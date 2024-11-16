@@ -1,152 +1,213 @@
-Return-Path: <linux-kernel+bounces-411641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88D119CFD36
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 09:16:11 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 220A69CFD39
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 09:16:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF06FB231B8
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 08:16:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B533B23EA8
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 08:16:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AA471925BA;
-	Sat, 16 Nov 2024 08:16:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kruces-com.20230601.gappssmtp.com header.i=@kruces-com.20230601.gappssmtp.com header.b="q/wQrKHM"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42D76193425;
+	Sat, 16 Nov 2024 08:16:30 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2531218C004
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 08:15:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B5891922E8
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 08:16:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731744960; cv=none; b=eh3h9zjMoDzMGqJUiH4TsEqLUegf71ppxFMq81jECeVBBUnswUYnYTCY2c42QY12tAgoeAvZ+6Y2v+cQ78v7YeEwOePSE2lqMtlzdolKe4c+P/7jJzMuMQhL62ruWxj8nvh0hOPkcP4OgGUDDGyS1sDreXpAtG11KoSCPZ3UMZE=
+	t=1731744989; cv=none; b=QuQgMFhG5pNzvw9vdBX0EDnXeUraPuMEVQ+ih2YHIuVh+6IZuVUAipjolnmqjHcVizKPPBPEe3Q+YQe+K92Vt2McqeB4IsiXQXndE/whSMcc83iVHdkkSGTKWq0V5TiCIO0prXE4Tw7WD4pYq7j2cK88rhqroCJCxw48YSuDK3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731744960; c=relaxed/simple;
-	bh=BZHDdgynYllHo9s/RBohlkX3EpDgKEvWgSe+O8M5w2s=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=SvXAz8StBIz/KPEW9ccJVM4di49bxFwduY+7BWEcRUT96i6gxR7cxE5FVyxs0sAKWkrTYAddF00TAC4SmIwlRqbrC8bx9dNqBRYgsXloVC0c1FcdFhpgqvDI72+OlZmrhbYwAIrp2ytd4bXyGe5Abr8U9kiuIb4xXHcD5fFQ8cE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kruces.com; spf=pass smtp.mailfrom=kruces.com; dkim=pass (2048-bit key) header.d=kruces-com.20230601.gappssmtp.com header.i=@kruces-com.20230601.gappssmtp.com header.b=q/wQrKHM; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kruces.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kruces.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a9e8522445dso60288466b.1
-        for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 00:15:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kruces-com.20230601.gappssmtp.com; s=20230601; t=1731744957; x=1732349757; darn=vger.kernel.org;
-        h=in-reply-to:references:from:to:cc:subject:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=M0LnKdboHHEmfsI5Xr01w60NGeW67NF6gaue5MpHh7U=;
-        b=q/wQrKHMj66Xyb9HsKjGLhXrWhe2ca5uKowd2UX0SKRGEN+qA/6rg0iK8y30UpeZtA
-         J5UfaJCPMOFvsQVYhYFNKRVOmErKguXDzBSlgSlJzEZpVcmDhRqTats8okVghuYHO2+f
-         FEqtGfqoSV/wUZQFlAwDNJH6Iqqm8Ol0/rc9fdQIuYl66/1MU7ywQo6cBaS2cSOyiX+x
-         L9V5SJqqAcvSE/1o/oD5e/b7hd4AFfvQcT8MV/JuY+vrDxwCBDgL3iUK8+AMTa2LSt8h
-         nfeTKq836qpmfz/eLFtemvn7PsSo373sMYmrrVQyWbPjdkLkse5QfZm5kEMK14LFeD0S
-         9R5g==
+	s=arc-20240116; t=1731744989; c=relaxed/simple;
+	bh=NdCNRt5hseY7XgSrFhM3rvJkKWMJFpMnTxgzT+R6vHA=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=uIziGbhT7SavRcZ68dTe+dx06AwLh2a7JIf1eL+QX8o0T9lpATDr/nkFc5Yuv5IpNlmE86JNr7cqpaUuKcFztNq0c4qOJ7fQUfqvCz+WySSOEB//VRJO8T+CCOHuR/qiw+zLeHrMqrpQSTcUW4CFNDZBfYULy3yCexhnbDYUF2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-83abb164a4fso151429639f.2
+        for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 00:16:27 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731744957; x=1732349757;
-        h=in-reply-to:references:from:to:cc:subject:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=M0LnKdboHHEmfsI5Xr01w60NGeW67NF6gaue5MpHh7U=;
-        b=IJdRBEx9ESjsKwXfOOAn4QveouE421HqlqZQN4a5r9Pza162GUPalBqMYL88BznY3g
-         sejFVtXSZrSVnRCyT2lBzSIKGEbmsff7dYxMSwknyJbo0vHj2PjNW0GU7tOoVICNXmQq
-         rtKOPKT+f/jgrB+qxlFWdrg50nAYmNSiplqxiWmFvkY1F/9PqES8qhYzA0lgJADo56QB
-         QWUqPxVwY7GLJT84rUCAeceTimhyxYq4U9Uxk/Dz74oVMG/B+QFSZQ/mUUoLadmcknn2
-         1FRVUQRWkVFJGUnSjdUD9rWu9kaMQZejM5BIHLOR1ajip7DaOXF8tAeL9tRCRx9/34Ko
-         V2BA==
-X-Forwarded-Encrypted: i=1; AJvYcCVU875HbS+qWr4L9mJXWdOANcmtPDQYFYKACzKLMMf5codrCYamILeBrrHNN7PpyjunVG/fT2oufkY4TPQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyy1sdeV20wT1F/4DfLUCAaO1jakxqM+21JeAYcwI/ktrwfwFma
-	HMGULennzQhy3I+wQedQURJlv9TjAtvH1BP/pmeSTanGiN5NyfnY1xJe1MOwaTE=
-X-Google-Smtp-Source: AGHT+IHyh4hTVRqHe7iP2X/OykKbk2d5/cc41SVXiUl/rLecdctguq73j7MNYRvzb6T9OiZJ81pymA==
-X-Received: by 2002:a17:907:9308:b0:a99:46ff:f4e6 with SMTP id a640c23a62f3a-aa48357f73bmr463687266b.61.1731744957314;
-        Sat, 16 Nov 2024 00:15:57 -0800 (PST)
-Received: from localhost (89-23-255-189.ip4.fiberby.net. [89.23.255.189])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20df74fb6sm272332566b.82.2024.11.16.00.15.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 16 Nov 2024 00:15:56 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731744987; x=1732349787;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2jbckV7ux3lzXJSR7JR4BmQDcEyddTRVjQlXOwEJaVI=;
+        b=IPocIZQj+IIEJ3QpvL3cxi5QGsVXMc6QLJHsOcT+nAWQsB4EHjlrzTv4udmWt6Bdn8
+         rpZUGmMhazwvwnQlmWMHA/drZ/lsC/VKdMF+2pMAro6m8N9Mj/L/XRBPnND5BIKUy6Tb
+         htWCsmaVbfY9w+cZXWaW3j8ARktewDjHUmityVWH+hPEFrRlPb7Qtr8VEDKWF9VswbhE
+         KN3am1qYw8sgarknanp9Y3Yp0JEdIFeoxoTJtawZ+AmjsV9N4C3CEC4XI275JK3kgvU6
+         PRCpotZTR+xGHiye5at4TdHDgSetLDjb+BVkvdB+5TSZbeKpRtbmxnFUX+PTrTF/WO8p
+         8+jg==
+X-Forwarded-Encrypted: i=1; AJvYcCUpH2oGb7qMDc//GZtu3VuZtaBLFZcvMSY6pPuGD791H9XJSn2t4QLDnvW0W+LwKFAM08qC9ypNv2a9FL4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx752OmHdfo5VA8ViEPOckN4eszs8r0bh+vD909HQy2VilSlvqz
+	r58dqoNDluDQIS2Eqw/EI2f2mSmxCH9EdfuaB6gvbHMfAzDTPOo0s6+LFmiFUX1t+of1PCijhsh
+	4bF2e3Zlx4lbkTLvOKkzkN8EEjrKoYMPWeV/kXm02EaphRjzAlvbdgiI=
+X-Google-Smtp-Source: AGHT+IH9L6VPPkxwi3Qe5NdR2HEfdsN8Fets2wPPjEmFamGj7SXwc73uB8k38B1TeZwK9V74LE9ui4l4Am0DBHkuzPYYHMdszb70
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sat, 16 Nov 2024 09:15:55 +0100
-Message-Id: <D5NGCPSP7EO8.28YI337NY203X@kruces.com>
-Subject: Re: [PATCH v5 2/2] module: Block a module by TUXEDO from accessing
- GPL symbols
-Cc: =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: "Werner Sembach" <wse@tuxedocomputers.com>,
- <u.kleine-koenig@baylibre.com>, <mcgrof@kernel.org>, <petr.pavlu@suse.com>,
- <samitolvanen@google.com>, <da.gomez@samsung.com>,
- <linux-modules@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux@leemhuis.info>, <vv@tuxedocomputers.com>, <cs@tuxedo.de>
-From: "Daniel Gomez" <d+samsung@kruces.com>
-X-Mailer: aerc HEAD-434ca29
-References: <20241115185253.1299264-1-wse@tuxedocomputers.com>
- <20241115185253.1299264-3-wse@tuxedocomputers.com>
-In-Reply-To: <20241115185253.1299264-3-wse@tuxedocomputers.com>
+MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:b47:b0:3a0:4d1f:519c with SMTP id
+ e9e14a558f8ab-3a747ff8c92mr58797555ab.3.1731744987352; Sat, 16 Nov 2024
+ 00:16:27 -0800 (PST)
+Date: Sat, 16 Nov 2024 00:16:27 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <673854db.050a0220.85a0.0011.GAE@google.com>
+Subject: [syzbot] [net?] WARNING: suspicious RCU usage in dev_deactivate
+From: syzbot <syzbot+8a65ac5be396817eefb3@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
+	jhs@mojatatu.com, jiri@resnulli.us, kuba@kernel.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
+	syzkaller-bugs@googlegroups.com, xiyou.wangcong@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri Nov 15, 2024 at 7:50 PM CET, Werner Sembach wrote:
-> From: Uwe Kleine-K=C3=B6nig <ukleinek@kernel.org>
->
-> TUXEDO has not yet relicensed a module for GPLv2+ as a reply from former
-> contributers the committed code under GPLv3+ is awaited.
+Hello,
 
-FYI, the SPDX identifier GPL-2.0+ is deprecated as of 2.0rc2 [1]. I think y=
-ou'd
-need to use GPL-2.0-or-later [2] instead. And when using the SPDX identifie=
-r,
-you don't need to include the full text boilerplate in the source of every =
-file
-as long as you include a LICENSE file or COPYRIGHT file with a copy of the
-license. One example upstream here [3] commit 1a59d1b8e05ea ("treewide: Rep=
-lace
-GPLv2 boilerplate/reference with SPDX - rule 156").
+syzbot found the following issue on:
 
-[1] https://spdx.org/licenses/GPL-2.0+.html
-[2] https://spdx.org/licenses/GPL-2.0-or-later.html
-[3] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/comm=
-it/?h=3Dv6.12-rc7&id=3D1a59d1b8e05ea
+HEAD commit:    2d5404caa8c7 Linux 6.12-rc7
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1219335f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=327b6119dd928cbc
+dashboard link: https://syzkaller.appspot.com/bug?extid=8a65ac5be396817eefb3
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-2d5404ca.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/1bbbfa50cb5f/vmlinux-2d5404ca.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/a5bcdede1c8a/bzImage-2d5404ca.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+8a65ac5be396817eefb3@syzkaller.appspotmail.com
+
+=============================
+WARNING: suspicious RCU usage
+6.12.0-rc7-syzkaller #0 Not tainted
+-----------------------------
+net/sched/sch_generic.c:1290 suspicious rcu_dereference_protected() usage!
+
+other info that might help us debug this:
 
 
-Daniel
->
-> Teach the module loader that this module is not GPLv2 compatible despite
-> the declaration to be GPLv2 compatible until the relicensing is complete.
->
-> Signed-off-by: Uwe Kleine-K=C3=B6nig <ukleinek@kernel.org>
-> [Remove relicensed modules and accusatory language]
-> Signed-off-by: Werner Sembach <wse@tuxedocomputers.com>
-> ---
->  kernel/module/main.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
->
-> diff --git a/kernel/module/main.c b/kernel/module/main.c
-> index 905d7b60dd709..df2549352ca8a 100644
-> --- a/kernel/module/main.c
-> +++ b/kernel/module/main.c
-> @@ -2029,6 +2029,14 @@ static const char *module_license_offenders[] =3D =
-{
-> =20
->  	/* lve claims to be GPL but upstream won't provide source */
->  	"lve",
-> +
-> +	/*
-> +	 * TUXEDO awaits 2 final answers to relicense the last module to GPLv2+
-> +	 * See https://gitlab.com/tuxedocomputers/development/packages/tuxedo-d=
-rivers/-/merge_requests/21 ,
-> +	 * https://gitlab.com/tuxedocomputers/development/packages/tuxedo-drive=
-rs/-/commit/dd34594ab880ed477bb75725176c3fb9352a07eb ,
-> +	 * and https://gitlab.com/tuxedocomputers/development/packages/tuxedo-d=
-rivers/-/commit/c8893684c2f869b2a6b13f1ef1ddeb4922f2ffe3
-> +	 */
-> +	"clevo_acpi",
->  };
-> =20
->  /*
+rcu_scheduler_active = 2, debug_locks = 1
+3 locks held by kworker/u32:18/10870:
+ #0: ffff888046b42148 ((wq_completion)bond0#22){+.+.}-{0:0}, at: process_one_work+0x129b/0x1ba0 kernel/workqueue.c:3204
+ #1: ffffc90004557d80 ((work_completion)(&(&bond->mii_work)->work)){+.+.}-{0:0}, at: process_one_work+0x921/0x1ba0 kernel/workqueue.c:3205
+ #2: ffffffff8e1b8340 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
+ #2: ffffffff8e1b8340 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
+ #2: ffffffff8e1b8340 (rcu_read_lock){....}-{1:2}, at: bond_mii_monitor+0x140/0x2d90 drivers/net/bonding/bond_main.c:2937
+stack backtrace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x16c/0x1f0 lib/dump_stack.c:120
+ lockdep_rcu_suspicious+0x210/0x3c0 kernel/locking/lockdep.c:6821
+ dev_deactivate_queue+0x167/0x190 net/sched/sch_generic.c:1290
+ netdev_for_each_tx_queue include/linux/netdevice.h:2504 [inline]
+ dev_deactivate_many+0xe7/0xb20 net/sched/sch_generic.c:1363
+ dev_deactivate+0xf9/0x1c0 net/sched/sch_generic.c:1403
+ bond_miimon_inspect drivers/net/bonding/bond_main.c:2717 [inline]
+ bond_mii_monitor+0x3c1/0x2d90 drivers/net/bonding/bond_main.c:2939
+-----------------------------
+include/linux/rtnetlink.h:100 suspicious rcu_dereference_protected() usage!
+other info that might help us debug this:
 
+rcu_scheduler_active = 2, debug_locks = 1
+
+stack backtrace:
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ dev_deactivate+0xf9/0x1c0 net/sched/sch_generic.c:1403
+ bond_check_dev_link+0x197/0x490 drivers/net/bonding/bond_main.c:873
+ process_scheduled_works kernel/workqueue.c:3310 [inline]
+ worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+ </TASK>
+RCU nest depth: 1, expected: 0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ dev_deactivate_many+0x2a1/0xb20 net/sched/sch_generic.c:1377
+
+other info that might help us debug this:
+
+
+rcu_scheduler_active = 2, debug_locks = 1
+3 locks held by kworker/u32:18/10870:
+ #0: ffff888046b42148 ((wq_completion)bond0#22){+.+.}-{0:0}, at: process_one_work+0x129b/0x1ba0 kernel/workqueue.c:3204
+
+stack backtrace:
+Tainted: [W]=WARN
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x16c/0x1f0 lib/dump_stack.c:120
+ lockdep_rcu_suspicious+0x210/0x3c0 kernel/locking/lockdep.c:6821
+ dev_deactivate+0xf9/0x1c0 net/sched/sch_generic.c:1403
+ ethtool_op_get_link+0x1d/0x70 net/ethtool/ioctl.c:62
+ process_scheduled_works kernel/workqueue.c:3310 [inline]
+ worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+6.12.0-rc7-syzkaller #0 Tainted: G        W         
+-----------------------------
+other info that might help us debug this:
+context-{4:4}
+stack backtrace:
+Workqueue: bond0 bond_mii_monitor
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+ lock_acquire.part.0+0x11b/0x380 kernel/locking/lockdep.c:5825
+ synchronize_rcu_expedited+0x290/0x450 kernel/rcu/tree_exp.h:976
+ synchronize_net+0x3e/0x60 net/core/dev.c:11286
+ ethtool_op_get_link+0x1d/0x70 net/ethtool/ioctl.c:62
+ bond_check_dev_link+0x197/0x490 drivers/net/bonding/bond_main.c:873
+ bond_miimon_inspect drivers/net/bonding/bond_main.c:2717 [inline]
+ bond_mii_monitor+0x3c1/0x2d90 drivers/net/bonding/bond_main.c:2939
+ process_one_work+0x9c5/0x1ba0 kernel/workqueue.c:3229
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+------------[ cut here ]------------
+WARNING: CPU: 2 PID: 10870 at kernel/rcu/tree_plugin.h:331 rcu_note_context_switch+0xc5c/0x1ae0 kernel/rcu/tree_plugin.h:331
+Tainted: [W]=WARN
+RSP: 0018:ffffc900045573b0 EFLAGS: 00010086
+RDX: ffff888026c3c880 RSI: ffffffff814e6e86 RDI: 0000000000000001
+R10: 0000000000000000 R11: 000000002d2d2d2d R12: ffff888026c3c880
+CR2: 00007fd5d2467d60 CR3: 0000000030df0000 CR4: 0000000000352ef0
+Call Trace:
+ <TASK>
+ mutex_optimistic_spin kernel/locking/mutex.c:510 [inline]
+ __mutex_lock_common kernel/locking/mutex.c:612 [inline]
+ __mutex_lock+0x81e/0x9c0 kernel/locking/mutex.c:752
+ synchronize_rcu_expedited+0x290/0x450 kernel/rcu/tree_exp.h:976
+ dev_deactivate_many+0x2a1/0xb20 net/sched/sch_generic.c:1377
+ linkwatch_sync_dev+0x181/0x210 net/core/link_watch.c:263
+ ethtool_op_get_link+0x1d/0x70 net/ethtool/ioctl.c:62
+ kthread+0x2c1/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
