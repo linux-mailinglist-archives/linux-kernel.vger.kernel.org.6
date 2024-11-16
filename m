@@ -1,151 +1,90 @@
-Return-Path: <linux-kernel+bounces-411687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF1BA9CFE33
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 11:34:53 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67F3D9CFE37
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 11:38:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B465328BADE
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 10:34:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D2D99B26E69
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 10:38:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13772194C8B;
-	Sat, 16 Nov 2024 10:34:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="pkSUlc7d"
-Received: from forwardcorp1a.mail.yandex.net (forwardcorp1a.mail.yandex.net [178.154.239.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D4C7194137;
+	Sat, 16 Nov 2024 10:38:05 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54ABA191484;
-	Sat, 16 Nov 2024 10:34:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76329194096
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 10:38:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731753284; cv=none; b=Fz5bcZ4Od0+A3dRxO4QfeFMr6TMCY+YXl7mi/K9DF1QUJtRYjIk4SLVwiaXZorNqvEww914WG2fiYV9MCiG5Ki+SktAbfaehI/coN0/gixUswmBb/00oFta58R0Kwlq9qSRhsxXFl4pFMT5rLdUVkqH099KSr3ZRE/nhvvivCjk=
+	t=1731753484; cv=none; b=Xo427qDJ1swEOMASV5836sH98TcE43Fq5hiNhOK0zRW99t+MQVDfjhcks+A0O07WTxWL+dU/RNrWYxp5neHNnRk+uvyeoJQglOUqZCkrr9ONe+1Eun9eTn7GaCI4opbhTrW4b4mzIT4EtdCeMBLo3Qwl0RtGG/vf3YrCWlkvje8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731753284; c=relaxed/simple;
-	bh=wIVyp/7ICbtsn8aYA9PY6NhVFUFy2o5cyVtdv3OTLOE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tlgREXzG1S5MPjQ0iY/AZtGrP7hgZD/wv+HvtQd+BdrsRNgOwDz2GzAFv+5C7oKjlkTtelHzkdlVgXZ6M/IsM9OrK8QqzOETM98ej0n+6gYXz+xYHgJHdHmqLWXdg3Ob6Ofc3pvkHvi9KT0DkTeZHqdgQqB4RyCI1dDfH9qrJ8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru; spf=pass smtp.mailfrom=yandex-team.ru; dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b=pkSUlc7d; arc=none smtp.client-ip=178.154.239.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex-team.ru
-Received: from mail-nwsmtp-smtp-corp-main-26.myt.yp-c.yandex.net (mail-nwsmtp-smtp-corp-main-26.myt.yp-c.yandex.net [IPv6:2a02:6b8:c12:4fa4:0:640:dbe3:0])
-	by forwardcorp1a.mail.yandex.net (Yandex) with ESMTPS id D615460AA4;
-	Sat, 16 Nov 2024 13:34:29 +0300 (MSK)
-Received: from [IPV6:2a02:6b8:b081:31::1:15] (unknown [2a02:6b8:b081:31::1:15])
-	by mail-nwsmtp-smtp-corp-main-26.myt.yp-c.yandex.net (smtpcorp/Yandex) with ESMTPSA id RYLQ1T0Ie4Y0-6g18ZEEY;
-	Sat, 16 Nov 2024 13:34:29 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru;
-	s=default; t=1731753269;
-	bh=yV+Y83OPVDgDA1jP5vd1HgYLCL54HObfQfH9dqmEPQU=;
-	h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
-	b=pkSUlc7d0xicoc9zN55XELzByTGbbO5rjPs4d8wxL0+mnyM9xXPBnmgr5gzo7y85/
-	 6DfeRU7KK3n/URcOgkM2guZ/FWEYCO2RIaE3Nv3vam6Y+s59IXWwc+TAvKHgu+H18Z
-	 BsA/gIPtZOgMpLcpVw2I/62hsJ03ix45HVOP2pP0=
-Authentication-Results: mail-nwsmtp-smtp-corp-main-26.myt.yp-c.yandex.net; dkim=pass header.i=@yandex-team.ru
-Message-ID: <a9549e7a-4808-4020-852f-db5a19291da4@yandex-team.ru>
-Date: Sat, 16 Nov 2024 13:34:27 +0300
+	s=arc-20240116; t=1731753484; c=relaxed/simple;
+	bh=nnqogNynXOMA0QadwMHnOAX0FSBNZm1yoF39BZbwnJU=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=gz5sQX9CmOft0iJSupBFAGWEsh3f4FTU9ItBXDTDDQl8OD2WkgL4QKQ5rvTo5iU5XpkhnhLNPv2pXN3+wOCBD1dZa44MAPdYdbHXDAjjHrX+FbrkRlMUSPV3rLAt0/Pw0Xu8vCHhlDNo9ffMquNnINQanwWP5XAb/5oTyHOIljc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a6b37c6dd4so30909935ab.3
+        for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 02:38:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731753482; x=1732358282;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OAueTxdgAoViJAt82uzda7JpmlwOQ7bg6ANECTjo1xQ=;
+        b=PVFdPYex/6Icd5eHDU3lDUp8kRK6QrP5245tJYVgN358R3MfU9dXbWyqv2GxBkpK6i
+         KcyMv4lXKNBITESOp8GJ7e4claTqX+JFDLKAJwk7DAvVQgLPcZ1hJuTwPdHdAxpmJcAB
+         k91fySD5+7Y4MztNz3THTWgiMwpL5DX7tmpToTDfxbZIJyvLzijYtIB6WiKIrtYpOW7u
+         BkjAn2z2otpEKuES/n6LFKUGiaeaOrpJCSsnCmrZSKKF3kG+FMV4qbADxEkHLPPjVJ/F
+         gHmXQSO5XXyYmBdeNRoyAcm6hWFxio7n6L9ouAPr80GvVVVWt+YJYR4WTuM14BFvjtLD
+         4QPA==
+X-Forwarded-Encrypted: i=1; AJvYcCVEcVf3NCPAwYGZ0vy31Tk8I9T39Z2rPajc46PlNcU+8BmqCGR/yu4+hUzCuApElHnwGYyycqF94HKVNG4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxp+t4dINxs8+5A0gmNcwwJkerv1FexmmClLQkhntjlLgQFYbpM
+	fjALuM/NKv30ABhy2F5A6fGAdis3N4VgnF/Qp3/tM8kXmvOiF6dStZoBsHoeG4ixRA4NpBQZlub
+	cru7on0EaJHc/uDOzZXD7Fo0BKnfwDE2sZeRXQixkKg8sokbqP4sfbMI=
+X-Google-Smtp-Source: AGHT+IFSqWbqPsFEJebjAPbB7M739W1+clCtsyBBoGxheG+D53bEoWaGQu5RBakPUDdg7o7J/5mS77EwdkNCTo3Ay9S9BoKA0K48
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] x86: KVM: Advertise FSRS and FSRC on AMD to userspace
-To: babu.moger@amd.com
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org,
- seanjc@google.com, sandipan.das@amd.com, bp@alien8.de, mingo@redhat.com,
- tglx@linutronix.de, dave.hansen@linux.intel.com, hpa@zytor.com,
- pbonzini@redhat.com
-References: <20241113133042.702340-1-davydov-max@yandex-team.ru>
- <20241113133042.702340-2-davydov-max@yandex-team.ru>
- <5267175a-27ed-9293-c780-ed22b13bb8ca@amd.com>
-Content-Language: en-US
-From: Maksim Davydov <davydov-max@yandex-team.ru>
-In-Reply-To: <5267175a-27ed-9293-c780-ed22b13bb8ca@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:368f:b0:3a2:7651:9846 with SMTP id
+ e9e14a558f8ab-3a748023851mr61926845ab.13.1731753482730; Sat, 16 Nov 2024
+ 02:38:02 -0800 (PST)
+Date: Sat, 16 Nov 2024 02:38:02 -0800
+In-Reply-To: <CAHiZj8iv2WBFHDdamhnOg+KTNqWrmNpDxshpEX7h4QdtF0Wb_g@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6738760a.050a0220.bb738.0006.GAE@google.com>
+Subject: Re: [syzbot] [acpi?] [nvdimm?] KASAN: vmalloc-out-of-bounds Read in
+ acpi_nfit_ctl (2)
+From: syzbot <syzbot+7534f060ebda6b8b51b3@syzkaller.appspotmail.com>
+To: dan.j.williams@intel.com, dave.jiang@intel.com, ira.weiny@intel.com, 
+	lenb@kernel.org, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	nvdimm@lists.linux.dev, rafael@kernel.org, surajsonawane0215@gmail.com, 
+	syzkaller-bugs@googlegroups.com, vishal.l.verma@intel.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi!
+Hello,
 
-On 11/15/24 22:51, Moger, Babu wrote:
-> Hi Maksim,
-> 
-> On 11/13/2024 7:30 AM, Maksim Davydov wrote:
->> Fast short REP STOSB and fast short CMPSB support on AMD processors are
->> provided in other CPUID function in comparison with Intel processors:
->> * FSRS: 10 bit in 0x80000021_EAX
->> * FSRC: 11 bit in 0x80000021_EAX
->>
->> AMD bit numbers differ from existing definition of FSRC and
->> FSRS. So, the new appropriate values have to be added with new names.
->>
->> It's safe to advertise these features to userspace because they are a 
->> part
->> of CPU model definition and they can't be disabled (as existing Intel
->> features).
->>
->> Fixes: 2a4209d6a9cb ("KVM: x86: Advertise fast REP string features 
->> inherent to the CPU")
->> Signed-off-by: Maksim Davydov <davydov-max@yandex-team.ru>
->> ---
->>   arch/x86/include/asm/cpufeatures.h | 2 ++
->>   arch/x86/kvm/cpuid.c               | 4 ++--
->>   2 files changed, 4 insertions(+), 2 deletions(-)
->>
->> diff --git a/arch/x86/include/asm/cpufeatures.h 
->> b/arch/x86/include/asm/cpufeatures.h
->> index 913fd3a7bac6..2f8a858325a4 100644
->> --- a/arch/x86/include/asm/cpufeatures.h
->> +++ b/arch/x86/include/asm/cpufeatures.h
->> @@ -457,6 +457,8 @@
->>   #define X86_FEATURE_NULL_SEL_CLR_BASE    (20*32+ 6) /* Null Selector 
->> Clears Base */
->>   #define X86_FEATURE_AUTOIBRS        (20*32+ 8) /* Automatic IBRS */
->>   #define X86_FEATURE_NO_SMM_CTL_MSR    (20*32+ 9) /* SMM_CTL MSR is 
->> not present */
->> +#define X86_FEATURE_AMD_FSRS            (20*32+10) /* AMD Fast short 
->> REP STOSB supported */
->> +#define X86_FEATURE_AMD_FSRC        (20*30+11) /* AMD Fast short REP 
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Sorry
-I made a mistake (30 instead of 32) while preparing the patch.
-I'll prepare the new version.
+Reported-by: syzbot+7534f060ebda6b8b51b3@syzkaller.appspotmail.com
+Tested-by: syzbot+7534f060ebda6b8b51b3@syzkaller.appspotmail.com
 
->> CMPSB supported */
->>   #define X86_FEATURE_SBPB        (20*32+27) /* Selective Branch 
->> Prediction Barrier */
->>   #define X86_FEATURE_IBPB_BRTYPE        (20*32+28) /* 
->> MSR_PRED_CMD[IBPB] flushes all branch type predictions */
->> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
->> index 41786b834b16..30ce1bcfc47f 100644
->> --- a/arch/x86/kvm/cpuid.c
->> +++ b/arch/x86/kvm/cpuid.c
->> @@ -793,8 +793,8 @@ void kvm_set_cpu_caps(void)
->>       kvm_cpu_cap_mask(CPUID_8000_0021_EAX,
->>           F(NO_NESTED_DATA_BP) | F(LFENCE_RDTSC) | 0 /* SmmPgCfgLock */ |
->> -        F(NULL_SEL_CLR_BASE) | F(AUTOIBRS) | 0 /* PrefetchCtlMsr */ |
->> -        F(WRMSR_XX_BASE_NS)
->> +        F(NULL_SEL_CLR_BASE) | F(AUTOIBRS) | F(AMD_FSRS) |
->> +        F(AMD_FSRC) | 0 /* PrefetchCtlMsr */ | F(WRMSR_XX_BASE_NS)
-> 
-> KVM still does not report AMD_FSRC.
-> 
-> The KVM_GET_SUPPORTED_CPUID output for the function 0x80000021.
-> 
-> {0x80000021, 0000, eax = 0x1800074f, ebx= 0000000000, ecx = 0000000000, 
-> edx= 0000000000}, /* 0 */
-> 
-> 
-> 
->>       );
->>       kvm_cpu_cap_check_and_set(X86_FEATURE_SBPB);
-> 
+Tested on:
 
--- 
-Best regards,
-Maksim Davydov
+commit:         e8bdb3c8 Merge tag 'riscv-for-linus-6.12-rc8' of git:/..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12a112c0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d2aeec8c0b2e420c
+dashboard link: https://syzkaller.appspot.com/bug?extid=7534f060ebda6b8b51b3
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=109e12c0580000
+
+Note: testing is done by a robot and is best-effort only.
 
