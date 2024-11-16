@@ -1,153 +1,258 @@
-Return-Path: <linux-kernel+bounces-411817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 718439CFFF0
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 17:50:10 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25C699CFFF3
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 17:51:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2ADD5284113
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 16:50:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB52EB24E6F
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 16:51:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86F30183CCA;
-	Sat, 16 Nov 2024 16:50:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCC8A1917FD;
+	Sat, 16 Nov 2024 16:50:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="g9dbDe+E"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yU6jiluY"
+Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com [209.85.222.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0ABE74421
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 16:49:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C4C117548
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 16:50:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731775801; cv=none; b=oTf1rouiA7DDBY55ZjWSpjDuPF5r0lkiEKGVz3PABu5W9BVwr+WPr20XAWAR9sLDryJg1AA8AWJA2u1Kwnc1T76u6TGrz1ESE+T1OnxW5NF+sXgRVvVjEeZE4N/Hfjb4alFuRWAPqjqmUJs34vn7jvyLFOL9DVffeFStJzJytQs=
+	t=1731775858; cv=none; b=aHyXKNdHgcyX69iwJDJeKDvEuUuzy2qkPmr0M22Ps6Ayau0+LRy2lgFywbK1WMFnfqXyGrYJALDJdlExytQHMS/rewio7VsdiQtigujIwDsh6YdwYmXf79oGzc3tUoYO8qoFWCPcx9kuD88CcX9B5b4CEN56B3zctCBvLVQU8Vw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731775801; c=relaxed/simple;
-	bh=E/Tuo/db8iOWp7eoMWkOygfOn+4wOFvSZJleOrdzNZA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EbxzW8DuQSPzS3U5nPCr6w7jJZh/VwusOeBIoWLiOyUDkJV9lunJi9MdufrVu+LXcqkdwJ7RxWmI76/Dgq/oorYDaQxqh2eo0BF8IclOOFs6bTBgYFhQFl0fx3E+sd52TXMGGch79JRPgdfwZRRFOwTq9Bmpj4EHgxInzbxdPNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=g9dbDe+E; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5cecbddb574so3599217a12.1
-        for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 08:49:59 -0800 (PST)
+	s=arc-20240116; t=1731775858; c=relaxed/simple;
+	bh=JxVQRUmXu/GR6DOZL4O8huHliPPvYC5bjH4b+yDupQ0=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=amBudxJN0HqEjvGEnIK44Yvqc5mUTgxATMQpHJwsPZsE1/kHjRZvCT5uJWwnxD2hls00GfSRb9SYDdmAJfgXzEzYxB7mHBdJgWq2lGHJqs+4g/ZqewkewPbysQqxQfT1N3uAHTS+B+B1eEsPbKxSDsEg596lGiRDWtjl5zA934A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yU6jiluY; arc=none smtp.client-ip=209.85.222.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ua1-f49.google.com with SMTP id a1e0cc1a2514c-856e98ad00bso233900241.0
+        for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 08:50:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1731775798; x=1732380598; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=EVggJ+HrFs+M+88omfFvZ5m4gN340mphxc1eGqJLQ9E=;
-        b=g9dbDe+EhDuKbiRUMWnVdm5zFPhGbAe5n2wkfprqLuZqBnhPqQ9/kDyaZwV9/YEmMG
-         acvzsP30MZ90qYEXrOC88aYwoDn82bzxtW8qadmKAW5lFfyV08cHwQogmt08yT5Tu4W3
-         rQTX/4yMc2VHEPUEuoslS4xq5dgG6nuc8J7rM=
+        d=linaro.org; s=google; t=1731775854; x=1732380654; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=/AJbuq7ELapydlmshajvSeNG3RIacjhiudlwSv7Rgic=;
+        b=yU6jiluYkdj1tOLAT9wtUgvASi5XtQAitq7sYOzTj7/+AwR+YuPR13AhliKtJ+BTF9
+         VTDuBPHv6LWdAmwo56X0UY8RGOTg8DVOfzOePPXxXlvs0WdzoHWB/djYhzvtRDsIAC1C
+         vmBiYFSfWMut/LcCzMk9FOBahHc/Qsv/lOq3rsksii/GyvpFQ4BTBag0LQXh+MhL9l8Q
+         ul4TUpKTdaGvUoY+3lpt2OXjOF9jOm4SbNb/HupOPswWfFxqUbGDxa2KMm/IJVZeMN3M
+         GB0fEcNnmlocXe5ssvWvN2qf2q67yDhSINk5kpb54z8HRU96d6Nxlxk17Fg4oISbZ9iR
+         spaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731775798; x=1732380598;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EVggJ+HrFs+M+88omfFvZ5m4gN340mphxc1eGqJLQ9E=;
-        b=TfSUAwunwAYj1U63k3o0gUIMxzQ61eIp3aH9sETm1Fj8ulU8tquk4/PnZVuh2qnb0J
-         bIMjY4oC9oOfyMNOxiOc4rExKJPRqVCcXgaaqS1J7cCyifRDzr0SN/bukgDLYCAvakK/
-         FNawZ1ep8xJpIR0h+QBAKTKV1JaQBfGEHiDNGJ40B9Ak7DnCy+eJv01+aiQ2bU+F1g+y
-         rEDCarsMu9/qA7dtwqMLZnw5oS3wBKA8zQxJMKStKUg7hxWSTjpe6q7hErajUKlqk1z+
-         /c9wXpKMLgVBVzBzeOmRZrkFJiPXeK7u1CG+Rr2LK7TNk4b28sEu4B4xhV95YI8zLqVi
-         UMwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUHUifxkXsqXDQUFNYiiZCKK8bPDA9SUa2QcW90bT9P6LYz2Zk5ngbnuNegUSHzm94r4aMU/MBL6k7FxTU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3s1rXG6pDghWa2TuDmWUZVB0KrQyM/YWZAPPwnTfY/9EGoIiE
-	VbL2AN3EYZXtEJRdjlBIkfBG9eU81RVLWZVy7i8YDmS/ieVp2/PcJUb9F00hczrIlaIunhdoorw
-	EXCM=
-X-Google-Smtp-Source: AGHT+IFdllFJ7sO1uVvB4Ru2ongC1afeRfdBXfxvsCiDSa/gVhouIv7q0Sgjwjw5eh97KCZxtCPm9A==
-X-Received: by 2002:a17:907:7290:b0:aa1:f73b:be43 with SMTP id a640c23a62f3a-aa483488d6amr695374666b.32.1731775797948;
-        Sat, 16 Nov 2024 08:49:57 -0800 (PST)
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com. [209.85.208.51])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20dfffcd4sm322127666b.98.2024.11.16.08.49.56
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 16 Nov 2024 08:49:56 -0800 (PST)
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5cfaa02c716so766007a12.3
-        for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 08:49:56 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXGqsEz2bb+z6CvIpcEp5lIr2+w3hWS06bOE4F6O5AYI5tl+cBglaq4lUAJZWszj9rIAHrX2E0LYx6eFqE=@vger.kernel.org
-X-Received: by 2002:a17:907:a0e:b0:a9a:4d1:c628 with SMTP id
- a640c23a62f3a-aa48352c0f5mr617966166b.45.1731775796094; Sat, 16 Nov 2024
- 08:49:56 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731775854; x=1732380654;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/AJbuq7ELapydlmshajvSeNG3RIacjhiudlwSv7Rgic=;
+        b=d9mO8vtpHjLev8LpVjwb7qx9tqM+DnesQwpBjbK4MYhPx1AuKAbKiO9IlUtQLrSAyd
+         ycH9gZM+YsOXe60yi+whhKvqAURlGJTZsQd+w1aywGo6cc3xJ0lbQl6rCDs4y8mz5kxP
+         sBF3rj2CWNR3p51ENr5IklqYwwmAyMi4716z4faAMXUizCHbLgYxMPd4tItIRsvCIM6c
+         FrZs39+88zQ2gWm/XkL/39wonw8a/mwNbQLORxbalPtMJ52qgnpGlJfSyvtUWdLYmdNd
+         VIAh1LkE2cvx67RBii740qtDviW7AigCIodInKHMrhwdJnqL3Wkc/0Qzzv9y+RsDZrmV
+         IX0A==
+X-Gm-Message-State: AOJu0YygJf20LAUf8wMSeYq34biT+EPmK0N8wP8wWgXDF5PGEknXk664
+	K7QBOJAU1I61AeC27ddsOpJ064qezI6rVbX0HJ7/TKIjILT1YUBbU+rLHas62kkbh6tKVE9NPV6
+	IjMLKIib4MjI9QIVPNwfmjVZpPHoLCwVGy5eHDIXBJY1XE0JJ8Lc=
+X-Google-Smtp-Source: AGHT+IGxwi/IVhPflsdG08C7ZbvkGxsHxai4iTgnUdrVuVk07lklbn089q1LGPkXwyBIKlKfDffXfQwU/VQ3TdNFYOg=
+X-Received: by 2002:a05:6102:3f03:b0:4a3:db6a:dbbf with SMTP id
+ ada2fe7eead31-4ad62bffe1amr7191005137.14.1731775854568; Sat, 16 Nov 2024
+ 08:50:54 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241116061258.GA216473@lichtman.org> <20241116072804.GA3387508@ZenIV>
-In-Reply-To: <20241116072804.GA3387508@ZenIV>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sat, 16 Nov 2024 08:49:39 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wiMEpPZYDeF5ak8FToB_fw7pfjKhuJAcjLpjqMfCvvB7g@mail.gmail.com>
-Message-ID: <CAHk-=wiMEpPZYDeF5ak8FToB_fw7pfjKhuJAcjLpjqMfCvvB7g@mail.gmail.com>
-Subject: Re: [PATCH v2] exec: make printable macro more concise
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Nir Lichtman <nir@lichtman.org>, ebiederm@xmission.com, kees@kernel.org, 
-	brauner@kernel.org, jack@suse.cz, linux-kernel@vger.kernel.org
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Sat, 16 Nov 2024 22:20:43 +0530
+Message-ID: <CA+G9fYvVAvEBbFzhQQ_UBf+PYMojtN1O4qHKXngu33AT8HqEnA@mail.gmail.com>
+Subject: ltp-syscalls/ioctl04: sysfs: cannot create duplicate filename '/kernel/slab/:a-0000176'
+To: open list <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org, 
+	linux-ext4 <linux-ext4@vger.kernel.org>, lkft-triage@lists.linaro.org, 
+	Linux Regressions <regressions@lists.linux.dev>
+Cc: "Theodore Ts'o" <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, 
+	Arnd Bergmann <arnd@arndb.de>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Sasha Levin <sashal@kernel.org>, 
+	Anders Roxell <anders.roxell@linaro.org>, Dan Carpenter <dan.carpenter@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 15 Nov 2024 at 23:28, Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> Now, whether that logics makes sense is a separate story;
-> that's before my time (1.3.60), so...
+The LTP syscalls ioctl04 and sequence test cases reported failures due
+to following
+reasons in the test log on the following environments on
+sashal/linus-next.git tree.
+ - qemu-x86_64
+ - qemu-x86_64-compat
+ - testing still in progress
 
-Bah. The whole ctype stuff is a mess, partly because it's
-fundamentally a broken concept and depends on locale.
+LTP test failed log:
+---------------
+<4>[   70.931891] sysfs: cannot create duplicate filename
+'/kernel/slab/:a-0000176'
+...
+<0>[   70.969266] EXT4-fs: no memory for groupinfo slab cache
+<3>[   70.970744] EXT4-fs (loop0): failed to initialize mballoc (-12)
+<3>[   70.977680] EXT4-fs (loop0): mount failed
+ioctl04.c:67: TFAIL: Mounting RO device RO failed: ENOMEM (12)
 
-The original ctype array was US-ASCII only, and at some point in the
-random past it got changed to be based on Latin1. Maybe indeed 1.3.60
-as you say, I didn't go digging around.
+First seen on commit sha id c12cd257292c0c29463aa305967e64fc31a514d8.
+  Good: 7ff71d62bdc4828b0917c97eb6caebe5f4c07220
+  Bad:  c12cd257292c0c29463aa305967e64fc31a514d8
+  (not able to fetch these ^ commit ids now)
 
-And Latin1 is not only what I used to use, it's the "low range of
-unicode". So it makes *some* sense, but not a whole lot.
+qemu-x86_64:
+  * ltp-syscalls/fanotify14
+  * ltp-syscalls/ioctl04
+  * etc..
 
-It might be good to go back to US-ASCII just as a true lowest common
-denominator, because people who use the ctype macros almost certainly
-don't actually do it on unicode characters, they do it on bytes, and
-then UTF-8 will not actually DTRT with anything but US-ASCII anyway.
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-And this fs/exec.c code is really confused. It explicitly doesn't use
-our ctype, probably exactly *because* of high-bit issues, but then it
-calls '\t' and '\n' is "printable", makes little sense.
+Test log:
+---------
+tst_tmpdir.c:316: TINFO: Using /scratch/ltp-8XkJXJek4F/LTP_iocSaDyQw
+as tmpdir (ext2/ext3/ext4 filesystem)
+tst_device.c:96: TINFO: Found free device 0 '/dev/loop0'
+<6>[   70.394900] loop0: detected capacity change from 0 to 614400
+tst_test.c:1158: TINFO: Formatting /dev/loop0 with ext2 opts='' extra opts=''
+mke2fs 1.47.1 (20-May-2024)
+tst_test.c:1860: TINFO: LTP version: 20240930
+tst_test.c:1864: TINFO: Tested kernel: 6.12.0-rc7 #1 SMP
+PREEMPT_DYNAMIC @1731766491 x86_64
+tst_test.c:1703: TINFO: Timeout per run is 0h 02m 30s
+ioctl04.c:29: TPASS: BLKROGET returned 0
+<6>[   70.921794] EXT4-fs (loop0): mounting ext2 file system using the
+ext4 subsystem
+ioctl04.c:42: TPASS: BLKROGET returned 1
+ioctl04.c:53: TPASS: Mounting RO device RW failed: EACCES (13)
+<4>[   70.931891] sysfs: cannot create duplicate filename
+'/kernel/slab/:a-0000176'
+<4>[   70.932354] CPU: 0 UID: 0 PID: 992 Comm: ioctl04 Not tainted 6.12.0-rc7 #1
+<4>[   70.932936] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009),
+BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+<4>[   70.933433] Call Trace:
+<4>[   70.933894]  <TASK>
+<4>[   70.934161]  dump_stack_lvl+0x96/0xb0
+<4>[   70.934608]  dump_stack+0x14/0x20
+<4>[   70.934909]  sysfs_warn_dup+0x5f/0x80
+<4>[   70.935215]  sysfs_create_dir_ns+0xd0/0xf0
+<4>[   70.935521]  kobject_add_internal+0xa8/0x2e0
+<4>[   70.935944]  kobject_init_and_add+0x8c/0xd0
+<4>[   70.936265]  sysfs_slab_add+0x11a/0x1f0
+<4>[   70.936446]  do_kmem_cache_create+0x433/0x500
+<4>[   70.936622]  __kmem_cache_create_args+0x19c/0x250
+<4>[   70.936827]  ext4_mb_init+0x690/0x7e0
+<4>[   70.937180]  ext4_fill_super+0x1934/0x31e0
+<4>[   70.937547]  ? sb_set_blocksize+0x21/0x70
+<4>[   70.937911]  ? __pfx_ext4_fill_super+0x10/0x10
+<4>[   70.938346]  get_tree_bdev_flags+0x13c/0x1d0
+<4>[   70.938780]  get_tree_bdev+0x14/0x20
+<4>[   70.939118]  ext4_get_tree+0x19/0x20
+<4>[   70.939354]  vfs_get_tree+0x2e/0xe0
+<4>[   70.939717]  path_mount+0x309/0xb00
+<4>[   70.940025]  ? putname+0x5e/0x80
+<4>[   70.940183]  __x64_sys_mount+0x11d/0x160
+<4>[   70.940353]  x64_sys_call+0x1719/0x20b0
+<4>[   70.940516]  do_syscall_64+0xb2/0x1d0
+<4>[   70.940711]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+<4>[   70.941202] RIP: 0033:0x7f667d9dd4ea
+<4>[   70.941527] Code: 48 8b 0d 39 39 0d 00 f7 d8 64 89 01 48 83 c8
+ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 49 89 ca b8 a5 00
+00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 06 39 0d 00 f7 d8 64
+89 01 48
+<4>[   70.942905] RSP: 002b:00007ffe22faecf8 EFLAGS: 00000246
+ORIG_RAX: 00000000000000a5
+<4>[   70.943283] RAX: ffffffffffffffda RBX: 00007f667d8d26c8 RCX:
+00007f667d9dd4ea
+<4>[   70.943788] RDX: 00007ffe22fb0e59 RSI: 000055e50098e60b RDI:
+000055e50099cca0
+<4>[   70.944248] RBP: 000055e50098e5d8 R08: 0000000000000000 R09:
+0000000000000000
+<4>[   70.944479] R10: 0000000000000001 R11: 0000000000000246 R12:
+00007ffe22faed0c
+<4>[   70.944704] R13: 000055e50098e60b R14: 0000000000000000 R15:
+0000000000000000
+<4>[   70.945086]  </TASK>
+<3>[   70.946069] kobject: kobject_add_internal failed for :a-0000176
+with -EEXIST, don't try to register things with the same name in the
+same directory.
+<3>[   70.948453] SLUB: Unable to add cache ext4_groupinfo_1k to sysfs
+<4>[   70.951178] __kmem_cache_create_args(ext4_groupinfo_1k) failed
+with error -22
+<4>[   70.952636] CPU: 0 UID: 0 PID: 992 Comm: ioctl04 Not tainted 6.12.0-rc7 #1
+<4>[   70.953183] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009),
+BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+<4>[   70.953975] Call Trace:
+<4>[   70.954215]  <TASK>
+<4>[   70.954460]  dump_stack_lvl+0x96/0xb0
+<4>[   70.954877]  dump_stack+0x14/0x20
+<4>[   70.955079]  __kmem_cache_create_args+0x7d/0x250
+<4>[   70.955331]  ext4_mb_init+0x690/0x7e0
+<4>[   70.955698]  ext4_fill_super+0x1934/0x31e0
+<4>[   70.956271]  ? sb_set_blocksize+0x21/0x70
+<4>[   70.958236]  ? __pfx_ext4_fill_super+0x10/0x10
+<4>[   70.958570]  get_tree_bdev_flags+0x13c/0x1d0
+<4>[   70.958812]  get_tree_bdev+0x14/0x20
+<4>[   70.958990]  ext4_get_tree+0x19/0x20
+<4>[   70.959752]  vfs_get_tree+0x2e/0xe0
+<4>[   70.960137]  path_mount+0x309/0xb00
+<4>[   70.960340]  ? putname+0x5e/0x80
+<4>[   70.960560]  __x64_sys_mount+0x11d/0x160
+<4>[   70.961572]  x64_sys_call+0x1719/0x20b0
+<4>[   70.961841]  do_syscall_64+0xb2/0x1d0
+<4>[   70.962060]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+<4>[   70.963017] RIP: 0033:0x7f667d9dd4ea
+<4>[   70.963229] Code: 48 8b 0d 39 39 0d 00 f7 d8 64 89 01 48 83 c8
+ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 49 89 ca b8 a5 00
+00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 06 39 0d 00 f7 d8 64
+89 01 48
+<4>[   70.964889] RSP: 002b:00007ffe22faecf8 EFLAGS: 00000246
+ORIG_RAX: 00000000000000a5
+<4>[   70.965471] RAX: ffffffffffffffda RBX: 00007f667d8d26c8 RCX:
+00007f667d9dd4ea
+<4>[   70.965693] RDX: 00007ffe22fb0e59 RSI: 000055e50098e60b RDI:
+000055e50099cca0
+<4>[   70.965938] RBP: 000055e50098e5d8 R08: 0000000000000000 R09:
+0000000000000000
+<4>[   70.966152] R10: 0000000000000001 R11: 0000000000000246 R12:
+00007ffe22faed0c
+<4>[   70.966370] R13: 000055e50098e60b R14: 0000000000000000 R15:
+0000000000000000
+<4>[   70.966593]  </TASK>
+<0>[   70.969266] EXT4-fs: no memory for groupinfo slab cache
+<3>[   70.970744] EXT4-fs (loop0): failed to initialize mballoc (-12)
+<3>[   70.977680] EXT4-fs (loop0): mount failed
+ioctl04.c:67: TFAIL: Mounting RO device RO failed: ENOMEM (12)
 
-What that code seems to basically want to do is to check that
-'bprm->buf' is some binary data, not text, and using "printable()" as
-a name for that is actively misleading and wrong.
+Summary:
+passed   3
+failed   1
 
-So I really think that all it does is try to protect from even
-*trying* to execute a text-file or script as a binary.
+Build image:
+-----------
+- https://qa-reports.linaro.org/lkft/sashal-linus-next/build/v6.11-15432-gac3274b9a6ec/testrun/25851045/suite/ltp-syscalls/test/ioctl04/log
+- https://qa-reports.linaro.org/lkft/sashal-linus-next/build/v6.11-15430-gc12cd257292c/testrun/25848631/suite/ltp-syscalls/test/ioctl04/history/
+- https://qa-reports.linaro.org/lkft/sashal-linus-next/build/v6.11-15432-gac3274b9a6ec/testrun/25851045/suite/ltp-syscalls/test/ioctl04/details/
+- https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2ow28dxrEwN5dFu4vChS2wgU93J
 
-Anyway, the fs/exec.c "printable()" code most definitely shouldn't use
-the ctype stuff. I'm not sure it should exist at all, and if it should
-exist it probably should be renamed. Because it has *nothing* to do
-with "isprint()".
+Steps to reproduce:
+------------
+- https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2ow28dxrEwN5dFu4vChS2wgU93J/reproducer
 
-> Looks like module-init-tools used to put (completely useless by that time,
-> due to the printf format change from %hd to %04x) aliases for binfmt_aout
-> into /etc/modprobe.d/aliases.conf:
->         alias binfmt-204 binfmt_aout
->         alias binfmt-263 binfmt_aout
->         alias binfmt-264 binfmt_aout
->         alias binfmt-267 binfmt_aout
->         alias binfmt-387 binfmt_aout
-> until 2011, when it had been put out of its misery.
+metadata:
+----
+  Linux version: 6.12.0-rc7
+  git repo: https://git.kernel.org/pub/scm/linux/kernel/git/sashal/linus-next.git
+  git sha: ac3274b9a6ec132398615faaa725c8fa23700219
+  kernel config:
+https://storage.tuxsuite.com/public/linaro/lkft/builds/2ow9ILyg8kMOGCJOc8VDIGOlz1h/config
+  build url: https://storage.tuxsuite.com/public/linaro/lkft/builds/2ow9ILyg8kMOGCJOc8VDIGOlz1h/
+  toolchain: gcc-13
+  config: gcc-13-lkftconfig
+  arch: x86_64 and testing is in progress for other architectures
 
-What a crock. Yeah, that code seems to be entirely dead.
-
-The "two first bytes" thing only makes sense for a.out, and those
-numbers are odd. The first four ones make sense (QMAGIC, OMAGIC,
-NMAGIC and ZMAGIC respectively), but 387 doesn't even seem to match
-any a.out magic number
-
-Oh, it's CMAGIC. Which is a core file. That you should never try to
-execute. So it's just insane.
-
-Very strange.
-
-Anyway, a.out support is dead, so I think this code is pure historical
-leftovers and should be removed.
-
-           Linus
+--
+Linaro LKFT
+https://lkft.linaro.org
 
