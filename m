@@ -1,179 +1,102 @@
-Return-Path: <linux-kernel+bounces-411700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73E309CFE87
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 12:26:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D207D9CFE8F
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 12:31:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38D56288AA8
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 11:26:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7084B1F25709
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 11:31:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EE431ADFED;
-	Sat, 16 Nov 2024 11:26:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1055D192D95;
+	Sat, 16 Nov 2024 11:31:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="e6HMrvPi"
-Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bnGEno9U"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A986D74E09;
-	Sat, 16 Nov 2024 11:26:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.104
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BDF722338;
+	Sat, 16 Nov 2024 11:31:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731756370; cv=none; b=mCA2+79yaTCe8jqTba2wBQK9qzEkdsLHkPc3W2Lpsidk4c0MrW+vRcs0rHdCPC1YiXjI9jqrQyzjrXklVWUjYMW15zln5a4paxsNqHUILEWCEGYpky1Hi5Vh6wHolQznk3OrmUhCIVDYdxxLmXBuV00zWoBmTrl+eCYVLVMr6DI=
+	t=1731756683; cv=none; b=G291b/RIldyOtN5u8H/yaO8O6bCyg6FfNBgbkpx4yTnIyhT382YfXseCdhlDDc+Tcil2Pf0+2p9yzQqKyt7ATJzp8+zytNmLtvdcTIWgvX6ZL5OX6gKLccCP3yStRFhB/wLjATH5PbJfmal1X3dcypB7i4E5h4cGZ/rs/dQP2BQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731756370; c=relaxed/simple;
-	bh=sHo8qF+AvE8oVJvwFjFrtdRWHM4ZdMC/331/xYQY13M=;
-	h=Content-Type:From:Mime-Version:Subject:Date:Message-Id:References:
-	 Cc:In-Reply-To:To; b=Y3VriLnM/AXjiNMpHe2hEinCnXV/BaqfqfZ8j9b/yQeTrzE3GoNBl/ICJbWah4edlQugzrEbZ9dQIfZLSAdWIGJEnc9xRU3GAdtd9g9S9Rye86YDUJxKtbH9P7ZEnBAgHUZVO4OQsBODXCbxNcZkTJNDCzFbl9o+yd+tDFn4h4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=e6HMrvPi; arc=none smtp.client-ip=192.134.164.104
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=inria.fr; s=dc;
-  h=content-transfer-encoding:from:mime-version:subject:date:
-   message-id:references:cc:in-reply-to:to;
-  bh=anlUiHWGDGyJ8xswjmMdLXKoB6PZ+VXioMuGFa77dbg=;
-  b=e6HMrvPibM0Fbpr/ONm0hFVcMKT8wC0+mQJzKmTLL/6XVEyPLKe8HZWV
-   9C9LRPkcO6Hd6rCjzjqag+sCK6WeODO+KGVznFmYkAs5A6UnqgiSZB6Nc
-   xXNWMuA+9KGLx3MmUi1yOamiphAXkkAK5LOz38Lay2oYzEJOtPfPHDOwT
-   E=;
-Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
-X-IronPort-AV: E=Sophos;i="6.12,159,1728943200"; 
-   d="scan'208";a="101793166"
-Received: from 105.39.22.93.rev.sfr.net (HELO smtpclient.apple) ([93.22.39.105])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Nov 2024 12:24:33 +0100
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-From: Julia Lawall <Julia.Lawall@inria.fr>
+	s=arc-20240116; t=1731756683; c=relaxed/simple;
+	bh=cj87K21fiofZv5vzKeP0rOuBx822aemdxsrd4srrtaU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=SVtzuu3JbLyehynGYkbw3ETyEvq8IExLx49nplNE7TNe5zqDgSC+YuxGbZXoZsGNhUIpsp2eGoh17VnYtoUIeowgUgQCfSeubU9L0LbS9j4U5NxpKc2Z64VnhuUfthPd7ROpRb4DyFnFNPNb0JFCfUsA7q23sEf1mZekaAhegTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bnGEno9U; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16FD7C4CEC3;
+	Sat, 16 Nov 2024 11:31:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731756682;
+	bh=cj87K21fiofZv5vzKeP0rOuBx822aemdxsrd4srrtaU=;
+	h=From:Subject:Date:To:Cc:From;
+	b=bnGEno9UlChK/cjIKJhDHBGZR9beusm+X1/Rj4zSqTJDM50i9PEfM4HgaqJYOjGcT
+	 ANYUctiMydk2swyerWuCzVr3wSmQ2uNnFO6mCcNHSOdMD/31dVuniGMDk3nERgvOgz
+	 lwz3DGkmQ9lbI1jKbtSo4bqSdOR46RlWVUmFv58LCbktU/RIz3bOLmuBL96dGzhlSV
+	 HGdXbBp+4hxGUIpLtPoYJvUG2oscKCfjZRBTWtOXpua97Vn4+VDM2QoH5m6aU4otoF
+	 JaSjnOh9TcPa2z9PPlaUKHJzeU/0NreTY0hK2+lxj/RuGocSN5Bcoyd8kyO6Mv8sE/
+	 JAbvsPV5lNPUg==
+From: Konrad Dybcio <konradybcio@kernel.org>
+Subject: [PATCH 0/2] Fix SC8180X cpufreq dt-bindings error
+Date: Sat, 16 Nov 2024 12:31:16 +0100
+Message-Id: <20241116-topic-sc8180x_cpufreq_bindings-v1-0-e7db627da99c@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH v2 05/21] powerpc/papr_scm: Convert timeouts to secs_to_jiffies()
-Date: Sat, 16 Nov 2024 06:24:20 -0500
-Message-Id: <272B86FC-5CC9-4A3A-ACE0-F268E4E61C3D@inria.fr>
-References: <e4872a15-ff3d-4619-9b03-c7f0b6230934@stanley.mountain>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
- Easwar Hariharan <eahariha@linux.microsoft.com>,
- Pablo Neira Ayuso <pablo@netfilter.org>,
- Jozsef Kadlecsik <kadlec@netfilter.org>,
- "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
- Nicolas Palix <nicolas.palix@imag.fr>, Daniel Mack <daniel@zonque.org>,
- Haojian Zhuang <haojian.zhuang@gmail.com>,
- Robert Jarzmik <robert.jarzmik@free.fr>,
- Russell King <linux@armlinux.org.uk>, Heiko Carstens <hca@linux.ibm.com>,
- Vasily Gorbik <gor@linux.ibm.com>,
- Alexander Gordeev <agordeev@linux.ibm.com>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>, Ofir Bitton <obitton@habana.ai>,
- Oded Gabbay <ogabbay@kernel.org>,
- Lucas De Marchi <lucas.demarchi@intel.com>,
- =?utf-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Jeroen de Borst <jeroendb@google.com>,
- Praveen Kaligineedi <pkaligineedi@google.com>,
- Shailend Chand <shailend@google.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
- James Smart <james.smart@broadcom.com>,
- Dick Kennedy <dick.kennedy@broadcom.com>,
- "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- =?utf-8?Q?Roger_Pau_Monn=C3=A9?= <roger.pau@citrix.com>,
- Jens Axboe <axboe@kernel.dk>, Kalle Valo <kvalo@kernel.org>,
- Jeff Johnson <jjohnson@kernel.org>,
- Catalin Marinas <catalin.marinas@arm.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Jack Wang <jinpu.wang@cloud.ionos.com>,
- Marcel Holtmann <marcel@holtmann.org>,
- Johan Hedberg <johan.hedberg@gmail.com>,
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
- Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
- Josh Poimboeuf <jpoimboe@kernel.org>, Jiri Kosina <jikos@kernel.org>,
- Miroslav Benes <mbenes@suse.cz>, Petr Mladek <pmladek@suse.com>,
- Joe Lawrence <joe.lawrence@redhat.com>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, Lucas Stach <l.stach@pengutronix.de>,
- Russell King <linux+etnaviv@armlinux.org.uk>,
- Christian Gmeiner <christian.gmeiner@gmail.com>,
- Louis Peens <louis.peens@corigine.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Naveen N Rao <naveen@kernel.org>,
- Madhavan Srinivasan <maddy@linux.ibm.com>, netfilter-devel@vger.kernel.org,
- coreteam@netfilter.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- cocci@inria.fr, linux-arm-kernel@lists.infradead.org,
- linux-s390@vger.kernel.org, dri-devel@lists.freedesktop.org,
- intel-xe@lists.freedesktop.org, linux-scsi@vger.kernel.org,
- xen-devel@lists.xenproject.org, linux-block@vger.kernel.org,
- linux-wireless@vger.kernel.org, ath11k@lists.infradead.org,
- linux-mm@kvack.org, linux-bluetooth@vger.kernel.org,
- linux-staging@lists.linux.dev, linux-rpi-kernel@lists.infradead.org,
- ceph-devel@vger.kernel.org, live-patching@vger.kernel.org,
- linux-sound@vger.kernel.org, etnaviv@lists.freedesktop.org,
- oss-drivers@corigine.com, linuxppc-dev@lists.ozlabs.org,
- Anna-Maria Behnsen <anna-maria@linutronix.de>
-In-Reply-To: <e4872a15-ff3d-4619-9b03-c7f0b6230934@stanley.mountain>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-X-Mailer: iPhone Mail (21E236)
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAISCOGcC/x3NQQqDMBBA0avIrA1kgqahVykimkzsbGKaaUWQ3
+ N3Q5dv8f4FQYRJ4dhcUOlh4Tw3Yd+DfS9pIcWgGo82AiFZ998xeiXfo9Dn7/IuFPvPKKXDaRDk
+ bx9U+0GqzQIvkQpHP/+A11XoDPyb/jnAAAAA=
+X-Change-ID: 20241116-topic-sc8180x_cpufreq_bindings-86f5b671602a
+To: "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Viresh Kumar <viresh.kumar@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Vinod Koul <vkoul@kernel.org>
+Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
+ linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1731756678; l=814;
+ i=konrad.dybcio@oss.qualcomm.com; s=20230215; h=from:subject:message-id;
+ bh=cj87K21fiofZv5vzKeP0rOuBx822aemdxsrd4srrtaU=;
+ b=lvnZGuVjrdgCr4nYrC4JSHAQhDKU35nLWlNDxPvkNRGwEtkBwS997Ptzy+25xXmSSml2VDDow
+ q/Au2QOziSgBqr34uGFhOsS2nH/eOk4vnkjMfRb/+C4hNRNKz/CZD9E
+X-Developer-Key: i=konrad.dybcio@oss.qualcomm.com; a=ed25519;
+ pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 
+Add the bindings and dt bits to fix:
 
-Sent from my iPhone
+cpufreq@18323000: compatible: 'oneOf' conditional failed, one must be fixed:
+        ['qcom,cpufreq-hw'] is too short
 
-> On 16 Nov 2024, at 05:40, Dan Carpenter <dan.carpenter@linaro.org> wrote:
->=20
-> =EF=BB=BFOn Sat, Nov 16, 2024 at 11:06:55AM +0100, Christophe Leroy wrote:=
+No functional changes.
 
->>> diff --git a/arch/powerpc/platforms/pseries/papr_scm.c b/arch/powerpc/pl=
-atforms/pseries/papr_scm.c
->>> index 9e297f88adc5d97d4dc7b267b0bfebd58e5cf193..9e8086ec66e0f0e555ac2793=
-3854c06cfcf91a04 100644
->>> --- a/arch/powerpc/platforms/pseries/papr_scm.c
->>> +++ b/arch/powerpc/platforms/pseries/papr_scm.c
->>> @@ -543,7 +543,7 @@ static int drc_pmem_query_health(struct papr_scm_pri=
-v *p)
->>>=20
->>>         /* Jiffies offset for which the health data is assumed to be sam=
-e */
->>>         cache_timeout =3D p->lasthealth_jiffies +
->>> -               msecs_to_jiffies(MIN_HEALTH_QUERY_INTERVAL * 1000);
->>> +               secs_to_jiffies(MIN_HEALTH_QUERY_INTERVAL);
->>=20
->> Wouldn't it now fit on a single line ?
->>=20
->=20
-> Some maintainers still prefer to put a line break at 80 characters. =20
+Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+---
+Konrad Dybcio (2):
+      dt-bindings: cpufreq: cpufreq-qcom-hw: Add SC8180X compatible
+      arm64: dts: qcom: sc8180x: Add a SoC-specific compatible to cpufreq-hw
 
-Coccinelle tries for 80 chars. It may have a command line option to specify s=
-omething else.
+ Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-hw.yaml | 2 ++
+ arch/arm64/boot/dts/qcom/sc8180x.dtsi                          | 2 +-
+ 2 files changed, 3 insertions(+), 1 deletion(-)
+---
+base-commit: 744cf71b8bdfcdd77aaf58395e068b7457634b2c
+change-id: 20241116-topic-sc8180x_cpufreq_bindings-86f5b671602a
 
-Julia
-
-> It's kind
-> of a nightmare for an automated script like this to figure out everyone's
-> preferences.  In this particular
-> file, there are some lines which go over 80
-> characters so sure.  Earlier in the patchset one of these introduced a lin=
-e
-> break that wasn't there before so I think maybe Coccinelle is applying the=
- 80
-> character line break rule?
->=20
-> There are sometimes where the 80 character rule really hurts readability, b=
-ut
-> here it doesn't make any difference.
->=20
-> regards,
-> dan carpenter
->=20
+Best regards,
+-- 
+Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
 
