@@ -1,102 +1,91 @@
-Return-Path: <linux-kernel+bounces-411842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 952A39D004A
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 19:03:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF78C9D004C
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 19:03:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 273792875FF
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 18:03:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A79CE1F21CD2
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 18:03:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0D1818E75A;
-	Sat, 16 Nov 2024 18:03:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 858CE198A11;
+	Sat, 16 Nov 2024 18:03:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="oC/LTyTj"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="HsKRaCyI"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B509418B492
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EB4718EFD4
 	for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 18:03:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731780191; cv=none; b=dVurxtqEHep3PeBT/o9cmfPvBfuH884SsZlZ1CB9wGKPz3Y4rQJVG5SAz7rXdvXJXS3IK+rGITj89HcmO4RBDWQA7JzWEQmKjZdEswW2OBep/H8orR29q+PlH0LltBK/MA7E2+ZcQZLWWslokdca9V/XGMZduCdGqQpQ8lvXAO0=
+	t=1731780191; cv=none; b=s+0pvy/Z0flXCGBGVEtHhI/QtkWRXrzNmGeXh+JUDEfMlYjAjsChBRF+ztoHgGgZT+C9vFVt+P/SbaBQvfIoxBFQGH80vitAa5Nz/h67sfve93FnjvYdorNr3AsHC15KTlN16DSDufSKa7wntK+DvbDSns+IpH9C2/6EKVVedmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1731780191; c=relaxed/simple;
-	bh=3fmsZVtcET08j6sLy4Df00S5MnbnA34nvqPE7UPj5hw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sZdTFC6eDQpiTW53/0akzHtNBMqZoDiqH3ghh08z6Q6I7iMh4aUIQpertQZvqFJWW97zJTk8lPJsZ5cXqPUKu2GyEl0gzZMyk0fEcwcN6D5Fe3Zc8V2V6+GnafkA8HF6Rtrnrhrh47WBnLBwBSG76c2gIcRoOyIV+kUrPULfaX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=oC/LTyTj; arc=none smtp.client-ip=209.85.218.42
+	bh=6yVXQABDgHQ3YoFzFBc688YaHlYOrV8PMSvT0DmVF0g=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=nGhTFXBq1226qa8l75oglZHgwauh39NSYxtbYysF+F7vFIDWGEB5Q0oEkWwxvxbujcS/6Lj1JSxOSEIVl1dhh2jO96T27gkCDGxhU+p2MtzKnuhS5m40IJDPR/UvDR5S5cWgCoOa3OLwW5pLfus7DnRahy7oz3k4JFMRaR/CJ/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=HsKRaCyI; arc=none smtp.client-ip=209.85.218.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-aa1e51ce601so137224466b.3
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-aa2099efdc3so542999466b.1
         for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 10:03:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google; t=1731780188; x=1732384988; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=aGohF+muowKkt4fdau+AubKELBZgZqyCJ8OaVgT7H9o=;
-        b=oC/LTyTj/72ySlTJfLnuFL5lK1WaRqdZ9aYrdNW1KNbYDIm/KPdg6SwzY3yQ7Yh3zs
-         7oetmFgbetS04KmrljW3+mmv3jrEfbrcrfpuZi2wz5/NcZs2FfaFaWv9/pqoO2lLDC64
-         NsNWBnylr+tyrZwGZreC8THfj+Rj+X4NW4Zow=
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CGnFcahEd0eVvjCCPAmskcKVoLg3YmWfRrAxcNnhTVM=;
+        b=HsKRaCyI871iY1l5Qeyc6UDUSwcuGhGMCDevYQ2NGytn58BAQNcVs2Wqyv6d8Il4ZN
+         imRPyozRk+2ElitXM/VyaorxyO4j3/yIH/qXBD6JyvbRKYMHCzd2mOPzq4ttVt3Uzt7t
+         Mhqui6sOmmnYRMuweXVRqMKh/Qo3jn1h+qKek=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1731780188; x=1732384988;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aGohF+muowKkt4fdau+AubKELBZgZqyCJ8OaVgT7H9o=;
-        b=JeOMOM0vkboAyw6nvcTIwqdTPS77XM2AJNVaEtvEg+l05QwKXtH5x//GdggTFD3Xam
-         7V507Qz7m35dq8/k44aTns/bDkxRibsqNdMni1oQhrgGB80vq5uxAFWQZB9Jpd0I3qFY
-         IZzFoMuB2AzFA1k2hxYGWS+7qnwGdZ5b88EDewIC7WLKn1aG+cBNDp5+wSrx3W//oorU
-         1vYxHorIp+qHOuVfcLhn8UwGukjEOx3qnRoiwoG4I4Iw6uBblfQoczy4n6na0UgwKEQ1
-         NRCrGKAIKn89Cf+NGkoBUMz9ikBmaM3GwdBPk5BZx43GqNBnMiPiBHKJlj7vrmWu2NqP
-         Hd3w==
-X-Gm-Message-State: AOJu0Yyr+1nQIWFGBgXXwGSEQRKyIbyimr8jWx1FfTRFOhjF48vxN+4D
-	5lFSfHtbvj6YaIPYSE+if+sEpq1ysWRot3A8QfGYDtFjRo1A1827DbR4Qt60m7PV78tZE5Tm3DT
-	3
-X-Google-Smtp-Source: AGHT+IG2ObGwiCvfIl++zWd9qF2zaGLlhIycmyruL6/OHxRiEVmPAs5MlD90c/NhVLeiofEJ0atIOw==
-X-Received: by 2002:a17:907:9413:b0:aa3:722c:cc8a with SMTP id a640c23a62f3a-aa483525d25mr654985366b.40.1731780186523;
-        Sat, 16 Nov 2024 10:03:06 -0800 (PST)
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CGnFcahEd0eVvjCCPAmskcKVoLg3YmWfRrAxcNnhTVM=;
+        b=BC8Pjdxh7ue999TErI90vC0S+7c08bM1SFTB8QmSPuJHAef4vfzptrYbwyshl3psi2
+         UL6btF/bOSObHtu7knP7ataqXv312nxlR6wz6o13IQ6aPDgt5sHEJFUoE8rQ2ENJ6CZm
+         B6Bjoo05QSbYmbtNUhuBud4Fhwrd56zm4m3QfzdAoP4dg3Ces1xstqGJ8GXibWXHJPJ0
+         yaV227F0KdfWJHpMhSigpP2xmugJE0K05YxFoBKtEeah+TYB/TdM1o28f1w1LzaQokLN
+         Rk+BXk6UX1QJ6qsj00kqBIiy/+xiUAgjQZa9A3sP6OCQaDNtBwTli9HmCSlnTCPo8M1b
+         KfMg==
+X-Gm-Message-State: AOJu0Yy5WiJtjoSsJFuCrkin8Vy9Nri8xlrq+v2IPqKSP2hBEQx1M67M
+	V4ei1SQYaCjz2ckmD5EM7/Sxp3Ui0ydWWI5cBKGx6R94kPiDYavfpc6HwtCTU71r3F+WW1B7Y7V
+	V
+X-Google-Smtp-Source: AGHT+IEY6i5r17rHD7AA4pDo0eewtwkaRGniz3NbwzmDUylo6DVU+CLQMsuSqXx2AB1hMg+lZtDO9Q==
+X-Received: by 2002:a17:907:1c9d:b0:a9e:670f:9485 with SMTP id a640c23a62f3a-aa481a5cecfmr569044566b.30.1731780188249;
+        Sat, 16 Nov 2024 10:03:08 -0800 (PST)
 Received: from dario-ThinkPad-T14s-Gen-2i.homenet.telecomitalia.it (host-82-54-94-193.retail.telecomitalia.it. [82.54.94.193])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20dc6d364sm329549066b.0.2024.11.16.10.03.04
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20dc6d364sm329549066b.0.2024.11.16.10.03.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 16 Nov 2024 10:03:06 -0800 (PST)
+        Sat, 16 Nov 2024 10:03:07 -0800 (PST)
 From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 To: linux-kernel@vger.kernel.org
 Cc: linux-amarula@amarulasolutions.com,
 	Dario Binacchi <dario.binacchi@amarulasolutions.com>,
-	Akshay Bhat <akshay.bhat@timesys.com>,
 	Andrew Lunn <andrew+netdev@lunn.ch>,
 	Chandrasekar Ramakrishnan <rcsekar@samsung.com>,
-	Chen-Yu Tsai <wens@csie.org>,
 	"David S. Miller" <davem@davemloft.net>,
 	Dong Aisheng <b29396@freescale.com>,
 	Eric Dumazet <edumazet@google.com>,
 	Fengguang Wu <fengguang.wu@intel.com>,
-	Gerhard Bertelsmann <info@gerhard-bertelsmann.de>,
 	Jakub Kicinski <kuba@kernel.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	"Ji-Ze Hong (Peter Hong)" <peter_hong@fintek.com.tw>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
 	Marc Kleine-Budde <mkl@pengutronix.de>,
-	Marek Vasut <marex@denx.de>,
-	Maxime Ripard <mripard@kernel.org>,
-	Oliver Hartkopp <oliver.hartkopp@volkswagen.de>,
 	Paolo Abeni <pabeni@redhat.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Sebastian Haas <haas@ems-wuensche.com>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
 	Varka Bhadram <varkabhadram@gmail.com>,
 	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
-	Wolfgang Grandegger <wg@grandegger.com>,
-	linux-arm-kernel@lists.infradead.org,
 	linux-can@vger.kernel.org,
-	linux-sunxi@lists.linux.dev,
 	netdev@vger.kernel.org
-Subject: [PATCH 0/7] Fix {rx,tx}_errors CAN statistics
-Date: Sat, 16 Nov 2024 19:02:29 +0100
-Message-ID: <20241116180301.3935879-1-dario.binacchi@amarulasolutions.com>
+Subject: [PATCH 1/7] can: m_can: fix {rx,tx}_errors statistics
+Date: Sat, 16 Nov 2024 19:02:30 +0100
+Message-ID: <20241116180301.3935879-2-dario.binacchi@amarulasolutions.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241116180301.3935879-1-dario.binacchi@amarulasolutions.com>
+References: <20241116180301.3935879-1-dario.binacchi@amarulasolutions.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -105,29 +94,63 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This series extends the patch 4d6d26537940 ("can: c_can: fix {rx,tx}_errors statistics"),
-already merged into the mainline, to other CAN devices that similarly do
-not correctly increment the error counters for reception/transmission.
+The m_can_handle_lec_err() function was incorrectly incrementing only the
+receive error counter, even in cases of bit or acknowledgment errors that
+occur during transmission. The patch fixes the issue by incrementing the
+appropriate counter based on the type of error.
 
+Fixes: e0d1f4816f2a ("can: m_can: add Bosch M_CAN controller support")
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+---
 
-Dario Binacchi (7):
-  can: m_can: fix {rx,tx}_errors statistics
-  can: ifi_canfd: fix {rx,tx}_errors statistics
-  can: hi311x: fix {rx,tx}_errors statistics
-  can: sja1000: fix {rx,tx}_errors statistics
-  can: sun4i_can: fix {rx,tx}_errors statistics
-  can: ems_usb: fix {rx,tx}_errors statistics
-  can: f81604: fix {rx,tx}_errors statistics
+ drivers/net/can/m_can/m_can.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
- drivers/net/can/ifi_canfd/ifi_canfd.c | 29 +++++++++++++++++++--------
- drivers/net/can/m_can/m_can.c         |  7 ++++++-
- drivers/net/can/sja1000/sja1000.c     |  7 +++++--
- drivers/net/can/spi/hi311x.c          | 17 ++++++++++------
- drivers/net/can/sun4i_can.c           |  7 +++++--
- drivers/net/can/usb/ems_usb.c         |  7 +++++--
- drivers/net/can/usb/f81604.c          |  7 +++++--
- 7 files changed, 58 insertions(+), 23 deletions(-)
-
+diff --git a/drivers/net/can/m_can/m_can.c b/drivers/net/can/m_can/m_can.c
+index 16e9e7d7527d..337ccfae34fd 100644
+--- a/drivers/net/can/m_can/m_can.c
++++ b/drivers/net/can/m_can/m_can.c
+@@ -695,7 +695,6 @@ static int m_can_handle_lec_err(struct net_device *dev,
+ 	u32 timestamp = 0;
+ 
+ 	cdev->can.can_stats.bus_error++;
+-	stats->rx_errors++;
+ 
+ 	/* propagate the error condition to the CAN stack */
+ 	skb = alloc_can_err_skb(dev, &cf);
+@@ -711,26 +710,32 @@ static int m_can_handle_lec_err(struct net_device *dev,
+ 	case LEC_STUFF_ERROR:
+ 		netdev_dbg(dev, "stuff error\n");
+ 		cf->data[2] |= CAN_ERR_PROT_STUFF;
++		stats->rx_errors++;
+ 		break;
+ 	case LEC_FORM_ERROR:
+ 		netdev_dbg(dev, "form error\n");
+ 		cf->data[2] |= CAN_ERR_PROT_FORM;
++		stats->rx_errors++;
+ 		break;
+ 	case LEC_ACK_ERROR:
+ 		netdev_dbg(dev, "ack error\n");
+ 		cf->data[3] = CAN_ERR_PROT_LOC_ACK;
++		stats->tx_errors++;
+ 		break;
+ 	case LEC_BIT1_ERROR:
+ 		netdev_dbg(dev, "bit1 error\n");
+ 		cf->data[2] |= CAN_ERR_PROT_BIT1;
++		stats->tx_errors++;
+ 		break;
+ 	case LEC_BIT0_ERROR:
+ 		netdev_dbg(dev, "bit0 error\n");
+ 		cf->data[2] |= CAN_ERR_PROT_BIT0;
++		stats->tx_errors++;
+ 		break;
+ 	case LEC_CRC_ERROR:
+ 		netdev_dbg(dev, "CRC error\n");
+ 		cf->data[3] = CAN_ERR_PROT_LOC_CRC_SEQ;
++		stats->rx_errors++;
+ 		break;
+ 	default:
+ 		break;
 -- 
 2.43.0
 
