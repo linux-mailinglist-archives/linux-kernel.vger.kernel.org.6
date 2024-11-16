@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-411867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AD3D9D0094
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 20:04:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B5179D0096
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 20:07:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 608F4286FEC
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 19:04:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EACD71F236A5
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 19:07:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28F701946AA;
-	Sat, 16 Nov 2024 19:04:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBC77194C77;
+	Sat, 16 Nov 2024 19:07:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="zdYYMNir"
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="xIQWahUA"
 Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CEA6184;
-	Sat, 16 Nov 2024 19:04:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 601CF79F6;
+	Sat, 16 Nov 2024 19:07:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731783890; cv=none; b=GJO64aNWJyq8iq1SFm6217vUpOoVn4CNkKDCMyM2qBCN0QDZx3GPuy9uVQCgfWj4vcUvzsdodkz2JCik+4EMvk7y+QIYKhwJ7CB34v5S14AfGKxVHV0siWV2++nxCLwsCEhmb5QyjKkB26KOIQvHQGa0husaL0JwrS1/B9tBuLk=
+	t=1731784050; cv=none; b=EvT5dlmBTqKYS/XBv4zJnDEZedAh+meDlERICkBq4SYywn+mD5ZfpFVBMYsHwSnRm+8HHiQmoSSI73yOGuJ+53QOGLBPN255JtEPBqCJvPgywnoEAJIIiOtbwR3dOleU0nGvou3TX+nMJv4SSpKOgM1BYhyLN7ALP7uGwj2dBDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731783890; c=relaxed/simple;
-	bh=lGay5KwpX9eOYcO4i4uTrLWE4bMAIdNWXbcgOfVAJV0=;
+	s=arc-20240116; t=1731784050; c=relaxed/simple;
+	bh=QGG0kSisYfxhMiSKSBjW6Mg6IYCqM6RD6litW91JUyE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q6DzE7r9LmQrwItkHWlpHzRvCfRVEhmAiPH5Q3/LQ0rAasEGs97VTztXhUIzd/sr2p/+4U43KUOna/b6huVA5Y1Pj5b3+HGU88Hb2rxr9LH0Pi7+Z4TUoAROZvZwRMhGHNXkr7XUYGTRDBKawJp87sEuRMbpEN8xf3O9Ib25Sn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=zdYYMNir; arc=none smtp.client-ip=156.67.10.101
+	 Content-Type:Content-Disposition:In-Reply-To; b=nEDrSnVvIOLBzP0lBDxtG7ymWv01neJUXrInpZYflZ0BScW4wfu3WeYx7ufV3aHl+EajFjumsUGqRYBnV6F2RGzkhy1LK201Unu3/NjHCsEwUqGDWZp/vdULz+ds0XRqnFZQVvB19CITIOfV+lmLpXb2ocjrf6qN1T307wMPg+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=xIQWahUA; arc=none smtp.client-ip=156.67.10.101
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
@@ -35,24 +35,23 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
 	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
 	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
 	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=UswJf2Dkm0aY9UHYIo8swOnK8INhX+9W3eNK1dWGpvM=; b=zdYYMNirogdaJQlvauxeGKzu6I
-	315elCXsIU9fLyPF2/AcI7Dvx19V6/wm7T7xF7mTDCnqO5lkoeByA24U8tH8S2u6Hp4pypZqU+RsF
-	X0Yy8pvk5ZmoG+VHvK5TiBCh/aFSaI0dTXHH30tIdzqFovcx1/XwS2h3tpCf3m1UNn08=;
+	bh=7lqTnwwBmKNlBnmwiFv7Fs4kjvB3qTXjJ5WtSHx0T44=; b=xIQWahUAV+c0SClpQpa0inp7kK
+	OsbMpZ/GVu76cubAISu91at5V6tW3iiZLfq7AStOm7LuAuNTjJP/jxIq2QCK03cXuNFrle6sM/hxk
+	8K3Uy8Sa1wTzM8FfpGPClb6TyNoUyr4DehGYXz4wXasKQ/hH1WvY0tsdiHvHsfh77wnI=;
 Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
 	(envelope-from <andrew@lunn.ch>)
-	id 1tCO68-00DXUr-DY; Sat, 16 Nov 2024 20:04:44 +0100
-Date: Sat, 16 Nov 2024 20:04:44 +0100
+	id 1tCO8h-00DXVh-Mk; Sat, 16 Nov 2024 20:07:23 +0100
+Date: Sat, 16 Nov 2024 20:07:23 +0100
 From: Andrew Lunn <andrew@lunn.ch>
 To: Justin Lai <justinlai0215@realtek.com>
 Cc: kuba@kernel.org, davem@davemloft.net, edumazet@google.com,
 	pabeni@redhat.com, andrew+netdev@lunn.ch,
 	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
 	horms@kernel.org, pkshih@realtek.com, larry.chiu@realtek.com
-Subject: Re: [PATCH net v2 4/5] rtase: Corrects error handling of the
- rtase_check_mac_version_valid()
-Message-ID: <d850865e-6f78-4366-b94c-d34b56e5df77@lunn.ch>
+Subject: Re: [PATCH net v2 3/5] rtase: Add support for RTL907XD-VA PCIe port
+Message-ID: <939ab163-a537-417f-9edc-0823644a2a1d@lunn.ch>
 References: <20241115095429.399029-1-justinlai0215@realtek.com>
- <20241115095429.399029-5-justinlai0215@realtek.com>
+ <20241115095429.399029-4-justinlai0215@realtek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,15 +60,16 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241115095429.399029-5-justinlai0215@realtek.com>
+In-Reply-To: <20241115095429.399029-4-justinlai0215@realtek.com>
 
-On Fri, Nov 15, 2024 at 05:54:28PM +0800, Justin Lai wrote:
-> Corrects error handling of the rtase_check_mac_version_valid().
-> 
-> Fixes: a36e9f5cfe9e ("rtase: Add support for a pci table in this module")
-> Signed-off-by: Justin Lai <justinlai0215@realtek.com>
+On Fri, Nov 15, 2024 at 05:54:27PM +0800, Justin Lai wrote:
+> 1. Add RTL907XD-VA hardware version id.
+> 2. Add the reported speed for RTL907XD-VA.
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+This is not a fix, it never worked on this device as far as i see. So
+this should be for net-next.
 
-    Andrew
+Please separate these patches out into real fixes, and new features.
+
+	Andrew
 
