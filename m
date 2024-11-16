@@ -1,118 +1,86 @@
-Return-Path: <linux-kernel+bounces-411809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71B199CFFD4
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 17:18:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D45E9CFFDB
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 17:28:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91F20B21C74
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 16:18:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E71A1F228E0
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 16:28:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC519188CA9;
-	Sat, 16 Nov 2024 16:18:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64EE418E050;
+	Sat, 16 Nov 2024 16:28:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="CxMyor8y"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="oVbntF+K"
+Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA1A4262BE;
-	Sat, 16 Nov 2024 16:18:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 788DF1885BD
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 16:28:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731773894; cv=none; b=OsfcKboyafv+1NimaprZBf+l/xq1G3u0+HqoInsm0Wg3oiNOmEhRjY8f3C06zoDs2TcKosM07KbB5/uyWSevOzSkbTSnhvVdwGfMMJyu57qTRkCe+4Hw0ZH5uoQAUwNF7W2f3Wu+enp156QkT9Vlpz+rEHT3vmHLyF7AoTx+08o=
+	t=1731774515; cv=none; b=QweQmnP9ImhqLWVFr7rnCV5TKr6mrCiYltTs/uFcQI7RMIpuC0YvKjKIcbUEFaBgKcTZDiNO3wKYNzt5hAm1B0GZwzM7GkmcF6Coe+9U5PNIe6gtE+WBVpvSALb430gtO7SoFHHF56DJ/wWmyM7TAJQTswcs6TsLzsWVuuRYyhg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731773894; c=relaxed/simple;
-	bh=LOmw6t/E+d3UESUVlzSpAO7MVZQar1LZB9iRDSdzsUA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=MAwropf4gLEqHmCV7lX76qYbx/NdjTcAZSU2a/53EnQdPehBKoNK5flkdshIeVuLMT0Yw4ALDxYEfym1f1tq1HRk+1OAshuvLOn4pD4ufz4HiR7UZ/8siK3mOAVvMyDvya7x8aFggNDzUsAV5+Y/tICqJPs3bYw2ME9VDb/0gY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=CxMyor8y; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AGEcS68028855;
-	Sat, 16 Nov 2024 16:17:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ERbkDVC0vYWi1nDWzYA+UR2ALH9IAtmrbjWrdnk+JdU=; b=CxMyor8ykgviNmPN
-	3gV33g7Twpj4hDjwfs2b31htW+4pVbecFZsSkbwwlHunj6cnpxs+uyBaeosCIYKN
-	ggtS8FuAxb2b+5hTOzKgUZvPEFh+F+Zknq3gx9iEqhCahb5lyoX+W5ksHs3XydaK
-	1vBFVoAwfYF9qq8s+NJiWlbAQTsT5XeN1kgo+BxVGyiCbRr/frFVuaKOrOsAH68b
-	dgunWF3dZ/z2+trf3YJX/Y9uOs8Spa2WvQZdQXijIP6CoeGP08a0dP/anV9P78gv
-	gIpl+97tJSq4SvCuFuq0pSrX324l51ipybgJo8wpSLY9/Ds6RA90q3PYErUJDGr1
-	6qN30w==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42xmp78xqg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 16 Nov 2024 16:17:57 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AGGHvsj013175
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 16 Nov 2024 16:17:57 GMT
-Received: from [10.253.8.97] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sat, 16 Nov
- 2024 08:17:54 -0800
-Message-ID: <85106272-31d0-49ec-b190-597a34e2099d@quicinc.com>
-Date: Sun, 17 Nov 2024 00:17:52 +0800
+	s=arc-20240116; t=1731774515; c=relaxed/simple;
+	bh=kOAI5lix9Ed17w5NCYaMHAZuqm5vJa1RMZ7TPcrnMmw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=r1U2y/xIjNCIsLYSS8AoByrXsScxrW8me2brl27AmR/+ggdw3i3RmAGXBmRs3Qf20Bu9+lLq4KmSy36yCA31AwMPwB546QcJmEqB1fZCAtnoQP8+z260dft4WoVKsRSeUNeVySKgEyG4nOl+L3PH3dNuNTADwtO2+Tc/mSuWnpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=oVbntF+K; arc=none smtp.client-ip=91.218.175.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1731774510;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=YfwACum2e9ImWiqsDCrhshsPNGyjoxiAESW2iCRRMW4=;
+	b=oVbntF+KoeCVNKrPqFHT3XZLLUtnR6mR8WoNGaa3Wg7ciapVbFvwnvzInmCx2rWwTpVP4y
+	2Spsp9dC88vrdbG42KgYvBL69oXtXfYCsPWC1+dXD2BUYpRj/+/BkdUQrjlGOSvrmz9Vao
+	UfCJLVGbMUO4B10tLtYprLCJu4xD+eA=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+	Xin Long <lucien.xin@gmail.com>
+Cc: linux-hardening@vger.kernel.org,
+	Thorsten Blum <thorsten.blum@linux.dev>,
+	linux-sctp@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] sctp: Replace zero-length array with flexible array member
+Date: Sat, 16 Nov 2024 17:28:24 +0100
+Message-ID: <20241116162825.33164-1-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Bluetooth: qca: Support downloading board id specific NVM
- for WCN6855
-To: Steev Klimaszewski <steev@kali.org>
-CC: Marcel Holtmann <marcel@holtmann.org>,
-        Luiz Augusto von Dentz
-	<luiz.dentz@gmail.com>,
-        Zijun Hu <zijun_hu@icloud.com>, <linux-bluetooth@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        "Bjorn
- Andersson" <bjorande@quicinc.com>,
-        "Aiqun Yu (Maria)"
-	<quic_aiquny@quicinc.com>,
-        Cheng Jiang <quic_chejiang@quicinc.com>,
-        "Johan
- Hovold" <johan@kernel.org>,
-        Jens Glathe <jens.glathe@oldschoolsolutions.biz>
-References: <20241113-x13s_wcn6855_fix-v1-1-15af0aa2549c@quicinc.com>
- <CAKXuJqg0SSLYW_XaY+vRGko33nR+Tt9BUcGaAvQt0QMAJjYzrw@mail.gmail.com>
-Content-Language: en-US
-From: quic_zijuhu <quic_zijuhu@quicinc.com>
-In-Reply-To: <CAKXuJqg0SSLYW_XaY+vRGko33nR+Tt9BUcGaAvQt0QMAJjYzrw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: ltmzfV1-fn61X9M_uqgFbUy-1ZmEc-Ej
-X-Proofpoint-GUID: ltmzfV1-fn61X9M_uqgFbUy-1ZmEc-Ej
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- priorityscore=1501 suspectscore=0 adultscore=0 mlxlogscore=851
- phishscore=0 bulkscore=0 lowpriorityscore=0 impostorscore=0 mlxscore=0
- malwarescore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411160140
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On 11/15/2024 3:17 PM, Steev Klimaszewski wrote:
-> Thank you for this, I'd had something similar written, so it's nice to
-> see I was kind of on the right track!  I tested this on my Thinkpad
-> X13s with an H2GO bluetooth Speaker and the range I can get is far
-> greater when it properly loads the b8c file (with this patch), than
-> with the .bin (without this patch).  Thanks again!
-> 
-> Tested-by: Steev Klimaszewski <steev@kali.org>
+Replace the deprecated zero-length array with a modern flexible array
+member in the struct sctp_idatahdr.
 
-i am glad to heard that the issue can be fixed
-thank you Steev for help verification with your machines.
-(^^)(^^).
+Link: https://github.com/KSPP/linux/issues/78
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ include/linux/sctp.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/linux/sctp.h b/include/linux/sctp.h
+index 836a7e200f39..19eaaf3948ed 100644
+--- a/include/linux/sctp.h
++++ b/include/linux/sctp.h
+@@ -239,7 +239,7 @@ struct sctp_idatahdr {
+ 		__u32 ppid;
+ 		__be32 fsn;
+ 	};
+-	__u8 payload[0];
++	__u8 payload[];
+ };
+ 
+ struct sctp_idata_chunk {
+-- 
+2.47.0
 
 
