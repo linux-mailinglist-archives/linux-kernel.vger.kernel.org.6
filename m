@@ -1,116 +1,167 @@
-Return-Path: <linux-kernel+bounces-411929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A83919D0170
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 00:26:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52C3C9D0171
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 00:30:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5346128172E
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 23:26:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC7F81F231FE
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 23:30:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B04C91993B4;
-	Sat, 16 Nov 2024 23:26:05 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A605195F22;
+	Sat, 16 Nov 2024 23:30:22 +0000 (UTC)
+Received: from mail115-171.sinamail.sina.com.cn (mail115-171.sinamail.sina.com.cn [218.30.115.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2A6818C008
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 23:26:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31291621
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 23:30:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731799565; cv=none; b=R8B5hRxSNODS9BAbS8o+EG5YA33gd4QJQopKWxrC48eTPm42I8H63wewqTUKyb653/UKKQjrKSgrShUxvRMWO3HFhZA0Qi+hYUNtlDuEtvMY2s7YkCxl5CD7NwLP2qIsS8W6ewmL4oZdDlomujvjZq/rc4eQtivnWa9kVsdtTHA=
+	t=1731799821; cv=none; b=Da4OZ8CGYapoviB67yw52CxijOcpWFQxDKGRh5WXtZDGHwf9z+YPzU08LdFNaKYR1senNV64bkT3SX23BNXMjm0NT+WIuvdyCSbNpSCcNnYVHOrAa8aXgQnNswAt76yOKU2sSS0PS/sReC8w8008uoNv3egxEtZeclZSI6lUKGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731799565; c=relaxed/simple;
-	bh=vuWs0S3EeniurAZhOiHHv6a0bd9kr4WIi/phRwjnM70=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=f1PueBwxv76D4aolebSI4kwurMXUWg/k2rYUPGkSBHdjMbcEjzm/C0SmMaYRnnYeeW83dOlGU07Iiu4TzZnwr82LqQk9EJY10mnSusLk+b4kKcLdBnhSUF1J+wnp8dAUkTOyPTata0aHOKk7EuaB6GBaRL37z9pPDhJR6thD0DU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-83abf723da3so69308939f.3
-        for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 15:26:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731799563; x=1732404363;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KS/3T9912Ge5sdPaeEv3HURQfOnZbK0lLGF2BFMXebQ=;
-        b=NdFED9luykiS8uNTnegcbGexVg86lwLNKXqnWPFLyulm5JpUSiZhd9pfvnBKOS3iev
-         RhDiikywAyu2GFWjooWCTqVeVIF/nihtcYW8aCUQA3V2kFa/sCfn61K0amqo8YbvdcTe
-         xcdU7xYI1fOygwqo7ehQwphIW/GyH3pfe10PRx0QpQ9yWCgUrkNMlQFjlxdYPl7YjQzh
-         wk61uYg1RM6DLqn4MIrHB7hNTF3a9EObdFw0v5gh5VKXOvK11L2EKOBgC7f7IGdhT1Td
-         Kyk6YmueR3A5a2gpRttDOOs44hB/02TFnFjHROQbjJws9SifhW46eofjBYI7165nYYc/
-         0/yQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWwHkzgdw1G8Th8txd2IyPQHNpTmD8aUMg5Amx/uQuvZzV0XXiPL0s3ceSKxCdHf3YqriqXtgIo7GmBz6w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzfC+Ks55kNgfqcx2DaF9pTw9eqgB4EcqkJRbCSouUYU4QQetbb
-	x+yWqzqvivXWu8/wmPLGHrmHL925JUlLpvpCA6c25rHxa76vrplrFFP1v455mXHhLkOkA4yv5Bv
-	T84oEV8B+Oyc7EWiWtfhtHD93r9u8k14TIdAMOge0jxFcNpv9ArTxhP4=
-X-Google-Smtp-Source: AGHT+IGprvu6a8h0hNiDccxdISSaTeNbmVI4V5PIwX9b7n9MJ/OWR4hJAF8hK7igkuNsF+C//MGCs2plOW7WoB5XWiwEjlsnJ/HT
+	s=arc-20240116; t=1731799821; c=relaxed/simple;
+	bh=2+43jZtEdQsQkc/UHpXcF7Wa25sr0Iub5uiM4oMeO/w=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=LRZOC3KTO4B0pwja8PpR02nmFw53o9FKaiKP/u9tsyCsTBkP4L1nRW+7/xoBzW1RjOJbdD46PyvXLPr7i4MB0pX1vtGuU7xMAbj5Up2c5PoEfrZIvk70puUqnSEZwcXD+VO5yNIdqh9eSO03+c1rppChvjLnjAdiLo+IUXbZH8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([113.118.70.242])
+	by sina.com (10.185.250.24) with ESMTP
+	id 67392AFA0000290A; Sat, 17 Nov 2024 07:30:07 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 20108810748372
+X-SMAIL-UIID: EFE1C8C429594DEE84BA08F0157769CD-20241117-073007-1
+From: Hillf Danton <hdanton@sina.com>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Boqun Feng <boqun.feng@gmail.com>
+Cc: syzbot <syzbot+7f4f9a43a9c78eaee04f@syzkaller.appspotmail.com>,
+	Jason@zx2c4.com,
+	linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com,
+	tytso@mit.edu
+Subject: Re: [syzbot] [kernel?] WARNING: locking bug in get_random_u8
+Date: Sun, 17 Nov 2024 07:29:57 +0800
+Message-Id: <20241116232957.1223-1-hdanton@sina.com>
+In-Reply-To: <6738c3ba.050a0220.bb738.000d.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3d04:b0:3a5:e7a5:afc with SMTP id
- e9e14a558f8ab-3a74800ee54mr66240775ab.2.1731799562924; Sat, 16 Nov 2024
- 15:26:02 -0800 (PST)
-Date: Sat, 16 Nov 2024 15:26:02 -0800
-In-Reply-To: <20241116230913.1124-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67392a0a.050a0220.e1c64.0008.GAE@google.com>
-Subject: Re: [syzbot] [fs?] WARNING in rcu_sync_dtor (2)
-From: syzbot <syzbot+823cd0d24881f21ab9f1@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Loop in lock people.
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-WARNING in rcu_sync_dtor
+On Sat, 16 Nov 2024 08:09:30 -0800
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    929beafbe7ac Add linux-next specific files for 20241108
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=14cb0ce8580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=75175323f2078363
+> dashboard link: https://syzkaller.appspot.com/bug?extid=7f4f9a43a9c78eaee04f
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> 
+> Unfortunately, I don't have any reproducer for this issue yet.
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/9705ecb6a595/disk-929beafb.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/dbdd1f64b9b8/vmlinux-929beafb.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/3f70d07a929b/bzImage-929beafb.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+7f4f9a43a9c78eaee04f@syzkaller.appspotmail.com
+> 
+> =============================
+> [ BUG: Invalid wait context ]
+> 6.12.0-rc6-next-20241108-syzkaller #0 Not tainted
+> -----------------------------
+> syz.4.319/7686 is trying to lock:
+> ffff8880b873a970 (batched_entropy_u8.lock){..-.}-{3:3}, at: local_lock_acquire include/linux/local_lock_internal.h:29 [inline]
+> ffff8880b873a970 (batched_entropy_u8.lock){..-.}-{3:3}, at: get_random_u8+0x1a0/0xaa0 drivers/char/random.c:551
+> other info that might help us debug this:
+> context-{2:2}
+> no locks held by syz.4.319/7686.
+> stack backtrace:
+> CPU: 1 UID: 0 PID: 7686 Comm: syz.4.319 Not tainted 6.12.0-rc6-next-20241108-syzkaller #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
+> Call Trace:
+>  <IRQ>
+>  __dump_stack lib/dump_stack.c:94 [inline]
+>  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+>  print_lock_invalid_wait_context kernel/locking/lockdep.c:4826 [inline]
+>  check_wait_context kernel/locking/lockdep.c:4898 [inline]
+>  __lock_acquire+0x15a8/0x2100 kernel/locking/lockdep.c:5176
+>  lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
+>  local_lock_acquire include/linux/local_lock_internal.h:29 [inline]
+>  get_random_u8+0x1bd/0xaa0 drivers/char/random.c:551
+>  get_random_u32_below include/linux/random.h:78 [inline]
+>  kfence_guarded_alloc+0x9c/0xcd0 mm/kfence/core.c:421
+>  __kfence_alloc+0x344/0x370 mm/kfence/core.c:1136
+>  kfence_alloc include/linux/kfence.h:129 [inline]
+>  slab_alloc_node mm/slub.c:4137 [inline]
+>  __kmalloc_cache_noprof+0x2dd/0x390 mm/slub.c:4309
+>  kmalloc_noprof include/linux/slab.h:901 [inline]
+>  add_stack_record_to_list mm/page_owner.c:172 [inline]
+>  inc_stack_record_count mm/page_owner.c:214 [inline]
+>  __set_page_owner+0x55f/0x800 mm/page_owner.c:329
+>  set_page_owner include/linux/page_owner.h:32 [inline]
+>  post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1556
+>  prep_new_page mm/page_alloc.c:1564 [inline]
+>  get_page_from_freelist+0x3725/0x3870 mm/page_alloc.c:3510
+>  __alloc_pages_noprof+0x292/0x710 mm/page_alloc.c:4786
+>  alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2265
+>  stack_depot_save_flags+0x666/0x830 lib/stackdepot.c:627
+>  kasan_save_stack+0x4f/0x60 mm/kasan/common.c:48
+>  __kasan_record_aux_stack+0xac/0xc0 mm/kasan/generic.c:544
+>  task_work_add+0xd9/0x490 kernel/task_work.c:77
+>  __run_posix_cpu_timers kernel/time/posix-cpu-timers.c:1223 [inline]
+>  run_posix_cpu_timers+0x6ac/0x810 kernel/time/posix-cpu-timers.c:1422
+>  tick_sched_handle kernel/time/tick-sched.c:276 [inline]
+>  tick_nohz_handler+0x37c/0x500 kernel/time/tick-sched.c:297
+>  __run_hrtimer kernel/time/hrtimer.c:1739 [inline]
+>  __hrtimer_run_queues+0x551/0xd50 kernel/time/hrtimer.c:1803
+>  hrtimer_interrupt+0x403/0xa40 kernel/time/hrtimer.c:1865
+>  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1038 [inline]
+>  __sysvec_apic_timer_interrupt+0x110/0x420 arch/x86/kernel/apic/apic.c:1055
+>  instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1049 [inline]
+>  sysvec_apic_timer_interrupt+0xa1/0xc0 arch/x86/kernel/apic/apic.c:1049
+>  </IRQ>
 
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 47 at kernel/rcu/sync.c:177 rcu_sync_dtor+0xcd/0x180 kernel/rcu/sync.c:177
-Modules linked in:
-CPU: 1 UID: 0 PID: 47 Comm: kworker/1:1 Not tainted 6.12.0-rc7-syzkaller-00192-gb5a24181e461-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
-Workqueue: events destroy_super_work
-RIP: 0010:rcu_sync_dtor+0xcd/0x180 kernel/rcu/sync.c:177
-Code: 74 19 e8 96 dd 00 00 43 0f b6 44 25 00 84 c0 0f 85 82 00 00 00 41 83 3f 00 75 1d 5b 41 5c 41 5d 41 5e 41 5f c3 cc cc cc cc 90 <0f> 0b 90 e9 66 ff ff ff 90 0f 0b 90 eb 89 90 0f 0b 90 eb dd 44 89
-RSP: 0018:ffffc90000b77b30 EFLAGS: 00010246
-RAX: 0000000000000002 RBX: 1ffff1100acad877 RCX: ffff8880206cbc00
-RDX: 0000000000000000 RSI: ffffffff8c6038c0 RDI: ffff88805656c350
-RBP: 0000000000000236 R08: ffffffff820f0554 R09: 1ffffffff1cfbc21
-R10: dffffc0000000000 R11: fffffbfff1cfbc22 R12: dffffc0000000000
-R13: 1ffff1100acad86a R14: ffff88805656c350 R15: ffff88805656c350
-FS:  0000000000000000(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000555583944808 CR3: 0000000012ac6000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- percpu_free_rwsem+0x41/0x80 kernel/locking/percpu-rwsem.c:42
- destroy_super_work+0xef/0x130 fs/super.c:282
- process_one_work kernel/workqueue.c:3229 [inline]
- process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
- worker_thread+0x870/0xd30 kernel/workqueue.c:3391
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
+Another locking issue in irq context [1].
 
-
-Tested on:
-
-commit:         b5a24181 Merge tag 'trace-ringbuffer-v6.12-rc7-2' of g..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13cb52c0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1503500c6f615d24
-dashboard link: https://syzkaller.appspot.com/bug?extid=823cd0d24881f21ab9f1
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=117bb130580000
-
+[1] https://lore.kernel.org/all/20241102001224.2789-1-hdanton@sina.com/
+>  <TASK>
+>  asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
+> RIP: 0010:__raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:152 [inline]
+> RIP: 0010:_raw_spin_unlock_irqrestore+0xd8/0x140 kernel/locking/spinlock.c:194
+> Code: 9c 8f 44 24 20 42 80 3c 23 00 74 08 4c 89 f7 e8 ee 14 43 f6 f6 44 24 21 02 75 52 41 f7 c7 00 02 00 00 74 01 fb bf 01 00 00 00 <e8> 43 99 a6 f5 65 8b 05 64 f3 3c 74 85 c0 74 43 48 c7 04 24 0e 36
+> RSP: 0018:ffffc900032efc60 EFLAGS: 00000206
+> RAX: 92c7e75658265800 RBX: 1ffff9200065df90 RCX: ffffffff9a3bf903
+> RDX: dffffc0000000000 RSI: ffffffff8c0ad880 RDI: 0000000000000001
+> RBP: ffffc900032efcf0 R08: ffffffff901c8877 R09: 1ffffffff203910e
+> R10: dffffc0000000000 R11: fffffbfff203910f R12: dffffc0000000000
+> R13: 1ffff9200065df8c R14: ffffc900032efc80 R15: 0000000000000246
+>  spin_unlock_irqrestore include/linux/spinlock.h:406 [inline]
+>  unlock_timer kernel/time/posix-timers.c:128 [inline]
+>  do_timer_settime+0x37f/0x3e0 kernel/time/posix-timers.c:908
+>  __do_sys_timer_settime kernel/time/posix-timers.c:928 [inline]
+>  __se_sys_timer_settime kernel/time/posix-timers.c:914 [inline]
+>  __x64_sys_timer_settime+0x19e/0x240 kernel/time/posix-timers.c:914
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
