@@ -1,117 +1,102 @@
-Return-Path: <linux-kernel+bounces-411806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BCAD9CFFCE
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 17:14:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 060429CFFD1
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 17:15:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAA9F1F23B49
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 16:14:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEF041F213A3
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 16:15:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23E4318CBFE;
-	Sat, 16 Nov 2024 16:14:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86A7C188CA9;
+	Sat, 16 Nov 2024 16:15:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hvfaQCI3"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="t1B0plXG"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20E89EAF6;
-	Sat, 16 Nov 2024 16:14:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E183C8C7;
+	Sat, 16 Nov 2024 16:15:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731773686; cv=none; b=dl7krvDdz1bBoIL+JKqAdFb6cKybL5IaiNic0NeBGHCIt3wsSsTaAD5f7MDT6coWzFFP3YxyIuorBvmkmXk4xi66GiqVNMx/yLtPpF2G04Ssc5h7QWF5clZX+KOweGGJRR+ouYbdE/H+Pyx1y5bophLMVd/N1g/1xmA/u+lTD/o=
+	t=1731773739; cv=none; b=jPHklaCca0UNYJhKVyrkFrWocI4M+RXvneRYg5tIs0+5Pi/TdL+L247floN7geg7eEOp/PVcAhMoMI1wm+poeujfgPZbgZyu8W49c4u8FX1lR6vAX8P2+ufjeH+f0zWT818g+DqlKnSPJMYvKdc5SxALu8zpuLOnjvhnwbZVjZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731773686; c=relaxed/simple;
-	bh=Z+FS3aH9ns/09plAyTBL04srlqkqXUqce8PfMIJ5Qoo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=WN2AGAA/NK5ocRceCp59sgxT/V9BOCeXQJxaQ8scz0DIb7gIr3O4ZnjXwBpTOHN7+4sD5bzwR7EJwiyJ1d11kp4RUSCPpcNRxwOhMjOE1zbURl6YnLkCPFpnG76Luen+ftUa6J8PahT7ESpsIqLCqPsbv5/c2MPSPlBZVr3/6xk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hvfaQCI3; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AGFJbA9013107;
-	Sat, 16 Nov 2024 16:14:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	YniZ3f1E+sc5s0E3erFuJzdfsAgutZY81DqXchcGWr4=; b=hvfaQCI3nRIYjMo0
-	A3AkWBo7VU3DVlMVMTiMayzZ6enKd7yi9GEOHQiABdlvLp/XrutunQguHNSnmJf8
-	xuf8q172LH2NKq+oyGpfZGpKXhsJ/0OM96rFU7AY7OYN+NgV2+VVF0nW1r/5iXcg
-	ChE1wPsEITHyXekok05Gy434ARQRgyQfnatbqzr/boEaOZYGCGHKTWuALt2OmUuA
-	jkuSr9l7NxT3ToCxEhTlP3Ldvmmxc764jSsjagGFWbtekBxmIcalbNn2D7C7sE+S
-	luZIxzC/A58nkUkXwm9+lrkTDTKwg9GWoEizwQeeKpEbk6u62ZpDVpwRIteLgHwP
-	mkyJNQ==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42xkrm106e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 16 Nov 2024 16:14:31 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AGGEUmK007646
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 16 Nov 2024 16:14:30 GMT
-Received: from [10.253.8.97] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sat, 16 Nov
- 2024 08:14:27 -0800
-Message-ID: <a63ae3c8-cb5e-4155-87d3-b448d09be9ae@quicinc.com>
-Date: Sun, 17 Nov 2024 00:14:25 +0800
+	s=arc-20240116; t=1731773739; c=relaxed/simple;
+	bh=BIM1Jk1WfWD8u+/mNfra30CaiC1sEYqJ/6LciJmtljk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c9zjsVXuYORhonXDgzUuZQLkcpRddYI/GPszLwzZWGZmFvV7Hv8yTCp3v6WyHwx+b4Y9HnSgmz6G2RGrrbkRaB+T6CrjcIl2njbxNZujAGMFSqLJa7qe1T9CWSwOtOOEkZIh9JBFvS2tz3qL9/Kho2rnbHbgIJM/tGZspJ+6zz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=t1B0plXG; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1731773734;
+	bh=BIM1Jk1WfWD8u+/mNfra30CaiC1sEYqJ/6LciJmtljk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=t1B0plXGSm38raN82fLD9vJnfnurcFtNEbeXCxfNtVhIhamAMXzKsQ6IPQlMGNepB
+	 zbYJF6rXxD6gdid87FVztpBkkUq1PwVvYCNVE1AkxEej90/0mHUVlvWojvQNQea3ik
+	 qYUm1yCOk4zG0k2KFnFU2QW+VWZMNrapArUPS2DQ=
+Date: Sat, 16 Nov 2024 17:15:33 +0100
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
+	Thomas Gleixner <tglx@linutronix.de>, Kunwu Chan <kunwu.chan@linux.dev>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eddy Z <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, 
+	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, clrkwllms@kernel.org, 
+	Steven Rostedt <rostedt@goodmis.org>, bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	linux-rt-devel@lists.linux.dev, syzbot+b506de56cbbb63148c33@syzkaller.appspotmail.com, 
+	Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+Subject: Re: [PATCH] bpf: Convert lpm_trie::lock to 'raw_spinlock_t'
+Message-ID: <1ed46394-f065-4e8b-8f37-c450b0c1b3a9@t-8ch.de>
+References: <20241108063214.578120-1-kunwu.chan@linux.dev>
+ <87v7wsmqv4.ffs@tglx>
+ <1e5910b1-ea54-4b7a-a68b-a02634a517dd@linux.dev>
+ <87sersyvuc.ffs@tglx>
+ <20241116092102.O_30pj9W@linutronix.de>
+ <CAADnVQ+ToRZ6ZQL44Z9TAn6c=ecqrDgrnJenH7-miHJSWe7Nsw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Bluetooth: qca: Support downloading board id specific NVM
- for WCN6855
-To: Jens Glathe <jens.glathe@oldschoolsolutions.biz>,
-        Marcel Holtmann
-	<marcel@holtmann.org>,
-        Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-CC: Zijun Hu <zijun_hu@icloud.com>, <linux-bluetooth@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Bjorn Andersson <bjorande@quicinc.com>,
-        "Aiqun Yu (Maria)" <quic_aiquny@quicinc.com>,
-        Cheng Jiang
-	<quic_chejiang@quicinc.com>,
-        Johan Hovold <johan@kernel.org>,
-        "Steev
- Klimaszewski" <steev@kali.org>
-References: <20241113-x13s_wcn6855_fix-v1-1-15af0aa2549c@quicinc.com>
- <41966d59-063f-4848-9776-399ee348069a@oldschoolsolutions.biz>
-Content-Language: en-US
-From: quic_zijuhu <quic_zijuhu@quicinc.com>
-In-Reply-To: <41966d59-063f-4848-9776-399ee348069a@oldschoolsolutions.biz>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: lPI5UCGA22RLYFZ6ziDeudRbVxkhpYtg
-X-Proofpoint-ORIG-GUID: lPI5UCGA22RLYFZ6ziDeudRbVxkhpYtg
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 phishscore=0
- spamscore=0 adultscore=0 mlxlogscore=870 malwarescore=0 impostorscore=0
- clxscore=1015 bulkscore=0 priorityscore=1501 lowpriorityscore=0 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2411160140
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAADnVQ+ToRZ6ZQL44Z9TAn6c=ecqrDgrnJenH7-miHJSWe7Nsw@mail.gmail.com>
 
-On 11/15/2024 2:40 PM, Jens Glathe wrote:
-> Hi Zijun,
+On 2024-11-16 08:01:49-0800, Alexei Starovoitov wrote:
+> On Sat, Nov 16, 2024 at 1:21 AM Sebastian Andrzej Siewior
+> <bigeasy@linutronix.de> wrote:
+> >
+> > On 2024-11-15 23:29:31 [+0100], Thomas Gleixner wrote:
+> > > IIRC, BPF has it's own allocator which can be used everywhere.
+> >
+> > Thomas Weißschuh made something. It appears to work. Need to take a
+> > closer look.
 > 
-> I tested his patch on the HP Omnibook X14 and on the Windows Dev Kit
-> 2023, it works well. Thank you!
+> Any more details?
+> bpf_mem_alloc is a stop gap.
+
+It is indeed using bpf_mem_alloc.
+It is a fairly straightforward conversion, using one cache for
+intermediate and one for non-intermediate nodes.
+
+I'll try to send it early next week.
+
+> As Vlastimil Babka suggested long ago:
+> https://lwn.net/Articles/974138/
+> "...next on the target list is the special allocator used by the BPF
+> subsystem. This allocator is intended to succeed in any calling
+> context, including in non-maskable interrupts (NMIs). BPF maintainer
+> Alexei Starovoitov is evidently in favor of this removal if SLUB is
+> able to handle the same use cases..."
 > 
-> Tested-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
-> 
-
-thank you Jens for helping verification with your machines.
-
-(^^)(^^)
-> with best regards
-
+> Here is the first step:
+> https://lore.kernel.org/bpf/20241116014854.55141-1-alexei.starovoitov@gmail.com/
 
