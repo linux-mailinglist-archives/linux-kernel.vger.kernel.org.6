@@ -1,233 +1,118 @@
-Return-Path: <linux-kernel+bounces-411639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 663F99CFD31
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 09:07:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39D7E9CFD34
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 09:11:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E28CAB22261
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 08:07:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB3191F23036
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 08:11:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB1C2191F7C;
-	Sat, 16 Nov 2024 08:07:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04DE9192B75;
+	Sat, 16 Nov 2024 08:11:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ti1NL4Y+"
-Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com [209.85.221.172])
+	dkim=pass (2048-bit key) header.d=furiosa-ai.20230601.gappssmtp.com header.i=@furiosa-ai.20230601.gappssmtp.com header.b="ns0BAJ6L"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 934E718F2FC
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 08:07:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2155F18FDD5
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 08:11:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731744438; cv=none; b=Rvc78WD9QN7Pgsp/deJ128lbJTuCCLLZI6t1fV2EDkeQ1Kr7x5QOzPdmVYlDVfnPlfezpwCYbhUMWtJQ3z60/irsV0HccXmznM8OrvytrQDiY/ztZWAQpZA+Ai6sNhk3haWUILfLwhc9Vg9EXMre1eWe9om4Wnccohf11ei2KXM=
+	t=1731744672; cv=none; b=VYaSZCcgSowT6yUpN+tbFvVY8kIOVwP4qiRjs02H5Zw1ARqUxlhyv5jCOEZvIYHduv/jTVnFer8bY/213K8TeZPy0OfIsu+2BDtrcwP186ocGkadGcfVQpowgdewLhu/eS3VjmsJuxzMsjTwYQygG8Q90/ffwJ4E75TwxoXjths=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731744438; c=relaxed/simple;
-	bh=NAIlf6R7JXlWQUkwEAToGNXpP4mKJHRaO2W11Ni98hk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QIv0Ab8pgQkEVbqzq0Q17j/HL6XHQkok3mP0+vbdzNmMS5qDcQ2B9uhu5PmBvv+jqr0deRJT0U9i7QFTR+zlCf7RVKC1KpbKp06FPuU7kNNCbHjHvW0DEuZyHEtNXRsG72O/Qk/qstzkOrZnNCPdnYIqShcRC0XF+XmtI/eEfh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ti1NL4Y+; arc=none smtp.client-ip=209.85.221.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-50d4a333a87so146753e0c.1
-        for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 00:07:16 -0800 (PST)
+	s=arc-20240116; t=1731744672; c=relaxed/simple;
+	bh=I5d6xq8yApFLD3lqBQul4LMzk21YrsqnImFrxksSgCM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VmTqCPnDpdXjn2nTC5u5wI5Ihs/3WY/5yccoMPUwOn+hejN5LVkjEbY6Dvc08yq8zWop7lFj0oknx0kGfryvBOSNcCpxXRT4y1hFQXlUjg2GSdkvRFICTWVuUG9Z2evE9rRcmXSOc6h6Cep52gZ/uhAm2objXL/EKOn1eNjzjVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=furiosa.ai; spf=none smtp.mailfrom=furiosa.ai; dkim=pass (2048-bit key) header.d=furiosa-ai.20230601.gappssmtp.com header.i=@furiosa-ai.20230601.gappssmtp.com header.b=ns0BAJ6L; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=furiosa.ai
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=furiosa.ai
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-7ee6edc47abso331433a12.3
+        for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 00:11:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731744435; x=1732349235; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2WmVZTA0OBY9zHSB9Kn5Ws2PBlPlk+7EEemKYnV7uns=;
-        b=ti1NL4Y+xgXyh+oYXU0KLWQDzuG0Uxd+K0bCQ4QuqzzSno4i3SuzGqyimfOH3ytV70
-         EsHHliDYNLAjJrlR08+nwASkXY64Dewp7Kl98lkZAB8yQ3SuQjtMDqz21KSVY0o1ZZne
-         b24rgBwjtkHhCNSLQNBChnTY1rhiOLo4DjBPpTaMEbbfx6iaEhYg+Mz+jKwjDrhQhq1g
-         P3AHuUWzfzQ/W7b/D9XkoZQcodY9a+LBe/uP4Q5OVJJB4CPmd1b1rOfEm9AH4fzGnx5R
-         78YwhldhoOn+dStgtacMpFbKqNNmZiQ5UXLsy+q+UJfy6BJi3IstiGcKRibybj6lnI1i
-         sxMw==
+        d=furiosa-ai.20230601.gappssmtp.com; s=20230601; t=1731744670; x=1732349470; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=96+ITd4Yn9GceeD6WwWI1juRk5f17FxOFIRFnl0ul0k=;
+        b=ns0BAJ6LhrQ+QXzoKO1fuDfYAfkqdLKT1RchI2RjJeetwET4vKDe1mBXdr4diTnBRL
+         /Ya9frbJDr9sjB//OPU+aPZ8ZfgPSKIUfR3nf48RfMKhxA/jn0waEYVzuo60HC0UyGHh
+         wrOUPD4ZK1gNsCcYJs8Tbc8oV3NT99hX0TMQLT/848qilMEHvW1N+hENCs9KhjA29jln
+         Vrlhs0+IYAyCBkcqk1xBCT/eABsI+Ro1eOU1XTEI35MrH5ueOChGQo1BhxfIviM76NjK
+         lj+tR1w4mRpEkwpBJRco7bj0AF/W9R1iCuBaubG2z3A6d2rql6uyek5xV/J4TLTiODM1
+         dVvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731744435; x=1732349235;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2WmVZTA0OBY9zHSB9Kn5Ws2PBlPlk+7EEemKYnV7uns=;
-        b=BYf00uF6y3YtviCkkZfD2FwwXNfPH0s6ZDgRrvJjyAjai15HL32tO6MnePqyA1K47n
-         T836p2W0n4gvsWg6sjYeOV+pe2ce5aMV4TYcJJMhzEA+rGGNjFf8mQ+jLVvY9PxJqGL1
-         l4h26nJVrVpuW36bJENpROO4fdLXeVvU7PTIxm5liXUIL3hDQ5cSg++pYcc74u8PooDu
-         yxehWU0sdN5PsOmJ+RJ96OOfvailg7TTLXUX4gsjhY9B3AF86dpmhrw/wGNNoO3jeyDY
-         Foz29Xe6Dk0pnDHZECDZ8VP4Z4pqRkFtOREzIkgABWaMu4yKMqfJxuS2aFLZLeHcAUKm
-         iWgw==
-X-Forwarded-Encrypted: i=1; AJvYcCUC6BgS/4TUVYUdiN9lCr3oyIqN2Q5vYhymf1Wxjjf5X1lwkXKMGo9rhyuViwmwxl7m5970nVJyJWDNF6U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPQKhbceUFoYxXvqDV2QsnGeP2Hf7fkViBJRIQPKXFwq/PIMqh
-	uUQAVGTJFsVXRe9xNTaOktL9O9+sqyx+SdL3t+xuT0Dc/9WyDtbK4Bd16JX7cG2rNiQWlj+Cek5
-	rZfTpsbfYdqucemfAWF0OYXa/UO4ZyTpKKWEgZQ==
-X-Google-Smtp-Source: AGHT+IHEfkUckBJ9XCrI2yVxSSJFj5t3YJDMntbgNupaqGx3dkUFYzNPzxPNBPxh0TXFSaU2ErN5g16+lB1l2lMkmXs=
-X-Received: by 2002:a05:6122:3c4d:b0:4f5:199b:2a61 with SMTP id
- 71dfb90a1353d-51477f99aa8mr5580802e0c.9.1731744435541; Sat, 16 Nov 2024
- 00:07:15 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731744670; x=1732349470;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=96+ITd4Yn9GceeD6WwWI1juRk5f17FxOFIRFnl0ul0k=;
+        b=iXO5Z8c8a80TKiU8g9MatCL2lQOQHc79rayux28uzYyaW5xHMqdw4h7GAQDl6ZFMS0
+         0RGMF5x8rGeiVqQUWCzw2Boj2a3wh8O47Y/a+l5VdGo9/VDo+bG5fDS/QOspKQ0+8SiS
+         fY0UN/MTPs0iX+gednsy/qkH38YCskpmu+WyGz7OKeEQ/RBR4IQplo8Re/AAVFYcUWw9
+         zySUQutnOqhADKd19dd45CR1+rn25EBbTyRgs5+cBSqziD4X9bkzs5+FbnIeLRlCp6/2
+         hqDycf/azS4w6dKel+TWgrsBaL+9ikxabInN5pm6pJiPPaKZh7ZgOZRD5UMPyxSx0HgU
+         blhw==
+X-Forwarded-Encrypted: i=1; AJvYcCVqHsE+3R407gyP9gGSJdk8u5TQDkWaVHx0QifiEaVkXH0KnVrOTmNOAH7Lfa2IFQE8ZW/qxF6HsRKdQXs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZCk0VFTn8Vr04nmpppzie0+OJ1b5qcHZZa9HAn3rgXFgLphVt
+	HUiWSXvfPxopFs3wWVKaBd0+lKF541RSAr1z+3WIKNv9FocGXfvSrv/mquUV9DQ=
+X-Google-Smtp-Source: AGHT+IEbav/q6nbtcpi6jdgXPqNXxpTkVa7JXKPtww5C9bR4QElLwnA5phd49NQB6khRf9cPHWGSBg==
+X-Received: by 2002:a17:902:ecca:b0:211:ce94:866a with SMTP id d9443c01a7336-211d0ebf214mr78997325ad.40.1731744670439;
+        Sat, 16 Nov 2024 00:11:10 -0800 (PST)
+Received: from localhost.localdomain ([61.83.209.48])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211eca09906sm8106475ad.246.2024.11.16.00.11.07
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Sat, 16 Nov 2024 00:11:10 -0800 (PST)
+From: Sidong Yang <sidong.yang@furiosa.ai>
+To: Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+	bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Sidong Yang <sidong.yang@furiosa.ai>
+Subject: [PATCH] libbpf: Change hash_combine parameters from long to unsigned long
+Date: Sat, 16 Nov 2024 17:10:52 +0900
+Message-ID: <20241116081054.65195-1-sidong.yang@furiosa.ai>
+X-Mailer: git-send-email 2.42.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241115063725.892410236@linuxfoundation.org>
-In-Reply-To: <20241115063725.892410236@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Sat, 16 Nov 2024 13:37:04 +0530
-Message-ID: <CA+G9fYuzB_AvjT7tZQy+tH257ztf--cs8Y+y0wF25RuruOS+cw@mail.gmail.com>
-Subject: Re: [PATCH 6.11 00/63] 6.11.9-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
-	broonie@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, 15 Nov 2024 at 12:17, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.11.9 release.
-> There are 63 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sun, 17 Nov 2024 06:37:07 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
-6.11.9-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.11.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+The hash_combine() could be trapped when compiled with sanitizer like "zig cc"
+or clang with signed-integer-overflow option. This patch parameters and return
+type to unsigned long to remove the potential overflow.
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+Signed-off-by: Sidong Yang <sidong.yang@furiosa.ai>
+---
+ tools/lib/bpf/btf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+diff --git a/tools/lib/bpf/btf.c b/tools/lib/bpf/btf.c
+index 8befb8103e32..12468ae0d573 100644
+--- a/tools/lib/bpf/btf.c
++++ b/tools/lib/bpf/btf.c
+@@ -3548,7 +3548,7 @@ struct btf_dedup {
+ 	struct strset *strs_set;
+ };
+ 
+-static long hash_combine(long h, long value)
++static unsigned long hash_combine(unsigned long h, unsigned long value)
+ {
+ 	return h * 31 + value;
+ }
+-- 
+2.42.0
 
-## Build
-* kernel: 6.11.9-rc1
-* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
-rc.git
-* git commit: 0862a6020163c7b2e1de05e468651684ec642396
-* git describe: v6.11.7-249-g0862a6020163
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.11.y/build/v6.11=
-.7-249-g0862a6020163
-
-## Test Regressions (compared to v6.11.7-185-ga5b459e185d1)
-
-## Metric Regressions (compared to v6.11.7-185-ga5b459e185d1)
-
-## Test Fixes (compared to v6.11.7-185-ga5b459e185d1)
-
-## Metric Fixes (compared to v6.11.7-185-ga5b459e185d1)
-
-## Test result summary
-total: 153766, pass: 127727, fail: 1793, skip: 24246, xfail: 0
-
-## Build Summary
-* arc: 5 total, 5 passed, 0 failed
-* arm: 130 total, 128 passed, 2 failed
-* arm64: 42 total, 42 passed, 0 failed
-* i386: 18 total, 16 passed, 2 failed
-* mips: 26 total, 25 passed, 1 failed
-* parisc: 4 total, 4 passed, 0 failed
-* powerpc: 32 total, 31 passed, 1 failed
-* riscv: 16 total, 15 passed, 1 failed
-* s390: 14 total, 13 passed, 1 failed
-* sh: 5 total, 5 passed, 0 failed
-* sparc: 4 total, 3 passed, 1 failed
-* x86_64: 34 total, 34 passed, 0 failed
-
-## Test suites summary
-* boot
-* commands
-* kselftest-arm64
-* kselftest-breakpoints
-* kselftest-capabilities
-* kselftest-cgroup
-* kselftest-clone3
-* kselftest-core
-* kselftest-cpu-hotplug
-* kselftest-cpufreq
-* kselftest-efivarfs
-* kselftest-exec
-* kselftest-filesystems
-* kselftest-filesystems-binderfs
-* kselftest-filesystems-epoll
-* kselftest-firmware
-* kselftest-fpu
-* kselftest-ftrace
-* kselftest-futex
-* kselftest-gpio
-* kselftest-intel_pstate
-* kselftest-ipc
-* kselftest-kcmp
-* kselftest-kvm
-* kselftest-livepatch
-* kselftest-membarrier
-* kselftest-memfd
-* kselftest-mincore
-* kselftest-mqueue
-* kselftest-net
-* kselftest-net-mptcp
-* kselftest-openat2
-* kselftest-ptrace
-* kselftest-rseq
-* kselftest-rtc
-* kselftest-rust
-* kselftest-seccomp
-* kselftest-sigaltstack
-* kselftest-size
-* kselftest-tc-testing
-* kselftest-timers
-* kselftest-tmpfs
-* kselftest-tpm2
-* kselftest-user_events
-* kselftest-vDSO
-* kselftest-watchdog
-* kselftest-x86
-* kunit
-* kvm-unit-tests
-* libgpiod
-* libhugetlbfs
-* log-parser-boot
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-cpuhotplug
-* ltp-crypto
-* ltp-cve
-* ltp-dio
-* ltp-fcntl-locktests
-* ltp-fs
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-ipc
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sched
-* ltp-smoke
-* ltp-syscalls
-* ltp-tracing
-* perf
-* rcutorture
-
---
-Linaro LKFT
-https://lkft.linaro.org
 
