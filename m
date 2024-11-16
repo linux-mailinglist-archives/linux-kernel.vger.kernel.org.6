@@ -1,60 +1,77 @@
-Return-Path: <linux-kernel+bounces-411558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDC1D9CFBEF
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 02:03:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 933FE9CFBF2
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 02:11:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 39E6EB25EF2
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 01:03:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E68FCB27079
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 01:11:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F9D479F6;
-	Sat, 16 Nov 2024 01:02:53 +0000 (UTC)
-Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF50380038;
+	Sat, 16 Nov 2024 01:10:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="pK2LrKLI"
+Received: from smtp-fw-33001.amazon.com (smtp-fw-33001.amazon.com [207.171.190.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F16F2F2D;
-	Sat, 16 Nov 2024 01:02:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 104F345003;
+	Sat, 16 Nov 2024 01:10:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.190.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731718973; cv=none; b=sCFeIC/l7sJdJYG3VJoRfjq6Kx3png55R+wSNp0TqYPLiaaAYxyue1xc0nccSmGGNJlGW+wiF2jPfQnvuaY5lk8zgiaCsZJcNC/c3HrPq+8IQueWvf3fe+tlsS8hVMHT95LdxrvdvdHkgM4oV1SCJEkD92zH0FJprfikTsFOeYs=
+	t=1731719454; cv=none; b=I10LSz2SWR+GwApwO/8dNohiDBEuy38+3j/TqkOzDoH+gyv4tA1f4lHWnJb0YotLACb5cFXeVUDw1wgM2nPAeBDsYIsMaP5kcs5fZ8fCNLl22XyuR8fpdErRAEpRaeusgeWDPWVzZRBEDQeUTV/cmJPbR+flnQyoPXGpMWE9XvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731718973; c=relaxed/simple;
-	bh=uTFMcoRPz9oyPXbowOi32P8SItlL4dizgLfTOlxPRW0=;
+	s=arc-20240116; t=1731719454; c=relaxed/simple;
+	bh=s8FsK55RfNkPVlqWqVt25Ac+d5jXBqfa1XLJHTT7q7s=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MRZIps3WQQi/6EzSzYI3DCGNFagpFUjJ4Sb2giFycwEefHCp9PkDAOba7CYzknXyBMfD5iEvECmYx+UngmP+IdqFIGjr4rTtLqU4mWpfpZUpd2+Nid8dD2up7sGSasB4hRg4idP/gsddmhSEO9925kF0iNrDxeRog6EwK/baDu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.178.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250811.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AG0x2PO018884;
-	Sat, 16 Nov 2024 01:02:12 GMT
-Received: from ala-exchng01.corp.ad.wrs.com (ala-exchng01.wrs.com [147.11.82.252])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 42xgm0g0wx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Sat, 16 Nov 2024 01:02:11 +0000 (GMT)
-Received: from ala-exchng01.corp.ad.wrs.com (147.11.82.252) by
- ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.43; Fri, 15 Nov 2024 17:02:10 -0800
-Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
- ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server id
- 15.1.2507.43 via Frontend Transport; Fri, 15 Nov 2024 17:02:08 -0800
-From: Lizhi Xu <lizhi.xu@windriver.com>
-To: <jack@suse.cz>
-CC: <almaz.alexandrovich@paragon-software.com>, <brauner@kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <lizhi.xu@windriver.com>, <ntfs3@lists.linux.dev>,
-        <syzbot+73d8fc29ec7cba8286fa@syzkaller.appspotmail.com>,
-        <syzkaller-bugs@googlegroups.com>, <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH] fs: add check for symlink corrupted
-Date: Sat, 16 Nov 2024 09:02:07 +0800
-Message-ID: <20241116010207.1484956-1-lizhi.xu@windriver.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241115114306.5sgqa3opc56rhu4x@quack3>
-References: <20241115114306.5sgqa3opc56rhu4x@quack3>
+	 MIME-Version:Content-Type; b=n4n9nAyR3gT3iFep1xkRa8LPA4uzYilgXdOx7AxF0cV40+cqvrjBjChtE91Sr8rRNJwWGvNenrycaHNwIcCuAY2DYbXAiwd/OmHmuUgvc1+PjZr7joGxV+4I7mslMWjmp4vzrtShPo9qBTYwSe/qEiwk2RZpiwIo5gstVAtbfFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=pK2LrKLI; arc=none smtp.client-ip=207.171.190.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1731719452; x=1763255452;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=oZf83NcSi94ctWC30Z+k813YHX+uNN8Tlt2tor25DCQ=;
+  b=pK2LrKLI/rP8W41eJ4XYq9+NPW2lhkn912GGcP01MvVBqYdMOsHhl4pv
+   r6LOsbE8gPyn+dS9103YTgpeYRWCPurnKGSa/OKV/ThRJD6YvvXudvLTA
+   vrOuJinO0Q7nKbJw00gOMuiZ0V2928mCotD653eH+d4/5Uz9s20IUloFg
+   0=;
+X-IronPort-AV: E=Sophos;i="6.12,158,1728950400"; 
+   d="scan'208";a="385827814"
+Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
+  by smtp-border-fw-33001.sea14.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Nov 2024 01:10:46 +0000
+Received: from EX19MTAUWC002.ant.amazon.com [10.0.21.151:7363]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.14.147:2525] with esmtp (Farcaster)
+ id 98dd0642-8156-4c38-bcef-9c8974a3a191; Sat, 16 Nov 2024 01:10:46 +0000 (UTC)
+X-Farcaster-Flow-ID: 98dd0642-8156-4c38-bcef-9c8974a3a191
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWC002.ant.amazon.com (10.250.64.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Sat, 16 Nov 2024 01:10:45 +0000
+Received: from 6c7e67c6786f.amazon.com (10.187.170.14) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
+ Sat, 16 Nov 2024 01:10:41 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <stsp2@yandex.ru>
+CC: <almasrymina@google.com>, <asml.silence@gmail.com>, <axboe@kernel.dk>,
+	<brauner@kernel.org>, <cyphar@cyphar.com>, <davem@davemloft.net>,
+	<edumazet@google.com>, <gouhao@uniontech.com>, <horms@kernel.org>,
+	<kees@kernel.org>, <krisman@suse.de>, <kuba@kernel.org>, <kuniyu@amazon.com>,
+	<linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+	<mhal@rbox.co>, <netdev@vger.kernel.org>, <oleg@redhat.com>,
+	<pabeni@redhat.com>, <quic_abchauha@quicinc.com>, <shuah@kernel.org>,
+	<tandersen@netflix.com>, <viro@zeniv.linux.org.uk>, <willemb@google.com>
+Subject: Re: [PATCH v2] net/unix: pass pidfd flags via SCM_PIDFD cmsg
+Date: Fri, 15 Nov 2024 17:10:38 -0800
+Message-ID: <20241116011038.94912-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+In-Reply-To: <20241114091909.3552288-1-stsp2@yandex.ru>
+References: <20241114091909.3552288-1-stsp2@yandex.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,119 +80,253 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: m4R4hgSfdiwqbyh-Lnapu0cXQbCHcICX
-X-Proofpoint-GUID: m4R4hgSfdiwqbyh-Lnapu0cXQbCHcICX
-X-Authority-Analysis: v=2.4 cv=E4efprdl c=1 sm=1 tr=0 ts=6737ef13 cx=c_pps a=/ZJR302f846pc/tyiSlYyQ==:117 a=/ZJR302f846pc/tyiSlYyQ==:17 a=VlfZXiiP6vEA:10 a=edf1wS77AAAA:8 a=hSkVLCK3AAAA:8 a=t7CeM3EgAAAA:8 a=w0FKj9lh2ZS4Y81rqtgA:9 a=DcSpbTIhAlouE1Uv7lRv:22
- a=cQPPKAXgyycSBL8etih5:22 a=FdTzh2GWekK77mhwV6Dw:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-11-15_11,2024-11-14_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- clxscore=1015 malwarescore=0 impostorscore=0 adultscore=0 phishscore=0
- mlxlogscore=999 spamscore=0 priorityscore=1501 bulkscore=0 suspectscore=0
- mlxscore=0 classifier=spam authscore=0 adjust=0 reason=mlx scancount=1
- engine=8.21.0-2409260000 definitions=main-2411160006
+X-ClientProxiedBy: EX19D031UWC002.ant.amazon.com (10.13.139.212) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-On Fri, 15 Nov 2024 12:43:06 +0100, Jan Kara wrote:
-> On Fri 15-11-24 17:49:08, Lizhi Xu wrote:
-> > syzbot reported a null-ptr-deref in pick_link. [1]
-> > When symlink's inode is corrupted, the value of the i_link is 2 in this case,
-> > it will trigger null pointer deref when accessing *res in pick_link().
-> >
-> > To avoid this issue, add a check for inode mode, return -EINVAL when it's
-> > not symlink.
-> >
-> > [1]
-> > KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
-> > CPU: 0 UID: 0 PID: 5310 Comm: syz-executor255 Not tainted 6.12.0-rc6-syzkaller-00318-ga9cda7c0ffed #0
-> > Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-> > RIP: 0010:pick_link+0x51c/0xd50 fs/namei.c:1864
-> 
-> Hum, based on line number is:
-> 
->         if (*res == '/') { <<<< HERE
->                 error = nd_jump_root(nd);
->                 if (unlikely(error))
-> 
-> So res would be non-zero but a small number.
-> 
-> > Code: c1 e8 03 42 80 3c 38 00 74 08 48 89 df e8 fc 00 e9 ff 48 8b 2b 48 85 ed 0f 84 92 00 00 00 e8 7b 36 7f ff 48 89 e8 48 c1 e8 03 <42> 0f b6 04 38 84 c0 0f 85 a2 05 00 00 0f b6 5d 00 bf 2f 00 00 00
-> > RSP: 0018:ffffc9000d147998 EFLAGS: 00010246
-> > RAX: 0000000000000000 RBX: ffff88804558dec8 RCX: ffff88801ec7a440
-> > RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-> > RBP: 0000000000000002 R08: ffffffff8215a35f R09: 1ffffffff203a13d
-> > R10: dffffc0000000000 R11: fffffbfff203a13e R12: 1ffff92001a28f93
-> > R13: ffffc9000d147af8 R14: 1ffff92001a28f5f R15: dffffc0000000000
-> > FS:  0000555577611380(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > CR2: 00007fcc0a595ed8 CR3: 0000000035760000 CR4: 0000000000352ef0
-> > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> > Call Trace:
-> >  <TASK>
-> >  step_into+0xca9/0x1080 fs/namei.c:1923
-> >  lookup_last fs/namei.c:2556 [inline]
-> >  path_lookupat+0x16f/0x450 fs/namei.c:2580
-> >  filename_lookup+0x256/0x610 fs/namei.c:2609
-> >  user_path_at+0x3a/0x60 fs/namei.c:3016
-> >  do_mount fs/namespace.c:3844 [inline]
-> >  __do_sys_mount fs/namespace.c:4057 [inline]
-> >  __se_sys_mount+0x297/0x3c0 fs/namespace.c:4034
-> >  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-> >  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-> >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> > RIP: 0033:0x7f4b18ad5b19
-> > Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-> > RSP: 002b:00007ffc2e486c48 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-> > RAX: ffffffffffffffda RBX: 0030656c69662f2e RCX: 00007f4b18ad5b19
-> > RDX: 0000000000000000 RSI: 00000000200000c0 RDI: 0000000000000000
-> > RBP: 00007f4b18b685f0 R08: 0000000000000000 R09: 00005555776124c0
-> > R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffc2e486c70
-> > R13: 00007ffc2e486e98 R14: 431bde82d7b634db R15: 00007f4b18b1e03b
-> >  </TASK>
-> >
-> > Reported-and-tested-by: syzbot+73d8fc29ec7cba8286fa@syzkaller.appspotmail.com
-> > Closes: https://syzkaller.appspot.com/bug?extid=73d8fc29ec7cba8286fa
-> > Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
-> > ---
-> >  fs/namei.c | 3 +++
-> >  1 file changed, 3 insertions(+)
-> >
-> > diff --git a/fs/namei.c b/fs/namei.c
-> > index 4a4a22a08ac2..f5dbccb3aafc 100644
-> > --- a/fs/namei.c
-> > +++ b/fs/namei.c
-> > @@ -1844,6 +1844,9 @@ static const char *pick_link(struct nameidata *nd, struct path *link,
-> >  	if (unlikely(error))
-> >  		return ERR_PTR(error);
-> >
-> > +	if (!S_ISLNK(inode->i_mode))
-> > +		return ERR_PTR(-EINVAL);
-> > +
-> 
-> So I don't see how we can get here without inode being a symlink.
-> pick_link() is called from step_into() which has among other things:
-> 
-> if (likely(!d_is_symlink(path.dentry)) || ...)
-Our idea is the same. Because d_is_symlink() has confirmed the mode of
-symlink in step_into(), I will confirm whether the mode of symlink's inode
-has changed when the value of i_link is 2 in pick_link().
-> 	do something and return
-> 
-> so we are checking whether the inode is a symlink before calling
-> pick_link(). And yes, the d_is_symlink() is using cached type in
-> dentry->d_flags so they could mismatch. But inode is not supposed to change
-> its type during its lifetime so if there is a mismatch that is the problem
-> that needs to be fixed.
-I think syzbot executed the following two syscalls when triggering this problem:
+> [PATCH v2] net/unix: pass pidfd flags via SCM_PIDFD cmsg
 
-link(&(0x7f0000000200)='./file0\x00', &(0x7f0000000240)='./bus\x00')
-mount$overlay(0x0, &(0x7f00000000c0)='./bus\x00', 0x0, 0x0, 0x0)
+Please specify the target tree; net for fixes, net-next for others.
+https://www.kernel.org/doc/html/v6.11/process/maintainer-netdev.html
 
-Obviously, this is to mount a link. Whether the mount operation itself will
-change or corrupt the i_link value and mode value of the symlink is not
-clear to me yet.
+  [PATCH net-next v3] af_unix: pass ...
 
-BR,
-Lizhi
+
+From: Stas Sergeev <stsp2@yandex.ru>
+Date: Thu, 14 Nov 2024 12:19:09 +0300
+> Currently SCM_PIDFD cmsg cannot be sent via unix socket
+> (returns -EINVAL) and SO_PASSPIDFD doesn't support flags.
+> The created pidfd always has flags set to 0.
+> 
+> This patch implements SCM_PIDFD cmsg in AF_UNIX socket, which
+> can be used to send flags to SO_PASSPIDFD-enabled recipient.
+> 
+> Self-test is added for the propagation of PIDFD_NONBLOCK flag.
+> 
+> This is mainly needed for the future extensions, like eg this one:
+> https://lore.kernel.org/lkml/8288a08e-448b-43c2-82dc-59f87d0d9072@yandex.ru/T/#me1237e46deba8574b77834b7704e63559ffef9cb
+> where it was suggested to try solving the supplementary groups
+> problem with pidfd.
+> 
+> Changes in v2: remove flags validation in scm_pidfd_recv(), as
+>   suggested by Kuniyuki Iwashima <kuniyu@amazon.com>
+
+You can put this changelog and the following CC: under '---' so
+that they will disappear during merge.
+
+> 
+> Signed-off-by: Stas Sergeev <stsp2@yandex.ru>
+> 
+> CC: "David S. Miller" <davem@davemloft.net>
+> CC: Eric Dumazet <edumazet@google.com>
+> CC: Jakub Kicinski <kuba@kernel.org>
+> CC: Paolo Abeni <pabeni@redhat.com>
+> CC: Simon Horman <horms@kernel.org>
+> CC: Shuah Khan <shuah@kernel.org>
+> CC: Christian Brauner <brauner@kernel.org>
+> CC: Jens Axboe <axboe@kernel.dk>
+> CC: Willem de Bruijn <willemb@google.com>
+> CC: Pavel Begunkov <asml.silence@gmail.com>
+> CC: Gabriel Krisman Bertazi <krisman@suse.de>
+> CC: Mina Almasry <almasrymina@google.com>
+> CC: Oleg Nesterov <oleg@redhat.com>
+> CC: Tycho Andersen <tandersen@netflix.com>
+> CC: Al Viro <viro@zeniv.linux.org.uk>
+> CC: Kuniyuki Iwashima <kuniyu@amazon.com>
+> CC: Gou Hao <gouhao@uniontech.com>
+> CC: Abhishek Chauhan <quic_abchauha@quicinc.com>
+> CC: Michal Luczaj <mhal@rbox.co>
+> CC: Kees Cook <kees@kernel.org>
+> CC: Aleksa Sarai <cyphar@cyphar.com>
+> CC: linux-kernel@vger.kernel.org
+> CC: netdev@vger.kernel.org
+> CC: linux-kselftest@vger.kernel.org
+> ---
+
+^^^ Here
+
+
+>  include/linux/pidfs.h                         |  9 +++
+>  include/linux/socket.h                        |  2 +-
+>  include/net/af_unix.h                         |  1 +
+>  include/net/scm.h                             |  3 +-
+>  kernel/pid.c                                  |  6 +-
+>  net/core/scm.c                                | 14 ++++
+>  net/core/sock.c                               |  1 +
+>  net/unix/af_unix.c                            |  3 +
+>  .../testing/selftests/net/af_unix/scm_pidfd.c | 70 +++++++++++++++++--
+>  9 files changed, 99 insertions(+), 10 deletions(-)
+> 
+> diff --git a/include/linux/pidfs.h b/include/linux/pidfs.h
+> index 75bdf9807802..c4c5c1a0c2ad 100644
+> --- a/include/linux/pidfs.h
+> +++ b/include/linux/pidfs.h
+> @@ -2,7 +2,16 @@
+>  #ifndef _LINUX_PID_FS_H
+>  #define _LINUX_PID_FS_H
+>  
+> +#include <uapi/linux/pidfd.h>
+> +
+>  struct file *pidfs_alloc_file(struct pid *pid, unsigned int flags);
+>  void __init pidfs_init(void);
+>  
+> +static inline int pidfd_validate_flags(unsigned int flags)
+> +{
+> +	if (flags & ~(PIDFD_NONBLOCK | PIDFD_THREAD))
+> +		return -EINVAL;
+> +	return 0;
+> +}
+> +
+>  #endif /* _LINUX_PID_FS_H */
+> diff --git a/include/linux/socket.h b/include/linux/socket.h
+> index d18cc47e89bd..ee27d391e5aa 100644
+> --- a/include/linux/socket.h
+> +++ b/include/linux/socket.h
+> @@ -178,7 +178,7 @@ static inline size_t msg_data_left(struct msghdr *msg)
+>  #define	SCM_RIGHTS	0x01		/* rw: access rights (array of int) */
+>  #define SCM_CREDENTIALS 0x02		/* rw: struct ucred		*/
+>  #define SCM_SECURITY	0x03		/* rw: security label		*/
+> -#define SCM_PIDFD	0x04		/* ro: pidfd (int)		*/
+> +#define SCM_PIDFD	0x04		/* r: pidfd, w: pidfd_flags (int) */
+>  
+>  struct ucred {
+>  	__u32	pid;
+> diff --git a/include/net/af_unix.h b/include/net/af_unix.h
+> index 63129c79b8cb..4bc197548c2f 100644
+> --- a/include/net/af_unix.h
+> +++ b/include/net/af_unix.h
+> @@ -62,6 +62,7 @@ struct unix_skb_parms {
+>  #ifdef CONFIG_SECURITY_NETWORK
+>  	u32			secid;		/* Security ID		*/
+>  #endif
+> +	u32			pidfd_flags;
+>  	u32			consumed;
+>  } __randomize_layout;
+>  
+> diff --git a/include/net/scm.h b/include/net/scm.h
+> index 0d35c7c77a74..1326edcacacb 100644
+> --- a/include/net/scm.h
+> +++ b/include/net/scm.h
+> @@ -48,6 +48,7 @@ struct scm_cookie {
+>  #ifdef CONFIG_SECURITY_NETWORK
+>  	u32			secid;		/* Passed security ID 	*/
+>  #endif
+> +	u32			pidfd_flags;
+
+Now we consume 40 byes of cb[48].
+
+If we need more storage in the future, we may want to save
+converted flags in __scm_send() and restore that in
+scm_pidfd_recv().
+
+No need to do so now, just a note.
+
+
+>  };
+>  
+>  void scm_detach_fds(struct msghdr *msg, struct scm_cookie *scm);
+> @@ -154,7 +155,7 @@ static __inline__ void scm_pidfd_recv(struct msghdr *msg, struct scm_cookie *scm
+>  	if (!scm->pid)
+>  		return;
+>  
+> -	pidfd = pidfd_prepare(scm->pid, 0, &pidfd_file);
+> +	pidfd = pidfd_prepare(scm->pid, scm->pidfd_flags, &pidfd_file);
+>  
+>  	if (put_cmsg(msg, SOL_SOCKET, SCM_PIDFD, sizeof(int), &pidfd)) {
+>  		if (pidfd_file) {
+> diff --git a/kernel/pid.c b/kernel/pid.c
+> index 2715afb77eab..b1100ae8ea63 100644
+> --- a/kernel/pid.c
+> +++ b/kernel/pid.c
+> @@ -629,10 +629,12 @@ static int pidfd_create(struct pid *pid, unsigned int flags)
+>  SYSCALL_DEFINE2(pidfd_open, pid_t, pid, unsigned int, flags)
+>  {
+>  	int fd;
+> +	int err;
+>  	struct pid *p;
+>  
+> -	if (flags & ~(PIDFD_NONBLOCK | PIDFD_THREAD))
+> -		return -EINVAL;
+> +	err = pidfd_validate_flags(flags);
+> +	if (err)
+> +		return err;
+>  
+>  	if (pid <= 0)
+>  		return -EINVAL;
+> diff --git a/net/core/scm.c b/net/core/scm.c
+> index 4f6a14babe5a..3bcdecdacd7e 100644
+> --- a/net/core/scm.c
+> +++ b/net/core/scm.c
+> @@ -23,6 +23,7 @@
+>  #include <linux/security.h>
+>  #include <linux/pid_namespace.h>
+>  #include <linux/pid.h>
+> +#include <linux/pidfs.h>
+>  #include <linux/nsproxy.h>
+>  #include <linux/slab.h>
+>  #include <linux/errqueue.h>
+> @@ -210,6 +211,19 @@ int __scm_send(struct socket *sock, struct msghdr *msg, struct scm_cookie *p)
+>  			p->creds.gid = gid;
+>  			break;
+>  		}
+> +		case SCM_PIDFD:
+> +		{
+> +			unsigned int flags;
+> +
+> +			if (cmsg->cmsg_len != CMSG_LEN(sizeof(flags)))
+> +				goto error;
+> +			memcpy(&flags, CMSG_DATA(cmsg), sizeof(flags));
+> +			err = pidfd_validate_flags(flags);
+> +			if (err)
+> +				goto error;
+> +			p->pidfd_flags = flags;
+> +			break;
+> +		}
+
+Now this allows sending pidfd without SO_PASSPIDFD, so you need to
+add a validation for "if (!msg->msg_control)" in __scm_recv_common().
+
+
+>  		default:
+>  			goto error;
+>  		}
+> diff --git a/net/core/sock.c b/net/core/sock.c
+> index 039be95c40cf..d1fce437c035 100644
+> --- a/net/core/sock.c
+> +++ b/net/core/sock.c
+> @@ -2930,6 +2930,7 @@ int __sock_cmsg_send(struct sock *sk, struct cmsghdr *cmsg,
+>  	/* SCM_RIGHTS and SCM_CREDENTIALS are semantically in SOL_UNIX. */
+>  	case SCM_RIGHTS:
+>  	case SCM_CREDENTIALS:
+> +	case SCM_PIDFD:
+>  		break;
+>  	default:
+>  		return -EINVAL;
+> diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
+> index 001ccc55ef0f..8b19dfec0221 100644
+> --- a/net/unix/af_unix.c
+> +++ b/net/unix/af_unix.c
+> @@ -1892,6 +1892,7 @@ static int unix_scm_to_skb(struct scm_cookie *scm, struct sk_buff *skb, bool sen
+>  	UNIXCB(skb).uid = scm->creds.uid;
+>  	UNIXCB(skb).gid = scm->creds.gid;
+>  	UNIXCB(skb).fp = NULL;
+> +	UNIXCB(skb).pidfd_flags = scm->pidfd_flags;
+>  	unix_get_secdata(scm, skb);
+>  	if (scm->fp && send_fds)
+>  		err = unix_attach_fds(scm, skb);
+> @@ -2486,6 +2487,7 @@ int __unix_dgram_recvmsg(struct sock *sk, struct msghdr *msg, size_t size,
+>  	memset(&scm, 0, sizeof(scm));
+>  
+>  	scm_set_cred(&scm, UNIXCB(skb).pid, UNIXCB(skb).uid, UNIXCB(skb).gid);
+> +	scm.pidfd_flags = UNIXCB(skb).pidfd_flags;
+>  	unix_set_secdata(&scm, skb);
+>  
+>  	if (!(flags & MSG_PEEK)) {
+> @@ -2873,6 +2875,7 @@ static int unix_stream_read_generic(struct unix_stream_read_state *state,
+>  			   test_bit(SOCK_PASSPIDFD, &sock->flags)) {
+>  			/* Copy credentials */
+>  			scm_set_cred(&scm, UNIXCB(skb).pid, UNIXCB(skb).uid, UNIXCB(skb).gid);
+> +			scm.pidfd_flags = UNIXCB(skb).pidfd_flags;
+>  			unix_set_secdata(&scm, skb);
+>  			check_creds = true;
+>  		}
 
