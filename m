@@ -1,107 +1,92 @@
-Return-Path: <linux-kernel+bounces-411922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C72819D013E
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 23:20:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 429049D0140
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 23:38:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6356EB23132
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 22:20:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C79E71F233A5
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 22:38:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88AC31B0F1C;
-	Sat, 16 Nov 2024 22:20:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D503F1946BA;
+	Sat, 16 Nov 2024 22:38:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="YXg7K+7D"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=lichtman.org header.i=@lichtman.org header.b="hhi2VXMq"
+Received: from lichtman.org (lichtman.org [149.28.33.109])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4A0D19004A;
-	Sat, 16 Nov 2024 22:20:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9B1B179BC
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 22:38:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.33.109
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731795627; cv=none; b=MBMNSnIJ0x3P5C5pempr0IZiRts2A0YiXqLhKMRPXdLvd0vuZmdSVed5b1VOzZ6aeoM7DuJTLDIf1skTF8LdWSf5TgKNNreRx0DmrBJhwRGsgCQvUqAfXT3je+Ls6asR28ielnHIyMHSOnzv8P2yGtUpAMheQDYND3Pjf+ifSWQ=
+	t=1731796713; cv=none; b=j+7RnWVwkmEwi57CWl4DM5dZno0v6JdpE8yPiEvdVjnKlE2EJBPqlb/mmXMRAUMiGh8JoQ72jAQZZNJpVN8bbHJKBaQuCgRqhA5dcsTgAHTs9lIPtcLv3DqtI4AgvDYhgPyeYSqR9PKFRd7EaSv3TPIqk0gHxWWOI4mSgEzuKTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731795627; c=relaxed/simple;
-	bh=zG3lsvkchGGddMCV5F5tTsLTAmiTZzRvR7QUvDg8d8k=;
-	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Mic/bQOoNaNjsaYjV+FBNAlX9brL6zmnhtAF2GAiUfjEgE++OxarKZJv7V0wuL9gJaOVuswtTwxu5KiwjTcI6trE6p2eikPNtJAF2bujMxd+iyVpQMlrii/7xVFrV7W4RSNnFGC9D4lLX4SoUQwZiyCvIdJWrFYalnIon7ptJkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=YXg7K+7D; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net B33FC403E5
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1731795616; bh=rnLOFZZDEy+qyRI0xpVNtGzIX3qjRaGSTJ7RXKfL49w=;
-	h=From:To:Subject:In-Reply-To:References:Date:From;
-	b=YXg7K+7Dg2WW9s8rfxbke9ShI3MTXLbJgwgFGQ0ixdkgISr5G6wmLhBLpp4gnnDRl
-	 snWsKiwKEIpdUwQx3j7bQOxFCg9O6nGdYOpRChB4wuHYXwNfd7hFCPIf8GJiJWCU5E
-	 a7ADoN90g4dF0sJ3RGaCZOepnzfbPtrz/qmB7TZmvTwOXYx9EvxXS5wSMXVrvGOTTh
-	 NprtpKcOtYKJlkrgsojbACxTrYsDbHHLpNyqKR+QUZmxLaOodWx0kN6x516Tz6k5TU
-	 z2VNLpsc53uhCPyHbFlAzBJxmCH9qpP65iclUbYVTba+ouCIWOEY/xn257LjhU8KTs
-	 VhUHSQ4i9BHWA==
-Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id B33FC403E5;
-	Sat, 16 Nov 2024 22:20:16 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>, pasha.tatashin@soleen.com,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- cgroups@vger.kernel.org, linux-kselftest@vger.kernel.org,
- akpm@linux-foundation.org, derek.kiernan@amd.com, dragan.cvetic@amd.com,
- arnd@arndb.de, gregkh@linuxfoundation.org, viro@zeniv.linux.org.uk,
- brauner@kernel.org, jack@suse.cz, tj@kernel.org, hannes@cmpxchg.org,
- mhocko@kernel.org, roman.gushchin@linux.dev, shakeel.butt@linux.dev,
- muchun.song@linux.dev, Liam.Howlett@oracle.com,
- lorenzo.stoakes@oracle.com, vbabka@suse.cz, jannh@google.com,
- shuah@kernel.org, vegard.nossum@oracle.com, vattunuru@marvell.com,
- schalla@marvell.com, david@redhat.com, willy@infradead.org,
- osalvador@suse.de, usama.anjum@collabora.com, andrii@kernel.org,
- ryan.roberts@arm.com, peterx@redhat.com, oleg@redhat.com,
- tandersen@netflix.com, rientjes@google.com, gthelen@google.com
-Subject: Re: [RFCv1 4/6] misc/page_detective: Introduce Page Detective
-In-Reply-To: <20241116175922.3265872-5-pasha.tatashin@soleen.com>
-References: <20241116175922.3265872-1-pasha.tatashin@soleen.com>
- <20241116175922.3265872-5-pasha.tatashin@soleen.com>
-Date: Sat, 16 Nov 2024 15:20:15 -0700
-Message-ID: <87cyiukehs.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1731796713; c=relaxed/simple;
+	bh=yMLLHYnoxqdQC1FP9RvK4ZDXdJ419A93fpT/Becp84g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qMnnyTv8Bb1TCHzp651mJ9F6zzpbGL5RJdUxXgr65P5H+EktYv/ShrlxWJ+/48qwLBSjrVi5L2c0ffM6Sv4XMJDSh0Pb4LV0khkzxZoWd1aS9g4WGAQcVY+L5BAdg2fjic7tqI7L1kRbX7MQn1cKfdlClEdJq7anSa316+6g7gs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lichtman.org; spf=pass smtp.mailfrom=lichtman.org; dkim=pass (2048-bit key) header.d=lichtman.org header.i=@lichtman.org header.b=hhi2VXMq; arc=none smtp.client-ip=149.28.33.109
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lichtman.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lichtman.org
+Received: by lichtman.org (Postfix, from userid 1000)
+	id A3261177104; Sat, 16 Nov 2024 22:38:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=lichtman.org; s=mail;
+	t=1731796710; bh=yMLLHYnoxqdQC1FP9RvK4ZDXdJ419A93fpT/Becp84g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hhi2VXMqqcbA8XTtnD5i+biPJSX2i+gpXLHdIgOOS1VTbGv+O879wxxMY37HAiGlx
+	 0s4SymIIZ8Ixp+6CkcEKl/gDnfoqaKbZlAvmmL8u2hFzH9Ehd+QkdN2+tDlcEW1fHe
+	 5SPyOX1UXtdvrsI1gLSzViajpx3RGMVhaQeoLiuAZf0vGzD90KSM66XKV38qBYo6vg
+	 Mxfx9fV5hnyWxQPDCCpLZjvZdC0j2p3OUXfMsC2kylG7h0uOSjuton9j9IYHxtzv8F
+	 QuYW9tSR3rFGqPhtZ/FT7cDeLeVDN3vXDsNefaZ9OwuI282Uc4Hj2TZWaeHe3b/70L
+	 BPXTjgAuzPzBQ==
+Date: Sat, 16 Nov 2024 22:38:30 +0000
+From: Nir Lichtman <nir@lichtman.org>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, ebiederm@xmission.com,
+	kees@kernel.org, brauner@kernel.org, jack@suse.cz,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] exec: make printable macro more concise
+Message-ID: <20241116223830.GA225347@lichtman.org>
+References: <20241116061258.GA216473@lichtman.org>
+ <20241116072804.GA3387508@ZenIV>
+ <CAHk-=wiMEpPZYDeF5ak8FToB_fw7pfjKhuJAcjLpjqMfCvvB7g@mail.gmail.com>
+ <20241116172301.GA222714@lichtman.org>
+ <20241116220602.GE3387508@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241116220602.GE3387508@ZenIV>
 
-Pasha Tatashin <pasha.tatashin@soleen.com> writes:
+On Sat, Nov 16, 2024 at 10:06:02PM +0000, Al Viro wrote:
+> On Sat, Nov 16, 2024 at 05:23:01PM +0000, Nir Lichtman wrote:
+> > On Sat, Nov 16, 2024 at 08:49:39AM -0800, Linus Torvalds wrote:
+> > > On Fri, 15 Nov 2024 at 23:28, Al Viro <viro@zeniv.linux.org.uk> wrote:
+> > > >
+> > > Anyway, a.out support is dead, so I think this code is pure historical
+> > > leftovers and should be removed.
+> > > 
+> > >            Linus
+> > 
+> > Thanks for answering Al and Linus.
+> > Al, continuing forward, to work on a new version of the patch removing the
+> > support for dynamically loading binfmt kernel modules or you'll take it
+> > from here?
+> 
+> Just kill it off, since you are poking in the area anyway...  No point
 
-> Page Detective is a kernel debugging tool that provides detailed
-> information about the usage and mapping of physical memory pages.
->
-> It operates through the Linux debugfs interface, providing access
-> to both virtual and physical address inquiries. The output, presented
-> via kernel log messages (accessible with dmesg), will help
-> administrators and developers understand how specific pages are
-> utilized by the system.
->
-> This tool can be used to investigate various memory-related issues,
-> such as checksum failures during live migration, filesystem journal
-> failures, general segfaults, or other corruptions.
->
-> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
-> ---
->  Documentation/misc-devices/index.rst          |   1 +
->  Documentation/misc-devices/page_detective.rst |  78 ++
+Roger, will send out a new patch shortly.
 
-This seems like a strange place to bury this document - who will look
-for it here?  Even if it is truly implemented as a misc device (I didn't
-look), the documentation would belong either in the admin guide or with
-the MM docs, it seems to me...?
-
-Thanks,
-
-jon
+> coordinating patches, etc. - removal is completely straightforward,
+> with something along the lines of "that was an ancient leftover from
+> a.out-to-ELF transition, left without a single valid use after removal
+> of a.out support; anyone who might find future uses for it (currently
+> there's none) would be better off using binfmt_misc to trigger whatever
+> module loading they might need - would be more flexible that way"
 
