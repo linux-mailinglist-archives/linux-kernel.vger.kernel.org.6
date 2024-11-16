@@ -1,179 +1,87 @@
-Return-Path: <linux-kernel+bounces-411592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D1F69CFC93
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 04:19:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 031299CFC95
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 04:28:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2B9C2844F5
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 03:19:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 894FB1F2420F
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 03:28:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C5DB197A7E;
-	Sat, 16 Nov 2024 03:17:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="DYnHFFyT"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB7D218FDA5;
+	Sat, 16 Nov 2024 03:28:04 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B41F2192D62;
-	Sat, 16 Nov 2024 03:17:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0336033EC
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 03:28:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731727058; cv=none; b=WXaKx3+B/eeBB3d0t+jUKKdfJpaQxf+x/vRXnArdJGhP3Ez9V1s6EpZ2NH3HuMmXBf1sTyO/n2mojlG/k5fw/laz2MitRTIYGYIhctXmJhfPH23KDs1ES9PVLOXvXBa2bVIWNbeEja5waMoe0g6+xrG124T6alUk3U+nlVt/AO0=
+	t=1731727684; cv=none; b=Omi325MHOoxIdgHKKK/jbhXnIGv9T9Z0nWCpcH1IpiixQqkTn4I4iXswszuajHvW8TScmmRW88kzwvo7zPGw9WIRJXkU5yyELhpiKHRdexULJLtDppgI+p5pc05VSt/QUrj8HQOeju9uILNY9QsbJvqpejfU8PLxL00i4ZkGgFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731727058; c=relaxed/simple;
-	bh=lGToSgMvk2B3q7G5z72Kh/gXG/P1Sn99kRVXKZ8U0s8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JWvcTBArjoLGhimWlSuZ1JbStawSLMtTKhnZmo2OQCNaFWqkyhSMYONetwP7mNk9YQ/1M29k185EELTzGPuN8KhqRKlR0m/3C984A3YGMKEx+XELhrHMwnGZi7uqmoxtbL6AsPTUinF2czAJ8DhMsk+sdmjtgT89SHQc6d2y5Ic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=DYnHFFyT; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 51499d1ea3c911efbd192953cf12861f-20241116
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=U+Wa/gu1OcvAO05IVCtNhN7nadBhoIHWhdnKEeo81ds=;
-	b=DYnHFFyT20avBK4E/ZfZc4GZxVQ5wCjtO3OaCD/aIgLDbVYl+jqcU6A4F5QBE0+nKIcgOJCVHNfunJma9TgceEW0+8G+G+D3rn0Nwktm51V7fvgQuDs0PparT6ouaqS30wlxiQ55qPvtPnSAf4arBepqJ5EDyFOMo2XIYj65J5k=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.43,REQID:712aaf14-69a7-401f-97d5-3b0c157b9329,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:ce19b8a,CLOUDID:6dedb85c-f18b-4d56-b49c-93279ee09144,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:81|82|102,TC:nil,Content:0,EDM:-3,IP
-	:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,
-	LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 51499d1ea3c911efbd192953cf12861f-20241116
-Received: from mtkmbs09n1.mediatek.inc [(172.21.101.35)] by mailgw02.mediatek.com
-	(envelope-from <yunfei.dong@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 2003743283; Sat, 16 Nov 2024 11:17:31 +0800
-Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
- mtkmbs11n2.mediatek.inc (172.21.101.187) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Sat, 16 Nov 2024 11:17:30 +0800
-Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
- mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Sat, 16 Nov 2024 11:17:29 +0800
-From: Yunfei Dong <yunfei.dong@mediatek.com>
-To: =?UTF-8?q?N=C3=ADcolas=20F=20=2E=20R=20=2E=20A=20=2E=20Prado?=
-	<nfraprado@collabora.com>, Sebastian Fricke <sebastian.fricke@collabora.com>,
-	Nicolas Dufresne <nicolas.dufresne@collabora.com>, Hans Verkuil
-	<hverkuil-cisco@xs4all.nl>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, Benjamin Gaignard
-	<benjamin.gaignard@collabora.com>, Nathan Hebert <nhebert@chromium.org>,
-	Daniel Almeida <daniel.almeida@collabora.com>
-CC: Hsin-Yi Wang <hsinyi@chromium.org>, Fritz Koenig <frkoenig@chromium.org>,
-	Daniel Vetter <daniel@ffwll.ch>, Steve Cho <stevecho@chromium.org>, Yunfei
- Dong <yunfei.dong@mediatek.com>, <linux-media@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>
-Subject: [PATCH v7 5/5] media: mediatek: vcodec: store current vb2 buffer to decode again
-Date: Sat, 16 Nov 2024 11:17:19 +0800
-Message-ID: <20241116031724.15694-6-yunfei.dong@mediatek.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20241116031724.15694-1-yunfei.dong@mediatek.com>
-References: <20241116031724.15694-1-yunfei.dong@mediatek.com>
+	s=arc-20240116; t=1731727684; c=relaxed/simple;
+	bh=EbXiYr+cU82nnoaNFcqfkYGGHPy+s8xeT6BOKorsFi0=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=oW9wIgbJDILLpqQ19eWIPu5G4hQ9lGBg7mRg46kWvT88LAOIgsyQlQOgnzyT1ND3GejX4Zl8/N748R80iK5pAsK3j9HJGGNXNWY/L1uvZTYMvfqxoj/eS6BLNDcx9jRYxElbwfrfPdqQnLYla/iWW9/lEhKg2znwMKqFB3taWZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a71a9ed154so3770505ab.0
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 19:28:02 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731727682; x=1732332482;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qun1Ml3PfghljKWRPaaiQ4r+b19k0kGl7DSEIQtBt88=;
+        b=tzHtpZSCKU3ZklCK4kqxxaZGXBnZYOfHcIVVwJZY9tkUPc67LnxEie+okDRcWivLJp
+         YvXTThtgyZ71SzmnLdhM1i2+pMaYE9lzwEIMLd9CMO89EzDG37MNa295Sf0pr7UI7Yj1
+         C7kAjy+4sVIYsCLGsZuZduVXHJAGlb1DUN7PXaqv2g/50o55xnFXkGzuKmlCOGl7aVep
+         wggbum4+1H7AbCYj/ZLdelkaQr99ZEY+23U3yKSUWdeYpqSTw2u/7ZJRZwBIsScyLDgb
+         fk9K///2xhVBC8b63ofpl2nxSmlPJsne177Ia2e3OwyvIs3Yxfs5cVNJS7WP3OAgn2IF
+         VOsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW0c6DoLEVSLl6THWI+/2e8D2uTJz7fzBpaT5drFbNoWWP0Ew9WzK6zLCqfCQvzaeddu9RbEmyhbWZPyfA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkR55jhfuPIQs5rbpL3gQdhYTCM3vsHGIFVxYnEScgL+Vr6o4Y
+	rf/QdPNdwSYW5fUk4Vzc1By8hM5N0yEB4RWyM8lez1fMA+vj4B8n7Ugtyf20I7YpJF+CchUAKX8
+	Xt89uuaSlgDf0JT0K5XZnk9ljS9Go904X2oEt8m62m9mjDNb1LyUtt/A=
+X-Google-Smtp-Source: AGHT+IGSCuC15zzCDaSO20SDTElbfF/LaiBjWr9fihytA7ZWK5YGfo6YO3Fh9fwMCW8CtCPip6PzLBs8K+4BWKvsF/MdnecZ0d72
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-MTK: N
+X-Received: by 2002:a05:6e02:3083:b0:3a5:d2a:10e0 with SMTP id
+ e9e14a558f8ab-3a748002e1bmr60439865ab.5.1731727682272; Fri, 15 Nov 2024
+ 19:28:02 -0800 (PST)
+Date: Fri, 15 Nov 2024 19:28:02 -0800
+In-Reply-To: <20241116030012.1036-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67381142.050a0220.57553.0044.GAE@google.com>
+Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in set_powered_sync
+From: syzbot <syzbot+03d6270b6425df1605bf@syzkaller.appspotmail.com>
+To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-All the src vb2 buffer are removed from ready list when STREAMOFF
-capture queue, may remove a non exist vb2 buffer if lat is working
-currently. The driver also need to use current vb2 buffer to decode
-again to wait for enough resource when lat decode error.
+Hello,
 
-Signed-off-by: Yunfei Dong <yunfei.dong@mediatek.com>
----
- .../vcodec/decoder/mtk_vcodec_dec_drv.h       |  2 ++
- .../vcodec/decoder/mtk_vcodec_dec_stateless.c | 29 ++++++++++++++-----
- 2 files changed, 23 insertions(+), 8 deletions(-)
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-diff --git a/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec_drv.h b/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec_drv.h
-index ac568ed14fa2..e70e97e401ba 100644
---- a/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec_drv.h
-+++ b/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec_drv.h
-@@ -155,6 +155,7 @@ struct mtk_vcodec_dec_pdata {
-  * @last_decoded_picinfo: pic information get from latest decode
-  * @empty_flush_buf: a fake size-0 capture buffer that indicates flush. Used
-  *		     for stateful decoder.
-+ * @cur_src_buffer: current vb2 buffer for the latest decode.
-  * @is_flushing: set to true if flushing is in progress.
-  *
-  * @current_codec: current set input codec, in V4L2 pixel format
-@@ -201,6 +202,7 @@ struct mtk_vcodec_dec_ctx {
- 	struct work_struct decode_work;
- 	struct vdec_pic_info last_decoded_picinfo;
- 	struct v4l2_m2m_buffer empty_flush_buf;
-+	struct vb2_v4l2_buffer *cur_src_buffer;
- 	bool is_flushing;
- 
- 	u32 current_codec;
-diff --git a/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec_stateless.c b/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec_stateless.c
-index dd6ee694382e..ad3c585e339d 100644
---- a/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec_stateless.c
-+++ b/drivers/media/platform/mediatek/vcodec/decoder/mtk_vcodec_dec_stateless.c
-@@ -316,7 +316,7 @@ static void mtk_vdec_worker(struct work_struct *work)
- 	struct mtk_vcodec_dec_ctx *ctx =
- 		container_of(work, struct mtk_vcodec_dec_ctx, decode_work);
- 	struct mtk_vcodec_dec_dev *dev = ctx->dev;
--	struct vb2_v4l2_buffer *vb2_v4l2_src;
-+	struct vb2_v4l2_buffer *vb2_v4l2_src = ctx->cur_src_buffer;
- 	struct vb2_buffer *vb2_src;
- 	struct mtk_vcodec_mem *bs_src;
- 	struct mtk_video_dec_buf *dec_buf_src;
-@@ -325,7 +325,7 @@ static void mtk_vdec_worker(struct work_struct *work)
- 	bool res_chg = false;
- 	int ret;
- 
--	vb2_v4l2_src = v4l2_m2m_next_src_buf(ctx->m2m_ctx);
-+	vb2_v4l2_src = vb2_v4l2_src ? vb2_v4l2_src : v4l2_m2m_src_buf_remove(ctx->m2m_ctx);
- 	if (!vb2_v4l2_src) {
- 		v4l2_m2m_job_finish(dev->m2m_dev_dec, ctx->m2m_ctx);
- 		mtk_v4l2_vdec_dbg(1, ctx, "[%d] no available source buffer", ctx->id);
-@@ -375,13 +375,26 @@ static void mtk_vdec_worker(struct work_struct *work)
- 		v4l2_m2m_buf_done_and_job_finish(dev->m2m_dev_dec, ctx->m2m_ctx, state);
- 		v4l2_ctrl_request_complete(src_buf_req, &ctx->ctrl_hdl);
- 		media_request_manual_complete(src_buf_req);
--	} else {
--		if (ret != -EAGAIN) {
--			v4l2_m2m_src_buf_remove(ctx->m2m_ctx);
--			v4l2_m2m_buf_done(vb2_v4l2_src, state);
--		}
--		v4l2_m2m_job_finish(dev->m2m_dev_dec, ctx->m2m_ctx);
-+
-+		return;
- 	}
-+
-+	/*
-+	 * If each codec return -EAGAIN to decode again, need to backup current source
-+	 * buffer, then the driver will get this buffer next time.
-+	 *
-+	 * If each codec decode error, must to set buffer done with error status for
-+	 * this buffer have been removed from ready list.
-+	 */
-+	ctx->cur_src_buffer = (ret != -EAGAIN) ? NULL : vb2_v4l2_src;
-+	if (ret && ret != -EAGAIN) {
-+		v4l2_ctrl_request_complete(src_buf_req, &ctx->ctrl_hdl);
-+		media_request_manual_complete(src_buf_req);
-+	}
-+
-+	if (ret != -EAGAIN)
-+		v4l2_m2m_buf_done(vb2_v4l2_src, state);
-+	v4l2_m2m_job_finish(dev->m2m_dev_dec, ctx->m2m_ctx);
- }
- 
- static void vb2ops_vdec_stateless_buf_queue(struct vb2_buffer *vb)
--- 
-2.46.0
+Reported-by: syzbot+03d6270b6425df1605bf@syzkaller.appspotmail.com
+Tested-by: syzbot+03d6270b6425df1605bf@syzkaller.appspotmail.com
 
+Tested on:
+
+commit:         2d5404ca Linux 6.12-rc7
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git v6.12-rc7
+console output: https://syzkaller.appspot.com/x/log.txt?x=16bed130580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=db2ecab25173dcef
+dashboard link: https://syzkaller.appspot.com/bug?extid=03d6270b6425df1605bf
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=176deb5f980000
+
+Note: testing is done by a robot and is best-effort only.
 
