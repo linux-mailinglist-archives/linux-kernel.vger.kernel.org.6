@@ -1,79 +1,131 @@
-Return-Path: <linux-kernel+bounces-411872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1A149D00A0
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 20:22:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 511779D00A4
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 20:23:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2DD16B23BFD
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 19:22:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 081CA1F23DE6
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 19:23:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C48C3199951;
-	Sat, 16 Nov 2024 19:21:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 054CB1990D6;
+	Sat, 16 Nov 2024 19:23:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VhfQV67V"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="gdRfOcvT"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 313B11990D6
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 19:21:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B999919149F;
+	Sat, 16 Nov 2024 19:23:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731784912; cv=none; b=EzeVmRM+rSgHKinH1+KdJ8GMqodK3V/ACMuAbWu+gS9hWPhZQ+l8lfk9V1S1sl1Ivu6FblalIgqrpeIdIg8xx6Gx1lVGGUaubRjY26E8g0h1KwVMWaNDNPxVWwjixdTIixr+EiRYPV4vCXVCOEHs0tAfXsTGvyk0uyavBBarwig=
+	t=1731784998; cv=none; b=qm0rgR8XxyUhgtPbQ4aHga0FoKzZoBjNB+v3XaPyIGstZcGjv3BQimDyAcmNVZXpHl3zOVDoP3Z1h7G9lD+Ja4btD7LxB+7whU3B6Nd7Wopl/DUL942Lhn7Zmw7220sy1ldBdiAKOVLbvHj/+K6F+QuNbHgGc8qPPgFMtGzlGDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731784912; c=relaxed/simple;
-	bh=mbV4wku0UG04aiRDSJPIwUpvYV2Ki7n5eukpL9UiQsU=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=MCGa2BrdcuiPBpJkPrcAzPYBb7110p124kiNBhfR7EZNHb00qUAvJerBnq10IVgfPV4Aiz/fOYk5g+lSw7QHf4HZfUV/ipaUBNoqdaeVDhv0aZ0Wk2Bx+4s0uBdbECSoudFS/cbMo3m+IbiyyTpi/pP9kg1Dk4ln1YJn+jXC3f4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VhfQV67V; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02CFDC4CED9;
-	Sat, 16 Nov 2024 19:21:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731784912;
-	bh=mbV4wku0UG04aiRDSJPIwUpvYV2Ki7n5eukpL9UiQsU=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=VhfQV67VIdavd9SUDnP7QnUu/DsBTPTaLwOBK/MDkF/+CK9n4+9MEKsL6nLH9z4Ld
-	 ZDexPPYKHygCc1jWlKM09O//PbTGkvWNr82Vhq2l3uMf/s4lmU6lHEPm/6630IrK7m
-	 9A14lV3x8zaoV1c5XGQk2Zclv+dz+Z/q4wg110KPecSNvNVODhtV4bItIEFAybacdS
-	 HyoyJxVsVvAD9EP8h5pWlorw97cvWPlzdJ49IlChb7C4GC35h4QLm4Z5t8UWCX0xLi
-	 Orl6G9C5l/PLp1l4+eXvHQxEhelsFUec6k+KrImvBJdkrkNT0bYlDA6+IYestypRmB
-	 XA64A/e17ecvA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33A0B3809A80;
-	Sat, 16 Nov 2024 19:22:04 +0000 (UTC)
-Subject: Re: [GIT PULL] tracing/ring-buffer: Fixes for the boot mapped buffer
- for v6.12
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20241116085339.4248f843@gandalf.local.home>
-References: <20241116085339.4248f843@gandalf.local.home>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20241116085339.4248f843@gandalf.local.home>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git trace-ringbuffer-v6.12-rc7-2
-X-PR-Tracked-Commit-Id: 09663753bb7c50b33f8e5fa562c20ce275b88237
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: b5a24181e461e8bfa8cdf35e1804679dc1bebcdd
-Message-Id: <173178492269.2978276.9438520204201286560.pr-tracker-bot@kernel.org>
-Date: Sat, 16 Nov 2024 19:22:02 +0000
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+	s=arc-20240116; t=1731784998; c=relaxed/simple;
+	bh=yfX/6TZQ1gd9+8AMgBgNPFETIp1Fe4WBrJJhmJztd/I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P1qN3RWW7epoR+V2Q6vRa2nmYbLa4Pm/nwn/m/4RwJbBeowuxkKm+cjzguqrpl3v6X+URPjXM2bqFzCqSQfLFW0RVHVw+I6bD53UQ5XtyEylRM7VO648RGfoiVQ0X9bOJG80DKuEtAHoniNJMsKqe+VuY8OQUKkWsISE2TEQWs8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=gdRfOcvT; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=dn+2cDfRC1yH4NOcw8ysKYN7T3VzTAsD6jJX6tRQuE0=; b=gdRfOcvTKwxKkLKP+bQtMsvxeP
+	Zcxq1PDSbPRXkd6PvRH478+Xa11lrRN3cdrqac8/EN9m0pGru+9CaGqImJwB9y2vem4kTJ9INuRjQ
+	3BNTlCTAlH6WrvWOK3XO5BHaKsjGnmQlg/tFjALWn9OFuc6IOvE4cK8R+h+z/XuTo7NM=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tCONh-00DXYh-Cb; Sat, 16 Nov 2024 20:22:53 +0100
+Date: Sat, 16 Nov 2024 20:22:53 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Parker Newman <parker@finest.io>
+Cc: Paolo Abeni <pabeni@redhat.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>, netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Parker Newman <pnewman@connecttech.com>
+Subject: Re: [PATCH v1 1/1] net: stmmac: dwmac-tegra: Read iommu stream id
+ from device tree
+Message-ID: <bb52bdc1-df2e-493d-a58f-df3143715150@lunn.ch>
+References: <cover.1731685185.git.pnewman@connecttech.com>
+ <f2a14edb5761d372ec939ccbea4fb8dfd1fdab91.1731685185.git.pnewman@connecttech.com>
+ <ed2ec1c2-65c7-4768-99f1-987e5fa39a54@redhat.com>
+ <20241115135940.5f898781.parker@finest.io>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241115135940.5f898781.parker@finest.io>
 
-The pull request you sent on Sat, 16 Nov 2024 08:53:39 -0500:
+On Fri, Nov 15, 2024 at 01:59:40PM -0500, Parker Newman wrote:
+> On Fri, 15 Nov 2024 18:17:07 +0100
+> Paolo Abeni <pabeni@redhat.com> wrote:
+> 
+> > On 11/15/24 17:31, Parker Newman wrote:
+> > > From: Parker Newman <pnewman@connecttech.com>
+> > >
+> > > Read the iommu stream id from device tree rather than hard coding to mgbe0.
+> > > Fixes kernel panics when using mgbe controllers other than mgbe0.
+> >
+> > It's better to include the full Oops backtrace, possibly decoded.
+> >
+> 
+> Will do, there are many different ones but I can add the most common.
+> 
+> > > Tested with Orin AGX 64GB module on Connect Tech Forge carrier board.
+> >
+> > Since this looks like a fix, you should include a suitable 'Fixes' tag
+> > here, and specify the 'net' target tree in the subj prefix.
+> >
+> 
+> Sorry I missed the "net" tag.
+> 
+> The bug has existed since dwmac-tegra.c was added. I can add a Fixes tag but
+> in the past I was told they aren't needed in that situation?
+> 
+> > > @@ -241,6 +243,12 @@ static int tegra_mgbe_probe(struct platform_device *pdev)
+> > >  	if (IS_ERR(mgbe->xpcs))
+> > >  		return PTR_ERR(mgbe->xpcs);
+> > >
+> > > +	/* get controller's stream id from iommu property in device tree */
+> > > +	if (!tegra_dev_iommu_get_stream_id(mgbe->dev, &mgbe->iommu_sid)) {
+> > > +		dev_err(mgbe->dev, "failed to get iommu stream id\n");
+> > > +		return -EINVAL;
+> > > +	}
+> >
+> > I *think* it would be better to fallback (possibly with a warning or
+> > notice) to the previous default value when the device tree property is
+> > not available, to avoid regressions.
+> >
+> 
+> I debated this as well... In theory the iommu must be setup for the
+> mgbe controller to work anyways. Doing it this way means the worst case is
+> probe() fails and you lose an ethernet port.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git trace-ringbuffer-v6.12-rc7-2
+New DT properties are always optional. Take the example of a board
+only using a single controller. It should happily work. It probably
+does not have this property because it is not needed. Your change is
+likely to cause a regression on such a board.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/b5a24181e461e8bfa8cdf35e1804679dc1bebcdd
+Also, is a binding patch needed?
 
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+	Andrew
 
