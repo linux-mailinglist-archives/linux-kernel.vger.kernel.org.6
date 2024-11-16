@@ -1,45 +1,73 @@
-Return-Path: <linux-kernel+bounces-411595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 891399CFC9A
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 04:39:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AB079CFC9B
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 04:48:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A6091F240C4
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 03:39:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4538A287A3F
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 03:48:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B96518FDBA;
-	Sat, 16 Nov 2024 03:39:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 298D018FDA5;
+	Sat, 16 Nov 2024 03:48:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="LGv67E2y"
-Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Go+EiRM9"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 975CF38382;
-	Sat, 16 Nov 2024 03:39:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AA78624;
+	Sat, 16 Nov 2024 03:48:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731728350; cv=none; b=WwoYwN3YX4y9E5FgBfSJWxUSQKLYMsU2WQj9Tp0elA08Q5JBxXwKjfliG96o1m7QU2VvUL82+io5Rl5Dol8BEqHegYlWOvrhT4F6LrGVdlQLaHBHOVdcss7lsN5F+24lTHD/r1box75rJPwi62P7vxyQ0KxQSVkEKIVsY0JEWds=
+	t=1731728907; cv=none; b=KIc+dFjtkL3MZJoZ+OEY0aMOMGDqwruRAiN6b6JnJfTD3yxX29oJWsaeL7a6Jfxrmp/DHX7Nls0dhf8lyPLJ70NGvjHjYWZ2eMr3NpdFcVctcYQQgFoYl5h71/itDA9XGMQ9GYPW6pZ1yi5Drig2acdJ6yL/PuA+24FRW2plh6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731728350; c=relaxed/simple;
-	bh=2WnIUhF4nF+5eiZ30FfIKwQDl93TFvg/qO/SRgQ2zzo=;
+	s=arc-20240116; t=1731728907; c=relaxed/simple;
+	bh=ieeUuIerkjDDSrkzSFQbSC37Rio0pr9cSn/Dv1ez9hY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dvqQk0E1zmuTYgMT/Hmqf2vIUQs1CjjpopqBTEXKwUQZrV7eeKK/ZuurvMUCQqtwuCOMZTvEeQTXw+ltzFXv0m6FjwfPHE3Ep2jwyDcyZ4T9sG8m5h0+H+r8kPDvYd6JoOTqwIsu7aCHcWWzcshRAOgRhR5nc3vnhwg/z8Js6Kc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=LGv67E2y; arc=none smtp.client-ip=115.124.30.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1731728338; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=YTBNWZgiiFjUFQseifv6NuUHrr3Tj7gRyILW+ozwUiQ=;
-	b=LGv67E2yvjO1N3UKhe2M2nKsbax1XduL7o18pBwlIi1M9tlovJo/de/jijV4eQn+EXF/NSdj2KLOGAcG87iDZrhWbeimlxuk2c7r4eUxUlG8Uu8AVzwK4myjGBCvcKa+ZgCWnWMrT4bFQU3RqczFt2IM2psx2Hv8MBnmEq/nT4g=
-Received: from 192.168.0.104(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WJVOyqZ_1731728336 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Sat, 16 Nov 2024 11:38:57 +0800
-Message-ID: <af72a051-ee53-4050-a1c0-2a657e58cf03@linux.alibaba.com>
-Date: Sat, 16 Nov 2024 11:38:56 +0800
+	 In-Reply-To:Content-Type; b=oF+cHE0UvtTycDmOt4Jp/6nuwDGlWEKvNTL+twmJyOfHJOmWnhkgRnfU7DTpTTC7765UMDTE5KCjTT/lGyH2LYYT+J6MvcjBF0/xKkK5XaMAO6fYQJlPpuYO1kN5HFAu9PfTg6SpQtOPkL4AZPQ4JlnuHY4Gqnlc76OOLEJcTf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Go+EiRM9; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-211f4e2873fso299695ad.1;
+        Fri, 15 Nov 2024 19:48:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731728905; x=1732333705; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1X6feTn5BLY+cIw7COfGlCu+hHK0fLj/DvXKOsWr43Q=;
+        b=Go+EiRM9efCnVu/xF0FCBOwDAkMtvbqvEmIPBY/imJOAGzewDBwNJKyYhYne5mWAEm
+         /+Xda8goaZhOIUi8t9Fom8vDOpYglYvFtZXK7LJTshN+Z1DFdOfJ4sxzQ45VI1B3iMYT
+         GDw77smFnicvUOaDSpQQVTFIo2MgnQEPpcLO5yjo8IMF57DDHGFQebGPmgOlatsuKDVZ
+         oka+2TMTsX9NKi1OvcZVMmetQ8Z/DawhYCHkEYK/4Nrrn9a/7KBF90lxIxWdo+Foy7ij
+         TOghtkOU2N94xi/Qabb4vuCglezQrEJ6OJIPlywPj8Tx+bXJvlIPiuFAMlgO2EgDJNFT
+         1T8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731728905; x=1732333705;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1X6feTn5BLY+cIw7COfGlCu+hHK0fLj/DvXKOsWr43Q=;
+        b=qDnmvG1gn0895aHXKslHPHNsqVenpv19qzpra8apS8XZsXiZjqMyTiYihkp5jlTGRX
+         TeHnErd9FCj26qzBgx9r/d9kQgfoKCaxhRBdd7fVOlWm6zkqN0qEE8lWwZKRcIxyohzG
+         3Lr8xZb4jMt7JlcwObhg9k6+rjhm7Z/T4cJvPor/FxJWFfqyussorQc70BGLb9uf7HsL
+         coxQq4G6rMqDpA2R9WbKluVXogTxBvuqAJzVIWxz+xvT4FqfyQZ5KdLhBtJxGFryDWog
+         cBeSYoqULlYV1VXEGWcb3e9x69IlBI0vzio87peZ++TBO5GidnNynEEJLmfLzrYxVEMC
+         KKZA==
+X-Forwarded-Encrypted: i=1; AJvYcCUhmNxP3QkC6htuVv8cS53EyXtXw3lQ4OcqLAQ7WyrBUIy9oKZtJFnT2k2+YFA/Ekjl3SSQmSW+kIFVxwDEP7c=@vger.kernel.org, AJvYcCXwbQaubKJaajwW1+iMHoDPW3JxrK1Q9yFkY4ggiRLQwWTczr/eFnAug5Me/IobpFfxbQNI5i9O3+oOFRHI@vger.kernel.org
+X-Gm-Message-State: AOJu0YwuXemUVOFwdJ/FC89pxRUCG1hC1+AwQst+1Cut4mmyhxMUpkYn
+	3NQt4VoP9vwsVRFxWrtcLOAGd3A50jZaKF1Xed1S7f9h9iPv/umd
+X-Google-Smtp-Source: AGHT+IH9d/94RHkrpzjOvRPbYXCVTRLcWSFbJw+A7dVUDAf2K54LQ2/ZxefrWJKXczHI1MvZ7RvZJw==
+X-Received: by 2002:a17:902:cf07:b0:20c:e2ff:4a4c with SMTP id d9443c01a7336-211d0d63769mr28579775ad.3.1731728905286;
+        Fri, 15 Nov 2024 19:48:25 -0800 (PST)
+Received: from ?IPV6:2402:e280:214c:86:7694:d274:39d8:8ffa? ([2402:e280:214c:86:7694:d274:39d8:8ffa])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211d0f55cf8sm19813745ad.260.2024.11.15.19.48.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 15 Nov 2024 19:48:24 -0800 (PST)
+Message-ID: <2a5500a5-c1b6-4c5c-bf37-4cfeda5a9e1e@gmail.com>
+Date: Sat, 16 Nov 2024 09:18:21 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,44 +75,68 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: sprd: Remove unused and undocumented
- "constant_charge_voltage_max_microvolt" property
-To: "Rob Herring (Arm)" <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Orson Zhai <orsonzhai@gmail.com>,
- Chunyan Zhang <zhang.lyra@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241115193409.3618257-1-robh@kernel.org>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <20241115193409.3618257-1-robh@kernel.org>
+Subject: Re: [PATCH linux-next] lib/string_choices: Add
+ str_locked_unlocked()/str_unlocked_locked() helper
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Kees Cook <kees@kernel.org>, Andy Shevchenko <andy@kernel.org>,
+ linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Przemek Kitszel <przemyslaw.kitszel@intel.com>
+References: <20241115144616.7453-1-prosunofficial@gmail.com>
+ <CAHp75Vfp++XMr8VGjjFRBpJi+uAk8PRVPxMLmQciedBzS8gedQ@mail.gmail.com>
+ <CAHp75VdD1KYh9KJWHwhxkXy-+jfh_o=Rn05AtL4QBb0HC-oz6g@mail.gmail.com>
+Content-Language: en-US
+From: R Sundar <prosunofficial@gmail.com>
+In-Reply-To: <CAHp75VdD1KYh9KJWHwhxkXy-+jfh_o=Rn05AtL4QBb0HC-oz6g@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-
-
-On 2024/11/16 03:34, Rob Herring (Arm) wrote:
-> Remove "constant_charge_voltage_max_microvolt" property which is both
-> unused in the kernel and undocumented. Most likely they are leftovers
-> from downstream.
-
-Yes. LGTM. Thanks.
-Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
-
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
->   arch/arm64/boot/dts/sprd/sp9860g-1h10.dts | 1 -
->   1 file changed, 1 deletion(-)
+On 16/11/24 01:16, Andy Shevchenko wrote:
+> On Fri, Nov 15, 2024 at 9:44 PM Andy Shevchenko
+> <andy.shevchenko@gmail.com> wrote:
+>> On Fri, Nov 15, 2024 at 4:47 PM R Sundar <prosunofficial@gmail.com> wrote:
 > 
-> diff --git a/arch/arm64/boot/dts/sprd/sp9860g-1h10.dts b/arch/arm64/boot/dts/sprd/sp9860g-1h10.dts
-> index 095b24a31313..e60838695d0e 100644
-> --- a/arch/arm64/boot/dts/sprd/sp9860g-1h10.dts
-> +++ b/arch/arm64/boot/dts/sprd/sp9860g-1h10.dts
-> @@ -71,7 +71,6 @@ bat: battery {
->   		compatible = "simple-battery";
->   		charge-full-design-microamp-hours = <1900000>;
->   		charge-term-current-microamp = <120000>;
-> -		constant_charge_voltage_max_microvolt = <4350000>;
->   		internal-resistance-micro-ohms = <250000>;
->   		ocv-capacity-celsius = <20>;
->   		ocv-capacity-table-0 = <4185000 100>, <4113000 95>, <4066000 90>,
+> ...
+> 
+>>> --- a/include/linux/string_choices.h
+>>> +++ b/include/linux/string_choices.h
+>>> @@ -82,4 +82,10 @@ static inline const char *str_plural(size_t num)
+>>>          return num == 1 ? "" : "s";
+>>>   }
+>>>
+>>> +static inline const char *str_locked_unlocked(bool v)
+>>> +{
+>>> +       return v ? "locked" : "unlocked";
+>>> +}
+>>> +#define str_unlocked_locked(v)         str_locked_unlocked(!(v))
+>>
+>> The rest is sorted (okay, read_write() seems to be misplaced, fix that
+>> in a separate change if you wish), please keep it that way (I believe
+>> it should go before on_off).
+> 
+Hi,
+
+Thanks for the Review and Comments provided.
+
+Please correct me, If I am wrong.
+
+The function name should be in sorted order means,  str_read_write() 
+will go after str_on_off().
+
+For example, the sorted order of function will be like:
+
+str_on_off()
+str_plural()
+str_read_write()
+
+> Oh, I looked in v6.11 code, in v6.12 there are a couple of more
+> misplacements. Can you fix them all, please?
+> 
+Sure, Will sort it and send as seperate patch.
+
+Thanks,
+Sundar
+
+
+
+
 
