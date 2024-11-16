@@ -1,119 +1,144 @@
-Return-Path: <linux-kernel+bounces-411891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEBB49D00C7
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 21:23:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 72DA69D00CC
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 21:28:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5316C1F23700
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 20:23:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB9611F238F6
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 20:28:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECD961953B0;
-	Sat, 16 Nov 2024 20:23:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCA5E199EA8;
+	Sat, 16 Nov 2024 20:27:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="lmoYsacE"
-Received: from forward101a.mail.yandex.net (forward101a.mail.yandex.net [178.154.239.84])
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="QFBDja2Z"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 405D228FF;
-	Sat, 16 Nov 2024 20:23:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5281928FF;
+	Sat, 16 Nov 2024 20:27:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731788618; cv=none; b=t+27V6cO2BL+Ztx/4uqHD8y41rFBQSnNi2cako2wL8aAn+4zZezja6TxBYbw9uPGVeczt2T0urSyPAtvRWPh2YcgdWpJCx+Q3jUqbQVWkv6jZUiBMxB1YUIcQiuZ6/8c3T0/PIIjP6hDU10B9ydnsDMtoAfzHPj6HFpSWZMAsMg=
+	t=1731788877; cv=none; b=Xku0boNb7eQnWf+6fePOCZ2/HEJnI+FOkN4vBNWSTYgVPitrxUc3uZQDlglqxptGl8jeTvK5qBqQdDljhwdArtK2LjbvM9itLAuP9TqL9F0gpGM+RvFIB3GQa+Tg7yvsn6u9YIHiMHq5fw7DPzCHsW44QnieJBUAK1r4R5fe85w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731788618; c=relaxed/simple;
-	bh=Xwt1wgD3GpJFJvVO6W3Kf69DFMrYWLJzBt+Q+zwdm+0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GcloqygU2PFy9vQHKKPlVtEIx40TQr974h5neSMAniztWwMjDrrxdy6/T5FBhqTydF9HNJDKjGkt3L3766Igur+l8Rzym8mXLwObfIA7wi4OteZ/gW0Uw7Zi3yGyQ3WSqt1atlrPIiWeyH5TF7lAUtZKgTWAds2zHtecV5rJqPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=lmoYsacE; arc=none smtp.client-ip=178.154.239.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
-Received: from mail-nwsmtp-smtp-production-main-68.vla.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-68.vla.yp-c.yandex.net [IPv6:2a02:6b8:c1d:3e83:0:640:307a:0])
-	by forward101a.mail.yandex.net (Yandex) with ESMTPS id E5A9860039;
-	Sat, 16 Nov 2024 23:23:24 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-68.vla.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id LNVPeYOOouQ0-0ivAiGht;
-	Sat, 16 Nov 2024 23:23:23 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
-	t=1731788603; bh=O31CYpoIo+My2OpOnR9CiaJUHu/xs78IoYQDtcJ0LqQ=;
-	h=Message-ID:Date:Cc:Subject:To:From;
-	b=lmoYsacE+Sy+VMXQJRteDwFsxIILrj5k8mhabMMexsWuSGk5t3RvuTQaG+FGVmCf5
-	 t6iDNm4u2wRuUHbTCJ/7i2o0Tbe+evaMcaIztP7pnLFFjzH37D93PRfW+nn11MacSG
-	 FTZSdAUWuIqj35xxvfQwNcfkI6oRSABIH/ljeY7A=
-Authentication-Results: mail-nwsmtp-smtp-production-main-68.vla.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
-From: Stas Sergeev <stsp2@yandex.ru>
-To: linux-kernel@vger.kernel.org
-Cc: Stas Sergeev <stsp2@yandex.ru>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Kees Cook <kees@kernel.org>,
-	Kuniyuki Iwashima <kuniyu@amazon.com>,
-	netdev@vger.kernel.org
-Subject: [PATCH net] scm: fix negative fds with SO_PASSPIDFD
-Date: Sat, 16 Nov 2024 23:23:05 +0300
-Message-ID: <20241116202306.937322-1-stsp2@yandex.ru>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1731788877; c=relaxed/simple;
+	bh=3W/vNeG99abzvcR9K+Bx5HhwVrlB/e7Cu6Zw6Ux/ASo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=s0p7Juwd6Kq9a7laJDyPn/IPy4oTwhrWftE8oCTcUTzjtU600cR0bh2vYDYpr58rwRsmnQT9y6/57abAV/K4DFP2tG7Dk2EYP2nx7xzaVc2LHR5YRnTt2aoLoOGkOpx1Lf7TBM98AudPw6NDFlYooBhNehYzl0hY8wQSxRm+N7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=QFBDja2Z; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=RZGy7qwsxGBnmfUQ6rUk5NOMwmA4dhgXmcF2ln4UgfM=; b=QFBDja2ZNto8VLe0W1q+K002OR
+	Yd5ZPiMmrhG2zziVo/PwybtfJpC7EAhpME6MhFdb7A8BpPCpaR8iz7lqEUTE4fhnPr58R9M0rscNg
+	EGIdwh2pyBgMnFeBDwdN+dvdXGnApEZpma9EVNRpLi7fmzCnV2Adf1OJZrDrn9qo2LuPA7vPV9Tww
+	QWiyVY6UGw08JrQqn8WZFyLZlaL8/UX1uEzmwvcTpjZtBwXpnZp7q4oRTec7Qk10nSFej3ezHWl0k
+	uKIZT0FUHyR+BG4UhkLHhuffLohA8LjW0Pdor+2t62R/r019WAUw0acti6nCyH/Ldqd8lxhbYKxEB
+	wju13Wrw==;
+Date: Sat, 16 Nov 2024 21:27:34 +0100
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Tony Lindgren <tony@atomide.com>
+Cc: Roger Quadros <rogerq@kernel.org>, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, hns@goldelico.com, linux-omap@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ aaro.koskinen@iki.fi, khilman@baylibre.com, stable@vger.kernel.org
+Subject: Re: [PATCH] ARM: dts: ti/omap: gta04: fix pm issues caused by spi
+ module
+Message-ID: <20241116212734.30f5d35b@akair>
+In-Reply-To: <20241111234604.66a9691b@akair>
+References: <20241107225100.1803943-1-andreas@kemnade.info>
+	<b26c1fa8-b3b7-4aa9-bc78-793ddfa3bc6b@kernel.org>
+	<20241108184118.5ee8114c@akair>
+	<20241111150953.GA23206@atomide.com>
+	<20241111193117.5a5f5ecb@akair>
+	<20241111234604.66a9691b@akair>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-pidfd_prepare() can return negative values as an error codes.
-But scm_pidfd_recv() didn't check for that condition.
-As the result, it is possible to create the race that leads to
-the negative fds. The race happens if the peer process sends
-something to SO_PASSPIDFD-enabled recipient, and quickly exits.
-pidfd_prepare() has this code:
+Am Mon, 11 Nov 2024 23:46:04 +0100
+schrieb Andreas Kemnade <andreas@kemnade.info>:
 
-    if (!pid || !pid_has_task(pid, thread ? PIDTYPE_PID : PIDTYPE_TGID))
-            return -EINVAL;
+> Am Mon, 11 Nov 2024 19:31:17 +0100
+> schrieb Andreas Kemnade <andreas@kemnade.info>:
+> 
+> > Am Mon, 11 Nov 2024 17:09:53 +0200
+> > schrieb Tony Lindgren <tony@atomide.com>:
+> >   
+> > > * Andreas Kemnade <andreas@kemnade.info> [241108 17:41]:    
+> > > > They are not used, if they are just disabled, kernel does not touch
+> > > > them, so if it is there, the kernel can handle
+> > > > pm. At least as long as it is not under ti,sysc.
+> > > > 
+> > > > There are probably cleaner solutions for this, but for a CC: stable I
+> > > > would prefer something less invasive.      
+> > > 
+> > > For unused devices, it's best to configure things to use ti-sysc, and
+> > > then set status disabled (or reserved) for the child devices only. This
+> > > way the parent interconnect target module is PM runtime managed by
+> > > Linux, and it's power domain gets properly idled for the unused devices
+> > > too.
+> > >     
+> > Hmm, we also have omap_hwmod_setup_all() which is still called if
+> > without device nodes being available.
+> > 
+> > Converting mcspi to ti-sysc is more than 100 lines. So it does not
+> > qualify for stable.
+> >   
+> > > > I can try a ti-sysc based fix in parallel.      
+> > > 
+> > > Yeah that should be trivial hopefully :)
+> > >     
+> > I played around, got pm issues too, tried to force-enable things (via
+> > power/control),
+> > watched CM_IDLEST1_CORE and CM_FCLKEN1_CORE, they behave. Bits are set
+> > or reset.
+> > 
+> > but not CM_IDLEST_CKGEN, it is 0x209 instead of 0x1.
+> > 
+> > I test from initramfs, so no mmc activity involved
+> > 
+> > removing status = "disabled" from mcspi3 solves things.
+> > With and without ti-sysc conversion. removing status = "disabled" from
+> > mcspi4 seems not to help.
+> > 
+> > That all cannot be... I will retry tomorrow.
+> >   
+> well, I tried a bit further:
+> I build the omap spi driver as module.
+> and booted With mcspi3 not disabled and no module autoload.
+> 
+> without module loaded: pm bad, same as with mcspi3 disabled
+> with module loaded: core pm ok
+> with module loaded and unloaded: core pm ok.
+> 
+> so at least a trace.
+> 
+ok, I am a bit further.
+mcspi is per default in slave mode, setting it to master solves issues.
+And that happens when the driver is probed because its default is
+master.
+Having the pins muxed as mode 7 also helps or selecting a pulldown for
+cs. (cs is active high per default!)
+switching to pullup does not harm once the spi module is off, but having
+active cs seems to prevent idling despite CM_IDLEST1_CORE
+not showing it.
 
-So if you exit quickly enough, you can hit that EINVAL.
-Getting the fd=-22 is very weird, if not exploitable.
+History: u-boot muxes McSPI3, because it can be available on an
+optionally fitted pin header. But there is no user known (would need
+a dtb overlay anyways). So I will rather mux to mode 7.
 
-This patch adds the missing check and sets MSG_CTRUNC on error.
-Recipient can now detect an error by checking this flag.
-
-Signed-off-by: Stas Sergeev <stsp2@yandex.ru>
-
-CC: "David S. Miller" <davem@davemloft.net>
-CC: Eric Dumazet <edumazet@google.com>
-CC: Jakub Kicinski <kuba@kernel.org>
-CC: Paolo Abeni <pabeni@redhat.com>
-CC: Simon Horman <horms@kernel.org>
-CC: Christian Brauner <brauner@kernel.org>
-CC: Kees Cook <kees@kernel.org>
-CC: Kuniyuki Iwashima <kuniyu@amazon.com>
-CC: netdev@vger.kernel.org
-CC: linux-kernel@vger.kernel.org
----
- include/net/scm.h | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/include/net/scm.h b/include/net/scm.h
-index 0d35c7c77a74..3ccf8546c506 100644
---- a/include/net/scm.h
-+++ b/include/net/scm.h
-@@ -155,6 +155,10 @@ static __inline__ void scm_pidfd_recv(struct msghdr *msg, struct scm_cookie *scm
- 		return;
- 
- 	pidfd = pidfd_prepare(scm->pid, 0, &pidfd_file);
-+	if (pidfd < 0) {
-+		msg->msg_flags |= MSG_CTRUNC;
-+		return;
-+	}
- 
- 	if (put_cmsg(msg, SOL_SOCKET, SCM_PIDFD, sizeof(int), &pidfd)) {
- 		if (pidfd_file) {
--- 
-2.47.0
-
+Regards,
+Andreas
 
