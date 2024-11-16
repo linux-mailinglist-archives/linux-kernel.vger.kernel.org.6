@@ -1,184 +1,236 @@
-Return-Path: <linux-kernel+bounces-411859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16E3B9D0080
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 19:32:37 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BD549D0083
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 19:37:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6112285547
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 18:32:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 68449B24A2F
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 18:37:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1A23192590;
-	Sat, 16 Nov 2024 18:32:28 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D52EB192D67;
+	Sat, 16 Nov 2024 18:37:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UrQ6FJYG"
+Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B89248F6E
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 18:32:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DEF0A47
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 18:37:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731781948; cv=none; b=Fxvmg/3NfLXgEYr7Qal3YNuZYBpGZ9CZmhvxyYN7Q8yB3yAK+TMB6jpst4hXBR8M7mGT/7UgsqraLebd0eef2ap8oASD9YArp6gJ2D1ZFaq9/tZwYr0sPi1glP32HmkZs+Bo4W10tnZfViqbZanLJy0voGwdS+6rgdDEE0/zS8M=
+	t=1731782267; cv=none; b=qqrbQtJFI9AQIYSfP3yYFcQwRC7JSuZ+6YiCd6isegI3FxKlP8hglmqFoFbv7tL6PY0rANpPP95+xFrmmLmpiDpX4yLBawLVDIGtTncURtZ7p4EAFTB96/n9Lix36XeVV/iFYDE4goP4k38tdv8ZyUz2IIxlYySgruPgu9ULkkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731781948; c=relaxed/simple;
-	bh=mlB0+thn19nCuu7bVxLlqBKuRmMSG4g4oTMX2iUi41s=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=S9ZABlTNusqh2yAyvJ6DvGDiRsGPakR5Pvi4clmQ8a8OAh7f1IircyUC94qSSTFCvQCqnW27OIa+znjJt+Kil2ACaS8U20TcLofzM6MhGJPB1UA9pf/WCU0xyIVeqVgdFwkraR7N/Dm9RlljjuSN4nbfFQVHEK/nX6Oz/UtnxAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-83aaedba7b5so55354139f.0
-        for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 10:32:26 -0800 (PST)
+	s=arc-20240116; t=1731782267; c=relaxed/simple;
+	bh=EuVvZndbJbLCbkw/jVWTOrqaNxG+iFovwa0e+HK6+zY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hfgGTheYK7a0MKfuyegNwmZZY13dKF57Zbm2YpI+TJ/bZvW8gQP4c1fcl+phoelNEl2MrHLIHxaxoPydl1QHlXfGIErcF4PrRKi7Az55sFGDWT8c1JBeiadPSdW2/QjbPFUurXiJlCuoZY+975shkqUdROtxu2oGA4YtQs+Bdg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UrQ6FJYG; arc=none smtp.client-ip=209.85.166.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3a761c7c496so2835ab.0
+        for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 10:37:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1731782265; x=1732387065; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ct7dWEryvMDfH1sRvyaI/rpEKv5TjVF/tJVlscy8fBM=;
+        b=UrQ6FJYGgRToACPJ6w0SQ1BQ6YGfFNplAmLP0uzBM68nt3Lp6cI/NbixWCNZsi2Eep
+         Jv6jrP+RYGqZpy0s6luDy9fjut6y09y9b88htSuzKnPAvau01avwzBGfj4Fco9TU5Riq
+         BAsu8G1cieYOPQAwZ/pfZ35uzcZB5wbQ1ubSCTbUHHYlinEyhRaBGAOHHZLY+6ewxqk6
+         cBlLWlFmXSXd5ASxmkMHwndwKmPZUCVyA2svsaXil4wrFYPHnzIS8M6rJsoSq61fNZj2
+         o4xdmeVNGNa6dtFlWpJA4o7LEYscjIaMiCDUAV9ZBO/ta42K+5Q4H/D3P71AaIlaH22M
+         bWEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731781946; x=1732386746;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xfePePTsXYhBX39P9elCNwfVWb5sKbJgwAbl39C7W5Q=;
-        b=qmM6svAXyPBjA+tg0tLXXCXiK6yQ77GpKW1+6Hjj6j8f7NpNN7bt4PnSvmI3w8fxNR
-         h89uLWq7GLx2uDkJ+guV1OvxcyuJOvPuzh6tZ/QiADDZaUADPkDMNeV95u++bmCP90kZ
-         vV7firNkrpIfZzdTpSzpkN/EoSmFV1VaY1MykZc3l8WHHKD5zJB8jqNn9hEMT3SB5gnU
-         CYSybpmEKVwFn7yoAzGt/maEDWcXjxCUkO67uHkgnJ3H6ieuaA/VG1MHW7xn0GAzYJN3
-         cKr3C0GyxK7ep6gWlk0togdWhxZrGLsV6ZwOcFORIir35e3GAIHQ5SGyb1J7Mf41/I24
-         0mXw==
-X-Forwarded-Encrypted: i=1; AJvYcCWL9SBpI6wMNtv1o0n3791FfVL7bcojGFJ/04RimhzPFpcrq4iW/+uZfAaA+QMyPUo3jtsrdZvlLQqTdEo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYPbMrW9CRmPvFIkZRUpZAuQN9mwJuEO2t79zongRGFKX0Ed/3
-	bTvXTlPxz/N1baAC3X+NJn4lkGci2DxJnZTSX/xP1dGHaTVBwm1RwtPwEuxYMRpHYqRjuIXQVpH
-	KX7Xs5Q8TfBJMtG73fr52/0ZGWbe2r+P+7PdHZC5rCQuSw/6Le9dIYsI=
-X-Google-Smtp-Source: AGHT+IH5zsJbo7kUAodC0qUZi4w5wICKVzNYKcoIEvFzES9l/os3tvmiytos6O8rUa0AZi+fkVAsQWqx5o0NxU5XOvi+07IUEkxY
+        d=1e100.net; s=20230601; t=1731782265; x=1732387065;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ct7dWEryvMDfH1sRvyaI/rpEKv5TjVF/tJVlscy8fBM=;
+        b=hQPKVhsGt1nUaL9iNp/pMEQLh83e76Dw7J55ODBUpk+RipyXlWAyvTHveCbVusvfCC
+         kxg0D7divF5Trd5uxyBF426x7oaDWkRausl4ps64/OL+wIkSTizWXQG0cj7iIyJt3HUA
+         7QU/dHXQuFWY0Chxq3rx/AKhCtL/7yYtl5tyKrASLQVgZg6KrcKpE9oeRjj9kUZPJdCv
+         4i85aLEXFnKQ8ZdK63q4TTmfENXBjMAA6MBwSMF3BdyePdsocQ9IwL+vRjCOXDvVIzk9
+         t3VyD/a6HK3/iUUK5qHe+7ew9WtMfS4OoIkOrDJ62e0nzss246eWVbJmhjVuY2iR9R5s
+         tfDg==
+X-Forwarded-Encrypted: i=1; AJvYcCWjcgl+FG/rxHr7slmxb1YuIWNBPN1l9K6QhUTcNB31a6gIS1fBSHK+l7AxJ6FFF6Vdv4uJ4IrJ1LmxWX4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHYnCd5bUh9ZX+VM9EbykW2NjGk8gwmgVKslJfN2lI7IBFV8bx
+	0ONxVoOxCxn4dB10nW9hRSMGuWACsFfc1BprA1RZPh9RE6cQrNGKC0jxN9F2I8Xc0bw7K+is4Mv
+	qaoSh3L+ZjbEBSoSAzQVEViq+8cQs9Szpb4ds
+X-Gm-Gg: ASbGncspxqq93sB9OkjqWz1mtqA5jrXT8IBq2+uIKI3za+Px1ChofRNqMmmCsivKPvB
+	CCVZ9U54Q6iIVHs4yrOHm9jaUAsWKHpUF
+X-Google-Smtp-Source: AGHT+IFaZTQ5zPAocYt8kqY+sKAsQpnFpg4ANEp9NJJsjwgwEVw/Id0rLAsqpRi6pgxDSGeB1E51/3JmCjaS+FESOdw=
+X-Received: by 2002:a05:6e02:b4c:b0:3a6:f215:c5aa with SMTP id
+ e9e14a558f8ab-3a750c61f8emr2428345ab.14.1731782264632; Sat, 16 Nov 2024
+ 10:37:44 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:b43:b0:3a7:1b96:220f with SMTP id
- e9e14a558f8ab-3a7480417e3mr59740755ab.9.1731781945870; Sat, 16 Nov 2024
- 10:32:25 -0800 (PST)
-Date: Sat, 16 Nov 2024 10:32:25 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6738e539.050a0220.e1c64.0002.GAE@google.com>
-Subject: [syzbot] [net?] WARNING in sk_skb_reason_drop
-From: syzbot <syzbot+52fbd90f020788ec7709@syzkaller.appspotmail.com>
-To: davem@davemloft.net, dongml2@chinatelecom.cn, dsahern@kernel.org, 
-	edumazet@google.com, horms@kernel.org, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, menglong8.dong@gmail.com, 
-	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+References: <20241116155850.113129-1-linux@treblig.org>
+In-Reply-To: <20241116155850.113129-1-linux@treblig.org>
+From: Ian Rogers <irogers@google.com>
+Date: Sat, 16 Nov 2024 10:37:32 -0800
+Message-ID: <CAP-5=fXqig=qHAa26d5-8pHPCtS0ZyCNs4FJGr4c4BSjFe+-eg@mail.gmail.com>
+Subject: Re: [PATCH] perf util: Remove kernel version deadcode
+To: linux@treblig.org
+Cc: namhyung@kernel.org, peterz@infradead.org, mingo@redhat.com, 
+	acme@kernel.org, mark.rutland@arm.com, alexander.shishkin@linux.intel.com, 
+	jolsa@kernel.org, adrian.hunter@intel.com, kan.liang@linux.intel.com, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Sat, Nov 16, 2024 at 7:58=E2=80=AFAM <linux@treblig.org> wrote:
+>
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+>
+> fetch_kernel_version() has been unused since Ian's 2013
+> commit 3d6dfae88917 ("perf parse-events: Remove BPF event support")
+>
+> Remove it, and it's helpers.
+> I noticed there are a bunch of kernel-version macros that are also
+> unused nearby.
+> Also remove them.
+>
+> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
 
-syzbot found the following issue on:
+Reviewed-by: Ian Rogers <irogers@google.com>
 
-HEAD commit:    a58f00ed24b8 net: sched: cls_api: improve the error messag..
-git tree:       net-next
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=140a735f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=47cb6c16bf912470
-dashboard link: https://syzkaller.appspot.com/bug?extid=52fbd90f020788ec7709
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=132804c0580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14f481a7980000
+Thanks,
+Ian
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/d28dcea68102/disk-a58f00ed.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/8ec032ea06c6/vmlinux-a58f00ed.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/da9b8f80c783/bzImage-a58f00ed.xz
-
-The issue was bisected to:
-
-commit 82d9983ebeb871cb5abd27c12a950c14c68772e1
-Author: Menglong Dong <menglong8.dong@gmail.com>
-Date:   Thu Nov 7 12:55:58 2024 +0000
-
-    net: ip: make ip_route_input_noref() return drop reasons
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=10ae41a7980000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=12ae41a7980000
-console output: https://syzkaller.appspot.com/x/log.txt?x=14ae41a7980000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+52fbd90f020788ec7709@syzkaller.appspotmail.com
-Fixes: 82d9983ebeb8 ("net: ip: make ip_route_input_noref() return drop reasons")
-
-netlink: 'syz-executor371': attribute type 4 has an invalid length.
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 5842 at net/core/skbuff.c:1219 __sk_skb_reason_drop net/core/skbuff.c:1216 [inline]
-WARNING: CPU: 0 PID: 5842 at net/core/skbuff.c:1219 sk_skb_reason_drop+0x87/0x380 net/core/skbuff.c:1241
-Modules linked in:
-CPU: 0 UID: 0 PID: 5842 Comm: syz-executor371 Not tainted 6.12.0-rc6-syzkaller-01362-ga58f00ed24b8 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
-RIP: 0010:__sk_skb_reason_drop net/core/skbuff.c:1216 [inline]
-RIP: 0010:sk_skb_reason_drop+0x87/0x380 net/core/skbuff.c:1241
-Code: 00 00 00 fc ff df 41 8d 9e 00 00 fc ff bf 01 00 fc ff 89 de e8 ea 9f 08 f8 81 fb 00 00 fc ff 77 3a 4c 89 e5 e8 9a 9b 08 f8 90 <0f> 0b 90 eb 5e bf 01 00 00 00 89 ee e8 c8 9f 08 f8 85 ed 0f 8e 49
-RSP: 0018:ffffc90003d57078 EFLAGS: 00010293
-RAX: ffffffff898c3ec6 RBX: 00000000fffbffea RCX: ffff8880347a5a00
-RDX: 0000000000000000 RSI: 00000000fffbffea RDI: 00000000fffc0001
-RBP: dffffc0000000000 R08: ffffffff898c3eb6 R09: 1ffff110023eb7d4
-R10: dffffc0000000000 R11: ffffed10023eb7d5 R12: dffffc0000000000
-R13: ffff888011f5bdc0 R14: 00000000ffffffea R15: 0000000000000000
-FS:  000055557d41e380(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000056519d31d608 CR3: 000000007854e000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- kfree_skb_reason include/linux/skbuff.h:1263 [inline]
- ip_rcv_finish_core+0xfde/0x1b50 net/ipv4/ip_input.c:424
- ip_list_rcv_finish net/ipv4/ip_input.c:610 [inline]
- ip_sublist_rcv+0x3b1/0xab0 net/ipv4/ip_input.c:636
- ip_list_rcv+0x42b/0x480 net/ipv4/ip_input.c:670
- __netif_receive_skb_list_ptype net/core/dev.c:5715 [inline]
- __netif_receive_skb_list_core+0x94e/0x980 net/core/dev.c:5762
- __netif_receive_skb_list net/core/dev.c:5814 [inline]
- netif_receive_skb_list_internal+0xa51/0xe30 net/core/dev.c:5905
- netif_receive_skb_list+0x55/0x4b0 net/core/dev.c:5957
- xdp_recv_frames net/bpf/test_run.c:280 [inline]
- xdp_test_run_batch net/bpf/test_run.c:361 [inline]
- bpf_test_run_xdp_live+0x1b5e/0x21b0 net/bpf/test_run.c:390
- bpf_prog_test_run_xdp+0x805/0x11e0 net/bpf/test_run.c:1318
- bpf_prog_test_run+0x2e4/0x360 kernel/bpf/syscall.c:4266
- __sys_bpf+0x48d/0x810 kernel/bpf/syscall.c:5671
- __do_sys_bpf kernel/bpf/syscall.c:5760 [inline]
- __se_sys_bpf kernel/bpf/syscall.c:5758 [inline]
- __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:5758
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f18af25a8e9
-Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffee4090af8 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f18af25a8e9
-RDX: 0000000000000048 RSI: 0000000020000600 RDI: 000000000000000a
-RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+> ---
+>  tools/perf/util/util.c | 85 ------------------------------------------
+>  tools/perf/util/util.h |  8 ----
+>  2 files changed, 93 deletions(-)
+>
+> diff --git a/tools/perf/util/util.c b/tools/perf/util/util.c
+> index 9d55a13787ce..855aac5150a0 100644
+> --- a/tools/perf/util/util.c
+> +++ b/tools/perf/util/util.c
+> @@ -336,91 +336,6 @@ bool perf_event_paranoid_check(int max_level)
+>         return perf_event_paranoid() <=3D max_level;
+>  }
+>
+> -static int
+> -fetch_ubuntu_kernel_version(unsigned int *puint)
+> -{
+> -       ssize_t len;
+> -       size_t line_len =3D 0;
+> -       char *ptr, *line =3D NULL;
+> -       int version, patchlevel, sublevel, err;
+> -       FILE *vsig;
+> -
+> -       if (!puint)
+> -               return 0;
+> -
+> -       vsig =3D fopen("/proc/version_signature", "r");
+> -       if (!vsig) {
+> -               pr_debug("Open /proc/version_signature failed: %s\n",
+> -                        strerror(errno));
+> -               return -1;
+> -       }
+> -
+> -       len =3D getline(&line, &line_len, vsig);
+> -       fclose(vsig);
+> -       err =3D -1;
+> -       if (len <=3D 0) {
+> -               pr_debug("Reading from /proc/version_signature failed: %s=
+\n",
+> -                        strerror(errno));
+> -               goto errout;
+> -       }
+> -
+> -       ptr =3D strrchr(line, ' ');
+> -       if (!ptr) {
+> -               pr_debug("Parsing /proc/version_signature failed: %s\n", =
+line);
+> -               goto errout;
+> -       }
+> -
+> -       err =3D sscanf(ptr + 1, "%d.%d.%d",
+> -                    &version, &patchlevel, &sublevel);
+> -       if (err !=3D 3) {
+> -               pr_debug("Unable to get kernel version from /proc/version=
+_signature '%s'\n",
+> -                        line);
+> -               goto errout;
+> -       }
+> -
+> -       *puint =3D (version << 16) + (patchlevel << 8) + sublevel;
+> -       err =3D 0;
+> -errout:
+> -       free(line);
+> -       return err;
+> -}
+> -
+> -int
+> -fetch_kernel_version(unsigned int *puint, char *str,
+> -                    size_t str_size)
+> -{
+> -       struct utsname utsname;
+> -       int version, patchlevel, sublevel, err;
+> -       bool int_ver_ready =3D false;
+> -
+> -       if (access("/proc/version_signature", R_OK) =3D=3D 0)
+> -               if (!fetch_ubuntu_kernel_version(puint))
+> -                       int_ver_ready =3D true;
+> -
+> -       if (uname(&utsname))
+> -               return -1;
+> -
+> -       if (str && str_size) {
+> -               strncpy(str, utsname.release, str_size);
+> -               str[str_size - 1] =3D '\0';
+> -       }
+> -
+> -       if (!puint || int_ver_ready)
+> -               return 0;
+> -
+> -       err =3D sscanf(utsname.release, "%d.%d.%d",
+> -                    &version, &patchlevel, &sublevel);
+> -
+> -       if (err !=3D 3) {
+> -               pr_debug("Unable to get kernel version from uname '%s'\n"=
+,
+> -                        utsname.release);
+> -               return -1;
+> -       }
+> -
+> -       *puint =3D (version << 16) + (patchlevel << 8) + sublevel;
+> -       return 0;
+> -}
+> -
+>  int perf_tip(char **strp, const char *dirpath)
+>  {
+>         struct strlist *tips;
+> diff --git a/tools/perf/util/util.h b/tools/perf/util/util.h
+> index 9966c21aaf04..b5e7becfc803 100644
+> --- a/tools/perf/util/util.h
+> +++ b/tools/perf/util/util.h
+> @@ -43,14 +43,6 @@ int sysctl__max_stack(void);
+>
+>  bool sysctl__nmi_watchdog_enabled(void);
+>
+> -int fetch_kernel_version(unsigned int *puint,
+> -                        char *str, size_t str_sz);
+> -#define KVER_VERSION(x)                (((x) >> 16) & 0xff)
+> -#define KVER_PATCHLEVEL(x)     (((x) >> 8) & 0xff)
+> -#define KVER_SUBLEVEL(x)       ((x) & 0xff)
+> -#define KVER_FMT       "%d.%d.%d"
+> -#define KVER_PARAM(x)  KVER_VERSION(x), KVER_PATCHLEVEL(x), KVER_SUBLEVE=
+L(x)
+> -
+>  int perf_tip(char **strp, const char *dirpath);
+>
+>  #ifndef HAVE_SCHED_GETCPU_SUPPORT
+> --
+> 2.47.0
+>
 
