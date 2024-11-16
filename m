@@ -1,84 +1,163 @@
-Return-Path: <linux-kernel+bounces-411812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E716B9CFFE4
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 17:37:53 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B2109CFFC7
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 17:07:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACE1C286BB3
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 16:37:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B04CB258A9
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 16:07:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2038518785B;
-	Sat, 16 Nov 2024 16:37:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A21171885BD;
+	Sat, 16 Nov 2024 16:07:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b="PyTVcIuG"
-Received: from kylie.crudebyte.com (kylie.crudebyte.com [5.189.157.229])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="V6wL8vj2"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7350F9CB
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 16:37:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.189.157.229
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8470E372;
+	Sat, 16 Nov 2024 16:07:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731775066; cv=none; b=sqI0qPewbqLXRMcODxlhnjbCOkAt74u/BgTyIy+jKwDYZ/LE4c9avEgSg1783YGdlgu2xOOuoJHVrzQ6UliTl8MumMw/kwakEUtkYycWA1plnFMOG1SrQy4HucrqHEFNPuaK9PLrhXCmrbSjIl1/qgI4o10i8Yuc43uIQmBKMoI=
+	t=1731773246; cv=none; b=sX4jQJrXuE9IF9U09r/BbHh/xE9OuIhcPSU4csI0RIY8q4Q99jceH5XJogkBWPwD7/WsgaFgYnHd6vsw6y5DLmt0ZIHDP9GvHGW5ccOy141wElDBgm0k/FOU4WGic9dfLEA6cfZGEQqyl6ylNJXR1GbdjJKXCeUaNu9yKH5Jsg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731775066; c=relaxed/simple;
-	bh=fGRcLgTdAEn87VdKiChEPOpSyV2TeNOcjHVwbHLtHXM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LyqpkDIX58V3OriH7qgqxkUShPaNKOf7czc+cCO31RzwZgnnYgIH7ZUN+N9+pq50+31L3Rel2DDcRSkFSxx/ZXmtTxX2br8xP6NhpT++6BlcEaPcdLgLC/AYfrly0TG59zYl2RFDq+RisToVN1zAmZkTPAreEv3QyLrVlliAAlo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com; spf=pass smtp.mailfrom=crudebyte.com; dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b=PyTVcIuG; arc=none smtp.client-ip=5.189.157.229
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crudebyte.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=crudebyte.com; s=kylie; h=Content-Type:Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
-	Content-ID:Content-Description;
-	bh=cpNm5dh0wytspX2vkDrBMvEUs3Vr1KnmEy3dyDTmaig=; b=PyTVcIuGH++Ou3695qVpd9C4xK
-	qSELpqV59tB+bZtExb4/N0DX21Xo8C8GxNWz45Pqf5KeVjwwt5lbRWcIpvPhaoYVYiqwHMRhQo41S
-	IcYflDrd45dEagojBCqrb2/GftNNvcpfJMKZqouSEXNUe+MJ4nd31zWMmO7+f/4Jv4rS0qyIdWdCz
-	zhuhoYi9srVLFSCeAq9elYM6SovzgSvAbXumJvC1Mv75FfGD+wCpMjpWVTfLNlGyACkJBLsS6LbU4
-	jjI+asSzYubStIoJHniBaP5nZJlS7NRpwtmMQFI+J/GmsJwVdtWcMUCSoKVGQXP7RbLk2QEAwnz75
-	L7hZVRXrI9jaRYUTH2d+GkW1CSHWkqYlHJI0gP1ijNsnE3cPWxT84jVVS+pZLNR3cVLb0VEDr4NVp
-	eP9HRx24xWvdiIUZX+LtSc+W/V5VCAKfEBNoyD3I7QO0PirnQFYC9Rvu/j5lvicJcQSS5eBejzEc8
-	4ysXBUnE2xeo6rWgvsgDRYBF9n+emOn5/HaGJmfD4xR5dLq5dykuIWbunutK0Qrp9wJrWly1RJHRW
-	l6YYGT1jBqL7KBmGcj4Ge3dyw4GW3o86hoUfslKQbY5uk8st3XXGUjwasxBw1QNeGgfsKwEjhYKxX
-	qkrMxDCU5bmEEkM99uZ9zn/J4Ov5NKjXcToqne4FQ=;
-From: Christian Schoenebeck <linux_oss@crudebyte.com>
-To: ericvh@kernel.org, lucho@ionkov.net, asmadeus@codewreck.org,
- Rex Nie <rexnie3@gmail.com>, Colin Ian King <colin.i.king@gmail.com>
-Cc: linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] 9p/fs: Different branch return the same value
-Date: Sat, 16 Nov 2024 17:06:17 +0100
-Message-ID: <2715835.jR4hUPQygh@silver>
-In-Reply-To: <20241116152612.2423-1-rexnie3@gmail.com>
-References: <20241116152612.2423-1-rexnie3@gmail.com>
+	s=arc-20240116; t=1731773246; c=relaxed/simple;
+	bh=wylaWJR0acGeGX1yBxFH8MsEVHJG/4q3VPC3lfDnhZs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=RmVwvy8liviCPNJ33sP9vqCrKP7voxZM+QygjTS9BjTDxgL1R88ZBB7nwCZS/S2/D7wMcOnnS39D0zgayqKOLAQd8qmAza4vbbeAQz96GMoFfiDtzgyWxs6ALs7W44JtlUqbI1wFJcHRtjaVSJLKjiPzwOmqeyQ74tkx22VSJD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=V6wL8vj2; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AGBtLRe019812;
+	Sat, 16 Nov 2024 16:07:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	tKkHBgtzTghGd8itEi931CamhAt3K0AyD3r7RftjAF8=; b=V6wL8vj2eYMZS6zE
+	NEYIo2xVa77vDwPXZy101yhCaczSnBpHBH7TNLSIG3P3IrDvE9ySDk/BdBMa0+lH
+	GZqnuO65zdD89/z7CgfJa6EiI+Vkr179JqvCKVqUpqJ35fH7mkpF3QnafeC5kG0W
+	C/6GqJiz7PwYukqI6fRQWOr9ROPmua4AZGvcU9qA3nzFazBwYbvwSCMZe57u3j7B
+	3iKbk0bwg6J8hXXh1pml55Lmm15rcSknWrARFzV6GvNS2NS7nmIpEknfcLfw6Jgx
+	w6nujRf+EhcgCXolexGG/dACy5xs2RmGogE1um5TqfBMaTFvR60loHKgUJSkNRLa
+	4NAwiA==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42xmp78x7n-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 16 Nov 2024 16:07:11 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AGG7Bwc021345
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 16 Nov 2024 16:07:11 GMT
+Received: from [10.253.8.97] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sat, 16 Nov
+ 2024 08:07:08 -0800
+Message-ID: <a3725b96-4811-4ecb-bad1-1e859b730423@quicinc.com>
+Date: Sun, 17 Nov 2024 00:07:05 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Bluetooth: qca: Support downloading board id specific NVM
+ for WCN6855
+To: Johan Hovold <johan@kernel.org>
+CC: Marcel Holtmann <marcel@holtmann.org>,
+        Luiz Augusto von Dentz
+	<luiz.dentz@gmail.com>,
+        Zijun Hu <zijun_hu@icloud.com>, <linux-bluetooth@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        "Bjorn
+ Andersson" <bjorande@quicinc.com>,
+        "Aiqun Yu (Maria)"
+	<quic_aiquny@quicinc.com>,
+        Cheng Jiang <quic_chejiang@quicinc.com>,
+        "Jens
+ Glathe" <jens.glathe@oldschoolsolutions.biz>,
+        Steev Klimaszewski
+	<steev@kali.org>
+References: <20241113-x13s_wcn6855_fix-v1-1-15af0aa2549c@quicinc.com>
+ <Zzcb-Yqvs3Mn2PxC@hovoldconsulting.com>
+Content-Language: en-US
+From: quic_zijuhu <quic_zijuhu@quicinc.com>
+In-Reply-To: <Zzcb-Yqvs3Mn2PxC@hovoldconsulting.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: KhxicFVQsuq_ZILsTAvteWiFI_RPy5fk
+X-Proofpoint-GUID: KhxicFVQsuq_ZILsTAvteWiFI_RPy5fk
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ priorityscore=1501 suspectscore=0 adultscore=0 mlxlogscore=999
+ phishscore=0 bulkscore=0 lowpriorityscore=0 impostorscore=0 mlxscore=0
+ malwarescore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411160139
 
-On Saturday, November 16, 2024 4:26:12 PM CET Rex Nie wrote:
-> The same code is executed when the condition ret < 0 is true or false.
-> Remove the if branch and just return v9fs_init_inode_cache(). This
-> does not change the semantics of the original code.
+On 11/15/2024 6:01 PM, Johan Hovold wrote:
+> On Wed, Nov 13, 2024 at 10:26:56PM -0800, Zijun Hu wrote:
+>> Download board id specific NVM instead of default for WCN6855 if board
+>> id is available, and that is required by Lenovo ThinkPad X13s.
+>>
+>> Cc: Bjorn Andersson <bjorande@quicinc.com>
+>> Cc: Aiqun Yu (Maria) <quic_aiquny@quicinc.com>
+>> Cc: Cheng Jiang <quic_chejiang@quicinc.com>
+>> Cc: Johan Hovold <johan@kernel.org>
+>> Cc: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+>> Cc: Steev Klimaszewski <steev@kali.org>
+>> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
 > 
-> Signed-off-by: Rex Nie <rexnie3@gmail.com>
-> ---
->  fs/9p/v9fs.c | 7 +------
->  1 file changed, 1 insertion(+), 6 deletions(-)
+> This works like a charm on my X13s which has the GF variant.
+> 
+> Unlike with the "default" NVM file, the range is excellent with the
+> board-specific file now pushed to linux-firmware (similar to what I see
+> when using the Windows driver NVM file). Specifically, the range with
+> the headphones I use for testing increases from about two meters to 20 m
+> (around a bend).
+> 
+> Even if these NVM files didn't make it into the November release of
+> linux-firmware and therefore won't make it into the distros for another
+> month, I think we should mark this one as a fix and backport it to
+> stable as soon as possible.
+> 
+> Zijun, could you amend the commit message with some details about why
+> this needs to be fixed and backported (e.g. refer to my range example
+> above)?
+> 
 
-Too late to the party: :)
+will do it within v2 as you suggest.
 
-https://lore.kernel.org/all/20241107095756.10261-1-colin.i.king@gmail.com/
+> Fixes: 095327fede00 ("Bluetooth: hci_qca: Add support for QTI Bluetooth chip wcn6855")
+> Cc: stable@vger.kernel.org	# 6.4
+> 
+> It's possible to add a comment after the stable tag to delay backporting
+> until the next linux-firmware release, but in this case it may be better
+> to break existing setups and force people to update to the correct radio
+> calibration data.
+> 
 
-But thanks!
+i would like to temporarily add fallback logic within v2, then i will
+help to backport it ASAP without breaking existing setups even if the
+current default NVM are not for WCN6855.
 
-/Christian
+> Either way:
+> 
+> Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
+> Tested-by: Johan Hovold <johan+linaro@kernel.org>
 
+thank you johan for verification and suggestion.
+(^^)(^^)
+
+> 
+> Johan
 
 
