@@ -1,132 +1,239 @@
-Return-Path: <linux-kernel+bounces-411563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12B419CFBFA
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 02:27:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 881BF9CFBFD
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 02:28:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 39A6BB26A39
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 01:27:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A07E28781B
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 01:28:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE95418FDA5;
-	Sat, 16 Nov 2024 01:27:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AC1818FDDF;
+	Sat, 16 Nov 2024 01:28:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="YWKHeP7h"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="TpdXh1eE"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 351C918E351
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 01:27:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E2D6802;
+	Sat, 16 Nov 2024 01:28:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731720450; cv=none; b=uiX0Bfc6O4QKDVqeYjfkp8+uUBOw1J0A1v89/fKtOPJN0nOr8Zfnebs3Ru6Vh/FbaTFOLRRhuR0hQZrwb1IgUZu1Hi1mTvl19/D/zcgSc9Sjsqazd1yIF7yiOR/j7FyY/rA3ZJl5qq4m87n7vMC7akr0f2obuGnlA0Tel0BbRyM=
+	t=1731720521; cv=none; b=NaTVNDzsjFW2tgrAVaC9xt74nITtJNaH9sR4tszq1LjfWLKZAkInRX8a14ClJYAMzEJ0jLXmEgozEyNRe/KvNCgzyN45UXsVlFJimXq2oSbSB8MYnkFZGTmkAmvYD8ZyDCYCzr8dgPjfVJMZ3Gbx8lSONg3FdWRLdVWcI7aNEkE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731720450; c=relaxed/simple;
-	bh=bOA4nUo7mfQQkw3JoxTcyaN1uMUcu+dalgd7RW7X650=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hp8dUZfUSKDtM9arXGjR642W0KYQcS0nKHnXNtp4Y81r7nbUJOM3TMdzAmgUI1FNiUPtdgfl44DctsCDeFL9NWpKmu5sLVv39b5aHuX6VF9hvw3zCbe9dzC7q+DwyaavUAeaqrrVdxBrTZ+HkonIXdyv2KXlkzhY63RrlEd3ClM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=YWKHeP7h; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5ceb03aadb1so1641835a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 17:27:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1731720446; x=1732325246; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=CVYMo6RE4YtZC72bkP/PJmu2mQS4HXZjPFfcPWBRsOU=;
-        b=YWKHeP7huL/jMWBHDiy9rije2tZVAfTIsbOi7ThQHUkzMKydjUYBfK7e6vTRadyGO5
-         5YX2T3WgUiXG62SZSsNM+JGLrS1jnt4tsmOWriBWiRl2aHN1/KUqsKzqho7sBVWzSg4u
-         O9eHrKcz/kh151+M14U0iDB2t3dhr6pG20a5c=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731720446; x=1732325246;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CVYMo6RE4YtZC72bkP/PJmu2mQS4HXZjPFfcPWBRsOU=;
-        b=ibuQUaKbLlq60YRuPcfwsp+RHkgiDUwGZ030G3Jb8bmAkq582hDDSkUZSlba1UbqZ4
-         QUQsm73S7IoCvRdjb2w8EX4e6S1sYLIwvXqQYqNPgsOnUa7FgPROAKJcG8rpUqK7EcDP
-         pwt/34UFioRQDNgTnqqAEoZpazycYmmeuYerJY5Eke0uWC25Fag72gXKkXojtO/nllpE
-         HH9Q/bQdTGimrI+Vc03qLXmXVuIaCTsPk4jHpbec7xWr1X0Pn4214mgo+ZKhsA19uYoT
-         Qw2pzY1RWCqtBECM7ENtYQXY4RUYl77Mm+FkG37rDQpXK9GnKYjO34j6f+tzIr1CYZZG
-         GzfA==
-X-Forwarded-Encrypted: i=1; AJvYcCXK/3sj5+TPFbzxAWRo3qt4z4ebSIfzdiAkkiIWZIsxNStkuLoQwuYXStDK2uRZZIXl8a+BRRTqnLyMwvg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzyAWg+4vzm6a///Ss4pUB+dLs8YOagRC8n5nmQXuA6JweARY8q
-	mID1jbk5vvj+1JzYtV7sQRiWENjvtFFVGdD1FBK3vPAH2eUckA8oSMCX6EHb/uMm3UDPZUccVWD
-	0TbI=
-X-Google-Smtp-Source: AGHT+IHd4Dyq7BgEUche4Gz+glQqU44dJxyFP172QYNSlsGfdIo8oEqij5lDNS1/CHdk1NkshVpAgA==
-X-Received: by 2002:a05:6402:1d50:b0:5c9:7dd9:3eda with SMTP id 4fb4d7f45d1cf-5cf8fc163ecmr3616282a12.5.1731720446408;
-        Fri, 15 Nov 2024 17:27:26 -0800 (PST)
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com. [209.85.218.43])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cf79bb329bsm2161057a12.38.2024.11.15.17.27.23
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Nov 2024 17:27:23 -0800 (PST)
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a9e44654ae3so201218666b.1
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 17:27:23 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUP/UOxuOrefZ6VZAIFz/W+COOrFdy2sZq/3dhLJb/yMs90oSeUyW24h++7X+C/3hD26/+5BVeHW3rFj84=@vger.kernel.org
-X-Received: by 2002:a17:907:7f8a:b0:a9a:e91:68c5 with SMTP id
- a640c23a62f3a-aa483454536mr357189766b.33.1731720442701; Fri, 15 Nov 2024
- 17:27:22 -0800 (PST)
+	s=arc-20240116; t=1731720521; c=relaxed/simple;
+	bh=dV3gE/Fce2fEyDTyKSUD8M4cTij8y1YTIeT44VzlWn4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Rk+ijHWCHcOBHZjQUCP6qq7V2bOn5DoD1H+MQnUqeAELp/i8ZgJT2VEgPvlVuHE+5zuxg1gT1jZPkFDyoWilvyHq9BLzMotN51MBh3TSilzBxSNREp0KMybXx2J+AqjpplHQJRcPpMqfzKJeOxq24cu/AEKwFGJFFUn19ROVoMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=TpdXh1eE; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=0P3tBtXNpyEwEzMGSGyCB4PLtgx+5VH11spzu16y6tU=; b=TpdXh1eEobegRTQr
+	QYeBT//gbrcjPUmBZWLhhB+pS2AYN52qclAj3XdzNuUa0oY51pSSvsh0l1Z6JqyIGadOwYXuGwzpx
+	vcN2x61NBkBmRCyeQwrqvg6l2FnRED7cgtBWBhbpsNt+xeNqI8XBAbcpPgW238uqQZEpd4u6hj69R
+	qHA1efOYKyCEb1gdrBfY3nGs0yWqP6oFyu+GmjxKaip48eUxwDBGRC8P8zObxIbvM3nuUAQmaQXlF
+	VRMc2TLqnHS12simcTtrLsNjkhMFWbyF1HCu0yuI8p9gYZ8BnRt/HhkkQouYPMxHuMzs38crk734j
+	wvYVlpiMaUJ3zUgwFg==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1tC7bx-000Fd6-2k;
+	Sat, 16 Nov 2024 01:28:29 +0000
+From: linux@treblig.org
+To: s.nawrocki@samsung.com,
+	mchehab@kernel.org,
+	krzk@kernel.org,
+	alim.akhtar@samsung.com
+Cc: linux-media@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH] media: platform: exynos4-is: Remove unused fimc_is_param_strerr
+Date: Sat, 16 Nov 2024 01:28:28 +0000
+Message-ID: <20241116012828.359002-1-linux@treblig.org>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1730166635.git.jpoimboe@kernel.org> <82cbb9983fef5ecf6f1cb33661e977172d40a7e6.1730166635.git.jpoimboe@kernel.org>
- <20241029032735.pw3bg64bpneqnfhk@treble.attlocal.net> <76bb85ceeb854e3ab68d87f846515306@AcuMS.aculab.com>
- <20241115230653.hfvzyf3aqqntgp63@jpoimboe>
-In-Reply-To: <20241115230653.hfvzyf3aqqntgp63@jpoimboe>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Fri, 15 Nov 2024 17:27:06 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wgLCzEwa=S4hZFGeOPjix-1_fDrsqR-QLaBcDM-fgkvhw@mail.gmail.com>
-Message-ID: <CAHk-=wgLCzEwa=S4hZFGeOPjix-1_fDrsqR-QLaBcDM-fgkvhw@mail.gmail.com>
-Subject: Re: [PATCH v3 2/6] x86/uaccess: Avoid barrier_nospec() in 64-bit __get_user()
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: David Laight <David.Laight@aculab.com>, "x86@kernel.org" <x86@kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Borislav Petkov <bp@alien8.de>, Peter Zijlstra <peterz@infradead.org>, 
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, Waiman Long <longman@redhat.com>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Ingo Molnar <mingo@redhat.com>, 
-	Michael Ellerman <mpe@ellerman.id.au>, 
-	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, Andrew Cooper <andrew.cooper3@citrix.com>, 
-	Mark Rutland <mark.rutland@arm.com>, "Kirill A . Shutemov" <kirill@shutemov.name>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Fri, 15 Nov 2024 at 15:06, Josh Poimboeuf <jpoimboe@kernel.org> wrote:
->
-> It's sad that __get_user() is now slower than get_user() on x86, it kind
-> of defeats the whole point!
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-Well, honestly, we've been trying to get away from __get_user() and
-__put_user() for a long long time.
+fimc_is_param_strerr() was added in 2013 by
+commit 9a761e436843 ("[media] exynos4-is: Add Exynos4x12 FIMC-IS driver")
+but has never been called.
 
-With CLAC/STAC, it's been probably a decade or two since __get_user()
-and friends were actually a worthwhile optimization, so let's just
-strive to get rid of the ones that matter.
+Remove it.
 
-So I think the thing to do is
+(The other possibility might be to add a call maybe in fimc-is-param ?)
 
- (a) find out which __get_user() it is that matters so much for that load
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+---
+ .../samsung/exynos4-is/fimc-is-errno.c        | 131 ------------------
+ .../samsung/exynos4-is/fimc-is-errno.h        |   1 -
+ 2 files changed, 132 deletions(-)
 
-Do you have a profile somewhere?
+diff --git a/drivers/media/platform/samsung/exynos4-is/fimc-is-errno.c b/drivers/media/platform/samsung/exynos4-is/fimc-is-errno.c
+index 7a48fad1df16..ac67a04e5eeb 100644
+--- a/drivers/media/platform/samsung/exynos4-is/fimc-is-errno.c
++++ b/drivers/media/platform/samsung/exynos4-is/fimc-is-errno.c
+@@ -12,137 +12,6 @@
+ 
+ #include "fimc-is-errno.h"
+ 
+-const char *fimc_is_param_strerr(unsigned int error)
+-{
+-	switch (error) {
+-	case ERROR_COMMON_CMD:
+-		return "ERROR_COMMON_CMD: Invalid Command";
+-	case ERROR_COMMON_PARAMETER:
+-		return "ERROR_COMMON_PARAMETER: Invalid Parameter";
+-	case ERROR_COMMON_SETFILE_LOAD:
+-		return "ERROR_COMMON_SETFILE_LOAD: Illegal Setfile Loading";
+-	case ERROR_COMMON_SETFILE_ADJUST:
+-		return "ERROR_COMMON_SETFILE_ADJUST: Setfile isn't adjusted";
+-	case ERROR_COMMON_SETFILE_INDEX:
+-		return "ERROR_COMMON_SETFILE_INDEX: Invalid setfile index";
+-	case ERROR_COMMON_INPUT_PATH:
+-		return "ERROR_COMMON_INPUT_PATH: Input path can be changed in ready state";
+-	case ERROR_COMMON_INPUT_INIT:
+-		return "ERROR_COMMON_INPUT_INIT: IP can not start if input path is not set";
+-	case ERROR_COMMON_OUTPUT_PATH:
+-		return "ERROR_COMMON_OUTPUT_PATH: Output path can be changed in ready state (stop)";
+-	case ERROR_COMMON_OUTPUT_INIT:
+-		return "ERROR_COMMON_OUTPUT_INIT: IP can not start if output path is not set";
+-	case ERROR_CONTROL_BYPASS:
+-		return "ERROR_CONTROL_BYPASS";
+-	case ERROR_OTF_INPUT_FORMAT:
+-		return "ERROR_OTF_INPUT_FORMAT: Invalid format  (DRC: YUV444, FD: YUV444, 422, 420)";
+-	case ERROR_OTF_INPUT_WIDTH:
+-		return "ERROR_OTF_INPUT_WIDTH: Invalid width (DRC: 128~8192, FD: 32~8190)";
+-	case ERROR_OTF_INPUT_HEIGHT:
+-		return "ERROR_OTF_INPUT_HEIGHT: Invalid bit-width (DRC: 8~12bits, FD: 8bit)";
+-	case ERROR_OTF_INPUT_BIT_WIDTH:
+-		return "ERROR_OTF_INPUT_BIT_WIDTH: Invalid bit-width (DRC: 8~12bits, FD: 8bit)";
+-	case ERROR_DMA_INPUT_WIDTH:
+-		return "ERROR_DMA_INPUT_WIDTH: Invalid width (DRC: 128~8192, FD: 32~8190)";
+-	case ERROR_DMA_INPUT_HEIGHT:
+-		return "ERROR_DMA_INPUT_HEIGHT: Invalid height (DRC: 64~8192, FD: 16~8190)";
+-	case ERROR_DMA_INPUT_FORMAT:
+-		return "ERROR_DMA_INPUT_FORMAT: Invalid format (DRC: YUV444 or YUV422, FD: YUV444,422,420)";
+-	case ERROR_DMA_INPUT_BIT_WIDTH:
+-		return "ERROR_DMA_INPUT_BIT_WIDTH: Invalid bit-width (DRC: 8~12bits, FD: 8bit)";
+-	case ERROR_DMA_INPUT_ORDER:
+-		return "ERROR_DMA_INPUT_ORDER: Invalid order(DRC: YYCbCr,YCbYCr,FD:NO,YYCbCr,YCbYCr,CbCr,CrCb)";
+-	case ERROR_DMA_INPUT_PLANE:
+-		return "ERROR_DMA_INPUT_PLANE: Invalid plane (DRC: 3, FD: 1, 2, 3)";
+-	case ERROR_OTF_OUTPUT_WIDTH:
+-		return "ERROR_OTF_OUTPUT_WIDTH: Invalid width (DRC: 128~8192)";
+-	case ERROR_OTF_OUTPUT_HEIGHT:
+-		return "ERROR_OTF_OUTPUT_HEIGHT: Invalid height (DRC: 64~8192)";
+-	case ERROR_OTF_OUTPUT_FORMAT:
+-		return "ERROR_OTF_OUTPUT_FORMAT: Invalid format (DRC: YUV444)";
+-	case ERROR_OTF_OUTPUT_BIT_WIDTH:
+-		return "ERROR_OTF_OUTPUT_BIT_WIDTH: Invalid bit-width (DRC: 8~12bits, FD: 8bit)";
+-	case ERROR_DMA_OUTPUT_WIDTH:
+-		return "ERROR_DMA_OUTPUT_WIDTH";
+-	case ERROR_DMA_OUTPUT_HEIGHT:
+-		return "ERROR_DMA_OUTPUT_HEIGHT";
+-	case ERROR_DMA_OUTPUT_FORMAT:
+-		return "ERROR_DMA_OUTPUT_FORMAT";
+-	case ERROR_DMA_OUTPUT_BIT_WIDTH:
+-		return "ERROR_DMA_OUTPUT_BIT_WIDTH";
+-	case ERROR_DMA_OUTPUT_PLANE:
+-		return "ERROR_DMA_OUTPUT_PLANE";
+-	case ERROR_DMA_OUTPUT_ORDER:
+-		return "ERROR_DMA_OUTPUT_ORDER";
+-
+-	/* Sensor Error(100~199) */
+-	case ERROR_SENSOR_I2C_FAIL:
+-		return "ERROR_SENSOR_I2C_FAIL";
+-	case ERROR_SENSOR_INVALID_FRAMERATE:
+-		return "ERROR_SENSOR_INVALID_FRAMERATE";
+-	case ERROR_SENSOR_INVALID_EXPOSURETIME:
+-		return "ERROR_SENSOR_INVALID_EXPOSURETIME";
+-	case ERROR_SENSOR_INVALID_SIZE:
+-		return "ERROR_SENSOR_INVALID_SIZE";
+-	case ERROR_SENSOR_INVALID_SETTING:
+-		return "ERROR_SENSOR_INVALID_SETTING";
+-	case ERROR_SENSOR_ACTUATOR_INIT_FAIL:
+-		return "ERROR_SENSOR_ACTUATOR_INIT_FAIL";
+-	case ERROR_SENSOR_INVALID_AF_POS:
+-		return "ERROR_SENSOR_INVALID_AF_POS";
+-	case ERROR_SENSOR_UNSUPPORT_FUNC:
+-		return "ERROR_SENSOR_UNSUPPORT_FUNC";
+-	case ERROR_SENSOR_UNSUPPORT_PERI:
+-		return "ERROR_SENSOR_UNSUPPORT_PERI";
+-	case ERROR_SENSOR_UNSUPPORT_AF:
+-		return "ERROR_SENSOR_UNSUPPORT_AF";
+-
+-	/* ISP Error (200~299) */
+-	case ERROR_ISP_AF_BUSY:
+-		return "ERROR_ISP_AF_BUSY";
+-	case ERROR_ISP_AF_INVALID_COMMAND:
+-		return "ERROR_ISP_AF_INVALID_COMMAND";
+-	case ERROR_ISP_AF_INVALID_MODE:
+-		return "ERROR_ISP_AF_INVALID_MODE";
+-
+-	/* DRC Error (300~399) */
+-	/* FD Error  (400~499) */
+-	case ERROR_FD_CONFIG_MAX_NUMBER_STATE:
+-		return "ERROR_FD_CONFIG_MAX_NUMBER_STATE";
+-	case ERROR_FD_CONFIG_MAX_NUMBER_INVALID:
+-		return "ERROR_FD_CONFIG_MAX_NUMBER_INVALID";
+-	case ERROR_FD_CONFIG_YAW_ANGLE_STATE:
+-		return "ERROR_FD_CONFIG_YAW_ANGLE_STATE";
+-	case ERROR_FD_CONFIG_YAW_ANGLE_INVALID:
+-		return "ERROR_FD_CONFIG_YAW_ANGLE_INVALID\n";
+-	case ERROR_FD_CONFIG_ROLL_ANGLE_STATE:
+-		return "ERROR_FD_CONFIG_ROLL_ANGLE_STATE";
+-	case ERROR_FD_CONFIG_ROLL_ANGLE_INVALID:
+-		return "ERROR_FD_CONFIG_ROLL_ANGLE_INVALID";
+-	case ERROR_FD_CONFIG_SMILE_MODE_INVALID:
+-		return "ERROR_FD_CONFIG_SMILE_MODE_INVALID";
+-	case ERROR_FD_CONFIG_BLINK_MODE_INVALID:
+-		return "ERROR_FD_CONFIG_BLINK_MODE_INVALID";
+-	case ERROR_FD_CONFIG_EYES_DETECT_INVALID:
+-		return "ERROR_FD_CONFIG_EYES_DETECT_INVALID";
+-	case ERROR_FD_CONFIG_MOUTH_DETECT_INVALID:
+-		return "ERROR_FD_CONFIG_MOUTH_DETECT_INVALID";
+-	case ERROR_FD_CONFIG_ORIENTATION_STATE:
+-		return "ERROR_FD_CONFIG_ORIENTATION_STATE";
+-	case ERROR_FD_CONFIG_ORIENTATION_INVALID:
+-		return "ERROR_FD_CONFIG_ORIENTATION_INVALID";
+-	case ERROR_FD_CONFIG_ORIENTATION_VALUE_INVALID:
+-		return "ERROR_FD_CONFIG_ORIENTATION_VALUE_INVALID";
+-	case ERROR_FD_RESULT:
+-		return "ERROR_FD_RESULT";
+-	case ERROR_FD_MODE:
+-		return "ERROR_FD_MODE";
+-	default:
+-		return "Unknown";
+-	}
+-}
+-
+ const char *fimc_is_strerr(unsigned int error)
+ {
+ 	error &= ~IS_ERROR_TIME_OUT_FLAG;
+diff --git a/drivers/media/platform/samsung/exynos4-is/fimc-is-errno.h b/drivers/media/platform/samsung/exynos4-is/fimc-is-errno.h
+index 809e117331c0..fa8204ffec7b 100644
+--- a/drivers/media/platform/samsung/exynos4-is/fimc-is-errno.h
++++ b/drivers/media/platform/samsung/exynos4-is/fimc-is-errno.h
+@@ -240,6 +240,5 @@ enum fimc_is_error {
+ };
+ 
+ const char *fimc_is_strerr(unsigned int error);
+-const char *fimc_is_param_strerr(unsigned int error);
+ 
+ #endif /* FIMC_IS_ERR_H_ */
+-- 
+2.47.0
 
- (b) convert them to use "unsafe_get_user()", with that whole
-
-                if (can_do_masked_user_access())
-                        from = masked_user_access_begin(from);
-                else if (!user_read_access_begin(from, sizeof(*from)))
-                        return -EFAULT;
-
-     sequence before it.
-
-And if it's just a single __get_user() (rather than a sequence of
-them), just convert it to get_user().
-
-Hmm?
-
-                Linus
 
