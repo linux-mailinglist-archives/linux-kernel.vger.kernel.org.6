@@ -1,86 +1,95 @@
-Return-Path: <linux-kernel+bounces-411669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F12D99CFD9A
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 10:42:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FD259CFDA8
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 10:52:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 829BEB289A2
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 09:42:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AB641F2586F
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 09:52:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78D79194A52;
-	Sat, 16 Nov 2024 09:42:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C60F194C6E;
+	Sat, 16 Nov 2024 09:51:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="J2KXX/Su"
-Received: from xry111.site (xry111.site [89.208.246.23])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="q5NABSZw"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 718A7191F7C
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 09:42:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79DE4191F67;
+	Sat, 16 Nov 2024 09:51:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731750134; cv=none; b=jes+BuRRteapwFVfN+9hwaDm8k2m7TZL/qjrayl864lC68RToAtZlvHFerutMQGiZbSdmpeRppYjelL0seZtugFVTj9gmMEhNYrNv9D8TuC94s8VbG/tvWKqUEUvLRrrNJN4aVt7AOu9tNIrydWHmPD54X68tcqFD2iyNcfq89E=
+	t=1731750718; cv=none; b=Odl3CSSnf59YJIVlFNXtPL/7EprCaZWoZS5aK+F1WNiZZxfhT63bjslNhPHipcDJTFD4PAFGmbjKr4TRs0EpHckkq3f7TYHZfND0/p/BmtZO3MrwkW7NJTpLcTXsVap3cNksOM7V5SaOiLbELXPK1nwU+nMkhbXcuQuqu5rEsR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731750134; c=relaxed/simple;
-	bh=U9emRweIjDuCq5Hej5AucUk8uRA06S0B+7MpUGrg5qY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=oYFMwQ29ipAeYp7d8zk6uXw0fYNfuDpTv0tRYZfzOGLFY8d0b7pn0IdLc0njHbto1uPON5tKrDImD7ppLgXqDUwY9knFUwmIuV9/l3lWADiXRPDLJ8hixVs7H9Z7APWs3uE6xGrxe1lYntm+oU1b9npIeMLTWxVtDZ8TEhZt0jk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=J2KXX/Su; arc=none smtp.client-ip=89.208.246.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xry111.site;
-	s=default; t=1731750127;
-	bh=6Yr3v8h2TldfiCcRyReOQGJPZNnddjXSKjFgGcIyKP8=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=J2KXX/SuxtCkozOltk8pyFMZIPW8v6gjTXxskXui5BZL4pooA3xpBeg2DRtSe4Eji
-	 4bVTdh6R+RO+fB01qsqbd5WIJqB4Scw7nND4rkZ9ZF5DeLcvkJvcXv833vANEYsmN1
-	 sl2ICJ3VxsWrfSD7SeBppusvX1XaSNUBWia40JVc=
-Received: from [192.168.124.9] (unknown [113.200.174.68])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature ECDSA (secp384r1) server-digest SHA384)
-	(Client did not present a certificate)
-	(Authenticated sender: xry111@xry111.site)
-	by xry111.site (Postfix) with ESMTPSA id CA72D1A3F68;
-	Sat, 16 Nov 2024 04:42:05 -0500 (EST)
-Message-ID: <0509da76bd3be0d4c7ff433da854ae74cd367d5b.camel@xry111.site>
-Subject: Re: [PATCH] soc: loongson: add Loongson Security Module driver
-From: Xi Ruoyao <xry111@xry111.site>
-To: Qunqin Zhao <zhaoqunqin@loongson.cn>, arnd@arndb.de, olof@lixom.net
-Cc: soc@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	loongarch@lists.linux.dev
-Date: Sat, 16 Nov 2024 17:42:02 +0800
-In-Reply-To: <20241116085729.12651-1-zhaoqunqin@loongson.cn>
-References: <20241116085729.12651-1-zhaoqunqin@loongson.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.1 
+	s=arc-20240116; t=1731750718; c=relaxed/simple;
+	bh=zVCc939sk04A1yJMA7UBNYAOKlV8gQZiicq0DCfOEjM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bVuZvyRI+0tY/N0+a433ARSsRjZ/3H9QcJjq9ZFeiL7yjMSO0q67yam+kmiR23geeQE81Z41nEXqyYzklhf3r3z5Ey1Hx1S/tqzI3ZsMnbMa1ejqqSkGSoMeJXZQPJUIIIi7L4i+2JJsoDRztX3GLdNbtEq6e1g6wGbUvzRaoVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=q5NABSZw; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=O5nB4+sLM9LLKuWB/wxba1ZJuYJOkIcKppUHsoTYmLc=; b=q5NABSZw+xfQ/FtoORaxsdgb22
+	Rw3NyFgLpuml8xRFrZtiBAqRH1nHilpk4t4xNQXotFsUtr1TSLdW6n+8wNUDcGuOY4+F7NXE+Zz8x
+	Zz+kFbE1LinJ1hdy3qCPsMS2Rhd9jFwowxW5WfAY8kZ9Y7uiY8R0bPmnfor8MAt4IGnwQLrcpmyfH
+	I1P2wa+7mkswEDK5lV95pKRuf+hADq3oEEwFM0QcXcb4bG7QAYhQC5T+Ae1XKFvHaIT1ctLVfSZ6q
+	5q/hwwRbtAvd6I49LJguiU0GdjekQ6sjuW+mK+wQH/6ataproR5XjVoQAlpOBOaftLc7jtAPMs6HV
+	imJlXJpQ==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tCFT7-000000000cI-0yfp;
+	Sat, 16 Nov 2024 09:51:53 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id D3111300472; Sat, 16 Nov 2024 10:51:52 +0100 (CET)
+Date: Sat, 16 Nov 2024 10:51:52 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: seanjc@google.com, pbonzini@redhat.com, tglx@linutronix.de,
+	linux-kernel@vger.kernel.org, x86@kernel.org, kvm@vger.kernel.org,
+	jthoughton@google.com
+Subject: Re: [PATCH v2 04/12] objtool: Convert instrumentation_{begin,end}()
+ to ANNOTATE
+Message-ID: <20241116095152.GM22801@noisy.programming.kicks-ass.net>
+References: <20241111115935.796797988@infradead.org>
+ <20241111125218.469665219@infradead.org>
+ <20241115184008.ek774neoqkvczxz4@jpoimboe>
+ <20241116093626.GI22801@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241116093626.GI22801@noisy.programming.kicks-ass.net>
 
-On Sat, 2024-11-16 at 16:57 +0800, Qunqin Zhao wrote:
-> +config LOONGSON_SE
-> +	tristate "LOONGSON SECURITY MODULE Interface"
+On Sat, Nov 16, 2024 at 10:36:26AM +0100, Peter Zijlstra wrote:
+> On Fri, Nov 15, 2024 at 10:40:08AM -0800, Josh Poimboeuf wrote:
+> > On Mon, Nov 11, 2024 at 12:59:39PM +0100, Peter Zijlstra wrote:
+> > > +++ b/include/linux/objtool.h
+> > > @@ -51,13 +51,16 @@
+> > >  	".long 998b\n\t"						\
+> > >  	".popsection\n\t"
+> > >  
+> > > -#define ASM_ANNOTATE(x)						\
+> > > -	"911:\n\t"						\
+> > > +#define __ASM_ANNOTATE(s, x)					\
+> > >  	".pushsection .discard.annotate,\"M\",@progbits,8\n\t"	\
+> > > -	".long 911b - .\n\t"					\
+> > > +	".long " __stringify(s) "b - .\n\t"			\
+> > 
+> > It would probably be better for __ASM_ANNOTATE's callers to pass in the
+> > full label name (e.g. '911b') since they know where the label is?  It
+> > could even be a named label.
+> 
+> I have this somewhere later, changing it here would be a pain because
+> the existing annotations dont do it like that.
 
-"Loongson Security Module" as there's no reason to use all upper-case
-form here.
-
-> +	depends on LOONGARCH && ACPI
-> +	help
-> +	=C2=A0 The Loongson security module provides the control for
-> hardware
-> +	=C2=A0 encryption acceleration devices. Each device uses at least
-> one
-> +	=C2=A0 channel to interacts with security module, and each channel
-> may
-> +	=C2=A0 has its own buffer provided by security module.
-
---=20
-Xi Ruoyao <xry111@xry111.site>
-School of Aerospace Science and Technology, Xidian University
+Reading is hard, yes let me do what you said.
 
