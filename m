@@ -1,178 +1,130 @@
-Return-Path: <linux-kernel+bounces-411634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCC999CFD22
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 08:59:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 45F259CFD29
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 09:01:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CC3F287C82
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 07:59:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B7E8287E2F
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 08:01:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BB9D1940B3;
-	Sat, 16 Nov 2024 07:59:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99B811917C7;
+	Sat, 16 Nov 2024 08:01:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="r5iZGNuE"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q+klF+xr"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D8291917E6
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 07:59:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76436B64A;
+	Sat, 16 Nov 2024 08:01:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731743977; cv=none; b=cbk2pu0lm7Om0vDbIb9wyr2fScIpCtJwpxqoZwa2O/FWled/drs9rUPqrCUL7NMKQty946QDUNIyfs0+VQcIYs1Q/eNgFUWEWc7aLj2KssuiiHz/h+/b/THflJcXYs+qVH8ggeF/BjOOi0u9vpWwXZbCOx4eZfhP+zdQjvnQZrw=
+	t=1731744077; cv=none; b=X8pa84rXDXNU6bBcv02Ut9y6U6Kc7BUzAdX6dk1CC//6JB29Rk6We7g6yN/Ei37G3Et3PckQZQ2gOWcmxkoJYNkPuuUFW2kTaaO8peVxaobP8Lx9ZYD15viO6/SEQ6dxkXQv7kCyTaWyyIfkjswkYhOTOfyVpAi3JO6sHIk12hU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731743977; c=relaxed/simple;
-	bh=syAVCylnhi0AytBImEtkvzButQ9wsAguk45yhcS0NNc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KrmPg3bCCjmCIvJ6v48VEoSgcmZtgVBpCwcWqb0jYVVtbVQwXOcKbPwKXc+X+Oti9PPdQwojaERKeuF3e9FQLAZcrYuA7vvkxhbCFknh4ZFTVo+WMyUo+DjMoQ8/1uCmvTONcBqvhLRtYDWwfAn4PdsY251ekglwqx94s3/z/b0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=r5iZGNuE; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4315eac969aso14377165e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 23:59:35 -0800 (PST)
+	s=arc-20240116; t=1731744077; c=relaxed/simple;
+	bh=0HJM9cjcvmpdVTDGL1l6M1Dj+SmvBnR7aytq8be+/pc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JZYsyqFek9Y3LbJyvXEIqklvJmlIGN9aSnyu+u0MClK+tyQQ5tI53ECQkYFmE9GLErrSmR/U5MlfowsB7G/DYgx8X8WSYrVyw7rlA3iiZ/IjUUvECGWtDt7E+m3wJbiBOywPVQbNPw1M+qGM4GL2CYlc8902H/NS0QzwtHw252k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q+klF+xr; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5c96b2a10e1so4362164a12.2;
+        Sat, 16 Nov 2024 00:01:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731743973; x=1732348773; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xrsdExZKqTlwoTRHJD0ZdQo7yx2uU25FrNS0bU2S5+Y=;
-        b=r5iZGNuEOfNWbi26gs/0hDufWiKU9glpkrz83hfYdk20o+8yDMVRsyZ6+cPIv/oaQN
-         1kDE9R6Vr8IhLeyXsibSIWi+i5grPibUr8CgcnTKyayifBg26F0iK5NCf/Zk+pdy13Hu
-         08u3dXU0sR2s59y+fza8gG5ZMw0Hfg8Sa3w3izBxsCrCB2Hfi3yWK+5VciZPLCvYZRaJ
-         Cm3dD99wasOBV+Vb4KvuHLxcD9cr9PRrdBxQ3n8LlNaCQDaVlvqQLTJ3YxibOJsA3aud
-         mNDVaqD9+G+4jwsF6k6bmfL3lgB8UhWpAIV/7hICAk042PQXjY0vP86Sl31MhmWRTiq6
-         Ag5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731743973; x=1732348773;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1731744074; x=1732348874; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=xrsdExZKqTlwoTRHJD0ZdQo7yx2uU25FrNS0bU2S5+Y=;
-        b=E03kYgX/2y5J7ObWJvdxNmWvSE4bKLDnCKmk16Qlb7v33RVS0a3s2T96w3HdIizgOK
-         z9HoBUf7tG2dKJlGNjVCh4aVorTYtPJm4WHZs0i/e/L/u5fel8VyAXVWIMpVa8Fwn5NF
-         E/FfRv70QJ4XG+FIf5wuHLm8gGuGnEulSNJaTPf/zufEKmN7pe6DBOoccXDAKSAaqofi
-         qKk7fFLtt964B9Ypqz31P/BDFXbjIh0adib790gRS+Xja4PmVV+11qlMmjnPIg1CQ7Lr
-         XjjGV+zv1bRq9ZXIB+PeCHSSTmS61XuOf6rColL/A6I2/1gAVa14F4nEpzgBSQlXssIT
-         AbHg==
-X-Forwarded-Encrypted: i=1; AJvYcCWPaWEXXe362TV6PcWd/eG/5SWHx9Q1toZd9scC8tTogNygTrardwicuCq0taOmdib+ouctzj9kvcr3EQY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YypYBLLwWlrbAw48mkTXe2Y6wO4Wc8wNhQWtDO/zcGXfimkMrtr
-	CUSlwJ7lVJ8BjoRQ9uYvI1ieMTW9FRS8xAZNa9GWQpJnHvtgY7G0vn9knn0T80E=
-X-Google-Smtp-Source: AGHT+IHwPca/r8TengkDOJBkzNMy5+IC+M/DjfY5vaIp0XwfqGKX+JdkORZRtZVKPaDZkydKQ4+r2A==
-X-Received: by 2002:a05:600c:19cb:b0:431:559d:4103 with SMTP id 5b1f17b1804b1-432defe3203mr49400585e9.7.1731743973417;
-        Fri, 15 Nov 2024 23:59:33 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432dab806e1sm81445685e9.20.2024.11.15.23.59.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Nov 2024 23:59:32 -0800 (PST)
-Date: Sat, 16 Nov 2024 10:59:29 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Easwar Hariharan <eahariha@linux.microsoft.com>
-Cc: Pablo Neira Ayuso <pablo@netfilter.org>,
-	Jozsef Kadlecsik <kadlec@netfilter.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Julia Lawall <Julia.Lawall@inria.fr>,
-	Nicolas Palix <nicolas.palix@imag.fr>,
-	Daniel Mack <daniel@zonque.org>,
-	Haojian Zhuang <haojian.zhuang@gmail.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Russell King <linux@armlinux.org.uk>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Ofir Bitton <obitton@habana.ai>, Oded Gabbay <ogabbay@kernel.org>,
-	Lucas De Marchi <lucas.demarchi@intel.com>,
-	Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Jeroen de Borst <jeroendb@google.com>,
-	Praveen Kaligineedi <pkaligineedi@google.com>,
-	Shailend Chand <shailend@google.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	James Smart <james.smart@broadcom.com>,
-	Dick Kennedy <dick.kennedy@broadcom.com>,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Roger Pau =?iso-8859-1?Q?Monn=E9?= <roger.pau@citrix.com>,
-	Jens Axboe <axboe@kernel.dk>, Kalle Valo <kvalo@kernel.org>,
-	Jeff Johnson <jjohnson@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jack Wang <jinpu.wang@cloud.ionos.com>,
-	Marcel Holtmann <marcel@holtmann.org>,
-	Johan Hedberg <johan.hedberg@gmail.com>,
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Jiri Kosina <jikos@kernel.org>, Miroslav Benes <mbenes@suse.cz>,
-	Petr Mladek <pmladek@suse.com>,
-	Joe Lawrence <joe.lawrence@redhat.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Russell King <linux+etnaviv@armlinux.org.uk>,
-	Christian Gmeiner <christian.gmeiner@gmail.com>,
-	Louis Peens <louis.peens@corigine.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	cocci@inria.fr, linux-arm-kernel@lists.infradead.org,
-	linux-s390@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	intel-xe@lists.freedesktop.org, linux-scsi@vger.kernel.org,
-	xen-devel@lists.xenproject.org, linux-block@vger.kernel.org,
-	linux-wireless@vger.kernel.org, ath11k@lists.infradead.org,
-	linux-mm@kvack.org, linux-bluetooth@vger.kernel.org,
-	linux-staging@lists.linux.dev, linux-rpi-kernel@lists.infradead.org,
-	ceph-devel@vger.kernel.org, live-patching@vger.kernel.org,
-	linux-sound@vger.kernel.org, etnaviv@lists.freedesktop.org,
-	oss-drivers@corigine.com, linuxppc-dev@lists.ozlabs.org,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>
-Subject: Re: [PATCH 19/22] livepatch: Convert timeouts to secs_to_jiffies()
-Message-ID: <896c656f-6d8c-4337-8464-7557c43a80ab@stanley.mountain>
-References: <20241115-converge-secs-to-jiffies-v1-0-19aadc34941b@linux.microsoft.com>
- <20241115-converge-secs-to-jiffies-v1-19-19aadc34941b@linux.microsoft.com>
+        bh=MSXDTZ0aay8d1yiOoVnu2o6e/epgyQVcOo5da5OfdOM=;
+        b=Q+klF+xr4jlG+dcd9QRLzpcFTWWQBcje8AoH5klXvmNlACFYN88OWTFpdlzcoJ+/A3
+         dPgRA57TXxBzDnQJSRmQrhtrqxcqrFoRB3yedrDNVI72iFE99eBGAHKIoU4XrxX2FW22
+         IG9VCa0lgu6p3sQQDG//Fugca0IsfbDR2DzNum9oNFSmR71oHimhPYMBr08GASgTRbPF
+         2qweqkCxZuegWAy4NGbG+7BGDcAmd0LRT2FxiEEuvLGb5Z2pNIwrLNKJvHX4vboKEC7e
+         Oa25ZwIzDxzxq1c/+03lq7SETF6WHZWpUX4uko1ZsvO4mv9o+Oi/TSid5/PmZZ7xmSbw
+         Kjzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731744074; x=1732348874;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MSXDTZ0aay8d1yiOoVnu2o6e/epgyQVcOo5da5OfdOM=;
+        b=M30kdtZf9u+FWYIGkNYTlk3G5mA4CfL1ybIkuX1QP/CIKHFp19jZh3s8mYdFolrVy6
+         S7slPtAuZLmLLg9jEuxxYt6JOg/1ecnN5GVvVcyfk+JhR15AY9xb1i12pTuZlSY2q87v
+         ByNiW8kXHHW0Y0Iv9jzXVH9NfUjl99qhdwz3CixfgJ+sJ3ItT26N2nAJDqNpIc24nCAZ
+         3YtRxgVqrjIakx7F3b/i5k5xoTX1+/8zJcZSf7nXv65EDVVupqL5RKnqyfdvaDxtYSiz
+         XCa4OlGdMFTCmGzPXgDMbUN8er6NVqtXbo49Z+xBcL8qnbSbScPCvXTjglHGbWVfuBUh
+         AeHg==
+X-Forwarded-Encrypted: i=1; AJvYcCV7coujpF1Utl4MMEHTco5/CxxK9NXROHViSph62dJsPXqTnlFYpMzHs+BWk2j7rcB/QHzTi2guO/fg643m@vger.kernel.org, AJvYcCVpr8G54ajgjrq4U4NZvDZKp/RDV0zuw3jobEyNXGMj+4vrHCFqSzbBavsNVcYnCmt3xIVAbUvKbqtR9Y4V@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIY2shqGxQmtbf+DLspC+c7sGNk6QUCUh/Vn0d+2Z34rNt9L4X
+	bfMpUGQvnf3PTQyfi5yFekUmA9nqdKY3oKFLFZ67qf/dBlgm22bCPvrfmHxkFKsVXMP7p9dR0rt
+	nmFLjcl8AntvJYTFYISEF04tiJkSDLxxG
+X-Google-Smtp-Source: AGHT+IFr7u/yrjt5Q6SDniYU7mwzeqrSSSE/z+mZgR4Wv/vU6F2I3kUGth1q6lU1BwTQujQdi2q1yvWygsEk3HeGf04=
+X-Received: by 2002:a05:6402:2106:b0:5cf:a296:ac6d with SMTP id
+ 4fb4d7f45d1cf-5cfa296ad7dmr1298340a12.18.1731744073592; Sat, 16 Nov 2024
+ 00:01:13 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241115-converge-secs-to-jiffies-v1-19-19aadc34941b@linux.microsoft.com>
+References: <20241116064128.280870-1-mjguzik@gmail.com> <20241116073626.GB3387508@ZenIV>
+ <20241116074209.GC3387508@ZenIV>
+In-Reply-To: <20241116074209.GC3387508@ZenIV>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Sat, 16 Nov 2024 09:01:01 +0100
+Message-ID: <CAGudoHH-v=eDxV0D3wU+bXmGL75UEj7z=yy7r0jx303E4aW38Q@mail.gmail.com>
+Subject: Re: [PATCH] fs: delay sysctl_nr_open check in expand_files()
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: brauner@kernel.org, jack@suse.cz, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 15, 2024 at 09:22:49PM +0000, Easwar Hariharan wrote:
-> diff --git a/samples/livepatch/livepatch-callbacks-busymod.c b/samples/livepatch/livepatch-callbacks-busymod.c
-> index 378e2d40271a9717d09eff51d3d3612c679736fc..d0fd801a7c21b7d7939c29d83f9d993badcc9aba 100644
-> --- a/samples/livepatch/livepatch-callbacks-busymod.c
-> +++ b/samples/livepatch/livepatch-callbacks-busymod.c
-> @@ -45,7 +45,7 @@ static int livepatch_callbacks_mod_init(void)
->  {
->  	pr_info("%s\n", __func__);
->  	schedule_delayed_work(&work,
-> -		msecs_to_jiffies(1000 * 0));
-> +		secs_to_jiffies(0));
+On Sat, Nov 16, 2024 at 8:42=E2=80=AFAM Al Viro <viro@zeniv.linux.org.uk> w=
+rote:
+>
+> On Sat, Nov 16, 2024 at 07:36:26AM +0000, Al Viro wrote:
+> > On Sat, Nov 16, 2024 at 07:41:28AM +0100, Mateusz Guzik wrote:
+> > > Suppose a thread sharing the table started a resize, while
+> > > sysctl_nr_open got lowered to a value which prohibits it. This is sti=
+ll
+> > > going to go through with and without the patch, which is fine.
+> > >
+> > > Further suppose another thread shows up to do a matching expansion wh=
+ile
+> > > resize_in_progress =3D=3D true. It is going to error out since it per=
+forms
+> > > the sysctl_nr_open check *before* finding out if there is an expansio=
+n
+> > > in progress. But the aformentioned thread is going to succeded, so th=
+e
+> > > error is spurious (and it would not happen if the thread showed up a
+> > > little bit later).
+> > >
+> > > Checking the sysctl *after* we know there are no pending updates sort=
+s
+> > > it out.
+> >
+> >       What for?  No, seriously - what's the point?  What could possibly
+> > observe an inconsistent situation?  How would that look like?
+>
+> PS: I'm not saying I hate that patch; I just don't understand the point..=
+.
 
-Better to just call schedule_delayed_work(&work, 0);
+Per the description, if you get unlucky enough one thread is going to
+spuriously error out. So basically any multithreaded program which
+ends up trying to expand the fd table while racing against
+sysctl_nr_open going down can in principle run into it. Except people
+normally don't mess with sysctl_nr_open, so I don't think this shows
+up during normal operation.
 
->  	return 0;
->  }
+I explicitly noted this is not a serious problem, just a thing I
+noticed while poking around. If you want to NAK this that's fine with
+me, it's not worth arguing over.
 
-regards,
-dan carpenter
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
