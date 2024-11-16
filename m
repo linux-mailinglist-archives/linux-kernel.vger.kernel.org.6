@@ -1,160 +1,84 @@
-Return-Path: <linux-kernel+bounces-411801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BA179CFFC4
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 17:05:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E716B9CFFE4
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 17:37:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6993285CDA
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 16:05:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACE1C286BB3
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 16:37:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A15D183CCA;
-	Sat, 16 Nov 2024 16:05:39 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7D48372;
-	Sat, 16 Nov 2024 16:05:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2038518785B;
+	Sat, 16 Nov 2024 16:37:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b="PyTVcIuG"
+Received: from kylie.crudebyte.com (kylie.crudebyte.com [5.189.157.229])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7350F9CB
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 16:37:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.189.157.229
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731773138; cv=none; b=eeFEjCxlTm0nPkkGfZTebCAV6Gbp+qAtvAB70UTng0/a8HePda/I7hCcbYV/IfCPD1mvdsuJZykJNYhPsKj+GBUzvCOF0UeTMA4JDCtYH0PMSgtzHooDLEUWz6dtdrmiUMiHlNTF9mwmWmitX6nOyZZjf6UlP02MQXmUuaRqKZ0=
+	t=1731775066; cv=none; b=sqI0qPewbqLXRMcODxlhnjbCOkAt74u/BgTyIy+jKwDYZ/LE4c9avEgSg1783YGdlgu2xOOuoJHVrzQ6UliTl8MumMw/kwakEUtkYycWA1plnFMOG1SrQy4HucrqHEFNPuaK9PLrhXCmrbSjIl1/qgI4o10i8Yuc43uIQmBKMoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731773138; c=relaxed/simple;
-	bh=8E9fdTPH4z1JWEfAFPme5sq66UKNxpppxxaOanqA25I=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FXZX6lsjbqccUAHIINj8WBnvS57cw403OoYUY4x8vha0uB2TkHLdqF1YN7utSHBO0g7T+ULMyIFxcxqmy178sRMJHdKVzoiG2bsjTNdfhG4bXpAVTlMRrDTgFubfrD+q6uDmwc88ZwQYqLhWSWckXwpnG64KzRAbFI/ZVUVDiwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-IronPort-AV: E=Sophos;i="6.12,160,1728918000"; 
-   d="scan'208";a="225039180"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 17 Nov 2024 01:05:34 +0900
-Received: from Ubuntu-22.. (unknown [10.226.92.19])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 37BE54012505;
-	Sun, 17 Nov 2024 01:05:16 +0900 (JST)
-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Colton Lewis <coltonlewis@google.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	linux-perf-users@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	linux-renesas-soc@vger.kernel.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Chris Paterson <Chris.Paterson2@renesas.com>,
-	Andrew Jones <ajones@ventanamicro.com>
-Subject: [PATCH v2] riscv: perf: Drop defining `perf_instruction_pointer()` and `perf_misc_flags()`
-Date: Sat, 16 Nov 2024 16:05:06 +0000
-Message-ID: <20241116160506.5324-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1731775066; c=relaxed/simple;
+	bh=fGRcLgTdAEn87VdKiChEPOpSyV2TeNOcjHVwbHLtHXM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LyqpkDIX58V3OriH7qgqxkUShPaNKOf7czc+cCO31RzwZgnnYgIH7ZUN+N9+pq50+31L3Rel2DDcRSkFSxx/ZXmtTxX2br8xP6NhpT++6BlcEaPcdLgLC/AYfrly0TG59zYl2RFDq+RisToVN1zAmZkTPAreEv3QyLrVlliAAlo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com; spf=pass smtp.mailfrom=crudebyte.com; dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b=PyTVcIuG; arc=none smtp.client-ip=5.189.157.229
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crudebyte.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=crudebyte.com; s=kylie; h=Content-Type:Content-Transfer-Encoding:
+	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
+	Content-ID:Content-Description;
+	bh=cpNm5dh0wytspX2vkDrBMvEUs3Vr1KnmEy3dyDTmaig=; b=PyTVcIuGH++Ou3695qVpd9C4xK
+	qSELpqV59tB+bZtExb4/N0DX21Xo8C8GxNWz45Pqf5KeVjwwt5lbRWcIpvPhaoYVYiqwHMRhQo41S
+	IcYflDrd45dEagojBCqrb2/GftNNvcpfJMKZqouSEXNUe+MJ4nd31zWMmO7+f/4Jv4rS0qyIdWdCz
+	zhuhoYi9srVLFSCeAq9elYM6SovzgSvAbXumJvC1Mv75FfGD+wCpMjpWVTfLNlGyACkJBLsS6LbU4
+	jjI+asSzYubStIoJHniBaP5nZJlS7NRpwtmMQFI+J/GmsJwVdtWcMUCSoKVGQXP7RbLk2QEAwnz75
+	L7hZVRXrI9jaRYUTH2d+GkW1CSHWkqYlHJI0gP1ijNsnE3cPWxT84jVVS+pZLNR3cVLb0VEDr4NVp
+	eP9HRx24xWvdiIUZX+LtSc+W/V5VCAKfEBNoyD3I7QO0PirnQFYC9Rvu/j5lvicJcQSS5eBejzEc8
+	4ysXBUnE2xeo6rWgvsgDRYBF9n+emOn5/HaGJmfD4xR5dLq5dykuIWbunutK0Qrp9wJrWly1RJHRW
+	l6YYGT1jBqL7KBmGcj4Ge3dyw4GW3o86hoUfslKQbY5uk8st3XXGUjwasxBw1QNeGgfsKwEjhYKxX
+	qkrMxDCU5bmEEkM99uZ9zn/J4Ov5NKjXcToqne4FQ=;
+From: Christian Schoenebeck <linux_oss@crudebyte.com>
+To: ericvh@kernel.org, lucho@ionkov.net, asmadeus@codewreck.org,
+ Rex Nie <rexnie3@gmail.com>, Colin Ian King <colin.i.king@gmail.com>
+Cc: linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] 9p/fs: Different branch return the same value
+Date: Sat, 16 Nov 2024 17:06:17 +0100
+Message-ID: <2715835.jR4hUPQygh@silver>
+In-Reply-To: <20241116152612.2423-1-rexnie3@gmail.com>
+References: <20241116152612.2423-1-rexnie3@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Saturday, November 16, 2024 4:26:12 PM CET Rex Nie wrote:
+> The same code is executed when the condition ret < 0 is true or false.
+> Remove the if branch and just return v9fs_init_inode_cache(). This
+> does not change the semantics of the original code.
+> 
+> Signed-off-by: Rex Nie <rexnie3@gmail.com>
+> ---
+>  fs/9p/v9fs.c | 7 +------
+>  1 file changed, 1 insertion(+), 6 deletions(-)
 
-With commit 2c47e7a74f44 ("perf/core: Correct perf sampling with guest
-VMs"), the perf core now handles the functionality previously requiring
-arch-specific definitions of `perf_instruction_pointer()` and
-`perf_misc_flags()`. As these definitions are no longer necessary for
-RISC-V, this patch removes their implementation and declarations.
+Too late to the party: :)
 
-This change also fixes the following build issue on RISC-V:
+https://lore.kernel.org/all/20241107095756.10261-1-colin.i.king@gmail.com/
 
-    ./include/linux/perf_event.h:1679:84: error: macro "perf_misc_flags" passed 2 arguments, but takes just 1
-    ./include/linux/perf_event.h:1679:22: error: 'perf_misc_flags' redeclared as different kind of symbol
-    ./include/linux/perf_event.h:1680:22: error: conflicting types for 'perf_instruction_pointer'; have 'long unsigned int(struct perf_event *, struct pt_regs *)'
+But thanks!
 
-The above errors arise from conflicts between the core definitions in
-`linux/perf_event.h` and the RISC-V-specific definitions in
-`arch/riscv/include/asm/perf_event.h`. Removing the RISC-V-specific
-definitions resolves these issues and aligns the architecture with the
-updated perf core.
+/Christian
 
-Fixes: 2c47e7a74f44 ("perf/core: Correct perf sampling with guest VMs")
-Reported-by: Chris Paterson <Chris.Paterson2@renesas.com>
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
----
-v1->v2
-- Update commit message to say it fixes build issue
-- Included RB tag from Andrew
----
- arch/riscv/include/asm/perf_event.h |  3 ---
- arch/riscv/kernel/perf_callchain.c  | 28 ----------------------------
- 2 files changed, 31 deletions(-)
-
-diff --git a/arch/riscv/include/asm/perf_event.h b/arch/riscv/include/asm/perf_event.h
-index 38926b4a902d..bcc928fd3785 100644
---- a/arch/riscv/include/asm/perf_event.h
-+++ b/arch/riscv/include/asm/perf_event.h
-@@ -10,9 +10,6 @@
- 
- #ifdef CONFIG_PERF_EVENTS
- #include <linux/perf_event.h>
--extern unsigned long perf_instruction_pointer(struct pt_regs *regs);
--extern unsigned long perf_misc_flags(struct pt_regs *regs);
--#define perf_misc_flags(regs) perf_misc_flags(regs)
- #define perf_arch_bpf_user_pt_regs(regs) (struct user_regs_struct *)regs
- 
- #define perf_arch_fetch_caller_regs(regs, __ip) { \
-diff --git a/arch/riscv/kernel/perf_callchain.c b/arch/riscv/kernel/perf_callchain.c
-index c2c81a80f816..b465bc9eb870 100644
---- a/arch/riscv/kernel/perf_callchain.c
-+++ b/arch/riscv/kernel/perf_callchain.c
-@@ -46,31 +46,3 @@ void perf_callchain_kernel(struct perf_callchain_entry_ctx *entry,
- 
- 	walk_stackframe(NULL, regs, fill_callchain, entry);
- }
--
--unsigned long perf_instruction_pointer(struct pt_regs *regs)
--{
--	if (perf_guest_state())
--		return perf_guest_get_ip();
--
--	return instruction_pointer(regs);
--}
--
--unsigned long perf_misc_flags(struct pt_regs *regs)
--{
--	unsigned int guest_state = perf_guest_state();
--	unsigned long misc = 0;
--
--	if (guest_state) {
--		if (guest_state & PERF_GUEST_USER)
--			misc |= PERF_RECORD_MISC_GUEST_USER;
--		else
--			misc |= PERF_RECORD_MISC_GUEST_KERNEL;
--	} else {
--		if (user_mode(regs))
--			misc |= PERF_RECORD_MISC_USER;
--		else
--			misc |= PERF_RECORD_MISC_KERNEL;
--	}
--
--	return misc;
--}
--- 
-2.25.1
 
 
