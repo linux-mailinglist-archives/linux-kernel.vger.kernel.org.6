@@ -1,134 +1,230 @@
-Return-Path: <linux-kernel+bounces-411778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB36F9CFF75
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 16:23:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CEC19CFF77
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 16:25:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8828BB24BF9
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 15:23:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D2B82825FE
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 15:24:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E06B227715;
-	Sat, 16 Nov 2024 15:23:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC8054EB51;
+	Sat, 16 Nov 2024 15:24:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y0LlfG4W"
-Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="jQklbqBF"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9B2FD529;
-	Sat, 16 Nov 2024 15:23:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03F78D529;
+	Sat, 16 Nov 2024 15:24:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731770628; cv=none; b=TZyjG4eaF9CZ79JQh7Dax4G5HIMga1B1T1R30VuOIjDgASY5thGE8XDRdjc/31LSe+mn52pIjeNG+js0s92deQIigwB5ZCY+/qIsU0UCMY+6svjBSJLAQqPxQ/ZR4kPZ3GPLnJs1FV2PJrHfx7axsxAZajGcbVmE9rdhCYV5Mlw=
+	t=1731770689; cv=none; b=pdZ9XLetj2vGlyGQJkROhuRNpWGZHiHmKOv2jOr/Y6rnckOdEbMUjCnPUY8Hlxmog2srDnmmQ8LRh+zUlBSpMy/EUchSpHnqGrm4M9OBw7C1l5ie5IZqEfLrpv6icEe/MV8uc1COSglhS8SBxn3w+H9IdsDnXIZRj5NcuAbh4rU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731770628; c=relaxed/simple;
-	bh=GwfmAa5qnQq6mMnjIjgsfJOxOYrGpAQlt6L3gg12Viw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FuTXU/lJZwhW+wRCpF1gdtHK6+pxavzUlXTPmySd4u4sWyhH1LlGGWkOe1pIjfphxfHzZlbHPfb7OUbWNGbmp2KYD6wjwokoiu7xJbaKjXzw4CUA8iyeIDxJoDdFcSsYqf5v3XEZfodEO/10uUXlaul644Ls6bq1XQ768/Z8OrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y0LlfG4W; arc=none smtp.client-ip=209.85.167.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-3e5fbc40239so226382b6e.3;
-        Sat, 16 Nov 2024 07:23:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731770626; x=1732375426; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=aUhMLr+Os6n2IcHWR2ztmJRnW+7I9tUgOIUzcmvqJXk=;
-        b=Y0LlfG4WXnVTAdfDw5hOQ34HJY2rPzAZt5B3ZpckOpWcCxm4e5vHUIhr9VnMqfO8sb
-         lnOTFdBhxyRsDJOcztKoGEr8Fsbeh6Rfewzo37tO3KnRPUE8YqxFyNDRhTIALrHcI7PT
-         C1O4WgghHWAKDT/K7G87Mdnp5EAHU6+6BtQQRnDLOx6pE4q/u+rTXDJoju1r+BsL1VSQ
-         qtU0n4PA8YyhenI+NCHfZNlM3QQ1o6xM+5tlIiUcSkCHk4fIm8EETOvWiTDIf8JxHG3x
-         /jOWn5l1UsBKWT5b5fpKYlFm9UZExRCsb1Vluu00v3boSdJTbAZHpbJg0IUt1eiiMl/R
-         S0Xw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731770626; x=1732375426;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aUhMLr+Os6n2IcHWR2ztmJRnW+7I9tUgOIUzcmvqJXk=;
-        b=aqLms4g+z3mmMf9iTUcp7vfEvitm6sCFpewXSPkP/PhfT6YyvvGu95DdAhTp+0ahyy
-         Y5c8tam5GwRHeHT3KOUC7QhmGqy4/zPWXlciz2h08LhlJ/Ohp+m8taNAVbvlN/N8IBFf
-         2dryEilk1WnYziUBkLFBR3P9NWd8JDbkxYuSoR8UFx6S++LSvLbdeKr2MIpN7NqU8owU
-         jRQ9EPgpCRAK2mM/ausRimpNJDdYx2bXmXHtEY6ml2a/gnqP1PDua2/SM+ReRT9xdqSu
-         XDeEEw6Lgt0rK6na7mmjBRVqHDtaODkVO9es5IsQWMA42tOlHrCHcp4ng1LmONZbIBU7
-         POGw==
-X-Forwarded-Encrypted: i=1; AJvYcCUWHgq6JJ4vCFDQpXf+JPzB7o25yy8i0rUp9QK25vFF7BzAovU5EEmo+ucUktFzEz8YmGtxWxxbhdoYTogC2jKOsepqqA==@vger.kernel.org, AJvYcCXkUwFUlyo16dX8vA/6udnbsRK9jRs5Ry6b3APxOXtI/fkUGlsffA+2+m7SjJQdFDCMffXyfUsPKp7XKSY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjOCRD8K7yEbdHttVBqU0f+/YjkfrNVjpbGeCev71wF6m5/fAE
-	tORtvjgUJLEkzKsecGhYy6Trvhsyc87L0HjUoZWMqZqNwVuEpkFW
-X-Google-Smtp-Source: AGHT+IHXul5z9iBJ5gjEx1u2zVz42H4jXYI+4yOMmOzXIDpr+zo/Y85jQdqfj6U3CjDBP4QW6RFw9g==
-X-Received: by 2002:a05:6871:d202:b0:288:6c52:ffab with SMTP id 586e51a60fabf-2962de0d27fmr5281588fac.24.1731770625932;
-        Sat, 16 Nov 2024 07:23:45 -0800 (PST)
-Received: from alphacentauri (host95.181-12-202.telecom.net.ar. [181.12.202.95])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-29651b36ab7sm866722fac.48.2024.11.16.07.23.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 16 Nov 2024 07:23:45 -0800 (PST)
-Date: Sat, 16 Nov 2024 12:23:41 -0300
-From: Kurt Borja <kuurtb@gmail.com>
-To: Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
-Cc: w_armin@gmx.de, hdegoede@redhat.com, linux-kernel@vger.kernel.org, 
-	platform-driver-x86@vger.kernel.org, Dell.Client.Kernel@dell.com
-Subject: Re: [PATCH 0/5] Better thermal mode probing + support for 9 models
-Message-ID: <hemkijs35bx73dulvhgpuzjq2ahkwcyggrhk64mmtvdblbj3p3@rwau36643fpw>
-References: <20241111183308.14081-3-kuurtb@gmail.com>
- <173176940782.1711.698562469347976245.b4-ty@linux.intel.com>
+	s=arc-20240116; t=1731770689; c=relaxed/simple;
+	bh=jDOjDDgZ7NeERfOKKdvK+6lgxU7doXUeIzzP6RaCQBc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bw8KR9k8+yoWidjkWc0R2IDRR2cXFoVAuEMcqufWAs0/doltaN3dtoVtyvdmA6X3iEmlPKm396OWbXqxWSbzU/FVrHThzZobIB+l6m9S/pGR40Szoi71d0OoOVVS8XEElt8IvY774U3Ell/ugghf/Q8MuCDIo4JZmj2IVIYVnNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=jQklbqBF; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=MOwl+3RRY6hxipxxoc7tx76VBhuRwRCiipNgIx+NOyw=; b=jQklbqBFpGHK1wDK
+	vjkNxGjl6RAxQS9DO47Bsw2jtozWJttx6ZB4jIWFlJpRpK2hNZYeXEoBPiHntqEqgMk9qr2S/wkHf
+	KFXGqkrQlvZZQb1C5b2aVG7h281MAvIwN4fJLGZ/XMB8chosS6aQ1TEYKVGY0kgkd9/ptY8Ltux5i
+	31krpcPcsyNjVqGoyQK2ZAMS/Sx4xTEOmrKbY3KkScxEkXyJd4Q7IaUr8onugrJJxkhE7NoGStCVZ
+	gnlOo56gLspSWEXJqxFtkgS1G2k3KYAmuIZ5zGjEdPLB1is79sYeK4RQY/0ITaMb3Gq3vcpRtpysx
+	bH+o5fdUxvaPTEFXuA==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1tCKf4-000ISC-1X;
+	Sat, 16 Nov 2024 15:24:34 +0000
+From: linux@treblig.org
+To: anthony.l.nguyen@intel.com,
+	przemyslaw.kitszel@intel.com,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	netdev@vger.kernel.org
+Cc: intel-wired-lan@lists.osuosl.org,
+	linux-kernel@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH net-next] intel/fm10k: Remove unused fm10k_iov_msg_mac_vlan_pf
+Date: Sat, 16 Nov 2024 15:24:33 +0000
+Message-ID: <20241116152433.96262-1-linux@treblig.org>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <173176940782.1711.698562469347976245.b4-ty@linux.intel.com>
 
-On Sat, Nov 16, 2024 at 05:03:27PM +0200, Ilpo Järvinen wrote:
-> On Mon, 11 Nov 2024 15:33:10 -0300, Kurt Borja wrote:
-> 
-> > I added models for all the acpidumps I could find. Also I find a way to
-> > not brute force create_thermal_profile and that's always a good thing.
-> > 
-> > I hope you all have a great week!
-> > 
-> > Kurt Borja (5):
-> >   alienware-wmi: order alienware_quirks[] alphabetically
-> >   alienware-wmi: extends the list of supported models
-> >   alienware-wmi: Adds support to Alienware x17 R2
-> >   alienware-wmi: create_thermal_profile no longer brute-forces IDs
-> >   Documentation: alienware-wmi: Describe THERMAL_INFORMATION operation
-> >     0x02
-> > 
-> > [...]
-> 
-> 
-> Thank you for your contribution, it has been applied to my local
-> review-ilpo branch. Note it will show up in the public
-> platform-drivers-x86/review-ilpo branch only once I've pushed my
-> local branch there, which might take a while.
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-Thank you Ilpo!
+fm10k_iov_msg_mac_vlan_pf() has been unused since 2017's
+commit 1f5c27e52857 ("fm10k: use the MAC/VLAN queue for VF<->PF MAC/VLAN
+requests")
 
-Regards,
-Kurt
+Remove it.
 
-> 
-> The list of commits applied:
-> [1/5] alienware-wmi: order alienware_quirks[] alphabetically
->       commit: 2b8dc45b8ca31e3a0ed1d71cfc042b9b7af85dfb
-> [2/5] alienware-wmi: extends the list of supported models
->       commit: 1c1eb70e7d235f5feb7b68861637a5fd0b52a9fd
-> [3/5] alienware-wmi: Adds support to Alienware x17 R2
->       commit: 01bd181d21cf65e43f30948f9216571218732a12
-> [4/5] alienware-wmi: create_thermal_profile no longer brute-forces IDs
->       commit: bfcda5cbcdb642a64d5b8a0229842dca7917ac6e
-> [5/5] Documentation: alienware-wmi: Describe THERMAL_INFORMATION operation 0x02
->       commit: 6674c5a0eeb55143cd10514d0083624e056e7d13
-> 
-> --
->  i.
-> 
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+---
+ drivers/net/ethernet/intel/fm10k/fm10k_pf.c | 120 --------------------
+ drivers/net/ethernet/intel/fm10k/fm10k_pf.h |   2 -
+ 2 files changed, 122 deletions(-)
+
+diff --git a/drivers/net/ethernet/intel/fm10k/fm10k_pf.c b/drivers/net/ethernet/intel/fm10k/fm10k_pf.c
+index 98861cc6df7c..b9dd7b719832 100644
+--- a/drivers/net/ethernet/intel/fm10k/fm10k_pf.c
++++ b/drivers/net/ethernet/intel/fm10k/fm10k_pf.c
+@@ -1179,126 +1179,6 @@ s32 fm10k_iov_select_vid(struct fm10k_vf_info *vf_info, u16 vid)
+ 		return vid;
+ }
+ 
+-/**
+- *  fm10k_iov_msg_mac_vlan_pf - Message handler for MAC/VLAN request from VF
+- *  @hw: Pointer to hardware structure
+- *  @results: Pointer array to message, results[0] is pointer to message
+- *  @mbx: Pointer to mailbox information structure
+- *
+- *  This function is a default handler for MAC/VLAN requests from the VF.
+- *  The assumption is that in this case it is acceptable to just directly
+- *  hand off the message from the VF to the underlying shared code.
+- **/
+-s32 fm10k_iov_msg_mac_vlan_pf(struct fm10k_hw *hw, u32 **results,
+-			      struct fm10k_mbx_info *mbx)
+-{
+-	struct fm10k_vf_info *vf_info = (struct fm10k_vf_info *)mbx;
+-	u8 mac[ETH_ALEN];
+-	u32 *result;
+-	int err = 0;
+-	bool set;
+-	u16 vlan;
+-	u32 vid;
+-
+-	/* we shouldn't be updating rules on a disabled interface */
+-	if (!FM10K_VF_FLAG_ENABLED(vf_info))
+-		err = FM10K_ERR_PARAM;
+-
+-	if (!err && !!results[FM10K_MAC_VLAN_MSG_VLAN]) {
+-		result = results[FM10K_MAC_VLAN_MSG_VLAN];
+-
+-		/* record VLAN id requested */
+-		err = fm10k_tlv_attr_get_u32(result, &vid);
+-		if (err)
+-			return err;
+-
+-		set = !(vid & FM10K_VLAN_CLEAR);
+-		vid &= ~FM10K_VLAN_CLEAR;
+-
+-		/* if the length field has been set, this is a multi-bit
+-		 * update request. For multi-bit requests, simply disallow
+-		 * them when the pf_vid has been set. In this case, the PF
+-		 * should have already cleared the VLAN_TABLE, and if we
+-		 * allowed them, it could allow a rogue VF to receive traffic
+-		 * on a VLAN it was not assigned. In the single-bit case, we
+-		 * need to modify requests for VLAN 0 to use the default PF or
+-		 * SW vid when assigned.
+-		 */
+-
+-		if (vid >> 16) {
+-			/* prevent multi-bit requests when PF has
+-			 * administratively set the VLAN for this VF
+-			 */
+-			if (vf_info->pf_vid)
+-				return FM10K_ERR_PARAM;
+-		} else {
+-			err = fm10k_iov_select_vid(vf_info, (u16)vid);
+-			if (err < 0)
+-				return err;
+-
+-			vid = err;
+-		}
+-
+-		/* update VSI info for VF in regards to VLAN table */
+-		err = hw->mac.ops.update_vlan(hw, vid, vf_info->vsi, set);
+-	}
+-
+-	if (!err && !!results[FM10K_MAC_VLAN_MSG_MAC]) {
+-		result = results[FM10K_MAC_VLAN_MSG_MAC];
+-
+-		/* record unicast MAC address requested */
+-		err = fm10k_tlv_attr_get_mac_vlan(result, mac, &vlan);
+-		if (err)
+-			return err;
+-
+-		/* block attempts to set MAC for a locked device */
+-		if (is_valid_ether_addr(vf_info->mac) &&
+-		    !ether_addr_equal(mac, vf_info->mac))
+-			return FM10K_ERR_PARAM;
+-
+-		set = !(vlan & FM10K_VLAN_CLEAR);
+-		vlan &= ~FM10K_VLAN_CLEAR;
+-
+-		err = fm10k_iov_select_vid(vf_info, vlan);
+-		if (err < 0)
+-			return err;
+-
+-		vlan = (u16)err;
+-
+-		/* notify switch of request for new unicast address */
+-		err = hw->mac.ops.update_uc_addr(hw, vf_info->glort,
+-						 mac, vlan, set, 0);
+-	}
+-
+-	if (!err && !!results[FM10K_MAC_VLAN_MSG_MULTICAST]) {
+-		result = results[FM10K_MAC_VLAN_MSG_MULTICAST];
+-
+-		/* record multicast MAC address requested */
+-		err = fm10k_tlv_attr_get_mac_vlan(result, mac, &vlan);
+-		if (err)
+-			return err;
+-
+-		/* verify that the VF is allowed to request multicast */
+-		if (!(vf_info->vf_flags & FM10K_VF_FLAG_MULTI_ENABLED))
+-			return FM10K_ERR_PARAM;
+-
+-		set = !(vlan & FM10K_VLAN_CLEAR);
+-		vlan &= ~FM10K_VLAN_CLEAR;
+-
+-		err = fm10k_iov_select_vid(vf_info, vlan);
+-		if (err < 0)
+-			return err;
+-
+-		vlan = (u16)err;
+-
+-		/* notify switch of request for new multicast address */
+-		err = hw->mac.ops.update_mc_addr(hw, vf_info->glort,
+-						 mac, vlan, set);
+-	}
+-
+-	return err;
+-}
+-
+ /**
+  *  fm10k_iov_supported_xcast_mode_pf - Determine best match for xcast mode
+  *  @vf_info: VF info structure containing capability flags
+diff --git a/drivers/net/ethernet/intel/fm10k/fm10k_pf.h b/drivers/net/ethernet/intel/fm10k/fm10k_pf.h
+index 8e814df709d2..ad3696893cb1 100644
+--- a/drivers/net/ethernet/intel/fm10k/fm10k_pf.h
++++ b/drivers/net/ethernet/intel/fm10k/fm10k_pf.h
+@@ -99,8 +99,6 @@ extern const struct fm10k_tlv_attr fm10k_err_msg_attr[];
+ 
+ s32 fm10k_iov_select_vid(struct fm10k_vf_info *vf_info, u16 vid);
+ s32 fm10k_iov_msg_msix_pf(struct fm10k_hw *, u32 **, struct fm10k_mbx_info *);
+-s32 fm10k_iov_msg_mac_vlan_pf(struct fm10k_hw *, u32 **,
+-			      struct fm10k_mbx_info *);
+ s32 fm10k_iov_msg_lport_state_pf(struct fm10k_hw *, u32 **,
+ 				 struct fm10k_mbx_info *);
+ 
+-- 
+2.47.0
+
 
