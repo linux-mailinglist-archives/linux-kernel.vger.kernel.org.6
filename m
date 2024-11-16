@@ -1,160 +1,156 @@
-Return-Path: <linux-kernel+bounces-411708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 160B79CFEAA
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 12:40:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E0339CFED3
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 13:34:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D001E28752D
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 11:40:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4307B286258
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 12:34:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86471195985;
-	Sat, 16 Nov 2024 11:40:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63096198A11;
+	Sat, 16 Nov 2024 12:34:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EveRJaJT"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CF+ie1JF"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F7FF191F9B;
-	Sat, 16 Nov 2024 11:40:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E75517E44A;
+	Sat, 16 Nov 2024 12:34:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731757240; cv=none; b=RMOyYYL4LbdU+nDwBJdJuBplb840vFwzWlChyA48Xu8rcQC0Z4JfJYeENaB435lLIyddOhRj1GovGCMoFb6VNziytCS+Xg17crx43Fh7M91bRhVnoZkBn6uhiCipG1wyonDkEVu/y+QfPdeg/4rCL1LOfSJHRp/BKuNlj7vg6fI=
+	t=1731760469; cv=none; b=WRzBXsyC4RYVw2h/99WdbEE9EnCLs0o1wYPFcaB7EQS3g12EEMBGMVLd5ES3QVs2N7XO0Y72te8BgPxtLEyuDNyzC5xPyEKnZnpNLJwn9rmK+z5U2J/a3er41VXVaWJ9eJNDZ3Yg6SWPVjtM15FjCLP53VrEA+cN8t2/plDJEVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731757240; c=relaxed/simple;
-	bh=4yqtf3TxzZLdieOGloCVo+/KNale2JTxAEniThZmU1A=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=AEMKA78ymybC+9RLILiceGRuJuVf1wc5HUwuahGV6MS6ogvuz6sAkOOujwi51niYxVzPG8sdTWFkiqqX6Z3fnbUdc+hAwlP4MaoR5EXy4hAyqO3c2nZ0VRUQCljFYbr2FHRanD5PJeAoUDLfWUAeJFFRN9FXN+p/Gga9tKkML9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EveRJaJT; arc=none smtp.client-ip=209.85.215.170
+	s=arc-20240116; t=1731760469; c=relaxed/simple;
+	bh=GHUEOYJoLV8zdUhoqYwejQdeNblBrkuxKUGJYzFtDLg=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=OWxYsDSQnXgeoXUWJoWsFf/ZtfPy1pUYuyg6uteshdQfmb+B5n6KO8yjFcJ7V4gs3iWMTSAHQZUmucO14YSFIol3oMetP0J5ofL9vrNWqelM+IZaAREnup77dk+vGzEAk+6qlCrQzUcGFF2p/x8+ONrrFOewtr8oCfy0Bd/yjP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CF+ie1JF; arc=none smtp.client-ip=209.85.214.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-7f8b37edeb7so2161374a12.0;
-        Sat, 16 Nov 2024 03:40:39 -0800 (PST)
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20cbcd71012so4716705ad.3;
+        Sat, 16 Nov 2024 04:34:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731757239; x=1732362039; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=QES5ivYy4we8CGU9IJFUjy9+jaCCLBYcx/iDh9H/oSQ=;
-        b=EveRJaJTbOH6ZpgiTkqh+0F+JaO5ZjSNQYJHy1tFj/Qqs3z4qn02bpfQ0bKfL20z1G
-         /6KGQZ4RcFS5OMaFvkdAcgEcnBPtva7edTLVq5HkbeiFnBrede2h5ht9KDEuhnL2HeSu
-         KYqtj29VgJoXBfVIbx4PH0czHjRv08NDs2RMTGoIqTy7svmTYkDPH9mcupW3pE7liCWI
-         zJX9EuUsSQFiGF5Th7uk9PghqUlEPMoQ24D2SBgLCBoRYsfTEBOstYc3d6IuePTfBWh7
-         mEIx1NFHtvRM1bar4ND6ACocsCGGOM6m5V8yYdtzPCxlIWO+g6Yj26aKGUAsPPUZFgC0
-         NXRg==
+        d=gmail.com; s=20230601; t=1731760467; x=1732365267; darn=vger.kernel.org;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=fEtJp9SSOayGK+bhR6rbytlyGbW7N5dlpS26wnCneKg=;
+        b=CF+ie1JF63uUMhOddfq0b4/e7j1cHtT0p9vwcviwY42wVFlz/oxeniLD02mJJ1pR2w
+         4dMv+UA0GfpJGFzXGDe0hP2FC4GKM/CI/ltVOuY+zwnOxx354KF9ctzTgERyrkiG6a/H
+         okts1jj44C5Vu21TIRazIgfOBWILOxJwYhsfQL421SPIT1XCtD0mK+1rArF95/DOCoJ+
+         2g/Po49hw3Q13UcTg6UQRZ0Ut0F1y9K0Tywe7VnrLRTBG9tGvO8lPxQJ6DGGgBNmkkDI
+         i8gdAVNUCqKZc/h34K96xf71jlcUZw86owuAy8DsshXRTvDYjZdZpRaJrBmhVQpJv0R7
+         i1NA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731757239; x=1732362039;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QES5ivYy4we8CGU9IJFUjy9+jaCCLBYcx/iDh9H/oSQ=;
-        b=grsrTG8ZTlLjCG7T4NB6ozMYPR2wQ87c9YKnO1PF8nmp2VtL/IgcTC06PCm1qS6HRY
-         Vv0Vy1aohmOAeGPbRIXpPv0BPDMwo6J65/t99cDyDgyV0x9sHCGO+6eRsBUyMcSQnzW7
-         f1JOnjR4Y6m5YOtpi+7YlkGcR9CE8/3CU5MIkxGGVQBOWoJ4XnQptDcE96K4V7V0VQ6S
-         aGpkwlVO1ynMyeipsltnGL1S38d77XSswzaOMnXVM+Lcrmzj5lMdfS6p0DT7Qj1ZRCLn
-         3rpocnHQ+2IIrIFTTOk5Ee5YUl0Vl/C4VLoigOJ+Ffp2G4RZW7oZB2G4hp+WP0nqomsd
-         zOcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVsr4+H3DeUCyoJF34vBk53Q356+W6+ODonKTnc+hZ7JkxynEZrguXe1Y2NoVg9mg9qGYCWOMO1uKbH@vger.kernel.org, AJvYcCXmNzAh8H+zwPIL94Zl0IndDMqJNvPA1/zlA7LOTo4dfQaoJRnuvdUZycZb3DSyvtKMIijmlKLIzmy9YE6A@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7s3AkSiMf+Hm8WxlDXkWrkRPW27+PQGWXe9oO+fTVkKh8TNyA
-	jo56/dhLrv6R6UNDZb8p8gmiuvJQ6l/yuYbAWFW9jEqM8tYjtRnf
-X-Google-Smtp-Source: AGHT+IEcEqeRIULoqbB9V79aG/v2fsxloM/p8RLsB1XrG/4rD4IVC3xsTHDvM3Zh3WY/8ejIOOSrsA==
-X-Received: by 2002:a17:903:2b04:b0:20c:79f1:fed9 with SMTP id d9443c01a7336-211d0d7e444mr87833935ad.25.1731757238639;
-        Sat, 16 Nov 2024 03:40:38 -0800 (PST)
-Received: from purva-IdeaPad-Gaming-3-15IHU6.. ([2409:4040:6e99:f02a:954f:e157:760e:3d30])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211d0f346d7sm26078255ad.138.2024.11.16.03.40.33
+        d=1e100.net; s=20230601; t=1731760467; x=1732365267;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fEtJp9SSOayGK+bhR6rbytlyGbW7N5dlpS26wnCneKg=;
+        b=X5TfsFqoEEqckX4iHJtmP1sa30U2WCxymKpiuwRm4gdwblNpzRfbgIkxja/pRZxhVF
+         xUOSyzqV6t1h0Jo0aocnq0eh8TfQjK9Gg1T9r9nTZIQYgCqSDltx7cJyu6GQXE7XGSZJ
+         irqLXM7M9MNHOZwLfYaf+ILtHSyjP8E3CPXzKqGfkeR06H8AtYZ+ckptsj9H2hmUgtNK
+         7x09DVXfGKp0TBRr/JN4iIsXXWL/gVQ73K4dhJOYdz63zWjU4nwZ7i6NARogMfEENJpX
+         WoOZJGz+VpRgNmUoKRXWL9K5J5ZEmIyaw85OrWTx/7r0GcppzhVbXPnsrrqMyBKsk9uy
+         Q7Kw==
+X-Forwarded-Encrypted: i=1; AJvYcCU6awTg4jPS9vlZGyA+0GJn93JraVm7tNg3CgLKjeAWBrgUkIvSKhPUu0Zc70BCBFEjQ0XIJZ4mmeIGtTEP@vger.kernel.org, AJvYcCVLK0JBvUeW0xQIeRVHc/kdsv9lHRGYKGxkJ5Dd8NHOqxgygAfVMDgDiLsMNDFWVg9wpvqcFnQ66QNvXwQe@vger.kernel.org, AJvYcCVvjbdStpIuCHzLunCkR/GXOKq9c+3EME8V3gxL5baXl021pULfcf9CJgfUubT6X78xC33wpgFwGu4rVqGAU9l7@vger.kernel.org
+X-Gm-Message-State: AOJu0YwoD/OnFzCtrPef1uvFayFE+QFCWg7mg8/mbUy+AG4RFdBSy3sw
+	JglvUe+XQPHM5MDR2qAaFS45qcqUR51GJCD/rhWQ7L2MyGqU54OMVliBnpCD
+X-Google-Smtp-Source: AGHT+IGMIdd0MVq9ycS0BwfPAQWlm2CmDCHtZs+52Ag/FtZcI3X0AMiqJ588rNWYIzfyalFel19UQw==
+X-Received: by 2002:a17:902:d50a:b0:20c:8331:cb6e with SMTP id d9443c01a7336-211d0d818c6mr91611965ad.19.1731760466885;
+        Sat, 16 Nov 2024 04:34:26 -0800 (PST)
+Received: from dw-tp ([49.205.218.89])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211d0f34903sm27031255ad.158.2024.11.16.04.34.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 16 Nov 2024 03:40:38 -0800 (PST)
-From: Suraj Sonawane <surajsonawane0215@gmail.com>
-To: surajsonawane0215@gmail.com,
-	dan.j.williams@intel.com
-Cc: dave.jiang@intel.com,
-	ira.weiny@intel.com,
-	lenb@kernel.org,
-	linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	nvdimm@lists.linux.dev,
-	rafael@kernel.org,
-	syzbot+7534f060ebda6b8b51b3@syzkaller.appspotmail.com,
-	vishal.l.verma@intel.com
-Subject: [PATCH v5] acpi: nfit: vmalloc-out-of-bounds Read in acpi_nfit_ctl
-Date: Sat, 16 Nov 2024 17:10:27 +0530
-Message-Id: <20241116114027.19303-1-surajsonawane0215@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        Sat, 16 Nov 2024 04:34:26 -0800 (PST)
+From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+To: Michael Ellerman <mpe@ellerman.id.au>, brauner@kernel.org
+Cc: sforshee@kernel.org, linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] selftests/mount_setattr: Fix failures on 64K PAGE_SIZE kernels
+In-Reply-To: <20241115134114.1219555-1-mpe@ellerman.id.au>
+Date: Sat, 16 Nov 2024 17:12:34 +0530
+Message-ID: <87o72fcslx.fsf@gmail.com>
+References: <20241115134114.1219555-1-mpe@ellerman.id.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Fix an issue detected by syzbot with KASAN:
+Michael Ellerman <mpe@ellerman.id.au> writes:
 
-BUG: KASAN: vmalloc-out-of-bounds in cmd_to_func drivers/acpi/nfit/
-core.c:416 [inline]
-BUG: KASAN: vmalloc-out-of-bounds in acpi_nfit_ctl+0x20e8/0x24a0
-drivers/acpi/nfit/core.c:459
+> Currently the mount_setattr_test fails on machines with a 64K PAGE_SIZE,
+> with errors such as:
+>
+>   #  RUN           mount_setattr_idmapped.invalid_fd_negative ...
+>   mkfs.ext4: No space left on device while writing out and closing file system
+>   # mount_setattr_test.c:1055:invalid_fd_negative:Expected system("mkfs.ext4 -q /mnt/C/ext4.img") (256) == 0 (0)
+>   # invalid_fd_negative: Test terminated by assertion
+>   #          FAIL  mount_setattr_idmapped.invalid_fd_negative
+>   not ok 12 mount_setattr_idmapped.invalid_fd_negative
+>
+> The code creates a 100,000 byte tmpfs:
+>
+> 	ASSERT_EQ(mount("testing", "/mnt", "tmpfs", MS_NOATIME | MS_NODEV,
+> 			"size=100000,mode=700"), 0);
+>
+> And then a little later creates a 2MB ext4 filesystem in that tmpfs:
+>
+> 	ASSERT_EQ(ftruncate(img_fd, 1024 * 2048), 0);
+> 	ASSERT_EQ(system("mkfs.ext4 -q /mnt/C/ext4.img"), 0);
+>
+> At first glance it seems like that should never work, after all 2MB is
+> larger than 100,000 bytes. However the filesystem image doesn't actually
+> occupy 2MB on "disk" (actually RAM, due to tmpfs). On 4K kernels the
+> ext4.img uses ~84KB of actual space (according to du), which just fits.
+>
+> However on 64K PAGE_SIZE kernels the ext4.img takes at least 256KB,
+> which is too large to fit in the tmpfs, hence the errors.
 
-The issue occurs in cmd_to_func when the call_pkg->nd_reserved2
-array is accessed without verifying that call_pkg points to a buffer
-that is appropriately sized as a struct nd_cmd_pkg. This can lead
-to out-of-bounds access and undefined behavior if the buffer does not
-have sufficient space.
+Even though ext4 will use by default 4k blocksize on both kernels but
+the backing file here belongs to tmpfs (RAM) which operates at 64k page.
+Hence the difference in the size of the image between 4k and 64k kernels
+looks expected.
 
-To address this, a check was added in acpi_nfit_ctl() to ensure that
-buf is not NULL and that buf_len is less than sizeof(*call_pkg)
-before accessing it. This ensures safe access to the members of
-call_pkg, including the nd_reserved2 array.
+# 64k kernel
+du -sh /run/ext4
+256K    /run/ext4
 
-Reported-by: syzbot+7534f060ebda6b8b51b3@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=7534f060ebda6b8b51b3
-Tested-by: syzbot+7534f060ebda6b8b51b3@syzkaller.appspotmail.com
-Fixes: ebe9f6f19d80 ("acpi/nfit: Fix bus command validation")
-Signed-off-by: Suraj Sonawane <surajsonawane0215@gmail.com>
----
-V1: https://lore.kernel.org/lkml/20241111080429.9861-1-surajsonawane0215@gmail.com/ 
-V2: Initialized `out_obj` to `NULL` in `acpi_nfit_ctl()` to prevent
-potential uninitialized variable usage if condition is true.
-V3: Changed the condition to if (!buf || buf_len < sizeof(*call_pkg))
-and updated the Fixes tag to reference the correct commit.
-V4: Removed the explicit cast to maintain the original code style.
-V5: Re-Initialized `out_obj` to NULL. To prevent
-potential uninitialized variable usage if condition is true.
+# 4k kernel
+du -sh /run/ext4
+84K     /run/ext4
 
- drivers/acpi/nfit/core.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+>
+> It seems fraught to rely on the ext4.img taking less space on disk than
+> the allocated size, so instead create the tmpfs with a size of 2MB. With
+> that all 21 tests pass on 64K PAGE_SIZE kernels.
 
-diff --git a/drivers/acpi/nfit/core.c b/drivers/acpi/nfit/core.c
-index 5429ec9ef..573ed264c 100644
---- a/drivers/acpi/nfit/core.c
-+++ b/drivers/acpi/nfit/core.c
-@@ -439,7 +439,7 @@ int acpi_nfit_ctl(struct nvdimm_bus_descriptor *nd_desc, struct nvdimm *nvdimm,
- {
- 	struct acpi_nfit_desc *acpi_desc = to_acpi_desc(nd_desc);
- 	struct nfit_mem *nfit_mem = nvdimm_provider_data(nvdimm);
--	union acpi_object in_obj, in_buf, *out_obj;
-+	union acpi_object in_obj, in_buf, *out_obj = NULL;
- 	const struct nd_cmd_desc *desc = NULL;
- 	struct device *dev = acpi_desc->dev;
- 	struct nd_cmd_pkg *call_pkg = NULL;
-@@ -454,8 +454,15 @@ int acpi_nfit_ctl(struct nvdimm_bus_descriptor *nd_desc, struct nvdimm *nvdimm,
- 	if (cmd_rc)
- 		*cmd_rc = -EINVAL;
- 
--	if (cmd == ND_CMD_CALL)
-+	if (cmd == ND_CMD_CALL) {
-+		if (!buf || buf_len < sizeof(*call_pkg)) {
-+			rc = -EINVAL;
-+			goto out;
-+		}
-+
- 		call_pkg = buf;
-+	}
-+
- 	func = cmd_to_func(nfit_mem, cmd, call_pkg, &family);
- 	if (func < 0)
- 		return func;
--- 
-2.34.1
+That looks like the right thing to do here. 
 
+Please feel free to add - 
+
+Reviewed-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+
+>
+> Fixes: 01eadc8dd96d ("tests: add mount_setattr() selftests")
+> Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+> ---
+>  tools/testing/selftests/mount_setattr/mount_setattr_test.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/tools/testing/selftests/mount_setattr/mount_setattr_test.c b/tools/testing/selftests/mount_setattr/mount_setattr_test.c
+> index 68801e1a9ec2..70f65eb320a7 100644
+> --- a/tools/testing/selftests/mount_setattr/mount_setattr_test.c
+> +++ b/tools/testing/selftests/mount_setattr/mount_setattr_test.c
+> @@ -1026,7 +1026,7 @@ FIXTURE_SETUP(mount_setattr_idmapped)
+>  			"size=100000,mode=700"), 0);
+>  
+>  	ASSERT_EQ(mount("testing", "/mnt", "tmpfs", MS_NOATIME | MS_NODEV,
+> -			"size=100000,mode=700"), 0);
+> +			"size=2m,mode=700"), 0);
+>  
+>  	ASSERT_EQ(mkdir("/mnt/A", 0777), 0);
+>  
+> -- 
+> 2.47.0
 
