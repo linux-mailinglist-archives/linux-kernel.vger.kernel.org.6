@@ -1,139 +1,116 @@
-Return-Path: <linux-kernel+bounces-411800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E4FE9CFFC0
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 17:03:22 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3C759CFFBC
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 17:02:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7B6B2859FB
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 16:03:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4DBD5B24576
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 16:02:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D302E193091;
-	Sat, 16 Nov 2024 16:02:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5260E1885BD;
+	Sat, 16 Nov 2024 16:02:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jy9WBBFd"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UL7EY4ix"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E73B9198848
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 16:02:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FDC918B482;
+	Sat, 16 Nov 2024 16:02:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731772935; cv=none; b=mX07bbbLXLlP8QKTZcA6/ks5X2WFdOBTFdeOfnld/PWr1Ihp8fmmt8M+S81bDTXFzEWr/Tavq4FTexjo+/iY8mizzOoxMcQ9fHpcFc27Ac/YfqJNYhjxtl9ROyYWMPhIeaIfyQFuMKTZEDHeREe5Gqlaqf/bEGyhW0C52S0XCqU=
+	t=1731772924; cv=none; b=O/2Y9Q1eaempPeMa/6ypmB5OpS40jTN5HL7unGaMYmdEsAMH9WqVfS5NaTXgEyVlDVOhVwL7maGAG8vJrtBaApaPRtW80+VXStZ+SunCM5lKyAzAJDjPlH8bhrPDWyj6WeerqZYdr8AVEfWUeop6wCrXV7HlHw8g8LmOmB7Sphw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731772935; c=relaxed/simple;
-	bh=29OhbxoZ0xm6G7JzBb4GdoFklR8a8xfzpQfSQfoBXk4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=acUVA01wLBHkotAXqMjuu+4wQJrMtkYK+kgoH2XFNfyb5bkg3RO1BdGBSKEkZbookqhZ24MHDm6VUydaNDmqj8JttRFbFXWsZXjU5lcDt47bZWMZ8EIwfvMmbNaVu41SWS+KqXN9UCNB8audtL57gK0f6zat2KBCLPEDRzCnzPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jy9WBBFd; arc=none smtp.client-ip=209.85.214.175
+	s=arc-20240116; t=1731772924; c=relaxed/simple;
+	bh=UijMnMV8wUCIx8JQ6HHv3iRulp3nmwiDHx+zhV5iZRI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Oyc4EqiiNGD8NZlOC17ZWuMHYi4tmVnnvneVkp0szCQrTL/Wu5O6ExZXwlrdvQyw9eZOZp1UI1KlBAQ+D/v7oAzs4ZeDdw/VnZT5x6kk5ZT+9zim8qOGlUKB+PzPxoZqn8crWNBuSio0wNleGBNPKzVvIzf8TvDnvPyF3FCLpbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UL7EY4ix; arc=none smtp.client-ip=209.85.221.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-20caccadbeeso18597065ad.2
-        for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 08:02:13 -0800 (PST)
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3823cf963f1so153312f8f.1;
+        Sat, 16 Nov 2024 08:02:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731772933; x=1732377733; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1731772921; x=1732377721; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=hEUGftoYqMghGeJCrzA2wJAFP+c9rSA4g2ZKWQjS6GI=;
-        b=jy9WBBFdZWlX+aqc3w5GBlY18Piz8jo3rsA9Kh6jaEUW8wUlI8j4qBpZoTIPByVul/
-         Bqwudv+lHRoIoFHjoJxgQ2+r1Rv5Mmj5GUcXBNEjHEIs8HYd0j/WNo31lpKQRGXEyU7v
-         PtWZPWKBUZsHv2cc2gLqzcRSAIgkNO383OPYt/01hrZClZdG9QxZctm0u7D1wQpDsqiG
-         SVpOchQgrEUoSmo5u8LCEhO6phLaLTK5l64HpixhYhAxMC2udIoVJFKYsbbuB96Teei+
-         FgFFhtLMmR+qQJDsoQlxgKJi3UnUVYP19cjYvG4VV4PyJGJOBhpknGMOhapCbA3kVaW7
-         8Jeg==
+        bh=UijMnMV8wUCIx8JQ6HHv3iRulp3nmwiDHx+zhV5iZRI=;
+        b=UL7EY4ix4lAdjh+JxPpt39KqtRToKxsVaN4k9ydY0b3w2QFbau4yGGnX71mBRa0Q+j
+         5FpdzmWI6+7HLNulrOKCmrUhAlNZhohB05KaPfl/SUZ/Tn2JtTxeeBVFoe/E3viHUV1r
+         kOT5YGz7hgog23onikdkHKi6nYSKPrEPvJ8+Nv8srM/L/V514vW8RvIxI8uEuW871VZ1
+         pYolZkoX2RWGkZYl0aGe/vIRm5Wdhhq1d6Bwx6yMQ8XpjNc6BVr/iv+qO88J8dJ0p0XI
+         4UUJZ/kHVHElCk7iKXk5Exfx2aH82Oht6elRyzVtQMmeGcKBevan7ohfrboe9DGyROz4
+         v8zw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731772933; x=1732377733;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1731772921; x=1732377721;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=hEUGftoYqMghGeJCrzA2wJAFP+c9rSA4g2ZKWQjS6GI=;
-        b=g3eUIQf6QttWMekU7dPCwlnlneZhyDn1KSm7CHe61Vd4sS1tFss82j7XxoSDC0R4Il
-         eZdHW42fqFv0hrM2yRSO4gWXsDxwWnSwCueVX6WaYIrXW7UTEDH2NcOpWMxZkUTohDaj
-         CzZHkl4qDq+2EmQN6e1N/vbBuxPDXLl5LDNsZebKLiFgZRetXgcG3fIX6Sw3B4PMH1Ay
-         K439nqV3pOg799klcr/q/7rnRcuXtS34JTR4guP+m36wJaG5rFlcOpka/uYok06pYaKX
-         +OJBItgCRWwzf2DNrnB50mTvXCq9yIoENJlCJIcc6H+Md8dzZGZrlncClRK1sS2bYq+9
-         Fiww==
-X-Forwarded-Encrypted: i=1; AJvYcCW8oJtmG+5T7OQ6DOtOx91FAYOIq1oeg9G5xNCyAAyLfvFWK5L7iGmvlo9Jak66Uq6jxGy2d44B22qro/E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1+3bhF0yxE5E8SaSpOW7+dkRiXbIyGxEyYkfvnsfuhhDE1OjS
-	YyEmBxK/ay8M9gBbFmmQYhVvXUBCYT+HyCOliN9WfhRC70Yg3Y7c
-X-Google-Smtp-Source: AGHT+IFQzE03yOcJF6hT2Bip9XWJXr23JrMiXmrisg0f9+jeNvS/flZn9tQ/f2G0LVaDu+haL6Zunw==
-X-Received: by 2002:a17:902:d48e:b0:20c:e5b5:608a with SMTP id d9443c01a7336-211d0d5ea23mr94522405ad.5.1731772933238;
-        Sat, 16 Nov 2024 08:02:13 -0800 (PST)
-Received: from localhost ([58.29.143.236])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211d0f4535csm29137285ad.178.2024.11.16.08.02.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 16 Nov 2024 08:02:12 -0800 (PST)
-From: Changwoo Min <multics69@gmail.com>
-X-Google-Original-From: Changwoo Min <changwoo@igalia.com>
-To: tj@kernel.org,
-	void@manifault.com
-Cc: mingo@redhat.com,
-	peterz@infradead.org,
-	changwoo@igalia.com,
-	kernel-dev@igalia.com,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 5/5] sched_ext: Replace bpf_ktime_get_ns() to scx_bpf_clock_get_ns()
-Date: Sun, 17 Nov 2024 01:01:26 +0900
-Message-ID: <20241116160126.29454-6-changwoo@igalia.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241116160126.29454-1-changwoo@igalia.com>
-References: <20241116160126.29454-1-changwoo@igalia.com>
+        bh=UijMnMV8wUCIx8JQ6HHv3iRulp3nmwiDHx+zhV5iZRI=;
+        b=W9nCYHeoAd0bdbnFq1zHAdIPmpykl5+/+NJxc/W32EXSYGLU+Z+AtHAyCchdxGy6J0
+         or7kVrqILzMVAoPfaH9Kc0vl0ObviyJ7Wvo8YqAJoU7wrS2ycLNOHLxVhGfkw/OciZTV
+         6i1Q3sj94/6uK+dINtwfM6I1Xr8sdWg3ZggoiGm/0EaO3TFHJ/9ZZTMTWaIg8zgfSuKe
+         Y8nJ7QR0lMoo+w5mex5GZRIoAVA0yjJSNrcvwo5lYvVI/QwgGF/n94RsItEjRQvXpjrD
+         ++uNM+BIwThXCtgoW9ejTAQ/QtrKSznR2LhUBPao94j/HoN5yJkEsAjwhG5gDjZX5p+2
+         by+A==
+X-Forwarded-Encrypted: i=1; AJvYcCXq5X0toTyoN5Vrx1nBRW+YNFOdMRQmTRiy0+44+U+M0oBIpsdVBnHJhZyrxDQ+/fDOsh4=@vger.kernel.org, AJvYcCXr0E7Z67sElMZkOD9JHfM9zTXaqJUhKHK7ToHOwUJccbfrSIr7Yrrym4xzi8L+t2SlpsK8YJ9LyHvn3ktD@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXJX0qbV4dfdHfuToqliMKvTQKkWDdZtXuc6CdFB4GF2e1iM8Z
+	Fyt5ZkEQtjQpr3WRGjRrb11WyhHBLHxntM9U0OPkznwNf8T9InhHIAwx829ga5DXUt25yCvl44n
+	Ky8+uCgeVDvqDvrZgQrWXJkzDs94=
+X-Google-Smtp-Source: AGHT+IFQ/o+7fboa/cFjS9jNYnRv2Xn1kVPcEe2go1Tliw6ReETIuha0jykNvpXLIypVYBUW8aqD3xeOXhVojofPA0A=
+X-Received: by 2002:a05:6000:4619:b0:382:1e06:fb2 with SMTP id
+ ffacd0b85a97d-38225a92035mr5439250f8f.38.1731772921103; Sat, 16 Nov 2024
+ 08:02:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241108063214.578120-1-kunwu.chan@linux.dev> <87v7wsmqv4.ffs@tglx>
+ <1e5910b1-ea54-4b7a-a68b-a02634a517dd@linux.dev> <87sersyvuc.ffs@tglx> <20241116092102.O_30pj9W@linutronix.de>
+In-Reply-To: <20241116092102.O_30pj9W@linutronix.de>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Sat, 16 Nov 2024 08:01:49 -0800
+Message-ID: <CAADnVQ+ToRZ6ZQL44Z9TAn6c=ecqrDgrnJenH7-miHJSWe7Nsw@mail.gmail.com>
+Subject: Re: [PATCH] bpf: Convert lpm_trie::lock to 'raw_spinlock_t'
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Kunwu Chan <kunwu.chan@linux.dev>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Eddy Z <eddyz87@gmail.com>, 
+	Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, 
+	John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	clrkwllms@kernel.org, Steven Rostedt <rostedt@goodmis.org>, bpf <bpf@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, linux-rt-devel@lists.linux.dev, 
+	syzbot+b506de56cbbb63148c33@syzkaller.appspotmail.com, 
+	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-In the BPF schedulers that use bpf_ktime_get_ns() -- scx_central and
-scx_flatcg, replace bpf_ktime_get_ns() calls to scx_bpf_clock_get_ns().
+On Sat, Nov 16, 2024 at 1:21=E2=80=AFAM Sebastian Andrzej Siewior
+<bigeasy@linutronix.de> wrote:
+>
+> On 2024-11-15 23:29:31 [+0100], Thomas Gleixner wrote:
+> > IIRC, BPF has it's own allocator which can be used everywhere.
+>
+> Thomas Wei=C3=9Fschuh made something. It appears to work. Need to take a
+> closer look.
 
-Signed-off-by: Changwoo Min <changwoo@igalia.com>
----
- tools/sched_ext/scx_central.bpf.c | 4 ++--
- tools/sched_ext/scx_flatcg.bpf.c  | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+Any more details?
+bpf_mem_alloc is a stop gap.
+As Vlastimil Babka suggested long ago:
+https://lwn.net/Articles/974138/
+"...next on the target list is the special allocator used by the BPF
+subsystem. This allocator is intended to succeed in any calling
+context, including in non-maskable interrupts (NMIs). BPF maintainer
+Alexei Starovoitov is evidently in favor of this removal if SLUB is
+able to handle the same use cases..."
 
-diff --git a/tools/sched_ext/scx_central.bpf.c b/tools/sched_ext/scx_central.bpf.c
-index e6fad6211f6c..cb7428b6a198 100644
---- a/tools/sched_ext/scx_central.bpf.c
-+++ b/tools/sched_ext/scx_central.bpf.c
-@@ -245,7 +245,7 @@ void BPF_STRUCT_OPS(central_running, struct task_struct *p)
- 	s32 cpu = scx_bpf_task_cpu(p);
- 	u64 *started_at = ARRAY_ELEM_PTR(cpu_started_at, cpu, nr_cpu_ids);
- 	if (started_at)
--		*started_at = bpf_ktime_get_ns() ?: 1;	/* 0 indicates idle */
-+		*started_at = scx_bpf_clock_get_ns() ?: 1;	/* 0 indicates idle */
- }
- 
- void BPF_STRUCT_OPS(central_stopping, struct task_struct *p, bool runnable)
-@@ -258,7 +258,7 @@ void BPF_STRUCT_OPS(central_stopping, struct task_struct *p, bool runnable)
- 
- static int central_timerfn(void *map, int *key, struct bpf_timer *timer)
- {
--	u64 now = bpf_ktime_get_ns();
-+	u64 now = scx_bpf_clock_get_ns();
- 	u64 nr_to_kick = nr_queued;
- 	s32 i, curr_cpu;
- 
-diff --git a/tools/sched_ext/scx_flatcg.bpf.c b/tools/sched_ext/scx_flatcg.bpf.c
-index 4e3afcd260bf..3be99f3c32fd 100644
---- a/tools/sched_ext/scx_flatcg.bpf.c
-+++ b/tools/sched_ext/scx_flatcg.bpf.c
-@@ -734,7 +734,7 @@ void BPF_STRUCT_OPS(fcg_dispatch, s32 cpu, struct task_struct *prev)
- 	struct fcg_cpu_ctx *cpuc;
- 	struct fcg_cgrp_ctx *cgc;
- 	struct cgroup *cgrp;
--	u64 now = bpf_ktime_get_ns();
-+	u64 now = scx_bpf_op_clock_get_ns();
- 	bool picked_next = false;
- 
- 	cpuc = find_cpu_ctx();
--- 
-2.47.0
-
+Here is the first step:
+https://lore.kernel.org/bpf/20241116014854.55141-1-alexei.starovoitov@gmail=
+.com/
 
