@@ -1,55 +1,62 @@
-Return-Path: <linux-kernel+bounces-411808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 315589CFFD2
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 17:16:04 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71B199CFFD4
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 17:18:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB0A6289169
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 16:16:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91F20B21C74
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 16:18:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6E5F191F77;
-	Sat, 16 Nov 2024 16:15:43 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC519188CA9;
+	Sat, 16 Nov 2024 16:18:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="CxMyor8y"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BAD018E379
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 16:15:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA1A4262BE;
+	Sat, 16 Nov 2024 16:18:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731773743; cv=none; b=VqtzMO8rMmxTFjecY2VU/G0PjuhfCgw6rRzfbwkjuoZjXBZJ/RVvEfuye70cw9q4Y73nlMCb5xttTFZ0j/0hurq58vDkYOICnTU9WGUCyglitbU/BYqtKqLCR1snWoFeUKbHU2Fk4qiAXtSlxwgaOeY+WI1WRgwpxVT597XfT9U=
+	t=1731773894; cv=none; b=OsfcKboyafv+1NimaprZBf+l/xq1G3u0+HqoInsm0Wg3oiNOmEhRjY8f3C06zoDs2TcKosM07KbB5/uyWSevOzSkbTSnhvVdwGfMMJyu57qTRkCe+4Hw0ZH5uoQAUwNF7W2f3Wu+enp156QkT9Vlpz+rEHT3vmHLyF7AoTx+08o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731773743; c=relaxed/simple;
-	bh=lMZvYYUoRTyAS55ZblTspUhA2a6Mak886MN0+Dr7gQA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iMPY/ttyiQH/ly+/AK6gzwAf3C7NrbOw1HNaI8vSOfvJ/dtbX5b5TFNelYKq1Na859BODP8HxjjLDPfAMtnQLYfa6vo+UcP7F2i3x0sRowP6ELwXfW7RAuaPSVZT+3GhTYQJBMeww7sq4TM5WacF8be9c90xps3UCYgbOMbVgfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4XrJs670Ghz9sSN;
-	Sat, 16 Nov 2024 17:15:38 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id RDniS05mwtFq; Sat, 16 Nov 2024 17:15:38 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4XrJs662Y9z9sSL;
-	Sat, 16 Nov 2024 17:15:38 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id BC2638B7A0;
-	Sat, 16 Nov 2024 17:15:38 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id 0gGIiKiV87Hr; Sat, 16 Nov 2024 17:15:38 +0100 (CET)
-Received: from [192.168.232.159] (POS169858.IDSI0.si.c-s.fr [192.168.232.159])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 6F5258B763;
-	Sat, 16 Nov 2024 17:15:38 +0100 (CET)
-Message-ID: <c00a229c-9ced-4a28-9666-b4707f317c90@csgroup.eu>
-Date: Sat, 16 Nov 2024 17:15:38 +0100
+	s=arc-20240116; t=1731773894; c=relaxed/simple;
+	bh=LOmw6t/E+d3UESUVlzSpAO7MVZQar1LZB9iRDSdzsUA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=MAwropf4gLEqHmCV7lX76qYbx/NdjTcAZSU2a/53EnQdPehBKoNK5flkdshIeVuLMT0Yw4ALDxYEfym1f1tq1HRk+1OAshuvLOn4pD4ufz4HiR7UZ/8siK3mOAVvMyDvya7x8aFggNDzUsAV5+Y/tICqJPs3bYw2ME9VDb/0gY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=CxMyor8y; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AGEcS68028855;
+	Sat, 16 Nov 2024 16:17:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	ERbkDVC0vYWi1nDWzYA+UR2ALH9IAtmrbjWrdnk+JdU=; b=CxMyor8ykgviNmPN
+	3gV33g7Twpj4hDjwfs2b31htW+4pVbecFZsSkbwwlHunj6cnpxs+uyBaeosCIYKN
+	ggtS8FuAxb2b+5hTOzKgUZvPEFh+F+Zknq3gx9iEqhCahb5lyoX+W5ksHs3XydaK
+	1vBFVoAwfYF9qq8s+NJiWlbAQTsT5XeN1kgo+BxVGyiCbRr/frFVuaKOrOsAH68b
+	dgunWF3dZ/z2+trf3YJX/Y9uOs8Spa2WvQZdQXijIP6CoeGP08a0dP/anV9P78gv
+	gIpl+97tJSq4SvCuFuq0pSrX324l51ipybgJo8wpSLY9/Ds6RA90q3PYErUJDGr1
+	6qN30w==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42xmp78xqg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 16 Nov 2024 16:17:57 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AGGHvsj013175
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 16 Nov 2024 16:17:57 GMT
+Received: from [10.253.8.97] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sat, 16 Nov
+ 2024 08:17:54 -0800
+Message-ID: <85106272-31d0-49ec-b190-597a34e2099d@quicinc.com>
+Date: Sun, 17 Nov 2024 00:17:52 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,64 +64,55 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 02/10] powerpc/chrp: Remove various dead code
-To: Michael Ellerman <mpe@ellerman.id.au>, linuxppc-dev@lists.ozlabs.org
-Cc: linux-kernel@vger.kernel.org, geert@linux-m68k.org, arnd@arndb.de
-References: <20241114131114.602234-1-mpe@ellerman.id.au>
- <20241114131114.602234-2-mpe@ellerman.id.au>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <20241114131114.602234-2-mpe@ellerman.id.au>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] Bluetooth: qca: Support downloading board id specific NVM
+ for WCN6855
+To: Steev Klimaszewski <steev@kali.org>
+CC: Marcel Holtmann <marcel@holtmann.org>,
+        Luiz Augusto von Dentz
+	<luiz.dentz@gmail.com>,
+        Zijun Hu <zijun_hu@icloud.com>, <linux-bluetooth@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        "Bjorn
+ Andersson" <bjorande@quicinc.com>,
+        "Aiqun Yu (Maria)"
+	<quic_aiquny@quicinc.com>,
+        Cheng Jiang <quic_chejiang@quicinc.com>,
+        "Johan
+ Hovold" <johan@kernel.org>,
+        Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+References: <20241113-x13s_wcn6855_fix-v1-1-15af0aa2549c@quicinc.com>
+ <CAKXuJqg0SSLYW_XaY+vRGko33nR+Tt9BUcGaAvQt0QMAJjYzrw@mail.gmail.com>
+Content-Language: en-US
+From: quic_zijuhu <quic_zijuhu@quicinc.com>
+In-Reply-To: <CAKXuJqg0SSLYW_XaY+vRGko33nR+Tt9BUcGaAvQt0QMAJjYzrw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: ltmzfV1-fn61X9M_uqgFbUy-1ZmEc-Ej
+X-Proofpoint-GUID: ltmzfV1-fn61X9M_uqgFbUy-1ZmEc-Ej
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ priorityscore=1501 suspectscore=0 adultscore=0 mlxlogscore=851
+ phishscore=0 bulkscore=0 lowpriorityscore=0 impostorscore=0 mlxscore=0
+ malwarescore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411160140
 
-
-
-Le 14/11/2024 à 14:11, Michael Ellerman a écrit :
-> Remove various bits of code that are dead now that PPC_CHRP has been
-> removed.
+On 11/15/2024 3:17 PM, Steev Klimaszewski wrote:
+> Thank you for this, I'd had something similar written, so it's nice to
+> see I was kind of on the right track!  I tested this on my Thinkpad
+> X13s with an H2GO bluetooth Speaker and the range I can get is far
+> greater when it properly loads the b8c file (with this patch), than
+> with the .bin (without this patch).  Thanks again!
 > 
-> Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-> ---
->   arch/powerpc/Kconfig                 |  5 +--
->   arch/powerpc/boot/Makefile           |  1 -
->   arch/powerpc/include/asm/processor.h |  6 ---
->   arch/powerpc/kernel/head_book3s_32.S | 12 ------
->   arch/powerpc/kernel/pci_32.c         |  2 +-
->   arch/powerpc/kernel/prom_init.c      | 56 ----------------------------
->   6 files changed, 3 insertions(+), 79 deletions(-)
-> 
+> Tested-by: Steev Klimaszewski <steev@kali.org>
 
-> diff --git a/arch/powerpc/kernel/head_book3s_32.S b/arch/powerpc/kernel/head_book3s_32.S
-> index cb2bca76be53..c6e297fd36e2 100644
-> --- a/arch/powerpc/kernel/head_book3s_32.S
-> +++ b/arch/powerpc/kernel/head_book3s_32.S
-> @@ -256,20 +256,8 @@ __secondary_hold_acknowledge:
->    */
->   	START_EXCEPTION(INTERRUPT_MACHINE_CHECK, MachineCheck)
->   	EXCEPTION_PROLOG_0
-> -#ifdef CONFIG_PPC_CHRP
-> -	mtspr	SPRN_SPRG_SCRATCH2,r1
-> -	mfspr	r1, SPRN_SPRG_THREAD
-> -	lwz	r1, RTAS_SP(r1)
-> -	cmpwi	cr1, r1, 0
-> -	bne	cr1, 7f
-> -	mfspr	r1, SPRN_SPRG_SCRATCH2
-> -#endif /* CONFIG_PPC_CHRP */
->   	EXCEPTION_PROLOG_1
->   7:	EXCEPTION_PROLOG_2 0x200 MachineCheck
-> -#ifdef CONFIG_PPC_CHRP
-> -	beq	cr1, 1f
-> -	twi	31, 0, 0
-> -#endif
->   1:	prepare_transfer_to_handler
->   	bl	machine_check_exception
->   	b	interrupt_return
-
-Then it becomes a standard exception handler that can be set up with
-
-	EXCEPTION(INTERRUPT_MACHINE_CHECK, MachineCheck, machine_check_exception)
-
-And the comment from paulus voids.
+i am glad to heard that the issue can be fixed
+thank you Steev for help verification with your machines.
+(^^)(^^).
 
 
