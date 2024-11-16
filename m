@@ -1,258 +1,109 @@
-Return-Path: <linux-kernel+bounces-411818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25C699CFFF3
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 17:51:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 526B19CFFF4
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 17:55:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB52EB24E6F
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 16:51:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10FAA28273B
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 16:55:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCC8A1917FD;
-	Sat, 16 Nov 2024 16:50:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF7CF187FFA;
+	Sat, 16 Nov 2024 16:55:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yU6jiluY"
-Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com [209.85.222.49])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="PWdBuLQa"
+Received: from smtp.smtpout.orange.fr (smtp-19.smtpout.orange.fr [80.12.242.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C4C117548
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 16:50:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77BD117548
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 16:55:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731775858; cv=none; b=aHyXKNdHgcyX69iwJDJeKDvEuUuzy2qkPmr0M22Ps6Ayau0+LRy2lgFywbK1WMFnfqXyGrYJALDJdlExytQHMS/rewio7VsdiQtigujIwDsh6YdwYmXf79oGzc3tUoYO8qoFWCPcx9kuD88CcX9B5b4CEN56B3zctCBvLVQU8Vw=
+	t=1731776105; cv=none; b=PeS47r5UIFWePCEge1J1BxReGlCVeAOOLC2zyxv+5QCH7ebSTzI7kKHMHX5o/tUhUWnzXKF5Vnlpx0Vbd5qEb9b5ThfdBf1iS0buutfzOdASz5aikDBh8Otocb7l1uPjKeXm+r0pXSpbvc6tu7k2AIlXb5n+qF8PTFWC4WAp9tc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731775858; c=relaxed/simple;
-	bh=JxVQRUmXu/GR6DOZL4O8huHliPPvYC5bjH4b+yDupQ0=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=amBudxJN0HqEjvGEnIK44Yvqc5mUTgxATMQpHJwsPZsE1/kHjRZvCT5uJWwnxD2hls00GfSRb9SYDdmAJfgXzEzYxB7mHBdJgWq2lGHJqs+4g/ZqewkewPbysQqxQfT1N3uAHTS+B+B1eEsPbKxSDsEg596lGiRDWtjl5zA934A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yU6jiluY; arc=none smtp.client-ip=209.85.222.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ua1-f49.google.com with SMTP id a1e0cc1a2514c-856e98ad00bso233900241.0
-        for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 08:50:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731775854; x=1732380654; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=/AJbuq7ELapydlmshajvSeNG3RIacjhiudlwSv7Rgic=;
-        b=yU6jiluYkdj1tOLAT9wtUgvASi5XtQAitq7sYOzTj7/+AwR+YuPR13AhliKtJ+BTF9
-         VTDuBPHv6LWdAmwo56X0UY8RGOTg8DVOfzOePPXxXlvs0WdzoHWB/djYhzvtRDsIAC1C
-         vmBiYFSfWMut/LcCzMk9FOBahHc/Qsv/lOq3rsksii/GyvpFQ4BTBag0LQXh+MhL9l8Q
-         ul4TUpKTdaGvUoY+3lpt2OXjOF9jOm4SbNb/HupOPswWfFxqUbGDxa2KMm/IJVZeMN3M
-         GB0fEcNnmlocXe5ssvWvN2qf2q67yDhSINk5kpb54z8HRU96d6Nxlxk17Fg4oISbZ9iR
-         spaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731775854; x=1732380654;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/AJbuq7ELapydlmshajvSeNG3RIacjhiudlwSv7Rgic=;
-        b=d9mO8vtpHjLev8LpVjwb7qx9tqM+DnesQwpBjbK4MYhPx1AuKAbKiO9IlUtQLrSAyd
-         ycH9gZM+YsOXe60yi+whhKvqAURlGJTZsQd+w1aywGo6cc3xJ0lbQl6rCDs4y8mz5kxP
-         sBF3rj2CWNR3p51ENr5IklqYwwmAyMi4716z4faAMXUizCHbLgYxMPd4tItIRsvCIM6c
-         FrZs39+88zQ2gWm/XkL/39wonw8a/mwNbQLORxbalPtMJ52qgnpGlJfSyvtUWdLYmdNd
-         VIAh1LkE2cvx67RBii740qtDviW7AigCIodInKHMrhwdJnqL3Wkc/0Qzzv9y+RsDZrmV
-         IX0A==
-X-Gm-Message-State: AOJu0YygJf20LAUf8wMSeYq34biT+EPmK0N8wP8wWgXDF5PGEknXk664
-	K7QBOJAU1I61AeC27ddsOpJ064qezI6rVbX0HJ7/TKIjILT1YUBbU+rLHas62kkbh6tKVE9NPV6
-	IjMLKIib4MjI9QIVPNwfmjVZpPHoLCwVGy5eHDIXBJY1XE0JJ8Lc=
-X-Google-Smtp-Source: AGHT+IGxwi/IVhPflsdG08C7ZbvkGxsHxai4iTgnUdrVuVk07lklbn089q1LGPkXwyBIKlKfDffXfQwU/VQ3TdNFYOg=
-X-Received: by 2002:a05:6102:3f03:b0:4a3:db6a:dbbf with SMTP id
- ada2fe7eead31-4ad62bffe1amr7191005137.14.1731775854568; Sat, 16 Nov 2024
- 08:50:54 -0800 (PST)
+	s=arc-20240116; t=1731776105; c=relaxed/simple;
+	bh=tKyUOWXsLVGZxe1Ulhs5OzVYVexbN0uCIlE0sSJtrfM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LvzhE5H6p/qYDa4kGAWDh0LWQBTFMK5YUNb9lpL/6EXTTQINuEpq0BZtHHpgikq746B/Xud3SKRbw9DMbO4MOm8f6QjnVTpW5xmOHaAs2D1H95pHJEqTL58GN83BGvt3CvIwS9pBlvxAkqOQcf9zutpkAT0Pvs8Ee1cmx0wT1bo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=PWdBuLQa; arc=none smtp.client-ip=80.12.242.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id CM4TtSwSb8AEMCM4TtV69b; Sat, 16 Nov 2024 17:54:54 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1731776094;
+	bh=gRLvF0j4ihPFPoFcSZt3VuXORVsZwQBdv/+ra6bwjEE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=PWdBuLQaocHWa3SqGn0E/jnjgH2kUkF+J0ex1i+gDs5QdcSIEKzClVlwB1tEvbs/w
+	 VYv5JF04ttn85dgiywcqmVV8+Y3+BexCMEApMxdPXqqCKD/H1U3Y7fZhuuFAqXwIvz
+	 WBI9KVY0WHaOPkbHwZARFtJpVw67Se6f9RJ/wjldh5bxFsfbQDQQVfNP446DdnucAK
+	 eXKmHJw5CGwb/oNonWcG3EJTifk6ZT63lGzY7S9MA3kk56yeWAtfV9/QdIEqe4Y+Uq
+	 +4LSKCI4t2esPu9LTEaEhQtus1tjgAd8yh3P1PN0UYCZJxUCXJBm+UmqYh6I3sFKR9
+	 8i36aGWkYzm+w==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Sat, 16 Nov 2024 17:54:54 +0100
+X-ME-IP: 90.11.132.44
+Message-ID: <fe670aff-461f-417f-a9b7-7b714e84b5e2@wanadoo.fr>
+Date: Sat, 16 Nov 2024 17:54:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Sat, 16 Nov 2024 22:20:43 +0530
-Message-ID: <CA+G9fYvVAvEBbFzhQQ_UBf+PYMojtN1O4qHKXngu33AT8HqEnA@mail.gmail.com>
-Subject: ltp-syscalls/ioctl04: sysfs: cannot create duplicate filename '/kernel/slab/:a-0000176'
-To: open list <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org, 
-	linux-ext4 <linux-ext4@vger.kernel.org>, lkft-triage@lists.linaro.org, 
-	Linux Regressions <regressions@lists.linux.dev>
-Cc: "Theodore Ts'o" <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, 
-	Arnd Bergmann <arnd@arndb.de>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Sasha Levin <sashal@kernel.org>, 
-	Anders Roxell <anders.roxell@linaro.org>, Dan Carpenter <dan.carpenter@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] 9p/fs: Different branch return the same value
+To: Rex Nie <rexnie3@gmail.com>, ericvh@kernel.org, lucho@ionkov.net,
+ asmadeus@codewreck.org, linux_oss@crudebyte.com
+Cc: linux-kernel@vger.kernel.org
+References: <20241116152612.2423-1-rexnie3@gmail.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20241116152612.2423-1-rexnie3@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-The LTP syscalls ioctl04 and sequence test cases reported failures due
-to following
-reasons in the test log on the following environments on
-sashal/linus-next.git tree.
- - qemu-x86_64
- - qemu-x86_64-compat
- - testing still in progress
+Le 16/11/2024 à 16:26, Rex Nie a écrit :
+> The same code is executed when the condition ret < 0 is true or false.
+> Remove the if branch and just return v9fs_init_inode_cache(). This
+> does not change the semantics of the original code.
+> 
+> Signed-off-by: Rex Nie <rexnie3@gmail.com>
+> ---
+>   fs/9p/v9fs.c | 7 +------
+>   1 file changed, 1 insertion(+), 6 deletions(-)
+> 
+> diff --git a/fs/9p/v9fs.c b/fs/9p/v9fs.c
+> index 281a1ed03a04..ee0a374e0d9d 100644
+> --- a/fs/9p/v9fs.c
+> +++ b/fs/9p/v9fs.c
+> @@ -661,12 +661,7 @@ static void v9fs_destroy_inode_cache(void)
+>   
+>   static int v9fs_cache_register(void)
+>   {
+> -	int ret;
+> -
+> -	ret = v9fs_init_inode_cache();
+> -	if (ret < 0)
+> -		return ret;
+> -	return ret;
+> +	return v9fs_init_inode_cache();
+>   }
+>   
+>   static void v9fs_cache_unregister(void)
 
-LTP test failed log:
----------------
-<4>[   70.931891] sysfs: cannot create duplicate filename
-'/kernel/slab/:a-0000176'
-...
-<0>[   70.969266] EXT4-fs: no memory for groupinfo slab cache
-<3>[   70.970744] EXT4-fs (loop0): failed to initialize mballoc (-12)
-<3>[   70.977680] EXT4-fs (loop0): mount failed
-ioctl04.c:67: TFAIL: Mounting RO device RO failed: ENOMEM (12)
+Hi,
 
-First seen on commit sha id c12cd257292c0c29463aa305967e64fc31a514d8.
-  Good: 7ff71d62bdc4828b0917c97eb6caebe5f4c07220
-  Bad:  c12cd257292c0c29463aa305967e64fc31a514d8
-  (not able to fetch these ^ commit ids now)
+a similar patch has already been sent.
 
-qemu-x86_64:
-  * ltp-syscalls/fanotify14
-  * ltp-syscalls/ioctl04
-  * etc..
+See [1], which is the v2 of the patch and goes one step further.
 
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+CJ
 
-Test log:
----------
-tst_tmpdir.c:316: TINFO: Using /scratch/ltp-8XkJXJek4F/LTP_iocSaDyQw
-as tmpdir (ext2/ext3/ext4 filesystem)
-tst_device.c:96: TINFO: Found free device 0 '/dev/loop0'
-<6>[   70.394900] loop0: detected capacity change from 0 to 614400
-tst_test.c:1158: TINFO: Formatting /dev/loop0 with ext2 opts='' extra opts=''
-mke2fs 1.47.1 (20-May-2024)
-tst_test.c:1860: TINFO: LTP version: 20240930
-tst_test.c:1864: TINFO: Tested kernel: 6.12.0-rc7 #1 SMP
-PREEMPT_DYNAMIC @1731766491 x86_64
-tst_test.c:1703: TINFO: Timeout per run is 0h 02m 30s
-ioctl04.c:29: TPASS: BLKROGET returned 0
-<6>[   70.921794] EXT4-fs (loop0): mounting ext2 file system using the
-ext4 subsystem
-ioctl04.c:42: TPASS: BLKROGET returned 1
-ioctl04.c:53: TPASS: Mounting RO device RW failed: EACCES (13)
-<4>[   70.931891] sysfs: cannot create duplicate filename
-'/kernel/slab/:a-0000176'
-<4>[   70.932354] CPU: 0 UID: 0 PID: 992 Comm: ioctl04 Not tainted 6.12.0-rc7 #1
-<4>[   70.932936] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009),
-BIOS 1.16.3-debian-1.16.3-2 04/01/2014
-<4>[   70.933433] Call Trace:
-<4>[   70.933894]  <TASK>
-<4>[   70.934161]  dump_stack_lvl+0x96/0xb0
-<4>[   70.934608]  dump_stack+0x14/0x20
-<4>[   70.934909]  sysfs_warn_dup+0x5f/0x80
-<4>[   70.935215]  sysfs_create_dir_ns+0xd0/0xf0
-<4>[   70.935521]  kobject_add_internal+0xa8/0x2e0
-<4>[   70.935944]  kobject_init_and_add+0x8c/0xd0
-<4>[   70.936265]  sysfs_slab_add+0x11a/0x1f0
-<4>[   70.936446]  do_kmem_cache_create+0x433/0x500
-<4>[   70.936622]  __kmem_cache_create_args+0x19c/0x250
-<4>[   70.936827]  ext4_mb_init+0x690/0x7e0
-<4>[   70.937180]  ext4_fill_super+0x1934/0x31e0
-<4>[   70.937547]  ? sb_set_blocksize+0x21/0x70
-<4>[   70.937911]  ? __pfx_ext4_fill_super+0x10/0x10
-<4>[   70.938346]  get_tree_bdev_flags+0x13c/0x1d0
-<4>[   70.938780]  get_tree_bdev+0x14/0x20
-<4>[   70.939118]  ext4_get_tree+0x19/0x20
-<4>[   70.939354]  vfs_get_tree+0x2e/0xe0
-<4>[   70.939717]  path_mount+0x309/0xb00
-<4>[   70.940025]  ? putname+0x5e/0x80
-<4>[   70.940183]  __x64_sys_mount+0x11d/0x160
-<4>[   70.940353]  x64_sys_call+0x1719/0x20b0
-<4>[   70.940516]  do_syscall_64+0xb2/0x1d0
-<4>[   70.940711]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-<4>[   70.941202] RIP: 0033:0x7f667d9dd4ea
-<4>[   70.941527] Code: 48 8b 0d 39 39 0d 00 f7 d8 64 89 01 48 83 c8
-ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 49 89 ca b8 a5 00
-00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 06 39 0d 00 f7 d8 64
-89 01 48
-<4>[   70.942905] RSP: 002b:00007ffe22faecf8 EFLAGS: 00000246
-ORIG_RAX: 00000000000000a5
-<4>[   70.943283] RAX: ffffffffffffffda RBX: 00007f667d8d26c8 RCX:
-00007f667d9dd4ea
-<4>[   70.943788] RDX: 00007ffe22fb0e59 RSI: 000055e50098e60b RDI:
-000055e50099cca0
-<4>[   70.944248] RBP: 000055e50098e5d8 R08: 0000000000000000 R09:
-0000000000000000
-<4>[   70.944479] R10: 0000000000000001 R11: 0000000000000246 R12:
-00007ffe22faed0c
-<4>[   70.944704] R13: 000055e50098e60b R14: 0000000000000000 R15:
-0000000000000000
-<4>[   70.945086]  </TASK>
-<3>[   70.946069] kobject: kobject_add_internal failed for :a-0000176
-with -EEXIST, don't try to register things with the same name in the
-same directory.
-<3>[   70.948453] SLUB: Unable to add cache ext4_groupinfo_1k to sysfs
-<4>[   70.951178] __kmem_cache_create_args(ext4_groupinfo_1k) failed
-with error -22
-<4>[   70.952636] CPU: 0 UID: 0 PID: 992 Comm: ioctl04 Not tainted 6.12.0-rc7 #1
-<4>[   70.953183] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009),
-BIOS 1.16.3-debian-1.16.3-2 04/01/2014
-<4>[   70.953975] Call Trace:
-<4>[   70.954215]  <TASK>
-<4>[   70.954460]  dump_stack_lvl+0x96/0xb0
-<4>[   70.954877]  dump_stack+0x14/0x20
-<4>[   70.955079]  __kmem_cache_create_args+0x7d/0x250
-<4>[   70.955331]  ext4_mb_init+0x690/0x7e0
-<4>[   70.955698]  ext4_fill_super+0x1934/0x31e0
-<4>[   70.956271]  ? sb_set_blocksize+0x21/0x70
-<4>[   70.958236]  ? __pfx_ext4_fill_super+0x10/0x10
-<4>[   70.958570]  get_tree_bdev_flags+0x13c/0x1d0
-<4>[   70.958812]  get_tree_bdev+0x14/0x20
-<4>[   70.958990]  ext4_get_tree+0x19/0x20
-<4>[   70.959752]  vfs_get_tree+0x2e/0xe0
-<4>[   70.960137]  path_mount+0x309/0xb00
-<4>[   70.960340]  ? putname+0x5e/0x80
-<4>[   70.960560]  __x64_sys_mount+0x11d/0x160
-<4>[   70.961572]  x64_sys_call+0x1719/0x20b0
-<4>[   70.961841]  do_syscall_64+0xb2/0x1d0
-<4>[   70.962060]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-<4>[   70.963017] RIP: 0033:0x7f667d9dd4ea
-<4>[   70.963229] Code: 48 8b 0d 39 39 0d 00 f7 d8 64 89 01 48 83 c8
-ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 49 89 ca b8 a5 00
-00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 06 39 0d 00 f7 d8 64
-89 01 48
-<4>[   70.964889] RSP: 002b:00007ffe22faecf8 EFLAGS: 00000246
-ORIG_RAX: 00000000000000a5
-<4>[   70.965471] RAX: ffffffffffffffda RBX: 00007f667d8d26c8 RCX:
-00007f667d9dd4ea
-<4>[   70.965693] RDX: 00007ffe22fb0e59 RSI: 000055e50098e60b RDI:
-000055e50099cca0
-<4>[   70.965938] RBP: 000055e50098e5d8 R08: 0000000000000000 R09:
-0000000000000000
-<4>[   70.966152] R10: 0000000000000001 R11: 0000000000000246 R12:
-00007ffe22faed0c
-<4>[   70.966370] R13: 000055e50098e60b R14: 0000000000000000 R15:
-0000000000000000
-<4>[   70.966593]  </TASK>
-<0>[   70.969266] EXT4-fs: no memory for groupinfo slab cache
-<3>[   70.970744] EXT4-fs (loop0): failed to initialize mballoc (-12)
-<3>[   70.977680] EXT4-fs (loop0): mount failed
-ioctl04.c:67: TFAIL: Mounting RO device RO failed: ENOMEM (12)
-
-Summary:
-passed   3
-failed   1
-
-Build image:
------------
-- https://qa-reports.linaro.org/lkft/sashal-linus-next/build/v6.11-15432-gac3274b9a6ec/testrun/25851045/suite/ltp-syscalls/test/ioctl04/log
-- https://qa-reports.linaro.org/lkft/sashal-linus-next/build/v6.11-15430-gc12cd257292c/testrun/25848631/suite/ltp-syscalls/test/ioctl04/history/
-- https://qa-reports.linaro.org/lkft/sashal-linus-next/build/v6.11-15432-gac3274b9a6ec/testrun/25851045/suite/ltp-syscalls/test/ioctl04/details/
-- https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2ow28dxrEwN5dFu4vChS2wgU93J
-
-Steps to reproduce:
-------------
-- https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2ow28dxrEwN5dFu4vChS2wgU93J/reproducer
-
-metadata:
-----
-  Linux version: 6.12.0-rc7
-  git repo: https://git.kernel.org/pub/scm/linux/kernel/git/sashal/linus-next.git
-  git sha: ac3274b9a6ec132398615faaa725c8fa23700219
-  kernel config:
-https://storage.tuxsuite.com/public/linaro/lkft/builds/2ow9ILyg8kMOGCJOc8VDIGOlz1h/config
-  build url: https://storage.tuxsuite.com/public/linaro/lkft/builds/2ow9ILyg8kMOGCJOc8VDIGOlz1h/
-  toolchain: gcc-13
-  config: gcc-13-lkftconfig
-  arch: x86_64 and testing is in progress for other architectures
-
---
-Linaro LKFT
-https://lkft.linaro.org
+[1]: 
+https://lore.kernel.org/linux-kernel/20241107095756.10261-1-colin.i.king@gmail.com/
 
