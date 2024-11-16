@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-411795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 835809CFFBA
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 17:02:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E59589CFFBD
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 17:02:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42E6D285C36
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 16:02:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 929AF1F23B2C
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 16:02:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB33E42A92;
-	Sat, 16 Nov 2024 16:02:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 760AB19048F;
+	Sat, 16 Nov 2024 16:02:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T2AmXO43"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L5PaUiGU"
 Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F22A414F70
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 16:01:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC63F18DF6D
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 16:02:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731772921; cv=none; b=bdhfixUs4sPQV5rCZnphHuRIqaJZywLHuJZtJZEfrc8gZb7heOnFYzrMHRuBvnZ8TQ/TKMF0Vv0MnytRipBQLKHFIsVoJa9y35lG5rquunLenuEanmMC1hiqbOpVXzeTPIhP0iuhiGoKBNz7YWgvx1onIvyG7DE3QZISaSQRek0=
+	t=1731772925; cv=none; b=gqP/NGokaLw8VcgkJCBvUAtEm3twBixXbAxXvK17fvueVt4ObgM0Fo2JR4sFtnMh6LcSwX6bZwBH9ctqS9bVy8nAgU+pn8o1lwReNQ1byEiMF3qtJYdolsVPu/ZSHrLbk+mto23ir8azufW5Ae2t6nYqx8NJD93WgDkn79Sf3/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731772921; c=relaxed/simple;
-	bh=0vd+HZzJ5k+fFsPT6iNDQixWz/Op/NOEpANZ9hcb6EI=;
+	s=arc-20240116; t=1731772925; c=relaxed/simple;
+	bh=+MG52QQoyvMX4PhF1K/8jvNUimDPdhZ2sTZ6kij+eCo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=py/BsDD0Pk+oh8rkJYNGCJeigcjCaUkJzPGKEZOGbyqsi7iVKnWc42GndaKP7oTK7h5fv0pcRblGQy9FLXWSor3Yeusgn06koLHd0yDvi16uBut/kuqZHLW93N1ZU+NIPtO2QKW8hFJ0gy92fOhJqhlm+b+jsvCJJM9/xh1lWTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T2AmXO43; arc=none smtp.client-ip=209.85.214.174
+	 MIME-Version; b=jEsnTqTe98L5AOBnaAeA5yKM6yBy7tQP/tGNQ5ZlG86Erco8nkwBKCpHRftGBkJPVpD4Q6kZRp73ZqYx76sV/MJpSlcCXudosZmp+yFQ8sYKjGyxEiG6iCdErclcDLhcM30bKYbDbboUuW2QxCy4HvPfg8sxqkaPlnJCIQbCU9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L5PaUiGU; arc=none smtp.client-ip=209.85.214.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-20cb47387ceso30314095ad.1
-        for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 08:01:59 -0800 (PST)
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-20c714cd9c8so4233745ad.0
+        for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 08:02:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731772919; x=1732377719; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1731772923; x=1732377723; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=IuuWQGzQ1DfUt2ak4ZbC84lMZxrJ6yXnCz0y/5+ZzOA=;
-        b=T2AmXO43hnCiwPMtv379vL5k7OjkIaDiasb8V5NE/o5vTlc4BaozgEoWWkPuT1NZsB
-         0gegVtyjeT6GcDj56DOMGc4N0kjkFN07MeBNbBjx+7YAUoO964J8JoaOSEOAcdylDzg0
-         +wua93HwuK4qSg+v00A2ODMdu0d6panpF7o87TKJxkuxbJsSWMzQiH/3lQ74hcMnZMhP
-         J3fiCeAmHtBS2ClY5nRwuuxtoeItCcb9puS2eQa2IQHn6Me/YKX8CUpfjqv8RwExCB30
-         dwy9Xvq4fcTRLi5THEPMoEmUwFUKwDBr4LupoVoTDZXtnXyh44Jm2KoMG8dVV3ieIYxJ
-         kS5g==
+        bh=38PQp1RQQ2NMP1hcM2NKIXHciL2ilqE4M5FPbIzuslY=;
+        b=L5PaUiGUbXBB2SdVNkV2IWSGLcQimmx6ywB+hK7XfXs5zIEwK5MYIH77fULjzjfYld
+         LFYZQYAW5oVzWp4ttbUHHAr3sPVPdo2/Q/Q26hGN9m/1LfdlK0X5l1mjjnXlPHLAP14f
+         dEYtHlgE3FVxBU9qXWnCg7bkCbxsIqayP1xCsQt/mwziLX6Z+8/T6erHP/dR6Es+ChoW
+         tPdTD1LN6FtAW1ZYzHX+rbxSEPGdL+iHXRZZQaIsPVCetFLUJekFFCprk5lOIbEU4uBU
+         C2/b0A0+AQL2EOxz5XGCUIBmahZPC/UePvU83z4Egt9B7mcMhwGHxznYSaaUDtdfUc0j
+         U2fA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731772919; x=1732377719;
+        d=1e100.net; s=20230601; t=1731772923; x=1732377723;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=IuuWQGzQ1DfUt2ak4ZbC84lMZxrJ6yXnCz0y/5+ZzOA=;
-        b=RlPprmro0Fnc35ck3Nc+upoRCTUtQttk09WEA0jco2AY1r0ApdiHTa+ajwbQEZya9M
-         jGWQbhS2Wdk5U8TXmcaQypYg/TntQ8xfZF2hU4mPA2SFBWEhD5CTBNsHzxrAF1jjlZMA
-         ZemS5nUoREk+iAkJcqsjFtqPFuzEowJppbVHt/QvTvpPjwaT45da5o9j/TIIbG3TlYxm
-         I0lPVYlrwoPfs1Rn+qTOozxWXiSfvqEcq9TTkgRCOZ4+zkElufz7LLiTQkQPi6zbXuxN
-         beWDTCPqHpyFsrVCPOuhyn/JTn0e4djoQ9V11VYw/xF0s1BSsmJZ2RVMeppf0nYJZ4Ps
-         Rudg==
-X-Forwarded-Encrypted: i=1; AJvYcCXwL8XnCYx11LlqotxqAxUnTxC6DH6hME0EdDbVowzLiaXv4KsPlQCcoVPCeCB4lLlJx798StyD1GeAm3c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3Ct0uWBBKKVHZUQZgIkOaiQa8orA6shXubQx8PXf3PQA+Na+m
-	tKVue9SijJPJOZ44dbyU7ALw7ETvE9yR63G7WGlgorIWFLsUTw9Z
-X-Google-Smtp-Source: AGHT+IF4zrtBHANffc8d0oZ84RIc2au55hvsJo3/mPDF1rpu4iZzgSVCVnsFyVvIm7hJ6KI2EtO/RA==
-X-Received: by 2002:a17:903:2452:b0:20b:8776:4902 with SMTP id d9443c01a7336-211d0ebf325mr97950975ad.38.1731772919100;
-        Sat, 16 Nov 2024 08:01:59 -0800 (PST)
+        bh=38PQp1RQQ2NMP1hcM2NKIXHciL2ilqE4M5FPbIzuslY=;
+        b=Lc9Q9aq+SHvMaOT0nRfz8xedDfigji81png3/O/mmfRLfDIsw+IWlRecYFGekU250h
+         /evxkClZmydpjC1+4TuSdEenzXXkWu2uP7FA8heQrO/Nhpzx5P6JsOPaFbkQXLurypKe
+         zF2TRl75aaYL4YL0nLuxmLJHJubTL9qF2vGo68eK6mUv/MhXkKRbMSfFb2j1+V2iw2pz
+         jpSvbtyV61n+Nfa+ix3sgmmkHjB3RGvjDnqlFX0upFHoHA4S8aMfigrpCHd0a7pyPLRM
+         B8fust/iCf2/36AMjnbLuw1zsnLMhNssgRyPgKbyxAsLTKDNXzHf8apzUQUUg9VxiKjY
+         +b5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUmueibSe3MrlOP3YWC0B8LGOPqVycLW9wM/S2kLm8z+AQlM+TuEeuzo2+bchbmd3TlbZcl17XWyx2dvd0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdT5ggBxTewHuAyGZ1qRbUHc+vzqXkuFiZRI5pLI7IWAGIaW3K
+	0501lQEgIpW0m2/I2dD+nXbrd8cYiZOP74Hd0M8psaG3eGFpr9my
+X-Google-Smtp-Source: AGHT+IEyY5xTEzo2l7XaqcLEW8MmJjYA8BSONOvXiTv670zrm9w9LaEoXycJgP5gUCdOsieDWorNyA==
+X-Received: by 2002:a05:6a20:729b:b0:1db:ec2b:7322 with SMTP id adf61e73a8af0-1dc90c18aedmr11919815637.46.1731772923095;
+        Sat, 16 Nov 2024 08:02:03 -0800 (PST)
 Received: from localhost ([58.29.143.236])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211d0f34809sm28267705ad.124.2024.11.16.08.01.58
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7f8c1c3224asm3116635a12.29.2024.11.16.08.02.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 16 Nov 2024 08:01:58 -0800 (PST)
+        Sat, 16 Nov 2024 08:02:02 -0800 (PST)
 From: Changwoo Min <multics69@gmail.com>
 X-Google-Original-From: Changwoo Min <changwoo@igalia.com>
 To: tj@kernel.org,
@@ -75,9 +75,9 @@ Cc: mingo@redhat.com,
 	changwoo@igalia.com,
 	kernel-dev@igalia.com,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/5] sched_ext: Implement scx_rq_clock_update/stale()
-Date: Sun, 17 Nov 2024 01:01:22 +0900
-Message-ID: <20241116160126.29454-2-changwoo@igalia.com>
+Subject: [PATCH 2/5] sched_ext: Manage the validity of scx_rq_clock
+Date: Sun, 17 Nov 2024 01:01:23 +0900
+Message-ID: <20241116160126.29454-3-changwoo@igalia.com>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20241116160126.29454-1-changwoo@igalia.com>
 References: <20241116160126.29454-1-changwoo@igalia.com>
@@ -89,60 +89,79 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-scx_rq_clock_update() and scx_rq_clock_stale() manage the status of an
-rq clock. scx_rq_clock_update() keeps the rq clock in memory and its
-status valid. scx_rq_clock_stale() invalidates the current rq clock
-not to use the cached rq clock.
+An rq clock becomes valid when it is updated using update_rq_clock()
+and invalidated when the rq is unlocked using rq_unpin_lock(). Also,
+after long running operations -- ops.running() and ops.update_idle() --
+in a BPF scheduler, the sched_ext core invalidates the rq clock.
 
 Signed-off-by: Changwoo Min <changwoo@igalia.com>
 ---
- kernel/sched/sched.h | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ kernel/sched/core.c  | 6 +++++-
+ kernel/sched/ext.c   | 3 +++
+ kernel/sched/sched.h | 2 +-
+ 3 files changed, 9 insertions(+), 2 deletions(-)
 
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index a910a5b4c274..d0eb58b6a2da 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -784,6 +784,7 @@ static void update_rq_clock_task(struct rq *rq, s64 delta)
+ void update_rq_clock(struct rq *rq)
+ {
+ 	s64 delta;
++	u64 clock;
+ 
+ 	lockdep_assert_rq_held(rq);
+ 
+@@ -795,11 +796,14 @@ void update_rq_clock(struct rq *rq)
+ 		SCHED_WARN_ON(rq->clock_update_flags & RQCF_UPDATED);
+ 	rq->clock_update_flags |= RQCF_UPDATED;
+ #endif
++	clock = sched_clock_cpu(cpu_of(rq));
++	scx_rq_clock_update(rq, clock);
+ 
+-	delta = sched_clock_cpu(cpu_of(rq)) - rq->clock;
++	delta = clock - rq->clock;
+ 	if (delta < 0)
+ 		return;
+ 	rq->clock += delta;
++
+ 	update_rq_clock_task(rq, delta);
+ }
+ 
+diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
+index 9f9bc2930658..b8ad776ef516 100644
+--- a/kernel/sched/ext.c
++++ b/kernel/sched/ext.c
+@@ -2928,6 +2928,8 @@ static void set_next_task_scx(struct rq *rq, struct task_struct *p, bool first)
+ 	if (SCX_HAS_OP(running) && (p->scx.flags & SCX_TASK_QUEUED))
+ 		SCX_CALL_OP_TASK(SCX_KF_REST, running, p);
+ 
++	scx_rq_clock_stale(rq);
++
+ 	clr_task_runnable(p, true);
+ 
+ 	/*
+@@ -3590,6 +3592,7 @@ void __scx_update_idle(struct rq *rq, bool idle)
+ {
+ 	int cpu = cpu_of(rq);
+ 
++	scx_rq_clock_stale(rq);
+ 	if (SCX_HAS_OP(update_idle) && !scx_rq_bypassing(rq)) {
+ 		SCX_CALL_OP(SCX_KF_REST, update_idle, cpu_of(rq), idle);
+ 		if (!static_branch_unlikely(&scx_builtin_idle_enabled))
 diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 4d79804631e4..61efff790e24 100644
+index 61efff790e24..03854ac9914b 100644
 --- a/kernel/sched/sched.h
 +++ b/kernel/sched/sched.h
-@@ -754,6 +754,7 @@ enum scx_rq_flags {
- 	SCX_RQ_BAL_PENDING	= 1 << 2, /* balance hasn't run yet */
- 	SCX_RQ_BAL_KEEP		= 1 << 3, /* balance decided to keep current */
- 	SCX_RQ_BYPASSING	= 1 << 4,
-+	SCX_RQ_CLK_UPDATED	= 1 << 5, /* RQ clock is updated by the core */
- 
- 	SCX_RQ_IN_WAKEUP	= 1 << 16,
- 	SCX_RQ_IN_BALANCE	= 1 << 17,
-@@ -765,6 +766,7 @@ struct scx_rq {
- 	struct list_head	ddsp_deferred_locals;	/* deferred ddsps from enq */
- 	unsigned long		ops_qseq;
- 	u64			extra_enq_flags;	/* see move_task_to_local_dsq() */
-+	u64			clock;			/* cached per-rq clock -- see scx_bpf_clock_get_ns() */
- 	u32			nr_running;
- 	u32			flags;
- 	u32			cpuperf_target;		/* [0, SCHED_CAPACITY_SCALE] */
-@@ -1345,6 +1347,24 @@ DECLARE_PER_CPU_SHARED_ALIGNED(struct rq, runqueues);
- #define cpu_curr(cpu)		(cpu_rq(cpu)->curr)
- #define raw_rq()		raw_cpu_ptr(&runqueues)
- 
-+#ifdef CONFIG_SCHED_CLASS_EXT
-+static inline void scx_rq_clock_update(struct rq *rq, u64 clock)
-+{
-+	rq->scx.clock = clock;
-+	rq->scx.flags |= SCX_RQ_CLK_UPDATED;
-+}
-+
-+static inline void scx_rq_clock_stale(struct rq *rq)
-+{
-+	rq->scx.flags &= ~SCX_RQ_CLK_UPDATED;
-+}
-+
-+#else
-+static inline void scx_rq_clock_update(struct rq *rq, u64 clock) {}
-+static inline void scx_rq_clock_stale(struct rq *rq) {}
-+
-+#endif /* CONFIG_SCHED_CLASS_EXT */
-+
- #ifdef CONFIG_SCHED_CORE
- static inline struct cpumask *sched_group_span(struct sched_group *sg);
+@@ -1758,7 +1758,7 @@ static inline void rq_unpin_lock(struct rq *rq, struct rq_flags *rf)
+ 	if (rq->clock_update_flags > RQCF_ACT_SKIP)
+ 		rf->clock_update_flags = RQCF_UPDATED;
+ #endif
+-
++	scx_rq_clock_stale(rq);
+ 	lockdep_unpin_lock(__rq_lockp(rq), rf->cookie);
+ }
  
 -- 
 2.47.0
