@@ -1,108 +1,178 @@
-Return-Path: <linux-kernel+bounces-411703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 261979CFE9D
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 12:32:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B72309CFE9F
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 12:33:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 903F2B28A0D
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 11:32:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4898D1F2578D
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 11:33:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 209821AE875;
-	Sat, 16 Nov 2024 11:31:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FBBB1925B4;
+	Sat, 16 Nov 2024 11:33:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZxPiKG2E"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BkVdjbAX"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7166422338;
-	Sat, 16 Nov 2024 11:31:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56D651917D0;
+	Sat, 16 Nov 2024 11:33:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731756691; cv=none; b=JdyIGhH4jU4UwUA44V5AmhvpxKm/vYvOX4ep+EVtj+Z98xFtOnJg3K1GzbQHYoBENCkkvCByU5FDIrLWko1rBseVrILkFBLSpuYDBNZvRFYvzY2UEQnjzffW+OoajIKRp1X38Yqgf6kbBueJm9ipx8fgbN5aUQ6Ao3JS3KKtg2s=
+	t=1731756785; cv=none; b=WFHyfl4OfSFwRbBVo3zi8+JT+fLBjT4KVxn1DPF28nLpc/Ws1gLDXsVm/qzfeHdUznSlRVKbOKGt9Bg/putNnaKkpJ0oykVhVrRxcgSluU+Eh8ShbitPcz6o6V8hQyX7gqPSLfYr/NyCPYE18J2Hd9Y5q6tep9H4Mvdys3bcbpg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731756691; c=relaxed/simple;
-	bh=6FtOTp2L33sndUrL9nlXHnk0jTq9STErg2JadJb+OKk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=lcKqmKPZKasHnJJsxTy4EbhJy+kdBhZOmspWQCg5Av0vIbjQlfnyGMEtMkMlzD5TVUzRw9TIkJ98/9QFfQ6SZeBeikd5WXBZ+iXgaARP8IGQAgiwPk/2UHXzCM7XTEXFLAwN3xGnENGuhYFvnP5OlvOjY+OV6wtNKrbVQIOzHro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZxPiKG2E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44312C4CEC3;
-	Sat, 16 Nov 2024 11:31:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731756690;
-	bh=6FtOTp2L33sndUrL9nlXHnk0jTq9STErg2JadJb+OKk=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=ZxPiKG2EO9LNH47zhy9ZWhD+Ch7FUKd1oLFzbvR+Gg3T6gGUTms+GKIdOxbyQQe2L
-	 1XZg4O9gqTx+6RY+2LQmpJ22pJNqxRt4l05cadYhPoPrBn+y+52HJmH7X1gJEqt+zk
-	 0g7v9dQ8xMnNQ9GM8ivYe37xrigynU0hmM1BTvkSrMSFJnSUTz4SFTmv1tFYQPJ+Pe
-	 VAN7IWHUVN5sVMOmc+XmEXudLgxm9BX//UcvACa0RjxZkNuAQtA8he/IGzeaTay99j
-	 RxCTl0tJJpWigaEdOhK4r7iHDfFMETIE5WAec4FihiFdNrkNT5mSP2uTOSQNBWQ+Mu
-	 XiqNu6HIhdD6g==
-From: Konrad Dybcio <konradybcio@kernel.org>
-Date: Sat, 16 Nov 2024 12:31:18 +0100
-Subject: [PATCH 2/2] arm64: dts: qcom: sc8180x: Add a SoC-specific
- compatible to cpufreq-hw
+	s=arc-20240116; t=1731756785; c=relaxed/simple;
+	bh=klMsOcsnU2C5A6NOzXibzpAs2jZS9KhWRu6JwZ7TDh0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=j8PAJSKkRWnADFuQlRFGme5Q30ja5Ot/vC/XHtX9zuqb9RJhG/WFHGMz7JUVLgLF+0Buq9JOilvBFa4Avd4j9235ZIYdOEWsLezCSQGVIFfHpR5spI+zAeoMTbs4V569K2wWUmhZqfSFfrxK9aQ0dGNfVh5jLD6c5ZuV3qpwRJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BkVdjbAX; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-7242f559a9fso2710125b3a.1;
+        Sat, 16 Nov 2024 03:33:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731756783; x=1732361583; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KpKjjailJtub/Xow/CfKdQ/p+NBXaW+7PVrX4G8t8cQ=;
+        b=BkVdjbAXncv28B9IvbeaYuuPqRPtUWoGIK9hMlVlmrjAoEoaOSvWaww1k2Puz5ly4p
+         4Kso9MHjx11ovDMyRe9BO9cOx1JDdJ9WBbgTMGP8MEuYoDJSeTwejEF433fy5ImmLpUw
+         RJNFmx+aLvpp5/O4uWdHzo3ZU71gDOb4LMRCyAk59ok5m9ort2D3n6R6A5gwQ3R4gSUC
+         BjErBwdOjBmY6sXgvBIMdbV3jr9MOhcQ9uo1uzcjDtx2gBUddp2od+BMB/HhAX5fD7PG
+         xINCjAPGgolhv+62jTb+/GkZ7isRv6t3JfHktioVkFimlWFk06PWk1tfv5EAYo1yqqHu
+         +8dg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731756783; x=1732361583;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KpKjjailJtub/Xow/CfKdQ/p+NBXaW+7PVrX4G8t8cQ=;
+        b=Wym1+qXol+S+18m8GwCVjLx01jBSkkFF3Vk3woBI6bwgDhKa7iWw5y/vKi8/hB3gAY
+         kLF+Nd6igwXxfEM3qadwoifbIk96eL9QQagqCaIuhWArZXhcfNnYJ1Sl8wUZS/3m+J5Q
+         iXv83lZog/OQNvGnxRPM0kLI80l7BzhntPJECO1oW9KxROeTpAe/nox/cojFSndZjddV
+         1qvCvBI5x6m40C0UXYRCzcOjqUuP7XmHpAvGK4TxmTAemCRA8zVCfoIoJHbwSWADS/P4
+         OpRzJCLXIQ7DwYaTA+OwqyNMcdzGFcFaH6f0lHD55Alyz1onGeW68/3NIxsGhj/Wo44T
+         qXkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVYKq8nu935DLUbjZ6nMxe+bYbSZEbrjxRNALdnLgXgAFCdU2u0K3iwNSMTz0zUv83RLqXY6ct+YSKZx88=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8isaPO3qhKVEypXxRIbgd+2X3whqUQCCT8nGePCfhSugJ8pjV
+	hO7epLMsEedbceObJ3+st7MkHRGhiiNzoWe350lchs8UNB01lIpEGZI7AQ==
+X-Google-Smtp-Source: AGHT+IH5CCY4aGZc0wgs9SqkS2ezMEtsfs0/Zl1EDQiKLeW3qQjTatxWKN2kJTI6jKQLVB8LuwWReQ==
+X-Received: by 2002:a05:6a00:240a:b0:71e:5d1d:1aa2 with SMTP id d2e1a72fcca58-72476b96ceamr6384441b3a.7.1731756783588;
+        Sat, 16 Nov 2024 03:33:03 -0800 (PST)
+Received: from ?IPV6:2409:4040:6e99:f02a:954f:e157:760e:3d30? ([2409:4040:6e99:f02a:954f:e157:760e:3d30])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724771c0d43sm2901482b3a.114.2024.11.16.03.33.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 16 Nov 2024 03:33:03 -0800 (PST)
+Message-ID: <f90b485d-a78e-4bcf-bb77-94f68ad575cf@gmail.com>
+Date: Sat, 16 Nov 2024 17:02:57 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4] block: Fix uninitialized symbol 'bio' in
+ blk_rq_prep_clone
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ hch@infradead.org
+References: <20241004100842.9052-1-surajsonawane0215@gmail.com>
+ <20241008175215.23975-1-surajsonawane0215@gmail.com>
+ <70996029-be8a-4f97-88fc-a27cff4f5df4@gmail.com>
+ <f6a50924-e3f8-4175-a97e-4e77ed24b72b@kernel.dk>
+Content-Language: en-US
+From: Suraj Sonawane <surajsonawane0215@gmail.com>
+In-Reply-To: <f6a50924-e3f8-4175-a97e-4e77ed24b72b@kernel.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241116-topic-sc8180x_cpufreq_bindings-v1-2-e7db627da99c@oss.qualcomm.com>
-References: <20241116-topic-sc8180x_cpufreq_bindings-v1-0-e7db627da99c@oss.qualcomm.com>
-In-Reply-To: <20241116-topic-sc8180x_cpufreq_bindings-v1-0-e7db627da99c@oss.qualcomm.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>, 
- Viresh Kumar <viresh.kumar@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Vinod Koul <vkoul@kernel.org>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
- linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1731756678; l=1018;
- i=konrad.dybcio@oss.qualcomm.com; s=20230215; h=from:subject:message-id;
- bh=rDzXnBO2BTwNVQR9ieAv61yGPCGBlgCfXDXJN72WymA=;
- b=QQB9FzhVW8PFMgl8/iQ6qvPpyZYaSA0ByQhAkXXKGd5AJPAIWAifaroNrwMjS7Bj/kGhHZuk2
- EcrF+0cD4vVBLGG53XAxSZKvCAxD0Nix+8FZSxfTLa3fdHq1d56VCBJ
-X-Developer-Key: i=konrad.dybcio@oss.qualcomm.com; a=ed25519;
- pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+On 15/11/24 21:40, Jens Axboe wrote:
+> On 11/15/24 9:07 AM, Suraj Sonawane wrote:
+>> On 08/10/24 23:22, SurajSonawane2415 wrote:
+>>> Fix the uninitialized symbol 'bio' in the function blk_rq_prep_clone
+>>> to resolve the following error:
+>>> block/blk-mq.c:3199 blk_rq_prep_clone() error: uninitialized symbol 'bio'.
+>>>
+>>> Signed-off-by: SurajSonawane2415 <surajsonawane0215@gmail.com>
+>>> ---
+>>> V1 - Initialize 'bio' to NULL.
+>>> V2 - Move bio_put(bio) into the bio_ctr error handling block,
+>>> ensuring memory cleanup occurs only when the bio_ctr fail.
+>>> V3 - Moved the bio declaration into the loop scope, eliminating
+>>> the need to set it to NULL at the end of the loop.
+>>> V4 - Adjusted position of arguments of bio_alloc_clone.
+>>>
+>>>    block/blk-mq.c | 13 ++++++-------
+>>>    1 file changed, 6 insertions(+), 7 deletions(-)
+>>>
+>>> diff --git a/block/blk-mq.c b/block/blk-mq.c
+>>> index 4b2c8e940..89c9a6c4d 100644
+>>> --- a/block/blk-mq.c
+>>> +++ b/block/blk-mq.c
+>>> @@ -3156,19 +3156,21 @@ int blk_rq_prep_clone(struct request *rq, struct request *rq_src,
+>>>                  int (*bio_ctr)(struct bio *, struct bio *, void *),
+>>>                  void *data)
+>>>    {
+>>> -    struct bio *bio, *bio_src;
+>>> +    struct bio *bio_src;
+>>>          if (!bs)
+>>>            bs = &fs_bio_set;
+>>>          __rq_for_each_bio(bio_src, rq_src) {
+>>> -        bio = bio_alloc_clone(rq->q->disk->part0, bio_src, gfp_mask,
+>>> -                      bs);
+>>> +        struct bio *bio = bio_alloc_clone(rq->q->disk->part0, bio_src,
+>>> +                    gfp_mask, bs);
+>>>            if (!bio)
+>>>                goto free_and_out;
+>>>    -        if (bio_ctr && bio_ctr(bio, bio_src, data))
+>>> +        if (bio_ctr && bio_ctr(bio, bio_src, data)) {
+>>> +            bio_put(bio);
+>>>                goto free_and_out;
+>>> +        }
+>>>              if (rq->bio) {
+>>>                rq->biotail->bi_next = bio;
+>>> @@ -3176,7 +3178,6 @@ int blk_rq_prep_clone(struct request *rq, struct request *rq_src,
+>>>            } else {
+>>>                rq->bio = rq->biotail = bio;
+>>>            }
+>>> -        bio = NULL;
+>>>        }
+>>>          /* Copy attributes of the original request to the clone request. */
+>>> @@ -3196,8 +3197,6 @@ int blk_rq_prep_clone(struct request *rq, struct request *rq_src,
+>>>        return 0;
+>>>      free_and_out:
+>>> -    if (bio)
+>>> -        bio_put(bio);
+>>>        blk_rq_unprep_clone(rq);
+>>>          return -ENOMEM;
+>>
+>> Hello Jens!
+>>
+>> I wanted to follow up on this patch I submitted. I have done all the
+>> suggested changes till v4. I was wondering if you had a chance to
+>> review it and if there are any comments or feedback.
+> 
+> Sorry missed this one. Is this a legit case of it being used
+> uninitialized, or is it just cleaning up the code so that smatch is
+> happy? The commit is woefully non-descriptive, unfortunately. So perhaps
+> resend this one and improve the commit message.
+> 
 
-Comply with bindings guidelines and get rid of errors such as:
+Apologies for any confusion earlier, and thank you for your attention to 
+this. After further analysis, I realize that this change isn't 
+necessary, as bio is already set to NULL by bio_alloc_clone on failure, 
+preventing any real case of uninitialized use. My initial patch aimed to 
+clean up the code and satisfy smatch, ensuring better readability and 
+error handling.
 
-cpufreq@18323000: compatible: 'oneOf' conditional failed, one must be fixed:
-        ['qcom,cpufreq-hw'] is too short
+I appreciate your feedback and the opportunity to learn from this. I now 
+understand that no change is needed here. Thank you for your guidance 
+and understanding.
 
-Fixes: 8575f197b077 ("arm64: dts: qcom: Introduce the SC8180x platform")
-Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
----
- arch/arm64/boot/dts/qcom/sc8180x.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm64/boot/dts/qcom/sc8180x.dtsi b/arch/arm64/boot/dts/qcom/sc8180x.dtsi
-index 717ec4ad63f3035b839d85fb1dd375fac9b0a2b7..745a7d0b8381046dda40dc31e61df905824d6388 100644
---- a/arch/arm64/boot/dts/qcom/sc8180x.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sc8180x.dtsi
-@@ -3889,7 +3889,7 @@ lmh@18358800 {
- 		};
- 
- 		cpufreq_hw: cpufreq@18323000 {
--			compatible = "qcom,cpufreq-hw";
-+			compatible = "qcom,sc8180x-cpufreq-hw", "qcom,cpufreq-hw";
- 			reg = <0 0x18323000 0 0x1400>, <0 0x18325800 0 0x1400>;
- 			reg-names = "freq-domain0", "freq-domain1";
- 
-
--- 
-2.47.0
-
+Best regards,
+Suraj Sonawane
 
