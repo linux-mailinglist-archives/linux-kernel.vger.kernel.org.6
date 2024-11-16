@@ -1,142 +1,111 @@
-Return-Path: <linux-kernel+bounces-411833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50E409D0021
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 18:50:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DA889D0023
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 18:59:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B39D6B23BCB
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 17:50:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC8B31F21B9D
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 17:59:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90CBB18F2F8;
-	Sat, 16 Nov 2024 17:50:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8740191F74;
+	Sat, 16 Nov 2024 17:59:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q5gXCT8E"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="lbvwvNLQ"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD854B666;
-	Sat, 16 Nov 2024 17:49:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C424CB666;
+	Sat, 16 Nov 2024 17:59:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731779400; cv=none; b=dq/tuu88xrU1U4DaGAobjui6behNX9b+oseg5XtNzHcMF02XffkydTArA9ClAhnHKvN2knnHyG2xhddCj+mpBrIRE43LjmK8+ogMCiGfxcfCwsz0Ahrh8x9aWAZjx3kOzmwZsR1G3QpEoMFr+eTDemlWk/G5yCFEyNbHwNo6Oww=
+	t=1731779946; cv=none; b=U3Ie1+ml8QHWT2WopXo2gHGdI4xbZEHJAnAvNkxFXoJRSauUrKpuOib8dL+USB3L1ni6JHlqX95yOi3+ztlhsq26gvGJNqFjuhvel+wvrzx0g2vyOebl/Wj/0yruCnkwOk6w7RpX4ojwOwqmgjgMrpqQcWJ+rhJbmifSLYdd3bc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731779400; c=relaxed/simple;
-	bh=6omQLfyrdzywIDGTsKilpGsb6tCdhV5CflukTwmNgVE=;
+	s=arc-20240116; t=1731779946; c=relaxed/simple;
+	bh=qpWAfAW/flM6FCElfxnZMg+YR7oaJxHVMGq8ZpKccD0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Rc/L7iHJwEutyzovoxPCC0Kl9XMnbgIIGtNHATCSxdTfN/dUvob13SUkMtmVDh9NyMg4udT7DMOB85+kNbTduMUMcl4ecUKM/aowJBrJpjwYj7jfzj5LAmwzvqGp+YfPG8smG6jfTW95c0+VdwRJYqU5hfJnghDYUJG9cH8W/2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q5gXCT8E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8E3FC4CEC3;
-	Sat, 16 Nov 2024 17:49:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731779399;
-	bh=6omQLfyrdzywIDGTsKilpGsb6tCdhV5CflukTwmNgVE=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=Upn5CD21VIs+W3cfs66fiKytUhJb5Atqry/JWVQxK3PNwVkWLmU6RiZFl1O8lyKukrgGFERsQhrBeDV1H9JL0RO46ipYLOUIgHtllc4CfEnJ0sc9ILjm7LfUJb3zwFUlxnn10xTPMUlC+xlclQUSKbd4wpz6oKHrke2byJxzzoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=lbvwvNLQ; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 4ED4540E0263;
+	Sat, 16 Nov 2024 17:59:01 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 3S_k-VtsdwLh; Sat, 16 Nov 2024 17:58:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1731779935; bh=sdUnsdGYam1RArzz2rGqxpxolNET71VTUgEXOl5+a1c=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Q5gXCT8E1q1Cnk3WHXKpw6kKLZJApGSAdSYiagjvPD1a4G+/meuSEUIGFJm05KfAK
-	 Hxlfhv70dgOrByUFWaS+uqz5w7O4McVAecoXCi0RWBXn9ac4HWk/CgO7XxvE/XmuX3
-	 HMGL8pYLZnh77Y3rte6rzfIZIe08qYLg0WnpoTOOkdPR2mZriYEj+Ovn8/5Kv9MFeU
-	 2YRWowGMygtQcYs25V96l1uOevypjv5mHh+Zz/xD/H8BcmlJ0CSGZ4F1GjLXbE4B/W
-	 keVHdEQvv+TbD9dp2vVEZ1TNoYtSGpMvakr5VM6LtiNyiKOmj8N0DjZDUsHJ55O5z9
-	 r5xfXZ3sd4V0Q==
-Date: Sat, 16 Nov 2024 18:49:56 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Werner Sembach <wse@tuxedocomputers.com>
-Cc: Luis Chamberlain <mcgrof@kernel.org>, tux@tuxedocomputers.com, 
-	Petr Pavlu <petr.pavlu@suse.com>, Sami Tolvanen <samitolvanen@google.com>, 
-	Daniel Gomez <da.gomez@samsung.com>, linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Thorsten Leemhuis <linux@leemhuis.info>
-Subject: Re: [PATCH 0/2] module: Block modules by Tuxedo from accessing GPL
- symbols
-Message-ID: <ozjiojcjmdjppmtardffvrqkuksnexyhfttzbyandihzhg6n3t@ssscyybngobw>
-References: <20241114103133.547032-4-ukleinek@kernel.org>
- <e32e9f5c-3841-41f7-9728-f998f123cc8a@tuxedocomputers.com>
- <e7d97b3d-1880-4c89-bbf2-a742d6ac9e6b@kernel.org>
+	b=lbvwvNLQ2FPtanTdDsA9EOgDcJf/vLT1vST3kq60+xdLUTo4fc3k1Hrq3Ta9bvAef
+	 ckeRYNmT61plmgNYL5vMBOsSV1ibSnzo998QP/CXt+aTy0knGeTC4sn1ekm0GlqOjR
+	 5N5LZlR6HvWN1LrHD8UG1YFjjTr29MWrkHD88aKcEJakfA/5tE4/ozH2BDpP6nbTjw
+	 T1lWBEr7NMsOIN0RuQLqM9R/uVfbYm9IWuzUEAJZQ0T8ag1Um3ghf3kz53LGM01Gaf
+	 yawQaa+huczGBVKzPzIMq7XpqvMrdjdBWoAe89DMOB9ZctJuTxBHoDdEaK4uLIyyN1
+	 TZN7ITab3GG+JwdH1MBnBUpEusJGdsr68OqP0bk9N7wgz5YsDvdOsVIoLctapCk6Xt
+	 MKHx6ACqernnKiuCQesmU1d80xNqaIeyrPTmXYtRMR/L6JDRPYkiIP89IcU2qT079D
+	 v0CRa4lElyXmexVeZSEFbAhmoxGtAQ0kXYEtcvcB5cAjjoQv97krqWMrH9Mvq245JG
+	 EOF4DyQZcHWt1kJxSpB31/STdjEtYX5F2BkGlLzxNIre2a6D7EUwNNpFuOmFKJmfp+
+	 mLhDRBf2BExbcaggjp63Q/efdSXTrFFRsR4c/A9LZqX6je3kr0TyZY/aNL6oxOVsXB
+	 OP+P6xF4aVAbKwSyNiiXWuEA=
+Received: from zn.tnic (p200300ea9736a13e329c23fffea6a903.dip0.t-ipconnect.de [IPv6:2003:ea:9736:a13e:329c:23ff:fea6:a903])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A1B9840E0219;
+	Sat, 16 Nov 2024 17:58:51 +0000 (UTC)
+Date: Sat, 16 Nov 2024 18:58:46 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-serial@vger.kernel.org, Jiri Slaby <jirislaby@kernel.org>,
+	lkml <linux-kernel@vger.kernel.org>
+Subject: Re: serial 00:06: Runtime PM usage count underflow!
+Message-ID: <20241116175846.GDZzjdVlO79wtX7mlF@fat_crate.local>
+References: <20241116170727.GCZzjRT5WGcOMKFDYq@fat_crate.local>
+ <2024111656-try-flatten-b215@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="z4gm4udsgcwtxml7"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <e7d97b3d-1880-4c89-bbf2-a742d6ac9e6b@kernel.org>
+In-Reply-To: <2024111656-try-flatten-b215@gregkh>
 
+On Sat, Nov 16, 2024 at 06:19:36PM +0100, Greg Kroah-Hartman wrote:
+> Look in the bios, that seems to be the "old" pnp serial device?  Does it
+> really have a serial port on the board?
 
---z4gm4udsgcwtxml7
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 0/2] module: Block modules by Tuxedo from accessing GPL
- symbols
-MIME-Version: 1.0
+Yeah, there is a COM1 connector and I've attached a serial port brace to have
+the connector on the back of the board.
 
-Hello,
+> Is it enabled properly?
 
-On Thu, Nov 14, 2024 at 12:14:16PM +0100, Uwe Kleine-K=F6nig wrote:
-> On 11/14/24 11:49, Werner Sembach wrote:
-> > Am 14.11.24 um 11:31 schrieb Uwe Kleine-K=F6nig:
-> > > the kernel modules provided by Tuxedo on
-> > > https://gitlab.com/tuxedocomputers/development/packages/tuxedo-drivers
-> > > are licensed under GPLv3 or later. This is incompatible with the
-> > > kernel's license and so makes it impossible for distributions and oth=
-er
-> > > third parties to support these at least in pre-compiled form and so
-> > > limits user experience and the possibilities to work on mainlining th=
-ese
-> > > drivers.
-> > >=20
-> > > This incompatibility is created on purpose to control the upstream
-> > > process. See https://fosstodon.org/@kernellogger/113423314337991594 f=
-or
-> > > a nice summary of the situation and some further links about the issu=
-e.
-> > >=20
-> > > Note that the pull request that fixed the MODULE_LICENSE invocations =
-to
-> > > stop claiming GPL(v2) compatibility was accepted and then immediately
-> > > reverted "for the time being until the legal stuff is sorted out"
-> > > (https://gitlab.com/tuxedocomputers/development/packages/tuxedo-
-> > > drivers/-/commit/a8c09b6c2ce6393fe39d8652d133af9f06cfb427).
-> >=20
-> > As already being implied by that commit message, this is sadly not an
-> > issue that can be sorted out over night.
-> >=20
-> > We ended up in this situation as MODULE_LICENSE("GPL") on its own does
-> > not hint at GPL v2, if one is not aware of the license definition table
-> > in the documentation.
->=20
-> That statement isn't consistent with you saying to pick GPLv3 as an
-> explicitly incompatible license to control the mainlining process. So you
-> knew that it's legally at least questionable to combine these licenses.
+BIOS says:
 
-When I wrote this mail I missed the possibility that while Werner knew
-GPLv3 isn't ok for in-kernel code might still have considered GPLv3 ok
-for external modules anyhow.=20
+Serial(COM) Port 0 Configuration
+	Port		Enabled
+	Settings	IO=3F8H, IRQ=4
 
-So I take back what I said and excuse me for my words. They were not
-intended as harsh as Werner obviously took them, but still I regret
-having written my reply with this suggestion.
+It was on "Auto" before but neither setting changed anything.
 
-I'm sorry,
-Uwe
+I don't know how relevant this is about that same PCI device:
 
---z4gm4udsgcwtxml7
-Content-Type: application/pgp-signature; name="signature.asc"
+pnp 00:06: [dma 0 disabled]
 
------BEGIN PGP SIGNATURE-----
+I'll try to upgrade the BIOS, maybe it really is an ACPI f*ckup.
 
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmc420IACgkQj4D7WH0S
-/k6L8Af/Yrhl+2KEFVEyXCZhK5T2bGM3MLav7R0yMc3ZVsZyuR6spJY5g7bpBPqS
-Q94n0qrm7Bk/J/RnC6fULy+TvFGwQDrqE5NSzImB2LSu+y6K2g1VprpFgOnQ3Tgl
-qfLnCoHELuoUrgB2yJlHlowvnZspd9Qcz4qUzPBA5X7MtA5Uqn9dBK47LB0eGg2h
-bnlseBKig59XKGWyi0WALZAsxXPqcSjpxPWpfrdebk1M5UqRim8TTEaKhekCLjUB
-o/2v+yhDJwLEZZxNVMZHqOqK5JyFPnoWVLiw5kEwdcmkbw73C5kQehSkvO52hiHO
-4vHBnmcMis4TV7sDfZsfrPXBA07mCw==
-=zoHt
------END PGP SIGNATURE-----
+Thx!
 
---z4gm4udsgcwtxml7--
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
