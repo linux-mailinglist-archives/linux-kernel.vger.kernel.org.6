@@ -1,438 +1,320 @@
-Return-Path: <linux-kernel+bounces-411692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A9819CFE50
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 11:44:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B00C79CFE56
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 11:56:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BC16280CEA
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 10:44:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39AC21F244DB
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 10:56:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE27E196C9B;
-	Sat, 16 Nov 2024 10:44:41 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE4CB2F29;
+	Sat, 16 Nov 2024 10:56:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="huM4oPOu"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC4AC194C8B
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 10:44:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48126190063
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 10:56:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731753881; cv=none; b=Ciko2uC5s0NoybFY/ED+0LiaHruYYl5NdFkLKfLEPXBAk/9v7YT6tpCU7JYz7n0lrkMcp5J6VaadPBkzgxVA94HCaZd9nd7AsojeHKUq/XtTZdjmWLdQj1fLYomQPbj9+pMmwCiusZcVJEfBHJyusAnGA0r4+733/tyfvGrZAU8=
+	t=1731754577; cv=none; b=rTuv77C4iKeSt624c/lB9z3oGguaTAPc61/e0ki7stAKcscrk3m+4MMKNg2u+kYGDwr8qp3rvWbLb1Eg2S1BkZc15sKnT5hz/Gyw/vhPV1zKxXVbrfvlziBysc7q9aV+YJ7zkljqEhU6AB9fpruhS5npVxhYp3z2hpuS6Oe3iys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731753881; c=relaxed/simple;
-	bh=RT334Um1Eqh+TvREoKzZMzj5j8G4vUSTm94Vn5B3XwU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=B+D8b8S7wTREtpWeKjHsZvIBggMmFtYkYV8UHtq10RIwJ9LDIdNMQFEEzslhwyyMQ0XtbxcCakXxl87kL8g6JsfGzwpnh4NkNPqYihqV3monXYkQJFYQD1qzwLMWQIdIv7QnK2RjrRGxwVJKuablAgC6ESj5Ms3ZoQ8W++tGhFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4Xr9W84fDjz9sSV;
-	Sat, 16 Nov 2024 11:44:36 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id Yp4BJPltr9UO; Sat, 16 Nov 2024 11:44:36 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4Xr9W83DqBz9sST;
-	Sat, 16 Nov 2024 11:44:36 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 53FC48B7A0;
-	Sat, 16 Nov 2024 11:44:36 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id 4zkTht-Dnt66; Sat, 16 Nov 2024 11:44:36 +0100 (CET)
-Received: from [192.168.232.159] (POS169858.IDSI0.si.c-s.fr [192.168.232.159])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id C77298B763;
-	Sat, 16 Nov 2024 11:44:35 +0100 (CET)
-Message-ID: <5b44abcc-f629-4250-9edf-7f173b78172c@csgroup.eu>
-Date: Sat, 16 Nov 2024 11:44:35 +0100
+	s=arc-20240116; t=1731754577; c=relaxed/simple;
+	bh=S9eRxq402eK4I35Xnjw+5DdjS0TnqMYqf/6CHY6wIAM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=dXT2rQzPyP/8urjgIONrOKRRAdoHhde2rCTqfiVAKCoVnB890fBBLYP5F+0EHwa/+c1sNzIhPF/n/VoIWh4loAZB7C4Vgc9EaPjWHcc9n8RYr7TvRFrZ4YlI9LcgwzATXUufKJc0hKtfh/gr1T3mxO0K9YoV9PFROcmvkk02L5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=huM4oPOu; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2fb50e84ec7so21216871fa.1
+        for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 02:56:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731754573; x=1732359373; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=NsK2HSjEed8EMz5ILwoIkeMUbKZSPGTUjsgD49Z7xGA=;
+        b=huM4oPOuYCcX1jChWX3rM542HeNbm4HKz8fwvz959KKm9c9CgVTtUtVAYEChQEgS4U
+         aLJcE3wlVd1aQGoh57PW+1qWfd/QjFQ7pfoKYvLbnBx/I6BUgo+vNUnf8E7UAa/vwij3
+         5IWHGNecxvmoynqex195A2PKyxdzWeY//tUXMwo0vTDxlJ/zNpkqPls+vtwNY975qzTU
+         HlMKf9RQMEQcnRFLjS/19s9ij4AGO/Rg9Wq1clz6lAiiJzgV/DRI/ybxt/HfmftAvGjm
+         QZddbSkiKwKj7R7Wupuaj8LZSdf7TMmlZgsn+KLERAO0Hn1A5lyf6eHP5Q6AmkHSHR8+
+         6dbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731754573; x=1732359373;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NsK2HSjEed8EMz5ILwoIkeMUbKZSPGTUjsgD49Z7xGA=;
+        b=la580xR04iP8CrEhilHl5DJtqtkoW9UhCJm00+INuNiPgSVaVPr+8XYCQYYqKdNQ90
+         XvFD8QCPAOeknPiuFWeQe8jzIj7MzWbe9N3VwVPnw0eQbTbG14VbiaqDGY5BMTi7wvD8
+         czU99AtTjps/Nju2R2SWek75ibB0AGcD6i/KNjnsRlNox2toT/nj1U2C3J3/AXJYI67F
+         WZd7EFiAVjZm4Wl5NCD7J1MJqj8HwFiTg2rtWhfBxvZzRtnhZfRVSke+UwNu8/sFvGMd
+         37lZD89Ydvx4K3luPZzqDsCqYuAaHb2F0DC9A+AMdf9Jbhf+6TvuXYtxIw7iAWzNdUEU
+         E0Rw==
+X-Forwarded-Encrypted: i=1; AJvYcCX0VQT0lMSGSEmSAGHL7IUleGRytc9BtLJ6YProGqmQ+aA9l1MNuQxc1DTTWRRrxhoqcNNgZpZX60+aRmw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMA0sshDcq4IOvQikONoLGwB4XWQP04mXuznkFX8BK0hF/KL0G
+	S2l/r8+LmkeMGEVfqHYqKyrG1agIDps9sPJW+CF0esd1xgJfFvFd
+X-Google-Smtp-Source: AGHT+IEK8/b0zHZVkVOqjdtIvar+DEHmvQ9/RvK13Xl0AsBy6sPbYs/kgVQgfmYz7Sp5NJTIFX8hsA==
+X-Received: by 2002:a2e:be25:0:b0:2fb:5e64:327e with SMTP id 38308e7fff4ca-2ff609c654cmr35086611fa.33.1731754572865;
+        Sat, 16 Nov 2024 02:56:12 -0800 (PST)
+Received: from [192.168.1.11] (83-233-6-197.cust.bredband2.com. [83.233.6.197])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ff69b158fdsm2289301fa.102.2024.11.16.02.56.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 16 Nov 2024 02:56:10 -0800 (PST)
+From: Marcus Folkesson <marcus.folkesson@gmail.com>
+Date: Sat, 16 Nov 2024 11:55:55 +0100
+Subject: [PATCH v4] mtd: spi-nor: atmel: add at25sf321 entry
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/1] powerpc/8xx: Drop legacy-of-mm-gpiochip.h header
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Cc: Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin
- <npiggin@gmail.com>, Naveen N Rao <naveen@kernel.org>,
- Madhavan Srinivasan <maddy@linux.ibm.com>
-References: <20241115133802.3919003-1-andriy.shevchenko@linux.intel.com>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <20241115133802.3919003-1-andriy.shevchenko@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241116-spi-nor-v4-1-3de8ac6fd0be@gmail.com>
+X-B4-Tracking: v=1; b=H4sIADp6OGcC/2XMTQ6CMBCG4auYrq3ptPzVlfcwLqAdYBKhpDWNh
+ nB3CxuILr/JPO/MAnrCwK6nmXmMFMiNaWTnEzN9PXbIyabNpJAZCKh4mIiPznNrpC50ZbEWLUv
+ fk8eW3lvp/ki7p/By/rOFI6zX/0YEDtyWMm/aphSA5tYNNT0vxg1sbUR5cFLvTiaHUBRGaSEQ9
+ K9TuwPId6eS0wpNXmVQlqY5umVZvjtp4J0OAQAA
+X-Change-ID: 20241018-spi-nor-dc29698dea0f
+To: Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Pratyush Yadav <pratyush@kernel.org>, Michael Walle <mwalle@kernel.org>, 
+ Miquel Raynal <miquel.raynal@bootlin.com>, 
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, 
+ Nicolas Ferre <nicolas.ferre@microchip.com>, 
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Cc: linux-mtd@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, Marcus Folkesson <marcus.folkesson@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4883;
+ i=marcus.folkesson@gmail.com; h=from:subject:message-id;
+ bh=S9eRxq402eK4I35Xnjw+5DdjS0TnqMYqf/6CHY6wIAM=;
+ b=owEBbQKS/ZANAwAIAYiATm9ZXVIyAcsmYgBnOHpEhuDfKZJq5pNn5HGrppcMqMIFW/mvGNTVD
+ 6wy2OGQw5GJAjMEAAEIAB0WIQQFUaLotmy1TWTBLGWIgE5vWV1SMgUCZzh6RAAKCRCIgE5vWV1S
+ Ms4dEACJPrCLNfXlv8LSAo2ITG/27aqRj1Dux1Af4VpYRkhUvt7tAHQ9ZPBbd/IxFZbzbjiXOe2
+ 67z7quG11la+0eif5vghMRHIQFD9TlBXnwzH8bANPMkLhCTfa9FAsHIWSaJroDVW3fpIPcLbi/O
+ ecnaCH40s1oJ0nsJmmVtir90GeVptGAbsNsh5HuG+8fJGO95vDooMZZyoDlKLoC/0UPehbJELo9
+ Yev671hIVjlvmvn9InEj8QGXqs3PJOIZ01D23+KCkwttEhOr22KvaSMaaSPeXY7os1SJ/RkCqJf
+ lUHsMU8prc+FRvDnIL/HPE8J0uqw2bkxoIONyrfF9oWchX+LS8vvjJACL2YlBLUdVpyJ3hACc3Y
+ FPnXy0jLYW+CiOhMcXXlDYFnYlf/GC5tDjXhRl7/l3qhx6TQa8QI/E5J+teoybwCZG2rWW59DjO
+ /eREh2oqhXqn5+vr1NT2Go+tU7av3I652UYE3bwO8MzhB2t+Uy1FB1LsNNj+653EdkokOTU0tcz
+ E1bgcZHoEKq1jnV+m/54Q2guLBPTfFF5miRTdvnU/ksFaR+ck22xUonbrDKMdKMBMu9JzfO7rS6
+ Wte/dEC4HAIiyqxYJu6lcXZtoSlr5mItkXATxUVFXViFVJvCLQnVHkGt6hIxdzBAh+3EULZTcoq
+ SwNMGlX1HPU5RJw==
+X-Developer-Key: i=marcus.folkesson@gmail.com; a=openpgp;
+ fpr=AB91D46C7E0F6E6FB2AB640EC0FE25D598F6C127
 
+Add entry for the at25sf321 32Mbit SPI flash.
 
+This flash is populated on a custom board and was tested at
+10MHz frequency using the "ti,da830-spi" SPI controller.
 
-Le 15/11/2024 à 14:38, Andy Shevchenko a écrit :
-> Remove legacy-of-mm-gpiochip.h header file, replace of_* functions
-> and structs with appropriate alternatives.
+Link: https://www.renesas.com/en/document/dst/at25sf321-datasheet?r=1608801
+Reviewed-by: Michael Walle <mwalle@kernel.org>
+Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
+---
+root# cat /sys/class/spi_master/spi1/spi1.1/spi-nor/partname
+at25sf321
 
-Looks like you don't really have an alternative to 
-of_mm_gpiochip_add_data(), you are replacing one single line by 11 new 
-ones, and that is done twice (once for cpm1_gpiochip_add16(), once for 
-cpm1_gpiochip_add32()).
+root# cat /sys/class/spi_master/spi1/spi1.1/spi-nor/jedec_id
+1f8701
 
-> 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
->   arch/powerpc/platforms/8xx/cpm1.c | 119 +++++++++++++++---------------
+root# cat /sys/class/spi_master/spi1/spi1.1/spi-nor/manufacturer
+atmel
 
-Does not build:
+root# cat /sys/kernel/debug/spi-nor/spi1.1/capabilities
+Supported read modes by the flash
+ 1S-1S-1S
+  opcode        0x03
+  mode cycles   0
+  dummy cycles  0
+ 1S-1S-1S (fast read)
+  opcode        0x0b
+  mode cycles   0
+  dummy cycles  8
+ 1S-1S-2S
+  opcode        0x3b
+  mode cycles   0
+  dummy cycles  8
+ 1S-2S-2S
+  opcode        0xbb
+  mode cycles   4
+  dummy cycles  0
+ 1S-1S-4S
+  opcode        0x6b
+  mode cycles   0
+  dummy cycles  8
+ 1S-4S-4S
+  opcode        0xeb
+  mode cycles   2
+  dummy cycles  4
 
-   CC      arch/powerpc/platforms/8xx/cpm1.o
-arch/powerpc/platforms/8xx/cpm1.c: In function 'cpm1_gpiochip_add16':
-arch/powerpc/platforms/8xx/cpm1.c:505:2: error: 'g' undeclared (first 
-use in this function); did you mean 'gc'?
-   g->label = devm_kasprintf(dev, GFP_KERNEL, "%pOF", np);
-   ^
-   gc
-arch/powerpc/platforms/8xx/cpm1.c:505:2: note: each undeclared 
-identifier is reported only once for each function it appears in
-arch/powerpc/platforms/8xx/cpm1.c:509:18: error: too few arguments to 
-function 'devm_of_iomap'
-   cpm1_gc->regs = devm_of_iomap(dev, np, 0);
-                   ^~~~~~~~~~~~~
-In file included from ./include/linux/dma-mapping.h:8:0,
-                  from arch/powerpc/platforms/8xx/cpm1.c:27:
-./include/linux/device.h:372:15: note: declared here
-  void __iomem *devm_of_iomap(struct device *dev,
-                ^~~~~~~~~~~~~
-arch/powerpc/platforms/8xx/cpm1.c: At top level:
-arch/powerpc/platforms/8xx/cpm1.c:545:31: error: unknown type name 
-'cpm1_gpio32_chip'
-  static void __cpm1_gpio32_set(cpm1_gpio32_chip *cpm1_gc, u32 pin_mask, 
-int value)
-                                ^~~~~~~~~~~~~~~~
-arch/powerpc/platforms/8xx/cpm1.c: In function 'cpm1_gpio32_set':
-arch/powerpc/platforms/8xx/cpm1.c:565:2: error: implicit declaration of 
-function '__cpm1_gpio32_set'; did you mean 'cpm1_gpio32_set'? 
-[-Werror=implicit-function-declaration]
-   __cpm1_gpio32_set(cpm1_gc, pin_mask, value);
-   ^~~~~~~~~~~~~~~~~
-   cpm1_gpio32_set
-arch/powerpc/platforms/8xx/cpm1.c: In function 'cpm1_gpiochip_add32':
-arch/powerpc/platforms/8xx/cpm1.c:625:2: error: 'g' undeclared (first 
-use in this function); did you mean 'gc'?
-   g->label = devm_kasprintf(dev, GFP_KERNEL, "%pOF", np);
-   ^
-   gc
-arch/powerpc/platforms/8xx/cpm1.c:629:18: error: too few arguments to 
-function 'devm_of_iomap'
-   cpm1_gc->regs = devm_of_iomap(dev, np, 0);
-                   ^~~~~~~~~~~~~
-In file included from ./include/linux/dma-mapping.h:8:0,
-                  from arch/powerpc/platforms/8xx/cpm1.c:27:
-./include/linux/device.h:372:15: note: declared here
-  void __iomem *devm_of_iomap(struct device *dev,
-                ^~~~~~~~~~~~~
+Supported page program modes by the flash
+ 1S-1S-1S
+  opcode        0x02
 
+root# mtd_debug  info /dev/mtd6
+mtd.type = MTD_NORFLASH
+mtd.flags = MTD_BIT_WRITEABLE
+mtd.size = 65536 (64K)
+mtd.erasesize = 4096 (4K)
+mtd.writesize = 1 
+mtd.oobsize = 0 
+regions = 0
 
+SINGLE
+======
+spi-rx-bus-width = <1>;
+spi-tx-bus-width = <1>;
 
->   1 file changed, 60 insertions(+), 59 deletions(-)
-> 
-> diff --git a/arch/powerpc/platforms/8xx/cpm1.c b/arch/powerpc/platforms/8xx/cpm1.c
-> index b24d4102fbf6..1262bff5ba2e 100644
-> --- a/arch/powerpc/platforms/8xx/cpm1.c
-> +++ b/arch/powerpc/platforms/8xx/cpm1.c
-> @@ -45,7 +45,7 @@
->   #include <sysdev/fsl_soc.h>
->   
->   #ifdef CONFIG_8xx_GPIO
-> -#include <linux/gpio/legacy-of-mm-gpiochip.h>
-> +#include <linux/gpio/driver.h>
->   #endif
->   
->   #define CPM_MAP_SIZE    (0x4000)
-> @@ -376,7 +376,8 @@ int __init cpm1_clk_setup(enum cpm_clk_target target, int clock, int mode)
->   #ifdef CONFIG_8xx_GPIO
->   
->   struct cpm1_gpio16_chip {
-> -	struct of_mm_gpio_chip mm_gc;
-> +	struct gpio_chip gc;
-> +	void __iomem *regs;
->   	spinlock_t lock;
->   
->   	/* shadowed data register to clear/set bits safely */
-> @@ -386,19 +387,17 @@ struct cpm1_gpio16_chip {
->   	int irq[16];
->   };
->   
-> -static void cpm1_gpio16_save_regs(struct of_mm_gpio_chip *mm_gc)
-> +static void cpm1_gpio16_save_regs(struct cpm1_gpio16_chip *cpm1_gc)
->   {
-> -	struct cpm1_gpio16_chip *cpm1_gc =
-> -		container_of(mm_gc, struct cpm1_gpio16_chip, mm_gc);
-> -	struct cpm_ioport16 __iomem *iop = mm_gc->regs;
-> +	struct cpm_ioport16 __iomem *iop = cpm1_gc->regs;
->   
->   	cpm1_gc->cpdata = in_be16(&iop->dat);
->   }
->   
->   static int cpm1_gpio16_get(struct gpio_chip *gc, unsigned int gpio)
->   {
-> -	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
-> -	struct cpm_ioport16 __iomem *iop = mm_gc->regs;
-> +	struct cpm1_gpio16_chip *cpm1_gc = gpiochip_get_data(gc);
-> +	struct cpm_ioport16 __iomem *iop = cpm1_gc->regs;
->   	u16 pin_mask;
->   
->   	pin_mask = 1 << (15 - gpio);
-> @@ -406,11 +405,9 @@ static int cpm1_gpio16_get(struct gpio_chip *gc, unsigned int gpio)
->   	return !!(in_be16(&iop->dat) & pin_mask);
->   }
->   
-> -static void __cpm1_gpio16_set(struct of_mm_gpio_chip *mm_gc, u16 pin_mask,
-> -	int value)
-> +static void __cpm1_gpio16_set(struct cpm1_gpio16_chip *cpm1_gc, u16 pin_mask, int value)
->   {
-> -	struct cpm1_gpio16_chip *cpm1_gc = gpiochip_get_data(&mm_gc->gc);
-> -	struct cpm_ioport16 __iomem *iop = mm_gc->regs;
-> +	struct cpm_ioport16 __iomem *iop = cpm1_gc->regs;
->   
->   	if (value)
->   		cpm1_gc->cpdata |= pin_mask;
-> @@ -422,38 +419,35 @@ static void __cpm1_gpio16_set(struct of_mm_gpio_chip *mm_gc, u16 pin_mask,
->   
->   static void cpm1_gpio16_set(struct gpio_chip *gc, unsigned int gpio, int value)
->   {
-> -	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
-> -	struct cpm1_gpio16_chip *cpm1_gc = gpiochip_get_data(&mm_gc->gc);
-> +	struct cpm1_gpio16_chip *cpm1_gc = gpiochip_get_data(gc);
->   	unsigned long flags;
->   	u16 pin_mask = 1 << (15 - gpio);
->   
->   	spin_lock_irqsave(&cpm1_gc->lock, flags);
->   
-> -	__cpm1_gpio16_set(mm_gc, pin_mask, value);
-> +	__cpm1_gpio16_set(cpm1_gc, pin_mask, value);
->   
->   	spin_unlock_irqrestore(&cpm1_gc->lock, flags);
->   }
->   
->   static int cpm1_gpio16_to_irq(struct gpio_chip *gc, unsigned int gpio)
->   {
-> -	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
-> -	struct cpm1_gpio16_chip *cpm1_gc = gpiochip_get_data(&mm_gc->gc);
-> +	struct cpm1_gpio16_chip *cpm1_gc = gpiochip_get_data(gc);
->   
->   	return cpm1_gc->irq[gpio] ? : -ENXIO;
->   }
->   
->   static int cpm1_gpio16_dir_out(struct gpio_chip *gc, unsigned int gpio, int val)
->   {
-> -	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
-> -	struct cpm1_gpio16_chip *cpm1_gc = gpiochip_get_data(&mm_gc->gc);
-> -	struct cpm_ioport16 __iomem *iop = mm_gc->regs;
-> +	struct cpm1_gpio16_chip *cpm1_gc = gpiochip_get_data(gc);
-> +	struct cpm_ioport16 __iomem *iop = cpm1_gc->regs;
->   	unsigned long flags;
->   	u16 pin_mask = 1 << (15 - gpio);
->   
->   	spin_lock_irqsave(&cpm1_gc->lock, flags);
->   
->   	setbits16(&iop->dir, pin_mask);
-> -	__cpm1_gpio16_set(mm_gc, pin_mask, val);
-> +	__cpm1_gpio16_set(cpm1_gc, pin_mask, val);
->   
->   	spin_unlock_irqrestore(&cpm1_gc->lock, flags);
->   
-> @@ -462,9 +456,8 @@ static int cpm1_gpio16_dir_out(struct gpio_chip *gc, unsigned int gpio, int val)
->   
->   static int cpm1_gpio16_dir_in(struct gpio_chip *gc, unsigned int gpio)
->   {
-> -	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
-> -	struct cpm1_gpio16_chip *cpm1_gc = gpiochip_get_data(&mm_gc->gc);
-> -	struct cpm_ioport16 __iomem *iop = mm_gc->regs;
-> +	struct cpm1_gpio16_chip *cpm1_gc = gpiochip_get_data(gc);
-> +	struct cpm_ioport16 __iomem *iop = cpm1_gc->regs;
->   	unsigned long flags;
->   	u16 pin_mask = 1 << (15 - gpio);
->   
-> @@ -481,11 +474,10 @@ int cpm1_gpiochip_add16(struct device *dev)
->   {
->   	struct device_node *np = dev->of_node;
->   	struct cpm1_gpio16_chip *cpm1_gc;
-> -	struct of_mm_gpio_chip *mm_gc;
->   	struct gpio_chip *gc;
->   	u16 mask;
->   
-> -	cpm1_gc = kzalloc(sizeof(*cpm1_gc), GFP_KERNEL);
-> +	cpm1_gc = devm_kzalloc(dev, sizeof(*cpm1_gc), GFP_KERNEL);
->   	if (!cpm1_gc)
->   		return -ENOMEM;
->   
-> @@ -499,10 +491,8 @@ int cpm1_gpiochip_add16(struct device *dev)
->   				cpm1_gc->irq[i] = irq_of_parse_and_map(np, j++);
->   	}
->   
-> -	mm_gc = &cpm1_gc->mm_gc;
-> -	gc = &mm_gc->gc;
-> -
-> -	mm_gc->save_regs = cpm1_gpio16_save_regs;
-> +	gc = &cpm1_gc->gc;
-> +	gc->base = -1;
->   	gc->ngpio = 16;
->   	gc->direction_input = cpm1_gpio16_dir_in;
->   	gc->direction_output = cpm1_gpio16_dir_out;
-> @@ -512,30 +502,39 @@ int cpm1_gpiochip_add16(struct device *dev)
->   	gc->parent = dev;
->   	gc->owner = THIS_MODULE;
->   
-> -	return of_mm_gpiochip_add_data(np, mm_gc, cpm1_gc);
-> +	g->label = devm_kasprintf(dev, GFP_KERNEL, "%pOF", np);
-> +	if (!gc->label)
-> +		return -ENOMEM;
-> +
-> +	cpm1_gc->regs = devm_of_iomap(dev, np, 0);
-> +	if (IS_ERR(cpm1_gc->regs))
-> +		return PTR_ERR(cpm1_gc->regs);
-> +
-> +	cpm1_gpio16_save_regs(cpm1_gc);
-> +
-> +	return devm_gpiochip_add_data(dev, gc, cpm1_gc);
->   }
->   
->   struct cpm1_gpio32_chip {
-> -	struct of_mm_gpio_chip mm_gc;
-> +	struct gpio_chip gc;
-> +	void __iomem *regs;
->   	spinlock_t lock;
->   
->   	/* shadowed data register to clear/set bits safely */
->   	u32 cpdata;
->   };
->   
-> -static void cpm1_gpio32_save_regs(struct of_mm_gpio_chip *mm_gc)
-> +static void cpm1_gpio32_save_regs(struct cpm1_gpio32_chip *cpm1_gc)
->   {
-> -	struct cpm1_gpio32_chip *cpm1_gc =
-> -		container_of(mm_gc, struct cpm1_gpio32_chip, mm_gc);
-> -	struct cpm_ioport32b __iomem *iop = mm_gc->regs;
-> +	struct cpm_ioport32b __iomem *iop = cpm1_gc->regs;
->   
->   	cpm1_gc->cpdata = in_be32(&iop->dat);
->   }
->   
->   static int cpm1_gpio32_get(struct gpio_chip *gc, unsigned int gpio)
->   {
-> -	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
-> -	struct cpm_ioport32b __iomem *iop = mm_gc->regs;
-> +	struct cpm1_gpio32_chip *cpm1_gc = gpiochip_get_data(gc);
-> +	struct cpm_ioport32b __iomem *iop = cpm1_gc->regs;
->   	u32 pin_mask;
->   
->   	pin_mask = 1 << (31 - gpio);
-> @@ -543,11 +542,9 @@ static int cpm1_gpio32_get(struct gpio_chip *gc, unsigned int gpio)
->   	return !!(in_be32(&iop->dat) & pin_mask);
->   }
->   
-> -static void __cpm1_gpio32_set(struct of_mm_gpio_chip *mm_gc, u32 pin_mask,
-> -	int value)
-> +static void __cpm1_gpio32_set(cpm1_gpio32_chip *cpm1_gc, u32 pin_mask, int value)
->   {
-> -	struct cpm1_gpio32_chip *cpm1_gc = gpiochip_get_data(&mm_gc->gc);
-> -	struct cpm_ioport32b __iomem *iop = mm_gc->regs;
-> +	struct cpm_ioport32b __iomem *iop = cpm1_gc->regs;
->   
->   	if (value)
->   		cpm1_gc->cpdata |= pin_mask;
-> @@ -559,30 +556,28 @@ static void __cpm1_gpio32_set(struct of_mm_gpio_chip *mm_gc, u32 pin_mask,
->   
->   static void cpm1_gpio32_set(struct gpio_chip *gc, unsigned int gpio, int value)
->   {
-> -	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
-> -	struct cpm1_gpio32_chip *cpm1_gc = gpiochip_get_data(&mm_gc->gc);
-> +	struct cpm1_gpio32_chip *cpm1_gc = gpiochip_get_data(gc);
->   	unsigned long flags;
->   	u32 pin_mask = 1 << (31 - gpio);
->   
->   	spin_lock_irqsave(&cpm1_gc->lock, flags);
->   
-> -	__cpm1_gpio32_set(mm_gc, pin_mask, value);
-> +	__cpm1_gpio32_set(cpm1_gc, pin_mask, value);
->   
->   	spin_unlock_irqrestore(&cpm1_gc->lock, flags);
->   }
->   
->   static int cpm1_gpio32_dir_out(struct gpio_chip *gc, unsigned int gpio, int val)
->   {
-> -	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
-> -	struct cpm1_gpio32_chip *cpm1_gc = gpiochip_get_data(&mm_gc->gc);
-> -	struct cpm_ioport32b __iomem *iop = mm_gc->regs;
-> +	struct cpm1_gpio32_chip *cpm1_gc = gpiochip_get_data(gc);
-> +	struct cpm_ioport32b __iomem *iop = cpm1_gc->regs;
->   	unsigned long flags;
->   	u32 pin_mask = 1 << (31 - gpio);
->   
->   	spin_lock_irqsave(&cpm1_gc->lock, flags);
->   
->   	setbits32(&iop->dir, pin_mask);
-> -	__cpm1_gpio32_set(mm_gc, pin_mask, val);
-> +	__cpm1_gpio32_set(cpm1_gc, pin_mask, val);
->   
->   	spin_unlock_irqrestore(&cpm1_gc->lock, flags);
->   
-> @@ -591,9 +586,8 @@ static int cpm1_gpio32_dir_out(struct gpio_chip *gc, unsigned int gpio, int val)
->   
->   static int cpm1_gpio32_dir_in(struct gpio_chip *gc, unsigned int gpio)
->   {
-> -	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
-> -	struct cpm1_gpio32_chip *cpm1_gc = gpiochip_get_data(&mm_gc->gc);
-> -	struct cpm_ioport32b __iomem *iop = mm_gc->regs;
-> +	struct cpm1_gpio32_chip *cpm1_gc = gpiochip_get_data(gc);
-> +	struct cpm_ioport32b __iomem *iop = cpm1_gc->regs;
->   	unsigned long flags;
->   	u32 pin_mask = 1 << (31 - gpio);
->   
-> @@ -610,19 +604,16 @@ int cpm1_gpiochip_add32(struct device *dev)
->   {
->   	struct device_node *np = dev->of_node;
->   	struct cpm1_gpio32_chip *cpm1_gc;
-> -	struct of_mm_gpio_chip *mm_gc;
->   	struct gpio_chip *gc;
->   
-> -	cpm1_gc = kzalloc(sizeof(*cpm1_gc), GFP_KERNEL);
-> +	cpm1_gc = devm_kzalloc(dev, sizeof(*cpm1_gc), GFP_KERNEL);
->   	if (!cpm1_gc)
->   		return -ENOMEM;
->   
->   	spin_lock_init(&cpm1_gc->lock);
->   
-> -	mm_gc = &cpm1_gc->mm_gc;
-> -	gc = &mm_gc->gc;
-> -
-> -	mm_gc->save_regs = cpm1_gpio32_save_regs;
-> +	gc = &cpm1_gc->gc;
-> +	gc->base = -1;
->   	gc->ngpio = 32;
->   	gc->direction_input = cpm1_gpio32_dir_in;
->   	gc->direction_output = cpm1_gpio32_dir_out;
-> @@ -631,7 +622,17 @@ int cpm1_gpiochip_add32(struct device *dev)
->   	gc->parent = dev;
->   	gc->owner = THIS_MODULE;
->   
-> -	return of_mm_gpiochip_add_data(np, mm_gc, cpm1_gc);
-> +	g->label = devm_kasprintf(dev, GFP_KERNEL, "%pOF", np);
-> +	if (!gc->label)
-> +		return -ENOMEM;
-> +
-> +	cpm1_gc->regs = devm_of_iomap(dev, np, 0);
-> +	if (IS_ERR(cpm1_gc->regs))
-> +		return PTR_ERR(cpm1_gc->regs);
-> +
-> +	cpm1_gpio32_save_regs(cpm1_gc);
-> +
-> +	return devm_gpiochip_add_data(dev, gc, cpm1_gc);
->   }
->   
->   #endif /* CONFIG_8xx_GPIO */
+root# cat /sys/kernel/debug/spi-nor/spi1.1/params
+name            at25sf321
+id              1f 87 01
+size            4.00 MiB
+write size      1
+page size       256
+address nbytes  3
+flags           HAS_16BIT_SR
+
+opcodes
+ read           0x0b
+  dummy cycles  8
+ erase          0x20
+ program        0x02
+ 8D extension   none
+
+protocols
+ read           1S-1S-1S
+ write          1S-1S-1S
+ register       1S-1S-1S
+
+erase commands
+ 20 (4.00 KiB) [0]
+ d8 (64.0 KiB) [1]
+ c7 (4.00 MiB)
+
+sector map
+ region (in hex)   | erase mask | flags
+ ------------------+------------+----------
+ 00000000-003fffff |     [01  ] |
+
+DUAL
+======
+spi-rx-bus-width = <2>;
+spi-tx-bus-width = <2>;
+
+root# cat /sys/kernel/debug/spi-nor/spi1.1/params 
+name            at25sf321
+id              1f 87 01
+size            4.00 MiB
+write size      1
+page size       256
+address nbytes  3
+flags           HAS_16BIT_SR | SOFT_RESET
+
+opcodes
+ read           0x0b
+  dummy cycles  8
+ erase          0x20
+ program        0x02
+ 8D extension   repeat
+
+protocols
+ read           1S-1S-1S
+ write          1S-1S-1S
+ register       1S-1S-1S
+
+erase commands
+ 20 (4.00 KiB) [1]
+ 52 (32.0 KiB) [2]
+ d8 (64.0 KiB) [3]
+ c7 (4.00 MiB)
+
+sector map
+ region (in hex)   | erase mask | flags
+ ------------------+------------+----------
+ 00000000-003fffff |     [ 123] | 
+
+QUAD
+======
+spi-rx-bus-width = <4>;
+spi-tx-bus-width = <4>;
+
+root# cat /sys/kernel/debug/spi-nor/spi1.1/params
+name            at25sf321
+id              1f 87 01
+size            4.00 MiB
+write size      1
+page size       256
+address nbytes  3
+flags           HAS_16BIT_SR | SOFT_RESET
+
+opcodes
+ read           0x0b
+  dummy cycles  8
+ erase          0x20
+ program        0x02
+ 8D extension   repeat
+
+protocols
+ read           1S-1S-1S
+ write          1S-1S-1S
+ register       1S-1S-1S
+
+erase commands
+ 20 (4.00 KiB) [1]
+ 52 (32.0 KiB) [2]
+ d8 (64.0 KiB) [3]
+ c7 (4.00 MiB)
+
+sector map
+ region (in hex)   | erase mask | flags
+ ------------------+------------+----------
+ 00000000-003fffff |     [ 123] |
+---
+Changes in v4:
+- Join line for link in description
+- Removed .name as the ID is reused by different chips
+- Link to v3: https://lore.kernel.org/r/20241115-spi-nor-v3-1-93ec584177cb@gmail.com
+
+Changes in v3:
+- Add SPI_NOR_DUAL_READ and SPI_NOR_QUAD_READ flags
+- Link to v2: https://lore.kernel.org/r/20241029-spi-nor-v2-1-e166c3900e19@gmail.com
+
+Changes in v2:
+- Change from at25sf321b to at25sf321
+- Link to v1: https://lore.kernel.org/r/20241018-spi-nor-v1-1-d725bfb701ec@gmail.com
+---
+ drivers/mtd/spi-nor/atmel.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/drivers/mtd/spi-nor/atmel.c b/drivers/mtd/spi-nor/atmel.c
+index 45d1153a04a07b7c61f46b117311b24ab695038f..82c592f0a1e156e6871785d58b670f76a0c03911 100644
+--- a/drivers/mtd/spi-nor/atmel.c
++++ b/drivers/mtd/spi-nor/atmel.c
+@@ -238,6 +238,10 @@ static const struct flash_info atmel_nor_parts[] = {
+ 		.flags = SPI_NOR_HAS_LOCK,
+ 		.no_sfdp_flags = SECT_4K,
+ 		.fixups = &at25fs_nor_fixups
++	}, {
++		.id = SNOR_ID(0x1f, 0x87, 0x01),
++		.size = SZ_4M,
++		.no_sfdp_flags = SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ,
+ 	},
+ };
+ 
+
+---
+base-commit: 200289db261f0c8131a5756133e9d30966289c3b
+change-id: 20241018-spi-nor-dc29698dea0f
+
+Best regards,
+-- 
+Marcus Folkesson <marcus.folkesson@gmail.com>
+
 
