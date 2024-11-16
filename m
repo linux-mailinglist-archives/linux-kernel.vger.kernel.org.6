@@ -1,58 +1,81 @@
-Return-Path: <linux-kernel+bounces-411885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3673A9D00B7
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 20:37:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8B849D00BB
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 20:47:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D431284EF9
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 19:37:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FA05284857
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 19:47:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF5BB199947;
-	Sat, 16 Nov 2024 19:37:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18419198841;
+	Sat, 16 Nov 2024 19:47:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Z19skp1S"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lijy5qYM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87F3319308C;
-	Sat, 16 Nov 2024 19:37:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66EB117BB0F;
+	Sat, 16 Nov 2024 19:47:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731785825; cv=none; b=PVh/5lDhK1ePTK+w/7iUSex5OgibFNYlLaCqWuTVc8wsMdTMsg5TMe+0/6BTn+aCIDFiuggSogGdA/dKUbUQAJTarrNLx1On4lpil4yWFH/ObRFn9mjvr2UoJntLlAuX31Swhq/pECh4FbqdM4mxg4j4JJ+AXL6W+fRhzs8XAEE=
+	t=1731786431; cv=none; b=QSwW6DUJabUpTB+cEaPVjjztJs45cNyPEFS7Fsr7g8gUNvhUDTUWnPO/QDOTSisI1aLoQzrw8823Xbt1nFzI020ea9jMN3hyogUzemJfOmaiFIahwtqhKk4VyM+1f/gqbrC3RnL51HoN3Q6xsLIafgmaf55JLMsW4OhsD/LZiaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731785825; c=relaxed/simple;
-	bh=ELlNSiKS+DrwlChWXi2ylpoZK4FqLfd2aifSISBqemQ=;
+	s=arc-20240116; t=1731786431; c=relaxed/simple;
+	bh=A4qVV9tDRxaJPJNkj5ZNN9jdW4qqoLjHW6sCHUJGmwY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WEibw/rNzfZe3FKyFKyzZihCrP1Ho3W7OpAiQV6H8hKHotfIIdmhkXHcufdHTTV21l5/x94f9ot/SCMuJ5xeFvYfaKi0afyfCyex+bgQpU7O5Fh2F0y1UEoVVnrLElfYDVp3Y5WlEetVLSraqT2PbdMOxnC5m//YoshtmzuDQ4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Z19skp1S; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 98A9C60002;
-	Sat, 16 Nov 2024 19:36:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1731785814;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fz9hLc2YmSBpYXp/MdXJqnvHA+ad6QdDvN4TBAUYxjQ=;
-	b=Z19skp1SaKh+mEGWDUQh6eY2O/8ZedG637T9RB/uRFodDTX9qvoP0kZme8fkxVZlr1zg0/
-	7HMtSYa8npUzBWfg5aIFRN8HvVfbpyqvYLnOr8DdLli2x0RiTUmkv4cqiSQ0uIfnaOdi6z
-	1pIl6j4DynSoKrA9bDInIjT9K0dn8iNKRC6TVg95p2sOT+BxxLQVjIBTrKgcZo0RcNfmRM
-	Fzgmxt49xpxNcuiZkS2oCNWhLWMKj853522oTP8wivl2n9jjexP75tKzp0gTadVj6oGayb
-	boK5lpl8XfRjGvc93TirgXS6f4S8vEwFxGx5aFZsGc7tsBG2Dgzh/rXIGcBXNQ==
-Date: Sat, 16 Nov 2024 20:36:52 +0100
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Jacky Bai <ping.bai@nxp.com>, Peng Fan <peng.fan@nxp.com>,
-	"open list:REAL TIME CLOCK (RTC) SUBSYSTEM" <linux-rtc@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
-Subject: Re: [PATCH 1/1] rtc: bbnsm: Enable RTC by default to fix time read
- failure
-Message-ID: <20241116193652a13b3081@mail.local>
-References: <20241115194858.3837298-1-Frank.Li@nxp.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YTD61FZ/6k4Cj5sZ1PIRKWsr9u9c+478QNQjp2Gs5fcz50aTElBY2IULXVmgBhpyZeHaEqlgUQQzEfrr9GSfxR1jPaOqXzACQepUVR48yusHYOIKqOLUbxmL17qjAXiMu1v4sNEWank/9rSDyJQjuXDVQAlkHZnFm/FkWhhjUl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lijy5qYM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3692FC4CEC3;
+	Sat, 16 Nov 2024 19:47:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731786429;
+	bh=A4qVV9tDRxaJPJNkj5ZNN9jdW4qqoLjHW6sCHUJGmwY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lijy5qYMACLMDKO9zLfN0EkUShWwPvHiK09RgoEfqUrA8nMuZ7wyyw/8HkACqdJ+S
+	 TJUHv8WjeYrvvCtGH+bVLgQ1Agx3sMYv7duG84oLFfVYvH45N0x/W0iugVmeJVF2QA
+	 t9Xr3baoXf3AIxJqQmaooeMHwalOVSm7qArFZ2Ou2vlXcBBT3BlUwWWKELqs14CO0W
+	 80v3SUgVLwghFBhUbEQ7g2fe3Sss95jMEYnw3d8uyVLMtkg+lZxd1IpNzLg4974WOK
+	 M/XemHAqU5tdfQnwUWQdbx4bwRg/FqYNYv3qwat4mMhVEYwj6ReOMEpMQZiqtv3EXr
+	 bYq4/SrnQZ+WQ==
+Date: Sat, 16 Nov 2024 16:47:06 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: James Clark <james.clark@linaro.org>
+Cc: Ian Rogers <irogers@google.com>, Xu Yang <xu.yang_2@nxp.com>,
+	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Huacai Chen <chenhuacai@kernel.org>, Bibo Mao <maobibo@loongson.cn>,
+	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
+	Ben Zong-You Xie <ben717@andestech.com>,
+	Alexandre Ghiti <alexghiti@rivosinc.com>,
+	Sandipan Das <sandipan.das@amd.com>,
+	Benjamin Gray <bgray@linux.ibm.com>,
+	Ravi Bangoria <ravi.bangoria@amd.com>,
+	=?iso-8859-1?Q?Cl=E9ment?= Le Goffic <clement.legoffic@foss.st.com>,
+	Yicong Yang <yangyicong@hisilicon.com>,
+	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+	Dima Kogan <dima@secretsauce.net>,
+	"Dr. David Alan Gilbert" <linux@treblig.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v2 0/8] Refactor cpuid and metric table lookup code
+Message-ID: <Zzj2usdkgdyZ9Z8I@x1>
+References: <20241107162035.52206-1-irogers@google.com>
+ <215ca9a2-0a63-4d0c-8402-5cb1f2bb0794@linaro.org>
+ <ZzdsCWpAULCe839R@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,51 +84,84 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241115194858.3837298-1-Frank.Li@nxp.com>
-X-GND-Sasl: alexandre.belloni@bootlin.com
+In-Reply-To: <ZzdsCWpAULCe839R@x1>
 
-On 15/11/2024 14:48:58-0500, Frank Li wrote:
-> From: Jacky Bai <ping.bai@nxp.com>
+On Fri, Nov 15, 2024 at 12:43:05PM -0300, Arnaldo Carvalho de Melo wrote:
+> On Fri, Nov 15, 2024 at 03:35:55PM +0000, James Clark wrote:
+> > 
+> > 
+> > On 07/11/2024 4:20 pm, Ian Rogers wrote:
+> > > Xu Yang <xu.yang_2@nxp.com> reported issues with the system metric
+> > > lookup:
+> > > https://lore.kernel.org/linux-perf-users/20241106085441.3945502-1-xu.yang_2@nxp.com/
+> > > These patches remove a lot of the logic relating CPUIDs to PMUs so
+> > > that the PMU isn't part of the question when finding a metric table.
+> > > For time reasons, it doesn't go as far as allowing system metrics
+> > > without a metric table as a metric table is needed for metrics to
+> > > refer to other metrics, and the refactoring of that resolution is a
+> > > hassle.
+> > > 
+> > > Ian Rogers (7):
+> > >    perf header: Move is_cpu_online to numa bench
+> > >    perf header: Refactor get_cpuid to take a CPU for ARM
+> > >    perf arm64 header: Use cpu argument in get_cpuid
+> > >    perf header: Avoid transitive PMU includes
+> > >    perf header: Pass a perf_cpu rather than a PMU to get_cpuid_str
+> > >    perf jevents: Add map_for_cpu
+> > >    perf pmu: Move pmu_metrics_table__find and remove ARM override
+> > > 
+> > > Xu Yang (1):
+> > >    perf jevents: fix breakage when do perf stat on system metric
+> > > 
+> > >   tools/perf/arch/arm64/util/arm-spe.c     | 14 +---
+> > >   tools/perf/arch/arm64/util/header.c      | 73 ++++++++++-----------
+> > >   tools/perf/arch/arm64/util/pmu.c         | 20 ------
+> > >   tools/perf/arch/loongarch/util/header.c  |  4 +-
+> > >   tools/perf/arch/powerpc/util/header.c    |  4 +-
+> > >   tools/perf/arch/riscv/util/header.c      |  4 +-
+> > >   tools/perf/arch/s390/util/header.c       |  6 +-
+> > >   tools/perf/arch/x86/util/auxtrace.c      |  3 +-
+> > >   tools/perf/arch/x86/util/header.c        |  5 +-
+> > >   tools/perf/bench/numa.c                  | 53 +++++++++++++++
+> > >   tools/perf/builtin-kvm.c                 |  4 +-
+> > >   tools/perf/pmu-events/empty-pmu-events.c | 39 ++++++-----
+> > >   tools/perf/pmu-events/jevents.py         | 39 ++++++-----
+> > >   tools/perf/pmu-events/pmu-events.h       |  2 +-
+> > >   tools/perf/tests/expr.c                  |  5 +-
+> > >   tools/perf/util/env.c                    |  4 +-
+> > >   tools/perf/util/expr.c                   |  6 +-
+> > >   tools/perf/util/header.c                 | 82 ++++++++----------------
+> > >   tools/perf/util/header.h                 | 23 +++----
+> > >   tools/perf/util/pmu.c                    | 25 --------
+> > >   tools/perf/util/pmu.h                    |  2 -
+> > >   tools/perf/util/probe-event.c            |  1 +
+> > >   22 files changed, 189 insertions(+), 229 deletions(-)
+> > > 
+> > 
+> > Reviewed-by: James Clark <james.clark@linaro.org>
 > 
-> Enable the RTC by default even when no valid time is set to ensure the
-> RTC's time read and alarm functions work properly. Without this, running
-> hwclock results in the following error:
-> 
-> hwclock: ioctl(RTC_RD_TIME) to /dev/rtc0 to read the time failed: Invalid argument
-> 
+> Thanks for reviewing James, I'm doing a round of tests to push what I
+> have in tmp.perf-tools-next to perf-tools-next so that it gets test
+> merged on linux-next and later today I'll escape from the holiday and
+> take a last look on this series, apply and test.
 
+Applied locally, pushing to tmp.perf-tools-next as I'm still testing the
+hwmon case, building it on an 32-bit ARM machine:
 
-What is providing your hwclock and which version does it have?
+processor	: 3
+model name	: ARMv7 Processor rev 4 (v7l)
+BogoMIPS	: 38.40
+Features	: half thumb fastmult vfp edsp neon vfpv3 tls vfpv4 idiva idivt vfpd32 lpae evtstrm crc32 
+CPU implementer	: 0x41
+CPU architecture: 7
+CPU variant	: 0x0
+CPU part	: 0xd03
+CPU revision	: 4
 
+Hardware	: BCM2835
+Revision	: a020d3
+Serial		: 00000000783939e0
+Model		: Raspberry Pi 3 Model B Plus Rev 1.3
 
-> Fixes: eb7b85853c38 ("rtc: bbnsm: Add the bbnsm rtc support")
-> Signed-off-by: Jacky Bai <ping.bai@nxp.com>
-> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
->  drivers/rtc/rtc-nxp-bbnsm.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/rtc/rtc-nxp-bbnsm.c b/drivers/rtc/rtc-nxp-bbnsm.c
-> index fa3b0328c7a25..6610db2f75125 100644
-> --- a/drivers/rtc/rtc-nxp-bbnsm.c
-> +++ b/drivers/rtc/rtc-nxp-bbnsm.c
-> @@ -189,6 +189,9 @@ static int bbnsm_rtc_probe(struct platform_device *pdev)
->  	/* clear all the pending events */
->  	regmap_write(bbnsm->regmap, BBNSM_EVENTS, 0x7A);
->  
-> +	/* Enable the Real-Time counter */
-> +	regmap_update_bits(bbnsm->regmap, BBNSM_CTRL, RTC_EN_MSK, RTC_EN);
-> +
->  	device_init_wakeup(&pdev->dev, true);
->  	dev_pm_set_wake_irq(&pdev->dev, bbnsm->irq);
->  
-> -- 
-> 2.34.1
-> 
-
--- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+- Arnaldo
 
