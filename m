@@ -1,130 +1,81 @@
-Return-Path: <linux-kernel+bounces-411863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF92D9D008A
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 19:41:45 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D880B9D008C
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 19:54:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7CE05B24BB6
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 18:41:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13995B237B3
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 18:54:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7CBA1946A2;
-	Sat, 16 Nov 2024 18:41:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EC8A19340E;
+	Sat, 16 Nov 2024 18:54:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="uIiICG1h"
-Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="kwaOetkz"
+Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF22519046E;
-	Sat, 16 Nov 2024 18:41:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7BEF2B2F2
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 18:54:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731782495; cv=none; b=axogZAmDvbfmHk3qyTjZLNXyHyCLcVl1+tnrPJjBXb5okV+2BA+8x0wRrEAb2Wl6eLaidv6p9EKWbNncxVyeED0TIa3POLOudlXv2lhxBE9Lyy9am/rn3nILvR+uFBddMunmFUQUDsc+qDg+FUJWnPSHvWLGHsPamT/+Kfdk2Kg=
+	t=1731783264; cv=none; b=WrF7e5gOtRYyTt0ELYIakGgcK2cSC/J5FzXDm4yNIHReHj8JmpFoWU3nYg47uikTpxQ2Jpkd83rQ70tu9flGYlmVGyx0U1m2PDhnh8SZQjzuIQ3R8k3rbULw9q5/m8gdi5IPKctB64CYrGRZkcF3riGgdGITecLl2ZhE9q28QNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731782495; c=relaxed/simple;
-	bh=TUu/axCnwXUSPjl7DmdASpjS+JzTdRRaW1X3JGCd1HQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Nz8pFabJKedlC8Q8t3fIFwTr5KcI1IFH9Jh/1UTzHGqwOorRaYqlMC7YAT472uZbqsHKgWZ7hTCx2f33fpiAZKIg7YMMPV97GG0gWP0kQ2uUJKKM1gP9W3BnT/+cV3nrG3xIBrXh1z6qcjtnyCj2Ji3+Ux8qEYoZTZEHDNzHlPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=uIiICG1h; arc=none smtp.client-ip=157.90.84.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
-Received: from [192.168.42.27] (p5de457db.dip0.t-ipconnect.de [93.228.87.219])
-	(Authenticated sender: wse@tuxedocomputers.com)
-	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id C853F2FC0057;
-	Sat, 16 Nov 2024 19:41:22 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
-	s=default; t=1731782483;
+	s=arc-20240116; t=1731783264; c=relaxed/simple;
+	bh=HhJ5pN2/GxXKA4Rbq4lfzOtpM7okGHdMg4kVH9PY1lY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=gxER14ruklwbl3LlK2/uvuwMhfO9RTHISuDtj+9tIFfEV09QJAFfpKLn67CdSTb3Bav21oh/NJ9ukj7HhhCVZReUFtqRoyFN5VkUf/W7GEp84HIyvx8pehrCB9mImjCY3AjTPicd0sN4gjCBrxoJB+9pb4BP2M9ybGH8dWWL4Aw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=kwaOetkz; arc=none smtp.client-ip=95.215.58.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <b992d5ec-c1eb-4ab2-b2df-2464d9a2a847@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1731783257;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=JBqRSlWZvIoHn8A7/4oK+jcLVTVxG6tAyXjnQGfUghI=;
-	b=uIiICG1h2poU+bwTMHITZuDQcptlbgqEOAAnOCIGILOZD9Hv6bx5l3Wqf79Ur0CmY59/rx
-	glWr+qRCSZdkWmfpEGs3/JDEAxjRfenJHwV/cyWoPz+RyfvR4uXEcBvRfQtrG3eKtJ90Eh
-	9v+4fIO4zBiQEpyBTg9IIdb1YSx1gdU=
-Authentication-Results: mail.tuxedocomputers.com;
-	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
-Message-ID: <2a82f2e1-070a-4269-8b8e-26c5f188c85f@tuxedocomputers.com>
-Date: Sat, 16 Nov 2024 19:41:22 +0100
+	bh=HhJ5pN2/GxXKA4Rbq4lfzOtpM7okGHdMg4kVH9PY1lY=;
+	b=kwaOetkzI9lVNSyANWoe+1jPYaXDJ3EJN11Sw/RUTnYmMBoR7srIc0hQ9DBCmLjgweRVHn
+	cI5Y/FPvDduzFrx1YDkOXel8heeL3aXNCUvRyg8h7+UOGNWfaSr2EoZg/FklfXHMGnueBJ
+	fT86F5ldvJkkRuqIek+a3rsewYg5rxw=
+Date: Sat, 16 Nov 2024 10:54:09 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] module: Block modules by Tuxedo from accessing GPL
- symbols
-To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-Cc: Luis Chamberlain <mcgrof@kernel.org>, tux@tuxedocomputers.com,
- Petr Pavlu <petr.pavlu@suse.com>, Sami Tolvanen <samitolvanen@google.com>,
- Daniel Gomez <da.gomez@samsung.com>, linux-modules@vger.kernel.org,
- linux-kernel@vger.kernel.org, Thorsten Leemhuis <linux@leemhuis.info>
-References: <20241114103133.547032-4-ukleinek@kernel.org>
- <e32e9f5c-3841-41f7-9728-f998f123cc8a@tuxedocomputers.com>
- <e7d97b3d-1880-4c89-bbf2-a742d6ac9e6b@kernel.org>
- <ozjiojcjmdjppmtardffvrqkuksnexyhfttzbyandihzhg6n3t@ssscyybngobw>
-Content-Language: de-DE
-From: Werner Sembach <wse@tuxedocomputers.com>
-In-Reply-To: <ozjiojcjmdjppmtardffvrqkuksnexyhfttzbyandihzhg6n3t@ssscyybngobw>
+Subject: Re: [PATCH] libbpf: Change hash_combine parameters from long to
+ unsigned long
+Content-Language: en-GB
+To: Sidong Yang <sidong.yang@furiosa.ai>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
+ <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+ bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241116081054.65195-1-sidong.yang@furiosa.ai>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yonghong Song <yonghong.song@linux.dev>
+In-Reply-To: <20241116081054.65195-1-sidong.yang@furiosa.ai>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-Hello Uwe,
 
-Am 16.11.24 um 18:49 schrieb Uwe Kleine-König:
-> Hello,
+
+
+On 11/16/24 12:10 AM, Sidong Yang wrote:
+> The hash_combine() could be trapped when compiled with sanitizer like "zig cc"
+> or clang with signed-integer-overflow option. This patch parameters and return
+> type to unsigned long to remove the potential overflow.
 >
-> On Thu, Nov 14, 2024 at 12:14:16PM +0100, Uwe Kleine-König wrote:
->> On 11/14/24 11:49, Werner Sembach wrote:
->>> Am 14.11.24 um 11:31 schrieb Uwe Kleine-König:
->>>> the kernel modules provided by Tuxedo on
->>>> https://gitlab.com/tuxedocomputers/development/packages/tuxedo-drivers
->>>> are licensed under GPLv3 or later. This is incompatible with the
->>>> kernel's license and so makes it impossible for distributions and other
->>>> third parties to support these at least in pre-compiled form and so
->>>> limits user experience and the possibilities to work on mainlining these
->>>> drivers.
->>>>
->>>> This incompatibility is created on purpose to control the upstream
->>>> process. See https://fosstodon.org/@kernellogger/113423314337991594 for
->>>> a nice summary of the situation and some further links about the issue.
->>>>
->>>> Note that the pull request that fixed the MODULE_LICENSE invocations to
->>>> stop claiming GPL(v2) compatibility was accepted and then immediately
->>>> reverted "for the time being until the legal stuff is sorted out"
->>>> (https://gitlab.com/tuxedocomputers/development/packages/tuxedo-
->>>> drivers/-/commit/a8c09b6c2ce6393fe39d8652d133af9f06cfb427).
->>> As already being implied by that commit message, this is sadly not an
->>> issue that can be sorted out over night.
->>>
->>> We ended up in this situation as MODULE_LICENSE("GPL") on its own does
->>> not hint at GPL v2, if one is not aware of the license definition table
->>> in the documentation.
->> That statement isn't consistent with you saying to pick GPLv3 as an
->> explicitly incompatible license to control the mainlining process. So you
->> knew that it's legally at least questionable to combine these licenses.
-> When I wrote this mail I missed the possibility that while Werner knew
-> GPLv3 isn't ok for in-kernel code might still have considered GPLv3 ok
-> for external modules anyhow.
->
-> So I take back what I said and excuse me for my words. They were not
-> intended as harsh as Werner obviously took them, but still I regret
-> having written my reply with this suggestion.
->
-> I'm sorry,
-> Uwe
-Thank you very much for these words.
+> Signed-off-by: Sidong Yang <sidong.yang@furiosa.ai>
 
-I hope that in my replies I wasn't too harsh from my side and if so, I 
-too want to apologize for it.
-
-No more bad feelings going forward.
-
-Best regards,
-
-Werner Sembach
+Acked-by: Yonghong Song <yonghong.song@linux.dev>
 
 
