@@ -1,175 +1,193 @@
-Return-Path: <linux-kernel+bounces-411599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E5B39CFCA3
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 04:53:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E7379CFCA4
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 05:03:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D7B2288938
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 03:53:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 942F01F23200
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 04:03:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CAFE190662;
-	Sat, 16 Nov 2024 03:53:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ccg2aF1e"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C731018FDD2;
+	Sat, 16 Nov 2024 04:03:32 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37A63126BE6;
-	Sat, 16 Nov 2024 03:52:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5169383
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 04:03:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731729181; cv=none; b=RD8pvFaWT14JdFiK9FZkjpd0XzZg3DNglY5r4w7NCuG9Y780QRrdkAVI9PYgHcXHfxskNXjRrnxKgBz5ZhvQU89gy5yJpNZdZyHKZHkxmPJwm5mX1/fZ1559T6dBZQrgNw+WY1LhD69Z2tPLkyacdQ0FzD253L9NJdMd+NWXdYE=
+	t=1731729812; cv=none; b=XFidKOdcsTSC+S9Kk19mhJzfeuUxvIErKbzb/ATF9JikLEyH+6zFcQiJ9YLUYb8T0Zj/mbL4b3gg0YnrQDbdReKr9alXNozeTirV8A2NJGNYaU3XIs1KfIPY3x0NnQcMvnxAXyczPl2+uUDdFO5Hvsc1PJdNnBQNkhuYUHcexBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731729181; c=relaxed/simple;
-	bh=a3ziXhQhmHQ0vA7AjZjsO6DPSj0qovCeoArD26q9LA0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sqBY2eiyq1181QycHd6n+HOKxUcqesXNKSfhyAqUjMGMuxgl4tK5+jpDBIP607D7Wvj6k24mN2LzWlqYWTQGH5BO7Cghj3KdF4THbr1JNjZVN6JRys8WRDTjWfCgG2fagIMGqWhFmubzVWhP3CCiKjxpXG6akdSzebssvqTA6Ks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ccg2aF1e; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-7f8cc29aaf2so664730a12.3;
-        Fri, 15 Nov 2024 19:52:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731729178; x=1732333978; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=0a1LFZe7mhPiCdYnydxfbs4tmbiylajqw5WUGlsha3I=;
-        b=Ccg2aF1eYvN/9ZxE6E0BRlLZxZ9n2hXvRVdpckTQDakyo6BPeEy5S2HRYbPLfprzyN
-         ofuGldcKHttHqvaWrO29DrckkQCyEN5U03tabbiGr3/ADclWAMSXcq9NbFtCJJAurEbH
-         uQLJJO4hKGGaUWaUM2a49vocFRO+xr99qqwf1g/1wNnt76KjaFC0o/Ilhc/ct3QpfZWn
-         iw4+JDfmLegMrDZ4j5lPbIJRxXQXtNdEU7OsxIuPg1ZuDEcGyd3blCwBKWus5bR8smYP
-         rKZU5wL0P1oF0PSHWzp2ai9vivQ/Gf9olYb6qdDDRQpeISmqljrSpjH1rMVUhr79pKZH
-         XMPg==
+	s=arc-20240116; t=1731729812; c=relaxed/simple;
+	bh=Xch8GfihzBFvr239EZp64JgKknhHnufeNl4rkqWy+yw=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=M6KHGIYR9kPlFDLPP2QBhoD0CIFv8IDYHMk4u8uiT/8x9jOTkbaRvKaBUVnezud9rJY3IdejSUcIxYlQ3jzXh+3HlU4gFMfIpuCA0YSZ0YLyUrmxRUe4ZhEDEJa3dxbIKo7wePbgOleVg7dXIbzjVCqm0ckKjC/DEYYTHNtdSKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a6b9f3239dso3817445ab.0
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 20:03:30 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731729178; x=1732333978;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0a1LFZe7mhPiCdYnydxfbs4tmbiylajqw5WUGlsha3I=;
-        b=I29UwwoApLgtuJIt+GfQ+svPqOxvQrJKnNmjVK42OF5fCMpsIWzVT4+cYQ72CIi484
-         hVjfcMQw8i2pbszrRzQM+AcAs0QwLJbHk8NHHm6R1Yf771KMdwngAWntttcL3C+vitlE
-         MMIwvdoD3KBiOCsR1jt14u6asDokRXxHepauUwS2PYkrUZgdzA9zKEN6fh8KiZZRQHTD
-         WF9c1J9tPHtyiOKMawHL9RZ0I5RsNLLbg4N7x5A/iOOQormFkwlaT0idSprX+N7Xf3KF
-         X3pfisY8BtU96/NcPdgH0cCo0ZAswA8OpnjptFxaTN8p6t7o7bxVbFK4aSTNyiZNUvDr
-         KrMA==
-X-Forwarded-Encrypted: i=1; AJvYcCWORfFXIqmRzm+YNzsikNrfpvtO7AUiWgcmdzeGaNvkh4g6qES5Wx11ByD0m5qjFO4cHXdwxb/G@vger.kernel.org, AJvYcCXgXArzi5oFqLeMlcyq1CK3vgfuZwRlVLizw7H8M1okqZPrxkKPfLna/XG3AMHDPFnWaXPWW9P7fmPc+Pg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywm+tV9HWoobk3E4Kg2dyTKnNjQsRtkjZFGVnLJrS1Zf24E3pIP
-	fx5z+AMRj5oNcIK49RGNf2ilt1+CYt3ffbX7NbMPUtLkL6jO3ZsizLH+7LsEr6BM/TJqp9SgXmC
-	BgnYArIE1GYH9NcWJD1NoYdF+U2o=
-X-Google-Smtp-Source: AGHT+IEFUKFM2wbR8eLssBH3u61VGNgNPx8MQA8aMhcofW24BafDDbKsmR7m0RlbzXs89pxamk77eCK3z2P+QVEDy3g=
-X-Received: by 2002:a17:90b:2402:b0:2ea:2a8d:dd2a with SMTP id
- 98e67ed59e1d1-2ea2a8dee1fmr2837292a91.27.1731729178457; Fri, 15 Nov 2024
- 19:52:58 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731729810; x=1732334610;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=H3opLCRcHjNdfFwjWccZxOIh1mLgc55rA1a1R118YCc=;
+        b=Cj2kbhZfH+iss1nEZj+QT0rn7jzSvQcoosPCeC4q8YVmIYQPhLHCUvevOJOPkhSCL8
+         AIpHF9pBJk7U2fkvfatBNGWpqvhThoR/rDHGpS2fr2D/4Dp9MrN67KgHdR4slIHJOr4d
+         j85r4BR9xEyBM5K9f7NisUYMeT9Gyse877BqpADCo2y+9qGgrsAz9M0U+dadRjMHiBTm
+         UgZb35DHd9W5hTk4WvsDwKVQDOugQ3cFYcRhkopQPtb00sJQfAK4MZeKe2Kii84MNy/X
+         LDd1OaB7JZRzMOACRIsUjuyjwHjwpKCQCRtMx8DwYvfkGTBxAv7P+twGPshst4h+Ddgi
+         FXOg==
+X-Forwarded-Encrypted: i=1; AJvYcCWWix6oRb311ks/1zEQwp9KW59kvB/haoGHH9YzCxaQt6lggPjucPZwtHPcoOyEfxfOil9Fr6t1bChRE3E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPq8KYdaT/YIEyBWmqirHNiy09TZle/bTf0xSSjeSfkZc7ATR3
+	F0Um89QLG2BVTwOOmmzMZpnB/5IYPZWPvBPWvlMAwRuvLlfa4AuEspjWf5TZMM6Fv2T1WaX3l5K
+	gYixK/2b0coAhACvoITeoKLBhlTxQVNqj2N7GNwI5zEiNTgFzm1cNm04=
+X-Google-Smtp-Source: AGHT+IHxLGwN/LoGbR/vX6FJFdNKtj8W9Ui54RbvpNEm7SCsRP3kkrCwCFaEogYfGVnd8mymjrTOnMmcnjqGeGsFZE1Td3t7TOE7
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241113-tcp-md5-diag-prep-v2-0-00a2a7feb1fa@gmail.com>
- <20241115160816.09df40eb@kernel.org> <CAJwJo6ax-Ltpa2xY7J7VxjDkUq_5NJqYx_g+yNn9yfrNHfWeYA@mail.gmail.com>
- <20241115175838.4dec771a@kernel.org>
-In-Reply-To: <20241115175838.4dec771a@kernel.org>
-From: Dmitry Safonov <0x7f454c46@gmail.com>
-Date: Sat, 16 Nov 2024 03:52:47 +0000
-Message-ID: <CAJwJo6YdAEj1GscO-DQ2hAHeS3cvqU_xev3TKbpLSqf-EqiMiQ@mail.gmail.com>
-Subject: Re: [PATCH net v2 0/5] Make TCP-MD5-diag slightly less broken
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Dmitry Safonov via B4 Relay <devnull+0x7f454c46.gmail.com@kernel.org>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, David Ahern <dsahern@kernel.org>, 
-	Ivan Delalande <colona@arista.com>, Matthieu Baerts <matttbe@kernel.org>, 
-	Mat Martineau <martineau@kernel.org>, Geliang Tang <geliang@kernel.org>, 
-	John Fastabend <john.fastabend@gmail.com>, Davide Caratti <dcaratti@redhat.com>, 
-	Kuniyuki Iwashima <kuniyu@amazon.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	mptcp@lists.linux.dev, Johannes Berg <johannes@sipsolutions.net>
+X-Received: by 2002:a05:6e02:1a89:b0:3a5:e532:799d with SMTP id
+ e9e14a558f8ab-3a74800f3efmr63010405ab.3.1731729809839; Fri, 15 Nov 2024
+ 20:03:29 -0800 (PST)
+Date: Fri, 15 Nov 2024 20:03:29 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67381991.050a0220.57553.0045.GAE@google.com>
+Subject: [syzbot] [jfs?] general protection fault in jfs_error (2)
+From: syzbot <syzbot+5f0d7af0e45fae10edd1@syzkaller.appspotmail.com>
+To: jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
+	shaggy@kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
-On Sat, 16 Nov 2024 at 01:58, Jakub Kicinski <kuba@kernel.org> wrote:
->
-> On Sat, 16 Nov 2024 00:48:17 +0000 Dmitry Safonov wrote:
-> > On Sat, 16 Nov 2024 at 00:08, Jakub Kicinski <kuba@kernel.org> wrote:
-> > > Would it be too ugly if we simply retried with a 32kB skb if the initial
-> > > dump failed with EMSGSIZE?
-> >
-> > Yeah, I'm not sure. I thought of keeping it simple and just marking
-> > the nlmsg "inconsistent". This is arguably a change of meaning for
-> > NLM_F_DUMP_INTR because previously, it meant that the multi-message
-> > dump became inconsistent between recvmsg() calls. And now, it is also
-> > utilized in the "do" version if it raced with the socket setsockopts()
-> > in another thread.
->
-> NLM_F_DUMP_INTR is an interesting idea, but exactly as you say NLM_F_DUMP_INTR
-> was a workaround for consistency of the dump as a whole. Single message
-> we can re-generate quite easily in the kernel, so forcing the user to
-> handle INTR and retry seems unnecessarily cruel ;)
+Hello,
 
-Kind of agree. But then, it seems to be quite rare. Even on a
-purposely created selftest it fires not each time (maybe I'm not
-skilful enough). Yet somewhat sceptical about a re-try in the kernel:
-the need for it is caused by another thread manipulating keys, so we
-may need another re-try after the first re-try... So, then we would
-have to introduce a limit on retries :D
+syzbot found the following issue on:
 
-Hmm, what do you think about a kind of middle-ground/compromise
-solution: keeping this NLM_F_DUMP_INTR flag and logic, but making it
-hardly ever/never happen by purposely allocating larger skb. I don't
-want to set some value in stone as one day it might become not enough
-for all different socket infos, but maybe just add 4kB more to the
-initial allocation? So, for it to reproduce, another thread would have
-to add 4kB/sizeof(tcp_diag_md5sig) = 4kB/100 ~= 40 MD5 keys on the
-socket between this thread's skb allocation and filling of the info
-array. I'd call it "attempting to be nice to a user, but not at their
-busylooping expense".
+HEAD commit:    2d5404caa8c7 Linux 6.12-rc7
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1772fe30580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d2aeec8c0b2e420c
+dashboard link: https://syzkaller.appspot.com/bug?extid=5f0d7af0e45fae10edd1
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17b2f4e8580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=119f7ea7980000
 
-> > > Just putting the same attribute type multiple times is preferable
-> > > to array types.
-> >
-> > Cool. I didn't know that. I think I was confused by iproute way of
-> > parsing [which I read very briefly, so might have misunderstood]:
-> > : while (RTA_OK(rta, len)) {
-> > :         type = rta->rta_type & ~flags;
-> > :         if ((type <= max) && (!tb[type]))
-> > :                 tb[type] = rta;
-> > :         rta = RTA_NEXT(rta, len);
-> > : }
-> > https://github.com/iproute2/iproute2/blob/main/lib/libnetlink.c#L1526
-> >
-> > which seems like it will just ignore duplicate attributes.
-> >
-> > That doesn't mean iproute has to dictate new code in kernel, for sure.
->
-> Right, the table based parsing doesn't work well with multi-attr,
-> but other table formats aren't fundamentally better. Or at least
-> I never came up with a good way of solving this. And the multi-attr
-> at least doesn't suffer from the u16 problem.
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-2d5404ca.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/c68277f7b0f1/vmlinux-2d5404ca.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/161b075483b1/bzImage-2d5404ca.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/6b6a26f0435b/mount_0.gz
 
-Yeah, also an array of structs that makes it impossible to extend such
-an ABI with new members.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+5f0d7af0e45fae10edd1@syzkaller.appspotmail.com
 
-And with regards to u16, I was thinking of this diff for net-next, but
-was not sure if it's worth it:
+ERROR: (device loop0): remounting filesystem as read-only
+ERROR: (device loop0): dbFindCtl: Corrupt dmapctl page
+jfs_create: dtInsert returned -EIO
+ERROR: (device (efault)): jfs_create: 
+Oops: general protection fault, probably for non-canonical address 0xdffffc000000000a: 0000 [#1] PREEMPT SMP KASAN NOPTI
+KASAN: null-ptr-deref in range [0x0000000000000050-0x0000000000000057]
+CPU: 0 UID: 0 PID: 5313 Comm: syz-executor116 Not tainted 6.12.0-rc7-syzkaller #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:sb_rdonly include/linux/fs.h:2292 [inline]
+RIP: 0010:jfs_handle_error fs/jfs/super.c:66 [inline]
+RIP: 0010:jfs_error+0x159/0x2e0 fs/jfs/super.c:98
+Code: 08 48 c7 c7 40 e9 42 8c 48 89 74 24 08 4c 89 f9 e8 4c 22 9c 08 4d 8d 65 50 4d 89 e7 49 c1 ef 03 48 b8 00 00 00 00 00 fc ff df <41> 80 3c 07 00 74 08 4c 89 e7 e8 48 5e d6 fe 49 8b 1c 24 48 89 de
+RSP: 0018:ffffc9000ce4fa20 EFLAGS: 00010206
+RAX: dffffc0000000000 RBX: dffffc0000000000 RCX: 1c32466592978100
+RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
+RBP: ffffc9000ce4fb30 R08: ffffffff8174a13c R09: 1ffff11003f8519a
+R10: dffffc0000000000 R11: ffffed1003f8519b R12: 0000000000000050
+R13: 0000000000000000 R14: 1ffff920019c9f4c R15: 000000000000000a
+FS:  0000555595511380(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055fdcfd20000 CR3: 0000000043170000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ jfs_create+0x81d/0xbb0 fs/jfs/namei.c:140
+ vfs_create+0x23c/0x3d0 fs/namei.c:3294
+ do_mknodat+0x447/0x5b0 fs/namei.c:4185
+ __do_sys_mknod fs/namei.c:4218 [inline]
+ __se_sys_mknod fs/namei.c:4216 [inline]
+ __x64_sys_mknod+0x8c/0xa0 fs/namei.c:4216
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f17ac91d9f9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 61 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fff56943258 EFLAGS: 00000246 ORIG_RAX: 0000000000000085
+RAX: ffffffffffffffda RBX: 00007fff56943428 RCX: 00007f17ac91d9f9
+RDX: 0000000000000701 RSI: 0000000000000000 RDI: 0000000020000000
+RBP: 00007f17ac996610 R08: 0000000020000000 R09: 00007fff56943428
+R10: 00007fff56943120 R11: 0000000000000246 R12: 0000000000000001
+R13: 00007fff56943418 R14: 0000000000000001 R15: 0000000000000001
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:sb_rdonly include/linux/fs.h:2292 [inline]
+RIP: 0010:jfs_handle_error fs/jfs/super.c:66 [inline]
+RIP: 0010:jfs_error+0x159/0x2e0 fs/jfs/super.c:98
+Code: 08 48 c7 c7 40 e9 42 8c 48 89 74 24 08 4c 89 f9 e8 4c 22 9c 08 4d 8d 65 50 4d 89 e7 49 c1 ef 03 48 b8 00 00 00 00 00 fc ff df <41> 80 3c 07 00 74 08 4c 89 e7 e8 48 5e d6 fe 49 8b 1c 24 48 89 de
+RSP: 0018:ffffc9000ce4fa20 EFLAGS: 00010206
+RAX: dffffc0000000000 RBX: dffffc0000000000 RCX: 1c32466592978100
+RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
+RBP: ffffc9000ce4fb30 R08: ffffffff8174a13c R09: 1ffff11003f8519a
+R10: dffffc0000000000 R11: ffffed1003f8519b R12: 0000000000000050
+R13: 0000000000000000 R14: 1ffff920019c9f4c R15: 000000000000000a
+FS:  0000555595511380(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055fdcfd20000 CR3: 0000000043170000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	08 48 c7             	or     %cl,-0x39(%rax)
+   3:	c7 40 e9 42 8c 48 89 	movl   $0x89488c42,-0x17(%rax)
+   a:	74 24                	je     0x30
+   c:	08 4c 89 f9          	or     %cl,-0x7(%rcx,%rcx,4)
+  10:	e8 4c 22 9c 08       	call   0x89c2261
+  15:	4d 8d 65 50          	lea    0x50(%r13),%r12
+  19:	4d 89 e7             	mov    %r12,%r15
+  1c:	49 c1 ef 03          	shr    $0x3,%r15
+  20:	48 b8 00 00 00 00 00 	movabs $0xdffffc0000000000,%rax
+  27:	fc ff df
+* 2a:	41 80 3c 07 00       	cmpb   $0x0,(%r15,%rax,1) <-- trapping instruction
+  2f:	74 08                	je     0x39
+  31:	4c 89 e7             	mov    %r12,%rdi
+  34:	e8 48 5e d6 fe       	call   0xfed65e81
+  39:	49 8b 1c 24          	mov    (%r12),%rbx
+  3d:	48 89 de             	mov    %rbx,%rsi
 
-diff --git a/lib/nlattr.c b/lib/nlattr.c
-index be9c576b6e2d..01c5a49ffa34 100644
---- a/lib/nlattr.c
-+++ b/lib/nlattr.c
-@@ -903,6 +903,9 @@ struct nlattr *__nla_reserve(struct sk_buff *skb,
-int attrtype, int attrlen)
- {
-  struct nlattr *nla;
 
-+ DEBUG_NET_WARN_ONCE(attrlen >= U16_MAX,
-+     "requested nlattr::nla_len %d >= U16_MAX", attrlen);
-+
-  nla = skb_put(skb, nla_total_size(attrlen));
-  nla->nla_type = attrtype;
-  nla->nla_len = nla_attr_size(attrlen);
---->8---
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Thanks,
-             Dmitry
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
