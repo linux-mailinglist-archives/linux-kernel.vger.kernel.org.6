@@ -1,111 +1,191 @@
-Return-Path: <linux-kernel+bounces-411834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DA889D0023
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 18:59:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BEBC19D0025
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 18:59:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC8B31F21B9D
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 17:59:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D4021F21C09
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 17:59:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8740191F74;
-	Sat, 16 Nov 2024 17:59:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1254194C78;
+	Sat, 16 Nov 2024 17:59:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="lbvwvNLQ"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="qx/57Eoq"
+Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C424CB666;
-	Sat, 16 Nov 2024 17:59:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 475E818E050
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 17:59:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731779946; cv=none; b=U3Ie1+ml8QHWT2WopXo2gHGdI4xbZEHJAnAvNkxFXoJRSauUrKpuOib8dL+USB3L1ni6JHlqX95yOi3+ztlhsq26gvGJNqFjuhvel+wvrzx0g2vyOebl/Wj/0yruCnkwOk6w7RpX4ojwOwqmgjgMrpqQcWJ+rhJbmifSLYdd3bc=
+	t=1731779969; cv=none; b=O/MjUO0/PHDIpMUtudKMSN5SjiFV7u5UALcn01Lb8/ziZXodwTnKH1Y/2MMPY/fJM5uhnrCH7KPuKvGzUCgCtokUOpkmwVOXEdqi5Uyd3Wyns+NkEfsZbAVDwbCvlFKmPaK4MTqunrsfiaFNpcyXhQPK8kfupLuwyONYrx1yv7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731779946; c=relaxed/simple;
-	bh=qpWAfAW/flM6FCElfxnZMg+YR7oaJxHVMGq8ZpKccD0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Upn5CD21VIs+W3cfs66fiKytUhJb5Atqry/JWVQxK3PNwVkWLmU6RiZFl1O8lyKukrgGFERsQhrBeDV1H9JL0RO46ipYLOUIgHtllc4CfEnJ0sc9ILjm7LfUJb3zwFUlxnn10xTPMUlC+xlclQUSKbd4wpz6oKHrke2byJxzzoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=lbvwvNLQ; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 4ED4540E0263;
-	Sat, 16 Nov 2024 17:59:01 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 3S_k-VtsdwLh; Sat, 16 Nov 2024 17:58:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1731779935; bh=sdUnsdGYam1RArzz2rGqxpxolNET71VTUgEXOl5+a1c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lbvwvNLQ2FPtanTdDsA9EOgDcJf/vLT1vST3kq60+xdLUTo4fc3k1Hrq3Ta9bvAef
-	 ckeRYNmT61plmgNYL5vMBOsSV1ibSnzo998QP/CXt+aTy0knGeTC4sn1ekm0GlqOjR
-	 5N5LZlR6HvWN1LrHD8UG1YFjjTr29MWrkHD88aKcEJakfA/5tE4/ozH2BDpP6nbTjw
-	 T1lWBEr7NMsOIN0RuQLqM9R/uVfbYm9IWuzUEAJZQ0T8ag1Um3ghf3kz53LGM01Gaf
-	 yawQaa+huczGBVKzPzIMq7XpqvMrdjdBWoAe89DMOB9ZctJuTxBHoDdEaK4uLIyyN1
-	 TZN7ITab3GG+JwdH1MBnBUpEusJGdsr68OqP0bk9N7wgz5YsDvdOsVIoLctapCk6Xt
-	 MKHx6ACqernnKiuCQesmU1d80xNqaIeyrPTmXYtRMR/L6JDRPYkiIP89IcU2qT079D
-	 v0CRa4lElyXmexVeZSEFbAhmoxGtAQ0kXYEtcvcB5cAjjoQv97krqWMrH9Mvq245JG
-	 EOF4DyQZcHWt1kJxSpB31/STdjEtYX5F2BkGlLzxNIre2a6D7EUwNNpFuOmFKJmfp+
-	 mLhDRBf2BExbcaggjp63Q/efdSXTrFFRsR4c/A9LZqX6je3kr0TyZY/aNL6oxOVsXB
-	 OP+P6xF4aVAbKwSyNiiXWuEA=
-Received: from zn.tnic (p200300ea9736a13e329c23fffea6a903.dip0.t-ipconnect.de [IPv6:2003:ea:9736:a13e:329c:23ff:fea6:a903])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A1B9840E0219;
-	Sat, 16 Nov 2024 17:58:51 +0000 (UTC)
-Date: Sat, 16 Nov 2024 18:58:46 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-serial@vger.kernel.org, Jiri Slaby <jirislaby@kernel.org>,
-	lkml <linux-kernel@vger.kernel.org>
-Subject: Re: serial 00:06: Runtime PM usage count underflow!
-Message-ID: <20241116175846.GDZzjdVlO79wtX7mlF@fat_crate.local>
-References: <20241116170727.GCZzjRT5WGcOMKFDYq@fat_crate.local>
- <2024111656-try-flatten-b215@gregkh>
+	s=arc-20240116; t=1731779969; c=relaxed/simple;
+	bh=k6WhVuILcWU/thSQ+0eV73cWf0Sp/tBXO+i+GiCbh04=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=br6oOjaozeYcAwoMS3aTAFh/BQB/bu3SXSHUpV8K3oS4t0FcOWCHKDfOV/A6jEIYGdmVIycwoIlgMKHFN4aaSxoTjbH23oVaEmH1W59bb7oIo6PaCxHuqKVt1P6SBN4P+pu2jU5C/AdSvhm6eFQPiSFuB47uu8v4sThbKSTr+SU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=qx/57Eoq; arc=none smtp.client-ip=209.85.219.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6d40e69577dso4709886d6.3
+        for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 09:59:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1731779966; x=1732384766; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9/2cx8m5V2KkB1LkibOPMizZ7amfyQzK5oG3Ev3ZaAc=;
+        b=qx/57Eoqde1LS1pnJFix7xy2vrCYFAhCETHHEv354y8jVjbNnBS94qtSP0hcVMjrS8
+         YVJ2l9x7LBpecEW+FgB49wrL3hBmGVvkdUjf1i9hnQxlz5q41bd40280Je/UM3IE4zub
+         pKLg2nQti26xmpVQwdg2nMk0mgYwwz0LY4Px4QucV13NfbYDRjhyYGNxLVwYkN5r8eH1
+         fVupHzsxp4lJlH5PiozAyL79eRlO+sw5D2WdsA11bLuiNycTYl06/CKNqZrIIViT4hrm
+         4SdzRfEw8xM51yIanZXoJZQ2choH9wki063AMog66QN7CBO2+qANxk8CmoEDfS6nLzYx
+         +Isg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731779966; x=1732384766;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9/2cx8m5V2KkB1LkibOPMizZ7amfyQzK5oG3Ev3ZaAc=;
+        b=LR7mP2HjkfBJ9lghBYos7eQmdu/EZWAzRtWlpaHJ2T5Q3T9Eaw/zelItJh5dIj4jw2
+         kZ7RGMBxop+jRGwWmeumkJWz8nXOQxWeUb+0yXkhrawzD1SKDz0mZ9pmzc6SJEDH+Sz7
+         DDxmvzmSc9IGBt2g+Y1rku1xyvcBLKHir/0fykgZQLpn25QjefYxJeFGikTQPowCqEIN
+         LzWl4FsWZXNkuxNEwOi7KfzKNZTGIwBnBa3i+S6xjngrerE3am4zTt9oYcL1y3UH5fvN
+         V7Z5xouxGJ7pb7bDRZBXYEnEQ30y+KV2d8/bg0+r6nJqXVR2yCugcdd9mAbVq6jFTFQx
+         OEsw==
+X-Forwarded-Encrypted: i=1; AJvYcCUd2RUl5rINe9n3zJugvCMeDNGtbhSlNabpf9aKjZq2iBWLtNlgmEqk1en3b2uMQ35CIEOyoeb/eqJBVU0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdccMNKuGPzmJXPVhGC9VTkvmZSKw12vjadzWUpEqQvm2ryPAR
+	sMmXmewEP9vI2UvdZ9mXAJCYWxaGu1C5hWnW4k2s6P7wBcSNvizI2HcpjSdch9E=
+X-Google-Smtp-Source: AGHT+IG9khClVQZaK5gJiOlSuiW+HiW7mbHelDE5mIQzNETjqXaEChD5Y6UapjcY1u5FRRsYiVlDuQ==
+X-Received: by 2002:ad4:5c4d:0:b0:6d4:1a42:8efa with SMTP id 6a1803df08f44-6d41a4295admr9228036d6.0.1731779966175;
+        Sat, 16 Nov 2024 09:59:26 -0800 (PST)
+Received: from soleen.c.googlers.com.com (51.57.86.34.bc.googleusercontent.com. [34.86.57.51])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b35ca309d6sm280530085a.94.2024.11.16.09.59.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 16 Nov 2024 09:59:25 -0800 (PST)
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+To: pasha.tatashin@soleen.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-doc@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	cgroups@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	akpm@linux-foundation.org,
+	corbet@lwn.net,
+	derek.kiernan@amd.com,
+	dragan.cvetic@amd.com,
+	arnd@arndb.de,
+	gregkh@linuxfoundation.org,
+	viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz,
+	tj@kernel.org,
+	hannes@cmpxchg.org,
+	mhocko@kernel.org,
+	roman.gushchin@linux.dev,
+	shakeel.butt@linux.dev,
+	muchun.song@linux.dev,
+	Liam.Howlett@oracle.com,
+	lorenzo.stoakes@oracle.com,
+	vbabka@suse.cz,
+	jannh@google.com,
+	shuah@kernel.org,
+	vegard.nossum@oracle.com,
+	vattunuru@marvell.com,
+	schalla@marvell.com,
+	david@redhat.com,
+	willy@infradead.org,
+	osalvador@suse.de,
+	usama.anjum@collabora.com,
+	andrii@kernel.org,
+	ryan.roberts@arm.com,
+	peterx@redhat.com,
+	oleg@redhat.com,
+	tandersen@netflix.com,
+	rientjes@google.com,
+	gthelen@google.com
+Subject: [RFCv1 0/6] Page Detective
+Date: Sat, 16 Nov 2024 17:59:16 +0000
+Message-ID: <20241116175922.3265872-1-pasha.tatashin@soleen.com>
+X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <2024111656-try-flatten-b215@gregkh>
+Content-Transfer-Encoding: 8bit
 
-On Sat, Nov 16, 2024 at 06:19:36PM +0100, Greg Kroah-Hartman wrote:
-> Look in the bios, that seems to be the "old" pnp serial device?  Does it
-> really have a serial port on the board?
+Page Detective is a new kernel debugging tool that provides detailed
+information about the usage and mapping of physical memory pages.
 
-Yeah, there is a COM1 connector and I've attached a serial port brace to have
-the connector on the back of the board.
+It is often known that a particular page is corrupted, but it is hard to
+extract more information about such a page from live system. Examples
+are:
 
-> Is it enabled properly?
+- Checksum failure during live migration
+- Filesystem journal failure
+- dump_page warnings on the console log
+- Unexcpected segfaults
 
-BIOS says:
+Page Detective helps to extract more information from the kernel, so it
+can be used by developers to root cause the associated problem.
 
-Serial(COM) Port 0 Configuration
-	Port		Enabled
-	Settings	IO=3F8H, IRQ=4
+It operates through the Linux debugfs interface, with two files: "virt"
+and "phys".
 
-It was on "Auto" before but neither setting changed anything.
+The "virt" file takes a virtual address and PID and outputs information
+about the corresponding page.
 
-I don't know how relevant this is about that same PCI device:
+The "phys" file takes a physical address and outputs information about
+that page.
 
-pnp 00:06: [dma 0 disabled]
+The output is presented via kernel log messages (can be accessed with
+dmesg), and includes information such as the page's reference count,
+mapping, flags, and memory cgroup. It also shows whether the page is
+mapped in the kernel page table, and if so, how many times.
 
-I'll try to upgrade the BIOS, maybe it really is an ACPI f*ckup.
+Pasha Tatashin (6):
+  mm: Make get_vma_name() function public
+  pagewalk: Add a page table walker for init_mm page table
+  mm: Add a dump_page variant that accept log level argument
+  misc/page_detective: Introduce Page Detective
+  misc/page_detective: enable loadable module
+  selftests/page_detective: Introduce self tests for Page Detective
 
-Thx!
+ Documentation/misc-devices/index.rst          |   1 +
+ Documentation/misc-devices/page_detective.rst |  78 ++
+ MAINTAINERS                                   |   8 +
+ drivers/misc/Kconfig                          |  11 +
+ drivers/misc/Makefile                         |   1 +
+ drivers/misc/page_detective.c                 | 808 ++++++++++++++++++
+ fs/inode.c                                    |  18 +-
+ fs/kernfs/dir.c                               |   1 +
+ fs/proc/task_mmu.c                            |  61 --
+ include/linux/fs.h                            |   5 +-
+ include/linux/mmdebug.h                       |   1 +
+ include/linux/pagewalk.h                      |   2 +
+ kernel/pid.c                                  |   1 +
+ mm/debug.c                                    |  53 +-
+ mm/memcontrol.c                               |   1 +
+ mm/oom_kill.c                                 |   1 +
+ mm/pagewalk.c                                 |  32 +
+ mm/vma.c                                      |  60 ++
+ tools/testing/selftests/Makefile              |   1 +
+ .../selftests/page_detective/.gitignore       |   1 +
+ .../testing/selftests/page_detective/Makefile |   7 +
+ tools/testing/selftests/page_detective/config |   4 +
+ .../page_detective/page_detective_test.c      | 727 ++++++++++++++++
+ 23 files changed, 1787 insertions(+), 96 deletions(-)
+ create mode 100644 Documentation/misc-devices/page_detective.rst
+ create mode 100644 drivers/misc/page_detective.c
+ create mode 100644 tools/testing/selftests/page_detective/.gitignore
+ create mode 100644 tools/testing/selftests/page_detective/Makefile
+ create mode 100644 tools/testing/selftests/page_detective/config
+ create mode 100644 tools/testing/selftests/page_detective/page_detective_test.c
 
 -- 
-Regards/Gruss,
-    Boris.
+2.47.0.338.g60cca15819-goog
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
