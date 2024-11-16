@@ -1,163 +1,106 @@
-Return-Path: <linux-kernel+bounces-411652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D5079CFD6D
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 10:09:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id ED9379CFD75
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 10:26:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1D8F1F2315A
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 09:09:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A02E1F22E38
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 09:26:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51301194A44;
-	Sat, 16 Nov 2024 09:09:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fDL2mFiq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B854192D8F;
+	Sat, 16 Nov 2024 09:26:25 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A90115381A;
-	Sat, 16 Nov 2024 09:09:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A8C216D9DF
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 09:26:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731748141; cv=none; b=FRJZGuaFVEskHBs0BQ2ODJJOKo6c61fHrnK6V4dbRfuIYQY8jKM3x0SaVQJehTunZ7d8Hv+ATP3GTqdPJMpA7UYoSMdxy2qL4qyIY627gk+IAAe6rYBthTqHTaANjzc8jh21WAhb2VhpuVdwNRnL0yZ3XJi6mWzNPJ9Z1zzHhMc=
+	t=1731749184; cv=none; b=EsR+Jy2Y57QwdxPC0/CTf/SKnNILxu31+e4qz0w33tGHpV6D7GFLsRA7igL/Lx8hxczrOIHWwV/10X1z4z2GaruKAvnSbYhg+WJE3Kp5vaYWHBhIaT8sjwhZk0KiWSuWiS4WjQPCfk9yD8A6e5nFEbXqGtgRA4ka9gRFFpuSTh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731748141; c=relaxed/simple;
-	bh=vR2V+V2QxqcQECfOUvT+5A1KplyfZDEMEObd7HFAmoA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BjLj/hUwu656cbC8LTmYHH8hptYbpApYSS//iyGyHDSmnkm1yOQQvhqqaQ5fpyECbZwRh5X7bWOAzXpfhToRZDaI8t0RmwAzn0mOJwyh3okf/Qpj89L5Ypx9xj69x1hoQdhbfxmKGcHqBhUER3r36VAxccZCDBOXHpk1Z/Hnmg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fDL2mFiq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2ADE9C4CEC3;
-	Sat, 16 Nov 2024 09:09:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731748141;
-	bh=vR2V+V2QxqcQECfOUvT+5A1KplyfZDEMEObd7HFAmoA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=fDL2mFiq2jNynLhRPE6JTTBqZQaY/SWRFVMrn4Sx1RYpe4j99Lo53dJmP9pHDsEms
-	 Tyegx6moZ6nF2SKwXPT5WnwFJFfxn0Sohyw3rC8hlnSeZP26rrySKKtUx/mruIT980
-	 /kZDvxQb+RxAYju6zxetisy59I+ldPEUv1MDsN1ovNx9qT456VP95uCH5O0XP5PNbl
-	 p2uxu8WSl5jhehDaCLezX5ldIgnU65GtYOmn0K6UKigAZ/z3hisX/GjlniQiAdXr4Y
-	 utA9XbZUR+QSxbYc6BWAowo9U1SxwzhVXXMHewkV/81PNfu6bTdiH/QLuTvHKw6CYl
-	 ZCx2uN1dxk6yA==
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-53a007743e7so1672607e87.1;
-        Sat, 16 Nov 2024 01:09:01 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCV0/GxAIlrUA518jTXm8GsBSweBAAOsY0hLksW/DBoXK1yEVk72jLG1e4yylZ+DFW+L5momKPNGj0q5EKXJHA==@vger.kernel.org, AJvYcCWg9EzoKX+nK1246AKXlDCi6wXQEaU4guwSid5bA+Bf+4zEvuqFd0NeKRpuCgJ7C/lyRCBHZGcy8lqxENH1YQw=@vger.kernel.org, AJvYcCWpTy/IqRJuuYi5JpwFgrtq5YS8SRbDIPLjuoclOMiwpvgsz13a4ZwDdiynEWI+RULoTH5M12qi7inkFAig@vger.kernel.org, AJvYcCWyQ+j4MnvjV6JEqf73iSo37FqTOwgh5WNxKIzFR6DA/qXOaTzChxoJ3DebNuD5uecAHoL2/rVPrz4UGqM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzipiViB5/n7poAuJb4F9ih+QyC7/6i3tqlxEiLcIl5zeYjMotR
-	5PcJE0ZgTIzXKpc4hyqonMPOYFzM+5YxdyNbmCD+jdtvI5A6BNf9n6nQCj79qegJcRTUmVIDUL8
-	q1Z1oIGA5fn65gcVLP4F2hcCz4kQ=
-X-Google-Smtp-Source: AGHT+IHpl8ZAglZvngz5xm6ocic+KgEC+INX3t93NnViVbyMnAzYKh2RUbWNfOuCYlzJQ1LoVk0VBgZmNkdKrSdV/4s=
-X-Received: by 2002:ac2:5b1c:0:b0:53d:abc3:82a9 with SMTP id
- 2adb3069b0e04-53dabc382f0mr1869248e87.19.1731748139824; Sat, 16 Nov 2024
- 01:08:59 -0800 (PST)
+	s=arc-20240116; t=1731749184; c=relaxed/simple;
+	bh=Y4o6hWQYEWd3MyBtMl93Tmwu8wlGBh7XmphN3Mz9zf0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iq6iBLxcJ66+3jvVpXJvlb6dP7iqWHaLOGqCqQ1UHMjxTdSPEqDUCz7VzO3km6PG5waOl6farAf2YioHEwnpN1ekVbOofSEW5Co4n3yKAHqnEjEXlPs4bwmM91mz0FZ+YRTuVE/UjrUNg+oChHTs/2s3Bg9hUmd7tB1SQtX9s2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Xr7mS2y6Lz4f3kFL
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 17:26:00 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id BF1B81A06D7
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 17:26:18 +0800 (CST)
+Received: from hulk-vt.huawei.com (unknown [10.67.174.121])
+	by APP4 (Coremail) with SMTP id gCh0CgDnDoMoZThnJYjBBw--.28482S2;
+	Sat, 16 Nov 2024 17:26:16 +0800 (CST)
+From: Chen Ridong <chenridong@huaweicloud.com>
+To: akpm@linux-foundation.org,
+	mhocko@suse.com,
+	hannes@cmpxchg.org,
+	yosryahmed@google.com,
+	yuzhao@google.com,
+	david@redhat.com,
+	willy@infradead.org,
+	ryan.roberts@arm.com,
+	baohua@kernel.org
+Cc: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	chenridong@huawei.com,
+	wangweiyang2@huawei.com,
+	xieym_ict@hotmail.com
+Subject: [RFC PATCH v2 0/1] mm/vmscan: move the written-back folios to the tail of LRU after shrinking
+Date: Sat, 16 Nov 2024 09:16:57 +0000
+Message-Id: <20241116091658.1983491-1-chenridong@huaweicloud.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241030170106.1501763-21-samitolvanen@google.com>
- <20241030170106.1501763-22-samitolvanen@google.com> <CAK7LNAShVzrE6uhXxZ7HepKhmOJYsZeigq6w19jRN3OH-T_Jyg@mail.gmail.com>
- <CABCJKueVjP8V-=3Ehi4QvQzg1FZh2unyVMDzSJ_vJ_E5EE+gLg@mail.gmail.com>
-In-Reply-To: <CABCJKueVjP8V-=3Ehi4QvQzg1FZh2unyVMDzSJ_vJ_E5EE+gLg@mail.gmail.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Sat, 16 Nov 2024 18:08:23 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARVK1ZpGXZVTAynuo7CDjgB4uT5bQzcGiWseZfaEu7Tvw@mail.gmail.com>
-Message-ID: <CAK7LNARVK1ZpGXZVTAynuo7CDjgB4uT5bQzcGiWseZfaEu7Tvw@mail.gmail.com>
-Subject: Re: [PATCH v5 01/19] scripts: move genksyms crc32 implementation to a
- common include
-To: Sami Tolvanen <samitolvanen@google.com>
-Cc: Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Matthew Maurer <mmaurer@google.com>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	Petr Pavlu <petr.pavlu@suse.com>, Daniel Gomez <da.gomez@samsung.com>, Neal Gompa <neal@gompa.dev>, 
-	Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>, Miroslav Benes <mbenes@suse.cz>, 
-	Asahi Linux <asahi@lists.linux.dev>, Sedat Dilek <sedat.dilek@gmail.com>, 
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-modules@vger.kernel.org, rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgDnDoMoZThnJYjBBw--.28482S2
+X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYa7kC6x804xWl14x267AKxVW8JVW5JwAF
+	c2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII
+	0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xv
+	wVC0I7IYx2IY6xkF7I0E14v26F4j6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7
+	xvwVC2z280aVCY1x0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40E
+	FcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr
+	0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4IIrI8v6xkF7I0E8cxa
+	n2IY04v7MxAIw28IcxkI7VAKI48JMxAqzxv26xkF7I0En4kS14v26r1q6r43MxC20s026x
+	CaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_
+	JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r
+	1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_
+	Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8Jr
+	UvcSsGvfC2KfnxnUUI43ZEXa7IU1zuWJUUUUU==
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-On Thu, Nov 14, 2024 at 2:54=E2=80=AFAM Sami Tolvanen <samitolvanen@google.=
-com> wrote:
->
-> Hi,
->
-> On Mon, Nov 11, 2024 at 8:06=E2=80=AFPM Masahiro Yamada <masahiroy@kernel=
-.org> wrote:
-> >
-> > On Thu, Oct 31, 2024 at 2:01=E2=80=AFAM Sami Tolvanen <samitolvanen@goo=
-gle.com> wrote:
-> > >
-> > > To avoid duplication between host programs, move the crc32 code to a
-> > > shared header file.
-> >
-> >
-> > Only the motivation to use this long table is to keep compatibility
-> > between genksyms and gendwarfksyms.
-> > I do not think this should be exposed to other programs.
-> >
-> >
-> > If you avoid the code duplication, you can do
-> >
-> > // scripts/gendwarfksyms/crc.c
-> > #include "../genksyms/crc.c"
->
-> Sure, that sounds reasonable. I'll change this in the next version.
+From: Chen Ridong <chenridong@huawei.com>
+
+The issue has been dissused [1]. This patch is following Barry's
+suggestion to fix this issue.
+
+---
+v2:
+ - detect folios whose writeback has done and move them to the tail
+    of lru. suggested by Barry Song
+
+v1:
+[1] https://lore.kernel.org/linux-kernel/20241010081802.290893-1-chenridong@huaweicloud.com/
 
 
-BTW, is it necessary to share the same crc function
-between genksyms and gendwarfksyms?
+Chen Ridong (1):
+  mm/vmscan: move the written-back folios to the tail of LRU after
+    shrinking
 
-If CONFIG_GENKSYMS and CONFIG_GENDWARFKSYMS
-were able to produce the same CRC, it would be a good motivation
-to share the same function.
-However, as far as I tested, gendwarfksyms generates different CRC values.
+ mm/vmscan.c | 37 +++++++++++++++++++++++++++++--------
+ 1 file changed, 29 insertions(+), 8 deletions(-)
 
-When a distro migrates to CONFIG_GENDWARFKSYMS,
-the new kernel cannot load old modules built with CONFIG_GENKSYMS.
+-- 
+2.34.1
 
-So, there is no need to share the old code.
-Another solution might be to use crc32() provided by zlib, for example.
-It requires another external library, but this already depends on
-libdw and libelf.
-
-
-
-
-
-
-
-
-
-
->
-> > > Suggested-by: Petr Pavlu <petr.pavlu@suse.com>
-> > > Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
-> > > Acked-by: Neal Gompa <neal@gompa.dev>
-> >
-> > Does this Ack add any value?
-> >
-> > Acked-by is meaningful only when it is given by someone who
-> > maintains the relevant area or has established a reputation.
-> >
-> > $ git grep "Neal Gompa"
-> > $ git shortlog -n -s | grep "Neal Gompa"
-> >      2 Neal Gompa
-> >
-> > His Ack feels more like "I like it" rather than a qualified endorsement=
-.
->
-> Like Neal explained, an Ack from a potential user of this feature
-> seemed relevant, but if you don't think it's meaningful, I can
-> certainly drop it.
-
-Tested-by is more suitable if he wants to leave something.
-
-
-
-
---
-Best Regards
-Masahiro Yamada
 
