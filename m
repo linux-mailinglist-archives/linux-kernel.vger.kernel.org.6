@@ -1,149 +1,163 @@
-Return-Path: <linux-kernel+bounces-411659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0DB79CFD7A
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 10:34:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6244B9CFD78
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 10:33:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6532828356A
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 09:34:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BA6F2823BC
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 09:33:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E0C41957FF;
-	Sat, 16 Nov 2024 09:33:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ACNRohWX"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A001F194088;
+	Sat, 16 Nov 2024 09:33:37 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 563A4194AEE;
-	Sat, 16 Nov 2024 09:33:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA90016D9DF
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 09:33:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731749621; cv=none; b=swbIHQ22znjlvy3g3XwpvIL2aUnfW7Ffz1/e6NaNN8eSGMbOlU6d7mSbGkLDVvX4XMGtdZBRFA4RgoH3Dk4o+GbiVwMveYKlac1gnYDehT5ZAfsv+Jbi2e6jeaLPL69NkxDOC4XXmPgGamzjUMffw9OWorTu+HRPdYWT7YrHAcc=
+	t=1731749617; cv=none; b=nAhNEM0G+dbyHPP/Ea5YO1x9+WSusMToQnshNBxYhfhBqS5iIVX3JtGq65KasHy+lCz4NtN7WbVHKT+JBh3Qt4oyXKkNMmxlFSKRGK1I6diOcQRUdl74Tn1+j/yH9L6VW/wwXBNPvjZoOogf6YrCDasS/ef6CN9jkswZt0yc4/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731749621; c=relaxed/simple;
-	bh=L29d4WYAwCnOipR2Lo/vS0KouaT4rXVdIo9GGbGY9kM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=obaIre+DwrpqFREU7qU9HZNA6+Z0yZOxN2HeoAZfztVI+OVoiusJQy0Rw55KAN8fq4zgiWSwoWyqfF/PTNKPUEFBWo4Pn9xDtkU2ZIrNOo+5ngP4NfFMu45hvnC+BZzQuPBT0SKlOLz7fCFth+alpoeCV7exBnpGK9V/eWUmYeE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ACNRohWX; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=yqZ5dKc7iRnfwB3kyjg/tN6YSKNFmSbCahFY3Y+gZNg=; b=ACNRohWX7wE7M/5XoBRMrjublh
-	3NDqCbp6z+a0HueXikWVqiVNYOEADIguIRITCYn7LsfauzTvj2c1zjjAQu4xFOYt3iCnR6mh2ygYw
-	ZHRyiaYwif9cK+VNtvUe0/Z8o/tLzFcC8eJAokckRY3+RbML9LO3hgEhVPcuF+5oe9b3SPNwpCgZA
-	tjsOd5C54MGYsLUYfdOw+71koNm6e47ZKi9Jn6y+AHlGyh2j7YdfFdWosa2zDfS5C6iyhw7XaH/h5
-	Lsil0ahmnZFv1eWLErJUVpXiMvmKMnDXtzl33K1A7wc4cTVGzDSl0uBEkqF68kk9JPofYFUjzulM0
-	gd2iPe7A==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tCFBL-000000013fo-0EIC;
-	Sat, 16 Nov 2024 09:33:32 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 783F1300472; Sat, 16 Nov 2024 10:33:31 +0100 (CET)
-Date: Sat, 16 Nov 2024 10:33:31 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: seanjc@google.com, pbonzini@redhat.com, tglx@linutronix.de,
-	linux-kernel@vger.kernel.org, x86@kernel.org, kvm@vger.kernel.org,
-	jthoughton@google.com
-Subject: Re: [PATCH v2 01/12] objtool: Generic annotation infrastructure
-Message-ID: <20241116093331.GG22801@noisy.programming.kicks-ass.net>
-References: <20241111115935.796797988@infradead.org>
- <20241111125218.113053713@infradead.org>
- <20241115183828.6cs64mpbp5cqtce4@jpoimboe>
+	s=arc-20240116; t=1731749617; c=relaxed/simple;
+	bh=3d9QK3NBavMT5R7BD/H+tQDJRXWAgbk6wcoEVgyMP+E=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ucMEASDdisMaH9nZg6eYrQwpi3QRcPVZwP0r8VJxTxqrPTuYfJOlfl7r0LaeMpnxAEmMgmPf3BiL3THxcsgLaWfBC9kNPJ6tcHcSnilkoZ+T7PlziJ8tRtyvfLgI1jIWMF4k7zUM9LikDEgMB8aSJxfBpJZe9tHs5zIIvq2fSfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-83dff8bc954so265572039f.1
+        for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 01:33:35 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731749615; x=1732354415;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ZGjyFqZ15gaSUNElFDCLW+fSmoAeakbgt0BfAIds3sI=;
+        b=SzoadRewkSMbLMUORpcf63ioCqTjJpKf3n2jx0OkyFi5TVuh7MRwoPX89gaB+vacIx
+         MflYcQgatAQZDiXJ+Xr0DbSMD3sSVV4kN9tyLdisbe+8GmwuQ6W9O2oIM3LeAbK1lD3i
+         QfEmFf2rj3z4a/+MxD8Mret+t7u8dNZxp+8xoT7JKz1xCGpgmUnsP+uRrJxHDGTxLGU7
+         yI2dYvzjOuN88JQpyxB0gjosW8K70CfSi5eJSCRDhB9zmE6XRHMPPddoCTlcF+spswNV
+         7i1evmOjZ+z0/M1yFcFN2O9zSmUj+mG+UWQokjzH3XodNj+QrsvE8hWDl7MWqYk6I/tr
+         KObQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUZ3rX2PdgOove9AxNHIXIJjvBd2sb2cOeOuaY6rb8BSvCrHCMY8KpsMZ8Jyvr3WcEv2grqJCb/JwDWv4I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDvUEGt+95bqinsFnml7czVgdBW/SknES2+Fye0DIY0SHUUGan
+	BdiKXPgAU7GK9lVoS/kKZH2fBHeQJ9kqClNX8VbxfBRx6OKUuPNf2oCr6SK05OM+5FXQ+lFcT5J
+	J8JbsHkeeDjE7Gyn4VY6ep17TV0xKal6muI6yhUsopLpMgcMGVAP+gBo=
+X-Google-Smtp-Source: AGHT+IH7SwUqClR7Wwpy94hNZP7bmwFHpVWWQIIL/zggp668bzWTff8j2K7NUewVHM2I5DENjcyIU81P6mIZ9zJaN+sRny4125eJ
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241115183828.6cs64mpbp5cqtce4@jpoimboe>
+X-Received: by 2002:a05:6e02:1fe3:b0:3a7:42f8:76c2 with SMTP id
+ e9e14a558f8ab-3a74808715bmr56798905ab.15.1731749614906; Sat, 16 Nov 2024
+ 01:33:34 -0800 (PST)
+Date: Sat, 16 Nov 2024 01:33:34 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <673866ee.050a0220.85a0.0013.GAE@google.com>
+Subject: [syzbot] [fs?] WARNING in rcu_sync_dtor (2)
+From: syzbot <syzbot+823cd0d24881f21ab9f1@syzkaller.appspotmail.com>
+To: brauner@kernel.org, dongliang.cui@unisoc.com, jack@suse.cz, 
+	linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	viro@zeniv.linux.org.uk, zhiguo.niu@unisoc.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Nov 15, 2024 at 10:38:28AM -0800, Josh Poimboeuf wrote:
-> On Mon, Nov 11, 2024 at 12:59:36PM +0100, Peter Zijlstra wrote:
-> > +#define ASM_ANNOTATE(x)						\
-> > +	"911:\n\t"						\
-> > +	".pushsection .discard.annotate,\"M\",@progbits,8\n\t"	\
-> > +	".long 911b - .\n\t"					\
-> > +	".long " __stringify(x) "\n\t"				\
-> > +	".popsection\n\t"
-> 
-> Why mergeable and progbits?
+Hello,
 
-In order to get sh_entsize ?
+syzbot found the following issue on:
 
-> > +static int read_annotate(struct objtool_file *file, void (*func)(int type, struct instruction *insn))
-> > +{
-> > +	struct section *rsec, *sec;
-> > +	struct instruction *insn;
-> > +	struct reloc *reloc;
-> > +	int type;
-> > +
-> > +	rsec = find_section_by_name(file->elf, ".rela.discard.annotate");
-> > +	if (!rsec)
-> > +		return 0;
-> > +
-> > +	sec = find_section_by_name(file->elf, ".discard.annotate");
-> > +	if (!sec)
-> > +		return 0;
-> 
-> Instead of looking for .rela.discard.annotate you can just get it from
-> sec->rsec.
+HEAD commit:    2d5404caa8c7 Linux 6.12-rc7
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14f7b35f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=1503500c6f615d24
+dashboard link: https://syzkaller.appspot.com/bug?extid=823cd0d24881f21ab9f1
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16f7b35f980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12188ce8580000
 
-Oh, indeed.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/a2d329b82126/disk-2d5404ca.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/37a04ca225dd/vmlinux-2d5404ca.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/4f837ce9d9dc/bzImage-2d5404ca.xz
+mounted in repro #1: https://storage.googleapis.com/syzbot-assets/6696bb7d0ad1/mount_0.gz
+mounted in repro #2: https://storage.googleapis.com/syzbot-assets/c4373413d8ae/mount_5.gz
 
-> > +
-> > +	if (sec->sh.sh_entsize != 8) {
-> > +		static bool warn = false;
-> 
-> "warned" ?
+The issue was bisected to:
 
-Sure.
+commit f761fcdd289d07e8547fef7ac76c3760fc7803f2
+Author: Dongliang Cui <dongliang.cui@unisoc.com>
+Date:   Tue Sep 17 22:40:05 2024 +0000
 
-> > +		if (!warn) {
-> > +			WARN("%s: dodgy linker, sh_entsize != 8", sec->name);
-> > +			warn = true;
-> > +		}
-> 
-> Any reason not to make this a fatal error?
+    exfat: Implement sops->shutdown and ioctl
 
-lld is currently suffering from this, it would get us build failures on
-llvm builds. Once that's fixed, then yes, this should become fatal.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=129df35f980000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=119df35f980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=169df35f980000
 
-  https://github.com/ClangBuiltLinux/linux/issues/2057
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+823cd0d24881f21ab9f1@syzkaller.appspotmail.com
+Fixes: f761fcdd289d ("exfat: Implement sops->shutdown and ioctl")
 
-> > +		sec->sh.sh_entsize = 8;
-> > +	}
-> > +
-> > +	for_each_reloc(rsec, reloc) {
-> > +		insn = find_insn(file, reloc->sym->sec,
-> > +				 reloc->sym->offset + reloc_addend(reloc));
-> > +		if (!insn) {
-> > +			WARN("bad .discard.annotate entry: %d", reloc_idx(reloc));
-> > +			return -1;
-> > +		}
-> 
-> Would be nice to print the type here as well.
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 9 at kernel/rcu/sync.c:177 rcu_sync_dtor+0xcd/0x180 kernel/rcu/sync.c:177
+Modules linked in:
+CPU: 0 UID: 0 PID: 9 Comm: kworker/0:1 Not tainted 6.12.0-rc7-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
+Workqueue: events destroy_super_work
+RIP: 0010:rcu_sync_dtor+0xcd/0x180 kernel/rcu/sync.c:177
+Code: 74 19 e8 96 dd 00 00 43 0f b6 44 25 00 84 c0 0f 85 82 00 00 00 41 83 3f 00 75 1d 5b 41 5c 41 5d 41 5e 41 5f c3 cc cc cc cc 90 <0f> 0b 90 e9 66 ff ff ff 90 0f 0b 90 eb 89 90 0f 0b 90 eb dd 44 89
+RSP: 0018:ffffc900000e7b30 EFLAGS: 00010246
 
-Sure.
+RAX: 0000000000000002 RBX: 1ffff1100fba4077 RCX: ffff88801d2b8000
+RDX: 0000000000000000 RSI: ffffffff8c603640 RDI: ffff88807dd20350
+RBP: 00000000000001e4 R08: ffffffff820ee1c4 R09: 1ffffffff1cfbc21
+R10: dffffc0000000000 R11: fffffbfff1cfbc22 R12: dffffc0000000000
+R13: 1ffff1100fba406a R14: ffff88807dd20350 R15: ffff88807dd20350
+FS:  0000000000000000(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000555567cdece8 CR3: 0000000030508000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ percpu_free_rwsem+0x41/0x80 kernel/locking/percpu-rwsem.c:42
+ destroy_super_work+0xef/0x130 fs/super.c:282
+ process_one_work kernel/workqueue.c:3229 [inline]
+ process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
+ worker_thread+0x870/0xd30 kernel/workqueue.c:3391
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
 
-> > @@ -2670,6 +2714,8 @@ static int decode_sections(struct objtoo
-> >  	if (ret)
-> >  		return ret;
-> >  
-> > +	ret = read_annotate(file, __annotate_nop);
-> > +
-> 
-> 'ret' is ignored here (not that it matters much as this goes away in the
-> next patch)
 
-Right..
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
