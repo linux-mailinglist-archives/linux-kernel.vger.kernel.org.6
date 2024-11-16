@@ -1,174 +1,95 @@
-Return-Path: <linux-kernel+bounces-411543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 274039CFBC1
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 01:36:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC74B9CFBC2
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 01:36:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1711285E00
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 00:36:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 841541F22C73
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 00:36:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD19379DC;
-	Sat, 16 Nov 2024 00:36:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0AF979F6;
+	Sat, 16 Nov 2024 00:36:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=furiosa-ai.20230601.gappssmtp.com header.i=@furiosa-ai.20230601.gappssmtp.com header.b="O+1d46gY"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZlxnsZQV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 794DF4C76
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 00:36:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19FFF4A2D;
+	Sat, 16 Nov 2024 00:36:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731717376; cv=none; b=rkaMZ2bFzt19H7wnpaI7Z+nLojaElez6B5lse8FWx2NQbeLHfIGB6w3W1yEwAFJE/OMoxTPRJTrS+XjKMUA1ir8SdbqaWYKmKoGAkDRQwqpWNZwHR5DIMKNxcFul3CSUIw56DPYVKLGli7tsN3DUNwnieR7hdUcJzIP5GMepucw=
+	t=1731717393; cv=none; b=MzR54z5iJXLId22s4UQIqoSiFVwc9uzdVwCikGJ6fwRMuzGH0GbXwoaesGkoMqLOUgTJkpuJeSkntFNIWEF+DcDSpH8OaSeGRHX9hBNnu33fy/cRUF76z3fnLswnHPR19BmvznrQttW54iXPXKKeRkbqpHBYMrUwxc0TYK4MC10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731717376; c=relaxed/simple;
-	bh=RQdd57iRz0CvjpF9ML9OvvqQd3DNHBVZL9GzAnBolBc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rag5syJIjX8H+zsMx4797AnRK4QmGXl7uTOAV/WVRV5QerZ2Pjw3y4AFKYJ+RwQvSN8klGCAtel5hOnQLlQm4k0nsem3IDCtltkFZ5H+lp/c3Ojb5RFn0ub9Z3U0xQl0tJWGi1sanHnqF1TG4/p/Yb6UKuAPuE+9INAdqYwFcOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=furiosa.ai; spf=none smtp.mailfrom=furiosa.ai; dkim=pass (2048-bit key) header.d=furiosa-ai.20230601.gappssmtp.com header.i=@furiosa-ai.20230601.gappssmtp.com header.b=O+1d46gY; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=furiosa.ai
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=furiosa.ai
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7246c8b89b4so1672108b3a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 16:36:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=furiosa-ai.20230601.gappssmtp.com; s=20230601; t=1731717374; x=1732322174; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=+uE+atgt1vtE/elxwOSmphd/thEwXR+0AG9SDju+aII=;
-        b=O+1d46gYHeu5FwlW5p7XzHy1DAJScJiPEhbHheiQV5oInOpI7iXJE3nGX5vzUZyRTC
-         7iDLbl3AQCxv4GUPlEWfwBhQ5CW3FqhgY3FvCn1XwxSJA/FcR0USvUOia8hXOKhKJJHc
-         A2yF5qs8dbp2XiUpC70BtMyosxcypLvLa1mgZhN2VRK2Tgvs9WNX8OV2fw8aw/Ex4LUL
-         zFh+fuCZL9CRRSI36uh2eexDv/HjVaaR27Dq9YfP4KEMiKw8XpC80YdTwVPEoJPQ3rER
-         rl27hidpRJ3ZFfurl+vZkoBkaSP7WJcQz5a3Tll9l5K9PlKPKFG01vRqdq+t1qn3wNkD
-         bnWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731717374; x=1732322174;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+uE+atgt1vtE/elxwOSmphd/thEwXR+0AG9SDju+aII=;
-        b=DgyemNJZ+aSXfz+dSdO3wQzNaup0yo8nBiEb/J9WcwwiHCWKss2ZJjwIyiZNRBTztd
-         o+qr/d8g8fJNbBPxMzvg99b8bmoBCF8E/4Ijri497k2RftzC6JWNKICfN8cAfGAeLGhz
-         cRdobIri8jfs2oJYmyfb6J1jbXeuYwPkA8Slb/b3A2GPfYmlWXKus9jt1K7sjouJC3Np
-         8DX0OWTH5G/d/pIbiQ/Kklytm+02kGIV2jCDy9o3D5jLWCfnA76nA+I1g+OqdP3gpBtx
-         zfGtR1eF47mpXVFusi9iGMIHePuz0GxdSYMeqpxGu/JoB5QGSlWufZXe51E4HpGhnPTf
-         d7Yw==
-X-Forwarded-Encrypted: i=1; AJvYcCUPc7x2GN2R/vLx7hcwT2HrSNg/EYDMw8VkfnGXjt5wEjUBRmteQiGTRtX2sO/nVteUHayd2haZAXrHhJ0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYxNU+53k06XYBE+bC/g6bK39UfuhTsllzRmZeIsarMRjo1aPW
-	2q9b79gB8GtVu+VYa3r6a4cHj8VvR1yMzC/chQ9WdwgLsqb0yRM40BoINYsbNcE=
-X-Google-Smtp-Source: AGHT+IEzJq3ZF1gSX7zEro8gp0KD50msaVqg1twIRbOyUMP0aQtrXRhqwDTD93IqhR0/2bDNyM+aew==
-X-Received: by 2002:a17:90b:17d1:b0:2da:88b3:cff8 with SMTP id 98e67ed59e1d1-2ea14e1c1a1mr7261531a91.6.1731717373687;
-        Fri, 15 Nov 2024 16:36:13 -0800 (PST)
-Received: from sidongui-MacBookPro.local ([61.83.209.48])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ea06f9c64esm3478725a91.42.2024.11.15.16.36.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Nov 2024 16:36:11 -0800 (PST)
-Date: Sat, 16 Nov 2024 09:36:01 +0900
-From: Sidong Yang <sidong.yang@furiosa.ai>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	bpf@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] libbpf: Change hash_combine parameters from long to
- __u32
-Message-ID: <Zzfo8YCeNkbCQDTg@sidongui-MacBookPro.local>
-References: <20241115103422.55040-1-sidong.yang@furiosa.ai>
- <CAEf4BzYape9gtc7k1NQMD5BrfakzDXV_9SHNqZeamcaSKn744Q@mail.gmail.com>
+	s=arc-20240116; t=1731717393; c=relaxed/simple;
+	bh=JgNf+mN+2k06qc4q3wA6mwGvTy2iwaXR8wILdflZBXo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=h+r3CwpJsSgZN+a9w9IfiFImxa/4sAtws5K2j0MiIAvWlP2+iGrTRLwXHaeJVB10syrZkOdHGBT4CZCaf1FGERrpX7JvlpesHn8Aq8SEKZYsgwBTNGlXu8HBuB2KnPJkOCna2+SBRD83Yq7rBRXkUmjozyZdrTRrpUpVnR/Z1Ig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZlxnsZQV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D5B3C4CECF;
+	Sat, 16 Nov 2024 00:36:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731717392;
+	bh=JgNf+mN+2k06qc4q3wA6mwGvTy2iwaXR8wILdflZBXo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ZlxnsZQVcJF01pZ5jwRzyQeZ6ohSJOul6Sum7k4lBnRbUheJF+djwktdY1Z3U0l7p
+	 BevpJRgqtREE0zd9zOBm279Umr18HVBYg2FQVnfsOGwoyhxab0Jb6gIwHj3NlVfAPq
+	 j60uWc1+RgfEasiOLJ2N/8lhSLKBSU1Oik1POzVbfGOV8hVHMHv5XOVRnIX7pC3sSc
+	 4jQtwapSBiKXCYWgsxM3I7tfONzF2JQohSiVe5+GJclmVbZ1Ni2fcXLGao1NcSpohZ
+	 DBTCpn1BTOygqoZ2C4Q5AJFxJp6FnHgh1v8La7EDJU6Vi1iTOzzQX2n5POJLeNIRBg
+	 MBS3yNKbCD7vw==
+Date: Fri, 15 Nov 2024 16:36:31 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Divya Koppera <divya.koppera@microchip.com>
+Cc: <andrew@lunn.ch>, <arun.ramadoss@microchip.com>,
+ <UNGLinuxDriver@microchip.com>, <hkallweit1@gmail.com>,
+ <linux@armlinux.org.uk>, <davem@davemloft.net>, <edumazet@google.com>,
+ <pabeni@redhat.com>, <netdev@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <richardcochran@gmail.com>,
+ <vadim.fedorenko@linux.dev>
+Subject: Re: [PATCH net-next v4 3/5] net: phy: Kconfig: Add ptp library
+ support and 1588 optional flag in Microchip phys
+Message-ID: <20241115163631.636927b0@kernel.org>
+In-Reply-To: <20241114120455.5413-4-divya.koppera@microchip.com>
+References: <20241114120455.5413-1-divya.koppera@microchip.com>
+	<20241114120455.5413-4-divya.koppera@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEf4BzYape9gtc7k1NQMD5BrfakzDXV_9SHNqZeamcaSKn744Q@mail.gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Nov 15, 2024 at 11:57:24AM -0800, Andrii Nakryiko wrote:
-> On Fri, Nov 15, 2024 at 2:51 AM Sidong Yang <sidong.yang@furiosa.ai> wrote:
-> >
-> > The hash_combine() could be trapped when compiled with sanitizer like "zig cc".
-> > This patch changes parameters to __u32 to fix it.
-> 
-> Can you please elaborate? What exactly are you fixing? "Undefined"
-> signed integer overflow? I can consider changing long to unsigned
-> long, but I don't think we should downgrade from long all the way to
-> 32-bit u32. I'd rather keep all those 64 bits for hash.
+On Thu, 14 Nov 2024 17:34:53 +0530 Divya Koppera wrote:
+>  config MICROCHIP_T1_PHY
+>  	tristate "Microchip T1 PHYs"
+> +	select MICROCHIP_PHYPTP if NETWORK_PHY_TIMESTAMPING
+> +	depends on PTP_1588_CLOCK_OPTIONAL
 
-Hi, Andrii.
+I presume the dependency is because select doesn't obey
+dependencies, but you only select PHYPTP if NETWORK_PHY_TIMESTAMPING.
+Maybe it's possible to create a intermediate meta-symbol which is
+NETWORK_PHY_TIMESTAMPING && PTP_1588_CLOCK_OPTIONAL
+and use that in the select.. if ... clause?
 
-Actually I'm using libbpf-rs with maturin build that makes python package for
-rust. It seems that it uses zig cc for cross compilation. It compiles libbpf
-like this command.
+> +	help
+> +	  Supports the LAN8XXX PHYs.
+> +
+> +config MICROCHIP_PHYPTP
+> +        tristate "Microchip PHY PTP"
+>  	help
 
-CC="zig cc" make CFLAGS="-fsanitize-trap"
+nit: tabs vs spaces
 
-And hash_combine's result is like below.
+> -	  Supports the LAN87XX PHYs.
+> +	  Currently supports LAN887X T1 PHY
 
-0000000000063860 <hash_combine>:
-   63860:       55                      push   %rbp
-   63861:       48 89 e5                mov    %rsp,%rbp
-   63864:       48 89 7d f8             mov    %rdi,-0x8(%rbp)
-   63868:       48 89 75 f0             mov    %rsi,-0x10(%rbp)
-   6386c:       b8 1f 00 00 00          mov    $0x1f,%eax
-   63871:       48 0f af 45 f8          imul   -0x8(%rbp),%rax
-   63876:       48 89 45 e8             mov    %rax,-0x18(%rbp)
-   6387a:       0f 90 c0                seto   %al
-   6387d:       34 ff                   xor    $0xff,%al
-   6387f:       a8 01                   test   $0x1,%al
-   63881:       0f 85 05 00 00 00       jne    6388c <hash_combine+0x2c>
--> 63887:       67 0f b9 40 0c          ud1    0xc(%eax),%eax
-   6388c:       48 8b 45 e8             mov    -0x18(%rbp),%rax
-   63890:       48 03 45 f0             add    -0x10(%rbp),%rax
-   63894:       48 89 45 e0             mov    %rax,-0x20(%rbp)
-   63898:       0f 90 c0                seto   %al
-   6389b:       34 ff                   xor    $0xff,%al
-   6389d:       a8 01                   test   $0x1,%al
-   6389f:       0f 85 04 00 00 00       jne    638a9 <hash_combine+0x49>
-   638a5:       67 0f b9 00             ud1    (%eax),%eax
-   638a9:       48 8b 45 e0             mov    -0x20(%rbp),%rax
-   638ad:       5d                      pop    %rbp
-   638ae:       c3                      ret   
-   638af:       90                      nop
-
-When I'm using libbpf-rs, it receives SIGILL for ud1 instruction.
-It seems more appropriate to use u64 instead of u32, doesn't it?
-I'll work on it.
-
-Thanks,
-Sidong
-> 
-> pw-bot: cr
-> 
-> >
-> > Signed-off-by: Sidong Yang <sidong.yang@furiosa.ai>
-> > ---
-> >  tools/lib/bpf/btf.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/tools/lib/bpf/btf.c b/tools/lib/bpf/btf.c
-> > index 8befb8103e32..11ccb5aa4958 100644
-> > --- a/tools/lib/bpf/btf.c
-> > +++ b/tools/lib/bpf/btf.c
-> > @@ -3548,7 +3548,7 @@ struct btf_dedup {
-> >         struct strset *strs_set;
-> >  };
-> >
-> > -static long hash_combine(long h, long value)
-> > +static __u32 hash_combine(__u32 h, __u32 value)
-> >  {
-> >         return h * 31 + value;
-> >  }
-> > --
-> > 2.42.0
-> >
-> >
+This Kconfig is likely unsafe.
+You have to make sure PHYPTP is not a module when T1_PHY is built in.
+-- 
+pw-bot: cr
 
