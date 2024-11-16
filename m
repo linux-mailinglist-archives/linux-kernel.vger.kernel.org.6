@@ -1,92 +1,131 @@
-Return-Path: <linux-kernel+bounces-411931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8919E9D0174
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 00:33:14 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AF459D0179
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 00:36:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9514281E92
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 23:33:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E6215B249FA
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 23:36:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E7C238DE1;
-	Sat, 16 Nov 2024 23:33:04 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B35AC1AA7AF;
+	Sat, 16 Nov 2024 23:36:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="l2H8JTly"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B236E194C7A
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 23:33:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC11138DE1;
+	Sat, 16 Nov 2024 23:36:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731799984; cv=none; b=A8calaTzl+Hp1Zhjcut5V2rDbtumGkZq3NUCOaYBDLa4ckK0GGmArmNuPOP9dFeW6nFEkIQjRYFFCWK3hEil9nO6sz9oqUAF0npcFzowyI2dykAUyw5nzSJHrWi3Hle3FrBA6rHM0vXpJs0vrS/xMi71tBe4WYfm9SPUMEC0LQk=
+	t=1731800162; cv=none; b=OeM0p8UU+BuLgbY26VRMScVXiewa0Os6GvcFzL3K4NH4c1Nqh0V0NXwXttwtDPPiMRN1wGUYFpVPO6uU9GLgDEvFAUR2bMoPHWHQhL7WZGDnhWfsm+EkMi+IIUQP/ShW+QYgY9FmacAg6YgLRpLYvL45y4jkTK8lbNhEB2Zkdz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731799984; c=relaxed/simple;
-	bh=ozfUCCvHD7H7cQd7d43iIoXCIgVvNpJ7H82PLjvW++Q=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=iK+ldoP+mBl/HFe56PUZXTwLRkppLZ2EMkZ+LyyjZCyHtFrmstxCbOPOhaZQVxVhQN+5LsfstMVnx521vCTDDBryQQwruYSPolo+IzInb5UoHhcnu7L06YVRWJ2GdqleQ7iZcaQhUWdkEqc3kVhEv9jVtIWFBw49dG2kjxwIHHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-83ab3d46472so309663739f.2
-        for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 15:33:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731799982; x=1732404782;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6pPDlMybPfT5VSrJgcwp4WOC86rQWqblOSy8gJogtjg=;
-        b=S296TGFJww4IKtlm5irikoGPS5RT9uaYpM0VUpTOrtDisK1RMLr7xiqdLFGKoadds1
-         i4q8TuSmAyOyTcmpNeOIcR3mBgq0zmtbNS/tbv+ccqSR/E3o6AK7fDC9CZCgHLz49fF/
-         oPAe9CAHORxKWyx4xnuGVhXtrezKNeNLTpJEJUtppH61Dn82O3tNSdH2fz5vhK4CPNBK
-         22/8ysY11mgB91E9zQH9t7g7InO3c2DT//RxIyKuHQPl0Me98Mwwe/RLZq9H5fNFXYJN
-         00unIBVipxRIW/SRoC0RX1jDbhO/U7UKU5obpp9wVFxa2T8kpVQTBx7j27T4SDPF0XjS
-         X/uA==
-X-Forwarded-Encrypted: i=1; AJvYcCWwQ77M9NN5BrRG2XWqvNl9kR3C2cvA8NdyVmFLqgJjwbzsfVe4SwVsdZ9c1vXdef2USd14/4bnYypHUSw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOb6QmNsltLvuckFpQw8pHnyFD7tgIchUGoC9RhTUokHNqehsH
-	wSAg6Kal1oEfnnfFzivkMuWO5PkRxJha8IW8+zOp9UsesDA54nRdQWx+omkYy5pjb3gdni0z0jN
-	Qomv5kwfbYQrmEWarYcaF7z4xMQBuq+34XB2VE+m3IGjdjPUsXlYbiz8=
-X-Google-Smtp-Source: AGHT+IHxQ9I2yZYOzjRu/LCFRev0gwqeF6CbR7jTx9glbHmeTnAWQobIRQzimgpPUOzK4oLe2zqzYITldOsYwITjPA3qJEI3bt+k
+	s=arc-20240116; t=1731800162; c=relaxed/simple;
+	bh=KgchrBbEjJ6FmtT/OHxHi3NDIfi1tuion/rr6Heara8=;
+	h=Date:From:To:Cc:Subject:Message-Id:Mime-Version:Content-Type; b=YVCv40rtnJGzMnLbQQZURCJGEu8Aiu8uEZaWhTNpm0I7EhGmt9t5jn8pdldG3xk3IGXQDd9zE6rjOznNdbuQFpTIwjoKmVqGu4JeAS4IaWVdEtanSVxlUxyH8siYirkNsrgHaksDwTJSFVcZQShh84VbsBoTwpuQCM845oQblkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=l2H8JTly; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C866BC4CEC3;
+	Sat, 16 Nov 2024 23:35:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1731800161;
+	bh=KgchrBbEjJ6FmtT/OHxHi3NDIfi1tuion/rr6Heara8=;
+	h=Date:From:To:Cc:Subject:From;
+	b=l2H8JTlyMuxgmdDs/F3QBRaeepMAXlVQYaAPM0nVzQf09ktLewQEppHTKi6bz15Xp
+	 P4TgO4XmqufG3yoUeL21C8mTR9mKZgtq0TiUenFsx3yXKgulnJ/oSfpZU6m55CW7EC
+	 IH9DizWHQ8yw+oQJW+e5G2LeP7sKinbnepcWaKXw=
+Date: Sat, 16 Nov 2024 15:35:56 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-mm@kvack.org, mm-commits@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: [GIT PULL] hotfixes for 6.12
+Message-Id: <20241116153556.767f1aeed6ac628a09efe346@linux-foundation.org>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:b43:b0:3a7:158d:6510 with SMTP id
- e9e14a558f8ab-3a74800e163mr69240285ab.5.1731799981891; Sat, 16 Nov 2024
- 15:33:01 -0800 (PST)
-Date: Sat, 16 Nov 2024 15:33:01 -0800
-In-Reply-To: <67336557.050a0220.a0661.041e.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67392bad.050a0220.e1c64.0009.GAE@google.com>
-Subject: Re: [syzbot] [block?] possible deadlock in loop_reconfigure_limits
-From: syzbot <syzbot+867b0179d31db9955876@syzkaller.appspotmail.com>
-To: axboe@kernel.dk, hch@lst.de, linux-block@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	mathieu.desnoyers@efficios.com, mhiramat@kernel.org, ming.lei@redhat.com, 
-	rostedt@goodmis.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
 
-syzbot has bisected this issue to:
 
-commit f1be1788a32e8fa63416ad4518bbd1a85a825c9d
-Author: Ming Lei <ming.lei@redhat.com>
-Date:   Fri Oct 25 00:37:20 2024 +0000
+Linus, please merge this batch of hotfixes, thanks.
 
-    block: model freeze & enter queue as lock for supporting lockdep
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=129b52c0580000
-start commit:   929beafbe7ac Add linux-next specific files for 20241108
-git tree:       linux-next
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=119b52c0580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=169b52c0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=75175323f2078363
-dashboard link: https://syzkaller.appspot.com/bug?extid=867b0179d31db9955876
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11b520c0580000
+The following changes since commit dcf32ea7ecede94796fb30231b3969d7c838374c:
 
-Reported-by: syzbot+867b0179d31db9955876@syzkaller.appspotmail.com
-Fixes: f1be1788a32e ("block: model freeze & enter queue as lock for supporting lockdep")
+  mm: swapfile: fix cluster reclaim work crash on rotational devices (2024-=
+11-12 16:01:36 -0800)
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm tags/mm-hotfixes-st=
+able-2024-11-16-15-33
+
+for you to fetch changes up to d1aa0c04294e29883d65eac6c2f72fe95cc7c049:
+
+  mm: revert "mm: shmem: fix data-race in shmem_getattr()" (2024-11-16 15:3=
+0:32 -0800)
+
+----------------------------------------------------------------
+10 hotfixes, 7 of which are cc:stable.  All singletons, please see the
+changelogs for details.
+
+----------------------------------------------------------------
+Andrew Morton (1):
+      mm: revert "mm: shmem: fix data-race in shmem_getattr()"
+
+Dan Carpenter (1):
+      fs/proc/task_mmu: prevent integer overflow in pagemap_scan_get_args()
+
+Dave Vasilevsky (1):
+      crash, powerpc: default to CRASH_DUMP=3Dn on PPC_BOOK3S_32
+
+Dmitry Antipov (1):
+      ocfs2: uncache inode which has failed entering the group
+
+Jann Horn (1):
+      mm/mremap: fix address wraparound in move_page_tables()
+
+Jinjiang Tu (1):
+      mm: fix NULL pointer dereference in alloc_pages_bulk_noprof
+
+Kairui Song (1):
+      mm, swap: fix allocation and scanning race with swapoff
+
+Motiejus Jak=C5`tys (1):
+      tools/mm: fix compile error
+
+Qun-Wei Lin (1):
+      sched/task_stack: fix object_is_on_stack() for KASAN tagged pointers
+
+Yafang Shao (1):
+      mm, doc: update read_ahead_kb for MADV_HUGEPAGE
+
+ Documentation/ABI/stable/sysfs-block |  3 +++
+ arch/arm/Kconfig                     |  3 +++
+ arch/arm64/Kconfig                   |  3 +++
+ arch/loongarch/Kconfig               |  3 +++
+ arch/mips/Kconfig                    |  3 +++
+ arch/powerpc/Kconfig                 |  4 ++++
+ arch/riscv/Kconfig                   |  3 +++
+ arch/s390/Kconfig                    |  3 +++
+ arch/sh/Kconfig                      |  3 +++
+ arch/x86/Kconfig                     |  3 +++
+ fs/ocfs2/resize.c                    |  2 ++
+ fs/proc/task_mmu.c                   |  4 +++-
+ include/linux/sched/task_stack.h     |  2 ++
+ kernel/Kconfig.kexec                 |  2 +-
+ mm/mremap.c                          |  2 +-
+ mm/page_alloc.c                      |  3 ++-
+ mm/shmem.c                           |  2 --
+ mm/swapfile.c                        | 22 +++++++++++++++++++---
+ tools/mm/page-types.c                |  2 +-
+ 19 files changed, 62 insertions(+), 10 deletions(-)
+
 
