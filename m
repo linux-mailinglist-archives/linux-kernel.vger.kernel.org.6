@@ -1,95 +1,129 @@
-Return-Path: <linux-kernel+bounces-411804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A46E9CFFCA
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 17:10:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 685A39CFFCC
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 17:11:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C4C91F22D0F
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 16:10:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E5C48B25AAA
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 16:11:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62F5B188735;
-	Sat, 16 Nov 2024 16:10:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9892A188A3B;
+	Sat, 16 Nov 2024 16:10:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QRajz0Ni"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="K/MhkdMp"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0CFD372;
-	Sat, 16 Nov 2024 16:10:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE781372;
+	Sat, 16 Nov 2024 16:10:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731773412; cv=none; b=khR6oER5xfY5gnZtrgq7jhBOM3feZ5CE0Z/HTwxOYJ8C9SiV98fY2mcYYQLJbYOd1r9AmqzS8x/cWwCqKY1XAA8b+slukkz45iOrxXWmjKAzd87K7JYM7wIogv5KYlms3DnfE9y01Uu9hwqrGe1p6h4j0QNEbxi8hiHwW9vyaC8=
+	t=1731773451; cv=none; b=ZRTqP9NL2joP4EQdwrAQ7zBF7q9JcRti33Bs2nMy6JwPSPEshuwN0L9izTaLhMLLfL8kvooYUpQK/p/Wg+NEf5KcQgVsKdrnXPXNdduOBx9jyxfjGrT/8oHE+t8Q2FRNMkRYbtaydJXyqckl6VBTKL/tXGiOmy3EZN2BeyC7EJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731773412; c=relaxed/simple;
-	bh=uQ2hZIbcyCdOT5tFiJM33Yw3IrjR5YjDThAnh5uBtiA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=lJDn+wYY7/H2Dc0jjqIB/evQ37UuCvvSLRcBT9WyfQZaW1LJWCUMUDjX1FVbFJY+Qc8+V0CmnWchpYtFrt/yHnHHa7dnpvofvKs8dfInu6xMcNMjURehu65eSg5RjjYS7MFAd32OWpQtm/jhnJLEztyGjLZtZHmQawvYpaHeV+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QRajz0Ni; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11DAFC4CEC3;
-	Sat, 16 Nov 2024 16:10:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731773412;
-	bh=uQ2hZIbcyCdOT5tFiJM33Yw3IrjR5YjDThAnh5uBtiA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=QRajz0Nivm/dImoTpjV42/bIEt+TN4wI5erATGPAjmhkw4ENo6FQbL/zjKdSdk9/6
-	 rn0k1xF+mSMKL6cU5xVSrKfo3x+h+SjTVOuoBAO/stWd1Rys7xrJl+LEQo9Rg6n3hv
-	 6odm8MoOr8UGB5CDGrdzSBjKEcT/69xpgr5sH/4D9FXboNLpoxyDzk4619ehBnqWuu
-	 tT/2dh3a6glt6l8+2O++2bgz9r02KQGcD3AoZpy48Ty+0K2vBzTJjdslVZCaRlQv1M
-	 NX7gdIHdPS2hb/Tvyfe2AxJsq0l3xI0DJzJoPaA22645pB1ZHifbDfVhb3i3vK4Chc
-	 81eb1N0jaQyBA==
-Date: Sat, 16 Nov 2024 10:10:10 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
-Cc: Stefan Wahren <wahrenst@gmx.net>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Lukas Wunner <lukas@wunner.de>, Bjorn Helgaas <bhelgaas@google.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	linux-pci@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/1] PCI/bwctrl: Remove IRQF_ONESHOT and handle hardirqs
- instead
-Message-ID: <20241116161010.GA2125250@bhelgaas>
+	s=arc-20240116; t=1731773451; c=relaxed/simple;
+	bh=bE9I7jbo7EwEHmnSYuS78gyXK8w7LqS9iHRxarfkXQk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=d12kknWiu0BoUqJuoHjbw3zKLZEM55K2baelTNcAKbbo/4MVfnkqZpoRnR1ZcL/ZYbKKoWr3UWORdxP5d8TNrOwZQQjcxqO2AC2lgxVVfoGYutcUt9TS0KzQa9Lz1LK1BE14yOHtt8pm5GeQvXiT5t+gRw+wFzUlqxe5LM2Z9yo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=K/MhkdMp; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AGDP2Ox004445;
+	Sat, 16 Nov 2024 16:10:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Gy9U9UPyHSzhnf5nC9s9djsgQ2Xgc1/T46oTs5+stjg=; b=K/MhkdMpzi8w7M+s
+	JG0iYSLK1YohVxa//Mg1qEw8xw1wDiZDfv4hMMv26YDKVGI76z2TGsn8RA2omG6P
+	QFNDIifcOHG8wz/2BPCKMUTldhkqduMfOjMiI3G7yJGxCvMWjc6zUQFeEyT0+d/X
+	9LN1C6JtMifzjAaA8mTikfTy1r5j3LiwXBNo27y/Y8CDuPkNTtTv6X/++Cnfs2GW
+	HNTzyuH2wXDzpe1tc/kITzFPTQTDIL8HqQBGntXsNY3ISBtECS3U7oe4Yt3uvmBV
+	zKhJrzXTvu61FQQJvQlsKIHm1ol66O7vRWtWUojs3DrWp52+GzuLT5d0Sl76Ir/3
+	6t5TxQ==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42xkv9s14g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 16 Nov 2024 16:10:25 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AGGAOPc003017
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 16 Nov 2024 16:10:24 GMT
+Received: from [10.253.8.97] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sat, 16 Nov
+ 2024 08:10:21 -0800
+Message-ID: <de0c487a-b1bd-40ac-bb9d-eaf97d655e4d@quicinc.com>
+Date: Sun, 17 Nov 2024 00:10:19 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ec7f9169-26dc-cc0e-e321-b66ca9d3f40e@linux.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Bluetooth: qca: Support downloading board id specific NVM
+ for WCN6855
+To: Paul Menzel <pmenzel@molgen.mpg.de>
+CC: Marcel Holtmann <marcel@holtmann.org>,
+        Luiz Augusto von Dentz
+	<luiz.dentz@gmail.com>,
+        Zijun Hu <zijun_hu@icloud.com>, <linux-bluetooth@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        "Bjorn
+ Andersson" <bjorande@quicinc.com>,
+        Aiqun Yu <quic_aiquny@quicinc.com>,
+        "Cheng
+ Jiang" <quic_chejiang@quicinc.com>,
+        Johan Hovold <johan@kernel.org>,
+        "Jens
+ Glathe" <jens.glathe@oldschoolsolutions.biz>,
+        Steev Klimaszewski
+	<steev@kali.org>
+References: <20241113-x13s_wcn6855_fix-v1-1-15af0aa2549c@quicinc.com>
+ <4d973d61-27be-4830-880a-a3d74c4bbbc7@molgen.mpg.de>
+Content-Language: en-US
+From: quic_zijuhu <quic_zijuhu@quicinc.com>
+In-Reply-To: <4d973d61-27be-4830-880a-a3d74c4bbbc7@molgen.mpg.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 1BKg7lZq_Nzv8bv3fXrIP3NFf6vaIUnp
+X-Proofpoint-ORIG-GUID: 1BKg7lZq_Nzv8bv3fXrIP3NFf6vaIUnp
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
+ mlxlogscore=904 priorityscore=1501 lowpriorityscore=0 adultscore=0
+ spamscore=0 suspectscore=0 impostorscore=0 clxscore=1015 mlxscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411160139
 
-On Sat, Nov 16, 2024 at 04:40:51PM +0200, Ilpo Järvinen wrote:
-> On Fri, 15 Nov 2024, Bjorn Helgaas wrote:
+On 11/14/2024 5:49 PM, Paul Menzel wrote:
 > 
-> > On Fri, Nov 15, 2024 at 06:57:17PM +0200, Ilpo Järvinen wrote:
-> > > bwctrl cannot use IRQF_ONESHOT because it shares interrupt with other
-> > > service drivers that are not using IRQF_ONESHOT nor compatible with it.
-> > > 
-> > > Remove IRQF_ONESHOT from bwctrl and convert the irq thread to hardirq
-> > > handler. Rename the handler to pcie_bwnotif_irq() to indicate its new
-> > > purpose.
-> > > 
-> > > The IRQ handler is simple enough to not require not require other
-> > > changes.
-> > > 
-> > > Fixes: 058a4cb11620 ("PCI/bwctrl: Re-add BW notification portdrv as PCIe BW controller")
-> > > Reported-by: Stefan Wahren <wahrenst@gmx.net>
-> > > Link: https://lore.kernel.org/linux-pci/dcd660fd-a265-4f47-8696-776a85e097a0@gmx.net/
-> > > Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
-> > 
-> > Squashed into 058a4cb11620, thanks!
-> > 
-> > Also added your tested-by, Stefan, thanks very much for doing that!
+> Thank you for your patch.
 > 
-> Hi Bjorn,
+> Am 14.11.24 um 07:26 schrieb Zijun Hu:
+>> Download board id specific NVM instead of default for WCN6855 if board
+>> id is available, and that is required by Lenovo ThinkPad X13s.
 > 
-> You might want to also remove "3) ..." part from the commit message as it 
-> still refers to threaded IRQ and IRQF_ONESHOT so it won't confuse anybody 
-> when looking at this years from now :-).
+> Could you please start by describing the problem/motivation. What does
+> not work with the Lenovo ThinkPad X13s before your pacth.
+> 
 
-Removed, thanks for that!
+will do it within v2 as you suggest.
+
+> What is variant *g*?
+> 
+> Maybe also describe the file naming convention in the commit message.
+
+v2 comments under --- will contain reply about this.
+
+thank you for code review (^^) (^^)
+
 
