@@ -1,213 +1,126 @@
-Return-Path: <linux-kernel+bounces-411642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 220A69CFD39
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 09:16:44 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 746A69CFD4D
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 09:23:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B533B23EA8
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 08:16:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E5364B23841
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 08:23:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42D76193425;
-	Sat, 16 Nov 2024 08:16:30 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B5891922E8
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 08:16:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24AFC194089;
+	Sat, 16 Nov 2024 08:22:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="cHhR8YQI"
+Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04BC238382;
+	Sat, 16 Nov 2024 08:22:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731744989; cv=none; b=QuQgMFhG5pNzvw9vdBX0EDnXeUraPuMEVQ+ih2YHIuVh+6IZuVUAipjolnmqjHcVizKPPBPEe3Q+YQe+K92Vt2McqeB4IsiXQXndE/whSMcc83iVHdkkSGTKWq0V5TiCIO0prXE4Tw7WD4pYq7j2cK88rhqroCJCxw48YSuDK3E=
+	t=1731745373; cv=none; b=XFTEBsAODa0LmhA3LQfiV9mjnnqMBzUnHR8M9s0BwPila7xDVfPIFtGLErvprK12PO5dp9cBr4TpOngnSio1hHR6PBAyYl0e6griwLVIlXyNjEI7DaqHz9i+aPr4yzBvj5XL8MYlWosxuAIml57bFbcu9a/0vNuw92DN1jXfbgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731744989; c=relaxed/simple;
-	bh=NdCNRt5hseY7XgSrFhM3rvJkKWMJFpMnTxgzT+R6vHA=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=uIziGbhT7SavRcZ68dTe+dx06AwLh2a7JIf1eL+QX8o0T9lpATDr/nkFc5Yuv5IpNlmE86JNr7cqpaUuKcFztNq0c4qOJ7fQUfqvCz+WySSOEB//VRJO8T+CCOHuR/qiw+zLeHrMqrpQSTcUW4CFNDZBfYULy3yCexhnbDYUF2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-83abb164a4fso151429639f.2
-        for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 00:16:27 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731744987; x=1732349787;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2jbckV7ux3lzXJSR7JR4BmQDcEyddTRVjQlXOwEJaVI=;
-        b=IPocIZQj+IIEJ3QpvL3cxi5QGsVXMc6QLJHsOcT+nAWQsB4EHjlrzTv4udmWt6Bdn8
-         rpZUGmMhazwvwnQlmWMHA/drZ/lsC/VKdMF+2pMAro6m8N9Mj/L/XRBPnND5BIKUy6Tb
-         htWCsmaVbfY9w+cZXWaW3j8ARktewDjHUmityVWH+hPEFrRlPb7Qtr8VEDKWF9VswbhE
-         KN3am1qYw8sgarknanp9Y3Yp0JEdIFeoxoTJtawZ+AmjsV9N4C3CEC4XI275JK3kgvU6
-         PRCpotZTR+xGHiye5at4TdHDgSetLDjb+BVkvdB+5TSZbeKpRtbmxnFUX+PTrTF/WO8p
-         8+jg==
-X-Forwarded-Encrypted: i=1; AJvYcCUpH2oGb7qMDc//GZtu3VuZtaBLFZcvMSY6pPuGD791H9XJSn2t4QLDnvW0W+LwKFAM08qC9ypNv2a9FL4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx752OmHdfo5VA8ViEPOckN4eszs8r0bh+vD909HQy2VilSlvqz
-	r58dqoNDluDQIS2Eqw/EI2f2mSmxCH9EdfuaB6gvbHMfAzDTPOo0s6+LFmiFUX1t+of1PCijhsh
-	4bF2e3Zlx4lbkTLvOKkzkN8EEjrKoYMPWeV/kXm02EaphRjzAlvbdgiI=
-X-Google-Smtp-Source: AGHT+IH9L6VPPkxwi3Qe5NdR2HEfdsN8Fets2wPPjEmFamGj7SXwc73uB8k38B1TeZwK9V74LE9ui4l4Am0DBHkuzPYYHMdszb70
+	s=arc-20240116; t=1731745373; c=relaxed/simple;
+	bh=LuDcn+RHguKWaiqobwicYIMlL673APuvhJZ9OzNXM/w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=obC62vL0Q6kK7eJQqutCwajAVd8TaekRUiF09KWRqP3WNjhJBjFYEuU4MHkfxRL0OPHSdeQzEsxz/jxjQfoNRZS9CZKNDy1yxdpHV9vcggX3zmvCBEY3KK4lMe4GKkM0WWs4rFLKcKFr2WSKKrs200KFxdj/RKlCPoOyGJ+rz70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=cHhR8YQI; arc=none smtp.client-ip=62.210.214.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
+Received: from gaia.codewreck.org (localhost [127.0.0.1])
+	by submarine.notk.org (Postfix) with ESMTPS id D3A6914C1E1;
+	Sat, 16 Nov 2024 09:22:44 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
+	s=2; t=1731745368;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=M8LkjK7OJAgL/T02i6vFtgd+OiEHmfvwmO7csCxkIwE=;
+	b=cHhR8YQIsj09AmJOtyuWMsmjBQjV48y1gKTpkUsCHj6RxyTDxpx83Rc6AQqekGJ0C6RCnv
+	0RCV3GRNsRzO7TmNILFVIW4wXnYAIqceNlN88ajVzA1WGitO3+1fIal6Pmvk2tDMQTDpB3
+	HYnMnDXDAsPl4qqcJIBw5pnTP5kqts6L35iE1zjse/oTDMLT7in1HlSv38lb2KJammJzFa
+	PeNaSDfxYpaDHHp6rUjf3p7IQev7nHhONV71lbY4Zkj2axbeQUACR4ME9Mv2VQSRDPnHhB
+	9hpLfG7bpvLMJk+NAq/7AzlHSkbaHlE4N6HwoY8pmBvFJZCcLDITKCJkyxg1xg==
+Received: from localhost (gaia.codewreck.org [local])
+	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id 74a3c321;
+	Sat, 16 Nov 2024 08:22:43 +0000 (UTC)
+Date: Sat, 16 Nov 2024 17:22:28 +0900
+From: Dominique Martinet <asmadeus@codewreck.org>
+To: Michael Grzeschik <m.grzeschik@pengutronix.de>
+Cc: Eric Van Hensbergen <ericvh@kernel.org>,
+	Latchesar Ionkov <lucho@ionkov.net>,
+	Christian Schoenebeck <linux_oss@crudebyte.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Andrzej Pietrasiewicz <andrzej.p@collabora.com>,
+	v9fs@lists.linux.dev, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+	kernel@pengutronix.de
+Subject: Re: [PATCH v12 2/3] net/9p/usbg: Add new usb gadget function
+ transport
+Message-ID: <ZzhWRPDNwu225NWz@codewreck.org>
+References: <20240116-ml-topic-u9p-v12-0-9a27de5160e0@pengutronix.de>
+ <20240116-ml-topic-u9p-v12-2-9a27de5160e0@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:b47:b0:3a0:4d1f:519c with SMTP id
- e9e14a558f8ab-3a747ff8c92mr58797555ab.3.1731744987352; Sat, 16 Nov 2024
- 00:16:27 -0800 (PST)
-Date: Sat, 16 Nov 2024 00:16:27 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <673854db.050a0220.85a0.0011.GAE@google.com>
-Subject: [syzbot] [net?] WARNING: suspicious RCU usage in dev_deactivate
-From: syzbot <syzbot+8a65ac5be396817eefb3@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
-	jhs@mojatatu.com, jiri@resnulli.us, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
-	syzkaller-bugs@googlegroups.com, xiyou.wangcong@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240116-ml-topic-u9p-v12-2-9a27de5160e0@pengutronix.de>
 
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    2d5404caa8c7 Linux 6.12-rc7
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1219335f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=327b6119dd928cbc
-dashboard link: https://syzkaller.appspot.com/bug?extid=8a65ac5be396817eefb3
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-2d5404ca.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/1bbbfa50cb5f/vmlinux-2d5404ca.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/a5bcdede1c8a/bzImage-2d5404ca.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+8a65ac5be396817eefb3@syzkaller.appspotmail.com
-
-=============================
-WARNING: suspicious RCU usage
-6.12.0-rc7-syzkaller #0 Not tainted
------------------------------
-net/sched/sch_generic.c:1290 suspicious rcu_dereference_protected() usage!
-
-other info that might help us debug this:
+Michael Grzeschik wrote on Sun, Sep 01, 2024 at 09:11:17PM +0200:
+> diff --git a/net/9p/Kconfig b/net/9p/Kconfig
+> index bcdab9c23b402..2d7e596e22c3f 100644
+> --- a/net/9p/Kconfig
+> +++ b/net/9p/Kconfig
+> @@ -40,6 +40,12 @@ config NET_9P_XEN
+>  	  This builds support for a transport for 9pfs between
+>  	  two Xen domains.
+>  
+> +config NET_9P_USBG
+> +	bool "9P USB Gadget Transport"
 
 
-rcu_scheduler_active = 2, debug_locks = 1
-3 locks held by kworker/u32:18/10870:
- #0: ffff888046b42148 ((wq_completion)bond0#22){+.+.}-{0:0}, at: process_one_work+0x129b/0x1ba0 kernel/workqueue.c:3204
- #1: ffffc90004557d80 ((work_completion)(&(&bond->mii_work)->work)){+.+.}-{0:0}, at: process_one_work+0x921/0x1ba0 kernel/workqueue.c:3205
- #2: ffffffff8e1b8340 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
- #2: ffffffff8e1b8340 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
- #2: ffffffff8e1b8340 (rcu_read_lock){....}-{1:2}, at: bond_mii_monitor+0x140/0x2d90 drivers/net/bonding/bond_main.c:2937
-stack backtrace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x16c/0x1f0 lib/dump_stack.c:120
- lockdep_rcu_suspicious+0x210/0x3c0 kernel/locking/lockdep.c:6821
- dev_deactivate_queue+0x167/0x190 net/sched/sch_generic.c:1290
- netdev_for_each_tx_queue include/linux/netdevice.h:2504 [inline]
- dev_deactivate_many+0xe7/0xb20 net/sched/sch_generic.c:1363
- dev_deactivate+0xf9/0x1c0 net/sched/sch_generic.c:1403
- bond_miimon_inspect drivers/net/bonding/bond_main.c:2717 [inline]
- bond_mii_monitor+0x3c1/0x2d90 drivers/net/bonding/bond_main.c:2939
------------------------------
-include/linux/rtnetlink.h:100 suspicious rcu_dereference_protected() usage!
-other info that might help us debug this:
+It's been a while since this got in, but I figured I'd at least start by
+getting this built since we got a minor fix recently, and this being a
+bool is a bit weird -- any reaosn this wasn't made tristate?
 
-rcu_scheduler_active = 2, debug_locks = 1
-
-stack backtrace:
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- dev_deactivate+0xf9/0x1c0 net/sched/sch_generic.c:1403
- bond_check_dev_link+0x197/0x490 drivers/net/bonding/bond_main.c:873
- process_scheduled_works kernel/workqueue.c:3310 [inline]
- worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- </TASK>
-RCU nest depth: 1, expected: 0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- dev_deactivate_many+0x2a1/0xb20 net/sched/sch_generic.c:1377
-
-other info that might help us debug this:
+(If NET_9P=m then setting NET_9P_USBG=y doesn't seem to do anything?
+while it should be buildable as module, whether NET_9P is m or y)
 
 
-rcu_scheduler_active = 2, debug_locks = 1
-3 locks held by kworker/u32:18/10870:
- #0: ffff888046b42148 ((wq_completion)bond0#22){+.+.}-{0:0}, at: process_one_work+0x129b/0x1ba0 kernel/workqueue.c:3204
+From the code there's a module_init and MODULE_ALIAS_9P is set so I
+don't see why it wouldn't just work, but I still haven't taken the time
+to figure out how to run this in qemu so I can't test this trivial diff:
+----
+diff --git a/net/9p/Kconfig b/net/9p/Kconfig
+index ee967fd25312..97546a6a3475 100644
+--- a/net/9p/Kconfig
++++ b/net/9p/Kconfig
+@@ -41,7 +41,7 @@ config NET_9P_XEN
+          two Xen domains.
+ 
+ config NET_9P_USBG
+-       bool "9P USB Gadget Transport"
++       tristate "9P USB Gadget Transport"
+        depends on USB_GADGET=y || USB_GADGET=NET_9P
+        select CONFIGFS_FS
+        select USB_LIBCOMPOSITE
 
-stack backtrace:
-Tainted: [W]=WARN
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x16c/0x1f0 lib/dump_stack.c:120
- lockdep_rcu_suspicious+0x210/0x3c0 kernel/locking/lockdep.c:6821
- dev_deactivate+0xf9/0x1c0 net/sched/sch_generic.c:1403
- ethtool_op_get_link+0x1d/0x70 net/ethtool/ioctl.c:62
- process_scheduled_works kernel/workqueue.c:3310 [inline]
- worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-6.12.0-rc7-syzkaller #0 Tainted: G        W         
------------------------------
-other info that might help us debug this:
-context-{4:4}
-stack backtrace:
-Workqueue: bond0 bond_mii_monitor
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
- lock_acquire.part.0+0x11b/0x380 kernel/locking/lockdep.c:5825
- synchronize_rcu_expedited+0x290/0x450 kernel/rcu/tree_exp.h:976
- synchronize_net+0x3e/0x60 net/core/dev.c:11286
- ethtool_op_get_link+0x1d/0x70 net/ethtool/ioctl.c:62
- bond_check_dev_link+0x197/0x490 drivers/net/bonding/bond_main.c:873
- bond_miimon_inspect drivers/net/bonding/bond_main.c:2717 [inline]
- bond_mii_monitor+0x3c1/0x2d90 drivers/net/bonding/bond_main.c:2939
- process_one_work+0x9c5/0x1ba0 kernel/workqueue.c:3229
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
-------------[ cut here ]------------
-WARNING: CPU: 2 PID: 10870 at kernel/rcu/tree_plugin.h:331 rcu_note_context_switch+0xc5c/0x1ae0 kernel/rcu/tree_plugin.h:331
-Tainted: [W]=WARN
-RSP: 0018:ffffc900045573b0 EFLAGS: 00010086
-RDX: ffff888026c3c880 RSI: ffffffff814e6e86 RDI: 0000000000000001
-R10: 0000000000000000 R11: 000000002d2d2d2d R12: ffff888026c3c880
-CR2: 00007fd5d2467d60 CR3: 0000000030df0000 CR4: 0000000000352ef0
-Call Trace:
- <TASK>
- mutex_optimistic_spin kernel/locking/mutex.c:510 [inline]
- __mutex_lock_common kernel/locking/mutex.c:612 [inline]
- __mutex_lock+0x81e/0x9c0 kernel/locking/mutex.c:752
- synchronize_rcu_expedited+0x290/0x450 kernel/rcu/tree_exp.h:976
- dev_deactivate_many+0x2a1/0xb20 net/sched/sch_generic.c:1377
- linkwatch_sync_dev+0x181/0x210 net/core/link_watch.c:263
- ethtool_op_get_link+0x1d/0x70 net/ethtool/ioctl.c:62
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
+----
+
+Thoughts?
+In particular the depends might need adjusting, it's already in an `if
+NET_9P` block so just depends on USB_GADGET is probably enough, but I
+don't understand the rationale behind USB_GADGET=NET_9P either (can't
+have NET_9P=y and USB_GADGET=m ?)
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Thanks,
+-- 
+Dominique
 
