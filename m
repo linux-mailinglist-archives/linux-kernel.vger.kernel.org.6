@@ -1,133 +1,233 @@
-Return-Path: <linux-kernel+bounces-411638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E1F99CFD30
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 09:06:09 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 663F99CFD31
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 09:07:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9C3C1F228BC
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 08:06:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E28CAB22261
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 08:07:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1E5A192B75;
-	Sat, 16 Nov 2024 08:06:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB1C2191F7C;
+	Sat, 16 Nov 2024 08:07:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="xf9uzds6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ti1NL4Y+"
+Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com [209.85.221.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05B7619146E;
-	Sat, 16 Nov 2024 08:06:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 934E718F2FC
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 08:07:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731744362; cv=none; b=ncByz6OZ05jep/F7IVsNGPvKvJt9aH7+b8Rn0DaVOePM1LWyb/P/WjLj3zfiFD+v4yGcuAfJof38UmPi30PEMqCKwrCDRqWFgo/zwDZTooY9LWZLt4CJINaC4rBROfyEGX3G++J31TBZnx9gF2v0+U6wvrO19OCCNPS7dTegFYY=
+	t=1731744438; cv=none; b=Rvc78WD9QN7Pgsp/deJ128lbJTuCCLLZI6t1fV2EDkeQ1Kr7x5QOzPdmVYlDVfnPlfezpwCYbhUMWtJQ3z60/irsV0HccXmznM8OrvytrQDiY/ztZWAQpZA+Ai6sNhk3haWUILfLwhc9Vg9EXMre1eWe9om4Wnccohf11ei2KXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731744362; c=relaxed/simple;
-	bh=bQ/rmffOm2v/gX5o6y6qAx3LH5jlMVgs8emLepbSxaE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hunzief3qxtb9rc6dwYsor9ayylHKchb7xmv4ww0uttzzU8mrl061XtMSXNZ7N9ooeAJHNCLb+NiyOm4pDrITQh8dFt+jAfjM8rb3U99YId2PLFdL0xyLEZBc3oDFF2/YoFx9RRZtQ+Ddhe1kn4THi+SveLREFaBP/4URkwfjqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=xf9uzds6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B116C4CEC3;
-	Sat, 16 Nov 2024 08:06:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1731744361;
-	bh=bQ/rmffOm2v/gX5o6y6qAx3LH5jlMVgs8emLepbSxaE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=xf9uzds67a2eJp61+uQC+qqZv1QVVn0+RSAOWiwwWjYIF1EhHjWsN1AZMDM6SdxzX
-	 SBjeQf6v6VK8J+BtJbjKxXFd9I0z8UEowkx1QIVUJ2uUlrULO8kAICykISe5GBxgzv
-	 5bqQHEy62GZjD5G2b+q9acu9nehbEeh5ftB1XUFI=
-Date: Sat, 16 Nov 2024 09:05:34 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
-Cc: Thinh.Nguyen@synopsys.com, michal.simek@amd.com,
-	robert.hancock@calian.com, linux-usb@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	git@amd.com, Neal Frager <neal.frager@amd.com>
-Subject: Re: [PATCH] usb: dwc3: xilinx: make sure pipe clock is deselected in
- usb2 only mode
-Message-ID: <2024111625-afraid-pencil-b567@gregkh>
-References: <1731695460-1814409-1-git-send-email-radhey.shyam.pandey@amd.com>
+	s=arc-20240116; t=1731744438; c=relaxed/simple;
+	bh=NAIlf6R7JXlWQUkwEAToGNXpP4mKJHRaO2W11Ni98hk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QIv0Ab8pgQkEVbqzq0Q17j/HL6XHQkok3mP0+vbdzNmMS5qDcQ2B9uhu5PmBvv+jqr0deRJT0U9i7QFTR+zlCf7RVKC1KpbKp06FPuU7kNNCbHjHvW0DEuZyHEtNXRsG72O/Qk/qstzkOrZnNCPdnYIqShcRC0XF+XmtI/eEfh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ti1NL4Y+; arc=none smtp.client-ip=209.85.221.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-50d4a333a87so146753e0c.1
+        for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 00:07:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731744435; x=1732349235; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2WmVZTA0OBY9zHSB9Kn5Ws2PBlPlk+7EEemKYnV7uns=;
+        b=ti1NL4Y+xgXyh+oYXU0KLWQDzuG0Uxd+K0bCQ4QuqzzSno4i3SuzGqyimfOH3ytV70
+         EsHHliDYNLAjJrlR08+nwASkXY64Dewp7Kl98lkZAB8yQ3SuQjtMDqz21KSVY0o1ZZne
+         b24rgBwjtkHhCNSLQNBChnTY1rhiOLo4DjBPpTaMEbbfx6iaEhYg+Mz+jKwjDrhQhq1g
+         P3AHuUWzfzQ/W7b/D9XkoZQcodY9a+LBe/uP4Q5OVJJB4CPmd1b1rOfEm9AH4fzGnx5R
+         78YwhldhoOn+dStgtacMpFbKqNNmZiQ5UXLsy+q+UJfy6BJi3IstiGcKRibybj6lnI1i
+         sxMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731744435; x=1732349235;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2WmVZTA0OBY9zHSB9Kn5Ws2PBlPlk+7EEemKYnV7uns=;
+        b=BYf00uF6y3YtviCkkZfD2FwwXNfPH0s6ZDgRrvJjyAjai15HL32tO6MnePqyA1K47n
+         T836p2W0n4gvsWg6sjYeOV+pe2ce5aMV4TYcJJMhzEA+rGGNjFf8mQ+jLVvY9PxJqGL1
+         l4h26nJVrVpuW36bJENpROO4fdLXeVvU7PTIxm5liXUIL3hDQ5cSg++pYcc74u8PooDu
+         yxehWU0sdN5PsOmJ+RJ96OOfvailg7TTLXUX4gsjhY9B3AF86dpmhrw/wGNNoO3jeyDY
+         Foz29Xe6Dk0pnDHZECDZ8VP4Z4pqRkFtOREzIkgABWaMu4yKMqfJxuS2aFLZLeHcAUKm
+         iWgw==
+X-Forwarded-Encrypted: i=1; AJvYcCUC6BgS/4TUVYUdiN9lCr3oyIqN2Q5vYhymf1Wxjjf5X1lwkXKMGo9rhyuViwmwxl7m5970nVJyJWDNF6U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPQKhbceUFoYxXvqDV2QsnGeP2Hf7fkViBJRIQPKXFwq/PIMqh
+	uUQAVGTJFsVXRe9xNTaOktL9O9+sqyx+SdL3t+xuT0Dc/9WyDtbK4Bd16JX7cG2rNiQWlj+Cek5
+	rZfTpsbfYdqucemfAWF0OYXa/UO4ZyTpKKWEgZQ==
+X-Google-Smtp-Source: AGHT+IHEfkUckBJ9XCrI2yVxSSJFj5t3YJDMntbgNupaqGx3dkUFYzNPzxPNBPxh0TXFSaU2ErN5g16+lB1l2lMkmXs=
+X-Received: by 2002:a05:6122:3c4d:b0:4f5:199b:2a61 with SMTP id
+ 71dfb90a1353d-51477f99aa8mr5580802e0c.9.1731744435541; Sat, 16 Nov 2024
+ 00:07:15 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1731695460-1814409-1-git-send-email-radhey.shyam.pandey@amd.com>
+References: <20241115063725.892410236@linuxfoundation.org>
+In-Reply-To: <20241115063725.892410236@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Sat, 16 Nov 2024 13:37:04 +0530
+Message-ID: <CA+G9fYuzB_AvjT7tZQy+tH257ztf--cs8Y+y0wF25RuruOS+cw@mail.gmail.com>
+Subject: Re: [PATCH 6.11 00/63] 6.11.9-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
+	broonie@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Nov 16, 2024 at 12:01:00AM +0530, Radhey Shyam Pandey wrote:
-> From: Neal Frager <neal.frager@amd.com>
-> 
-> When the USB3 PHY is not defined in the Linux device tree, there could
-> still be a case where there is a USB3 PHY is active on the board and
-> enabled by the first stage bootloader.  If serdes clock is being used
-> then the USB will fail to enumerate devices in 2.0 only mode.
-> 
-> To solve this, make sure that the PIPE clock is deselected whenever the
-> USB3 PHY is not defined and guarantees that the USB2 only mode will work
-> in all cases.
-> 
-> Fixes: 9678f3361afc ("usb: dwc3: xilinx: Skip resets and USB3 register settings for USB2.0 mode")
-> Signed-off-by: Neal Frager <neal.frager@amd.com>
-> Signed-off-by: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
-> ---
->  drivers/usb/dwc3/dwc3-xilinx.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/dwc3/dwc3-xilinx.c b/drivers/usb/dwc3/dwc3-xilinx.c
-> index e3738e1610db..a33a42ba0249 100644
-> --- a/drivers/usb/dwc3/dwc3-xilinx.c
-> +++ b/drivers/usb/dwc3/dwc3-xilinx.c
-> @@ -121,8 +121,11 @@ static int dwc3_xlnx_init_zynqmp(struct dwc3_xlnx *priv_data)
->  	 * in use but the usb3-phy entry is missing from the device tree.
->  	 * Therefore, skip these operations in this case.
->  	 */
-> -	if (!priv_data->usb3_phy)
-> +	if (!priv_data->usb3_phy) {
-> +		/* Deselect the PIPE Clock Select bit in FPD PIPE Clock register */
-> +		writel(PIPE_CLK_DESELECT, priv_data->regs + XLNX_USB_FPD_PIPE_CLK);
->  		goto skip_usb3_phy;
-> +	}
->  
->  	crst = devm_reset_control_get_exclusive(dev, "usb_crst");
->  	if (IS_ERR(crst)) {
-> 
-> base-commit: 744cf71b8bdfcdd77aaf58395e068b7457634b2c
-> -- 
-> 2.34.1
-> 
-> 
+On Fri, 15 Nov 2024 at 12:17, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.11.9 release.
+> There are 63 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Sun, 17 Nov 2024 06:37:07 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
+6.11.9-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-6.11.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Hi,
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-You are receiving this message because of the following common error(s)
-as indicated below:
+## Build
+* kernel: 6.11.9-rc1
+* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
+rc.git
+* git commit: 0862a6020163c7b2e1de05e468651684ec642396
+* git describe: v6.11.7-249-g0862a6020163
+* test details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.11.y/build/v6.11=
+.7-249-g0862a6020163
 
-- You have marked a patch with a "Fixes:" tag for a commit that is in an
-  older released kernel, yet you do not have a cc: stable line in the
-  signed-off-by area at all, which means that the patch will not be
-  applied to any older kernel releases.  To properly fix this, please
-  follow the documented rules in the
-  Documentation/process/stable-kernel-rules.rst file for how to resolve
-  this.
+## Test Regressions (compared to v6.11.7-185-ga5b459e185d1)
 
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
+## Metric Regressions (compared to v6.11.7-185-ga5b459e185d1)
 
-thanks,
+## Test Fixes (compared to v6.11.7-185-ga5b459e185d1)
 
-greg k-h's patch email bot
+## Metric Fixes (compared to v6.11.7-185-ga5b459e185d1)
+
+## Test result summary
+total: 153766, pass: 127727, fail: 1793, skip: 24246, xfail: 0
+
+## Build Summary
+* arc: 5 total, 5 passed, 0 failed
+* arm: 130 total, 128 passed, 2 failed
+* arm64: 42 total, 42 passed, 0 failed
+* i386: 18 total, 16 passed, 2 failed
+* mips: 26 total, 25 passed, 1 failed
+* parisc: 4 total, 4 passed, 0 failed
+* powerpc: 32 total, 31 passed, 1 failed
+* riscv: 16 total, 15 passed, 1 failed
+* s390: 14 total, 13 passed, 1 failed
+* sh: 5 total, 5 passed, 0 failed
+* sparc: 4 total, 3 passed, 1 failed
+* x86_64: 34 total, 34 passed, 0 failed
+
+## Test suites summary
+* boot
+* commands
+* kselftest-arm64
+* kselftest-breakpoints
+* kselftest-capabilities
+* kselftest-cgroup
+* kselftest-clone3
+* kselftest-core
+* kselftest-cpu-hotplug
+* kselftest-cpufreq
+* kselftest-efivarfs
+* kselftest-exec
+* kselftest-filesystems
+* kselftest-filesystems-binderfs
+* kselftest-filesystems-epoll
+* kselftest-firmware
+* kselftest-fpu
+* kselftest-ftrace
+* kselftest-futex
+* kselftest-gpio
+* kselftest-intel_pstate
+* kselftest-ipc
+* kselftest-kcmp
+* kselftest-kvm
+* kselftest-livepatch
+* kselftest-membarrier
+* kselftest-memfd
+* kselftest-mincore
+* kselftest-mqueue
+* kselftest-net
+* kselftest-net-mptcp
+* kselftest-openat2
+* kselftest-ptrace
+* kselftest-rseq
+* kselftest-rtc
+* kselftest-rust
+* kselftest-seccomp
+* kselftest-sigaltstack
+* kselftest-size
+* kselftest-tc-testing
+* kselftest-timers
+* kselftest-tmpfs
+* kselftest-tpm2
+* kselftest-user_events
+* kselftest-vDSO
+* kselftest-watchdog
+* kselftest-x86
+* kunit
+* kvm-unit-tests
+* libgpiod
+* libhugetlbfs
+* log-parser-boot
+* ltp-commands
+* ltp-containers
+* ltp-controllers
+* ltp-cpuhotplug
+* ltp-crypto
+* ltp-cve
+* ltp-dio
+* ltp-fcntl-locktests
+* ltp-fs
+* ltp-fs_bind
+* ltp-fs_perms_simple
+* ltp-hugetlb
+* ltp-ipc
+* ltp-math
+* ltp-mm
+* ltp-nptl
+* ltp-pty
+* ltp-sched
+* ltp-smoke
+* ltp-syscalls
+* ltp-tracing
+* perf
+* rcutorture
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
