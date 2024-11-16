@@ -1,73 +1,82 @@
-Return-Path: <linux-kernel+bounces-411770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C4949CFF5A
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 15:49:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BE0269CFF5D
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 15:50:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A517283B97
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 14:49:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83484283B29
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 14:50:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C7572A1D7;
-	Sat, 16 Nov 2024 14:49:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 963161863F;
+	Sat, 16 Nov 2024 14:50:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="V/2QeDBS"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EIjLpmPt"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D818D199B8
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 14:49:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A6A517597;
+	Sat, 16 Nov 2024 14:50:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731768574; cv=none; b=a8VzfqkKVsNxl9LTwBZFI+4h/5pC5prV6/wWFVV6jlKKwhKiXbBlJc90EsnYRt5JEQmv4WA8PMvHwRzydZLfZr2z3/vcjhoumhbsDsu5d9AFvcYJ0SBVxMLZhAFiffI7IUavtCEj+0TtU0sPuz6WlvBrlBT3AE2MWC1nv+XIpPY=
+	t=1731768638; cv=none; b=SVmRjVFfqVUw4gzJe6T9U2nUU82p1cT8xR/ed52e5Q0FqEtRgGDJYEMiSmj8aPkKleTseZYC7t9CzM2nx4L0+vnePbf3bdevdfh/ciiftmjSZwXZyEAxnh5J1Fy1oRnZ3+Wd8AoXMBFJCiAAFGIHrygx7zcNn/lpityj9Ghyh9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731768574; c=relaxed/simple;
-	bh=Dxx7q3HMOBouvFw415gQ5rA5w5RnLWD2eWLFzh62qXI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Z21ymT5UZXNg2bmB5D4kzo38s4NyU5Qer6l0yuvTssFe1G/ptdy0yiIliPF1bBhwIYVVPh47VjQZ6GsP9b0PD/G4p1o0FsjZFn8VDB36pfmWdZGFWSNn9UM5RpQWhLR3KArQWw+HGmPksuc98Lz0Gah+o0UrTZ79sXXfNGuzHU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=V/2QeDBS; arc=none smtp.client-ip=198.175.65.10
+	s=arc-20240116; t=1731768638; c=relaxed/simple;
+	bh=aNCZ64MCmt/N4DbLmTH85EEO8OSXwz2VH7eNqqs2mZ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N4wCTvpIM8NQOCFgxaP27dUTrOGojYe5kYqF5V6XBedviUuksppmvCHnewySzyyeItPprwVbmndN1RXeL3oBY4ggLhV5cL/AqhGuIKs/iNlRWx4rVE+Y5WCCM6MTHiKaH4+iGBC4uqDxSiLFoctAH5UA/jqkfbmkuqqEoZ/dSqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EIjLpmPt; arc=none smtp.client-ip=198.175.65.10
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731768572; x=1763304572;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=Dxx7q3HMOBouvFw415gQ5rA5w5RnLWD2eWLFzh62qXI=;
-  b=V/2QeDBSVEv247X/pQR7Aw+4iSsxg+aZCnDYbDerR6nDBIWfq0gRqopz
-   lw9Kx1GX88VZNOjeeI8Ksk5Svq2Ih1v0hq3C2GdTL99FSqn2QbKq+4v5X
-   fd4o6178Lp9oTmdg+Dt8I+3V8i4OH93RcV2XIU+G1v7/1RUs4cx+Z9hn5
-   O3VCzSnLb2lAOXso57OFFyDHYUPBX1AP9eSHsVPCPZU0XsnTEgH+C4FCb
-   D1qYRCZTQvP+csSk/6LFnkK1IHouVwlYvaZoD7JO/LtIxYFgIzkUEFxAo
-   HXBaQLy1l5E5GS6/O16vTTsB4k7LOMxxFu6M69927qRSo5+vpV5qH3NSb
-   g==;
-X-CSE-ConnectionGUID: PB4pFf/WSt+wQBcwf7+Ylg==
-X-CSE-MsgGUID: 8lrXzPXPTOiDmSrAU1wlqw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11258"; a="49197501"
+  t=1731768636; x=1763304636;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=aNCZ64MCmt/N4DbLmTH85EEO8OSXwz2VH7eNqqs2mZ8=;
+  b=EIjLpmPtW9XJVb/0Lm1FHjsrHtIBsW6QbN0wRK84qCH57RuUOWdmMIjY
+   GJde51oG/Csig2ZEWrmNyBbU/qV43JGhQ+Abz4A00rg0iam2gemhvB9fg
+   CTvnslJsJwjBhK+tr+s+0IZ0HjOCMRJennC9zHMUezRoOFbOzD1C4eWCI
+   OWXul2cmdqAzkjoiL2UQd/TTiXbZsDj/WCj+UyRlLVOMVwqoe8iN9Z8/w
+   hEDM19kUqFUvvWPb/0ffRUSvjE4GedtJO/LOcAQsgQFL93wW0UB8xTxql
+   9taf77lmypC6ZNLHFQFDAp3P6PtHgzj5+PQZMXwRWfa/k3gvpH5joBxjj
+   w==;
+X-CSE-ConnectionGUID: dwkzLzLyRrWBT8l/s44Ssg==
+X-CSE-MsgGUID: J1xqH81yQcq3Wo77Vt7JqQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11258"; a="49197542"
 X-IronPort-AV: E=Sophos;i="6.12,160,1728975600"; 
-   d="scan'208";a="49197501"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Nov 2024 06:49:31 -0800
-X-CSE-ConnectionGUID: VKwOsEJKSl2Z4pmLllK3WA==
-X-CSE-MsgGUID: xdLCn8gARLOSuqCYif9z+w==
+   d="scan'208";a="49197542"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Nov 2024 06:50:36 -0800
+X-CSE-ConnectionGUID: CuyfysNaStaHbS/lCrjC7g==
+X-CSE-MsgGUID: 8gfPGFzsR4OOG0b7jpoc+Q==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.12,160,1728975600"; 
-   d="scan'208";a="89589510"
+   d="scan'208";a="88711502"
 Received: from lkp-server01.sh.intel.com (HELO 1e3cc1889ffb) ([10.239.97.150])
-  by orviesa008.jf.intel.com with ESMTP; 16 Nov 2024 06:49:30 -0800
+  by orviesa010.jf.intel.com with ESMTP; 16 Nov 2024 06:50:31 -0800
 Received: from kbuild by 1e3cc1889ffb with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1tCK76-0000hI-1J;
-	Sat, 16 Nov 2024 14:49:28 +0000
-Date: Sat, 16 Nov 2024 22:49:26 +0800
+	id 1tCK84-0000hV-1f;
+	Sat, 16 Nov 2024 14:50:28 +0000
+Date: Sat, 16 Nov 2024 22:49:28 +0800
 From: kernel test robot <lkp@intel.com>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: fs/bcachefs/btree_update.o: warning: objtool:
- flush_new_cached_update+0xc8: stack state mismatch: reg1[22]=-1+0
- reg2[22]=-2-16
-Message-ID: <202411160912.cy9SVuWn-lkp@intel.com>
+To: Terry Bowman <terry.bowman@amd.com>, linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	nifan.cxl@gmail.com, ming4.li@intel.com, dave@stgolabs.net,
+	jonathan.cameron@huawei.com, dave.jiang@intel.com,
+	alison.schofield@intel.com, vishal.l.verma@intel.com,
+	dan.j.williams@intel.com, bhelgaas@google.com, mahesh@linux.ibm.com,
+	ira.weiny@intel.com, oohall@gmail.com, Benjamin.Cheatham@amd.com,
+	rrichter@amd.com, nathan.fontenot@amd.com,
+	Smita.KoralahalliChannabasappa@amd.com, lukas@wunner.de
+Cc: oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH v3 08/15] cxl/pci: Map CXL PCIe root port and downstream
+ switch port RAS registers
+Message-ID: <202411161334.rczGLGKY-lkp@intel.com>
+References: <20241113215429.3177981-9-terry.bowman@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,23 +85,63 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20241113215429.3177981-9-terry.bowman@amd.com>
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   cfaaa7d010d1fc58f9717fcc8591201e741d2d49
-commit: fd104e2967b766f1151b4c58daa67cbde620b376 bcachefs: bch2_trans_verify_not_unlocked()
-date:   6 months ago
-config: loongarch-randconfig-002-20241116 (https://download.01.org/0day-ci/archive/20241116/202411160912.cy9SVuWn-lkp@intel.com/config)
-compiler: loongarch64-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241116/202411160912.cy9SVuWn-lkp@intel.com/reproduce)
+Hi Terry,
+
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on 2d5404caa8c7bb5c4e0435f94b28834ae5456623]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Terry-Bowman/PCI-AER-Introduce-struct-cxl_err_handlers-and-add-to-struct-pci_driver/20241114-060000
+base:   2d5404caa8c7bb5c4e0435f94b28834ae5456623
+patch link:    https://lore.kernel.org/r/20241113215429.3177981-9-terry.bowman%40amd.com
+patch subject: [PATCH v3 08/15] cxl/pci: Map CXL PCIe root port and downstream switch port RAS registers
+config: i386-randconfig-141-20241116 (https://download.01.org/0day-ci/archive/20241116/202411161334.rczGLGKY-lkp@intel.com/config)
+compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241116/202411161334.rczGLGKY-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411160912.cy9SVuWn-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411161334.rczGLGKY-lkp@intel.com/
 
 All warnings (new ones prefixed by >>):
 
->> fs/bcachefs/btree_update.o: warning: objtool: flush_new_cached_update+0xc8: stack state mismatch: reg1[22]=-1+0 reg2[22]=-2-16
+>> drivers/cxl/core/pci.c:782: warning: Excess function parameter 'host' description in 'cxl_dport_init_ras_reporting'
+
+
+vim +782 drivers/cxl/core/pci.c
+
+d1a9def33d7043 Terry Bowman   2023-10-18  775  
+577a67662ff529 Li Ming        2024-08-30  776  /**
+577a67662ff529 Li Ming        2024-08-30  777   * cxl_dport_init_ras_reporting - Setup CXL RAS report on this dport
+577a67662ff529 Li Ming        2024-08-30  778   * @dport: the cxl_dport that needs to be initialized
+577a67662ff529 Li Ming        2024-08-30  779   * @host: host device for devm operations
+577a67662ff529 Li Ming        2024-08-30  780   */
+23f51024741fc0 Terry Bowman   2024-11-13  781  void cxl_dport_init_ras_reporting(struct cxl_dport *dport)
+f05fd10d138d8b Robert Richter 2023-10-27 @782  {
+23f51024741fc0 Terry Bowman   2024-11-13  783  	struct device *dport_dev = dport->dport_dev;
+23f51024741fc0 Terry Bowman   2024-11-13  784  	struct pci_host_bridge *host_bridge = to_pci_host_bridge(dport_dev);
+f05fd10d138d8b Robert Richter 2023-10-27  785  
+23f51024741fc0 Terry Bowman   2024-11-13  786  	if (dport->rch && host_bridge->native_aer) {
+23f51024741fc0 Terry Bowman   2024-11-13  787  		cxl_dport_map_rch_aer(dport);
+23f51024741fc0 Terry Bowman   2024-11-13  788  		cxl_disable_rch_root_ints(dport);
+23f51024741fc0 Terry Bowman   2024-11-13  789  	}
+6c5f3aacb2963d Terry Bowman   2023-10-18  790  
+23f51024741fc0 Terry Bowman   2024-11-13  791  	/* dport may have more than 1 downstream EP. Check if already mapped. */
+23f51024741fc0 Terry Bowman   2024-11-13  792  	if (dport->regs.ras)
+c8706cc15a5814 Li Ming        2024-08-30  793  		return;
+d1a9def33d7043 Terry Bowman   2023-10-18  794  
+23f51024741fc0 Terry Bowman   2024-11-13  795  	dport->reg_map.host = dport_dev;
+23f51024741fc0 Terry Bowman   2024-11-13  796  	if (cxl_map_component_regs(&dport->reg_map, &dport->regs.component,
+23f51024741fc0 Terry Bowman   2024-11-13  797  				   BIT(CXL_CM_CAP_CAP_ID_RAS))) {
+23f51024741fc0 Terry Bowman   2024-11-13  798  		dev_err(dport_dev, "Failed to map RAS capability.\n");
+23f51024741fc0 Terry Bowman   2024-11-13  799  		return;
+f05fd10d138d8b Robert Richter 2023-10-27  800  	}
+c8706cc15a5814 Li Ming        2024-08-30  801  }
+577a67662ff529 Li Ming        2024-08-30  802  EXPORT_SYMBOL_NS_GPL(cxl_dport_init_ras_reporting, CXL);
+f05fd10d138d8b Robert Richter 2023-10-27  803  
 
 -- 
 0-DAY CI Kernel Test Service
