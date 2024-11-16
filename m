@@ -1,113 +1,124 @@
-Return-Path: <linux-kernel+bounces-411582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC1F09CFC6F
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 04:01:15 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A48C49CFC6C
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 04:00:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD8DC2891B3
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 03:01:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23ECEB28506
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 03:00:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCB7F1917EB;
-	Sat, 16 Nov 2024 03:00:43 +0000 (UTC)
-Received: from smtp134-24.sina.com.cn (smtp134-24.sina.com.cn [180.149.134.24])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 206921917FD;
+	Sat, 16 Nov 2024 03:00:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="XAIaaf1e"
+Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F24A1534E9
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 03:00:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.149.134.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B39019149F
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 03:00:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731726043; cv=none; b=SkY14uTZKUqcslx8yiK9oaBjxRBe/dsG/vQiKtXkwwroIG/PnK9/zM8oTOJAjxIe1UKOb5XBETFbVzbzezN9tZh3XMM5Qbsvj5Jv8YQ8V8PH9HE8REfMYYKFSEnjQ7QR4zx7s1hjgItFiisMv7Emq8r16iCJh/LOc/NUiIHRNig=
+	t=1731726028; cv=none; b=CYxII3qvsbt4EKwduFwoSAkbzHdGgeFy7dQxLb9fmNENd1HqxRJGXkCY3Vwh+UNqp2xnLCiwCmSGfoppQDLLRUNGtViyNAx1a769yyCN6yufRwbDSpmSXdYlHrHRXHUu2jJyEF6dT7/y+vJb21LnZR0OasANHOHHJ8Yku30+UKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731726043; c=relaxed/simple;
-	bh=mvo5jZrV+aIhDnrISSa5yeUAd0n7xPw4pw3+wJbToeI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=f4Mc6bF6/84wjHPmQlhxLE2iOWAraz+ybjKz19ePRrSshXqAPGlyC3vkQjnAzGtBeTC+Z0Flt1EHICaENXUFxzLbzBgyK6WExq/e+N7fupkYBjcHXI8NDeArF3XHeGO0cPgA+2N8m8Ow7CrvDBSKWHHDzvXJG0F31+Mh0yq199c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=180.149.134.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([113.88.51.152])
-	by sina.com (10.185.250.21) with ESMTP
-	id 67380AC100007D5E; Sat, 16 Nov 2024 11:00:28 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 9262183408370
-X-SMAIL-UIID: 03A46EBC9AA541B7A30B76F4D81EEE92-20241116-110028-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+03d6270b6425df1605bf@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in set_powered_sync
-Date: Sat, 16 Nov 2024 11:00:12 +0800
-Message-Id: <20241116030012.1036-1-hdanton@sina.com>
-In-Reply-To: <000000000000ca8574062197f744@google.com>
-References: 
+	s=arc-20240116; t=1731726028; c=relaxed/simple;
+	bh=J5GVRExHd/Wx/FAq8nwXYA2tkBV+HZyUXupAHROGjZ8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BVJP0HdHazwgLRypapUrvDrzeWXQVMTnUKXzphd5wq1xwy33a3sziAf2Aze5CQjClJWJzgswSu4FwE8TiKFAhdfarjlJ+9EfbRQzjDBlduPLP3x4IA8xHyr2kii4ZGZEU7y/wTxlToUahDlLBc2FgjfIYc/UBIFV1I0SDZh2zdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=XAIaaf1e; arc=none smtp.client-ip=115.124.30.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1731726017; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=H9UBLlphCdhVZDzQqhowJ1Buh+3zpa4QHzk+DvFyodM=;
+	b=XAIaaf1emIxD+lvlH1za0WyPob0p61F3qgflwWkN2WguMDkDGIRr29eTIRJdoOaSD8kp45xweGWKzwcxl//CYS1mhtVklD8ONNn8jA7zYynKTePNEQpV1HNRFYlT4+y8fcOLy/MwDJq+gNIqCmnO5R7CHE/s+a1zdb9yLZzvceQ=
+Received: from 30.121.23.212(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WJVKSl3_1731726014 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Sat, 16 Nov 2024 11:00:15 +0800
+Message-ID: <13bfe4a4-193d-4e8e-a520-7e261b9d6131@linux.alibaba.com>
+Date: Sat, 16 Nov 2024 11:00:14 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/5] mm: shmem: add a kernel command line to change the
+ default huge policy for tmpfs
+To: David Hildenbrand <david@redhat.com>, Daniel Gomez
+ <da.gomez@samsung.com>, akpm@linux-foundation.org, hughd@google.com
+Cc: willy@infradead.org, wangkefeng.wang@huawei.com, 21cnbao@gmail.com,
+ ryan.roberts@arm.com, ioworker0@gmail.com, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <cover.1731397290.git.baolin.wang@linux.alibaba.com>
+ <64091a3d5a8c5edb0461fae203cfcf6f302a19ce.1731397290.git.baolin.wang@linux.alibaba.com>
+ <CGME20241115140254eucas1p2e77d484813d39b8e6c8c0dbd6046f3c4@eucas1p2.samsung.com>
+ <D5MT3TF12PO7.1A65Y7SMUHI7N@samsung.com>
+ <d6dfe598-f7c2-4c3d-b7a3-71b1e928cb04@redhat.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <d6dfe598-f7c2-4c3d-b7a3-71b1e928cb04@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sun, 08 Sep 2024 02:07:21 -0700
-> syzbot has found a reproducer for the following issue on:
-> 
-> HEAD commit:    f723224742fc Merge tag 'nf-next-24-09-06' of git://git.ker..
-> git tree:       net-next
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=139b0e00580000
 
-#syz test https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git  v6.12-rc7
 
---- x/net/bluetooth/hci_sync.c
-+++ y/net/bluetooth/hci_sync.c
-@@ -308,6 +308,7 @@ static void hci_cmd_sync_work(struct wor
- 
- 	bt_dev_dbg(hdev, "");
- 
-+	hci_req_sync_lock(hdev);
- 	/* Dequeue all entries and run them */
- 	while (1) {
- 		struct hci_cmd_sync_work_entry *entry;
-@@ -328,15 +329,14 @@ static void hci_cmd_sync_work(struct wor
- 		if (entry->func) {
- 			int err;
- 
--			hci_req_sync_lock(hdev);
- 			err = entry->func(hdev, entry->data);
- 			if (entry->destroy)
- 				entry->destroy(hdev, entry->data, err);
--			hci_req_sync_unlock(hdev);
- 		}
- 
- 		kfree(entry);
- 	}
-+	hci_req_sync_unlock(hdev);
- }
- 
- static void hci_cmd_sync_cancel_work(struct work_struct *work)
-@@ -5185,6 +5185,15 @@ int hci_dev_close_sync(struct hci_dev *h
- 			cancel_delayed_work_sync(&adv_instance->rpa_expired_cb);
- 	}
- 
-+	mutex_lock(&hdev->cmd_sync_work_lock);
-+	do {
-+		struct hci_cmd_sync_work_entry *entry, *tmp;
-+
-+		list_for_each_entry_safe(entry, tmp, &hdev->cmd_sync_work_list, list)
-+			_hci_cmd_sync_cancel_entry(hdev, entry, -ECANCELED);
-+	} while (0);
-+	mutex_unlock(&hdev->cmd_sync_work_lock);
-+
- 	/* Avoid potential lockdep warnings from the *_flush() calls by
- 	 * ensuring the workqueue is empty up front.
- 	 */
---
+On 2024/11/15 22:54, David Hildenbrand wrote:
+> On 15.11.24 15:02, Daniel Gomez wrote:
+>> On Tue Nov 12, 2024 at 8:45 AM CET, Baolin Wang wrote:
+>>> Now the tmpfs can allow to allocate any sized large folios, and the 
+>>> default
+>>> huge policy is still 'never'. Thus adding a new command line to change
+>>> the default huge policy will be helpful to use the large folios for 
+>>> tmpfs,
+>>> which is similar to the 'transparent_hugepage_shmem' cmdline for shmem.
+>>
+>>
+>> I think it would be good to include a summary of why tmpfs is not
+>> enabling large folios by default as the other fs. David has been
+>> pretty good at repeating the reasons over and over and it would be very
+>> valuable to have them included here.
+
+
+OK. I'd like to directly quote David's previous comments. So hope Andew 
+can help include the updated commit message:
+
+=====
+Now the tmpfs can allow to allocate any sized large folios, and the 
+default huge policy is still prefered to be 'never'. Due to tmpfs not 
+behaving like other file systems in some cases as previously explained 
+by David[1]:
+
+"
+I think I raised this in the past, but tmpfs/shmem is just like any
+other file system .. except it sometimes really isn't and behaves much
+more like (swappable) anonymous memory. (or mlocked files)
+
+There are many systems out there that run without swap enabled, or with
+extremely minimal swap (IIRC until recently kubernetes was completely
+incompatible with swapping). Swap can even be disabled today for shmem
+using a mount option.
+
+That's a big difference to all other file systems where you are
+guaranteed to have backend storage where you can simply evict under
+memory pressure (might temporarily fail, of course).
+
+I *think* that's the reason why we have the "huge=" parameter that also
+controls the THP allocations during page faults (IOW possible memory
+over-allocation). Maybe also because it was a new feature, and we only
+had a single THP size.
+"
+
+Thus adding a new command line to change the default huge policy will be 
+helpful to use the large folios for tmpfs, which is similar to the 
+'transparent_hugepage_shmem' cmdline for shmem.
+
+[1] 
+https://lore.kernel.org/all/cbadd5fe-69d5-4c21-8eb8-3344ed36c721@redhat.com/
+
+> Yes. We also discussed in v4 the idea of having a Kconfig option to just 
+> change the default policy to "always". We could mention that here as well.
 
