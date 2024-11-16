@@ -1,185 +1,163 @@
-Return-Path: <linux-kernel+bounces-411729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 744249CFEEA
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 13:54:45 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4FFB9CFEF9
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 14:06:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 836C52879E7
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 12:54:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5BED1B26C5D
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 13:06:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93554194C7A;
-	Sat, 16 Nov 2024 12:54:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tss89jXs"
-Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63CF1198857;
+	Sat, 16 Nov 2024 13:06:14 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 644D913D297
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 12:54:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 725FD190468
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 13:06:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731761681; cv=none; b=Xb2X2a9g+1tzGqhjzVxLtj2VqyT7R9v9n81XnQ386tub2SNm/fZn+cFV7ptYwlTxZpXznHdbgyu2eFEoiX5umaKeFWGF7QkdhUPopzLZtqzR3V/Gfc3oScU7HUlR6V60Wt1JICqbGq/c9iCaLj0//U1fKYtfKJGPvEvXqmvbGuA=
+	t=1731762374; cv=none; b=TdtEFLPqSRJ/KR6+pB/2xdpCMOjM1GMBE2PsfRr7doQ7/S7mYgliGRW7dTbh5dzPG+XXE5Os/C01N4VtNFV7pB1oNIPffZB0yPyXCNCKMsaQ4ffGdWcDbeTipgEERbn2m2pSgVuPRMmR1JhuShuxzNzvBXmxtCoyeTYO5s5T2gE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731761681; c=relaxed/simple;
-	bh=V8tnW0pG41HoDBAZmyoo2mCqeNMoj/x8I1k9IWEuRNg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=W3/q1V9sUnL25rBmkQe9mCpEf1u+64lS5PBeI4KdXZWYU1QVfJUxJbkd+V6nmPBodOw6ux50Frkg2myqbT5GZrR/Ay7yQoWCIlObGOGiLf+nYZwOTI+fD+Eu6G4YrgPxYz+vmtSjf3oCm0dnWLiPR0QEXFsWzCP6xF0WrfDRGZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tss89jXs; arc=none smtp.client-ip=209.85.221.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-5148381f2a4so446884e0c.2
-        for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 04:54:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731761679; x=1732366479; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PkrfLtlpmMOkbZGmAfotCto0+KgmvVAi/auh4c1VTLU=;
-        b=tss89jXs3Khjdx7l13RrTiaBR5A2T3K30sqbyFKFuYFGVk/KVK7Amt6lxsCFRtXu6K
-         3wtgLR7UGE/dsAVta1T0ozE7G2y4DI0rqqRdHzTw0dypAFsYrUKLi29P/r6CFuoj6aLH
-         Hq3/HGASbe2iyCKQhTg7sDh9ahM/WtGrvoaeT9YdXP0ZHcb5pQUtYjCMq9L9nePtoD7h
-         R9p5Sd+P/UZdj9qAoFkNo9/bhDNQ8yay9fOw2n4/GXn5Hzr1t7ol0Xwh7X6oiIRR0lug
-         g23H4AI7KvUGyhppFDblalhweFCvHAHfF8CUB9jMGWKjLMsvuI/ZKJfKJcwNaMO8htai
-         kHzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731761679; x=1732366479;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PkrfLtlpmMOkbZGmAfotCto0+KgmvVAi/auh4c1VTLU=;
-        b=Ba3znuusrsP6Hip/1u48oUeUzfltmejaxsjx2sY8rYcCLOuYcDAAA9BSxcbGb/0oAf
-         aDnP7x6tpZilAvfw8dXv5cyJOzyCh8HZaa5g65KwXVGDpzjxALOMUbU93c/lEW6oFjxc
-         85Yo8AlnuksTPntK7BU2esgC8ItKq5AL0Cs6yKqBWrK6XeduvUu6Gy0BFNmdm2gOIs2u
-         xbfADGRes43XDkuB7vJe2yqs4N5qmz4xIUCst/C61uQ8zHFxJXvmHP27PjAVTbyAWM+y
-         ZJXRYry4D2ZVFRmqTkUrjCYrnMA0mKuU55qY7kXj5nIcUpkeqifJ+hFBlpcqL3fE5P+F
-         As1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXTTOTMnuoiOmYiavsqVB8m9J6eV4OULq+qVWuLOUP4FMGdxEJWPKziitS2A11cPM+BcWGTJvTjV3R1IMc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNFfYr6wDtwP6PRjiwUBdiUl+oEZnjG0e+znTo0yfILsZvIu23
-	n3Bga9VA3NXBRczO79dOTUaTaDUhHi2GZzL58ZO5qnnjwQA5ds1+2V5xzRPE7Pp1YU5QkZ5O2JX
-	gAsaOo89rHCHUEem3D2P4sAXeXBGA4P+mUvQ6gQ==
-X-Google-Smtp-Source: AGHT+IFBlNbBEfHKYfUCLNDUnsYSTdCdqnGy1PkuwbDOsfFBeRKbFAQ00f5BfHzKrvXon2aVChjMTfVk2GjdRQAR1X4=
-X-Received: by 2002:a05:6122:3d0c:b0:4f6:aa3e:aa4c with SMTP id
- 71dfb90a1353d-51478567375mr5882461e0c.3.1731761679481; Sat, 16 Nov 2024
- 04:54:39 -0800 (PST)
+	s=arc-20240116; t=1731762374; c=relaxed/simple;
+	bh=NDuvEwLj+5DVhv2b+kWP+VkTdebIdmQXEHGW9868HBk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SyzA50af/mUN3Wik4cXo+ztTKqCZobYV6x4zESeCOveiIL401YTLIfjLkycRNyiaMwDoncMrwGNPhhkPwcmGfwn94Q4ax6ARExX8MBmHnJBe4UhGd9hkwhuSWF0qFM7oWtNIFn5ZDqZ0EjjcqHiAWU6QmMJw74ba1JbHy8HNufU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1tCIUy-0000ZR-Rv; Sat, 16 Nov 2024 14:06:00 +0100
+Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1tCIUx-0014fP-1F;
+	Sat, 16 Nov 2024 14:05:59 +0100
+Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1tCIUx-005fmW-11;
+	Sat, 16 Nov 2024 14:05:59 +0100
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Woojung Huh <woojung.huh@microchip.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	John Efstathiades <john.efstathiades@pebblebay.com>,
+	kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	UNGLinuxDriver@microchip.com,
+	Phil Elwell <phil@raspberrypi.org>
+Subject: [PATCH net v1 1/2] net: usb: lan78xx: Fix double free issue with interrupt buffer allocation
+Date: Sat, 16 Nov 2024 14:05:57 +0100
+Message-Id: <20241116130558.1352230-1-o.rempel@pengutronix.de>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241115063722.845867306@linuxfoundation.org>
-In-Reply-To: <20241115063722.845867306@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Sat, 16 Nov 2024 18:24:28 +0530
-Message-ID: <CA+G9fYvzExabWp94wW9dT=_KWLUWjTJvT4ZtoiJvFvGyxjW9Gg@mail.gmail.com>
-Subject: Re: [PATCH 4.19 00/52] 4.19.324-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
-	broonie@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Fri, 15 Nov 2024 at 12:11, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 4.19.324 release.
-> There are 52 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sun, 17 Nov 2024 06:37:07 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
-4.19.324-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-4.19.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+In lan78xx_probe(), the buffer `buf` was being freed twice: once
+implicitly through `usb_free_urb(dev->urb_intr)` with the
+`URB_FREE_BUFFER` flag and again explicitly by `kfree(buf)`. This caused
+a double free issue.
 
+To resolve this, reordered `kmalloc()` and `usb_alloc_urb()` calls to
+simplify the initialization sequence and removed the redundant
+`kfree(buf)`.  Now, `buf` is allocated after `usb_alloc_urb()`, ensuring
+it is correctly managed by  `usb_fill_int_urb()` and freed by
+`usb_free_urb()` as intended.
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+Fixes: a6df95cae40b ("lan78xx: Fix memory allocation bug")
+Cc: John Efstathiades <john.efstathiades@pebblebay.com>
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+---
+ drivers/net/usb/lan78xx.c | 29 ++++++++++++++---------------
+ 1 file changed, 14 insertions(+), 15 deletions(-)
 
-Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+diff --git a/drivers/net/usb/lan78xx.c b/drivers/net/usb/lan78xx.c
+index 8adf77e3557e..094a47b8b97e 100644
+--- a/drivers/net/usb/lan78xx.c
++++ b/drivers/net/usb/lan78xx.c
+@@ -4414,29 +4414,30 @@ static int lan78xx_probe(struct usb_interface *intf,
+ 
+ 	period = ep_intr->desc.bInterval;
+ 	maxp = usb_maxpacket(dev->udev, dev->pipe_intr);
+-	buf = kmalloc(maxp, GFP_KERNEL);
+-	if (!buf) {
++
++	dev->urb_intr = usb_alloc_urb(0, GFP_KERNEL);
++	if (!dev->urb_intr) {
+ 		ret = -ENOMEM;
+ 		goto out5;
+ 	}
+ 
+-	dev->urb_intr = usb_alloc_urb(0, GFP_KERNEL);
+-	if (!dev->urb_intr) {
++	buf = kmalloc(maxp, GFP_KERNEL);
++	if (!buf) {
+ 		ret = -ENOMEM;
+-		goto out6;
+-	} else {
+-		usb_fill_int_urb(dev->urb_intr, dev->udev,
+-				 dev->pipe_intr, buf, maxp,
+-				 intr_complete, dev, period);
+-		dev->urb_intr->transfer_flags |= URB_FREE_BUFFER;
++		goto free_urbs;
+ 	}
+ 
++	usb_fill_int_urb(dev->urb_intr, dev->udev,
++			 dev->pipe_intr, buf, maxp,
++			 intr_complete, dev, period);
++	dev->urb_intr->transfer_flags |= URB_FREE_BUFFER;
++
+ 	dev->maxpacket = usb_maxpacket(dev->udev, dev->pipe_out);
+ 
+ 	/* Reject broken descriptors. */
+ 	if (dev->maxpacket == 0) {
+ 		ret = -ENODEV;
+-		goto out6;
++		goto free_urbs;
+ 	}
+ 
+ 	/* driver requires remote-wakeup capability during autosuspend. */
+@@ -4444,7 +4445,7 @@ static int lan78xx_probe(struct usb_interface *intf,
+ 
+ 	ret = lan78xx_phy_init(dev);
+ 	if (ret < 0)
+-		goto out7;
++		goto free_urbs;
+ 
+ 	ret = register_netdev(netdev);
+ 	if (ret != 0) {
+@@ -4466,10 +4467,8 @@ static int lan78xx_probe(struct usb_interface *intf,
+ 
+ out8:
+ 	phy_disconnect(netdev->phydev);
+-out7:
++free_urbs:
+ 	usb_free_urb(dev->urb_intr);
+-out6:
+-	kfree(buf);
+ out5:
+ 	lan78xx_unbind(dev, intf);
+ out4:
+-- 
+2.39.5
 
-## Build
-* kernel: 4.19.324-rc1
-* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
-rc.git
-* git commit: 3b4d1c2cc31466d675bc2579661f90066a9c0404
-* git describe: v4.19.323-53-g3b4d1c2cc314
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-4.19.y/build/v4.19=
-.323-53-g3b4d1c2cc314
-
-## Test Regressions (compared to v4.19.322-350-g9e8e2cfe2de9)
-
-## Metric Regressions (compared to v4.19.322-350-g9e8e2cfe2de9)
-
-## Test Fixes (compared to v4.19.322-350-g9e8e2cfe2de9)
-
-## Metric Fixes (compared to v4.19.322-350-g9e8e2cfe2de9)
-
-## Test result summary
-total: 25104, pass: 19640, fail: 186, skip: 5242, xfail: 36
-
-## Build Summary
-* arc: 10 total, 10 passed, 0 failed
-* arm: 101 total, 95 passed, 6 failed
-* arm64: 26 total, 21 passed, 5 failed
-* i386: 14 total, 11 passed, 3 failed
-* mips: 20 total, 20 passed, 0 failed
-* parisc: 3 total, 0 passed, 3 failed
-* powerpc: 21 total, 21 passed, 0 failed
-* s390: 6 total, 6 passed, 0 failed
-* sh: 10 total, 10 passed, 0 failed
-* sparc: 6 total, 6 passed, 0 failed
-* x86_64: 22 total, 16 passed, 6 failed
-
-## Test suites summary
-* boot
-* kunit
-* libhugetlbfs
-* log-parser-boot
-* log-parser-test
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-cpuhotplug
-* ltp-crypto
-* ltp-cve
-* ltp-dio
-* ltp-fcntl-locktests
-* ltp-fs
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-ipc
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sched
-* ltp-smoke
-* ltp-syscalls
-* ltp-tracing
-* rcutorture
-
---
-Linaro LKFT
-https://lkft.linaro.org
 
