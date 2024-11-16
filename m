@@ -1,78 +1,87 @@
-Return-Path: <linux-kernel+bounces-411530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70D5E9CFB91
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 01:14:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D16529CFB9A
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 01:18:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 365A1286187
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 00:14:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87C80288221
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 00:18:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AA7F944F;
-	Sat, 16 Nov 2024 00:13:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rkTYohWe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7B05184E;
+	Sat, 16 Nov 2024 00:18:07 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81FE936D;
-	Sat, 16 Nov 2024 00:13:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12C411372
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 00:18:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731716030; cv=none; b=d7qOkq0jA5AmPe34a3+9MhPMJV4H9hKlb+1eBNaYloInIP2TmbUw+HImo3X1goBGFWcddzq+ZNjV2oemsaxrx+ciYsFJ46n/PF31NEaksPAaUcLacfG0dWRe8oiST1w7cwHcuERAt4a6z/kWI8xrBtLNzvnTWSkSfh+35rR5fNI=
+	t=1731716287; cv=none; b=VFzA5O9iSHGOmItDNOhHWXSprXhavKvBytRPS9jfvm4uLSmEMN3vaZbxXl4eetT2nz4h493XiHZ4Ygl+f1bE52lDpWONJs3XBCMCZbbHFFZpR87EcPzdmo/hRIyauYI6rrsSk8lFPcP/Wl/9JMysPaBoR0mwPOTwOwodA5FDavI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731716030; c=relaxed/simple;
-	bh=bhgxwkHRViK3jkSy2IanwbEGS325jUf3R1U0Xjcn2A0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uD6MYc2YmQYX79o6+WRlL9xZkwcoAA5pktbS3fYLqa6m0XSIL3cm4Okw+AAUZZo9Q3fnPJiPvP69SxAT4TMArbCoSi9P/EiV4XPsuOiCJNjFadq6v7LaTr50tO09EzSyHPQUXNyBG6Ez3B4yEc1jURnj7ltsQKBuc9bcVsLJgp0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rkTYohWe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 396BEC4CECF;
-	Sat, 16 Nov 2024 00:13:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731716029;
-	bh=bhgxwkHRViK3jkSy2IanwbEGS325jUf3R1U0Xjcn2A0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=rkTYohWenM36KAYozGo5drV55cSOYn+FaiDGMMYmuG0Rj8wwKeQu6gN1NozLdf1Aj
-	 6v+abKp+7tVtD3hqA887PIqohSe9m8q5RuQdZ83XeV3Og9d2maNoJJWELvUbCcuM+E
-	 izHrGm6KZqjRMdoWEL2+Ixqt/cQKWvlUHyYsruG+y2MOdwK01L6Qu7CiPnaNwzzSR8
-	 U69gFHvxh6n75yXtorPjFyXV/UMgkg9cSHmT6shq04kRyHi7b0hRgUb/uAKsjXCklA
-	 qGcidtJ6fk4/ocCiWncRkBAebKh6/ftG4cTToUiyfl2okSiouNLynWSIdN6zh0Aeh4
-	 R9qBhRKddP7VA==
-Date: Fri, 15 Nov 2024 16:13:48 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Dmitry Safonov via B4 Relay <devnull+0x7f454c46.gmail.com@kernel.org>
-Cc: 0x7f454c46@gmail.com, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon
- Horman <horms@kernel.org>, David Ahern <dsahern@kernel.org>, Ivan Delalande
- <colona@arista.com>, Matthieu Baerts <matttbe@kernel.org>, Mat Martineau
- <martineau@kernel.org>, Geliang Tang <geliang@kernel.org>, Boris Pismenny
- <borisp@nvidia.com>, John Fastabend <john.fastabend@gmail.com>, Davide
- Caratti <dcaratti@redhat.com>, Kuniyuki Iwashima <kuniyu@amazon.com>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org, mptcp@lists.linux.dev
-Subject: Re: [PATCH net v2 5/5] net/netlink: Correct the comment on netlink
- message max cap
-Message-ID: <20241115161348.517ed20d@kernel.org>
-In-Reply-To: <20241113-tcp-md5-diag-prep-v2-5-00a2a7feb1fa@gmail.com>
-References: <20241113-tcp-md5-diag-prep-v2-0-00a2a7feb1fa@gmail.com>
-	<20241113-tcp-md5-diag-prep-v2-5-00a2a7feb1fa@gmail.com>
+	s=arc-20240116; t=1731716287; c=relaxed/simple;
+	bh=mFDWgdGeK/9+TtfMDQ2ASIpWKU2DDLnIqBQ+2ZUIjrA=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=piriD3YS0GMkkbRkGw11YSeNSNtdDDSgvmi+hTlKUmje9L/rWt/PTkZUrvtE0/I0DZqFVd8cnYJ+6mbOOGXGZuy4p1PLa/2S8iXlo4K+PeBJ1AQOvi2aLxy+P0SqeckWwfAJlWhSgfa0ke4I7ls9bmRnyIT1wMNzizwCapp4594=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-83abe8804a5so233216139f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Nov 2024 16:18:05 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731716285; x=1732321085;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ca7XTW0kgTpUY9OnQOuVpXToi6KqMNQwLQ+YtGQVZKo=;
+        b=tFUUTIo4r2RhmSbcHqvgEBtUhsmkyrdylB+PcBOeT942dEJknYm4PNEgTckmEgaNFR
+         S+N7tiCrNfCF4OEjpEXJI6ft4bWo7CnTSAnBoShuYfaV7F7E3fCHBIC332QFUd5e75vf
+         sv/zszNmbaHatfyKFcg8C12KBlQ0w9j6JBN9kY/hA6LA4i2q/qLlzGsdm7BmBIpyYoZ0
+         cNQ3tQaNjJ2M4lg72uSSpcEXQEsD220ELOOAhz1UnzrHYDtWrvo5hxc1GmEnbiCXL4oe
+         XVfroUs6tmPuynE6VPjirRUg3H9DANgVD0RCky290zsko607jshWm6Z1TcxUMh7avAPx
+         JJnA==
+X-Forwarded-Encrypted: i=1; AJvYcCWiPlYp+k3IOONSOZ14nIo5qy8rbKjQjqzre9K92tOlJtuiIhAivjfPR+eOgyy5y3U8mWGkdDH+ne6xxCI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEMbm/brA7gy0uCJHc/NODfRYcyOP78C9+/3HzjvrbmtRXFZ1i
+	NW80wW89vJiXLQQhoyavZ8UndXKMIZ8g1EcpHIhnUpbhEcLErRz3muE17CAoA3ki0zPI6F9n6R0
+	5QnXeoQ9RA5LV6ilPGVcvjq2aaGIBrJDgGJRrkJ7SfXeD0GsqryG0CQ8=
+X-Google-Smtp-Source: AGHT+IHNHdWUUb4Tydyj2HtfOR7qJMBM/ThSwEQBxVSQoHnln5ijpDIi0eTakmPbgbPCwL82mvvnDHMQYgV3vfY7z0r14IXLdGcS
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:3487:b0:3a7:47bb:bb81 with SMTP id
+ e9e14a558f8ab-3a748094eb6mr60526675ab.20.1731716284991; Fri, 15 Nov 2024
+ 16:18:04 -0800 (PST)
+Date: Fri, 15 Nov 2024 16:18:04 -0800
+In-Reply-To: <20241115232117.3774-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6737e4bc.050a0220.85a0.0007.GAE@google.com>
+Subject: Re: [syzbot] [kernel?] WARNING in posixtimer_send_sigqueue
+From: syzbot <syzbot+852e935b899bde73626e@syzkaller.appspotmail.com>
+To: frederic@kernel.org, hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, tglx@linutronix.de
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 13 Nov 2024 18:46:44 +0000 Dmitry Safonov via B4 Relay wrote:
-> From: Dmitry Safonov <0x7f454c46@gmail.com>
-> 
-> Since commit d35c99ff77ec ("netlink: do not enter direct reclaim from
-> netlink_dump()") the cap is 32KiB.
-> 
-> Signed-off-by: Dmitry Safonov <0x7f454c46@gmail.com>
+Hello,
 
-I'll apply this one already, looks obviously correct (tm)
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+
+Reported-by: syzbot+852e935b899bde73626e@syzkaller.appspotmail.com
+Tested-by: syzbot+852e935b899bde73626e@syzkaller.appspotmail.com
+
+Tested on:
+
+commit:         228ad72e Merge tag 'timers-v6.13-rc1' of https://git.l..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers/core
+console output: https://syzkaller.appspot.com/x/log.txt?x=102f3cc0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=a3e11aa0fc34acd5
+dashboard link: https://syzkaller.appspot.com/bug?extid=852e935b899bde73626e
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=16b471a7980000
+
+Note: testing is done by a robot and is best-effort only.
 
