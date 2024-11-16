@@ -1,201 +1,134 @@
-Return-Path: <linux-kernel+bounces-411783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9D759CFF7F
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 16:30:15 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AD779CFF82
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 16:31:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 194F6B25625
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 15:30:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CCD9FB26362
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 15:31:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1677582866;
-	Sat, 16 Nov 2024 15:30:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EE3680038;
+	Sat, 16 Nov 2024 15:31:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="ZbRp4uQ7"
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2083.outbound.protection.outlook.com [40.107.22.83])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i20LXlj8"
+Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55A3581732;
-	Sat, 16 Nov 2024 15:30:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.83
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731771006; cv=fail; b=RUAYXteIQxvXL51FirFtfABE818FFL4HI7sM76Qw+N2YdR/uavpBcTgtU24OloOdpa539vNYiRir3/+quMj5ZaFo90MD9Pyc+L7D5026BbJe2Tl/EkIxZxp1YSKSAwAYiSRUjpju3zxeI+tw5W8+/Ye/RmO3NvhjueAxkLOB3o4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731771006; c=relaxed/simple;
-	bh=wjvIw5tph23C+qyTQTLxp6TCv2SX49HC3ROChm1CV6U=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=ZcxyIxKk1EObB9fEhv59uSRCa1lOpPj0wfdUopo6gjgD9VxeZ1I8PyZq3O3JDIN3YWBLWXDS9I2FCp7NENvEDFqhWS1lS4fuy18OJCQ7YstEB9jbE9FY22yD+pd7vC93gxanMyiT4zSfwbOHNYqcDDJ8PiFtL+lq9XGhF/hv8E8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=ZbRp4uQ7; arc=fail smtp.client-ip=40.107.22.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=WHsmi5AXUI0GeYA3nMyquqOa9sktI1ns/uSCHsvto2Jj2TYhARbLlvgEN+Qx0hEH2vYk8WicV5nOW9m+Pp3STWtVIdWHCSE6KwTX2YxcBKvsErMsqHtmkBe/7SidcXfwBZspCiFybYk//pCem8mWczsfQgLdMLQ2IR2b3Zdm0xy3t5txosJZDAJXcG9VfJcHOLi/FBGuaWafbzpdzurkNow0j/CyafNwg465ba1g4IAiVPKxPLb8RtTXV1UhaGiyAPV9dLg6mHClS0nUiX/qyR/VCbjnRysPZrjvD9Ef6zKl9X6C2xWmTAW7M7P7SMMA0AiHLNGa2Luz1n+0BdK2Tw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/yKbLFYo+yc8utGST4rtYsYgFSHz1BsczOqVoEBO0zI=;
- b=K8LiNYvrVJLvELZDBqqQM+SyPPBnFvQiL8kFS9oRwOze6gg4CLmEqOYGD+4TLb2/13/UUvRcyV7wf1DuWNyVd9YUOpoRskZzpnpw3C14VKR/9kuLLVJ6/ambu4QGSLCskYNFnCMJQpQDtdVSuYfKwD4JJKoxpN5VPT+QWNjChLqV0oSOMBikppvOklVdD/gr2SfnNPVbeDxRrvxHnwpR5MqfircMzbawuaMq3lNOQn38dFwFilSXv3qFQ3ZKai/cCxHyylZL54JoV9Qcp2d1njEvYIHZHH5Gy+d7h7u/t5f1nR4IHqSBTZUD7cnEMIcFNuQ9d0L3eYH7asXxSXFQJQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/yKbLFYo+yc8utGST4rtYsYgFSHz1BsczOqVoEBO0zI=;
- b=ZbRp4uQ7sfErm6XNDncX5MVVk9duqQctcspxJ9iDzb1+cd7Qrdmo+CUTh10TFv1LwgxjPNsGnh6Y6pEx6aMQmnf1RjffTPhN+ukgllB8B80n0Dm1RdgtkmcTRGFgKJvvqC9Ce6/CmA4Zijta/C5RLSVgTkXH8j570dEe+SOqxDmVEMQ5+SU/AS9VHIZRZEvMUjGX3hW50eFL/TpFC5eqvdFC7Fqhmr2nZK3KZYZfxW9NnFSXc/H6c2sc99k6QMg37j73cPt052pzA9P+eD1C7ShK2/5vZocwvDd/1rHW+aYeYmRtQjldK9VGPP12MzfSk2o8cG5WwzjQ9jMv4J5Axw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by PA4PR04MB7742.eurprd04.prod.outlook.com (2603:10a6:102:b9::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.20; Sat, 16 Nov
- 2024 15:30:00 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%4]) with mapi id 15.20.8158.017; Sat, 16 Nov 2024
- 15:30:00 +0000
-From: Frank Li <Frank.Li@nxp.com>
-To: Rui Miguel Silva <rmfrfs@gmail.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	linux-iio@vger.kernel.org (open list:NXP FXAS21002C DRIVER),
-	linux-kernel@vger.kernel.org (open list)
-Cc: imx@lists.linux.dev
-Subject: [PATCH 1/1] iio: gyro: fxas21002c: Fix missing data update in trigger handler
-Date: Sat, 16 Nov 2024 10:29:45 -0500
-Message-Id: <20241116152945.4006374-1-Frank.Li@nxp.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: BY5PR20CA0021.namprd20.prod.outlook.com
- (2603:10b6:a03:1f4::34) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 755E815E97;
+	Sat, 16 Nov 2024 15:31:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731771072; cv=none; b=SPkje/y6uu+MPpVi3jX2TeJrqo9BYpoC+kvz+m5K2QR4TDjgOE2hukNK5A06JZ7F0QHPwPvy4kFmqfDUUbm08rl9x74SCc+8lrFP3lHk/HpnJC606cZnwKBIUh/PeWi6t72F2ABDI+YirYJ874eK7uLc5+Gw0i7mVAUhJTuIs08=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731771072; c=relaxed/simple;
+	bh=yQYdgCpNEMtF0HNTBzAA+71DuzYd+VQ2Rqp+ru9TBB0=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=QAzzLwGPAooRE2vbNlqzquPjNJ8mZOE7oaZBZsqfj7x/taxkRO51YhE1cmfAJD90Va+cKlBWTtuH3/MAGQfJFYjbgCIl/Qc9jbARoVqzTnopfV8h8S7nmVwepBS5aP3NY/2nWaR4/rhQMYfBn/VfY7oht5ORpmJ2XYSho2lQ21g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i20LXlj8; arc=none smtp.client-ip=209.85.222.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7b14554468fso169989185a.1;
+        Sat, 16 Nov 2024 07:31:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731771069; x=1732375869; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ffp/2XHswsX4GIfB6X17WYFirgSky6aZSjqbMLRIuB0=;
+        b=i20LXlj88z4Sy2qfYjPRU0G7Qg4I29PT0ytoqlj4TZAHQIZItvJ7NgYmpG0Y+czlZt
+         7ItoJ3lUDFWns8RHWxqWTkx4C2gJH0kG4quNnbYIMUckFWr5wQMlzKTcOWaXLhnEcw68
+         a+3hBgDBU1XzbU4hsDCwYWXCzKc3MBuEj9roKlNl8WzZA9Y1yTDlTy55sdZjD+vAQJsf
+         6D+V5O+NrN1EEhZizNZl+BdF+IiuEcWXU7kk+kn27adexWj3YhGXAiTk2QxnE6fy4u3m
+         WrXPkbi082reEsVQPpmZOYmD/Qb8WlEXq0LYfyf3Tf8suPsAzrsTckuMG9ezT7smM3r4
+         f/fQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731771069; x=1732375869;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ffp/2XHswsX4GIfB6X17WYFirgSky6aZSjqbMLRIuB0=;
+        b=CA6HBdMjFzIMD35lmFBAh/c3fxhykr8qgdJRfu7hOhjTTTZtk9Wd4srrlXY54mAAFS
+         XRUrl+JHTsewbodr/fO1Eo9qaen1wQ0yVDNjZCOey2Sdw3QXSCuc6wpXuTw90HI1V9YK
+         fBr0DB3Zg/smupqaCZsVXQSWh6rlJhY1svyU+U2fiNje5CliZ0vdLfBewgUGapMl27V+
+         5ofXa7IHpqDONo+4nqNBOeRJrC+5povnbxvkoF9PXzCe6o2pz3FCWXQJZ/+F2X3gJIEL
+         whDhaEk3MmIEplVgC7gyKuY8z5nKwrN5cf8XqRPHtMH6GSaHAZeLZ7+AyYFZglkKlR6/
+         qA8A==
+X-Forwarded-Encrypted: i=1; AJvYcCWZpuesIBfxIkW0dUrzbMyKR4kPclDlQLap72JmHSNBrUQPbfK7JFo/AFPIA7FmfTB/jOXaFXOo@vger.kernel.org, AJvYcCWfzE4s7dqhJ9ud/B6kX2SOKCyyztxztEFux+mi/g17wsA8w7+qKPaotgImuZqk/XAEnL8=@vger.kernel.org, AJvYcCWgYk7645W1tFVau5nP2YiavAAobfWHEe8t+I6XxUn7aUjsW/29u+tby+ZXh0Vn4Vvy8HgFZWZMv41jKahQ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxhkb7JsDlyB4hWZXWg2DhHKKqBEDccGHJS6jZWAFYqbXSrR4So
+	iPysMWI0qG893nregAkbrojyIzbWbDrKi5VVczaJ/CfRVAGE9nV/
+X-Google-Smtp-Source: AGHT+IGzJiXel5I/BzErwJFKRsN4haga5+vVh6h48bwOnnM6wNuhTqevKYwU6qC0aF/ISDj4a7QqsA==
+X-Received: by 2002:a05:620a:1996:b0:7b1:3f19:b81a with SMTP id af79cd13be357-7b3623678aemr876423485a.53.1731771069231;
+        Sat, 16 Nov 2024 07:31:09 -0800 (PST)
+Received: from localhost (250.4.48.34.bc.googleusercontent.com. [34.48.4.250])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4635aa3ab71sm32480391cf.49.2024.11.16.07.31.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 16 Nov 2024 07:31:08 -0800 (PST)
+Date: Sat, 16 Nov 2024 10:31:08 -0500
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To: Jakub Kicinski <kuba@kernel.org>, 
+ Alexander Lobakin <aleksander.lobakin@intel.com>
+Cc: "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, 
+ Paolo Abeni <pabeni@redhat.com>, 
+ =?UTF-8?B?VG9rZSBIw7hpbGFuZC1Kw7hyZ2Vuc2Vu?= <toke@redhat.com>, 
+ Alexei Starovoitov <ast@kernel.org>, 
+ Daniel Borkmann <daniel@iogearbox.net>, 
+ John Fastabend <john.fastabend@gmail.com>, 
+ Andrii Nakryiko <andrii@kernel.org>, 
+ Maciej Fijalkowski <maciej.fijalkowski@intel.com>, 
+ Stanislav Fomichev <sdf@fomichev.me>, 
+ Magnus Karlsson <magnus.karlsson@intel.com>, 
+ nex.sw.ncis.osdt.itp.upstreaming@intel.com, 
+ bpf@vger.kernel.org, 
+ netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+Message-ID: <6738babc4165e_747ce29446@willemb.c.googlers.com.notmuch>
+In-Reply-To: <20241115184301.16396cfe@kernel.org>
+References: <20241113152442.4000468-1-aleksander.lobakin@intel.com>
+ <20241115184301.16396cfe@kernel.org>
+Subject: Re: [PATCH net-next v5 00/19] xdp: a fistful of generic changes
+ (+libeth_xdp)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|PA4PR04MB7742:EE_
-X-MS-Office365-Filtering-Correlation-Id: 543a1d2f-8f59-4285-1155-08dd065388cb
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|52116014|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?fy6eWF5efb1HieEZsQ47v/m7IMp5XRBh1We/NS9Qi4EDC2UsVqhQTkKPmXLB?=
- =?us-ascii?Q?PEVvpKQg8ltuHj+K/3igqSHlYCtG4Gyoyt4d4OqKumveqVummgurDxtimTkS?=
- =?us-ascii?Q?hMM/ogyBmRSZy2Q+Z7mQIq8Y4xYjZXKLtjcTtxKjLS2eVL6ypoeu++zWhZat?=
- =?us-ascii?Q?yCXEvBhukMTfColSeIIHcyaShlfZoyKea4EY6oy6SL8WEWz5Z8zYZEWr5Gma?=
- =?us-ascii?Q?FGl2VCe2vf17DimyIED9swKqp6icpUJrzquqWHloQI1IOgLrcOD7mdO8KYyy?=
- =?us-ascii?Q?k6BvHpWhKEDJhQB938NInN/Pt4FTVsBDNqLxuDE9De/9d1ahZD8anaNXQdhK?=
- =?us-ascii?Q?Xf9LJxLVY9AdpmJv7OPcPMhk9ToDaH6axNDX6s7heWQwTsvUu8oePrcDUMFp?=
- =?us-ascii?Q?iOVgzcLBnGRCueR9t0TvcQzifDiZXKGXBW1ajOYGIPTXFlWX5VkmPLbBlDlL?=
- =?us-ascii?Q?un6GB87uogVN66OhlmMTzX24SdfM0OHuBZUK/EuDbHA4Gy/3L607D10Y7nGU?=
- =?us-ascii?Q?cngZicuKnPp3V+WXVibxdr8wByXJoHVskhKtSk8ckZ6fae6JCNjLRJovZB6g?=
- =?us-ascii?Q?pOIsaKUhWO/IsJbwcg7+V5fbcZ67FheOKYQc9MgV38Ycmeow5/6RBSihPz6e?=
- =?us-ascii?Q?BdOoc8FDwjNuQGiYbe8szzLaIDxSG6iD0KrnJA8AYXn/K8jVHeYAk24IXjsA?=
- =?us-ascii?Q?G7Fay1LhkEEkxuYd5VBCz5QIEQ2r+j1pvskdBkTL2XT5rjRwMM/epOZAx1cP?=
- =?us-ascii?Q?W9fa5k6PEdd4wp+qrE7UTuBDgZHULfN1T98OjXHEVvYs9LUFjVK/WIcaP5Yj?=
- =?us-ascii?Q?7gpvAOvfQgfKZIIrlXq+IyVREvYJqG19Hv1TQDL3ZmTuCcYj2IjeTubdei2h?=
- =?us-ascii?Q?iYncvKlH52YSJX64q3NlG3GGGM7miAPY92T8QCY3AAHlJ2WkW0Jsxvzk0lDD?=
- =?us-ascii?Q?WZkJZXMv3wwKOV18oJqjJQT9ulFTRESUIgZuQpFj9EZv4bFyTtPYYtHdpbo9?=
- =?us-ascii?Q?khVgaxq7jOVjIZBvZRWJPM1EHEnVx8YwZ5+lBapxkqTAZKF6GG2qIQFlqcKb?=
- =?us-ascii?Q?h90oeEOB2dRi/VSr14Twm/P+qt9NesBm9V8YuoGjrOnCVeTc2V9lLpa1Y6+B?=
- =?us-ascii?Q?lZJloO2TG84u1dGpPU2DgsEF3GAlWem+s9aO74GybLkbF8DiFjJNufnduOb3?=
- =?us-ascii?Q?qUkK/jvbXyfvVKwGGJS+8KlO/w5xgNgX7b3nB9IbAFA04C5ivyq2lzI8IXjs?=
- =?us-ascii?Q?6AFW5oEuww07m7I3bc0zXuTqAn4GBgT6M7BXvgRBDY77pG7itq8USgqRZOPb?=
- =?us-ascii?Q?FSXWdl0A/9wMlcekFaEN0C2bQZRR259aqcN/wBr7FlZMG7JzZt/tdDmstker?=
- =?us-ascii?Q?8EG71jc=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(52116014)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Rdkkj8vFCLePw24ONDpoor9s4FxWZ6YJ+Q78owe9Z+fbu+upzTCFYULF7ZxC?=
- =?us-ascii?Q?2zlF7lybCyJfYGA4wwAQczVT9EbutSHq6aECHc5F1KiVhWwsU34CFjl/i2Io?=
- =?us-ascii?Q?ISIXG66nLT4twiR2R7q3QjgPM90KjFdd5lFqmmgzNMwl65Ds33BL0O0f7OYV?=
- =?us-ascii?Q?ZQPDMZX13KCJk4/Qn0a/i0jrDkDpDnvxE3tY6aS2uIkAI0HnHjRJC4xMnDS8?=
- =?us-ascii?Q?2n9W41GsX4v0zl3gvRldbrZR6SrjondHsBHcC9RKW2DbgSAug10SwSqNEzpG?=
- =?us-ascii?Q?91qA0y4DlN+m5n3lbWc7osYUD376iyHBm9EZy5h0WUQY3+Jgqd+4c8jpDVjV?=
- =?us-ascii?Q?UWvHJBA0/8CdktWNZPyG65l3ItdyH3rNhAsTQjqtiBOU0YNr3OPwO0Ufy4r/?=
- =?us-ascii?Q?e61L+kvVMqoGI2gQ9MuVx0NBQk/KL7su1uKmXPejek7FeZpwbhHtmmqmQR+0?=
- =?us-ascii?Q?JJG6FkCjXh239GbHPseiRgc/VRKkLuPNTOaYepX737cPA6CNX+RZ+cRFP6kg?=
- =?us-ascii?Q?8seJgmMcxQ8K0p9SN2vIyr1ZU1LY8vgWtdwySPBsyIk/R5N2G4odEWgtZKH7?=
- =?us-ascii?Q?WFOi63E16p2AkYbmN8lJdy9E0pqvl9EKd7r4HTkyqb0SwuelTV6x2rWC/Ftv?=
- =?us-ascii?Q?3T07qbLOyHm0pj408eb8hYL4fmfhygdrfG/XAgLuZQnsHW7DS76LXcFxnh8S?=
- =?us-ascii?Q?FltaGHPN8L1BWpll3K5jmxv7N7YSmO/pE/4z45bEDnxI/W7dbLshaYpUDbGt?=
- =?us-ascii?Q?kY1Neldf1XoNQQNE6Cipf8mTQwV1dU/Qzxf0MdJfvaLGpjQO2NgAxEdz2qpA?=
- =?us-ascii?Q?VzUOdKjTGsrIJMq5pwI3337SS197sQ87WkyNk9JLdvymCUWnh/uARXluIJJB?=
- =?us-ascii?Q?4oyXMR3RuRom8E/Yb8xekJPZ0Rt/F4TaL6A9p41brSNtA3rilvYl35pEsitb?=
- =?us-ascii?Q?xqt9r93ERzMcqsK7WP/ANYQuIvDMn3o8VxmWzIVvV0ttmD2hx8L393iNBGnI?=
- =?us-ascii?Q?tpwJhQ8gcdfUSICXe6y9QFjFmKFsNVRnuEI8t/xntTse12VYC/no5TYXUr6D?=
- =?us-ascii?Q?1TqdjWPVl06LQEic0gk0ZiEnnX3e+/rdfX4per4NVjFnKboJ526jTxAbNQfp?=
- =?us-ascii?Q?YP05QIT2x1voHrpAu/AzcJMqmvY9VHnllH0UhLuhIZQOw8dYKuyDbD/9ZzSZ?=
- =?us-ascii?Q?74680lELXDSMnroejwvddd8QTfLt7x3NM1fKAMaXHE8QGl+ZfNvW4CDueK1p?=
- =?us-ascii?Q?SLVuIgSjNeLy8jn2AIgLK4PKj/vqvghpElOdST3CRJnZsg0WI17vuiKb8cP/?=
- =?us-ascii?Q?hui+OWQsoM/ud9frGuOwrhZjU02btofnOqOicd3P5jZ8Aad49e/PbQ1jop4i?=
- =?us-ascii?Q?9cx0YfUxNnG7RGMkPbCihJqwFdy0wRklH+BVi6ZocdmzcKAnGWnq7jkF8/tu?=
- =?us-ascii?Q?q+ojzgYXqKc/b6DOBisZyD/TzRqnkXltn7hbtZ9su338a3hCj2XTeXYPT0Wv?=
- =?us-ascii?Q?DhTlz3sggJ1GAGNvSQplNzo4jgodjPb79AuwGNYr4OwWX/VNTWtzBMbYdhl8?=
- =?us-ascii?Q?5PFrBFijV7Kemuk5pHY=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 543a1d2f-8f59-4285-1155-08dd065388cb
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Nov 2024 15:30:00.5170
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: iOuy+T1VOe00gfs/DVQ1Gs4wmtRyD44wWpeBTpL4ZMl/ZQuTq7reEuwGXd5gIWCvSAT3cSvvvKWV0NyUxaetrw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR04MB7742
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 7bit
 
-From: Carlos Song <carlos.song@nxp.com>
+Jakub Kicinski wrote:
+> On Wed, 13 Nov 2024 16:24:23 +0100 Alexander Lobakin wrote:
+> > Part III does the following:
+> > * does some cleanups with marking read-only bpf_prog and xdp_buff
+> >   arguments const for some generic functions;
+> > * allows attaching already registered XDP memory model to Rxq info;
+> > * allows mixing pages from several Page Pools within one XDP frame;
+> > * optimizes &xdp_frame structure and removes no-more-used field;
+> > * adds generic functions to build skbs from xdp_buffs (regular and
+> >   XSk) and attach frags to xdp_buffs (regular and XSk);
+> > * adds helper to optimize XSk xmit in drivers;
+> > * extends libeth Rx to support XDP requirements (headroom etc.) on Rx;
+> > * adds libeth_xdp -- libeth module with common XDP and XSk routines.
+> 
+> This clearly could be multiple series, please don't go over the limit.
 
-The fxas21002c_trigger_handler() may fail to acquire sample data because
-the runtime PM enters the autosuspend state and sensor can not return
-sample data in standby mode..
+Targeting different subsystems and thus reviewers. The XDP, page_pool
+and AF_XDP changes might move faster on their own.
 
-Resume the sensor before reading the sample data into the buffer within the
-trigger handler. After the data is read, place the sensor back into the
-autosuspend state.
+If pulling those out into separate series, that also allows splitting
+up the last patch. That weighs in at 3481 LoC, out of 4400 for the
+series.
 
-Fixes: a0701b6263ae ("iio: gyro: add core driver for fxas21002c")
-Signed-off-by: Carlos Song <carlos.song@nxp.com>
-Signed-off-by: Frank Li <Frank.Li@nxp.com>
----
- drivers/iio/gyro/fxas21002c_core.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+The first 3 patches are not essential to IDFP XDP + AF_XDP either.
+The IDPF feature does not have to not depend on them.
 
-diff --git a/drivers/iio/gyro/fxas21002c_core.c b/drivers/iio/gyro/fxas21002c_core.c
-index 688966129f704..50b908b2419be 100644
---- a/drivers/iio/gyro/fxas21002c_core.c
-+++ b/drivers/iio/gyro/fxas21002c_core.c
-@@ -730,14 +730,21 @@ static irqreturn_t fxas21002c_trigger_handler(int irq, void *p)
- 	int ret;
- 
- 	mutex_lock(&data->lock);
-+	ret = fxas21002c_pm_get(data);
-+	if (ret < 0)
-+		goto out_unlock;
-+
- 	ret = regmap_bulk_read(data->regmap, FXAS21002C_REG_OUT_X_MSB,
- 			       data->buffer, CHANNEL_SCAN_MAX * sizeof(s16));
- 	if (ret < 0)
--		goto out_unlock;
-+		goto out_pm_put;
- 
- 	iio_push_to_buffers_with_timestamp(indio_dev, data->buffer,
- 					   data->timestamp);
- 
-+out_pm_put:
-+	fxas21002c_pm_put(data);
-+
- out_unlock:
- 	mutex_unlock(&data->lock);
- 
--- 
-2.34.1
-
+Does not matter for upstream, but for the purpose of backporting this
+to distro kernels, it helps if the driver feature minimizes dependency
+on core kernel API changes. If patch 19 can be made to work without
+some of the changes in 1..18, that makes it more robust from that PoV.
 
