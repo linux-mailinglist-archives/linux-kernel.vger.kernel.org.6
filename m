@@ -1,136 +1,88 @@
-Return-Path: <linux-kernel+bounces-411876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 577059D00AB
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 20:25:32 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EEE19D00AC
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 20:26:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 168D92876C9
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 19:25:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B7548B251C3
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 19:26:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38EC11AAE33;
-	Sat, 16 Nov 2024 19:25:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFFB01990A2;
+	Sat, 16 Nov 2024 19:26:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="pQpo47wX"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RChUPxFQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46CB8191F7A
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 19:24:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A5F316419;
+	Sat, 16 Nov 2024 19:26:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731785099; cv=none; b=QoGD1w2kfioJYintH9mVTFbMpsEp2AkMCfoeunyz5oJrp4QfOiZu8jeY2MdBNCW7N+vmAozHWuqazHN5qiJ2m2qmdd+hv4yWqXKmRZEJ00mIkwRDa6XzO499Q8UcRVMYp6b24uIW7Xdjn0p+EAos4awur9Z63xCtFJIrUv5+nQQ=
+	t=1731785161; cv=none; b=oN4o/c6ax7u0emkbZ9jdfgXASngoppHYCDbpmjDBM34aqnl3lPDmW7j5d/wyMhJeloT7LRzNQ4k42dPXicRh4ilm92Z7QG9Zx6eAGND37xZec+5ZT7n6xpXN7WBVe2JOiXys8RYKw4ZyaEQT09ymUCFqb7K7W6JIvC16pvoJfyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731785099; c=relaxed/simple;
-	bh=XajJ7P8F2bVIM3HEVhGPIKHiQNp5ggNKVqY/VX2leIc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PA87O3s52NuYVtkcclBT3ApkD02ZoJi21YLFeqmAOFsuAzPXbx0u60MYg34jAqEeAZLpVqOceSTJIN5AzUsmwgyJHD+vuw7v5QXuuKocMLSBkce7N6DAGSr1uHgjuiI9bs2zMjvcq6xUbC3GxAwcPeLMobKX/Iv8ZQ7YaaYc82w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=pQpo47wX; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AGHTUjs023793;
-	Sat, 16 Nov 2024 19:24:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=VrXm4CcyPZMofJB5r
-	tl6eM3KG+92o/0fEeQSzM6etFs=; b=pQpo47wXALyEOOOKSd7JCZodJRCH1EJKB
-	Pozagr59R9uczuih6FsJg3w/GGg38Y3YSY4TSgHseUlDsynzPMnBhUKwBaHqFnYA
-	N4OWbLgHJN19aS90WVBDDb+KgnhRCPK2OZAA48oDFeP5NIzKqeGEFPfZjkByZl+R
-	UVWsxSc/HlcMYwmF7ErNBo2zBQG9smUxPxM/9UluvvFqD4GvngfV/5UaYI8dgbZk
-	BLpp6MUz16H/Ord4ajOEi+aTj2U4g3B/9oqLQ/cGJtWWYq/1F/ifNBbCqNKwfSWj
-	TNP9PUxtLcD3ee64RaPw+o87QArPGRO5PODSeDuJFo+dQ7OxesrDg==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42xyu18ag9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 16 Nov 2024 19:24:34 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4AGJK7ZL032457;
-	Sat, 16 Nov 2024 19:24:33 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42xyu18ag7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 16 Nov 2024 19:24:33 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AGHwjVa008392;
-	Sat, 16 Nov 2024 19:24:32 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42tjf0y5hc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 16 Nov 2024 19:24:32 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4AGJOTmb53412138
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sat, 16 Nov 2024 19:24:29 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 03D3520043;
-	Sat, 16 Nov 2024 19:24:29 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id BAC4120040;
-	Sat, 16 Nov 2024 19:24:26 +0000 (GMT)
-Received: from li-7bb28a4c-2dab-11b2-a85c-887b5c60d769.ibm.com.com (unknown [9.124.220.93])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Sat, 16 Nov 2024 19:24:26 +0000 (GMT)
-From: Shrikanth Hegde <sshegde@linux.ibm.com>
-To: mpe@ellerman.id.au, linuxppc-dev@lists.ozlabs.org
-Cc: sshegde@linux.ibm.com, npiggin@gmail.com, christophe.leroy@csgroup.eu,
-        maddy@linux.ibm.com, bigeasy@linutronix.de, ankur.a.arora@oracle.com,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] powerpc: Large user copy aware of full:rt:lazy preemption
-Date: Sun, 17 Nov 2024 00:53:06 +0530
-Message-ID: <20241116192306.88217-3-sshegde@linux.ibm.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20241116192306.88217-1-sshegde@linux.ibm.com>
-References: <20241116192306.88217-1-sshegde@linux.ibm.com>
+	s=arc-20240116; t=1731785161; c=relaxed/simple;
+	bh=kSAxhjtR5pLE+SU6IJ1SezBvqEgOiWHg3DExa2hKbCc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EBvpJo6bXPWpUUJdqK4gAgQwbZu31F+6KthWwDkW2xQ81SkwGDRvov/kbWIm8x28+VBuJPkjlMXJ5gavaN+m3kB6fT6ONvkiyruYiREzQSHDsDyJ9cKooUBrhkpPFxdbIZ++R4EXoFI/El8dTsuywhdwAAUvWYSu00xZ2WF7cUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RChUPxFQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59443C4CEC3;
+	Sat, 16 Nov 2024 19:26:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731785160;
+	bh=kSAxhjtR5pLE+SU6IJ1SezBvqEgOiWHg3DExa2hKbCc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RChUPxFQCcwyp5VevaIDow7tS+NvmwA8mCjwsxL6iFfkRTpmFNvhjHZ3UgBVOmoUn
+	 eyFHRknlHrNSVcur0nFAOOB6HPy4foO7XDRDSQKhgyHlFQLl9zxJrmn7z2kazf2Vuw
+	 8aoekDN5sKqOYrkLksznA/BXB7paN3Rus6UnXIhgNQJL0IHOSn22J+L9uawgcDrQBJ
+	 voJjzfzSnIT+Lpa6Wxdv9JX129BvtsdIifKe3eAf8IE3iGglLs8ihdlKVus/EFbJp5
+	 zjNgFHw9mWZk7CB2IHfftxH6LoL/MAF6BQUwGHVaTaIIqp76IJFYEDT8LLH8KS/7H9
+	 P97SsgLIb4ukg==
+Date: Sat, 16 Nov 2024 16:25:56 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: linux@treblig.org, namhyung@kernel.org, peterz@infradead.org,
+	mingo@redhat.com, mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	adrian.hunter@intel.com, kan.liang@linux.intel.com,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] perf util: Remove kernel version deadcode
+Message-ID: <ZzjxxCnicVIwAF5N@x1>
+References: <20241116155850.113129-1-linux@treblig.org>
+ <CAP-5=fXqig=qHAa26d5-8pHPCtS0ZyCNs4FJGr4c4BSjFe+-eg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: EdNCyaoVO74elOKg6CZ6IappUiebcywk
-X-Proofpoint-ORIG-GUID: -mJAzlN_T8nOW_D2ZgQuWCuNhBTMAScI
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- lowpriorityscore=0 priorityscore=1501 suspectscore=0 impostorscore=0
- bulkscore=0 spamscore=0 mlxlogscore=999 adultscore=0 mlxscore=0
- clxscore=1015 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411160165
+In-Reply-To: <CAP-5=fXqig=qHAa26d5-8pHPCtS0ZyCNs4FJGr4c4BSjFe+-eg@mail.gmail.com>
 
-Large user copy_to/from (more than 16 bytes) uses vmx instructions to 
-speed things up. Once the copy is done, it makes sense to try schedule 
-as soon as possible for preemptible kernels. So do this for 
-preempt=full/lazy and rt kernel. 
+On Sat, Nov 16, 2024 at 10:37:32AM -0800, Ian Rogers wrote:
+> On Sat, Nov 16, 2024 at 7:58 AM <linux@treblig.org> wrote:
+> > From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> >
+> > fetch_kernel_version() has been unused since Ian's 2013
 
-Not checking for lazy bit here, since it could lead to unnecessary 
-context switches.
+                                                       2023
 
-Suggested-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Signed-off-by: Shrikanth Hegde <sshegde@linux.ibm.com>
----
- arch/powerpc/lib/vmx-helper.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> > commit 3d6dfae88917 ("perf parse-events: Remove BPF event support")
+> >
+> > Remove it, and it's helpers.
+> > I noticed there are a bunch of kernel-version macros that are also
+> > unused nearby.
+> > Also remove them.
+> >
+> > Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> 
+> Reviewed-by: Ian Rogers <irogers@google.com>
 
-diff --git a/arch/powerpc/lib/vmx-helper.c b/arch/powerpc/lib/vmx-helper.c
-index d491da8d1838..58ed6bd613a6 100644
---- a/arch/powerpc/lib/vmx-helper.c
-+++ b/arch/powerpc/lib/vmx-helper.c
-@@ -45,7 +45,7 @@ int exit_vmx_usercopy(void)
- 	 * set and we are preemptible. The hack here is to schedule a
- 	 * decrementer to fire here and reschedule for us if necessary.
- 	 */
--	if (IS_ENABLED(CONFIG_PREEMPT) && need_resched())
-+	if (IS_ENABLED(CONFIG_PREEMPTION) && need_resched())
- 		set_dec(1);
- 	return 0;
- }
--- 
-2.43.5
+Thanks, applied to perf-tools-next,
 
+- Arnaldo
 
