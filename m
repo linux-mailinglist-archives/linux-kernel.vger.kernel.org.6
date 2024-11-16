@@ -1,131 +1,176 @@
-Return-Path: <linux-kernel+bounces-411932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AF459D0179
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 00:36:13 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57B399D017B
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 00:40:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E6215B249FA
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 23:36:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB07CB225A3
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 23:40:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B35AC1AA7AF;
-	Sat, 16 Nov 2024 23:36:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="l2H8JTly"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2A2D1ABEA5;
+	Sat, 16 Nov 2024 23:40:31 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC11138DE1;
-	Sat, 16 Nov 2024 23:36:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 059E2193079
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 23:40:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731800162; cv=none; b=OeM0p8UU+BuLgbY26VRMScVXiewa0Os6GvcFzL3K4NH4c1Nqh0V0NXwXttwtDPPiMRN1wGUYFpVPO6uU9GLgDEvFAUR2bMoPHWHQhL7WZGDnhWfsm+EkMi+IIUQP/ShW+QYgY9FmacAg6YgLRpLYvL45y4jkTK8lbNhEB2Zkdz8=
+	t=1731800431; cv=none; b=pvieOyy82701yc7fPgMmqvsXvmU2cIepwKtIHUjxL2VEys3/EC0JxB3cCStEtkNI8yVGd0Kpu5Iya89XoMe65yx1CMFgK9yDGN8FpLQ8G8aVkg5CmREX7UYS0Tf10WtkuIEr5P7dKrAhRkKXdL2UcPZS022Pri1lky/4pnF4uMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731800162; c=relaxed/simple;
-	bh=KgchrBbEjJ6FmtT/OHxHi3NDIfi1tuion/rr6Heara8=;
-	h=Date:From:To:Cc:Subject:Message-Id:Mime-Version:Content-Type; b=YVCv40rtnJGzMnLbQQZURCJGEu8Aiu8uEZaWhTNpm0I7EhGmt9t5jn8pdldG3xk3IGXQDd9zE6rjOznNdbuQFpTIwjoKmVqGu4JeAS4IaWVdEtanSVxlUxyH8siYirkNsrgHaksDwTJSFVcZQShh84VbsBoTwpuQCM845oQblkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=l2H8JTly; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C866BC4CEC3;
-	Sat, 16 Nov 2024 23:35:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1731800161;
-	bh=KgchrBbEjJ6FmtT/OHxHi3NDIfi1tuion/rr6Heara8=;
-	h=Date:From:To:Cc:Subject:From;
-	b=l2H8JTlyMuxgmdDs/F3QBRaeepMAXlVQYaAPM0nVzQf09ktLewQEppHTKi6bz15Xp
-	 P4TgO4XmqufG3yoUeL21C8mTR9mKZgtq0TiUenFsx3yXKgulnJ/oSfpZU6m55CW7EC
-	 IH9DizWHQ8yw+oQJW+e5G2LeP7sKinbnepcWaKXw=
-Date: Sat, 16 Nov 2024 15:35:56 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-mm@kvack.org, mm-commits@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: [GIT PULL] hotfixes for 6.12
-Message-Id: <20241116153556.767f1aeed6ac628a09efe346@linux-foundation.org>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1731800431; c=relaxed/simple;
+	bh=0ox60d0tY9xN9C+7OwmiAYuJ18xlV8NQVygfCBYJ5oI=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=R0yiGxWqAImVi0fJQXCNPQ0RDJpEaA9+ZyACh5wLujpWujLz8f8/lLKR+iX8yf7KN36o5YoIpwA/s5byTSsDuPSjJT6H3JHSxjr1/2Yvi5v5NxURpPcKs6eBkaj3+kDCj6HwqUoC4w5TNWFlmDTpZjheHaZkJcmuPVdIOfCxUUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-83abf9b6bfaso69466439f.2
+        for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 15:40:29 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731800429; x=1732405229;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=H/O2GpCEAvsHvmB5TwXYPuJj++JFWLv4bXVKE8bL8gQ=;
+        b=r6cjX7kgprfVabJC1LUZ+r7nbWRY9GidA5vBTxB0ZlZvzLCurtWH5j5ZttOQHCU9qF
+         UMHNBsZuTsY1Lxj2/2KZPWTRwZHPJgJrOyXglVkIBUm2ZjU2c4Xv3JUD/BQV8MEHu9bR
+         QO1enHAndz1vkIojYitApXxopZJTC72LvQLWkWkrVxhUqvUHJuNqt6x5U5MHx5WisWPI
+         kDg7qoHleCMQLSs51HeTNy5ZgJ/EGNeDTKxStMTanBDCA7Whmur+Zji3vnLFl1RsnuEF
+         V0PWl3KEI11ulfedtJnvS1hTV77M6QCPJnE/vyREPyVoI+RU8mmi0OMok/u/GAQqmQxY
+         uECQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV2YqJXp/hYZQ4Ok+WtVycBusUuNk0jhMl8aeXrvKcBW5A/q6ea3skY8+pbrJFvVUvan7DR3YshxFgZXKY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YydwvRiLOZcNPtaJa/ZvUwNCGdNXZcCKtTrWaZ58Df0e3KmYs/W
+	liYPKZeqnynQJQBo2+UsTa/ObO48siYoH1dRjoseqzZ+9tV/O/qUw9n7WFZbTUYLnQrTlumeR5P
+	munsl6lhplQHHfitlyBvd5pKig/4cFuuO2b3d+0OCYZFuBY0F5HjariA=
+X-Google-Smtp-Source: AGHT+IGqhH1oUAVO2vqm+OC3dAw54MV8T875v0LgzsjFxJO3o2Zu7R5t7S7DD8Ku9IDW2FFNP8xtREJWuz2DI7b1JDkykMJcVbUK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:b21:b0:3a5:e1f5:1572 with SMTP id
+ e9e14a558f8ab-3a7480d4ademr53874245ab.22.1731800429129; Sat, 16 Nov 2024
+ 15:40:29 -0800 (PST)
+Date: Sat, 16 Nov 2024 15:40:29 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67392d6d.050a0220.e1c64.000a.GAE@google.com>
+Subject: [syzbot] [fs?] BUG: unable to handle kernel NULL pointer dereference
+ in filemap_read_folio (4)
+From: syzbot <syzbot+09b7d050e4806540153d@syzkaller.appspotmail.com>
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    3022e9d00ebe Merge tag 'sched_ext-for-6.12-rc7-fixes' of g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=119f8ce8580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=327b6119dd928cbc
+dashboard link: https://syzkaller.appspot.com/bug?extid=09b7d050e4806540153d
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1656a4c0580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=159f8ce8580000
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-3022e9d0.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/6539389f3983/vmlinux-3022e9d0.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/9ee2dbf68ed6/bzImage-3022e9d0.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+09b7d050e4806540153d@syzkaller.appspotmail.com
+
+BUG: kernel NULL pointer dereference, address: 0000000000000000
+#PF: supervisor instruction fetch in kernel mode
+#PF: error_code(0x0010) - not-present page
+PGD 32263067 P4D 32263067 PUD 32264067 PMD 0 
+Oops: Oops: 0010 [#1] PREEMPT SMP KASAN NOPTI
+CPU: 3 UID: 0 PID: 5935 Comm: syz-executor262 Not tainted 6.12.0-rc7-syzkaller-00012-g3022e9d00ebe #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:0x0
+Code: Unable to access opcode bytes at 0xffffffffffffffd6.
+RSP: 0018:ffffc900036a79c8 EFLAGS: 00010293
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffffff81c26c1f
+RDX: ffff8880289da440 RSI: ffffea0000e995c0 RDI: ffff888029a421c0
+RBP: ffffea0000e995c0 R08: 0000000000000007 R09: 0000000000000000
+R10: 0000000000000000 R11: ffffffff961d8908 R12: 1ffff920006d4f3a
+R13: ffff888029a421c0 R14: 0000000000000000 R15: dffffc0000000000
+FS:  000055557e035380(0000) GS:ffff88806a900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffffffffffffd6 CR3: 0000000031818000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ filemap_read_folio+0xc6/0x2a0 mm/filemap.c:2367
+ do_read_cache_folio+0x263/0x5c0 mm/filemap.c:3825
+ freader_get_folio+0x337/0x8e0 lib/buildid.c:77
+ freader_fetch+0xc2/0x5f0 lib/buildid.c:120
+ __build_id_parse.isra.0+0xed/0x7a0 lib/buildid.c:305
+ do_procmap_query+0xd62/0x1030 fs/proc/task_mmu.c:534
+ procfs_procmap_ioctl+0x7d/0xb0 fs/proc/task_mmu.c:613
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:907 [inline]
+ __se_sys_ioctl fs/ioctl.c:893 [inline]
+ __x64_sys_ioctl+0x18f/0x220 fs/ioctl.c:893
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f5f4c4436e9
+Code: 48 83 c4 28 c3 e8 37 17 00 00 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffde11efd68 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007ffde11efd70 RCX: 00007f5f4c4436e9
+RDX: 0000000020000180 RSI: 00000000c0686611 RDI: 0000000000000004
+RBP: 00007f5f4c4b6610 R08: 0000000000000000 R09: 65732f636f72702f
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
+R13: 00007ffde11effa8 R14: 0000000000000001 R15: 0000000000000001
+ </TASK>
+Modules linked in:
+CR2: 0000000000000000
+---[ end trace 0000000000000000 ]---
+RIP: 0010:0x0
+Code: Unable to access opcode bytes at 0xffffffffffffffd6.
+RSP: 0018:ffffc900036a79c8 EFLAGS: 00010293
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffffff81c26c1f
+RDX: ffff8880289da440 RSI: ffffea0000e995c0 RDI: ffff888029a421c0
+RBP: ffffea0000e995c0 R08: 0000000000000007 R09: 0000000000000000
+R10: 0000000000000000 R11: ffffffff961d8908 R12: 1ffff920006d4f3a
+R13: ffff888029a421c0 R14: 0000000000000000 R15: dffffc0000000000
+FS:  000055557e035380(0000) GS:ffff88806a900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffffffffffffd6 CR3: 0000000031818000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
 
-Linus, please merge this batch of hotfixes, thanks.
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-The following changes since commit dcf32ea7ecede94796fb30231b3969d7c838374c:
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-  mm: swapfile: fix cluster reclaim work crash on rotational devices (2024-=
-11-12 16:01:36 -0800)
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
-are available in the Git repository at:
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm tags/mm-hotfixes-st=
-able-2024-11-16-15-33
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
-for you to fetch changes up to d1aa0c04294e29883d65eac6c2f72fe95cc7c049:
-
-  mm: revert "mm: shmem: fix data-race in shmem_getattr()" (2024-11-16 15:3=
-0:32 -0800)
-
-----------------------------------------------------------------
-10 hotfixes, 7 of which are cc:stable.  All singletons, please see the
-changelogs for details.
-
-----------------------------------------------------------------
-Andrew Morton (1):
-      mm: revert "mm: shmem: fix data-race in shmem_getattr()"
-
-Dan Carpenter (1):
-      fs/proc/task_mmu: prevent integer overflow in pagemap_scan_get_args()
-
-Dave Vasilevsky (1):
-      crash, powerpc: default to CRASH_DUMP=3Dn on PPC_BOOK3S_32
-
-Dmitry Antipov (1):
-      ocfs2: uncache inode which has failed entering the group
-
-Jann Horn (1):
-      mm/mremap: fix address wraparound in move_page_tables()
-
-Jinjiang Tu (1):
-      mm: fix NULL pointer dereference in alloc_pages_bulk_noprof
-
-Kairui Song (1):
-      mm, swap: fix allocation and scanning race with swapoff
-
-Motiejus Jak=C5`tys (1):
-      tools/mm: fix compile error
-
-Qun-Wei Lin (1):
-      sched/task_stack: fix object_is_on_stack() for KASAN tagged pointers
-
-Yafang Shao (1):
-      mm, doc: update read_ahead_kb for MADV_HUGEPAGE
-
- Documentation/ABI/stable/sysfs-block |  3 +++
- arch/arm/Kconfig                     |  3 +++
- arch/arm64/Kconfig                   |  3 +++
- arch/loongarch/Kconfig               |  3 +++
- arch/mips/Kconfig                    |  3 +++
- arch/powerpc/Kconfig                 |  4 ++++
- arch/riscv/Kconfig                   |  3 +++
- arch/s390/Kconfig                    |  3 +++
- arch/sh/Kconfig                      |  3 +++
- arch/x86/Kconfig                     |  3 +++
- fs/ocfs2/resize.c                    |  2 ++
- fs/proc/task_mmu.c                   |  4 +++-
- include/linux/sched/task_stack.h     |  2 ++
- kernel/Kconfig.kexec                 |  2 +-
- mm/mremap.c                          |  2 +-
- mm/page_alloc.c                      |  3 ++-
- mm/shmem.c                           |  2 --
- mm/swapfile.c                        | 22 +++++++++++++++++++---
- tools/mm/page-types.c                |  2 +-
- 19 files changed, 62 insertions(+), 10 deletions(-)
-
+If you want to undo deduplication, reply with:
+#syz undup
 
