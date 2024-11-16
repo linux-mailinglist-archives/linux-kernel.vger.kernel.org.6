@@ -1,141 +1,117 @@
-Return-Path: <linux-kernel+bounces-411904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F3569D00FD
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 22:33:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D9A39D0106
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 22:38:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF82D1F2355B
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 21:33:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FCF71F23757
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 21:38:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F222198E90;
-	Sat, 16 Nov 2024 21:33:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="rA3t9YQq"
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB64319D096;
+	Sat, 16 Nov 2024 21:38:50 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ACE115E97
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 21:33:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A43CA15E97
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 21:38:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731792783; cv=none; b=ZsQwdy617PpAPGxrBTOphRI3N2GCEQIF4QM92kKorIpb9HN21Mf0br1kZ7IahiB3SkQXRJI4wXrNsH0qgmRjHJhtBH+1QPmkY7yWjD9jIYu7gTJCGILu5IVF7YHvgQIAROUG+QzoPYeWwxi9z79mcECsoqYt0fD5s1kb7sQki/k=
+	t=1731793130; cv=none; b=Asq8TstnfBlYcRXte+R2Fzy/CIRbfjv24O2KyjRS3Vk7bu7F9epesoenH0Ac3mKPgVqSBu87kgBT9S0+q5pWJjspzYBWj9uo1eorqZT4CK4lsmambYFiy8w2r9WpEez9pxI2BJbwQaOjLDUbnfqEjaooom8dJb+OGfLeRJjf3ZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731792783; c=relaxed/simple;
-	bh=dEUqjXsUzaxQfHkbfghKnXfI2v3l1ipW3W1IFWCd5gY=;
-	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
-	 To:Content-Type; b=p2/GccoL3v5bdhSghIWqStC91pnpLrG2iOSxLXLoI19bRpv/wTDPNxBuas5DE4O4m0+TX+wuxUHpMnxqkc/DfFlBYJkn56pSn1GuExf828anNSYJ6Z9PKdcG63sfc/rp+y9zO2OD8KoWRtc6YMXQA59PxsbuCmDoEdnZf7239hE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=rA3t9YQq; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-oa1-f71.google.com (mail-oa1-f71.google.com [209.85.160.71])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 2D2743F2C0
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 21:32:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1731792773;
-	bh=fmAemAqFyetLPXFFHnZ9TzZGuiy7HXnbjCZZxtYlmL8=;
-	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
-	 To:Content-Type;
-	b=rA3t9YQqBDA0nvLeR08auH/+rhU5LdKt6PYVlqAZPYM9P32u76ANljcBGzNiY/AAH
-	 W4SuXhCx8t0snzdWjIxPluIHNmPDPWzbQ03vKEgEnOmOt8EeN09p33DDjWTSwKyqG5
-	 qmB6maXOA2yDL40ENloQFUT4pD17/+cCbulqgNgVjXbKzjRvKM94io9bPARVfjPj+P
-	 Lj+bQ9hYG97uuG2F9LNbOyaMC+19wPzrwY4n6F36FOlMc4AAuRmZU8i7M6ZveRcBO4
-	 7U255Z6y4KQbe40QgLcyjjpEizjyW5gGwt+dBTXD/EykI2reNrukEqbbrgW+5cx2pQ
-	 Ttg70AXxvzZvQ==
-Received: by mail-oa1-f71.google.com with SMTP id 586e51a60fabf-2964720a511so673814fac.3
-        for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 13:32:53 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731792771; x=1732397571;
-        h=to:subject:message-id:date:mime-version:references:in-reply-to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fmAemAqFyetLPXFFHnZ9TzZGuiy7HXnbjCZZxtYlmL8=;
-        b=F14gcr7I+a1sjG4P9tiXqxLzH4+QQV5bScybaVeWgr9s1gw6OUNi09MPX/A/dFg6QX
-         K6Kmp7+y+5hTuIvS9WpNLVd54rGahjBmhwXJtZF+YVzUT+5QMGQa/l5UQDjO0gEXD0Eq
-         c3xa0U5HW+KMW/Y8QmY3wEEMU7m922QuJrHNvynk9srF0aFgz9cKQ0MjLlJc6NjkGyZI
-         n3+PTkOXkD8YQtzcc4WZfhiksMjWGlCgCe1p/uuXpINZO5RR4elUTATjJTN3NPy3rM8L
-         8WB/Go5hYOPRbf+aKIbnITJqT8hq18jUakS+QghhHas+L6GtB2PxdD7EzZlt1x9gvnLR
-         5Z5w==
-X-Forwarded-Encrypted: i=1; AJvYcCXjtWUOf6W9g3+DBCyYvPkWh1fpYWNu/hfMAOhN6VJl3fHSidxyW9EeqDuv9zRtrq+9LIMOeIHYjBJg4VU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yztx/Zt5HLmeFP9kdHZ1dnbwO8BRZUnSsDv8x62VbTATa3/serR
-	cGZynrbSjbpJKOq0Opz/6syzWgefGMWOL1pgZHpeo6lbWHyEnrC2PdUD9tmJfP3AWM8j3dwmBBx
-	k4um4GXjxEXeffGAFdXbRpEoy0K0Dm6y/kRBQkhrRtwelj24prch4NUi5S4x3WHl1AFRUWqWPYB
-	QXIvkmPyV0jRdgiciKC19xCQh2P/oggtx3pAkOIo18KhkfIlZlg/+9
-X-Received: by 2002:a05:6870:75c8:b0:254:affe:5a05 with SMTP id 586e51a60fabf-2962dedb297mr6559784fac.21.1731792771130;
-        Sat, 16 Nov 2024 13:32:51 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IELtO4V2RHfs6Yj+eIbaX82LviojGiiluYE09Wmg5o0ei8JG6pU9J+XS5YGYrQ2jHlSSLFj13Doph221IgSbgk=
-X-Received: by 2002:a05:6870:75c8:b0:254:affe:5a05 with SMTP id
- 586e51a60fabf-2962dedb297mr6559770fac.21.1731792770837; Sat, 16 Nov 2024
- 13:32:50 -0800 (PST)
-Received: from 348282803490 named unknown by gmailapi.google.com with
- HTTPREST; Sat, 16 Nov 2024 16:32:50 -0500
-From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-In-Reply-To: <20241113184333.829716-1-drew@pdp7.com>
-References: <20241113184333.829716-1-drew@pdp7.com>
+	s=arc-20240116; t=1731793130; c=relaxed/simple;
+	bh=Hc2XGFjuXeJ15jPzV6P+/r18QrW8HZSQd8bGKAujwus=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=PfcZuPPWDcwk1A8lzheMw3GxX3lCbISOOfe0iRPH3ttl8S6Zb6WCQMHfEEuf9IYNQlZYl/AAJvgOdT2VadQZ3cENdj4zxC1GSpTx149VrvA33a6AXNw7FgcYYwlLxNOaeAUlBnUxd7mLwmVQ79DRPlPeWsh6VUkKctG0wP85160=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-141-h79k7KFOPgSvZ4dAolKOUQ-1; Sat, 16 Nov 2024 21:38:36 +0000
+X-MC-Unique: h79k7KFOPgSvZ4dAolKOUQ-1
+X-Mimecast-MFC-AGG-ID: h79k7KFOPgSvZ4dAolKOUQ
+Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
+ (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sat, 16 Nov
+ 2024 21:38:35 +0000
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Sat, 16 Nov 2024 21:38:35 +0000
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Linus Torvalds' <torvalds@linux-foundation.org>, Josh Poimboeuf
+	<jpoimboe@kernel.org>
+CC: "x86@kernel.org" <x86@kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+	Borislav Petkov <bp@alien8.de>, Peter Zijlstra <peterz@infradead.org>, "Pawan
+ Gupta" <pawan.kumar.gupta@linux.intel.com>, Waiman Long <longman@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, Ingo Molnar <mingo@redhat.com>,
+	Michael Ellerman <mpe@ellerman.id.au>, "linuxppc-dev@lists.ozlabs.org"
+	<linuxppc-dev@lists.ozlabs.org>, Andrew Cooper <andrew.cooper3@citrix.com>,
+	Mark Rutland <mark.rutland@arm.com>, "Kirill A . Shutemov"
+	<kirill@shutemov.name>
+Subject: RE: [PATCH v3 2/6] x86/uaccess: Avoid barrier_nospec() in 64-bit
+ __get_user()
+Thread-Topic: [PATCH v3 2/6] x86/uaccess: Avoid barrier_nospec() in 64-bit
+ __get_user()
+Thread-Index: AQHbKc6je06svG7vU0mpJNDFnNBsh7Ktq5PQgAuONbKAAUs+QA==
+Date: Sat, 16 Nov 2024 21:38:35 +0000
+Message-ID: <4055e18be7ff4f1f83fb9a4b6a8bc312@AcuMS.aculab.com>
+References: <cover.1730166635.git.jpoimboe@kernel.org>
+ <82cbb9983fef5ecf6f1cb33661e977172d40a7e6.1730166635.git.jpoimboe@kernel.org>
+ <20241029032735.pw3bg64bpneqnfhk@treble.attlocal.net>
+ <76bb85ceeb854e3ab68d87f846515306@AcuMS.aculab.com>
+ <20241115230653.hfvzyf3aqqntgp63@jpoimboe>
+ <CAHk-=wgLCzEwa=S4hZFGeOPjix-1_fDrsqR-QLaBcDM-fgkvhw@mail.gmail.com>
+In-Reply-To: <CAHk-=wgLCzEwa=S4hZFGeOPjix-1_fDrsqR-QLaBcDM-fgkvhw@mail.gmail.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Date: Sat, 16 Nov 2024 16:32:50 -0500
-Message-ID: <CAJM55Z_RchO-Ke1aXXAaB5f-OJEYcHU6n+MVtBTCUSXrHOQp1Q@mail.gmail.com>
-Subject: Re: [PATCH v2] riscv: defconfig: enable pinctrl and dwmac support for TH1520
-To: Drew Fustini <drew@pdp7.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Conor Dooley <conor.dooley@microchip.com>, Inochi Amaoto <inochiama@gmail.com>, 
-	Guo Ren <guoren@kernel.org>, Yangyu Chen <cyy@cyyself.name>, 
-	Sunil V L <sunilvl@ventanamicro.com>, Hal Feng <hal.feng@starfivetech.com>, 
-	Chen Wang <unicorn_wang@outlook.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: Hj-nizpus-nveCwF3X3PaXcJjFhrlEu4K9JiB89Ca7I_1731793115
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 
-Drew Fustini wrote:
-> Enable pinctrl and ethernet dwmac driver for the TH1520 SoC boards like
-> the BeagleV Ahead and the Sipeed LicheePi 4A.
->
-> Signed-off-by: Drew Fustini <drew@pdp7.com>
+RnJvbTogTGludXMgVG9ydmFsZHMNCj4gU2VudDogMTYgTm92ZW1iZXIgMjAyNCAwMToyNw0KPiAN
+Cj4gT24gRnJpLCAxNSBOb3YgMjAyNCBhdCAxNTowNiwgSm9zaCBQb2ltYm9ldWYgPGpwb2ltYm9l
+QGtlcm5lbC5vcmc+IHdyb3RlOg0KPiA+DQo+ID4gSXQncyBzYWQgdGhhdCBfX2dldF91c2VyKCkg
+aXMgbm93IHNsb3dlciB0aGFuIGdldF91c2VyKCkgb24geDg2LCBpdCBraW5kDQo+ID4gb2YgZGVm
+ZWF0cyB0aGUgd2hvbGUgcG9pbnQhDQo+IA0KPiBXZWxsLCBob25lc3RseSwgd2UndmUgYmVlbiB0
+cnlpbmcgdG8gZ2V0IGF3YXkgZnJvbSBfX2dldF91c2VyKCkgYW5kDQo+IF9fcHV0X3VzZXIoKSBm
+b3IgYSBsb25nIGxvbmcgdGltZS4NCj4gDQo+IFdpdGggQ0xBQy9TVEFDLCBpdCdzIGJlZW4gcHJv
+YmFibHkgYSBkZWNhZGUgb3IgdHdvIHNpbmNlIF9fZ2V0X3VzZXIoKQ0KPiBhbmQgZnJpZW5kcyB3
+ZXJlIGFjdHVhbGx5IGEgd29ydGh3aGlsZSBvcHRpbWl6YXRpb24sIHNvIGxldCdzIGp1c3QNCj4g
+c3RyaXZlIHRvIGdldCByaWQgb2YgdGhlIG9uZXMgdGhhdCBtYXR0ZXIuDQoNClRoaW5rcy4uLi4N
+Cg0KSWYgX19nZXRfdXNlcigpIGlzIHRoZSBzYW1lIGFzIGdldF91c2VyKCkgdGhlbiBhbGwgdGhl
+IGFjY2Vzc19vaygpDQpvdXRzaWRlIG9mIGdldC9wdXRfdXNlcigpIGFuZCBjb3B5X3RvL2Zyb21f
+dXNlcigpIGNhbiBiZSByZW1vdmVkDQpiZWNhdXNlIHRoZXkgYXJlIHBvaW50bGVzcyAoYW55b25l
+IHRoYXQgYnJhdmU/KS4NClRoZXJlIGlzIG5vIHBvaW50IG9wdGltaXNpbmcgdGhlIGNvZGUgdG8g
+ZmFzdC1wYXRoIGJhZCB1c2VyIHBvaW50ZXJzLg0KDQo+IFdlIGFscmVhZHkgaGF2ZSB0aGlzIHdp
+dGggdXNlcl9hY2Nlc3NfYmVnaW4oKSArIHVuc2FmZV9nZXRfdXNlcigpLg0KPiBUaGVyZSdzIGFs
+c28gYSB2ZXJzaW9uIHdoaWNoIG1hc2tzIHRoZSBhZGRyZXNzOiBtYXNrZWRfdXNlcl9hY2Nlc3Nf
+YmVnaW4oKS4NCg0KVGhhdCBzb3VuZHMgYXMgdGhvdWdoIGl0IGlzIGJlZ2dpbmcgZm9yIGEgc2lt
+cGxlIHRvIHVzZToNCgltYXNrZWRfYWRkciA9IHVzZXJfYWNjZXNzX2JlZ2luKGFkZHIsIHNpemUs
+IGVycm9yX2xhYmVsKTsNCmFuZA0KCXZhbCA9IHVuc2FmZV9nZXRfdXNlcihtYXNrZWRfYWRkciwg
+ZXJyb3JfbGFiZWwpOw0KZm9ybT8NClByb2JhYmx5IHdpdGggb2JqdG9vbCBjaGVja2luZyB0aGV5
+IGFyZSBhbGwgaW4gYSB2YWxpZCBzZXF1ZW5jZQ0Kd2l0aCBubyBmdW5jdGlvbnMgY2FsbHMgKGV0
+YykuDQoNCklmIGFkZHJlc3MgbWFza2luZyBpc24ndCBuZWVkZWQgKGJ5IGFuIGFyY2hpdGVjdHVy
+ZSkgdGhlIGFkZHJlc3MgY2FuIGJlIGxlZnQNCnVuY2hhbmdlZC4NCg0KQSBxdWljayBncmVwIHNo
+b3dzIGFjY2Vzc19vaygpIGluIDY2IC5jIGFuZCA4IC5oIGZpbGVzIG91dHNpZGUgdGhlIGFyY2gg
+Y29kZS4NCkFuZCA2OSAuYyBmaWxlIGluIGFyY2gsIG1vc3Qgb2YgdGhlIGFyY2ggLmggYXJlIHVh
+Y2Nlc3MuaCBhbmQgZnV0ZXguaC4NCkkgc3VzcGVjdCB0aGUgYXVkaXQgd291bGRuJ3QgdGFsZSB0
+aGF0IGxvbmcuDQpHZXR0aW5nIGFueSBwYXRjaGVzIGFjY2VwdGVkIGlzIGFub3RoZXIgbWF0dGVy
+Lg0KDQoJRGF2aWQNCg0KLQ0KUmVnaXN0ZXJlZCBBZGRyZXNzIExha2VzaWRlLCBCcmFtbGV5IFJv
+YWQsIE1vdW50IEZhcm0sIE1pbHRvbiBLZXluZXMsIE1LMSAxUFQsIFVLDQpSZWdpc3RyYXRpb24g
+Tm86IDEzOTczODYgKFdhbGVzKQ0K
 
-Reviewed-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-
-> ---
-> Changes in v2:
->  - Switch CONFIG_DWMAC_THEAD from built-in to module
->
->
->  arch/riscv/configs/defconfig | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/arch/riscv/configs/defconfig b/arch/riscv/configs/defconfig
-> index b4a37345703e..d26e670404b6 100644
-> --- a/arch/riscv/configs/defconfig
-> +++ b/arch/riscv/configs/defconfig
-> @@ -167,6 +167,7 @@ CONFIG_PINCTRL_SOPHGO_CV1800B=y
->  CONFIG_PINCTRL_SOPHGO_CV1812H=y
->  CONFIG_PINCTRL_SOPHGO_SG2000=y
->  CONFIG_PINCTRL_SOPHGO_SG2002=y
-> +CONFIG_PINCTRL_TH1520=y
->  CONFIG_GPIO_DWAPB=y
->  CONFIG_GPIO_SIFIVE=y
->  CONFIG_POWER_RESET_GPIO_RESTART=y
-> @@ -242,6 +243,7 @@ CONFIG_RTC_DRV_SUN6I=y
->  CONFIG_DMADEVICES=y
->  CONFIG_DMA_SUN6I=m
->  CONFIG_DW_AXI_DMAC=y
-> +CONFIG_DWMAC_THEAD=m
->  CONFIG_VIRTIO_PCI=y
->  CONFIG_VIRTIO_BALLOON=y
->  CONFIG_VIRTIO_INPUT=y
-> --
-> 2.34.1
->
->
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
