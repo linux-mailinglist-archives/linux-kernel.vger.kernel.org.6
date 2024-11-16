@@ -1,131 +1,132 @@
-Return-Path: <linux-kernel+bounces-411873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 511779D00A4
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 20:23:29 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 327359D00AA
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 20:25:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 081CA1F23DE6
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 19:23:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE196B221C1
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 19:25:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 054CB1990D6;
-	Sat, 16 Nov 2024 19:23:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E48F1990A8;
+	Sat, 16 Nov 2024 19:24:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="gdRfOcvT"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="QCuFjyqD"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B999919149F;
-	Sat, 16 Nov 2024 19:23:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F2A3191F7A
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 19:24:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731784998; cv=none; b=qm0rgR8XxyUhgtPbQ4aHga0FoKzZoBjNB+v3XaPyIGstZcGjv3BQimDyAcmNVZXpHl3zOVDoP3Z1h7G9lD+Ja4btD7LxB+7whU3B6Nd7Wopl/DUL942Lhn7Zmw7220sy1ldBdiAKOVLbvHj/+K6F+QuNbHgGc8qPPgFMtGzlGDw=
+	t=1731785095; cv=none; b=ijKy2H74Umipt5NIe64IZSBVk4UuyuOLRf/eVpysSL4fL2ovIw2VsKcfj939LDHdoGTVOBzqkCN2imCHkiDD58BQMfwMgS3LSAGwercreTwCNshmMUBlneEAKD5RMXz69J6NzfWCuHey251eOkL/cl+4KnJoNN7hCCTIDBBFnf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731784998; c=relaxed/simple;
-	bh=yfX/6TZQ1gd9+8AMgBgNPFETIp1Fe4WBrJJhmJztd/I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P1qN3RWW7epoR+V2Q6vRa2nmYbLa4Pm/nwn/m/4RwJbBeowuxkKm+cjzguqrpl3v6X+URPjXM2bqFzCqSQfLFW0RVHVw+I6bD53UQ5XtyEylRM7VO648RGfoiVQ0X9bOJG80DKuEtAHoniNJMsKqe+VuY8OQUKkWsISE2TEQWs8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=gdRfOcvT; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=dn+2cDfRC1yH4NOcw8ysKYN7T3VzTAsD6jJX6tRQuE0=; b=gdRfOcvTKwxKkLKP+bQtMsvxeP
-	Zcxq1PDSbPRXkd6PvRH478+Xa11lrRN3cdrqac8/EN9m0pGru+9CaGqImJwB9y2vem4kTJ9INuRjQ
-	3BNTlCTAlH6WrvWOK3XO5BHaKsjGnmQlg/tFjALWn9OFuc6IOvE4cK8R+h+z/XuTo7NM=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tCONh-00DXYh-Cb; Sat, 16 Nov 2024 20:22:53 +0100
-Date: Sat, 16 Nov 2024 20:22:53 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Parker Newman <parker@finest.io>
-Cc: Paolo Abeni <pabeni@redhat.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>, netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Parker Newman <pnewman@connecttech.com>
-Subject: Re: [PATCH v1 1/1] net: stmmac: dwmac-tegra: Read iommu stream id
- from device tree
-Message-ID: <bb52bdc1-df2e-493d-a58f-df3143715150@lunn.ch>
-References: <cover.1731685185.git.pnewman@connecttech.com>
- <f2a14edb5761d372ec939ccbea4fb8dfd1fdab91.1731685185.git.pnewman@connecttech.com>
- <ed2ec1c2-65c7-4768-99f1-987e5fa39a54@redhat.com>
- <20241115135940.5f898781.parker@finest.io>
+	s=arc-20240116; t=1731785095; c=relaxed/simple;
+	bh=GJlmTT6GyiADI6KBNV1Ur7EasTZjDgutyczRV7Dh5Ws=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TV/gbCOwjtxtzmG2zHqabuT4nWTZgNl0Wx5tSOhC7DekxESWtr4GQPfipq7kpGeDPdbtgrFTMe54nQc6TmR6xZdIC6JzezCvL0XWpVR9O/CeYWM2EV93J2bXvLaBfzfrKl6pznb2AJ4KMG4SpNFi9+izZ5UCNpeF7YbEWgHyU6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=QCuFjyqD; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AGBEpWc021707;
+	Sat, 16 Nov 2024 19:24:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=h0IjdvkGudWwLmIFMN1Q+N9e5ImIB2ZBhoc2dI1xk
+	Wk=; b=QCuFjyqDDnDpgk1hretvgTg44uS1Uw2c0+Oy6DklMbYCsOjKuhP15Vr8g
+	RWNeWG2F94SyDU1CcYhPNjoAQPt4bt3crMDF5/QFMNxVT9Wvc+bAXxki1ZmjqK5Q
+	wkDIXw3cJ2/JocAIJ4HVGVS68311zee083fY0dHxerq7UMhqmAYuCKvHsHpM8Gfl
+	hxoS1Ech7WBwqOoGc7YwBEQrUcMpzWDEOzHoXNuhkYPfDG3anUvWiGYSjpIgxFx2
+	agjeq9rkb7k2qZE+szSNogT22Hvi27/oxeiter9FH3LSsBCg9Grf5cGnCwqpATpl
+	1RP6D73kKXSnv4polmrdjNQDs5p3A==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42xgtstv35-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 16 Nov 2024 19:24:26 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4AGJOQHx016608;
+	Sat, 16 Nov 2024 19:24:26 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42xgtstv33-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 16 Nov 2024 19:24:25 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AG9HEbG002784;
+	Sat, 16 Nov 2024 19:24:25 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 42tms1chfu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 16 Nov 2024 19:24:25 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4AGJOLBV52494642
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sat, 16 Nov 2024 19:24:21 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B3DA62004D;
+	Sat, 16 Nov 2024 19:24:21 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 8CB782004B;
+	Sat, 16 Nov 2024 19:24:19 +0000 (GMT)
+Received: from li-7bb28a4c-2dab-11b2-a85c-887b5c60d769.ibm.com.com (unknown [9.124.220.93])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Sat, 16 Nov 2024 19:24:19 +0000 (GMT)
+From: Shrikanth Hegde <sshegde@linux.ibm.com>
+To: mpe@ellerman.id.au, linuxppc-dev@lists.ozlabs.org
+Cc: sshegde@linux.ibm.com, npiggin@gmail.com, christophe.leroy@csgroup.eu,
+        maddy@linux.ibm.com, bigeasy@linutronix.de, ankur.a.arora@oracle.com,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/2] powerpc: Enable lazy preemption
+Date: Sun, 17 Nov 2024 00:53:04 +0530
+Message-ID: <20241116192306.88217-1-sshegde@linux.ibm.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241115135940.5f898781.parker@finest.io>
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: hyeRfXY9rOGUTA5HTY3yFtEZdbbKeB6q
+X-Proofpoint-ORIG-GUID: XrQIH_H1HhIVinAJbhnWr0I8ujvSlgEd
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 phishscore=0
+ mlxscore=0 malwarescore=0 mlxlogscore=531 adultscore=0 priorityscore=1501
+ bulkscore=0 impostorscore=0 spamscore=0 lowpriorityscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2411160165
 
-On Fri, Nov 15, 2024 at 01:59:40PM -0500, Parker Newman wrote:
-> On Fri, 15 Nov 2024 18:17:07 +0100
-> Paolo Abeni <pabeni@redhat.com> wrote:
-> 
-> > On 11/15/24 17:31, Parker Newman wrote:
-> > > From: Parker Newman <pnewman@connecttech.com>
-> > >
-> > > Read the iommu stream id from device tree rather than hard coding to mgbe0.
-> > > Fixes kernel panics when using mgbe controllers other than mgbe0.
-> >
-> > It's better to include the full Oops backtrace, possibly decoded.
-> >
-> 
-> Will do, there are many different ones but I can add the most common.
-> 
-> > > Tested with Orin AGX 64GB module on Connect Tech Forge carrier board.
-> >
-> > Since this looks like a fix, you should include a suitable 'Fixes' tag
-> > here, and specify the 'net' target tree in the subj prefix.
-> >
-> 
-> Sorry I missed the "net" tag.
-> 
-> The bug has existed since dwmac-tegra.c was added. I can add a Fixes tag but
-> in the past I was told they aren't needed in that situation?
-> 
-> > > @@ -241,6 +243,12 @@ static int tegra_mgbe_probe(struct platform_device *pdev)
-> > >  	if (IS_ERR(mgbe->xpcs))
-> > >  		return PTR_ERR(mgbe->xpcs);
-> > >
-> > > +	/* get controller's stream id from iommu property in device tree */
-> > > +	if (!tegra_dev_iommu_get_stream_id(mgbe->dev, &mgbe->iommu_sid)) {
-> > > +		dev_err(mgbe->dev, "failed to get iommu stream id\n");
-> > > +		return -EINVAL;
-> > > +	}
-> >
-> > I *think* it would be better to fallback (possibly with a warning or
-> > notice) to the previous default value when the device tree property is
-> > not available, to avoid regressions.
-> >
-> 
-> I debated this as well... In theory the iommu must be setup for the
-> mgbe controller to work anyways. Doing it this way means the worst case is
-> probe() fails and you lose an ethernet port.
+preempt=lazy has been merged into tip[1]. Lets Enable it for PowerPC.
 
-New DT properties are always optional. Take the example of a board
-only using a single controller. It should happily work. It probably
-does not have this property because it is not needed. Your change is
-likely to cause a regression on such a board.
+This has been very lightly tested and as michael suggested could go
+through a test cycle. If needed, patches can be merged. I have kept it 
+separate for easier bisect.
 
-Also, is a binding patch needed?
+Lazy preemption support for kvm on powerpc is still to be done.
 
-	Andrew
+Refs:
+[1]: https://lore.kernel.org/lkml/20241007074609.447006177@infradead.org/
+v1: https://lore.kernel.org/all/20241108101853.277808-1-sshegde@linux.ibm.com/
+
+Changes since v1:
+- Change for vmx copy as suggested by Sebastian. 
+- Add rwb tags 
+
+Shrikanth Hegde (2):
+  powerpc: Add preempt lazy support
+  powerpc: Large user copy aware of full:rt:lazy preemption
+
+ arch/powerpc/Kconfig                   | 1 +
+ arch/powerpc/include/asm/thread_info.h | 9 ++++++---
+ arch/powerpc/kernel/interrupt.c        | 4 ++--
+ arch/powerpc/lib/vmx-helper.c          | 2 +-
+ 4 files changed, 10 insertions(+), 6 deletions(-)
+
+-- 
+2.43.5
+
 
