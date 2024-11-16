@@ -1,112 +1,107 @@
-Return-Path: <linux-kernel+bounces-411758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCC319CFF3D
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 15:21:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 595159CFF43
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 15:33:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 02A6EB25E65
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 14:21:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19CF128450A
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 14:32:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F1881426C;
-	Sat, 16 Nov 2024 14:21:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E8C91863F;
+	Sat, 16 Nov 2024 14:32:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b="QfzbBeD1";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="IniUWIzZ"
-Received: from fhigh-a7-smtp.messagingengine.com (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
+	dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b="f9poJhrv";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Y4OCLt9e"
+Received: from fout-a4-smtp.messagingengine.com (fout-a4-smtp.messagingengine.com [103.168.172.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5318C8462;
-	Sat, 16 Nov 2024 14:21:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DE8FD53F;
+	Sat, 16 Nov 2024 14:32:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731766869; cv=none; b=oRNGuwTwys5CXnmBZTZKJ8BXNBefkZPxyeBTk7NrXrvEb1l6KxPi+l7xQCpFO2Lqnur8XiVaNz95ahV5xHPRRyfsUaKu3o6Z1gib9v8UvqI8QCftxCJ4s3fWhRyP7fLVsfwxAsI6rqNsPip/w/j7NtTQQr/YQomz3sMMJk7ENhg=
+	t=1731767567; cv=none; b=jRJPeOeJLJhx+4XiPBWwBAovmHeRR37aJFqaoQIOZ8Dyz1P5lPukdWznCYP7YrHzc+gWZbVVZ692ys2oNSU7ACvRXfZ6J3q3++jt3HT9fgtosWnb87YvyJR9Z9h6BpEfztLFa9WyQqjSzVQ9T44OaX/RAcGT85NnsAZ97m11LG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731766869; c=relaxed/simple;
-	bh=83ROZP99NHhTBCZDaK6Qiko/B+ob6DGV88osQP9CYow=;
+	s=arc-20240116; t=1731767567; c=relaxed/simple;
+	bh=Qf1YtplSqboVrrQeSa+gApRr86YTzv1m+laATy0yACw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MyWpb8on3Rz2cDjY7CY12mt/zkw74s9cqKc0bsmsV518b3NMJlqGEgaUa1csMNQLcZTEBiqaDp6tAKRPBx+9SlioquEfbZLZskoziRxcvKUb7sV1hHxoVkANVnPhGmcrID7AH69hSYdi1YvsjlNrTHW4iwSwP+xWHKaz1UFNXKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net; spf=pass smtp.mailfrom=jannau.net; dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b=QfzbBeD1; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=IniUWIzZ; arc=none smtp.client-ip=103.168.172.158
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ahj1qaSove5I2wEdJ9u5gD3VD4qbYWn73DIW7zIY0qjmbVsu8HElfZA+XJS6GvNXP/1asp0VRXfRiUa3/taq2KQs6ogYERnYlIzOAdY/zlnjYp2HYBPmQlY7xEWbsVK73shGpQCgCR2LiGwtBMNrdf6s7CVnFXylywKqXt2sFXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net; spf=pass smtp.mailfrom=jannau.net; dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b=f9poJhrv; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Y4OCLt9e; arc=none smtp.client-ip=103.168.172.147
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jannau.net
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 4B05C1140135;
-	Sat, 16 Nov 2024 09:21:06 -0500 (EST)
+Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
+	by mailfout.phl.internal (Postfix) with ESMTP id 8E1A213801CA;
+	Sat, 16 Nov 2024 09:32:43 -0500 (EST)
 Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-10.internal (MEProxy); Sat, 16 Nov 2024 09:21:06 -0500
+  by phl-compute-03.internal (MEProxy); Sat, 16 Nov 2024 09:32:43 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jannau.net; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1731766866;
-	 x=1731853266; bh=NnZ+71/DdSs2iQZjBK1OW6Bj8CARVk7Y17qna5/pE2E=; b=
-	QfzbBeD1RW/sWNjFNlzCSXgCVpVSGop3t7yqoUBDXT/zIHbFXXZnQUTy/gClkqN0
-	KdkGaF1dpXHcTT9cTz4L9F2UIaoJfJyahVri7boWGXscUDwRKBJpzclLM5y/z4qx
-	N8US60oPqTga9qfTaf8iPuubS/GpqWR6E5VtU++Tn7HlASRIEz5E+j0SoLXbHV5z
-	FQuSKyXeJZfT3jSLiTmZrj8k6HxSHHsKiB9dtTOMbQG0kW1dxWIZfntJ4HoVucP0
-	/UK/F3+qEEg3PIZQr/s0YrYX1VhIxTA1QY7YtKKsyOzx0OBbDdoCNQGhmZ9m/D8t
-	qtJcKJeN4YnXZH2QUIoSow==
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1731767563; x=1731853963; bh=MoWHSBImfy
+	kRca31mkake2h91ckcx0gjiNgQduzFP54=; b=f9poJhrvgBmc+nEAuEnws3V3cG
+	Fbf1oEbXoDgrP0dVvIUWlkKfBuDcFz68o8epnXPVsL8Y/iAJxHS8+fOanHrrPcCD
+	mhuacUlbIc44xvXvnbgQXBe9HXrU8dbeDnjm3lX85twBSAbPlPVSyWx9kLNjXrhL
+	4FGkDIfrDVMHqpBeLyYim2IS0DYiiKHGeB22ffLd0vHsfHUvAPNraaxj5kTTIcj8
+	OOP6pBvsqumJPwjNcLE3XzH9i5YqTz8iwLc1PdLV9QudosqO0e9AYUnXEw1YzvFi
+	pj7QpqnQt/qa5TG1Ka1vxAsspO4Rl6Y1eSGGMN5/3+/GW0B/L4u+aSm29Mww==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1731766866; x=
-	1731853266; bh=NnZ+71/DdSs2iQZjBK1OW6Bj8CARVk7Y17qna5/pE2E=; b=I
-	niUWIzZSVccQU9QPJoduSkdkMzUMyph5sqPfidr+xGwaHqDPCArdbPOJR6dB0fWo
-	y4d5aIdQnOdhOLt14C20UD87lA6isoditurhOgliQoAFPnBrzJRULnSya/68cjgx
-	V8cwH8L2kto4utteQH70+rK1rMdvxAecGtU89+kZfPziJEdFdfsI6/IqT5E3Fz+/
-	OLhTCyNpFzaU8ZPGQ9UFkFF9DIG3h3ULUrnvBrj1b3KtyFrJIwLFH8U79PKSp2hT
-	2hPhwgITlwug6MD/6BwLYzUKNeRloyRwiN3bg41qhWoF0S0hpPiEdoMQyIeCNZxs
-	v4Z9WQtOtn665u+aGIxQw==
-X-ME-Sender: <xms:UKo4Z5Jg5J0aoDA1rmMNY5Wig2A2OUrnElqf6nmCqBUiAIlZd0O00w>
-    <xme:UKo4Z1JmjlNLHRB8FNObvmlYKYi1-5pTPsnVUdOQg2HJiammnwExEBdoEl3s8G6MO
-    npo241FKzyTZMjcYCM>
-X-ME-Received: <xmr:UKo4ZxuVh-qB-M-11LzYZGAkIhBjZlCj2mB1-9RFaZU3AoyLMcgwwF7SX56JVbjiskiw3IFRxhg3cAZmdfTXFumSjFrLt1weiP8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrvdeigdeiudcutefuodetggdotefrodftvf
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1731767563; x=1731853963; bh=MoWHSBImfykRca31mkake2h91ckcx0gjiNg
+	QduzFP54=; b=Y4OCLt9ezShbISTXv+1QZudz9h8a59Z9UW9Q/gIA5alJrVKwnDR
+	XQLJWtoI7D7UC/qLEtM29PwmeR36H7FztxMZvm14cBoanutWxlj9rvswhaQg+qHU
+	VPSAQgy6QzlqtLfe4+6/2dnFUOHCV5EjagkxzhU5TA2eMzL1RdXXE2narLbfzsrI
+	qc+hc2Y1wyCuj0M54p+H3cdNSoaLGye/+zJzE0BvyaaQc5lbseLNtSCxVN0hTfrU
+	68fjmXDtBKL4QiXV1ZI0CTIg6rlJrr8yHR0yIHfMzX8k5rWTWY2VOBwy7xZrC9N8
+	iSY8SfNlg1Fty+UuHv1znfqwhuvnWWqLYhQ==
+X-ME-Sender: <xms:Cq04ZyOKji-4pI8hx6pJJltp96UBMvVKeSXu03m2TjRERmO4m2kpmQ>
+    <xme:Cq04Zw9fBkoo8ZTJ8e5WR-17gDQGKi5dZsrwvIyVqzpOjVV-cwTzB3F2qflGjlT0I
+    wWAhme2ajbXd4TC1ds>
+X-ME-Received: <xmr:Cq04Z5RLUtk4ex1CG0bgSSiyI8L6FcKvej7ysYvU2vY0YIVbDj9dknqg25lHfOt20An9NI_nISMai61o3RITMhfnRUZdXeRrVe8>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrvdeigdeifecutefuodetggdotefrodftvf
     curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
     tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtugfgjgesthekredttddtjeen
-    ucfhrhhomheplfgrnhhnvgcuifhruhhnrghuuceojhesjhgrnhhnrghurdhnvghtqeenuc
-    ggtffrrghtthgvrhhnpeevfeekuedutedtvdffvefhvedvkefhgfevheefhfffheeftefg
-    teffuefgveefhfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfh
-    hrohhmpehjsehjrghnnhgruhdrnhgvthdpnhgspghrtghpthhtohepvdeipdhmohguvgep
-    shhmthhpohhuthdprhgtphhtthhopegrlhhitggvrhihhhhlsehgohhoghhlvgdrtghomh
-    dprhgtphhtthhopehlihhnrgesrghsrghhihhlihhnrgdrnhgvthdprhgtphhtthhopegu
-    rghkrheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepohhjvggurgeskhgvrhhnvghlrd
-    horhhgpdhrtghpthhtoheprghlvgigrdhgrgihnhhorhesghhmrghilhdrtghomhdprhgt
-    phhtthhopeifvggushhonhgrfhesghhmrghilhdrtghomhdprhgtphhtthhopegsohhquh
-    hnrdhfvghnghesghhmrghilhdrtghomhdprhgtphhtthhopehgrghrhiesghgrrhihghhu
-    ohdrnhgvthdprhgtphhtthhopegsjhhorhhnfegpghhhsehprhhothhonhhmrghilhdrtg
-    homh
-X-ME-Proxy: <xmx:UKo4Z6YqeM8yjUblx70moc4kZkBcvu1sWGaSMDfwEV3CUnhC5z927A>
-    <xmx:UKo4ZwYRx81ttBhVaoTF-CkILBbssejrXpzukB6i9ujXTfh4fLvZuA>
-    <xmx:UKo4Z-A_fN2BtxLKkyq1wgxMXL_CfcJO-VfAOOefuZvQe8aXJYO71Q>
-    <xmx:UKo4Z-YDaITSK8AMfTOKk-LmPuapH2MJe9zB-Kwa--4nVNMwF-AuYQ>
-    <xmx:Uqo4Z7tvoU4ARpzlIbgFvoABTViD_HY5gL8b1pbdhChvZxIbQcwrW8Ib>
+    hsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttdejnecu
+    hfhrohhmpeflrghnnhgvucfirhhunhgruhcuoehjsehjrghnnhgruhdrnhgvtheqnecugg
+    ftrfgrthhtvghrnhepgfdvffevleegudejfeefheehkeehleehfefgjefffeetudegtefh
+    uedufeehfeetnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
+    homhepjhesjhgrnhhnrghurdhnvghtpdhnsggprhgtphhtthhopedvjedpmhhouggvpehs
+    mhhtphhouhhtpdhrtghpthhtohepuggrkhhrsehkvghrnhgvlhdrohhrghdprhgtphhtth
+    hopehgrhgvghhkhheslhhinhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthho
+    pehrrghfrggvlheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepsghhvghlghgrrghsse
+    hgohhoghhlvgdrtghomhdprhgtphhtthhopehojhgvuggrsehkvghrnhgvlhdrohhrghdp
+    rhgtphhtthhopegrlhgvgidrghgrhihnohhrsehgmhgrihhlrdgtohhmpdhrtghpthhtoh
+    epsghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmpdhrtghpthhtohepghgrrhihsehg
+    rghrhihguhhordhnvghtpdhrtghpthhtohepsghjohhrnhefpghghhesphhrohhtohhnmh
+    grihhlrdgtohhm
+X-ME-Proxy: <xmx:Cq04ZyuSRMGiRDET4GjSh-DZWmojqbdLgnVCGsAb4YjTB_eEL7-cHA>
+    <xmx:Cq04Z6eibCtRYLVxf16cOaPpU7CZ_SVNHp1L4mLhJq4RZLv_xjJnKw>
+    <xmx:Cq04Z23nPVwBImd73lhnHE9rfcn1EoWrKLwniePvGneAiLX1gi5WHQ>
+    <xmx:Cq04Z-8IYTVTJF2xfoXZcm9ukKQYMJcmPK1YaH1FkGx_nbZujxG_zA>
+    <xmx:C604Z7NO8WXzVMxwZP3N3gLb0z4RYZF7dKTDmp4e0ysp-VB3n7Os-Yiu>
 Feedback-ID: i47b949f6:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 16 Nov 2024 09:21:04 -0500 (EST)
-Date: Sat, 16 Nov 2024 15:21:02 +0100
+ 16 Nov 2024 09:32:41 -0500 (EST)
+Date: Sat, 16 Nov 2024 15:32:40 +0100
 From: Janne Grunau <j@jannau.net>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Asahi Lina <lina@asahilina.net>, Danilo Krummrich <dakr@kernel.org>,
-	ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
-	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
-	benno.lossin@proton.me, a.hindborg@samsung.com,
-	akpm@linux-foundation.org, daniel.almeida@collabora.com,
-	faith.ekstrand@collabora.com, boris.brezillon@collabora.com,
-	mcanal@igalia.com, zhiw@nvidia.com, cjia@nvidia.com,
-	jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com,
-	lyude@redhat.com, linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, linux-mm@kvack.org,
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com,
+	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	tmgross@umich.edu, a.hindborg@samsung.com, aliceryhl@google.com,
+	airlied@gmail.com, fujita.tomonori@gmail.com, lina@asahilina.net,
+	pstanner@redhat.com, ajanulgu@redhat.com, lyude@redhat.com,
+	robh@kernel.org, daniel.almeida@collabora.com, saravanak@google.com,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
 	asahi@lists.linux.dev
-Subject: Re: [PATCH v9 00/29] Generic `Allocator` support for Rust
-Message-ID: <20241116142102.GA1484376@robin.jannau.net>
-References: <20241004154149.93856-1-dakr@kernel.org>
- <3b843e34-48f3-41ca-bd83-9bc137ca6c76@asahilina.net>
- <CAH5fLgg68b-pfGhDubJMzGA8w4dywviMv+ghw0KV1emFvNKe9Q@mail.gmail.com>
+Subject: Re: [PATCH v3 00/16] Device / Driver PCI / Platform Rust abstractions
+Message-ID: <20241116143240.GA1490760@robin.jannau.net>
+References: <20241022213221.2383-1-dakr@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -115,32 +110,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAH5fLgg68b-pfGhDubJMzGA8w4dywviMv+ghw0KV1emFvNKe9Q@mail.gmail.com>
+In-Reply-To: <20241022213221.2383-1-dakr@kernel.org>
 
-On Fri, Nov 15, 2024 at 03:00:43PM +0100, Alice Ryhl wrote:
-> On Fri, Nov 15, 2024 at 12:33 PM Asahi Lina <lina@asahilina.net> wrote:
-> >
-> > We (Asahi Linux) noticed that this doesn't support unsized types, which
-> > is a regression from the alloc Box. drm/asahi uses boxed trait objects
-> > to generalize across certain object types like render commands, so this
-> > breaks the driver.
-> >
-> > Is there a plan to add this back in? AIUI this would need the
-> > coerce_unsized unstable feature, but is there any other blocker?
+On Tue, Oct 22, 2024 at 11:31:37PM +0200, Danilo Krummrich wrote:
+> This patch series implements the necessary Rust abstractions to implement
+> device drivers in Rust.
 > 
-> We're already using coerce_unsized for Arc, so I see no reason we
-> can't just add that for KBox too. Soon, we should be able to use the
-> derive macro [1] I proposed to do this without unstable language
-> features. The limitation that the RFC mentions for custom allocators
-> does not apply to KBox because it uses PhantomData<A> instead of A for
-> the allocator field.
+> This includes some basic generalizations for driver registration, handling of ID
+> tables, MMIO operations and device resource handling.
+> 
+> Those generalizations are used to implement device driver support for two
+> busses, the PCI and platfrom bus (with OF IDs) in order to provide some evidence
+> that the generalizations work as intended.
+> 
+> The patch series also includes two patches adding two driver samples, one PCI
+> driver and one platform driver.
+> 
+> The PCI bits are motivated by the Nova driver project [1], but are used by at
+> least one more OOT driver (rnvme [2]).
+> 
+> The platform bits, besides adding some more evidence to the base abstractions,
+> are required by a few more OOT drivers aiming at going upstream, i.e. rvkms [3],
+> cpufreq-dt [4], asahi [5] and the i2c work from Fabien [6].
 
-I have branch rebased onto rust-next and Danilo's "Device / Driver PCI /
-Platform Rust abstractions". In addition to coerce_unsized for kbox
-kvec misses the unproblematic methods clear and truncate and
-array_try_from_vec. drain() as taken from the rust library looks like
-more effort considering kvec's IntoIter.
+A rebase of the asahi driver onto this series still probes the platform
+device and the driver works as expected.
+
+Feel free to add
+Tested-by: Janne Grunau <j@jannau>
+
+We plan to import this series for the Asahi Linux downstream kernel
+starting with v6.12 and replace the old rust-for-linux Device/Driver
+abstractions with this.
 
 Janne
 
