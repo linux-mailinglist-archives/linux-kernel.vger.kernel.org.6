@@ -1,199 +1,328 @@
-Return-Path: <linux-kernel+bounces-411769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F38E9CFF58
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 15:43:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 73AAF9CFF5B
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 15:49:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4C2C282B4B
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 14:43:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 349C1283A52
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 14:49:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CB33199B8;
-	Sat, 16 Nov 2024 14:43:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CB9A374CB;
+	Sat, 16 Nov 2024 14:49:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D7FrMwOF"
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hONiac63"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B7B417BA9;
-	Sat, 16 Nov 2024 14:43:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D265B5C96
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 14:49:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731768188; cv=none; b=lKp++vvoDzJUpYQIhBCHFrmtMwy6zzRyKUMhQfRi98WPgFbB6AWq/vvBLzoAT7fBGPGwd2KsGiyRmausjvupHNKmXakTIwpZhNlBgl/MwU9lPVgTKL5Ew+lu2QJgSBPhHm+fsmYejLnD+w4XcJeAuTD3Iy53C7PyNdmIV00ob6k=
+	t=1731768576; cv=none; b=ogzRzJUMdjek6LBlhPQqhel3n+f8z6EbDVum0HMP8JylaFmYKXQo5Cx/6x02tNQKgZ1W0Gvogjix8un8DXrV7ntwaWfMxtE4P8zlPK3qhb4bJuKRzxSwIrFyP8ig0dlWWf+mP72uKwY36YeYL26GQLavle84R2Z/BCptYCRfbQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731768188; c=relaxed/simple;
-	bh=e4C99wW2UPPIu5P1AuOTYlKstuvypUmsKgze6j6XC4Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=P8lIz+gBSvECl4xKdrQGOAIic8uWV193a+dDvnbdNgvXKE25Mkdj1zJrBkOjL9a+OuApLvIKHY30RSk57PUCG4DRuGjdl92W42OUCDttcYucP0bZSh8Ih6ufYZY2a+Er1Us8IcdQmGJW8aZemcthdItDbJbXuYHVja49Xnl8718=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D7FrMwOF; arc=none smtp.client-ip=209.85.128.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-6e38ebcc0abso31214077b3.2;
-        Sat, 16 Nov 2024 06:43:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731768186; x=1732372986; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mnLlPzgn///5qxbj/KGMB5xH9xngFzG+evdzDcbKohA=;
-        b=D7FrMwOF2oZ7D5kiVP70QGG503cuvka7riF4yL4DxCyT77bhFMgovO+2bO53uqauT8
-         VjcZtbvF/K7wffxt347Nq+h5i8qAo8UMdLTkKW2AMjhdeaZDC8pqYfvsSaOg45g0quZj
-         8it991d1PTwI9WAf9HfB+qqgBf3ucxr3Ey1IuDbDB91FpfVx0SzRvs2oEXlxP94NlFM5
-         oCW7K5E/+jrSCw/gwuril6UUck1vPbEtV/1ZQ4teR9K3g9stODqs8Kk5Z7uI5MOzGidy
-         0cx0Qm7aVO8iQXfU7ZBUOCiCnlz0xG7gB90rgw2QtsLvFauSADFwsU/NhBiVgEpEPqy+
-         uB9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731768186; x=1732372986;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mnLlPzgn///5qxbj/KGMB5xH9xngFzG+evdzDcbKohA=;
-        b=n27NCGF3FCmlFnKcJ87K62iwqkTrf1OR+IDcyIrXgRpkI2R9KjizC8bFXvpxk0w5De
-         zklSaubgUPz9JM9I9qqHUylMSGv5KsS1SfgjTLJ7nr3rYDoMTE5Ka1AFmtpSDwC8CyYB
-         i/959ogpCWb7OEa4Q34UcTUb5pNS64ajxnEL1f5Hml3GMr30zdqaWMUK557XgEXAQosp
-         ZYuToqA+VuqbyswQ2sGdQyqeV6kav2W/k1VjbMvn10zZ4sZkXTaXGmBLAeihLar0vddl
-         4Kd/6g1jiNzS4q42SbfpORSZj5hH5xMW4mp79qnZWq3UJ3xEEqXwngGi3XF8Ptjh5C2Z
-         ytgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVyKrQ3vC2DkfXgF5GpSWuS3xbdohdvLUyS28aJPj4f91WSwlCcwKoQcEzZVDZ6MEm0hKGd+WSXsBN+zwpnBnpIbA==@vger.kernel.org, AJvYcCXmKFlNUytcJzpNek2Xe5Td4w3DQp3WbFa6RZSnUwrG5byTNzy+9W6LrOM17MX123lvqfmP5UlA/UfXNS8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpOxn2e7wvD+l6LuY/dNAmHM6xTA98eIiI+JxcDzemKAayY9U4
-	6XRMaeMt+2uoWB4EUenFTYY790xGmOVnjKmiRYY8lUJzH4P33Qq5Wzs58VkJeGcDgOsN8mizo+9
-	kX9dKJq22cPHfUxs0+oZ43M4HSxM=
-X-Google-Smtp-Source: AGHT+IFayL7Mi9sUU127LNWy/FJp1u0QIJU2u9qeMbGyKHhkzzXxgs27MkgyS1ksnzbLONf3G8fRaFdjFMT7T1TjCUY=
-X-Received: by 2002:a05:690c:6302:b0:6ee:4e06:c5da with SMTP id
- 00721157ae682-6ee55c29e43mr72245697b3.26.1731768184486; Sat, 16 Nov 2024
- 06:43:04 -0800 (PST)
+	s=arc-20240116; t=1731768576; c=relaxed/simple;
+	bh=+8qjG6lkKmzdTCWTh1r4yk6B2fJfBryzWI+n+DKtC0I=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=TGtWAcdl6Qis4140XbzdQwZJw8XQZoONJWoh4jcm7XKUHQ0I1/DuEHbsQQ6MjKPscKbeB7o4PCRddUkneN6TCob9SCZ5wsv/BNUma3waQuGlwghq9+CpJuOwLPKm1pgMnxbjHLGdqZyEOYEWFkqHq5Fizx0Mu8/X2lGODBENjq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hONiac63; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731768575; x=1763304575;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=+8qjG6lkKmzdTCWTh1r4yk6B2fJfBryzWI+n+DKtC0I=;
+  b=hONiac63jUtjHmFeNxPe/w/mghYp7TIvsugI7wKIuUWjVlsjvQ/7IZVr
+   1LaY5kSpbz4SAI7ulNg4QC+9IDzjTwhr+MUYvES47BQSNFjusz0sPhe7V
+   oizIECyT48C2FsnZb1YEy5q3okrmRNO3GxKSazUEqeUpqGwzKaEEJPlHz
+   sn/jGXW08wRPjKjcjewPxITBtA8MAtMvizRdSGzZk+HEWasoON2OnHUW5
+   ElLGEPYkB8Ep1kLD6o5NKNV1D/02VDM1EOArJUvAi8YQmwHDe54i9FwjA
+   DqjrOL4aezz4pAj8dMKbPP7BhTXHKT951ro50BhXpfm7OhaC2Uy2w4I5T
+   A==;
+X-CSE-ConnectionGUID: 4D9cgQQET+aSe/jr93v3FA==
+X-CSE-MsgGUID: oSXB+1j/RLivA7Dr4Ug9Jg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11258"; a="49197504"
+X-IronPort-AV: E=Sophos;i="6.12,160,1728975600"; 
+   d="scan'208";a="49197504"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Nov 2024 06:49:32 -0800
+X-CSE-ConnectionGUID: EHBWx8jxR3q+u9cNnUYDDQ==
+X-CSE-MsgGUID: 3s6M9fdvTpieNvJnFrlXFg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,160,1728975600"; 
+   d="scan'208";a="89589509"
+Received: from lkp-server01.sh.intel.com (HELO 1e3cc1889ffb) ([10.239.97.150])
+  by orviesa008.jf.intel.com with ESMTP; 16 Nov 2024 06:49:30 -0800
+Received: from kbuild by 1e3cc1889ffb with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tCK76-0000hE-1F;
+	Sat, 16 Nov 2024 14:49:28 +0000
+Date: Sat, 16 Nov 2024 22:49:25 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ranjan Kumar <ranjan.kumar@broadcom.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Sathya Prakash <sathya.prakash@broadcom.com>
+Subject: drivers/scsi/mpi3mr/mpi3mr_fw.c:1531:54: error: variable
+ 'scratch_pad0' set but not used
+Message-ID: <202411160656.VlupxFbZ-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241108204137.2444151-1-howardchu95@gmail.com>
- <ZzOg3Xlq2jsG85XQ@x1> <ZzOpvzN-OTLZPyFh@x1> <ZzOy2KjyuMD9AJ3G@x1>
-In-Reply-To: <ZzOy2KjyuMD9AJ3G@x1>
-From: Howard Chu <howardchu95@gmail.com>
-Date: Sat, 16 Nov 2024 06:42:53 -0800
-Message-ID: <CAH0uvogjWTTJk_Qza11rOvwRyOwaBSkN4as==LF=kRnqOzA59Q@mail.gmail.com>
-Subject: Re: [PATCH v7 00/10] perf record --off-cpu: Dump off-cpu samples directly
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: peterz@infradead.org, namhyung@kernel.org, irogers@google.com, 
-	mingo@redhat.com, mark.rutland@arm.com, james.clark@linaro.org, 
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org, adrian.hunter@intel.com, 
-	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hello Arnaldo,
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   cfaaa7d010d1fc58f9717fcc8591201e741d2d49
+commit: 0a2714b787b91176e7d4f005dcef8d177efdff8a scsi: mpi3mr: Debug ability improvements
+date:   8 months ago
+config: x86_64-rhel-9.4-nofixup (https://download.01.org/0day-ci/archive/20241116/202411160656.VlupxFbZ-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241116/202411160656.VlupxFbZ-lkp@intel.com/reproduce)
 
-On Tue, Nov 12, 2024 at 11:56=E2=80=AFAM Arnaldo Carvalho de Melo
-<acme@kernel.org> wrote:
->
-> On Tue, Nov 12, 2024 at 04:17:19PM -0300, Arnaldo Carvalho de Melo wrote:
-> > I squashed the patch below and I'm trying to apply the other patches to=
- do some
-> > minimal testing on the feature itself, but the organization of the
-> > patches needs some work.
->
-> > +++ b/tools/perf/util/bpf_off_cpu.c
-> > @@ -61,6 +61,9 @@ static int off_cpu_config(struct evlist *evlist)
-> >  static void off_cpu_start(void *arg)
-> >  {
-> >       struct evlist *evlist =3D arg;
-> > +     struct evsel *evsel;
-> > +     struct perf_cpu pcpu;
-> > +     int i;
-> >
-> >       /* update task filter for the given workload */
-> >       if (skel->rodata->has_task && skel->rodata->uses_tgid &&
-> > @@ -82,6 +85,8 @@ static void off_cpu_start(void *arg)
-> >       }
-> >
-> >       perf_cpu_map__for_each_cpu(pcpu, i, evsel->core.cpus) {
-> > +             int err;
-> > +
-> >               err =3D bpf_map__update_elem(skel->maps.offcpu_output, &p=
-cpu.cpu, sizeof(__u32),
-> >                                          xyarray__entry(evsel->core.fd,=
- i, 0),
-> >                                          sizeof(__u32), BPF_ANY);
->
-> This is not enough, as it in the end tries to use that
-> skel->maps.offcpu_output that is only introduced at a later patch, it
-> seems, not checked yet, but explains the error below:
->
->   LD      /tmp/build/perf-tools-next/perf-test-in.o
->   AR      /tmp/build/perf-tools-next/libperf-test.a
->   CC      /tmp/build/perf-tools-next/util/parse-events.o
-> util/bpf_off_cpu.c: In function =E2=80=98off_cpu_start=E2=80=99:
-> util/bpf_off_cpu.c:90:54: error: =E2=80=98struct <anonymous>=E2=80=99 has=
- no member named =E2=80=98offcpu_output=E2=80=99
->    90 |                 err =3D bpf_map__update_elem(skel->maps.offcpu_ou=
-tput, &pcpu.cpu, sizeof(__u32),
->       |                                                      ^
-> make[4]: *** [/home/acme/git/perf-tools-next/tools/build/Makefile.build:1=
-06: /tmp/build/perf-tools-next/util/bpf_off_cpu.o] Error 1
-> make[4]: *** Waiting for unfinished jobs....
-> make[3]: *** [/home/acme/git/perf-tools-next/tools/build/Makefile.build:1=
-58: util] Error 2
-> make[2]: *** [Makefile.perf:789: /tmp/build/perf-tools-next/perf-util-in.=
-o] Error 2
-> make[2]: *** Waiting for unfinished jobs....
->   CC      /tmp/build/perf-tools-next/pmu-events/pmu-events.o
->   LD      /tmp/build/perf-tools-next/pmu-events/pmu-events-in.o
-> make[1]: *** [Makefile.perf:292: sub-make] Error 2
-> make: *** [Makefile:119: install-bin] Error 2
-> make: Leaving directory '/home/acme/git/perf-tools-next/tools/perf'
-> =E2=AC=A2 [acme@toolbox perf-tools-next]$
->
->
-> Ok, at the end of the series it builds, and the 'perf test' entry
-> introduced in this series passes:
->
-> root@x1:~# perf test off
-> 121: perf record offcpu profiling tests                              : Ok
-> root@x1:~# perf test -v off
-> 121: perf record offcpu profiling tests                              : Ok
-> root@x1:~# perf test -vv off
-> 121: perf record offcpu profiling tests:
-> --- start ---
-> test child forked, pid 1303134
-> Checking off-cpu privilege
-> Basic off-cpu test
-> Basic off-cpu test [Success]
-> Child task off-cpu test
-> Child task off-cpu test [Success]
-> Direct off-cpu test
-> Direct off-cpu test [Success]
-> ---- end(0) ----
-> 121: perf record offcpu profiling tests                              : Ok
-> root@x1:~#
->
-> But the only examples I could find so far for this feature were on the
-> 'perf test' at the end of this series.
->
-> I think we need to have some examples in the 'perf-record' man page
-> showing how to use it, explaining the whole process, etc.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411160656.VlupxFbZ-lkp@intel.com/
 
-Sure, I'll send patches to do that. :)
+All errors (new ones prefixed by >>):
 
->
-> I'll continue testing it and trying to move things around so that it
-> gets bisectable and testable step by step, documenting the whole
-> process as I go, probably tomorrow.
->
-> The series with my fixes is at:
->
-> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git =
-perf-off-cpu77918
-> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/=
-log/?h=3Dperf-off-cpu
->
->
-> - Arnaldo
+   drivers/scsi/mpi3mr/mpi3mr_fw.c: In function 'mpi3mr_issue_reset':
+>> drivers/scsi/mpi3mr/mpi3mr_fw.c:1531:54: error: variable 'scratch_pad0' set but not used [-Werror=unused-but-set-variable]
+    1531 |         u32 host_diagnostic, ioc_status, ioc_config, scratch_pad0;
+         |                                                      ^~~~~~~~~~~~
+   drivers/scsi/mpi3mr/mpi3mr_fw.c: In function 'mpi3mr_setup_isr':
+   drivers/scsi/mpi3mr/mpi3mr_fw.c:732:58: error: '%d' directive output may be truncated writing between 1 and 3 bytes into a region of size between 1 and 64 [-Werror=format-truncation=]
+     732 |         snprintf(intr_info->name, MPI3MR_NAME_LENGTH, "%s%d-msix%d",
+         |                                                          ^~
+   In function 'mpi3mr_request_irq',
+       inlined from 'mpi3mr_setup_isr' at drivers/scsi/mpi3mr/mpi3mr_fw.c:857:12:
+   drivers/scsi/mpi3mr/mpi3mr_fw.c:732:55: note: directive argument in the range [0, 255]
+     732 |         snprintf(intr_info->name, MPI3MR_NAME_LENGTH, "%s%d-msix%d",
+         |                                                       ^~~~~~~~~~~~~
+   drivers/scsi/mpi3mr/mpi3mr_fw.c:732:55: note: directive argument in the range [0, 65535]
+   drivers/scsi/mpi3mr/mpi3mr_fw.c:732:9: note: 'snprintf' output between 8 and 77 bytes into a destination of size 64
+     732 |         snprintf(intr_info->name, MPI3MR_NAME_LENGTH, "%s%d-msix%d",
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     733 |             mrioc->driver_name, mrioc->id, index);
+         |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   In file included from include/asm-generic/bug.h:22,
+                    from arch/x86/include/asm/bug.h:87,
+                    from include/linux/bug.h:5,
+                    from include/linux/thread_info.h:13,
+                    from include/linux/spinlock.h:60,
+                    from include/linux/wait.h:9,
+                    from include/linux/wait_bit.h:8,
+                    from include/linux/fs.h:6,
+                    from include/linux/highmem.h:5,
+                    from include/linux/bvec.h:10,
+                    from include/linux/blk_types.h:10,
+                    from include/linux/blkdev.h:9,
+                    from drivers/scsi/mpi3mr/mpi3mr.h:13,
+                    from drivers/scsi/mpi3mr/mpi3mr_fw.c:10:
+   drivers/scsi/mpi3mr/mpi3mr_fw.c: In function 'mpi3mr_bring_ioc_ready':
+   include/linux/kern_levels.h:5:25: error: '%s' directive argument is null [-Werror=format-overflow=]
+       5 | #define KERN_SOH        "\001"          /* ASCII Start Of Header */
+         |                         ^~~~~~
+   include/linux/printk.h:429:25: note: in definition of macro 'printk_index_wrap'
+     429 |                 _p_func(_fmt, ##__VA_ARGS__);                           \
+         |                         ^~~~
+   include/linux/printk.h:530:9: note: in expansion of macro 'printk'
+     530 |         printk(KERN_INFO pr_fmt(fmt), ##__VA_ARGS__)
+         |         ^~~~~~
+   include/linux/kern_levels.h:14:25: note: in expansion of macro 'KERN_SOH'
+      14 | #define KERN_INFO       KERN_SOH "6"    /* informational */
+         |                         ^~~~~~~~
+   include/linux/printk.h:530:16: note: in expansion of macro 'KERN_INFO'
+     530 |         printk(KERN_INFO pr_fmt(fmt), ##__VA_ARGS__)
+         |                ^~~~~~~~~
+   drivers/scsi/mpi3mr/mpi3mr_debug.h:48:9: note: in expansion of macro 'pr_info'
+      48 |         pr_info("%s: " fmt, (ioc)->name, ##__VA_ARGS__)
+         |         ^~~~~~~
+   drivers/scsi/mpi3mr/mpi3mr_fw.c:1341:9: note: in expansion of macro 'ioc_info'
+    1341 |         ioc_info(mrioc, "controller is in %s state during detection\n",
+         |         ^~~~~~~~
+   include/linux/kern_levels.h:5:25: error: '%s' directive argument is null [-Werror=format-overflow=]
+       5 | #define KERN_SOH        "\001"          /* ASCII Start Of Header */
+         |                         ^~~~~~
+   include/linux/printk.h:429:25: note: in definition of macro 'printk_index_wrap'
+     429 |                 _p_func(_fmt, ##__VA_ARGS__);                           \
+         |                         ^~~~
+   include/linux/printk.h:530:9: note: in expansion of macro 'printk'
+     530 |         printk(KERN_INFO pr_fmt(fmt), ##__VA_ARGS__)
+         |         ^~~~~~
+   include/linux/kern_levels.h:14:25: note: in expansion of macro 'KERN_SOH'
+      14 | #define KERN_INFO       KERN_SOH "6"    /* informational */
+         |                         ^~~~~~~~
+   include/linux/printk.h:530:16: note: in expansion of macro 'KERN_INFO'
+     530 |         printk(KERN_INFO pr_fmt(fmt), ##__VA_ARGS__)
+         |                ^~~~~~~~~
+   drivers/scsi/mpi3mr/mpi3mr_debug.h:48:9: note: in expansion of macro 'pr_info'
+      48 |         pr_info("%s: " fmt, (ioc)->name, ##__VA_ARGS__)
+         |         ^~~~~~~
+   drivers/scsi/mpi3mr/mpi3mr_fw.c:1360:17: note: in expansion of macro 'ioc_info'
+    1360 |                 ioc_info(mrioc,
+         |                 ^~~~~~~~
+   include/linux/kern_levels.h:5:25: error: '%s' directive argument is null [-Werror=format-overflow=]
+       5 | #define KERN_SOH        "\001"          /* ASCII Start Of Header */
+         |                         ^~~~~~
+   include/linux/printk.h:429:25: note: in definition of macro 'printk_index_wrap'
+     429 |                 _p_func(_fmt, ##__VA_ARGS__);                           \
+         |                         ^~~~
+   include/linux/printk.h:500:9: note: in expansion of macro 'printk'
+     500 |         printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
+         |         ^~~~~~
+   include/linux/kern_levels.h:11:25: note: in expansion of macro 'KERN_SOH'
+      11 | #define KERN_ERR        KERN_SOH "3"    /* error conditions */
+         |                         ^~~~~~~~
+   include/linux/printk.h:500:16: note: in expansion of macro 'KERN_ERR'
+     500 |         printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
+         |                ^~~~~~~~
+   drivers/scsi/mpi3mr/mpi3mr_debug.h:42:9: note: in expansion of macro 'pr_err'
+      42 |         pr_err("%s: " fmt, (ioc)->name, ##__VA_ARGS__)
+         |         ^~~~~~
+   drivers/scsi/mpi3mr/mpi3mr_fw.c:1371:25: note: in expansion of macro 'ioc_err'
+    1371 |                         ioc_err(mrioc,
+         |                         ^~~~~~~
+   drivers/scsi/mpi3mr/mpi3mr_fw.c: In function 'mpi3mr_start_watchdog':
+   drivers/scsi/mpi3mr/mpi3mr_fw.c:2690:60: error: '%s' directive output may be truncated writing up to 63 bytes into a region of size 41 [-Werror=format-truncation=]
+    2690 |             sizeof(mrioc->watchdog_work_q_name), "watchdog_%s%d", mrioc->name,
+         |                                                            ^~
+   drivers/scsi/mpi3mr/mpi3mr_fw.c:2690:50: note: directive argument in the range [0, 255]
 
-Thanks,
-Howard
+
+vim +/scratch_pad0 +1531 drivers/scsi/mpi3mr/mpi3mr_fw.c
+
+  1512	
+  1513	/**
+  1514	 * mpi3mr_issue_reset - Issue reset to the controller
+  1515	 * @mrioc: Adapter reference
+  1516	 * @reset_type: Reset type
+  1517	 * @reset_reason: Reset reason code
+  1518	 *
+  1519	 * Unlock the host diagnostic registers and write the specific
+  1520	 * reset type to that, wait for reset acknowledgment from the
+  1521	 * controller, if the reset is not successful retry for the
+  1522	 * predefined number of times.
+  1523	 *
+  1524	 * Return: 0 on success, non-zero on failure.
+  1525	 */
+  1526	static int mpi3mr_issue_reset(struct mpi3mr_ioc *mrioc, u16 reset_type,
+  1527		u16 reset_reason)
+  1528	{
+  1529		int retval = -1;
+  1530		u8 unlock_retry_count = 0;
+> 1531		u32 host_diagnostic, ioc_status, ioc_config, scratch_pad0;
+  1532		u32 timeout = MPI3MR_RESET_ACK_TIMEOUT * 10;
+  1533	
+  1534		if ((reset_type != MPI3_SYSIF_HOST_DIAG_RESET_ACTION_SOFT_RESET) &&
+  1535		    (reset_type != MPI3_SYSIF_HOST_DIAG_RESET_ACTION_DIAG_FAULT))
+  1536			return retval;
+  1537		if (mrioc->unrecoverable)
+  1538			return retval;
+  1539		if (reset_reason == MPI3MR_RESET_FROM_FIRMWARE) {
+  1540			retval = 0;
+  1541			return retval;
+  1542		}
+  1543	
+  1544		ioc_info(mrioc, "%s reset due to %s(0x%x)\n",
+  1545		    mpi3mr_reset_type_name(reset_type),
+  1546		    mpi3mr_reset_rc_name(reset_reason), reset_reason);
+  1547	
+  1548		mpi3mr_clear_reset_history(mrioc);
+  1549		do {
+  1550			ioc_info(mrioc,
+  1551			    "Write magic sequence to unlock host diag register (retry=%d)\n",
+  1552			    ++unlock_retry_count);
+  1553			if (unlock_retry_count >= MPI3MR_HOSTDIAG_UNLOCK_RETRY_COUNT) {
+  1554				ioc_err(mrioc,
+  1555				    "%s reset failed due to unlock failure, host_diagnostic(0x%08x)\n",
+  1556				    mpi3mr_reset_type_name(reset_type),
+  1557				    host_diagnostic);
+  1558				mrioc->unrecoverable = 1;
+  1559				return retval;
+  1560			}
+  1561	
+  1562			writel(MPI3_SYSIF_WRITE_SEQUENCE_KEY_VALUE_FLUSH,
+  1563			    &mrioc->sysif_regs->write_sequence);
+  1564			writel(MPI3_SYSIF_WRITE_SEQUENCE_KEY_VALUE_1ST,
+  1565			    &mrioc->sysif_regs->write_sequence);
+  1566			writel(MPI3_SYSIF_WRITE_SEQUENCE_KEY_VALUE_2ND,
+  1567			    &mrioc->sysif_regs->write_sequence);
+  1568			writel(MPI3_SYSIF_WRITE_SEQUENCE_KEY_VALUE_3RD,
+  1569			    &mrioc->sysif_regs->write_sequence);
+  1570			writel(MPI3_SYSIF_WRITE_SEQUENCE_KEY_VALUE_4TH,
+  1571			    &mrioc->sysif_regs->write_sequence);
+  1572			writel(MPI3_SYSIF_WRITE_SEQUENCE_KEY_VALUE_5TH,
+  1573			    &mrioc->sysif_regs->write_sequence);
+  1574			writel(MPI3_SYSIF_WRITE_SEQUENCE_KEY_VALUE_6TH,
+  1575			    &mrioc->sysif_regs->write_sequence);
+  1576			usleep_range(1000, 1100);
+  1577			host_diagnostic = readl(&mrioc->sysif_regs->host_diagnostic);
+  1578			ioc_info(mrioc,
+  1579			    "wrote magic sequence: retry_count(%d), host_diagnostic(0x%08x)\n",
+  1580			    unlock_retry_count, host_diagnostic);
+  1581		} while (!(host_diagnostic & MPI3_SYSIF_HOST_DIAG_DIAG_WRITE_ENABLE));
+  1582	
+  1583		scratch_pad0 = ((MPI3MR_RESET_REASON_OSTYPE_LINUX <<
+  1584		    MPI3MR_RESET_REASON_OSTYPE_SHIFT) | (mrioc->facts.ioc_num <<
+  1585		    MPI3MR_RESET_REASON_IOCNUM_SHIFT) | reset_reason);
+  1586		writel(reset_reason, &mrioc->sysif_regs->scratchpad[0]);
+  1587		writel(host_diagnostic | reset_type,
+  1588		    &mrioc->sysif_regs->host_diagnostic);
+  1589		switch (reset_type) {
+  1590		case MPI3_SYSIF_HOST_DIAG_RESET_ACTION_SOFT_RESET:
+  1591			do {
+  1592				ioc_status = readl(&mrioc->sysif_regs->ioc_status);
+  1593				ioc_config =
+  1594				    readl(&mrioc->sysif_regs->ioc_configuration);
+  1595				if ((ioc_status & MPI3_SYSIF_IOC_STATUS_RESET_HISTORY)
+  1596				    && mpi3mr_soft_reset_success(ioc_status, ioc_config)
+  1597				    ) {
+  1598					mpi3mr_clear_reset_history(mrioc);
+  1599					retval = 0;
+  1600					break;
+  1601				}
+  1602				msleep(100);
+  1603			} while (--timeout);
+  1604			mpi3mr_print_fault_info(mrioc);
+  1605			break;
+  1606		case MPI3_SYSIF_HOST_DIAG_RESET_ACTION_DIAG_FAULT:
+  1607			do {
+  1608				ioc_status = readl(&mrioc->sysif_regs->ioc_status);
+  1609				if (mpi3mr_diagfault_success(mrioc, ioc_status)) {
+  1610					retval = 0;
+  1611					break;
+  1612				}
+  1613				msleep(100);
+  1614			} while (--timeout);
+  1615			break;
+  1616		default:
+  1617			break;
+  1618		}
+  1619	
+  1620		writel(MPI3_SYSIF_WRITE_SEQUENCE_KEY_VALUE_2ND,
+  1621		    &mrioc->sysif_regs->write_sequence);
+  1622	
+  1623		ioc_config = readl(&mrioc->sysif_regs->ioc_configuration);
+  1624		ioc_status = readl(&mrioc->sysif_regs->ioc_status);
+  1625		ioc_info(mrioc,
+  1626		    "ioc_status/ioc_onfig after %s reset is (0x%x)/(0x%x)\n",
+  1627		    (!retval)?"successful":"failed", ioc_status,
+  1628		    ioc_config);
+  1629		if (retval)
+  1630			mrioc->unrecoverable = 1;
+  1631		return retval;
+  1632	}
+  1633	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
