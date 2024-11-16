@@ -1,134 +1,195 @@
-Return-Path: <linux-kernel+bounces-411673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 291EC9CFDBD
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 11:06:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CABA69CFDCA
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 11:07:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A7842B25CAB
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 10:06:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B1D4288351
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 10:07:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0637B194A40;
-	Sat, 16 Nov 2024 10:06:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="cQ54leWf"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6334E198831;
+	Sat, 16 Nov 2024 10:07:03 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BA4F1917FE;
-	Sat, 16 Nov 2024 10:06:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19E8218FC7E;
+	Sat, 16 Nov 2024 10:07:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731751575; cv=none; b=Ew5GAi095AnHs+YEjqnK4rQqq+hzM+hiKV9jfkmeEZDDqf/qyqfkHnTqJq8nEdAHj6B+eqdygXwjzTEcQObaF59WnXqncYl5H4hcvJF+TZoaEk9YhrnQ+7ek2FkeBcvHu3vsEBKvh7V5r7nN0FZGHsZ011kbZ7FB366yf5fNsxk=
+	t=1731751622; cv=none; b=itQSVSnF5LC8O15aS3eTvvWkPoZF4aoy/B5Oe6xYIMQbNS/Yk/+QKz4RIHQjjpqjCQEqIeT3HUPf99eQzLGwlakvkRuaDHTltadSUASderiMJE0WVKdzxM+RoEJ97aSbcoh1mq2fb2X9crozubPqRBftBEyCxe6Ch7vLvWnMiFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731751575; c=relaxed/simple;
-	bh=0AlUv8R0EdPfdkhvkv09pu347pdjeQT4rOr+EcKQVIE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VOAzI8jmUITpozaNZJSCueGb7KgFihRNzQh16mxKwjsqCtazB1jMfkA4mDkv1xQo/nVaozULkvlh8BJHThn+zhJ7mgLybCHAA306ebO2yMMtY27o6OQXkTATzm75HHKhE1EuLoK3YGdlIxV5YlupdeyLKzw/GS2FI68+MZP+3Zg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=cQ54leWf; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=A5rIWctTKXuF4Q5ODaGsX9C9QZC4g6I69X0S4tWU3dw=; b=cQ54leWfIGl4QHJw/pyvgH/6hc
-	WCmOXIpOSjmMZ0DUj4ZeqCPTQO0XUXCjs3/dh+ad+cwdJv7OTflBTDk+NOTH98VsOGU/EMlRBzjfw
-	1o/8aNKpZTWyd2qRrLo5I3BbxpatWmb8nzQeYOTGXAIhTUDcbZMI3wDTwnZRJuC8XCz5XjoGXzWB1
-	btVJw3Zm7h8HNDhKdCNRYwXjmqbGwjnJINRo6pNJCi1FbXr0Rvev7mYh2BGt5ZkpC1vYgJ+XL6vOx
-	wX9aPs+vAz2bc3sbtSIKV/Z3IMNMFW3cQar0zXD+BNUJ5cyFAWLfLy217E8SOrevYUnv4xQrKRjaq
-	H9nq1FFw==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tCFgw-000000000gF-46s6;
-	Sat, 16 Nov 2024 10:06:11 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 9D9C9300472; Sat, 16 Nov 2024 11:06:10 +0100 (CET)
-Date: Sat, 16 Nov 2024 11:06:10 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: seanjc@google.com, pbonzini@redhat.com, tglx@linutronix.de,
-	linux-kernel@vger.kernel.org, x86@kernel.org, kvm@vger.kernel.org,
-	jthoughton@google.com
-Subject: Re: [PATCH v2 04/12] objtool: Convert instrumentation_{begin,end}()
- to ANNOTATE
-Message-ID: <20241116100610.GN22801@noisy.programming.kicks-ass.net>
-References: <20241111115935.796797988@infradead.org>
- <20241111125218.469665219@infradead.org>
- <20241115184008.ek774neoqkvczxz4@jpoimboe>
+	s=arc-20240116; t=1731751622; c=relaxed/simple;
+	bh=/hDc1/waL6f66GbgsvvZdoFgtSGIcddOihZj3VZBNV4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NmR+owoljJNf2M08pHpkwOkrEGhuA5w99tnbKNz0pdSBf+anFfDvipSpQkp/wOgoovLaYX/MGL+rh5m5tHnOTz+rq2EoItEYDl0+izSNsEpjfRwyYU0/NMP21eJtCZej/96ThTWn+WoxwkfJO2BfbtsGAyLZ7N3UEmUKp5tePlk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4Xr8gl1ry9z9sSX;
+	Sat, 16 Nov 2024 11:06:59 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id GiuJ5kFiF1NH; Sat, 16 Nov 2024 11:06:59 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4Xr8gl0b48z9sST;
+	Sat, 16 Nov 2024 11:06:59 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id ECAD08B7A0;
+	Sat, 16 Nov 2024 11:06:58 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id xw5jQJJ7h8Zy; Sat, 16 Nov 2024 11:06:58 +0100 (CET)
+Received: from [192.168.232.159] (POS169858.IDSI0.si.c-s.fr [192.168.232.159])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 7AEB48B763;
+	Sat, 16 Nov 2024 11:06:55 +0100 (CET)
+Message-ID: <b6a059d8-7b23-455d-9ecd-eb3cdddd22a2@csgroup.eu>
+Date: Sat, 16 Nov 2024 11:06:55 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241115184008.ek774neoqkvczxz4@jpoimboe>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 05/21] powerpc/papr_scm: Convert timeouts to
+ secs_to_jiffies()
+To: Easwar Hariharan <eahariha@linux.microsoft.com>,
+ Pablo Neira Ayuso <pablo@netfilter.org>,
+ Jozsef Kadlecsik <kadlec@netfilter.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, Julia Lawall <Julia.Lawall@inria.fr>,
+ Nicolas Palix <nicolas.palix@imag.fr>, Daniel Mack <daniel@zonque.org>,
+ Haojian Zhuang <haojian.zhuang@gmail.com>,
+ Robert Jarzmik <robert.jarzmik@free.fr>, Russell King
+ <linux@armlinux.org.uk>, Heiko Carstens <hca@linux.ibm.com>,
+ Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
+ <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>, Ofir Bitton <obitton@habana.ai>,
+ Oded Gabbay <ogabbay@kernel.org>, Lucas De Marchi
+ <lucas.demarchi@intel.com>,
+ =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Jeroen de Borst <jeroendb@google.com>,
+ Praveen Kaligineedi <pkaligineedi@google.com>,
+ Shailend Chand <shailend@google.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ James Smart <james.smart@broadcom.com>,
+ Dick Kennedy <dick.kennedy@broadcom.com>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ =?UTF-8?Q?Roger_Pau_Monn=C3=A9?= <roger.pau@citrix.com>,
+ Jens Axboe <axboe@kernel.dk>, Kalle Valo <kvalo@kernel.org>,
+ Jeff Johnson <jjohnson@kernel.org>, Catalin Marinas
+ <catalin.marinas@arm.com>, Andrew Morton <akpm@linux-foundation.org>,
+ Jack Wang <jinpu.wang@cloud.ionos.com>, Marcel Holtmann
+ <marcel@holtmann.org>, Johan Hedberg <johan.hedberg@gmail.com>,
+ Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui
+ <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Xiubo Li <xiubli@redhat.com>,
+ Ilya Dryomov <idryomov@gmail.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
+ Jiri Kosina <jikos@kernel.org>, Miroslav Benes <mbenes@suse.cz>,
+ Petr Mladek <pmladek@suse.com>, Joe Lawrence <joe.lawrence@redhat.com>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ Lucas Stach <l.stach@pengutronix.de>,
+ Russell King <linux+etnaviv@armlinux.org.uk>,
+ Christian Gmeiner <christian.gmeiner@gmail.com>,
+ Louis Peens <louis.peens@corigine.com>, Michael Ellerman
+ <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Naveen N Rao <naveen@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>
+Cc: netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org, cocci@inria.fr,
+ linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
+ linux-scsi@vger.kernel.org, xen-devel@lists.xenproject.org,
+ linux-block@vger.kernel.org, linux-wireless@vger.kernel.org,
+ ath11k@lists.infradead.org, linux-mm@kvack.org,
+ linux-bluetooth@vger.kernel.org, linux-staging@lists.linux.dev,
+ linux-rpi-kernel@lists.infradead.org, ceph-devel@vger.kernel.org,
+ live-patching@vger.kernel.org, linux-sound@vger.kernel.org,
+ etnaviv@lists.freedesktop.org, oss-drivers@corigine.com,
+ linuxppc-dev@lists.ozlabs.org, Anna-Maria Behnsen <anna-maria@linutronix.de>
+References: <20241115-converge-secs-to-jiffies-v2-0-911fb7595e79@linux.microsoft.com>
+ <20241115-converge-secs-to-jiffies-v2-5-911fb7595e79@linux.microsoft.com>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <20241115-converge-secs-to-jiffies-v2-5-911fb7595e79@linux.microsoft.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, Nov 15, 2024 at 10:40:08AM -0800, Josh Poimboeuf wrote:
-> On Mon, Nov 11, 2024 at 12:59:39PM +0100, Peter Zijlstra wrote:
-> > +++ b/include/linux/objtool.h
-> > @@ -51,13 +51,16 @@
-> >  	".long 998b\n\t"						\
-> >  	".popsection\n\t"
-> >  
-> > -#define ASM_ANNOTATE(x)						\
-> > -	"911:\n\t"						\
-> > +#define __ASM_ANNOTATE(s, x)					\
-> >  	".pushsection .discard.annotate,\"M\",@progbits,8\n\t"	\
-> > -	".long 911b - .\n\t"					\
-> > +	".long " __stringify(s) "b - .\n\t"			\
+
+
+Le 15/11/2024 à 22:26, Easwar Hariharan a écrit :
+> [Vous ne recevez pas souvent de courriers de eahariha@linux.microsoft.com. Découvrez pourquoi ceci est important à https://aka.ms/LearnAboutSenderIdentification ]
 > 
-> It would probably be better for __ASM_ANNOTATE's callers to pass in the
-> full label name (e.g. '911b') since they know where the label is?  It
-> could even be a named label.
+> Changes made with the following Coccinelle rules:
+> 
+> @@ constant C; @@
+> 
+> - msecs_to_jiffies(C * 1000)
+> + secs_to_jiffies(C)
+> 
+> @@ constant C; @@
+> 
+> - msecs_to_jiffies(C * MSEC_PER_SEC)
+> + secs_to_jiffies(C)
 
-This seems to work.
+Is it a special script or is it done with the script in patch 2.
 
---- a/include/linux/instrumentation.h
-+++ b/include/linux/instrumentation.h
-@@ -6,11 +6,12 @@
- 
- #include <linux/objtool.h>
- #include <linux/stringify.h>
-+#include <linux/args.h>
- 
- /* Begin/end of an instrumentation safe region */
- #define __instrumentation_begin(c) ({					\
- 	asm volatile(__stringify(c) ": nop\n\t"				\
--		     __ASM_ANNOTATE(c, ANNOTYPE_INSTR_BEGIN)		\
-+		     __ASM_ANNOTATE(CONCATENATE(c, b), ANNOTYPE_INSTR_BEGIN)	\
- 		     : : "i" (c));					\
- })
- #define instrumentation_begin() __instrumentation_begin(__COUNTER__)
-@@ -48,7 +49,7 @@
-  */
- #define __instrumentation_end(c) ({					\
- 	asm volatile(__stringify(c) ": nop\n\t"				\
--		     __ASM_ANNOTATE(c, ANNOTYPE_INSTR_END)		\
-+		     __ASM_ANNOTATE(CONCATENATE(c, b), ANNOTYPE_INSTR_END)		\
- 		     : : "i" (c));					\
- })
- #define instrumentation_end() __instrumentation_end(__COUNTER__)
---- a/include/linux/objtool.h
-+++ b/include/linux/objtool.h
-@@ -53,13 +53,13 @@
- 
- #define __ASM_ANNOTATE(s, x)					\
- 	".pushsection .discard.annotate,\"M\",@progbits,8\n\t"	\
--	".long " __stringify(s) "b - .\n\t"			\
-+	".long " __stringify(s) " - .\n\t"			\
- 	".long " __stringify(x) "\n\t"				\
- 	".popsection\n\t"
- 
- #define ASM_ANNOTATE(x)						\
- 	"911:\n\t"						\
--	__ASM_ANNOTATE(911, x)
-+	__ASM_ANNOTATE(911b, x)
- 
- #define ANNOTATE_NOENDBR	ASM_ANNOTATE(ANNOTYPE_NOENDBR)
- 
+That's nice to say how it is done, but you also have to say _what_ and 
+_why_ you do it. This is even more important as you plan to get it 
+merged independently in each tree instead of merging it as a single series.
+
+It could be something like:
+
+Commit b35108a51cf7 ("jiffies: Define secs_to_jiffies()") introduced 
+secs_to_jiffies(). As the value here is a multiple of 1000, use 
+secs_to_jiffies() instead of msecs_to_jiffies to avoid the multiplication.
+
+This is converted using scripts/coccinelle/misc/secs_to_jiffies.cocci
+
+> 
+> Signed-off-by: Easwar Hariharan <eahariha@linux.microsoft.com>
+> ---
+>   arch/powerpc/platforms/pseries/papr_scm.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/powerpc/platforms/pseries/papr_scm.c b/arch/powerpc/platforms/pseries/papr_scm.c
+> index 9e297f88adc5d97d4dc7b267b0bfebd58e5cf193..9e8086ec66e0f0e555ac27933854c06cfcf91a04 100644
+> --- a/arch/powerpc/platforms/pseries/papr_scm.c
+> +++ b/arch/powerpc/platforms/pseries/papr_scm.c
+> @@ -543,7 +543,7 @@ static int drc_pmem_query_health(struct papr_scm_priv *p)
+> 
+>          /* Jiffies offset for which the health data is assumed to be same */
+>          cache_timeout = p->lasthealth_jiffies +
+> -               msecs_to_jiffies(MIN_HEALTH_QUERY_INTERVAL * 1000);
+> +               secs_to_jiffies(MIN_HEALTH_QUERY_INTERVAL);
+
+Wouldn't it now fit on a single line ?
+
+	cache_timeout = p->lasthealth_jiffies + 
+secs_to_jiffies(MIN_HEALTH_QUERY_INTERVAL);
+
+
+Also I'm not sure it is worth the MIN_HEALTH_QUERY_INTERVAL macro as it 
+is defined localy and used only once, but that's another story.
+
+> 
+>          /* Fetch new health info is its older than MIN_HEALTH_QUERY_INTERVAL */
+>          if (time_after(jiffies, cache_timeout))
+> 
+> --
+> 2.34.1
+> 
 
