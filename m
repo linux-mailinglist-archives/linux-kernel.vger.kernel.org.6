@@ -1,195 +1,105 @@
-Return-Path: <linux-kernel+bounces-411750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D5FF9CFF28
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 14:16:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6F3A9CFF2A
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 14:28:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DD961F21482
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 13:16:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68C6D2836E6
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 13:28:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 865C71990A2;
-	Sat, 16 Nov 2024 13:16:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF15B19306F;
+	Sat, 16 Nov 2024 13:28:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UEnk3WvF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VzztqluI"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB388161;
-	Sat, 16 Nov 2024 13:16:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7AFE161
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 13:28:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731763006; cv=none; b=bp1++7NLxAJV5V0N+XQAIhJUdO1GwuGOZ+sD8xL9syD2yyqHO5v1Y1zAfD61ZTp/c+2x3gHP5trRWiXaq2sa6hqG85V+uepkufymFqx5k8mudUT2aI5anq9/eTk7GekCWgP2xPBQyPAm8zh0om/OM7zM5G7Dt5bFoWp6lLX0GCQ=
+	t=1731763711; cv=none; b=agaqFE5I10hSaOWzDOMNz0U7RkBru4L8SOQ2A5lwF7dmO2jEfZ801lxfKZhqM+zcLw9u2ta1Q8BYcuNRwjKuqqdK6ryqeiIKRnvibJF+AMYh9s9UmhAC2BTGla5Ae68E8hrqQjtJhvckdUhFKv7CtEEW0Su/HQ7GpAC4hkKHyu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731763006; c=relaxed/simple;
-	bh=XNgAawX6XLOa4/demc/OpYXjlzmHxNtnjOdaMjMRKCM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AsT7XT7cXvQcD1rtX7e9YCQnvfqgycanyRthauADv5RYyGTXZ6UGcLH7cmtBZ/KRMc56OA67u25GevzXu+0KOmHzS+hOC/dAyBOXVTA418BZNWytOq48X9CUffFE77gMJjiTBmRii98VSSvGdd7l4LzjgfaaSaLxVSJVXTfmGpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UEnk3WvF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95D78C4CEC3;
-	Sat, 16 Nov 2024 13:16:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731763006;
-	bh=XNgAawX6XLOa4/demc/OpYXjlzmHxNtnjOdaMjMRKCM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=UEnk3WvFJhwIzB5jN/zko4f6MTzOl0oeR+O281JOQE/TRtTGnrtf43PAjTSygnRnZ
-	 Gsx2vsi5s+vwy0EUpMEhomzM3oWohQpLU5BlAKJ2DC+g+Pb76yNiHbcJrg5JP1KDek
-	 KLwA/Pmrz9UN/KMSIOEu3+8jrBbgPtNesauRe/aPcSX+BtLikw/bYL4N6aHe0q+Ygt
-	 yOWJH0Hs3dUGYo01JQlT6+wWiEQW6xN07167UNstQII7NT+8cbfP5eue9ya4famEEc
-	 6QmsOYjR1WhSPydvpGp57CDU8HPgXwdfCC0EcuX/VeFbRVJzPZqV7SUaC+0doU/M0t
-	 bJUJBUqBJ2D0A==
-Date: Sat, 16 Nov 2024 14:16:39 +0100
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Thorsten Leemhuis <linux@leemhuis.info>
-Cc: Greg KH <gregkh@linuxfoundation.org>, Jonathan Corbet <corbet@lwn.net>,
- workflows@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, Laurent Pinchart
- <laurent.pinchart@ideasonboard.com>, Simona Vetter <simona.vetter@ffwll.ch>
-Subject: Re: [PATCH v2 2/2] docs: clarify rules wrt tagging other people
-Message-ID: <20241116141639.5adb4a95@foz.lan>
-In-Reply-To: <7491b60c-3e46-4425-aef5-63021538c33d@leemhuis.info>
-References: <cover.1731749544.git.linux@leemhuis.info>
-	<b7dce8b22a391c2f8f0d5a47bf23bc852eca4e71.1731749544.git.linux@leemhuis.info>
-	<2024111651-slather-blabber-857f@gregkh>
-	<20241116125003.43bf305c@foz.lan>
-	<7491b60c-3e46-4425-aef5-63021538c33d@leemhuis.info>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1731763711; c=relaxed/simple;
+	bh=KNmclWt+ATP4SArTRDpLkRCG1qV+1QuWe1Nv/B7rim0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U+xP2aSTO/4QIACE9marcmNGnNH9Ffc/x9TIlgZ0560qP/cbUy6s55AuxXEVpYHP6WAbsyGmOw9mk7SlwPaDFC8AmEJ6guVaykUqpUSnhZPI+h1WVSqAYAY5TyMGD+yx3v4U2ximhZPQSonnGOr59wZOhyYVSsQjBBbdOXi9vzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VzztqluI; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731763708;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/qq8C4BaiGCD/J7h9VQtTaV3Ol041LIReh2JXiSX3iU=;
+	b=VzztqluIIVpSP+f/KGIGRWydefvo4dy7fYgCJLTOzLA6HSrlQnheiCq8QDiZph1Ah3EoR1
+	Y6jC1s+us4RjquXNhg2KvgmIJK4BisRhiRWwBkgcE/G9xsCzHcORzPBan1BWx0f90qL0p6
+	eyqm+X64wGDs12fsum6Z+l0XX4qpGCo=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-2--PE7YWDjM-a16tIoBCzwJg-1; Sat,
+ 16 Nov 2024 08:28:24 -0500
+X-MC-Unique: -PE7YWDjM-a16tIoBCzwJg-1
+X-Mimecast-MFC-AGG-ID: -PE7YWDjM-a16tIoBCzwJg
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 65A6C1956096;
+	Sat, 16 Nov 2024 13:28:23 +0000 (UTC)
+Received: from localhost (unknown [10.72.113.10])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 12BCF19560A3;
+	Sat, 16 Nov 2024 13:28:21 +0000 (UTC)
+Date: Sat, 16 Nov 2024 21:28:17 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Tom Lendacky <thomas.lendacky@amd.com>, linux-kernel@vger.kernel.org,
+	bp@alien8.de, x86@kernel.org
+Subject: Re: [PATCH 2/3] x86/ioremap: use helper to implement
+ xxx_is_setup_data()
+Message-ID: <Zzid8dMZHAmfyUI9@MiWiFi-R3L-srv>
+References: <20241115012131.509226-1-bhe@redhat.com>
+ <20241115012131.509226-3-bhe@redhat.com>
+ <0dd9802f-ee28-180e-98b2-854c32288a72@amd.com>
+ <ZzhZinP5QLwHrPYa@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZzhZinP5QLwHrPYa@gmail.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-Em Sat, 16 Nov 2024 13:27:44 +0100
-Thorsten Leemhuis <linux@leemhuis.info> escreveu:
-
-> On 16.11.24 12:50, Mauro Carvalho Chehab wrote:
-> > Em Sat, 16 Nov 2024 11:42:06 +0100
-> > Greg KH <gregkh@linuxfoundation.org> escreveu:  
-> >> On Sat, Nov 16, 2024 at 10:33:59AM +0100, Thorsten Leemhuis wrote:  
-> >>> Point out that explicit permission is usually needed to tag other people
-> >>> in changes, but mention that implicit permission can be sufficient in
-> >>> certain cases. This fixes slight inconsistencies between Reported-by:
-> >>> and Suggested-by: and makes the usage more intuitive.
-> >>>
-> >>> While at it, explicitly mention the dangers of our bugzilla instance, as
-> >>> it makes it easy to forget that email addresses visible there are only
-> >>> shown to logged-in users.
-> >>>
-> >>> The latter is not a theoretical issue, as one maintainer mentioned that
-> >>> his employer received a EU GDPR (general data protection regulation)
-> >>> complaint after exposing a email address used in bugzilla through a tag
-> >>> in a patch description.
-> >>>
-> >>> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> >>> Cc: Simona Vetter <simona.vetter@ffwll.ch>
-> >>> Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> >>> Signed-off-by: Thorsten Leemhuis <linux@leemhuis.info>
-> >>> ---
-> >>> Note: this triggers a few checkpatch.pl complaints that are irrelevant
-> >>> when when to comes to changes like this.
-> >>>
-> >>> v2:
-> >>> - Retry differently. This slightly hardens the rule for Reported-by:
-> >>>   while slightly lessening it for Suggested-by:. Those in the end are
-> >>>   quite similar, so it does not make much sense to apply different ones.
-> >>>   I considered using an approach along the lines of "if you reported it
-> >>>   in pubic by mail, implicit permission to use in a tag is granted"; but
-> >>>   I abstained from it, as I assume there are good reasons for the
-> >>>   existing approach regarding Suggested-by:.
-> >>> - CC all the people that provided feedback on the text changes in v1
-> >>>
-> >>> v1: https://lore.kernel.org/all/f5bc0639a20d6fac68062466d5e3dd0519588d08.1731486825.git.linux@leemhuis.info/
-> >>> - initial version
-> >>> ---
-> >>>  Documentation/process/5.Posting.rst          | 17 ++++++--
-> >>>  Documentation/process/submitting-patches.rst | 44 ++++++++++++++------
-> >>>  2 files changed, 45 insertions(+), 16 deletions(-)
-> >>>
-> >>> diff --git a/Documentation/process/5.Posting.rst b/Documentation/process/5.Posting.rst
-> >>> index dbb763a8de901d..b45c4f6d65ca95 100644
-> >>> --- a/Documentation/process/5.Posting.rst
-> >>> +++ b/Documentation/process/5.Posting.rst
-> >>> @@ -268,10 +268,19 @@ The tags in common use are:
-> >>>   - Cc: the named person received a copy of the patch and had the
-> >>>     opportunity to comment on it.
-> >>>  
-> >>> -Be careful in the addition of tags to your patches, as only Cc: is appropriate
-> >>> -for addition without the explicit permission of the person named; using
-> >>> -Reported-by: is fine most of the time as well, but ask for permission if
-> >>> -the bug was reported in private.
-> >>> +Be careful in the addition of tags to your patches, as nearly all of them need
-> >>> +explicit permission of the person named.
-> >>> +
-> >>> +The only exceptions are Cc:, Reported-by:, and Suggested-by:, as for them    
-> >>
-> >> I don't understand what you mean by "only exceptions" here.  Exceptions
-> >> to what?
-> >>  
-> >>> +implicit permission is sufficient under the following circumstances: when the
-> >>> +person named according to the lore archives or the commit history regularly
-> >>> +contributes to the Linux kernel using that name and email address --   
-> > 
-> > Note that get_maintainer.pl doesn't use a concept of "regularly", and it
-> > doesn't really matter if one has just one or dozens of patches, once it 
-> > has a patch merged with his address, it is now public, as git log will
-> > keep it forever.
-> > 
-> > Also, if a patch authored by "John Doe <john@doe>" causes a regression, 
-> > a patch fixing the regression should be Cc: to him, even it it was his
-> > first contribution.
-> > 
-> > So, having a single patch accepted is enough to have other patches
-> > with meta-tag pointing to a name/email.
-> > 
-> > So, this would be better:
-> > 
-> > 	... or the git commit history contains that name and email address  
+On 11/16/24 at 09:36am, Ingo Molnar wrote:
 > 
-> Good point. But we are getting closer and closer to areas where I feel
-> out of my league as IANAL without any backing from company lawyers if
-> this leads to problems down the road.
+> * Tom Lendacky <thomas.lendacky@amd.com> wrote:
 > 
-> To still feel comfortable, I would change this to something like:
-> """
-> ... or a commit with a 'Signed-off-by' tag containing that name and
-> email address.
-> """
-
-You should also cover commit authorship, as SOB e-mail might be
-different. Currently, -next catches it as warnings, but still
-there are cases where maintainer might opt to keep as is, for
-instance when the SOB has name+company@e.mail and the author
-may have just name@e.mail - or vice-versa.
-
-What about:
-
-"""
-commit with a 'Signed-off-by' tag or patch(es) authored or committed by 
-that name and email address.
-"""
-
-> Because one accidental expose of a name and email address (say in a CC:
-> tag) by a some other developer should not be enough to allow other
-> developers to expose it again. Highly unlikely corner case, yes, but I
-> feel better that way. And in the end it should not make much of a
-> difference.
-
-IANAL either, but, once someone else exposes a secret publicly, it is
-not a secret anymore. You can't be blamed to mention a previously
-"secret email" that was now public.
-
+> > On 11/14/24 19:21, Baoquan He wrote:
+> > > This simplifies codes a lot by removing the duplicated code handling.
+> > 
+> > You should probably squash this with the first patch.
+> > 
+> > > 
+> > > And also remove the similar code comment above of them.
+> > > 
+> > > While at it, add __ref to memremap_is_setup_data() to avoid
+> > 
+> > The __ref shouldn't be needed if you remove the __init from the helper
+> > function.
 > 
-> Ciao, Thorsten
+> Yeah.
 > 
+> Baoquan, I've zapped these 3 commits from tip:x86/mm for now, mind resending them the init 
+> annotations fixed?
 
+Sure, will resend. Thanks.
 
-
-Thanks,
-Mauro
 
