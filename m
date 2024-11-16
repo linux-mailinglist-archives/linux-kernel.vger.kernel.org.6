@@ -1,87 +1,150 @@
-Return-Path: <linux-kernel+bounces-411934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88E9C9D017D
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 00:45:01 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DAFB9D017E
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 00:48:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 412191F22814
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 23:45:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83B77B21BC9
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 23:48:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C5C71AA786;
-	Sat, 16 Nov 2024 23:44:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B71B4198831;
+	Sat, 16 Nov 2024 23:48:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="N+f6cozo"
-Received: from mail-4325.protonmail.ch (mail-4325.protonmail.ch [185.70.43.25])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UCO0vxHw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8A8E195F22;
-	Sat, 16 Nov 2024 23:44:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DF55219FF
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 23:48:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731800692; cv=none; b=cb/DEhGd2nmrFxc7XuR4vUyiEWtIooZ1No3c0ZHjpYWXFzLAn6Zaufnilr0Nvk8ueKhmzG1dut9fhlTRju/+RgEna5bR2jmmn9S6Vyom3/Cn9lioJMiN5A0hfFKiS+K6SbZy1jmiBwCdQNA+U11XNDN8myIwUwYqaqKGnutmrcg=
+	t=1731800912; cv=none; b=FpwIYwLMQXX2o9OUp7XPC6RxeuzgC1GqNLa+tF7jtbjlvgaGhfEoxWFkkqDPe6TFfASXHdi3rObfUqrj10+FInd0rF+DpVhtQIUXzppYxSWP7tnvMuOx9w+P5KXGgRtUFDtfPyB3llun14rh2XDdTxKSY7LW/N3eVRqwojMiv8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731800692; c=relaxed/simple;
-	bh=yX6PXFJsWJV++bCpi3eMzC7Yg2y6EF2jfCPjAS1De6s=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HRORF4DERf8RvTjcnkhrJGMNyFprzJw+GiT1FVW7Nki5MIhhSZPhvbH5X6nywGq8lASo06nWfAx9FiA+wer8i9Za6mYLHuacKJ8xcSL3w3q6dg0LPCJw6blrutukHT0q5MuGB4YCjn61gDwFbG7vJuUvzVa4XFNydE3MketiImM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=N+f6cozo; arc=none smtp.client-ip=185.70.43.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-	s=protonmail3; t=1731800682; x=1732059882;
-	bh=yX6PXFJsWJV++bCpi3eMzC7Yg2y6EF2jfCPjAS1De6s=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=N+f6cozoFNiMcqzL9hENR8Og4xWkBrgs3w6gNmsi0UCyUfLVmY9l9QAkYWyHdQYP4
-	 /YfiWj93NHEWTTNvhfPHvdxU+E3lfGZe8KD/xnA8qkf5bwZ8Tk9HqdoeOXZauon5j+
-	 pk8+fqffvmKCDCXtaRpPuiyk32Ny4qnDjzRxQNzwRvl9Ngnc7z56OQL6lYcd2d6/75
-	 eWNwdjWR3eR2sO6plmyXTjktP7ZRM4M89XTE4jDYUTXefdEjXcu2wGzF4ziOsWbxj8
-	 y6Zyf39ZN5amoJNNYH6s6cvV1moGuMm2jFFUW5d50OleDyhl4AXdPEge+Gikd8SBbS
-	 p3UdbyX5jkr6Q==
-Date: Sat, 16 Nov 2024 23:44:37 +0000
-To: Andreas Larsson <andreas@gaisler.com>
-From: Koakuma <koachan@protonmail.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Vincenzo Frascino <vincenzo.frascino@arm.com>, Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH v2] sparc/vdso: Add helper function for 64-bit right shift on 32-bit target
-Message-ID: <gecz9pMRccdD2v_dImhonTGStG4FmiUko8IM2fkc9Rh2thw_QuSOvlsYTspZSf9bjtidQOD2uVL2aSaQ29-neWABRm1cpyXQr6xV0wELTU0=@protonmail.com>
-In-Reply-To: <1b2e776e-0ae3-4f48-a2b9-99b486d49368@gaisler.com>
-References: <20240808-sparc-shr64-v2-1-fd18f1b2cea9@protonmail.com> <1b2e776e-0ae3-4f48-a2b9-99b486d49368@gaisler.com>
-Feedback-ID: 6608610:user:proton
-X-Pm-Message-ID: 3d1c3566c3b675db725ff6937b0d516c7c4c2190
+	s=arc-20240116; t=1731800912; c=relaxed/simple;
+	bh=/8Q9v50cb3tWqVkZVKZ9WeEWxOVgp82X7xufnSizMMA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OLb2RyXc/OewO4MiUkgq1rgRYiMbxp4qzZbugivlxzU/xAUqcFkqvc1YU9wF5jdusejkFDh1+kRFZeGSrpRXJ5PfoqaYiin3ptfROPOxUR7UAGu4FHhpcKUcpI4xjkz3AGPc+YPbeJ34Uyr4WURjIJ64v++5tV5AcS2HbtzBm24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UCO0vxHw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36D3FC4CEC3;
+	Sat, 16 Nov 2024 23:48:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731800911;
+	bh=/8Q9v50cb3tWqVkZVKZ9WeEWxOVgp82X7xufnSizMMA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=UCO0vxHwDIgegNCdtgeIMC2pcnb7pOwGtgal1QXyHnY1yGzWG/PhPy8/icFHSp800
+	 Fk4QfH7JOC39aN8riGdu19OixIUv/MuwXjKSwa3oSDnvdLFhJnbg7FibeGSHUSmgg9
+	 OS4ZBv/PK6DkRo5zqty8BYWuB9yvIWMeKrJEf7Bm/dN6hVY2L5ui1TdU2ZWExJKZ2J
+	 KTSSPJT2RvzG7Cj4DPQKWZDN75qdcWIWiFPclxxy5157Vu/H9j5hNT7mtNXpVWdKSo
+	 fbG29v9ZSgQfAOatJ0iJImuxhx5hlxWI9l65++c1c9SWKQyprn0J+WfQEidpN1HyNy
+	 vhdjCmB5ZKAhA==
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	hdanton@sina.com,
+	syzbot+852e935b899bde73626e@syzkaller.appspotmail.com
+Subject: [PATCH] posix-timers: Fix spurious warning on double enqueue VS do_exit()
+Date: Sun, 17 Nov 2024 00:48:23 +0100
+Message-ID: <20241116234823.28497-1-frederic@kernel.org>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Andreas Larsson <andreas@gaisler.com> wrote:
-> Koakuma via B4 Relay wrote:
-> > +notrace static __always_inline u64 __shr64(u64 val, int amt)
-> > +{
-> > + u64 ret;
-> > +
-> > + asm volatile("sllx %H1, 32, %%g1\n\t"
-> > + "srl %L1, 0, %L1\n\t"
-> > + "or %%g1, %L1, %%g1\n\t"
-> > + "srlx %%g1, %2, %L0\n\t"
-> > + "srlx %L0, 32, %H0"
-> > + : "=3Dr" (ret)
-> > + : "r" (val), "r" (amt)
-> > + : "g1");
-> > + return ret;
-> > +}
->=20
-> Can not residual in bits 63:32 of %L0 potentially pose a problem?
+A timer sigqueue may find itself already pending when it is tried to
+be enqueued. This situation can happen if the timer sigqueue is enqueued
+but then the timer is reset afterwards and fires before the pending
+signal managed to be delivered.
 
-It shouldn't be a problem, upon returning the caller should treat
-the upper bits of %L0 as an unspecified value and not depend on/use
-its contents.
+However when such a double enqueue occurs while the corresponding signal
+is ignored, the sigqueue is expected to be found either on the dedicated
+ignored list if the timer was periodic or dropped if the timer was
+one-shot. In any case it is not supposed to be queued on the real signal
+queue.
+
+An assertion verifies the latter expectation on top of the return value
+of prepare_signal(), assuming "false" means that the signal is being
+ignored. But prepare_signal() may also fail if the target is exiting as
+the last task of its group. In this case the double enqueue observes the
+sigqueue queued, as in such a situation:
+
+    TASK A (same group as B)                   TASK B (same group as A)
+    ------------------------                   ------------------------
+
+    // timer event
+    // queue signal to TASK B
+    posix_timer_queue_signal()
+    // reset timer through syscall
+    do_timer_settime()
+    // exit, leaving task B alone
+    do_exit()
+                                               do_exit()
+                                                  synchronize_group_exit()
+                                                      signal->flags = SIGNAL_GROUP_EXIT
+                                                  // ========> <IRQ> timer event
+                                                  posix_timer_queue_signal()
+                                                  // return false due to SIGNAL_GROUP_EXIT
+                                                  if (!prepare_signal())
+                                                     WARN_ON_ONCE(!list_empty(&q->list))
+
+And this spuriously triggers this warning:
+
+    WARNING: CPU: 0 PID: 5854 at kernel/signal.c:2008 posixtimer_send_sigqueue
+    CPU: 0 UID: 0 PID: 5854 Comm: syz-executor139 Not tainted 6.12.0-rc6-next-20241108-syzkaller #0
+    RIP: 0010:posixtimer_send_sigqueue+0x9da/0xbc0 kernel/signal.c:2008
+    Call Trace:
+     <IRQ>
+     alarm_handle_timer
+     alarmtimer_fired
+     __run_hrtimer
+     __hrtimer_run_queues
+     hrtimer_interrupt
+     local_apic_timer_interrupt
+     __sysvec_apic_timer_interrupt
+     instr_sysvec_apic_timer_interrupt
+     sysvec_apic_timer_interrupt
+     </IRQ>
+
+Fortunately the recovery code in that case already does the right thing:
+just exit from posixtimer_send_sigqueue() and wait for __exit_signal()
+to flush the pending signal. Just make sure to warn only the case when
+the sigqueue is queued and the signal is really ignored.
+
+Reported-and-tested-by: syzbot+852e935b899bde73626e@syzkaller.appspotmail.com
+Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+---
+ kernel/signal.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/signal.c b/kernel/signal.c
+index cbf70c808969..10b464b9d91f 100644
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -2003,9 +2003,15 @@ void posixtimer_send_sigqueue(struct k_itimer *tmr)
+ 	if (!prepare_signal(sig, t, false)) {
+ 		result = TRACE_SIGNAL_IGNORED;
+ 
+-		/* Paranoia check. Try to survive. */
+-		if (WARN_ON_ONCE(!list_empty(&q->list)))
++		if (!list_empty(&q->list)) {
++			/*
++			 * If task group is exiting with the signal already pending,
++			 * wait for __exit_signal() to do its job. Otherwise if
++			 * ignored, it's not supposed to be queued. Try to survive.
++			 */
++			WARN_ON_ONCE(!(t->signal->flags & SIGNAL_GROUP_EXIT));
+ 			goto out;
++		}
+ 
+ 		/* Periodic timers with SIG_IGN are queued on the ignored list */
+ 		if (tmr->it_sig_periodic) {
+-- 
+2.46.0
 
 
