@@ -1,176 +1,87 @@
-Return-Path: <linux-kernel+bounces-411933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57B399D017B
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 00:40:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88E9C9D017D
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 00:45:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB07CB225A3
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 23:40:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 412191F22814
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 23:45:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2A2D1ABEA5;
-	Sat, 16 Nov 2024 23:40:31 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C5C71AA786;
+	Sat, 16 Nov 2024 23:44:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="N+f6cozo"
+Received: from mail-4325.protonmail.ch (mail-4325.protonmail.ch [185.70.43.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 059E2193079
-	for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 23:40:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8A8E195F22;
+	Sat, 16 Nov 2024 23:44:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731800431; cv=none; b=pvieOyy82701yc7fPgMmqvsXvmU2cIepwKtIHUjxL2VEys3/EC0JxB3cCStEtkNI8yVGd0Kpu5Iya89XoMe65yx1CMFgK9yDGN8FpLQ8G8aVkg5CmREX7UYS0Tf10WtkuIEr5P7dKrAhRkKXdL2UcPZS022Pri1lky/4pnF4uMI=
+	t=1731800692; cv=none; b=cb/DEhGd2nmrFxc7XuR4vUyiEWtIooZ1No3c0ZHjpYWXFzLAn6Zaufnilr0Nvk8ueKhmzG1dut9fhlTRju/+RgEna5bR2jmmn9S6Vyom3/Cn9lioJMiN5A0hfFKiS+K6SbZy1jmiBwCdQNA+U11XNDN8myIwUwYqaqKGnutmrcg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731800431; c=relaxed/simple;
-	bh=0ox60d0tY9xN9C+7OwmiAYuJ18xlV8NQVygfCBYJ5oI=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=R0yiGxWqAImVi0fJQXCNPQ0RDJpEaA9+ZyACh5wLujpWujLz8f8/lLKR+iX8yf7KN36o5YoIpwA/s5byTSsDuPSjJT6H3JHSxjr1/2Yvi5v5NxURpPcKs6eBkaj3+kDCj6HwqUoC4w5TNWFlmDTpZjheHaZkJcmuPVdIOfCxUUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-83abf9b6bfaso69466439f.2
-        for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 15:40:29 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731800429; x=1732405229;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=H/O2GpCEAvsHvmB5TwXYPuJj++JFWLv4bXVKE8bL8gQ=;
-        b=r6cjX7kgprfVabJC1LUZ+r7nbWRY9GidA5vBTxB0ZlZvzLCurtWH5j5ZttOQHCU9qF
-         UMHNBsZuTsY1Lxj2/2KZPWTRwZHPJgJrOyXglVkIBUm2ZjU2c4Xv3JUD/BQV8MEHu9bR
-         QO1enHAndz1vkIojYitApXxopZJTC72LvQLWkWkrVxhUqvUHJuNqt6x5U5MHx5WisWPI
-         kDg7qoHleCMQLSs51HeTNy5ZgJ/EGNeDTKxStMTanBDCA7Whmur+Zji3vnLFl1RsnuEF
-         V0PWl3KEI11ulfedtJnvS1hTV77M6QCPJnE/vyREPyVoI+RU8mmi0OMok/u/GAQqmQxY
-         uECQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV2YqJXp/hYZQ4Ok+WtVycBusUuNk0jhMl8aeXrvKcBW5A/q6ea3skY8+pbrJFvVUvan7DR3YshxFgZXKY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YydwvRiLOZcNPtaJa/ZvUwNCGdNXZcCKtTrWaZ58Df0e3KmYs/W
-	liYPKZeqnynQJQBo2+UsTa/ObO48siYoH1dRjoseqzZ+9tV/O/qUw9n7WFZbTUYLnQrTlumeR5P
-	munsl6lhplQHHfitlyBvd5pKig/4cFuuO2b3d+0OCYZFuBY0F5HjariA=
-X-Google-Smtp-Source: AGHT+IGqhH1oUAVO2vqm+OC3dAw54MV8T875v0LgzsjFxJO3o2Zu7R5t7S7DD8Ku9IDW2FFNP8xtREJWuz2DI7b1JDkykMJcVbUK
+	s=arc-20240116; t=1731800692; c=relaxed/simple;
+	bh=yX6PXFJsWJV++bCpi3eMzC7Yg2y6EF2jfCPjAS1De6s=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HRORF4DERf8RvTjcnkhrJGMNyFprzJw+GiT1FVW7Nki5MIhhSZPhvbH5X6nywGq8lASo06nWfAx9FiA+wer8i9Za6mYLHuacKJ8xcSL3w3q6dg0LPCJw6blrutukHT0q5MuGB4YCjn61gDwFbG7vJuUvzVa4XFNydE3MketiImM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=N+f6cozo; arc=none smtp.client-ip=185.70.43.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1731800682; x=1732059882;
+	bh=yX6PXFJsWJV++bCpi3eMzC7Yg2y6EF2jfCPjAS1De6s=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=N+f6cozoFNiMcqzL9hENR8Og4xWkBrgs3w6gNmsi0UCyUfLVmY9l9QAkYWyHdQYP4
+	 /YfiWj93NHEWTTNvhfPHvdxU+E3lfGZe8KD/xnA8qkf5bwZ8Tk9HqdoeOXZauon5j+
+	 pk8+fqffvmKCDCXtaRpPuiyk32Ny4qnDjzRxQNzwRvl9Ngnc7z56OQL6lYcd2d6/75
+	 eWNwdjWR3eR2sO6plmyXTjktP7ZRM4M89XTE4jDYUTXefdEjXcu2wGzF4ziOsWbxj8
+	 y6Zyf39ZN5amoJNNYH6s6cvV1moGuMm2jFFUW5d50OleDyhl4AXdPEge+Gikd8SBbS
+	 p3UdbyX5jkr6Q==
+Date: Sat, 16 Nov 2024 23:44:37 +0000
+To: Andreas Larsson <andreas@gaisler.com>
+From: Koakuma <koachan@protonmail.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Vincenzo Frascino <vincenzo.frascino@arm.com>, Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH v2] sparc/vdso: Add helper function for 64-bit right shift on 32-bit target
+Message-ID: <gecz9pMRccdD2v_dImhonTGStG4FmiUko8IM2fkc9Rh2thw_QuSOvlsYTspZSf9bjtidQOD2uVL2aSaQ29-neWABRm1cpyXQr6xV0wELTU0=@protonmail.com>
+In-Reply-To: <1b2e776e-0ae3-4f48-a2b9-99b486d49368@gaisler.com>
+References: <20240808-sparc-shr64-v2-1-fd18f1b2cea9@protonmail.com> <1b2e776e-0ae3-4f48-a2b9-99b486d49368@gaisler.com>
+Feedback-ID: 6608610:user:proton
+X-Pm-Message-ID: 3d1c3566c3b675db725ff6937b0d516c7c4c2190
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:b21:b0:3a5:e1f5:1572 with SMTP id
- e9e14a558f8ab-3a7480d4ademr53874245ab.22.1731800429129; Sat, 16 Nov 2024
- 15:40:29 -0800 (PST)
-Date: Sat, 16 Nov 2024 15:40:29 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67392d6d.050a0220.e1c64.000a.GAE@google.com>
-Subject: [syzbot] [fs?] BUG: unable to handle kernel NULL pointer dereference
- in filemap_read_folio (4)
-From: syzbot <syzbot+09b7d050e4806540153d@syzkaller.appspotmail.com>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+Andreas Larsson <andreas@gaisler.com> wrote:
+> Koakuma via B4 Relay wrote:
+> > +notrace static __always_inline u64 __shr64(u64 val, int amt)
+> > +{
+> > + u64 ret;
+> > +
+> > + asm volatile("sllx %H1, 32, %%g1\n\t"
+> > + "srl %L1, 0, %L1\n\t"
+> > + "or %%g1, %L1, %%g1\n\t"
+> > + "srlx %%g1, %2, %L0\n\t"
+> > + "srlx %L0, 32, %H0"
+> > + : "=3Dr" (ret)
+> > + : "r" (val), "r" (amt)
+> > + : "g1");
+> > + return ret;
+> > +}
+>=20
+> Can not residual in bits 63:32 of %L0 potentially pose a problem?
 
-syzbot found the following issue on:
+It shouldn't be a problem, upon returning the caller should treat
+the upper bits of %L0 as an unspecified value and not depend on/use
+its contents.
 
-HEAD commit:    3022e9d00ebe Merge tag 'sched_ext-for-6.12-rc7-fixes' of g..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=119f8ce8580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=327b6119dd928cbc
-dashboard link: https://syzkaller.appspot.com/bug?extid=09b7d050e4806540153d
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1656a4c0580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=159f8ce8580000
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-3022e9d0.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/6539389f3983/vmlinux-3022e9d0.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/9ee2dbf68ed6/bzImage-3022e9d0.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+09b7d050e4806540153d@syzkaller.appspotmail.com
-
-BUG: kernel NULL pointer dereference, address: 0000000000000000
-#PF: supervisor instruction fetch in kernel mode
-#PF: error_code(0x0010) - not-present page
-PGD 32263067 P4D 32263067 PUD 32264067 PMD 0 
-Oops: Oops: 0010 [#1] PREEMPT SMP KASAN NOPTI
-CPU: 3 UID: 0 PID: 5935 Comm: syz-executor262 Not tainted 6.12.0-rc7-syzkaller-00012-g3022e9d00ebe #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:0x0
-Code: Unable to access opcode bytes at 0xffffffffffffffd6.
-RSP: 0018:ffffc900036a79c8 EFLAGS: 00010293
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffffff81c26c1f
-RDX: ffff8880289da440 RSI: ffffea0000e995c0 RDI: ffff888029a421c0
-RBP: ffffea0000e995c0 R08: 0000000000000007 R09: 0000000000000000
-R10: 0000000000000000 R11: ffffffff961d8908 R12: 1ffff920006d4f3a
-R13: ffff888029a421c0 R14: 0000000000000000 R15: dffffc0000000000
-FS:  000055557e035380(0000) GS:ffff88806a900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffffffffffffd6 CR3: 0000000031818000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- filemap_read_folio+0xc6/0x2a0 mm/filemap.c:2367
- do_read_cache_folio+0x263/0x5c0 mm/filemap.c:3825
- freader_get_folio+0x337/0x8e0 lib/buildid.c:77
- freader_fetch+0xc2/0x5f0 lib/buildid.c:120
- __build_id_parse.isra.0+0xed/0x7a0 lib/buildid.c:305
- do_procmap_query+0xd62/0x1030 fs/proc/task_mmu.c:534
- procfs_procmap_ioctl+0x7d/0xb0 fs/proc/task_mmu.c:613
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:907 [inline]
- __se_sys_ioctl fs/ioctl.c:893 [inline]
- __x64_sys_ioctl+0x18f/0x220 fs/ioctl.c:893
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f5f4c4436e9
-Code: 48 83 c4 28 c3 e8 37 17 00 00 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffde11efd68 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007ffde11efd70 RCX: 00007f5f4c4436e9
-RDX: 0000000020000180 RSI: 00000000c0686611 RDI: 0000000000000004
-RBP: 00007f5f4c4b6610 R08: 0000000000000000 R09: 65732f636f72702f
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
-R13: 00007ffde11effa8 R14: 0000000000000001 R15: 0000000000000001
- </TASK>
-Modules linked in:
-CR2: 0000000000000000
----[ end trace 0000000000000000 ]---
-RIP: 0010:0x0
-Code: Unable to access opcode bytes at 0xffffffffffffffd6.
-RSP: 0018:ffffc900036a79c8 EFLAGS: 00010293
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffffff81c26c1f
-RDX: ffff8880289da440 RSI: ffffea0000e995c0 RDI: ffff888029a421c0
-RBP: ffffea0000e995c0 R08: 0000000000000007 R09: 0000000000000000
-R10: 0000000000000000 R11: ffffffff961d8908 R12: 1ffff920006d4f3a
-R13: ffff888029a421c0 R14: 0000000000000000 R15: dffffc0000000000
-FS:  000055557e035380(0000) GS:ffff88806a900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffffffffffffd6 CR3: 0000000031818000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
