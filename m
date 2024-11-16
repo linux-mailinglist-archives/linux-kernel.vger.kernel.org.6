@@ -1,169 +1,82 @@
-Return-Path: <linux-kernel+bounces-411538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E88A9CFBB2
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 01:33:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 296739CFBB3
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 01:33:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26D451F22E5E
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 00:33:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E333A284A7E
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 00:33:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 365C54C76;
-	Sat, 16 Nov 2024 00:33:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8B8FBA2D;
+	Sat, 16 Nov 2024 00:33:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="lmlTPDZn"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="eqv7VY2h"
+Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D85FB10E6;
-	Sat, 16 Nov 2024 00:33:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5AAE944E
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 00:33:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731717183; cv=none; b=jUyZpbcbq2bp8+rvI6sRT7XT3DwDbKjEosPry6M3krq2adFPf1AHN9SwlX2g2ASbJeELJSVmeYtNCUHH/YxWCAyFe1+QR6fY13XocV8IN+EC9uSnk6ukD+JMGP/HvcqRdnU/iYUL4dtA3643vptY6qF+hY3f0zZKl+cAj7xOwGk=
+	t=1731717191; cv=none; b=Kg0tmDboMrOE3zdF4Kw8o1J0C9KjnRVpOqDk4sZ8kgIDRMnbcGjJWh2fyPhb7W2mAQ7KxWwTCwm8FHs51ndaj+mmif0RuPrUXhYEkSSaG0vrqhIWKQGoQ6kyDRk2mgKgfzAv/onpm7wQJKJoteMvC6Pmp0gtnxvSaemzjOqpc+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731717183; c=relaxed/simple;
-	bh=T7RtKM+FtjTcEG3IPQwos/zWrHkVgFDeK3pjo2QBvC0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HSVLfWTkzLjbKPOEZ5qcw60batYhVxx0r4z6UI8TWDt8xG2qNzYKIa4hqFWmtVQtbu8FpRh4vucGLckNWVPi/wj6J2g4LQ2m2SWHJ7OZXg6Du3LEATwCdGz3V4QkkZwhCmfHN3uQ4DEtjZD/kZ4ixZu/aF7MvG+nuLw0of10mEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=lmlTPDZn; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=O69RYa26PSMBV2S9yrDOnpZxIdp5LpKg7DZPibj60YM=; b=lmlTPDZnE4F0PENa
-	rs96Vt9CjL6fHsmROCUPK8M28fs62uFoWDV6gZlFjIpOBNGBhVNllDUA6ROsmpfmHUfPvXkegAQ9k
-	OcvqOqnZzf2zPJsw/Rh4YMBcSwW8kczZitdXmz0xZAwB1+G0bjwqC8e2mkaGxKJGv5sqCGl6BIPLG
-	44ic2otqRE7OtbRJZjarIrMJH6Is7nwUDT/ZsoGSx2DDow6/9HjBYgmlo1GbjoIdvyq5kaQc6ttAi
-	E51VpHxLBcf2e4yOzGRD3Z/GIzJn1cyje+sf7zeezQA7ewEc4G0h2MTRfVtnH13V2fJppMYFMYBzP
-	ZgXsJChKVEtp5mZr+w==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1tC6kA-000FLA-1D;
-	Sat, 16 Nov 2024 00:32:54 +0000
-From: linux@treblig.org
-To: andriy.shevchenko@linux.intel.com,
-	djrscally@gmail.com,
-	heikki.krogerus@linux.intel.com,
-	sakari.ailus@linux.intel.com,
-	rafael@kernel.org
-Cc: linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH] device: property: Remove deadcode
-Date: Sat, 16 Nov 2024 00:32:53 +0000
-Message-ID: <20241116003253.335337-1-linux@treblig.org>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1731717191; c=relaxed/simple;
+	bh=F6fU7KlLSzUs1gveo2BCh7OFm372YDhjsxyCVNn+gQw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YD/kM1tYLv8Bfl8lM4kk43Hzbp6+9GhXZe57OcRlT4WjVJvZRasazixd9uGCT9QXWuVG3kKdbHFFUUD6zo0NeN0uND8vBczhXpVEgGIldEEEE1g5QEFlrIbcSv19E4/xFgd0fIl3dC0B5O5t2sh8AXHZhwJGZXx/tqXQHLeUQH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=eqv7VY2h; arc=none smtp.client-ip=95.215.58.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <fb9476ac-74da-4a58-b997-14b25d3ec2a1@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1731717186;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=F6fU7KlLSzUs1gveo2BCh7OFm372YDhjsxyCVNn+gQw=;
+	b=eqv7VY2hqwalOemrPrMnqrHOsLRx0dzdCNIWgJGlTfxdGhEbUIFRU6taalMso/HIkZsKaz
+	JflZEFhlDgBvvNXxsd9DkJXRYCutgMfxGt8XtWvG+D9JCmraW74oi8BkSdzS6TAoOPwbCu
+	5Pc6mO51yuHeWL2Qd6DTdYVrLTEVAwU=
+Date: Fri, 15 Nov 2024 16:32:59 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v2] ARC: bpf: Correct conditional check in 'check_jmp_32'
+To: Shahab Vahedi <list+bpf@vahedi.org>
+Cc: vadim.fedorenko@linux.dev, tarang.raval@siliconsignals.io,
+ Vineet Gupta <vgupta@kernel.org>, bpf@vger.kernel.org,
+ linux-snps-arc@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>
+References: <20241113134142.14970-1-hardevsinh.palaniya@siliconsignals.io>
+ <920e71ab-2375-4722-bcf3-d6aaf8e68b3a@vahedi.org>
+ <f5f49eee8979985439408e7bd6fbd1534e91a115@vahedi.org>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Vineet Gupta <vineet.gupta@linux.dev>
+Content-Language: en-US
+In-Reply-To: <f5f49eee8979985439408e7bd6fbd1534e91a115@vahedi.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+On 11/15/24 07:55, Shahab Vahedi wrote:
+> Hi Vineet,
+>
+> Could you pick up this patch [1] in your "next"?
+>
+> Thanks,
+> Shahab
+>
+> [1]
+> https://lore.kernel.org/bpf/920e71ab-2375-4722-bcf3-d6aaf8e68b3a@vahedi.org/T/#t
 
-fwnode_graph_get_endpoint_count() was added in 2021 by
-commit c87b8fc56966 ("device property: Implement
-fwnode_graph_get_endpoint_count()")
+Done. Given We are in the last week this all will land in 6.13 cycle.
 
-but has never been used.
-
-fwnode_graph_get_remote_port() has been unused since 2017's
-commit 6a71d8d77795 ("device property: Add fwnode_graph_get_port_parent")
-
-Remove them.
-
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- drivers/base/property.c  | 41 ----------------------------------------
- include/linux/property.h |  4 ----
- 2 files changed, 45 deletions(-)
-
-diff --git a/drivers/base/property.c b/drivers/base/property.c
-index 837d77e3af2b..0cf8a7afaaee 100644
---- a/drivers/base/property.c
-+++ b/drivers/base/property.c
-@@ -1116,22 +1116,6 @@ fwnode_graph_get_remote_port_parent(const struct fwnode_handle *fwnode)
- }
- EXPORT_SYMBOL_GPL(fwnode_graph_get_remote_port_parent);
- 
--/**
-- * fwnode_graph_get_remote_port - Return fwnode of a remote port
-- * @fwnode: Endpoint firmware node pointing to the remote endpoint
-- *
-- * Extracts firmware node of a remote port the @fwnode points to.
-- *
-- * The caller is responsible for calling fwnode_handle_put() on the returned
-- * fwnode pointer.
-- */
--struct fwnode_handle *
--fwnode_graph_get_remote_port(const struct fwnode_handle *fwnode)
--{
--	return fwnode_get_next_parent(fwnode_graph_get_remote_endpoint(fwnode));
--}
--EXPORT_SYMBOL_GPL(fwnode_graph_get_remote_port);
--
- /**
-  * fwnode_graph_get_remote_endpoint - Return fwnode of a remote endpoint
-  * @fwnode: Endpoint firmware node pointing to the remote endpoint
-@@ -1227,31 +1211,6 @@ fwnode_graph_get_endpoint_by_id(const struct fwnode_handle *fwnode,
- }
- EXPORT_SYMBOL_GPL(fwnode_graph_get_endpoint_by_id);
- 
--/**
-- * fwnode_graph_get_endpoint_count - Count endpoints on a device node
-- * @fwnode: The node related to a device
-- * @flags: fwnode lookup flags
-- * Count endpoints in a device node.
-- *
-- * If FWNODE_GRAPH_DEVICE_DISABLED flag is specified, also unconnected endpoints
-- * and endpoints connected to disabled devices are counted.
-- */
--unsigned int fwnode_graph_get_endpoint_count(const struct fwnode_handle *fwnode,
--					     unsigned long flags)
--{
--	struct fwnode_handle *ep;
--	unsigned int count = 0;
--
--	fwnode_graph_for_each_endpoint(fwnode, ep) {
--		if (flags & FWNODE_GRAPH_DEVICE_DISABLED ||
--		    fwnode_graph_remote_available(ep))
--			count++;
--	}
--
--	return count;
--}
--EXPORT_SYMBOL_GPL(fwnode_graph_get_endpoint_count);
--
- /**
-  * fwnode_graph_parse_endpoint - parse common endpoint node properties
-  * @fwnode: pointer to endpoint fwnode_handle
-diff --git a/include/linux/property.h b/include/linux/property.h
-index 61fc20e5f81f..4301f5130280 100644
---- a/include/linux/property.h
-+++ b/include/linux/property.h
-@@ -470,8 +470,6 @@ struct fwnode_handle *
- fwnode_graph_get_port_parent(const struct fwnode_handle *fwnode);
- struct fwnode_handle *fwnode_graph_get_remote_port_parent(
- 	const struct fwnode_handle *fwnode);
--struct fwnode_handle *fwnode_graph_get_remote_port(
--	const struct fwnode_handle *fwnode);
- struct fwnode_handle *fwnode_graph_get_remote_endpoint(
- 	const struct fwnode_handle *fwnode);
- 
-@@ -497,8 +495,6 @@ static inline bool fwnode_graph_is_endpoint(const struct fwnode_handle *fwnode)
- struct fwnode_handle *
- fwnode_graph_get_endpoint_by_id(const struct fwnode_handle *fwnode,
- 				u32 port, u32 endpoint, unsigned long flags);
--unsigned int fwnode_graph_get_endpoint_count(const struct fwnode_handle *fwnode,
--					     unsigned long flags);
- 
- #define fwnode_graph_for_each_endpoint(fwnode, child)				\
- 	for (child = fwnode_graph_get_next_endpoint(fwnode, NULL); child;	\
--- 
-2.47.0
-
+-Vineet
 
