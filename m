@@ -1,142 +1,155 @@
-Return-Path: <linux-kernel+bounces-411596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AB079CFC9B
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 04:48:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5AE59CFC9E
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 04:50:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4538A287A3F
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 03:48:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9348C1F243B1
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 03:50:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 298D018FDA5;
-	Sat, 16 Nov 2024 03:48:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Go+EiRM9"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BE261917C7;
+	Sat, 16 Nov 2024 03:50:33 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AA78624;
-	Sat, 16 Nov 2024 03:48:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67CCC624;
+	Sat, 16 Nov 2024 03:50:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731728907; cv=none; b=KIc+dFjtkL3MZJoZ+OEY0aMOMGDqwruRAiN6b6JnJfTD3yxX29oJWsaeL7a6Jfxrmp/DHX7Nls0dhf8lyPLJ70NGvjHjYWZ2eMr3NpdFcVctcYQQgFoYl5h71/itDA9XGMQ9GYPW6pZ1yi5Drig2acdJ6yL/PuA+24FRW2plh6U=
+	t=1731729032; cv=none; b=DSIBaf5x5rRaSoE1rVOGCAdT22L6/rfsCPBNB2hO3hszeqNhcfXB5/9wKNDvYfVFv8WLUMUKkm4F/jT6RM1bL6x8jc5Fkd0AOZXayhfFJE5RmJdughqGyZpJB2bet+xi3YbEE8xRDJrzrh1DxVpw3B1BOsjLowlgsdMA68Utsl8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731728907; c=relaxed/simple;
-	bh=ieeUuIerkjDDSrkzSFQbSC37Rio0pr9cSn/Dv1ez9hY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oF+cHE0UvtTycDmOt4Jp/6nuwDGlWEKvNTL+twmJyOfHJOmWnhkgRnfU7DTpTTC7765UMDTE5KCjTT/lGyH2LYYT+J6MvcjBF0/xKkK5XaMAO6fYQJlPpuYO1kN5HFAu9PfTg6SpQtOPkL4AZPQ4JlnuHY4Gqnlc76OOLEJcTf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Go+EiRM9; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-211f4e2873fso299695ad.1;
-        Fri, 15 Nov 2024 19:48:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731728905; x=1732333705; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1X6feTn5BLY+cIw7COfGlCu+hHK0fLj/DvXKOsWr43Q=;
-        b=Go+EiRM9efCnVu/xF0FCBOwDAkMtvbqvEmIPBY/imJOAGzewDBwNJKyYhYne5mWAEm
-         /+Xda8goaZhOIUi8t9Fom8vDOpYglYvFtZXK7LJTshN+Z1DFdOfJ4sxzQ45VI1B3iMYT
-         GDw77smFnicvUOaDSpQQVTFIo2MgnQEPpcLO5yjo8IMF57DDHGFQebGPmgOlatsuKDVZ
-         oka+2TMTsX9NKi1OvcZVMmetQ8Z/DawhYCHkEYK/4Nrrn9a/7KBF90lxIxWdo+Foy7ij
-         TOghtkOU2N94xi/Qabb4vuCglezQrEJ6OJIPlywPj8Tx+bXJvlIPiuFAMlgO2EgDJNFT
-         1T8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731728905; x=1732333705;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1X6feTn5BLY+cIw7COfGlCu+hHK0fLj/DvXKOsWr43Q=;
-        b=qDnmvG1gn0895aHXKslHPHNsqVenpv19qzpra8apS8XZsXiZjqMyTiYihkp5jlTGRX
-         TeHnErd9FCj26qzBgx9r/d9kQgfoKCaxhRBdd7fVOlWm6zkqN0qEE8lWwZKRcIxyohzG
-         3Lr8xZb4jMt7JlcwObhg9k6+rjhm7Z/T4cJvPor/FxJWFfqyussorQc70BGLb9uf7HsL
-         coxQq4G6rMqDpA2R9WbKluVXogTxBvuqAJzVIWxz+xvT4FqfyQZ5KdLhBtJxGFryDWog
-         cBeSYoqULlYV1VXEGWcb3e9x69IlBI0vzio87peZ++TBO5GidnNynEEJLmfLzrYxVEMC
-         KKZA==
-X-Forwarded-Encrypted: i=1; AJvYcCUhmNxP3QkC6htuVv8cS53EyXtXw3lQ4OcqLAQ7WyrBUIy9oKZtJFnT2k2+YFA/Ekjl3SSQmSW+kIFVxwDEP7c=@vger.kernel.org, AJvYcCXwbQaubKJaajwW1+iMHoDPW3JxrK1Q9yFkY4ggiRLQwWTczr/eFnAug5Me/IobpFfxbQNI5i9O3+oOFRHI@vger.kernel.org
-X-Gm-Message-State: AOJu0YwuXemUVOFwdJ/FC89pxRUCG1hC1+AwQst+1Cut4mmyhxMUpkYn
-	3NQt4VoP9vwsVRFxWrtcLOAGd3A50jZaKF1Xed1S7f9h9iPv/umd
-X-Google-Smtp-Source: AGHT+IH9d/94RHkrpzjOvRPbYXCVTRLcWSFbJw+A7dVUDAf2K54LQ2/ZxefrWJKXczHI1MvZ7RvZJw==
-X-Received: by 2002:a17:902:cf07:b0:20c:e2ff:4a4c with SMTP id d9443c01a7336-211d0d63769mr28579775ad.3.1731728905286;
-        Fri, 15 Nov 2024 19:48:25 -0800 (PST)
-Received: from ?IPV6:2402:e280:214c:86:7694:d274:39d8:8ffa? ([2402:e280:214c:86:7694:d274:39d8:8ffa])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211d0f55cf8sm19813745ad.260.2024.11.15.19.48.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Nov 2024 19:48:24 -0800 (PST)
-Message-ID: <2a5500a5-c1b6-4c5c-bf37-4cfeda5a9e1e@gmail.com>
-Date: Sat, 16 Nov 2024 09:18:21 +0530
+	s=arc-20240116; t=1731729032; c=relaxed/simple;
+	bh=FKljwgLTPLLfEy9k9vlShafwIRGORg2aw9l0iiys8lc=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=t+6pbu1PaODy0MWWmalt9cUIdKX9UPU8lepIPw1B5A3WIrPBsUdLzyQfnYDcxVkx6FKd54cJlfS7eQEyN6XTYmZmuM4+II4zgVkASex1NJKEiM6nv7my27Wy3PiCi5V0xlUJ1moWO/NGWsa3w0yQ+LIRrbAz/r8i8M2XrahJEcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Xr0Jy3CqXz4f3jkk;
+	Sat, 16 Nov 2024 11:50:10 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id B4C2E1A0196;
+	Sat, 16 Nov 2024 11:50:23 +0800 (CST)
+Received: from [10.174.176.73] (unknown [10.174.176.73])
+	by APP4 (Coremail) with SMTP id gCh0CgCHY4d9FjhnAx2rBw--.46507S3;
+	Sat, 16 Nov 2024 11:50:23 +0800 (CST)
+Subject: Re: [PATCH v4 5/5] md/raid10: Atomic write support
+To: Song Liu <song@kernel.org>, John Garry <john.g.garry@oracle.com>
+Cc: axboe@kernel.dk, hch@lst.de, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org,
+ martin.petersen@oracle.com, "yukuai (C)" <yukuai3@huawei.com>
+References: <20241112124256.4106435-1-john.g.garry@oracle.com>
+ <20241112124256.4106435-6-john.g.garry@oracle.com>
+ <CAPhsuW6nJGQMQsEzJFZasg4LuHb3Qf-+JRTgqjaBtbYj_uBNGQ@mail.gmail.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <469d9b9b-dbc4-26c0-4ad6-ee97bba39d47@huaweicloud.com>
+Date: Sat, 16 Nov 2024 11:50:21 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH linux-next] lib/string_choices: Add
- str_locked_unlocked()/str_unlocked_locked() helper
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Kees Cook <kees@kernel.org>, Andy Shevchenko <andy@kernel.org>,
- linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
- Przemek Kitszel <przemyslaw.kitszel@intel.com>
-References: <20241115144616.7453-1-prosunofficial@gmail.com>
- <CAHp75Vfp++XMr8VGjjFRBpJi+uAk8PRVPxMLmQciedBzS8gedQ@mail.gmail.com>
- <CAHp75VdD1KYh9KJWHwhxkXy-+jfh_o=Rn05AtL4QBb0HC-oz6g@mail.gmail.com>
-Content-Language: en-US
-From: R Sundar <prosunofficial@gmail.com>
-In-Reply-To: <CAHp75VdD1KYh9KJWHwhxkXy-+jfh_o=Rn05AtL4QBb0HC-oz6g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+In-Reply-To: <CAPhsuW6nJGQMQsEzJFZasg4LuHb3Qf-+JRTgqjaBtbYj_uBNGQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCHY4d9FjhnAx2rBw--.46507S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7tFykZw18KFykCr4rGFy5XFb_yoW5JrW5p3
+	yqqa98Kr43tw48u3ZrXFW7ZayFgrs7KrWIkFZ3Ww1fXFy3ZryDJF4rJrWjgrn5ZF4fJry2
+	q3Z0vrZruF4akFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkKb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
+	j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7x
+	kEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v2
+	6r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrV
+	AFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCI
+	c40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267
+	AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_
+	Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU17KsU
+	UUUUU==
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On 16/11/24 01:16, Andy Shevchenko wrote:
-> On Fri, Nov 15, 2024 at 9:44 PM Andy Shevchenko
-> <andy.shevchenko@gmail.com> wrote:
->> On Fri, Nov 15, 2024 at 4:47 PM R Sundar <prosunofficial@gmail.com> wrote:
-> 
-> ...
-> 
->>> --- a/include/linux/string_choices.h
->>> +++ b/include/linux/string_choices.h
->>> @@ -82,4 +82,10 @@ static inline const char *str_plural(size_t num)
->>>          return num == 1 ? "" : "s";
->>>   }
->>>
->>> +static inline const char *str_locked_unlocked(bool v)
->>> +{
->>> +       return v ? "locked" : "unlocked";
->>> +}
->>> +#define str_unlocked_locked(v)         str_locked_unlocked(!(v))
->>
->> The rest is sorted (okay, read_write() seems to be misplaced, fix that
->> in a separate change if you wish), please keep it that way (I believe
->> it should go before on_off).
-> 
 Hi,
 
-Thanks for the Review and Comments provided.
+在 2024/11/16 2:19, Song Liu 写道:
+> On Tue, Nov 12, 2024 at 4:43 AM John Garry <john.g.garry@oracle.com> wrote:
+>>
+>> Set BLK_FEAT_ATOMIC_WRITES_STACKED to enable atomic writes.
+>>
+>> For an attempt to atomic write to a region which has bad blocks, error
+>> the write as we just cannot do this. It is unlikely to find devices which
+>> support atomic writes and bad blocks.
+>>
+>> Signed-off-by: John Garry <john.g.garry@oracle.com>
+>> ---
+>>   drivers/md/raid10.c | 14 ++++++++++++--
+>>   1 file changed, 12 insertions(+), 2 deletions(-)
+>>
 
-Please correct me, If I am wrong.
+Reviewed-by: Yu Kuai <yukuai3@huawei.com>
 
-The function name should be in sorted order means,  str_read_write() 
-will go after str_on_off().
+One nit below:
+>> diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
+>> index 8c7f5daa073a..a3936a67e1e8 100644
+>> --- a/drivers/md/raid10.c
+>> +++ b/drivers/md/raid10.c
+>> @@ -1255,6 +1255,7 @@ static void raid10_write_one_disk(struct mddev *mddev, struct r10bio *r10_bio,
+>>          const enum req_op op = bio_op(bio);
+>>          const blk_opf_t do_sync = bio->bi_opf & REQ_SYNC;
+>>          const blk_opf_t do_fua = bio->bi_opf & REQ_FUA;
+>> +       const blk_opf_t do_atomic = bio->bi_opf & REQ_ATOMIC;
+>>          unsigned long flags;
+>>          struct r10conf *conf = mddev->private;
+>>          struct md_rdev *rdev;
+>> @@ -1273,7 +1274,7 @@ static void raid10_write_one_disk(struct mddev *mddev, struct r10bio *r10_bio,
+>>          mbio->bi_iter.bi_sector = (r10_bio->devs[n_copy].addr +
+>>                                     choose_data_offset(r10_bio, rdev));
+>>          mbio->bi_end_io = raid10_end_write_request;
+>> -       mbio->bi_opf = op | do_sync | do_fua;
+>> +       mbio->bi_opf = op | do_sync | do_fua | do_atomic;
+>>          if (!replacement && test_bit(FailFast,
+>>                                       &conf->mirrors[devnum].rdev->flags)
+>>                           && enough(conf, devnum))
+>> @@ -1468,7 +1469,15 @@ static void raid10_write_request(struct mddev *mddev, struct bio *bio,
+>>                                  continue;
+>>                          }
+>>                          if (is_bad) {
+>> -                               int good_sectors = first_bad - dev_sector;
+>> +                               int good_sectors;
+>> +
+>> +                               if (bio->bi_opf & REQ_ATOMIC) {
+>> +                                       /* We just cannot atomically write this ... */
 
-For example, the sorted order of function will be like:
+Maybe mention that we can if there is at least one disk without any BB,
+it's just benefit does not worth the complexity. And return the special
+error code to let user retry without atomic write.
 
-str_on_off()
-str_plural()
-str_read_write()
-
-> Oh, I looked in v6.11 code, in v6.12 there are a couple of more
-> misplacements. Can you fix them all, please?
+>> +                                       error = -EFAULT;
 > 
-Sure, Will sort it and send as seperate patch.
+> Is EFAULT the right error code here? I think we should return something
+> covered by blk_errors?
 
-Thanks,
-Sundar
+The error code is passed to bio by:
 
+bio->bi_status = errno_to_blk_status(error);
 
-
+So, this is fine.
+> 
+> Other than this, 4/5 and 5/5 look good to me.
+> 
+> Thanks,
+> Song
+> 
+> .
+> 
 
 
