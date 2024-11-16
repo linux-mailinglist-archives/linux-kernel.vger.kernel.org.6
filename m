@@ -1,102 +1,120 @@
-Return-Path: <linux-kernel+bounces-411807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 060429CFFD1
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 17:15:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 315589CFFD2
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 17:16:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEF041F213A3
-	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 16:15:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB0A6289169
+	for <lists+linux-kernel@lfdr.de>; Sat, 16 Nov 2024 16:16:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86A7C188CA9;
-	Sat, 16 Nov 2024 16:15:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="t1B0plXG"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6E5F191F77;
+	Sat, 16 Nov 2024 16:15:43 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E183C8C7;
-	Sat, 16 Nov 2024 16:15:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BAD018E379
+	for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 16:15:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731773739; cv=none; b=jPHklaCca0UNYJhKVyrkFrWocI4M+RXvneRYg5tIs0+5Pi/TdL+L247floN7geg7eEOp/PVcAhMoMI1wm+poeujfgPZbgZyu8W49c4u8FX1lR6vAX8P2+ufjeH+f0zWT818g+DqlKnSPJMYvKdc5SxALu8zpuLOnjvhnwbZVjZ4=
+	t=1731773743; cv=none; b=VqtzMO8rMmxTFjecY2VU/G0PjuhfCgw6rRzfbwkjuoZjXBZJ/RVvEfuye70cw9q4Y73nlMCb5xttTFZ0j/0hurq58vDkYOICnTU9WGUCyglitbU/BYqtKqLCR1snWoFeUKbHU2Fk4qiAXtSlxwgaOeY+WI1WRgwpxVT597XfT9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731773739; c=relaxed/simple;
-	bh=BIM1Jk1WfWD8u+/mNfra30CaiC1sEYqJ/6LciJmtljk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c9zjsVXuYORhonXDgzUuZQLkcpRddYI/GPszLwzZWGZmFvV7Hv8yTCp3v6WyHwx+b4Y9HnSgmz6G2RGrrbkRaB+T6CrjcIl2njbxNZujAGMFSqLJa7qe1T9CWSwOtOOEkZIh9JBFvS2tz3qL9/Kho2rnbHbgIJM/tGZspJ+6zz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=t1B0plXG; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1731773734;
-	bh=BIM1Jk1WfWD8u+/mNfra30CaiC1sEYqJ/6LciJmtljk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=t1B0plXGSm38raN82fLD9vJnfnurcFtNEbeXCxfNtVhIhamAMXzKsQ6IPQlMGNepB
-	 zbYJF6rXxD6gdid87FVztpBkkUq1PwVvYCNVE1AkxEej90/0mHUVlvWojvQNQea3ik
-	 qYUm1yCOk4zG0k2KFnFU2QW+VWZMNrapArUPS2DQ=
-Date: Sat, 16 Nov 2024 17:15:33 +0100
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
-	Thomas Gleixner <tglx@linutronix.de>, Kunwu Chan <kunwu.chan@linux.dev>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eddy Z <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, 
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, clrkwllms@kernel.org, 
-	Steven Rostedt <rostedt@goodmis.org>, bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	linux-rt-devel@lists.linux.dev, syzbot+b506de56cbbb63148c33@syzkaller.appspotmail.com, 
-	Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-Subject: Re: [PATCH] bpf: Convert lpm_trie::lock to 'raw_spinlock_t'
-Message-ID: <1ed46394-f065-4e8b-8f37-c450b0c1b3a9@t-8ch.de>
-References: <20241108063214.578120-1-kunwu.chan@linux.dev>
- <87v7wsmqv4.ffs@tglx>
- <1e5910b1-ea54-4b7a-a68b-a02634a517dd@linux.dev>
- <87sersyvuc.ffs@tglx>
- <20241116092102.O_30pj9W@linutronix.de>
- <CAADnVQ+ToRZ6ZQL44Z9TAn6c=ecqrDgrnJenH7-miHJSWe7Nsw@mail.gmail.com>
+	s=arc-20240116; t=1731773743; c=relaxed/simple;
+	bh=lMZvYYUoRTyAS55ZblTspUhA2a6Mak886MN0+Dr7gQA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iMPY/ttyiQH/ly+/AK6gzwAf3C7NrbOw1HNaI8vSOfvJ/dtbX5b5TFNelYKq1Na859BODP8HxjjLDPfAMtnQLYfa6vo+UcP7F2i3x0sRowP6ELwXfW7RAuaPSVZT+3GhTYQJBMeww7sq4TM5WacF8be9c90xps3UCYgbOMbVgfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4XrJs670Ghz9sSN;
+	Sat, 16 Nov 2024 17:15:38 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id RDniS05mwtFq; Sat, 16 Nov 2024 17:15:38 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4XrJs662Y9z9sSL;
+	Sat, 16 Nov 2024 17:15:38 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id BC2638B7A0;
+	Sat, 16 Nov 2024 17:15:38 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id 0gGIiKiV87Hr; Sat, 16 Nov 2024 17:15:38 +0100 (CET)
+Received: from [192.168.232.159] (POS169858.IDSI0.si.c-s.fr [192.168.232.159])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 6F5258B763;
+	Sat, 16 Nov 2024 17:15:38 +0100 (CET)
+Message-ID: <c00a229c-9ced-4a28-9666-b4707f317c90@csgroup.eu>
+Date: Sat, 16 Nov 2024 17:15:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 02/10] powerpc/chrp: Remove various dead code
+To: Michael Ellerman <mpe@ellerman.id.au>, linuxppc-dev@lists.ozlabs.org
+Cc: linux-kernel@vger.kernel.org, geert@linux-m68k.org, arnd@arndb.de
+References: <20241114131114.602234-1-mpe@ellerman.id.au>
+ <20241114131114.602234-2-mpe@ellerman.id.au>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <20241114131114.602234-2-mpe@ellerman.id.au>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAADnVQ+ToRZ6ZQL44Z9TAn6c=ecqrDgrnJenH7-miHJSWe7Nsw@mail.gmail.com>
 
-On 2024-11-16 08:01:49-0800, Alexei Starovoitov wrote:
-> On Sat, Nov 16, 2024 at 1:21 AM Sebastian Andrzej Siewior
-> <bigeasy@linutronix.de> wrote:
-> >
-> > On 2024-11-15 23:29:31 [+0100], Thomas Gleixner wrote:
-> > > IIRC, BPF has it's own allocator which can be used everywhere.
-> >
-> > Thomas Weißschuh made something. It appears to work. Need to take a
-> > closer look.
+
+
+Le 14/11/2024 à 14:11, Michael Ellerman a écrit :
+> Remove various bits of code that are dead now that PPC_CHRP has been
+> removed.
 > 
-> Any more details?
-> bpf_mem_alloc is a stop gap.
-
-It is indeed using bpf_mem_alloc.
-It is a fairly straightforward conversion, using one cache for
-intermediate and one for non-intermediate nodes.
-
-I'll try to send it early next week.
-
-> As Vlastimil Babka suggested long ago:
-> https://lwn.net/Articles/974138/
-> "...next on the target list is the special allocator used by the BPF
-> subsystem. This allocator is intended to succeed in any calling
-> context, including in non-maskable interrupts (NMIs). BPF maintainer
-> Alexei Starovoitov is evidently in favor of this removal if SLUB is
-> able to handle the same use cases..."
+> Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+> ---
+>   arch/powerpc/Kconfig                 |  5 +--
+>   arch/powerpc/boot/Makefile           |  1 -
+>   arch/powerpc/include/asm/processor.h |  6 ---
+>   arch/powerpc/kernel/head_book3s_32.S | 12 ------
+>   arch/powerpc/kernel/pci_32.c         |  2 +-
+>   arch/powerpc/kernel/prom_init.c      | 56 ----------------------------
+>   6 files changed, 3 insertions(+), 79 deletions(-)
 > 
-> Here is the first step:
-> https://lore.kernel.org/bpf/20241116014854.55141-1-alexei.starovoitov@gmail.com/
+
+> diff --git a/arch/powerpc/kernel/head_book3s_32.S b/arch/powerpc/kernel/head_book3s_32.S
+> index cb2bca76be53..c6e297fd36e2 100644
+> --- a/arch/powerpc/kernel/head_book3s_32.S
+> +++ b/arch/powerpc/kernel/head_book3s_32.S
+> @@ -256,20 +256,8 @@ __secondary_hold_acknowledge:
+>    */
+>   	START_EXCEPTION(INTERRUPT_MACHINE_CHECK, MachineCheck)
+>   	EXCEPTION_PROLOG_0
+> -#ifdef CONFIG_PPC_CHRP
+> -	mtspr	SPRN_SPRG_SCRATCH2,r1
+> -	mfspr	r1, SPRN_SPRG_THREAD
+> -	lwz	r1, RTAS_SP(r1)
+> -	cmpwi	cr1, r1, 0
+> -	bne	cr1, 7f
+> -	mfspr	r1, SPRN_SPRG_SCRATCH2
+> -#endif /* CONFIG_PPC_CHRP */
+>   	EXCEPTION_PROLOG_1
+>   7:	EXCEPTION_PROLOG_2 0x200 MachineCheck
+> -#ifdef CONFIG_PPC_CHRP
+> -	beq	cr1, 1f
+> -	twi	31, 0, 0
+> -#endif
+>   1:	prepare_transfer_to_handler
+>   	bl	machine_check_exception
+>   	b	interrupt_return
+
+Then it becomes a standard exception handler that can be set up with
+
+	EXCEPTION(INTERRUPT_MACHINE_CHECK, MachineCheck, machine_check_exception)
+
+And the comment from paulus voids.
+
 
