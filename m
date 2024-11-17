@@ -1,87 +1,116 @@
-Return-Path: <linux-kernel+bounces-412070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86DDB9D0368
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 13:04:39 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9A819D0360
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 13:04:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 320F61F232BB
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 12:04:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 76221B23CED
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 12:04:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83035189B94;
-	Sun, 17 Nov 2024 12:04:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3F30183CCA;
+	Sun, 17 Nov 2024 12:03:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="O/nK4pOx"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="RA6qYfnM"
+Received: from smtp.smtpout.orange.fr (smtp-21.smtpout.orange.fr [80.12.242.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22FD9176ADE;
-	Sun, 17 Nov 2024 12:04:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FB4CA937;
+	Sun, 17 Nov 2024 12:03:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731845064; cv=none; b=b7ijKeXStfhpsnSCtPu2mnB5ARxMzmByN3xLiWoO3mvIuPmy/k/YyTGDNG6MC7uxcz1Rn+VtfTkfADTG8XsC1+d/x9rOm0mEPxYlKvPxze7XPgsyktgLvrmhAvEfSSVmTIdmCP+8m78eztT3NloLIu5PrsLmAnpd5dRFO0Kp5zg=
+	t=1731845039; cv=none; b=BIG4olsoJRRnVUwYE22ECiNIUR75fW5V5t4hP0WCN1379tu0D4seCSAHsIpRJWrXADt69xtKAFqrksBb9TbDlKF/7uFHM6mKxZoEPr2fdQvd6Wn7bY1wxx5Gy0SS7RPJf7Aft+Npckeh6bjX2rYlnKfU6SZwLBoMOm6ZN/tXASs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731845064; c=relaxed/simple;
-	bh=W/swTHqRJXD1dpeLJ6fRt5WOVlHTTxL3ftX6njve5T0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Xp2a7VymZV9rZZ8ZghbCklOh//tNG/eiJmLawxpaBvbI3fenMLIhNPFHMfwO/3/cM95nwAYU17ZNnckAFkeShks5Y5o/sK9IcQrA9QcY84d+auWs1VKOQYOirgmzh9is1qqpUVTDNNWsjoYJF1+oUjaYI+nlDTVj8y0CCY8HYEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=O/nK4pOx; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-	s=201909; t=1731845056;
-	bh=iDLBEcPLnsdBaxtgoBm6ijM1a0dYsIecpZLlCOdfoe4=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=O/nK4pOxgHaTKX6JcezklCGDvhMmAeuaeDbUvf9fi+KBI9sq5pP6tYnjGF0D1mpFF
-	 3FgbS7McyJIiQpQzeIwi2nMKKRD0WsgySmi4Z5ss6DuxLZxnyBPlde7QxD6yT1Zcxv
-	 K2LDbp5mQL+b60gFavsa9qQ5nn1sw5twvwBrY7lOIh84+e1ZQyISAgD54bpaqnWiRI
-	 4Qi2KYBKXrEyDLPgPUhEBpylGVixQTb9eSISdosYCk/vVYmOpzJL9SHNb5mpKR2RPB
-	 LUkKiVQ+fSj9zAom+RymQ/k84Vx/UnwlaGkwK6iEAEJHq/LBkuU4/RIpiqXlbCI/7s
-	 YY+ZiEqsF0BRg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XrqDb6Rh2z4xdT;
-	Sun, 17 Nov 2024 23:04:15 +1100 (AEDT)
-From: Michael Ellerman <patch-notifications@ellerman.id.au>
-To: mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu, naveen@kernel.org, maddy@linux.ibm.com, vaibhav@linux.ibm.com, Gautam Menghani <gautam@linux.ibm.com>
-Cc: linuxppc-dev@lists.ozlabs.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20241109063301.105289-1-gautam@linux.ibm.com>
-References: <20241109063301.105289-1-gautam@linux.ibm.com>
-Subject: Re: [PATCH 0/3] Fix doorbell emulation for nested KVM guests in V1 API
-Message-Id: <173184457526.887714.4884403618372389811.b4-ty@ellerman.id.au>
-Date: Sun, 17 Nov 2024 22:56:15 +1100
+	s=arc-20240116; t=1731845039; c=relaxed/simple;
+	bh=U44pX1OyuYqTVUwfaSVxarNW1wSY/enpy9dFasbbbqo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uljfwCjnOpaC8TR1crB95tp8d1/HSNIp/VXC6bCUUFmsbMUIJsLiT4byj0b4Ic9WnvgdEP1Wbk/7Syf8jPd+Hd3cG+wDblGWiE+8mVRqg5YA2hPGck5ss1K3L2qEQAHAW+yLwA36kWzO5kLXRIm+WYMx96p4ZrAQHCpoJRdZdis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=RA6qYfnM; arc=none smtp.client-ip=80.12.242.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from localhost.localdomain ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id Ce0FtKvGCPqyaCe0GtWgzY; Sun, 17 Nov 2024 13:03:48 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1731845028;
+	bh=F86dYHhTvuTsM0pNGR7yup3yM38zQaZLLpJ4MuMSPEk=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=RA6qYfnMtS4P7V9Zq0yBEygn8/KuBN1SNPfWjxCqVfhLZr2rNX044LTOu2zPQvQsV
+	 ZvajoS82pGIMDAyx0scSznzvcZWKoJ73xGGChp8RcKsmuW20UcjNTUo/3i0tR/k7Z5
+	 eWkvkp2BvbuuL7WtJRdllnGUzVZae9YRrkAaPrwzXKIt33FNTpkDahi7Syo3sDlSmK
+	 dwORZ6R37qho4XntvmGu2/2nam4cLTXbdVngwZKJ9Y1gsiGSW5rSOp85mhVTz9Rplw
+	 WH8a65A3n3JA8zUBzgqHg9bK3e0LX73+iOB/XdAvowMObmzP4UelQd5M1rD4q/d6Tt
+	 BjLBfdpEjZfFw==
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 17 Nov 2024 13:03:48 +0100
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	=?UTF-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@linaro.org>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-gpio@vger.kernel.org
+Subject: [PATCH] pinctrl: samsung: Fix irq handling if an error occurs in exynos_irq_demux_eint16_31()
+Date: Sun, 17 Nov 2024 13:03:32 +0100
+Message-ID: <f148d823acfb3326a115bd49a0eed60f2345f909.1731844995.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Sat, 09 Nov 2024 12:02:54 +0530, Gautam Menghani wrote:
-> Doorbell emulation for nested KVM guests in V1 API is broken because of
-> 2 reasons:
-> 1. L0 presenting H_EMUL_ASSIST to L1 instead of H_FAC_UNAVAIL
-> 2. Broken plumbing for passing around doorbell state.
-> 
-> Fix the trap passed to L1 and the plumbing for maintaining doorbell
-> state.
-> 
-> [...]
+chained_irq_enter(() should be paired with a corresponding
+chained_irq_exit().
 
-Applied to powerpc/topic/ppc-kvm.
+Here, if clk_enable() fails, a early return occurs and chained_irq_exit()
+is not called.
 
-[1/3] Revert "KVM: PPC: Book3S HV Nested: Stop forwarding all HFUs to L1"
-      https://git.kernel.org/powerpc/c/ed351c57432122c4499be4f4aee8711d6fa93f3b
-[2/3] KVM: PPC: Book3S HV: Stop using vc->dpdes for nested KVM guests
-      https://git.kernel.org/powerpc/c/0d3c6b28896f9889c8864dab469e0343a0ad1c0c
-[3/3] KVM: PPC: Book3S HV: Avoid returning to nested hypervisor on pending doorbells
-      https://git.kernel.org/powerpc/c/26686db69917399fa30e3b3135360771e90f83ec
+Add a new label and a goto for fix it.
 
-cheers
+Fixes: f9c744747973 ("pinctrl: samsung: support a bus clock")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+Compile tested only.
+
+Review with care, irq handling is sometimes tricky...
+---
+ drivers/pinctrl/samsung/pinctrl-exynos.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
+index b79c211c0374..ac6dc22b37c9 100644
+--- a/drivers/pinctrl/samsung/pinctrl-exynos.c
++++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
+@@ -636,7 +636,7 @@ static void exynos_irq_demux_eint16_31(struct irq_desc *desc)
+ 		if (clk_enable(b->drvdata->pclk)) {
+ 			dev_err(b->gpio_chip.parent,
+ 				"unable to enable clock for pending IRQs\n");
+-			return;
++			goto out;
+ 		}
+ 	}
+ 
+@@ -652,6 +652,7 @@ static void exynos_irq_demux_eint16_31(struct irq_desc *desc)
+ 	if (eintd->nr_banks)
+ 		clk_disable(eintd->banks[0]->drvdata->pclk);
+ 
++out:
+ 	chained_irq_exit(chip, desc);
+ }
+ 
+-- 
+2.47.0
+
 
