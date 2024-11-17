@@ -1,104 +1,134 @@
-Return-Path: <linux-kernel+bounces-412048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B829E9D02EA
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 11:20:53 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C19DF9D02EB
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 11:22:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DEB2282990
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 10:20:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5DA6EB23407
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 10:22:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 262B813D297;
-	Sun, 17 Nov 2024 10:20:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="awj33hk7"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 029B712E1E0;
+	Sun, 17 Nov 2024 10:22:13 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6676438C;
-	Sun, 17 Nov 2024 10:20:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2BC638C
+	for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 10:22:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731838843; cv=none; b=pB50ppxChFOEnHK3TfOYsaDZSW6PAy5m/NFwtxt/JLmGazOwKLwQi+EmY81iJkQJAeSVkc/xXx/vRFoGU3M2Rn94/5+WZf2w/hhHgiIpPPJhcPFZBQ6nbjEsiQeOVnd1YXjsgzYxyOuaFo2geKf2nSlVSabbStxvIFqIwVHFHPg=
+	t=1731838932; cv=none; b=mjsig1nZvG2U1lD1qq2RwT+TQLUpey/5Km7hx7vXFnzGGP9Xe5+r2Bqw0FUJ7zSK7qAKOg2x2EGYVQht4xyaH67/kMETR9D2qDXjYwBcAsr38ZXgtQprM3WoyshZfuUTrOu+8hHHHn551wj3/2B83WiNZmUGeeq7rQ84yJ4Fn7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731838843; c=relaxed/simple;
-	bh=XnwVRnokFrmnC2nPBW2Pi8KvS5rKZccAQiigQhSs2FU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=b5hDUFLZOMRzckeLINknIxuWMkvDTaxrrpzzoLvyLAXMwyZOmtF7t47PoAbVgvQ+LJohtw71VoM2ASvHEszcYUwZ8jAolTOFXXodzxTPObgU30iJCSRVm2KSENYk/a6Q2xhwP/SMYSWInQ+7LI1IH2IxaE7aYf0FmM8Y+eSLGCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=awj33hk7; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1731838830;
-	bh=XnwVRnokFrmnC2nPBW2Pi8KvS5rKZccAQiigQhSs2FU=;
-	h=From:Date:Subject:To:Cc:From;
-	b=awj33hk7yn8l/H81ibggz6xMsjMLtTqqX2JhUJz7RMSZG1FRXkafY1cLjjA+rlVoM
-	 lGZ16NyjVDl3L8AR9lAhneKCmxFnSnDDEX8OwPbA+E9C7cInejCO5wl5rsmbwXgczA
-	 fHI8tHASIncJDxzmCheRBynpd8CZdN0pqILEZUxY=
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Sun, 17 Nov 2024 11:20:16 +0100
-Subject: [PATCH] perf: arm-ni: Fix attribute_group definition syntax
+	s=arc-20240116; t=1731838932; c=relaxed/simple;
+	bh=UK5bPZe0zz3zdT46ggBn8KyGyBxl/NfToZuH1ZZB5t0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=e8run2Mu1E6F/xFFzbv2cHCI2Pv3LsniwdT31CmMZnhNkR+ye5lw6ns9unBzz22cBgAiq0x3UIkdnCy7S/U9jDO6xaAlGuezp1fBGnGdKVjK88zsq2XNEroEDzzrWl2E+/FitqbXXcHen21M2NgSMVJfbyumvRdxJHcfIQh3kzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1tCcPf-0003wq-7k; Sun, 17 Nov 2024 11:21:51 +0100
+Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1tCcPc-001DJh-33;
+	Sun, 17 Nov 2024 11:21:48 +0100
+Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1tCcPc-0075O7-2o;
+	Sun, 17 Nov 2024 11:21:48 +0100
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: "David S. Miller" <davem@davemloft.net>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Eric Dumazet <edumazet@google.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Woojung Huh <woojung.huh@microchip.com>,
+	Arun Ramadoss <arun.ramadoss@microchip.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Yuiko Oshino <yuiko.oshino@microchip.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	UNGLinuxDriver@microchip.com,
+	Phil Elwell <phil@raspberrypi.org>
+Subject: [PATCH net v1 1/1] net: phy: microchip: Reset LAN88xx PHY to ensure clean link state on LAN7800/7850
+Date: Sun, 17 Nov 2024 11:21:47 +0100
+Message-Id: <20241117102147.1688991-1-o.rempel@pengutronix.de>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20241117-arm-ni-syntax-v1-1-1894efca38ac@weissschuh.net>
-X-B4-Tracking: v=1; b=H4sIAF/DOWcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxNDQ0Nz3cSiXN28TN3iyrySxApdI1ODRAtjA1MLUyNLJaCegqLUtMwKsHn
- RsbW1AKAERsxfAAAA
-X-Change-ID: 20241117-arm-ni-syntax-250a83058529
-To: Robin Murphy <robin.murphy@arm.com>, Will Deacon <will@kernel.org>, 
- Mark Rutland <mark.rutland@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- stable@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1731838830; l=1098;
- i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=XnwVRnokFrmnC2nPBW2Pi8KvS5rKZccAQiigQhSs2FU=;
- b=4vVy3arO72EZfxh5ovfjA9bszsEuseGV5JKPtX1fS44RPOS8gDEWaXZkeE7z0jby1AZj3JhIS
- f+1tpOskReICe/Vr7766JoBLqx/vIkoHgXdED1cLhG/bhK4rbGRrBv+
-X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
- pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-The sentinel NULL value does not make sense and is a syntax error in a
-structure definition.
-Remove it.
+Fix outdated MII_LPA data in the LAN88xx PHY, which is used in LAN7800
+and LAN7850 USB Ethernet controllers. Due to a hardware limitation, the
+PHY cannot reliably update link status after parallel detection when the
+link partner does not support auto-negotiation. To mitigate this, add a
+PHY reset in `lan88xx_link_change_notify()` when `phydev->state` is
+`PHY_NOLINK`, ensuring the PHY starts in a clean state and reports
+accurate fixed link parallel detection results.
 
-Fixes: 4d5a7680f2b4 ("perf: Add driver for Arm NI-700 interconnect PMU")
-Cc: stable@vger.kernel.org
-Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+Fixes: 792aec47d59d9 ("add microchip LAN88xx phy driver")
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 ---
-Cc stable because although this commit is not yet released, it most
-likely will be by the time it hits mainline.
----
- drivers/perf/arm-ni.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/net/phy/microchip.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-diff --git a/drivers/perf/arm-ni.c b/drivers/perf/arm-ni.c
-index 90fcfe693439ef3e18e23c6351433ac3c5ea78b5..fd7a5e60e96302fada29cd44e7bf9c582e93e4ce 100644
---- a/drivers/perf/arm-ni.c
-+++ b/drivers/perf/arm-ni.c
-@@ -247,7 +247,6 @@ static struct attribute *arm_ni_other_attrs[] = {
- 
- static const struct attribute_group arm_ni_other_attr_group = {
- 	.attrs = arm_ni_other_attrs,
--	NULL
- };
- 
- static const struct attribute_group *arm_ni_attr_groups[] = {
+diff --git a/drivers/net/phy/microchip.c b/drivers/net/phy/microchip.c
+index d3273bc0da4a..3c8bc87da70e 100644
+--- a/drivers/net/phy/microchip.c
++++ b/drivers/net/phy/microchip.c
+@@ -351,6 +351,21 @@ static int lan88xx_config_aneg(struct phy_device *phydev)
+ static void lan88xx_link_change_notify(struct phy_device *phydev)
+ {
+ 	int temp;
++	int ret;
++
++	/* Reset PHY, otherwise MII_LPA will provide outdated information.
++	 * This issue is reproducible only with after parallel detection
++	 * where link partner do not supports auto-negotiation.
++	 */
++	if (phydev->state == PHY_NOLINK) {
++		ret = phy_init_hw(phydev);
++		if (ret < 0)
++			goto link_change_notify_failed;
++
++		ret = _phy_start_aneg(phydev);
++		if (ret < 0)
++			goto link_change_notify_failed;
++	}
 
----
-base-commit: 4a5df37964673effcd9f84041f7423206a5ae5f2
-change-id: 20241117-arm-ni-syntax-250a83058529
+ 	/* At forced 100 F/H mode, chip may fail to set mode correctly
+ 	 * when cable is switched between long(~50+m) and short one.
+@@ -377,6 +392,11 @@ static void lan88xx_link_change_notify(struct phy_device *phydev)
+ 		temp |= LAN88XX_INT_MASK_MDINTPIN_EN_;
+ 		phy_write(phydev, LAN88XX_INT_MASK, temp);
+ 	}
++
++	return;
++
++link_change_notify_failed:
++	phydev_err(phydev, "Link change process failed %pe\n", ERR_PTR(ret));
+ }
 
-Best regards,
--- 
-Thomas Weißschuh <linux@weissschuh.net>
+ /**
+--
+2.39.5
 
 
