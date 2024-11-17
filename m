@@ -1,117 +1,113 @@
-Return-Path: <linux-kernel+bounces-412246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A90CB9D05DE
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 21:36:19 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 751EC9D05E8
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 21:49:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 678F8282322
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 20:36:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11DDEB21A48
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 20:49:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 750021DBB11;
-	Sun, 17 Nov 2024 20:36:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD1731DD880;
+	Sun, 17 Nov 2024 20:49:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.net header.i=gerhard_pircher@gmx.net header.b="jzUqmkTk"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z7XEhU1l"
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 097FD18054
-	for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 20:36:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2BEB17BB6;
+	Sun, 17 Nov 2024 20:49:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731875771; cv=none; b=Oscx5KHvnjmDa0Z6GsskM/4/Xt1Ctl/nYz5rx2vUSc7BS26Rqydjhp3hU1d7/Uo2EF88kQyYiQoX2/GG3akPbUUN/qVVYqxHOgUARp5a7nAdKDpkKB3N8Uqpd2MVH9sf4he92ADz7vqUWZUQr2H5Oaq4g/fMKaS++Ysx32+WbmU=
+	t=1731876576; cv=none; b=XDdh1nrCNoY4u0lhOzFwQ3n2hTM0RNqcCH3QZKmt6Bo8pZlhI+vl0faNDukijIKMm/MGoIroOLyfZcKwO87+JLDGBJq4uPwoMySYeYrfNUwoWMkzkLKz8ghwq6Z5tAJOdEb0TE1y1UvO1/919O/ZwMH3sZLdKD7kcUA3gxN3vXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731875771; c=relaxed/simple;
-	bh=wBbUFxuRpefUDoTWDdR4oG541pCxAjV12MOKKMSPMLg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=S6CU6Wa9rL7A9VyTHAqsG1eVqof6xpdrorJ236Gzi8IM4bl7BqAzjFoJiV78GL0TWz5E1veFNDKO+tVWafwQfpMDOPSDM7B9gln1x4DbpE9nqPOc9YokAPKwFGLk0RUbk1OIdGkDhz0NrBHKvmKeXvFkzPk6oOk4eKi9TA4Xh58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=gerhard_pircher@gmx.net header.b=jzUqmkTk; arc=none smtp.client-ip=212.227.17.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
-	s=s31663417; t=1731875762; x=1732480562; i=gerhard_pircher@gmx.net;
-	bh=wBbUFxuRpefUDoTWDdR4oG541pCxAjV12MOKKMSPMLg=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=jzUqmkTk+e4csRGVRQ5iB51OwQI2Bgq4UHPOT4LC6X3iAl6K4BRJEQ602E1+lmht
-	 qsVr8imBNT2BXGf5xnkEwSVCrE4q9VVAkHxWwGTPDi+4NLCjN8OfUEduzjyYh9lvm
-	 VxPzkQ9f9IrMZgor0RW3vBLmBsdiEPiJoYG4I1T9qOvEbDZUVb6CLP/DMET5KiVU+
-	 8Yi4xVNMg4jWzTWuPA9pS9DIr2e53xe0lXWmlZSTcsXDo7axj7SrpJNZJgSA15Cws
-	 Rrc/d/HYxdOqOcBR0bVE5afBkkmwv9pgBTKFWWmSLV+mjYB1Ht6eekFrBW/cuwFjM
-	 iZHOQ32I75Vuy7RnhA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.24.73] ([45.95.211.208]) by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1N3bX1-1tuawb0FJD-012bDQ; Sun, 17
- Nov 2024 21:36:02 +0100
-Message-ID: <7e8a2788-f0ab-4d98-b26c-114e04558fb3@gmx.net>
-Date: Sun, 17 Nov 2024 21:36:00 +0100
+	s=arc-20240116; t=1731876576; c=relaxed/simple;
+	bh=RUh5Z//qokD1EHed93XgS2G8TkaYHQNEYjVLmW0YjxM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cEWy1dFHdnSJBDow4OWOBHXvIlf4zqGl3XNNBDnHUfK3vRdb0VW+FRDtXIczSxcGIGX7RVG4jy5lbOyWazAu04lTKQiSo3VWC7Cjp5JGoKMG6pC0eF30caHMe+xBB9nI8v6RJHSx3uDfnJYfHsrIkJgOGwYTiqu9qK5jHb1l8eg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z7XEhU1l; arc=none smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-7ea7e2204d1so701481a12.0;
+        Sun, 17 Nov 2024 12:49:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731876574; x=1732481374; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RUh5Z//qokD1EHed93XgS2G8TkaYHQNEYjVLmW0YjxM=;
+        b=Z7XEhU1lurFbpxD3J1NmXo1zQygGnI1sUIAPnSimYSj20g89N7HvHc9m4mquqMtoPn
+         eIRwY0g8JQ68KXhq1+k0vLmyv8ypWI4z8siFtjx+FiveUivfiNqqHblbZEmpqJZ2CNTv
+         wgzl9zddLjguUN+FayiMYKfr+lUNSWKlNOY/j5YEXAd0cN+mEiXi3YqHz2sbXhiOo4Kk
+         HWM5StygeUKjW7uIgNRBnhO+vkwycOuV2rm4CzRAlAnd/fdkxytBXSq5JMt7GQxgWPhP
+         LLeLfPeR/BTX/jOG6xKkGIQRDNHFU4o4+2WRCEfvM1Ll/E8tiYaU5HmxWYj7dlaf87eY
+         JwQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731876574; x=1732481374;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RUh5Z//qokD1EHed93XgS2G8TkaYHQNEYjVLmW0YjxM=;
+        b=qyOs2VydB44nzpD74dKDN4ERZMW3aS2Fvy0ZrbYAFnXsq5N7aFXUmL8IkLXbgSBURH
+         vTvx5vwpsvZxgA/TsUfJSvyDqcQnp7kM5/flXdFtYcz2L/0sgWUuW3Y/n4SMXZ8ZJqlK
+         WjbrrwzUAtZqwe9ArKuZfBWJ9sjOaIUUvPHW2zDRxfsznSqas/rGfTh3TmJYn9ne5abi
+         4oG+WBusa2t617CMEs0p+ZPqm3CvAYWDq8pX9uD7N21dzx0fFk+7xMIl0kGlalXl6XJg
+         nY4qXi73TDomgvqmPKZIjosXpz+g0u1IWpa1+k9vXroj12tizylB8lkv6xnbjWPaXAAi
+         mMhA==
+X-Forwarded-Encrypted: i=1; AJvYcCVXeaK6tbpSdzF1PxMD52tMHMG/GYNlyLs+ToBzntLU1cfOV19fmE/D35cR0q/hSY4v7QyqY7dVlh1mnw==@vger.kernel.org, AJvYcCWW2CogxfEiCg2eDRZX3TgJE1BTXzXeyWOROHLSr6vChX0nrJHUeEII/3Z8PwtX41jOhiF/uLjq@vger.kernel.org, AJvYcCXAQQz0cJwJyjVGWmWmBStt+ErV3Lp8pGZnkJOIcUfQlpE8EQS+ZH7Mw4g2Tk8dALuwaIyOTPtQPZQ6xNneRkA=@vger.kernel.org, AJvYcCXEf1ASePbWuOk7KGze2gHRuytdZhZDBXXJuppcQYljDvoDyb//UKin8ibpi773vORMb+c261v7LDaCJzjv@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6CVCoH8qjeZDdIe5MEYCN4WfJwBAb++Ko0grWoHVapi0mGozx
+	XgeqaF5kCVQeB+r/yiNSHNiK6kH9ToaeKycCbKAQVBM4K2clGb2G5VDNeJ8wLb24e/jbyXhIidx
+	0PRsnxb7SgGVAcUrasl9IdoyfMxY=
+X-Google-Smtp-Source: AGHT+IG9vm4VgRwNRukE21UZzKhSxM8wQwmAjdt8NVMeFerxL1QCjKVJKSenujzwCjqlLkK4hlmk87d9BqlykZMHd7w=
+X-Received: by 2002:a17:90a:e70c:b0:2ea:47f1:79d3 with SMTP id
+ 98e67ed59e1d1-2ea47f18194mr2098649a91.6.1731876574192; Sun, 17 Nov 2024
+ 12:49:34 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 01/10] powerpc/chrp: Remove CHRP support
-To: Michael Ellerman <mpe@ellerman.id.au>, linuxppc-dev@lists.ozlabs.org
-Cc: linux-kernel@vger.kernel.org, geert@linux-m68k.org, arnd@arndb.de
-References: <20241114131114.602234-1-mpe@ellerman.id.au>
-Content-Language: de-AT, en-US
-From: Gerhard Pircher <gerhard_pircher@gmx.net>
-Autocrypt: addr=gerhard_pircher@gmx.net; keydata=
- xjMEZgsLXBYJKwYBBAHaRw8BAQdAFQBjng5ejD4ROI9G+eNIrECAOKsI0dEqMh4uW/vHjfrN
- KUdlcmhhcmQgUGlyY2hlciA8Z2VyaGFyZF9waXJjaGVyQGdteC5uZXQ+wpkEExYIAEECGwMF
- CRLMAwAFCwkIBwIGFQoJCAsCBBYCAwECHgECF4AWIQRvJ2HWg8s/bjPDPanyPTewbNK3vQUC
- ZgsLtAIZAQAKCRDyPTewbNK3vVErAQCnjZo9vq/Z+bcO5xA4NTIEjFNWGX5ezKIdycZwh083
- dQD9HyN3IE0xKU78rBok4lgimReA0zIoXIB2cWoi9cCjWgfOOARmCwtcEgorBgEEAZdVAQUB
- AQdAw8jGfsYGYHfXSiHhEk8zkKAFbkAodKiSLAqp/YxKMkcDAQgHwn4EGBYIACYWIQRvJ2HW
- g8s/bjPDPanyPTewbNK3vQUCZgsLXAIbDAUJEswDAAAKCRDyPTewbNK3ver4AQCkOqp9UwZO
- HAk+IuqBcdIf9qxFT5U00N9QCFMSiJtFEwEAyEpRNkXaPu2VroSiuZFBtQPd9uwS7QzdyR+w
- NTurFwY=
-In-Reply-To: <20241114131114.602234-1-mpe@ellerman.id.au>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+References: <20241117-simplify-result-v1-1-5b01bd230a6b@iiitd.ac.in> <3721a7b2-4a8f-478c-bbeb-fdf22ded44c9@lunn.ch>
+In-Reply-To: <3721a7b2-4a8f-478c-bbeb-fdf22ded44c9@lunn.ch>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Sun, 17 Nov 2024 21:49:20 +0100
+Message-ID: <CANiq72kk0gsC8gohDT9aqY6r4E+pxNC6=+v8hZqthbaqzrFhLg@mail.gmail.com>
+Subject: Re: [PATCH] rust: simplify Result<()> uses
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: manas18244@iiitd.ac.in, FUJITA Tomonori <fujita.tomonori@gmail.com>, 
+	Trevor Gross <tmgross@umich.edu>, Heiner Kallweit <hkallweit1@gmail.com>, 
+	Russell King <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>, 
+	Shuah Khan <skhan@linuxfoundation.org>, Anup Sharma <anupnewsmail@gmail.com>, 
+	netdev@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:IIKJU9JoBpa6kQg3YVBs1CsTZpTHWzfg+ZLwzYhCZvdRNURyHKx
- hS7h4Bxu2npIFKzWRQ4+p/9lWWHeVBCwZSKm4BEOw8/KQDa0PCN3j4+gp0NyjlZ4UQ87oP6
- ompBnAyJgm2Vb8HZOPsTTKgD+phDsBZMqKDgnhCvBUr7YD2e5UrZweEh9ttURvR/ktSppGs
- JImmgr25Iw/vvDIqA7zTQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:GZrdb5MdC7Y=;MgX5JXk1AHLGyU6DCS8jDyEBOP3
- WxrUB3KYKVy3twShH3QtaunZkFyWaZQrp+yAA6BZy+ip70QfVJN3Br549MtQhcb4sxpPLfJLz
- 4vLpwv0DsoJg/+I1I7lnNelCzI/cqeSfp7fABKtSo+eukIyeN1ndfDO1b2lEAAiCmz8rCv7ls
- mbfj7cbSIyvQwrvVdo/PsN58cU7QUxzvPWoRsGjHAirZyJavQQt+p0/Ef2ND3fYcfIvbjz7rX
- 0s/xMQvmxMN4L1ep540Vwx1WEFpKsmq5cPBjKKZrMJqQupBmMUj0D6zYfBPCQYT5BcQGaDowq
- +mBej2CVumVApyddeq1+jGOT2UQGgvtLIhuaB8ldb7bnWeG9ff2oHCMzLmYqx0NZg4BFoJ8Kn
- 0gWHILc4C0NmPJFyrgjJq3OjJIVrtZtwFcBs5nN0S/L8LNHLbhyevUik7QvynM7jHGpqBuztw
- xjQrSSM8FqYupGYGjimew+WlF00WLXg58PvL/e/f3uPbPZ2toofnvQax1Sfm6eY6FmTJpw13B
- jDGUyiMnh1vsgLdhK0jQ8hs+Xe3um8cA9FGjbouCAvRvKCKMFUcHlWLRgyok3qwDnXgG3Pvlk
- aHyqfS1wn3oupml0YjsEl8khwufW8XwmN8wu9/YWHyTDclLSQyeqJJ8ROf6q2l3QQgadYji9A
- sazzBqnnrHQKYl9e+H0tgfXyF39xGuwxDlHzrAlJmgW4UctEIus8wAb4lQ8SS7kSwxDbKAxAz
- UeMSQPl/Es2Hng/DadmyyiXKrwUM0HsdZ0nA6yyyZPbVhjsGFMr2j8GJRBGeEGJCn6LYknimu
- ld3sJ5rGhBqW5SeMdYga/asvqXIO4hG4mi7SqsFJ5LYXWjOZONeWngD1kfk5A2DejwKEXbbjX
- aO05UG6ISzK4A+jEcCJ6DnXKEcflHg+xVgteh3s/wFoOd/DK5F58LmVyd
 
-Am 14.11.24 um 14:11 schrieb Michael Ellerman:
-> CHRP (Common Hardware Reference Platform) was a standard developed by
-> IBM & Apple for PowerPC-based systems.
+On Sun, Nov 17, 2024 at 7:26=E2=80=AFPM Andrew Lunn <andrew@lunn.ch> wrote:
 >
-> The standard was used in the development of some machines but never
-> gained wide spread adoption.
->
-> The Linux CHRP code only supports a handful of machines, all 32-bit, eg.
-> IBM B50, bplan/Genesi Pegasos/Pegasos2, Total Impact briQ, and possibly
-> some from Motorola? No Apple machines should be affected.
->
-> All of those mentioned above are over or nearing 20 years old, and seem
-> to have no active users.
-Pegasos2 users still exist, but admittedly they mainly use MorphOS and
-AmigaOS4 on these machines.
+> Please split these patches up per subsystem, and submit them
+> individually to the appropriate subsystems.
 
-br,
-Gerhard
+That is good advice, although if you and block are Ok with an Acked-by
+(assuming a good v2), we could do that too.
+
+Manas: I forgot to mention in the issue that this could be a good case
+for a `checkpatch.pl` check (I added it now). It would be great if you
+could add that in a different (and possibly independent) patch.
+
+Of course, it is not a requirement, but it would be a nice opportunity
+to contribute something extra related to this :)
+
+Thanks!
+
+Cheers,
+Miguel
 
