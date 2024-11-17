@@ -1,181 +1,112 @@
-Return-Path: <linux-kernel+bounces-412229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96B9F9D0592
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 20:36:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BFDBA9D0594
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 20:46:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54EBC282B08
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 19:36:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CEE2282181
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 19:46:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60F031DB93A;
-	Sun, 17 Nov 2024 19:35:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="jQVIH/MQ"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21E0B1DB53A;
+	Sun, 17 Nov 2024 19:46:04 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E9773BBEA;
-	Sun, 17 Nov 2024 19:35:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14BB22B2F2
+	for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 19:46:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731872157; cv=none; b=ad/POZT7xQgqgspEg2CSwJA9bYlivTkwDzfhlpvLo2UWZe4hHTt5nkxzebHlOX58Qiu6S0M8jai8bhKizfz7R6tYfjt/LpWJweD/GExuKzV8qTwC5p6TdmfZ2Mrmo6Qv4JfZNKiaG5M0hm9kGTh2UuhPunDB0Tg6WEirCbFFwpA=
+	t=1731872763; cv=none; b=jKfZeHGSy8/P1Y9NhIFhrAwac0wcN411KPwlQ7qzwXX9mTJBWK2spR/UnnDQXGkL6XxtOsZY/xsOEJ0n9HrI/fsVN3X1NIeiwEYQoQ/N++Ujb95Ik4f5s/BPK5PXZyJsbtfMufZU5kggUWPUlliPzYGb14yvi7zk1l4VseppaJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731872157; c=relaxed/simple;
-	bh=XUIur0HMQDaY4x9r2qT5TU8fwu4PLZhNxfQFtfkJtPw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=go+qRVdPW4BE8LlQjevJVuMbx1/fiAqLDrjwSsVLnE77vIjpzwPUrHwqV5xBV2j1KpUipconcsTpSYjhj+HtNLeJP+ldwIvNOWFWO1c0f/JajRvynciThqh2JwNgKqLbTMPBo0Xi49VPpLiv97u9JfL0H93oOR3XS7nRSddlqNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=jQVIH/MQ; arc=none smtp.client-ip=212.227.17.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1731872080; x=1732476880; i=w_armin@gmx.de;
-	bh=fKQUVHgnMUfsRJgLc4Ki6RRXzaHF/RXS3pp8KVZMOvw=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=jQVIH/MQl/Ecf0Iou6PcHGiJRHAyXgR+pcduWtXdM4x2ERrRVfshOBqwdpHlBylA
-	 0wzL5tZf3LA5S3xze82iU9EFsyjHtiy0prT3Ngo6L8DwyDKqGoe6FT1A8+aMVp/NS
-	 4KYS0RuP+gWYcO/M62SspmohTeeAUuxRhSFx+UpQs65bhCDMyEQyeosS29Ofmkhrf
-	 ia5Bcn3UyuN8v/kqxESzitt3ZDplnnXZ42BogLfiMl3zRgmhQyPqIOm0YqXtSIyMx
-	 PXOojqRJOvPed45+b72GAarLk2fuddcReBkerTDuSA0TVgsf6KjibsT7fHaiQKgr6
-	 vfjUj+plWsoR5+uH8w==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.0.14] ([141.30.226.119]) by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1N2Dx8-1ttDO53aAA-011llx; Sun, 17
- Nov 2024 20:34:40 +0100
-Message-ID: <229772cf-9671-429f-bb2d-70f1f4e56172@gmx.de>
-Date: Sun, 17 Nov 2024 20:34:33 +0100
+	s=arc-20240116; t=1731872763; c=relaxed/simple;
+	bh=TRO7U3X0J9wMVAhm4yfPtvutQOYWakyy3QJHpWDppbo=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=jWaV3ajR0YBl7ElcrA5QhwRZN3cgMR0t6aMeaZMBUcxXg/Mw5PBG+/McnjcoyUozghI2NQdVWlXdYbaKs376wD2LuD00JXlGUvBQzT+Yq4SErLGPqlwO4kQ/tBzxOvQ0hLfsb7GlHvYbv+gxIZTXPtO+taGPFbAHNpQHTedb2KQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-53-_P1VEAMNOva3eicHEWbyxg-1; Sun, 17 Nov 2024 19:45:57 +0000
+X-MC-Unique: _P1VEAMNOva3eicHEWbyxg-1
+X-Mimecast-MFC-AGG-ID: _P1VEAMNOva3eicHEWbyxg
+Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
+ (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sun, 17 Nov
+ 2024 19:45:56 +0000
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Sun, 17 Nov 2024 19:45:56 +0000
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Vincent Mailhol' <mailhol.vincent@wanadoo.fr>, 'Linus Torvalds'
+	<torvalds@linux-foundation.org>, 'Yury Norov' <yury.norov@gmail.com>,
+	"'Rasmus Villemoes'" <linux@rasmusvillemoes.dk>, 'Luc Van Oostenryck'
+	<luc.vanoostenryck@gmail.com>
+CC: "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
+	"'linux-sparse@vger.kernel.org'" <linux-sparse@vger.kernel.org>, "'Rikard
+ Falkeborn'" <rikard.falkeborn@gmail.com>
+Subject: RE: [PATCH v4 2/2] linux/bits.h: simplify GENMASK_INPUT_CHECK()
+Thread-Topic: [PATCH v4 2/2] linux/bits.h: simplify GENMASK_INPUT_CHECK()
+Thread-Index: AQHbNfVbqmtUi60kGE6/zbkAvTDGArK7vYpQgAAm/5A=
+Date: Sun, 17 Nov 2024 19:45:56 +0000
+Message-ID: <f5692429eb4b43738f562e5fc402ead2@AcuMS.aculab.com>
+References: <20241113172939.747686-4-mailhol.vincent@wanadoo.fr>
+ <20241113172939.747686-6-mailhol.vincent@wanadoo.fr>
+ <8bf9eb4434104a3b960d52bd1d38caea@AcuMS.aculab.com>
+In-Reply-To: <8bf9eb4434104a3b960d52bd1d38caea@AcuMS.aculab.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 22/22] Documentation: Add documentation about class
- interface for platform profiles
-To: Mario Limonciello <mario.limonciello@amd.com>,
- Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>,
- Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
- Corentin Chary <corentin.chary@gmail.com>, "Luke D . Jones"
- <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>,
- Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
- Alexis Belmonte <alexbelm48@gmail.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>,
- open list <linux-kernel@vger.kernel.org>,
- "open list:ACPI" <linux-acpi@vger.kernel.org>,
- "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER"
- <platform-driver-x86@vger.kernel.org>,
- "open list:THINKPAD ACPI EXTRAS DRIVER"
- <ibm-acpi-devel@lists.sourceforge.net>,
- Mark Pearson <mpearson-lenovo@squebb.ca>,
- Matthew Schwartz <matthew.schwartz@linux.dev>
-References: <20241109044151.29804-1-mario.limonciello@amd.com>
- <20241109044151.29804-23-mario.limonciello@amd.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: 5gtbCRwuLmDHl2QQBzlsNyHVgsS516MLnu6y1KmNFMo_1731872756
+X-Mimecast-Originator: aculab.com
 Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <20241109044151.29804-23-mario.limonciello@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:HUy4UsSbMRAnDfl6uP+L9wLbCPCmS8q1bX7QrwI+CqahK2vFLGF
- FKM6Px+BW/11kcZo+NahktzmWoEprHf7gR7pFPVMijZvn7m6nTNDKxqC1GMU6cmPs7foVxh
- SQfH30Sj5sXXnCSo2zlktlhvr+eMxckn+5U8nAAmHBUmjoVntj4KevkftFHtfEVAf/KhjF7
- CaCKkhph6Qb9uL2EAd2pA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:flInAw9PPZo=;UPJ4lesXFmTdiFJyMDCCKcvlU4e
- 2Usyuh7DBHPD0vQJn5qriLxMkzYojMQZClPVIYVqryyw10dhYBpIq5F8akzkM1FNf7ptVXRun
- 2IgNczqYFpG2d30lMf2oJUm3in49kdr//b0QZRjWjy+A2QOf8UElyv4f2/8hZC2aaq2Nboee7
- zCui1CQ5FcRuHL2H8qfRKc2ZQiNW6YpUBpfPSLML9eJ35p9shfgYgaQ/Ya6E0F18u9QtWNnmU
- FeBHXc6Hz9PtiQGfEIi2Hu2p8L2idWOyoeyvp3Tb0qSjx5gWV3dHpjP0bvJkMifUyIBvYr15X
- hLlm7UVyb7SOHhnh2MLgRKJlFjCAB8Ru7GbspUAq0pa/myx+2yQeO0ZRycX8F+jh+zqzbVGEa
- CkSSwsbAlYr7uz6eyDkjVRFde+fW8XQBwb9oOLzvknHNpyJpD7xVOBzNrhHcfzWyKLbiKOy9g
- cAG3Ww1hv+oRZ20ZwWUue8T+0O8b3E45q74PywVtFb/X/67kPWkUk6+qr1+9jCBkuw8Q7oRnR
- 7FLUaEesc/FrXLt/uBgvGSBrOf20U2Jjg30pa/gjdMhvUfz4ksEXWyxzlTozXagzLLzyHTMzv
- Fbwt/MN+ZpDDGy3SVHsz89rcuY23IKsVU8c2V6+Zj/RBvX3lslUZV/v725BUyyITVw2ztlzqp
- 3jmO3hox+XoDCVlY2FtoqEV79lPEPuxJfCrTsRGM0iWdH9XqzmybjPIGVqa4kQXJYL4a2qpsz
- fMOFZDmTXbLzemVVSUhKZV64hMYNIHVPeJ3AZd4mK8IN4MMH0KDMfhZjpByvGQswH5ocsCnx2
- URTOlXT1/aqDy1d6+erpLHrcRes1wtaxLGjpUMIMH61utIA9+wuPESv1vOkYygANkzMj5jH9N
- kup3wRvNlZLiDHncpqF/tN0mUJUYtRPXkXH7t1RBb4ULDIICwzLoVUCgr
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Am 09.11.24 um 05:41 schrieb Mario Limonciello:
+From: David Laight
+> Sent: 17 November 2024 17:25
+>=20
+> From: Vincent Mailhol
+> > Sent: 13 November 2024 17:19
+> >
+> > In GENMASK_INPUT_CHECK(),
+> >
+> >   __builtin_choose_expr(__is_constexpr((l) > (h)), (l) > (h), 0)
+> >
+> > is the exact expansion of:
+> >
+> >   const_true((l) > (h))
+> >
+> > Apply const_true() to simplify GENMASK_INPUT_CHECK().
+>=20
+> Wouldn't statically_true() give better coverage ?
+> I wouldn't have though that GENMASK() got used anywhere where a constant
+> integer expression was needed.
 
-> The class interface allows changing multiple platform profiles on a system
-> to different values. The semantics of it are similar to the legacy
-> interface.
->
-> Tested-by: Mark Pearson <mpearson-lenovo@squebb.ca>
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
-> ---
-> v5:
->   * Fix some typos
-> ---
->   .../ABI/testing/sysfs-platform_profile        |  5 ++++
->   .../userspace-api/sysfs-platform_profile.rst  | 28 +++++++++++++++++++
->   2 files changed, 33 insertions(+)
->
-> diff --git a/Documentation/ABI/testing/sysfs-platform_profile b/Documentation/ABI/testing/sysfs-platform_profile
-> index baf1d125f9f83..125324ab53a96 100644
-> --- a/Documentation/ABI/testing/sysfs-platform_profile
-> +++ b/Documentation/ABI/testing/sysfs-platform_profile
-> @@ -33,3 +33,8 @@ Description:	Reading this file gives the current selected profile for this
->   		source such as e.g. a hotkey triggered profile change handled
->   		either directly by the embedded-controller or fully handled
->   		inside the kernel.
-> +
-> +		This file may also emit the string 'custom' to indicate
-> +		that multiple platform profiles drivers are in use but
-> +		have different values.  This string can not be written to
-> +		this interface and is solely for informational purposes.
-> diff --git a/Documentation/userspace-api/sysfs-platform_profile.rst b/Documentation/userspace-api/sysfs-platform_profile.rst
-> index 4fccde2e45639..b746c30432753 100644
-> --- a/Documentation/userspace-api/sysfs-platform_profile.rst
-> +++ b/Documentation/userspace-api/sysfs-platform_profile.rst
-> @@ -40,3 +40,31 @@ added. Drivers which wish to introduce new profile names must:
->    1. Explain why the existing profile names cannot be used.
->    2. Add the new profile name, along with a clear description of the
->       expected behaviour, to the sysfs-platform_profile ABI documentation.
-> +
-> +Multiple driver support
-> +=======================
-> +When multiple drivers on a system advertise a platform profile handler, the
-> +platform profile handler core will only advertise the profiles that are
-> +common between all drivers to the ``/sys/firmware/acpi`` interfaces.
-> +
-> +This is to ensure there is no ambiguity on what the profile names mean when
-> +all handlers don't support a profile.
-> +
-> +Individual drivers will register a 'platform_profile' class device that has
-> +similar semantics as the ``/sys/firmware/acpi/platform_profile`` interface.
-> +
+If it is, maybe add a GENMASK_CONST() that uses BUILD_BUG_ON_ZERO_MSG()
+(recently proposed) and so validates that the values are constants.
+And then use statically_true() in the normal case to pick up more errors.
 
-Please add a short description of the 'name' attribute of the class device.
+(Or just remove the check because coders really aren't that stupid!)
 
-With that being addressed:
+The interesting cases are the ones using variables.
+And they'd need run-time checks of some form.
 
-Reviewed-by: Armin Wolf <W_Armin@gmx.de>
+=09David
 
-> +To discover available profiles from the class interface the user can read the
-> +``choices`` attribute.
-> +
-> +If a user wants to select a profile for a specific driver, they can do so
-> +by writing to the ``profile`` attribute of the driver's class device.
-> +
-> +This will allow users to set different profiles for different drivers on the
-> +same system. If the selected profile by individual drivers differs the
-> +platform profile handler core will display the profile 'custom' to indicate
-> +that the profiles are not the same.
-> +
-> +While the ``platform_profile`` attribute has the value ``custom``, writing a
-> +common profile from ``platform_profile_choices`` to the platform_profile
-> +attribute of the platform profile handler core will set the profile for all
-> +drivers.
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
+PT, UK
+Registration No: 1397386 (Wales)
+
 
