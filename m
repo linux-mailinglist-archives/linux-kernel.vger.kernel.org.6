@@ -1,112 +1,99 @@
-Return-Path: <linux-kernel+bounces-412230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFDBA9D0594
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 20:46:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4603C9D0596
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 20:53:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CEE2282181
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 19:46:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0DF12821CB
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 19:53:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21E0B1DB53A;
-	Sun, 17 Nov 2024 19:46:04 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75E8A1DA633;
+	Sun, 17 Nov 2024 19:53:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="SeenTW4i"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14BB22B2F2
-	for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 19:46:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EA9D2629F
+	for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 19:53:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731872763; cv=none; b=jKfZeHGSy8/P1Y9NhIFhrAwac0wcN411KPwlQ7qzwXX9mTJBWK2spR/UnnDQXGkL6XxtOsZY/xsOEJ0n9HrI/fsVN3X1NIeiwEYQoQ/N++Ujb95Ik4f5s/BPK5PXZyJsbtfMufZU5kggUWPUlliPzYGb14yvi7zk1l4VseppaJM=
+	t=1731873205; cv=none; b=gXppdNWEe4cBfV5HRP2s8kyoi3KurUGANtVb2i2+1HGRz/fTNUemWsgtd66sVEykGfSsBFiNT27B7CS3cwmhMS++2ZkEpYaqOOVtZom5PEdjNRGiaMMoDugwQKaPK2d6vT3+p2VyLhIJLOh+O1RbFQAemnr/q2Xs2HenZcTjAoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731872763; c=relaxed/simple;
-	bh=TRO7U3X0J9wMVAhm4yfPtvutQOYWakyy3QJHpWDppbo=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=jWaV3ajR0YBl7ElcrA5QhwRZN3cgMR0t6aMeaZMBUcxXg/Mw5PBG+/McnjcoyUozghI2NQdVWlXdYbaKs376wD2LuD00JXlGUvBQzT+Yq4SErLGPqlwO4kQ/tBzxOvQ0hLfsb7GlHvYbv+gxIZTXPtO+taGPFbAHNpQHTedb2KQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-53-_P1VEAMNOva3eicHEWbyxg-1; Sun, 17 Nov 2024 19:45:57 +0000
-X-MC-Unique: _P1VEAMNOva3eicHEWbyxg-1
-X-Mimecast-MFC-AGG-ID: _P1VEAMNOva3eicHEWbyxg
-Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
- (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sun, 17 Nov
- 2024 19:45:56 +0000
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Sun, 17 Nov 2024 19:45:56 +0000
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Vincent Mailhol' <mailhol.vincent@wanadoo.fr>, 'Linus Torvalds'
-	<torvalds@linux-foundation.org>, 'Yury Norov' <yury.norov@gmail.com>,
-	"'Rasmus Villemoes'" <linux@rasmusvillemoes.dk>, 'Luc Van Oostenryck'
-	<luc.vanoostenryck@gmail.com>
-CC: "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
-	"'linux-sparse@vger.kernel.org'" <linux-sparse@vger.kernel.org>, "'Rikard
- Falkeborn'" <rikard.falkeborn@gmail.com>
-Subject: RE: [PATCH v4 2/2] linux/bits.h: simplify GENMASK_INPUT_CHECK()
-Thread-Topic: [PATCH v4 2/2] linux/bits.h: simplify GENMASK_INPUT_CHECK()
-Thread-Index: AQHbNfVbqmtUi60kGE6/zbkAvTDGArK7vYpQgAAm/5A=
-Date: Sun, 17 Nov 2024 19:45:56 +0000
-Message-ID: <f5692429eb4b43738f562e5fc402ead2@AcuMS.aculab.com>
-References: <20241113172939.747686-4-mailhol.vincent@wanadoo.fr>
- <20241113172939.747686-6-mailhol.vincent@wanadoo.fr>
- <8bf9eb4434104a3b960d52bd1d38caea@AcuMS.aculab.com>
-In-Reply-To: <8bf9eb4434104a3b960d52bd1d38caea@AcuMS.aculab.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1731873205; c=relaxed/simple;
+	bh=drKbxlN+WCqncl6+dfHtGCw/Y2b8PS3Ls8HdgwF9PMY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VzvUbA5R2t0enic/NB9zKUUXefMp2CTnldQN0++KOvsqv75VGQUPGi3IfLE5at32uvKzDnbCj9JdB9EDCEWfUCOueyMzaIROYjjVPsI53HCW/N73nD3FLNf3m1LVAX4hNnc1p4dDCUjpK2LCXRSW+sWBxCdNn7JJQZEhsYRwr0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=SeenTW4i; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 003F840E0261;
+	Sun, 17 Nov 2024 19:53:13 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id Ld6pF0VOrRmW; Sun, 17 Nov 2024 19:53:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1731873184; bh=vTbi9vZB1ZT5qRDbz2NohYb0AKopUpegDeVIxyzWDno=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SeenTW4iYQQ5v8lwwDcot+o+l392ZAFQ4/n08pX8FZCNx/EUW8TWJbqu3ddS9rNiG
+	 13eX+eBuqBfSb+5CXgvsM+KTSgN5AVwSYp9a1Bt/1XCsCcOvhAWwS+VgnNiUSuy2rQ
+	 fHl/KH2C24RPikd6RCKZxA7uHmbedDLR01rotyRLyvGM7pIduY+vbkDXZoA6Z3syHn
+	 yRqxJqh8WDY5slzQ4RO1dh6Izi7zCutc4RohRkS8LxxHyq9h+V3RCt51AXiJU5uAn/
+	 rF6edPyaKstPmR6sjSJPAL7Vrvg59XG0pkJhlKWm+BLyaR1kKWsFmvEkLLd+nhybkZ
+	 6ZaR034HTfsbTBweIhYeRyO0h7PTqnYGnEnirCtpqt5MSeqq1pVavrChF9xqCVsucA
+	 EroAvERCuBpB9c7SLrTNEgZ6Oc1iLj48e2lKhD6Nzqf6z972yNfOd+VfJZ/lTgxViW
+	 Dx01BjUdsdz/84WUcV5uyUIer+f5Kpcv4F7l/DYRZ4EHmjdWfmzSCKnD5qp6PXgHmj
+	 XRnfx0F6ESZc1/2R7GroWpK/uFg1ZF9KzvfxoxoRNrBpYavI+w4LyTJM3RWmuVY0bD
+	 JU/gswhBtzBmU/xmdMYQGvdGbOd4TMKejV5XCWsUCTWnd7gcNBiuBBmjum99WpEKrw
+	 9b1BTiTvlUxw9KieQpPmY5T4=
+Received: from zn.tnic (pd9530b86.dip0.t-ipconnect.de [217.83.11.134])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 08B9340E0208;
+	Sun, 17 Nov 2024 19:52:58 +0000 (UTC)
+Date: Sun, 17 Nov 2024 20:52:52 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: David Laight <David.Laight@aculab.com>
+Cc: Andrew Cooper <andrew.cooper3@citrix.com>,
+	Thomas De Schampheleire <thomas.de_schampheleire@nokia.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"x86@kernel.org" <x86@kernel.org>
+Subject: Re: x86/amd late microcode thread loading slows down boot
+Message-ID: <20241117195252.GAZzpJlOY7kSUDeaT-@fat_crate.local>
+References: <ZyulbYuvrkshfsd2@antipodes>
+ <6449aa6c-43b1-40eb-ab54-48803481d11b@citrix.com>
+ <20241107153036.GCZyzdHEwm9-LPQOzY@fat_crate.local>
+ <Zy0p5DT0SOWsCDn7@antipodes>
+ <20241114095639.GDZzXJV1EDJlMqv24c@fat_crate.local>
+ <3f6a84bd-af4a-4ffa-8205-25b2c9084893@citrix.com>
+ <20241115205114.GCZze0QtUKbeXdFEHe@fat_crate.local>
+ <53daf7e9901d428fa25ede7caa99b520@AcuMS.aculab.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: 5gtbCRwuLmDHl2QQBzlsNyHVgsS516MLnu6y1KmNFMo_1731872756
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <53daf7e9901d428fa25ede7caa99b520@AcuMS.aculab.com>
 
-From: David Laight
-> Sent: 17 November 2024 17:25
->=20
-> From: Vincent Mailhol
-> > Sent: 13 November 2024 17:19
-> >
-> > In GENMASK_INPUT_CHECK(),
-> >
-> >   __builtin_choose_expr(__is_constexpr((l) > (h)), (l) > (h), 0)
-> >
-> > is the exact expansion of:
-> >
-> >   const_true((l) > (h))
-> >
-> > Apply const_true() to simplify GENMASK_INPUT_CHECK().
->=20
-> Wouldn't statically_true() give better coverage ?
-> I wouldn't have though that GENMASK() got used anywhere where a constant
-> integer expression was needed.
+On Sun, Nov 17, 2024 at 06:23:20PM +0000, David Laight wrote:
+> Shouldn't that be 'psize - 1' ?
 
-If it is, maybe add a GENMASK_CONST() that uses BUILD_BUG_ON_ZERO_MSG()
-(recently proposed) and so validates that the values are constants.
-And then use statically_true() in the normal case to pick up more errors.
+Right, it should.
 
-(Or just remove the check because coders really aren't that stupid!)
+Thx.
 
-The interesting cases are the ones using variables.
-And they'd need run-time checks of some form.
+-- 
+Regards/Gruss,
+    Boris.
 
-=09David
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
-PT, UK
-Registration No: 1397386 (Wales)
-
+https://people.kernel.org/tglx/notes-about-netiquette
 
