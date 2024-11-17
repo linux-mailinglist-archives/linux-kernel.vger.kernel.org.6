@@ -1,127 +1,97 @@
-Return-Path: <linux-kernel+bounces-412209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 334879D053E
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 19:44:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40C309D0542
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 19:45:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDBF7281C94
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 18:44:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D167D281CD6
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 18:45:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3501F1DB375;
-	Sun, 17 Nov 2024 18:44:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AE2E1DBB0C;
+	Sun, 17 Nov 2024 18:44:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="ifWoM0aZ"
-Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gy1gP7Yy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 044691DB372;
-	Sun, 17 Nov 2024 18:44:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 000BD1DB55D
+	for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 18:44:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731869079; cv=none; b=osWBsOVtTozHvMkWYKCaG+SqQqNp9xbDSnSYhJesMz5ATjeqgSk60A3UzbIOIZzKS6WbwZ4dhPKmQQh2S71K2yPAhBqLR/oQMdPdJ+/ZXzMjFqocHlx+ZodpJ4QmIamDObayCTnwOO2EkSAoLmmyX7zDgrAhjRrohphShbyl+c0=
+	t=1731869089; cv=none; b=Vy/x+aUpw6e2CjZwmo2A49haaJ2/ySyAQp20UAswD2URpqoRif9A2DkLGvCqBpbF3scLxX26++Nx6OTpmuCeBNJrKuXJbtRbzaI+cxopJi7JOmcm858sD2seBcZMt8tVHtL2ZCrHfaDPzT9cyBaHz6Gv6FPOXbC9YVijwnCjeBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731869079; c=relaxed/simple;
-	bh=mF5mAl1yefvIXyEEzISzCNTuGTrDa/onIGRCa/o2AqY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=EDSh9tJq3d/jqmFA0p+CBoZGirRJoiAgJOUb0AL55pERj0rp2dML/wS1/hw2RxBol/p8Bk8o2ZMXiNy64Ftn1WDn5+6xkTo5MiK29YAZJWawqJdoGxMv14UtpW6DfYpfThFuMkQfKHrK5Gh1w9M/kogSIR4KHFKjEDoKj4WksoQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=ifWoM0aZ; arc=none smtp.client-ip=83.149.199.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
-Received: from fpc.intra.ispras.ru (unknown [10.10.165.6])
-	by mail.ispras.ru (Postfix) with ESMTPSA id 574F6518E77B;
-	Sun, 17 Nov 2024 18:44:29 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 574F6518E77B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
-	s=default; t=1731869069;
-	bh=z83vOsND3dmU2lQdMai5FHCaNYTMGUxXC+d3JRYKOAM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ifWoM0aZW9jsM3hf2l0UNIgHM7DMOleLcyN4dOwzuyjuCzoFHRjMqXvAnVy7G/Q2S
-	 IoMbsXVH1VCcctIrAMdgjHVWJwSp8ggJq2XeTpvTxa2Wz25ePntE0gOLPrZ6JjeFPo
-	 G5z22+bEsjoKLwZv1tVQ+O6OnpLAT83KqBiSlf5I=
-From: Fedor Pchelkin <pchelkin@ispras.ru>
-To: Richard Weinberger <richard@nod.at>,
-	Zhihao Cheng <chengzhihao1@huawei.com>
-Cc: Fedor Pchelkin <pchelkin@ispras.ru>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Wang Yong <wang.yong12@zte.com.cn>,
-	Lu Zhongjun <lu.zhongjun@zte.com.cn>,
-	Yang Tao <yang.tao172@zte.com.cn>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	linux-mtd@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org,
-	stable@vger.kernel.org
-Subject: [PATCH 2/2] jffs2: initialize inocache earlier
-Date: Sun, 17 Nov 2024 21:44:12 +0300
-Message-Id: <20241117184412.366672-3-pchelkin@ispras.ru>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20241117184412.366672-1-pchelkin@ispras.ru>
-References: <20241117184412.366672-1-pchelkin@ispras.ru>
+	s=arc-20240116; t=1731869089; c=relaxed/simple;
+	bh=ig4tE5R2PftmUJbSGWvSIxhH15jKIn4AFxyKaQ6PGcg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=L5ST9rQLdoAKg6ZW6NfFKqzfSP8D+tUUo6rbEfRzceyswsVgk/h9gGHedgXkjiyNnEM40wo4BN+DE/nSQJttA9rq3w1Li+HebuKSt9Cn01xc/hdEscavDBHHV+c3YjjdnfAzG0XEsGlCMiH9k/QNZm8jaNHPgFDS8GA5KRc0Upg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gy1gP7Yy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82A60C4CECD;
+	Sun, 17 Nov 2024 18:44:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731869088;
+	bh=ig4tE5R2PftmUJbSGWvSIxhH15jKIn4AFxyKaQ6PGcg=;
+	h=Date:From:To:Cc:Subject:Reply-To:From;
+	b=gy1gP7YyngA6epeaoZJOJQdMPEqOd2l4rEm3hzPBC0m/XK+1L7qcxfjH3zBBwc/qS
+	 nRmNP2LWDVV46Ln3DtpEfpMMm8fLu+/ktSDHp8S1lEAGD6QGiPPBTVfXyo5apEvYON
+	 +I0uefn0tvQNbmp+jarOAQUM7YTsM1QQUvuhWupjAh+/AfpBrqxMNcKCdHVKBBAcsN
+	 kntPA5XcJGkMsTgaQUU1vUqbWfonyUxvvGMCfiyyGqoc0bvmw660yqiTVzdoA6FbsH
+	 I4tmLHRFM+7t6VeYR9Rh0xZ7Dgi/C5Knv2o7vQIKpUWEsd4lsIO9soJ//2tJ5rR5Zk
+	 BSnrvBftqO97A==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 28A47CE0885; Sun, 17 Nov 2024 10:44:48 -0800 (PST)
+Date: Sun, 17 Nov 2024 10:44:48 -0800
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: torvalds@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com,
+	bigeasy@linutronix.de, dan.carpenter@linaro.org,
+	boqun.feng@gmail.com
+Subject: [GIT PULL] scftorture changes for v6.13
+Message-ID: <e7f3c085-674b-4e5a-a97b-fbc70ce20b9c@paulmck-laptop>
+Reply-To: paulmck@kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Inside jffs2_new_inode() there is a small gap when jffs2_init_acl_pre() or
-jffs2_do_new_inode() may fail e.g. due to a memory allocation error while
-uninit inocache field is touched upon subsequent inode eviction.
+Hello, Linus,
 
-general protection fault, probably for non-canonical address 0xdffffc0000000005: 0000 [#1] PREEMPT SMP KASAN NOPTI
-KASAN: null-ptr-deref in range [0x0000000000000028-0x000000000000002f]
-CPU: 0 PID: 10592 Comm: syz-executor.1 Not tainted 5.10.209-syzkaller #0
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.12.0-1 04/01/2014
-RIP: 0010:jffs2_xattr_delete_inode+0x35/0x130 fs/jffs2/xattr.c:602
-Call Trace:
- jffs2_do_clear_inode+0x4c/0x570 fs/jffs2/readinode.c:1418
- evict+0x281/0x6b0 fs/inode.c:577
- iput_final fs/inode.c:1697 [inline]
- iput.part.0+0x4df/0x6d0 fs/inode.c:1723
- iput+0x58/0x80 fs/inode.c:1713
- jffs2_new_inode+0xb12/0xdb0 fs/jffs2/fs.c:469
- jffs2_create+0x90/0x400 fs/jffs2/dir.c:177
- lookup_open.isra.0+0xead/0x1260 fs/namei.c:3169
- open_last_lookups fs/namei.c:3239 [inline]
- path_openat+0x96c/0x2670 fs/namei.c:3428
- do_filp_open+0x1a4/0x3f0 fs/namei.c:3458
- do_sys_openat2+0x171/0x420 fs/open.c:1186
- do_sys_open fs/open.c:1202 [inline]
- __do_sys_openat fs/open.c:1218 [inline]
- __se_sys_openat fs/open.c:1213 [inline]
- __x64_sys_openat+0x13c/0x1f0 fs/open.c:1213
- do_syscall_64+0x30/0x40 arch/x86/entry/common.c:46
+Once the v6.13 merge window opens, please pull these scftorture changes
+from:
 
-Initialize the inocache pointer to a NULL value while preparing an inode
-in jffs2_init_inode_info(). jffs2_xattr_delete_inode() will handle it
-later just fine.
+  git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git tags/scftorture.2024.11.16a
+  # HEAD: f946cae86d088d02a2f9c0ae0bf8a80359d3f454: scftorture: Handle NULL argument passed to scf_add_to_free_list(). (2024-11-14 16:09:51 -0800)
 
-Found by Linux Verification Center (linuxtesting.org) with Syzkaller.
+----------------------------------------------------------------
+scftorture changes for v6.13
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Cc: stable@vger.kernel.org
-Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
----
- fs/jffs2/os-linux.h | 1 +
- 1 file changed, 1 insertion(+)
+o	Avoid divide operation.
 
-diff --git a/fs/jffs2/os-linux.h b/fs/jffs2/os-linux.h
-index 86ab014a349c..39b6565f10c9 100644
---- a/fs/jffs2/os-linux.h
-+++ b/fs/jffs2/os-linux.h
-@@ -55,6 +55,7 @@ static inline void jffs2_init_inode_info(struct jffs2_inode_info *f)
- 	f->metadata = NULL;
- 	f->dents = NULL;
- 	f->target = NULL;
-+	f->inocache = NULL;
- 	f->flags = 0;
- 	f->usercompr = 0;
- }
--- 
-2.39.5
+o	Fix cleanup code waiting for IPI handlers.
 
+o	Move memory allocations out of preempt-disable region of code
+	for PREEMPT_RT compatibility.
+
+o	Use a lockless list to avoid freeing memory while interrupts
+	are disabled, again for PREEMPT_RT compatibility.
+
+o	Make lockless list scf_add_to_free_list() correctly handle
+	freeing a NULL pointer.
+
+----------------------------------------------------------------
+Sebastian Andrzej Siewior (5):
+      scftorture: Avoid additional div operation.
+      scftorture: Wait until scf_cleanup_handler() completes.
+      scftorture: Move memory allocation outside of preempt_disable region.
+      scftorture: Use a lock-less list to free memory.
+      scftorture: Handle NULL argument passed to scf_add_to_free_list().
+
+ kernel/scftorture.c | 54 +++++++++++++++++++++++++++++++++++++++++++----------
+ 1 file changed, 44 insertions(+), 10 deletions(-)
 
