@@ -1,165 +1,218 @@
-Return-Path: <linux-kernel+bounces-412284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 056429D0704
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 00:30:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13D0F9D070F
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 00:33:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87BDD281B2A
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 23:30:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2514828208D
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 23:33:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 932641DE2AD;
-	Sun, 17 Nov 2024 23:29:56 +0000 (UTC)
-Received: from smtp01.aussiebb.com.au (smtp01.aussiebb.com.au [121.200.0.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 095F71DE2AD;
+	Sun, 17 Nov 2024 23:33:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="tjTKtaGk"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D86B91DDA33;
-	Sun, 17 Nov 2024 23:29:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.200.0.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4F7815445D;
+	Sun, 17 Nov 2024 23:33:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731886196; cv=none; b=a5k4gEILkc0cIVoLlCiruIqRvNzn5tsUHuOme34KieK8UHPFIum4rC9up0S3mm8YiBhU/PvWpLRHb3Y2x1OU5C4wKDJ5xrhd+JaElT2Vuyr4STKp9XQNCrv01dDtM7C8rkV2kP4Loo3d8q/5xUq5/6mysKQS+RCYRhNCAnppthg=
+	t=1731886384; cv=none; b=GFF9AKYUPcgIOzy5ZeR5NJ8I+KqKAVruTDyffjeJTZbIsaXgtTZBiaLwgbEKoqxQ8D8rvLzmhQEAgy5wUVbcuswTeMh35gh8SfqJx5ocgZ+oqZfj3O3jbSAsGzpIjVrimz5Z8zFwRqdnBxrp7mia0LxWonni+UHH1i5zQK2l8hU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731886196; c=relaxed/simple;
-	bh=jIMynjpJaK/O61eRSvGhtn9jzOXXW78GlgyU9AxE0b4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZTOGm4FIC4v3jNP+t1pSfw9QP3jbWHIQMcg/cN5s78yYr4zerLpT3JVMjsaJcS8RsXVf+zOke9IdzmPse1DXyXNEbtbcNks6OG74csGP7Rpts+RL8oJobgbGvQqwGHI6b33GF93O7hs0lY9WGJQ8R19NDbod0HNfXrng2vdZo2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=themaw.net; spf=fail smtp.mailfrom=themaw.net; arc=none smtp.client-ip=121.200.0.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=themaw.net
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=themaw.net
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by smtp01.aussiebb.com.au (Postfix) with ESMTP id 605B7100814;
-	Mon, 18 Nov 2024 10:29:46 +1100 (AEDT)
-X-Virus-Scanned: Debian amavisd-new at smtp01.aussiebb.com.au
-Received: from smtp01.aussiebb.com.au ([127.0.0.1])
-	by localhost (smtp01.aussiebb.com.au [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id QSGkpr7bSMwc; Mon, 18 Nov 2024 10:29:46 +1100 (AEDT)
-Received: by smtp01.aussiebb.com.au (Postfix, from userid 116)
-	id 503DA100723; Mon, 18 Nov 2024 10:29:46 +1100 (AEDT)
-X-Spam-Level: 
-Received: from [192.168.50.229] (159-196-82-144.9fc452.per.static.aussiebb.net [159.196.82.144])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: ian146@aussiebb.com.au)
-	by smtp01.aussiebb.com.au (Postfix) with ESMTPSA id C06851006EE;
-	Mon, 18 Nov 2024 10:29:43 +1100 (AEDT)
-Message-ID: <fe9f3161-b9e5-4943-9d55-dfec08e7594e@themaw.net>
-Date: Mon, 18 Nov 2024 07:29:42 +0800
+	s=arc-20240116; t=1731886384; c=relaxed/simple;
+	bh=fHLymYQ6ddaLa2cUMVtli3qmCb2cer2E0VtRbJ7+buo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j/q6+BNNdh6d5JXeuzEJ33NpcBQAmgg8ZnWG8zhKbQFXIOlEOWJlq85+HSA/NLm0C7gng7gA0EDjXUOIQNwl15Vkps/m5zCbR86CPhMr6lvKShC1HAbYZNhJRm6bv3fvbf/1PLoO8IkOo+/GLbSDfs35oI1G4xbYaAK3HClqlog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=tjTKtaGk; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id A969E75A;
+	Mon, 18 Nov 2024 00:32:42 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1731886363;
+	bh=fHLymYQ6ddaLa2cUMVtli3qmCb2cer2E0VtRbJ7+buo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tjTKtaGkGKIJ8Z6MBkSqu2Nk3dXFRxGlupGDuLNeo6s0ZIZS0jo/a5YEum4xd7tEh
+	 4NDueI88abxoKkk3hkGJLsKEnLAcg5a92htCpHh63S1ddcDeL9D7pxfralkcgCVutD
+	 AtEg6Wu0pdCYaB611oEn2mhA65pJneexkt8R2uhw=
+Date: Mon, 18 Nov 2024 01:32:50 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Jani Nikula <jani.nikula@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>,
+	Danilo Krummrich <dakr@redhat.com>,
+	Harry Wentland <harry.wentland@amd.com>,
+	Leo Li <sunpeng.li@amd.com>,
+	Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
+	Xinhui Pan <Xinhui.Pan@amd.com>,
+	Alain Volmat <alain.volmat@foss.st.com>,
+	Raphael Gallais-Pou <rgallaispou@gmail.com>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Peter Senna Tschudin <peter.senna@gmail.com>,
+	Ian Ray <ian.ray@ge.com>,
+	Martyn Welch <martyn.welch@collabora.co.uk>,
+	Inki Dae <inki.dae@samsung.com>,
+	Seung-Woo Kim <sw0312.kim@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Stefan Agner <stefan@agner.ch>, Alison Wang <alison.wang@nxp.com>,
+	Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Rob Clark <robdclark@gmail.com>,
+	Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	Sean Paul <sean@poorly.run>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	Dave Airlie <airlied@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>,
+	Sandy Huang <hjc@rock-chips.com>,
+	Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>,
+	Andy Yan <andy.yan@rock-chips.com>, Chen-Yu Tsai <wens@csie.org>,
+	Samuel Holland <samuel@sholland.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	=?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>,
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
+	Gurchetan Singh <gurchetansingh@chromium.org>,
+	Chia-I Wu <olvaffe@gmail.com>, Zack Rusin <zack.rusin@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	nouveau@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+	virtualization@lists.linux.dev, spice-devel@lists.freedesktop.org,
+	linux-rockchip@lists.infradead.org, linux-sunxi@lists.linux.dev,
+	linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 1/5] drm/encoder_slave: make mode_valid accept const
+ struct drm_display_mode
+Message-ID: <20241117233250.GK12409@pendragon.ideasonboard.com>
+References: <20241115-drm-connector-mode-valid-const-v1-0-b1b523156f71@linaro.org>
+ <20241115-drm-connector-mode-valid-const-v1-1-b1b523156f71@linaro.org>
+ <20241117205426.GE12409@pendragon.ideasonboard.com>
+ <CAA8EJpr=4AQVRKbtR2MaCQfguGW0a=3ay-ttew-mFR4f086Uyg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/3] fs: allow statmount to fetch the fs_subtype and
- sb_source
-To: Jan Kara <jack@suse.cz>
-Cc: Jeff Layton <jlayton@kernel.org>, Karel Zak <kzak@redhat.com>,
- Christian Brauner <brauner@kernel.org>, Miklos Szeredi <miklos@szeredi.hu>,
- Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>
-References: <20241111-statmount-v4-0-2eaf35d07a80@kernel.org>
- <20241112-antiseptisch-kinowelt-6634948a413e@brauner>
- <hss5w5in3wj3af3o2x3v3zfaj47gx6w7faeeuvnxwx2uieu3xu@zqqllubl6m4i>
- <63f3aa4b3d69b33f1193f4740f655ce6dae06870.camel@kernel.org>
- <20241113151848.hta3zax57z7lprxg@quack3>
- <83b4c065-8cb4-4851-a557-aa47b7d03b6f@themaw.net>
- <20241114115652.so2dkvhaahl2ygvl@quack3>
-Content-Language: en-US
-From: Ian Kent <raven@themaw.net>
-Autocrypt: addr=raven@themaw.net; keydata=
- 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
-In-Reply-To: <20241114115652.so2dkvhaahl2ygvl@quack3>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAA8EJpr=4AQVRKbtR2MaCQfguGW0a=3ay-ttew-mFR4f086Uyg@mail.gmail.com>
 
+On Mon, Nov 18, 2024 at 01:22:12AM +0200, Dmitry Baryshkov wrote:
+> On Sun, 17 Nov 2024 at 22:54, Laurent Pinchart wrote:
+> > On Fri, Nov 15, 2024 at 11:09:26PM +0200, Dmitry Baryshkov wrote:
+> > > The mode_valid() callbacks of drm_encoder, drm_crtc and drm_bridge
+> > > accept const struct drm_display_mode argument. Change the mode_valid
+> > > callback of drm_encoder_slave to also accept const argument.
+> > >
+> > > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> >
+> > Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> >
+> > On a side note, there's only two I2C slave encoder drivers left... I
+> > wonder if we could so something about them. The ch7006 and sil164
+> > drivers seem to be used by nouveau only, could they be moved to
+> > drivers/gpu/drm/nouveau/ ? We would move the whole drm_encoder_slave
+> > implementation there too, and leave it to die (or get taken out of limbo
+> > and fixed) with dispnv04.
+> 
+> Or it might be better to switch to drm_bridge. Currently we also have
+> sil164 (sub)drivers in ast and i915 drivers. I don't know if there is
+> any common code to share or not. If there is some, it might be nice to
+> use common framework.
 
-On 14/11/24 19:56, Jan Kara wrote:
-> On Thu 14-11-24 09:45:23, Ian Kent wrote:
->> On 13/11/24 23:18, Jan Kara wrote:
->>> On Wed 13-11-24 08:45:06, Jeff Layton wrote:
->>>> On Wed, 2024-11-13 at 12:27 +0100, Karel Zak wrote:
->>>>> On Tue, Nov 12, 2024 at 02:39:21PM GMT, Christian Brauner wrote:
->>>>> Next on the wish list is a notification (a file descriptor that can be
->>>>> used in epoll) that returns a 64-bit ID when there is a change in the
->>>>> mount node. This will enable us to enhance systemd so that it does not
->>>>> have to read the entire mount table after every change.
->>>>>
->>>> New fanotify events for mount table changes, perhaps?
->>> Now that I'm looking at it I'm not sure fanotify is a great fit for this
->>> usecase. A lot of fanotify functionality does not really work for virtual
->>> filesystems such as proc and hence we generally try to discourage use of
->>> fanotify for them. So just supporting one type of event (like FAN_MODIFY)
->>> on one file inside proc looks as rather inconsistent interface. But I
->>> vaguely remember we were discussing some kind of mount event, weren't we?
->>> Or was that for something else?
->> I still need to have a look at the existing notifications sub-systems but,
->> tbh, I also don't think they offer the needed functionality.
->>
->> The thing that was most useful with David's notifications when I was trying
->> to improve the mounts handling was the queuing interface. It allowed me to
->> batch notifications up to around a couple of hundred and grab them in one go
->> for processing. This significantly lowered the overhead of rapid fire event
->> processing. The ability to go directly to an individual mount and get it's
->> information only got about half the improvement I saw, the rest come from
->> the notifications improvement.
-> Well, if we implemented the mount notification events in fanotify, then the
-> mount events get queued in the notification group queue and you can process
-> the whole batch of events in one go if you want. So I don't see batching as
-> an issue. What I'm more worried about is that watching the whole system
-> for new mounts is going to be somewhat cumbersome when all you can do is to
-> watch new mounts attached under an existing mount / filesystem.
+That would require porting nouveau and i915 to drm_bridge. As much as
+I'd love to see that happening, I won't hold my breath.
 
-But, for mounts/unounts for example, isn't it the act of performing the
+> > > ---
+> > >  drivers/gpu/drm/i2c/ch7006_drv.c          | 2 +-
+> > >  drivers/gpu/drm/i2c/sil164_drv.c          | 2 +-
+> > >  drivers/gpu/drm/nouveau/dispnv04/tvnv17.c | 2 +-
+> > >  include/drm/drm_encoder_slave.h           | 2 +-
+> > >  4 files changed, 4 insertions(+), 4 deletions(-)
+> > >
+> > > diff --git a/drivers/gpu/drm/i2c/ch7006_drv.c b/drivers/gpu/drm/i2c/ch7006_drv.c
+> > > index 131512a5f3bd996ad1e2eb869ffa09837daba0c7..a57f0a41c1a9e2006142fe0bad2914b0c344c82a 100644
+> > > --- a/drivers/gpu/drm/i2c/ch7006_drv.c
+> > > +++ b/drivers/gpu/drm/i2c/ch7006_drv.c
+> > > @@ -104,7 +104,7 @@ static bool ch7006_encoder_mode_fixup(struct drm_encoder *encoder,
+> > >  }
+> > >
+> > >  static int ch7006_encoder_mode_valid(struct drm_encoder *encoder,
+> > > -                                  struct drm_display_mode *mode)
+> > > +                                  const struct drm_display_mode *mode)
+> > >  {
+> > >       if (ch7006_lookup_mode(encoder, mode))
+> > >               return MODE_OK;
+> > > diff --git a/drivers/gpu/drm/i2c/sil164_drv.c b/drivers/gpu/drm/i2c/sil164_drv.c
+> > > index ff23422727fce290a188e495d343e32bc2c373ec..708e119072fcb50c31b5596b75dc341429b93697 100644
+> > > --- a/drivers/gpu/drm/i2c/sil164_drv.c
+> > > +++ b/drivers/gpu/drm/i2c/sil164_drv.c
+> > > @@ -255,7 +255,7 @@ sil164_encoder_restore(struct drm_encoder *encoder)
+> > >
+> > >  static int
+> > >  sil164_encoder_mode_valid(struct drm_encoder *encoder,
+> > > -                       struct drm_display_mode *mode)
+> > > +                       const struct drm_display_mode *mode)
+> > >  {
+> > >       struct sil164_priv *priv = to_sil164_priv(encoder);
+> > >
+> > > diff --git a/drivers/gpu/drm/nouveau/dispnv04/tvnv17.c b/drivers/gpu/drm/nouveau/dispnv04/tvnv17.c
+> > > index 3ecb101d23e949b753b873d24eec01ad6fe7f5d6..35ad4e10d27323c87704a3ff35b7dc26462c82bd 100644
+> > > --- a/drivers/gpu/drm/nouveau/dispnv04/tvnv17.c
+> > > +++ b/drivers/gpu/drm/nouveau/dispnv04/tvnv17.c
+> > > @@ -308,7 +308,7 @@ static int nv17_tv_get_modes(struct drm_encoder *encoder,
+> > >  }
+> > >
+> > >  static int nv17_tv_mode_valid(struct drm_encoder *encoder,
+> > > -                           struct drm_display_mode *mode)
+> > > +                           const struct drm_display_mode *mode)
+> > >  {
+> > >       struct nv17_tv_norm_params *tv_norm = get_tv_norm(encoder);
+> > >
+> > > diff --git a/include/drm/drm_encoder_slave.h b/include/drm/drm_encoder_slave.h
+> > > index 49172166a164474f43e4afb2eeeb3cde8ae7c61a..b526643833dcf78bae29f9fbbe27de3f730b55d8 100644
+> > > --- a/include/drm/drm_encoder_slave.h
+> > > +++ b/include/drm/drm_encoder_slave.h
+> > > @@ -85,7 +85,7 @@ struct drm_encoder_slave_funcs {
+> > >        * @mode_valid: Analogous to &drm_encoder_helper_funcs @mode_valid.
+> > >        */
+> > >       int (*mode_valid)(struct drm_encoder *encoder,
+> > > -                       struct drm_display_mode *mode);
+> > > +                       const struct drm_display_mode *mode);
+> > >       /**
+> > >        * @mode_set: Analogous to &drm_encoder_helper_funcs @mode_set
+> > >        * callback. Wrapped by drm_i2c_encoder_mode_set().
+> > >
 
-mount/unmount that triggers the notification if the path in within a file
+-- 
+Regards,
 
-system that's marked to report such events?
-
-
-Ian
-
+Laurent Pinchart
 
