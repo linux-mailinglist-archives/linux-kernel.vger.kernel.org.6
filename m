@@ -1,165 +1,234 @@
-Return-Path: <linux-kernel+bounces-412252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E46339D060C
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 22:03:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D0359D0613
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 22:12:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34090B21C59
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 21:03:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 927F31F219BC
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 21:12:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4D8B1DD866;
-	Sun, 17 Nov 2024 21:02:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3720C1DD86C;
+	Sun, 17 Nov 2024 21:12:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="W7uUTpcG"
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="bFw6+02h"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 740E984A3E
-	for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 21:02:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 716BA84A3E;
+	Sun, 17 Nov 2024 21:12:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731877377; cv=none; b=QTk4l5/jXGV5hOI40/ri15U8ij78kamZba1cohP59+LDky1XAL6qkVO0lBYCBJeqagCqFL81U1RKHU/ZlqXtb+NixAT5MBvl7tGe6pDCialKz8nRW5RjFapKOktZ50NF1g7+fxLHQvq77IiBQubaCJcilKfEQ8yVME4txXcvgvA=
+	t=1731877932; cv=none; b=Px8OEDmOxYk2Cf8gzwYdvArabN0rZi8BEfbfHOgoDyGvNdWx3eS2tWP6RKHw5SZmsnYJTBK9Ym8mobVPmI1Qp4ujojEYFPmZBnPlzy5tWk8WQAFYBv1UBTuP7rCwo0NjZibYB4aaeqNjVqUZ4sGxT9Z6sCkGuYnqa2pxRqqNqOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731877377; c=relaxed/simple;
-	bh=PRFaT1as5OxBAOyjiziv8bUZQYDtkLJAhsKW6psnoGI=;
+	s=arc-20240116; t=1731877932; c=relaxed/simple;
+	bh=HGRx4uxFKRJlW6uig3Endwi2UsrcK+2HJJC5CFseVrE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=musQDJLurjYBaMpfqFArlgK1vftGhfkq7Y9b4jBrYSyoOKGp1f71VQunZPHH3xi+6xu3CFhzQvKSLYnmCxufUVdLaXpOsMzHvkPJDte2DQdbz2oV1BhFhsOjv6v34dmPzhji26ShC4MtECJOCaPsiXIKrlMNMSyPddiW7jd3GyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=W7uUTpcG; arc=none smtp.client-ip=209.85.160.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-460c316fc37so24843641cf.0
-        for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 13:02:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1731877374; x=1732482174; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=6wjrpq+6MswuiTE+2/ghtZhteEiq8qgWQWvFqee2GXo=;
-        b=W7uUTpcGH/N6FD5qyR7303J5qU+Jdl6TVRMJRB7BKHTL+yPBooaADW8CI4RLCSOgln
-         7vIbMroUbC1ImqQGJVdr/pn3QDzvuTInU38bme51fzV3F144zPgAhklwhvcHGlN4NHT/
-         cr/19i/oH2Lq3HqcZGuoc6K8doCkB1c+tlQ/MDt2PsLOreR4qW9CzVHa7m3aCNDXaBl8
-         pnIOdJqEbZkkfA/KQbO3NYi22KayNY+hB3jHAW6+9cxZ0RtctWCN4q9JdY1QoKwNunZJ
-         GMxY46a/wGM6Tevsd/OsRNYuklR03aBo0UK2k7k/aMzq/6Fkq2giqwQHrs9u17RdKySe
-         vBhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731877374; x=1732482174;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6wjrpq+6MswuiTE+2/ghtZhteEiq8qgWQWvFqee2GXo=;
-        b=MYend2OuorwyAqyOV3h4WwO0hViuhY/Z/MlNwTxy3B/j+6bPBLXM8jqPgodl0TG05J
-         HOLlZI9mk5F/0rf97vPfeBFdGiBVaGEv1NlatyXsGXPUf8lF6Qd1jtnsgi9JA+IF7iVD
-         Nr28romxdfIJ10jIvXrvfEClVNUleD6bfmn+/1FK26R+hyD6ksPBH1ZnF610qI7BYS3I
-         MQ4rwTEmJcv9yaDIr7Urwu5xWXY1QYtTRpXPYqZMdSKUm43QPEMmTYjqyX/jRgUTdrIY
-         fxKalar85gNwniPYwswM9axe3AbLfSiCAme4HyTuw5e7wEe1ePMxlqNioovbUJm4C2lu
-         NPHA==
-X-Forwarded-Encrypted: i=1; AJvYcCWxL1cDyk03h/yiSaZ0Qvj439CXW/VHC3TD2khl0f098cLt0t59CvAs3hJw5XLhu1t8pNeGLMRlf2iaHIg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx93F3hqQJedzhZ1hNnxpJbF9q92ZRnv1AP+qzOZ9UDWTymNsKw
-	ImA1Atgn4lFaTgBpl5aC6s/Z4Kl01zqcLVZKMZfFAQwM3k6TcEzsYaani4Hs3A==
-X-Google-Smtp-Source: AGHT+IEujOQD9HguVj3nlHAUK3YYh8UHHi5/lv2W0spWj0axGPSzGT5UihEI7OdVB25ic3mOyYKH7g==
-X-Received: by 2002:a05:622a:56:b0:461:285:9d7c with SMTP id d75a77b69052e-46363e0af04mr128743021cf.12.1731877374463;
-        Sun, 17 Nov 2024 13:02:54 -0800 (PST)
-Received: from rowland.harvard.edu ([2601:19b:681:fd10::24f4])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4635a9c64d4sm48211421cf.13.2024.11.17.13.02.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 17 Nov 2024 13:02:53 -0800 (PST)
-Date: Sun, 17 Nov 2024 16:02:49 -0500
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Markus Rechberger <linuxusb.ml@sundtek.de>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: Highly critical bug in XHCI Controller
-Message-ID: <dff9f24a-4aa2-45aa-920f-20876cf4ccbf@rowland.harvard.edu>
-References: <3905c1c88695e0ffcfabf700c06dd7223decef8d.camel@sundtek.de>
- <dd4239c7b0538e1cd2f2a85307c73299117d5f0e.camel@sundtek.de>
- <50f730ae-4918-4dac-88ec-b3632bee67e7@rowland.harvard.edu>
- <35c051354414ae9ef6e6b32b1a15a5dedf471176.camel@sundtek.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BrPoF2oRx0NX4eP5tw8Gku8d+aadc4cZVauURTB+Zr+Rd8ptA3ByzvRnA4g5Fa/enNyryWSknw2DvjYb1yOqMDmWSDlJHhOueVdfQ/5LX7o7G+tkg/rBnk+todL/R2sVha58y/2kOqyDYmoXKlIPE6qfNJhZ+UHRd/5kxk9Q3pQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=bFw6+02h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BC9BC4CED2;
+	Sun, 17 Nov 2024 21:12:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1731877931;
+	bh=HGRx4uxFKRJlW6uig3Endwi2UsrcK+2HJJC5CFseVrE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bFw6+02hlzEKV45miXHj2ui9OPScaDREt4GyBl7/aCQ9ze76Gd94XQtAwU2ANvV9x
+	 kk+OCMLWdVKxIVrAYQqJClJWqZdADNAM0CVqPmYihslgNzNHqItAzi1iZS3EijE8JR
+	 DF1VIfkwtbjMN49rU2grAFgmm8BMOyljCgNI47E0=
+Date: Sun, 17 Nov 2024 22:11:47 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>, stable@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Jann Horn <jannh@google.com>, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Xu <peterx@redhat.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Mark Brown <broonie@kernel.org>,
+	"David S . Miller" <davem@davemloft.net>,
+	Andreas Larsson <andreas@gaisler.com>,
+	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
+	Helge Deller <deller@gmx.de>
+Subject: Re: [PATCH 6.1.y 4/4] mm: resolve faulty mmap_region() error path
+ behaviour
+Message-ID: <2024111713-syndrome-impolite-d154@gregkh>
+References: <cover.1731671441.git.lorenzo.stoakes@oracle.com>
+ <4cb9b846f0c4efcc4a2b21453eea4e4d0136efc8.1731671441.git.lorenzo.stoakes@oracle.com>
+ <2979df31-ce8c-4382-ab01-7e66f852099d@suse.cz>
+ <01fbc3f2-bccb-4694-99ec-2ee8e9ff6e4e@lucifer.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <35c051354414ae9ef6e6b32b1a15a5dedf471176.camel@sundtek.de>
+In-Reply-To: <01fbc3f2-bccb-4694-99ec-2ee8e9ff6e4e@lucifer.local>
 
-On Sun, Nov 17, 2024 at 11:47:52PM +0800, Markus Rechberger wrote:
-> On Sun, 2024-11-17 at 10:18 -0500, Alan Stern wrote:
-> > On Sun, Nov 17, 2024 at 08:44:16PM +0800, Markus Rechberger wrote:
-> > > Basically the issue comes from hub_port_connect.
-> > > 
-> > > drivers/usb/core/hub.c
-> > > 
-> > > hub_port_init returns -71 -EPROTO and jumps to loop
-> > > https://github.com/torvalds/linux/blob/master/drivers/usb/core/hub.c#L5450
-> > > 
-> > > I'd question if usb_ep0_reinit is really required in loop which is
-> > > running following functions:
-
-> This should only go down there in case an error happened earlier no?
-
-Of course, since -EPROTO indicates there was an error.
-
-> In case the hardware signed up correctly it should not even enter that
-> code.
+On Fri, Nov 15, 2024 at 07:28:34PM +0000, Lorenzo Stoakes wrote:
+> On Fri, Nov 15, 2024 at 08:06:05PM +0100, Vlastimil Babka wrote:
+> > On 11/15/24 13:40, Lorenzo Stoakes wrote:
+> > > [ Upstream commit 5de195060b2e251a835f622759550e6202167641 ]
+> > >
+> > > The mmap_region() function is somewhat terrifying, with spaghetti-like
+> > > control flow and numerous means by which issues can arise and incomplete
+> > > state, memory leaks and other unpleasantness can occur.
+> > >
+> > > A large amount of the complexity arises from trying to handle errors late
+> > > in the process of mapping a VMA, which forms the basis of recently
+> > > observed issues with resource leaks and observable inconsistent state.
+> > >
+> > > Taking advantage of previous patches in this series we move a number of
+> > > checks earlier in the code, simplifying things by moving the core of the
+> > > logic into a static internal function __mmap_region().
+> > >
+> > > Doing this allows us to perform a number of checks up front before we do
+> > > any real work, and allows us to unwind the writable unmap check
+> > > unconditionally as required and to perform a CONFIG_DEBUG_VM_MAPLE_TREE
+> > > validation unconditionally also.
+> > >
+> > > We move a number of things here:
+> > >
+> > > 1. We preallocate memory for the iterator before we call the file-backed
+> > >    memory hook, allowing us to exit early and avoid having to perform
+> > >    complicated and error-prone close/free logic. We carefully free
+> > >    iterator state on both success and error paths.
+> > >
+> > > 2. The enclosing mmap_region() function handles the mapping_map_writable()
+> > >    logic early. Previously the logic had the mapping_map_writable() at the
+> > >    point of mapping a newly allocated file-backed VMA, and a matching
+> > >    mapping_unmap_writable() on success and error paths.
+> > >
+> > >    We now do this unconditionally if this is a file-backed, shared writable
+> > >    mapping. If a driver changes the flags to eliminate VM_MAYWRITE, however
+> > >    doing so does not invalidate the seal check we just performed, and we in
+> > >    any case always decrement the counter in the wrapper.
+> > >
+> > >    We perform a debug assert to ensure a driver does not attempt to do the
+> > >    opposite.
+> > >
+> > > 3. We also move arch_validate_flags() up into the mmap_region()
+> > >    function. This is only relevant on arm64 and sparc64, and the check is
+> > >    only meaningful for SPARC with ADI enabled. We explicitly add a warning
+> > >    for this arch if a driver invalidates this check, though the code ought
+> > >    eventually to be fixed to eliminate the need for this.
+> > >
+> > > With all of these measures in place, we no longer need to explicitly close
+> > > the VMA on error paths, as we place all checks which might fail prior to a
+> > > call to any driver mmap hook.
+> > >
+> > > This eliminates an entire class of errors, makes the code easier to reason
+> > > about and more robust.
+> > >
+> > > Link: https://lkml.kernel.org/r/6e0becb36d2f5472053ac5d544c0edfe9b899e25.1730224667.git.lorenzo.stoakes@oracle.com
+> > > Fixes: deb0f6562884 ("mm/mmap: undo ->mmap() when arch_validate_flags() fails")
+> > > Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> > > Reported-by: Jann Horn <jannh@google.com>
+> > > Reviewed-by: Liam R. Howlett <Liam.Howlett@oracle.com>
+> > > Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
+> > > Tested-by: Mark Brown <broonie@kernel.org>
+> > > Cc: Andreas Larsson <andreas@gaisler.com>
+> > > Cc: Catalin Marinas <catalin.marinas@arm.com>
+> > > Cc: David S. Miller <davem@davemloft.net>
+> > > Cc: Helge Deller <deller@gmx.de>
+> > > Cc: James E.J. Bottomley <James.Bottomley@HansenPartnership.com>
+> > > Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> > > Cc: Peter Xu <peterx@redhat.com>
+> > > Cc: Will Deacon <will@kernel.org>
+> > > Cc: <stable@vger.kernel.org>
+> > > Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+> > > Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> > > ---
+> > >  mm/mmap.c | 103 +++++++++++++++++++++++++++++-------------------------
+> > >  1 file changed, 56 insertions(+), 47 deletions(-)
+> > >
+> > > diff --git a/mm/mmap.c b/mm/mmap.c
+> > > index 322677f61d30..e457169c5cce 100644
+> > > --- a/mm/mmap.c
+> > > +++ b/mm/mmap.c
+> > > @@ -2652,7 +2652,7 @@ int do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
+> > >  	return do_mas_munmap(&mas, mm, start, len, uf, false);
+> > >  }
+> > >
+> > > -unsigned long mmap_region(struct file *file, unsigned long addr,
+> > > +static unsigned long __mmap_region(struct file *file, unsigned long addr,
+> > >  		unsigned long len, vm_flags_t vm_flags, unsigned long pgoff,
+> > >  		struct list_head *uf)
+> > >  {
+> > > @@ -2750,26 +2750,28 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
+> > >  	vma->vm_page_prot = vm_get_page_prot(vm_flags);
+> > >  	vma->vm_pgoff = pgoff;
+> > >
+> > > -	if (file) {
+> > > -		if (vm_flags & VM_SHARED) {
+> > > -			error = mapping_map_writable(file->f_mapping);
+> > > -			if (error)
+> > > -				goto free_vma;
+> > > -		}
+> > > +	if (mas_preallocate(&mas, vma, GFP_KERNEL)) {
+> > > +		error = -ENOMEM;
+> > > +		goto free_vma;
+> > > +	}
+> > >
+> > > +	if (file) {
+> > >  		vma->vm_file = get_file(file);
+> > >  		error = mmap_file(file, vma);
+> > >  		if (error)
+> > > -			goto unmap_and_free_vma;
+> > > +			goto unmap_and_free_file_vma;
+> > > +
+> > > +		/* Drivers cannot alter the address of the VMA. */
+> > > +		WARN_ON_ONCE(addr != vma->vm_start);
+> > >
+> > >  		/*
+> > > -		 * Expansion is handled above, merging is handled below.
+> > > -		 * Drivers should not alter the address of the VMA.
+> > > +		 * Drivers should not permit writability when previously it was
+> > > +		 * disallowed.
+> > >  		 */
+> > > -		if (WARN_ON((addr != vma->vm_start))) {
+> > > -			error = -EINVAL;
+> > > -			goto close_and_free_vma;
+> > > -		}
+> > > +		VM_WARN_ON_ONCE(vm_flags != vma->vm_flags &&
+> > > +				!(vm_flags & VM_MAYWRITE) &&
+> > > +				(vma->vm_flags & VM_MAYWRITE));
+> > > +
+> > >  		mas_reset(&mas);
+> > >
+> > >  		/*
+> > > @@ -2792,7 +2794,7 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
+> > >  				vma = merge;
+> > >  				/* Update vm_flags to pick up the change. */
+> > >  				vm_flags = vma->vm_flags;
 > 
-> My experience is just - reconnect the device in case an error happened
-
-You can't reconnect some devices; they are permanently attached.  There 
-are other reasons why reconnecting might not be practical.
-
-> those
-> workarounds did not work properly for the device I deal with (but yes
-> that's
-> why I'm asking - maybe someone else has different hardware with
-> different
-> experience).
-
-I doubt we will hear from these people, because they will not realize 
-that anything was wrong.
-
-In any case, it is generally recognized that the type of errors leading 
-to -EPROTO (bad CRC or no response, for instance) can be temporary or 
-intermittent.  Retrying is an appropriate strategy.
-
-> > > As a second issue I found in usb_reset_and_verify device 
-> > > https://github.com/torvalds/linux/blob/master/drivers/usb/core/hub.c#L6131
-> > > 
-> > >         ret = hub_port_init(parent_hub, udev, port1, i,
-> > > &descriptor);
-> > >         if (ret >= 0 || ret == -ENOTCONN || ret == -ENODEV) {
-> > >             break;
-> > >         }
-> > > 
-> > > hub_port_init can also return -71 / -EPROTO, the cases should be
-> > > very
-> > > rare when usb_reset_and_verify_device is triggered and that
-> > > happens.
-> > 
-> > If that happens, the loop which this code sits inside will simply 
-> > perform another iteration.  That's what  it's supposed to do, not an 
-> > issue at all.
-> > 
+> As far as I can tell we should add:
 > 
-> It doesn't cause any issue yes but it's not correct either.
+> +				mas_destroy(&mas);
+> 
+> > > -				goto unmap_writable;
+> > > +				goto file_expanded;
+> >
+> > I think we might need a mas_destroy() somewhere around here otherwise we
+> > leak the prealloc? In later versions the merge operation takes our vma
+> > iterator so it handles that if merge succeeds, but here we have to cleanup
+> > our mas ourselves?
+> >
+> 
+> Sigh, yup. This code path is SO HORRIBLE. I think simply a
+> mas_destroy(&mas) here would suffice (see above).
+> 
+> I'm not sure how anything works with stable, I mean do we need to respin a
+> v2 just for one line?
 
-Why not?  What's wrong with it?
+How else am I supposed to take a working patch that has actually been
+tested?  I can't hand-edit this...
 
-> -EPROTO will be returned if I disconnect or short the device here. So
-> initially someone
-> thought he should check for -ENODEV/-ENOTCONN (which should also
-> indicate that the device is gone), so -EPROTO should also be checked in
-> that case.
-> Otherwise just remove all those error checks.
+thanks,
 
--EPROTO does not necessarily indicate the device is gone; it indicates 
-there was a problem communicating with the device.  The problem might be 
-caused by a disconnection, or it might be caused by temporary 
-electromagnetic interference (for example), or by something else.
-
-Alan Stern
+greg k-h
 
