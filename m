@@ -1,86 +1,100 @@
-Return-Path: <linux-kernel+bounces-412178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E3769D04FB
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 19:23:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC3F39D0500
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 19:26:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5A312821B5
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 18:23:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A65682821D7
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 18:26:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8D731DA103;
-	Sun, 17 Nov 2024 18:23:27 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FC051DB365;
+	Sun, 17 Nov 2024 18:26:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="iKmc/WyX"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CB9A1863F
-	for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 18:23:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD59319BA6;
+	Sun, 17 Nov 2024 18:26:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731867807; cv=none; b=V7Q+5BC6R01LsxERSG1XDM1Vb8AgBiaEz6unHxH1cqqZnEtKsNxId39PT7RSs01VUrkkH1iHsIzmZpKOxe1Nv3Oh9I1Fio/VcIXP/m9kGU2MhhXNUxTFvnH0xp6ixy9l3ZYj5NKl5ZKJSkSD+UitumxYAax3lt3lpHFtHZmN8ng=
+	t=1731867973; cv=none; b=rSHrpl6/LzLhwkJOyjv5LnPXVau+nhqaVfT6wGiob8P8SqbjYr2kXLVJbo1ikg4c7f8JsO+EK5PISTdWU67w/jMqmmEAfLxq3CghLWwkdyqLLO+cXqp4WfXdUrWX9IYheBoD0Dy76395U04ZP9IibS4uw7TBTJvobQfnKSN3gbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731867807; c=relaxed/simple;
-	bh=Lq7+lc0MukCzfZDwfOBCjA9grHkNTBpIjJfNoUx4RWw=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=NI3a2ZbNj55iGuL84kKd2t33GocCtmKxjgPLiUzmeYGutVLYR20uj7ZjGNPnq+5v0OdatTgl1gZ2WTa104NncQjlHiM4Mr1GI6BfWMvRV612wVnsE5C1V4xbYfnHIscJp+uDM0TcXioKejB9zBg51ZUpxKb0GhniCtMJRANuTSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-209-bEZVg5RhPyCH4pvwK1Ydfw-1; Sun, 17 Nov 2024 18:23:21 +0000
-X-MC-Unique: bEZVg5RhPyCH4pvwK1Ydfw-1
-X-Mimecast-MFC-AGG-ID: bEZVg5RhPyCH4pvwK1Ydfw
-Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
- (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sun, 17 Nov
- 2024 18:23:20 +0000
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Sun, 17 Nov 2024 18:23:20 +0000
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Borislav Petkov' <bp@alien8.de>, Andrew Cooper
-	<andrew.cooper3@citrix.com>, Thomas De Schampheleire
-	<thomas.de_schampheleire@nokia.com>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"x86@kernel.org" <x86@kernel.org>
-Subject: RE: x86/amd late microcode thread loading slows down boot
-Thread-Topic: x86/amd late microcode thread loading slows down boot
-Thread-Index: AQHbN6A/rTQwJ7AT5E+tr8TdCEPGZbK7zBrA
-Date: Sun, 17 Nov 2024 18:23:20 +0000
-Message-ID: <53daf7e9901d428fa25ede7caa99b520@AcuMS.aculab.com>
-References: <ZyulbYuvrkshfsd2@antipodes>
- <6449aa6c-43b1-40eb-ab54-48803481d11b@citrix.com>
- <20241107153036.GCZyzdHEwm9-LPQOzY@fat_crate.local>
- <Zy0p5DT0SOWsCDn7@antipodes>
- <20241114095639.GDZzXJV1EDJlMqv24c@fat_crate.local>
- <3f6a84bd-af4a-4ffa-8205-25b2c9084893@citrix.com>
- <20241115205114.GCZze0QtUKbeXdFEHe@fat_crate.local>
-In-Reply-To: <20241115205114.GCZze0QtUKbeXdFEHe@fat_crate.local>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1731867973; c=relaxed/simple;
+	bh=L5i67y0gMIms/tG4mdxgZaI1qv/UhvU9JzFgf+I6i88=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TSTDvGqeWiJ5jhRu/lb4q89VphA4/zIqFzCcInDvXhS34s9BRRegew/IBGtoR+7ugKlrfzsyNcCnYLSPoz+Qq8OIR3d64RAlvte544BX+UAz4pzvfwhrWe03ZnvU94qsATi++whOQI5Exx3tL7iwd0pzGSwN+C5g4BKcQXswvaM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=iKmc/WyX; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=AGQIXcjAkiejG+UbcSeM9PSqSR0eMXRHAu+HA5Bn4LA=; b=iKmc/WyXkq4taeMNAJmHOcSXjH
+	/GykTUb3E61RiPdvqBjNABw+uGUZ5nHM45aWI5DEDBh46uFonHNrmp8eatxogQo2NfBPP+ZgkGMHN
+	ll4Wi5nv8fORT8/g3v1S/C0gZ2WZ5SDU+kH9MiD3rPj+ea5PUKVW4IXlRa5iQslMEG0c=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tCjy0-00Db2A-Cq; Sun, 17 Nov 2024 19:25:48 +0100
+Date: Sun, 17 Nov 2024 19:25:48 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: manas18244@iiitd.ac.in
+Cc: FUJITA Tomonori <fujita.tomonori@gmail.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Anup Sharma <anupnewsmail@gmail.com>, netdev@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-block@vger.kernel.org
+Subject: Re: [PATCH] rust: simplify Result<()> uses
+Message-ID: <3721a7b2-4a8f-478c-bbeb-fdf22ded44c9@lunn.ch>
+References: <20241117-simplify-result-v1-1-5b01bd230a6b@iiitd.ac.in>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: W2E0pezgxrR2UqpBIc1HdvI-_Kp5BLG5YbfPmb9nPUs_1731867801
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241117-simplify-result-v1-1-5b01bd230a6b@iiitd.ac.in>
 
-Li4uDQo+ICsJCS8qDQo+ICsJCSAqIEZsdXNoIG5leHQgcGFnZSB0b28gaWYgcGF0Y2ggaW1hZ2Ug
-aXMgY3Jvc3NpbmcgYSBwYWdlDQo+ICsJCSAqIGJvdW5kYXJ5Lg0KPiArCQkgKi8NCj4gKwkJaWYg
-KHBfYWRkciA+PiBQQUdFX1NISUZUICE9IChwX2FkZHIgKyBwc2l6ZSkgPj4gUEFHRV9TSElGVCkN
-Cj4gKwkJCWludmxwZyhwX2FkZHIgKyBwc2l6ZSk7DQo+ICsJfQ0KDQpTaG91bGRuJ3QgdGhhdCBi
-ZSAncHNpemUgLSAxJyA/DQoNCglEYXZpZA0KDQotDQpSZWdpc3RlcmVkIEFkZHJlc3MgTGFrZXNp
-ZGUsIEJyYW1sZXkgUm9hZCwgTW91bnQgRmFybSwgTWlsdG9uIEtleW5lcywgTUsxIDFQVCwgVUsN
-ClJlZ2lzdHJhdGlvbiBObzogMTM5NzM4NiAoV2FsZXMpDQo=
+On Sun, Nov 17, 2024 at 08:41:47PM +0530, Manas via B4 Relay wrote:
+> From: Manas <manas18244@iiitd.ac.in>
+> 
+> This patch replaces `Result<()>` with `Result`.
+> 
+> Suggested-by: Miguel Ojeda <ojeda@kernel.org>
+> Link: https://github.com/Rust-for-Linux/linux/issues/1128
+> Signed-off-by: Manas <manas18244@iiitd.ac.in>
+> ---
+>  drivers/net/phy/qt2025.rs        | 2 +-
+>  rust/kernel/block/mq/gen_disk.rs | 2 +-
+>  rust/kernel/uaccess.rs           | 2 +-
+>  rust/macros/lib.rs               | 6 +++---
 
+
+Please split these patches up per subsystem, and submit them
+individually to the appropriate subsystems.
+
+
+    Andrew
+
+---
+pw-bot: cr
 
