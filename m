@@ -1,265 +1,308 @@
-Return-Path: <linux-kernel+bounces-412057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 546859D0331
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 12:08:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4C6A9D0335
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 12:12:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D04B11F2170B
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 11:08:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64FF02838A3
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 11:12:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BBAD1422AB;
-	Sun, 17 Nov 2024 11:07:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4720E143C69;
+	Sun, 17 Nov 2024 11:12:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="NdL0H25X"
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2062.outbound.protection.outlook.com [40.107.20.62])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="XcJ1OlCH";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="tfSUTeGC";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ioDXYgf8";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="P8d4JMXB"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B86A11CAF;
-	Sun, 17 Nov 2024 11:07:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.62
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731841676; cv=fail; b=gWNhq4lCLsXBDRd+y97LDdqAKdvvMO9a9DbNhp2LaLjwQSUtz3DzkOBZPgUmYIRpy3qsEl32bFFqKB1Hmx41Gj1+voZtPBHU4JW3Ex1M6GIPwc26F0KaVy74oEmNFRMutgdMIVFvkVoTFMIJ0ENRHGfWf1mQfKTT7cxlKI98kKw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731841676; c=relaxed/simple;
-	bh=dTz3xU5ivIQjtGSXBjma7+m6+IHX7rewLsdzIBLCV2s=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=sESTeuXwnHbKuA81vj3K/ZHzpwlbiNhT78iwj9kMfTPtNFQ60Lh3NDq20sE49j/o8gq4cOYXYq+Onh27zH7MoKqDLZz8pvcDc+l8EZfz2dsx5MmXazOpK1jrZxT7A04ImEaEhvA8ga0t/caYnVbXmErTMUEP97u9jdsOtZqB7u0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=NdL0H25X; arc=fail smtp.client-ip=40.107.20.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=OkjLj7yQkZxTE8qcvNPMJtYj4/jcqMJRG7JJjF4OsOBRD5Q0SEOyyVObDITejL2xW5kgOiDgG1VklPZ7l7n9cq9uaawEDq+HGVKIZuIORUEmjOuD5SyHWZZT+yhlLcJrkDOM8hw7qrUPO67OEvC/uZhELDyZgaddJvllcUpTDgptUon6zQKOdeCSBSxWf9dwnp+LdJuo3gsBIhMr4SpFZkRkZ+E1oGf7vmey9U3FzkWMmYVqLp90npsy7LQViwUAMpkTfbJ19NxUv4Ms041aO+NvB6E+hJm8aNh32kqGI2w5J91EQLgz6RcJ2kvoJ8Dp2s6SaYvvLwc/ZxiXPeFJYw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kxJDx95bUmW+2VGDcpcO+lCDgR1zUplRfWZzIqcRW58=;
- b=RqnN6xnDy0KkuxNBabQkPdkR07vRwDav94JpL6kJfYjH15q3chsPzIa0NFdwZwGjLv4qC0JXJMxXl0Ni4FpdfNJjKOJGFpycH9rWGX/5tI+x5T+ziXL4WW2dP/fP1qJ/UouGJpzJUNb0aRs7YMbOmBHGJPoUjkFc6JyUzgzZOkxrCzS9D9Ak33zWSeRLmqwVhmqWY0QdPb11ZCD11zDQ/fJvPBvarIEr/Z7pYdQrYIm1e7Kb25bLX1GgOAgZRAVWoM6HZ8kZp4GRyunUMKfjDqT5ZERS5/oKrIN6W10Y5x2m87XEugfAQqbBFfN+K2Nc1mSr1A//3XyZcwPbWQ8E1Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kxJDx95bUmW+2VGDcpcO+lCDgR1zUplRfWZzIqcRW58=;
- b=NdL0H25XiGjd4xPXa+ohrzxIQhKOu6O9CWoNwy92MbJCXXLPLpnbmCwHyjHCZPaGFC9OYreykToIjJK/7E/tBAyBo9WDEpdWnQsxcWvZI8DJbP7ox1y/slppl/6BlxveqgMyil1c9G64XKNztLcH9PE3KvmpKEjXAyV+UZrSISxp2jdXhzErQs1tv4bdRjJtR3KFhldi3DvxX3ItTt54U0VCwYMm2+cbsyU4WyUdApJGHdhSPcbZeleeq8w5yusTbfHoI7Gfb4Yd3huvcdKFwJvzrTFTOhroS3dRyE6rYXjCHn5UG8DlcVvr2oFI5Inmgp3exynBYqNqet30Xdo5Zw==
-Received: from DB9PR04MB8461.eurprd04.prod.outlook.com (2603:10a6:10:2cf::20)
- by GV1PR04MB10560.eurprd04.prod.outlook.com (2603:10a6:150:203::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.21; Sun, 17 Nov
- 2024 11:07:51 +0000
-Received: from DB9PR04MB8461.eurprd04.prod.outlook.com
- ([fe80::b1b9:faa9:901b:c197]) by DB9PR04MB8461.eurprd04.prod.outlook.com
- ([fe80::b1b9:faa9:901b:c197%5]) with mapi id 15.20.8158.021; Sun, 17 Nov 2024
- 11:07:51 +0000
-From: Peng Fan <peng.fan@nxp.com>
-To: Frank Li <frank.li@nxp.com>, "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-CC: Vinod Koul <vkoul@kernel.org>, "open list:FREESCALE eDMA DRIVER"
-	<imx@lists.linux.dev>, "open list:FREESCALE eDMA DRIVER"
-	<dmaengine@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH V3 2/2] dmaengine: fsl-edma: free irq correctly in remove
- path
-Thread-Topic: [PATCH V3 2/2] dmaengine: fsl-edma: free irq correctly in remove
- path
-Thread-Index: AQHbN00YuLiEZEKAsEm+xXjVZKuTQLK4cwMAgALfyMA=
-Date: Sun, 17 Nov 2024 11:07:51 +0000
-Message-ID:
- <DB9PR04MB8461407FB15C100903EFEFB988262@DB9PR04MB8461.eurprd04.prod.outlook.com>
-References: <20241115105629.748390-1-peng.fan@oss.nxp.com>
- <20241115105629.748390-2-peng.fan@oss.nxp.com>
- <Zzdk5qcUyhNhRZSR@lizhi-Precision-Tower-5810>
-In-Reply-To: <Zzdk5qcUyhNhRZSR@lizhi-Precision-Tower-5810>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DB9PR04MB8461:EE_|GV1PR04MB10560:EE_
-x-ms-office365-filtering-correlation-id: 3e0b633b-bbe9-48d0-7eea-08dd06f81447
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?mFhGUAFicxj17CgqW3lAHwu4FlNVjHpDSxHtiHlxZY4aNGcXzcU8GYMWAmkq?=
- =?us-ascii?Q?p6EmVeccU0n/1F33i/XBFoDLGEeOrBsU3ScpKuhWYH6dLtOEE5l/TJcnaHQX?=
- =?us-ascii?Q?R1wl0kxQve5a2T0OtZJo9WcNKu4MmwQcIr0F88bro7ZUDORREE9R9etm1+jE?=
- =?us-ascii?Q?Y/n2N76D/M77Z1xLTWaPX9QexVye1XZLBag2RbyvfyndF6sfKp+x/H8McNK5?=
- =?us-ascii?Q?BSR3kTnlhPaStGTHUXTcqK7fRApbXV2L9FJJY4hQ0lg5teb4UEFSb1GFmw42?=
- =?us-ascii?Q?wmFwlrqZ2wmYJVyD6BUYY5HuLIhsshYq0qWcmgs/dAZ7795o9unrG7lZmcpy?=
- =?us-ascii?Q?w8G8WxVqJWtH9AQkF9nqVVykXQBEO7SW+HCuyF6YHYNr2B5spfcP3ED7RzCe?=
- =?us-ascii?Q?eE4NC5sK8g/2cxDTae6DhxIUWB01T7TZ1dtnWDCrPv1AHLEHWYaFNMqlaq5C?=
- =?us-ascii?Q?ThEUgW67TX7PgfRrQFFWBNL/i7bONZdRm2oA1jUzclXkH21myjLHJQGtEdYA?=
- =?us-ascii?Q?hloBlbd4kV4y5zAIOhJRdUI/y5FQYrDFRVhlLH1F4+74/7xnEFOW/5+uogyG?=
- =?us-ascii?Q?FXZx6Nc0E3//dllXai8KNmXesrRbhzZIowhkOVDuN1VllDjvYceAYeV+H/1s?=
- =?us-ascii?Q?7mUXu6vRR/97N4I8jJfBB3kxUFK42K18OjK9OX6WmywOejo9BSF2hBg6rePw?=
- =?us-ascii?Q?FsiVa9VSvMRCNoxJrMmnLZHXhczeEF6sMj6HH5mDpmfx8pJ5+Iggv4dS3W1O?=
- =?us-ascii?Q?uE+4ysHXcF17q3ag5nUcQ1uyzw4trHebfiV4uT8HRde3VYkGyEnsNIGxNFVT?=
- =?us-ascii?Q?+zMetL7hl5mkLgPCet4QKAyB7woYosVtcorIffziAZhlIsIZyBs6PBvQ/fNu?=
- =?us-ascii?Q?/FPMHjzq8abXL0fldjCoW5QG82kzqMMvHY0cLE7nq2k0os/j7W2iuthgXPBl?=
- =?us-ascii?Q?oL6n23bH1VwXJu0iRhJNx9nX1HauNhf5LJfGr7QpPJK76+P6oGVz4qweIm1y?=
- =?us-ascii?Q?r5X3UH0XklnF7h2nNRbPqNBog/TzkXcqFdbGUoJOc/aUSBSKL7gmOgbnw1Ys?=
- =?us-ascii?Q?QXkG9Kji54YKLGXmy2WoZQRj5IfgAaxqcvceGavImXzHuq2aG4ODIHXBmDzN?=
- =?us-ascii?Q?QpuOB14wIT7qqmTZHbWnGZtVWZj79JQwfj5ngT/mSAtpP8Jm9I6K+jU/vV/A?=
- =?us-ascii?Q?vzVnHuqmlg4T1nP+NvIBq3OoN4t0fQQdPPzMnDgSubpqMifkcL2IT4oWKbLv?=
- =?us-ascii?Q?XMQrZlmw95RJVrIosgHWxlVjQSI7jJXYZRmnhAHDTGmxdF9Zmgl948lCnnI0?=
- =?us-ascii?Q?ayGDRsJ+kvouD/DSmBR9qgU4bycPcgF7QwcRuvit4cp80d3LQBYTaWgHRewa?=
- =?us-ascii?Q?aW9cjRI=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB8461.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?HPjps4v2C+Q3TP1Uwe/+Mj1iis2CWv24yNIn5vcBijwqp5DN+Q+tZ6tCIITj?=
- =?us-ascii?Q?5F5GaPM3rFGlvq41pRCTIfV7SB3cB3TITCxME6+86I9efMmeZdgq4llLKgGO?=
- =?us-ascii?Q?t1oVWqMznp79qx54f034zr+8vSEWIuY0nIvxMQY/BlnjeVAhWKllHbESKLLi?=
- =?us-ascii?Q?gV7OCtxrqBYV49PhBB7P2bruRtWcKYZx8hfRo0u2eLJmOnp81z7LEZfV6Bll?=
- =?us-ascii?Q?BUqbu+NqT48STrpvsNIH4ce7JjWi8ID8ohzLfGpSEC1rwENYJR9sYdu9boYw?=
- =?us-ascii?Q?nu5RTKJKD1QmomjzHkDzhcJB9akKgaovpooS90e2V2fbwnVgLpVM11jtuhn5?=
- =?us-ascii?Q?D8AMA4oH5ANAjhDpq83fl2Md5n1UaOFlv+R7BwxCmCKP1Rzfrv4f/uDVZOEh?=
- =?us-ascii?Q?Y9SCOGP0EPYvaZPtY9dvn0ktHhVkQhpe8NsviPI+urZdqtMIItz8Lfs0aql9?=
- =?us-ascii?Q?hKqUcrXy1FWcg3yZZd4e1iL6t0jAFjwnG664Vgz3get6ARtBTMwVM1jW+lc5?=
- =?us-ascii?Q?Hd8mG4dcz564wM6Auxh4QJISkQEuQMfBRDCFvs1Qj+7pAt1YCrfduFaubWQ6?=
- =?us-ascii?Q?OnwvFZfB6PsR2FcASnxQs2jX9uIjudFJt/fd7aYT+vt+Wm0lRk8DThEo7qQ3?=
- =?us-ascii?Q?0QjvC+QqvfZavJS0vZMl359fRQGEQwUbXHzMrexm9RZxUykJVyOiWmNHRJwx?=
- =?us-ascii?Q?CHOetQssZgNUmqT12pdzhwwDB6cIBc4VXKx/QdjauAGULUS+tV/rN7l8kCok?=
- =?us-ascii?Q?VawgMYAQZpb62Vk/y/2fxi/+ZSCBCrWMOdgXB6jFs6c/bxhD+nvHjnkIab0B?=
- =?us-ascii?Q?di61bs+eW0FIJbnZo+hLS1pGNtYQ3NJQiZrsVfFlEV0KBmCtJ187L8h/H38U?=
- =?us-ascii?Q?NarQUfPX9yeCtvoe2kdBHJ9hqehDsGh4L30WKgHVNHH7CopyH2It65RVRCgF?=
- =?us-ascii?Q?bU/Jfm008PRvwpMlfg3JcN/lvRElZ7UvE06hiYGVUOx2e44zC2RJn/ueAlIv?=
- =?us-ascii?Q?qa0R5BUAP28PhoePy5mIJxicRtAQeNmkIs8oEadOClkFHtc0PKkNAsvQ3LAD?=
- =?us-ascii?Q?U3vCjce7jokxjlzzP5oiHOFQbYGZWrEu6dRpLAKwTdOQhVIIjszsYM8+vOIh?=
- =?us-ascii?Q?V4Io48dPWHtj167YsjxRt2vyKUDvABS1TXZRH2y8pQS8TszM29XIPp4rcr78?=
- =?us-ascii?Q?DPl2FIXx2Fn6V9EMT0onP4T2MhITDMn6I3+Hz4Rgfjx6UQJUlTH52zO38RRb?=
- =?us-ascii?Q?uqkwhHHIw0l9wQbJMc3jr38y83pffJs00mmCGteCgBVnOIhFmD5TevbZ0IMo?=
- =?us-ascii?Q?SjgKu+0sDVdDvAWHsyxCbTjRYaFv3kRZTsMj0yKr2w1XL7mI7ldV6YFhAgx/?=
- =?us-ascii?Q?4LKJ46qTxFqvo+ie/rJteJiyYGlndq3kE5N5JtFn5rFyn9EmvT91asvvsL7b?=
- =?us-ascii?Q?YpBYRgrccAXySAZOpxA1rNt1k3vnXE5L7kQrZVdVAawo5oRUZZxEw5pqJAkU?=
- =?us-ascii?Q?q3+eQ2brhXIIAuMIb0JppspYRnv88sCbSuaT3dyGwkcp/5V7gTFVWA/VRjem?=
- =?us-ascii?Q?BH+TT9uP0SW+L1JRBVg=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB61A11CAF;
+	Sun, 17 Nov 2024 11:12:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731841933; cv=none; b=e0OhI2J10cUwGsfUgjDDDudi72yblY7/OVB6YWuGgE6+FoMtp+/L47gNwvpyIKoE5OUo5U8+Dw4rnylMHXMQtTQ7zPyeO0O/rDLSmzj25oUY+Nv59XLjlDgdJc27/srK/rDiCg+Tq1Nzhskc1+jw43Tv05F+Sj2jDzooIBEIe+U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731841933; c=relaxed/simple;
+	bh=+jlcTYYLyKw82qj7N9YEdPgK+/+T+2RY3jwKtCP/Kag=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DkFnvrxs2ahkNnSNNvgT7iYpW8nz/pTiyLH36FZv2S8hXqPG9Qbs4ZpbXUX+IMwDHdzmFsI44yY3FYWxI+3fDFD9hhHIeEW0HM6RcstRB7gXsRHSnPBW+oL3OqFbGL7EeBlJ6jjmK+qMnA0FImezUw/eT1kNZwycG/biNT7JzrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=XcJ1OlCH; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=tfSUTeGC; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ioDXYgf8; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=P8d4JMXB; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id E69DD210F0;
+	Sun, 17 Nov 2024 11:12:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1731841926; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=f4EbAMMmlSBa1NQyk5g/groONUzdOMuy70Z3hW9jfEM=;
+	b=XcJ1OlCHyooUm6AUj64baKeAPQJrzcZVuv9f3Y5oVFmVVkQaHg0ViQbdgvdsDQ2qH97LWd
+	0rP1ys1KH4fIczjaRb2E0y8STQDmbYdi6rertwJwN2P2ZAUyZphGLQsL6L4cf3euIn1smf
+	R2NrE/1ph0al4HGePf1nM9HWA1J4VKg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1731841926;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=f4EbAMMmlSBa1NQyk5g/groONUzdOMuy70Z3hW9jfEM=;
+	b=tfSUTeGCxF/6ho+PuPdgImo2GSQ5EXkTJghVmGzowrwp4sE3ppG6jabMe0K/4fyAHCZ81b
+	6ELwje4VMjwk8ACA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1731841925; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=f4EbAMMmlSBa1NQyk5g/groONUzdOMuy70Z3hW9jfEM=;
+	b=ioDXYgf86GYvYn989DaAZcrOvyskhCS0ai/q2hfP8wKx6BCNkaFLpgT9K7f6a8qxdXb7Bl
+	tN3cFiswnJ8/7WsBLkehVFk20CwUY5FZTj3P5yT8z2A9GjymWSy8NcHle2aBlsZytXcOP1
+	G9cVGE+n+vRiYA8VZ0fmptbAErIyokA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1731841925;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=f4EbAMMmlSBa1NQyk5g/groONUzdOMuy70Z3hW9jfEM=;
+	b=P8d4JMXBTEBYNi8HhnG6Cgzd5Mw6mDYdYtwTW2bpahRr5u6an4ZnL15JWLsQngx4yEFMkw
+	pLH/TkYg2XPR2tCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BC0FA136D9;
+	Sun, 17 Nov 2024 11:12:05 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id ufM3LYXPOWdKUAAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Sun, 17 Nov 2024 11:12:05 +0000
+Message-ID: <f0502143-3b37-44aa-a3fa-d468e64b3245@suse.cz>
+Date: Sun, 17 Nov 2024 12:12:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB8461.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3e0b633b-bbe9-48d0-7eea-08dd06f81447
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Nov 2024 11:07:51.7891
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: ix8iuP9WjUax82nz34oSo/SQdkWNAewcVxCU1koqIXqe9wr7lHNnB4k15iQMFxPzQ1OHU2VBR25BRYVvdchprw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB10560
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm: Respect mmap hint address when aligning for THP
+Content-Language: en-US
+To: Yang Shi <shy828301@gmail.com>, Kalesh Singh <kaleshsingh@google.com>
+Cc: kernel-team@android.com, android-mm@google.com,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Yang Shi <yang@os.amperecomputing.com>, Rik van Riel <riel@surriel.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Suren Baghdasaryan <surenb@google.com>,
+ Minchan Kim <minchan@kernel.org>, Hans Boehm <hboehm@google.com>,
+ Lokesh Gidra <lokeshgidra@google.com>, stable@vger.kernel.org,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Jann Horn <jannh@google.com>,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20241115215256.578125-1-kaleshsingh@google.com>
+ <CAHbLzkrVoK-y4zc10+=0hDGZLi8+i73wSHciTUOWGDBsEcD0xw@mail.gmail.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <CAHbLzkrVoK-y4zc10+=0hDGZLi8+i73wSHciTUOWGDBsEcD0xw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Score: -4.30
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.980];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_TO(0.00)[gmail.com,google.com];
+	RCPT_COUNT_TWELVE(0.00)[18];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,suse.cz:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-> Subject: Re: [PATCH V3 2/2] dmaengine: fsl-edma: free irq correctly in
-> remove path
->=20
-> On Fri, Nov 15, 2024 at 06:56:29PM +0800, Peng Fan (OSS) wrote:
-> > From: Peng Fan <peng.fan@nxp.com>
-> >
-> > To i.MX9, there is no valid fsl_edma->txirq/errirq, so add a check in
-> > fsl_edma_irq_exit to avoid issues. Otherwise there will be kernel
-> dump:
->=20
-> Nik:
->=20
-> Add fsl_edma->txirq/errirq check to avoid below warning because no
-> errirq at i.MX9 platform.
->=20
-> Reviewed-by: Frank Li <Frank.Li@nxp.com>
+On 11/15/24 23:15, Yang Shi wrote:
+> On Fri, Nov 15, 2024 at 1:52 PM Kalesh Singh <kaleshsingh@google.com> wrote:
+>>
+>> Commit efa7df3e3bb5 ("mm: align larger anonymous mappings on THP
+>> boundaries") updated __get_unmapped_area() to align the start address
+>> for the VMA to a PMD boundary if CONFIG_TRANSPARENT_HUGEPAGE=y.
+>>
+>> It does this by effectively looking up a region that is of size,
+>> request_size + PMD_SIZE, and aligning up the start to a PMD boundary.
+>>
+>> Commit 4ef9ad19e176 ("mm: huge_memory: don't force huge page alignment
+>> on 32 bit") opted out of this for 32bit due to regressions in mmap base
+>> randomization.
+>>
+>> Commit d4148aeab412 ("mm, mmap: limit THP alignment of anonymous
+>> mappings to PMD-aligned sizes") restricted this to only mmap sizes that
+>> are multiples of the PMD_SIZE due to reported regressions in some
+>> performance benchmarks -- which seemed mostly due to the reduced spatial
+>> locality of related mappings due to the forced PMD-alignment.
+>>
+>> Another unintended side effect has emerged: When a user specifies an mmap
+>> hint address, the THP alignment logic modifies the behavior, potentially
+>> ignoring the hint even if a sufficiently large gap exists at the requested
+>> hint location.
+>>
+>> Example Scenario:
+>>
+>> Consider the following simplified virtual address (VA) space:
+>>
+>>     ...
+>>
+>>     0x200000-0x400000 --- VMA A
+>>     0x400000-0x600000 --- Hole
+>>     0x600000-0x800000 --- VMA B
+>>
+>>     ...
+>>
+>> A call to mmap() with hint=0x400000 and len=0x200000 behaves differently:
+>>
+>>   - Before THP alignment: The requested region (size 0x200000) fits into
+>>     the gap at 0x400000, so the hint is respected.
+>>
+>>   - After alignment: The logic searches for a region of size
+>>     0x400000 (len + PMD_SIZE) starting at 0x400000.
+>>     This search fails due to the mapping at 0x600000 (VMA B), and the hint
+>>     is ignored, falling back to arch_get_unmapped_area[_topdown]().
 
-Thanks, since this is minor commit update. Not sure Vinok could help
-to update, or need me to update and send v4.
+Hmm looks like the search is not done in the optimal way regardless of
+whether or not it ignores a hint - it should be able to find the hole, no?
 
-Thanks,
-Peng.
+>> In general the hint is effectively ignored, if there is any
+>> existing mapping in the below range:
+>>
+>>      [mmap_hint + mmap_size, mmap_hint + mmap_size + PMD_SIZE)
+>>
+>> This changes the semantics of mmap hint; from ""Respect the hint if a
+>> sufficiently large gap exists at the requested location" to "Respect the
+>> hint only if an additional PMD-sized gap exists beyond the requested size".
+>>
+>> This has performance implications for allocators that allocate their heap
+>> using mmap but try to keep it "as contiguous as possible" by using the
+>> end of the exisiting heap as the address hint. With the new behavior
+>> it's more likely to get a much less contiguous heap, adding extra
+>> fragmentation and performance overhead.
+>>
+>> To restore the expected behavior; don't use thp_get_unmapped_area_vmflags()
+>> when the user provided a hint address.
 
->=20
-> > WARNING: CPU: 0 PID: 11 at kernel/irq/devres.c:144
-> > devm_free_irq+0x74/0x80 Modules linked in:
-> > CPU: 0 UID: 0 PID: 11 Comm: kworker/u8:0 Not tainted 6.12.0-
-> rc7#18
-> > Hardware name: NXP i.MX93 11X11 EVK board (DT)
-> > Workqueue: events_unbound deferred_probe_work_func
-> > pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=3D--)
-> pc :
-> > devm_free_irq+0x74/0x80 lr : devm_free_irq+0x48/0x80 Call trace:
-> >  devm_free_irq+0x74/0x80 (P)
-> >  devm_free_irq+0x48/0x80 (L)
-> >  fsl_edma_remove+0xc4/0xc8
-> >  platform_remove+0x28/0x44
-> >  device_remove+0x4c/0x80
-> >
-> > Fixes: 44eb827264de ("dmaengine: fsl-edma: request per-channel
-> IRQ
-> > only when channel is allocated")
-> > Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> > ---
-> > V3:
-> >  Update commit log
-> > V2:
-> >  None
-> >
-> >  drivers/dma/fsl-edma-main.c | 12 +++++++++---
-> >  1 file changed, 9 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/drivers/dma/fsl-edma-main.c b/drivers/dma/fsl-edma-
-> main.c
-> > index 3966320c3d73..03b684d7358c 100644
-> > --- a/drivers/dma/fsl-edma-main.c
-> > +++ b/drivers/dma/fsl-edma-main.c
-> > @@ -303,6 +303,7 @@ fsl_edma2_irq_init(struct platform_device
-> *pdev,
-> >
-> >  		/* The last IRQ is for eDMA err */
-> >  		if (i =3D=3D count - 1) {
-> > +			fsl_edma->errirq =3D irq;
-> >  			ret =3D devm_request_irq(&pdev->dev, irq,
-> >
-> 	fsl_edma_err_handler,
-> >  						0, "eDMA2-ERR",
-> fsl_edma);
-> > @@ -322,10 +323,13 @@ static void fsl_edma_irq_exit(
-> >  		struct platform_device *pdev, struct fsl_edma_engine
-> *fsl_edma)  {
-> >  	if (fsl_edma->txirq =3D=3D fsl_edma->errirq) {
-> > -		devm_free_irq(&pdev->dev, fsl_edma->txirq,
-> fsl_edma);
-> > +		if (fsl_edma->txirq >=3D 0)
-> > +			devm_free_irq(&pdev->dev, fsl_edma->txirq,
-> fsl_edma);
-> >  	} else {
-> > -		devm_free_irq(&pdev->dev, fsl_edma->txirq,
-> fsl_edma);
-> > -		devm_free_irq(&pdev->dev, fsl_edma->errirq,
-> fsl_edma);
-> > +		if (fsl_edma->txirq >=3D 0)
-> > +			devm_free_irq(&pdev->dev, fsl_edma->txirq,
-> fsl_edma);
-> > +		if (fsl_edma->errirq >=3D 0)
-> > +			devm_free_irq(&pdev->dev, fsl_edma->errirq,
-> fsl_edma);
-> >  	}
-> >  }
-> >
-> > @@ -485,6 +489,8 @@ static int fsl_edma_probe(struct
-> platform_device *pdev)
-> >  	if (!fsl_edma)
-> >  		return -ENOMEM;
-> >
-> > +	fsl_edma->errirq =3D -EINVAL;
-> > +	fsl_edma->txirq =3D -EINVAL;
-> >  	fsl_edma->drvdata =3D drvdata;
-> >  	fsl_edma->n_chans =3D chans;
-> >  	mutex_init(&fsl_edma->fsl_edma_mutex);
-> > --
-> > 2.37.1
-> >
+Agreed, the hint should take precendence.
+
+> Thanks for fixing it. I agree we should respect the hint address. But
+> this patch actually just fixed anonymous mapping and the file mappings
+> which don't support thp_get_unmapped_area(). So I think you should
+> move the hint check to __thp_get_unmapped_area().
+> 
+> And Vlastimil's fix d4148aeab412 ("mm, mmap: limit THP alignment of
+> anonymous mappings to PMD-aligned sizes") should be moved to there too
+> IMHO.
+
+This was brought up, but I didn't want to do it as part of the stable fix as
+that would change even situations that Rik's change didn't.
+If the mmap hint change is another stable hotfix, I wouldn't conflate it
+either. But we can try it for further development. But careful about just
+moving the code as-is, the file-based mappings are different than anonymous
+memory and I believe file offsets matter:
+
+https://lore.kernel.org/all/9d7c73f6-1e1a-458b-93c6-3b44959022e0@suse.cz/
+
+https://lore.kernel.org/all/5f7a49e8-0416-4648-a704-a7a67e8cd894@suse.cz/
+
+>> Cc: Andrew Morton <akpm@linux-foundation.org>
+>> Cc: Vlastimil Babka <vbabka@suse.cz>
+>> Cc: Yang Shi <yang@os.amperecomputing.com>
+>> Cc: Rik van Riel <riel@surriel.com>
+>> Cc: Ryan Roberts <ryan.roberts@arm.com>
+>> Cc: Suren Baghdasaryan <surenb@google.com>
+>> Cc: Minchan Kim <minchan@kernel.org>
+>> Cc: Hans Boehm <hboehm@google.com>
+>> Cc: Lokesh Gidra <lokeshgidra@google.com>
+>> Cc: <stable@vger.kernel.org>
+>> Fixes: efa7df3e3bb5 ("mm: align larger anonymous mappings on THP boundaries")
+>> Signed-off-by: Kalesh Singh <kaleshsingh@google.com>
+
+Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
+
+>> ---
+>>  mm/mmap.c | 1 +
+>>  1 file changed, 1 insertion(+)
+>>
+>> diff --git a/mm/mmap.c b/mm/mmap.c
+>> index 79d541f1502b..2f01f1a8e304 100644
+>> --- a/mm/mmap.c
+>> +++ b/mm/mmap.c
+>> @@ -901,6 +901,7 @@ __get_unmapped_area(struct file *file, unsigned long addr, unsigned long len,
+>>         if (get_area) {
+>>                 addr = get_area(file, addr, len, pgoff, flags);
+>>         } else if (IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE)
+>> +                  && !addr /* no hint */
+>>                    && IS_ALIGNED(len, PMD_SIZE)) {
+>>                 /* Ensures that larger anonymous mappings are THP aligned. */
+>>                 addr = thp_get_unmapped_area_vmflags(file, addr, len,
+>>
+>> base-commit: 2d5404caa8c7bb5c4e0435f94b28834ae5456623
+>> --
+>> 2.47.0.338.g60cca15819-goog
+>>
+
 
