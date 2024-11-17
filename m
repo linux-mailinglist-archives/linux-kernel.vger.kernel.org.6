@@ -1,98 +1,122 @@
-Return-Path: <linux-kernel+bounces-412120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EAD79D0415
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 14:31:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25C199D0418
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 14:32:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C99781F22D7C
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 13:31:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BC9F283E85
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 13:32:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B75CA17BB32;
-	Sun, 17 Nov 2024 13:31:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2C4618C936;
+	Sun, 17 Nov 2024 13:31:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CH3fGJAl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QFLmPBAa"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 150356FB0;
-	Sun, 17 Nov 2024 13:31:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FDAF1E4AB;
+	Sun, 17 Nov 2024 13:31:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731850298; cv=none; b=oVJyz0zhMwayO6idNuZqxYI6TzrfuEuNbDCPHjcJ/SaLeMS9s3A5JjRsC1JZx3F5/KqhN7wm8Euu82TWQVBZ4pV6Pp2jSBnk0DyvitFYdOuF98HqZmEtQqeYINeMVcCYJR0VGWBTiKwZ4ULWtEZuesdpUZkWyao+vskVf2WAPp4=
+	t=1731850313; cv=none; b=R19MzWlSKJ/lI+sCdG1G2DQJLrLgd5Nv8Q6pA5llb9YXv51E/XsOD2Pw5fjH+Z3Iw/P99UPHmTlIw3ujpMrfFgJmwkH+QuD2mMcxjWcLms5WHpeqE+dJV07TcbFa/CMll64LXbU73pquE+HYAueZG0Xho2rXKn99/pdvoPudzxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731850298; c=relaxed/simple;
-	bh=GqOQ+eUqfPKPaqsDhUk28dFOZErq76wUx4qvkmEWdXk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ttOqvMB/d19oQmecy6Yjm/uIbmJ02WmNAiD3hyEQql5JB0yeSJXUvAoizMKbIh4vVU10ipB590f/PIancOl9dfPoc6LkkP6SeQ6NvRmIpf89B+9kMHNOR0rAHw/EVoPALO/QWlYSdqnXrjDlH4Yyr3aEMxwhRtCWFUNBZJQRvkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CH3fGJAl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE382C4CECD;
-	Sun, 17 Nov 2024 13:31:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731850297;
-	bh=GqOQ+eUqfPKPaqsDhUk28dFOZErq76wUx4qvkmEWdXk=;
-	h=From:To:Cc:Subject:Date:From;
-	b=CH3fGJAlDXH+U30BMtb2JUfT+YcDez4g346QX51jmi15xpsWsJbpHK34wcMv869Gl
-	 KwE7fps2IO+5lp2HWvCpCVQXDDC7uEOVoQOugAxruOZnP+KJX7zYAR4f7XFPcy2LjY
-	 iG5HrfcI30yXdk1QCC2eykh7IcVevfrEH5yXf6dbBLsqZl74b/7bxjfRc/UFFx+wyl
-	 uAeC2cKIJtqbFaNE3Sx/bvxnY5smMGE/F7HxtB8NzeEM3GYJfCxLLtKACe7RWMSBvN
-	 WJ02eBDaLu/xLuS4iOzLdeT6+U3XrE2RsS5VJCN1Z/HVf9V2w4WXqQPCgefZgEmCSC
-	 arbr/XbBO+syQ==
-From: Miguel Ojeda <ojeda@kernel.org>
-To: Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev
-Subject: [PATCH] docs: rust: remove spurious item in `expect` list
-Date: Sun, 17 Nov 2024 14:31:27 +0100
-Message-ID: <20241117133127.473937-1-ojeda@kernel.org>
+	s=arc-20240116; t=1731850313; c=relaxed/simple;
+	bh=98BfMBAt1C0W4NJ4jKkYuWlULsYMUPHaFx7a6fdmLcc=;
+	h=Message-ID:Date:From:To:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YLy5S3lll9PGBGi/G6I8906Zu+6rtl0aF2ehhtwOfB2Zy0bym1tbI8+y0ACX1nXw1PQYeQHAX6W6cQ1ZaOQeWz0lXTTqcq6xcCFUscTZOlHvQUUfzFoakyerbPXrDwKwOriXP5bYG/6fA6DpYVAUxIUBpSFLeWe9pkUjFxGA/tM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QFLmPBAa; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4315eac969aso18370235e9.1;
+        Sun, 17 Nov 2024 05:31:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731850310; x=1732455110; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:to
+         :from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=FnDq/5jDtvRz9wvJUkiQLKbNnaCYIlhSUV3JJFbTe6Y=;
+        b=QFLmPBAadlj0nV5mybdd52Nk+6RalwHuddtULPRcHdZvmexGtqRIpzDtXNcANlwxdW
+         ZeuooUrzqBB77CCVzW5AVRSG3LIo7B69gmmcXyJBhjIZjA/LlC7K3FF8/kfZ7vlJv0kC
+         yuVCvPUMqOwBohVULg9IoK0oQNWnB9wO3x784lM9zHysTranbDnzjReY+tli6lcA2L7i
+         4x808XDZMqnCVx5O18n9hoNjmTPK0k5iz5BaJimfAyFfuB97g2EFdrRBoQKsOEtnilpT
+         4RBpgSADxB3x190nluUX5aoXo/SQrV3AZVMRYfyi7neEHx9hi/FDl8agDTPeFkfgLyX5
+         Nbzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731850310; x=1732455110;
+        h=in-reply-to:content-disposition:mime-version:references:subject:to
+         :from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FnDq/5jDtvRz9wvJUkiQLKbNnaCYIlhSUV3JJFbTe6Y=;
+        b=j7fbUtA7Cwx0kzbacHhrR7jNoI3CDDk0zPoER7oMjJAQufDnzAdwO0WI5Iwcb5+fsJ
+         SV/OMgSFbF/xBhimZHcVy5uT5osCAbihBgNl+Z76iAEG84me6obkVWS30jBfVYW6itxF
+         Tm0ghE0N/BlYegOD3wRpD4wKbn8u3ARXXE1CQcAAVvtABgt4jYPmpJ0x3mXvuFWzlqa5
+         YUzQMt7J/h7KKTVxirNaH2V6agJL4R+4TILH1t8DqfU2nbo6e22P9LZLnZzSgiaotrfX
+         BDoSNRFt5EABTQI5JEFcZBjUIeCb3sWZDG0hVni5j3cpf1i0jm5jB4jSA7dPXvkXGhfD
+         Sv3A==
+X-Forwarded-Encrypted: i=1; AJvYcCU8EzzhsrNRqj9NvYNT9wMllGicF+WEj0w3pqAsp0CpcGDgB+HeE5Bdu00LC1YQeTE9CQn6p2+sur37qXbO@vger.kernel.org, AJvYcCVyRSP8q15hHoYwVPEuKTKX2zPe72unrcFEP8i6+vfrZi2DkXeosjCmjkdEiYWB81msh0DmRpYX@vger.kernel.org, AJvYcCXs4FXmKnV9xcDrK2L8PaKoj9sWaH3mvdNHp9+lGmUDHy9vAiybSvy3kzyZgVtEtReHGHWF9mkcvae4@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXST/dO2JA4FB8LAiV/frrRi+Hy8myNCgfqA1zmmZxC8cKy+qq
+	e2hNBeiFYAH/hmPlWzYpTzj5bux46IyFp1TesKMlHKZJL0lJ3Ja6
+X-Google-Smtp-Source: AGHT+IERyxnbD4p7iEZ9MOnnFKigJwdLcKzUPk6eBLQKFq6MYktdFTsmEMmPRzYPWbmoKwroTD4JwQ==
+X-Received: by 2002:a05:600c:548b:b0:42c:b54c:a6d7 with SMTP id 5b1f17b1804b1-432d9767d80mr126959115e9.14.1731850309608;
+        Sun, 17 Nov 2024 05:31:49 -0800 (PST)
+Received: from Ansuel-XPS. (93-34-91-161.ip49.fastwebnet.it. [93.34.91.161])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432da29978dsm122010285e9.41.2024.11.17.05.31.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 17 Nov 2024 05:31:49 -0800 (PST)
+Message-ID: <6739f045.050a0220.3b85cd.5d42@mx.google.com>
+X-Google-Original-Message-ID: <ZznwQRSsOT3CnD4v@Ansuel-XPS.>
+Date: Sun, 17 Nov 2024 14:31:45 +0100
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	upstream@airoha.com
+Subject: Re: [net-next PATCH v6 0/4] net: dsa: Add Airoha AN8855 support
+References: <20241116131257.51249-1-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241116131257.51249-1-ansuelsmth@gmail.com>
 
-This list started as a "when to prefer `expect`" list, but at some point
-during writing I changed it to a "prefer `expect` unless...` one. However,
-the first bullet remained, which does not make sense anymore.
+On Sat, Nov 16, 2024 at 02:12:45PM +0100, Christian Marangi wrote:
+> This small series add the initial support for the Airoha AN8855 Switch.
+> 
+> It's a 5 port Gigabit Switch with SGMII/HSGMII upstream port.
+> 
+> This is starting to get in the wild and there are already some router
+> having this switch chip.
+> 
+> It's conceptually similar to mediatek switch but register and bits
+> are different. And there is that massive Hell that is the PCS
+> configuration.
+> Saddly for that part we have absolutely NO documentation currently.
+> 
+> There is this special thing where PHY needs to be calibrated with values
+> from the switch efuse. (the thing have a whole cpu timer and MCU)
+> 
 
-Thus remove it. In addition, fix nearby typo.
+Totally forgot to fix the devm_dsa_register_switch export symbol, fixed
+in v7. Sorry!
 
-Fixes: 04866494e936 ("Documentation: rust: discuss `#[expect(...)]` in the guidelines")
-Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
----
- Documentation/rust/coding-guidelines.rst | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/Documentation/rust/coding-guidelines.rst b/Documentation/rust/coding-guidelines.rst
-index f7194f7124b0..a2e326b42410 100644
---- a/Documentation/rust/coding-guidelines.rst
-+++ b/Documentation/rust/coding-guidelines.rst
-@@ -296,9 +296,7 @@ may happen in several situations, e.g.:
- It also increases the visibility of the remaining ``allow``\ s and reduces the
- chance of misapplying one.
- 
--Thus prefer ``except`` over ``allow`` unless:
--
--- The lint attribute is intended to be temporary, e.g. while developing.
-+Thus prefer ``expect`` over ``allow`` unless:
- 
- - Conditional compilation triggers the warning in some cases but not others.
- 
-
-base-commit: b2603f8ac8217bc59f5c7f248ac248423b9b99cb
 -- 
-2.47.0
-
+	Ansuel
 
