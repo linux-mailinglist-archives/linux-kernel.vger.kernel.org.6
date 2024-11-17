@@ -1,210 +1,219 @@
-Return-Path: <linux-kernel+bounces-412123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 994CC9D041C
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 14:36:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FA7C9D0421
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 14:45:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 085BAB21C14
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 13:36:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5FE7B21F67
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 13:45:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5D4718B47E;
-	Sun, 17 Nov 2024 13:36:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D0B71CF5E9;
+	Sun, 17 Nov 2024 13:45:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="AS3hO6Bb"
-Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="gWOjL3oj";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="C40yiof1";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="gWOjL3oj";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="C40yiof1"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C07D1803A;
-	Sun, 17 Nov 2024 13:36:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08AEC1CF2A4;
+	Sun, 17 Nov 2024 13:45:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731850580; cv=none; b=oxWqzfOZxkV+W7WxS6PpeH1SYdrciLLayhNwUmw41g3D8JzjXNW4iR6diuL3CwlCLK5hyJAKzS4HHnMpUOqcOSNGn2RgX/JuQPsT+zI+VuzsmvDaTwp/4acif01IVN63Q6wajxYO8elIBLiWpGs906m8Lru9GmDQpXJ4sbJ8biA=
+	t=1731851143; cv=none; b=R7C1uoRaV3NLF+uaMvzo924gDDpBFq6qqXEwzLEXN+6EatsCWqxMRbm9+MNqCCQa/pwUvRNTPipkxlzxB5gheFtJmOxieOdZG0JWcz526pVLwUN3KLXrd8lHvukXKY4LjlNnPhwVXUUeR2KjJAAby/NxIMVwEPPWM5lt76ymUW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731850580; c=relaxed/simple;
-	bh=6B9O9K4lKpLnFrRgfITcTiaRr7MosaVzxeLvtDE4CQ4=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=aD11trYG5uNK3ZN4/e7Zl7CAyIZ0aGSxbCzXc/CqP8rC2+Iz40IV4FPeKu0omoMqnwvW97puHsKxwcMOSD0Ox7LJSnBXJmBxNMFDtCBWu4pqAriOBzyppqXuaOoBFFrR/rN0oIzdhHv9J6pcUjy5Tt2bb+uRuETHr0pt3iMpYJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=AS3hO6Bb; arc=none smtp.client-ip=115.124.30.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1731850571; h=Message-ID:Date:MIME-Version:Subject:From:To:Content-Type;
-	bh=sPrf19kc7+LO7xSLmSlRMhOGFVSZNNSI0hI3auZl73k=;
-	b=AS3hO6BbTxTFpGDJmm2hlKzPNImy8Q7huZCJA4RjHdo1ZPPbohNKZcac0Z+HSFHBAjQpb7iUQZRrUlD3i+jxLOgutDTvUIBdLwWFxy1tCbWR1aZ1id998feRht3V65ZIDL/8IKojg2Qdv2T5fc1kKy2mRY4nX9ARRFKa0AG4NcY=
-Received: from 30.246.162.170(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WJZaXPt_1731850569 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Sun, 17 Nov 2024 21:36:10 +0800
-Message-ID: <9810fadd-2b0b-410b-a8a6-89ddf7a103b9@linux.alibaba.com>
-Date: Sun, 17 Nov 2024 21:36:08 +0800
+	s=arc-20240116; t=1731851143; c=relaxed/simple;
+	bh=wlpL9K/BSFvJu/8n0B/UjT/JVS4r5lRUhoUFjHt1F3w=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=slKmjZiyJGiqDBmXe5Xm7+csiBVNdTe1vQ3w9t3XzHJI/LM2cnbB9F+/bfCWZ/r1+7ugGMBJcGHCdwLcrzk7JfJD0m2M3aGBFlrn6a02C+VNlKnVWMrYiMqpwpcr/S+hw7+KHXOx+K+L47wAwMMnyhisLtQ7Y/LeZ8+UCVC9HPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=gWOjL3oj; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=C40yiof1; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=gWOjL3oj; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=C40yiof1; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 17D0D1F392;
+	Sun, 17 Nov 2024 13:45:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1731851140; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ClVxzXfHCSPMV48ylQZaEyqqtVKOcchnFeid0TS1gMY=;
+	b=gWOjL3ojg1hD+BuYuezAa1bdQMQbZLZsPO6/jC3mIm991QSr2mBmC/pKXuUKOLooo8YapR
+	dNOrom8FbWD7kwNYfTOrlOzSmT6vFKXH/WOBlqmTYn7vDHCotJd3Xik8h3Sr97bNQbTP/f
+	MI2Bqu8FHYJdocc2cp27lrm9y+dwF8U=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1731851140;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ClVxzXfHCSPMV48ylQZaEyqqtVKOcchnFeid0TS1gMY=;
+	b=C40yiof1Pin9we/KFSMazE1NupuK4M3blYtzp6mbdlSchG/XW2PABjT2tkPabhF1ZjMra3
+	mZmqzQgtUhHLfnCA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=gWOjL3oj;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=C40yiof1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1731851140; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ClVxzXfHCSPMV48ylQZaEyqqtVKOcchnFeid0TS1gMY=;
+	b=gWOjL3ojg1hD+BuYuezAa1bdQMQbZLZsPO6/jC3mIm991QSr2mBmC/pKXuUKOLooo8YapR
+	dNOrom8FbWD7kwNYfTOrlOzSmT6vFKXH/WOBlqmTYn7vDHCotJd3Xik8h3Sr97bNQbTP/f
+	MI2Bqu8FHYJdocc2cp27lrm9y+dwF8U=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1731851140;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ClVxzXfHCSPMV48ylQZaEyqqtVKOcchnFeid0TS1gMY=;
+	b=C40yiof1Pin9we/KFSMazE1NupuK4M3blYtzp6mbdlSchG/XW2PABjT2tkPabhF1ZjMra3
+	mZmqzQgtUhHLfnCA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B2920136D9;
+	Sun, 17 Nov 2024 13:45:39 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 4vkXKoPzOWc4cwAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Sun, 17 Nov 2024 13:45:39 +0000
+Date: Sun, 17 Nov 2024 14:45:39 +0100
+Message-ID: <87iksmq8ho.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Hridesh MG <hridesh699@gmail.com>
+Cc: Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Stefan Binding <sbinding@opensource.cirrus.com>,
+	Kailang Yang <kailang@realtek.com>,
+	Simon Trimmer <simont@opensource.cirrus.com>,
+	Joshua Grisham <josh@joshuagrisham.com>,
+	Richard Fitzgerald <rf@opensource.cirrus.com>,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH 1/2] ALSA: hda/realtek: Fix headset mic on Acer Nitro 5
+In-Reply-To: <20241114-alc287-nitro5-v1-1-72e5bf2275c3@gmail.com>
+References: <20241114-alc287-nitro5-v1-0-72e5bf2275c3@gmail.com>
+	<20241114-alc287-nitro5-v1-1-72e5bf2275c3@gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] PCI/AER: Report fatal errors of RCiEP and EP if
- link recoverd
-From: Shuai Xue <xueshuai@linux.alibaba.com>
-To: "Bowman, Terry" <terry.bowman@amd.com>, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- bhelgaas@google.com, kbusch@kernel.org, Lukas Wunner <lukas@wunner.de>
-Cc: mahesh@linux.ibm.com, oohall@gmail.com,
- sathyanarayanan.kuppuswamy@linux.intel.com
-References: <20241112135419.59491-1-xueshuai@linux.alibaba.com>
- <20241112135419.59491-3-xueshuai@linux.alibaba.com>
- <a76394c4-8746-46c0-9cb5-bf0e2e0aa9b5@amd.com>
- <22d27575-fc68-4a7f-9bce-45b91c7dfb98@linux.alibaba.com>
-In-Reply-To: <22d27575-fc68-4a7f-9bce-45b91c7dfb98@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Rspamd-Queue-Id: 17D0D1F392
+X-Spam-Score: -3.51
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-3.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	FREEMAIL_TO(0.00)[gmail.com];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-
-
-在 2024/11/16 20:44, Shuai Xue 写道:
+On Thu, 14 Nov 2024 17:41:19 +0100,
+Hridesh MG wrote:
 > 
+> The headset jack on the realtek ALC287 codec for the Acer Nitro 5
+> AN515-58 laptop requires a fixup to detect microphone input.
 > 
-> 在 2024/11/16 04:20, Bowman, Terry 写道:
->> Hi Shuai,
->>
->>
->> On 11/12/2024 7:54 AM, Shuai Xue wrote:
->>> The AER driver has historically avoided reading the configuration space of
->>> an endpoint or RCiEP that reported a fatal error, considering the link to
->>> that device unreliable. Consequently, when a fatal error occurs, the AER
->>> and DPC drivers do not report specific error types, resulting in logs like:
->>>
->>>    pcieport 0000:30:03.0: EDR: EDR event received
->>>    pcieport 0000:30:03.0: DPC: containment event, status:0x0005 source:0x3400
->>>    pcieport 0000:30:03.0: DPC: ERR_FATAL detected
->>>    pcieport 0000:30:03.0: AER: broadcast error_detected message
->>>    nvme nvme0: frozen state error detected, reset controller
->>>    nvme 0000:34:00.0: ready 0ms after DPC
->>>    pcieport 0000:30:03.0: AER: broadcast slot_reset message
->>>
->>> AER status registers are sticky and Write-1-to-clear. If the link recovered
->>> after hot reset, we can still safely access AER status of the error device.
->>> In such case, report fatal errors which helps to figure out the error root
->>> case.
->>>
->>> After this patch, the logs like:
->>>
->>>    pcieport 0000:30:03.0: EDR: EDR event received
->>>    pcieport 0000:30:03.0: DPC: containment event, status:0x0005 source:0x3400
->>>    pcieport 0000:30:03.0: DPC: ERR_FATAL detected
->>>    pcieport 0000:30:03.0: AER: broadcast error_detected message
->>>    nvme nvme0: frozen state error detected, reset controller
->>>    pcieport 0000:30:03.0: waiting 100 ms for downstream link, after activation
->>>    nvme 0000:34:00.0: ready 0ms after DPC
->>>    nvme 0000:34:00.0: PCIe Bus Error: severity=Uncorrectable (Fatal), type=Data Link Layer, (Receiver ID)
->>>    nvme 0000:34:00.0:   device [144d:a804] error status/mask=00000010/00504000
->>>    nvme 0000:34:00.0:    [ 4] DLP                    (First)
->>>    pcieport 0000:30:03.0: AER: broadcast slot_reset message
->>>
->>> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
->>> ---
->>>   drivers/pci/pci.h      |  3 ++-
->>>   drivers/pci/pcie/aer.c | 11 +++++++----
->>>   drivers/pci/pcie/dpc.c |  2 +-
->>>   drivers/pci/pcie/err.c |  9 +++++++++
->>>   4 files changed, 19 insertions(+), 6 deletions(-)
->>>
->>> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
->>> index 0866f79aec54..6f827c313639 100644
->>> --- a/drivers/pci/pci.h
->>> +++ b/drivers/pci/pci.h
->>> @@ -504,7 +504,8 @@ struct aer_err_info {
->>>       struct pcie_tlp_log tlp;    /* TLP Header */
->>>   };
->>> -int aer_get_device_error_info(struct pci_dev *dev, struct aer_err_info *info);
->>> +int aer_get_device_error_info(struct pci_dev *dev, struct aer_err_info *info,
->>> +                  bool link_healthy);
->>>   void aer_print_error(struct pci_dev *dev, struct aer_err_info *info);
->>>   #endif    /* CONFIG_PCIEAER */
->>> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
->>> index 13b8586924ea..97ec1c17b6f4 100644
->>> --- a/drivers/pci/pcie/aer.c
->>> +++ b/drivers/pci/pcie/aer.c
->>> @@ -1200,12 +1200,14 @@ EXPORT_SYMBOL_GPL(aer_recover_queue);
->>>    * aer_get_device_error_info - read error status from dev and store it to info
->>>    * @dev: pointer to the device expected to have a error record
->>>    * @info: pointer to structure to store the error record
->>> + * @link_healthy: link is healthy or not
->>>    *
->>>    * Return 1 on success, 0 on error.
->>>    *
->>>    * Note that @info is reused among all error devices. Clear fields properly.
->>>    */
->>> -int aer_get_device_error_info(struct pci_dev *dev, struct aer_err_info *info)
->>> +int aer_get_device_error_info(struct pci_dev *dev, struct aer_err_info *info,
->>> +                  bool link_healthy)
->>>   {
->>>       int type = pci_pcie_type(dev);
->>>       int aer = dev->aer_cap;
->>> @@ -1229,7 +1231,8 @@ int aer_get_device_error_info(struct pci_dev *dev, struct aer_err_info *info)
->>>       } else if (type == PCI_EXP_TYPE_ROOT_PORT ||
->>>              type == PCI_EXP_TYPE_RC_EC ||
->>>              type == PCI_EXP_TYPE_DOWNSTREAM ||
->>> -           info->severity == AER_NONFATAL) {
->>> +           info->severity == AER_NONFATAL ||
->>> +           (info->severity == AER_FATAL && link_healthy)) {
->>>           /* Link is still healthy for IO reads */
->>>           pci_read_config_dword(dev, aer + PCI_ERR_UNCOR_STATUS,
->>> @@ -1258,11 +1261,11 @@ static inline void aer_process_err_devices(struct aer_err_info *e_info)
->>>       /* Report all before handle them, not to lost records by reset etc. */
->>>       for (i = 0; i < e_info->error_dev_num && e_info->dev[i]; i++) {
->>> -        if (aer_get_device_error_info(e_info->dev[i], e_info))
->>> +        if (aer_get_device_error_info(e_info->dev[i], e_info, false))
->>>               aer_print_error(e_info->dev[i], e_info);
->>>       }
->>
->> Would it be reasonable to detect if the link is intact and set the aer_get_device_error_info()
->> function's 'link_healthy' parameter accordingly? I was thinking the port upstream capability
->> link status register could be used to indicate the link viability.
->>
->> Regards,
->> Terry
+> The required pin config and verbs were obtained by reverse engineering
+> the windows driver using RtHD dump.
 > 
-> Good idea. I think pciehp_check_link_active is a good implementation to check
-> link_healthy in aer_get_device_error_info().
+> Signed-off-by: Hridesh MG <hridesh699@gmail.com>
+> ---
+>  sound/pci/hda/patch_realtek.c | 21 +++++++++++++++++++++
+>  1 file changed, 21 insertions(+)
 > 
->    int pciehp_check_link_active(struct controller *ctrl)
->    {
->        struct pci_dev *pdev = ctrl_dev(ctrl);
->        u16 lnk_status;
->        int ret;
->        ret = pcie_capability_read_word(pdev, PCI_EXP_LNKSTA, &lnk_status);
->        if (ret == PCIBIOS_DEVICE_NOT_FOUND || PCI_POSSIBLE_ERROR(lnk_status))
->            return -ENODEV;
->        ret = !!(lnk_status & PCI_EXP_LNKSTA_DLLLA);
->        ctrl_dbg(ctrl, "%s: lnk_status = %x\n", __func__, lnk_status);
->        return ret;
->    }
-> 
-> Thank you for valuable comments.
-> 
-> Best Regards
-> Shuai
+> diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
+> index 571fa8a6c9e1204892a93ffb24acce65400ce4b2..0204ed80791db87153dad80d6a25466985ce5784 100644
+> --- a/sound/pci/hda/patch_realtek.c
+> +++ b/sound/pci/hda/patch_realtek.c
+> @@ -7780,6 +7780,8 @@ enum {
+>  	ALC287_FIXUP_LENOVO_SSID_17AA3820,
+>  	ALC245_FIXUP_CLEVO_NOISY_MIC,
+>  	ALC269_FIXUP_VAIO_VJFH52_MIC_NO_PRESENCE,
+> +	ALC_287_FIXUP_ACER_NITRO_HEADSET_MIC_PIN,
+> +	ALC_287_FIXUP_ACER_NITRO_HEADSET_MIC_VERBS,
+>  };
+>  
+>  /* A special fixup for Lenovo C940 and Yoga Duet 7;
+> @@ -10154,6 +10156,23 @@ static const struct hda_fixup alc269_fixups[] = {
+>  		.chained = true,
+>  		.chain_id = ALC269_FIXUP_LIMIT_INT_MIC_BOOST
+>  	},
+> +	[ALC_287_FIXUP_ACER_NITRO_HEADSET_MIC_PIN] = {
+> +		.type = HDA_FIXUP_PINS,
+> +		.chained = true,
+> +		.chain_id = ALC_287_FIXUP_ACER_NITRO_HEADSET_MIC_VERBS,
+> +		.v.pins = (const struct hda_pintbl[]) {
+> +			{ 0x19, 0x03a19020 }, /* missing pin for headphone jack mic */
 
-Hi, Bowman,
+This looks fine, but...
 
-After dive into the code details, I found that both dpc_reset_link() and
-aer_root_reset() use pci_bridge_wait_for_secondary_bus() to wait for secondary
-bus to be accessible. IMHO, pci_bridge_wait_for_secondary_bus() is better
-robustness than function like pciehp_check_link_active(). So I think
-reset_subordinates() is good boundary for delineating whether a link is
-accessible.
+> +			{ }
+> +		}
+> +	},
+> +	[ALC_287_FIXUP_ACER_NITRO_HEADSET_MIC_VERBS] = {
+> +		.type = HDA_FIXUP_VERBS,
+> +		.v.verbs = (const struct hda_verb[]) {
+> +			{ 0x20, AC_VERB_SET_COEF_INDEX, 0x45 },
+> +			{ 0x20, AC_VERB_SET_PROC_COEF, 0xD689 },
 
-Besides, for DPC driver, the link status of upstream port, e.g, rootport, is
-inactive when DPC is triggered, and is recoverd to active until
-dpc_reset_link() success. But for AER driver, the link is active before and
-after aer_root_reset(). As a result, the AER status will be reported twice.
+This is a generic setup for the headset input in CTIA mode.
+Do you really need this explicity?  Usually it's set up at
+alc_headset_mode_ctia() when the iPhone type is connected.
 
-Best Regards,
-Shuai
+>  static const struct snd_pci_quirk alc269_fixup_tbl[] = {
+> @@ -10201,6 +10220,7 @@ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
+>  	SND_PCI_QUIRK(0x1025, 0x1466, "Acer Aspire A515-56", ALC255_FIXUP_ACER_HEADPHONE_AND_MIC),
+>  	SND_PCI_QUIRK(0x1025, 0x1534, "Acer Predator PH315-54", ALC255_FIXUP_ACER_MIC_NO_PRESENCE),
+>  	SND_PCI_QUIRK(0x1025, 0x169a, "Acer Swift SFG16", ALC256_FIXUP_ACER_SFG16_MICMUTE_LED),
+> +	SND_PCI_QUIRK(0x1025, 0x159c, "Acer Nitro 5 AN515-58", ALC_287_FIXUP_ACER_NITRO_HEADSET_MIC_PIN),
 
+The table is sorted in PCI SSID order.  Please put at the right
+place.
+
+> +	{.id = ALC_287_FIXUP_ACER_NITRO_HEADSET_MIC_PIN, .name = "alc287-fixup-acer-nitro-headset-mic"},
+
+Nowadays the less need for a new model name string.  You can specify
+the model with an alias of SSID if any other device needs to apply the
+same quirk, too.  So, unless it's mandatory, better to drop.
+
+
+thanks,
+
+Takashi
 
