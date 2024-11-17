@@ -1,265 +1,360 @@
-Return-Path: <linux-kernel+bounces-412165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 489169D04C0
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 18:09:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 810ED9D04C6
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 18:14:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 591C5B2224A
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 17:09:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11A421F21FEA
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 17:14:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89F141D88AC;
-	Sun, 17 Nov 2024 17:09:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nDIMlNuP"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC7DC1DACAA;
+	Sun, 17 Nov 2024 17:14:27 +0000 (UTC)
+Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D92D1D9694;
-	Sun, 17 Nov 2024 17:09:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731863353; cv=fail; b=hq6GdEeueVkoIeGBWkho8g0M3+e+Erlw9PTDA9qw9+KfBjD5ZHd6GeoZ/7uIIhwvVQ/K+g2ROdvGQ/eNVx11bMOwH3ZJyGtLg//ctvW5zauBZVfLoJdIDziBIQo98C9f3rfqa2BVqNjzDBqqwtYb3c/AINUVEleirVBxi80sf6o=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731863353; c=relaxed/simple;
-	bh=1tb43d/iVQKvPs70uoeKUlluTN/vf3YFYUr+39ubyLQ=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=FLKJcaUG5X6BQXLMu1QJK/k8fTlR1bQ7Z211cotpSoJMKANGUHmvWgrHv7mYX2CRMhOUkl/+aUPrXuWLQJe1oq+HXedrjRyaoo5k0qDExuuoi1j2lSY6FJeyUlXseIrRPPZTFdCO73/LLAqr9FqYV04/y+M/ScOubAPr+HseIjo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nDIMlNuP; arc=fail smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731863351; x=1763399351;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=1tb43d/iVQKvPs70uoeKUlluTN/vf3YFYUr+39ubyLQ=;
-  b=nDIMlNuPsPid7ApJSjuj/q5Pq5f3FmddcAMDJgtiL19yoMnw9Jz9skdn
-   jYCvs3X0JeNO8rejsSJLygrvjW4oNaExsGUjuRdjwbBaFur2O9A8Hl63e
-   DCQnQfafSp7OoyCCwuCw4uPv+z7fDDzQX/Jo+ht+MeEhbHtV1lKLsA+wQ
-   dp4GleVHMD5uEQK6yzzYZk0NtwwT2dt6YQ3zDNOPiT4EqMA8KmQsjT76h
-   EiK1Kpr2A/lyQhaqTYTy+bXSfYoyKr6sA8FmFQtYVVOhlKe4PC7JW2FUK
-   dqIQ3po59j/3gpsgNoPMESmB2Hv3V3dj2UoAphgPAwdazwGuH6WkYqdMz
-   A==;
-X-CSE-ConnectionGUID: gLYK/vjRReS194WHZ1+LHw==
-X-CSE-MsgGUID: w2aaJOlsQDO7YbXAzMZCPw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11259"; a="35491892"
-X-IronPort-AV: E=Sophos;i="6.12,162,1728975600"; 
-   d="scan'208";a="35491892"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Nov 2024 09:09:11 -0800
-X-CSE-ConnectionGUID: D4Fh0l1uQ5+2eAB8Psx9ug==
-X-CSE-MsgGUID: ELbNUpLSQP2XltSCvU4ycw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,162,1728975600"; 
-   d="scan'208";a="89019719"
-Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
-  by orviesa009.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 17 Nov 2024 09:09:11 -0800
-Received: from fmsmsx603.amr.corp.intel.com (10.18.126.83) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Sun, 17 Nov 2024 09:09:10 -0800
-Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Sun, 17 Nov 2024 09:09:10 -0800
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.172)
- by edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Sun, 17 Nov 2024 09:09:10 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hncrlUBOPMDutpeiwmDLusSi1zh0+TPwTyh9R6Zh4qN7o5dmfN36naUxyuk7LcnSGEACra1THEMgcUTcNk9pjipfZYA2E137NcKyjtouXz3SkqFz18/9f547D5ZIqNxelMikIGqjC4kdOdNT8wxjxnGPZq6SjQwJZdSg8ljWTaOhKe+eGZZjJmaLOpDe09MlmGrtzDhMvO7eZlkS6bRlqb/+an+TCEzYStUyXR6Q8Yel2BHPi9eQM9oZnaziZUG6g/Eb+H56BrGAP5wUM5bASCbizjCEB6mRkyBWlbbg8rucFonokXGFlsi85R9PqkJGTuSuLjyMHde0yVnYz/ynSg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=b8yWoEc+fXlSWXwpmmvVrjPuRZTB1LRY8INYTeq7r8o=;
- b=kiD/sp5wuXeEodqLU6B50XjNuDNEVH/JJc4hLbedCOLVOkT65+nYzAlJRvahwpxn+2I7lzI3qfKZQXrFDdpVrSmerntXWxPb002F3bW/BiPwBHrWuvVLcZ0fmRlypcDw06rzaq0HLC0KaLeHs8Xmc/JaaMell4tYBkSuRk4/Awc9tGKazq4TCQoCT7QagkLi2LKZrqOAPnYdAknUwiJfTSlEFQDT1UWzab/9bBExYjXEUVonUrsqsCaPP5IrAL2T7gCUvAfM0S5fg2oS28wRYJQfIKL4rRCoaHdPm3O9Tdi3Fl0zBqWPXe5O6YPwcte9xQuxKOvglI1Z4qYQEm1HyQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from MW4PR11MB6739.namprd11.prod.outlook.com (2603:10b6:303:20b::19)
- by DM4PR11MB6504.namprd11.prod.outlook.com (2603:10b6:8:8d::5) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8158.21; Sun, 17 Nov 2024 17:09:06 +0000
-Received: from MW4PR11MB6739.namprd11.prod.outlook.com
- ([fe80::a7ad:a6e8:fced:3f24]) by MW4PR11MB6739.namprd11.prod.outlook.com
- ([fe80::a7ad:a6e8:fced:3f24%2]) with mapi id 15.20.8158.021; Sun, 17 Nov 2024
- 17:09:06 +0000
-Date: Sun, 17 Nov 2024 11:09:02 -0600
-From: Ira Weiny <ira.weiny@intel.com>
-To: Suraj Sonawane <surajsonawane0215@gmail.com>, <dan.j.williams@intel.com>
-CC: <dave.jiang@intel.com>, <ira.weiny@intel.com>, <lenb@kernel.org>,
-	<linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<nvdimm@lists.linux.dev>, <rafael@kernel.org>,
-	<syzbot+7534f060ebda6b8b51b3@syzkaller.appspotmail.com>,
-	<vishal.l.verma@intel.com>
-Subject: Re: [PATCH v5] acpi: nfit: vmalloc-out-of-bounds Read in
- acpi_nfit_ctl
-Message-ID: <673a232e4bd9_29b0ab294a2@iweiny-mobl.notmuch>
-References: <20241116114027.19303-1-surajsonawane0215@gmail.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20241116114027.19303-1-surajsonawane0215@gmail.com>
-X-ClientProxiedBy: MW2PR2101CA0020.namprd21.prod.outlook.com
- (2603:10b6:302:1::33) To MW4PR11MB6739.namprd11.prod.outlook.com
- (2603:10b6:303:20b::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1B113A1CD;
+	Sun, 17 Nov 2024 17:14:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731863667; cv=none; b=In9AHkg8E1wxhUTpOzPOlWDPPWBskET5IvuD5LuqDx8KIfpa02WtrAA1QpkUJzhr1gnsnUquWGyh8FXbGCcVnXpbB08PreMJY/3MKyGgWnEtBKj+7kvA79W92hesbt05BHRU5wGdkvPSGppjS7+JJu93jBRTReLNhzZwuYGEmKY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731863667; c=relaxed/simple;
+	bh=a8GyKpn0jcOgx76uziTiiFRmYGPv9um3ohgxcewyRkg=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
+	 In-Reply-To:Content-Type; b=YqiDNXagsl7FfXVvLD7sJ5TJkN9P3jB9ex8H8yEhFZ5swg8GZWTHovAz0dVgQL5QeqMXdaVY4UyPr680Fdcm8DmXJrMpMFsAov0hx64bksy1pDVBmJPB6r9L3E4gstEoCcKgJw0X88Ek5orZRyHVEzNcL4rBc1oVoMfoJvj3UGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
+Received: from [192.168.2.102] (213.87.152.88) by msexch01.omp.ru
+ (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Sun, 17 Nov
+ 2024 20:14:12 +0300
+Message-ID: <c847e042-cc66-462e-a857-d1d9e500a081@omp.ru>
+Date: Sun, 17 Nov 2024 20:14:11 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW4PR11MB6739:EE_|DM4PR11MB6504:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4f4c83ff-2daa-46af-7b74-08dd072a8b5a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?Y6TGnmCcUPDY8oLZh1rqHmCaMUD4QcuTG4N17D8EjUFmuaveV6yR6Zfd0MTx?=
- =?us-ascii?Q?x+Ry165exB33o3MGBF3C6pYX0DoGBlX7ieGSscesG0SbQXw01cCEbX7NAn+1?=
- =?us-ascii?Q?/IVSt5vtSkbQsKE+lhMDJSY6P+7LNSgG5iCLHQjNVoq1upaxYL5qTQfRV5Ey?=
- =?us-ascii?Q?RtK7pY6O7qyPE9Run0CpK8NWwvoo616DZ9h//6RrgXqgY0GpsA2ps6ojlL+H?=
- =?us-ascii?Q?NxpLd7nA4atj9BnvxVHg8FNhV/XLEMd6EfeQ4gPgUZjtGw8jVGxE/N2v+N0w?=
- =?us-ascii?Q?8O0CYUpMZuMvXIgPD0AmQYTWczkpP74I4ftD8qrD11kJSxo9RLgvlbuCfPXt?=
- =?us-ascii?Q?EksxNV9pQc9C4m6Zaclf4L9c1CwrSzz/qvtjx5NbYWHKEMIevLTRK8WSpwBq?=
- =?us-ascii?Q?+liu/hIQ37ZiYZJiGzctewOFtHibid0Zdz6RlFa/iD2Wwchez77zJyWmwQRc?=
- =?us-ascii?Q?XZnImKtmb8ZWr9OmXZ/u5RicFLQiIwFfwg48/SG3YnC6FY3TLMlLjFlAzXG6?=
- =?us-ascii?Q?59w7vBu3fomMVOL5b5Bm+uukDlnZEhmNPIY9s3CarLOTClDuzqaQd0crSYtx?=
- =?us-ascii?Q?+G4tw8wCEg/k339bIJWq2j21COeIOFd+N4nE/YzRe9EhWDM4gq8IWjSjx1jA?=
- =?us-ascii?Q?VdMHnk8DN0ntfkeFk5W/+8xcNHTUQirV4heff2fyPyDSuxfc09EqfVLZ8q4Q?=
- =?us-ascii?Q?pujEIB7euotXDwX5R7UQK3oVu4uHtMga+0fKK96tq9h7J4+pSOTtklJWXMQM?=
- =?us-ascii?Q?KT+uM4I8YSQP1nkulqSJtmBgVOZZ7n8i7T2lkUt9rcHO6WUI0sRjm0Gd0grq?=
- =?us-ascii?Q?ajhRHJlZ81Cx+9iPdIvpHuPfZVu78jiWmG1fLtAzqwPCBnFnMx16m7PvA9gU?=
- =?us-ascii?Q?ltbsQYOvPzE4daPWbZcMTg7Vm32IfIusSsC9+jE3TL+Mf7mts3DwJlPUX3eP?=
- =?us-ascii?Q?PIERCeiuyFI1uV0IOJh+V7Hfa7+bpbolUNBMopZ5TTzLJ7A6LFA+WDE9VsTx?=
- =?us-ascii?Q?OoaXQ28hTLLyrxwXNzmVKAIbGPPEhNrEWnxC+k1qTDTj7YN3UOZ78pwmc0Tw?=
- =?us-ascii?Q?y60fGqvabXiAceMNg5QW6B4sO6MkYqAno1pc6lBxzU7nOpDzvqHFK9YPS2P5?=
- =?us-ascii?Q?aFyCd7at4RYt+GQgIVsz8gnPdNOu86BtZDjMZad308qeYv4Nw7xUl2tSvayi?=
- =?us-ascii?Q?xb0mk9qquTBArSp+WVw3PlRveg8WdJvb9fj5UO3slNyXOyY4EKsinYSrveFx?=
- =?us-ascii?Q?z1BrZRehIaiB1cozLh8UP4t+dXMo5XNBGxG4yJjYFA=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW4PR11MB6739.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?z0D2PeD1tYvLflbig7IJL/kwMZ7789PHvN9C1h+6N9fEha0PZPeXhsFbxFML?=
- =?us-ascii?Q?KwS16stHbnov9o4kA0lOy1U5ususuSISCx0EDTE9mRZHc+a81OVGMOhBEVY7?=
- =?us-ascii?Q?/bBnFbhkon9hujgZ5AM1WCNQE2YWEcV++UoanBF1T4f1luhSgUGQjcpH8f/u?=
- =?us-ascii?Q?754W3r0cjuqIpEEH8EyvZipmTZO7Qm82XfrQlZ6iyRuCfeGZUUe/vtVa7NyU?=
- =?us-ascii?Q?w1oKravT2EdLCfiWqVzn8gbsciycdknoSAhvq5phbsOgHHv6OSt7NGWFqR1L?=
- =?us-ascii?Q?NaQPnrm28iXi9feNigRN/ox2skiSL8xgmAYQ9NUW0H3zQByG2R+/D5JNa1GX?=
- =?us-ascii?Q?uIpQ+Awj4KKE4B2fT9mdb6Fug1YDKzW/gvdN3rySGbLstDp/d8tM33aqWxi1?=
- =?us-ascii?Q?lkrd3/MjSchJ8YPPs4GSvEkI95aiZZ9lcn7HIuadSknd3o3TGx8cYp7cQln4?=
- =?us-ascii?Q?h1d48Y6Ump4FTUefAKEp9NpOMuyfHdPYKMgUO44YF+1gctHBm0CP1YtB/E9H?=
- =?us-ascii?Q?EqDDLrtM/Q7Ghp7UH8fag3/Z/6TJK40SAx2JUKkXFDHM1KDbL7KJWMS7kj3a?=
- =?us-ascii?Q?JKo5tXAnQRwl6QZS9WgkQMmfdBrl87p+0mYg+DDTqigWrEzdcv5Ar2GE9nQz?=
- =?us-ascii?Q?lv4fcQ53R2XdU+dfU7T8I8gvaESw88qS/NOIp0aE/CAawey1pH91vbFMohcI?=
- =?us-ascii?Q?ecancv1k/UScWfKof8Lm6h2/iS42+RLR5dCe9V+qq1818G1CRgFr9kcYahPv?=
- =?us-ascii?Q?UE6yaED/g7cC5rc/CjpEFaI9khGYqAmjE/Qxj3UQ9/tYZCqlTVSCfmLKeGqe?=
- =?us-ascii?Q?zmy4ej1/J5p1yhUBiggKrsP+vpo6drUsyyiXtZikyFVjySfEBbvp9Iq6s1Mk?=
- =?us-ascii?Q?uGCjHF1+jIINIfRwrgjioxlgJQGlx4l2XDuHDyiMtcM8/pvFRDgdwi8Bo1fJ?=
- =?us-ascii?Q?fIMgSau7AF4z18xQ6rs+Qeajb9e0PorUpxYAO1blkQdT6eVK0iEGyK1Em5Mg?=
- =?us-ascii?Q?m9I9+v83dXYNAUoCfWkqQ696PSzVqECPMia9TTyDwUiVwQaBXYb9xI11PZz6?=
- =?us-ascii?Q?DgNPElM0/mINfl0tommkEKSzTReMSiy8vT6fGij559+RtS8eocm84E0YMypq?=
- =?us-ascii?Q?ox0Q1UY5GCOHVWnPkqG8ba9uVViw3AbdBCWYC2tMgFduIqCCZDw6lEHLXfo8?=
- =?us-ascii?Q?r5vw+tMwbOdgmcTqvMZ8O+ST4Qy++zYUNLVH4bh/Iwm9gUFn13mBaJngKpjb?=
- =?us-ascii?Q?wEGNgWQpPLacScfdKWelqeRNhUPvntunHvehE+bTy1BDDzavphelsSebh5L2?=
- =?us-ascii?Q?Jp0uQXdGpaqjtFeHFRFjvYtnrTSb2SXks+ksMFaXdeuRJy1qybTqEsDJfFTa?=
- =?us-ascii?Q?7LlK8NmpV1i4uU6t+yNDfnDIxMRH4nk/jzc2FvRgmx9R0bkl31fT/VPni3PO?=
- =?us-ascii?Q?zQj+z41IqKbcmALgfaNcGiy7AYbYS203HEJ0cnaJ4xV3kqbh3V0C8DzNo85f?=
- =?us-ascii?Q?11yJi7dA8RfRO5dYVmNmIzaYVKI0SBotA5UZhwbcXB9ZRSP4HUpiJFFRzxiK?=
- =?us-ascii?Q?JbOzqneSPiVZk2cKc2YVe/8r503IasCavmidQhkc?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4f4c83ff-2daa-46af-7b74-08dd072a8b5a
-X-MS-Exchange-CrossTenant-AuthSource: MW4PR11MB6739.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Nov 2024 17:09:06.6604
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: aVUMINb7XaossqyiHZG9LFx1zFkjPyoyfb5r/GzKExmdRhsy3OnYVxtpz+wc2ZVCwmSioTxsWOgRyq1R1pGMhg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB6504
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+From: Sergey Shtylyov <s.shtylyov@omp.ru>
+Subject: Re: [PATCHv2 net-next] net: modernize ioremap in probe
+To: Rosen Penev <rosenp@gmail.com>, <netdev@vger.kernel.org>
+CC: Chandrasekar Ramakrishnan <rcsekar@samsung.com>, Marc Kleine-Budde
+	<mkl@pengutronix.de>, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, Andrew
+ Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, Kurt Kanzenbach <kurt@linutronix.de>, Vladimir Oltean
+	<olteanv@gmail.com>, Chris Snook <chris.snook@gmail.com>, Marcin Wojtas
+	<marcin.s.wojtas@gmail.com>, Russell King <linux@armlinux.org.uk>, Horatiu
+ Vultur <horatiu.vultur@microchip.com>, "maintainer:MICROCHIP LAN966X ETHERNET
+ DRIVER" <UNGLinuxDriver@microchip.com>, Yoshihiro Shimoda
+	<yoshihiro.shimoda.uh@renesas.com>, =?UTF-8?Q?Niklas_S=C3=B6derlund?=
+	<niklas.soderlund@ragnatech.se>, Doug Berger <opendmb@gmail.com>, Florian
+ Fainelli <florian.fainelli@broadcom.com>, Broadcom internal kernel review
+ list <bcm-kernel-feedback-list@broadcom.com>, Heiner Kallweit
+	<hkallweit1@gmail.com>, Richard Cochran <richardcochran@gmail.com>, "open
+ list:MCAN MMIO DEVICE DRIVER" <linux-can@vger.kernel.org>, open list
+	<linux-kernel@vger.kernel.org>, "open list:RENESAS ETHERNET SWITCH DRIVER"
+	<linux-renesas-soc@vger.kernel.org>
+References: <20241111200212.5907-1-rosenp@gmail.com>
+Content-Language: en-US
+Organization: Open Mobile Platform
+In-Reply-To: <20241111200212.5907-1-rosenp@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
+ (10.188.4.12)
+X-KSE-ServerInfo: msexch01.omp.ru, 9
+X-KSE-AntiSpam-Interceptor-Info: scan successful
+X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 11/17/2024 17:00:21
+X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
+X-KSE-AntiSpam-Method: none
+X-KSE-AntiSpam-Rate: 19
+X-KSE-AntiSpam-Info: Lua profiles 189220 [Nov 17 2024]
+X-KSE-AntiSpam-Info: Version: 6.1.1.7
+X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
+X-KSE-AntiSpam-Info: LuaCore: 41 0.3.41
+ 623e98d5198769c015c72f45fabbb9f77bdb702b
+X-KSE-AntiSpam-Info: {rep_avail}
+X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
+X-KSE-AntiSpam-Info: {SMTP from is not routable}
+X-KSE-AntiSpam-Info:
+	127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;omp.ru:7.1.1
+X-KSE-AntiSpam-Info: FromAlignment: s
+X-KSE-AntiSpam-Info: ApMailHostAddress: 213.87.152.88
+X-KSE-AntiSpam-Info: {DNS response errors}
+X-KSE-AntiSpam-Info: Rate: 19
+X-KSE-AntiSpam-Info: Status: not_detected
+X-KSE-AntiSpam-Info: Method: none
+X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
+ smtp.mailfrom=omp.ru;dkim=none
+X-KSE-Antiphishing-Info: Clean
+X-KSE-Antiphishing-ScanningType: Heuristic
+X-KSE-Antiphishing-Method: None
+X-KSE-Antiphishing-Bases: 11/17/2024 17:04:00
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 11/17/2024 3:00:00 PM
+X-KSE-Attachment-Filter-Triggered-Rules: Clean
+X-KSE-Attachment-Filter-Triggered-Filters: Clean
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
 
-Suraj Sonawane wrote:
-> Fix an issue detected by syzbot with KASAN:
-> 
-> BUG: KASAN: vmalloc-out-of-bounds in cmd_to_func drivers/acpi/nfit/
-> core.c:416 [inline]
-> BUG: KASAN: vmalloc-out-of-bounds in acpi_nfit_ctl+0x20e8/0x24a0
-> drivers/acpi/nfit/core.c:459
-> 
-> The issue occurs in cmd_to_func when the call_pkg->nd_reserved2
-> array is accessed without verifying that call_pkg points to a buffer
-> that is appropriately sized as a struct nd_cmd_pkg. This can lead
-> to out-of-bounds access and undefined behavior if the buffer does not
-> have sufficient space.
-> 
-> To address this, a check was added in acpi_nfit_ctl() to ensure that
-> buf is not NULL and that buf_len is less than sizeof(*call_pkg)
-> before accessing it. This ensures safe access to the members of
-> call_pkg, including the nd_reserved2 array.
-> 
-> Reported-by: syzbot+7534f060ebda6b8b51b3@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=7534f060ebda6b8b51b3
-> Tested-by: syzbot+7534f060ebda6b8b51b3@syzkaller.appspotmail.com
-> Fixes: ebe9f6f19d80 ("acpi/nfit: Fix bus command validation")
-> Signed-off-by: Suraj Sonawane <surajsonawane0215@gmail.com>
-> ---
-> V1: https://lore.kernel.org/lkml/20241111080429.9861-1-surajsonawane0215@gmail.com/ 
-> V2: Initialized `out_obj` to `NULL` in `acpi_nfit_ctl()` to prevent
-> potential uninitialized variable usage if condition is true.
-> V3: Changed the condition to if (!buf || buf_len < sizeof(*call_pkg))
-> and updated the Fixes tag to reference the correct commit.
-> V4: Removed the explicit cast to maintain the original code style.
-> V5: Re-Initialized `out_obj` to NULL. To prevent
-> potential uninitialized variable usage if condition is true.
-> 
->  drivers/acpi/nfit/core.c | 11 +++++++++--
->  1 file changed, 9 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/acpi/nfit/core.c b/drivers/acpi/nfit/core.c
-> index 5429ec9ef..573ed264c 100644
-> --- a/drivers/acpi/nfit/core.c
-> +++ b/drivers/acpi/nfit/core.c
-> @@ -439,7 +439,7 @@ int acpi_nfit_ctl(struct nvdimm_bus_descriptor *nd_desc, struct nvdimm *nvdimm,
->  {
->  	struct acpi_nfit_desc *acpi_desc = to_acpi_desc(nd_desc);
->  	struct nfit_mem *nfit_mem = nvdimm_provider_data(nvdimm);
-> -	union acpi_object in_obj, in_buf, *out_obj;
-> +	union acpi_object in_obj, in_buf, *out_obj = NULL;
+On 11/11/24 11:02 PM, Rosen Penev wrote:
 
-This is not needed...
+> I changed resource acquisition to be performed in a single step. Possible
+> because devm is used here.
 
->  	const struct nd_cmd_desc *desc = NULL;
->  	struct device *dev = acpi_desc->dev;
->  	struct nd_cmd_pkg *call_pkg = NULL;
-> @@ -454,8 +454,15 @@ int acpi_nfit_ctl(struct nvdimm_bus_descriptor *nd_desc, struct nvdimm *nvdimm,
->  	if (cmd_rc)
->  		*cmd_rc = -EINVAL;
+   Have you tested it? Asking because switching to devm_platform_ioremap_resource_byname()
+and devm_platform_get_and_ioremap_resource() seems to add devm_request_mem_region() call
+into the picture...
+   I'm also not sure the single patch per drivers/net/ would be enough, but that's for the
+maintainers to decide...
+
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+[...]
+
+> diff --git a/drivers/net/dsa/hirschmann/hellcreek.c b/drivers/net/dsa/hirschmann/hellcreek.c
+> index 283ec5a6e23c..940c4fa6a924 100644
+> --- a/drivers/net/dsa/hirschmann/hellcreek.c
+> +++ b/drivers/net/dsa/hirschmann/hellcreek.c
+[...]
+> @@ -1982,23 +1981,12 @@ static int hellcreek_probe(struct platform_device *pdev)
 >  
-> -	if (cmd == ND_CMD_CALL)
-> +	if (cmd == ND_CMD_CALL) {
-> +		if (!buf || buf_len < sizeof(*call_pkg)) {
-> +			rc = -EINVAL;
-> +			goto out;
+>  	hellcreek->dev = dev;
+>  
+> -	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "tsn");
+> -	if (!res) {
+> -		dev_err(dev, "No memory region provided!\n");
+> -		return -ENODEV;
+> -	}
+> -
+> -	hellcreek->base = devm_ioremap_resource(dev, res);
+> +	hellcreek->base = devm_platform_ioremap_resource_byname(pdev, "tsn");
 
-Just return -EINVAL.
+   The new code here should behave equivalently to the old, so seems OK.
 
-Ira
+>  	if (IS_ERR(hellcreek->base))
+>  		return PTR_ERR(hellcreek->base);
+>  
+> -	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "ptp");
+> -	if (!res) {
+> -		dev_err(dev, "No PTP memory region provided!\n");
+> -		return -ENODEV;
+> -	}
+> -
+> -	hellcreek->ptp_base = devm_ioremap_resource(dev, res);
+> +	hellcreek->ptp_base =
+> +		devm_platform_ioremap_resource_byname(pdev, "ptp");
 
-> +		}
-> +
->  		call_pkg = buf;
+   Here as well...
+
+[...]
+> diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+> index 571631a30320..faf853edc0db 100644
+> --- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+> +++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+> @@ -7425,21 +7425,17 @@ static int mvpp2_init(struct platform_device *pdev, struct mvpp2 *priv)
+>  static int mvpp2_get_sram(struct platform_device *pdev,
+>  			  struct mvpp2 *priv)
+>  {
+> -	struct resource *res;
+>  	void __iomem *base;
+>  
+> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 2);
+> -	if (!res) {
+> +	base = devm_platform_ioremap_resource(pdev, 2);
+> +	if (IS_ERR(base)) {
+>  		if (has_acpi_companion(&pdev->dev))
+>  			dev_warn(&pdev->dev, "ACPI is too old, Flow control not supported\n");
+>  		else
+> -			dev_warn(&pdev->dev, "DT is too old, Flow control not supported\n");
+> -		return 0;
+> -	}
+> -
+> -	base = devm_ioremap_resource(&pdev->dev, res);
+> -	if (IS_ERR(base))
+> +			dev_warn(&pdev->dev,
+> +				 "DT is too old, Flow control not supported\n");
+>  		return PTR_ERR(base);
 > +	}
-> +
->  	func = cmd_to_func(nfit_mem, cmd, call_pkg, &family);
->  	if (func < 0)
->  		return func;
-> -- 
-> 2.34.1
-> 
+>  
+>  	priv->cm3_base = base;
+>  	return 0;
 
+   This change also seems to look sane...
 
+[...]
+> diff --git a/drivers/net/ethernet/renesas/rswitch.c b/drivers/net/ethernet/renesas/rswitch.c
+> index 8d18dae4d8fb..8ef52fc46a01 100644
+> --- a/drivers/net/ethernet/renesas/rswitch.c
+> +++ b/drivers/net/ethernet/renesas/rswitch.c
+[...]
+> @@ -2074,7 +2067,7 @@ static int renesas_eth_sw_probe(struct platform_device *pdev)
+>  
+>  	platform_set_drvdata(pdev, priv);
+>  	priv->pdev = pdev;
+> -	priv->addr = devm_ioremap_resource(&pdev->dev, res);
+> +	priv->addr = devm_platform_ioremap_resource_byname(pdev, "secure_base");
+>  	if (IS_ERR(priv->addr))
+>  		return PTR_ERR(priv->addr);
+>  
+
+   This one looks OKish too...
+
+> diff --git a/drivers/net/ethernet/renesas/rtsn.c b/drivers/net/ethernet/renesas/rtsn.c
+> index 6b3f7fca8d15..bfe08facc707 100644
+> --- a/drivers/net/ethernet/renesas/rtsn.c
+> +++ b/drivers/net/ethernet/renesas/rtsn.c
+> @@ -1297,14 +1297,8 @@ static int rtsn_probe(struct platform_device *pdev)
+>  	ndev->netdev_ops = &rtsn_netdev_ops;
+>  	ndev->ethtool_ops = &rtsn_ethtool_ops;
+>  
+> -	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "gptp");
+> -	if (!res) {
+> -		dev_err(&pdev->dev, "Can't find gptp resource\n");
+> -		ret = -EINVAL;
+> -		goto error_free;
+> -	}
+> -
+> -	priv->ptp_priv->addr = devm_ioremap_resource(&pdev->dev, res);
+> +	priv->ptp_priv->addr =
+> +		devm_platform_ioremap_resource_byname(pdev, "gptp");
+>  	if (IS_ERR(priv->ptp_priv->addr)) {
+>  		ret = PTR_ERR(priv->ptp_priv->addr);
+>  		goto error_free;
+
+   Looks OKish too...
+
+> diff --git a/drivers/net/ethernet/renesas/sh_eth.c b/drivers/net/ethernet/renesas/sh_eth.c
+> index d072f394eecb..07d1f1504a97 100644
+> --- a/drivers/net/ethernet/renesas/sh_eth.c
+> +++ b/drivers/net/ethernet/renesas/sh_eth.c
+> @@ -3351,31 +3351,12 @@ static int sh_eth_drv_probe(struct platform_device *pdev)
+>  
+>  	if (mdp->cd->tsu) {
+>  		int port = pdev->id < 0 ? 0 : pdev->id % 2;
+> -		struct resource *rtsu;
+>  
+> -		rtsu = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+> -		if (!rtsu) {
+> -			dev_err(&pdev->dev, "no TSU resource\n");
+> -			ret = -ENODEV;
+> -			goto out_release;
+> -		}
+> -		/* We can only request the  TSU region  for the first port
+> -		 * of the two  sharing this TSU for the probe to succeed...
+> -		 */
+> -		if (port == 0 &&
+> -		    !devm_request_mem_region(&pdev->dev, rtsu->start,
+> -					     resource_size(rtsu),
+> -					     dev_name(&pdev->dev))) {
+> -			dev_err(&pdev->dev, "can't request TSU resource.\n");
+> -			ret = -EBUSY;
+> -			goto out_release;
+> -		}
+>  		/* ioremap the TSU registers */
+> -		mdp->tsu_addr = devm_ioremap(&pdev->dev, rtsu->start,
+> -					     resource_size(rtsu));
+> -		if (!mdp->tsu_addr) {
+> +		mdp->tsu_addr = devm_platform_ioremap_resource(pdev, 1);
+> +		if (IS_ERR(mdp->tsu_addr)) {
+>  			dev_err(&pdev->dev, "TSU region ioremap() failed.\n");
+> -			ret = -ENOMEM;
+> +			ret = PTR_ERR(mdp->tsu_addr);
+>  			goto out_release;
+>  		}
+>  		mdp->port = port;
+
+   No, this one won't fly since you're removing the port == 0 check... :-/
+This code looks so strange on purpose... :-)
+
+[...]
+> diff --git a/drivers/net/mdio/mdio-ipq4019.c b/drivers/net/mdio/mdio-ipq4019.c
+> index dd3ed2d6430b..725e5c13d212 100644
+> --- a/drivers/net/mdio/mdio-ipq4019.c
+> +++ b/drivers/net/mdio/mdio-ipq4019.c
+> @@ -256,7 +256,7 @@ static int ipq_mdio_reset(struct mii_bus *bus)
+>  	/* To indicate CMN_PLL that ethernet_ldo has been ready if platform resource 1
+>  	 * is specified in the device tree.
+>  	 */
+> -	if (priv->eth_ldo_rdy) {
+> +	if (!IS_ERR(priv->eth_ldo_rdy)) {
+
+   What's that? :-/
+   Ah, devm_ioremap_resource() returns error ptr too, so this looks like a fix for
+the existing code?
+
+>  		val = readl(priv->eth_ldo_rdy);
+>  		val |= BIT(0);
+>  		writel(val, priv->eth_ldo_rdy);
+[...]
+> @@ -351,9 +350,7 @@ static int ipq4019_mdio_probe(struct platform_device *pdev)
+>  
+>  	/* The platform resource is provided on the chipset IPQ5018 */
+>  	/* This resource is optional */
+> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+> -	if (res)
+> -		priv->eth_ldo_rdy = devm_ioremap_resource(&pdev->dev, res);
+> +	priv->eth_ldo_rdy = devm_platform_ioremap_resource(pdev, 1);
+>  
+>  	bus->name = "ipq4019_mdio";
+>  	bus->read = ipq4019_mdio_read_c22;
+
+   Other than that looks OKish...
+
+[...]
+> diff --git a/drivers/net/mdio/mdio-octeon.c b/drivers/net/mdio/mdio-octeon.c
+> index 2beb83154d39..cb53dccbde1a 100644
+> --- a/drivers/net/mdio/mdio-octeon.c
+> +++ b/drivers/net/mdio/mdio-octeon.c
+> @@ -17,37 +17,20 @@ static int octeon_mdiobus_probe(struct platform_device *pdev)
+>  {
+>  	struct cavium_mdiobus *bus;
+>  	struct mii_bus *mii_bus;
+> -	struct resource *res_mem;
+> -	resource_size_t mdio_phys;
+> -	resource_size_t regsize;
+>  	union cvmx_smix_en smi_en;
+> -	int err = -ENOENT;
+> +	int err;
+>  
+>  	mii_bus = devm_mdiobus_alloc_size(&pdev->dev, sizeof(*bus));
+>  	if (!mii_bus)
+>  		return -ENOMEM;
+>  
+> -	res_mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -	if (res_mem == NULL) {
+> -		dev_err(&pdev->dev, "found no memory resource\n");
+> -		return -ENXIO;
+> -	}
+> -
+>  	bus = mii_bus->priv;
+>  	bus->mii_bus = mii_bus;
+> -	mdio_phys = res_mem->start;
+> -	regsize = resource_size(res_mem);
+>  
+> -	if (!devm_request_mem_region(&pdev->dev, mdio_phys, regsize,
+> -				     res_mem->name)) {
+> -		dev_err(&pdev->dev, "request_mem_region failed\n");
+> -		return -ENXIO;
+> -	}
+> -
+> -	bus->register_base = devm_ioremap(&pdev->dev, mdio_phys, regsize);
+> -	if (!bus->register_base) {
+> +	bus->register_base = devm_platform_ioremap_resource(pdev, 0);
+> +	if (IS_ERR(bus->register_base)) {
+>  		dev_err(&pdev->dev, "dev_ioremap failed\n");
+> -		return -ENOMEM;
+> +		return PTR_ERR(bus->register_base);
+>  	}
+>  
+>  	smi_en.u64 = 0;
+
+   Seems OKish too...
+
+MBR, Sergey
 
