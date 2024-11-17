@@ -1,141 +1,170 @@
-Return-Path: <linux-kernel+bounces-412146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C96C99D0458
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 15:35:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59BDA9D0467
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 16:04:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80DCE1F21B3B
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 14:35:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05B521F2184E
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 15:04:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D2CB1D95BA;
-	Sun, 17 Nov 2024 14:35:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PItJ7/tJ"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F288E1D88D5;
+	Sun, 17 Nov 2024 15:04:13 +0000 (UTC)
+Received: from sundtek.de (sundtek.de [85.10.198.106])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8D0A18FDD2;
-	Sun, 17 Nov 2024 14:35:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D95B38DE0
+	for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 15:04:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.10.198.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731854116; cv=none; b=U7jxcYGnF/tFmCyoFVAbjYqsjBWZHINJSH/cwz+po9+pvXRsCutdW9LFx0+JK0Q2kYXSbfcIE0MHk4feM/Be1d/U7Ks9f+a+w6N13TIQ2ZLWaJ0Z+SLPCbKzUog70uP4wUW6g5i8Hh5kH0/1yXbZOCgcSBmS2PKAmgswJi4UxIk=
+	t=1731855853; cv=none; b=L8bEyaYRJBtjZqlr/igq5MHPwNNu3bMv1owyopKR+c5Kasit5ng1GgigYijIdeA1SFtcd4GvN7ZWG4l9p6NkNT01MvPkwo/oMaoe1hE3nuwkgZYTFwqWXwLWJzp8QaUmxjLU2Vz9+LPKtUPzBFv0smUzLj8W9Jrd5Q811rSSHUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731854116; c=relaxed/simple;
-	bh=mj+zr5/Eu2ly1YN5Nz6BSG95JnitRRBoBJEZY9HIT58=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:MIME-Version:
-	 Content-Type; b=U7HL/12du2zqO7OdITgNCIQb6V6BLKBROxbJoNq9fJo9WwhJhSoj8VGOmseYeYXf/CujdUbrEl8sNmmWfIDdvwlRIUloux7udaHicwyULuQkijOd++Lv9K9U5LC8YClCi5use3aeNjzER/rl4T/wJ+fsRzvFDnL3iAybrYWRCj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PItJ7/tJ; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-539e59dadebso3942273e87.0;
-        Sun, 17 Nov 2024 06:35:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731854113; x=1732458913; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:in-reply-to:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=QHmlE3PEHiHFr+j2guDx/AT4TY0CqPzBlvz63DvR7YU=;
-        b=PItJ7/tJuQ2pFKG+d2hvB61kt6emamtiG6AuE81FFomaqlEj714l3uPHYTIqm60QIk
-         0OaBWLuR0tE7TLkZ1fPp6nNQmt18k9zGFm0VPn7o5WL4w3rAmU71TocCMtQm/phxSxja
-         k6nE0KS41d2ZPC2C4bcHdnz2z7EXROAKgsvfgX26j5VIrH/JgpSFrmtMHdnBiV3tR1VC
-         cQ9rll+87662DStu7/HNjMscePVDlLtSnpJi+uFLRtdSfJxpo7toEuB5rSNAGJhoGpcr
-         bSViv0rdpBLO059hNyilhyRFOcFfRmgwrl4PvlcQYB0+6VdDNoaDMwxJ/xwBVLRjIdeR
-         TDCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731854113; x=1732458913;
-        h=content-transfer-encoding:mime-version:in-reply-to:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QHmlE3PEHiHFr+j2guDx/AT4TY0CqPzBlvz63DvR7YU=;
-        b=fwwpYwBWIfYfQ6VnjTcEZXPs8Jc7rO8GFPoLdQjkQ0Uo4bRjT2m9XZlxk8T1FxG8+5
-         8ChhQOF/JbkMOiS4cyyqxIFbBz43sRT7brar9p1Cb+Ap49oOy3XuaV8xcyIzlj4J7c5Z
-         HwzM+hlgbZFFQpYOvBUaEfROZ4OaAtQpTyQotFxhTs8AdoojUyx67EXHgoN1dEaCb4Ht
-         QSwKhry3p5pGsrqJdqfyEivmqPNzdeyGdGkCW2eQbXRVW5RfI7Far2loIJ5A4OFLVFH+
-         +Q3GTSG1cR5x2MGHS907nJNSSCdvSkNTdxUUuWyziM0Cwz8t21l3O1M6RE83Upz/h1nr
-         ODuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUkP7xbMA8Ctiupu0b6ElcfhRfmGSgndUoS6Fy5Xl4MVLC4XKXCzUUYKwgSIAz8ahUNha3+NUaJVb0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxizTKndhg+hcm/huk2lPvlBprKWsnaxeSX4NjyHpVpdyQ7PvMz
-	oiEcGsdjc0pE9NGuTkacq9TQHXkCqYN8uEQtMd/nmvf172QiTVQX9pqXgA==
-X-Google-Smtp-Source: AGHT+IEzNfDOyFoKWVzT5/K6kj/RrHoLls0/uRWmNJAHeMcvOOUQI8EyJqVXO+GE8amhPsPiKvyRww==
-X-Received: by 2002:ac2:4e12:0:b0:53a:1e5:572a with SMTP id 2adb3069b0e04-53dab29db04mr4064263e87.16.1731854112713;
-        Sun, 17 Nov 2024 06:35:12 -0800 (PST)
-Received: from foxbook (bff246.neoplus.adsl.tpnet.pl. [83.28.43.246])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53da6548ad9sm1308369e87.263.2024.11.17.06.35.11
-        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
-        Sun, 17 Nov 2024 06:35:12 -0800 (PST)
-Date: Sun, 17 Nov 2024 15:35:07 +0100
-From: =?UTF-8?B?TWljaGHFgg==?= Pecio <michal.pecio@gmail.com>
-To: linuxusb.ml@sundtek.de
-Cc: linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
+	s=arc-20240116; t=1731855853; c=relaxed/simple;
+	bh=A0Nf2h4bLGg3F7hEgVsjh9jEs+/osPSwh4jUOq90zdw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=bXHMh1pY0DptaL2flyBFdOWvajedXp4V/etd6LyiDy+PFz2V4m7YpitZ335irCPUD7acNyaP6LqNJkGtGLYYkXmKayd9DnqfVXiDrMVj+3msBM26grRLv/kWd/Vpley2WZPxQMofYkOcmJvm51smoKMPvIqSu7WPUY4pxMct9l4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sundtek.de; spf=pass smtp.mailfrom=sundtek.de; arc=none smtp.client-ip=85.10.198.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sundtek.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sundtek.de
+Received: from Debian-exim by sundtek.de with spam-scanned (Exim 4.95)
+	(envelope-from <linuxusb.ml@sundtek.de>)
+	id 1tCgop-005HCt-D0
+	for linux-kernel@vger.kernel.org;
+	Sun, 17 Nov 2024 16:04:09 +0100
+Received: from 1-175-135-24.dynamic-ip.hinet.net ([1.175.135.24] helo=[192.168.2.197])
+	by sundtek.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <linuxusb.ml@sundtek.de>)
+	id 1tCgom-005HCe-2I;
+	Sun, 17 Nov 2024 16:04:04 +0100
+Message-ID: <a4199978d55410911a2f51fb8d63bbeb072c227e.camel@sundtek.de>
 Subject: Re: Highly critical bug in XHCI Controller
-Message-ID: <20241117153507.4daaa9f0@foxbook>
-In-Reply-To: <dd4239c7b0538e1cd2f2a85307c73299117d5f0e.camel@sundtek.de>
+From: Markus Rechberger <linuxusb.ml@sundtek.de>
+To: =?UTF-8?Q?Micha=C5=82?= Pecio <michal.pecio@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
+Date: Sun, 17 Nov 2024 23:03:59 +0800
+In-Reply-To: <20241117153507.4daaa9f0@foxbook>
+References: <20241117153507.4daaa9f0@foxbook>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3-0ubuntu1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: linuxusb.ml@sundtek.de
+X-SA-Exim-Scanned: No (on sundtek.de); SAEximRunCond expanded to false
 
-Hi,
+On Sun, 2024-11-17 at 15:35 +0100, Micha=C5=82 Pecio wrote:
+> Hi,
+>=20
+> > Basically the issue comes from hub_port_connect.
+> >=20
+> > drivers/usb/core/hub.c
+> >=20
+> > hub_port_init returns -71 -EPROTO and jumps to loop
+> > https://github.com/torvalds/linux/blob/master/drivers/usb/core/hub.c#L5=
+450
+> >=20
+> > I'd question if usb_ep0_reinit is really required in loop which is
+> > running following functions:
+> > =C2=A0=C2=A0=C2=A0 usb_disable_endpoint(udev, 0 + USB_DIR_IN, true);
+> > =C2=A0=C2=A0=C2=A0 usb_disable_endpoint(udev, 0 + USB_DIR_OUT, true);
+> > =C2=A0=C2=A0=C2=A0 usb_enable_endpoint(udev, &udev->ep0, true);
+> >=20
+> > this is something only experience over the past decades can tell?
+> >=20
+> > usb_enable_endpoint will trigger xhci_endpoint_reset which doesn't
+> > do
+> > much, but crashes the entire system with the upstream kernel when
+> > it
+> > triggers xhci_check_bw_table).
+> >=20
+> > I removed usb_ep0_reinit here and devices are still workable under
+> > various conditions (again I shorted and pulled D+/D- to ground for
+> > testing).
+>=20
+> xHCI isn't the only host controller supported by Linux, and
+> usb_ep0_reinit() predates it. Maybe it's pointless today, maybe
+> it isn't, but it's not the root cause of your problem anyway.
+>=20
 
-> Basically the issue comes from hub_port_connect.
-> 
-> drivers/usb/core/hub.c
-> 
-> hub_port_init returns -71 -EPROTO and jumps to loop
-> https://github.com/torvalds/linux/blob/master/drivers/usb/core/hub.c#L5450
-> 
-> I'd question if usb_ep0_reinit is really required in loop which is
-> running following functions:
->     usb_disable_endpoint(udev, 0 + USB_DIR_IN, true);
->     usb_disable_endpoint(udev, 0 + USB_DIR_OUT, true);
->     usb_enable_endpoint(udev, &udev->ep0, true);
-> 
-> this is something only experience over the past decades can tell?
-> 
-> usb_enable_endpoint will trigger xhci_endpoint_reset which doesn't do
-> much, but crashes the entire system with the upstream kernel when it
-> triggers xhci_check_bw_table).
-> 
-> I removed usb_ep0_reinit here and devices are still workable under
-> various conditions (again I shorted and pulled D+/D- to ground for
-> testing).
+exactly, but it shouldn't go there anyway. This section of the code is
+only for 'in case an error already happened'.
+That's why I'm asking if anyone knows a practical situation where this
+is really needed - and did it ever help?
+I'm working with USB across many systems for nearly 2 decades and I
+never saw any of those fallbacks succeeding. Usually the way to recover
+a device which had connection issues was to reconnect the device
+completely.
 
-xHCI isn't the only host controller supported by Linux, and
-usb_ep0_reinit() predates it. Maybe it's pointless today, maybe
-it isn't, but it's not the root cause of your problem anyway.
+> > The NULL PTR check in xhci_check_bw_table would be a second line
+> > of defense but as indicated in the first mail it shouldn't even get
+> > there.
+>=20
+> It's an xHCI bug that BW calculation is attempted on an uninitialized
+> device and crashes. Looks like a NULL check somewhere is exactly what
+> is needed, or maybe avoid it completely on EP0 (it's probably no-op).
+>=20
 
-> The NULL PTR check in xhci_check_bw_table would be a second line
-> of defense but as indicated in the first mail it shouldn't even get
-> there.
+Yes this would be the second line of defense as indicated in my email
+before.
+I'm preparing 2 small patches with comments in the code.
+One commenting out usb_ep0_reinit and the other one a simple NULL PTR
+check - but
+again the code shouldn't be executed at all when bw_table =3D=3D NULL
+something already
+went wrong, the issue should be handled earlier in the code already.
 
-It's an xHCI bug that BW calculation is attempted on an uninitialized
-device and crashes. Looks like a NULL check somewhere is exactly what
-is needed, or maybe avoid it completely on EP0 (it's probably no-op).
+bw_table is not setting itself to NULL or not at all.
 
-Other similar bug recently:
-https://lore.kernel.org/linux-usb/D3CKQQAETH47.1MUO22RTCH2O3@matfyz.cz/T/#u
+Since it's infrastructure code it's a sensitive part.
 
-Yours too should be unique to those Intel Panther Point chipsets.
+This issue fully crashed my Asus notebook at least 3 times when working
+with a USB ethernet adapter and a USB harddisk. Not only faulty
+hardware is causing that problem also simple hotplug connection
+problems.
 
-> As a second issue I found in usb_reset_and_verify device 
-> https://github.com/torvalds/linux/blob/master/drivers/usb/core/hub.c#L6131
-> 
->         ret = hub_port_init(parent_hub, udev, port1, i, &descriptor);
->         if (ret >= 0 || ret == -ENOTCONN || ret == -ENODEV) {
->             break;
->         }
-> 
-> hub_port_init can also return -71 / -EPROTO, the cases should be very
-> rare when usb_reset_and_verify_device is triggered and that happens.
+> Other similar bug recently:
+> https://lore.kernel.org/linux-usb/D3CKQQAETH47.1MUO22RTCH2O3@matfyz.cz/T/=
+#u
+>=20
+> Yours too should be unique to those Intel Panther Point chipsets.
 
-Right, and the intent seems to be to simply retry in this case.
+This is exactly the same problem yes.
+The problem will happen with all systems which use the xhci driver.
 
-Regards,
-Michal
+
+Best Regards,
+Markus
+
+>=20
+> > As a second issue I found in usb_reset_and_verify device=20
+> > https://github.com/torvalds/linux/blob/master/drivers/usb/core/hub.c#L6=
+131
+> >=20
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ret =3D hub_port_init(parent=
+_hub, udev, port1, i,
+> > &descriptor);
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (ret >=3D 0 || ret =3D=3D=
+ -ENOTCONN || ret =3D=3D -ENODEV) {
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 brea=
+k;
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+> >=20
+> > hub_port_init can also return -71 / -EPROTO, the cases should be
+> > very
+> > rare when usb_reset_and_verify_device is triggered and that
+> > happens.
+>=20
+> Right, and the intent seems to be to simply retry in this case.
+>=20
+> Regards,
+> Michal
+
 
