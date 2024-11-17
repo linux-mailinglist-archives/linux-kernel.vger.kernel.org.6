@@ -1,145 +1,173 @@
-Return-Path: <linux-kernel+bounces-412027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C69259D0288
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 09:54:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBC559D0289
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 09:54:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2A4E8B21233
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 08:54:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C8941F21595
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 08:54:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34FE978C91;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFFFC12E1E9;
 	Sun, 17 Nov 2024 08:54:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nigauri-org.20230601.gappssmtp.com header.i=@nigauri-org.20230601.gappssmtp.com header.b="h6XkncAE"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB2F228EB
-	for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 08:54:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C070A45023
+	for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 08:54:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731833661; cv=none; b=FoR4eaU1ZNFUZOW38M6ANBqAyUherW/kRnfim7btMmNzUwI80ZlRfevMJgiJZfTsPOj0NGNgrn4V8nRLF3JdSUtmwzQqHvIhb38Q13z6MAntmgpg1xoac9LCHv63th76RGUT9qbqc4J5OV2UuoK9TCx7xECmL/12iDeGgAqJfnE=
+	t=1731833662; cv=none; b=e7aYqciA/aRxngFrxaMex18c+m1bvP9SdAUWiH8HqVnx/mqwYJSvdSrHCc8C0kCWwHLHUwU9MEtoYiOKCu9Jw7rMeew5Hg1FnrN+nCtyCsMhB3HJBkyqaZr+WpM/Hu2wBrsAi8nUVjKl0W0w3vqLz1ODpllsYWxiDibyaxS4yAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731833661; c=relaxed/simple;
-	bh=1CgclRnp10ly/JD5SiLrTDFla8mus//SPDBxcGQV0jY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=r3vGdDCwV0b79LoCLKjXM1DX6vS50pIDkpKfaJr1u+eUijXNGHX79RFSeLGceH2Rfzgbbf8EwvR7fLE3MbxtQhRjJngntrwcAkOKR9t4ZLBTqutn/qqt5NFSOIZIXfHox7Td/SKHkN051ge4yAdqDA+uFdvsJP6chyMPJqXrjyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nigauri.org; spf=none smtp.mailfrom=nigauri.org; dkim=pass (2048-bit key) header.d=nigauri-org.20230601.gappssmtp.com header.i=@nigauri-org.20230601.gappssmtp.com header.b=h6XkncAE; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nigauri.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=nigauri.org
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5cb15b84544so1147475a12.2
-        for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 00:54:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=nigauri-org.20230601.gappssmtp.com; s=20230601; t=1731833657; x=1732438457; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aAFozerT8AmWvaMiQhtVKgrLvIOoUAQYsmUVcu4V1u0=;
-        b=h6XkncAEP5lZU7dLWT3iVaWZKNTd2D+jLdHb1E9WzRlZo64hwVFLdlpw+PNj9jiEfE
-         0ZSMBx7zlbgpHYESCAPSp+JJychIe+cq8er/XXvfdfzc2vj6Iq5LZag7iIpZ4n39VDo5
-         PLIoq9HzcRmAaft/8e3R0mMPQ1YcRCJHLXWgdvJs2UZBnWeL8omeRGty+LKgYDIGv+fc
-         Kt18gEPB4r8A+iJvyrnUZejvuru3ukTC6/+c842PC29ByxB+WnbDccY9VfR2dMZMT0IC
-         MF8M/7NFqx+g/52D3aoEM55HIYdG9e74B1P2YYFIi4RotqO90QBGT72Aa3d0/PqxOiuY
-         d2Bw==
+	s=arc-20240116; t=1731833662; c=relaxed/simple;
+	bh=hNGFVYc72UO2mgeYU91sQC9+fOs2EG6RcJDDBMnf61U=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=B9PsQodgnM1IFLxuMjx5+ZYL5Gu0crsbPLFr1lc8aPzUvwoNTM9W/0tPZn6zFJ9uJ8vOMrzzvHH6fkwcbMU4tXb/9TEdCTN9FYHQ8YCL2qbwDmdogJXXmkdyyfHcTgoEtN2B0EyFDSUnNc+RlZCDO0wKzXrIrqdsThaJ95XVI8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a743d76ed9so23894785ab.0
+        for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 00:54:20 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731833657; x=1732438457;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aAFozerT8AmWvaMiQhtVKgrLvIOoUAQYsmUVcu4V1u0=;
-        b=evI2yAiK67P5WevYM2j++kyXZy5pA5Ioqlev9pYRBz+H8emo095SXq9dYaiF52DJbw
-         2I42YF20Mz9bFyRWG+B3746E+GV7zphxBoKfnBVzW47Vru6upImCOygeqlRgJn8QBtNi
-         PPZ5OO8Zn+xIocL8+DGzmsR1iBiah0jDs4w2koH0zKNrvWYQ9ZtsYzjMq0SGp8iPmEVb
-         UfkCKUKNgmAh6Cy46zbhW5JwmGDkdfD+yyN7utQoat7iidsDmwzuZeMkQ2Xm4dRC0N8F
-         x4xxPnQvw0grdEscQi07PvjclT9DLioxeyBZ8n8Gs4nwk9ipyoWKMPhnjIjtdAyN3cqQ
-         pc4A==
-X-Forwarded-Encrypted: i=1; AJvYcCXuXCCdDCcf8/rCYdoMOPQCPldoYsd66C6Ph4BQaCBHGE2cYKGs/8n0E0nsoBQ6mHolKGdUc2QwNSE6HBs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxKiWIHty9x+zJmMuDB8zdcC2NwKxorBXt+MVEKZSQQTkYjq+c
-	TyACx6Qbas0lK9PEa6ljZ7dFOB8o+oPp5XDidSu6anne2aSiaiaty07/Gsn2Frzw9nSbN1dTvWg
-	0fhkt1T7whHXbPvS8HC27nO6IEQWtUDHCm+E=
-X-Google-Smtp-Source: AGHT+IH9A6EZKAlNlaThpg9AAuD/cbmV9VJvtt/bhTQvVCtVUAtunC0O/fpyJLc/etjVvqahiNW3SCx3U6/D6U7BbUI=
-X-Received: by 2002:a17:907:3f98:b0:a9e:d539:86c4 with SMTP id
- a640c23a62f3a-aa4833f41cdmr702610266b.9.1731833657034; Sun, 17 Nov 2024
- 00:54:17 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731833660; x=1732438460;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gpW9XoTRggzdMzhtPVMqmJUsWCL+vzGqsCdnm2YZVOw=;
+        b=ArWd7A5zdR2NfWU++F4M8gq+dXyyDbLHV3wcLzm/sEltSxwhbmfjfZxwhC+EXLiK3e
+         X1io7kPLF09oREbt369p86iTVQpCMm68OEDucX9J0b7RGoEOVJSqU4HSYccd7fKgR+BL
+         4ppiR1iVM4tjZ1n68Sw6MQ/KEKvkp9lVVRrdlGBqKqQCchGsyunnjOfmHqAQeP+ZYGWT
+         HPiKMWR2OYsubmW55G0YmsfQXWX5BxKo4IqUkI7rpmy7vn6xVgDS4IQSDuslJ2T7vfX1
+         0m3NmzCpwJECCS1FnVO9MYOcIZQ1j8b1RJDd3aZcp7bgUG7yWqCJu/5GA0RNssFMBaUY
+         av4A==
+X-Forwarded-Encrypted: i=1; AJvYcCWig24DqNIFhXPbgRJF4ZIlpky9ZFkDH8AT9Y4KWHbAnC5NZWRSELO98vIdpFdyjQoDIRWhPz0lrgfKTH4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmL7VdxmCFTOdxx0qrafWZsGwRdY5fikSwNnz/RGr9IoF5dqKs
+	e7zhBBdqhpw5hhjtoh36jd1gcbk1QYIeC/k+4IUA8gcHotVM7jFyNvnAb+wBH2bL9Xx08gyCTpc
+	b7+fb4fgd1vbLmkFfrtwGOO+naR+QasDFQsYXrwP196ZrNo6YjCF19X4=
+X-Google-Smtp-Source: AGHT+IHu623/lRAwEWD8F2FQ5xQOyFBtiD7P9n4iWXZr6YNynbDCcNdLZ9sldIRp70gwoMaFQlnGfLswlX+qT5x2qw6cET/AWHq5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241004061541.1666280-1-nobuhiro1.iwamatsu@toshiba.co.jp>
-In-Reply-To: <20241004061541.1666280-1-nobuhiro1.iwamatsu@toshiba.co.jp>
-From: Nobuhiro Iwamatsu <iwamatsu@nigauri.org>
-Date: Sun, 17 Nov 2024 17:53:51 +0900
-Message-ID: <CABMQnVK_RUC84QQ5zb+ZpuMOZcFMNV6HzEYAfmX4bOrRm+rvTw@mail.gmail.com>
-Subject: Re: [PATCH] ARM: dts: socfpga: sodia: Fix mdio bus probe and PHY ID
-To: dinguyen@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org, robh+dt@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org
+X-Received: by 2002:a05:6e02:3f0b:b0:3a0:9c04:8047 with SMTP id
+ e9e14a558f8ab-3a746f7ee2emr76584325ab.6.1731833659951; Sun, 17 Nov 2024
+ 00:54:19 -0800 (PST)
+Date: Sun, 17 Nov 2024 00:54:19 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6739af3b.050a0220.87769.0008.GAE@google.com>
+Subject: [syzbot] [bcachefs?] KMSAN: uninit-value in bch2_btree_node_iter_init (2)
+From: syzbot <syzbot+62f5ae3a10a9e97accd4@syzkaller.appspotmail.com>
+To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Dinh,
+Hello,
 
-Please check and apply this patch?
+syzbot found the following issue on:
 
-Thanks,
-  Nobuhiro
+HEAD commit:    3022e9d00ebe Merge tag 'sched_ext-for-6.12-rc7-fixes' of g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=162341a7980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=dcca673786a14715
+dashboard link: https://syzkaller.appspot.com/bug?extid=62f5ae3a10a9e97accd4
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: i386
 
-2024=E5=B9=B410=E6=9C=884=E6=97=A5(=E9=87=91) 15:16 Nobuhiro Iwamatsu <iwam=
-atsu@nigauri.org>:
->
-> From: Nobuhiro Iwamatsu <iwamatsu@nigauri.org>
->
-> On SoCFPGA/Sodia board, mdio bus cannot be probed, so the PHY cannot be
-> found and the network device does not work.
->
-> ```
-> stmmaceth ff702000.ethernet eth0: __stmmac_open: Cannot attach to PHY (er=
-ror: -19)
-> ```
->
-> To probe the mdio bus, add "snps,dwmac-mdio" as compatible string of the
-> mdio bus. Also the PHY ID connected to this board is 4. Therefore, change
-> to 4.
->
-> Fixes: 8fbc10b995a5 ("net: stmmac: check fwnode for phy device before sca=
-nning for phy")
-> Cc: stable@vger.kernel.org # 6.3+
-> Signed-off-by: Nobuhiro Iwamatsu <iwamatsu@nigauri.org>
-> ---
->  arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_sodia.dts | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
->
-> diff --git a/arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_sodia.dts b=
-/arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_sodia.dts
-> index ce0d6514eeb571..e4794ccb8e413f 100644
-> --- a/arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_sodia.dts
-> +++ b/arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_sodia.dts
-> @@ -66,8 +66,10 @@ &gmac1 {
->         mdio0 {
->                 #address-cells =3D <1>;
->                 #size-cells =3D <0>;
-> -               phy0: ethernet-phy@0 {
-> -                       reg =3D <0>;
-> +               compatible =3D "snps,dwmac-mdio";
-> +
-> +               phy0: ethernet-phy@4 {
-> +                       reg =3D <4>;
->                         rxd0-skew-ps =3D <0>;
->                         rxd1-skew-ps =3D <0>;
->                         rxd2-skew-ps =3D <0>;
-> --
-> 2.45.2
->
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/937339c4ba17/disk-3022e9d0.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/23acd73c301b/vmlinux-3022e9d0.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/66d14471611f/bzImage-3022e9d0.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+62f5ae3a10a9e97accd4@syzkaller.appspotmail.com
+
+=====================================================
+BUG: KMSAN: uninit-value in bkey_cmp_p_or_unp fs/bcachefs/bset.h:287 [inline]
+BUG: KMSAN: uninit-value in bkey_iter_cmp_p_or_unp fs/bcachefs/bset.h:400 [inline]
+BUG: KMSAN: uninit-value in bch2_bset_search_linear fs/bcachefs/bset.c:1189 [inline]
+BUG: KMSAN: uninit-value in bch2_btree_node_iter_init+0x319a/0x51a0 fs/bcachefs/bset.c:1334
+ bkey_cmp_p_or_unp fs/bcachefs/bset.h:287 [inline]
+ bkey_iter_cmp_p_or_unp fs/bcachefs/bset.h:400 [inline]
+ bch2_bset_search_linear fs/bcachefs/bset.c:1189 [inline]
+ bch2_btree_node_iter_init+0x319a/0x51a0 fs/bcachefs/bset.c:1334
+ __btree_path_level_init fs/bcachefs/btree_iter.c:615 [inline]
+ bch2_btree_path_level_init+0x821/0xc80 fs/bcachefs/btree_iter.c:635
+ btree_path_lock_root fs/bcachefs/btree_iter.c:769 [inline]
+ bch2_btree_path_traverse_one+0x379d/0x47b0 fs/bcachefs/btree_iter.c:1183
+ bch2_btree_path_traverse fs/bcachefs/btree_iter.h:247 [inline]
+ bch2_btree_iter_traverse+0xaf9/0x1020 fs/bcachefs/btree_iter.c:1880
+ bch2_btree_node_update_key_get_iter+0x15c/0x9e0 fs/bcachefs/btree_update_interior.c:2481
+ btree_node_write_work+0xb37/0x15a0 fs/bcachefs/btree_io.c:1874
+ process_one_work kernel/workqueue.c:3229 [inline]
+ process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3310
+ worker_thread+0xea7/0x14f0 kernel/workqueue.c:3391
+ kthread+0x3e2/0x540 kernel/kthread.c:389
+ ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+Uninit was created at:
+ ___kmalloc_large_node+0x22c/0x370 mm/slub.c:4219
+ __kmalloc_large_node_noprof+0x3f/0x1e0 mm/slub.c:4236
+ __do_kmalloc_node mm/slub.c:4252 [inline]
+ __kmalloc_node_noprof+0x9d6/0xf50 mm/slub.c:4270
+ __kvmalloc_node_noprof+0xc0/0x2d0 mm/util.c:658
+ btree_bounce_alloc fs/bcachefs/btree_io.c:124 [inline]
+ btree_node_sort+0x78a/0x1d30 fs/bcachefs/btree_io.c:323
+ bch2_btree_post_write_cleanup+0x1b0/0xf20 fs/bcachefs/btree_io.c:2252
+ bch2_btree_node_prep_for_write+0x494/0x720 fs/bcachefs/btree_trans_commit.c:93
+ bch2_trans_lock_write+0x7ef/0xc00 fs/bcachefs/btree_trans_commit.c:129
+ do_bch2_trans_commit fs/bcachefs/btree_trans_commit.c:896 [inline]
+ __bch2_trans_commit+0x31c4/0xd190 fs/bcachefs/btree_trans_commit.c:1121
+ bch2_trans_commit fs/bcachefs/btree_update.h:184 [inline]
+ bch2_journal_replay+0x2e3d/0x4d30 fs/bcachefs/recovery.c:317
+ bch2_run_recovery_pass fs/bcachefs/recovery_passes.c:185 [inline]
+ bch2_run_recovery_passes+0xaf9/0xf80 fs/bcachefs/recovery_passes.c:238
+ bch2_fs_recovery+0x447b/0x5b00 fs/bcachefs/recovery.c:861
+ bch2_fs_start+0x7b2/0xbd0 fs/bcachefs/super.c:1036
+ bch2_fs_get_tree+0x13ea/0x22d0 fs/bcachefs/fs.c:2170
+ vfs_get_tree+0xb1/0x5a0 fs/super.c:1814
+ do_new_mount+0x71f/0x15e0 fs/namespace.c:3507
+ path_mount+0x742/0x1f10 fs/namespace.c:3834
+ do_mount fs/namespace.c:3847 [inline]
+ __do_sys_mount fs/namespace.c:4057 [inline]
+ __se_sys_mount+0x722/0x810 fs/namespace.c:4034
+ __ia32_sys_mount+0xe3/0x150 fs/namespace.c:4034
+ ia32_sys_call+0x2530/0x40d0 arch/x86/include/generated/asm/syscalls_32.h:22
+ do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
+ __do_fast_syscall_32+0xb0/0x110 arch/x86/entry/common.c:386
+ do_fast_syscall_32+0x38/0x80 arch/x86/entry/common.c:411
+ do_SYSENTER_32+0x1f/0x30 arch/x86/entry/common.c:449
+ entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+
+CPU: 0 UID: 0 PID: 43 Comm: kworker/0:1H Not tainted 6.12.0-rc7-syzkaller-00012-g3022e9d00ebe #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
+Workqueue: bcachefs_btree_io btree_node_write_work
+=====================================================
 
 
---=20
-Nobuhiro Iwamatsu
-   iwamatsu at {nigauri.org / debian.org / kernel.org}
-   GPG ID: 32247FBB40AD1FA6
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
