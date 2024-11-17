@@ -1,121 +1,157 @@
-Return-Path: <linux-kernel+bounces-412272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 428A99D06B1
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 23:38:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B98809D06B4
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 23:39:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A6462B21E1E
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 22:38:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2DA57B21E59
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 22:39:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4E0B1DD880;
-	Sun, 17 Nov 2024 22:38:31 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 060391DDC2A;
+	Sun, 17 Nov 2024 22:38:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="d7kp6BQH";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="mnbU/buw"
+Received: from fhigh-a4-smtp.messagingengine.com (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9083F1D9A7E
-	for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 22:38:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02A5E144D1A;
+	Sun, 17 Nov 2024 22:38:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731883111; cv=none; b=C/8znUBH+DAfLr+AYkfhCQedlY0fk2+R0zne24vPo5KkrV5s4aLXOjP6dl7+5aHPuDxM41NfOPx+3C37ZjNZFyLutPwRSQdImJPFrmYk3eIgoWY2Br4Zb3Qh+33b/zlOYdLCtPzP/5Bws4lht0IcJUskMBHi+X2wdCasGwn2aEc=
+	t=1731883137; cv=none; b=tMrZ7T3S9GHdEWoPnSVzGTVPC4t04qBMO0StIG/AKN4pMLuze28hLlzkNZblyKO9lfJFOgTG6KIGJ0dhf+nvFoYdZ1o0xqvgjKurcumXVpg+rKjJUTlq7W3T5dU1QujFw/8WDNZ2zpXbvbcsB2WcsINmMqgDAmMgQ8SJZ7EIKis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731883111; c=relaxed/simple;
-	bh=2l9mQSwUstwUuLUzwIPuOARQ5ev1wuJCPXnNgx4NN7w=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=G+dc0W3K66fgxYSdrBcj9qKytrBM2wDmjcj/T1dqyoSu7W0J7ruOhUWtXRd+81DvgMnEGHtcydO5U+5cP6ZLECPLkKXGHIP/40ZcBMGvvD3ZmS667Q/HS0JpfF4c6hd/8nEWD1hkR0DkSqGZnPy3qFJYNG90jkWw8kFgRAPp2eQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-29-2rHpzjVKOP-ixmiiFv3v0A-1; Sun, 17 Nov 2024 22:38:20 +0000
-X-MC-Unique: 2rHpzjVKOP-ixmiiFv3v0A-1
-X-Mimecast-MFC-AGG-ID: 2rHpzjVKOP-ixmiiFv3v0A
-Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
- (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sun, 17 Nov
- 2024 22:38:19 +0000
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Sun, 17 Nov 2024 22:38:19 +0000
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Linus Torvalds' <torvalds@linux-foundation.org>
-CC: Vincent Mailhol <mailhol.vincent@wanadoo.fr>, Yury Norov
-	<yury.norov@gmail.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, "Luc Van
- Oostenryck" <luc.vanoostenryck@gmail.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-sparse@vger.kernel.org"
-	<linux-sparse@vger.kernel.org>, Rikard Falkeborn <rikard.falkeborn@gmail.com>
-Subject: RE: [PATCH v4 1/2] compiler.h: add const_true()
-Thread-Topic: [PATCH v4 1/2] compiler.h: add const_true()
-Thread-Index: AQHbNfHJErTnWAqww06zGCD7FdQ1jLK7v5ZAgAAJngCAAAybIIAABtuAgAABLjCAABBOAIAAHt5Q
-Date: Sun, 17 Nov 2024 22:38:19 +0000
-Message-ID: <2b5282038b1f46bc9a658fb2b6d78350@AcuMS.aculab.com>
-References: <20241113172939.747686-4-mailhol.vincent@wanadoo.fr>
- <20241113172939.747686-5-mailhol.vincent@wanadoo.fr>
- <8bf6922f4bb143d1bc699aadd1c84607@AcuMS.aculab.com>
- <CAHk-=wiq=GUNWJwWh1CRAYchW73UmOaSkaCovLatfDKeveZctA@mail.gmail.com>
- <c2eabf2786c2498eae5772e5af3c456f@AcuMS.aculab.com>
- <CAHk-=whaUtqsgLGk3a+1+SJ2+KGK+GK-WbSK0dX2JpVN3bs0hQ@mail.gmail.com>
- <fab10eb9e70041c0a034f4945a978e00@AcuMS.aculab.com>
- <CAHk-=wgfpLdt7SFFGcByTfHdkvv7AEa3MDu_s_W1kfOxQs49pw@mail.gmail.com>
-In-Reply-To: <CAHk-=wgfpLdt7SFFGcByTfHdkvv7AEa3MDu_s_W1kfOxQs49pw@mail.gmail.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1731883137; c=relaxed/simple;
+	bh=kcUhqc1H/sSqKzCIml06tsv1hCK1orZ6aFoj1a6W/Cc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZgjozZkZti6u+7gZhiskUEsIFYDokoBz3sfedc8GATWkPma+700nZB5s263pewID3yAkKKBwFQmB8JnMCEfwB1Qi1xkJoP7gfX4yiZS4xxArt94jhPKu+MSvWEuxIoR0YX8wYRF8VHZQQftyT387Jb+mquYY/Egc6vt5BNAKoUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=d7kp6BQH; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=mnbU/buw; arc=none smtp.client-ip=103.168.172.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
+Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id F3A46114019E;
+	Sun, 17 Nov 2024 17:38:53 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-03.internal (MEProxy); Sun, 17 Nov 2024 17:38:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1731883133;
+	 x=1731969533; bh=TyZQ3oux8sXs5BpOMWkWK8bYbC++bbMBVEmXrfZoS3Q=; b=
+	d7kp6BQHytP1h9Wp35KVSneMQe8evLLLOkjCYcZ9p/UZvRs3wS0jsmnvACxhnS9P
+	kuTBVemnvrG+p1SRIybTuokCLK7ZiCA7y4Z/5rDwPPjlpctmxOJibbGCBQSFjViZ
+	i6pezuzo8gHtc2eoJ0Rg0qrJ2WmFv4/hlnUB0x9cy8EqcC2NQxc3wE57nhK0RrCi
+	n1WHqU08GvU7z4t5CIG4oz2CyHnNRf26ZeX57do3xsMitXHjevaBMDgwsAdm4QQQ
+	mUOMewDydZS7cfx7thYr0FqRSznihaRjPK1acB1Qr+zZOf8JWOmMDoB4r/QhZAbD
+	4IDH9mA60Y1OmNbNTx2lPQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1731883133; x=
+	1731969533; bh=TyZQ3oux8sXs5BpOMWkWK8bYbC++bbMBVEmXrfZoS3Q=; b=m
+	nbU/buwwYUrQAyx5S9Y7uuXXfhNb908OyP4OSZ0ui9lAbUpIzSgloO984WKrOZpS
+	i8MTMQUztUCu0nesuRcyIqmp2VPxAWg4XfidJvrUZ3DgU2JdHGv8dSqIWNDdv4qR
+	VZ0lW1flKA0RkoQvr6t+juwMEAUa41qNUu7rln76uDpXMIp0wiDImQK7eTJGzNzL
+	UV/bSlKG80qwrdWxoVGIQDz6wyhzlxG44k9lICevx6yoZxv7agU97OnXdksUaTdc
+	Vfs+yUo0XN4RSgZQQ1V3QD5PGooKiEcbeBA/6Vh1m3vb1kMH8t1v6wYXaeMP2ox6
+	DRbYFkFh67Tu2qKdc6DYA==
+X-ME-Sender: <xms:fXA6Z96BCF5uYknDq7mRGDIKHd991mX2eKgLCQQJCrb7zLx2kYUUzg>
+    <xme:fXA6Z67b6jLmzDPUhLwwE8ep_ShVAW5psEdB4I14W_j2rUL0YbRGatjAOVPTG_xJX
+    KGQv426Dkw6r039kds>
+X-ME-Received: <xmr:fXA6Z0c1Jg8mZidDRcUEwDk5lAxp2RenM78Vkpoh0q5MAtWiYxVNRW2UsR18LpUI7xtnz0YEGqBA-yZ-PbvjVpntmbnrl4_q-w>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrvdelgddtudcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtugfgjgesthekredttddtjeen
+    ucfhrhhomheppfhikhhlrghsucfunpguvghrlhhunhguuceonhhikhhlrghsrdhsohguvg
+    hrlhhunhgusehrrghgnhgrthgvtghhrdhsvgeqnecuggftrfgrthhtvghrnhepveetgedt
+    vddvhfdtkeeghfeffeehteehkeekgeefjeduieduueelgedtheekkeetnecuvehluhhsth
+    gvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhhikhhlrghsrdhsohgu
+    vghrlhhunhgusehrrghgnhgrthgvtghhrdhsvgdpnhgspghrtghpthhtohepudejpdhmoh
+    guvgepshhmthhpohhuthdprhgtphhtthhopehrohhsvghnphesghhmrghilhdrtghomhdp
+    rhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtth
+    hopehkuhhrtheslhhinhhuthhrohhnihigrdguvgdprhgtphhtthhopegrnhgurhgvfies
+    lhhunhhnrdgthhdprhgtphhtthhopeholhhtvggrnhhvsehgmhgrihhlrdgtohhmpdhrtg
+    hpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegvughu
+    mhgriigvthesghhoohhglhgvrdgtohhmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlh
+    drohhrghdprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhm
+X-ME-Proxy: <xmx:fXA6Z2Llebuj6Mu__Xn91mLXJlHF_1Ia91oHwnN3c5vx8QSXQpSO7Q>
+    <xmx:fXA6ZxJ7mAUShv7861GzoKjOyMv88BDtZR2EkO4JCWWlvt4KGKkaXw>
+    <xmx:fXA6Z_wu_fGarudwg0_BqSGgyVmFBb5JpzFJroGUnFnzu9T0_ASD3g>
+    <xmx:fXA6Z9L68MvcmYZk6Cv8RXh_V5z1eU9cMr1IxjnNadVK7exp8tQldg>
+    <xmx:fXA6Z-dNDxbuUacU3sy5A9HaBR5hB-c8fAgdPyXnSZZ5Dr1N_6w3_BhF>
+Feedback-ID: i80c9496c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
+ 17 Nov 2024 17:38:52 -0500 (EST)
+Date: Sun, 17 Nov 2024 23:38:50 +0100
+From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+To: Rosen Penev <rosenp@gmail.com>
+Cc: netdev@vger.kernel.org, Kurt Kanzenbach <kurt@linutronix.de>,
+	Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Chris Snook <chris.snook@gmail.com>,
+	Marcin Wojtas <marcin.s.wojtas@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:RENESAS ETHERNET SWITCH DRIVER" <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCHv3 net-next] net: modernize ioremap in probe
+Message-ID: <20241117223850.GK5315@ragnatech.se>
+References: <20241117212711.13612-1-rosenp@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: QWGBq1Oyhs15Hossbzx9xEP4N4yu6aawzubASz3y-IM_1731883100
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241117212711.13612-1-rosenp@gmail.com>
 
-RnJvbTogTGludXMgVG9ydmFsZHMNCj4gU2VudDogMTcgTm92ZW1iZXIgMjAyNCAyMDoxMg0KPiAN
-Cj4gT24gU3VuLCAxNyBOb3YgMjAyNCBhdCAxMToyMywgRGF2aWQgTGFpZ2h0IDxEYXZpZC5MYWln
-aHRAYWN1bGFiLmNvbT4gd3JvdGU6DQo+ID4NCj4gPiBTaW5jZSA5OSUgd2lsbCBiZSAxLDAgbWF5
-YmUgc2F2aW5nIHRoZSBleHRyYSBleHBhbnNpb24gaXMgYmVzdCBhbnl3YXkuDQo+ID4gU28gaGF2
-ZSBpc19jb25zdF96ZXJvKHgpIGFuZCBhZGQgaWZfY29uc3RfemVybyh4LCBpZl96LCBpZl9ueikg
-bGF0ZXIuDQo+IA0KPiBPay4gU28gc29tZXRoaW5nIGxpa2UgdGhpcyBzZWVtcyB0byBnaXZlIHVz
-IHRoZSByZWxldmFudCBjYXNlczoNCj4gDQo+ICAgI2RlZmluZSBfX2lzX2NvbnN0X3plcm8oeCkg
-XA0KPiAgICAgICAgIF9HZW5lcmljKDA/KHZvaWQgKikobG9uZykoeCk6KGNoYXIgKikwLCBjaGFy
-ICo6MSwgdm9pZCAqOjApDQo+IA0KPiAgICNkZWZpbmUgaXNfY29uc3RfemVybyh4KSBfX2lzX2Nv
-bnN0X3plcm8oISEoeCkpDQo+ICAgI2RlZmluZSBpc19jb25zdF90cnVlKHgpIF9faXNfY29uc3Rf
-emVybyghKHgpKQ0KPiAgICNkZWZpbmUgaXNfY29uc3QoeCkgX19pc19jb25zdF96ZXJvKDAqISh4
-KSkNCj4gDQo+IGFuZCBzaG91bGQgd29yayB3aXRoIGFsbCBzY2FsYXIgZXhwcmVzc2lvbnMgdGhh
-dCBJIGNhbiB0aGluayBvZiAob2ssDQo+IHRlY2huaWNhbGx5ICd2b2lkJyBpcyBhIHNjYWxhciB0
-eXBlIGFuZCBpdCBvYnZpb3VzbHkgd29uJ3Qgd29yayB3aXRoDQo+IHRoYXQpLiBBbmQgc2hvdWxk
-IHdvcmsgaW4gYWxsIGNvbnRleHRzLg0KDQpTZWVtcyBhIHJlYXNvbmFibGUgc2V0Lg0KDQpNYXli
-ZSB0aGV5IG5lZWQgYSBzZXQgdGhhdCBhcmUgcGFpcmVkIHdpdGggX19CVUlMRF9CVUdfT05fWkVS
-T19NU0coKQ0KdG8gZ2VuZXJhdGUgYW4gZXJyb3IgbWVzc2FnZSBvbiBmYWlsdXJlLg0KDQpBbHRo
-b3VnaCBJIHdvdWxkIGFkZCBhIGZldyBtb3JlICcgJyBjaGFyYWN0ZXJzIGZvciByZWFkYWJpbGl0
-eS4NCg0KPiBJdCBkb2VzIHdhbnQgYSBjb21tZW50IChpbiBhZGRpdGlvbiB0byB0aGUgY29tbWVu
-dCBhYm91dCBob3cgTlVMTCBpcw0KPiBzcGVjaWFsIGZvciB0aGUgdGVybmFyeSBvcCB0aGF0IG1h
-a2VzIGl0IHdvcmspOiB0aGUgJyhsb25nKScgY2FzdCBpcw0KPiBzbyB0aGF0IHRoZXJlIGFyZSBu
-byB3YXJuaW5ncyBmb3IgY2FzdGluZyB0byAndm9pZCAqJyB3aGVuIGl0J3MgKm5vdCoNCj4gYSBj
-b25zdGFudCB6ZXJvIGV4cHJlc3Npb24sIGFuZCB0aGUgJyEnIHBhdHRlcm4gaXMgdG8gdHVybiBw
-b2ludGVycw0KPiBhbmQgaHVnZSBjb25zdGFudHMgaW50byAnaW50JyB3aXRob3V0IGxvc3Mgb2Yg
-aW5mb3JtYXRpb24gYW5kIHdpdGhvdXQNCj4gd2FybmluZ3MuDQoNClRoZSBjb21tZW50cyB3b3Vs
-ZCBuZWVkIHRvIGJlIHRlcnNlIG9uZS1saW5lcnMuDQoNCkkgd29uZGVyIGlmIGl0IHJlYWRzIGJl
-dHRlciAoYW5kIHdpdGhvdXQgZXh0cmEgY29tbWVudHMpIGlmIHRoZSAobG9uZykNCmNhc3QgaXMg
-cmVtb3ZlZCBhbmQgdGhlICdjYWxsZXJzJyBhcmUgcmVxdWlyZWQgdG8gZ2VuZXJhdGUgJ2xvbmcn
-IGFyZ3MuDQpTbyB5b3UgaGF2ZToNCg0KI2RlZmluZSBfX2lzX2NvbnN0X3plcm8oeCkgXA0KCV9H
-ZW5lcmljKDAgPyAodm9pZCAqKSh4KSA6IChjaGFyICopMCwgY2hhciAqOiAxLCB2b2lkICo6IDAp
-DQogDQojZGVmaW5lIGlzX2NvbnN0X3plcm8oeCkgX19pc19jb25zdF96ZXJvKCh4KSA/IDFMIDog
-MEwpDQojZGVmaW5lIGlzX2NvbnN0X3RydWUoeCkgX19pc19jb25zdF96ZXJvKCh4KSA/IDBMIDog
-MUwpDQojZGVmaW5lIGlzX2NvbnN0KHgpIF9faXNfY29uc3RfemVybygoeCkgPyAwTCA6IDBMKQ0K
-DQpJJ3ZlIGRvbmUgYSBxdWljayB0ZXN0IG9mIHRoZSBsYXN0IG9uZSBpbiBnb2Rib2x0Lg0KDQoJ
-RGF2aWQNCg0KPiANCj4gQ29tcG91bmQgdHlwZXMgb2J2aW91c2x5IHdpbGwgZ2VuZXJhdGUgYSB3
-YXJuaW5nLiBBcyB0aGV5IHNob3VsZC4NCj4gDQo+IFRoZSBhYm92ZSBsb29rcyByZWFzb25hYmxl
-IHRvIG1lLCBidXQgSSBkaWRuJ3QgYWN0dWFsbHkgdGVzdCBhbnkgb2YgaXQNCj4gaW4gdGhlIGFj
-dHVhbCBrZXJuZWwgYnVpbGQuDQo+IA0KPiAgICAgICAgICAgICAgTGludXMNCg0KLQ0KUmVnaXN0
-ZXJlZCBBZGRyZXNzIExha2VzaWRlLCBCcmFtbGV5IFJvYWQsIE1vdW50IEZhcm0sIE1pbHRvbiBL
-ZXluZXMsIE1LMSAxUFQsIFVLDQpSZWdpc3RyYXRpb24gTm86IDEzOTczODYgKFdhbGVzKQ0K
+Hello Rosen,
 
+Thanks for your work.
+
+On 2024-11-17 13:27:11 -0800, Rosen Penev wrote:
+
+> diff --git a/drivers/net/ethernet/renesas/rtsn.c 
+> b/drivers/net/ethernet/renesas/rtsn.c
+> index 6b3f7fca8d15..bfe08facc707 100644
+> --- a/drivers/net/ethernet/renesas/rtsn.c
+> +++ b/drivers/net/ethernet/renesas/rtsn.c
+> @@ -1297,14 +1297,8 @@ static int rtsn_probe(struct platform_device *pdev)
+>  	ndev->netdev_ops = &rtsn_netdev_ops;
+>  	ndev->ethtool_ops = &rtsn_ethtool_ops;
+>  
+> -	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "gptp");
+> -	if (!res) {
+> -		dev_err(&pdev->dev, "Can't find gptp resource\n");
+> -		ret = -EINVAL;
+> -		goto error_free;
+> -	}
+> -
+> -	priv->ptp_priv->addr = devm_ioremap_resource(&pdev->dev, res);
+> +	priv->ptp_priv->addr =
+> +		devm_platform_ioremap_resource_byname(pdev, "gptp");
+>  	if (IS_ERR(priv->ptp_priv->addr)) {
+>  		ret = PTR_ERR(priv->ptp_priv->addr);
+>  		goto error_free;
+
+You have a similar construct using platform_get_resource_byname() a few 
+lines above this one. Please convert both uses, or none, mixing them is 
+just confusing IMHO.
+
+-- 
+Kind Regards,
+Niklas Söderlund
 
