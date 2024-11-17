@@ -1,98 +1,210 @@
-Return-Path: <linux-kernel+bounces-412248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED9629D05F4
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 21:53:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AE119D05FD
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 21:54:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5093282119
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 20:53:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40CDE282327
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 20:54:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38A0F1DD889;
-	Sun, 17 Nov 2024 20:52:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCDB31DC1B7;
+	Sun, 17 Nov 2024 20:54:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=candelatech.com header.i=@candelatech.com header.b="jomFyei4"
-Received: from dispatch1-us1.ppe-hosted.com (dispatch1-us1.ppe-hosted.com [148.163.129.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="XZe5vUJI"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9482E1DC184
-	for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 20:52:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.129.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E2811D363D;
+	Sun, 17 Nov 2024 20:54:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731876764; cv=none; b=BkQb9PI470SaNehvrSeg2rtyJ0mB8kA/Hz+hq17wi5SGRvAsja9TNXoAlx8R5xKi1OINia6MSOrm72Yr8G4a6lNhuTMczJlDFZTpWDYI1RgASIlbOD8WSXLamKArgdGFf8ZhGRbs4RrOO/9cMSRl06rHDnHZONHNown5jNL0i4o=
+	t=1731876886; cv=none; b=t4lmYoX6ZLkOtSjLDubmKWp/EvqoGdvk5GBpfp7TCdrVAzotZW3GmUk45YxaHuf4VoPlE+atiOC9DFFSkJpcuOUSpC4xBeC1kKRfn2J52N94GGfJzzvRxt4wfesQQoWkmruEjo+pB9d0A3FNlos0F+tR+166ARMUFBVRsSd58Ps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731876764; c=relaxed/simple;
-	bh=YZPjXdN8hyCdHemnE5jLshMjS+y/JaTHEu54KLugluk=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=cga74y5FyD2JDnZG49onyd+LOsJOY+gb7s/xSAaUbBBlkoIt5DQooxXO5iNK7KuF+XKUoubQNRD58G42elamAvMFFOV+Lc5xU/jIYt2C+uDAWypGRsFrVv0M1hK0Nkrt6Sxu2romvBV6NduvUtt3a11sBmbAt6Y/hRc98ra9AT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=candelatech.com; spf=pass smtp.mailfrom=candelatech.com; dkim=pass (1024-bit key) header.d=candelatech.com header.i=@candelatech.com header.b=jomFyei4; arc=none smtp.client-ip=148.163.129.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=candelatech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=candelatech.com
-X-Virus-Scanned: Proofpoint Essentials engine
-Received: from mail3.candelatech.com (mail.candelatech.com [208.74.158.173])
-	by mx1-us1.ppe-hosted.com (PPE Hosted ESMTP Server) with ESMTP id D4A77600067;
-	Sun, 17 Nov 2024 20:52:34 +0000 (UTC)
-Received: from [10.252.34.165] (unknown [198.134.98.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by mail3.candelatech.com (Postfix) with ESMTPSA id 3CDE913C2B0;
-	Sun, 17 Nov 2024 12:52:34 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail3.candelatech.com 3CDE913C2B0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=candelatech.com;
-	s=default; t=1731876754;
-	bh=YZPjXdN8hyCdHemnE5jLshMjS+y/JaTHEu54KLugluk=;
-	h=Date:To:Cc:From:Subject:From;
-	b=jomFyei4EITy64heYOjb+p9q1LSZKd8wP73V+W8WbmeQW/AeXzrzJPIYIC8tMFq+d
-	 wL24cCdCu++ynclmKxRdBth+wqMftgEGpkJn6kt02/xPa58gOjeUrte+U9NUFpZma0
-	 bQaNKHXE+tv+LNMuWg9bySF/3j/1synsjJ4q5YV4=
-Message-ID: <f2aefd64-8881-4690-aacc-ad676c9826e7@candelatech.com>
-Date: Sun, 17 Nov 2024 12:52:34 -0800
+	s=arc-20240116; t=1731876886; c=relaxed/simple;
+	bh=w9SUo0onmIEsCbHLk8aWeLWWcw+C7sEI352gJsh+oTo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uAHkXXuUgrgHZMegLcncXyYT05HB61j8b6lThkdSI4aVj28ZZXb0phb6wXWLwIo+bImHNTUMM4Bn0Ux8IkH+ydOpgVIuMDbpJPnVOqrXWJj9c/R6jdB4SNtFPGM/bSI41okC8zhCI0YRexY5BzIuNTkDo+VPjqcG8Edfn9Scdqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=XZe5vUJI; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 701F57FE;
+	Sun, 17 Nov 2024 21:54:19 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1731876859;
+	bh=w9SUo0onmIEsCbHLk8aWeLWWcw+C7sEI352gJsh+oTo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XZe5vUJIolLfMAXIsVhz7GffiGmYnhewBuHdpxEvyTaXOd4N0DgZ4tZSXv4c2lG6W
+	 P1rY+Y4mit0F7L7b6m1SfRmXQEUS7GNzudoX7LQ8FZPzyXf8+sXDu7C268CgkZxL7P
+	 /8QQwAwE2VSY81CTqI8e/nIrkb9w4cBk5Zd/KEKQ=
+Date: Sun, 17 Nov 2024 22:54:26 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Jani Nikula <jani.nikula@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>,
+	Danilo Krummrich <dakr@redhat.com>,
+	Harry Wentland <harry.wentland@amd.com>,
+	Leo Li <sunpeng.li@amd.com>,
+	Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
+	Xinhui Pan <Xinhui.Pan@amd.com>,
+	Alain Volmat <alain.volmat@foss.st.com>,
+	Raphael Gallais-Pou <rgallaispou@gmail.com>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Peter Senna Tschudin <peter.senna@gmail.com>,
+	Ian Ray <ian.ray@ge.com>,
+	Martyn Welch <martyn.welch@collabora.co.uk>,
+	Inki Dae <inki.dae@samsung.com>,
+	Seung-Woo Kim <sw0312.kim@samsung.com>,
+	Kyungmin Park <kyungmin.park@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Stefan Agner <stefan@agner.ch>, Alison Wang <alison.wang@nxp.com>,
+	Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Rob Clark <robdclark@gmail.com>,
+	Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	Sean Paul <sean@poorly.run>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	Dave Airlie <airlied@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>,
+	Sandy Huang <hjc@rock-chips.com>,
+	Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>,
+	Andy Yan <andy.yan@rock-chips.com>, Chen-Yu Tsai <wens@csie.org>,
+	Samuel Holland <samuel@sholland.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	=?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>,
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
+	Gurchetan Singh <gurchetansingh@chromium.org>,
+	Chia-I Wu <olvaffe@gmail.com>, Zack Rusin <zack.rusin@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	nouveau@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+	virtualization@lists.linux.dev, spice-devel@lists.freedesktop.org,
+	linux-rockchip@lists.infradead.org, linux-sunxi@lists.linux.dev,
+	linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 1/5] drm/encoder_slave: make mode_valid accept const
+ struct drm_display_mode
+Message-ID: <20241117205426.GE12409@pendragon.ideasonboard.com>
+References: <20241115-drm-connector-mode-valid-const-v1-0-b1b523156f71@linaro.org>
+ <20241115-drm-connector-mode-valid-const-v1-1-b1b523156f71@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Language: en-MW
-Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>
-From: Ben Greear <greearb@candelatech.com>
-Subject: Bind wiregard interface to VRF
-Organization: Candela Technologies
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-MDID: 1731876755-uEj5r1WQqF0Q
-X-MDID-O:
- us5;ut7;1731876755;uEj5r1WQqF0Q;<greearb@candelatech.com>;36aee6e67036a1cc1127540b8af91e62
-X-PPE-TRUSTED: V=1;DIR=OUT;
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241115-drm-connector-mode-valid-const-v1-1-b1b523156f71@linaro.org>
 
-Hello,
+Hi Dmitry,
 
-I am interested in binding wireguard interface to a VRF.
+Thank you for the patch.
 
-I was thinking the parentdev option in 'ip link add' logic could be used to
-set the bind_ifindex in the 'struct udp_port_cfg' object.  I didn't fully follow
-this through to see if it could work, but it seems likely.
+On Fri, Nov 15, 2024 at 11:09:26PM +0200, Dmitry Baryshkov wrote:
+> The mode_valid() callbacks of drm_encoder, drm_crtc and drm_bridge
+> accept const struct drm_display_mode argument. Change the mode_valid
+> callback of drm_encoder_slave to also accept const argument.
+> 
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-Something like:
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-ip link add wg1 type wireguard parentdev vrf1
+On a side note, there's only two I2C slave encoder drivers left... I
+wonder if we could so something about them. The ch7006 and sil164
+drivers seem to be used by nouveau only, could they be moved to
+drivers/gpu/drm/nouveau/ ? We would move the whole drm_encoder_slave
+implementation there too, and leave it to die (or get taken out of limbo
+and fixed) with dispnv04.
 
-
-I think as long as the UDP socket is created/bound with something similar to how
-user-space applications often support --interface eth1 argument, then it would do
-what I want.
-
-I'm curious if there has been any effort in this direction or if anyone has suggestions
-for most acceptable path forward.
-
-Thanks,
-Ben
+> ---
+>  drivers/gpu/drm/i2c/ch7006_drv.c          | 2 +-
+>  drivers/gpu/drm/i2c/sil164_drv.c          | 2 +-
+>  drivers/gpu/drm/nouveau/dispnv04/tvnv17.c | 2 +-
+>  include/drm/drm_encoder_slave.h           | 2 +-
+>  4 files changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/i2c/ch7006_drv.c b/drivers/gpu/drm/i2c/ch7006_drv.c
+> index 131512a5f3bd996ad1e2eb869ffa09837daba0c7..a57f0a41c1a9e2006142fe0bad2914b0c344c82a 100644
+> --- a/drivers/gpu/drm/i2c/ch7006_drv.c
+> +++ b/drivers/gpu/drm/i2c/ch7006_drv.c
+> @@ -104,7 +104,7 @@ static bool ch7006_encoder_mode_fixup(struct drm_encoder *encoder,
+>  }
+>  
+>  static int ch7006_encoder_mode_valid(struct drm_encoder *encoder,
+> -				     struct drm_display_mode *mode)
+> +				     const struct drm_display_mode *mode)
+>  {
+>  	if (ch7006_lookup_mode(encoder, mode))
+>  		return MODE_OK;
+> diff --git a/drivers/gpu/drm/i2c/sil164_drv.c b/drivers/gpu/drm/i2c/sil164_drv.c
+> index ff23422727fce290a188e495d343e32bc2c373ec..708e119072fcb50c31b5596b75dc341429b93697 100644
+> --- a/drivers/gpu/drm/i2c/sil164_drv.c
+> +++ b/drivers/gpu/drm/i2c/sil164_drv.c
+> @@ -255,7 +255,7 @@ sil164_encoder_restore(struct drm_encoder *encoder)
+>  
+>  static int
+>  sil164_encoder_mode_valid(struct drm_encoder *encoder,
+> -			  struct drm_display_mode *mode)
+> +			  const struct drm_display_mode *mode)
+>  {
+>  	struct sil164_priv *priv = to_sil164_priv(encoder);
+>  
+> diff --git a/drivers/gpu/drm/nouveau/dispnv04/tvnv17.c b/drivers/gpu/drm/nouveau/dispnv04/tvnv17.c
+> index 3ecb101d23e949b753b873d24eec01ad6fe7f5d6..35ad4e10d27323c87704a3ff35b7dc26462c82bd 100644
+> --- a/drivers/gpu/drm/nouveau/dispnv04/tvnv17.c
+> +++ b/drivers/gpu/drm/nouveau/dispnv04/tvnv17.c
+> @@ -308,7 +308,7 @@ static int nv17_tv_get_modes(struct drm_encoder *encoder,
+>  }
+>  
+>  static int nv17_tv_mode_valid(struct drm_encoder *encoder,
+> -			      struct drm_display_mode *mode)
+> +			      const struct drm_display_mode *mode)
+>  {
+>  	struct nv17_tv_norm_params *tv_norm = get_tv_norm(encoder);
+>  
+> diff --git a/include/drm/drm_encoder_slave.h b/include/drm/drm_encoder_slave.h
+> index 49172166a164474f43e4afb2eeeb3cde8ae7c61a..b526643833dcf78bae29f9fbbe27de3f730b55d8 100644
+> --- a/include/drm/drm_encoder_slave.h
+> +++ b/include/drm/drm_encoder_slave.h
+> @@ -85,7 +85,7 @@ struct drm_encoder_slave_funcs {
+>  	 * @mode_valid: Analogous to &drm_encoder_helper_funcs @mode_valid.
+>  	 */
+>  	int (*mode_valid)(struct drm_encoder *encoder,
+> -			  struct drm_display_mode *mode);
+> +			  const struct drm_display_mode *mode);
+>  	/**
+>  	 * @mode_set: Analogous to &drm_encoder_helper_funcs @mode_set
+>  	 * callback. Wrapped by drm_i2c_encoder_mode_set().
+> 
 
 -- 
-Ben Greear <greearb@candelatech.com>
-Candela Technologies Inc  http://www.candelatech.com
+Regards,
 
+Laurent Pinchart
 
