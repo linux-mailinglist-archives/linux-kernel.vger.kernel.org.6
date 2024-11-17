@@ -1,113 +1,98 @@
-Return-Path: <linux-kernel+bounces-412247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 751EC9D05E8
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 21:49:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED9629D05F4
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 21:53:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11DDEB21A48
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 20:49:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5093282119
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 20:53:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD1731DD880;
-	Sun, 17 Nov 2024 20:49:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38A0F1DD889;
+	Sun, 17 Nov 2024 20:52:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z7XEhU1l"
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	dkim=pass (1024-bit key) header.d=candelatech.com header.i=@candelatech.com header.b="jomFyei4"
+Received: from dispatch1-us1.ppe-hosted.com (dispatch1-us1.ppe-hosted.com [148.163.129.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2BEB17BB6;
-	Sun, 17 Nov 2024 20:49:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9482E1DC184
+	for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 20:52:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.129.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731876576; cv=none; b=XDdh1nrCNoY4u0lhOzFwQ3n2hTM0RNqcCH3QZKmt6Bo8pZlhI+vl0faNDukijIKMm/MGoIroOLyfZcKwO87+JLDGBJq4uPwoMySYeYrfNUwoWMkzkLKz8ghwq6Z5tAJOdEb0TE1y1UvO1/919O/ZwMH3sZLdKD7kcUA3gxN3vXQ=
+	t=1731876764; cv=none; b=BkQb9PI470SaNehvrSeg2rtyJ0mB8kA/Hz+hq17wi5SGRvAsja9TNXoAlx8R5xKi1OINia6MSOrm72Yr8G4a6lNhuTMczJlDFZTpWDYI1RgASIlbOD8WSXLamKArgdGFf8ZhGRbs4RrOO/9cMSRl06rHDnHZONHNown5jNL0i4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731876576; c=relaxed/simple;
-	bh=RUh5Z//qokD1EHed93XgS2G8TkaYHQNEYjVLmW0YjxM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cEWy1dFHdnSJBDow4OWOBHXvIlf4zqGl3XNNBDnHUfK3vRdb0VW+FRDtXIczSxcGIGX7RVG4jy5lbOyWazAu04lTKQiSo3VWC7Cjp5JGoKMG6pC0eF30caHMe+xBB9nI8v6RJHSx3uDfnJYfHsrIkJgOGwYTiqu9qK5jHb1l8eg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z7XEhU1l; arc=none smtp.client-ip=209.85.215.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-7ea7e2204d1so701481a12.0;
-        Sun, 17 Nov 2024 12:49:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731876574; x=1732481374; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RUh5Z//qokD1EHed93XgS2G8TkaYHQNEYjVLmW0YjxM=;
-        b=Z7XEhU1lurFbpxD3J1NmXo1zQygGnI1sUIAPnSimYSj20g89N7HvHc9m4mquqMtoPn
-         eIRwY0g8JQ68KXhq1+k0vLmyv8ypWI4z8siFtjx+FiveUivfiNqqHblbZEmpqJZ2CNTv
-         wgzl9zddLjguUN+FayiMYKfr+lUNSWKlNOY/j5YEXAd0cN+mEiXi3YqHz2sbXhiOo4Kk
-         HWM5StygeUKjW7uIgNRBnhO+vkwycOuV2rm4CzRAlAnd/fdkxytBXSq5JMt7GQxgWPhP
-         LLeLfPeR/BTX/jOG6xKkGIQRDNHFU4o4+2WRCEfvM1Ll/E8tiYaU5HmxWYj7dlaf87eY
-         JwQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731876574; x=1732481374;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RUh5Z//qokD1EHed93XgS2G8TkaYHQNEYjVLmW0YjxM=;
-        b=qyOs2VydB44nzpD74dKDN4ERZMW3aS2Fvy0ZrbYAFnXsq5N7aFXUmL8IkLXbgSBURH
-         vTvx5vwpsvZxgA/TsUfJSvyDqcQnp7kM5/flXdFtYcz2L/0sgWUuW3Y/n4SMXZ8ZJqlK
-         WjbrrwzUAtZqwe9ArKuZfBWJ9sjOaIUUvPHW2zDRxfsznSqas/rGfTh3TmJYn9ne5abi
-         4oG+WBusa2t617CMEs0p+ZPqm3CvAYWDq8pX9uD7N21dzx0fFk+7xMIl0kGlalXl6XJg
-         nY4qXi73TDomgvqmPKZIjosXpz+g0u1IWpa1+k9vXroj12tizylB8lkv6xnbjWPaXAAi
-         mMhA==
-X-Forwarded-Encrypted: i=1; AJvYcCVXeaK6tbpSdzF1PxMD52tMHMG/GYNlyLs+ToBzntLU1cfOV19fmE/D35cR0q/hSY4v7QyqY7dVlh1mnw==@vger.kernel.org, AJvYcCWW2CogxfEiCg2eDRZX3TgJE1BTXzXeyWOROHLSr6vChX0nrJHUeEII/3Z8PwtX41jOhiF/uLjq@vger.kernel.org, AJvYcCXAQQz0cJwJyjVGWmWmBStt+ErV3Lp8pGZnkJOIcUfQlpE8EQS+ZH7Mw4g2Tk8dALuwaIyOTPtQPZQ6xNneRkA=@vger.kernel.org, AJvYcCXEf1ASePbWuOk7KGze2gHRuytdZhZDBXXJuppcQYljDvoDyb//UKin8ibpi773vORMb+c261v7LDaCJzjv@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6CVCoH8qjeZDdIe5MEYCN4WfJwBAb++Ko0grWoHVapi0mGozx
-	XgeqaF5kCVQeB+r/yiNSHNiK6kH9ToaeKycCbKAQVBM4K2clGb2G5VDNeJ8wLb24e/jbyXhIidx
-	0PRsnxb7SgGVAcUrasl9IdoyfMxY=
-X-Google-Smtp-Source: AGHT+IG9vm4VgRwNRukE21UZzKhSxM8wQwmAjdt8NVMeFerxL1QCjKVJKSenujzwCjqlLkK4hlmk87d9BqlykZMHd7w=
-X-Received: by 2002:a17:90a:e70c:b0:2ea:47f1:79d3 with SMTP id
- 98e67ed59e1d1-2ea47f18194mr2098649a91.6.1731876574192; Sun, 17 Nov 2024
- 12:49:34 -0800 (PST)
+	s=arc-20240116; t=1731876764; c=relaxed/simple;
+	bh=YZPjXdN8hyCdHemnE5jLshMjS+y/JaTHEu54KLugluk=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=cga74y5FyD2JDnZG49onyd+LOsJOY+gb7s/xSAaUbBBlkoIt5DQooxXO5iNK7KuF+XKUoubQNRD58G42elamAvMFFOV+Lc5xU/jIYt2C+uDAWypGRsFrVv0M1hK0Nkrt6Sxu2romvBV6NduvUtt3a11sBmbAt6Y/hRc98ra9AT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=candelatech.com; spf=pass smtp.mailfrom=candelatech.com; dkim=pass (1024-bit key) header.d=candelatech.com header.i=@candelatech.com header.b=jomFyei4; arc=none smtp.client-ip=148.163.129.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=candelatech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=candelatech.com
+X-Virus-Scanned: Proofpoint Essentials engine
+Received: from mail3.candelatech.com (mail.candelatech.com [208.74.158.173])
+	by mx1-us1.ppe-hosted.com (PPE Hosted ESMTP Server) with ESMTP id D4A77600067;
+	Sun, 17 Nov 2024 20:52:34 +0000 (UTC)
+Received: from [10.252.34.165] (unknown [198.134.98.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by mail3.candelatech.com (Postfix) with ESMTPSA id 3CDE913C2B0;
+	Sun, 17 Nov 2024 12:52:34 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail3.candelatech.com 3CDE913C2B0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=candelatech.com;
+	s=default; t=1731876754;
+	bh=YZPjXdN8hyCdHemnE5jLshMjS+y/JaTHEu54KLugluk=;
+	h=Date:To:Cc:From:Subject:From;
+	b=jomFyei4EITy64heYOjb+p9q1LSZKd8wP73V+W8WbmeQW/AeXzrzJPIYIC8tMFq+d
+	 wL24cCdCu++ynclmKxRdBth+wqMftgEGpkJn6kt02/xPa58gOjeUrte+U9NUFpZma0
+	 bQaNKHXE+tv+LNMuWg9bySF/3j/1synsjJ4q5YV4=
+Message-ID: <f2aefd64-8881-4690-aacc-ad676c9826e7@candelatech.com>
+Date: Sun, 17 Nov 2024 12:52:34 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241117-simplify-result-v1-1-5b01bd230a6b@iiitd.ac.in> <3721a7b2-4a8f-478c-bbeb-fdf22ded44c9@lunn.ch>
-In-Reply-To: <3721a7b2-4a8f-478c-bbeb-fdf22ded44c9@lunn.ch>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Sun, 17 Nov 2024 21:49:20 +0100
-Message-ID: <CANiq72kk0gsC8gohDT9aqY6r4E+pxNC6=+v8hZqthbaqzrFhLg@mail.gmail.com>
-Subject: Re: [PATCH] rust: simplify Result<()> uses
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: manas18244@iiitd.ac.in, FUJITA Tomonori <fujita.tomonori@gmail.com>, 
-	Trevor Gross <tmgross@umich.edu>, Heiner Kallweit <hkallweit1@gmail.com>, 
-	Russell King <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>, 
-	Shuah Khan <skhan@linuxfoundation.org>, Anup Sharma <anupnewsmail@gmail.com>, 
-	netdev@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Language: en-MW
+Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>
+From: Ben Greear <greearb@candelatech.com>
+Subject: Bind wiregard interface to VRF
+Organization: Candela Technologies
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-MDID: 1731876755-uEj5r1WQqF0Q
+X-MDID-O:
+ us5;ut7;1731876755;uEj5r1WQqF0Q;<greearb@candelatech.com>;36aee6e67036a1cc1127540b8af91e62
+X-PPE-TRUSTED: V=1;DIR=OUT;
 
-On Sun, Nov 17, 2024 at 7:26=E2=80=AFPM Andrew Lunn <andrew@lunn.ch> wrote:
->
-> Please split these patches up per subsystem, and submit them
-> individually to the appropriate subsystems.
+Hello,
 
-That is good advice, although if you and block are Ok with an Acked-by
-(assuming a good v2), we could do that too.
+I am interested in binding wireguard interface to a VRF.
 
-Manas: I forgot to mention in the issue that this could be a good case
-for a `checkpatch.pl` check (I added it now). It would be great if you
-could add that in a different (and possibly independent) patch.
+I was thinking the parentdev option in 'ip link add' logic could be used to
+set the bind_ifindex in the 'struct udp_port_cfg' object.  I didn't fully follow
+this through to see if it could work, but it seems likely.
 
-Of course, it is not a requirement, but it would be a nice opportunity
-to contribute something extra related to this :)
+Something like:
 
-Thanks!
+ip link add wg1 type wireguard parentdev vrf1
 
-Cheers,
-Miguel
+
+I think as long as the UDP socket is created/bound with something similar to how
+user-space applications often support --interface eth1 argument, then it would do
+what I want.
+
+I'm curious if there has been any effort in this direction or if anyone has suggestions
+for most acceptable path forward.
+
+Thanks,
+Ben
+
+-- 
+Ben Greear <greearb@candelatech.com>
+Candela Technologies Inc  http://www.candelatech.com
+
 
