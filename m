@@ -1,153 +1,93 @@
-Return-Path: <linux-kernel+bounces-412173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 179D29D04E6
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 18:46:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CA6109D04E8
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 18:49:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BA101F215CA
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 17:46:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7178F1F2165F
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 17:49:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AABA1DACA8;
-	Sun, 17 Nov 2024 17:46:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GrcmPlGp"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1BA21D9A47;
+	Sun, 17 Nov 2024 17:49:04 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D7CE17591;
-	Sun, 17 Nov 2024 17:46:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 178A2A945
+	for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 17:49:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731865577; cv=none; b=BSqJLqWEZXxb6zeFWRjjyFdp+LhREA6Tw4ngMWg/dSWc/442bgvuzZhp9BUEZ7pO8ohdtIBgE6U8bEbP433znugaY6EdYiGaAgdpdTK7AD9i3LZ9dsW1x18qj9fRF5xj3VirpQ7DjkTEPWryQnCijB/FNBjNOnFgrxTs8f+KMwQ=
+	t=1731865744; cv=none; b=YftsfKJ8juE7RIZwRpLyl/WMqBei1qAT8GPoBOg4SK59w07j6pwYVIbLglUb8J6yRlB1foswHSd7Oy6hgfM8Y6vus2o4iaX2mvNsX9s3j4sGLbQ0Eq3vP7XQF10AyGP5PTdqH1eB9SXmsZhoFGlE0+aPoy+hoKbcayDwXnV5uP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731865577; c=relaxed/simple;
-	bh=d4PA4dekFrbPidu64a4HKq8oTBnE6bajLq9aru2A85E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=UKsGMrphv/YTC0Jbx3qXTqfE3bS5/KCZH9itq/y/XMPtH2y7S66zgaYjfBQ8FjTsDEGkmAe8FtNveZAeJCMPmdIYymxVR2r6gvrAnkFy1m8kVRW5UE4RrbJNs7OIVQ2SY1Ql/HExfNA6XItpxgunZW5d6ACJ8Y58qtB0yVY61MQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GrcmPlGp; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AHGMi5T029188;
-	Sun, 17 Nov 2024 17:46:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	AfYabs+tjtdSrn/b9JlV7O8Zk+qQd/9P8eF6s33xDM4=; b=GrcmPlGpthJZGBjt
-	JrwzVJQbVc5lcBKq5uiAiaR/3U74r4epvC1eAq6kZyk9VT+8K2/B9Qxbj2Vfe2cu
-	bqVwWlPvaxTgN7cJNCBhNGhpCT6F/32ULQFnS83q0BbZlEC+GlY/qM7wrUtgkGlx
-	jo+Ax8a/JjGcqlUr6jx0SsS5HFaayP2YDYy1ye6wzgIa+b7UUvvL3Vl1FmpRrm81
-	3M3TDAR/7DZnXA9tpkDpMWdc9bc5rkSbRVlUzfMLgyQmyzdJ076A9B8ZbHKoKy4l
-	sVIK9yvHW2orB2R/axMa/R71W4cpY9HBoqtEb70pLmSSqOfDlI56JHMsCm+ZDEoT
-	0jqjwA==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42xkrm2hvm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 17 Nov 2024 17:46:03 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AHHk2h9007072
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 17 Nov 2024 17:46:02 GMT
-Received: from [10.216.44.33] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 17 Nov
- 2024 09:45:55 -0800
-Message-ID: <ff20d185-4db4-482b-b6dd-06e46124b8ab@quicinc.com>
-Date: Sun, 17 Nov 2024 23:15:51 +0530
+	s=arc-20240116; t=1731865744; c=relaxed/simple;
+	bh=RmZwaPE9t9S4xO4E+RPxgKRwz63mR86k6WsistzGryw=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=C/JXdGyNtpcgEfH7qgI2fapzJgJBoCkbACTFp5HCqHoAKos3MfTojWglRoz7SxGjJZ/2Arzqnu+OodBsDq2YKOPpr96YyhwU3IkEn4u/0IxaV3zdZHFgIAI1Eof65uvOH5wkE/51ll0pmt6scZZrY+EbOQ0r7/i0CmwJo2htOO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a3c5a6c5e1so42650525ab.2
+        for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 09:49:02 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731865742; x=1732470542;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lH039o7iT31/Qu/1scxtSdidkcelHSCYJg58Ymh6JG0=;
+        b=FNRkcHdK721tDmF+mhquRFxB+Li8xAlAZvc/QmeLrxH8s63btbDSZVYq0HF9Ka1Psq
+         W8lhwBh3JGuWJk7nrXeKKXp0S/uXt2mP+zuCgiJRCogB2vPyKYMYOnAtPw67YOFG2Pqf
+         G06wh42+EW4iPi4UFUgqUBmt8hv7V12b6/+8ujdj2gB7VH2kWRJSiTMRG23o1DUCJC3s
+         ahmxfMMv4uVM9IdQFSQglcgJ9SqKQtN6ufurCfnUDDeJun3zs/YUbyLjzWbmX8ZQpgIU
+         d2NJzyEqc2yvMSlcLVJlP86GXz4xur7x46k28seSo+HHbmKxuyiSLTgFvQHUWMIw8fWF
+         IiqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWZ0lx5DL0PYwItnleUiRX62q60GHlm5Czfj83V1uckuxtsgYTHmjDD2Fb6GiLuEqe/ePYojL9l7ncxUfI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzyPTBo5Mil7evoZXiEzg2WOAcFfKOLwnWTYB2THDuOp5gyfiKl
+	SPKSZTUpBVjff6SnY+tIhrOkTU8HUidteTLY7byY5b/oe0ioy+q+MrmNyN/2ZeOQitIQlmf8X3y
+	xeZUSYIdeicc+zz86szcNaHsBNoB7nTTQO2EjwadyOkK1uC4ci79aNJQ=
+X-Google-Smtp-Source: AGHT+IHgeFp9d9NI51lcsjZ1noXS6I6lDq/BwKeNkva1lw7F6tNxdBBtcQk6nkn5cPhLIMXMVlqRtPZMlC3JxYVyUzaR8xHWIlmA
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/4] dt-bindindgs: i2c: qcom,i2c-geni: Document shared
- flag
-To: Rob Herring <robh@kernel.org>
-CC: <konrad.dybcio@linaro.org>, <andersson@kernel.org>,
-        <andi.shyti@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-i2c@vger.kernel.org>, <conor+dt@kernel.org>,
-        <agross@kernel.org>, <devicetree@vger.kernel.org>, <vkoul@kernel.org>,
-        <linux@treblig.org>, <dan.carpenter@linaro.org>, <Frank.Li@nxp.com>,
-        <konradybcio@kernel.org>, <bryan.odonoghue@linaro.org>,
-        <krzk+dt@kernel.org>, <quic_vdadhani@quicinc.com>
-References: <20241113161413.3821858-1-quic_msavaliy@quicinc.com>
- <20241113161413.3821858-2-quic_msavaliy@quicinc.com>
- <20241115173156.GA3432253-robh@kernel.org>
-Content-Language: en-US
-From: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
-In-Reply-To: <20241115173156.GA3432253-robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: TrqZK6ySCZyw15zvzb8M31VMCLnuwXst
-X-Proofpoint-ORIG-GUID: TrqZK6ySCZyw15zvzb8M31VMCLnuwXst
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 phishscore=0
- spamscore=0 adultscore=0 mlxlogscore=999 malwarescore=0 impostorscore=0
- clxscore=1015 bulkscore=0 priorityscore=1501 lowpriorityscore=0 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2411170160
+X-Received: by 2002:a05:6e02:1949:b0:3a0:5642:c78 with SMTP id
+ e9e14a558f8ab-3a748082c35mr93496865ab.15.1731865742330; Sun, 17 Nov 2024
+ 09:49:02 -0800 (PST)
+Date: Sun, 17 Nov 2024 09:49:02 -0800
+In-Reply-To: <00000000000093a1ca0621e8d336@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <673a2c8e.050a0220.87769.0012.GAE@google.com>
+Subject: Re: [syzbot] [ocfs2?] possible deadlock in ocfs2_page_mkwrite
+From: syzbot <syzbot+2e6495950edcf7fbfccf@syzkaller.appspotmail.com>
+To: elic@nvidia.com, jasowang@redhat.com, jlbec@evilplan.org, 
+	joseph.qi@linux.alibaba.com, linux-kernel@vger.kernel.org, mark@fasheh.com, 
+	mst@redhat.com, ocfs2-devel@lists.linux.dev, ocfs2-devel@oss.oracle.com, 
+	parav@nvidia.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Thanks Rob for your review and comments !
+syzbot has bisected this issue to:
 
-On 11/15/2024 11:01 PM, Rob Herring wrote:
-> On Wed, Nov 13, 2024 at 09:44:10PM +0530, Mukesh Kumar Savaliya wrote:
->> Adds qcom,is-shared flag usage. Use this flag when I2C serial controller
-> 
-> Doesn't match the property name.
-Sure, i need to change the name here as qcom,shared-se, will upload a 
-new patch.
-> 
->> needs to be shared in multiprocessor system(APPS,Modem,ADSP) environment.
->>
->> Two clients from different processors can share an I2C controller for same
->> slave device OR their owned slave devices. Assume I2C Slave EEPROM device
->> connected with I2C controller. Each client from ADSP SS and APPS Linux SS
->> can perform i2c transactions.
->>
->> Transfer gets serialized by Lock TRE + DMA xfer + Unlock TRE at HW level.
->>
->> Signed-off-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
->> ---
->>   Documentation/devicetree/bindings/i2c/qcom,i2c-geni-qcom.yaml | 4 ++++
->>   1 file changed, 4 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/i2c/qcom,i2c-geni-qcom.yaml b/Documentation/devicetree/bindings/i2c/qcom,i2c-geni-qcom.yaml
->> index 9f66a3bb1f80..fe36938712f7 100644
->> --- a/Documentation/devicetree/bindings/i2c/qcom,i2c-geni-qcom.yaml
->> +++ b/Documentation/devicetree/bindings/i2c/qcom,i2c-geni-qcom.yaml
->> @@ -60,6 +60,10 @@ properties:
->>     power-domains:
->>       maxItems: 1
->>   
->> +  qcom,shared-se:
-> 
-> What is 'se'? Is that defined somewhere?
-> 
-SE is Serial Engine acting as I2C controller. Let me add second line for 
-SE here also.
+commit a3c06ae158dd6fa8336157c31d9234689d068d02
+Author: Parav Pandit <parav@nvidia.com>
+Date:   Tue Jan 5 10:32:03 2021 +0000
 
-It's mentioned in source code in Patch 3 where it's used.
- >>> True if serial engine is shared between multiprocessors OR 
-Execution Environment.
+    vdpa_sim_net: Add support for user supported devices
 
->> +    description: True if I2C controller is shared between two or more system processors.
->> +    type: boolean
->> +
->>     reg:
->>       maxItems: 1
->>   
->> -- 
->> 2.25.1
->>
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=10fff130580000
+start commit:   b5a24181e461 Merge tag 'trace-ringbuffer-v6.12-rc7-2' of g..
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=12fff130580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=14fff130580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=1503500c6f615d24
+dashboard link: https://syzkaller.appspot.com/bug?extid=2e6495950edcf7fbfccf
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17f252e8580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12ecd2c0580000
+
+Reported-by: syzbot+2e6495950edcf7fbfccf@syzkaller.appspotmail.com
+Fixes: a3c06ae158dd ("vdpa_sim_net: Add support for user supported devices")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
