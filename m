@@ -1,161 +1,119 @@
-Return-Path: <linux-kernel+bounces-412280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 327F69D06F2
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 00:08:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5235B9D06F6
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 00:21:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 88F02B21E1E
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 23:08:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBE401F21327
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 23:21:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04D5F1DE2A3;
-	Sun, 17 Nov 2024 23:08:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA1041DDC2D;
+	Sun, 17 Nov 2024 23:21:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eHK6hhMu"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b="D07L0vhr"
+Received: from mout.web.de (mout.web.de [212.227.15.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B76A1D89E5;
-	Sun, 17 Nov 2024 23:08:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87FC4143748;
+	Sun, 17 Nov 2024 23:21:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731884909; cv=none; b=rszqueViOgS6w7RMAw4bbF3UxOXbYmaKwwdN3e9R0gsxqWmo6zqCWQMu3217u+53iokKDNvkS8t8DOGmyOH0gHZRdK+kmZSsVA07x/VmNxJMKe7smAGrwncGzbPosBylOqn7F1EiSSmu9TNpXoP8TD1XG6ZZqqUBUFf137PPl+k=
+	t=1731885688; cv=none; b=GD5UAjy4ElVJW4IbwyjjG7CuXZlVnANEZXOhDKFkjMsv3mhAgqqXvkGslp3v6XTL4GmFj57IxyoxYgeOISnGIPALrWPgpHZGMsps+mw6C23Fn10sO498SwJ//s4FKpZWM6QNSsmhwXqGg38I8haGyZlFt6OxDGOCpO0qz0iFQS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731884909; c=relaxed/simple;
-	bh=qc//Rp6FgcU/OzykKOBKbEI0fB9iPhKctaTJW5N31Mg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pML2QmJnO/kFAEa4Gd2T4we15zWHJeXcw3EiAfqBSaSggekZUGsTWzXbvDVrH38V9SnP3FuAI0Uw3tgXuzXha+ARi3NkqO8wR3LjUbalwRxNDcICTtfLx3pu8ENzUX8ENgPMwxiCENY6+RfVPwDlHDVcMZdgLH7SyqaVukHoX+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eHK6hhMu; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-53b34ed38easo3591120e87.0;
-        Sun, 17 Nov 2024 15:08:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731884906; x=1732489706; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MNN7ziIzHnkd18GYio7H3EiJ5Cg8s0kx1zTc8dpUr6c=;
-        b=eHK6hhMutEUnhXkbiJqwd3lYmt3Clrzs5DrfD+pCo1YbMxAAHAIJwVKB9GBD1NVTkg
-         ZWExkwWPCE5FNjvybQhbIEP126Kvnx3NAQtazuIVhN5xbqqmRGC0ATyNz8x2FDogAATi
-         rDvQBuNymvxafMzAdhI5Kn/Ih+naJGnM+JXE4x3aLAwRL3TB1GotmYrUSA0WrtepT9LJ
-         9V555bJpqFySjjx7N/WAW2uicj8kFbL1tdpZFJT5TcLX9FRd/BxrqAiOxlb/7w05ejAT
-         WT0enUo3QgS7ACD9LRdRIzxkmdE86WLqdOndGYwL5HmTleXYlwAhLRyRmq/KNdBBFoPZ
-         yqxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731884906; x=1732489706;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MNN7ziIzHnkd18GYio7H3EiJ5Cg8s0kx1zTc8dpUr6c=;
-        b=L/DYOB1Zbuls1z+3Zf2T9BHZ5TsB+C3myHdt5yTCHydgdmn4Vc/3pzuE1HQLpw/Rza
-         EeWdVzr1vlGtt/rcf/+8vj7AxX9wpoTiuCvSxNnjaTF4j5tt8Lyb7g4JTB2qcauRANrB
-         nGRSl1btusc3htRJGx8x1S/ylsbvqgFrSqUGrqsyqQQyehVOLmuDvYY8HLO7CiMMwowy
-         DJcnit7KLg5AgPjy216z4KlqGtwveML12+XJxw0kGoWFdOXU1t/v3i05yQuZpadRttiw
-         6Ux5ygghbC4RMfucOJHBoBpgJvtdqD5G4PTJgKQRm0TqeJBFLL3KXlowpCAP37F4cesN
-         QY8w==
-X-Forwarded-Encrypted: i=1; AJvYcCUuFs/g67o38gkHDmYotLYciSpd0AjLNnJd02TRHG18BYHEvlnQEgxFPdtgoI7yf5DHlVDgFk/s7v+tYLYyqj3B@vger.kernel.org, AJvYcCVJ2kIlbK/UZI74Nf0uP8ElWTj99JFA4Oqbmvd0tjnsA7wDzm58/RkTk3ZlSN5tzl6V3VXkMueiFt+V@vger.kernel.org, AJvYcCX8JNEYnxVjSRLRIM1Qeu3G6TaxeR94SlkNeOEevWbiEyYOtqDmsVwMmtxiGZRhdfwKlf5aUBaVXJIeHX5w@vger.kernel.org
-X-Gm-Message-State: AOJu0YxeZBLmw9iiFlMV4x3HUB78WScobf9t6XfUYlS8eI3yK2M5D6ch
-	hdDuD5Xfoez0cw1ukZCju77dJAZw9oD/JejGSwLgAlwa5L9koJLrEjBQNuyu1N5+l+Yg+MCxFGL
-	QqcQvgVvFyMBDVyeo4XfkWzpBFS0=
-X-Google-Smtp-Source: AGHT+IG/Q4t9zlJxo0SzEiq1OWyQAiH8D9mhKsLHtjK5w2rEQERHHK17Ean2SepEZ7MUtCVHaZhXmMnoKX3qNPyE0Gk=
-X-Received: by 2002:a05:6512:b83:b0:539:f9b9:e6d2 with SMTP id
- 2adb3069b0e04-53dab3b126amr4424699e87.35.1731884905418; Sun, 17 Nov 2024
- 15:08:25 -0800 (PST)
+	s=arc-20240116; t=1731885688; c=relaxed/simple;
+	bh=hceMuZltkxsAevxTMbzv8/My+gL6tf/ANKKWCqWpnL8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BzU2PI66aP782lpe9hVu3YxarwluGh2nKFXXOEa3zMtLi7uVfUjgP+u9thiPN2kfRorP35PjVOT2bgDhQz7RiSDsxwAS2Og7+8Vr3RuYgW4f8BHdZkVc1jD1kuFFBeh42+zcsYdZDSAytxmOKJ6EeUUKjnP1GgfvfnzdkOr7Zio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b=D07L0vhr; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1731885665; x=1732490465; i=spasswolf@web.de;
+	bh=VNf5yKUCwlfHJbMu6/6RZkTHJt28mgqFMR3tYkD17F8=;
+	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:
+	 MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=D07L0vhrmsLmPOQ5EGPBJGXnT8trcmzm8oa7fsD7p9TEihNDuH7NpTFuiIXpg1LU
+	 vA9719otd4NYcHQqTm4dP1cmOKScgVqShuXUpBEdxGi+Oocd+0GgxcvxBg2+wQrWo
+	 DMSv4eD6aKPctAekuPA+x/zLUvznxoOgRlMiOtpyRYn8F09h9VfxHKISY8zrTJfVL
+	 s8jCK7Rxgp6vtMNw9YpxeDPsfpy6+u/ixpBDyMs5xqSJ4Y59uQ1CL7btEGVMdaUgc
+	 kjCMWjoZ3NgaGZpY9K9pwozArSZ62OD2uhyocVMr6jM0OR1DwHFUHt6ZwnOijv3XF
+	 B2uvhLCYbEpdhZa+jw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from localhost.localdomain ([84.119.92.193]) by smtp.web.de
+ (mrweb006 [213.165.67.108]) with ESMTPSA (Nemesis) id
+ 1MNOVK-1tNAQl0rMo-00JEYf; Mon, 18 Nov 2024 00:21:05 +0100
+From: Bert Karwatzki <spasswolf@web.de>
+To: Stephan Gerhold <stephan@gerhold.net>
+Cc: Bert Karwatzki <spasswolf@web.de>,
+	Mark Brown <broonie@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	alsa-devel@alsa-project.org
+Subject: [PATCH] ASoC: qcom: apq8016_sbc: Fix second argument of apq8016_dai_init()
+Date: Mon, 18 Nov 2024 00:20:58 +0100
+Message-ID: <20241117232100.23760-1-spasswolf@web.de>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241117113204.work.419-kees@kernel.org> <bcd4fb0f-47ee-4676-8e71-6b06973e9b65@embeddedor.com>
-In-Reply-To: <bcd4fb0f-47ee-4676-8e71-6b06973e9b65@embeddedor.com>
-From: Steve French <smfrench@gmail.com>
-Date: Sun, 17 Nov 2024 17:08:14 -0600
-Message-ID: <CAH2r5msDZjC_iktAhCn6jxhUVQZ2sXrD8KpbCs-woDriZNDmXw@mail.gmail.com>
-Subject: Re: [PATCH] smb: client: memcpy() with surrounding object base address
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc: Kees Cook <kees@kernel.org>, Steve French <sfrench@samba.org>, 
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Paulo Alcantara <pc@manguebit.com>, 
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>, Shyam Prasad N <sprasad@microsoft.com>, 
-	Tom Talpey <tom@talpey.com>, Bharath SM <bharathsm@microsoft.com>, linux-cifs@vger.kernel.org, 
-	samba-technical@lists.samba.org, linux-kernel@vger.kernel.org, 
-	linux-hardening@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:FoOB3vKq1UKw6Wxtf3ryOzCsih3jKzk7i9YjxLeRn4jsAIQ5zb6
+ t1qrmVLjY+TvsjPmubDxFlYPPEgLufBvihYtecYVx163eFAe7xKVwD75wp37VPShR6IhXJd
+ tuFVI4D/p2lVfvdtKXyyIo/vk38SpfZgPMgAC8YuaTGDnuGjGEFdqBmsKC5UU6nkHd6xQar
+ 6JW/1Ul1s6Fe6GQV0KpIw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:TiSWYEaojQE=;8sEHgFuD/vy8M71Qffrgfz4/crb
+ qIqXcYNBg1xiw5yDhXWTPh7SQCUuVfOAquTL/X8bZ8QjY/kwQ0xkbZgWKYnZ4tSZUknx2a8k+
+ OKXL04WrjPUAyuJ3kAsEKWnJZxZKXcPuROdXR822pK5DAbeploYKT/exJSx1ha8zSNvEcHR6g
+ Ekc41J18JKRt701vi9k6OHPU3Lagb1uuZQvaJCrOmP/yzClMLBNs43uRVODHq3IqxCKWDVT+M
+ xf1vBQtJIJs3OfLa8j3NPvfqKdsJgMzSFUTWN7jD1jQOyawLEHuPifw1yJuTdXZadsDCLkNMu
+ /uDpLbIdXBfH/azxx6Z8tr3DJF1yOLsXuzYO2ouNKw+cuqgCBu+FNqicr0wBLajVRUSAc++HN
+ qTASbMr4UxYdX7bUVs6jdLmE7cB1myaQYJLnyySJy/5xM6YkgAcDMHZJaxshPyvcOaMlgPCR6
+ OJ5VGJD9IA0Hg8T05C0Q9TC6g7397NtxnfNPNV4H7TK9QWk2vq9iaSJCJpbqySm6y2J9MdSNH
+ 0Iyou8YkAE0oY+5ZLAohe4QH++0Bv7CNS2BGqCzkrrPhPZvz7QgERr+xrCzaMK0oeA+DBmuwq
+ q5ETktfDwhRw2951dZqhMes69qiV4FAdr0BYetjb/pUcC+2MmcUCj7eYnq8tKU0dyLzJ1CC4L
+ INyVHMp2M8XYYG67ypXiDxw3tjxjtcuTE4+aeKKXVk0noTEbcbamLFRQLMAWLmtabiVq6xS8e
+ 1GmwcWsRzi20x1DURDRnBJi+fgrxNpeOYVvplnUgWowflhfil/2e78pyT8GmexlnnDK+q1zNW
+ 7BPLQXJP1pLgBgYnazwUN2Cf+IMQyikyVxeIXNs2sY3VaEiOjRP4MrBl0675HtNLjpA7imBa7
+ iXtZQ57gGCEDhz7A7szW+J66CExhSKB2jBzXvG6vv+otF9QeB96/LJLeg
 
-merged into cifs-2.6.git for-next
+Since commit a78a42fb48b8 the second argument of apq8016_dai_init() has
+to be an lpass id returned by qdsp6_dai_get_lpass_id().
 
-On Sun, Nov 17, 2024 at 1:15=E2=80=AFPM Gustavo A. R. Silva
-<gustavo@embeddedor.com> wrote:
->
->
->
-> On 17/11/24 05:32, Kees Cook wrote:
-> > Like commit f1f047bd7ce0 ("smb: client: Fix -Wstringop-overflow issues"=
-),
-> > adjust the memcpy() destination address to be based off the surrounding
-> > object rather than based off the 4-byte "Protocol" member. This avoids =
-a
-> > build-time warning when compiling under CONFIG_FORTIFY_SOURCE with GCC =
-15:
-> >
-> > In function 'fortify_memcpy_chk',
-> >      inlined from 'CIFSSMBSetPathInfo' at ../fs/smb/client/cifssmb.c:53=
-58:2:
-> > ../include/linux/fortify-string.h:571:25: error: call to '__write_overf=
-low_field' declared with attribute warning: detected write beyond size of f=
-ield (1st parameter); maybe use struct_group()? [-Werror=3Dattribute-warnin=
-g]
-> >    571 |                         __write_overflow_field(p_size_field, s=
-ize);
-> >        |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~=
-~~~~
-> >
-> > Signed-off-by: Kees Cook <kees@kernel.org>
->
-> Reviewed-by: Gustavo A. R. Silva <gustavoars@kernel.org>
->
-> Thanks!
-> -Gustavo
->
-> > ---
-> > Cc: Steve French <sfrench@samba.org>
-> > Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-> > Cc: Paulo Alcantara <pc@manguebit.com>
-> > Cc: Ronnie Sahlberg <ronniesahlberg@gmail.com>
-> > Cc: Shyam Prasad N <sprasad@microsoft.com>
-> > Cc: Tom Talpey <tom@talpey.com>
-> > Cc: Bharath SM <bharathsm@microsoft.com>
-> > Cc: linux-cifs@vger.kernel.org
-> > Cc: samba-technical@lists.samba.org
-> > ---
-> >   fs/smb/client/cifssmb.c | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/fs/smb/client/cifssmb.c b/fs/smb/client/cifssmb.c
-> > index b96ca9be5352..026d6b5f23a9 100644
-> > --- a/fs/smb/client/cifssmb.c
-> > +++ b/fs/smb/client/cifssmb.c
-> > @@ -5337,7 +5337,7 @@ CIFSSMBSetPathInfo(const unsigned int xid, struct=
- cifs_tcon *tcon,
-> >       param_offset =3D offsetof(struct smb_com_transaction2_spi_req,
-> >                               InformationLevel) - 4;
-> >       offset =3D param_offset + params;
-> > -     data_offset =3D (char *) (&pSMB->hdr.Protocol) + offset;
-> > +     data_offset =3D (char *)pSMB + offsetof(typeof(*pSMB), hdr.Protoc=
-ol) + offset;
-> >       pSMB->ParameterOffset =3D cpu_to_le16(param_offset);
-> >       pSMB->DataOffset =3D cpu_to_le16(offset);
-> >       pSMB->SetupCount =3D 1;
->
->
+Fixes: a78a42fb48b8 ("ASoC: qcom: apq8016_sbc: Allow routing audio through=
+ QDSP6")
 
+Signed-off-by: Bert Karwatzki <spasswolf@web.de>
+=2D--
+ sound/soc/qcom/apq8016_sbc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---=20
-Thanks,
+diff --git a/sound/soc/qcom/apq8016_sbc.c b/sound/soc/qcom/apq8016_sbc.c
+index 3023cf180a75..ddfcd4616895 100644
+=2D-- a/sound/soc/qcom/apq8016_sbc.c
++++ b/sound/soc/qcom/apq8016_sbc.c
+@@ -150,7 +150,7 @@ static int apq8016_sbc_dai_init(struct snd_soc_pcm_run=
+time *rtd)
+ {
+ 	struct snd_soc_dai *cpu_dai =3D snd_soc_rtd_to_cpu(rtd, 0);
 
-Steve
+-	return apq8016_dai_init(rtd, cpu_dai->id);
++	return apq8016_dai_init(rtd, qdsp6_dai_get_lpass_id(cpu_dai));
+ }
+
+ static void apq8016_sbc_add_ops(struct snd_soc_card *card)
+=2D-
+2.45.2
+
+I came across this while I was trying to adapt this driver to another
+sound card.
+
+Bert Karwatzki
 
