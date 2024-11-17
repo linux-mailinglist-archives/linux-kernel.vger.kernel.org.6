@@ -1,78 +1,139 @@
-Return-Path: <linux-kernel+bounces-412171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44B759D04DE
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 18:41:51 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 226379D04E1
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 18:44:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0196282A84
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 17:41:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9212AB21B53
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 17:44:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1569143C69;
-	Sun, 17 Nov 2024 17:41:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a0IpCEXK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9539B1D95AA;
+	Sun, 17 Nov 2024 17:44:08 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DF7015C0
-	for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 17:41:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 226D721A0B
+	for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 17:44:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731865307; cv=none; b=MOgdebBFtOisvYjT/p2GinmDt9TvKfnuBAhPwVInPfpmbstvmVa87Y8zePycabq103NmsSdp6MrenH/UBm2Prbb60KTlV+TPmHJxrHXaeP8fCTDat4EIdu8y//cVj2urL1ZsvePcCiaaebTKq6KdsaRRk6wtDJwE9yba+u2gVl0=
+	t=1731865448; cv=none; b=RtyZeOFRKsBeIDqm9Pg1CHORJOcNZa+ac0AWHY1y0YPhmhdE/FKTx5VUTlWETasjDjdtsGZ70N5CYEgSzHrbT0CiEGK5nZkSwfjSIpNGxu5MAGCw48MPFvKJmRUr8Ra9HkZPl02SuXMRRW3OzEk+9nhkrhu/I7P2FdTdw+Cv4lc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731865307; c=relaxed/simple;
-	bh=ckN/aFOJzhUs39iv7cdXeRRpOyoEe1qnkL/ZAHnti1I=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=Zpdj8Rhbi+UXAmeFQ7C7bxQwL9liqc0c0vBMdmlL+1ix9UCKBfDiYoay4B01j1n+PVX+GWxkzgVwcZ+3ZlNyoeAKcnLaWfQtXXz9YI7QfBxSYeVNrmFZYFAnow5ISWGCcH+HjkHtYqVic5xKxZAFZC9ZkwaAxWotjvLUpzVi0SQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a0IpCEXK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D29E1C4CECD;
-	Sun, 17 Nov 2024 17:41:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731865306;
-	bh=ckN/aFOJzhUs39iv7cdXeRRpOyoEe1qnkL/ZAHnti1I=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=a0IpCEXKwvCYlcoJc8dgjNkRUED+MRQHm9aRmgHKsn07HBL5YS1hjINjsoA3/kvbw
-	 dZRlXPLxbTs+ONpb+z5JhvPfbzYlkVHiwDOyBdFHRjTKaTEVU10mrPkiPpVNz0fBDP
-	 CB81Ly9591p+VPTTe8pfqeoItot0X07vCXzqaMG5cKPW5aiEfp4q/nb+E9BiPEGKyR
-	 R7nSpkPbYReT4lVLigcDGHxCrfhFYh4fR2fEN5xIPErcsG9rxI9VAXjDlyupd3idfo
-	 nTCdBflF7Me1McUre+UXsQLcqXs5eKoJXHJbEFhppotWYh5s8lXPOJm3L7lcWij3KB
-	 0QC8ZVKs8d8IQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 340153809A80;
-	Sun, 17 Nov 2024 17:41:59 +0000 (UTC)
-Subject: Re: [GIT PULL] x86/urgent for v6.12
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20241117123710.GAZznjdtizJgrgwx1I@fat_crate.local>
-References: <20241117123710.GAZznjdtizJgrgwx1I@fat_crate.local>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20241117123710.GAZznjdtizJgrgwx1I@fat_crate.local>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip tags/x86_urgent_for_v6.12
-X-PR-Tracked-Commit-Id: 8d9ffb2fe65a6c4ef114e8d4f947958a12751bbe
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: f66d6acccbc08b4146f4c2cf9445241f70f5517d
-Message-Id: <173186531761.3182024.6493253115747566393.pr-tracker-bot@kernel.org>
-Date: Sun, 17 Nov 2024 17:41:57 +0000
-To: Borislav Petkov <bp@alien8.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
+	s=arc-20240116; t=1731865448; c=relaxed/simple;
+	bh=tl4TXTqkdYOf4gM4Q46JtvbrBcbW6ngLygbVVNgS7AY=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=FHkYG2OARln7TzEzFCxuul1JX59tPKyMsxlkeVmnsI8hm1MKZ7ClcFBlNYKnRzJE5mVE+/31RbpzzteSc3cC84ZF/rP+Nn975bWKDg6E1q7xQKt7Cs2cnvmWQ3tmw/D8ljCKXKGT4+du/rMDeeCRlY513enPVYlajRRDNOln83Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-146-yU9yEEzTNeKHqlfqjEofxQ-1; Sun, 17 Nov 2024 17:42:21 +0000
+X-MC-Unique: yU9yEEzTNeKHqlfqjEofxQ-1
+X-Mimecast-MFC-AGG-ID: yU9yEEzTNeKHqlfqjEofxQ
+Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
+ (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sun, 17 Nov
+ 2024 17:42:20 +0000
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Sun, 17 Nov 2024 17:42:20 +0000
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Vincent Mailhol' <mailhol.vincent@wanadoo.fr>, Linus Torvalds
+	<torvalds@linux-foundation.org>, Yury Norov <yury.norov@gmail.com>, "Rasmus
+ Villemoes" <linux@rasmusvillemoes.dk>, Luc Van Oostenryck
+	<luc.vanoostenryck@gmail.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-sparse@vger.kernel.org" <linux-sparse@vger.kernel.org>, "Rikard
+ Falkeborn" <rikard.falkeborn@gmail.com>
+Subject: RE: [PATCH v4 1/2] compiler.h: add const_true()
+Thread-Topic: [PATCH v4 1/2] compiler.h: add const_true()
+Thread-Index: AQHbNfHJErTnWAqww06zGCD7FdQ1jLK7v5ZA
+Date: Sun, 17 Nov 2024 17:42:20 +0000
+Message-ID: <8bf6922f4bb143d1bc699aadd1c84607@AcuMS.aculab.com>
+References: <20241113172939.747686-4-mailhol.vincent@wanadoo.fr>
+ <20241113172939.747686-5-mailhol.vincent@wanadoo.fr>
+In-Reply-To: <20241113172939.747686-5-mailhol.vincent@wanadoo.fr>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: enDYlC75FLL_kOye6-Ggh-dg0ovA5wLX_ZE8AhBj5kI_1731865341
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-The pull request you sent on Sun, 17 Nov 2024 13:37:10 +0100:
+From: Vincent Mailhol
+> Sent: 13 November 2024 17:19
+>=20
+> __builtin_constant_p() is known for not always being able to produce
+> constant expression [1] which led to the introduction of
+> __is_constexpr() [2]. Because of its dependency on
+> __builtin_constant_p(), statically_true() suffers from the same
+> issues.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip tags/x86_urgent_for_v6.12
+Chalk and cheese.
+Personally I don't think any of the text below is really needed.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/f66d6acccbc08b4146f4c2cf9445241f70f5517d
+You might want the final short form - but it is a short form.
 
-Thank you!
+OTOH the implementation is horrid.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+You probably want to start with this (posted a while back in a minmax patch=
+ set:
+
+diff --git a/include/linux/compiler.h b/include/linux/compiler.h
+index 2594553bb30b..35d5b2fa4786 100644
+--- a/include/linux/compiler.h
++++ b/include/linux/compiler.h
+@@ -242,6 +242,23 @@ static inline void *offset_to_ptr(const int *off)
+ /* &a[0] degrades to a pointer: a different type from an array */
+ #define __must_be_array(a)     BUILD_BUG_ON_ZERO(__same_type((a), &(a)[0])=
+)
+
++/**
++ * __if_constexpr - Check whether an expression is an 'integer
++ *             constant expression'
++ * @expr: Expression to test, not evaluated, can be a pointer
++ * @if_const: return value if constant
++ * @if_not_const: return value if not constant
++ *
++ * The return values @if_const and @if_not_const can have different types.
++ *
++ * Relies on typeof(x ? NULL : ptr_type) being ptr_type and
++ * typeof(x ? (void *)y : ptr_type) being 'void *'.
++ */
++#define __if_constexpr(expr, if_const, if_not_const)           \
++       _Generic(0 ? ((void *)((long)(expr) * 0l)) : (char *)0, \
++               char *: (if_const),                             \
++               void *: (if_not_const))
++
+ /*
+  * This returns a constant expression while determining if an argument is
+  * a constant expression, most importantly without evaluating the argument=
+.
+--
+
+Then have:
+
+#define __is_constexpr(x) __if_constexpr(x, 1, 0)
+
+#define const_true(x) __if_constexpr(x, x, 0)
+
+=09David
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
+PT, UK
+Registration No: 1397386 (Wales)
+
 
