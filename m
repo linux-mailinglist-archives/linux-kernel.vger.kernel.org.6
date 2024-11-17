@@ -1,227 +1,124 @@
-Return-Path: <linux-kernel+bounces-411973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 095919D01E8
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 03:57:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 347BC9D01EB
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 04:05:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58A34B24B61
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 02:57:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0110C281D58
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 03:05:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C32CFDF60;
-	Sun, 17 Nov 2024 02:57:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99C9AF4ED;
+	Sun, 17 Nov 2024 03:05:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gAITLlaK"
-Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KdiJGosl"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81C1E2F32;
-	Sun, 17 Nov 2024 02:57:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4BCBBA3F;
+	Sun, 17 Nov 2024 03:05:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731812222; cv=none; b=uMQNvlZECFlYcmOMYsrr6TPfyDm/jCDmA6nx+74CebArZgwEJsD61xtJb7zwi/5TPwVfBmXqapWmJlreRo0oErSlX0aZqWPSTNL9mbkauGWeVoquPFzWrCoOGBj36fCp5SDv8ZC/WqCv9n7FPuIm+W/Hk5UQrDTgaVZz7T9JA/E=
+	t=1731812745; cv=none; b=oY6JywFeoS/UTJkpr5plCmvtA4HhPs8xF8YWqN+BeJ2Rtos8cAGAYM1T5GruAVcE6XzBFab2CZxwhQSLV5vi6L9rsM5e9qjKdcr6fZ4SDwDsOcVCtJ/7PDZShrQPU18MRciYdRAhSXlLG1qyZilP9xeSiWEJHoTEvNfcR5rO3uY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731812222; c=relaxed/simple;
-	bh=LZXiDYwgJQWymN6RFSecU98xmLZmOHuM26niW1Qps5o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=r7zvId8Tp9zIgelejjq3jKI6HJibu7i7lG9/nz4MpFMYgo3VrzHzvk3JrnWn30hEILbqf++t0I6Kh5rff8uh4w9lCOIHqMIQxiQYCWO4WsyHFw0CpJiM6zj+HOdutbuchK97SFiD1V7YSPX9qAiWbSH4ZLKQYvvloh1vZFY0AS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gAITLlaK; arc=none smtp.client-ip=209.85.219.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6d41c87aec0so1807796d6.0;
-        Sat, 16 Nov 2024 18:57:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731812219; x=1732417019; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bXce7LBnGp/mxnNvTStq2N96jIon3J5rcs8YDFa0gxY=;
-        b=gAITLlaKcsLAACwo9BE47/vTxOaXsMdduIfsVtOPOkvDQgFTzNHnEVBmdFOFZ3Yxk+
-         QLSYHWk9dnMu4W81asnC/7QK6U+23gRBJe6SJkFhBuKticBbclxp2cI2+wSRJxHwr1e8
-         yhMS5rzxsw/LrNzYNDwTW8SYRlvmAnGLelSkpBAqU2JzYAGqjqzxMsHcpXpKxrfmvyX3
-         Xwhiv6yqBchklLmgtGgdhCNXGNk9mJc6IdoHoNjk8iGyIJV9gmh3e4GgxSejhkIyvFT3
-         2QDn5/hUO3TiMvqEju2oUZ/HydrRTWJ4NHhHw9lAH+SY7623V7SiGw1if3IC3PpHrLEx
-         IlXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731812219; x=1732417019;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bXce7LBnGp/mxnNvTStq2N96jIon3J5rcs8YDFa0gxY=;
-        b=FSc0dRv9SMV8wgZq3B4tPkahmSNAWxO+p1FqjD1hssE8rqWj+OEGPAayjb104vuqNI
-         DCp5b5mZy1cX69OpAQofsl2bH9WsFnItKSOSAfwDK0Gg6MZCYesR32GLd2Z5WyXzmXOL
-         61nDnE26rWPajXawCne8I0NM5WYzEIrejQbCbNGt2OWDtueuzhFnuZJJ3lk7sWn5j0vO
-         nMgehADEI64GH2oRWBYtvj18wIWDWMGu8M23UNvrNgNA5hz98AFaM4u+kIG3+QFGmz9V
-         sokyoFuerrlKsLGAh+37/F/X45Llq8q16m+nxTI+JnOGv3IahujHkQwIPAJyJ9X65Yp8
-         Ow8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCULHGOgco8otdGAk+tfgSeMURnxAtGsBL8j4aTT1dcWRcV9avmMPbHxaFSvdxUaRTGcIwjeKIMOe8PjUMNl@vger.kernel.org, AJvYcCXkK7ByEClopbdIVGY19RGvB54bneMdg9Y4AVxt5Igalk+t4Qn6m0yxvJB3Ckq7go7hChTrGHN9@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLcB21nwzlOM+e+5tCg/BUwnk9VrPLcSSBGnBVsMP46GVlIhQs
-	A4lxGfOYxCYlahSAr2Phs8gZkrDa2u7V0Pd3j4LVpEe3Hj0IMrRkernHOuFephLUK3xiqTcljGE
-	8s64enZCSkHWAcSeCyBpYIXEwAS8=
-X-Google-Smtp-Source: AGHT+IGrlf03xFwrrJsqCuzmveo5teRS/VlUmv5/NdN7uiJUv4+7nMvpcQ82bR2uphxBPJF9YwYgpMY77weQg1CiJFo=
-X-Received: by 2002:a05:6214:570a:b0:6cc:378f:f7fb with SMTP id
- 6a1803df08f44-6d3fb88beb2mr116071526d6.35.1731812217596; Sat, 16 Nov 2024
- 18:56:57 -0800 (PST)
+	s=arc-20240116; t=1731812745; c=relaxed/simple;
+	bh=CHrsYTfEg3BHIhf2gtxsVvuv1Sg6ZU+fanYiVmQxMLU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UR/fvYbEa8hJURMs3reEoKRXSI2QmczHV+9bto5AVsS6G87XWCcEssMaXygivs4WjCFmTV+21lKjelLvHVv0FGwX2LbM7KcDETJxfIGYwmHOOjz29m314rCo+9nzkU94a13wWb/TcrcLSIvOrM5nZZqvan/qLG/GJMHpVjBCtPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KdiJGosl; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731812742; x=1763348742;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=CHrsYTfEg3BHIhf2gtxsVvuv1Sg6ZU+fanYiVmQxMLU=;
+  b=KdiJGoslHYgLV3ORZf6a7WUswimPm5qy2zKY/eZ3+YXCb7rqPBhjG49f
+   QqKbj0TzBkk/BpzXHTGlyv79zmJYY5JW2n6GcUbFOAmj0nPMwIT2sbl6j
+   r/IUx+CBFamdE/FmnCea6PZeMKzM1oP63LrF7yV/APmL4mo0AIsIbBDrD
+   tMY354GDVU5YyS66OJRGd5kSZCDfpkXk80BX/JhASGMkq9S5k65CEDEBW
+   gMP58TkYxIkqBIJpNgi+IWykONrEGp2j7Z/sE+YSK7QZhe9wKcqgLbx1s
+   0pA8WFIGO3hWUDRv485iGk9O+uJUos9gVfbq4anoeUy3RdNrWMysdS/dA
+   Q==;
+X-CSE-ConnectionGUID: oqPnFRcgT1OLEKVv27jiMQ==
+X-CSE-MsgGUID: GaLYDS3bRFSgcDHnH7ozOQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11258"; a="31199853"
+X-IronPort-AV: E=Sophos;i="6.12,161,1728975600"; 
+   d="scan'208";a="31199853"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Nov 2024 19:05:41 -0800
+X-CSE-ConnectionGUID: 9AR+ZDSRRySkglu2Zx+FcA==
+X-CSE-MsgGUID: AODqRlbGSV6WufBreVf/pg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,161,1728975600"; 
+   d="scan'208";a="88478076"
+Received: from lkp-server01.sh.intel.com (HELO 1e3cc1889ffb) ([10.239.97.150])
+  by fmviesa006.fm.intel.com with ESMTP; 16 Nov 2024 19:05:37 -0800
+Received: from kbuild by 1e3cc1889ffb with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tCVbT-0001HR-0T;
+	Sun, 17 Nov 2024 03:05:35 +0000
+Date: Sun, 17 Nov 2024 11:04:39 +0800
+From: kernel test robot <lkp@intel.com>
+To: admiyo@os.amperecomputing.com, Jeremy Kerr <jk@codeconstruct.com.au>,
+	Matt Johnston <matt@codeconstruct.com.au>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: Paul Gazzillo <paul@pgazz.com>,
+	Necip Fazil Yildiran <fazilyildiran@gmail.com>,
+	oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Sudeep Holla <sudeep.holla@arm.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Huisong Li <lihuisong@huawei.com>
+Subject: Re: [PATCH v7 2/2] mctp pcc: Implement MCTP over PCC Transport
+Message-ID: <202411171010.YDEy5wvg-lkp@intel.com>
+References: <20241114024928.60004-3-admiyo@os.amperecomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241108132904.6932-1-laoar.shao@gmail.com> <dmibxkog4sdbuddotjslmyv6zgyptgbq5voujhfnitdag2645m@bl4jphfz3xzg>
-In-Reply-To: <dmibxkog4sdbuddotjslmyv6zgyptgbq5voujhfnitdag2645m@bl4jphfz3xzg>
-From: Yafang Shao <laoar.shao@gmail.com>
-Date: Sun, 17 Nov 2024 10:56:21 +0800
-Message-ID: <CALOAHbC54QZ6ZrRBHHKKz8F79C1J8fYcA1q59iwotuBBKtFGmA@mail.gmail.com>
-Subject: Re: [PATCH v5 0/4] sched: Fix missing irq time when
- CONFIG_IRQ_TIME_ACCOUNTING is enabled
-To: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
-Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com, 
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org, 
-	bsegall@google.com, mgorman@suse.de, vschneid@redhat.com, hannes@cmpxchg.org, 
-	surenb@google.com, cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241114024928.60004-3-admiyo@os.amperecomputing.com>
 
-On Fri, Nov 15, 2024 at 9:41=E2=80=AFPM Michal Koutn=C3=BD <mkoutny@suse.co=
-m> wrote:
->
-> Hello Yafang.
->
-> On Fri, Nov 08, 2024 at 09:29:00PM GMT, Yafang Shao <laoar.shao@gmail.com=
-> wrote:
-> > After enabling CONFIG_IRQ_TIME_ACCOUNTING to track IRQ pressure in our
-> > container environment, we encountered several user-visible behavioral
-> > changes:
-> >
-> > - Interrupted IRQ/softirq time is excluded in the cpuacct cgroup
-> >
-> >   This breaks userspace applications that rely on CPU usage data from
-> >   cgroups to monitor CPU pressure. This patchset resolves the issue by
-> >   ensuring that IRQ/softirq time is included in the cgroup of the
-> >   interrupted tasks.
-> >
-> > - getrusage(2) does not include time interrupted by IRQ/softirq
-> >
-> >   Some services use getrusage(2) to check if workloads are experiencing=
- CPU
-> >   pressure. Since IRQ/softirq time is no longer included in task runtim=
-e,
-> >   getrusage(2) can no longer reflect the CPU pressure caused by heavy
-> >   interrupts.
->
-> I understand that IRQ/softirq time is difficult to attribute to an
-> "accountable" entity and it's technically simplest to attribute it
-> everyone/noone, i.e. to root cgroup (or through a global stat w/out
-> cgroups).
+Hi,
 
-This issue is not about deciding which IRQ/softIRQ events should be
-accounted for. Instead, it focuses on reflecting the interrupted
-runtime of a task or a cgroup. I might be misunderstanding the
-distinction between *charge* and *account*=E2=80=94or perhaps there is no
-difference between them=E2=80=94but PATCH #4 captures exactly what I mean.
-While IRQ/softIRQ time should not be attributed to the interrupted
-task, it is crucial to have a metric that reflects this interrupted
-runtime in CPU utilization.
+kernel test robot noticed the following build warnings:
 
-The purpose of this patchset is to address this issue, conceptually
-represented as:
+[auto build test WARNING on rafael-pm/linux-next]
+[also build test WARNING on rafael-pm/bleeding-edge linus/master v6.12-rc7 next-20241115]
+[cannot apply to horms-ipvs/master]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-   |<----Runtime---->|<----Interrupted time---->|<----Runtime---->|<---Slee=
-p-->|
+url:    https://github.com/intel-lab-lkp/linux/commits/admiyo-os-amperecomputing-com/mctp-pcc-Check-before-sending-MCTP-PCC-response-ACK/20241114-105151
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git linux-next
+patch link:    https://lore.kernel.org/r/20241114024928.60004-3-admiyo%40os.amperecomputing.com
+patch subject: [PATCH v7 2/2] mctp pcc: Implement MCTP over PCC Transport
+config: riscv-kismet-CONFIG_ACPI-CONFIG_MCTP_TRANSPORT_PCC-0-0 (https://download.01.org/0day-ci/archive/20241117/202411171010.YDEy5wvg-lkp@intel.com/config)
+reproduce: (https://download.01.org/0day-ci/archive/20241117/202411171010.YDEy5wvg-lkp@intel.com/reproduce)
 
-Without reflecting the *interrupted time* in CPU utilization, a gap=E2=80=
-=94or
-hole=E2=80=94is created:
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411171010.YDEy5wvg-lkp@intel.com/
 
-    |<----Runtime---->|<----HOLE---->|<----Runtime---->|<---Sleep-->|
+kismet warnings: (new ones prefixed by >>)
+>> kismet: WARNING: unmet direct dependencies detected for ACPI when selected by MCTP_TRANSPORT_PCC
+   WARNING: unmet direct dependencies detected for ACPI
+     Depends on [n]: ARCH_SUPPORTS_ACPI [=n]
+     Selected by [y]:
+     - MCTP_TRANSPORT_PCC [=y] && NETDEVICES [=y] && MCTP [=y]
 
-This gap will misleadingly appear as sleep time to the user:
-
-  |<----Runtime---->|<----Sleep---->|<----Runtime---->|<---Sleep-->|
-
-As a result, users may interpret this as underutilized CPU time and
-attempt to increase their workloads to raise CPU runtime. However,
-these efforts will be futile, as the observed runtime cannot increase
-due to the missing metric for interrupted time.
-
->
-> > This patchset addresses the first issue, which is relatively
-> > straightforward. Once this solution is accepted, I will address the sec=
-ond
-> > issue in a follow-up patchset.
->
-> Is the first issue about cpuacct data or irq.pressure?
-
-The data in question is from cpu.stat. Below is the cpu.stat file for cgrou=
-p2:
-
-  $ cat cpu.stat
-  usage_usec 0
-  user_usec 0
-  system_usec 0                            <<<< We should reflect the
-interrupted time here.
-  core_sched.force_idle_usec 0
-  nr_periods 0
-  nr_throttled 0
-  throttled_usec 0
-  nr_bursts 0
-  burst_usec 0
-
->
-> It sounds kind of both and I noticed the docs for irq.pressure is
-> lacking in Documentation/accounting/psi.rst. When you're touching this,
-> could you please add a paragraph or sentence explaining what does this
-> value represent?
-
-I believe I have explained this clearly in the comments above.
-However, if anything remains unclear, please feel free to ask for
-further clarification.
-
->
-> (Also, there is same change both for cpuacct and
-> cgroup_base_stat_cputime_show(), right?)
->
-> >                    ----------------
-> >                    | Load Balancer|
-> >                    ----------------
-> >                 /    |      |        \
-> >                /     |      |         \
-> >           Server1 Server2 Server3 ... ServerN
-> >
-> > Although the load balancer's algorithm is complex, it follows some core
-> > principles:
-> >
-> > - When server CPU utilization increases, it adds more servers and deplo=
-ys
-> >   additional instances to meet SLA requirements.
-> > - When server CPU utilization decreases, it scales down by decommission=
-ing
-> >   servers and reducing the number of instances to save on costs.
->
-> A server here references to a whole node (whole kernel) or to a cgroup
-> (i.e. more servers on top of one kernel)?
-
-It is, in fact, a cgroup. These cgroups may be deployed across
-different servers.
-
->
-> > The load balancer is malfunctioning due to the exclusion of IRQ time fr=
-om
-> > CPU utilization calculations.
->
-> Could this be fixed by subtracting (global) IRQ time from (presumed
-> total) system capacity that the balancer uses for its decisions? (i.e.
-> without exact per-cgroup breakdown of IRQ time)
-
-The issue here is that the global IRQ time may include the interrupted
-time of tasks outside the target cgroup. As a result, I don't believe
-it's possible to find a reliable solution without modifying the
-kernel.
-
---
-Regards
-Yafang
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
