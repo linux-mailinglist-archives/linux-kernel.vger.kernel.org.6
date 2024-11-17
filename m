@@ -1,306 +1,340 @@
-Return-Path: <linux-kernel+bounces-411969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CB4A9D01D8
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 02:35:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC9CF9D01D9
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 02:38:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0187A1F23885
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 01:35:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2667F285FB8
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 01:38:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4AC8BE46;
-	Sun, 17 Nov 2024 01:35:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OsR9yjVt"
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1288BB672;
+	Sun, 17 Nov 2024 01:38:26 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0630B2F3E;
-	Sun, 17 Nov 2024 01:35:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65F497462
+	for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 01:38:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731807332; cv=none; b=AUaQQw5hS3dw9qydWJfyaHRJft2ZFKkQKR8bx+9TvxrI75REGoZuDABf83RgZHT2rdRoO3hrEr868Ikh9qoUlyWGKLjadscOEPPBVXgZ+cVMC5ahXFVlDUq6lacqKN+6krq/+9CcMIFfPmBhv0/VbWYMszpL6A/oDtCQzIZM4ao=
+	t=1731807505; cv=none; b=kGLTxyoDcHrHsZqA5wq08f1iKZ0cgun06GEbmOrcmlcCaargn0W/ZXRliVYtUO0wRg7I8uNnnhMVuJZhQjPFgg5J2cyUT6MzQ0lak7rDFaPDXjiGwK90JW2Sq4cxUJpWtJS+UphNQR8ivdf59iRxsjRLlBGjlIPB/gAV28tf+Pg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731807332; c=relaxed/simple;
-	bh=uzgwjUP+KPsrHihwohqoFaqlgBQUUjqVCdudBAh9ZeQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dUfdLqz/EwOiwCwGnR1odXKmeUJebXUbQyTZzuqmaEWJHkn+RLFCegrKPvGXh+Pex29sn8VVFkitwzDHImHrG8rf18b+7leKp1rHw+h1DNmN4yCpbc87WCs4tph/0vAUv669FPbJdcgL7XTQ6IrK4N8XX+NRvQp99KdWIReC9RY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OsR9yjVt; arc=none smtp.client-ip=209.85.160.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-460b2e4c50fso21306481cf.0;
-        Sat, 16 Nov 2024 17:35:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731807330; x=1732412130; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CqmBKlSWynrsrcqfyioauQIXzcWQM8RbSMBn2piT/gk=;
-        b=OsR9yjVtaTaITM1UJWgB9kKRXkYqyiMTbqez/ZdVzF6bE/Agkx9qp0yrHL8pd3D3Z0
-         YHrQJgze+1Qp2Xb7tUc3+SOkKQYtiMaeTE+1C7HCX3FQZmBGjjmURlovygwpT+KAfhL4
-         FxHt46S2mlz2PDrvPFrOHuN8vMpMPjeTBCUqWvzhUF0bnSozzYTzilKcpnmID+GSKsyA
-         y0pU9FJmvjsOxkXdNTpbFZZnsM9dplhEsxERqwZ4Mzi49scOymZIVkTrSi0G19q4eVvJ
-         rwDV6odLf2Xso84mDx37FnKQMnP8LxtFroS1D+xjbq7sXXW8YGgfutejZDe0pAbiSm30
-         z4Yg==
+	s=arc-20240116; t=1731807505; c=relaxed/simple;
+	bh=er5gV1fh0tbYXj4Qq92nWe22kK2nc2dfA6OBMFJW3fY=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=hdM8INnufhv89I9N83ZSYR1Ku9wSqjK6lgfd8rehR937/kYELsofbywMIf9KQB6dvp1tSnyITHJI83pq8Ojqn5ccuITu2ooaHiIZ6Vm6V7yP4W0GT1VSTzcGpLcua0mhj6el0/QiwDjW9Y+qhZGLhMK/2pJthExYTav5yzOhWEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a75dd4b1f3so4029975ab.1
+        for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 17:38:23 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731807330; x=1732412130;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CqmBKlSWynrsrcqfyioauQIXzcWQM8RbSMBn2piT/gk=;
-        b=K9XRLrjImBCJo7hDVyZ4bulYbb25LOByrG4D2TaMYyNKlEb+iZjKGC0m+jY01FpNV1
-         fOrXuAYjrGExcO4LGw0QCSN5qbfCC4iOcaFYvShzlhsI4gAHDyPXouGI/8pH+flED0Dc
-         Hw0nm5DVplyiKrbaxXBPEsTmp+JCnWE7DyMdIv3mmAJR08I3LuNh7m7T7UAjDxH8oVxS
-         EzhmMapypLQnYC1fGIuOEh3e2ucCytfV/W3+b5gXSnRoDd6C68U4Yl+CBWxgJEKv8q/q
-         nCcherXhsUDPI2KOkQQXnKQ1gAEPYkuvXoO9sTM8bCQfoU9ozpRlSIRfD5YRaI0wDhfV
-         mHAw==
-X-Forwarded-Encrypted: i=1; AJvYcCW1YML37IL7fp05Xnv5HuDYnBjRhOlB20aq4+M7OgJrCgkEjUlk8L8ohSINkExqI9o0YjejgDcrPfzVfnw=@vger.kernel.org, AJvYcCX38uWie5ZV5qS/fQviTV87HuqVIHz3yvcl2KHYRcVYVZtBR40B2cCoOgsbJ5+jf/NcBpGQZDy9zyy9@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUoVL0cHGCyBFPSnP04+T19kuVcsEizAOwCMkSthZSjZtrlFj4
-	B0ij+ulNwS7ERBmhd0sl/AsNPvoB2rEwjrEbIfWrxz1NWM6njCUqjK8uXoKOCF3MDxXhkuS1evh
-	oQmO2I59HnC/heADWTWNtWmpK+o+nXF3MikI=
-X-Google-Smtp-Source: AGHT+IFMdFoyYKQWW6wadd6uJfItC/0LpHBzPBMxLCm0ohzqn7EhyKw6TiXAF8zGkNuN4p708UOQA5Z5y57UVmYat3E=
-X-Received: by 2002:ac8:690c:0:b0:460:42f7:fa44 with SMTP id
- d75a77b69052e-46363df3fe3mr116526691cf.9.1731807329744; Sat, 16 Nov 2024
- 17:35:29 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731807502; x=1732412302;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xKrR2m9X07/iFElV7yj7025d7UGZUrC8saN7pGJScOo=;
+        b=hsnjiZVmmt+OtSbPg8yMTrYR6q7cDHgS9SdTvIgj1/UFDNRps9xRZ6mppO4wHiq9aF
+         Z8nADP+MOlbh4DmpnzzJVnK/zY88UjckePd7DgNksDRGe8J3mJFNwfPtkqRfBryiXX88
+         hMkTYZMvDmyRH+YRAbzUl0dZmLRVIonGZft21na7h7v4zU5JKeUz0dB4DmUIKzAlwf/y
+         xZYv7Q+kBMwZCOziC8ZS2QqpolSYSKS51KvLBPRF570cn+0U99eVR3D9QvCaisplf/Qm
+         0qApco7FQDMhGv10KHkZFoYWVqHfAAkwMnqF2eBgkya49XijS2xU6INbxLSEdVC6KMUt
+         arCg==
+X-Forwarded-Encrypted: i=1; AJvYcCX5x0dy7KEIi5j36koifA1QOC74cJdazrEpg2+hBF6efmhZlyT39mNUCDC5dnf2/D1oFtRdZRgVSrEyNiM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwR/9Y8qWd1z0P07iBmoGA9jTkq7roD+IdjR7lWUPr4mcXTjbaL
+	YwSAgMwxt7JcfXX+YxYvXwIbW/FLTX8gs+v/W5+X/qADKulvR2TX9/SAnI2Mhlw7mIvKOYYODjr
+	spDo9pbsa9ZE0KL0kjBKqzdMn7au8FN42Pme958HewhtSz3y4TyBF1bM=
+X-Google-Smtp-Source: AGHT+IEzgb7zGzcqQlk/x7R04XAegmiJh4SSNILCn28nnEBqpeWQekSlj+q91UbLwHZ6h0WKSYUm4/AoOEr3RmYBW3/L67bS1mVx
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241104014439.3786609-1-zhangshida@kylinos.cn>
- <ZyhAOEkrjZzOQ4kJ@dread.disaster.area> <CANubcdVbimowVMdoH+Tzk6AZuU7miwf4PrvTv2Dh0R+eSuJ1CQ@mail.gmail.com>
- <Zyi683yYTcnKz+Y7@dread.disaster.area> <CANubcdX3zJ_uVk3rJM5t0ivzCgWacSj6ZHX+pDvzf3XOeonFQw@mail.gmail.com>
- <ZzFmOzld1P9ReIiA@dread.disaster.area>
-In-Reply-To: <ZzFmOzld1P9ReIiA@dread.disaster.area>
-From: Stephen Zhang <starzhangzsd@gmail.com>
-Date: Sun, 17 Nov 2024 09:34:53 +0800
-Message-ID: <CANubcdXv8rmRGERFDQUELes3W2s_LdvfCSrOuWK8ge=cdEhFYA@mail.gmail.com>
-Subject: Re: [PATCH 0/5] *** Introduce new space allocation algorithm ***
-To: Dave Chinner <david@fromorbit.com>
-Cc: djwong@kernel.org, dchinner@redhat.com, leo.lilong@huawei.com, 
-	wozizhi@huawei.com, osandov@fb.com, xiang@kernel.org, 
-	zhangjiachen.jaycee@bytedance.com, linux-xfs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, zhangshida@kylinos.cn
+X-Received: by 2002:a05:6e02:1d1c:b0:3a7:2b12:78dd with SMTP id
+ e9e14a558f8ab-3a7480234f3mr66364335ab.11.1731807502596; Sat, 16 Nov 2024
+ 17:38:22 -0800 (PST)
+Date: Sat, 16 Nov 2024 17:38:22 -0800
+In-Reply-To: <6731d39c.050a0220.1fb99c.014e.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6739490e.050a0220.87769.0000.GAE@google.com>
+Subject: Re: [syzbot] [mm?] [v9fs?] BUG: stack guard page was hit in sys_open
+From: syzbot <syzbot+885c03ad650731743489@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, asmadeus@codewreck.org, ericvh@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux_oss@crudebyte.com, 
+	lucho@ionkov.net, syzkaller-bugs@googlegroups.com, v9fs@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Dave Chinner <david@fromorbit.com> =E4=BA=8E2024=E5=B9=B411=E6=9C=8811=E6=
-=97=A5=E5=91=A8=E4=B8=80 10:04=E5=86=99=E9=81=93=EF=BC=9A
->
-> On Fri, Nov 08, 2024 at 09:34:17AM +0800, Stephen Zhang wrote:
-> > Dave Chinner <david@fromorbit.com> =E4=BA=8E2024=E5=B9=B411=E6=9C=884=
-=E6=97=A5=E5=91=A8=E4=B8=80 20:15=E5=86=99=E9=81=93=EF=BC=9A
-> > > On Mon, Nov 04, 2024 at 05:25:38PM +0800, Stephen Zhang wrote:
-> > > > Dave Chinner <david@fromorbit.com> =E4=BA=8E2024=E5=B9=B411=E6=9C=
-=884=E6=97=A5=E5=91=A8=E4=B8=80 11:32=E5=86=99=E9=81=93=EF=BC=9A
-> > > > > On Mon, Nov 04, 2024 at 09:44:34AM +0800, zhangshida wrote:
->
-> [snip unnecessary stereotyping, accusations and repeated information]
->
-> > > AFAICT, this "reserve AG space for inodes" behaviour that you are
-> > > trying to acheive is effectively what the inode32 allocator already
-> > > implements. By forcing inode allocation into the AGs below 1TB and
-> > > preventing data from being allocated in those AGs until allocation
-> > > in all the AGs above start failing, it effectively provides the same
-> > > functionality but without the constraints of a global first fit
-> > > allocation policy.
-> > >
-> > > We can do this with any AG by setting it up to prefer metadata,
-> > > but given we already have the inode32 allocator we can run some
-> > > tests to see if setting the metadata-preferred flag makes the
-> > > existing allocation policies do what is needed.
-> > >
-> > > That is, mkfs a new 2TB filesystem with the same 344AG geometry as
-> > > above, mount it with -o inode32 and run the workload that fragments
-> > > all the free space. What we should see is that AGs in the upper TB
-> > > of the filesystem should fill almost to full before any significant
-> > > amount of allocation occurs in the AGs in the first TB of space.
->
-> Have you performed this experiment yet?
->
-> I did not ask it idly, and I certainly did not ask it with the intent
-> that we might implement inode32 with AFs. It is fundamentally
-> impossible to implement inode32 with the proposed AF feature.
->
-> The inode32 policy -requires- top down data fill so that AG 0 is the
-> *last to fill* with user data. The AF first-fit proposal guarantees
-> bottom up fill where AG 0 is the *first to fill* with user data.
->
-> For example:
->
-> > So for the inode32 logarithm:
-> > 1. I need to specify a preferred ag, like ag 0:
-> > |----------------------------
-> > | ag 0 | ag 1 | ag 2 | ag 3 |
-> > +----------------------------
-> > 2. Someday space will be used up to 100%, Then we have to growfs to ag =
-7:
-> > +------+------+------+------+------+------+------+------+
-> > | full | full | full | full | ag 4 | ag 5 | ag 6 | ag 7 |
-> > +------+------+------+------+------+------+------+------+
-> > 3. specify another ag for inodes again.
-> > 4. repeat 1-3.
->
-> Lets's assume that AGs are 512GB each and so AGs 0 and 1 fill the
-> entire lower 1TB of the filesystem. Hence if we get to all AGs full
-> the entire inode32 inode allocation space is full.
->
-> Even if we grow the filesystem at this point, we still *cannot*
-> allocate more inodes in the inode32 space. That space (AGs 0-1) is
-> full even after the growfs.  Hence we will still give ENOSPC, and
-> that is -correct behaviour- because the inode32 policy requires this
-> behaviour.
->
-> IOWs, growfs and changing the AF bounds cannot fix ENOSPC on inode32
-> when the inode space is exhausted. Only physically moving data out
-> of the lower AGs can fix that problem...
->
-> > for the AF logarithm:
-> >     mount -o af1=3D1 $dev $mnt
-> > and we are done.
-> > |<-----+ af 0 +----->|<af 1>|
-> > |----------------------------
-> > | ag 0 | ag 1 | ag 2 | ag 3 |
-> > +----------------------------
-> > because the af is a relative number to ag_count, so when growfs, it wil=
-l
-> > become:
-> > |<-----+ af 0 +--------------------------------->|<af 1>|
-> > +------+------+------+------+------+------+------+------+
-> > | full | full | full | full | ag 4 | ag 5 | ag 6 | ag 7 |
-> > +------+------+------+------+------+------+------+------+
-> > So just set it once, and run forever.
->
-> That is actually the general solution to the original problem being
-> reported. I realised this about half way through reading your
-> original proposal. This is why I pointed out inode32 and the
-> preferred metadata mechanism in the AG allocator policies.
->
-> That is, a general solution should only require the highest AG
-> to be marked as metadata preferred. Then -all- data allocation will
-> then skip over the highest AG until there is no space left in any of
-> the lower AGs. This behaviour will be enforced by the existing AG
-> iteration allocation algorithms without any change being needed.
->
-> Then when we grow the fs, we set the new highest AG to be metadata
-> preferred, and that space will now be reserved for inodes until all
-> other space is consumed.
->
-> Do you now understand why I asked you to test whether the inode32
-> mount option kept the data out of the lower AGs until the higher AGs
-> were completely filled? It's because I wanted confirmation that the
-> metadata preferred flag would do what we need to implement a
-> general solution for the problematic workload.
->
+syzbot has found a reproducer for the following issue on:
 
-Hi, I have tested the inode32 mount option. To my suprise, the inode32
-or the metadata preferred structure (will be referred to as inode32 for the
-rest reply) doesn't implement the desired behavior as the AF rule[1] does:
-        Lower AFs/AGs will do anything they can for allocation before going
-to HIGHER/RESERVED AFs/AGS. [1]
+HEAD commit:    e8bdb3c8be08 Merge tag 'riscv-for-linus-6.12-rc8' of git:/..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=136a52e8580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=327b6119dd928cbc
+dashboard link: https://syzkaller.appspot.com/bug?extid=885c03ad650731743489
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1642d2c0580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14547130580000
 
-While the inode32 does:
-        Lower AFs/AGs won't do anything they can for allocation before goin=
-g
-to HIGHER/RESERVED AFs/AGS.
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-e8bdb3c8.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/3fca1f7d05f3/vmlinux-e8bdb3c8.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/51d966b1b453/bzImage-e8bdb3c8.xz
 
-To illustrate that, imagine that now AG 2 is badly fragmented and AG 0/1 ar=
-e
-reserved for inode32:
-       +------------------------+
-       |                        |
-ag 0   |                        |
-       +------------------------+
-       |                        |
-ag 1   |                        |
-       +------------------------+
-       |  1     1     1         |
-       |  1        1  1         |
-       |  1  1 4       1        |
-ag 2   |           1     1      |
-       |      1     1           |
-       |    4  8          1     |
-       +------------------------+
-We want a allocate a space len of 4, but ag 2 is so fragmented that there
-is no such continuous space that we have only two choices:
-1. Break down the 4 into many small pieces for a success allocation in AG 2=
-.
-2. Go to the reserved AG 0/1 for the allocation.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+885c03ad650731743489@syzkaller.appspotmail.com
 
-But unlike the AF, the inode32 will choose option 2...
+BUG: TASK stack guard page was hit at ffffc90005abfff8 (stack is ffffc90005ac0000..ffffc90005ac8000)
+Oops: stack guard page: 0000 [#1] PREEMPT SMP KASAN NOPTI
+CPU: 0 UID: 0 PID: 6005 Comm: syz-executor698 Not tainted 6.12.0-rc7-syzkaller-00189-ge8bdb3c8be08 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:mark_lock+0xb0/0xc60 kernel/locking/lockdep.c:4703
+Code: fe 09 0f 87 e3 00 00 00 41 83 fe 08 49 89 fc 48 89 f3 0f 84 97 00 00 00 41 bd 01 00 00 00 44 89 f1 41 d3 e5 4d 63 ed 48 89 df <e8> cb 6b ff ff 48 ba 00 00 00 00 00 fc ff df 48 8d 78 60 48 89 f9
+RSP: 0018:ffffc90005ac0000 EFLAGS: 00010002
+RAX: 0000000000000000 RBX: ffff888029b953b0 RCX: 0000000000000003
+RDX: 0000000000000002 RSI: ffff888029b953b0 RDI: ffff888029b953b0
+RBP: ffffc90005ac0138 R08: 0000000000000000 R09: 0000000000000006
+R10: ffffffff96e2ed1f R11: 0000000000000002 R12: ffff888029b94880
+R13: 0000000000000200 R14: 0000000000000009 R15: 1ffff92000b58006
+FS:  00007f59e396f6c0(0000) GS:ffff88806a600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffc90005abfff8 CR3: 000000003c6a2000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <#DF>
+ </#DF>
+ <TASK>
+ mark_usage kernel/locking/lockdep.c:4646 [inline]
+ __lock_acquire+0x906/0x3ce0 kernel/locking/lockdep.c:5156
+ lock_acquire.part.0+0x11b/0x380 kernel/locking/lockdep.c:5825
+ rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
+ rcu_read_lock include/linux/rcupdate.h:849 [inline]
+ page_ext_get+0x3a/0x310 mm/page_ext.c:525
+ __set_page_owner+0x96/0x560 mm/page_owner.c:322
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x2d1/0x350 mm/page_alloc.c:1556
+ prep_new_page mm/page_alloc.c:1564 [inline]
+ get_page_from_freelist+0xfce/0x2f80 mm/page_alloc.c:3474
+ __alloc_pages_noprof+0x223/0x25a0 mm/page_alloc.c:4750
+ alloc_pages_mpol_noprof+0x2c9/0x610 mm/mempolicy.c:2265
+ alloc_slab_page mm/slub.c:2412 [inline]
+ allocate_slab mm/slub.c:2578 [inline]
+ new_slab+0x2c9/0x410 mm/slub.c:2631
+ ___slab_alloc+0xdac/0x1880 mm/slub.c:3818
+ __slab_alloc.constprop.0+0x56/0xb0 mm/slub.c:3908
+ __slab_alloc_node mm/slub.c:3961 [inline]
+ slab_alloc_node mm/slub.c:4122 [inline]
+ kmem_cache_alloc_noprof+0x2a7/0x2f0 mm/slub.c:4141
+ p9_tag_alloc+0x9c/0x870 net/9p/client.c:281
+ p9_client_prepare_req+0x19f/0x4d0 net/9p/client.c:644
+ p9_client_zc_rpc.constprop.0+0x105/0x880 net/9p/client.c:793
+ p9_client_read_once+0x443/0x820 net/9p/client.c:1570
+ p9_client_read+0x13f/0x1b0 net/9p/client.c:1534
+ v9fs_issue_read+0x115/0x310 fs/9p/vfs_addr.c:74
+ netfs_retry_read_subrequests fs/netfs/read_retry.c:60 [inline]
+ netfs_retry_reads+0x153a/0x1d00 fs/netfs/read_retry.c:232
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+ netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
+ netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
+ netfs_dispatch_unbuffered_reads fs/netfs/direct_read.c:103 [inline]
+ netfs_unbuffered_read fs/netfs/direct_read.c:127 [inline]
+ netfs_unbuffered_read_iter_locked+0x12f6/0x19b0 fs/netfs/direct_read.c:221
+ netfs_unbuffered_read_iter+0xc5/0x100 fs/netfs/direct_read.c:256
+ v9fs_file_read_iter+0xbf/0x100 fs/9p/vfs_file.c:361
+ __kernel_read+0x3f1/0xb50 fs/read_write.c:527
+ integrity_kernel_read+0x7f/0xb0 security/integrity/iint.c:28
+ ima_calc_file_hash_tfm+0x2c9/0x3e0 security/integrity/ima/ima_crypto.c:480
+ ima_calc_file_shash security/integrity/ima/ima_crypto.c:511 [inline]
+ ima_calc_file_hash+0x1ba/0x490 security/integrity/ima/ima_crypto.c:568
+ ima_collect_measurement+0x89f/0xa40 security/integrity/ima/ima_api.c:293
+ process_measurement+0x1271/0x2370 security/integrity/ima/ima_main.c:372
+ ima_file_check+0xc1/0x110 security/integrity/ima/ima_main.c:572
+ security_file_post_open+0x8e/0x210 security/security.c:3129
+ do_open fs/namei.c:3776 [inline]
+ path_openat+0x1419/0x2d60 fs/namei.c:3933
+ do_filp_open+0x1dc/0x430 fs/namei.c:3960
+ do_sys_openat2+0x17a/0x1e0 fs/open.c:1415
+ do_sys_open fs/open.c:1430 [inline]
+ __do_sys_open fs/open.c:1438 [inline]
+ __se_sys_open fs/open.c:1434 [inline]
+ __x64_sys_open+0x154/0x1e0 fs/open.c:1434
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f59e39b43e9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 51 18 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f59e396f218 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
+RAX: ffffffffffffffda RBX: 00007f59e3a3e308 RCX: 00007f59e39b43e9
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000020000140
+RBP: 00007f59e3a3e300 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f59e3a3e30c
+R13: 00007f59e3a0b074 R14: 0030656c69662f2e R15: 00000000ffffff3c
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:mark_lock+0xb0/0xc60 kernel/locking/lockdep.c:4703
+Code: fe 09 0f 87 e3 00 00 00 41 83 fe 08 49 89 fc 48 89 f3 0f 84 97 00 00 00 41 bd 01 00 00 00 44 89 f1 41 d3 e5 4d 63 ed 48 89 df <e8> cb 6b ff ff 48 ba 00 00 00 00 00 fc ff df 48 8d 78 60 48 89 f9
+RSP: 0018:ffffc90005ac0000 EFLAGS: 00010002
+RAX: 0000000000000000 RBX: ffff888029b953b0 RCX: 0000000000000003
+RDX: 0000000000000002 RSI: ffff888029b953b0 RDI: ffff888029b953b0
+RBP: ffffc90005ac0138 R08: 0000000000000000 R09: 0000000000000006
+R10: ffffffff96e2ed1f R11: 0000000000000002 R12: ffff888029b94880
+R13: 0000000000000200 R14: 0000000000000009 R15: 1ffff92000b58006
+FS:  00007f59e396f6c0(0000) GS:ffff88806a600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffc90005abfff8 CR3: 000000003c6a2000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	fe 09                	decb   (%rcx)
+   2:	0f 87 e3 00 00 00    	ja     0xeb
+   8:	41 83 fe 08          	cmp    $0x8,%r14d
+   c:	49 89 fc             	mov    %rdi,%r12
+   f:	48 89 f3             	mov    %rsi,%rbx
+  12:	0f 84 97 00 00 00    	je     0xaf
+  18:	41 bd 01 00 00 00    	mov    $0x1,%r13d
+  1e:	44 89 f1             	mov    %r14d,%ecx
+  21:	41 d3 e5             	shl    %cl,%r13d
+  24:	4d 63 ed             	movslq %r13d,%r13
+  27:	48 89 df             	mov    %rbx,%rdi
+* 2a:	e8 cb 6b ff ff       	call   0xffff6bfa <-- trapping instruction
+  2f:	48 ba 00 00 00 00 00 	movabs $0xdffffc0000000000,%rdx
+  36:	fc ff df
+  39:	48 8d 78 60          	lea    0x60(%rax),%rdi
+  3d:	48 89 f9             	mov    %rdi,%rcx
 
-To understand the reason for that, we must understand the general allocatio=
-n
-phases:
-1. Best length fit. Find the best length for the current allocation in
-two loops.
-    1.1. First loop with *_TRY_LOCK flags.
-    1.2. Second loop without *_TRY_LOCK flags.
-2. Low space algorithm. Break the allocation into small pieces and fit them=
- into
-   the free space one by one.
 
-So for the AF, it will do anything it can before going to higher AFs. *anyt=
-hing*
-means the allocation must completely go through the whole 1.1->1.2->2 phase=
- and
-then go to the next AF.
-But for the inode32, it will only go through 1.1-> and then go to the
-reserved AG.
-
-Take a look at the core code snippet for inode32 in xfs_alloc_fix_freelist(=
-):
-
-
-        /*
-         * If this is a metadata preferred pag and we are user data then tr=
-y
-         * somewhere else if we are not being asked to try harder at this
-         * point
-         */
-        if (xfs_perag_prefers_metadata(pag) &&
-            (args->datatype & XFS_ALLOC_USERDATA) &&
-            (alloc_flags & XFS_ALLOC_FLAG_TRYLOCK)) {
-                ASSERT(!(alloc_flags & XFS_ALLOC_FLAG_FREEING));
-                goto out_agbp_relse;
-        }
-
-That's exactly how the inode32 sees if it should go to the RESERVED AG for
-allocation or not.
-
-The inode32 will see if the current alloction is in *_TRY_LOCK mode
-or not, if it isn't, then it can go to the RESERVED AG for allocation.
-But at this moment, the allocation in unreserved ags only have gone
-through 1.1->...
-
-And seen from the code analysis for metadata preference algorithm, using th=
-e
-preference info to comply with the rule[1](indicate the unreserved AGs alre=
-ady
-having gone through 1.1->1.2->2) will greatly increase the
-system complexity compared with the AF algorithm, or basically impossible..=
-.
-
-To sum it up:
-1. The inode32/metadata-preference doesn't comply with the rule[1]. So it h=
-as
-   no ability to solve the reported problem.
-2. Since the inode32 is kinda conficted with AF, maybe the AF should be dis=
-abled
-   when inode32 gets enabled...
-
-
-> Remeber: free space fragmentation can happen for many reasons - this
-> mysql thing is just the latest one discovered.  The best solution is
-> having general mechanisms in the filesystem that automatically
-> mitigate the effects of free space fragmentation on inode
-> allocation. The worst solution is requiring users to tweak knobs...
->
-> -Dave.
-> --
-> Dave Chinner
-> david@fromorbit.com
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
