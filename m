@@ -1,83 +1,61 @@
-Return-Path: <linux-kernel+bounces-412207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2750A9D053A
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 19:44:34 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A5D99D053F
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 19:44:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEDD91F21AFD
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 18:44:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3003B21EB9
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 18:44:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C98F81DB527;
-	Sun, 17 Nov 2024 18:44:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2920D1DBB0D;
+	Sun, 17 Nov 2024 18:44:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="edEoZQt2"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="KtkQIxay"
+Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50DA9823DD
-	for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 18:44:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5505126ACB
+	for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 18:44:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731869063; cv=none; b=h4KLM1NXyZI1Ty9ZF9NeKn4+V33VHTf5UyIAR5Up3cP9veXAJlxHwt2UggL0U/xJUOLdohFUfdX8QVXAiudg0A2+zVlmMp7a9waEyMJ9J8xtSfVkKu4NVH3mXLIW4oOrXLURERqxX6Lijub1qUgI26Nc++0uw3s5SnY1xXejl/g=
+	t=1731869079; cv=none; b=jmAMvdRU+9ljXDgBg2U4GlKMnYU8x7vAUEEHE0aBu1ng15ZC5dgrz8I4GstF38SoV2K9K2x7I5s71rnCbsKcANAamJqZBflMDbYtBUduakhLJuJmSEH/hXFs7yCA8QBkqlaYXAtDzmeI4a6KjgcrV4YsMXq0YznR2U+iT+e1+p8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731869063; c=relaxed/simple;
-	bh=BRVnz4//YdXvz1FMKrURytumMDf92OlVDuTwtndmp1c=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qzRkOI8gB7ZM3yGk8C5360aPRebJGQEzItalTtz+JY5PDYZxn2LeMzvzkIj8t5MdWYQ8HUD74vtr54Q/w6E+FLFAWV+qsXY9JeOik42ril/XEj1AZwn/j6gSdjQHgxd0qclgY+wLKe5UY/vm/oEmzZI/w7nrr/3526XJJjwHbKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=edEoZQt2; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-382411ea5eeso330003f8f.0
-        for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 10:44:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731869060; x=1732473860; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=eWkh7WZG7vwBsGnxbhTtR+8ik+TAgauZ51w8oqK1WyQ=;
-        b=edEoZQt26f5BxB30gaQq7huHihGGgPtKaRxJ7WI+MmxNh5jyyx06GM9POk9TL0L5aR
-         sdUBRqpiiS+gaVr6qKVRc24JME7YWPT9yBd6fD+Z2r530Jzqffv+E1lNQQZtF5Vg+vwI
-         dI8apdMJQOyV24U/XpVjpvY2UY3Zmx0Rg4/g26kL1tat+wrVb5LA3gh7ezAC8Bojlh0w
-         bZ5OzzrGyJNAeQ13hLM1H8YVwqtPdRVX7jQvDff4jsmA+x/F2K7MSlq91qrqMZ8UBq+3
-         XBJfAPtB3cho9WSJ/JMauOdacse4eIzNZNu4pzKXXDjBTzBfGuaJXkN5qoUexKGl11xB
-         blKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731869060; x=1732473860;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=eWkh7WZG7vwBsGnxbhTtR+8ik+TAgauZ51w8oqK1WyQ=;
-        b=f6evUafy/bALemXDZ7W9fNqRvck9bzmcbR5FFb3D6agwdtKG8ZfjE2TzFdOgbzPB19
-         /r4xKWQgDPglLQkwzC1peO3UJDidZnqRDRVl4iBBCvNuE2t82pFSrsCkfutzd+SIgmH2
-         H5IyHx5I0zJz4Kp/+vmKFqpbjD1Fm6Eenij+sLX05cbWPi8VKJ9z68g5S3ya5Tf2x2s0
-         z1yvxL3TLzjz18HmPLPntkhl/IDI1QBbZ/NQrhzivuyG8fAzQ3o9+BJ0CEG1h1Y3+lVX
-         QiuYPxZQ8Ejp+4zW9CRynRL5G+Dz2RaHjcqSj56+/Su75n48Wb9KPc+m6p3pSUhRqAb1
-         rDrg==
-X-Forwarded-Encrypted: i=1; AJvYcCXvBUsp959dX/WrLA5xOD3wKJQ39ddt2r0QokH7J8kC74J9ysx6XVSPe3e7kQ/WfqYh3CHdYn0rPXAi9Kw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YymxgeTxKz9OaoiQFAIG1CWsfL5b8Ykf348wjICs/51fXmfBleV
-	P0OWPUowwOw8+enz7a0mvETfFxu1H9vrkhZy2Bb++I0d1nhRRt0Fk1F/3HcXcqg=
-X-Google-Smtp-Source: AGHT+IGkeQweqYBW/8Hnl0hUU1V1jJ5EB7kiHg+dpWYM1ZyWbyKk+uGQSNgMw4bo7IDu+9OSpPIMdA==
-X-Received: by 2002:a05:6000:1a8e:b0:382:3c7b:9bd with SMTP id ffacd0b85a97d-3823c7b0b66mr3233529f8f.30.1731869059589;
-        Sun, 17 Nov 2024 10:44:19 -0800 (PST)
-Received: from eugen-station.. ([82.76.24.202])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38244220183sm1863714f8f.99.2024.11.17.10.44.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 17 Nov 2024 10:44:19 -0800 (PST)
-From: Eugen Hristev <eugen.hristev@linaro.org>
-To: linux-arm-msm@vger.kernel.org
-Cc: linux-clk@vger.kernel.org,
+	s=arc-20240116; t=1731869079; c=relaxed/simple;
+	bh=1vF/ooWorH2Ca5CAOB4mMV8CTmrs5ciK2QzG1YGK8h8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=V6vwsEF7tNzbgCSNKTu8Uo+lgTDGXVOSw+5Oqwmnb3Mc84eaC/sVdfgebGQDOqW8ULOX5LcrwU2rrXkbdpyk1T6OW945+EhuuKQ0psfZYB/1YQg7NtaJC73tGtaJTBeHc/XaxCZNVK2wu3HJkteQmiPoijkIRgrJf5JeZkJviAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=KtkQIxay; arc=none smtp.client-ip=83.149.199.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
+Received: from fpc.intra.ispras.ru (unknown [10.10.165.6])
+	by mail.ispras.ru (Postfix) with ESMTPSA id 2FBC1518E778;
+	Sun, 17 Nov 2024 18:44:27 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 2FBC1518E778
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
+	s=default; t=1731869067;
+	bh=ZfOJ3PpDEgEr9Zel8CG5ZDup6WjpmnQFHw2f6/BApFI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=KtkQIxayYNhqUiSE/e2qdEjmr0Ov5PDq6l8Plza3soLEpAMndcyjl78R0okRttA8e
+	 Ka1Mjgs510jInDqGeSM4ZVh/Arn+nqDmGL5+vAZ3SKzYHQuxwVyBwnQklyO9NfWvSg
+	 g8C6Ufxm8hRixG5ITD6GNahvNnoC5t4vXiuoJ7VY=
+From: Fedor Pchelkin <pchelkin@ispras.ru>
+To: Richard Weinberger <richard@nod.at>,
+	Zhihao Cheng <chengzhihao1@huawei.com>
+Cc: Fedor Pchelkin <pchelkin@ispras.ru>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Wang Yong <wang.yong12@zte.com.cn>,
+	Lu Zhongjun <lu.zhongjun@zte.com.cn>,
+	Yang Tao <yang.tao172@zte.com.cn>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	linux-mtd@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	konradybcio@kernel.org,
-	sboyd@kernel.org,
-	andersson@kernel.org,
-	evgreen@chromium.org,
-	Eugen Hristev <eugen.hristev@linaro.org>
-Subject: [PATCH v3] soc: qcom: Rework BCM_TCS_CMD macro
-Date: Sun, 17 Nov 2024 20:43:52 +0200
-Message-ID: <20241117184352.187184-1-eugen.hristev@linaro.org>
-X-Mailer: git-send-email 2.43.0
+	lvc-project@linuxtesting.org
+Subject: [PATCH 0/2] jffs2: fix a couple of uninit value errors
+Date: Sun, 17 Nov 2024 21:44:10 +0300
+Message-Id: <20241117184412.366672-1-pchelkin@ispras.ru>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,102 +64,20 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Reworked BCM_TCS_CMD macro in order to fix warnings from sparse:
+There is a couple of places where uninit value is touched on error
+handling paths in jffs2 code. Fix them.
 
-drivers/clk/qcom/clk-rpmh.c:270:28: warning: restricted __le32 degrades to integer
-drivers/clk/qcom/clk-rpmh.c:270:28: warning: restricted __le32 degrades to integer
+Fedor Pchelkin (2):
+  jffs2: initialize filesystem-private inode info in ->alloc_inode
+    callback
+  jffs2: initialize inocache earlier
 
-While at it, used le32_encode_bits which made the code easier to
-follow and removed unnecessary shift definitions.
+ fs/jffs2/fs.c       | 2 --
+ fs/jffs2/os-linux.h | 1 +
+ fs/jffs2/super.c    | 3 ++-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-Signed-off-by: Eugen Hristev <eugen.hristev@linaro.org>
----
-Changes in v3:
-- align the macro lines better
-
-Changes in v2:
-- use le32_encode_bits instead of u32_encode_bits with a cpu_to_le32 on
-the fields; this however ment we need to force cast the le32 to the
-u32 container.
-
- drivers/clk/qcom/clk-rpmh.c           |  2 +-
- drivers/interconnect/qcom/bcm-voter.c |  2 +-
- include/soc/qcom/tcs.h                | 26 ++++++++++++--------------
- 3 files changed, 14 insertions(+), 16 deletions(-)
-
-diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
-index 4acde937114a..4929893b09c2 100644
---- a/drivers/clk/qcom/clk-rpmh.c
-+++ b/drivers/clk/qcom/clk-rpmh.c
-@@ -267,7 +267,7 @@ static int clk_rpmh_bcm_send_cmd(struct clk_rpmh *c, bool enable)
- 
- 	if (c->last_sent_aggr_state != cmd_state) {
- 		cmd.addr = c->res_addr;
--		cmd.data = BCM_TCS_CMD(1, enable, 0, cmd_state);
-+		cmd.data = (__force u32)BCM_TCS_CMD(1, enable, 0, cmd_state);
- 
- 		/*
- 		 * Send only an active only state request. RPMh continues to
-diff --git a/drivers/interconnect/qcom/bcm-voter.c b/drivers/interconnect/qcom/bcm-voter.c
-index a2d437a05a11..ce9091cf122b 100644
---- a/drivers/interconnect/qcom/bcm-voter.c
-+++ b/drivers/interconnect/qcom/bcm-voter.c
-@@ -144,7 +144,7 @@ static inline void tcs_cmd_gen(struct tcs_cmd *cmd, u64 vote_x, u64 vote_y,
- 		vote_y = BCM_TCS_CMD_VOTE_MASK;
- 
- 	cmd->addr = addr;
--	cmd->data = BCM_TCS_CMD(commit, valid, vote_x, vote_y);
-+	cmd->data = (__force u32)BCM_TCS_CMD(commit, valid, vote_x, vote_y);
- 
- 	/*
- 	 * Set the wait for completion flag on command that need to be completed
-diff --git a/include/soc/qcom/tcs.h b/include/soc/qcom/tcs.h
-index 3acca067c72b..d0dfcaa07337 100644
---- a/include/soc/qcom/tcs.h
-+++ b/include/soc/qcom/tcs.h
-@@ -6,6 +6,9 @@
- #ifndef __SOC_QCOM_TCS_H__
- #define __SOC_QCOM_TCS_H__
- 
-+#include <linux/bitfield.h>
-+#include <linux/bits.h>
-+
- #define MAX_RPMH_PAYLOAD	16
- 
- /**
-@@ -60,22 +63,17 @@ struct tcs_request {
- 	struct tcs_cmd *cmds;
- };
- 
--#define BCM_TCS_CMD_COMMIT_SHFT		30
--#define BCM_TCS_CMD_COMMIT_MASK		0x40000000
--#define BCM_TCS_CMD_VALID_SHFT		29
--#define BCM_TCS_CMD_VALID_MASK		0x20000000
--#define BCM_TCS_CMD_VOTE_X_SHFT		14
--#define BCM_TCS_CMD_VOTE_MASK		0x3fff
--#define BCM_TCS_CMD_VOTE_Y_SHFT		0
--#define BCM_TCS_CMD_VOTE_Y_MASK		0xfffc000
-+#define BCM_TCS_CMD_COMMIT_MASK		BIT(30)
-+#define BCM_TCS_CMD_VALID_MASK		BIT(29)
-+#define BCM_TCS_CMD_VOTE_MASK		GENMASK(13, 0)
-+#define BCM_TCS_CMD_VOTE_Y_MASK		GENMASK(13, 0)
-+#define BCM_TCS_CMD_VOTE_X_MASK		GENMASK(27, 14)
- 
- /* Construct a Bus Clock Manager (BCM) specific TCS command */
- #define BCM_TCS_CMD(commit, valid, vote_x, vote_y)		\
--	(((commit) << BCM_TCS_CMD_COMMIT_SHFT) |		\
--	((valid) << BCM_TCS_CMD_VALID_SHFT) |			\
--	((cpu_to_le32(vote_x) &					\
--	BCM_TCS_CMD_VOTE_MASK) << BCM_TCS_CMD_VOTE_X_SHFT) |	\
--	((cpu_to_le32(vote_y) &					\
--	BCM_TCS_CMD_VOTE_MASK) << BCM_TCS_CMD_VOTE_Y_SHFT))
-+	(le32_encode_bits(commit, BCM_TCS_CMD_COMMIT_MASK) |	\
-+	le32_encode_bits(valid, BCM_TCS_CMD_VALID_MASK) |	\
-+	le32_encode_bits(vote_x, BCM_TCS_CMD_VOTE_X_MASK) |	\
-+	le32_encode_bits(vote_y, BCM_TCS_CMD_VOTE_Y_MASK))
- 
- #endif /* __SOC_QCOM_TCS_H__ */
 -- 
-2.43.0
+2.39.5
 
 
