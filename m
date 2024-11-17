@@ -1,341 +1,165 @@
-Return-Path: <linux-kernel+bounces-412283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACFF29D0701
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 00:27:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 056429D0704
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 00:30:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64DE5281BB8
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 23:27:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87BDD281B2A
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 23:30:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 926EC1DDC34;
-	Sun, 17 Nov 2024 23:27:15 +0000 (UTC)
-Received: from sundtek.de (sundtek.de [85.10.198.106])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 932641DE2AD;
+	Sun, 17 Nov 2024 23:29:56 +0000 (UTC)
+Received: from smtp01.aussiebb.com.au (smtp01.aussiebb.com.au [121.200.0.92])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16C891DDA37
-	for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 23:27:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.10.198.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D86B91DDA33;
+	Sun, 17 Nov 2024 23:29:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.200.0.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731886034; cv=none; b=VZvryhevzZe0TUOo4Yk1X2lblRlNvd8WzN0r51xDMuyBT979kOlIjiQn8s5Rd09xLAqxVdLepRYkHErc8DfaRqM0CDbgIWyhNBff0dufPotQPIiUWl89TTx6m8nd8H4wnV+k2nsHNLHINbcwS+n+/Gz2qBEcXlQVWHnsbAFJyLM=
+	t=1731886196; cv=none; b=a5k4gEILkc0cIVoLlCiruIqRvNzn5tsUHuOme34KieK8UHPFIum4rC9up0S3mm8YiBhU/PvWpLRHb3Y2x1OU5C4wKDJ5xrhd+JaElT2Vuyr4STKp9XQNCrv01dDtM7C8rkV2kP4Loo3d8q/5xUq5/6mysKQS+RCYRhNCAnppthg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731886034; c=relaxed/simple;
-	bh=SiZrIa7IMhWCH1/3xGaryyfBG/bxqIefnGhJK9s/8hQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:References:Content-Type:
-	 MIME-Version; b=sapWUOscd3V9LJR3hjEDoBdRwsXM0u97sv81b94KtttnoKctEuNAxY1zrNpgrcmqj2/ZR9/uubn1s1bGl88GbiMIqnQXtD5K6Jm5YSUsJxfBynMyfegXwezceD+OUxLrec2unNr3jZ2020q9jHCCo7u2DO0m3/xLsTOAtwQZV6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sundtek.de; spf=pass smtp.mailfrom=sundtek.de; arc=none smtp.client-ip=85.10.198.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sundtek.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sundtek.de
-Received: from Debian-exim by sundtek.de with spam-scanned (Exim 4.95)
-	(envelope-from <linuxusb.ml@sundtek.de>)
-	id 1tCofb-0001Ig-T3
-	for linux-kernel@vger.kernel.org;
-	Mon, 18 Nov 2024 00:27:09 +0100
-Received: from 1-175-135-24.dynamic-ip.hinet.net ([1.175.135.24] helo=[192.168.2.197])
-	by sundtek.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <linuxusb.ml@sundtek.de>)
-	id 1tCofb-0001IF-8a;
-	Mon, 18 Nov 2024 00:27:07 +0100
-Message-ID: <03c1ae453f2781dbcf3a5ea607640c696b748848.camel@sundtek.de>
-Subject: [PATCH] XHCI NULL Pointer check in xhci_check_bw_table
-From: Markus Rechberger <linuxusb.ml@sundtek.de>
-To: linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
-Cc: Greg KH <gregkh@linuxfoundation.org>
-Date: Mon, 18 Nov 2024 07:27:03 +0800
-References: <b90d48df16cf74bb682af870cd71d7c5cc4a9d97.camel@sundtek.de>
-Content-Type: multipart/mixed; boundary="=-5urReUzQZxabI7oEQTBX"
-User-Agent: Evolution 3.52.3-0ubuntu1 
+	s=arc-20240116; t=1731886196; c=relaxed/simple;
+	bh=jIMynjpJaK/O61eRSvGhtn9jzOXXW78GlgyU9AxE0b4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZTOGm4FIC4v3jNP+t1pSfw9QP3jbWHIQMcg/cN5s78yYr4zerLpT3JVMjsaJcS8RsXVf+zOke9IdzmPse1DXyXNEbtbcNks6OG74csGP7Rpts+RL8oJobgbGvQqwGHI6b33GF93O7hs0lY9WGJQ8R19NDbod0HNfXrng2vdZo2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=themaw.net; spf=fail smtp.mailfrom=themaw.net; arc=none smtp.client-ip=121.200.0.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=themaw.net
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=themaw.net
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by smtp01.aussiebb.com.au (Postfix) with ESMTP id 605B7100814;
+	Mon, 18 Nov 2024 10:29:46 +1100 (AEDT)
+X-Virus-Scanned: Debian amavisd-new at smtp01.aussiebb.com.au
+Received: from smtp01.aussiebb.com.au ([127.0.0.1])
+	by localhost (smtp01.aussiebb.com.au [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id QSGkpr7bSMwc; Mon, 18 Nov 2024 10:29:46 +1100 (AEDT)
+Received: by smtp01.aussiebb.com.au (Postfix, from userid 116)
+	id 503DA100723; Mon, 18 Nov 2024 10:29:46 +1100 (AEDT)
+X-Spam-Level: 
+Received: from [192.168.50.229] (159-196-82-144.9fc452.per.static.aussiebb.net [159.196.82.144])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: ian146@aussiebb.com.au)
+	by smtp01.aussiebb.com.au (Postfix) with ESMTPSA id C06851006EE;
+	Mon, 18 Nov 2024 10:29:43 +1100 (AEDT)
+Message-ID: <fe9f3161-b9e5-4943-9d55-dfec08e7594e@themaw.net>
+Date: Mon, 18 Nov 2024 07:29:42 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: linuxusb.ml@sundtek.de
-X-SA-Exim-Scanned: No (on sundtek.de); SAEximRunCond expanded to false
-
---=-5urReUzQZxabI7oEQTBX
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-This patch fixes a NULL Pointer exception when a device using the XHCI
-controller driver is not properly initialized. It's relatively easy to
-reproduce with a faulty connection to a USB Harddisk / USB Ethernet
-adapter.=C2=A0
-The way I used for testing this patch was to short USB D+/D- and pull
-them to ground.
-
-We manufacture our own USB devices and use Linux for testing, lately we
-upgraded the system to Ubuntu noble with Kernel 6.8.0 and our system
-also crashed multiple times just when plugging in some devices (no
-commands need to be executed).
-We connect/disconnect devices > 100 times (eg uploading firmware, do
-electrical tests etc).
-
-I would rate this issue as highly critical.
-The problem is triggered via some fallback code in hub.c, a second
-patch will follow which
-removes the endpoint reset in the particular fallback.
-
-2024-11-16T22:14:09.701229+08:00 sundtek-UX32VD kernel: usb 3-2: new
-full-speed USB device number 64 using xhci_hcd
-2024-11-16T22:14:09.816295+08:00 sundtek-UX32VD kernel: usb 3-2: device
-descriptor read/64, error -71
-2024-11-16T22:14:10.006157+08:00 sundtek-UX32VD kernel: audit:
-type=3D1400 audit(1731766450.004:3206): apparmor=3D"DENIED"
-operation=3D"open" class=3D"file" profile=3D"snap.skype.skype"
-name=3D"/sys/devices/pci0000:00/ACPI0003:00/power_supply/AC0/online"
-pid=3D4839 comm=3D"skypeforlinux" requested_mask=3D"r" denied_mask=3D"r"
-fsuid=3D1000 ouid=3D0
-2024-11-16T22:14:10.035263+08:00 sundtek-UX32VD kernel: usb 3-2: device
-descriptor read/64, error -71
-2024-11-16T22:14:10.251221+08:00 sundtek-UX32VD kernel: usb 3-2: new
-full-speed USB device number 65 using xhci_hcd
-2024-11-16T22:14:10.365247+08:00 sundtek-UX32VD kernel: usb 3-2: device
-descriptor read/64, error -71
-2024-11-16T22:14:10.587264+08:00 sundtek-UX32VD kernel: usb 3-2: device
-descriptor read/64, error -71
-2024-11-16T22:14:10.689265+08:00 sundtek-UX32VD kernel: usb usb3-port2:
-attempt power cycle
-2024-11-16T22:14:11.006217+08:00 sundtek-UX32VD kernel: audit:
-type=3D1400 audit(1731766451.004:3207): apparmor=3D"DENIED"
-operation=3D"open" class=3D"file" profile=3D"snap.skype.skype"
-name=3D"/sys/devices/pci0000:00/ACPI0003:00/power_supply/AC0/online"
-pid=3D4839 comm=3D"skypeforlinux" requested_mask=3D"r" denied_mask=3D"r"
-fsuid=3D1000 ouid=3D0
-2024-11-16T22:14:11.069247+08:00 sundtek-UX32VD kernel: usb 3-2: new
-full-speed USB device number 66 using xhci_hcd
-2024-11-16T22:14:11.069347+08:00 sundtek-UX32VD kernel: usb 3-2: Device
-not responding to setup address.
-2024-11-16T22:14:11.273256+08:00 sundtek-UX32VD kernel: usb 3-2: Device
-not responding to setup address.
-2024-11-16T22:14:12.122162+08:00 sundtek-UX32VD kernel: usb 3-2: device
-not accepting address 66, error -71
-2024-11-16T22:14:12.122196+08:00 sundtek-UX32VD kernel: BUG: kernel
-NULL pointer dereference, address: 0000000000000020
-2024-11-16T22:14:12.122203+08:00 sundtek-UX32VD kernel: #PF: supervisor
-read access in kernel mode
-2024-11-16T22:14:12.122206+08:00 sundtek-UX32VD kernel: #PF:
-error_code(0x0000) - not-present page
-2024-11-16T22:14:12.122210+08:00 sundtek-UX32VD kernel: PGD 0 P4D 0=20
-2024-11-16T22:14:12.122214+08:00 sundtek-UX32VD kernel: Oops: 0000 [#1]
-PREEMPT SMP PTI
-2024-11-16T22:14:12.122216+08:00 sundtek-UX32VD kernel: CPU: 2 PID:
-15600 Comm: kworker/2:1 Not tainted 6.8.0-48-generic #48-Ubuntu
-2024-11-16T22:14:12.122219+08:00 sundtek-UX32VD kernel: Hardware name:
-ASUSTeK COMPUTER INC. UX32VD/UX32VD, BIOS UX32VD.214 01/29/2013
-2024-11-16T22:14:12.122221+08:00 sundtek-UX32VD kernel: Workqueue:
-usb_hub_wq hub_event
-2024-11-16T22:14:12.122224+08:00 sundtek-UX32VD kernel: RIP:
-0010:xhci_check_bw_table+0x100/0x4d0
-2024-11-16T22:14:12.122227+08:00 sundtek-UX32VD kernel: Code: c7 c2 60
-35 70 9f 48 c7 c6 70 aa 79 9e 4c 89 55 c0 4c 89 5d d0 e8 d0 c7 01 00 4c
-8b 5d d0 4c 8b 55 c0 4c 8b 4d b8 41 8d 47 ff <41> 8b 4a 20 31 d2 45 8b
-72 08 89 45 d0 41 03 02 41 f7 f7 ba 80 00
-2024-11-16T22:14:12.122231+08:00 sundtek-UX32VD kernel: RSP:
-0018:ffffc3774ebeb758 EFLAGS: 00010046
-2024-11-16T22:14:12.122234+08:00 sundtek-UX32VD kernel: RAX:
-0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
-2024-11-16T22:14:12.122236+08:00 sundtek-UX32VD kernel: RDX:
-0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-2024-11-16T22:14:12.122239+08:00 sundtek-UX32VD kernel: RBP:
-ffffc3774ebeb7c0 R08: 0000000000000000 R09: ffff9fcad3566000
-2024-11-16T22:14:12.122242+08:00 sundtek-UX32VD kernel: R10:
-0000000000000000 R11: ffff9fc9cc687260 R12: ffffc37741131000
-2024-11-16T22:14:12.122245+08:00 sundtek-UX32VD kernel: R13:
-0000000000000000 R14: ffff9fcad3566000 R15: 0000000000000001
-2024-11-16T22:14:12.122247+08:00 sundtek-UX32VD kernel: FS:=20
-0000000000000000(0000) GS:ffff9fcb65700000(0000) knlGS:0000000000000000
-2024-11-16T22:14:12.122250+08:00 sundtek-UX32VD kernel: CS:=C2=A0 0010 DS:
-0000 ES: 0000 CR0: 0000000080050033
-2024-11-16T22:14:12.122252+08:00 sundtek-UX32VD kernel: CR2:
-0000000000000020 CR3: 000000021c23c005 CR4: 00000000001706f0
-2024-11-16T22:14:12.122254+08:00 sundtek-UX32VD kernel: Call Trace:
-2024-11-16T22:14:12.122257+08:00 sundtek-UX32VD kernel:=C2=A0 <TASK>
-2024-11-16T22:14:12.122259+08:00 sundtek-UX32VD kernel:=C2=A0 ?
-show_regs+0x6d/0x80
-2024-11-16T22:14:12.122261+08:00 sundtek-UX32VD kernel:=C2=A0 ?
-__die+0x24/0x80
-2024-11-16T22:14:12.122263+08:00 sundtek-UX32VD kernel:=C2=A0 ?
-page_fault_oops+0x99/0x1b0
-2024-11-16T22:14:12.122265+08:00 sundtek-UX32VD kernel:=C2=A0 ?
-kernelmode_fixup_or_oops.isra.0+0x69/0x90
-2024-11-16T22:14:12.122267+08:00 sundtek-UX32VD kernel:=C2=A0 ?
-__bad_area_nosemaphore+0x19d/0x2c0
-2024-11-16T22:14:12.122269+08:00 sundtek-UX32VD kernel:=C2=A0 ?
-update_sg_lb_stats+0x97/0x5c0
-2024-11-16T22:14:12.122271+08:00 sundtek-UX32VD kernel:=C2=A0 ?
-bad_area_nosemaphore+0x16/0x30
-2024-11-16T22:14:12.122273+08:00 sundtek-UX32VD kernel:=C2=A0 ?
-do_user_addr_fault+0x29c/0x670
-2024-11-16T22:14:12.122275+08:00 sundtek-UX32VD kernel:=C2=A0 ?
-exc_page_fault+0x83/0x1b0
-2024-11-16T22:14:12.122276+08:00 sundtek-UX32VD kernel:=C2=A0 ?
-asm_exc_page_fault+0x27/0x30
-2024-11-16T22:14:12.122279+08:00 sundtek-UX32VD kernel:=C2=A0 ?
-xhci_check_bw_table+0x100/0x4d0
-2024-11-16T22:14:12.122281+08:00 sundtek-UX32VD kernel:=C2=A0 ?
-xhci_check_bw_table+0x357/0x4d0
-2024-11-16T22:14:12.122283+08:00 sundtek-UX32VD kernel:=20
-xhci_reserve_bandwidth+0x298/0xb20
-2024-11-16T22:14:12.122286+08:00 sundtek-UX32VD kernel:=C2=A0 ?
-update_load_avg+0x82/0x850
-2024-11-16T22:14:12.122288+08:00 sundtek-UX32VD kernel:=20
-xhci_configure_endpoint+0xa8/0x730
-2024-11-16T22:14:12.122291+08:00 sundtek-UX32VD kernel:=20
-xhci_check_ep0_maxpacket.isra.0+0x14e/0x1d0
-2024-11-16T22:14:12.122293+08:00 sundtek-UX32VD kernel:=20
-xhci_endpoint_reset+0x254/0x4a0
-2024-11-16T22:14:12.122295+08:00 sundtek-UX32VD kernel:=C2=A0 ?
-_raw_spin_lock_irqsave+0xe/0x20
-2024-11-16T22:14:12.122298+08:00 sundtek-UX32VD kernel:=20
-usb_hcd_reset_endpoint+0x28/0xa0
-2024-11-16T22:14:12.122300+08:00 sundtek-UX32VD kernel:=20
-usb_enable_endpoint+0x8c/0xa0
-2024-11-16T22:14:12.122302+08:00 sundtek-UX32VD kernel:=20
-hub_port_connect+0x176/0xb70
-2024-11-16T22:14:12.122305+08:00 sundtek-UX32VD kernel:=20
-hub_port_connect_change+0x88/0x2b0
-2024-11-16T22:14:12.122307+08:00 sundtek-UX32VD kernel:=20
-port_event+0x651/0x810
-2024-11-16T22:14:12.122309+08:00 sundtek-UX32VD kernel:=20
-hub_event+0x14a/0x450
-2024-11-16T22:14:12.122311+08:00 sundtek-UX32VD kernel:=20
-process_one_work+0x178/0x350
-2024-11-16T22:14:12.122313+08:00 sundtek-UX32VD kernel:=20
-worker_thread+0x306/0x440
-2024-11-16T22:14:12.122316+08:00 sundtek-UX32VD kernel:=C2=A0 ?
-_raw_spin_lock_irqsave+0xe/0x20
-2024-11-16T22:14:12.122318+08:00 sundtek-UX32VD kernel:=C2=A0 ?
-__pfx_worker_thread+0x10/0x10
-2024-11-16T22:14:12.122321+08:00 sundtek-UX32VD kernel:=20
-kthread+0xf2/0x120
-2024-11-16T22:14:12.122323+08:00 sundtek-UX32VD kernel:=C2=A0 ?
-__pfx_kthread+0x10/0x10
-2024-11-16T22:14:12.122325+08:00 sundtek-UX32VD kernel:=20
-ret_from_fork+0x47/0x70
-2024-11-16T22:14:12.122327+08:00 sundtek-UX32VD kernel:=C2=A0 ?
-__pfx_kthread+0x10/0x10
-2024-11-16T22:14:12.122329+08:00 sundtek-UX32VD kernel:=20
-ret_from_fork_asm+0x1b/0x30
-2024-11-16T22:14:12.122331+08:00 sundtek-UX32VD kernel:=C2=A0 </TASK>
-2024-11-16T22:14:12.122334+08:00 sundtek-UX32VD kernel: Modules linked
-in: cpuid ufs qnx4 hfsplus hfs minix ntfs msdos jfs nls_ucs2_utils xfs
-usbtest rfcomm snd_seq_dummy snd_hrtimer qrtr uhid hid cmac algif_hash
-algif_skcipher af_alg bnep sunrpc snd_hda_codec_hdmi intel_rapl_msr
-intel_rapl_common binfmt_misc snd_hda_codec_realtek
-x86_pkg_temp_thermal snd_hda_codec_generic intel_powerclamp coretemp
-kvm_intel snd_hda_intel snd_intel_dspcfg snd_intel_sdw_acpi uvcvideo
-snd_hda_codec kvm videobuf2_vmalloc snd_hda_core uvc btusb snd_hwdep
-irqbypass videobuf2_memops snd_pcm btrtl videobuf2_v4l2 iwldvm
-rtsx_usb_ms btintel videodev btbcm rapl btmtk at24 mei_pxp mei_hdcp
-memstick nls_iso8859_1 mac80211 asus_nb_wmi videobuf2_common mfd_aaeon
-libarc4 mc i915 snd_seq_midi bluetooth snd_seq_midi_event snd_rawmidi
-intel_cstate asus_wmi iwlwifi ledtrig_audio ecdh_generic sparse_keymap
-platform_profile i2c_i801 ecc mxm_wmi drm_buddy wmi_bmof snd_seq
-i2c_smbus cfg80211 ttm snd_seq_device snd_timer drm_display_helper snd
-acpi_als mei_me cec soundcore
-2024-11-16T22:14:12.122337+08:00 sundtek-UX32VD kernel:=20
-industrialio_triggered_buffer rc_core lpc_ich mei i2c_algo_bit
-int3400_thermal kfifo_buf int3402_thermal industrialio int3403_thermal
-acpi_thermal_rel asus_wireless int340x_thermal_zone joydev input_leds
-mac_hid serio_raw sch_fq_codel msr parport_pc ppdev lp parport
-efi_pstore nfnetlink dmi_sysfs ip_tables x_tables autofs4 btrfs
-blake2b_generic raid10 raid456 async_raid6_recov async_memcpy async_pq
-async_xor async_tx xor raid6_pq libcrc32c raid1 raid0 rtsx_usb_sdmmc
-rtsx_usb crct10dif_pclmul crc32_pclmul polyval_clmulni polyval_generic
-ghash_clmulni_intel sha256_ssse3 sha1_ssse3 video psmouse ahci xhci_pci
-libahci xhci_pci_renesas wmi aesni_intel crypto_simd cryptd
-2024-11-16T22:14:12.122340+08:00 sundtek-UX32VD kernel: CR2:
-0000000000000020
-2024-11-16T22:14:12.122342+08:00 sundtek-UX32VD kernel: ---[ end trace
-0000000000000000 ]---
-2024-11-16T22:14:12.122344+08:00 sundtek-UX32VD kernel: RIP:
-0010:xhci_check_bw_table+0x100/0x4d0
-2024-11-16T22:14:12.122346+08:00 sundtek-UX32VD kernel: Code: c7 c2 60
-35 70 9f 48 c7 c6 70 aa 79 9e 4c 89 55 c0 4c 89 5d d0 e8 d0 c7 01 00 4c
-8b 5d d0 4c 8b 55 c0 4c 8b 4d b8 41 8d 47 ff <41> 8b 4a 20 31 d2 45 8b
-72 08 89 45 d0 41 03 02 41 f7 f7 ba 80 00
-2024-11-16T22:14:12.122349+08:00 sundtek-UX32VD kernel: RSP:
-0018:ffffc3774ebeb758 EFLAGS: 00010046
-2024-11-16T22:14:12.122352+08:00 sundtek-UX32VD kernel: RAX:
-0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
-2024-11-16T22:14:12.122355+08:00 sundtek-UX32VD kernel: RDX:
-0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-2024-11-16T22:14:12.122357+08:00 sundtek-UX32VD kernel: RBP:
-ffffc3774ebeb7c0 R08: 0000000000000000 R09: ffff9fcad3566000
-2024-11-16T22:14:12.122359+08:00 sundtek-UX32VD kernel: R10:
-0000000000000000 R11: ffff9fc9cc687260 R12: ffffc37741131000
-2024-11-16T22:14:12.122361+08:00 sundtek-UX32VD kernel: R13:
-0000000000000000 R14: ffff9fcad3566000 R15: 0000000000000001
-2024-11-16T22:14:12.122363+08:00 sundtek-UX32VD kernel: FS:=20
-0000000000000000(0000) GS:ffff9fcb65700000(0000) knlGS:0000000000000000
-2024-11-16T22:14:12.122366+08:00 sundtek-UX32VD kernel: CS:=C2=A0 0010 DS:
-0000 ES: 0000 CR0: 0000000080050033
-2024-11-16T22:14:12.122368+08:00 sundtek-UX32VD kernel: CR2:
-0000000000000020 CR3: 000000011ffde004 CR4: 00000000001706f0
-2024-11-16T22:14:12.122371+08:00 sundtek-UX32VD kernel: note:
-kworker/2:1[15600] exited with irqs disabled
-2024-11-16T22:14:12.122373+08:00 sundtek-UX32VD kernel: note:
-kworker/2:1[15600] exited with preempt_count 1
-
-Signed-off-by: Markus Rechberger <linuxusb.ml@sundtek.de>
-
-This patch diff --git a/drivers/usb/host/xhci.c
-b/drivers/usb/host/xhci.c
-index 899c0effb5d3..f054e262176c 100644
---- a/drivers/usb/host/xhci.c
-+++ b/drivers/usb/host/xhci.c
-@@ -2380,6 +2380,17 @@ static int xhci_check_bw_table(struct xhci_hcd
-*xhci,
-=C2=A0	}
-=C2=A0
-=C2=A0	bw_table =3D virt_dev->bw_table;
-+
-+	/* second line of defense, this should not happen if bw_table
-+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 is not initialized this calculation s=
-hould not be called
-+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 any issue with bw_table is supposed t=
-o be handled earlier
-+	*/
-+	if (bw_table =3D=3D NULL) {
-+		xhci_warn(xhci, "bw_table =3D=3D NULL, this should not
-happen\n"
-+				"please report\n");
-+		return -ENOMEM;
-+	}
-+
-=C2=A0	/* We need to translate the max packet size and max ESIT
-payloads into
-=C2=A0	 * the units the hardware uses.
-=C2=A0	 */
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/3] fs: allow statmount to fetch the fs_subtype and
+ sb_source
+To: Jan Kara <jack@suse.cz>
+Cc: Jeff Layton <jlayton@kernel.org>, Karel Zak <kzak@redhat.com>,
+ Christian Brauner <brauner@kernel.org>, Miklos Szeredi <miklos@szeredi.hu>,
+ Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>
+References: <20241111-statmount-v4-0-2eaf35d07a80@kernel.org>
+ <20241112-antiseptisch-kinowelt-6634948a413e@brauner>
+ <hss5w5in3wj3af3o2x3v3zfaj47gx6w7faeeuvnxwx2uieu3xu@zqqllubl6m4i>
+ <63f3aa4b3d69b33f1193f4740f655ce6dae06870.camel@kernel.org>
+ <20241113151848.hta3zax57z7lprxg@quack3>
+ <83b4c065-8cb4-4851-a557-aa47b7d03b6f@themaw.net>
+ <20241114115652.so2dkvhaahl2ygvl@quack3>
+Content-Language: en-US
+From: Ian Kent <raven@themaw.net>
+Autocrypt: addr=raven@themaw.net; keydata=
+ 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
+In-Reply-To: <20241114115652.so2dkvhaahl2ygvl@quack3>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
+On 14/11/24 19:56, Jan Kara wrote:
+> On Thu 14-11-24 09:45:23, Ian Kent wrote:
+>> On 13/11/24 23:18, Jan Kara wrote:
+>>> On Wed 13-11-24 08:45:06, Jeff Layton wrote:
+>>>> On Wed, 2024-11-13 at 12:27 +0100, Karel Zak wrote:
+>>>>> On Tue, Nov 12, 2024 at 02:39:21PM GMT, Christian Brauner wrote:
+>>>>> Next on the wish list is a notification (a file descriptor that can be
+>>>>> used in epoll) that returns a 64-bit ID when there is a change in the
+>>>>> mount node. This will enable us to enhance systemd so that it does not
+>>>>> have to read the entire mount table after every change.
+>>>>>
+>>>> New fanotify events for mount table changes, perhaps?
+>>> Now that I'm looking at it I'm not sure fanotify is a great fit for this
+>>> usecase. A lot of fanotify functionality does not really work for virtual
+>>> filesystems such as proc and hence we generally try to discourage use of
+>>> fanotify for them. So just supporting one type of event (like FAN_MODIFY)
+>>> on one file inside proc looks as rather inconsistent interface. But I
+>>> vaguely remember we were discussing some kind of mount event, weren't we?
+>>> Or was that for something else?
+>> I still need to have a look at the existing notifications sub-systems but,
+>> tbh, I also don't think they offer the needed functionality.
+>>
+>> The thing that was most useful with David's notifications when I was trying
+>> to improve the mounts handling was the queuing interface. It allowed me to
+>> batch notifications up to around a couple of hundred and grab them in one go
+>> for processing. This significantly lowered the overhead of rapid fire event
+>> processing. The ability to go directly to an individual mount and get it's
+>> information only got about half the improvement I saw, the rest come from
+>> the notifications improvement.
+> Well, if we implemented the mount notification events in fanotify, then the
+> mount events get queued in the notification group queue and you can process
+> the whole batch of events in one go if you want. So I don't see batching as
+> an issue. What I'm more worried about is that watching the whole system
+> for new mounts is going to be somewhat cumbersome when all you can do is to
+> watch new mounts attached under an existing mount / filesystem.
 
---=-5urReUzQZxabI7oEQTBX
-Content-Disposition: attachment; filename="xhci_bwtable_check.diff"
-Content-Type: text/x-patch; name="xhci_bwtable_check.diff"; charset="UTF-8"
-Content-Transfer-Encoding: base64
+But, for mounts/unounts for example, isn't it the act of performing the
 
-ZGlmZiAtLWdpdCBhL2RyaXZlcnMvdXNiL2hvc3QveGhjaS5jIGIvZHJpdmVycy91c2IvaG9zdC94
-aGNpLmMKaW5kZXggODk5YzBlZmZiNWQzLi5mMDU0ZTI2MjE3NmMgMTAwNjQ0Ci0tLSBhL2RyaXZl
-cnMvdXNiL2hvc3QveGhjaS5jCisrKyBiL2RyaXZlcnMvdXNiL2hvc3QveGhjaS5jCkBAIC0yMzgw
-LDYgKzIzODAsMTcgQEAgc3RhdGljIGludCB4aGNpX2NoZWNrX2J3X3RhYmxlKHN0cnVjdCB4aGNp
-X2hjZCAqeGhjaSwKIAl9CiAKIAlid190YWJsZSA9IHZpcnRfZGV2LT5id190YWJsZTsKKworCS8q
-IHNlY29uZCBsaW5lIG9mIGRlZmVuc2UsIHRoaXMgc2hvdWxkIG5vdCBoYXBwZW4gaWYgYndfdGFi
-bGUKKyAgICAgICBpcyBub3QgaW5pdGlhbGl6ZWQgdGhpcyBjYWxjdWxhdGlvbiBzaG91bGQgbm90
-IGJlIGNhbGxlZAorICAgICAgIGFueSBpc3N1ZSB3aXRoIGJ3X3RhYmxlIGlzIHN1cHBvc2VkIHRv
-IGJlIGhhbmRsZWQgZWFybGllcgorCSovCisJaWYgKGJ3X3RhYmxlID09IE5VTEwpIHsKKwkJeGhj
-aV93YXJuKHhoY2ksICJid190YWJsZSA9PSBOVUxMLCB0aGlzIHNob3VsZCBub3QgaGFwcGVuXG4i
-CisJCQkJInBsZWFzZSByZXBvcnRcbiIpOworCQlyZXR1cm4gLUVOT01FTTsKKwl9CisKIAkvKiBX
-ZSBuZWVkIHRvIHRyYW5zbGF0ZSB0aGUgbWF4IHBhY2tldCBzaXplIGFuZCBtYXggRVNJVCBwYXls
-b2FkcyBpbnRvCiAJICogdGhlIHVuaXRzIHRoZSBoYXJkd2FyZSB1c2VzLgogCSAqLwo=
+mount/unmount that triggers the notification if the path in within a file
+
+system that's marked to report such events?
 
 
+Ian
 
---=-5urReUzQZxabI7oEQTBX--
 
