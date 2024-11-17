@@ -1,138 +1,91 @@
-Return-Path: <linux-kernel+bounces-412019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC8D19D0270
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 09:11:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EE989D0273
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 09:14:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 49196B2535D
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 08:11:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F437B21D21
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 08:14:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7452517B427;
-	Sun, 17 Nov 2024 08:09:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RLdtbwIV"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAE6E2B9DD;
+	Sun, 17 Nov 2024 08:14:05 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEDE7170A11
-	for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 08:09:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27ED32E403
+	for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 08:14:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731830997; cv=none; b=MpIXkmjvDsuf4ODaJQuqdJi18ki+1zKbA3bupXD47zWAW8UZy+QIWaZmK0nvjJa78V8IAXC7bKh3IHhjQz3YPTS9HjB2BxDZnXaFLBJa57Dzf9VQwZX2N861GTUbuUrRRCf3ktgRrBv/xcUU5Nv69+nyzyCTm5evUyxmVKqlvXk=
+	t=1731831245; cv=none; b=tZ8vJNk/PmcX47VopSUkstlLDhpfKKR9nNHs1nseUvUb6RSjqyY9zemLHOlrAcJA93VakDvjApCPXHvVCYUSAyRZmW8JXlV6TR8glLDCyCQjxejBy8C4VqIUQSNUYf+mCQ2YccjDoBC6LH6IWyz+Ozs2zTKYXK7IbnxY7H0mmjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731830997; c=relaxed/simple;
-	bh=vW4Z0ZGOmtEV/XeePxhUsVUAClcMrrgx+7r+mI7C7D0=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=PdgQ/oy2gJQcx2ZOnlLc/3KIS64IV2QKQTj0kUNWkmfqXz8gIHcHDjP0LcIWSdJP6AIZsCBtmdltHigvU5nIz4as2YjAa25s6SqXvcBiJnj/+x6bHTHzuGPc/PadPgExSW7C+e7pH/OwE2N4806mdI10ussBvHFgE17ytROVfak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RLdtbwIV; arc=none smtp.client-ip=209.85.219.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e30b8fd4ca1so4294901276.3
-        for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 00:09:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731830995; x=1732435795; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=TVe9xIxnbmkl7SmN6iZyRrlBkQz17Arq0DLY4ssSJic=;
-        b=RLdtbwIVV47RHFFJ0tSqs/iwT4hqyIH8joNbIL/CTmntbBzG/OadRByae5MC4zYovN
-         3tqPl+nAAI0cyvOAQIlMWnPyCh0M9uJavEHPPI8BzRm2auQwlttQSYTxhCp2Rkaev/M2
-         7YPl6YKvvWYW1NzJ2rX+fax2X0EwE62wrywvjagXPNajWPMkQ0Kd2tIbTN/vRURJrB+P
-         EJ/dMxSypLvirshPxKr54mBCXcxKqcwTQrMsX+3g/nwi5zUoDwM6sFa3g3uBOFLZ0tM8
-         4bc7BZG0GgF/8C8FpmpyVOkAuQbAiQYmcHnFvi1aXHN2T69pYWDFbR15T0jALvdhuMvf
-         fRGw==
+	s=arc-20240116; t=1731831245; c=relaxed/simple;
+	bh=sITDq9pgxV0JGeUE+jutRHugAwm7EjJ+KKPhCIWr8/s=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=uCZugNq1c3m8Qr5trz+cXNC0mthaE+z+rRxVPNYwBzZmvDCVUwiwpfVzOIKMRGtKQRpyD0kIXvrkkzwxez2BEVWlPzIG5TUT+vh0tD4A5P9HlVLUTeyOnknp0+FfaiMFUtY0tBLHxxeax5e8F6ER5o4n4ck+OR/Sys/M6/dCP1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a6b7974696so12642835ab.1
+        for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 00:14:03 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731830995; x=1732435795;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TVe9xIxnbmkl7SmN6iZyRrlBkQz17Arq0DLY4ssSJic=;
-        b=CMREIgRrAaXF6X4XtlbdmKWkTosajD8H2PWuoYQN8DDQo3mks1vJeuqkUWnMWP4DfM
-         bbRCtBaQj6a4TJWTm58s2MwWfpWAx+j4b5WI5L1zghSA4dS9V0Tp1X/o8stZ6S14RyDy
-         tOZCSH81iQHhsOi3CyFx9Fh1GRj0jeYqhjoE6f08HVCYSsPjpbas3rRwYoL4cXbtUwnS
-         VvgDMn8phIGgdooWdmqOWZm4ZtXO9Zi728wfrqx/q5u7z3FHLe4X9uT3MviGscSuVBNA
-         4EuwB79j6F08phep15jfh3B5u3ZVOWx6KdqkmDaRT/C6oMPKZtJNsSyvLNSYi9h3qNze
-         wRXA==
-X-Forwarded-Encrypted: i=1; AJvYcCX+uk11ZzPqA0co/uy5mawtMQUkOUGsqzgg4Qss4K/rCADnt785lG0XnSMYFwMjeNrMFaX3Tyo7hzSh+Qw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZGRpjLvjS+ep/TCOR/Hvxg+Ceqolsyu1Y3Tpd6hlF3RzjEIak
-	nw6ZHFLX2BbPTJCMRvKThi5l7bpzVa51zuQU5R9lXHxL6KDqVCI/YJl4u5cYnE/bBi7cExBU7IF
-	cbw==
-X-Google-Smtp-Source: AGHT+IHOo0SNvb429sH9y3xLmKrGp2y4SlbBBZl72lF8+egqZzHX2n9q6YU+duTw+pCfixwfbSLpKdu+Ko4=
-X-Received: from surenb-desktop.mtv.corp.google.com ([2a00:79e0:2e3f:8:bafc:6633:f766:6415])
- (user=surenb job=sendgmr) by 2002:a25:aa8b:0:b0:e38:816c:df18 with SMTP id
- 3f1490d57ef6-e38816cec5dmr3614276.4.1731830994994; Sun, 17 Nov 2024 00:09:54
- -0800 (PST)
-Date: Sun, 17 Nov 2024 00:09:31 -0800
-In-Reply-To: <20241117080931.600731-1-surenb@google.com>
+        d=1e100.net; s=20230601; t=1731831243; x=1732436043;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0cAXStZgVrmvMzECPpPJcbsX24KNDbw/bMwbcFv7apo=;
+        b=G7nrHO2r/stHiLRK9bZ1kkNvQ9YmPbWG8qh6pLfOggFIKp838UAQzYp2XjrRZEosUh
+         QFG103/fJy1xKB7Cpb2rVbVYFo9OklCm2uglyBfzIYT0bF0uNMUqdx6R9MegCwBN+UJk
+         X/JpHJYBFrPQGax52DoWpRY8Hxi8rC36Ai8RvKwkZ0yYvYxeLbQKaPaBVw0YEu5Y+3ZU
+         ReoCh5PrPOZWDhdo7lVGvvaUlc82nL9BuCmjSQTxijYhB7vhZPdtsNCpfGMpwyGTcwKy
+         kqjb7Vi/itJkmNp12j03bzGWGbIYGERJaaiSVWSv47KR1EaeUm1LPqoK5sOXSHiLFSsK
+         73qg==
+X-Forwarded-Encrypted: i=1; AJvYcCUUTyXVeEc/YzD+g2IJDbI8WD55kFYp5zTyca4KmhJNdeWMTkxbn8IQaQOSZlIt1KFOsysDRqspWEqD9pM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4bHbZ4PTZKSxgnDqToRhU4EgOk4igwwaciPSmSYs0teTjRteF
+	aDOmNaq6Ak93oCAAmlhIWppQ/HWOkUfvIVkRxxUsShL2sz80TDP/9QPdoLunBbe0xgXxksfUdMa
+	QUszLvORM5qEyneJHPeefuanaUOc1tUIoHd/zcFv3OfAeVPnzZ2XrvIg=
+X-Google-Smtp-Source: AGHT+IFd1nbd3dh0Rhw8u+kcphrA3gBgDy9zioD/bdGdledmXplLVHrzifgX/GQ1F/B2kxhtseYyiN1YIX4ZI/wlZ3Q4qSUI0Xzz
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241117080931.600731-1-surenb@google.com>
-X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-Message-ID: <20241117080931.600731-6-surenb@google.com>
-Subject: [PATCH v3 5/5] docs/mm: document latest changes to vm_lock
-From: Suren Baghdasaryan <surenb@google.com>
-To: akpm@linux-foundation.org
-Cc: willy@infradead.org, liam.howlett@oracle.com, lorenzo.stoakes@oracle.com, 
-	mhocko@suse.com, vbabka@suse.cz, hannes@cmpxchg.org, mjguzik@gmail.com, 
-	oliver.sang@intel.com, mgorman@techsingularity.net, david@redhat.com, 
-	peterx@redhat.com, oleg@redhat.com, dave@stgolabs.net, paulmck@kernel.org, 
-	brauner@kernel.org, dhowells@redhat.com, hdanton@sina.com, hughd@google.com, 
-	minchan@google.com, jannh@google.com, shakeel.butt@linux.dev, 
-	souravpanda@google.com, pasha.tatashin@soleen.com, corbet@lwn.net, 
-	linux-doc@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	kernel-team@android.com, surenb@google.com
+MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:1ca8:b0:3a7:1891:c5f2 with SMTP id
+ e9e14a558f8ab-3a7480031bemr85191805ab.1.1731831243214; Sun, 17 Nov 2024
+ 00:14:03 -0800 (PST)
+Date: Sun, 17 Nov 2024 00:14:03 -0800
+In-Reply-To: <672c2a44.050a0220.350062.0283.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6739a5cb.050a0220.87769.0006.GAE@google.com>
+Subject: Re: [syzbot] [block?] [usb?] WARNING: bad unlock balance in elevator_init_mq
+From: syzbot <syzbot+a95fab8e491d4ac8cbe9@syzkaller.appspotmail.com>
+To: axboe@kernel.dk, hch@lst.de, linux-block@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, ming.lei@redhat.com, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
-Change the documentation to reflect that vm_lock is integrated into vma.
-Document newly introduced vma_start_read_locked{_nested} functions.
+syzbot has bisected this issue to:
 
-Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
----
- Documentation/mm/process_addrs.rst | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+commit f1be1788a32e8fa63416ad4518bbd1a85a825c9d
+Author: Ming Lei <ming.lei@redhat.com>
+Date:   Fri Oct 25 00:37:20 2024 +0000
 
-diff --git a/Documentation/mm/process_addrs.rst b/Documentation/mm/process_addrs.rst
-index 1bf7ad010fc0..a18450b6496d 100644
---- a/Documentation/mm/process_addrs.rst
-+++ b/Documentation/mm/process_addrs.rst
-@@ -686,7 +686,11 @@ calls :c:func:`!rcu_read_lock` to ensure that the VMA is looked up in an RCU
- critical section, then attempts to VMA lock it via :c:func:`!vma_start_read`,
- before releasing the RCU lock via :c:func:`!rcu_read_unlock`.
- 
--VMA read locks hold the read lock on the :c:member:`!vma->vm_lock` semaphore for
-+In cases when the user already holds mmap read lock, :c:func:`!vma_start_read_locked`
-+and :c:func:`!vma_start_read_locked_nested` can be used. These functions always
-+succeed in acquiring VMA read lock.
-+
-+VMA read locks hold the read lock on the :c:member:`!vma.vm_lock` semaphore for
- their duration and the caller of :c:func:`!lock_vma_under_rcu` must release it
- via :c:func:`!vma_end_read`.
- 
-@@ -750,7 +754,7 @@ keep VMAs locked across entirely separate write operations. It also maintains
- correct lock ordering.
- 
- Each time a VMA read lock is acquired, we acquire a read lock on the
--:c:member:`!vma->vm_lock` read/write semaphore and hold it, while checking that
-+:c:member:`!vma.vm_lock` read/write semaphore and hold it, while checking that
- the sequence count of the VMA does not match that of the mm.
- 
- If it does, the read lock fails. If it does not, we hold the lock, excluding
-@@ -760,7 +764,7 @@ Importantly, maple tree operations performed in :c:func:`!lock_vma_under_rcu`
- are also RCU safe, so the whole read lock operation is guaranteed to function
- correctly.
- 
--On the write side, we acquire a write lock on the :c:member:`!vma->vm_lock`
-+On the write side, we acquire a write lock on the :c:member:`!vma.vm_lock`
- read/write semaphore, before setting the VMA's sequence number under this lock,
- also simultaneously holding the mmap write lock.
- 
--- 
-2.47.0.338.g60cca15819-goog
+    block: model freeze & enter queue as lock for supporting lockdep
 
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13aa32c0580000
+start commit:   c88416ba074a Add linux-next specific files for 20241101
+git tree:       linux-next
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=106a32c0580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=17aa32c0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=704b6be2ac2f205f
+dashboard link: https://syzkaller.appspot.com/bug?extid=a95fab8e491d4ac8cbe9
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1722ab40580000
+
+Reported-by: syzbot+a95fab8e491d4ac8cbe9@syzkaller.appspotmail.com
+Fixes: f1be1788a32e ("block: model freeze & enter queue as lock for supporting lockdep")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
