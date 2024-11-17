@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-412023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61D489D027C
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 09:32:58 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C2029D027F
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 09:33:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 237092850C1
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 08:32:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA744B2490D
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 08:33:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A659113D297;
-	Sun, 17 Nov 2024 08:32:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECF01171652;
+	Sun, 17 Nov 2024 08:32:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=intelfx.name header.i=@intelfx.name header.b="V598YzfH"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	dkim=pass (1024-bit key) header.d=intelfx.name header.i=@intelfx.name header.b="V6bsp8Ob"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 315DE12EBE7
-	for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 08:32:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F92D14B07E
+	for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 08:32:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731832345; cv=none; b=j7e5LDS2FKJcK3ION84TCuXhnSIAzcErjJXCqQn+DM/Hx8Z1Q39WTDD7Xc2AvISaaBo8RYZy+o0XIxJ2tzmu4U9GV24G41Kxj6Qb5FYJqnzSRRYZATHsZbV0FxTJuO3cE7cIxn1GqmWIIWqvjtopKy8czZMQ1LzBlOVXNBxjgeQ=
+	t=1731832349; cv=none; b=YYFdBmemT3ZCwMPUFzzm0ZyA3EHMXLIYKPWQLvCUW/wTahCAYKpCMcSZBZ3xkBOcyW8ykzYuKtLyWdWyErOcQeTCbEhZ2znCbWjH7JEqTHmLt5wxjBxeKuzKC+XQuzqJzXL4piP6VfL8pqeqvbUQkvCXqbr3x3lLn2Z5ZhqWDZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731832345; c=relaxed/simple;
-	bh=eU5NyTFEX/54/n12G9K/uPw2uOx1/C9JJOPt0bYsQiY=;
+	s=arc-20240116; t=1731832349; c=relaxed/simple;
+	bh=bctWgxAXidA+mT+mxTODN07yskzEsrZh07njUIX3POo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BtHAh8GdqFmdlyYgjA0AbbtDANzDGyKD7RRCpKkTMTv9xqXgEWQ12cxdQN1Tu97yY39Gl+lpkabYMBnZZMDKBL5biQnIagsSLggqzra2llVlic5NQ58H0AJ/9YsXQp8eaLqU4lfRBwRpqmiTaZO900xrBHr+980NlekjeWARqxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=intelfx.name; spf=pass smtp.mailfrom=intelfx.name; dkim=pass (1024-bit key) header.d=intelfx.name header.i=@intelfx.name header.b=V598YzfH; arc=none smtp.client-ip=209.85.221.51
+	 MIME-Version; b=jXRWkVIkTMOzVOJXKfvExOvVC4H2VRMHPgm5OcK6IIKQr9s3sS0JGnkmcgt62Yqe9rc4y2Sp3JPc54LFXGpQ+GYA7aR14Abxp6Lu1SJ64DqT7gBble1jEU8uUHs0vcBWra32GDfF5paUEO+UefyjIrayajUJKFxArRUQyRTQq7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=intelfx.name; spf=pass smtp.mailfrom=intelfx.name; dkim=pass (1024-bit key) header.d=intelfx.name header.i=@intelfx.name header.b=V6bsp8Ob; arc=none smtp.client-ip=209.85.221.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=intelfx.name
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intelfx.name
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-382325b0508so875671f8f.3
-        for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 00:32:23 -0800 (PST)
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-38231f84dccso1183276f8f.1
+        for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 00:32:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intelfx.name; s=google; t=1731832342; x=1732437142; darn=vger.kernel.org;
+        d=intelfx.name; s=google; t=1731832345; x=1732437145; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=LFOA/yNMB3vCwH1wnNsMgep9hJHa+oh6MsEyHh9pwYw=;
-        b=V598YzfHGLFg4CmJUHOCk8H4xYIOW5IAjPqGlgWf5NyzELZPzrhR6OaZcU4Ws/5n7O
-         DqYhtkxaHhfmc6mogy7t/W8iorhlT9+csdf/2tOPLK9kxSMPefE7YNesnT+UMnoj4ITJ
-         BWAXgmJvLP1GkANDU1oX7i8zwHu6omsRYApwA=
+        bh=wK4WZjisXiLa4RGvV3QpavT3gWK1y9Oz1eyCL48Z860=;
+        b=V6bsp8Ob/fQPreLTvKOnUZKk6skJcHrJ2GqdmiQcbnzH4+xbD6s2S+hW9TdU7Ibq4S
+         shPDQS1HZLSmuOvvcr8UNUOf05LAKtY+1p+Fn5ZG8SHUso+x6xVcEvaWdNTz77Coodsb
+         xEtEr6WC3RMwUdkGe8lfir2e80o+LxHoEFHuM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731832342; x=1732437142;
+        d=1e100.net; s=20230601; t=1731832345; x=1732437145;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=LFOA/yNMB3vCwH1wnNsMgep9hJHa+oh6MsEyHh9pwYw=;
-        b=wO8mj0kciv8iMvquSB92h8aF+rSX7Q/3piEFr1RbNbtGL68giJTbPpdmMIVy2vYLMM
-         aM/f8DsEzKNMxo/0chIQQfUDB+ttCWQopGEHxP1Wb5LQoyK2NEwVf6MRVEj7JxsvaXh5
-         7gOzQz48lBR/aJgNPN9t6AJymyl0MKLv8+gyxAXtaFPcHWpmjoXa4gHEf5UvmFqIJMaG
-         8VGi2B1WnRgwBoVc+G+2r5YTJEIRomQBpXz26xKH5/MwNHQ1Ty1ulwSWocikxPytWANq
-         aCQ3EMB5960wGB89lsJGTKilJyZaCe3zP9/gXznwr6Sd1y9NeUz0PGdm6n/FGd6KVuV2
-         ftXA==
-X-Gm-Message-State: AOJu0Yzlxw3tu6DipiP6aQA/fKjcKN2FnXcj0FOp6jcJbYL6wrGILkPr
-	pmBD/1xCp2TzXAr6n058muLV7e8cjLBRPN/qMwKqDzdTKPK1RQlZSPNIv7mQRrgCAOxi8wdzXT5
-	nQjqWeg==
-X-Google-Smtp-Source: AGHT+IHDnj1MMhfE18u/+gecgHN/Su5hE0ego5ddaxfSYgYFHEtmLtoDQ1h+sTFoZudsRUpAWcd0PQ==
-X-Received: by 2002:a5d:6c69:0:b0:37c:d12c:17e5 with SMTP id ffacd0b85a97d-38225a05af2mr5179598f8f.23.1731832342260;
-        Sun, 17 Nov 2024 00:32:22 -0800 (PST)
+        bh=wK4WZjisXiLa4RGvV3QpavT3gWK1y9Oz1eyCL48Z860=;
+        b=drljEkFOWdeSqM5Umx+jLQTeCZPaM65+pvDP+xHKdthtnM5voYPNTHKGpFr2ANfk0s
+         kV5ZaEpXtXz6XY83qDbnGw9pZVpznbgREfKT9Ki6cW1+HwqGbR1TAH/9DmaWQnjUracb
+         24N85DQOmkT0bN+XkRmLiDgOkHU7LHvnkgVzxdGxDbP/cEUnsap6+gYBT5pLsR02HCtE
+         PwYVcP/SxIsumyXXw7xZeUt7iM1Cm4wRqKK1+f5Ng8vyb1rOCxqUxsOKr9Y6vqlKNScy
+         jberJf7bsuP3/RbAhIWCMsLKEQcRfJThHYVLPlhoFQhni0fPIoCEQZemi3XXNgmoDdgw
+         4Gzw==
+X-Gm-Message-State: AOJu0YyPkw0mM5QY1f89pBIkYoOMl3coFYPvMRHBj68IbtVzLV8J2Vf0
+	KScny3H83f/kITewyhLEiYPlpTas5YSG+FgyRtQVojG7vZoIwbMJQeLgnksO/sKI3boc9n+/ZXK
+	wiL1xVQ==
+X-Google-Smtp-Source: AGHT+IFCKRSWGFYQbti82L7zlgY59h7hQq8RHOb43YX795Ddzzq+WFz4YJqy/z4OU4bhQAmCe1QkKw==
+X-Received: by 2002:a05:6000:714:b0:37d:5405:817b with SMTP id ffacd0b85a97d-3822590b819mr7612385f8f.7.1731832345156;
+        Sun, 17 Nov 2024 00:32:25 -0800 (PST)
 Received: from able.tailbefcf.ts.net (94-43-143-139.dsl.utg.ge. [94.43.143.139])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3821ae1685csm9466919f8f.83.2024.11.17.00.32.20
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3821ae1685csm9466919f8f.83.2024.11.17.00.32.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 17 Nov 2024 00:32:21 -0800 (PST)
+        Sun, 17 Nov 2024 00:32:24 -0800 (PST)
 From: Ivan Shapovalov <intelfx@intelfx.name>
 To: linux-kernel@vger.kernel.org
 Cc: Ivan Shapovalov <intelfx@intelfx.name>,
@@ -76,9 +76,9 @@ Cc: Ivan Shapovalov <intelfx@intelfx.name>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	netdev@vger.kernel.org,
 	linux-usb@vger.kernel.org
-Subject: [PATCH 2/5] USB: serial: qcserial: add EM7565 (9X50) IDs and configurations
-Date: Sun, 17 Nov 2024 12:31:12 +0400
-Message-ID: <20241117083204.57738-2-intelfx@intelfx.name>
+Subject: [PATCH 3/5] USB: serial: qcserial: add EM9xxx (SDX55) IDs and configurations
+Date: Sun, 17 Nov 2024 12:31:13 +0400
+Message-ID: <20241117083204.57738-3-intelfx@intelfx.name>
 X-Mailer: git-send-email 2.47.0.5.gd823fa0eac
 In-Reply-To: <20241117083204.57738-1-intelfx@intelfx.name>
 References: <20241117083204.57738-1-intelfx@intelfx.name>
@@ -91,140 +91,70 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
 This is a port of the corresponding change from the qcserial.c driver
-distributed as part of the 9X50 SDK, tested and augmented via
-investigation of author's own EM7565 device.
-
-The "MBIM USBIF" configurations correspond to the `AT!USBCOMP=1,1,xxx`
-on-device USB composition setting. When activated, the VID:PID resets
-to 1199:90b1 ("application" mode) + 1199:90b0 ("boot" mode, i.e. QDL).
-
-The "PCIE USBIF" configurations correspond to the `AT!USBCOMP=1,2,xxx`
-on-device USB composition setting. Similarly, when activated, VID:PID
-resets to 1199:90c3 ("application" mode) + 1199:90c2 ("boot" mode).
-
-The existing 1199:9091 and 1199:9090 VID:PID pairs correspond to the
-"Legacy/Generic" configuration, activated by the `AT!USBCOMP=1,3,xxx`
-on-device USB composition setting.
-
-The supported interfaces and their numbers in both these configurations
-were confirmed by manual testing. Additional available interfaces
-(not claimed by the qcserial driver, such as ADB) found by investigation
-were documented in the comments for posterity.
-
-The "MBIM USBIF" and "PCIE USBIF" labels come from on-device help:
-
----8<---
-AT!USBCOMP=?
-!USBCOMP:
-AT!USBCOMP=<Config Index>,<Config Type>,<Interface bitmask>
-  <Config Index>      - configuration index to which the composition applies, should be 1
-
-  <Config Type>       - 1:MBIM USBIF, 2:PCIE USBIF, 3:Legacy-Generic, 4:RNDIS
-
-  <Interface bitmask> - DIAG     - 0x00000001,
-                        NMEA     - 0x00000004,
-                        MODEM    - 0x00000008,
-                        RMNET0   - 0x00000100,
-                        MBIM     - 0x00001000,
-  e.g.
-  10D  - diag, nmea, modem, rmnet interfaces enabled
-  1009 - diag, modem, mbim interfaces enabled
-
-  The default configuration is:
-  at!usbcomp=1,3,10F
-
-OK
----8<---
-
-Additionally, a fourth PID pair (1199:90c1, 1199:90c0) has been
-extracted from on-device help:
-
----8<---
-AT!USBPID=?
-APP   BOOT
-9091, 9090
-90B1, 90B0
-90C1, 90C0
-
-OK
----8<---
-
-It is not clear which configuration it corresponds to, but it is
-included in the patch for completeness.
+distributed as part of the 9X50 SDK. It was not tested by the author.
 
 Signed-off-by: Ivan Shapovalov <intelfx@intelfx.name>
 ---
- drivers/usb/serial/qcserial.c | 73 +++++++++++++++++++++++++++++++++++
- 1 file changed, 73 insertions(+)
+ drivers/usb/serial/qcserial.c | 55 ++++++++++++++++++++++++++++++++++-
+ 1 file changed, 54 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/usb/serial/qcserial.c b/drivers/usb/serial/qcserial.c
-index 13c664317a05..c7167242e235 100644
+index c7167242e235..f1b0ef9935bb 100644
 --- a/drivers/usb/serial/qcserial.c
 +++ b/drivers/usb/serial/qcserial.c
-@@ -26,12 +26,18 @@ enum qcserial_layouts {
- 	QCSERIAL_G1K = 1,	/* Gobi 1000 */
- 	QCSERIAL_SWI = 2,	/* Sierra Wireless */
+@@ -28,6 +28,8 @@ enum qcserial_layouts {
  	QCSERIAL_HWI = 3,	/* Huawei */
-+	QCSERIAL_SWI_9X50_MBIM = 4, /* Sierra Wireless 9x50 "MBIM USBIF" */
-+	QCSERIAL_SWI_9X50_PCIE = 5, /* Sierra Wireless 9x50 "PCIE USBIF" */
+ 	QCSERIAL_SWI_9X50_MBIM = 4, /* Sierra Wireless 9x50 "MBIM USBIF" */
+ 	QCSERIAL_SWI_9X50_PCIE = 5, /* Sierra Wireless 9x50 "PCIE USBIF" */
++	QCSERIAL_SWI_SDX55 = 6, /* Sierra Wireless SDX55 */
++	QCSERIAL_SWI_SDX55_RMNET = 7, /* Sierra Wireless SDX55 */
  };
  
  #define DEVICE_G1K(v, p) \
- 	USB_DEVICE(v, p), .driver_info = QCSERIAL_G1K
- #define DEVICE_SWI(v, p) \
- 	USB_DEVICE(v, p), .driver_info = QCSERIAL_SWI
-+#define DEVICE_SWI_9X50_PCIE(v, p) \
-+	USB_DEVICE(v, p), .driver_info = QCSERIAL_SWI_9X50_PCIE
-+#define DEVICE_SWI_9X50_MBIM(v, p) \
-+	USB_DEVICE(v, p), .driver_info = QCSERIAL_SWI_9X50_MBIM
+@@ -38,6 +40,10 @@ enum qcserial_layouts {
+ 	USB_DEVICE(v, p), .driver_info = QCSERIAL_SWI_9X50_PCIE
+ #define DEVICE_SWI_9X50_MBIM(v, p) \
+ 	USB_DEVICE(v, p), .driver_info = QCSERIAL_SWI_9X50_MBIM
++#define DEVICE_SWI_SDX55(v, p) \
++	USB_DEVICE(v, p), .driver_info = QCSERIAL_SWI_SDX55
++#define DEVICE_SWI_SDX55_RMNET(v, p) \
++	USB_DEVICE(v, p), .driver_info = QCSERIAL_SWI_SDX55_RMNET
  #define DEVICE_HWI(v, p) \
  	USB_DEVICE(v, p), .driver_info = QCSERIAL_HWI
  
-@@ -165,6 +171,12 @@ static const struct usb_device_id id_table[] = {
- 	{DEVICE_SWI(0x1199, 0x907b)},	/* Sierra Wireless EM74xx */
- 	{DEVICE_SWI(0x1199, 0x9090)},	/* Sierra Wireless EM7565 QDL */
- 	{DEVICE_SWI(0x1199, 0x9091)},	/* Sierra Wireless EM7565 */
-+	{DEVICE_SWI(0x1199, 0x90B0)},	/* Sierra Wireless EM7565 QDL */
-+	{DEVICE_SWI_9X50_MBIM(0x1199, 0x90B1)},	/* Sierra Wireless EM7565 "MBIM USBIF" */
-+	{DEVICE_SWI(0x1199, 0x90c0)},	/* Sierra Wireless EM7565 QDL */
-+	{DEVICE_SWI_9X50_PCIE(0x1199, 0x90c1)},	/* Sierra Wireless EM7565 (unknown configuration, found in on-device AT command help) */
-+	{DEVICE_SWI(0x1199, 0x90c2)},	/* Sierra Wireless EM7565 QDL */
-+	{DEVICE_SWI_9X50_PCIE(0x1199, 0x90c3)},	/* Sierra Wireless EM7565 "PCIE USBIF" */
- 	{DEVICE_SWI(0x1199, 0x90d2)},	/* Sierra Wireless EM9191 QDL */
+@@ -177,11 +183,18 @@ static const struct usb_device_id id_table[] = {
+ 	{DEVICE_SWI_9X50_PCIE(0x1199, 0x90c1)},	/* Sierra Wireless EM7565 (unknown configuration, found in on-device AT command help) */
+ 	{DEVICE_SWI(0x1199, 0x90c2)},	/* Sierra Wireless EM7565 QDL */
+ 	{DEVICE_SWI_9X50_PCIE(0x1199, 0x90c3)},	/* Sierra Wireless EM7565 "PCIE USBIF" */
+-	{DEVICE_SWI(0x1199, 0x90d2)},	/* Sierra Wireless EM9191 QDL */
  	{DEVICE_SWI(0x1199, 0x90e4)},	/* Sierra Wireless EM86xx QDL*/
  	{DEVICE_SWI(0x1199, 0x90e5)},	/* Sierra Wireless EM86xx */
-@@ -345,9 +357,11 @@ static int qcprobe(struct usb_serial *serial, const struct usb_device_id *id)
- 		/*
- 		 * Sierra Wireless layout:
- 		 * 0: DM/DIAG (use libqcdm from ModemManager for communication)
-+		 * 1: ADB
- 		 * 2: NMEA
- 		 * 3: AT-capable modem port
- 		 * 8: QMI/net
-+		 * 12, 13: MBIM
- 		 */
- 		switch (ifnum) {
- 		case 0:
-@@ -403,6 +417,65 @@ static int qcprobe(struct usb_serial *serial, const struct usb_device_id *id)
- 				intf->desc.bInterfaceProtocol);
+ 	{DEVICE_SWI(0x1199, 0xc080)},	/* Sierra Wireless EM7590 QDL */
+ 	{DEVICE_SWI(0x1199, 0xc081)},	/* Sierra Wireless EM7590 */
++	{DEVICE_SWI(0x1199, 0x90d2)},	/* Sierra Wireless EM9190 QDL */
++	{DEVICE_SWI_SDX55(0x1199, 0x90d3)},	/* Sierra Wireless EM9190 */
++	{DEVICE_SWI(0x1199, 0x90d8)},	/* Sierra Wireless EM9190 QDL */
++	{DEVICE_SWI_SDX55_RMNET(0x1199, 0x90d9)},	/* Sierra Wireless EM9190 */
++	{DEVICE_SWI(0x1199, 0x90e0)},	/* Sierra Wireless EM929x QDL */
++	{DEVICE_SWI_SDX55(0x1199, 0x90e1)},	/* Sierra Wireless EM929x */
++	{DEVICE_SWI(0x1199, 0x90e2)},	/* Sierra Wireless EM929x QDL */
++	{DEVICE_SWI_SDX55(0x1199, 0x90e3)},	/* Sierra Wireless EM929x */
+ 	{DEVICE_SWI(0x413c, 0x81a2)},	/* Dell Wireless 5806 Gobi(TM) 4G LTE Mobile Broadband Card */
+ 	{DEVICE_SWI(0x413c, 0x81a3)},	/* Dell Wireless 5570 HSPA+ (42Mbps) Mobile Broadband Card */
+ 	{DEVICE_SWI(0x413c, 0x81a4)},	/* Dell Wireless 5570e HSPA+ (42Mbps) Mobile Broadband Card */
+@@ -476,6 +489,46 @@ static int qcprobe(struct usb_serial *serial, const struct usb_device_id *id)
+ 			break;
  		}
  		break;
-+	case QCSERIAL_SWI_9X50_MBIM:
++	case QCSERIAL_SWI_SDX55:
 +		/*
-+		 * Sierra Wireless 9X50 "MBIM USBIF" layout:
-+		 * 0, 1: MBIM
-+		 * 2: AT-capable modem port
-+		 * 3: NMEA
++		 * Sierra Wireless SDX55 layout:
++		 * 3: AT-capable modem port
 +		 * 4: DM
-+		 * 7: ADB
 +		 */
 +		switch (ifnum) {
-+		case 2:
-+			dev_dbg(dev, "Modem port found\n");
-+			sendsetup = true;
-+			break;
 +		case 3:
-+			dev_dbg(dev, "NMEA GPS interface found\n");
++			dev_dbg(dev, "Modem port found\n");
 +			sendsetup = true;
 +			break;
 +		case 4:
@@ -236,33 +166,21 @@ index 13c664317a05..c7167242e235 100644
 +			break;
 +		}
 +		break;
-+	case QCSERIAL_SWI_9X50_PCIE:
++	case QCSERIAL_SWI_SDX55_RMNET:
 +		/*
-+		 * Sierra Wireless 9X50 "PCIE USBIF" layout:
-+		 * 0: AT-capable modem port
-+		 * 1: NMEA
++		 * Sierra Wireless SDX55 layout:
++		 * 1: AT-capable modem port
 +		 * 2: DM
-+		 * 5: ADB
-+		 * No other interfaces possible, presumably this configuration
-+		 * means that data exchange is happening via PCIe (but we are
-+		 * not making this an error).
 +		 */
 +		switch (ifnum) {
-+		case 0:
-+			dev_dbg(dev, "Modem port found\n");
-+			sendsetup = true;
-+			break;
 +		case 1:
-+			dev_dbg(dev, "NMEA GPS interface found\n");
++			dev_dbg(dev, "Modem port found\n");
 +			sendsetup = true;
 +			break;
 +		case 2:
 +			dev_dbg(dev, "DM/DIAG interface found\n");
 +			break;
 +		default:
-+			dev_err(dev,
-+			        "unexpected interface for PCIE-USBIF layout type: %u\n",
-+			        (unsigned)ifnum);
 +			/* don't claim any unsupported interface */
 +			altsetting = -1;
 +			break;
