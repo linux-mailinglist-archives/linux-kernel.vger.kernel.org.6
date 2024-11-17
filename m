@@ -1,49 +1,50 @@
-Return-Path: <linux-kernel+bounces-412108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 450A79D03F8
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 14:12:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 775829D03FA
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 14:13:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A38C28289F
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 13:12:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2EBB31F2281B
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 13:13:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B6F3190470;
-	Sun, 17 Nov 2024 13:12:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6F33190499;
+	Sun, 17 Nov 2024 13:13:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="CGA1YMPx"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="yC74CMLX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8390E224D7;
-	Sun, 17 Nov 2024 13:12:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31EDA322E;
+	Sun, 17 Nov 2024 13:13:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731849145; cv=none; b=uJwVSlR4uy99UG5+y059/XgMsTS+JiJO6zSqpnhXpAqi7UfEqNbA5zhknFmG6ZdMfG56oZ2MbzNGUEBBAHuBNvL71wud4tuX38h5PeyfvqVRAWXEHD7NUlcfXcajuhcA9BXc41e80+Y92Hr7QST3vhuxlsBYrsyhEW66/JD93K8=
+	t=1731849191; cv=none; b=YE2Fg9ldYlNX0CHFzR/hOCPHyNQBzmKPFAu9c9zoD5Hhxc17orAWVJfAf0/pWq4Zo05NnuXtEF8M70c5cEukgJ3Gcx0EZPOii0Ou7EpS8TBsnyoo7kiYsCRu7ATDgQ6CbX9xHsPClGXDgCJmZm+3kBUto1eYKdjHrRoG57O9cL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731849145; c=relaxed/simple;
-	bh=rU9M05aj4MiXLkJ6DmViYmPFtHC0b0iauT5fQ0vK1ZI=;
+	s=arc-20240116; t=1731849191; c=relaxed/simple;
+	bh=krPJN/i7lgpkSrhazY804Fe9VJqM4MsMPUHqbu9+Q/A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OmLvLsVk2zGwn36+4oqpvsVXbCFpMwX4coA8YNSF0ueol6yTyQflQlngh+NW9DStkCralgdQ3KO5dh8or75D1VDhnUKlazHxLNLaZTY47+cTFJTXXS8AK/Tt61Uee2+26K7vNYLiZzobNOJvBohcA3P1yEo1ZIsHL9y7gt/pegs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=CGA1YMPx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B43CFC4CECD;
-	Sun, 17 Nov 2024 13:12:24 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=IfREsSi0CYTkKXZRYDPPGsF7bMsBgSvdmMaqZjqy8kW1F/kNPJKOjYu7NHmG+2NWw2wSubHVE6gz6HAv/TIBUgsOvXPHq9HZ+dVcbDB0CLJUkUHaggH0XlgLN390IRqIytHtYQBoXACr7/xHN2Ji1F96zDOC7j2mklBXAUtAoTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=yC74CMLX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6454CC4CECD;
+	Sun, 17 Nov 2024 13:13:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1731849145;
-	bh=rU9M05aj4MiXLkJ6DmViYmPFtHC0b0iauT5fQ0vK1ZI=;
+	s=korg; t=1731849190;
+	bh=krPJN/i7lgpkSrhazY804Fe9VJqM4MsMPUHqbu9+Q/A=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CGA1YMPx11HAVBKqblY/xOVux/2+htu9dNrcsQm3dc+BD0VbW9gx7+ePHfdhXd7HR
-	 QxfVEZbHW6BT9V7Wi3cISmRMq3QBveNJafzBd7mnu0nz4lyFTUSYHOoygyQvVhYb0U
-	 Vj6g8aq+SeqwsU4wfKcpOaxqhXzdpmH3n+PiPBts=
-Date: Sun, 17 Nov 2024 14:12:00 +0100
+	b=yC74CMLX6VUShyJx9Ocqk0OqYOdMpU2vjCh8hfxEcYlKeSSF/rfA1fg4OdpES0I+t
+	 1RyJkLDTtcjaS0kBoB1CfKBkcHYamYBiihdXrpW4I+zbjSn5oOCZ6oJhAX8Ztb+mP1
+	 bSfhSx+d5rRbv4zOQbrxzo1fu9TEZVyr4zIpYZAY=
+Date: Sun, 17 Nov 2024 14:12:46 +0100
 From: Greg KH <gregkh@linuxfoundation.org>
 To: Markus Rechberger <linuxusb.ml@sundtek.de>
 Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 Subject: Re: Highly critical bug in XHCI Controller
-Message-ID: <2024111732-repeater-earthly-365e@gregkh>
+Message-ID: <2024111731-neuter-customer-0230@gregkh>
 References: <3905c1c88695e0ffcfabf700c06dd7223decef8d.camel@sundtek.de>
+ <dd4239c7b0538e1cd2f2a85307c73299117d5f0e.camel@sundtek.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,48 +53,54 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <3905c1c88695e0ffcfabf700c06dd7223decef8d.camel@sundtek.de>
+In-Reply-To: <dd4239c7b0538e1cd2f2a85307c73299117d5f0e.camel@sundtek.de>
 
-On Sun, Nov 17, 2024 at 03:33:28PM +0800, Markus Rechberger wrote:
-> Hi,
+On Sun, Nov 17, 2024 at 08:44:16PM +0800, Markus Rechberger wrote:
+> Basically the issue comes from hub_port_connect.
+> 
+> drivers/usb/core/hub.c
+> 
+> hub_port_init returns -71 -EPROTO and jumps to loop
+> https://github.com/torvalds/linux/blob/master/drivers/usb/core/hub.c#L5450
+> 
+> I'd question if usb_ep0_reinit is really required in loop which is
+> running following functions:
+>     usb_disable_endpoint(udev, 0 + USB_DIR_IN, true);
+>     usb_disable_endpoint(udev, 0 + USB_DIR_OUT, true);
+>     usb_enable_endpoint(udev, &udev->ep0, true);
+> 
+> this is something only experience over the past decades can tell?
+> 
+> usb_enable_endpoint will trigger xhci_endpoint_reset which doesn't do
+> much, but crashes the entire system with the upstream kernel when it
+> triggers xhci_check_bw_table).
+> 
+> I removed usb_ep0_reinit here and devices are still workable under
+> various conditions (again I shorted and pulled D+/D- to ground for
+> testing).
+> The NULL PTR check in xhci_check_bw_table would be a second line of
+> defense but as indicated in the first mail it shouldn't even get there.
 > 
 > 
-> the issue was first reported at vdr-portal.de
-> https://www-vdr--portal-de.translate.goog/forum/index.php?thread/136541-empfehlung-dvb-s2-tuner-oder-satip/&postID=1376196&_x_tr_sl=de&_x_tr_tl=en&_x_tr_hl=de&_x_tr_pto=wapp#post1376196
 > 
-> we've got around a highly critical bug in the xhci driver.
+> As a second issue I found in usb_reset_and_verify device 
+> https://github.com/torvalds/linux/blob/master/drivers/usb/core/hub.c#L6131
 > 
-> https://sundtek.de/support/uxvd32.txt
+>         ret = hub_port_init(parent_hub, udev, port1, i, &descriptor);
+>         if (ret >= 0 || ret == -ENOTCONN || ret == -ENODEV) {
+>             break;
+>         }
 > 
-> In xhci.c
+> hub_port_init can also return -71 / -EPROTO, the cases should be very
+> rare when usb_reset_and_verify_device is triggered and that happens.
 > 
-> The bug is still active in Mainline:
-> https://github.com/torvalds/linux/blob/master/drivers/usb/host/xhci.c#L2382
 > 
-> static int xhci_check_bw_table(struct xhci_hcd *xhci,
->         struct xhci_virt_device *virt_dev,
->         int old_active_eps)
-> 
-> bw_table can end up with a NULL pointer.
-> 
-> This problem will lead to a complete kernel crash, rendering the entire
-> system unusable without any access to the actual linux system.
-> 
-> How to trigger the problem?
-> Short D+/D- or pull them to ground on a USB device while connecting the
-> device.
-> 
-> The problem can happen due to following cases:
-> * a device is getting suddenly disconnected during enumeration
-> * a faulty cable
-> * a faulty device 
-> * a malicious device triggers this issue on purpose
-> * if there are electrical issues during connecting a device.
+> I'm just waiting for comments now since this is some critical piece of
+> infrastructure code before proceeding with a patch.
 
-Bad hardware is always a problem, can you send a patch to resolve this
-as you seem to be able to reproduce it?
+Send us a patch and we will be glad to review it.
 
-thanks,
+thanks!
 
 greg k-h
 
