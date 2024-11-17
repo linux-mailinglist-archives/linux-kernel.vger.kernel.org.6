@@ -1,77 +1,80 @@
-Return-Path: <linux-kernel+bounces-412014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8BA29D0266
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 09:09:49 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B76629D0268
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 09:10:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2222DB246CB
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 08:09:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E3865B24A4D
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 08:10:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29D1041C69;
-	Sun, 17 Nov 2024 08:09:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34D6912C530;
+	Sun, 17 Nov 2024 08:09:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FuMc62CH"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="r6d2k7S2"
 Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEF202A8E5
-	for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 08:09:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0930084A5B
+	for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 08:09:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731830977; cv=none; b=bBZpLYHx3v26hF9BvxqvHZIonPO1gAXeEPHkHbHx+o6nzwavusNZf+v3AYLMzWdvO5DN+Y+CO2EKcqAJTCy1HASEdOr14FY6HCXdxBUGNzPzKvWorHxCJrZZW8xAgPTCk1IdCAMsUlJIBP27WSpkFUYdyKFjYOEkUZjt7l85xAw=
+	t=1731830981; cv=none; b=kF97dUO1d2rZwp22tkFvS04bdgxhvmfmgwutO1xOvfTHag/FhIWV3MxjsmCGrq1d6IUd5rxgcDv/dtI0hjlO32/6vG00Ofzso4JkzrlNhhbicEgdhdPlqKSIznupl5lzD8hqaTdzhBwohrlhTsRGhMyg4aeKJVvfBlqoRc3gHt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731830977; c=relaxed/simple;
-	bh=JVjdxIAOylzI3vGfYIYWj1s1Lcucv/izfPzPJ3GkXSw=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=fEh6FS/t/6bs+bZqrAZb/5axtR5KmuoDIlNrOAapgc2LaCbic8CTHPoFIIX703ZD0S0KLBLg0mP3L/uy69lnjajYNXE5WRvOHrfk9avfIGc2ZyDn2WoZgHggBLU4b1lX9mibKfajXDGbR571CzWe4jiqKoieYZc5ec5qTl2reSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FuMc62CH; arc=none smtp.client-ip=209.85.219.201
+	s=arc-20240116; t=1731830981; c=relaxed/simple;
+	bh=8wju+b7uaLmVu0APJU3rHR7dESQZvzmF8mBUVYwqEm8=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=mNrksJNd1WJHxKC1zSN0+ioUR3HAj8a0nUliXediBbd/6o33NONkg33dPOd3Ej+Wv4Bt5Ef5BlGoZQ5N22V/Ru4svcbcuuMfccK0bB3lYxtTOgZSpWMFH2AJDiFcElv+X/V7iqNoY6qgON7rDzXeAW4V0a7NLwgaMcjC1kCweCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=r6d2k7S2; arc=none smtp.client-ip=209.85.219.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e330f65bcd9so3958079276.1
-        for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 00:09:35 -0800 (PST)
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e387e8e8426so1262687276.1
+        for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 00:09:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731830975; x=1732435775; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=T+OFugD+gETNb7vhEAsrG1OgRlzuAtkUoQYa8geci98=;
-        b=FuMc62CHWH2n6AMlI4TWeTzwGtn8Xp2faxrIy6gbhrRLF4oW2+GoTdaCS2jFxeuve1
-         SjNjVLbjvjQ6jAs5V6HyywwQKdGPFzk0aOxD/CtyAysljHOHu21qI2HakG+zLTR4nFmS
-         ROJviCNJcIp3wyBX9PyBXv5A1Wqw+4aIyel5kRpC4s/la6l8DvGiOPHnA4S6B0ZqnCbP
-         TtjaN2NVAE9LULduSFcLWQ6qadFAZp50MUZMxFISGmYKJTWh1a6jbfS5Js3o95kf3UTY
-         Ii0wIYEUtWQCLdoraSa/ohimj+mTf2V3iD8Q74UBa5CjVn6g2x6lKTJ631lBh2ATFV8m
-         xXPQ==
+        d=google.com; s=20230601; t=1731830979; x=1732435779; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=CZkyrFrgAwaR5MxHWX7P6WpGLYaVbagX6YvpJwNn5k0=;
+        b=r6d2k7S2tTsh1PbLwKEuNtdpNl0tYMi40vxoL/Z8KtsAStXwQYHNqmoR5011EGS1ky
+         ONqt9XXzGocuzrMD1megWm2y87fN92hWCxWGgR5T7mwZEafPp44UqFQt+AfzDcUZWsho
+         zrygkwG+tcF6cGWKk+bGayPwezgMV2XoNgT2DIrP4POaMdPeK1jlMyITW5x3j0uwsPhx
+         sbTEgpY/xgIPZo+GerwJJjYSbgDFDIRdFucY4AJr+Z2bw9s5P5nt3FWgFZ3UFjDeFY7e
+         3qNMOjI9Z/X4drjDrk4ODk4m9i0BbFhwNX1nV2G6m38QvrNdvRNozspro0O+cdU1UV+n
+         rr8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731830975; x=1732435775;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=T+OFugD+gETNb7vhEAsrG1OgRlzuAtkUoQYa8geci98=;
-        b=ZA0cID7W6RZpUUUWoiFGVE6ZyAqbBODRK1hqT8yuCiE8vgdco1jUKXFzctW+jvJTLE
-         7FHocDlKxkv+QZVu/tCj07j2HKG/DBQG7ySzCidZtyRog+ySDeZ4KZIH2XynUiWHCv3Y
-         prsKtufG5lISc73Uvlb/puUh2NJ+FjqoznxrbmxSI1I0V0edAjYHwAxvTW+MXM3L4FX6
-         QDnwXqmXh/u6Avy+zruZy7gFRUY1L9fy9w30j8Vm+sCO+AwtJzvXXWIMgm9LSr/hd9o8
-         /86gov1RpDqdjQ5nC6DUbv7vKhzrAT8MOxifh2SP+WI20C+PXV8EDNzC9aIHkeFyFblQ
-         OyPw==
-X-Forwarded-Encrypted: i=1; AJvYcCUOc+WljWOEApz9yOPbeTKGYpHw4ggBdX+g/n77MZzJlXLBG+4Tp7JnW0HgSnlTVC6CQSnKtf0lcjWSYKU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/fsVdb5mtvmb6MrGdaMcRYXMayvjhCfqBprQL1xgYoDFVqOi9
-	4Z0epNgJzuWOJ0SUgrqomvAwix8QGyLzSdCjrr9BBkOgQGeuco6LFKe9WZagbtCQd9aBLEEPdGA
-	pOA==
-X-Google-Smtp-Source: AGHT+IG4dmb/uQ+GXi1P4l9n6RvmmZk+SVBQpXYBunsXvRdr7iFW+KRUCnhiMQ1KfmEq7maeTeWIGGpGl/E=
+        d=1e100.net; s=20230601; t=1731830979; x=1732435779;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CZkyrFrgAwaR5MxHWX7P6WpGLYaVbagX6YvpJwNn5k0=;
+        b=ZjT7Ys3H9YwRUpJBSjdvTiHwwp/AZ6udw0WEZdqUV6jT7Xhgw77DgrEvAH/PaZYPDU
+         ggVGIWvbAWSICEiRbKYMqtQuEqpayhEOHlV3AgHjWuzZHP4cPeekgNBnYMqn1/WEgMqo
+         px1WMsY+maRjg/uCtrw6Wv+u46TR8lcY2FziJ2BIvF2Mvp1QfP5HmIfjz+1UwuQwedrM
+         g+6X1VvlzXz26cUQERWRWBoFsLve+5JES1qf0U1Hl34QwdfhyB5fiD1MibQa11YWxJ5B
+         m4f+DZSCz/F6/1VCfGsPQ7wWwKjYUR0rYzYHW6ez1YEp/N6eQ6kcGEYoR7eIAdjyoOPU
+         hVBw==
+X-Forwarded-Encrypted: i=1; AJvYcCVr7r+7J8tenVeJIKtFdD+6A4OzUU7sT5YdoZvIPRqWk/zWvopFGbw2b+W2USmcIQogDXe/4vBA1Wnbmzs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywm9/nJyoXXhEZ9moX77RSAy3yIRpArU4HTt+vVYm0iIQZHiHBA
+	8Drt97HA7h+L3DtI502GUKex6NTFduYM+2YcFiIO+Vgb6OmhzoNGX+zbF+tLXhJT5vgOSlfMRvM
+	H9Q==
+X-Google-Smtp-Source: AGHT+IH7Nd8pXV7CscbKL6Oe02lMMMIInGW3q+Det1fKSUjvn9CktAIAKXjQIOt60hBNRgC9PV8ouBWRm4Y=
 X-Received: from surenb-desktop.mtv.corp.google.com ([2a00:79e0:2e3f:8:bafc:6633:f766:6415])
- (user=surenb job=sendgmr) by 2002:a05:6902:2808:b0:e26:3788:9ea2 with SMTP id
- 3f1490d57ef6-e3824775f45mr228432276.0.1731830974816; Sun, 17 Nov 2024
- 00:09:34 -0800 (PST)
-Date: Sun, 17 Nov 2024 00:09:26 -0800
+ (user=surenb job=sendgmr) by 2002:a25:9d85:0:b0:e2e:317a:d599 with SMTP id
+ 3f1490d57ef6-e3824ac0065mr340301276.2.1731830978836; Sun, 17 Nov 2024
+ 00:09:38 -0800 (PST)
+Date: Sun, 17 Nov 2024 00:09:27 -0800
+In-Reply-To: <20241117080931.600731-1-surenb@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20241117080931.600731-1-surenb@google.com>
 X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-Message-ID: <20241117080931.600731-1-surenb@google.com>
-Subject: [PATCH v3 0/5] move per-vma lock into vm_area_struct
+Message-ID: <20241117080931.600731-2-surenb@google.com>
+Subject: [PATCH v3 1/5] mm: introduce vma_start_read_locked{_nested} helpers
 From: Suren Baghdasaryan <surenb@google.com>
 To: akpm@linux-foundation.org
 Cc: willy@infradead.org, liam.howlett@oracle.com, lorenzo.stoakes@oracle.com, 
@@ -85,73 +88,92 @@ Cc: willy@infradead.org, liam.howlett@oracle.com, lorenzo.stoakes@oracle.com,
 	kernel-team@android.com, surenb@google.com
 Content-Type: text/plain; charset="UTF-8"
 
-Back when per-vma locks were introduces, vm_lock was moved out of
-vm_area_struct in [1] because of the performance regression caused by
-false cacheline sharing. Recent investigation [2] revealed that the
-regressions is limited to a rather old Broadwell microarchitecture and
-even there it can be mitigated by disabling adjacent cacheline
-prefetching, see [3].
-Splitting single logical structure into multiple ones leads to more
-complicated management, extra pointer dereferences and overall less
-maintainable code. When that split-away part is a lock, it complicates
-things even further. With no performance benefits, there are no reasons
-for this split. Merging the vm_lock back into vm_area_struct also allows
-vm_area_struct to use SLAB_TYPESAFE_BY_RCU later in this patchset.
-This patchset:
-1. moves vm_lock back into vm_area_struct, aligning it at the cacheline
-boundary and changing the cache to be cacheline-aligned to minimize
-cacheline sharing;
-2. changes vm_area_struct initialization to mark new vma as detached until
-it is inserted into vma tree;
-3. changes vm_area_struct cache to SLAB_TYPESAFE_BY_RCU to allow for their
-reuse and to minimize call_rcu() calls.
-Pagefault microbenchmarks do not show noticeable performance change.
+Introduce helper functions which can be used to read-lock a VMA when
+holding mmap_lock for read. Replace direct accesses to vma->vm_lock
+with these new helpers.
 
-Changes since v2 [4]
-- Updated vma_start_read_locked and vma_start_read_locked_nested comments,
-per Lorenzo Stoakes;
-- Undated patch 2 description to include motivation for moving vm_lock
-into vm_area_struct, per Lorenzo Stoakes, Vlastimil Babka, Mateusz Guzik;
-- Undated description to include a note about memory overhead dependency
-on kernel config options, per Lorenzo Stoakes and Vlastimil Babka;
-- Updated vma tests;
-- Introduced vma_mark_attached();
-- Moved vma_mark_attached() calls into vma_iter_store{_gfp},
-per Lorenzo Stoakes
-- Moved vma_lock_init() into vm_area_cachep constructor, per Hugh Dickins;
-- Ensure vm_lock is preserved when clearing or copying vm_area_struct;
-- Pass mm to vma_start_read() to avoid use of vma->vm_mm, which might be
-changed by a racing vma_init() if the vma gets reused;
-- Added vma write-locking in vma_mark_attached() to prevent races with
-vma->detached check in lock_vma_under_rcu().
+Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+---
+ include/linux/mm.h | 24 ++++++++++++++++++++++++
+ mm/userfaultfd.c   | 22 +++++-----------------
+ 2 files changed, 29 insertions(+), 17 deletions(-)
 
-Patch applies over mm-unstable
-
-[1] https://lore.kernel.org/all/20230227173632.3292573-34-surenb@google.com/
-[2] https://lore.kernel.org/all/ZsQyI%2F087V34JoIt@xsang-OptiPlex-9020/
-[3] https://lore.kernel.org/all/CAJuCfpEisU8Lfe96AYJDZ+OM4NoPmnw9bP53cT_kbfP_pR+-2g@mail.gmail.com/
-[4] https://lore.kernel.org/all/20241112194635.444146-1-surenb@google.com/
-
-Suren Baghdasaryan (5):
-  mm: introduce vma_start_read_locked{_nested} helpers
-  mm: move per-vma lock into vm_area_struct
-  mm: mark vma as detached until it's added into vma tree
-  mm: make vma cache SLAB_TYPESAFE_BY_RCU
-  docs/mm: document latest changes to vm_lock
-
- Documentation/mm/process_addrs.rst |  10 ++-
- include/linux/mm.h                 | 121 +++++++++++++++++++++++------
- include/linux/mm_types.h           |  19 ++---
- kernel/fork.c                      |  88 ++++++++-------------
- mm/memory.c                        |   9 ++-
- mm/userfaultfd.c                   |  22 ++----
- mm/vma.c                           |   8 +-
- mm/vma.h                           |   2 +
- tools/testing/vma/vma_internal.h   |  55 ++++++-------
- 9 files changed, 183 insertions(+), 151 deletions(-)
-
-
-base-commit: 84f7f75fda11c147979984755011c6e2b71e97e1
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index fecd47239fa9..1ba2e480ae63 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -722,6 +722,30 @@ static inline bool vma_start_read(struct vm_area_struct *vma)
+ 	return true;
+ }
+ 
++/*
++ * Use only while holding mmap read lock which guarantees that locking will not
++ * fail (nobody can concurrently write-lock the vma). vma_start_read() should
++ * not be used in such cases because it might fail due to mm_lock_seq overflow.
++ * This functionality is used to obtain vma read lock and drop the mmap read lock.
++ */
++static inline void vma_start_read_locked_nested(struct vm_area_struct *vma, int subclass)
++{
++	mmap_assert_locked(vma->vm_mm);
++	down_read_nested(&vma->vm_lock->lock, subclass);
++}
++
++/*
++ * Use only while holding mmap read lock which guarantees that locking will not
++ * fail (nobody can concurrently write-lock the vma). vma_start_read() should
++ * not be used in such cases because it might fail due to mm_lock_seq overflow.
++ * This functionality is used to obtain vma read lock and drop the mmap read lock.
++ */
++static inline void vma_start_read_locked(struct vm_area_struct *vma)
++{
++	mmap_assert_locked(vma->vm_mm);
++	down_read(&vma->vm_lock->lock);
++}
++
+ static inline void vma_end_read(struct vm_area_struct *vma)
+ {
+ 	rcu_read_lock(); /* keeps vma alive till the end of up_read */
+diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
+index 60a0be33766f..87db4b32b82a 100644
+--- a/mm/userfaultfd.c
++++ b/mm/userfaultfd.c
+@@ -84,16 +84,8 @@ static struct vm_area_struct *uffd_lock_vma(struct mm_struct *mm,
+ 
+ 	mmap_read_lock(mm);
+ 	vma = find_vma_and_prepare_anon(mm, address);
+-	if (!IS_ERR(vma)) {
+-		/*
+-		 * We cannot use vma_start_read() as it may fail due to
+-		 * false locked (see comment in vma_start_read()). We
+-		 * can avoid that by directly locking vm_lock under
+-		 * mmap_lock, which guarantees that nobody can lock the
+-		 * vma for write (vma_start_write()) under us.
+-		 */
+-		down_read(&vma->vm_lock->lock);
+-	}
++	if (!IS_ERR(vma))
++		vma_start_read_locked(vma);
+ 
+ 	mmap_read_unlock(mm);
+ 	return vma;
+@@ -1476,14 +1468,10 @@ static int uffd_move_lock(struct mm_struct *mm,
+ 	mmap_read_lock(mm);
+ 	err = find_vmas_mm_locked(mm, dst_start, src_start, dst_vmap, src_vmap);
+ 	if (!err) {
+-		/*
+-		 * See comment in uffd_lock_vma() as to why not using
+-		 * vma_start_read() here.
+-		 */
+-		down_read(&(*dst_vmap)->vm_lock->lock);
++		vma_start_read_locked(*dst_vmap);
+ 		if (*dst_vmap != *src_vmap)
+-			down_read_nested(&(*src_vmap)->vm_lock->lock,
+-					 SINGLE_DEPTH_NESTING);
++			vma_start_read_locked_nested(*src_vmap,
++						SINGLE_DEPTH_NESTING);
+ 	}
+ 	mmap_read_unlock(mm);
+ 	return err;
 -- 
 2.47.0.338.g60cca15819-goog
 
