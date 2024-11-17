@@ -1,58 +1,58 @@
-Return-Path: <linux-kernel+bounces-412076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF4089D0387
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 13:25:32 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE5499D03C4
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 13:28:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3216284481
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 12:25:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 27EB2B2693F
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 12:28:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78A6918A950;
-	Sun, 17 Nov 2024 12:25:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB44B1A9B5B;
+	Sun, 17 Nov 2024 12:25:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="hSDV47H0"
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="DHjTIw83"
 Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8784215B0F2
-	for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 12:25:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC4D71A00FE;
+	Sun, 17 Nov 2024 12:25:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731846316; cv=none; b=SEL1Ayi4HzvObyAGz+wOw4WRUGwUy1e0LzQ5ccG6MyvPaLXYRN4pKRFfHE/B9tLlRB81kB1q8rEe714JgJzjmztn8usCXqdWh/EHQZRFmMPelbU6Acifdy+cwATFYQDTsSVBI2DVyIwTtG3/4jduD9V1cZpxPVf66zaxBLO9w44=
+	t=1731846334; cv=none; b=hAQGcrLr2b8Kmcsu9ufM/EhhatEgMDMSr2boxk2Xr9q3EC5arZBV49AtPTLx1BSMC+MoukscMru4upjhCaDU//NIQfqLGaQpoRokTQo7jGmPL15LNIN+tMl4Kahc1JaQV4HiueEmxNGoVBpNkIo/BcX6+wOPNGTlaB9DJ1lLjuQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731846316; c=relaxed/simple;
-	bh=YzY4aou3IaZgHFHev/4ZvsvWYksL/Y5TaYVToMBxg/4=;
+	s=arc-20240116; t=1731846334; c=relaxed/simple;
+	bh=Fq865M/WrUHRUH+5J7pUXroBZwRrXAGq8n5OxIsSYF8=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=q4IKJrplaDhxIYKM6iLXT50hvEo14gwQo0qnT6lX2/avwXZb06s/y9ejSWzI0cr1pFgme5zd1rrJtYrrVjeV9/bp90fREZX8SrD/fBsu1od8pFh9zS7yBR9t8cDzpS40C/KxMxnvJ1/zv7i7TuWQedMT1i8TmiwJ5bJTSPZ640Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=hSDV47H0; arc=none smtp.client-ip=150.107.74.76
+	 MIME-Version:Content-Type; b=KHnV4Phywc59FjcrafPIZUBM6EZP8o6vGqOncRpaoE464PXkW+wyfoSkMfu4aqCdkvL8U0CtI817XDmH4Pgx7aLR1BmeVzFNw7SfKqQXpi+v7OMmWb+8EQRwv464xS+gsR16WLvAGDdRsVmxb2mzl+2JUHp9+HqhAgkgvxUanxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=DHjTIw83; arc=none smtp.client-ip=150.107.74.76
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-	s=201909; t=1731846311;
-	bh=ZtVZjHZpNMLRUjQi5h35hHsNEqKCZhuH0S+3ozdVAic=;
+	s=201909; t=1731846328;
+	bh=tIh/QNV7meNa8ZIOXp4JCVdE5EyBroYXF+febM+ZTBY=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=hSDV47H0eD+7XS/3nGedPptWFN9AhomQxWk2sNvmdaeUi5uvsKpJcOSDj6II2JPos
-	 Xua/MldRgW+De/0LMIn1cW7+mCyZuCI4rtTNooLvXMALcEHH33zb5hRmGLgmE1REXQ
-	 onMQEoQU8IqiKQ9M9EiAzxeUQbV7YOzpC800mG/esXdW+c148ufAHxLls/oR02x6YB
-	 fncbmELipMtjqabvH9U6Kt3x5Mei5UqTlfXtNzSNZ/O/h7rUDwP/OW7dNrFdlZvJfj
-	 1daXFx3yfbMgWD7AMzBkrNXOMFtY56fXINBItNbuL+TGfgtZFsIE+BwXqZueH3wHEc
-	 bwsLBlRPz/IZQ==
+	b=DHjTIw83VFAysYWEw7AgoPAe6hOt4XDQZOG2X63mE2qeumMvRDF2mUpHXtJUcRE8N
+	 R+ghXJqqRr6WH2hHJkynC/ievdh9h5KBPxgZC19TtzcVP4ksJiM5tQHlt8BRXAfIkA
+	 /WU2tEuRmzubxUWOWbdOH42Jfkvujqw4miYp8BSAWIPpqh1oQtGuoZkzc1f3cEZg5+
+	 F4EFQkUyasEXcfRfJrkMuLh1apvdcSWYtWLFfbT6VPis5dXaMih0CAUjOrOy43bu7l
+	 TrYPr8MkDEpwxy7zG6tZhKpgerwkVYXriBVTLniJ9jW9+RQAI3e9j7hbqRGvpoAKGI
+	 AQCjUIgARCGVA==
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Xrqhk73vWz4xdm;
-	Sun, 17 Nov 2024 23:25:10 +1100 (AEDT)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Xrqj4380Zz4xfJ;
+	Sun, 17 Nov 2024 23:25:28 +1100 (AEDT)
 From: Michael Ellerman <patch-notifications@ellerman.id.au>
-To: mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, Naveen N Rao <naveen@kernel.org>, David Hunter <david.hunter.linux@gmail.com>
-Cc: julia.lawall@inria.fr, skhan@linuxfoundation.org, javier.carrasco.cruz@gmail.com
-In-Reply-To: <20240709143553.117053-1-david.hunter.linux@gmail.com>
-References: <20240709143553.117053-1-david.hunter.linux@gmail.com>
-Subject: Re: [PATCH] powerpc-km82xx.c: replace of_node_put with __free improves cleanup
-Message-Id: <173184539769.890800.11654652895579463795.b4-ty@ellerman.id.au>
+To: linux-pm@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, rafael@kernel.org, viresh.kumar@linaro.org
+In-Reply-To: <20241112085148.415574-1-mpe@ellerman.id.au>
+References: <20241112085148.415574-1-mpe@ellerman.id.au>
+Subject: Re: [PATCH] cpufreq: maple: Remove maple driver
+Message-Id: <173184539748.890800.8372516431978764964.b4-ty@ellerman.id.au>
 Date: Sun, 17 Nov 2024 23:09:57 +1100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -63,20 +63,23 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 
-On Tue, 09 Jul 2024 10:35:53 -0400, David Hunter wrote:
-> The use of the __free function allows the cleanup to be based on scope
-> instead of on another function called later. This makes the cleanup
-> automatic and less susceptible to errors later.
+On Tue, 12 Nov 2024 19:51:48 +1100, Michael Ellerman wrote:
+> This driver is no longer buildable since the PPC_MAPLE platform was
+> removed, see commit 62f8f307c80e ("powerpc/64: Remove maple platform").
 > 
-> This code was compiled without errors or warnings.
+> Remove the driver.
 > 
+> Note that the comment in the driver says it supports "SMU & 970FX
+> based G5 Macs", but that's not true, that comment was copied from
+> pmac64-cpufreq.c, which still exists and continues to support those
+> machines.
 > 
 > [...]
 
 Applied to powerpc/next.
 
-[1/1] powerpc-km82xx.c: replace of_node_put with __free improves cleanup
-      https://git.kernel.org/powerpc/c/4aa5cc1e0012f784bc7f637458e597564833b425
+[1/1] cpufreq: maple: Remove maple driver
+      https://git.kernel.org/powerpc/c/fae2987e67786a6358c0ef47189b12ff19e9543a
 
 cheers
 
