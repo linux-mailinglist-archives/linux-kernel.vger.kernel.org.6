@@ -1,219 +1,214 @@
-Return-Path: <linux-kernel+bounces-411962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4CD09D01C6
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 01:54:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69E8C9D01C7
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 01:57:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 44295B220BF
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 00:54:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 226C1284744
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 00:57:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82F5BB652;
-	Sun, 17 Nov 2024 00:54:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99BB1A92D;
+	Sun, 17 Nov 2024 00:57:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="lvKNNRYv"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="k/0l3Z5i"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 464A0137E
-	for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 00:54:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B122C33E7
+	for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 00:57:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731804873; cv=none; b=heCIg2tFqDuEIozqtg6N2u973q7zNtzxgLN7GxFOPGRwwz/SmSmHlYAdCrDl+gUoWeMIB3eGFH7qgEroIN3rh15UGG1znIFKzCwBc3YIZTLs33y9BKidC294vaoK+C2Kd2EHFcDVzVygfhuQNiPPNg6L/zKWe+ViE5nKac5FeS0=
+	t=1731805051; cv=none; b=OfumRkgqkDVyASkpzdbWTk0VfjDtCPmU6XmLpJi9jRdpD9P8ZZRcU9CojrMidtEzhsdZUiqgxL9sWSXNuxCK1Z2juYnToOcqzQDwyoOHZEDyicGLzqA7laeb2ieiz94P6Bj1ePreXmFv7Qm40uNRIVjdI34cJotiuLM2AmaMLag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731804873; c=relaxed/simple;
-	bh=AahsvNCgqe0CD0EnglmUffluAVhGeJsO5JRnNswTG70=;
-	h=Content-Type:From:Mime-Version:Subject:Date:Message-Id:References:
-	 Cc:In-Reply-To:To; b=Af+P69eDcnkaJ8bzCQXS3LE8s+K7WBMmMEnbgZb6daaWn2PhlKWS9/IElusWJWa9ciK01gndEdKb9xL6zqdkLQPBdlQuYlldHTWi+Z948gbRy1UhjkPo8JkKiqhiVwsjiz19XlXq63b796ktZBgbh4Rbiiv89TRDVxD+ZqxnvA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org; spf=pass smtp.mailfrom=joelfernandes.org; dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b=lvKNNRYv; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=joelfernandes.org
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2e3010478e6so685141a91.1
-        for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 16:54:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google; t=1731804871; x=1732409671; darn=vger.kernel.org;
-        h=to:in-reply-to:cc:references:message-id:date:subject:mime-version
-         :from:content-transfer-encoding:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YLyW0SjepbIQoNpxN2g8xJsS2oPVOfF+dT7/t6HOJl0=;
-        b=lvKNNRYvX0SEwV0qihqUpBidmOnYSkIQCkjl04LwXjIHUrgDnLlYTTMDoisrnNoWsD
-         k3cFnAxkp9ATzCJ8WZDU2mP8SEUx0DpB6GHQsWyhOMn/PQSPOohXalxTagcDqQKvn0rW
-         uQJd+bXkpYgsTffh7m5yMHOwWhWa1vt91UZkU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731804871; x=1732409671;
-        h=to:in-reply-to:cc:references:message-id:date:subject:mime-version
-         :from:content-transfer-encoding:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YLyW0SjepbIQoNpxN2g8xJsS2oPVOfF+dT7/t6HOJl0=;
-        b=vhSqXd89/M8Mrz47WcLEtN2cqIKTAS0/k6J4wgJpZ4iHs7k+8k9QHEKvRpzeaFtFG8
-         VABZPcL4yKej164orxsJC6s6FxQ2CaTHO2G9SAUb4hisV9SFsXba4SriViy/aD9P1gy4
-         aiuZp+DzdGPc8KxKzIHSitzL8XFqlgtYonPifNTOrDFcFTAT6SfIFcm4IBkhqDhLuwoh
-         gEcLQLwTPrXSo2RccCfujTH5bE4vJXP6pUo1lKnwtYYqD+AiS3iZy01WvbPcVHU/KG0O
-         hC2dkHF5aqgbac4xM7MusB2khbivkt3+sePCR2WHinBFcSGD0S8lauSm9EYr5wFOc5MA
-         iy2A==
-X-Forwarded-Encrypted: i=1; AJvYcCW5rrChENGkLLkfLMATMjYOMj8Y4Y7MdcSPSuToAoaXqC/oFKCc7oFXiNjTFDbr+86w+2zvyOgyPWPJ1z4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpRptmsZ4akwgAcIqZdalgjSc5fAKIGc8oqSNaGVlTfRuaK198
-	dR1sQggLVj6QJAyL+qdhXqsJYlZSWoLD8UFhbpVCdAnQWKBKGDyyOgq9pgTJATI=
-X-Google-Smtp-Source: AGHT+IFdlt9nj0MlfNaq4/78E+AUaLriuYkxiXzLxLe2azaL5+HmZDqvU3XBAxk5cIyY50DMroZ9RA==
-X-Received: by 2002:a17:90b:5346:b0:2ea:498d:809f with SMTP id 98e67ed59e1d1-2ea498d8345mr2637634a91.26.1731804871469;
-        Sat, 16 Nov 2024 16:54:31 -0800 (PST)
-Received: from smtpclient.apple ([194.195.89.78])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ea06f1a508sm5035659a91.18.2024.11.16.16.54.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 16 Nov 2024 16:54:30 -0800 (PST)
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-From: Joel Fernandes <joel@joelfernandes.org>
+	s=arc-20240116; t=1731805051; c=relaxed/simple;
+	bh=5wrsNBo8Hnbij2o1ETYHg7Xe+kl2cGv/S/QTsTULEcw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nZcBSjOzQxDdJ+zL6C3kQmTI7CU5mIT+p8M1x8QT6cK8xGIUqH9OAEj7H0wJ/6WfYqrQjIR39EsIp/IXrIFmuUXVf6Z/d2X3S5bMwsGqWHspTITNpV6VTlu+Cu/IjssCKUI9DUDKov75XMcKoOdCzXjyZXNTVAmLV6yqsgDNAJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=k/0l3Z5i; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731805049; x=1763341049;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=5wrsNBo8Hnbij2o1ETYHg7Xe+kl2cGv/S/QTsTULEcw=;
+  b=k/0l3Z5i3pZP6FK3VIJgdAY2/ktdmY8WF83CnceT7SqvM+FSJo2bNl9d
+   gip3T49A4rs6KW7WjqvyOW1Y65D7/GRzQnNmEKuj7xrrIFNgW4hU8MXkj
+   /Rdx2/qVvo0KE4hP3hie9Qr0nYHK8PcIKogm2vik5WiuCDtXDZSnlX+89
+   WXgCRUz9iAIHQaifbga80MtvoyGKl/ZENvS9SRANv1OoH0qGORcdonShP
+   AfWbtbPQMEDa16Tsk7iCXTX967OGlmnRKMI1Z9nR/Yv75pHL7lQYVkUxK
+   9/FeZEsgo0uxq0F4ykR4zRPumE800RwiBJl0GfyFnTauLlwQhMw0+F0z5
+   A==;
+X-CSE-ConnectionGUID: NHvLfdTvRWK1tAEPllBwUw==
+X-CSE-MsgGUID: HhWxvZ/qQOidCn11FxnlhA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11258"; a="35554502"
+X-IronPort-AV: E=Sophos;i="6.12,160,1728975600"; 
+   d="scan'208";a="35554502"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Nov 2024 16:57:29 -0800
+X-CSE-ConnectionGUID: oONgtneyR4SfW7tr4TIMmA==
+X-CSE-MsgGUID: ehnUVlDnSlWqcJdGSl/ksA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,160,1728975600"; 
+   d="scan'208";a="119736636"
+Received: from lkp-server01.sh.intel.com (HELO 1e3cc1889ffb) ([10.239.97.150])
+  by orviesa002.jf.intel.com with ESMTP; 16 Nov 2024 16:57:26 -0800
+Received: from kbuild by 1e3cc1889ffb with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tCTbP-0001CX-2I;
+	Sun, 17 Nov 2024 00:57:23 +0000
+Date: Sun, 17 Nov 2024 08:56:26 +0800
+From: kernel test robot <lkp@intel.com>
+To: Paul Benoit <paul@os.amperecomputing.com>, linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev,
+	Paul Benoit <paul@os.amperecomputing.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] firmware: smccc: Support optional Arm SMC SOC_ID name
+Message-ID: <202411171059.1mPeDZMS-lkp@intel.com>
+References: <20241114030452.10149-1-paul@os.amperecomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH 1/2] sched/deadline: Restore dl_server bandwidth on non-destructive root domain changes
-Date: Sun, 17 Nov 2024 09:54:19 +0900
-Message-Id: <3F3A1712-6F87-444D-A2FA-B009D30CF1BF@joelfernandes.org>
-References: <20241113125724.450249-2-juri.lelli@redhat.com>
-Cc: Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>,
- Johannes Weiner <hannes@cmpxchg.org>, Michal Koutny <mkoutny@suse.com>,
- Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
- Qais Yousef <qyousef@layalina.io>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Suleiman Souhlal <suleiman@google.com>,
- Aashish Sharma <shraash@google.com>, Shin Kawamura <kawasin@google.com>,
- Vineeth Remanan Pillai <vineeth@bitbyteword.org>,
- linux-kernel@vger.kernel.org, cgroups@vger.kernel.org
-In-Reply-To: <20241113125724.450249-2-juri.lelli@redhat.com>
-To: Juri Lelli <juri.lelli@redhat.com>
-X-Mailer: iPhone Mail (21G93)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241114030452.10149-1-paul@os.amperecomputing.com>
+
+Hi Paul,
+
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on soc/for-next]
+[also build test ERROR on linus/master v6.12-rc7 next-20241115]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Paul-Benoit/firmware-smccc-Support-optional-Arm-SMC-SOC_ID-name/20241114-113039
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git for-next
+patch link:    https://lore.kernel.org/r/20241114030452.10149-1-paul%40os.amperecomputing.com
+patch subject: [PATCH] firmware: smccc: Support optional Arm SMC SOC_ID name
+config: arm-randconfig-003-20241117 (https://download.01.org/0day-ci/archive/20241117/202411171059.1mPeDZMS-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241117/202411171059.1mPeDZMS-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411171059.1mPeDZMS-lkp@intel.com/
+
+All error/warnings (new ones prefixed by >>):
+
+   drivers/firmware/smccc/smccc.c: In function 'arm_smccc_version_init':
+>> drivers/firmware/smccc/smccc.c:26:35: error: storage size of 'regs_1_2' isn't known
+      26 |         struct arm_smccc_1_2_regs regs_1_2;
+         |                                   ^~~~~~~~
+>> drivers/firmware/smccc/smccc.c:50:25: error: implicit declaration of function 'arm_smccc_1_2_smc'; did you mean 'arm_smccc_1_1_smc'? [-Wimplicit-function-declaration]
+      50 |                         arm_smccc_1_2_smc(
+         |                         ^~~~~~~~~~~~~~~~~
+         |                         arm_smccc_1_1_smc
+>> drivers/firmware/smccc/smccc.c:26:35: warning: unused variable 'regs_1_2' [-Wunused-variable]
+      26 |         struct arm_smccc_1_2_regs regs_1_2;
+         |                                   ^~~~~~~~
 
 
+vim +26 drivers/firmware/smccc/smccc.c
 
-> On Nov 13, 2024, at 9:57=E2=80=AFPM, Juri Lelli <juri.lelli@redhat.com> wr=
-ote:
->=20
-> =EF=BB=BFWhen root domain non-destructive changes (e.g., only modifying on=
-e of
-> the existing root domains while the rest is not touched) happen we still
-> need to clear DEADLINE bandwidth accounting so that it's then properly
-> restore taking into account DEADLINE tasks associated to each cpuset
-> (associated to each root domain). After the introduction of dl_servers,
-> we fail to restore such servers contribution after non-destructive
-> changes (as they are only considered on destructive changes when
-> runqueues are attached to the new domains).
->=20
-> Fix this by making sure we iterate over the dl_server attached to
-> domains that have not been destroyed and add them bandwidth contribution
-> back correctly.
->=20
-> Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
+    22	
+    23	void __init arm_smccc_version_init(u32 version, enum arm_smccc_conduit conduit)
+    24	{
+    25		struct arm_smccc_res res;
+  > 26		struct arm_smccc_1_2_regs regs_1_2;
+    27	
+    28		smccc_version = version;
+    29		smccc_conduit = conduit;
+    30	
+    31		smccc_trng_available = smccc_probe_trng();
+    32	
+    33		if ((smccc_version >= ARM_SMCCC_VERSION_1_2) &&
+    34		    (smccc_conduit != SMCCC_CONDUIT_NONE)) {
+    35			arm_smccc_1_1_invoke(ARM_SMCCC_ARCH_FEATURES_FUNC_ID,
+    36					     ARM_SMCCC_ARCH_SOC_ID, &res);
+    37			if ((s32)res.a0 >= 0) {
+    38				arm_smccc_1_1_invoke(ARM_SMCCC_ARCH_SOC_ID, 0, &res);
+    39				smccc_soc_id_version = (s32)res.a0;
+    40				arm_smccc_1_1_invoke(ARM_SMCCC_ARCH_SOC_ID, 1, &res);
+    41				smccc_soc_id_revision = (s32)res.a0;
+    42	
+    43				/* Issue Number 1.6 of the Arm SMC Calling Convention
+    44				 * specification introduces an optional "name" string
+    45				 * to the ARM_SMCCC_ARCH_SOC_ID function.  Fetch it if
+    46				 * available.
+    47				 */
+    48				regs_1_2.a0 = ARM_SMCCC_ARCH_SOC_ID;
+    49				regs_1_2.a1 = 2;	/* SOC_ID name */
+  > 50				arm_smccc_1_2_smc(
+    51					(const struct arm_smccc_1_2_regs *)&regs_1_2,
+    52					(struct arm_smccc_1_2_regs *)&regs_1_2);
+    53	
+    54				if ((u32)regs_1_2.a0 == 0) {
+    55					unsigned long *destination =
+    56						(unsigned long *)smccc_soc_id_name;
+    57	
+    58					/*
+    59					 * Copy regs_1_2.a1..regs_1_2.a17 to the
+    60					 * smccc_soc_id_name string with consideration
+    61					 * to the endianness of the values in a1..a17.
+    62					 * As per Issue 1.6 of the Arm SMC Calling
+    63					 * Convention, the string will be NUL terminated
+    64					 * and padded, from the end of the string to
+    65					 * the end of the 136 byte buffer, with NULs.
+    66					 */
+    67					*destination++ =
+    68					    cpu_to_le64p((const __u64 *)&regs_1_2.a1);
+    69					*destination++ =
+    70					    cpu_to_le64p((const __u64 *)&regs_1_2.a2);
+    71					*destination++ =
+    72					    cpu_to_le64p((const __u64 *)&regs_1_2.a3);
+    73					*destination++ =
+    74					    cpu_to_le64p((const __u64 *)&regs_1_2.a4);
+    75					*destination++ =
+    76					    cpu_to_le64p((const __u64 *)&regs_1_2.a5);
+    77					*destination++ =
+    78					    cpu_to_le64p((const __u64 *)&regs_1_2.a6);
+    79					*destination++ =
+    80					    cpu_to_le64p((const __u64 *)&regs_1_2.a7);
+    81					*destination++ =
+    82					    cpu_to_le64p((const __u64 *)&regs_1_2.a8);
+    83					*destination++ =
+    84					    cpu_to_le64p((const __u64 *)&regs_1_2.a9);
+    85					*destination++ =
+    86					    cpu_to_le64p((const __u64 *)&regs_1_2.a10);
+    87					*destination++ =
+    88					    cpu_to_le64p((const __u64 *)&regs_1_2.a11);
+    89					*destination++ =
+    90					    cpu_to_le64p((const __u64 *)&regs_1_2.a12);
+    91					*destination++ =
+    92					    cpu_to_le64p((const __u64 *)&regs_1_2.a13);
+    93					*destination++ =
+    94					    cpu_to_le64p((const __u64 *)&regs_1_2.a14);
+    95					*destination++ =
+    96					    cpu_to_le64p((const __u64 *)&regs_1_2.a15);
+    97					*destination++ =
+    98					    cpu_to_le64p((const __u64 *)&regs_1_2.a16);
+    99					*destination++ =
+   100					    cpu_to_le64p((const __u64 *)&regs_1_2.a17);
+   101				}
+   102			}
+   103		}
+   104	}
+   105	
 
-Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-
-Thanks,
-
- - Joel
-
-
-
-
-> ---
-> include/linux/sched/deadline.h |  2 +-
-> kernel/cgroup/cpuset.c         |  2 +-
-> kernel/sched/deadline.c        | 18 +++++++++++++-----
-> kernel/sched/topology.c        | 10 ++++++----
-> 4 files changed, 21 insertions(+), 11 deletions(-)
->=20
-> diff --git a/include/linux/sched/deadline.h b/include/linux/sched/deadline=
-.h
-> index 3a912ab42bb5..82c966a55856 100644
-> --- a/include/linux/sched/deadline.h
-> +++ b/include/linux/sched/deadline.h
-> @@ -33,7 +33,7 @@ static inline bool dl_time_before(u64 a, u64 b)
->=20
-> struct root_domain;
-> extern void dl_add_task_root_domain(struct task_struct *p);
-> -extern void dl_clear_root_domain(struct root_domain *rd);
-> +extern void dl_clear_root_domain(struct root_domain *rd, bool restore);
->=20
-> #endif /* CONFIG_SMP */
->=20
-> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-> index 142303abb055..4d3603a99db3 100644
-> --- a/kernel/cgroup/cpuset.c
-> +++ b/kernel/cgroup/cpuset.c
-> @@ -954,7 +954,7 @@ static void dl_rebuild_rd_accounting(void)
->     * Clear default root domain DL accounting, it will be computed again
->     * if a task belongs to it.
->     */
-> -    dl_clear_root_domain(&def_root_domain);
-> +    dl_clear_root_domain(&def_root_domain, false);
->=20
->    cpuset_for_each_descendant_pre(cs, pos_css, &top_cpuset) {
->=20
-> diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-> index 9ce93d0bf452..e53208a50279 100644
-> --- a/kernel/sched/deadline.c
-> +++ b/kernel/sched/deadline.c
-> @@ -2968,13 +2968,21 @@ void dl_add_task_root_domain(struct task_struct *p=
-)
->    task_rq_unlock(rq, p, &rf);
-> }
->=20
-> -void dl_clear_root_domain(struct root_domain *rd)
-> +void dl_clear_root_domain(struct root_domain *rd, bool restore)
-> {
-> -    unsigned long flags;
-> -
-> -    raw_spin_lock_irqsave(&rd->dl_bw.lock, flags);
-> +    guard(raw_spinlock_irqsave)(&rd->dl_bw.lock);
->    rd->dl_bw.total_bw =3D 0;
-> -    raw_spin_unlock_irqrestore(&rd->dl_bw.lock, flags);
-> +
-> +    if (restore) {
-> +        int i;
-> +
-> +        for_each_cpu(i, rd->span) {
-> +            struct sched_dl_entity *dl_se =3D &cpu_rq(i)->fair_server;
-> +
-> +            if (dl_server(dl_se))
-> +                rd->dl_bw.total_bw +=3D dl_se->dl_bw;
-> +        }
-> +    }
-> }
->=20
-> #endif /* CONFIG_SMP */
-> diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-> index 9748a4c8d668..e9e7a7c43dd6 100644
-> --- a/kernel/sched/topology.c
-> +++ b/kernel/sched/topology.c
-> @@ -2721,12 +2721,14 @@ void partition_sched_domains_locked(int ndoms_new,=
- cpumask_var_t doms_new[],
->=20
->                /*
->                 * This domain won't be destroyed and as such
-> -                 * its dl_bw->total_bw needs to be cleared.  It
-> -                 * will be recomputed in function
-> -                 * update_tasks_root_domain().
-> +                 * its dl_bw->total_bw needs to be cleared.
-> +                 * Tasks contribution will be then recomputed
-> +                 * in function dl_update_tasks_root_domain(),
-> +                 * dl_servers contribution in function
-> +                 * dl_restore_server_root_domain().
->                 */
->                rd =3D cpu_rq(cpumask_any(doms_cur[i]))->rd;
-> -                dl_clear_root_domain(rd);
-> +                dl_clear_root_domain(rd, true);
->                goto match1;
->            }
->        }
-> --
-> 2.47.0
->=20
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
