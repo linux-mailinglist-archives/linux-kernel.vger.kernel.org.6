@@ -1,144 +1,96 @@
-Return-Path: <linux-kernel+bounces-412041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E6E69D02B2
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 11:03:55 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B444C9D02DD
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 11:11:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BAD1F1F233A3
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 10:03:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32D0CB245CF
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 10:11:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF5BE139D07;
-	Sun, 17 Nov 2024 10:03:34 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACFE538C;
-	Sun, 17 Nov 2024 10:03:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA2E5148FF9;
+	Sun, 17 Nov 2024 10:11:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="fhNhH9Jx"
+Received: from forward502d.mail.yandex.net (forward502d.mail.yandex.net [178.154.239.210])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D50E335B5;
+	Sun, 17 Nov 2024 10:11:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731837814; cv=none; b=cLPRgci0XhUJtqFXFtxqp6nJfmciXY1b5MAcFJKxXh5sIFSZtv4eOn8RiwLNRSCxuNVA4o1RytsIQJicrPEVErrub5FWhsNuxNpg3QTJZIEomv/s5P1LV6vvQeapX9hviMNYRdbugnO1jEF47b0uMBSAOqZKqgzvIYOHQ3VLuCM=
+	t=1731838292; cv=none; b=pcHXjbwCFIJat4Pz1Xm49WwLPOWeek13Zv1A+HvcYNHCJPAUGy+gwnvA2zWjAadbah9w1dN81p6lANby4iyN5wViPUMX7KSTsVUfb8BX3Ldn4eVWiUA7azO3AHpnokwbs2cau+3Z6RtF7l8OMy0NCbkBDZoIXrlAsPB+6JzqF4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731837814; c=relaxed/simple;
-	bh=wLngz+w8R8ARLEGH+KooMXrrnp/v/UtKleyZ2Ad5FW0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NlfwuYPivf4RzOzVEfolmhhRB3mGJJxUtBOYOZAw1w8X8rw3tIs7eX1WUqdHWZIk5qCbjCz4nbiLmpSfbHuP6HOCbF37ElzolNzCRhs5zBDXoBiIahd8kD4ii+Tbus1oPBmzoHN2P93ie2rmEC/5maLAYGqdlM6tsk/dXQnuJuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5B76E1424;
-	Sun, 17 Nov 2024 02:03:54 -0800 (PST)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DBAC33F6A8;
-	Sun, 17 Nov 2024 02:03:21 -0800 (PST)
-Date: Sun, 17 Nov 2024 10:03:11 +0000
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Sudeep Holla <sudeep.holla@arm.com>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Mark Brown <broonie@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Peng Fan <peng.fan@nxp.com>, arm-scmi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org
-Subject: Re: [PATCH] firmware: arm_scmi: fix i.MX build dependency
-Message-ID: <Zzm_X0o-TkkGQeAN@pluto>
-References: <20241115230555.2435004-1-arnd@kernel.org>
+	s=arc-20240116; t=1731838292; c=relaxed/simple;
+	bh=Dxby0uqMdN7as2UyyHjcSaRbFkuNxqYBZvH3idpkSss=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Li9cmiFrZaQlx6zw2+Pia8w4OnnQTzk9S+4Uth9y2GsV36HF9X3j4b+zY6uRn+LTGKMT+TnUUceTmiKj/Z0E+fgmj/J7gpXQ/V35kQP46Qkw2HPDm4eDo15zW8JXeANfvaV0PY0e8cmYhPxaanJyBxTcX09LOMYK+Y6TnSQc/WU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=fhNhH9Jx; arc=none smtp.client-ip=178.154.239.210
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
+Received: from mail-nwsmtp-smtp-production-main-72.klg.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-72.klg.yp-c.yandex.net [IPv6:2a02:6b8:c42:2cca:0:640:9416:0])
+	by forward502d.mail.yandex.net (Yandex) with ESMTPS id E9F1760F04;
+	Sun, 17 Nov 2024 13:04:55 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-72.klg.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id r4M6SEROg8c0-pFZwU6ST;
+	Sun, 17 Nov 2024 13:04:55 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
+	t=1731837895; bh=Dxby0uqMdN7as2UyyHjcSaRbFkuNxqYBZvH3idpkSss=;
+	h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
+	b=fhNhH9Jxvc9NeeLktZiL0q18ircVXaacbK+3docRjMX5MUYvX/OzMvMwmpMM2VliM
+	 8TUv/YD2Q5IC12SWDU1bvzH0kP/QznbX8OvltEnMKsl1vWH6cFqax78WdGSsGuF30R
+	 h5hXq+c8uAhQQCZPD/4HhglwpBZwV8SIWxgk3jbU=
+Authentication-Results: mail-nwsmtp-smtp-production-main-72.klg.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
+Message-ID: <d1e90994-ca11-4a3e-b627-e3425dc5bf26@yandex.ru>
+Date: Sun, 17 Nov 2024 13:04:53 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241115230555.2435004-1-arnd@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net v2] scm: fix negative fds with SO_PASSPIDFD
+To: Alexander Mikhalitsyn <alexander@mihalicyn.com>
+Cc: linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+ Christian Brauner <brauner@kernel.org>, Kees Cook <kees@kernel.org>,
+ Kuniyuki Iwashima <kuniyu@amazon.com>, netdev@vger.kernel.org
+References: <20241117091313.10251-1-stsp2@yandex.ru>
+ <CAJqdLrp4J57k67R3OWM-_6QZSv8EV9UANzdAtBCiLGQZPTXDcQ@mail.gmail.com>
+Content-Language: en-US
+From: stsp <stsp2@yandex.ru>
+In-Reply-To: <CAJqdLrp4J57k67R3OWM-_6QZSv8EV9UANzdAtBCiLGQZPTXDcQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Sat, Nov 16, 2024 at 12:05:18AM +0100, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
+17.11.2024 12:40, Alexander Mikhalitsyn пишет:
+> Hi Stas,
+>
+> Actually, it's not a forgotten check. It's intended behavior to pass
+> through errors from pidfd_prepare() to
+> the userspace. In my first version [1] of the patch I tried to return
+> ESRCH instead of EINVAL in your case, but
+> then during discussions we decided to remove that.
+>
+> [1] https://lore.kernel.org/all/20230316131526.283569-2-aleksandr.mikhalitsyn@canonical.com/
+Yes, the patch you referenced above,
+only calls put_cmsg() with an error code.
 
-Hi Arnd,
+But the code I can see now in git, does
+much more. Namely,
+if (pidfd_file)
+     fd_install(pidfd, pidfd_file);
 
-> The newly added SCMI vendor driver references functions in the
-> protocol driver but needs a Kconfig dependency to ensure it can link,
-> essentially the Kconfig dependency needs to be reversed to match the
-> link time dependency:
-> 
-> arm-linux-gnueabi-ld: sound/soc/fsl/fsl_mqs.o: in function `fsl_mqs_sm_write':
-> fsl_mqs.c:(.text+0x1aa): undefined reference to `scmi_imx_misc_ctrl_set'
-> arm-linux-gnueabi-ld: sound/soc/fsl/fsl_mqs.o: in function `fsl_mqs_sm_read':
-> fsl_mqs.c:(.text+0x1ee): undefined reference to `scmi_imx_misc_ctrl_get'
-> 
+Or:
 
-The SCMI drivers, like the newly added IMX_SCMI_MISC_DRV, generally make
-ue of the related vendor protocol like IMX_SCMI_MISC_EXT, BUT the SCMI
-stack is designed in a way that NO symbols are needed to be exported by
-the protocol layer (to avoid a huge and growing number of symbols
-exports)...so usually the current DRV-->PROTO dependency is fine.
+put_unused_fd(pidfd);
 
-In this case, AFAIU, it is the SCMI driver that in turn exports a few
-helpers that are used by another driver fsl_mqs, which in turn could be
-compiled and work with or without the SCMI stack, so with this patch we
-are artificially reversing the DRV<--PROTO dependency to solve this
-scenario in all the compillation scenarios...
+And I really can't find any ">=0" check
+in those funcs. What am I missing?
+Is it safe to call fd_install(-22, pidfd_file)?
 
-....BUT given that the IMX_SCMI_MISC_DRV is the one that should export
-the missing symbols could NOT this solved in a cleaner way, without
-adding the fake reverse dependency, by instead modifying the header of
-the driver with something like the classic:
-
---->8-----
-diff --git a/include/linux/firmware/imx/sm.h b/include/linux/firmware/imx/sm.h
-index 9b85a3f028d1..3a7a3ec367c5 100644
---- a/include/linux/firmware/imx/sm.h
-+++ b/include/linux/firmware/imx/sm.h
-@@ -17,7 +17,19 @@
- #define SCMI_IMX_CTRL_SAI4_MCLK                4       /* WAKE SAI4 MCLK */
- #define SCMI_IMX_CTRL_SAI5_MCLK                5       /* WAKE SAI5 MCLK */
- 
-+#ifdef IMX_SCMI_MISC_DRV
- int scmi_imx_misc_ctrl_get(u32 id, u32 *num, u32 *val);
- int scmi_imx_misc_ctrl_set(u32 id, u32 val);
-+#else
-+static inline int scmi_imx_misc_ctrl_get(u32 id, u32 *num, u32 *val)
-+{
-+       return 0;
-+}
-+
-+static inline int scmi_imx_misc_ctrl_set(u32 id, u32 val)
-+{
-+       return 0;
-+}
-+#endif
- 
- #endif
------>8-----------
-
-....to just support compilation in all the scenarios.
-
-> This however only works after changing the dependency in the SND_SOC_FSL_MQS
-> driver as well, which uses 'select IMX_SCMI_MISC_DRV' to turn on a
-> driver it depends on. This is generally a bad idea, so the best solution
-> is to change that into a dependency.
-> 
-> To allow the ASoC driver to keep building with the SCMI support, this
-> needs to be an optional dependency that enforces the link-time
-> dependency if IMX_SCMI_MISC_DRV is a loadable module but not
-> depend on it if that is disabled.
-> 
-
-...and maybe with the above additions you could avoid also these other
-dep changes...
-
-...not sure if I am missing something and I have definitely not tested
-any of my babbling above...
-
-Thanks,
-Cristian
 
