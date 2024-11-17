@@ -1,157 +1,118 @@
-Return-Path: <linux-kernel+bounces-412273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B98809D06B4
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 23:39:11 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F5C49D0712
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 00:42:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2DA57B21E59
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 22:39:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0E944B21B43
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 23:42:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 060391DDC2A;
-	Sun, 17 Nov 2024 22:38:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 628A11DE2AD;
+	Sun, 17 Nov 2024 23:42:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="d7kp6BQH";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="mnbU/buw"
-Received: from fhigh-a4-smtp.messagingengine.com (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="wBF5LxbE"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02A5E144D1A;
-	Sun, 17 Nov 2024 22:38:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 468101DD880
+	for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 23:42:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731883137; cv=none; b=tMrZ7T3S9GHdEWoPnSVzGTVPC4t04qBMO0StIG/AKN4pMLuze28hLlzkNZblyKO9lfJFOgTG6KIGJ0dhf+nvFoYdZ1o0xqvgjKurcumXVpg+rKjJUTlq7W3T5dU1QujFw/8WDNZ2zpXbvbcsB2WcsINmMqgDAmMgQ8SJZ7EIKis=
+	t=1731886923; cv=none; b=gWqOQc0L07dpIZJcZuOGS0IVS5dteQQ6b7CWRzphRn/uDd9BrTm6p+w4shqGt8jMI3DMfjlHdC1aHWSrL15RGVdvEssbeKUbhOgIL0Ip0L0zO9l0FfTyB0Tt9HM6b7QKSQPoJcrZgU10KYo0waoLN41nBj3dFHJgZo756sJiedA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731883137; c=relaxed/simple;
-	bh=kcUhqc1H/sSqKzCIml06tsv1hCK1orZ6aFoj1a6W/Cc=;
+	s=arc-20240116; t=1731886923; c=relaxed/simple;
+	bh=qxTOujbTL10cxGD+QdGTBhyG9RaWSm17XBudCi8uBi0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZgjozZkZti6u+7gZhiskUEsIFYDokoBz3sfedc8GATWkPma+700nZB5s263pewID3yAkKKBwFQmB8JnMCEfwB1Qi1xkJoP7gfX4yiZS4xxArt94jhPKu+MSvWEuxIoR0YX8wYRF8VHZQQftyT387Jb+mquYY/Egc6vt5BNAKoUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=d7kp6BQH; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=mnbU/buw; arc=none smtp.client-ip=103.168.172.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
-Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id F3A46114019E;
-	Sun, 17 Nov 2024 17:38:53 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-03.internal (MEProxy); Sun, 17 Nov 2024 17:38:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1731883133;
-	 x=1731969533; bh=TyZQ3oux8sXs5BpOMWkWK8bYbC++bbMBVEmXrfZoS3Q=; b=
-	d7kp6BQHytP1h9Wp35KVSneMQe8evLLLOkjCYcZ9p/UZvRs3wS0jsmnvACxhnS9P
-	kuTBVemnvrG+p1SRIybTuokCLK7ZiCA7y4Z/5rDwPPjlpctmxOJibbGCBQSFjViZ
-	i6pezuzo8gHtc2eoJ0Rg0qrJ2WmFv4/hlnUB0x9cy8EqcC2NQxc3wE57nhK0RrCi
-	n1WHqU08GvU7z4t5CIG4oz2CyHnNRf26ZeX57do3xsMitXHjevaBMDgwsAdm4QQQ
-	mUOMewDydZS7cfx7thYr0FqRSznihaRjPK1acB1Qr+zZOf8JWOmMDoB4r/QhZAbD
-	4IDH9mA60Y1OmNbNTx2lPQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1731883133; x=
-	1731969533; bh=TyZQ3oux8sXs5BpOMWkWK8bYbC++bbMBVEmXrfZoS3Q=; b=m
-	nbU/buwwYUrQAyx5S9Y7uuXXfhNb908OyP4OSZ0ui9lAbUpIzSgloO984WKrOZpS
-	i8MTMQUztUCu0nesuRcyIqmp2VPxAWg4XfidJvrUZ3DgU2JdHGv8dSqIWNDdv4qR
-	VZ0lW1flKA0RkoQvr6t+juwMEAUa41qNUu7rln76uDpXMIp0wiDImQK7eTJGzNzL
-	UV/bSlKG80qwrdWxoVGIQDz6wyhzlxG44k9lICevx6yoZxv7agU97OnXdksUaTdc
-	Vfs+yUo0XN4RSgZQQ1V3QD5PGooKiEcbeBA/6Vh1m3vb1kMH8t1v6wYXaeMP2ox6
-	DRbYFkFh67Tu2qKdc6DYA==
-X-ME-Sender: <xms:fXA6Z96BCF5uYknDq7mRGDIKHd991mX2eKgLCQQJCrb7zLx2kYUUzg>
-    <xme:fXA6Z67b6jLmzDPUhLwwE8ep_ShVAW5psEdB4I14W_j2rUL0YbRGatjAOVPTG_xJX
-    KGQv426Dkw6r039kds>
-X-ME-Received: <xmr:fXA6Z0c1Jg8mZidDRcUEwDk5lAxp2RenM78Vkpoh0q5MAtWiYxVNRW2UsR18LpUI7xtnz0YEGqBA-yZ-PbvjVpntmbnrl4_q-w>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrvdelgddtudcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtugfgjgesthekredttddtjeen
-    ucfhrhhomheppfhikhhlrghsucfunpguvghrlhhunhguuceonhhikhhlrghsrdhsohguvg
-    hrlhhunhgusehrrghgnhgrthgvtghhrdhsvgeqnecuggftrfgrthhtvghrnhepveetgedt
-    vddvhfdtkeeghfeffeehteehkeekgeefjeduieduueelgedtheekkeetnecuvehluhhsth
-    gvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhhikhhlrghsrdhsohgu
-    vghrlhhunhgusehrrghgnhgrthgvtghhrdhsvgdpnhgspghrtghpthhtohepudejpdhmoh
-    guvgepshhmthhpohhuthdprhgtphhtthhopehrohhsvghnphesghhmrghilhdrtghomhdp
-    rhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtth
-    hopehkuhhrtheslhhinhhuthhrohhnihigrdguvgdprhgtphhtthhopegrnhgurhgvfies
-    lhhunhhnrdgthhdprhgtphhtthhopeholhhtvggrnhhvsehgmhgrihhlrdgtohhmpdhrtg
-    hpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegvughu
-    mhgriigvthesghhoohhglhgvrdgtohhmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlh
-    drohhrghdprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhm
-X-ME-Proxy: <xmx:fXA6Z2Llebuj6Mu__Xn91mLXJlHF_1Ia91oHwnN3c5vx8QSXQpSO7Q>
-    <xmx:fXA6ZxJ7mAUShv7861GzoKjOyMv88BDtZR2EkO4JCWWlvt4KGKkaXw>
-    <xmx:fXA6Z_wu_fGarudwg0_BqSGgyVmFBb5JpzFJroGUnFnzu9T0_ASD3g>
-    <xmx:fXA6Z9L68MvcmYZk6Cv8RXh_V5z1eU9cMr1IxjnNadVK7exp8tQldg>
-    <xmx:fXA6Z-dNDxbuUacU3sy5A9HaBR5hB-c8fAgdPyXnSZZ5Dr1N_6w3_BhF>
-Feedback-ID: i80c9496c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 17 Nov 2024 17:38:52 -0500 (EST)
-Date: Sun, 17 Nov 2024 23:38:50 +0100
-From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-To: Rosen Penev <rosenp@gmail.com>
-Cc: netdev@vger.kernel.org, Kurt Kanzenbach <kurt@linutronix.de>,
-	Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Chris Snook <chris.snook@gmail.com>,
-	Marcin Wojtas <marcin.s.wojtas@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:RENESAS ETHERNET SWITCH DRIVER" <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCHv3 net-next] net: modernize ioremap in probe
-Message-ID: <20241117223850.GK5315@ragnatech.se>
-References: <20241117212711.13612-1-rosenp@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=SzLWdiAKVnVNK5dMLy2z/XXkKc+wLY5ynTqPvx92h1Fg1yJuJcc/gU3d36/wxi7UWx88yMR3CpTrl+BobHvAhqYN8Xg5LElwI41xGjklnIEjOUFRrI+ZTqJp9MoX+ikj5aosVcX1YOk1VKeLMTmGwM7V2uAPtWCUuVUirqXet8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=wBF5LxbE; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-7205b6f51f3so840555b3a.1
+        for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 15:42:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1731886921; x=1732491721; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=SUTPquA8eQo3SmUaOr4zN6yMlKLusBV0j+4/2JWItaw=;
+        b=wBF5LxbEq1PaT3a7msB8CtZvB9UfUUMd6RvXeTP+U2KGj0YeSxvwT8yY0G8WczWIkn
+         15J4k9uJ6Dpd6AZfbNOUaRSD3HuYa30JFrAGQSAzQGF7yDEQ972Fyu+HYAti8nnqais9
+         1/gT7f2hWhtHVW4KRmBJFdYRx5grtC4yQYlhzEL9PQYuqs37O5iApXLGrWYxvJ6G3gNM
+         wN195gi6v/bU6+pRQSs5pNlM+jTCCuahDA3AIfjFOj2YZ1n3sjsUbQd9Nl08Bmz/W8OE
+         SMo4zHpIlfR43nZBWpCPaVjPWOvrj4OkjaBCQFn5tcJzdr1ZlX4yV+ICw3LXWBlBLzJH
+         XorQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731886921; x=1732491721;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SUTPquA8eQo3SmUaOr4zN6yMlKLusBV0j+4/2JWItaw=;
+        b=R1OnuaP8W2AeAeiqwUg8XLPHUw65NW0kSZhWArKoLfuHtLsg2EM58Ab00agcw2ccFq
+         L8IcXgZjfi3kRLDnWthninU0SQCc1t9l4dpvwWqYx+r/6lSpY+7DnlYHsRmYY3cVX27X
+         A1Nz5eTQ9PoLp6ys4QLMUVlpb6CtuCdcRh8nzEPDPv/0sGfWY+uPFlKmHQsFa/O45bZV
+         Sa7bSQM0bSUmqo6acRqSCWYkgqKhvgXRAqnXvKQmFV6M0eCj2xwv1b6BQq1HrypJCM3E
+         6l4ffiobBr+ztsXuXbmJukTGDsVg22m//FqMNUd/RLsmK1zOgS2ZeOBicv87gDI8gJvC
+         TCMg==
+X-Forwarded-Encrypted: i=1; AJvYcCUytlp/NpsazDorRGRvQgeAKPEpI/igmTUXx/a++mtDc9wJG7o3qp6eTTTOePgATGZpVSoKQQUqpevD3xQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9sAroxjrdZ3wXHbbZiX+OdrxMVbW4GsGU3KlnQ/bAfVGMTETQ
+	wBVw+3+2lRTtGxkdibxRlY22LGrgdAiVizlymp1VpULvbDjMop0rRIbAu5kwf9avhtZdaGUInlB
+	b
+X-Google-Smtp-Source: AGHT+IGiAd1rAkdTifocy8exaCIjQV+CPbeJh6699Tv0xtsUdygH+X0bJrVxisJuCl+ycdb/1IDZPw==
+X-Received: by 2002:a05:6a00:a0c:b0:71e:e4f:3e58 with SMTP id d2e1a72fcca58-72476cad10fmr13213225b3a.17.1731886921599;
+        Sun, 17 Nov 2024 15:42:01 -0800 (PST)
+Received: from dread.disaster.area (pa49-186-86-168.pa.vic.optusnet.com.au. [49.186.86.168])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724770eef26sm4858255b3a.33.2024.11.17.15.42.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 17 Nov 2024 15:42:01 -0800 (PST)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1tCo8F-00G4fV-1g;
+	Mon, 18 Nov 2024 09:52:39 +1100
+Date: Mon, 18 Nov 2024 09:52:39 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: Jeongjun Park <aha310510@gmail.com>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] fs: prevent data-race due to missing inode_lock when
+ calling vfs_getattr
+Message-ID: <ZzpztwFlxgz8q6BZ@dread.disaster.area>
+References: <20241117163719.39750-1-aha310510@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241117212711.13612-1-rosenp@gmail.com>
+In-Reply-To: <20241117163719.39750-1-aha310510@gmail.com>
 
-Hello Rosen,
+On Mon, Nov 18, 2024 at 01:37:19AM +0900, Jeongjun Park wrote:
+> Many filesystems lock inodes before calling vfs_getattr, so there is no
+> data-race for inodes. However, some functions in fs/stat.c that call
+> vfs_getattr do not lock inodes, so the data-race occurs.
+> 
+> Therefore, we need to apply a patch to remove the long-standing data-race
+> for inodes in some functions that do not lock inodes.
 
-Thanks for your work.
+The lock does nothing useful here. The moment the lock is dropped,
+the information in the stat buffer is out of date (i.e. stale) and
+callers need to treat it as such. i.e. stat data is a point in time
+snapshot of inode state and nothing more.
 
-On 2024-11-17 13:27:11 -0800, Rosen Penev wrote:
+Holding the inode lock over the getattr call does not change this -
+the information returned by getattr is not guaranteed to be up to
+date by the time the caller reads it.
 
-> diff --git a/drivers/net/ethernet/renesas/rtsn.c 
-> b/drivers/net/ethernet/renesas/rtsn.c
-> index 6b3f7fca8d15..bfe08facc707 100644
-> --- a/drivers/net/ethernet/renesas/rtsn.c
-> +++ b/drivers/net/ethernet/renesas/rtsn.c
-> @@ -1297,14 +1297,8 @@ static int rtsn_probe(struct platform_device *pdev)
->  	ndev->netdev_ops = &rtsn_netdev_ops;
->  	ndev->ethtool_ops = &rtsn_ethtool_ops;
->  
-> -	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "gptp");
-> -	if (!res) {
-> -		dev_err(&pdev->dev, "Can't find gptp resource\n");
-> -		ret = -EINVAL;
-> -		goto error_free;
-> -	}
-> -
-> -	priv->ptp_priv->addr = devm_ioremap_resource(&pdev->dev, res);
-> +	priv->ptp_priv->addr =
-> +		devm_platform_ioremap_resource_byname(pdev, "gptp");
->  	if (IS_ERR(priv->ptp_priv->addr)) {
->  		ret = PTR_ERR(priv->ptp_priv->addr);
->  		goto error_free;
+i.e. If a caller needs stat information to be serialised against
+other operations on the inode, then it needs to hold the inode lock
+itself....
 
-You have a similar construct using platform_get_resource_byname() a few 
-lines above this one. Please convert both uses, or none, mixing them is 
-just confusing IMHO.
-
+-Dave.
 -- 
-Kind Regards,
-Niklas Söderlund
+Dave Chinner
+david@fromorbit.com
 
