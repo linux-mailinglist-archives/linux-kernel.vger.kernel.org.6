@@ -1,100 +1,148 @@
-Return-Path: <linux-kernel+bounces-412179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC3F39D0500
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 19:26:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 974709D0502
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 19:28:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A65682821D7
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 18:26:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94C84281512
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 18:28:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FC051DB365;
-	Sun, 17 Nov 2024 18:26:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA9631DAC93;
+	Sun, 17 Nov 2024 18:28:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="iKmc/WyX"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xihp/RWu"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD59319BA6;
-	Sun, 17 Nov 2024 18:26:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 864761EA73;
+	Sun, 17 Nov 2024 18:28:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731867973; cv=none; b=rSHrpl6/LzLhwkJOyjv5LnPXVau+nhqaVfT6wGiob8P8SqbjYr2kXLVJbo1ikg4c7f8JsO+EK5PISTdWU67w/jMqmmEAfLxq3CghLWwkdyqLLO+cXqp4WfXdUrWX9IYheBoD0Dy76395U04ZP9IibS4uw7TBTJvobQfnKSN3gbI=
+	t=1731868097; cv=none; b=b7E/rdRQJboEvejc9DbVpB/AA5OR/HLnt30av8vDWDCuh17wwqMJ4esvlU4y+JXDRLs03x+Y6vaxhJXJ2shgN1owsi/kTiFYW321zqlZ3tmIGUTx1rvSxunasCfLmS/BkpDyWFAu7tjr9Dhgal7K0/M8+BnRRX+9vMLeo7pQu+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731867973; c=relaxed/simple;
-	bh=L5i67y0gMIms/tG4mdxgZaI1qv/UhvU9JzFgf+I6i88=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TSTDvGqeWiJ5jhRu/lb4q89VphA4/zIqFzCcInDvXhS34s9BRRegew/IBGtoR+7ugKlrfzsyNcCnYLSPoz+Qq8OIR3d64RAlvte544BX+UAz4pzvfwhrWe03ZnvU94qsATi++whOQI5Exx3tL7iwd0pzGSwN+C5g4BKcQXswvaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=iKmc/WyX; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=AGQIXcjAkiejG+UbcSeM9PSqSR0eMXRHAu+HA5Bn4LA=; b=iKmc/WyXkq4taeMNAJmHOcSXjH
-	/GykTUb3E61RiPdvqBjNABw+uGUZ5nHM45aWI5DEDBh46uFonHNrmp8eatxogQo2NfBPP+ZgkGMHN
-	ll4Wi5nv8fORT8/g3v1S/C0gZ2WZ5SDU+kH9MiD3rPj+ea5PUKVW4IXlRa5iQslMEG0c=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tCjy0-00Db2A-Cq; Sun, 17 Nov 2024 19:25:48 +0100
-Date: Sun, 17 Nov 2024 19:25:48 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: manas18244@iiitd.ac.in
-Cc: FUJITA Tomonori <fujita.tomonori@gmail.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Anup Sharma <anupnewsmail@gmail.com>, netdev@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-block@vger.kernel.org
-Subject: Re: [PATCH] rust: simplify Result<()> uses
-Message-ID: <3721a7b2-4a8f-478c-bbeb-fdf22ded44c9@lunn.ch>
-References: <20241117-simplify-result-v1-1-5b01bd230a6b@iiitd.ac.in>
+	s=arc-20240116; t=1731868097; c=relaxed/simple;
+	bh=tYa1Z0HutYyF4t+LAAxxv0fRkYPg6GdxMWQHBmzGQWA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LcBRkeEufe/KnGXs3HT5yVk7HVd2wVJfU6hDI4wQfFEqrHcHy4jbWDczJsovU2ADlrXyCmuZtBugWitczhUY5n8Jp/7QT1VMI+ndImLwz1i9AIgRbgH7rS2vlsr8W36l01qT9QPRpPiLxCL1DATuOWxcHa6+24j3J/xAm47fv1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xihp/RWu; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4315dfa3e0bso2241025e9.0;
+        Sun, 17 Nov 2024 10:28:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731868094; x=1732472894; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=v0yUSeeOvbqs8tHSlx92wZzZTLKipu7boU7UlyhJIHo=;
+        b=Xihp/RWub+p+WU4m4xdaUDHJUzUi/spsitLCquR9QELTRRx/oRmEdyKi4Ju76y0HIK
+         7JKCp5ghSX0ZYMqXTlWepXs45Wrzb78NAq9n18QmaxZWhzFK+kGT1PO1sBhpVeGedVSl
+         rXYjPAZZxK504kFQb8TYONIbQQuJOlnNMdjyMsi9SfkpukyOQzFTJGjqAvfjFnLCVZQW
+         iaQNhYg93QrAR5HWvCPnFLUzw/IPc1jcMA6mx84Fyq9yAvrXNkm7do+h0rYNYjP+fcva
+         UCOEXbzsbLwMGXUvNQNybnlJPBi3ZscTIWgvb45oiDFec+tv1+U42sJbsKuxn3s1tHC+
+         t8qg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731868094; x=1732472894;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=v0yUSeeOvbqs8tHSlx92wZzZTLKipu7boU7UlyhJIHo=;
+        b=uc+jJf2kq20KvVPBAxK2AIZr5FfQWctYzxhBrfyU64Kv60niIykLBoKn3RktjX9/AW
+         dGOBGW6HYj2j4cOabN7bdToLN33ZJsy/tG5Rjeuhkusz8qC1sq8F/YVxFrCWdsOHTBL8
+         XS1H1SeAsn2p64dzRetRxoSJ/WhxT1xmGKLLWJCCc4txzEHICMmbZR6YA4DpFIFqC6rx
+         7ARw0aLS/EPKyu+654SD/ZDnt14nkN4IPXSnCdspeQNk/scEGQ8FKi1VQesf+Nevx2Ki
+         2T8DYlR7PLR/LSmnUd3CVQ4jUY7FhxD7iz3htyXkgGmvAPdFmlljR51oMGuqmDkDOVOg
+         7tFA==
+X-Forwarded-Encrypted: i=1; AJvYcCURg15wChXxMYRmt2ObuRaJrtGlmWEa4hmal9ImOsWVA/NHOPvAc4t/iAQQH5Qm+0Ok/sRHGYVD4ZmMGTY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPXB3/jLvyEiIRYC4Vy8ROTKkYg10OEFP55repqlweS+oNqoyh
+	tWansF8i4WbZQ2YUR6OypgUKaOCAbv4td4FPrZBPL/zQ5Smjfb1T
+X-Google-Smtp-Source: AGHT+IEZwmgPFtkP3s1Ya7qUEqRoryXtfa+bGnBKcgd3zgF6RbqcdvoDmOwePjeDEC/PbljwvkATZg==
+X-Received: by 2002:a05:6000:20c7:b0:382:36f1:a14 with SMTP id ffacd0b85a97d-38236f10bb1mr1395953f8f.7.1731868093625;
+        Sun, 17 Nov 2024 10:28:13 -0800 (PST)
+Received: from 5dfbf0f66296.v.cablecom.net (84-72-156-211.dclient.hispeed.ch. [84.72.156.211])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3823f72441bsm3028137f8f.101.2024.11.17.10.28.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 17 Nov 2024 10:28:13 -0800 (PST)
+From: Lothar Rubusch <l.rubusch@gmail.com>
+To: lars@metafoo.de,
+	Michael.Hennerich@analog.com,
+	jic23@kernel.org
+Cc: linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	eraretuya@gmail.com,
+	l.rubusch@gmail.com
+Subject: [PATCH v2 00/22] iio: accel: adxl345: add FIFO operating with IRQ triggered watermark events
+Date: Sun, 17 Nov 2024 18:26:29 +0000
+Message-Id: <20241117182651.115056-1-l.rubusch@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241117-simplify-result-v1-1-5b01bd230a6b@iiitd.ac.in>
+Content-Transfer-Encoding: 8bit
 
-On Sun, Nov 17, 2024 at 08:41:47PM +0530, Manas via B4 Relay wrote:
-> From: Manas <manas18244@iiitd.ac.in>
-> 
-> This patch replaces `Result<()>` with `Result`.
-> 
-> Suggested-by: Miguel Ojeda <ojeda@kernel.org>
-> Link: https://github.com/Rust-for-Linux/linux/issues/1128
-> Signed-off-by: Manas <manas18244@iiitd.ac.in>
-> ---
->  drivers/net/phy/qt2025.rs        | 2 +-
->  rust/kernel/block/mq/gen_disk.rs | 2 +-
->  rust/kernel/uaccess.rs           | 2 +-
->  rust/macros/lib.rs               | 6 +++---
+The adxl345 sensor offers several features. Most of them are based on
+using the hardware FIFO and reacting on events coming in on an interrupt
+line. Add access to configure and read out the FIFO, handling of interrupts
+and configuration and application of the watermark feature on that FIFO.
 
+The series will include the public adxl345.h used also in the
+corresponding older input driver. In brief, the data fields seem to be
+identical when implementing it for IIO, the file is already in public
+include, and to avoid duplication.
 
-Please split these patches up per subsystem, and submit them
-individually to the appropriate subsystems.
+The series is meant as base. Implementation of single tap, double tap,
+freefall, activity/inactivity on top is relatively straight forward and
+will be upcoming, as soon as this patch set is stabilized.
 
+The series reverts the data justification mode of the measurements
+(right and left-justified) since it comes in more handy. Further the
+series reverts moving out constant defines to the header file and moves
+them back into the source file. This is kind of embarassing, and
+definitely not on purpose.
+When implementing the features, it became clear what was actually used
+to be in the header. I hope this is still acceptible, for the learning
+curve.
 
-    Andrew
-
+Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
 ---
-pw-bot: cr
+v1 -> v2: Fix comments according to Documentation/doc-guide/kernel-doc.rst
+          and missing static declaration of function.
+---
+Lothar Rubusch (22):
+  iio: accel: adxl345: fix comment on probe
+  iio: accel: adxl345: rename variable data to st
+  iio: accel: adxl345: rename struct adxl34x_state
+  iio: accel: adxl345: rename to adxl34x_channels
+  iio: accel: adxl345: measure right-justified
+  iio: accel: adxl345: add function to switch measuring
+  iio: accel: adxl345: initialize IRQ number
+  iio: accel: adxl345: initialize FIFO delay value for SPI
+  iio: accel: adxl345: unexpose private defines
+  iio: accel: adxl345: set interrupt line to INT1
+  iio: accel: adxl345: import adxl345 general data
+  iio: accel: adxl345: elaborate iio channel definition
+  iio: accel: adxl345: add trigger handler
+  iio: accel: adxl345: read FIFO entries
+  iio: accel: adxl345: reset the FIFO on error
+  iio: accel: adxl345: register trigger ops
+  iio: accel: adxl345: push FIFO data to iio
+  iio: accel: adxl345: start measure at buffer en/disable
+  iio: accel: adxl345: prepare FIFO watermark handling
+  iio: accel: adxl345: use FIFO with watermark IRQ
+  iio: accel: adxl345: sync FIFO reading with sensor
+  iio: accel: adxl345: add debug printout
+
+ drivers/iio/accel/adxl345.h      |  34 +-
+ drivers/iio/accel/adxl345_core.c | 887 +++++++++++++++++++++++++++++--
+ drivers/iio/accel/adxl345_i2c.c  |   2 +-
+ drivers/iio/accel/adxl345_spi.c  |  11 +-
+ 4 files changed, 845 insertions(+), 89 deletions(-)
+
+-- 
+2.39.5
+
 
