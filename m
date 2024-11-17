@@ -1,184 +1,261 @@
-Return-Path: <linux-kernel+bounces-412251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94F8A9D060A
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 22:02:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3985B9D0605
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 22:02:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54DA82822AF
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 21:02:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45ED7282124
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 21:02:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54C6A84A3E;
-	Sun, 17 Nov 2024 21:02:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A90121DB956;
+	Sun, 17 Nov 2024 21:02:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="nuFuE4AM"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="KcHSRb11";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="+4DEh/HW";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="KcHSRb11";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="+4DEh/HW"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21FFC1DD89F;
-	Sun, 17 Nov 2024 21:02:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0F9BA937
+	for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 21:01:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731877326; cv=none; b=iXNUmwdAI+7f4osTxA8a0BR2BWk7AB5upm/LJ5CUvlrk/QhJIVaKU6HcEUqig6agVKt1Lnfswfvckf1WNgyYvj+Y9rf2sn1/KPKuiff60NkfJZJeDhxIqmGMMVbuIHu8y3KruARYn8c97I+5PzSDvnsgQQSvL9JVoPdGi5ebB+0=
+	t=1731877321; cv=none; b=m3pwIZmCYVdqSYxdfDUaAZwSFzuIgWQuDYZPRf55rFyFicit5zo8XhiuBFdscSHICF2KJEfmElyztZOQyHmtA0K27KJcc09v9PhVWwCjuB6dzNUa2lEsxcufrKcVaxds0qvx8urQnw3LJbr7hVROYP4l7ORACnFVIg0lMeH1u/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731877326; c=relaxed/simple;
-	bh=gn60uRI7cPoOu0aZqxhm0cizQyiIvGbnUSQmXYtqG/g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OkN6fWUQcEzxeNK3Vh0CMsHOZdAIe+2Nrh14tY+XmoX43o25WZCVqo09KbJPYyg8bbeIlMQh/Jmzqa8fzN3EY40HvlfbavZ2eoeuEhA/DR84gNjZG24gFouHD4uLFp+wIT82fjIKXG+K5UbJTTn8dHomJAPGkKAf+PRMoAvWpDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=nuFuE4AM; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id A71AC7CA;
-	Sun, 17 Nov 2024 22:01:45 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1731877305;
-	bh=gn60uRI7cPoOu0aZqxhm0cizQyiIvGbnUSQmXYtqG/g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nuFuE4AMBPsFBGqHFQd4ggjkJ+QzgBQXXkXgyRh2K8mqddIBNVuq2ZOYkN5jrTPyP
-	 0WX5eUs1aOXhoq+JyTrup3B+WxggSFrP1A9YGQlL7Qrf7yElE6n/eQNleyHUg4vja4
-	 xktQSbx1VHUUMaFQHwFRkF+ZmnHJ73iJ+P2eE6pc=
-Date: Sun, 17 Nov 2024 23:01:53 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Jani Nikula <jani.nikula@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>,
-	Danilo Krummrich <dakr@redhat.com>,
-	Harry Wentland <harry.wentland@amd.com>,
-	Leo Li <sunpeng.li@amd.com>,
-	Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
-	Xinhui Pan <Xinhui.Pan@amd.com>,
-	Alain Volmat <alain.volmat@foss.st.com>,
-	Raphael Gallais-Pou <rgallaispou@gmail.com>,
-	Liviu Dudau <liviu.dudau@arm.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Peter Senna Tschudin <peter.senna@gmail.com>,
-	Ian Ray <ian.ray@ge.com>,
-	Martyn Welch <martyn.welch@collabora.co.uk>,
-	Inki Dae <inki.dae@samsung.com>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Stefan Agner <stefan@agner.ch>, Alison Wang <alison.wang@nxp.com>,
-	Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Rob Clark <robdclark@gmail.com>,
-	Abhinav Kumar <quic_abhinavk@quicinc.com>,
-	Sean Paul <sean@poorly.run>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	Dave Airlie <airlied@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>,
-	Sandy Huang <hjc@rock-chips.com>,
-	Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>,
-	Andy Yan <andy.yan@rock-chips.com>, Chen-Yu Tsai <wens@csie.org>,
-	Samuel Holland <samuel@sholland.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	=?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>,
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
-	Gurchetan Singh <gurchetansingh@chromium.org>,
-	Chia-I Wu <olvaffe@gmail.com>, Zack Rusin <zack.rusin@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	nouveau@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
-	virtualization@lists.linux.dev, spice-devel@lists.freedesktop.org,
-	linux-rockchip@lists.infradead.org, linux-sunxi@lists.linux.dev,
-	linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 2/5] drm/amdgpu: don't change mode in
- amdgpu_dm_connector_mode_valid()
-Message-ID: <20241117210153.GF12409@pendragon.ideasonboard.com>
-References: <20241115-drm-connector-mode-valid-const-v1-0-b1b523156f71@linaro.org>
- <20241115-drm-connector-mode-valid-const-v1-2-b1b523156f71@linaro.org>
+	s=arc-20240116; t=1731877321; c=relaxed/simple;
+	bh=vsjGvNL9B+WWR8kgTCUwnbPGRjC9oUX99z3N/YF/Ek0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JeD74chOT1wX7VEP6eGUGyIsS6wWgcQh6VHx7sRz/sVk++w3pBEYIEIxopMwi+Q5C0nKypUtsBH3pChbMGfGxW9UqbneUtV+qRguSb3YOlVZUQEXXjsLrZAkxvd02WgGunDLJgUU5xFn3bsLdJAyYa7oWcSNVixOf3Vm1qJ42BU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=KcHSRb11; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=+4DEh/HW; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=KcHSRb11; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=+4DEh/HW; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id C60AC21288;
+	Sun, 17 Nov 2024 21:01:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1731877317; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=xLTr/NahoUUzWTaTSWHEo2tnJpwITYiCHiCG5lE+2BQ=;
+	b=KcHSRb11TedM4R6iEOebivmcfzIM7q1A66Fn+0sC8VB3A4O4v1U9WdQkG0/BsA72tlIs7O
+	8zIioVYhYOHWkervA4eB+htlSJKqyNA2rGez8vq3+CtQjMApLLCyUVsgDvN7C0W3qVVmJc
+	3cGCeDm1AC7SxEQ2nFLUetTbLHLuw2o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1731877317;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=xLTr/NahoUUzWTaTSWHEo2tnJpwITYiCHiCG5lE+2BQ=;
+	b=+4DEh/HWB42jr7OAB7JWLlJXNh3NdmkCORClvYpvySMmG0F7yu68vRa0QpS8h1PzGImyZ6
+	g39leJIfEM0MupDg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=KcHSRb11;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="+4DEh/HW"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1731877317; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=xLTr/NahoUUzWTaTSWHEo2tnJpwITYiCHiCG5lE+2BQ=;
+	b=KcHSRb11TedM4R6iEOebivmcfzIM7q1A66Fn+0sC8VB3A4O4v1U9WdQkG0/BsA72tlIs7O
+	8zIioVYhYOHWkervA4eB+htlSJKqyNA2rGez8vq3+CtQjMApLLCyUVsgDvN7C0W3qVVmJc
+	3cGCeDm1AC7SxEQ2nFLUetTbLHLuw2o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1731877317;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=xLTr/NahoUUzWTaTSWHEo2tnJpwITYiCHiCG5lE+2BQ=;
+	b=+4DEh/HWB42jr7OAB7JWLlJXNh3NdmkCORClvYpvySMmG0F7yu68vRa0QpS8h1PzGImyZ6
+	g39leJIfEM0MupDg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A778713297;
+	Sun, 17 Nov 2024 21:01:57 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id y84mKMVZOmcaXAAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Sun, 17 Nov 2024 21:01:57 +0000
+Message-ID: <d7d5fa1f-f696-44f7-8384-6ba982bff8ec@suse.cz>
+Date: Sun, 17 Nov 2024 22:01:57 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241115-drm-connector-mode-valid-const-v1-2-b1b523156f71@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [GIT PULL] slab updates for 6.13
+Content-Language: en-US
+To: Xiongwei Song <sxwbruce@gmail.com>, Sasha Levin <sashal@kernel.org>
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ David Rientjes <rientjes@google.com>, Christoph Lameter <cl@linux.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ "linux-mm@kvack.org" <linux-mm@kvack.org>,
+ LKML <linux-kernel@vger.kernel.org>,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ Hyeonggon Yoo <42.hyeyoo@gmail.com>
+References: <03ec75a9-aade-4457-ac21-5649116afa98@suse.cz>
+ <Zzi7BxJASrR_wbAQ@sashalap> <Zzi7zR0maqdCC3ME@sashalap>
+ <52be272d-009b-477b-9929-564f75208168@suse.cz> <Zzll9v3dR8UxwvQ8@sashalap>
+ <CALy5rjW-rOAUDuFVVL67yRXhyVUjWa_9saE2HBTGbyAfUV53kA@mail.gmail.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ xsFNBFZdmxYBEADsw/SiUSjB0dM+vSh95UkgcHjzEVBlby/Fg+g42O7LAEkCYXi/vvq31JTB
+ KxRWDHX0R2tgpFDXHnzZcQywawu8eSq0LxzxFNYMvtB7sV1pxYwej2qx9B75qW2plBs+7+YB
+ 87tMFA+u+L4Z5xAzIimfLD5EKC56kJ1CsXlM8S/LHcmdD9Ctkn3trYDNnat0eoAcfPIP2OZ+
+ 9oe9IF/R28zmh0ifLXyJQQz5ofdj4bPf8ecEW0rhcqHfTD8k4yK0xxt3xW+6Exqp9n9bydiy
+ tcSAw/TahjW6yrA+6JhSBv1v2tIm+itQc073zjSX8OFL51qQVzRFr7H2UQG33lw2QrvHRXqD
+ Ot7ViKam7v0Ho9wEWiQOOZlHItOOXFphWb2yq3nzrKe45oWoSgkxKb97MVsQ+q2SYjJRBBH4
+ 8qKhphADYxkIP6yut/eaj9ImvRUZZRi0DTc8xfnvHGTjKbJzC2xpFcY0DQbZzuwsIZ8OPJCc
+ LM4S7mT25NE5kUTG/TKQCk922vRdGVMoLA7dIQrgXnRXtyT61sg8PG4wcfOnuWf8577aXP1x
+ 6mzw3/jh3F+oSBHb/GcLC7mvWreJifUL2gEdssGfXhGWBo6zLS3qhgtwjay0Jl+kza1lo+Cv
+ BB2T79D4WGdDuVa4eOrQ02TxqGN7G0Biz5ZLRSFzQSQwLn8fbwARAQABzSBWbGFzdGltaWwg
+ QmFia2EgPHZiYWJrYUBzdXNlLmN6PsLBlAQTAQoAPgIbAwULCQgHAwUVCgkICwUWAgMBAAIe
+ AQIXgBYhBKlA1DSZLC6OmRA9UCJPp+fMgqZkBQJkBREIBQkRadznAAoJECJPp+fMgqZkNxIQ
+ ALZRqwdUGzqL2aeSavbum/VF/+td+nZfuH0xeWiO2w8mG0+nPd5j9ujYeHcUP1edE7uQrjOC
+ Gs9sm8+W1xYnbClMJTsXiAV88D2btFUdU1mCXURAL9wWZ8Jsmz5ZH2V6AUszvNezsS/VIT87
+ AmTtj31TLDGwdxaZTSYLwAOOOtyqafOEq+gJB30RxTRE3h3G1zpO7OM9K6ysLdAlwAGYWgJJ
+ V4JqGsQ/lyEtxxFpUCjb5Pztp7cQxhlkil0oBYHkudiG8j1U3DG8iC6rnB4yJaLphKx57NuQ
+ PIY0Bccg+r9gIQ4XeSK2PQhdXdy3UWBr913ZQ9AI2usid3s5vabo4iBvpJNFLgUmxFnr73SJ
+ KsRh/2OBsg1XXF/wRQGBO9vRuJUAbnaIVcmGOUogdBVS9Sun/Sy4GNA++KtFZK95U7J417/J
+ Hub2xV6Ehc7UGW6fIvIQmzJ3zaTEfuriU1P8ayfddrAgZb25JnOW7L1zdYL8rXiezOyYZ8Fm
+ ZyXjzWdO0RpxcUEp6GsJr11Bc4F3aae9OZtwtLL/jxc7y6pUugB00PodgnQ6CMcfR/HjXlae
+ h2VS3zl9+tQWHu6s1R58t5BuMS2FNA58wU/IazImc/ZQA+slDBfhRDGYlExjg19UXWe/gMcl
+ De3P1kxYPgZdGE2eZpRLIbt+rYnqQKy8UxlszsBNBFsZNTUBCACfQfpSsWJZyi+SHoRdVyX5
+ J6rI7okc4+b571a7RXD5UhS9dlVRVVAtrU9ANSLqPTQKGVxHrqD39XSw8hxK61pw8p90pg4G
+ /N3iuWEvyt+t0SxDDkClnGsDyRhlUyEWYFEoBrrCizbmahOUwqkJbNMfzj5Y7n7OIJOxNRkB
+ IBOjPdF26dMP69BwePQao1M8Acrrex9sAHYjQGyVmReRjVEtv9iG4DoTsnIR3amKVk6si4Ea
+ X/mrapJqSCcBUVYUFH8M7bsm4CSxier5ofy8jTEa/CfvkqpKThTMCQPNZKY7hke5qEq1CBk2
+ wxhX48ZrJEFf1v3NuV3OimgsF2odzieNABEBAAHCwXwEGAEKACYCGwwWIQSpQNQ0mSwujpkQ
+ PVAiT6fnzIKmZAUCZAUSmwUJDK5EZgAKCRAiT6fnzIKmZOJGEACOKABgo9wJXsbWhGWYO7mD
+ 8R8mUyJHqbvaz+yTLnvRwfe/VwafFfDMx5GYVYzMY9TWpA8psFTKTUIIQmx2scYsRBUwm5VI
+ EurRWKqENcDRjyo+ol59j0FViYysjQQeobXBDDE31t5SBg++veI6tXfpco/UiKEsDswL1WAr
+ tEAZaruo7254TyH+gydURl2wJuzo/aZ7Y7PpqaODbYv727Dvm5eX64HCyyAH0s6sOCyGF5/p
+ eIhrOn24oBf67KtdAN3H9JoFNUVTYJc1VJU3R1JtVdgwEdr+NEciEfYl0O19VpLE/PZxP4wX
+ PWnhf5WjdoNI1Xec+RcJ5p/pSel0jnvBX8L2cmniYnmI883NhtGZsEWj++wyKiS4NranDFlA
+ HdDM3b4lUth1pTtABKQ1YuTvehj7EfoWD3bv9kuGZGPrAeFNiHPdOT7DaXKeHpW9homgtBxj
+ 8aX/UkSvEGJKUEbFL9cVa5tzyialGkSiZJNkWgeHe+jEcfRT6pJZOJidSCdzvJpbdJmm+eED
+ w9XOLH1IIWh7RURU7G1iOfEfmImFeC3cbbS73LQEFGe1urxvIH5K/7vX+FkNcr9ujwWuPE9b
+ 1C2o4i/yZPLXIVy387EjA6GZMqvQUFuSTs/GeBcv0NjIQi8867H3uLjz+mQy63fAitsDwLmR
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <CALy5rjW-rOAUDuFVVL67yRXhyVUjWa_9saE2HBTGbyAfUV53kA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: C60AC21288
+X-Spam-Score: -3.01
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FREEMAIL_TO(0.00)[gmail.com,kernel.org];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[kernel.org,zeniv.linux.org.uk,linux-foundation.org,google.com,linux.com,kvack.org,vger.kernel.org,linux.dev,gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-Hi Dmitry,
+On 11/17/24 13:56, Xiongwei Song wrote:
+> It seems there is a conflict between fc0eac57d08c ("slab: pull kmem_cache_open()
+> into do_kmem_cache_create()") and 543c5bde72e9 ("mm/slab: Allow cache creation
+> to proceed even if sysfs registration fails"). The err is initialized
 
-Thank you for the patch.
+No conflict, commit fc0eac57d08c is from 6.12-rc1, there's no merge here.
+I've introduced the bug by trying to improve Hyeonggon's patch and he
+quickly corrected me [1] so the buggy version never even made it to -next.
+But here I managed to resurrect it before the git pull.
 
-On Fri, Nov 15, 2024 at 11:09:27PM +0200, Dmitry Baryshkov wrote:
-> Make amdgpu_dm_connector_mode_valid() duplicate the mode during the
-> test rather than modifying the passed mode. This is a preparation to
-> converting the mode_valid() callback of drm_connector to accept const
-> struct drm_display_mode argument.
+[1] https://lore.kernel.org/all/195242b4-5471-419a-a350-08fd246973f0@suse.cz/
+
+> to -EINVAL in
+> the entry of do_kmem_cache_create(), sysfs_slab_add() call can assign
+> a value to
+> err normally,  but the assignment to err variable has been removed in
+> Hyeonggon's
+> patch, so do_kmem_cache_create() returns -EINVAL normally. We probably can do
+> the following fix:
 > 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 10 ++++++++--
->  1 file changed, 8 insertions(+), 2 deletions(-)
+> diff --git a/mm/slub.c b/mm/slub.c
+> index 73eea67a306b..19630a2da8e1 100644
+> --- a/mm/slub.c
+> +++ b/mm/slub.c
+> @@ -6199,9 +6199,11 @@ int do_kmem_cache_create(struct kmem_cache *s,
+> const char *name,
+>         if (!alloc_kmem_cache_cpus(s))
+>                 goto out;
 > 
-> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-> index 75d6b90104f8fe196df06383b20ee88196a700bf..d0ca905e91eafe6c53f3f2ebdf3f2ae9589d7f89 100644
-> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-> @@ -7381,6 +7381,7 @@ enum drm_mode_status amdgpu_dm_connector_mode_valid(struct drm_connector *connec
->  {
->  	int result = MODE_ERROR;
->  	struct dc_sink *dc_sink;
-> +	struct drm_display_mode *test_mode;
->  	/* TODO: Unhardcode stream count */
->  	struct dc_stream_state *stream;
->  	struct amdgpu_dm_connector *aconnector = to_amdgpu_dm_connector(connector);
-> @@ -7405,11 +7406,16 @@ enum drm_mode_status amdgpu_dm_connector_mode_valid(struct drm_connector *connec
->  		goto fail;
->  	}
->  
-> -	drm_mode_set_crtcinfo(mode, 0);
-> +	test_mode = drm_mode_duplicate(connector->dev, mode);
-> +	if (!test_mode)
-> +		goto fail;
+> +       /* The error code is not needed any more. */
+> +       err = 0;
 > +
-> +	drm_mode_set_crtcinfo(test_mode, 0);
+>         /* Mutex is not taken during early boot */
+>         if (slab_state <= UP) {
+> -               err = 0;
 
-I wonder if things could be refactored further to avoid the need to
-duplicate the mode here, but that seems out of scope for this patch
-series.
+That was indeed the fix.
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-
->  
-> -	stream = create_validate_stream_for_sink(aconnector, mode,
-> +	stream = create_validate_stream_for_sink(aconnector, test_mode,
->  						 to_dm_connector_state(connector->state),
->  						 NULL);
-> +	drm_mode_destroy(connector->dev, test_mode);
->  	if (stream) {
->  		dc_stream_release(stream);
->  		result = MODE_OK;
+>                 goto out;
+>         }
 > 
+> Regards,
+> Xiongwei
+> 
+> On Sun, Nov 17, 2024 at 11:42 AM Sasha Levin <sashal@kernel.org> wrote:
+>>
+>> On Sat, Nov 16, 2024 at 09:43:07PM +0100, Vlastimil Babka wrote:
+>> >On 11/16/24 16:35, Sasha Levin wrote:
+>> >> [ Obviously I fat-fingered it and didn't add Christian or Al ]
+>> >
+>> >I have found the problem and looks like I managed to force push an older
+>> >broken version of a branch, possibly due to switching between two computers.
+>> >Serves me well for amending in some last minute R-b tags. Doing git diff
+>> >@{u} to check for unexpected suprirses before pushing the result didn't help
+>> >this time, either I forgot or was blind.
+>> >
+>> >I have deleted the slab-for-6.13 signed tag and pushed the fixed branch only
+>> >to -next. Thanks a lot Sasha for catching this early and please drop the
+>> >merge from the for-linus tree.
+>>
+>> I've dropped the merge and tests are passing now, thanks!
+>>
+>> --
+>> Thanks,
+>> Sasha
+>>
 
--- 
-Regards,
-
-Laurent Pinchart
 
