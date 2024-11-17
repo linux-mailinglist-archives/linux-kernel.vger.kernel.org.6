@@ -1,92 +1,187 @@
-Return-Path: <linux-kernel+bounces-412206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 420699D0536
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 19:40:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2750A9D053A
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 19:44:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07A2E281882
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 18:40:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEDD91F21AFD
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 18:44:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48A8E823DD;
-	Sun, 17 Nov 2024 18:40:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C98F81DB527;
+	Sun, 17 Nov 2024 18:44:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M3SH90mS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="edEoZQt2"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A362613AA5D
-	for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 18:40:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50DA9823DD
+	for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 18:44:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731868851; cv=none; b=JjnummFZVdUOlRVY8JXH5iYY5lXy6VNuabCHgQYKRJh3MS2jeXw06XsxWhRMne9QnjQF3gWskBWb0oSV9CxF3c6xaIeTFDSYZfz23SwaAenhKTsRNNbLARMRKGe+NOqCgNmn0nAkJUkMvbxXz3GxvEMHuVX1RDygenPmyrxc/gw=
+	t=1731869063; cv=none; b=h4KLM1NXyZI1Ty9ZF9NeKn4+V33VHTf5UyIAR5Up3cP9veXAJlxHwt2UggL0U/xJUOLdohFUfdX8QVXAiudg0A2+zVlmMp7a9waEyMJ9J8xtSfVkKu4NVH3mXLIW4oOrXLURERqxX6Lijub1qUgI26Nc++0uw3s5SnY1xXejl/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731868851; c=relaxed/simple;
-	bh=uq+AudFrYpzpfsVnppxp71fYMy+dTmM7EoD1YUKAnSA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=eYBEw0GWhQJjHsc2gpHScJq0eZAqic+Ze51wf8NdoLyEfJEYMyeyvredufd99UX5OqDBQrP86qvWe9ophPbOZeTQVMWNfGgN1qrLXntgzufGvX2nEwUSD5QpdnT2oyebtaf5+EPCiOlXkcSnJWK5mdym0pdCskF2VUok/UpMjYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M3SH90mS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 273D6C4CECD;
-	Sun, 17 Nov 2024 18:40:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731868851;
-	bh=uq+AudFrYpzpfsVnppxp71fYMy+dTmM7EoD1YUKAnSA=;
-	h=Date:From:To:Cc:Subject:Reply-To:From;
-	b=M3SH90mSGYt100isARSVUrvelndBKnxWTSoU9Frq6NT9zmjzvjlQH8yj6eiBJDcHq
-	 G02D65aAR9yzA6qRX615zsyRKgOQymIwC384YtPxykGkVKiQnPe23bW/hjibyCUUPB
-	 7/7OvzVmodCIvsZrYfj1h5z6DdupoPwklfp4EslnRpsddRpaFzPIhJhma/zT5aYwlx
-	 YxZf+DHcAjr94R6zAD7lZfpjx2sWzKmeVS+IUYVVsl9Sx8XSGUCRcLZBIiAIyrmhB2
-	 2o6vrX7ml9mmQO11q697BJ3i6KgmxNu/N8wqgkIqZSG8KeUR1A2WjBLNhRmTiFEfoT
-	 6xkWi3R6Pp8Zw==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 95149CE0885; Sun, 17 Nov 2024 10:40:50 -0800 (PST)
-Date: Sun, 17 Nov 2024 10:40:50 -0800
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: torvalds@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com, w@lwt.eu,
-	linux@weissschuh.net, skhan@linuxfoundation.org
-Subject: [GIT PULL] nolibc changes for v6.13
-Message-ID: <4df7ba8c-f373-4b22-9387-7674e5f903a7@paulmck-laptop>
-Reply-To: paulmck@kernel.org
+	s=arc-20240116; t=1731869063; c=relaxed/simple;
+	bh=BRVnz4//YdXvz1FMKrURytumMDf92OlVDuTwtndmp1c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qzRkOI8gB7ZM3yGk8C5360aPRebJGQEzItalTtz+JY5PDYZxn2LeMzvzkIj8t5MdWYQ8HUD74vtr54Q/w6E+FLFAWV+qsXY9JeOik42ril/XEj1AZwn/j6gSdjQHgxd0qclgY+wLKe5UY/vm/oEmzZI/w7nrr/3526XJJjwHbKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=edEoZQt2; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-382411ea5eeso330003f8f.0
+        for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 10:44:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731869060; x=1732473860; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=eWkh7WZG7vwBsGnxbhTtR+8ik+TAgauZ51w8oqK1WyQ=;
+        b=edEoZQt26f5BxB30gaQq7huHihGGgPtKaRxJ7WI+MmxNh5jyyx06GM9POk9TL0L5aR
+         sdUBRqpiiS+gaVr6qKVRc24JME7YWPT9yBd6fD+Z2r530Jzqffv+E1lNQQZtF5Vg+vwI
+         dI8apdMJQOyV24U/XpVjpvY2UY3Zmx0Rg4/g26kL1tat+wrVb5LA3gh7ezAC8Bojlh0w
+         bZ5OzzrGyJNAeQ13hLM1H8YVwqtPdRVX7jQvDff4jsmA+x/F2K7MSlq91qrqMZ8UBq+3
+         XBJfAPtB3cho9WSJ/JMauOdacse4eIzNZNu4pzKXXDjBTzBfGuaJXkN5qoUexKGl11xB
+         blKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731869060; x=1732473860;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eWkh7WZG7vwBsGnxbhTtR+8ik+TAgauZ51w8oqK1WyQ=;
+        b=f6evUafy/bALemXDZ7W9fNqRvck9bzmcbR5FFb3D6agwdtKG8ZfjE2TzFdOgbzPB19
+         /r4xKWQgDPglLQkwzC1peO3UJDidZnqRDRVl4iBBCvNuE2t82pFSrsCkfutzd+SIgmH2
+         H5IyHx5I0zJz4Kp/+vmKFqpbjD1Fm6Eenij+sLX05cbWPi8VKJ9z68g5S3ya5Tf2x2s0
+         z1yvxL3TLzjz18HmPLPntkhl/IDI1QBbZ/NQrhzivuyG8fAzQ3o9+BJ0CEG1h1Y3+lVX
+         QiuYPxZQ8Ejp+4zW9CRynRL5G+Dz2RaHjcqSj56+/Su75n48Wb9KPc+m6p3pSUhRqAb1
+         rDrg==
+X-Forwarded-Encrypted: i=1; AJvYcCXvBUsp959dX/WrLA5xOD3wKJQ39ddt2r0QokH7J8kC74J9ysx6XVSPe3e7kQ/WfqYh3CHdYn0rPXAi9Kw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YymxgeTxKz9OaoiQFAIG1CWsfL5b8Ykf348wjICs/51fXmfBleV
+	P0OWPUowwOw8+enz7a0mvETfFxu1H9vrkhZy2Bb++I0d1nhRRt0Fk1F/3HcXcqg=
+X-Google-Smtp-Source: AGHT+IGkeQweqYBW/8Hnl0hUU1V1jJ5EB7kiHg+dpWYM1ZyWbyKk+uGQSNgMw4bo7IDu+9OSpPIMdA==
+X-Received: by 2002:a05:6000:1a8e:b0:382:3c7b:9bd with SMTP id ffacd0b85a97d-3823c7b0b66mr3233529f8f.30.1731869059589;
+        Sun, 17 Nov 2024 10:44:19 -0800 (PST)
+Received: from eugen-station.. ([82.76.24.202])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38244220183sm1863714f8f.99.2024.11.17.10.44.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 17 Nov 2024 10:44:19 -0800 (PST)
+From: Eugen Hristev <eugen.hristev@linaro.org>
+To: linux-arm-msm@vger.kernel.org
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	konradybcio@kernel.org,
+	sboyd@kernel.org,
+	andersson@kernel.org,
+	evgreen@chromium.org,
+	Eugen Hristev <eugen.hristev@linaro.org>
+Subject: [PATCH v3] soc: qcom: Rework BCM_TCS_CMD macro
+Date: Sun, 17 Nov 2024 20:43:52 +0200
+Message-ID: <20241117184352.187184-1-eugen.hristev@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 
-Hello, Linus,
+Reworked BCM_TCS_CMD macro in order to fix warnings from sparse:
 
-Once the v6.13 merge window opens, please pull the latest nolibc
-changes from:
+drivers/clk/qcom/clk-rpmh.c:270:28: warning: restricted __le32 degrades to integer
+drivers/clk/qcom/clk-rpmh.c:270:28: warning: restricted __le32 degrades to integer
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git tags/nolibc.2024.11.01a
-  # HEAD: ad0558f3883130954ca724697f2d19aef93967b3: selftests/nolibc: start qemu with 1 GiB of memory (2024-10-07 21:57:45 +0200)
+While at it, used le32_encode_bits which made the code easier to
+follow and removed unnecessary shift definitions.
 
-----------------------------------------------------------------
-nolibc changes for 6.13
+Signed-off-by: Eugen Hristev <eugen.hristev@linaro.org>
+---
+Changes in v3:
+- align the macro lines better
 
-Changes
--------
+Changes in v2:
+- use le32_encode_bits instead of u32_encode_bits with a cpu_to_le32 on
+the fields; this however ment we need to force cast the le32 to the
+u32 container.
 
-* Fix potential error due to missing #include on s390
-* Compatibility with -Wmissing-fallthrough
-* Run qemu with more memory during tests
+ drivers/clk/qcom/clk-rpmh.c           |  2 +-
+ drivers/interconnect/qcom/bcm-voter.c |  2 +-
+ include/soc/qcom/tcs.h                | 26 ++++++++++++--------------
+ 3 files changed, 14 insertions(+), 16 deletions(-)
 
-----------------------------------------------------------------
-Thomas Weißschuh (3):
-      tools/nolibc: s390: include std.h
-      tools/nolibc: compiler: add macro __nolibc_fallthrough
-      selftests/nolibc: start qemu with 1 GiB of memory
+diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
+index 4acde937114a..4929893b09c2 100644
+--- a/drivers/clk/qcom/clk-rpmh.c
++++ b/drivers/clk/qcom/clk-rpmh.c
+@@ -267,7 +267,7 @@ static int clk_rpmh_bcm_send_cmd(struct clk_rpmh *c, bool enable)
+ 
+ 	if (c->last_sent_aggr_state != cmd_state) {
+ 		cmd.addr = c->res_addr;
+-		cmd.data = BCM_TCS_CMD(1, enable, 0, cmd_state);
++		cmd.data = (__force u32)BCM_TCS_CMD(1, enable, 0, cmd_state);
+ 
+ 		/*
+ 		 * Send only an active only state request. RPMh continues to
+diff --git a/drivers/interconnect/qcom/bcm-voter.c b/drivers/interconnect/qcom/bcm-voter.c
+index a2d437a05a11..ce9091cf122b 100644
+--- a/drivers/interconnect/qcom/bcm-voter.c
++++ b/drivers/interconnect/qcom/bcm-voter.c
+@@ -144,7 +144,7 @@ static inline void tcs_cmd_gen(struct tcs_cmd *cmd, u64 vote_x, u64 vote_y,
+ 		vote_y = BCM_TCS_CMD_VOTE_MASK;
+ 
+ 	cmd->addr = addr;
+-	cmd->data = BCM_TCS_CMD(commit, valid, vote_x, vote_y);
++	cmd->data = (__force u32)BCM_TCS_CMD(commit, valid, vote_x, vote_y);
+ 
+ 	/*
+ 	 * Set the wait for completion flag on command that need to be completed
+diff --git a/include/soc/qcom/tcs.h b/include/soc/qcom/tcs.h
+index 3acca067c72b..d0dfcaa07337 100644
+--- a/include/soc/qcom/tcs.h
++++ b/include/soc/qcom/tcs.h
+@@ -6,6 +6,9 @@
+ #ifndef __SOC_QCOM_TCS_H__
+ #define __SOC_QCOM_TCS_H__
+ 
++#include <linux/bitfield.h>
++#include <linux/bits.h>
++
+ #define MAX_RPMH_PAYLOAD	16
+ 
+ /**
+@@ -60,22 +63,17 @@ struct tcs_request {
+ 	struct tcs_cmd *cmds;
+ };
+ 
+-#define BCM_TCS_CMD_COMMIT_SHFT		30
+-#define BCM_TCS_CMD_COMMIT_MASK		0x40000000
+-#define BCM_TCS_CMD_VALID_SHFT		29
+-#define BCM_TCS_CMD_VALID_MASK		0x20000000
+-#define BCM_TCS_CMD_VOTE_X_SHFT		14
+-#define BCM_TCS_CMD_VOTE_MASK		0x3fff
+-#define BCM_TCS_CMD_VOTE_Y_SHFT		0
+-#define BCM_TCS_CMD_VOTE_Y_MASK		0xfffc000
++#define BCM_TCS_CMD_COMMIT_MASK		BIT(30)
++#define BCM_TCS_CMD_VALID_MASK		BIT(29)
++#define BCM_TCS_CMD_VOTE_MASK		GENMASK(13, 0)
++#define BCM_TCS_CMD_VOTE_Y_MASK		GENMASK(13, 0)
++#define BCM_TCS_CMD_VOTE_X_MASK		GENMASK(27, 14)
+ 
+ /* Construct a Bus Clock Manager (BCM) specific TCS command */
+ #define BCM_TCS_CMD(commit, valid, vote_x, vote_y)		\
+-	(((commit) << BCM_TCS_CMD_COMMIT_SHFT) |		\
+-	((valid) << BCM_TCS_CMD_VALID_SHFT) |			\
+-	((cpu_to_le32(vote_x) &					\
+-	BCM_TCS_CMD_VOTE_MASK) << BCM_TCS_CMD_VOTE_X_SHFT) |	\
+-	((cpu_to_le32(vote_y) &					\
+-	BCM_TCS_CMD_VOTE_MASK) << BCM_TCS_CMD_VOTE_Y_SHFT))
++	(le32_encode_bits(commit, BCM_TCS_CMD_COMMIT_MASK) |	\
++	le32_encode_bits(valid, BCM_TCS_CMD_VALID_MASK) |	\
++	le32_encode_bits(vote_x, BCM_TCS_CMD_VOTE_X_MASK) |	\
++	le32_encode_bits(vote_y, BCM_TCS_CMD_VOTE_Y_MASK))
+ 
+ #endif /* __SOC_QCOM_TCS_H__ */
+-- 
+2.43.0
 
- tools/include/nolibc/arch-s390.h        | 1 +
- tools/include/nolibc/compiler.h         | 6 ++++++
- tools/include/nolibc/stdio.h            | 3 ++-
- tools/testing/selftests/nolibc/Makefile | 4 ++--
- 4 files changed, 11 insertions(+), 3 deletions(-)
 
