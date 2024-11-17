@@ -1,58 +1,58 @@
-Return-Path: <linux-kernel+bounces-412072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 401659D0374
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 13:05:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E6239D0373
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 13:05:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05B56284717
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 12:05:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1508284583
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 12:05:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4D89192D69;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFA2918D65C;
 	Sun, 17 Nov 2024 12:04:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="FSQ08UwL"
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="bHCwnzmC"
 Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF51E18C33B
-	for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 12:04:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FE3C1885A5;
+	Sun, 17 Nov 2024 12:04:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731845066; cv=none; b=pY3EwjYChG6bYQ+UtHFf1Be0YJk2g3K22smMdt4KvY8h+osBwv1y08LUqIgvMxcIq67MD0Ro3R4WdHCUFxbNj2OZpo+HH6ghnbBfFuDs2bwTEXJinlNFKaNvCp3wJhg+IYbh1IMgiya5tGGuFcJ4O8FOmq0EzycHqxHUwveURng=
+	t=1731845066; cv=none; b=E3OUlUdEmIDEBQYnBYNErJoDcOQ/LN7pCV2xioLDnSwdNh/aGYb1Dwjm4fykRt9CT5JXO+hyfn3xi0B0USD97BB0Fxn+sEyuXmFVQFEtdtJ6tX//EjpJKFG5i9TLnRBb0Ul/weencjIKbEfef26z77dHQHRW7cPjRGnLkR4jOGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1731845066; c=relaxed/simple;
-	bh=X/BZGJv/+7b9MBaFtyFiw/8OXS4Ne/6eCFzXgkeH2zc=;
+	bh=H6Q/+kkZnvVk8G0hRNlWD8uGHYHGc/V8PwsN7PfAurg=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=pRviWJ87VZ1Mw0bSjcZvIVcivbdMR8Dl0IhZsnqIZ5jwuKw6hiYPRn7JY8Q5fGdQoCAn61jQRM/mgl8IiSchVduvO8/V/5BciK4IPQlnoly6xncOPosoBJjCchCyEZJ62eLGE+yMNZkdtd49s7YWPWE4uhoU8ceasA/hxc/HEkI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=FSQ08UwL; arc=none smtp.client-ip=150.107.74.76
+	 MIME-Version:Content-Type; b=MhpWE9ng4LFFDiXR/Vmz3mkdbN4ryriW4f33Pnxur91l8rG2j6tiJGZBGjFPi9Ne4+eWX8URrXuVhuNQSABixFpbbXFO3n9tC/0gWmdPJB/v2lgC8grPBjfKm6zuafnN46DXVg8qGtv2rMSZnqKWAV1nPE6VCjxdFhbBie2n5ZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=bHCwnzmC; arc=none smtp.client-ip=150.107.74.76
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-	s=201909; t=1731845060;
-	bh=Vv5ir4yvI/MF1TuTKBmAOQKGEI1JLEw6+WgPv1tVKaw=;
+	s=201909; t=1731845059;
+	bh=tllPr++YWNmN/ICehcrJsGBTpJU5ev+6G1o94E8aVEA=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=FSQ08UwL41cfEU4lUj98R3ftb54XfNDRt+KHUyjKQ1RdxwmG74gPBgtQyRCj9dJcn
-	 MQ2QSPNsFkR/9b0kgjwZu6nwItoTAfSVhEPQrWpW57ofOkHozTwLE87WC/hycdDK+s
-	 R6kUcrfvC4flg9zZIJjNd23Rsh/NBPo3hXGsA9J95AHzR7vQzFKo/4sYMJTNgAs0E6
-	 PnSXYiVs4V8UqIfTSLlY1DNvWta2Ln9mpAZoCJKPwBEgOBU7W+4OaDom+MdNHwA6By
-	 okYMKP/8uvSh2v4MraHdmAljC/KiVPWpn3R4mAoYmaibIEf6ZH7RUDTPUYVLPUqaMz
-	 VVIqMrDz5/iUQ==
+	b=bHCwnzmC4Wn699TTaIvMmA7oqAQUCB0vBZAcYQFnrPziGiTbunbYU+CXdS38yDvH6
+	 YU112WNOjKnnI7JSMJzmw/a0svprG00zS9a6LPP4NJJT/jjzlFbVdAm/RM/h/U+tns
+	 TsykHb5IN7FOSJM573KL+qqNfifuTL8r1hG6UNvh5joUZD+KBNkc1Fn7IYJrs5Ptwk
+	 QPaqtA4agDbcLESUFhw4fys+mFWvc6kPxuKH/D9lsAIxlZt3ypiZTruEU9Mv61lufm
+	 a1hIO9QaUkphJcq/soI8cLFSVRrGlaI+MEFOmOa7tMCM3TlCNsxG9p8p3+SqPMR261
+	 Neh+mkXQjvunQ==
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XrqDg6sz9z4xdQ;
-	Sun, 17 Nov 2024 23:04:19 +1100 (AEDT)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XrqDc2cRjz4xdS;
+	Sun, 17 Nov 2024 23:04:16 +1100 (AEDT)
 From: Michael Ellerman <patch-notifications@ellerman.id.au>
-To: mpe@ellerman.id.au, maddy@linux.ibm.com, Kajol Jain <kjain@linux.ibm.com>
-Cc: atrajeev@linux.ibm.com, disgoel@linux.ibm.com, hbathini@linux.ibm.com, adubey@linux.ibm.com, gautam@linux.ibm.com, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, Ritesh Harjani <ritesh.list@gmail.com>, Amit Machhiwal <amachhiw@linux.ibm.com>
-In-Reply-To: <20241114085020.1147912-1-kjain@linux.ibm.com>
-References: <20241114085020.1147912-1-kjain@linux.ibm.com>
-Subject: Re: [PATCH v2] powerpc/kvm: Fix typo in the kvm functions
-Message-Id: <173184457527.887714.28164544908148060.b4-ty@ellerman.id.au>
+To: linux-nfs@vger.kernel.org, Julia Lawall <Julia.Lawall@inria.fr>
+Cc: kernel-janitors@vger.kernel.org, vbabka@suse.cz, paulmck@kernel.org, Tom Talpey <tom@talpey.com>, Dai Ngo <Dai.Ngo@oracle.com>, Olga Kornievskaia <okorniev@redhat.com>, Neil Brown <neilb@suse.de>, linux-can@vger.kernel.org, bridge@lists.linux.dev, b.a.t.m.a.n@lists.open-mesh.org, linux-kernel@vger.kernel.org, wireguard@lists.zx2c4.com, netdev@vger.kernel.org, ecryptfs@vger.kernel.org, linux-block@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, Naveen N Rao <naveen@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org, kvm@vger.kernel.org, netfilter-devel@vger.kernel.org, coreteam@netfilter.org
+In-Reply-To: <20241013201704.49576-1-Julia.Lawall@inria.fr>
+References: <20241013201704.49576-1-Julia.Lawall@inria.fr>
+Subject: Re: (subset) [PATCH 00/17] replace call_rcu by kfree_rcu for simple kmem_cache_free callback
+Message-Id: <173184457524.887714.2708612402334434298.b4-ty@ellerman.id.au>
 Date: Sun, 17 Nov 2024 22:56:15 +1100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -63,18 +63,22 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 
-On Thu, 14 Nov 2024 14:20:20 +0530, Kajol Jain wrote:
-> Fix typo in the following kvm function names from:
+On Sun, 13 Oct 2024 22:16:47 +0200, Julia Lawall wrote:
+> Since SLOB was removed and since
+> commit 6c6c47b063b5 ("mm, slab: call kvfree_rcu_barrier() from kmem_cache_destroy()"),
+> it is not necessary to use call_rcu when the callback only performs
+> kmem_cache_free. Use kfree_rcu() directly.
 > 
-> kmvhv_counters_tracepoint_regfunc -> kvmhv_counters_tracepoint_regfunc
-> kmvhv_counters_tracepoint_unregfunc -> kvmhv_counters_tracepoint_unregfunc
+> The changes were done using the following Coccinelle semantic patch.
+> This semantic patch is designed to ignore cases where the callback
+> function is used in another way.
 > 
-> 
+> [...]
 
 Applied to powerpc/topic/ppc-kvm.
 
-[1/1] powerpc/kvm: Fix typo in the kvm functions
-      https://git.kernel.org/powerpc/c/590d2f9347f7974d7954400e5d937672fd844a8b
+[13/17] KVM: PPC: replace call_rcu by kfree_rcu for simple kmem_cache_free callback
+        https://git.kernel.org/powerpc/c/1db6a4e8a3fc8ccaa4690272935e02831dc6d40d
 
 cheers
 
