@@ -1,93 +1,121 @@
-Return-Path: <linux-kernel+bounces-412276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 730959D06CD
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 00:00:03 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC2F59D06A8
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 23:09:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A36CDB22213
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 23:00:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 62B2FB22332
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 22:09:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBB9C1DE2C5;
-	Sun, 17 Nov 2024 22:59:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25F961DDC08;
+	Sun, 17 Nov 2024 22:08:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="xLq1cW3H"
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="NkupL3KA"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6629B1DE2BB;
-	Sun, 17 Nov 2024 22:59:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ED1C2B2F2;
+	Sun, 17 Nov 2024 22:08:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731884373; cv=none; b=UTbIMjIxFlWCDHW6HDz0fqy/K9QMbGqoqRwdOirpkZYEXX8dxRsVytwmXKbxZG0aeapC7nIBa+NDyDa4v1mexsF/ClBmPIwdUpopSIeQK/ZI0YWRxxFHpO2h4is/haxBBO9sYTlpHA9xVG0b8HMW2QTrnivW8N6fg+YsldGk1NI=
+	t=1731881335; cv=none; b=rtBMaLDUWBLQKRQjTG4f0vh3vOc8uH3cj6Z+QKdEaeat3UAV3JgPSEbp5n4fJgzlfKBdP8TYrKR33JBQbUO7lIswy/d8WrA/6eDJ01o2AjFGU5j8mAE/fD5nP5AaqrlgMAX+mD1dLRkk+WUREZp3pImLuaYjbWa2caop1wSixcY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731884373; c=relaxed/simple;
-	bh=k9mMIGPjAE7T/mIsbukE7MMsCOXGLM/F+Drb9ESSV2I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dgTi8uoPXoZ6WDv7V389qFtLIVxBqgyX5rC6VcQl6wL5Ep4o7ER8wofWdlM1x4LaNXN5AoVRzYd3do/iHNcbzg49pCpkP/ev0QEQimtSTDEjWRjJ5J6Ff55pTjJyV+usE9UbYg9ZghXt5ZinRBY1pzadMNesbDZSB7Dr3C+aYA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=xLq1cW3H; arc=none smtp.client-ip=85.214.62.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-	(No client certificate requested)
-	(Authenticated sender: marex@denx.de)
-	by phobos.denx.de (Postfix) with ESMTPSA id B3E6689003;
-	Sun, 17 Nov 2024 23:59:22 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-	s=phobos-20191101; t=1731884363;
-	bh=3IzmB2O3D7dIbxmRicxWETS2qqEUDSL6zS9NFg7l0sU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=xLq1cW3HNrTEtpH3mmvlcfKc4YFfVd40BwLlRhqIH5llADix1BEEhaV7p9lisZKNF
-	 N4xQ/l9rrr7qxCSi09HqygcD6pPwYz1mvtf2h4CdQ53jSSopCf6aBfXfsJc7PaAd60
-	 t9xy9tCpvGmfucChxJmXUmmHLpeoAcz5p4b6PSX+5hJ9IGKABkT29F+TKvgEqtbkWz
-	 28VxZeYdRE7nkqihG6seNDyYsv4UwG4LPQBy82BjWye0zK7FLMrRVo6cuEJQTRUs1c
-	 lAg1PSlHxXkRNyc8+xq4S/5u8XBjhTo0T8uXFrkpCon40tMMYmJ2vHv05RWvhDr5i1
-	 4mpjelopROc6Q==
-Message-ID: <5b203f2a-755a-448b-946a-f14d6060dbb7@denx.de>
-Date: Sun, 17 Nov 2024 23:06:27 +0100
+	s=arc-20240116; t=1731881335; c=relaxed/simple;
+	bh=yJoEY8Dhl24L2RKgI/GDHFbZxhRjEaxJSRk78zfDT8Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QhVsuESYou4Hgv7vad2VyVBzF/ojAdGgWI9B+vsKazfTNdeiMcA7rCgxe4LFFU44qaUHV+8Yetti17pE1byF2S4NwbDuX8nGBxYA2INd5YDJEtqRekVtGHINTkRLFvkW9JlwOHcBKfXC1GijO/Qd8yGccej3uBi3Q7H/GktwvZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=NkupL3KA; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 61C51240004;
+	Sun, 17 Nov 2024 22:08:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1731881323;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZGJ5GG2606gKy4mBZVJZhX7DW4jyjCrmU4DyUUU3wEY=;
+	b=NkupL3KAugLscihNPgBOM7JboMZzNMYVcNHt8vUxOlvzyq7QIeUvHwpev+UjSiRSijOhd+
+	xxmNw0SkhozDT8nCvLqyovCW5f+H9DH52socU93jzQEe5xiizY1pprQCtr1BQyqElWR/qQ
+	QoCkaBvnekiv95me9dQSEoQJP8MineUD3VELYERi+vNgaxyIaPMvuqvcTXpm/0cphDcec/
+	OTaHb21gi13tNOndKO5ZiT5Wbr9YrlHt4wH6n1t2zAe6Gg7UzwGixurkzX5lkTIXNy/CPn
+	nTs5kSJxGYsfkev4lfpC3XzbA2YzaJqMqIIcPX3q1zKpX3QnL1X9L0Yb+VT9ow==
+Date: Sun, 17 Nov 2024 23:08:43 +0100
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Jacky Bai <ping.bai@nxp.com>, Peng Fan <peng.fan@nxp.com>,
+	"open list:REAL TIME CLOCK (RTC) SUBSYSTEM" <linux-rtc@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
+Subject: Re: [PATCH 1/1] rtc: bbnsm: Enable RTC by default to fix time read
+ failure
+Message-ID: <2024111722084384333dcf@mail.local>
+References: <20241115194858.3837298-1-Frank.Li@nxp.com>
+ <20241116193652a13b3081@mail.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Input: ads7846 - Expand xfer array to match usage
-To: Kees Cook <kees@kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Linus Walleij <linus.walleij@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
- Luca Ellero <l.ellero@asem.it>, linux-input@vger.kernel.org,
- Alexander Stein <alexander.stein@ew.tq-group.com>,
- Al Viro <viro@zeniv.linux.org.uk>, linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org
-References: <20241117033445.work.274-kees@kernel.org>
-Content-Language: en-US
-From: Marek Vasut <marex@denx.de>
-In-Reply-To: <20241117033445.work.274-kees@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241116193652a13b3081@mail.local>
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-On 11/17/24 4:34 AM, Kees Cook wrote:
-> Commit 781a07da9bb9 ("Input: ads7846 - add dummy command register
-> clearing cycle") added commands to struct ser_req::xfer without
-> expanding it to hold them. Expand the array to the correct size.
+On 16/11/2024 20:36:54+0100, Alexandre Belloni wrote:
+> On 15/11/2024 14:48:58-0500, Frank Li wrote:
+> > From: Jacky Bai <ping.bai@nxp.com>
+> > 
+> > Enable the RTC by default even when no valid time is set to ensure the
+> > RTC's time read and alarm functions work properly. Without this, running
+> > hwclock results in the following error:
+> > 
+> > hwclock: ioctl(RTC_RD_TIME) to /dev/rtc0 to read the time failed: Invalid argument
+> > 
 > 
-> ../drivers/input/touchscreen/ads7846.c: In function 'ads7846_read12_ser':
-> ../drivers/input/touchscreen/ads7846.c:416:18: error: array subscript 7 is above array bounds of 'struct spi_transfer[6]' [-Werror=array-bounds=]
->    416 |         req->xfer[7].rx_buf = &req->scratch;
->        |         ~~~~~~~~~^~~
-> ../drivers/input/touchscreen/ads7846.c:334:33: note: while referencing 'xfer'
->    334 |         struct spi_transfer     xfer[6];
->        |                                 ^~~~
 > 
-> Fixes: 781a07da9bb9 ("Input: ads7846 - add dummy command register clearing cycle")
-> Signed-off-by: Kees Cook <kees@kernel.org>
-I think Nathan already sent a fix too.
+> What is providing your hwclock and which version does it have?
 
-Thanks !
+
+This is a bug in util-linux that needs to be fixed.
+> 
+> 
+> > Fixes: eb7b85853c38 ("rtc: bbnsm: Add the bbnsm rtc support")
+> > Signed-off-by: Jacky Bai <ping.bai@nxp.com>
+> > Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+> > Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> > ---
+> >  drivers/rtc/rtc-nxp-bbnsm.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> > 
+> > diff --git a/drivers/rtc/rtc-nxp-bbnsm.c b/drivers/rtc/rtc-nxp-bbnsm.c
+> > index fa3b0328c7a25..6610db2f75125 100644
+> > --- a/drivers/rtc/rtc-nxp-bbnsm.c
+> > +++ b/drivers/rtc/rtc-nxp-bbnsm.c
+> > @@ -189,6 +189,9 @@ static int bbnsm_rtc_probe(struct platform_device *pdev)
+> >  	/* clear all the pending events */
+> >  	regmap_write(bbnsm->regmap, BBNSM_EVENTS, 0x7A);
+> >  
+> > +	/* Enable the Real-Time counter */
+> > +	regmap_update_bits(bbnsm->regmap, BBNSM_CTRL, RTC_EN_MSK, RTC_EN);
+> > +
+> >  	device_init_wakeup(&pdev->dev, true);
+> >  	dev_pm_set_wake_irq(&pdev->dev, bbnsm->irq);
+> >  
+> > -- 
+> > 2.34.1
+> > 
+> 
+> -- 
+> Alexandre Belloni, co-owner and COO, Bootlin
+> Embedded Linux and Kernel engineering
+> https://bootlin.com
+
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
