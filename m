@@ -1,139 +1,153 @@
-Return-Path: <linux-kernel+bounces-412172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 226379D04E1
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 18:44:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 179D29D04E6
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 18:46:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9212AB21B53
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 17:44:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BA101F215CA
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 17:46:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9539B1D95AA;
-	Sun, 17 Nov 2024 17:44:08 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AABA1DACA8;
+	Sun, 17 Nov 2024 17:46:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GrcmPlGp"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 226D721A0B
-	for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 17:44:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D7CE17591;
+	Sun, 17 Nov 2024 17:46:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731865448; cv=none; b=RtyZeOFRKsBeIDqm9Pg1CHORJOcNZa+ac0AWHY1y0YPhmhdE/FKTx5VUTlWETasjDjdtsGZ70N5CYEgSzHrbT0CiEGK5nZkSwfjSIpNGxu5MAGCw48MPFvKJmRUr8Ra9HkZPl02SuXMRRW3OzEk+9nhkrhu/I7P2FdTdw+Cv4lc=
+	t=1731865577; cv=none; b=BSqJLqWEZXxb6zeFWRjjyFdp+LhREA6Tw4ngMWg/dSWc/442bgvuzZhp9BUEZ7pO8ohdtIBgE6U8bEbP433znugaY6EdYiGaAgdpdTK7AD9i3LZ9dsW1x18qj9fRF5xj3VirpQ7DjkTEPWryQnCijB/FNBjNOnFgrxTs8f+KMwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731865448; c=relaxed/simple;
-	bh=tl4TXTqkdYOf4gM4Q46JtvbrBcbW6ngLygbVVNgS7AY=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=FHkYG2OARln7TzEzFCxuul1JX59tPKyMsxlkeVmnsI8hm1MKZ7ClcFBlNYKnRzJE5mVE+/31RbpzzteSc3cC84ZF/rP+Nn975bWKDg6E1q7xQKt7Cs2cnvmWQ3tmw/D8ljCKXKGT4+du/rMDeeCRlY513enPVYlajRRDNOln83Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-146-yU9yEEzTNeKHqlfqjEofxQ-1; Sun, 17 Nov 2024 17:42:21 +0000
-X-MC-Unique: yU9yEEzTNeKHqlfqjEofxQ-1
-X-Mimecast-MFC-AGG-ID: yU9yEEzTNeKHqlfqjEofxQ
-Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
- (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sun, 17 Nov
- 2024 17:42:20 +0000
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Sun, 17 Nov 2024 17:42:20 +0000
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Vincent Mailhol' <mailhol.vincent@wanadoo.fr>, Linus Torvalds
-	<torvalds@linux-foundation.org>, Yury Norov <yury.norov@gmail.com>, "Rasmus
- Villemoes" <linux@rasmusvillemoes.dk>, Luc Van Oostenryck
-	<luc.vanoostenryck@gmail.com>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-sparse@vger.kernel.org" <linux-sparse@vger.kernel.org>, "Rikard
- Falkeborn" <rikard.falkeborn@gmail.com>
-Subject: RE: [PATCH v4 1/2] compiler.h: add const_true()
-Thread-Topic: [PATCH v4 1/2] compiler.h: add const_true()
-Thread-Index: AQHbNfHJErTnWAqww06zGCD7FdQ1jLK7v5ZA
-Date: Sun, 17 Nov 2024 17:42:20 +0000
-Message-ID: <8bf6922f4bb143d1bc699aadd1c84607@AcuMS.aculab.com>
-References: <20241113172939.747686-4-mailhol.vincent@wanadoo.fr>
- <20241113172939.747686-5-mailhol.vincent@wanadoo.fr>
-In-Reply-To: <20241113172939.747686-5-mailhol.vincent@wanadoo.fr>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1731865577; c=relaxed/simple;
+	bh=d4PA4dekFrbPidu64a4HKq8oTBnE6bajLq9aru2A85E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=UKsGMrphv/YTC0Jbx3qXTqfE3bS5/KCZH9itq/y/XMPtH2y7S66zgaYjfBQ8FjTsDEGkmAe8FtNveZAeJCMPmdIYymxVR2r6gvrAnkFy1m8kVRW5UE4RrbJNs7OIVQ2SY1Ql/HExfNA6XItpxgunZW5d6ACJ8Y58qtB0yVY61MQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GrcmPlGp; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AHGMi5T029188;
+	Sun, 17 Nov 2024 17:46:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	AfYabs+tjtdSrn/b9JlV7O8Zk+qQd/9P8eF6s33xDM4=; b=GrcmPlGpthJZGBjt
+	JrwzVJQbVc5lcBKq5uiAiaR/3U74r4epvC1eAq6kZyk9VT+8K2/B9Qxbj2Vfe2cu
+	bqVwWlPvaxTgN7cJNCBhNGhpCT6F/32ULQFnS83q0BbZlEC+GlY/qM7wrUtgkGlx
+	jo+Ax8a/JjGcqlUr6jx0SsS5HFaayP2YDYy1ye6wzgIa+b7UUvvL3Vl1FmpRrm81
+	3M3TDAR/7DZnXA9tpkDpMWdc9bc5rkSbRVlUzfMLgyQmyzdJ076A9B8ZbHKoKy4l
+	sVIK9yvHW2orB2R/axMa/R71W4cpY9HBoqtEb70pLmSSqOfDlI56JHMsCm+ZDEoT
+	0jqjwA==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42xkrm2hvm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 17 Nov 2024 17:46:03 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AHHk2h9007072
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 17 Nov 2024 17:46:02 GMT
+Received: from [10.216.44.33] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 17 Nov
+ 2024 09:45:55 -0800
+Message-ID: <ff20d185-4db4-482b-b6dd-06e46124b8ab@quicinc.com>
+Date: Sun, 17 Nov 2024 23:15:51 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: enDYlC75FLL_kOye6-Ggh-dg0ovA5wLX_ZE8AhBj5kI_1731865341
-X-Mimecast-Originator: aculab.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/4] dt-bindindgs: i2c: qcom,i2c-geni: Document shared
+ flag
+To: Rob Herring <robh@kernel.org>
+CC: <konrad.dybcio@linaro.org>, <andersson@kernel.org>,
+        <andi.shyti@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-i2c@vger.kernel.org>, <conor+dt@kernel.org>,
+        <agross@kernel.org>, <devicetree@vger.kernel.org>, <vkoul@kernel.org>,
+        <linux@treblig.org>, <dan.carpenter@linaro.org>, <Frank.Li@nxp.com>,
+        <konradybcio@kernel.org>, <bryan.odonoghue@linaro.org>,
+        <krzk+dt@kernel.org>, <quic_vdadhani@quicinc.com>
+References: <20241113161413.3821858-1-quic_msavaliy@quicinc.com>
+ <20241113161413.3821858-2-quic_msavaliy@quicinc.com>
+ <20241115173156.GA3432253-robh@kernel.org>
 Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+From: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+In-Reply-To: <20241115173156.GA3432253-robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: TrqZK6ySCZyw15zvzb8M31VMCLnuwXst
+X-Proofpoint-ORIG-GUID: TrqZK6ySCZyw15zvzb8M31VMCLnuwXst
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 phishscore=0
+ spamscore=0 adultscore=0 mlxlogscore=999 malwarescore=0 impostorscore=0
+ clxscore=1015 bulkscore=0 priorityscore=1501 lowpriorityscore=0 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2411170160
 
-From: Vincent Mailhol
-> Sent: 13 November 2024 17:19
->=20
-> __builtin_constant_p() is known for not always being able to produce
-> constant expression [1] which led to the introduction of
-> __is_constexpr() [2]. Because of its dependency on
-> __builtin_constant_p(), statically_true() suffers from the same
-> issues.
+Thanks Rob for your review and comments !
 
-Chalk and cheese.
-Personally I don't think any of the text below is really needed.
+On 11/15/2024 11:01 PM, Rob Herring wrote:
+> On Wed, Nov 13, 2024 at 09:44:10PM +0530, Mukesh Kumar Savaliya wrote:
+>> Adds qcom,is-shared flag usage. Use this flag when I2C serial controller
+> 
+> Doesn't match the property name.
+Sure, i need to change the name here as qcom,shared-se, will upload a 
+new patch.
+> 
+>> needs to be shared in multiprocessor system(APPS,Modem,ADSP) environment.
+>>
+>> Two clients from different processors can share an I2C controller for same
+>> slave device OR their owned slave devices. Assume I2C Slave EEPROM device
+>> connected with I2C controller. Each client from ADSP SS and APPS Linux SS
+>> can perform i2c transactions.
+>>
+>> Transfer gets serialized by Lock TRE + DMA xfer + Unlock TRE at HW level.
+>>
+>> Signed-off-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+>> ---
+>>   Documentation/devicetree/bindings/i2c/qcom,i2c-geni-qcom.yaml | 4 ++++
+>>   1 file changed, 4 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/i2c/qcom,i2c-geni-qcom.yaml b/Documentation/devicetree/bindings/i2c/qcom,i2c-geni-qcom.yaml
+>> index 9f66a3bb1f80..fe36938712f7 100644
+>> --- a/Documentation/devicetree/bindings/i2c/qcom,i2c-geni-qcom.yaml
+>> +++ b/Documentation/devicetree/bindings/i2c/qcom,i2c-geni-qcom.yaml
+>> @@ -60,6 +60,10 @@ properties:
+>>     power-domains:
+>>       maxItems: 1
+>>   
+>> +  qcom,shared-se:
+> 
+> What is 'se'? Is that defined somewhere?
+> 
+SE is Serial Engine acting as I2C controller. Let me add second line for 
+SE here also.
 
-You might want the final short form - but it is a short form.
+It's mentioned in source code in Patch 3 where it's used.
+ >>> True if serial engine is shared between multiprocessors OR 
+Execution Environment.
 
-OTOH the implementation is horrid.
-
-You probably want to start with this (posted a while back in a minmax patch=
- set:
-
-diff --git a/include/linux/compiler.h b/include/linux/compiler.h
-index 2594553bb30b..35d5b2fa4786 100644
---- a/include/linux/compiler.h
-+++ b/include/linux/compiler.h
-@@ -242,6 +242,23 @@ static inline void *offset_to_ptr(const int *off)
- /* &a[0] degrades to a pointer: a different type from an array */
- #define __must_be_array(a)     BUILD_BUG_ON_ZERO(__same_type((a), &(a)[0])=
-)
-
-+/**
-+ * __if_constexpr - Check whether an expression is an 'integer
-+ *             constant expression'
-+ * @expr: Expression to test, not evaluated, can be a pointer
-+ * @if_const: return value if constant
-+ * @if_not_const: return value if not constant
-+ *
-+ * The return values @if_const and @if_not_const can have different types.
-+ *
-+ * Relies on typeof(x ? NULL : ptr_type) being ptr_type and
-+ * typeof(x ? (void *)y : ptr_type) being 'void *'.
-+ */
-+#define __if_constexpr(expr, if_const, if_not_const)           \
-+       _Generic(0 ? ((void *)((long)(expr) * 0l)) : (char *)0, \
-+               char *: (if_const),                             \
-+               void *: (if_not_const))
-+
- /*
-  * This returns a constant expression while determining if an argument is
-  * a constant expression, most importantly without evaluating the argument=
-.
---
-
-Then have:
-
-#define __is_constexpr(x) __if_constexpr(x, 1, 0)
-
-#define const_true(x) __if_constexpr(x, x, 0)
-
-=09David
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
-PT, UK
-Registration No: 1397386 (Wales)
-
+>> +    description: True if I2C controller is shared between two or more system processors.
+>> +    type: boolean
+>> +
+>>     reg:
+>>       maxItems: 1
+>>   
+>> -- 
+>> 2.25.1
+>>
 
