@@ -1,69 +1,65 @@
-Return-Path: <linux-kernel+bounces-412049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C19DF9D02EB
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 11:22:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D4A969D2292
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 10:37:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5DA6EB23407
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 10:22:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 62683B21831
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 09:37:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 029B712E1E0;
-	Sun, 17 Nov 2024 10:22:13 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2BC638C
-	for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 10:22:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E07431B4F1C;
+	Tue, 19 Nov 2024 09:36:58 +0000 (UTC)
+Received: from cmccmta2.chinamobile.com (cmccmta4.chinamobile.com [111.22.67.137])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B90571925B3;
+	Tue, 19 Nov 2024 09:36:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.137
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731838932; cv=none; b=mjsig1nZvG2U1lD1qq2RwT+TQLUpey/5Km7hx7vXFnzGGP9Xe5+r2Bqw0FUJ7zSK7qAKOg2x2EGYVQht4xyaH67/kMETR9D2qDXjYwBcAsr38ZXgtQprM3WoyshZfuUTrOu+8hHHHn551wj3/2B83WiNZmUGeeq7rQ84yJ4Fn7M=
+	t=1732009018; cv=none; b=NMjMqrJzhQTg1Vj3QKzH47KqPk88vPkkNWFYVxvaFwNj5MYjjm8fYiNJ6Ezgm95A6fpQI4AvmbirHoYRf/Ux/RuPWmvYOyMcCM6uZp0/TzhOo+QtFK+dRLAiWKwm4M0sB7GAdZtTL9u3uz7Okg8Ts9rNvwz6Un8HxqM6GoD9TT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731838932; c=relaxed/simple;
-	bh=UK5bPZe0zz3zdT46ggBn8KyGyBxl/NfToZuH1ZZB5t0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=e8run2Mu1E6F/xFFzbv2cHCI2Pv3LsniwdT31CmMZnhNkR+ye5lw6ns9unBzz22cBgAiq0x3UIkdnCy7S/U9jDO6xaAlGuezp1fBGnGdKVjK88zsq2XNEroEDzzrWl2E+/FitqbXXcHen21M2NgSMVJfbyumvRdxJHcfIQh3kzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1tCcPf-0003wq-7k; Sun, 17 Nov 2024 11:21:51 +0100
-Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1tCcPc-001DJh-33;
-	Sun, 17 Nov 2024 11:21:48 +0100
-Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1tCcPc-0075O7-2o;
-	Sun, 17 Nov 2024 11:21:48 +0100
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: "David S. Miller" <davem@davemloft.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Eric Dumazet <edumazet@google.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Woojung Huh <woojung.huh@microchip.com>,
-	Arun Ramadoss <arun.ramadoss@microchip.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Yuiko Oshino <yuiko.oshino@microchip.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	kernel@pengutronix.de,
+	s=arc-20240116; t=1732009018; c=relaxed/simple;
+	bh=52/0Yw7upQLX+DkYnXMAKU3T9jvRn9MiFFYrwKplFjs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OG15doHaTZ8jOLTsib+5vHYr54LyfdpXkOI0T8V74PYp9/i2cyKYgwHsxU+7UxC0pTWtfhVgW9lXy0DhMNDZakciv0M2XXZ3R3GOlDCeRVtLuk01yPq87wPGuXbYNXAsZSFUz7IaON9UvgXw4spkQ+IuwJlYYXpunGO0tBoTRhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.137
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app08-12008 (RichMail) with SMTP id 2ee8673c5c2d300-8634b;
+	Tue, 19 Nov 2024 17:36:46 +0800 (CST)
+X-RM-TRANSID:2ee8673c5c2d300-8634b
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from localhost.localdomain (unknown[223.108.79.101])
+	by rmsmtp-syy-appsvr04-12004 (RichMail) with SMTP id 2ee4673c5c2657d-04a4e;
+	Tue, 19 Nov 2024 17:36:46 +0800 (CST)
+X-RM-TRANSID:2ee4673c5c2657d-04a4e
+From: guanjing <guanjing@cmss.chinamobile.com>
+To: andrii@kernel.org,
+	eddyz87@gmail.com,
+	mykolal@fb.com,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	martin.lau@linux.dev,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	john.fastabend@gmail.com,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	shuah@kernel.org
+Cc: bpf@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	UNGLinuxDriver@microchip.com,
-	Phil Elwell <phil@raspberrypi.org>
-Subject: [PATCH net v1 1/1] net: phy: microchip: Reset LAN88xx PHY to ensure clean link state on LAN7800/7850
-Date: Sun, 17 Nov 2024 11:21:47 +0100
-Message-Id: <20241117102147.1688991-1-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.39.5
+	guanjing <guanjing@cmss.chinamobile.com>
+Subject: [PATCH v1] selftests/bpf: Fix unnecessary conversion to bool in 'run_subtest'
+Date: Sun, 17 Nov 2024 18:28:57 +0800
+Message-Id: <20241117102857.198803-1-guanjing@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,64 +67,33 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Fix outdated MII_LPA data in the LAN88xx PHY, which is used in LAN7800
-and LAN7850 USB Ethernet controllers. Due to a hardware limitation, the
-PHY cannot reliably update link status after parallel detection when the
-link partner does not support auto-negotiation. To mitigate this, add a
-PHY reset in `lan88xx_link_change_notify()` when `phydev->state` is
-`PHY_NOLINK`, ensuring the PHY starts in a clean state and reports
-accurate fixed link parallel detection results.
+Fixes the following coccicheck:
 
-Fixes: 792aec47d59d9 ("add microchip LAN88xx phy driver")
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+tools/testing/selftests/bpf/test_loader.c:1033:64-69: WARNING: conversion to bool not needed here
+
+Fixes: 80a4129fcf20 ("selftests/bpf: Add unit tests for bpf_arena_alloc/free_pages")
+Signed-off-by: guanjing <guanjing@cmss.chinamobile.com>
 ---
- drivers/net/phy/microchip.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ tools/testing/selftests/bpf/test_loader.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/phy/microchip.c b/drivers/net/phy/microchip.c
-index d3273bc0da4a..3c8bc87da70e 100644
---- a/drivers/net/phy/microchip.c
-+++ b/drivers/net/phy/microchip.c
-@@ -351,6 +351,21 @@ static int lan88xx_config_aneg(struct phy_device *phydev)
- static void lan88xx_link_change_notify(struct phy_device *phydev)
- {
- 	int temp;
-+	int ret;
-+
-+	/* Reset PHY, otherwise MII_LPA will provide outdated information.
-+	 * This issue is reproducible only with after parallel detection
-+	 * where link partner do not supports auto-negotiation.
-+	 */
-+	if (phydev->state == PHY_NOLINK) {
-+		ret = phy_init_hw(phydev);
-+		if (ret < 0)
-+			goto link_change_notify_failed;
-+
-+		ret = _phy_start_aneg(phydev);
-+		if (ret < 0)
-+			goto link_change_notify_failed;
-+	}
+diff --git a/tools/testing/selftests/bpf/test_loader.c b/tools/testing/selftests/bpf/test_loader.c
+index 3e9b009580d4..400f56f81272 100644
+--- a/tools/testing/selftests/bpf/test_loader.c
++++ b/tools/testing/selftests/bpf/test_loader.c
+@@ -1030,7 +1030,7 @@ void run_subtest(struct test_loader *tester,
+ 		}
+ 
+ 		do_prog_test_run(bpf_program__fd(tprog), &retval,
+-				 bpf_program__type(tprog) == BPF_PROG_TYPE_SYSCALL ? true : false);
++				 bpf_program__type(tprog) == BPF_PROG_TYPE_SYSCALL);
+ 		if (retval != subspec->retval && subspec->retval != POINTER_VALUE) {
+ 			PRINT_FAIL("Unexpected retval: %d != %d\n", retval, subspec->retval);
+ 			goto tobj_cleanup;
+-- 
+2.33.0
 
- 	/* At forced 100 F/H mode, chip may fail to set mode correctly
- 	 * when cable is switched between long(~50+m) and short one.
-@@ -377,6 +392,11 @@ static void lan88xx_link_change_notify(struct phy_device *phydev)
- 		temp |= LAN88XX_INT_MASK_MDINTPIN_EN_;
- 		phy_write(phydev, LAN88XX_INT_MASK, temp);
- 	}
-+
-+	return;
-+
-+link_change_notify_failed:
-+	phydev_err(phydev, "Link change process failed %pe\n", ERR_PTR(ret));
- }
 
- /**
---
-2.39.5
 
 
