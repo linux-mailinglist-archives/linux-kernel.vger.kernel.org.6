@@ -1,57 +1,64 @@
-Return-Path: <linux-kernel+bounces-412162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CC7C9D04B3
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 17:56:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9987C9D04BA
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 18:02:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E57F7B21FA5
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 16:55:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50A6B1F21F90
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 17:02:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DB0C1DA633;
-	Sun, 17 Nov 2024 16:55:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Z6XhuvOw"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 351351DA605;
+	Sun, 17 Nov 2024 17:02:37 +0000 (UTC)
+Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [83.223.95.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BEEA7DA68;
-	Sun, 17 Nov 2024 16:55:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C49E2101E6;
+	Sun, 17 Nov 2024 17:02:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.95.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731862546; cv=none; b=ObvNVwiJxG2ppzwPfEvp2oqXfF5SMsTgDscQlrxYWMan7lx+2l0r+Ryu8r5PehlYg+QUE6NYDeOlCAl7MYxxM8OXPKi6PkW7SZ87C1U+bNqmLT47j1nBoTeSCmV6cF7MN3XNof+5/DtwWyY2UtSH1QmU52eTAwW3NHO4ocNwT0w=
+	t=1731862956; cv=none; b=svXCB+GuawNfp1pQP33YRIaXt3oMix3N45fh4WKbbqBwiydiMOLaXzCrTeJskIPzDq/RiMg0xymDGY4jC3Xjxg/4PzlJCSnQ5a9zsa2kBrCtXAS41R57v87O4lVHhkFhijXp8HHk9N7r2zKJFYboU72jaa9w1i09w3WbaxMmklc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731862546; c=relaxed/simple;
-	bh=zqrBOGxmlr3m1LZas0bxuYjIJojhoqrvpTpD+FMzFbg=;
+	s=arc-20240116; t=1731862956; c=relaxed/simple;
+	bh=x3fbqqyaDUEI1z5L8HhpzlEawRcNm9+yHV/9jvt8KAY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VLU4/njN7qMdTeZ1SxJjVElPu7k5hlGGUFRfvmPUIYiQDYdL9tc2jGuPciyCuYnPxRNDMr6uDABz7ExYyvdWi/+NDTH6BeUfOgyuZy3BC/MLFYahS7b4cnYw/5Kz7+vrKnkJHktzG3Wn4N8Ep8UZ5NwseRjkrI9ecbpgaD2f1sc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=Z6XhuvOw; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=TFW4OVWgse3VEZmUCrGZeS2fzZTd1dS/v0LDv9d0mnw=; b=Z6XhuvOwq9hD0SLUNvMX5I+xrH
-	8UP2Nbg6OQS8unq2EPM/WyXgeUUEhFPIbmRNXjNcLrETWA2sn4kLB39v+oLEAZPJz96l5LvfqRUEv
-	1lrKYMJtuAntJtk/HmAWPhRyq/Zi7Z/pcLu4fIL0N/O8Z1YPIGOUHdF4DCkn9IIPu2uetCYIQ9zvg
-	U29Ei/RHuS7UmuYTUus0xCV9i/Hhken6llo2jw0jivxO18UJEBYVLOLcNKhxFhLouIPrHKt7hNlkv
-	N11kGsZ263OKRMwut4VICI+JvKc+M5vCrxVaawcm47OFPQxN7XoksNnx2qVkBQUsTkW0gvnHNdnmT
-	mUaPcgJQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tCiYm-0000000G7uA-2znr;
-	Sun, 17 Nov 2024 16:55:40 +0000
-Date: Sun, 17 Nov 2024 16:55:40 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Jeongjun Park <aha310510@gmail.com>
-Cc: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] fs: prevent data-race due to missing inode_lock when
- calling vfs_getattr
-Message-ID: <20241117165540.GF3387508@ZenIV>
-References: <20241117163719.39750-1-aha310510@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=KZ46QQcJleyf+5KZ5NnPV3gKfHQGt6Li/LG3cnzCDgmBFJZ2ijSLA6DB8rKwc/GXQ7pMcVO5j6AJnznoU5eJM8kZHjjKLbzxixXYM+DkE8hb0sgoC/EC5h95SjtAZgYNUzROZNvHDf+CnezU3xeJJ5nMjuaCYCPHovBo4rii9H0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.95.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout1.hostsharing.net (Postfix) with ESMTPS id CB551300000BE;
+	Sun, 17 Nov 2024 18:02:23 +0100 (CET)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id B37533C4905; Sun, 17 Nov 2024 18:02:23 +0100 (CET)
+Date: Sun, 17 Nov 2024 18:02:23 +0100
+From: Lukas Wunner <lukas@wunner.de>
+To: "Bowman, Terry" <terry.bowman@amd.com>
+Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, nifan.cxl@gmail.com, ming4.li@intel.com,
+	dave@stgolabs.net, jonathan.cameron@huawei.com,
+	dave.jiang@intel.com, alison.schofield@intel.com,
+	vishal.l.verma@intel.com, dan.j.williams@intel.com,
+	bhelgaas@google.com, mahesh@linux.ibm.com, ira.weiny@intel.com,
+	oohall@gmail.com, Benjamin.Cheatham@amd.com, rrichter@amd.com,
+	nathan.fontenot@amd.com, Smita.KoralahalliChannabasappa@amd.com
+Subject: Re: [PATCH v3 03/15] cxl/pci: Introduce PCIe helper functions
+ pcie_is_cxl() and pcie_is_cxl_port()
+Message-ID: <Zzohn1nGk1-ZpMlc@wunner.de>
+References: <20241113215429.3177981-1-terry.bowman@amd.com>
+ <20241113215429.3177981-4-terry.bowman@amd.com>
+ <ZzYbHZvU_RFXZuk0@wunner.de>
+ <ffd740e5-235a-4b74-8bf9-91331b619a7f@amd.com>
+ <ZzYq2GIUoD2kkUyK@wunner.de>
+ <e686016d-2670-4431-ad9d-3c189a48b1e4@amd.com>
+ <ZzcKoOXTVVj3bTnE@wunner.de>
+ <f8fb0737-3450-4dcf-87a1-3b9f03ec94f2@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,18 +67,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241117163719.39750-1-aha310510@gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <f8fb0737-3450-4dcf-87a1-3b9f03ec94f2@amd.com>
 
-On Mon, Nov 18, 2024 at 01:37:19AM +0900, Jeongjun Park wrote:
-> Many filesystems lock inodes before calling vfs_getattr, so there is no
-> data-race for inodes. However, some functions in fs/stat.c that call
-> vfs_getattr do not lock inodes, so the data-race occurs.
+On Fri, Nov 15, 2024 at 07:54:37AM -0600, Bowman, Terry wrote:
+> On 11/15/2024 2:47 AM, Lukas Wunner wrote:
+> > On Thu, Nov 14, 2024 at 11:07:26AM -0600, Bowman, Terry wrote:
+> > > I will remove the "if (!pcie_is_cxl(dev))" block as you suggested.
+> > 
+> > Ah, this is meant as a speed-up.  Actually that makes sense,
+> > so feel free to keep it.
+> >
+> > If you do remove it, I think you'll have to move the cxl_port_dvsec()
+> > invocation up in the function, in front of the pci_pcie_type() checks.
+> > The latter require that one first checks that the device is PCIe.
+> > That's done implicitly by cxl_port_dvsec() because it returns 0 in
+> > the non-PCIe case.  (Due to the "if (dev->cfg_size <= PCI_CFG_SPACE_SIZE)"
+> > check in pci_find_next_ext_capability().)
+> >
+> > Another idea would be to put a "if (!pcie_is_cxl(dev)) return 0;" speed-up
+> > in cxl_port_dvsec() so that the other caller benefits from it as well.
 > 
-> Therefore, we need to apply a patch to remove the long-standing data-race
-> for inodes in some functions that do not lock inodes.
+> Ok, I'll look at adding the same pcie_is_cxl() call and check in
+> cxl_port_devsec().
 
-Why do we care?  Slapping even a shared lock on a _very_ hot path, with
-possible considerable latency, would need more than "theoretically it's
-a data race".
+If you put "if (!pcie_is_cxl(dev)) return 0;" in cxl_port_devsec()
+and move the call to cxl_port_devsec() in pcie_is_cxl_port() up in front
+of the pci_pcie_type() checks, I think you won't need an additional
+"!pcie_is_cxl(dev)" check in pcie_is_cxl_port().
+
+Thanks,
+
+Lukas
 
