@@ -1,90 +1,87 @@
-Return-Path: <linux-kernel+bounces-411955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8DB89D01B8
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 01:27:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 122E59D01B9
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 01:31:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 720E7B26868
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 00:27:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E59EB21A67
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 00:31:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE5EED528;
-	Sun, 17 Nov 2024 00:26:22 +0000 (UTC)
-Received: from mail115-100.sinamail.sina.com.cn (mail115-100.sinamail.sina.com.cn [218.30.115.100])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B29618F7D;
+	Sun, 17 Nov 2024 00:31:06 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81596DDC3
-	for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 00:26:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC5971392
+	for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 00:31:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731803182; cv=none; b=SvO+aX3w5mLhn0X03lCcOSHS2JGuA0YBhyKmxoCpRX0kkYrP80ITWiWLcrQXvDHjn0a83zKXyZtnZsaq0rdyIJaOtRSeLBY9iGXiQFl2dRoGZO0UsXICbfrN6q77UOG1QpNMom75VpYhqvQgAANprv6wZbDzs1xgxCYWeErofKQ=
+	t=1731803466; cv=none; b=SRYKzfRezBMUruhDW08O9Fr+VKQVIQH5y7eIdgFTkeAVkhIdr53v53P/qAI84IzS/I6g8TXp+SXxf/xmDJhgH/SFIJCF/m91EOLFcts8L7boTAv+tdR1+N43GUvQ1ZVuBPAmHOT+RiOJi6oOne01OmiIBb8RdCDQ3VUBVwUbmrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731803182; c=relaxed/simple;
-	bh=jyTuA5KuNW7U5OYjyzVEKZOpcFP/oUthdbbwYK425lQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Bu+hIrMY26t4IN8vrw1q4AAMCvrRvqcIMhbZsna4KIRBAdGMqGeqf92I8GNfm1PhZGkX0r+p6n7EbPAK8gJJmmJf95l+xx2kmmxt1PXGtkZAJmNipQP1AAwCT7lavjmQPqz2RTxbFJoLKPY5KPQFzPo2tVHRkadbF+xmYmWJhC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([113.118.70.242])
-	by sina.com (10.185.250.23) with ESMTP
-	id 6739382300003351; Sun, 17 Nov 2024 08:26:14 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 9061028913242
-X-SMAIL-UIID: C7F3CF17DEE84FBCABC75CE195795BBA-20241117-082614-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+823cd0d24881f21ab9f1@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [fs?] WARNING in rcu_sync_dtor (2)
-Date: Sun, 17 Nov 2024 08:26:05 +0800
-Message-Id: <20241117002605.1398-1-hdanton@sina.com>
-In-Reply-To: <673866ee.050a0220.85a0.0013.GAE@google.com>
-References: 
+	s=arc-20240116; t=1731803466; c=relaxed/simple;
+	bh=sI7b5a6iTkhpMHVQJepvoJ0f4eMFIgx7fCmEPoMEbRE=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=O2+9s0w9d4tgwTQCZOmGPO4N4weCvJVoI/cMu0tx1k59fRwFUraZwJdc2ZVyx7AH22KnCam5p+dO80lx6/AoFojwXNERu7CNbJO6wsVTJBR1QhKn3QdP8UtZfbsiJHLkQFi9HxGtNzagIbwpT5VoOgtBW/83YQhZwjpI1XP0LCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a71bdd158aso33691295ab.1
+        for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 16:31:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731803464; x=1732408264;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tr2ApS7S+CUgDuMHU/p6U+lFSkiCWC69u1BREs+Vyqw=;
+        b=TKb84quhUEF/C5JavcQUPk1ih1YasVa1n447UvcPJEmn+oBAi9njz/j6ncUB5R6lSN
+         qfAoJOkrxZQrEbl9kx2uOZsLPoT4FwPrbEV4orSH9r0hZqAsM++VRWJGnVm6NEmmg9H2
+         3TCDp9w7vGzcoqnlFmUmQdAu61VpbYQXBcg3+u3UPtQKbmpWl+bmX//kf0lV1jcagaZT
+         A0OSIpBxpGw7LU9+5Gk9NLt9v3jda4VR2GSugu0RdAGUjnAuGYjrkmT8swH/+KpjPKpz
+         hFbZnU4gXSqBV0VlrkEPWV4w9TmavehCY8Yz6QFKQhdUMZvoNQbO8kpXXAUTcD8F1pKE
+         VY+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWh38c2bC6OVCRhJ2EEVGT28Ae0ZKiUE16eTWFSnm/PBf0XVNz2C6kOQ5MxApNG7fwPMCQrqJYQL0GYyUA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMvoD6keBp0a6j/xCsm0adeOGf6FFpib5roVzkpJLWuiayMgek
+	HyCeOZyA/LUBJU3VAmyPPPSu6tzxwOUSMerkAZ10G91mfVXNNGTnJMayvqn5gw17d8lte+DLtds
+	KGpQYy+cHbAC4AMR296CTm78d1yQ8C2OIrF+TsKcVh1ca/2Xw+qUfnbM=
+X-Google-Smtp-Source: AGHT+IG+P6EzasY3ux65yZJ8Urc1Uawvv2MSLGqg4lRdTZ+vhEmeIMJ6UoXesEcBoyx56SEfdGbaA/ug2Tw+8zhdcFU2Fuz23L1x
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:1529:b0:3a6:abdc:dfbe with SMTP id
+ e9e14a558f8ab-3a7480377bdmr62581145ab.14.1731803464086; Sat, 16 Nov 2024
+ 16:31:04 -0800 (PST)
+Date: Sat, 16 Nov 2024 16:31:04 -0800
+In-Reply-To: <20241117000154.1285-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67393948.050a0220.e8d8d.016d.GAE@google.com>
+Subject: Re: [syzbot] [net?] WARNING in sk_skb_reason_drop
+From: syzbot <syzbot+52fbd90f020788ec7709@syzkaller.appspotmail.com>
+To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Sat, 16 Nov 2024 01:33:34 -0800
-> syzbot found the following issue on:
-> 
-> HEAD commit:    2d5404caa8c7 Linux 6.12-rc7
-> git tree:       upstream
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12188ce8580000
+Hello,
 
-#syz test
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
---- x/fs/exfat/super.c
-+++ y/fs/exfat/super.c
-@@ -46,9 +46,6 @@ static int exfat_sync_fs(struct super_bl
- 	struct exfat_sb_info *sbi = EXFAT_SB(sb);
- 	int err = 0;
- 
--	if (unlikely(exfat_forced_shutdown(sb)))
--		return 0;
--
- 	if (!wait)
- 		return 0;
- 
-@@ -189,7 +186,6 @@ int exfat_force_shutdown(struct super_bl
- 		set_bit(EXFAT_FLAGS_SHUTDOWN, &sbi->s_exfat_flags);
- 		break;
- 	case EXFAT_GOING_DOWN_NOSYNC:
--		set_bit(EXFAT_FLAGS_SHUTDOWN, &sbi->s_exfat_flags);
- 		break;
- 	default:
- 		return -EINVAL;
---
+Reported-by: syzbot+52fbd90f020788ec7709@syzkaller.appspotmail.com
+Tested-by: syzbot+52fbd90f020788ec7709@syzkaller.appspotmail.com
+
+Tested on:
+
+commit:         38f83a57 Merge branch 'virtio-net-support-af_xdp-zero-..
+git tree:       net-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=111c52e8580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e6d63a300b6a84a4
+dashboard link: https://syzkaller.appspot.com/bug?extid=52fbd90f020788ec7709
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=14789378580000
+
+Note: testing is done by a robot and is best-effort only.
 
