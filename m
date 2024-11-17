@@ -1,132 +1,88 @@
-Return-Path: <linux-kernel+bounces-412287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 691459D0715
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 00:47:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F3EF29D0716
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 00:48:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E245281E2E
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 23:47:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B93AE281EB7
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 23:48:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57E1B1DE2C2;
-	Sun, 17 Nov 2024 23:47:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADB5E1DE2A3;
+	Sun, 17 Nov 2024 23:48:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cISYT6ZU"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="SR9QYUiv"
+Received: from mail-40131.protonmail.ch (mail-40131.protonmail.ch [185.70.40.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AFF91DDA3C;
-	Sun, 17 Nov 2024 23:47:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6B8A2309A7
+	for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 23:48:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731887259; cv=none; b=Gf06lv8ieXDgSsK5pM97op15atFqNpxA09gxAcTqToPpadrzfXxCSHTWzF3HFwaGsgzgErkyvNkZkpOh0ntgIXlDIav15WFP9uJQUGh32FhGWkSEAheOVt8vU2kHN/fr4y/F32lXX9SScmLTdN7FS3sW7JEftYVlzXXd0hLZlmo=
+	t=1731887315; cv=none; b=ZVBy+DrLvDURs/++PJRJ6lMC8rK/b/BZOSxv2mh8Qz4MD11H0cUMXZW7kqf3xCxVP5OSilisHt28IaJpWD9/JCLeYhApZoSoGSUwAH6HALYftg/vHtlnrYVLOS+F+RrArySW3qaux8m8LNkuDhwKx+J6zlKB70A152BSBJBMxoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731887259; c=relaxed/simple;
-	bh=P1BsP1cGK94H5aphr+CmIL8Z4amP2D/fjFOsmEmkSAs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q60EsTowmDO4WMh12A9FhP3/3qJ1mXTciyHt22wdk5Ovg3RzVWpSPtmpwNBzaN/muml+pLL1tktUISM6stRcluvHGHoeF+UBNZSJlPQizf8PDvZ9bK5HNHUYANKh9WT8cw2DQqUyxEZisSj4ghmI2F9IedA+L4YlTdI3E1RK7aQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cISYT6ZU; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731887259; x=1763423259;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=P1BsP1cGK94H5aphr+CmIL8Z4amP2D/fjFOsmEmkSAs=;
-  b=cISYT6ZUl9xBnoVuzfPGhEEqRwe+fkay/ZQT5NHFywLx1UwwHEMt2QRC
-   RwhI4PjlkHeqwBsi0SirRnQawhOuuWz9cdFx/c6uqvVdSovy1JFKHyrlQ
-   bnmGmlDKMzFPpq+/2v975tP+qSAOdGmROC1y21uYwCkMtvAmAex2zsFyM
-   v4YrEPd7WiAMehFi94Tb40EyxoA64nJe1GJiv6hPlG8/TxZcEF7muTjW+
-   NQLtU9Ub99Z2iMJX5J5P2COWBVf+LTutYQy9JJMcL4d4QrFwRwtVjGR4Y
-   cy06pAW1BsL34HCHdyp9oQjYzvJw+QSXB23LiBz8LR1HKTh+u3sgUROPV
-   Q==;
-X-CSE-ConnectionGUID: 0R/LjNjBQUG4/bYeEAKbVA==
-X-CSE-MsgGUID: L0BbL33nTGisIv3p+5gxKQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11259"; a="35598071"
-X-IronPort-AV: E=Sophos;i="6.12,162,1728975600"; 
-   d="scan'208";a="35598071"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Nov 2024 15:47:38 -0800
-X-CSE-ConnectionGUID: y9QjnJUARW+Pfju8B/fzmQ==
-X-CSE-MsgGUID: IRZPKmHYQ56Dn9+mpxT1Dw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,162,1728975600"; 
-   d="scan'208";a="112357128"
-Received: from lkp-server01.sh.intel.com (HELO 1e3cc1889ffb) ([10.239.97.150])
-  by fmviesa002.fm.intel.com with ESMTP; 17 Nov 2024 15:47:31 -0800
-Received: from kbuild by 1e3cc1889ffb with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tCozI-00027l-2K;
-	Sun, 17 Nov 2024 23:47:28 +0000
-Date: Mon, 18 Nov 2024 07:46:33 +0800
-From: kernel test robot <lkp@intel.com>
-To: FUJITA Tomonori <fujita.tomonori@gmail.com>,
-	linux-kernel@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	netdev@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	andrew@lunn.ch, hkallweit1@gmail.com, tmgross@umich.edu,
-	ojeda@kernel.org, alex.gaynor@gmail.com, gary@garyguo.net,
-	bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	a.hindborg@samsung.com, aliceryhl@google.com,
-	anna-maria@linutronix.de, frederic@kernel.org, tglx@linutronix.de,
-	arnd@arndb.de, jstultz@google.com, sboyd@kernel.org,
-	mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	vschneid@redhat.com, Boqun Feng <boqun.feng@gmail.com>
-Subject: Re: [PATCH v6 6/7] rust: Add read_poll_timeout functions
-Message-ID: <202411180733.UATVgVuv-lkp@intel.com>
-References: <20241114070234.116329-7-fujita.tomonori@gmail.com>
+	s=arc-20240116; t=1731887315; c=relaxed/simple;
+	bh=ri6Ho4ucUdEBaSs6tOZ0fI21T90qoYj7m+XdRVkRm0k=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=eXWxFo/IGPOaI7UCwPX1bTXgj93oA4JDiyWUscMt2XdR5b21hply20bAC5wcJI5fomQFGsZcFUMaplmI8VXrhpMShxPXcDa+QsprAMYdXdL0NUElaIcNWV/5Dmsl6hMb3a+quF35+3v6WKpw/Wd6gZbDcHyKeUI86hPQw8bs0nM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=SR9QYUiv; arc=none smtp.client-ip=185.70.40.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1731887305; x=1732146505;
+	bh=ri6Ho4ucUdEBaSs6tOZ0fI21T90qoYj7m+XdRVkRm0k=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector:
+	 List-Unsubscribe:List-Unsubscribe-Post;
+	b=SR9QYUiv5IZwlM8oofocnfC+QIg98fhR3iKgxFAvN2YQJobPc6QsDTyo12D5UG1pp
+	 /5rs0NecKXVkTaDxL2GZc3nGWTe0/kTUM65XURafWdLT8mSW7Mk7jHD2zm+ll0iIay
+	 KYiqOp7f5BYGHDQBxlduu+g+/7DkML05QUK3d/yidtmuobNOMJoFjkMYNAu0Mql15u
+	 MW4hoxvlgXz48i+z1+fuRnkmYrEKPtLdifazadqXpx00NDAL1J4XCGN/o2Cb8HJZRt
+	 uEukLVVQ6XcgtS/3w4btZ787rCPRwXsLDRPt0jnCZq6RuFCKhjMMuJE9PGX8RoajkZ
+	 F8mXezrNDLxBw==
+Date: Sun, 17 Nov 2024 23:48:23 +0000
+To: kent.overstreet@linux.dev, nathan@kernel.org, ndesaulniers@google.com, morbo@google.com, justinstitt@google.com, linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+From: Piotr Zalewski <pZ010001011111@proton.me>
+Cc: skhan@linuxfoundation.org, Piotr Zalewski <pZ010001011111@proton.me>
+Subject: [PATCH] bcachefs: initialize local variables in bch2_evacuate_bucket
+Message-ID: <20241117234334.722730-4-pZ010001011111@proton.me>
+Feedback-ID: 53478694:user:proton
+X-Pm-Message-ID: 7835e83be954f30a22e5bcf361713dba078952f7
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241114070234.116329-7-fujita.tomonori@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi FUJITA,
+Compiling bcachefs sources with LLVM triggers uninitialized variables
+warnings.
 
-kernel test robot noticed the following build errors:
+Signed-off-by: Piotr Zalewski <pZ010001011111@proton.me>
+---
+ fs/bcachefs/move.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-[auto build test ERROR on 228ad72e7660e99821fd430a04ac31d7f8fe9fc4]
+diff --git a/fs/bcachefs/move.c b/fs/bcachefs/move.c
+index 8c032ef3a567..94cac498d372 100644
+--- a/fs/bcachefs/move.c
++++ b/fs/bcachefs/move.c
+@@ -674,8 +674,8 @@ int bch2_evacuate_bucket(struct moving_context *ctxt,
+ =09struct bkey_buf sk;
+ =09struct bkey_s_c k;
+ =09struct data_update_opts data_opts;
+-=09unsigned dirty_sectors, bucket_size;
+-=09u64 fragmentation;
++=09unsigned dirty_sectors =3D 0, bucket_size =3D 0;
++=09u64 fragmentation =3D 0;
+ =09int ret =3D 0;
+=20
+ =09struct bch_dev *ca =3D bch2_dev_tryget(c, bucket.inode);
+--=20
+2.47.0
 
-url:    https://github.com/intel-lab-lkp/linux/commits/FUJITA-Tomonori/rust-time-Add-PartialEq-Eq-PartialOrd-Ord-trait-to-Ktime/20241114-151340
-base:   228ad72e7660e99821fd430a04ac31d7f8fe9fc4
-patch link:    https://lore.kernel.org/r/20241114070234.116329-7-fujita.tomonori%40gmail.com
-patch subject: [PATCH v6 6/7] rust: Add read_poll_timeout functions
-config: um-randconfig-002-20241117 (https://download.01.org/0day-ci/archive/20241118/202411180733.UATVgVuv-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 592c0fe55f6d9a811028b5f3507be91458ab2713)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241118/202411180733.UATVgVuv-lkp@intel.com/reproduce)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411180733.UATVgVuv-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> error[E0433]: failed to resolve: use of undeclared type `KBox`
-   --> rust/doctests_kernel_generated.rs:1821:12
-   |
-   1821 | let lock = KBox::pin_init(new_spinlock!(()), kernel::alloc::flags::GFP_KERNEL)?;
-   |            ^^^^
-   |            |
-   |            use of undeclared type `KBox`
-   |            help: a struct with a similar name exists: `Box`
-
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for GET_FREE_REGION
-   Depends on [n]: SPARSEMEM [=n]
-   Selected by [m]:
-   - RESOURCE_KUNIT_TEST [=m] && RUNTIME_TESTING_MENU [=y] && KUNIT [=y]
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
