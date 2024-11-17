@@ -1,136 +1,107 @@
-Return-Path: <linux-kernel+bounces-412168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 624C69D04CF
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 18:25:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D2AA9D04D6
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 18:31:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D8A32825CA
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 17:25:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 092B51F21ED6
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 17:31:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 097061DA60B;
-	Sun, 17 Nov 2024 17:25:02 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21A6D1DACA1;
+	Sun, 17 Nov 2024 17:31:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dB38pEvz"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01B141925B3
-	for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 17:24:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0219C15C0;
+	Sun, 17 Nov 2024 17:31:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731864301; cv=none; b=GtOuoJHWCHTiAlCjMvJPzUPH6Xnto+DMihTqEgGCvqmh83FJI7RERZR0p5kHzs+OWgbvzsWNxvuXJp7b4/wQ/sOG7gylsebsQsEbMmM/FoZW+FlFycxEBpEdLrf4GXVBzr1pIfJzkXAKvoNKLek0VFEsM/3h6/cPqutjkYral/E=
+	t=1731864703; cv=none; b=N2LxR94UhTlLQsNOQRTlhWbgmHTu1ghCedBNWF9ahwzvQH7mBGyEnfe3eagZyzIQ/cAapA6mz4tEQL4EUUHoIWQvNQnZCzQ3wl85ow4u7vvOxU5usTGdQbAauOzjA6OREqPe8Ipp/w8OXOnj3LVz0fPtVPJThbmP3DIlqjX5lDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731864301; c=relaxed/simple;
-	bh=WXgXmjEkeVkaqXh0v1ISBXOrG2oE+R4HdXb950Jipxk=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=iczjK2oWyueDrhp5dNHkr4bLMT/SyVxbhMQxf33Y65IF4Qmm2N+TW2o4YGt+gNe2WNQw44AWtWlHlVbGuX17a6aHCQe5QI1FvBuOOY8ai5sr498phMvz6ssPbmUAgN03wFZtr2yNUQCAjrtVjMPhTGwl8cA52PMl/QJH31+6Jds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-65-aYQSyGLCMVmxdIscXjtVLw-1; Sun, 17 Nov 2024 17:24:55 +0000
-X-MC-Unique: aYQSyGLCMVmxdIscXjtVLw-1
-X-Mimecast-MFC-AGG-ID: aYQSyGLCMVmxdIscXjtVLw
-Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
- (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sun, 17 Nov
- 2024 17:24:54 +0000
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Sun, 17 Nov 2024 17:24:54 +0000
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Vincent Mailhol' <mailhol.vincent@wanadoo.fr>, Linus Torvalds
-	<torvalds@linux-foundation.org>, Yury Norov <yury.norov@gmail.com>, "Rasmus
- Villemoes" <linux@rasmusvillemoes.dk>, Luc Van Oostenryck
-	<luc.vanoostenryck@gmail.com>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-sparse@vger.kernel.org" <linux-sparse@vger.kernel.org>, "Rikard
- Falkeborn" <rikard.falkeborn@gmail.com>
-Subject: RE: [PATCH v4 2/2] linux/bits.h: simplify GENMASK_INPUT_CHECK()
-Thread-Topic: [PATCH v4 2/2] linux/bits.h: simplify GENMASK_INPUT_CHECK()
-Thread-Index: AQHbNfVbqmtUi60kGE6/zbkAvTDGArK7vYpQ
-Date: Sun, 17 Nov 2024 17:24:54 +0000
-Message-ID: <8bf9eb4434104a3b960d52bd1d38caea@AcuMS.aculab.com>
-References: <20241113172939.747686-4-mailhol.vincent@wanadoo.fr>
- <20241113172939.747686-6-mailhol.vincent@wanadoo.fr>
-In-Reply-To: <20241113172939.747686-6-mailhol.vincent@wanadoo.fr>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1731864703; c=relaxed/simple;
+	bh=XU3f8iOzysWsUXprwUt22rCfRKOt8VzIxFdJ24lS6Ew=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=h1IWFzoL182KY/fQ4R7Kg7P2bt7Iyfg+MQPPGeegmumSPh/PRxOpbgkC0WULVXRbIi0ZxFtngoLalCtnaqeAwU0pTY9xdenO95Tps5PpYuiFMnNgp3Sg6CQ5zQAu0gmaXOKDcCnqHKv01ctp+AbhL9U3846iNL7L4v6HmBYP7ho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dB38pEvz; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-37d4b0943c7so2253570f8f.1;
+        Sun, 17 Nov 2024 09:31:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731864700; x=1732469500; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=XU3f8iOzysWsUXprwUt22rCfRKOt8VzIxFdJ24lS6Ew=;
+        b=dB38pEvzh3LILhgDAXUC9JlZjsTXuynrRZssCIP1EYZUbPuAtTDqj6KZfg0fnCjkSU
+         hjIpEAB0UG1WK+uqo/R6a79Gf/gCB7a3PjgPPzl9m+DnWd5JcCYmT0iUdL5zOpEKbK3o
+         8bwP6Moku+cs7MIE6SwDF3X1iRytCiF4tO/dgwKGGVaGY+m71Y26R+ULFZSfYid/UiNj
+         RblUxfh9gfiSZW4FMVZ3ExKBmDSdenU23v/Q8hXRdoFn2W0eZXb2jHxycg6P/harZCbr
+         Gwwj5dXgCO/VvnST5FcHnoEdW0a0Fhz3yazD3tZvhkWFSkwQgvfW/ovANN4Zj56vNkXl
+         gcnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731864700; x=1732469500;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XU3f8iOzysWsUXprwUt22rCfRKOt8VzIxFdJ24lS6Ew=;
+        b=DkBwPZ5hJouuZydHcCV2uiIgSEG+o9LJ5jry0O0Mk7g0wcl3tuBwfrvmhAQa6ON0+a
+         ScR2gyBF6p3bUxz+BFW9k/mtgOEs7OlcJWAYW73wdDCGaQE3JaqXu5/sTG2IchL9iaUg
+         v5nZgPXzmmd2ioSvOGEUFlFYFcyOTFL55W4YHYRNJvL3/e/pp3uT3smsnBWx36+n1cV4
+         1EDCP/mQD5xZZuq/dgbgMcGZO0XOX81qsDEXBHBNte5UB+Qr65o/ZvXVLBQPDvGW+qW0
+         P+T2RgeR+oe0PnE+HeI9e6uzOQ4lqOQAYp4dzDFqkPLyHTvj8akTYG+gvhwVfAmQeNld
+         KzDw==
+X-Forwarded-Encrypted: i=1; AJvYcCU/r5oS8anp/tyjraNR5kjvqlAnSKxnQHRw07ELG6lBRB2x+7ifbTAPdwpIs6QRxhVe6Mghfva3@vger.kernel.org, AJvYcCU4cPXRZbL61XmanX/h8dVcL4nQCtWz1ew3ZE+OzkE2q/dWjfSCxr5H6fQt1T3BAZDbWLk+D+9Wux9pcLPiA75RZN4=@vger.kernel.org, AJvYcCUAEKaI7v2HwfaFJ17lE7lxVYIuL4CMA4LquKBZzmhWw0Zr4Mv5MptWLRmyLxOxCeMtsHIRldrLBE3Hih81C0npjgs=@vger.kernel.org, AJvYcCWeZgrdvCgj+Lb8/9yDpFe6Hju2TE1dfxeF0ntkC+C2HEZifrtNsw7oflyO4mf6ugQdrQOfVaU3lYXZSi/2@vger.kernel.org, AJvYcCX4Zwb1d5VWDuBmuT4fa4kfn9CLit0+stmpCgTQX7deg3nnYP+RZ0w75xLOVumGHlYf+2BRqI+Q4pWwulSQ@vger.kernel.org
+X-Gm-Message-State: AOJu0YxubAau92N+EyC3chUpoNQwJEc8VqJ9GMEVUzNPHXFJL06Md12i
+	z0F44XDFf2rBCRt3+OTpXdyEMwOOsbMnIMtpIINz+WWhDBc4mp5L
+X-Google-Smtp-Source: AGHT+IGM5AOKwL/Gq+vlCdXodaTvKaKrFRZZ7omamsRPMIsQdxFKGxSowkpEpgRfKiIOKPWFsLR64Q==
+X-Received: by 2002:a05:6000:1fac:b0:382:d7a:315b with SMTP id ffacd0b85a97d-382258f0d9emr8122852f8f.11.1731864700227;
+        Sun, 17 Nov 2024 09:31:40 -0800 (PST)
+Received: from p200300c58705a8eb1a556f9921c6cbbb.dip0.t-ipconnect.de (p200300c58705a8eb1a556f9921c6cbbb.dip0.t-ipconnect.de. [2003:c5:8705:a8eb:1a55:6f99:21c6:cbbb])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3821ae1685csm10504821f8f.83.2024.11.17.09.31.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 17 Nov 2024 09:31:39 -0800 (PST)
+Message-ID: <050e354f0d413dc39164bb72262b84b8c2038073.camel@gmail.com>
+Subject: Re: [PATCH 1/5] scsi: ufs: core: Cancel RTC work during
+ ufshcd_remove()
+From: Bean Huo <huobean@gmail.com>
+To: manivannan.sadhasivam@linaro.org, Alim Akhtar <alim.akhtar@samsung.com>,
+  Avri Altman <avri.altman@wdc.com>, Bart Van Assche <bvanassche@acm.org>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, "Martin K.
+ Petersen" <martin.petersen@oracle.com>, Mike Bi <mikebi@micron.com>, Bean
+ Huo <beanhuo@micron.com>, Thomas =?ISO-8859-1?Q?Wei=DFschuh?=
+ <linux@weissschuh.net>,  Luca Porzio <lporzio@micron.com>, Asutosh Das
+ <quic_asutoshd@quicinc.com>, Can Guo <quic_cang@quicinc.com>,  Pedro Sousa
+ <pedrom.sousa@synopsys.com>, Krzysztof Kozlowski <krzk@kernel.org>, Peter
+ Wang <peter.wang@mediatek.com>, Stanley Jhu <chu.stanley@gmail.com>,
+ Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, Orson Zhai
+ <orsonzhai@gmail.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, Chunyan
+ Zhang <zhang.lyra@gmail.com>,  Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Santosh Y <santoshsy@gmail.com>, Namjae Jeon <linkinjeon@gmail.com>
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-mediatek@lists.infradead.org, 
+	linux-renesas-soc@vger.kernel.org, stable@vger.kernel.org
+Date: Sun, 17 Nov 2024 18:31:32 +0100
+In-Reply-To: <20241111-ufs_bug_fix-v1-1-45ad8b62f02e@linaro.org>
+References: <20241111-ufs_bug_fix-v1-0-45ad8b62f02e@linaro.org>
+	 <20241111-ufs_bug_fix-v1-1-45ad8b62f02e@linaro.org>
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: oTzza4WtIML6m51PtQDxicOWFvPYalAN4dUDUGSrzqU_1731864295
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
 
-From: Vincent Mailhol
-> Sent: 13 November 2024 17:19
->=20
-> In GENMASK_INPUT_CHECK(),
->=20
->   __builtin_choose_expr(__is_constexpr((l) > (h)), (l) > (h), 0)
->=20
-> is the exact expansion of:
->=20
->   const_true((l) > (h))
->=20
-> Apply const_true() to simplify GENMASK_INPUT_CHECK().
 
-Wouldn't statically_true() give better coverage ?
-I wouldn't have though that GENMASK() got used anywhere where a constant
-integer expression was needed.
-
-More interesting would be to get it to pass a W=3D1 build for
-any place where 'l' is 0u.
-
-=09David
-
->=20
-> Signed-off-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-> ---
-> This change passes the unit tests from CONFIG_BITS_TEST, including the
-> extra negative tests provided under #ifdef TEST_GENMASK_FAILURES [1].
->=20
-> [1] commit 6d511020e13d ("lib/test_bits.c: add tests of GENMASK")
-> Link: https://git.kernel.org/torvalds/c/6d511020e13d
-> ---
->  include/linux/bits.h | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
->=20
-> diff --git a/include/linux/bits.h b/include/linux/bits.h
-> index 60044b608817..61a75d3f294b 100644
-> --- a/include/linux/bits.h
-> +++ b/include/linux/bits.h
-> @@ -20,9 +20,8 @@
->   */
->  #if !defined(__ASSEMBLY__)
->  #include <linux/build_bug.h>
-> -#define GENMASK_INPUT_CHECK(h, l) \
-> -=09(BUILD_BUG_ON_ZERO(__builtin_choose_expr( \
-> -=09=09__is_constexpr((l) > (h)), (l) > (h), 0)))
-> +#include <linux/compiler.h>
-> +#define GENMASK_INPUT_CHECK(h, l) BUILD_BUG_ON_ZERO(const_true((l) > (h)=
-))
->  #else
->  /*
->   * BUILD_BUG_ON_ZERO is not available in h files included from asm files=
-,
-> --
-> 2.45.2
->=20
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
-PT, UK
-Registration No: 1397386 (Wales)
-
+Reviewed-by: Bean Huo <beanhuo@micron.com>
 
