@@ -1,138 +1,132 @@
-Return-Path: <linux-kernel+bounces-412001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 574599D022C
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 06:49:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 067AB9D022D
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 06:52:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 037DF1F23BDC
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 05:49:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAA071F23B7E
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 05:52:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85B1D3B7A8;
-	Sun, 17 Nov 2024 05:49:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 518052EAE6;
+	Sun, 17 Nov 2024 05:52:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QPAZtno1"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZqgPBW2m"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DAF015E96;
-	Sun, 17 Nov 2024 05:49:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACD402FB2;
+	Sun, 17 Nov 2024 05:52:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731822545; cv=none; b=Hbq5/V4qxHieaLoOI6/mf5QBd2xffGDQk0xaMKsZp1TqIhY3pkDhMKRWRva9NB6t6eExEt6M/mxFVcLZtJgerkvGNaUgqBuONOSjcxSXcR7gEapVe1WoZTWCLhBIkvyYQSGoPGEWm9kHTI/H91mpbbhL+4ljN+23kh58/8hON1s=
+	t=1731822768; cv=none; b=F0SmJzM9xRIEfCKzhqAM2C+CgbzGyKr326hJj6cdibaS9460k90isROfaiwkJHxcV8nfswddkyBe5eOK+RoeBj6gIjGtwEDLhorB7a8wFAyY16ygJQ6a1nMAGVYTDqoNJVPc7wKpIujitaM+5WHQJH4pS0+ESmPHNRUL4SOz8D4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731822545; c=relaxed/simple;
-	bh=K5mcIFf6KWqYvD7AWDGPfJ4yz3xBRzhejZq9iMDkX8I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HDOyhp1pENp+HkTxwu5a3cMIILRk2MWBk2VdK7mYoLMcD4FQxvBWLTd7rtlc5lrQYyCGm1GVUuBB9vXvdst002uXePtim/BsgdrBbyx0jSHx+T7iOoUWmhlFD1mSo056a7F6xmK014yZAjVPHXEecDNGtFtDJQqIdQprghsok8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QPAZtno1; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731822544; x=1763358544;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=K5mcIFf6KWqYvD7AWDGPfJ4yz3xBRzhejZq9iMDkX8I=;
-  b=QPAZtno1hcK9ot5OgCilhSI7YJu1uCwTZuXQFB9QjakDdhAaelGkJsxk
-   q/p7uHSEtyYUsxV3FRyhiQJw7bIAXhaWsjIVeew4jRNx7WNFpDGtGkRXc
-   PPqK0KZH3nIQC+C1uapcIp/1SsXyJPt/YKaSavnOL/AyItFgLao76q0Iv
-   RZGhs4Kr/ief/NPKCZDrYLdNi3112k2KB3kLzJO5gtaXVTmAnFB/ehy0g
-   2CMiH/FstIxDc3ysLg/m9i6UrfttzxKo546xRqeYM2kGA3/jYX/vB/nUG
-   2XWUVOg6kd0wVuOT2HamkfBNx+3Gi0XHQPBZ/Xq4tO4m85mGG2nk/NYtZ
-   A==;
-X-CSE-ConnectionGUID: BrR0WxswTSSUQRNRJUcRtQ==
-X-CSE-MsgGUID: aovsbX5hT/aDTDwvBC6TyQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11258"; a="31176351"
-X-IronPort-AV: E=Sophos;i="6.12,161,1728975600"; 
-   d="scan'208";a="31176351"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Nov 2024 21:49:04 -0800
-X-CSE-ConnectionGUID: RfKSW4tFSdOtMaW5d3L56g==
-X-CSE-MsgGUID: 2M7UIhSVQLGr9mmiGOdWVA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,161,1728975600"; 
-   d="scan'208";a="88818447"
-Received: from lkp-server01.sh.intel.com (HELO 1e3cc1889ffb) ([10.239.97.150])
-  by orviesa010.jf.intel.com with ESMTP; 16 Nov 2024 21:49:00 -0800
-Received: from kbuild by 1e3cc1889ffb with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tCY9Z-0001Zt-0V;
-	Sun, 17 Nov 2024 05:48:57 +0000
-Date: Sun, 17 Nov 2024 13:48:34 +0800
-From: kernel test robot <lkp@intel.com>
-To: Krishna chaitanya chundru <quic_krichai@quicinc.com>,
-	quic_mrana@quicinc.com, quic_vbadigan@quicinc.com,
-	kernel@quicinc.com, Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Helgaas <helgaas@kernel.org>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?unknown-8bit?Q?Wilczy=C5=84ski?= <kw@linux.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	Krishna chaitanya chundru <quic_krichai@quicinc.com>
-Subject: Re: [PATCH 2/4] PCI: of: Add API to retrieve equalization presets
- from device tree
-Message-ID: <202411171316.4RG7T90F-lkp@intel.com>
-References: <20241116-presets-v1-2-878a837a4fee@quicinc.com>
+	s=arc-20240116; t=1731822768; c=relaxed/simple;
+	bh=lJF35G3iawF9neNf2TiAhh320szRAcoG/yrAEvImh9A=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WyNgOrJxlyDLTPaba4gDEqWYRnThzZDD+t/p2WkkADGpXQtP1M0/03/O9QLlFbuVAhN49WDX0ZGY/+ULzM6sMqLBthwrCmC/MPc8mAx5Ku4R+/mo9KnnKCpCbGxE8HRUhQTb9nzKwhxm8mafYFSWyM2a8gXfuRn82GTrEs1w01E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZqgPBW2m; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37BDBC4CECD;
+	Sun, 17 Nov 2024 05:52:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731822768;
+	bh=lJF35G3iawF9neNf2TiAhh320szRAcoG/yrAEvImh9A=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ZqgPBW2mUQKQGrZWQMHb6934mIVxGzPX+/a7Kzuaman5pmp2OSbEDIb7FgOHi+yvD
+	 zQdSozklXiiyqzXw7LQZ0L5fX/Tqa4XTjRFTzlT3uq0cVrmpYTVLv5Pdd/E1d8w6ZI
+	 pPLSqXOFlZ1GBvP4x95j+ETDMoM04chyg3D911AOGK+cAhlGPnitf1KFESlovvqF/x
+	 kclMhk/Zz8x5y6m0I5TiYCyhCjrYUQNz6wBvIWh2ln8WK6VkuNthxiW3eJK6+dwXzj
+	 aguKJAWzFl8grh4Lqv+lWQoE4R8VrqHH0rciiRarfadGoVDBO6ixusUxs9D7NsKT+2
+	 5/hO6rkVB9s2w==
+From: Kees Cook <kees@kernel.org>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Kees Cook <kees@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH] mm: Handle compound pages better in __dump_page()
+Date: Sat, 16 Nov 2024 21:52:44 -0800
+Message-Id: <20241117055243.work.907-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241116-presets-v1-2-878a837a4fee@quicinc.com>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2294; i=kees@kernel.org; h=from:subject:message-id; bh=lJF35G3iawF9neNf2TiAhh320szRAcoG/yrAEvImh9A=; b=owGbwMvMwCVmps19z/KJym7G02pJDOmWLavfcJ7v+JuzaofVtBfmuo+sN4iHNB68t/Xnm8lbv MuebzLa3VHKwiDGxSArpsgSZOce5+Lxtj3cfa4izBxWJpAhDFycAjAR/0uMDGvPNcsunP17/sPA CRMeVFmoFsdvO3whYNaxMA8pKaf+jRcZGV6ycHHYFThYlu06KB2fsOX78ykx+68UNn1/8jHoWPg zUz4A
+X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
 
-Hi Krishna,
+GCC 15's -Warray-bounds reports:
 
-kernel test robot noticed the following build warnings:
+In function 'page_fixed_fake_head',
+    inlined from '_compound_head' at ../include/linux/page-flags.h:251:24,
+    inlined from '__dump_page' at ../mm/debug.c:123:11:
+../include/asm-generic/rwonce.h:44:26: warning: array subscript 9 is outside array bounds of 'struct page[1]' [-Warray-bounds=]
 
-[auto build test WARNING on 81983758430957d9a5cb3333fe324fd70cf63e7e]
+(Not noted in this warning is that the code passes through page_folio()
+_Generic macro.)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Krishna-chaitanya-chundru/arm64-dts-qcom-x1e80100-Add-PCIe-lane-equalization-preset-properties/20241117-000950
-base:   81983758430957d9a5cb3333fe324fd70cf63e7e
-patch link:    https://lore.kernel.org/r/20241116-presets-v1-2-878a837a4fee%40quicinc.com
-patch subject: [PATCH 2/4] PCI: of: Add API to retrieve equalization presets from device tree
-config: i386-buildonly-randconfig-005-20241117 (https://download.01.org/0day-ci/archive/20241117/202411171316.4RG7T90F-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241117/202411171316.4RG7T90F-lkp@intel.com/reproduce)
+It may not be that "precise" is always 1 page, so accessing "page[1]"
+in either page_folio() or folio_test_large() may cause problems.
+Instead, explicitly make precise 2 pages. Just open-coding page_folio()
+isn't sufficient to avoid the warning[1].
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411171316.4RG7T90F-lkp@intel.com/
+Link: https://lore.kernel.org/r/ZkN0aSE9zAB5aXvM@casper.infradead.org [1]
+Signed-off-by: Kees Cook <kees@kernel.org>
+---
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-mm@kvack.org
+---
+ mm/debug.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-All warnings (new ones prefixed by >>):
-
-   In file included from drivers/pci/controller/dwc/pcie-designware.c:23:
->> drivers/pci/controller/dwc/../../pci.h:803:12: warning: 'of_pci_get_equalization_presets' defined but not used [-Wunused-function]
-     803 | static int of_pci_get_equalization_presets(struct device *dev,
-         |            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-vim +/of_pci_get_equalization_presets +803 drivers/pci/controller/dwc/../../pci.h
-
-   802	
- > 803	static int of_pci_get_equalization_presets(struct device *dev,
-   804						   struct pci_eq_presets *presets,
-   805						   int num_lanes)
-   806	{
-   807		return 0;
-   808	}
-   809	#endif /* CONFIG_OF */
-   810	
-
+diff --git a/mm/debug.c b/mm/debug.c
+index aa57d3ffd4ed..7ea396e8c143 100644
+--- a/mm/debug.c
++++ b/mm/debug.c
+@@ -123,15 +123,15 @@ static void __dump_folio(struct folio *folio, struct page *page,
+ static void __dump_page(const struct page *page)
+ {
+ 	struct folio *foliop, folio;
+-	struct page precise;
++	struct page precise[2] = { };
+ 	unsigned long pfn = page_to_pfn(page);
+ 	unsigned long idx, nr_pages = 1;
+ 	int loops = 5;
+ 
+ again:
+-	memcpy(&precise, page, sizeof(*page));
+-	foliop = page_folio(&precise);
+-	if (foliop == (struct folio *)&precise) {
++	memcpy(&precise[0], page, sizeof(*page));
++	foliop = page_folio(&precise[0]);
++	if (foliop == (struct folio *)&precise[0]) {
+ 		idx = 0;
+ 		if (!folio_test_large(foliop))
+ 			goto dump;
+@@ -150,13 +150,13 @@ static void __dump_page(const struct page *page)
+ 		if (loops-- > 0)
+ 			goto again;
+ 		pr_warn("page does not match folio\n");
+-		precise.compound_head &= ~1UL;
+-		foliop = (struct folio *)&precise;
++		precise[0].compound_head &= ~1UL;
++		foliop = (struct folio *)&precise[0];
+ 		idx = 0;
+ 	}
+ 
+ dump:
+-	__dump_folio(foliop, &precise, pfn, idx);
++	__dump_folio(foliop, &precise[0], pfn, idx);
+ }
+ 
+ void dump_page(const struct page *page, const char *reason)
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.34.1
+
 
