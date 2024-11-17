@@ -1,111 +1,90 @@
-Return-Path: <linux-kernel+bounces-411978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A79E9D01F5
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 04:35:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4636C9D01F7
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 04:41:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4BF61F22E4F
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 03:35:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDD841F22C94
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 03:41:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7191E1171C;
-	Sun, 17 Nov 2024 03:34:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E45AE11712;
+	Sun, 17 Nov 2024 03:41:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZBg+Hny2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I9nxrFbZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC64D6FB0;
-	Sun, 17 Nov 2024 03:34:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F4E028EB
+	for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 03:41:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731814497; cv=none; b=EEi4DIkJFD4XOD7OCSjG10tJOv7p2j7JFjsK3J/sfpvgxdpQpnFjwzZWxuQZH4noC+IJQ4D3rOLseYwj1YLtFtw7+qnwH6tCF9oeGjyaRzGisuqnxkbKX2yH+EoFUyJnIVEvUVOA4gCUri8EB+5ZCvLv9eqkmkIoqVvJs4kS2Gc=
+	t=1731814904; cv=none; b=fs9EdafM6/7+OYZvSi6ex85mTWJEP0Y0cUd52UPrjn9uTj47rMREMPYg3KdhG1Lx02MnmOeDvMhP6Bnz+44E7OnxOjFfx797Cyh8dRcmjswTctzRnWW5yHUlXfRcJ143KIDZaAcbphFJXYS+QriK8i7mp2Xd+bulHRMbwtMaLV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731814497; c=relaxed/simple;
-	bh=Eku9wIx8SnL1CGEny2QkDwzzkpnkr/vdiw6LJHjH5X8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=faWB7m/p4UZfKqHZ8iMiVzyC3PSQ28TVK6FfUTjX3tLtXhPCwk3uFCTaMt2IuaUNnJI4EcNOwL257pQj8U7IFLAh4ZKWZSGUFhx5entKQ0HXHuMBxG7w832+huDfL5ZT5dVmfBz/rnxkA29yM9SF29jOHI5qxYDQlvIPliH6BWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZBg+Hny2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3000FC4CECD;
-	Sun, 17 Nov 2024 03:34:57 +0000 (UTC)
+	s=arc-20240116; t=1731814904; c=relaxed/simple;
+	bh=Fh4kPox9UjV5xE/GDrhwl3lS8k1Xznr8ojhJreMCXs0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WOm78g6n9AdPOt/o31SaEXQq2iyWu92fqHATddL5JfaVEUrxCxdmznR6GOg2lls4AvnWyU2GrsCpuEBL6RLMQpETbDuOD81Hxqg77X6MWHdhtYLrymFuC7xOcqeyg3PQK4I7HA0B0VOmAvfHaZ6YqVYt5yok3gYQ5imCjGSFiz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I9nxrFbZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E51EC4CECD;
+	Sun, 17 Nov 2024 03:41:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731814497;
-	bh=Eku9wIx8SnL1CGEny2QkDwzzkpnkr/vdiw6LJHjH5X8=;
-	h=From:To:Cc:Subject:Date:From;
-	b=ZBg+Hny2nGRD1sDLANX8Qql7LTzA1MxCWuKgM4tR4bOk+OUdaflBHmrkHkWU911f/
-	 1gBZvmYoBbfz0+UhW0QQxdKx/ZsDraqZxafCVdSHZHUBLOV/63+ChOSMJAezZ3/aIX
-	 SovKGoGqcaHJeRxBDuUai1nnpdhzE5Apn5A3kLmQOLRiUnv1PPzg6Gxoouqa7SddDW
-	 flOzSNVrDpF0EXoPbdWgBtrrsdMuN9HOL4/X0bzW6oaVTylHntclkRxlgLOMtIX4De
-	 /N5RD9pTpLOi406raLn9fl0LZSYHtnCTXkDVu7IkXgRM5LFnfWs8K7TKnF2UfrS/8f
-	 hvj50WR0SDRtA==
-From: Kees Cook <kees@kernel.org>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Kees Cook <kees@kernel.org>,
-	Marek Vasut <marex@denx.de>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Luca Ellero <l.ellero@asem.it>,
-	linux-input@vger.kernel.org,
-	Alexander Stein <alexander.stein@ew.tq-group.com>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH] Input: ads7846 - Expand xfer array to match usage
-Date: Sat, 16 Nov 2024 19:34:50 -0800
-Message-Id: <20241117033445.work.274-kees@kernel.org>
-X-Mailer: git-send-email 2.34.1
+	s=k20201202; t=1731814903;
+	bh=Fh4kPox9UjV5xE/GDrhwl3lS8k1Xznr8ojhJreMCXs0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=I9nxrFbZDDA1mqBle1uo+iuC+uUJ3rupF2ESk8qYrAaWUDOKqXgzqi6MAcAljwnKA
+	 Ip2OWpla1MXOYTKQGNl5YHL8zTyQrU5QX8CcNcgyhbwMmmWP9pQgIpPojpqhq+mFZn
+	 tnZclO4KIdGQNlklmyvgUXN7umTT4fHWyJniyR+byfwyZtc3oDAQhoMBdsJDbXN4qE
+	 FHaPz/qDxtT/cRL0VO/ssLMMhujVLD0/jk/URedwUuKbcYJWU3fpxQpmaFvsOdYRIX
+	 bZAYneVbfqCqbZkcQv35VyYP8UkT/FyKFoZLdjgDQIcPoO5/sMrdzbQO8+4WtHizPJ
+	 Y0vW7usnOpjJA==
+Date: Sat, 16 Nov 2024 22:41:42 -0500
+From: Sasha Levin <sashal@kernel.org>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	David Rientjes <rientjes@google.com>,
+	Christoph Lameter <cl@linux.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>
+Subject: Re: [GIT PULL] slab updates for 6.13
+Message-ID: <Zzll9v3dR8UxwvQ8@sashalap>
+References: <03ec75a9-aade-4457-ac21-5649116afa98@suse.cz>
+ <Zzi7BxJASrR_wbAQ@sashalap>
+ <Zzi7zR0maqdCC3ME@sashalap>
+ <52be272d-009b-477b-9929-564f75208168@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1718; i=kees@kernel.org; h=from:subject:message-id; bh=Eku9wIx8SnL1CGEny2QkDwzzkpnkr/vdiw6LJHjH5X8=; b=owGbwMvMwCVmps19z/KJym7G02pJDOmWKZF7LT4Zv2YW2e6kW+7X/eHx4s2vpioISRat6Z9z4 /vTg8afOkpZGMS4GGTFFFmC7NzjXDzetoe7z1WEmcPKBDKEgYtTACaSr83wP6DkrYFFnl/8w4se lnb824WXzNRom289pWZp89K42edmH2L4K7T6suKKB1bJ8/mnBi3a4SUU2buiIIbN+var8Dnpr+b s4QQA
-X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <52be272d-009b-477b-9929-564f75208168@suse.cz>
 
-Commit 781a07da9bb9 ("Input: ads7846 - add dummy command register
-clearing cycle") added commands to struct ser_req::xfer without
-expanding it to hold them. Expand the array to the correct size.
+On Sat, Nov 16, 2024 at 09:43:07PM +0100, Vlastimil Babka wrote:
+>On 11/16/24 16:35, Sasha Levin wrote:
+>> [ Obviously I fat-fingered it and didn't add Christian or Al ]
+>
+>I have found the problem and looks like I managed to force push an older
+>broken version of a branch, possibly due to switching between two computers.
+>Serves me well for amending in some last minute R-b tags. Doing git diff
+>@{u} to check for unexpected suprirses before pushing the result didn't help
+>this time, either I forgot or was blind.
+>
+>I have deleted the slab-for-6.13 signed tag and pushed the fixed branch only
+>to -next. Thanks a lot Sasha for catching this early and please drop the
+>merge from the for-linus tree.
 
-../drivers/input/touchscreen/ads7846.c: In function 'ads7846_read12_ser':
-../drivers/input/touchscreen/ads7846.c:416:18: error: array subscript 7 is above array bounds of 'struct spi_transfer[6]' [-Werror=array-bounds=]
-  416 |         req->xfer[7].rx_buf = &req->scratch;
-      |         ~~~~~~~~~^~~
-../drivers/input/touchscreen/ads7846.c:334:33: note: while referencing 'xfer'
-  334 |         struct spi_transfer     xfer[6];
-      |                                 ^~~~
+I've dropped the merge and tests are passing now, thanks!
 
-Fixes: 781a07da9bb9 ("Input: ads7846 - add dummy command register clearing cycle")
-Signed-off-by: Kees Cook <kees@kernel.org>
----
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Marek Vasut <marex@denx.de>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Luca Ellero <l.ellero@asem.it>
-Cc: linux-input@vger.kernel.org
----
- drivers/input/touchscreen/ads7846.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/input/touchscreen/ads7846.c b/drivers/input/touchscreen/ads7846.c
-index 75e5b2e4368d..066dc04003fa 100644
---- a/drivers/input/touchscreen/ads7846.c
-+++ b/drivers/input/touchscreen/ads7846.c
-@@ -331,7 +331,7 @@ struct ser_req {
- 	u8			ref_off;
- 	u16			scratch;
- 	struct spi_message	msg;
--	struct spi_transfer	xfer[6];
-+	struct spi_transfer	xfer[8];
- 	/*
- 	 * DMA (thus cache coherency maintenance) requires the
- 	 * transfer buffers to live in their own cache lines.
 -- 
-2.34.1
-
+Thanks,
+Sasha
 
