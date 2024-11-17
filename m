@@ -1,107 +1,103 @@
-Return-Path: <linux-kernel+bounces-411985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4417B9D0205
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 05:53:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A2DF9D020A
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 06:00:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBB221F238F5
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 04:53:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22AA41F238E5
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 05:00:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2B9E14A90;
-	Sun, 17 Nov 2024 04:53:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="juXa5VM2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D4D5F9D6;
-	Sun, 17 Nov 2024 04:53:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B456A18E25;
+	Sun, 17 Nov 2024 05:00:17 +0000 (UTC)
+Received: from 189.cn (ptr.189.cn [183.61.185.104])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B57D315C0;
+	Sun, 17 Nov 2024 05:00:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.61.185.104
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731819202; cv=none; b=u5dVon7b/ZW/v7SaDY27a9tOF4JCPggvrXiVqMYbI2AgKngxQIbSVOgO/TWHzxGYaAYbjyVwwQVlwLedHRPIh1Gsy7imx8EtEbhQHcB67nyKd7Nq5N99gt/7VObuTslK/HeclSwuGoZgqcdDh2oqBmZZ8jj2AZUcPpi0OIuwThw=
+	t=1731819617; cv=none; b=cB32ADrqRU1lIHcrvkyYubzSPLWKh9rSJRAMXnvJBzIjxy9wOX5Emn7JRnndUlddJaP7dRTR13Noj1yyBYyw0ZzbXqMa1o5DkM+5PsBuN58rzhw6YZsF0d3xgq1pOApxz35rToD3+i7JEc9Gls7qMYHqYB6LRnESNuW3FUWW920=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731819202; c=relaxed/simple;
-	bh=Z4M/l36RQ7BDxA0KkJcywqBI1etn5Goa+uDViOuOZao=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=p1smu8VVj6cmDmwNhyPEt32ag5TeI+zLz0exmVP/TFeLTdeTnhwTrpXYD/7eVtbXgHBRrcnPXZQO7qyscGBxJGcECaAGV6OqpBo+qNgHfXgf6PiVvC1iJy7i/gMkPCQE1t8DcQdvXadhfDYmOoO2Ca4owHQuh7ZjvbQDcNV4s3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=juXa5VM2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC79CC4CED9;
-	Sun, 17 Nov 2024 04:53:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731819201;
-	bh=Z4M/l36RQ7BDxA0KkJcywqBI1etn5Goa+uDViOuOZao=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=juXa5VM2/3+gf5GKqZo2M0CM5a64MV7GtJW4uxarzymsNmtEjNFADlwrXXQWNeMFV
-	 KJt7QUXfdahobcnv5LdrxDqPCdLQsnbPnEXQxcVeUMdzobUaqdIUjwi3sFTOA+ReUb
-	 TTPM9PmbPYSxKxZix4/SUDOcFRQivtjmU75w7q++WCsBaZk7dfNr68JchAIViZYIsa
-	 Qhz6kgjf0AN0qXTyIhh0BZbEF0sAKl69yljkCllDKExmJUVvSd+EVU6a8a+5GZfeXT
-	 PokapZtrtiF/8047rXyoZ0q0Zjg/JePUCczkm6lT1LYaI/gbD21IAGFv+t6Uu53pku
-	 kIr99w7ZzupEA==
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2fb51f39394so27779891fa.2;
-        Sat, 16 Nov 2024 20:53:21 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXPyZy4wQ7QE9Lzs0PNypb2Xvwd0dqiCpHD4rdfMv8F9m6IpmGsVWt2tfYBS4blWe2dSJXmNHjirBDul1vW@vger.kernel.org, AJvYcCXQHE0S1ObEOjHbaKe3sLLi7Rxd6+OPD5WQMIioPEpQkvzqcAI9WCfuHYPC8PlMpoaf6LwJzk68uVGlXqw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCqo7n/wcZ6gA0kk69lBjADCJt6gaNrhF/oz7vDInN6H3X4TC+
-	nhsQhO4kxes5q+Lew2fyg3q8moTQ4KlrBY+yyxlGklbRQvqpsZ7I4c8E8ycfqq0fQ+ZHGIFlwJv
-	gxTkxn7/vYMlZLVoMDwNvpNNSr68=
-X-Google-Smtp-Source: AGHT+IFfyVPI/OVi1o+HOnvr+Rz8GoX4PcmXLXqpQzSsQLua2qkafXKAkY8vkxBQcZ+N/vBhCTLgDEDFQ/sdJsp/NN4=
-X-Received: by 2002:a05:651c:1595:b0:2ff:5210:4128 with SMTP id
- 38308e7fff4ca-2ff60925ebcmr36647001fa.22.1731819200527; Sat, 16 Nov 2024
- 20:53:20 -0800 (PST)
+	s=arc-20240116; t=1731819617; c=relaxed/simple;
+	bh=XgFJjt5/DFGuMscEjrtcxG3CWGxgAUMArINndNWJhU8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JkTfWhgsuCQ4Oqpoo/+/OSLNyjGeKv23anzi9Sm0SuN8pkNGaVTe86lh09R4/PcVbBWW1nTYquN5VdaUNeZAwkOq6h2Spf98INUFON2MBME6UFUaL2oA/iIvmhDbiaialy2OISZfobPskCOnxUVVnx5It+W5Vad2bA+/XpmX7W0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=189.cn; spf=pass smtp.mailfrom=189.cn; arc=none smtp.client-ip=183.61.185.104
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=189.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=189.cn
+HMM_SOURCE_IP:10.158.242.145:64623.961438416
+HMM_ATTACHE_NUM:0000
+HMM_SOURCE_TYPE:SMTP
+Received: from clientip-60.24.208.28 (unknown [10.158.242.145])
+	by 189.cn (HERMES) with SMTP id F3C7B10294C;
+	Sun, 17 Nov 2024 12:55:15 +0800 (CST)
+Received: from  ([60.24.208.28])
+	by gateway-153622-dep-5c5f88b874-qw5z2 with ESMTP id 42bc408d85d145a9944272cc616e9566 for davem@davemloft.net;
+	Sun, 17 Nov 2024 12:55:18 CST
+X-Transaction-ID: 42bc408d85d145a9944272cc616e9566
+X-Real-From: chensong_2000@189.cn
+X-Receive-IP: 60.24.208.28
+X-MEDUSA-Status: 0
+Sender: chensong_2000@189.cn
+From: Song Chen <chensong_2000@189.cn>
+To: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	kory.maincent@bootlin.com,
+	aleksander.lobakin@intel.com,
+	willemb@google.com
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Song Chen <chensong_2000@189.cn>
+Subject: [PATCH] net/core/dev_ioctl: avoid invoking modprobe with empty ifr_name
+Date: Sun, 17 Nov 2024 12:55:12 +0800
+Message-Id: <20241117045512.111515-1-chensong_2000@189.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241108214953.1160765-1-xur@google.com>
-In-Reply-To: <20241108214953.1160765-1-xur@google.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Sun, 17 Nov 2024 13:52:44 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARO307kMjXgBPG59g4zbiW6KPQK8SJqjhVS1A7esDJaZw@mail.gmail.com>
-Message-ID: <CAK7LNARO307kMjXgBPG59g4zbiW6KPQK8SJqjhVS1A7esDJaZw@mail.gmail.com>
-Subject: Re: [PATCH v2] kbuild: Fix Propeller build option
-To: Rong Xu <xur@google.com>
-Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Han Shen <shenhan@google.com>, 
-	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sat, Nov 9, 2024 at 6:50=E2=80=AFAM Rong Xu <xur@google.com> wrote:
->
-> The '-fbasic-block-sections=3Dlabels' option has been deprecated in tip
-> of tree clang (20.0.0) [1]. While the option still works, a warning is
-> emitted:
->
->   clang: warning: argument '-fbasic-block-sections=3Dlabels' is deprecate=
-d, use '-fbasic-block-address-map' instead [-Wdeprecated]
->
-> Add a version check to set the proper option.
->
-> Link: https://github.com/llvm/llvm-project/pull/110039 [1]
->
-> Signed-off-by: Rong Xu <xur@google.com>
-> Reported-by: Nathan Chancellor <nathan@kernel.org>
-> Suggested-by: Nathan Chancellor <nathan@kernel.org>
->
-> ---
-> ChangeLog in V2
-> Integrated suggestions from Nathan Chancellor.
-> (1) improved commit message
-> (2) added links to the comments
-> (3) used ld.lld version in the version check for lld
-> ---
+dev_ioctl handles requests from user space if a process calls
+ioctl(sockfd, SIOCGIFINDEX, &ifr). However, if this user space
+process doesn't have interface name well specified, dev_ioctl
+doesn't give it an essential check, as a result, dev_load will
+invoke modprobe with a nonsense module name if the user happens
+to be sys admin or root, see following code in dev_load:
 
-Applied to linux-kbuild.
-Thanks!
+    no_module = !dev;
+    if (no_module && capable(CAP_NET_ADMIN))
+        no_module = request_module("netdev-%s", name);
+    if (no_module && capable(CAP_SYS_MODULE))
+        request_module("%s", name);
 
+This patch checks if ifr_name is empty at the beginning, reduces
+the overhead of calling modprobe.
 
+Signed-off-by: Song Chen <chensong_2000@189.cn>
+---
+ net/core/dev_ioctl.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
---=20
-Best Regards
-Masahiro Yamada
+diff --git a/net/core/dev_ioctl.c b/net/core/dev_ioctl.c
+index 473c437b6b53..1371269f17d5 100644
+--- a/net/core/dev_ioctl.c
++++ b/net/core/dev_ioctl.c
+@@ -676,6 +676,9 @@ int dev_ioctl(struct net *net, unsigned int cmd, struct ifreq *ifr,
+ 	if (cmd == SIOCGIFNAME)
+ 		return dev_ifname(net, ifr);
+ 
++	if (ifr->ifr_name[0] == '\0')
++		return -EINVAL;
++
+ 	ifr->ifr_name[IFNAMSIZ-1] = 0;
+ 
+ 	colon = strchr(ifr->ifr_name, ':');
+-- 
+2.25.1
+
 
