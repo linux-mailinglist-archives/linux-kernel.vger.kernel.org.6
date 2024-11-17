@@ -1,152 +1,98 @@
-Return-Path: <linux-kernel+bounces-412225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE2039D0575
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 20:23:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B026A9D0579
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 20:23:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B4E9B21887
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 19:23:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 687481F21D2F
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 19:23:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1D581DB534;
-	Sun, 17 Nov 2024 19:23:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="qa+Abd/e"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D6441DB350;
+	Sun, 17 Nov 2024 19:23:27 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 984631C1F02;
-	Sun, 17 Nov 2024 19:23:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B1451DA633
+	for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 19:23:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731871389; cv=none; b=OOtNId+uWDMM0QR0wJFvL0feWOJGnMhNeENGQ3T48RcJyHzdLNODna5b3HOgNtaG1R0TlVsPN+003O7ejS17vJYbZ4it6Wp9opbR3aApuJAAQgWuV4H3w+9hTslPirbv7KVf+IZNq5ZoxYoKFBGyLQ2/yZ4j27wJDQkcY5ag9p0=
+	t=1731871406; cv=none; b=XVnzrz328toh0Y7nVT/bo7a5OFenjBgFu78Z5T/FeCGCkRGx/txPiCScx9piWucxmVhPkxbCeMM7/qZNanjngG4trLbBRBCFl5ej+InAu40vPVoPJOAjpfpSvMB7QdB+bbOe3C/yrm768g2AT6PI3loMEuwRNuEFzzzxt68qJkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731871389; c=relaxed/simple;
-	bh=qvvcw2rGSvVYr54LWhSwv3Jj9H1IvuduUO0bJhYedc8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ekj3voef4JZYEQYIjTB8C/C2G+KsFcqArj+RBtbv4LCNcZCDSg8lKzY6RCafr9gt11fPvrx1irhJWnkITOVinCVmnPhauo+dg+nqVy01Hzuvh1seKhAolRrHlblRCjh0uUlAfiYg1wTktEPF5Lw3EW/2hTRG6xdEe1Ehr7OZau0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=qa+Abd/e; arc=none smtp.client-ip=212.227.17.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1731871320; x=1732476120; i=w_armin@gmx.de;
-	bh=LpRR3FeRRmpTYUZWtc4tjgOoBSbvw3ZG88sGvtb5rwQ=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=qa+Abd/e9tTTYdvhS05twHeyLe5Kc0/vS7akznmd7J2VxWdh6UyfTQJhx9XzR7UO
-	 ji0LDCfObVhPS7vbd2k5zYnKKDHwHy8HcbiN7H8b8UgfyKtiIk1qseJRxdKOVbNEm
-	 0zPI83pwP5/AkUwsBWow3KGWsDxVRb5Yfounv1089IMJl5MFdt2fU9Tc/AhVVEMdo
-	 yF/skV+V2o18qObMEuZUOhB+gp0/cmRMJx/snHGFg+AAetSMeCwh1ZSsU9QbZdQVL
-	 5pyZP7S87OfP+LXDzEQqnxrTCH7SyNG6G0KgwVQgJ+YM7GGzCfMASxxZlYD55J/VX
-	 ecUiEcKfCnuWdhW7xA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.0.14] ([141.30.226.119]) by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1M5QJJ-1tE8QH0uk1-003ImY; Sun, 17
- Nov 2024 20:22:00 +0100
-Message-ID: <c5df06b5-b827-4978-a3fd-63a0fa052f87@gmx.de>
-Date: Sun, 17 Nov 2024 20:21:51 +0100
+	s=arc-20240116; t=1731871406; c=relaxed/simple;
+	bh=0kDBzHy4Z3zCX3m3Wqf3QqCh8+QMdVY5KxEOrrON/1A=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=SepFLKJ+wOGZtnyo5DVQ10VqgJqZ/P5Tg/+CcgxR7Gyb6Te64NwPFX7liosDAtSoj2bjMmAkWWyf+k/ukaN1T3bQAivQlLBisvofd4uyLo9NmzBNE/nf32QTg+GttJ5M8htaAujewujRdrxCJA1jQrhEvk2oWQFznxcEcrUKBtU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-33-DPMEbQEGOSq-2p63680f8w-1; Sun, 17 Nov 2024 19:23:21 +0000
+X-MC-Unique: DPMEbQEGOSq-2p63680f8w-1
+X-Mimecast-MFC-AGG-ID: DPMEbQEGOSq-2p63680f8w
+Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
+ (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sun, 17 Nov
+ 2024 19:23:20 +0000
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Sun, 17 Nov 2024 19:23:20 +0000
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Linus Torvalds' <torvalds@linux-foundation.org>
+CC: Vincent Mailhol <mailhol.vincent@wanadoo.fr>, Yury Norov
+	<yury.norov@gmail.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, "Luc Van
+ Oostenryck" <luc.vanoostenryck@gmail.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-sparse@vger.kernel.org"
+	<linux-sparse@vger.kernel.org>, Rikard Falkeborn <rikard.falkeborn@gmail.com>
+Subject: RE: [PATCH v4 1/2] compiler.h: add const_true()
+Thread-Topic: [PATCH v4 1/2] compiler.h: add const_true()
+Thread-Index: AQHbNfHJErTnWAqww06zGCD7FdQ1jLK7v5ZAgAAJngCAAAybIIAABtuAgAABLjA=
+Date: Sun, 17 Nov 2024 19:23:20 +0000
+Message-ID: <fab10eb9e70041c0a034f4945a978e00@AcuMS.aculab.com>
+References: <20241113172939.747686-4-mailhol.vincent@wanadoo.fr>
+ <20241113172939.747686-5-mailhol.vincent@wanadoo.fr>
+ <8bf6922f4bb143d1bc699aadd1c84607@AcuMS.aculab.com>
+ <CAHk-=wiq=GUNWJwWh1CRAYchW73UmOaSkaCovLatfDKeveZctA@mail.gmail.com>
+ <c2eabf2786c2498eae5772e5af3c456f@AcuMS.aculab.com>
+ <CAHk-=whaUtqsgLGk3a+1+SJ2+KGK+GK-WbSK0dX2JpVN3bs0hQ@mail.gmail.com>
+In-Reply-To: <CAHk-=whaUtqsgLGk3a+1+SJ2+KGK+GK-WbSK0dX2JpVN3bs0hQ@mail.gmail.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 14/22] ACPI: platform_profile: Notify change events on
- register and unregister
-To: Mario Limonciello <mario.limonciello@amd.com>,
- Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>,
- Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
- Corentin Chary <corentin.chary@gmail.com>, "Luke D . Jones"
- <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>,
- Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
- Alexis Belmonte <alexbelm48@gmail.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>,
- open list <linux-kernel@vger.kernel.org>,
- "open list:ACPI" <linux-acpi@vger.kernel.org>,
- "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER"
- <platform-driver-x86@vger.kernel.org>,
- "open list:THINKPAD ACPI EXTRAS DRIVER"
- <ibm-acpi-devel@lists.sourceforge.net>,
- Mark Pearson <mpearson-lenovo@squebb.ca>,
- Matthew Schwartz <matthew.schwartz@linux.dev>
-References: <20241109044151.29804-1-mario.limonciello@amd.com>
- <20241109044151.29804-15-mario.limonciello@amd.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: YSTdnB5zPj-yC913mTe5u_d66g9im8GmAkb78_8cdj0_1731871401
+X-Mimecast-Originator: aculab.com
 Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <20241109044151.29804-15-mario.limonciello@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:IECImMn+Qr7qI4SmFfOcZ8DpysDVqkGClF3OMSnb3x7UAV90VVB
- ddCbtnELaUOlnIxl4ZEK5DLQ3vWqoh0P4TnrJ7nqbsUqRbBDdeoJ378pd4Zs2X7SUW6G0SP
- ce/mZJTDAa2dMiKTzXCX1VOkWxUTOT06JcWEsZDKiOt5wn2XKOL3pF2GNyihLcRGbZZBXJ0
- sIwWBTMyfl0CEDCy4DUyg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:IItYEDh3QUg=;YsuqOR8Y7+L66qpcV0xHMXjWizj
- sjHp0ooV6Iq+PhcqudO5nZFMVPQqP/C3EXG9saQk8fmXnWa+I/bcAUGcUx52JTFlYflgIq5pz
- sTEz1KNDl4bFFsXwHAOLvyJigynz32WU6yYH7AbG2D1C9196I8VixjfuIM8ubXTMMltu6X5Lm
- irzfIqBWTWmIXagBEuU5Ljt9yV2SrcEa7STJsFhm9oous9ujx/TVP8b8DyiXqTXJJr4xQqgz1
- aMDtrrHcnGwYlDH01PWhdeA4zMhhJEQuXjXVuz2nhc/9gmpqaFivG6n9WZpYQxp0/Xwoin7Ya
- ZCA/g4OGsY4Jn0LfibRVbobBUYoLmnwBCE6N0zJcFbiIMgSAMXAOrc3q7SWxq0d5LCfOEvi4K
- Z6YteQ93eoIrU2+dIzOn7vGW2nV2W3F4D7eKQ2qsCe0WeUZfxhB2dqcwaB1C690UNdbOQz+l5
- qP0nZg7s9lw+mA6OVvK0N2q0wmsAuTh56mLL6/Ti9l+9HG3m3BiQ8ql/Q27s2yk7sLx7doJLz
- 12ecEIzxpJgUMKGBWrTIFNDpgz4yHdBtKQak2deSJaR36q+QoVU6QnyM8eqKzTPUf5lQqokbm
- 140knkoCsCdp6DB3JNxfcrmTRyTD62khqv+UgMoutdpCir/gKP1GAVM3nxbMWL7zW3vFHbjn9
- /+4YLof2wkqjYo/0SpV87nYWkIvoL+/eKA9yJH9cbAq4qKP7nVQhLQ1EiC8f9/27JfnrDGMOO
- /FUM32TP/mdDuTOgV/b8R575H51V38KJF7g4vAouD1C/8qK8OEBZKmXbUv7OTnmS2rwhQipfz
- tuMhXlsx1bVdEDgxR/gS1M5SLHkLfAaPbytmBVsFY51Jj8vIwRR3txABGX978/fpt6Ud5r7Vj
- k/ypZcQxOKmBuei8PLEPuqWsctW3skCFmQlrnDoTs18kbLZBw8efhlRO7
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 
-Am 09.11.24 um 05:41 schrieb Mario Limonciello:
+RnJvbTogTGludXMgVG9ydmFsZHMNCj4gU2VudDogMTcgTm92ZW1iZXIgMjAyNCAxOToxMA0KPiAN
+Cj4gT24gU3VuLCAxNyBOb3YgMjAyNCBhdCAxMTowNSwgRGF2aWQgTGFpZ2h0IDxEYXZpZC5MYWln
+aHRAYWN1bGFiLmNvbT4gd3JvdGU6DQo+ID4NCj4gPiBJIHRoaW5rIGV2ZXJ5dGhpbmcgY2FuIGJl
+IGJ1aWx0IG9uIGEgYmFzZSBpZl9jb25zdF96ZXJvKHgsIGlmX3osIGlmX256KQ0KPiA+ICNkZWZp
+bmUgY29uc3RfdHJ1ZSh4KSBpZl9jb25zdF96ZXJvKCEoeCksIDEsIDApDQo+ID4gI2RlZmluZSBp
+c19jb25zdGV4cHIoeCkgaWZfY29uc3RfemVybygoeCkgKiAwLCAxLCAwKQ0KPiA+IHdoaWNoIGdp
+dmVzIGEgYml0IG1vcmUgZmxleGliaWxpdHkuDQo+IA0KPiBUaGUgaXNfY29uc3RleHByKCkgc2hv
+dWxkIHByb2JhYmx5IGJlIGlmX2NvbnN0X3plcm8oMCohKHgpLDEsMCkgdG8gYmUNCj4gb2sgd2l0
+aCBwb2ludGVycyBhbmQgd2l0aCAibG9uZyBsb25nIiBjb25zdGFudHMuDQo+IA0KPiBBbmQgdGhl
+ICIxLDAiIGFyZ3VtZW50cyBzaG91bGQgaGF2ZSBhIHJlYWwgcmVhc29uIGZvciBleGlzdGluZy4g
+SSdtDQo+IG5vdCBlbnRpcmVseSBjb252aW5jZWQgYW55IG90aGVyIGNhc2VzIG1ha2UgbXVjaCBz
+ZW5zZS4NCg0KSSBtaWdodCBoYXZlIHVzZWQgdGhlbSB3aGVuIHRyeWluZyB0byBnZXQgKGhpZ2gg
+Pj0gMHUpIHRocm91Z2ggYSAtVzEgYnVpbGQuDQooZm9yIGV4YW1wbGUgaW4gR0VOTUFTSygpKS4N
+CkNhbid0IHF1aXRlIHJlbWVtYmVyIHRoZSBob3JyaWQgc29sdXRpb24gdGhvdWdoLg0KDQpTaW5j
+ZSA5OSUgd2lsbCBiZSAxLDAgbWF5YmUgc2F2aW5nIHRoZSBleHRyYSBleHBhbnNpb24gaXMgYmVz
+dCBhbnl3YXkuDQpTbyBoYXZlIGlzX2NvbnN0X3plcm8oeCkgYW5kIGFkZCBpZl9jb25zdF96ZXJv
+KHgsIGlmX3osIGlmX256KSBsYXRlci4NCg0KCURhdmlkDQoNCi0NClJlZ2lzdGVyZWQgQWRkcmVz
+cyBMYWtlc2lkZSwgQnJhbWxleSBSb2FkLCBNb3VudCBGYXJtLCBNaWx0b24gS2V5bmVzLCBNSzEg
+MVBULCBVSw0KUmVnaXN0cmF0aW9uIE5vOiAxMzk3Mzg2IChXYWxlcykNCg==
 
-> As multiple platform profile handlers may come and go, send a notificati=
-on
-> to userspace each time that a platform profile handler is registered or
-> unregistered.
-
-Reviewed-by: Armin Wolf <W_Armin@gmx.de>
-
->
-> Tested-by: Mark Pearson <mpearson-lenovo@squebb.ca>
-> Tested-by: Matthew Schwartz <matthew.schwartz@linux.dev>
-> Reviewed-by: Mark Pearson <mpearson-lenovo@squebb.ca>
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
-> ---
->   drivers/acpi/platform_profile.c | 4 ++++
->   1 file changed, 4 insertions(+)
->
-> diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/platform_pro=
-file.c
-> index c5487d3928c1b..c4d451782ff18 100644
-> --- a/drivers/acpi/platform_profile.c
-> +++ b/drivers/acpi/platform_profile.c
-> @@ -380,6 +380,8 @@ int platform_profile_register(struct platform_profil=
-e_handler *pprof)
->   		goto cleanup_ida;
->   	}
->
-> +	sysfs_notify(acpi_kobj, NULL, "platform_profile");
-> +
->   	cur_profile =3D pprof;
->
->   	err =3D sysfs_update_group(acpi_kobj, &platform_profile_group);
-> @@ -408,6 +410,8 @@ int platform_profile_remove(struct platform_profile_=
-handler *pprof)
->   	device_unregister(pprof->class_dev);
->   	ida_free(&platform_profile_ida, id);
->
-> +	sysfs_notify(acpi_kobj, NULL, "platform_profile");
-> +
->   	cur_profile =3D NULL;
->
->   	sysfs_update_group(acpi_kobj, &platform_profile_group);
 
