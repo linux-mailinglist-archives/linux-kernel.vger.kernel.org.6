@@ -1,88 +1,141 @@
-Return-Path: <linux-kernel+bounces-411959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6C059D01BE
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 01:37:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C979F9D01C1
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 01:46:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97E151F22AD2
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 00:37:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AE0B284A26
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 00:46:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE3B58F7D;
-	Sun, 17 Nov 2024 00:37:08 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3742B674;
+	Sun, 17 Nov 2024 00:46:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kC5vSboK"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16C861392
-	for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 00:37:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C18468F58;
+	Sun, 17 Nov 2024 00:46:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731803828; cv=none; b=UqnNdt+QJi0kZHUn94GRauOQcFVWO50TW+hi2fHArS7ZOaphin3dFoN6d0DTEpiuGwC87aIBiTwbYM7gWSJswJLQcb8W9B+UrpeZE+zKCY7xHcMJwbiwbc6D0MPziaAmVf/M8NQCVUFhW1BBDRaZSMuaZtpwMsvCcwWOXr32/Tg=
+	t=1731804389; cv=none; b=Q4TGWGDijuhF5/SbZvJ46NPuD5yQzHgATaKIKX0uC4YazRTX44zvxFaCzxBOciun63PgQ4io3KQDRmNLENlk6G+A5slSKFOydpxvLkvhNTugt+itKBisI4A1V0Ia0gTyHJEsVN5r/PEni2DNw9z0+BBBCF1IYjnGHz/O2pbSiKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731803828; c=relaxed/simple;
-	bh=90KsV0rRIXVLcshJQW4l6mMhXt38alpIMTuGs8odQeU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=E9rgSxfdRkUUvutuMpDTXJeR2Jy7ZRiNAmXgS7W8hSCFD5jXnzM3lJOriN2skml0nBC4/gEWaNbG5s8ttbz2ET2txCjz/N0KX+8Eru/XAS44lBvwiVYKI0d5r1crCFbDnh3ErntSwzUJd1Io/rK9W8Fy6+Jpvag4AJQtdIUN4f4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a3da2d46b9so36253735ab.0
-        for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 16:37:06 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731803826; x=1732408626;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=91k3LD0111RhfjoOAEnJA18VfRp5RkcFq3tbVNWtrD0=;
-        b=dgU19ojSDapAUxs3gdN5CTZ1vzkYjVJXWoi/DbJx7a6tDjUmFG9QvovzaSmIkxeZ3n
-         VCAfHf1dTwZtnKg/2fFZdQMUW3tUWN/x26qD1fn7msljoW9146E1BxRyNDjjSkatZXt6
-         BKoOhyKT6gzJPeGa1sInLLzpejJYaA9IEG1byvofBSuVuJxHJaXJbstdT7mtELbEuTCQ
-         fGWl90dnVM7m8gFu7D1v+HEQn0RhZBss0DjUzVmT2MKrVOefN6Tu8j4p9untk+rV7Bgy
-         2NGVCY97tcjVfnkHfbfBGsGnPreTQhipmz91olpYjBLR/xHH0pm7bQz2H5vY0+OQ89VI
-         3TJw==
-X-Forwarded-Encrypted: i=1; AJvYcCVAwYhwm4a0vg+A50j8lF2LJsJ5qHIvcH2P383rf7/k1BdwaF5al96TFxC6omO8eORODXO2Fqv/i81p5pE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyztHDLub5/WBEQbu19qLbrkRf2f2RqMMMT7GLAsSA3fLzg8GKQ
-	+RTKOiSLHFK3UaQRe225TOb3hyjMt3IKGCQAOJGIzacbO7So1uYlbKarL6hK1fTLBQ0tghLm96Q
-	5GEx6YqByuvUfwFnOhMkmTso6XcsYgS3MP9juQeGHNcEwC79jGkDe4So=
-X-Google-Smtp-Source: AGHT+IEemr6dN5obvd1896FAG7oaFtXNvNRgn0vfoZsuT5I9xRE0GVaDtL2+aY9m7ZqSbAauhFP3DzD1V7dP2dpvMussgeuURZcy
+	s=arc-20240116; t=1731804389; c=relaxed/simple;
+	bh=PzXGeeIrOWYZEs2yRXxGZGL8FaOkxUAdrGfguYkWM5Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XvVUFbB2mgOMKKlDdNKCw0DCYlJye/3zxgj6cYVfpGac/xob7eOMOlES2zNGoZvNANPEoPFxXpUJWOBU6u9Yt0U9DlIQ7m7DkQNgZeORyMVss1wa9g4qVZ0Z/KrblXM3NY2oZYU68k5ZRoKHeDDUt3u78nhFcs1WMqdgd6oJ1as=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kC5vSboK; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731804388; x=1763340388;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=PzXGeeIrOWYZEs2yRXxGZGL8FaOkxUAdrGfguYkWM5Y=;
+  b=kC5vSboKbQUZEp3N8U4k45h0j+XYJjUO/0tkVEHAU4/uHjncfO9ZnQJ/
+   /ZglLRg0qqPEGJkeUFKnEmc1HgoKwwOeDUZNWI9bTMADJZLdnHaL0TRcJ
+   rlcBNyA8fF/iYKjvJDdy1ymD5+I/jt/CSPgE/Svjrv5EbzKI7JLtwoSM0
+   zgzO+Xuj+lJYLEbKDTHaxtYcxE50ITmH7NQKAopzit1nr8Gw0qVbkRC84
+   GhrCiaZAsK+317FmfHY8dTNC/Ttvwyjy9r/Ulwby+DkYe8hEx270n/Ac7
+   Om5H+ohQaKG06LZGRXHuNeWpF5FnNpY9EWPLRzY5jmNrG5nFWvSS/h+YT
+   Q==;
+X-CSE-ConnectionGUID: 1y0NOOuZQZqvp2Nf+23Otw==
+X-CSE-MsgGUID: sjyaCh+PQxKTnOFom9DF6Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11258"; a="19393986"
+X-IronPort-AV: E=Sophos;i="6.12,160,1728975600"; 
+   d="scan'208";a="19393986"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Nov 2024 16:46:27 -0800
+X-CSE-ConnectionGUID: 0LV3cbWDT+6oY7XfbwPSng==
+X-CSE-MsgGUID: Y+/tZA4MTXm8TYfHtBtseA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,160,1728975600"; 
+   d="scan'208";a="93724253"
+Received: from lkp-server01.sh.intel.com (HELO 1e3cc1889ffb) ([10.239.97.150])
+  by fmviesa004.fm.intel.com with ESMTP; 16 Nov 2024 16:46:25 -0800
+Received: from kbuild by 1e3cc1889ffb with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tCTQk-0001CH-3D;
+	Sun, 17 Nov 2024 00:46:22 +0000
+Date: Sun, 17 Nov 2024 08:45:30 +0800
+From: kernel test robot <lkp@intel.com>
+To: Lothar Rubusch <l.rubusch@gmail.com>, lars@metafoo.de,
+	Michael.Hennerich@analog.com, jic23@kernel.org,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, l.rubusch@gmx.ch,
+	Lothar Rubusch <l.rubusch@gmail.com>
+Subject: Re: [PATCH 15/22] iio: accel: adxl345: reset the FIFO on error
+Message-ID: <202411170855.sbBnXXo4-lkp@intel.com>
+References: <20241114231002.98595-16-l.rubusch@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:b45:b0:3a7:45b4:47d8 with SMTP id
- e9e14a558f8ab-3a7480218b2mr74825475ab.9.1731803826185; Sat, 16 Nov 2024
- 16:37:06 -0800 (PST)
-Date: Sat, 16 Nov 2024 16:37:06 -0800
-In-Reply-To: <20241117001814.1342-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67393ab2.050a0220.e8d8d.016e.GAE@google.com>
-Subject: Re: [syzbot] [fs?] BUG: unable to handle kernel NULL pointer
- dereference in filemap_read_folio (4)
-From: syzbot <syzbot+09b7d050e4806540153d@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241114231002.98595-16-l.rubusch@gmail.com>
 
-Hello,
+Hi Lothar,
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+kernel test robot noticed the following build warnings:
 
-Reported-by: syzbot+09b7d050e4806540153d@syzkaller.appspotmail.com
-Tested-by: syzbot+09b7d050e4806540153d@syzkaller.appspotmail.com
+[auto build test WARNING on jic23-iio/togreg]
+[also build test WARNING on linus/master v6.12-rc7 next-20241115]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Tested on:
+url:    https://github.com/intel-lab-lkp/linux/commits/Lothar-Rubusch/iio-accel-adxl345-fix-comment-on-probe/20241115-190245
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
+patch link:    https://lore.kernel.org/r/20241114231002.98595-16-l.rubusch%40gmail.com
+patch subject: [PATCH 15/22] iio: accel: adxl345: reset the FIFO on error
+config: arc-randconfig-r052-20241117 (https://download.01.org/0day-ci/archive/20241117/202411170855.sbBnXXo4-lkp@intel.com/config)
+compiler: arc-elf-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241117/202411170855.sbBnXXo4-lkp@intel.com/reproduce)
 
-commit:         4a5df379 Merge tag 'mm-hotfixes-stable-2024-11-16-15-3..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17dc52e8580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4fca5d6b7cd3e6f
-dashboard link: https://syzkaller.appspot.com/bug?extid=09b7d050e4806540153d
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=16cc52e8580000
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202411170855.sbBnXXo4-lkp@intel.com/
 
-Note: testing is done by a robot and is best-effort only.
+All warnings (new ones prefixed by >>):
+
+>> drivers/iio/accel/adxl345_core.c:383:6: warning: no previous prototype for 'adxl345_empty_fifo' [-Wmissing-prototypes]
+     383 | void adxl345_empty_fifo(struct adxl34x_state *st)
+         |      ^~~~~~~~~~~~~~~~~~
+
+
+vim +/adxl345_empty_fifo +383 drivers/iio/accel/adxl345_core.c
+
+   376	
+   377	/**
+   378	 * Empty the fifo. This is needed also in case of overflow or error handling.
+   379	 * Read out all remaining elements and reset the fifo_entries counter.
+   380	 *
+   381	 * @st: The instance to the state object of the sensor.
+   382	 */
+ > 383	void adxl345_empty_fifo(struct adxl34x_state *st)
+   384	{
+   385		int regval;
+   386		int fifo_entries;
+   387	
+   388		/* In case the HW is not "clean" just read out remaining elements */
+   389		adxl345_get_fifo_entries(st, &fifo_entries);
+   390		if (fifo_entries > 0)
+   391			adxl345_read_fifo_elements(st, fifo_entries);
+   392	
+   393		/* Reset the INT_SOURCE register by reading the register */
+   394		regmap_read(st->regmap, ADXL345_REG_INT_SOURCE, &regval);
+   395	}
+   396	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
