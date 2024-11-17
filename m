@@ -1,117 +1,93 @@
-Return-Path: <linux-kernel+bounces-412061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99D0C9D0340
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 12:22:18 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E117D9D0346
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 12:29:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F5DA283CFA
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 11:22:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F792B2244E
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 11:29:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED609170A11;
-	Sun, 17 Nov 2024 11:22:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0FFD1547FB;
+	Sun, 17 Nov 2024 11:29:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="g3uU7i02"
-Received: from smtp.smtpout.orange.fr (smtp-29.smtpout.orange.fr [80.12.242.29])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="Bvpzp0A2"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7265733E7;
-	Sun, 17 Nov 2024 11:22:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.29
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F3653EA9A
+	for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 11:29:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731842530; cv=none; b=NvMM2NlOlGHtj4mfhQWks0hmNhTGVM+vWcieIyVAg3eto4r+hIK7nhzTLUp0fWyA0WobaLhBizsz2uyvubEq/tM4z+O5+jhfaee2Lo9vm6tKH7c0ORPsdPu1FwhCWRP/oBFJSw6jal7RZI6C+x5HCTBF4G3CrSjl4LmwvVXhTLg=
+	t=1731842961; cv=none; b=nq+H1UOVdv64WB6tP3lf5bG96gdzpoJ5QYc2sKiP9bsLP0dY86td1AilAtVBb7v/UaVcc/Q9wdaQmXGz7rrMMRWtiMioEfmTShxfC2oHMeKqigFpQ0LLz7xo2fpaQ5qo362Kofxqodb79HKFN6Gi1TgOpGLbDa6YNQgVOI992aU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731842530; c=relaxed/simple;
-	bh=GL6L0RdEB3pV7TqNFOrFDekS6axn/OVeGdxC9qw5byM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tOsyRwhh4opw+/55JS/vk1HLDgl8OujH/40NQ5R/erV3/R9x/giQ93xXtE9g9bzegje2LdbBPTKHlbquOd3slRLrD7AVG9aNL5JhepCs0hFNNlZC6vTBHOhMgNCHNMIHa6RxBinRbZp7bzUtR7DS5KJdNSW5Ra3nl+0UKM7Pkwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=g3uU7i02; arc=none smtp.client-ip=80.12.242.29
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from localhost.localdomain ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id CdLltujfVkz9DCdLltiABX; Sun, 17 Nov 2024 12:21:58 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1731842518;
-	bh=wutmjbunPazncW+7ACgp5eT9w4BJnbyk7q/fyDFLZ9g=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=g3uU7i02kt7I5UMCR2YSd0Jh7XdjTBkf1sV5I1IvB/dWjRSWhguCsUDnUcPk9SjIQ
-	 xDbA/sY5wzXGp8+lUTDjx2fYMIK+VM/BprxDh/mzNzDLzaFTigAq1Hoc/IMPxrGRgY
-	 yqA2uh+d8/VzX1GnsqNb4qS5v8Iar4rlm+iGqNfcHgGXZGryfmrV7xDXJMq7kAN91Y
-	 JyYvVYr2+ybGGGY+e7EVDLVvyXFZCP6CqVg1QbNvsA7+wIQU+PEWXsGIqQSmnZ+BLd
-	 JF7rqbpM7vRTqz1nBMLz3TAqN9PhVDxzsu0uCkF/T2TkPAYdSfR9bSUBG7OXrejMFw
-	 x+wqWFVIao+EQ==
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 17 Nov 2024 12:21:58 +0100
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Thomas Gleixner <tglx@linutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Marc Zyngier <maz@kernel.org>,
-	Aisheng Dong <aisheng.dong@nxp.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] irqchip/imx-irqsteer: Fix irq handling if an error occurs in imx_irqsteer_irq_handler()
-Date: Sun, 17 Nov 2024 12:21:43 +0100
-Message-ID: <ad6514c771fef0ac2d1b3c050c6db5d5e0fd034d.1731842478.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1731842961; c=relaxed/simple;
+	bh=PSBb+Fx6j8MqoaoYmqM6Mk179B1/iW4dbopQjEhK+JU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=fCl0lQ//7PHOl3ygk7+XHJr842YgFQcK9nZzKAKpaTw/3T/VRcSVwPMNp8LUT5qOXY9I72mj8mGy41C57COvYB0hkZmHgrfhUNIo9FqUj+hji7PxZoY0ZeEwcEhW6pNjitx6PqVo7305RRvOWrdsSJ+xZQak3R39FAbuWZmCPSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=Bvpzp0A2; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+	s=201909; t=1731842947;
+	bh=LwloFIxi3u3sTNfvSTU4Cv52KouL8YzkskRDutCjz4c=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=Bvpzp0A2UCD6/jvuPEqth7dkLgcz6V6FTxMxZTXN1UcyMzVaOauCZOWsW2IyA7003
+	 zsgjxBTRvpo3h9YkvL6h8bViy/NV3Rh++1+pJrIwhvo8He73EveEH09POo5/oX/So3
+	 7zEvQT/AkvqNGb0kJG9kLMea1MoctyHLKyj7gkLCW9p+Uoh8O+AeejGXlZJaMtGBaa
+	 BDosg9uVw/ckhbw1bRzE1auLJtwYMhbcrhTFR2ve6T7oadvH031DYYfe3hJiVPvsuR
+	 q07q0Le0/gUWjBKNzDPDAOALCp6ZNrwYXNu9FdpxvByKy+73LaNGdwR5JPoTVZELuT
+	 59ZSFTlPehK5w==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XrpS23y4fz4xD9;
+	Sun, 17 Nov 2024 22:29:06 +1100 (AEDT)
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>,
+ linuxppc-dev@lists.ozlabs.org
+Cc: linux-kernel@vger.kernel.org, geert@linux-m68k.org, arnd@arndb.de
+Subject: Re: [RFC PATCH 08/10] macintosh: Remove ADB_MACIO
+In-Reply-To: <c1c01965-ac44-4d8e-aff1-3f6169bdd3cf@csgroup.eu>
+References: <20241114131114.602234-1-mpe@ellerman.id.au>
+ <20241114131114.602234-8-mpe@ellerman.id.au>
+ <c1c01965-ac44-4d8e-aff1-3f6169bdd3cf@csgroup.eu>
+Date: Sun, 17 Nov 2024 22:29:08 +1100
+Message-ID: <87mshyxfnf.fsf@mpe.ellerman.id.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-chained_irq_enter(() should be paired with a corresponding
-chained_irq_exit().
+Christophe Leroy <christophe.leroy@csgroup.eu> writes:
+> Le 14/11/2024 =C3=A0 14:11, Michael Ellerman a =C3=A9crit=C2=A0:
+>> The macio-adb driver depends on PPC_CHRP, which has been removed, remove
+>> the driver also.
+>>=20
+>> Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+>> ---
+>>   drivers/macintosh/Kconfig     |   9 --
+>>   drivers/macintosh/Makefile    |   1 -
+>>   drivers/macintosh/adb.c       |   4 -
+>>   drivers/macintosh/macio-adb.c | 288 ----------------------------------
+>>   4 files changed, 302 deletions(-)
+>>   delete mode 100644 drivers/macintosh/macio-adb.c
+>
+> What about:
+>
+> drivers/macintosh/adb.c:        if (!machine_is(chrp) &&=20
+> !machine_is(powermac))
+> drivers/macintosh/adbhid.c:     if (!machine_is(chrp) &&=20
+> !machine_is(powermac))
 
-Here, if (hwirq < 0), a early return occurs and chained_irq_exit() is not
-called.
+Oops, missed them, thanks.
 
-Add a new label and a goto for fix it.
-
-Fixes: 28528fca4908 ("irqchip/imx-irqsteer: Add multi output interrupts support")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested only.
-
-Review with care, irq handling is sometimes tricky...
----
- drivers/irqchip/irq-imx-irqsteer.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/irqchip/irq-imx-irqsteer.c b/drivers/irqchip/irq-imx-irqsteer.c
-index 75a0e980ff35..59abe5a8beb8 100644
---- a/drivers/irqchip/irq-imx-irqsteer.c
-+++ b/drivers/irqchip/irq-imx-irqsteer.c
-@@ -135,7 +135,7 @@ static void imx_irqsteer_irq_handler(struct irq_desc *desc)
- 	if (hwirq < 0) {
- 		pr_warn("%s: unable to get hwirq base for irq %d\n",
- 			__func__, irq);
--		return;
-+		goto out;
- 	}
- 
- 	for (i = 0; i < 2; i++, hwirq += 32) {
-@@ -153,6 +153,7 @@ static void imx_irqsteer_irq_handler(struct irq_desc *desc)
- 			generic_handle_domain_irq(data->domain, pos + hwirq);
- 	}
- 
-+out:
- 	chained_irq_exit(irq_desc_get_chip(desc), desc);
- }
- 
--- 
-2.47.0
-
+cheers
 
