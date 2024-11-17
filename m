@@ -1,261 +1,165 @@
-Return-Path: <linux-kernel+bounces-412250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3985B9D0605
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 22:02:16 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E46339D060C
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 22:03:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45ED7282124
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 21:02:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34090B21C59
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 21:03:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A90121DB956;
-	Sun, 17 Nov 2024 21:02:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4D8B1DD866;
+	Sun, 17 Nov 2024 21:02:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="KcHSRb11";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="+4DEh/HW";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="KcHSRb11";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="+4DEh/HW"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="W7uUTpcG"
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0F9BA937
-	for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 21:01:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 740E984A3E
+	for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 21:02:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731877321; cv=none; b=m3pwIZmCYVdqSYxdfDUaAZwSFzuIgWQuDYZPRf55rFyFicit5zo8XhiuBFdscSHICF2KJEfmElyztZOQyHmtA0K27KJcc09v9PhVWwCjuB6dzNUa2lEsxcufrKcVaxds0qvx8urQnw3LJbr7hVROYP4l7ORACnFVIg0lMeH1u/0=
+	t=1731877377; cv=none; b=QTk4l5/jXGV5hOI40/ri15U8ij78kamZba1cohP59+LDky1XAL6qkVO0lBYCBJeqagCqFL81U1RKHU/ZlqXtb+NixAT5MBvl7tGe6pDCialKz8nRW5RjFapKOktZ50NF1g7+fxLHQvq77IiBQubaCJcilKfEQ8yVME4txXcvgvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731877321; c=relaxed/simple;
-	bh=vsjGvNL9B+WWR8kgTCUwnbPGRjC9oUX99z3N/YF/Ek0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JeD74chOT1wX7VEP6eGUGyIsS6wWgcQh6VHx7sRz/sVk++w3pBEYIEIxopMwi+Q5C0nKypUtsBH3pChbMGfGxW9UqbneUtV+qRguSb3YOlVZUQEXXjsLrZAkxvd02WgGunDLJgUU5xFn3bsLdJAyYa7oWcSNVixOf3Vm1qJ42BU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=KcHSRb11; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=+4DEh/HW; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=KcHSRb11; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=+4DEh/HW; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id C60AC21288;
-	Sun, 17 Nov 2024 21:01:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1731877317; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=xLTr/NahoUUzWTaTSWHEo2tnJpwITYiCHiCG5lE+2BQ=;
-	b=KcHSRb11TedM4R6iEOebivmcfzIM7q1A66Fn+0sC8VB3A4O4v1U9WdQkG0/BsA72tlIs7O
-	8zIioVYhYOHWkervA4eB+htlSJKqyNA2rGez8vq3+CtQjMApLLCyUVsgDvN7C0W3qVVmJc
-	3cGCeDm1AC7SxEQ2nFLUetTbLHLuw2o=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1731877317;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=xLTr/NahoUUzWTaTSWHEo2tnJpwITYiCHiCG5lE+2BQ=;
-	b=+4DEh/HWB42jr7OAB7JWLlJXNh3NdmkCORClvYpvySMmG0F7yu68vRa0QpS8h1PzGImyZ6
-	g39leJIfEM0MupDg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=KcHSRb11;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="+4DEh/HW"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1731877317; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=xLTr/NahoUUzWTaTSWHEo2tnJpwITYiCHiCG5lE+2BQ=;
-	b=KcHSRb11TedM4R6iEOebivmcfzIM7q1A66Fn+0sC8VB3A4O4v1U9WdQkG0/BsA72tlIs7O
-	8zIioVYhYOHWkervA4eB+htlSJKqyNA2rGez8vq3+CtQjMApLLCyUVsgDvN7C0W3qVVmJc
-	3cGCeDm1AC7SxEQ2nFLUetTbLHLuw2o=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1731877317;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=xLTr/NahoUUzWTaTSWHEo2tnJpwITYiCHiCG5lE+2BQ=;
-	b=+4DEh/HWB42jr7OAB7JWLlJXNh3NdmkCORClvYpvySMmG0F7yu68vRa0QpS8h1PzGImyZ6
-	g39leJIfEM0MupDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A778713297;
-	Sun, 17 Nov 2024 21:01:57 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id y84mKMVZOmcaXAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Sun, 17 Nov 2024 21:01:57 +0000
-Message-ID: <d7d5fa1f-f696-44f7-8384-6ba982bff8ec@suse.cz>
-Date: Sun, 17 Nov 2024 22:01:57 +0100
+	s=arc-20240116; t=1731877377; c=relaxed/simple;
+	bh=PRFaT1as5OxBAOyjiziv8bUZQYDtkLJAhsKW6psnoGI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=musQDJLurjYBaMpfqFArlgK1vftGhfkq7Y9b4jBrYSyoOKGp1f71VQunZPHH3xi+6xu3CFhzQvKSLYnmCxufUVdLaXpOsMzHvkPJDte2DQdbz2oV1BhFhsOjv6v34dmPzhji26ShC4MtECJOCaPsiXIKrlMNMSyPddiW7jd3GyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=W7uUTpcG; arc=none smtp.client-ip=209.85.160.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-460c316fc37so24843641cf.0
+        for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 13:02:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rowland.harvard.edu; s=google; t=1731877374; x=1732482174; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=6wjrpq+6MswuiTE+2/ghtZhteEiq8qgWQWvFqee2GXo=;
+        b=W7uUTpcGH/N6FD5qyR7303J5qU+Jdl6TVRMJRB7BKHTL+yPBooaADW8CI4RLCSOgln
+         7vIbMroUbC1ImqQGJVdr/pn3QDzvuTInU38bme51fzV3F144zPgAhklwhvcHGlN4NHT/
+         cr/19i/oH2Lq3HqcZGuoc6K8doCkB1c+tlQ/MDt2PsLOreR4qW9CzVHa7m3aCNDXaBl8
+         pnIOdJqEbZkkfA/KQbO3NYi22KayNY+hB3jHAW6+9cxZ0RtctWCN4q9JdY1QoKwNunZJ
+         GMxY46a/wGM6Tevsd/OsRNYuklR03aBo0UK2k7k/aMzq/6Fkq2giqwQHrs9u17RdKySe
+         vBhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731877374; x=1732482174;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6wjrpq+6MswuiTE+2/ghtZhteEiq8qgWQWvFqee2GXo=;
+        b=MYend2OuorwyAqyOV3h4WwO0hViuhY/Z/MlNwTxy3B/j+6bPBLXM8jqPgodl0TG05J
+         HOLlZI9mk5F/0rf97vPfeBFdGiBVaGEv1NlatyXsGXPUf8lF6Qd1jtnsgi9JA+IF7iVD
+         Nr28romxdfIJ10jIvXrvfEClVNUleD6bfmn+/1FK26R+hyD6ksPBH1ZnF610qI7BYS3I
+         MQ4rwTEmJcv9yaDIr7Urwu5xWXY1QYtTRpXPYqZMdSKUm43QPEMmTYjqyX/jRgUTdrIY
+         fxKalar85gNwniPYwswM9axe3AbLfSiCAme4HyTuw5e7wEe1ePMxlqNioovbUJm4C2lu
+         NPHA==
+X-Forwarded-Encrypted: i=1; AJvYcCWxL1cDyk03h/yiSaZ0Qvj439CXW/VHC3TD2khl0f098cLt0t59CvAs3hJw5XLhu1t8pNeGLMRlf2iaHIg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx93F3hqQJedzhZ1hNnxpJbF9q92ZRnv1AP+qzOZ9UDWTymNsKw
+	ImA1Atgn4lFaTgBpl5aC6s/Z4Kl01zqcLVZKMZfFAQwM3k6TcEzsYaani4Hs3A==
+X-Google-Smtp-Source: AGHT+IEujOQD9HguVj3nlHAUK3YYh8UHHi5/lv2W0spWj0axGPSzGT5UihEI7OdVB25ic3mOyYKH7g==
+X-Received: by 2002:a05:622a:56:b0:461:285:9d7c with SMTP id d75a77b69052e-46363e0af04mr128743021cf.12.1731877374463;
+        Sun, 17 Nov 2024 13:02:54 -0800 (PST)
+Received: from rowland.harvard.edu ([2601:19b:681:fd10::24f4])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4635a9c64d4sm48211421cf.13.2024.11.17.13.02.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 17 Nov 2024 13:02:53 -0800 (PST)
+Date: Sun, 17 Nov 2024 16:02:49 -0500
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Markus Rechberger <linuxusb.ml@sundtek.de>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: Highly critical bug in XHCI Controller
+Message-ID: <dff9f24a-4aa2-45aa-920f-20876cf4ccbf@rowland.harvard.edu>
+References: <3905c1c88695e0ffcfabf700c06dd7223decef8d.camel@sundtek.de>
+ <dd4239c7b0538e1cd2f2a85307c73299117d5f0e.camel@sundtek.de>
+ <50f730ae-4918-4dac-88ec-b3632bee67e7@rowland.harvard.edu>
+ <35c051354414ae9ef6e6b32b1a15a5dedf471176.camel@sundtek.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [GIT PULL] slab updates for 6.13
-Content-Language: en-US
-To: Xiongwei Song <sxwbruce@gmail.com>, Sasha Levin <sashal@kernel.org>
-Cc: brauner@kernel.org, viro@zeniv.linux.org.uk,
- Linus Torvalds <torvalds@linux-foundation.org>,
- David Rientjes <rientjes@google.com>, Christoph Lameter <cl@linux.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- "linux-mm@kvack.org" <linux-mm@kvack.org>,
- LKML <linux-kernel@vger.kernel.org>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Hyeonggon Yoo <42.hyeyoo@gmail.com>
-References: <03ec75a9-aade-4457-ac21-5649116afa98@suse.cz>
- <Zzi7BxJASrR_wbAQ@sashalap> <Zzi7zR0maqdCC3ME@sashalap>
- <52be272d-009b-477b-9929-564f75208168@suse.cz> <Zzll9v3dR8UxwvQ8@sashalap>
- <CALy5rjW-rOAUDuFVVL67yRXhyVUjWa_9saE2HBTGbyAfUV53kA@mail.gmail.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <CALy5rjW-rOAUDuFVVL67yRXhyVUjWa_9saE2HBTGbyAfUV53kA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: C60AC21288
-X-Spam-Score: -3.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FREEMAIL_TO(0.00)[gmail.com,kernel.org];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[kernel.org,zeniv.linux.org.uk,linux-foundation.org,google.com,linux.com,kvack.org,vger.kernel.org,linux.dev,gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+In-Reply-To: <35c051354414ae9ef6e6b32b1a15a5dedf471176.camel@sundtek.de>
 
-On 11/17/24 13:56, Xiongwei Song wrote:
-> It seems there is a conflict between fc0eac57d08c ("slab: pull kmem_cache_open()
-> into do_kmem_cache_create()") and 543c5bde72e9 ("mm/slab: Allow cache creation
-> to proceed even if sysfs registration fails"). The err is initialized
+On Sun, Nov 17, 2024 at 11:47:52PM +0800, Markus Rechberger wrote:
+> On Sun, 2024-11-17 at 10:18 -0500, Alan Stern wrote:
+> > On Sun, Nov 17, 2024 at 08:44:16PM +0800, Markus Rechberger wrote:
+> > > Basically the issue comes from hub_port_connect.
+> > > 
+> > > drivers/usb/core/hub.c
+> > > 
+> > > hub_port_init returns -71 -EPROTO and jumps to loop
+> > > https://github.com/torvalds/linux/blob/master/drivers/usb/core/hub.c#L5450
+> > > 
+> > > I'd question if usb_ep0_reinit is really required in loop which is
+> > > running following functions:
 
-No conflict, commit fc0eac57d08c is from 6.12-rc1, there's no merge here.
-I've introduced the bug by trying to improve Hyeonggon's patch and he
-quickly corrected me [1] so the buggy version never even made it to -next.
-But here I managed to resurrect it before the git pull.
+> This should only go down there in case an error happened earlier no?
 
-[1] https://lore.kernel.org/all/195242b4-5471-419a-a350-08fd246973f0@suse.cz/
+Of course, since -EPROTO indicates there was an error.
 
-> to -EINVAL in
-> the entry of do_kmem_cache_create(), sysfs_slab_add() call can assign
-> a value to
-> err normally,  but the assignment to err variable has been removed in
-> Hyeonggon's
-> patch, so do_kmem_cache_create() returns -EINVAL normally. We probably can do
-> the following fix:
+> In case the hardware signed up correctly it should not even enter that
+> code.
 > 
-> diff --git a/mm/slub.c b/mm/slub.c
-> index 73eea67a306b..19630a2da8e1 100644
-> --- a/mm/slub.c
-> +++ b/mm/slub.c
-> @@ -6199,9 +6199,11 @@ int do_kmem_cache_create(struct kmem_cache *s,
-> const char *name,
->         if (!alloc_kmem_cache_cpus(s))
->                 goto out;
-> 
-> +       /* The error code is not needed any more. */
-> +       err = 0;
-> +
->         /* Mutex is not taken during early boot */
->         if (slab_state <= UP) {
-> -               err = 0;
+> My experience is just - reconnect the device in case an error happened
 
-That was indeed the fix.
+You can't reconnect some devices; they are permanently attached.  There 
+are other reasons why reconnecting might not be practical.
 
->                 goto out;
->         }
-> 
-> Regards,
-> Xiongwei
-> 
-> On Sun, Nov 17, 2024 at 11:42â€¯AM Sasha Levin <sashal@kernel.org> wrote:
->>
->> On Sat, Nov 16, 2024 at 09:43:07PM +0100, Vlastimil Babka wrote:
->> >On 11/16/24 16:35, Sasha Levin wrote:
->> >> [ Obviously I fat-fingered it and didn't add Christian or Al ]
->> >
->> >I have found the problem and looks like I managed to force push an older
->> >broken version of a branch, possibly due to switching between two computers.
->> >Serves me well for amending in some last minute R-b tags. Doing git diff
->> >@{u} to check for unexpected suprirses before pushing the result didn't help
->> >this time, either I forgot or was blind.
->> >
->> >I have deleted the slab-for-6.13 signed tag and pushed the fixed branch only
->> >to -next. Thanks a lot Sasha for catching this early and please drop the
->> >merge from the for-linus tree.
->>
->> I've dropped the merge and tests are passing now, thanks!
->>
->> --
->> Thanks,
->> Sasha
->>
+> those
+> workarounds did not work properly for the device I deal with (but yes
+> that's
+> why I'm asking - maybe someone else has different hardware with
+> different
+> experience).
 
+I doubt we will hear from these people, because they will not realize 
+that anything was wrong.
+
+In any case, it is generally recognized that the type of errors leading 
+to -EPROTO (bad CRC or no response, for instance) can be temporary or 
+intermittent.  Retrying is an appropriate strategy.
+
+> > > As a second issue I found in usb_reset_and_verify device 
+> > > https://github.com/torvalds/linux/blob/master/drivers/usb/core/hub.c#L6131
+> > > 
+> > >         ret = hub_port_init(parent_hub, udev, port1, i,
+> > > &descriptor);
+> > >         if (ret >= 0 || ret == -ENOTCONN || ret == -ENODEV) {
+> > >             break;
+> > >         }
+> > > 
+> > > hub_port_init can also return -71 / -EPROTO, the cases should be
+> > > very
+> > > rare when usb_reset_and_verify_device is triggered and that
+> > > happens.
+> > 
+> > If that happens, the loop which this code sits inside will simply 
+> > perform another iteration.  That's what  it's supposed to do, not an 
+> > issue at all.
+> > 
+> 
+> It doesn't cause any issue yes but it's not correct either.
+
+Why not?  What's wrong with it?
+
+> -EPROTO will be returned if I disconnect or short the device here. So
+> initially someone
+> thought he should check for -ENODEV/-ENOTCONN (which should also
+> indicate that the device is gone), so -EPROTO should also be checked in
+> that case.
+> Otherwise just remove all those error checks.
+
+-EPROTO does not necessarily indicate the device is gone; it indicates 
+there was a problem communicating with the device.  The problem might be 
+caused by a disconnection, or it might be caused by temporary 
+electromagnetic interference (for example), or by something else.
+
+Alan Stern
 
