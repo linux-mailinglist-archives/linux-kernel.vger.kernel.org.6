@@ -1,89 +1,104 @@
-Return-Path: <linux-kernel+bounces-412039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 407C19D02AB
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 10:52:38 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56C4A9D02B0
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 11:02:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C7AF282455
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 09:52:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E6E19B243FB
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 10:02:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B66C512F5A5;
-	Sun, 17 Nov 2024 09:52:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08C3A144D1A;
+	Sun, 17 Nov 2024 10:02:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qpd+UhmY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LebczgXL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16774DDA8;
-	Sun, 17 Nov 2024 09:52:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E0D738C;
+	Sun, 17 Nov 2024 10:02:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731837149; cv=none; b=MXgLiMj0VJwt4GzQjaxtkDEH7FJ2uI3HynZgaUdIcr5jlt2C5RHBMVmHB/fvnDxOTBpcYv39yGNbFdal4FfrcmiMa/FU0obiJfRnyns2XVZTGCgbGtcf/m1Mw4qwCGupGHwdlflGK/w35tulwmANQoB+RVrYDXYdib1FUC2/iYw=
+	t=1731837722; cv=none; b=RYa+J8n9A9r6EXnYHdLhj5w2lTOe4rxSXQCWwMyCNleg3AA90rKIz24nR+cZS5rCF1Wh8N6hcXT9M7yXXi4GzmHyoWJDRGTDQTCzaG2dE3OfjmbnKb4O5VfDAyabtPfZNIoQgZfRnED/nzQ1PunZL4uvP/4KGO6bkfKALn44p2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731837149; c=relaxed/simple;
-	bh=XTLg0eWuydxY6lLMuzmi6jAlPTpd0Y1RIfkxybv4Gbk=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=qbzJ2TaESg9EcOc/fNd7PkQP53r+mWcpInhazujS8bHviKuMgp7mQiUk8t1isoapkX5lcBQ6OK8X1+28FUE+jiVsefaiUVNeibAkPWHzm3f2IpnM47GWSDh4Hha3g0oq2URVtId/yH50g4T7XBzBD6vAFuRmui3MoysbzBIbVz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qpd+UhmY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 760FBC4CECD;
-	Sun, 17 Nov 2024 09:52:28 +0000 (UTC)
+	s=arc-20240116; t=1731837722; c=relaxed/simple;
+	bh=GDy6m6BY4EGyXxc2N9r+tnApMzC68LOdmdCnQ6PdhHs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YPthTiMGAadOG7MrR4tivHekhfP1J5LsBSZLb54ANRqISgMDfi0btUOWf69/4Ev6sgiElGY3+X78c9mKBq4SXIa9FOEu+qvlkFMgsWwzphpeIwWKykpa7C1W0LitEMGeEth6/0SfFQm56DbtbgqVlbcxnFaM/DHbsGyfOADgbvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LebczgXL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CD5BC4CECD;
+	Sun, 17 Nov 2024 10:02:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731837148;
-	bh=XTLg0eWuydxY6lLMuzmi6jAlPTpd0Y1RIfkxybv4Gbk=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=Qpd+UhmYjOgjIelWXTzVMHCy/l7Wr3BfUBKVOFRr6oLO4K/r+yq5GSITnXIPS1dSj
-	 SsN0jSOZrFIlv6a7k5lJ60accB2MWrdVTqfaAYNjEm0xiYTLpLmaH6cTfJnNlhEgv5
-	 3+vMnouWQ3KUWbx6Lavox4SlR27CsUkvJHT24mau8ddpudDVDJFMphbUNUtc9oJcIE
-	 Q9cJvDjEkh0RF5hHRySvHAMvg/7IJXKGgWKeZWGtdStVMyc0LH8Q8QUMgNdKQVGpwB
-	 K6yxfvEkw0vBFam0CATCJnu21v2DySlOMCE/afvP2HX/rN+5Ow4ybM0ZI1q175nmzp
-	 981YKxXOg9hTg==
+	s=k20201202; t=1731837721;
+	bh=GDy6m6BY4EGyXxc2N9r+tnApMzC68LOdmdCnQ6PdhHs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LebczgXLzB7bS4cwxNexnHpB3sIg+Qps8p+Da/insm+RxuMlE5Xj1O/G8cwiODmnj
+	 Vn8pyhm31oezXFTWaG/3KvoNseUbHJE6r9qzqZxs3JBAxppDl2UZPtotPGP1xRIKcT
+	 gf5CnoK1zOUJUoCBiojv4J0POtQxW5du3OX0etKs6iJpkD83cg7/9a+sUdZ+xYx5lc
+	 r5YF/jZoes6tAu7d4TrxNPUn2IRL47ziqlSZ8Uaw2f5YUVlxBvBYgENJMXkaWIK4Dy
+	 D/Pz7EsiI63/4NiYpvkwgMnav2CU6CJSsBw2kPkdH/eMbxp44MgUMl+c8rgEtRoao3
+	 jJKVji4avjE9Q==
+Date: Sun, 17 Nov 2024 12:01:56 +0200
 From: Leon Romanovsky <leon@kernel.org>
-To: Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org, 
- Or Har-Toov <ohartoov@nvidia.com>, Sean Hefty <shefty@nvidia.com>, 
- Vlad Dumitrescu <vdumitrescu@nvidia.com>
-In-Reply-To: <cover.1731495873.git.leon@kernel.org>
-References: <cover.1731495873.git.leon@kernel.org>
-Subject: Re: [PATCH rdma-next 0/3] Batch of IBCM improvements
-Message-Id: <173183714552.223531.10917862917495682531.b4-ty@kernel.org>
-Date: Sun, 17 Nov 2024 04:52:25 -0500
+To: Gerd Bayer <gbayer@linux.ibm.com>
+Cc: Wenjia Zhang <wenjia@linux.ibm.com>, Jan Karcher <jaka@linux.ibm.com>,
+	"D. Wythe" <alibuda@linux.alibaba.com>,
+	Tony Lu <tonylu@linux.alibaba.com>,
+	Wen Gu <guwen@linux.alibaba.com>, Halil Pasic <pasic@linux.ibm.com>,
+	linux-rdma@vger.kernel.org, netdev@vger.kernel.org,
+	linux390-list@tuxmaker.boeblingen.de.ibm.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] net/smc: Run patches also by RDMA ML
+Message-ID: <20241117100156.GA28954@unreal>
+References: <20241115-smc_lists-v1-1-a0a438125f13@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-37811
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241115-smc_lists-v1-1-a0a438125f13@linux.ibm.com>
 
-
-On Wed, 13 Nov 2024 13:12:53 +0200, Leon Romanovsky wrote:
-> This patchset from Sean fixes old standing issues with IB/cm.
+On Fri, Nov 15, 2024 at 06:44:57PM +0100, Gerd Bayer wrote:
+> Commits for the SMC protocol usually get carried through the netdev
+> mailing list. Some portions use InfiniBand verbs that are discussed on
+> the RDMA mailing list. So run patches by that list too to increase the
+> likelihood that all interested parties can see them.
 > 
-> Thanks
+> Signed-off-by: Gerd Bayer <gbayer@linux.ibm.com>
+> ---
+> ---
+>  MAINTAINERS | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> Sean Hefty (3):
->   IB/cm: Explicitly mark if a response MAD is a retransmission
->   IB/cm: Do not hold reference on cm_id unless needed
->   IB/cm: Rework sending DREQ when destroying a cm_id
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 32d157621b44fb919307e865e2481ab564eb17df..16024268b5fc1feb6c0d01eab3048bd9255d0bf9 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -20943,6 +20943,7 @@ M:	Jan Karcher <jaka@linux.ibm.com>
+>  R:	D. Wythe <alibuda@linux.alibaba.com>
+>  R:	Tony Lu <tonylu@linux.alibaba.com>
+>  R:	Wen Gu <guwen@linux.alibaba.com>
+> +L:	linux-rdma@vger.kernel.org
+>  L:	linux-s390@vger.kernel.org
+
+Why don't we have netdev ML here too?
+
+Thanks
+
+>  S:	Supported
+>  F:	net/smc/
 > 
-> [...]
-
-Applied, thanks!
-
-[1/3] IB/cm: Explicitly mark if a response MAD is a retransmission
-      https://git.kernel.org/rdma/rdma/c/0492458750c9fb
-[2/3] IB/cm: Do not hold reference on cm_id unless needed
-      https://git.kernel.org/rdma/rdma/c/1e5159219076dd
-[3/3] IB/cm: Rework sending DREQ when destroying a cm_id
-      https://git.kernel.org/rdma/rdma/c/fc0856c3a32576
-
-Best regards,
--- 
-Leon Romanovsky <leon@kernel.org>
-
+> ---
+> base-commit: 519b790af22e705ee3fae7d598f1afbb3d1cfdd5
+> change-id: 20241106-smc_lists-b98e6829b31c
+> 
+> Best regards,
+> -- 
+> Gerd Bayer <gbayer@linux.ibm.com>
+> 
 
