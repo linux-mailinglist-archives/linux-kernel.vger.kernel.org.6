@@ -1,144 +1,102 @@
-Return-Path: <linux-kernel+bounces-412009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 544179D0255
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 08:24:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49A879D0258
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 08:33:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E4E8B21713
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 07:24:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00A941F22D01
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 07:33:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AF7974421;
-	Sun, 17 Nov 2024 07:24:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ftWKNMzF"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FB4254782;
+	Sun, 17 Nov 2024 07:33:42 +0000 (UTC)
+Received: from sundtek.de (sundtek.de [85.10.198.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3F7426ACD;
-	Sun, 17 Nov 2024 07:24:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 924152C95
+	for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 07:33:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.10.198.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731828256; cv=none; b=YqyisRiGk7CHmV0oOlWFUjk/Pxx1oBqEX9weiOvV7kf4iZMm9q/MgFybD+hdhvrM1eUkrbPBNPVd2HUgZEuNIfrR4kBEhlyzocaOR2hNt7jXz1p5JKFfzEiZgk/OifEZaGivsStc9p3bVsqvYhXbSF77sOmp0nVB4JjklPrMPs0=
+	t=1731828822; cv=none; b=m6kV32KoVKHxOIaMOU+gDBIFix/hH8Ov7maDHvam6ZOKn6UkdqJ++1ax/qkSqVNYAhRAwbmLqm487Ik440frWqeBhqumrcDyAc8S4+LaoJwN3TFwQfcN8r6k6rErUawZTuzI0U76KsDR/NSZHnG/02H1bs1dH/Nj5gUvVDRffmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731828256; c=relaxed/simple;
-	bh=PIpxrPsJhzncZLir5a0JaLLfnHxWYWwe2urMxNiGP8Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mbR4A/ZGrfCjaMZ1LodjnVKI1RmLB8FXGFI/+ik+Natr2hwSvrsJq27IoOySgVhS9XhmvzB9CZTS4uJ6eXHaFXx5HgmkD+bz55bWFh6VClXTHHsllpPqdxpZ8QUEXPix0BANY8wjLZI+khJML5FD8y62fqJAb6bhtKXtE6MVAt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ftWKNMzF; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731828255; x=1763364255;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=PIpxrPsJhzncZLir5a0JaLLfnHxWYWwe2urMxNiGP8Q=;
-  b=ftWKNMzFGee6zTPu1wDKYzIUw0V2qVkIyeGrp0txQVfRWwSnCbfugCzs
-   llxSAXRPH+mIFMqAmrR2Qf4G7Ao47Gs5sW8DLtztDJHeKG0yY0QEinBKX
-   0tRe/c8JwZs8HZK8aEtODDnuHuZdlWd/Nerp3LMpOb3pQ4FhYNCT3s9q/
-   kBiGPpGF/bz3uX/K6lnwoYrAg4oyy37UVu+NRZrgqTclkMoefgDYaKV54
-   tQWHTndMUnBXg+SROVHdk4uaOi1g0NZhKYSFY/Qef+i+DVaFHnQwF2Sr1
-   88c9Eh+vvsU6saNiOT+zK3zVGa1QD16WAAvOgTkByxdsvLN91TUPNnLn+
-   g==;
-X-CSE-ConnectionGUID: aL+A60hkSfihFte19PENsw==
-X-CSE-MsgGUID: Te/0ccHPSEmXQpA7lrnPuw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11258"; a="42321238"
-X-IronPort-AV: E=Sophos;i="6.12,161,1728975600"; 
-   d="scan'208";a="42321238"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Nov 2024 23:24:13 -0800
-X-CSE-ConnectionGUID: qYG51FVbSaKTOja1pCCeKw==
-X-CSE-MsgGUID: 6bMcVYbNTWGGkV9IsAVA0A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,161,1728975600"; 
-   d="scan'208";a="88834652"
-Received: from lkp-server01.sh.intel.com (HELO 1e3cc1889ffb) ([10.239.97.150])
-  by orviesa010.jf.intel.com with ESMTP; 16 Nov 2024 23:24:07 -0800
-Received: from kbuild by 1e3cc1889ffb with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tCZdc-0001cn-1t;
-	Sun, 17 Nov 2024 07:24:04 +0000
-Date: Sun, 17 Nov 2024 15:23:42 +0800
-From: kernel test robot <lkp@intel.com>
-To: Li Li <dualli@chromium.org>, dualli@google.com, corbet@lwn.net,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, donald.hunter@gmail.com,
-	gregkh@linuxfoundation.org, arve@android.com, tkjos@android.com,
-	maco@android.com, joel@joelfernandes.org, brauner@kernel.org,
-	cmllamas@google.com, surenb@google.com, arnd@arndb.de,
-	masahiroy@kernel.org, bagasdotme@gmail.com, horms@kernel.org,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	netdev@vger.kernel.org, hridya@google.com, smoreland@google.com
-Cc: oe-kbuild-all@lists.linux.dev, kernel-team@android.com
-Subject: Re: [PATCH net-next v8 2/2] binder: report txn errors via generic
- netlink
-Message-ID: <202411171514.Vfp0RaLK-lkp@intel.com>
-References: <20241113193239.2113577-3-dualli@chromium.org>
+	s=arc-20240116; t=1731828822; c=relaxed/simple;
+	bh=QE5HpRlfZPD7nD/qiKO/hgmRaCB49b3+TQJFWEik8zQ=;
+	h=Message-ID:Subject:From:To:Date:Content-Type:MIME-Version; b=LdcFRmTCY7MH5ZhRARLyWrBFtWP/eXj89/2hZGEC267FaDxrdzUvxxxsZzmfT1mTfKMEdz3BEzONhHiu5ZQRBfNk7hvCOE1oWrZiGcfd7xssDCYbAQngDfkwMV2/ZvDAZ5DCwCC9tKi26W3XTTDyhddvaMIJdffcZS/4iUuq5Ds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sundtek.de; spf=pass smtp.mailfrom=sundtek.de; arc=none smtp.client-ip=85.10.198.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sundtek.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sundtek.de
+Received: from Debian-exim by sundtek.de with spam-scanned (Exim 4.95)
+	(envelope-from <linuxusb.ml@sundtek.de>)
+	id 1tCZmq-005BiM-R3
+	for linux-kernel@vger.kernel.org;
+	Sun, 17 Nov 2024 08:33:38 +0100
+Received: from 1-175-135-24.dynamic-ip.hinet.net ([1.175.135.24] helo=[192.168.2.197])
+	by sundtek.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <linuxusb.ml@sundtek.de>)
+	id 1tCZmk-005Bi1-Kb;
+	Sun, 17 Nov 2024 08:33:30 +0100
+Message-ID: <3905c1c88695e0ffcfabf700c06dd7223decef8d.camel@sundtek.de>
+Subject: Highly critical bug in XHCI Controller
+From: Markus Rechberger <linuxusb.ml@sundtek.de>
+To: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Sun, 17 Nov 2024 15:33:28 +0800
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3-0ubuntu1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241113193239.2113577-3-dualli@chromium.org>
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: linuxusb.ml@sundtek.de
+X-SA-Exim-Scanned: No (on sundtek.de); SAEximRunCond expanded to false
 
-Hi Li,
-
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on 31a1f8752f7df7e3d8122054fbef02a9a8bff38f]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Li-Li/tools-ynl-gen-allow-uapi-headers-in-sub-dirs/20241114-033521
-base:   31a1f8752f7df7e3d8122054fbef02a9a8bff38f
-patch link:    https://lore.kernel.org/r/20241113193239.2113577-3-dualli%40chromium.org
-patch subject: [PATCH net-next v8 2/2] binder: report txn errors via generic netlink
-config: arc-randconfig-001-20241117 (https://download.01.org/0day-ci/archive/20241117/202411171514.Vfp0RaLK-lkp@intel.com/config)
-compiler: arceb-elf-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241117/202411171514.Vfp0RaLK-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411171514.Vfp0RaLK-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   drivers/android/binder.c:1977: warning: Function parameter or struct member 'file' not described in 'binder_task_work_cb'
-   drivers/android/binder.c:1977: warning: Excess struct member 'fd' description in 'binder_task_work_cb'
-   drivers/android/binder.c:2428: warning: Function parameter or struct member 'offset' not described in 'binder_ptr_fixup'
-   drivers/android/binder.c:2428: warning: Function parameter or struct member 'skip_size' not described in 'binder_ptr_fixup'
-   drivers/android/binder.c:2428: warning: Function parameter or struct member 'fixup_data' not described in 'binder_ptr_fixup'
-   drivers/android/binder.c:2428: warning: Function parameter or struct member 'node' not described in 'binder_ptr_fixup'
-   drivers/android/binder.c:2448: warning: Function parameter or struct member 'offset' not described in 'binder_sg_copy'
-   drivers/android/binder.c:2448: warning: Function parameter or struct member 'sender_uaddr' not described in 'binder_sg_copy'
-   drivers/android/binder.c:2448: warning: Function parameter or struct member 'length' not described in 'binder_sg_copy'
-   drivers/android/binder.c:2448: warning: Function parameter or struct member 'node' not described in 'binder_sg_copy'
-   drivers/android/binder.c:4180: warning: Function parameter or struct member 'thread' not described in 'binder_free_buf'
->> drivers/android/binder.c:7161: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
-    * Add a binder device to binder_devices
+Hi,
 
 
-vim +7161 drivers/android/binder.c
+the issue was first reported at vdr-portal.de
+https://www-vdr--portal-de.translate.goog/forum/index.php?thread/136541-emp=
+fehlung-dvb-s2-tuner-oder-satip/&postID=3D1376196&_x_tr_sl=3Dde&_x_tr_tl=3D=
+en&_x_tr_hl=3Dde&_x_tr_pto=3Dwapp#post1376196
 
-  7159	
-  7160	/**
-> 7161	 * Add a binder device to binder_devices
-  7162	 * @device: the new binder device to add to the global list
-  7163	 *
-  7164	 * Not reentrant as the list is not protected by any locks
-  7165	 */
-  7166	void binder_add_device(struct binder_device *device)
-  7167	{
-  7168		hlist_add_head(&device->hlist, &binder_devices);
-  7169	}
-  7170	
+we've got around a highly critical bug in the xhci driver.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+https://sundtek.de/support/uxvd32.txt
+
+In xhci.c
+
+The bug is still active in Mainline:
+https://github.com/torvalds/linux/blob/master/drivers/usb/host/xhci.c#L2382
+
+static int xhci_check_bw_table(struct xhci_hcd *xhci,
+        struct xhci_virt_device *virt_dev,
+        int old_active_eps)
+
+bw_table can end up with a NULL pointer.
+
+This problem will lead to a complete kernel crash, rendering the entire
+system unusable without any access to the actual linux system.
+
+How to trigger the problem?
+Short D+/D- or pull them to ground on a USB device while connecting the
+device.
+
+The problem can happen due to following cases:
+* a device is getting suddenly disconnected during enumeration
+* a faulty cable
+* a faulty device=20
+* a malicious device triggers this issue on purpose
+* if there are electrical issues during connecting a device.
+
+A quick hotfix would be to check if bw_table is NULL in
+xhci_check_bw_table, however the check should be performed earlier - in
+the area where bw_table is supposed to be assigned.
+
+Best Regards,
+Markus
 
