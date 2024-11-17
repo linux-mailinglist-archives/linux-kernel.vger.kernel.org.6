@@ -1,104 +1,103 @@
-Return-Path: <linux-kernel+bounces-411953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E5509D01B5
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 01:26:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96F289D01B7
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 01:27:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C6F35B26022
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 00:26:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43D321F238C1
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 00:27:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49365192597;
-	Sun, 17 Nov 2024 00:24:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25585946C;
+	Sun, 17 Nov 2024 00:24:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UH5o4nb3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="BraRK5ye"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1B0AB67A;
-	Sun, 17 Nov 2024 00:23:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B000828FF
+	for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 00:24:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731803038; cv=none; b=Wcpz0YjbIJfZM27kNZq2ETDOir0OwX+XMXBUraB0aTbJe0YgFuc2ABFBw4aAI33BC4JO75lsYpq1XP/EuVI3rPNyueiNVEVCs5KrxoRGVOu09SUngvNxixTh+WbTB3tzsB1aXk7q+MMfZbbrQh6pvmGLO0JLfwNS4R5VAX5O2Qg=
+	t=1731803068; cv=none; b=jZnjRsuMDUjw5acIo7uJBxHBWVKKfYf7fW5gpw7zI93FsCsRUH1eNnX4KCWlFSMse7WTgClFIwEn8tUh4nfVpHlcdyXqRK6XIMhgaK+Q6xJ9qTpjcv4y7vymdL3lUkZNrFktX/+R6HyLZ+wxJVtpdCRWF6R4cWvpLG9iDonMk/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731803038; c=relaxed/simple;
-	bh=gikOnfBjekSzGf6NqlY+odr2KqKVyYrQvBhQkTK3oqk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PLxA35XmX6dgM0pnFftC6KWURLljJStVltkVgt9hXsndcTe8Y3vViOYHnb/2XwEgwCKYAKBs92RBHUbkoLLBXUr6KL+fQMxqNa55gAEfQQunH76rO8SvkUg2WSuDIefD4yPoc/tzRsYZQTaAjHqnbRjSmY6QcPW/0kLMARn54JQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UH5o4nb3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47B1AC4CED9;
-	Sun, 17 Nov 2024 00:23:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731803038;
-	bh=gikOnfBjekSzGf6NqlY+odr2KqKVyYrQvBhQkTK3oqk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=UH5o4nb3MbDFI7VGAxCOF+o9Q9t+WxRpA1f2cg+TtQFgYl2KFizmYdfMVE/ji0Ho1
-	 oqZZH0z849b0GxE15m+X8+SPEyrxdQQ+NKcxPOhPuiwBSda7WTDhym+vaORjmrHnfO
-	 M0/I/j1Sisn3Eiu8zI97Pfn3z6gGRPkCAOMzzoz5CtWfG/0uPRqmsIHI1UDBn5NYY/
-	 3qdx5aa+nLV0C0hj02e2R2X1zsNkrLUNRxmoiXoZxNPwyDC587XCRjvadQH/swR/gB
-	 hoMkyTyVXupR++o8Sy4Ve/gXdMUC8n2JysUjzdX29ZwxeqbCQlkMyFRpRllM+OoO/k
-	 9+XdVmWdtGYPg==
-From: Eric Biggers <ebiggers@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: linux-arch@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-crypto@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	x86@kernel.org,
-	Zhihang Shao <zhihang.shao.iscas@gmail.com>,
-	Ard Biesheuvel <ardb@kernel.org>
-Subject: [PATCH 11/11] MAINTAINERS: add entry for CRC library
-Date: Sat, 16 Nov 2024 16:22:44 -0800
-Message-ID: <20241117002244.105200-12-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241117002244.105200-1-ebiggers@kernel.org>
-References: <20241117002244.105200-1-ebiggers@kernel.org>
+	s=arc-20240116; t=1731803068; c=relaxed/simple;
+	bh=ocQ0r7pmqpzv4lz5D1G/M4lBGf0YM0OQHNOLD6yFJo0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fGGEQkPD3x8sBGq6sp6w7LqZ8pu/tkxkCkkLnfPD/yB+pdIu98U0wfBS3QMASzhN/XKxiE1zHjcmKlBqRGo+z8oTtLyqrjQIhhdig/wc5czA72+DSa/AUlpA7sgYIcCtqZqwiYEKqJ9GREOIx0LB87neQh3c7EBs1rn3Oy4mFpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=BraRK5ye; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a9a68480164so437334866b.3
+        for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 16:24:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1731803065; x=1732407865; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=LX0zVUghvJRcc4ljKP7D+f24RyfwSYfXIKzndmlZIkk=;
+        b=BraRK5yeTcvN96+eOvf7p/2PcLRvIf1+NNtLiZi15s5vfG7SF7apeDK8PVcF1rHeoh
+         ctHGt9JeqfZ1J3h6+Cc4WYne+xhsfCbETmiTOFEnngbCZeRc/1MLoWAnASrU+qS+zGhi
+         hRhUTepfDcoHHgz0zNMbD7ISqG5zvh6A/qxGk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731803065; x=1732407865;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LX0zVUghvJRcc4ljKP7D+f24RyfwSYfXIKzndmlZIkk=;
+        b=TbD1sEWl4XMj2MlRqTKHrt4USq/xYatnL0Lnd9z6IknwTV/6HjPjsMXtj6f8Rb/tdK
+         be0FjPq4tq3wSfCyqRg3iIBY1Z2z1GHg/qbHS7/+XDYU4wfW0scUJIUmu4ILvAQD/7Sw
+         o9h1p0/dYNKEJnZ1My7+YoN2c/hYs67NIb1r1UswRMz5tlREFkAmiRx3gHqA2sYmD8KV
+         IOPB1FoJ8kh+i7SXa5KhPg8AK6/KpALHOfXGvohzjiZajvHUhLZ75/6weMcF60AXw9ze
+         1+cwBm4vhfKkO07qaFCssN5rO4M91CZ4dFSVKsVFFTK3tvBxOD+PsSE3hWPQeMcGMglB
+         BvzA==
+X-Forwarded-Encrypted: i=1; AJvYcCVkKMbbH3ZwYHu2HAei3O3sUwr/sFQotnOrBoDmswzGHesgkl6vyLhBmfbbB5e86PETymkXehQrZbrYR4A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYdk4DjY1PljVZzZ/yMhwuhHMO7xvVbSlomvhFBvSo4PGNyTNo
+	cbghxlm/EOuajAdL3qwc9sOzrpYpKiwyK8pEDpWzb5G39FCsSr7TrRAC2dah5sx76D/vGxLbKkB
+	NKk9CvQ==
+X-Google-Smtp-Source: AGHT+IGBtIuKyz2sa5n+u5ThINPilBNZgkK9x5eTu6WFAyUFIjG1SN8VvyMDqWdCNat58ci2DdmkIw==
+X-Received: by 2002:a17:907:3d86:b0:a9a:14fc:44a2 with SMTP id a640c23a62f3a-aa483488086mr702402666b.30.1731803064973;
+        Sat, 16 Nov 2024 16:24:24 -0800 (PST)
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com. [209.85.218.48])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20e044bb8sm359051466b.150.2024.11.16.16.24.22
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 16 Nov 2024 16:24:23 -0800 (PST)
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-aa4833e9c44so267880566b.2
+        for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 16:24:22 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCX2+RiU4Ih9li8ZjXrxDr1tyyQdoloqIMHPouAjgVZLOYkX+wm+y2MOagPtVumSbeH7BhAvRq0anx/AL28=@vger.kernel.org
+X-Received: by 2002:a17:907:3f03:b0:a9a:a891:b43e with SMTP id
+ a640c23a62f3a-aa483555ef6mr716497666b.50.1731803062330; Sat, 16 Nov 2024
+ 16:24:22 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241116153556.767f1aeed6ac628a09efe346@linux-foundation.org> <CAHk-=wji0ErHJjX-ZE4fdQ02nxcqQa5pwV==1sHC3p91wxUXAA@mail.gmail.com>
+In-Reply-To: <CAHk-=wji0ErHJjX-ZE4fdQ02nxcqQa5pwV==1sHC3p91wxUXAA@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sat, 16 Nov 2024 16:24:06 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wj1T_JvBcn_gqFdnuENA-Y9EL=2WNhN5o2xY3p3h4TPMw@mail.gmail.com>
+Message-ID: <CAHk-=wj1T_JvBcn_gqFdnuENA-Y9EL=2WNhN5o2xY3p3h4TPMw@mail.gmail.com>
+Subject: Re: [GIT PULL] hotfixes for 6.12
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-mm@kvack.org, mm-commits@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: Eric Biggers <ebiggers@google.com>
+On Sat, 16 Nov 2024 at 16:17, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> I can see the original at [..]
 
-I am volunteering to maintain the kernel's CRC library code.
+That should have been
 
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
- MAINTAINERS | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+    https://lkml.kernel.org/20241112171655.1662670-1-motiejus@jakstys.lt
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index a27407950242..2bfbdcad0282 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -5982,10 +5982,21 @@ CRAMFS FILESYSTEM
- M:	Nicolas Pitre <nico@fluxnic.net>
- S:	Maintained
- F:	Documentation/filesystems/cramfs.rst
- F:	fs/cramfs/
- 
-+CRC LIBRARY
-+M:	Eric Biggers <ebiggers@kernel.org>
-+L:	linux-crypto@vger.kernel.org
-+S:	Maintained
-+T:	git https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git crc-next
-+F:	Documentation/staging/crc*
-+F:	arch/*/lib/crc*
-+F:	include/linux/crc*
-+F:	lib/crc*
-+F:	scripts/crc/
-+
- CREATIVE SB0540
- M:	Bastien Nocera <hadess@hadess.net>
- L:	linux-input@vger.kernel.org
- S:	Maintained
- F:	drivers/hid/hid-creative-sb0540.c
--- 
-2.47.0
+of course. The link was the wrong one.
 
+            Linus
 
