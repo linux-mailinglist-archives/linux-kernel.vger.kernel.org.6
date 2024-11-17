@@ -1,138 +1,161 @@
-Return-Path: <linux-kernel+bounces-412279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D24B9D06F0
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 00:08:20 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 327F69D06F2
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 00:08:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BFBF5B21A07
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 23:08:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 88F02B21E1E
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 23:08:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 435421DE2A1;
-	Sun, 17 Nov 2024 23:08:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04D5F1DE2A3;
+	Sun, 17 Nov 2024 23:08:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HhzEg9ak"
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eHK6hhMu"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB6A11D89E5;
-	Sun, 17 Nov 2024 23:08:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B76A1D89E5;
+	Sun, 17 Nov 2024 23:08:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731884887; cv=none; b=ZXVok24hhifN/k28bKqX9Ae9eVUGLBWPjQ/4ScFAApFN30fNphW2t4tt0a9K9C+ycY2soFFbPvXIJSzrWttRs8+RSx8SSIze/AiZxD+3jnleSH+3dUAyWMHV3hh8MQWEWsX0O9XX5CdTK+RySvTqWa8D+phQR7XREb0p91so1T4=
+	t=1731884909; cv=none; b=rszqueViOgS6w7RMAw4bbF3UxOXbYmaKwwdN3e9R0gsxqWmo6zqCWQMu3217u+53iokKDNvkS8t8DOGmyOH0gHZRdK+kmZSsVA07x/VmNxJMKe7smAGrwncGzbPosBylOqn7F1EiSSmu9TNpXoP8TD1XG6ZZqqUBUFf137PPl+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731884887; c=relaxed/simple;
-	bh=1X/8HfLV4Pk7UniYVWhK6RRymNOkD/WLoHIafDrtilk=;
+	s=arc-20240116; t=1731884909; c=relaxed/simple;
+	bh=qc//Rp6FgcU/OzykKOBKbEI0fB9iPhKctaTJW5N31Mg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qVHtnNnnb5pk/Wd6RvwNIFqsZ9yveQjTRnWuR60qvtTusu+gTaNDln32yaM7KA/rVBwzOEfk3Jb7EfLi1j8BK5wzALMqa6ZKM9KxONAk126sjbTp+4GJ06LiGWdKsThFbMnZ0j4fzRWl2CT7b1DkK7feXmoY5+gw4xRb9+fbhcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HhzEg9ak; arc=none smtp.client-ip=209.85.128.173
+	 To:Cc:Content-Type; b=pML2QmJnO/kFAEa4Gd2T4we15zWHJeXcw3EiAfqBSaSggekZUGsTWzXbvDVrH38V9SnP3FuAI0Uw3tgXuzXha+ARi3NkqO8wR3LjUbalwRxNDcICTtfLx3pu8ENzUX8ENgPMwxiCENY6+RfVPwDlHDVcMZdgLH7SyqaVukHoX+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eHK6hhMu; arc=none smtp.client-ip=209.85.167.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-6ea339a41f1so20072027b3.2;
-        Sun, 17 Nov 2024 15:08:05 -0800 (PST)
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-53b34ed38easo3591120e87.0;
+        Sun, 17 Nov 2024 15:08:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731884884; x=1732489684; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1731884906; x=1732489706; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=LEZyWH2yk1juDD0j0bMycJzhP5/ewJCEwodH/GfxYu0=;
-        b=HhzEg9ak8OhWWTJCbQuuxW7yzWSeTQA539HOhPWpEF4mk5OyiW6Py6yZwrAGwe8w/s
-         8YLg0iL3+Ft2RMAzi07F/eek+b0jyngWSAsvksrd6HU64Dsl6h+s05J9E7+RdmnHghAt
-         MrsLkj3fe3e9cN8PfGrwECRPMCoeHB5VUZbeFalx05w+juf0nm2Clzkd6dPaN2+9vwyu
-         kUA3WVzaLafMflH2kfGIyq2l7feV9EVVZGN4ygWKlmKDSFLdR9GMqpxpu/T1v34jYTYa
-         SXzoHmASkeX9ZBQMVWZOdjZ46c2mCJf4ucQtfKHiT0A2HUUmBHSJsaUtxTkO4089pw/g
-         3nhg==
+        bh=MNN7ziIzHnkd18GYio7H3EiJ5Cg8s0kx1zTc8dpUr6c=;
+        b=eHK6hhMutEUnhXkbiJqwd3lYmt3Clrzs5DrfD+pCo1YbMxAAHAIJwVKB9GBD1NVTkg
+         ZWExkwWPCE5FNjvybQhbIEP126Kvnx3NAQtazuIVhN5xbqqmRGC0ATyNz8x2FDogAATi
+         rDvQBuNymvxafMzAdhI5Kn/Ih+naJGnM+JXE4x3aLAwRL3TB1GotmYrUSA0WrtepT9LJ
+         9V555bJpqFySjjx7N/WAW2uicj8kFbL1tdpZFJT5TcLX9FRd/BxrqAiOxlb/7w05ejAT
+         WT0enUo3QgS7ACD9LRdRIzxkmdE86WLqdOndGYwL5HmTleXYlwAhLRyRmq/KNdBBFoPZ
+         yqxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731884884; x=1732489684;
+        d=1e100.net; s=20230601; t=1731884906; x=1732489706;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=LEZyWH2yk1juDD0j0bMycJzhP5/ewJCEwodH/GfxYu0=;
-        b=XpTvIazocujw/wnV070RxQszQGhM76RB/Q0HgZO9ilAzWgwm+suhPprj09DFr19pTN
-         mF15b4x4BSwXUYKz2nf64jpVL3j4oUvGoon/runqXkdYD8qVlX/lAnolRMaWHCCVlZ6P
-         uAO9aLGR83/aOs2IY7ME8aO1evIDc1tIHdveoG4hxx6VwXowuaLD5yKBwNdP7FiGCetT
-         3yLjSsQz9SHjse/RmKJjB+LBXcYue4nx25gtAEbCVQy88CQPzIt+70G5pIVIYjx81XXC
-         bzQ+KxZGtkG/AOsP5GaLqpnRQ+1gOcFXE88vZ67nX/MFJ+Pj1zm2kMbPGgg/Jb3x4LM6
-         Jfqg==
-X-Forwarded-Encrypted: i=1; AJvYcCUfP2bmrFRTf+oVa4tQ/gcmeGryPZVsaSRVmJIwnhWLnKNms6qUg8/WeoeippQaBuQBsFRbBxI4fcUm5TY=@vger.kernel.org, AJvYcCWOCReeK+nsAwUzkFlkC5NJXvds6g2RIe76ZaToeDPbSk5KIYJCgA/Z72muM8psfMTJsUSgZ+lpP/ZjDZPt2ujD5TA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIVKtS2f9U1mK05G/IAkVg/NCZyOpE2ahINLOM/8qiPi9CwWXd
-	KRcfIAcKW5iRrOjpAKpqVh+JN/uQLYw+yNLetlCozhEn1i1KSy9WJFF/AaseLdcnbO21zKVr+IY
-	aQGotDcqhv4Z4OmYhQfvUjxKBli4=
-X-Google-Smtp-Source: AGHT+IHDy73B3Eu2odcBEz4FMGMBOLQSAs2ZC8I2RAiMOO8YuCHjJGZQlXeuZPTyuNA9Gg1xDRkSzM+BpdoUgb1b1Kk=
-X-Received: by 2002:a05:690c:7246:b0:6e3:34b9:960a with SMTP id
- 00721157ae682-6ee55b7e645mr89326377b3.17.1731884884631; Sun, 17 Nov 2024
- 15:08:04 -0800 (PST)
+        bh=MNN7ziIzHnkd18GYio7H3EiJ5Cg8s0kx1zTc8dpUr6c=;
+        b=L/DYOB1Zbuls1z+3Zf2T9BHZ5TsB+C3myHdt5yTCHydgdmn4Vc/3pzuE1HQLpw/Rza
+         EeWdVzr1vlGtt/rcf/+8vj7AxX9wpoTiuCvSxNnjaTF4j5tt8Lyb7g4JTB2qcauRANrB
+         nGRSl1btusc3htRJGx8x1S/ylsbvqgFrSqUGrqsyqQQyehVOLmuDvYY8HLO7CiMMwowy
+         DJcnit7KLg5AgPjy216z4KlqGtwveML12+XJxw0kGoWFdOXU1t/v3i05yQuZpadRttiw
+         6Ux5ygghbC4RMfucOJHBoBpgJvtdqD5G4PTJgKQRm0TqeJBFLL3KXlowpCAP37F4cesN
+         QY8w==
+X-Forwarded-Encrypted: i=1; AJvYcCUuFs/g67o38gkHDmYotLYciSpd0AjLNnJd02TRHG18BYHEvlnQEgxFPdtgoI7yf5DHlVDgFk/s7v+tYLYyqj3B@vger.kernel.org, AJvYcCVJ2kIlbK/UZI74Nf0uP8ElWTj99JFA4Oqbmvd0tjnsA7wDzm58/RkTk3ZlSN5tzl6V3VXkMueiFt+V@vger.kernel.org, AJvYcCX8JNEYnxVjSRLRIM1Qeu3G6TaxeR94SlkNeOEevWbiEyYOtqDmsVwMmtxiGZRhdfwKlf5aUBaVXJIeHX5w@vger.kernel.org
+X-Gm-Message-State: AOJu0YxeZBLmw9iiFlMV4x3HUB78WScobf9t6XfUYlS8eI3yK2M5D6ch
+	hdDuD5Xfoez0cw1ukZCju77dJAZw9oD/JejGSwLgAlwa5L9koJLrEjBQNuyu1N5+l+Yg+MCxFGL
+	QqcQvgVvFyMBDVyeo4XfkWzpBFS0=
+X-Google-Smtp-Source: AGHT+IG/Q4t9zlJxo0SzEiq1OWyQAiH8D9mhKsLHtjK5w2rEQERHHK17Ean2SepEZ7MUtCVHaZhXmMnoKX3qNPyE0Gk=
+X-Received: by 2002:a05:6512:b83:b0:539:f9b9:e6d2 with SMTP id
+ 2adb3069b0e04-53dab3b126amr4424699e87.35.1731884905418; Sun, 17 Nov 2024
+ 15:08:25 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241117212711.13612-1-rosenp@gmail.com> <20241117223850.GK5315@ragnatech.se>
-In-Reply-To: <20241117223850.GK5315@ragnatech.se>
-From: Rosen Penev <rosenp@gmail.com>
-Date: Sun, 17 Nov 2024 15:07:53 -0800
-Message-ID: <CAKxU2N_VMSEo30u-C1VK4+jBSUBTo6QT1vgd14RQSS=P+g9w+w@mail.gmail.com>
-Subject: Re: [PATCHv3 net-next] net: modernize ioremap in probe
-To: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-Cc: netdev@vger.kernel.org, Kurt Kanzenbach <kurt@linutronix.de>, 
-	Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Chris Snook <chris.snook@gmail.com>, 
-	Marcin Wojtas <marcin.s.wojtas@gmail.com>, Russell King <linux@armlinux.org.uk>, 
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, Heiner Kallweit <hkallweit1@gmail.com>, 
-	Richard Cochran <richardcochran@gmail.com>, open list <linux-kernel@vger.kernel.org>, 
-	"open list:RENESAS ETHERNET SWITCH DRIVER" <linux-renesas-soc@vger.kernel.org>
+References: <20241117113204.work.419-kees@kernel.org> <bcd4fb0f-47ee-4676-8e71-6b06973e9b65@embeddedor.com>
+In-Reply-To: <bcd4fb0f-47ee-4676-8e71-6b06973e9b65@embeddedor.com>
+From: Steve French <smfrench@gmail.com>
+Date: Sun, 17 Nov 2024 17:08:14 -0600
+Message-ID: <CAH2r5msDZjC_iktAhCn6jxhUVQZ2sXrD8KpbCs-woDriZNDmXw@mail.gmail.com>
+Subject: Re: [PATCH] smb: client: memcpy() with surrounding object base address
+To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc: Kees Cook <kees@kernel.org>, Steve French <sfrench@samba.org>, 
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Paulo Alcantara <pc@manguebit.com>, 
+	Ronnie Sahlberg <ronniesahlberg@gmail.com>, Shyam Prasad N <sprasad@microsoft.com>, 
+	Tom Talpey <tom@talpey.com>, Bharath SM <bharathsm@microsoft.com>, linux-cifs@vger.kernel.org, 
+	samba-technical@lists.samba.org, linux-kernel@vger.kernel.org, 
+	linux-hardening@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Nov 17, 2024 at 2:38=E2=80=AFPM Niklas S=C3=B6derlund
-<niklas.soderlund@ragnatech.se> wrote:
+merged into cifs-2.6.git for-next
+
+On Sun, Nov 17, 2024 at 1:15=E2=80=AFPM Gustavo A. R. Silva
+<gustavo@embeddedor.com> wrote:
 >
-> Hello Rosen,
 >
-> Thanks for your work.
 >
-> On 2024-11-17 13:27:11 -0800, Rosen Penev wrote:
->
-> > diff --git a/drivers/net/ethernet/renesas/rtsn.c
-> > b/drivers/net/ethernet/renesas/rtsn.c
-> > index 6b3f7fca8d15..bfe08facc707 100644
-> > --- a/drivers/net/ethernet/renesas/rtsn.c
-> > +++ b/drivers/net/ethernet/renesas/rtsn.c
-> > @@ -1297,14 +1297,8 @@ static int rtsn_probe(struct platform_device *pd=
-ev)
-> >       ndev->netdev_ops =3D &rtsn_netdev_ops;
-> >       ndev->ethtool_ops =3D &rtsn_ethtool_ops;
+> On 17/11/24 05:32, Kees Cook wrote:
+> > Like commit f1f047bd7ce0 ("smb: client: Fix -Wstringop-overflow issues"=
+),
+> > adjust the memcpy() destination address to be based off the surrounding
+> > object rather than based off the 4-byte "Protocol" member. This avoids =
+a
+> > build-time warning when compiling under CONFIG_FORTIFY_SOURCE with GCC =
+15:
 > >
-> > -     res =3D platform_get_resource_byname(pdev, IORESOURCE_MEM, "gptp"=
-);
-> > -     if (!res) {
-> > -             dev_err(&pdev->dev, "Can't find gptp resource\n");
-> > -             ret =3D -EINVAL;
-> > -             goto error_free;
-> > -     }
-> > -
-> > -     priv->ptp_priv->addr =3D devm_ioremap_resource(&pdev->dev, res);
-> > +     priv->ptp_priv->addr =3D
-> > +             devm_platform_ioremap_resource_byname(pdev, "gptp");
-> >       if (IS_ERR(priv->ptp_priv->addr)) {
-> >               ret =3D PTR_ERR(priv->ptp_priv->addr);
-> >               goto error_free;
+> > In function 'fortify_memcpy_chk',
+> >      inlined from 'CIFSSMBSetPathInfo' at ../fs/smb/client/cifssmb.c:53=
+58:2:
+> > ../include/linux/fortify-string.h:571:25: error: call to '__write_overf=
+low_field' declared with attribute warning: detected write beyond size of f=
+ield (1st parameter); maybe use struct_group()? [-Werror=3Dattribute-warnin=
+g]
+> >    571 |                         __write_overflow_field(p_size_field, s=
+ize);
+> >        |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~=
+~~~~
+> >
+> > Signed-off-by: Kees Cook <kees@kernel.org>
 >
-> You have a similar construct using platform_get_resource_byname() a few
-> lines above this one. Please convert both uses, or none, mixing them is
-> just confusing IMHO.
-that cannot be converted.
-
-devm_platform_ioremap_resource_byname has no res parameter, which is a
-problem as there's this lovely line below it.
-
-ndev->base_addr =3D res->start;
+> Reviewed-by: Gustavo A. R. Silva <gustavoars@kernel.org>
 >
-> --
-> Kind Regards,
-> Niklas S=C3=B6derlund
+> Thanks!
+> -Gustavo
+>
+> > ---
+> > Cc: Steve French <sfrench@samba.org>
+> > Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+> > Cc: Paulo Alcantara <pc@manguebit.com>
+> > Cc: Ronnie Sahlberg <ronniesahlberg@gmail.com>
+> > Cc: Shyam Prasad N <sprasad@microsoft.com>
+> > Cc: Tom Talpey <tom@talpey.com>
+> > Cc: Bharath SM <bharathsm@microsoft.com>
+> > Cc: linux-cifs@vger.kernel.org
+> > Cc: samba-technical@lists.samba.org
+> > ---
+> >   fs/smb/client/cifssmb.c | 2 +-
+> >   1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/fs/smb/client/cifssmb.c b/fs/smb/client/cifssmb.c
+> > index b96ca9be5352..026d6b5f23a9 100644
+> > --- a/fs/smb/client/cifssmb.c
+> > +++ b/fs/smb/client/cifssmb.c
+> > @@ -5337,7 +5337,7 @@ CIFSSMBSetPathInfo(const unsigned int xid, struct=
+ cifs_tcon *tcon,
+> >       param_offset =3D offsetof(struct smb_com_transaction2_spi_req,
+> >                               InformationLevel) - 4;
+> >       offset =3D param_offset + params;
+> > -     data_offset =3D (char *) (&pSMB->hdr.Protocol) + offset;
+> > +     data_offset =3D (char *)pSMB + offsetof(typeof(*pSMB), hdr.Protoc=
+ol) + offset;
+> >       pSMB->ParameterOffset =3D cpu_to_le16(param_offset);
+> >       pSMB->DataOffset =3D cpu_to_le16(offset);
+> >       pSMB->SetupCount =3D 1;
+>
+>
+
+
+--=20
+Thanks,
+
+Steve
 
