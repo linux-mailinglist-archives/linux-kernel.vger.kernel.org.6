@@ -1,58 +1,58 @@
-Return-Path: <linux-kernel+bounces-412237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D07C29D05A4
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 21:06:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E1A359D05A1
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 21:06:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B8D4B21C36
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 20:06:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 60BC4B210D7
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 20:06:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85A8C1DCB21;
-	Sun, 17 Nov 2024 20:06:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80D3B1DC196;
+	Sun, 17 Nov 2024 20:06:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="21U+wuwF"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="mC18zsML"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C12D91DB53A;
-	Sun, 17 Nov 2024 20:06:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C12C31DA60F;
+	Sun, 17 Nov 2024 20:06:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731873989; cv=none; b=JNxrhK6nHjjRaELmGhhDt4l0obLZNCvcb3pEI1Hn6f+MRRBQyCmgSCUvXsX+BEb6XZlCPc0LJfKgQM18facop/hxGmR2V1dY4n6018ItbnhKOJn6qCwPAci0PF3I80FsT4tgZj5c0COEDNZTByBljkc5RzPpRLvhuw3lsB/BGMA=
+	t=1731873984; cv=none; b=r65j9Qt987F0Rp0qJG1G6x02BpVcuZ0UVoYKnbLtfjVjnzgAIhgeYBCMkj9/2Avgek0F8LcxIML9ctDJrjw0FgSNdKQDrNL5x1Q28nC/Hti7JW94b8oHQuihu4NrfmBV4JW553lTaqvB9tclgU6/XTFai6UNyABHb5G73UVO71Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731873989; c=relaxed/simple;
-	bh=5R8x8u4RHqL9R/WudJoPXh5WUVqV0zIebiN38r36Lgs=;
+	s=arc-20240116; t=1731873984; c=relaxed/simple;
+	bh=OyxAN4YgaXUp4x+XaG2iuK6SIMvKnOiGTkjdOlJAyrU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WvktKa7XqALxdF9nXuzK2BUX2uGKtW/hmYgq+J6kXsrzAPoRNnyriS4HuQx6q4IwSgeXZqheIqvYOAlLlBk+svSCl/tOQph1sC7hE1minLJRmAyt946d5DbUk/YND/SX5VqRBuBSOSb12Q/QPqCDYSIHjtbiVg5XoB6v2oedKc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=21U+wuwF; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
-	In-Reply-To:References; bh=n6cxG/zZp641/q+hYZRRTrOQqG5Xgl13FSXhfP9tpHQ=; b=21
-	U+wuwFd3743A0QeYMjX6G0RHUhP4f7dA4yY9oNdlOscDp7pYteUrJm4U8xQtm+GpapDJENGzXZE/W
-	RfPmCRKX9/+gjOJm9IPDmStpa4eEKp+mM4zvBwtD07kB/kmfYz6+3TEy6Ts8zzFAM3f0Y6XXPldG8
-	1zqJkI/wx2p/4m4=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tClXD-00DbFs-Lt; Sun, 17 Nov 2024 21:06:15 +0100
-Date: Sun, 17 Nov 2024 21:06:15 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Nobuhiro Iwamatsu <iwamatsu@nigauri.org>
-Cc: dinguyen@kernel.org, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org, robh+dt@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org
-Subject: Re: [PATCH] ARM: dts: socfpga: sodia: Fix mdio bus probe and PHY ID
-Message-ID: <90978892-2086-4c70-9698-0957cc71abb8@lunn.ch>
-References: <20241004061541.1666280-1-nobuhiro1.iwamatsu@toshiba.co.jp>
- <CABMQnVK_RUC84QQ5zb+ZpuMOZcFMNV6HzEYAfmX4bOrRm+rvTw@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tuym9p83yf1xU9wZ8sWaGAe3hw/01ZgipyskzeSokVR5BsDJFeFeNwllh+1N1IszpdHXphlK7/mNmbsjjq8qXtlmCCXKm0r8TU01elbMJ55EQgcuyoLGskIC1/BuqyW+Q7OOxcZUA5emtpEBoTAwWMgGrz3wv8r6tuGoXAtAVME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=mC18zsML; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71351C4CECD;
+	Sun, 17 Nov 2024 20:06:23 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="mC18zsML"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1731873981;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OyxAN4YgaXUp4x+XaG2iuK6SIMvKnOiGTkjdOlJAyrU=;
+	b=mC18zsML78oK44vTAGfzIlRcbHSABMcqxb1jceIME38nVDjL//ZsQKeO/rOwTefJ1cSgMT
+	eWm1DsiL/dNk4Uh6mN5Yb8wX0Jl0J+Xh1WhnqQ86Ap2W1j0c5+tptSZhWaGkM/a6pqDZe5
+	d6KQzjvXosYx+b2MXTGqpA3TPd0KzWo=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 01568eab (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Sun, 17 Nov 2024 20:06:20 +0000 (UTC)
+Date: Sun, 17 Nov 2024 21:06:18 +0100
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: Dheeraj Reddy Jonnalagadda <dheeraj.linuxdev@gmail.com>
+Cc: wireguard@lists.zx2c4.com, andrew+netdev@lunn.ch, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] wireguard: allowedips: Fix useless call issue
+Message-ID: <ZzpMumfYVgV8fTFH@zx2c4.com>
+References: <20241115110721.22932-1-dheeraj.linuxdev@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,33 +61,13 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CABMQnVK_RUC84QQ5zb+ZpuMOZcFMNV6HzEYAfmX4bOrRm+rvTw@mail.gmail.com>
+In-Reply-To: <20241115110721.22932-1-dheeraj.linuxdev@gmail.com>
 
-On Sun, Nov 17, 2024 at 05:53:51PM +0900, Nobuhiro Iwamatsu wrote:
-> Hi Dinh,
-> 
-> Please check and apply this patch?
-> 
-> Thanks,
->   Nobuhiro
-> 
-> 2024年10月4日(金) 15:16 Nobuhiro Iwamatsu <iwamatsu@nigauri.org>:
-> >
-> > From: Nobuhiro Iwamatsu <iwamatsu@nigauri.org>
-> >
-> > On SoCFPGA/Sodia board, mdio bus cannot be probed, so the PHY cannot be
-> > found and the network device does not work.
-> >
-> > ```
-> > stmmaceth ff702000.ethernet eth0: __stmmac_open: Cannot attach to PHY (error: -19)
-> > ```
-> >
-> > To probe the mdio bus, add "snps,dwmac-mdio" as compatible string of the
-> > mdio bus. Also the PHY ID connected to this board is 4. Therefore, change
-> > to 4.
+On Fri, Nov 15, 2024 at 04:37:21PM +0530, Dheeraj Reddy Jonnalagadda wrote:
+> This commit fixes a useless call issue detected
+> by Coverity (CID 1508092). The call to
+> horrible_allowedips_lookup_v4 is unnecessary as
+> its return value is never checked.
 
-It is the address which is 4, not the ID.
-
-	Andrew
+Applied to the wireguard tree, thanks.
 
