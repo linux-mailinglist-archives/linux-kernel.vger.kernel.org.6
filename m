@@ -1,147 +1,152 @@
-Return-Path: <linux-kernel+bounces-412266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF4849D065D
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 22:42:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21B5E9D06A3
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 22:52:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2FBDFB21CC2
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 21:42:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6DE41F21F91
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 21:52:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 309B11DDC07;
-	Sun, 17 Nov 2024 21:42:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B78511DDA34;
+	Sun, 17 Nov 2024 21:52:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="Q526gACL"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NtQR2QxK"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 047E51DAC9F
-	for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 21:42:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2CCB49627
+	for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 21:52:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731879749; cv=none; b=TTynWnsVoGtmg/L0M/v6he6Kpy74ZWkBwGUBhNWjXR/INp147X20FkRu8Z/4Oc97Dm/IxqeCw1QiweCgtUx16hGldoW7ZQ0BSPqsWMq9NHj5vC6Gyj4JfDyrV9TLoZvSB7fKnEvIZWunl5KlHm2N1s3+ZzDlgwxxLRFg0QmFapY=
+	t=1731880345; cv=none; b=UvWqomW7coF2sPZ/wnVajtmobTW7pLz5jsuyH07cBVuJ7ioWTh0uRHLVY6CQXFnDD0q/Wnww0xtLm+NqKFQ78YGPS1P6bW57GJM7RTz2OFxyozheqr2vxiMfPTWz4uEkojRmgrKdplWb2/JZQnPW7iAfoXkeXIXL0JWF9WEhZGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731879749; c=relaxed/simple;
-	bh=fbnwBa/ZpueSh9SqikfHGUoxX6deXqluvSX6WSJQJJs=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=Q7hUJcRYdKb3vzzQcUNRHREen7jgCHfMFlGhTU0oTCVJkwjGxuI+5x4NV9XdGpHvFybMi2Oi7FQiZvGRuUI7jrXIs89cKVNbKtOhWlkuVkceIbbDY5CNyxTbJENaHZMoyx+IY8QFlvM9koVxPA7P2ftD6N0Nk0Si0ccz+lz/5l8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=Q526gACL; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-37ece998fe6so253346f8f.1
-        for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 13:42:27 -0800 (PST)
+	s=arc-20240116; t=1731880345; c=relaxed/simple;
+	bh=NU7crY72ANGOmaw+FykFygE/dkkujprQhyOPT2KbGvQ=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version; b=V8WQueqcPAmbg46e6X6SHqISapSsUXB7R9RSk1Yh1HMnHqaT3H1f7hcNzjLfJTlJbm6OZJ/H4d6+Yz4JVNjQ1tB4UIqJDYPSGSnWbbZ8+MwF1qhpwMq6zuBjgW4OIT0s/fUh2fhROPLf645rPM23A8h0LcVS3rCtwDYDDYim1+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NtQR2QxK; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-7f809332ffcso2389901a12.0
+        for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 13:52:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1731879746; x=1732484546; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zr6CSSq+yYWOM7mVKH3wNw8lI+twmShT9Ch+V8e8Hus=;
-        b=Q526gACLPCDOWLLrEoYKBrLLfdC2d05mdnCg98TDFXNH4uNAPiZX3ZrYW4cbl4WhtJ
-         +awuTdVmtIafCxljL7oloVn+ArbH2XE2nrt/Hdki5eVxHmvQmwGy2yutJ1b/1/aQ7VrU
-         6atrZNHPfLsNTDX5ArB9AZ1dinbNjWly+mejJif4Bywlr7K9G5kIQEscS2UOJnXCa6T/
-         VsukXHbfzwnnrwgw+ctEv+bBF72BG/jcn60CovYszlmbcBzhQCyP/q71E6v4Jww9zJaS
-         LGUxWMiQ7AAkEcdp/HbN1hUb+oIQcGBhthHb0+9OeKns2vQPyzaZlZPM/IDzhRX5ghXN
-         8NYA==
+        d=gmail.com; s=20230601; t=1731880343; x=1732485143; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TZFa1I2jutht+G4LRPkakmXfxYKKGJlHT58aBpyCo3A=;
+        b=NtQR2QxKGMgVriG77nTFVjWrg+BmqFeusp5kcsJcNZeTM+0mead8unEKoPxX1a8U2c
+         J19iPVn3Bi/xccGEjm7XElJH5859KEgrqDKtwP3yeRUcnTP5L7/Z3XATlIGjqco881zq
+         1OomwoYINlc++Ii0K+v3zx0paFuMng2poL8oTme3FHTRnTeqh2YC8EDUzJ5XhJ4Hi/yB
+         tTYjpQH5WB9Dg5lBCg7LFE5Vc+2blHJppOND8JjTS/evHTN5Euk/1Q+AwAaUMJ7zahzg
+         ELafV0QdBSgTumy2CXP69IBDhOJZOgzI0h2r8g2rraU2OtSq5exy216hFxYk0sQnXPsg
+         z7Eg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731879746; x=1732484546;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zr6CSSq+yYWOM7mVKH3wNw8lI+twmShT9Ch+V8e8Hus=;
-        b=v5yLT+R8IQKhyi8MfD3wmHQZN3R4NG8HIyRDuuv5ZzfzV4FvWuK0LYs2/rJfl+Z+d9
-         SlUgZN8enqoYsURkPiRFxfRBTT/Ehj/E6ROyjyVXGRhgc/IPgb7IpzzzIEMnm0byyf05
-         yhld2rY55rw0h2+W3FEjddeNLRIGHWfbK1v/b3mll2Aqc6JrLn3sns/+dawOkufv+tTX
-         WdWOYonkw9LfXUIuNVZiI7UpHjSJ68ZKHB1b5yzZ+5/KBJZ7XUhoiWs0BrbIm6IhUV7t
-         VWtGpRLshGrgMNEqMkLM3+N3rTMPxhxKiF+jJPLueAqEkPcnYgo6x45kzc0uNaZJNlNV
-         d5Uw==
-X-Forwarded-Encrypted: i=1; AJvYcCWFmTiJ8tbbW9OeqtBOcpWLhwQzaRhbzjfLU2FikQlohhDuxPRQ707Z9y2qNi5Q22xNYqzHqWWJx14kYGM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyr9VUR8eW5jjpvRkJ5L9y2cCnN6Zkie/IbJHvB5ARxxmU00oWX
-	ilvVYIZMW7xRJYz271DLW+P01zj2G2pxfs+p7Fm7kPkKvm2Mwc8FuQ/2v7D8wtg=
-X-Gm-Gg: ASbGncvvpTQ1PAQugZZoU6aMYrddH6pu1vIzoQl9jU4v28VV/2uwc0T4tFQZ1zUXaJf
-	pBWIlhNbYZEjE+sv8aDRqEyClVNszY2D3XF3STkRw/zDt6FvYv7GR9pgO5ogOv+P8ZxQfPy39w2
-	YZ3j6BQzgzVx6ojiiJN08vClj8CQPANQ3ryKQvB21RgteBLKHTtY4oV53X/ysajZZb9OwXENVOQ
-	tEe1o41q9XQpjVyFMaWXk6m/V+Y3zt0k8fLX5gNk03ut3tQ5o78M/F9EvtjCYwajpzSUoPsb1To
-	BDMW6g==
-X-Google-Smtp-Source: AGHT+IF+9oJFbi21AiEkbm/uejQ7RsC8IrNLz23sCIY+EPlWop6ZGwOrWSuUxfNkWi1PvkVhegUgpA==
-X-Received: by 2002:a05:6000:2d03:b0:382:3ef9:dfbc with SMTP id ffacd0b85a97d-3823ef9eecemr723300f8f.5.1731879746245;
-        Sun, 17 Nov 2024 13:42:26 -0800 (PST)
-Received: from smtpclient.apple ([2001:a61:a4f:301:d900:ed0f:882d:dc03])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-382491e19bdsm477489f8f.16.2024.11.17.13.42.24
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 17 Nov 2024 13:42:25 -0800 (PST)
-Content-Type: text/plain;
-	charset=us-ascii
+        d=1e100.net; s=20230601; t=1731880343; x=1732485143;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TZFa1I2jutht+G4LRPkakmXfxYKKGJlHT58aBpyCo3A=;
+        b=BvouINxM1yV3Rqdg+kTx/ITc96kABL1GsS/LD40rhvkxj2BymzZu9LHvdZdr9QYk4g
+         uO6dWPrhniIMoKoubyRQujT5W4UgfQGp9ThHOVf+Rgw1oCw7O2Dii52GHeCw4RwR4isF
+         vUx9Q1rOe4SY6fJNbJmHW4i2lfuuzAURNHHpVDKy+/v3YTIpdJ07kmglFDlaBUTESxYv
+         Pw15OtuYHvOZ/H8yQDTPGg+iSd0+wo9R5i0DXCEK9BQb3MEwfd+G/KKVOC3hqKYD517j
+         tJNNd4tZnk9qNM9+mnwDoq0cjuhtV5nLwxZ5MDC7q/tzic6XaezJQcDIx9kDnJ1/8iTZ
+         peGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXbStWXCx3GeZryLpXDP3V/T9tfQ4N6jgDq1ZkldYI/SX8eaPqPf/WLzfGrM4yFCYaghwypvYRmLhqmwi4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJHPEq6qYchdWPRg170RapB65+5VipNdXfDCjXfqAFDNDjthpG
+	x19PZzxXRyDFWK+3jlXKeTET4wd2eAbpQzRemi6/QpMvFDVto4s6
+X-Google-Smtp-Source: AGHT+IGH3sWRJ7aCqF1wjKKWMkrxL2s288oAl945dj2z0e7cyzKT3LxbZQOtJvHKEce+XipNgoXQCw==
+X-Received: by 2002:a17:902:d509:b0:212:4b3:1080 with SMTP id d9443c01a7336-21204b3158bmr55172805ad.13.1731880343068;
+        Sun, 17 Nov 2024 13:52:23 -0800 (PST)
+Received: from debian.host.ucla.edu (wifi-natpool-131-179-61-163.host.ucla.edu. [131.179.61.163])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-211d0f56f02sm44450015ad.272.2024.11.17.13.52.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 17 Nov 2024 13:52:22 -0800 (PST)
+From: Daniel Yang <danielyangkang@gmail.com>
+To: Mark Fasheh <mark@fasheh.com>,
+	Joel Becker <jlbec@evilplan.org>,
+	Joseph Qi <joseph.qi@linux.alibaba.com>,
+	"GitAuthor: Daniel Yang" <danielyangkang@gmail.com>,
+	ocfs2-devel@lists.linux.dev (open list:ORACLE CLUSTER FILESYSTEM 2 (OCFS2)),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v3] ocfs2: heartbeat: replace simple_strtoul with kstrtoul
+Date: Sun, 17 Nov 2024 13:52:18 -0800
+Message-Id: <20241117215219.4012-1-danielyangkang@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51.11.1\))
-Subject: Re: [RESEND PATCH] fscache: Remove duplicate included header
-From: Thorsten Blum <thorsten.blum@toblux.com>
-In-Reply-To: <20240830-weihnachten-umtreiben-d3a9f1aee2e7@brauner>
-Date: Sun, 17 Nov 2024 22:42:13 +0100
-Cc: netfs@lists.linux.dev,
- linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Simon Horman <horms@kernel.org>,
- dhowells@redhat.com,
- jlayton@kernel.org
-Content-Transfer-Encoding: 7bit
-Message-Id: <FE1592EE-F840-4E90-9177-FD2D03261E3B@toblux.com>
-References: <20240628062329.321162-2-thorsten.blum@toblux.com>
- <20240628-dingfest-gemessen-756a29e9af0b@brauner>
- <4A2EAFA2-842F-46EF-995E-7843937E8CD5@toblux.com>
- <20240830-weihnachten-umtreiben-d3a9f1aee2e7@brauner>
-To: Christian Brauner <brauner@kernel.org>
-X-Mailer: Apple Mail (2.3776.700.51.11.1)
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On 30. Aug 2024, at 15:17, Christian Brauner wrote:
-> On Thu, Aug 29, 2024 at 02:29:34PM GMT, Thorsten Blum wrote:
->> On 28. Jun 2024, at 10:44, Christian Brauner wrote:
->>> On Fri, 28 Jun 2024 08:23:30 +0200, Thorsten Blum wrote:
->>>> Remove duplicate included header file linux/uio.h
->>>> 
->>>> 
->>> 
->>> Applied to the vfs.netfs branch of the vfs/vfs.git tree.
->>> Patches in the vfs.netfs branch should appear in linux-next soon.
->>> 
->>> Please report any outstanding bugs that were missed during review in a
->>> new review to the original patch series allowing us to drop it.
->>> 
->>> It's encouraged to provide Acked-bys and Reviewed-bys even though the
->>> patch has now been applied. If possible patch trailers will be updated.
->>> 
->>> Note that commit hashes shown below are subject to change due to rebase,
->>> trailer updates or similar. If in doubt, please check the listed branch.
->>> 
->>> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
->>> branch: vfs.netfs
->>> 
->>> [1/1] fscache: Remove duplicate included header
->>>     https://git.kernel.org/vfs/vfs/c/5094b901bedc
->> 
->> Hi Christian,
->> 
->> I just noticed that this patch never made it into linux-next and I 
->> can't find it in the vfs.netfs branch either. Any ideas?
-> 
-> Picked into vfs.fixes.
+The function simple_strtoul is deprecated due to ignoring overflows and
+also requires clunkier error checking. Replacing with kstrtoul() leads
+to safer code and cleaner error checking.
 
-Hi Christian,
+Signed-off-by: Daniel Yang <danielyangkang@gmail.com>
+---
+v2->v3: code style change and return ret
+v1->v2: moved ret definition and removed blank lines
 
-I just noticed that this patch (again) didn't make it into linux-next.
-Any ideas why not? The link just says:
+ fs/ocfs2/cluster/heartbeat.c | 21 ++++++++++++---------
+ 1 file changed, 12 insertions(+), 9 deletions(-)
 
-  Notice: this object is not reachable from any branch.
-
-Obviously, this patch isn't very important, but maybe this happens with
-other, more important patches too?
-
-Thanks,
-Thorsten
+diff --git a/fs/ocfs2/cluster/heartbeat.c b/fs/ocfs2/cluster/heartbeat.c
+index dff18efbc..76f1e7bfd 100644
+--- a/fs/ocfs2/cluster/heartbeat.c
++++ b/fs/ocfs2/cluster/heartbeat.c
+@@ -1536,10 +1536,11 @@ static int o2hb_read_block_input(struct o2hb_region *reg,
+ {
+ 	unsigned long bytes;
+ 	char *p = (char *)page;
++	int ret;
+ 
+-	bytes = simple_strtoul(p, &p, 0);
+-	if (!p || (*p && (*p != '\n')))
+-		return -EINVAL;
++	ret = kstrtoul(p, 0, &bytes);
++	if (ret)
++		return ret;
+ 
+ 	/* Heartbeat and fs min / max block sizes are the same. */
+ 	if (bytes > 4096 || bytes < 512)
+@@ -1623,13 +1624,14 @@ static ssize_t o2hb_region_blocks_store(struct config_item *item,
+ 	struct o2hb_region *reg = to_o2hb_region(item);
+ 	unsigned long tmp;
+ 	char *p = (char *)page;
++	int ret;
+ 
+ 	if (reg->hr_bdev_file)
+ 		return -EINVAL;
+ 
+-	tmp = simple_strtoul(p, &p, 0);
+-	if (!p || (*p && (*p != '\n')))
+-		return -EINVAL;
++	ret = kstrtoul(p, 0, &tmp);
++	if (ret)
++		return ret;
+ 
+ 	if (tmp > O2NM_MAX_NODES || tmp == 0)
+ 		return -ERANGE;
+@@ -2141,10 +2143,11 @@ static ssize_t o2hb_heartbeat_group_dead_threshold_store(struct config_item *ite
+ {
+ 	unsigned long tmp;
+ 	char *p = (char *)page;
++	int ret;
+ 
+-	tmp = simple_strtoul(p, &p, 10);
+-	if (!p || (*p && (*p != '\n')))
+-                return -EINVAL;
++	ret = kstrtoul(p, 10, &tmp);
++	if (ret)
++		return ret;
+ 
+ 	/* this will validate ranges for us. */
+ 	o2hb_dead_threshold_set((unsigned int) tmp);
+-- 
+2.39.5
 
 
