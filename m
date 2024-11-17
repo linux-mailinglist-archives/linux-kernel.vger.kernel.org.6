@@ -1,207 +1,225 @@
-Return-Path: <linux-kernel+bounces-412011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFEC49D025A
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 08:38:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94BDD9D025C
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 08:39:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4318CB23472
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 07:38:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D011B285716
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 07:39:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FA777D3F4;
-	Sun, 17 Nov 2024 07:38:23 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1CD67D3F4;
+	Sun, 17 Nov 2024 07:38:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="mlU5pD3W"
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05olkn2032.outbound.protection.outlook.com [40.92.91.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CB7D383A5
-	for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 07:38:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731829103; cv=none; b=UmNEQ8Feq0xXmQTwZQBVcKVYr/uDvzLQBl6WbvPgG1dykkB78o/0cuudJVpWYL5bv6h9JipYVSZzLXhmbxxYkZ2Au/1siFAzeb31ghd7PVfveTW6gQYgLRiNgTKnIoXxUSZsZ1xpdrSmBLWEWQ7Qpo6q/fkiWMy/TPLop7FJkzk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731829103; c=relaxed/simple;
-	bh=Bd96KkRu2mUsr86NmTv7M/pMEhNWGK4TiVGgkdw/8t4=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=mj560MKbmdCRiX0MUylOHTd1gknEDR/KbZgBj+uYWlnddSCmqWVoPPxFulxQWkSHLM7lgmSV/0oNcyy5imKdWxaxYpexbqvAlyy6Zg6Ee+NJ+RFXtnvAzNs/SXV0vioTRPgRD16Ozlvb5xxvOvGjJGNUL1vuTYX0QEytye2dxVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a715ac91f6so23388675ab.2
-        for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 23:38:21 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731829100; x=1732433900;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YKKKIlj9Kh23bXoEQoDxs5NVCMYSors2CPzf2eGf3E4=;
-        b=G5Ff+MpJAQSXV0nKSaXQ7ZPkik9ICVo8vIZ5AnoiANZfaNBW2TU8yJqIi+zxvt9+jj
-         c1ux2zo4JGIECHi2MoAzsOTA/LMWqzodv/68f3T+LK6M0MVIY2eWAfB7baU5+SkiVvnJ
-         3FcYopcGZMg3hC7jzSk3SjBhTKYFc2OdtU2YnwS+BCmc73I/Vp0Iw+KHo1z+Iq77Q9D5
-         cvITutI4gCQsevGhpbpYty6CVZOmAj97RvAKFUii3dJemyBCqZrtcCB+Liz74sxc4amy
-         PRYMy1iGVGWf9M0NChW7OzyFqGyqO8RkYhEuT+OeNviy/OIo5NBrHvW3YLXyqbc7nXQo
-         Ml9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXDuGtcAx7xPtRh/3fmA/Eerqgwyh2IpX5mWnl29wiEVOsZOsE9dkgF1jRABNj4s01gy2ucUluYuz1JWQI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKNYaxWyaZ6BGLbOodv2hMg9VIY2uA/t+6b9q/sxAssGW2ckOl
-	I2vHCZV52+0GUBTfbAjrIvbIDUgsi1D2EYoI8kynrZ5vtdbEc+mTZ/yOtbP/gdEUbmDzW4GefEv
-	q0hAIz/w4jo8R2f3tb3hczHAsq+G668sj2iTCAklNpIjEoZEbwX4/KHc=
-X-Google-Smtp-Source: AGHT+IE6sRALUW4ufN5B5EC5tkFPRX66B2RVZsnR0hh9k2M6Cd8AUt/4xUl3cK6M7fDNd710Bn7JpL99wFi5YXpUK7GqbCcsK8OV
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEEFB383A5;
+	Sun, 17 Nov 2024 07:38:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.91.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731829137; cv=fail; b=m0vLIsfb8zni9H5xqbk47JjxWy28l1qFVIqjw60vYYJ7AhzcWgHh5cPEOtbIX1UGyb1/gAwOafX6Dp1zmkMoi0X+jf/QlaETXvD15VwES3T6DbySpNXh+F14A9m1jfdyMGJ2xK7gJVwT/QTaWBzNhqD1Scex4v9m/3KbXcfIEGE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731829137; c=relaxed/simple;
+	bh=2MzFM1i2AhuQ+KvnGjVE3+TztOJs3zV64eFovEIhN14=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=IMUpKYXzCyKBqDi3bb0jzh3CrfzngOP7gERiva76DhMyZmd5J/7b73UkkA8s/dDXNlfR4IOedKgX3rBI2tvEhCmfK1b9fCqHnaSC5XWg/390QUU5n8WbVypFxPWa/gUtGRLVBz8ljRPa8N3W9vNLXEZ4tNO289txW5d4iuNE0Lg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=mlU5pD3W; arc=fail smtp.client-ip=40.92.91.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Ed6GAJl+c7chNcFfae5WMcZcbHxbnHLbxmgPYxZAr2jW2/er766r5wICaTB5HMYxbRiJ4WHz7guStcfNZvBsNHEOyCXBPQhDYNrBO+OogJaLspoFMlzvcqwtHg1Cr5wM9sIh6YHZ4NsKDuaRuqtbn3X9b0NIBndVD0t8DMGqvZaON7vjYVBzCSCYBRGxVRY908g3o3EliNiS+I1Jy7zCu3k4tGrkyc0wNVwhGSqeaDx6RL+M4ToBsZn8LIT9IkDukswSczUwclzUKSU7z0vHwbzquErJMockcIui+THb1me8c+d/JJ3JqzTvVaypCw3TdvDv1/551BR2lplAYDGv4Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=CSd0bc5vBk/3cX79tK0wRwRWIfG/q6PZ8pz5Ox+jLKI=;
+ b=jb5cjeOKOTwyzxyKk9CNYk87Fr71cZEq5pykGWl3thFvkAQg/5CvD3G8ct70l3UoXDwM/8cWuBvjwtLne3YIgxnwDz6CMhNmfKyTx+6ljLOOFCBi3OE1047ES+W8KTdw1TVuSq+IgA0wwaEHjh5cZYzd+Qm5mO0cFkj08zCoF7+xSNohq+8XLvrH8j4ukg/5Y1E3NP7YM5uHOmkq7Cqfw5LO4OhhKf8SEeZNOjFRE3T5S9EBWPYtDKTRAXihbhMw0S4o6KnYjEnjCmDnLFZdJ9qJasHVvneTnvjR4k3lzpURADbAQ954co1R6lgWi2DRLtXFkfW+4+4xX3nB8jkX2g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CSd0bc5vBk/3cX79tK0wRwRWIfG/q6PZ8pz5Ox+jLKI=;
+ b=mlU5pD3WwWAEyVtNi943orQx19SWxYDkHlCh2DLnK2DD35e0hAR395q2rxBI89OQggwtNupcBsbvlCeTMMDYJJuKw32YQm8j4g4TW47fwbmo77Cq4vo5k400hERbf59VbMZ6+1M+HuJwPT4uZgtw3wpQeX4EISYFvd618aWu705LDzhphh97nbqKD9lyAwNJ7YoiR5tSxfEAq6NPCtAs1kBRB+T0cM2hw/7LV9wP7nN74Y1fwczizkUDMaAaT0950V2M9t9ed5intKQmIKnOmYeSYmS+K0/1EnyAnlUZkOXUPinfIduooCkEF5LRJ+cmqH0DdfHXhv6PqH1mIINaHg==
+Received: from VI1PR10MB2016.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:803:36::13)
+ by GV1PR10MB6417.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:150:a6::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.12; Sun, 17 Nov
+ 2024 07:38:51 +0000
+Received: from VI1PR10MB2016.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::8597:8c28:89af:4616]) by VI1PR10MB2016.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::8597:8c28:89af:4616%7]) with mapi id 15.20.8182.004; Sun, 17 Nov 2024
+ 07:38:51 +0000
+Message-ID:
+ <VI1PR10MB201646F611CAC37D90C7D1A2CE262@VI1PR10MB2016.EURPRD10.PROD.OUTLOOK.COM>
+Date: Sun, 17 Nov 2024 15:38:42 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 05/15] PCI/AER: Add CXL PCIe port correctable error
+ support in AER service driver
+To: "Bowman, Terry" <terry.bowman@amd.com>, Lukas Wunner <lukas@wunner.de>
+Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pci@vger.kernel.org, nifan.cxl@gmail.com, ming4.li@intel.com,
+ dave@stgolabs.net, jonathan.cameron@huawei.com, dave.jiang@intel.com,
+ alison.schofield@intel.com, vishal.l.verma@intel.com,
+ dan.j.williams@intel.com, bhelgaas@google.com, mahesh@linux.ibm.com,
+ ira.weiny@intel.com, oohall@gmail.com, Benjamin.Cheatham@amd.com,
+ rrichter@amd.com, nathan.fontenot@amd.com,
+ Smita.KoralahalliChannabasappa@amd.com
+References: <20241113215429.3177981-1-terry.bowman@amd.com>
+ <20241113215429.3177981-6-terry.bowman@amd.com> <ZzYo5hNkcIjKAZ4i@wunner.de>
+ <7cfb4733-73a6-4a07-8afa-9c432f771bb0@amd.com>
+ <VI1PR10MB201607EB59D6C0884A57995CCE242@VI1PR10MB2016.EURPRD10.PROD.OUTLOOK.COM>
+ <21fbec11-94dc-4189-b9a8-041840ebf913@amd.com>
+From: Li Ming <ming4.li@outlook.com>
+In-Reply-To: <21fbec11-94dc-4189-b9a8-041840ebf913@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SI2P153CA0035.APCP153.PROD.OUTLOOK.COM
+ (2603:1096:4:190::14) To VI1PR10MB2016.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:803:36::13)
+X-Microsoft-Original-Message-ID:
+ <7eff24b5-f362-4bb1-bdfb-5839849bf44b@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d88:b0:3a6:ac4e:2659 with SMTP id
- e9e14a558f8ab-3a74800f183mr93069895ab.6.1731829100606; Sat, 16 Nov 2024
- 23:38:20 -0800 (PST)
-Date: Sat, 16 Nov 2024 23:38:20 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67399d6c.050a0220.87769.0005.GAE@google.com>
-Subject: [syzbot] [exfat?] KMSAN: uninit-value in exfat_iterate
-From: syzbot <syzbot+84345a1b4057358168d9@syzkaller.appspotmail.com>
-To: linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, sj1557.seo@samsung.com, 
-	syzkaller-bugs@googlegroups.com, yuezhang.mo@sony.com
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    3022e9d00ebe Merge tag 'sched_ext-for-6.12-rc7-fixes' of g..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=177941a7980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=dcca673786a14715
-dashboard link: https://syzkaller.appspot.com/bug?extid=84345a1b4057358168d9
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: i386
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/937339c4ba17/disk-3022e9d0.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/23acd73c301b/vmlinux-3022e9d0.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/66d14471611f/bzImage-3022e9d0.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+84345a1b4057358168d9@syzkaller.appspotmail.com
-
-exFAT-fs (loop1): failed to load upcase table (idx : 0x0001e4a3, chksum : 0x009ea0b8, utbl_chksum : 0x7319d30d)
-=====================================================
-BUG: KMSAN: uninit-value in exfat_get_entry_type fs/exfat/dir.c:348 [inline]
-BUG: KMSAN: uninit-value in exfat_readdir fs/exfat/dir.c:125 [inline]
-BUG: KMSAN: uninit-value in exfat_iterate+0x1346/0x3f90 fs/exfat/dir.c:261
- exfat_get_entry_type fs/exfat/dir.c:348 [inline]
- exfat_readdir fs/exfat/dir.c:125 [inline]
- exfat_iterate+0x1346/0x3f90 fs/exfat/dir.c:261
- wrap_directory_iterator+0xf3/0x190 fs/readdir.c:65
- shared_exfat_iterate+0x3c/0x50 fs/exfat/dir.c:309
- iterate_dir+0x5b3/0x9e0 fs/readdir.c:108
- __do_compat_sys_getdents fs/readdir.c:575 [inline]
- __se_compat_sys_getdents+0x171/0x550 fs/readdir.c:560
- __ia32_compat_sys_getdents+0x93/0xe0 fs/readdir.c:560
- ia32_sys_call+0x12f8/0x40d0 arch/x86/include/generated/asm/syscalls_32.h:142
- do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
- __do_fast_syscall_32+0xb0/0x110 arch/x86/entry/common.c:386
- do_fast_syscall_32+0x38/0x80 arch/x86/entry/common.c:411
- do_SYSENTER_32+0x1f/0x30 arch/x86/entry/common.c:449
- entry_SYSENTER_compat_after_hwframe+0x84/0x8e
-
-Uninit was stored to memory at:
- memcpy_to_iter lib/iov_iter.c:65 [inline]
- iterate_bvec include/linux/iov_iter.h:123 [inline]
- iterate_and_advance2 include/linux/iov_iter.h:304 [inline]
- iterate_and_advance include/linux/iov_iter.h:328 [inline]
- _copy_to_iter+0xe5a/0x2b30 lib/iov_iter.c:185
- copy_page_to_iter+0x419/0x880 lib/iov_iter.c:362
- shmem_file_read_iter+0xa09/0x12b0 mm/shmem.c:3161
- do_iter_readv_writev+0x88a/0xa30
- vfs_iter_read+0x278/0x760 fs/read_write.c:923
- lo_read_simple drivers/block/loop.c:283 [inline]
- do_req_filebacked drivers/block/loop.c:516 [inline]
- loop_handle_cmd drivers/block/loop.c:1910 [inline]
- loop_process_work+0x20fc/0x3750 drivers/block/loop.c:1945
- loop_workfn+0x48/0x60 drivers/block/loop.c:1969
- process_one_work kernel/workqueue.c:3229 [inline]
- process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3310
- worker_thread+0xea7/0x14f0 kernel/workqueue.c:3391
- kthread+0x3e2/0x540 kernel/kthread.c:389
- ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-Uninit was stored to memory at:
- memcpy_from_iter lib/iov_iter.c:73 [inline]
- iterate_bvec include/linux/iov_iter.h:123 [inline]
- iterate_and_advance2 include/linux/iov_iter.h:304 [inline]
- iterate_and_advance include/linux/iov_iter.h:328 [inline]
- __copy_from_iter lib/iov_iter.c:249 [inline]
- copy_page_from_iter_atomic+0x1299/0x30c0 lib/iov_iter.c:483
- copy_folio_from_iter_atomic include/linux/uio.h:201 [inline]
- generic_perform_write+0x8d1/0x1080 mm/filemap.c:4066
- shmem_file_write_iter+0x2ba/0x2f0 mm/shmem.c:3215
- do_iter_readv_writev+0x88a/0xa30
- vfs_iter_write+0x44d/0xd40 fs/read_write.c:988
- lo_write_bvec drivers/block/loop.c:243 [inline]
- lo_write_simple drivers/block/loop.c:264 [inline]
- do_req_filebacked drivers/block/loop.c:511 [inline]
- loop_handle_cmd drivers/block/loop.c:1910 [inline]
- loop_process_work+0x15e6/0x3750 drivers/block/loop.c:1945
- loop_workfn+0x48/0x60 drivers/block/loop.c:1969
- process_one_work kernel/workqueue.c:3229 [inline]
- process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3310
- worker_thread+0xea7/0x14f0 kernel/workqueue.c:3391
- kthread+0x3e2/0x540 kernel/kthread.c:389
- ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-Uninit was created at:
- __alloc_pages_noprof+0x9a7/0xe00 mm/page_alloc.c:4758
- alloc_pages_mpol_noprof+0x299/0x990 mm/mempolicy.c:2265
- alloc_pages_noprof mm/mempolicy.c:2345 [inline]
- folio_alloc_noprof+0x1db/0x310 mm/mempolicy.c:2352
- filemap_alloc_folio_noprof+0xa6/0x440 mm/filemap.c:1010
- __filemap_get_folio+0xac4/0x1550 mm/filemap.c:1952
- block_write_begin+0x6e/0x2b0 fs/buffer.c:2226
- exfat_write_begin+0xfb/0x400 fs/exfat/inode.c:434
- exfat_extend_valid_size fs/exfat/file.c:553 [inline]
- exfat_file_write_iter+0x474/0xfb0 fs/exfat/file.c:588
- do_iter_readv_writev+0x88a/0xa30
- vfs_writev+0x56a/0x14f0 fs/read_write.c:1064
- do_pwritev fs/read_write.c:1165 [inline]
- __do_compat_sys_pwritev2 fs/read_write.c:1311 [inline]
- __se_compat_sys_pwritev2+0x2a8/0x490 fs/read_write.c:1303
- __ia32_compat_sys_pwritev2+0x11d/0x1a0 fs/read_write.c:1303
- ia32_sys_call+0x2f06/0x40d0 arch/x86/include/generated/asm/syscalls_32.h:380
- do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
- __do_fast_syscall_32+0xb0/0x110 arch/x86/entry/common.c:386
- do_fast_syscall_32+0x38/0x80 arch/x86/entry/common.c:411
- do_SYSENTER_32+0x1f/0x30 arch/x86/entry/common.c:449
- entry_SYSENTER_compat_after_hwframe+0x84/0x8e
-
-CPU: 1 UID: 0 PID: 6646 Comm: syz.1.260 Not tainted 6.12.0-rc7-syzkaller-00012-g3022e9d00ebe #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
-=====================================================
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: VI1PR10MB2016:EE_|GV1PR10MB6417:EE_
+X-MS-Office365-Filtering-Correlation-Id: dcf792cb-77c7-4ba8-f24a-08dd06dae117
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|461199028|6090799003|8060799006|19110799003|15080799006|5072599009|36102599003|3412199025|440099028|3430499032;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?KzN0QUVmMzl0aGUxOEdQeEk0c21PZVE0VmVvY3FVSGRYYVdQVk5QZXE1YTYz?=
+ =?utf-8?B?TTNOQ0dWUzl4ZUZZcm1UMlFXUUx1MVZxTmZ5eFNNYnFZZW9aV1d0eG42VVBk?=
+ =?utf-8?B?a2hzMFk2UklDbjBqem5lMU1MMlFndGNqUlRiMFY3bWx5VmY1Y0txalV2Szdt?=
+ =?utf-8?B?TE9nWjJ4cDhna3lyZVpOazFvc0VRcldGaGdmUnZuQy9taWNSN3NCOG1Fbm5a?=
+ =?utf-8?B?UzNYVkNQSmdoUFMxNmd5TW85MFludTVWZzdKaXAxK0s2SG1NUE9Jd2RKeUti?=
+ =?utf-8?B?NVh2MlAzTnpIeHhjdzFNS1VJeGtRbDFXV05wRkVtUDFnSW5OS0pUVW9OZk10?=
+ =?utf-8?B?a0pHQmtHM3hQUVltOGtNam4xSlZMVUVvNksvQnFabFZxTVR2dERxY1MzaGhq?=
+ =?utf-8?B?QzQvVzc5M3VMVm5VajMxOW1FNTVjcm4yNGNPRDY5Q3dwYlJUWlpZNEhVYUNK?=
+ =?utf-8?B?TUhoS2ZqNGVOZUs4WUtmRmlxK0owOGRqek1aZTdCdUJZdUs3MGszaTl1WWVj?=
+ =?utf-8?B?T1pSYWFHMVlJejVGSEp4U1pMKzkvZzdOamJQVk1vbVRIbklJMXZNbTRpTjdB?=
+ =?utf-8?B?RXQvanJPYnhIWXdtc0JIRytaRnJFTjBrZm1TKzN0d0Q5b3NNSmVzY3ExaWx4?=
+ =?utf-8?B?aHR2VXRHdkJPQ1JPZE1oMmtMK0V5OHRmUStBNHJtUTJrK3ZQVmJNZGtsM2Uz?=
+ =?utf-8?B?ang2eXFpcWlWbXRPVlZCQlJWN3VHN1RDT0RJczQzazgzeU9iS1IyNmVLRUN3?=
+ =?utf-8?B?S0NMV3hMT2dBcjN5ajk1aERCVlg1TituNUhlSHhhSWpDbmZ2UlJSVFdDVW4y?=
+ =?utf-8?B?WWhub3hkSnRJT2JjRlZQVWo4ditSY1FnT3YwQWN4SEc0MC94MHlqVytDTzlx?=
+ =?utf-8?B?ZFB0QzNVRzBWSENTR2JRYk1pbkc1Nmt0aHdGWFFudjlYaTFrdmdhT042YjVh?=
+ =?utf-8?B?a25mL1RRL3R1SzgwanI2VU4rLy81UE5qL0JHRTU2a1VBcXlVY2l6NFJoK0JH?=
+ =?utf-8?B?SVcvOGRIZWZHM0VxYXd4TGhTV3cwMDc2QXNMSlVzU2RTNXVHMWpGaTFVQWhm?=
+ =?utf-8?B?YUFub0ZNcHZZNWVzZEpJZHRrYm9BODNHVkZzOTErSks4Qm9LT0ZnM1RhZFYr?=
+ =?utf-8?B?bjUzS0E2ZXFjMFVaWTBJWFpEMk1NeE5qcE1ZWDd2UTV5c1lPMm54K1ZIYkdY?=
+ =?utf-8?B?S2JHM2lnZ0pJeDdreWtyYkRwSWNwYWN2eWt1andQSWJkQzRRR3BLcXdHQi9W?=
+ =?utf-8?B?MC81VzlrWjgyM2ljSm1Kd1dCK2piakhjRC8zcXpWQlFxWGZYc3BVMmNrTkds?=
+ =?utf-8?B?RjlFd1RrYm84VG5vMEtBbGNEVWRqVFgybzc1TG9CUklIVmM5R0ZCTUlSRGRy?=
+ =?utf-8?B?bHQwcGpsRUNMT2N0UGRwNWNmRjloTE15a09YZlJDM0lGUW9IMGJvQUY5RTBy?=
+ =?utf-8?Q?t+bJTo0c?=
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?bmVBZTZnenpTeCtWM01PQzU0NDNTSTZFamRBWGVDd0lva3FyMHk5eG9ZZnFQ?=
+ =?utf-8?B?TGVZZkpQRlBhSHBFYUExQzlnVjF4T1E2NWJiNmlkd0F0SDdYdWk3bkRmMmtV?=
+ =?utf-8?B?Q1RzV1dBaXNOMGxwZ1NtT3ovbjQrdmdQNWZJQ2p2YWR4eCtrSjRzM3phRnBp?=
+ =?utf-8?B?QWQ0RWNHY0tqK2l2aS91TDhObkIvUjN4Y3RSMUFJNTRxZGMwNG5PbGFxTG9S?=
+ =?utf-8?B?azlYcnVvYmFodVpEV0Y2RVBDZDlsUDlyQUNFZkNNRTdvVHB6dXhVK0FlcFB4?=
+ =?utf-8?B?VEZtRVJiV1dNbHpQa1dGNFMvWDUveFpNbENkZUw0ZEt1NlRzVW94cnVPdTVV?=
+ =?utf-8?B?d0hSRVc1S1Q3OXBPclM4aHppUVUyejMzZXpSTXBOWkZub1ZINnRjOHVhdFZx?=
+ =?utf-8?B?SzhncDJsSGlnaG4wZnRhaFN0NlVVdWhyMkZqQUxLaURESWJib2JSR1R2Zi81?=
+ =?utf-8?B?bmdSNTd2aVU4aXEybU5OdWIrb1NjdmNsb3YrNnpEd1hFZ20zRXZwcWFUY2t3?=
+ =?utf-8?B?RmZDc3d1WWQvcjZLN2pOQWdxOS9SY0ozTUpPR3VCaFo5SnltZXUxOUVYT1Jm?=
+ =?utf-8?B?M1JRdW9YYjF6amloSHRVVHZ6aytDL2xaUTdYU282dmRIeEhGOFF2aEhFL3ZN?=
+ =?utf-8?B?N1MrZVUvMkhrNmw1L3Q0YmE4b3NlUS93NGFSeVpJNmxwejhkNWVVRXZyTzRM?=
+ =?utf-8?B?eUs1WEQ2MklqU1ZrUEF3elJiQVZRMVN0NDh0T21pcHJhaE5BWWZrcTRUQTNE?=
+ =?utf-8?B?YXByMVBRaVoycHB0ZEErT3dySFArTEpsbnNJblI4QUVET0lWV2dYbGg3RnUx?=
+ =?utf-8?B?TmhKNE42NGNvdG9CdzhLR1Q5cjRpZ0QrUW41Y2dYVlNDZmxiT0RaVzByMi9j?=
+ =?utf-8?B?b2ticTREMU1uR2pLc0psdDl0ZkJKMTRQakx1cks1UnBDTmNKSy8yWi9nc2Fv?=
+ =?utf-8?B?SmxTNmdHZkpTSFZpZGlYVm1rem9VblJGUWZpMkM3SGtkUk9LL0E3OW54dlhG?=
+ =?utf-8?B?V0xxTGZERXV4ZHkyVjEwa1phb3poeE9HMXMzYUUyWkpLYUkyQ2xkc1hTV2V1?=
+ =?utf-8?B?MGVmb2ZWNEtVT0pSeTB1MkRHeVhkZ1dTeCsyVzNMMTNEdk1VR2krYjA5KzFB?=
+ =?utf-8?B?ajNNT1BGTVo2U0VxbGJ1dHp3ai81dnNxVFExcUNsMUcrc2hpbkZaVHRBT2Rx?=
+ =?utf-8?B?eEkwdFFYZTV0R01aV01LYXR3NkpoOXVBaDNwUmxtUmRob3RKMXUvUVBORzdx?=
+ =?utf-8?B?YmZHdVh2ZlpOYjd0UXM2SkxRTFJlTitMSzBsY1B1cDdYOS9kQStnZUt6TVdI?=
+ =?utf-8?B?blExY2R2elpYemJMclZtb3Y1R09tOUdNbEpCdlVNQkx5bnRPWkk1UHpNYmls?=
+ =?utf-8?B?U2orWTNJaWFScHJBMTdLODNDOGxESVJHNURRWEI2ZHQzL09Qbk1RN0FrUjZL?=
+ =?utf-8?B?SzN0Q1piYmp4cDBhbmxFbGNBTVF2aHF2eG9EUzFmK3FrV3dtdGZFcDFzbXU1?=
+ =?utf-8?B?Nm40cWRubWFpWm1DdGJxcWNiNGlJay9PUEkvN1NVUGdOMkMydXpwbHBVa1Vw?=
+ =?utf-8?B?WDBwdTBZb2xiYXJXeVNkNEpWcmwyU0lNdjA5YmFtUU1qQ0ljU0NGR1BLS0lW?=
+ =?utf-8?Q?KIM2z56uX4qJnr5mE8P2q7xkaPLit4+s4DnyaJb2TQLU=3D?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: dcf792cb-77c7-4ba8-f24a-08dd06dae117
+X-MS-Exchange-CrossTenant-AuthSource: VI1PR10MB2016.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Nov 2024 07:38:51.1104
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR10MB6417
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+On 2024/11/16 3:46, Bowman, Terry wrote:
+> 
+> 
+> On 11/15/2024 8:49 AM, Li Ming wrote:
+>>
+>> On 2024/11/15 2:41, Bowman, Terry wrote:
+>>> Hi Lukas,
+>>>
+>>> I added comments below.
+>>>
+>>> On 11/14/2024 10:44 AM, Lukas Wunner wrote:
+>>>> On Wed, Nov 13, 2024 at 03:54:19PM -0600, Terry Bowman wrote:
+>>>>> @@ -1115,8 +1131,11 @@ static void pci_aer_handle_error(struct pci_dev *dev, struct aer_err_info *info)
+>>>>>    
+>>>>>    static void handle_error_source(struct pci_dev *dev, struct aer_err_info *info)
+>>>>>    {
+>>>>> -	cxl_handle_error(dev, info);
+>>>>> -	pci_aer_handle_error(dev, info);
+>>>>> +	if (is_internal_error(info) && handles_cxl_errors(dev))
+>>>>> +		cxl_handle_error(dev, info);
+>>>>> +	else
+>>>>> +		pci_aer_handle_error(dev, info);
+>>>>> +
+>>>>>    	pci_dev_put(dev);
+>>>>>    }
+>>>> If you just do this at the top of cxl_handle_error()...
+>>>>
+>>>> 	if (!is_internal_error(info))
+>>>> 		return;
+>>>>
+>>>> ...you avoid the need to move is_internal_error() around and the
+>>>> patch becomes simpler and easier to review.
+>>> If is_internal_error()==0, then pci_aer_handle_error() should be called to process the PCIe error. Your suggestion would require returning a value from cxl_handle_error(). And then more "if" logic would be required for the cxl_handle_error() return value. Should both is_internal_error() and handles_cxl_errors()be moved into cxl_handle_error()? Would give this:
+>>>
+>>>    static void handle_error_source(struct pci_dev *dev, struct aer_err_info *info)
+>>>    {
+>>> -	cxl_handle_error(dev, info);
+>>> -	pci_aer_handle_error(dev, info);
+>>> +	if (!cxl_handle_error(dev, info))
+>>> +		pci_aer_handle_error(dev, info);
+>>> +
+>>>    	pci_dev_put(dev);
+>>>    }
+>>>
+> 
+> We could do that. And with that change it might need handles_cxl_errors() renamed
+> to something more correct, like handle_cxl_error()?
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+Yes, the name you mentioned is better.
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+Ming
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+> 
+> Regards,
+> Terry
+> 
+> 
 
-If you want to undo deduplication, reply with:
-#syz undup
 
