@@ -1,146 +1,157 @@
-Return-Path: <linux-kernel+bounces-412007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4047F9D0247
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 08:13:22 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C141E9D0252
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 08:17:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB404285706
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 07:13:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3536AB239B8
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 07:17:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6382429406;
-	Sun, 17 Nov 2024 07:13:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CciDX/37"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70ED97BB0A;
+	Sun, 17 Nov 2024 07:17:26 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89F6D3EA76;
-	Sun, 17 Nov 2024 07:13:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F9B12B9DD
+	for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 07:17:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731827592; cv=none; b=gBVKggI602JgPp5NQaIgQudtItD1TXFmzZDpPclxakKmeLlpMKcU+l2H+kv/mo4oqnCvZvSwrsMFCOyqqr/YrC0CgdltvhO8MDrDVNipJq05VL+olR8Q+XtnO9Dt3vw+aONi1CPndQ79iYNrx4/j//mnN8BoA8Bz8TUUXVEqNe8=
+	t=1731827846; cv=none; b=jUhL8+l4u6BQxKAi5X9sYtDBSclc2ib+RCJMhCB7v2PH4eX1oOQ5UEmqAO/TuI459EZ/zm3lZYpSZsS5Dxpl8SUM57VJJgL2AtIrOVQnlTf7Vz2f7mhVwt0D/UoGs8nBjh4i5cC93Zv4RKEf/3Lk5v3yhpsqtmkEaSzdY+K34xc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731827592; c=relaxed/simple;
-	bh=rQBcQbykMk0tLp5YALUMbtDcDwg04OCFBS3BiDb9kO0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jrlHLUHQ0Fu/XmGP/SPWzf0mVWtavuFy6eIouhZttftuUq/K4saR8qXJmacPq7LphI6HmW40zEYKkw4BftwETIlPn7ofoVj9YEihT5mc+/Kb7Ek0KbZMvfV2BLHtD57RLEKTCqgEog/rWDVyX5A9hTiTjvgYyanBQXnX/Zz6fWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CciDX/37; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731827591; x=1763363591;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=rQBcQbykMk0tLp5YALUMbtDcDwg04OCFBS3BiDb9kO0=;
-  b=CciDX/37ZAd9vXwTy9un8oMpqA182hVArqZyUaKmcaJG1TBTrpnIkjbI
-   6LUtU+t3GMQ06LLEawlUNsRAhiEecbSdpBMTBiAQuWQBcLQqGjSzIhOPS
-   cjvhJAnlBRbFyG5VmeSuZ7nfl/KAKtKj22WTFH4VP/xEg0q8gC7fr+vub
-   Z7lABEds1fdYmHT+efLecmm0gfvoAhhXNtgo/xkcDxzyfzyG4Z589Sbt4
-   G4jxBeTFk2S6eqPRpQ1Kf1ZJZMRbznSOb4ESlC3fifjGX0FnUuAtGYyO3
-   U26vHSttEWIBgyl13G3lHOHB1kesgDWPIfebM04ZPXmu+MJa3WjV8bgCR
-   A==;
-X-CSE-ConnectionGUID: gECYEcolQfC4MiPgf99dMw==
-X-CSE-MsgGUID: iSYbzjF4S5SdTzeHVxtTXA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11258"; a="31638519"
-X-IronPort-AV: E=Sophos;i="6.12,161,1728975600"; 
-   d="scan'208";a="31638519"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Nov 2024 23:13:09 -0800
-X-CSE-ConnectionGUID: e9FA9D5hTrurc79A9hOCaQ==
-X-CSE-MsgGUID: wFdtOkIkQ1ay5u/4R5VxXw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,161,1728975600"; 
-   d="scan'208";a="89094162"
-Received: from lkp-server01.sh.intel.com (HELO 1e3cc1889ffb) ([10.239.97.150])
-  by orviesa006.jf.intel.com with ESMTP; 16 Nov 2024 23:13:07 -0800
-Received: from kbuild by 1e3cc1889ffb with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tCZSx-0001cP-34;
-	Sun, 17 Nov 2024 07:13:03 +0000
-Date: Sun, 17 Nov 2024 15:12:52 +0800
-From: kernel test robot <lkp@intel.com>
-To: Lothar Rubusch <l.rubusch@gmail.com>, lars@metafoo.de,
-	Michael.Hennerich@analog.com, jic23@kernel.org,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, l.rubusch@gmx.ch,
-	Lothar Rubusch <l.rubusch@gmail.com>
-Subject: Re: [PATCH 15/22] iio: accel: adxl345: reset the FIFO on error
-Message-ID: <202411171552.BWbWLHpL-lkp@intel.com>
-References: <20241114231002.98595-16-l.rubusch@gmail.com>
+	s=arc-20240116; t=1731827846; c=relaxed/simple;
+	bh=J9xo0eDjjWl6nYWn3GkKYXXbRW+xqRQnTm0Dylsv+W0=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=M09l9kdwHEiSvujg99cF/QgMio0hXBz8GMs1HNnVcGR/gEiem03CXTa2YtrHaZ3fnjktRW3iO4umyZamzA9mtzH86yATH0KQT8m/O7v0JbMc+MimLJmhw8lh07uhs+ncFcd1mwAFD+/ebx3Q0vjUx4lhdUc3s4B5KYdVzDxJ3Ak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-83aa904b231so217360739f.1
+        for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 23:17:24 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731827843; x=1732432643;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9g9FL2vtw746ImnieEUrrscr7c4cCXXlHJDI8dzEecs=;
+        b=c0XMX4NoDzcwIn+N028GkgXTjOkcAq3ePc5Owfy+0CodSHVfp9xrE1Hdzys9Ih8/jP
+         YcXplZ7qwkbDCQ+sdA60GDOtdRseIuxED2F9G211RJpsBRumlRsmwskvxgiR+B9mrlD6
+         atqM56clSwNja+z1ZzEZSA91d64FsOhcl6YoF/394msGqgHJqm9vNw7ueVu+0WX9iUW4
+         lKKMqbijaiSNaw2b4i8zm7uM0WCA2KNVnqGJqtrWKb/5kAMzMCJ3tbWk3xrIV9orRwJK
+         j4aL/U/X27ztKlCMzvertNRCJAMcI3FzYQhmJmZr3tW+L7dmaB6xjttEYl4eG9XoqYom
+         HI0g==
+X-Forwarded-Encrypted: i=1; AJvYcCX4U26TYuMFrurY8lbpE0UQzpNnnOygMdgGRD60RGvprxQxarJYZL+muM7qJskIFNWMzZuj4JpO07IvzWU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVvhYcIvbgoknkjuyqqBV1hJFyMIuof9Sm1ClBYyJoexZGkWNn
+	Pdj57KoDzwy4H/HyBGg+CWWp84CsB2V88OsUtWoIsRwRGukn0ohr2LsV3Oe4niOMxVwqNhxaSxk
+	WfEk5C9SrCZcoWmEAmEmQjMY0gOUpNIHGprlWBtTYy89j67jwG+URoU0=
+X-Google-Smtp-Source: AGHT+IFP3Is8EwEVSWbcBxUXcFQ8uqHZie0oXoS31tzssqe3YWdGOm9OwUtOr9Y5yPw3mF6DxRyEmVAaReMKLjtoFXxbHYuZcgHg
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241114231002.98595-16-l.rubusch@gmail.com>
+X-Received: by 2002:a05:6e02:1a8d:b0:3a6:b445:dc9c with SMTP id
+ e9e14a558f8ab-3a747ff7fc7mr106747335ab.3.1731827843528; Sat, 16 Nov 2024
+ 23:17:23 -0800 (PST)
+Date: Sat, 16 Nov 2024 23:17:23 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67399883.050a0220.e1c64.0010.GAE@google.com>
+Subject: [syzbot] [net?] WARNING: locking bug in try_to_wake_up (2)
+From: syzbot <syzbot+6ac735cc9f9ce6ec2f74@syzkaller.appspotmail.com>
+To: linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	luiz.dentz@gmail.com, marcel@holtmann.org, netdev@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Lothar,
+Hello,
 
-kernel test robot noticed the following build warnings:
+syzbot found the following issue on:
 
-[auto build test WARNING on jic23-iio/togreg]
-[also build test WARNING on linus/master v6.12-rc7 next-20241115]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+HEAD commit:    e8bdb3c8be08 Merge tag 'riscv-for-linus-6.12-rc8' of git:/..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=11231378580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d2aeec8c0b2e420c
+dashboard link: https://syzkaller.appspot.com/bug?extid=6ac735cc9f9ce6ec2f74
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Lothar-Rubusch/iio-accel-adxl345-fix-comment-on-probe/20241115-190245
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
-patch link:    https://lore.kernel.org/r/20241114231002.98595-16-l.rubusch%40gmail.com
-patch subject: [PATCH 15/22] iio: accel: adxl345: reset the FIFO on error
-config: arm-randconfig-002-20241117 (https://download.01.org/0day-ci/archive/20241117/202411171552.BWbWLHpL-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 592c0fe55f6d9a811028b5f3507be91458ab2713)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241117/202411171552.BWbWLHpL-lkp@intel.com/reproduce)
+Unfortunately, I don't have any reproducer for this issue yet.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411171552.BWbWLHpL-lkp@intel.com/
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/e2da80861e22/disk-e8bdb3c8.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/e048d2585df1/vmlinux-e8bdb3c8.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/203d0f852ba3/bzImage-e8bdb3c8.xz
 
-All warnings (new ones prefixed by >>):
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+6ac735cc9f9ce6ec2f74@syzkaller.appspotmail.com
 
->> drivers/iio/accel/adxl345_core.c:383:6: warning: no previous prototype for function 'adxl345_empty_fifo' [-Wmissing-prototypes]
-     383 | void adxl345_empty_fifo(struct adxl34x_state *st)
-         |      ^
-   drivers/iio/accel/adxl345_core.c:383:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
-     383 | void adxl345_empty_fifo(struct adxl34x_state *st)
-         | ^
-         | static 
-   1 warning generated.
+Bluetooth: hci4: unexpected cc 0x1001 length: 249 > 9
+------------[ cut here ]------------
+DEBUG_LOCKS_WARN_ON(1)
+WARNING: CPU: 0 PID: 5857 at kernel/locking/lockdep.c:232 hlock_class kernel/locking/lockdep.c:232 [inline]
+WARNING: CPU: 0 PID: 5857 at kernel/locking/lockdep.c:232 check_wait_context kernel/locking/lockdep.c:4826 [inline]
+WARNING: CPU: 0 PID: 5857 at kernel/locking/lockdep.c:232 __lock_acquire+0x58c/0x2050 kernel/locking/lockdep.c:5152
+Modules linked in:
+CPU: 0 UID: 0 PID: 5857 Comm: kworker/u9:7 Not tainted 6.12.0-rc7-syzkaller-00189-ge8bdb3c8be08 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
+Workqueue: hci4 hci_cmd_work
+RIP: 0010:hlock_class kernel/locking/lockdep.c:232 [inline]
+RIP: 0010:check_wait_context kernel/locking/lockdep.c:4826 [inline]
+RIP: 0010:__lock_acquire+0x58c/0x2050 kernel/locking/lockdep.c:5152
+Code: 00 00 83 3d b5 db ac 0e 00 75 23 90 48 c7 c7 60 c9 0a 8c 48 c7 c6 00 cc 0a 8c e8 0f 7d e5 ff 48 ba 00 00 00 00 00 fc ff df 90 <0f> 0b 90 90 90 31 db 48 81 c3 c4 00 00 00 48 89 d8 48 c1 e8 03 0f
+RSP: 0018:ffffc90004d17670 EFLAGS: 00010046
+RAX: 8e05c886ad1f6a00 RBX: 0000000000000d68 RCX: ffff88803572bc00
+RDX: dffffc0000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000014 R08: ffffffff8155e312 R09: 1ffff110170c519a
+R10: dffffc0000000000 R11: ffffed10170c519b R12: ffff88803572bc00
+R13: 0000000000000d68 R14: 1ffff11006ae58f4 R15: ffff88803572c7a0
+FS:  0000000000000000(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000001b30b1eff8 CR3: 000000006d8fc000 CR4: 0000000000350ef0
+Call Trace:
+ <TASK>
+ lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5825
+ _raw_spin_lock_nested+0x31/0x40 kernel/locking/spinlock.c:378
+ raw_spin_rq_lock_nested+0x2a/0x140 kernel/sched/core.c:598
+ raw_spin_rq_lock kernel/sched/sched.h:1506 [inline]
+ rq_lock kernel/sched/sched.h:1805 [inline]
+ ttwu_queue kernel/sched/core.c:3951 [inline]
+ try_to_wake_up+0x81e/0x14b0 kernel/sched/core.c:4281
+ autoremove_wake_function+0x16/0x110 kernel/sched/wait.c:384
+ __wake_up_common kernel/sched/wait.c:89 [inline]
+ __wake_up_common_lock+0x132/0x1e0 kernel/sched/wait.c:106
+ vhci_send_frame+0xe1/0x150 drivers/bluetooth/hci_vhci.c:83
+ hci_send_frame+0x1fb/0x380 net/bluetooth/hci_core.c:3042
+ hci_send_cmd_sync net/bluetooth/hci_core.c:4069 [inline]
+ hci_cmd_work+0x123/0x6c0 net/bluetooth/hci_core.c:4098
+ process_one_work kernel/workqueue.c:3229 [inline]
+ process_scheduled_works+0xa65/0x1850 kernel/workqueue.c:3310
+ worker_thread+0x870/0xd30 kernel/workqueue.c:3391
+ kthread+0x2f2/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
 
 
-vim +/adxl345_empty_fifo +383 drivers/iio/accel/adxl345_core.c
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-   376	
-   377	/**
-   378	 * Empty the fifo. This is needed also in case of overflow or error handling.
-   379	 * Read out all remaining elements and reset the fifo_entries counter.
-   380	 *
-   381	 * @st: The instance to the state object of the sensor.
-   382	 */
- > 383	void adxl345_empty_fifo(struct adxl34x_state *st)
-   384	{
-   385		int regval;
-   386		int fifo_entries;
-   387	
-   388		/* In case the HW is not "clean" just read out remaining elements */
-   389		adxl345_get_fifo_entries(st, &fifo_entries);
-   390		if (fifo_entries > 0)
-   391			adxl345_read_fifo_elements(st, fifo_entries);
-   392	
-   393		/* Reset the INT_SOURCE register by reading the register */
-   394		regmap_read(st->regmap, ADXL345_REG_INT_SOURCE, &regval);
-   395	}
-   396	
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
