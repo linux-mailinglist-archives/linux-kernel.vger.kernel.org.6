@@ -1,132 +1,98 @@
-Return-Path: <linux-kernel+bounces-412065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40DC79D0350
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 12:45:53 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 945289D0353
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 12:50:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAE32283682
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 11:45:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1D7D5B21F38
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 11:50:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86DF216F27E;
-	Sun, 17 Nov 2024 11:45:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F080217BB38;
+	Sun, 17 Nov 2024 11:49:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eGUEgnSV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LhASRHp6"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E10F66AA7;
-	Sun, 17 Nov 2024 11:45:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF9F780054;
+	Sun, 17 Nov 2024 11:49:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731843944; cv=none; b=QM/TDwgUpr74Ze5ec73jsYOTHW77ViH7RSZd6EyxLrPvJnlp62g4bRKbMnPpnh8EyISdJ11tU1ppeUya/Or1boN3inSE8BycFgxYZlBLX8NDqsH/stRwcHOxQ2bW7UYbm0WOAEsR+Jgzn7TDBHBXk3OEByf37cTbMegO/H9SucU=
+	t=1731844199; cv=none; b=DHSgdlldv1lTY4BvwT49H7hnCNgmPak6Dd//CPHvGu65c8CPdfp5ktv7swBN94xSxkdclzEQB5KqYPcspAL4VTxnuXHckbIFmGCGsbRtasvc7SE9b62zT9TdVaWJxuYsYTrkhmYkmQWEtsil6czPVbS9xRG80WSSie5KN56tRNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731843944; c=relaxed/simple;
-	bh=WaUpZJgl59YzipJ0kAPa5ZUnQ2h5lltdWBavhDkQf0M=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=X7PTx2F7twbA98UFplVTW177hFeyhd0OAmdO/ikowHSdB0evVrkjIwLDpmbkfJvTlSppi8sJrdj5Xvcr3WgBU4WggF9l1hmD3H80ZDzzX3Pkb+1h8IN3Eny1XyFnAxx6ChVeXEcNFFcS8kSQFcci9BdGr1mMyVdzstWccdZ4TDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eGUEgnSV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FD8FC4CED8;
-	Sun, 17 Nov 2024 11:45:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731843943;
-	bh=WaUpZJgl59YzipJ0kAPa5ZUnQ2h5lltdWBavhDkQf0M=;
-	h=From:To:Cc:Subject:Date:From;
-	b=eGUEgnSVL17XsKDEl+xI+13lYs6hsEHSWhiTNo9PwYvPuuuII/oTVCsODqD2h82Vy
-	 stqkD9tA+NibANaR0xiIO40MYVJJntPO9nJycF2HhgVzjp2qFhCf66bQ11h3I6CDIE
-	 4mT4PIQ8/aR74+2/pP4xiR674pcGWEoVnx1RyKyucAVDZ0NPCo/u2q9nESfOVPnStv
-	 KA3KIyEAc908v4q1nWIYnhjTGG6//y1gEuzjXJJPk+NI+eeI44gyoVuGN9ElNv/IXc
-	 hCOFH4CsnVKRhg441fDQyWLn4wcQtcU6gtLmWMna7NKGii/1MSixpqS/fQash9tRAB
-	 afPTnVMN371wg==
-From: Kees Cook <kees@kernel.org>
-To: Lorenzo Bianconi <lorenzo@kernel.org>
-Cc: Kees Cook <kees@kernel.org>,
-	Sean Wang <sean.wang@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	linux-mediatek@lists.infradead.org,
-	linux-gpio@vger.kernel.org,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH] pinctrl: airoha: Use unsigned long for bit search
-Date: Sun, 17 Nov 2024 03:45:38 -0800
-Message-Id: <20241117114534.work.292-kees@kernel.org>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1731844199; c=relaxed/simple;
+	bh=BR6tEUEAXyNktteiJU0Ti9OpaPc5VMyZ8NsUTmLYRk4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dy0CqLNiIebhs4y4p8fVG15URJBLL0jHCqr8BeptMiMWQQMf9Mn9MsBzMFOvWPbFC/tu/sF1qsKWt1c2QTVXygyVxpj4JdSVK4n9nTcAWWV/sXyq2Ta44r3KGxmFMbzj4mRu0JZ5VKRJ0CHfnNtqNmaQIhLyfuZ+NW0iwhTfcKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=LhASRHp6; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=M/R6LRXdublxiC2V1kGQuuBfrcKBn4lBOlKqBBRk3QM=; b=LhASRHp6waAsZb724BndWI0NMu
+	1supTlUkplgKlO9Fj2BMINBr8rSQ3kcUSFkHNa9AJYjrpTonUfZpYjrkuNzOOIWFH4+/F4pscQ3wy
+	OnFMz+mOKvJUi16OWaR3iatQc04GYG6jT9DVk0/9Qz4VrARmN89pw72Mbz/YHrQyhG0bCJVRGkLC+
+	BwYiUhhuPxAchpxlTjmhOqJRfd2SeKbLF51XkKGqfAIV5Z5tOTdfc/kd7koejGMFECiDiQQC2NxN5
+	j9uaS8kxMMZ4YakdRar7eu8qKcH7j5CXstnhPPfOuXuPVT2vr3HmMEqxOCrU1b7m9lzMHx8CwGS7b
+	YFg+tE7A==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tCdml-000000007gm-1IyX;
+	Sun, 17 Nov 2024 11:49:47 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id B92A63006B7; Sun, 17 Nov 2024 12:49:46 +0100 (CET)
+Date: Sun, 17 Nov 2024 12:49:46 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Jiri Olsa <jolsa@kernel.org>
+Cc: Oleg Nesterov <oleg@redhat.com>, Andrii Nakryiko <andrii@kernel.org>,
+	bpf@vger.kernel.org, Song Liu <songliubraving@fb.com>,
+	Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Alan Maguire <alan.maguire@oracle.com>,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [RFC 00/11] uprobes: Add support to optimize usdt probes on
+ x86_64
+Message-ID: <20241117114946.GD27667@noisy.programming.kicks-ass.net>
+References: <20241105133405.2703607-1-jolsa@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2769; i=kees@kernel.org; h=from:subject:message-id; bh=WaUpZJgl59YzipJ0kAPa5ZUnQ2h5lltdWBavhDkQf0M=; b=owGbwMvMwCVmps19z/KJym7G02pJDOmW15OY+ArTEmyFrWfl7Re2OJn69UpMy3EDQ1cXuRt13 1MnzHrWUcrCIMbFICumyBJk5x7n4vG2Pdx9riLMHFYmkCEMXJwCMBHpI4wM3yJmvOF8+Y0h59rR 30xq5pGlQnqPBbZ8Leuqvnynb4FyGsM/mwsHM21iXz3xTfm8uUg6+Feka63IqT1HHFTnzA5c6b+ UGQA=
-X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241105133405.2703607-1-jolsa@kernel.org>
 
-Instead of risking alignment problems and causing (false positive) array
-bound warnings when casting a u32 to (64-bit) unsigned long, just use a
-native unsigned long for doing bit searches. Avoids warning with GCC 15's
--Warray-bounds -fdiagnostics-details:
+On Tue, Nov 05, 2024 at 02:33:54PM +0100, Jiri Olsa wrote:
+> hi,
+> this patchset adds support to optimize usdt probes on top of 5-byte
+> nop instruction.
+> 
+> The generic approach (optimize all uprobes) is hard due to emulating
+> possible multiple original instructions and its related issues. The
+> usdt case, which stores 5-byte nop seems much easier, so starting
+> with that.
+> 
+> The basic idea is to replace breakpoint exception with syscall which
+> is faster on x86_64. For more details please see changelog of patch 7.
 
-In file included from ../include/linux/bitmap.h:11,
-                 from ../include/linux/cpumask.h:12,
-                 from ../arch/x86/include/asm/paravirt.h:21,
-                 from ../arch/x86/include/asm/irqflags.h:80,
-                 from ../include/linux/irqflags.h:18,
-                 from ../include/linux/spinlock.h:59,
-                 from ../include/linux/irq.h:14,
-                 from ../include/linux/irqchip/chained_irq.h:10,
-                 from ../include/linux/gpio/driver.h:8,
-                 from ../drivers/pinctrl/mediatek/pinctrl-airoha.c:11:
-In function 'find_next_bit',
-    inlined from 'airoha_irq_handler' at ../drivers/pinctrl/mediatek/pinctrl-airoha.c:2394:3:
-../include/linux/find.h:65:23: error: array subscript 'long unsigned int[0]' is partly outside array bounds of 'u32[1]' {aka 'unsigned int[1]'} [-Werror=array-bounds=]
-   65 |                 val = *addr & GENMASK(size - 1, offset);
-      |                       ^~~~~
-../drivers/pinctrl/mediatek/pinctrl-airoha.c: In function 'airoha_irq_handler':
-../drivers/pinctrl/mediatek/pinctrl-airoha.c:2387:21: note: object 'status' of size 4
- 2387 |                 u32 status;
-      |                     ^~~~~~
+So this is really about the fact that syscalls are faster than traps on
+x86_64? Is there something similar on ARM64, or are they roughly the
+same speed there?
 
-Signed-off-by: Kees Cook <kees@kernel.org>
----
-Cc: Lorenzo Bianconi <lorenzo@kernel.org>
-Cc: Sean Wang <sean.wang@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-mediatek@lists.infradead.org
-Cc: linux-gpio@vger.kernel.org
----
- drivers/pinctrl/mediatek/pinctrl-airoha.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+That is, I don't think this scheme will work for the various RISC
+architectures, given their very limited immediate range turns a typical
+call into a multi-instruction trainwreck real quick.
 
-diff --git a/drivers/pinctrl/mediatek/pinctrl-airoha.c b/drivers/pinctrl/mediatek/pinctrl-airoha.c
-index 7692e6d9b871..547a798b71c8 100644
---- a/drivers/pinctrl/mediatek/pinctrl-airoha.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-airoha.c
-@@ -2384,15 +2384,16 @@ static irqreturn_t airoha_irq_handler(int irq, void *data)
- 
- 	for (i = 0; i < ARRAY_SIZE(irq_status_regs); i++) {
- 		struct gpio_irq_chip *girq = &pinctrl->gpiochip.chip.irq;
--		u32 status;
-+		u32 regmap;
-+		unsigned long status;
- 		int irq;
- 
- 		if (regmap_read(pinctrl->regmap, pinctrl->gpiochip.status[i],
--				&status))
-+				&regmap))
- 			continue;
- 
--		for_each_set_bit(irq, (unsigned long *)&status,
--				 AIROHA_PIN_BANK_SIZE) {
-+		status = regmap;
-+		for_each_set_bit(irq, &status, AIROHA_PIN_BANK_SIZE) {
- 			u32 offset = irq + i * AIROHA_PIN_BANK_SIZE;
- 
- 			generic_handle_irq(irq_find_mapping(girq->domain,
--- 
-2.34.1
-
+Now, that isn't a problem if their exceptions and syscalls are of equal
+speed.
 
