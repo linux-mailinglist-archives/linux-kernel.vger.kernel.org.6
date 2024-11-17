@@ -1,192 +1,306 @@
-Return-Path: <linux-kernel+bounces-411968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-411969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A94379D01D4
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 02:28:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CB4A9D01D8
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 02:35:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B4AA1F23878
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 01:28:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0187A1F23885
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 01:35:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55C91CA5A;
-	Sun, 17 Nov 2024 01:28:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4AC8BE46;
+	Sun, 17 Nov 2024 01:35:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dGuHrdES"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OsR9yjVt"
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D611928F5;
-	Sun, 17 Nov 2024 01:28:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0630B2F3E;
+	Sun, 17 Nov 2024 01:35:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731806916; cv=none; b=lV/OVaS22wWKB8qdyhkaQbg7PrYW6Nlt+yAfrO8loixyqwSaAuTt6tnISJPpqHUz6/HzGECOiFwQYIsidRbGNTqi6ICQhoo922WXTZZgXUhr6GJ8EPwcY+UVBncot8kjVpux1a0FAzGrXIULSW1VM9T41gSRoEpY84MTx0NCiFc=
+	t=1731807332; cv=none; b=AUaQQw5hS3dw9qydWJfyaHRJft2ZFKkQKR8bx+9TvxrI75REGoZuDABf83RgZHT2rdRoO3hrEr868Ikh9qoUlyWGKLjadscOEPPBVXgZ+cVMC5ahXFVlDUq6lacqKN+6krq/+9CcMIFfPmBhv0/VbWYMszpL6A/oDtCQzIZM4ao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731806916; c=relaxed/simple;
-	bh=PCcdSgA/1OmuD7op38DOfI+lwyCKBvubLb11kK/+qzU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WY/T2Sg7640+6SfjYBavLxnrs3h57meSzlMvAQNivzc0vVhkruPB39etbS55ayBgSVOQ9HRpR3dM1WyD3V3wSug9GqshU6bBf0HNtt+Vj6rdhdB4oe2wTAfHDG5ehIMlZjboa4/ZKuQZ5BcmZ+wIv6QzFlgWNXKOWMH38aWrOw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dGuHrdES; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731806914; x=1763342914;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=PCcdSgA/1OmuD7op38DOfI+lwyCKBvubLb11kK/+qzU=;
-  b=dGuHrdESBpBu22VX1gxz87t7qsF++E2U7atNxRLiwjrmxGfqdvFEl4f4
-   IpU7nNnPvJZ8N0zlSkkvKrMKBv/SHYx9sGJBWy3TvbOnYu/yAHeecQV3N
-   XgI5/wwfVxTyd9smPIko+h2H+5aH8HMd6KZY5mGbwvDr/RyIAfhy29CWY
-   5zCWTEFwdENal3fqrMBPIpAUWjZNdpiPlS+/x5chcM5XTMy+pux1FArjV
-   yLIRLrzdlLgSaDrGqXbDNlQVK3Z1Xjb/mN5sJsJdc6yD0/NcUlC6jo+wG
-   HjFhr6AdGvrw1PDurtyj9c2gJv+zUnk5VjktgAc6ZJKVGU+LtbPm/g59i
-   g==;
-X-CSE-ConnectionGUID: xxStmAXxQI+a/kQ0rxbJHg==
-X-CSE-MsgGUID: q198bREHSvi6PU3UDsIwjw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11258"; a="57193723"
-X-IronPort-AV: E=Sophos;i="6.12,160,1728975600"; 
-   d="scan'208";a="57193723"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Nov 2024 17:28:33 -0800
-X-CSE-ConnectionGUID: GL6swRqATFSUDV3BzVTWvg==
-X-CSE-MsgGUID: 9HkT9VndSEiCBGuUTd1rzw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="93920878"
-Received: from lkp-server01.sh.intel.com (HELO 1e3cc1889ffb) ([10.239.97.150])
-  by orviesa003.jf.intel.com with ESMTP; 16 Nov 2024 17:28:29 -0800
-Received: from kbuild by 1e3cc1889ffb with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tCU5R-0001DB-2v;
-	Sun, 17 Nov 2024 01:28:25 +0000
-Date: Sun, 17 Nov 2024 09:28:11 +0800
-From: kernel test robot <lkp@intel.com>
-To: admiyo@os.amperecomputing.com, Sudeep Holla <sudeep.holla@arm.com>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, Robert Moore <robert.moore@intel.com>
-Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Jeremy Kerr <jk@codeconstruct.com.au>,
-	Matt Johnston <matt@codeconstruct.com.au>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Huisong Li <lihuisong@huawei.com>
-Subject: Re: [PATCH v7 1/2] mctp pcc: Check before sending MCTP PCC response
- ACK
-Message-ID: <202411170906.mCmSa3oY-lkp@intel.com>
-References: <20241114024928.60004-2-admiyo@os.amperecomputing.com>
+	s=arc-20240116; t=1731807332; c=relaxed/simple;
+	bh=uzgwjUP+KPsrHihwohqoFaqlgBQUUjqVCdudBAh9ZeQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dUfdLqz/EwOiwCwGnR1odXKmeUJebXUbQyTZzuqmaEWJHkn+RLFCegrKPvGXh+Pex29sn8VVFkitwzDHImHrG8rf18b+7leKp1rHw+h1DNmN4yCpbc87WCs4tph/0vAUv669FPbJdcgL7XTQ6IrK4N8XX+NRvQp99KdWIReC9RY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OsR9yjVt; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-460b2e4c50fso21306481cf.0;
+        Sat, 16 Nov 2024 17:35:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731807330; x=1732412130; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CqmBKlSWynrsrcqfyioauQIXzcWQM8RbSMBn2piT/gk=;
+        b=OsR9yjVtaTaITM1UJWgB9kKRXkYqyiMTbqez/ZdVzF6bE/Agkx9qp0yrHL8pd3D3Z0
+         YHrQJgze+1Qp2Xb7tUc3+SOkKQYtiMaeTE+1C7HCX3FQZmBGjjmURlovygwpT+KAfhL4
+         FxHt46S2mlz2PDrvPFrOHuN8vMpMPjeTBCUqWvzhUF0bnSozzYTzilKcpnmID+GSKsyA
+         y0pU9FJmvjsOxkXdNTpbFZZnsM9dplhEsxERqwZ4Mzi49scOymZIVkTrSi0G19q4eVvJ
+         rwDV6odLf2Xso84mDx37FnKQMnP8LxtFroS1D+xjbq7sXXW8YGgfutejZDe0pAbiSm30
+         z4Yg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731807330; x=1732412130;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CqmBKlSWynrsrcqfyioauQIXzcWQM8RbSMBn2piT/gk=;
+        b=K9XRLrjImBCJo7hDVyZ4bulYbb25LOByrG4D2TaMYyNKlEb+iZjKGC0m+jY01FpNV1
+         fOrXuAYjrGExcO4LGw0QCSN5qbfCC4iOcaFYvShzlhsI4gAHDyPXouGI/8pH+flED0Dc
+         Hw0nm5DVplyiKrbaxXBPEsTmp+JCnWE7DyMdIv3mmAJR08I3LuNh7m7T7UAjDxH8oVxS
+         EzhmMapypLQnYC1fGIuOEh3e2ucCytfV/W3+b5gXSnRoDd6C68U4Yl+CBWxgJEKv8q/q
+         nCcherXhsUDPI2KOkQQXnKQ1gAEPYkuvXoO9sTM8bCQfoU9ozpRlSIRfD5YRaI0wDhfV
+         mHAw==
+X-Forwarded-Encrypted: i=1; AJvYcCW1YML37IL7fp05Xnv5HuDYnBjRhOlB20aq4+M7OgJrCgkEjUlk8L8ohSINkExqI9o0YjejgDcrPfzVfnw=@vger.kernel.org, AJvYcCX38uWie5ZV5qS/fQviTV87HuqVIHz3yvcl2KHYRcVYVZtBR40B2cCoOgsbJ5+jf/NcBpGQZDy9zyy9@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUoVL0cHGCyBFPSnP04+T19kuVcsEizAOwCMkSthZSjZtrlFj4
+	B0ij+ulNwS7ERBmhd0sl/AsNPvoB2rEwjrEbIfWrxz1NWM6njCUqjK8uXoKOCF3MDxXhkuS1evh
+	oQmO2I59HnC/heADWTWNtWmpK+o+nXF3MikI=
+X-Google-Smtp-Source: AGHT+IFMdFoyYKQWW6wadd6uJfItC/0LpHBzPBMxLCm0ohzqn7EhyKw6TiXAF8zGkNuN4p708UOQA5Z5y57UVmYat3E=
+X-Received: by 2002:ac8:690c:0:b0:460:42f7:fa44 with SMTP id
+ d75a77b69052e-46363df3fe3mr116526691cf.9.1731807329744; Sat, 16 Nov 2024
+ 17:35:29 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241114024928.60004-2-admiyo@os.amperecomputing.com>
+References: <20241104014439.3786609-1-zhangshida@kylinos.cn>
+ <ZyhAOEkrjZzOQ4kJ@dread.disaster.area> <CANubcdVbimowVMdoH+Tzk6AZuU7miwf4PrvTv2Dh0R+eSuJ1CQ@mail.gmail.com>
+ <Zyi683yYTcnKz+Y7@dread.disaster.area> <CANubcdX3zJ_uVk3rJM5t0ivzCgWacSj6ZHX+pDvzf3XOeonFQw@mail.gmail.com>
+ <ZzFmOzld1P9ReIiA@dread.disaster.area>
+In-Reply-To: <ZzFmOzld1P9ReIiA@dread.disaster.area>
+From: Stephen Zhang <starzhangzsd@gmail.com>
+Date: Sun, 17 Nov 2024 09:34:53 +0800
+Message-ID: <CANubcdXv8rmRGERFDQUELes3W2s_LdvfCSrOuWK8ge=cdEhFYA@mail.gmail.com>
+Subject: Re: [PATCH 0/5] *** Introduce new space allocation algorithm ***
+To: Dave Chinner <david@fromorbit.com>
+Cc: djwong@kernel.org, dchinner@redhat.com, leo.lilong@huawei.com, 
+	wozizhi@huawei.com, osandov@fb.com, xiang@kernel.org, 
+	zhangjiachen.jaycee@bytedance.com, linux-xfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, zhangshida@kylinos.cn
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Dave Chinner <david@fromorbit.com> =E4=BA=8E2024=E5=B9=B411=E6=9C=8811=E6=
+=97=A5=E5=91=A8=E4=B8=80 10:04=E5=86=99=E9=81=93=EF=BC=9A
+>
+> On Fri, Nov 08, 2024 at 09:34:17AM +0800, Stephen Zhang wrote:
+> > Dave Chinner <david@fromorbit.com> =E4=BA=8E2024=E5=B9=B411=E6=9C=884=
+=E6=97=A5=E5=91=A8=E4=B8=80 20:15=E5=86=99=E9=81=93=EF=BC=9A
+> > > On Mon, Nov 04, 2024 at 05:25:38PM +0800, Stephen Zhang wrote:
+> > > > Dave Chinner <david@fromorbit.com> =E4=BA=8E2024=E5=B9=B411=E6=9C=
+=884=E6=97=A5=E5=91=A8=E4=B8=80 11:32=E5=86=99=E9=81=93=EF=BC=9A
+> > > > > On Mon, Nov 04, 2024 at 09:44:34AM +0800, zhangshida wrote:
+>
+> [snip unnecessary stereotyping, accusations and repeated information]
+>
+> > > AFAICT, this "reserve AG space for inodes" behaviour that you are
+> > > trying to acheive is effectively what the inode32 allocator already
+> > > implements. By forcing inode allocation into the AGs below 1TB and
+> > > preventing data from being allocated in those AGs until allocation
+> > > in all the AGs above start failing, it effectively provides the same
+> > > functionality but without the constraints of a global first fit
+> > > allocation policy.
+> > >
+> > > We can do this with any AG by setting it up to prefer metadata,
+> > > but given we already have the inode32 allocator we can run some
+> > > tests to see if setting the metadata-preferred flag makes the
+> > > existing allocation policies do what is needed.
+> > >
+> > > That is, mkfs a new 2TB filesystem with the same 344AG geometry as
+> > > above, mount it with -o inode32 and run the workload that fragments
+> > > all the free space. What we should see is that AGs in the upper TB
+> > > of the filesystem should fill almost to full before any significant
+> > > amount of allocation occurs in the AGs in the first TB of space.
+>
+> Have you performed this experiment yet?
+>
+> I did not ask it idly, and I certainly did not ask it with the intent
+> that we might implement inode32 with AFs. It is fundamentally
+> impossible to implement inode32 with the proposed AF feature.
+>
+> The inode32 policy -requires- top down data fill so that AG 0 is the
+> *last to fill* with user data. The AF first-fit proposal guarantees
+> bottom up fill where AG 0 is the *first to fill* with user data.
+>
+> For example:
+>
+> > So for the inode32 logarithm:
+> > 1. I need to specify a preferred ag, like ag 0:
+> > |----------------------------
+> > | ag 0 | ag 1 | ag 2 | ag 3 |
+> > +----------------------------
+> > 2. Someday space will be used up to 100%, Then we have to growfs to ag =
+7:
+> > +------+------+------+------+------+------+------+------+
+> > | full | full | full | full | ag 4 | ag 5 | ag 6 | ag 7 |
+> > +------+------+------+------+------+------+------+------+
+> > 3. specify another ag for inodes again.
+> > 4. repeat 1-3.
+>
+> Lets's assume that AGs are 512GB each and so AGs 0 and 1 fill the
+> entire lower 1TB of the filesystem. Hence if we get to all AGs full
+> the entire inode32 inode allocation space is full.
+>
+> Even if we grow the filesystem at this point, we still *cannot*
+> allocate more inodes in the inode32 space. That space (AGs 0-1) is
+> full even after the growfs.  Hence we will still give ENOSPC, and
+> that is -correct behaviour- because the inode32 policy requires this
+> behaviour.
+>
+> IOWs, growfs and changing the AF bounds cannot fix ENOSPC on inode32
+> when the inode space is exhausted. Only physically moving data out
+> of the lower AGs can fix that problem...
+>
+> > for the AF logarithm:
+> >     mount -o af1=3D1 $dev $mnt
+> > and we are done.
+> > |<-----+ af 0 +----->|<af 1>|
+> > |----------------------------
+> > | ag 0 | ag 1 | ag 2 | ag 3 |
+> > +----------------------------
+> > because the af is a relative number to ag_count, so when growfs, it wil=
+l
+> > become:
+> > |<-----+ af 0 +--------------------------------->|<af 1>|
+> > +------+------+------+------+------+------+------+------+
+> > | full | full | full | full | ag 4 | ag 5 | ag 6 | ag 7 |
+> > +------+------+------+------+------+------+------+------+
+> > So just set it once, and run forever.
+>
+> That is actually the general solution to the original problem being
+> reported. I realised this about half way through reading your
+> original proposal. This is why I pointed out inode32 and the
+> preferred metadata mechanism in the AG allocator policies.
+>
+> That is, a general solution should only require the highest AG
+> to be marked as metadata preferred. Then -all- data allocation will
+> then skip over the highest AG until there is no space left in any of
+> the lower AGs. This behaviour will be enforced by the existing AG
+> iteration allocation algorithms without any change being needed.
+>
+> Then when we grow the fs, we set the new highest AG to be metadata
+> preferred, and that space will now be reserved for inodes until all
+> other space is consumed.
+>
+> Do you now understand why I asked you to test whether the inode32
+> mount option kept the data out of the lower AGs until the higher AGs
+> were completely filled? It's because I wanted confirmation that the
+> metadata preferred flag would do what we need to implement a
+> general solution for the problematic workload.
+>
 
-kernel test robot noticed the following build errors:
+Hi, I have tested the inode32 mount option. To my suprise, the inode32
+or the metadata preferred structure (will be referred to as inode32 for the
+rest reply) doesn't implement the desired behavior as the AF rule[1] does:
+        Lower AFs/AGs will do anything they can for allocation before going
+to HIGHER/RESERVED AFs/AGS. [1]
 
-[auto build test ERROR on rafael-pm/linux-next]
-[also build test ERROR on rafael-pm/bleeding-edge linus/master v6.12-rc7 next-20241115]
-[cannot apply to horms-ipvs/master]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+While the inode32 does:
+        Lower AFs/AGs won't do anything they can for allocation before goin=
+g
+to HIGHER/RESERVED AFs/AGS.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/admiyo-os-amperecomputing-com/mctp-pcc-Check-before-sending-MCTP-PCC-response-ACK/20241114-105151
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git linux-next
-patch link:    https://lore.kernel.org/r/20241114024928.60004-2-admiyo%40os.amperecomputing.com
-patch subject: [PATCH v7 1/2] mctp pcc: Check before sending MCTP PCC response ACK
-config: x86_64-randconfig-161-20241117 (https://download.01.org/0day-ci/archive/20241117/202411170906.mCmSa3oY-lkp@intel.com/config)
-compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241117/202411170906.mCmSa3oY-lkp@intel.com/reproduce)
+To illustrate that, imagine that now AG 2 is badly fragmented and AG 0/1 ar=
+e
+reserved for inode32:
+       +------------------------+
+       |                        |
+ag 0   |                        |
+       +------------------------+
+       |                        |
+ag 1   |                        |
+       +------------------------+
+       |  1     1     1         |
+       |  1        1  1         |
+       |  1  1 4       1        |
+ag 2   |           1     1      |
+       |      1     1           |
+       |    4  8          1     |
+       +------------------------+
+We want a allocate a space len of 4, but ag 2 is so fragmented that there
+is no such continuous space that we have only two choices:
+1. Break down the 4 into many small pieces for a success allocation in AG 2=
+.
+2. Go to the reserved AG 0/1 for the allocation.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411170906.mCmSa3oY-lkp@intel.com/
+But unlike the AF, the inode32 will choose option 2...
 
-All error/warnings (new ones prefixed by >>):
+To understand the reason for that, we must understand the general allocatio=
+n
+phases:
+1. Best length fit. Find the best length for the current allocation in
+two loops.
+    1.1. First loop with *_TRY_LOCK flags.
+    1.2. Second loop without *_TRY_LOCK flags.
+2. Low space algorithm. Break the allocation into small pieces and fit them=
+ into
+   the free space one by one.
 
-   In file included from drivers/cpufreq/acpi-cpufreq.c:31:
-   In file included from include/acpi/cppc_acpi.h:17:
->> include/acpi/pcc.h:51:10: error: expected ';' after return statement
-      51 |         return 0
-         |                 ^
-         |                 ;
->> include/acpi/pcc.h:49:5: warning: no previous prototype for function 'pcc_mbox_ioremap' [-Wmissing-prototypes]
-      49 | int pcc_mbox_ioremap(struct mbox_chan *chan)
-         |     ^
-   include/acpi/pcc.h:49:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
-      49 | int pcc_mbox_ioremap(struct mbox_chan *chan)
-         | ^
-         | static 
-   1 warning and 1 error generated.
---
-   In file included from drivers/cpufreq/intel_pstate.c:30:
-   In file included from include/trace/events/power.h:12:
-   In file included from include/linux/trace_events.h:6:
-   In file included from include/linux/ring_buffer.h:5:
-   In file included from include/linux/mm.h:2213:
-   include/linux/vmstat.h:504:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     504 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     505 |                            item];
-         |                            ~~~~
-   include/linux/vmstat.h:511:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     511 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     512 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
-   In file included from drivers/cpufreq/intel_pstate.c:48:
-   In file included from include/acpi/cppc_acpi.h:17:
->> include/acpi/pcc.h:51:10: error: expected ';' after return statement
-      51 |         return 0
-         |                 ^
-         |                 ;
->> include/acpi/pcc.h:49:5: warning: no previous prototype for function 'pcc_mbox_ioremap' [-Wmissing-prototypes]
-      49 | int pcc_mbox_ioremap(struct mbox_chan *chan)
-         |     ^
-   include/acpi/pcc.h:49:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
-      49 | int pcc_mbox_ioremap(struct mbox_chan *chan)
-         | ^
-         | static 
-   4 warnings and 1 error generated.
+So for the AF, it will do anything it can before going to higher AFs. *anyt=
+hing*
+means the allocation must completely go through the whole 1.1->1.2->2 phase=
+ and
+then go to the next AF.
+But for the inode32, it will only go through 1.1-> and then go to the
+reserved AG.
+
+Take a look at the core code snippet for inode32 in xfs_alloc_fix_freelist(=
+):
 
 
-vim +51 include/acpi/pcc.h
+        /*
+         * If this is a metadata preferred pag and we are user data then tr=
+y
+         * somewhere else if we are not being asked to try harder at this
+         * point
+         */
+        if (xfs_perag_prefers_metadata(pag) &&
+            (args->datatype & XFS_ALLOC_USERDATA) &&
+            (alloc_flags & XFS_ALLOC_FLAG_TRYLOCK)) {
+                ASSERT(!(alloc_flags & XFS_ALLOC_FLAG_FREEING));
+                goto out_agbp_relse;
+        }
 
-    36	
-    37	#ifdef CONFIG_PCC
-    38	extern struct pcc_mbox_chan *
-    39	pcc_mbox_request_channel(struct mbox_client *cl, int subspace_id);
-    40	extern void pcc_mbox_free_channel(struct pcc_mbox_chan *chan);
-    41	extern int pcc_mbox_ioremap(struct mbox_chan *chan);
-    42	#else
-    43	static inline struct pcc_mbox_chan *
-    44	pcc_mbox_request_channel(struct mbox_client *cl, int subspace_id)
-    45	{
-    46		return ERR_PTR(-ENODEV);
-    47	}
-    48	static inline void pcc_mbox_free_channel(struct pcc_mbox_chan *chan) { }
-  > 49	int pcc_mbox_ioremap(struct mbox_chan *chan)
-    50	{
-  > 51		return 0
-    52	};
-    53	#endif
-    54	
+That's exactly how the inode32 sees if it should go to the RESERVED AG for
+allocation or not.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+The inode32 will see if the current alloction is in *_TRY_LOCK mode
+or not, if it isn't, then it can go to the RESERVED AG for allocation.
+But at this moment, the allocation in unreserved ags only have gone
+through 1.1->...
+
+And seen from the code analysis for metadata preference algorithm, using th=
+e
+preference info to comply with the rule[1](indicate the unreserved AGs alre=
+ady
+having gone through 1.1->1.2->2) will greatly increase the
+system complexity compared with the AF algorithm, or basically impossible..=
+.
+
+To sum it up:
+1. The inode32/metadata-preference doesn't comply with the rule[1]. So it h=
+as
+   no ability to solve the reported problem.
+2. Since the inode32 is kinda conficted with AF, maybe the AF should be dis=
+abled
+   when inode32 gets enabled...
+
+
+> Remeber: free space fragmentation can happen for many reasons - this
+> mysql thing is just the latest one discovered.  The best solution is
+> having general mechanisms in the filesystem that automatically
+> mitigate the effects of free space fragmentation on inode
+> allocation. The worst solution is requiring users to tweak knobs...
+>
+> -Dave.
+> --
+> Dave Chinner
+> david@fromorbit.com
 
