@@ -1,340 +1,92 @@
-Return-Path: <linux-kernel+bounces-411970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC9CF9D01D9
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 02:38:34 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2EBD9D1D0E
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 02:15:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2667F285FB8
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 01:38:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1FB1AB2291F
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 01:15:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1288BB672;
-	Sun, 17 Nov 2024 01:38:26 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65F497462
-	for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 01:38:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD0E933998;
+	Tue, 19 Nov 2024 01:15:26 +0000 (UTC)
+Received: from cmccmta1.chinamobile.com (cmccmta8.chinamobile.com [111.22.67.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD76D1BC2A
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 01:15:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731807505; cv=none; b=kGLTxyoDcHrHsZqA5wq08f1iKZ0cgun06GEbmOrcmlcCaargn0W/ZXRliVYtUO0wRg7I8uNnnhMVuJZhQjPFgg5J2cyUT6MzQ0lak7rDFaPDXjiGwK90JW2Sq4cxUJpWtJS+UphNQR8ivdf59iRxsjRLlBGjlIPB/gAV28tf+Pg=
+	t=1731978926; cv=none; b=PYWnDSkv6My/Z1Wca3vzkgUtA9mdnlH439VjlQdbpO9qdzIl5k5Z7Hkrc29C1Yu+lssbEZdpifU5w10wbe2SECeyClX0JREL9KDnrr7MnVgTckH2aNec1DxFyK0hknswMlFABqq+Pm/xqPLhRimoTsYRzrAwnJ6YLRL/HzHYzzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731807505; c=relaxed/simple;
-	bh=er5gV1fh0tbYXj4Qq92nWe22kK2nc2dfA6OBMFJW3fY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=hdM8INnufhv89I9N83ZSYR1Ku9wSqjK6lgfd8rehR937/kYELsofbywMIf9KQB6dvp1tSnyITHJI83pq8Ojqn5ccuITu2ooaHiIZ6Vm6V7yP4W0GT1VSTzcGpLcua0mhj6el0/QiwDjW9Y+qhZGLhMK/2pJthExYTav5yzOhWEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a75dd4b1f3so4029975ab.1
-        for <linux-kernel@vger.kernel.org>; Sat, 16 Nov 2024 17:38:23 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731807502; x=1732412302;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xKrR2m9X07/iFElV7yj7025d7UGZUrC8saN7pGJScOo=;
-        b=hsnjiZVmmt+OtSbPg8yMTrYR6q7cDHgS9SdTvIgj1/UFDNRps9xRZ6mppO4wHiq9aF
-         Z8nADP+MOlbh4DmpnzzJVnK/zY88UjckePd7DgNksDRGe8J3mJFNwfPtkqRfBryiXX88
-         hMkTYZMvDmyRH+YRAbzUl0dZmLRVIonGZft21na7h7v4zU5JKeUz0dB4DmUIKzAlwf/y
-         xZYv7Q+kBMwZCOziC8ZS2QqpolSYSKS51KvLBPRF570cn+0U99eVR3D9QvCaisplf/Qm
-         0qApco7FQDMhGv10KHkZFoYWVqHfAAkwMnqF2eBgkya49XijS2xU6INbxLSEdVC6KMUt
-         arCg==
-X-Forwarded-Encrypted: i=1; AJvYcCX5x0dy7KEIi5j36koifA1QOC74cJdazrEpg2+hBF6efmhZlyT39mNUCDC5dnf2/D1oFtRdZRgVSrEyNiM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwR/9Y8qWd1z0P07iBmoGA9jTkq7roD+IdjR7lWUPr4mcXTjbaL
-	YwSAgMwxt7JcfXX+YxYvXwIbW/FLTX8gs+v/W5+X/qADKulvR2TX9/SAnI2Mhlw7mIvKOYYODjr
-	spDo9pbsa9ZE0KL0kjBKqzdMn7au8FN42Pme958HewhtSz3y4TyBF1bM=
-X-Google-Smtp-Source: AGHT+IEzgb7zGzcqQlk/x7R04XAegmiJh4SSNILCn28nnEBqpeWQekSlj+q91UbLwHZ6h0WKSYUm4/AoOEr3RmYBW3/L67bS1mVx
+	s=arc-20240116; t=1731978926; c=relaxed/simple;
+	bh=mqGjaAmUeltmw3E/tgvW4U6VUo4/W1Gqw6C73GWJ/xU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=usOoAVlqEYJU/zsAYFNoH4GaV5xjxseybwUlNwtO2VNBpmohseflXLJUzGnEatyA8xu8se+d6o1ZLx51g08P6UQwOoKATr/3V/njuplmuxzN4ZncgY8gV2JdOD+KZD/vE39XzuVOod/IYZINIf71hYEjXiLr32pAPzn/Jc18ETc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app02-12002 (RichMail) with SMTP id 2ee2673be6a61ba-7b1d6;
+	Tue, 19 Nov 2024 09:15:18 +0800 (CST)
+X-RM-TRANSID:2ee2673be6a61ba-7b1d6
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from localhost.localdomain (unknown[223.108.79.101])
+	by rmsmtp-syy-appsvr10-12010 (RichMail) with SMTP id 2eea673be69a0ae-f959e;
+	Tue, 19 Nov 2024 09:15:18 +0800 (CST)
+X-RM-TRANSID:2eea673be69a0ae-f959e
+From: guanjing <guanjing@cmss.chinamobile.com>
+To: tj@kernel.org,
+	void@manifault.com,
+	joshdon@google.com,
+	haoluo@google.com,
+	brho@google.com
+Cc: linux-kernel@vger.kernel.org,
+	guanjing <guanjing@cmss.chinamobile.com>
+Subject: [PATCH v2] sched_ext: fix application of sizeof to pointer
+Date: Sun, 17 Nov 2024 09:39:20 +0800
+Message-Id: <20241117013920.150829-1-guanjing@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d1c:b0:3a7:2b12:78dd with SMTP id
- e9e14a558f8ab-3a7480234f3mr66364335ab.11.1731807502596; Sat, 16 Nov 2024
- 17:38:22 -0800 (PST)
-Date: Sat, 16 Nov 2024 17:38:22 -0800
-In-Reply-To: <6731d39c.050a0220.1fb99c.014e.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6739490e.050a0220.87769.0000.GAE@google.com>
-Subject: Re: [syzbot] [mm?] [v9fs?] BUG: stack guard page was hit in sys_open
-From: syzbot <syzbot+885c03ad650731743489@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, asmadeus@codewreck.org, ericvh@kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux_oss@crudebyte.com, 
-	lucho@ionkov.net, syzkaller-bugs@googlegroups.com, v9fs@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-syzbot has found a reproducer for the following issue on:
+sizeof when applied to a pointer typed expression gives the size of
+the pointer.
 
-HEAD commit:    e8bdb3c8be08 Merge tag 'riscv-for-linus-6.12-rc8' of git:/..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=136a52e8580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=327b6119dd928cbc
-dashboard link: https://syzkaller.appspot.com/bug?extid=885c03ad650731743489
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1642d2c0580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14547130580000
+The proper fix in this particular case is to code sizeof(cpu_set_t)
+instead of sizeof(cpuset).
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-e8bdb3c8.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/3fca1f7d05f3/vmlinux-e8bdb3c8.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/51d966b1b453/bzImage-e8bdb3c8.xz
+This issue was detected with the help of Coccinelle.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+885c03ad650731743489@syzkaller.appspotmail.com
-
-BUG: TASK stack guard page was hit at ffffc90005abfff8 (stack is ffffc90005ac0000..ffffc90005ac8000)
-Oops: stack guard page: 0000 [#1] PREEMPT SMP KASAN NOPTI
-CPU: 0 UID: 0 PID: 6005 Comm: syz-executor698 Not tainted 6.12.0-rc7-syzkaller-00189-ge8bdb3c8be08 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:mark_lock+0xb0/0xc60 kernel/locking/lockdep.c:4703
-Code: fe 09 0f 87 e3 00 00 00 41 83 fe 08 49 89 fc 48 89 f3 0f 84 97 00 00 00 41 bd 01 00 00 00 44 89 f1 41 d3 e5 4d 63 ed 48 89 df <e8> cb 6b ff ff 48 ba 00 00 00 00 00 fc ff df 48 8d 78 60 48 89 f9
-RSP: 0018:ffffc90005ac0000 EFLAGS: 00010002
-RAX: 0000000000000000 RBX: ffff888029b953b0 RCX: 0000000000000003
-RDX: 0000000000000002 RSI: ffff888029b953b0 RDI: ffff888029b953b0
-RBP: ffffc90005ac0138 R08: 0000000000000000 R09: 0000000000000006
-R10: ffffffff96e2ed1f R11: 0000000000000002 R12: ffff888029b94880
-R13: 0000000000000200 R14: 0000000000000009 R15: 1ffff92000b58006
-FS:  00007f59e396f6c0(0000) GS:ffff88806a600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffc90005abfff8 CR3: 000000003c6a2000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <#DF>
- </#DF>
- <TASK>
- mark_usage kernel/locking/lockdep.c:4646 [inline]
- __lock_acquire+0x906/0x3ce0 kernel/locking/lockdep.c:5156
- lock_acquire.part.0+0x11b/0x380 kernel/locking/lockdep.c:5825
- rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
- rcu_read_lock include/linux/rcupdate.h:849 [inline]
- page_ext_get+0x3a/0x310 mm/page_ext.c:525
- __set_page_owner+0x96/0x560 mm/page_owner.c:322
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x2d1/0x350 mm/page_alloc.c:1556
- prep_new_page mm/page_alloc.c:1564 [inline]
- get_page_from_freelist+0xfce/0x2f80 mm/page_alloc.c:3474
- __alloc_pages_noprof+0x223/0x25a0 mm/page_alloc.c:4750
- alloc_pages_mpol_noprof+0x2c9/0x610 mm/mempolicy.c:2265
- alloc_slab_page mm/slub.c:2412 [inline]
- allocate_slab mm/slub.c:2578 [inline]
- new_slab+0x2c9/0x410 mm/slub.c:2631
- ___slab_alloc+0xdac/0x1880 mm/slub.c:3818
- __slab_alloc.constprop.0+0x56/0xb0 mm/slub.c:3908
- __slab_alloc_node mm/slub.c:3961 [inline]
- slab_alloc_node mm/slub.c:4122 [inline]
- kmem_cache_alloc_noprof+0x2a7/0x2f0 mm/slub.c:4141
- p9_tag_alloc+0x9c/0x870 net/9p/client.c:281
- p9_client_prepare_req+0x19f/0x4d0 net/9p/client.c:644
- p9_client_zc_rpc.constprop.0+0x105/0x880 net/9p/client.c:793
- p9_client_read_once+0x443/0x820 net/9p/client.c:1570
- p9_client_read+0x13f/0x1b0 net/9p/client.c:1534
- v9fs_issue_read+0x115/0x310 fs/9p/vfs_addr.c:74
- netfs_retry_read_subrequests fs/netfs/read_retry.c:60 [inline]
- netfs_retry_reads+0x153a/0x1d00 fs/netfs/read_retry.c:232
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
- netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
- netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
- netfs_dispatch_unbuffered_reads fs/netfs/direct_read.c:103 [inline]
- netfs_unbuffered_read fs/netfs/direct_read.c:127 [inline]
- netfs_unbuffered_read_iter_locked+0x12f6/0x19b0 fs/netfs/direct_read.c:221
- netfs_unbuffered_read_iter+0xc5/0x100 fs/netfs/direct_read.c:256
- v9fs_file_read_iter+0xbf/0x100 fs/9p/vfs_file.c:361
- __kernel_read+0x3f1/0xb50 fs/read_write.c:527
- integrity_kernel_read+0x7f/0xb0 security/integrity/iint.c:28
- ima_calc_file_hash_tfm+0x2c9/0x3e0 security/integrity/ima/ima_crypto.c:480
- ima_calc_file_shash security/integrity/ima/ima_crypto.c:511 [inline]
- ima_calc_file_hash+0x1ba/0x490 security/integrity/ima/ima_crypto.c:568
- ima_collect_measurement+0x89f/0xa40 security/integrity/ima/ima_api.c:293
- process_measurement+0x1271/0x2370 security/integrity/ima/ima_main.c:372
- ima_file_check+0xc1/0x110 security/integrity/ima/ima_main.c:572
- security_file_post_open+0x8e/0x210 security/security.c:3129
- do_open fs/namei.c:3776 [inline]
- path_openat+0x1419/0x2d60 fs/namei.c:3933
- do_filp_open+0x1dc/0x430 fs/namei.c:3960
- do_sys_openat2+0x17a/0x1e0 fs/open.c:1415
- do_sys_open fs/open.c:1430 [inline]
- __do_sys_open fs/open.c:1438 [inline]
- __se_sys_open fs/open.c:1434 [inline]
- __x64_sys_open+0x154/0x1e0 fs/open.c:1434
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f59e39b43e9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 51 18 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f59e396f218 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
-RAX: ffffffffffffffda RBX: 00007f59e3a3e308 RCX: 00007f59e39b43e9
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000020000140
-RBP: 00007f59e3a3e300 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007f59e3a3e30c
-R13: 00007f59e3a0b074 R14: 0030656c69662f2e R15: 00000000ffffff3c
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:mark_lock+0xb0/0xc60 kernel/locking/lockdep.c:4703
-Code: fe 09 0f 87 e3 00 00 00 41 83 fe 08 49 89 fc 48 89 f3 0f 84 97 00 00 00 41 bd 01 00 00 00 44 89 f1 41 d3 e5 4d 63 ed 48 89 df <e8> cb 6b ff ff 48 ba 00 00 00 00 00 fc ff df 48 8d 78 60 48 89 f9
-RSP: 0018:ffffc90005ac0000 EFLAGS: 00010002
-RAX: 0000000000000000 RBX: ffff888029b953b0 RCX: 0000000000000003
-RDX: 0000000000000002 RSI: ffff888029b953b0 RDI: ffff888029b953b0
-RBP: ffffc90005ac0138 R08: 0000000000000000 R09: 0000000000000006
-R10: ffffffff96e2ed1f R11: 0000000000000002 R12: ffff888029b94880
-R13: 0000000000000200 R14: 0000000000000009 R15: 1ffff92000b58006
-FS:  00007f59e396f6c0(0000) GS:ffff88806a600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffc90005abfff8 CR3: 000000003c6a2000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	fe 09                	decb   (%rcx)
-   2:	0f 87 e3 00 00 00    	ja     0xeb
-   8:	41 83 fe 08          	cmp    $0x8,%r14d
-   c:	49 89 fc             	mov    %rdi,%r12
-   f:	48 89 f3             	mov    %rsi,%rbx
-  12:	0f 84 97 00 00 00    	je     0xaf
-  18:	41 bd 01 00 00 00    	mov    $0x1,%r13d
-  1e:	44 89 f1             	mov    %r14d,%ecx
-  21:	41 d3 e5             	shl    %cl,%r13d
-  24:	4d 63 ed             	movslq %r13d,%r13
-  27:	48 89 df             	mov    %rbx,%rdi
-* 2a:	e8 cb 6b ff ff       	call   0xffff6bfa <-- trapping instruction
-  2f:	48 ba 00 00 00 00 00 	movabs $0xdffffc0000000000,%rdx
-  36:	fc ff df
-  39:	48 8d 78 60          	lea    0x60(%rax),%rdi
-  3d:	48 89 f9             	mov    %rdi,%rcx
-
-
+Fixes: 22a920209ab6 ("sched_ext: Implement tickless support")
+Signed-off-by: guanjing <guanjing@cmss.chinamobile.com>
 ---
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+ tools/sched_ext/scx_central.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tools/sched_ext/scx_central.c b/tools/sched_ext/scx_central.c
+index 21deea320bd7..e938156ed0a0 100644
+--- a/tools/sched_ext/scx_central.c
++++ b/tools/sched_ext/scx_central.c
+@@ -97,7 +97,7 @@ int main(int argc, char **argv)
+ 	SCX_BUG_ON(!cpuset, "Failed to allocate cpuset");
+ 	CPU_ZERO(cpuset);
+ 	CPU_SET(skel->rodata->central_cpu, cpuset);
+-	SCX_BUG_ON(sched_setaffinity(0, sizeof(cpuset), cpuset),
++	SCX_BUG_ON(sched_setaffinity(0, sizeof(*cpuset), cpuset),
+ 		   "Failed to affinitize to central CPU %d (max %d)",
+ 		   skel->rodata->central_cpu, skel->rodata->nr_cpu_ids - 1);
+ 	CPU_FREE(cpuset);
+-- 
+2.33.0
+
+
+
 
