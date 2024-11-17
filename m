@@ -1,241 +1,142 @@
-Return-Path: <linux-kernel+bounces-412159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 399159D049C
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 17:00:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F1079D04AE
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 17:37:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A221EB21E41
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 15:59:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52F71281FF8
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 16:37:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A64391DA103;
-	Sun, 17 Nov 2024 15:59:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0E8D1DA617;
+	Sun, 17 Nov 2024 16:37:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jLt2Sq+s"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iI2rzMx1"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DD90A937
-	for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 15:59:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFB2223AD;
+	Sun, 17 Nov 2024 16:37:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731859190; cv=none; b=cFKIBhK5X1Wqk8ZXFKEN4w3dQMqSpnKot078Qo6/vZDj6KHvOQrlySGBibZqDdlmVP6UGHLGvFE/DUCIWshUadYvny2TbwNsP4KTxXStr0PpFykw7hKpi3WeunZpUtUqvfD8SC1zqpZNHiq7T3J+nyFuwY6O4e0KDGa2aCSV4po=
+	t=1731861448; cv=none; b=OmcwlWCcsY+rCqhoAXYAupiIxr3DBKkvS/oXll59J5KEuyzce1UssexIfeRey0rKQvkFFbkvxsQBnEuP18N/rzq7RZpJxoabZnW6G8kOAMyYyrXut4wu0pv2WFHDl++1C0Xy8TqIjquLtt+KpkEq+GjTPRnwQ5Ik9EqhK8gb1iI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731859190; c=relaxed/simple;
-	bh=3UKEx9YdnwZaoYgzCG3v0Te7r2k/Y1c4XoDFY9q9Pqk=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=Q+3grN445yjtPhA/V3IsvkKgBipJUAZtfL3hcc0mSjQ2a5jhZlGvWY6tnA0O4bK2f00MXx/rTWzWZuYiSi06iqebCvVim41yImgWh69tyDe9glD3h0INCHeagpcae2RQ6VjZWGt3djmssYCFygIvglTLx7eTd2PniD12P+eDi0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jLt2Sq+s; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731859189; x=1763395189;
-  h=date:from:to:cc:subject:message-id;
-  bh=3UKEx9YdnwZaoYgzCG3v0Te7r2k/Y1c4XoDFY9q9Pqk=;
-  b=jLt2Sq+sC9KSvDWds7+OYNpJS+BtV9beALmcz+OP62LmT2ip0G5AaOVr
-   jhbGy6bRSRgKHQcFCKqKnXpXMZh+QX89t+CLTMx2GkK9a3TJ9ZO74M6sM
-   txz0AGgDK/OgH28cl8ARwe/U/GYpeKDofOe5hkqRfvz4XGM/bNieauZ53
-   01dbULjJkx5v0yRw8aMYocq8U1ggh+b/X6rMUzCAx11+jViqfX9YbVC2M
-   ZtQ9zVh5lzAwI0AX9H6ZBVrs020Wg2skLT5nYo8o+hBmi06Nrf5nIyo20
-   yViMPs2S+rSxtG4M5ATDi3LiWGR0PLoFu+KBzNDSpTBQq+Rtz41jSBCqT
-   w==;
-X-CSE-ConnectionGUID: MxIwREpATFycf5Nlr/oamg==
-X-CSE-MsgGUID: 0UJE0qWfSHakDkMniz6qJg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11259"; a="34673480"
-X-IronPort-AV: E=Sophos;i="6.12,162,1728975600"; 
-   d="scan'208";a="34673480"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Nov 2024 07:59:49 -0800
-X-CSE-ConnectionGUID: knLYLtpuRkKS/jXT5lM/uw==
-X-CSE-MsgGUID: YsQoq1glRrWsqMPM4EYwow==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,162,1728975600"; 
-   d="scan'208";a="93843528"
-Received: from lkp-server01.sh.intel.com (HELO 1e3cc1889ffb) ([10.239.97.150])
-  by fmviesa004.fm.intel.com with ESMTP; 17 Nov 2024 07:59:48 -0800
-Received: from kbuild by 1e3cc1889ffb with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tChgf-0001rw-2K;
-	Sun, 17 Nov 2024 15:59:45 +0000
-Date: Sun, 17 Nov 2024 23:59:29 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:irq/core] BUILD SUCCESS
- 1f181d1cda56c2fbe379c5ace1aa1fac6306669e
-Message-ID: <202411172324.Lf1wn0pb-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1731861448; c=relaxed/simple;
+	bh=kpcEm9Mcf2J+wvBZe8UhQb7yknm1sbdvWP697oKorXU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gHi81Ja4i47pL7mw1Dpxle7BdCDobvIRI6CKzpoDGcW1vhyeMVcn3BpBrD5SJmzEnEO8Wd9CitRguW0JEg/m5UlUmHb3nqXLEOCL16TTpZ65k455lze7N0RHWjNlG9HA9abDghPl1LcwK/HhaXjdcYVbs2Xy8Fa9bwVCzHUVxKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iI2rzMx1; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-20cdb889222so20695365ad.3;
+        Sun, 17 Nov 2024 08:37:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731861446; x=1732466246; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vMA9g0ieQb4FGXI4tL0EeYX61YRjSAvl7fcI+5lcUls=;
+        b=iI2rzMx1/VoHOyJh6oWGwjFTOLepx2zXhnxZyWqApMw0fRAgbrmLI1z0utOBtnGO++
+         dKfasvf5+du9X8KV22AoPrAfKA4ry6UgZz6C86/tf8QvU3FRTuMKVwEsN8r4NmvBEEbm
+         CDM5pfKqvuXckx/5g5Tg+v5BdOuounlnV1c+FYjJaXdR4/YLGDck4Ey9hbIMVVPmkhUx
+         tI1oNxv3y4NjjC4gTH8/+RebMWZLpFkXj3dc0sFTgO/kiVxlF2bi18JVZdPBr5U38/49
+         o/73Gjxuq+9ZXeMtWcZPmVp+jKcjJfl7H5PNH3GRLp1P7UM9+iyngQF0QrUGfRRjxGBN
+         5+Sg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731861446; x=1732466246;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vMA9g0ieQb4FGXI4tL0EeYX61YRjSAvl7fcI+5lcUls=;
+        b=qebJa1/O6bPIjLz7V4muk8slo6DcLFf9cEaZewRzmF/8Zitb8xkmd/7dA5hAbABzlk
+         Sd/UCflkxq+/T66ry9Kn5M6eQtkJ5roiHfEfEVsDl4vW7PrJwNBeq/y+PtfslKbenjaa
+         d3GMK+cqiexZpXkkHEyy4+rjqkj7QH0hSZC87WyTaCL3nOPFi+you5ap/jrL8QYIrj9W
+         wYXI7WQlEF+/I6/iJXWB5Q+FuiRvKzCI2vqN9dnk9lG1ZgW7xWQqq48KH2dcSpiauoD1
+         vPUFhlYY/cNbjjutns5VG3xPzx2oMDwzhg4bvIAJDHMZnrYmUCrbct2xhCg7+SIv9eyd
+         xYGA==
+X-Forwarded-Encrypted: i=1; AJvYcCU8XOGTez3hSUa/EReYLtwi4XzEQE0NCDxjuymXSyTzGUC3YkcrkqeNG2H8uwQl7tCn3HvJp33X7CGke/8q@vger.kernel.org, AJvYcCXQ6c9xMSMsu5W625xU28cvz2YKeAQ2S0N8R5QUudVOOKpVcH+EKnlSPDDGWngal4ofl9M5/wqPDhcXPnYg@vger.kernel.org, AJvYcCXrSJz8bnaEMBti3ZsBGVxhpFVTMxst3/on0lnrlt1XZFQ73ANSSGXsLKr6mOS4Plf5qKAt8AD4@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXw1BOIJrTsx3w0DTji07FUX/6AyhPpJuIhF0QSiWmH2vg3HqU
+	06SrFBcHNczKvmpWVt3DdKKT3ldcozqoopaU8rqYfxIr/xxxYQ0mSzsDFR4p
+X-Google-Smtp-Source: AGHT+IG9fJrqcgbGd0VodBFM6O+os4m+kvXOMWizLW61sT7ZDTjxAvlh8SbyOR1T30+uHGNzLZYZ+Q==
+X-Received: by 2002:a17:903:11c9:b0:20c:d428:adf4 with SMTP id d9443c01a7336-211d0ecb083mr148289215ad.38.1731861445980;
+        Sun, 17 Nov 2024 08:37:25 -0800 (PST)
+Received: from kernelexploit-virtual-machine.localdomain ([121.185.186.233])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ea2a3fe8a5sm3272519a91.13.2024.11.17.08.37.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 17 Nov 2024 08:37:25 -0800 (PST)
+From: Jeongjun Park <aha310510@gmail.com>
+To: viro@zeniv.linux.org.uk,
+	brauner@kernel.org
+Cc: jack@suse.cz,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	Jeongjun Park <aha310510@gmail.com>
+Subject: [PATCH] fs: prevent data-race due to missing inode_lock when calling vfs_getattr
+Date: Mon, 18 Nov 2024 01:37:19 +0900
+Message-Id: <20241117163719.39750-1-aha310510@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq/core
-branch HEAD: 1f181d1cda56c2fbe379c5ace1aa1fac6306669e  irqchip/riscv-aplic: Prevent crash when MSI domain is missing
+Many filesystems lock inodes before calling vfs_getattr, so there is no
+data-race for inodes. However, some functions in fs/stat.c that call
+vfs_getattr do not lock inodes, so the data-race occurs.
 
-elapsed time: 1457m
+Therefore, we need to apply a patch to remove the long-standing data-race
+for inodes in some functions that do not lock inodes.
 
-configs tested: 149
-configs skipped: 4
+Cc: <stable@vger.kernel.org>
+Fixes: da9aa5d96bfe ("fs: remove vfs_statx_fd")
+Fixes: 0ef625bba6fb ("vfs: support statx(..., NULL, AT_EMPTY_PATH, ...)")
+Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+---
+ fs/stat.c | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
-
-tested configs:
-alpha                            alldefconfig    gcc-13.2.0
-alpha                             allnoconfig    gcc-14.2.0
-alpha                               defconfig    gcc-14.2.0
-arc                              allmodconfig    clang-20
-arc                               allnoconfig    gcc-14.2.0
-arc                              allyesconfig    clang-20
-arc                                 defconfig    gcc-14.2.0
-arc                     nsimosci_hs_defconfig    gcc-13.2.0
-arc                   randconfig-001-20241117    clang-20
-arc                   randconfig-002-20241117    clang-20
-arm                              allmodconfig    clang-20
-arm                               allnoconfig    gcc-14.2.0
-arm                              allyesconfig    clang-20
-arm                          collie_defconfig    clang-20
-arm                                 defconfig    gcc-14.2.0
-arm                          ixp4xx_defconfig    clang-20
-arm                        multi_v7_defconfig    clang-20
-arm                         nhk8815_defconfig    clang-20
-arm                          pxa3xx_defconfig    clang-20
-arm                             pxa_defconfig    clang-20
-arm                   randconfig-001-20241117    clang-20
-arm                   randconfig-002-20241117    clang-20
-arm                   randconfig-003-20241117    clang-20
-arm                   randconfig-004-20241117    clang-20
-arm                         s5pv210_defconfig    clang-20
-arm                           sama7_defconfig    clang-20
-arm                           sunxi_defconfig    clang-20
-arm                           u8500_defconfig    clang-20
-arm                       versatile_defconfig    clang-20
-arm64                            allmodconfig    clang-20
-arm64                             allnoconfig    gcc-14.2.0
-arm64                               defconfig    gcc-14.2.0
-arm64                 randconfig-001-20241117    clang-20
-arm64                 randconfig-002-20241117    clang-20
-arm64                 randconfig-003-20241117    clang-20
-arm64                 randconfig-004-20241117    clang-20
-csky                              allnoconfig    gcc-14.2.0
-csky                                defconfig    gcc-14.2.0
-csky                  randconfig-001-20241117    clang-20
-csky                  randconfig-002-20241117    clang-20
-hexagon                           allnoconfig    gcc-14.2.0
-hexagon                             defconfig    gcc-14.2.0
-hexagon               randconfig-001-20241117    clang-20
-hexagon               randconfig-002-20241117    clang-20
-i386                             allmodconfig    clang-19
-i386                              allnoconfig    clang-19
-i386                             allyesconfig    clang-19
-i386        buildonly-randconfig-001-20241117    clang-19
-i386        buildonly-randconfig-002-20241117    clang-19
-i386        buildonly-randconfig-003-20241117    clang-19
-i386        buildonly-randconfig-004-20241117    clang-19
-i386        buildonly-randconfig-005-20241117    clang-19
-i386        buildonly-randconfig-006-20241117    clang-19
-i386                                defconfig    clang-19
-i386                  randconfig-001-20241117    clang-19
-i386                  randconfig-002-20241117    clang-19
-i386                  randconfig-003-20241117    clang-19
-i386                  randconfig-004-20241117    clang-19
-i386                  randconfig-005-20241117    clang-19
-i386                  randconfig-006-20241117    clang-19
-i386                  randconfig-011-20241117    clang-19
-i386                  randconfig-012-20241117    clang-19
-i386                  randconfig-013-20241117    clang-19
-i386                  randconfig-014-20241117    clang-19
-i386                  randconfig-015-20241117    clang-19
-i386                  randconfig-016-20241117    clang-19
-loongarch                        allmodconfig    gcc-14.2.0
-loongarch                         allnoconfig    gcc-14.2.0
-loongarch                           defconfig    gcc-14.2.0
-loongarch             randconfig-001-20241117    clang-20
-loongarch             randconfig-002-20241117    clang-20
-m68k                             allmodconfig    gcc-14.2.0
-m68k                              allnoconfig    gcc-14.2.0
-m68k                             allyesconfig    gcc-14.2.0
-m68k                                defconfig    gcc-14.2.0
-microblaze                       allmodconfig    gcc-14.2.0
-microblaze                        allnoconfig    gcc-14.2.0
-microblaze                       allyesconfig    gcc-14.2.0
-microblaze                          defconfig    gcc-14.2.0
-mips                              allnoconfig    gcc-14.2.0
-mips                           mtx1_defconfig    gcc-13.2.0
-mips                   sb1250_swarm_defconfig    clang-20
-nios2                             allnoconfig    gcc-14.2.0
-nios2                               defconfig    gcc-14.2.0
-nios2                 randconfig-001-20241117    clang-20
-nios2                 randconfig-002-20241117    clang-20
-openrisc                          allnoconfig    clang-20
-openrisc                            defconfig    gcc-12
-parisc                            allnoconfig    clang-20
-parisc                              defconfig    gcc-12
-parisc                generic-64bit_defconfig    gcc-13.2.0
-parisc                randconfig-001-20241117    clang-20
-parisc                randconfig-002-20241117    clang-20
-parisc64                            defconfig    gcc-14.2.0
-powerpc                           allnoconfig    clang-20
-powerpc                     ksi8560_defconfig    gcc-13.2.0
-powerpc                 mpc8313_rdb_defconfig    gcc-13.2.0
-powerpc                     rainier_defconfig    gcc-13.2.0
-powerpc               randconfig-001-20241117    clang-20
-powerpc               randconfig-002-20241117    clang-20
-powerpc               randconfig-003-20241117    clang-20
-powerpc                     sequoia_defconfig    gcc-13.2.0
-powerpc64                        alldefconfig    clang-20
-powerpc64             randconfig-001-20241117    clang-20
-powerpc64             randconfig-002-20241117    clang-20
-powerpc64             randconfig-003-20241117    clang-20
-riscv                             allnoconfig    clang-20
-riscv                               defconfig    gcc-12
-riscv                 randconfig-001-20241117    clang-20
-riscv                 randconfig-002-20241117    clang-20
-s390                             allmodconfig    gcc-14.2.0
-s390                              allnoconfig    clang-20
-s390                             allyesconfig    gcc-14.2.0
-s390                                defconfig    gcc-12
-s390                  randconfig-001-20241117    clang-20
-s390                  randconfig-002-20241117    clang-20
-s390                       zfcpdump_defconfig    gcc-13.2.0
-sh                               allmodconfig    gcc-14.2.0
-sh                                allnoconfig    gcc-14.2.0
-sh                               allyesconfig    gcc-14.2.0
-sh                                  defconfig    gcc-12
-sh                               j2_defconfig    gcc-13.2.0
-sh                    randconfig-001-20241117    clang-20
-sh                    randconfig-002-20241117    clang-20
-sh                           se7206_defconfig    gcc-13.2.0
-sh                           se7750_defconfig    gcc-13.2.0
-sh                        sh7785lcr_defconfig    gcc-13.2.0
-sh                            shmin_defconfig    clang-20
-sh                          urquell_defconfig    gcc-13.2.0
-sparc                            allmodconfig    gcc-14.2.0
-sparc64                             defconfig    gcc-12
-sparc64               randconfig-001-20241117    clang-20
-sparc64               randconfig-002-20241117    clang-20
-um                                allnoconfig    clang-20
-um                                  defconfig    gcc-12
-um                             i386_defconfig    gcc-12
-um                    randconfig-001-20241117    clang-20
-um                    randconfig-002-20241117    clang-20
-um                           x86_64_defconfig    gcc-12
-x86_64                            allnoconfig    clang-19
-x86_64                           allyesconfig    clang-19
-x86_64                              defconfig    clang-19
-x86_64                                  kexec    gcc-12
-x86_64                               rhel-8.3    gcc-12
-xtensa                            allnoconfig    gcc-14.2.0
-xtensa                          iss_defconfig    clang-20
-xtensa                randconfig-001-20241117    clang-20
-xtensa                randconfig-002-20241117    clang-20
-xtensa                    xip_kc705_defconfig    clang-20
-
+diff --git a/fs/stat.c b/fs/stat.c
+index 41e598376d7e..da532b611aa3 100644
+--- a/fs/stat.c
++++ b/fs/stat.c
+@@ -220,13 +220,21 @@ EXPORT_SYMBOL(vfs_getattr);
+  */
+ int vfs_fstat(int fd, struct kstat *stat)
+ {
++	const struct path *path;
++	struct inode *inode;
+ 	struct fd f;
+ 	int error;
+ 
+ 	f = fdget_raw(fd);
+ 	if (!fd_file(f))
+ 		return -EBADF;
+-	error = vfs_getattr(&fd_file(f)->f_path, stat, STATX_BASIC_STATS, 0);
++
++	path = &fd_file(f)->f_path;
++	inode = d_backing_inode(path->dentry);
++
++	inode_lock_shared(inode);
++	error = vfs_getattr(path, stat, STATX_BASIC_STATS, 0);
++	inode_unlock_shared(inode);
+ 	fdput(f);
+ 	return error;
+ }
+@@ -248,7 +256,11 @@ int getname_statx_lookup_flags(int flags)
+ static int vfs_statx_path(struct path *path, int flags, struct kstat *stat,
+ 			  u32 request_mask)
+ {
++	struct inode *inode = d_backing_inode(path->dentry);
++
++	inode_lock_shared(inode);
+ 	int error = vfs_getattr(path, stat, request_mask, flags);
++	inode_unlock_shared(inode);
+ 
+ 	if (request_mask & STATX_MNT_ID_UNIQUE) {
+ 		stat->mnt_id = real_mount(path->mnt)->mnt_id_unique;
 --
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
