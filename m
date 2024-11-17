@@ -1,124 +1,109 @@
-Return-Path: <linux-kernel+bounces-411974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 347BC9D01EB
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 04:05:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 927EC9D1E67
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 03:47:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0110C281D58
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 03:05:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A8281F227FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 02:47:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99C9AF4ED;
-	Sun, 17 Nov 2024 03:05:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KdiJGosl"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4BCBBA3F;
-	Sun, 17 Nov 2024 03:05:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67D5A13DBA0;
+	Tue, 19 Nov 2024 02:47:05 +0000 (UTC)
+Received: from cmccmta2.chinamobile.com (cmccmta4.chinamobile.com [111.22.67.137])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 278AD33F7;
+	Tue, 19 Nov 2024 02:47:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.137
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731812745; cv=none; b=oY6JywFeoS/UTJkpr5plCmvtA4HhPs8xF8YWqN+BeJ2Rtos8cAGAYM1T5GruAVcE6XzBFab2CZxwhQSLV5vi6L9rsM5e9qjKdcr6fZ4SDwDsOcVCtJ/7PDZShrQPU18MRciYdRAhSXlLG1qyZilP9xeSiWEJHoTEvNfcR5rO3uY=
+	t=1731984425; cv=none; b=VX9zzWeib73T2h5HjCF33asUwru7VxlG9xVLfZznwikTfKQ/MuFi91MlX0tS7cA4M+UKSbrk7gtM6MhNWqQPd1AOw1BoHyCnNsIUgfk6YbYlFVtRopKir0F1LFWXEBziIuYIAKvJIleqtwfxVh/9zRAmA8KFY0T54I9JnjXdndg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731812745; c=relaxed/simple;
-	bh=CHrsYTfEg3BHIhf2gtxsVvuv1Sg6ZU+fanYiVmQxMLU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UR/fvYbEa8hJURMs3reEoKRXSI2QmczHV+9bto5AVsS6G87XWCcEssMaXygivs4WjCFmTV+21lKjelLvHVv0FGwX2LbM7KcDETJxfIGYwmHOOjz29m314rCo+9nzkU94a13wWb/TcrcLSIvOrM5nZZqvan/qLG/GJMHpVjBCtPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KdiJGosl; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731812742; x=1763348742;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=CHrsYTfEg3BHIhf2gtxsVvuv1Sg6ZU+fanYiVmQxMLU=;
-  b=KdiJGoslHYgLV3ORZf6a7WUswimPm5qy2zKY/eZ3+YXCb7rqPBhjG49f
-   QqKbj0TzBkk/BpzXHTGlyv79zmJYY5JW2n6GcUbFOAmj0nPMwIT2sbl6j
-   r/IUx+CBFamdE/FmnCea6PZeMKzM1oP63LrF7yV/APmL4mo0AIsIbBDrD
-   tMY354GDVU5YyS66OJRGd5kSZCDfpkXk80BX/JhASGMkq9S5k65CEDEBW
-   gMP58TkYxIkqBIJpNgi+IWykONrEGp2j7Z/sE+YSK7QZhe9wKcqgLbx1s
-   0pA8WFIGO3hWUDRv485iGk9O+uJUos9gVfbq4anoeUy3RdNrWMysdS/dA
-   Q==;
-X-CSE-ConnectionGUID: oqPnFRcgT1OLEKVv27jiMQ==
-X-CSE-MsgGUID: GaLYDS3bRFSgcDHnH7ozOQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11258"; a="31199853"
-X-IronPort-AV: E=Sophos;i="6.12,161,1728975600"; 
-   d="scan'208";a="31199853"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Nov 2024 19:05:41 -0800
-X-CSE-ConnectionGUID: 9AR+ZDSRRySkglu2Zx+FcA==
-X-CSE-MsgGUID: AODqRlbGSV6WufBreVf/pg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,161,1728975600"; 
-   d="scan'208";a="88478076"
-Received: from lkp-server01.sh.intel.com (HELO 1e3cc1889ffb) ([10.239.97.150])
-  by fmviesa006.fm.intel.com with ESMTP; 16 Nov 2024 19:05:37 -0800
-Received: from kbuild by 1e3cc1889ffb with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tCVbT-0001HR-0T;
-	Sun, 17 Nov 2024 03:05:35 +0000
-Date: Sun, 17 Nov 2024 11:04:39 +0800
-From: kernel test robot <lkp@intel.com>
-To: admiyo@os.amperecomputing.com, Jeremy Kerr <jk@codeconstruct.com.au>,
-	Matt Johnston <matt@codeconstruct.com.au>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: Paul Gazzillo <paul@pgazz.com>,
-	Necip Fazil Yildiran <fazilyildiran@gmail.com>,
-	oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Sudeep Holla <sudeep.holla@arm.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Huisong Li <lihuisong@huawei.com>
-Subject: Re: [PATCH v7 2/2] mctp pcc: Implement MCTP over PCC Transport
-Message-ID: <202411171010.YDEy5wvg-lkp@intel.com>
-References: <20241114024928.60004-3-admiyo@os.amperecomputing.com>
+	s=arc-20240116; t=1731984425; c=relaxed/simple;
+	bh=l7EGQCVzS8e+Cm9uLnOIk+DQliZX4oyPru3AsAUlqBU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mZyATknYAylfGvaMhqKh6KTpdqlTykxbMwnYEoM0akTGgPx+m75DhktF2pRBb+1JDRjYyx8sAdELNS06ICzKzWvcEFPuA9pENpzeHExEEHQ/KTw9DrKjJASsKxlqdwNk7Fcy+M0oPuOBWShZmAnPFvP7BVpxfjsI7hPO5U+Mdio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.137
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app08-12008 (RichMail) with SMTP id 2ee8673bfc2197e-819c9;
+	Tue, 19 Nov 2024 10:46:59 +0800 (CST)
+X-RM-TRANSID:2ee8673bfc2197e-819c9
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from localhost.localdomain (unknown[223.108.79.101])
+	by rmsmtp-syy-appsvr06-12006 (RichMail) with SMTP id 2ee6673bfc163b6-0b1a5;
+	Tue, 19 Nov 2024 10:46:59 +0800 (CST)
+X-RM-TRANSID:2ee6673bfc163b6-0b1a5
+From: guanjing <guanjing@cmss.chinamobile.com>
+To: andrii@kernel.org,
+	eddyz87@gmail.com,
+	mykolal@fb.com,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	martin.lau@linux.dev,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	john.fastabend@gmail.com,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	shuah@kernel.org,
+	dxu@dxuuu.xyz,
+	antony.antony@secunet.com,
+	cupertino.miranda@oracle.com,
+	asavkov@redhat.com
+Cc: bpf@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	guanjing <guanjing@cmss.chinamobile.com>
+Subject: [PATCH v1] selftests/bpf: fix application of sizeof to pointer
+Date: Sun, 17 Nov 2024 11:18:38 +0800
+Message-Id: <20241117031838.161576-1-guanjing@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241114024928.60004-3-admiyo@os.amperecomputing.com>
+Content-Transfer-Encoding: 8bit
 
-Hi,
+sizeof when applied to a pointer typed expression gives the size of
+the pointer.
 
-kernel test robot noticed the following build warnings:
+tools/testing/selftests/bpf/progs/test_tunnel_kern.c:678:41-47: ERROR: application of sizeof to pointer
 
-[auto build test WARNING on rafael-pm/linux-next]
-[also build test WARNING on rafael-pm/bleeding-edge linus/master v6.12-rc7 next-20241115]
-[cannot apply to horms-ipvs/master]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+The proper fix in this particular case is to code sizeof(*gopt)
+instead of sizeof(gopt).
 
-url:    https://github.com/intel-lab-lkp/linux/commits/admiyo-os-amperecomputing-com/mctp-pcc-Check-before-sending-MCTP-PCC-response-ACK/20241114-105151
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git linux-next
-patch link:    https://lore.kernel.org/r/20241114024928.60004-3-admiyo%40os.amperecomputing.com
-patch subject: [PATCH v7 2/2] mctp pcc: Implement MCTP over PCC Transport
-config: riscv-kismet-CONFIG_ACPI-CONFIG_MCTP_TRANSPORT_PCC-0-0 (https://download.01.org/0day-ci/archive/20241117/202411171010.YDEy5wvg-lkp@intel.com/config)
-reproduce: (https://download.01.org/0day-ci/archive/20241117/202411171010.YDEy5wvg-lkp@intel.com/reproduce)
+This issue was detected with the help of Coccinelle.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411171010.YDEy5wvg-lkp@intel.com/
+Fixes: 5ddafcc377f9 ("selftests/bpf: Fix a few tests for GCC related warnings.")
+Signed-off-by: guanjing <guanjing@cmss.chinamobile.com>
+---
+ tools/testing/selftests/bpf/progs/test_tunnel_kern.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-kismet warnings: (new ones prefixed by >>)
->> kismet: WARNING: unmet direct dependencies detected for ACPI when selected by MCTP_TRANSPORT_PCC
-   WARNING: unmet direct dependencies detected for ACPI
-     Depends on [n]: ARCH_SUPPORTS_ACPI [=n]
-     Selected by [y]:
-     - MCTP_TRANSPORT_PCC [=y] && NETDEVICES [=y] && MCTP [=y]
-
+diff --git a/tools/testing/selftests/bpf/progs/test_tunnel_kern.c b/tools/testing/selftests/bpf/progs/test_tunnel_kern.c
+index 32127f1cd687..3a437cdc5c15 100644
+--- a/tools/testing/selftests/bpf/progs/test_tunnel_kern.c
++++ b/tools/testing/selftests/bpf/progs/test_tunnel_kern.c
+@@ -675,7 +675,7 @@ int ip6geneve_set_tunnel(struct __sk_buff *skb)
+ 	gopt->length = 2; /* 4-byte multiple */
+ 	*(int *) &gopt->opt_data = bpf_htonl(0xfeedbeef);
+ 
+-	ret = bpf_skb_set_tunnel_opt(skb, gopt, sizeof(gopt));
++	ret = bpf_skb_set_tunnel_opt(skb, gopt, sizeof(*gopt));
+ 	if (ret < 0) {
+ 		log_err(ret);
+ 		return TC_ACT_SHOT;
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.33.0
+
+
+
 
