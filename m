@@ -1,223 +1,341 @@
-Return-Path: <linux-kernel+bounces-412282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AA5B9D0700
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 00:22:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACFF29D0701
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 00:27:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C4911F215BF
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 23:22:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64DE5281BB8
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 23:27:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF8301DDC0F;
-	Sun, 17 Nov 2024 23:22:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xnMrAzV0"
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 926EC1DDC34;
+	Sun, 17 Nov 2024 23:27:15 +0000 (UTC)
+Received: from sundtek.de (sundtek.de [85.10.198.106])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11F8E1DDC0C
-	for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 23:22:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16C891DDA37
+	for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 23:27:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.10.198.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731885758; cv=none; b=jiEJujEUQAIX7E2sDpHpNJvfLNf0Q2nnlGN97hAT7HlgJGG9gIKoORDXp7bvH5r4RVRp+ZiiCtUOjMCvRCgAtGkQTFi1IZtyVtVQvZqso7oH7BFYeTVLFxRgKtRMZbhZA5fH8sg53lzW3LKFdfkBEtYxmWewjiNBgIDy4s19zsA=
+	t=1731886034; cv=none; b=VZvryhevzZe0TUOo4Yk1X2lblRlNvd8WzN0r51xDMuyBT979kOlIjiQn8s5Rd09xLAqxVdLepRYkHErc8DfaRqM0CDbgIWyhNBff0dufPotQPIiUWl89TTx6m8nd8H4wnV+k2nsHNLHINbcwS+n+/Gz2qBEcXlQVWHnsbAFJyLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731885758; c=relaxed/simple;
-	bh=diA6inMrusLXglhZxC6jEX8FBjSawPwJhQbHu6isinc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BGhF+Jh5TSjxC699fILy3/6SwaVrmh8kZWo6aCpEx4Mzh7qLhkZktbq9WBqgNZLvsKCtiyPsTb0PtvgNPtr0ig5P897OPsS/XR7/Zo2EQ0L4SEjNvQG5CqqtfRxHNjMd1Dq5Yo97v3XJn4UZbfp3CeYlcDQKr8TWh4Ovu+lbERA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xnMrAzV0; arc=none smtp.client-ip=209.85.219.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e388d853727so623895276.1
-        for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 15:22:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731885755; x=1732490555; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=421dnoBG8EVTU7khRTWnYcAennve4M8YbD8yLemljJw=;
-        b=xnMrAzV0+klRMHytR5mbvolEKCEp0g+ZNbuIqL1Y9QmVL8kmZOMFEflAI/kBlE11ok
-         B0pru/BDcTgsuzpnEijEjYuW03Mg/kiqdo4t0X2jYbkm9fUPvVT/iJrbtZoWa+qgUTQr
-         KQyr4MZaoHPAFcHI/OsLi631NLHkEucaTHvOPAMgNPisEQyEQc3TtTzt/C5DUrOtTgPL
-         oKWW5I5BFTQ+b6EInQGzElBAXpXeb1q2EsAXIZboDWk0KKByYhoZuHa06u5Kq2HAWhtM
-         9B89FyGCwrVMJ+Tse18/KwXJ8MO2gqGoPGqwBUcQ5himuOSHAPeQL532BOvv+SdAiaWm
-         fWdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731885755; x=1732490555;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=421dnoBG8EVTU7khRTWnYcAennve4M8YbD8yLemljJw=;
-        b=ky/wb4HVvZaT2nSa11mmzsj9iwJ9B3WVv/uQ/87/wepjdYdTVH1eajO0VfGk7GlsB4
-         APD/z/1g6xdzc1Ny2iA+liXv7CbZMesRZjZmwThBO+rdWIO89Hr+KPdPRpEiN9TaKTEq
-         +AgqVOWVp0k/IsNlrvBkHLobTJy3VViqBHJBx0VdtsBv9cKfx3ma14jqjaiRsEaQTzew
-         EQtRsdZ9ibQRqtA1OSUAzsXvd02+LdVLCUnWlN6TahWYKvlOIIFFeEv3/vKfFKAWlCDA
-         g2EBaEOpsxptcenw3xp5wrBazhRt5piFW7wxyoOhsrC1Hy5riNv02LN5I3q8VOCEFzpi
-         o3gw==
-X-Forwarded-Encrypted: i=1; AJvYcCW/P5PnL5Vh3ItgZG56bFlqVc8XJYGsIbZSFU0HPqFRHikpQoYv/sqLtv5HSiqc1IoT8Q3T3tz2H9R7aLc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPlhoFtDAdHmI4rtbZjSxcfOuCO4CCB46H0g0Dwd7pPTFsPGPv
-	g66aCJ4gJo5AyZkX5nASsBxdf7rxOawbf6gOmfWMqHQuyoahjFI3VtR6SXNNYnaiiE2P82wHzn0
-	+MsoO+Dyhuypp4GTzF3MWorgiQFOUmV0BV7dQug==
-X-Google-Smtp-Source: AGHT+IEKu4HQ4qxL7ggceao+8OGc691sv4/g0I2nwk1Rm7VUkJQLOOIbagikzI5b/uN25//8jFEf3+o5fWyZPy0dMUc=
-X-Received: by 2002:a05:6902:12ca:b0:e33:2533:2d52 with SMTP id
- 3f1490d57ef6-e38263dc27bmr8339143276.44.1731885754875; Sun, 17 Nov 2024
- 15:22:34 -0800 (PST)
+	s=arc-20240116; t=1731886034; c=relaxed/simple;
+	bh=SiZrIa7IMhWCH1/3xGaryyfBG/bxqIefnGhJK9s/8hQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:References:Content-Type:
+	 MIME-Version; b=sapWUOscd3V9LJR3hjEDoBdRwsXM0u97sv81b94KtttnoKctEuNAxY1zrNpgrcmqj2/ZR9/uubn1s1bGl88GbiMIqnQXtD5K6Jm5YSUsJxfBynMyfegXwezceD+OUxLrec2unNr3jZ2020q9jHCCo7u2DO0m3/xLsTOAtwQZV6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sundtek.de; spf=pass smtp.mailfrom=sundtek.de; arc=none smtp.client-ip=85.10.198.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sundtek.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sundtek.de
+Received: from Debian-exim by sundtek.de with spam-scanned (Exim 4.95)
+	(envelope-from <linuxusb.ml@sundtek.de>)
+	id 1tCofb-0001Ig-T3
+	for linux-kernel@vger.kernel.org;
+	Mon, 18 Nov 2024 00:27:09 +0100
+Received: from 1-175-135-24.dynamic-ip.hinet.net ([1.175.135.24] helo=[192.168.2.197])
+	by sundtek.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <linuxusb.ml@sundtek.de>)
+	id 1tCofb-0001IF-8a;
+	Mon, 18 Nov 2024 00:27:07 +0100
+Message-ID: <03c1ae453f2781dbcf3a5ea607640c696b748848.camel@sundtek.de>
+Subject: [PATCH] XHCI NULL Pointer check in xhci_check_bw_table
+From: Markus Rechberger <linuxusb.ml@sundtek.de>
+To: linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
+Cc: Greg KH <gregkh@linuxfoundation.org>
+Date: Mon, 18 Nov 2024 07:27:03 +0800
+References: <b90d48df16cf74bb682af870cd71d7c5cc4a9d97.camel@sundtek.de>
+Content-Type: multipart/mixed; boundary="=-5urReUzQZxabI7oEQTBX"
+User-Agent: Evolution 3.52.3-0ubuntu1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241115-drm-connector-mode-valid-const-v1-0-b1b523156f71@linaro.org>
- <20241115-drm-connector-mode-valid-const-v1-1-b1b523156f71@linaro.org> <20241117205426.GE12409@pendragon.ideasonboard.com>
-In-Reply-To: <20241117205426.GE12409@pendragon.ideasonboard.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Mon, 18 Nov 2024 01:22:12 +0200
-Message-ID: <CAA8EJpr=4AQVRKbtR2MaCQfguGW0a=3ay-ttew-mFR4f086Uyg@mail.gmail.com>
-Subject: Re: [PATCH 1/5] drm/encoder_slave: make mode_valid accept const
- struct drm_display_mode
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Jani Nikula <jani.nikula@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>, 
-	Danilo Krummrich <dakr@redhat.com>, Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, 
-	Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, Alex Deucher <alexander.deucher@amd.com>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Xinhui Pan <Xinhui.Pan@amd.com>, Alain Volmat <alain.volmat@foss.st.com>, 
-	Raphael Gallais-Pou <rgallaispou@gmail.com>, Liviu Dudau <liviu.dudau@arm.com>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Peter Senna Tschudin <peter.senna@gmail.com>, 
-	Ian Ray <ian.ray@ge.com>, Martyn Welch <martyn.welch@collabora.co.uk>, 
-	Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
-	Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Stefan Agner <stefan@agner.ch>, 
-	Alison Wang <alison.wang@nxp.com>, Patrik Jakobsson <patrik.r.jakobsson@gmail.com>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Rob Clark <robdclark@gmail.com>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, Dave Airlie <airlied@redhat.com>, 
-	Gerd Hoffmann <kraxel@redhat.com>, Sandy Huang <hjc@rock-chips.com>, 
-	=?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
-	Andy Yan <andy.yan@rock-chips.com>, Chen-Yu Tsai <wens@csie.org>, 
-	Samuel Holland <samuel@sholland.org>, Thierry Reding <thierry.reding@gmail.com>, 
-	Mikko Perttunen <mperttunen@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Dave Stevenson <dave.stevenson@raspberrypi.com>, =?UTF-8?B?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>, 
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, Gurchetan Singh <gurchetansingh@chromium.org>, 
-	Chia-I Wu <olvaffe@gmail.com>, Zack Rusin <zack.rusin@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, intel-gfx@lists.freedesktop.org, 
-	intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, nouveau@lists.freedesktop.org, 
-	amd-gfx@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org, 
-	virtualization@lists.linux.dev, spice-devel@lists.freedesktop.org, 
-	linux-rockchip@lists.infradead.org, linux-sunxi@lists.linux.dev, 
-	linux-tegra@vger.kernel.org
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: linuxusb.ml@sundtek.de
+X-SA-Exim-Scanned: No (on sundtek.de); SAEximRunCond expanded to false
+
+--=-5urReUzQZxabI7oEQTBX
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, 17 Nov 2024 at 22:54, Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
->
-> Hi Dmitry,
->
-> Thank you for the patch.
->
-> On Fri, Nov 15, 2024 at 11:09:26PM +0200, Dmitry Baryshkov wrote:
-> > The mode_valid() callbacks of drm_encoder, drm_crtc and drm_bridge
-> > accept const struct drm_display_mode argument. Change the mode_valid
-> > callback of drm_encoder_slave to also accept const argument.
-> >
-> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->
-> Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
->
-> On a side note, there's only two I2C slave encoder drivers left... I
-> wonder if we could so something about them. The ch7006 and sil164
-> drivers seem to be used by nouveau only, could they be moved to
-> drivers/gpu/drm/nouveau/ ? We would move the whole drm_encoder_slave
-> implementation there too, and leave it to die (or get taken out of limbo
-> and fixed) with dispnv04.
+This patch fixes a NULL Pointer exception when a device using the XHCI
+controller driver is not properly initialized. It's relatively easy to
+reproduce with a faulty connection to a USB Harddisk / USB Ethernet
+adapter.=C2=A0
+The way I used for testing this patch was to short USB D+/D- and pull
+them to ground.
 
-Or it might be better to switch to drm_bridge. Currently we also have
-sil164 (sub)drivers in ast and i915 drivers. I don't know if there is
-any common code to share or not. If there is some, it might be nice to
-use common framework.
+We manufacture our own USB devices and use Linux for testing, lately we
+upgraded the system to Ubuntu noble with Kernel 6.8.0 and our system
+also crashed multiple times just when plugging in some devices (no
+commands need to be executed).
+We connect/disconnect devices > 100 times (eg uploading firmware, do
+electrical tests etc).
 
->
-> > ---
-> >  drivers/gpu/drm/i2c/ch7006_drv.c          | 2 +-
-> >  drivers/gpu/drm/i2c/sil164_drv.c          | 2 +-
-> >  drivers/gpu/drm/nouveau/dispnv04/tvnv17.c | 2 +-
-> >  include/drm/drm_encoder_slave.h           | 2 +-
-> >  4 files changed, 4 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/i2c/ch7006_drv.c b/drivers/gpu/drm/i2c/ch7006_drv.c
-> > index 131512a5f3bd996ad1e2eb869ffa09837daba0c7..a57f0a41c1a9e2006142fe0bad2914b0c344c82a 100644
-> > --- a/drivers/gpu/drm/i2c/ch7006_drv.c
-> > +++ b/drivers/gpu/drm/i2c/ch7006_drv.c
-> > @@ -104,7 +104,7 @@ static bool ch7006_encoder_mode_fixup(struct drm_encoder *encoder,
-> >  }
-> >
-> >  static int ch7006_encoder_mode_valid(struct drm_encoder *encoder,
-> > -                                  struct drm_display_mode *mode)
-> > +                                  const struct drm_display_mode *mode)
-> >  {
-> >       if (ch7006_lookup_mode(encoder, mode))
-> >               return MODE_OK;
-> > diff --git a/drivers/gpu/drm/i2c/sil164_drv.c b/drivers/gpu/drm/i2c/sil164_drv.c
-> > index ff23422727fce290a188e495d343e32bc2c373ec..708e119072fcb50c31b5596b75dc341429b93697 100644
-> > --- a/drivers/gpu/drm/i2c/sil164_drv.c
-> > +++ b/drivers/gpu/drm/i2c/sil164_drv.c
-> > @@ -255,7 +255,7 @@ sil164_encoder_restore(struct drm_encoder *encoder)
-> >
-> >  static int
-> >  sil164_encoder_mode_valid(struct drm_encoder *encoder,
-> > -                       struct drm_display_mode *mode)
-> > +                       const struct drm_display_mode *mode)
-> >  {
-> >       struct sil164_priv *priv = to_sil164_priv(encoder);
-> >
-> > diff --git a/drivers/gpu/drm/nouveau/dispnv04/tvnv17.c b/drivers/gpu/drm/nouveau/dispnv04/tvnv17.c
-> > index 3ecb101d23e949b753b873d24eec01ad6fe7f5d6..35ad4e10d27323c87704a3ff35b7dc26462c82bd 100644
-> > --- a/drivers/gpu/drm/nouveau/dispnv04/tvnv17.c
-> > +++ b/drivers/gpu/drm/nouveau/dispnv04/tvnv17.c
-> > @@ -308,7 +308,7 @@ static int nv17_tv_get_modes(struct drm_encoder *encoder,
-> >  }
-> >
-> >  static int nv17_tv_mode_valid(struct drm_encoder *encoder,
-> > -                           struct drm_display_mode *mode)
-> > +                           const struct drm_display_mode *mode)
-> >  {
-> >       struct nv17_tv_norm_params *tv_norm = get_tv_norm(encoder);
-> >
-> > diff --git a/include/drm/drm_encoder_slave.h b/include/drm/drm_encoder_slave.h
-> > index 49172166a164474f43e4afb2eeeb3cde8ae7c61a..b526643833dcf78bae29f9fbbe27de3f730b55d8 100644
-> > --- a/include/drm/drm_encoder_slave.h
-> > +++ b/include/drm/drm_encoder_slave.h
-> > @@ -85,7 +85,7 @@ struct drm_encoder_slave_funcs {
-> >        * @mode_valid: Analogous to &drm_encoder_helper_funcs @mode_valid.
-> >        */
-> >       int (*mode_valid)(struct drm_encoder *encoder,
-> > -                       struct drm_display_mode *mode);
-> > +                       const struct drm_display_mode *mode);
-> >       /**
-> >        * @mode_set: Analogous to &drm_encoder_helper_funcs @mode_set
-> >        * callback. Wrapped by drm_i2c_encoder_mode_set().
-> >
->
-> --
-> Regards,
->
-> Laurent Pinchart
+I would rate this issue as highly critical.
+The problem is triggered via some fallback code in hub.c, a second
+patch will follow which
+removes the endpoint reset in the particular fallback.
+
+2024-11-16T22:14:09.701229+08:00 sundtek-UX32VD kernel: usb 3-2: new
+full-speed USB device number 64 using xhci_hcd
+2024-11-16T22:14:09.816295+08:00 sundtek-UX32VD kernel: usb 3-2: device
+descriptor read/64, error -71
+2024-11-16T22:14:10.006157+08:00 sundtek-UX32VD kernel: audit:
+type=3D1400 audit(1731766450.004:3206): apparmor=3D"DENIED"
+operation=3D"open" class=3D"file" profile=3D"snap.skype.skype"
+name=3D"/sys/devices/pci0000:00/ACPI0003:00/power_supply/AC0/online"
+pid=3D4839 comm=3D"skypeforlinux" requested_mask=3D"r" denied_mask=3D"r"
+fsuid=3D1000 ouid=3D0
+2024-11-16T22:14:10.035263+08:00 sundtek-UX32VD kernel: usb 3-2: device
+descriptor read/64, error -71
+2024-11-16T22:14:10.251221+08:00 sundtek-UX32VD kernel: usb 3-2: new
+full-speed USB device number 65 using xhci_hcd
+2024-11-16T22:14:10.365247+08:00 sundtek-UX32VD kernel: usb 3-2: device
+descriptor read/64, error -71
+2024-11-16T22:14:10.587264+08:00 sundtek-UX32VD kernel: usb 3-2: device
+descriptor read/64, error -71
+2024-11-16T22:14:10.689265+08:00 sundtek-UX32VD kernel: usb usb3-port2:
+attempt power cycle
+2024-11-16T22:14:11.006217+08:00 sundtek-UX32VD kernel: audit:
+type=3D1400 audit(1731766451.004:3207): apparmor=3D"DENIED"
+operation=3D"open" class=3D"file" profile=3D"snap.skype.skype"
+name=3D"/sys/devices/pci0000:00/ACPI0003:00/power_supply/AC0/online"
+pid=3D4839 comm=3D"skypeforlinux" requested_mask=3D"r" denied_mask=3D"r"
+fsuid=3D1000 ouid=3D0
+2024-11-16T22:14:11.069247+08:00 sundtek-UX32VD kernel: usb 3-2: new
+full-speed USB device number 66 using xhci_hcd
+2024-11-16T22:14:11.069347+08:00 sundtek-UX32VD kernel: usb 3-2: Device
+not responding to setup address.
+2024-11-16T22:14:11.273256+08:00 sundtek-UX32VD kernel: usb 3-2: Device
+not responding to setup address.
+2024-11-16T22:14:12.122162+08:00 sundtek-UX32VD kernel: usb 3-2: device
+not accepting address 66, error -71
+2024-11-16T22:14:12.122196+08:00 sundtek-UX32VD kernel: BUG: kernel
+NULL pointer dereference, address: 0000000000000020
+2024-11-16T22:14:12.122203+08:00 sundtek-UX32VD kernel: #PF: supervisor
+read access in kernel mode
+2024-11-16T22:14:12.122206+08:00 sundtek-UX32VD kernel: #PF:
+error_code(0x0000) - not-present page
+2024-11-16T22:14:12.122210+08:00 sundtek-UX32VD kernel: PGD 0 P4D 0=20
+2024-11-16T22:14:12.122214+08:00 sundtek-UX32VD kernel: Oops: 0000 [#1]
+PREEMPT SMP PTI
+2024-11-16T22:14:12.122216+08:00 sundtek-UX32VD kernel: CPU: 2 PID:
+15600 Comm: kworker/2:1 Not tainted 6.8.0-48-generic #48-Ubuntu
+2024-11-16T22:14:12.122219+08:00 sundtek-UX32VD kernel: Hardware name:
+ASUSTeK COMPUTER INC. UX32VD/UX32VD, BIOS UX32VD.214 01/29/2013
+2024-11-16T22:14:12.122221+08:00 sundtek-UX32VD kernel: Workqueue:
+usb_hub_wq hub_event
+2024-11-16T22:14:12.122224+08:00 sundtek-UX32VD kernel: RIP:
+0010:xhci_check_bw_table+0x100/0x4d0
+2024-11-16T22:14:12.122227+08:00 sundtek-UX32VD kernel: Code: c7 c2 60
+35 70 9f 48 c7 c6 70 aa 79 9e 4c 89 55 c0 4c 89 5d d0 e8 d0 c7 01 00 4c
+8b 5d d0 4c 8b 55 c0 4c 8b 4d b8 41 8d 47 ff <41> 8b 4a 20 31 d2 45 8b
+72 08 89 45 d0 41 03 02 41 f7 f7 ba 80 00
+2024-11-16T22:14:12.122231+08:00 sundtek-UX32VD kernel: RSP:
+0018:ffffc3774ebeb758 EFLAGS: 00010046
+2024-11-16T22:14:12.122234+08:00 sundtek-UX32VD kernel: RAX:
+0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
+2024-11-16T22:14:12.122236+08:00 sundtek-UX32VD kernel: RDX:
+0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+2024-11-16T22:14:12.122239+08:00 sundtek-UX32VD kernel: RBP:
+ffffc3774ebeb7c0 R08: 0000000000000000 R09: ffff9fcad3566000
+2024-11-16T22:14:12.122242+08:00 sundtek-UX32VD kernel: R10:
+0000000000000000 R11: ffff9fc9cc687260 R12: ffffc37741131000
+2024-11-16T22:14:12.122245+08:00 sundtek-UX32VD kernel: R13:
+0000000000000000 R14: ffff9fcad3566000 R15: 0000000000000001
+2024-11-16T22:14:12.122247+08:00 sundtek-UX32VD kernel: FS:=20
+0000000000000000(0000) GS:ffff9fcb65700000(0000) knlGS:0000000000000000
+2024-11-16T22:14:12.122250+08:00 sundtek-UX32VD kernel: CS:=C2=A0 0010 DS:
+0000 ES: 0000 CR0: 0000000080050033
+2024-11-16T22:14:12.122252+08:00 sundtek-UX32VD kernel: CR2:
+0000000000000020 CR3: 000000021c23c005 CR4: 00000000001706f0
+2024-11-16T22:14:12.122254+08:00 sundtek-UX32VD kernel: Call Trace:
+2024-11-16T22:14:12.122257+08:00 sundtek-UX32VD kernel:=C2=A0 <TASK>
+2024-11-16T22:14:12.122259+08:00 sundtek-UX32VD kernel:=C2=A0 ?
+show_regs+0x6d/0x80
+2024-11-16T22:14:12.122261+08:00 sundtek-UX32VD kernel:=C2=A0 ?
+__die+0x24/0x80
+2024-11-16T22:14:12.122263+08:00 sundtek-UX32VD kernel:=C2=A0 ?
+page_fault_oops+0x99/0x1b0
+2024-11-16T22:14:12.122265+08:00 sundtek-UX32VD kernel:=C2=A0 ?
+kernelmode_fixup_or_oops.isra.0+0x69/0x90
+2024-11-16T22:14:12.122267+08:00 sundtek-UX32VD kernel:=C2=A0 ?
+__bad_area_nosemaphore+0x19d/0x2c0
+2024-11-16T22:14:12.122269+08:00 sundtek-UX32VD kernel:=C2=A0 ?
+update_sg_lb_stats+0x97/0x5c0
+2024-11-16T22:14:12.122271+08:00 sundtek-UX32VD kernel:=C2=A0 ?
+bad_area_nosemaphore+0x16/0x30
+2024-11-16T22:14:12.122273+08:00 sundtek-UX32VD kernel:=C2=A0 ?
+do_user_addr_fault+0x29c/0x670
+2024-11-16T22:14:12.122275+08:00 sundtek-UX32VD kernel:=C2=A0 ?
+exc_page_fault+0x83/0x1b0
+2024-11-16T22:14:12.122276+08:00 sundtek-UX32VD kernel:=C2=A0 ?
+asm_exc_page_fault+0x27/0x30
+2024-11-16T22:14:12.122279+08:00 sundtek-UX32VD kernel:=C2=A0 ?
+xhci_check_bw_table+0x100/0x4d0
+2024-11-16T22:14:12.122281+08:00 sundtek-UX32VD kernel:=C2=A0 ?
+xhci_check_bw_table+0x357/0x4d0
+2024-11-16T22:14:12.122283+08:00 sundtek-UX32VD kernel:=20
+xhci_reserve_bandwidth+0x298/0xb20
+2024-11-16T22:14:12.122286+08:00 sundtek-UX32VD kernel:=C2=A0 ?
+update_load_avg+0x82/0x850
+2024-11-16T22:14:12.122288+08:00 sundtek-UX32VD kernel:=20
+xhci_configure_endpoint+0xa8/0x730
+2024-11-16T22:14:12.122291+08:00 sundtek-UX32VD kernel:=20
+xhci_check_ep0_maxpacket.isra.0+0x14e/0x1d0
+2024-11-16T22:14:12.122293+08:00 sundtek-UX32VD kernel:=20
+xhci_endpoint_reset+0x254/0x4a0
+2024-11-16T22:14:12.122295+08:00 sundtek-UX32VD kernel:=C2=A0 ?
+_raw_spin_lock_irqsave+0xe/0x20
+2024-11-16T22:14:12.122298+08:00 sundtek-UX32VD kernel:=20
+usb_hcd_reset_endpoint+0x28/0xa0
+2024-11-16T22:14:12.122300+08:00 sundtek-UX32VD kernel:=20
+usb_enable_endpoint+0x8c/0xa0
+2024-11-16T22:14:12.122302+08:00 sundtek-UX32VD kernel:=20
+hub_port_connect+0x176/0xb70
+2024-11-16T22:14:12.122305+08:00 sundtek-UX32VD kernel:=20
+hub_port_connect_change+0x88/0x2b0
+2024-11-16T22:14:12.122307+08:00 sundtek-UX32VD kernel:=20
+port_event+0x651/0x810
+2024-11-16T22:14:12.122309+08:00 sundtek-UX32VD kernel:=20
+hub_event+0x14a/0x450
+2024-11-16T22:14:12.122311+08:00 sundtek-UX32VD kernel:=20
+process_one_work+0x178/0x350
+2024-11-16T22:14:12.122313+08:00 sundtek-UX32VD kernel:=20
+worker_thread+0x306/0x440
+2024-11-16T22:14:12.122316+08:00 sundtek-UX32VD kernel:=C2=A0 ?
+_raw_spin_lock_irqsave+0xe/0x20
+2024-11-16T22:14:12.122318+08:00 sundtek-UX32VD kernel:=C2=A0 ?
+__pfx_worker_thread+0x10/0x10
+2024-11-16T22:14:12.122321+08:00 sundtek-UX32VD kernel:=20
+kthread+0xf2/0x120
+2024-11-16T22:14:12.122323+08:00 sundtek-UX32VD kernel:=C2=A0 ?
+__pfx_kthread+0x10/0x10
+2024-11-16T22:14:12.122325+08:00 sundtek-UX32VD kernel:=20
+ret_from_fork+0x47/0x70
+2024-11-16T22:14:12.122327+08:00 sundtek-UX32VD kernel:=C2=A0 ?
+__pfx_kthread+0x10/0x10
+2024-11-16T22:14:12.122329+08:00 sundtek-UX32VD kernel:=20
+ret_from_fork_asm+0x1b/0x30
+2024-11-16T22:14:12.122331+08:00 sundtek-UX32VD kernel:=C2=A0 </TASK>
+2024-11-16T22:14:12.122334+08:00 sundtek-UX32VD kernel: Modules linked
+in: cpuid ufs qnx4 hfsplus hfs minix ntfs msdos jfs nls_ucs2_utils xfs
+usbtest rfcomm snd_seq_dummy snd_hrtimer qrtr uhid hid cmac algif_hash
+algif_skcipher af_alg bnep sunrpc snd_hda_codec_hdmi intel_rapl_msr
+intel_rapl_common binfmt_misc snd_hda_codec_realtek
+x86_pkg_temp_thermal snd_hda_codec_generic intel_powerclamp coretemp
+kvm_intel snd_hda_intel snd_intel_dspcfg snd_intel_sdw_acpi uvcvideo
+snd_hda_codec kvm videobuf2_vmalloc snd_hda_core uvc btusb snd_hwdep
+irqbypass videobuf2_memops snd_pcm btrtl videobuf2_v4l2 iwldvm
+rtsx_usb_ms btintel videodev btbcm rapl btmtk at24 mei_pxp mei_hdcp
+memstick nls_iso8859_1 mac80211 asus_nb_wmi videobuf2_common mfd_aaeon
+libarc4 mc i915 snd_seq_midi bluetooth snd_seq_midi_event snd_rawmidi
+intel_cstate asus_wmi iwlwifi ledtrig_audio ecdh_generic sparse_keymap
+platform_profile i2c_i801 ecc mxm_wmi drm_buddy wmi_bmof snd_seq
+i2c_smbus cfg80211 ttm snd_seq_device snd_timer drm_display_helper snd
+acpi_als mei_me cec soundcore
+2024-11-16T22:14:12.122337+08:00 sundtek-UX32VD kernel:=20
+industrialio_triggered_buffer rc_core lpc_ich mei i2c_algo_bit
+int3400_thermal kfifo_buf int3402_thermal industrialio int3403_thermal
+acpi_thermal_rel asus_wireless int340x_thermal_zone joydev input_leds
+mac_hid serio_raw sch_fq_codel msr parport_pc ppdev lp parport
+efi_pstore nfnetlink dmi_sysfs ip_tables x_tables autofs4 btrfs
+blake2b_generic raid10 raid456 async_raid6_recov async_memcpy async_pq
+async_xor async_tx xor raid6_pq libcrc32c raid1 raid0 rtsx_usb_sdmmc
+rtsx_usb crct10dif_pclmul crc32_pclmul polyval_clmulni polyval_generic
+ghash_clmulni_intel sha256_ssse3 sha1_ssse3 video psmouse ahci xhci_pci
+libahci xhci_pci_renesas wmi aesni_intel crypto_simd cryptd
+2024-11-16T22:14:12.122340+08:00 sundtek-UX32VD kernel: CR2:
+0000000000000020
+2024-11-16T22:14:12.122342+08:00 sundtek-UX32VD kernel: ---[ end trace
+0000000000000000 ]---
+2024-11-16T22:14:12.122344+08:00 sundtek-UX32VD kernel: RIP:
+0010:xhci_check_bw_table+0x100/0x4d0
+2024-11-16T22:14:12.122346+08:00 sundtek-UX32VD kernel: Code: c7 c2 60
+35 70 9f 48 c7 c6 70 aa 79 9e 4c 89 55 c0 4c 89 5d d0 e8 d0 c7 01 00 4c
+8b 5d d0 4c 8b 55 c0 4c 8b 4d b8 41 8d 47 ff <41> 8b 4a 20 31 d2 45 8b
+72 08 89 45 d0 41 03 02 41 f7 f7 ba 80 00
+2024-11-16T22:14:12.122349+08:00 sundtek-UX32VD kernel: RSP:
+0018:ffffc3774ebeb758 EFLAGS: 00010046
+2024-11-16T22:14:12.122352+08:00 sundtek-UX32VD kernel: RAX:
+0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
+2024-11-16T22:14:12.122355+08:00 sundtek-UX32VD kernel: RDX:
+0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+2024-11-16T22:14:12.122357+08:00 sundtek-UX32VD kernel: RBP:
+ffffc3774ebeb7c0 R08: 0000000000000000 R09: ffff9fcad3566000
+2024-11-16T22:14:12.122359+08:00 sundtek-UX32VD kernel: R10:
+0000000000000000 R11: ffff9fc9cc687260 R12: ffffc37741131000
+2024-11-16T22:14:12.122361+08:00 sundtek-UX32VD kernel: R13:
+0000000000000000 R14: ffff9fcad3566000 R15: 0000000000000001
+2024-11-16T22:14:12.122363+08:00 sundtek-UX32VD kernel: FS:=20
+0000000000000000(0000) GS:ffff9fcb65700000(0000) knlGS:0000000000000000
+2024-11-16T22:14:12.122366+08:00 sundtek-UX32VD kernel: CS:=C2=A0 0010 DS:
+0000 ES: 0000 CR0: 0000000080050033
+2024-11-16T22:14:12.122368+08:00 sundtek-UX32VD kernel: CR2:
+0000000000000020 CR3: 000000011ffde004 CR4: 00000000001706f0
+2024-11-16T22:14:12.122371+08:00 sundtek-UX32VD kernel: note:
+kworker/2:1[15600] exited with irqs disabled
+2024-11-16T22:14:12.122373+08:00 sundtek-UX32VD kernel: note:
+kworker/2:1[15600] exited with preempt_count 1
+
+Signed-off-by: Markus Rechberger <linuxusb.ml@sundtek.de>
+
+This patch diff --git a/drivers/usb/host/xhci.c
+b/drivers/usb/host/xhci.c
+index 899c0effb5d3..f054e262176c 100644
+--- a/drivers/usb/host/xhci.c
++++ b/drivers/usb/host/xhci.c
+@@ -2380,6 +2380,17 @@ static int xhci_check_bw_table(struct xhci_hcd
+*xhci,
+=C2=A0	}
+=C2=A0
+=C2=A0	bw_table =3D virt_dev->bw_table;
++
++	/* second line of defense, this should not happen if bw_table
++=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 is not initialized this calculation s=
+hould not be called
++=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 any issue with bw_table is supposed t=
+o be handled earlier
++	*/
++	if (bw_table =3D=3D NULL) {
++		xhci_warn(xhci, "bw_table =3D=3D NULL, this should not
+happen\n"
++				"please report\n");
++		return -ENOMEM;
++	}
++
+=C2=A0	/* We need to translate the max packet size and max ESIT
+payloads into
+=C2=A0	 * the units the hardware uses.
+=C2=A0	 */
 
 
 
--- 
-With best wishes
-Dmitry
+--=-5urReUzQZxabI7oEQTBX
+Content-Disposition: attachment; filename="xhci_bwtable_check.diff"
+Content-Type: text/x-patch; name="xhci_bwtable_check.diff"; charset="UTF-8"
+Content-Transfer-Encoding: base64
+
+ZGlmZiAtLWdpdCBhL2RyaXZlcnMvdXNiL2hvc3QveGhjaS5jIGIvZHJpdmVycy91c2IvaG9zdC94
+aGNpLmMKaW5kZXggODk5YzBlZmZiNWQzLi5mMDU0ZTI2MjE3NmMgMTAwNjQ0Ci0tLSBhL2RyaXZl
+cnMvdXNiL2hvc3QveGhjaS5jCisrKyBiL2RyaXZlcnMvdXNiL2hvc3QveGhjaS5jCkBAIC0yMzgw
+LDYgKzIzODAsMTcgQEAgc3RhdGljIGludCB4aGNpX2NoZWNrX2J3X3RhYmxlKHN0cnVjdCB4aGNp
+X2hjZCAqeGhjaSwKIAl9CiAKIAlid190YWJsZSA9IHZpcnRfZGV2LT5id190YWJsZTsKKworCS8q
+IHNlY29uZCBsaW5lIG9mIGRlZmVuc2UsIHRoaXMgc2hvdWxkIG5vdCBoYXBwZW4gaWYgYndfdGFi
+bGUKKyAgICAgICBpcyBub3QgaW5pdGlhbGl6ZWQgdGhpcyBjYWxjdWxhdGlvbiBzaG91bGQgbm90
+IGJlIGNhbGxlZAorICAgICAgIGFueSBpc3N1ZSB3aXRoIGJ3X3RhYmxlIGlzIHN1cHBvc2VkIHRv
+IGJlIGhhbmRsZWQgZWFybGllcgorCSovCisJaWYgKGJ3X3RhYmxlID09IE5VTEwpIHsKKwkJeGhj
+aV93YXJuKHhoY2ksICJid190YWJsZSA9PSBOVUxMLCB0aGlzIHNob3VsZCBub3QgaGFwcGVuXG4i
+CisJCQkJInBsZWFzZSByZXBvcnRcbiIpOworCQlyZXR1cm4gLUVOT01FTTsKKwl9CisKIAkvKiBX
+ZSBuZWVkIHRvIHRyYW5zbGF0ZSB0aGUgbWF4IHBhY2tldCBzaXplIGFuZCBtYXggRVNJVCBwYXls
+b2FkcyBpbnRvCiAJICogdGhlIHVuaXRzIHRoZSBoYXJkd2FyZSB1c2VzLgogCSAqLwo=
+
+
+
+--=-5urReUzQZxabI7oEQTBX--
 
