@@ -1,146 +1,133 @@
-Return-Path: <linux-kernel+bounces-412098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC20A9D03D9
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 13:37:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A16689D03DA
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 13:37:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A63A28295E
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 12:37:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59EC91F21953
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 12:37:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E8A818E373;
-	Sun, 17 Nov 2024 12:37:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75E6618E373;
+	Sun, 17 Nov 2024 12:37:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="pXPzGb3d"
-Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="eGd9t9xK"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8852318C33B
-	for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 12:37:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 861461803A
+	for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 12:37:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731847036; cv=none; b=VH61WlN4TVs2HCZb0i72eyQi93VsLETKA6eoOp1uFPEO+ApOMi1j14IQibbWe4+7il7exq8iNDuRybkYSWxOS3skgxDjycMP/JipJzIKFK5+HrEeurKUySslDRrv9DErXWKgO6ZXh3N02lIm2GksaDboEXNkFivGrqlJDqbXKpc=
+	t=1731847053; cv=none; b=s1XD7E2aUoNlKMPinN98fsFXObW0SWie8Ly5Tafjn33QzTMA3msI1nq3vpuwMUG3NEiLnHGmr63ya4DWjeAcjCycY5MLD+o6HsGYbS8EN8b5bYaDHY9bSQClzkuT4zqg6BvBQED2OANka9flbhe/iUmXu7v2LKIzv1pI1Gr/knY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731847036; c=relaxed/simple;
-	bh=3ptpaSTU7u2ZLBagCzlW0Cgy1Z4aHdOAnBD1uKeBybA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
-	 In-Reply-To:Content-Type; b=Xkdu0zYBTuX0XF8GDUWbiBmqj6V/0DXB+eXN8sfFtGObV6vpSezJ0uioJep/B09XV+tY663cc7TH0NFNFas1lZC0YEmq9XW7mLSxyfHbzbs4OuJRcjmJA+NjXFvN52UpHNBALxPP1dzHVRYiWaB5OpNYYeq8x9o7W/8a+UKU6Rs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=pXPzGb3d; arc=none smtp.client-ip=115.124.30.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1731847023; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=pgtIAPsqThKFymRr4rV6egKD24ElMHTERpSkVAxHhoI=;
-	b=pXPzGb3dL4tpsZNKkiMbQclis61Nr+fZYanRGfRUudsgdIoXtaaYrhM4iRiNYBigSyAUshHW9zCWP30cJRpoGOk/Igs08r5R0qMEbDG6lDOspXUm8w4fPWqAChLELRMQ/4o7zJmCYv1t7ppyiieQr/S7LbCN3KkKgABGRcK4kbA=
-Received: from 30.0.179.31(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0WJZQeSy_1731847022 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Sun, 17 Nov 2024 20:37:03 +0800
-Message-ID: <ce0227ac-0262-46b7-8f77-6f6953b549ae@linux.alibaba.com>
-Date: Sun, 17 Nov 2024 20:37:02 +0800
+	s=arc-20240116; t=1731847053; c=relaxed/simple;
+	bh=S893wIxUCVDSun7pHzH4xyeFlhHTdIfEzSfWqq9qXrU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=lhzH9eeJeSWohdMEDlAsrZss41PREBKA7jMiWKTcXst2jQSutd18hisfESbgyh73cqTgIYzh2YYmC1yVN5/fVH99iWcsGMO7+f+emPMTffulaAK3oQacWreHv84fS6oI+f0hhaGEQ/xxrHFVA98F4MZ6Y5TA7nQmy432iNQ8hac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=eGd9t9xK; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 9F95540E0263;
+	Sun, 17 Nov 2024 12:37:26 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id F8f0csi1frr2; Sun, 17 Nov 2024 12:37:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1731847042; bh=39TkJ0PCXkHanY7+TVYgvBT/uNL7HtlkDZKaPcgOTAY=;
+	h=Date:From:To:Cc:Subject:From;
+	b=eGd9t9xKDXj2RHemLy6W4L6Jd+s4YGMOed8VVNZl8idJBs8TrWRBvWZQV9eEr17lp
+	 2D7Xu2LAeOyfjqaYFhbQZ7yZknNlEDN8xpt5PmLDmdiwXW3k0kCynspgOzMkPnxAIM
+	 Ma/32LSd4aBeKe5FYXHTXKqzyGXVdtuTKN67JW5vPUOJBbE968IJdCqivRkfShilSa
+	 Sp83aPZ8l2TNZCLn3BoaH9i+NW0FlEIzdxj977smb9XYziZMOmRfUJVb711HY3I9Ej
+	 yKJXqCZGilKY/c9wjKX9o7+SywO+0Kh7J7F5uhwofmBwSNH7iAu9Y6D5wCLVo9sbII
+	 WQlvJUrURPx2vu+OPzlCihP9Pq+27k4zD2eQIpmClyak0ykjdCQqbcB7bOaivYQkfM
+	 02s2Yol5EsLDLpwoTWiy9uSrksZMPj8JnRddIGNkEXRJPLj8tXO4gsQT6Mu33O2mbt
+	 GhPXuJ0mlpfwN7Nqqe8IsVp3fZP1LV1bMkAJ9vkMTjj9FUKA0ZNHCtRhOC9yuHWoef
+	 rbdVY/OAXn3pxcSOabuxNZvWiEiCOnidk9cE25s7zmYyf6oB5iAd7g2FeU+S30pEP/
+	 vIC54Zh0/riQg8++/j8z0P1ndf3BhZExXL7nUKAT4KqhvQ9kFYQ8pe/z76GDv/N/rK
+	 y3i/iJxyQLsz9ewvVr3HY2uI=
+Received: from zn.tnic (pd9530b86.dip0.t-ipconnect.de [217.83.11.134])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 318F440E0208;
+	Sun, 17 Nov 2024 12:37:19 +0000 (UTC)
+Date: Sun, 17 Nov 2024 13:37:10 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] x86/urgent for v6.12
+Message-ID: <20241117123710.GAZznjdtizJgrgwx1I@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] ocfs2: heartbeat: replace simple_strtoul with kstrtoul
-To: Daniel Yang <danielyangkang@gmail.com>
-References: <20241115075131.4457-1-danielyangkang@gmail.com>
-Content-Language: en-US
-From: Joseph Qi <joseph.qi@linux.alibaba.com>
-Cc: "open list:ORACLE CLUSTER FILESYSTEM 2 (OCFS2)"
- <ocfs2-devel@lists.linux.dev>, open list <linux-kernel@vger.kernel.org>,
- Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>
-In-Reply-To: <20241115075131.4457-1-danielyangkang@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+
+Hi Linus,
+
+please pull the final set of x86/urgent fixes for v6.12.
+
+Thx.
+
+---
+
+The following changes since commit 59b723cd2adbac2a34fc8e12c74ae26ae45bf230:
+
+  Linux 6.12-rc6 (2024-11-03 14:05:52 -1000)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip tags/x86_urgent_for_v6.12
+
+for you to fetch changes up to 8d9ffb2fe65a6c4ef114e8d4f947958a12751bbe:
+
+  x86/mm: Fix a kdump kernel failure on SME system when CONFIG_IMA_KEXEC=y (2024-11-13 14:11:33 +0100)
+
+----------------------------------------------------------------
+- Make sure a kdump kernel with CONFIG_IMA_KEXEC enabled and booted on an AMD
+  SME enabled hardware properly decrypts the ima_kexec buffer information
+  passed to it from the previous kernel
+
+- Fix building the kernel with Clang where a non-TLS definition of the stack
+  protector guard cookie leads to bogus code generation
+
+- Clear a wrongly advertised virtualized VMLOAD/VMSAVE feature flag on some
+  Zen4 client systems as those insns are not supported on client
+
+----------------------------------------------------------------
+Ard Biesheuvel (1):
+      x86/stackprotector: Work around strict Clang TLS symbol requirements
+
+Baoquan He (1):
+      x86/mm: Fix a kdump kernel failure on SME system when CONFIG_IMA_KEXEC=y
+
+Mario Limonciello (1):
+      x86/CPU/AMD: Clear virtualized VMLOAD/VMSAVE on Zen4 client
+
+ arch/x86/Makefile                     |  5 +++--
+ arch/x86/entry/entry.S                | 16 ++++++++++++++++
+ arch/x86/include/asm/asm-prototypes.h |  3 +++
+ arch/x86/kernel/cpu/amd.c             | 11 +++++++++++
+ arch/x86/kernel/cpu/common.c          |  2 ++
+ arch/x86/kernel/vmlinux.lds.S         |  3 +++
+ arch/x86/mm/ioremap.c                 |  6 ++++--
+ 7 files changed, 42 insertions(+), 4 deletions(-)
 
 
+-- 
+Regards/Gruss,
+    Boris.
 
-On 11/15/24 3:51 PM, Daniel Yang wrote:
-> The function simple_strtoul is deprecated due to ignoring overflows and
-> also requires clunkier error checking. Replacing with kstrtoul() leads
-> to safer code and cleaner error checking.
-> 
-> Signed-off-by: Daniel Yang <danielyangkang@gmail.com>
-> ---
-> v1->v2: moved ret definition and removed blank lines
-> 
->  fs/ocfs2/cluster/heartbeat.c | 15 +++++++--------
->  1 file changed, 7 insertions(+), 8 deletions(-)
-> 
-> diff --git a/fs/ocfs2/cluster/heartbeat.c b/fs/ocfs2/cluster/heartbeat.c
-> index dff18efbc..84ee5e340 100644
-> --- a/fs/ocfs2/cluster/heartbeat.c
-> +++ b/fs/ocfs2/cluster/heartbeat.c
-> @@ -1536,9 +1536,8 @@ static int o2hb_read_block_input(struct o2hb_region *reg,
->  {
->  	unsigned long bytes;
->  	char *p = (char *)page;
-> -
-> -	bytes = simple_strtoul(p, &p, 0);
-> -	if (!p || (*p && (*p != '\n')))
-> +	int ret = kstrtoul(p, 0, &bytes);
-> +	if (ret)
-
-The preferred code style is:
-
-...
-int ret;
-
-ret = kstrtoul(p, 0, &bytes);
-if (ret < 0)
-	return ret;
-
->  		return -EINVAL;
->  
->  	/* Heartbeat and fs min / max block sizes are the same. */
-> @@ -1623,12 +1622,13 @@ static ssize_t o2hb_region_blocks_store(struct config_item *item,
->  	struct o2hb_region *reg = to_o2hb_region(item);
->  	unsigned long tmp;
->  	char *p = (char *)page;
-> +	int ret;
->  
->  	if (reg->hr_bdev_file)
->  		return -EINVAL;
->  
-> -	tmp = simple_strtoul(p, &p, 0);
-> -	if (!p || (*p && (*p != '\n')))
-> +	ret = kstrtoul(p, 0, &tmp);
-> +	if (ret)
->  		return -EINVAL;
-
-Better to return 'ret' directly since it may be -ERANGE.
-
->  
->  	if (tmp > O2NM_MAX_NODES || tmp == 0)
-> @@ -2141,9 +2141,8 @@ static ssize_t o2hb_heartbeat_group_dead_threshold_store(struct config_item *ite
->  {
->  	unsigned long tmp;
->  	char *p = (char *)page;
-> -
-> -	tmp = simple_strtoul(p, &p, 10);
-> -	if (!p || (*p && (*p != '\n')))
-> +	int ret = kstrtoul(p, 10, &tmp);
-> +	if (ret)
->                  return -EINVAL;
-
-Prefer to:
-
-...
-int ret;
-
-ret = kstrtoul(p, 10, &tmp);
-if (ret < 0)
-	return ret;
-
-Thanks,
-Joseph
->  
->  	/* this will validate ranges for us. */
-
+https://people.kernel.org/tglx/notes-about-netiquette
 
