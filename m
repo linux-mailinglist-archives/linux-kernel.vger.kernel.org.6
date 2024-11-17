@@ -1,178 +1,105 @@
-Return-Path: <linux-kernel+bounces-412255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42D419D0632
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 22:22:25 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E2D39D0636
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 22:23:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83435B21CB2
-	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 21:22:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF5ECB21B51
+	for <lists+linux-kernel@lfdr.de>; Sun, 17 Nov 2024 21:23:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C9651DDC04;
-	Sun, 17 Nov 2024 21:22:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A17491DDC01;
+	Sun, 17 Nov 2024 21:23:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Pa2mPEib"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="84smE8WR"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C1E41D90D4;
-	Sun, 17 Nov 2024 21:22:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B32C1D90D4;
+	Sun, 17 Nov 2024 21:22:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731878530; cv=none; b=FbMMjGj9RZrmfLkB/wwflVx13Mgqzg1VQ3Nrdvw8d83RAMyk+2EYx+xLjIEJfEiuvOoO3pe9twiBr36VqtPVn54ir61O5XRZxAZvN+p2sDc6mJ1KmTF3m8/YKhzcgJHLy5DFakZ/Old4C+BYQU1i1xcSXUpVcFvnlOHMy7y+8Tc=
+	t=1731878580; cv=none; b=hADFUKOlmALGi3DyxK881ukcXdP7LxROCTi5sSJVSAGugZ4WZNUbIRVraq30CDH0tR1zv41GKGMNYrpPKvFJcpCSCVj0ZRuW9J5FXejS3cEQSu+hjO62hSHjhMm3syvo20iChatZq+zEGFQMgyjGXsrUHS8TmGetkhYNFY5G/Jo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731878530; c=relaxed/simple;
-	bh=rvxRHpoxrBHmhZXrzlCvtBy9N5Ly7iqPFhcybhOJzuw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ukuyg1iRvACYNnhrT5ATZKB3F8KULfumJzS32+cceuQ2RUwK8Gj5uIkf04OQK1C62mqjnJgmUFWz2KG6CCZoZwPFvGEFLSEWpNww12FvynwevTQffQPYjiAOaIy+ed9zcCB9b0FmPEJ0MWhpPnWHh8xSBemPIJ1aeK/AFJXKwvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Pa2mPEib; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id F05A07FE;
-	Sun, 17 Nov 2024 22:21:48 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1731878509;
-	bh=rvxRHpoxrBHmhZXrzlCvtBy9N5Ly7iqPFhcybhOJzuw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Pa2mPEibJBWhKqt6uIdQYCPL6lOI8+BM2zNT3dPovLPpDTdraQcyYrl+pjxTPiXqr
-	 3CW9f9p+qau39S0sg5D30HaqaxqZFRM77q+nNBXBwiwXd9H3jXm9gy5WYT8xTFyPb8
-	 dY18Eqm1ylcuAWD0nEeLybGdQXFI45rPVJ7U4pEs=
-Date: Sun, 17 Nov 2024 23:21:56 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Jani Nikula <jani.nikula@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>,
-	Danilo Krummrich <dakr@redhat.com>,
-	Harry Wentland <harry.wentland@amd.com>,
-	Leo Li <sunpeng.li@amd.com>,
-	Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
-	Xinhui Pan <Xinhui.Pan@amd.com>,
-	Alain Volmat <alain.volmat@foss.st.com>,
-	Raphael Gallais-Pou <rgallaispou@gmail.com>,
-	Liviu Dudau <liviu.dudau@arm.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Peter Senna Tschudin <peter.senna@gmail.com>,
-	Ian Ray <ian.ray@ge.com>,
-	Martyn Welch <martyn.welch@collabora.co.uk>,
-	Inki Dae <inki.dae@samsung.com>,
-	Seung-Woo Kim <sw0312.kim@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Stefan Agner <stefan@agner.ch>, Alison Wang <alison.wang@nxp.com>,
-	Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Rob Clark <robdclark@gmail.com>,
-	Abhinav Kumar <quic_abhinavk@quicinc.com>,
-	Sean Paul <sean@poorly.run>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	Dave Airlie <airlied@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>,
-	Sandy Huang <hjc@rock-chips.com>,
-	Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>,
-	Andy Yan <andy.yan@rock-chips.com>, Chen-Yu Tsai <wens@csie.org>,
-	Samuel Holland <samuel@sholland.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	=?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>,
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
-	Gurchetan Singh <gurchetansingh@chromium.org>,
-	Chia-I Wu <olvaffe@gmail.com>, Zack Rusin <zack.rusin@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	nouveau@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
-	virtualization@lists.linux.dev, spice-devel@lists.freedesktop.org,
-	linux-rockchip@lists.infradead.org, linux-sunxi@lists.linux.dev,
-	linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 4/5] drm/connector: make mode_valid_ctx accept const
- struct drm_display_mode
-Message-ID: <20241117212156.GH12409@pendragon.ideasonboard.com>
-References: <20241115-drm-connector-mode-valid-const-v1-0-b1b523156f71@linaro.org>
- <20241115-drm-connector-mode-valid-const-v1-4-b1b523156f71@linaro.org>
+	s=arc-20240116; t=1731878580; c=relaxed/simple;
+	bh=YLggjynJPgVDmVhvTUsxJne55hppKvPWX8tNOkJTNuQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Eaw/0CJjeuzIg9Nrhfd4aO5Ck2tWb46ftI/9aNG1HbDiAoPBEF4q4BaCYMD2avxQOyRsPdcb7b9J0mNjGARdg0Tk9xdgMuoodmnpR67i17pi84ZT588Eci6Ly7EKH42oiZrq/GFHkEGX2u9LwFeAasP6CteInQ1sWHkF1Fg1ZpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=84smE8WR; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=Oka4/LOj+xRmPxvfYg/1XFFMYiAPQZp1ilukkmZN5zI=; b=84smE8WRj2Mw3d+ZxzRcfgWzPs
+	o5uBVXjEs577uSjOkfPhTdRNIl6pf4t4TxaVuOfeDphMCgZyRjDpGs+rsw23Z3NgswUqD4aAa9AiN
+	m0XH+511IPjDZD+ZAFuooeXZzA2CgldVYPjwgmFgVYyfQagjARWALv8Gg8S3n5tb17gBV5uDrKZIW
+	iA4u41bSCOklpffLgX1cK0NrWEYMIKH+saSUCwIYxzKIcfndaCyJKcWKawgalqCE3VixgeDt6zZEF
+	Zdq0FlfkjZb+idjXrwXZzbCsez+ubonC+2OXC15gl3GomPRWbRE0P/AK3i7NTs5dudqt/vH0L+Dt/
+	UJEcZUmg==;
+Date: Sun, 17 Nov 2024 22:22:37 +0100
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Tony Lindgren <tony@atomide.com>
+Cc: Roger Quadros <rogerq@kernel.org>, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, hns@goldelico.com, linux-omap@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ aaro.koskinen@iki.fi, khilman@baylibre.com, stable@vger.kernel.org
+Subject: Re: [PATCH] ARM: dts: ti/omap: gta04: fix pm issues caused by spi
+ module
+Message-ID: <20241117222237.01a9b0b5@akair>
+In-Reply-To: <20241117111903.GB23206@atomide.com>
+References: <20241107225100.1803943-1-andreas@kemnade.info>
+	<b26c1fa8-b3b7-4aa9-bc78-793ddfa3bc6b@kernel.org>
+	<20241108184118.5ee8114c@akair>
+	<20241111150953.GA23206@atomide.com>
+	<20241111193117.5a5f5ecb@akair>
+	<20241111234604.66a9691b@akair>
+	<20241116212734.30f5d35b@akair>
+	<20241117111903.GB23206@atomide.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241115-drm-connector-mode-valid-const-v1-4-b1b523156f71@linaro.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Dmitry,
+Hi Tony,
 
-Thank you for the patch.
+Am Sun, 17 Nov 2024 13:19:03 +0200
+schrieb Tony Lindgren <tony@atomide.com>:
 
-On Fri, Nov 15, 2024 at 11:09:29PM +0200, Dmitry Baryshkov wrote:
-> The mode_valid() callbacks of drm_encoder, drm_crtc and drm_bridge
-> accept const struct drm_display_mode argument. Change the mode_valid_ctx
-> callback of drm_connector to also accept const argument.
-
-I would write "take a const argument" instead of "accept". Same in the
-other patches.
-
+> * Andreas Kemnade <andreas@kemnade.info> [241116 20:27]:
+> > mcspi is per default in slave mode, setting it to master solves issues.
+> > And that happens when the driver is probed because its default is
+> > master.  
 > 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-
-> ---
->  drivers/gpu/drm/i915/display/intel_dp_mst.c | 2 +-
->  include/drm/drm_modeset_helper_vtables.h    | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
+> OK interesting. Maybe set up a quirk function for it in ti-sysc.c.
+> That way the mcspi will get idled also when set to status disabled
+> and no mcspi driver is loaded.
 > 
-> diff --git a/drivers/gpu/drm/i915/display/intel_dp_mst.c b/drivers/gpu/drm/i915/display/intel_dp_mst.c
-> index 7be8fb047b6c17cb37b9021a2dbf430f0aaecfa2..cfefd89209ca864e19771c538ca00016f9322e74 100644
-> --- a/drivers/gpu/drm/i915/display/intel_dp_mst.c
-> +++ b/drivers/gpu/drm/i915/display/intel_dp_mst.c
-> @@ -1432,7 +1432,7 @@ static int intel_dp_mst_get_modes(struct drm_connector *connector)
->  
->  static int
->  intel_dp_mst_mode_valid_ctx(struct drm_connector *connector,
-> -			    struct drm_display_mode *mode,
-> +			    const struct drm_display_mode *mode,
->  			    struct drm_modeset_acquire_ctx *ctx,
->  			    enum drm_mode_status *status)
->  {
-> diff --git a/include/drm/drm_modeset_helper_vtables.h b/include/drm/drm_modeset_helper_vtables.h
-> index ec59015aec3cf3ba01510031c55df8c0b3e0b382..fa9ee6a128bec0205f501df6f7634757f5fcb9ee 100644
-> --- a/include/drm/drm_modeset_helper_vtables.h
-> +++ b/include/drm/drm_modeset_helper_vtables.h
-> @@ -1006,7 +1006,7 @@ struct drm_connector_helper_funcs {
->  	 *
->  	 */
->  	int (*mode_valid_ctx)(struct drm_connector *connector,
-> -			      struct drm_display_mode *mode,
-> +			      const struct drm_display_mode *mode,
->  			      struct drm_modeset_acquire_ctx *ctx,
->  			      enum drm_mode_status *status);
->  
+First of all I think if status = "disabled" then no pins should be
+muxed to mcspi. That prevents all mess.
 
--- 
+So the only case left is spi enabled but no driver and CS input is
+active. If we configure things as master via a quirk if the setup is
+slave then switch something to output which should not be. We would have
+some output againt output situation at least for a moment.
+
+Maybe pinmuxing stuff in ti-sysc? Hmm, I am really unsure if it is
+worth it.
+
+Regarding the GTA04 case:
+
+mcspi1,2 and 4 are not muxed, so that issue occurs only with mcspi3,
+and therefore the most simple solution is to mux it to mode7 as sent
+in the v2 which should also be suitable for -stable.
+
 Regards,
-
-Laurent Pinchart
+Andreas
 
