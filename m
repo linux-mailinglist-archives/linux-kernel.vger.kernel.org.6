@@ -1,249 +1,120 @@
-Return-Path: <linux-kernel+bounces-412448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 556819D0920
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 06:53:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00A009D0926
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 07:01:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9A0A1F21E02
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 05:53:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D7A9281BC9
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 06:01:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E184C146599;
-	Mon, 18 Nov 2024 05:52:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D772142E78;
+	Mon, 18 Nov 2024 06:00:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="q4iPmXLf"
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2065.outbound.protection.outlook.com [40.107.100.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k3HINUEj"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87C9438B;
-	Mon, 18 Nov 2024 05:52:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.65
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731909162; cv=fail; b=YQ22VmcLDzpMxMDWJ32VvW3csUBre6aDTzCi/9prpu3HA1DbctVHsiz1VMU2NB34yjBZMvAlxgyaO/nfmlZi2bXRQVhDiOZWUPzQVMiBvdZHHwYpMfbQo9Q8mPgW6hYzLlbEio6rlOZK5Qtli5t7oQUNMm3+H0Kx8NlrpUVSy6A=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731909162; c=relaxed/simple;
-	bh=pD3CmY8Vf1E5rTziOoui/AnVhcJWQmAJJ32cDLUAJww=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MZATLUtrYKl6t9O2muEV1c62UJ1XRDcQ5AmkNJ0Z5ZwrATZIx3HN9SmFLsIn0FnC2PZxOu3EYr3nI2cVqyZUUIwGmc1r9nYIcESLVlHmJ05O8r0avRBgaTv7uSX7gmKYy6bKRjGMmlcp3sog0NrPYxJ8yjdki9/QE6A+Huo8PKg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=q4iPmXLf; arc=fail smtp.client-ip=40.107.100.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=R1YZl7mlhB+HweD5bm7QOkquonJs2sIAA6X3rcUsKvlmSYe5ZJypncoOz/dHaiXs9jx3RKBlHmgm/Ki8V4XOImLw8LM0A+EASXiMfzRvC1+hI8LAKEVCHykmv9xTkY7lUGw0ciyBGL8gcTGJs5t0FzfjvnCo5i9upYJkKUyEFVOpFouuu986SgH6zgnLoWJRyBMk6NYifA6CK+rOmm06meNvy3MI3b6DoPHWkwWuT0dAW5dtEZb+3wU1PJbD4X0+wLr9QhziYfe8HhCyCiATGeHDrAIMY8OzWlLA/nzzh13rbqSkzJmqwatYr/GwkOSEuHkMOKo0qKxX0h0xUmMmRQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=WbvGlNcV3r/+rLNLwnQcH/ZmbvXRuw3wEjKIZO0sv+U=;
- b=DSKIm5hxBW1E3BAvP+4eR1TT9g70X41+3H1W16nMOWB4WEsYZwlsunF1ln8v+zv1PbFNRFN0/1xnwLqRdh4o552w0XMX8SRkv1KN5SXTL4CTZ55rEsq7UFgnRDffvO6Md2e1nWImlzIEvllKkqPorXhtRNljzilbRkiZSvtYr+27LbKTgZzbLUx4wlhMsq1QI0xwOxtkJ5N2OnxZuDvsoOPQLdr1Yj8j0Aro52Ns4gfvYn7vQu1bYn/S8NXZT2BHwD0BZG3BSMS2tyf7jFyivM3WncNgKrddwYD14S8E5/xTMt01pjqvqe8OQW1mUuAQQqgfkN86KiN4Z4uw7pak5g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=softfail (sender ip
- is 165.204.84.12) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
- dmarc=fail (p=quarantine sp=quarantine pct=100) action=quarantine
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WbvGlNcV3r/+rLNLwnQcH/ZmbvXRuw3wEjKIZO0sv+U=;
- b=q4iPmXLfCB7kzvurQliKG88zQ6iE8UgiMRbXxgfk7vRfrSP4fsjUU8I5DtOetK8NzN4w9HQaJDa6p+O4/JoQgq2aYCmhmliT+2Kubj18YzmTv7NfRI48dQ6ZTISu3rd5pc777DOHpvdlftnR8lySJSIKXmNpNZcTlwsE8EG5byk=
-Received: from MN2PR15CA0011.namprd15.prod.outlook.com (2603:10b6:208:1b4::24)
- by SA1PR12MB7199.namprd12.prod.outlook.com (2603:10b6:806:2bc::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.23; Mon, 18 Nov
- 2024 05:52:35 +0000
-Received: from BN2PEPF000055DF.namprd21.prod.outlook.com
- (2603:10b6:208:1b4:cafe::d1) by MN2PR15CA0011.outlook.office365.com
- (2603:10b6:208:1b4::24) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8158.22 via Frontend Transport; Mon,
- 18 Nov 2024 05:52:35 +0000
-X-MS-Exchange-Authentication-Results: spf=softfail (sender IP is
- 165.204.84.12) smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=fail action=quarantine header.from=amd.com;
-Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
- amd.com discourages use of 165.204.84.12 as permitted sender)
-Received: from SATLEXMB04.amd.com (165.204.84.12) by
- BN2PEPF000055DF.mail.protection.outlook.com (10.167.245.9) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8207.0 via Frontend Transport; Mon, 18 Nov 2024 05:52:35 +0000
-Received: from purico-ed03host.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Sun, 17 Nov
- 2024 23:50:36 -0600
-From: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-To: <linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>
-CC: <joro@8bytes.org>, <robin.murphy@arm.com>, <vasant.hegde@amd.com>,
-	<arnd@arndb.de>, <ubizjak@gmail.com>, <linux-arch@vger.kernel.org>,
-	<jgg@nvidia.com>, <kevin.tian@intel.com>, <jon.grimm@amd.com>,
-	<santosh.shukla@amd.com>, <pandoh@google.com>, <kumaranand@google.com>,
-	Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-Subject: [PATCH v12 9/9] iommu/amd: Remove amd_iommu_apply_erratum_63()
-Date: Mon, 18 Nov 2024 05:49:37 +0000
-Message-ID: <20241118054937.5203-10-suravee.suthikulpanit@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241118054937.5203-1-suravee.suthikulpanit@amd.com>
-References: <20241118054937.5203-1-suravee.suthikulpanit@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36A58DDC5;
+	Mon, 18 Nov 2024 06:00:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731909654; cv=none; b=XlxBLAaZGpCAojq16nDO73YkE4Md4zdDZCEb3cmypzHoio9wnLCAU3yXZKZTuRW/PWKsRFXJ1yoUPacAL6qfe/MglxaxE+rvbmpelscUcajrJyjGuAXmhqacYhWwmOA/puhwvbmgLQtk2w2qKnH1UY+XJb1A9qCzYN/9+bgTO2Q=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731909654; c=relaxed/simple;
+	bh=sgFGmAJSWz62h5J0gaOs0tTJ0+JIkMwQW8wgYGPyNjw=;
+	h=Content-Type:From:Mime-Version:Subject:Date:Message-Id:References:
+	 Cc:In-Reply-To:To; b=ZBdUuTe2RObH9vQHS2/z+HeghRBCm9zoQMAIy9dCrg028ByqZVd/YM6gbfmJPZIKYW0QxFzRhrQ9XkRdL3MD4BHfv/4qsx9Zd91K1pStygoQHkxqA9J1Hc2fNR0hUC0SRuE1AE+n0lPVb5wQN/xutxdUCup0pB6VU/YjZLB6Zbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k3HINUEj; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-21210fe8775so5314035ad.1;
+        Sun, 17 Nov 2024 22:00:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731909652; x=1732514452; darn=vger.kernel.org;
+        h=to:in-reply-to:cc:references:message-id:date:subject:mime-version
+         :from:content-transfer-encoding:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kO+QtFpKfgzNuqO1kZp/2nPap7iCfAUCSQud9ZT+/+Q=;
+        b=k3HINUEjcyuCyACMEeizV1B5Dj86tZQqBhZ2PXX4ZrTbGKvNAqse7ZbZJD0PfY4eRS
+         wLG1DBYo2FzFZ6FeA8bgJ5dXP0PoUufKkkJQU8jGCVbik29gEJFGk0o21ffD8wPXyfEW
+         yjSGsQiU59+1ZJ/QHLT4p+kQQsWnHk6WV9zU2cL1yQZkYdlqmNTm21Fjx3pIrxOg0LAe
+         D8wxIYepF4YMusf6ByyRH4uXRyqTiPN9HfXExchu8gD+mVUHler8ppmvwlBlkbHmUFwb
+         9SyUiB0l0RPoCkdgnYHS4E2uDnDAGH9xdqPJBFXrYJG8ZA0H9b6Top4vHwnzPNmO9PXk
+         kWZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731909652; x=1732514452;
+        h=to:in-reply-to:cc:references:message-id:date:subject:mime-version
+         :from:content-transfer-encoding:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kO+QtFpKfgzNuqO1kZp/2nPap7iCfAUCSQud9ZT+/+Q=;
+        b=xJACQ1pPD7+1fk8eCCKGnQScFV3iFvtFR3uMXIPochwCBkgeitM3hd5VteF4t4qAPA
+         4lu1l8EJl90R6CWTkqX50+oX5y0pipliYAdV3U6/WhRHAEf6e8DR+e9LI2U2/8ZobMOM
+         TI9P6FQxyrw2CaYDIG7BskFJoGbSsA8um6RGOP1T8aQVhFOB9SYyb2QVj4Wn2fUIzJrD
+         DKr8vHFiN4qDCvGnNQu0UAzqVyPPwu7jQU2nEcvxwZ4CCZt09PksOTV2ItdLk1t7TNk8
+         JOz41Bkv/gPrKxOhZ+Mjd/fDe4Ib91K+rg5Wzdsjw2FkCevtHAFch4imNtg0eFT+Yzgz
+         wV1g==
+X-Forwarded-Encrypted: i=1; AJvYcCWSW6rGdsntcVO1udcOBEbSTxk94hpgfQu9pkx7NTYglaQh5jtz3VbHPVSvCcVX2h3S3GjYqDyp@vger.kernel.org, AJvYcCXnKkgXJPvdk6opIn1c/rTZNqwIzXy47OKQUCHkre3oC1hlL/K9yfYMbQcL5PrYyH2my5Tp0H/BJV3X3ixd@vger.kernel.org, AJvYcCXyPH8nBow3B8ZHDTlQr/JLPZMuJ3NsAYQ4hnE9FYbCsheNireN1B3wAjiZBdeYUG9o9bKBljgn9eo0ymgO@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVUoih+UjHMKS7WC4HV+QDd2uR7+T9wKKlWUFLhTohZqCxyEG0
+	bGUEHOW90zgBENqqrngeH4V0ZaaiOp2XqDupykQrtKMEPWZ9Hh4Y21vVMwwK
+X-Google-Smtp-Source: AGHT+IFdxyTPCM6q1QU17AqfiduUvqhQ1jdXop17N8bmnqw3ZxHsAmLAuld0aAwN/RD4QYOI9Rf7Tg==
+X-Received: by 2002:a17:902:ce0e:b0:20b:a73b:3f5 with SMTP id d9443c01a7336-211d06f619cmr172400875ad.14.1731909651862;
+        Sun, 17 Nov 2024 22:00:51 -0800 (PST)
+Received: from smtpclient.apple ([2001:e60:a40b:abbe:19cc:3a68:771c:24a1])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211d0ec7b9csm49435665ad.73.2024.11.17.22.00.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 17 Nov 2024 22:00:51 -0800 (PST)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+From: Jeongjun Park <aha310510@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN2PEPF000055DF:EE_|SA1PR12MB7199:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0d15fd07-70a2-4269-d0a5-08dd07953391
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|82310400026|1800799024|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?TBXpiR2QLujuNTJS/QkAAYZwLnXkfzM3VnR4fkbWs9DncjozFRz4FwbnfQOB?=
- =?us-ascii?Q?t49bDv//mp/UdZA01pP1dvRR9S/OtyUCHC+EBPibs0QPpemlj1sDxaNUdyGn?=
- =?us-ascii?Q?yQRpH71yYbMLYJtwEJcaCRd+bBGtERL2H0ONfQ9ZWdY/NUx1HwHrpzsIcBqI?=
- =?us-ascii?Q?/I1klyocsWpiy7sPtGstYJnMEreIxKKWaBI2oszlek5b3mEmJ7/CgFLlgmcy?=
- =?us-ascii?Q?CuBoi4DwCkqTQd49C6Qkcd6B6vYmKZMr5HLJYi8LcqCB+orvzNvxVVU18gNb?=
- =?us-ascii?Q?Us6BwvhdwqjdvnAZX/bTOfOoX4LWyt0jI4zezilDHcEsnAiNFekRqS8B069b?=
- =?us-ascii?Q?z7gZVhKFheG71R0ij3nOSpHMv4GuW/S40vseBklsmfi/aOHaYo5/JOhuu4st?=
- =?us-ascii?Q?n3FrR6WwvxiXN9sLLq6/mNTtkpJsEQrhbNh/oK9W/eOXstItk1GNo4/EjiwA?=
- =?us-ascii?Q?eb015RX/hZp6dgwckfOCnIMiD9M3KCbXD0lW4AHwt0MbmI8ckFfT/gb7jRUZ?=
- =?us-ascii?Q?FHvtv0jwMaYDXNAR9co4foUfup90cR+SfPPPs+dN9c7Ymq2r/FvMSktO45wI?=
- =?us-ascii?Q?io7Wzfzu72kBFCuXchg/2hRYcrpROQ1+gcNP/phS5PtjytPiUw4pct0JyL6B?=
- =?us-ascii?Q?uLYa+2UHa/9rEuv5kevV0ytQ55HdQ6gV1OL1uzIUH6Eb/+dGQxRyqzUOoa4z?=
- =?us-ascii?Q?rzLAfGlMVG5Snq/lkFaZm1hrpR/qlshgR6N2kRyrROMwpOaAd+eeOmQuJq73?=
- =?us-ascii?Q?ULT2TzU9fs7fbMdBsQMGE9onsuWaoHhC75gV5DdxrFT4EQHbttENK0n6bQt0?=
- =?us-ascii?Q?2fNe3e1Ia7StU9AB90RrlChOyt3QZq6qpfqJO3cxZCat5+/tZGR98hfmL14n?=
- =?us-ascii?Q?aZydyo/YhLVmou1vZXTQBskgQkCfTsLRAXL8h6s8G3Jkbm0rwF/YlZ01Uihf?=
- =?us-ascii?Q?YlZnl05pw8b59L0AQd6t/R4oQdORemBq4rklvVXSsBuF/l7KAhKkuMu902X8?=
- =?us-ascii?Q?7Yf15eAZBtA5QvPKb6nnMkopRatU8wnd8HKYM2A4+x6IBpQyP4CJpZwNDC8y?=
- =?us-ascii?Q?AQS1RrBTKt1XVL9Mu6IVRcYTWHobuUxQb34KJiZrTsbQNtzBlWIojY6tEcFq?=
- =?us-ascii?Q?ktPuAtKzFGy3ky68ZpIC+B/puQrGBJ5pppKBJdQBC50tUpzXK9DS6kq1DfG1?=
- =?us-ascii?Q?9C6E9xUU4J62r7iA8hri5QGMWzZ6SWVkaROOy8w6NC0AOvX203e6v52Lo/Lg?=
- =?us-ascii?Q?b/OyRVGNzx+Nlx/qzg0y0q3qVHO8hNx4N21ma7TNwY58B21LM8A3+60CnUog?=
- =?us-ascii?Q?azRvF1c7FvzdEVGn3xVmiPpPJ0mxV1OG27J+IWOc4H5vTcsVhY5GNapEMkfq?=
- =?us-ascii?Q?V4xVMQQglQ1c277gC05ZJTb5DpOBhvWaHE2sHE2v2mTt7+gWcg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.12;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:atlvpn-bp.amd.com;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Nov 2024 05:52:35.2520
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0d15fd07-70a2-4269-d0a5-08dd07953391
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.12];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN2PEPF000055DF.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB7199
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH] fs: prevent data-race due to missing inode_lock when calling vfs_getattr
+Date: Mon, 18 Nov 2024 15:00:39 +0900
+Message-Id: <E79FF080-A233-42F6-80EB-543384A0C3AC@gmail.com>
+References: <20241117165540.GF3387508@ZenIV>
+Cc: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+In-Reply-To: <20241117165540.GF3387508@ZenIV>
+To: Al Viro <viro@zeniv.linux.org.uk>
+X-Mailer: iPhone Mail (21G93)
 
-Also replace __set_dev_entry_bit() with set_dte_bit() and remove unused
-helper functions.
 
-Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-Signed-off-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
----
- drivers/iommu/amd/amd_iommu.h |  1 -
- drivers/iommu/amd/init.c      | 50 +++--------------------------------
- 2 files changed, 3 insertions(+), 48 deletions(-)
+Hello,
 
-diff --git a/drivers/iommu/amd/amd_iommu.h b/drivers/iommu/amd/amd_iommu.h
-index 7b43894f6b90..621ffb5d8669 100644
---- a/drivers/iommu/amd/amd_iommu.h
-+++ b/drivers/iommu/amd/amd_iommu.h
-@@ -16,7 +16,6 @@ irqreturn_t amd_iommu_int_thread_evtlog(int irq, void *data);
- irqreturn_t amd_iommu_int_thread_pprlog(int irq, void *data);
- irqreturn_t amd_iommu_int_thread_galog(int irq, void *data);
- irqreturn_t amd_iommu_int_handler(int irq, void *data);
--void amd_iommu_apply_erratum_63(struct amd_iommu *iommu, u16 devid);
- void amd_iommu_restart_log(struct amd_iommu *iommu, const char *evt_type,
- 			   u8 cntrl_intr, u8 cntrl_log,
- 			   u32 status_run_mask, u32 status_overflow_mask);
-diff --git a/drivers/iommu/amd/init.c b/drivers/iommu/amd/init.c
-index 1e4b8040c374..41294807452d 100644
---- a/drivers/iommu/amd/init.c
-+++ b/drivers/iommu/amd/init.c
-@@ -992,38 +992,6 @@ static void set_dte_bit(struct dev_table_entry *dte, u8 bit)
- 	dte->data[i] |= (1UL << _bit);
- }
- 
--static void __set_dev_entry_bit(struct dev_table_entry *dev_table,
--				u16 devid, u8 bit)
--{
--	int i = (bit >> 6) & 0x03;
--	int _bit = bit & 0x3f;
--
--	dev_table[devid].data[i] |= (1UL << _bit);
--}
--
--static void set_dev_entry_bit(struct amd_iommu *iommu, u16 devid, u8 bit)
--{
--	struct dev_table_entry *dev_table = get_dev_table(iommu);
--
--	return __set_dev_entry_bit(dev_table, devid, bit);
--}
--
--static int __get_dev_entry_bit(struct dev_table_entry *dev_table,
--			       u16 devid, u8 bit)
--{
--	int i = (bit >> 6) & 0x03;
--	int _bit = bit & 0x3f;
--
--	return (dev_table[devid].data[i] & (1UL << _bit)) >> _bit;
--}
--
--static int get_dev_entry_bit(struct amd_iommu *iommu, u16 devid, u8 bit)
--{
--	struct dev_table_entry *dev_table = get_dev_table(iommu);
--
--	return __get_dev_entry_bit(dev_table, devid, bit);
--}
--
- static bool __copy_device_table(struct amd_iommu *iommu)
- {
- 	u64 int_ctl, int_tab_len, entry = 0;
-@@ -1179,17 +1147,6 @@ static bool search_ivhd_dte_flags(u16 segid, u16 first, u16 last)
- 	return false;
- }
- 
--void amd_iommu_apply_erratum_63(struct amd_iommu *iommu, u16 devid)
--{
--	int sysmgt;
--
--	sysmgt = get_dev_entry_bit(iommu, devid, DEV_ENTRY_SYSMGT1) |
--		 (get_dev_entry_bit(iommu, devid, DEV_ENTRY_SYSMGT2) << 1);
--
--	if (sysmgt == 0x01)
--		set_dev_entry_bit(iommu, devid, DEV_ENTRY_IW);
--}
--
- /*
-  * This function takes the device specific flags read from the ACPI
-  * table and sets up the device table entry with that information
-@@ -2637,9 +2594,9 @@ static void init_device_table_dma(struct amd_iommu_pci_seg *pci_seg)
- 		return;
- 
- 	for (devid = 0; devid <= pci_seg->last_bdf; ++devid) {
--		__set_dev_entry_bit(dev_table, devid, DEV_ENTRY_VALID);
-+		set_dte_bit(&dev_table[devid], DEV_ENTRY_VALID);
- 		if (!amd_iommu_snp_en)
--			__set_dev_entry_bit(dev_table, devid, DEV_ENTRY_TRANSLATION);
-+			set_dte_bit(&dev_table[devid], DEV_ENTRY_TRANSLATION);
- 	}
- }
- 
-@@ -2667,8 +2624,7 @@ static void init_device_table(void)
- 
- 	for_each_pci_segment(pci_seg) {
- 		for (devid = 0; devid <= pci_seg->last_bdf; ++devid)
--			__set_dev_entry_bit(pci_seg->dev_table,
--					    devid, DEV_ENTRY_IRQ_TBL_EN);
-+			set_dte_bit(&pci_seg->dev_table[devid], DEV_ENTRY_IRQ_TBL_EN);
- 	}
- }
- 
--- 
-2.34.1
+> Al Viro <viro@zeniv.linux.org.uk> wrote:
+>=20
+> =EF=BB=BFOn Mon, Nov 18, 2024 at 01:37:19AM +0900, Jeongjun Park wrote:
+>> Many filesystems lock inodes before calling vfs_getattr, so there is no
+>> data-race for inodes. However, some functions in fs/stat.c that call
+>> vfs_getattr do not lock inodes, so the data-race occurs.
+>>=20
+>> Therefore, we need to apply a patch to remove the long-standing data-race=
 
+>> for inodes in some functions that do not lock inodes.
+>=20
+> Why do we care?  Slapping even a shared lock on a _very_ hot path, with
+> possible considerable latency, would need more than "theoretically it's
+> a data race".
+
+All the functions that added lock in this patch are called only via syscall,=
+
+so in most cases there will be no noticeable performance issue. And
+this data-race is not a problem that only occurs in theory. It is
+a bug that syzbot has been reporting for years. Many file systems that
+exist in the kernel lock inode_lock before calling vfs_getattr, so
+data-race does not occur, but only fs/stat.c has had a data-race
+for years. This alone shows that adding inode_lock to some
+functions is a good way to solve the problem without much=20
+performance degradation.
+
+Regards,
+
+Jeongjun Park=
 
