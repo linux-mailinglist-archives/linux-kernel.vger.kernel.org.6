@@ -1,47 +1,54 @@
-Return-Path: <linux-kernel+bounces-412505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A9189D09D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 07:52:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B1429D09DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 07:52:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21D681F21D88
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 06:52:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 511D0282515
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 06:52:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDD2B14A4D1;
-	Mon, 18 Nov 2024 06:52:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A48114A4F0;
+	Mon, 18 Nov 2024 06:52:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t/ObsHco"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="REq9SpKa"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 468D2149C6F
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 06:52:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D7D4146A87;
+	Mon, 18 Nov 2024 06:52:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731912745; cv=none; b=YWpc3UNmQj26vxZwuJwt/MlPE7/PmrKX9m5KLfTs/oGqA/NoUMVwD4GRi911gVY5qweAGbMtMyZmg9Vc4TMR0qg06ILtPABdRRMzvzCA26jnHiknBAFsQkuEI5PKOjpGxeL/6P0Bc++UK8IJMOX2YnSmEhiI5uUgZ2/BZqx7I30=
+	t=1731912764; cv=none; b=I+pFcBjSaSwax8Rf6QzctnWSelTIWu2BdRWo43K2d8fuHGKyO45kKWxh9UHo35KC1JpmMcovvWeSdMQc5EPQyGyWM3oNVRdpXynh1u3K4uMGyHQmxJ7A7YJA3b+28V6hQE+1VZy7l9hqPwL/tlGkzxvRLIe+ryEftpmElwz6yAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731912745; c=relaxed/simple;
-	bh=b0TRyEAlrSD429EVw9p268WP5nJU++Nk4CwNQ0Bf8hg=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=bI3vsNKMuNIfdZbUIn+Hj42eHnUGljGBCWLvugWjfidPprlUpUAMj6y+LA84p6Y4haUiBCjQreHgaBZFtEhgQ0V/j/0UOpGomUT6YxSISVjQLn8yOwlLI8TDlMmvik9Bc2At6BP4ohR5FFIXsrTl0junq5PaZ6gzvZp5dsVmJEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t/ObsHco; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97C59C4CECF;
-	Mon, 18 Nov 2024 06:52:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731912744;
-	bh=b0TRyEAlrSD429EVw9p268WP5nJU++Nk4CwNQ0Bf8hg=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=t/ObsHcoSp4uIyE2yM2dconLAljqCB9Xy2KqhQO+TCF4q+2gRG3/XPew9wdLBkmoJ
-	 KL+vQKeggZYJkI7uleMxSwhICSHJQAISD/VuErRUWchQxLcPRjQzqHPZ4z9TlH/0WL
-	 T4UeauEeb3R6jhz3WhiyxYGbpI5z67A4bdXB00q3cSGr1ZQObKsSpwOrQLNbpiq1/X
-	 4wJm40JORcrzXzkAHSwGxKGcZH7MFdYE9ZDnlKOp80fJtgsPIptkMkR12/tivYbfjp
-	 vRxnibFVtec0HoFzCeF6ihW0lzvmtYdMV0hLYGRPSwJP6M3PQ+p0ybAYTMzXZnsA2m
-	 oX8tzeXLvG8BQ==
-Message-ID: <3760a0ac-1dc3-4069-8fe7-a6e4a9222683@kernel.org>
-Date: Mon, 18 Nov 2024 14:52:19 +0800
+	s=arc-20240116; t=1731912764; c=relaxed/simple;
+	bh=Wzof8Ms9Bx1I7gMnTWBqwPj9iq0cMnT9zRVArVqYBMI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GzwH22vFbRpWo/gOoCJ0zNps+ecTspXxMXjL9JQoSQCmgFyAn+D3dvM5dhvntR8r6LKS1JSFTho/VOLp9/8dm3K2TCNCmt62/GD7GAbYY9c8MlHHlKjqdZxZcX/h1hgwPV86GL9eY59/6WSlAfn6ohbjtI+ie2ss1cW0sfoKBuk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=REq9SpKa; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1731912759;
+	bh=Wzof8Ms9Bx1I7gMnTWBqwPj9iq0cMnT9zRVArVqYBMI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=REq9SpKa55aKFUCf7qaWWO4c7scByRAFfFKwKtlJNh+w6CdWHSW3YHxLfsujwPfCV
+	 u/rw5xWvZA3YdXA1vCIv9VbUmsy9l9kMqYTbsEWdGyt96ZJ8Xn19MH7iXNq9omjra1
+	 JGGmoGLbyXriE+y+44nAx+Z4Vpg+Z6gYSRGNJkxQIsLlhcBD1q+jCwvsrypFIgCo2l
+	 EuEjAvkZxVwtNWmsghTzUe9tIoyZlWlwARlOsMBVFAjSE863P6CUrANHnq0FTymP6j
+	 JeiFTkEG1xjgsxtzAPDz2wSy/d+SHmtM23uGGdmmmJ56lPt2d5KMg3mRzuNt20l3SE
+	 IJL7ugd3ZTBjw==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 2CAC717E1232;
+	Mon, 18 Nov 2024 07:52:39 +0100 (CET)
+Message-ID: <ddf945c3-8bb8-4f20-b53b-5cbf6579a1da@collabora.com>
+Date: Mon, 18 Nov 2024 07:52:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,29 +56,49 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Cc: Chao Yu <chao@kernel.org>, linux-f2fs-devel@lists.sourceforge.net,
- linux-kernel@vger.kernel.org, Song Feng <songfeng@oppo.com>,
- Yongpeng Yang <yangyongpeng1@oppo.com>
-Subject: Re: [PATCH 2/2] f2fs: clear SBI_POR_DOING before initing inmem curseg
-To: Sheng Yong <shengyong@oppo.com>, jaegeuk@kernel.org
-References: <20241111085058.4136077-1-shengyong@oppo.com>
- <20241111085058.4136077-2-shengyong@oppo.com>
+Subject: Re: [PATCH] pinctrl: airoha: Use unsigned long for bit search
+To: Kees Cook <kees@kernel.org>, Lorenzo Bianconi <lorenzo@kernel.org>
+Cc: Sean Wang <sean.wang@kernel.org>, Linus Walleij
+ <linus.walleij@linaro.org>, linux-mediatek@lists.infradead.org,
+ linux-gpio@vger.kernel.org, Matthias Brugger <matthias.bgg@gmail.com>,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-hardening@vger.kernel.org
+References: <20241117114534.work.292-kees@kernel.org>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20241111085058.4136077-2-shengyong@oppo.com>
+In-Reply-To: <20241117114534.work.292-kees@kernel.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 2024/11/11 16:50, Sheng Yong wrote:
-> SBI_POR_DOING can be cleared after recovery is completed, so that
-> changes made before recovery can be persistent, and subsequent
-> errors can be recorded into cp/sb.
+Il 17/11/24 12:45, Kees Cook ha scritto:
+> Instead of risking alignment problems and causing (false positive) array
+> bound warnings when casting a u32 to (64-bit) unsigned long, just use a
+> native unsigned long for doing bit searches. Avoids warning with GCC 15's
+> -Warray-bounds -fdiagnostics-details:
 > 
-> Signed-off-by: Song Feng <songfeng@oppo.com>
-> Signed-off-by: Yongpeng Yang <yangyongpeng1@oppo.com>
-> Signed-off-by: Sheng Yong <shengyong@oppo.com>
+> In file included from ../include/linux/bitmap.h:11,
+>                   from ../include/linux/cpumask.h:12,
+>                   from ../arch/x86/include/asm/paravirt.h:21,
+>                   from ../arch/x86/include/asm/irqflags.h:80,
+>                   from ../include/linux/irqflags.h:18,
+>                   from ../include/linux/spinlock.h:59,
+>                   from ../include/linux/irq.h:14,
+>                   from ../include/linux/irqchip/chained_irq.h:10,
+>                   from ../include/linux/gpio/driver.h:8,
+>                   from ../drivers/pinctrl/mediatek/pinctrl-airoha.c:11:
+> In function 'find_next_bit',
+>      inlined from 'airoha_irq_handler' at ../drivers/pinctrl/mediatek/pinctrl-airoha.c:2394:3:
+> ../include/linux/find.h:65:23: error: array subscript 'long unsigned int[0]' is partly outside array bounds of 'u32[1]' {aka 'unsigned int[1]'} [-Werror=array-bounds=]
+>     65 |                 val = *addr & GENMASK(size - 1, offset);
+>        |                       ^~~~~
+> ../drivers/pinctrl/mediatek/pinctrl-airoha.c: In function 'airoha_irq_handler':
+> ../drivers/pinctrl/mediatek/pinctrl-airoha.c:2387:21: note: object 'status' of size 4
+>   2387 |                 u32 status;
+>        |                     ^~~~~~
+> 
+> Signed-off-by: Kees Cook <kees@kernel.org>
 
-Reviewed-by: Chao Yu <chao@kernel.org>
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-Thanks,
+
 
