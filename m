@@ -1,126 +1,96 @@
-Return-Path: <linux-kernel+bounces-412653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 605AC9D0BFE
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 10:40:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B8B29D0C09
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 10:41:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25CCC284EEE
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 09:40:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41AE3284F17
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 09:41:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1512E1922F1;
-	Mon, 18 Nov 2024 09:40:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EEC618FDD8;
+	Mon, 18 Nov 2024 09:41:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZV+TU7NO"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="VG07oOjc"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99A7D18E03A
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 09:40:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2753522083
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 09:41:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731922822; cv=none; b=bc+RoWl8LdIMGCpv15PhVUQQv05T8tGA6XCC+LOy3ojDdp4qjTRMJdfVQ0wLxpEDQcw77eXSSQ89iSrUAPTLzfkdP8hSvIgqLOo+kenOVQWC9HIK2LO9PUsJXKE0hXH8gHxJBnF7MvP/NdVeUAfw60vuv+AhZMjQa1xPKR5LAak=
+	t=1731922870; cv=none; b=UTwmm79cYLuZ3V5NZP+HPaDcEVtnWK6202EUHph1ogJ8yZli03WS2aJgw88zbIrUokGmjWSwu2TPsEjDSnquRbzcxcSE3HZyBIPJSZDUfxGnhzNvoXmQLUhBepDYLkaTu06UHEFcJ7u9M1H1MX6L1WlnIv0oZfJ1CZTs5i29cxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731922822; c=relaxed/simple;
-	bh=sCgDf9HmfpnPuFGw6HgxCSG4fFokGM5DQWc7VQ0OyAY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=PhTwX49rwr94piOualtVGSNPTvdy1VOaknWbn/dhPyLo8d97VI4wCyHzmDRO49vDizO1fEVadeiLIo+pLmNdE0bo21Z5fiiy+dlmF1gFj9ua3sSl6/qoyHs5KJI+y7e4H68SXZq0nLb9Zut1/NMdpvIQiiEuUy0u81hzhCHZLPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZV+TU7NO; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3823eb7ba72so925116f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 01:40:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731922819; x=1732527619; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=sCgDf9HmfpnPuFGw6HgxCSG4fFokGM5DQWc7VQ0OyAY=;
-        b=ZV+TU7NOJI40iDDH+7QIyyvyzwmDPk5q5oVOAM2vME0PtVYf6q8aGB9Ylnw2COb2a/
-         xz1yfCBiDQAFlDH9kPdVkuZ2/Wg6Jfgis8a7VHWrB4qHTzVzrD7qpeJORBuO8SJDtx1i
-         1pRCUsZhsu25gs7nwvqaiAn2Z3G2J3HijK3cT+5TUZKz5Q1IVna1M8lx0rbYf/suuZF4
-         FHFX6a+j5s3mLUItgNapuMxE6r0+OroRTSHWHvOIo2XyeRqf/C9N2nejc3ttesjywWE0
-         5FjNU1wp9qHzRNv3OrqMyHqZO1apq4bG3/hg59/DDZSbIdX1pazYGmMGKZdhoFikbk7A
-         J7pg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731922819; x=1732527619;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=sCgDf9HmfpnPuFGw6HgxCSG4fFokGM5DQWc7VQ0OyAY=;
-        b=M8diukiL3omffqOsVJCbE9KDe+XE3OkO5N/kvE7Rehhf0YLLI9pwiYet34MZ/Q0rNE
-         kXB8xElsI5pAd0nYQJOt5jYhEFHI/O43vIJUdUzZky1OV1fOcfNWyt9ohkKFM3YTd2bw
-         zNvqY1MpTGBBxQDfueCj/MeQ2k46cO5uvZh8UzTLtlyZfh4I/NmelGV/2DSwQtAFjdil
-         NZ7LvJKCuNrxL3BcaME5K3Ni7xJM9TDl8Q1MqoQZzBoWfd8lbKL8TGGOJeip+4GorP4D
-         +OkzUUKK2iyO5HFRTQqxf6QCykgFanlpmtWi4yp3s6e8x5lbbnN/E9XDm8IP8txGdEqa
-         LKXg==
-X-Gm-Message-State: AOJu0YxPAHSW9es5HiRmQ8exrioJaGBu/dyHLVTlqvvfnbxUdLhy8+qL
-	FTs2iLK8IrmdaKtYprMPfSLgYRJ8+dikgF8mkC8fAF5GCCTFxa7SfEJ3WP+/d8A=
-X-Google-Smtp-Source: AGHT+IGHa7gc48NoS0q6ZGoDNAksIkFsU8teJxL7tX5AMyhsKg2Sq4IjQbIZKZWs65VOlUxgPKn/cw==
-X-Received: by 2002:a05:6000:2c6:b0:374:c3e4:d6de with SMTP id ffacd0b85a97d-38225aa8607mr8472740f8f.41.1731922818924;
-        Mon, 18 Nov 2024 01:40:18 -0800 (PST)
-Received: from [10.1.1.109] ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-382456ba017sm3220899f8f.97.2024.11.18.01.40.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Nov 2024 01:40:18 -0800 (PST)
-Message-ID: <939800a57d356771b405de49bc198d33327b4fe8.camel@linaro.org>
-Subject: Re: [PATCH] pinctrl: samsung: Fix irq handling if an error occurs
- in exynos_irq_demux_eint16_31()
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Krzysztof Kozlowski
- <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Alim Akhtar
- <alim.akhtar@samsung.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Krzysztof
- Kozlowski <krzysztof.kozlowski@linaro.org>,
- linux-arm-kernel@lists.infradead.org,  linux-samsung-soc@vger.kernel.org,
- linux-gpio@vger.kernel.org
-Date: Mon, 18 Nov 2024 09:40:17 +0000
-In-Reply-To: <f148d823acfb3326a115bd49a0eed60f2345f909.1731844995.git.christophe.jaillet@wanadoo.fr>
-References: 
-	<f148d823acfb3326a115bd49a0eed60f2345f909.1731844995.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.1-4 
+	s=arc-20240116; t=1731922870; c=relaxed/simple;
+	bh=wtVw1/bYuTsNGxnHQ3aG2SHkoqtIshGNLA6gyXSnoqE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u+sBkLaF4Xht9t3pXEsifEDazQ5bVfDChQuB5NG7hmyL00/oCSrLiZ/kRcJrL3f02dYsEqIhIs/gaVEu6qWWA1/FssLpy96GrS9kb313D+zEIE/LIr3J5HgC2B4NXvbOIi9vXaJOkhIGLlezD6s8s7aQcxcLNsj5zxiVmskbJdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=VG07oOjc; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=wtVw1/bYuTsNGxnHQ3aG2SHkoqtIshGNLA6gyXSnoqE=; b=VG07oOjcsDEzhY+D+YQcdILeSz
+	rOKT/llv5S2e+On1Fl8zeNV77wvCKofA1bssZLLZNh3CW2paOW10nTzAGJt18W29+EjqdLOeMeDbv
+	+SrITeTPob+ewJSCEBOTazAQLcudQ4rNm1GOD1ZHKNuusiSsjkMJ7PZBKct1m5RTRpbXBdJZ6rUNv
+	saddjXJr6wxZaMSva0QgrKspZZAeSoofRTBov9d5ip+yux0JDtqtmqmRlLmEPtnuw9XMk5u2Ckrug
+	FMWbwu4HnifSZNZ+dlvQDz1UVWUIvQT6Mc3+JUnCHK95O6Ci1fDDyTbdoEkCVwWya1eH2OOUPEHDy
+	WMRfnOkQ==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tCyFg-00000000D3Y-2PPe;
+	Mon, 18 Nov 2024 09:41:01 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 37DAC30049D; Mon, 18 Nov 2024 10:41:00 +0100 (CET)
+Date: Mon, 18 Nov 2024 10:41:00 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Changwoo Min <changwoo@igalia.com>
+Cc: tj@kernel.org, void@manifault.com, mingo@redhat.com,
+	kernel-dev@igalia.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/5] sched_ext: Manage the validity of scx_rq_clock
+Message-ID: <20241118094100.GG39245@noisy.programming.kicks-ass.net>
+References: <20241116160126.29454-1-changwoo@igalia.com>
+ <20241116160126.29454-3-changwoo@igalia.com>
+ <20241116193235.GQ22801@noisy.programming.kicks-ass.net>
+ <494b8851-ba5b-4205-bea0-dc504c2ffa33@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <494b8851-ba5b-4205-bea0-dc504c2ffa33@igalia.com>
 
-On Sun, 2024-11-17 at 13:03 +0100, Christophe JAILLET wrote:
-> chained_irq_enter(() should be paired with a corresponding
-> chained_irq_exit().
->=20
-> Here, if clk_enable() fails, a early return occurs and chained_irq_exit()
-> is not called.
->=20
-> Add a new label and a goto for fix it.
->=20
-> Fixes: f9c744747973 ("pinctrl: samsung: support a bus clock")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Compile tested only.
->=20
-> Review with care, irq handling is sometimes tricky...
+On Mon, Nov 18, 2024 at 12:46:32AM +0900, Changwoo Min wrote:
 
-Well spotted, thanks.
+> The main reason to keep the second copy (rq->scx.clock) is that
+> a BPF scheduler can call scx_bpf_clock_get_ns() at almost any
+> time in any context, including any of sched_ext operations, BPF
+> timer callbacks, BPF syscalls, kprobes, and so on.
 
-It looks like there is a similar problem in exynos_irq_request_resources()
-in same file. It should likely call gpiochip_unlock_as_irq() if clk_enable(=
-)
-failed.
+If it's going to be a BPF wide thing, why is it presented as part of
+sched_ext ? That makes no sense.
 
-Care to fix that as well?
+> Another approach would be to extend struct sched_clock_data (in
+> kernel/sched/clock.c) to store the update flag
+> (SCX_RQ_CLK_UPDATED). This would be the best regarding the number
+> of cache line accesses. However, that would be an overkill since
+> now sched_clock_data stores the sched_ext-specific data.
+> I thought it would be better to keep sched_ext specific data in
+> one place, struct scx_rq, for managibility.
 
-That said,
+What's the purpose of that flag? Why can't BPF use sched_clock_local()
+and call it a day?
 
-Reviewed-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+Do note that kernel/sched/clock.c is very much x86 specific (it was
+briefly used by ia64 since their 'TSC' was of equal quality).
 
-
-Cheers,
-Andre'
-
+Growing sched_clock_data shouldn't be a problem, it's only 24 bytes, so
+we have plenty free bytes there.
 
