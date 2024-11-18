@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-413263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D441E9D16A1
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 18:00:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FA1B9D16A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 18:00:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AB2B1F2253C
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 17:00:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC5C71F22757
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 17:00:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BF301C07EA;
-	Mon, 18 Nov 2024 17:00:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E9251C07D5;
+	Mon, 18 Nov 2024 17:00:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RwKJmait"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DyUy6t42"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2D1518B47E;
-	Mon, 18 Nov 2024 17:00:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DA3C1A0706;
+	Mon, 18 Nov 2024 17:00:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731949219; cv=none; b=fhHbigHlVgO2+QIMvF4kj3W+FxGDS6NDPJNUVW/tgC1VnVHLmwokM30wi7WrJ1ntj4sPqa4jE+hj+S3f7ILgX4ODZMLbwBn4Ex8GsaGlOFRH9/FpxWcXOjdKkvfCy5GMDOx3O3jIaGEbD+96dg3BfPMlK5VaGth991s0X7KyYpo=
+	t=1731949229; cv=none; b=CYBuQapbWpsi/1CsgKPv0G6g4wwzuFzZBMl4LoE2yr/bAnei75JBPI8Q+bRNwAIRedI2HMO5/o4ys8dqPeD0Q7Oa3EnfrLH9VbY7iFTR2YMzUCwcecKvMkWk9ILMNqHpUVc9of2Glp9s6WjgqSsfmBsIHC50KPwkAAHyzsiaXoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731949219; c=relaxed/simple;
-	bh=ekE1O8xyEVJFoKtw0C3VA+kT2P+GQt3Yk/reFDaycPU=;
+	s=arc-20240116; t=1731949229; c=relaxed/simple;
+	bh=aCMzkrnkmswBGkORH2PDGxYL9yDX2zO7PHnNpveln+c=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=cbQh2XxIGgkiRFWWAwd8fJCSOrf6AVRYa4YqbuBnk82PKMp7PATzATPuMZd5qARD7DOj+17TNN8aDkmcWYr27+i93q3759CriaVpUZ866CoL2+m86YURuzaREfh9PMZSkYn26Dklgrxh7FgM/fuL1J4qUXH6xvUHZ1P6571ngJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RwKJmait; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62F61C4CECC;
-	Mon, 18 Nov 2024 17:00:19 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=oU6W+eCDYdVv9+sYpIJXWUjD6nrkGId7B5IkuQSxKQ0ofevFKmlLDwfXh+saUmZnrv0KcgG6E5fX5JG6FrT5TBI5KtSAbMVIL+Z8KvU7sLHnKhWGa1+z92UPfZ+ufQY2R40dpeWGnoiGd0A5TvRS1BNvTcK1NvQ9JS+3Olc/8YU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DyUy6t42; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23B49C4CECC;
+	Mon, 18 Nov 2024 17:00:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731949219;
-	bh=ekE1O8xyEVJFoKtw0C3VA+kT2P+GQt3Yk/reFDaycPU=;
+	s=k20201202; t=1731949229;
+	bh=aCMzkrnkmswBGkORH2PDGxYL9yDX2zO7PHnNpveln+c=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=RwKJmaitQhxE25emSDMbNhsN2ui59x3qyMzy5f1yYIWY0L4Ex7m+FqgJtoeDzAKA8
-	 Tny44j+yEFbROiB8r+aDBG591EwPxiwMpInKGgvaabLCAykqT8AoDFJbfMT57zYyfN
-	 kZP/f0Wj58X9YHtKUSLVKVEwnFeGzGaq+JOIzpeP5leLa1o/7G4stYmJkJatlAqaWX
-	 dOygGroPUqEeGaDDdWnJYsYNtUmLI6e053dXNVXHdj0lWlIrguhW47vK8E4JVVumxe
-	 6D21fQ8iUulmfFeQ4mawarArAcz5IkL/5HEfZHrW05pD+tH/5ePW83Q0LwGs8hY2iX
-	 MRhJ6gCyL2Ksg==
+	b=DyUy6t421aI7preeDKTIOPxMqJNGTTbifTvLNLelkoISmTFeiZfv0rPEF9AFlLNCG
+	 9qcKzF0Am+zaJfrR8byG5JBKQoXc6R6/WC9P9Rm4KwCaNS1A1+mT9D1bhTeWwFMyTd
+	 +ZJ9M12n/UZar8/ZccZOs0DXwHf/9jxP3dGmkh5rNqaUqMh1tTc3tKaSxxjm+IGRYB
+	 CQ1kdiXlZTxdJgUE5cAESiSkOSaHBfCxwxkcve0E//QKi0FaxGsFjIyfpjwksl+J9k
+	 Gd7w7P2kBz+RxDbj/4E3SgUhmedwGLu4UY4JYqL2+gJg3Wj2DxJmroKoLNAnLZQHUt
+	 aRnbUJZTFIsZw==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAEF03809A80;
-	Mon, 18 Nov 2024 17:00:31 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADE263809A80;
+	Mon, 18 Nov 2024 17:00:41 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,48 +51,39 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH iproute2-next v1 0/6] iplink_can: preparation before
- introduction of CAN XL
-From: patchwork-bot+netdevbpf@kernel.org
+Subject: Re: [f2fs-dev] [PATCH] Revert "f2fs: remove unreachable lazytime mount
+ option parsing"
+From: patchwork-bot+f2fs@kernel.org
 Message-Id: 
- <173194923075.4109060.18408610499610779344.git-patchwork-notify@kernel.org>
-Date: Mon, 18 Nov 2024 17:00:30 +0000
-References: <20241112172812.590665-8-mailhol.vincent@wanadoo.fr>
-In-Reply-To: <20241112172812.590665-8-mailhol.vincent@wanadoo.fr>
-To: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Cc: netdev@vger.kernel.org, stephen@networkplumber.org, dsahern@gmail.com,
- linux-can@vger.kernel.org, mkl@pengutronix.de, socketcan@hartkopp.net,
- mbro1689@gmail.com, linux-kernel@vger.kernel.org
+ <173194924030.4109060.8641898406336440438.git-patchwork-notify@kernel.org>
+Date: Mon, 18 Nov 2024 17:00:40 +0000
+References: <20241112010820.2788822-1-jaegeuk@kernel.org>
+In-Reply-To: <20241112010820.2788822-1-jaegeuk@kernel.org>
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ drosen@google.com, stable@vger.kernel.org
 
 Hello:
 
-This series was applied to iproute2/iproute2-next.git (main)
-by David Ahern <dsahern@kernel.org>:
+This patch was applied to jaegeuk/f2fs.git (dev)
+by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Wed, 13 Nov 2024 02:27:50 +0900 you wrote:
-> An RFC was sent last weekend to kick-off the discussion of the
-> introduction of CAN XL: [1] for the kernel side and [2] for the
-> iproute2 interface. While the series received some positive feedback,
-> it is far from completion. Some work is still needed to:
+On Tue, 12 Nov 2024 01:08:20 +0000 you wrote:
+> This reverts commit 54f43a10fa257ad4af02a1d157fefef6ebcfa7dc.
 > 
->   - adjust the nesting of the IFLA_CAN_XL_DATA_BITTIMING_CONST in the
->     netlink interface
+> The above commit broke the lazytime mount, given
+> 
+> mount("/dev/vdb", "/mnt/test", "f2fs", 0, "lazytime");
+> 
+> CC: stable@vger.kernel.org # 6.11+
+> Signed-off-by: Daniel Rosenberg <drosen@google.com>
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 > 
 > [...]
 
 Here is the summary with links:
-  - [iproute2-next,v1,1/6] iplink_can: remove unused FILE *f parameter in three functions
-    https://git.kernel.org/pub/scm/network/iproute2/iproute2-next.git/commit/?id=df72757907f3
-  - [iproute2-next,v1,2/6] iplink_can: reduce the visibility of tdc in can_parse_opt()
-    https://git.kernel.org/pub/scm/network/iproute2/iproute2-next.git/commit/?id=3bd5fb4d57aa
-  - [iproute2-next,v1,3/6] iplink_can: remove newline at the end of invarg()'s messages
-    https://git.kernel.org/pub/scm/network/iproute2/iproute2-next.git/commit/?id=9b1f33d5a46d
-  - [iproute2-next,v1,4/6] iplink_can: use invarg() instead of fprintf()
-    https://git.kernel.org/pub/scm/network/iproute2/iproute2-next.git/commit/?id=68aaea862838
-  - [iproute2-next,v1,5/6] iplink_can: add struct can_tdc
-    https://git.kernel.org/pub/scm/network/iproute2/iproute2-next.git/commit/?id=aac087a0108b
-  - [iproute2-next,v1,6/6] iplink_can: rename dbt into fd_dbt in can_parse_opt()
-    https://git.kernel.org/pub/scm/network/iproute2/iproute2-next.git/commit/?id=3f2ab9d6070e
+  - [f2fs-dev] Revert "f2fs: remove unreachable lazytime mount option parsing"
+    https://git.kernel.org/jaegeuk/f2fs/c/f8bed73c6c52
 
 You are awesome, thank you!
 -- 
