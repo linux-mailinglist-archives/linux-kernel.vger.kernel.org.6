@@ -1,75 +1,177 @@
-Return-Path: <linux-kernel+bounces-412563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 795DC9D0AA8
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 09:18:05 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A3049D0AAB
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 09:18:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 316501F21C42
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 08:18:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96FD7B22780
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 08:18:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC1EE17B502;
-	Mon, 18 Nov 2024 08:17:41 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB50F154425;
+	Mon, 18 Nov 2024 08:18:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bBtJomjM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF61C170A11
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 08:17:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C0E93BBF2;
+	Mon, 18 Nov 2024 08:18:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731917861; cv=none; b=JOClI7Dmspe53rRWNFreADBjWqdz1t89XtCvxHfCeCIYdvFpFyHIqP3nniN74mlbA0SAVULVX7U9MmIXrKjFulXHh55fSGoxkXt791ULP5mENMHNyQid4GjKp5N6ad6wicTPAeSO8UI4fpmOSBuyLF9GGP0iVo444wIJ/t0DopE=
+	t=1731917894; cv=none; b=gC5q6Xba02APbHY1mAyv8B+ACcpfdXZZzAZeJsdgt/cSosPFwaoBwLiYBRcgsPCdtu2N1m4ZdCqFcsnuBULTm8Xex4qwtm/gWgIfHArkIXa9HWmk1sl+v2sqw2CC4C7FG2m0/TUWcNd4Do7JSICybbIk7LRy7o3pBWxyy/Pl3hc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731917861; c=relaxed/simple;
-	bh=u5RhTCXMLynqVSsvTrRysZOcrUWOJ3K+sfE2xOyauDQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=ogQaLL9ksWvH4VJpsloF2ff4di90MoS20U7P8qdf7RVN2udfe25AQS6dRr81La00SJqsh41SOiwqH3iF/ug85WskTj9lijZ0/ud9piUcVPxLGDgBi2LLjD1XzwSFbhqzCCChFhpUI7uQ9YZyW9DSMuJ+/ZoN/kwhDztOJcEvGwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a75dd4b1f3so12651505ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 00:17:39 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731917859; x=1732522659;
-        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=u5RhTCXMLynqVSsvTrRysZOcrUWOJ3K+sfE2xOyauDQ=;
-        b=GcRSWXJvo9k3TnAZnoNsQA49fOoQxrbDCc2bsnzoY9VUxf20iWwvzwTyayY9HJSysn
-         mh9ItONwd2KvH2QfuMXt5pv3t3iL1cDleWKwCGXgfq/GCNTldsuAGu3d7l/uI04+4KBE
-         fUMZoQngzb5QgUVGBoSGzuO28ORvNqHCK7euiCtfUaMlFbNgfEzHQF8Mgv8tkLwgBUGF
-         MUCefwxrwcauyIz4pQ22pTtph3RWhZDeAuSNM4bMlYDyqFHDHaO9MS7oIcOkP3z6bq0X
-         QhPMGDlGDRZVJIv6gmHJ93wUXhRnp9g0yZowDcOib6bEzXeO80f8gPOqpTkr6VsUNLrL
-         QI5w==
-X-Forwarded-Encrypted: i=1; AJvYcCVfFQmku/L0cHhaKuGTZsiEAhqH8D+GW/Zyl/FBkODmwuQnQofw2zbLt4FYyFfzQrgykdTPC/g84jMetuY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxg8KRkWSTBsuk45AAeCuIf3CKBIjk05T6uXgGYQS4aQYO+zHsp
-	4tjkO96myqqqm9nhqnQ1h2cj+UdDMzNEAakyYoKbwMzqzfXRVfTpg2s/paXJKhLLlcbJGRLnZKm
-	PECVI463Ads4eQn+F+qH/gsDHZ/PlmsP/yzKtBwVDPLXCVo4NVhOct00=
-X-Google-Smtp-Source: AGHT+IE4690Te8WI2VGqmxrZL+FjUqEVNMfKaVQ4G2ZI6d68A89Ihkkp8OCFYbu4EiSjKAyFHZBbsnlGbGt65ndisksXJl15aII3
+	s=arc-20240116; t=1731917894; c=relaxed/simple;
+	bh=yB126og11Z2QbsbKhKtQEVuRANQlHW9pxdXRcHedxuE=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=irONBb+oJBp7shpj7yzLsEgZha+LlM7QhplAWC/gVpUdRaprkJtqFKuYPJWH0+E7vJ/5RArx4IaRFdOJOIySvZjlUpAyVS3m+gOg+XqZtcco0t7GzYvcnig7cUkRFHTR3BrMIe4CIX5t1out4CcGZjILbOg9xWlaXlOkWu47kSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bBtJomjM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8851DC4CECC;
+	Mon, 18 Nov 2024 08:18:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731917893;
+	bh=yB126og11Z2QbsbKhKtQEVuRANQlHW9pxdXRcHedxuE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=bBtJomjMHghzWIATHwiIk2YXgtwldU82l6jNt8QDjLZCPhvAX6+N1E7uNKlx+MlUC
+	 VaHffFMfxHuTftxDiX4OpN8oNqCzCueYAUJW5dmdrdPE+Xii7djebXY6k7yBrJw0Rf
+	 vP4V+EVri/FPmftMZwUq8G9U8SHUkxzjjzAm18aL19oKtShJ7c2TgdkAIkYSe7B5q/
+	 DDAgllYnE8HaWFTW9fP4jA6JENVpL4Meg5uQdLj9LNVnmlvJoVgKNlPKYXvqVZYgHk
+	 aOgh8poRQKNfBM7sbrV8XB1YR7/DhByZG7f8jcwvx1KOw5l4DwrkJBNez/Qb9z3YiE
+	 W2YDwcF95Xe8A==
+Date: Mon, 18 Nov 2024 17:18:08 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Jiri Olsa <jolsa@kernel.org>
+Cc: Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, Song Liu
+ <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, John Fastabend
+ <john.fastabend@gmail.com>, Hao Luo <haoluo@google.com>, Steven Rostedt
+ <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, Alan Maguire
+ <alan.maguire@oracle.com>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Subject: Re: [RFC perf/core 07/11] uprobes/x86: Add support to optimize
+ uprobes
+Message-Id: <20241118171808.316ae124cd57886e813cb98f@kernel.org>
+In-Reply-To: <20241105133405.2703607-8-jolsa@kernel.org>
+References: <20241105133405.2703607-1-jolsa@kernel.org>
+	<20241105133405.2703607-8-jolsa@kernel.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:b4a:b0:3a7:6c6a:e2a2 with SMTP id
- e9e14a558f8ab-3a76c6ae540mr12489965ab.9.1731917859223; Mon, 18 Nov 2024
- 00:17:39 -0800 (PST)
-Date: Mon, 18 Nov 2024 00:17:39 -0800
-In-Reply-To: <CAKYAXd-T3gnugL4MyvArK5dONRJsyN3X6skbZWFR43V=h5bOzQ@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <673af823.050a0220.87769.0026.GAE@google.com>
-Subject: Re: [syzbot] [exfat?] KMSAN: uninit-value in exfat_iterate
-From: syzbot <syzbot+84345a1b4057358168d9@syzkaller.appspotmail.com>
-To: linkinjeon@kernel.org
-Cc: linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, sj1557.seo@samsung.com, 
-	syzkaller-bugs@googlegroups.com, yuezhang.mo@sony.com
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-> #syz test: git.kernel.org/pub/scm/linux/kernel/git/linkinjeon/exfat.git dev
+On Tue,  5 Nov 2024 14:34:01 +0100
+Jiri Olsa <jolsa@kernel.org> wrote:
 
-This crash does not have a reproducer. I cannot test it.
+> Putting together all the previously added pieces to support optimized
+> uprobes on top of 5-byte nop instruction.
+> 
+> The current uprobe execution goes through following:
+>   - installs breakpoint instruction over original instruction
+>   - exception handler hit and calls related uprobe consumers
+>   - and either simulates original instruction or does out of line single step
+>     execution of it
+>   - returns to user space
+> 
+> The optimized uprobe path
+> 
+>   - checks the original instruction is 5-byte nop (plus other checks)
+>   - adds (or uses existing) user space trampoline and overwrites original
+>     instruction (5-byte nop) with call to user space trampoline
+>   - the user space trampoline executes uprobe syscall that calls related uprobe
+>     consumers
+>   - trampoline returns back to next instruction
+> 
+> This approach won't speed up all uprobes as it's limited to using nop5 as
+> original instruction, but we could use nop5 as USDT probe instruction (which
+> uses single byte nop ATM) and speed up the USDT probes.
+> 
+> This patch overloads related arch functions in uprobe_write_opcode and
+> set_orig_insn so they can install call instruction if needed.
+> 
+> The arch_uprobe_optimize triggers the uprobe optimization and is called after
+> first uprobe hit. I originally had it called on uprobe installation but then
+> it clashed with elf loader, because the user space trampoline was added in a
+> place where loader might need to put elf segments, so I decided to do it after
+> first uprobe hit when loading is done.
+> 
+> TODO release uprobe trampoline when it's no longer needed.. we might need to
+> stop all cpus to make sure no user space thread is in the trampoline.. or we
+> might just keep it, because there's just one 4GB memory region?
+> 
+> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> ---
+>  arch/x86/include/asm/uprobes.h |   7 ++
+>  arch/x86/kernel/uprobes.c      | 130 +++++++++++++++++++++++++++++++++
+>  include/linux/uprobes.h        |   1 +
+>  kernel/events/uprobes.c        |   3 +
+>  4 files changed, 141 insertions(+)
+> 
+> diff --git a/arch/x86/include/asm/uprobes.h b/arch/x86/include/asm/uprobes.h
+> index 678fb546f0a7..84a75ed748f0 100644
+> --- a/arch/x86/include/asm/uprobes.h
+> +++ b/arch/x86/include/asm/uprobes.h
+> @@ -20,6 +20,11 @@ typedef u8 uprobe_opcode_t;
+>  #define UPROBE_SWBP_INSN		0xcc
+>  #define UPROBE_SWBP_INSN_SIZE		   1
+>  
+> +enum {
+> +	ARCH_UPROBE_FLAG_CAN_OPTIMIZE	= 0,
+> +	ARCH_UPROBE_FLAG_OPTIMIZED	= 1,
+> +};
+> +
+>  struct uprobe_xol_ops;
+>  
+>  struct arch_uprobe {
+> @@ -45,6 +50,8 @@ struct arch_uprobe {
+>  			u8	ilen;
+>  		}			push;
+>  	};
+> +
+> +	unsigned long flags;
+>  };
+>  
+>  struct arch_uprobe_task {
+> diff --git a/arch/x86/kernel/uprobes.c b/arch/x86/kernel/uprobes.c
+> index 02aa4519b677..50ccf24ff42c 100644
+> --- a/arch/x86/kernel/uprobes.c
+> +++ b/arch/x86/kernel/uprobes.c
+> @@ -18,6 +18,7 @@
+>  #include <asm/processor.h>
+>  #include <asm/insn.h>
+>  #include <asm/mmu_context.h>
+> +#include <asm/nops.h>
+>  
+>  /* Post-execution fixups. */
+>  
+> @@ -877,6 +878,33 @@ static const struct uprobe_xol_ops push_xol_ops = {
+>  	.emulate  = push_emulate_op,
+>  };
+>  
+> +static int is_nop5_insns(uprobe_opcode_t *insn)
+> +{
+> +	return !memcmp(insn, x86_nops[5], 5);
 
+Maybe better to use BYTES_NOP5 directly?
+
+> +}
+> +
+> +static int is_call_insns(uprobe_opcode_t *insn)
+> +{
+> +	return *insn == 0xe8;
+
+0xe8 -> CALL_INSN_OPCODE
+
+Thank you,
+
+
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
