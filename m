@@ -1,126 +1,127 @@
-Return-Path: <linux-kernel+bounces-413069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D6AA9D12F7
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 15:30:51 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE3A89D135B
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 15:41:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A8D41F23342
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 14:30:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 98693B2E962
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 14:39:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 593AB1A9B34;
-	Mon, 18 Nov 2024 14:30:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4099E1AE001;
+	Mon, 18 Nov 2024 14:35:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oafBZTBN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="b/Uxpe86"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A35E719644B;
-	Mon, 18 Nov 2024 14:30:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F275A1AA1E4;
+	Mon, 18 Nov 2024 14:35:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731940238; cv=none; b=hofyNgxrROt1x0htc9i2EdetaHKIt3IRzryqKUMEJmJ10czPTbYt1Kg06UAWi4od49r6CPFN2HWO8BZiJDGdQ0rnWbGHXylGw8HgdUoj5F++vTuafvhGzUCKofhHUV2NWdJ75biNb4+Kr6uMcYSbIF+Ig6PPUmDTJ3dWTwh3bEo=
+	t=1731940531; cv=none; b=UfAZ+egI8GXl0M3oWh/CzfPdnsDbZrAR7fZK4SB7qWFoki5VxPl5MhKhtd8CWWx28VDjplYBBt60dYV1V62+ZdqR+/cCIeen25l0Td1NkFuFB8YkNVp3kEnDaaZd/4yCS7MZaJitw/6cKzF0mhmcUHT51t8zh6o9iYSufYIOFoU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731940238; c=relaxed/simple;
-	bh=FXq5Cf7VHzuwBMR/MOh2YNWTogYHGhhe16mnSSQYCcA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=mbvR1ylA67YAjkn3y+D2Q6Vg0U0XSTC6sCaSJ5/0Yri9tEI4fqE/CZ3H5jHDyAdLGfbFmZiKZs1BjzUZ3H0yBa0rF3yDzVaTFDcpXEdd3WQLDn/M4NHEIQeahVbm7/mhkkNe0YVL13A5sUptKnX++biRU7BLyUVtCDjSRFGut3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oafBZTBN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 29677C4CED6;
-	Mon, 18 Nov 2024 14:30:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731940238;
-	bh=FXq5Cf7VHzuwBMR/MOh2YNWTogYHGhhe16mnSSQYCcA=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=oafBZTBN6oM83s6qc8zTXIdfC/ZRGXKP1YY4TvT/xg81NyJMlfISNvcbl3j7UO/Ri
-	 iX2kpv40Mryg+f744vnFLgBSIKUi2TzFHtUiLy+nfcI22ExsJof9hl7J7UA/DMA6AE
-	 fWiVPU6qR4T4jYbdciQVXPOcJ2yOPKvG0rMDcXu9wUa8t+Npe+XOxbDXX2AxRi0WgJ
-	 CIBkG7auw+BaCS/0USFugCc7PMEOrp82zY3ZQ56R0xhIbYMKBu9rGEz+bqvQ3xRZwW
-	 rAdEJFbwZFFhoFyDdSEbXsKi4oSKhxkc7YsnEYpnm6ulbM8gZLnw4JjlQYzlpRLeJB
-	 A86ii8i47bRyg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15317D4921D;
-	Mon, 18 Nov 2024 14:30:38 +0000 (UTC)
-From: Manas via B4 Relay <devnull+manas18244.iiitd.ac.in@kernel.org>
-Date: Mon, 18 Nov 2024 20:00:36 +0530
-Subject: [PATCH net-next v2] net: phy: qt2025: simplify Result<()> in probe
- return
+	s=arc-20240116; t=1731940531; c=relaxed/simple;
+	bh=k2EDNNE2MH6cAr2jzyt5WJSQPAhgBLY2X5+jVYr1hhc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O3c3r3+lSJnUN4bvtPPI1JDiVM+9VUXJ2BVAXw6lSPEXsPhGUhnAt9UO9NXhgLykkQhajKNsAE7RtkKSLPqRMtm9v4suxZEKi0mRGvCWrYxtyiTMzBWGnlqhuYN6pMD2tQoGEhbf62BNPtt2RF8XaaNyTFyEHxTIAO7A11zVR2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=b/Uxpe86; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731940530; x=1763476530;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=k2EDNNE2MH6cAr2jzyt5WJSQPAhgBLY2X5+jVYr1hhc=;
+  b=b/Uxpe86dvWYfoqUFWEQlDTwZUcAW4c64ALjPDJ5gfRYDC+1UkYvsGkh
+   iESuUttNbUTop7T5ZpZgimyQqLkapYA4NJ/GP9wRPEgLKC1uUlTMN+M8G
+   F8MZxhXitx4/+FFTQKR9ayP8TgsXnpzGr2z7gnOL3aAXCkmIRLx8caPHK
+   yW/eHDy97DN4MSurUk7SYH/E4vPg4gtciWiUGDo5NGgBObGMP7OhiDxFC
+   nw/HtOcqPw8DXocRrSa62mnTLgqxp9RWUrAncGxQRaUWAcolK2om8v/f0
+   bGLfjkV7dlHWFzhdqMmtlJu5uldxamf4lit/+vdF1Z0Q3rQ7NJEX2KGaA
+   Q==;
+X-CSE-ConnectionGUID: tb5zbOADSROTRFbpFVcz+w==
+X-CSE-MsgGUID: mAfNe+zgS9utkFAi2PsDcQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11260"; a="57307721"
+X-IronPort-AV: E=Sophos;i="6.12,164,1728975600"; 
+   d="scan'208";a="57307721"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2024 06:35:29 -0800
+X-CSE-ConnectionGUID: T0NN7DUFTmy4g7Tdhhr4uA==
+X-CSE-MsgGUID: aJ/8+fAHSdCMRLAXjHyAvA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,164,1728975600"; 
+   d="scan'208";a="88806588"
+Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
+  by fmviesa006.fm.intel.com with ESMTP; 18 Nov 2024 06:35:27 -0800
+Date: Mon, 18 Nov 2024 22:32:34 +0800
+From: Xu Yilun <yilun.xu@linux.intel.com>
+To: Peter Colberg <peter.colberg@intel.com>
+Cc: Wu Hao <hao.wu@intel.com>, Tom Rix <trix@redhat.com>,
+	Moritz Fischer <mdf@kernel.org>, Xu Yilun <yilun.xu@intel.com>,
+	linux-fpga@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Russ Weight <russ.weight@linux.dev>,
+	Marco Pagani <marpagan@redhat.com>,
+	Matthew Gerlach <matthew.gerlach@linux.intel.com>,
+	Basheer Ahmed Muddebihal <basheer.ahmed.muddebihal@linux.intel.com>
+Subject: Re: [PATCH v4 15/19] fpga: dfl: convert is_feature_dev_detected() to
+ use FIU type
+Message-ID: <ZztQAsDCyRqGm6UW@yilunxu-OptiPlex-7050>
+References: <20241025223714.394533-1-peter.colberg@intel.com>
+ <20241025223714.394533-16-peter.colberg@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241118-simplify-result-qt2025-v2-1-af1bcff5d101@iiitd.ac.in>
-X-B4-Tracking: v=1; b=H4sIAItPO2cC/4WNQQ6CMBBFr0Jm7RCnSgRX3sOwgHYqk2DBthII6
- d1tuIDLl5f//g6BvXCAe7GD50WCTC6DOhWgh869GMVkBnVWVyKqMch7HsVu6Dl8x4ifmFWF1Pd
- NY2quLqwhj2fPVtYj/ATHER2vEdpsBglx8tvxuNDh/8UXQkKrTKPZ0s3q7iEi0ZSdLsVBm1L6A
- TNXe4bIAAAA
-X-Change-ID: 20241118-simplify-result-qt2025-1bb99d8e53ec
-To: FUJITA Tomonori <fujita.tomonori@gmail.com>, 
- Trevor Gross <tmgross@umich.edu>, Andrew Lunn <andrew@lunn.ch>, 
- Heiner Kallweit <hkallweit1@gmail.com>, 
- Russell King <linux@armlinux.org.uk>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: Shuah Khan <skhan@linuxfoundation.org>, 
- Anup Sharma <anupnewsmail@gmail.com>, netdev@vger.kernel.org, 
- rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Miguel Ojeda <ojeda@kernel.org>, Manas <manas18244@iiitd.ac.in>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1731940236; l=1498;
- i=manas18244@iiitd.ac.in; s=20240813; h=from:subject:message-id;
- bh=aNU3+RJ8lBcv7tT/MtgstLYhDl/ERX/hXonU5AJGIRw=;
- b=aKxqt8ceYzbm2O7JpvqJGoSp1qYHMsTzRsrMTB8+OS1LGL00Tyy6twRxjXiO4RBEuY8TARKEm
- YjN5JzMkyPvDkEbaNYjUkvGjmzeQLN61vIPio3EC07kOSA6oeNMAxDO
-X-Developer-Key: i=manas18244@iiitd.ac.in; a=ed25519;
- pk=pXNEDKd3qTkQe9vsJtBGT9hrfOR7Dph1rfX5ig2AAoM=
-X-Endpoint-Received: by B4 Relay for manas18244@iiitd.ac.in/20240813 with
- auth_id=196
-X-Original-From: Manas <manas18244@iiitd.ac.in>
-Reply-To: manas18244@iiitd.ac.in
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241025223714.394533-16-peter.colberg@intel.com>
 
-From: Manas <manas18244@iiitd.ac.in>
+On Fri, Oct 25, 2024 at 06:37:10PM -0400, Peter Colberg wrote:
+> Use binfo->type instead of binfo->feature_dev to decide whether a
+> feature device was detected during feature parsing. A subsequent
+> commit will delay the allocation of the feature platform device
+> to feature_dev_register() and remove binfo->feature_dev.
+> 
+> This commit does not introduce any functional changes.
+> 
+> Signed-off-by: Peter Colberg <peter.colberg@intel.com>
+> Reviewed-by: Matthew Gerlach <matthew.gerlach@linux.intel.com>
+> Reviewed-by: Basheer Ahmed Muddebihal <basheer.ahmed.muddebihal@linux.intel.com>
+> ---
+> Changes since v3:
+> - New patch extracted from last patch of v3 series.
+> ---
+>  drivers/fpga/dfl.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/fpga/dfl.c b/drivers/fpga/dfl.c
+> index 758673b0290a..a9ec37278b2d 100644
+> --- a/drivers/fpga/dfl.c
+> +++ b/drivers/fpga/dfl.c
+> @@ -1248,7 +1248,7 @@ static int parse_feature_port_afu(struct build_feature_devs_info *binfo,
+>  	return create_feature_instance(binfo, ofst, size, FEATURE_ID_AFU);
+>  }
+>  
+> -#define is_feature_dev_detected(binfo) (!!(binfo)->feature_dev)
+> +#define is_feature_dev_detected(binfo) ((binfo)->type != DFL_ID_MAX)
 
-probe returns a `Result<()>` type, which can be simplified as `Result`,
-due to default type parameters being unit `()` and `Error` types. This
-maintains a consistent usage of `Result` throughout codebase.
+I still doesn't get why put the change here. How it resolves my concern
+compared to v3?
 
-Suggested-by: Miguel Ojeda <ojeda@kernel.org>
-Link: https://github.com/Rust-for-Linux/linux/issues/1128
-Signed-off-by: Manas <manas18244@iiitd.ac.in>
----
-Changes in v2:
-- Add Link: and Suggested-by: tags
-- Link to v1: https://lore.kernel.org/r/20241118-simplify-result-qt2025-v1-1-f2d9cef17fca@iiitd.ac.in
----
- drivers/net/phy/qt2025.rs | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks,
+Yilun
 
-diff --git a/drivers/net/phy/qt2025.rs b/drivers/net/phy/qt2025.rs
-index 1ab065798175b4f54c5f2fd6c871ba2942c48bf1..25c12a02baa255d3d5952e729a890b3ccfe78606 100644
---- a/drivers/net/phy/qt2025.rs
-+++ b/drivers/net/phy/qt2025.rs
-@@ -39,7 +39,7 @@ impl Driver for PhyQT2025 {
-     const NAME: &'static CStr = c_str!("QT2025 10Gpbs SFP+");
-     const PHY_DEVICE_ID: phy::DeviceId = phy::DeviceId::new_with_exact_mask(0x0043a400);
- 
--    fn probe(dev: &mut phy::Device) -> Result<()> {
-+    fn probe(dev: &mut phy::Device) -> Result {
-         // Check the hardware revision code.
-         // Only 0x3b works with this driver and firmware.
-         let hw_rev = dev.read(C45::new(Mmd::PMAPMD, 0xd001))?;
-
----
-base-commit: 8cf0b93919e13d1e8d4466eb4080a4c4d9d66d7b
-change-id: 20241118-simplify-result-qt2025-1bb99d8e53ec
-
-Best regards,
--- 
-Manas <manas18244@iiitd.ac.in>
-
-
+>  
+>  static int parse_feature_afu(struct build_feature_devs_info *binfo,
+>  			     resource_size_t ofst)
+> -- 
+> 2.47.0
+> 
+> 
 
