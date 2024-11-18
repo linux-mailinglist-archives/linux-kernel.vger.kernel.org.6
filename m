@@ -1,259 +1,271 @@
-Return-Path: <linux-kernel+bounces-412725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 802E79D0E59
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:22:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 93B8D9D0E5B
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:22:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 061251F21CD8
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 10:22:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19D7E1F21CD8
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 10:22:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08645198822;
-	Mon, 18 Nov 2024 10:18:50 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC18A193078;
-	Mon, 18 Nov 2024 10:18:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B46AE197A8E;
+	Mon, 18 Nov 2024 10:19:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OyWSlQSP"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AFB6E55B
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 10:19:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731925129; cv=none; b=jHrX8TVYbuNHMQ2z5Ac/IDErSSZXLK5IrJYAPMuwgIm9O6HXru6FwAWToeBDdYgc3zF9yM29QCAr63jFyh2m/1hheL9wC1QKKfHeub2T+hU6PdKo2y4Dppqke4LPtUv0LDrYUzB0jVkF3czu+iK3+nFOpHhGxtEauSTFHsm8qMw=
+	t=1731925178; cv=none; b=fB6DeVJLjhFUanVDBmWxg4VudJC/2OYVChvcYspIAR9Kp4NvuSEt4v6mnhccHIrm1epRwoJhQCRoCdNuns6ODXy3UpfY7wYq7KXWUEVTolQqLAvKjnJDpOPFeayxfCkFsZmtJ7crpz6SeJkj2LulMea7NT9ydgNXZFAbrgCnf4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731925129; c=relaxed/simple;
-	bh=WIrXWo4C4xW7cz2oeKRTCkfd+yRuNRUQJ0POoOogce4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IWMHjULhis0IypU57o2TFHUY4VR0M0gJzzI6SoHC6CXCtWAzC1/ZuvJ8FwihwsF0AiIobX7/hL2v6AYzWuV6xck9f38H6B7Jidd7+B3QQE7KGBJclkgTbcXahnyYjuptYeNDhVRMG+L2sy6ktVgWq29jWDzRrxI55Cx5Uq7nfS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 23BDB1682;
-	Mon, 18 Nov 2024 02:19:16 -0800 (PST)
-Received: from [10.57.67.249] (unknown [10.57.67.249])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id A839D3F5A1;
-	Mon, 18 Nov 2024 02:18:42 -0800 (PST)
-Message-ID: <ef057e19-1209-4a72-b223-ef3f1e2b4513@arm.com>
-Date: Mon, 18 Nov 2024 10:18:41 +0000
+	s=arc-20240116; t=1731925178; c=relaxed/simple;
+	bh=Rax6lueyWacS3m5xDCDewow2hehHpuuYcm6qKoAPoGM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oy4pr32QKdELr+INmrmoGUbXbAxdwVm/EWIgzL7GrEElaWdtIXX81fFAnFgq3n/lI+VD3LIePW1gDu2PBnoyPM48a36IEkN8eWnPvgQrlIV+mPzZ/nPhzpnSzCUQNyTdktOSlH30qjhu3LVpsPvJwVoNcwtKB3EvGoGJWxI+EXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OyWSlQSP; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-382378f359dso1132225f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 02:19:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1731925174; x=1732529974; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kwWADfyCr2BC5TAT+DCbNFAyRnnXgdXIFe6xs1I/TUI=;
+        b=OyWSlQSPHZtr5DN+PzopxWo+28jsbGU7otKxAv4a1NRTHBMDRoALWHbH0mEFrhttHB
+         jArR3DCPtZ9z8r4fYhSnfaKijBTziiuDNEQRWNoskp5W7d9cj10Uwps0weHvndTkb4p0
+         Pik++Pk94o0tweOOoYkf8fq/ILah09OpRTeiaPXYDTq/XJ7MPr7HmayEY/dMDWA/GX2r
+         kSZeVstZ6nCC6Ezey+sMQLqJljmN/qLU0YpUQUACcN42mkUNDkKMYZmx1+EzwQxEd/DE
+         SliGp3qy5FO66lGIaHmefBS1kifR7O0UkuIyhrz+f4Yx2p80ZPbmhu1TeYMKor4an7fA
+         jR0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731925174; x=1732529974;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kwWADfyCr2BC5TAT+DCbNFAyRnnXgdXIFe6xs1I/TUI=;
+        b=b9x1zCUOsJvXPSfGqze387uk01Dbof1+w+FVMRLWTNa/o09qpLuowXybKWBmByKwQW
+         /TxzlyUI11DkptD9LYIGzwvnRniTeydJ9MGMe9qINo9WdAhJllWN1VT3ftMKaRKbizFm
+         at9xfFNZYXw2j/wcYVl3RlMc3qqFikvhkHMJgngoxnqUhQYmJWTsxxtQ4tq3/oo/jViA
+         glENFycdX7X11EzHAm6PWTFE3cpTW3UG6cr3DkojRWCPsESU4+hJT/aXCl1jyDMMrBHA
+         RZnjjANEZOvN8AL9WGFqpXzA83KRS7F2xDBgDG5XwqQLVekgforPzPI0GL5Pa4kQ/N5T
+         +Ucw==
+X-Forwarded-Encrypted: i=1; AJvYcCVTYls/YxU1mYYMfPcGmCZDJLCTbh7ItkEklsS/UFCp5SqtbLz0IlGj1SswwdduIZ7dMU/2AT/TdQ/cbk0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFHuQmYKdpOC7YN3SvfAN7+0B0MTJo1BhbeSVDIEfzos4zWpHL
+	aRGiNeS840fhgaJPZkYeyNj5IEdSILupZ1u4ETLxc0stD5lcHn5G1V8F6SypgmRAEqV/VenLwKB
+	HjKbyHuPqb86C05rOkIFiwbv5ywzcdVUQtE8i
+X-Google-Smtp-Source: AGHT+IFDuCFFF9qAITz79FZE1ou75NV3hWq3UbrD7F/i3+vJePDzNP2hkzupaucOBe8Jv8KaJYYyGiWVfLp+FISbZC4=
+X-Received: by 2002:a05:6000:2587:b0:37e:d2b7:acd5 with SMTP id
+ ffacd0b85a97d-38225a428f4mr8915076f8f.8.1731925172936; Mon, 18 Nov 2024
+ 02:19:32 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 2/3] coresight: Add support to get static id for system
- trace sources
-Content-Language: en-GB
-To: Jinlong Mao <quic_jinlmao@quicinc.com>, Mike Leach
- <mike.leach@linaro.org>, James Clark <james.clark@arm.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org
-References: <20241104115604.14522-1-quic_jinlmao@quicinc.com>
- <20241104115604.14522-3-quic_jinlmao@quicinc.com>
- <6424c536-2f2c-4a59-8b6d-f610201dc7a7@arm.com>
- <6a8e10fc-a231-467a-8056-d291e237fec1@quicinc.com>
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <6a8e10fc-a231-467a-8056-d291e237fec1@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20241009105759.579579-1-me@kloenk.dev> <20241009105759.579579-2-me@kloenk.dev>
+ <snsf4cc6valp5ovrrbjv7fefxtkthifsis5el4teajzwjhmv4x@ghxovfdqkhop>
+In-Reply-To: <snsf4cc6valp5ovrrbjv7fefxtkthifsis5el4teajzwjhmv4x@ghxovfdqkhop>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Mon, 18 Nov 2024 11:19:21 +0100
+Message-ID: <CAH5fLghthWr4r0v=2xNE_UJntG6o6qRzdqHj_nu8AKUwUWh2Aw@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/2] rust: LED abstraction
+To: =?UTF-8?B?TWFyZWsgQmVow7pu?= <kabel@kernel.org>
+Cc: Fiona Behrens <me@kloenk.dev>, Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
+	linux-leds@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, FUJITA Tomonori <fujita.tomonori@gmail.com>, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 18/11/2024 10:14, Jinlong Mao wrote:
-> 
-> 
-> On 2024/11/13 21:27, Suzuki K Poulose wrote:
->> On 04/11/2024 11:56, Mao Jinlong wrote:
->>> Dynamic trace id was introduced in coresight subsystem, so trace id is
->>> allocated dynamically. However, some hardware ATB source has static 
->>> trace
->>> id and it cannot be changed via software programming. For such source,
->>> it can call coresight_get_static_trace_id to get the fixed trace id from
->>> device node and pass id to coresight_trace_id_get_static_system_id to
->>> reserve the id.
->>>
->>> Signed-off-by: Mao Jinlong <quic_jinlmao@quicinc.com>
->>> Reviewed-by: Mike Leach <mike.leach@linaro.org>
->>> ---
->>>   .../hwtracing/coresight/coresight-platform.c  |  6 +++
->>>   .../hwtracing/coresight/coresight-trace-id.c  | 39 +++++++++++++------
->>>   .../hwtracing/coresight/coresight-trace-id.h  |  9 +++++
->>>   include/linux/coresight.h                     |  1 +
->>>   4 files changed, 44 insertions(+), 11 deletions(-)
->>>
->>> diff --git a/drivers/hwtracing/coresight/coresight-platform.c b/ 
->>> drivers/hwtracing/coresight/coresight-platform.c
->>> index 64e171eaad82..633d96b9577a 100644
->>> --- a/drivers/hwtracing/coresight/coresight-platform.c
->>> +++ b/drivers/hwtracing/coresight/coresight-platform.c
->>> @@ -796,6 +796,12 @@ int coresight_get_cpu(struct device *dev)
->>>   }
->>>   EXPORT_SYMBOL_GPL(coresight_get_cpu);
->>> +int coresight_get_static_trace_id(struct device *dev, u32 *id)
->>> +{
->>> +    return fwnode_property_read_u32(dev_fwnode(dev), "arm,static- 
->>> trace-id", id);
->>> +}
->>> +EXPORT_SYMBOL_GPL(coresight_get_static_trace_id);
->>> +
->>>   struct coresight_platform_data *
->>>   coresight_get_platform_data(struct device *dev)
->>>   {
->>> diff --git a/drivers/hwtracing/coresight/coresight-trace-id.c b/ 
->>> drivers/hwtracing/coresight/coresight-trace-id.c
->>> index d98e12cb30ec..df8fe50b413f 100644
->>> --- a/drivers/hwtracing/coresight/coresight-trace-id.c
->>> +++ b/drivers/hwtracing/coresight/coresight-trace-id.c
->>> @@ -12,6 +12,12 @@
->>>   #include "coresight-trace-id.h"
->>> +enum trace_id_flags {
->>> +    TRACE_ID_ANY = 0x0,
->>> +    TRACE_ID_PREFER_ODD = 0x1,
->>> +    TRACE_ID_REQ_STATIC = 0x2,
->>> +};
->>> +
->>>   /* Default trace ID map. Used in sysfs mode and for system sources */
->>>   static DEFINE_PER_CPU(atomic_t, id_map_default_cpu_ids) = 
->>> ATOMIC_INIT(0);
->>>   static struct coresight_trace_id_map id_map_default = {
->>> @@ -74,16 +80,18 @@ static int coresight_trace_id_find_odd_id(struct 
->>> coresight_trace_id_map *id_map)
->>>    * Otherwise allocate next available ID.
->>>    */
->>>   static int coresight_trace_id_alloc_new_id(struct 
->>> coresight_trace_id_map *id_map,
->>> -                       int preferred_id, bool prefer_odd_id)
->>> +                       int preferred_id, unsigned int flags)
->>>   {
->>>       int id = 0;
->>>       /* for backwards compatibility, cpu IDs may use preferred value */
->>> -    if (IS_VALID_CS_TRACE_ID(preferred_id) &&
->>> -        !test_bit(preferred_id, id_map->used_ids)) {
->>> -        id = preferred_id;
->>> -        goto trace_id_allocated;
->>> -    } else if (prefer_odd_id) {
->>> +    if (IS_VALID_CS_TRACE_ID(preferred_id)) {
->>> +        if (!test_bit(preferred_id, id_map->used_ids)) {
->>> +            id = preferred_id;
->>> +            goto trace_id_allocated;
->>> +        } else if (flags & TRACE_ID_REQ_STATIC)
->>> +            return -EINVAL;
->>
->> nit: EBUSY sounds like a better choice here ? Requested ID is not
->> available.
->>
->> Additionally, do we need to handle a case where the preferred_id is
->> not valid ? I think we silently allocate a new trace id in such case ?
->>
->> Rest looks good to me.
->>
->> Suzuki
->>
->>
-> 
-> If preferred_id is not valid, a random id will be allocated for the 
-> source. For the normal source, 0 is provided here as preferred_id.
+On Sat, Nov 16, 2024 at 4:47=E2=80=AFPM Marek Beh=C3=BAn <kabel@kernel.org>=
+ wrote:
+>
+> On Wed, Oct 09, 2024 at 12:57:58PM +0200, Fiona Behrens wrote:
+>
+> > +/// Color of an LED.
+> > +#[derive(Copy, Clone)]
+> > +pub enum Color {
+> > +    /// White
+> > +    White,
+> > +    /// Red
+> > +    Red,
+> > +    /// Green
+> > +    Green,
+> > +    /// Blue
+> > +    Blue,
+> > +    /// Amber
+> > +    Amber,
+> > +    /// Violet
+> > +    Violet,
+> > +    /// Yellow
+> > +    Yellow,
+> > +    /// Purple
+> > +    Purple,
+> > +    /// Orange
+> > +    Orange,
+> > +    /// Pink
+> > +    Pink,
+> > +    /// Cyan
+> > +    Cyan,
+> > +    /// Lime
+> > +    Lime,
+>
+> Why these repetitions?
 
-My point is : If preferred_id is not valid *and* TRACE_ID_REQ_STATIC
-flag is set, we go ahead and allocate a random different ID. Which is
-not preferred. We should return -EINVAL in that case.
+My guess is that it's to silence the warning about undocumented public
+items. It may make sense to just silence the warning in this case.
 
-Suzuki
+> > +impl TryFrom<u32> for Color {
+> > +    type Error =3D Error;
+> > +
+> > +    fn try_from(value: u32) -> Result<Self, Self::Error> {
+> > +        Ok(match value {
+> > +            bindings::LED_COLOR_ID_WHITE =3D> Color::White,
+> > +            bindings::LED_COLOR_ID_RED =3D> Color::Red,
+> > +            bindings::LED_COLOR_ID_GREEN =3D> Color::Green,
+> > +            bindings::LED_COLOR_ID_BLUE =3D> Color::Blue,
+> > +            bindings::LED_COLOR_ID_AMBER =3D> Color::Amber,
+> > +            bindings::LED_COLOR_ID_VIOLET =3D> Color::Violet,
+> > +            bindings::LED_COLOR_ID_YELLOW =3D> Color::Yellow,
+> > +            bindings::LED_COLOR_ID_PURPLE =3D> Color::Purple,
+> > +            bindings::LED_COLOR_ID_ORANGE =3D> Color::Orange,
+> > +            bindings::LED_COLOR_ID_PINK =3D> Color::Pink,
+> > +            bindings::LED_COLOR_ID_CYAN =3D> Color::Cyan,
+> > +            bindings::LED_COLOR_ID_LIME =3D> Color::Lime,
+> > +            bindings::LED_COLOR_ID_IR =3D> Color::IR,
+> > +            bindings::LED_COLOR_ID_MULTI =3D> Color::Multi,
+> > +            bindings::LED_COLOR_ID_RGB =3D> Color::RGB,
+> > +            _ =3D> return Err(EINVAL),
+> > +        })
+> > +    }
+> > +}
+>
+> How does Rust compile these? If these constants compile to the same
+> numeric values, i.e. if
+>   LED_COLOR_ID_AMBER =3D=3D Color::Amber,
+> will the compiler compile away the function?
 
+Well, it can't compile away the part where it returns EINVAL when the
+u32 is not a valid color. But other than that, these matches are
+usually optimized pretty well. I just tried a few different examples
+in godbolt to confirm it. See e.g.:
+https://rust.godbolt.org/z/WWM7891zW
 
-> 
->>
->>
->>> +    } else if (flags & TRACE_ID_PREFER_ODD) {
->>>       /* may use odd ids to avoid preferred legacy cpu IDs */
->>>           id = coresight_trace_id_find_odd_id(id_map);
->>>           if (id)
->>> @@ -153,7 +161,7 @@ static int _coresight_trace_id_get_cpu_id(int 
->>> cpu, struct coresight_trace_id_map
->>>        */
->>>       id = coresight_trace_id_alloc_new_id(id_map,
->>>                            CORESIGHT_LEGACY_CPU_TRACE_ID(cpu),
->>> -                         false);
->>> +                         TRACE_ID_ANY);
->>>       if (!IS_VALID_CS_TRACE_ID(id))
->>>           goto get_cpu_id_out_unlock;
->>> @@ -188,14 +196,14 @@ static void _coresight_trace_id_put_cpu_id(int 
->>> cpu, struct coresight_trace_id_ma
->>>       DUMP_ID_MAP(id_map);
->>>   }
->>> -static int coresight_trace_id_map_get_system_id(struct 
->>> coresight_trace_id_map *id_map)
->>> +static int coresight_trace_id_map_get_system_id(struct 
->>> coresight_trace_id_map *id_map,
->>> +                    int preferred_id, unsigned int traceid_flags)
->>>   {
->>>       unsigned long flags;
->>>       int id;
->>>       spin_lock_irqsave(&id_map->lock, flags);
->>> -    /* prefer odd IDs for system components to avoid legacy CPU IDS */
->>> -    id = coresight_trace_id_alloc_new_id(id_map, 0, true);
->>> +    id = coresight_trace_id_alloc_new_id(id_map, preferred_id, 
->>> traceid_flags);
->>>       spin_unlock_irqrestore(&id_map->lock, flags);
->>>       DUMP_ID(id);
->>> @@ -255,10 +263,19 @@ 
->>> EXPORT_SYMBOL_GPL(coresight_trace_id_read_cpu_id_map);
->>>   int coresight_trace_id_get_system_id(void)
->>>   {
->>> -    return coresight_trace_id_map_get_system_id(&id_map_default);
->>> +    /* prefer odd IDs for system components to avoid legacy CPU IDS */
->>> +    return coresight_trace_id_map_get_system_id(&id_map_default, 0,
->>> +            TRACE_ID_PREFER_ODD);
->>>   }
->>>   EXPORT_SYMBOL_GPL(coresight_trace_id_get_system_id);
->>> +int coresight_trace_id_get_static_system_id(int trace_id)
->>> +{
->>> +    return coresight_trace_id_map_get_system_id(&id_map_default,
->>> +            trace_id, TRACE_ID_REQ_STATIC);
->>> +}
->>> +EXPORT_SYMBOL_GPL(coresight_trace_id_get_static_system_id);
->>> +
->>>   void coresight_trace_id_put_system_id(int id)
->>>   {
->>>       coresight_trace_id_map_put_system_id(&id_map_default, id);
->>> diff --git a/drivers/hwtracing/coresight/coresight-trace-id.h b/ 
->>> drivers/hwtracing/coresight/coresight-trace-id.h
->>> index 9aae50a553ca..db68e1ec56b6 100644
->>> --- a/drivers/hwtracing/coresight/coresight-trace-id.h
->>> +++ b/drivers/hwtracing/coresight/coresight-trace-id.h
->>> @@ -116,6 +116,15 @@ int coresight_trace_id_read_cpu_id_map(int cpu, 
->>> struct coresight_trace_id_map *i
->>>    */
->>>   int coresight_trace_id_get_system_id(void);
->>> +/**
->>> + * Allocate a CoreSight static trace ID for a system component.
->>> + *
->>> + * Used to allocate static IDs for system trace sources such as 
->>> dummy source.
->>> + *
->>> + * return: Trace ID or -EINVAL if allocation is impossible.
->>> + */
->>> +int coresight_trace_id_get_static_system_id(int id);
->>> +
->>>   /**
->>>    * Release an allocated system trace ID.
->>>    *
->>> diff --git a/include/linux/coresight.h b/include/linux/coresight.h
->>> index c13342594278..129795873072 100644
->>> --- a/include/linux/coresight.h
->>> +++ b/include/linux/coresight.h
->>> @@ -662,6 +662,7 @@ void coresight_relaxed_write64(struct 
->>> coresight_device *csdev,
->>>   void coresight_write64(struct coresight_device *csdev, u64 val, u32 
->>> offset);
->>>   extern int coresight_get_cpu(struct device *dev);
->>> +extern int coresight_get_static_trace_id(struct device *dev, u32 *id);
->>>   struct coresight_platform_data *coresight_get_platform_data(struct 
->>> device *dev);
->>>   struct coresight_connection *
->>
-> 
+That said, this relies on the assumption that they are represented
+using the same values. We probably want to change the declaration to
+this:
 
+#[derive(Copy, Clone)]
+pub enum Color {
+    White =3D bindings::LED_COLOR_ID_WHITE,
+    Red =3D bindings::LED_COLOR_ID_RED,
+    Green =3D bindings::LED_COLOR_ID_GREEN,
+    ...
+}
+
+That way we are guaranteed that the enum uses the right values for the
+enum to make the conversion free.
+
+> How do enums work in Rust?
+
+In this case, the enum has no fields. In that case, the enum is a
+value that is only allowed to have certain values.
+
+Enums are also allowed to have fields. In this case, you can think of
+it as a discriminated union, though in some cases Rust will store it
+in a more clever way. You can look up the "null pointer optimization"
+for an example of that.
+
+> > +impl<'a, T> Led<T>
+>
+> offtopic, what is 'a ? What does the ' mean? Is impl<> something like
+> template in c++?
+
+Things starting with a tick are lifetimes, so 'a is the name of a
+lifetime. That said, this usage of lifetimes looks incorrect to me, so
+I wouldn't look too closely at this instance.
+
+As for impl<>, then yes sort of. It is the <> that makes it like a
+template. When you have an `impl TypeName { ... }` block, then that
+defines methods for `TypeName`, which you can call as either
+`value.method(...)` or `TypeName::method(...)` depending on the
+signature. When you write `impl<T>`, then this means that it is a
+template (we use the word "generic" in Rust rather than "template"),
+that is
+
+impl<T> TypeName<T> { ... }
+
+becomes the following infinite list of impl blocks:
+
+impl TypeName<i32> { ... }
+impl TypeName<u32> { ... }
+impl TypeName<String> { ... }
+impl TypeName<TcpStream> { ... }
+// ... and so on for all possible types
+
+This logic works anywhere that <T> appears. For example, `struct
+TypeName<T> { ... }` is short-hand for the following infinite list of
+structs:
+
+struct TypeName<i32> { ... }
+struct TypeName<u32> { ... }
+struct TypeName<String> { ... }
+struct TypeName<TcpStream> { ... }
+// ... and so on for all possible types
+
+Of course, only things in this infinite list that you actually use end
+up in the final binary.
+
+The `where T: Operations` part is a filter for the infinite list. It
+restricts it so that only types `T` that implement the `Operations`
+trait are present in the list; all other types are filtered out.
+
+> > +where
+> > +    T: Operations + 'a,
+>
+> What does + mean here?
+
+This is the same as:
+where
+    T: Operations,
+    T: 'a
+that is, apply two filters to the infinite list I mentioned above. The
+meaning of `T: 'a` when the RHS is a lifetime is that `T` must not be
+a type containing a lifetime annotation shorter than 'a.
+
+> > +/// LED brightness.
+> > +#[derive(Debug, Copy, Clone)]
+> > +pub enum Brightness {
+> > +    /// LED off.
+> > +    Off,
+> > +    /// Led set to the given value.
+> > +    On(NonZeroU8),
+> > +}
+> > +
+> > +impl Brightness {
+> > +    /// Half LED brightness
+> > +    // SAFETY: constant value non zero
+> > +    pub const HALF: Self =3D Self::On(unsafe { NonZeroU8::new_unchecke=
+d(127) });
+> > +    /// Full LED brightness.
+> > +    pub const FULL: Self =3D Self::On(NonZeroU8::MAX);
+>
+> These LED_OFF, LED_ON, LED_HALF and LED_FULL are deprecated constants
+> that should not be used anymore. enum led_brightness will be either
+> uint8_t or usigned int in the future.
+>
+> Is it possible to not infect Rust with these deprecated constants?
+>
+> Marek
 
