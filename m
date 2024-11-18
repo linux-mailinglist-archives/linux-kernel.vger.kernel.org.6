@@ -1,141 +1,114 @@
-Return-Path: <linux-kernel+bounces-413432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9559E9D18F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 20:32:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C8319D1902
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 20:35:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32891B2183D
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 19:32:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 422E4282D9F
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 19:35:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 784521E1C0B;
-	Mon, 18 Nov 2024 19:32:43 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44B0B1E261B;
+	Mon, 18 Nov 2024 19:34:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="ZJWU0pTs"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A44117BBF;
-	Mon, 18 Nov 2024 19:32:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9E9F14F9CF
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 19:34:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731958363; cv=none; b=QVPYv+BEjVOJ6EjoItbhwEx3UNFhj1F1drp85iIgSnCZwL6C/zDZ5ukxoSNIi7ZpXLyWd/qYwyJCa+WpXuQPOYmGZH+RHL4Wi4UQcpU5g9eLZGDfgpMHLWvp9L+EC7y83yKZsOlQxkwu9VXBhHGb6Oa/6wDBD4BwvMha4GHoR98=
+	t=1731958495; cv=none; b=lwjA0LQnxggH8jazHPbPVsOk0k7vZXF3Km+WsHYWKif1BZpABOPTLRH8z759L/+YYx3v0gYajlGTAWbRM91HW3YaZzfapc/+Xt8RbNSik/PpOqSqrvTphTnDl1cqwpK8mCYASsU0OBskk9pEnTvCxPgHjcExulJui2SW3JAt9T8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731958363; c=relaxed/simple;
-	bh=jwf9mr6ZqGV+aRwYqQV3XDJze1+KZMmOLGtdZOcQrx8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sB3S0aOb0HSjhpLhzoYTB7Z8dYTpbthAwRoh+FArCWPvOEDzTa3dp0o3uFnrV3gvZh+ON2Rm/Ta5LUkDgZE6+JHBBW5n3f6cpQ+CNqXr3IJJMvRb4/LZ8APCClpPHnJl2FawJ+7G8OyYjfZueMTdza3V8I/BpUREehvwRFFtUzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4572C4CECC;
-	Mon, 18 Nov 2024 19:32:40 +0000 (UTC)
-Date: Mon, 18 Nov 2024 14:33:11 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Suleiman Souhlal <suleiman@google.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot
- <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, Valentin
- Schneider <vschneid@redhat.com>, Paolo Bonzini <pbonzini@redhat.com>,
- seanjc@google.com, Srikar Dronamraju <srikar@linux.ibm.com>, David
- Woodhouse <dwmw2@infradead.org>, joelaf@google.com, vineethrp@google.com,
- linux-kernel@vger.kernel.org, kvm@vger.kernel.org, ssouhlal@freebsd.org
-Subject: Re: [PATCH v3] sched: Don't try to catch up excess steal time.
-Message-ID: <20241118143311.3ca94405@gandalf.local.home>
-In-Reply-To: <20241118043745.1857272-1-suleiman@google.com>
-References: <20241118043745.1857272-1-suleiman@google.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1731958495; c=relaxed/simple;
+	bh=4IQ+/qlAPIVtK5c7UjGrT6bzGc6QP7fuCo5yCioqtvA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JuTob/3UMKQQ/NkYc8xaI/wdZ2BWZVvs78P9R4/aySdORtBmWSd62H6xwyLzLzSR1tQW6nPHYixA8EM1OYNbLmyMmkMW1CH5223r69Rk2eP3n9sjtSudzyS+aP5KWfSW5uLG2RTPp0PIewIUsPZO6FmTFaJz1/q3k8Jemd7WfbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=ZJWU0pTs; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=4IQ+
+	/qlAPIVtK5c7UjGrT6bzGc6QP7fuCo5yCioqtvA=; b=ZJWU0pTsUmezyoO4QRFD
+	ksMkot+jJiGIlXObDkvBnyK5AKBRDtoUalHtoVVqTCuuK7roE93EuoikoAUgV0MV
+	GDhFoF9RswTk+f+bRYrXq3R8Jn1J/ky9yiYt3i0jq8G7Nx8bUzl5KSPba4mc783B
+	jpALQMKrUTYSBbTJoqifzjqNiMQApvYN6Ql0DDFbXuJy5GZNH6WlFgiHNXoKzhsa
+	puMblOHBgIFuz+csH+LOYOZ7gXrGpHje6pl2MgMr3W+6H2mm0GtRYwB2sbdhs6LB
+	DO4+ZwZD8jTCCPs1YktaaZeMioDVoaPflm6m0PoGBPIZ/TlKUPNUTtsXcXH5aZQq
+	hg==
+Received: (qmail 320855 invoked from network); 18 Nov 2024 20:34:45 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 18 Nov 2024 20:34:45 +0100
+X-UD-Smtp-Session: l3s3148p1@zKZMAjUngr4ujntT
+Date: Mon, 18 Nov 2024 20:34:44 +0100
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc: linux-kernel@vger.kernel.org, Mike Leach <mike.leach@linaro.org>,
+	James Clark <james.clark@linaro.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 04/15] coresight: etm4x: don't include 'pm_wakeup.h'
+ directly
+Message-ID: <ZzuW1Gh8ULYurUKH@ninjato>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	linux-kernel@vger.kernel.org, Mike Leach <mike.leach@linaro.org>,
+	James Clark <james.clark@linaro.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org
+References: <20241118072917.3853-1-wsa+renesas@sang-engineering.com>
+ <20241118072917.3853-5-wsa+renesas@sang-engineering.com>
+ <ea311a21-959d-4985-9364-7c85d256ab09@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-
-On Mon, 18 Nov 2024 13:37:45 +0900
-Suleiman Souhlal <suleiman@google.com> wrote:
-
-> When steal time exceeds the measured delta when updating clock_task, we
-> currently try to catch up the excess in future updates.
-> However, this results in inaccurate run times for the future things using
-> clock_task, in some situations, as they end up getting additional steal
-> time that did not actually happen.
-> This is because there is a window between reading the elapsed time in
-> update_rq_clock() and sampling the steal time in update_rq_clock_task().
-> If the VCPU gets preempted between those two points, any additional
-> steal time is accounted to the outgoing task even though the calculated
-> delta did not actually contain any of that "stolen" time.
-> When this race happens, we can end up with steal time that exceeds the
-> calculated delta, and the previous code would try to catch up that excess
-> steal time in future clock updates, which is given to the next,
-> incoming task, even though it did not actually have any time stolen.
-> 
-> This behavior is particularly bad when steal time can be very long,
-> which we've seen when trying to extend steal time to contain the duration
-> that the host was suspended [0]. When this happens, clock_task stays
-> frozen, during which the running task stays running for the whole
-> duration, since its run time doesn't increase.
-> However the race can happen even under normal operation.
-> 
-> Ideally we would read the elapsed cpu time and the steal time atomically,
-> to prevent this race from happening in the first place, but doing so
-> is non-trivial.
-> 
-> Since the time between those two points isn't otherwise accounted anywhere,
-> neither to the outgoing task nor the incoming task (because the "end of
-> outgoing task" and "start of incoming task" timestamps are the same),
-> I would argue that the right thing to do is to simply drop any excess steal
-> time, in order to prevent these issues.
-> 
-> [0] https://lore.kernel.org/kvm/20240820043543.837914-1-suleiman@google.com/
-> 
-> Signed-off-by: Suleiman Souhlal <suleiman@google.com>
-> ---
-> v3:
-> - Reword commit message.
-> - Revert back to v1 code, since it's more understandable.
-> 
-> v2: https://lore.kernel.org/lkml/20240911111522.1110074-1-suleiman@google.com
-> - Slightly changed to simply moving one line up instead of adding
->   new variable.
-> 
-> v1: https://lore.kernel.org/lkml/20240806111157.1336532-1-suleiman@google.com
-> ---
->  kernel/sched/core.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index a1c353a62c56..13f70316ef39 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -766,13 +766,15 @@ static void update_rq_clock_task(struct rq *rq, s64 delta)
->  #endif
->  #ifdef CONFIG_PARAVIRT_TIME_ACCOUNTING
->  	if (static_key_false((&paravirt_steal_rq_enabled))) {
-> -		steal = paravirt_steal_clock(cpu_of(rq));
-> +		u64 prev_steal;
-> +
-> +		steal = prev_steal = paravirt_steal_clock(cpu_of(rq));
->  		steal -= rq->prev_steal_time_rq;
->  
->  		if (unlikely(steal > delta))
->  			steal = delta;
-
-So is the problem just the above if statement? That is, delta is already
-calculated, but if we get interrupted by the host before steal is
-calculated and the time then becomes greater than delta, the time
-difference between delta and steal gets pushed off to the next task, right?
-
--- Steve
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="WVupqj1J1l+LAVq0"
+Content-Disposition: inline
+In-Reply-To: <ea311a21-959d-4985-9364-7c85d256ab09@arm.com>
 
 
+--WVupqj1J1l+LAVq0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->  
-> -		rq->prev_steal_time_rq += steal;
-> +		rq->prev_steal_time_rq = prev_steal;
->  		delta -= steal;
->  	}
->  #endif
 
+> If you plan to take this as a collection outside of CoreSight tree,
+>=20
+> Acked-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+>=20
+> Otherwise, I can pick this up.
+
+As stated in the cover letter, please pick it up. There are no
+dependencies.
+
+
+--WVupqj1J1l+LAVq0
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmc7ltAACgkQFA3kzBSg
+KbajBw/+Iw5lYdddTN921JDSBexKi7CMET5BgZ+xmLzXHFZG94SwxZazKIKgLGRj
+jKdD91uGgFgxZo+W092wF+rMcA1AhCzwFhwIeJbf+yOXJuDUKtlqsD/PypPyWZkK
+2OhNgbM+czo6FLrBGpwYdRjmmhRwkGJVzpNxJiK6EEK14e5ih5h0u9cbri2YZxe/
+XU2cQ7KrbMenAum5xy/t3dBIWBQRNbaAVWVuf25vGta0dKC1+MrAd4vxvz0sQlVc
+r9m+uC05Y8rzvOvi33KijYkwF2Tv6/S0onG5zE9ODUAMT5VqCAht+DBwbIEwc+D6
+uUvzcGxnfYv5x77JnCgnf5oPeoJGe6u4xSq7xZ9NsdL+SN9TumpBrlA6wp3Ue/te
+Fy0mFcKOfkrfuDRYFrfczsew5KJ4Gj5CBVxgbw1/860Fs/gKZ4uu5cU5Pgl0+GbX
+92nXHFMAoIYQ/XOFH6AdxbEfloI42kbDxTeIZ+AmanY1eCMcAZ2l3eQxMCX9gMTM
+dRRAZPkO7PtJwRCCcsbxR9Wq0VXKQ4dvaRB6NOl/C53IiI/lJTzw96jlYG70ne6c
+MQp6lbm7xbUA2VrdZayFbE/A5Ym9rMG1XNCaFPcNU+c5HjqZB93EB8SRmYjlj7SS
+2j9RkQP9YoyIn2sBcc+fInrTH71/V3koiAMKOQdT2kZh2PKjWcw=
+=madr
+-----END PGP SIGNATURE-----
+
+--WVupqj1J1l+LAVq0--
 
