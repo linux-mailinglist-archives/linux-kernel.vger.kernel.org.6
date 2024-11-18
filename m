@@ -1,116 +1,115 @@
-Return-Path: <linux-kernel+bounces-413132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EE4A9D13F1
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 16:05:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D24E39D13FD
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 16:06:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D3611F23E30
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 15:05:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 986B62835D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 15:06:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 721BA1BD4E1;
-	Mon, 18 Nov 2024 15:03:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BA821BD9D0;
+	Mon, 18 Nov 2024 15:03:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="qKVE/Hso"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="RoqiBvWD"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C38B1AC43E;
-	Mon, 18 Nov 2024 15:03:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5ED21AC43E
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 15:03:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731942193; cv=none; b=KDkX3PvHDcx2XjfRUz6wr5nAy8MwvMAGwsvO0OE1zFW7vOZiV9NWl9d0arefQYsTB2/YSVb1sTrWGmj1cfyE76FyIm5I6FR6KE6QwxHz56yWlysAhhl99ytZFGMM3gKESQ4zQVou2pOJWNsjZpoQUHD+uKLUWI+u5tY/i7gOIMw=
+	t=1731942224; cv=none; b=QvCyUaKkN2Pn3B/I4ECE5q3rBktl4T7qMI65JSkuNfIpAw+7/fklPR2RfiM3Oi+VmmKpEljQN3TScm6P3oWlPoVqcIuQ6r1tJJFV1eg+B0cLqPGOzfVqkRHLcOcz1bt60Asl79oXEkTA9h6ERvbuOiqYCDhkpD/6c7Y4rf5IL2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731942193; c=relaxed/simple;
-	bh=Y6IKnnnehrgtsOGYcC4soeo5EMiO1x9gQENuPzItkvw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=k1HLydlOcVx9CmBZcNuduBqH+j3bGOKlVYr4hoBTammaMEw7hEC3s7ZT4eT97iye4cdyYDkjR+mrqkffLoIkj37WM8+BVI51xSRWYGZcF7xiHiI2xCmAgkDDZn2rCsihW5vEH4SZCiADWkPACePHdonEgVClpH7XFpF5v8+XzZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=qKVE/Hso; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1731942187;
-	bh=Y6IKnnnehrgtsOGYcC4soeo5EMiO1x9gQENuPzItkvw=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=qKVE/HsoamW7WBskfH/JsFzqNNnUf/9fRciYOl7BrVHQXChEVo/w4I3wRgSQ5AUAW
-	 Vb4vvj5ITSI/+WNv+Q2iQ2YgzjhvabKGVsAscoMYItGIak7OwlNAzTS6UQVDerSbli
-	 NC2t654mYZuILJ2S2lxjBfPZgTIirWgI1p6S96sk=
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Mon, 18 Nov 2024 16:02:49 +0100
-Subject: [PATCH 3/3] cpu: Remove spurious NULL in attribute_group
- definition
+	s=arc-20240116; t=1731942224; c=relaxed/simple;
+	bh=K3Dm9N8RgDQVKjLySeNTpGXytJD8NFVPT4+evyr480A=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=kyhC8RA+KDhTS/5mn66FK8xFAnjj0MbNAMEGH/bAS2W1UiyhaWo2qGYpDxWW9IscuNSyLO+10qJqUB97NnnPqlMg29bcg3FlLGdPuCICrFAJUt67ifZlu57K2xVaOzi5y5FnpYsWzcAti7sg3A4aS22vAWKWR6i9nP720+f6nTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=RoqiBvWD; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id C80C240E021C;
+	Mon, 18 Nov 2024 15:03:39 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id bpBu-gdcuYx2; Mon, 18 Nov 2024 15:03:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1731942215; bh=vGG+JtqpZ683PXXYiaVi3ln3CS179qfl7ulOTwGKP+Q=;
+	h=Date:From:To:Cc:Subject:From;
+	b=RoqiBvWDIjnNB945X456HDSUl19nFhTbxbidGdIff/M5pnEa73eTWB0/M67IIVANx
+	 XR8Oq6fx+1mRPBLTsNEzBtDCVvryQ0kTqjNLZFRxkV62qPdLGk5ExO0y6neSV2XA+I
+	 GXovamaGgM+7vv/DSmTcEwzfqra0TE/l+n+pgJDUPxHBuUPfSGA37pI3Dv6mWzeI89
+	 QKzoTSTsOBTqXRmgQwDYVjKH8tJzBTcBJHb57kXTry2MGub9q1IDEH3PLQ+bW5VKPp
+	 enmQjUeqAC42A3I3KwBPg+yRxRdBxN0mi7poB8aLPxBQ40QHTk3XY6ERt4MYe8S/8Q
+	 YROpPcq/2UyzU63rMk4c9whSi1CZIGI5VpBBaz8yvMFqJSK3lzd/t4XZbK/cDk+655
+	 rQ8S2inVVhPgihglKkK7P0p9MpcRa76Wl7+VF+2IyY9UzpvAyS12qH0iHezOqNBV9B
+	 70hpnWj2yG26r29EeSGGcgBJ+WiOXLPtM4p9cI5e2cEZ12OUk7a/LH9DjxepxR1H6Y
+	 jzg0m19iQk0YII7DV2YWxZknW+fmZDykWkLk4cdAeRIiNZZ346xXRYSukh376nHJCQ
+	 0AUq9EZSLuh9B3CMdQB1GQqehp8S0Rr2xP4X4Lu7VOaoMKIPa4HGYLJq8cskgfoiBG
+	 NtelWaq4tkE2tLqjpthJSlcg=
+Received: from zn.tnic (pd9530b86.dip0.t-ipconnect.de [217.83.11.134])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 89C6E40E019C;
+	Mon, 18 Nov 2024 15:03:32 +0000 (UTC)
+Date: Mon, 18 Nov 2024 16:03:27 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] x86/microcode for v6.13
+Message-ID: <20241118150327.GAZztXP3hswdK38kJK@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20241118-sysfs-const-attribute_group-fixes-v1-3-48e0b0ad8cba@weissschuh.net>
-References: <20241118-sysfs-const-attribute_group-fixes-v1-0-48e0b0ad8cba@weissschuh.net>
-In-Reply-To: <20241118-sysfs-const-attribute_group-fixes-v1-0-48e0b0ad8cba@weissschuh.net>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, 
- Robin Murphy <robin.murphy@arm.com>, Will Deacon <will@kernel.org>, 
- Mark Rutland <mark.rutland@arm.com>, Heiko Carstens <hca@linux.ibm.com>, 
- Vasily Gorbik <gor@linux.ibm.com>, 
- Alexander Gordeev <agordeev@linux.ibm.com>, 
- Christian Borntraeger <borntraeger@linux.ibm.com>, 
- Sven Schnelle <svens@linux.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, 
- Peter Zijlstra <peterz@infradead.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- linux-s390@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1731942187; l=1161;
- i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=Y6IKnnnehrgtsOGYcC4soeo5EMiO1x9gQENuPzItkvw=;
- b=SSps8DBII7qesqAsv+xf0NzLA2Q2RkAGnWvq5dXhTqti/ZR3bY+tTVFcPUvGfpHjOTATQg1/u
- H3o+/TmtbdRCrrDyEimbS9Q1Keupowt8TUyAnhPOvDjwEHLC8qQl6tc
-X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
- pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-This NULL value is most-likely a copy-paste error from an array
-definition. The NULL doesn't have any effect.
+Hi Linus,
 
-Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+please pull a single microcode loader optimization for v6.13.
+
+Thx.
+
 ---
- kernel/cpu.c | 3 ---
- 1 file changed, 3 deletions(-)
 
-diff --git a/kernel/cpu.c b/kernel/cpu.c
-index d293d52a3e00e1e8d7c82bdf2f1365bb459f8bb6..f3ee615d2274f161857ef0180454f30b54477cc1 100644
---- a/kernel/cpu.c
-+++ b/kernel/cpu.c
-@@ -2866,7 +2866,6 @@ static struct attribute *cpuhp_cpu_attrs[] = {
- static const struct attribute_group cpuhp_cpu_attr_group = {
- 	.attrs = cpuhp_cpu_attrs,
- 	.name = "hotplug",
--	NULL
- };
- 
- static ssize_t states_show(struct device *dev,
-@@ -2898,7 +2897,6 @@ static struct attribute *cpuhp_cpu_root_attrs[] = {
- static const struct attribute_group cpuhp_cpu_root_attr_group = {
- 	.attrs = cpuhp_cpu_root_attrs,
- 	.name = "hotplug",
--	NULL
- };
- 
- #ifdef CONFIG_HOTPLUG_SMT
-@@ -3020,7 +3018,6 @@ static struct attribute *cpuhp_smt_attrs[] = {
- static const struct attribute_group cpuhp_smt_attr_group = {
- 	.attrs = cpuhp_smt_attrs,
- 	.name = "smt",
--	NULL
- };
- 
- static int __init cpu_smt_sysfs_init(void)
+The following changes since commit 42f7652d3eb527d03665b09edac47f85fb600924:
+
+  Linux 6.12-rc4 (2024-10-20 15:19:38 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip x86_microcode_for_v6.13
+
+for you to fetch changes up to 9a819753b0209c6edebdea447a1aa53e8c697653:
+
+  x86/microcode/intel: Remove unnecessary cache writeback and invalidation (2024-10-25 18:12:03 +0200)
+
+----------------------------------------------------------------
+- Remove the unconditional cache writeback and invalidation after loading the
+  microcode patch on Intel as this was addressing a microcode bug for which
+  there is a concrete microcode revision check instead
+
+----------------------------------------------------------------
+Chang S. Bae (1):
+      x86/microcode/intel: Remove unnecessary cache writeback and invalidation
+
+ arch/x86/kernel/cpu/microcode/intel.c | 10 ++--------
+ 1 file changed, 2 insertions(+), 8 deletions(-)
+
 
 -- 
-2.47.0
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
