@@ -1,300 +1,178 @@
-Return-Path: <linux-kernel+bounces-413551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DFC89D1ADC
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 22:57:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 505F39D1ADF
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 22:59:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3F632828B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 21:57:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB0181F227C0
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 21:59:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D793C1E7C0B;
-	Mon, 18 Nov 2024 21:57:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 243881E7C26;
+	Mon, 18 Nov 2024 21:58:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dL+vWk89"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YCwFGM4m"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03CEE150981;
-	Mon, 18 Nov 2024 21:57:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 632821E7653
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 21:58:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731967052; cv=none; b=s/Cu3inwI1DpPgaVLhn0WouTCq06BwIyU2MCbov0QQ+CkvXaFiLNFS1/mvqFkAD8b0bDEV0MyCnUdMV76cjTxiVRIjMHOXKMpyefsaahtv9D6U+6Kxsxm6mKI50Kk9kDIC5JpAjWQ+Mci5hbZpHkjA0Nd0anY5NklK26xA2ZWhY=
+	t=1731967131; cv=none; b=TT0gSd21XA2U/JbQ+XeXNHbphyBfH0Fg4/d5FgPLJWLV6g+X4AcQVBsdtBb1Dt9k77tMhB2+FxyK1Vpm18EMLi9s6rGsqGX6py4ySck06T1xufVg8uHOam/yJkY4Tr/KZF9oIadRcmRRcT3utUIbdwZGhSQ9ya4oE5uPTmdVPwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731967052; c=relaxed/simple;
-	bh=Dla+R32ok4wTwYIuQlAVhjXzYybXhfCM9m5QRpkVQ6M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RJsabrCt+vxB+vVUo4QJBmuKD+qn98uJ0YryZrtoZ4905kjQ7aXzAkdifye2lWpEO6p2cKyTZZX9uJhH1Oe3eh8/iScgZZJcujcCQC3NFnSr/ml8c0oPoLFINHvIn0sFoUieZ6+UlaXRgz4ZRMJVY67AaBQ68sZlYoje4DNVwSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dL+vWk89; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FE21C4CECC;
-	Mon, 18 Nov 2024 21:57:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731967051;
-	bh=Dla+R32ok4wTwYIuQlAVhjXzYybXhfCM9m5QRpkVQ6M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dL+vWk89PXIcZRxke+UQ/Rn7ZrXZgguAgOy2tZDcWvZTF1ycMMYeAmatFX7boILFk
-	 +B/0NfZoRaWlfLOx/BDPYsSaCMSKLiwG37OeLjHNfP9kr+30LOiqAxXoJC94vpSquX
-	 qtqpEVBqoa4KaY9Swa3aACpkX8USjGTMg716PWgVMMNTjyPUSD8hM0rLckNYtG+/mc
-	 X1fpXp1BcQMIW4iXqfRaTPsSozL8XxINRqZD/WS43zxPAvmX+Jh0SwAxV1+gV14D+m
-	 iKDUPs86338PqkPFddRaNVmlnCVzvcrNlFVbZmY6KLajEHmTIgzh8zVHA3EVHXm3s5
-	 IqD9nB037he1A==
-Date: Mon, 18 Nov 2024 13:57:29 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Athira Jajeev <atrajeev@linux.vnet.ibm.com>,
-	James Clark <james.clark@linaro.org>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	Yang Li <yang.lee@linux.alibaba.com>,
-	Colin Ian King <colin.i.king@gmail.com>,
-	Yang Jihong <yangjihong@bytedance.com>,
-	"Steinar H. Gunderson" <sesse@google.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Ilkka Koskinen <ilkka@os.amperecomputing.com>,
-	Ze Gao <zegao2021@gmail.com>, Weilin Wang <weilin.wang@intel.com>,
-	Ben Gainey <ben.gainey@arm.com>,
-	zhaimingbing <zhaimingbing@cmss.chinamobile.com>,
-	Zixian Cai <fzczx123@gmail.com>, Andi Kleen <ak@linux.intel.com>,
-	Paran Lee <p4ranlee@gmail.com>,
-	Thomas Falcon <thomas.falcon@intel.com>,
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	"Steven Rostedt (Google)" <rostedt@goodmis.org>
-Subject: Re: [PATCH v4 0/6] Avoid parsing tracepoint format just for id
-Message-ID: <Zzu4Sdebve-NXEMX@google.com>
-References: <20241108184751.359237-1-irogers@google.com>
- <Zy8FIt2OMa5-GymZ@google.com>
- <CAP-5=fXmxhaLk+qvH9nGAV-ByyhyHx=WPhXCFbBaZ3nSySSsMA@mail.gmail.com>
- <Zy-WM779rMwczlj_@google.com>
- <CAP-5=fVKvDLUMw_HXBoRLK3FyPvUCWGOZNECer6_fyhbTZTM6A@mail.gmail.com>
- <ZzuH-8ZCa7BVt3ef@google.com>
- <CAP-5=fUCtzhN75k8gWEVgb_+XoYXFf1VfNndimuHZOx814yAMQ@mail.gmail.com>
+	s=arc-20240116; t=1731967131; c=relaxed/simple;
+	bh=hQkH15gr6Qgm2KoVe/ThQVUD4flOHdtYi2Q7pTwd0MQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=byxhAFswgQPCZxtVb1Qf4HRa2D1Pb5cZ3YElw8mR4cEBqoQ+1OMsMlvkXNpXWdDYW5j+sOICZySJJR9NCM5v3qcqtwnByQk6fuUDX8o/IDkLID4/Yksg+K+8DwaeWKkunsv6prRpyhBxv5NsC9WqFBHGrrmxlB7hVI2ays6lnmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YCwFGM4m; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5cfb81a0af9so3398a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 13:58:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1731967127; x=1732571927; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZQ3Et6WIBdQ7sud4i/NonpGyXfau4X1TNW+PUgugafE=;
+        b=YCwFGM4m7dm3zFbfStEWvyaCFaFZgAlEnsbWu0wmvgKiX3fe9zlLm1kZwFEwV+Y7q/
+         crJtP3SJxgkueA8WSOKJrQIztfNl6bxSkwKeJvsVh0iA61LK0rsBcohX1jJhvdneuxvN
+         /JFSN23ZmIszzCTZL+nvL4lxcm/2fAI+LK17pHRid03SQFt3q63VmmkkbI+0rejeoaW8
+         uXawDrsKcpcfBip21IbCPgpMygCAEMCqEMCfPoxlmnLiUQGU6suyP8I71Zgo8TKnWikf
+         6Uais1OpfOsGBQQQfOpbIOIx+/02IIGLk70py3jHHlQAJ+Hpt3Bm5bakqdoZ96pTz05s
+         d63g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731967127; x=1732571927;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZQ3Et6WIBdQ7sud4i/NonpGyXfau4X1TNW+PUgugafE=;
+        b=ISUdTtrmgSLmBLSKhAHuqNmeV6tC0977ou+0BiMxWMzScvX1dm7j9sRV14oby5pWSa
+         ZXG333iUFF7zFZml5utn3TuXD5spYGu8ZvjbKJ3muF/xohz2aGOk2aFyudnH4Yr+fJ6N
+         J22JkFo61wjL5otQ7echBz9zLqzISQdNXXrb8nJT/BykpUHYva6aSv1Rx4uw1RsjhNGR
+         Unve9yGAigoPfoqf0f3tF3SgfdGdIMtCzKFQhRwDmLDbK54b56kxD5kkH+TjbON46mlV
+         8yKY2Ur15sWpYeORfgYfKxPbLTMnu+xGgVIXf76QfvDicqYw5LZ1YnG0xWS9ZUttQePt
+         lTMw==
+X-Forwarded-Encrypted: i=1; AJvYcCWyF8qRVuV28WxSt1DWWjkR2JSC372MDeYE87vKp5KMASGYxGswoGslOYPutBOWwOfi9SSGBziDU8nlZn0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIAfl/MB0HZMaBWK8Lc1gjAhDjuChet0mr/mkK6HFinweZ2Kb4
+	XM/3/53/uJ4Je7YcLb+byI3qTwda/T2SoCiR/cY/15rGukjI5AxUS9UkmPd5WCjkGvsnkN2BveK
+	6SAhHKDaK9E2mieFSoNcXJe+G9C4lOVHafuvB
+X-Gm-Gg: ASbGncu3BJoerdjonYLowDMR5UqXo6PF6kBtuz2yAeOF02ZJA9i91CO0iCJtHfkq/s8
+	DnNtr2p/IdjWGWc3yT2hbAGiqPWHbw5X9ntONMdGUwEFWGqzjhuR4qmKmLpw=
+X-Google-Smtp-Source: AGHT+IED/n5r3VjG+Ri+3OnSZ0XSX0QLyw7ggJKkFG+u6FSu0srLpXwOc/cszXrN20qB0TpblSw7+zX2Fd7l9uwnoW4=
+X-Received: by 2002:a05:6402:50c6:b0:5cf:deaf:ac2 with SMTP id
+ 4fb4d7f45d1cf-5cfdec1bb2cmr23256a12.2.1731967126565; Mon, 18 Nov 2024
+ 13:58:46 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fUCtzhN75k8gWEVgb_+XoYXFf1VfNndimuHZOx814yAMQ@mail.gmail.com>
+References: <20241030170106.1501763-21-samitolvanen@google.com>
+ <20241030170106.1501763-22-samitolvanen@google.com> <CAK7LNAShVzrE6uhXxZ7HepKhmOJYsZeigq6w19jRN3OH-T_Jyg@mail.gmail.com>
+ <CABCJKueVjP8V-=3Ehi4QvQzg1FZh2unyVMDzSJ_vJ_E5EE+gLg@mail.gmail.com> <CAK7LNARVK1ZpGXZVTAynuo7CDjgB4uT5bQzcGiWseZfaEu7Tvw@mail.gmail.com>
+In-Reply-To: <CAK7LNARVK1ZpGXZVTAynuo7CDjgB4uT5bQzcGiWseZfaEu7Tvw@mail.gmail.com>
+From: Sami Tolvanen <samitolvanen@google.com>
+Date: Mon, 18 Nov 2024 21:58:09 +0000
+Message-ID: <CABCJKufVpx4dsr7A44qA0ydwTEx+3Qy_OMx9Ch6OKa4nzvRj2g@mail.gmail.com>
+Subject: Re: [PATCH v5 01/19] scripts: move genksyms crc32 implementation to a
+ common include
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Matthew Maurer <mmaurer@google.com>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	Petr Pavlu <petr.pavlu@suse.com>, Daniel Gomez <da.gomez@samsung.com>, Neal Gompa <neal@gompa.dev>, 
+	Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>, Miroslav Benes <mbenes@suse.cz>, 
+	Asahi Linux <asahi@lists.linux.dev>, Sedat Dilek <sedat.dilek@gmail.com>, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-modules@vger.kernel.org, rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 18, 2024 at 11:35:19AM -0800, Ian Rogers wrote:
-> On Mon, Nov 18, 2024 at 10:31 AM Namhyung Kim <namhyung@kernel.org> wrote:
+Hi,
+
+On Sat, Nov 16, 2024 at 9:09=E2=80=AFAM Masahiro Yamada <masahiroy@kernel.o=
+rg> wrote:
+>
+> On Thu, Nov 14, 2024 at 2:54=E2=80=AFAM Sami Tolvanen <samitolvanen@googl=
+e.com> wrote:
 > >
-> > On Wed, Nov 13, 2024 at 10:06:13AM -0800, Ian Rogers wrote:
-> > > On Sat, Nov 9, 2024 at 9:04 AM Namhyung Kim <namhyung@kernel.org> wrote:
-> > > >
-> > > > On Sat, Nov 09, 2024 at 08:26:20AM -0800, Ian Rogers wrote:
-> > > > > On Fri, Nov 8, 2024 at 10:45 PM Namhyung Kim <namhyung@kernel.org> wrote:
-> > > > > > On Fri, Nov 08, 2024 at 10:47:45AM -0800, Ian Rogers wrote:
-> > > > > > > Ian Rogers (6):
-> > > > > > >   tool api fs: Correctly encode errno for read/write open failures
-> > > > > > >   perf trace-event: Constify print arguments
-> > > > > > >   perf trace-event: Always build trace-event-info.c
-> > > > > > >   perf evsel: Add/use accessor for tp_format
-> > > > > > >   perf evsel: Allow evsel__newtp without libtraceevent
-> > > > > > >   perf tests: Enable tests disabled due to tracepoint parsing
-> > > > > >
-> > > > > > After applying this series, I'm seeing some test failures.  But I don't
-> > > > > > understand why it affects non-tracepoint events though.
-> > > > > >
-> > > > > >   $ sudo ./perf test -v pipe
-> > > > > >   --- start ---
-> > > > > >   test child forked, pid 3036123
-> > > > > >    1bde35-1bdecc l noploop
-> > > > > >   perf does have symbol 'noploop'
-> > > > > >
-> > > > > >   Record+report pipe test
-> > > > > >   [ perf record: Woken up 1 times to write data ]
-> > > > > >   [ perf record: Captured and wrote 0.210 MB - ]
-> > > > > >   [ perf record: Woken up 2 times to write data ]
-> > > > > >   [ perf record: Captured and wrote 0.517 MB - ]
-> > > > > >   [ perf record: Woken up 2 times to write data ]
-> > > > > >   [ perf record: Captured and wrote 0.516 MB - ]
-> > > > > >   Record+report pipe test [Success]
-> > > > > >
-> > > > > >   Inject -B build-ids test
-> > > > > >   0xa5c [0x17a4]: failed to process type: 80
-> > > > > >   Error:
-> > > > > >   failed to process sample
-> > > > > >   Inject build-ids test [Failed - cannot find noploop function in pipe #1]
-> > > > > >
-> > > > > >   Inject -b build-ids test
-> > > > > >   0xa5c [0x17a4]: failed to process type: 80
-> > > > > >   Error:
-> > > > > >   failed to process sample
-> > > > > >   Inject build-ids test [Failed - cannot find noploop function in pipe #1]
-> > > > > >
-> > > > > >   Inject --buildid-all build-ids test
-> > > > > >   0xa5c [0x17a4]: failed to process type: 80
-> > > > > >   Error:
-> > > > > >   failed to process sample
-> > > > > >   Inject build-ids test [Failed - cannot find noploop function in pipe #1]
-> > > > > >
-> > > > > >   Inject --mmap2-buildid-all build-ids test
-> > > > > >   0xa5c [0x17a4]: failed to process type: 80
-> > > > > >   Error:
-> > > > > >   failed to process sample
-> > > > > >   Inject build-ids test [Failed - cannot find noploop function in pipe #1]
-> > > > > >   ---- end(-1) ----
-> > > > > >    84: perf pipe recording and injection test                          : FAILED!
-> > > > > >
-> > > > > >   $ sudo ./perf test -v Zstd
-> > > > > >   --- start ---
-> > > > > >   test child forked, pid 3036097
-> > > > > >   Collecting compressed record file:
-> > > > > >   500+0 records in
-> > > > > >   500+0 records out
-> > > > > >   256000 bytes (256 kB, 250 KiB) copied, 0.00169127 s, 151 MB/s
-> > > > > >   [ perf record: Woken up 1 times to write data ]
-> > > > > >   [ perf record: Captured and wrote 0.032 MB /tmp/perf.data.KBo, compressed (original 0.004 MB, ratio is 3.324) ]
-> > > > > >   Checking compressed events stats:
-> > > > > >   Couldn't decompress data
-> > > > > >   0x7ca8 [0x4f2]: failed to process type: 81 [Operation not permitted]
-> > > > > >   Error:
-> > > > > >   failed to process sample
-> > > > > >   ---- end(-1) ----
-> > > > > >    86: Zstd perf.data compression/decompression                        : FAILED!
-> > > > > >
-> > > > > > Thanks,
-> > > > > > Namhyung
-> > > > >
-> > > > > I'm not able to reproduce:
-> > > > > ```
-> > > > > $ git log --oneline |head
-> > > > > a59bca6eb0a6 perf test: Add a runs-per-test flag
-> > > > > 0d0c002eb45c perf tests: Enable tests disabled due to tracepoint parsing
-> > > > > 4b8f5c9dfbda perf evsel: Allow evsel__newtp without libtraceevent
-> > > > > 7f57057c7884 perf evsel: Add/use accessor for tp_format
-> > > > > c27d357d2d4c perf trace-event: Always build trace-event-info.c
-> > > > > 20bf7a2cd68a perf trace-event: Constify print arguments
-> > > > > f18b07ee2af1 tool api fs: Correctly encode errno for read/write open failures
-> > > > > ...
-> > > > > $ sudo /tmp/perf/perf test -r 10 Zstd pipe -v
-> > > > > 84: perf pipe recording and injection test                          : Ok
-> > > > > 84: perf pipe recording and injection test                          : Ok
-> > > > > 84: perf pipe recording and injection test                          : Ok
-> > > > > 84: perf pipe recording and injection test                          : Ok
-> > > > > 84: perf pipe recording and injection test                          : Ok
-> > > > > 84: perf pipe recording and injection test                          : Ok
-> > > > > 84: perf pipe recording and injection test                          : Ok
-> > > > > 84: perf pipe recording and injection test                          : Ok
-> > > > > 84: perf pipe recording and injection test                          : Ok
-> > > > > 84: perf pipe recording and injection test                          : Ok
-> > > > > 86: Zstd perf.data compression/decompression                        : Ok
-> > > > > 86: Zstd perf.data compression/decompression                        : Ok
-> > > > > 86: Zstd perf.data compression/decompression                        : Ok
-> > > > > 86: Zstd perf.data compression/decompression                        : Ok
-> > > > > 86: Zstd perf.data compression/decompression                        : Ok
-> > > > > 86: Zstd perf.data compression/decompression                        : Ok
-> > > > > 86: Zstd perf.data compression/decompression                        : Ok
-> > > > > 86: Zstd perf.data compression/decompression                        : Ok
-> > > > > 86: Zstd perf.data compression/decompression                        : Ok
-> > > > > 86: Zstd perf.data compression/decompression                        : Ok
-> > > > > ```
-> > > > > Similarly not as root or if runs-per-test is 100.
-> > > > >
-> > > > > Agreed that the changes are for tracepoints and these tests aren't for
-> > > > > tracepoints, so an interaction wouldn't be expected. If you have a
-> > > > > reliable reproduction perhaps you can bisect it.
-> > > >
-> > > > it says:
-> > > >
-> > > > 9c10de391840a35ab095b65e9a5c4fad0ac52068 is the first bad commit
-> > > > commit 9c10de391840a35ab095b65e9a5c4fad0ac52068 (HEAD)
-> > > > Author: Ian Rogers <irogers@google.com>
-> > > > Date:   Fri Nov 8 10:47:46 2024 -0800
-> > > >
-> > > >     tool api fs: Correctly encode errno for read/write open failures
-> > > >
-> > > >     Switch from returning -1 to -errno so that callers can determine types
-> > > >     of failure.
-> > > >
-> > > >     Signed-off-by: Ian Rogers <irogers@google.com>
-> > > >     Acked-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-> > > >
-> > > >  tools/lib/api/fs/fs.c | 6 +++---
-> > > >  1 file changed, 3 insertions(+), 3 deletions(-)
+> > Hi,
+> >
+> > On Mon, Nov 11, 2024 at 8:06=E2=80=AFPM Masahiro Yamada <masahiroy@kern=
+el.org> wrote:
 > > >
-> > > So I tried to eye-ball/grep all callers to spot assumptions on the
-> > > return value like:
-> > > ```
-> > > err = ...__read_int
-> > > if (err == -1)
-> > > ```
-> > > Didn't spot anything.
+> > > On Thu, Oct 31, 2024 at 2:01=E2=80=AFAM Sami Tolvanen <samitolvanen@g=
+oogle.com> wrote:
+> > > >
+> > > > To avoid duplication between host programs, move the crc32 code to =
+a
+> > > > shared header file.
 > > >
-> > > It seems in the test log the record is failing so I ran this under
-> > > gdb, set breakpoints on the 3 modified functions and then looked up
-> > > the call stack to spot bad return value assumptions. Everything looks
-> > > good.
-> > > I then tried inject and report, the only file read by these functions
-> > > is /proc/sys/kernel/perf_event_paranoid as part of symbol
-> > > initialization (nit, this should probably be read lazily and the
-> > > restriction should really come from the perf.data file, not the
-> > > running system) and those calls look good.
 > > >
-> > > The change is small and not critical for the series. It improves the
-> > > error message when reading the tracepoint id fails. So we could move
-> > > forward with the rest of the series, but that could be annoying for
-> > > tracepoint users.
+> > > Only the motivation to use this long table is to keep compatibility
+> > > between genksyms and gendwarfksyms.
+> > > I do not think this should be exposed to other programs.
 > > >
-> > > If I had a reproducer I'd revert the 1 line change on each function to
-> > > find out which is causing the regression. Once you have that then you
-> > > can binary search to find the bad call by using some global counter
-> > > where the first 'n' calls use the new return value and the later use
-> > > the old value. You can then vary 'n' to binary search and find the bad
-> > > caller.
 > > >
-> > > Is there any chance you can help diagnose this or help me to find the
-> > > reproducer?
+> > > If you avoid the code duplication, you can do
+> > >
+> > > // scripts/gendwarfksyms/crc.c
+> > > #include "../genksyms/crc.c"
 > >
-> > I think this depends on the system configuration.  I've debugged it
-> > failed when it gets cpu topology:
+> > Sure, that sounds reasonable. I'll change this in the next version.
+>
+>
+> BTW, is it necessary to share the same crc function
+> between genksyms and gendwarfksyms?
+>
+> If CONFIG_GENKSYMS and CONFIG_GENDWARFKSYMS
+> were able to produce the same CRC, it would be a good motivation
+> to share the same function.
+> However, as far as I tested, gendwarfksyms generates different CRC values=
+.
+>
+> When a distro migrates to CONFIG_GENDWARFKSYMS,
+> the new kernel cannot load old modules built with CONFIG_GENKSYMS.
+
+No, it's not necessary to use the exact same function, this was just
+to avoid adding more external dependencies.
+
+> So, there is no need to share the old code.
+> Another solution might be to use crc32() provided by zlib, for example.
+> It requires another external library, but this already depends on
+> libdw and libelf.
+
+Makes sense. I'll switch to the zlib implementation in v6.
+
+> > > > Suggested-by: Petr Pavlu <petr.pavlu@suse.com>
+> > > > Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
+> > > > Acked-by: Neal Gompa <neal@gompa.dev>
+> > >
+> > > Does this Ack add any value?
+> > >
+> > > Acked-by is meaningful only when it is given by someone who
+> > > maintains the relevant area or has established a reputation.
+> > >
+> > > $ git grep "Neal Gompa"
+> > > $ git shortlog -n -s | grep "Neal Gompa"
+> > >      2 Neal Gompa
+> > >
+> > > His Ack feels more like "I like it" rather than a qualified endorseme=
+nt.
 > >
-> >   ...
-> >   read int failed: /sys/devices/system/cpu/cpu112/topology/core_id (errno=2)
-> >   read int failed: /sys/devices/system/cpu/cpu112/topology/physical_package_id (errno=2)
-> >   read int failed: /sys/devices/system/cpu/cpu112/topology/die_id (errno=2)
-> >   ...
-> >
-> > Maybe it's because # online CPUs != # possible CPUs.
-> >
-> >   $ cat /sys/devices/system/cpu/online
-> >   0-63
-> >   $ cat /sys/devices/system/cpu/possible
-> >   0-127
-> >
-> > There's a code like cpu__get_socket_id() to use the return value of
-> > sysfs__read_int() directly.  And it saves the value to aggr_cpu_id which
-> > requires exact match like in aggr_cpu_id__equal().
-> 
-> So this is a latent bug. Are you working on the fix or asking me to do
-> it? I'm not sure why we should fail to describe the topology for
-> offline cores, but if this is a kernel restriction we should probably
-> purge those logical CPUs from the topology.
+> > Like Neal explained, an Ack from a potential user of this feature
+> > seemed relevant, but if you don't think it's meaningful, I can
+> > certainly drop it.
+>
+> Tested-by is more suitable if he wants to leave something.
 
-It doesn't have the topology directory for the offline CPUs.
+Ack. Neal, I'll drop the acks from v6, but if you end up testing that
+series, please feel free to add your Tested-by.
 
-  $ ls /sys/devices/system/cpu/cpu112/
-  acpi_cppc  cpufreq  cpuidle  crash_notes  crash_notes_size  driver  firmware_node  hotplug  node0  online  power  subsystem  uevent
-
-  $ ls /sys/devices/system/cpu/cpu112/topology
-  ls: cannot access '/sys/devices/system/cpu/cpu112/topology': No such file or directory
-
-Anyway, I'm not sure if it's really needed for this change.  Maybe you
-can drop the patch 1 from the series for now and tackle it later.
-
-Thanks,
-Namhyung
-
+Sami
 
