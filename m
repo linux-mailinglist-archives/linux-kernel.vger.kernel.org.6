@@ -1,182 +1,100 @@
-Return-Path: <linux-kernel+bounces-412559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 388E39D0A8E
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 09:05:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A6389D0AA1
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 09:13:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D907B21E91
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 08:05:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EADEA1F216B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 08:13:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FAC3153BE4;
-	Mon, 18 Nov 2024 08:05:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1808815442A;
+	Mon, 18 Nov 2024 08:13:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZXpr+HFu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rAZckC15"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8200405FB;
-	Mon, 18 Nov 2024 08:05:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA31518E25
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 08:13:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731917104; cv=none; b=s9IvyJWkwmhsQ7opYLgB4mEzNyz6PZ1e2EvwgE1UGeKoBBPg+o8cxPcKBWWYbHxRudWN4kxPYEECIjREijegekP017sMqQNlMLFkLRpEoGwWjEkHkChVVNhs+3dN60ra8y4RtBW2OKfoSonm1QPVs2l6oizfqN/6aMqFCPQA8NI=
+	t=1731917627; cv=none; b=bWrJAp+fAHd1Pqh2yMGrwGwx8hNMf/V3oD03i/hmHeth/sNldl1l91LP4QQgjIkr2S6n4r3dPY0YVxwE9JyI/QFEXyFMOhVdiAKmAHOQciz78uZQIv4pC3P+eqgVFZNRUj3v7gIHVAod5Fu8DpcEaMCUVWbiQzT1efNvIBsrQYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731917104; c=relaxed/simple;
-	bh=Se1/3EGyEUGoIHskyijwcLj2gMIA+uBgyClSkko/PjY=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=CasQF8muIoqRLyZk6Qc9YmHjCK5dZ2DuKZlA+7VNSjProoaSRcS3ozArnt/bnRsgmcCxOCL6cReyDsn22BLe8fM8jt7R8EsY9rdC7GDukoRnoaK5o/R1YpOI9xNOeKbEDXMhXLPFs1SbBdKGdE7de0k/TYG8IuPZmTQfN2gIA/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZXpr+HFu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21912C4CECC;
-	Mon, 18 Nov 2024 08:05:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731917104;
-	bh=Se1/3EGyEUGoIHskyijwcLj2gMIA+uBgyClSkko/PjY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ZXpr+HFuGZvL/uQqg/vOBP5dEJAbbcCyhKFzlzeKOeqAYepp3DbaoSR24rl6ngFmp
-	 L09wY4N0d0jBQdx6bGWp62FWQY+FvJdi5ZmgHgm8tUNfUOVfpwZSGPWfWrvKZ214ei
-	 DrYNXhRsFYhi7h/m4GuRSAwiFbFTxkZ+ju+ZqrNpaI5twr+NCI8VSQLugMXGo/borC
-	 K+kNmWlJoViCvFtI1G8fzmcl19MfbncnwHbF/qD8t6qC9V4wnIfWVjfBZ0Y67ZQGh0
-	 CwJFti2Wr/HKpMI5E7EgB8Xzx02QPSuR2SVLX2ajpDDivv9XjFkK1T9UXRamO/nZtC
-	 upS17kZl8XSdg==
-Date: Mon, 18 Nov 2024 17:04:58 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Jiri Olsa <jolsa@kernel.org>
-Cc: Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, Song Liu
- <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, John Fastabend
- <john.fastabend@gmail.com>, Hao Luo <haoluo@google.com>, Steven Rostedt
- <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, Alan Maguire
- <alan.maguire@oracle.com>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, Beau Belgrave
- <beaub@linux.microsoft.com>
-Subject: Re: [RFC 00/11] uprobes: Add support to optimize usdt probes on
- x86_64
-Message-Id: <20241118170458.c825bf255c2fb93f2e6a3519@kernel.org>
-In-Reply-To: <20241105133405.2703607-1-jolsa@kernel.org>
-References: <20241105133405.2703607-1-jolsa@kernel.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1731917627; c=relaxed/simple;
+	bh=EjN2FOjlhXfTzPg/EElgB1IbsKczLAtQuB4kZcdGrz8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bVtriDoAmE9zUG8q4jV//Jjd5cKNC/AdG+Di4kZL5NFK1lM2JzU+6CqV+Jy0S3N7Vqc02XQP93CYyQChHcLx0vdrYPMy/VKhJ0jv4OjXwX1gtRNJNYT3TonpNRQVoFv801XI1+//L4B/EdNjVpthi6ElRQN9UEl1dSQwE4AHTzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rAZckC15; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4315baa51d8so24650175e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 00:13:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731917624; x=1732522424; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=PrD3D7iL//Mh4abst76FIfs2+jhPNoFsbOsCfvfo52E=;
+        b=rAZckC15T39AAAHjUkHcKvCW/07531piOOnzYnoRefrds1d6WjTE9jFwCGNR4gq0tm
+         KcPE4pNuA3/CHTDAyeiPD4/i1cZPChtWY6VV1AHINT8chcQuYBpElBuJrUhdhwrhysnJ
+         1X0Ahd5TxXiPJC9sv3x9T8w2b0Un0vyubn/hFOXeRTor4rKqhLrvoCIZkj6vyqwzvoFO
+         vI/eCTB8S7/OQBRM1JOsPGBc9R5ShaINHoASg97LhCP0396VOunqBg8uZd46WuDE8qG+
+         0QeU3mcVkuSMYxFdBLOyPltEdD7UHjocMaSf8Fc8fygJMObIcZ+EZt5ZtAoSQfUsBiyl
+         1Zag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731917624; x=1732522424;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PrD3D7iL//Mh4abst76FIfs2+jhPNoFsbOsCfvfo52E=;
+        b=D/a9T5h5xfOuKVZG8MRCYA7pR27uD8O4j2gdkaWay52iXNKqTftolti7zMN/cgDZ7u
+         ht0wcd8wnSokrue/GwlVUZLWMRnu1tFUakNq6AC0gM8GMX56XCU53SEgn3JMlQDJiMt0
+         rfhOOrAQh5/+5vUzKofWqPtnMBb0oJpdsdISAcJ+aOH7TUQ/z6HEapNee7lpYDLHCm5X
+         gVtzhxVAECZv9YHXg+3634vVhiz7PBWfBVRQSxHZK2mdcS4c2Vwr8W35085EOMfm8gol
+         nD/qgGPzRNaRDBc/EBaoCR2WFPn94kzDpZQrqkhOAVwqH0GFpYWDl2DT+KdLHOoQK7y8
+         2ETw==
+X-Forwarded-Encrypted: i=1; AJvYcCXgjs+1rcyqc9ED3EzuEIlDFoFzOapQQcpnnMvemLZmWXecb7eZlUQYR/hkscS2DR4Cm7uFe6+DXg3Zlmg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwN4+lyJNSG4BIv4KIcdotEnJgGhmBPDEKSGjrwKujLDrmn96hh
+	+ozrcvNjQPWNkMcWQJEbyFCNv+Qs//djMsv2MqApfXJCa1LH2TypJnkUmvwBZmo=
+X-Google-Smtp-Source: AGHT+IGuQUg4zqLcof123OuTET4pS8hUz2MMP7MXmYJJ7qXDFxQQcBUhfeky+bsj5tZDGaDRRwX7bQ==
+X-Received: by 2002:a05:6000:402b:b0:382:383e:84e2 with SMTP id ffacd0b85a97d-382383e87e6mr6160452f8f.46.1731917624022;
+        Mon, 18 Nov 2024 00:13:44 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3823390c818sm6944834f8f.28.2024.11.18.00.13.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Nov 2024 00:13:43 -0800 (PST)
+Date: Mon, 18 Nov 2024 11:13:40 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Kees Cook <kees@kernel.org>
+Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] overflow: improve size_add/mul for 32bit systems
+Message-ID: <f8ed52f5-51e0-4fe4-a1f9-d840979f52a8@stanley.mountain>
+References: <ebdae636-11f3-4f02-a158-f15bbed2847f@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ebdae636-11f3-4f02-a158-f15bbed2847f@stanley.mountain>
 
-Hi Jiri,
-
-On Tue,  5 Nov 2024 14:33:54 +0100
-Jiri Olsa <jolsa@kernel.org> wrote:
-
-> hi,
-> this patchset adds support to optimize usdt probes on top of 5-byte
-> nop instruction.
+On Mon, Nov 18, 2024 at 09:09:28AM +0300, Dan Carpenter wrote:
+> On 32bit systems, if you pass a long long to size_add()/mul() the top
+> 32 bits are truncated away so the function doesn't work as expected.
+> Add a test to prevent this.
 > 
-> The generic approach (optimize all uprobes) is hard due to emulating
-> possible multiple original instructions and its related issues. The
-> usdt case, which stores 5-byte nop seems much easier, so starting
-> with that.
-> 
-> The basic idea is to replace breakpoint exception with syscall which
-> is faster on x86_64. For more details please see changelog of patch 7.
-
-This looks like a great idea!
-
-> 
-> The first benchmark shows about 68% speed up (see below). The benchmark
-> triggers usdt probe in a loop and counts how many of those happened
-> per second.
-
-Hmm, interesting result. I'd like to compare it with user-space event,
-which is also use "write" syscall to write the pre-defined events
-in the ftrace trace buffer.
-
-But if uprobe trampoline can run in the comparable speed, user may
-want to use uprobes because it is based on widely used usdt and
-avoid accessing tracefs from application. (The user event user
-application has to setup their events via tracefs interface)
-
-> 
-> It's still rfc state with some loose ends, but I'd be interested in
-> any feedback about the direction of this.
-
-So does this change the usdt macro? Or it just reuse the usdt so that
-user applications does not need to be recompiled?
-
-Thank you,
-
-> 
-> It's based on tip/perf/core with bpf-next/master merged on top of
-> that together with uprobe session patchset.
-> 
-> thanks,
-> jirka
-> 
-> 
-> current:
->         # ./bench -w2 -d5 -a  trig-usdt
->         Setting up benchmark 'trig-usdt'...
->         Benchmark 'trig-usdt' started.
->         Iter   0 ( 46.982us): hits    4.893M/s (  4.893M/prod), drops    0.000M/s, total operations    4.893M/s
->         Iter   1 ( -5.967us): hits    4.892M/s (  4.892M/prod), drops    0.000M/s, total operations    4.892M/s
->         Iter   2 ( -2.771us): hits    4.899M/s (  4.899M/prod), drops    0.000M/s, total operations    4.899M/s
->         Iter   3 (  1.286us): hits    4.889M/s (  4.889M/prod), drops    0.000M/s, total operations    4.889M/s
->         Iter   4 ( -2.871us): hits    4.881M/s (  4.881M/prod), drops    0.000M/s, total operations    4.881M/s
->         Iter   5 (  1.005us): hits    4.886M/s (  4.886M/prod), drops    0.000M/s, total operations    4.886M/s
->         Iter   6 ( 11.626us): hits    4.906M/s (  4.906M/prod), drops    0.000M/s, total operations    4.906M/s
->         Iter   7 ( -6.638us): hits    4.896M/s (  4.896M/prod), drops    0.000M/s, total operations    4.896M/s
->         Summary: hits    4.893 +- 0.009M/s (  4.893M/prod), drops    0.000 +- 0.000M/s, total operations    4.893 +- 0.009M/s
-> 
-> optimized:
->         # ./bench -w2 -d5 -a  trig-usdt
->         Setting up benchmark 'trig-usdt'...
->         Benchmark 'trig-usdt' started.
->         Iter   0 ( 46.073us): hits    8.258M/s (  8.258M/prod), drops    0.000M/s, total operations    8.258M/s
->         Iter   1 ( -5.752us): hits    8.264M/s (  8.264M/prod), drops    0.000M/s, total operations    8.264M/s
->         Iter   2 ( -1.333us): hits    8.263M/s (  8.263M/prod), drops    0.000M/s, total operations    8.263M/s
->         Iter   3 ( -2.996us): hits    8.265M/s (  8.265M/prod), drops    0.000M/s, total operations    8.265M/s
->         Iter   4 ( -0.620us): hits    8.264M/s (  8.264M/prod), drops    0.000M/s, total operations    8.264M/s
->         Iter   5 ( -2.624us): hits    8.236M/s (  8.236M/prod), drops    0.000M/s, total operations    8.236M/s
->         Iter   6 ( -0.840us): hits    8.232M/s (  8.232M/prod), drops    0.000M/s, total operations    8.232M/s
->         Iter   7 ( -1.783us): hits    8.235M/s (  8.235M/prod), drops    0.000M/s, total operations    8.235M/s
->         Summary: hits    8.249 +- 0.016M/s (  8.249M/prod), drops    0.000 +- 0.000M/s, total operations    8.249 +- 0.016M/s
-> 
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 > ---
-> Jiri Olsa (11):
->       uprobes: Rename arch_uretprobe_trampoline function
->       uprobes: Make copy_from_page global
->       uprobes: Add len argument to uprobe_write_opcode
->       uprobes: Add data argument to uprobe_write_opcode function
->       uprobes: Add mapping for optimized uprobe trampolines
->       uprobes: Add uprobe syscall to speed up uprobe
->       uprobes/x86: Add support to optimize uprobes
->       selftests/bpf: Use 5-byte nop for x86 usdt probes
->       selftests/bpf: Add usdt trigger bench
->       selftests/bpf: Add uprobe/usdt optimized test
->       selftests/bpf: Add hit/attach/detach race optimized uprobe test
-> 
->  arch/x86/entry/syscalls/syscall_64.tbl                    |   1 +
->  arch/x86/include/asm/uprobes.h                            |   7 +++
->  arch/x86/kernel/uprobes.c                                 | 180 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
->  include/linux/syscalls.h                                  |   2 +
->  include/linux/uprobes.h                                   |  25 +++++++++-
->  kernel/events/uprobes.c                                   | 222 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++------
->  kernel/fork.c                                             |   2 +
->  kernel/sys_ni.c                                           |   1 +
->  tools/testing/selftests/bpf/bench.c                       |   2 +
->  tools/testing/selftests/bpf/benchs/bench_trigger.c        |  45 +++++++++++++++++
->  tools/testing/selftests/bpf/prog_tests/uprobe_optimized.c | 252 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
->  tools/testing/selftests/bpf/progs/trigger_bench.c         |  10 +++-
->  tools/testing/selftests/bpf/progs/uprobe_optimized.c      |  29 +++++++++++
->  tools/testing/selftests/bpf/sdt.h                         |   9 +++-
->  14 files changed, 768 insertions(+), 19 deletions(-)
->  create mode 100644 tools/testing/selftests/bpf/prog_tests/uprobe_optimized.c
->  create mode 100644 tools/testing/selftests/bpf/progs/uprobe_optimized.c
 
+Sorry, I thought I had build tested this, but actually I didn't build test it
+enough...  Probably the kbuild bot will complain soon.
 
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+regards,
+dan carpenter
+
 
