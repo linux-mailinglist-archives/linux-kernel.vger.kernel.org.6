@@ -1,131 +1,366 @@
-Return-Path: <linux-kernel+bounces-413064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 738759D12E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 15:24:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AF129D12E6
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 15:24:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1EE2B1F23B5F
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 14:24:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C512284617
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 14:24:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D37B71AA1D9;
-	Mon, 18 Nov 2024 14:22:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 753981A08BC;
+	Mon, 18 Nov 2024 14:22:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=iiitd.ac.in header.i=@iiitd.ac.in header.b="TkFxCrjQ"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LgM9k66L";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="JC+++jkx"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 139A51A265E
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 14:22:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ED22196C67
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 14:22:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731939766; cv=none; b=CUFkhmJAfa8t+yVluHjIfKFDiVsAyXJv5TLzyJMnKm6j/gZkQupwZb/xvN13fxV7b04kALhXgkvpil3w+6aw/CloFJRnDm7tYkb0CWCcW8QMco0pBu/TizXTL7Q8yPf9ntemjqLEQ8bB533ienBDr7Xen3s821OfpDa0jgm7CzQ=
+	t=1731939763; cv=none; b=tW3qXqx8Y3PlmI3t2k3jPl0SOVSwwobf70h/c1drJJn9VDNQp/tFgBE883yfBq1yP5kcwAfE47rx6VxvNehE1VPDMAc0wwsguGdSlhHvksWLpIhBeyO5Gdnaqm+bM7lnmrpV02CuLiwvnpIVIvN1NLzaEqPqOT75ruO4UqsGpXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731939766; c=relaxed/simple;
-	bh=0/JguiZcTPrNz/YSnYa6PH270B4ZDgqsime95IrntPE=;
+	s=arc-20240116; t=1731939763; c=relaxed/simple;
+	bh=3xsdy2uS02/Uz8yRS3Q2Klf1v4N3WcywG0ZjChxUP9k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SRfW2NW/BUSSny3qIO9wthDfMryIdNiEjBmd1ttuNmoqmeVSIiieaDYPH/31glMHgBO/aTuzHZP4u820SqOgPsSrmRBy9Q++xjm5FjCOW0xTujKHH/K7BCTxIehU3ZfoFtMbN8fvIkd1tk/P/4oadUQ7OYwxDsahsL6rbDObTY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iiitd.ac.in; spf=pass smtp.mailfrom=iiitd.ac.in; dkim=pass (1024-bit key) header.d=iiitd.ac.in header.i=@iiitd.ac.in header.b=TkFxCrjQ; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iiitd.ac.in
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iiitd.ac.in
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-720cb6ac25aso3345294b3a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 06:22:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=iiitd.ac.in; s=google; t=1731939762; x=1732544562; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=8U2P1opxMKXLCU8WluCY8oxXYTWyAxW/3p1HSS0hYGc=;
-        b=TkFxCrjQtoLEfTUtL6ah/uLRqqYZ+E8u4J682epsRchlgBYV0M1BSM8earQcMlG0e5
-         mmMdvDdqmOKwfrDZ4lelsCLAHA3UUgNcqBnJqjjrq8aKZtKCNAAl8yErmMyOeaK3z30c
-         c7e5e8H9fEzWDH1itMyZEEqYJWV7ZskYRypFc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731939762; x=1732544562;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8U2P1opxMKXLCU8WluCY8oxXYTWyAxW/3p1HSS0hYGc=;
-        b=pivexvqxo8zmQxjV9bCm57KxTfHZ23uF8cdeTCerBlpCsF9BAAJipkSlICutyuJkse
-         Dg01qaFiz1LsUIz2xyxjbpxXEaQoZ/APH9N9l6ISy8bJIgE5G3t360AisuVIyjjc/VVk
-         OAyqgQh0a7moFopsWOJQxxyHnCows9hz8t1fbX2U9T26fxAQFnpAV/z+E0IaomtWzdKo
-         //HKHb1pJXIp0+tUcVl0i09Yean80K3l0E/l/nNykNQoaECKbbFNDbMvDcHqP5mHsGOF
-         K0Dzjl9hLjzqZvQIH/yp0Ga/1v8lT/KywKg4DI2biZS1F9TPTcPtXmYqt9i/acDWVbZ/
-         Pk3A==
-X-Forwarded-Encrypted: i=1; AJvYcCXbCRjx0uLVeE9exSfB8n4tmoAfjYxBxO4+0D8Ces6IrRLgd7uOt9umMiqN7tSQxAu182Z1ccrb8CwdWso=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSAohqPFylQOcb740VCxEaewt1cQcDu+oaUuYEm/5QArVM2Lou
-	fXmEfgjtwHgUs+eL5Z4PzW4vTeWFjzXquUOzytJLzLiZoXWUMLGn8X79soKBBT0=
-X-Google-Smtp-Source: AGHT+IGgcOjKbKA8w5b7kuKMeOESVvEYFAjmcimvNF36hlrzlrHCp7ZaXrb4iv9nf7aq17KqWEhawA==
-X-Received: by 2002:a05:6a00:1792:b0:71e:4bfb:a1f9 with SMTP id d2e1a72fcca58-72476d58965mr15670768b3a.22.1731939762414;
-        Mon, 18 Nov 2024 06:22:42 -0800 (PST)
-Received: from fedora ([103.3.204.127])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7f8c1dc03fbsm6002289a12.70.2024.11.18.06.22.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Nov 2024 06:22:41 -0800 (PST)
-Date: Mon, 18 Nov 2024 19:52:29 +0530
-From: Manas <manas18244@iiitd.ac.in>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: FUJITA Tomonori <fujita.tomonori@gmail.com>, 
-	Trevor Gross <tmgross@umich.edu>, Andrew Lunn <andrew@lunn.ch>, 
-	Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
-	Alice Ryhl <aliceryhl@google.com>, Shuah Khan <skhan@linuxfoundation.org>, 
-	Anup Sharma <anupnewsmail@gmail.com>, netdev@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] rust: block: simplify Result<()> in
- validate_block_size return
-Message-ID: <oc2pslg33lfkwpjeho2trjltrg6nw2plxizvb7dq3gvlzkme6t@eauzzfnizzqu>
-References: <20241118-simplify-result-v2-0-9d280ada516d@iiitd.ac.in>
- <20241118-simplify-result-v2-1-9d280ada516d@iiitd.ac.in>
- <CANiq72=o56xxJLEo7VL=-wUfKa7jZ75Tg3rRHv+CHg9jaxqRQA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=WDOVhXcrlanSSQ90z98ZyWEunIQWsNXrYSCHYFkZvbOiWzvhulV9RxfaZYlx0CKyyS5VQFVTH0JwEqWGKS4jDYJWnPLLGVsgLp0RGaHk+WvO0DD0L6hzCiw8faBZfskDzcsOhzvkUUB9b3+wKjdMs+Sbfw8H1gOaPcWYKPTJu2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LgM9k66L; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=JC+++jkx; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 18 Nov 2024 15:22:37 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1731939759;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gu4CWMX3V/82ON7Ch4380CqxNl3Nb1JT34Ac7zMXwLY=;
+	b=LgM9k66L2EQeONBvbX5GnPfY2cni15inUqScSqd0wdhYU0F46h6KnToW+RYoOWC+sFsyLm
+	6Lt6wAS+xm0PiUoTBg7T72o/rcw5nfZ/yn9+gSy3mWNmiI0POgEpzy+7TYL10Fvaaw6bSw
+	XNKFlaLaXxcPS8z8pBft3H3uv4WIJtiUp0LJMdkP2iLX3QLrzffxSEhRR9HD2W7Iw3K9Iv
+	lT7/WcN65PRk+b9QAywPmW7KN5MIthnho2+y0i10THcT2XPcZDt/LFYi6Ti3SQ9ZV3qPpQ
+	ffmo2jtVYoXbt7XdwsEI+bBEfIwFR3vpoEurjcmtNvJvQeb+JKuH/eXEfJecPQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1731939759;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gu4CWMX3V/82ON7Ch4380CqxNl3Nb1JT34Ac7zMXwLY=;
+	b=JC+++jkxrboqECgjjfCMXa0U2CZDVBf2f+w5SBzR4CirvENhGaUSpBT0p8ZYZgnGdJhX5R
+	kFT5ZygXSpKHwpBA==
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+To: Alessandro Carminati <acarmina@redhat.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
+	Clark Williams <clrkwllms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev, 
+	Alessandro Carminati <alessandro.carminati@gmail.com>, Juri Lelli <juri.lelli@redhat.com>, 
+	Gabriele Paoloni <gpaoloni@redhat.com>
+Subject: Re: [RFC] mm/kmemleak: Fix sleeping function called from invalid
+ context at print message
+Message-ID: <20241118151351-5a465d40-b8d0-45e4-bf9b-6d3add8ce98b@linutronix.de>
+References: <20241115145410.114376-1-acarmina@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANiq72=o56xxJLEo7VL=-wUfKa7jZ75Tg3rRHv+CHg9jaxqRQA@mail.gmail.com>
+In-Reply-To: <20241115145410.114376-1-acarmina@redhat.com>
 
-On 18.11.2024 15:08, Miguel Ojeda wrote:
->On Mon, Nov 18, 2024 at 2:12 PM Manas via B4 Relay
-><devnull+manas18244.iiitd.ac.in@kernel.org> wrote:
->>
->> `Result` is used in place of `Result<()>` because the default type
->> parameters are unit `()` and `Error` types, which are automatically
->> inferred. This patch keeps the usage consistent throughout codebase.
+On Fri, Nov 15, 2024 at 02:54:10PM +0000, Alessandro Carminati wrote:
+> Address a bug in the kernel that triggers a "sleeping function called from
+> invalid context" warning when /sys/kernel/debug/kmemleak is printed under
+> specific conditions:
+> - CONFIG_PREEMPT_RT=y
+> - Set SELinux as the LSM for the system
+> - Set kptr_restrict to 1
+> - kmemleak buffer contains at least one item
+> Ensure the kmemleak buffer contains at least one item
+> Commit 8c96f1bc6fc49c724c4cdd22d3e99260263b7384 ("mm/kmemleak: turn
+> kmemleak_lock and object->lock to raw_spinlock_t") introduced a change
+> where kmemleak_seq_show is executed in atomic context within the RT kernel.
+> However, the SELinux capability check in this function flow still relies on
+> regular spinlocks, leading to potential race conditions that trigger an
+> error when printing the kmemleak backtrace.
+> Move the backtrace printing out of the critical section. Use a stack
+> variable to store the backtrace pointers, avoiding spinlocks in the atomic
+> context.
 >
->The tags you had in v1 (Link, Suggested-by) seem to have been removed.
->
->Nit: the usual style is to use the imperative tense when describing
->the change that the patch performs, although that is not a hard rule,
->e.g. you could say "Thus keep the usage consistent throughout the
->codebase." in the last sentence.
->
-Will do.
+> Implement delta encoding to minimize the stack memory footprint,
+> addressing the potentially large memory demands for storing these pointers
+> on 64-bit systems.
 
->> Signed-off-by: Manas <manas18244@iiitd.ac.in>
->
->Same comment as in v1 about the "known identity".
->
-Actually, "Manas" is my __official__ name.
+The stacktrace is already stored in the stackdepot.
+Shouldn't it be possible to take a reference to the stackdepot entry
+inside the critical section and then use that reference outside of the
+critical section for printing?
 
->(The notes above apply to the other patches too).
->
->The change itself looks fine to me of course, so with those fixed,
->please feel free to add in your next version:
->
->Reviewed-by: Miguel Ojeda <ojeda@kernel.org>
->
-Adding tags in v3.
-
--- 
-Manas
+> Signed-off-by: Alessandro Carminati <acarmina@redhat.com>
+> ---
+> ```
+> [  159.247069] BUG: sleeping function called from invalid context at kernel/locking/spinlock_rt.c:48
+> [  159.247193] in_atomic(): 1, irqs_disabled(): 1, non_block: 0, pid: 136, name: cat
+> [  159.247241] preempt_count: 1, expected: 0
+> [  159.247277] RCU nest depth: 2, expected: 2
+> [  159.247388] 6 locks held by cat/136:
+> [  159.247438]  #0: ffff32e64bcbf950 (&p->lock){+.+.}-{3:3}, at: seq_read_iter+0xb8/0xe30
+> [  159.248835]  #1: ffffafe6aaa9dea0 (scan_mutex){+.+.}-{3:3}, at: kmemleak_seq_start+0x34/0x128
+> [  159.249053]  #3: ffff32e6546b1cd0 (&object->lock){....}-{2:2}, at: kmemleak_seq_show+0x3c/0x1e0
+> [  159.249127]  #4: ffffafe6aa8d8560 (rcu_read_lock){....}-{1:2}, at: has_ns_capability_noaudit+0x8/0x1b0
+> [  159.249205]  #5: ffffafe6aabbc0f8 (notif_lock){+.+.}-{2:2}, at: avc_compute_av+0xc4/0x3d0
+> [  159.249364] irq event stamp: 136660
+> [  159.249407] hardirqs last  enabled at (136659): [<ffffafe6a80fd7a0>] _raw_spin_unlock_irqrestore+0xa8/0xd8
+> [  159.249465] hardirqs last disabled at (136660): [<ffffafe6a80fd85c>] _raw_spin_lock_irqsave+0x8c/0xb0
+> [  159.249518] softirqs last  enabled at (0): [<ffffafe6a5d50b28>] copy_process+0x11d8/0x3df8
+> [  159.249571] softirqs last disabled at (0): [<0000000000000000>] 0x0
+> [  159.249970] Preemption disabled at:
+> [  159.249988] [<ffffafe6a6598a4c>] kmemleak_seq_show+0x3c/0x1e0
+> [  159.250609] CPU: 1 UID: 0 PID: 136 Comm: cat Tainted: G            E      6.11.0-rt7+ #34
+> [  159.250797] Tainted: [E]=UNSIGNED_MODULE
+> [  159.250822] Hardware name: linux,dummy-virt (DT)
+> [  159.251050] Call trace:
+> [  159.251079]  dump_backtrace+0xa0/0x128
+> [  159.251132]  show_stack+0x1c/0x30
+> [  159.251156]  dump_stack_lvl+0xe8/0x198
+> [  159.251180]  dump_stack+0x18/0x20
+> [  159.251227]  rt_spin_lock+0x8c/0x1a8
+> [  159.251273]  avc_perm_nonode+0xa0/0x150
+> [  159.251316]  cred_has_capability.isra.0+0x118/0x218
+> [  159.251340]  selinux_capable+0x50/0x80
+> [  159.251363]  security_capable+0x7c/0xd0
+> [  159.251388]  has_ns_capability_noaudit+0x94/0x1b0
+> [  159.251412]  has_capability_noaudit+0x20/0x30
+> [  159.251437]  restricted_pointer+0x21c/0x4b0
+> [  159.251461]  pointer+0x298/0x760
+> [  159.251482]  vsnprintf+0x330/0xf70
+> [  159.251504]  seq_printf+0x178/0x218
+> [  159.251526]  print_unreferenced+0x1a4/0x2d0
+> [  159.251551]  kmemleak_seq_show+0xd0/0x1e0
+> [  159.251576]  seq_read_iter+0x354/0xe30
+> [  159.251599]  seq_read+0x250/0x378
+> [  159.251622]  full_proxy_read+0xd8/0x148
+> [  159.251649]  vfs_read+0x190/0x918
+> [  159.251672]  ksys_read+0xf0/0x1e0
+> [  159.251693]  __arm64_sys_read+0x70/0xa8
+> [  159.251716]  invoke_syscall.constprop.0+0xd4/0x1d8
+> [  159.251767]  el0_svc+0x50/0x158
+> [  159.251813]  el0t_64_sync+0x17c/0x180
+> ```
+> I have considered three potential approaches to address this matter:
+> 
+> 1. Remove Raw Pointer Printing
+> The simplest solution is to eliminate raw pointer printing from the report.
+> This approach involves minimal changes to the kernel code and is 
+> straightforward to implement.
+> 
+> While I am confident that omitting the raw address would result in
+> negligible information loss in most scenarios, some may perceive it as a
+> feature regression. Below is an example of the modification:
+> ```
+> - warn_or_seq_printf(seq, "    [<%pK>] %pS\n", ptr, ptr);
+> + warn_or_seq_printf(seq, "    %pS\n", ptr);
+> ```
+> This change may be acceptable since the %pS format outputs a hex string
+> if no kallsyms are available. However, it modifies the original behavior,
+> and in the kallsyms scenario, the raw pointer would no longer be present.
+> 
+> 2. Modify SELinux to Avoid Sleeping Spinlocks
+> Another option is to alter the SELinux capability check to use
+> non-sleeping spinlocks.
+> However, this approach is not advisable. The SELinux capability check is
+> extensively used across the kernel and is far more critical than the
+> kmemleak reporting feature.
+> Adapting it to address this rare issue could unnecessarily introduce
+> latency across the entire kernel, particularly as kmemleak is rarely used
+> in production environments.
+> 
+> 3. Move Stack Trace Printing Outside the Atomic Section
+> The third and preferred approach is to move the stack trace printing
+> outside the atomic section. This would preserve the current functionality
+> without modifying SELinux.
+> 
+> The primary challenge here lies in making the backtrace pointers available
+> after exiting the critical section, as they are captured within it.
+> To address this, the backtrace pointers can be copied to a safe location,
+> enabling access once the raw_spinlock is released.
+> 
+> Options for Creating a Safe Location for Backtrace Pointers
+> Several strategies have been considered for storing the backtrace pointers
+> safely:
+> * Dynamic Allocation
+>     * Allocating memory with kmalloc cannot be done within a raw_spinlock
+>       area. Using GFP_ATOMIC is also infeasible.
+>     * Since the code that prints the message is inside a loop, executed
+>       potentially multiple times, it is only within the raw_spinlock 
+>       section that we can determine whether allocation is needed.
+>     * Allocating and deallocating memory on every loop iteration would be
+>       prohibitively expensive.
+> * Global Data Section
+>     * In this strategy, the message would be printed after exiting the
+>       raw_spinlock protected section.
+>     * However, this approach risks data corruption if another occurrence
+>       of the issue arises before the first operation completes.
+> * Per-CPU Data
+>     * The same concerns as with global data apply here. While data 
+>       corruption is less likely, it is not impossible.
+> * Stack
+>     * Using the stack is the best option since each thread has its own 
+>       stack, ensuring data isolation. However, the size of the data poses
+>       a challenge.
+>     * Exporting a full stack trace pointer list requires considerable space.
+>       A 32-level stack trace in a 64-bit system would require 256 bytes, 
+>       which is contrary to best practices for stack size management.
+> 
+> To mitigate this, I propose using delta encoding to store the addresses.
+> This method reduces the size of each address from 8 bytes to 4 bytes on
+> 64-bit systems. While this introduces some complexity, it significantly
+> reduces memory usage and allows us to preserve the kmemleak reports in their
+> current form.
+>  mm/kmemleak.c | 78 ++++++++++++++++++++++++++++++++++++++++++++++-----
+>  1 file changed, 71 insertions(+), 7 deletions(-)
+> 
+> diff --git a/mm/kmemleak.c b/mm/kmemleak.c
+> index 0400f5e8ac60..fc5869e09280 100644
+> --- a/mm/kmemleak.c
+> +++ b/mm/kmemleak.c
+> @@ -274,6 +274,44 @@ static void kmemleak_disable(void);
+>  		pr_warn(fmt, ##__VA_ARGS__);		\
+>  } while (0)
+>  
+> +#define PTR_STORAGE_OP_OK	-1
+> +#define PTR_STORAGE_OP_FAIL	0
+> +#define PTR_STORAGE_CAPACITY	32
+> +
+> +struct ptr_storage {
+> +	unsigned long	base;
+> +	u32		data[PTR_STORAGE_CAPACITY];
+> +	int		nr_entries;
+> +};
+> +
+> +static int ptr_storage_insert(unsigned long p, struct ptr_storage *s)
+> +{
+> +	unsigned long diff_data;
+> +
+> +	if (s->nr_entries != 0) {
+> +		diff_data = s->base - p;
+> +		if (s->nr_entries < PTR_STORAGE_CAPACITY) {
+> +			s->data[((s->nr_entries - 1))] = diff_data & 0xffffffff;
+> +			s->nr_entries++;
+> +			return PTR_STORAGE_OP_OK;
+> +		}
+> +		return PTR_STORAGE_OP_FAIL;
+> +	}
+> +	s->base = p;
+> +	s->nr_entries++;
+> +	return PTR_STORAGE_OP_OK;
+> +}
+> +
+> +static void *ptr_storage_get(struct ptr_storage *s, int item_no)
+> +{
+> +	if (item_no < s->nr_entries && item_no > 0)
+> +		return (void *)s->base - (s32)s->data[(item_no - 1)];
+> +
+> +	if (item_no == 0)
+> +		return (void *)s->base;
+> +	return NULL;
+> +}
+> +
+>  static void warn_or_seq_hex_dump(struct seq_file *seq, int prefix_type,
+>  				 int rowsize, int groupsize, const void *buf,
+>  				 size_t len, bool ascii)
+> @@ -357,11 +395,13 @@ static bool unreferenced_object(struct kmemleak_object *object)
+>   * print_unreferenced function must be called with the object->lock held.
+>   */
+>  static void print_unreferenced(struct seq_file *seq,
+> -			       struct kmemleak_object *object)
+> +			       struct kmemleak_object *object,
+> +			       struct ptr_storage *s)
+>  {
+>  	int i;
+>  	unsigned long *entries;
+>  	unsigned int nr_entries;
+> +	unsigned long tmp;
+>  
+>  	nr_entries = stack_depot_fetch(object->trace_handle, &entries);
+>  	warn_or_seq_printf(seq, "unreferenced object 0x%08lx (size %zu):\n",
+> @@ -372,8 +412,8 @@ static void print_unreferenced(struct seq_file *seq,
+>  	warn_or_seq_printf(seq, "  backtrace (crc %x):\n", object->checksum);
+>  
+>  	for (i = 0; i < nr_entries; i++) {
+> -		void *ptr = (void *)entries[i];
+> -		warn_or_seq_printf(seq, "    [<%pK>] %pS\n", ptr, ptr);
+> +		tmp = (unsigned long)entries[i];
+> +		ptr_storage_insert(tmp, s);
+>  	}
+>  }
+>  
+> @@ -1625,6 +1665,10 @@ static void kmemleak_scan(void)
+>  	struct zone *zone;
+>  	int __maybe_unused i;
+>  	int new_leaks = 0;
+> +	struct ptr_storage s = {0};
+> +	bool do_print = false;
+> +	void *tmp;
+> +	int inx;
+>  
+>  	jiffies_last_scan = jiffies;
+>  
+> @@ -1783,12 +1827,20 @@ static void kmemleak_scan(void)
+>  		    !(object->flags & OBJECT_REPORTED)) {
+>  			object->flags |= OBJECT_REPORTED;
+>  
+> -			if (kmemleak_verbose)
+> -				print_unreferenced(NULL, object);
+> +			if (kmemleak_verbose) {
+> +				print_unreferenced(NULL, object, &s);
+> +				do_print = true;
+> +			}
+>  
+>  			new_leaks++;
+>  		}
+>  		raw_spin_unlock_irq(&object->lock);
+> +		if (kmemleak_verbose && do_print) {
+> +			for (inx = 0; inx < s.nr_entries; inx++) {
+> +				tmp = ptr_storage_get(&s, i);
+> +				warn_or_seq_printf(NULL, "    [<%pK>] %pS\n", tmp, tmp);
+> +			}
+> +		}
+>  	}
+>  	rcu_read_unlock();
+>  
+> @@ -1939,11 +1991,23 @@ static int kmemleak_seq_show(struct seq_file *seq, void *v)
+>  {
+>  	struct kmemleak_object *object = v;
+>  	unsigned long flags;
+> +	struct ptr_storage s = {0};
+> +	void *tmp;
+> +	int i;
+> +	bool do_print = false;
+>  
+>  	raw_spin_lock_irqsave(&object->lock, flags);
+> -	if ((object->flags & OBJECT_REPORTED) && unreferenced_object(object))
+> -		print_unreferenced(seq, object);
+> +	if ((object->flags & OBJECT_REPORTED) && unreferenced_object(object)) {
+> +		print_unreferenced(seq, object, &s);
+> +		do_print = true;
+> +	}
+>  	raw_spin_unlock_irqrestore(&object->lock, flags);
+> +	if (do_print) {
+> +		for (i = 0; i < s.nr_entries; i++) {
+> +			tmp = ptr_storage_get(&s, i);
+> +			warn_or_seq_printf(seq, "    [<%pK>] %pS\n", tmp, tmp);
+> +		}
+> +	}
+>  	return 0;
+>  }
+>  
+> -- 
+> 2.34.1
+> 
 
