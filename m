@@ -1,135 +1,165 @@
-Return-Path: <linux-kernel+bounces-412687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A266F9D0DC5
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:08:17 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61B2D9D0DC6
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:08:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 595E01F20F77
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 10:08:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9684B25EEC
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 10:08:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06F4A192D7F;
-	Mon, 18 Nov 2024 10:08:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC8C9192B6F;
+	Mon, 18 Nov 2024 10:08:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vJTMPvG2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hsLECLzJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56965149E0E;
-	Mon, 18 Nov 2024 10:08:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26252149E0E
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 10:08:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731924487; cv=none; b=gvbYVbsWcSzjtJqECTYLZBOnCgT9ulBpZcwPuX8ffbSWMl10kPsdR2zwwzcQBHqMhunOJOxDVV8xHpSFLVitRF27qqepW/8CfDU+mMlRcLSwCneoAinu8KuItUpGwn1nAXCbuFUMPStEMlFODXW+uirhgW++iDbL58aeaKZKTRI=
+	t=1731924510; cv=none; b=T96wSc5vcvpCo6EQMSxs6DlOEmA0NBKh612SGqNCdgoluA1PXiz0JRRl9srhYiPIQpZONKofb5P4WLKV+gkiL7zgs4R/HSOMTsZ85igDq3u6ot8XUBEWMEc0f8FwBb9fNmSgQwAFGN9Nj9KSajsUPptVTFgfK7v3MJJGSAil0Lk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731924487; c=relaxed/simple;
-	bh=lxh0gMMp9eGAgGhRMnuFyMkB0OFqF6nvxw+gL9xR83I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=V4I3pMMqMV8H1ts/eFSrT/vhyq1vF6hmcsRwAc0qbk2cOTsfVUh4fQkjZUiKfstqt1XIdF8Op/l5rMG1grZr4HbZ3onxtj/b8v21x5tqNT4QALZ3Ai6JLQoGk3/F16yLWuHF97Imacm78wqFtgKGwhQN211abN+EICxa6a2zqrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vJTMPvG2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4D9DC4CECC;
-	Mon, 18 Nov 2024 10:08:06 +0000 (UTC)
+	s=arc-20240116; t=1731924510; c=relaxed/simple;
+	bh=ElbV7+y46xOwExqz+QF3XktAt+Sx1IHP9XxevAPamFU=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=VQWJCvnhPoEUjcuYuv7658L+56K3UYsOvweCEYnFa9R/C2E0pcb51+d/dxUQUDE29PMGu8f5O5y1airHI/ni84MDAItsguAOK6NziASA2Ze7PfdwUiD/L5RrnlZhgJRUT7V8LAnZgmnXz8jZEUn2iROeBTn+v5BvCQhG9ysF2qc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hsLECLzJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 731D2C4CED6;
+	Mon, 18 Nov 2024 10:08:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731924486;
-	bh=lxh0gMMp9eGAgGhRMnuFyMkB0OFqF6nvxw+gL9xR83I=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=vJTMPvG2Jr/Qt1Jl+m7KdLdFjz3CwKt6a+9BfThNPAPS4hYpBPpsKtqhoaZn7cYbt
-	 Y2yR3COBYUhZ/7iyw4Xmd6Iu1VDKNv/BHyLEnV5sz4i1V4zo6VD/JkAaDMd4iPkc66
-	 LlrPHS8q6CLbFWpiXoOoUB2H7oNwdMTpoSzqcRoNrpUpJewMvHpenDhe5LRcwN0DmW
-	 DyR+is8/eUBwXEml6JwSAIbDa6kNvt/ZJgS7a1R8I2SgE79UHpUDmnYjcgjgeRMPyp
-	 1CVgi/A4Za+I7UU+C8V7k9l0VBt9xBqG617Q8f1o6X09Qv7f1IaAeNQIQdlD5CjVaK
-	 C49Du0fbQKgoQ==
-Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-3e60d3adecbso912469b6e.2;
-        Mon, 18 Nov 2024 02:08:06 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUhPsdB+kuzTNb4k7P2px2AxlnARKNfxJ2n3XfuR14a/Iy8r0xICcoroDp0jX5ruaZPUtojR8y7zXY=@vger.kernel.org, AJvYcCUyHkzlCICsaMqohnvp2MD1jc6BQ/SSVgA4AizhfF1TfUabpyV+ZP68KMEdbVCqGDov1bGlfH1EFsNi@vger.kernel.org, AJvYcCXeAajuEMLq1toXiiXWKbmTxVoxZkulbIrYg0GoCKvSLTrlifUskKz6jla18fnpolj9F7gqlb2KEsm9Q5OO@vger.kernel.org
-X-Gm-Message-State: AOJu0YzrNBmjo9UlnjDd2nwWms0nsIWWuGoz2gzzVYUtTk3zXc3BpFSM
-	ivl/G9oZJ4PrwpIo4QsE0NOYbFcMKvJcVUk/tlR0nrQA3oXpvYBDVzJFAKVSd5v0eq1joknF4Gi
-	7hXYqK++bLPX9eUnMYfiQuP2YPSQ=
-X-Google-Smtp-Source: AGHT+IFxZkoTn6Npfb/jiXNak79sProbz3bDPP5Z1MLqEVyrzD84TNhh1EJIvv5murV5tXAfRdtUHkiY94kGO/q5xLg=
-X-Received: by 2002:a05:6808:1404:b0:3e7:5af4:f8e7 with SMTP id
- 5614622812f47-3e7bc7a908amr9718034b6e.1.1731924486130; Mon, 18 Nov 2024
- 02:08:06 -0800 (PST)
+	s=k20201202; t=1731924509;
+	bh=ElbV7+y46xOwExqz+QF3XktAt+Sx1IHP9XxevAPamFU=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=hsLECLzJWeIvPpsAAHBOOIrZ/skFjRU9YqYuQPERDT9sVHEH4Uz28A+QOOn8R10t5
+	 btkC9J4Op652G/F6H3Gz9T2g6OcSwA1YyxhSQ7kVVNrq5OMN+Bm+Lkd4psL4eKMCT8
+	 jp3PjFpzVUu84uOdbJDicysdDAU33IY9hpsZUp6Y9SscWS6UWEZS9cRTCB/V7TNnri
+	 AO7pH4eztBpR6Brw9opORCgv2sGBdsySleTmctnZQub2hNh23g/gdEOY3Io8129SZg
+	 UVtU7JeXwMfMBmM6O4FaRylTQ92z277I0GkDRRnAJsSQ20HgaX7NzzTljvRPnBuozp
+	 +8MNrkTuC/yrQ==
+Message-ID: <4dfbb8ba-f141-42d4-aedb-c6d98e8c930a@kernel.org>
+Date: Mon, 18 Nov 2024 18:08:26 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <2803b89021f991662b000f50e45dbaebdcca438a.1724729626.git.len.brown@intel.com>
- <CAJZ5v0jcOUoN6gDDFkufu8xWF-BHXaSKnXqraHsTkq8JanJXuQ@mail.gmail.com>
- <CAJvTdKkucaRVDZm6EVeUxwyrQexyuYd7ECUBSkpP0nC9PwzspA@mail.gmail.com>
- <CAJZ5v0jvYitb7DLyLkqTRv0TT=6yBHDvEvb8tJLzAOVKa3hqnQ@mail.gmail.com>
- <CAJZ5v0gxVqrASiuJq=UX9jyZsG=XvriFn2=7CPmG6-1sKbmPEQ@mail.gmail.com>
- <CAJvTdK=-ETniiwzwLYH14+TeU0kA49gvTnqyRxH7-Hc6tzTBUw@mail.gmail.com>
- <CAJvTdKmpfs_nh4J0R8T=1P9WaAJ-nJ+mKj=rT3tqMpmvpUTisA@mail.gmail.com>
- <87frqoig98.fsf@somnus> <CAJZ5v0gTfhTQ4AMZ+ukuJZEG=RRo-wbPsf7NPbWA0snDeA5ivQ@mail.gmail.com>
- <878qwf9w84.fsf@somnus> <CAJvTdKmbwtrUmCAJxXb7UVJuVAyMLec2AF--AHbiy+YNhOg5-Q@mail.gmail.com>
- <CAJZ5v0gE07+Nin5Weji20M-xOmjyWrixQU5PUnzZt=YWeH+-YA@mail.gmail.com>
- <CAJvTdKm+w_VZ9TQ5bw6=2G4N7CR9xn2qLYAb+p96jC66BXFFug@mail.gmail.com>
- <CAJZ5v0gmtRAQtdi6fdUQDfLv7sKyukb3aXwsdsdtZvSH6QFRnw@mail.gmail.com> <CAJvTdKmHGJZ8kkoNc2CefW_j5oa-SB4eCqghF-tuab39XyqNUA@mail.gmail.com>
-In-Reply-To: <CAJvTdKmHGJZ8kkoNc2CefW_j5oa-SB4eCqghF-tuab39XyqNUA@mail.gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 18 Nov 2024 11:07:51 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0ht7qZ_Da63c=RNvRovD=HYtT9A8S+-ng7qiKm3McdwEQ@mail.gmail.com>
-Message-ID: <CAJZ5v0ht7qZ_Da63c=RNvRovD=HYtT9A8S+-ng7qiKm3McdwEQ@mail.gmail.com>
-Subject: Re: [PATCH] ACPI: Remove msleep() bloat from acpi_os_sleep()
-To: Len Brown <lenb@kernel.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Anna-Maria Behnsen <anna-maria@linutronix.de>, 
-	Thomas Gleixner <tglx@linutronix.de>, linux-acpi@vger.kernel.org, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Frederic Weisbecker <frederic@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Jonathan Corbet <corbet@lwn.net>, 
-	Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Cc: Chao Yu <chao@kernel.org>, Chunhai Guo <guochunhai@vivo.com>,
+ LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 1/3] erofs: get rid of erofs_{find,insert}_workgroup
+To: Gao Xiang <hsiangkao@linux.alibaba.com>, linux-erofs@lists.ozlabs.org
+References: <20241021035323.3280682-1-hsiangkao@linux.alibaba.com>
+ <36d1653d-249a-47b0-a87c-1216ed5bf1ca@kernel.org>
+ <bda19625-e43e-4ebe-82f5-dad860782e6d@linux.alibaba.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <bda19625-e43e-4ebe-82f5-dad860782e6d@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, Nov 15, 2024 at 11:05=E2=80=AFPM Len Brown <lenb@kernel.org> wrote:
->
-> > Performance lower than the possible maximum doesn't necessarily count a=
-s "bad".
->
-> System resume slower than 1 second will fail multiple product acceptance =
-tests.
->
-> That isn't good, it is bad :-)
->
-> > > Re: if long sleeps then use msleep()
-> > >
-> > > ... because a jiffy based timer effectively forces coalescing, and is
-> > > the lowest overhead.
-> > >
-> > > The problem with this logic is, as you mention, coalescing is a
-> > > function of the distribution of timer expirations over time,it is not
-> > > a function of the duration of those timers.
-> >
-> > I just think that high precision is not necessary for long timeouts.
-> >
-> > I also don't think that ASL programmers expect high precision in those =
-cases.
->
-> Precision isn't the question.
-> The benefit of additional delay is the question.
->
-> ie. if an ASL programmer asks for Sleep(100), they expect it to take
-> no less than 100ms.
->
-> msleep(100) takes 106ms -- effectively always.
+On 2024/11/11 10:12, Gao Xiang wrote:
+> Hi Chao,
+> 
+> On 2024/11/7 11:09, Chao Yu wrote:
+>> On 2024/10/21 11:53, Gao Xiang wrote:
+>>> Just fold them into the only two callers since
+>>> they are simple enough.
+>>>
+>>> Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+>>> ---
+>>> v1: https://lore.kernel.org/r/20241017115705.877515-1-hsiangkao@linux.alibaba.com
+>>> change since v1:
+>>>   - !grp case should be handled properly mentioned by Chunhai;
+>>>
+>>>   fs/erofs/internal.h |  5 +----
+>>>   fs/erofs/zdata.c    | 38 +++++++++++++++++++++++++---------
+>>>   fs/erofs/zutil.c    | 50 +--------------------------------------------
+>>>   3 files changed, 30 insertions(+), 63 deletions(-)
+>>>
+>>> diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
+>>> index 4efd578d7c62..8081ee43cd83 100644
+>>> --- a/fs/erofs/internal.h
+>>> +++ b/fs/erofs/internal.h
+>>> @@ -457,10 +457,7 @@ void erofs_release_pages(struct page **pagepool);
+>>>   #ifdef CONFIG_EROFS_FS_ZIP
+>>>   void erofs_workgroup_put(struct erofs_workgroup *grp);
+>>> -struct erofs_workgroup *erofs_find_workgroup(struct super_block *sb,
+>>> -                         pgoff_t index);
+>>> -struct erofs_workgroup *erofs_insert_workgroup(struct super_block *sb,
+>>> -                           struct erofs_workgroup *grp);
+>>> +bool erofs_workgroup_get(struct erofs_workgroup *grp);
+>>>   void erofs_workgroup_free_rcu(struct erofs_workgroup *grp);
+>>>   void erofs_shrinker_register(struct super_block *sb);
+>>>   void erofs_shrinker_unregister(struct super_block *sb);
+>>> diff --git a/fs/erofs/zdata.c b/fs/erofs/zdata.c
+>>> index a569ff9dfd04..bb1b73d99d07 100644
+>>> --- a/fs/erofs/zdata.c
+>>> +++ b/fs/erofs/zdata.c
+>>> @@ -714,9 +714,10 @@ static int z_erofs_register_pcluster(struct z_erofs_decompress_frontend *fe)
+>>>   {
+>>>       struct erofs_map_blocks *map = &fe->map;
+>>>       struct super_block *sb = fe->inode->i_sb;
+>>> +    struct erofs_sb_info *sbi = EROFS_SB(sb);
+>>>       bool ztailpacking = map->m_flags & EROFS_MAP_META;
+>>>       struct z_erofs_pcluster *pcl;
+>>> -    struct erofs_workgroup *grp;
+>>> +    struct erofs_workgroup *grp, *pre;
+>>>       int err;
+>>>       if (!(map->m_flags & EROFS_MAP_ENCODED) ||
+>>> @@ -752,15 +753,23 @@ static int z_erofs_register_pcluster(struct z_erofs_decompress_frontend *fe)
+>>>           pcl->obj.index = 0;    /* which indicates ztailpacking */
+>>>       } else {
+>>>           pcl->obj.index = erofs_blknr(sb, map->m_pa);
+>>> -
+>>> -        grp = erofs_insert_workgroup(fe->inode->i_sb, &pcl->obj);
+>>> -        if (IS_ERR(grp)) {
+>>> -            err = PTR_ERR(grp);
+>>> -            goto err_out;
+>>> +        while (1) {
+>>> +            xa_lock(&sbi->managed_pslots);
+>>> +            pre = __xa_cmpxchg(&sbi->managed_pslots, grp->index,
+>>> +                       NULL, grp, GFP_KERNEL);
+>>> +            if (!pre || xa_is_err(pre) || erofs_workgroup_get(pre)) {
+>>> +                xa_unlock(&sbi->managed_pslots);
+>>> +                break;
+>>> +            }
+>>> +            /* try to legitimize the current in-tree one */
+>>> +            xa_unlock(&sbi->managed_pslots);
+>>> +            cond_resched();
+>>>           }
+>>> -
+>>> -        if (grp != &pcl->obj) {
+>>
+>> Do we need to keep this logic?
+> 
+> Thanks for the review.  I think
+> 
+>          if (grp != &pcl->obj)
+> 
+> equals to (pre && erofs_workgroup_get(pre)) here, so
+> 
+>          } else if (pre) {
+>              fe->pcl = container_of(pre,
+>                  struct z_erofs_pcluster, obj);
+>              err = -EEXIST;
+>              goto err_out;
+>          }
+> 
+> Handles this case.
 
-For HZ=3D250.
+Xiang, thanks for your explanation.
 
-> usleep-range(100,100) takes 100ms, effectively always.
->
-> Is the additional 6ms delay really worth the saved overhead of using
-> jiffies rather than a timer for an ACPI flow?
+Reviewed-by: Chao Yu <chao@kernel.org>
 
-Or the other way around, is the better timer precision worth the
-additional overhead?
+Thanks,
 
-AFAICS, the reason why you are pushing so hard for this is
-suspend/resume delays due to loops of many iterations that sleep for a
-short time in every iteration.
+> 
+> Thanks,
+> Gao Xiang
 
-I'm kind of having a hard time with accepting the argument that the
-kernel needs to be made to use more resources always in the ACPI path
-to address just this one case.
 
