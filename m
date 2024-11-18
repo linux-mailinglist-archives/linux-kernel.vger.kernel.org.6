@@ -1,152 +1,295 @@
-Return-Path: <linux-kernel+bounces-412823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61F3A9D0FC0
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 12:30:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D4A89D0F93
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 12:24:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 676D2B25F03
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:21:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DF522826CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:24:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B186915B102;
-	Mon, 18 Nov 2024 11:21:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD6FB198E77;
+	Mon, 18 Nov 2024 11:24:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Z+oLHsSa"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A1aJyXbV"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70EF9194151
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 11:21:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63B20190493;
+	Mon, 18 Nov 2024 11:24:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731928888; cv=none; b=ZJD4sXQLkUmbjEMrsaSmRfliHT3i/dQDP1kRfC3DT/Pjz0ep8fHDEnxOCMrledWZUeUnepeVMqkpKJMzVTFBvJTXnWDNJoJXUgUlgalw3JREfeco4ES7MuzFKey9PQ+fhu3Ib0CD1R67Eg0iaIhYACriA+HonsarBN9g4DGkoe0=
+	t=1731929061; cv=none; b=brvxpE7wLlLVBqqb05IVnacmXjCBmzRtFSmvrgUUYUSCmJne5pc5wn5ZPd+RIkEH//+lkNtIv2V5Gi3vhcZY/NFYcexqokANMOhYdCeAmiKazJq7JCgZetRyBKDjIDVcw4DTfwk8eX39sqMzBS3urgdvf7vwPfU1OFQ4hGmdHQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731928888; c=relaxed/simple;
-	bh=gCjdTwJtgC8pvpKGrKkLfZzj0vbHT92cffiGbzomHu8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KEDRcs+ut7azkd5rRBaeTrWdo+uoxIHYItBgG8aEbWlTbRT8rsvh9acYtCW316TnRrS5Wi44Vn2k5LI0UynZjsZykenc3VZSVRR1AF1nmkV6FR3pWXi1ztEKO1iBFjtf+rSiMaYfXV4t11+iF8JB0rVsusF7iqH8azT6QY8ZyrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Z+oLHsSa; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731928885;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=J/vhtRuGapTYfwMrUTXvgOIYZYR68jtcwBM26NHmo8w=;
-	b=Z+oLHsSadrhu28Ja6A1T3nrGvLGGM+9W1Y02ymnndpzPCf+2FUaGH2n9d50Ao/mOhRI5+X
-	xFWviNmYKWUyWDPaPl3SY3Ab8I36B+0r/8eThvdnMqmN/4rAkwsBANtFDj6mCsxiQdSG6P
-	0Z7v8Gqk7Iw5Qwa7a+VHdCsPFTSCBBw=
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
- [209.85.208.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-425-v6i_-ZHRP--ZCQCl5c9FKA-1; Mon, 18 Nov 2024 06:21:23 -0500
-X-MC-Unique: v6i_-ZHRP--ZCQCl5c9FKA-1
-X-Mimecast-MFC-AGG-ID: v6i_-ZHRP--ZCQCl5c9FKA
-Received: by mail-ed1-f71.google.com with SMTP id 4fb4d7f45d1cf-5cfca6de3f5so669731a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 03:21:23 -0800 (PST)
+	s=arc-20240116; t=1731929061; c=relaxed/simple;
+	bh=cwfWqKb2oPi2VN5fRBTiB9MYZwt5qGyqB4hWNJzllj4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LzsYv4p/dMfQE+iAl5wd/sOBIRcl4d5eeUlrTgBl4ySZmRBrCQs+WeOOwHW6+bcbr4SmkIQdEUjbIDtaSALSXLJddEdHk9ChMn/HKpXjg1R3cY5hY9QhX9C4r7UzxcUJssz0eRwFnO4YTXTDJOlXLezSon9EUA5Ar0SS68gkEuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A1aJyXbV; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-723f37dd76cso2421209b3a.0;
+        Mon, 18 Nov 2024 03:24:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731929060; x=1732533860; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=zQ2rPkNXPPvcolTw44Nc6tDll7Wen7YOVi3JKZbs/yI=;
+        b=A1aJyXbV9YDWwPPWhWVuafMtrLCgNVVBEbB7N0aEykHuYN30ILKWULuhT0y3PLT1Wb
+         uGXd/5gAA8bOUTgLZcNOQTGrY6WMXBM/nBonbpyLvJBGcyMUK5+X7w9QsvYwpnRumPJ1
+         H5wyefF+zUXCBFhsgmeXzbGz1mhLzzi//OfZeEdnpEHoZw5FrLCshblXkxSCRmGVJXtL
+         wTok+SdZLHajdXSBmNYEp7qzjwRfsjDdawfI+NgCEgleILxQ99m8H3CYPjdaSz868aWS
+         jrR3s4i6UwYvu3jQ39a4F3wWo/aiVLyVM06wEzM3PdgK4K1nD0273wcCEMJk43iis2s3
+         nKlg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731928882; x=1732533682;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=J/vhtRuGapTYfwMrUTXvgOIYZYR68jtcwBM26NHmo8w=;
-        b=ayfuK+/EromZObFKkJgMDLfFl8EYMCRciAvpLvbj4us3t4AHLr0FEYx+slUwABjd2H
-         KNqhQHzRBTr0j8xElOzBo73TIYNZsFFAVt0C9AGcHW0N8TzZEZv9dQu3hQFWqP3DtTHj
-         eMAkZjevwBzSatff0buAC+DIMRC0TAdZT9n5zxYqoG8oCVdHrvBVSqlG+/1M68+EP8IM
-         jnAiCkYT2yxkW6oFB+ZX0HPoRSvqOJq4PebcFkzgR1w2kBh+KB3j3cZaAMYvsk9qsXLe
-         CLTKRVIQQzr7khP72qcQjcaaXM6alvDgt33mRBqjaHfY8X7FYOpIpZ4Yz4fNXzFTcb0Q
-         rv9A==
-X-Forwarded-Encrypted: i=1; AJvYcCXBVSkD/crLmQYqkbfgXINoadq8iQi4YS2ldW1bd34gcXTEIP4xT/Xs/oU9aXrtmgpwXkAlLQMVWsPOoJw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwpapyG0Wh6LkFW1M/o1EHKODvYgtw3/4vi5BQzqE3wDBTBRaKY
-	3qZGv+lyadGCyG5MYGd2sVRd3TvTeO5O2jmOV/No8OPd4OBCt4r6iErXxPQXE54OJC0KF+HLAtc
-	RsllsBhaC0Hmv7GvjNxmz3i5iIpvJ1yFB7ZjPcNh5P11Jk8enkkAaIsxH30/+cA==
-X-Received: by 2002:a05:6402:d05:b0:5ce:fa47:18b6 with SMTP id 4fb4d7f45d1cf-5cf8fc8c279mr8212963a12.12.1731928882643;
-        Mon, 18 Nov 2024 03:21:22 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGyn/GEysF6WORMzNW3q8gK3j2rSf3hJU2HyR4Q6dLKfu1IWv3ThPBnLW69j4Xl3SiqiqZiPg==
-X-Received: by 2002:a05:6402:d05:b0:5ce:fa47:18b6 with SMTP id 4fb4d7f45d1cf-5cf8fc8c279mr8212941a12.12.1731928882287;
-        Mon, 18 Nov 2024 03:21:22 -0800 (PST)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cfce9e1e38sm620404a12.37.2024.11.18.03.21.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Nov 2024 03:21:21 -0800 (PST)
-Message-ID: <646da4cc-0030-4f11-8a1d-4e4aaa1f609d@redhat.com>
-Date: Mon, 18 Nov 2024 12:21:21 +0100
+        d=1e100.net; s=20230601; t=1731929060; x=1732533860;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zQ2rPkNXPPvcolTw44Nc6tDll7Wen7YOVi3JKZbs/yI=;
+        b=B5vfZMwXC7JIpEOb7pGrD+EAkpKJ3ZafNfJpnwRmv5UTliErBYHfRABIpr8DPGi+4v
+         MBs+E2hi63EW7sLkeBglVDb8Hw3Efq0gzf5hzA4AlhNjht40ldWGqHDGJRiGmm0VtQAX
+         SMYsAWuJ2FraB9qE+b2Bk5B/hbsp9ZXIV/OSWdeGLr0Uq4tPblHn/NHzFE3KOw+el4B2
+         2fGETgJmrmWXZ5hhidJZ42/fikWPiT6g7sLQvPLeZDdP/gN2+fsDzzrXYosIUFMoEuLU
+         y0cgwYH6Bk+/57IA5euNPiy1T9d2Id9osMWYvMZGuC3xbLVpVzAWN68qCHeLL7R417IT
+         0Wlg==
+X-Forwarded-Encrypted: i=1; AJvYcCUO4sfcNnT1es/KtKzbgmhmbb9dEEXudVOdrjatzcJxA6lneQYDVcxox0pe7IN5tlO3Dbjjp4RAC7Rm@vger.kernel.org, AJvYcCUdhVsGY71HhbedjmM2FMTnEdGjgDnakNw3docUcC4ELm4gacqN4CbSjy6PC/xTv34YbtAYfNTkjNWfd9KH@vger.kernel.org, AJvYcCUgnK9bAGoGIYQXNG9QWrlWVA++xCyvyp5nAKa9hfrdt7tJ7lZUIyW4IPUr+NI0Tz+6kc9sxpEQhYmh@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvZ+DqUdBKYlS//nz4XfICudY46/UynPeSLb/Q0sv0YQGAJ1Ov
+	y9lQ0APIouS2gHLImMtIBQwZ8Id4kVhcboxKTsD1d47IukPKmOlL
+X-Google-Smtp-Source: AGHT+IFtMQFJC1y6uYyHpQbY8vkIy3CfXLJjbydMNPSXbqdvu3VmA4+1HEEbkkSSN4MxoMPyrmDoiA==
+X-Received: by 2002:a05:6a00:1890:b0:71e:634e:fe0d with SMTP id d2e1a72fcca58-72476bb01dbmr14956848b3a.12.1731929059402;
+        Mon, 18 Nov 2024 03:24:19 -0800 (PST)
+Received: from localhost ([2804:30c:1618:9800:694b:286f:2b3a:5414])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724772012fcsm6093086b3a.187.2024.11.18.03.24.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Nov 2024 03:24:18 -0800 (PST)
+Date: Mon, 18 Nov 2024 08:24:39 -0300
+From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>, lars@metafoo.de,
+	Michael.Hennerich@analog.com, jic23@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/4] dt-bindings: iio: adc: adi,ad4000: Add PulSAR
+Message-ID: <Zzsj9_HVBO5wrJv_@debian-BULLSEYE-live-builder-AMD64>
+References: <cover.1731626099.git.marcelo.schmitt@analog.com>
+ <a155d0d0fb1d9b5eece86099af9b5c0fb76dcac2.1731626099.git.marcelo.schmitt@analog.com>
+ <0b8a2d07-feea-409f-a850-7ee0c752a949@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] platform/x86: panasonic-laptop: Return errno correctly in
- show callback
-To: Yao Zi <ziyao@disroot.org>, Kenneth Chan <kenneth.t.chan@gmail.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: "open list:PANASONIC LAPTOP ACPI EXTRAS DRIVER"
- <platform-driver-x86@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>
-References: <20241118064637.61832-3-ziyao@disroot.org>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20241118064637.61832-3-ziyao@disroot.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0b8a2d07-feea-409f-a850-7ee0c752a949@baylibre.com>
 
-Hi,
-
-On 18-Nov-24 7:46 AM, Yao Zi wrote:
-> When an error occurs in sysfs show callback, we should return the errno
-> directly instead of formatting it as the result, which produces
-> meaningless output and doesn't inform the userspace of the error.
+On 11/15, David Lechner wrote:
+> On 11/14/24 5:50 PM, Marcelo Schmitt wrote:
+> > Extend the AD4000 series device tree documentation to also describe
+> > PulSAR devices.
+> > 
+> > Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
+> > ---
+> >  .../bindings/iio/adc/adi,ad4000.yaml          | 115 +++++++++++++++++-
+> >  1 file changed, 114 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad4000.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad4000.yaml
+> > index e413a9d8d2a2..35049071a9de 100644
+> > --- a/Documentation/devicetree/bindings/iio/adc/adi,ad4000.yaml
+> > +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad4000.yaml
+> > @@ -19,6 +19,21 @@ description: |
+> >      https://www.analog.com/media/en/technical-documentation/data-sheets/ad4020-4021-4022.pdf
+> >      https://www.analog.com/media/en/technical-documentation/data-sheets/adaq4001.pdf
+> >      https://www.analog.com/media/en/technical-documentation/data-sheets/adaq4003.pdf
+> > +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7685.pdf
+> > +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7686.pdf
+> > +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7687.pdf
+> > +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7688.pdf
+> > +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7690.pdf
+> > +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7691.pdf
+> > +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7693.pdf
+> > +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7694.pdf
+> > +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7942.pdf
+> > +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7946.pdf
+> > +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7980.pdf
+> > +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7982.pdf
+> > +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7983.pdf
+> > +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7984.pdf
+> > +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7988-1_7988-5.pdf
 > 
-> Fixes: 468f96bfa3a0 ("platform/x86: panasonic-laptop: Add support for battery charging threshold (eco mode)")
-> Fixes: d5a81d8e864b ("platform/x86: panasonic-laptop: Add support for optical driver power in Y and W series")
-> Signed-off-by: Yao Zi <ziyao@disroot.org>
+> It would be nice to sort these lowest number first.
 
-Thanks, patch looks good to me:
+Ack
 
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-
-Regards,
-
-Hans
-
-
-> ---
->  drivers/platform/x86/panasonic-laptop.c | 10 +++++++---
->  1 file changed, 7 insertions(+), 3 deletions(-)
 > 
-> diff --git a/drivers/platform/x86/panasonic-laptop.c b/drivers/platform/x86/panasonic-laptop.c
-> index 2bf94d0ab324..22ca70eb8227 100644
-> --- a/drivers/platform/x86/panasonic-laptop.c
-> +++ b/drivers/platform/x86/panasonic-laptop.c
-> @@ -614,8 +614,7 @@ static ssize_t eco_mode_show(struct device *dev, struct device_attribute *attr,
->  		result = 1;
->  		break;
->  	default:
-> -		result = -EIO;
-> -		break;
-> +		return -EIO;
->  	}
->  	return sysfs_emit(buf, "%u\n", result);
->  }
-> @@ -761,7 +760,12 @@ static ssize_t current_brightness_store(struct device *dev, struct device_attrib
->  static ssize_t cdpower_show(struct device *dev, struct device_attribute *attr,
->  			    char *buf)
->  {
-> -	return sysfs_emit(buf, "%d\n", get_optd_power_state());
-> +	int state = get_optd_power_state();
-> +
-> +	if (state < 0)
-> +		return state;
-> +
-> +	return sysfs_emit(buf, "%d\n", state);
->  }
->  
->  static ssize_t cdpower_store(struct device *dev, struct device_attribute *attr,
+> >  
+> >  $ref: /schemas/spi/spi-peripheral-props.yaml#
+> >  
+> > @@ -63,6 +78,38 @@ properties:
+> >  
+> >        - const: adi,adaq4003
+> >  
+> > +      - const: adi,ad7946
+> > +      - items:
+> > +          - enum:
+> > +              - adi,ad7942
+> > +          - const: adi,ad7946
+> > +
+> > +      - const: adi,ad7983
+> > +      - items:
+> > +          - enum:
+> > +              - adi,ad7980
+> > +              - adi,ad7988-5
+> > +              - adi,ad7686
+> > +              - adi,ad7685
+> > +              - adi,ad7694
+> > +              - adi,ad7988-1
+> > +          - const: adi,ad7983
+> > +
+> > +      - const: adi,ad7688
+> > +      - items:
+> > +          - enum:
+> > +              - adi,ad7693
+> > +              - adi,ad7687
+> > +          - const: adi,ad7688
+> > +
+> > +      - const: adi,ad7984
+> > +      - items:
+> > +          - enum:
+> > +              - adi,ad7982
+> > +              - adi,ad7690
+> > +              - adi,ad7691
+> > +          - const: adi,ad7984
+> > +
+> 
+> IMHO, having fallbacks just makes the bindings harder to use and doesn't
+> actually provide any useful benefit.
+> 
+Having fallbacks was a suggestion from a dt maintainer to the ad4000 series.
+I assumed they would ask it for PulSAR too. Will wait a comment from a dt
+maintainer to change it.
 
+> And with this many chips, it can be easy to overlook a small difference
+> in one chips, like ad7694 not having VIO pin, so is it really fallback
+> compatible? Easier to just avoid the question and not have fallbacks.
+> 
+The absence of a VIO pin does not change how the driver handles the devices.
+They are compatible from software perspective.
+
+> >    reg:
+> >      maxItems: 1
+> >  
+> > @@ -129,10 +176,76 @@ required:
+> >    - compatible
+> >    - reg
+> >    - vdd-supply
+> > -  - vio-supply
+> >    - ref-supply
+> >  
+> >  allOf:
+> > +  # AD7694 doesn't have a VIO pin
+> 
+> It sounds like using not: could make this if: a lot shorter.
+
+Ack
+
+> 
+> Also, it looks like ad7983 doesn't have the pin either.
+
+Ack
+
+> 
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          contains:
+> > +            enum:
+> > +              - adi,ad4000
+> > +              - adi,ad4001
+> > +              - adi,ad4002
+> > +              - adi,ad4003
+> > +              - adi,ad4004
+> > +              - adi,ad4005
+> > +              - adi,ad4006
+> > +              - adi,ad4007
+> > +              - adi,ad4008
+> > +              - adi,ad4010
+> > +              - adi,ad4011
+> > +              - adi,ad4020
+> > +              - adi,ad4021
+> > +              - adi,ad4022
+> > +              - adi,adaq4001
+> > +              - adi,adaq4003
+> > +              - adi,ad7685
+> > +              - adi,ad7686
+> > +              - adi,ad7687
+> > +              - adi,ad7688
+> > +              - adi,ad7690
+> > +              - adi,ad7691
+> > +              - adi,ad7693
+> > +              - adi,ad7942
+> > +              - adi,ad7946
+> > +              - adi,ad7980
+> > +              - adi,ad7982
+> > +              - adi,ad7983
+> > +              - adi,ad7984
+> > +              - adi,ad7988-1
+> > +              - adi,ad7988-5
+> > +    then:
+> > +      required:
+> > +        - vio-supply
+> > +  # Single-channel PulSAR devices have SDI either tied to VIO, GND, or host CS.
+> 
+> To me, the more interesting thing to say here is that the sdi
+> option is omitted because these chips don't have a programmable
+> register.
+
+Yes, that's correct. But the adi,sdi-pin property is about what is connected
+to the SDI/MOSI pin so I kept the comment about hw connections only.
+We could in theory connect SDI to host MOSI and set MOSI idle high (if the
+controller supports that), but that is harder to describe.
+
+> 
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          contains:
+> > +            enum:
+> > +              - adi,ad7685
+> > +              - adi,ad7686
+> > +              - adi,ad7687
+> > +              - adi,ad7688
+> > +              - adi,ad7690
+> > +              - adi,ad7691
+> > +              - adi,ad7693
+> > +              - adi,ad7694
+> > +              - adi,ad7942
+> > +              - adi,ad7946
+> > +              - adi,ad7980
+> > +              - adi,ad7982
+> > +              - adi,ad7983
+> > +              - adi,ad7984
+> > +              - adi,ad7988-1
+> > +              - adi,ad7988-5
+> > +    then:
+> > +      properties:
+> > +        adi,sdi-pin:
+> > +          enum: [ high, low, cs ]
+> > +          default: high
+> 
+> For the similar ad7944, Rob suggested that the default should be the equivalent
+> of "cs" since that is most like "regular" SPI. So I think it makes sense do the
+> same here. (The adi,spi-mode property in the ad7944 binding is named a bit
+> different, single = high, chain = low and _property omitted_ (default) = cs)
+Ack
+
+> 
+> >    # The configuration register can only be accessed if SDI is connected to MOSI
+> >    - if:
+> >        required:
+> 
 
