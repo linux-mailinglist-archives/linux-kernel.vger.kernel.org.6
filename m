@@ -1,164 +1,102 @@
-Return-Path: <linux-kernel+bounces-413176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C59D99D149B
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 16:39:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AC1B99D149D
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 16:40:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B98A2833E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 15:39:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73E9F2833E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 15:40:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADDA41BC065;
-	Mon, 18 Nov 2024 15:39:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BE101AE01D;
+	Mon, 18 Nov 2024 15:40:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="dbasgpvs"
-Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mI4Cfr50"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 271AF1991C8
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 15:39:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C96221991C8
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 15:40:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731944351; cv=none; b=h9vH1TJxcdvfJiqhoDApPxCFUFAFK2tk8xq5z5OKHi8+/PL5vvhKWHTfJ0tfyIqftQuhcpNey4yk6hUxnpkv3fY9xMUyxNh1JQG307EqYv27dgAVulWlz3SZhaet2gPhc5vlpN10Fo/AXBkAWAxQgf+Bldob8CVqnqBScjAdddw=
+	t=1731944439; cv=none; b=ffefWqmLM5ydBPNO6TIttg9DHGgFntyNxZdSkwiBZeGVuAIwzY4VpplWnPHw+gyQ0P3rbdLQAdfKKIJFP40dHWtwfpnNWThxJp6peFPSXa79c8cxojxx2oRqSEbdI/cKtickhfxn6D0Sd1PttFIjU7sUZvwZKFEfv/JwDExt8zo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731944351; c=relaxed/simple;
-	bh=E/AOOMvgSRjv68wjM/CkDTUJ00Q97K2I8EQ4shdp8SM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=N+kTrmICTKNWjcze3esUeDtsq4UjR/JSFuHt8pBIijjfr5FJTYtPFpGR8Y0mVH7Xdd5ZzaP2fFqNsnQDmQRjT07k1TUP5KQqJmzMG+0Mj5qi1HXfUOgAAmLNRbo2O/aO9nO00qwIKQHflRuUqBzN5TaZ5DxiFiXLbykjbXahCYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=dbasgpvs; arc=none smtp.client-ip=209.85.160.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-296085d59caso2507848fac.0
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 07:39:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1731944347; x=1732549147; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=XNuNrxBqUyURPkdBXHGeLgBU5iN5EdsIDoVSlUzMdmk=;
-        b=dbasgpvsZ07Uy4ezgCYriomk7/28IH1X+icBwVR/N7PrnyDZtvm3q63JLAh6IotlrD
-         AhE5+IyOLVQLGuVmNGQ6JGArKwol16rpa7OuSWM1P43fpTzUWRJI4RXcs3B+UekFcAaL
-         03D2asxO9xs4yakjhucoeAylVn7TxRvLflD7ji42gq0syRssMXi3ZeSpvGXFr5qidVUN
-         39TxT3ldo8CEzN2ja3b5YJhHBui+IUOZA3QpRfWbh4hnLo3541+JiIGqB9Mk/Vj1IO5+
-         7376AIRw1FvlORQ2ZQUNgEmYsHUX9lfjpMpkD/4AwwUiBt47kZMHn2Ujuoh8hU74vPdM
-         DwPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731944347; x=1732549147;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XNuNrxBqUyURPkdBXHGeLgBU5iN5EdsIDoVSlUzMdmk=;
-        b=FqJJrMz+DD08RTplgM39zrF0Ph4Dr7+6uZPcSP1CCLXjqnL3DHzwhzOSu2w/1a4RDm
-         1uaMeDVDhNycH6WJgp/mcZq39LayE78KA+ZA5RanR3kMQg4gjZbmwgpgIp0iVmrK4gDi
-         yaIDQ5wkCfOU4QrNpqzs2L9iRKLfMeLR0CI1asihb8AuOiAk9DEagFld5vshmv8CyQIY
-         5pbVq0MwLilL/ifEozWNShqvJ8L0ImS5Je+tlyRtTD4/LoROLrPvOWVTlXD97W3RfboC
-         7v8Xpj7y+KAdrKCBrYev0X4XWurhsh7VwyqOA6GC7dR+lIi1jMuPgUZi9k4VZ8m0Qkm7
-         WIXw==
-X-Forwarded-Encrypted: i=1; AJvYcCUcTU6imU0edg3ZUv3awUOPWBCz/9RYne23Xc/JgvOjjlQRI7i9guML8+NM97Bt7+T4LJRTWLrzy5Mito4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnGDvkKQNtrtsbrHOnNeTpc1L7jkqZaprcAvCJLHXfFweDTKsV
-	cr+HeELlR/Ba6tsQSIOR49LyaZndZ1IX76WrTCtb/v8Y81/GnYmbHEImZTipLVk=
-X-Google-Smtp-Source: AGHT+IE6Rw+oZBtfbJDW+T3gX/EtF50OgyEAlP1PpSElJChUCBgsYe5e8IuHw7bHa3JPA3HcVEFFeQ==
-X-Received: by 2002:a05:6870:970c:b0:289:2126:6826 with SMTP id 586e51a60fabf-2962dfee96amr12405436fac.30.1731944347304;
-        Mon, 18 Nov 2024 07:39:07 -0800 (PST)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5eeabca05dcsm2857023eaf.10.2024.11.18.07.39.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Nov 2024 07:39:06 -0800 (PST)
-Message-ID: <d6539dc1-2fef-48c1-9b03-c07fe82c670e@baylibre.com>
-Date: Mon, 18 Nov 2024 09:39:05 -0600
+	s=arc-20240116; t=1731944439; c=relaxed/simple;
+	bh=dCIpcRJOFAu0YQtEzjLzx/9Xx8PoRr9ebJYSbNidsLI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=N2/V09XLoNmmVP22YlHS4l5kBNAKkHnb2SOuxD9EpaQezB1P6UivObXhNBiPaECTXZAfDyIdcjFC6VfgXoIBK5lTTxC55GGxl3aZsyS/VE0pPyT9JJdqGlUKXP5eh/2Spdd2xHo4VyDS8yczZYafqcqcS0xyiHKnFWsxL6gKPXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mI4Cfr50; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E36CC4CECC;
+	Mon, 18 Nov 2024 15:40:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731944439;
+	bh=dCIpcRJOFAu0YQtEzjLzx/9Xx8PoRr9ebJYSbNidsLI=;
+	h=Date:From:To:Cc:Subject:From;
+	b=mI4Cfr508pvSao94Oyj7RTfgOgurB0PR+VmZ8u9Ql9Gqglk0iQdxzd+B4FknYbQgQ
+	 OdRYCOhfpbWSpcfEe+L1iccLfF/wWSy24gn5TxfYta8s1EcWtrRbNkcyEQTmDl/qZC
+	 4REXi5q2JHCIRs9sdbSlmMXBr47DjJDLeJ3Rwct0HwPhez0b2N+Zbds+gXRwHCFXLo
+	 //Qd2B5HZhTGK4kstHkVmO8+tEiz50StHI461kW21Hhm4xqrKdWdFIwAowL/Frk6NR
+	 ksR2IoFjGEesbGM5vgFbEmQSg6sAPFV3MWwbjyNAtzGJvsvJP1Puu4XeKBNEoMftiA
+	 F+nZ7j9U85Avw==
+Date: Mon, 18 Nov 2024 05:40:38 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, Lai Jiangshan <jiangshanlai@gmail.com>
+Subject: [GIT PULL] workqueue: Changes for v6.13
+Message-ID: <Zztf9nRuKNjH34Bd@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] dt-bindings: iio: adc: adi,ad4000: Add PulSAR
-To: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>, lars@metafoo.de,
- Michael.Hennerich@analog.com, jic23@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <cover.1731626099.git.marcelo.schmitt@analog.com>
- <a155d0d0fb1d9b5eece86099af9b5c0fb76dcac2.1731626099.git.marcelo.schmitt@analog.com>
- <0b8a2d07-feea-409f-a850-7ee0c752a949@baylibre.com>
- <Zzsj9_HVBO5wrJv_@debian-BULLSEYE-live-builder-AMD64>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <Zzsj9_HVBO5wrJv_@debian-BULLSEYE-live-builder-AMD64>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 11/18/24 5:24 AM, Marcelo Schmitt wrote:
-> On 11/15, David Lechner wrote:
->> On 11/14/24 5:50 PM, Marcelo Schmitt wrote:
->>> Extend the AD4000 series device tree documentation to also describe
->>> PulSAR devices.
->>>
->>> Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
->>> ---
+The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758edc:
 
-...
+  Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
 
->>>  
->>>  $ref: /schemas/spi/spi-peripheral-props.yaml#
->>>  
->>> @@ -63,6 +78,38 @@ properties:
->>>  
->>>        - const: adi,adaq4003
->>>  
->>> +      - const: adi,ad7946
->>> +      - items:
->>> +          - enum:
->>> +              - adi,ad7942
->>> +          - const: adi,ad7946
->>> +
->>> +      - const: adi,ad7983
->>> +      - items:
->>> +          - enum:
->>> +              - adi,ad7980
->>> +              - adi,ad7988-5
->>> +              - adi,ad7686
->>> +              - adi,ad7685
->>> +              - adi,ad7694
->>> +              - adi,ad7988-1
->>> +          - const: adi,ad7983
->>> +
->>> +      - const: adi,ad7688
->>> +      - items:
->>> +          - enum:
->>> +              - adi,ad7693
->>> +              - adi,ad7687
->>> +          - const: adi,ad7688
->>> +
->>> +      - const: adi,ad7984
->>> +      - items:
->>> +          - enum:
->>> +              - adi,ad7982
->>> +              - adi,ad7690
->>> +              - adi,ad7691
->>> +          - const: adi,ad7984
->>> +
->>
->> IMHO, having fallbacks just makes the bindings harder to use and doesn't
->> actually provide any useful benefit.
->>
-> Having fallbacks was a suggestion from a dt maintainer to the ad4000 series.
-> I assumed they would ask it for PulSAR too. Will wait a comment from a dt
-> maintainer to change it.
-> 
->> And with this many chips, it can be easy to overlook a small difference
->> in one chips, like ad7694 not having VIO pin, so is it really fallback
->> compatible? Easier to just avoid the question and not have fallbacks.
->>
-> The absence of a VIO pin does not change how the driver handles the devices.
-> They are compatible from software perspective.
-> 
-OK. Another difference for consideration that I noticed is that on some chips,
-the SDO line can generate a BUSY interrupt while others can't. Not sure if
-that matters from the point of view of fallbacks or not.
+are available in the Git repository at:
 
+  git://git.kernel.org/pub/scm/linux/kernel/git/tj/wq.git/ tags/wq-for-6.13
 
+for you to fetch changes up to 85f0d8e39affb7b88401b1e0542230a7af985b96:
+
+  workqueue: Reduce expensive locks for unbound workqueue (2024-11-15 06:43:39 -1000)
+
+----------------------------------------------------------------
+workqueue: Changes for v6.13
+
+- Maximum concurrency limit of 512 which was set a long time ago is too low
+  now. A legitimate use (BPF cgroup release) of system_wq could saturate it
+  under stress test conditions leading to false dependencies and deadlocks.
+  While the offending use was switched to a dedicated workqueue, use the
+  opportunity to bump WQ_MAX_ACTIVE four fold and document that system
+  workqueue shouldn't be saturated. Workqueue should add at least a warning
+  mechanism for cases where system workqueues are saturated.
+
+- Recent workqueue updates to support more flexible execution topology made
+  unbound workqueues use per-cpu worker pool frontends which pushed up
+  workqueue flush overhead. As consecutive CPUs are likely to be pointing to
+  the same worker pool, reduce overhead by switching locks only when
+  necessary.
+
+----------------------------------------------------------------
+Chen Ridong (2):
+      workqueue: doc: Add a note saturating the system_wq is not permitted
+      workqueue: Adjust WQ_MAX_ACTIVE from 512 to 2048
+
+Wangyang Guo (1):
+      workqueue: Reduce expensive locks for unbound workqueue
+
+ Documentation/core-api/workqueue.rst |  9 +++++++--
+ include/linux/workqueue.h            |  2 +-
+ kernel/workqueue.c                   | 22 ++++++++++++++++++----
+ 3 files changed, 26 insertions(+), 7 deletions(-)
+
+-- 
+tejun
 
