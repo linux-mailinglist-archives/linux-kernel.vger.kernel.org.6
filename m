@@ -1,126 +1,116 @@
-Return-Path: <linux-kernel+bounces-413384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB82D9D1866
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 19:46:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D621E9D1867
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 19:46:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89E6A283E23
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 18:46:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E68F2842B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 18:46:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B12261E2838;
-	Mon, 18 Nov 2024 18:45:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5890A1E501B;
+	Mon, 18 Nov 2024 18:45:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BRUiChqv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G2b8JMuP"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04FFD1E102E;
-	Mon, 18 Nov 2024 18:45:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5349D1E103C
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 18:45:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731955533; cv=none; b=ddgf9K/JdYjFqFTByPdPijA90v6ah758DARZUt1biVmH53OBhBaY6Wux9HUqwmMGy6H/ldjJBzh0v0TYRaHcyS7rnDde4iMBAiyG46W1BjsH65DBGGGVu8Zm/Vl/KsM8LmbFB49KG9H9JA8T0eUblYpO1qUBJdM9D6z8h6P8WTI=
+	t=1731955543; cv=none; b=HGFONNW7B8tY4USfYMF0jMLg5W7HSFowMVr34TsRBMlrP8uJvDK05o+8fTYDShfw3GL+IW4aBcEqCkLXIG33xymLTUF1cW+Cq4uaGUVgX5PmEwqfKqeh9r1O/7Ewvl6gmiQ5Sh2tSCQp1GQhu8aSTaAxot6nKuUvvFDTF/PoR6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731955533; c=relaxed/simple;
-	bh=pTpgbEQ2v4xOlxmRjIKhSkuxO6OUIO3GQ62UFcCIbLY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jwyP9NiRd7AJADvQdMkppRdhnBBEnfbYsb1LYrkDhg1DoiWVjjj/A8l08s1lsMPmBVHAdmVszL4wgXh6unRldVlxz5G/xSjlt7k4uolAj0kNbfj9firMpkgGHdyba5vjF9LgqElOeYU+bPsh4o9O97SFVZ8pp3M/jDV7QZZthDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BRUiChqv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3CA0C4CECC;
-	Mon, 18 Nov 2024 18:45:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731955532;
-	bh=pTpgbEQ2v4xOlxmRjIKhSkuxO6OUIO3GQ62UFcCIbLY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BRUiChqvD9wUkB+adJ+j8Xum+Z5bFMu7qqMilBlF5myMtJpFm+ezFJJycgSZgRlk4
-	 nrIeUmu9p+u6KR7wQEZR5mDtx1a8iiN6wTIZfl9kujk/gidgH2lP1mjNrnoxr45PLX
-	 WjyL1x/RYudJqea+GmyXXBKiW4zVDF/G1p0lMHiAe8dzi+eSQVI/wcmfTYlrZBkOal
-	 3FaitVSX+TMZHTvEEHoTHrvlKucmCcZxE7No5iutEhyoi3U5ifmMxt/HKGzBpxZy6n
-	 s3GWwbfYFeIbfCmmGPoYxbezl6CrHAeswrA3Eyfqfw7w3U/stkp4P29+oul4GbqOXP
-	 6V3ZY2RPwRaOw==
-Date: Mon, 18 Nov 2024 10:45:30 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org,
-	Andrii Nakryiko <andrii@kernel.org>, Song Liu <song@kernel.org>,
-	bpf@vger.kernel.org, Stephane Eranian <eranian@google.com>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>, Kees Cook <kees@kernel.org>
-Subject: Re: [PATCH v2 3/4] perf lock contention: Resolve slab object name
- using BPF
-Message-ID: <ZzuLSkThfgkA_8hT@google.com>
-References: <20241108061500.2698340-1-namhyung@kernel.org>
- <20241108061500.2698340-4-namhyung@kernel.org>
- <5f95c0d7-01a4-485d-a9d7-1a39acf9c680@suse.cz>
- <ZzNrIdiHCxTy1QId@x1>
- <00aa92be-85db-4163-9576-dfc71eafb415@suse.cz>
+	s=arc-20240116; t=1731955543; c=relaxed/simple;
+	bh=Fr7v4H9DWsSJxqMRgTDv9BGwu6HmSu7GRDLzo2SwD/c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=K/7oAvUFF4eZBSlcN3mXKyVk/MVaFcU/yQoirbTyBJ8AC9JS92BsGU3HFFH3zt7/6osOPWFPbXouIwnAimnq8dz0Fh1XvUHdKQ30piLoovOOd4lNOT3fYdHm4B3GJTJOnXawRmjRR94wO7ju520YQtXjMba4NoI47PRuSduH4co=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G2b8JMuP; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2e9ff7a778cso3361030a91.1
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 10:45:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731955541; x=1732560341; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hi+RFUnTdC+uuCyoN74teTvaWgXTbPW8c0oasB6dJN0=;
+        b=G2b8JMuPKV8E2J7oQvXO3HyVtkmabiNUUHXfgGFpKPqEuxzZm8xBsMH0QfNYVJowf1
+         fsVE1+G8nZSkr7F6gqJFkLXslN5tLNc0I4wchXH4uMiFZSJGEInBXlRABt/0lTZa6pxv
+         40347JJH8bP/HY82x9Ua8FNlpi9+6qgdzE2knFajngLdYZaHPOXnV/+tohSJxAZSf2j1
+         XmqGtTz2V9/Mc/Z53719b1EeijKxO78Ag56zdYmRXKgReICDf3KYSSZFGwjt+8/SQk9e
+         Q98gk2mTRekzhu1rw7jpTFk6VTUUM/U6YqmZsNsZoNaDAxOwrGNznYf1b7ho8i1M6js+
+         ceQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731955541; x=1732560341;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hi+RFUnTdC+uuCyoN74teTvaWgXTbPW8c0oasB6dJN0=;
+        b=BfsL/RtOld7VvzVtUxYtSUdRNe9/143hDUxpikkPJa4rK3ERd3cmI5cE6t2F0kFvsr
+         tX43y9ZgOz5dlMl56X0wzUIRWIOsowgfffV0ZiM9g1DhnuI55BSm4ZUr5u+w9VYNFnR0
+         iP6MGjx0IPNxJKw6RTR3HzXIMk05Yf7YTDeVNtjaCoSgj33LxIYrysxFmOaBxfDAyo1s
+         8OEUdcVN/z3gjpTEtAwHs56h1gD6VO15YERmMrm9w7tGG9AzCvnebGcx7r4tjrCOMFIF
+         sxqTFFbPEGgqLznaEasA1etoTfeB6KH5GgD+OyYlor/QbSgb6h3xctUTgSMJZGDSFUt7
+         3aeg==
+X-Gm-Message-State: AOJu0Yy9Lext6f+DkxiSlP0spk9CKHaO1wsaUuxQzcPqmI+xOpbU6Hrr
+	c7kjXCy5Qjt/Zz+aziswEWQnxDB++aLIDOnq5wel/wEtL/QJgvdOYEoWEA==
+X-Google-Smtp-Source: AGHT+IFsxG1vk886ZhlOHC0wu4CA+2e4OBsKJr9OaHDhhc6RVWAcXeKEiYio1UdcAHKb+ImgCuig2w==
+X-Received: by 2002:a17:90b:3806:b0:2ea:507f:49bd with SMTP id 98e67ed59e1d1-2eaaa7379c5mr617970a91.2.1731955541020;
+        Mon, 18 Nov 2024 10:45:41 -0800 (PST)
+Received: from daehojeong-desktop.mtv.corp.google.com ([2a00:79e0:2e14:7:7bb5:50ed:8f20:3617])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724771e640esm6507466b3a.156.2024.11.18.10.45.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Nov 2024 10:45:40 -0800 (PST)
+From: Daeho Jeong <daeho43@gmail.com>
+To: linux-kernel@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net,
+	kernel-team@android.com
+Cc: Daeho Jeong <daehojeong@google.com>
+Subject: [PATCH] f2fs: adjust unusable cap before checkpoint=disable mode
+Date: Mon, 18 Nov 2024 10:45:35 -0800
+Message-ID: <20241118184535.1047327-1-daeho43@gmail.com>
+X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <00aa92be-85db-4163-9576-dfc71eafb415@suse.cz>
+Content-Transfer-Encoding: 8bit
 
-Hello,
+From: Daeho Jeong <daehojeong@google.com>
 
-On Wed, Nov 13, 2024 at 03:20:43PM +0100, Vlastimil Babka wrote:
-> On 11/12/24 15:50, Arnaldo Carvalho de Melo wrote:
-> > On Tue, Nov 12, 2024 at 12:09:24PM +0100, Vlastimil Babka wrote:
-> > +               /* look slab_hash for dynamic locks in a slab object */
-> > +               if (hashmap__find(&slab_hash, flags & LCB_F_SLAB_ID_MASK, &slab_data)) {
-> > +                       snprintf(name_buf, sizeof(name_buf), "&%s", slab_data->name);
-> > +                       return name_buf;
-> > +        	}
-> > 
-> > He wants to avoid storing 64 bytes (the slab cache pointer, 's'), instead
-> > he wants to store a shorter 'id' and encode it in the upper bits of the
-> > 'struct contention_data' 'flags' field.
-> > 
-> > The iterator, at the beggining of the session attributes this id,
-> > starting from zero, to each of the slab caches, so it needs to map it
-> > back from the address at contention_end tracepoint.
-> > 
-> > At post processing time it converts the id back to the name of the slab
-> > cache.
-> > 
-> > I hope this helps,
+The unusable cap value must be adjusted before checking whether
+checkpoint=disable is feasible.
 
-Thanks Analdo for the explanation!
+Signed-off-by: Daeho Jeong <daehojeong@google.com>
+---
+ fs/f2fs/super.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> 
-> Thanks a lot, if it's a tradeoff to do a bit more work in order to store
-> less data, then it makes sense to me.
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 87ab5696bd48..da85e3c47698 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -2474,6 +2474,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
+ 		}
+ 	}
+ 
++	adjust_unusable_cap_perc(sbi);
+ 	if (enable_checkpoint == !!test_opt(sbi, DISABLE_CHECKPOINT)) {
+ 		if (test_opt(sbi, DISABLE_CHECKPOINT)) {
+ 			err = f2fs_disable_checkpoint(sbi);
+@@ -2518,7 +2519,6 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
+ 		(test_opt(sbi, POSIX_ACL) ? SB_POSIXACL : 0);
+ 
+ 	limit_reserve_root(sbi);
+-	adjust_unusable_cap_perc(sbi);
+ 	*flags = (*flags & ~SB_LAZYTIME) | (sb->s_flags & SB_LAZYTIME);
+ 	return 0;
+ restore_checkpoint:
+-- 
+2.47.0.338.g60cca15819-goog
 
-Right, I don't want to increase the data size for this as we have some
-unused bits in the flags.  It'd call one more bpf hashmap lookup during
-record but I don't think it's gonna be a problem.
-
-Thanks,
-Namhyung
-
-> > 
-> >> - if it's postprocessing, it would be too late for bpf_get_kmem_cache() as
-> >> the object might be gone already?
-> >> 
-> >> The second alternative would be worse as it could miss the cache or
-> >> misattribute (in case page is reallocated by another cache), the first is
-> >> just less efficient than possible.
-> >> 
-> >> > +			}
-> >> > +		}
-> >> >  
-> >> >  		err = bpf_map_update_elem(&lock_stat, &key, &first, BPF_NOEXIST);
-> >> >  		if (err < 0) {
-> 
 
