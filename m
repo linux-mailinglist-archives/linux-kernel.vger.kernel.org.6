@@ -1,411 +1,214 @@
-Return-Path: <linux-kernel+bounces-412719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65B309D0E4C
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:20:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F27279D0E4E
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:20:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD13B1F231B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 10:20:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 778A51F21004
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 10:20:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A79931993B2;
-	Mon, 18 Nov 2024 10:15:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65B3719A28D;
+	Mon, 18 Nov 2024 10:16:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mke5Nok2"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="zO4LE0SZ"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2084.outbound.protection.outlook.com [40.107.243.84])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3EB3199243;
-	Mon, 18 Nov 2024 10:15:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731924934; cv=none; b=Fjrcx5xrWILdN6/KJCM2QD5Nc5kPJPmblFRtCcFL+toGP62OzMpUaNV+BGOvmhJaPAbOpKg+HESj3ldWoPYjULT8SKrYbIMOGJJ37MPcJLkBCJJ+mZgH6rppQPWKv5SXg5u4GLuwJIpw1ejeY26d696RhuT1SP8jAXlSnr/xLDY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731924934; c=relaxed/simple;
-	bh=TH30VyqA7OU9YqATMjryFauBN4pQYazeqI+zTeF8qaU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=unhjbSnIqy0N1YjVv00loKCZtVYyzHp1DMHkXvY3Kn9hzl8b93UEBwkTKK1mykHhzA4mvIM24GbxVGH7Jj9mL5HQhwpwfXAhlavnbMF1Z+f9Y/c/BlaVPCOAP+Azc9l5plcFfd+oxbMOhsojGl/4gigQZNqqvNEb0DSji4MWRO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mke5Nok2; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5cf7567f369so4002012a12.3;
-        Mon, 18 Nov 2024 02:15:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731924931; x=1732529731; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YdKa5z3twiIQe8AUFC1Fbj5IBy2mDQVy5MB2Z28mCTw=;
-        b=mke5Nok21jtMrFY8YL7oLrT3ZjWmPPC5MhtGG32uurLOTgJKwA4dHvHfj2EQC3HYN/
-         Sqmii70QpZnpm33bHA0xn706ULczATYbpwtA8uugTKLa7OTftrL/h4okni0sY1c8GqOX
-         4Dulp+Xpi72+m6y1c1IVQor+cdIPoR3sGYhpLQ0VhsBNBpvF3WKUf5GQNki4aJw4Zkqx
-         TakSSHLrQRxMaSUkp5Lxv9BIXNoFWVhTJXRhaKfjkuUba5KmR/PvdPbNy0MzgyBLRem2
-         u5noqPv/XqFtsKUlhkT4/5P/+tmGlFPr+jkE3qd0CK9Gj/fD+98+GqcmcujxWT6Wf8nI
-         rG+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731924931; x=1732529731;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YdKa5z3twiIQe8AUFC1Fbj5IBy2mDQVy5MB2Z28mCTw=;
-        b=ZWajvlL+LUTYGt7lsWTZxZM7gDPAG3VnEVkCILENzNNc1uuEMA1xkS0o1F3vLQRU2a
-         hKsR/SISVpRAAezTsDyT4Cy/PpGXEi4/zcdzBvisynVM7uyOUNO1sfgSxQZB3FTe7Xt1
-         omLkxRnppEjxkqxp9XAQl+fYYDdbMa4eP1sYsFM+I+rjf+rqvIb178X1q9mIW35z7cKW
-         p4xKkXqDjukZS8Hkv9IIkqgVGVdUQWvVbWHe2pBWcE3xOlLAwXx5R+aaO/9b9jRWCf+O
-         X2nvyFHKTFYggM934+9zMRe2VRPQ21khfXX3v/DpU4cGXHNeeftu67TjjLtADzIMvt4w
-         eBMg==
-X-Forwarded-Encrypted: i=1; AJvYcCVDrZpMFBiidt2n1Rfq6yK/h+1EVjUZf9WBT3LOPeKccbbtZV8Q7sc76nZqa7CdiznZQ13ttUvJ0Mo=@vger.kernel.org, AJvYcCWKZlNst3sRNzJ2H+BYYgck7KVMLrX/4prI8BTi6o6kau8aiQOKfWCYygZDa1cqUbwEMgk8XErmZSb2XObs@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8aYXXrt3r9Nakw6oNtciXGzehkh6GgziqGj/WTsOOl6EhK6NE
-	1WL4tYZ2TViO2CQHkCb/L9q19PxEtpNL1Prr6VJcD44bGVGFxGPPr0yvXw==
-X-Google-Smtp-Source: AGHT+IHiDctVuf7zwjconAoBa1+x3MA2pK6ReWGE+6RW70BdN/H+e6KcwiEw7SDUxXZO7RiiD4xUYw==
-X-Received: by 2002:a05:6402:90a:b0:5cf:77e4:75c0 with SMTP id 4fb4d7f45d1cf-5cf8fd06ca0mr7962814a12.30.1731924930921;
-        Mon, 18 Nov 2024 02:15:30 -0800 (PST)
-Received: from [127.0.1.1] ([46.53.242.72])
-        by smtp.googlemail.com with ESMTPSA id 4fb4d7f45d1cf-5cf79bb329bsm4574455a12.38.2024.11.18.02.15.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Nov 2024 02:15:29 -0800 (PST)
-From: Dzmitry Sankouski <dsankouski@gmail.com>
-Date: Mon, 18 Nov 2024 13:15:21 +0300
-Subject: [PATCH RESEND v8 3/3] gcc-sdm845: Add general purpose clock ops
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05A2A199EB0;
+	Mon, 18 Nov 2024 10:16:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.84
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731924962; cv=fail; b=hNBpZxsm96EJUUgSPepFjpMnUbFfa2FBwp0rHLNfA8VNfiXvmnGe7DtDK+6VHImqV72ixbLX6kcfK2vkYyQoUI3k672JpUXy763xNcDshIVhLr7NCZQx4RhF0UTczBX4P5j7fzJjlJomhTq8uLmobve+Fz0XegJVWgvNdJJ1TWg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731924962; c=relaxed/simple;
+	bh=TurhxZCYKf45Hvp+9ayxTFHDgfYZJ4hFUUH33Lj7eFo=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=SC7n9KuHS9rwC8GwrKPCjHciSky2MqavRzveHXok6isenuLQ0iQWk8r6DgVCc2a69c5/p0f0PfcPosXzeWzShX+Tq890+fGxWA8sWAZ0NVpJjP/VGuTtN4Q/I95KbFd2tsfel6ncL1SnGGXVJx4OMCTlVy5cr/7POfT566nkFzU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=zO4LE0SZ; arc=fail smtp.client-ip=40.107.243.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=tIqG3KF1jYoGVra4JY4da95wh3xRdRE2CINnE6APb2oxgcoEuhfVp9XHS4bh8LMmJaOdans37TDFL2mjS67vXzyYrqy++ETTsbTiB7i1nvNegNFNcN80PNJogTYTFeylXjVCTG29Ppa+DVNqSlj3kcoZY3RKWnLYnLXzf8+t0VTHV8IzZKn+O21m3tCxhcbma2X/JIABRZAOWkfntD2BJwE+R5qgvpxZGlA8MgeQmhhigL7kCAt+Jg9w9jg+d9KAdefSLe26RHQmghyH8+gjwvMs1UEwv9o848qaUSmtf5NVkRTvfX4r3RVVim5KfSTh8D2n7Tsj3z/KSGbKhiCCIQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=TurhxZCYKf45Hvp+9ayxTFHDgfYZJ4hFUUH33Lj7eFo=;
+ b=d4NMXTMKYMkJ/V+BYuyQtELpqlwuaY6UkdWqOvTDmZDX331b3Nr6f8VB3J/trBxSwMUrg5Yxes6ZZ9XpcDfLycxBbO9b1IrAGXVTWTF3H4zMJzDiPIXAX3M/U9J3T1wZVNrnRvL9m415GHbjAdmhRzNDyoeEngjScZ9W1ljjHutObjlQGTWjUjPisxw+2wafmbpXSOA0W2LskJPzyKeGR8gbAwzw28sJCBYoSWKgTaRYAv92FeOp5KfgN5kg797a39ni3sUENXCI70j75YzX466wCli5XfPMlJOwvgfmMX3CEvReiRGzUkwAfVH15abkW82b+kD42b7fGRU9gtzeBA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=TurhxZCYKf45Hvp+9ayxTFHDgfYZJ4hFUUH33Lj7eFo=;
+ b=zO4LE0SZcKj9gBf6dp2THvn5sIx5xopTONvwuxyonaRedJ5X/jlw14Kd/HQ8KTXo1Jfz5PRkiuulGAk02HfwntOXW1S5DA5M0oTWjHGOSdmh2lpMlS1YgqLPeSJD/f8Syv9Q+SBIsbiP7dywWd1LpLhJOR2UUyQpkQP5Xz3Mkmo=
+Received: from PH8PR12MB6938.namprd12.prod.outlook.com (2603:10b6:510:1bd::8)
+ by PH8PR12MB6986.namprd12.prod.outlook.com (2603:10b6:510:1bd::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.21; Mon, 18 Nov
+ 2024 10:15:56 +0000
+Received: from PH8PR12MB6938.namprd12.prod.outlook.com
+ ([fe80::16e0:b570:3abe:e708]) by PH8PR12MB6938.namprd12.prod.outlook.com
+ ([fe80::16e0:b570:3abe:e708%2]) with mapi id 15.20.8158.023; Mon, 18 Nov 2024
+ 10:15:56 +0000
+From: "Shah, Amit" <Amit.Shah@amd.com>
+To: "pawan.kumar.gupta@linux.intel.com" <pawan.kumar.gupta@linux.intel.com>,
+	"jpoimboe@kernel.org" <jpoimboe@kernel.org>, "amit@kernel.org"
+	<amit@kernel.org>
+CC: "corbet@lwn.net" <corbet@lwn.net>, "kvm@vger.kernel.org"
+	<kvm@vger.kernel.org>, "andrew.cooper3@citrix.com"
+	<andrew.cooper3@citrix.com>, "kai.huang@intel.com" <kai.huang@intel.com>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "Lendacky,
+ Thomas" <Thomas.Lendacky@amd.com>, "daniel.sneddon@linux.intel.com"
+	<daniel.sneddon@linux.intel.com>, "boris.ostrovsky@oracle.com"
+	<boris.ostrovsky@oracle.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "seanjc@google.com" <seanjc@google.com>,
+	"mingo@redhat.com" <mingo@redhat.com>, "pbonzini@redhat.com"
+	<pbonzini@redhat.com>, "tglx@linutronix.de" <tglx@linutronix.de>, "Moger,
+ Babu" <Babu.Moger@amd.com>, "Das1, Sandipan" <Sandipan.Das@amd.com>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "dwmw@amazon.co.uk"
+	<dwmw@amazon.co.uk>, "hpa@zytor.com" <hpa@zytor.com>, "peterz@infradead.org"
+	<peterz@infradead.org>, "bp@alien8.de" <bp@alien8.de>, "Kaplan, David"
+	<David.Kaplan@amd.com>, "x86@kernel.org" <x86@kernel.org>
+Subject: Re: [RFC PATCH v2 1/3] x86: cpu/bugs: update SpectreRSB comments for
+ AMD
+Thread-Topic: [RFC PATCH v2 1/3] x86: cpu/bugs: update SpectreRSB comments for
+ AMD
+Thread-Index:
+ AQHbNFhQwY6CJIvrmU2tNHgQpSE0v7KyeFwAgABS0QCAABWWAIABTnUAgAF7OYCAAF1RgIAACjqAgABcFgCAAW1DAIAAyceAgAAFZICABDKEgA==
+Date: Mon, 18 Nov 2024 10:15:56 +0000
+Message-ID: <2eab0a67613c35ec1aea57b47f6808a507270ad6.camel@amd.com>
+References: <20241111193304.fjysuttl6lypb6ng@jpoimboe>
+	 <564a19e6-963d-4cd5-9144-2323bdb4f4e8@citrix.com>
+	 <20241112014644.3p2a6te3sbh5x55c@jpoimboe>
+	 <20241112214241.fzqq6sqszqd454ei@desk>
+	 <20241113202105.py5imjdy7pctccqi@jpoimboe>
+	 <20241114015505.6kghgq33i4m6jrm4@desk>
+	 <20241114023141.n4n3zl7622gzsf75@jpoimboe>
+	 <20241114075403.7wxou7g5udaljprv@desk>
+	 <20241115054836.oubgh4jbyvjum4tk@jpoimboe>
+	 <20241115175047.bszpeakeodajczav@desk>
+	 <20241115181005.xxlebbykksmimgqj@jpoimboe>
+In-Reply-To: <20241115181005.xxlebbykksmimgqj@jpoimboe>
+Accept-Language: en-DE, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PH8PR12MB6938:EE_|PH8PR12MB6986:EE_
+x-ms-office365-filtering-correlation-id: c1d542af-e86e-4bfd-7bf3-08dd07b9fdb2
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|7416014|376014|1800799024|366016|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?Y3NYd0pwbU9oNjVxRFpGWGNpeG81VGVMMmRaa0pZV0VsMVNkelFIbTVPeXY4?=
+ =?utf-8?B?RmRVSzdiTU9iTDdvVFF4cWJPSWJtRTIzVE5BUXF3MTByQ1kvTE1uMXdoUlls?=
+ =?utf-8?B?ZVZURGpRc1YweE9EeGVkd084RTJEd0lwVmk2aFhGYkY3bFhwdnhtUDlNNTB6?=
+ =?utf-8?B?Z3AyN0w3T2R4eTNLQXovRmM0TTZWeDdlaUVWQ0s2eCtWZFpBS1dVaUsxbFZo?=
+ =?utf-8?B?bXRFRys2SUttd0tPbjFwc25zclVRdXd1RlFGSy9kQXkyTFVwYk94Zjh6S092?=
+ =?utf-8?B?MlVaQU5yY1huL2xBUGNEais5MXVuL1NsZXdrZ2tFTnFTa1MvTXIrRklRRkRu?=
+ =?utf-8?B?Q0pvUTBka3NhdDdKc2xoK2ZRSzRyL3V4NjNCN3pQcThKa2JOR0hxTUZQQlU3?=
+ =?utf-8?B?YTlwTVpKWTRnLythU1VwYTh1cUdzWjhIZUhlS2hJSTA0Z1Y5clFnenBLTzZC?=
+ =?utf-8?B?Wmwrc0xlYUNSVm5QVngrb3dKVGo2NkJhMnFaRElOcXNqSjA4SmVVOXhqNWlu?=
+ =?utf-8?B?K1d5T0FGcG5oVWxPZElGazJPK1dVeUpQeWFZTDQ1Ym9qR1FnbzcwMDJqWjdn?=
+ =?utf-8?B?V295ODFMa1NJbm12enVZZ01KMWNRMWJmQ2tKUkpBNmsyQVE3TXNsaG5tdGhh?=
+ =?utf-8?B?dmp3dFI3dG8yam8vcXVEMHR0UGFiTFZ2YktEVVVuM2ZYV3JxVXNnL2hJaUsy?=
+ =?utf-8?B?eDdKWFQ2ZndFZGlJQmpTMml5Mnlqc3dNTVVvaERUdnB3M2EwUXVEQ3Y3MnVF?=
+ =?utf-8?B?K1kxVmdSSU5SWWdveU1DVC9QMkhZdklOTWo5REpZSEluc3AyalM4UEFwc3N6?=
+ =?utf-8?B?dWlDOTBiWkRSVzljVCtMd2Y1MHlwQ3RIOXlqbHNLZlA3emp0WU5CYjZ3dVkz?=
+ =?utf-8?B?dzdlWTQxKzFORWpqblExaDVGRW5yR0RLZnJJeWtlaFh5dUZwQkdBTDJPa1c5?=
+ =?utf-8?B?c0RjcXdzSWtJRkhSQU12K0VVVWxaalJ6TU9uYm5oZ2ZrQWx5WHRiVzAxT3Jk?=
+ =?utf-8?B?c1JMMG96MzFvcnNCcjg2UDN4dDAvbDRBMlpRcFoyVG9tS1NNVVZWakNZRFFH?=
+ =?utf-8?B?eUkxQkwvQmRxZ25Oc0lvckF4ZGtRbTNQR3B2UXZPT2tTeWlxUFQ2WFNwM0s4?=
+ =?utf-8?B?bEcyR01jZmhSaGJ6T045SzRzeFhDTUJzTmptbEY3QmtZYUpWMTEwRitTVlVQ?=
+ =?utf-8?B?QStuVUhBZVVXQzNYWEllN2pReWZyMGlJbnNtWmhISlErQk1sR1AvY2dMTzlt?=
+ =?utf-8?B?Y1phZTh2TWRxdU1LWURnV3krczAwZFp4bWZZQ080Qkx1U0FyRjRsb2I3MHVa?=
+ =?utf-8?B?NDdUd3lSRDdVajJyc0xPaEJBL3NRRzVLVktndElFMnRQbXVibTJRaDVSU1Rm?=
+ =?utf-8?B?UHczelZFZFFMeVJXbldLb1hjcEtjanRBVlhvdE1KQWlaQjR4OS9LYkZ2RjE4?=
+ =?utf-8?B?b3BaQmVOZDRjekZPSlB6UkdKQjI0alhtZFJtOVV1WHhud0ZicWRVYWpxbkcr?=
+ =?utf-8?B?NitDVDYrcEhPZFdsWUsrOWk0UHNXeUc1QnFtK2hYZWg4bUhEcS94ZS9MMG9x?=
+ =?utf-8?B?UWlYY0NjZVUrODVVVXZsRTMxMzNnRG94SFp1T1ZraUlxRjRTNnZ5Zk9VcC9C?=
+ =?utf-8?B?QXQyRFZLRGMyZDRFQVl0cHJnRFRpRGRTRytmRUtmYi9zS3U0Q3dpZEIxbEw2?=
+ =?utf-8?B?NVc4b3dpeU1WQUY4LzdhL0o5TnBXYXBZR283R2lsaWpKV1ZBSjU0alU2UWVz?=
+ =?utf-8?B?N1NwMlBkU09ESWJ3c014allTM2VicjFodGFLeWp3ODNDdHpRVC96WjZUNmpQ?=
+ =?utf-8?Q?4PGSpZbe3xNj+Hu/RGwIO4WX8zFGQvAjtZoSg=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR12MB6938.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?eTVBSnpmUU04NEdFNWtWekkrbWoxZDRJQmNrd0t2TW9WZFNIMkFJTXhBc2JZ?=
+ =?utf-8?B?TGZLVUU3amxGSnloalc1YXQrbW41N0FwUUl0azI5NlowdllUVXRDVFYzUUFl?=
+ =?utf-8?B?QU5tZ01NbVFCR0wwZ3hJdDNHTFAwZmpNcEJXOXZ2dWZkTEpSdEcwa3JqeVZZ?=
+ =?utf-8?B?QkR2UlhWZ0pwQVFJRFF0MXdhNDViM2JXalBEY1Myb1UwQU8zcUdyRlZydFBC?=
+ =?utf-8?B?TjM1YnBPOEpYM05GR1plTXNtWGdHeXlaTjR4UFpEaVBkTytsN2FUQWNCU0VT?=
+ =?utf-8?B?MVhLcWhVOWRKWmc4Q1YvZC9iWDhUSmh0bXgya0V1U0NGWHkya09xVmhZeCtu?=
+ =?utf-8?B?YmZNZXpWQVovZ2RBY0hEQUpxNnpCbEphWlVaZWpuWUk3Ykt2REpHVDRVZmw2?=
+ =?utf-8?B?OHIzOGRRcmVBb0VtSFI4c1lrb0RGOHlwbEdVc1M5M2VuaGludHNsREZlaFRq?=
+ =?utf-8?B?MTdwZENkMVNQNEY4YXkrb2JlOEkxdmZGRDMyZXJLSUw5aEIyV3BZK3MvaDZV?=
+ =?utf-8?B?YW9BNGwySDJVNU1iVHZIWG8wL3ZuaC84K01RMUNERFE0SFB4Z09CRFRoeWd0?=
+ =?utf-8?B?Z2hwYWJwVmpqcmFOamhrNjBmeXNzRFI5OXlBR292aVoxNlFZaUVzVnpWMFFI?=
+ =?utf-8?B?Vm5hNHlLN3pQci9UWVBHOWRYY055dHpWUlJ6WU96RzFHMzNxYmUrUXh4NGNS?=
+ =?utf-8?B?ZEttekFwVjhMcDhnRC9SRStyakRGQndMREdtbHhOdVE3M1Jsd1pWajc5dzhZ?=
+ =?utf-8?B?c3pPY3lBWUMzU0xCeDBiVWNyditHUG1GUHVrMmZ2UDZreFlJNjA3Sit3VEli?=
+ =?utf-8?B?K0VCdVMzbEdOZ1BmV21URkUxUmkrdlV1eS9GOW5iZzhhVEY1dEpDRjhZM0ww?=
+ =?utf-8?B?N0gyT0VINVBHdlg5NElEYytaOE1keDBvTVpGWDdxcm1KMllrM0N1cXkyVXFn?=
+ =?utf-8?B?T1BVUmJBU2pBNEVud2NGckJ5K2lhWStSbXBMNDJmc2t0K2EzbDhzckROZlhR?=
+ =?utf-8?B?UG9HT0Z4VmhJNTd0QzR2Y0lLZ1RxK3FBcnFudnNOSlVDZjBpNUFjQTdSeEsr?=
+ =?utf-8?B?OGMyYlBDQXhYYUlCVCs5Y2JyZWdqZ2dhMEZqQ1FPOVVlampYdVZuZFRNTkFM?=
+ =?utf-8?B?azR1ZTg5Uzk5U0kzSytrQm4rdkwrd2lnV1RMOUFUZWQ3Z1MzakU5RXRZeWtW?=
+ =?utf-8?B?bmU4Rk9kOXZtM2pjR0xYa2k2ekxUcm9wSDJtNnMxSmw0d0gzbDVjOHMyRHNQ?=
+ =?utf-8?B?eG1lUXdpcnQzNjhzSkJPcmVrVGFmelE4Yk11NHlrVHpuZGNoQWNhYVFTQWZO?=
+ =?utf-8?B?ekltYVVCWit3WWxQU0xwKzh3Z1Y4R2c3Wm1Ld0pObWFZZmc3QU9HWVRKYWp2?=
+ =?utf-8?B?eXNCTmt2ZTZXNHdybjlxQ1pDZTRod2FtdlpRMjAxZkRMQndIS0lyYXhRZldW?=
+ =?utf-8?B?S3lwS3ZmV2dUU0RSZ1hSWDhPUGxONTBLbzZKRjB0akVORktqWDVNOGVzNWdB?=
+ =?utf-8?B?aFdaNXZTeUFqWlF5ZXBFVVl6R2Z1aTdnZUI5L3FGNml5ODRnd2RhZzU4UnFG?=
+ =?utf-8?B?TWNJTHV3c0VseWNScVgvZXl4OCtnam84R0VhRS9hSkVBcXRWbnhpUmU0Mm1Z?=
+ =?utf-8?B?YWErRmFtRm5uUWtOSmZHR3l1OEVLWnRtK2w3bEJFd0tmRitwbk43QlVyVmdm?=
+ =?utf-8?B?eklWT0V2VTVKdEw1d2hqNk1TcGZkNnlKeXVjek1MYW12eGh1anQ0WVVpdk1u?=
+ =?utf-8?B?UVFwTEQ0cWlSNmpnRytvd1B3U1NDZGNoOE5kSXgxODJEMFNnTkFZVU9TRjU3?=
+ =?utf-8?B?a1lkVEhXeS8vQjlOOWF1ZDBDT3hUWlRtc3cwYmhZNU0vOFA4amJmZFdKeWZC?=
+ =?utf-8?B?RU00L2J4NWRCNXBCUFh1Y2JuaXNRS1djWEYra1oxZ2RoWjNWWnRqajdnbHN1?=
+ =?utf-8?B?VERLdFd0ekZ3QXNwRkR5VXZEaXBVa1g2VnFLdGtMZ3lHNEpOWjRIYmJjNVYz?=
+ =?utf-8?B?UEljbjNRZU5WcDZROGorendxTGI0L0JHMEZtdWg3MDlpeWdkZTNqbjNKUVd0?=
+ =?utf-8?B?UEVDZjE3UTUyejhLVmlIblYzeks1TnUwemZ2M05JaUpRVlJLb3FHRGZiVHcx?=
+ =?utf-8?Q?u/7hYghNQqOvOEhfoUw6+WOQ/?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <F3B0E46A84C71F4C83C18CD15E7BA5AB@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241118-starqltechn_integration_upstream-v8-3-ac8e36a3aa65@gmail.com>
-References: <20241118-starqltechn_integration_upstream-v8-0-ac8e36a3aa65@gmail.com>
-In-Reply-To: <20241118-starqltechn_integration_upstream-v8-0-ac8e36a3aa65@gmail.com>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Dzmitry Sankouski <dsankouski@gmail.com>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1731924925; l=9804;
- i=dsankouski@gmail.com; s=20240619; h=from:subject:message-id;
- bh=TH30VyqA7OU9YqATMjryFauBN4pQYazeqI+zTeF8qaU=;
- b=3ph1sosCcJvMc6rWdHjLGuaaNV/TpbGvhhveMKzpRBCGigBBNYVZumhlbCt2j9vjAd8VTuZ9X
- ruDDkiVVvINAPl++0li67X2Dvvcc0Jd6wAATIoS1ZHfkMnKGdGpe+c8
-X-Developer-Key: i=dsankouski@gmail.com; a=ed25519;
- pk=YJcXFcN1EWrzBYuiE2yi5Mn6WLn6L1H71J+f7X8fMag=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR12MB6938.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c1d542af-e86e-4bfd-7bf3-08dd07b9fdb2
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Nov 2024 10:15:56.2887
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: d9NBkwKP562h0vwV1V/gM4o8VbDKk5LBzHnVZxi4zrWmdeY4mnInclqEOgQnjupHz6jGeNkETJmUedK+nhwY2w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB6986
 
-SDM845 has "General Purpose" clocks that can be muxed to
-SoC pins to clock various external devices.
-Those clocks may be used as e.g. PWM sources for external peripherals.
-
-GPCLK can in theory have arbitrary value depending on the use case, so
-the concept of frequency tables, used in rcg2 clock driver, is not
-efficient, because it allows only defined frequencies.
-
-Introduce clk_rcg2_gp_ops, which automatically calculate clock
-mnd values for arbitrary clock rate. The calculation done as follows:
-- upon determine rate request, we calculate m/n/pre_div as follows:
-  - find parent(from our client's assigned-clock-parent) rate
-  - find scaled rates by dividing rates on its greatest common divisor
-  - assign requested scaled rate to m
-  - factorize scaled parent rate, put multipliers to n till max value
-    (determined by mnd_width)
-- validate calculated values with *_width:
-  - if doesn't fit, delete divisor and multiplier by 2 until fit
-- return determined rate
-
-Limitations:
-- The driver doesn't select a parent clock (it may be selected by client
-  in device tree with assigned-clocks, assigned-clock-parents properties)
-
-Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
-
----
-Changes in v8:
-- format kernel-doc
-- test with scripts/kernel-doc
-
-Changes in v7:
-- split patch on gp and non gp changes
-- use /**/ comment for kernel doc
-- clk_rcg2_determine_gp_rate: put freq_tbl to the stack
-- clk_rcg2_calc_mnd: if impossible to lower scale, return
-  after setting max divisors values
-
-Changes in v6:
-- remove unused count variable
-- run sparse and smatch
-
-Changes in v5:
-- replace '/' to div64_u64 to fix 32 bit gcc error
-- fix empty scalar initializer
----
- drivers/clk/qcom/clk-rcg.h    |   1 +
- drivers/clk/qcom/clk-rcg2.c   | 146 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/qcom/gcc-sdm845.c |  11 +++--------
- 3 files changed, 150 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
-index 8e0f3372dc7a..8817d14bbda4 100644
---- a/drivers/clk/qcom/clk-rcg.h
-+++ b/drivers/clk/qcom/clk-rcg.h
-@@ -189,6 +189,7 @@ struct clk_rcg2_gfx3d {
- 	container_of(to_clk_rcg2(_hw), struct clk_rcg2_gfx3d, rcg)
- 
- extern const struct clk_ops clk_rcg2_ops;
-+extern const struct clk_ops clk_rcg2_gp_ops;
- extern const struct clk_ops clk_rcg2_floor_ops;
- extern const struct clk_ops clk_rcg2_fm_ops;
- extern const struct clk_ops clk_rcg2_mux_closest_ops;
-diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-index 714ab79e11d6..75617cc8f0c4 100644
---- a/drivers/clk/qcom/clk-rcg2.c
-+++ b/drivers/clk/qcom/clk-rcg2.c
-@@ -8,11 +8,13 @@
- #include <linux/err.h>
- #include <linux/bug.h>
- #include <linux/export.h>
-+#include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include <linux/delay.h>
- #include <linux/rational.h>
- #include <linux/regmap.h>
- #include <linux/math64.h>
-+#include <linux/gcd.h>
- #include <linux/minmax.h>
- #include <linux/slab.h>
- 
-@@ -32,6 +34,7 @@
- 
- #define CFG_REG			0x4
- #define CFG_SRC_DIV_SHIFT	0
-+#define CFG_SRC_DIV_LENGTH	8
- #define CFG_SRC_SEL_SHIFT	8
- #define CFG_SRC_SEL_MASK	(0x7 << CFG_SRC_SEL_SHIFT)
- #define CFG_MODE_SHIFT		12
-@@ -148,6 +151,17 @@ static int clk_rcg2_set_parent(struct clk_hw *hw, u8 index)
- 	return update_config(rcg);
- }
- 
-+/**
-+ * convert_to_reg_val() - Convert divisor values to hardware values.
-+ *
-+ * @f: Frequency table with pure m/n/pre_div parameters.
-+ */
-+static void convert_to_reg_val(struct freq_tbl *f)
-+{
-+	f->pre_div *= 2;
-+	f->pre_div -= 1;
-+}
-+
- /**
-  * calc_rate() - Calculate rate based on m/n:d values
-  *
-@@ -402,6 +416,90 @@ static int clk_rcg2_fm_determine_rate(struct clk_hw *hw,
- 	return _freq_tbl_fm_determine_rate(hw, rcg->freq_multi_tbl, req);
- }
- 
-+/**
-+ * clk_rcg2_split_div() - Split multiplier that doesn't fit in n neither in pre_div.
-+ *
-+ * @multiplier: Multiplier to split between n and pre_div.
-+ * @pre_div: Pointer to pre divisor value.
-+ * @n: Pointer to n divisor value.
-+ * @pre_div_max: Pre divisor maximum value.
-+ */
-+static inline void clk_rcg2_split_div(int multiplier, unsigned int *pre_div,
-+				      u16 *n, unsigned int pre_div_max)
-+{
-+	*n = mult_frac(multiplier * *n, *pre_div, pre_div_max);
-+	*pre_div = pre_div_max;
-+}
-+
-+static void clk_rcg2_calc_mnd(u64 parent_rate, u64 rate, struct freq_tbl *f,
-+			unsigned int mnd_max, unsigned int pre_div_max)
-+{
-+	int i = 2;
-+	unsigned int pre_div = 1;
-+	unsigned long rates_gcd, scaled_parent_rate;
-+	u16 m, n = 1, n_candidate = 1, n_max;
-+
-+	rates_gcd = gcd(parent_rate, rate);
-+	m = div64_u64(rate, rates_gcd);
-+	scaled_parent_rate = div64_u64(parent_rate, rates_gcd);
-+	while (scaled_parent_rate > (mnd_max + m) * pre_div_max) {
-+		// we're exceeding divisor's range, trying lower scale.
-+		if (m > 1) {
-+			m--;
-+			scaled_parent_rate = mult_frac(scaled_parent_rate, m, (m + 1));
-+		} else {
-+			// cannot lower scale, just set max divisor values.
-+			f->n = mnd_max + m;
-+			f->pre_div = pre_div_max;
-+			f->m = m;
-+			return;
-+		}
-+	}
-+
-+	n_max = m + mnd_max;
-+
-+	while (scaled_parent_rate > 1) {
-+		while (scaled_parent_rate % i == 0) {
-+			n_candidate *= i;
-+			if (n_candidate < n_max)
-+				n = n_candidate;
-+			else if (pre_div * i < pre_div_max)
-+				pre_div *= i;
-+			else
-+				clk_rcg2_split_div(i, &pre_div, &n, pre_div_max);
-+
-+			scaled_parent_rate /= i;
-+		}
-+		i++;
-+	}
-+
-+	f->m = m;
-+	f->n = n;
-+	f->pre_div = pre_div > 1 ? pre_div : 0;
-+}
-+
-+static int clk_rcg2_determine_gp_rate(struct clk_hw *hw,
-+				   struct clk_rate_request *req)
-+{
-+	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-+	struct freq_tbl f_tbl = {}, *f = &f_tbl;
-+	int mnd_max = BIT(rcg->mnd_width) - 1;
-+	int hid_max = BIT(rcg->hid_width) - 1;
-+	struct clk_hw *parent;
-+	u64 parent_rate;
-+
-+	parent = clk_hw_get_parent(hw);
-+	parent_rate = clk_get_rate(parent->clk);
-+	if (!parent_rate)
-+		return -EINVAL;
-+
-+	clk_rcg2_calc_mnd(parent_rate, req->rate, f, mnd_max, hid_max / 2);
-+	convert_to_reg_val(f);
-+	req->rate = calc_rate(parent_rate, f->m, f->n, f->n, f->pre_div);
-+
-+	return 0;
-+}
-+
- static int __clk_rcg2_configure_parent(struct clk_rcg2 *rcg, u8 src, u32 *_cfg)
- {
- 	struct clk_hw *hw = &rcg->clkr.hw;
-@@ -499,6 +597,26 @@ static int clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f)
- 	return update_config(rcg);
- }
- 
-+static int clk_rcg2_configure_gp(struct clk_rcg2 *rcg, const struct freq_tbl *f)
-+{
-+	u32 cfg;
-+	int ret;
-+
-+	ret = regmap_read(rcg->clkr.regmap, RCG_CFG_OFFSET(rcg), &cfg);
-+	if (ret)
-+		return ret;
-+
-+	ret = __clk_rcg2_configure_mnd(rcg, f, &cfg);
-+	if (ret)
-+		return ret;
-+
-+	ret = regmap_write(rcg->clkr.regmap, RCG_CFG_OFFSET(rcg), cfg);
-+	if (ret)
-+		return ret;
-+
-+	return update_config(rcg);
-+}
-+
- static int __clk_rcg2_set_rate(struct clk_hw *hw, unsigned long rate,
- 			       enum freq_policy policy)
- {
-@@ -552,6 +670,22 @@ static int clk_rcg2_set_rate(struct clk_hw *hw, unsigned long rate,
- 	return __clk_rcg2_set_rate(hw, rate, CEIL);
- }
- 
-+static int clk_rcg2_set_gp_rate(struct clk_hw *hw, unsigned long rate,
-+			    unsigned long parent_rate)
-+{
-+	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-+	int mnd_max = BIT(rcg->mnd_width) - 1;
-+	int hid_max = BIT(rcg->hid_width) - 1;
-+	struct freq_tbl f_tbl = {}, *f = &f_tbl;
-+	int ret;
-+
-+	clk_rcg2_calc_mnd(parent_rate, rate, f, mnd_max, hid_max / 2);
-+	convert_to_reg_val(f);
-+	ret = clk_rcg2_configure_gp(rcg, f);
-+
-+	return ret;
-+}
-+
- static int clk_rcg2_set_floor_rate(struct clk_hw *hw, unsigned long rate,
- 				   unsigned long parent_rate)
- {
-@@ -679,6 +813,18 @@ const struct clk_ops clk_rcg2_ops = {
- };
- EXPORT_SYMBOL_GPL(clk_rcg2_ops);
- 
-+const struct clk_ops clk_rcg2_gp_ops = {
-+	.is_enabled = clk_rcg2_is_enabled,
-+	.get_parent = clk_rcg2_get_parent,
-+	.set_parent = clk_rcg2_set_parent,
-+	.recalc_rate = clk_rcg2_recalc_rate,
-+	.determine_rate = clk_rcg2_determine_gp_rate,
-+	.set_rate = clk_rcg2_set_gp_rate,
-+	.get_duty_cycle = clk_rcg2_get_duty_cycle,
-+	.set_duty_cycle = clk_rcg2_set_duty_cycle,
-+};
-+EXPORT_SYMBOL_GPL(clk_rcg2_gp_ops);
-+
- const struct clk_ops clk_rcg2_floor_ops = {
- 	.is_enabled = clk_rcg2_is_enabled,
- 	.get_parent = clk_rcg2_get_parent,
-diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
-index dc3aa7014c3e..0def0fc0e009 100644
---- a/drivers/clk/qcom/gcc-sdm845.c
-+++ b/drivers/clk/qcom/gcc-sdm845.c
-@@ -284,11 +284,6 @@ static struct clk_rcg2 gcc_sdm670_cpuss_rbcpr_clk_src = {
- };
- 
- static const struct freq_tbl ftbl_gcc_gp1_clk_src[] = {
--	F(19200000, P_BI_TCXO, 1, 0, 0),
--	F(25000000, P_GPLL0_OUT_EVEN, 12, 0, 0),
--	F(50000000, P_GPLL0_OUT_EVEN, 6, 0, 0),
--	F(100000000, P_GPLL0_OUT_MAIN, 6, 0, 0),
--	F(200000000, P_GPLL0_OUT_MAIN, 3, 0, 0),
- 	{ }
- };
- 
-@@ -302,7 +297,7 @@ static struct clk_rcg2 gcc_gp1_clk_src = {
- 		.name = "gcc_gp1_clk_src",
- 		.parent_data = gcc_parent_data_1,
- 		.num_parents = ARRAY_SIZE(gcc_parent_data_1),
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_gp_ops,
- 	},
- };
- 
-@@ -316,7 +311,7 @@ static struct clk_rcg2 gcc_gp2_clk_src = {
- 		.name = "gcc_gp2_clk_src",
- 		.parent_data = gcc_parent_data_1,
- 		.num_parents = ARRAY_SIZE(gcc_parent_data_1),
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_gp_ops,
- 	},
- };
- 
-@@ -330,7 +325,7 @@ static struct clk_rcg2 gcc_gp3_clk_src = {
- 		.name = "gcc_gp3_clk_src",
- 		.parent_data = gcc_parent_data_1,
- 		.num_parents = ARRAY_SIZE(gcc_parent_data_1),
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_gp_ops,
- 	},
- };
- 
-
--- 
-2.39.2
-
+T24gRnJpLCAyMDI0LTExLTE1IGF0IDEwOjEwIC0wODAwLCBKb3NoIFBvaW1ib2V1ZiB3cm90ZToN
+Cj4gT24gRnJpLCBOb3YgMTUsIDIwMjQgYXQgMDk6NTA6NDdBTSAtMDgwMCwgUGF3YW4gR3VwdGEg
+d3JvdGU6DQo+ID4gVGhpcyBMR1RNLg0KPiA+IA0KPiA+IEkgdGhpbmsgU1BFQ1RSRV9WMl9FSUJS
+U19SRVRQT0xJTkUgaXMgcGxhY2VkIGluIHRoZSB3cm9uZyBsZWcsIGl0DQo+ID4gZG9lc24ndCBu
+ZWVkIFJTQiBmaWxsaW5nIG9uIGNvbnRleHQgc3dpdGNoLCBhbmQgb25seSBuZWVkcw0KPiA+IFZN
+RVhJVF9MSVRFLg0KPiA+IERvZXMgYmVsb3cgY2hhbmdlIG9uIHRvcCBvZiB5b3VyIHBhdGNoIGxv
+b2sgb2theT8NCj4gDQo+IFllYWgsIEkgd2FzIHdvbmRlcmluZyBhYm91dCB0aGF0IHRvby7CoCBT
+aW5jZSBpdCBjaGFuZ2VzIGV4aXN0aW5nDQo+IFZNRVhJVF9MSVRFIGJlaGF2aW9yIEknbGwgbWFr
+ZSBpdCBhIHNlcGFyYXRlIHBhdGNoLsKgIEFuZCBJJ2xsDQo+IHByb2JhYmx5DQo+IGRvIHRoZSBj
+b21tZW50IGNoYW5nZXMgaW4gYSBzZXBhcmF0ZSBwYXRjaCBhcyB3ZWxsLg0KDQpTbyBhbGwgb2Yg
+dGhhdCBsb29rcyBnb29kIHRvIG1lIGFzIHdlbGwuICBJIHRoaW5rIGEgc3RhbmRhbG9uZSBzZXJp
+ZXMNCm1ha2VzIHNlbnNlIC0gbWF5YmUgZXZlbiBmb3IgNi4xMy4gIEknbGwgYmFzZSBteSBwYXRj
+aGVzIG9uIHRvcCBvZg0KeW91cnMuDQoNClRoYW5rcyENCg0KCQlBbWl0DQo=
 
