@@ -1,176 +1,111 @@
-Return-Path: <linux-kernel+bounces-412932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E4AB9D1165
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 14:07:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 084E79D1161
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 14:06:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FAB92843F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 13:07:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3F571F2123E
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 13:06:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0A3D1BA89B;
-	Mon, 18 Nov 2024 13:04:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B3071B4F10;
+	Mon, 18 Nov 2024 13:04:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="bZECRhYC"
-Received: from smtp-fw-6001.amazon.com (smtp-fw-6001.amazon.com [52.95.48.154])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="I4xI+4NR"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03D201B85F0;
-	Mon, 18 Nov 2024 13:04:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.95.48.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41D4C1AF0A5
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 13:04:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731935078; cv=none; b=MEvXS4vyGRLDObFnovJkbemdFH25PUMklfVyPJIapLYCJrvA4NxQPN2fk7ix8KvOTB+aL+kykFPCfehYc+d5zKE3FePO8MaVmbXlyPzvsEmTAdPBJi+nYsftjeiiGuXtC7jaKp2BSk5iflPnH/my/4/4X1P41EiCGjQ/sP1SRqQ=
+	t=1731935066; cv=none; b=GSlOlxfWl0h1pbIHPPn8bGd4oEy6zcwajO6IXdnMv5gFbAMddi7goCDLCk2w57OvMzuJkGsNgK9tCwvp0Jd6vPK6R95HK83r6lIe5AQoNHZkP4CW7h9nWluvHFgJ+t9iE2zdDramfecy0q9vOKpWHBZ9xeFGTM3NpfINUChQFvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731935078; c=relaxed/simple;
-	bh=n13NhvqjiFneogKbi1C94dKpbD7dUVi7WjsM+NBvQlQ=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=o/aInRorCXHLPkDpDiqt/nR9DdbFd5ZxbipqftV0j+0J03y+mEO3+Lr5i3Dlw0iC948UPZjEL3FVYuMZO6RVXEmVgjBgvtzBb+wI8kIMYkt6oIMr6GIxzqgf+m6t1B9SGvYB1iWq0UozkHHhbIfQuaTTV+sDYeosrZKVk+2ZLAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=bZECRhYC; arc=none smtp.client-ip=52.95.48.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
+	s=arc-20240116; t=1731935066; c=relaxed/simple;
+	bh=6FWzUYWFCrsnvBdRA5DjNCEJdOaye5Th9KK3CZXgcSI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=ZdtyD4Ydm8oRpYDVtc3R765nPiJ9xCXS+3M94GCehNpYdym/DuKBonoYJVxrfkxuqGtL1QveDdm6sA1sAh1KAlulRcI+H6LVFlC30LoG5Wr8t/RffTN15T7gdFu2TQhfqkoC8v6PlzcbrF9ImCeXcfGSsHyfSHRXdCtSetrWPK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=I4xI+4NR; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3824446d2bcso1333253f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 05:04:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1731935076; x=1763471076;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=gOEkMewe8WJbkBBs7uFzinPK2/JG25Gq0vZUtD9UmC8=;
-  b=bZECRhYCIlxW1PV+JL6322jFwS2ApAc5Vg8QOlgUDwM8h3RvhAYT9qgm
-   6mOs3EWAirmq+cyD14azuTVmCVFVOcNxe9H8A+czLt2X/pjFvdYACvRHM
-   dp+c5HrxlglkKVdBAP2/CE3xgJIN5NSs1MMBk6k+X+6TF1H8To72eRaAe
-   k=;
-X-IronPort-AV: E=Sophos;i="6.12,164,1728950400"; 
-   d="scan'208";a="440827820"
-Received: from iad6-co-svc-p1-lb1-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.124.125.2])
-  by smtp-border-fw-6001.iad6.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2024 13:04:08 +0000
-Received: from EX19MTAUWA002.ant.amazon.com [10.0.21.151:6012]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.43.2:2525] with esmtp (Farcaster)
- id 0c5aaa77-bd99-4459-b7f4-c9a75c06344d; Mon, 18 Nov 2024 13:04:07 +0000 (UTC)
-X-Farcaster-Flow-ID: 0c5aaa77-bd99-4459-b7f4-c9a75c06344d
-Received: from EX19D020UWA003.ant.amazon.com (10.13.138.254) by
- EX19MTAUWA002.ant.amazon.com (10.250.64.202) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Mon, 18 Nov 2024 13:04:07 +0000
-Received: from EX19MTAUWA001.ant.amazon.com (10.250.64.204) by
- EX19D020UWA003.ant.amazon.com (10.13.138.254) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Mon, 18 Nov 2024 13:04:06 +0000
-Received: from email-imr-corp-prod-pdx-all-2b-dbd438cc.us-west-2.amazon.com
- (10.25.36.214) by mail-relay.amazon.com (10.250.64.204) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id
- 15.2.1258.34 via Frontend Transport; Mon, 18 Nov 2024 13:04:06 +0000
-Received: from dev-dsk-kalyazin-1a-a12e27e2.eu-west-1.amazon.com (dev-dsk-kalyazin-1a-a12e27e2.eu-west-1.amazon.com [172.19.103.116])
-	by email-imr-corp-prod-pdx-all-2b-dbd438cc.us-west-2.amazon.com (Postfix) with ESMTPS id 2B499A065B;
-	Mon, 18 Nov 2024 13:04:04 +0000 (UTC)
-From: Nikita Kalyazin <kalyazin@amazon.com>
-To: <pbonzini@redhat.com>, <seanjc@google.com>, <tglx@linutronix.de>,
-	<mingo@redhat.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>,
-	<hpa@zytor.com>, <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <david@redhat.com>, <peterx@redhat.com>, <oleg@redhat.com>,
-	<vkuznets@redhat.com>, <gshan@redhat.com>, <graf@amazon.de>,
-	<jgowans@amazon.com>, <roypat@amazon.co.uk>, <derekmn@amazon.com>,
-	<nsaenz@amazon.es>, <xmarcalx@amazon.com>, <kalyazin@amazon.com>
-Subject: [PATCH] KVM: x86: async_pf: check earlier if can deliver async pf
-Date: Mon, 18 Nov 2024 13:04:03 +0000
-Message-ID: <20241118130403.23184-1-kalyazin@amazon.com>
-X-Mailer: git-send-email 2.40.1
+        d=suse.com; s=google; t=1731935062; x=1732539862; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=GxWmoEeugVS1v5FyiW6L+8vxmWvgvGVYr+32bhSNYVY=;
+        b=I4xI+4NRNwIdqEl4aflVO7Kmj0AcLq/HsTkPdfNSTzP/xkuJTfQaW0ozzMQWPVtMrm
+         /phHSN7AC2S3XrUHAFRlKqK0UVzBM0fS4t4KUXcol1Pp8PChXmX3A3V8eSSvRQqHO/kf
+         owQ1Hiaqep96yfg3F+hPCYjOs/OmlLVant5SicgiwXt0a5kOgTBPDfYAu8QOre9PRqcB
+         qrLYcmIkN7U9BgRB8QzTSSXJ5Zru26knyWezZAfrAhBonrCj2uD2v5IEEULTbpdHqHuB
+         8GDP8F5+QNobc9LalJArdeO/8kzv5O0I+9bQug0bxmmjdNSJQGSvaBP1KOqCP1pzC3iK
+         4alA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731935062; x=1732539862;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GxWmoEeugVS1v5FyiW6L+8vxmWvgvGVYr+32bhSNYVY=;
+        b=dfe199gj3BP+1W6GMXLy7QCxuiD0rlvP6asMelxfkeKtbwmvUhmldCDORnczLBy/EZ
+         zBGtAluGIxnS59EG1a2+hpGormcYNUEs9zB2dApYXW98/cirzhkopLTyiK0Gg+jkYwsi
+         rOtAVCyD0TPTGyNKvDF3mcYVRcFXBL86KfEHGSyIWfzqLzy3ad4kGuUT0PCf6KK2Rl5j
+         J1vo2OsADH0k6HBAXBxO0BGEBrTp1D+hO8d6KlogpRgWQLME2QtVwqxU8o1HPkXcAPLD
+         9iRCNEJV51l1BZnzRMRXAFcinee/Qal/ZYhdi3BrqYvT429OEtRme8wh+nsPdsqKvW4t
+         Fe3Q==
+X-Gm-Message-State: AOJu0YzYciZLrugQ1eT8DKy5/+SOo2ka56i5miCjbZC1s1ZH6+156/CZ
+	tfU//SxcqnYo8dAszPe5B1MDbjExs1v3NatT1/1PpfBRolxMUJiL6aVwK5ORXCQ=
+X-Google-Smtp-Source: AGHT+IHy/xNjbMBwdkC38nxZZYbLABoxkMezarb7il7wix1uC6BXNWVekYNhmn0yGD3yIBODDTuVhA==
+X-Received: by 2002:a5d:5850:0:b0:382:24b1:e762 with SMTP id ffacd0b85a97d-38225ac4bb6mr12329038f8f.56.1731935062634;
+        Mon, 18 Nov 2024 05:04:22 -0800 (PST)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-382455820absm3879797f8f.84.2024.11.18.05.04.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Nov 2024 05:04:22 -0800 (PST)
+Date: Mon, 18 Nov 2024 14:04:19 +0100
+From: Petr Mladek <pmladek@suse.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, live-patching@vger.kernel.org
+Subject: [GIT PULL] livepatching for 6.13
+Message-ID: <Zzs7U8VsO8YmxxD4@pathway.suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On x86, async pagefault events can only be delivered if the page fault
-was triggered by guest userspace, not kernel.  This is because
-the guest may be in non-sleepable context and will not be able
-to reschedule.
+Hi Linus,
 
-However existing implementation pays the following overhead even for the
-kernel-originated faults, even though it is known in advance that they
-cannot be processed asynchronously:
- - allocate async PF token
- - create and schedule an async work
+please pull the latest changes for the kernel livepatching from
 
-This patch avoids the overhead above in case of kernel-originated faults
-by moving the `kvm_can_deliver_async_pf` check from
-`kvm_arch_async_page_not_present` to `__kvm_faultin_pfn`.
+  git://git.kernel.org/pub/scm/linux/kernel/git/livepatching/livepatching.git tags/livepatching-for-6.13
 
-Note that the existing check `kvm_can_do_async_pf` already calls
-`kvm_can_deliver_async_pf` internally, however it only does that if the
-`kvm_hlt_in_guest` check is true, ie userspace requested KVM not to exit
-on guest halts via `KVM_CAP_X86_DISABLE_EXITS`.  In that case the code
-proceeds with the async fault processing with the following
-justification in 1dfdb45ec510ba27e366878f97484e9c9e728902 ("KVM: x86:
-clean up conditions for asynchronous page fault handling"):
+=============================================
 
-"Even when asynchronous page fault is disabled, KVM does not want to pause
-the host if a guest triggers a page fault; instead it will put it into
-an artificial HLT state that allows running other host processes while
-allowing interrupt delivery into the guest."
+- A new selftest for livepatching of a kprobed function.
 
-Signed-off-by: Nikita Kalyazin <kalyazin@amazon.com>
----
- arch/x86/kvm/mmu/mmu.c | 3 ++-
- arch/x86/kvm/x86.c     | 5 ++---
- arch/x86/kvm/x86.h     | 2 ++
- 3 files changed, 6 insertions(+), 4 deletions(-)
+----------------------------------------------------------------
+Michael Vetter (3):
+      selftests: livepatch: rename KLP_SYSFS_DIR to SYSFS_KLP_DIR
+      selftests: livepatch: save and restore kprobe state
+      selftests: livepatch: test livepatching a kprobed function
 
-diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-index 22e7ad235123..11d29d15b6cd 100644
---- a/arch/x86/kvm/mmu/mmu.c
-+++ b/arch/x86/kvm/mmu/mmu.c
-@@ -4369,7 +4369,8 @@ static int __kvm_mmu_faultin_pfn(struct kvm_vcpu *vcpu,
- 			trace_kvm_async_pf_repeated_fault(fault->addr, fault->gfn);
- 			kvm_make_request(KVM_REQ_APF_HALT, vcpu);
- 			return RET_PF_RETRY;
--		} else if (kvm_arch_setup_async_pf(vcpu, fault)) {
-+		} else if (kvm_can_deliver_async_pf(vcpu) &&
-+			kvm_arch_setup_async_pf(vcpu, fault)) {
- 			return RET_PF_RETRY;
- 		}
- 	}
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 2e713480933a..8edae75b39f7 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -13355,7 +13355,7 @@ static inline bool apf_pageready_slot_free(struct kvm_vcpu *vcpu)
- 	return !val;
- }
- 
--static bool kvm_can_deliver_async_pf(struct kvm_vcpu *vcpu)
-+bool kvm_can_deliver_async_pf(struct kvm_vcpu *vcpu)
- {
- 
- 	if (!kvm_pv_async_pf_enabled(vcpu))
-@@ -13406,8 +13406,7 @@ bool kvm_arch_async_page_not_present(struct kvm_vcpu *vcpu,
- 	trace_kvm_async_pf_not_present(work->arch.token, work->cr2_or_gpa);
- 	kvm_add_async_pf_gfn(vcpu, work->arch.gfn);
- 
--	if (kvm_can_deliver_async_pf(vcpu) &&
--	    !apf_put_user_notpresent(vcpu)) {
-+	if (!apf_put_user_notpresent(vcpu)) {
- 		fault.vector = PF_VECTOR;
- 		fault.error_code_valid = true;
- 		fault.error_code = 0;
-diff --git a/arch/x86/kvm/x86.h b/arch/x86/kvm/x86.h
-index ec623d23d13d..9647f41e5c49 100644
---- a/arch/x86/kvm/x86.h
-+++ b/arch/x86/kvm/x86.h
-@@ -387,6 +387,8 @@ int x86_emulate_instruction(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa,
- fastpath_t handle_fastpath_set_msr_irqoff(struct kvm_vcpu *vcpu);
- fastpath_t handle_fastpath_hlt(struct kvm_vcpu *vcpu);
- 
-+bool kvm_can_deliver_async_pf(struct kvm_vcpu *vcpu);
-+
- extern struct kvm_caps kvm_caps;
- extern struct kvm_host_values kvm_host;
- 
-
-base-commit: d96c77bd4eeba469bddbbb14323d2191684da82a
--- 
-2.40.1
-
+ tools/testing/selftests/livepatch/Makefile         |  3 +-
+ tools/testing/selftests/livepatch/functions.sh     | 29 ++++++----
+ .../testing/selftests/livepatch/test-callbacks.sh  | 24 ++++-----
+ tools/testing/selftests/livepatch/test-ftrace.sh   |  2 +-
+ tools/testing/selftests/livepatch/test-kprobe.sh   | 62 ++++++++++++++++++++++
+ .../testing/selftests/livepatch/test-livepatch.sh  | 12 ++---
+ tools/testing/selftests/livepatch/test-state.sh    |  8 +--
+ tools/testing/selftests/livepatch/test-syscall.sh  |  6 +--
+ tools/testing/selftests/livepatch/test-sysfs.sh    |  8 +--
+ .../selftests/livepatch/test_modules/Makefile      |  3 +-
+ .../livepatch/test_modules/test_klp_kprobe.c       | 38 +++++++++++++
+ 11 files changed, 152 insertions(+), 43 deletions(-)
+ create mode 100755 tools/testing/selftests/livepatch/test-kprobe.sh
+ create mode 100644 tools/testing/selftests/livepatch/test_modules/test_klp_kprobe.c
 
