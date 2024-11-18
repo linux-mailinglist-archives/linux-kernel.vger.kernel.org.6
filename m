@@ -1,91 +1,91 @@
-Return-Path: <linux-kernel+bounces-413572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 637979D1B27
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 23:37:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06FC79D1B2D
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 23:40:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D870EB2225E
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 22:37:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6D721F21DCB
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 22:40:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ADBB1E7657;
-	Mon, 18 Nov 2024 22:37:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CEBF1E8846;
+	Mon, 18 Nov 2024 22:40:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sQEcO9AP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bDtJ3sKh"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A691414E2C0
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 22:37:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D587158DAC
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 22:40:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731969436; cv=none; b=kKa/QT2BAhY476xk9KuuhJ33c5/KRJhG+nTZh9vjikMo1h8qfrbIJsJQEbTWU9+jl2ZeOdcTJWb4jdoT6U5+Tlq+iqOwjNBWcFgFdfzKn2a6NgxSDIs+sBibifMdOGKbk+T/THq2y8HnkGOWce1BZMPpE89DVPGcqkpwhb4YMSM=
+	t=1731969650; cv=none; b=ru9LgtF/jGwee9xUVPdHZ7Fi+czzoqmc+XU1UYDKxkKVichfPrhHV86BBUFtDEv8l34IMHWL6e6OltlRdZ82Zm9ElnPDVqv+1iefrqhYYUAmZtd0xAHZFp2EDwzr4YAJvsGbuRc/tSOOu9qGKUix7neZNH6a8nzvTOsyYI13zYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731969436; c=relaxed/simple;
-	bh=+Da2EUxoTsOjPeVElA9B/PqKIwe35EA9sy0XrDXIkhc=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=CM/+Jd1WoAd6ly+/4keOVymPoQXWyzqHgwSSDtS+qEFK0OaBy+xXz1BurlZ2JcszVWxYyUWb3knuJi7+4oUSBmPXGgNVfMFEedVGtXNhFEqSmoACj/HbYy8150SufHhqMHtQzysXsKdS1tEIQaHx+FUI+4JHQIIRXLBM68NFDdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sQEcO9AP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7B47C4CECC;
-	Mon, 18 Nov 2024 22:37:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731969436;
-	bh=+Da2EUxoTsOjPeVElA9B/PqKIwe35EA9sy0XrDXIkhc=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=sQEcO9APU+FbKm8N8Doe2IHGbfM6yHVopz07mUFFwK4RIRizIqMFnpGBkuFVexqjL
-	 J4sDWUjmyU2vth8DdFe5Kiu5iXjsO3SL7vQ8stJ+byznWVs/lGGefxOlyuJ/cTtzAu
-	 +IMEI2OqEkAtco6e0e65bks6Fg4svhW7Q6yxF2mvAKs2x4SiviT9hznL+yOAeBEdOC
-	 X+sBiVC+Sm0G/usmCGwo7AiSDyLrmGWoMP1ab28MGoKUuA/jI5asE6A4zp9rNNCfBt
-	 ISMChsUfYfHpigpqjuXWgpRY1+/IW8SEfuu4Bd2DVI7RSdWZtL8aOirpT/E6buWw9m
-	 4Ze5bSCSZOjPA==
-Date: Mon, 18 Nov 2024 23:37:13 +0100 (CET)
-From: Jiri Kosina <jikos@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-cc: Benjamin Tissoires <bentiss@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] HID for 6.13
-In-Reply-To: <nycvar.YFH.7.76.2411182207390.20286@cbobk.fhfr.pm>
-Message-ID: <366r6ss5-2qo9-or0p-28qo-634892op88ns@xreary.bet>
-References: <nycvar.YFH.7.76.2411182207390.20286@cbobk.fhfr.pm>
+	s=arc-20240116; t=1731969650; c=relaxed/simple;
+	bh=IwvWeYwJTMOuB9zMw8pWHnpFQi44jYl76g5qw5BujXQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VLnVFpwytqsdwd1sA4MKTY4QTUEFp5TmT3yx56G3nzNondRQpQakiVNvXkPlCIsr5NbAgxDr+k6WJ0zMNug5rP+AQiPVBF4D4Su88lIoGBaQiFL1phyK5kcMM3oKOzP8RHyGbMiqFEJVYCdsyNE2pFthTcL+rK+Vc5mMii3VCK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bDtJ3sKh; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731969646;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=1O230Jlxlah/OjRxFvR7zagjddCyf3ntg587u1hFFis=;
+	b=bDtJ3sKhV4Clzv88yTLSeLz7mYzP0tCrqygsPwgx/hKfyuJgl7L+m/Jjf+19+p7c6zr3lD
+	SJAViYcEUnuLj4n+dTDwN6qLc2GIGMuU0AVJbe3NsS1MTqRomy1j/WROOXywTr+2lxrp1+
+	DdsIZISjg4B/Ka2vGGr/o1u+suRUTWE=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-267-7gXCOA-SMRCEMaK5SVFpSg-1; Mon,
+ 18 Nov 2024 17:40:45 -0500
+X-MC-Unique: 7gXCOA-SMRCEMaK5SVFpSg-1
+X-Mimecast-MFC-AGG-ID: 7gXCOA-SMRCEMaK5SVFpSg
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DDD9A1978F59;
+	Mon, 18 Nov 2024 22:40:43 +0000 (UTC)
+Received: from bcodding.csb.redhat.com (unknown [10.22.74.7])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id C3FB71955F43;
+	Mon, 18 Nov 2024 22:40:42 +0000 (UTC)
+From: Benjamin Coddington <bcodding@redhat.com>
+To: Trond Myklebust <trondmy@kernel.org>,
+	Anna Schumaker <anna@kernel.org>,
+	Chuck Lever <chuck.lever@oracle.com>
+Cc: linux-nfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] two fixes for pNFS SCSI device handling
+Date: Mon, 18 Nov 2024 17:40:39 -0500
+Message-ID: <cover.1731969260.git.bcodding@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Mon, 18 Nov 2024, Jiri Kosina wrote:
+A bit late for v6.13 perhaps, but here are two fresh corrections for pNFS
+SCSI device handling, and some comments as requeted by Christoph.
 
-> Linus,
-> 
-> please pull from
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git tags/hid-for-linus-2024111801
-> 
-> to receive HID subsystem queue for 6.13 merge window.
-> 
-> Please note: there is one SHA that you might notice was not present in 
-> linux-next, and that's e8a0581914bd ("HID: multitouch: make mt_set_mode() 
-> less cryptic").
-> 
-> The reason for this is that there was a hiccup when merging this patch 
-> originally, and the topic branch was based on some random state of the 
-> for-next branch, so it contained a lot of unrelated churn. And I've 
-> noticed that only now, when preparing the pull request. The end result is 
-> identical on a code level, but I didn't want to send you the branch with 
-> git merge history that makes no sense [1], so I've created [2] instead, 
-> and that's the one present in this pull request.
-> 
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git/log/?h=for-6.13/multitouch
+Benjamin Coddington (2):
+  nfs/blocklayout: Don't attempt unregister for invalid block device
+  nfs/blocklayout: Limit repeat device registration on failure
 
-[2] https://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git/log/?h=for-6.13/multitouch-v2
+ fs/nfs/blocklayout/blocklayout.c | 12 +++++++++++-
+ fs/nfs/blocklayout/dev.c         |  7 +++++--
+ 2 files changed, 16 insertions(+), 3 deletions(-)
 
-is of course the missing reference.
 
+base-commit: adc218676eef25575469234709c2d87185ca223a
 -- 
-Jiri Kosina
-SUSE Labs
+2.47.0
 
 
