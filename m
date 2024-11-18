@@ -1,112 +1,127 @@
-Return-Path: <linux-kernel+bounces-412388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 787D19D085B
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 05:14:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF9DA9D085C
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 05:14:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CDEAEB21268
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 04:14:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B5B11F21F76
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 04:14:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAF567F460;
-	Mon, 18 Nov 2024 04:14:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05F3D13BC35;
+	Mon, 18 Nov 2024 04:14:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="kQFgBWdI"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="frlSFEKy"
+Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com [209.85.221.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A37F581745
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 04:14:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E64E713B7B3
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 04:14:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731903258; cv=none; b=k81InxhQtd3to2qXYZKZhR0p+x2ahgvaN5Pbs2JMmmwscp//cBPOb9Zz6PztPWMQdn4yJBYd5g47ST5ULCW2MdBO9re1hOJK/XTE/EvGRpB1c6EedsHPgPHDqYbIKmq2DFp1SDo5ILP0kGxpWmsBENEGmJT1b2Xli9VeN0UZiTA=
+	t=1731903267; cv=none; b=OcN9vwD4txFtKKEwgLbWihMfMW5G5Lqn4Y9MN314/L2LDeLtOCXXrd9WKI6JImT+FxgC2I54f78wg8KBY+2yYoSE97988S5qTALGZm203BgDYdflKdrG1aUUH/VRO6kMdeOUMl+LQt3qy2pMOBlivNbxuPMVLox+lsw5PPnKQJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731903258; c=relaxed/simple;
-	bh=d+tL0KwV1n4w0y+aQKArnpxFMg/v7LoAmZuEToUallo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=acMJfMA1+yVI95/kwgMCw/xoS426hnpxYNcIGvsUyk5IfenWBazDBboQ/QOghQ7t0sy3g45AvMdmhfXLAiLmvIlIHcJR8rMQBAIQZtRs3pKW81peWv/4WKs8ri5jaq1nCbjhXE7pM+nXwBXKm4P7ZYMkxWUlZFb2PIwJZ692Dyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=kQFgBWdI; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1731903248;
-	bh=d+tL0KwV1n4w0y+aQKArnpxFMg/v7LoAmZuEToUallo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=kQFgBWdIqDRyMo+1efplIwL+XPWvPLsSMJUskwRSFsn7XB6tvPglNWk8A46ENsYcQ
-	 ZcjPk+psEpvifed84X8FNvag5RwoJFPJyRd4+Jiuwj+AOgY6cP6bDqNd2CMHdMFYcY
-	 Wz0uv5RBMl7KRPtQo2YHMBvh+5whTZtVqfSGN2vy29P/HIXncpH7F/DUV9O8aFHOKG
-	 vMzO+cy2o8o4mYi65130aPI+2+Q8mKnoo2kg3W3XYzZ5NYcpj0TB2Ozp/ylYpsI6g8
-	 5Zrn1sxQB2+E0aqLCblAsayTaZzp442QlTV9n7OLl0B9MjTdfe9DzsRlbsabNnFkAA
-	 T8/445ZmTlAjg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XsDlg5t2mz4x8m;
-	Mon, 18 Nov 2024 15:14:07 +1100 (AEDT)
-Date: Mon, 18 Nov 2024 15:14:09 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>, linux-kernel@vger.kernel.org,
- Dave Airlie <airlied@redhat.com>, DRI <dri-devel@lists.freedesktop.org>
-Subject: Re: [GIT PULL] random number generator updates for 6.13-rc1
-Message-ID: <20241118151409.2a6a2333@canb.auug.org.au>
-In-Reply-To: <20241118020939.641511-1-Jason@zx2c4.com>
-References: <20241118020939.641511-1-Jason@zx2c4.com>
+	s=arc-20240116; t=1731903267; c=relaxed/simple;
+	bh=nsLPNefWmi0BmG+QCMhQkDkPhf3ZsZH9jvPvI3SQnLI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CeaDJ6ul/Urg0M4kI/nGP7+TMgqMNA/hywfeEfPWCPweEV4FdLhv11FtG9aPBe7koJrvair66v5/fuyF+QYYTAyrIh+rhSvYKjtOtlw9ic5+vfdPkFYByAcDUvuZQBPqIxi6tALNexG4dQrFBgOJxRe9PKTYp8V4LhyY3RQpzJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=frlSFEKy; arc=none smtp.client-ip=209.85.221.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-5139cd0032cso1087800e0c.2
+        for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 20:14:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731903265; x=1732508065; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PQd6JI85biFn4sbwYRSTbFK4J9rq3Xx1TpPMhTyPg5U=;
+        b=frlSFEKyZ9Dv8AlLx//StREEVcIX/olMDXCCfygFC6sKN5UZP59j24M4nsMdEs/t36
+         hxlSMpEjUsdghAPnoZptUuIVLZ9Cq4pVuKDaXYFYW/m9ctXgm78PiJbOQUI3zV/Id5ck
+         jLidXnkdaSBSnpe6LOWDb21WbQf42G3BU3Z0LLTmqmqHtEpqIZvfkUP9luPvitn6T9Cb
+         39l0KN/7NkrT/F9no+Evy8mZjNFDqgBAJYPCC4D2TJZZfqXM4nliDFO19HULZigoeR60
+         QgjKNnTtGFbkYWSAvzM0MtoISIoaEqlTvB3ZBWwEy8c4NnE2fcODix2LBg2dJcf85s4t
+         YBdw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731903265; x=1732508065;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PQd6JI85biFn4sbwYRSTbFK4J9rq3Xx1TpPMhTyPg5U=;
+        b=xPbXb3AkNnquyI+dJmQGNV5uCX8ZfSIWb/W1q2QpxZ2OfZZaFR50yzRLFHjs/8QxQu
+         5ftgg6dkL8MBXRNSK8VT9SO+8PPVKYOEb/yPIZY7px/8KVX5J0X3ak0mDcBNk1gCU33j
+         wDeCup8MukYi10IBKfoMTd3y514aeuCHkKolSCR+/fl027Qt7SwjD+1YpfdK/ZMXbvtg
+         w1grWo/66OLno+qfO8WWxCtNf20/9/1kGN0fPgyY5cQeN5BYcxDYSyWDHdPd0W9jj0pk
+         lucUjebdlvUirn4zbmqttNBd7MRDPa4quMg/HLmrtp47HUgnPZVpGlMojUZoorLmr7lP
+         IBTA==
+X-Forwarded-Encrypted: i=1; AJvYcCX/1f/BpnVBQNUmeu6qzG13NTdEao+derX9a1HeiMrWXp7mV26cdDEXCHK9K8g4vCauulp3w7XCb1P6hlY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHTmF3saQMqML/drtXTL23fvy/30t3ViffEYUZAaTFEvUC8GIN
+	ep5uwmurNFz2tbBo+G11rnJcrcxxqAqOyHnwo5eZUMFK2pMRG9tErQNPzRrTP/qz1yN3/GtTc+N
+	wz+IOTOcBF6TMfQeka8fAt6u5e4o=
+X-Google-Smtp-Source: AGHT+IFqn2Ag9Be1EYUtk0qbTon2Pz8J3bvBTLUBi2O1zIWfzTGRnArJmiRDqhI/HtuXrT/KxPYCGy0djt2J4gohTic=
+X-Received: by 2002:a05:6122:789:b0:50d:85c8:af3e with SMTP id
+ 71dfb90a1353d-51477eeb37dmr9177343e0c.3.1731903264820; Sun, 17 Nov 2024
+ 20:14:24 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/pLR6yKQ2jdQD0mFZy7=ShCJ";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/pLR6yKQ2jdQD0mFZy7=ShCJ
-Content-Type: text/plain; charset=US-ASCII
+References: <20241116091658.1983491-1-chenridong@huaweicloud.com>
+ <20241116091658.1983491-2-chenridong@huaweicloud.com> <Zzq8jsAQNYgDKSGN@casper.infradead.org>
+In-Reply-To: <Zzq8jsAQNYgDKSGN@casper.infradead.org>
+From: Barry Song <21cnbao@gmail.com>
+Date: Mon, 18 Nov 2024 17:14:14 +1300
+Message-ID: <CAGsJ_4x0OrdhorQdz8PyLD84GOYVZJ7kLfGV_5yupLG_ZQ_B3w@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 1/1] mm/vmscan: move the written-back folios to the
+ tail of LRU after shrinking
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Chen Ridong <chenridong@huaweicloud.com>, akpm@linux-foundation.org, mhocko@suse.com, 
+	hannes@cmpxchg.org, yosryahmed@google.com, yuzhao@google.com, 
+	david@redhat.com, ryan.roberts@arm.com, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, chenridong@huawei.com, wangweiyang2@huawei.com, 
+	xieym_ict@hotmail.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
-
-On Mon, 18 Nov 2024 03:09:39 +0100 "Jason A. Donenfeld" <Jason@zx2c4.com> w=
-rote:
+On Mon, Nov 18, 2024 at 5:03=E2=80=AFPM Matthew Wilcox <willy@infradead.org=
+> wrote:
 >
-> This pull request contains a single series from Uros to replace uses of
-> #include <linux/random.h> with prandom.h or other more specific headers, =
-as
-> needed, in order to avoid a circular header issue. Uros' goal is to be ab=
-le to
-> use percpu.h from prandom.h, which will then allow him to define __percpu=
- in
-> percpu.h rather than in compiler_types.h.
->=20
-> This has been sitting in next for most of the 6.12 cycle.
+> On Sat, Nov 16, 2024 at 09:16:58AM +0000, Chen Ridong wrote:
+> > 2. In shrink_page_list function, if folioN is THP(2M), it may be splite=
+d
+> >    and added to swap cache folio by folio. After adding to swap cache,
+> >    it will submit io to writeback folio to swap, which is asynchronous.
+> >    When shrink_page_list is finished, the isolated folios list will be
+> >    moved back to the head of inactive lru. The inactive lru may just lo=
+ok
+> >    like this, with 512 filioes have been move to the head of inactive l=
+ru.
+>
+> I was hoping that we'd be able to stop splitting the folio when adding
+> to the swap cache.  Ideally. we'd add the whole 2MB and write it back
+> as a single unit.
 
-One conflict against the DRM tree.
+This is already the case: adding to the swapcache doesn=E2=80=99t require s=
+plitting
+THPs, but failing to allocate 2MB of contiguous swap slots will.
 
-https://lore.kernel.org/lkml/20241010153855.588ec772@canb.auug.org.au/
+>
+> This is going to become much more important with memdescs.  We'd have to
+> allocate 512 struct folios to do this, which would be about 10 4kB pages,
+> and if we're trying to swap out memory, we're probably low on memory.
+>
+> So I don't like this solution you have at all because it doesn't help us
+> get to the solution we're going to need in about a year's time.
+>
 
---=20
-Cheers,
-Stephen Rothwell
+Ridong might need to clarify why this splitting is occurring. If it=E2=80=
+=99s due to the
+failure to allocate swap slots, we still need a solution to address it.
 
---Sig_/pLR6yKQ2jdQD0mFZy7=ShCJ
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmc6vxEACgkQAVBC80lX
-0GzyyAf/RtTTTtMAfPx2mqkl5u6fGrAriuFttFWVZm7bwFQEqbU3PfDS75WjZaZ/
-5J/gtguRN+A6YxH/8mf6DP0XvW51l60R5go4TEwfWcAoB1KRRM2mF8NS34vtZ4eN
-/mP+tS4CcVYiHRZJTorRDQn4fwE30sWr7wJl4ftBseNEAptGfo62aa/qjl8mNN8B
-JuoUXqaL95dFw+jK//fZClIalnS+SkWi+zDPzNvvW6Da4Nhzsh6FtNDOEp+m0bb2
-7+KyTvrsJ2R2uMpK9ufEykp6L0Nb/+IQt3g6z37Q52ww0OaWq7IzCvfYqwW+xmiX
-SVs4jqgi2zmcvaDgNevsHHiRE9SG7g==
-=uEIf
------END PGP SIGNATURE-----
-
---Sig_/pLR6yKQ2jdQD0mFZy7=ShCJ--
+Thanks
+Barry
 
