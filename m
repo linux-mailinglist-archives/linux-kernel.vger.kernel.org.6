@@ -1,160 +1,93 @@
-Return-Path: <linux-kernel+bounces-412397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAAE49D0872
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 05:38:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FA3D9D0875
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 05:39:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 844F3281C2E
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 04:38:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4EFBB1F21588
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 04:39:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1426813B2A2;
-	Mon, 18 Nov 2024 04:38:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0110E13B2B4;
+	Mon, 18 Nov 2024 04:39:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jjn9TKqG"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ivS5mdQ2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E81FA1CA94
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 04:38:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 540701EB48;
+	Mon, 18 Nov 2024 04:39:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731904709; cv=none; b=QN+6xzUbpzVSI3VWtd33ivCeEik4Q9Ae8Qzty3Vj6HAFD9sfwSuIR77dkKGJB1xlGpiS4W4L0nKme3YvzCsDzzSrEK3miN2c1QZInSQJU+p46aIeBuAAo98acvbDB+xojTYtAMPmtHUUR7sMDNvmlbQKQBa4GhTrUqqvSV91ul4=
+	t=1731904745; cv=none; b=K45LOlD9DLdJ//G7/dAIDWta1PDP5zNV+FI2nEHg1gRUF4CDnFJUEYC5SUjKluIrdEy02k0BVqKn4LC1WI83YhmH7hSaK6vW4o4tCGfoEdEoahjFUeda4MC5iL2f6Rr6XdIN2FN2dsUnYUY9rXUHAAUumNlwQ6SYN/rrd8VnRbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731904709; c=relaxed/simple;
-	bh=t1DV9+PJwntk8JsKXT8IBFfY683A0ef74HmUZOsGwu0=;
-	h=Date:Message-Id:Mime-Version:Subject:From:To:Cc:Content-Type; b=cCbgv5ol6l4lPn6IBkjF4GXXT1ImU4MYuHm+VeaByzllsr8dF4765wai9QJY1zTR8pj26jaVfMdbS84bUU885kaXb8Pl1zTkfA1P7dqrtVB4t39FWvi4YOVkafYRMQ7+ktl1fbv7rK5v2sCQTBoliXK7Kx8LWCgDzOumAYsffIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--suleiman.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jjn9TKqG; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--suleiman.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6eb0a1d0216so54804557b3.2
-        for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 20:38:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731904707; x=1732509507; darn=vger.kernel.org;
-        h=cc:to:from:subject:mime-version:message-id:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=JQv8I3JIxaU1/rgjHqPaWuqVa3AWWbnCJTtTeM4ESO8=;
-        b=jjn9TKqGZQANXWzJFdS2V5ZD5ZDINBjfaCAj+qnnHxlJ9S8XnbMEnnJMfix+T+FVp6
-         i4rrcQhjZAuZUEEsWt6zXMv48dklJQDZmdtXk4G4otBcIiQqnSXdtCCxh147i6f03Bjv
-         pRY1IxdIXYm74l+8RbxStAcJ55K3QOqdfcKXLqXx+AcVZon3DKvV7acnkaPexSr8+mnx
-         QhU7/zSvV00OEUGbUZf7Z4xgkD1oO3IPhDk6b4MILaMvJ+Knb1EURo+urKik65YQJYZO
-         BGlaQxgQmATrFtBrxYrXYVY03mUVuAOStjeR4QYYrQXD3OxC8owaN1Pe2H1iZ676KTiS
-         B10A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731904707; x=1732509507;
-        h=cc:to:from:subject:mime-version:message-id:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=JQv8I3JIxaU1/rgjHqPaWuqVa3AWWbnCJTtTeM4ESO8=;
-        b=ptRuexgMbqZNSyRI9Z5TU1aZ/aSUPA3UNQFJ1WAdfUEQvL3TowTAdUnv74IFVAN7SN
-         63xl3usFr+vl2wYwcj9Io+6C0keI74mHpLrzDx6fFybCyL+B2uqtPior6s0DWbilAOaI
-         aaLPS5KEZ7t7chNQdlhWtrr7gSgBp02yHIT1hR9C75t15e0lF+nPB3425Fxv+Q+R9vXW
-         17+/jwAKopZ7+aLfKQwUAztJZ6RASigcYygtTVQbrOdiZqjkJAuDiRzBHyOjBbJVVecV
-         iTs3jia5gREV2Uk9K9P31gtQID7LDn7uqJr7QVTQTyTHF6xSBPFKAu75ksg4YRktp3pn
-         0qng==
-X-Forwarded-Encrypted: i=1; AJvYcCUSRtnQhL/4PRG2HtUU0aUhIrKGCXzKTqESbPFBD8cBGDCP1fm0V6Zm1QgUaTZZHRWLrKAgCJeRQOV8TdQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqRG/U5LMl1T6jFnQMljYnzDVE1t84Vs4vmSgdsLhvk0EenZHM
-	u4ZGZvthyN0p7OXHNB0OsaZ67ivqLLgpWoxwMe3/l8iaw2oT6DVnR59gKKXQ+MjcHpTmngnfOUw
-	DlazKw+oSYw==
-X-Google-Smtp-Source: AGHT+IG/L7EqsoR1sfX/shhNBpQ4HgVRA9GeBU49j7fNWohg7uviubTV5M/BOrxjTQEpcnc2LCXFSHLhg2XoWw==
-X-Received: from suleiman1.tok.corp.google.com ([2401:fa00:8f:203:ee32:7944:d9d4:158a])
- (user=suleiman job=sendgmr) by 2002:a05:690c:808d:b0:6ee:3b47:59a3 with SMTP
- id 00721157ae682-6ee55a553d5mr525797b3.2.1731904706871; Sun, 17 Nov 2024
- 20:38:26 -0800 (PST)
-Date: Mon, 18 Nov 2024 13:37:45 +0900
-Message-Id: <20241118043745.1857272-1-suleiman@google.com>
+	s=arc-20240116; t=1731904745; c=relaxed/simple;
+	bh=7plGjMDEMlt/J3128k/TPdaPFrereg8GAEnNA6ZDp3o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ti0NMpGkVEGpLsqIxUx5hLXdP49IWOOPQ/wuzfnpX8Twrih0wAQtrWK8xkkga2AjaMZ6Wu6/sxM8Xa0mGkZz4F+N5Q43qaXL6XwZbPz1JxEgqEnX0iByizX71csz0NBlulmo8XratCXs2IkuPl4a58Kn4ZDR2Q82/XZyM3ne4N4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ivS5mdQ2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D74D1C4CECC;
+	Mon, 18 Nov 2024 04:39:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731904744;
+	bh=7plGjMDEMlt/J3128k/TPdaPFrereg8GAEnNA6ZDp3o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ivS5mdQ2YkVCKsa/1qf47Je485JGu12/Co9/jGQ1gHijuFDoXJFh614PN2wglbj+Z
+	 O9HBn8AJG2i/CoS12cxA0CZ+uxRp7/GzFAmfKcN8kG3VTZ7JAuXcazj/zdtpt0NUTS
+	 UKShj+y+gdup+spREckOegw9/Ll34z2KgO+TO8PF3rkAaEdlhS4ghJosvfTVbfQvWP
+	 xr7FSkse4t7zTd2eqkeWvBZV3HsB/rXPpz30+gSLC6RwHUZO7T0pkU4ADbs1FL2dBi
+	 CUjBBgafrcwC7Uu8dmc3YGigpfTKByuV7GfFD/s3m3F1be9CN9GPfv5aJ/uBQtFy03
+	 Msot7QvTcXYFQ==
+Date: Sun, 17 Nov 2024 20:39:01 -0800
+From: Kees Cook <kees@kernel.org>
+To: Marek Vasut <marex@denx.de>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>, Luca Ellero <l.ellero@asem.it>,
+	linux-input@vger.kernel.org,
+	Alexander Stein <alexander.stein@ew.tq-group.com>,
+	Al Viro <viro@zeniv.linux.org.uk>, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] Input: ads7846 - Expand xfer array to match usage
+Message-ID: <202411172038.DF2CF9CD@keescook>
+References: <20241117033445.work.274-kees@kernel.org>
+ <5b203f2a-755a-448b-946a-f14d6060dbb7@denx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-Subject: [PATCH v3] sched: Don't try to catch up excess steal time.
-From: Suleiman Souhlal <suleiman@google.com>
-To: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, Paolo Bonzini <pbonzini@redhat.com>, seanjc@google.com, 
-	Srikar Dronamraju <srikar@linux.ibm.com>, David Woodhouse <dwmw2@infradead.org>, joelaf@google.com, 
-	vineethrp@google.com, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
-	ssouhlal@freebsd.org, Suleiman Souhlal <suleiman@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5b203f2a-755a-448b-946a-f14d6060dbb7@denx.de>
 
-When steal time exceeds the measured delta when updating clock_task, we
-currently try to catch up the excess in future updates.
-However, this results in inaccurate run times for the future things using
-clock_task, in some situations, as they end up getting additional steal
-time that did not actually happen.
-This is because there is a window between reading the elapsed time in
-update_rq_clock() and sampling the steal time in update_rq_clock_task().
-If the VCPU gets preempted between those two points, any additional
-steal time is accounted to the outgoing task even though the calculated
-delta did not actually contain any of that "stolen" time.
-When this race happens, we can end up with steal time that exceeds the
-calculated delta, and the previous code would try to catch up that excess
-steal time in future clock updates, which is given to the next,
-incoming task, even though it did not actually have any time stolen.
+On Sun, Nov 17, 2024 at 11:06:27PM +0100, Marek Vasut wrote:
+> On 11/17/24 4:34 AM, Kees Cook wrote:
+> > Commit 781a07da9bb9 ("Input: ads7846 - add dummy command register
+> > clearing cycle") added commands to struct ser_req::xfer without
+> > expanding it to hold them. Expand the array to the correct size.
+> > 
+> > ../drivers/input/touchscreen/ads7846.c: In function 'ads7846_read12_ser':
+> > ../drivers/input/touchscreen/ads7846.c:416:18: error: array subscript 7 is above array bounds of 'struct spi_transfer[6]' [-Werror=array-bounds=]
+> >    416 |         req->xfer[7].rx_buf = &req->scratch;
+> >        |         ~~~~~~~~~^~~
+> > ../drivers/input/touchscreen/ads7846.c:334:33: note: while referencing 'xfer'
+> >    334 |         struct spi_transfer     xfer[6];
+> >        |                                 ^~~~
+> > 
+> > Fixes: 781a07da9bb9 ("Input: ads7846 - add dummy command register clearing cycle")
+> > Signed-off-by: Kees Cook <kees@kernel.org>
+> I think Nathan already sent a fix too.
 
-This behavior is particularly bad when steal time can be very long,
-which we've seen when trying to extend steal time to contain the duration
-that the host was suspended [0]. When this happens, clock_task stays
-frozen, during which the running task stays running for the whole
-duration, since its run time doesn't increase.
-However the race can happen even under normal operation.
+Oh excellent! I did a search in lore before sending it but must have
+failed to find it. Do you have a link to it?
 
-Ideally we would read the elapsed cpu time and the steal time atomically,
-to prevent this race from happening in the first place, but doing so
-is non-trivial.
+-Kees
 
-Since the time between those two points isn't otherwise accounted anywhere,
-neither to the outgoing task nor the incoming task (because the "end of
-outgoing task" and "start of incoming task" timestamps are the same),
-I would argue that the right thing to do is to simply drop any excess steal
-time, in order to prevent these issues.
-
-[0] https://lore.kernel.org/kvm/20240820043543.837914-1-suleiman@google.com/
-
-Signed-off-by: Suleiman Souhlal <suleiman@google.com>
----
-v3:
-- Reword commit message.
-- Revert back to v1 code, since it's more understandable.
-
-v2: https://lore.kernel.org/lkml/20240911111522.1110074-1-suleiman@google.com
-- Slightly changed to simply moving one line up instead of adding
-  new variable.
-
-v1: https://lore.kernel.org/lkml/20240806111157.1336532-1-suleiman@google.com
----
- kernel/sched/core.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index a1c353a62c56..13f70316ef39 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -766,13 +766,15 @@ static void update_rq_clock_task(struct rq *rq, s64 delta)
- #endif
- #ifdef CONFIG_PARAVIRT_TIME_ACCOUNTING
- 	if (static_key_false((&paravirt_steal_rq_enabled))) {
--		steal = paravirt_steal_clock(cpu_of(rq));
-+		u64 prev_steal;
-+
-+		steal = prev_steal = paravirt_steal_clock(cpu_of(rq));
- 		steal -= rq->prev_steal_time_rq;
- 
- 		if (unlikely(steal > delta))
- 			steal = delta;
- 
--		rq->prev_steal_time_rq += steal;
-+		rq->prev_steal_time_rq = prev_steal;
- 		delta -= steal;
- 	}
- #endif
 -- 
-2.47.0.338.g60cca15819-goog
-
+Kees Cook
 
