@@ -1,211 +1,136 @@
-Return-Path: <linux-kernel+bounces-412805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65D889D0F35
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 12:07:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5724F9D0F3B
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 12:07:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8E901F2240E
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:07:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0FD5E1F2241D
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:07:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30180198E78;
-	Mon, 18 Nov 2024 11:06:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21B16198A1A;
+	Mon, 18 Nov 2024 11:07:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ekl0NLE7"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YiI2qtdB"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FB9A194A5A
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 11:06:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F166C3BBF2;
+	Mon, 18 Nov 2024 11:07:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731928006; cv=none; b=UhZJhLELkfWWK9ZSmYj4W6uucZA/A8M0ohmWq2VMYXRrn1c5duSzQfPZ3yLMAVm1uJ5cHGwhfFKqZ2Kl7zHMqoRtoRaWgwFhadvvbHkuxJXtDsAWvwoQpQ7pqtghkm+NQAnK6sF85c8Ppp9fXwiBU+U7ak+GxZm5eIX611VBwkQ=
+	t=1731928044; cv=none; b=X9gjei2R2aqlkJlNw+W6F26aOEvohwYzhAEq8/E4THGq/dn38hK9A446T07TrAUG8/nI9/KCdA7GZA9sJUiH0wa9PuKhlN2I2uHaN3voknjDjDFccUVzrnjyvKpyOi8BDk0oNMr+CUPwAhTx2ITVbZPRPHnuzN+taa8DoLxrCiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731928006; c=relaxed/simple;
-	bh=IFcBtIn1LqFVelHm7kG7/Vy3ppN0z+ueq8gYg8sWEas=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U6xaeoVrTWohA6Nno+piV0FOQPuAo1rwP/4zPUbtvZwfLcnXTeRCfluZj1IWOrdabYMGVFbOi8Zxa9aQhmthuPUM8vurUWA+hJKG9nU7/wbBw+re5YucVz3fS1vySIiwpusAOifgsf9ktKAe55OtpsCw0XHHna6cgAlWqovkM+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ekl0NLE7; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-38232cebb0cso1490596f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 03:06:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1731928002; x=1732532802; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Q4K7ZFgLQYJQlGAzpq8RK54g3EqKOomWWOR+yhsr1qw=;
-        b=ekl0NLE713WVl+0iqMFWCUeOyXGpS1GTBNAadeC6CjQrpdNj1R2nypLRGP2uJjakH3
-         ma6jZAiH77JhVsgZkswVXE9+2l5Yia2YLgFg6gsC88yso321GFZfT27iEKVPgSJFNaM9
-         2W2NPkP0iv4jC4RM8EWyzp5JMVGQUDyQPWB8SMNIP/y8oyb8Hywli7WQnPgfo82zPfG6
-         rQCdFl5UhQJc+FctTaghJ0W1GD9XLogikkThFP7hwAl0gs65J49G1fTmGWNGUnJTfluX
-         zSVJrdJLD7Qsye3TVFGals+IXJ9hPI7Ba9b3ytrQIA7bHxP9wm9EHtPjUxegLnu5oju/
-         lOmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731928002; x=1732532802;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Q4K7ZFgLQYJQlGAzpq8RK54g3EqKOomWWOR+yhsr1qw=;
-        b=QDEv+lxOVG7lRbNif1QpCSsGs0WpnfbKW1VsVqmxAKkyanujDY2SfL0Gv3BUAN4Gbp
-         FWtP+BJR2jRNQjAXBXf6syDfE4i1Bmhrwy9hCkf2rgeL5HL9arx2dLCscleWywF9zqMx
-         0qjtf/VDjwqWrjyuMlX3T+qsGFwTbQmjDaXNIyTDY6Gsyd7M0YjRmjguyFf17x8Cx9rN
-         joy2vqM87AAd+tWdXjJBYWQRx3ERyB5p1UVriXXKKKDnNHKaA3bjwYxs8ciGSjwVUu3V
-         5/GbJjZ093Nyl9SpOBNYtP+r/Dy5wnirFeydruRbTnvk8TTBKNdFJqGhP68wQBqrx4LA
-         mrvg==
-X-Forwarded-Encrypted: i=1; AJvYcCXcASyTYv9yzbqkIe5Wmgnv0Hl1qxEbo1mUQh6mjprjRIIhSIGSHBnuudohmYmdtDKFh95FcPiAg0jkudE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxluCzDa7W7ws+eL82kCZ40BfXSGDRuWQd8P1ucMeB1JutS18Wc
-	H/yk2VLIO9TDeQ5i1bDeFnghvMQZAabJCx8gAAqIAklqJB9Sgm56VqjWLzJSaK4=
-X-Google-Smtp-Source: AGHT+IEHvVmgRYFNhCs4UC7E5RjVk5JwGYVdnUZOYcUXsiEIWSohYFEZO8cTVp2lMrq4C8xPl0BQ1Q==
-X-Received: by 2002:a05:6000:18af:b0:37d:4ef1:1820 with SMTP id ffacd0b85a97d-38225a91e80mr10392779f8f.40.1731928002298;
-        Mon, 18 Nov 2024 03:06:42 -0800 (PST)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38242eef982sm4319340f8f.8.2024.11.18.03.06.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Nov 2024 03:06:41 -0800 (PST)
-Date: Mon, 18 Nov 2024 12:06:34 +0100
-From: Petr Mladek <pmladek@suse.com>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: Easwar Hariharan <eahariha@linux.microsoft.com>,
-	Pablo Neira Ayuso <pablo@netfilter.org>,
-	Jozsef Kadlecsik <kadlec@netfilter.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Julia Lawall <Julia.Lawall@inria.fr>,
-	Nicolas Palix <nicolas.palix@imag.fr>,
-	Daniel Mack <daniel@zonque.org>,
-	Haojian Zhuang <haojian.zhuang@gmail.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Russell King <linux@armlinux.org.uk>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Ofir Bitton <obitton@habana.ai>, Oded Gabbay <ogabbay@kernel.org>,
-	Lucas De Marchi <lucas.demarchi@intel.com>,
-	Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Jeroen de Borst <jeroendb@google.com>,
-	Praveen Kaligineedi <pkaligineedi@google.com>,
-	Shailend Chand <shailend@google.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	James Smart <james.smart@broadcom.com>,
-	Dick Kennedy <dick.kennedy@broadcom.com>,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Roger Pau =?iso-8859-1?Q?Monn=E9?= <roger.pau@citrix.com>,
-	Jens Axboe <axboe@kernel.dk>, Kalle Valo <kvalo@kernel.org>,
-	Jeff Johnson <jjohnson@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jack Wang <jinpu.wang@cloud.ionos.com>,
-	Marcel Holtmann <marcel@holtmann.org>,
-	Johan Hedberg <johan.hedberg@gmail.com>,
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Jiri Kosina <jikos@kernel.org>, Miroslav Benes <mbenes@suse.cz>,
-	Joe Lawrence <joe.lawrence@redhat.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Russell King <linux+etnaviv@armlinux.org.uk>,
-	Christian Gmeiner <christian.gmeiner@gmail.com>,
-	Louis Peens <louis.peens@corigine.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Naveen N Rao <naveen@kernel.org>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	cocci@inria.fr, linux-arm-kernel@lists.infradead.org,
-	linux-s390@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	intel-xe@lists.freedesktop.org, linux-scsi@vger.kernel.org,
-	xen-devel@lists.xenproject.org, linux-block@vger.kernel.org,
-	linux-wireless@vger.kernel.org, ath11k@lists.infradead.org,
-	linux-mm@kvack.org, linux-bluetooth@vger.kernel.org,
-	linux-staging@lists.linux.dev, linux-rpi-kernel@lists.infradead.org,
-	ceph-devel@vger.kernel.org, live-patching@vger.kernel.org,
-	linux-sound@vger.kernel.org, etnaviv@lists.freedesktop.org,
-	oss-drivers@corigine.com, linuxppc-dev@lists.ozlabs.org,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>
-Subject: Re: [PATCH v2 19/21] livepatch: Convert timeouts to secs_to_jiffies()
-Message-ID: <Zzsfuuv3AVomkMxn@pathway.suse.cz>
-References: <20241115-converge-secs-to-jiffies-v2-0-911fb7595e79@linux.microsoft.com>
- <20241115-converge-secs-to-jiffies-v2-19-911fb7595e79@linux.microsoft.com>
- <718febc4-59ee-4701-ad62-8b7a8fa7a910@csgroup.eu>
+	s=arc-20240116; t=1731928044; c=relaxed/simple;
+	bh=23QyvkzDL9YlSpvXTlcrd7cFt30wzl3tPcIobl+J6ag=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=LmzcLhWlWzwKy9nD5lrgzEec1BxaCcDRNmdlnzrMQiWFnd33/E7E23wfkwxQu9JCOk1Ufv3AzUl2zZjoCrjfSWKXGnHec06aq0Bxr8KIsNma6Qm8PAmug5qP7HA0cXcBt8nKm7JbpALcmTQWySKXoMuIiKduu7S8K9JFKxSyBS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=YiI2qtdB; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AI5RdSY001092;
+	Mon, 18 Nov 2024 11:07:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	43q9oucTOu/jPRWVJ4UemBYMItswkfaX94LjYJ9vTPM=; b=YiI2qtdBmb6jfeUF
+	7TUntECEFLQ85UiyryFpdgkjE2EQ9i27910lI2zLcfaW3iKiN62iY7jeQvoc/Nd8
+	63rHYcqun9kjiIeqUiAtr87QBpZlJ0zbxtO+O+j1+CM3UJ3doyRzFLfn9uiloYmh
+	0ydUT9LMd2QpTbiiepzeF3AmNxYc/nW2WTjIF6q3gJestQ5k/2IUlYUrXOc9V13b
+	+xQC6nhBEwgMHmHxCs3SDFRpcFwWxWPnOH2rtS52qNXZG+BeHNR3XUP4vVuUGv/T
+	kiMZGj64ktrlie/kfPLBkAlbKJiigms2mqxIVFvfziLOEcdENpCGULOTG0oCkNXI
+	wIV2uQ==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42ycufa9mv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 18 Nov 2024 11:07:17 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AIB7GOQ029920
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 18 Nov 2024 11:07:16 GMT
+Received: from [10.218.15.248] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 18 Nov
+ 2024 03:07:11 -0800
+Message-ID: <386f0f4a-b17e-4f0b-90ef-0a960f23b1e4@quicinc.com>
+Date: Mon, 18 Nov 2024 16:37:07 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <718febc4-59ee-4701-ad62-8b7a8fa7a910@csgroup.eu>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V4 1/3] dt-bindings: interconnect: Add EPSS L3 compatible
+ for SA8775P
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>,
+        Sibi Sankar <quic_sibis@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Odelu Kukatla
+	<quic_okukatla@quicinc.com>,
+        Mike Tipton <quic_mdtipton@quicinc.com>
+References: <20241112075826.28296-1-quic_rlaggysh@quicinc.com>
+ <20241112075826.28296-2-quic_rlaggysh@quicinc.com>
+ <tv7gsceomtdjcymma5ximownsxleg2ujuxcwjgkzj5zhmlscr7@wnyx3bfi2cpo>
+Content-Language: en-US
+From: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
+In-Reply-To: <tv7gsceomtdjcymma5ximownsxleg2ujuxcwjgkzj5zhmlscr7@wnyx3bfi2cpo>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: PqHpfkL2JIzPyYmidHAZqME6-UvA2m08
+X-Proofpoint-GUID: PqHpfkL2JIzPyYmidHAZqME6-UvA2m08
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 clxscore=1015
+ mlxlogscore=999 phishscore=0 spamscore=0 impostorscore=0 adultscore=0
+ bulkscore=0 lowpriorityscore=0 priorityscore=1501 mlxscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411180092
 
-On Sat 2024-11-16 11:10:52, Christophe Leroy wrote:
+
+
+On 11/12/2024 7:20 PM, Dmitry Baryshkov wrote:
+> On Tue, Nov 12, 2024 at 07:58:24AM +0000, Raviteja Laggyshetty wrote:
+>> Add Epoch Subsystem (EPSS) L3 interconnect provider binding on
+>> SA8775P SoCs.
+>>
+>> Signed-off-by: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
+>> ---
+>>  Documentation/devicetree/bindings/interconnect/qcom,osm-l3.yaml | 1 +
+>>  1 file changed, 1 insertion(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/interconnect/qcom,osm-l3.yaml b/Documentation/devicetree/bindings/interconnect/qcom,osm-l3.yaml
+>> index 21dae0b92819..94f7f283787a 100644
+>> --- a/Documentation/devicetree/bindings/interconnect/qcom,osm-l3.yaml
+>> +++ b/Documentation/devicetree/bindings/interconnect/qcom,osm-l3.yaml
+>> @@ -33,6 +33,7 @@ properties:
+>>                - qcom,sm6375-cpucp-l3
+>>                - qcom,sm8250-epss-l3
+>>                - qcom,sm8350-epss-l3
+>> +              - qcom,sa8775p-epss-l3
+>>            - const: qcom,epss-l3
+> 
+> No, sa8775p isn't compatible with qcom,epss-l3. I asked you to split the
+> driver patch, not to change the compatibles.
 > 
 > 
-> Le 15/11/2024 à 22:26, Easwar Hariharan a écrit :
-> > [Vous ne recevez pas souvent de courriers de eahariha@linux.microsoft.com. Découvrez pourquoi ceci est important à https://aka.ms/LearnAboutSenderIdentification ]
-> > 
-> > Changes made with the following Coccinelle rules:
-> > 
-> > @@ constant C; @@
-> > 
-> > - msecs_to_jiffies(C * 1000)
-> > + secs_to_jiffies(C)
-> > 
-> > @@ constant C; @@
-> > 
-> > - msecs_to_jiffies(C * MSEC_PER_SEC)
-> > + secs_to_jiffies(C)
-> > 
-> > Signed-off-by: Easwar Hariharan <eahariha@linux.microsoft.com>
-> > ---
-> >   samples/livepatch/livepatch-callbacks-busymod.c |  2 +-
-> >   samples/livepatch/livepatch-shadow-fix1.c       |  2 +-
-> >   samples/livepatch/livepatch-shadow-mod.c        | 10 +++++-----
-> >   3 files changed, 7 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/samples/livepatch/livepatch-callbacks-busymod.c b/samples/livepatch/livepatch-callbacks-busymod.c
-> > index 378e2d40271a9717d09eff51d3d3612c679736fc..d0fd801a7c21b7d7939c29d83f9d993badcc9aba 100644
-> > --- a/samples/livepatch/livepatch-callbacks-busymod.c
-> > +++ b/samples/livepatch/livepatch-callbacks-busymod.c
-> > @@ -45,7 +45,7 @@ static int livepatch_callbacks_mod_init(void)
-> >   {
-> >          pr_info("%s\n", __func__);
-> >          schedule_delayed_work(&work,
-> > -               msecs_to_jiffies(1000 * 0));
-> > +               secs_to_jiffies(0));
-> 
-> Using secs_to_jiffies() is pointless, 0 is universal, should become
-> schedule_delayed_work(&work, 0);
+Got it, I will split the driver code changes into two patches. 
+First patch will contain the SoC-specific compatible change and multi device support. 
+Second patch will contain the generic compatible addition to of_match table.
 
-Yes, schedule_delayed_work(&work, 0) looks like the right solution.
-
-Or even better, it seems that the delayed work might get replaced by
-a normal workqueue work.
-
-Anyway, I am working on a patchset which would remove this sample
-module. There is no need to put much effort into the clean up
-of this particular module. Do whatever is easiest for you.
-
-Best Regards,
-Petr
 
