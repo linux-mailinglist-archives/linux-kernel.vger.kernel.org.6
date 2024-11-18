@@ -1,260 +1,398 @@
-Return-Path: <linux-kernel+bounces-412882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2588F9D1092
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 13:31:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 598559D1095
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 13:33:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A54461F226FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 12:31:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2436283851
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 12:33:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E11D3199381;
-	Mon, 18 Nov 2024 12:30:57 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFFB619ABB6;
+	Mon, 18 Nov 2024 12:33:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nLmUERNp"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61A42190665
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 12:30:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A46F1993B9
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 12:32:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731933057; cv=none; b=l4YGuC7dF70NzU3SQod/R3f7BC9tRRRvpts9tGYtBd7EuI3I9+ED6rXW2crlvvNnFuCWlFvifIy5d4FhQ5KRZt2OCI8lJMUPl9vEXbvvvRtzkkVuWp0rNZhZhJZrXOsGZdldgAinh+Wfv7DV5FHKGrpE0xmJxXSITh7TuuMsfJg=
+	t=1731933180; cv=none; b=XzmsWgyEHGvyiSpf+/oSls+/QRUD2h3zXRJx7mKr1ZGpES2vuYGjUwiG8iWxivltFj8zQHorfDoSCHcHRhgDHlkANxvxj5j9U/zZ0Q0aYp3YjxGj9b3EcJIPyGsKSlSk63hewEVuEz4OIsgCWQyipnIJjZoLEW6itLpc/EWfwOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731933057; c=relaxed/simple;
-	bh=xUTnX9sfzz0j20d3cUBEqs2vf4IT/0oHwg4KIm1ccrY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=cEhHMsEAObOVOmECcB4RocO+RCkSSKqX/zEzwMH+WB7ZLsc6WvoT9IZOCclALc+nJlOOMpCtcEXcTHDXKF1EW2XcWrZn5RKRkFuk69fS1LSqcvWdqWdyS3BEWcAvgSRf3XxU4eibgy5VwYI3kCGGpz3hilv4ZA/U3DrUW80fnoI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a7642d452dso9927085ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 04:30:55 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731933054; x=1732537854;
-        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
-         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=y02zO3AKIAA0IiJ4Ma1zvBoT9cjGOBk2uMbTGUb10mI=;
-        b=QY015jPDxeVaQknNG1WTRwXuGegQXZIOmuV+6zzTErX9sF59XmYwv0Ze88QQUNOZl7
-         PdfDw/7vcID0EpiYSiNSkyAhrPaPxTC3sxGXBMngMeTnb0Gk/2ejP92KYql4ogsJX4cH
-         s9abO/GUDkgrOlajFy6UT8XQ1Ba8XlXPWOAflWEbV8hbAtTVtfC++I1qi+F9GhcL9VOU
-         Hvgt04ufC1n8LUtm2bUFOcu7GS1bwVcp68N2Pp2H7+RnE500sBKw6urkuKsNr6IcM9bm
-         IiENVDo0xJXXkWNhpjuoRo4Mov16rJMs8Lk/MUxYZ1DlU/vqGxF5fxQyxcpGKiN6pk0s
-         HsPw==
-X-Gm-Message-State: AOJu0Yyx8XTw4AdJNKOHnsUjaFK9lD6f+ZQ5+cC5MfJ9rxnpXzWKSXzg
-	7INMMpEOs7Wdvy42OeLt3wDfF6X2MrlU4ygu8+WdPmRnZBQqcdM9qKXZjow26txNAyIcpkjDZng
-	c7yh+CHT4CVXqbxwsvJMRq3+2pWYjafzsfyuCSLMdHEO3vibqU5GEsuQ=
-X-Google-Smtp-Source: AGHT+IEdbEzkT9At8Ix/F1ydBttrfaMpGqFo5lS8DgL6jxYoh6vlB038e5c+r8ueykMEQiWAJ2RVV8CXS/5oWORnU+bvX/Dlxrdd
+	s=arc-20240116; t=1731933180; c=relaxed/simple;
+	bh=3FCzFMN9NyDps4Gv1d2SieEWKCopYH8IRTojQ3H5dCs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Z5tBhnNizuE2q7V2qj5u+VU5Sjm5AsMvksICrcEsLlBrYRgfeFuZoKhNAcEeuxCteA9IPJfR6MMQQykwymCOOC5W0MvV6e7RGqY2M+WkrU0QXqZJGzn22rtCMSFNSh7zR/5ESc6iVfxhJGAdCcltZF1FL3y7x7BK303Sjo2gtGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nLmUERNp; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731933179; x=1763469179;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=3FCzFMN9NyDps4Gv1d2SieEWKCopYH8IRTojQ3H5dCs=;
+  b=nLmUERNp3N/A7fvvyr3+CaiSEuUkAczq/js3xwc2m3gEzmOkN6ZeWs+j
+   mA5eMY0a/WeT3W2hXeJe+Ln1QiA8r800xXhqVtbG2LZnI4T4cHqIm6tWj
+   eLy9lWfEQUCcx8H0+UpXec24BqlMjO3PSoITGZYr+rZFNCE9z7TV+EvMa
+   A5lgMPq9NaD5e88kUsM4XF3N6v6amFnYcVzITuAq3xf3tlx7XaDDapKRp
+   08duyf7PPsI6OX0BCzeeLKjcJPdZB5GkSiTn4SjJIzksRbTFMb2SWv+f5
+   Vs5Fyw9q5jlvjeHMj8YEd16nu8UP2ruVxpamafK7fc/JGU3xmL8VytgAY
+   Q==;
+X-CSE-ConnectionGUID: zvy18cfWQKaLsOqEOS5MTA==
+X-CSE-MsgGUID: jZ5gfAysSgyD3QGe4nMTsA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11259"; a="57289645"
+X-IronPort-AV: E=Sophos;i="6.12,164,1728975600"; 
+   d="scan'208";a="57289645"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2024 04:32:58 -0800
+X-CSE-ConnectionGUID: BW6EuTj5RIqFmF3SqalfnQ==
+X-CSE-MsgGUID: h+S3L0nVSWeaFQf+wSZnlQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,164,1728975600"; 
+   d="scan'208";a="120143952"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa001.fm.intel.com with ESMTP; 18 Nov 2024 04:32:56 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 7109118D; Mon, 18 Nov 2024 14:32:55 +0200 (EET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Naveen N Rao <naveen@kernel.org>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>
+Subject: [PATCH v2 1/1] powerpc/8xx: Drop legacy-of-mm-gpiochip.h header
+Date: Mon, 18 Nov 2024 14:31:03 +0200
+Message-ID: <20241118123254.620519-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:4418:10b0:3a0:c8b8:1b0f with SMTP id
- e9e14a558f8ab-3a71de506a4mr113716515ab.2.1731933054570; Mon, 18 Nov 2024
- 04:30:54 -0800 (PST)
-Date: Mon, 18 Nov 2024 04:30:54 -0800
-In-Reply-To: <672a3997.050a0220.2a847.11f7.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <673b337e.050a0220.87769.0038.GAE@google.com>
-Subject: Re: [syzbot] Re: [syzbot] [acpi?] [nvdimm?] KASAN:
- vmalloc-out-of-bounds Read in acpi_nfit_ctl (2)
-From: syzbot <syzbot+7534f060ebda6b8b51b3@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+Remove legacy-of-mm-gpiochip.h header file. The above mentioned
+file provides an OF API that's deprecated. There is no agnostic
+alternatives to it and we have to open code the logic which was
+hidden behind of_mm_gpiochip_add_data(). Note, most of the GPIO
+drivers are using their own labeling schemas and resource retrieval
+that only a few may gain of the code deduplication, so whenever
+alternative is appear we can move drivers again to use that one.
 
-***
+As a side effect this change fixes a potential memory leak on
+an error path, if of_mm_gpiochip_add_data() fails.
 
-Subject: Re: [syzbot] [acpi?] [nvdimm?] KASAN: vmalloc-out-of-bounds Read i=
-n acpi_nfit_ctl (2)
-Author: surajsonawane0215@gmail.com
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+v2: fixed build errors (Christophe), improved commit message (Christophe)
+ arch/powerpc/platforms/8xx/cpm1.c | 119 +++++++++++++++---------------
+ 1 file changed, 60 insertions(+), 59 deletions(-)
 
-#syz test
+diff --git a/arch/powerpc/platforms/8xx/cpm1.c b/arch/powerpc/platforms/8xx/cpm1.c
+index b24d4102fbf6..1dc095ad48fc 100644
+--- a/arch/powerpc/platforms/8xx/cpm1.c
++++ b/arch/powerpc/platforms/8xx/cpm1.c
+@@ -45,7 +45,7 @@
+ #include <sysdev/fsl_soc.h>
+ 
+ #ifdef CONFIG_8xx_GPIO
+-#include <linux/gpio/legacy-of-mm-gpiochip.h>
++#include <linux/gpio/driver.h>
+ #endif
+ 
+ #define CPM_MAP_SIZE    (0x4000)
+@@ -376,7 +376,8 @@ int __init cpm1_clk_setup(enum cpm_clk_target target, int clock, int mode)
+ #ifdef CONFIG_8xx_GPIO
+ 
+ struct cpm1_gpio16_chip {
+-	struct of_mm_gpio_chip mm_gc;
++	struct gpio_chip gc;
++	void __iomem *regs;
+ 	spinlock_t lock;
+ 
+ 	/* shadowed data register to clear/set bits safely */
+@@ -386,19 +387,17 @@ struct cpm1_gpio16_chip {
+ 	int irq[16];
+ };
+ 
+-static void cpm1_gpio16_save_regs(struct of_mm_gpio_chip *mm_gc)
++static void cpm1_gpio16_save_regs(struct cpm1_gpio16_chip *cpm1_gc)
+ {
+-	struct cpm1_gpio16_chip *cpm1_gc =
+-		container_of(mm_gc, struct cpm1_gpio16_chip, mm_gc);
+-	struct cpm_ioport16 __iomem *iop = mm_gc->regs;
++	struct cpm_ioport16 __iomem *iop = cpm1_gc->regs;
+ 
+ 	cpm1_gc->cpdata = in_be16(&iop->dat);
+ }
+ 
+ static int cpm1_gpio16_get(struct gpio_chip *gc, unsigned int gpio)
+ {
+-	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
+-	struct cpm_ioport16 __iomem *iop = mm_gc->regs;
++	struct cpm1_gpio16_chip *cpm1_gc = gpiochip_get_data(gc);
++	struct cpm_ioport16 __iomem *iop = cpm1_gc->regs;
+ 	u16 pin_mask;
+ 
+ 	pin_mask = 1 << (15 - gpio);
+@@ -406,11 +405,9 @@ static int cpm1_gpio16_get(struct gpio_chip *gc, unsigned int gpio)
+ 	return !!(in_be16(&iop->dat) & pin_mask);
+ }
+ 
+-static void __cpm1_gpio16_set(struct of_mm_gpio_chip *mm_gc, u16 pin_mask,
+-	int value)
++static void __cpm1_gpio16_set(struct cpm1_gpio16_chip *cpm1_gc, u16 pin_mask, int value)
+ {
+-	struct cpm1_gpio16_chip *cpm1_gc = gpiochip_get_data(&mm_gc->gc);
+-	struct cpm_ioport16 __iomem *iop = mm_gc->regs;
++	struct cpm_ioport16 __iomem *iop = cpm1_gc->regs;
+ 
+ 	if (value)
+ 		cpm1_gc->cpdata |= pin_mask;
+@@ -422,38 +419,35 @@ static void __cpm1_gpio16_set(struct of_mm_gpio_chip *mm_gc, u16 pin_mask,
+ 
+ static void cpm1_gpio16_set(struct gpio_chip *gc, unsigned int gpio, int value)
+ {
+-	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
+-	struct cpm1_gpio16_chip *cpm1_gc = gpiochip_get_data(&mm_gc->gc);
++	struct cpm1_gpio16_chip *cpm1_gc = gpiochip_get_data(gc);
+ 	unsigned long flags;
+ 	u16 pin_mask = 1 << (15 - gpio);
+ 
+ 	spin_lock_irqsave(&cpm1_gc->lock, flags);
+ 
+-	__cpm1_gpio16_set(mm_gc, pin_mask, value);
++	__cpm1_gpio16_set(cpm1_gc, pin_mask, value);
+ 
+ 	spin_unlock_irqrestore(&cpm1_gc->lock, flags);
+ }
+ 
+ static int cpm1_gpio16_to_irq(struct gpio_chip *gc, unsigned int gpio)
+ {
+-	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
+-	struct cpm1_gpio16_chip *cpm1_gc = gpiochip_get_data(&mm_gc->gc);
++	struct cpm1_gpio16_chip *cpm1_gc = gpiochip_get_data(gc);
+ 
+ 	return cpm1_gc->irq[gpio] ? : -ENXIO;
+ }
+ 
+ static int cpm1_gpio16_dir_out(struct gpio_chip *gc, unsigned int gpio, int val)
+ {
+-	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
+-	struct cpm1_gpio16_chip *cpm1_gc = gpiochip_get_data(&mm_gc->gc);
+-	struct cpm_ioport16 __iomem *iop = mm_gc->regs;
++	struct cpm1_gpio16_chip *cpm1_gc = gpiochip_get_data(gc);
++	struct cpm_ioport16 __iomem *iop = cpm1_gc->regs;
+ 	unsigned long flags;
+ 	u16 pin_mask = 1 << (15 - gpio);
+ 
+ 	spin_lock_irqsave(&cpm1_gc->lock, flags);
+ 
+ 	setbits16(&iop->dir, pin_mask);
+-	__cpm1_gpio16_set(mm_gc, pin_mask, val);
++	__cpm1_gpio16_set(cpm1_gc, pin_mask, val);
+ 
+ 	spin_unlock_irqrestore(&cpm1_gc->lock, flags);
+ 
+@@ -462,9 +456,8 @@ static int cpm1_gpio16_dir_out(struct gpio_chip *gc, unsigned int gpio, int val)
+ 
+ static int cpm1_gpio16_dir_in(struct gpio_chip *gc, unsigned int gpio)
+ {
+-	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
+-	struct cpm1_gpio16_chip *cpm1_gc = gpiochip_get_data(&mm_gc->gc);
+-	struct cpm_ioport16 __iomem *iop = mm_gc->regs;
++	struct cpm1_gpio16_chip *cpm1_gc = gpiochip_get_data(gc);
++	struct cpm_ioport16 __iomem *iop = cpm1_gc->regs;
+ 	unsigned long flags;
+ 	u16 pin_mask = 1 << (15 - gpio);
+ 
+@@ -481,11 +474,10 @@ int cpm1_gpiochip_add16(struct device *dev)
+ {
+ 	struct device_node *np = dev->of_node;
+ 	struct cpm1_gpio16_chip *cpm1_gc;
+-	struct of_mm_gpio_chip *mm_gc;
+ 	struct gpio_chip *gc;
+ 	u16 mask;
+ 
+-	cpm1_gc = kzalloc(sizeof(*cpm1_gc), GFP_KERNEL);
++	cpm1_gc = devm_kzalloc(dev, sizeof(*cpm1_gc), GFP_KERNEL);
+ 	if (!cpm1_gc)
+ 		return -ENOMEM;
+ 
+@@ -499,10 +491,8 @@ int cpm1_gpiochip_add16(struct device *dev)
+ 				cpm1_gc->irq[i] = irq_of_parse_and_map(np, j++);
+ 	}
+ 
+-	mm_gc = &cpm1_gc->mm_gc;
+-	gc = &mm_gc->gc;
+-
+-	mm_gc->save_regs = cpm1_gpio16_save_regs;
++	gc = &cpm1_gc->gc;
++	gc->base = -1;
+ 	gc->ngpio = 16;
+ 	gc->direction_input = cpm1_gpio16_dir_in;
+ 	gc->direction_output = cpm1_gpio16_dir_out;
+@@ -512,30 +502,39 @@ int cpm1_gpiochip_add16(struct device *dev)
+ 	gc->parent = dev;
+ 	gc->owner = THIS_MODULE;
+ 
+-	return of_mm_gpiochip_add_data(np, mm_gc, cpm1_gc);
++	gc->label = devm_kasprintf(dev, GFP_KERNEL, "%pOF", np);
++	if (!gc->label)
++		return -ENOMEM;
++
++	cpm1_gc->regs = devm_of_iomap(dev, np, 0, NULL);
++	if (IS_ERR(cpm1_gc->regs))
++		return PTR_ERR(cpm1_gc->regs);
++
++	cpm1_gpio16_save_regs(cpm1_gc);
++
++	return devm_gpiochip_add_data(dev, gc, cpm1_gc);
+ }
+ 
+ struct cpm1_gpio32_chip {
+-	struct of_mm_gpio_chip mm_gc;
++	struct gpio_chip gc;
++	void __iomem *regs;
+ 	spinlock_t lock;
+ 
+ 	/* shadowed data register to clear/set bits safely */
+ 	u32 cpdata;
+ };
+ 
+-static void cpm1_gpio32_save_regs(struct of_mm_gpio_chip *mm_gc)
++static void cpm1_gpio32_save_regs(struct cpm1_gpio32_chip *cpm1_gc)
+ {
+-	struct cpm1_gpio32_chip *cpm1_gc =
+-		container_of(mm_gc, struct cpm1_gpio32_chip, mm_gc);
+-	struct cpm_ioport32b __iomem *iop = mm_gc->regs;
++	struct cpm_ioport32b __iomem *iop = cpm1_gc->regs;
+ 
+ 	cpm1_gc->cpdata = in_be32(&iop->dat);
+ }
+ 
+ static int cpm1_gpio32_get(struct gpio_chip *gc, unsigned int gpio)
+ {
+-	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
+-	struct cpm_ioport32b __iomem *iop = mm_gc->regs;
++	struct cpm1_gpio32_chip *cpm1_gc = gpiochip_get_data(gc);
++	struct cpm_ioport32b __iomem *iop = cpm1_gc->regs;
+ 	u32 pin_mask;
+ 
+ 	pin_mask = 1 << (31 - gpio);
+@@ -543,11 +542,9 @@ static int cpm1_gpio32_get(struct gpio_chip *gc, unsigned int gpio)
+ 	return !!(in_be32(&iop->dat) & pin_mask);
+ }
+ 
+-static void __cpm1_gpio32_set(struct of_mm_gpio_chip *mm_gc, u32 pin_mask,
+-	int value)
++static void __cpm1_gpio32_set(struct cpm1_gpio32_chip *cpm1_gc, u32 pin_mask, int value)
+ {
+-	struct cpm1_gpio32_chip *cpm1_gc = gpiochip_get_data(&mm_gc->gc);
+-	struct cpm_ioport32b __iomem *iop = mm_gc->regs;
++	struct cpm_ioport32b __iomem *iop = cpm1_gc->regs;
+ 
+ 	if (value)
+ 		cpm1_gc->cpdata |= pin_mask;
+@@ -559,30 +556,28 @@ static void __cpm1_gpio32_set(struct of_mm_gpio_chip *mm_gc, u32 pin_mask,
+ 
+ static void cpm1_gpio32_set(struct gpio_chip *gc, unsigned int gpio, int value)
+ {
+-	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
+-	struct cpm1_gpio32_chip *cpm1_gc = gpiochip_get_data(&mm_gc->gc);
++	struct cpm1_gpio32_chip *cpm1_gc = gpiochip_get_data(gc);
+ 	unsigned long flags;
+ 	u32 pin_mask = 1 << (31 - gpio);
+ 
+ 	spin_lock_irqsave(&cpm1_gc->lock, flags);
+ 
+-	__cpm1_gpio32_set(mm_gc, pin_mask, value);
++	__cpm1_gpio32_set(cpm1_gc, pin_mask, value);
+ 
+ 	spin_unlock_irqrestore(&cpm1_gc->lock, flags);
+ }
+ 
+ static int cpm1_gpio32_dir_out(struct gpio_chip *gc, unsigned int gpio, int val)
+ {
+-	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
+-	struct cpm1_gpio32_chip *cpm1_gc = gpiochip_get_data(&mm_gc->gc);
+-	struct cpm_ioport32b __iomem *iop = mm_gc->regs;
++	struct cpm1_gpio32_chip *cpm1_gc = gpiochip_get_data(gc);
++	struct cpm_ioport32b __iomem *iop = cpm1_gc->regs;
+ 	unsigned long flags;
+ 	u32 pin_mask = 1 << (31 - gpio);
+ 
+ 	spin_lock_irqsave(&cpm1_gc->lock, flags);
+ 
+ 	setbits32(&iop->dir, pin_mask);
+-	__cpm1_gpio32_set(mm_gc, pin_mask, val);
++	__cpm1_gpio32_set(cpm1_gc, pin_mask, val);
+ 
+ 	spin_unlock_irqrestore(&cpm1_gc->lock, flags);
+ 
+@@ -591,9 +586,8 @@ static int cpm1_gpio32_dir_out(struct gpio_chip *gc, unsigned int gpio, int val)
+ 
+ static int cpm1_gpio32_dir_in(struct gpio_chip *gc, unsigned int gpio)
+ {
+-	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
+-	struct cpm1_gpio32_chip *cpm1_gc = gpiochip_get_data(&mm_gc->gc);
+-	struct cpm_ioport32b __iomem *iop = mm_gc->regs;
++	struct cpm1_gpio32_chip *cpm1_gc = gpiochip_get_data(gc);
++	struct cpm_ioport32b __iomem *iop = cpm1_gc->regs;
+ 	unsigned long flags;
+ 	u32 pin_mask = 1 << (31 - gpio);
+ 
+@@ -610,19 +604,16 @@ int cpm1_gpiochip_add32(struct device *dev)
+ {
+ 	struct device_node *np = dev->of_node;
+ 	struct cpm1_gpio32_chip *cpm1_gc;
+-	struct of_mm_gpio_chip *mm_gc;
+ 	struct gpio_chip *gc;
+ 
+-	cpm1_gc = kzalloc(sizeof(*cpm1_gc), GFP_KERNEL);
++	cpm1_gc = devm_kzalloc(dev, sizeof(*cpm1_gc), GFP_KERNEL);
+ 	if (!cpm1_gc)
+ 		return -ENOMEM;
+ 
+ 	spin_lock_init(&cpm1_gc->lock);
+ 
+-	mm_gc = &cpm1_gc->mm_gc;
+-	gc = &mm_gc->gc;
+-
+-	mm_gc->save_regs = cpm1_gpio32_save_regs;
++	gc = &cpm1_gc->gc;
++	gc->base = -1;
+ 	gc->ngpio = 32;
+ 	gc->direction_input = cpm1_gpio32_dir_in;
+ 	gc->direction_output = cpm1_gpio32_dir_out;
+@@ -631,7 +622,17 @@ int cpm1_gpiochip_add32(struct device *dev)
+ 	gc->parent = dev;
+ 	gc->owner = THIS_MODULE;
+ 
+-	return of_mm_gpiochip_add_data(np, mm_gc, cpm1_gc);
++	gc->label = devm_kasprintf(dev, GFP_KERNEL, "%pOF", np);
++	if (!gc->label)
++		return -ENOMEM;
++
++	cpm1_gc->regs = devm_of_iomap(dev, np, 0, NULL);
++	if (IS_ERR(cpm1_gc->regs))
++		return PTR_ERR(cpm1_gc->regs);
++
++	cpm1_gpio32_save_regs(cpm1_gc);
++
++	return devm_gpiochip_add_data(dev, gc, cpm1_gc);
+ }
+ 
+ #endif /* CONFIG_8xx_GPIO */
+-- 
+2.43.0.rc1.1336.g36b5255a03ac
 
-On Tue, Nov 5, 2024 at 8:58=E2=80=AFPM syzbot <
-syzbot+7534f060ebda6b8b51b3@syzkaller.appspotmail.com> wrote:
-
-> Hello,
->
-> syzbot found the following issue on:
->
-> HEAD commit:    2e1b3cc9d7f7 Merge tag 'arm-fixes-6.12-2' of
-> git://git.ker..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=3D12418e3058000=
-0
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D11254d3590b16=
-717
-> dashboard link:
-> https://syzkaller.appspot.com/bug?extid=3D7534f060ebda6b8b51b3
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for
-> Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D12170f40580=
-000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D16418e3058000=
-0
->
-> Downloadable assets:
-> disk image (non-bootable):
-> https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_di=
-sk-2e1b3cc9.raw.xz
-> vmlinux:
-> https://storage.googleapis.com/syzbot-assets/2f2588b04ae9/vmlinux-2e1b3cc=
-9.xz
-> kernel image:
-> https://storage.googleapis.com/syzbot-assets/2c9324cf16df/bzImage-2e1b3cc=
-9.xz
->
-> IMPORTANT: if you fix the issue, please add the following tag to the
-> commit:
-> Reported-by: syzbot+7534f060ebda6b8b51b3@syzkaller.appspotmail.com
->
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> BUG: KASAN: vmalloc-out-of-bounds in cmd_to_func
-> drivers/acpi/nfit/core.c:416 [inline]
-> BUG: KASAN: vmalloc-out-of-bounds in acpi_nfit_ctl+0x20e8/0x24a0
-> drivers/acpi/nfit/core.c:459
-> Read of size 4 at addr ffffc90000e0e038 by task syz-executor229/5316
->
-> CPU: 0 UID: 0 PID: 5316 Comm: syz-executor229 Not tainted
-> 6.12.0-rc6-syzkaller-00077-g2e1b3cc9d7f7 #0
-> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS
-> 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-> Call Trace:
->  <TASK>
->  __dump_stack lib/dump_stack.c:94 [inline]
->  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
->  print_address_description mm/kasan/report.c:377 [inline]
->  print_report+0x169/0x550 mm/kasan/report.c:488
->  kasan_report+0x143/0x180 mm/kasan/report.c:601
->  cmd_to_func drivers/acpi/nfit/core.c:416 [inline]
->  acpi_nfit_ctl+0x20e8/0x24a0 drivers/acpi/nfit/core.c:459
->  __nd_ioctl drivers/nvdimm/bus.c:1186 [inline]
->  nd_ioctl+0x1844/0x1fd0 drivers/nvdimm/bus.c:1264
->  vfs_ioctl fs/ioctl.c:51 [inline]
->  __do_sys_ioctl fs/ioctl.c:907 [inline]
->  __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:893
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7fb399ccda79
-> Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 c1 17 00 00 90 48 89 f8 48 89 f=
-7
-> 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff
-> ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007ffcf6cb8d88 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-> RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fb399ccda79
-> RDX: 0000000020000180 RSI: 00000000c008640a RDI: 0000000000000003
-> RBP: 00007fb399d405f0 R08: 0000000000000006 R09: 0000000000000006
-> R10: 0000000000000006 R11: 0000000000000246 R12: 0000000000000001
-> R13: 431bde82d7b634db R14: 0000000000000001 R15: 0000000000000001
->  </TASK>
->
-> The buggy address belongs to the virtual mapping at
->  [ffffc90000e0e000, ffffc90000e10000) created by:
->  __nd_ioctl drivers/nvdimm/bus.c:1169 [inline]
->  nd_ioctl+0x1594/0x1fd0 drivers/nvdimm/bus.c:1264
->
-> The buggy address belongs to the physical page:
-> page: refcount:1 mapcount:0 mapping:0000000000000000
-> index:0xffff8880401b9a80 pfn:0x401b9
-> flags: 0x4fff00000000000(node=3D1|zone=3D1|lastcpupid=3D0x7ff)
-> raw: 04fff00000000000 0000000000000000 dead000000000122 0000000000000000
-> raw: ffff8880401b9a80 0000000000000000 00000001ffffffff 0000000000000000
-> page dumped because: kasan: bad access detected
-> page_owner tracks the page as allocated
-> page last allocated via order 0, migratetype Unmovable, gfp_mask
-> 0x2cc2(GFP_KERNEL|__GFP_HIGHMEM|__GFP_NOWARN), pid 5316, tgid 5316
-> (syz-executor229), ts 69039468240, free_ts 68666765389
->  set_page_owner include/linux/page_owner.h:32 [inline]
->  post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1537
->  prep_new_page mm/page_alloc.c:1545 [inline]
->  get_page_from_freelist+0x303f/0x3190 mm/page_alloc.c:3457
->  __alloc_pages_noprof+0x292/0x710 mm/page_alloc.c:4733
->  alloc_pages_bulk_noprof+0x729/0xd40 mm/page_alloc.c:4681
->  alloc_pages_bulk_array_mempolicy_noprof+0x8ea/0x1600 mm/mempolicy.c:2556
->  vm_area_alloc_pages mm/vmalloc.c:3542 [inline]
->  __vmalloc_area_node mm/vmalloc.c:3646 [inline]
->  __vmalloc_node_range_noprof+0x752/0x13f0 mm/vmalloc.c:3828
->  __vmalloc_node_noprof mm/vmalloc.c:3893 [inline]
->  vmalloc_noprof+0x79/0x90 mm/vmalloc.c:3926
->  __nd_ioctl drivers/nvdimm/bus.c:1169 [inline]
->  nd_ioctl+0x1594/0x1fd0 drivers/nvdimm/bus.c:1264
->  vfs_ioctl fs/ioctl.c:51 [inline]
->  __do_sys_ioctl fs/ioctl.c:907 [inline]
->  __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:893
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> page last free pid 5312 tgid 5312 stack trace:
->  reset_page_owner include/linux/page_owner.h:25 [inline]
->  free_pages_prepare mm/page_alloc.c:1108 [inline]
->  free_unref_page+0xcfb/0xf20 mm/page_alloc.c:2638
->  __folio_put+0x2c7/0x440 mm/swap.c:126
->  pipe_buf_release include/linux/pipe_fs_i.h:219 [inline]
->  pipe_update_tail fs/pipe.c:224 [inline]
->  pipe_read+0x6ed/0x13e0 fs/pipe.c:344
->  new_sync_read fs/read_write.c:488 [inline]
->  vfs_read+0x991/0xb70 fs/read_write.c:569
->  ksys_read+0x183/0x2b0 fs/read_write.c:712
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
->
-> Memory state around the buggy address:
->  ffffc90000e0df00: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8
->  ffffc90000e0df80: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8
-> >ffffc90000e0e000: 00 00 00 00 00 00 00 03 f8 f8 f8 f8 f8 f8 f8 f8
->                                         ^
->  ffffc90000e0e080: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8
->  ffffc90000e0e100: f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8 f8
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->
->
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
->
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
->
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before testing.
->
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
->
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
->
-> If you want to undo deduplication, reply with:
-> #syz undup
->
-> --
-> You received this message because you are subscribed to the Google Groups
-> "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an
-> email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion visit
-> https://groups.google.com/d/msgid/syzkaller-bugs/672a3997.050a0220.2a847.=
-11f7.GAE%40google.com
-> .
->
 
