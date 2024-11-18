@@ -1,150 +1,160 @@
-Return-Path: <linux-kernel+bounces-412396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D762D9D086F
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 05:34:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAAE49D0872
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 05:38:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F8AF1F21654
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 04:34:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 844F3281C2E
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 04:38:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 521A913B7B3;
-	Mon, 18 Nov 2024 04:34:24 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1426813B2A2;
+	Mon, 18 Nov 2024 04:38:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jjn9TKqG"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 520877F460
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 04:34:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E81FA1CA94
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 04:38:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731904463; cv=none; b=XLcuxaIdHFCGbeeF7TmcFhY/GMpJabLWh7s27H59N/JietZ4c5u97Da8DApYrhtX0bTys7pgcrUU9jbweJvzbJ308w3upK+ozZBa0kwEa84RQ+wYALhvPi8H9SxUyz3k5xxPmJ6zandYL1PbRTAwceGBbqfteUSgfDik8x2EB34=
+	t=1731904709; cv=none; b=QN+6xzUbpzVSI3VWtd33ivCeEik4Q9Ae8Qzty3Vj6HAFD9sfwSuIR77dkKGJB1xlGpiS4W4L0nKme3YvzCsDzzSrEK3miN2c1QZInSQJU+p46aIeBuAAo98acvbDB+xojTYtAMPmtHUUR7sMDNvmlbQKQBa4GhTrUqqvSV91ul4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731904463; c=relaxed/simple;
-	bh=nAYYGGKvPU2SLH3YjjcZ1qwvVhwc2kLU819TpGwtePA=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=kulUUgJo95MN12OrcHxsL+59p/oJrBU+Pp+Kicu97CCE1b2QnC4PBiOd0JqOiSVJesdBSk54ZHcSA+IAcqOzQHmS5mCGBeIwd68qPJAtfqgsWEmXXyBfFJJKjN/5axrsGwMtQTcMGgbWZ6YQwI3LUAEvJBrW7D6OCsGO4MELDHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a3c3ecaaabso52323405ab.0
-        for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 20:34:22 -0800 (PST)
+	s=arc-20240116; t=1731904709; c=relaxed/simple;
+	bh=t1DV9+PJwntk8JsKXT8IBFfY683A0ef74HmUZOsGwu0=;
+	h=Date:Message-Id:Mime-Version:Subject:From:To:Cc:Content-Type; b=cCbgv5ol6l4lPn6IBkjF4GXXT1ImU4MYuHm+VeaByzllsr8dF4765wai9QJY1zTR8pj26jaVfMdbS84bUU885kaXb8Pl1zTkfA1P7dqrtVB4t39FWvi4YOVkafYRMQ7+ktl1fbv7rK5v2sCQTBoliXK7Kx8LWCgDzOumAYsffIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--suleiman.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jjn9TKqG; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--suleiman.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6eb0a1d0216so54804557b3.2
+        for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 20:38:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1731904707; x=1732509507; darn=vger.kernel.org;
+        h=cc:to:from:subject:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=JQv8I3JIxaU1/rgjHqPaWuqVa3AWWbnCJTtTeM4ESO8=;
+        b=jjn9TKqGZQANXWzJFdS2V5ZD5ZDINBjfaCAj+qnnHxlJ9S8XnbMEnnJMfix+T+FVp6
+         i4rrcQhjZAuZUEEsWt6zXMv48dklJQDZmdtXk4G4otBcIiQqnSXdtCCxh147i6f03Bjv
+         pRY1IxdIXYm74l+8RbxStAcJ55K3QOqdfcKXLqXx+AcVZon3DKvV7acnkaPexSr8+mnx
+         QhU7/zSvV00OEUGbUZf7Z4xgkD1oO3IPhDk6b4MILaMvJ+Knb1EURo+urKik65YQJYZO
+         BGlaQxgQmATrFtBrxYrXYVY03mUVuAOStjeR4QYYrQXD3OxC8owaN1Pe2H1iZ676KTiS
+         B10A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731904461; x=1732509261;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+        d=1e100.net; s=20230601; t=1731904707; x=1732509507;
+        h=cc:to:from:subject:mime-version:message-id:date:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=/rwgSRg0agNab0QoDWUuCny3dkOl6ihcHjI7LHymwSU=;
-        b=mBauG6beD/nKRT0pgiGyftND+8ESSAQw6Qdjneh475ul3SFC6ue/oDVT7Lll6OR7Nm
-         hrzUWSEEjGy3MFP/3BVnH9KVSer4Vk76bXzh66G066y5copJ8O2sGx51g/W4gqRnkJ+e
-         H5gab0NqL7RKhHwaSi05D46f6Sc9F79B/hVP5tTrEJ40rh5bKGk86+pbDkho7Zln+5x6
-         BCDFXuQ8C9sqrA1bppZRs1z74DnOOgWFROxLMwRdh6Yp/y4l/yfFZNKhnumuxnGiFmY5
-         nXMUBZUxvq3JKCF/LkcOgD8kJYv5qZ+NZCYztwdcSo1aCHjYMzQzWR71bbm6OwkOCPFq
-         KDJA==
-X-Forwarded-Encrypted: i=1; AJvYcCXhbHhj6dk9ADS/g1N61GPhro8rukq5hVHtAHO6Xg2MNf6vTdsd6j08cfoI6qrHQrSLP/TZUELgDmgV5t8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8PjibhFBuEb19GIh24gBcpYkp1lUQfJrCApJ7v2fO4+RfGJPT
-	JjcsRIDf2EJWutpBbokk9Sd3q9dEHSJ40KlLKYfDFZT+HRKPgS7Rm6oSgMSSWCb0EVHt8XlsKLt
-	85BErjZb/22wImP2bYEe+KmFF9aaq/tDZk1TE///WHMRGUAUuleW6G44=
-X-Google-Smtp-Source: AGHT+IHal0Idqvv4i8Vbv2KmbcqwGuSpRgyw+XbDXbbZrBEPHIurwqpSpQ/hikNunViYMYUZD+zuWslkBzntZSRGVmC+uGCuZbqg
+        bh=JQv8I3JIxaU1/rgjHqPaWuqVa3AWWbnCJTtTeM4ESO8=;
+        b=ptRuexgMbqZNSyRI9Z5TU1aZ/aSUPA3UNQFJ1WAdfUEQvL3TowTAdUnv74IFVAN7SN
+         63xl3usFr+vl2wYwcj9Io+6C0keI74mHpLrzDx6fFybCyL+B2uqtPior6s0DWbilAOaI
+         aaLPS5KEZ7t7chNQdlhWtrr7gSgBp02yHIT1hR9C75t15e0lF+nPB3425Fxv+Q+R9vXW
+         17+/jwAKopZ7+aLfKQwUAztJZ6RASigcYygtTVQbrOdiZqjkJAuDiRzBHyOjBbJVVecV
+         iTs3jia5gREV2Uk9K9P31gtQID7LDn7uqJr7QVTQTyTHF6xSBPFKAu75ksg4YRktp3pn
+         0qng==
+X-Forwarded-Encrypted: i=1; AJvYcCUSRtnQhL/4PRG2HtUU0aUhIrKGCXzKTqESbPFBD8cBGDCP1fm0V6Zm1QgUaTZZHRWLrKAgCJeRQOV8TdQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqRG/U5LMl1T6jFnQMljYnzDVE1t84Vs4vmSgdsLhvk0EenZHM
+	u4ZGZvthyN0p7OXHNB0OsaZ67ivqLLgpWoxwMe3/l8iaw2oT6DVnR59gKKXQ+MjcHpTmngnfOUw
+	DlazKw+oSYw==
+X-Google-Smtp-Source: AGHT+IG/L7EqsoR1sfX/shhNBpQ4HgVRA9GeBU49j7fNWohg7uviubTV5M/BOrxjTQEpcnc2LCXFSHLhg2XoWw==
+X-Received: from suleiman1.tok.corp.google.com ([2401:fa00:8f:203:ee32:7944:d9d4:158a])
+ (user=suleiman job=sendgmr) by 2002:a05:690c:808d:b0:6ee:3b47:59a3 with SMTP
+ id 00721157ae682-6ee55a553d5mr525797b3.2.1731904706871; Sun, 17 Nov 2024
+ 20:38:26 -0800 (PST)
+Date: Mon, 18 Nov 2024 13:37:45 +0900
+Message-Id: <20241118043745.1857272-1-suleiman@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a92:c6cb:0:b0:3a7:6212:f87e with SMTP id
- e9e14a558f8ab-3a76212fa23mr34212145ab.20.1731904461553; Sun, 17 Nov 2024
- 20:34:21 -0800 (PST)
-Date: Sun, 17 Nov 2024 20:34:21 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <673ac3cd.050a0220.87769.001f.GAE@google.com>
-Subject: [syzbot] [netfs?] WARNING in netfs_writepages
-From: syzbot <syzbot+06023121b0153752a3d3@syzkaller.appspotmail.com>
-To: dhowells@redhat.com, jlayton@kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, netfs@lists.linux.dev, 
-	syzkaller-bugs@googlegroups.com
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
+Subject: [PATCH v3] sched: Don't try to catch up excess steal time.
+From: Suleiman Souhlal <suleiman@google.com>
+To: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>, Paolo Bonzini <pbonzini@redhat.com>, seanjc@google.com, 
+	Srikar Dronamraju <srikar@linux.ibm.com>, David Woodhouse <dwmw2@infradead.org>, joelaf@google.com, 
+	vineethrp@google.com, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+	ssouhlal@freebsd.org, Suleiman Souhlal <suleiman@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+When steal time exceeds the measured delta when updating clock_task, we
+currently try to catch up the excess in future updates.
+However, this results in inaccurate run times for the future things using
+clock_task, in some situations, as they end up getting additional steal
+time that did not actually happen.
+This is because there is a window between reading the elapsed time in
+update_rq_clock() and sampling the steal time in update_rq_clock_task().
+If the VCPU gets preempted between those two points, any additional
+steal time is accounted to the outgoing task even though the calculated
+delta did not actually contain any of that "stolen" time.
+When this race happens, we can end up with steal time that exceeds the
+calculated delta, and the previous code would try to catch up that excess
+steal time in future clock updates, which is given to the next,
+incoming task, even though it did not actually have any time stolen.
 
-syzbot found the following issue on:
+This behavior is particularly bad when steal time can be very long,
+which we've seen when trying to extend steal time to contain the duration
+that the host was suspended [0]. When this happens, clock_task stays
+frozen, during which the running task stays running for the whole
+duration, since its run time doesn't increase.
+However the race can happen even under normal operation.
 
-HEAD commit:    f1b785f4c787 Merge tag 'for_linus' of git://git.kernel.org..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=11f5ace8580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=327b6119dd928cbc
-dashboard link: https://syzkaller.appspot.com/bug?extid=06023121b0153752a3d3
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+Ideally we would read the elapsed cpu time and the steal time atomically,
+to prevent this race from happening in the first place, but doing so
+is non-trivial.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+Since the time between those two points isn't otherwise accounted anywhere,
+neither to the outgoing task nor the incoming task (because the "end of
+outgoing task" and "start of incoming task" timestamps are the same),
+I would argue that the right thing to do is to simply drop any excess steal
+time, in order to prevent these issues.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/2eb65d2a03c1/disk-f1b785f4.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/70c538f32a8e/vmlinux-f1b785f4.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/79fc36f9a44b/bzImage-f1b785f4.xz
+[0] https://lore.kernel.org/kvm/20240820043543.837914-1-suleiman@google.com/
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+06023121b0153752a3d3@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 35 at fs/netfs/write_issue.c:573 netfs_writepages+0x350/0x9d0 fs/netfs/write_issue.c:573
-Modules linked in:
-CPU: 0 UID: 0 PID: 35 Comm: kworker/u8:2 Not tainted 6.12.0-rc7-syzkaller-00042-gf1b785f4c787 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
-Workqueue: writeback wb_workfn
- (flush-9p-3)
-
-RIP: 0010:netfs_writepages+0x350/0x9d0 fs/netfs/write_issue.c:573
-Code: d5 05 00 00 4c 8b a5 90 02 00 00 4c 89 fe 48 c1 e6 0c 4c 89 e7 e8 00 04 54 ff 48 8b 44 24 10 49 39 c4 7e 09 e8 41 02 54 ff 90 <0f> 0b 90 e8 38 02 54 ff 48 8d 7b 28 48 89 f8 48 c1 e8 03 42 80 3c
-RSP: 0018:ffffc90000ab7400 EFLAGS: 00010293
-
-RAX: 0000000000000000 RBX: ffffea00015c0700 RCX: ffffffff82397910
-RDX: ffff88801e292440 RSI: ffffffff8239791f RDI: 0000000000000006
-RBP: ffff88802aac0000 R08: 0000000000000006 R09: 0000000000000000
-R10: 810f000000000000 R11: 0000000000000001 R12: 0000000000000000
-R13: ffffc90000ab7790 R14: dffffc0000000000 R15: 000810f000000000
-FS:  0000000000000000(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fc1ba1a2d3d CR3: 000000003660a000 CR4: 00000000003526f0
-DR0: 0000000000000003 DR1: 0000000000000004 DR2: 0000000100000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- do_writepages+0x1a3/0x7f0 mm/page-writeback.c:2683
- __writeback_single_inode+0x166/0xfa0 fs/fs-writeback.c:1658
- writeback_sb_inodes+0x603/0xfa0 fs/fs-writeback.c:1954
- __writeback_inodes_wb+0xff/0x2e0 fs/fs-writeback.c:2025
- wb_writeback+0x721/0xb50 fs/fs-writeback.c:2136
- wb_check_old_data_flush fs/fs-writeback.c:2240 [inline]
- wb_do_writeback fs/fs-writeback.c:2293 [inline]
- wb_workfn+0x8c3/0xbc0 fs/fs-writeback.c:2321
- process_one_work+0x9c5/0x1ba0 kernel/workqueue.c:3229
- process_scheduled_works kernel/workqueue.c:3310 [inline]
- worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-
-
+Signed-off-by: Suleiman Souhlal <suleiman@google.com>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+v3:
+- Reword commit message.
+- Revert back to v1 code, since it's more understandable.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+v2: https://lore.kernel.org/lkml/20240911111522.1110074-1-suleiman@google.com
+- Slightly changed to simply moving one line up instead of adding
+  new variable.
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+v1: https://lore.kernel.org/lkml/20240806111157.1336532-1-suleiman@google.com
+---
+ kernel/sched/core.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index a1c353a62c56..13f70316ef39 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -766,13 +766,15 @@ static void update_rq_clock_task(struct rq *rq, s64 delta)
+ #endif
+ #ifdef CONFIG_PARAVIRT_TIME_ACCOUNTING
+ 	if (static_key_false((&paravirt_steal_rq_enabled))) {
+-		steal = paravirt_steal_clock(cpu_of(rq));
++		u64 prev_steal;
++
++		steal = prev_steal = paravirt_steal_clock(cpu_of(rq));
+ 		steal -= rq->prev_steal_time_rq;
+ 
+ 		if (unlikely(steal > delta))
+ 			steal = delta;
+ 
+-		rq->prev_steal_time_rq += steal;
++		rq->prev_steal_time_rq = prev_steal;
+ 		delta -= steal;
+ 	}
+ #endif
+-- 
+2.47.0.338.g60cca15819-goog
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
