@@ -1,113 +1,112 @@
-Return-Path: <linux-kernel+bounces-412387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8549B9D0859
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 05:11:12 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 787D19D085B
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 05:14:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B8432823E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 04:11:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CDEAEB21268
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 04:14:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64F2113AA3F;
-	Mon, 18 Nov 2024 04:10:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAF567F460;
+	Mon, 18 Nov 2024 04:14:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gsFjVtvP"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="kQFgBWdI"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E92476048;
-	Mon, 18 Nov 2024 04:10:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A37F581745
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 04:14:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731903056; cv=none; b=P0YvFF4ET/hZYeJKqIRf+60JlXOPc1TIL/4m+AKy54yXFHwXu4b10R4A+g3bakJlfY5b6DlsrKvmKZiTviyTR3yzbtJfzGtKmzndv7z+lTXEumGMYSy81skLwWiUREJofA2nvDWInCYhdRL2fD5jVsDUwHo9C/1KiXSbh50+lB8=
+	t=1731903258; cv=none; b=k81InxhQtd3to2qXYZKZhR0p+x2ahgvaN5Pbs2JMmmwscp//cBPOb9Zz6PztPWMQdn4yJBYd5g47ST5ULCW2MdBO9re1hOJK/XTE/EvGRpB1c6EedsHPgPHDqYbIKmq2DFp1SDo5ILP0kGxpWmsBENEGmJT1b2Xli9VeN0UZiTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731903056; c=relaxed/simple;
-	bh=5hya0c9GlAmUVAappSh9msAuKRyN4kcO/L1gB49AvO4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i/0OEnVAzMNGgRjzBNCEzJp4S95BjGU1D565SGIvZHqFg2uCqaUJD6aDPIy7uZialdEEtnJSBhe9UtF/dt0hylujtiAJsz/r8tLK2NV5aSG6TwG/+bxlhWtDlTjvIwDEvw/FXWOYeiB4o2XEpcHW74ILJ4BJar5PGd9Pz5L4PfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=gsFjVtvP; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=9ZDIRBgFpCZrfxRdrYUTcVGYUj9o3eyEGynCSyQQ3T0=; b=gsFjVtvPA+fXkbHMP/RPM0jP46
-	tDXOZSgUnV459KQB1ZQjuJEeFNGjI+s+P62y9TFp6jw2NvncM8m36M1P9qjXE09AzuHuRKBNnFQh3
-	D9wNVHaWAaThvlKum/I3rJQemxX4ko8zxtv08KxG8Gt8p9dO9MgHgghdPQ6TcmvttVCjUYkU8Inal
-	MGIy4afnUEKInO2HRLDGKT5fOiiCJjs9Le0BVQ+rIansKkvkd1NRgZ0zhLT7nyUOIrD1KTAgJi7GJ
-	il7IB26XiEKeX+eVIX4YNgs0hpM0ABvn7SVDwKY/GpwrN7afCLVd7AaSHp9PWUGAnR3J/45DCP2sa
-	OWS8B8+Q==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tCt6D-00000002YNw-0LVn;
-	Mon, 18 Nov 2024 04:10:53 +0000
-Date: Mon, 18 Nov 2024 04:10:52 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Kees Cook <kees@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] mm: Handle compound pages better in __dump_page()
-Message-ID: <Zzq-TJlSKXoo80Fo@casper.infradead.org>
-References: <20241117055243.work.907-kees@kernel.org>
+	s=arc-20240116; t=1731903258; c=relaxed/simple;
+	bh=d+tL0KwV1n4w0y+aQKArnpxFMg/v7LoAmZuEToUallo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=acMJfMA1+yVI95/kwgMCw/xoS426hnpxYNcIGvsUyk5IfenWBazDBboQ/QOghQ7t0sy3g45AvMdmhfXLAiLmvIlIHcJR8rMQBAIQZtRs3pKW81peWv/4WKs8ri5jaq1nCbjhXE7pM+nXwBXKm4P7ZYMkxWUlZFb2PIwJZ692Dyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=kQFgBWdI; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1731903248;
+	bh=d+tL0KwV1n4w0y+aQKArnpxFMg/v7LoAmZuEToUallo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=kQFgBWdIqDRyMo+1efplIwL+XPWvPLsSMJUskwRSFsn7XB6tvPglNWk8A46ENsYcQ
+	 ZcjPk+psEpvifed84X8FNvag5RwoJFPJyRd4+Jiuwj+AOgY6cP6bDqNd2CMHdMFYcY
+	 Wz0uv5RBMl7KRPtQo2YHMBvh+5whTZtVqfSGN2vy29P/HIXncpH7F/DUV9O8aFHOKG
+	 vMzO+cy2o8o4mYi65130aPI+2+Q8mKnoo2kg3W3XYzZ5NYcpj0TB2Ozp/ylYpsI6g8
+	 5Zrn1sxQB2+E0aqLCblAsayTaZzp442QlTV9n7OLl0B9MjTdfe9DzsRlbsabNnFkAA
+	 T8/445ZmTlAjg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XsDlg5t2mz4x8m;
+	Mon, 18 Nov 2024 15:14:07 +1100 (AEDT)
+Date: Mon, 18 Nov 2024 15:14:09 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>, linux-kernel@vger.kernel.org,
+ Dave Airlie <airlied@redhat.com>, DRI <dri-devel@lists.freedesktop.org>
+Subject: Re: [GIT PULL] random number generator updates for 6.13-rc1
+Message-ID: <20241118151409.2a6a2333@canb.auug.org.au>
+In-Reply-To: <20241118020939.641511-1-Jason@zx2c4.com>
+References: <20241118020939.641511-1-Jason@zx2c4.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241117055243.work.907-kees@kernel.org>
+Content-Type: multipart/signed; boundary="Sig_/pLR6yKQ2jdQD0mFZy7=ShCJ";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Sat, Nov 16, 2024 at 09:52:44PM -0800, Kees Cook wrote:
-> GCC 15's -Warray-bounds reports:
-> 
-> In function 'page_fixed_fake_head',
->     inlined from '_compound_head' at ../include/linux/page-flags.h:251:24,
->     inlined from '__dump_page' at ../mm/debug.c:123:11:
-> ../include/asm-generic/rwonce.h:44:26: warning: array subscript 9 is outside array bounds of 'struct page[1]' [-Warray-bounds=]
+--Sig_/pLR6yKQ2jdQD0mFZy7=ShCJ
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for bringing this back up.  I have a somewhat orphaned patch in
-my tree that has a terrible commit message which was no help.
+Hi all,
 
-That said, this patch is definitely wrong because it's unsafe to
-call page_fixed_fake_head().
+On Mon, 18 Nov 2024 03:09:39 +0100 "Jason A. Donenfeld" <Jason@zx2c4.com> w=
+rote:
+>
+> This pull request contains a single series from Uros to replace uses of
+> #include <linux/random.h> with prandom.h or other more specific headers, =
+as
+> needed, in order to avoid a circular header issue. Uros' goal is to be ab=
+le to
+> use percpu.h from prandom.h, which will then allow him to define __percpu=
+ in
+> percpu.h rather than in compiler_types.h.
+>=20
+> This has been sitting in next for most of the 6.12 cycle.
 
-> (Not noted in this warning is that the code passes through page_folio()
-> _Generic macro.)
-> 
-> It may not be that "precise" is always 1 page, so accessing "page[1]"
-> in either page_folio() or folio_test_large() may cause problems.
+One conflict against the DRM tree.
 
-folio_test_large() does not touch page[1].  Look:
+https://lore.kernel.org/lkml/20241010153855.588ec772@canb.auug.org.au/
 
-static inline bool folio_test_large(const struct folio *folio)
-{
-        return folio_test_head(folio);
+--=20
+Cheers,
+Stephen Rothwell
 
-static __always_inline bool folio_test_head(const struct folio *folio)
-{
-        return test_bit(PG_head, const_folio_flags(folio, FOLIO_PF_ANY));
+--Sig_/pLR6yKQ2jdQD0mFZy7=ShCJ
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-#define FOLIO_PF_ANY            0
+-----BEGIN PGP SIGNATURE-----
 
-static const unsigned long *const_folio_flags(const struct folio *folio,
-                unsigned n)
-{
-        const struct page *page = &folio->page;
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmc6vxEACgkQAVBC80lX
+0GzyyAf/RtTTTtMAfPx2mqkl5u6fGrAriuFttFWVZm7bwFQEqbU3PfDS75WjZaZ/
+5J/gtguRN+A6YxH/8mf6DP0XvW51l60R5go4TEwfWcAoB1KRRM2mF8NS34vtZ4eN
+/mP+tS4CcVYiHRZJTorRDQn4fwE30sWr7wJl4ftBseNEAptGfo62aa/qjl8mNN8B
+JuoUXqaL95dFw+jK//fZClIalnS+SkWi+zDPzNvvW6Da4Nhzsh6FtNDOEp+m0bb2
+7+KyTvrsJ2R2uMpK9ufEykp6L0Nb/+IQt3g6z37Q52ww0OaWq7IzCvfYqwW+xmiX
+SVs4jqgi2zmcvaDgNevsHHiRE9SG7g==
+=uEIf
+-----END PGP SIGNATURE-----
 
-        VM_BUG_ON_PGFLAGS(PageTail(page), page);
-        VM_BUG_ON_PGFLAGS(n > 0 && !test_bit(PG_head, &page->flags), page);
-        return &page[n].flags;
-
-so we only look at page[0].
-
-> Instead, explicitly make precise 2 pages. Just open-coding page_folio()
-> isn't sufficient to avoid the warning[1].
-
-Why not?  What goes wrong?  I'm trying to get gcc-15 installed here now
-...
-
+--Sig_/pLR6yKQ2jdQD0mFZy7=ShCJ--
 
