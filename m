@@ -1,85 +1,97 @@
-Return-Path: <linux-kernel+bounces-412577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7880F9D0ADD
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 09:28:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1C089D0AF1
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 09:30:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CEA99B22903
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 08:28:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8327C282670
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 08:30:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5FB819340C;
-	Mon, 18 Nov 2024 08:26:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7E3318F2C3;
+	Mon, 18 Nov 2024 08:27:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ET7y+BcA"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h/LiJ9+A"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03E16176242;
-	Mon, 18 Nov 2024 08:26:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF2DF18BC3F;
+	Mon, 18 Nov 2024 08:27:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731918402; cv=none; b=Aqr974tXhz0jBqZZB54WbqpbdWCzUCTVD/upAkdd5bvqMA1EOYOkGogib5rUI/PmKgliqS0K9xBDKy/3fOjzuhro7ER+cXyppJzu8Tez4vapCSELpYtyikzhVjXbMF0Zqhw54vpUfxxxQBjQqvDHToSlIFrCmnW3QnNm2eVPAqg=
+	t=1731918453; cv=none; b=UkzOF8tni9UoH61RZ80BmADXInNrJ8fVsob8+fMms8IdJSF4PF9w6MuOKxv/KrElcO/h4MNiRUDtPmsON2x8iPyaCaRllq97Ihg/jRd8cxxrErISzTLLQ65K16afCszaqFZH5sgzEJMvsfamhYYxV8A5bFBhLX/KsczO0MlcYCo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731918402; c=relaxed/simple;
-	bh=y65IyhdCBZLfnfXl2Jp8zDFdNpZxqQ4w2NKTuNouIHM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=VszI+tXNdrrY+ma4/rAYbVqs7Hm4V+krmO9gePxvoePU2xFKIV79u7qYtqp4xrc7vS131YHJF4U7m4wjNrYKiiu8jwHz//g7qiPQWu8QBdMSBoZf5it+mGqIaBiK+vuu/ipy1fXiXxvm2oRAl4QrJegYHfp1ao4M1l8q1Tlnd8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ET7y+BcA; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AI5Rm6V001478;
-	Mon, 18 Nov 2024 08:26:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=s38fixq29jL
-	xJgUv0I15Lb57uUi3FsgupQ81UBKkdvg=; b=ET7y+BcApaiNoRz3wBRIds9UJF4
-	c1Xq+ZruCNoyQk421SYCEJzx0G5JqbD+GAAUuYoAXW8LvpsgNpRRRFGw8qdmOtqx
-	UDufyX+jbl6sZa3GR/YqUOq569W9Ad7VcV4SOUkisjcknZ669yA74A9VJDv0PREl
-	oN3JBAXzmwQgpzSLA9zTPnzYv8i31qqox9yd8z+VrXkneEBzAZyphm0Qem7RI/qK
-	xp10Naki/kPAFubCz2T+pb6neVPnKQzfUwtJfaAlkRUyXx+YlJ8pdfKzZs3ZbF3a
-	8fsmwLxNmLo3d9tuiaDzO3xxuKWAxhvbekgkpRNu4VzSNs47r6XobYNCu+Q==
-Received: from aptaippmta01.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42ycuf9uuw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 18 Nov 2024 08:26:28 +0000 (GMT)
-Received: from pps.filterd (APTAIPPMTA01.qualcomm.com [127.0.0.1])
-	by APTAIPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AI8OBDe009657;
-	Mon, 18 Nov 2024 08:26:26 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 42xmfkhw00-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 18 Nov 2024 08:26:26 +0000
-Received: from APTAIPPMTA01.qualcomm.com (APTAIPPMTA01.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4AI8QQHu011266;
-	Mon, 18 Nov 2024 08:26:26 GMT
-Received: from cse-cd02-lnx.ap.qualcomm.com (cse-cd02-lnx.qualcomm.com [10.64.75.246])
-	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 4AI8QPxp011259
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 18 Nov 2024 08:26:26 +0000
-Received: by cse-cd02-lnx.ap.qualcomm.com (Postfix, from userid 4438065)
-	id AF35D176D; Mon, 18 Nov 2024 16:26:24 +0800 (CST)
-From: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
-To: vkoul@kernel.org, kishon@kernel.org, robh+dt@kernel.org,
-        manivannan.sadhasivam@linaro.org, bhelgaas@google.com, kw@linux.com,
-        lpieralisi@kernel.org, quic_qianyu@quicinc.com, conor+dt@kernel.org,
-        neil.armstrong@linaro.org, andersson@kernel.org,
-        konradybcio@kernel.org
-Cc: quic_shashim@quicinc.com, quic_kaushalk@quicinc.com, quic_tdas@quicinc.com,
-        quic_tingweiz@quicinc.com, quic_aiquny@quicinc.com, kernel@quicinc.com,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
-        Krishna chaitanya chundru <quic_krichai@quicinc.com>,
-        Ziyue Zhang <quic_ziyuzhan@quicinc.com>
-Subject: [PATCH 5/5] arm64: dts: qcom: qcs615: enable pcie for qcs615
-Date: Mon, 18 Nov 2024 16:26:19 +0800
-Message-Id: <20241118082619.177201-6-quic_ziyuzhan@quicinc.com>
+	s=arc-20240116; t=1731918453; c=relaxed/simple;
+	bh=yKqQlgDvbxWBXdJnH+2SQxWsAjGR8brRbvHf6wRTHz8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=d0xFjZ2Z1jvN0WzyHTQ8tm1VZfPsmlVGDXxqabrsOaDCNnJbDhmchkyhs4prG5yD24bTxzxId5LvBrhcthLZFfhvZpOdFJIeEQX+RT6eWE7b2Dm9Z8taNpBSN7Ia6DcV9CQkuJEuMtCnE37HF+iWMnnZL1/b3tw/BxijKnP/qrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h/LiJ9+A; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-20c6f492d2dso15972875ad.0;
+        Mon, 18 Nov 2024 00:27:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731918451; x=1732523251; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gkSbdNRIUJlQANFk/zwDmvqLsXhMldYS43rY4RRFAzE=;
+        b=h/LiJ9+A2jPNoMVbd07NnufUO5AwjtSxTLsluwiTieKg+KADKjf2b5OSeMKrh4WmOF
+         Taw0nMdEwjdqgU/UNBOa9fIElMbaRrO5FjCs6X3L18tBw07wFFsBYNes4gSpTs8qxHJG
+         qtTIaqdtG+JYwtfj/SqzvDb4Kfc7/8HF2IWBz6M1BVPZ9Q0xdnS0oubfFdtofxlsfjGv
+         ZdahDK6ddmQ/HFAiGpxGZHpyueQRZp7ys0XVk1Jfht5CiJXwxwMWx8hsal9M3YhY1PIy
+         o8O15/gG2vHUzHaWSEfgXjoPF5AipMvYxTpWvah7wqYIQaYMAnKsVefAgqskv/2577Z+
+         qg8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731918451; x=1732523251;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gkSbdNRIUJlQANFk/zwDmvqLsXhMldYS43rY4RRFAzE=;
+        b=Lawjo4QK/msnMcGfj2hH7clWDYahE9P9I/D9YEqPZloW/vfywOHdp1aCPk49kI9h+a
+         iJ+DgWkXqyv4jVS9J/aKS1nWBOKy8sYjyWKDebSsy1mqMgHyalXh30zLkDcjTpt1NVTS
+         9gq+uizIlday6e5Ixcj3vsHLPhSldos0t0tP/GjHw8ZhekMPQhrkfKV0lFVVJuTV8fxT
+         awdikL1Ko8Tj48Zwf01Fpzod8nHBgzH43Hix+eqZuqFGxwSIWWrwu2lSB9d62cXTy5wf
+         gME7TJ9PJY8vngzpIgYE005AnElFHW8Kn1KK+KTfXDparNef7xKygp0ke/tpJ8ZqQ+3x
+         4/OA==
+X-Forwarded-Encrypted: i=1; AJvYcCV27Tomkge2V5IPtN8OL6Ou8iJBngGV56QNafVoj+gyiQrMWUTfIqZU3hhZUEs2VFJ7Gb6bHPAr@vger.kernel.org, AJvYcCVZKiIb/Cvda9a1Lswsf05aPflm1Hz2ij6ZIHBcD3QZ/QEkkUox0BMkdwYFAuGB126xI/sAZ3noFk3qvvSF@vger.kernel.org, AJvYcCVhmJUO3ZsyT+Htsseck1NeWd7QgxzEK7p+pUBTKaXsQL9uS4IXe0+cVQryhub1LntFIxfmqwMbLEbu@vger.kernel.org
+X-Gm-Message-State: AOJu0YySn6pbtHc2IZ+ifLapixOAgUHyuugfHoj+p36Xs/UtHj2XRXVH
+	AcSsVqwpTiwkXsb/PF05RTxrMtVZO/Z4U9Ffe8NDs4Gr1WMcw0GP
+X-Google-Smtp-Source: AGHT+IEvoyj4wxb7J7Wh84n7jGX2+vtLnvotel8z2KtjVjP3hhCMcqWSJASSXlB0gPXXOqon5nxuTg==
+X-Received: by 2002:a17:902:ec8f:b0:20c:a692:cf1e with SMTP id d9443c01a7336-211d0ed9a12mr171662035ad.43.1731918451221;
+        Mon, 18 Nov 2024 00:27:31 -0800 (PST)
+Received: from yclu-ubuntu.. (60-250-196-139.hinet-ip.hinet.net. [60.250.196.139])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211d0ebbf9esm51883815ad.45.2024.11.18.00.27.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Nov 2024 00:27:30 -0800 (PST)
+From: Joey Lu <a0987203069@gmail.com>
+To: andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	mcoquelin.stm32@gmail.com,
+	richardcochran@gmail.com
+Cc: alexandre.torgue@foss.st.com,
+	joabreu@synopsys.com,
+	ychuang3@nuvoton.com,
+	schung@nuvoton.com,
+	yclu4@nuvoton.com,
+	peppe.cavallaro@st.com,
+	linux-arm-kernel@lists.infradead.org,
+	netdev@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	openbmc@lists.ozlabs.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	Joey Lu <a0987203069@gmail.com>
+Subject: [PATCH v3 0/3] Add support for Nuvoton MA35D1 GMAC
+Date: Mon, 18 Nov 2024 16:27:04 +0800
+Message-Id: <20241118082707.8504-1-a0987203069@gmail.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241118082619.177201-1-quic_ziyuzhan@quicinc.com>
-References: <20241118082619.177201-1-quic_ziyuzhan@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,262 +99,68 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: MfFAJBXZTNAlns5fN7iGFPXJNIVC7N3N
-X-Proofpoint-GUID: MfFAJBXZTNAlns5fN7iGFPXJNIVC7N3N
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 clxscore=1015
- mlxlogscore=999 phishscore=0 spamscore=0 impostorscore=0 adultscore=0
- bulkscore=0 lowpriorityscore=0 priorityscore=1501 mlxscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411180070
 
-From: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+This patch series is submitted to add GMAC support for Nuvoton MA35D1
+SoC platform. This work involves implementing a GMAC driver glue layer
+based on Synopsys DWMAC driver framework to leverage MA35D1's dual GMAC
+interface capabilities.
 
-Add configurations in devicetree for PCIe0, including registers, clocks,
-interrupts and phy setting sequence.
+Overview:
+  1. Added a GMAC driver glue layer for MA35D1 SoC, providing support for
+  the platform's two GMAC interfaces.
+  2. Added device tree settings, with specific configurations for our
+  development boards:
+    a. SOM board: Configured for two RGMII interfaces.
+    b. IoT board: Configured with one RGMII and one RMII interface.
+  3. Added dt-bindings for the GMAC interfaces.
 
-Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-Signed-off-by: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
----
- arch/arm64/boot/dts/qcom/qcs615-ride.dts |  42 ++++++
- arch/arm64/boot/dts/qcom/qcs615.dtsi     | 158 +++++++++++++++++++++++
- 2 files changed, 200 insertions(+)
+v3:
+  - Update nuvoton,ma35d1-dwmac.yaml
+    - Fix for dt_binding_check warnings/errors.
+    - Add compatible in snps,dwmac.yaml.
+  - Update dtsi
+    - Update dtsi to follow examples in yaml.
+  - Update dwmac-nuvoton driver
+    - Fix for auto build test warnings.
+    - Invalid path delay arguments will be returned.
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs615-ride.dts b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-index 4ef969a6af15..dd245a8a50f5 100644
---- a/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-+++ b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-@@ -205,6 +205,23 @@ &gcc {
- 		 <&sleep_clk>;
- };
- 
-+&pcie {
-+	perst-gpios = <&tlmm 101 GPIO_ACTIVE_LOW>;
-+	wake-gpios = <&tlmm 100 GPIO_ACTIVE_HIGH>;
-+
-+	pinctrl-0 = <&pcie_default_state>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
-+
-+&pcie_phy {
-+	vdda-phy-supply = <&vreg_l5a>;
-+	vdda-pll-supply = <&vreg_l12a>;
-+
-+	status = "okay";
-+};
-+
- &qupv3_id_0 {
- 	status = "okay";
- };
-@@ -213,6 +230,31 @@ &rpmhcc {
- 	clocks = <&xo_board_clk>;
- };
- 
-+&tlmm {
-+	pcie_default_state: pcie-default-state {
-+		perst-pins {
-+			pins = "gpio101";
-+			function = "gpio";
-+			drive-strength = <2>;
-+			bias-pull-down;
-+		};
-+
-+		clkreq-pins {
-+			pins = "gpio90";
-+			function = "pcie_clk_req";
-+			drive-strength = <2>;
-+			bias-pull-up;
-+		};
-+
-+		wake-pins {
-+			pins = "gpio100";
-+			function = "gpio";
-+			drive-strength = <2>;
-+			bias-pull-up;
-+		};
-+	};
-+};
-+
- &uart0 {
- 	status = "okay";
- };
-diff --git a/arch/arm64/boot/dts/qcom/qcs615.dtsi b/arch/arm64/boot/dts/qcom/qcs615.dtsi
-index ac4c4c751da1..1e30951a0d2a 100644
---- a/arch/arm64/boot/dts/qcom/qcs615.dtsi
-+++ b/arch/arm64/boot/dts/qcom/qcs615.dtsi
-@@ -678,6 +678,164 @@ rpmhpd_opp_turbo_l1: opp-9 {
- 		};
- 	};
- 
-+	pcie: pcie@1c08000 {
-+		compatible = "qcom,pcie-qcs615";
-+		reg = <0x0 0x1c08000  0x0 0x3000>,
-+		      <0x0 0x40000000 0x0 0xf1d>,
-+		      <0x0 0x40000f20 0x0 0xa8>,
-+		      <0x0 0x40001000 0x0 0x1000>,
-+		      <0x0 0x40100000 0x0 0x100000>,
-+		      <0x0 0x1c0b000  0x0 0x1000>;
-+
-+		reg-names = "parf",
-+			    "dbi",
-+			    "elbi",
-+			    "atu",
-+			    "config",
-+			    "mhi";
-+
-+		device_type = "pci";
-+		linux,pci-domain = <0>;
-+		bus-range = <0x00 0xff>;
-+		num-lanes = <1>;
-+
-+		#address-cells = <3>;
-+		#size-cells = <2>;
-+
-+		ranges = <0x01000000 0x0 0x00000000 0x0 0x40200000 0x0 0x100000>,
-+			 <0x02000000 0x0 0x40300000 0x0 0x40300000 0x0 0x1fd00000>;
-+
-+		interrupts = <GIC_SPI 141 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 146 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 147 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-names = "msi0",
-+				  "msi1",
-+				  "msi2",
-+				  "msi3",
-+				  "msi4",
-+				  "msi5",
-+				  "msi6",
-+				  "msi7",
-+				  "global";
-+
-+		interrupt-map = <0 0 0 0 &intc 0 0 0 140 IRQ_TYPE_LEVEL_HIGH>,
-+				<0 0 0 1 &intc 0 0 0 149 IRQ_TYPE_LEVEL_HIGH>,
-+				<0 0 0 2 &intc 0 0 0 150 IRQ_TYPE_LEVEL_HIGH>,
-+				<0 0 0 3 &intc 0 0 0 151 IRQ_TYPE_LEVEL_HIGH>,
-+				<0 0 0 4 &intc 0 0 0 152 IRQ_TYPE_LEVEL_HIGH>;
-+
-+		#interrupt-cells = <1>;
-+		interrupt-map-mask = <0 0 0 0x7>;
-+
-+		interconnects = <&aggre1_noc MASTER_PCIE QCOM_ICC_TAG_ALWAYS
-+				 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
-+				<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
-+				 &config_noc SLAVE_PCIE_0 QCOM_ICC_TAG_ALWAYS>;
-+		interconnect-names = "pcie-mem", "cpu-pcie";
-+
-+		clocks = <&gcc GCC_PCIE_0_AUX_CLK>,
-+			 <&gcc GCC_PCIE_0_CFG_AHB_CLK>,
-+			 <&gcc GCC_PCIE_0_MSTR_AXI_CLK>,
-+			 <&gcc GCC_PCIE_0_SLV_AXI_CLK>,
-+			 <&gcc GCC_PCIE_0_SLV_Q2A_AXI_CLK>,
-+			 <&rpmhcc RPMH_CXO_CLK>;
-+
-+		clock-names = "aux",
-+			      "cfg",
-+			      "bus_master",
-+			      "bus_slave",
-+			      "slave_q2a",
-+			      "ref";
-+
-+		assigned-clocks = <&gcc GCC_PCIE_0_AUX_CLK>;
-+		assigned-clock-rates = <19200000>;
-+
-+		operating-points-v2 = <&pcie_opp_table>;
-+
-+		resets = <&gcc GCC_PCIE_0_BCR>;
-+		reset-names = "pci";
-+
-+		phys = <&pcie_phy>;
-+		phy-names = "pciephy";
-+
-+		power-domains = <&gcc PCIE_0_GDSC>;
-+
-+		dma-coherent;
-+
-+		iommu-map = <0x0 &apps_smmu 0x400 0x1>,
-+			    <0x100 &apps_smmu 0x401 0x1>;
-+
-+		status = "disabled";
-+		pcie_opp_table: opp-table {
-+			compatible = "operating-points-v2";
-+
-+			/* GEN 1 x1 */
-+			opp-2500000 {
-+				opp-hz = /bits/ 64 <2500000>;
-+				required-opps = <&rpmhpd_opp_low_svs>;
-+				opp-peak-kBps = <250000 1>;
-+			};
-+
-+			/* GEN 2 x1 */
-+			opp-5000000 {
-+				opp-hz = /bits/ 64 <5000000>;
-+				required-opps = <&rpmhpd_opp_low_svs>;
-+				opp-peak-kBps = <500000 1>;
-+			};
-+
-+			/* GEN 3 x1 */
-+			opp-8000000 {
-+				opp-hz = /bits/ 64 <8000000>;
-+				required-opps = <&rpmhpd_opp_svs_l1>;
-+				opp-peak-kBps = <984500 1>;
-+			};
-+		};
-+
-+		pcie@0 {
-+			device_type = "pci";
-+			reg = <0x0 0x0 0x0 0x0 0x0>;
-+			bus-range = <0x01 0xff>;
-+
-+			#address-cells = <3>;
-+			#size-cells = <2>;
-+			ranges;
-+		};
-+	};
-+
-+	pcie_phy: phy@1c0e000 {
-+		compatible = "qcom,qcs615-qmp-gen3x1-pcie-phy";
-+		reg = <0 0x01c0e000 0 0x1000>;
-+
-+		clocks = <&gcc GCC_PCIE_PHY_AUX_CLK>,
-+			 <&gcc GCC_PCIE_0_CFG_AHB_CLK>,
-+			 <&gcc GCC_PCIE_0_CLKREF_CLK>,
-+			 <&gcc GCC_PCIE0_PHY_REFGEN_CLK>,
-+			 <&gcc GCC_PCIE_0_PIPE_CLK>;
-+		clock-names = "aux",
-+			      "cfg_ahb",
-+			      "ref",
-+			      "refgen",
-+			      "pipe";
-+
-+		clock-output-names = "pcie_0_pipe_clk";
-+		#clock-cells = <0>;
-+
-+		#phy-cells = <0>;
-+
-+		resets = <&gcc GCC_PCIE_0_PHY_BCR>;
-+		reset-names = "phy";
-+
-+		assigned-clocks = <&gcc GCC_PCIE0_PHY_REFGEN_CLK>;
-+		assigned-clock-rates = <100000000>;
-+
-+		status = "disabled";
-+	};
-+
- 	arch_timer: timer {
- 		compatible = "arm,armv8-timer";
- 		interrupts = <GIC_PPI 1 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
+v2:
+  - Update nuvoton,ma35d1-dwmac.yaml
+    - Rename file to align with the compatible property.
+    - Add an argument to syscon to replace mac-id,
+      with corresponding descriptions.
+    - Use tx-internal-delay-ps and rx-internal-delay-ps properties for
+      configurable path delay with corresponding descriptions,
+      allowing selection between GMAC internal and PHY.
+    - Add all supported phy-mode options.
+    - Remove unused properties.
+  - Update dtsi
+    - Modify syscon configuration to include an argument for
+      GMAC interface selection.
+  - Update dwmac-nuvoton driver
+    - Remove redundant device information print statements.
+    - Remove non-global parameters.
+    - Retrieve GMAC interface selection from the syscon argument.
+    - Parse Tx and Rx path delays by correct properties.
+    - Update configurations to support Wake-on-LAN.
+
+Joey Lu (3):
+  dt-bindings: net: nuvoton: Add schema for Nuvoton MA35 family GMAC
+  arm64: dts: nuvoton: Add Ethernet nodes
+  net: stmmac: dwmac-nuvoton: Add dwmac glue for Nuvoton MA35 family
+
+ .../bindings/net/nuvoton,ma35d1-dwmac.yaml    | 173 +++++++++++++++++
+ .../devicetree/bindings/net/snps,dwmac.yaml   |   1 +
+ .../boot/dts/nuvoton/ma35d1-iot-512m.dts      |  12 ++
+ .../boot/dts/nuvoton/ma35d1-som-256m.dts      |  10 +
+ arch/arm64/boot/dts/nuvoton/ma35d1.dtsi       |  52 +++++
+ drivers/net/ethernet/stmicro/stmmac/Kconfig   |  11 ++
+ drivers/net/ethernet/stmicro/stmmac/Makefile  |   1 +
+ .../ethernet/stmicro/stmmac/dwmac-nuvoton.c   | 180 ++++++++++++++++++
+ 8 files changed, 440 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/net/nuvoton,ma35d1-dwmac.yaml
+ create mode 100644 drivers/net/ethernet/stmicro/stmmac/dwmac-nuvoton.c
+
 -- 
 2.34.1
 
