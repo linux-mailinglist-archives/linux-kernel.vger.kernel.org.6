@@ -1,115 +1,136 @@
-Return-Path: <linux-kernel+bounces-413185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A7539D14F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 17:03:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7772F9D14CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 16:54:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F54EB28524
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 15:54:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 231041F23882
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 15:54:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02C041A08BC;
-	Mon, 18 Nov 2024 15:54:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88E371AA1FE;
+	Mon, 18 Nov 2024 15:54:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="fkg73wde"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="qQ7Lv+2L"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A961E1DFFB
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 15:54:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97F1B12EBE7;
+	Mon, 18 Nov 2024 15:54:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731945277; cv=none; b=kzDsTarkgwMLcRc7cTkQUwd58rL8ujPAH2jDwmy7o5VsEG1duY14w825zNCmGHopuIbVUydkuUgJlL1yaGTwZuqpkp+8JjbbFpGVZbCTygvXmlXqne9EKc3z/ks+q0yN9b/w5TTNbxBvRKNlleNQ1KMZi6O9ndo5RvGKlf53Y7A=
+	t=1731945254; cv=none; b=Ozh6gBy2Ap0IDJEHQfCgZrSSx2Zn88aYKUXeR35iWg/kkm+qhDwDWo2OsyLn0OM6CQ3E+gxtC4/uLqzB6BuF2/tZ0Bsb9aSF+Z7gxKlIxxRM86FeMLqTZdThbiGzKO/d02moEw/jnJYXwRuCWEtkceaTnPR2D3g1QsdaI6paAPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731945277; c=relaxed/simple;
-	bh=EkXsvnXYvHDBrDyWxzREH6UlYXBi0F9oMvLf4SjdGAI=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=PO9nrL1+9xnEptePpHKetB7H2ni2KArHfkf5C/RLmBEDyUZsdpmydYs1BeGubbci7g+/gG34W4WNaFBGozcV2XL6VOttK3YdzmBlSaLdG3QzRtZXJ8dvOn/nzFy10FG/MdfjUYFT85BfVlzbFCBx/cxsV/2efr5KCv8NSnBL804=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=fkg73wde; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1731945276; x=1763481276;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=EkXsvnXYvHDBrDyWxzREH6UlYXBi0F9oMvLf4SjdGAI=;
-  b=fkg73wdeLW2/wFgkW/uHJDCvszWdlTT2fuajk0TiBfyIZttEQjF4duW/
-   0yxAL0UEcd+SMVVS8ix6gsVgNMvkzh5IlcapUGPmqMNyufjTTS7Xa/SIF
-   zFkVKCi6Wmmx0/l7Jj6vTRliN5AoXLEHXMomRWqcD5agKrgLH3TqoSOXk
-   QSz0Z/clkRCBKgx2C3LDZoQn3ZYULqgFQfomAwxo/93lFH3i5/+RO4VCM
-   Tt4WovIdP8sKwWUAjM7986ejEslsXQ0vPpWUnkB2hhMgQVOvp5OClVCB0
-   nC3la6xmcl5bjxAGrRDHQrcOGeQJ6QHZrjzXYfo9O0SvsfGWZHzwrT322
-   g==;
-X-CSE-ConnectionGUID: qvuwS+dsTduap8NKwvql5Q==
-X-CSE-MsgGUID: yVFQ8QXBQTGLlWUbI6XDRg==
-X-IronPort-AV: E=Sophos;i="6.12,164,1728975600"; 
-   d="scan'208";a="34460916"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 18 Nov 2024 08:54:34 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Mon, 18 Nov 2024 08:54:22 -0700
-Received: from valentina.microchip.com (10.10.85.11) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Mon, 18 Nov 2024 08:54:21 -0700
-From: Valentina Fernandez <valentina.fernandezalanis@microchip.com>
-To: <conor.dooley@microchip.com>, <daire.mcnamara@microchip.com>,
-	<valentina.fernandezalanis@microchip.com>
-CC: <linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v1] firmware: microchip: fix UL_IAP lock check in mpfs_auto_update_state()
-Date: Mon, 18 Nov 2024 15:53:54 +0000
-Message-ID: <20241118155354.697411-1-valentina.fernandezalanis@microchip.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1731945254; c=relaxed/simple;
+	bh=4lpYUs5Dbj0T8zn97A2VEybvGIFft2BYYoXxSpx3bHU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Go+z/PEQgADuXhuJMc8D8SE/fBNR/eBsSA8hpFCXuqpiR1uEUDaFqTrqla7BSl0iI+mqRNzL/ffxR2tVsxGZYuf6Zy9s12rL3h5tfw7j57d56uIms16/+hFP8VwyhZ50KMMKe7ZSQq946KR7CXO1a0V6xPQ02d1zBIXzo0fl8pg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=qQ7Lv+2L; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AIB4gaS022969;
+	Mon, 18 Nov 2024 15:54:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=SaDWlb
+	2kKaad3gP5OleofzMuysniJvB4P5iWE1Qjlb8=; b=qQ7Lv+2LJ5CnumzBzjAqxr
+	GunvUxdms9jNHeolIbO6z6aKh067VjHkVP3ahBhYvHTsC0FoTbCVPuVbDo0jQPws
+	uFOg+wTrZJuIOxe37ARIo74U1IvBaH65//fUuTGz+znTfWZl2XKRZqE7cIrL9n2G
+	rtP/32HvBwIWlMKNXR7H5c1ccTH9aVMc0tD0ATvlNh1AMH6lEFwHdHtbwdwm5gUZ
+	i2bgjKhbSq+M3CqZMjB4vPqUu/7xqLxo2tQ+rMDiGrUHO94/V19ez/Z0+mDj/aTC
+	iOZWlgetz8eejMwzRGRSBDbAmWJu8jlfW1ckA5c3h1VwotX2cvs+VBWWp9Z3JLBw
+	==
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42xyu1gpwd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 18 Nov 2024 15:54:07 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AIEogGR021983;
+	Mon, 18 Nov 2024 15:54:06 GMT
+Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42y6qmtv09-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 18 Nov 2024 15:54:06 +0000
+Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
+	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4AIFs55p47972750
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 18 Nov 2024 15:54:05 GMT
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4345F58050;
+	Mon, 18 Nov 2024 15:54:05 +0000 (GMT)
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E27F158045;
+	Mon, 18 Nov 2024 15:54:04 +0000 (GMT)
+Received: from [9.61.240.76] (unknown [9.61.240.76])
+	by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 18 Nov 2024 15:54:04 +0000 (GMT)
+Message-ID: <542cb6ed-8e2b-407e-9f9d-037144740b93@linux.ibm.com>
+Date: Mon, 18 Nov 2024 09:54:04 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 3/3] vsock/test: verify socket options after setting
+ them
+Content-Language: en-US
+To: Stefano Garzarella <sgarzare@redhat.com>
+Cc: virtualization@lists.linux.dev, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mjrosato@linux.ibm.com
+References: <20241113143557.1000843-1-kshk@linux.ibm.com>
+ <20241113143557.1000843-4-kshk@linux.ibm.com>
+ <yo2qj7psn3sqtyqgsfn6y2qtwcmyb4j7gwuffg34gwqwkrsyox@4aff3wvdrdgu>
+From: Konstantin Shkolnyy <kshk@linux.ibm.com>
+In-Reply-To: <yo2qj7psn3sqtyqgsfn6y2qtwcmyb4j7gwuffg34gwqwkrsyox@4aff3wvdrdgu>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: KY8lgYHVVl13F8Rj2DQbSA6JJs9h1IRC
+X-Proofpoint-ORIG-GUID: KY8lgYHVVl13F8Rj2DQbSA6JJs9h1IRC
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ lowpriorityscore=0 priorityscore=1501 suspectscore=0 impostorscore=0
+ bulkscore=0 spamscore=0 mlxlogscore=999 adultscore=0 mlxscore=0
+ clxscore=1015 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411180128
 
-To verify that Auto Update is possible, the mpfs_auto_update_state()
-function performs a "Query Security Service Request" to the system
-controller.
+On 11/14/2024 04:28, Stefano Garzarella wrote:
+> On Wed, Nov 13, 2024 at 08:35:57AM -0600, Konstantin Shkolnyy wrote:
+[...]
+>> diff --git a/tools/testing/vsock/msg_zerocopy_common.c b/tools/ 
+>> testing/vsock/msg_zerocopy_common.c
+>> index 5a4bdf7b5132..8622e5a0f8b7 100644
+>> --- a/tools/testing/vsock/msg_zerocopy_common.c
+>> +++ b/tools/testing/vsock/msg_zerocopy_common.c
+>> @@ -14,16 +14,6 @@
+>>
+>> #include "msg_zerocopy_common.h"
+>>
+>> -void enable_so_zerocopy(int fd)
+>> -{
+>> -    int val = 1;
+>> -
+>> -    if (setsockopt(fd, SOL_SOCKET, SO_ZEROCOPY, &val, sizeof(val))) {
+>> -        perror("setsockopt");
+>> -        exit(EXIT_FAILURE);
+>> -    }
+>> -}
+>> -
+> 
+> Since the new API has a different name (i.e.
+> `enable_so_zerocopy_check()`), this `enable_so_zerocopy()` could stay
+> here, anyway I don't want to be too picky, I'm totally fine with this
+> change since it's now only used by vsock_perf ;-)
+> 
+> Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
+> 
 
-Previously, the check was performed on the first element of the
-response message, which was accessed using a 32-bit pointer. This
-caused the bitwise operation to reference incorrect data, as the
-response should be inspected at the byte level. Fixed this by casting
-the response to a  u8 * pointer, ensuring the check correctly inspects
-the appropriate byte of the response message.
-
-Additionally, rename "UL_Auto Update" to "UL_IAP" to match the
-PolarFire Family System Services User Guide.
-
-Signed-off-by: Valentina Fernandez <valentina.fernandezalanis@microchip.com>
----
- drivers/firmware/microchip/mpfs-auto-update.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/firmware/microchip/mpfs-auto-update.c b/drivers/firmware/microchip/mpfs-auto-update.c
-index 0f7ec8848202..df1d69bdc1d7 100644
---- a/drivers/firmware/microchip/mpfs-auto-update.c
-+++ b/drivers/firmware/microchip/mpfs-auto-update.c
-@@ -402,10 +402,10 @@ static int mpfs_auto_update_available(struct mpfs_auto_update_priv *priv)
- 		return -EIO;
- 
- 	/*
--	 * Bit 5 of byte 1 is "UL_Auto Update" & if it is set, Auto Update is
-+	 * Bit 5 of byte 1 is "UL_IAP" & if it is set, Auto Update is
- 	 * not possible.
- 	 */
--	if (response_msg[1] & AUTO_UPDATE_FEATURE_ENABLED)
-+	if ((((u8 *)response_msg)[1] & AUTO_UPDATE_FEATURE_ENABLED))
- 		return -EPERM;
- 
- 	return 0;
--- 
-2.34.1
-
+Ok, let's keep it static then - it's simpler :-)
 
