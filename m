@@ -1,101 +1,87 @@
-Return-Path: <linux-kernel+bounces-412379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DE5E9D0845
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 05:03:48 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7B769D0846
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 05:04:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9529281B4B
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 04:03:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 40F1BB2183A
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 04:04:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9563013BACB;
-	Mon, 18 Nov 2024 04:03:27 +0000 (UTC)
-Received: from freeshell.de (freeshell.de [116.202.128.144])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C0C17F460;
+	Mon, 18 Nov 2024 04:03:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Urob7bVg"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D632682D66;
-	Mon, 18 Nov 2024 04:03:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.202.128.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F69E5A79B
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 04:03:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731902607; cv=none; b=dI58ZfFrytu+UZ3fKlq3J14/iiNA1JW6wAmDPQUnEfcl8ZPA5XBqmdMdnXfmW+aHCf9RAyxySnZ/BXl+bYLpbFepg08a+5UYu8TR8viD8SWHJVc2P3K9WsUvXPvmRbWdlo0Eb3QzvzWwEgE3YLuZ0zWOq0YfdHxjSQlQIgmZu4E=
+	t=1731902619; cv=none; b=IgOJ65xueEmvI7R6NTALSpILsmpXh/RRoKMEWI5hG1E2fZZ951qxkiTWoevxiHd1B/qMtBxAHz7GNnv0QYjONuPD10KkUSN8s72gFIAsumXdIG9+si/iw4KY+Kg2K5Sj67jEV4ocUX/QeGjwzHdD2NyEL+dq6JmEucJUl0TxYzE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731902607; c=relaxed/simple;
-	bh=8ciB0gOfLeSI3UfIWu23aJODHF04Z8UgAlPISxne1yo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GuoPM+Iwwg8uxddyU8kw2RSPpYaD+I9lYQzfanWLZRkNRk0mrD+kaLOGEQCPxbzd+z6JtcFZ/u5ATrKKtrVHWxw6bYIh7nvpE/ybhcrEoz7cEb1LCx7w8TVL/bBE+smKwlJXhTmpRj772y80nK5Ek5gRYJTKqhlFs7DG40QgFP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freeshell.de; spf=pass smtp.mailfrom=freeshell.de; arc=none smtp.client-ip=116.202.128.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freeshell.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=freeshell.de
-Received: from hay.lan. (unknown [IPv6:2605:59c8:31de:bf00:6ecf:39ff:fe00:8375])
-	(Authenticated sender: e)
-	by freeshell.de (Postfix) with ESMTPSA id 99FC3B4B1654;
-	Mon, 18 Nov 2024 05:03:20 +0100 (CET)
-From: E Shattow <e@freeshell.de>
-To: Henry Bell <dmoo_dv@protonmail.com>
-Cc: E Shattow <e@freeshell.de>,
-	Emil Renner Berthing <kernel@esmil.dk>,
-	Conor Dooley <conor@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	linux-riscv@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/1] riscv: dts: starfive: jh7110-pine64-star64: enable usb0 host function
-Date: Sun, 17 Nov 2024 20:02:10 -0800
-Message-ID: <20241118040250.43625-2-e@freeshell.de>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241118040250.43625-1-e@freeshell.de>
-References: <20241118040250.43625-1-e@freeshell.de>
+	s=arc-20240116; t=1731902619; c=relaxed/simple;
+	bh=3ePLqGtatfVfIXxTI/YnUsPYUbSVrlG+0tHZfXL92sU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nQJIUh5n5miAfX1D1CJa40ELNhkxuuh5PZ9lt7dfk4btp1RX8nR56sjX6v7u+Y+gsBZQQIeAmNEEBqqZAkfZa9+koq0mfN09QwBOQ83LECxQ19SUWKnnC59oEqJTAEJ5+ibaUPH3ORbtNV8oHFXIg+2ZoXWFmnmbNkCTYRkXa2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Urob7bVg; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=boSi3xL7VHuzHznVUUgFDFV80UsWJg2EYGUK1On7fzw=; b=Urob7bVg3BZ/R/LRt0nMuI51xt
+	DFTOd4yr6ZB8hD3AWIi4adqmPrOjGfEhyIGDN01gHbE+dxDnRb24Mtg4wGGnszVjxznoXl2NHPk1t
+	gC7iMnTyR5Y8afI6DKblS8iLqr9iFv/3FDuX/hu8T1P2cWnZ7BCVHMjb7iLd5J8JQM/NfSVru3ltl
+	ElZilL5gFpsC/LSiX64Fg7CyvTUXw/zRQGsiuUaVrZRn82Ur2mB51pzL2iGAK7OMx0yZ8k+wMiesv
+	ICyt970f6KwRb+vwJj2ZesGTTV/2vm+jBTWuYZPtYtZYwKoKnsABqVbHUUk4Dp3lEQD6G3kRYP0uV
+	q9mg3EsA==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tCsz1-00000002Y00-06LG;
+	Mon, 18 Nov 2024 04:03:27 +0000
+Date: Mon, 18 Nov 2024 04:03:26 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Chen Ridong <chenridong@huaweicloud.com>
+Cc: akpm@linux-foundation.org, mhocko@suse.com, hannes@cmpxchg.org,
+	yosryahmed@google.com, yuzhao@google.com, david@redhat.com,
+	ryan.roberts@arm.com, baohua@kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, chenridong@huawei.com,
+	wangweiyang2@huawei.com, xieym_ict@hotmail.com
+Subject: Re: [RFC PATCH v2 1/1] mm/vmscan: move the written-back folios to
+ the tail of LRU after shrinking
+Message-ID: <Zzq8jsAQNYgDKSGN@casper.infradead.org>
+References: <20241116091658.1983491-1-chenridong@huaweicloud.com>
+ <20241116091658.1983491-2-chenridong@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241116091658.1983491-2-chenridong@huaweicloud.com>
 
-Pine64 Star64 set host mode and vbus pin for JH7110 on-chip USB 2.0
+On Sat, Nov 16, 2024 at 09:16:58AM +0000, Chen Ridong wrote:
+> 2. In shrink_page_list function, if folioN is THP(2M), it may be splited
+>    and added to swap cache folio by folio. After adding to swap cache,
+>    it will submit io to writeback folio to swap, which is asynchronous.
+>    When shrink_page_list is finished, the isolated folios list will be
+>    moved back to the head of inactive lru. The inactive lru may just look
+>    like this, with 512 filioes have been move to the head of inactive lru.
 
-Signed-off-by: E Shattow <e@freeshell.de>
----
- .../dts/starfive/jh7110-pine64-star64.dts     | 21 +++++++++++++++++++
- 1 file changed, 21 insertions(+)
+I was hoping that we'd be able to stop splitting the folio when adding
+to the swap cache.  Ideally. we'd add the whole 2MB and write it back
+as a single unit.
 
-diff --git a/arch/riscv/boot/dts/starfive/jh7110-pine64-star64.dts b/arch/riscv/boot/dts/starfive/jh7110-pine64-star64.dts
-index 8e39fdc73ecb..9f608d00d3d3 100644
---- a/arch/riscv/boot/dts/starfive/jh7110-pine64-star64.dts
-+++ b/arch/riscv/boot/dts/starfive/jh7110-pine64-star64.dts
-@@ -62,3 +62,24 @@ &phy1 {
- 	motorcomm,tx-clk-10-inverted;
- 	motorcomm,tx-clk-100-inverted;
- };
-+
-+&sysgpio {
-+        usb0_pins: usb0-0 {
-+                vbus-pins {
-+                        pinmux = <GPIOMUX(25, GPOUT_SYS_USB_DRIVE_VBUS,
-+                                              GPOEN_ENABLE,
-+                                              GPI_NONE)>;
-+                        bias-disable;
-+                        input-disable;
-+                        input-schmitt-disable;
-+                        slew-rate = <0>;
-+                };
-+        };
-+};
-+
-+&usb0 {
-+        dr_mode = "host";
-+        pinctrl-names = "default";
-+        pinctrl-0 = <&usb0_pins>;
-+        status = "okay";
-+};
--- 
-2.45.2
+This is going to become much more important with memdescs.  We'd have to
+allocate 512 struct folios to do this, which would be about 10 4kB pages,
+and if we're trying to swap out memory, we're probably low on memory.
 
+So I don't like this solution you have at all because it doesn't help us
+get to the solution we're going to need in about a year's time.
 
