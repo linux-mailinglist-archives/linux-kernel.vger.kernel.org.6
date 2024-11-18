@@ -1,159 +1,78 @@
-Return-Path: <linux-kernel+bounces-412295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 284AF9D0734
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 01:12:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D3909D0739
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 01:12:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D38621F21A10
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 00:12:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBDCA1F219F8
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 00:12:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69E3828FD;
-	Mon, 18 Nov 2024 00:11:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CB11139D;
+	Mon, 18 Nov 2024 00:12:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=iiitd.ac.in header.i=@iiitd.ac.in header.b="Gu4Zuf19"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="D0YsSmzh"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D749038B
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 00:11:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85E8338B;
+	Mon, 18 Nov 2024 00:12:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731888709; cv=none; b=EfiQPUTtrZYQVsZNIn1aQR7+9tDui45C5znT99wIpWbyE82PALaiAv/T4UV9cTUIFssixXqbu2O4mr9rNlBAcG/3B0U116nrlkB2psEQ9VnE/oD0PzHzcex9slIc9sbRYYcp1jHFJ25DFda5ifqaITcoS763w4nxtTYk5+g+g2E=
+	t=1731888765; cv=none; b=OHg35JmCfwg2wpPhc/2/Xe70QbaN8S4bgLeO/NxvkUloH01qQSwppgTdMKvulXs9gAZ1EJF1bz3ixVEVMG1v/J1wPcWt3hpnlnVZY7n1wwVQa+qFqrVq7ndA1fpii3LucFaM5UD8XLJutmFEvztt72OtSDFx3FQcE279BBlOyt0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731888709; c=relaxed/simple;
-	bh=SoiSwSD49lv0IM/8lxFpHyYRjD/sbJDFjhrLAiQDzxk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SNJishSRWvjujpqjxW1fnd7eJVj2Tqhu1Yl41zHH8qDKqAl1f4iMiuai0PDlasVMYVd224kTZ64rnHvV57FcoGXfanI6/67Ewa5jawE5q6fjx4Sd2uv8JLU+d3rVeeLYMGvLPjD4KMG2ro9BHe6a6DBEBzXaBb30fxhvzXlHILQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iiitd.ac.in; spf=pass smtp.mailfrom=iiitd.ac.in; dkim=pass (1024-bit key) header.d=iiitd.ac.in header.i=@iiitd.ac.in header.b=Gu4Zuf19; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iiitd.ac.in
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iiitd.ac.in
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-20e576dbc42so25779375ad.0
-        for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 16:11:46 -0800 (PST)
+	s=arc-20240116; t=1731888765; c=relaxed/simple;
+	bh=CxbIkIRDUTFB6TvCqFZ4TKh00IZg2USzkP0odthd6h8=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=DHtxXeQV0P3qqSsdPSHrRFg7zmXCXxK6LpKl53z3YhaZCoWrCez4kQNYzB9EAmIL4VERRaSXgpOCq9MCJgLxILJW40Ns5R8/OIUEeqKNvMNKEB2gRLgVKmdAJNff3pt36rBxhKL5Vmft1xJExwFM7Z+wkMihCwk1Evb/bMA1i5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=D0YsSmzh; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=iiitd.ac.in; s=google; t=1731888706; x=1732493506; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=fzm439oR2uLsNkSgKqi/IwHWxPKHwC9Szch4YmaJqco=;
-        b=Gu4Zuf19xD7wEZztbR94q9cks+9MwBC71zPvxPDdrh91SvmD1TW5//EWdkhWfSV4tC
-         EekkYtEBNvtuqCCsl9jb+VhWBuZyc/BB/iGuLL0Hxz0n/sXWmhsxs/HQdqKv446+ahll
-         pJWcgm+8EHF8HJefDiZNP85jc9MrUvnNJU7Yk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731888706; x=1732493506;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fzm439oR2uLsNkSgKqi/IwHWxPKHwC9Szch4YmaJqco=;
-        b=IKIIwDWwbvAud17bUHJNCpG4DuDzXaiLGag4/otxPRQ0jV0Eq4ie084AgfxjHNPSIk
-         eewIbmpzRt+OMPL3yw4gKtFu9B0wlzuGO0oCi604CYxX/AHAQhsihpUFH8GepqymGh77
-         2ZNAOaKYNcGySn+lcEazoMdcgNfAGLs17sRivhYgCB212sJEVztzRdv50upZRkP5iqxz
-         HZ9Yo6OcTal7K4mE6uGW3S3M8jjT98VKJFzwllUw+eHOKj0SS0W23yvp+KnGzZavFis0
-         9NUieFbSgTuJJ3UVWS44LobcPzJqxjVqdbUI02Nqz+hMAzck1LQfPShZWpFs0sJnzYYS
-         je2w==
-X-Forwarded-Encrypted: i=1; AJvYcCXOT4k62I3g6q2ZLyr7obhExWpIz+uSHhpuRNN7DaNRBSRFiOKMNsLWdRS6lH0owOVAHHaoJRdxcHMtGEI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywd0mEH14GhixhUfJoXvY/hbpdLkE/9Mai6f9ujSNLKSSK2Toab
-	yKKaiFag6+2dSKJ4hHZBYIikGIV6ukGAinKfj00NLdFhVxLPCmPeom9PDp+bF2M=
-X-Google-Smtp-Source: AGHT+IEWvPNXF0LNjE2M13xB8ELSPmICXmcw9ZU6urY/s0XrAzOHzNs7phP0Ghc42LEvoQ5pq6eqTA==
-X-Received: by 2002:a17:903:11cd:b0:20c:ecd8:d0af with SMTP id d9443c01a7336-211d0d5eea4mr149867975ad.9.1731888706270;
-        Sun, 17 Nov 2024 16:11:46 -0800 (PST)
-Received: from fedora ([103.3.204.127])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211f6769057sm26344825ad.206.2024.11.17.16.11.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 17 Nov 2024 16:11:45 -0800 (PST)
-Date: Mon, 18 Nov 2024 05:41:32 +0530
-From: Manas <manas18244@iiitd.ac.in>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, 
-	FUJITA Tomonori <fujita.tomonori@gmail.com>, Trevor Gross <tmgross@umich.edu>, 
-	Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
-	Alice Ryhl <aliceryhl@google.com>, Shuah Khan <skhan@linuxfoundation.org>, 
-	Anup Sharma <anupnewsmail@gmail.com>, netdev@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org
-Subject: Re: [PATCH] rust: simplify Result<()> uses
-Message-ID: <q5xmd3g65jr4lmnio72pcpmkmvlha3u2q3fohe2wxlclw64adv@wjon44dqnn7e>
-References: <20241117-simplify-result-v1-1-5b01bd230a6b@iiitd.ac.in>
- <3721a7b2-4a8f-478c-bbeb-fdf22ded44c9@lunn.ch>
- <CANiq72kk0gsC8gohDT9aqY6r4E+pxNC6=+v8hZqthbaqzrFhLg@mail.gmail.com>
+	d=codeconstruct.com.au; s=2022a; t=1731888754;
+	bh=lB3rlRLKTOOVAVSWBuHAcyZgBv2WqxsLN/5q+wlDRHU=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date;
+	b=D0YsSmzhuneD2/YXxuFfsBSJGvvThF5tlHvNwSyuiTJhE/WL+D3jng9ibaYsMirtW
+	 6f2jGSWeFg5Vr63flpDTVJ018C+EmQh5eFMCo7qVI3rZd07VZq4jY/7hO/2DhkTH1g
+	 wLzm09ObOZ0GQwyK5BwEoQY7o7kZoXgNp6yLea2ZH5fgHlmra8lldBZ8BcZhisZ6sq
+	 7qTROwhTZKO5ORygntXw+ed+npPNAvYVcryGfD5+EcYt60q+9ynBBQN/XzRSwKTs9t
+	 ovQhWGgO+U3HtwFze0JrFuyH5RnCYiCt1l8Co0s8m1DgF6jooke3C9Keoxv0BnWqK+
+	 IvCUL7Cm2nDqA==
+Received: from [127.0.1.1] (58-7-148-107.dyn.iinet.net.au [58.7.148.107])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 4CE276625E;
+	Mon, 18 Nov 2024 08:12:33 +0800 (AWST)
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: linux-aspeed@lists.ozlabs.org, Eddie James <eajames@linux.ibm.com>
+Cc: joel@jms.id.au, robh@kernel.org, krzk+dt@kernel.org, 
+ conor+dt@kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20241115222721.1564735-1-eajames@linux.ibm.com>
+References: <20241115222721.1564735-1-eajames@linux.ibm.com>
+Subject: Re: [PATCH v2] arm: dts: aspeed: Blueridge and Rainer: Add VRM
+ presence GPIOs
+Message-Id: <173188875323.217268.13798052651518745663.b4-ty@codeconstruct.com.au>
+Date: Mon, 18 Nov 2024 10:42:33 +1030
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANiq72kk0gsC8gohDT9aqY6r4E+pxNC6=+v8hZqthbaqzrFhLg@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.1
 
-On 17.11.2024 21:49, Miguel Ojeda wrote:
->On Sun, Nov 17, 2024 at 7:26 PM Andrew Lunn <andrew@lunn.ch> wrote:
->>
->> Please split these patches up per subsystem, and submit them
->> individually to the appropriate subsystems.
->
->That is good advice, although if you and block are Ok with an Acked-by
->(assuming a good v2), we could do that too.
->
->Manas: I forgot to mention in the issue that this could be a good case
->for a `checkpatch.pl` check (I added it now). It would be great if you
->could add that in a different (and possibly independent) patch.
->
->Of course, it is not a requirement, but it would be a nice opportunity
->to contribute something extra related to this :)
->
+On Fri, 15 Nov 2024 16:27:21 -0600, Eddie James wrote:
+> Add GPIO line names to the GPIO expander to describe DCM and
+> VRM presence detection lines.
+> 
+> 
 
-On 17.11.2024 18:56, Russell King (Oracle) wrote:
->On Sun, Nov 17, 2024 at 07:25:48PM +0100, Andrew Lunn wrote:
->> On Sun, Nov 17, 2024 at 08:41:47PM +0530, Manas via B4 Relay wrote:
->> > From: Manas <manas18244@iiitd.ac.in>
->> >
->> > This patch replaces `Result<()>` with `Result`.
->> >
->> > Suggested-by: Miguel Ojeda <ojeda@kernel.org>
->> > Link: https://github.com/Rust-for-Linux/linux/issues/1128
->> > Signed-off-by: Manas <manas18244@iiitd.ac.in>
->> > ---
->> >  drivers/net/phy/qt2025.rs        | 2 +-
->> >  rust/kernel/block/mq/gen_disk.rs | 2 +-
->> >  rust/kernel/uaccess.rs           | 2 +-
->> >  rust/macros/lib.rs               | 6 +++---
->>
->> Please split these patches up per subsystem, and submit them
->> individually to the appropriate subsystems.
->
->In addition, it would be good if the commit stated the rationale for
->the change, rather than what the change is (which we can see from the
->patch itself.)
->
+Thanks, I've applied this to be picked up through the BMC tree.
 
-Thanks Andrew, Rusell and Miguel for the feedback.
+--
+Andrew Jeffery <andrew@codeconstruct.com.au>
 
-Russell: I will edit the commit message to say something like, use the
-standard way of `Result<()>` which is `Result` and keep things consistent wrt
-other parts of codebase.
-
-Andrew, Miguel:
-
-I can split it in the following subsystems:
-
-   rust: block:
-   rust: uaccess:
-   rust: macros:
-   net: phy: qt2025:
-
-Should I do a patch series for first three, and put an individual patch for
-qt2025?
-
-Also, I can work on the checkpatch.pl after this.
-
--- 
-Manas
 
