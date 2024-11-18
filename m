@@ -1,183 +1,192 @@
-Return-Path: <linux-kernel+bounces-412439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 900079D090B
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 06:46:44 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 035119D0911
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 06:50:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E8ED1F214C9
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 05:46:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5997EB21B99
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 05:50:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D14E8145A16;
-	Mon, 18 Nov 2024 05:46:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 185BF13D50C;
+	Mon, 18 Nov 2024 05:50:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Ni76dJ/G"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="YIxZt0ch"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2078.outbound.protection.outlook.com [40.107.220.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1612126BF5;
-	Mon, 18 Nov 2024 05:46:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731908784; cv=none; b=V50WvSRvy4HIidfgy4KiiP/cu0FsyAilaOaOJ7pBedVQ6d9HY6B88Cbl3Zt1oI67siQ1bKwGqLfwYsJeYXO7sGc3gIWxdDIJY6DA7DEDMJtbChyEaEw/ZGWOY+K9Ox7Q0p54Yik1stM7WA8mRPHmVI2KxA7faZXuaFhe0Z6loUc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731908784; c=relaxed/simple;
-	bh=93Nb6r7t6AIN0MXxsslj2L7H+yq3vjWywpI3M1cqALU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=WMr8zOKSU6SLsXvU8AGYHyo58tZ3uzt0BTnw9d+62Krw4CAShVxQBAzRZXPnAPUuLPBkuQ/HhxN0EAc3jNgaD/IxY3skRCtF9gluXKTtdA9i6SCaUQhXbUSmHvJFklHhHxsZHmCTfzSAfHzKH1tigXcbous7EVqV36D61dAeQ8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Ni76dJ/G; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AI5RmCd029042;
-	Mon, 18 Nov 2024 05:46:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	iOGrpjWMlH/TbNBbr4mUxA777nPQXKTSf24nXmae8hs=; b=Ni76dJ/GbMQbeV7j
-	qRYQap0wVB1mPkdPoY7IbeyFZS8eyoNLGRszcJu9EE4lc0EWsopGha0rCHghVLJW
-	zhXylDrw4hg2/WxzzxEhKZeHRBJg/gO4HcmeLq/1PEHJdEAcZJic4vpP1AE1Hask
-	RIXv3kFVggkgAtsOl6x3vhjBPbJc76ku+lR1cN8MfnqAkatwI06aZsEq07XjrfMU
-	yKcYYePVWq+NwLjE9HsEh8eWuNuX7IaD5hHPLnkreqmVBVuxh+VCeSewcyl86qIt
-	lh07dG68NaC2E2dhPVQjMC2A8ql9accOMyUT/C7eIFIDDUbzHDOh1HKGFpHyIjh9
-	3tvweQ==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42xkv9uhq5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 18 Nov 2024 05:46:14 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AI5kC2c031641
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 18 Nov 2024 05:46:12 GMT
-Received: from [10.217.219.207] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 17 Nov
- 2024 21:46:07 -0800
-Message-ID: <5a39b6d0-600f-455f-9ba7-29787f9085ce@quicinc.com>
-Date: Mon, 18 Nov 2024 11:16:07 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A632638B;
+	Mon, 18 Nov 2024 05:50:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.78
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731909007; cv=fail; b=ZsFSPoiDCrD5XMzdinibISA7cRUNaDY4FedISxGlQ9FA0D4s77SVPGKe5ZQJwu/JBfz2Me7jTk4J2zW1x/0mbblWgofZ2QtHAkvdL7kEoFsTvNCK83hQpOVQ+3Kyg20QsnNUi52L2lrLyPEuey1XoWETrjRsaGFx/wWvL4eKT6Q=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731909007; c=relaxed/simple;
+	bh=nFDdWouLGlpM4wMMcKg6UHN1i/eStu0dbEiwYsfpj5g=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=R7SmQYUxNKeFQR8BD8RvUL1RqsH0G7HMwWQhi/IWb2ZxWu8kzGvEOJvLnUvP18TES2cg+4swY55Mw8Ynnq6ozExzSpKQ3tP2P3tJnu37bCUpR6zUr3va/O7YxmRduu5Ha7YcOpQZ9ez5zPTbaJdrxa5EHxOUWCloTGjTbK/sZdA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=YIxZt0ch; arc=fail smtp.client-ip=40.107.220.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=tsLiNwgHFr72WJbBRUKnFuX93GBPQxunUlbjtovyW4LVG8WzplDdTp+laRSmyoXjGfAFgmoNSPaIyY/JslJxrNbTYEBrJJM0zA6a0OgFGY0aeWB/2axe2PVWjbvuELGL1iHqhgbsGaB/PgElxFIfcl6nmDpFrLYxDOUHEfe8AlRRXUjpgAgxpbls5TiZhjmFH4ql7usAivaXpUPl5YqY+em3ifud6yfSBjhYiCkjrIixAUVMACe31A5s/K5nv3nAXVhRWkvtfclyk0lVZyeN2QReuCxW0cJGfWx3U+zD06YARLQNJEI9KqUtUhTEu4hSubI0VoP3h9OAte5RaaV96Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7fQ9rZMGKwc9ae2ugd71bJzQxdA4VRKytsg6GNZo+hQ=;
+ b=f4BK/hXs+GbM3Q5E1a5LQu8uWwT/OAemHr6YfGaT0v4PXFLQNQ5RGDR6ppnD5CpbHnbmZWgqiXhGX7IZEMnhERVve+hMoJuDLMK5YZO2aHx6PpF0bOZKzwpw8IvSk/u1OUGX8gzrgSiY3YeI+DtJRYeQDS24CaJd5jR01lLHWmLioUZPyaeuPF1Nkdeq/irjPHp2e/WgwdwEmOVdkT7Q2MdmFDhTtXYDjyYXW4vhY3rprpXOgi3Q19mxz+OvLhLiWvz+fVtFmeVPl53nlIfAd7kG5NIx7EGExX+tsdJMzcTV9e3yRo7uBWjyKdtENLMtS8JSKtxjCLiRtBmqrUEbiw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=softfail (sender ip
+ is 165.204.84.12) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=fail (p=quarantine sp=quarantine pct=100) action=quarantine
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7fQ9rZMGKwc9ae2ugd71bJzQxdA4VRKytsg6GNZo+hQ=;
+ b=YIxZt0chjD17ZuCDjnbtYPcS/7QY445hX8HELQcQDmerrqQZ3IDmybRWTNRMFitQTgFyul/ziYhLFBxTzreWks323ZIVlRodViJ2qTjQm3PQXbIJdeAkWSuhMw26f2+hbL/awTzfFM1QuMHtGzn8iok0LxdrT3hCXswE8LVVFDo=
+Received: from CY5PR20CA0001.namprd20.prod.outlook.com (2603:10b6:930:3::10)
+ by CY8PR12MB7194.namprd12.prod.outlook.com (2603:10b6:930:5a::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.22; Mon, 18 Nov
+ 2024 05:50:03 +0000
+Received: from CY4PEPF0000E9D8.namprd05.prod.outlook.com
+ (2603:10b6:930:3:cafe::85) by CY5PR20CA0001.outlook.office365.com
+ (2603:10b6:930:3::10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.23 via Frontend
+ Transport; Mon, 18 Nov 2024 05:50:02 +0000
+X-MS-Exchange-Authentication-Results: spf=softfail (sender IP is
+ 165.204.84.12) smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=quarantine header.from=amd.com;
+Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
+ amd.com discourages use of 165.204.84.12 as permitted sender)
+Received: from SATLEXMB04.amd.com (165.204.84.12) by
+ CY4PEPF0000E9D8.mail.protection.outlook.com (10.167.241.71) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8158.14 via Frontend Transport; Mon, 18 Nov 2024 05:50:02 +0000
+Received: from purico-ed03host.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Sun, 17 Nov
+ 2024 23:49:53 -0600
+From: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+To: <linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>
+CC: <joro@8bytes.org>, <robin.murphy@arm.com>, <vasant.hegde@amd.com>,
+	<arnd@arndb.de>, <ubizjak@gmail.com>, <linux-arch@vger.kernel.org>,
+	<jgg@nvidia.com>, <kevin.tian@intel.com>, <jon.grimm@amd.com>,
+	<santosh.shukla@amd.com>, <pandoh@google.com>, <kumaranand@google.com>,
+	Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+Subject: [PATCH v12 0/9] iommu/amd: Use 128-bit cmpxchg operation to update DTE
+Date: Mon, 18 Nov 2024 05:49:28 +0000
+Message-ID: <20241118054937.5203-1-suravee.suthikulpanit@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/4] dmaengine: gpi: Add Lock and Unlock TRE support to
- access I2C exclusively
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, <konrad.dybcio@linaro.org>,
-        <andersson@kernel.org>, <andi.shyti@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <dmaengine@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
-        <conor+dt@kernel.org>, <agross@kernel.org>,
-        <devicetree@vger.kernel.org>, <vkoul@kernel.org>, <linux@treblig.org>,
-        <dan.carpenter@linaro.org>, <Frank.Li@nxp.com>,
-        <konradybcio@kernel.org>, <bryan.odonoghue@linaro.org>,
-        <krzk+dt@kernel.org>, <robh@kernel.org>
-CC: <quic_vdadhani@quicinc.com>
-References: <20241113161413.3821858-1-quic_msavaliy@quicinc.com>
- <20241113161413.3821858-3-quic_msavaliy@quicinc.com>
- <87cc1f1e-85d2-40cb-b3b3-8935004f4f98@oss.qualcomm.com>
-Content-Language: en-US
-From: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
-In-Reply-To: <87cc1f1e-85d2-40cb-b3b3-8935004f4f98@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: YGVu8ialxrtGNZHVR4ZDdas37iNRCKPn
-X-Proofpoint-ORIG-GUID: YGVu8ialxrtGNZHVR4ZDdas37iNRCKPn
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
- mlxlogscore=999 priorityscore=1501 lowpriorityscore=0 adultscore=0
- spamscore=0 suspectscore=0 impostorscore=0 clxscore=1015 mlxscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411180049
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000E9D8:EE_|CY8PR12MB7194:EE_
+X-MS-Office365-Filtering-Correlation-Id: c408cd1b-6b7d-4171-b328-08dd0794d855
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|82310400026|1800799024|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?ScMI/m1TG+R4+uQCAwVajTnznQde8kF8w6/ZkyLZ8CfxNyj3nXO0gRXAvrEZ?=
+ =?us-ascii?Q?kczI9B45j2p6cVl6tbV2ksrO/fl+vkKXlWasbM+P8x+rXHsBQfE2CG6ptYr6?=
+ =?us-ascii?Q?p/Wr0KLI3a/S0Verptxu3qnbS5ec0xq11ZCgoM2CJgtuP7Wkf0n7MrJ9bBOB?=
+ =?us-ascii?Q?/sbzOeUVgB11lQKuwjuWgjOQpAGu+y75CkM1aUw4+FmfMYHyhKZRzgSaMQa5?=
+ =?us-ascii?Q?LCUVmlCN4S1L+7Ib2do0nycblfx0QIQ0RFdA1LzOSAlMoa+GnvihBPkLixe7?=
+ =?us-ascii?Q?g12d/N5yS0wZDX8NQG3/EenLy98l8pIpzuswNxSuUv+jIl+aLwFiCkRygRYU?=
+ =?us-ascii?Q?EzpuAPXbuFuqII+qSXzT2VGeJl+YYiZKjMGYp8dQ9dNwo7KAEvD/bar8pVqs?=
+ =?us-ascii?Q?Hznu3haCgbq6UPV/1TmhyYy2Ip2gokQJYwnyML2yGBFAHhb9u/x3s5PPQHS7?=
+ =?us-ascii?Q?26rvEhD7B6ZqFxUrmhjIL1yoIsoHrdD2Jq5an5tXl42i89TLNQR3gabB3khU?=
+ =?us-ascii?Q?GFyGj3riUtIvG6glDvGBOuErBDJf6QIuf4dr7jLkDMPMzgAaK3EvEqDRFOvK?=
+ =?us-ascii?Q?+nHdI+P0U9G2uB2YRd2R32xfgicfbWhZbi511sdcSvlPEd84nGM8sHqsIzh1?=
+ =?us-ascii?Q?kqF/PE6zYQGyMWqNTR6IKbekOzJolZcFGh5qXJdcW8Vz6qSQKWzINrOhyOKR?=
+ =?us-ascii?Q?w2uwaDwY2M0tzGdBiLBPZjQ0GNTRlhJwxxxsFS1qVsueHthjkD01xUruqSzr?=
+ =?us-ascii?Q?jWtKwiJ0RFnWxGztdVZKo/a5cWG++ZzDWqvF/pTlFZkwEFglCwkBo/eeP0/5?=
+ =?us-ascii?Q?ao++d2bibMYWCg6a1WPSlXU8E7RM7kzpfBp//fXfhxBN14Obm1cbfSHY57CY?=
+ =?us-ascii?Q?x3HPdKQ9+/um660rN3omQHVMrhxKxCjERXyM2THtgtYzsh5Nw7tnjTGQLcdb?=
+ =?us-ascii?Q?1c1NIlUL1H20zHUndrimmDVLNGlXQwTnSGYdRi0vinrjNloVsy4Vd8bkrUv2?=
+ =?us-ascii?Q?f1NB3xSnzPRCQyPznyvSBIia452V2f7W0RZB65+5aZXXx5JHRUygrlezAh9E?=
+ =?us-ascii?Q?lw7hDcfo+wzS+mi3X+Yksg7sCrn5PTi0S70JiEn2zfyZnr3USlG7QGqcMgPZ?=
+ =?us-ascii?Q?ChsQoLVqYP6gqM55W+SeTc/crcOsckCg0+LAkNPi1Z5PGtKzjNsv3411UWWf?=
+ =?us-ascii?Q?mNTSuSqSCs0giQVLJXhc7OyMR5yMJRP0PZm1m7+cYrkzX0T0pPsv5DBxiIhh?=
+ =?us-ascii?Q?OGT8OlBFXfZQgKmaTc++nbrsz5W1xd8MdLdZ9kdS1ep1MtrxmO1xDIMIt6+L?=
+ =?us-ascii?Q?X1/Tc7M73XwBxyaXoeEGDyZvYjFpnyaO66bhZ4Tzk23Ep9himJPhIIS0rRv9?=
+ =?us-ascii?Q?NywTH2UlkXpKrmNL0rKT0GLNr8Uf4tdEqrxDZzwesM6Ta1zam+dH8UgCr1Gu?=
+ =?us-ascii?Q?e/IilS4aGJ8=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.12;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:atlvpn-bp.amd.com;CAT:NONE;SFS:(13230040)(7416014)(376014)(82310400026)(1800799024)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Nov 2024 05:50:02.0809
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c408cd1b-6b7d-4171-b328-08dd0794d855
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.12];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CY4PEPF0000E9D8.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7194
 
-Thanks Konrad for the review !
+This series modifies current implementation to use 128-bit cmpxchg to
+update DTE when needed as specified in the AMD I/O Virtualization
+Techonology (IOMMU) Specification.
 
-On 11/16/2024 12:53 AM, Konrad Dybcio wrote:
-> On 13.11.2024 5:14 PM, Mukesh Kumar Savaliya wrote:
->> GSI DMA provides specific TREs(Transfer ring element) namely Lock and
->> Unlock TRE. It provides mutually exclusive access to I2C controller from
->> any of the processor(Apps,ADSP). Lock prevents other subsystems from
->> concurrently performing DMA transfers and avoids disturbance to data path.
->> Basically for shared I2C usecase, lock the SE(Serial Engine) for one of
->> the processor, complete the transfer, unlock the SE.
->>
->> Apply Lock TRE for the first transfer of shared SE and Apply Unlock
->> TRE for the last transfer.
->>
->> Also change MAX_TRE macro to 5 from 3 because of the two additional TREs.
->>
->> Signed-off-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
->> ---
->>   drivers/dma/qcom/gpi.c           | 37 +++++++++++++++++++++++++++++++-
->>   include/linux/dma/qcom-gpi-dma.h |  6 ++++++
->>   2 files changed, 42 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/dma/qcom/gpi.c b/drivers/dma/qcom/gpi.c
->> index 52a7c8f2498f..c9e71c576680 100644
->> --- a/drivers/dma/qcom/gpi.c
->> +++ b/drivers/dma/qcom/gpi.c
->> @@ -2,6 +2,7 @@
->>   /*
->>    * Copyright (c) 2017-2020, The Linux Foundation. All rights reserved.
->>    * Copyright (c) 2020, Linaro Limited
->> + * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
->>    */
->>   
->>   #include <dt-bindings/dma/qcom-gpi.h>
->> @@ -65,6 +66,14 @@
->>   /* DMA TRE */
->>   #define TRE_DMA_LEN		GENMASK(23, 0)
->>   
->> +/* Lock TRE */
->> +#define TRE_LOCK		BIT(0)
->> +#define TRE_MINOR_TYPE		GENMASK(19, 16)
->> +#define TRE_MAJOR_TYPE		GENMASK(23, 20)
->> +
->> +/* Unlock TRE */
->> +#define TRE_I2C_UNLOCK		BIT(8)
-> 
-> So the lock is generic.. I'd then expect the unlock to be generic, too?
-Absolutely, renamed it for generic as TRE_UNLOCK.
-> 
->> +
->>   /* Register offsets from gpi-top */
->>   #define GPII_n_CH_k_CNTXT_0_OFFS(n, k)	(0x20000 + (0x4000 * (n)) + (0x80 * (k)))
->>   #define GPII_n_CH_k_CNTXT_0_EL_SIZE	GENMASK(31, 24)
->> @@ -516,7 +525,7 @@ struct gpii {
->>   	bool ieob_set;
->>   };
->>   
->> -#define MAX_TRE 3
->> +#define MAX_TRE 5
->>   
->>   struct gpi_desc {
->>   	struct virt_dma_desc vd;
->> @@ -1637,6 +1646,19 @@ static int gpi_create_i2c_tre(struct gchan *chan, struct gpi_desc *desc,
->>   	struct gpi_tre *tre;
->>   	unsigned int i;
->>   
->> +	/* create lock tre for first tranfser */
->> +	if (i2c->shared_se && i2c->first_msg) {
-> 
-> Does the first/last logic handle errors well? i.e. what if we
-> have >= 3 transfers and:
-> 
-> 1) the first transfer succeeds but the last doesn't
-> 2) the first transfer succeeds, the second one doesn't and the lock
->     is submitted again
-> 3) the unlock never suceeds
-> 
-geni_i2c_gpi_xfer() takes care of any of the error. Upon error, it does 
-dma_engine_terminate_sync() which resets all the pipes. Internal 
-downstream also has same implementation.
-> Konrad
+Please note that I have verified with the hardware designer, and they have
+confirmed that the IOMMU hardware has always been implemented with 256-bit
+read. The next revision of the IOMMU spec will be updated to correctly
+describe this part.  Therefore, I have updated the implementation to avoid
+unnecessary flushing.
+
+Also, this has been a long series. I would like to thank several folks who
+have helped review and provide suggestions along the way :)
+
+Changes in v12:
+* Patch 4: Use arch_cmpxchg128_local() instead in amd_iommu_atomic128_set()
+  and add Reviewed-by tag from Uros.
+* Patch 5: Add Reviewed-by tag from Jason.
+
+v11: https://lore.kernel.org/lkml/20241114194436.389961-1-suravee.suthikulpanit@amd.com/
+v10: https://lore.kernel.org/lkml/20241113120327.5239-1-suravee.suthikulpanit@amd.com/
+v9: https://lore.kernel.org/lkml/20241101162304.4688-1-suravee.suthikulpanit@amd.com/
+v8: https://lore.kernel.org/lkml/20241031184243.4184-1-suravee.suthikulpanit@amd.com/
+v7: https://lore.kernel.org/lkml/20241031091624.4895-1-suravee.suthikulpanit@amd.com/
+v6: https://lore.kernel.org/lkml/20241016051756.4317-1-suravee.suthikulpanit@amd.com/
+v5: https://lore.kernel.org/lkml/20241007041353.4756-1-suravee.suthikulpanit@amd.com/
+v4: https://lore.kernel.org/lkml/20240916171805.324292-1-suravee.suthikulpanit@amd.com/
+v3: https://lore.kernel.org/lkml/20240906121308.5013-1-suravee.suthikulpanit@amd.com/
+v2: https://lore.kernel.org/lkml/20240829180726.5022-1-suravee.suthikulpanit@amd.com/
+v1: https://lore.kernel.org/lkml/20240819161839.4657-1-suravee.suthikulpanit@amd.com/
+
+Thanks,
+Suravee
+Suravee Suthikulpanit (9):
+  iommu/amd: Misc ACPI IVRS debug info clean up
+  iommu/amd: Disable AMD IOMMU if CMPXCHG16B feature is not supported
+  iommu/amd: Introduce struct ivhd_dte_flags to store persistent DTE
+    flags
+  iommu/amd: Introduce helper function to update 256-bit DTE
+  iommu/amd: Modify set_dte_entry() to use 256-bit DTE helpers
+  iommu/amd: Introduce helper function get_dte256()
+  iommu/amd: Modify clear_dte_entry() to avoid in-place update
+  iommu/amd: Lock DTE before updating the entry with WRITE_ONCE()
+  iommu/amd: Remove amd_iommu_apply_erratum_63()
+
+ drivers/iommu/amd/amd_iommu.h       |   4 +-
+ drivers/iommu/amd/amd_iommu_types.h |  41 ++-
+ drivers/iommu/amd/init.c            | 229 +++++++++--------
+ drivers/iommu/amd/iommu.c           | 378 +++++++++++++++++++++-------
+ 4 files changed, 440 insertions(+), 212 deletions(-)
+
+-- 
+2.34.1
+
 
