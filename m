@@ -1,150 +1,195 @@
-Return-Path: <linux-kernel+bounces-413547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 475079D1AC8
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 22:46:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97E9F9D1AC9
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 22:47:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ABDAFB2448A
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 21:46:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5927A28063A
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 21:47:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A755B1E7C0B;
-	Mon, 18 Nov 2024 21:46:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41C381E7C13;
+	Mon, 18 Nov 2024 21:46:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="km4gGBnW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HH8AUolW"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0188E199252;
-	Mon, 18 Nov 2024 21:46:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0A041E7676
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 21:46:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731966389; cv=none; b=HU7LeyZOf3uBOu2NEDwC0HYfwVXTaKnQVNUqMeBZSpqoiudx6NW6OVtkPsA+mWFyOo6fLSwq8CAfmEXT8YVRX6UHe83M+ZQGILMr3mvb2sue7og47MY9H8ak7hP0vSS0pwe0cO6AC7kyj4lsRgtjI9uxk6swuqe6GLnTpKer5Yc=
+	t=1731966417; cv=none; b=kr2JC1AUhsMA21CfBHM+SKSJzjfByoWcxgdw+W+VwFdT1yWERV9/NA9JQwPu6W+qZgQVYp5jrE0y2f3ZojWO4XdOwTTcS+PqRkFkauZGXpSqOslmzvv0Rol86Y68iV6UYg3Jjl2p814pAGxhC2v66mPzN7igBjsYpNYUnOBnRYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731966389; c=relaxed/simple;
-	bh=peMY/XdTMJJWJ5Pyke2fhJXs2TjS23XsZl0pD54mdkM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fhtg9cS5OpOFr8GBfx9F76HAkj4Uw5oW1Y3qkA1leMEOEktIWiH7X8ahFazaI1EsraVqfwlCPsXBZ0ZV175RWLleicNQa7la8uzRJCUWVqj31RD/NsxY61h2kcmkKrvzRQf7oafgMFvE9YU04wf2RgKRbmtqMLJQ/jaAo7a7FxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=km4gGBnW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED1C5C4CECC;
-	Mon, 18 Nov 2024 21:46:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731966386;
-	bh=peMY/XdTMJJWJ5Pyke2fhJXs2TjS23XsZl0pD54mdkM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=km4gGBnWG4bpKH7oE2o487c2NzdoijSIdmnrnFZ4XNzizE4DM9mxyeCEJDxsP+4RR
-	 bQsrMfesHcXXX57TNSMEzqERuB0JthWmTDYuPCaXXuqUDsuk7E9wAKCgldyjd6oLH+
-	 h2hcM7haZ0qiLsZlZKFX0L9q83n+JxwX/6zYSZ/auTjslgSaTdfz5cPK/BeKUHC7LN
-	 v2dzCYS46Jqhu4xmFcAc5mQacVzylYVo4Imv+WAjyIl01mvauFgfjdsfvVREX73yKy
-	 vx/V4PFzf3Y2n+beDDzjtyGBhbPn/hIDgefud3JyyrHil9c/pFOLdQkEftq0d+uIlB
-	 UsSo+9IQ4I0lA==
-Date: Mon, 18 Nov 2024 13:46:24 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: Howard Chu <howardchu95@gmail.com>
-Cc: acme@kernel.org, peterz@infradead.org, irogers@google.com,
-	mingo@redhat.com, jolsa@kernel.org, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	James Clark <james.clark@linaro.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: Re: [PATCH v8 06/10] perf evsel: Assemble offcpu samples
-Message-ID: <Zzu1sI8E_vX26MgX@google.com>
-References: <20241113002818.3578645-1-howardchu95@gmail.com>
- <20241113002818.3578645-7-howardchu95@gmail.com>
+	s=arc-20240116; t=1731966417; c=relaxed/simple;
+	bh=lxFaUlbo4+BirV6isrV4hkn96boBXGf0A8P1B0Tn2LE=;
+	h=Date:Mime-Version:Message-ID:Subject:From:Cc:Content-Type; b=orlgVHO8El5jLYPnak6rd7Rdyq9umrdB7+KJiZ7syhMvFVB+jqeBcJFAjt4xavAv4D6n4FCR0rwdahesw3yFxYqeIr8GJJNyVB0Rb0or6LOSXZIsl19W02EhurclfbsUPbFuA+uQsYT4P4SWBQuewXKozce6kr629084rsB5rZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--kaleshsingh.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HH8AUolW; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--kaleshsingh.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6ee7ccc0283so36684527b3.2
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 13:46:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1731966415; x=1732571215; darn=vger.kernel.org;
+        h=cc:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=TvOCdV4s2TNa5ISzo3BdsjjuMEaKM722wwhwoXrHkjQ=;
+        b=HH8AUolWiekxJKi4WsT+kpfbgjunkJ2PetQJLFXvfsGGp8HZKpQ0GjLVz9vDJGPyEO
+         OBcMgb1qaejcG7iEm6KvEfajKxYDJZJSxBF/j565bFnX+/biFk4PuzzvOd7ItOTwoZvE
+         GCDzSzJqNdb6ppUzuVJ7RsF4X2R304L1jSZexaZOfqPxMDVgjyCSWLzott5KDe2gjYOU
+         EIHosC3eTH50QXCQbp1UFspnUuvx2bI1328zG5lgxItpm4YVjyPIyadao9e4cMkp2Ean
+         5UY/um/Rkcwut+XzduSWYQP4UMrfeNoZCbZlP5UXvTVSKzSr/LFOhmklgYgWqxLRa8EV
+         sCww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731966415; x=1732571215;
+        h=cc:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=TvOCdV4s2TNa5ISzo3BdsjjuMEaKM722wwhwoXrHkjQ=;
+        b=YIhV8QH7T2EOhtJKs4B6dws85bFTcfOSzaUrz1aUpLrFL6du77Ejl7LfeBy99Zc+iP
+         fgg6c0GEGI8YvyVFd6vKAztCsJkna5r6p8STKADM3lh7yc/vG9b3HeMkDbCOGegWkrwn
+         277ZTYUcMP16epsLbIDepzMexwJtv0mZgD2hCvLFLBHZED2f4UKDeAr358dC5qH6HbPs
+         xIZQK25HpUrgsgVkl+rGLq35u1NtejBZM5KVVTIgav72I4goANAViWCiOgrQY06KtiiH
+         OkQDdzWDr/yufCmk5lXPsy8XOgzBzV8jWPoMCF6Hx490M9K1nsbf8Sy1ARPX4HUMqBM4
+         4y4g==
+X-Forwarded-Encrypted: i=1; AJvYcCVl+MTTds8AIeGQqTH/5YW06oU5cnm0BNwdSePZ9IuukEubd4DJs7CH2zUdqTBSE3yfOL9mVNU4sRy12iw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPBeNSBkWkCKQguOA2Uc0z1QsGqOnYR1d69PHsY8T4gXDvS1AJ
+	BZwO1jCH4hQYfD5hQBIcvm1I1bynl8vWJ4Tl8uK+4i6XRFAOwtgnQjLDwPmF/mx4YNW9Vc3jL2b
+	8hpY83JycH30CrP5p2lkTxQ==
+X-Google-Smtp-Source: AGHT+IEuDWbTMXz+ht1hQLEvCDYEG9ppylXQkzguGm3T6mmWzkk/64xr+RI0ZQ0tDGlSNMX+q8PbO7BDoMupncte1g==
+X-Received: from kalesh.mtv.corp.google.com ([2a00:79e0:2e3f:8:ed74:6cb:48a0:1f9b])
+ (user=kaleshsingh job=sendgmr) by 2002:a05:690c:8bc1:b0:6ee:5091:4254 with
+ SMTP id 00721157ae682-6ee55cf1b83mr921467b3.6.1731966414927; Mon, 18 Nov 2024
+ 13:46:54 -0800 (PST)
+Date: Mon, 18 Nov 2024 13:46:48 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241113002818.3578645-7-howardchu95@gmail.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
+Message-ID: <20241118214650.3667577-1-kaleshsingh@google.com>
+Subject: [PATCH v2] mm: Respect mmap hint address when aligning for THP
+From: Kalesh Singh <kaleshsingh@google.com>
+Cc: kernel-team@android.com, android-mm@google.com, 
+	Kalesh Singh <kaleshsingh@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Vlastimil Babka <vbabka@suse.cz>, Yang Shi <yang@os.amperecomputing.com>, 
+	Rik van Riel <riel@surriel.com>, Ryan Roberts <ryan.roberts@arm.com>, 
+	Suren Baghdasaryan <surenb@google.com>, Minchan Kim <minchan@kernel.org>, Hans Boehm <hboehm@google.com>, 
+	Lokesh Gidra <lokeshgidra@google.com>, stable@vger.kernel.org, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Jann Horn <jannh@google.com>, Yang Shi <shy828301@gmail.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Nov 12, 2024 at 04:28:14PM -0800, Howard Chu wrote:
-> Use the data in bpf-output samples, to assemble offcpu samples.
+Commit efa7df3e3bb5 ("mm: align larger anonymous mappings on THP
+boundaries") updated __get_unmapped_area() to align the start address
+for the VMA to a PMD boundary if CONFIG_TRANSPARENT_HUGEPAGE=y.
 
-Now it requires PERF_SAMPLE_RAW for the off-cpu events.  But it's not
-compatible with the earlier format.  Can you please make sure if it can
-read old off-cpu data recorded before your change?  Maybe you need to
-check or add new info (like in a header.misc field) to distinguish them.
+It does this by effectively looking up a region that is of size,
+request_size + PMD_SIZE, and aligning up the start to a PMD boundary.
 
-Thanks,
-Namhyung
+Commit 4ef9ad19e176 ("mm: huge_memory: don't force huge page alignment
+on 32 bit") opted out of this for 32bit due to regressions in mmap base
+randomization.
 
-> 
-> Suggested-by: Namhyung Kim <namhyung@kernel.org>
-> Reviewed-by: Ian Rogers <irogers@google.com>
-> Signed-off-by: Howard Chu <howardchu95@gmail.com>
-> Cc: Adrian Hunter <adrian.hunter@intel.com>
-> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: James Clark <james.clark@linaro.org>
-> Cc: Jiri Olsa <jolsa@kernel.org>
-> Cc: Kan Liang <kan.liang@linux.intel.com>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Link: https://lore.kernel.org/r/20241108204137.2444151-7-howardchu95@gmail.com
-> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-> ---
->  tools/perf/util/evsel.c | 32 ++++++++++++++++++++++++++++++++
->  1 file changed, 32 insertions(+)
-> 
-> diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-> index 8d0308f62484..654fb5196ecf 100644
-> --- a/tools/perf/util/evsel.c
-> +++ b/tools/perf/util/evsel.c
-> @@ -2792,6 +2792,35 @@ static inline bool evsel__has_branch_counters(const struct evsel *evsel)
->  	return false;
->  }
->  
-> +static int __set_offcpu_sample(struct perf_sample *data)
-> +{
-> +	u64 *array = data->raw_data;
-> +	u32 max_size = data->raw_size, *p32;
-> +	const void *endp = (void *)array + max_size;
-> +
-> +	if (array == NULL)
-> +		return -EFAULT;
-> +
-> +	OVERFLOW_CHECK_u64(array);
-> +	p32 = (void *)array++;
-> +	data->pid = p32[0];
-> +	data->tid = p32[1];
-> +
-> +	OVERFLOW_CHECK_u64(array);
-> +	data->period = *array++;
-> +
-> +	OVERFLOW_CHECK_u64(array);
-> +	data->callchain = (struct ip_callchain *)array++;
-> +	OVERFLOW_CHECK(array, data->callchain->nr * sizeof(u64), max_size);
-> +	data->ip = data->callchain->ips[1];
-> +	array += data->callchain->nr;
-> +
-> +	OVERFLOW_CHECK_u64(array);
-> +	data->cgroup = *array;
-> +
-> +	return 0;
-> +}
-> +
->  int evsel__parse_sample(struct evsel *evsel, union perf_event *event,
->  			struct perf_sample *data)
->  {
-> @@ -3143,6 +3172,9 @@ int evsel__parse_sample(struct evsel *evsel, union perf_event *event,
->  		array = (void *)array + sz;
->  	}
->  
-> +	if (evsel__is_offcpu_event(evsel))
-> +		return __set_offcpu_sample(data);
-> +
->  	return 0;
->  }
->  
-> -- 
-> 2.43.0
-> 
+Commit d4148aeab412 ("mm, mmap: limit THP alignment of anonymous
+mappings to PMD-aligned sizes") restricted this to only mmap sizes that
+are multiples of the PMD_SIZE due to reported regressions in some
+performance benchmarks -- which seemed mostly due to the reduced spatial
+locality of related mappings due to the forced PMD-alignment.
+
+Another unintended side effect has emerged: When a user specifies an mmap
+hint address, the THP alignment logic modifies the behavior, potentially
+ignoring the hint even if a sufficiently large gap exists at the requested
+hint location.
+
+Example Scenario:
+
+Consider the following simplified virtual address (VA) space:
+
+    ...
+
+    0x200000-0x400000 --- VMA A
+    0x400000-0x600000 --- Hole
+    0x600000-0x800000 --- VMA B
+
+    ...
+
+A call to mmap() with hint=0x400000 and len=0x200000 behaves differently:
+
+  - Before THP alignment: The requested region (size 0x200000) fits into
+    the gap at 0x400000, so the hint is respected.
+
+  - After alignment: The logic searches for a region of size
+    0x400000 (len + PMD_SIZE) starting at 0x400000.
+    This search fails due to the mapping at 0x600000 (VMA B), and the hint
+    is ignored, falling back to arch_get_unmapped_area[_topdown]().
+
+In general the hint is effectively ignored, if there is any
+existing mapping in the below range:
+
+     [mmap_hint + mmap_size, mmap_hint + mmap_size + PMD_SIZE)
+
+This changes the semantics of mmap hint; from ""Respect the hint if a
+sufficiently large gap exists at the requested location" to "Respect the
+hint only if an additional PMD-sized gap exists beyond the requested size".
+
+This has performance implications for allocators that allocate their heap
+using mmap but try to keep it "as contiguous as possible" by using the
+end of the exisiting heap as the address hint. With the new behavior
+it's more likely to get a much less contiguous heap, adding extra
+fragmentation and performance overhead.
+
+To restore the expected behavior; don't use thp_get_unmapped_area_vmflags()
+when the user provided a hint address, for anonymous mappings.
+
+Note: As, Yang Shi, pointed out: the issue still remains for filesystems
+which are using thp_get_unmapped_area() for their get_unmapped_area() op.
+It is unclear what worklaods will regress for if we ignore THP alignment
+when the hint address is provided for such file backed mappings -- so this
+fix will be handled separately.
+
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: Yang Shi <yang@os.amperecomputing.com>
+Cc: Rik van Riel <riel@surriel.com>
+Cc: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Suren Baghdasaryan <surenb@google.com>
+Cc: Minchan Kim <minchan@kernel.org>
+Cc: Hans Boehm <hboehm@google.com>
+Cc: Lokesh Gidra <lokeshgidra@google.com>
+Cc: <stable@vger.kernel.org>
+Fixes: efa7df3e3bb5 ("mm: align larger anonymous mappings on THP boundaries")
+Signed-off-by: Kalesh Singh <kaleshsingh@google.com>
+Reviewed-by: Rik van Riel <riel@surriel.com>
+Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
+---
+
+Changes in v2:
+  - Clarify the handling of file backed mappings, as highlighted by Yang
+  - Collect Vlastimil's and Rik's Reviewed-by's
+
+ mm/mmap.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/mm/mmap.c b/mm/mmap.c
+index 79d541f1502b..2f01f1a8e304 100644
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -901,6 +901,7 @@ __get_unmapped_area(struct file *file, unsigned long addr, unsigned long len,
+ 	if (get_area) {
+ 		addr = get_area(file, addr, len, pgoff, flags);
+ 	} else if (IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE)
++		   && !addr /* no hint */
+ 		   && IS_ALIGNED(len, PMD_SIZE)) {
+ 		/* Ensures that larger anonymous mappings are THP aligned. */
+ 		addr = thp_get_unmapped_area_vmflags(file, addr, len,
+
+base-commit: 2d5404caa8c7bb5c4e0435f94b28834ae5456623
+--
+2.47.0.338.g60cca15819-goog
+
 
