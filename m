@@ -1,298 +1,174 @@
-Return-Path: <linux-kernel+bounces-412730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E13E9D0E6D
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:24:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D36CA9D0E6F
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:25:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 934731F21B0A
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 10:24:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64AA7282CAF
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 10:25:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E55819644B;
-	Mon, 18 Nov 2024 10:22:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A33519ABBB;
+	Mon, 18 Nov 2024 10:22:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sejU/WKd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2hvfNMdZ"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B77B7194AD8;
-	Mon, 18 Nov 2024 10:22:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7A4519A2A2
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 10:22:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731925341; cv=none; b=nCWLRcngXZaKDC6Yy53yJQc3h+nAI2u4e5v95YaSbglJzc3F4DDnBtpAKp0CgCShU1QQV9fth+zoXyMdpZVR1jnXErtwO4LZ4wVkjZ9ZoESEik6552H3oEQjuT45LKtF7oYNUR0CnPTG+N/h1i+tLHOo20N339UIb0IIG5l05cQ=
+	t=1731925367; cv=none; b=NGq/EsugmG7v64akV6zgiZ/+dJxhj2+ZedL7a43lzugBG3mrExfs93bORbn++w3yoZmgPwn+xzhbEqw2H18W+tCWYFXknp0eaV8bfbHhlB0DOFFUcl1o4Z8m5rsPt91MVfO+6slLjHNfPhyFOb67fQ9k877a3521JxGLny80r+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731925341; c=relaxed/simple;
-	bh=F6LJAvT4xb9vEZMGIAEyCuPJQXJmFDXic1ZVvGyAo7Q=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=ltyrpxJnF2aPXJzEJkmfq5ugkn8JOa1lVoT8vHZ4CsthXqjq+QL4sVM7ETOgxJwXZDqDH/9Bl94cyb8qgmzvVnpRVs/T4hL1THq2ZRMPONw5fZKVlBkaUY1eEDA+H04zr9xLuCJv6g2GyjiMMaz67qItCcQEWP0kbbz2I4hb1So=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sejU/WKd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D466C4CED0;
-	Mon, 18 Nov 2024 10:22:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731925340;
-	bh=F6LJAvT4xb9vEZMGIAEyCuPJQXJmFDXic1ZVvGyAo7Q=;
-	h=From:Date:Subject:To:Cc:From;
-	b=sejU/WKd0mxfrHAtuHfxqiqX5wmCYPApAgzQ9+EaHK7VsmZDatYuXfe+zXZdtoFX6
-	 Lp2j+DgTpiqrvbupjVpYBZpUjTyfLrJ/1Qu8rm2rAi3eEoP342wbCfdgcAk9J5k/8K
-	 a4shxJQaSgjGftq+QawQgtV0gmMBU2zJtwb+rPns5Sn3OJr9071GS+CoGmTHhLESFU
-	 2KEnJcF+439v2O3hsYuP4asfy7ZvJAlhWK3oxk6tJtuIjGaVrrzQ8xGFEfCai/+LJ2
-	 IF5I+ObTf8PyOhH1tfA8Vd4N10SxnN9y9e3WXKRr2cPrxWkiLeS3HmlRPMiNgSzM6A
-	 pzXCIGNopNm0w==
-Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-3e5f533e1c2so2121317b6e.3;
-        Mon, 18 Nov 2024 02:22:20 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVssu6FGHGK/z0htBHWcjVLhvXRZojNPgpzCeXt43eNLSAJ3jULEcJOezjmjiSFdAUTtyzTp3QLhGlgOZ3v@vger.kernel.org, AJvYcCVswRYpr+qV94r4LBjp8m/U6LN0x8wC28ZLfxiOudLgBisoyhYk9GhP6E3cNHoLYzBbj6rwN8MBjy/k@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCOyx1GdaoQEgb83RaTaYintN2acVeNfk+xRngMi3s/o3B96hj
-	QvDevWYdIevEn9ZS3DZ0oZ/GhFRoKWGrdSELXHQSHlH31gslhApUZic0JDPXWEm7ZSraK0VPvom
-	iHvh4vbCNO0N6Z036TgSTE1yrDLU=
-X-Google-Smtp-Source: AGHT+IGB0Q0xAufUUKH2H2oxeIC4U8QUE3WwW3fMFplzOdxQPzRm0oQ4NCT/hLkMR8nuu1Cyc7StjC87/kVZOJDldVs=
-X-Received: by 2002:a05:6808:1250:b0:3e5:d093:d6e with SMTP id
- 5614622812f47-3e7bc85054bmr12253112b6e.31.1731925339441; Mon, 18 Nov 2024
- 02:22:19 -0800 (PST)
+	s=arc-20240116; t=1731925367; c=relaxed/simple;
+	bh=iuJuV5q/Ib9dcphDRf3TAd0YCwdozV2yCknG7HW3jZs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=n1XskFl7+wymNjj/mRD3ggVpwx29uK8oiFuiOR1bt7DISk9aGOdJt6vBocj7Wt9DzE5GbZDn33Ynf9lpmhvKPA77tWD9wYNekQNg7fx4MkLfFok8lvvrWALUnB3EgqnmixemY5maO+61ODKaIAICnDhXHDqTNr1iXwq16A2eQ4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2hvfNMdZ; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-53d9ff8f1e4so1926848e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 02:22:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1731925364; x=1732530164; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZjpjOtr4jTi2V8JGqsZR3B1wLA+5BzuRYojm/xVmucw=;
+        b=2hvfNMdZ34WVWyZ9/lv/fJ2AdSOzEeg9bSP7uiT64Xs13kx/RCLURr17eyEIksNTni
+         jssW7Ra/dxxUSZPtg29a4YTy+aOljUL6bEyEhKm2ZKa4JlaO/IZYfPUN8XL5U7iBxuaI
+         TuPnuvwOaGDa+Aceq0uMrJAiKNWhJbgKO7QEmzsyIOlo8IizT4rktvZ0kgxshQx93nFA
+         6rSaUPeSH3wBahwwo3Yez5Vlyntxa8aKr2zU8f8bc6M+BJ8P+cR6MfYTu24DczBCM/im
+         NWegPlceKKTGeX1s+dyWmZWaEyt1uXXfekdSUMXIDTZlBXJlTnnvghKyAws42XaxILwt
+         jPhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731925364; x=1732530164;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZjpjOtr4jTi2V8JGqsZR3B1wLA+5BzuRYojm/xVmucw=;
+        b=WcaytG/Mz4ToyHneM+7JGUxxWhZpohflkEZaStkzWVaolyZKftV3sUvwKt78WfYGZE
+         kxiTNGjrlVm9JPD7fR/33gH888S1NE4JfyiZWIZ+B77oesHfx5gULPsb0O90xccV6SWP
+         jgeTiYdPl+aB5ftNLLqdOsfd7gj5EHNwMcDaLSTNlGisH+sidyNSbvJFVyQG+FGRE5w2
+         k0uFzTyjysyy9BLrw88HjVfeY9ixcqREl8cBN/fYXMsadSf31qGc9yjcxeU//S1eYmDO
+         T3dS8xBI4VxuBt8BP8mS0Ce9DV9idzASBvXRbkCtKRu5Cj6ZTVAKX3U6iILbnM+LJvSv
+         +v0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUtSGD16S/TUNAf3W5BdrrkTV8O8rHrGICi84/oj09O5lNDuGoXhzSloJWUFHXxn1ceL8KHJBV71ckH+Gw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtEY1wLtFyq9bxQNfCvXkk9iqLQNClMfDbDYqrIG38/b4kBzd5
+	T3YyvsVEo8yjEt5zKgelYDPLpzIXeJyk1bh2yFiEc913ztQd5d3TdSVdmGG+pmKLFPcZvAy8jUg
+	b4S7FYZR7BW0FNX9Aq61fH69LlN6KITLUiCtn
+X-Google-Smtp-Source: AGHT+IEZ0eBnMjmOp6HX5wMSHA5Bjt/VzflvzwE0qjWxJaryCmf+Xl5JR+1DtxvTGFmREncYHZpcQue6+XSitcpBy/8=
+X-Received: by 2002:a05:6512:2252:b0:536:7a24:8e82 with SMTP id
+ 2adb3069b0e04-53dab29ba62mr3666839e87.13.1731925363792; Mon, 18 Nov 2024
+ 02:22:43 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 18 Nov 2024 11:22:04 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0i90sb6CC=obDdmji-WeJnkwSp4Agd3UhGhuo+TVm4uXg@mail.gmail.com>
-Message-ID: <CAJZ5v0i90sb6CC=obDdmji-WeJnkwSp4Agd3UhGhuo+TVm4uXg@mail.gmail.com>
-Subject: [GIT PULL] Power management updates for v6.13-rc1
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux PM <linux-pm@vger.kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	ACPI Devel Maling List <linux-acpi@vger.kernel.org>
+References: <20241009105759.579579-1-me@kloenk.dev> <20241009105759.579579-2-me@kloenk.dev>
+In-Reply-To: <20241009105759.579579-2-me@kloenk.dev>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Mon, 18 Nov 2024 11:22:31 +0100
+Message-ID: <CAH5fLggju9ZYPD7LRTZKXJ9dhuLJ0uAS-USAokeoSvjOiN1v=w@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/2] rust: LED abstraction
+To: Fiona Behrens <me@kloenk.dev>
+Cc: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, linux-leds@vger.kernel.org, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, FUJITA Tomonori <fujita.tomonori@gmail.com>, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Linus,
+On Wed, Oct 9, 2024 at 12:58=E2=80=AFPM Fiona Behrens <me@kloenk.dev> wrote=
+:
+> +impl<'a, T> Led<T>
+> +where
+> +    T: Operations + 'a,
+> +{
+> +    /// Register a new LED with a predefine name.
+> +    pub fn register_with_name(
+> +        name: &'a CStr,
+> +        device: Option<&'a Device>,
+> +        config: &'a LedConfig,
+> +        data: T,
+> +    ) -> impl PinInit<Self, Error> + 'a {
+> +        try_pin_init!( Self {
+> +            led <- Opaque::try_ffi_init(move |place: *mut bindings::led_=
+classdev| {
+> +            // SAFETY: `place` is a pointer to a live allocation, so era=
+sing is valid.
+> +            unsafe { place.write_bytes(0, 1) };
+> +
+> +            // SAFETY: `place` is a pointer to a live allocation of `bin=
+dings::led_classdev`.
+> +            unsafe { Self::build_with_name(place, name) };
+> +
+> +            // SAFETY: `place` is a pointer to a live allocation of `bin=
+dings::led_classdev`.
+> +            unsafe { Self::build_config(place, config) };
+> +
+> +            // SAFETY: `place` is a pointer to a live allocation of `bin=
+dings::led_classdev`.
+> +            unsafe { Self::build_vtable(place) };
+> +
+> +        let dev =3D device.map(|dev| dev.as_raw()).unwrap_or(ptr::null_m=
+ut());
+> +            // SAFETY: `place` is a pointer to a live allocation of `bin=
+dings::led_classdev`.
+> +        crate::error::to_result(unsafe {
+> +            bindings::led_classdev_register_ext(dev, place, ptr::null_mu=
+t())
+> +        })
+> +            }),
+> +            data: data,
+> +        })
+> +    }
+> +
+> +    /// Add nameto the led_classdev.
+> +    ///
+> +    /// # Safety
+> +    ///
+> +    /// `ptr` has to be valid.
+> +    unsafe fn build_with_name(ptr: *mut bindings::led_classdev, name: &'=
+a CStr) {
+> +        // SAFETY: `ptr` is pointing to a live allocation, so the deref =
+is safe.
+> +        let name_ptr =3D unsafe { ptr::addr_of_mut!((*ptr).name) };
+> +        // SAFETY: `name_ptr` points to a valid allocation and we have e=
+xclusive access.
+> +        unsafe { ptr::write(name_ptr, name.as_char_ptr()) };
+> +    }
+> +
+> +    /// Add config to led_classdev.
+> +    ///
+> +    /// # Safety
+> +    ///
+> +    /// `ptr` has to be valid.
+> +    unsafe fn build_config(ptr: *mut bindings::led_classdev, config: &'a=
+ LedConfig) {
+> +        // SAFETY: `ptr` is pointing to a live allocation, so the deref =
+is safe.
+> +        let color_ptr =3D unsafe { ptr::addr_of_mut!((*ptr).color) };
+> +        // SAFETY: `color_ptr` points to a valid allocation and we have =
+exclusive access.
+> +        unsafe { ptr::write(color_ptr, config.color.into()) };
+> +    }
+> +}
 
-Please pull from the tag
+This usage of lifetimes looks incorrect to me. It looks like you are
+trying to say that the references must be valid for longer than the
+Led<T>, but what you are writing here does not enforce that. The Led
+struct must be annotated with the 'a lifetime if you want that, but
+I'm inclined to say you should not go for the lifetime solution in the
+first place.
 
- git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
- pm-6.13-rc1
-
-with top-most commit c6e2a4c9eed5249c4158bc621882d44e94af3371
-
- Merge branch 'pm-tools'
-
-on top of commit 1a1030d10a6335bb5e6cdb24fc9388d3d9bcc1ac
-
- cpufreq: intel_pstate: Rearrange locking in hybrid_init_cpu_capacity_scali=
-ng()
-
-to receive power management updates for 6.13-rc1.
-
-The amd-pstate cpufreq driver gets the majority of changes this time.
-They are mostly fixes and cleanups, but one of them causes it to become
-the default cpufreq driver on some AMD server platforms.
-
-Apart from that, the menu cpuidle governor is modified to not use iowait
-any more, the intel_idle gets a custom C-states table for Granite Rapids
-Xeon D, and the intel_pstate driver will use a more aggressive Balance-
-performance default EPP value on Granite Rapids now.
-
-There are also some fixes, cleanups and tooling updates.
-
-Specifics:
-
- - Update the amd-pstate driver to set the initial scaling frequency
-   policy lower bound to be the lowest non-linear frequency (Dhananjay
-   Ugwekar).
-
- - Enable amd-pstate by default on servers starting with newer AMD Epyc
-   processors (Swapnil Sapkal).
-
- - Align more codepaths between shared memory and MSR designs in
-   amd-pstate (Dhananjay Ugwekar).
-
- - Clean up amd-pstate code to rename functions and remove redundant
-   calls (Dhananjay Ugwekar, Mario Limonciello).
-
- - Do other assorted fixes and cleanups in amd-pstate (Dhananjay Ugwekar
-   and Mario Limonciello).
-
- - Change the Balance-performance EPP value for Granite Rapids in the
-   intel_pstate driver to a more performance-biased one (Srinivas
-   Pandruvada).
-
- - Simplify MSR read on the boot CPU in the ACPI cpufreq driver (Chang
-   S. Bae).
-
- - Ensure sugov_eas_rebuild_sd() is always called when sugov_init()
-   succeeds to always enforce sched domains rebuild in case EAS needs
-   to be enabled (Christian Loehle).
-
- - Switch cpufreq back to platform_driver::remove() (Uwe Kleine-K=C3=B6nig)=
-.
-
- - Use proper frequency unit names in cpufreq (Marcin Juszkiewicz).
-
- - Add a built-in idle states table for Granite Rapids Xeon D to the
-   intel_idle driver (Artem Bityutskiy).
-
- - Fix some typos in comments in the cpuidle core and drivers (Shen
-   Lichuan).
-
- - Remove iowait influence from the menu cpuidle governor (Christian
-   Loehle).
-
- - Add min/max available performance state limits to the Energy Model
-   management code (Lukasz Luba).
-
- - Update pm-graph to v5.13 (Todd Brandt).
-
- - Add documentation for some recently introduced cpupower utility
-   options (Tor Vic).
-
- - Make cpupower inform users where cpufreq-bench.conf should be located
-   when opening it fails (Peng Fan).
-
- - Allow overriding cross-compiling env params in cpupower (Peng Fan).
-
- - Add compile_commands.json to .gitignore in cpupower (John B. Wyatt
-   IV).
-
- - Improve disable c_state block in cpupower bindings and add a test to
-   confirm that CPU state is disabled to it (John B. Wyatt IV).
-
- - Add Chinese Simplified translation to cpupower (Kieran Moy).
-
- - Add checks for xgettext and msgfmt to cpupower (Siddharth Menon).
-
-Thanks!
-
-
----------------
-
-Artem Bityutskiy (1):
-      intel_idle: add Granite Rapids Xeon D support
-
-Chang S. Bae (1):
-      cpufreq: ACPI: Simplify MSR read on the boot CPU
-
-Christian Loehle (2):
-      cpuidle: menu: Remove iowait influence
-      sched/cpufreq: Ensure sd is rebuilt for EAS check
-
-Dhananjay Ugwekar (11):
-      cpufreq/amd-pstate: Rename MSR and shared memory specific functions
-      cpufreq/amd-pstate: Remove the redundant verify() function
-      cpufreq/amd-pstate: Set the initial min_freq to lowest_nonlinear_freq
-      cpufreq/amd-pstate: Call amd_pstate_register() in amd_pstate_init()
-      cpufreq/amd-pstate: Call amd_pstate_set_driver() in
-amd_pstate_register_driver()
-      cpufreq/amd-pstate: Remove the switch case in amd_pstate_init()
-      cpufreq/amd-pstate: Remove the redundant amd_pstate_set_driver() call
-      cpufreq/amd-pstate: Rename functions that enable CPPC
-      cpufreq/amd-pstate: Do not attempt to clear MSR_AMD_CPPC_ENABLE
-      cpufreq/amd-pstate: Call cppc_set_epp_perf in the reenable function
-      cpufreq/amd-pstate: Align offline flow of shared memory and MSR
-based systems
-
-Gautham R. Shenoy (1):
-      amd-pstate: Set min_perf to nominal_perf for active mode performance =
-gov
-
-John B. Wyatt IV (3):
-      pm: cpupower: gitignore: Add compile_commands.json
-      pm: cpupower: bindings: Improve disable c_state block
-      pm: cpupower: bindings: Add test to confirm cpu state is disabled
-
-Kieran Moy (1):
-      cpupower: Add Chinese Simplified translation
-
-Lukasz Luba (1):
-      PM: EM: Add min/max available performance state limits
-
-Marcin Juszkiewicz (1):
-      cpufreq: use proper units for frequency
-
-Mario Limonciello (7):
-      cpufreq/amd-pstate: Fix non kerneldoc comment
-      cpufreq/amd-pstate: Don't update CPPC request in
-amd_pstate_cpu_boost_update()
-      cpufreq/amd-pstate: Use amd_pstate_update_min_max_limit() for EPP lim=
-its
-      cpufreq/amd-pstate: Drop needless EPP initialization
-      cpufreq/amd-pstate-ut: Add fix for min freq unit test
-      cpufreq/amd-pstate: Push adjust_perf vfunc init into cpu_init
-      cpufreq/amd-pstate: Move registration after static function call upda=
-te
-
-Peng Fan (2):
-      pm: cpupower: bench: print config file path when open
-cpufreq-bench.conf fails
-      pm: cpupower: Makefile: Allow overriding cross-compiling env params
-
-Shen Lichuan (1):
-      cpuidle: Correct some typos in comments
-
-Siddharth Menon (1):
-      cpupower: add checks for xgettext and msgfmt
-
-Srinivas Pandruvada (1):
-      cpufreq: intel_pstate: Update Balance-performance EPP for Granite Rap=
-ids
-
-Swapnil Sapkal (1):
-      amd-pstate: Switch to amd-pstate by default on some Server platforms
-
-Todd Brandt (1):
-      pm-graph v5.13
-
-Tor Vic (1):
-      tools/power/cpupower: Add documentation for some recently
-introduced options
-
-Uwe Kleine-K=C3=B6nig (1):
-      cpufreq: Switch back to struct platform_driver::remove()
-
----------------
-
- drivers/cpufreq/acpi-cpufreq.c                     |   9 +-
- drivers/cpufreq/amd-pstate-ut.c                    |   6 +-
- drivers/cpufreq/amd-pstate.c                       | 229 ++---
- drivers/cpufreq/brcmstb-avs-cpufreq.c              |   2 +-
- drivers/cpufreq/cpufreq-dt.c                       |   2 +-
- drivers/cpufreq/cpufreq.c                          |   2 +-
- drivers/cpufreq/davinci-cpufreq.c                  |   2 +-
- drivers/cpufreq/imx-cpufreq-dt.c                   |   2 +-
- drivers/cpufreq/imx6q-cpufreq.c                    |   2 +-
- drivers/cpufreq/intel_pstate.c                     |   2 +
- drivers/cpufreq/kirkwood-cpufreq.c                 |   2 +-
- drivers/cpufreq/loongson3_cpufreq.c                |   2 +-
- drivers/cpufreq/mediatek-cpufreq-hw.c              |   2 +-
- drivers/cpufreq/omap-cpufreq.c                     |   2 +-
- drivers/cpufreq/pcc-cpufreq.c                      |   2 +-
- drivers/cpufreq/qcom-cpufreq-hw.c                  |   2 +-
- drivers/cpufreq/qcom-cpufreq-nvmem.c               |   2 +-
- drivers/cpufreq/qoriq-cpufreq.c                    |   2 +-
- drivers/cpufreq/raspberrypi-cpufreq.c              |   2 +-
- drivers/cpufreq/scpi-cpufreq.c                     |   2 +-
- drivers/cpufreq/sun50i-cpufreq-nvmem.c             |   2 +-
- drivers/cpufreq/tegra186-cpufreq.c                 |   2 +-
- drivers/cpufreq/tegra194-cpufreq.c                 |   2 +-
- drivers/cpufreq/vexpress-spc-cpufreq.c             |   2 +-
- drivers/cpuidle/cpuidle-arm.c                      |   2 +-
- drivers/cpuidle/cpuidle-qcom-spm.c                 |   2 +-
- drivers/cpuidle/cpuidle.c                          |   2 +-
- drivers/cpuidle/driver.c                           |   4 +-
- drivers/cpuidle/governors/menu.c                   |  76 +-
- drivers/idle/intel_idle.c                          |  48 ++
- include/linux/energy_model.h                       |  29 +-
- kernel/power/energy_model.c                        |  52 ++
- kernel/sched/cpufreq_schedutil.c                   |   3 +-
- tools/power/cpupower/.gitignore                    |   3 +
- tools/power/cpupower/Makefile                      |  26 +-
- tools/power/cpupower/bench/parse.c                 |   5 +-
- .../bindings/python/test_raw_pylibcpupower.py      |  28 +-
- tools/power/cpupower/man/cpupower-set.1            |  38 +-
- tools/power/cpupower/po/zh_CN.po                   | 942 +++++++++++++++++=
-++++
- tools/power/pm-graph/sleepgraph.8                  |   3 +
- tools/power/pm-graph/sleepgraph.py                 |  59 +-
- 41 files changed, 1330 insertions(+), 278 deletions(-)
+Alice
 
