@@ -1,150 +1,128 @@
-Return-Path: <linux-kernel+bounces-413370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 970FF9D1835
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 19:33:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D35119D183B
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 19:35:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F7A21F2253F
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 18:33:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 995A42818E9
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 18:35:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B2C61E0E07;
-	Mon, 18 Nov 2024 18:33:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BE261E1022;
+	Mon, 18 Nov 2024 18:35:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="mQJ0sUnk"
-Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com [209.85.160.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DM6khD+/"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 804131E0DF6
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 18:33:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54930126C02;
+	Mon, 18 Nov 2024 18:35:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731954824; cv=none; b=ZbUmlKZG8S/fROU3qRdX5ExmAs1dwOPzjqVSJE1TyrsZjhywwIOylBGmd69TzB1on+eBLM9vRTJolOHB1JQnF9TAn69wCRPwbroh4behln4wU0UO/9dGWUCOi6jiOUPWU6SmfNmeG6RtYfeAgVN2NpaTyvoE13Mpk2OKD3RhyJg=
+	t=1731954926; cv=none; b=AW2p9ZzfZyluR369p0aaRy94hhM7hSw/xUCpRIzYF8oaYNdb9PJvhx946cS/mRgMNx86GyT6hJKmDXc8443ZSmok7vMR9lnYrOPWzd0F5F1wNAJXCSI3bm4U+fwZfiLAOm5aKYl6Fs0vk6CFUHR1kqkvbbpG7qBWJIuH1s2oRO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731954824; c=relaxed/simple;
-	bh=PbL5qU7G89QRGe1mqq27S87ShiVyJjnCIGnqWYBTVYE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Un31d+7gMxhJGzhZBgqYIcgASDeF8cma0Y5tfMkpAV64+c+I8IVDppiE/H0NznIn5lE/R491iiXtYCmdS8zi5kAlzp/hXX5TIfm1lBEqjULxifLvFzrg+q+JNV9zCMvTBshhGzfGLj10RsGScEvOmZ9g0yuzysV+Z76UrlyYs1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=mQJ0sUnk; arc=none smtp.client-ip=209.85.160.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-2969dc28dafso531180fac.2
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 10:33:42 -0800 (PST)
+	s=arc-20240116; t=1731954926; c=relaxed/simple;
+	bh=YBAyZQDeCq6/CCXZbzAL+HTAL2zOtmud1JMUZD40ols=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LN7VCpfNPW+IgV0csW3walAivXfFtn/WbJYiPFQirdPSy5oJnlBQ/7fIOn1uoPZpqLR6uKoWbQCbQ/hCexonF6cPA1GgcLz8Bv6X4Ph932OdWg11KlqaXbZUtsAv3fLsU3/0J6Xis6NE+0DMOx3V7oBceqAWE9/brJte60chkTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DM6khD+/; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-381ee2e10dfso1442016f8f.0;
+        Mon, 18 Nov 2024 10:35:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1731954821; x=1732559621; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=aneuQOiwaFYBr88lA/0AyLISQzg4VGgde4c28AMLP6Q=;
-        b=mQJ0sUnkYBzditB2hTN1FFUvTpznayKuJyEUOv5bhDcSp04nzcFEZJOKM9YHbA6E5K
-         W4J69OMkCjm2sRbGRiPaZQSVTVo1xWij2gplfecUofmIh/kVeHzoMSmkjb9w6YMZPDeu
-         M9xEJurtMKp0LRwgVAWKijimUv5CRC/jkkSiqIwzgY+sMk/FOxqufyofNys9tnatEMW+
-         sWFVS2DRSS5pctAWgdyGSfqywF+aKo6d+iElKe3z2JyH2Rsf4MOQhPCu982N3XdeGoOl
-         OkUyg6twnFoVeTK9oIR6LTHAicPhXgj8C6AuDU1s8UFLr3hU+cb7QI8Inx7E+v1TBW9c
-         TJMw==
+        d=gmail.com; s=20230601; t=1731954923; x=1732559723; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=NutJMTMGBpGlg6jc4CAOpY+tUMerhneIWFgqOFsouME=;
+        b=DM6khD+/Fincl4UfLHOSQn/e7/Z7LiAwiJPt+A5/7g2DXQzu0PtyreZZI6HnaSZsY/
+         aSGLPUlTSeOck4qIodB76l+iiqI7Bqag9Wth/8NaX7Ggoaj/79c3u/q++tWzQXzUEkXT
+         WaV0vsRqwdhAmI4K5KbaCpYDVvIYJyUuP2i5fCNPelsafoX83u6TZx6g/3LJU87TANyr
+         L/2zYwHjykz7dU87x1/uGg//PgOvagzkmHXfLyQ0qm+wGIn2VeVGrq6ufdNxyfm50IxX
+         kgbiBD10cFY/qYfeon5xd7PGcIOgHpf87o6a2vIXNMhEKm1dF1CDkiBKkLQu7iOcAdcR
+         EfBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731954821; x=1732559621;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aneuQOiwaFYBr88lA/0AyLISQzg4VGgde4c28AMLP6Q=;
-        b=GgcUDHozt/QbYSfumuio6rg/A9pHkz6U8jfiMlEhTGGYLwyIGe03uZ3WSV5b8m9mrh
-         w904Aj8ooeJ005kIlXBPOtqV3nZEcascg7eOq958WV5PBzoYXPJv8bo12BaN/FxgzjEA
-         tGVwLad679iIe83VpX/VQDHqcOT0Ftz67Qv7SCn5jRRdk5PpE+0lSiEr0hVvbzE1MSqD
-         fjopzs5Lq8NJeT/fQj8SKFyDNYvS/FwOU3LIYNM1qeVD/utMbwlwl/RgGHrv44dUcAE1
-         Uw4Ru9Lq6AjWwaZXCsoXbXP8TUbEDiWz7zDWocwYDTFJPVxO6+qcmzDWpxwFzz6MtLLp
-         0kzw==
-X-Forwarded-Encrypted: i=1; AJvYcCWlAh5Q99z5GiGERPd8bdAfDiTWQCCu6g+L29MZdElQEtql/qTO27WuLiH4lDu8nDb4DaXxfl/HX1nKyRw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFGBwJW5r/yDKRu9WU+vbyRMCLQqpfLfT9P9FW+MhM4OHRLq3e
-	bgzSaE+Ppd0wor1AZqzv/GYBsRzYWdRy2ntxO1htb3Mzd3VB2cQBGjCSMEF4IGk=
-X-Google-Smtp-Source: AGHT+IGAsbhwJF0VOk/JdSVM72aUtGwdsVL9k36/zRYH/9py/W7xVmgcTjrc6OIRRMTekxdNRRCHQw==
-X-Received: by 2002:a05:6870:5d8f:b0:287:7695:6a87 with SMTP id 586e51a60fabf-2962de1a23dmr11493982fac.10.1731954821562;
-        Mon, 18 Nov 2024 10:33:41 -0800 (PST)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-71a780fe329sm2913082a34.25.2024.11.18.10.33.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Nov 2024 10:33:41 -0800 (PST)
-Message-ID: <02e0efcf-99c8-4c42-ae66-925c08a544b8@baylibre.com>
-Date: Mon, 18 Nov 2024 12:33:40 -0600
+        d=1e100.net; s=20230601; t=1731954923; x=1732559723;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NutJMTMGBpGlg6jc4CAOpY+tUMerhneIWFgqOFsouME=;
+        b=CFfrgbcm40ib7zYcwvWMZtOmDiDOwKOpZNmKGBPJE6k+FcqwgltC9vtW1F+nJzVfeH
+         MOu7FT4k3b/6qI9egeVYchaPua9fm4yMQ0s8MeYlHw/7fmhkiObBl8CGVMgAFrcyrO2T
+         K1gSBncZp6OU1FaTPBJB0I+2hlK0xm1q3V7pg8I3LQMjKJHu2nreQihgzo2nKj22KyK+
+         c5xkLguveixSAF+1e+pRjHksdk26w5eTGcCmV/2j+1ELmItZbGj/1VZbMkjkiyTkiwws
+         b9eKxxPu1vI9xBQUWg8oggm0CTlxk238wvTQ5NObgkI6CDodk4vl+cP2GqvIZZ3+wd6w
+         a/LA==
+X-Forwarded-Encrypted: i=1; AJvYcCW4iK9GLYC0T0q+dXKb1BFhaJBtKqR5jSSxU0bKsOnXfLRXVdGXe2YDtZu7fsYB/3zynwbA+BwFu854@vger.kernel.org, AJvYcCWbW8qsfoUc2NHCxWSQI2Ripx83H6zuZnFSlaBycFS2QuUkItavbB7wn0WUvRDwSSmiKA+oEH7CGx/4XOIq@vger.kernel.org, AJvYcCX47n5vrtZrQ+XaBY6V4iG2nr9DRai2QhLhABOVBMM2k5rQj/fOC0AOBEKBrGYp0Z+XucAIfLU2@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzo1BIWdzF/QXqVoiPGdlXQTxOicaarDZQBbirKxToOelBnjrdt
+	2QqwwNbf/hVauqiHH7utspyN7XuvUhC0GQDD/dn5+eN67gV2pYKc
+X-Google-Smtp-Source: AGHT+IFjKnwL+BAcS4FvmCWrXf++f05PwJmlO/bTN95oll3IN9DWzzjQsayZ7u1F458KkypWbgNafg==
+X-Received: by 2002:a5d:47a4:0:b0:37d:46fa:d1d3 with SMTP id ffacd0b85a97d-38225a931abmr11496928f8f.34.1731954923402;
+        Mon, 18 Nov 2024 10:35:23 -0800 (PST)
+Received: from Ansuel-XPS. (93-34-91-161.ip49.fastwebnet.it. [93.34.91.161])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3821ae161b5sm13816130f8f.74.2024.11.18.10.35.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Nov 2024 10:35:22 -0800 (PST)
+Message-ID: <673b88ea.5d0a0220.17b04a.bc4b@mx.google.com>
+X-Google-Original-Message-ID: <ZzuI5vA-PUWpe5CR@Ansuel-XPS.>
+Date: Mon, 18 Nov 2024 19:35:18 +0100
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Vladimir Oltean <olteanv@gmail.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	upstream@airoha.com
+Subject: Re: [net-next PATCH v7 0/4] net: dsa: Add Airoha AN8855 support
+References: <20241117132811.67804-1-ansuelsmth@gmail.com>
+ <20241118144859.4hwgpxtql5fplcyt@skbuf>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] dt-bindings: iio: adc: adi,ad4000: Add PulSAR
-To: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>, lars@metafoo.de,
- Michael.Hennerich@analog.com, jic23@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <cover.1731626099.git.marcelo.schmitt@analog.com>
- <a155d0d0fb1d9b5eece86099af9b5c0fb76dcac2.1731626099.git.marcelo.schmitt@analog.com>
- <0b8a2d07-feea-409f-a850-7ee0c752a949@baylibre.com>
- <Zzsj9_HVBO5wrJv_@debian-BULLSEYE-live-builder-AMD64>
- <ZzuGtvdrD6D06rEp@debian-BULLSEYE-live-builder-AMD64>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <ZzuGtvdrD6D06rEp@debian-BULLSEYE-live-builder-AMD64>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241118144859.4hwgpxtql5fplcyt@skbuf>
 
-On 11/18/24 12:25 PM, Marcelo Schmitt wrote:
-> On 11/18, Marcelo Schmitt wrote:
->> On 11/15, David Lechner wrote:
->>> On 11/14/24 5:50 PM, Marcelo Schmitt wrote:
->>>> Extend the AD4000 series device tree documentation to also describe
->>>> PulSAR devices.
->>>>
->>>> Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
->>>> ---
->>>>  .../bindings/iio/adc/adi,ad4000.yaml          | 115 +++++++++++++++++-
->>>>  1 file changed, 114 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad4000.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad4000.yaml
->>>> index e413a9d8d2a2..35049071a9de 100644
->>>> --- a/Documentation/devicetree/bindings/iio/adc/adi,ad4000.yaml
->>>> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad4000.yaml
->>>> @@ -19,6 +19,21 @@ description: |
->>>>      https://www.analog.com/media/en/technical-documentation/data-sheets/ad4020-4021-4022.pdf
->>>>      https://www.analog.com/media/en/technical-documentation/data-sheets/adaq4001.pdf
->>>>      https://www.analog.com/media/en/technical-documentation/data-sheets/adaq4003.pdf
->>>> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7685.pdf
->>>> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7686.pdf
->>>> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7687.pdf
->>>> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7688.pdf
->>>> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7690.pdf
->>>> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7691.pdf
->>>> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7693.pdf
->>>> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7694.pdf
->>>> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7942.pdf
->>>> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7946.pdf
->>>> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7980.pdf
->>>> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7982.pdf
->>>> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7983.pdf
->>>> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7984.pdf
->>>> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7988-1_7988-5.pdf
->>>
->>> It would be nice to sort these lowest number first.
->>
->> Ack
->>
-> Actually, I didn't get how I'm expected to sort those.
-> Isn't ad4000 < ad7685?
-> Or did you mean to put adaq at the end?
+On Mon, Nov 18, 2024 at 04:48:59PM +0200, Vladimir Oltean wrote:
+> Hi Christian,
 > 
-> ad4000-4004-4008.pdf
-> ...
-> ad4020-4021-4022.pdf
-> ad7685.pdf
-> ...
-> ad7988-1_7988-5.pdf
-> adaq4001.pdf
-> adaq4003.pdf
+> On Sun, Nov 17, 2024 at 02:27:55PM +0100, Christian Marangi wrote:
+> > This small series add the initial support for the Airoha AN8855 Switch.
+> > 
+> > It's a 5 port Gigabit Switch with SGMII/HSGMII upstream port.
+> > 
+> > This is starting to get in the wild and there are already some router
+> > having this switch chip.
+> > 
+> > It's conceptually similar to mediatek switch but register and bits
+> > are different. And there is that massive Hell that is the PCS
+> > configuration.
+> > Saddly for that part we have absolutely NO documentation currently.
+> > 
+> > There is this special thing where PHY needs to be calibrated with values
+> > from the switch efuse. (the thing have a whole cpu timer and MCU)
 > 
-I think all of the 6s, 8s and 9s were playing tricks on my brain when I wrote that.
-Looking again now, it looks fine to me. Sorry for the noise.
+> Have you run the scripts in tools/testing/selftests/drivers/net/dsa/?
+> Could you post the results?
+
+Any test in particular? I'm working on adding correct support for them
+in OpenWrt. Should I expect some to fail?
+
+-- 
+	Ansuel
 
