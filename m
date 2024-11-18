@@ -1,188 +1,113 @@
-Return-Path: <linux-kernel+bounces-413159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAF709D1456
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 16:22:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FAD69D1458
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 16:22:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87B9C1F21E51
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 15:22:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1366F282E63
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 15:22:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EE751AC45F;
-	Mon, 18 Nov 2024 15:22:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A41019AD7E;
+	Mon, 18 Nov 2024 15:22:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zKUnbotV"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="K/cKf/xc"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCF7A19AD7E
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 15:22:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23F501A9B51
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 15:22:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731943327; cv=none; b=lkuSMf8UVdaa33NDHH7iykCK/7JyIvuJWAsHfsInVQjsHWyguZyvWxix8nQx9mF+x+MVxSCiaRhaZGTJyG3dvvZ98HVleR/EzTtRu4smZzRJdUefGCabx4Avea5mGyNnFufS+R3SLflG8wg95HZLZ1tDAJg2X0uDpyjME10mNVg=
+	t=1731943341; cv=none; b=OQoqsRi5m+qORF7V00CXlMFfV1mLYb0s3S26h2bbhlv9x5EfgF4iWwvnjlZWQpxbhz/0Ez1klyBeBM2pQ3Vp2TxAtnqOxnyOuFpV+5Syrs2MsY2zXeXr3uojXTeDf97OmFxpNpx19bB7WnmSLZuH38kSPN8ZRhMhueed+jIkmO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731943327; c=relaxed/simple;
-	bh=jn5XT3hwcJVDiUuJsC/BYq6tWkmdqvb3lDZ1dl8ivUQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RwjRsARMflsH4owq95Al563J2NppEmtqBn/fyYpXumMHHAI9w2zyi27M+V3RjaihV6NjmBcofiZWia1wNyH2yEjv/IumyyRFiHKRPZF4BV0Zy1rup+6bpCfNU9g7ZHkszTWkMm+RyAulIqQR0Ye30XJJ/2KYsSZsmsNdpASUt0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zKUnbotV; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-432d9bb168cso24896785e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 07:22:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731943324; x=1732548124; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=yS/g2Uu8h88uKdC3kSKMEY90IlJiDjaSvhZlfRQ3+U8=;
-        b=zKUnbotVDS6JOrWURjZxpf86UHiOuWgrOLT9lyAoaO2gxJAmGkYTYl7jNK+abkMwiO
-         9Fzg/PigzURuTp/OGG9pudkulbQ5KhElgjKLjk1j+v1MBOWxuFwiXi11OjACb24PlEsu
-         eAOIk+Y8ySa/BMyArJ5yVXBo8nbGmjhkmrKWN+p70xP6JcnmI+bYVEcYNjTjJemmWgys
-         LfPqIQQSjQziYy7N+mw+puWP/7+0WHuZCUNDh/sS0EoPSGbrlA9rngbDDlJmNbvgCioO
-         vXknR7mVSZYRgxcwNIsIwrcHPnEPnaF1EubH8LFB6r0VW8PgwUebXv4DUdYBjrq7Mguu
-         npJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731943324; x=1732548124;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yS/g2Uu8h88uKdC3kSKMEY90IlJiDjaSvhZlfRQ3+U8=;
-        b=jM7rU/8warkqVuWbKjr/k0GvGGFr0iONZgm2uZIGRCef0HiKAJLFHkxGM26hTS1R9w
-         KHXjh3rdWZ8AfHihMAX45VVi4AFPR7rsYzVTiVxBdy1AuU0hCX7NFEmTUWm6m4yWaAq3
-         PUGqZrCszbWc4Jn7CSZANh1DX9F/gq2GqcXV2OXdX+4VemLPKVJveh0uZtJstG/HmtMD
-         aHHsb1eLT2Wujt4hP6wXC8vHO/fJmgfVAikrZRC6vk6QQccaLpTLPSvQwW93gNlavZOL
-         22CQW4Byt5gSaZaKXeYBZd3enr4R1Gh+dWGbIwKsQuK/OY86B0HoRPey4yNNWYIpjQAD
-         OW4g==
-X-Forwarded-Encrypted: i=1; AJvYcCXiMlwTB97+V+ms901EUbjEGuNFgvallWOn2C2tHsn+JZ3Mvw8v7peGrEVf3F8cZJ+anvQYZURHlzqbPQ8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJO2+oU0uDBt7NlBHGlAaKq7cyaNQ4nN4o1V7gG0lhTGhj6uEX
-	wR+0UHJJtL9n1b6iEezVz7BfFn1EXCptiPhlsj54Vki4R/J7ZB9t5rsesQWLKCo=
-X-Google-Smtp-Source: AGHT+IF5i912SxZj9aROjXMiBc6XZF1g7Bx1Z3E6lXHo6tsdVujyqT7a1uumivdREl9IH5QQ7U8UBQ==
-X-Received: by 2002:a05:6000:69a:b0:382:2386:ceaf with SMTP id ffacd0b85a97d-38224fd034amr12681351f8f.27.1731943324150;
-        Mon, 18 Nov 2024 07:22:04 -0800 (PST)
-Received: from [192.168.0.14] ([79.115.63.27])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-382308532cbsm9147678f8f.88.2024.11.18.07.22.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Nov 2024 07:22:03 -0800 (PST)
-Message-ID: <603407a6-93c7-4d45-b171-7bbc871a3569@linaro.org>
-Date: Mon, 18 Nov 2024 15:22:01 +0000
+	s=arc-20240116; t=1731943341; c=relaxed/simple;
+	bh=rfscN9LreANPm71G6IcmzMglWMfix8zvLltWpIltm5o=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=LLAj+OrHtof2Cl+5Rb7Os+lIsgAAFA5HZQtpM1j/X8wfkWs4BN5rMYLw8Z9sf39OR/9WlL8aXflPcKGPwD3NDvlILOb9dZJvnWlk8A4EUgEuvND5fu2dMQ7CPEODzJ/KBhelwQ3r1Dlp8M1OCFo2y6WHKpR3FPJSE+qyp8FmYOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=K/cKf/xc; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id AB28940E0261;
+	Mon, 18 Nov 2024 15:22:17 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id UmJOoXyyW1as; Mon, 18 Nov 2024 15:22:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1731943333; bh=yJxQxwiuDlZNdXpGwAeh8WpiaiQhI2lII45pzAIQxuA=;
+	h=Date:From:To:Cc:Subject:From;
+	b=K/cKf/xcrxpw6h38RmFPrPOJzaj1FqGMhehibBCqDN5FEjuMJnMJZTo9ehfFM/TCL
+	 ew7KN5slGi/oq6p0I4ASwewhm1mPyZH+O2FPGoEJEvs426Y3NLTmjpBmX2iA7kTOZj
+	 cXLvdeUNp4sAEPD+j0sf9ggHP/3jgusoKPtAMZEVadBVp8wBZ6fOJK4p3PsusZ/irp
+	 5/G5SwycRD5zGuScaVc2wibi5aYUqLIMn4gZQxOb8cQMZzBWhZ6Gqhx5cRx4xRgc6J
+	 nY3vVyVXLzfCeX6lhF27A9HZXMOc52hTWzJL38Y5apJn1y51r9A5wg5fphBIAPf56f
+	 ANQmDH1Ib9kb8qzHqFlKziOI0vXM6o9nWQtdR1NuXJdk36h4ji6KKVwql+Z4NNz/pZ
+	 b/lnAP+svYerK7R8fvDr9wW0ztdYF38f8aDms2hO5JlI+kYtSP1W7kUWhfj2nOUnl4
+	 j6MAOnU8gZFrdeW2/p62za0C0dMk4LAbX6pcEVeoJK5WBlnVWIokfI+/2YDFxW8elV
+	 ZFZSrgA0/KczvDKji2yZ8rnQGQIcq087XjI8u6FzFUjOs2lJgGXCF2yqyYelgJ50Sv
+	 lugPWHbkUMQ/pbRmwVjUAiqbG5kY7uVpyiN+VEvaqEaJD9vxh+Q9MCbLb1gJ7GUYcH
+	 YaBgjVWtgeNFF0WwcPHYGraQ=
+Received: from zn.tnic (pd9530b86.dip0.t-ipconnect.de [217.83.11.134])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 66D7740E019C;
+	Mon, 18 Nov 2024 15:22:10 +0000 (UTC)
+Date: Mon, 18 Nov 2024 16:22:04 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] x86/platform for v6.13
+Message-ID: <20241118152204.GAZztbnHMPrcQOkacl@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] mailbox: add async request mechanism to empower
- controllers w/ hw queues
-To: Jassi Brar <jassisinghbrar@gmail.com>
-Cc: krzk@kernel.org, alim.akhtar@samsung.com, mst@redhat.com,
- javierm@redhat.com, tzimmermann@suse.de, bartosz.golaszewski@linaro.org,
- luzmaximilian@gmail.com, sudeep.holla@arm.com, conor.dooley@microchip.com,
- bjorn@rivosinc.com, ulf.hansson@linaro.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, marcan@marcan.st, neal@gompa.dev,
- alyssa@rosenzweig.io, broonie@kernel.org, andre.draszik@linaro.org,
- willmcvicker@google.com, peter.griffin@linaro.org, kernel-team@android.com,
- vincent.guittot@linaro.org, daniel.lezcano@linaro.org,
- Arnd Bergmann <arnd@arndb.de>
-References: <20241017163649.3007062-1-tudor.ambarus@linaro.org>
- <20241017163649.3007062-2-tudor.ambarus@linaro.org>
- <CABb+yY0_NSLAs-mP=vHeNsfKRcS2hcFWmWfcvsr=nFcXQOi5uA@mail.gmail.com>
- <a7274a6e-1da3-47f2-8725-b0c534bf6608@linaro.org>
- <1df84f83-40d7-4719-a9f9-dfa10d25c667@linaro.org>
- <CABb+yY0H4cATB9Gz2EitnR6R179aKDzR1N87fz7Hq9Hm-_8Rmw@mail.gmail.com>
- <779fc372-a4d9-4425-a580-2173a0f6a945@linaro.org>
- <CABb+yY0bhjRYLwyo-t6djttP2bq_irX+Rad71wDX++nQV69cAw@mail.gmail.com>
- <a2065dc8-10da-42e9-b093-b0b541ca2305@linaro.org>
- <CABb+yY3W3Cv7a6wZhvJe80xn5sp1Y_A_nbY_=cj0U4Z1YC61vw@mail.gmail.com>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <CABb+yY3W3Cv7a6wZhvJe80xn5sp1Y_A_nbY_=cj0U4Z1YC61vw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-Hi, Jassi,
+Hi Linus,
 
-Sorry for the late reply, I was off for a while.
+please a single x86/platform cleanup for v6.13.
 
-On 10/29/24 3:59 PM, Jassi Brar wrote:
->>> If your usecase is not currently handled, please let me know. We can
->>> discuss that.
->> It's not handled. I have a list of requirements I have to fulfill which
->> are not covered by the mailbox core:
->>
->> 1/ allow multiple TX in-flight. We need to let the controller handle its
->> hardware queue, otherwise the hardware queue has no sense at all.
->>
-> As I said this one is currently handled by assuming TX-done by
-> depositing in the h/w queue/fifo.
+Thx.
 
-This may work indeed. I would have a TXDONE_BY_ACK controller. Its
-`.send_data` would be a one liner, where I just raise the interrupt to
-the firmware. TX ring would be written by `cl->tx_prepare()`.
+---
 
-Then in the protocol driver I would do:
-ret = mbox_send_message(mbox_chan, msg);
-if (ret < 0)
-	return ret;
+The following changes since commit 2d5404caa8c7bb5c4e0435f94b28834ae5456623:
 
-/* TX-done when depositing in the h/w queue. */
-mbox_client_txdone(mbox_chan, 0);
+  Linux 6.12-rc7 (2024-11-10 14:19:35 -0800)
 
-ret = exynos_acpm_wait_for_message_response(mbox_chan, msg);
-if (ret)
-	return ret;
+are available in the Git repository at:
 
-> You will have the same perf as with your attempt to have "multiple
+  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip x86_platform_for_v6.13
 
-I'm still forced to pass all the messages to the mailbox's core software
-queue. I also don't need the locking from the core. For my case the mbox
-core just needs to do:
+for you to fetch changes up to 90f1b42b179487ee77d182893408cc1c40d50b13:
 
-if (chan->cl->tx_prepare)
-	chan->cl->tx_prepare(chan->cl, data);
+  x86/platform/intel-mid: Replace deprecated PCI functions (2024-11-11 11:59:21 +0100)
 
-return chan->mbox->ops->send_data(chan, data);
+----------------------------------------------------------------
+- Replace deprecated PCI functions used in intel-mid
 
-Would it make sense to introduce such a method?
+----------------------------------------------------------------
+Philipp Stanner (1):
+      x86/platform/intel-mid: Replace deprecated PCI functions
 
-BTW, what are the minimum requirements for a controller to be considered
-a mailbox controller? As you saw, I'm using the mailbox controller just
-to raise the interrupt to the firmware, no messages are written to the
-controller's buffers.
+ arch/x86/platform/intel-mid/pwr.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-Does message size matter? On my device the ACPM protocol is using
-messages of 0, 2, 16 or 32 bytes, but it also allows the possibility to
-pass a pointer to an indirection command SRAM buffer, where one is able
-to write up to 412 bytes.
 
-> in-flight" while neither of these approaches handles in-flight
-> failures. We can discuss this.
+-- 
+Regards/Gruss,
+    Boris.
 
-Do you mean that there's no retry mechanism? The crypto subsystem has
-one, we may look at what's done there if we care.
-
-> 
->> 2/ allow to tie a TX to a RX. I need to know to what TX the response
->> corresponds to.
->> 3/ allow multiple clients to the same channel. ACPM allows this. Support
->> would have come as an extra patch.
->>
-> These are nothing new. A few other platforms too have shared channels
-> and that is implemented above the mailbox.
-> 
-okay
-
->> 4/ allow polling and IRQ channels for the same mailbox controller (not
->> urgent).
->>
-> It is very easy to populate them as separate controllers.
-
-Do you mean to call devm_mbox_controller_register() twice for the same dev?
-
-Thanks,
-ta
+https://people.kernel.org/tglx/notes-about-netiquette
 
