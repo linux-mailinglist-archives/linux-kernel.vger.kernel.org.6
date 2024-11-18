@@ -1,235 +1,238 @@
-Return-Path: <linux-kernel+bounces-413230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F13A09D1569
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 17:34:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A17A9D1568
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 17:34:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 59307B2C0C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 16:31:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 35331B2CC0C
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 16:31:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96B6B1B393F;
-	Mon, 18 Nov 2024 16:31:04 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0170E1C07C2;
+	Mon, 18 Nov 2024 16:31:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="oBk29yea"
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2045.outbound.protection.outlook.com [40.107.96.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 636151BBBC4
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 16:31:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731947464; cv=none; b=t0g7nh3TVT2Lqb1jNwZ8lWpu0PFWw15/e0e3vBPxOkKiHCPKl2xrD5AAFHp0urBeczX9wZRqb8lUPIZ8Wo/5NCrKWTKlR4B2Iyjhm46m4STFhBJjRT5VJ/mso/2jPfzDwQ+64o3Itdbqq5P53QY4harl8vMQ9QCxIjcnpYC5ZCY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731947464; c=relaxed/simple;
-	bh=tZmjDrURNdTH2bTrW/BrM3TEfahOpQOa/TxG12F4zsY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=N5AmGOEGKdtR/av+vySbgeOxHQMKS9xVirgGKD28mzBcQ7afJXLQIh28siKVyCCOI2lCgrrasL/bGkvsW/GLF9S4pW004r36ez2XdVljp4XoKosKpjVVCk12fI3/XMNczYSZ12jJUQUCWOLBuVABBOG08WKJ+dRGsPdCufYsgJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a765c8bdc1so15421805ab.3
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 08:31:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731947461; x=1732552261;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JIiyjQEEjsraY4e0dqyGtIPz95gfNSw28i4CoUtfMkc=;
-        b=dEqgEvE5+EBTKuBK/gOeceys4N5w00GRXeBui8Y4orz/njrON6ljpOr60FXUB4FmVE
-         KKgFddZFWJNTFHKfWO75FoB22B7+ZiG8ppYBjToPerIqBo3dNQi2gHL0byGazbzx0o8Y
-         rb4ZpYXW37zaH8Sj2bqg2UjomOOwM1QxLLpjjaI9vbbH47/nh/781q8rTEplvhSFyKmY
-         5DY887ymSD8OE4ndNAX5SWl7K19R7d5HVm/rgdAWkp4pQYiR2zoIJe5mpXhbMOM8IQm/
-         qIMBSoDymBxaKy4uO+u/336HhSLCydld+n5L+2Opp1erFrhyVD+bxAiltKgLAKIbwZH0
-         rGgA==
-X-Forwarded-Encrypted: i=1; AJvYcCXLs+wPJQJ9H69IFCNWs+ZTd7jj5DcigChpvk5NEVTrJTPs6g55bIsjo3S77Izn6KXK6I54p/XYYtN8g3Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9mQwBXfxRHDEFnaj8nm4CJIBMay6uZOiXDtQgrdIU2Ic4s+UK
-	1jJ1tv2IiO9Gx/RMjvYxZHdwjZ0CJYBqwE3TdFQW9lVWoZ6vCrvJ19FIzWzEc8t+/76izLsSSoV
-	98/iTX45KA1h6QMNwsSB3PWlBOLDgHrBu1Qn9NsBzNxQf91o1JTv3KXc=
-X-Google-Smtp-Source: AGHT+IECdyD6ZOBKHTjaN/Yfyh3CAFMwGi1tOK15j0a40HgE+uiw32RhG99wtP1hLRi8Z1AS66NHA5TYEgCTvkNmsc+SLeU1KLC4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 619981AA1E4
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 16:31:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.45
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731947482; cv=fail; b=SGYVGzTqpjjyvzUraRq5WL1yB6Yy5BTkxh3nvl2exSHMou/5n8Xd7h7pSiapGnY4AhxnLbgjROEvH8mNAf78YaSiVyGGIZVbfY8l9KMqywvXhE/8kF8CH3RaprdDin+7D9lNHdK/UskbxioNtWGIJK/oCkO7Iyk2C7dgsmhDwRc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731947482; c=relaxed/simple;
+	bh=8xkRj+2YYbKh0jGm2YGYKKBhe7InRI7HxmP02GWzjJw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=SxMnWCeIGp/JXoVfLN9bk8UEeUKNZHJ/uImgMmJrl8AmKPjCVUOlq9X4tVxhxOQgqCBTUMeGEyV6jgktDePAKEfzZgpvuzagBLXhluxaftrKSDeEmbun5yl84fvLsV0IWN6AD2/2NS9MhEj1wBr63IpTuTJAN+p88YK7gEvDKk4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=oBk29yea; arc=fail smtp.client-ip=40.107.96.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=eY6ciCykRCG6HgL/7BVmrJnyEC8zqzeS+ysbeFoImFM4iJ75/pKoJcduz8iRZ0M6N2jCoBLypXfJXIVZYBUVT5KKL6sSl1PZJtnxobJ4sQBZtqqIt95CpN6ojfBRYG3t1CwiboZWP5aD0gQ8h8UiKpXCa/MNWeAKy70WBMeeZcPjT7gVY6EfY2C24FLmi5aqftxeRCpYrbZTjuExm+0Nm4oHLbHvcu2E+fWEhLkUEKQNleOJDzmiKz3Q/9A7gONEbBK6tgwGSVQAq3oXhVmHhpolP2NuDioCSl9YLyQ2VWZDLXKEzu6FyYGLQslCA/hIF4Kp6+KDXGJ5aoTCE8yCkQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ZrqpW6SOIG5GfjLRUe8drriiOwIeklpTxVMqgXOtarc=;
+ b=chMV0Xi2VPJBeFTe9M/h9xv5BqI0nZ+YUTvfhOc6juxLjPze3hepUdCX1J5yj465V9LBBsUeNgYxt6KborOugHYk3EGb2fkY7dITGOjll/UHlVfk8HwNm/uNW/SMx5IHKXQJQJE77aCJz96XTYP366oHXqhB+ox8vv4x4SUDtuW29phteQBhcK+iy7i584to8Ak+z2ypKVKurpqy+OtFhIqp4s8C+jK3whS7IYKofGFor6/bG3YUxlhIZFn3pDYO4kTZh6SdxOhXZv4IPoATtoyy6tgSWP3FRKdwelck8NafH9xg/RXnMry/8YVrcWoAYc21w6bksWVFWjoff54cPg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.12) smtp.rcpttodomain=quicinc.com smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZrqpW6SOIG5GfjLRUe8drriiOwIeklpTxVMqgXOtarc=;
+ b=oBk29yeaJKmJRc2F6CdGJixzd0xi7ptuTNqf+cZAW+ccTNN7+JmK1nB1bcAbjJaakdKkcnRJJuJYNP/6fIniKQQ5/lDahmBWvtRMGXGZ+5dekZ5DhVn9cv1qvElmaGINmWwaUd/a4S638wOSPUuUsuOYcFTDxgdJD7aHqZ3a4/w=
+Received: from MW4PR04CA0146.namprd04.prod.outlook.com (2603:10b6:303:84::31)
+ by SJ2PR12MB7797.namprd12.prod.outlook.com (2603:10b6:a03:4c5::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.24; Mon, 18 Nov
+ 2024 16:31:14 +0000
+Received: from CO1PEPF000042A7.namprd03.prod.outlook.com
+ (2603:10b6:303:84:cafe::a7) by MW4PR04CA0146.outlook.office365.com
+ (2603:10b6:303:84::31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.23 via Frontend
+ Transport; Mon, 18 Nov 2024 16:31:14 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.12)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.12 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.12; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.12) by
+ CO1PEPF000042A7.mail.protection.outlook.com (10.167.243.36) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8158.14 via Frontend Transport; Mon, 18 Nov 2024 16:31:13 +0000
+Received: from SATLEXMB06.amd.com (10.181.40.147) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 18 Nov
+ 2024 10:31:13 -0600
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB06.amd.com
+ (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 18 Nov
+ 2024 10:31:12 -0600
+Received: from [172.19.71.207] (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Mon, 18 Nov 2024 10:31:12 -0600
+Message-ID: <aabe8b73-32e0-7123-bcc7-6b6515815047@amd.com>
+Date: Mon, 18 Nov 2024 08:31:12 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:17c7:b0:3a7:afb:7b36 with SMTP id
- e9e14a558f8ab-3a748092cc8mr110023455ab.22.1731947461610; Mon, 18 Nov 2024
- 08:31:01 -0800 (PST)
-Date: Mon, 18 Nov 2024 08:31:01 -0800
-In-Reply-To: <CABBYNZ+jcHzVhzLXeU9GYJuFO-PgT=vfYq1+RrGkgyRA9AeU1A@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <673b6bc5.050a0220.87769.004b.GAE@google.com>
-Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in set_powered_sync
-From: syzbot <syzbot+03d6270b6425df1605bf@syzkaller.appspotmail.com>
-To: linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	luiz.dentz@gmail.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH V10 07/10] accel/amdxdna: Add command execution
+Content-Language: en-US
+To: Jeffrey Hugo <quic_jhugo@quicinc.com>, <ogabbay@kernel.org>,
+	<dri-devel@lists.freedesktop.org>
+CC: <linux-kernel@vger.kernel.org>, <min.ma@amd.com>, <max.zhen@amd.com>,
+	<sonal.santan@amd.com>, <king.tam@amd.com>
+References: <20241112194745.854626-1-lizhi.hou@amd.com>
+ <20241112194745.854626-8-lizhi.hou@amd.com>
+ <749e9a1d-7bcf-0c04-41b3-e0a4b89068bd@quicinc.com>
+From: Lizhi Hou <lizhi.hou@amd.com>
+In-Reply-To: <749e9a1d-7bcf-0c04-41b3-e0a4b89068bd@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000042A7:EE_|SJ2PR12MB7797:EE_
+X-MS-Office365-Filtering-Correlation-Id: 653e08c6-9362-493e-c995-08dd07ee6b66
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|1800799024|82310400026|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?czVQamRWK28va0NXalExeEg2WVg2ekdXKzZlU2RPdDB1WVBCbDV2MCt6UGpm?=
+ =?utf-8?B?SExycVRsbk9EZk1mZnNVaWtra2FJQzdZSlJkN0Z6S0k0OW5xYXhSYnZONTlo?=
+ =?utf-8?B?eXF0Q2EycFZqbk5JNmh3cUJoLys2dkZKQmU3ejVrbTJHcXZjT1NLSnZQQlNR?=
+ =?utf-8?B?dGVoN2dHUmxtRTI2YTJPWHVRa1R0Qm51OGlwK1pRVmJhMUV2M0ZObE95R0l4?=
+ =?utf-8?B?WWhQY29BeCtuR09USXJsSCtjNEwzNGRPeFZHMlJMMCtrTjJXdFEwVkw1ejhF?=
+ =?utf-8?B?QkRwWEFLWjZyMkxvSTRuM0w5YnV6eWVOb2J4czJ5NkdiVnJIWEw2Ti9UdlNN?=
+ =?utf-8?B?THg5TWVsR051SXo2WlNmc3l1SEZGTUJaOEdBYmljL2lyclU0RnZuT1pUazJY?=
+ =?utf-8?B?YlV0T05TaVM2YUpJdVBMSXJHT0xiblpCQjZRSHlycGxod2s5S0s1cnVCTjZ3?=
+ =?utf-8?B?WHJ4eVJtVEVIWGFGdjFCWWdmU1VsTzI4eEFKaVBKQVBJQ2szbDZKVmdZcmxQ?=
+ =?utf-8?B?eEl3d0ZTM2UxcVk2TGdDb1Q4SkJOMzVUcjhMYXdNWG1uVVVyZWJmT080MUVu?=
+ =?utf-8?B?Y3ZJV1lXczVYZFBMV0JIQVY3M3hlcUJlcDZmYURhTVJIbXBXa3JaSGR2MFIy?=
+ =?utf-8?B?MWFpb3JtajJmb2xleVBTUmRGcTJSZ1lZOXl2UlJFU2J1NUFhMHlLdGxuTmFx?=
+ =?utf-8?B?R3E3K1FVZGVva3duallQVGFwakJvNjVMMmNNcHQ5TWtZVGh1Zmx5dTZyRmpk?=
+ =?utf-8?B?NjRaN3dMNUxoMGJ5ZzN2OWgxRDE2Vngxa05TSkdWWXFOSCtiUkl5UndDUGFi?=
+ =?utf-8?B?UTVZMW9idnB0ZlZYTldubURPa2l2aFFDSWErdmxUSnBoeGd5ZXZoTFZEQzBK?=
+ =?utf-8?B?UXliVXppQ2FMUnVlMGpFRDAxVlVWK3UydVBVeVFUYmh6UGwyM2UzS0dkOU9o?=
+ =?utf-8?B?UGhjeXhNSUtLOXQyYjg4bk1RWFBNM0ZHeGRwdDlDNXdWaUxNK3hiVUM5ejVl?=
+ =?utf-8?B?eEhYQlFlZ1pzSTFDKzZiTGJKbG9QNFFIK3A1L0JncTAxRmpEaTVnRmxjNjRR?=
+ =?utf-8?B?MnRUT2kreSt4QVVMQUIyUzQ3dDRUWGxWalNBamV2bkdncG9HbE40eEtYdE41?=
+ =?utf-8?B?WmI1T0tjR0hQRTh4enl1OXdPbVlweUY2WXRtN2p4dVJkMXhyVFBDbkdHSzg5?=
+ =?utf-8?B?NTR0Q3hHSHdQR00wN3VxdVYzY2F1WTdISEJ1d1poeStsaHpoc0pra0V3MEVu?=
+ =?utf-8?B?eGk1OGN0OUl6MVZxNUhPVXBpemlLVXBqbDBqWXREbUZmdFZiTEI5ODlabDBV?=
+ =?utf-8?B?MzJNRURGdlkvbjlLUHRGVVVXYndjSEdzVVptYy94VWRkV0tWNCtOd0pZODlO?=
+ =?utf-8?B?Wm9pdzFQUUk0eDZOc1JEVU9VcnRuVUZ4Y3BGTkgvaFE1d1NyczhDdy93UGd3?=
+ =?utf-8?B?V2ZiMHlVc1lwMWdMZXh3clMxRnVYRCtxV0tjejZ5MHdtODQ5NmZsNUtYUkoz?=
+ =?utf-8?B?MnczM2NhK1FNUC9mNlo2ZUpyWE1Ba3ZaTExSQ0V4TVlzT3pFSlNOZFd1bGdi?=
+ =?utf-8?B?czRsenY0ZnZKRHlzQU9pK05KVWRQSTdvWFpLR2orSytCUFM0M1hCYmJMdUVv?=
+ =?utf-8?B?bVJiR0w5aDZ1MkJTVTFvTVRRQzZFMWVVR1NPSFJRcHFvZXRaZDA1czNJNFdy?=
+ =?utf-8?B?VVhaYTBFVGRaQU1nYnZjVWh2Vm9UK240WDAzUStNQWhHdHNtbnpoU3Bvd0h5?=
+ =?utf-8?B?YkJEZnFRYm5PdS80b3BpK0VnM21ZemN4SjFuMEl1M1JrNWVJemFDMW9Ebllp?=
+ =?utf-8?B?L3ZUTXE5MUgwbEVWc2c3VnppUUFlSUJmRUUrcWhDVFA3d2N5MEVnQ0d3Tmox?=
+ =?utf-8?B?MlhXdlRDUTE0VCtXZ05uMGhiQitKZEtqOEtvQlhJQ080UGc9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.12;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:atlvpn-bp.amd.com;CAT:NONE;SFS:(13230040)(376014)(1800799024)(82310400026)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Nov 2024 16:31:13.9800
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 653e08c6-9362-493e-c995-08dd07ee6b66
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.12];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CO1PEPF000042A7.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB7797
 
-Hello,
-
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-KASAN: slab-use-after-free Read in set_powered_sync
-
-==================================================================
-BUG: KASAN: slab-use-after-free in set_powered_sync+0x3a/0xc0 net/bluetooth/mgmt.c:1354
-Read of size 8 at addr ffff888022f18818 by task kworker/u9:0/54
-
-CPU: 1 UID: 0 PID: 54 Comm: kworker/u9:0 Not tainted 6.12.0-rc7-syzkaller-01702-gd7ef9eeef072 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
-Workqueue: hci0 hci_cmd_sync_work
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:377 [inline]
- print_report+0x169/0x550 mm/kasan/report.c:488
- kasan_report+0x143/0x180 mm/kasan/report.c:601
- set_powered_sync+0x3a/0xc0 net/bluetooth/mgmt.c:1354
- hci_cmd_sync_work+0x22b/0x400 net/bluetooth/hci_sync.c:332
- process_one_work kernel/workqueue.c:3229 [inline]
- process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
- worker_thread+0x870/0xd30 kernel/workqueue.c:3391
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-
-Allocated by task 5993:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
- poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
- __kasan_kmalloc+0x98/0xb0 mm/kasan/common.c:394
- kasan_kmalloc include/linux/kasan.h:257 [inline]
- __kmalloc_cache_noprof+0x19c/0x2c0 mm/slub.c:4295
- kmalloc_noprof include/linux/slab.h:878 [inline]
- kzalloc_noprof include/linux/slab.h:1014 [inline]
- mgmt_pending_new+0x65/0x250 net/bluetooth/mgmt_util.c:269
- mgmt_pending_add+0x36/0x120 net/bluetooth/mgmt_util.c:296
- set_powered+0x3cd/0x5e0 net/bluetooth/mgmt.c:1395
- hci_mgmt_cmd+0xc47/0x11d0 net/bluetooth/hci_sock.c:1712
- hci_sock_sendmsg+0x7b8/0x11c0 net/bluetooth/hci_sock.c:1832
- sock_sendmsg_nosec net/socket.c:729 [inline]
- __sock_sendmsg+0x221/0x270 net/socket.c:744
- sock_write_iter+0x2d7/0x3f0 net/socket.c:1165
- new_sync_write fs/read_write.c:590 [inline]
- vfs_write+0xaeb/0xd30 fs/read_write.c:683
- ksys_write+0x183/0x2b0 fs/read_write.c:736
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Freed by task 5989:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
- kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:579
- poison_slab_object mm/kasan/common.c:247 [inline]
- __kasan_slab_free+0x59/0x70 mm/kasan/common.c:264
- kasan_slab_free include/linux/kasan.h:230 [inline]
- slab_free_hook mm/slub.c:2342 [inline]
- slab_free mm/slub.c:4579 [inline]
- kfree+0x1a0/0x440 mm/slub.c:4727
- settings_rsp+0x2bc/0x390 net/bluetooth/mgmt.c:1444
- mgmt_pending_foreach+0xd1/0x130 net/bluetooth/mgmt_util.c:259
- __mgmt_power_off+0x106/0x430 net/bluetooth/mgmt.c:9520
- hci_dev_close_sync+0x6c4/0x11c0 net/bluetooth/hci_sync.c:5208
- hci_dev_do_close net/bluetooth/hci_core.c:483 [inline]
- hci_dev_close+0x112/0x210 net/bluetooth/hci_core.c:508
- sock_do_ioctl+0x158/0x460 net/socket.c:1227
- sock_ioctl+0x626/0x8e0 net/socket.c:1346
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:907 [inline]
- __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:893
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-The buggy address belongs to the object at ffff888022f18800
- which belongs to the cache kmalloc-96 of size 96
-The buggy address is located 24 bytes inside of
- freed 96-byte region [ffff888022f18800, ffff888022f18860)
-
-The buggy address belongs to the physical page:
-page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x22f18
-ksm flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
-page_type: f5(slab)
-raw: 00fff00000000000 ffff88801ac41280 ffffea00009d9840 dead000000000003
-raw: 0000000000000000 0000000080200020 00000001f5000000 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 0, migratetype Unmovable, gfp_mask 0x52820(GFP_ATOMIC|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP), pid 58, tgid 58 (kworker/1:2), ts 69902458132, free_ts 69192164737
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1556
- prep_new_page mm/page_alloc.c:1564 [inline]
- get_page_from_freelist+0x3649/0x3790 mm/page_alloc.c:3474
- __alloc_pages_noprof+0x292/0x710 mm/page_alloc.c:4750
- alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2265
- alloc_slab_page+0x6a/0x140 mm/slub.c:2412
- allocate_slab+0x5a/0x2f0 mm/slub.c:2578
- new_slab mm/slub.c:2631 [inline]
- ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3818
- __slab_alloc+0x58/0xa0 mm/slub.c:3908
- __slab_alloc_node mm/slub.c:3961 [inline]
- slab_alloc_node mm/slub.c:4122 [inline]
- __kmalloc_cache_noprof+0x1d5/0x2c0 mm/slub.c:4290
- kmalloc_noprof include/linux/slab.h:878 [inline]
- dst_cow_metrics_generic+0x56/0x1c0 net/core/dst.c:185
- dst_metrics_write_ptr include/net/dst.h:133 [inline]
- dst_metric_set include/net/dst.h:194 [inline]
- icmp6_dst_alloc+0x270/0x420 net/ipv6/route.c:3288
- mld_sendpack+0x6a3/0xdb0 net/ipv6/mcast.c:1808
- mld_dad_work+0x44/0x500 net/ipv6/mcast.c:2260
- process_one_work kernel/workqueue.c:3229 [inline]
- process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
- worker_thread+0x870/0xd30 kernel/workqueue.c:3391
- kthread+0x2f0/0x390 kernel/kthread.c:389
-page last free pid 25 tgid 25 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1127 [inline]
- free_unref_page+0xdf9/0x1140 mm/page_alloc.c:2657
- discard_slab mm/slub.c:2677 [inline]
- __put_partials+0xeb/0x130 mm/slub.c:3145
- put_cpu_partial+0x17c/0x250 mm/slub.c:3220
- __slab_free+0x2ea/0x3d0 mm/slub.c:4449
- qlink_free mm/kasan/quarantine.c:163 [inline]
- qlist_free_all+0x9a/0x140 mm/kasan/quarantine.c:179
- kasan_quarantine_reduce+0x14f/0x170 mm/kasan/quarantine.c:286
- __kasan_slab_alloc+0x23/0x80 mm/kasan/common.c:329
- kasan_slab_alloc include/linux/kasan.h:247 [inline]
- slab_post_alloc_hook mm/slub.c:4085 [inline]
- slab_alloc_node mm/slub.c:4134 [inline]
- kmem_cache_alloc_node_noprof+0x16b/0x320 mm/slub.c:4186
- __alloc_skb+0x1c3/0x440 net/core/skbuff.c:668
- alloc_skb include/linux/skbuff.h:1323 [inline]
- alloc_skb_with_frags+0xc3/0x820 net/core/skbuff.c:6612
- sock_alloc_send_pskb+0x91a/0xa60 net/core/sock.c:2881
- sock_alloc_send_skb include/net/sock.h:1797 [inline]
- mld_newpack+0x1c3/0xaf0 net/ipv6/mcast.c:1747
- add_grhead net/ipv6/mcast.c:1850 [inline]
- add_grec+0x1492/0x19a0 net/ipv6/mcast.c:1988
- mld_send_initial_cr+0x228/0x4b0 net/ipv6/mcast.c:2234
- mld_dad_work+0x44/0x500 net/ipv6/mcast.c:2260
- process_one_work kernel/workqueue.c:3229 [inline]
- process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
-
-Memory state around the buggy address:
- ffff888022f18700: 00 00 00 00 00 00 00 00 00 00 00 fc fc fc fc fc
- ffff888022f18780: fa fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
->ffff888022f18800: fa fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
-                            ^
- ffff888022f18880: fa fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
- ffff888022f18900: fa fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
-==================================================================
+Sure. I will fix these two and post v11 patch set.
 
 
-Tested on:
+Lizhi
 
-commit:         d7ef9eee Merge branch 'am65-cpsw-rx-dscp-prio-map'
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=117bbb5f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d9e1e43bf6b46a4d
-dashboard link: https://syzkaller.appspot.com/bug?extid=03d6270b6425df1605bf
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Note: no patches were applied.
+On 11/17/24 12:03, Jeffrey Hugo wrote:
+> On 11/12/2024 12:47 PM, Lizhi Hou wrote:
+>> @@ -88,6 +91,8 @@ struct amdxdna_client {
+>>       struct list_head        node;
+>>       pid_t                pid;
+>>       struct mutex            hwctx_lock; /* protect hwctx */
+>> +    /* do NOT wait this srcu when hwctx_lock is hold */
+>
+> do NOT wait on this srcu when hwctx_lock is held
+>
+>> +    struct srcu_struct        hwctx_srcu;
+>>       struct idr            hwctx_idr;
+>>       struct amdxdna_dev        *xdna;
+>>       struct drm_file            *filp;
+>
+>
+> The significant problem I see currently is that this got merged -
+>
+> commit b2ef808786d93df36585cee42cfb973fc41636eb
+> Author: Christian König <ckoenig.leichtzumerken@gmail.com>
+> Date:   Mon Aug 26 14:25:38 2024 +0200
+>
+>     drm/sched: add optional errno to drm_sched_start()
+>
+> I can no longer compile this patch.  Specifically I see -
+>
+>   INSTALL libsubcmd_headers
+>   UPD     include/config/kernel.release
+>   UPD     include/generated/utsrelease.h
+>   CALL    scripts/checksyscalls.sh
+>   CC      init/version.o
+>   AR      init/built-in.a
+>   CC      kernel/sys.o
+>   CC      drivers/base/firmware_loader/main.o
+>   CC      kernel/module/main.o
+>   CC [M]  drivers/accel/amdxdna/aie2_ctx.o
+>   CC [M]  drivers/accel/amdxdna/aie2_message.o
+>   CC [M]  drivers/accel/amdxdna/aie2_pci.o
+>   CC [M]  drivers/accel/amdxdna/aie2_psp.o
+>   CC [M]  drivers/accel/amdxdna/aie2_smu.o
+>   CC [M]  drivers/accel/amdxdna/amdxdna_ctx.o
+>   CC [M]  drivers/accel/amdxdna/amdxdna_gem.o
+>   CC [M]  drivers/accel/amdxdna/amdxdna_mailbox.o
+>   CC [M]  drivers/accel/amdxdna/amdxdna_mailbox_helper.o
+>   CC [M]  drivers/accel/amdxdna/amdxdna_pci_drv.o
+>   CC [M]  drivers/accel/amdxdna/amdxdna_sysfs.o
+>   CC [M]  drivers/accel/amdxdna/npu1_regs.o
+>   CC [M]  drivers/accel/amdxdna/npu2_regs.o
+>   CC [M]  drivers/accel/amdxdna/npu4_regs.o
+>   CC [M]  drivers/accel/amdxdna/npu5_regs.o
+> drivers/accel/amdxdna/aie2_ctx.c: In function ‘aie2_hwctx_restart’:
+> drivers/accel/amdxdna/aie2_ctx.c:84:9: error: too few arguments to 
+> function ‘drm_sched_start’
+>    84 |         drm_sched_start(&hwctx->priv->sched);
+>       |         ^~~~~~~~~~~~~~~
+> In file included from ./include/trace/events/amdxdna.h:12,
+>                  from drivers/accel/amdxdna/aie2_ctx.c:14:
+> ./include/drm/gpu_scheduler.h:593:6: note: declared here
+>   593 | void drm_sched_start(struct drm_gpu_scheduler *sched, int errno);
+>       |      ^~~~~~~~~~~~~~~
+> make[5]: *** [scripts/Makefile.build:229: 
+> drivers/accel/amdxdna/aie2_ctx.o] Error 1
+> make[5]: *** Waiting for unfinished jobs....
+>   AR      drivers/base/firmware_loader/built-in.a
+>   AR      drivers/base/built-in.a
+> make[4]: *** [scripts/Makefile.build:478: drivers/accel/amdxdna] Error 2
+> make[3]: *** [scripts/Makefile.build:478: drivers/accel] Error 2
+> make[2]: *** [scripts/Makefile.build:478: drivers] Error 2
+> make[2]: *** Waiting for unfinished jobs....
+>   AR      kernel/module/built-in.a
+>   AR      kernel/built-in.a
+>
+> With the above two things fixed:
+>
+> Reviewed-by: Jeffrey Hugo <quic_jhugo@quicinc.com>
+>
 
