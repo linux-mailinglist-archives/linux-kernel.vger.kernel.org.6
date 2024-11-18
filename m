@@ -1,748 +1,194 @@
-Return-Path: <linux-kernel+bounces-413314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65DD79D172D
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 18:32:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 627649D1723
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 18:30:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2D001F23311
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 17:32:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C35F284B23
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 17:30:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9F4C1C4A20;
-	Mon, 18 Nov 2024 17:30:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E1091C1F28;
+	Mon, 18 Nov 2024 17:30:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="sdlNEQEd"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2044.outbound.protection.outlook.com [40.107.244.44])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nnV0rmH0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 236521C2420
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 17:30:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.44
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731951014; cv=fail; b=LCXYxnCukakwYdXFgMl/7/wuTevk+bS2yfZwjrGyG9UUsuK5X5673EV4dnuFqP8GzyZWKya6oLD8fJwT0npOr3ZzLr927fKwuQL03XFBALUoGqlcfCPTHTb+eGUbQ1wr6FBkxik4rFqjXEhWWAkHcsCdwhU43faWttzlDM9vraI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731951014; c=relaxed/simple;
-	bh=IqZQq1KaE+Kit52+vdDvgmXc6NWYifWlAg6XBzHhoCI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Pj6G2S72gKO/clXGLN1pPtBJsfdcGBwRXC2maJV/cx3N8W4EJxtkR0NFCgyUeriuFU5jF9K+iRzZ/yi9KWgdJ8T+Saz9ZvYHS3EzveaGNG1w8GmooDFVuINqHtDNLwfyp3TVeRERU05INo8vm/QhLttkB/34JDjUetlxwKEaI/M=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=sdlNEQEd; arc=fail smtp.client-ip=40.107.244.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=yKZgxGJWUyQvzd/LNSQd+3QUAmBb6ZaDhPAvfqir04fD6ZTUShzyDX53MQrmPfc61+g1l6kC+InMc8h97ilnCCaTmuzGkdsr/6AhQ6AWseeNSKUejNaYirR7Rni5q7o+iXSvEFz4MzrmBliPNAz/O00SahsoWwHoVUeC9BMkDBegxLfV9fLcb+nLttPACWnoBsd8qmzZDu2T+o/pvjKdWQoF9Io8sn6dIs40oZOU5EGkkyL+2ZGDBaLqjq1SLJ/S++yDE2KcebqtIsp0wjH0RJn2rZgqMl4pvg1Kgloz6WcJ4v3cRW+8jw4c0eQXYrdc9T7tg1aEMTXs4eZN8FupWA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2BUyoq5k0MfHFHnRwtKvICLVI2ig/IHIbk/uOrnr1G8=;
- b=V4VoWNGBcXqShn7ov08CaRrpPtO8ixm1zijEIdFqn1oexAYXKR4Y4lzsa96loSIg1q6SFBjSGlaTeTSiCdyYlGpFmcV85uCyyq7IHFEanGWsJkn0QwKOLQ2w0KNMcqhNcqPdisXf0lZvp8KRgH0XOV5mMofGNMwknzbJ8NPYOwUjYa0awftB/vAbgIrw9le5+5GVpagWC24qcruIstVz17UgM8JYJuHy+Ll4+uLnh+UUIseMEPT966H6Wgi2znYOkmfm3SkmF4iU6n0kWbzWagU3BR1ipW0ORge1Tfm36W1AQ9ysDld64vcKXw3BFKiWgw8cksyxwt5JJvrD3FE6NQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.12) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2BUyoq5k0MfHFHnRwtKvICLVI2ig/IHIbk/uOrnr1G8=;
- b=sdlNEQEdry6K0YQMeI52j9TCY2ndJk1ibklhkM3bJPMwelsYtzy+PFey2mopM26m73/LODEt0u50vEEFHyyEUpsDJhOvdGGeiYowxKdB4aZv6Re9Y3uYrpBa2BLFuZ9mGSF4Fb+7+T4w+77dJUwWPARDVBKFy3wE+TEOhDjLwvU=
-Received: from BL1PR13CA0233.namprd13.prod.outlook.com (2603:10b6:208:2bf::28)
- by CH3PR12MB8912.namprd12.prod.outlook.com (2603:10b6:610:169::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.21; Mon, 18 Nov
- 2024 17:30:02 +0000
-Received: from MN1PEPF0000ECD8.namprd02.prod.outlook.com
- (2603:10b6:208:2bf:cafe::f1) by BL1PR13CA0233.outlook.office365.com
- (2603:10b6:208:2bf::28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.18 via Frontend
- Transport; Mon, 18 Nov 2024 17:30:02 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.12)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.12 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.12; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.12) by
- MN1PEPF0000ECD8.mail.protection.outlook.com (10.167.242.137) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8158.14 via Frontend Transport; Mon, 18 Nov 2024 17:30:02 +0000
-Received: from SATLEXMB06.amd.com (10.181.40.147) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 18 Nov
- 2024 11:30:02 -0600
-Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB06.amd.com
- (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 18 Nov
- 2024 11:30:01 -0600
-Received: from xsjlizhih51.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Mon, 18 Nov 2024 11:30:01 -0600
-From: Lizhi Hou <lizhi.hou@amd.com>
-To: <ogabbay@kernel.org>, <quic_jhugo@quicinc.com>,
-	<dri-devel@lists.freedesktop.org>
-CC: Lizhi Hou <lizhi.hou@amd.com>, <linux-kernel@vger.kernel.org>,
-	<min.ma@amd.com>, <max.zhen@amd.com>, <sonal.santan@amd.com>,
-	<king.tam@amd.com>
-Subject: [PATCH V11 10/10] accel/amdxdna: Add query functions
-Date: Mon, 18 Nov 2024 09:29:42 -0800
-Message-ID: <20241118172942.2014541-11-lizhi.hou@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241118172942.2014541-1-lizhi.hou@amd.com>
-References: <20241118172942.2014541-1-lizhi.hou@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46BDD1C1F14;
+	Mon, 18 Nov 2024 17:30:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731951003; cv=none; b=nzXMq3xi525lXwR4/meRgl1eS/+wF7rH2HpxYNaU1Gduiozf3eeJa08vlbQZIhHwpCSIXTCE84k9CQYSHD7K0INUNCmyWSMQQv9rOyTiHcymbRLNJ6WJ2++getcRac6QobggMfCDguk/FFRw/TLGMLbAlSPCwV8Ai0k+s38gDqs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731951003; c=relaxed/simple;
+	bh=AAOwy+5Dxmw1BsBJE62bzHW+0ABCsWiqj+yUUpz71cs=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=V0un6KEeSk6pf+PPYQ0DLCsjz5m3zH8uWJFklXhVG+IJ2fULFWWsd8bx4+FWcowXBXBZDVxIEx1JIFw5rIrFNY8XtfGBz9WgyK/JmreBvZ/R2NxR3hk0WgGU55MBOamvNYxiEuA1W02pof788ktk5sXe4+Mv612qeEWh9N+FHDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nnV0rmH0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D2DAC4CECC;
+	Mon, 18 Nov 2024 17:30:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731951002;
+	bh=AAOwy+5Dxmw1BsBJE62bzHW+0ABCsWiqj+yUUpz71cs=;
+	h=Date:From:To:Cc:Subject:From;
+	b=nnV0rmH0kWgH9s7PawZS1vOlsLqs9gcgtYKSh1V06ZapPSX69z5YJDIH9hRbK9cp6
+	 RY8D1mktBYfXWC2Qf7zPHdw2WXp1ICFFWGHp16aMba1RPlyxnsWSb80T9ruS+bQ0Br
+	 EaWAs9ooDGCAerPVU5Lt3fuT8C+n5MonfVgG+WpSv9F+GGhtuKr0utfUOPP1XcprDj
+	 R570nFvO+hQtgXKfGzfXH/FOyTf+/wEbhbM00mV1wMKnjNXIEA/aMEKv1LcmuJm/AO
+	 i2P8Mkt53YVekKzpFHv8gsLRs7b7tm+hm0HPAq63nb3fmPVD+gg15BVx0waIGv7x9y
+	 fxl3sO7MDpSQg==
+Date: Mon, 18 Nov 2024 18:29:57 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+	Arnaldo Carvalho de Melo <acme@redhat.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: [GIT PULL] Performance events changes for v6.13
+Message-ID: <Zzt5lYZGF8IOrgpB@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN1PEPF0000ECD8:EE_|CH3PR12MB8912:EE_
-X-MS-Office365-Filtering-Correlation-Id: ebe94bf3-f8b2-4e51-0a1c-08dd07f6a29c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|82310400026|36860700013|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?AyFnju677jKVS1HTEAqjvWjRSB8hKFTtemix/8nLDY4U3+KW+hPF+N1+W9A8?=
- =?us-ascii?Q?hOPG7FH4EcU/JetDGrCV/ZyPu+Nq0F8+N8YFl4Gp1HyM/KWGehv0i9ZVm/++?=
- =?us-ascii?Q?IHP7PlsmpBb1HdEsN4A+qOK4F0wtZplc7eP16gzAQEuYeH9gL5Xct7qvEXc5?=
- =?us-ascii?Q?c0x/k958RvrC8hJIPomfGqmD+u7ORJDHQOoSl0cGhQhy3GGHMiyD6VGNioab?=
- =?us-ascii?Q?9vqSIeWEKpT4VM26i6QjJOgFoBplpDTeVKAHc4YSqGMJQViXCI7CflWv5w3u?=
- =?us-ascii?Q?etBhBXGaeGYdToaJskOfFJImuk7NexDzUvNVxYBMCc+F1vbz58B99ul5gqS4?=
- =?us-ascii?Q?VHCW/MmZLkcwLhV2fV8x9P2Hnsyf2kcDfICzrSKQx0KNQaIIZVEnWeL7qJ9c?=
- =?us-ascii?Q?vU4QiaJk/uakdUxp2OXV5iYhi/w6zE0xCXH4qJHNFbC0J2ej66WExQx5I2lN?=
- =?us-ascii?Q?A+d05M2PagHSv2KrPOFSRNGDJVmRPaZWwxzWCJ8ilYPCw0vNJdb2A7kDxOtE?=
- =?us-ascii?Q?oGV6Ri2p6Cc6jUsXG8uT3YLeyq9SklQju4PDZGzTFj18Vd5axoaVSSdxwsZn?=
- =?us-ascii?Q?3kV142t38JbzF/w2sW1bKzZtpDDkiWb7CaE1WCRZ5yZFhpuwMUxVnX2KWOtn?=
- =?us-ascii?Q?o79Z1Dm38nFQQLXpN3HCs8XbjS9ksh0OPOp1MvB5m67yhorR4ucirYWupsHo?=
- =?us-ascii?Q?48Jq7OBnSFmkX4pdpXF4NSu7h7cMiNBxDR+pb/009jTuh07mWxoZ92/AXrBV?=
- =?us-ascii?Q?AOkpPSajHfpsg1Xee77jDzbJ2716m8W/GU/9XttlZzAxTS2kuxl8TfNILA4y?=
- =?us-ascii?Q?TUb+qGcHhHDHySP+D/K4yvlvI8KoF62Uxg4qkRp2GSS/B6kBTUak/hihOXF5?=
- =?us-ascii?Q?H9iw3PoiuDPlm9HCrJEUlfAq+vXDJ97E/lYf23adx9dj6B0SZNWR/VWYP0O+?=
- =?us-ascii?Q?LtdG5zZn2K56tphS0zFP0cV8Of+cxQVc+afmuxDiRkKC3Ckwgw5baskSX0ly?=
- =?us-ascii?Q?F/gNkzR5/32ZQt52PUmvS7CP/81mzmMR4PGH1Q4PKNw+VzFtxUu6iyXfNWjf?=
- =?us-ascii?Q?8sXRN8LSFjygq6kGmT8hStDyO8HlcqppTJuk8NcfMjFDmrm3DUALycH/rIb6?=
- =?us-ascii?Q?LACQ9Ll1XyRO6YEkDKZxKa2pKzn8zqFTkHJy/phT6a6HEDPDzcKyYItd8qRL?=
- =?us-ascii?Q?kFj00g8LTesBDCWFVgdv7VH7DkVkIL3W/D7DfL3GYg6E70gHsLg/B7a+LYVK?=
- =?us-ascii?Q?kRZ50zHibkxDP2WK0LC9FyfwWBH7ys8NDCYp2wOAMKM68ol/PlIQNKy5fESp?=
- =?us-ascii?Q?ZjT4h7bONnNL5kUrRBB5g9PnIp1kfaplaTicq0DAUEvWHbwqyBhHcELZhscv?=
- =?us-ascii?Q?ZcRiqiF5hywN/dH+8vhc9qLw/EdF4TWJvXQ9JbWcVzV6XPte2w=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.12;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:atlvpn-bp.amd.com;CAT:NONE;SFS:(13230040)(376014)(82310400026)(36860700013)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Nov 2024 17:30:02.7337
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: ebe94bf3-f8b2-4e51-0a1c-08dd07f6a29c
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.12];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	MN1PEPF0000ECD8.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8912
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Add GET_INFO ioctl to retrieve hardware information, including
-AIE, clock, hardware context etc.
+Linus,
 
-Co-developed-by: Min Ma <min.ma@amd.com>
-Signed-off-by: Min Ma <min.ma@amd.com>
-Reviewed-by: Jeffrey Hugo <quic_jhugo@quicinc.com>
-Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
----
- drivers/accel/amdxdna/aie2_message.c    |  65 +++++++
- drivers/accel/amdxdna/aie2_pci.c        | 222 ++++++++++++++++++++++++
- drivers/accel/amdxdna/aie2_pci.h        |   1 +
- drivers/accel/amdxdna/amdxdna_pci_drv.c |  19 ++
- drivers/accel/amdxdna/amdxdna_pci_drv.h |   3 +
- include/uapi/drm/amdxdna_accel.h        | 166 ++++++++++++++++++
- 6 files changed, 476 insertions(+)
+Please pull the latest perf/core Git tree from:
 
-diff --git a/drivers/accel/amdxdna/aie2_message.c b/drivers/accel/amdxdna/aie2_message.c
-index eb7e27045213..c01a1d957b56 100644
---- a/drivers/accel/amdxdna/aie2_message.c
-+++ b/drivers/accel/amdxdna/aie2_message.c
-@@ -308,6 +308,71 @@ int aie2_map_host_buf(struct amdxdna_dev_hdl *ndev, u32 context_id, u64 addr, u6
- 	return 0;
- }
- 
-+int aie2_query_status(struct amdxdna_dev_hdl *ndev, char __user *buf,
-+		      u32 size, u32 *cols_filled)
-+{
-+	DECLARE_AIE2_MSG(aie_column_info, MSG_OP_QUERY_COL_STATUS);
-+	struct amdxdna_dev *xdna = ndev->xdna;
-+	struct amdxdna_client *client;
-+	struct amdxdna_hwctx *hwctx;
-+	dma_addr_t dma_addr;
-+	u32 aie_bitmap = 0;
-+	u8 *buff_addr;
-+	int next = 0;
-+	int ret, idx;
-+
-+	buff_addr = dma_alloc_noncoherent(xdna->ddev.dev, size, &dma_addr,
-+					  DMA_FROM_DEVICE, GFP_KERNEL);
-+	if (!buff_addr)
-+		return -ENOMEM;
-+
-+	/* Go through each hardware context and mark the AIE columns that are active */
-+	list_for_each_entry(client, &xdna->client_list, node) {
-+		idx = srcu_read_lock(&client->hwctx_srcu);
-+		idr_for_each_entry_continue(&client->hwctx_idr, hwctx, next)
-+			aie_bitmap |= amdxdna_hwctx_col_map(hwctx);
-+		srcu_read_unlock(&client->hwctx_srcu, idx);
-+	}
-+
-+	*cols_filled = 0;
-+	req.dump_buff_addr = dma_addr;
-+	req.dump_buff_size = size;
-+	req.num_cols = hweight32(aie_bitmap);
-+	req.aie_bitmap = aie_bitmap;
-+
-+	drm_clflush_virt_range(buff_addr, size); /* device can access */
-+	ret = aie2_send_mgmt_msg_wait(ndev, &msg);
-+	if (ret) {
-+		XDNA_ERR(xdna, "Error during NPU query, status %d", ret);
-+		goto fail;
-+	}
-+
-+	if (resp.status != AIE2_STATUS_SUCCESS) {
-+		XDNA_ERR(xdna, "Query NPU status failed, status 0x%x", resp.status);
-+		ret = -EINVAL;
-+		goto fail;
-+	}
-+	XDNA_DBG(xdna, "Query NPU status completed");
-+
-+	if (size < resp.size) {
-+		ret = -EINVAL;
-+		XDNA_ERR(xdna, "Bad buffer size. Available: %u. Needs: %u", size, resp.size);
-+		goto fail;
-+	}
-+
-+	if (copy_to_user(buf, buff_addr, resp.size)) {
-+		ret = -EFAULT;
-+		XDNA_ERR(xdna, "Failed to copy NPU status to user space");
-+		goto fail;
-+	}
-+
-+	*cols_filled = aie_bitmap;
-+
-+fail:
-+	dma_free_noncoherent(xdna->ddev.dev, size, buff_addr, dma_addr, DMA_FROM_DEVICE);
-+	return ret;
-+}
-+
- int aie2_register_asyn_event_msg(struct amdxdna_dev_hdl *ndev, dma_addr_t addr, u32 size,
- 				 void *handle, int (*cb)(void*, const u32 *, size_t))
- {
-diff --git a/drivers/accel/amdxdna/aie2_pci.c b/drivers/accel/amdxdna/aie2_pci.c
-index 5467aabe7308..349ada697e48 100644
---- a/drivers/accel/amdxdna/aie2_pci.c
-+++ b/drivers/accel/amdxdna/aie2_pci.c
-@@ -5,6 +5,7 @@
- 
- #include <drm/amdxdna_accel.h>
- #include <drm/drm_device.h>
-+#include <drm/drm_drv.h>
- #include <drm/drm_gem_shmem_helper.h>
- #include <drm/drm_managed.h>
- #include <drm/drm_print.h>
-@@ -525,11 +526,232 @@ static void aie2_fini(struct amdxdna_dev *xdna)
- 	pci_free_irq_vectors(pdev);
- }
- 
-+static int aie2_get_aie_status(struct amdxdna_client *client,
-+			       struct amdxdna_drm_get_info *args)
-+{
-+	struct amdxdna_drm_query_aie_status status;
-+	struct amdxdna_dev *xdna = client->xdna;
-+	struct amdxdna_dev_hdl *ndev;
-+	int ret;
-+
-+	ndev = xdna->dev_handle;
-+	if (copy_from_user(&status, u64_to_user_ptr(args->buffer), sizeof(status))) {
-+		XDNA_ERR(xdna, "Failed to copy AIE request into kernel");
-+		return -EFAULT;
-+	}
-+
-+	if (ndev->metadata.cols * ndev->metadata.size < status.buffer_size) {
-+		XDNA_ERR(xdna, "Invalid buffer size. Given Size: %u. Need Size: %u.",
-+			 status.buffer_size, ndev->metadata.cols * ndev->metadata.size);
-+		return -EINVAL;
-+	}
-+
-+	ret = aie2_query_status(ndev, u64_to_user_ptr(status.buffer),
-+				status.buffer_size, &status.cols_filled);
-+	if (ret) {
-+		XDNA_ERR(xdna, "Failed to get AIE status info. Ret: %d", ret);
-+		return ret;
-+	}
-+
-+	if (copy_to_user(u64_to_user_ptr(args->buffer), &status, sizeof(status))) {
-+		XDNA_ERR(xdna, "Failed to copy AIE request info to user space");
-+		return -EFAULT;
-+	}
-+
-+	return 0;
-+}
-+
-+static int aie2_get_aie_metadata(struct amdxdna_client *client,
-+				 struct amdxdna_drm_get_info *args)
-+{
-+	struct amdxdna_drm_query_aie_metadata *meta;
-+	struct amdxdna_dev *xdna = client->xdna;
-+	struct amdxdna_dev_hdl *ndev;
-+	int ret = 0;
-+
-+	ndev = xdna->dev_handle;
-+	meta = kzalloc(sizeof(*meta), GFP_KERNEL);
-+	if (!meta)
-+		return -ENOMEM;
-+
-+	meta->col_size = ndev->metadata.size;
-+	meta->cols = ndev->metadata.cols;
-+	meta->rows = ndev->metadata.rows;
-+
-+	meta->version.major = ndev->metadata.version.major;
-+	meta->version.minor = ndev->metadata.version.minor;
-+
-+	meta->core.row_count = ndev->metadata.core.row_count;
-+	meta->core.row_start = ndev->metadata.core.row_start;
-+	meta->core.dma_channel_count = ndev->metadata.core.dma_channel_count;
-+	meta->core.lock_count = ndev->metadata.core.lock_count;
-+	meta->core.event_reg_count = ndev->metadata.core.event_reg_count;
-+
-+	meta->mem.row_count = ndev->metadata.mem.row_count;
-+	meta->mem.row_start = ndev->metadata.mem.row_start;
-+	meta->mem.dma_channel_count = ndev->metadata.mem.dma_channel_count;
-+	meta->mem.lock_count = ndev->metadata.mem.lock_count;
-+	meta->mem.event_reg_count = ndev->metadata.mem.event_reg_count;
-+
-+	meta->shim.row_count = ndev->metadata.shim.row_count;
-+	meta->shim.row_start = ndev->metadata.shim.row_start;
-+	meta->shim.dma_channel_count = ndev->metadata.shim.dma_channel_count;
-+	meta->shim.lock_count = ndev->metadata.shim.lock_count;
-+	meta->shim.event_reg_count = ndev->metadata.shim.event_reg_count;
-+
-+	if (copy_to_user(u64_to_user_ptr(args->buffer), meta, sizeof(*meta)))
-+		ret = -EFAULT;
-+
-+	kfree(meta);
-+	return ret;
-+}
-+
-+static int aie2_get_aie_version(struct amdxdna_client *client,
-+				struct amdxdna_drm_get_info *args)
-+{
-+	struct amdxdna_drm_query_aie_version version;
-+	struct amdxdna_dev *xdna = client->xdna;
-+	struct amdxdna_dev_hdl *ndev;
-+
-+	ndev = xdna->dev_handle;
-+	version.major = ndev->version.major;
-+	version.minor = ndev->version.minor;
-+
-+	if (copy_to_user(u64_to_user_ptr(args->buffer), &version, sizeof(version)))
-+		return -EFAULT;
-+
-+	return 0;
-+}
-+
-+static int aie2_get_clock_metadata(struct amdxdna_client *client,
-+				   struct amdxdna_drm_get_info *args)
-+{
-+	struct amdxdna_drm_query_clock_metadata *clock;
-+	struct amdxdna_dev *xdna = client->xdna;
-+	struct amdxdna_dev_hdl *ndev;
-+	int ret = 0;
-+
-+	ndev = xdna->dev_handle;
-+	clock = kzalloc(sizeof(*clock), GFP_KERNEL);
-+	if (!clock)
-+		return -ENOMEM;
-+
-+	memcpy(clock->mp_npu_clock.name, ndev->mp_npu_clock.name,
-+	       sizeof(clock->mp_npu_clock.name));
-+	clock->mp_npu_clock.freq_mhz = ndev->mp_npu_clock.freq_mhz;
-+	memcpy(clock->h_clock.name, ndev->h_clock.name, sizeof(clock->h_clock.name));
-+	clock->h_clock.freq_mhz = ndev->h_clock.freq_mhz;
-+
-+	if (copy_to_user(u64_to_user_ptr(args->buffer), clock, sizeof(*clock)))
-+		ret = -EFAULT;
-+
-+	kfree(clock);
-+	return ret;
-+}
-+
-+static int aie2_get_hwctx_status(struct amdxdna_client *client,
-+				 struct amdxdna_drm_get_info *args)
-+{
-+	struct amdxdna_drm_query_hwctx __user *buf;
-+	struct amdxdna_dev *xdna = client->xdna;
-+	struct amdxdna_drm_query_hwctx *tmp;
-+	struct amdxdna_client *tmp_client;
-+	struct amdxdna_hwctx *hwctx;
-+	bool overflow = false;
-+	u32 req_bytes = 0;
-+	u32 hw_i = 0;
-+	int ret = 0;
-+	int next;
-+	int idx;
-+
-+	drm_WARN_ON(&xdna->ddev, !mutex_is_locked(&xdna->dev_lock));
-+
-+	tmp = kzalloc(sizeof(*tmp), GFP_KERNEL);
-+	if (!tmp)
-+		return -ENOMEM;
-+
-+	buf = u64_to_user_ptr(args->buffer);
-+	list_for_each_entry(tmp_client, &xdna->client_list, node) {
-+		idx = srcu_read_lock(&tmp_client->hwctx_srcu);
-+		next = 0;
-+		idr_for_each_entry_continue(&tmp_client->hwctx_idr, hwctx, next) {
-+			req_bytes += sizeof(*tmp);
-+			if (args->buffer_size < req_bytes) {
-+				/* Continue iterating to get the required size */
-+				overflow = true;
-+				continue;
-+			}
-+
-+			memset(tmp, 0, sizeof(*tmp));
-+			tmp->pid = tmp_client->pid;
-+			tmp->context_id = hwctx->id;
-+			tmp->start_col = hwctx->start_col;
-+			tmp->num_col = hwctx->num_col;
-+			tmp->command_submissions = hwctx->priv->seq;
-+			tmp->command_completions = hwctx->priv->completed;
-+
-+			if (copy_to_user(&buf[hw_i], tmp, sizeof(*tmp))) {
-+				ret = -EFAULT;
-+				srcu_read_unlock(&tmp_client->hwctx_srcu, idx);
-+				goto out;
-+			}
-+			hw_i++;
-+		}
-+		srcu_read_unlock(&tmp_client->hwctx_srcu, idx);
-+	}
-+
-+	if (overflow) {
-+		XDNA_ERR(xdna, "Invalid buffer size. Given: %u Need: %u.",
-+			 args->buffer_size, req_bytes);
-+		ret = -EINVAL;
-+	}
-+
-+out:
-+	kfree(tmp);
-+	args->buffer_size = req_bytes;
-+	return ret;
-+}
-+
-+static int aie2_get_info(struct amdxdna_client *client, struct amdxdna_drm_get_info *args)
-+{
-+	struct amdxdna_dev *xdna = client->xdna;
-+	int ret, idx;
-+
-+	if (!drm_dev_enter(&xdna->ddev, &idx))
-+		return -ENODEV;
-+
-+	switch (args->param) {
-+	case DRM_AMDXDNA_QUERY_AIE_STATUS:
-+		ret = aie2_get_aie_status(client, args);
-+		break;
-+	case DRM_AMDXDNA_QUERY_AIE_METADATA:
-+		ret = aie2_get_aie_metadata(client, args);
-+		break;
-+	case DRM_AMDXDNA_QUERY_AIE_VERSION:
-+		ret = aie2_get_aie_version(client, args);
-+		break;
-+	case DRM_AMDXDNA_QUERY_CLOCK_METADATA:
-+		ret = aie2_get_clock_metadata(client, args);
-+		break;
-+	case DRM_AMDXDNA_QUERY_HW_CONTEXTS:
-+		ret = aie2_get_hwctx_status(client, args);
-+		break;
-+	default:
-+		XDNA_ERR(xdna, "Not supported request parameter %u", args->param);
-+		ret = -EOPNOTSUPP;
-+	}
-+	XDNA_DBG(xdna, "Got param %d", args->param);
-+
-+	drm_dev_exit(idx);
-+	return ret;
-+}
-+
- const struct amdxdna_dev_ops aie2_ops = {
- 	.init           = aie2_init,
- 	.fini           = aie2_fini,
- 	.resume         = aie2_hw_start,
- 	.suspend        = aie2_hw_stop,
-+	.get_aie_info   = aie2_get_info,
- 	.hwctx_init     = aie2_hwctx_init,
- 	.hwctx_fini     = aie2_hwctx_fini,
- 	.hwctx_config   = aie2_hwctx_config,
-diff --git a/drivers/accel/amdxdna/aie2_pci.h b/drivers/accel/amdxdna/aie2_pci.h
-index 4422dd6c985e..6a2686255c9c 100644
---- a/drivers/accel/amdxdna/aie2_pci.h
-+++ b/drivers/accel/amdxdna/aie2_pci.h
-@@ -231,6 +231,7 @@ int aie2_query_firmware_version(struct amdxdna_dev_hdl *ndev,
- int aie2_create_context(struct amdxdna_dev_hdl *ndev, struct amdxdna_hwctx *hwctx);
- int aie2_destroy_context(struct amdxdna_dev_hdl *ndev, struct amdxdna_hwctx *hwctx);
- int aie2_map_host_buf(struct amdxdna_dev_hdl *ndev, u32 context_id, u64 addr, u64 size);
-+int aie2_query_status(struct amdxdna_dev_hdl *ndev, char *buf, u32 size, u32 *cols_filled);
- int aie2_register_asyn_event_msg(struct amdxdna_dev_hdl *ndev, dma_addr_t addr, u32 size,
- 				 void *handle, int (*cb)(void*, const u32 *, size_t));
- int aie2_config_cu(struct amdxdna_hwctx *hwctx);
-diff --git a/drivers/accel/amdxdna/amdxdna_pci_drv.c b/drivers/accel/amdxdna/amdxdna_pci_drv.c
-index c4df674fdf50..02533732d4ca 100644
---- a/drivers/accel/amdxdna/amdxdna_pci_drv.c
-+++ b/drivers/accel/amdxdna/amdxdna_pci_drv.c
-@@ -143,6 +143,23 @@ static int amdxdna_flush(struct file *f, fl_owner_t id)
- 	return 0;
- }
- 
-+static int amdxdna_drm_get_info_ioctl(struct drm_device *dev, void *data, struct drm_file *filp)
-+{
-+	struct amdxdna_client *client = filp->driver_priv;
-+	struct amdxdna_dev *xdna = to_xdna_dev(dev);
-+	struct amdxdna_drm_get_info *args = data;
-+	int ret;
-+
-+	if (!xdna->dev_info->ops->get_aie_info)
-+		return -EOPNOTSUPP;
-+
-+	XDNA_DBG(xdna, "Request parameter %u", args->param);
-+	mutex_lock(&xdna->dev_lock);
-+	ret = xdna->dev_info->ops->get_aie_info(client, args);
-+	mutex_unlock(&xdna->dev_lock);
-+	return ret;
-+}
-+
- static const struct drm_ioctl_desc amdxdna_drm_ioctls[] = {
- 	/* Context */
- 	DRM_IOCTL_DEF_DRV(AMDXDNA_CREATE_HWCTX, amdxdna_drm_create_hwctx_ioctl, 0),
-@@ -154,6 +171,8 @@ static const struct drm_ioctl_desc amdxdna_drm_ioctls[] = {
- 	DRM_IOCTL_DEF_DRV(AMDXDNA_SYNC_BO, amdxdna_drm_sync_bo_ioctl, 0),
- 	/* Execution */
- 	DRM_IOCTL_DEF_DRV(AMDXDNA_EXEC_CMD, amdxdna_drm_submit_cmd_ioctl, 0),
-+	/* AIE hardware */
-+	DRM_IOCTL_DEF_DRV(AMDXDNA_GET_INFO, amdxdna_drm_get_info_ioctl, 0),
- };
- 
- static const struct file_operations amdxdna_fops = {
-diff --git a/drivers/accel/amdxdna/amdxdna_pci_drv.h b/drivers/accel/amdxdna/amdxdna_pci_drv.h
-index 52c59249c8a0..c50d65a050ad 100644
---- a/drivers/accel/amdxdna/amdxdna_pci_drv.h
-+++ b/drivers/accel/amdxdna/amdxdna_pci_drv.h
-@@ -17,7 +17,9 @@
- 
- extern const struct drm_driver amdxdna_drm_drv;
- 
-+struct amdxdna_client;
- struct amdxdna_dev;
-+struct amdxdna_drm_get_info;
- struct amdxdna_gem_obj;
- struct amdxdna_hwctx;
- struct amdxdna_sched_job;
-@@ -37,6 +39,7 @@ struct amdxdna_dev_ops {
- 	void (*hwctx_suspend)(struct amdxdna_hwctx *hwctx);
- 	void (*hwctx_resume)(struct amdxdna_hwctx *hwctx);
- 	int (*cmd_submit)(struct amdxdna_hwctx *hwctx, struct amdxdna_sched_job *job, u64 *seq);
-+	int (*get_aie_info)(struct amdxdna_client *client, struct amdxdna_drm_get_info *args);
- };
- 
- /*
-diff --git a/include/uapi/drm/amdxdna_accel.h b/include/uapi/drm/amdxdna_accel.h
-index 3e88ed386fac..af12af8bd699 100644
---- a/include/uapi/drm/amdxdna_accel.h
-+++ b/include/uapi/drm/amdxdna_accel.h
-@@ -32,6 +32,7 @@ enum amdxdna_drm_ioctl_id {
- 	DRM_AMDXDNA_GET_BO_INFO,
- 	DRM_AMDXDNA_SYNC_BO,
- 	DRM_AMDXDNA_EXEC_CMD,
-+	DRM_AMDXDNA_GET_INFO,
- };
- 
- /**
-@@ -235,6 +236,167 @@ struct amdxdna_drm_exec_cmd {
- 	__u64 seq;
- };
- 
-+/**
-+ * struct amdxdna_drm_query_aie_status - Query the status of the AIE hardware
-+ * @buffer: The user space buffer that will return the AIE status.
-+ * @buffer_size: The size of the user space buffer.
-+ * @cols_filled: A bitmap of AIE columns whose data has been returned in the buffer.
-+ */
-+struct amdxdna_drm_query_aie_status {
-+	__u64 buffer; /* out */
-+	__u32 buffer_size; /* in */
-+	__u32 cols_filled; /* out */
-+};
-+
-+/**
-+ * struct amdxdna_drm_query_aie_version - Query the version of the AIE hardware
-+ * @major: The major version number.
-+ * @minor: The minor version number.
-+ */
-+struct amdxdna_drm_query_aie_version {
-+	__u32 major; /* out */
-+	__u32 minor; /* out */
-+};
-+
-+/**
-+ * struct amdxdna_drm_query_aie_tile_metadata - Query the metadata of AIE tile (core, mem, shim)
-+ * @row_count: The number of rows.
-+ * @row_start: The starting row number.
-+ * @dma_channel_count: The number of dma channels.
-+ * @lock_count: The number of locks.
-+ * @event_reg_count: The number of events.
-+ * @pad: Structure padding.
-+ */
-+struct amdxdna_drm_query_aie_tile_metadata {
-+	__u16 row_count;
-+	__u16 row_start;
-+	__u16 dma_channel_count;
-+	__u16 lock_count;
-+	__u16 event_reg_count;
-+	__u16 pad[3];
-+};
-+
-+/**
-+ * struct amdxdna_drm_query_aie_metadata - Query the metadata of the AIE hardware
-+ * @col_size: The size of a column in bytes.
-+ * @cols: The total number of columns.
-+ * @rows: The total number of rows.
-+ * @version: The version of the AIE hardware.
-+ * @core: The metadata for all core tiles.
-+ * @mem: The metadata for all mem tiles.
-+ * @shim: The metadata for all shim tiles.
-+ */
-+struct amdxdna_drm_query_aie_metadata {
-+	__u32 col_size;
-+	__u16 cols;
-+	__u16 rows;
-+	struct amdxdna_drm_query_aie_version version;
-+	struct amdxdna_drm_query_aie_tile_metadata core;
-+	struct amdxdna_drm_query_aie_tile_metadata mem;
-+	struct amdxdna_drm_query_aie_tile_metadata shim;
-+};
-+
-+/**
-+ * struct amdxdna_drm_query_clock - Metadata for a clock
-+ * @name: The clock name.
-+ * @freq_mhz: The clock frequency.
-+ * @pad: Structure padding.
-+ */
-+struct amdxdna_drm_query_clock {
-+	__u8 name[16];
-+	__u32 freq_mhz;
-+	__u32 pad;
-+};
-+
-+/**
-+ * struct amdxdna_drm_query_clock_metadata - Query metadata for clocks
-+ * @mp_npu_clock: The metadata for MP-NPU clock.
-+ * @h_clock: The metadata for H clock.
-+ */
-+struct amdxdna_drm_query_clock_metadata {
-+	struct amdxdna_drm_query_clock mp_npu_clock;
-+	struct amdxdna_drm_query_clock h_clock;
-+};
-+
-+enum amdxdna_sensor_type {
-+	AMDXDNA_SENSOR_TYPE_POWER
-+};
-+
-+/**
-+ * struct amdxdna_drm_query_sensor - The data for single sensor.
-+ * @label: The name for a sensor.
-+ * @input: The current value of the sensor.
-+ * @max: The maximum value possible for the sensor.
-+ * @average: The average value of the sensor.
-+ * @highest: The highest recorded sensor value for this driver load for the sensor.
-+ * @status: The sensor status.
-+ * @units: The sensor units.
-+ * @unitm: Translates value member variables into the correct unit via (pow(10, unitm) * value).
-+ * @type: The sensor type from enum amdxdna_sensor_type.
-+ * @pad: Structure padding.
-+ */
-+struct amdxdna_drm_query_sensor {
-+	__u8  label[64];
-+	__u32 input;
-+	__u32 max;
-+	__u32 average;
-+	__u32 highest;
-+	__u8  status[64];
-+	__u8  units[16];
-+	__s8  unitm;
-+	__u8  type;
-+	__u8  pad[6];
-+};
-+
-+/**
-+ * struct amdxdna_drm_query_hwctx - The data for single context.
-+ * @context_id: The ID for this context.
-+ * @start_col: The starting column for the partition assigned to this context.
-+ * @num_col: The number of columns in the partition assigned to this context.
-+ * @pad: Structure padding.
-+ * @pid: The Process ID of the process that created this context.
-+ * @command_submissions: The number of commands submitted to this context.
-+ * @command_completions: The number of commands completed by this context.
-+ * @migrations: The number of times this context has been moved to a different partition.
-+ * @preemptions: The number of times this context has been preempted by another context in the
-+ *               same partition.
-+ * @errors: The errors for this context.
-+ */
-+struct amdxdna_drm_query_hwctx {
-+	__u32 context_id;
-+	__u32 start_col;
-+	__u32 num_col;
-+	__u32 pad;
-+	__s64 pid;
-+	__u64 command_submissions;
-+	__u64 command_completions;
-+	__u64 migrations;
-+	__u64 preemptions;
-+	__u64 errors;
-+};
-+
-+enum amdxdna_drm_get_param {
-+	DRM_AMDXDNA_QUERY_AIE_STATUS,
-+	DRM_AMDXDNA_QUERY_AIE_METADATA,
-+	DRM_AMDXDNA_QUERY_AIE_VERSION,
-+	DRM_AMDXDNA_QUERY_CLOCK_METADATA,
-+	DRM_AMDXDNA_QUERY_SENSORS,
-+	DRM_AMDXDNA_QUERY_HW_CONTEXTS,
-+	DRM_AMDXDNA_NUM_GET_PARAM,
-+};
-+
-+/**
-+ * struct amdxdna_drm_get_info - Get some information from the AIE hardware.
-+ * @param: Value in enum amdxdna_drm_get_param. Specifies the structure passed in the buffer.
-+ * @buffer_size: Size of the input buffer. Size needed/written by the kernel.
-+ * @buffer: A structure specified by the param struct member.
-+ */
-+struct amdxdna_drm_get_info {
-+	__u32 param; /* in */
-+	__u32 buffer_size; /* in/out */
-+	__u64 buffer; /* in/out */
-+};
-+
- #define DRM_IOCTL_AMDXDNA_CREATE_HWCTX \
- 	DRM_IOWR(DRM_COMMAND_BASE + DRM_AMDXDNA_CREATE_HWCTX, \
- 		 struct amdxdna_drm_create_hwctx)
-@@ -263,6 +425,10 @@ struct amdxdna_drm_exec_cmd {
- 	DRM_IOWR(DRM_COMMAND_BASE + DRM_AMDXDNA_EXEC_CMD, \
- 		 struct amdxdna_drm_exec_cmd)
- 
-+#define DRM_IOCTL_AMDXDNA_GET_INFO \
-+	DRM_IOWR(DRM_COMMAND_BASE + DRM_AMDXDNA_GET_INFO, \
-+		 struct amdxdna_drm_get_info)
-+
- #if defined(__cplusplus)
- } /* extern c end */
- #endif
--- 
-2.34.1
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf-core-2024-11-18
 
+   # HEAD: 2c47e7a74f445426d156278e339b7abb259e50de perf/core: Correct perf sampling with guest VMs
+
+Performance events changes for v6.13:
+
+ - Uprobes:
+    - Add BPF session support (Jiri Olsa)
+    - Switch to RCU Tasks Trace flavor for better performance (Andrii Nakryiko)
+    - Massively increase uretprobe SMP scalability by SRCU-protecting
+      the uretprobe lifetime (Andrii Nakryiko)
+    - Kill xol_area->slot_count (Oleg Nesterov)
+
+ - Core facilities:
+    - Implement targeted high-frequency profiling by adding the ability
+      for an event to "pause" or "resume" AUX area tracing (Adrian Hunter)
+
+ - VM profiling/sampling:
+    - Correct perf sampling with guest VMs (Colton Lewis)
+
+ - New hardware support:
+    - x86/intel: Add PMU support for Intel ArrowLake-H CPUs (Dapeng Mi)
+
+ - Misc fixes and enhancements:
+    - x86/intel/pt: Fix buffer full but size is 0 case (Adrian Hunter)
+    - x86/amd: Warn only on new bits set (Breno Leitao)
+    - x86/amd/uncore: Avoid a false positive warning about snprintf
+                      truncation in amd_uncore_umc_ctx_init (Jean Delvare)
+    - uprobes: Re-order struct uprobe_task to save some space (Christophe JAILLET)
+    - x86/rapl: Move the pmu allocation out of CPU hotplug (Kan Liang)
+    - x86/rapl: Clean up cpumask and hotplug (Kan Liang)
+    - uprobes: Deuglify xol_get_insn_slot/xol_free_insn_slot paths (Oleg Nesterov)
+
+ Thanks,
+
+	Ingo
+
+------------------>
+Adrian Hunter (4):
+      perf/x86/intel/pt: Fix buffer full but size is 0 case
+      perf/core: Add aux_pause, aux_resume, aux_start_paused
+      perf/x86/intel/pt: Add support for pause / resume
+      perf/x86/intel: Do not enable large PEBS for events with aux actions or aux sampling
+
+Andrii Nakryiko (3):
+      uprobes: switch to RCU Tasks Trace flavor for better performance
+      uprobes: allow put_uprobe() from non-sleepable softirq context
+      uprobes: SRCU-protect uretprobe lifetime (with timeout)
+
+Breno Leitao (1):
+      perf/x86/amd: Warn only on new bits set
+
+Christophe JAILLET (1):
+      uprobes: Re-order struct uprobe_task to save some space
+
+Colton Lewis (5):
+      perf/arm: Drop unused functions
+      perf/core: Hoist perf_instruction_pointer() and perf_misc_flags()
+      perf/powerpc: Use perf_arch_instruction_pointer()
+      perf/x86: Refactor misc flag assignments
+      perf/core: Correct perf sampling with guest VMs
+
+Dapeng Mi (4):
+      perf/x86: Refine hybrid_pmu_type defination
+      x86/cpu/intel: Define helper to get CPU core native ID
+      perf/x86/intel: Support hybrid PMU with multiple atom uarchs
+      perf/x86/intel: Add PMU support for ArrowLake-H
+
+Jean Delvare (1):
+      perf/x86/amd/uncore: Avoid a false positive warning about snprintf truncation in amd_uncore_umc_ctx_init
+
+Jiri Olsa (2):
+      uprobe: Add data pointer to consumer handlers
+      uprobe: Add support for session consumer
+
+Kan Liang (2):
+      perf/x86/rapl: Move the pmu allocation out of CPU hotplug
+      perf/x86/rapl: Clean up cpumask and hotplug
+
+Oleg Nesterov (9):
+      uprobes: don't abuse get_utask() in pre_ssout() and prepare_uretprobe()
+      uprobes: sanitiize xol_free_insn_slot()
+      uprobes: kill the unnecessary put_uprobe/xol_free_insn_slot in uprobe_free_utask()
+      uprobes: simplify xol_take_insn_slot() and its caller
+      uprobes: move the initialization of utask->xol_vaddr from pre_ssout() to xol_get_insn_slot()
+      uprobes: pass utask to xol_get_insn_slot() and xol_free_insn_slot()
+      uprobes: deny mremap(xol_vma)
+      uprobes: kill xol_area->slot_count
+      uprobes: fold xol_take_insn_slot() into xol_get_insn_slot()
+
+
+ arch/Kconfig                                       |   1 +
+ arch/arm/include/asm/perf_event.h                  |   7 -
+ arch/arm/kernel/perf_callchain.c                   |  17 -
+ arch/arm64/include/asm/perf_event.h                |   4 -
+ arch/arm64/kernel/perf_callchain.c                 |  28 -
+ arch/powerpc/include/asm/perf_event_server.h       |   6 +-
+ arch/powerpc/perf/callchain.c                      |   2 +-
+ arch/powerpc/perf/callchain_32.c                   |   2 +-
+ arch/powerpc/perf/callchain_64.c                   |   2 +-
+ arch/powerpc/perf/core-book3s.c                    |   4 +-
+ arch/s390/include/asm/perf_event.h                 |   6 +-
+ arch/s390/kernel/perf_event.c                      |   4 +-
+ arch/x86/events/amd/core.c                         |  10 +-
+ arch/x86/events/amd/uncore.c                       |   5 +-
+ arch/x86/events/core.c                             |  64 ++-
+ arch/x86/events/intel/core.c                       | 137 ++++-
+ arch/x86/events/intel/ds.c                         |  21 +
+ arch/x86/events/intel/pt.c                         |  84 ++-
+ arch/x86/events/intel/pt.h                         |   6 +
+ arch/x86/events/perf_event.h                       |  34 +-
+ arch/x86/events/rapl.c                             | 130 ++---
+ arch/x86/include/asm/cpu.h                         |   6 +
+ arch/x86/include/asm/perf_event.h                  |  12 +-
+ arch/x86/kernel/cpu/intel.c                        |  15 +
+ include/linux/cpuhotplug.h                         |   1 -
+ include/linux/perf_event.h                         |  54 +-
+ include/linux/uprobes.h                            |  83 ++-
+ include/uapi/linux/perf_event.h                    |  11 +-
+ kernel/events/core.c                               | 102 +++-
+ kernel/events/internal.h                           |   1 +
+ kernel/events/uprobes.c                            | 608 +++++++++++++++------
+ kernel/trace/bpf_trace.c                           |   6 +-
+ kernel/trace/trace_uprobe.c                        |  12 +-
+ .../selftests/bpf/bpf_testmod/bpf_testmod.c        |   2 +-
+ 34 files changed, 1069 insertions(+), 418 deletions(-)
 
