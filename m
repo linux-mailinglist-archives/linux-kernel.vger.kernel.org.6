@@ -1,130 +1,133 @@
-Return-Path: <linux-kernel+bounces-412353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B94F9D07F8
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 03:51:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16F4B9D07FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 03:55:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C68B31F21980
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 02:51:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A54A3281647
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 02:55:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EE422AE6C;
-	Mon, 18 Nov 2024 02:51:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 818E643ABD;
+	Mon, 18 Nov 2024 02:55:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="dvlQInZc"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="r9DxHmAm"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00934EAE7
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 02:51:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1B66EAE7;
+	Mon, 18 Nov 2024 02:55:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731898303; cv=none; b=pPMNy0gmwWJReqjXNItKfIL1KyAWaYepTfd7ljL6f5ZMioAnuVfJcSJbHZ2A8s+x6JCK4VRMCw/FhzeFjAhHCbwAE4jiVG00KG8hpygautn/uvblnrLMxAsJW08USkOkgXF1nZiCkCAAg54j/Bw5k5GHQwwVQw29uaI73wpSb/s=
+	t=1731898519; cv=none; b=puHD3hEHd7jtb+z4gIhQsqz0LSp5uPUT8fx0XYyuDzkJOt1axrm917hWPdCiYstOudCr8/XJwgpKBn88EnFG80h/MEP8mYkqHyv9lNZgA5Au1Fx7hL3Ox4vc/+1C9ii2ZWNmDp+t0EtuIJlBn+FYAznx04eKm5IoWWlgFmuKSb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731898303; c=relaxed/simple;
-	bh=Q+vR/zt5HgzmZmpKqi60NYX/FJiixtIJJkMXSpyQ0w0=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=itXcmtefKrqD96Cu9rCIPjklhB4fr8cVAErKDdquDhM7Vxnw6Z2hFT+LoONP4UaQzFq1Bs6IjHp8Gjam03BHS8TjzHxYEGrZnq3ufHGUMm08IuNw8ssNEFvs7GSpaL2Gpuyj5JQdb6rxxrgqi73T8MDRRjwWRX73B8JsprAKMRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=dvlQInZc; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 0246ecc2a55811efbd192953cf12861f-20241118
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=ki8fJJIWNxnS2xxoAMPYMHgwxzquLA7ElLASLJuZBXc=;
-	b=dvlQInZcazLi3AaBZzogLFrk/8PVdzy7o7E2zplx3ib1p5drm5PIBQY1QskMnsUB3BT8JZg23NWmphjhDbN/Y/p6AMMz3M0mFL/nTzDyhcRUb8kkjGmuGo/0xQqDJN5fX/l3wjUPkOPm/jdebe6GAt+uaYtBdnKiUIrGf0zIDvc=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.43,REQID:9dbe8cbf-1ded-4db0-a6fc-7c8014bccfc5,IP:0,U
-	RL:0,TC:0,Content:-25,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:-25
-X-CID-META: VersionHash:ce19b8a,CLOUDID:7b6a344f-a2ae-4b53-acd4-c3dc8f449198,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
-	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 0246ecc2a55811efbd192953cf12861f-20241118
-Received: from mtkmbs13n1.mediatek.inc [(172.21.101.193)] by mailgw02.mediatek.com
-	(envelope-from <jason-jh.lin@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1273718258; Mon, 18 Nov 2024 10:51:28 +0800
-Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
- mtkmbs13n2.mediatek.inc (172.21.101.108) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Mon, 18 Nov 2024 10:51:27 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
- mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Mon, 18 Nov 2024 10:51:27 +0800
-From: Jason-JH.Lin <jason-jh.lin@mediatek.com>
-To: Chun-Kuang Hu <chunkuang.hu@kernel.org>
-CC: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Shawn Sung <shawn.sung@mediatek.com>, <dri-devel@lists.freedesktop.org>,
-	<linux-mediatek@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, "Jason-JH . Lin"
-	<jason-jh.lin@mediatek.com>, Singo Chang <singo.chang@mediatek.com>, Nancy
- Lin <nancy.lin@mediatek.com>,
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>, Fei Shao
-	<fshao@chromium.org>
-Subject: [PATCH] drm/mediatek: Add support for 180-degree rotation in the display driver
-Date: Mon, 18 Nov 2024 10:51:26 +0800
-Message-ID: <20241118025126.30808-1-jason-jh.lin@mediatek.com>
-X-Mailer: git-send-email 2.18.0
+	s=arc-20240116; t=1731898519; c=relaxed/simple;
+	bh=wRPgT1yObEHD6svJnaOip0QGxnZUBOU5xL/pq0EZDYk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=dCZvbOFul9wPQ0Pzk4oEyZWa+FB3815t23N6HlZiYidZRX+z2xURBY2zyLJgtbnA3X4e0tOeScPKVc/WQY3mHhlV8Yu8TEEmj9edAzSqcGoV58ulWKq9pFD1KGVf+cpIVJogPkoGIyOKugqA0n1sixumwY2Wrys9jbaYF1Bl6vc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=r9DxHmAm; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1731898511;
+	bh=lA9p/6FlZ0uog6Hp8Mfew1zkqnhfYb5W0Rbs/v3d/MA=;
+	h=Date:From:To:Cc:Subject:From;
+	b=r9DxHmAm7s/FlNVmJ5oX4b8Tn63VDPyWgkdf0QAEkHnSdVb5b6/TR/1+dot+5M09q
+	 Xt1mP1rwfXsSok2qEpqWgvkHwdRa4sjquKPu1iOGpLvFOJ2qm2/RCB5k9QIgJ3TIg+
+	 7RvuzOY/adSf1h10szEZT3HF2Y6MKK75/PBB8ordVt5shMFUlpJwwgmfaBRSDsN2Uu
+	 mbPaYYhyqc3ustpb6OzQZNnOG/N22vYZQcGpeJcgvPxE2jMgDRnHJ9mW4N3Y3N1EtY
+	 faXu6EgvV/tIMQDxF5c65yckXBMZE6Kp0CAQtTgMhTc5rRWJxFRA3OyLkZrtFMFFXv
+	 Vi7594J7p25Lw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XsC0b0bgLz4xfL;
+	Mon, 18 Nov 2024 13:55:10 +1100 (AEDT)
+Date: Mon, 18 Nov 2024 13:55:12 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: David Miller <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>
+Cc: Networking <netdev@vger.kernel.org>, Heiner Kallweit
+ <hkallweit1@gmail.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, "Russell King (Oracle)"
+ <rmk+kernel@armlinux.org.uk>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Message-ID: <20241118135512.1039208b@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK: N
+Content-Type: multipart/signed; boundary="Sig_/_/vmX0Hz1vripoj/QLgQntj";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-mediatek-drm driver reported the capability of 180-degree rotation by
-adding `DRM_MODE_ROTATE_180` to the plane property, as flip-x combined
-with flip-y equals a 180-degree rotation. However, we did not handle
-the rotation property in the driver and lead to rotation issues.
+--Sig_/_/vmX0Hz1vripoj/QLgQntj
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Fixes: 74608d8feefd ("drm/mediatek: Add DRM_MODE_ROTATE_0 to rotation property")
-Signed-off-by: Jason-JH.Lin <jason-jh.lin@mediatek.com>
----
- drivers/gpu/drm/mediatek/mtk_disp_ovl.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+Hi all,
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_disp_ovl.c b/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
-index e0c0bb01f65a..cc825c4f2e09 100644
---- a/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
-+++ b/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
-@@ -472,6 +472,7 @@ void mtk_ovl_layer_config(struct device *dev, unsigned int idx,
- 	unsigned int hdr_pitch = pending->hdr_pitch;
- 	unsigned int fmt = pending->format;
- 	unsigned int offset = (pending->y << 16) | pending->x;
-+	unsigned int rotation = pending->rotation;
- 	unsigned int src_size = (pending->height << 16) | pending->width;
- 	unsigned int blend_mode = state->base.pixel_blend_mode;
- 	unsigned int ignore_pixel_alpha = 0;
-@@ -513,12 +514,19 @@ void mtk_ovl_layer_config(struct device *dev, unsigned int idx,
- 			ignore_pixel_alpha = OVL_CONST_BLEND;
- 	}
- 
--	if (pending->rotation & DRM_MODE_REFLECT_Y) {
-+	/*
-+	 * Treat rotate 180 as flip x + flip y, and XOR the original rotation value
-+	 * to flip x + flip y to support both in the same time.
-+	 */
-+	if (rotation & DRM_MODE_ROTATE_180)
-+		rotation ^= DRM_MODE_REFLECT_X | DRM_MODE_REFLECT_Y;
-+
-+	if (rotation & DRM_MODE_REFLECT_Y) {
- 		con |= OVL_CON_VIRT_FLIP;
- 		addr += (pending->height - 1) * pending->pitch;
- 	}
- 
--	if (pending->rotation & DRM_MODE_REFLECT_X) {
-+	if (rotation & DRM_MODE_REFLECT_X) {
- 		con |= OVL_CON_HORZ_FLIP;
- 		addr += pending->pitch - 1;
- 	}
--- 
-2.43.0
+Today's linux-next merge of the net-next tree got a conflict in:
 
+  include/linux/phy.h
+
+between commit:
+
+  41ffcd95015f ("net: phy: fix phylib's dual eee_enabled")
+
+from the net tree and commit:
+
+  721aa69e708b ("net: phy: convert eee_broken_modes to a linkmode bitmap")
+
+from the net-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc include/linux/phy.h
+index 44890cdf40a2,b8346db42727..000000000000
+--- a/include/linux/phy.h
++++ b/include/linux/phy.h
+@@@ -720,6 -721,11 +720,10 @@@ struct phy_device=20
+  	/* used for eee validation and configuration*/
+  	__ETHTOOL_DECLARE_LINK_MODE_MASK(supported_eee);
+  	__ETHTOOL_DECLARE_LINK_MODE_MASK(advertising_eee);
++ 	/* Energy efficient ethernet modes which should be prohibited */
++ 	__ETHTOOL_DECLARE_LINK_MODE_MASK(eee_broken_modes);
+ -	bool eee_enabled;
++ 	bool enable_tx_lpi;
++ 	struct eee_config eee_cfg;
+ =20
+  	/* Host supported PHY interface types. Should be ignored if empty. */
+  	DECLARE_PHY_INTERFACE_MASK(host_interfaces);
+
+--Sig_/_/vmX0Hz1vripoj/QLgQntj
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmc6rJAACgkQAVBC80lX
+0GyAOAf+JsvkHQtN6HM1uzq93ryqcOg8/QM2rbDuGAxiMphDc4vg+jUtiEuuOtHP
+Y1VwGaFYffonnh+nj72fZTx+hxWLk/SsQ4++ovlPKRRA7egDnMZ+lvFTiw5CjisH
+PqrDPPKYBixXnpP7lJZdMW9OzPUn3ziOOmlMbc1/OQVahLOYq5Nv6dCw6OCexgWT
+JCLRq1J0SwM6chF574CXu5iENguUEUGkTk+bZsRjX6bjhSodCEhMIwD6NZjAkOND
+dYQ1TyewL/Q7pWdcGrRwthWLZj7cA2HpM4zZ9kioZBqxh3pcIQoYdQT586T6hJ22
+/vEWrBHL+ofwDsE/sY6nbHYQCkFW4w==
+=VEEF
+-----END PGP SIGNATURE-----
+
+--Sig_/_/vmX0Hz1vripoj/QLgQntj--
 
