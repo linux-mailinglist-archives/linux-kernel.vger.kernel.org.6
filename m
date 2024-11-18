@@ -1,113 +1,120 @@
-Return-Path: <linux-kernel+bounces-412767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E3289D0EBF
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:39:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E5DC49D0EC8
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:42:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44BF7280F8D
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 10:39:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB5CD282AB8
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 10:42:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD40C194C8D;
-	Mon, 18 Nov 2024 10:39:29 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73CB41946A8;
+	Mon, 18 Nov 2024 10:42:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="JvWhmqmR"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3285405FB
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 10:39:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B59E31DFFB;
+	Mon, 18 Nov 2024 10:42:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731926369; cv=none; b=Dq+cRsQ2uspjLj/PI2uI7pOXCgA1mGQiv/AH4RhkY+iL9W9EFsfXGjhgWOMgwKjrWPH4TkzviRV57V2oDkEGP48SeSDYTk8y4TfemPhDfcpQ84YK75BJcchqeGJWSW+nsFb1SKmPUhdxnBUlPRHYJEK2zGWehO/hv2AMSJTJcLc=
+	t=1731926525; cv=none; b=SJWeID9IcqCnxH9FNlG46pTPj2fJw64X+NVKQM0n4KGZQg3fwWZMDEVmTJbPB31299AsGIlH9kNg1yR7JTfWjZSgMNmBrr6UVazLaFiAIc+HlT5gIpuCoef1klyLhGcGSx32+o45vGhpLU4FKnScnPE7DfDdyixSMa7vX9mtOhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731926369; c=relaxed/simple;
-	bh=8cMHE7/1igewBZghqDxwQ01J1Xow0bKbnf1uog8Z17U=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=kVq8fdTZPaT30flQd/hrn7BboFjkB6cTX87+JHOTq+bwFepSHkmMNc6Ot0uz4r/gIYmLWfHIK40vFT4Nkz8Hg8Ck93z5qHm4awp4rkkSYAHlPu0sKAAKziSKGT9mK2nfwrXMZLrA3eQYiT5yV0c0LTz/okRurO472Wa5Y9j6jts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a6b9f3239dso18642215ab.0
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 02:39:26 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731926366; x=1732531166;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Zz0dExI+86k71TVQecrMYRF7YIQdaQH8XNcjQimG3ic=;
-        b=u/At8/iodVY3CtnG9lTy1UeSfXRkhgKWQbPcwQvzc+4CQ5TumQZz+3ofKkWk2ujRtB
-         yIepkrMj3hjnMblIbjUpEOWTxMvH/faFRktmGCGY/r18edHNEk6Kj/4m++ynSmHVXbr3
-         dSVYOj5imQcVIfQUov4yQaPeKsYZ3AkxmZukfO0WNGNL10Dgtadgghg/+6DrFnublihK
-         PfG0agzgixDne6Phi58TYaUlPgZbrbTIsskKwB4K/94xuVMZaPlH60/5xg+GBnfSQM9X
-         YxLsCvGM399ecj7A8Cviuto0lkKQPelyAZr+lVZCLQkmHLzHDvvLlfUthKW8RezM6OnC
-         8yEg==
-X-Forwarded-Encrypted: i=1; AJvYcCU+Hadu3TZJnEpQ/6EWIRKJ52nasf82uAh812v76kc1Ug4vfjwVMBdwEbCzhov4LQLmQRjXYHa/GdfqgAk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXssSiPOHqGSxnzOQY+bdilt2IZdmkAMilA3pwwh650k8tgzrO
-	Gk+8igUzwsHSrEY/ooTOonZ0IaUhVn6rlCzHUG4lNqSuUiZXmtrK1mHiPid+kOd/hK83Vc8mtC4
-	JtfVXOkD+1wjtDadZ1qBWXu9sf0RgGwfdpUnl+qZWYOfCi9ZO3alqIEs=
-X-Google-Smtp-Source: AGHT+IHvazNoiLGiKhZl60TcHrnStLVFbWVn+JHz6a7P1bf7lHGan6O1gpSewzj9QKvdSeOCNbjEB9Fl4x/q9sGnMroRMVpmy/MU
+	s=arc-20240116; t=1731926525; c=relaxed/simple;
+	bh=/pmGenI2wO3JTNxmubF24thm679YUhSXwuotCg6tHFk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Re9rdPujXdL2/PdrYjO7r8jQdT0bRyH5u7K8nc/U99eIjLiWHFbx2YwPfibln78joil2lrsg/JcgHloTM0MUmYM5rR/EHtrU1mmvqvwBiNuT0eYPrhp152Oq8Zi7p5POpyUC3Y4ODh39iupZpep/7skiUJjCkHdXYXqFY8QohVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=JvWhmqmR; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 2708040E019C;
+	Mon, 18 Nov 2024 10:41:59 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id OvAE2aXAax_E; Mon, 18 Nov 2024 10:41:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1731926513; bh=DmWtgi2Qz0m6ZoT7qjh0PUC9+yoNEpuOT/5+gLqTlk0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JvWhmqmRUL7hkytSCadEsftyQZKStLgnKxQ7agUehRPUm1ZpVWnixa4PPWp1SIqoe
+	 B0enESfQMM4tBv8OGr3oljiDEJy53Cput7Tbtpo5l/yTEOABbGS7lsX40nOSy78mGK
+	 uN0kaY126B8moeEx1Kd74aXQBfWrqZULBxXSJmSBS1T4XQwhnX17MBMiHfLy+w1ynD
+	 tk7kA0N+oLs6kJpgaVSP1Af169qh2I7ULbzp9bu6xvTzh+h/48BIdqnxwWT8k+6sET
+	 xpqjcnpnUrKE5vtHnoDTSbyVZONtyWW7D8zJpnZmmTHWbh/KiNv+MMvRGTCVQ9Zx/Z
+	 J5daFgDpW47r1bpgQQPSyduzz085tzUxHbLWXX7NAKwUbY0hrUnvd0zFLUK1AiRg8X
+	 rTm1iGsHtQsMyBztWeLmr2FSQgr1FZUZTmGDJfunx4IgtvVcJjwH12+05OAy3T+Srr
+	 cX7AGw5UVQPhXz2KTTn6TWzFHlIRIXbRVkc5wbh7/TvrKxJ+aND6IwipLlv25LlrnH
+	 jHHOMYePIE22wYsbcwEXa3F7LylXwFh8Tt07LFZBesr5abbc0KxkiLCwudeTg9XjAQ
+	 eGqnrrFfxj4NMxqUcqEiRoUAoel5a0PUXnFILzlBIairHJVl1TPu2mKq4K99nFb8GG
+	 Hej1E+d6sW5YH7KdeqVs6lQg=
+Received: from zn.tnic (pd9530b86.dip0.t-ipconnect.de [217.83.11.134])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 165CA40E0163;
+	Mon, 18 Nov 2024 10:41:48 +0000 (UTC)
+Date: Mon, 18 Nov 2024 11:41:42 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Michael Ellerman <mpe@ellerman.id.au>
+Cc: linux-edac@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org, tony.luck@intel.com
+Subject: Re: [PATCH] EDAC/powerpc: Remove PPC_MAPLE drivers
+Message-ID: <20241118104142.GAZzsZ5vcY_Vv3GvY-@fat_crate.local>
+References: <20241112084134.411964-1-mpe@ellerman.id.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3c08:b0:3a0:a71b:75e5 with SMTP id
- e9e14a558f8ab-3a748027c23mr104739245ab.7.1731926366093; Mon, 18 Nov 2024
- 02:39:26 -0800 (PST)
-Date: Mon, 18 Nov 2024 02:39:26 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <673b195e.050a0220.87769.002e.GAE@google.com>
-Subject: [syzbot] Monthly btrfs report (Nov 2024)
-From: syzbot <syzbot+list69ba8ebe12d504efee8b@syzkaller.appspotmail.com>
-To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241112084134.411964-1-mpe@ellerman.id.au>
 
-Hello btrfs maintainers/developers,
+On Tue, Nov 12, 2024 at 07:41:34PM +1100, Michael Ellerman wrote:
+> These two drivers are only buildable for the powerpc "maple" platform
+> (CONFIG_PPC_MAPLE), which has now been removed, see
+> commit 62f8f307c80e ("powerpc/64: Remove maple platform").
+> 
+> Remove the drivers.
+> 
+> Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+> ---
+>  drivers/edac/Kconfig        |  18 --
+>  drivers/edac/Makefile       |   2 -
+>  drivers/edac/amd8111_edac.c | 596 ------------------------------------
+>  drivers/edac/amd8111_edac.h | 118 -------
+>  drivers/edac/amd8131_edac.c | 358 ----------------------
+>  drivers/edac/amd8131_edac.h | 107 -------
+>  6 files changed, 1199 deletions(-)
+>  delete mode 100644 drivers/edac/amd8111_edac.c
+>  delete mode 100644 drivers/edac/amd8111_edac.h
+>  delete mode 100644 drivers/edac/amd8131_edac.c
+>  delete mode 100644 drivers/edac/amd8131_edac.h
+> 
+> The removal commit is in the powerpc/next branch:
+>   https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git/log/?h=next
+> 
+> I can take this via the powerpc tree if that's easiest, let me know.
 
-This is a 31-day syzbot report for the btrfs subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/btrfs
+Yes, please do. 
 
-During the period, 10 new issues were detected and 0 were fixed.
-In total, 43 issues are still open and 90 have already been fixed.
+I've been meaning to reply to you but then gazillion things interrupted me and
+... you know how it is. Sorry.
 
-Some of the still happening issues:
+Acked-by: Borislav Petkov (AMD) <bp@alien8.de>
 
-Ref  Crashes Repro Title
-<1>  6387    Yes   kernel BUG in close_ctree
-                   https://syzkaller.appspot.com/bug?extid=2665d678fffcc4608e18
-<2>  3458    Yes   WARNING in btrfs_space_info_update_bytes_may_use
-                   https://syzkaller.appspot.com/bug?extid=8edfa01e46fd9fe3fbfb
-<3>  362     Yes   BUG: MAX_LOCKDEP_CHAIN_HLOCKS too low! (7)
-                   https://syzkaller.appspot.com/bug?extid=74f79df25c37437e4d5a
-<4>  319     Yes   WARNING in btrfs_commit_transaction (2)
-                   https://syzkaller.appspot.com/bug?extid=dafbca0e20fbc5946925
-<5>  303     Yes   WARNING in lookup_inline_extent_backref
-                   https://syzkaller.appspot.com/bug?extid=d6f9ff86c1d804ba2bc6
-<6>  291     Yes   WARNING in btrfs_chunk_alloc
-                   https://syzkaller.appspot.com/bug?extid=e8e56d5d31d38b5b47e7
-<7>  245     Yes   WARNING in btrfs_remove_chunk
-                   https://syzkaller.appspot.com/bug?extid=e8582cc16881ec70a430
-<8>  141     Yes   WARNING in cleanup_transaction
-                   https://syzkaller.appspot.com/bug?extid=021d10c4d4edc87daa03
-<9>  90      Yes   WARNING in btrfs_put_block_group
-                   https://syzkaller.appspot.com/bug?extid=e38c6fff39c0d7d6f121
-<10> 72      Yes   kernel BUG in clear_state_bit
-                   https://syzkaller.appspot.com/bug?extid=78dbea1c214b5413bdd3
+Thx.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+-- 
+Regards/Gruss,
+    Boris.
 
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
-
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
-
-You may send multiple commands in a single email message.
+https://people.kernel.org/tglx/notes-about-netiquette
 
