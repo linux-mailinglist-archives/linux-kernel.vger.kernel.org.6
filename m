@@ -1,118 +1,87 @@
-Return-Path: <linux-kernel+bounces-413024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3250D9D1271
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 14:48:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 624189D1273
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 14:48:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED587285495
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 13:48:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28D3F2859BF
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 13:48:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 201ED1991C6;
-	Mon, 18 Nov 2024 13:47:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CB14199941;
+	Mon, 18 Nov 2024 13:48:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fDHEkSQq"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="gti0D6R6"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE2FC198A39
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 13:47:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EEB541C77;
+	Mon, 18 Nov 2024 13:48:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731937640; cv=none; b=F4/XuettNymPL2q8MWtgcqPAIpGoqQsl0FgS4ObwaOngJH99F2xwFFUMSGkgkI98I1aSahduDS47WGS04ccGRpGvZKqzbToZLoUA95g2wwSkI/VicM4PGNGwvX5M/Ipenfd48nX/5r4HgSu483fU1QLljMLNxj50sFuaYeR3GKE=
+	t=1731937725; cv=none; b=gMfh8+8ITUZSUcx7z5+RcPRakvYYMOFljF2a8J2Ggy2rnz2Quqqrv71LWqEXv7wLJ62I84nQbntzR2gP0OsZFEEJFb6rdOw0YV+UOCg5RA3bGOKbLNjxwRbWXZaFMtHU7Lqdt8OluDRu1fXeAr5k4vTpQnE5LyZaCmcLKL138Ag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731937640; c=relaxed/simple;
-	bh=pJxl4rQZejyfJm+QNm/dBeQozxmiMKPzYEx1qY12VVQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Tt3Zdh5mIDp0TYAK6f4LiU4IkTAvYk/fQNOZdvYXtm3jVcTW8kpsvuFlajb8SNRd8IFygcWgHlkrpeMMlxesNa39XImy5VOIOxDYrBVNfeytOA7oUCzxfL/dXZ5iTCHH+KMWnY/SgYC9IG7z7BbG26oyo4S1T1vvaSHNvUzynSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fDHEkSQq; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4315df7b43fso36929915e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 05:47:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731937636; x=1732542436; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=s8NgQOCCqPqf7FHd7BM4LXvTtZURwEU3Cj8EytucMjA=;
-        b=fDHEkSQqen5NcYUF5LL0TKURcC/drB2TuJlKJg5wMhCqe/ETcTc4NSA+NC96J3h9xJ
-         A5y16q1MAnXTnGRGaDeDB+BdEWBrpvtZkrR/Il9WbJGOQXa/BrWL3obbRAraFlP1vrJ9
-         N03K5G2Cy+BgdVevNEfQY8oXGSj7w1/+0cFBvNuz5yVANwSIgr5Si1v872nD8pCojKFT
-         nPpFVzykUOmtIizIQUMee3+ODvQA36ADxpBtwU2/u9bSwkI8dMZXj+r499zIJccpjisN
-         MeriaipxNx+4ey20pXv6roAt+H7fogpb0pTEtOrXWY9Ay9zh7aCRkEE4jd169+zgFxNI
-         mO+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731937636; x=1732542436;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=s8NgQOCCqPqf7FHd7BM4LXvTtZURwEU3Cj8EytucMjA=;
-        b=Cpbn4kCvWdPklzakBSonkoHNedIuwtf/awm3EeSZ93zuo9HbuDkrfZui+OQgYoMo/1
-         i4WHXCdxfE8KV980RRZHTH3Qr9QfMmvxs4Q2tNcUFxj8Vb53DkpkPvjmG14Jtiq3BMNu
-         f7Gt49YUHQNqu9+D3N9w5pWWc+HuW+cY2rv2lSA1P8cWaOj+Y6ydFXGz2pCON6Y2NZUd
-         iHsSMNcfjHQxNYoccgZuQ25Hpw630Q6OGz+tOhJNrQBtujPa6NxKbFkYEV6q1N/1RnDm
-         o7N+oXjPAtT0i1s0dvJNrd/REV8fKsBKlCzFIbVhP9E+mKzFwIZOA3mnIsM+hnoEukA0
-         SP7A==
-X-Forwarded-Encrypted: i=1; AJvYcCVaCDBaRLQ+snfeXLf3aVzUQBiqWWckx7TkNce+SZH7TqCtZD/0wg1Ln7MkLHJ8NOTyJvZSgDqGyST0wXI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUcsrguzOLeGDYWudEmkQqkg+GSkTWr9aIMf7SzHyd9rBugweQ
-	kkvPpR/abNY3UCoaCIiqwn9nLZHb13FbGkDUfpxDHGfl86VUpqzAO/OMVx4HQ4M=
-X-Google-Smtp-Source: AGHT+IGkNPMfEbTsWdumFk18TzboywRqef3yKH0bCK2BXh5ptB4CLaWCTXz64qGRHLnn74CknlpZng==
-X-Received: by 2002:a05:600c:1387:b0:42c:b45d:4a7b with SMTP id 5b1f17b1804b1-432df78a971mr103770975e9.25.1731937636216;
-        Mon, 18 Nov 2024 05:47:16 -0800 (PST)
-Received: from [192.168.0.40] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432dab80ad9sm154398355e9.25.2024.11.18.05.47.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Nov 2024 05:47:15 -0800 (PST)
-Message-ID: <d80e23bf-3e13-43af-9bc8-fa6bd4a86248@linaro.org>
-Date: Mon, 18 Nov 2024 13:47:15 +0000
+	s=arc-20240116; t=1731937725; c=relaxed/simple;
+	bh=WKTUs0IhED2ktSdRkiUNwb2ooYdSYFJzD/OZEuRtdUg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GevyLf+pj1K1aRe0XnXJ0NNe8icIGFrqp/MjFSgKOFwB7npL2gHZMCLVI7WUvYzwBymGI4kIuVc4Xk4LmqIAc/RBfQbg/fDtaHIQSmP8QI6wLLVatud9QsOODBUjhKrwhkj7wU0ILtisWaxl9fM+7awMFd8+sAUcFCDvDg9Wo+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=gti0D6R6; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id F35D120008;
+	Mon, 18 Nov 2024 13:48:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1731937716;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5KedvWKey5BPekgZ33QSyGqNhec7IAEYxlEO+HyVNno=;
+	b=gti0D6R6RJzfhukjTit9/jNRZNer8Wc4I47CfHEBwOOA123LT7sGMvinzRVJauSjPR+RCb
+	1XWl7zuKskAltxCHTnjiqJiBhqF34CzOMoTL+eZxi51LOQddbV0u2djRZAdPXsJJe6gRzB
+	QWWjmwv0WOa3JIIv1I4ikRTzlYuxcf8/68j5qB0ABpAPiFkkZCbaPOhw2z4EJBZ6G0pBDN
+	q/HTMvmAJN5YM4jssLf4ekSJ3IUS64p9f5vMJ5rXFQhBPcVwQTCgn6gxlxk/2sXaF1nZFo
+	PRARuM8G0jSjRzv9BAbytPIk11jloDG0Rv608QXUzs0WLxZR6Nbr5Z4+kd7TLQ==
+Date: Mon, 18 Nov 2024 14:48:35 +0100
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: linux-kernel@vger.kernel.org,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: (subset) [PATCH 13/15] rtc: brcmstb-waketimer: don't include
+ 'pm_wakeup.h' directly
+Message-ID: <173193770578.39194.10840695643775625403.b4-ty@bootlin.com>
+References: <20241118072917.3853-1-wsa+renesas@sang-engineering.com>
+ <20241118072917.3853-14-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] clk: qcom: gdsc: Add pm_runtime hooks
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241118-b4-linux-next-24-11-18-clock-multiple-power-domains-v1-0-b7a2bd82ba37@linaro.org>
- <20241118-b4-linux-next-24-11-18-clock-multiple-power-domains-v1-2-b7a2bd82ba37@linaro.org>
- <atg6yw64f4aojcbjyarljb57cejqk56g2qnddrloa3smmupm6d@fk3oyiycnuco>
- <45c0950a-0cde-4bb9-9e3d-7f25b8a3da31@linaro.org>
- <5lg7rsndxrcogrwywlciek4fdfejnpmvuibpwhh33whg2ebtlt@jli5g3qliota>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <5lg7rsndxrcogrwywlciek4fdfejnpmvuibpwhh33whg2ebtlt@jli5g3qliota>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241118072917.3853-14-wsa+renesas@sang-engineering.com>
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-On 18/11/2024 13:39, Dmitry Baryshkov wrote:
->> It brings up every PM domain in the list
->>
->> clock_cc {
->>      power-domains = <somedomain0>, <another-domain>;
->> };
->>
->> No different to what the core code does for a single domain - except we can
->> actually turn the PDs off with the pm_runtime_put().
-> I see. I missed the device link part of the dev_pm_domain_attach_list().
+On Mon, 18 Nov 2024 08:29:12 +0100, Wolfram Sang wrote:
+> The header clearly states that it does not want to be included directly,
+> only via 'device.h'. 'platform_device.h' works equally well. Remove the
+> direct inclusion.
 > 
-> Just to check, have you checked that this provides no splats in
-> lockdep-enabled kernels?
+> 
 
-No, I haven't.
+Applied, thanks!
 
-I'll have a look at that now. I did test on sc8280xp though.
+[13/15] rtc: brcmstb-waketimer: don't include 'pm_wakeup.h' directly
+        https://git.kernel.org/abelloni/c/5b42edefd733
 
-I'll get back to you on lockdep.
+Best regards,
 
----
-bod
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
