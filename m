@@ -1,99 +1,144 @@
-Return-Path: <linux-kernel+bounces-413258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4D9B9D1654
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 17:56:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C3749D165C
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 17:56:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 09AD8B250FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 16:56:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84F8928348A
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 16:56:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41FEB1BD9FE;
-	Mon, 18 Nov 2024 16:56:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S2XTscyC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EF771BDABE;
+	Mon, 18 Nov 2024 16:56:31 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99EFB1A00F8;
-	Mon, 18 Nov 2024 16:56:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1D821BD9D2
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 16:56:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731948970; cv=none; b=n1oubT3TaNSjPc9M4Evu6yxjLKJ+QOz+jBnBQV3hy5q76sq68QaSHLvW8rRQ2gL6LtpTkWJlFx7JTV00Nex4VWBJn55tKr9jhrcJkGl8Yi3IkGmeelsLByYsAYgD0zLgu3TXHt2FyDYPUrul15SOpUUjXuju1pGQPAjwruXPZkA=
+	t=1731948991; cv=none; b=fB95Ste87lFQ6qVJNTvvm6TccxgZSz5dmGi37QLhBppdDibCkyQV3R/heUTma0oNPIMFBStHsTqS199fVzLKjaclsYoh4yTaIMWa5iogoWaxy1QGz1IjfAe6Gwo4Dsq76y8BVlUO50qPVebJ9IBPrSzfUATiQpoNteuCaNUhNcI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731948970; c=relaxed/simple;
-	bh=/0Pkzh2eJ9T0ocM+1U2ygIK45IBE3fmm+j4EMF+QzAA=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=ZN0yT24+u+n/N8kipNCuF/ZTtMj9MgWs+orUy6L+0J07VjVU+CUw4fy0AG2W12RIaUYTD9Jmq9xH77n71PD9/2vu9wPB5pRNLpgg2k+i+sMJkiVGVs7xUQW8bWsjNzmBk5urxqiIdNUEJr6wi25QjnlAJ618lJf/3Pf9sZS+TbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S2XTscyC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C7DDC4CECC;
-	Mon, 18 Nov 2024 16:56:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731948970;
-	bh=/0Pkzh2eJ9T0ocM+1U2ygIK45IBE3fmm+j4EMF+QzAA=;
-	h=From:To:In-Reply-To:References:Subject:Date:From;
-	b=S2XTscyCwxFISPZnLeIfrr3AKwzy8gO6CrfzAhPYq5/fF0AVIZrKQODmFdkxQ0tgt
-	 /+whQ7e2Ap4c1WLNOfBzcJXlurZw2fUuwU3Z1Q3Rk0MY9RchyfpNpD2Srr004T4dQb
-	 FywxLPGgVAOHBeFtnojlBFZPOChxu1Ap+ZpgWUndC21QKYLXIGkPYypFuJn7QquvdM
-	 QxoDCvo2oFt31oKE3t6Ltdc3QLPke6pyULKWEfHfzVTV3fCmqpMEmvg3DbsLvuGu7U
-	 QrzyQsRlMyhEAjnx1eJifl0wSbzosrbJ68Hts1ajIgMvGsoKsdzhPUQJLvf5Zs7kTk
-	 HRt9kosaT5bBw==
-From: Mark Brown <broonie@kernel.org>
-To: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, 
- Mario Limonciello <mario.limonciello@amd.com>, 
- "end.to.start" <end.to.start@mail.ru>, Jiawei Wang <me@jwang.link>, 
- linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Alex Far <anf1980@gmail.com>
-In-Reply-To: <ZzjrZY3sImcqTtGx@RedmiG>
-References: <ZzjrZY3sImcqTtGx@RedmiG>
-Subject: Re: [PATCH] ASoC: amd: yc: fix internal mic on Redmi G 2022
-Message-Id: <173194896823.56205.158411490065653084.b4-ty@kernel.org>
-Date: Mon, 18 Nov 2024 16:56:08 +0000
+	s=arc-20240116; t=1731948991; c=relaxed/simple;
+	bh=vSauUQbqQRm+D9Sxdbn4/Gv0ov6NEV3lh/o1vp3dGzc=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=YuPSJgJxh7nC264VdoeLFgyCr58eDqbs2keajMUulRLCmTWZWWar71EcdYHQ+AwtzwIFUbICgnAUAu7dvDBTJ7Yu8chzZviRL30cMqj4spQ/DqNIs3/EwyOMln9/yD+oKy77qPzG/dw3Tx5uIHvXDC6bcO7yr1gJJWe+XJDjBd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-83aaedba7b5so181765439f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 08:56:29 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731948989; x=1732553789;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=j4Bnyr5J+1A12yJaaALa01BifYyba1Nn08q6McE9/0s=;
+        b=hHKi4v9OXWWnfH193Q1fjoQOOzFymrPMXiuvWoFdF32K+olGLhnM051ss3EpCN9mzo
+         t/606xIGqs6Vt0FT7aCIA+4+M3wkL/FwjrvJPFVTz2DJIQpsnlZBUJRibNFBH2/8wCcu
+         j1IN7dtn0o0s6K43nfmuBR6zvKfWv5rf9amK76O3be32tC5e+bPVL/BkzOEIpptvExA4
+         7tzNXy9zYECwtNf3/huFegNqYAIsisvz5EL8Gtl/PvPaK1AHxiEGOXnb0dgaoIMfRYDf
+         oY0dTHX5OOSYtIq+AdaEXogWpfJ/FnzfoN6gYN3O0rUUTADx/jmVNy1LQxlxeztfhosj
+         Yg9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXXgdHS8xzJWiLRY+D3y/sOcySgCwQU7op/CuoX2jWjWvPNCmtNhaBtNgE3AmIZTdoQqNPPRfT3SLJ2ARI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHRx2g76FcgwBTG2LNPHEMSSorzETKpp2o1pV8338A1axN46wr
+	D/4bET5d9yBrbo1OUG3ci5Mz7G7DUuRicLzr+ZC7OrWeMst68UIxP8fxGcbLNbJ2nXzzdJGH9i6
+	6q+SSOiy4UHhKVnhEYq8bNzcNAIepCoWADOtHMZA1dwhKD1SD2hjGh3M=
+X-Google-Smtp-Source: AGHT+IHC5DXB+ncNKrBTrSgiiRPB8eY+Tyj7FSJZH/ocRI+BEF08rpezB+dRjHBAJOw44RD0QVnKWnAJrlLkYEIYHFT0r+2B/buS
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-9b746
+X-Received: by 2002:a05:6e02:214f:b0:3a7:432d:912f with SMTP id
+ e9e14a558f8ab-3a74800f3e4mr123928455ab.1.1731948988827; Mon, 18 Nov 2024
+ 08:56:28 -0800 (PST)
+Date: Mon, 18 Nov 2024 08:56:28 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <673b71bc.050a0220.87769.004d.GAE@google.com>
+Subject: [syzbot] [wireless?] WARNING in sta_info_insert_rcu (4)
+From: syzbot <syzbot+8b512026a7ec10dcbdd9@syzkaller.appspotmail.com>
+To: johannes@sipsolutions.net, linux-kernel@vger.kernel.org, 
+	linux-wireless@vger.kernel.org, netdev@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Sat, 16 Nov 2024 21:58:45 +0300, Alex Far wrote:
-> This laptop model requires an additional detection quirk to enable the
-> internal microphone
-> 
-> 
+Hello,
 
-Applied to
+syzbot found the following issue on:
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+HEAD commit:    0a9b9d17f3a7 Merge tag 'pm-6.12-rc8' of git://git.kernel.o..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=179ef4c0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d2aeec8c0b2e420c
+dashboard link: https://syzkaller.appspot.com/bug?extid=8b512026a7ec10dcbdd9
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-Thanks!
+Unfortunately, I don't have any reproducer for this issue yet.
 
-[1/1] ASoC: amd: yc: fix internal mic on Redmi G 2022
-      commit: 67a0463d339059eeeead9cd015afa594659cfdaf
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-0a9b9d17.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/b80dd0292210/vmlinux-0a9b9d17.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/42a07c5c6678/bzImage-0a9b9d17.xz
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+8b512026a7ec10dcbdd9@syzkaller.appspotmail.com
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 1025 at net/mac80211/sta_info.c:738 sta_info_insert_check net/mac80211/sta_info.c:737 [inline]
+WARNING: CPU: 0 PID: 1025 at net/mac80211/sta_info.c:738 sta_info_insert_rcu+0x322/0x1900 net/mac80211/sta_info.c:942
+Modules linked in:
+CPU: 0 UID: 0 PID: 1025 Comm: kworker/u4:4 Not tainted 6.12.0-rc7-syzkaller-00070-g0a9b9d17f3a7 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Workqueue: events_unbound cfg80211_wiphy_work
+RIP: 0010:sta_info_insert_check net/mac80211/sta_info.c:737 [inline]
+RIP: 0010:sta_info_insert_rcu+0x322/0x1900 net/mac80211/sta_info.c:942
+Code: 85 db 4c 8b 6c 24 28 0f 84 90 00 00 00 e8 16 6e 4a f6 84 c0 0f 84 b4 00 00 00 e8 b9 80 64 f6 e9 0d 01 00 00 e8 af 80 64 f6 90 <0f> 0b 90 41 be ea ff ff ff 4c 8b 6c 24 28 4c 89 ee e8 98 d0 ff ff
+RSP: 0018:ffffc9000227f9c0 EFLAGS: 00010293
+RAX: ffffffff8b306961 RBX: 0000000000000001 RCX: ffff88803581a440
+RDX: 0000000000000000 RSI: 00000000ffffffff RDI: 0000000000000000
+RBP: 00000000ffffffff R08: ffffffff8b3068ee R09: 1ffff11009fc6ace
+R10: dffffc0000000000 R11: ffffed1009fc6acf R12: 00000000ffeeffff
+R13: 000000000000ffff R14: 000000000000feff R15: ffff88804fe34cc0
+FS:  0000000000000000(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fca30a06fb8 CR3: 00000000363e4000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ ieee80211_ocb_finish_sta net/mac80211/ocb.c:102 [inline]
+ ieee80211_ocb_work+0x2fd/0x550 net/mac80211/ocb.c:136
+ cfg80211_wiphy_work+0x2db/0x490 net/wireless/core.c:440
+ process_one_work kernel/workqueue.c:3229 [inline]
+ process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
+ worker_thread+0x870/0xd30 kernel/workqueue.c:3391
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Thanks,
-Mark
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
