@@ -1,115 +1,127 @@
-Return-Path: <linux-kernel+bounces-412648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44AEE9D0BEB
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 10:38:13 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EEA29D0BEA
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 10:38:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E95481F21DBA
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 09:38:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC3CDB25821
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 09:37:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7811019408C;
-	Mon, 18 Nov 2024 09:37:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IlMpVefa"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98F3E19308C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EB40193078;
 	Mon, 18 Nov 2024 09:37:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tj5S9db9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81ECB19259F;
+	Mon, 18 Nov 2024 09:37:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731922651; cv=none; b=o9xZZbNvZd3/wimC1g76YeQO+FhpwbT8C99AHQJo+/xaGSj6vTcweHhk418gvfv33AMH8S70wYR8NTp+XRhT84ujCPoopWzSK16hr0jMplB2kljbnCCJ6pWWgoY0z0/vZM/jFXqR5Tgc6e8mnmRFzn4siymVrS0gq7URPMy3RK4=
+	t=1731922649; cv=none; b=DbGp9bKdEtoPmiK9ilFhyuoothIk/WN9YDdR7qvDTH7UixhwWpp83pBASDyjS0es8GvY/v93Y4sabgIhLHJ7f2wDt4mKS55TeuSqNVsanuHbPXkrrXSuJ4bm/YlQayah/2gCf8EcwSa+oFYpl9Kdgeg++oc9mqaNx1KmV5imFyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731922651; c=relaxed/simple;
-	bh=OM7DQBUjAWe6PBNM50Gz0yNLuREAxgsFpfEeVs5Bjqc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bey6Zn87QiOT/tHEa0N3m59nCLhCWvPPwt1WoTjzQio/AIPrKyXXJQZIu4Wv5/rQf/7dzsu5uAEuHqf4DIc+bEPTwiwcCcZoiH4waA50ATFCCvsxVtpbKjwnLUOMJETpuwyT4aSKUteG1EzJbFJ8lgbszk9cbAq9cb7hJI1hsD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IlMpVefa; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-72410cc7be9so2991449b3a.0;
-        Mon, 18 Nov 2024 01:37:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731922650; x=1732527450; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=QW2IfhgsXhjkhuWBMY7B99CaNdpS5A7CGa3sZv7P9ac=;
-        b=IlMpVefahi7nnUDt6ivnbqQHGbcgEOY4LnRmKG20Apkg2Pfd5fYuM4CC7ooZcTE3Ve
-         Hqia9FT3JNIIOwYlsJ4OQHqZWh+NT40iH1DKWdJq8x9prWbNkwRBQWkP2gmdA+vadsnw
-         rXzZ33/giE958hoU1dA7p5XVBhWUUYjV4z/BEnjlfD7Fv0vC/l7AvvYJ1bAXLgg6CoV9
-         qHxlPajmksScrMHjUY1HCTe18JGSsIgYdBCN4/xQz2kHlGKcCjoI91KUbdztl/eh4zoq
-         0AoJoXNoTVL0z8E75xhPb+i7ndNQVuW0OXnTRKDfP867dTps2NmYstcWyHeRfy/Jrp70
-         Bi0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731922650; x=1732527450;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QW2IfhgsXhjkhuWBMY7B99CaNdpS5A7CGa3sZv7P9ac=;
-        b=v2t4TRWOa7ePzCN30JwQeFW7axS1bUC/iGn7VSGwCArQnXVCnK5J0cG2vzVchDwoZD
-         JajIZ06EdX++OoQYPwW0sHYEyY+on7dWtG/cPINDtVGgyQXjrlnZtApJ44jVRvcl4pRj
-         ZOWd7bagpr1w8Mmr4QjAPZFdqwlSz1fou9XU3RWAARa+opm0pK8os9Uiwy9QmaNqVo2R
-         5CLnuvZX4TjUJIbo9mxxd8mHjwQniIcrEymraf9dnHFzKGrIc4uLAmhj3CXtcHOMQ6Y+
-         h68P9A6i1548DlLrZ7aUCPORaeQgaPk+s82kWf2uQd4hr/WQZXTOJ7BbRVfbKB1lT7Jd
-         7TIg==
-X-Forwarded-Encrypted: i=1; AJvYcCVp3VVvsTJ/ipHrScCTQGtrrvp81RAkb0P1iuW+XXScRqL51K9r1NLq38mcuKiolFKzEnIeZVaImrNTLrU=@vger.kernel.org, AJvYcCXZw8joohTPJpavXeBmqihZYKiBi6ccWn+DagDQvkbNQdBJGvKUSVVjEG+w3RkSB799OgQ7yFnjR3aTHn0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLPLJpey2+oxYypQWlQrnrv8Mff2quHJCYB8Lxz5tWlubXraNO
-	QcVBOiGPRmcftTpE+xrJNKv5IjWu7Rd2vcwDm9A/XZFxUSh+F35a+JpP7Dvs
-X-Google-Smtp-Source: AGHT+IFnG8Al6NvOlovgTgrF7vExh8IbHZLAN5WSBXRN88bM7aNfyvAEiT0oobaDYvExVOElAobNIg==
-X-Received: by 2002:a05:6a00:4f8e:b0:71e:7887:81ac with SMTP id d2e1a72fcca58-72476d1764cmr13964427b3a.16.1731922649762;
-        Mon, 18 Nov 2024 01:37:29 -0800 (PST)
-Received: from HOME-PC ([223.185.133.4])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724772010f6sm5716632b3a.195.2024.11.18.01.37.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Nov 2024 01:37:29 -0800 (PST)
-From: Dheeraj Reddy Jonnalagadda <dheeraj.linuxdev@gmail.com>
-To: dafna@fastmail.com,
-	laurent.pinchart@ideasonboard.com,
-	linux-media@vger.kernel.org
-Cc: mchehab@kernel.org,
-	heiko@sntech.de,
-	linux-rockchip@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Dheeraj Reddy Jonnalagadda <dheeraj.linuxdev@gmail.com>
-Subject: [PATCH v2 media-next] media: rkisp1: Fix unused value issue
-Date: Mon, 18 Nov 2024 15:07:21 +0530
-Message-Id: <20241118093721.55982-1-dheeraj.linuxdev@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1731922649; c=relaxed/simple;
+	bh=RQgVYHEPorJ+99MZGykNM934RDtHC2VNhtpWhmYDngE=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=pcbP5XY94bjjSYzIsX0NY/D6wNCgJH+oXrqGSHuf6ofPHNb8H3FCsjmULPpwAHKjdV8wwQL/enW3MjiG87h2PXESJ8y6Aexh8ELwmDTnx0f0yGBFQOqn5GkQmMPWPME9yMPhb72wQAXqk1BIEGre/F8wufzp49iTrKtk0pcY4Hk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tj5S9db9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE41FC4CED0;
+	Mon, 18 Nov 2024 09:37:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731922649;
+	bh=RQgVYHEPorJ+99MZGykNM934RDtHC2VNhtpWhmYDngE=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=Tj5S9db9Q4TOehcZaFU+gEWyP1/BX3Hz7ol6oIhBQw41zo4YWOm+YoD4V2trId6wX
+	 F+CUO8HgnXawxMHao5lKg0w3PXs0g14Bx1CSaVm8+0XoCYLm6EKm2dq19IF1ccjdSe
+	 JwxVOdmMPJTMaLFlrKpdYYrzZZDlfvT+mM8X06v3RF8aV1OjwGkQOJk0BtND4ptE2i
+	 43yUn6NtewzY2NwBWgG9/McK6wf59GaH3Xr5nyJMXbK99P1LmPllZOH2rBDowbACF4
+	 5jM9u8YasstS6uxNKjTDUjao6kVozzTXGU/QIC/13NF/1tXL99xpMRdEryzU0K6CMO
+	 XwITIZJAkh0Mw==
+Date: Mon, 18 Nov 2024 03:37:27 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: robh+dt@kernel.org, devicetree@vger.kernel.org, 
+ quic_shashim@quicinc.com, kernel@quicinc.com, quic_tdas@quicinc.com, 
+ quic_aiquny@quicinc.com, quic_qianyu@quicinc.com, quic_tingweiz@quicinc.com, 
+ neil.armstrong@linaro.org, andersson@kernel.org, 
+ linux-kernel@vger.kernel.org, kishon@kernel.org, 
+ manivannan.sadhasivam@linaro.org, kw@linux.com, lpieralisi@kernel.org, 
+ bhelgaas@google.com, linux-phy@lists.infradead.org, conor+dt@kernel.org, 
+ konradybcio@kernel.org, 
+ Krishna chaitanya chundru <quic_krichai@quicinc.com>, vkoul@kernel.org, 
+ linux-arm-msm@vger.kernel.org, quic_kaushalk@quicinc.com
+To: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
+In-Reply-To: <20241118082619.177201-4-quic_ziyuzhan@quicinc.com>
+References: <20241118082619.177201-1-quic_ziyuzhan@quicinc.com>
+ <20241118082619.177201-4-quic_ziyuzhan@quicinc.com>
+Message-Id: <173192264707.1449621.6365585789543415603.robh@kernel.org>
+Subject: Re: [PATCH 3/5] dt-bindings: PCI: qcom: Document the QCS615 PCIe
+ Controller
 
-This commit fixes an unused value issue detected by Coverity (CID
-1519008). If ret is set to an error value in the switch statement, it is
-not handled before being overwritten later.
 
-Signed-off-by: Dheeraj Reddy Jonnalagadda <dheeraj.linuxdev@gmail.com>
----
- drivers/media/platform/rockchip/rkisp1/rkisp1-dev.c | 3 +++
- 1 file changed, 3 insertions(+)
+On Mon, 18 Nov 2024 16:26:17 +0800, Ziyue Zhang wrote:
+> From: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+> 
+> Add dedicated schema for the PCIe controllers found on QCS615.
+> A new compatible for qcs615 is needed, for we do not find the
+> similar one which is ok to use.
+> 
+> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+> Signed-off-by: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
+> ---
+>  .../bindings/pci/qcom,pcie-qcs615.yaml        | 161 ++++++++++++++++++
+>  1 file changed, 161 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pci/qcom,pcie-qcs615.yaml
+> 
 
-diff --git a/drivers/media/platform/rockchip/rkisp1/rkisp1-dev.c b/drivers/media/platform/rockchip/rkisp1/rkisp1-dev.c
-index dd114ab77800..9ad5026ab10a 100644
---- a/drivers/media/platform/rockchip/rkisp1/rkisp1-dev.c
-+++ b/drivers/media/platform/rockchip/rkisp1/rkisp1-dev.c
-@@ -228,6 +228,9 @@ static int rkisp1_subdev_notifier_register(struct rkisp1_device *rkisp1)
- 			break;
- 		}
- 
-+		if (ret)
-+			break;
-+
- 		/* Parse the endpoint and validate the bus type. */
- 		ret = v4l2_fwnode_endpoint_parse(ep, &vep);
- 		if (ret) {
--- 
-2.34.1
+My bot found errors running 'make dt_binding_check' on your patch:
+
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pci/qcom,pcie-qcs615.yaml: properties:resets: 'anyOf' conditional failed, one must be fixed:
+	'minItems' is not one of ['maxItems', 'description', 'deprecated']
+		hint: Only "maxItems" is required for a single entry if there are no constraints defined for the values.
+	'minItems' is not one of ['description', 'deprecated', 'const', 'enum', 'minimum', 'maximum', 'multipleOf', 'default', '$ref', 'oneOf']
+	'maxItems' is not one of ['description', 'deprecated', 'const', 'enum', 'minimum', 'maximum', 'multipleOf', 'default', '$ref', 'oneOf']
+	1 is less than the minimum of 2
+		hint: Arrays must be described with a combination of minItems/maxItems/items
+	hint: cell array properties must define how many entries and what the entries are when there is more than one entry.
+	from schema $id: http://devicetree.org/meta-schemas/reset.yaml#
+Documentation/devicetree/bindings/pci/qcom,pcie-qcs615.example.dts:24:18: fatal error: dt-bindings/clock/qcom,qcs615-gcc.h: No such file or directory
+   24 |         #include <dt-bindings/clock/qcom,qcs615-gcc.h>
+      |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+make[2]: *** [scripts/Makefile.dtbs:129: Documentation/devicetree/bindings/pci/qcom,pcie-qcs615.example.dtb] Error 1
+make[2]: *** Waiting for unfinished jobs....
+make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1442: dt_binding_check] Error 2
+make: *** [Makefile:224: __sub-make] Error 2
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241118082619.177201-4-quic_ziyuzhan@quicinc.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
 
