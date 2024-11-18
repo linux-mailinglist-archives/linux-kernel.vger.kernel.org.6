@@ -1,120 +1,174 @@
-Return-Path: <linux-kernel+bounces-413142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DDD39D1416
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 16:12:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64A8B9D141A
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 16:12:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB1D81F2225C
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 15:12:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD8BE1F22413
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 15:12:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 339041AE016;
-	Mon, 18 Nov 2024 15:11:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3D901B6D0A;
+	Mon, 18 Nov 2024 15:12:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZxtknAct"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WNt9Ruir"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 838701A08B6;
-	Mon, 18 Nov 2024 15:11:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B6131AA1F1
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 15:11:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731942712; cv=none; b=FqHsCWsQNtBxeH/D8sA7rwEQgcRIUd4aAoiW3tdR89TWkuL6uh9YSfDuH+705DoHHPEPGyF4VHs/mB0vn1kh6J0Zc12H1fL+8p/56l0aBTjRX2b/tkQaLy68tC0FhsAD1/8JELORylsu1kL67ioMbboU8Yiv/SRgFnYXvMd3YYo=
+	t=1731942721; cv=none; b=uN2Kvj0Fgjhy45DN/dJeG/vn7E09cD2qh3oLiuDNLDgXTG2370KVFLu3dzO62Sc0g1JiLLF4+C+2jy4cCs5IeMsdjgAYRURrb4/aHZFxBSmVtTbcX2CWfi05uH0uKm120HBtQNdcLqc8KeL1ws28FB1NfiuAj9pTH5/O3JvQp+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731942712; c=relaxed/simple;
-	bh=TExeTFz1ilJ8Wj+pToJnI0x993GlFRsjNQUz/EXz1Rc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZTfggCvJdez+CzbHZboJYtjaI+w/J7nR9xfUeiELKxXvNbQiGQjAIWK3abOPY/U/jt3GUDSrJmdnoSPJk5hJ91SBPDCaLR5ayqzEsP9KXjKZhJZx9R+VUWxAfHzs5C/auLYOOX+bqiCsZFgurOuHlj694o+3zd6BioUNVUxa2XY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZxtknAct; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A3C3C4CECC;
-	Mon, 18 Nov 2024 15:11:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731942712;
-	bh=TExeTFz1ilJ8Wj+pToJnI0x993GlFRsjNQUz/EXz1Rc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ZxtknAct4kAdFJ4YgK/gVZ8EBkvmlYRDhUlFtXfWsmvDYSluSC+6dBtR6BJoS/iXq
-	 jpE1jyK3ODuVm6GohUgVQYIxEawnJZk43u9b23IQeeu+weWsYdQHinofwo9xTmDy0d
-	 mVvnPeYG5sYec6tYDQgLDl0XPVkb3HjdcHwo3zfqoQpiVa9LNsZQmSY8F62AIQU8Dm
-	 2DWY1xhEtPsb8mw79ZMFMsfZ0dcNHt+Mmaedobd4isTwCbyLDXEIJAJZ8KJr9FKkWD
-	 Bk9SH2vvObBvN7Ga3p5BZr2ZknCfAQnLjzglDDInUUsyUryTYrOZLCaymvje+V0kJ3
-	 G+9fYSxKxqw7w==
-Message-ID: <17a24d69-7bf0-412c-a32a-b25d82bb4159@kernel.org>
-Date: Mon, 18 Nov 2024 16:11:46 +0100
+	s=arc-20240116; t=1731942721; c=relaxed/simple;
+	bh=L9u4djOarGr7R4ePq4khHIOJD1iKc5G+rEeGtjnMB48=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=d92j145qt44+xDHVUOAqKJIv+U5H31CvNNRbAomvsszGzT0jWe4b5tFTVW9WEYIpWryxsBKJlTHBcfC7AIATzJtRtGGA88kZA3e1GTMp71L0FUFMnsQ93SzeOexSVeJRaqvgXhmzErNq1ZMYScsJ6N85csEkWvB0HLuZcTC+UQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WNt9Ruir; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-21145812538so33722625ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 07:11:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1731942719; x=1732547519; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZKBcsDimJww6pYRM1GJfE4zk512cTlx5BHsoCw7EaLw=;
+        b=WNt9Ruir6k34qW1M8h5DPRsNGgumtEkN728Y8l8RjX2ZwqS/k+X5TY1UmlR7OSs8rb
+         zUyde93LfJjeFLr+Gx1eM7/jjbZcoPBm/0V3HACfDoaVROfJUqUE7+upKNhURv+fInzR
+         nDZHFc2lgjVNhXpyb8zGOPsb7R0bpFMFkaLm6sWBp23iROafFQNVieZk9PBU3wdUmN4l
+         b3pxZcPJFhaaQU/AV1avTIM3kSJLBsYZmESDSlk+H5wp2OrW8b/uDiydqzbUrA8MHDxv
+         xgidmB+tsmcklrNwJj8f3Ag12b+Kp+E8O/N4KhJESElH+2vxYGaljdSzwRldWIF6gEJU
+         y9ZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731942719; x=1732547519;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZKBcsDimJww6pYRM1GJfE4zk512cTlx5BHsoCw7EaLw=;
+        b=YphhGMIvjBbpZKA72EA3xHSh7M0+qddqiJLPvgmqXLTTQDWdJ/nsnbSzzdI+UVQ2dA
+         dHSdyiwx5SOPQO4H6z1KGp8RToFaP28XDQJuTwR2M0uAGk+UHcoyVE6/EvxEmDSfarYt
+         9cqtKBDhWwy7kWd3HRoqlXaBCAJrMbt1s9YTlAbbfkUceoTNS9s9IktudiJabjE7ChhD
+         hCeNsQef0J5MFu+AgGKZMuKmHN4YXqbKUvOv7MX5BlUW4ryYY4QtlEswh2iqQ3/VaWoq
+         HoDNAm/eHAbnh46wcyCXKnUvr8c7k6otEqTfk3TRS3Xpvm79uFOwQqzRzuFZZ4LWYjcJ
+         ceHw==
+X-Forwarded-Encrypted: i=1; AJvYcCUjAZk+t/9HqBpWRKngOOrap9nYYTaUznOfStRrqxbTaIHodc92SKuQjHGM5UFTRjnbkeAd5bfXgy/dKok=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2ggCM6dDh9T+VGZ3FqiXIOs2XJxsbCqJfkjqNGdE9eJahf7cd
+	RIhfDJqISGfgC7he2NNAzrELJTLVPgHjjxzDzGazMLO2aojq57iw8s/4uE0Qgz4xszP85kkqYpX
+	hfwTzb22IUjSGjkZfcyeRrjXpHCWgY1/F8s1N
+X-Google-Smtp-Source: AGHT+IFjfo/P9iieM7k3RDDAKQkvHdROHwdE7KrApXM3Ox4639CjYPlUVBIU1hPxB9Eq00WcnPDLHK03pzGg2veHBUw=
+X-Received: by 2002:a17:902:e80e:b0:20c:f27f:fcc with SMTP id
+ d9443c01a7336-211d0ebc0bamr195870035ad.44.1731942718549; Mon, 18 Nov 2024
+ 07:11:58 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v3 3/3] page_pool: fix IOMMU crash when driver
- has already unbound
-To: Yunsheng Lin <linyunsheng@huawei.com>,
- =?UTF-8?Q?Toke_H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>,
- davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com
-Cc: zhangkun09@huawei.com, fanghaiqing@huawei.com, liuyonglong@huawei.com,
- Robin Murphy <robin.murphy@arm.com>,
- Alexander Duyck <alexander.duyck@gmail.com>, IOMMU <iommu@lists.linux.dev>,
- Andrew Morton <akpm@linux-foundation.org>, Eric Dumazet
- <edumazet@google.com>, Ilias Apalodimas <ilias.apalodimas@linaro.org>,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- kernel-team <kernel-team@cloudflare.com>
-References: <20241022032214.3915232-1-linyunsheng@huawei.com>
- <20241022032214.3915232-4-linyunsheng@huawei.com>
- <dbd7dca7-d144-4a0f-9261-e8373be6f8a1@kernel.org>
- <113c9835-f170-46cf-92ba-df4ca5dfab3d@huawei.com> <878qudftsn.fsf@toke.dk>
- <d8e0895b-dd37-44bf-ba19-75c93605fc5e@huawei.com> <87r084e8lc.fsf@toke.dk>
- <0c146fb8-4c95-4832-941f-dfc3a465cf91@kernel.org>
- <204272e7-82c3-4437-bb0d-2c3237275d1f@huawei.com>
- <4564c77b-a54d-4307-b043-d08e314c4c5f@huawei.com> <87ldxp4n9v.fsf@toke.dk>
- <eab44c89-5ada-48b6-b880-65967c0f3b49@huawei.com>
- <be049c33-936a-4c93-94ff-69cd51b5de8e@kernel.org>
- <40c9b515-1284-4c49-bdce-c9eeff5092f9@huawei.com>
-Content-Language: en-US
-From: Jesper Dangaard Brouer <hawk@kernel.org>
-In-Reply-To: <40c9b515-1284-4c49-bdce-c9eeff5092f9@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <6731d32b.050a0220.1fb99c.014d.GAE@google.com> <1af819ae-cd88-4db0-af6e-02064489ebb2@rowland.harvard.edu>
+ <CANp29Y7RA00bKOinkjSDBchbkx3RDvWXGs4hr0PrPKyqSEC-_g@mail.gmail.com> <efc7e41c-b4a3-469a-983a-24b167b944e3@rowland.harvard.edu>
+In-Reply-To: <efc7e41c-b4a3-469a-983a-24b167b944e3@rowland.harvard.edu>
+From: Aleksandr Nogikh <nogikh@google.com>
+Date: Mon, 18 Nov 2024 16:11:46 +0100
+Message-ID: <CANp29Y4X9v_G-JE342xpvGRiso=48R-kgO85R5FWau5CGYCFHQ@mail.gmail.com>
+Subject: Re: [syzbot] [usb?] KASAN: slab-use-after-free Read in ld_usb_release
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: syzbot <syzbot+e8e879922808870c3437@syzkaller.appspotmail.com>, 
+	gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, 
+	linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	syzkaller <syzkaller@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Nov 15, 2024 at 6:48=E2=80=AFPM Alan Stern <stern@rowland.harvard.e=
+du> wrote:
+>
+> On Wed, Nov 13, 2024 at 11:46:00AM +0100, Aleksandr Nogikh wrote:
+> > Hi Alan,
+> >
+> > On Mon, Nov 11, 2024 at 4:45=E2=80=AFPM Alan Stern <stern@rowland.harva=
+rd.edu> wrote:
+> > >
+> > > On Mon, Nov 11, 2024 at 01:49:31AM -0800, syzbot wrote:
+> > > > Hello,
+> > > >
+> > > > syzbot found the following issue on:
+> > > >
+> > > > HEAD commit:    2e1b3cc9d7f7 Merge tag 'arm-fixes-6.12-2' of git://=
+git.ker..
+> > > > git tree:       upstream
+> > > > console output: https://syzkaller.appspot.com/x/log.txt?x=3D1650d6a=
+7980000
+> > > > kernel config:  https://syzkaller.appspot.com/x/.config?x=3Db77c8a5=
+5ccf1d9e2
+> > > > dashboard link: https://syzkaller.appspot.com/bug?extid=3De8e879922=
+808870c3437
+> > > > compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils=
+ for Debian) 2.40
+> > > > userspace arch: i386
+> > > >
+> > > > Unfortunately, I don't have any reproducer for this issue yet.
+> > >
+> > > Question for the syzbot people:
+> > >
+> > > If I have a patch which I think will cause the issue to become
+> > > reproducible, is there any way to ask syzbot to apply the same test t=
+hat
+> > > failed here to a kernel including my patch?
+> >
+> > No, that's unfortunately not supported.
+> >
+> > In this particular case, it's at least evident from `Comm: ` which
+> > exact program was being executed when the kernel crashed:
+> >
+> > [  178.539707][ T8305] BUG: KASAN: slab-use-after-free in
+> > do_raw_spin_lock+0x271/0x2c0
+> > [  178.542477][ T8305] Read of size 4 at addr ffff888022387c0c by task
+> > syz.3.600/8305
+> > [  178.546823][ T8305]
+> > [  178.548202][ T8305] CPU: 3 UID: 0 PID: 8305 Comm: syz.3.600 Not
+> > tainted 6.12.0-rc6-syzkaller-00077-g2e1b3cc9d7f7 #0
+> >
+> > syz.3.600 means procid=3D3 and id=3D600, so it's the program that comes
+> > after the following line in
+> > https://syzkaller.appspot.com/x/log.txt?x=3D1650d6a7980000:
+> >
+> > 551.627007ms ago: executing program 3 (id=3D600):
+> > <...>
+> >
+> > You may try to treat that program as a normal syz reproducer and run
+> > it against your patched kernel locally, that should be quite
+> > straightforward to do (just several commands). See e.g. the
+> > instructions here:
+> > https://github.com/google/syzkaller/blob/master/docs/syzbot_assets.md#r=
+un-a-syz-reproducer-directly
+>
+> One of the beauties of syzbot is that it will run potential reproducers
+> and test patches for us with very little effort on our part.
+>
+> Can I request an enhancement of the "#syz test:" email command?  It
+> would be great if it would be willing to run a test even if the test
+> program isn't considered a bona fide reproducer.
 
+That could be doable I think, thanks for the suggestion!
 
-On 18/11/2024 10.08, Yunsheng Lin wrote:
-> On 2024/11/12 22:19, Jesper Dangaard Brouer wrote:
->>>
->>> Yes, there seems to be many MM system internals, like the CONFIG_SPARSEMEM*
->>> config, memory offline/online and other MM specific optimization that it
->>> is hard to tell it is feasible.
->>>
->>> It would be good if MM experts can clarify on this.
->>>
->>
->> Yes, please.  Can Alex Duyck or MM-experts point me at some code walking
->> entire system page table?
->>
->> Then I'll write some kernel code (maybe module) that I can benchmark how
->> long it takes on my machine with 384GiB. I do like Alex'es suggestion,
->> but I want to assess the overhead of doing this on modern hardware.
->>
-> 
-> After looking more closely into MM subsystem, it seems there is some existing
-> pattern or API to walk the entire pages from the buddy allocator subsystem,
-> see the kmemleak_scan() in mm/kmemleak.c:
-> https://elixir.bootlin.com/linux/v6.12/source/mm/kmemleak.c#L1680
-> 
-> I used that to walk the pages in a arm64 system with over 300GB memory,
-> it took about 1.3 sec to do the walking, which seems acceptable?
+We actually have a related action item in our backlog:
+https://github.com/google/syzkaller/issues/613
 
-Yes, that seems acceptable to me.
+I've referenced your comment there.
 
-I'll also do a test on one of my 384 GB systems.
-  - It took approx 0.391661 seconds.
+--=20
+Aleksandr
 
-I just deref page->pp_magic and counted the pages, not many page were
-in-use (page_count(page) > 0) as machine has just been rebooted into
-this kernel:
-  - pages=100592572 in-use:2079607
-
---Jesper
+>
+> I don't really need it for this particular bug report; the underlying
+> cause of the problem in this case is pretty clear.  But having this
+> capability in the future could be a big help.
+>
+> Alan Stern
 
