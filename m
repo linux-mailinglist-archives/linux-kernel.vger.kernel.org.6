@@ -1,398 +1,139 @@
-Return-Path: <linux-kernel+bounces-412884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 598559D1095
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 13:33:19 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 922589D1093
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 13:33:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2436283851
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 12:33:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 280F7B22FAC
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 12:33:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFFB619ABB6;
-	Mon, 18 Nov 2024 12:33:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5C23199381;
+	Mon, 18 Nov 2024 12:32:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nLmUERNp"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UiABuY1n"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A46F1993B9
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 12:32:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A98C190665
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 12:32:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731933180; cv=none; b=XzmsWgyEHGvyiSpf+/oSls+/QRUD2h3zXRJx7mKr1ZGpES2vuYGjUwiG8iWxivltFj8zQHorfDoSCHcHRhgDHlkANxvxj5j9U/zZ0Q0aYp3YjxGj9b3EcJIPyGsKSlSk63hewEVuEz4OIsgCWQyipnIJjZoLEW6itLpc/EWfwOY=
+	t=1731933178; cv=none; b=RBLZkN6irANcDIvMSW/YDThcyfYVc+xuwUJzvI9Yh0eEZLJcwYCnijmc7GhUFxY8LyMwzTMx9Nyp0VXOz9sEfJeDAVL6EMG8xtWtJB4V59s3hagEjGDarJqavQVV6FlyDSelXChVK2RkieeFPDY27IjiLGpJaabnJAZ4ZrV2ung=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731933180; c=relaxed/simple;
-	bh=3FCzFMN9NyDps4Gv1d2SieEWKCopYH8IRTojQ3H5dCs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Z5tBhnNizuE2q7V2qj5u+VU5Sjm5AsMvksICrcEsLlBrYRgfeFuZoKhNAcEeuxCteA9IPJfR6MMQQykwymCOOC5W0MvV6e7RGqY2M+WkrU0QXqZJGzn22rtCMSFNSh7zR/5ESc6iVfxhJGAdCcltZF1FL3y7x7BK303Sjo2gtGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nLmUERNp; arc=none smtp.client-ip=192.198.163.7
+	s=arc-20240116; t=1731933178; c=relaxed/simple;
+	bh=jIaEOjK0mS7sbPkYVSxnP3VGbdEHlavlnKhav5Y1SV8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hcPkEpg9HC2ebCM4Mah7YCGCMy/ttGbRYSlPeZz++h+BzYEcr4Hjaadf3B9/Shmo5gi5XcipBaeoF4zJnbvxM9LLfu7P6qzPdXn3irw+jGgAzX94+0QsHj3y+2hQur7b275Hi8lUnCQZByvd4Rl3MQvwHXzg+itDHu2SbRwQnzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UiABuY1n; arc=none smtp.client-ip=198.175.65.18
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731933179; x=1763469179;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=3FCzFMN9NyDps4Gv1d2SieEWKCopYH8IRTojQ3H5dCs=;
-  b=nLmUERNp3N/A7fvvyr3+CaiSEuUkAczq/js3xwc2m3gEzmOkN6ZeWs+j
-   mA5eMY0a/WeT3W2hXeJe+Ln1QiA8r800xXhqVtbG2LZnI4T4cHqIm6tWj
-   eLy9lWfEQUCcx8H0+UpXec24BqlMjO3PSoITGZYr+rZFNCE9z7TV+EvMa
-   A5lgMPq9NaD5e88kUsM4XF3N6v6amFnYcVzITuAq3xf3tlx7XaDDapKRp
-   08duyf7PPsI6OX0BCzeeLKjcJPdZB5GkSiTn4SjJIzksRbTFMb2SWv+f5
-   Vs5Fyw9q5jlvjeHMj8YEd16nu8UP2ruVxpamafK7fc/JGU3xmL8VytgAY
-   Q==;
-X-CSE-ConnectionGUID: zvy18cfWQKaLsOqEOS5MTA==
-X-CSE-MsgGUID: jZ5gfAysSgyD3QGe4nMTsA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11259"; a="57289645"
+  t=1731933176; x=1763469176;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=jIaEOjK0mS7sbPkYVSxnP3VGbdEHlavlnKhav5Y1SV8=;
+  b=UiABuY1ncNhSEbFiNUdEKJBVTr+l4cVJk/HJC8TxDjmgCG5oVprcpHPR
+   biLLbvD9yQbV/Jtfpu2oaPgaxQWKmIPMCY1yEX0mZRj5G+N/FpYQkYGq7
+   ZeUIkHnLdkAprr7SpUyisfIPqLxtYiiMGEFnYl8H1np/wEno4cyfjoDCa
+   ewWxauUAvxdmcaKDIJXktXYo57NMRw3lunjQfbGVj//4xDvg/vvWr6/fs
+   gI8CsnuMmuz+wwxgguQvEq8H0cz/q2in6xsTSZntO21zxY4b5MOtTPorO
+   HT+zehfQ0vSDYGEKYMkMPhyozfrxdBgXGd1Qn/43GKoB7tfb0nureKq2c
+   w==;
+X-CSE-ConnectionGUID: mVAwRUghSRmrmUTgv1LSMw==
+X-CSE-MsgGUID: DbowVU9GSMWZkn9xkGdC2A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11259"; a="32037880"
 X-IronPort-AV: E=Sophos;i="6.12,164,1728975600"; 
-   d="scan'208";a="57289645"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2024 04:32:58 -0800
-X-CSE-ConnectionGUID: BW6EuTj5RIqFmF3SqalfnQ==
-X-CSE-MsgGUID: h+S3L0nVSWeaFQf+wSZnlQ==
+   d="scan'208";a="32037880"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2024 04:32:56 -0800
+X-CSE-ConnectionGUID: 1qjbz5mMQamSG6XBdojX1w==
+X-CSE-MsgGUID: YKPyKPjFSOKMkok5yEjWPA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,164,1728975600"; 
-   d="scan'208";a="120143952"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa001.fm.intel.com with ESMTP; 18 Nov 2024 04:32:56 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 7109118D; Mon, 18 Nov 2024 14:32:55 +0200 (EET)
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="94266911"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2024 04:32:54 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tD0vz-0000000G0Bj-1X7S;
+	Mon, 18 Nov 2024 14:32:51 +0200
+Date: Mon, 18 Nov 2024 14:32:51 +0200
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
 	Michael Ellerman <mpe@ellerman.id.au>,
 	Nicholas Piggin <npiggin@gmail.com>,
 	Naveen N Rao <naveen@kernel.org>,
 	Madhavan Srinivasan <maddy@linux.ibm.com>
-Subject: [PATCH v2 1/1] powerpc/8xx: Drop legacy-of-mm-gpiochip.h header
-Date: Mon, 18 Nov 2024 14:31:03 +0200
-Message-ID: <20241118123254.620519-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
+Subject: Re: [PATCH v1 1/1] powerpc/8xx: Drop legacy-of-mm-gpiochip.h header
+Message-ID: <Zzsz81-quzIZ_13L@smile.fi.intel.com>
+References: <20241115133802.3919003-1-andriy.shevchenko@linux.intel.com>
+ <5b44abcc-f629-4250-9edf-7f173b78172c@csgroup.eu>
+ <ZzsG9EjzV82Crl2W@smile.fi.intel.com>
+ <124ab5ab-3bfd-4ad7-a75d-981da9c03423@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <124ab5ab-3bfd-4ad7-a75d-981da9c03423@csgroup.eu>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Remove legacy-of-mm-gpiochip.h header file. The above mentioned
-file provides an OF API that's deprecated. There is no agnostic
-alternatives to it and we have to open code the logic which was
-hidden behind of_mm_gpiochip_add_data(). Note, most of the GPIO
-drivers are using their own labeling schemas and resource retrieval
-that only a few may gain of the code deduplication, so whenever
-alternative is appear we can move drivers again to use that one.
+On Mon, Nov 18, 2024 at 12:02:44PM +0100, Christophe Leroy wrote:
+> Le 18/11/2024 à 10:20, Andy Shevchenko a écrit :
+> > On Sat, Nov 16, 2024 at 11:44:35AM +0100, Christophe Leroy wrote:
+> > > Le 15/11/2024 à 14:38, Andy Shevchenko a écrit :
+> > > > Remove legacy-of-mm-gpiochip.h header file, replace of_* functions
+> > > > and structs with appropriate alternatives.
+> > > 
+> > > Looks like you don't really have an alternative to
+> > > of_mm_gpiochip_add_data(), you are replacing one single line by 11 new ones,
+> > > and that is done twice (once for cpm1_gpiochip_add16(), once for
+> > > cpm1_gpiochip_add32()).
 
-As a side effect this change fixes a potential memory leak on
-an error path, if of_mm_gpiochip_add_data() fails.
+Note, the overall statistics is +1 LoC only!
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
-v2: fixed build errors (Christophe), improved commit message (Christophe)
- arch/powerpc/platforms/8xx/cpm1.c | 119 +++++++++++++++---------------
- 1 file changed, 60 insertions(+), 59 deletions(-)
+> > True, but that's the issue that we have of_specific API. If someone propose
+> > the common API for the agnostic approach,  it would be nice, but I am not
+> > the one. And TBH I do not see the advantage of it right now as almost every
+> > GPIO driver is using its own labeling schema (*). Note, that this patch also
+> > fixes a memory leak as a side effect.
+> 
+> Can you explain that in the commit message instead of saying you use
+> appropriate alternatives that do not exist ?
+> 
+> Don't hesitate to mention the memory leak it in the commit message as well.
+> 
+> > *) the legacy API is mostly used by PPC code, do you want that of_mm_* thingy
+> > to be moved to PPC specific code instead of killing it? Would be done this
+> > way as well.
+> 
+> No no, your change is ok for me, just need an accurate commit message.
 
-diff --git a/arch/powerpc/platforms/8xx/cpm1.c b/arch/powerpc/platforms/8xx/cpm1.c
-index b24d4102fbf6..1dc095ad48fc 100644
---- a/arch/powerpc/platforms/8xx/cpm1.c
-+++ b/arch/powerpc/platforms/8xx/cpm1.c
-@@ -45,7 +45,7 @@
- #include <sysdev/fsl_soc.h>
- 
- #ifdef CONFIG_8xx_GPIO
--#include <linux/gpio/legacy-of-mm-gpiochip.h>
-+#include <linux/gpio/driver.h>
- #endif
- 
- #define CPM_MAP_SIZE    (0x4000)
-@@ -376,7 +376,8 @@ int __init cpm1_clk_setup(enum cpm_clk_target target, int clock, int mode)
- #ifdef CONFIG_8xx_GPIO
- 
- struct cpm1_gpio16_chip {
--	struct of_mm_gpio_chip mm_gc;
-+	struct gpio_chip gc;
-+	void __iomem *regs;
- 	spinlock_t lock;
- 
- 	/* shadowed data register to clear/set bits safely */
-@@ -386,19 +387,17 @@ struct cpm1_gpio16_chip {
- 	int irq[16];
- };
- 
--static void cpm1_gpio16_save_regs(struct of_mm_gpio_chip *mm_gc)
-+static void cpm1_gpio16_save_regs(struct cpm1_gpio16_chip *cpm1_gc)
- {
--	struct cpm1_gpio16_chip *cpm1_gc =
--		container_of(mm_gc, struct cpm1_gpio16_chip, mm_gc);
--	struct cpm_ioport16 __iomem *iop = mm_gc->regs;
-+	struct cpm_ioport16 __iomem *iop = cpm1_gc->regs;
- 
- 	cpm1_gc->cpdata = in_be16(&iop->dat);
- }
- 
- static int cpm1_gpio16_get(struct gpio_chip *gc, unsigned int gpio)
- {
--	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
--	struct cpm_ioport16 __iomem *iop = mm_gc->regs;
-+	struct cpm1_gpio16_chip *cpm1_gc = gpiochip_get_data(gc);
-+	struct cpm_ioport16 __iomem *iop = cpm1_gc->regs;
- 	u16 pin_mask;
- 
- 	pin_mask = 1 << (15 - gpio);
-@@ -406,11 +405,9 @@ static int cpm1_gpio16_get(struct gpio_chip *gc, unsigned int gpio)
- 	return !!(in_be16(&iop->dat) & pin_mask);
- }
- 
--static void __cpm1_gpio16_set(struct of_mm_gpio_chip *mm_gc, u16 pin_mask,
--	int value)
-+static void __cpm1_gpio16_set(struct cpm1_gpio16_chip *cpm1_gc, u16 pin_mask, int value)
- {
--	struct cpm1_gpio16_chip *cpm1_gc = gpiochip_get_data(&mm_gc->gc);
--	struct cpm_ioport16 __iomem *iop = mm_gc->regs;
-+	struct cpm_ioport16 __iomem *iop = cpm1_gc->regs;
- 
- 	if (value)
- 		cpm1_gc->cpdata |= pin_mask;
-@@ -422,38 +419,35 @@ static void __cpm1_gpio16_set(struct of_mm_gpio_chip *mm_gc, u16 pin_mask,
- 
- static void cpm1_gpio16_set(struct gpio_chip *gc, unsigned int gpio, int value)
- {
--	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
--	struct cpm1_gpio16_chip *cpm1_gc = gpiochip_get_data(&mm_gc->gc);
-+	struct cpm1_gpio16_chip *cpm1_gc = gpiochip_get_data(gc);
- 	unsigned long flags;
- 	u16 pin_mask = 1 << (15 - gpio);
- 
- 	spin_lock_irqsave(&cpm1_gc->lock, flags);
- 
--	__cpm1_gpio16_set(mm_gc, pin_mask, value);
-+	__cpm1_gpio16_set(cpm1_gc, pin_mask, value);
- 
- 	spin_unlock_irqrestore(&cpm1_gc->lock, flags);
- }
- 
- static int cpm1_gpio16_to_irq(struct gpio_chip *gc, unsigned int gpio)
- {
--	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
--	struct cpm1_gpio16_chip *cpm1_gc = gpiochip_get_data(&mm_gc->gc);
-+	struct cpm1_gpio16_chip *cpm1_gc = gpiochip_get_data(gc);
- 
- 	return cpm1_gc->irq[gpio] ? : -ENXIO;
- }
- 
- static int cpm1_gpio16_dir_out(struct gpio_chip *gc, unsigned int gpio, int val)
- {
--	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
--	struct cpm1_gpio16_chip *cpm1_gc = gpiochip_get_data(&mm_gc->gc);
--	struct cpm_ioport16 __iomem *iop = mm_gc->regs;
-+	struct cpm1_gpio16_chip *cpm1_gc = gpiochip_get_data(gc);
-+	struct cpm_ioport16 __iomem *iop = cpm1_gc->regs;
- 	unsigned long flags;
- 	u16 pin_mask = 1 << (15 - gpio);
- 
- 	spin_lock_irqsave(&cpm1_gc->lock, flags);
- 
- 	setbits16(&iop->dir, pin_mask);
--	__cpm1_gpio16_set(mm_gc, pin_mask, val);
-+	__cpm1_gpio16_set(cpm1_gc, pin_mask, val);
- 
- 	spin_unlock_irqrestore(&cpm1_gc->lock, flags);
- 
-@@ -462,9 +456,8 @@ static int cpm1_gpio16_dir_out(struct gpio_chip *gc, unsigned int gpio, int val)
- 
- static int cpm1_gpio16_dir_in(struct gpio_chip *gc, unsigned int gpio)
- {
--	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
--	struct cpm1_gpio16_chip *cpm1_gc = gpiochip_get_data(&mm_gc->gc);
--	struct cpm_ioport16 __iomem *iop = mm_gc->regs;
-+	struct cpm1_gpio16_chip *cpm1_gc = gpiochip_get_data(gc);
-+	struct cpm_ioport16 __iomem *iop = cpm1_gc->regs;
- 	unsigned long flags;
- 	u16 pin_mask = 1 << (15 - gpio);
- 
-@@ -481,11 +474,10 @@ int cpm1_gpiochip_add16(struct device *dev)
- {
- 	struct device_node *np = dev->of_node;
- 	struct cpm1_gpio16_chip *cpm1_gc;
--	struct of_mm_gpio_chip *mm_gc;
- 	struct gpio_chip *gc;
- 	u16 mask;
- 
--	cpm1_gc = kzalloc(sizeof(*cpm1_gc), GFP_KERNEL);
-+	cpm1_gc = devm_kzalloc(dev, sizeof(*cpm1_gc), GFP_KERNEL);
- 	if (!cpm1_gc)
- 		return -ENOMEM;
- 
-@@ -499,10 +491,8 @@ int cpm1_gpiochip_add16(struct device *dev)
- 				cpm1_gc->irq[i] = irq_of_parse_and_map(np, j++);
- 	}
- 
--	mm_gc = &cpm1_gc->mm_gc;
--	gc = &mm_gc->gc;
--
--	mm_gc->save_regs = cpm1_gpio16_save_regs;
-+	gc = &cpm1_gc->gc;
-+	gc->base = -1;
- 	gc->ngpio = 16;
- 	gc->direction_input = cpm1_gpio16_dir_in;
- 	gc->direction_output = cpm1_gpio16_dir_out;
-@@ -512,30 +502,39 @@ int cpm1_gpiochip_add16(struct device *dev)
- 	gc->parent = dev;
- 	gc->owner = THIS_MODULE;
- 
--	return of_mm_gpiochip_add_data(np, mm_gc, cpm1_gc);
-+	gc->label = devm_kasprintf(dev, GFP_KERNEL, "%pOF", np);
-+	if (!gc->label)
-+		return -ENOMEM;
-+
-+	cpm1_gc->regs = devm_of_iomap(dev, np, 0, NULL);
-+	if (IS_ERR(cpm1_gc->regs))
-+		return PTR_ERR(cpm1_gc->regs);
-+
-+	cpm1_gpio16_save_regs(cpm1_gc);
-+
-+	return devm_gpiochip_add_data(dev, gc, cpm1_gc);
- }
- 
- struct cpm1_gpio32_chip {
--	struct of_mm_gpio_chip mm_gc;
-+	struct gpio_chip gc;
-+	void __iomem *regs;
- 	spinlock_t lock;
- 
- 	/* shadowed data register to clear/set bits safely */
- 	u32 cpdata;
- };
- 
--static void cpm1_gpio32_save_regs(struct of_mm_gpio_chip *mm_gc)
-+static void cpm1_gpio32_save_regs(struct cpm1_gpio32_chip *cpm1_gc)
- {
--	struct cpm1_gpio32_chip *cpm1_gc =
--		container_of(mm_gc, struct cpm1_gpio32_chip, mm_gc);
--	struct cpm_ioport32b __iomem *iop = mm_gc->regs;
-+	struct cpm_ioport32b __iomem *iop = cpm1_gc->regs;
- 
- 	cpm1_gc->cpdata = in_be32(&iop->dat);
- }
- 
- static int cpm1_gpio32_get(struct gpio_chip *gc, unsigned int gpio)
- {
--	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
--	struct cpm_ioport32b __iomem *iop = mm_gc->regs;
-+	struct cpm1_gpio32_chip *cpm1_gc = gpiochip_get_data(gc);
-+	struct cpm_ioport32b __iomem *iop = cpm1_gc->regs;
- 	u32 pin_mask;
- 
- 	pin_mask = 1 << (31 - gpio);
-@@ -543,11 +542,9 @@ static int cpm1_gpio32_get(struct gpio_chip *gc, unsigned int gpio)
- 	return !!(in_be32(&iop->dat) & pin_mask);
- }
- 
--static void __cpm1_gpio32_set(struct of_mm_gpio_chip *mm_gc, u32 pin_mask,
--	int value)
-+static void __cpm1_gpio32_set(struct cpm1_gpio32_chip *cpm1_gc, u32 pin_mask, int value)
- {
--	struct cpm1_gpio32_chip *cpm1_gc = gpiochip_get_data(&mm_gc->gc);
--	struct cpm_ioport32b __iomem *iop = mm_gc->regs;
-+	struct cpm_ioport32b __iomem *iop = cpm1_gc->regs;
- 
- 	if (value)
- 		cpm1_gc->cpdata |= pin_mask;
-@@ -559,30 +556,28 @@ static void __cpm1_gpio32_set(struct of_mm_gpio_chip *mm_gc, u32 pin_mask,
- 
- static void cpm1_gpio32_set(struct gpio_chip *gc, unsigned int gpio, int value)
- {
--	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
--	struct cpm1_gpio32_chip *cpm1_gc = gpiochip_get_data(&mm_gc->gc);
-+	struct cpm1_gpio32_chip *cpm1_gc = gpiochip_get_data(gc);
- 	unsigned long flags;
- 	u32 pin_mask = 1 << (31 - gpio);
- 
- 	spin_lock_irqsave(&cpm1_gc->lock, flags);
- 
--	__cpm1_gpio32_set(mm_gc, pin_mask, value);
-+	__cpm1_gpio32_set(cpm1_gc, pin_mask, value);
- 
- 	spin_unlock_irqrestore(&cpm1_gc->lock, flags);
- }
- 
- static int cpm1_gpio32_dir_out(struct gpio_chip *gc, unsigned int gpio, int val)
- {
--	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
--	struct cpm1_gpio32_chip *cpm1_gc = gpiochip_get_data(&mm_gc->gc);
--	struct cpm_ioport32b __iomem *iop = mm_gc->regs;
-+	struct cpm1_gpio32_chip *cpm1_gc = gpiochip_get_data(gc);
-+	struct cpm_ioport32b __iomem *iop = cpm1_gc->regs;
- 	unsigned long flags;
- 	u32 pin_mask = 1 << (31 - gpio);
- 
- 	spin_lock_irqsave(&cpm1_gc->lock, flags);
- 
- 	setbits32(&iop->dir, pin_mask);
--	__cpm1_gpio32_set(mm_gc, pin_mask, val);
-+	__cpm1_gpio32_set(cpm1_gc, pin_mask, val);
- 
- 	spin_unlock_irqrestore(&cpm1_gc->lock, flags);
- 
-@@ -591,9 +586,8 @@ static int cpm1_gpio32_dir_out(struct gpio_chip *gc, unsigned int gpio, int val)
- 
- static int cpm1_gpio32_dir_in(struct gpio_chip *gc, unsigned int gpio)
- {
--	struct of_mm_gpio_chip *mm_gc = to_of_mm_gpio_chip(gc);
--	struct cpm1_gpio32_chip *cpm1_gc = gpiochip_get_data(&mm_gc->gc);
--	struct cpm_ioport32b __iomem *iop = mm_gc->regs;
-+	struct cpm1_gpio32_chip *cpm1_gc = gpiochip_get_data(gc);
-+	struct cpm_ioport32b __iomem *iop = cpm1_gc->regs;
- 	unsigned long flags;
- 	u32 pin_mask = 1 << (31 - gpio);
- 
-@@ -610,19 +604,16 @@ int cpm1_gpiochip_add32(struct device *dev)
- {
- 	struct device_node *np = dev->of_node;
- 	struct cpm1_gpio32_chip *cpm1_gc;
--	struct of_mm_gpio_chip *mm_gc;
- 	struct gpio_chip *gc;
- 
--	cpm1_gc = kzalloc(sizeof(*cpm1_gc), GFP_KERNEL);
-+	cpm1_gc = devm_kzalloc(dev, sizeof(*cpm1_gc), GFP_KERNEL);
- 	if (!cpm1_gc)
- 		return -ENOMEM;
- 
- 	spin_lock_init(&cpm1_gc->lock);
- 
--	mm_gc = &cpm1_gc->mm_gc;
--	gc = &mm_gc->gc;
--
--	mm_gc->save_regs = cpm1_gpio32_save_regs;
-+	gc = &cpm1_gc->gc;
-+	gc->base = -1;
- 	gc->ngpio = 32;
- 	gc->direction_input = cpm1_gpio32_dir_in;
- 	gc->direction_output = cpm1_gpio32_dir_out;
-@@ -631,7 +622,17 @@ int cpm1_gpiochip_add32(struct device *dev)
- 	gc->parent = dev;
- 	gc->owner = THIS_MODULE;
- 
--	return of_mm_gpiochip_add_data(np, mm_gc, cpm1_gc);
-+	gc->label = devm_kasprintf(dev, GFP_KERNEL, "%pOF", np);
-+	if (!gc->label)
-+		return -ENOMEM;
-+
-+	cpm1_gc->regs = devm_of_iomap(dev, np, 0, NULL);
-+	if (IS_ERR(cpm1_gc->regs))
-+		return PTR_ERR(cpm1_gc->regs);
-+
-+	cpm1_gpio32_save_regs(cpm1_gc);
-+
-+	return devm_gpiochip_add_data(dev, gc, cpm1_gc);
- }
- 
- #endif /* CONFIG_8xx_GPIO */
+Fine, just sent a v2, which is now compile-tested as suggested below.
+
+...
+
+> > > Does not build:
+> > 
+> > Crap, I most likely built something else and not these files...
+> > I have carefully build-test this for v2.
+> 
+> Just use mpc885_ads_defconfig
+
+Thanks, that is helpful!
+
 -- 
-2.43.0.rc1.1336.g36b5255a03ac
+With Best Regards,
+Andy Shevchenko
+
 
 
