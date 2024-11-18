@@ -1,102 +1,169 @@
-Return-Path: <linux-kernel+bounces-413186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F9989D14D1
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 16:55:07 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8EBE9D14E5
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 17:01:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD1AC1F2297E
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 15:55:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5594EB282F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 15:55:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9C351ADFED;
-	Mon, 18 Nov 2024 15:54:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74B5C1A9B3D;
+	Mon, 18 Nov 2024 15:55:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="o2BM5QHw"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="INyRbXfI"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7AE448CFC;
-	Mon, 18 Nov 2024 15:54:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 095F3148FE6
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 15:55:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731945299; cv=none; b=M8K9CXIjGmtZ+II2o1MkRlLAlUZKAX63nUbNVN/lt+ZUo/wgWaLfSQUn/a/OVJg0RKt5Ga7wngclf9wsS0NtuB+AC2NOi7I3aFhtI3EvK/JgJImih2YhTuqXq/ec06FK8KF90RO89/otgnWbxAB1hQVY7ZSCmwPWVOFHMr3ytug=
+	t=1731945339; cv=none; b=mWg0ItD47REMnJJ4i5QFMNZSxDJSbe4v2qfPrKWsVb0pAAPkFLLzKnfiGb/ur3LCFwJgNcfTrYWevSj3F5f3HcPeZvnRbFlxEsFTMj89pnTSuq6nl9V8AeK0gcY0ikew1thPjmLMe2Yxnp+ftP74cEw8o1RMIAf5KxPq1F+EWTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731945299; c=relaxed/simple;
-	bh=KWjaldySSsYfQCb+Fv1nXh6FZAdhvSHeg1RBQdsBVf8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=j+WHy5WptAm/kDP4eDf2929Mk0Q/CmSyrpf3yryiwHl+SLAkFnm2dy4XX9hYQYUdWTBfvHEMRzWQkzoV439Wcv9lP5+2QK4GSXKWsAnscCIqW3HyIbqJAYDfPOjG7DR6e/xRWXuYqd24lYvCE/AG+ZSG4uYs8doH/S63llf02EU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=o2BM5QHw; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 6CF4F20005;
-	Mon, 18 Nov 2024 15:54:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1731945293;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KWjaldySSsYfQCb+Fv1nXh6FZAdhvSHeg1RBQdsBVf8=;
-	b=o2BM5QHwOM9jIig3NLGd5FDgFvDpNzcM36wQa5NARzekPb/pj7gB0mOSC9JaANGhYCcY9q
-	qpM/6ojDZQaViCYcreN+FL/vQO4v8MTzQXp35MtLGOpKh5zGVCm6MMnhZ6FOH7/1ZyY/Mh
-	zberEPyKb2XCgNUmA4SPa3Xd9Vj7+avL4asbVL2OdGT7rOTl/H2POaDseg6ktW5mG1w6C7
-	PbpQKkKU44v1Ms8pA5luj0l1q4IxcJmYGQiQDpYpNFHR97HeM0x7qOO2ixZ2z+iwedaBcA
-	lXKynAIpWHh1at+lCyTcWXnpIWC3ERtrHrDusEfmGaRnNdrQrMlO6eycPqTOLA==
-Date: Mon, 18 Nov 2024 16:54:51 +0100
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: Suraj Gupta <suraj.gupta2@amd.com>
-Cc: <andrew+netdev@lunn.ch>, <davem@davemloft.net>, <edumazet@google.com>,
- <kuba@kernel.org>, <pabeni@redhat.com>, <michal.simek@amd.com>,
- <sean.anderson@linux.dev>, <radhey.shyam.pandey@amd.com>,
- <horms@kernel.org>, <netdev@vger.kernel.org>,
- <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
- <git@amd.com>, <harini.katakam@amd.com>
-Subject: Re: [PATCH net-next 1/2] dt-bindings: net: xlnx,axi-ethernet: Add
- bindings for AXI 2.5G MAC
-Message-ID: <20241118165451.6a8b53ed@fedora.home>
-In-Reply-To: <20241118081822.19383-2-suraj.gupta2@amd.com>
-References: <20241118081822.19383-1-suraj.gupta2@amd.com>
-	<20241118081822.19383-2-suraj.gupta2@amd.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1731945339; c=relaxed/simple;
+	bh=zir8hakDkyMI0HxAyo+ufjhm3nz0MJ1zHD5s8XoSlxA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fPtcn8mzm6567wQZjyaxpSXliRiv26ApUGuKkckwuJpBcJBK0dcCu4nb3HeW9aARjTLSP+JjvaqoVGVNbODXw7FUyzaFKb7nhAqTZwlewLMU/lcfRwe5+Cr8zQoL0zQTS/Tr6reYJf8MSe4tKpNaZMJTVJ8NPLxEB2rMyhkVdmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=INyRbXfI; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731945338; x=1763481338;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=zir8hakDkyMI0HxAyo+ufjhm3nz0MJ1zHD5s8XoSlxA=;
+  b=INyRbXfIl9O4lCOJlF+WUCgiq6cpt/o4pXtZ/Jy4l5AnL2xdD4ToW6Sd
+   /WyjWHFwQ5u+GG7y6HPMkmBOOIDoeHfxqw/PwXd+RbR5HyjiSZNLUiozn
+   16pDrWI8d8WbcrxO63Xjv0BZQLlV7BOWZmCMEG9LARIM2Fezc/2HV7n5P
+   EazN/dMmeaJdOINb7RmnUM98AzaXc5mWPXAxh5Z2S744Y/cfJ+dPStWG8
+   KI/C18QFd6oStgkNxr5Ji6LIDODBCNhYzlZw15bkQKR8n4tlpvVhAsUX+
+   wz5spAM1INeOaV1+XUnvxOxTvHGqt/RXIpXLgTp0cFoQI1dxjle91GHXM
+   Q==;
+X-CSE-ConnectionGUID: qPXAi+lbQ9eDKMo2uPaTrQ==
+X-CSE-MsgGUID: YVAVxR2iSdmuPdrftFngLw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11260"; a="34770973"
+X-IronPort-AV: E=Sophos;i="6.12,164,1728975600"; 
+   d="scan'208";a="34770973"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2024 07:55:36 -0800
+X-CSE-ConnectionGUID: p+N/JDGkSWKAROamBVUuLQ==
+X-CSE-MsgGUID: 1kHzIQ/mR32Yotgb4MMMkQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="94303462"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2024 07:55:34 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tD467-0000000G45q-0iMY;
+	Mon, 18 Nov 2024 17:55:31 +0200
+Date: Mon, 18 Nov 2024 17:55:30 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: "Daniel Walker (danielwa)" <danielwa@cisco.com>
+Cc: Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Ilpo =?utf-8?Q?J=EF=BF=BDrvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Klara Modin <klarasmodin@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Danil Rybakov <danilrybakov249@gmail.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"xe-linux-external(mailer list)" <xe-linux-external@cisco.com>
+Subject: Re: platform/x86: p2sb: Allow p2sb_bar() calls during PCI device
+ probe
+Message-ID: <ZztjcntEj5Eo0Rw9@smile.fi.intel.com>
+References: <ZzTk5kyPa5kUxA+f@goliath>
+ <a5bafe87-e8f6-40d9-a5d8-34cf6aa576a4@redhat.com>
+ <wxb4hmju5jknxr2bclxlu5gujgmb3vvqwub7jrt4wofllqp7li@pdvthto4jf47>
+ <ZzdhTsuRNk1YWg8p@goliath>
+ <5qjbimedzeertdham2smgktt54gzdc7yg4dwgiz7eezt2tf5a2@szhhpvzo3uhj>
+ <Zzs1rw1YcoEEeW7+@goliath>
+ <ZztABO3TyJBekZRs@smile.fi.intel.com>
+ <ZztCB5hN2NBnPgiR@goliath>
+ <ZztF7FKaBwZKs5dk@smile.fi.intel.com>
+ <ZztQwLpoZDZzbi6O@goliath>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: maxime.chevallier@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZztQwLpoZDZzbi6O@goliath>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Hello,
+On Mon, Nov 18, 2024 at 02:35:44PM +0000, Daniel Walker (danielwa) wrote:
+> On Mon, Nov 18, 2024 at 03:49:32PM +0200, Andy Shevchenko wrote:
+> > On Mon, Nov 18, 2024 at 01:32:55PM +0000, Daniel Walker (danielwa) wrote:
+> > > On Mon, Nov 18, 2024 at 03:24:20PM +0200, Andy Shevchenko wrote:
+> > > > On Mon, Nov 18, 2024 at 12:40:16PM +0000, Daniel Walker (danielwa) wrote:
 
-On Mon, 18 Nov 2024 13:48:21 +0530
-Suraj Gupta <suraj.gupta2@amd.com> wrote:
+...
 
-> AXI 1G/2.5G Ethernet subsystem supports 1G and 2.5G speeds. "max-speed"
-> property is used to distinguish 1G and 2.5G MACs of AXI 1G/2.5G IP.
-> max-speed is made a required property, and it breaks DT ABI but driver
-> implementation ensures backward compatibility and assumes 1G when this
-> property is absent.
-> Modify existing bindings description for 2.5G MAC.
+> > > > Are you referring to LPC GPIO?
+> > >  
+> > >  I don't know the hardware well enough to say for certain. It's whatever device 8086:19dd is.
+> > 
+> > This is device which represents p2sb. It's not a GPIO device you are talking
+> > about for sure. You can send privately more detailed info in case this is shouldn't
+> > be on public to me to understand what would be the best approach to fix your issue.
+> 
+> Here's a comment,
+> 
+> /* INTEL Denverton GPIO registers are accessible using SBREG_BAR(bar 0) as base */
+> 
+> We have gpio wired to an FPGA and I believe the gpio line is used to reset the
+> fpga.
+> 
+> So the pci resources attached to 8086:19dd can be used to access gpio of some
+> type. 
+> 
+> I'm not a pci expert but on the 19bb device bar 0 we use the below offset to manipulate
+> the gpio,
+> 
+> #define INTEL_GPIO_REG_RESET_OFFSET          0xC50578
+> 
+> The comments suggest this is gpio 6. I would seems your reaction would be that
+> there is no gpio on the 19dd device. Maybe our driver is access gpio thru p2sb
+> or something like that.
+> 
+> Does the offset above make sense to you in the context of the p2sb ?
 
-That may be a silly question, but as this is another version of the IP
-that behaves differently than the 1G version, could you use instead a
-dedicated compatible string for the 2.5G variant ?
+Yes, everything makes sense. Please, enable lpc_ich driver and forget about
+talking to the p2sb memory mapped IO.
 
-As the current one is :
+/* Offset data for Denverton GPIO controllers */
+static const resource_size_t dnv_gpio_offsets[DNV_GPIO_NR_RESOURCES] = {
+	[DNV_GPIO_NORTH] = 0xc20000,
+	[DNV_GPIO_SOUTH] = 0xc50000,
+};
 
-compatible = "xlnx,axi-ethernet-1.00.a";
+So, you are using a pin from the Community "South" of the on-die Denverton GPIO.
 
-it seems to already contain some version information.
+In EDS this called GPIO_6, while in the driver it's pin 88, i.e. SMB3_IE0_DATA.
 
-But I might also be missing something :)
+You will need to
+- enable lpc_ich driver (CONFIG_LPC_ICH)
+- enable Intel Denverton pin control driver (CONFIG_PINCTRL_DENVERTON)
+- replace your custom approach to:
+  - GPIO lookup table
+  - proper GPIO APIs, as gpiod_get() or alike
 
-Best regards,
+See how it was done in the current kernel code:
 
-Maxime
+8241b55f1ded ("drm/i915/dsi: Replace poking of VLV GPIOs behind the driver's back")
+a6c80bec3c93 ("leds: simatic-ipc-leds-gpio: Add GPIO version of Siemens driver")
+
+Hans, there will be no need to fix anything if they implement correct access
+to the GPIO, i.e. via driver and board code with GPIO lookup tables.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
