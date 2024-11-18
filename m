@@ -1,355 +1,392 @@
-Return-Path: <linux-kernel+bounces-413356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FD209D1811
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 19:28:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35DBF9D181E
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 19:28:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 050AA282ECC
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 18:28:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF75C1F22376
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 18:28:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E3051E0DF4;
-	Mon, 18 Nov 2024 18:28:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F87A1E0E00;
+	Mon, 18 Nov 2024 18:28:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aOmecg0P"
-Received: from mail-io1-f43.google.com (mail-io1-f43.google.com [209.85.166.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="h9kCS5T1"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8030A2E3EB
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 18:28:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 276B82E3EB;
+	Mon, 18 Nov 2024 18:28:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731954499; cv=none; b=GWMUHnSgeF693c8TTjBmLr/DPgaRdu2K5RBR14Bhi6zWLTiI8bmhC/zifzEqXqEr7DX+f2JY81dVVq88lLXi8CihDpahYGYkCKj7axrrf/OW5mAFdRMu8JdazY5v6rDUCrTp86+sfc0HvzZV95z4FGY7lfXG9al1jSyWDvDahu4=
+	t=1731954512; cv=none; b=Vlbxe1qlBBi2oPONBo4tMf2yLBaq2mT+0Q6qsIckTB/cFMtRUjxvWFAj4Mk2vEyNlEx3xeOEHw+ApFwi4HTbFBDTEwxCgZMGp6hfGQrfBKY8BHHg2el3iQXkKmADrxT0dm7VO9Hj3AdbWX411iXIXNlSiBa7KGo/26JrUcobue0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731954499; c=relaxed/simple;
-	bh=OVmd4B2Py/CK8hsegerm1zvbTenDemOZofpp13JbFPU=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=rO7EJjTEC4AaPmXjOGcWOQxP16nhceTkrftqcCxsDgPbNmHQ9/ZDvJ5EygbYO6RFKX+/XENh6A66epw+yRC4pQQrVzxP/nPO0lrze4hDMEslWvwOic1PaTCZMJZP8VJHzUPGH2KfqXvZOI/1D/DTGMgGNehVurAmJfP5mZB0yic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aOmecg0P; arc=none smtp.client-ip=209.85.166.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f43.google.com with SMTP id ca18e2360f4ac-83b430a4cfdso2760639f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 10:28:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731954496; x=1732559296; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=WKxUgmJ8YEN4+fzjwyJhbS+iHMcs0Y+0QP5Lgxe7JwU=;
-        b=aOmecg0P/jRmgbI1FhoY2mo3+WVqN9/7ZTJk2xI8PiZMUZDF8D2B8MlKoKHLnhHeJl
-         EwL9Z8i/aQMggsLQb1nKB6b/l/LlyBIyySodC0UQr30ljCM2r1XX/6D8k9ljm0lrzEFS
-         pX36rZKk2iaEtXclPBPhXECE4RGMZcC+YTAHWQkPco9orio+aAlmGxzKuukTpkh3ldPe
-         3CPRqAaYZAZq9SL/5jkVWjKWw0czHPldAfRAsohY8IOjL5cIWAGyrJp5G1IgL9p+RFTA
-         Nc+CGgqUnkdUTHv7o/les41idJmUTvLHnYLgJ1vPdHmAlgTj8jzEGLQuJQANQkHLAFUx
-         4RPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731954496; x=1732559296;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WKxUgmJ8YEN4+fzjwyJhbS+iHMcs0Y+0QP5Lgxe7JwU=;
-        b=mbTAfY4uO1LL4DnzEbEOMW1+osF2HNRpPo/ujWEViBekuxEq3Rkmx6+9/Rx1k+QHBT
-         pVpUKkiEHSaImtLb42rKp5zIuj6vAMf9nl3tzsnfEdWJ+8KQZPDAMgt9QK1Wg8+cx/Ne
-         iw8GIYjMj451/F9WkVFZZneP3fq/ChX7aQtI4Sa9YmHlL2GDxbCrqG/Ljq8TGA1pdqqB
-         vVRLP+LPAnPNlvhp9lQhTd1QAanaUKbCbPwREthBE0VxKXa23vNHYybiCwRxuy5L6m+6
-         o42F0B4KUiSvCDYCa3E/REkOSCfFYRZL0Tx6G85ckkDvWKbqbOCi9sOlq9bqrxmnCgNP
-         YK5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVb0iQyMazgQdYnpICRva1EaCqWnFphXgmreWIxAfkiNRH0BULbDFwZQpe4flVabnuSL5e/vS+bm60uJdA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLkx824anzIm0w5AtmnGjXS6ph0l13x40+MnF8RmeTq/GTasfV
-	USkOPUOmV287lMsQ0X4vdbsTJFZhG4NaJrsJN3AT6j649iBZysTtMQgq1OCd+LiCvrteGfOpUWd
-	v38MTWxdaoJIqY18C8gdv6dZs5oozOaC9
-X-Google-Smtp-Source: AGHT+IFnruqOWZUGwQ14X6b0cgUPUS6suv6gu0bP1IkpYy1adtAwU5k2XYDvl6qMinAoVFupTRAROpjO5iwguA1AUKg=
-X-Received: by 2002:a05:6602:29cd:b0:83a:9f64:6c75 with SMTP id
- ca18e2360f4ac-83e6c2641b1mr1659061639f.3.1731954496407; Mon, 18 Nov 2024
- 10:28:16 -0800 (PST)
+	s=arc-20240116; t=1731954512; c=relaxed/simple;
+	bh=L+ke1HKheZrVabiaIrosaybXGyZZ2n8s1WZwjU6XN3w=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=YVklbHSZdjI5yQutVvLvgbQM8zAI9qSJwuFfkFu9Mr8YAi/Du6pcwehHhRHs6MKUdku6WmslroDONuqurf1ESYRoZ/r5T5afc116FlWcvpP7b6SnrcveaN0XMvepS7nD4gCRI4LGLditvv7FlpMoqr/SI4HyD2bFXdsZLJEcRc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=h9kCS5T1; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id C982AE0004;
+	Mon, 18 Nov 2024 18:28:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1731954506;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=N8n8DeNXLJc3zxJEIGoUtBbHbVCDWJoELktVPpI0ii0=;
+	b=h9kCS5T1Qz/KhfTzr7tyWgBvB9l3sWpgrUo8K9o0+fXxAZPff5Z/5BJZ6ZEp5Z67lpjryt
+	ALklG6DcKUd4ZZoI8NGrKdovmqUsazG07kje4fWrCORgUp3qMZsXac+y9CUGwGpXgj3NF/
+	I5tHZdZmxJla1a7u9amja52PBezmtpuUnt1C/fd7lTazROVAPyqCckDja0XlUPjHdFGh4B
+	m4MPY7xZ1CUb2A/SIQkEBq48EpfvKEkiMTiuZEorAmMHfRGWohn4gOt6PvhpQSG4ZtTzh/
+	MIEZ+dQSJ9LQy7sxcMTOHI0SFZ48wDUALf8cnkGS7ZdfTEFRNw/luQoFhfqNrg==
+From: Louis Chauvet <louis.chauvet@bootlin.com>
+Subject: [PATCH v14 0/9] drm/vkms: Reimplement line-per-line pixel
+ conversion for plane reading
+Date: Mon, 18 Nov 2024 19:28:15 +0100
+Message-Id: <20241118-yuv-v14-0-2dbc2f1e222c@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: reveliofuzzing <reveliofuzzing@gmail.com>
-Date: Mon, 18 Nov 2024 13:28:04 -0500
-Message-ID: <CA+-ZZ_jGP42Kt=2MFJ7-JXFtkba+gXVKSn9Ey1LBFnJxaqSOpg@mail.gmail.com>
-Subject: Report "KASAN: null-ptr-deref in __rb_erase_color"
-To: akpm@linux-foundation.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAD+HO2cC/23T246bMBAG4FeJuC7tjA9je6/6HlUvfGyQEmiBo
+ F2t9t07BCKIyB028/Ebe/xZDblv8lC9nT6rPk/N0HQtD1B9O1Xx7Ns/uW4ST1QChAIBWH/cphq
+ lNMlBctpQxZXBD7kOvW/jmWvb2+XCk3/7XJr3+7d//ebxuRnGrv+4R004zz5/dMIaahm9NFSEI
+ Sl+hq4bL037PXbXOeVerZGWasvVsdhExZKSkJ+q57xJ7DKEXJRg5T2FLKwwIZijknu1ZklWpRC
+ JAs6pFI5KbUqCWpRiZTjKR5udcfKo9E7hukLNKhNCDAlk0eKoaFMK3KKIVcoYtRG2JANHZTalH
+ 1lm3nEL2ZWSo4YXWW5TFsSiHCuw3gARuYx0VAh7ti4RWdXoTTSkkKi82HvctYWTsLq5L1RALyj
+ EEt2rvO2oEcCsbj5rwIg+eeL/sy+c3Dn5aMP5tEPSiiQKKt4/u6+ltfv878a3ZVz6e7kB/P7aj
+ G+n1F/razPEH4+Hus3vI9Ov/xdDPWpwAwAA
+X-Change-ID: 20240201-yuv-1337d90d9576
+To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>, 
+ Melissa Wen <melissa.srw@gmail.com>, 
+ =?utf-8?q?Ma=C3=ADra_Canal?= <mairacanal@riseup.net>, 
+ Haneen Mohammed <hamohammed.sa@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Jonathan Corbet <corbet@lwn.net>, 
+ Louis Chauvet <louis.chauvet@bootlin.com>, Simona Vetter <simona@ffwll.ch>, 
+ Helen Koike <helen.koike@collabora.com>, rdunlap@infradead.org, 
+ arthurgrillo@riseup.net, pekka.paalanen@haloniitty.fi, 
+ Simona Vetter <simona.vetter@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ linux-doc@vger.kernel.org, thomas.petazzoni@bootlin.com, 
+ jeremie.dautheribes@bootlin.com, miquel.raynal@bootlin.com, 
+ seanpaul@google.com, marcheu@google.com, nicolejadeyee@google.com, 
+ Pekka Paalanen <pekka.paalanen@collabora.com>, 
+ =?utf-8?q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>, 
+ =?utf-8?q?Jos=C3=A9_Exp=C3=B3sito?= <jose.exposito89@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=13848;
+ i=louis.chauvet@bootlin.com; h=from:subject:message-id;
+ bh=L+ke1HKheZrVabiaIrosaybXGyZZ2n8s1WZwjU6XN3w=;
+ b=owEBbQKS/ZANAwAIASCtLsZbECziAcsmYgBnO4dEny8RNKvELZmOoakAVhYsC5tkN0nNoWnso
+ C7+Ko9G4BSJAjMEAAEIAB0WIQRPj7g/vng8MQxQWQQgrS7GWxAs4gUCZzuHRAAKCRAgrS7GWxAs
+ 4gOWD/406lkoHWbuZTtNAoZjVVrfDSEfLnP2fRW8bQnxb/pbF3vjBIRz+RolvTnHnLFeMQjFaMj
+ et+WcXex89p/Slb81nxmnwb/XaAygFPVV/gwVtA9T2iHvk7JTn/hWeWjj/ugdL0xo16JRqH5BsP
+ 6DERJjXctx5GfjfMfYV0Qm4e/19fNH+O9OiZ/ZZrYk/pAUOJavArXvqKeV3U1vgJzS7r59GFFEN
+ pl/0lDa+jL76ppeJB6EbI5zqtnHMFNEFam4HRr/I3rhe8BpIb9Uw07DRCXYGAmYTaukUS2Jlml8
+ z2Ro4Q27Q2sn44zZoU/2oh2rlcUqkTMtS+wYyJy7GpAHSJuzh3/uvTAzIRiNVboklKLN+Olg6gh
+ EEV+n7U/cX8FkIzstoToFYkQdepAwv/SrIep5LEbTpVVd7VWBT6P2hDHco0z08MY9FwxoIf9V2z
+ 1Xs8tWmqBWih+HwNhhiY/+L7bI1EHrnTM+7y6q6BJpa1NbKrwqp3PG2SYdnzywEOlvdl3to9lkO
+ AK420L6P3nDpJUQA1/OqdxsY6WzfBDfdAGhP0x4ZdpunzTHTLOQLbIJg+I4LR4aise3SbeMK8jW
+ FAfqQlIpSMSu/aOXtKHAJGyardsHFlyQAOOqFce12iM2v8OrpLPpLfWxCqyZpNXTUukDcTCCGR0
+ 8d9GBjLW4YR5n8Q==
+X-Developer-Key: i=louis.chauvet@bootlin.com; a=openpgp;
+ fpr=8B7104AE9A272D6693F527F2EC1883F55E0B40A5
+X-GND-Sasl: louis.chauvet@bootlin.com
 
-Hello,
+This patchset is the second version of [1]. It is almost a complete
+rewrite to use a line-by-line algorithm for the composition.
 
-We found a kernel crash at `__rb_erase_color` when running a test generated
-by Syzkaller on Linux kernel 6.10, both of which are unmodified. We would l=
-ike
-to report it for your reference because this crash has not been observed be=
-fore.
+It can be divided in multiple parts:
+- PATCH 1 to 3: no functional change is intended, only some formatting and
+  documenting (PATCH 2 is taken from [2])
+- PATCH 4 to 7: Some preparation work not directly related to the
+  line-by-line algorithm
+- PATCH 8: main patch for this series, it reintroduce the
+  line-by-line algorithm
+- PATCH 9: Remove useless drm_simplify_rotation
+- Rest of the series: moved to a new series to merge this one, see the new 
+  series "Add YUV ad R1..8 formats support to VKMS"
 
-This crash is likely due to a concurrency bug because it requires running t=
-he
-test, which repeatedly executes system calls, for a few minutes to trigger.
+The PATCH 8 aims to restore the line-by-line pixel reading algorithm. It
+was introduced in 8ba1648567e2 ("drm: vkms: Refactor the plane composer to
+accept new formats") but removed in 8ba1648567e2 ("drm: vkms: Refactor the
+plane composer to accept new formats") in a over-simplification effort.
+At this time, nobody noticed the performance impact of this commit. After
+the first iteration of my series, poeple notice performance impact, and it
+was the case. Pekka suggested to reimplement the line-by-line algorithm.
 
-This report comes with:
-- the console log of the guest VM
-- the test (syzlang syntax)
-- the test (c program) (url)
-- the compiled test (url)
-- kernel configuration (url)
-- the compiled kernel (url)
+Expiriments on my side shown great improvement for the line-by-line
+algorithm, and the performances are the same as the original line-by-line
+algorithm. I targeted my effort to make the code working for all the
+rotations and translations. The usage of helpers from drm_rect_* avoid
+reimplementing existing logic.
 
+The only "complex" part remaining is the clipping of the coordinate to
+avoid reading/writing outside of src/dst. Thus I added a lot of comments
+to help when someone will want to add some features (framebuffer resizing
+for example).
 
-- Crash
-syzkaller login: [   90.703937] loop1: detected capacity change from 0 to 2=
-048
-[   90.706327] program syz-executor is using a deprecated SCSI ioctl,
-please convert it to SG_IO
-[  153.091671] ata1: lost interrupt (Status 0x58)
-[  154.135548] clocksource: Long readout interval, skipping watchdog
-check: cs_nsec: 1103985354 wd_nsec: 1103985308
-[  154.295963] ata1: found unknown device (class 0)
-[  154.300620] BUG: Bad rss-counter state mm:00000000a161b843
-type:MM_FILEPAGES val:159
-[  154.302952] BUG: Bad rss-counter state mm:00000000a161b843
-type:MM_ANONPAGES val:13
-[  154.305174] BUG: non-zero pgtables_bytes on freeing mm: 8192
-[  154.320256] program syz-executor is using a deprecated SCSI ioctl,
-please convert it to SG_IO
-[  214.531549] ata1: lost interrupt (Status 0x58)
-[  215.751874] ata1: found unknown device (class 0)
-[  215.769343] program syz-executor is using a deprecated SCSI ioctl,
-please convert it to SG_IO
-[  280.059705] ata1: lost interrupt (Status 0x58)
-[  281.351944] ata1: found unknown device (class 0)
-[  281.362860] program syz-executor is using a deprecated SCSI ioctl,
-please convert it to SG_IO
-[  341.499646] ata1: lost interrupt (Status 0x58)
-[  342.530588] ata1.00: limiting speed to MWDMA1:PIO4
-[  342.687867] ata1: found unknown device (class 0)
-[  342.696934] program syz-executor is using a deprecated SCSI ioctl,
-please convert it to SG_IO
-[  402.947532] ata1: lost interrupt (Status 0x58)
-[  404.191938] ata1: found unknown device (class 0)
-[  404.202275] program syz-executor is using a deprecated SCSI ioctl,
-please convert it to SG_IO
-[  468.475663] ata1: lost interrupt (Status 0x58)
-[  469.671959] ata1: found unknown device (class 0)
-[  469.681397] program syz-executor is using a deprecated SCSI ioctl,
-please convert it to SG_IO
-[  529.915667] ata1: lost interrupt (Status 0x58)
-[  531.127989] ata1: found unknown device (class 0)
-[  531.140982] program syz-executor is using a deprecated SCSI ioctl,
-please convert it to SG_IO
-[  591.363666] ata1: lost interrupt (Status 0x58)
-[  592.437779] Oops: general protection fault, probably for
-non-canonical address 0xdffffc0000000000: 0000 [#1] PREEMPT SMP KASAN
-PTI
-[  592.440735] KASAN: null-ptr-deref in range
-[0x0000000000000000-0x0000000000000007]
-[  592.442545] CPU: 0 PID: 143 Comm: in:imuxsock Not tainted 6.10.0 #2
-[  592.444076] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
-BIOS 1.13.0-1ubuntu1.1 04/01/2014
-[  592.446257] RIP: 0010:__rb_erase_color+0x15d/0x11f0
-[  592.447551] Code: 89 ee 48 89 c5 e9 f2 fe ff ff 4c 8d 45 10 4c 89
-c0 48 c1 e8 03 80 3c 18 00 0f 85 7c 0a 00 00 4c 8b 65 10 4c 89 e0 48
-c19
-[  592.452437] RSP: 0018:ffff88800cc7f8c0 EFLAGS: 00010246
-[  592.454124] RAX: 0000000000000000 RBX: dffffc0000000000 RCX: 1ffff110012=
-c6d91
-[  592.456342] RDX: ffffffff81617b80 RSI: ffff888007348cc8 RDI: ffff8880096=
-36c78
-[  592.458501] RBP: ffff888009636c78 R08: ffff888009636c88 R09: ffffed1000e=
-691a4
-[  592.460734] R10: ffffed1000e691a3 R11: ffff888007348d1f R12: 00000000000=
-00000
-[  592.462944] R13: ffffed1000e69199 R14: 0000000000000000 R15: ffff8880073=
-48cc8
-[  592.465136] FS:  0000000000000000(0000) GS:ffff88806d200000(0000)
-knlGS:0000000000000000
-[  592.467607] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  592.469449] CR2: 0000000000000000 CR3: 0000000004e66000 CR4: 00000000000=
-006f0
-[  592.471678] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 00000000000=
-00000
-[  592.473909] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 00000000000=
-00400
-[  592.476150] Call Trace:
-[  592.476949]  <TASK>
-[  592.477632]  ? show_regs+0x73/0x80
-[  592.478735]  ? __die_body+0x1f/0x70
-[  592.479865]  ? die_addr+0x4c/0x90
-[  592.481047]  ? exc_general_protection+0x15c/0x2a0
-[  592.482549]  ? asm_exc_general_protection+0x26/0x30
-[  592.484114]  ? __pfx_vma_interval_tree_augment_rotate+0x10/0x10
-[  592.486011]  ? __rb_erase_color+0x15d/0x11f0
-[  592.487424]  vma_interval_tree_remove+0x6d2/0xe40
-[  592.488818]  ? __pfx_down_write+0x10/0x10
-[  592.489823]  ? unlink_anon_vmas+0x462/0x770
-[  592.490868]  unlink_file_vma+0x80/0xb0
-[  592.491846]  free_pgtables+0x2b6/0x750
-[  592.492787]  exit_mmap+0x299/0x810
-[  592.493650]  ? __pfx_exit_mmap+0x10/0x10
-[  592.494631]  ? exit_aio+0x260/0x340
-[  592.495542]  ? delayed_uprobe_remove+0x21/0x130
-[  592.496788]  mmput+0x64/0x290
-[  592.497801]  do_exit+0x7fd/0x2850
-[  592.498892]  ? __pfx_try_to_wake_up+0x10/0x10
-[  592.500296]  ? plist_del+0x18e/0x3f0
-[  592.501440]  ? sysvec_apic_timer_interrupt+0xf/0x90
-[  592.502996]  ? __pfx_do_exit+0x10/0x10
-[  592.504233]  do_group_exit+0xb6/0x260
-[  592.505395]  get_signal+0x19e3/0x1b00
-[  592.506450]  ? __pfx_mm_cid_get+0x10/0x10
-[  592.507687]  ? __pfx_get_signal+0x10/0x10
-[  592.508979]  ? do_futex+0xfd/0x330
-[  592.510083]  arch_do_signal_or_restart+0x81/0x750
-[  592.511591]  ? __pfx_arch_do_signal_or_restart+0x10/0x10
-[  592.513158]  ? __x64_sys_futex+0x1b1/0x400
-[  592.514461]  ? __x64_sys_futex+0x1ba/0x400
-[  592.515770]  ? __x64_sys_poll+0xf6/0x470
-[  592.517006]  ? __pfx___x64_sys_poll+0x10/0x10
-[  592.518390]  syscall_exit_to_user_mode+0xf6/0x140
-[  592.519892]  do_syscall_64+0x57/0x110
-[  592.521070]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-[  592.522667] RIP: 0033:0x7f9dd268196f
-[  592.523851] Code: Unable to access opcode bytes at 0x7f9dd2681945.
-[  592.525743] RSP: 002b:00007f9dd2201cf0 EFLAGS: 00000293 ORIG_RAX:
-0000000000000007
-[  592.527947] RAX: fffffffffffffdfc RBX: 0000000000000002 RCX: 00007f9dd26=
-8196f
-[  592.529679] RDX: 00000000ffffffff RSI: 0000000000000001 RDI: 00007f9dcc0=
-00b80
-[  592.531421] RBP: 0000000000000058 R08: 0000000000000000 R09: 000055a70c7=
-c5e68
-[  592.533244] R10: 0000000000000000 R11: 0000000000000293 R12: 00000000000=
-00000
-[  592.535373] R13: 00007f9dcc000b80 R14: 000055a6f41caa50 R15: 00007f9dd22=
-d5840
-[  592.537201]  </TASK>
-[  592.537781] Modules linked in:
-[  592.538790] ---[ end trace 0000000000000000 ]---
-[  592.540002] RIP: 0010:__rb_erase_color+0x15d/0x11f0
-[  592.541251] Code: 89 ee 48 89 c5 e9 f2 fe ff ff 4c 8d 45 10 4c 89
-c0 48 c1 e8 03 80 3c 18 00 0f 85 7c 0a 00 00 4c 8b 65 10 4c 89 e0 48
-c19
-[  592.545761] RSP: 0018:ffff88800cc7f8c0 EFLAGS: 00010246
-[  592.547108] RAX: 0000000000000000 RBX: dffffc0000000000 RCX: 1ffff110012=
-c6d91
-[  592.548891] RDX: ffffffff81617b80 RSI: ffff888007348cc8 RDI: ffff8880096=
-36c78
-[  592.550682] RBP: ffff888009636c78 R08: ffff888009636c88 R09: ffffed1000e=
-691a4
-[  592.552491] R10: ffffed1000e691a3 R11: ffff888007348d1f R12: 00000000000=
-00000
-[  592.554286] R13: ffffed1000e69199 R14: 0000000000000000 R15: ffff8880073=
-48cc8
-[  592.556082] FS:  0000000000000000(0000) GS:ffff88806d200000(0000)
-knlGS:0000000000000000
-[  592.558086] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  592.559571] CR2: 0000000000000000 CR3: 0000000004e66000 CR4: 00000000000=
-006f0
-[  592.561380] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 00000000000=
-00000
-[  592.563187] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 00000000000=
-00400
-[  592.564961] Fixing recursive fault but reboot is needed!
-[  592.566322] BUG: scheduling while atomic: in:imuxsock/143/0x00000000
-[  592.567925] Modules linked in:
-[  592.568756] CPU: 0 PID: 143 Comm: in:imuxsock Tainted: G      D
-       6.10.0 #2
-[  592.570680] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
-BIOS 1.13.0-1ubuntu1.1 04/01/2014
-[  592.572893] Call Trace:
-[  592.573528]  <TASK>
-[  592.574097]  dump_stack_lvl+0x7d/0xa0
-[  592.575038]  __schedule_bug+0xaa/0xf0
-[  592.575968]  ? irq_work_queue+0x23/0x60
-[  592.576931]  __schedule+0x17ce/0x2010
-[  592.577864]  ? __wake_up_klogd.part.0+0x69/0x80
-[  592.578996]  ? vprintk_emit+0x239/0x300
-[  592.579982]  ? __pfx___schedule+0x10/0x10
-[  592.580989]  ? vprintk+0x6b/0x80
-[  592.581828]  ? _printk+0xbf/0x100
-[  592.582677]  ? __pfx__printk+0x10/0x10
-[  592.583625]  ? _raw_spin_lock_irqsave+0x86/0xe0
-[  592.584764]  ? __pfx__raw_spin_lock_irqsave+0x10/0x10
-[  592.586028]  ? __pfx___x64_sys_poll+0x10/0x10
-[  592.587132]  do_task_dead+0x9d/0xc0
-[  592.588019]  make_task_dead+0x2f6/0x340
-[  592.588984]  rewind_stack_and_make_dead+0x16/0x20
-[  592.590158] RIP: 0033:0x7f9dd268196f
-[  592.591075] Code: Unable to access opcode bytes at 0x7f9dd2681945.
-[  592.591988] ata1: found unknown device (class 0)
-[  592.592604] RSP: 002b:00007f9dd2201cf0 EFLAGS: 00000293 ORIG_RAX:
-0000000000000007
-[  592.592612] RAX: fffffffffffffdfc RBX: 0000000000000002 RCX: 00007f9dd26=
-8196f
-[  592.592615] RDX: 00000000ffffffff RSI: 0000000000000001 RDI: 00007f9dcc0=
-00b80
-[  592.592618] RBP: 0000000000000058 R08: 0000000000000000 R09: 000055a70c7=
-c5e68
-[  592.592621] R10: 0000000000000000 R11: 0000000000000293 R12: 00000000000=
-00000
-[  592.592624] R13: 00007f9dcc000b80 R14: 000055a6f41caa50 R15: 00007f9dd22=
-d5840
-[  592.592629]  </TASK>
-[  592.613008] program syz-executor is using a deprecated SCSI ioctl,
-please convert it to SG_IO
-[  652.803528] ata1: lost interrupt (Status 0x58)
-[  654.024010] ata1: found unknown device (class 0)
-[  654.039570] program syz-executor is using a deprecated SCSI ioctl,
-please convert it to SG_IO
+I did not changed any expected test results as VKMS seems to have some 
+existing issue:
+https://gitlab.freedesktop.org/jim.cromie/kernel-drm-next-dd/-/jobs/61484201
+https://gitlab.freedesktop.org/jim.cromie/kernel-drm-next-dd/-/jobs/61803193
+https://gitlab.freedesktop.org/louischauvet/kernel/-/jobs/65944002
 
+To properly test the rotation algorithm, I had to implement a new IGT
+test [8]. This helped to found one issue in the YUV rotation algortihm.
 
-- syzlang test
-prctl$PR_SET_MM_AUXV(0x23, 0xc, &(0x7f0000000e80)=3D"84", 0x1)
-r0 =3D syz_open_dev$sg(&(0x7f0000000000), 0x0, 0x0)
-rseq(&(0x7f0000000000), 0x20, 0x0, 0x0)
-ioctl$KDENABIO(0xffffffffffffffff, 0x4b36)
-signalfd(0xffffffffffffffff, 0x0, 0x0)
-syz_mount_image$msdos(&(0x7f0000000500),
-&(0x7f0000000540)=3D'./file0\x00', 0x0, &(0x7f00000002c0)=3DANY=3D[], 0x1,
-0x522, &(0x7f0000000580)=3D"$eJzs1zGL02AYB/An16qH083i8IKL03G6uZ1IDw4DgtJBJw=
-tXl0bEZkk79RP4CfyQ0kFui2jKnRWFG+wlJb/fkj/554XnzZCXvH/4cXbxqfzw+cvXODzNYngac=
-XCZxVEcxCAaq7j2vQ4AYM9d1nV8q3/Jhm0PAwDcit/Of3/2ANATzn8A6B/nPwD0z5u3714+z/PR=
-65QOI9aralyNm2vTn53no5OUUtpata6q8eCqf5Ia2/2duL/pn/61vxuPHzX9z+7Fq/yP/l5c7Hj=
-vAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
-AAAAAAAAAAAAAAAAAAAAADQd8fpytH13XVVjQdNf/yvvkln5/noZPPAdj+MB8Nb2wYAAAAAAAAA=
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
-AAAAAAAADwH5SL5WxSFNO5sDeh3ujKPJ0Pz6L1MbKIVUfexg1D218mAAAAAAAAAAAAAAAAAAAAA=
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACgLeV=
-iOZsUxXRe3nBBlu14IgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACgbeViOZsUxXS+w9D2Hg=
-EAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgG76EQAA//9xKFC/")
-mkdir(&(0x7f0000000000)=3D'.\x00', 0x0)
-mknod$loop(&(0x7f0000000000)=3D'./file0\x00', 0x0, 0x0)
-ioctl$SCSI_IOCTL_SEND_COMMAND(r0, 0x1,
-&(0x7f0000000040)=3DANY=3D[@ANYBLOB=3D"00000000420d0000850aaa",
-@ANYRESHEX=3Dr0])
+My series was mainly tested with:
+- kms_plane (for color conversions)
+- kms_rotation_crc (for a subset of rotation and formats)
+- kms_rotation (to test all rotation and formats combinations) [8]
+- kms_cursor_crc (for translations)
+The benchmark used to measure the improvment was done with
+kms_fb_stress [10] with some modifications:
+- Fixing the writeback format to XRGB8888
+- Using a primary plane with odd dimension to avoid failures due to YUV
+  alignment
+The KMS structure was:
+	CRTC:
+		rectangle: 4096x2160+0+0
+	primary:
+		format: ABGR16161616
+		rectangle: 3640x2160+101+0
+	writeback:
+		format: XRGB8888
+		rectangle: 4096x2160+0+0
+Results (on my computer):
 
-- c test
-https://docs.google.com/document/d/1t9QaPHpOqHYOPfUhXVvjGErvE4s6fkZIm5PBsz_=
-6oUI/view?usp=3Dsharing
+8356b9790650: drm/test: Add test cases for drm_rect_rotate_inv() (before any regression)
+322d716a3e8a: drm/vkms: isolate pixel conversion functionality (first regression)
+cc4fd2934d41: drm/vkms: Isolate writeback pixel conversion functions (second regression)
+2c3d1bd284c5: drm/panel: simple: Add Microtips Technology MF-103HIEB0GA0 panel (current drm-misc-next)
 
-- compiled test (please run inside VM)
-https://drive.google.com/file/d/1qnMi9BxVlL-CVDeXeNtVeFLPL9srSbT6/view?usp=
-=3Dsharing
+ Used format  | This series | 2c3d1bd284c5 | cc4fd2934d41 | 322d716a3e8a | 8356b9790650 |
+--------------+-------------+--------------+--------------+--------------+--------------+
+ XRGB8888     |  13.261666s |   14.289582s |   10.731272s |    9.480001s |    9.277507s |
+ XRGB16161616 |  13.282479s |   13.918926s |   10.712616s |    9.776903s |    9.291766s |
+ RGB565       | 136.154163s |  141.646489s |  101.744050s |  103.712164s |   87.860923s |
 
-- kernel config
-https://drive.google.com/file/d/1LMJgfJPhTu78Cd2DfmDaRitF6cdxxcey/view?usp=
-=3Dsharing
+This is a 5-10% improvment of the performance. More work need to be done
+on the writeback to gain more.
 
-- compiled kernel
-https://drive.google.com/file/d/1B22XKuDqrtk8gvWFFEMXR0o-VcVdYvB4/view?usp=
-=3Dsharing
+[1]: https://lore.kernel.org/all/20240201-yuv-v1-0-3ca376f27632@bootlin.com
+[2]: https://lore.kernel.org/all/20240110-vkms-yuv-v2-0-952fcaa5a193@riseup.net/
+[3]: https://lore.kernel.org/all/20240110-vkms-yuv-v2-3-952fcaa5a193@riseup.net/
+[4]: https://lore.kernel.org/all/20240110-vkms-yuv-v2-5-952fcaa5a193@riseup.net/
+[5]: https://lore.kernel.org/all/20240110-vkms-yuv-v2-6-952fcaa5a193@riseup.net/
+[6]: https://lore.kernel.org/all/20240110-vkms-yuv-v2-7-952fcaa5a193@riseup.net/
+[8]: https://lore.kernel.org/r/20240313-new_rotation-v2-0-6230fd5cae59@bootlin.com
+[9]: https://lore.kernel.org/dri-devel/20240306-louis-vkms-conv-v1-1-5bfe7d129fdd@riseup.net/
+[10]: https://lore.kernel.org/all/20240422-kms_fb_stress-dev-v5-0-0c577163dc88@riseup.net/
+
+To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
+To: Melissa Wen <melissa.srw@gmail.com>
+To: Maíra Canal <mairacanal@riseup.net>
+To: Haneen Mohammed <hamohammed.sa@gmail.com>
+To: Daniel Vetter <daniel@ffwll.ch>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+To: Maxime Ripard <mripard@kernel.org>
+To: Thomas Zimmermann <tzimmermann@suse.de>
+To: David Airlie <airlied@gmail.com>
+To: rdunlap@infradead.org
+To: arthurgrillo@riseup.net
+To: Jonathan Corbet <corbet@lwn.net>
+To: pekka.paalanen@haloniitty.fi
+Cc: dri-devel@lists.freedesktop.org
+Cc: linux-kernel@vger.kernel.org
+Cc: jeremie.dautheribes@bootlin.com
+Cc: miquel.raynal@bootlin.com
+Cc: thomas.petazzoni@bootlin.com
+Cc: seanpaul@google.com
+Cc: marcheu@google.com
+Cc: nicolejadeyee@google.com
+Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+
+Changes in v14:
+- Rebased on drm-misc-next... Sorry for the quick iteration, next time I 
+  will push patches before sending a new iteration... I kept the Acked-by 
+  from Pekka as it is a minor fix.
+- Nitpicks from José
+- The only minor change is in PATCH 8/9, replacing 
+    vkms_state->base->crtc->mode
+  by
+    vkms_state->base->mode
+  as suggested by Ville Syrjälä ([11])
+  [11]:https://lore.kernel.org/all/Zv8IPRKcPqYXgL2B@intel.com/
+- Link to v13: https://lore.kernel.org/r/20241031-yuv-v13-0-bd5463126faa@bootlin.com
+Changes in v13:
+- Removed the YUV part to prepare the merge
+- Add Acked-by from Maíra
+- Link to v12: https://lore.kernel.org/r/20241007-yuv-v12-0-01c1ada6fec8@bootlin.com
+Changes in v12:
+- Fix documentation issues as suggested by Randy
+- Link to v11: https://lore.kernel.org/r/20240930-yuv-v11-0-4b1a26bcfc96@bootlin.com
+Changes in v11:
+- Remove documentation patch (already merged)
+- Fix sparse warning about documentation
+- Link to v10: https://lore.kernel.org/r/20240809-yuv-v10-0-1a7c764166f7@bootlin.com
+Changes in v10:
+- Properly remove the patch introducing dummy read/write functions
+- PATCH 8/16: Format fixups
+- PATCH 9/16: Format fixups
+- PATCH 11/16: Format fixups
+- PATCH 14/16: Fix test compilation, add module description
+- Link to v9: https://lore.kernel.org/r/20240802-yuv-v9-0-08a706669e16@bootlin.com
+Changes in v9:
+- PATCH 3/17: Fix docs as Maíra suggested
+- PATCH 4,6,10,12,15,17/17: Fix sparse warning about __le16 casting
+- Link to v8: https://lore.kernel.org/all/20240516-yuv-v8-0-cf8d6f86430e@bootlin.com/
+Changes in v8:
+- PATCH 7/17: Update pitch access to use the proper value for block
+  formats
+- PATCH 9/17: Update pitch access to use the proper value for block
+  formats
+- Link to v7: https://lore.kernel.org/r/20240513-yuv-v7-0-380e9ffec502@bootlin.com
+Changes in v7:
+- Some typos and indent fixes
+- Add Review-By, Acked-By
+- PATCH 3/17: Clarify src/dst unit
+- PATCH 9/17: Clarify documentation
+- PATCH 9/17: Restrict conditions for direction
+- PATCH 9/17: Rename get_block_step_byte to get_block_step_bytes
+- PATCH 10/17: Clarify kernel doc for clamp_line_coordinates, blend_line,
+  pixel_read_line_t
+- PATCH 10/17: Fix the case when src_*_start >= fb->width/height
+- PATCH 10/17: Change y in blend to be an int
+- PATCH 10/17: Clarify documentation for read functions
+- PATCH 12/17: Fix the type of rgb variables in argb_u16_from_yuv888
+- PATCH 12/17: Move comments at the right place, remove useless ones
+- PATCH 12/17: Add missing const
+- PATCH 17/17: Use drm_format_info_bpp and computation to avoid hard-coded
+  values
+- Link to v6: https://lore.kernel.org/r/20240409-yuv-v6-0-de1c5728fd70@bootlin.com
+Changes in v6:
+- Add Randy
+- Add Review-By and Acked-By
+- PATCH 2/17: Remove useless newline
+- PATCH 3/17: Fix kernel doc
+- PATCH 4/17: Fix typo in git commit
+- PATCH 4/17: Fix kernel doc and simplify brief description of typedef
+- PATCH 5/17: Change black default color to Magenta
+- PATCH 5/17: Fix wording in comment
+- PATCH 7/17: Fix typo in packed_pixel_offset
+- PATCH 7/17: Add WARN_ON for currently not supported formats
+- PATCH 8/17: Rename x_limit to pixel_count
+- PATCH 8/17: Clarify kernel doc for pre_mul_alpha_blend
+- PATCH 9/17: Rename get_step_next_block to get_block_step_bytes
+- PATCH 9/17: Change kernel doc order
+- PATCH 9/17: Rework the direction_for_rotation function to use drm
+  helpers
+- PATCH 9/17: Add a warn in direction_for_rotation if the result is not
+  expected
+- PATCH 10/17: Reword the comment of pixel color conversion functions
+- PATCH 10/17: Refactor the blending function to extract functions
+- PATCH 11/17: Remove useless drm_rotation_simplify
+- PATCH 12/17: Fix typo in comments
+- PATCH 12/17: Remove useless define
+- PATCH 12/17: Fix some comments typo and kernel doc
+- PATCH 12/17: Add a comma at the end of the vkms_formats list
+- PATCH 12/17: Use copy of matrix instead of pointers
+- PATCH 12/17: Use 16 bit range for yuv conversion
+- PATCH 17/17: Add a comma at the end of the vkms_formats list
+- PATCH 17/17: Add assertions
+- PATCH 17/17: Fix color conversion... Next time I will read the doc
+  twice...
+- Link to v5: https://lore.kernel.org/r/20240313-yuv-v5-0-e610cbd03f52@bootlin.com
+Changes in v5:
+- All patches: fix some formatting issues
+- PATCH 4/16: Use the correct formatter for 4cc code
+- PATCH 7/16: Update the pixel accessors to also return the pixel position
+  inside a block.
+- PATCH 8/16: Fix a temporary bug
+- PATCH 9/16: Update the get_step_1x1 to get_step_next_block and update
+  the documentation
+- PATCH 10/16: Update to uses the new pixel accessors
+- PATCH 10/16: Reword some comments
+- PATCH 11/16: Update to use the new pixel accessors
+- PATCH 11/16: Fix a bug in the subsampling offset for inverted reading
+  (right to left/bottom to top). Found by [8].
+- PATCH 11/16: Apply Arthur's modifications (comments, algorithm
+  clarification)
+- PATCH 11/16: Use the correct formatter for 4cc code
+- PATCH 11/16: Update to use the new get_step_next_block
+- PATCH 14/16: Apply Arthur's modification (comments, compilation issue)
+- PATCH 15/16: Add Arthur's patch to explain the kunit tests
+- PATCH 16/16: Introduce DRM_FORMAT_R* support.
+- Link to v4: https://lore.kernel.org/r/20240304-yuv-v4-0-76beac8e9793@bootlin.com
+Changes in v4:
+- PATCH 3/14: Update comments for get_pixel_* functions
+- PATCH 4/14: Add WARN when trying to get unsupported pixel_* functions
+- PATCH 5/14: Create dummy pixel reader/writer to avoid NULL
+  function pointers and kernel OOPS
+- PATCH 6/14: Added the usage of const pointers when needed
+- PATCH 7/14: Extraction of pixel accessors modification
+- PATCH 8/14: Extraction of the blending function modification
+- PATCH 9/14: Extraction of the pixel_read_direction enum
+- PATCH 10/14: Update direction_for_rotation documentation
+- PATCH 10/14: Rename conversion functions to be explicit
+- PATCH 10/14: Replace while(count) by while(out_pixel<end) in read_line
+  callbacks. It avoid a new variable+addition in the composition hot path.
+- PATCH 11/14: Rename conversion functions to be explicit
+- PATCH 11/14: Update the documentation for get_subsampling_offset
+- PATCH 11/14: Add the matrix_conversion structure to remove a test from
+  the hot path.
+- PATCH 11/14: Upadate matrix values to use 32.32 fixed floats for
+  conversion
+- PATCH 12/14: Update commit message
+- PATCH 14/14: Change kunit expected value
+- Link to v3: https://lore.kernel.org/r/20240226-yuv-v3-0-ff662f0994db@bootlin.com
+Changes in v3:
+- Correction of remaining git-rebase artefacts
+- Added Pekka in copy of this patch
+- Link to v2: https://lore.kernel.org/r/20240223-yuv-v2-0-aa6be2827bb7@bootlin.com
+Changes in v2:
+- Rebased the series on top of drm-misc/drm-misc-net
+- Extract the typedef for pixel_read/pixel_write
+- Introduce the line-by-line algorithm per pixel format
+- Add some documentation for existing and new code
+- Port the series [1] to use line-by-line algorithm
+- Link to v1: https://lore.kernel.org/r/20240201-yuv-v1-0-3ca376f27632@bootlin.com
+
+---
+Arthur Grillo (1):
+      drm/vkms: Use drm_frame directly
+
+Louis Chauvet (8):
+      drm/vkms: Code formatting
+      drm/vkms: Add typedef and documentation for pixel_read and pixel_write functions
+      drm/vkms: Use const for input pointers in pixel_read an pixel_write functions
+      drm/vkms: Update pixels accessor to support packed and multi-plane formats.
+      drm/vkms: Avoid computing blending limits inside pre_mul_alpha_blend
+      drm/vkms: Introduce pixel_read_direction enum
+      drm/vkms: Re-introduce line-per-line composition algorithm
+      drm/vkms: Remove useless drm_rotation_simplify
+
+ drivers/gpu/drm/vkms/vkms_composer.c  | 312 ++++++++++++++++++++------
+ drivers/gpu/drm/vkms/vkms_crtc.c      |   6 +-
+ drivers/gpu/drm/vkms/vkms_drv.c       |   3 +-
+ drivers/gpu/drm/vkms/vkms_drv.h       |  55 ++++-
+ drivers/gpu/drm/vkms/vkms_formats.c   | 409 ++++++++++++++++++++++++----------
+ drivers/gpu/drm/vkms/vkms_formats.h   |   4 +-
+ drivers/gpu/drm/vkms/vkms_plane.c     |  17 +-
+ drivers/gpu/drm/vkms/vkms_writeback.c |   5 -
+ 8 files changed, 588 insertions(+), 223 deletions(-)
+---
+base-commit: 7d2faa8dbb7055a115fe0cd6068d7090094a573d
+change-id: 20240201-yuv-1337d90d9576
+
+Best regards,
+-- 
+Louis Chauvet <louis.chauvet@bootlin.com>
+
 
