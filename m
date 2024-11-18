@@ -1,109 +1,121 @@
-Return-Path: <linux-kernel+bounces-412419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 310F79D08D1
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 06:27:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 10F9D9D08CF
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 06:26:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D62901F2305C
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 05:27:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCAB21F22EBA
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 05:26:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E527D13CFA5;
-	Mon, 18 Nov 2024 05:26:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65BE613C9D9;
+	Mon, 18 Nov 2024 05:26:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1Xpam8uL"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="k7NwoTbW"
+Received: from fhigh-b3-smtp.messagingengine.com (fhigh-b3-smtp.messagingengine.com [202.12.124.154])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA04513C906
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 05:26:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3052213A863
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 05:26:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731907608; cv=none; b=g7pXv+Wpa5OhhTT0tnhpyuN2kWBZkxZ3WRjYxJnXL1hOYgtXgOsHPai1WUqrhGemwqcXeQNGLjQqJs3pKlDhybF91188eMa9xj3KeH7BAuxx0QBRLo5MZ0FjqoW+ZV1WOsw9egBWdz1dFMdahGfYSGYBOb6nSUKBWo6FD28AoUI=
+	t=1731907584; cv=none; b=LfxkwjaegL/wp+Uy17h8N2VDszc3OaehvHQ+zNGZx2kjIqsLtUr9czfaSy1fzOzne65R2iYxfywkfakkblYBzfTGutUGfyikexCScXMudz17WV78CPoru4T8A3UffD3TTCrk4vIHiZgM3jnE1T8niApxcykA/Fuh6AYgo1X+uvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731907608; c=relaxed/simple;
-	bh=FSLgf7jIU8Cg5GPZ/xlTi5EV3FppM+GFoz/qkNa3AC4=;
-	h=Date:Message-Id:Mime-Version:Subject:From:To:Content-Type; b=gLiQy9lu5NBalW1T2JPuk8aDaeq5clMq/FQ/5SxuZ39OWrwAkMd7xCWU8wpClOrytvaBQbh6FmSXMhn072DAyHnCWLVk1cwgQDuFdb/JRoekcwZxQbbTM/yZpom/KNBIcxJrXhYmb0sxV7sNbCKi0RhPJwWiHysIXsws4HmHnt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1Xpam8uL; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6ee3fc5a13fso36572467b3.1
-        for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 21:26:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731907606; x=1732512406; darn=vger.kernel.org;
-        h=to:from:subject:mime-version:message-id:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=2CVj7EzOpLkXZaUuUsXzkWLUL7uv5LaSWkn156n2FLk=;
-        b=1Xpam8uL7oFyzGeogbGlv2QSrhbmee3+568or/J8PiYsNOTq08arxd7sC6/aBfmxdn
-         l5288fhl0vCXPA851vMsT+7v9z8wED4a64tchdkcW9Biiy1BIuRjKbGNViSG0nAi04m9
-         6oc4DgEOaQpZ3lgxEHsjcKDUXroX128rFHoWsmsx97YvdF8vOs6tf31QnRQ66vUmQ7d8
-         1gbBUeAiqEk9hkciTalJXrFkO4+Sg7R3jPxwmG567zKiadSRmkQ+gmWrHfqFDTnbF14B
-         9EGTBEHWReNFZrlp41sAebKxHgBrpbaS2WK2YmHdGRRvkErz53teqSyEFXuWSkCNPBrv
-         bPLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731907606; x=1732512406;
-        h=to:from:subject:mime-version:message-id:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2CVj7EzOpLkXZaUuUsXzkWLUL7uv5LaSWkn156n2FLk=;
-        b=WECGa+G7ao2VmeuOdahLQma5g7lyjX/HeKoA2lTqmuXPmRgRUQTA7fflJLPCDc+bqf
-         3L9N2ZT+3ayodj8CyYua2KaaTwEVRHMCiNXNgQTfoHrDMTesXZuS0w37xvmsycrAMulR
-         YWjmM+lTh1G6I0uNqU4P4VPp2S/Pwr9/mTJSV7vruuQP0xyoMZ+o4lqq2gpdsFZaOpaf
-         wvVuAmtFp0g6sT9FNCTX+ueHHEHnQYubuBiWvx7un3h3ScVFyiY882O8FB3A2A2Ch0ep
-         jbh4CQEjCXSzW63j1OZMFBmjkJh7bXT0kCWCrfUR692uiNO61qO9klgeuzlVJUgAYiC6
-         Z0iA==
-X-Forwarded-Encrypted: i=1; AJvYcCX7Agmws9YuUhpgrnHDpotCykYB/NxJuSiMHSWn7sq6Aq2JxMYKr77iYLKJtWB8CBuKigEmpu9l1jasfZs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyU/ksbzRmZl85p8a+Pbad9ocoOQ218PazxbOT+OB2iI5HMAIeq
-	pqYbFaBkc+QaIKPKsbQ/BStQK4+Y4N2b8BFehD2XvJ01NbBjitE2mLavp1Uxm20raAs6kJ4yA3S
-	YTMAOZA==
-X-Google-Smtp-Source: AGHT+IHf9gDi0FbO73XCSlPlQ/bLknfcP/3i0HYD/A5A/j05+tMO0q8TKgNoFaLVu9gsGgks76Xnz9DM59wc
-X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:22a4:ded5:5c37:fcc7])
- (user=irogers job=sendgmr) by 2002:a05:690c:7241:b0:6ee:6f60:e564 with SMTP
- id 00721157ae682-6ee6f60e67cmr250187b3.3.1731907605851; Sun, 17 Nov 2024
- 21:26:45 -0800 (PST)
-Date: Sun, 17 Nov 2024 21:26:38 -0800
-Message-Id: <20241118052638.754981-1-irogers@google.com>
+	s=arc-20240116; t=1731907584; c=relaxed/simple;
+	bh=PBw+2l4k/U/8zjU5cemT5owgK8Rdjbs+7eB+L9/Ycbc=;
+	h=Date:Message-ID:From:To:Cc:Subject; b=AF+XZLUbMFoEBAKIM+UR9vmlDKuFuEY3A1dXiKEfNR5MKcJFdZR46rUoc8Qn9gMwtG3QLMxhlBmkQYV1ClGnYA12KyfXFIjIs8Ji+Nn6UkgsDu9SQAaTIoDg0rzyKBuiP5nB1euJ7LzKV2Q/eGmQUQ59cVJpLOjzW+IEDF4WK0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=k7NwoTbW; arc=none smtp.client-ip=202.12.124.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 3C7932540119;
+	Mon, 18 Nov 2024 00:26:22 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-04.internal (MEProxy); Mon, 18 Nov 2024 00:26:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
+	:feedback-id:from:from:in-reply-to:message-id:reply-to:subject
+	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm3; t=1731907582; x=1731993982; bh=r29dMPQRv+Gn3SilhPT9HklbBYac
+	hEKIULVz8FVwt98=; b=k7NwoTbW69mVKGydqbzLqZOLwbnxd/Q6r980KWc1Y8Df
+	otUwgllcAyx2ZbPDDUNjm7LrWS/U5FmG09vM/AKkryooRsdCJ5h2Zjl1NMjhooEP
+	hC3T/l+uSdtPgrIKE6KrAOo0HqiDUfXTZEcdyASfh2c3TUxZnBJPzMqpMRezqa4f
+	z8OkrbOK6Bb0Fgrp85xRkMpoTVWAkngkVB9kw2gfTlC0lVddpcGeSaXZURDEMFiD
+	Ff5LTcJIVGPv5DTkDQI5eW8Q7bneLf6f7ps8AMJ575ci9uuIkMyAAAJm+/O+3RFG
+	dNowIf2lTECpap5FKh4EHDQ6oHaMPtkggbjPhBBWjA==
+X-ME-Sender: <xms:_c86Z-nppbNlBAN3HW9LhvBqQWtpqYoAzoJPAP9DWjfHZjFWADuw8A>
+    <xme:_c86Z10KjobDkxTWd4y0ZXAZPgwisr8fhEZtRHTfDVeu3QvGRVNs-dMXXKr9zLqbe
+    RpaAedrNcqlMk4asGI>
+X-ME-Received: <xmr:_c86Z8pP5hLbM_s-ykr26uaN4lznYyv6GrFGs7puUnrDM5kAalsvoEEARy402o1j0Fa0uFgoHkIMBfcBC39sa4pM8QFHqD4Goc8>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrvdelgdekgecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenucfjughrpeffkffhvfevufestddtjhdttddttdenucfhrhhomhep
+    hfhinhhnucfvhhgrihhnuceofhhthhgrihhnsehlihhnuhigqdhmieekkhdrohhrgheqne
+    cuggftrfgrthhtvghrnhepheetuddufffgfeekkeejudeivdfgfedtleetkeduleekueef
+    hfevueekkeeftdeinecuffhomhgrihhnpehkvghrnhgvlhdrohhrghdpvghnthhrhidrsh
+    gsnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepfhht
+    hhgrihhnsehlihhnuhigqdhmieekkhdrohhrghdpnhgspghrtghpthhtohephedpmhhoug
+    gvpehsmhhtphhouhhtpdhrtghpthhtohepshhtrggslhgvsehkvghrnhgvlhdrohhrghdp
+    rhgtphhtthhopehgvggvrhhtsehlihhnuhigqdhmieekkhdrohhrghdprhgtphhtthhope
+    hvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpdhrtghpthhtoheplhhinhhu
+    gidqmheikehksehlihhsthhsrdhlihhnuhigqdhmieekkhdrohhrghdprhgtphhtthhope
+    hlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:_c86Zynh2vbWVaZMwFGzijK3ECVZ90sf8Rx7OhDsYExA4jIpYj1JCw>
+    <xmx:_c86Z814jB2THHzekG-OxCtJAbDa07IG9FlbqBsk-jY5fqyBZJhElw>
+    <xmx:_c86Z5s5Om1p5moGEH1x5ykvTMtqhswRIyLtkC2XFPl3sC5EHS8OWg>
+    <xmx:_c86Z4VaDcnKdNaJSTzKUbCA3cnTfaIKYa94h7Rt3G1hMyc65ZLMPQ>
+    <xmx:_s86Z_TUGztPjDAlCPJacAiNc8nFkA1GfNMlPJx9uLG86Hx9CAxRb-a6>
+Feedback-ID: i58a146ae:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 18 Nov 2024 00:26:20 -0500 (EST)
+Date: Mon, 18 Nov 2024 16:26:49 +1100
+Message-ID: <768fa5661596788cd8e49b46cca853d3@linux-m68k.org>
+From: Finn Thain <fthain@linux-m68k.org>
+To: stable@kernel.org
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Al Viro <viro@zeniv.linux.org.uk>, linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 4.19.y] m68k: Update ->thread.esp0 before calling syscall_trace() in ret_from_signal
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-Subject: [PATCH v1] perf test: Correct hwmon test PMU detection
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 
-Use name to avoid potential other hwmon PMUs.
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-Signed-off-by: Ian Rogers <irogers@google.com>
+[ Upstream commit 50e43a57334400668952f8e551c9d87d3ed2dfef ]
+
+We get there when sigreturn has performed obscene acts on kernel stack;
+in particular, the location of pt_regs has shifted.  We are about to call
+syscall_trace(), which might stop for tracer.  If that happens, we'd better
+have task_pt_regs() returning correct result...
+
+Fucked-up-by: Al Viro <viro@zeniv.linux.org.uk>
+Fixes: bd6f56a75bb2 ("m68k: Missing syscall_trace() on sigreturn")
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Tested-by: Michael Schmitz <schmitzmic@gmail.com>
+Reviewed-by: Michael Schmitz <schmitzmic@gmail.com>
+Tested-by: Finn Thain <fthain@linux-m68k.org>
+Link: https://lore.kernel.org/r/YP2dMWeV1LkHiOpr@zeniv-ca.linux.org.uk
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Signed-off-by: Finn Thain <fthain@linux-m68k.org>
 ---
- tools/perf/tests/hwmon_pmu.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/m68k/kernel/entry.S | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/tools/perf/tests/hwmon_pmu.c b/tools/perf/tests/hwmon_pmu.c
-index 9f44093f18df..1e5f93aaaf5f 100644
---- a/tools/perf/tests/hwmon_pmu.c
-+++ b/tools/perf/tests/hwmon_pmu.c
-@@ -173,7 +173,8 @@ static int do_test(size_t i, bool with_pmu, bool with_alias)
- 	}
- 
- 	evlist__for_each_entry(evlist, evsel) {
--		if (!perf_pmu__is_hwmon(evsel->pmu))
-+		if (!evsel->pmu || !evsel->pmu->name ||
-+		    strcmp(evsel->pmu->name, "hwmon_a_test_hwmon_pmu"))
- 			continue;
- 
- 		if (evsel->core.attr.config != (u64)test_events[i].config) {
--- 
-2.47.0.338.g60cca15819-goog
-
+diff --git a/arch/m68k/kernel/entry.S b/arch/m68k/kernel/entry.S
+index 417d8f0e8962..0d03b4f2077b 100644
+--- a/arch/m68k/kernel/entry.S
++++ b/arch/m68k/kernel/entry.S
+@@ -182,6 +182,8 @@ ENTRY(ret_from_signal)
+ 	movel	%curptr@(TASK_STACK),%a1
+ 	tstb	%a1@(TINFO_FLAGS+2)
+ 	jge	1f
++	lea	%sp@(SWITCH_STACK_SIZE),%a1
++	movel	%a1,%curptr@(TASK_THREAD+THREAD_ESP0)
+ 	jbsr	syscall_trace
+ 1:	RESTORE_SWITCH_STACK
+ 	addql	#4,%sp
 
