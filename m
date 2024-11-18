@@ -1,181 +1,291 @@
-Return-Path: <linux-kernel+bounces-412802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8B939D0F2B
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 12:04:02 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F1309D0F97
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 12:25:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF846284902
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:04:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69251B2DBA8
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:04:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB6DE198E85;
-	Mon, 18 Nov 2024 11:03:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A360219644B;
+	Mon, 18 Nov 2024 11:04:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MS4XRzB0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="vAkuQX38";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="x6cnkTgw";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="vAkuQX38";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="x6cnkTgw"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13A56194A5A;
-	Mon, 18 Nov 2024 11:03:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6199B14F102
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 11:04:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731927824; cv=none; b=pPHDYoH5SXhraoPTX12dKUTDVTpDniOk8HNsWgXKZz/q9tsIsVJNOj6pKi8epfTKsXJIi7m6yxl7VKPisvB2nQ9+sx4sSH7sdk2gKuYl66TGMUaDbZ+aKu5MSWHT32sEm7daIa1lspoFaKrtUsIPM5H/oafPVcDSJUiKSaXiXv0=
+	t=1731927856; cv=none; b=StLSlHlC0v310Bte5W6bYD3daJnPl6DzW4gCSD155LAMPpQkWgczL7PCxJVmSx7nz++xw9coyQDViofsxJ9LOGVZiqzxjp3jqxk5XgSgpy2TLZdjKe+jARfTikBZAG3ONMZNEwqIS3UuHlp7jkxRhVrMKUtzgf4e4F8l/DnWsbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731927824; c=relaxed/simple;
-	bh=AOEBOSkZRti3bK8rQa/5CfKZopdyDgU2tBjztmiX0ks=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HXO8K49Zzpd4SeTrcp6WP+9GoghLgBCPgFKNq/qn1bfPGb/J5id2uYXo1kjBuykMe9+RDpdbvpeDWZ7O9eZhcyPnJmyZRvX8k8oK1QnB/uqz7bJqhlcO6s7XhDDvIm5czFbfDGCNlvBt/+tYYVOBTyGuutO1apcn5utO7+KIXgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MS4XRzB0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A32A3C4CED9;
-	Mon, 18 Nov 2024 11:03:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731927823;
-	bh=AOEBOSkZRti3bK8rQa/5CfKZopdyDgU2tBjztmiX0ks=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=MS4XRzB0auiYkwS4Ba17T2nI3g6H62F8KCrCwnJJxMVfDGVlFad/i5aBx3Jdqtjgh
-	 d5Jt537gxAoGGZ35oymAMpazp/hYfrEWhm5E6jVmz9dzLsMk7ZYOVHCVgRWlszeipt
-	 trDteD+2RNEsrTy5Wu4tSjnKKqQU21UFKMF5etunuwlGxZU1dAe1JVrMIwUh/pyId7
-	 XSzJWfaEnXWoh2FEEC/N0WYKZzPfa4pDz+Lda7XZyLksIzj+8f3DF/KbMFd/lmg4wd
-	 y9PnTyp4oa5yLsUME8w4WyxNQpdEK7s7WE2c/Ha9Yo+P5VEv7p8iRvOICYyz4J96Ea
-	 ZcQjMmD1oUVfw==
-Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-2958ddf99a7so3687930fac.2;
-        Mon, 18 Nov 2024 03:03:43 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVMuCUgW4x3nnZXJLrhmnL+G7WbRff1UFyf32LgpfAV5dRAxeNYwMEpixQHl7rs4qAiLdS8ZnTuGu8=@vger.kernel.org, AJvYcCVeK4ZAg4skU2DpkzInGLFHAAULJjE9ruDVO9lguQXlSJ+a+yNZWUr4phSBoXR66iIvr/1+hDsAdU8FIGBT@vger.kernel.org, AJvYcCWAKQrnnIzTA/pyugbNyKEV1/Jw14k93KIp/BAkxh/gL3cT8Q6z4O6ut9WPedZ0PEbMuECOqSFgWMHE@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw53hBEMCuhTDFERPByRvXQD1xzm/VDuM8f3eHbaQsNqg/fDTQo
-	34AxuWZtUMzW5La6sgMKBqYVkTFpp8gRljOKyK0z5OplCV5gpioAJeg9swtf8Bg0+52cyEOS+0Q
-	WHYCBfm1Tj6vXwExdiNmh1L8m+6U=
-X-Google-Smtp-Source: AGHT+IG6CtV/1ZJaq2aGg/BqFu90ot62tko56Hij+PNazXnlfm090dz2SI4Uih6KXYZYUAKK9CkdNax5HxUvJze7qH8=
-X-Received: by 2002:a05:6870:828a:b0:287:a973:2c66 with SMTP id
- 586e51a60fabf-2962dfeea85mr9037037fac.28.1731927822928; Mon, 18 Nov 2024
- 03:03:42 -0800 (PST)
+	s=arc-20240116; t=1731927856; c=relaxed/simple;
+	bh=kJX4JKyXAHptOn5Lf1bVJ9Lkx6/ywgEdImQjJlhWq28=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bBagIEaI+QJShUGQQoSXTKl8wmhp2ULY2n2nBnJtfoeS5WC1W8OByTDz5yf60b9dD+KUpj1INVB8A7q2UDalyJMLlropcvkybsgw3wv+95r3pEwpciPgKgDdnv505cArP3FYsvR0FyNSypn/+1UVpRJJYjTUpe/8Mq6jdNL16lc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=vAkuQX38; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=x6cnkTgw; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=vAkuQX38; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=x6cnkTgw; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 624271F365;
+	Mon, 18 Nov 2024 11:04:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1731927852; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6vCH4fT25UAM+LK3vGgiSrmNPx5b+seiHu6tJYQO25c=;
+	b=vAkuQX38+MlQdorYrWrdn2UXx0IFRo06D9A78Pgp8OaFevLxHGeEynz8UlFJ/ZsFpCio6D
+	P5UfTFWCHPooAWvOvlqrdzCHNjPgLpeG/WXaXtInvlRdOyTGRFCAIcaQO6u9sfjL/GiA1C
+	AzEUZEkXKVfFhWNBqGozcwtu03eZ0Ao=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1731927852;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6vCH4fT25UAM+LK3vGgiSrmNPx5b+seiHu6tJYQO25c=;
+	b=x6cnkTgw6kd6/Wst4wRNijvIG9lVF11kndfq7U1w2977VjXnkyWaSyZJhv2giOS9oj2/u8
+	YNxpaSW5KF6JO2BA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1731927852; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6vCH4fT25UAM+LK3vGgiSrmNPx5b+seiHu6tJYQO25c=;
+	b=vAkuQX38+MlQdorYrWrdn2UXx0IFRo06D9A78Pgp8OaFevLxHGeEynz8UlFJ/ZsFpCio6D
+	P5UfTFWCHPooAWvOvlqrdzCHNjPgLpeG/WXaXtInvlRdOyTGRFCAIcaQO6u9sfjL/GiA1C
+	AzEUZEkXKVfFhWNBqGozcwtu03eZ0Ao=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1731927852;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6vCH4fT25UAM+LK3vGgiSrmNPx5b+seiHu6tJYQO25c=;
+	b=x6cnkTgw6kd6/Wst4wRNijvIG9lVF11kndfq7U1w2977VjXnkyWaSyZJhv2giOS9oj2/u8
+	YNxpaSW5KF6JO2BA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4517B1376E;
+	Mon, 18 Nov 2024 11:04:12 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id uAmWECwfO2dpOgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 18 Nov 2024 11:04:12 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id DEAC9A0984; Mon, 18 Nov 2024 12:04:11 +0100 (CET)
+Date: Mon, 18 Nov 2024 12:04:11 +0100
+From: Jan Kara <jack@suse.cz>
+To: "Bai, Shuangpeng" <SJB7183@PSU.EDU>
+Cc: "jack@suse.com" <jack@suse.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"syzkaller@googlegroups.com" <syzkaller@googlegroups.com>,
+	Dave Kleikamp <shaggy@kernel.org>,
+	jfs-discussion@lists.sourceforge.net
+Subject: Re: KASAN: wild-memory-access in dqput.part.0
+Message-ID: <20241118110411.adggbvad6ncocbhr@quack3>
+References: <3A6D2300-7787-4C96-8509-B8D5907B9135@psu.edu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <c7db7e804c453629c116d508558eaf46477a2d73.1731708405.git.len.brown@intel.com>
-In-Reply-To: <c7db7e804c453629c116d508558eaf46477a2d73.1731708405.git.len.brown@intel.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 18 Nov 2024 12:03:28 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0iC3mX7Yh_ETTw4FY3xUbZeAUgS0Nc9_88fnT1q5EGWyA@mail.gmail.com>
-Message-ID: <CAJZ5v0iC3mX7Yh_ETTw4FY3xUbZeAUgS0Nc9_88fnT1q5EGWyA@mail.gmail.com>
-Subject: Re: [PATCH v2] ACPI: Replace msleep() with usleep_range() in acpi_os_sleep().
-To: Len Brown <lenb@kernel.org>
-Cc: rafael@kernel.org, anna-maria@linutronix.de, tglx@linutronix.de, 
-	peterz@infradead.org, frederic@kernel.org, corbet@lwn.net, 
-	akpm@linux-foundation.org, linux-acpi@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Len Brown <len.brown@intel.com>, Arjan van de Ven <arjan@linux.intel.com>, 
-	Todd Brandt <todd.e.brandt@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3A6D2300-7787-4C96-8509-B8D5907B9135@psu.edu>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_SOME(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	RCVD_TLS_LAST(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
+X-Spam-Score: -3.80
+X-Spam-Flag: NO
 
-On Sat, Nov 16, 2024 at 12:11=E2=80=AFAM Len Brown <lenb@kernel.org> wrote:
->
-> From: Len Brown <len.brown@intel.com>
->
-> Replace msleep() with usleep_range() in acpi_os_sleep().
->
-> This has a significant user-visible performance benefit
-> on some ACPI flows on some systems.  eg. Kernel resume
-> time of a Dell XPS-13-9300 drops from 1943ms to 1127ms (42%).
+Hello!
 
-Sure.
+On Mon 18-11-24 04:32:38, Bai, Shuangpeng wrote:
+> Our tool found a new kernel bug KASAN: wild-memory-access in
+> dqput.part.0. Please see the details below.
+> 
+> Kernel commit: v6.12 (upstream)
+> Kernel config: attachment
+> C/Syz reproducer: attachment
+> 
+> [  341.442215][T17431] ==================================================================
+> [341.444194][T17431] BUG: KASAN: wild-memory-access in dqput.part.0 (./arch/x86/include/asm/atomic.h:23 ./include/linux/atomic/atomic-arch-fallback.h:457 ./include/linux/atomic/atomic-instrumented.h:33 fs/quota/dquot.c:867)
+> [  341.448056][T17431] Read of size 4 at addr 006d03ff00000150 by task a.out/17431
 
-And the argument seems to be that it is better to always use more
-resources in a given path (ACPI sleep in this particular case) than to
-be somewhat inaccurate which is visible in some cases.
+This is a call to atomic_read(&dquot->dq_count) inside dqput(). And the
+address 006d03ff00000150 shows that dqput() has just been called with bogus
+pointer. Which means that jfs2_evict_inode() calls dquot_drop() likely with
+uninitialized i_dquot array. Shaggy, can you have a look?
 
-This would mean that hrtimers should always be used everywhere, but they ar=
-en't.
+								Honza
 
-While I have nothing against addressing the short sleeps issue where
-the msleep() inaccuracy is too large, I don't see why this requires
-using a hrtimer with no slack in all cases.
+> [  341.449702][T17431]
+> [  341.450245][T17431] CPU: 1 UID: 0 PID: 17431 Comm: a.out Not tainted 6.12.0 #8
+> [  341.451865][T17431] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+> [  341.453827][T17431] Call Trace:
+> [  341.454559][T17431]  <TASK>
+> [341.455199][T17431] dump_stack_lvl (lib/dump_stack.c:123)
+> [341.457411][T17431] ? dqput.part.0 (./arch/x86/include/asm/atomic.h:23 ./include/linux/atomic/atomic-arch-fallback.h:457 ./include/linux/atomic/atomic-instrumented.h:33 fs/quota/dquot.c:867)
+> [341.458459][T17431] kasan_report (mm/kasan/report.c:603)
+> [341.459399][T17431] ? rcu_is_watching (./include/linux/context_tracking.h:128 kernel/rcu/tree.c:737)
+> [341.460465][T17431] ? dqput.part.0 (./arch/x86/include/asm/atomic.h:23 ./include/linux/atomic/atomic-arch-fallback.h:457 ./include/linux/atomic/atomic-instrumented.h:33 fs/quota/dquot.c:867)
+> [341.461472][T17431] kasan_check_range (mm/kasan/generic.c:183 mm/kasan/generic.c:189)
+> [341.462560][T17431] dqput.part.0 (./arch/x86/include/asm/atomic.h:23 ./include/linux/atomic/atomic-arch-fallback.h:457 ./include/linux/atomic/atomic-instrumented.h:33 fs/quota/dquot.c:867)
+> [341.463548][T17431] __dquot_drop (fs/quota/dquot.c:422 fs/quota/dquot.c:1607)
+> [341.464548][T17431] ? __pfx___dquot_drop (fs/quota/dquot.c:1595)
+> [341.465592][T17431] ? mark_held_locks (kernel/locking/lockdep.c:4321)
+> [341.466683][T17431] ? _raw_spin_unlock_irq (./arch/x86/include/asm/irqflags.h:42 ./arch/x86/include/asm/irqflags.h:97 ./include/linux/spinlock_api_smp.h:159 kernel/locking/spinlock.c:202)
+> [341.467852][T17431] dquot_drop (fs/quota/dquot.c:1633)
+> [341.468844][T17431] jfs_evict_inode (./include/linux/list.h:373 fs/jfs/inode.c:169)
+> [341.469841][T17431] ? __pfx_jfs_evict_inode (fs/jfs/inode.c:140)
+> [341.471018][T17431] evict (fs/inode.c:730)
+> [341.471878][T17431] ? __pfx_evict (fs/inode.c:701)
+> [341.472844][T17431] ? evict_inodes (fs/inode.c:828)
+> [341.473850][T17431] ? __pfx_lock_release (kernel/locking/lockdep.c:5833)
+> [341.474965][T17431] dispose_list (fs/inode.c:775)
+> [341.475931][T17431] evict_inodes (fs/inode.c:789)
+> [341.476929][T17431] ? __pfx_evict_inodes (fs/inode.c:789)
+> [341.478083][T17431] ? sync_blockdev (block/bdev.c:220)
+> [341.480239][T17431] generic_shutdown_super (fs/super.c:633)
+> [341.481352][T17431] kill_block_super (fs/super.c:1711)
+> [341.482294][T17431] deactivate_locked_super (fs/super.c:475)
+> [341.483433][T17431] deactivate_super (fs/super.c:508)
+> [341.484415][T17431] cleanup_mnt (fs/namespace.c:250 fs/namespace.c:1374)
+> [341.485400][T17431] task_work_run (kernel/task_work.c:241 (discriminator 1))
+> [341.486378][T17431] ? __pfx_task_work_run (kernel/task_work.c:207)
+> [341.487470][T17431] ? __put_net (net/core/net_namespace.c:675)
+> [341.488455][T17431] do_exit (kernel/exit.c:940)
+> [341.489372][T17431] ? __pfx_lock_release (kernel/locking/lockdep.c:5833)
+> [341.490389][T17431] ? do_raw_spin_lock (./arch/x86/include/asm/atomic.h:107 ./include/linux/atomic/atomic-arch-fallback.h:2170 ./include/linux/atomic/atomic-instrumented.h:1302 ./include/asm-generic/qspinlock.h:111 kernel/locking/spinlock_debug.c:116)
+> [341.491477][T17431] ? __pfx_do_exit (kernel/exit.c:878)
+> [341.492477][T17431] ? _raw_spin_unlock_irq (./arch/x86/include/asm/irqflags.h:42 ./arch/x86/include/asm/irqflags.h:97 ./include/linux/spinlock_api_smp.h:159 kernel/locking/spinlock.c:202)
+> [341.493553][T17431] do_group_exit (kernel/exit.c:1069)
+> [341.494577][T17431] __x64_sys_exit_group (kernel/exit.c:1097)
+> [341.495730][T17431] x64_sys_call (./arch/x86/include/generated/asm/syscalls_64.h:61)
+> [341.496761][T17431] do_syscall_64 (arch/x86/entry/common.c:52 arch/x86/entry/common.c:83)
+> [341.497753][T17431] entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:130)
+> [  341.499093][T17431] RIP: 0033:0x7fb31b2de146
+> [ 341.500054][T17431] Code: Unable to access opcode bytes at 0x7fb31b2de11c.
+> 
+> Code starting with the faulting instruction
+> ===========================================
+> [  341.501546][T17431] RSP: 002b:00007ffc5afbf7b8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+> [  341.503383][T17431] RAX: ffffffffffffffda RBX: 00007fb31b3e38a0 RCX: 00007fb31b2de146
+> [  341.505155][T17431] RDX: 0000000000000001 RSI: 000000000000003c RDI: 0000000000000001
+> [  341.506907][T17431] RBP: 0000000000000001 R08: 00000000000000e7 R09: ffffffffffffff80
+> [  341.508600][T17431] R10: 0000000000000002 R11: 0000000000000246 R12: 00007fb31b3e38a0
+> [  341.510320][T17431] R13: 0000000000000001 R14: 00007fb31b3ec2e8 R15: 0000000000000000
+> [  341.512053][T17431]  </TASK>
+> [  341.512753][T17431] ==================================================================
+> [  341.514883][T17431] Kernel panic - not syncing: KASAN: panic_on_warn set ...
+> [  341.516508][T17431] CPU: 1 UID: 0 PID: 17431 Comm: a.out Not tainted 6.12.0 #8
+> [  341.518075][T17431] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+> [  341.520110][T17431] Call Trace:
+> [  341.520841][T17431]  <TASK>
+> [341.521478][T17431] dump_stack_lvl (lib/dump_stack.c:124 (discriminator 7))
+> [341.522380][T17431] panic (kernel/panic.c:354)
+> [341.523136][T17431] ? mark_held_locks (kernel/locking/lockdep.c:4321)
+> [341.524057][T17431] ? __pfx_panic (kernel/panic.c:288)
+> [341.525001][T17431] ? irqentry_exit (kernel/entry/common.c:358)
+> [341.526063][T17431] ? lockdep_hardirqs_on (kernel/locking/lockdep.c:4468)
+> [341.527213][T17431] ? check_panic_on_warn (kernel/panic.c:242)
+> [341.528379][T17431] check_panic_on_warn (kernel/panic.c:243)
+> [341.529413][T17431] end_report (mm/kasan/report.c:226)
+> [341.530412][T17431] ? dqput.part.0 (./arch/x86/include/asm/atomic.h:23 ./include/linux/atomic/atomic-arch-fallback.h:457 ./include/linux/atomic/atomic-instrumented.h:33 fs/quota/dquot.c:867)
+> [341.531436][T17431] kasan_report (./arch/x86/include/asm/smap.h:56 mm/kasan/report.c:606)
+> [341.532391][T17431] ? rcu_is_watching (./include/linux/context_tracking.h:128 kernel/rcu/tree.c:737)
+> [341.533429][T17431] ? dqput.part.0 (./arch/x86/include/asm/atomic.h:23 ./include/linux/atomic/atomic-arch-fallback.h:457 ./include/linux/atomic/atomic-instrumented.h:33 fs/quota/dquot.c:867)
+> [341.534496][T17431] kasan_check_range (mm/kasan/generic.c:183 mm/kasan/generic.c:189)
+> [341.535592][T17431] dqput.part.0 (./arch/x86/include/asm/atomic.h:23 ./include/linux/atomic/atomic-arch-fallback.h:457 ./include/linux/atomic/atomic-instrumented.h:33 fs/quota/dquot.c:867)
+> [341.536598][T17431] __dquot_drop (fs/quota/dquot.c:422 fs/quota/dquot.c:1607)
+> [341.537612][T17431] ? __pfx___dquot_drop (fs/quota/dquot.c:1595)
+> [341.538756][T17431] ? mark_held_locks (kernel/locking/lockdep.c:4321)
+> [341.539798][T17431] ? _raw_spin_unlock_irq (./arch/x86/include/asm/irqflags.h:42 ./arch/x86/include/asm/irqflags.h:97 ./include/linux/spinlock_api_smp.h:159 kernel/locking/spinlock.c:202)
+> [341.540960][T17431] dquot_drop (fs/quota/dquot.c:1633)
+> [341.541927][T17431] jfs_evict_inode (./include/linux/list.h:373 fs/jfs/inode.c:169)
+> [341.542976][T17431] ? __pfx_jfs_evict_inode (fs/jfs/inode.c:140)
+> [341.544121][T17431] evict (fs/inode.c:730)
+> [341.544961][T17431] ? __pfx_evict (fs/inode.c:701)
+> [341.545974][T17431] ? evict_inodes (fs/inode.c:828)
+> [341.547059][T17431] ? __pfx_lock_release (kernel/locking/lockdep.c:5833)
+> [341.548146][T17431] dispose_list (fs/inode.c:775)
+> [341.549081][T17431] evict_inodes (fs/inode.c:789)
+> [341.550043][T17431] ? __pfx_evict_inodes (fs/inode.c:789)
+> [341.551081][T17431] ? sync_blockdev (block/bdev.c:220)
+> [341.552101][T17431] generic_shutdown_super (fs/super.c:633)
+> [341.553173][T17431] kill_block_super (fs/super.c:1711)
+> [341.554216][T17431] deactivate_locked_super (fs/super.c:475)
+> [341.555353][T17431] deactivate_super (fs/super.c:508)
+> [341.556360][T17431] cleanup_mnt (fs/namespace.c:250 fs/namespace.c:1374)
+> [341.557394][T17431] task_work_run (kernel/task_work.c:241 (discriminator 1))
+> [341.558438][T17431] ? __pfx_task_work_run (kernel/task_work.c:207)
+> [341.559595][T17431] ? __put_net (net/core/net_namespace.c:675)
+> [341.560526][T17431] do_exit (kernel/exit.c:940)
+> [341.561426][T17431] ? __pfx_lock_release (kernel/locking/lockdep.c:5833)
+> [341.562555][T17431] ? do_raw_spin_lock (./arch/x86/include/asm/atomic.h:107 ./include/linux/atomic/atomic-arch-fallback.h:2170 ./include/linux/atomic/atomic-instrumented.h:1302 ./include/asm-generic/qspinlock.h:111 kernel/locking/spinlock_debug.c:116)
+> [341.563642][T17431] ? __pfx_do_exit (kernel/exit.c:878)
+> [341.564688][T17431] ? _raw_spin_unlock_irq (./arch/x86/include/asm/irqflags.h:42 ./arch/x86/include/asm/irqflags.h:97 ./include/linux/spinlock_api_smp.h:159 kernel/locking/spinlock.c:202)
+> [341.565796][T17431] do_group_exit (kernel/exit.c:1069)
+> [341.566798][T17431] __x64_sys_exit_group (kernel/exit.c:1097)
+> [341.567988][T17431] x64_sys_call (./arch/x86/include/generated/asm/syscalls_64.h:61)
+> [341.569005][T17431] do_syscall_64 (arch/x86/entry/common.c:52 arch/x86/entry/common.c:83)
+> [341.569991][T17431] entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:130)
+> [  341.571281][T17431] RIP: 0033:0x7fb31b2de146
+> [ 341.572302][T17431] Code: Unable to access opcode bytes at 0x7fb31b2de11c.
+> 
+> Code starting with the faulting instruction
+> ===========================================
+> [  341.573763][T17431] RSP: 002b:00007ffc5afbf7b8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+> [  341.575510][T17431] RAX: ffffffffffffffda RBX: 00007fb31b3e38a0 RCX: 00007fb31b2de146
+> [  341.577279][T17431] RDX: 0000000000000001 RSI: 000000000000003c RDI: 0000000000000001
+> [  341.578979][T17431] RBP: 0000000000000001 R08: 00000000000000e7 R09: ffffffffffffff80
+> [  341.580726][T17431] R10: 0000000000000002 R11: 0000000000000246 R12: 00007fb31b3e38a0
+> [  341.582427][T17431] R13: 0000000000000001 R14: 00007fb31b3ec2e8 R15: 0000000000000000
+> [  341.584109][T17431]  </TASK>
+> [  341.584889][T17431] Kernel Offset: disabled
+> [  341.585801][T17431] Rebooting in 86400 seconds..
+> 
+> 
+> Best,
+> Shuangpeng
+> 
+> 
 
-The argument seems to be that the short sleeps case is hard to
-distinguish from the other cases, but I'm not sure about this.
 
-Also, something like this might work, but for some reason you don't
-want to do it:
 
-if (ms >=3D 12 * MSEC_PER_SEC / HZ) {
-        msleep(ms);
-} else {
-       u64 us =3D ms * USEC_PER_MSEC;
-
-      usleep_range(us, us / 8);
-}
-
-> usleep_range(min, min) is used because there is scant
-> opportunity for timer coalescing during ACPI flows
-> related to system suspend, resume (or initialization).
->
-> ie. During these flows usleep_range(min, max) is observed to
-> be effectvely be the same as usleep_range(max, max).
->
-> Similarly, msleep() for long sleeps is not considered because
-> these flows almost never have opportunities to coalesce
-> with other activity on jiffie boundaries, leaving no
-> measurably benefit to rounding up to jiffie boundaries.
->
-> Background:
->
-> acpi_os_sleep() supports the ACPI AML Sleep(msec) operator,
-> and it must not return before the requested number of msec.
->
-> Until Linux-3.13, this contract was sometimes violated by using
-> schedule_timeout_interruptible(j), which could return early.
->
-> Since Linux-3.13, acpi_os_sleep() uses msleep(),
-> which doesn't return early, but is still subject
-> to long delays due to the low resolution of the jiffie clock.
->
-> Linux-6.12 removed a stray jiffie from msleep: commit 4381b895f544
-> ("timers: Remove historical extra jiffie for timeout in msleep()")
-> The 4ms savings is material for some durations,
-> but msleep is still generally too course. eg msleep(5)
-> on a 250HZ system still takes 11.9ms.
->
-> System resume performance of a Dell XPS 13 9300:
->
-> Linux-6.11:
-> msleep HZ 250   2460 ms
->
-> Linux-6.12:
-> msleep HZ 250   1943 ms
-> msleep HZ 1000  1233 ms
-> usleep HZ 250   1127 ms
-> usleep HZ 1000  1130 ms
->
-> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=3D216263
-> Signed-off-by: Len Brown <len.brown@intel.com>
-> Suggested-by: Arjan van de Ven <arjan@linux.intel.com>
-> Tested-by: Todd Brandt <todd.e.brandt@intel.com>
-> ---
->  drivers/acpi/osl.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/acpi/osl.c b/drivers/acpi/osl.c
-> index 70af3fbbebe5..daf87e33b8ea 100644
-> --- a/drivers/acpi/osl.c
-> +++ b/drivers/acpi/osl.c
-> @@ -607,7 +607,9 @@ acpi_status acpi_os_remove_interrupt_handler(u32 gsi,=
- acpi_osd_handler handler)
->
->  void acpi_os_sleep(u64 ms)
->  {
-> -       msleep(ms);
-> +       u64 us =3D ms * USEC_PER_MSEC;
-> +
-> +       usleep_range(us, us);
->  }
->
->  void acpi_os_stall(u32 us)
-> --
-> 2.43.0
->
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
