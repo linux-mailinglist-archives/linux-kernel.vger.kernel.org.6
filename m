@@ -1,127 +1,239 @@
-Return-Path: <linux-kernel+bounces-412836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5260C9D0FD5
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 12:37:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FA119D0FDA
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 12:38:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A2BD1F22EEA
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:37:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C50661F22E27
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:38:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8CD91990C7;
-	Mon, 18 Nov 2024 11:37:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55CB01991D8;
+	Mon, 18 Nov 2024 11:38:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hXeaD6aC"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QEeUd3Ng"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8861194A68;
-	Mon, 18 Nov 2024 11:37:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE633194A68
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 11:38:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731929831; cv=none; b=phZ/sOrJL13KBuIKJKHtpMjTpLc4Bxwt2xGOcBc4yOk0Ncjc+7EKUEgcxK/AIJWLZP7bkUnNAmUJl99XypNgZJ6jzirh5LR4hu+INExFROpivx3LJv74/By0Ir/RcHzBCKo5vUVpliZTOrrYPtOhfJXJ6CU4TT0ez6rrKhxItLQ=
+	t=1731929907; cv=none; b=TYY/ivRkd46Vkm4FE2668YmKzAnKBoGLZxKnf7udLSi1Cv+bigcXPTSsYhPuy9ggGIuadfwSMe4+fVKaDDuWXWUj6g2FtYdDoQ0DnPATtGBqKuh8gp1uqvh0Uy8IY5ZD5O9HybQXD/VzSPGu7apC786MZNBjXaDgRo7lGONhfyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731929831; c=relaxed/simple;
-	bh=31f63cT9cGr3gLKOMXPNf8G8Rq9837/wowS823QzWgA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N5/DNE9IKSqWw94YqLoxYGRuYPSdpY2eo0dr4Ee7UKanXBl0SG5wIMh0fBPln0J/rdGlAzSe/0equs/ui5Zo0g0bs6jGvKP6hcocat+fGMUuri61bVncg1xsTbBeHVn16wwsiXlScSOw02Pj4Br6NXoKjn2IEqeqwdx1k0npKgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hXeaD6aC; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-72483f6e2f3so1379727b3a.1;
-        Mon, 18 Nov 2024 03:37:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731929829; x=1732534629; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=dzasLoJr8T9pHfFmEYMw00zyjyFfURXh+CYiFyGOzCM=;
-        b=hXeaD6aC+cbkNx5EmXP7/Z/cO7XSdqFMCa52lrqNUPsyfe8XcHwNmppBKyFHZN9Qls
-         YjY40MytnHjsYNmLiJD7PCo3LHJH6HqZoGndEzilnmp8mcDhCMitvlXjtAwW0SrgRNfX
-         3mOdVdPK4UDqM4cKowUnfZkyq4nyLaQl56++aFPx1ycl25bEf6UM2FCIDAjAg3DQB1nD
-         ZJJiNBsCuA7lVbWSEt3snp5S1vL9L/1/eGj2zOBs48SY1m+tLvFVk/F2yyTNu5D054q1
-         u+KkM/dEAZaIDkbWzkSTK2ZKlfWIPciS/DtydhkA3IHSCmCas/QFR5AYYJv41oJ+t1Aq
-         +gCw==
+	s=arc-20240116; t=1731929907; c=relaxed/simple;
+	bh=oESMn1LEmVNmGUiTbjsDWqJWOp/IPPBvGpuOSSOKZ38=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=i3fGfDOz+J9tmjqsRxQPgQgAhUUS4nwLbEyiRlxCG3VGs8BazomXQptfaiU3Z2yWXZ2E21/QKV8D27nzbvfZYuv3N5CNelSPsD4KgadFexEW+ZBJkycoP7yFXAttAbQtaQAcyXQEd1zCnQAqoRMPtwOaFZmIVyD4TZ85nfedpjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QEeUd3Ng; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731929904;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LZrM+6f0a6JSJKh2gj/Png+irOpVHNOAEu2gMRnnpxc=;
+	b=QEeUd3NgQ/hu0pX+kZ0ButHf48atmoW5xn1/cKtDtnnc0o2T/Y6NQwhiLDia9WOzf3nwdT
+	IBooeX1dq0AQXjjELJkOEcdz5mo3oJQBzHjWX2NrUoAVtzvPUOLajU/+U15XzuQpe5NX8K
+	tMNMzwXkMfg2x6DtaFGSdJWaPhY7t6U=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-45-5ruCMFEjOX2BncNdZd0RZg-1; Mon, 18 Nov 2024 06:38:20 -0500
+X-MC-Unique: 5ruCMFEjOX2BncNdZd0RZg-1
+X-Mimecast-MFC-AGG-ID: 5ruCMFEjOX2BncNdZd0RZg
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-a9a01cba9f7so181719366b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 03:38:19 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731929829; x=1732534629;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dzasLoJr8T9pHfFmEYMw00zyjyFfURXh+CYiFyGOzCM=;
-        b=RIq6hTwwizohVerhv3AgnmQw22Pz961+6/aLb1zNbTTYgVXss9wjgE/gPfpr0oS98W
-         OqewKGqlLt32uj/elIJKCUfXkKBMmhvRWczGaueS5mcsJ7tP6UXE8W65BkXUxVgZAdbN
-         gk+BBaWQk5Z09kq8+bASNvvfY1z3H1HoTRuQSbIyodG6c/Ds4/nVX4fOLmZFwIDDPx5n
-         NheKq5NYTKR3zubRv0h6vnBaP66VnwdesWlWQz21hwUAW2VKAsjZbTlpUP9qnDIgX9vv
-         r1BbI68kZ/ij/GzEGjmLClrEfw8X0R7uKuTi/PexZHf2WXFCnO1Wj4Ij81Bily33PTd5
-         nuAg==
-X-Forwarded-Encrypted: i=1; AJvYcCUQg/dkhtGvfGGGjpQ3AgpTXgkHMv4u9j2eEd5xTBm2jMmJ00rjzjvpE+X1MwQyZ1CvnobVyLNpwcnq@vger.kernel.org, AJvYcCURGRybPjVPryTcaFprQ1KmSSUYHi21xdwdJgTEfwqFP3L40wvjFC1kpPTQdkm5sfFbnc17ePSDSjq9e31b@vger.kernel.org, AJvYcCWb/p2GYBlMB2Pmbq0hRDCn0sX2pThS1krgk4wPtilTjmIwUCfsv8mvEe/pFeRm3tnYOrE4kAa/uCj1@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNH5zRwWm578KXR/vJQAnKNMlP2ONCUHSABE+ZasQLo0xJ+JNP
-	Z60DBTA7ICClfql6TLvB7Wo8YGgskeIS7B9OsMIz8bnJvD1wnJpn
-X-Google-Smtp-Source: AGHT+IGM84PYTgxIk9mLFAtLdt1riKMxe4764ItcsKBTDYN/u31EiHZ7+puhc98etps3Gfdinbn34Q==
-X-Received: by 2002:a05:6a00:a0c:b0:71e:5709:2330 with SMTP id d2e1a72fcca58-7246674f4bdmr26728480b3a.7.1731929828855;
-        Mon, 18 Nov 2024 03:37:08 -0800 (PST)
-Received: from localhost ([2804:30c:1618:9800:694b:286f:2b3a:5414])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7247711e005sm5982735b3a.72.2024.11.18.03.37.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Nov 2024 03:37:08 -0800 (PST)
-Date: Mon, 18 Nov 2024 08:37:30 -0300
-From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>, lars@metafoo.de,
-	Michael.Hennerich@analog.com, jic23@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/4] iio: adc: ad4000: Add support for PulSAR devices
-Message-ID: <Zzsm-vwm-gFbiI7w@debian-BULLSEYE-live-builder-AMD64>
-References: <cover.1731626099.git.marcelo.schmitt@analog.com>
- <a2a1bb929a83f5906a9c1fd9ba76889a3682cf95.1731626099.git.marcelo.schmitt@analog.com>
- <a1852540-eeb4-4d92-a381-185014c828ac@baylibre.com>
+        d=1e100.net; s=20230601; t=1731929897; x=1732534697;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LZrM+6f0a6JSJKh2gj/Png+irOpVHNOAEu2gMRnnpxc=;
+        b=l0Nt0z6DQjqGjeoWhSZPUCXpB2du0M2bENXLxIia89v520HjitAzWVcpfVv+3KpxHC
+         UocOgTLUiHF+32p2WmCKfg47fubWWneX4psvr3E0gEMeC9YHi9yVa5RLSMHEYhVG588z
+         3Pos1n/oYCD9CdSXvlA0LpmA6fl7y29p2jIa5/o/m6MuYlh12WFIktncUVM6ygVtbrBm
+         zB7g3/ajOpRmiYCd6IWBkwPh0VmBt5Vbce4i6Fx3U6mDFDNLgufAI/bkxWW1Zfuekmda
+         yA5eqn6NioO65c3YDTWjJ3fKyJ/vbEILPxseZCuFYzsB54PZllKwzKqjA/iG1VGHsfZy
+         ThRA==
+X-Forwarded-Encrypted: i=1; AJvYcCUYOiBVbrZtbHWuckYBLWYm5a9AxXa35SA8V2a5wlcr0f19OJjMAnM8vYHp4dR9Js1cm6M9dup2T2NHEhU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7nTNAUf7oHQR2v3FZ8/dRwXHfDHGptExXjhjuCDfq6Nc4bgUl
+	zv2ljbqI7xDutdLezHp374/lMP3PjMV0yNJ5Vdt8TStyVacpUpALcn2eK1AIcDa58KvuHTLlLRY
+	F7l5hqwhNlnAi2Jk090DEKVzRuUQNXkP6DezVv6nsnjR6J0zZQxk/3EBgM7COig==
+X-Received: by 2002:a17:907:3f95:b0:a7a:9144:e23a with SMTP id a640c23a62f3a-aa483525e00mr1198623066b.43.1731929897314;
+        Mon, 18 Nov 2024 03:38:17 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHfFkqW6TL+8jKQefv/92+ahWKuKrfkkhKOeQulO6+cH0bYM/9ydIcxbw1TiBm1mURMwyBDwg==
+X-Received: by 2002:a17:907:3f95:b0:a7a:9144:e23a with SMTP id a640c23a62f3a-aa483525e00mr1198620866b.43.1731929896964;
+        Mon, 18 Nov 2024 03:38:16 -0800 (PST)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20e086058sm534699366b.184.2024.11.18.03.38.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 Nov 2024 03:38:16 -0800 (PST)
+Message-ID: <60f8eac0-9144-486b-983f-4ed09101cf0a@redhat.com>
+Date: Mon, 18 Nov 2024 12:38:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a1852540-eeb4-4d92-a381-185014c828ac@baylibre.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] ACPI: Replace msleep() with usleep_range() in
+ acpi_os_sleep().
+To: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>
+Cc: anna-maria@linutronix.de, tglx@linutronix.de, peterz@infradead.org,
+ frederic@kernel.org, corbet@lwn.net, akpm@linux-foundation.org,
+ linux-acpi@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Len Brown <len.brown@intel.com>,
+ Arjan van de Ven <arjan@linux.intel.com>,
+ Todd Brandt <todd.e.brandt@intel.com>
+References: <c7db7e804c453629c116d508558eaf46477a2d73.1731708405.git.len.brown@intel.com>
+ <CAJZ5v0iC3mX7Yh_ETTw4FY3xUbZeAUgS0Nc9_88fnT1q5EGWyA@mail.gmail.com>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <CAJZ5v0iC3mX7Yh_ETTw4FY3xUbZeAUgS0Nc9_88fnT1q5EGWyA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 11/15, David Lechner wrote:
-> On 11/14/24 5:51 PM, Marcelo Schmitt wrote:
-> > The AD4000 series and the single-channel PulSAR series of devices have
-> > similar SPI transfer specifications and wiring configurations.
-> > Single-channel PulSAR devices are slower than AD4000, and don't have a
-> > configuration register. That taken into account, single-channel PulSARs can
-> > be supported by the ad4000 driver without any increase in code complexity.
-> > 
-> > Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
-> > ---
-> >  drivers/iio/adc/ad4000.c | 163 +++++++++++++++++++++++++++++++++++++++
-> >  1 file changed, 163 insertions(+)
-> > 
-> > diff --git a/drivers/iio/adc/ad4000.c b/drivers/iio/adc/ad4000.c
-> > index 68ac77494263..8e31b42534f5 100644
-> > --- a/drivers/iio/adc/ad4000.c
-> > +++ b/drivers/iio/adc/ad4000.c
-> > @@ -137,6 +137,41 @@ static const struct ad4000_time_spec ad4020_t_spec = {
-> >  	.t_quiet2_ns = 60,
-> >  };
-> >  
-> > +/* AD7983, AD7984 */
-> > +static const struct ad4000_time_spec ad7983_t_spec = {
-> > +	.t_conv_ns = 500,
+Hi Rafael, Len,
+
+On 18-Nov-24 12:03 PM, Rafael J. Wysocki wrote:
+> On Sat, Nov 16, 2024 at 12:11 AM Len Brown <lenb@kernel.org> wrote:
+>>
+>> From: Len Brown <len.brown@intel.com>
+>>
+>> Replace msleep() with usleep_range() in acpi_os_sleep().
+>>
+>> This has a significant user-visible performance benefit
+>> on some ACPI flows on some systems.  eg. Kernel resume
+>> time of a Dell XPS-13-9300 drops from 1943ms to 1127ms (42%).
 > 
-> I'm sure there are diffing opinions on this but I would prefer
-> an explicit .t_quiet2_ns = 0, so we know that it wasn't omitted
-> on accident. Or a group comment to say that these chips don't need
-> any quite time.
-Ack, will set it with a macro.
+> Sure.
+> 
+> And the argument seems to be that it is better to always use more
+> resources in a given path (ACPI sleep in this particular case) than to
+> be somewhat inaccurate which is visible in some cases.
+> 
+> This would mean that hrtimers should always be used everywhere, but they aren't.
+> 
+> While I have nothing against addressing the short sleeps issue where
+> the msleep() inaccuracy is too large, I don't see why this requires
+> using a hrtimer with no slack in all cases.
+> 
+> The argument seems to be that the short sleeps case is hard to
+> distinguish from the other cases, but I'm not sure about this.
+> 
+> Also, something like this might work, but for some reason you don't
+> want to do it:
+> 
+> if (ms >= 12 * MSEC_PER_SEC / HZ) {
+>         msleep(ms);
+> } else {
+>        u64 us = ms * USEC_PER_MSEC;
+> 
+>       usleep_range(us, us / 8);
+> }
+
+FWIW I was thinking the same thing, that it would be good to still
+use msleep when the sleep is > (MSEC_PER_SEC / HZ), not sure
+why you added the 12 there ? Surely something like a sleep longer
+then 3 timerticks (I know we have NOHZ but still) would already be
+long enough to not worry about msleep slack ?
+
+And I assume the usleep_range(us, us / 8); is a typo ? Ma can
+never be less then max, maybe you meant: usleep_range(us, us + 8) ?
+
+OTOH it is not like we will hit these ACPI acpi_os_sleep()
+calls multiple times per second all the time. On a normal idle
+system I expect there to not be that many calls (could still
+be a few from ACPI managed devices going into + out of
+runtime-pm regularly). And if don't hit acpi_os_sleep() calls
+multiple times per second then the chances of time coalescing
+are not that big anyways.
+
+Still I think that finding something middle ground between always
+sleeping the exact min time and the old msleep() call, as Rafael
+is proposing, would be good IMHO.
+
+Regards,
+
+Hans
+
+
+
 
 > 
-> In any case...
+>> usleep_range(min, min) is used because there is scant
+>> opportunity for timer coalescing during ACPI flows
+>> related to system suspend, resume (or initialization).
+>>
+>> ie. During these flows usleep_range(min, max) is observed to
+>> be effectvely be the same as usleep_range(max, max).
+>>
+>> Similarly, msleep() for long sleeps is not considered because
+>> these flows almost never have opportunities to coalesce
+>> with other activity on jiffie boundaries, leaving no
+>> measurably benefit to rounding up to jiffie boundaries.
+>>
+>> Background:
+>>
+>> acpi_os_sleep() supports the ACPI AML Sleep(msec) operator,
+>> and it must not return before the requested number of msec.
+>>
+>> Until Linux-3.13, this contract was sometimes violated by using
+>> schedule_timeout_interruptible(j), which could return early.
+>>
+>> Since Linux-3.13, acpi_os_sleep() uses msleep(),
+>> which doesn't return early, but is still subject
+>> to long delays due to the low resolution of the jiffie clock.
+>>
+>> Linux-6.12 removed a stray jiffie from msleep: commit 4381b895f544
+>> ("timers: Remove historical extra jiffie for timeout in msleep()")
+>> The 4ms savings is material for some durations,
+>> but msleep is still generally too course. eg msleep(5)
+>> on a 250HZ system still takes 11.9ms.
+>>
+>> System resume performance of a Dell XPS 13 9300:
+>>
+>> Linux-6.11:
+>> msleep HZ 250   2460 ms
+>>
+>> Linux-6.12:
+>> msleep HZ 250   1943 ms
+>> msleep HZ 1000  1233 ms
+>> usleep HZ 250   1127 ms
+>> usleep HZ 1000  1130 ms
+>>
+>> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=216263
+>> Signed-off-by: Len Brown <len.brown@intel.com>
+>> Suggested-by: Arjan van de Ven <arjan@linux.intel.com>
+>> Tested-by: Todd Brandt <todd.e.brandt@intel.com>
+>> ---
+>>  drivers/acpi/osl.c | 4 +++-
+>>  1 file changed, 3 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/acpi/osl.c b/drivers/acpi/osl.c
+>> index 70af3fbbebe5..daf87e33b8ea 100644
+>> --- a/drivers/acpi/osl.c
+>> +++ b/drivers/acpi/osl.c
+>> @@ -607,7 +607,9 @@ acpi_status acpi_os_remove_interrupt_handler(u32 gsi, acpi_osd_handler handler)
+>>
+>>  void acpi_os_sleep(u64 ms)
+>>  {
+>> -       msleep(ms);
+>> +       u64 us = ms * USEC_PER_MSEC;
+>> +
+>> +       usleep_range(us, us);
+>>  }
+>>
+>>  void acpi_os_stall(u32 us)
+>> --
+>> 2.43.0
+>>
 > 
-> Reviewed-by: David Lechner <dlechner@baylibre.com>
-> 
-> 
+
 
