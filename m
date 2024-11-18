@@ -1,86 +1,89 @@
-Return-Path: <linux-kernel+bounces-412486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 860079D0997
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 07:25:48 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9E5B9D0863
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 05:26:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A45C281CCF
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 06:25:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34F1AB21E4D
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 04:26:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 286F6148827;
-	Mon, 18 Nov 2024 06:25:39 +0000 (UTC)
-Received: from cmccmta2.chinamobile.com (cmccmta8.chinamobile.com [111.22.67.151])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF5FE54652;
-	Mon, 18 Nov 2024 06:25:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D88812DD95;
+	Mon, 18 Nov 2024 04:26:05 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D7A625760
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 04:26:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731911138; cv=none; b=q7yycTATm+OmvMELSeDD7aZPBt3HxuV2cb+9MHCMqVqjo96lcbq9SIeAAOCqthTb3oKDfn7D9aeZw5O4iHnxuzQjkycmL0yYQ8r+M5bb1W4Yya1PSw+LTFJ6Hv4QR03Hj7aoqCZYC/bkrbrqS5C7bpIzWL7n75bgYtQLHLliiZg=
+	t=1731903965; cv=none; b=AuZEiFoW7YHnBjaxd6FG2NrKmQBwsUh+KQkp1d0lrN/J5ygmIkIrOMkMESW4RKeoZ+xrhQlh2TpEFjQIPbj653bDGJuC5f4AtHuX8UGl2ULLN7ds1toonXMnw0X3jov0NeJ5F2Y8IHfzRyj0uJxhs74MPotQm4oFKvrfV+4xklU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731911138; c=relaxed/simple;
-	bh=eYvTGSmwc/HG7pTWakworhP5mMe7YU+guEWVku/y6no=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HswH7CiV3uvKLVUL5vHJNrYrVeWwNlXM092duvhmhQV6Wol0v7Ao1GDLkJE4i6MLa3OfEqbyokmnt7FFCpjogCLuGcvZ/ur91LQQPXNaNrfxh9CtG1pcablV1fCGbwjS36lJo+pF63UAsW69yaJ9KW3YqPU7ZeBIodfPT+B+7oU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app06-12006 (RichMail) with SMTP id 2ee6673addd61fb-0cacc;
-	Mon, 18 Nov 2024 14:25:27 +0800 (CST)
-X-RM-TRANSID:2ee6673addd61fb-0cacc
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from localhost.localdomain (unknown[223.108.79.101])
-	by rmsmtp-syy-appsvr08-12008 (RichMail) with SMTP id 2ee8673addc9ddf-b0623;
-	Mon, 18 Nov 2024 14:25:27 +0800 (CST)
-X-RM-TRANSID:2ee8673addc9ddf-b0623
-From: Ba Jing <bajing@cmss.chinamobile.com>
-To: mic@digikod.net
-Cc: gnoack@google.com,
-	shuah@kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Ba Jing <bajing@cmss.chinamobile.com>
-Subject: [PATCH] landlock: ptrace_test: remove unused macros
-Date: Mon, 18 Nov 2024 12:24:07 +0800
-Message-Id: <20241118042407.12900-1-bajing@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.33.0
+	s=arc-20240116; t=1731903965; c=relaxed/simple;
+	bh=+F/leo9AMvHi/x6zhlILa/kGrSWBNodPYGOKoHeoQNQ=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=qYCZouqnVc8dYBhhWAWRC8TXnP5sGvKwKUly0mtIJbS+fNuKabn98gpaCqE/jHV5BM+NYaxza7kyDOnUMMOkX8CUcx0RYRzcM4+KIVrImGORYFvrUVPq97WNiKd/yeL+BqMPRoi6gB3p/3D+HJvlf4LO5KWHVFy2bLzYNXdRIGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-83aaca0efc6so401941839f.0
+        for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 20:26:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731903962; x=1732508762;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=++scD0/Zp9nBvwimBfYgYEDWjbK7zytp54LHcUwYAD0=;
+        b=Aj4gw31vj//3LcQNIDG2XNLhYNW6etdYJlsdfQij1vR1uo5MMXp5DnEH7jXMX9zCza
+         gXwHtIt/mU9yXUBk4wlIA/hBsYHTZ/0ZvLfFnpLsr4RuAL8xxVr/elBf4BCxCixmXmFL
+         E4PD9pWp2mVMykdC6oYwtGakdI2Tlm+CBAa/HrIfNLbIkdUuPTLO0HAqe2lmrmCeWbEX
+         Oaj1B3ieuaWIWKJxPGjSkwpZV+3+F+CYMASGugxUZz+dylb4hAQa5UpqhYO48f1TYHrd
+         Wt2kzZ4uSh5ducM0HZM2v1MI80pQGNaaEOU1hWE7bKTVfBP2K0Bgz3KixEhzJ40GmIx2
+         Si6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXOXGSETKc6IWloTlvwd4Kqy/03vu+tXnnSrUpy7hngKsdUFFVJhWQBs540NOKyHYePgMIoGDOh4oyZwjM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxi18C4La0GlGt8ewDeXZtTJvyR7yo/A6cR5/70hnzyruZu0AUn
+	XBg6xxtoDwt1jCe3C4Uki1Os6hEbxzqA8pbGohxQqVsPqJ+Wa7zNUvf1Yil0ocX7bbuUzG+OJLI
+	vwbw9gLDXfJsi2pJyW1MtHdL7oq2csy74Os/iEpK3hbzUGoCJwUXkiGk=
+X-Google-Smtp-Source: AGHT+IHdlUu9v6Io1kkQG1Qjb6FSL+pjjYpATweDMOl8zsf8NcLaaRMaYKI6xtxduEhiSn6MCGRPesYUVrTkSDaOKTbOqATlCz58
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:3301:b0:3a0:a80a:997c with SMTP id
+ e9e14a558f8ab-3a74807f1abmr101135815ab.19.1731903962679; Sun, 17 Nov 2024
+ 20:26:02 -0800 (PST)
+Date: Sun, 17 Nov 2024 20:26:02 -0800
+In-Reply-To: <i2eu66jkrzkudfoa4dmxbxvvsb77pmneou52wg2con6nbdjuov@apux3q3iqjme>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <673ac1da.050a0220.87769.001e.GAE@google.com>
+Subject: Re: [syzbot] [mm?] general protection fault in mas_store_prealloc
+From: syzbot <syzbot+bc6bfc25a68b7a020ee1@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, jannh@google.com, liam.howlett@oracle.com, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, lorenzo.stoakes@oracle.com, 
+	syzkaller-bugs@googlegroups.com, vbabka@suse.cz
+Content-Type: text/plain; charset="UTF-8"
 
-After reviewing the code, it was found that these macros are never
-referenced in the code. Just remove them.
+Hello,
 
-Signed-off-by: Ba Jing <bajing@cmss.chinamobile.com>
----
- tools/testing/selftests/landlock/ptrace_test.c | 2 --
- 1 file changed, 2 deletions(-)
+syzbot tried to test the proposed patch but the build/boot failed:
 
-diff --git a/tools/testing/selftests/landlock/ptrace_test.c b/tools/testing/selftests/landlock/ptrace_test.c
-index a19db4d0b3bd..8f31b673ff2d 100644
---- a/tools/testing/selftests/landlock/ptrace_test.c
-+++ b/tools/testing/selftests/landlock/ptrace_test.c
-@@ -22,8 +22,6 @@
- /* Copied from security/yama/yama_lsm.c */
- #define YAMA_SCOPE_DISABLED 0
- #define YAMA_SCOPE_RELATIONAL 1
--#define YAMA_SCOPE_CAPABILITY 2
--#define YAMA_SCOPE_NO_ATTACH 3
- 
- static void create_domain(struct __test_metadata *const _metadata)
- {
--- 
-2.33.0
+failed to checkout kernel repo http://git.infradead.org/users/jedix/linux-maple.git/arm64_kernelci_20241117: failed to run ["git" "fetch" "--force" "9c3e06581107b2a32da6dcbdfdaa1a523995a2c7" "arm64_kernelci_20241117"]: exit status 128
+fatal: http://git.infradead.org/users/jedix/linux-maple.git/info/refs not valid: could not determine hash algorithm; is this a git repository?
 
 
 
+Tested on:
+
+commit:         [unknown 
+git tree:       http://git.infradead.org/users/jedix/linux-maple.git arm64_kernelci_20241117
+kernel config:  https://syzkaller.appspot.com/x/.config?x=a1eb85a42cb8ccec
+dashboard link: https://syzkaller.appspot.com/bug?extid=bc6bfc25a68b7a020ee1
+compiler:       
+userspace arch: arm64
+
+Note: no patches were applied.
 
