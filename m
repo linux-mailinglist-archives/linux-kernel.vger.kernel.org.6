@@ -1,189 +1,64 @@
-Return-Path: <linux-kernel+bounces-412487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5BCE9D099B
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 07:26:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0642F9D09A0
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 07:27:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F1E81F21894
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 06:26:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFEB2280996
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 06:27:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79F2D1494A6;
-	Mon, 18 Nov 2024 06:26:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="BIu2xzZD"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76A50148827;
+	Mon, 18 Nov 2024 06:26:41 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B14D2145A16;
-	Mon, 18 Nov 2024 06:26:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1516146A87
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 06:26:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731911175; cv=none; b=e2Fh1g68NXe2/hPrAqHTwNWXTciG0qu8bNmLHXUFvEsiejA1KguuCz3EhWCb6EgaWZgoAhMzTuIpWT8GkARw6isGPrP+EJI80uCc48ASBOOfYZYdgQYRJWsB9LQ/ew4IyadbffnnOE/rpD/2K1kcdgl0zmL5c5RubxZQN7BXRm0=
+	t=1731911201; cv=none; b=gfWjDuZvVu42+po3IdCLkZgUga7CDz1Y3ZdARe+CMbSyVPonqBTTBWjU8giCoBsPIJIX++xWFuhEboARQFBayHjD5lDqql25abtTRh9iEoYlc4AKWOSO3PgzlAzNRcw/tl4HuCH3688M6uPBW08J004E1EwGrUVlrLkfm1Ynhq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731911175; c=relaxed/simple;
-	bh=Lqsipl3W4T/IW74TauH9Ii2sgwnoJbsQeKLVispAMic=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=aQGZgkahECTwFEE7Y0r+e68liuE7T3cGhmGGw0Iu3mole/j5Ddw99jXlRk0eXusSUNNC+FXQW18mSulV4lcgRK5qOG/t4qpGFeUB5G/3150ji1RLr8j4vTdvrUlb58LsfjKSXD2Qb0WWs1b23WdnqDW9pmrrvyJ8QsGvpYr7OOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=BIu2xzZD; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1731911165;
-	bh=pzdHO+GJiiSzs6NT6aXnsZPJcpu5ZFP/wUcExbRIogQ=;
-	h=Date:From:To:Cc:Subject:From;
-	b=BIu2xzZDU66COpBHoiqhkFnwS08kV1EkKwXgOfOCki4bYs85albCQh1Q0930xSAdW
-	 1kOxqS3LzjEMPKhO9YtmWsRIgXzdQxEn/QADoThNbNqg7PBrzBNdS+l13eK1smYScd
-	 jYHtuaYxb+4As7Gg+FvqG7YzEXD4XgOJaUp98I4LZxDqZDr6JwtWcrr2eSHXfjGJ4j
-	 H8vrX1ZcbUtCG7Yi8ZNgNUhVnhY5yZlEjtjUX8Pb00lLGXAzx7mp06rGyX9pVYqa+6
-	 fjTciHi9v+ZsRWUvl+rpxRtvqfpyJ3o0Z7+B+PwadaNR+U2DUEEXwpdKskrBwXHYsP
-	 0r/zzevHoLfTg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XsHgv5f2qz4wcy;
-	Mon, 18 Nov 2024 17:26:03 +1100 (AEDT)
-Date: Mon, 18 Nov 2024 17:26:05 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: "Michael S. Tsirkin" <mst@redhat.com>, David Miller
- <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
- <pabeni@redhat.com>
-Cc: Networking <netdev@vger.kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Wenyu Huang <huangwenyu1998@gmail.com>, Xuan
- Zhuo <xuanzhuo@linux.alibaba.com>
-Subject: linux-next: manual merge of the vhost tree with the net_next tree
-Message-ID: <20241118172605.19ee6f25@canb.auug.org.au>
+	s=arc-20240116; t=1731911201; c=relaxed/simple;
+	bh=9WPGGmNJ2DKE4iT2s8O6Vy+c2l5ep25mBfNJ7V52PCQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZRmEDNUMHERo3I0E5yF1HBNLu8wLxGx4qWsrsauI6awP3qrE7WYwwADXoA6U7fmA+P/+q19CT/kHr5YY/az3Rp5q2SLV/e+AuJt2zNhcKxL0k4Qnvv/Ek6HLw4mQucZl01pXHvb2h8B6myU37SYpYsxuR1IrBQ89RDZ9cKLZGvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id E20F368D38; Mon, 18 Nov 2024 07:26:27 +0100 (CET)
+Date: Mon, 18 Nov 2024 07:26:27 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: =?utf-8?B?6K645pil5YWJ?= <brookxu.cn@gmail.com>
+Cc: Christoph Hellwig <hch@lst.de>, kbusch@kernel.org, axboe@kernel.dk,
+	sagi@grimberg.me, linux-nvme@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] nvme-core: auto add the new ns while UUID changed
+Message-ID: <20241118062627.GA32372@lst.de>
+References: <20241115083727.30005-1-brookxu.cn@gmail.com> <20241115170411.GA23437@lst.de> <CADtkEec84+ECj_s4Seue5uC+xv3dBu6T4kaqeHMe9PLiLV6tUw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/7k4v_N_aVib7tYhIeXMi/Nd";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CADtkEec84+ECj_s4Seue5uC+xv3dBu6T4kaqeHMe9PLiLV6tUw@mail.gmail.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
---Sig_/7k4v_N_aVib7tYhIeXMi/Nd
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Sat, Nov 16, 2024 at 08:49:12AM +0800, 许春光 wrote:
+> Yes, now we have remove the old ns and log the change to dmesg,  but I am
+> confused why not auto add the ns with new UUID, we should treat it as a new
+> ns? so that we can avoid an active controller with no ns, but actually it have
+> one.
 
-Hi all,
+Because as far as the specification is concerned it is.  The whole point of
+these identifiers is that they are stable over the life time of the
+namespace.
 
-Today's linux-next merge of the vhost tree got a conflict in:
-
-  drivers/virtio/virtio_ring.c
-
-between commits:
-
-  9f19c084057a ("virtio_ring: introduce vring_need_unmap_buffer")
-  880ebcbe0663 ("virtio_ring: remove API virtqueue_set_dma_premapped")
-
-from the net_next tree and commit:
-
-  a49c26f761d2 ("virtio: Make vring_new_virtqueue support packed vring")
-
-from the vhost tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/virtio/virtio_ring.c
-index 8167be01b400,48b297f88aba..000000000000
---- a/drivers/virtio/virtio_ring.c
-+++ b/drivers/virtio/virtio_ring.c
-@@@ -1135,6 -1129,66 +1126,64 @@@ static int vring_alloc_queue_split(stru
-  	return 0;
-  }
- =20
-+ static struct virtqueue *__vring_new_virtqueue_split(unsigned int index,
-+ 					       struct vring_virtqueue_split *vring_split,
-+ 					       struct virtio_device *vdev,
-+ 					       bool weak_barriers,
-+ 					       bool context,
-+ 					       bool (*notify)(struct virtqueue *),
-+ 					       void (*callback)(struct virtqueue *),
-+ 					       const char *name,
-+ 					       struct device *dma_dev)
-+ {
-+ 	struct vring_virtqueue *vq;
-+ 	int err;
-+=20
-+ 	vq =3D kmalloc(sizeof(*vq), GFP_KERNEL);
-+ 	if (!vq)
-+ 		return NULL;
-+=20
-+ 	vq->packed_ring =3D false;
-+ 	vq->vq.callback =3D callback;
-+ 	vq->vq.vdev =3D vdev;
-+ 	vq->vq.name =3D name;
-+ 	vq->vq.index =3D index;
-+ 	vq->vq.reset =3D false;
-+ 	vq->we_own_ring =3D false;
-+ 	vq->notify =3D notify;
-+ 	vq->weak_barriers =3D weak_barriers;
-+ #ifdef CONFIG_VIRTIO_HARDEN_NOTIFICATION
-+ 	vq->broken =3D true;
-+ #else
-+ 	vq->broken =3D false;
-+ #endif
-+ 	vq->dma_dev =3D dma_dev;
-+ 	vq->use_dma_api =3D vring_use_dma_api(vdev);
- -	vq->premapped =3D false;
- -	vq->do_unmap =3D vq->use_dma_api;
-+=20
-+ 	vq->indirect =3D virtio_has_feature(vdev, VIRTIO_RING_F_INDIRECT_DESC) &&
-+ 		!context;
-+ 	vq->event =3D virtio_has_feature(vdev, VIRTIO_RING_F_EVENT_IDX);
-+=20
-+ 	if (virtio_has_feature(vdev, VIRTIO_F_ORDER_PLATFORM))
-+ 		vq->weak_barriers =3D false;
-+=20
-+ 	err =3D vring_alloc_state_extra_split(vring_split);
-+ 	if (err) {
-+ 		kfree(vq);
-+ 		return NULL;
-+ 	}
-+=20
-+ 	virtqueue_vring_init_split(vring_split, vq);
-+=20
-+ 	virtqueue_init(vq, vring_split->vring.num);
-+ 	virtqueue_vring_attach_split(vq, vring_split);
-+=20
-+ 	spin_lock(&vdev->vqs_list_lock);
-+ 	list_add_tail(&vq->vq.list, &vdev->vqs);
-+ 	spin_unlock(&vdev->vqs_list_lock);
-+ 	return &vq->vq;
-+ }
-+=20
-  static struct virtqueue *vring_create_virtqueue_split(
-  	unsigned int index,
-  	unsigned int num,
-
---Sig_/7k4v_N_aVib7tYhIeXMi/Nd
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmc63f0ACgkQAVBC80lX
-0GyY3Qf/cW2nX+CGnMfamWThl+HzXZ5Vg/KDYhtqqzoy2LNYtwcgHjVOwyOdpG/F
-6cED3rq2/xtb6DmUTIyPSiqiolgEJYpakioqgFgg9r9Ahuf7argM82ku1jGOZYO7
-EaTzz7fOiIaR+k3JEo3fssDvwh2pwyoDi6dCkQeIFIE8jmM3S9nNb1LaOhz8A+CG
-hA8f8R/mWqct8A1tARjMLqt4wJkTCrJQyGDK3+MrTGYGSCsxDQRq6ckqjNKRS2R1
-R2hO4t3Wyrcus4jYjLTH2hzb5BZyZGwh6uX1QjUiX8GIM+cbCeWYRuqvHTK2uDbb
-rTq6Gj8m55x1TeNEOCA8ZcFn6i9JMw==
-=RSl2
------END PGP SIGNATURE-----
-
---Sig_/7k4v_N_aVib7tYhIeXMi/Nd--
 
