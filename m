@@ -1,168 +1,253 @@
-Return-Path: <linux-kernel+bounces-413556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A96A59D1AEB
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 23:09:36 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFD1B9D1AFD
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 23:16:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A8442814ED
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 22:09:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 44505B21BEE
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 22:16:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F09E1E7C3B;
-	Mon, 18 Nov 2024 22:09:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1AA51E7C11;
+	Mon, 18 Nov 2024 22:16:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="Gb6Yp+hb"
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="LUKlTLWn"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F0641E570E
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 22:09:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99A63158DAC;
+	Mon, 18 Nov 2024 22:16:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731967762; cv=none; b=Mm9TajjJcaKYBMq45CWQdg3gq6GE/XwUewecZbYK4vRzkkO5GByUMR4zphWgmUwRjJgwyphEbkF2NKDwfYX7qh7Tj9YLtyWlC3tNDMUFl2sVJZN7tsjxY3U5zakJejJ3QnVuJ+NqO0uZOVTQk1xEPdfyeyHK4RTrQ536xVcbyEo=
+	t=1731968193; cv=none; b=E78AhyyKPWOgV9yw8e9UY9sNxFz5ZpFJfVO+a95vwe6/Ii6LSIqHVfDmF0ojHnmqd4UbDSl1W9kMkJR896ju2OQbWm4Q54ZEeDhNGtXw5woGMuZRSu7oXcuRkhI28TaiyjCzr58lE91ha2+L5wmEevveyH6Tdaxa9Jqjj6rvKqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731967762; c=relaxed/simple;
-	bh=I8MIscQQe9cVfzpDABcS2/+GpjCcV2Zx/6rrV6Zgl5M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rWh0INQqtOslwnZsCKmhwJgnNv9ughwJ923c9CWj1gO9BcTjtEOUpO4XUeFQG93/Xej9o0X3irSI2EX9/PySY76CdcKiv5KiqjNs35/koUQvpIkv4kyMTY8cEfgssy/SYlozi0oh8HrvXDwTI4wPpCMTjeFw5qXDnKFO1Y76kz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=Gb6Yp+hb; arc=none smtp.client-ip=209.85.160.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-460a415633fso27249741cf.2
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 14:09:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1731967759; x=1732572559; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=I8MIscQQe9cVfzpDABcS2/+GpjCcV2Zx/6rrV6Zgl5M=;
-        b=Gb6Yp+hb3LS2S3zgzu9xXG4v1kmiTe9wY1PbV3QgOWMQHSmHWOWT1xI8dU7iO68kBV
-         4Ojo3PWXytSFdernv3ZGsb9YFfVbwDrZd5mI/0vNDx9a1+Q/WWeCJ3GevOlUWT/SqRy4
-         Gy05r3/i+oZu1i3SopG02MLYAPG24QJUhTP/gryTdmzcfiNnp2l3x1v7JdQqq6aM2mR9
-         vfETuXNlo83U6lSzYagXrpZbraIsauv0elkttf3q65wCPujazJlhFsgWbv1NLU2UjZjj
-         VAIK7E0RbqfZVOV7eBQtKfINmP2xPdFxtDvH6O6VPmZrYP75MyniX6+BzzI7rtGsZoi+
-         MBYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731967759; x=1732572559;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=I8MIscQQe9cVfzpDABcS2/+GpjCcV2Zx/6rrV6Zgl5M=;
-        b=G4G+Ot0i9eJPE5tdwGnbgJhzDI6ks+KxH5XHYSqFycSWg5jx93dq6VEzxMFfw/vxYV
-         iA4Mgv6qlSliT7P9D8pqzUsSq9fA7iioW9filwlL3lAe9WXSeob+p3tia3aB53gGQu4n
-         5epXoTXSHkivO3khFhFgAJjz9Fcwuq+ky/slSR29yeiwab1qVjrZkVXez0whfbQjI+Ub
-         Pp+zOl1qYbv+xxi7uGF7SmcbUYs10KoHzKXh93qCIA7WfcrepJA+BGiOCJbAMSn3STV8
-         8XOKHBf75wNBMewb3vmL3fsAdsvJPXnKs4UmW7ARpsbBH6JeSn3ThXomKEYDmcCzfqUY
-         JtzQ==
-X-Gm-Message-State: AOJu0YyLnJ9HHKhYJec7pQ/7xDrQXojmVPpGV3WdGrojnsj7sLDls+Fk
-	i6gLK9DHZM2IrAVBYcuEp7fBiWRRTC9JBuarA63ohIXXg7Zx0N3x23lD3+PUVaJubWplQ+aGnas
-	ibwg79ZEnk4cchbIFifC24VaaIvzc3f6d3xVeyQ==
-X-Google-Smtp-Source: AGHT+IGuHkyDbKbXTopolKHlpXUuh5hPb8odsFN1/bRhiOBmnf88AGPczox19phVHKQRb/h9sm7V4erFguZn2MVlnKk=
-X-Received: by 2002:ac8:5946:0:b0:458:2764:37d5 with SMTP id
- d75a77b69052e-46363de80famr188224651cf.6.1731967759219; Mon, 18 Nov 2024
- 14:09:19 -0800 (PST)
+	s=arc-20240116; t=1731968193; c=relaxed/simple;
+	bh=/YuEiaBYaheoUGiGxF4r0WgQr1b56tLNgo/VqdVCka4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ZOASGIrhgxqOwqrgE+AsrXP5v1tMZ7g9Sn4M9di3s0Yl/ZbfmN+gEVHJEiC9wrDOjrn9g/UzH7MvDR2aOU/8VWKGMRIp4741Z/ckx90APPJDjPydtoSJNsBhzHbI56ak2YpBI0vbF2GfD6s4kRdCjmyg9Xhpq0eNdTiDJY9HFls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=LUKlTLWn; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AIGGpkX006018;
+	Mon, 18 Nov 2024 22:16:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	XJNsNXFftV73a7f1HlGoO9KUog+cN+4rISawA+ehEYI=; b=LUKlTLWnHdiiqCAP
+	CsNY9tbAK+DLSLDayvQefHLy/B6Q7r6X9cYT44c7fBsl4jVlV5aEeFeAAXcGR8tZ
+	5Vw2zoW10l2Vj2ORIitP7hHHGpt7ztISw3pUFkxK1BVPqpUUt67eNMvOJI1ME6bP
+	LIiE+ouAZ5Vl/2PNw5uWE7YtUbC8XTZ5WgFCUie8yxsHxA8G1HVeV20TaTPwp3QM
+	xLImPnNr6Hg84O+mi97QWGdkmUeJVpS7z8vReBXY3DvGkFiP+hc9S5VK62sgTfzi
+	m8ocRzcWrKw9DjQmYakuarSwcZrevA7731a0VY4iNg4JGwLLrSYSPNqBtmMidTik
+	itWe5g==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4308y8grm0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 18 Nov 2024 22:16:19 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AIMGAsb007634
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 18 Nov 2024 22:16:10 GMT
+Received: from [10.71.108.63] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 18 Nov
+ 2024 14:16:09 -0800
+Message-ID: <7062700e-1e96-4856-816a-ceefa0afd75c@quicinc.com>
+Date: Mon, 18 Nov 2024 14:16:09 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241116175922.3265872-1-pasha.tatashin@soleen.com> <ZzuRSZc8HX9Zu0dE@google.com>
-In-Reply-To: <ZzuRSZc8HX9Zu0dE@google.com>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Mon, 18 Nov 2024 17:08:42 -0500
-Message-ID: <CA+CK2bAAigxUv=HGpxoV-PruN_AhisKW675SxuG_yVi+vNmfSQ@mail.gmail.com>
-Subject: Re: [RFCv1 0/6] Page Detective
-To: Roman Gushchin <roman.gushchin@linux.dev>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	cgroups@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	akpm@linux-foundation.org, corbet@lwn.net, derek.kiernan@amd.com, 
-	dragan.cvetic@amd.com, arnd@arndb.de, gregkh@linuxfoundation.org, 
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, tj@kernel.org, 
-	hannes@cmpxchg.org, mhocko@kernel.org, shakeel.butt@linux.dev, 
-	muchun.song@linux.dev, Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, 
-	vbabka@suse.cz, jannh@google.com, shuah@kernel.org, vegard.nossum@oracle.com, 
-	vattunuru@marvell.com, schalla@marvell.com, david@redhat.com, 
-	willy@infradead.org, osalvador@suse.de, usama.anjum@collabora.com, 
-	andrii@kernel.org, ryan.roberts@arm.com, peterx@redhat.com, oleg@redhat.com, 
-	tandersen@netflix.com, rientjes@google.com, gthelen@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/6] arm64: dts: qcom: Add pmd8028 and pmih0108 PMICs
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Catalin Marinas
+	<catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Geert Uytterhoeven
+	<geert+renesas@glider.be>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        "Arnd
+ Bergmann" <arnd@arndb.de>,
+        =?UTF-8?Q?N=C3=ADcolas_F_=2E_R_=2E_A_=2E_Prado?=
+	<nfraprado@collabora.com>,
+        Trilok Soni <quic_tsoni@quicinc.com>,
+        "Satya Durga
+ Srinivasu Prabhala" <quic_satyap@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        Jishnu Prakash <quic_jprakash@quicinc.com>
+References: <20241112004936.2810509-1-quic_molvera@quicinc.com>
+ <20241112004936.2810509-3-quic_molvera@quicinc.com>
+ <r4slda74u7rpqiybsylrnoqiqo5qm4442rfwzhtjkwkkgqt25g@n5idmspl7sfd>
+Content-Language: en-US
+From: Melody Olvera <quic_molvera@quicinc.com>
+In-Reply-To: <r4slda74u7rpqiybsylrnoqiqo5qm4442rfwzhtjkwkkgqt25g@n5idmspl7sfd>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: s2vAzRuX-8NLCGbpzQenK-qU99mxDK-3
+X-Proofpoint-GUID: s2vAzRuX-8NLCGbpzQenK-qU99mxDK-3
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ mlxlogscore=878 lowpriorityscore=0 clxscore=1015 malwarescore=0
+ adultscore=0 impostorscore=0 mlxscore=0 spamscore=0 phishscore=0
+ suspectscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411180183
 
-On Mon, Nov 18, 2024 at 2:11=E2=80=AFPM Roman Gushchin <roman.gushchin@linu=
-x.dev> wrote:
+
+
+On 11/15/2024 6:58 AM, Dmitry Baryshkov wrote:
+> On Mon, Nov 11, 2024 at 04:49:32PM -0800, Melody Olvera wrote:
+>> From: Jishnu Prakash <quic_jprakash@quicinc.com>
+>>
+>> Add descriptions of pmd8028 and pmih0108 PMICs used on SM8750
+>> platforms.
+> Up/lower case?
+
+Up; will change.
+
 >
-> On Sat, Nov 16, 2024 at 05:59:16PM +0000, Pasha Tatashin wrote:
-> > Page Detective is a new kernel debugging tool that provides detailed
-> > information about the usage and mapping of physical memory pages.
-> >
-> > It is often known that a particular page is corrupted, but it is hard t=
-o
-> > extract more information about such a page from live system. Examples
-> > are:
-> >
-> > - Checksum failure during live migration
-> > - Filesystem journal failure
-> > - dump_page warnings on the console log
-> > - Unexcpected segfaults
-> >
-> > Page Detective helps to extract more information from the kernel, so it
-> > can be used by developers to root cause the associated problem.
-> >
-> > It operates through the Linux debugfs interface, with two files: "virt"
-> > and "phys".
-> >
-> > The "virt" file takes a virtual address and PID and outputs information
-> > about the corresponding page.
-> >
-> > The "phys" file takes a physical address and outputs information about
-> > that page.
-> >
-> > The output is presented via kernel log messages (can be accessed with
-> > dmesg), and includes information such as the page's reference count,
-> > mapping, flags, and memory cgroup. It also shows whether the page is
-> > mapped in the kernel page table, and if so, how many times.
+>> Signed-off-by: Jishnu Prakash <quic_jprakash@quicinc.com>
+>> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
+>> ---
+>>   arch/arm64/boot/dts/qcom/pmd8028.dtsi  | 56 +++++++++++++++++++++++
+>>   arch/arm64/boot/dts/qcom/pmih0108.dtsi | 62 ++++++++++++++++++++++++++
+> Those two are independent changes. Please use two separate patches.
+
+Sure thing. Will split.
+
 >
-> This looks questionable both from the security and convenience points of =
-view.
-> Given the request-response nature of the interface, the output can be
-> provided using a "normal" seq-based pseudo-file.
+>>   2 files changed, 118 insertions(+)
+>>   create mode 100644 arch/arm64/boot/dts/qcom/pmd8028.dtsi
+>>   create mode 100644 arch/arm64/boot/dts/qcom/pmih0108.dtsi
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/pmd8028.dtsi b/arch/arm64/boot/dts/qcom/pmd8028.dtsi
+>> new file mode 100644
+>> index 000000000000..f8ef8e133854
+>> --- /dev/null
+>> +++ b/arch/arm64/boot/dts/qcom/pmd8028.dtsi
+>> @@ -0,0 +1,56 @@
+>> +// SPDX-License-Identifier: BSD-3-Clause
+>> +/*
+>> + * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
+>> + */
+>> +
+>> +#include <dt-bindings/interrupt-controller/irq.h>
+>> +#include <dt-bindings/spmi/spmi.h>
+>> +
+>> +/ {
+>> +	thermal-zones {
+>> +		pmd8028-thermal {
+>> +			polling-delay-passive = <100>;
+>> +			thermal-sensors = <&pmd8028_temp_alarm>;
+>> +
+>> +			trips {
+>> +				pmd8028_trip0: trip0 {
+>> +					temperature = <95000>;
+>> +					hysteresis = <0>;
+>> +					type = "passive";
+>> +				};
+>> +
+>> +				pmd8028_trip1: trip1 {
+>> +					temperature = <115000>;
+>> +					hysteresis = <0>;
+>> +					type = "hot";
+> "critical" ?
 
-We opted to use dmesg for output because it's the standard method for
-capturing kernel information and is commonly included in bug reports.
-Introducing a new file would require modifying existing data
-collection scripts used for reporting, so this approach minimizes
-disruption to existing workflows.
+Will add.
 
-> But I have a more generic question:
-> doesn't it make sense to implement it as a set of drgn scripts instead
-> of kernel code? This provides more flexibility, is safer (even if it's bu=
-ggy,
-> you won't crash the host) and should be at least in theory equally
-> powerful.
+>
+>> +				};
+>> +			};
+>> +		};
+>> +	};
+>> +};
+>> +
+>> +&spmi_bus {
+>> +	pmd8028: pmic@4 {
+>> +		compatible = "qcom,pmd8028", "qcom,spmi-pmic";
+>> +		reg = <0x4 SPMI_USID>;
+>> +		#address-cells = <1>;
+>> +		#size-cells = <0>;
+>> +
+>> +		pmd8028_temp_alarm: temp-alarm@a00 {
+>> +			compatible = "qcom,spmi-temp-alarm";
+>> +			reg = <0xa00>;
+>> +			interrupts = <0x4 0xa 0x0 IRQ_TYPE_EDGE_BOTH>;
+>> +			#thermal-sensor-cells = <0>;
+>> +		};
+>> +
+>> +		pmd8028_gpios: gpio@8800 {
+>> +			compatible = "qcom,pmd8028-gpio", "qcom,spmi-gpio";
+>> +			reg = <0x8800>;
+>> +			gpio-controller;
+>> +			gpio-ranges = <&pmd8028_gpios 0 0 4>;
+>> +			#gpio-cells = <2>;
+>> +			interrupt-controller;
+>> +			#interrupt-cells = <2>;
+>> +		};
+>> +	};
+>> +};
+>> diff --git a/arch/arm64/boot/dts/qcom/pmih0108.dtsi b/arch/arm64/boot/dts/qcom/pmih0108.dtsi
+>> new file mode 100644
+>> index 000000000000..3907d8fbcf78
+>> --- /dev/null
+>> +++ b/arch/arm64/boot/dts/qcom/pmih0108.dtsi
+>> @@ -0,0 +1,62 @@
+>> +// SPDX-License-Identifier: BSD-3-Clause
+>> +/*
+>> + * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
+>> + */
+>> +
+>> +#include <dt-bindings/interrupt-controller/irq.h>
+>> +#include <dt-bindings/spmi/spmi.h>
+>> +
+>> +/ {
+>> +	thermal-zones {
+>> +		pmih0108-thermal {
+>> +			polling-delay-passive = <100>;
+>> +			thermal-sensors = <&pmih0108_temp_alarm>;
+>> +
+>> +			trips {
+>> +				trip0 {
+>> +					temperature = <95000>;
+>> +					hysteresis = <0>;
+>> +					type = "passive";
+>> +				};
+>> +
+>> +				trip1 {
+>> +					temperature = <115000>;
+>> +					hysteresis = <0>;
+>> +					type = "hot";
+> "critical" ?
 
-Regarding your suggestion, our plan is to perform reverse lookups in
-all page tables: kernel, user, IOMMU, and KVM. Currently, we only
-traverse the kernel and user page tables, but we intend to extend this
-functionality to IOMMU and KVM tables in future updates, I am not sure
-if drgn can provide this level of details within a reasonable amount
-of time.
-
-This approach will be helpful for debugging memory corruption
-scenarios. Often, external mechanisms detect corruption but require
-kernel-level information for root cause analysis. In our experience,
-invalid mappings persist in page tables for a period after corruption,
-providing a window to identify other users of the corrupted page via
-timely reverse lookup.
-
-Additionally, using crash/drgn is not feasible for us at this time, it
-requires keeping external tools on our hosts, also it requires
-approval and a security review for each script before deployment in
-our fleet.
+Will add.
 
 Thanks,
-Pasha
+Melody
+
+>
+>> +				};
+>> +			};
+>> +		};
+>> +	};
+>> +};
+>> +[...]
 
