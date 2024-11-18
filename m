@@ -1,118 +1,195 @@
-Return-Path: <linux-kernel+bounces-412757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54C499D0F3F
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 12:08:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C48F49D0EAD
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:36:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C9E3B27CB1
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 10:35:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 567781F227A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 10:36:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0260D197A99;
-	Mon, 18 Nov 2024 10:34:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 179B219AA63;
+	Mon, 18 Nov 2024 10:34:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RkEEcc/M"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dxAx5xyj"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EFD01946A8
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 10:34:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87847195FCE
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 10:34:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731926080; cv=none; b=LrrLdeOqjQcFCC+as5EPmcGmKalQ9MLBZyUkgBQUY7vGiXHJHzDzcKdgVve+QiOXf934DqRX49knhFRJ+5+3sxByliYaLPcN/Hufg62BE3430/G2BtFV7/jHp+gkZHfm4NscugL28SK3GG4ekc92IfCHNEDvJri9pPhYwjL04ko=
+	t=1731926091; cv=none; b=BTAQiiVkgVP7R/+xTqg2LoHvZnpRgRPbgVecQ+qhtZ+MkDQTHa4XfyKw1dOmz+9FOxY2N8t08bf6vSKYl+FHpzZIb3tfl59mCCGWZi/VvAeoj/qeRCyTXBZWXtdLNpUm7JNKhInUbZCO55oj7n0pMkhi4HlIBKfpUmq7f4rhKrI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731926080; c=relaxed/simple;
-	bh=XQsDyuRiau3IHO4Li1+Y+cuAubOEwOYf9EOJSmEbkBs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=UbEdvCfVXBXrMtWP1PAwnuknzzPw69m/mMU5Pgyc5Fn26q0CTTU6tInkNt+wgFGBmR81n/cmfbBcgQ18z9v6SGOq2EBG3xdU1aErHcUutQXwWI/c5e6VYMQAqyAPB38HyoGNq4SPS5lNbrx5VHT753dDA4dTAFrsEIP8UgxzYa0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RkEEcc/M; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3823f1ed492so583970f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 02:34:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731926077; x=1732530877; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=W7YU9L/ihohCgSGV7XFCQCDHEXAXKVeCUTFSk43kuSs=;
-        b=RkEEcc/MdVc4XeuUxPrXW7gCWcStT2vFV3AHdcGUqiXJptxZuuuGCD8zjAgqONl28D
-         e8764lltzpNaZR02Tbvh9uIWYnkANSyvmdmekBT+i19iLfjKmbsl+p933o8UYR/kuOlR
-         M+C0as/esy84Ww13qSH5cpRWqA+aY852nIh4f023ydNjXOX150eJmLoRreTrxmq1BzIf
-         FOFvI74QfOABwlCtUhhOCm8PAigqzUYb8/x+Zww6aS3TsZOiU6FE6OsvIFrNdNp9ia7W
-         4/l9lPCfZ+un6D6S8+CDo84yTHK38NCKU+E4LwW2tiyH5vmL2iQD0mOzAFcRNIJNFgVi
-         7u2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731926077; x=1732530877;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=W7YU9L/ihohCgSGV7XFCQCDHEXAXKVeCUTFSk43kuSs=;
-        b=wJeHPJF6j3V5MhGXUXdNi2w70lLwsZs3opYO+vQfClpyex4NcFq51No4BDQ5CkzkNX
-         3+lu7pvXHFyC2CWny18nwwRwBEg9b8GxEW8qOi64ZRDDeWMPRcyo5XBFCBBekYqLkfcw
-         w+Oxovn9qeCSAMd962e3JBY9W8rPTgQiM89ZPR9HMYUYyzFsspIOnfdn+trS45eAXQrB
-         PxPDiDs2Jr7n6ip0/6ei5BzZNlRtKBFwFMrV5mb8y8+FCZLrI9D8X4B+sMaguYS8AQ9W
-         Mb/FyRq0bEqUcE8HNo3nygAsNZLvxWFKoHYfZCR2iCsKajwRbdmjXZjWZEdHOc6Bfo7c
-         l6QA==
-X-Forwarded-Encrypted: i=1; AJvYcCUe/FBXcnOSCSudjveYHCBEerE29VKvZpuq5VOBjXX2YvToNEsRxCz1SiiR1Pauo3nM7efLYI3ZCGiwmFA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzj9EkWop+SuqAFQgfsQlSfZmh8JevFzx04F9pNwj9BXTd1zPz8
-	7mwd4q+nxws0WzzFzytl0Xpd8XmIVbvOlsVhIPOqJfcai9maP3l31sfJ1F/lrfE=
-X-Google-Smtp-Source: AGHT+IGwcJJL68jiIs4CpOJY91QszYJvr1I5b9vVKUwSfS1kEIk0ygwL6xoo18htvJHm4mOKTYcF8g==
-X-Received: by 2002:a5d:6d8a:0:b0:382:484d:45da with SMTP id ffacd0b85a97d-382484d4782mr2179017f8f.6.1731926076817;
-        Mon, 18 Nov 2024 02:34:36 -0800 (PST)
-Received: from [127.0.0.2] ([2a02:2454:ff21:ef40:5b7a:75b3:1e72:6e3d])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38245e95925sm3162979f8f.111.2024.11.18.02.34.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Nov 2024 02:34:36 -0800 (PST)
-From: Stephan Gerhold <stephan.gerhold@linaro.org>
-Date: Mon, 18 Nov 2024 11:34:30 +0100
-Subject: [PATCH 2/2] arm64: defconfig: enable NXP PTN3222 eUSB2 to USB2
- redriver driver
+	s=arc-20240116; t=1731926091; c=relaxed/simple;
+	bh=cBp3yUUy9DNvN+REf7TehRRGcJO5OMgYBSuviMX0yFI=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=XLPaHCw82nmxYdx3KuAntdbe+SBcFO5KtL7xVsEcAko8Jb3DFXP0HX0QhP/4UKUU30K+zrW0kbUIV/QYq3dp5THhtO6TiUm3V5Az1nDBBA2G4bdIux8uctF8COIPoh0uCczYvmNKjt0biWiQZ8GUTltrdypm8jIDD0YV1xqNDd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dxAx5xyj; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731926088;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sNvRxkqFSfDxfYHJKq8h50cJqbDnWLxMw7iTzA83QMs=;
+	b=dxAx5xyjg3lqYROo6U0a54NH3XIgPA9Jo+By7aNcoSXQM4zdVgrhfkCrGyEUiwrx9+HO4p
+	QvitGD6vV1aqLj+c3krDeoWNMBWcYQFX8w9zDR6WZoto6NoDvl//PNzNu7AR2EgZ4bMS8r
+	QEG/VHo1TINcQEBdlf4DN1jZBdOWGlw=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-633-_gdjaThYN42YF2wip7O8lA-1; Mon,
+ 18 Nov 2024 05:34:45 -0500
+X-MC-Unique: _gdjaThYN42YF2wip7O8lA-1
+X-Mimecast-MFC-AGG-ID: _gdjaThYN42YF2wip7O8lA
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 692931955F41;
+	Mon, 18 Nov 2024 10:34:43 +0000 (UTC)
+Received: from [10.45.225.96] (unknown [10.45.225.96])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6748A1955F49;
+	Mon, 18 Nov 2024 10:34:40 +0000 (UTC)
+Date: Mon, 18 Nov 2024 11:34:36 +0100 (CET)
+From: Mikulas Patocka <mpatocka@redhat.com>
+To: Song Liu <song@kernel.org>
+cc: Genes Lists <lists@sapience.com>, dm-devel@lists.linux.dev, 
+    Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>, 
+    yukuai3@huawei.com, linux-raid@vger.kernel.org, 
+    linux-kernel@vger.kernel.org, linux@leemhuis.info
+Subject: Re: md-raid 6.11.8 page fault oops
+In-Reply-To: <CAPhsuW4kNYbcXERCQFqO-r8Q_rCLxrkQPt777cB_8TwyBfy8FA@mail.gmail.com>
+Message-ID: <3441514c-c18e-4711-35be-1e8eda119677@redhat.com>
+References: <0b579808e848171fc64e04f0629e24735d034d32.camel@sapience.com> <CAPhsuW4kNYbcXERCQFqO-r8Q_rCLxrkQPt777cB_8TwyBfy8FA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241118-x1e80100-crd-fp-v1-2-ec6b553a2e53@linaro.org>
-References: <20241118-x1e80100-crd-fp-v1-0-ec6b553a2e53@linaro.org>
-In-Reply-To: <20241118-x1e80100-crd-fp-v1-0-ec6b553a2e53@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- Abel Vesa <abel.vesa@linaro.org>, Johan Hovold <johan@kernel.org>
-X-Mailer: b4 0.13.0
+Content-Type: multipart/mixed; boundary="-1463811712-373633788-1731926083=:1407836"
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-It is used in many of the Qualcomm X1 Elite laptops for additional USB-A
-ports, USB fingerprint readers or similar peripherals.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
----
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+---1463811712-373633788-1731926083=:1407836
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 0b8303eb498d..8b17d70b3b58 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -1530,6 +1530,7 @@ CONFIG_RESET_RZG2L_USBPHY_CTRL=y
- CONFIG_RESET_TI_SCI=y
- CONFIG_PHY_XGENE=y
- CONFIG_PHY_CAN_TRANSCEIVER=m
-+CONFIG_PHY_NXP_PTN3222=m
- CONFIG_PHY_SUN4I_USB=y
- CONFIG_PHY_CADENCE_TORRENT=m
- CONFIG_PHY_CADENCE_DPHY_RX=m
 
--- 
-2.44.2
+
+On Fri, 15 Nov 2024, Song Liu wrote:
+
+> + dm folks
+> 
+> It appears the crash happens in dm.c:clone_endio. Commit
+> aaa53168cbcc486ca1927faac00bd99e81d4ff04 made some
+> changes to clone_endio, but I haven't looked into it.
+> 
+> Thanks,
+> Song
+
+Hi
+
+That commit just adds a test for tio->ti being NULL, so I doubt that it 
+caused this error.
+
+Mikulas
+
+
+> On Fri, Nov 15, 2024 at 4:12 AM Genes Lists <lists@sapience.com> wrote:
+> >
+> > md-raid crashed with kernel NULL pointer deref on stable 6.11.8.
+> >
+> > Happened with raid6 while rsync was writing (data was pulled over
+> > network).
+> >
+> > This rsync happens twice every day without a problem. This was the
+> > second run after booting 6.11.8, so will see if/when it happens again -
+> > and if frequent enough to make a bisect possible.
+> >
+> > Nonetheless, reporting now in case it's helpful.
+> >
+> > Full dmesg attached but the interesting part is:
+> >
+> > [33827.216164] BUG: kernel NULL pointer dereference, address:
+> > 0000000000000050
+> > [33827.216183] #PF: supervisor read access in kernel mode
+> > [33827.216193] #PF: error_code(0x0000) - not-present page
+> > [33827.216203] PGD 0 P4D 0
+> > [33827.216211] Oops: Oops: 0000 [#1] PREEMPT SMP PTI
+> > [33827.216221] CPU: 4 UID: 0 PID: 793 Comm: md127_raid6 Not tainted
+> > 6.11.8-stable-1 #21 1400000003000000474e5500ae13c727d476f9ab
+> > [33827.216240] Hardware name: To Be Filled By O.E.M. To Be Filled By
+> > O.E.M./Z370 Extreme4, BIOS P4.20 10/31/2019
+> > [33827.216254] RIP: 0010:clone_endio+0x43/0x1f0 [dm_mod]
+> > [33827.216279] Code: 4c 8b 77 e8 65 48 8b 1c 25 28 00 00 00 48 89 5c 24
+> > 08 48 89 fb 88 44 24 07 4d 85 f6 0f 84 11 01 00 00 49 8b 56 08 4c 8b 6b
+> > e0 <48> 8b 6a 50 4d 8b 65 38 3c 05 0f 84 0b 01 00 00 66 90 48 85 ed 74
+> > [33827.216304] RSP: 0018:ffffb9610101bb40 EFLAGS: 00010282
+> > [33827.216315] RAX: 0000000000000000 RBX: ffff9b15b8c5c598 RCX:
+> > 000000000015000c
+> > [33827.216326] RDX: 0000000000000000 RSI: ffffec17e1944200 RDI:
+> > ffff9b15b8c5c598
+> > [33827.216338] RBP: 0000000000000000 R08: ffff9b1825108c00 R09:
+> > 000000000015000c
+> > [33827.216349] R10: 000000000015000c R11: 00000000ffffffff R12:
+> > ffff9b10da026000
+> > [33827.216360] R13: ffff9b15b8c5c520 R14: ffff9b10ca024440 R15:
+> > ffff9b1474cb33c0
+> > [33827.216372] FS:  0000000000000000(0000) GS:ffff9b185ee00000(0000)
+> > knlGS:0000000000000000
+> > [33827.216385] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > [33827.216394] CR2: 0000000000000050 CR3: 00000001f4e22005 CR4:
+> > 00000000003706f0
+> > [33827.216406] DR0: 0000000000000000 DR1: 0000000000000000 DR2:
+> > 0000000000000000
+> > [33827.216417] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7:
+> > 0000000000000400
+> > [33827.216429] Call Trace:
+> > [33827.216435]  <TASK>
+> > [33827.216442]  ? __die_body.cold+0x19/0x27
+> > [33827.216453]  ? page_fault_oops+0x15a/0x2d0
+> > [33827.216465]  ? exc_page_fault+0x7e/0x180
+> > [33827.216475]  ? asm_exc_page_fault+0x26/0x30
+> > [33827.216486]  ? clone_endio+0x43/0x1f0 [dm_mod
+> > 1400000003000000474e5500e90ca42f094c5280]
+> > [33827.216510]  clone_endio+0x120/0x1f0 [dm_mod
+> > 1400000003000000474e5500e90ca42f094c5280]
+> > [33827.216533]  md_end_clone_io+0x42/0xa0 [md_mod
+> > 1400000003000000474e55004ac7ec7b1ac1c22c]
+> > [33827.216559]  handle_stripe_clean_event+0x1e6/0x430 [raid456
+> > 1400000003000000474e550080acde909728c7a9]
+> > [33827.216583]  handle_stripe+0x9a3/0x1c00 [raid456
+> > 1400000003000000474e550080acde909728c7a9]
+> > [33827.216606]  handle_active_stripes.isra.0+0x381/0x5b0 [raid456
+> > 1400000003000000474e550080acde909728c7a9]
+> > [33827.216625]  ? psi_task_switch+0xb7/0x200
+> > [33827.216637]  raid5d+0x450/0x670 [raid456
+> > 1400000003000000474e550080acde909728c7a9]
+> > [33827.216655]  ? lock_timer_base+0x76/0xa0
+> > [33827.216666]  md_thread+0xa2/0x190 [md_mod
+> > 1400000003000000474e55004ac7ec7b1ac1c22c]
+> > [33827.216689]  ? __pfx_autoremove_wake_function+0x10/0x10
+> > [33827.216701]  ? __pfx_md_thread+0x10/0x10 [md_mod
+> > 1400000003000000474e55004ac7ec7b1ac1c22c]
+> > [33827.216723]  kthread+0xcf/0x100
+> > [33827.216731]  ? __pfx_kthread+0x10/0x10
+> > [33827.216740]  ret_from_fork+0x31/0x50
+> > [33827.216749]  ? __pfx_kthread+0x10/0x10
+> > [33827.216757]  ret_from_fork_asm+0x1a/0x30
+> > [33827.216769]  </TASK>
+> >
+> > --
+> > Gene
+> >
+> 
+---1463811712-373633788-1731926083=:1407836--
 
 
