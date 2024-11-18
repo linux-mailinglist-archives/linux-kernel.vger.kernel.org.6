@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-413278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 103C09D16D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 18:12:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F2CF69D16D3
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 18:12:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C225B22515
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 17:10:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D34DAB28186
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 17:11:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 720B61C07EA;
-	Mon, 18 Nov 2024 17:10:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CEF61C1AB4;
+	Mon, 18 Nov 2024 17:10:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jK7AAb8S"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GCJDINZJ"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 941191C07C4;
-	Mon, 18 Nov 2024 17:10:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02F6A1C0DD6;
+	Mon, 18 Nov 2024 17:10:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731949842; cv=none; b=e47TMx+tJdYxZU3UHKDAOsv1GPYw3eO8JzWHMxZNN6XuL+QldmbY5QAPeKGet0wzwwLarFcAL47hMx8V9jIYZYnB0hA3WO9VmpTGrVypnBvbabwXr9TLZ5mZQ9yJ51pBmMatbpzLQUf1RM9MfftFLcVeMYTN/gvBP0ZMuZH/rZo=
+	t=1731949851; cv=none; b=dQgV2pHHWKD+LZMAjHdh0TZfU0uI3XxgWNT+o/DFCaENEgdnLiVfdgwepbqv028vPv1JMU9ZKdJ5HAjznBcjTWQOoDycfheGgg1QiSMr2S3tHFCCAKkNRve8TLSVzRhMvozUTiG+C9fXzxMlh8tVMnkMKwv4F8SpCLmXv8RBgBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731949842; c=relaxed/simple;
-	bh=xH2UNquiqO6fKaPz7aGMcxaQ0qCCI4U8fmIhiPQWNT0=;
+	s=arc-20240116; t=1731949851; c=relaxed/simple;
+	bh=JfJSjIE8G8QYFV2qClWR+0Dl2UfEu5wcwK1Ta7YaTp8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=owAV/2/LC4NBe6boHoeZfyLkbaZPTXYBwQj6qcB0C5ZQmLsclWrQj6+6wm6/0rnobj4tZqyh3XVKIkC/aVHGKUhyqe723b/efUjqfBR5NuKz5r62hJDePpeMtwMqU8TMZVVFvDF0KZJwoHoAaSUSuLj4ncAZUtX2tYQUXCYr/hA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jK7AAb8S; arc=none smtp.client-ip=209.85.128.41
+	 MIME-Version:Content-Type; b=oYubviZ/TtLYJnTSH2tb9qoqk2HVbK6oTPMfB0yPUmgoxshCTpiHiucWPp0RDHhtxwTF22LZY6vuXWvjsi+3dmnRl7LtloPnFAIJ1RbhJzBA1hdJNdHkrSYx9RkDoiT/Y/SrOsHlIDmbI6fQhlUbeqaIyK4f9N6I4FYKtEburmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GCJDINZJ; arc=none smtp.client-ip=209.85.128.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43161e7bb25so36802075e9.2;
-        Mon, 18 Nov 2024 09:10:40 -0800 (PST)
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4319399a411so40968375e9.2;
+        Mon, 18 Nov 2024 09:10:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731949839; x=1732554639; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1731949848; x=1732554648; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=SVCU8P/1rDkdwsbj3DoyKB90cF22kVnBKHC+JWzuvzY=;
-        b=jK7AAb8SswLmHzhuz0h6gAXNyrJOZJK9oDu632bEnr8bYCUVq3QbBro1KT9eBLLtVx
-         l6EB9hJwrdyzio4Fk9vSn3cBr4mnK6kurG1qeqOmCc/Hq/LqJqNmR+h11oOWC5KH2Uqc
-         MdgLqSPTLRVNAAKkIUqVdtcNzfF01idElgiCr8tFh1NjxbqYWwVZxQ50HK4V0UMOGNdA
-         PvvKVlJuBcwGLn1gMPJKlNZVkSGc1oLOlla9G0luZ4UhWChvyQ7ht7H3tkLDJMkt1QSA
-         5y1l8vDJAT35uXtELaXcpj0P8ugdWtt998fpp8Cquxwjj05Ktv84NyL0bb/vJrswz0RF
-         0Npg==
+        bh=rMsBau+RNY/BQ9drs/seXkWHcU6HysTcpfy1mkYz62E=;
+        b=GCJDINZJPfDq/Ge/51mU1A4OrDbZwUjjof4lpZ4W6xu3xeBtU2GrMQkLU3a/vu3i33
+         Zs/WMzadBRV+OyEkzG1kTs2w5BZeQn5aDxDDHYLBtJenS4zBLK+PiuFfqPuvGRMix5XM
+         7rRcgHaxGxD2UBBleqe58M/2EtC4EjAE6Ss/i7I9jZLTuoUwwHuxpWlNJoo3aSR1ByDj
+         ApFDj30DUgPRuALtAorRSNN/oyL3xUkpR/SaYMlyuh7WowXK2n/4Uu/cUNdhZ7Nyx4yj
+         04XPieIl/K4czDJWSnBYkPBHnv0sUc7jvNZbFcEWlnwXAVoJqeuHFOSFdYnWwZEDe/rI
+         pA7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731949839; x=1732554639;
+        d=1e100.net; s=20230601; t=1731949848; x=1732554648;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=SVCU8P/1rDkdwsbj3DoyKB90cF22kVnBKHC+JWzuvzY=;
-        b=WvcnkFdNWrzNzStaoMP1omzmcXm1F7uw7ykjIUC4wXROdU96M09aFbSsf9m1emxhJR
-         q3Gu6a2U83OqA8Kb1DJBCl0j2IB0gCvIujhBe1qqhMN/bUfommKCoeaPpzEpljpi0egP
-         Bk9AdtN2pSftIUfIbM7dkPRw1oEC8HkZ1GJtxfSJQboWsGBTeZoZq6pn4b7F89MMLO8W
-         zVQcz9txMwBU8C6N2U2ddGMC0Cv5HMNMzXfu+rPDomOYGb9vw6o35U/g5a/NpiESUnlg
-         AVkdaBHeaNw9Edk3Rcsd7kY79LfPQ6dV5PvoE9WwJKPRs8QJ0ApXCLn4Kv0UdQ4X00Gv
-         v+DQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUt6z7+Yxl8j48ebcju7ijmF4MX5uAjCI6Pl7TmmciW4nYfu0rmchDTvstIucUWH8XgZqBvIDVzfeI=@vger.kernel.org, AJvYcCWk3ZVIheviD24fu3fvWiWSGa9kCzJByCbF/yAd/3QGCIJHAKRy9TNtkoBsMSKzMB8g3KB23JXMr2FJqR4c@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhMBVU3XHVX13puDIQCVcn60sgqJQwTXmdDwGs0QgV5jlNdHLb
-	9JmnHHHbQh7UaIIZ24JuO3TSICFzNKlvps1GAEtxPtm3S0t5QkdX
-X-Google-Smtp-Source: AGHT+IGzZtUA/mFXZHuQqRqpaK0R98UUjrlsUVZIQgXExwKHzv7fXllbuBmBsEV40Pqxan8uG4k07w==
-X-Received: by 2002:a05:600c:4595:b0:42c:b80e:5e50 with SMTP id 5b1f17b1804b1-432df67991emr115211925e9.0.1731949838681;
-        Mon, 18 Nov 2024 09:10:38 -0800 (PST)
+        bh=rMsBau+RNY/BQ9drs/seXkWHcU6HysTcpfy1mkYz62E=;
+        b=xKgea59klHjgUK4IN8XmB8znGJExNw7XjMx0UPvmu2DJU4LHnG7drk+jL4jO6vnfk7
+         3Do5pJPnhEY2Omvx9FDBIsN4l5WOq76nuEjQnxzQw6u1dxo0XvzneoMcz3UlIwcX0VCu
+         c05Za8uxv+h8PHnRzPcJgx8fwhQgkOjG7jEJTj97uvvEgIEr5pdO6cHbp+BPXJQJ/QLr
+         dxv6KjcyGGlWROLkIM/bG4JdUBEJZLaGsD/VyFVVsQDmyZXk+Os4Q+HW/UBEn8PlmHdX
+         XLb+aENl2zjQMIK/u9O5SzHzVcqZwr49yfm2aje4X0g89IgenalmWo4iheGDwXildnx2
+         9aXA==
+X-Forwarded-Encrypted: i=1; AJvYcCUVrz5NVlezBmdGVVc/AAo5HyRWuRJeSjKbLSZBmwtGf1g12NlwbS1qL3w9krUiy7yV3uo3+IKF0i8=@vger.kernel.org, AJvYcCXalTERaiZ/4ttuxabjjzZcEAzM/gcGdtllw8a/mmJph/a2NhoXAv4BryH7ZB6b3CQvyZOugBnC08ofC4cE@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPo2C8bEgW2zYkefUvch04+JhD/9brfHvD5Bl1qgAW5XWqXNDZ
+	Ztml5TYCehddr+ODbvQvz2++LRrQs5zuooiSL/zbj5m/DvwUSYan
+X-Google-Smtp-Source: AGHT+IEmWeRgtUI4XZ0nOVHrQDr2gMtwhcNxdB0d8C+tnMK3cUO1eNocb36D2Hy8oEafoeECFHDjtg==
+X-Received: by 2002:a05:600c:1c81:b0:432:a36b:d896 with SMTP id 5b1f17b1804b1-432df78c5a9mr99224175e9.26.1731949848076;
+        Mon, 18 Nov 2024 09:10:48 -0800 (PST)
 Received: from fedora.. ([213.94.25.69])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432dab76dafsm161563625e9.10.2024.11.18.09.10.37
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3823a0e8f26sm7119834f8f.31.2024.11.18.09.10.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Nov 2024 09:10:38 -0800 (PST)
+        Mon, 18 Nov 2024 09:10:47 -0800 (PST)
 From: =?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?= <jose.exposito89@gmail.com>
 To: louis.chauvet@bootlin.com
 Cc: airlied@gmail.com,
@@ -92,12 +92,12 @@ Cc: airlied@gmail.com,
 	simona@ffwll.ch,
 	thomas.petazzoni@bootlin.com,
 	tzimmermann@suse.de
-Subject: [PATCH v13 5/9] drm/vkms: Update pixels accessor to support packed and multi-plane formats.
-Date: Mon, 18 Nov 2024 18:10:36 +0100
-Message-ID: <20241118171037.2847-1-jose.exposito89@gmail.com>
+Subject: [PATCH v13 7/9] drm/vkms: Introduce pixel_read_direction enum
+Date: Mon, 18 Nov 2024 18:10:45 +0100
+Message-ID: <20241118171046.2861-1-jose.exposito89@gmail.com>
 X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241031-yuv-v13-5-bd5463126faa@bootlin.com>
-References: <20241031-yuv-v13-5-bd5463126faa@bootlin.com>
+In-Reply-To: <20241031-yuv-v13-7-bd5463126faa@bootlin.com>
+References: <20241031-yuv-v13-7-bd5463126faa@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -107,204 +107,147 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-> Introduce the usage of block_h/block_w to compute the offset and the
-> pointer of a pixel. The previous implementation was specialized for
-> planes with block_h == block_w == 1. To avoid confusion and allow easier
-> implementation of tiled formats. It also remove the usage of the
-> deprecated format field `cpp`.
-> 
-> Introduce the plane_index parameter to get an offset/pointer on a
-> different plane.
+> The pixel_read_direction enum is useful to describe the reading direction
+> in a plane. It avoids using the rotation property of DRM, which not
+> practical to know the direction of reading.
+> This patch also introduce two helpers, one to compute the
+> pixel_read_direction from the DRM rotation property, and one to compute
+> the step, in byte, between two successive pixel in a specific direction.
 > 
 > Acked-by: Maíra Canal <mairacanal@riseup.net>
 > Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
 > ---
->  drivers/gpu/drm/vkms/vkms_formats.c | 114 ++++++++++++++++++++++++++++--------
->  1 file changed, 91 insertions(+), 23 deletions(-)
+>  drivers/gpu/drm/vkms/vkms_composer.c | 44 ++++++++++++++++++++++++++++++++++++
+>  drivers/gpu/drm/vkms/vkms_drv.h      | 11 +++++++++
+>  drivers/gpu/drm/vkms/vkms_formats.c  | 32 ++++++++++++++++++++++++++
+>  3 files changed, 87 insertions(+)
 > 
-> diff --git a/drivers/gpu/drm/vkms/vkms_formats.c b/drivers/gpu/drm/vkms/vkms_formats.c
-> index 06aef5162529..7f932d42394d 100644
-> --- a/drivers/gpu/drm/vkms/vkms_formats.c
-> +++ b/drivers/gpu/drm/vkms/vkms_formats.c
-> @@ -10,22 +10,46 @@
->  #include "vkms_formats.h"
->  
->  /**
-> - * pixel_offset() - Get the offset of the pixel at coordinates x/y in the first plane
-> + * packed_pixels_offset() - Get the offset of the block containing the pixel at coordinates x/y
->   *
->   * @frame_info: Buffer metadata
->   * @x: The x coordinate of the wanted pixel in the buffer
->   * @y: The y coordinate of the wanted pixel in the buffer
-> + * @plane_index: The index of the plane to use
-> + * @offset: The returned offset inside the buffer of the block
-
-The previous function (pixel_offset) returned a size_t for the offset rather
-than an int. Do you know if we are safe using an int in this case?
-
-> + * @rem_x: The returned X coordinate of the requested pixel in the block
-> + * @rem_y: The returned Y coordinate of the requested pixel in the block
->   *
-> - * The caller must ensure that the framebuffer associated with this request uses a pixel format
-> - * where block_h == block_w == 1.
-> - * If this requirement is not fulfilled, the resulting offset can point to an other pixel or
-> - * outside of the buffer.
-> + * As some pixel formats store multiple pixels in a block (DRM_FORMAT_R* for example), some
-> + * pixels are not individually addressable. This function return 3 values: the offset of the
-> + * whole block, and the coordinate of the requested pixel inside this block.
-> + * For example, if the format is DRM_FORMAT_R1 and the requested coordinate is 13,5, the offset
-> + * will point to the byte 5*pitches + 13/8 (second byte of the 5th line), and the rem_x/rem_y
-> + * coordinates will be (13 % 8, 5 % 1) = (5, 0)
-> + *
-> + * With this function, the caller just have to extract the correct pixel from the block.
->   */
-> -static size_t pixel_offset(const struct vkms_frame_info *frame_info, int x, int y)
-> +static void packed_pixels_offset(const struct vkms_frame_info *frame_info, int x, int y,
-> +				 int plane_index, int *offset, int *rem_x, int *rem_y)
->  {
->  	struct drm_framebuffer *fb = frame_info->fb;
-> +	const struct drm_format_info *format = frame_info->fb->format;
-> +	/* Directly using x and y to multiply pitches and format->ccp is not sufficient because
-> +	 * in some formats a block can represent multiple pixels.
-> +	 *
-> +	 * Dividing x and y by the block size allows to extract the correct offset of the block
-> +	 * containing the pixel.
-> +	 */
->  
-> -	return fb->offsets[0] + (y * fb->pitches[0]) + (x * fb->format->cpp[0]);
-> +	int block_x = x / drm_format_info_block_width(format, plane_index);
-> +	int block_y = y / drm_format_info_block_height(format, plane_index);
-> +	int block_pitch = fb->pitches[plane_index] * drm_format_info_block_height(format,
-> +										  plane_index);
-> +	*rem_x = x % drm_format_info_block_width(format, plane_index);
-> +	*rem_y = y % drm_format_info_block_height(format, plane_index);
-> +	*offset = fb->offsets[plane_index] +
-> +		  block_y * block_pitch +
-> +		  block_x * format->char_per_block[plane_index];
+> diff --git a/drivers/gpu/drm/vkms/vkms_composer.c b/drivers/gpu/drm/vkms/vkms_composer.c
+> index ecac0bc858a0..601e33431b45 100644
+> --- a/drivers/gpu/drm/vkms/vkms_composer.c
+> +++ b/drivers/gpu/drm/vkms/vkms_composer.c
+> @@ -159,6 +159,50 @@ static void apply_lut(const struct vkms_crtc_state *crtc_state, struct line_buff
+>  	}
 >  }
 >  
->  /**
-> @@ -35,30 +59,71 @@ static size_t pixel_offset(const struct vkms_frame_info *frame_info, int x, int
->   * @frame_info: Buffer metadata
->   * @x: The x (width) coordinate inside the plane
->   * @y: The y (height) coordinate inside the plane
-> + * @plane_index: The index of the plane
-> + * @addr: The returned pointer
-> + * @rem_x: The returned X coordinate of the requested pixel in the block
-> + * @rem_y: The returned Y coordinate of the requested pixel in the block
->   *
-> - * Takes the information stored in the frame_info, a pair of coordinates, and
-> - * returns the address of the first color channel.
-> - * This function assumes the channels are packed together, i.e. a color channel
-> - * comes immediately after another in the memory. And therefore, this function
-> - * doesn't work for YUV with chroma subsampling (e.g. YUV420 and NV21).
-> + * Takes the information stored in the frame_info, a pair of coordinates, and returns the address
-> + * of the block containing this pixel and the pixel position inside this block.
->   *
-> - * The caller must ensure that the framebuffer associated with this request uses a pixel format
-> - * where block_h == block_w == 1, otherwise the returned pointer can be outside the buffer.
-> + * See @packed_pixel_offset for details about rem_x/rem_y behavior.
-
-Missing "s" in the name of the function. Should read "@packed_pixels_offset".
-
->   */
-> -static void *packed_pixels_addr(const struct vkms_frame_info *frame_info,
-> -				int x, int y)
-> +static void packed_pixels_addr(const struct vkms_frame_info *frame_info,
-> +			       int x, int y, int plane_index, u8 **addr, int *rem_x,
-> +			       int *rem_y)
->  {
-> -	size_t offset = pixel_offset(frame_info, x, y);
-> +	int offset;
->  
-> -	return (u8 *)frame_info->map[0].vaddr + offset;
-> +	packed_pixels_offset(frame_info, x, y, plane_index, &offset, rem_x, rem_y);
-> +	*addr = (u8 *)frame_info->map[0].vaddr + offset;
->  }
->  
-> -static void *get_packed_src_addr(const struct vkms_frame_info *frame_info, int y)
 > +/**
-> + * packed_pixels_addr_1x1() - Get the pointer to the block containing the pixel at the given
-> + * coordinates
+> + * direction_for_rotation() - Get the correct reading direction for a given rotation
 > + *
-> + * @frame_info: Buffer metadata
-> + * @x: The x (width) coordinate inside the plane
-> + * @y: The y (height) coordinate inside the plane
-> + * @plane_index: The index of the plane
-> + * @addr: The returned pointer
+> + * @rotation: Rotation to analyze. It correspond the field @frame_info.rotation.
 > + *
-> + * This function can only be used with format where block_h == block_w == 1.
+> + * This function will use the @rotation setting of a source plane to compute the reading
+> + * direction in this plane which correspond to a "left to right writing" in the CRTC.
+> + * For example, if the buffer is reflected on X axis, the pixel must be read from right to left
+> + * to be written from left to right on the CRTC.
 > + */
-> +static void packed_pixels_addr_1x1(const struct vkms_frame_info *frame_info,
-> +				   int x, int y, int plane_index, u8 **addr)
+> +static enum pixel_read_direction direction_for_rotation(unsigned int rotation)
 > +{
-> +	int offset, rem_x, rem_y;
-
-Nitpick, but it'd be nice if packed_pixels_offset() could take NULLs in
-the output values so we avoid declaring unused variables here and when
-calling packed_pixels_addr().
-
+> +	struct drm_rect tmp_a, tmp_b;
+> +	int x, y;
 > +
-> +	WARN_ONCE(drm_format_info_block_width(frame_info->fb->format,
-> +					      plane_index) != 1,
-> +		"%s() only support formats with block_w == 1", __func__);
-> +	WARN_ONCE(drm_format_info_block_height(frame_info->fb->format,
-> +					       plane_index) != 1,
-> +		"%s() only support formats with block_h == 1", __func__);
+> +	/*
+> +	 * Points A and B are depicted as zero-size rectangles on the CRTC.
+> +	 * The CRTC writing direction is from A to B. The plane reading direction
+> +	 * is discovered by inverse-transforming A and B.
+> +	 * The reading direction is computed by rotating the vector AB (top-left to top-right) in a
+> +	 * 1x1 square.
+> +	 */
 > +
-> +	packed_pixels_offset(frame_info, x, y, plane_index, &offset, &rem_x,
-> +			     &rem_y);
-> +	*addr = (u8 *)frame_info->map[0].vaddr + offset;
+> +	tmp_a = DRM_RECT_INIT(0, 0, 0, 0);
+> +	tmp_b = DRM_RECT_INIT(1, 0, 0, 0);
+> +	drm_rect_rotate_inv(&tmp_a, 1, 1, rotation);
+> +	drm_rect_rotate_inv(&tmp_b, 1, 1, rotation);
+> +
+> +	x = tmp_b.x1 - tmp_a.x1;
+> +	y = tmp_b.y1 - tmp_a.y1;
+> +
+> +	if (x == 1 && y == 0)
+> +		return READ_LEFT_TO_RIGHT;
+> +	else if (x == -1 && y == 0)
+> +		return READ_RIGHT_TO_LEFT;
+> +	else if (y == 1 && x == 0)
+> +		return READ_TOP_TO_BOTTOM;
+> +	else if (y == -1 && x == 0)
+> +		return READ_BOTTOM_TO_TOP;
+> +
+> +	WARN_ONCE(true, "The inverse of the rotation gives an incorrect direction.");
+> +	return READ_LEFT_TO_RIGHT;
 > +}
 > +
-> +static void *get_packed_src_addr(const struct vkms_frame_info *frame_info, int y,
-> +				 int plane_index)
->  {
->  	int x_src = frame_info->src.x1 >> 16;
->  	int y_src = y - frame_info->rotated.y1 + (frame_info->src.y1 >> 16);
-> +	u8 *addr;
-> +	int rem_x, rem_y;
-> +
-> +	WARN_ONCE(drm_format_info_block_width(frame_info->fb->format, plane_index) != 1,
-> +		  "%s() only support formats with block_w == 1", __func__);
-> +	WARN_ONCE(drm_format_info_block_height(frame_info->fb->format, plane_index) != 1,
-> +		  "%s() only support formats with block_h == 1", __func__);
+>  /**
+>   * blend - blend the pixels from all planes and compute crc
+>   * @wb: The writeback frame buffer metadata
+> diff --git a/drivers/gpu/drm/vkms/vkms_drv.h b/drivers/gpu/drm/vkms/vkms_drv.h
+> index 3f45290a0c5d..777b7bd91f27 100644
+> --- a/drivers/gpu/drm/vkms/vkms_drv.h
+> +++ b/drivers/gpu/drm/vkms/vkms_drv.h
+> @@ -69,6 +69,17 @@ struct vkms_writeback_job {
+>  	pixel_write_t pixel_write;
+>  };
 >  
-> -	return packed_pixels_addr(frame_info, x_src, y_src);
-> +	packed_pixels_addr(frame_info, x_src, y_src, plane_index, &addr, &rem_x, &rem_y);
+> +/**
+> + * enum pixel_read_direction - Enum used internaly by VKMS to represent a reading direction in a
+
+Minor typo:
+
+s/internaly/internally
+
+Everything else looks great, thanks!
+
+> + * plane.
+> + */
+> +enum pixel_read_direction {
+> +	READ_BOTTOM_TO_TOP,
+> +	READ_TOP_TO_BOTTOM,
+> +	READ_RIGHT_TO_LEFT,
+> +	READ_LEFT_TO_RIGHT
+> +};
 > +
-> +	return addr;
+>  /**
+>   * typedef pixel_read_t - These functions are used to read a pixel in the source frame,
+>   * convert it to `struct pixel_argb_u16` and write it to @out_pixel.
+> diff --git a/drivers/gpu/drm/vkms/vkms_formats.c b/drivers/gpu/drm/vkms/vkms_formats.c
+> index 7f932d42394d..d0e7dfc1f0d3 100644
+> --- a/drivers/gpu/drm/vkms/vkms_formats.c
+> +++ b/drivers/gpu/drm/vkms/vkms_formats.c
+> @@ -79,6 +79,38 @@ static void packed_pixels_addr(const struct vkms_frame_info *frame_info,
+>  	*addr = (u8 *)frame_info->map[0].vaddr + offset;
 >  }
 >  
->  static int get_x_position(const struct vkms_frame_info *frame_info, int limit, int x)
-> @@ -152,14 +217,14 @@ void vkms_compose_row(struct line_buffer *stage_buffer, struct vkms_plane_state
->  {
->  	struct pixel_argb_u16 *out_pixels = stage_buffer->pixels;
->  	struct vkms_frame_info *frame_info = plane->frame_info;
-> -	u8 *src_pixels = get_packed_src_addr(frame_info, y);
-> +	u8 *src_pixels = get_packed_src_addr(frame_info, y, 0);
->  	int limit = min_t(size_t, drm_rect_width(&frame_info->dst), stage_buffer->n_pixels);
->  
->  	for (size_t x = 0; x < limit; x++, src_pixels += frame_info->fb->format->cpp[0]) {
->  		int x_pos = get_x_position(frame_info, limit, x);
->  
->  		if (drm_rotation_90_or_270(frame_info->rotation))
-> -			src_pixels = get_packed_src_addr(frame_info, x + frame_info->rotated.y1)
-> +			src_pixels = get_packed_src_addr(frame_info, x + frame_info->rotated.y1, 0)
->  				+ frame_info->fb->format->cpp[0] * y;
->  
->  		plane->pixel_read(src_pixels, &out_pixels[x_pos]);
-> @@ -250,7 +315,10 @@ void vkms_writeback_row(struct vkms_writeback_job *wb,
->  {
->  	struct vkms_frame_info *frame_info = &wb->wb_frame_info;
->  	int x_dst = frame_info->dst.x1;
-> -	u8 *dst_pixels = packed_pixels_addr(frame_info, x_dst, y);
-> +	u8 *dst_pixels;
-> +	int rem_x, rem_y;
+> +/**
+> + * get_block_step_bytes() - Common helper to compute the correct step value between each pixel block
+> + * to read in a certain direction.
+> + *
+> + * @fb: Framebuffer to iter on
+> + * @direction: Direction of the reading
+> + * @plane_index: Plane to get the step from
+> + *
+> + * As the returned count is the number of bytes between two consecutive blocks in a direction,
+> + * the caller may have to read multiple pixels before using the next one (for example, to read from
+> + * left to right in a DRM_FORMAT_R1 plane, each block contains 8 pixels, so the step must be used
+> + * only every 8 pixels).
+> + */
+> +static int get_block_step_bytes(struct drm_framebuffer *fb, enum pixel_read_direction direction,
+> +				int plane_index)
+> +{
+> +	switch (direction) {
+> +	case READ_LEFT_TO_RIGHT:
+> +		return fb->format->char_per_block[plane_index];
+> +	case READ_RIGHT_TO_LEFT:
+> +		return -fb->format->char_per_block[plane_index];
+> +	case READ_TOP_TO_BOTTOM:
+> +		return (int)fb->pitches[plane_index] * drm_format_info_block_width(fb->format,
+> +										   plane_index);
+> +	case READ_BOTTOM_TO_TOP:
+> +		return -(int)fb->pitches[plane_index] * drm_format_info_block_width(fb->format,
+> +										    plane_index);
+> +	}
 > +
-> +	packed_pixels_addr(frame_info, x_dst, y, 0, &dst_pixels, &rem_x, &rem_y);
->  	struct pixel_argb_u16 *in_pixels = src_buffer->pixels;
->  	int x_limit = min_t(size_t, drm_rect_width(&frame_info->dst), src_buffer->n_pixels);
->  
+> +	return 0;
+> +}
+> +
+>  /**
+>   * packed_pixels_addr_1x1() - Get the pointer to the block containing the pixel at the given
+>   * coordinates
 > 
 
