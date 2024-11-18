@@ -1,107 +1,204 @@
-Return-Path: <linux-kernel+bounces-412651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77C769D0BF4
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 10:40:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A188B9D0BF5
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 10:40:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CD67284EA5
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 09:40:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61C23284E58
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 09:40:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B381192B70;
-	Mon, 18 Nov 2024 09:39:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C08B193071;
+	Mon, 18 Nov 2024 09:39:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="KxOeHPNZ"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 788A71714A1;
-	Mon, 18 Nov 2024 09:39:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KQHNw3YR"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B91BC19067C;
+	Mon, 18 Nov 2024 09:39:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731922784; cv=none; b=eQkoD02984FCwdTf5AMuKYFDGkKZp772/nsJVxBLFAdpsXtWyL5kAUar0Aq30jayc0WmFOcFlPmRueNBBkpS0hx2ALpGDC3Z+3U990tCNlo7m0lMD6tMYQTrbh5aaTY8nARaaCOL9erSITHTrVLXUJN5tvI4gwebsN/Uob2GkYg=
+	t=1731922791; cv=none; b=fhzcV3289BybGax6218OMsQoHXPjNbgzf4h9WXAKInfYpAIxdFlSL/JVpZtU+GM8Bjn8w8vmAnsyxLiqsyrQCN4kedIs8cT4DyJ08x42qMQ8xWs3D7EH4tp1N6nLNxVGPOMp9ZpKMAZRJcN6hJK31BPoLoHJUNGHsIv5+QZmr50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731922784; c=relaxed/simple;
-	bh=jI2oUO+1tsMleG+aQ41cfYpVkgtPY3AKQrsU4Nb2XJw=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=G1w3jh2GG1JjcT2uLsEBLQZ96f5XuehCL1+E4BaJueMNOPgG720OzagA7+HtLeC6RRlEls9m9W1Vgchg/95HYJqB9TtTd66JePEcYtYMNp859oCMqNknfimnrphq87JcXgQV69uVKHun0s8jJBfFGjYJTJ+Ei7lJzUB7n4vU88Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=KxOeHPNZ; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net (linux.microsoft.com [13.77.154.182])
-	by linux.microsoft.com (Postfix) with ESMTPSA id F148820BEBD0;
-	Mon, 18 Nov 2024 01:39:42 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com F148820BEBD0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1731922783;
-	bh=svmTY/2kdXFMsccrG2M7GQxcnbt1jxzePbgPFOpjeHQ=;
-	h=From:To:Cc:Subject:Date:From;
-	b=KxOeHPNZn72MXN/NANVCUXhUWZvH+PPSx/ueNHww+PzaTOo4VLQ/lJHziXXQ4J8bD
-	 W2t7OdG3JG152gJqDQKInIhK0I+8NCL3WcK6TjzlWyrL99Egj9zhJZp6ldzcmbRr/i
-	 Cm0DkWPkFozGTue4ma1C13bBsDl3dDj2Gj0HchRM=
-From: Saurabh Sengar <ssengar@linux.microsoft.com>
-To: mingo@redhat.com,
-	peterz@infradead.org,
-	juri.lelli@redhat.com,
-	vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com,
-	rostedt@goodmis.org,
-	bsegall@google.com,
-	mgorman@suse.de,
-	vschneid@redhat.com,
-	linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org,
-	ssengar@microsoft.com,
-	srivatsa@csail.mit.edu
-Subject: [PATCH v2] sched/topology: Enable topology_span_sane check only for debug builds
-Date: Mon, 18 Nov 2024 01:39:37 -0800
-Message-Id: <1731922777-7121-1-git-send-email-ssengar@linux.microsoft.com>
-X-Mailer: git-send-email 1.8.3.1
+	s=arc-20240116; t=1731922791; c=relaxed/simple;
+	bh=wcjFwTi9nS9WJBtKBzT8eqmoyIq2zYhF4HyEAvJfYgE=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kjdmigPdnkjvTl3I7Ha44nAgV6U+3X+r4CFvvdDaR/eg7VQtvGj5JzMKLGpDNz44r2tUfMTDUJ5cM6D8Of3Q/5INZWQY3lnFGWRfzrnhuG5hg1ta06jhRbSR2JrcgAlRvfoNncqpurBoCPVI5ND6IPgkU6KOAkCAOAKT0ku9Uew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KQHNw3YR; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-431ac30d379so34562595e9.1;
+        Mon, 18 Nov 2024 01:39:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731922788; x=1732527588; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=O2iBCRMm8OcKK+uQt7vua/k4ESoCIm8lP2KcuL0sWNM=;
+        b=KQHNw3YRpPObSnyoZJgE4deA52tUHgc/rWmoAYPuKjPjOdYZ3h1ZLwoa7IZs0LtcLC
+         DyaKewLzU7enA34aWmJo6VkjdAAkP4cu+VLQN1D0LScW5VJoQdEl/ygOI7lvEdsEQY0O
+         vS0mfPI+BwRI/N+TpSGF2vH4ofi2x5Oejp0wN5PvdzKuA8b2sQWjKFHlCZPnxlnrI21y
+         J4AxLGIBvd3mas2rlQ7CuW3TJqz6YDbCMfIMtFmdxiw5pyKdeH3frp3nHUbyFcCnOHYD
+         kjGFK0Q7AgPvUV46IXVqZG/PD99j2+zg4Up17/vpnF3+FlDmbzJ35W/fDC9xKGVakkf5
+         f2QA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731922788; x=1732527588;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=O2iBCRMm8OcKK+uQt7vua/k4ESoCIm8lP2KcuL0sWNM=;
+        b=BlK0pLfHRDolQ50vQp3MVkFwdA7+J4PHYar89eRqclmQSuUZfZPwi8//sEUi69mf/N
+         CQ4285NAUqiS/Xj5C1j/JEnM4wFJ9EvQ91JFWGQWt2qQBUZNXuZt2SNek8lIzxsophfB
+         oX/d+K1a+0v288bbhVstTSVmlWB4MFkPqHhJ94L6VC2ps+Ea6FyRMh8V/17k5KWXEc8C
+         IYApLt6I0S8JjnHS3dwNRqyKK22sC4Dlf+PwoZEKMf4FgxTY3VyHbe6UmGKah8OBtMDu
+         A/DyAMTTiz6pQbSvJ85mclno1XI/8QXkvRWMUcWKknPtTzvQPrK+b3JShn69m//GWUXd
+         9o4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUmBOPl67QnrXveijn7humIJHL2mtsHZlbXHumhe3I/0RwHv6yS+Iri50/PWt6nfuGQ3on1EMW/wCWSa0UR@vger.kernel.org, AJvYcCXUnEsPIbxfkWRShOQ4Tl+jCSdnu5qGlaqm1hxe0CTOHrbChx6COaSrR+su22kfxzjZZcoTRES/ufuPxSsk7iwRYwPZ@vger.kernel.org, AJvYcCXhO6Rg3i5bRaOXwelhnws3VRgCgqgZFL5ekTd58AOOD8XDKSLwW5RzdoSVN5pPfk5CAY0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzD4iYX8LmwmOHvLJErVgeLhr6g+H8NFIvsMArr7an3BGRn06oA
+	49DkX0mSET6+h4vt5KFZvxoovoa8q+s7oQXJ/VLHTenyk1dAYv8F
+X-Google-Smtp-Source: AGHT+IEx1uG94pHcWnn1BeSICFxkZnxhXwr+SPBiaeXhhwGCBkbPd01NG/fkT+f43kVhWDiUn0/qkA==
+X-Received: by 2002:a05:600c:468b:b0:431:5eeb:2214 with SMTP id 5b1f17b1804b1-432df7954a8mr86880085e9.33.1731922787837;
+        Mon, 18 Nov 2024 01:39:47 -0800 (PST)
+Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432dab78897sm148333635e9.16.2024.11.18.01.39.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Nov 2024 01:39:47 -0800 (PST)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Mon, 18 Nov 2024 10:39:45 +0100
+To: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+	Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>,
+	Alan Maguire <alan.maguire@oracle.com>,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [RFC perf/core 07/11] uprobes/x86: Add support to optimize
+ uprobes
+Message-ID: <ZzsLYQiER7EXf5J0@krava>
+References: <20241105133405.2703607-1-jolsa@kernel.org>
+ <20241105133405.2703607-8-jolsa@kernel.org>
+ <20241118171808.316ae124cd57886e813cb98f@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241118171808.316ae124cd57886e813cb98f@kernel.org>
 
-On a x86 system under test with 1780 CPUs, topology_span_sane() takes
-around 8 seconds cumulatively for all the iterations. It is an expensive
-operation which does the sanity of non-NUMA topology masks.
+On Mon, Nov 18, 2024 at 05:18:08PM +0900, Masami Hiramatsu wrote:
+> On Tue,  5 Nov 2024 14:34:01 +0100
+> Jiri Olsa <jolsa@kernel.org> wrote:
+> 
+> > Putting together all the previously added pieces to support optimized
+> > uprobes on top of 5-byte nop instruction.
+> > 
+> > The current uprobe execution goes through following:
+> >   - installs breakpoint instruction over original instruction
+> >   - exception handler hit and calls related uprobe consumers
+> >   - and either simulates original instruction or does out of line single step
+> >     execution of it
+> >   - returns to user space
+> > 
+> > The optimized uprobe path
+> > 
+> >   - checks the original instruction is 5-byte nop (plus other checks)
+> >   - adds (or uses existing) user space trampoline and overwrites original
+> >     instruction (5-byte nop) with call to user space trampoline
+> >   - the user space trampoline executes uprobe syscall that calls related uprobe
+> >     consumers
+> >   - trampoline returns back to next instruction
+> > 
+> > This approach won't speed up all uprobes as it's limited to using nop5 as
+> > original instruction, but we could use nop5 as USDT probe instruction (which
+> > uses single byte nop ATM) and speed up the USDT probes.
+> > 
+> > This patch overloads related arch functions in uprobe_write_opcode and
+> > set_orig_insn so they can install call instruction if needed.
+> > 
+> > The arch_uprobe_optimize triggers the uprobe optimization and is called after
+> > first uprobe hit. I originally had it called on uprobe installation but then
+> > it clashed with elf loader, because the user space trampoline was added in a
+> > place where loader might need to put elf segments, so I decided to do it after
+> > first uprobe hit when loading is done.
+> > 
+> > TODO release uprobe trampoline when it's no longer needed.. we might need to
+> > stop all cpus to make sure no user space thread is in the trampoline.. or we
+> > might just keep it, because there's just one 4GB memory region?
+> > 
+> > Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> > ---
+> >  arch/x86/include/asm/uprobes.h |   7 ++
+> >  arch/x86/kernel/uprobes.c      | 130 +++++++++++++++++++++++++++++++++
+> >  include/linux/uprobes.h        |   1 +
+> >  kernel/events/uprobes.c        |   3 +
+> >  4 files changed, 141 insertions(+)
+> > 
+> > diff --git a/arch/x86/include/asm/uprobes.h b/arch/x86/include/asm/uprobes.h
+> > index 678fb546f0a7..84a75ed748f0 100644
+> > --- a/arch/x86/include/asm/uprobes.h
+> > +++ b/arch/x86/include/asm/uprobes.h
+> > @@ -20,6 +20,11 @@ typedef u8 uprobe_opcode_t;
+> >  #define UPROBE_SWBP_INSN		0xcc
+> >  #define UPROBE_SWBP_INSN_SIZE		   1
+> >  
+> > +enum {
+> > +	ARCH_UPROBE_FLAG_CAN_OPTIMIZE	= 0,
+> > +	ARCH_UPROBE_FLAG_OPTIMIZED	= 1,
+> > +};
+> > +
+> >  struct uprobe_xol_ops;
+> >  
+> >  struct arch_uprobe {
+> > @@ -45,6 +50,8 @@ struct arch_uprobe {
+> >  			u8	ilen;
+> >  		}			push;
+> >  	};
+> > +
+> > +	unsigned long flags;
+> >  };
+> >  
+> >  struct arch_uprobe_task {
+> > diff --git a/arch/x86/kernel/uprobes.c b/arch/x86/kernel/uprobes.c
+> > index 02aa4519b677..50ccf24ff42c 100644
+> > --- a/arch/x86/kernel/uprobes.c
+> > +++ b/arch/x86/kernel/uprobes.c
+> > @@ -18,6 +18,7 @@
+> >  #include <asm/processor.h>
+> >  #include <asm/insn.h>
+> >  #include <asm/mmu_context.h>
+> > +#include <asm/nops.h>
+> >  
+> >  /* Post-execution fixups. */
+> >  
+> > @@ -877,6 +878,33 @@ static const struct uprobe_xol_ops push_xol_ops = {
+> >  	.emulate  = push_emulate_op,
+> >  };
+> >  
+> > +static int is_nop5_insns(uprobe_opcode_t *insn)
+> > +{
+> > +	return !memcmp(insn, x86_nops[5], 5);
+> 
+> Maybe better to use BYTES_NOP5 directly?
 
-CPU topology is not something which changes very frequently hence make
-this check optional for the systems where the topology is trusted and
-need faster bootup.
+ok
 
-Restrict this to sched_verbose kernel cmdline option so that this penalty
-can be avoided for the systems who wants to avoid it.
+> 
+> > +}
+> > +
+> > +static int is_call_insns(uprobe_opcode_t *insn)
+> > +{
+> > +	return *insn == 0xe8;
+> 
+> 0xe8 -> CALL_INSN_OPCODE
 
-Cc: stable@vger.kernel.org
-Fixes: ccf74128d66c ("sched/topology: Assert non-NUMA topology masks don't (partially) overlap")
-Signed-off-by: Saurabh Sengar <ssengar@linux.microsoft.com>
----
-[V2]
-	- Use kernel cmdline param instead of compile time flag.
+right, thanks
 
- kernel/sched/topology.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-index 9748a4c8d668..4ca63bff321d 100644
---- a/kernel/sched/topology.c
-+++ b/kernel/sched/topology.c
-@@ -2363,6 +2363,13 @@ static bool topology_span_sane(struct sched_domain_topology_level *tl,
- {
- 	int i = cpu + 1;
- 
-+	/* Skip the topology sanity check for non-debug, as it is a time-consuming operatin */
-+	if (!sched_debug_verbose) {
-+		pr_info_once("%s: Skipping topology span sanity check. Use `sched_verbose` boot parameter to enable it.\n",
-+			     __func__);
-+		return true;
-+	}
-+
- 	/* NUMA levels are allowed to overlap */
- 	if (tl->flags & SDTL_OVERLAP)
- 		return true;
--- 
-2.43.0
-
+jirka
 
