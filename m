@@ -1,90 +1,70 @@
-Return-Path: <linux-kernel+bounces-413187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8EBE9D14E5
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 17:01:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7834D9D14D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 16:57:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5594EB282F0
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 15:55:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D7572855B2
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 15:57:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74B5C1A9B3D;
-	Mon, 18 Nov 2024 15:55:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 183B71AA1FE;
+	Mon, 18 Nov 2024 15:57:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="INyRbXfI"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="biXQoHyB"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 095F3148FE6
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 15:55:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 478B0196C7C;
+	Mon, 18 Nov 2024 15:57:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731945339; cv=none; b=mWg0ItD47REMnJJ4i5QFMNZSxDJSbe4v2qfPrKWsVb0pAAPkFLLzKnfiGb/ur3LCFwJgNcfTrYWevSj3F5f3HcPeZvnRbFlxEsFTMj89pnTSuq6nl9V8AeK0gcY0ikew1thPjmLMe2Yxnp+ftP74cEw8o1RMIAf5KxPq1F+EWTc=
+	t=1731945425; cv=none; b=hMum4Mpmb+JluT3f/DHojVgA09S5RYQRXbydfSa7jf0Oknodds5NLjOMRcQanme0wl6NSJeOy5p0iA/imRYvGd58vwIXNj9rx6v2C16gBkWYh2tOpllYqYya318XMJkgHZkKLBJEOb/W5dUF0lqeJI725AOPGWly8piGV1uA5D4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731945339; c=relaxed/simple;
-	bh=zir8hakDkyMI0HxAyo+ufjhm3nz0MJ1zHD5s8XoSlxA=;
+	s=arc-20240116; t=1731945425; c=relaxed/simple;
+	bh=qYWFVCn3q14APeuwcYUZ72A5Kwi+646sYdvJU+kgKP4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fPtcn8mzm6567wQZjyaxpSXliRiv26ApUGuKkckwuJpBcJBK0dcCu4nb3HeW9aARjTLSP+JjvaqoVGVNbODXw7FUyzaFKb7nhAqTZwlewLMU/lcfRwe5+Cr8zQoL0zQTS/Tr6reYJf8MSe4tKpNaZMJTVJ8NPLxEB2rMyhkVdmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=INyRbXfI; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731945338; x=1763481338;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=zir8hakDkyMI0HxAyo+ufjhm3nz0MJ1zHD5s8XoSlxA=;
-  b=INyRbXfIl9O4lCOJlF+WUCgiq6cpt/o4pXtZ/Jy4l5AnL2xdD4ToW6Sd
-   /WyjWHFwQ5u+GG7y6HPMkmBOOIDoeHfxqw/PwXd+RbR5HyjiSZNLUiozn
-   16pDrWI8d8WbcrxO63Xjv0BZQLlV7BOWZmCMEG9LARIM2Fezc/2HV7n5P
-   EazN/dMmeaJdOINb7RmnUM98AzaXc5mWPXAxh5Z2S744Y/cfJ+dPStWG8
-   KI/C18QFd6oStgkNxr5Ji6LIDODBCNhYzlZw15bkQKR8n4tlpvVhAsUX+
-   wz5spAM1INeOaV1+XUnvxOxTvHGqt/RXIpXLgTp0cFoQI1dxjle91GHXM
-   Q==;
-X-CSE-ConnectionGUID: qPXAi+lbQ9eDKMo2uPaTrQ==
-X-CSE-MsgGUID: YVAVxR2iSdmuPdrftFngLw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11260"; a="34770973"
-X-IronPort-AV: E=Sophos;i="6.12,164,1728975600"; 
-   d="scan'208";a="34770973"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2024 07:55:36 -0800
-X-CSE-ConnectionGUID: p+N/JDGkSWKAROamBVUuLQ==
-X-CSE-MsgGUID: 1kHzIQ/mR32Yotgb4MMMkQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="94303462"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2024 07:55:34 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tD467-0000000G45q-0iMY;
-	Mon, 18 Nov 2024 17:55:31 +0200
-Date: Mon, 18 Nov 2024 17:55:30 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: "Daniel Walker (danielwa)" <danielwa@cisco.com>
-Cc: Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Ilpo =?utf-8?Q?J=EF=BF=BDrvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Klara Modin <klarasmodin@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Danil Rybakov <danilrybakov249@gmail.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"xe-linux-external(mailer list)" <xe-linux-external@cisco.com>
-Subject: Re: platform/x86: p2sb: Allow p2sb_bar() calls during PCI device
- probe
-Message-ID: <ZztjcntEj5Eo0Rw9@smile.fi.intel.com>
-References: <ZzTk5kyPa5kUxA+f@goliath>
- <a5bafe87-e8f6-40d9-a5d8-34cf6aa576a4@redhat.com>
- <wxb4hmju5jknxr2bclxlu5gujgmb3vvqwub7jrt4wofllqp7li@pdvthto4jf47>
- <ZzdhTsuRNk1YWg8p@goliath>
- <5qjbimedzeertdham2smgktt54gzdc7yg4dwgiz7eezt2tf5a2@szhhpvzo3uhj>
- <Zzs1rw1YcoEEeW7+@goliath>
- <ZztABO3TyJBekZRs@smile.fi.intel.com>
- <ZztCB5hN2NBnPgiR@goliath>
- <ZztF7FKaBwZKs5dk@smile.fi.intel.com>
- <ZztQwLpoZDZzbi6O@goliath>
+	 Content-Type:Content-Disposition:In-Reply-To; b=hv0WheCmCJCAVxU4KbMzjrQH/08qqkIIKXfUN2O3oFWjjx3OCQSHV5DEredyZwATm+rhBNCpV1NYu75Wzaehs3mdwxeSOl7H6lMS46QUhQZuOGeyPRsXnnMVzsAVNB5W4+XFsgGzD0q+hoBEJAyJOOMjg0trErAM2yHoPCsprr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=biXQoHyB; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=Sz1jHbHlp8QHDI8p6axcNSLoVuizF3hYscPtQCpLJQk=; b=biXQoHyBnaIUDYP3xC0QYwCpdL
+	tBc+spdPnAfSbQvxnCkiL4+VaZQeQfDT+/2kMJaP6vsKf0wzOVR3Bh08pg8cvUfKVW1uHTYUZyP4p
+	fJ+09bOWxGRUaLYeM5y6sNeofl4PchDZxCmBORt/9uJ5KdewChMjorjwQOrEXPPf3fLVeUm6lmIvg
+	LEiMAa+AdDz+6fhQsFaEDQV2D37zPoeR+tDeP5u+FLW2ICRlN7wojvq8EYaflu2lnx4EmfGnbgQVH
+	BJdH7Ec5wqBy6J/l8dFXMWVlqvCd8aE0L2o1EzysPs80B6MPR2uGMgACkoVMoqdTmfE4gqqFlyOxQ
+	ILV4N1Vg==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:35228)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1tD47O-00024l-0K;
+	Mon, 18 Nov 2024 15:56:50 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1tD47K-0005CP-2Y;
+	Mon, 18 Nov 2024 15:56:46 +0000
+Date: Mon, 18 Nov 2024 15:56:46 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Suraj Gupta <suraj.gupta2@amd.com>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, michal.simek@amd.com,
+	sean.anderson@linux.dev, radhey.shyam.pandey@amd.com,
+	horms@kernel.org, netdev@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	git@amd.com, harini.katakam@amd.com
+Subject: Re: [PATCH net-next 2/2] net: axienet: Add support for AXI 2.5G MAC
+Message-ID: <ZztjvkxbCiLER-PJ@shell.armlinux.org.uk>
+References: <20241118081822.19383-1-suraj.gupta2@amd.com>
+ <20241118081822.19383-3-suraj.gupta2@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,77 +73,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZztQwLpoZDZzbi6O@goliath>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20241118081822.19383-3-suraj.gupta2@amd.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Mon, Nov 18, 2024 at 02:35:44PM +0000, Daniel Walker (danielwa) wrote:
-> On Mon, Nov 18, 2024 at 03:49:32PM +0200, Andy Shevchenko wrote:
-> > On Mon, Nov 18, 2024 at 01:32:55PM +0000, Daniel Walker (danielwa) wrote:
-> > > On Mon, Nov 18, 2024 at 03:24:20PM +0200, Andy Shevchenko wrote:
-> > > > On Mon, Nov 18, 2024 at 12:40:16PM +0000, Daniel Walker (danielwa) wrote:
+On Mon, Nov 18, 2024 at 01:48:22PM +0530, Suraj Gupta wrote:
+> Add AXI 2.5G MAC support, which is an incremental speed upgrade
+> of AXI 1G MAC and supports 2.5G speed only. "max-speed" DT property
+> is used in driver to distinguish 1G and 2.5G MACs of AXI 1G/2.5G IP.
+> If max-speed property is missing, 1G is assumed to support backward
+> compatibility.
+> 
+> Co-developed-by: Harini Katakam <harini.katakam@amd.com>
+> Signed-off-by: Harini Katakam <harini.katakam@amd.com>
+> Signed-off-by: Suraj Gupta <suraj.gupta2@amd.com>
+> ---
 
 ...
 
-> > > > Are you referring to LPC GPIO?
-> > >  
-> > >  I don't know the hardware well enough to say for certain. It's whatever device 8086:19dd is.
-> > 
-> > This is device which represents p2sb. It's not a GPIO device you are talking
-> > about for sure. You can send privately more detailed info in case this is shouldn't
-> > be on public to me to understand what would be the best approach to fix your issue.
-> 
-> Here's a comment,
-> 
-> /* INTEL Denverton GPIO registers are accessible using SBREG_BAR(bar 0) as base */
-> 
-> We have gpio wired to an FPGA and I believe the gpio line is used to reset the
-> fpga.
-> 
-> So the pci resources attached to 8086:19dd can be used to access gpio of some
-> type. 
-> 
-> I'm not a pci expert but on the 19bb device bar 0 we use the below offset to manipulate
-> the gpio,
-> 
-> #define INTEL_GPIO_REG_RESET_OFFSET          0xC50578
-> 
-> The comments suggest this is gpio 6. I would seems your reaction would be that
-> there is no gpio on the 19dd device. Maybe our driver is access gpio thru p2sb
-> or something like that.
-> 
-> Does the offset above make sense to you in the context of the p2sb ?
+> -	lp->phylink_config.mac_capabilities = MAC_SYM_PAUSE | MAC_ASYM_PAUSE |
+> -		MAC_10FD | MAC_100FD | MAC_1000FD;
+> +	lp->phylink_config.mac_capabilities = MAC_SYM_PAUSE | MAC_ASYM_PAUSE;
+> +
+> +	/* Set MAC capabilities based on MAC type */
+> +	if (lp->max_speed == SPEED_1000)
+> +		lp->phylink_config.mac_capabilities |= MAC_10FD | MAC_100FD | MAC_1000FD;
+> +	else
+> +		lp->phylink_config.mac_capabilities |= MAC_2500FD;
 
-Yes, everything makes sense. Please, enable lpc_ich driver and forget about
-talking to the p2sb memory mapped IO.
+The MAC can only operate at (10M, 100M, 1G) _or_ 2.5G ?
 
-/* Offset data for Denverton GPIO controllers */
-static const resource_size_t dnv_gpio_offsets[DNV_GPIO_NR_RESOURCES] = {
-	[DNV_GPIO_NORTH] = 0xc20000,
-	[DNV_GPIO_SOUTH] = 0xc50000,
-};
-
-So, you are using a pin from the Community "South" of the on-die Denverton GPIO.
-
-In EDS this called GPIO_6, while in the driver it's pin 88, i.e. SMB3_IE0_DATA.
-
-You will need to
-- enable lpc_ich driver (CONFIG_LPC_ICH)
-- enable Intel Denverton pin control driver (CONFIG_PINCTRL_DENVERTON)
-- replace your custom approach to:
-  - GPIO lookup table
-  - proper GPIO APIs, as gpiod_get() or alike
-
-See how it was done in the current kernel code:
-
-8241b55f1ded ("drm/i915/dsi: Replace poking of VLV GPIOs behind the driver's back")
-a6c80bec3c93 ("leds: simatic-ipc-leds-gpio: Add GPIO version of Siemens driver")
-
-Hans, there will be no need to fix anything if they implement correct access
-to the GPIO, i.e. via driver and board code with GPIO lookup tables.
+Normally, max speeds can be limited using phylink_limit_mac_speed()
+which will clear any MAC capabilities for speeds faster than the
+speed specified.
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
