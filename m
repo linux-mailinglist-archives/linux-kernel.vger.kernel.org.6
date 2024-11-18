@@ -1,174 +1,112 @@
-Return-Path: <linux-kernel+bounces-412732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D36CA9D0E6F
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:25:20 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23CB29D0ED3
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:46:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64AA7282CAF
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 10:25:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F601B2E68B
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 10:25:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A33519ABBB;
-	Mon, 18 Nov 2024 10:22:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89DA3197A92;
+	Mon, 18 Nov 2024 10:22:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2hvfNMdZ"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IpEbYIWJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7A4519A2A2
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 10:22:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF8A2DDD2;
+	Mon, 18 Nov 2024 10:22:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731925367; cv=none; b=NGq/EsugmG7v64akV6zgiZ/+dJxhj2+ZedL7a43lzugBG3mrExfs93bORbn++w3yoZmgPwn+xzhbEqw2H18W+tCWYFXknp0eaV8bfbHhlB0DOFFUcl1o4Z8m5rsPt91MVfO+6slLjHNfPhyFOb67fQ9k877a3521JxGLny80r+Y=
+	t=1731925363; cv=none; b=e9hVF8+149pZd+uRSovNXahh0dxj9neaZh07TacPpjlt74rPjgdOv8RUGgirDh5Swa4NU9Ib7gPSdJ+QgycOW7EpUNoUucT5jJd/dEApAtIdLpkkngArIyV7O2JC1c9q5ZEGAlIKMQV6wGPGOKWCtYhrVr56KeRgrhGmfxgFG7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731925367; c=relaxed/simple;
-	bh=iuJuV5q/Ib9dcphDRf3TAd0YCwdozV2yCknG7HW3jZs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n1XskFl7+wymNjj/mRD3ggVpwx29uK8oiFuiOR1bt7DISk9aGOdJt6vBocj7Wt9DzE5GbZDn33Ynf9lpmhvKPA77tWD9wYNekQNg7fx4MkLfFok8lvvrWALUnB3EgqnmixemY5maO+61ODKaIAICnDhXHDqTNr1iXwq16A2eQ4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2hvfNMdZ; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-53d9ff8f1e4so1926848e87.2
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 02:22:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731925364; x=1732530164; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZjpjOtr4jTi2V8JGqsZR3B1wLA+5BzuRYojm/xVmucw=;
-        b=2hvfNMdZ34WVWyZ9/lv/fJ2AdSOzEeg9bSP7uiT64Xs13kx/RCLURr17eyEIksNTni
-         jssW7Ra/dxxUSZPtg29a4YTy+aOljUL6bEyEhKm2ZKa4JlaO/IZYfPUN8XL5U7iBxuaI
-         TuPnuvwOaGDa+Aceq0uMrJAiKNWhJbgKO7QEmzsyIOlo8IizT4rktvZ0kgxshQx93nFA
-         6rSaUPeSH3wBahwwo3Yez5Vlyntxa8aKr2zU8f8bc6M+BJ8P+cR6MfYTu24DczBCM/im
-         NWegPlceKKTGeX1s+dyWmZWaEyt1uXXfekdSUMXIDTZlBXJlTnnvghKyAws42XaxILwt
-         jPhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731925364; x=1732530164;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZjpjOtr4jTi2V8JGqsZR3B1wLA+5BzuRYojm/xVmucw=;
-        b=WcaytG/Mz4ToyHneM+7JGUxxWhZpohflkEZaStkzWVaolyZKftV3sUvwKt78WfYGZE
-         kxiTNGjrlVm9JPD7fR/33gH888S1NE4JfyiZWIZ+B77oesHfx5gULPsb0O90xccV6SWP
-         jgeTiYdPl+aB5ftNLLqdOsfd7gj5EHNwMcDaLSTNlGisH+sidyNSbvJFVyQG+FGRE5w2
-         k0uFzTyjysyy9BLrw88HjVfeY9ixcqREl8cBN/fYXMsadSf31qGc9yjcxeU//S1eYmDO
-         T3dS8xBI4VxuBt8BP8mS0Ce9DV9idzASBvXRbkCtKRu5Cj6ZTVAKX3U6iILbnM+LJvSv
-         +v0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUtSGD16S/TUNAf3W5BdrrkTV8O8rHrGICi84/oj09O5lNDuGoXhzSloJWUFHXxn1ceL8KHJBV71ckH+Gw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtEY1wLtFyq9bxQNfCvXkk9iqLQNClMfDbDYqrIG38/b4kBzd5
-	T3YyvsVEo8yjEt5zKgelYDPLpzIXeJyk1bh2yFiEc913ztQd5d3TdSVdmGG+pmKLFPcZvAy8jUg
-	b4S7FYZR7BW0FNX9Aq61fH69LlN6KITLUiCtn
-X-Google-Smtp-Source: AGHT+IEZ0eBnMjmOp6HX5wMSHA5Bjt/VzflvzwE0qjWxJaryCmf+Xl5JR+1DtxvTGFmREncYHZpcQue6+XSitcpBy/8=
-X-Received: by 2002:a05:6512:2252:b0:536:7a24:8e82 with SMTP id
- 2adb3069b0e04-53dab29ba62mr3666839e87.13.1731925363792; Mon, 18 Nov 2024
- 02:22:43 -0800 (PST)
+	s=arc-20240116; t=1731925363; c=relaxed/simple;
+	bh=YX1W5j5BkpAPp7zh3L69qMoyJQaJp02a7l+i7abLiEo=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=fKhyxCyiG09k5ngcVpcZCyIub08YhknYqp7JkwzjnQRYRQwJ9Sk3X4tdmIlUJNGwPUlf2ltdM/Qz7d/zR+1zCq7uyc7UGOIf1XkaB3CgbnznKiNlKyuw2Gf2Wpi6nSl1uPwBWmQOAxPjl7EIRoXMubcCZkyzwRTtofR6dPYHfzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IpEbYIWJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 338CEC4CECC;
+	Mon, 18 Nov 2024 10:22:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731925362;
+	bh=YX1W5j5BkpAPp7zh3L69qMoyJQaJp02a7l+i7abLiEo=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=IpEbYIWJRj/pd4xxrg3kA5dYcQRKLXmgUwXKDiJE7aoZ/RTRh1zU7JS2iCcqbZ4T1
+	 zV7zjpmXqoAVsKtgnsiw4kyeGZFRa06+txUpJaa/ZzRg2400ofDxJtUtMimcjvZYR8
+	 XkJtPnsy2SIZegwaK82Q9N5vh/kPYFcXoqrwY5JKzSPPthPeM0AU6RycRHBNmLqooC
+	 eMZ24se65rrmJmScnJcZgD8F7zusa6u4Ec8mel0LSTLPQiUZH9J6sXXiiIx7yRwvtd
+	 tznDSFChOe0gTrNcSy6UQ1dbBRw8RtEv89yHjddrHfz5iEo5sAkCrggdisBPuFJkcP
+	 AfDr+iLTQa+Ig==
+Date: Mon, 18 Nov 2024 04:22:40 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241009105759.579579-1-me@kloenk.dev> <20241009105759.579579-2-me@kloenk.dev>
-In-Reply-To: <20241009105759.579579-2-me@kloenk.dev>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Mon, 18 Nov 2024 11:22:31 +0100
-Message-ID: <CAH5fLggju9ZYPD7LRTZKXJ9dhuLJ0uAS-USAokeoSvjOiN1v=w@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/2] rust: LED abstraction
-To: Fiona Behrens <me@kloenk.dev>
-Cc: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, linux-leds@vger.kernel.org, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, FUJITA Tomonori <fujita.tomonori@gmail.com>, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Guenter Roeck <groeck@chromium.org>, devicetree@vger.kernel.org, 
+ Benson Leung <bleung@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, chrome-platform@lists.linux.dev, 
+ Lee Jones <lee@kernel.org>, linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>
+To: "Sung-Chi, Li" <lschyi@chromium.org>
+In-Reply-To: <20241118-add_charger_state-v1-2-94997079f35a@chromium.org>
+References: <20241118-add_charger_state-v1-0-94997079f35a@chromium.org>
+ <20241118-add_charger_state-v1-2-94997079f35a@chromium.org>
+Message-Id: <173192536035.1517344.13221127899911847834.robh@kernel.org>
+Subject: Re: [PATCH 2/3] dt-bindings: chrome: add new binding
+ google,cros-ec-chrage-state
 
-On Wed, Oct 9, 2024 at 12:58=E2=80=AFPM Fiona Behrens <me@kloenk.dev> wrote=
-:
-> +impl<'a, T> Led<T>
-> +where
-> +    T: Operations + 'a,
-> +{
-> +    /// Register a new LED with a predefine name.
-> +    pub fn register_with_name(
-> +        name: &'a CStr,
-> +        device: Option<&'a Device>,
-> +        config: &'a LedConfig,
-> +        data: T,
-> +    ) -> impl PinInit<Self, Error> + 'a {
-> +        try_pin_init!( Self {
-> +            led <- Opaque::try_ffi_init(move |place: *mut bindings::led_=
-classdev| {
-> +            // SAFETY: `place` is a pointer to a live allocation, so era=
-sing is valid.
-> +            unsafe { place.write_bytes(0, 1) };
-> +
-> +            // SAFETY: `place` is a pointer to a live allocation of `bin=
-dings::led_classdev`.
-> +            unsafe { Self::build_with_name(place, name) };
-> +
-> +            // SAFETY: `place` is a pointer to a live allocation of `bin=
-dings::led_classdev`.
-> +            unsafe { Self::build_config(place, config) };
-> +
-> +            // SAFETY: `place` is a pointer to a live allocation of `bin=
-dings::led_classdev`.
-> +            unsafe { Self::build_vtable(place) };
-> +
-> +        let dev =3D device.map(|dev| dev.as_raw()).unwrap_or(ptr::null_m=
-ut());
-> +            // SAFETY: `place` is a pointer to a live allocation of `bin=
-dings::led_classdev`.
-> +        crate::error::to_result(unsafe {
-> +            bindings::led_classdev_register_ext(dev, place, ptr::null_mu=
-t())
-> +        })
-> +            }),
-> +            data: data,
-> +        })
-> +    }
-> +
-> +    /// Add nameto the led_classdev.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// `ptr` has to be valid.
-> +    unsafe fn build_with_name(ptr: *mut bindings::led_classdev, name: &'=
-a CStr) {
-> +        // SAFETY: `ptr` is pointing to a live allocation, so the deref =
-is safe.
-> +        let name_ptr =3D unsafe { ptr::addr_of_mut!((*ptr).name) };
-> +        // SAFETY: `name_ptr` points to a valid allocation and we have e=
-xclusive access.
-> +        unsafe { ptr::write(name_ptr, name.as_char_ptr()) };
-> +    }
-> +
-> +    /// Add config to led_classdev.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// `ptr` has to be valid.
-> +    unsafe fn build_config(ptr: *mut bindings::led_classdev, config: &'a=
- LedConfig) {
-> +        // SAFETY: `ptr` is pointing to a live allocation, so the deref =
-is safe.
-> +        let color_ptr =3D unsafe { ptr::addr_of_mut!((*ptr).color) };
-> +        // SAFETY: `color_ptr` points to a valid allocation and we have =
-exclusive access.
-> +        unsafe { ptr::write(color_ptr, config.color.into()) };
-> +    }
-> +}
 
-This usage of lifetimes looks incorrect to me. It looks like you are
-trying to say that the references must be valid for longer than the
-Led<T>, but what you are writing here does not enforce that. The Led
-struct must be annotated with the 'a lifetime if you want that, but
-I'm inclined to say you should not go for the lifetime solution in the
-first place.
+On Mon, 18 Nov 2024 17:33:47 +0800, Sung-Chi, Li wrote:
+> Add new dt bindings for charge chip control. The charge chip control
+> dt configuration is used by the driver 'cros-ec-charge-state', which is
+> added in the commit "platform/chrome: cros_ec_charge_state: add new
+> driver to control charge".
+> 
+> As these charge chip controls are connected under the ChromeOS Embedded
+> Controller (EC), also add the patternProperties to the
+> mfd/google,cros-ec bindings.
+> 
+> Signed-off-by: Sung-Chi, Li <lschyi@chromium.org>
+> ---
+>  .../bindings/chrome/google,cros-charge-state.yaml  | 62 ++++++++++++++++++++++
+>  .../devicetree/bindings/mfd/google,cros-ec.yaml    |  4 ++
+>  2 files changed, 66 insertions(+)
+> 
 
-Alice
+My bot found errors running 'make dt_binding_check' on your patch:
+
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/chrome/google,cros-charge-state.example.dtb: ec@0: charge-chip-battery:compatible:0: 'google,cros-ec-charge-state' was expected
+	from schema $id: http://devicetree.org/schemas/mfd/google,cros-ec.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/chrome/google,cros-charge-state.example.dtb: ec@0: charge-chip-battery: 'man-milliamp' is a required property
+	from schema $id: http://devicetree.org/schemas/mfd/google,cros-ec.yaml#
+Documentation/devicetree/bindings/chrome/google,cros-charge-state.example.dtb: /example-0/spi/ec@0/charge-chip-battery: failed to match any schema with compatible: ['google,cros-ec-charge']
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241118-add_charger_state-v1-2-94997079f35a@chromium.org
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
