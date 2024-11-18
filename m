@@ -1,263 +1,261 @@
-Return-Path: <linux-kernel+bounces-412854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A77B79D1036
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 12:52:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA2879D1033
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 12:52:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 882F0B287AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:50:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AABEC28347C
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:52:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43476198E77;
-	Mon, 18 Nov 2024 11:49:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="X1BjMiFA"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 197681990B7;
+	Mon, 18 Nov 2024 11:52:09 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53398190470;
-	Mon, 18 Nov 2024 11:49:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EC301946DA
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 11:52:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731930595; cv=none; b=uwvSiF31Wkkp4H2lH4c30W03m0qcekqj+aaovWu30nNbKfDi1ErZzb43vQo3BKm1OwU1VS5AWlTEfB3uvJdoA6Biazn2SDjaWzocIDhP6KNgEo162dLzTkCYrnmhjf5lK1UGSZyO/tD5lBqfc8p9EvYVa7M+spR3VUhH+mzGGaI=
+	t=1731930728; cv=none; b=rnsAEM6fatRGd1RuBKgimElspsNONfhfS6wX0nfNGIT8b3WNR8eoww27paJEByBCgJ8C2T3midnRV4Sl1SQltK/yBgM01ADONAwQJ8X4tUbO2gMRr8Cd5mQAfNanQEhcjQC1Sskg0dxfHUT9QGEhGUPXsvmcCaS3g7IJ/hmD2uk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731930595; c=relaxed/simple;
-	bh=y/shz7LJykfGzzvEzrrxF6u6icM67RlSI5at4T/ucJY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PWjv5rkGdiW6qpGI2mXM4m9kUdlTetteul6nMmVhdAz5td4K4lSIDNGW6TwuszvMo+bQlrfPdWEkzsc4euN/J1jCOIq6VLLM93xJhLVY2IvGQEontZGy/IyXcN0w+mN119kg6JMQp+kjTPD/mBA2MCkevfyLZpgx11RUq+ZXMJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=X1BjMiFA; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731930593; x=1763466593;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=y/shz7LJykfGzzvEzrrxF6u6icM67RlSI5at4T/ucJY=;
-  b=X1BjMiFAJFNumQrQSw2SPjI1+mrtjQqz+PRWbtam0DlG6iseR5ZOImzN
-   S8D7Cffb9GI1ymxFy4W+JiPHcH5Kk/inAU+aW4hloKKW4qTlKfmPQS8Jh
-   PS4MIZ/xs809M6Z0TU1vF4+4Wb2ogbDgUcMH2ljuoytd+UTAVLcJabt0U
-   HvQxuu4qCE3MDw4mzKwCRO5ny+cCHQH8rcZNpWbvrhaX7MYRwLQuJvCA4
-   cSqAHqaNoH42mQLjzxQIjQj2H2iUTfU2BFftcjBBcdmXj0cmyUcgS7OqK
-   LYhjF7zZqS7sRtps7EkE1XRmXkSWtTwXjV/6d7tAAW82DZziTUJB4DZyQ
-   Q==;
-X-CSE-ConnectionGUID: bVs1VyvYRGqFSUIVhoXdAA==
-X-CSE-MsgGUID: CVw8LPfDSTOEHYDXPLzkBQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11259"; a="32116551"
-X-IronPort-AV: E=Sophos;i="6.12,164,1728975600"; 
-   d="scan'208";a="32116551"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2024 03:49:48 -0800
-X-CSE-ConnectionGUID: Y5q5JUYXRHqqdGh1UVCO2g==
-X-CSE-MsgGUID: F8479wZnQm+mCm2oL3VcLg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,164,1728975600"; 
-   d="scan'208";a="89602526"
-Received: from kuha.fi.intel.com ([10.237.72.152])
-  by orviesa007.jf.intel.com with SMTP; 18 Nov 2024 03:49:45 -0800
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Mon, 18 Nov 2024 13:49:44 +0200
-Date: Mon, 18 Nov 2024 13:49:44 +0200
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Oliver Facklam <oliver.facklam@zuehlke.com>
-Cc: Biju Das <biju.das@bp.renesas.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Benedict von Heyl <benedict.vonheyl@zuehlke.com>,
-	Mathis Foerst <mathis.foerst@zuehlke.com>,
-	Michael Glettig <michael.glettig@zuehlke.com>
-Subject: Re: [PATCH v2 3/4] usb: typec: hd3ss3220: support configuring port
- type
-Message-ID: <Zzsp2JOhnnPPOWvB@kuha.fi.intel.com>
-References: <20241114-usb-typec-controller-enhancements-v2-0-362376856aea@zuehlke.com>
- <20241114-usb-typec-controller-enhancements-v2-3-362376856aea@zuehlke.com>
+	s=arc-20240116; t=1731930728; c=relaxed/simple;
+	bh=AofMIkS1Rbbku1U0w4cTlE8XMy0c7VKc2nJfMNX57zk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=n46738/tJTaa2UJ92YuTZyIPkMDkSUpedjvlb4j9iTN6XtV3KHrOMLKtK3Z1uPPFGrJE6myCWu7opjhjmT3woyNEi2+gkEK4udk0IRSOMn156ocMdxRxcRAKiBm+80JtOWZ94xaXjaNt6Y6NuBWgr4X8ESBNvkpRO3UnIkQcS4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1tD0ID-0005OW-Uj; Mon, 18 Nov 2024 12:51:45 +0100
+Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1tD0IB-001O8W-2a;
+	Mon, 18 Nov 2024 12:51:43 +0100
+Received: from pza by lupine with local (Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1tD0IB-0006dT-2J;
+	Mon, 18 Nov 2024 12:51:43 +0100
+Message-ID: <73350e3c7b564ae64e3f120e414c45a86598eb91.camel@pengutronix.de>
+Subject: Re: [PATCH v3 3/8] serial: sh-sci: Update the suspend/resume support
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Claudiu Beznea <claudiu.beznea@tuxon.dev>, geert+renesas@glider.be, 
+ magnus.damm@gmail.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org,  mturquette@baylibre.com, sboyd@kernel.org,
+ gregkh@linuxfoundation.org,  jirislaby@kernel.org, lethal@linux-sh.org,
+ g.liakhovetski@gmx.de
+Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-serial@vger.kernel.org, Claudiu Beznea
+ <claudiu.beznea.uj@bp.renesas.com>
+Date: Mon, 18 Nov 2024 12:51:43 +0100
+In-Reply-To: <3153fbd0-189a-4cfc-92cd-a1cc23928d73@tuxon.dev>
+References: <20241115134401.3893008-1-claudiu.beznea.uj@bp.renesas.com>
+	 <20241115134401.3893008-4-claudiu.beznea.uj@bp.renesas.com>
+	 <81e131554a34c7b2f795a904f2b561f3c86e0baf.camel@pengutronix.de>
+	 <3153fbd0-189a-4cfc-92cd-a1cc23928d73@tuxon.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241114-usb-typec-controller-enhancements-v2-3-362376856aea@zuehlke.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Hi Oliver,
+On Mo, 2024-11-18 at 11:47 +0200, Claudiu Beznea wrote:
+> Hi, Philipp,
+>=20
+> On 15.11.2024 17:40, Philipp Zabel wrote:
+> > On Fr, 2024-11-15 at 15:43 +0200, Claudiu wrote:
+> > > From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> > >=20
+> > > The Renesas RZ/G3S supports a power saving mode where power to most o=
+f the
+> > > SoC components is turned off. When returning from this power saving m=
+ode,
+> > > SoC components need to be re-configured.
+> > >=20
+> > > The SCIFs on the Renesas RZ/G3S need to be re-configured as well when
+> > > returning from this power saving mode. The sh-sci code already config=
+ures
+> > > the SCIF clocks, power domain and registers by calling uart_resume_po=
+rt()
+> > > in sci_resume(). On suspend path the SCIF UART ports are suspended
+> > > accordingly (by calling uart_suspend_port() in sci_suspend()). The on=
+ly
+> > > missing setting is the reset signal. For this assert/de-assert the re=
+set
+> > > signal on driver suspend/resume.
+> > >=20
+> > > In case the no_console_suspend is specified by the user, the register=
+s need
+> > > to be saved on suspend path and restore on resume path. To do this th=
+e
+> > > sci_console_setup() function was added. There is no need to cache/res=
+tore
+> > > the status or FIFO registers. Only the control registers. To differen=
+tiate
+> > > b/w these, the struct sci_port_params::regs was updated with a new me=
+mber
+> > > that specifies if the register needs to be chached on suspend. Only t=
+he
+> > > RZ_SCIFA instances were updated with this new support as the hardware=
+ for
+> > > the rest of variants was missing for testing.
+> > >=20
+> > > Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> > > ---
+> > >=20
+> > > Changes in v3:
+> > > - none
+> > >=20
+> > > Changes in v2:
+> > > - rebased on top of the update version of patch 2/8 from
+> > >   this series
+> > >=20
+> > >  drivers/tty/serial/sh-sci.c | 53 ++++++++++++++++++++++++++++++-----=
+--
+> > >  1 file changed, 44 insertions(+), 9 deletions(-)
+> > >=20
+> > > diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.=
+c
+> > > index ade151ff39d2..e53496d2708e 100644
+> > > --- a/drivers/tty/serial/sh-sci.c
+> > > +++ b/drivers/tty/serial/sh-sci.c
+> > > @@ -101,7 +101,7 @@ enum SCI_CLKS {
+> > >  		if ((_port)->sampling_rate_mask & SCI_SR((_sr)))
+> > > =20
+> > >  struct plat_sci_reg {
+> > > -	u8 offset, size;
+> > > +	u8 offset, size, suspend_cacheable;
+> > >  };
+> > > =20
+> > >  struct sci_port_params {
+> > > @@ -134,6 +134,8 @@ struct sci_port {
+> > >  	struct dma_chan			*chan_tx;
+> > >  	struct dma_chan			*chan_rx;
+> > > =20
+> > > +	struct reset_control		*rstc;
+> > > +
+> > >  #ifdef CONFIG_SERIAL_SH_SCI_DMA
+> > >  	struct dma_chan			*chan_tx_saved;
+> > >  	struct dma_chan			*chan_rx_saved;
+> > > @@ -153,6 +155,7 @@ struct sci_port {
+> > >  	int				rx_trigger;
+> > >  	struct timer_list		rx_fifo_timer;
+> > >  	int				rx_fifo_timeout;
+> > > +	unsigned int			console_cached_regs[SCIx_NR_REGS];
+> > >  	u16				hscif_tot;
+> > > =20
+> > >  	bool has_rtscts;
+> > > @@ -298,17 +301,17 @@ static const struct sci_port_params sci_port_pa=
+rams[SCIx_NR_REGTYPES] =3D {
+> > >  	 */
+> > >  	[SCIx_RZ_SCIFA_REGTYPE] =3D {
+> > >  		.regs =3D {
+> > > -			[SCSMR]		=3D { 0x00, 16 },
+> > > -			[SCBRR]		=3D { 0x02,  8 },
+> > > -			[SCSCR]		=3D { 0x04, 16 },
+> > > +			[SCSMR]		=3D { 0x00, 16, 1 },
+> > > +			[SCBRR]		=3D { 0x02,  8, 1 },
+> > > +			[SCSCR]		=3D { 0x04, 16, 1 },
+> > >  			[SCxTDR]	=3D { 0x06,  8 },
+> > >  			[SCxSR]		=3D { 0x08, 16 },
+> > >  			[SCxRDR]	=3D { 0x0A,  8 },
+> > > -			[SCFCR]		=3D { 0x0C, 16 },
+> > > +			[SCFCR]		=3D { 0x0C, 16, 1 },
+> > >  			[SCFDR]		=3D { 0x0E, 16 },
+> > > -			[SCSPTR]	=3D { 0x10, 16 },
+> > > +			[SCSPTR]	=3D { 0x10, 16, 1 },
+> > >  			[SCLSR]		=3D { 0x12, 16 },
+> > > -			[SEMR]		=3D { 0x14, 8 },
+> > > +			[SEMR]		=3D { 0x14, 8, 1 },
+> > >  		},
+> > >  		.fifosize =3D 16,
+> > >  		.overrun_reg =3D SCLSR,
+> > > @@ -3380,6 +3383,7 @@ static struct plat_sci_port *sci_parse_dt(struc=
+t platform_device *pdev,
+> > >  	}
+> > > =20
+> > >  	sp =3D &sci_ports[id];
+> > > +	sp->rstc =3D rstc;
+> > >  	*dev_id =3D id;
+> > > =20
+> > >  	p->type =3D SCI_OF_TYPE(data);
+> > > @@ -3507,13 +3511,34 @@ static int sci_probe(struct platform_device *=
+dev)
+> > >  	return 0;
+> > >  }
+> > > =20
+> > > +static void sci_console_setup(struct sci_port *s, bool save)
+> > > +{
+> > > +	for (u16 i =3D 0; i < SCIx_NR_REGS; i++) {
+> > > +		struct uart_port *port =3D &s->port;
+> > > +
+> > > +		if (!s->params->regs[i].suspend_cacheable)
+> > > +			continue;
+> > > +
+> > > +		if (save)
+> > > +			s->console_cached_regs[i] =3D sci_serial_in(port, i);
+> > > +		else
+> > > +			sci_serial_out(port, i, s->console_cached_regs[i]);
+> > > +	}
+> > > +}
+> > > +
+> > >  static __maybe_unused int sci_suspend(struct device *dev)
+> > >  {
+> > >  	struct sci_port *sport =3D dev_get_drvdata(dev);
+> > > =20
+> > > -	if (sport)
+> > > +	if (sport) {
+> > >  		uart_suspend_port(&sci_uart_driver, &sport->port);
+> > > =20
+> > > +		if (!console_suspend_enabled && uart_console(&sport->port))
+> > > +			sci_console_setup(sport, true);
+> > > +		else
+> > > +			return reset_control_assert(sport->rstc);
+> > > +	}
+> > > +
+> > >  	return 0;
+> > >  }
+> > > =20
+> > > @@ -3521,8 +3546,18 @@ static __maybe_unused int sci_resume(struct de=
+vice *dev)
+> > >  {
+> > >  	struct sci_port *sport =3D dev_get_drvdata(dev);
+> > > =20
+> > > -	if (sport)
+> > > +	if (sport) {
+> > > +		if (!console_suspend_enabled && uart_console(&sport->port)) {
+> > > +			sci_console_setup(sport, false);
+> > > +		} else {
+> > > +			int ret =3D reset_control_deassert(sport->rstc);
+> >=20
+> > With this, is the reset_control_deassert() in sci_parse_dt() still
+> > needed?
+>=20
+> If I'm not wrongly understanding your question, yes, the
+> reset_control_deassert() is still needed in the sci_parse_dt() as the
+> sci_parse_dt() is called on probe path. After resume the sci_parse_dt() i=
+s
+> not called unless the driver is unbinded and then re-binded.
 
-I'm sorry, I noticed a problem with this...
+Ah, I was thinking of runtime PM resume callbacks. Thank you for the
+answer, this cleared my confusion.
 
-On Thu, Nov 14, 2024 at 09:02:08AM +0100, Oliver Facklam wrote:
-> The TI HD3SS3220 Type-C controller supports configuring the port type
-> it will operate as through the MODE_SELECT field of the General
-> Control Register.
-> 
-> Configure the port type based on the fwnode property "power-role"
-> during probe, and through the port_type_set typec_operation.
-> 
-> The MODE_SELECT field can only be changed when the controller is in
-> unattached state, so follow the sequence recommended by the datasheet to:
-> 1. disable termination on CC pins to disable the controller
-> 2. change the mode
-> 3. re-enable termination
-> 
-> This will effectively cause a connected device to disconnect
-> for the duration of the mode change.
-
-Changing the type of the port is really problematic, and IMO we should
-actually never support that.
-
-Consider for example, if your port is sink only, then the platform
-almost certainly can't drive the VBUS. This patch would still allow
-the port to be changed to source port.
-
-Sorry for not realising this in v1.
-
-I think what you want here is just a power role swap. Currently power
-role swap is only supported when USB PD is supported in the class
-code, but since the USB Type-C specification quite clearly states that
-power role and data role swap can be optionally supported even when
-USB PD is not supported (section 2.3.3) we need to fix that:
-
-diff --git a/drivers/usb/typec/class.c b/drivers/usb/typec/class.c
-index 58f40156de56..ee81909565a4 100644
---- a/drivers/usb/typec/class.c
-+++ b/drivers/usb/typec/class.c
-@@ -1535,11 +1535,6 @@ static ssize_t power_role_store(struct device *dev,
-                return -EOPNOTSUPP;
-        }
-
--       if (port->pwr_opmode != TYPEC_PWR_MODE_PD) {
--               dev_dbg(dev, "partner unable to swap power role\n");
--               return -EIO;
--       }
--
-        ret = sysfs_match_string(typec_roles, buf);
-        if (ret < 0)
-                return ret;
-
-
-After that it should be possible to do power role swap also in this
-driver when the port is DRP capable.
-
-> Signed-off-by: Oliver Facklam <oliver.facklam@zuehlke.com>
-> ---
->  drivers/usb/typec/hd3ss3220.c | 66 ++++++++++++++++++++++++++++++++++++++++++-
->  1 file changed, 65 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/typec/hd3ss3220.c b/drivers/usb/typec/hd3ss3220.c
-> index e581272bb47de95dee8363a5491f543354fcbbf8..e3e9b1597e3b09b82f0726a01f311fb60b4284da 100644
-> --- a/drivers/usb/typec/hd3ss3220.c
-> +++ b/drivers/usb/typec/hd3ss3220.c
-> @@ -35,10 +35,16 @@
->  #define HD3SS3220_REG_CN_STAT_CTRL_INT_STATUS		BIT(4)
->  
->  /* Register HD3SS3220_REG_GEN_CTRL*/
-> +#define HD3SS3220_REG_GEN_CTRL_DISABLE_TERM		BIT(0)
->  #define HD3SS3220_REG_GEN_CTRL_SRC_PREF_MASK		(BIT(2) | BIT(1))
->  #define HD3SS3220_REG_GEN_CTRL_SRC_PREF_DRP_DEFAULT	0x00
->  #define HD3SS3220_REG_GEN_CTRL_SRC_PREF_DRP_TRY_SNK	BIT(1)
->  #define HD3SS3220_REG_GEN_CTRL_SRC_PREF_DRP_TRY_SRC	(BIT(2) | BIT(1))
-> +#define HD3SS3220_REG_GEN_CTRL_MODE_SELECT_MASK		(BIT(5) | BIT(4))
-> +#define HD3SS3220_REG_GEN_CTRL_MODE_SELECT_DEFAULT	0x00
-> +#define HD3SS3220_REG_GEN_CTRL_MODE_SELECT_DFP		BIT(5)
-> +#define HD3SS3220_REG_GEN_CTRL_MODE_SELECT_UFP		BIT(4)
-> +#define HD3SS3220_REG_GEN_CTRL_MODE_SELECT_DRP		(BIT(5) | BIT(4))
->  
->  struct hd3ss3220 {
->  	struct device *dev;
-> @@ -75,6 +81,52 @@ static int hd3ss3220_set_power_opmode(struct hd3ss3220 *hd3ss3220, int power_opm
->  				  current_mode);
->  }
->  
-> +static int hd3ss3220_set_port_type(struct hd3ss3220 *hd3ss3220, int type)
-> +{
-> +	int mode_select, err;
-> +
-> +	switch (type) {
-> +	case TYPEC_PORT_SRC:
-> +		mode_select = HD3SS3220_REG_GEN_CTRL_MODE_SELECT_DFP;
-> +		break;
-> +	case TYPEC_PORT_SNK:
-> +		mode_select = HD3SS3220_REG_GEN_CTRL_MODE_SELECT_UFP;
-> +		break;
-> +	case TYPEC_PORT_DRP:
-> +		mode_select = HD3SS3220_REG_GEN_CTRL_MODE_SELECT_DRP;
-> +		break;
-> +	default:
-> +		dev_err(hd3ss3220->dev, "bad port type: %d\n", type);
-> +		return -EINVAL;
-> +	}
-> +
-> +	/* Disable termination before changing MODE_SELECT as required by datasheet */
-> +	err = regmap_update_bits(hd3ss3220->regmap, HD3SS3220_REG_GEN_CTRL,
-> +				 HD3SS3220_REG_GEN_CTRL_DISABLE_TERM,
-> +				 HD3SS3220_REG_GEN_CTRL_DISABLE_TERM);
-> +	if (err < 0) {
-> +		dev_err(hd3ss3220->dev, "Failed to disable port for mode change: %d\n", err);
-> +		return err;
-> +	}
-> +
-> +	err = regmap_update_bits(hd3ss3220->regmap, HD3SS3220_REG_GEN_CTRL,
-> +				 HD3SS3220_REG_GEN_CTRL_MODE_SELECT_MASK,
-> +				 mode_select);
-> +	if (err < 0) {
-> +		dev_err(hd3ss3220->dev, "Failed to change mode: %d\n", err);
-> +		regmap_update_bits(hd3ss3220->regmap, HD3SS3220_REG_GEN_CTRL,
-> +				   HD3SS3220_REG_GEN_CTRL_DISABLE_TERM, 0);
-> +		return err;
-> +	}
-> +
-> +	err = regmap_update_bits(hd3ss3220->regmap, HD3SS3220_REG_GEN_CTRL,
-> +				 HD3SS3220_REG_GEN_CTRL_DISABLE_TERM, 0);
-> +	if (err < 0)
-> +		dev_err(hd3ss3220->dev, "Failed to re-enable port after mode change: %d\n", err);
-> +
-> +	return err;
-> +}
-> +
->  static int hd3ss3220_set_source_pref(struct hd3ss3220 *hd3ss3220, int src_pref)
->  {
->  	return regmap_update_bits(hd3ss3220->regmap, HD3SS3220_REG_GEN_CTRL,
-> @@ -131,8 +183,16 @@ static int hd3ss3220_dr_set(struct typec_port *port, enum typec_data_role role)
->  	return ret;
->  }
->  
-> +static int hd3ss3220_port_type_set(struct typec_port *port, enum typec_port_type type)
-> +{
-> +	struct hd3ss3220 *hd3ss3220 = typec_get_drvdata(port);
-> +
-> +	return hd3ss3220_set_port_type(hd3ss3220, type);
-> +}
-
-This wrapper seems completely useless. You only need one function here
-for the callback.
-
->  static const struct typec_operations hd3ss3220_ops = {
-> -	.dr_set = hd3ss3220_dr_set
-> +	.dr_set = hd3ss3220_dr_set,
-> +	.port_type_set = hd3ss3220_port_type_set,
->  };
-
-So here I think you should implement the pr_set callback instead.
-
-Let me kwno wh
-
->  static void hd3ss3220_set_role(struct hd3ss3220 *hd3ss3220)
-> @@ -273,6 +333,10 @@ static int hd3ss3220_probe(struct i2c_client *client)
->  	if (ret != 0 && ret != -EINVAL && ret != -ENXIO)
->  		goto err_put_role;
->  
-> +	ret = hd3ss3220_set_port_type(hd3ss3220, typec_cap.type);
-> +	if (ret < 0)
-> +		goto err_put_role;
-> +
->  	hd3ss3220->port = typec_register_port(&client->dev, &typec_cap);
->  	if (IS_ERR(hd3ss3220->port)) {
->  		ret = PTR_ERR(hd3ss3220->port);
-> 
-
-thanks,
-
--- 
-heikki
+regards
+Philipp
 
