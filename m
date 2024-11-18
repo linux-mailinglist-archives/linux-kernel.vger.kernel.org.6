@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-413597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5E029D1B7F
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 00:01:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B81699D1B80
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 00:02:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7937280CA9
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 23:01:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7919728123B
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 23:02:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3954D1EABB4;
-	Mon, 18 Nov 2024 23:01:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 941C5192D82;
+	Mon, 18 Nov 2024 23:01:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="IE8FrBqp"
-Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
+	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="Ob8+ePIX"
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B2351E9065
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 23:01:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CE601E909E
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 23:01:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731970891; cv=none; b=G5/tCMKvgc+SESRTKLwZnVcQPOWM/wiyk5K/z43L0r+MfplkN0O0qzwq+x5gm8Y9mz+DIvo5RLwf9BHc8IL+yRqxPmbBNL+GRTfv9cnP0L9nwbJ7KlfBFT29m4XmZO3JGR7c99cTJW7skbzp6xF9RXA2KDN6HLGaa4sSzW7o0K8=
+	t=1731970893; cv=none; b=Mc6Iw6tFx3Pk1NZUiCZVU4rU0eByYiezzSfg0CZnLgV6dEFxla5NQZOcchh15GfZ83CPMYkJpdENWs9gGzc0YHqpIx5jEROdL2GPKoFqMiIvUx1RXupoTKbnxsztdV+KvmrnFahDZgBvGLkcda8X16Q7IF5Hg8aF2jEf5ksn8Bk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731970891; c=relaxed/simple;
-	bh=ws7tXnWf+U6DHt9H3UXfoIBpPUQt9MU+Vr1IUARhf/s=;
+	s=arc-20240116; t=1731970893; c=relaxed/simple;
+	bh=5sq2RndBvjwbPDbRstQdV6Pr5uT7zETeUtlaWtTno4I=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=c8U7ijEP5WEbeuPAwhOITLkmrzS9z/lKXhKlVST9e4qX7hL9JB/Y6tj4rQUJLRiyxqdsBHWxYZkTEClur3eBtyl0W52qNS9qGPqrtIAvDaP5PwWniRCnu+UMl1RtcNTZU5f74EeQ1y1qTuT03CgwkZZHmlYJG6FrfY1ue4xymnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=IE8FrBqp; arc=none smtp.client-ip=209.85.166.172
+	 MIME-Version; b=F0pfoOwF4hSceZQP/7wygUXqoD6LKZpfIfRjFQZcLOspBTJ7ulApEdujL6tJllHSH7yNfUIvWrptMIvxQtHj2zOBTZ4lpIr1vah0w1CMLBhpH0AsY4DojWV4Isp1AAV3e81ummSWLXvvRWdfttvc9AMrzeoB+7RrjVWbwkCNUI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=Ob8+ePIX; arc=none smtp.client-ip=209.85.222.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tenstorrent.com
-Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-3a761e21ddeso8479995ab.3
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 15:01:29 -0800 (PST)
+Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7b1457ba751so13899285a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 15:01:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tenstorrent.com; s=google; t=1731970889; x=1732575689; darn=vger.kernel.org;
+        d=tenstorrent.com; s=google; t=1731970890; x=1732575690; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=YFqjIC8plnN7ShAhD1wilwVRTqQH/DMgtflcfXOVYkY=;
-        b=IE8FrBqpP0gpBSaRh6vVvHW7DBQpULtsMi+mkcKcrLcNPMhlFLYDafriz8nUUNYj2c
-         U8vdZu46HvLBux5mnAQ3XsoM8tcUP2wK+jPvW2h5DLg/e2f4sCwsWQ4UgpxRFrfvk6Td
-         TCVuuvqkMLV7BvrttC7138HJCiBvVNJsmBG2PbtKwdqpS36Gk29XmT6njDveXd/5ty9U
-         E2fnIeskGUBXzqATlsqL+A1Uq5nnxP1ArVvbfCWZjrnx8MogaTusszih9KDmELa7XDS1
-         82cYeQ6VUxyurVycbOXQPtv2lJ0vx4T6G9AHMDkEGq5by+xZ4Hg+CPXwHgsC05oFfTuz
-         cNLA==
+        bh=PToKMxR8SXs7rV9viWVleXFNB1vBa7oV5mNalHrcMMc=;
+        b=Ob8+ePIXEkT+R8HcZg6cZbb1xYZpXSP6JJLiZ1RmJGqRV3voR8l2jbM6gW608/BfAY
+         Wfz/P1mKkTY1Y/NyNKz06pGVy2/oV3kKjCmjNISyzDOf9zPAykl3rGcmYbGrBhuniD/+
+         Vnnvb9LLculrhXLAEmFSLW90Ia0TT/+k081KTa22Vb7wJK6muNXMPfkZ17sKPhV4FXkc
+         eEvoWhLbI1HJ1H9DlMLv6Z7akDA1SX0c/k4+SNRPlRjaov1dw2+tmugBFJxw1n7qnosg
+         zeNpHL1tv9liA8DUzUh7UH+dhHDraXPvHsvQUHQKFX3GG4AUVdUh3CLwOc23XoaSurP5
+         wjRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731970889; x=1732575689;
+        d=1e100.net; s=20230601; t=1731970890; x=1732575690;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=YFqjIC8plnN7ShAhD1wilwVRTqQH/DMgtflcfXOVYkY=;
-        b=eLX4NEEEfWhyKarZJeQY4q+uIuzUI2MbH3W3r5lfaz2p1w/SnfbDqBtVzsfBHFxUCS
-         g0XX+HZbpsBV8uGuTjtkQjZF3eQMPBtYMfG47OqSU5Y+g57WVnlmRNz/z5Q35W7oF8Ad
-         Hmz5d2+iAY7dtTR0C/wwXv+puSCkp5pShd8LmhP007ISB/K5YMz5w/dmC+bgy6+ipgXu
-         0SSU1qdmPBeMgMPl7AR0bhTRUt7vsk/Am8GAzHHrlFq2Lcewvs+N1Qnn5hvelettm1to
-         L7qpkEDw+oBCwvAtkh3gugYOsvQa9nXENVw5IOdHMGNKNqMHeK2gNNTWWL/XkQNROV3O
-         //Qw==
-X-Forwarded-Encrypted: i=1; AJvYcCVHJJMEAvDOIZ3mfl/5Q6ONqYIzS+uFssB2MkjKjQlPKsR3jpz0myFwQpXRclEpH5XliNSDfcZwvlrPl/A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOMyVa8DRymCLlbw3y/tKYOqicwRQrAatFYttFE4sZ3+U7pIeS
-	UpzrNbjPA4YaCE+kA/waREZYG+ULGEC9AeU/f2Kk6Y6gpg0WopUbUAg9Xcse/Q==
-X-Google-Smtp-Source: AGHT+IFvCHXxvHQVpV+bK5VdC3xSTjSvs5zHAHvFSeEEYYdE9811W5YkCAlHdEbeZSHxbdsnrW17KA==
-X-Received: by 2002:a05:6e02:1949:b0:3a0:5642:c78 with SMTP id e9e14a558f8ab-3a748082c35mr142193715ab.15.1731970888729;
-        Mon, 18 Nov 2024 15:01:28 -0800 (PST)
+        bh=PToKMxR8SXs7rV9viWVleXFNB1vBa7oV5mNalHrcMMc=;
+        b=pGtzgHckUfgWEMHz0T/ipJ4ZWrpBHcnX4eY2KwhmQnwYZwYWA1WRpuwGQmYXZGyBTD
+         NyboP3COksmAKNr95DR+ytE+k7xSXNEMUJL+USriPx0sAdRv7jliVjJT3onP9dTYRjjd
+         1XaRLbpHJfDveAx/y+vVSXtwDVIRGVl5sTUBDJAYEyLfQQfTR0sS5VqoyhgcLRqTI9kl
+         XoQy5Bud5pWkMZwWAFF6zo8TtCafRa7I3bmyiepySsOtGr3mT6BO8LWdt4mDiu6Ra74B
+         e0Mt/WnW1nDTSImgnbT39XXw/a0Z/RD6d3xcHmhq+dCg7+HMejDcBapxiYEtLAXIKEBe
+         qI3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCX3x6MlN4zo3W1xRvFdHNb4YH0u3CgeKDaQtd0ok5BIqc5bUE0MeO18uutoGjEw1DkIaWSC01xb2gzBMZY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyS7nQwwGmx84S0uc/yd241sSSvyPkOg32dgS0cuC7REJ0eKJB/
+	K67uuoqFsHvdmaXLfKlKsEMHIEfkP8aPsUzvvhSK+izOnrt2xPW43PPbrJ3lIQ==
+X-Google-Smtp-Source: AGHT+IEdKYZYKIfiFMuOvuSqJaFWovb+3yVp8wkhP6JmHG9WTJacACUFPkjQt/TtG4UdQbsLVQzgYQ==
+X-Received: by 2002:a05:620a:45a7:b0:7ad:832a:4063 with SMTP id af79cd13be357-7b36229a32fmr1994256685a.7.1731970890344;
+        Mon, 18 Nov 2024 15:01:30 -0800 (PST)
 Received: from aus-ird.local.tenstorrent.com ([38.104.49.66])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b37a897eebsm35344185a.94.2024.11.18.15.01.27
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b37a897eebsm35344185a.94.2024.11.18.15.01.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Nov 2024 15:01:27 -0800 (PST)
+        Mon, 18 Nov 2024 15:01:29 -0800 (PST)
 From: Cyril Bur <cyrilbur@tenstorrent.com>
 To: palmer@dabbelt.com,
 	aou@eecs.berkeley.edu,
@@ -73,9 +73,9 @@ To: palmer@dabbelt.com,
 Cc: linux-riscv@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	Jisheng Zhang <jszhang@kernel.org>
-Subject: [PATCH v2 1/4] riscv: implement user_access_begin and families
-Date: Mon, 18 Nov 2024 23:01:09 +0000
-Message-Id: <20241118230112.2872978-2-cyrilbur@tenstorrent.com>
+Subject: [PATCH v2 2/4] riscv: uaccess: use input constraints for ptr of __put_user
+Date: Mon, 18 Nov 2024 23:01:10 +0000
+Message-Id: <20241118230112.2872978-3-cyrilbur@tenstorrent.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20241118230112.2872978-1-cyrilbur@tenstorrent.com>
 References: <20241118230112.2872978-1-cyrilbur@tenstorrent.com>
@@ -89,102 +89,59 @@ Content-Transfer-Encoding: 8bit
 
 From: Jisheng Zhang <jszhang@kernel.org>
 
-Currently, when a function like strncpy_from_user() is called,
-the userspace access protection is disabled and enabled
-for every word read.
-
-By implementing user_access_begin and families, the protection
-is disabled at the beginning of the copy and enabled at the end.
-
-The __inttype macro is borrowed from x86 implementation.
+I believe the output constraints "=m" is not necessary, because
+the instruction itself is "write", we don't need the compiler
+to "write" for us. So tell compiler we read from memory instead
+of writing.
 
 Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
 Signed-off-by: Cyril Bur <cyrilbur@tenstorrent.com>
 ---
- arch/riscv/include/asm/uaccess.h | 63 ++++++++++++++++++++++++++++++++
- 1 file changed, 63 insertions(+)
+ arch/riscv/include/asm/uaccess.h | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
 diff --git a/arch/riscv/include/asm/uaccess.h b/arch/riscv/include/asm/uaccess.h
-index 72ec1d9bd3f3..09d4ca37522c 100644
+index 09d4ca37522c..84b084e388a7 100644
 --- a/arch/riscv/include/asm/uaccess.h
 +++ b/arch/riscv/include/asm/uaccess.h
-@@ -28,6 +28,19 @@
- #define __disable_user_access()							\
- 	__asm__ __volatile__ ("csrc sstatus, %0" : : "r" (SR_SUM) : "memory")
- 
-+/*
-+ * This is the smallest unsigned integer type that can fit a value
-+ * (up to 'long long')
-+ */
-+#define __inttype(x) __typeof__(		\
-+	__typefits(x,char,			\
-+	  __typefits(x,short,			\
-+	    __typefits(x,int,			\
-+	      __typefits(x,long,0ULL)))))
-+
-+#define __typefits(x,type,not) \
-+	__builtin_choose_expr(sizeof(x)<=sizeof(type),(unsigned type)0,not)
-+
- /*
-  * The exception table consists of pairs of addresses: the first is the
-  * address of an instruction that is allowed to fault, and the second is
-@@ -335,6 +348,56 @@ do {									\
- 		goto err_label;						\
+@@ -186,11 +186,11 @@ do {								\
+ 	__typeof__(*(ptr)) __x = x;				\
+ 	__asm__ __volatile__ (					\
+ 		"1:\n"						\
+-		"	" insn " %z2, %1\n"			\
++		"	" insn " %z1, %2\n"			\
+ 		"2:\n"						\
+ 		_ASM_EXTABLE_UACCESS_ERR(1b, 2b, %0)		\
+-		: "+r" (err), "=m" (*(ptr))			\
+-		: "rJ" (__x));					\
++		: "+r" (err)			\
++		: "rJ" (__x), "m"(*(ptr)));					\
  } while (0)
  
-+static __must_check __always_inline bool user_access_begin(const void __user *ptr, size_t len)
-+{
-+	if (unlikely(!access_ok(ptr,len)))
-+		return 0;
-+	__enable_user_access();
-+	return 1;
-+}
-+#define user_access_begin(a,b)	user_access_begin(a,b)
-+#define user_access_end()	__disable_user_access();
-+
-+static inline unsigned long user_access_save(void) { return 0UL; }
-+static inline void user_access_restore(unsigned long enabled) { }
-+
-+#define unsafe_put_user(x, ptr, label)	do {				\
-+	long __kr_err = 0;						\
-+	__put_user_nocheck(x, (ptr), __kr_err);				\
-+	if (__kr_err) goto label;					\
-+} while (0)
-+
-+#define unsafe_get_user(x, ptr, label)	do {				\
-+	long __kr_err = 0;						\
-+	__inttype(*(ptr)) __gu_val;					\
-+	__get_user_nocheck(__gu_val, (ptr), __kr_err);			\
-+	(x) = (__force __typeof__(*(ptr)))__gu_val;			\
-+	if (__kr_err) goto label;					\
-+} while (0)
-+
-+/*
-+ * We want the unsafe accessors to always be inlined and use
-+ * the error labels - thus the macro games.
-+ */
-+#define unsafe_copy_loop(dst, src, len, type, label)				\
-+	while (len >= sizeof(type)) {						\
-+		unsafe_put_user(*(type *)(src),(type __user *)(dst),label);	\
-+		dst += sizeof(type);						\
-+		src += sizeof(type);						\
-+		len -= sizeof(type);						\
-+	}
-+
-+#define unsafe_copy_to_user(_dst,_src,_len,label)			\
-+do {									\
-+	char __user *__ucu_dst = (_dst);				\
-+	const char *__ucu_src = (_src);					\
-+	size_t __ucu_len = (_len);					\
-+	unsafe_copy_loop(__ucu_dst, __ucu_src, __ucu_len, u64, label);	\
-+	unsafe_copy_loop(__ucu_dst, __ucu_src, __ucu_len, u32, label);	\
-+	unsafe_copy_loop(__ucu_dst, __ucu_src, __ucu_len, u16, label);	\
-+	unsafe_copy_loop(__ucu_dst, __ucu_src, __ucu_len, u8, label);	\
-+} while (0)
-+
- #else /* CONFIG_MMU */
- #include <asm-generic/uaccess.h>
- #endif /* CONFIG_MMU */
+ #ifdef CONFIG_64BIT
+@@ -203,16 +203,16 @@ do {								\
+ 	u64 __x = (__typeof__((x)-(x)))(x);			\
+ 	__asm__ __volatile__ (					\
+ 		"1:\n"						\
+-		"	sw %z3, %1\n"				\
++		"	sw %z1, %3\n"				\
+ 		"2:\n"						\
+-		"	sw %z4, %2\n"				\
++		"	sw %z2, %4\n"				\
+ 		"3:\n"						\
+ 		_ASM_EXTABLE_UACCESS_ERR(1b, 3b, %0)		\
+ 		_ASM_EXTABLE_UACCESS_ERR(2b, 3b, %0)		\
+-		: "+r" (err),					\
+-			"=m" (__ptr[__LSW]),			\
+-			"=m" (__ptr[__MSW])			\
+-		: "rJ" (__x), "rJ" (__x >> 32));		\
++		: "+r" (err)					\
++		: "rJ" (__x), "rJ" (__x >> 32),			\
++			"m" (__ptr[__LSW]),			\
++			"m" (__ptr[__MSW]));			\
+ } while (0)
+ #endif /* CONFIG_64BIT */
+ 
 -- 
 2.34.1
 
