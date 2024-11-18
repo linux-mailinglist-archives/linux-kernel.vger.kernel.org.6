@@ -1,92 +1,165 @@
-Return-Path: <linux-kernel+bounces-412304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FEB39D074B
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 01:40:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69EF49D074E
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 01:45:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47DB31F218E0
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 00:40:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28A97281B40
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 00:45:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74447C2F2;
-	Mon, 18 Nov 2024 00:40:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECDE58C07;
+	Mon, 18 Nov 2024 00:45:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ZsfWDZc/"
-Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LJsnzDH4"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB99453A7
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 00:39:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E99A5360;
+	Mon, 18 Nov 2024 00:45:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731890402; cv=none; b=QuEYblc9Tmu4Aj/Dr0cHboXvuGsMjgNfu/w/OVptqfEWxelINUCsTnvo2R1M8boaFyKZPtMuaCMhHp7Ynfb01HFWLm0MlMQOQJOTUmBnQ6L//nYrBU9LIULAANQTgxE+kWkT3mo0VuiNYUk2pAriTDVYVcAIX5sXgnNxhNO0DIw=
+	t=1731890726; cv=none; b=Ed9E0vIKG5WX4z7srtmFKqoYScIQ6ucDgkXbit5+h6w71ONIpEOHJ27FvZB0f7NwYtzMg0s30KfakfT59l5JuoTPuRDjDum8g+VQkYscf9pAfUP9HfiWdJuUho7baMKJdEBDe5vQESX9MqmbcJ9VgZqCUmzu9i+zdDdd60mRsiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731890402; c=relaxed/simple;
-	bh=4RF8roOPstTpy7twDEtnddURNg3Z9e4HWF5kkzLn7wA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B90Q9vsj+KDSdjtRlHqAlt/r1YtV2Pkf1KmIJLGYDrO/l/MJtwsNN0aX5QrKTafwVBsawRzpP+KzMseaI1itSiGN5jYcEhBedYGo8Cg0yiBEdgWqO/XWIkgoPh+/90SlmtCk26XCGxjogJUc3u0R6RnPnbZOdhDjSb8SiplaYTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ZsfWDZc/; arc=none smtp.client-ip=91.218.175.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Sun, 17 Nov 2024 19:39:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1731890397;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wlfDgOeR/Mb2TWDTd1i3WXtlzuMdvzFZ6f33zvNnJ4M=;
-	b=ZsfWDZc/J7TL00fbdlwBlvwiRkm8Le4ViwHNG0vyNlMV1iWtRkLn1UDrWv99Icn2NbReDN
-	VKFOiK4wkS+U+6cwrZ+ApYOlv8pk0KZoO6/S+HXualedPeVj7DT9kwiFcuDULcP0y+/plC
-	MqDGUQb7iRK+MJ1LjThTxODmcV4EhNg=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Piotr Zalewski <pZ010001011111@proton.me>
-Cc: syzbot <syzbot+62f5ae3a10a9e97accd4@syzkaller.appspotmail.com>, 
-	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [bcachefs?] KMSAN: uninit-value in
- bch2_btree_node_iter_init (2)
-Message-ID: <bazxq46aftvo7bv5st4tkpebntekbi6th42vcsgvguoafl3qvb@d3zygvbnkb6m>
-References: <6739af3b.050a0220.87769.0008.GAE@google.com>
- <TNxAApRrZdXR4QxAVnv4G3kjNaa0xFOi94VAboFOlyOtiAY8oIR8evv4ZHrrl2lPngndHbqKBWTpS_N8HlaFq0YfE-amWQBOPks6cXz3B-I=@proton.me>
+	s=arc-20240116; t=1731890726; c=relaxed/simple;
+	bh=kA1ByiXY5K+rLi2sj3wYU2ocSKz5rgoe8y46HvzPwAw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jGJqXh0bz2k/hFBTSYQpHm0d5d2/ynnJfhnND5Ch+VyCRedmR2ZTLFhZbfcBATnam15ar7CGEZPCowd1aLptBo5ccEZqiGp5j4uQWBET2lZT9pJ76sr1jtA+X84KBxIHyQrBRTGP/3JgL2ovR222VxYS2kFAu8B6e2E1nzOp0io=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LJsnzDH4; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-20c693b68f5so23713035ad.1;
+        Sun, 17 Nov 2024 16:45:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731890724; x=1732495524; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=IRX0VvHiJZKtt9cfwQ9mhCnJ4ZqP3u+/oVwNiKN8Xgs=;
+        b=LJsnzDH48Cu6SYZomkNFE1Fm7rwyptvnjIL4+Sct24ayN78ktFwV9v+VRHVZg84uVM
+         rrBNY1m1lgipH4omKwBNQgsxsVxuz5vD25m4f2CC6UrEr5DXFKtoHAHSCmeKQ5h3bCO6
+         2oemaA3XxUSP+xZyYqcDWIJoQ/h1qE39PahW5ra0oZebpkcqCl5hzDWSfgMB3f94264g
+         VKbdubmBNy4B2cQNYWc1Wol3aTCr6s4l4OIk4ljWhR3BIvcIkB/AZ4nX2Xdnr7pMUyHL
+         QJJAy7C5tBo/71iw9a+xM1ZgxyzjpabDgEmC0DfhG8OG8oy5iDqgSIdvhbsjDBO42gIb
+         cLag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731890724; x=1732495524;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IRX0VvHiJZKtt9cfwQ9mhCnJ4ZqP3u+/oVwNiKN8Xgs=;
+        b=CWdqviBW4W2sS0z10NC0YyAqO3BCIad2mXR20eWU7ZYycjdbTbq0JppiOt+8t9E6xx
+         2bd6vPKhEEtnPAE6p94hePN5hJw4axaAlIBZ0+qEATCtY7k4n/X6wLGObs2Ogmy64XFq
+         YkVX7o7MyloHQSNTZRhY5TvKaEUvkgFIyADq6etutJrRmlncOjIjEY2qC8xL0gPrrETs
+         NHLK/80BM/u2RBv56Hfl2u1RqzYvYCKRbLPDqjccslinKXD3/Z82TKuN6ucCIrRnUKzt
+         4jZyjyMRbxX6/SF+8IYccWU/8CzW6/7sZ9UrvKcBInOjzTq3HchoVdInA1NkjN+NzTC6
+         6wHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWGt7zOHiprE/yYbvUQ54U7R81DQl3ozqldhJYYVdyBp/cZoeJBHcDNxPwZHE3u49UKDRpltLPa@vger.kernel.org, AJvYcCWenQTLdekv9uzcwTyAM4s88KlNT+2vbvrk8JvsqQLanvspfSLCjApmtMhRhlsZBXyyDFZP0gIcjcWkM1k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjIWz227/RkT1gOsJ+vig7RbTsjL8t9ceKuvD5eCUomScfeFR4
+	O2eQwBPNETJefQyNfzOEHF24Kp+OTWag+NnpDVJBPlQueg/5P7+z
+X-Google-Smtp-Source: AGHT+IGOU+A5Ft/ye7AqGZPzV4VIl7z1rxYSR/mHQnn0ZjHcrJGHWCkjJQMp6jVGLMA3rHxeySMqTA==
+X-Received: by 2002:a17:902:e750:b0:20b:8ef3:67a with SMTP id d9443c01a7336-211d0d6ee87mr124722665ad.7.1731890724176;
+        Sun, 17 Nov 2024 16:45:24 -0800 (PST)
+Received: from harry-home.bne.opengear.com (122-151-100-51.dyn.ip.vocus.au. [122.151.100.51])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211d0dc31basm46031655ad.8.2024.11.17.16.45.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 17 Nov 2024 16:45:23 -0800 (PST)
+From: Qingtao Cao <qingtao.cao.au@gmail.com>
+X-Google-Original-From: Qingtao Cao <qingtao.cao@digi.com>
+To: 
+Cc: Qingtao Cao <qingtao.cao@digi.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next v1 1/1] net: mv643xx_eth: disable IP tx checksum with jumbo frames for Armada 310
+Date: Mon, 18 Nov 2024 10:45:09 +1000
+Message-Id: <20241118004509.200828-1-qingtao.cao@digi.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <TNxAApRrZdXR4QxAVnv4G3kjNaa0xFOi94VAboFOlyOtiAY8oIR8evv4ZHrrl2lPngndHbqKBWTpS_N8HlaFq0YfE-amWQBOPks6cXz3B-I=@proton.me>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-On Sun, Nov 17, 2024 at 11:51:39PM +0000, Piotr Zalewski wrote:
-> Hi, all
-> 
-> This seems to be the proper way to fix this?:
-> 
-> diff --git a/fs/bcachefs/btree_io.c b/fs/bcachefs/btree_io.c
-> index 89a42ee81e5c..f92a3fb946de 100644
-> --- a/fs/bcachefs/btree_io.c
-> +++ b/fs/bcachefs/btree_io.c
-> @@ -324,6 +324,7 @@ static void btree_node_sort(struct bch_fs *c, struct btree *b,
->  	start_time = local_clock();
->  
->  	u64s = bch2_sort_keys(out->keys.start, &sort_iter.iter);
-> +	memset((out->keys.start + u64s), 0, bytes - sizeof(struct btree_node) - u64s * sizeof(u64));
->  
->  	out->keys.u64s = cpu_to_le16(u64s);
+The Ethernet controller found in Armada 310 doesn't support TCP/IP checksum
+with frame sizes larger than its TX checksum offload limit
 
-Did you do any analysis you can share?
+When the path MTU is larger than this limit, the skb_warn_bad_offload will
+throw out a warning oops
 
-It seems like zeroing out the rest of the buffer shouldn't be necessary:
-we do that at write time, where it really is necessary, otherwise we
-shouldn't be accessing parts of the buffer that don't have valid keys in
-them.
+Disable the TX checksum offload (NETIF_F_IP_CSUM) when the MTU is set to a
+value larger than this limit, the NETIF_F_TSO will automatically be disabled
+as a result and the IP stack will calculate jumbo frames' checksum instead.
 
-varint_decode_fast, used for inodes, does do reads (that aren't used) up
-to 7 bytes past the valid data, so it could be needed if we were seeing
-kmsan splats there - but this is bkey comparison, so something fishy
-seems to be going on.
+Signed-off-by: Qingtao Cao <qingtao.cao@digi.com>
+---
+ drivers/net/ethernet/marvell/mv643xx_eth.c | 23 +++++++++++++++++++++-
+ 1 file changed, 22 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/marvell/mv643xx_eth.c b/drivers/net/ethernet/marvell/mv643xx_eth.c
+index 9e80899546d9..808877dd3549 100644
+--- a/drivers/net/ethernet/marvell/mv643xx_eth.c
++++ b/drivers/net/ethernet/marvell/mv643xx_eth.c
+@@ -2558,6 +2558,23 @@ static int mv643xx_eth_ioctl(struct net_device *dev, struct ifreq *ifr, int cmd)
+ 	return ret;
+ }
+ 
++static netdev_features_t mv643xx_eth_fix_features(struct net_device *dev,
++						  netdev_features_t features)
++{
++	struct mv643xx_eth_private *mp = netdev_priv(dev);
++
++	if (mp->shared->tx_csum_limit &&
++	    dev->mtu > mp->shared->tx_csum_limit) {
++		/* Kernel disables TSO when there is no TX checksum offload */
++		features &= ~NETIF_F_IP_CSUM;
++		netdev_info(dev,
++			    "Disable IP TX checksum and TSO offload for MTU > %dB\n",
++			    mp->shared->tx_csum_limit);
++	}
++
++	return features;
++}
++
+ static int mv643xx_eth_change_mtu(struct net_device *dev, int new_mtu)
+ {
+ 	struct mv643xx_eth_private *mp = netdev_priv(dev);
+@@ -2566,8 +2583,10 @@ static int mv643xx_eth_change_mtu(struct net_device *dev, int new_mtu)
+ 	mv643xx_eth_recalc_skb_size(mp);
+ 	tx_set_rate(mp, 1000000000, 16777216);
+ 
+-	if (!netif_running(dev))
++	if (!netif_running(dev)) {
++		netdev_update_features(dev);
+ 		return 0;
++	}
+ 
+ 	/*
+ 	 * Stop and then re-open the interface. This will allocate RX
+@@ -2581,6 +2600,7 @@ static int mv643xx_eth_change_mtu(struct net_device *dev, int new_mtu)
+ 			   "fatal error on re-opening device after MTU change\n");
+ 	}
+ 
++	netdev_update_features(dev);
+ 	return 0;
+ }
+ 
+@@ -3079,6 +3099,7 @@ static const struct net_device_ops mv643xx_eth_netdev_ops = {
+ 	.ndo_set_mac_address	= mv643xx_eth_set_mac_address,
+ 	.ndo_validate_addr	= eth_validate_addr,
+ 	.ndo_eth_ioctl		= mv643xx_eth_ioctl,
++	.ndo_fix_features       = mv643xx_eth_fix_features,
+ 	.ndo_change_mtu		= mv643xx_eth_change_mtu,
+ 	.ndo_set_features	= mv643xx_eth_set_features,
+ 	.ndo_tx_timeout		= mv643xx_eth_tx_timeout,
+-- 
+2.34.1
+
 
