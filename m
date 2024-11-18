@@ -1,140 +1,176 @@
-Return-Path: <linux-kernel+bounces-412844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D8369D0FE9
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 12:43:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EED009D0FEC
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 12:44:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A9031F22F3E
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:43:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B42072832A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:44:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06BC519924D;
-	Mon, 18 Nov 2024 11:43:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A2E41990AD;
+	Mon, 18 Nov 2024 11:44:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U5znzDYc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="OzVNxIiz"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5657618B47E;
-	Mon, 18 Nov 2024 11:43:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3CD0188A0D;
+	Mon, 18 Nov 2024 11:43:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731930183; cv=none; b=hOiqZQY9llHpn/SPSbC8hgy6gwLe2o+caPGTyRpkwNEfJ34kXUIhjntPdSgF0mqpBPyTdirWyZyqaFd/8qiMK/a01PMaBkv6Wow4RVLlvthPHFJu27HU9uC5vrXFWuBuUQNx5wWiwxn4NNQJ6U2PerJKS4arj/2rcC/dBAdJhHA=
+	t=1731930239; cv=none; b=mVb/u2NOLS9QYZjGFbm7dIMVGDm2ttaZVnndYNHjTrf8/mWjAkhwK+kqY9/KmBWFDULz7p4lVzcPIlrlg4V786wasAyz4/XsNX0NWM9BQ+Q25AiUlQwzJ3O6rPcsHw+e1OdsT8BATEcdfOaIMBxco2vF5yXfm/MhwtHAoBw4LHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731930183; c=relaxed/simple;
-	bh=1Mu1Oe4up2k7/Ym+0BclLRPliMzcmd4nehsjMkkiK+4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SkpC6zcLndqvMj+cuKRCXo/BKLPe/l2M7yw+mfZ6HHhqQFIE8261tXujIjvaQEdyJn8tv74wB3TCMr+UilcAGqIGMhQRC+6gaola4svQ9EXWf/Yi6/PMgkqrkV5LQI/+awgiyMIivpCSAzidCfO14zIL2HTLIV5d8V5cTak1r10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U5znzDYc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D219C4CECC;
-	Mon, 18 Nov 2024 11:43:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731930182;
-	bh=1Mu1Oe4up2k7/Ym+0BclLRPliMzcmd4nehsjMkkiK+4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=U5znzDYcfP7e/PkaQyn1TGyrHDIDHQVZ4sMoTAWqMVz7weOcUZOtx6BsHL362pNaF
-	 qSU0Cxnwls+yj0MtELD6fjB7C2Kegp4uhxQnIaf5MOlggl4P3OPXzQ7iW0uhZAID4T
-	 dJV2z9oQ8nLoUEL/wUYzQ0cCcgTrySqH32vYAw6yIf1zuLXofm2G0TQ1krRUglscwm
-	 phtgPlk3JnODOUB5S0m1R04UjvsFZgz9bErEW929ZXpOqci73BYvHq+E1y6/8ZNlvt
-	 zXiH3qIh8JKqbdfM7oUTjWQ0Z9Vx+UKjVm8y0WBViPRxRJY4mY+Bq0cfK2atH920wv
-	 15XlMts+gMx5w==
-Date: Mon, 18 Nov 2024 12:42:58 +0100
-From: Niklas Cassel <cassel@kernel.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Damien Le Moal <dlemoal@kernel.org>, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, linux-ide@vger.kernel.org
-Subject: Re: [PATCH] ata: Constify struct pci_device_id
-Message-ID: <ZzsoQlOaDP4FJ8G-@ryzen>
-References: <8bddfee7f6f0f90eeb6da7156e30ab3bd553deb1.1731704917.git.christophe.jaillet@wanadoo.fr>
+	s=arc-20240116; t=1731930239; c=relaxed/simple;
+	bh=TwKBlDPWto5qUMoY6Ex07TeBDc1LB+82jYTKWT+EUOc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=kZmoo+6QnjdhJ3rOa7DK8OUgNekkuSYayQpK0Z2By2Pmuv7nJAJxhHAds3Fou2+6xZlovyzJseFuDo8JmhI0kRTvF57yFVfXR1269OBsFBTr44cmPd4BAYC5KOwF75jKjzD9q0qB3i3M4RxgmP2wDWS4u51p0/pkyzE5x7A67Go=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=OzVNxIiz; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 0D1B440E015F;
+	Mon, 18 Nov 2024 11:43:52 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 2DULiPkMLEzc; Mon, 18 Nov 2024 11:43:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1731930227; bh=5utdCM8Zl8kLwYkNyCmXrpE9uKkf1ZAvCdSEtJSzNKQ=;
+	h=Date:From:To:Cc:Subject:From;
+	b=OzVNxIizEInNjKjgUXLR/6LKDh8awijG+7prSh37p/dCD9eimAbJUbmIac0X7qq2N
+	 8Y2KXFf/nrvGUgPxTDk71kwCjlufBmwSURVlCv8q+jLnUpdcOAFMKcF4vVTDkv6t2v
+	 thlcJLkUo3uKKtvt/W0NE/aMMn9gFrysbIBG0C/IEv5BXKIJkU8URtEialRMdLzh6S
+	 0vKZSJoAT00jfW9AXJiL1jwT/8W24EmXd941BgUvl8XHcB2YheIujeeiwMP8KukrOE
+	 5aUibfTWcMepheiv33H7SobFhzLiFUUsrnx9Pkh2JoVJlI5W4+X/HfMPEQ2kNHTS1r
+	 Q6UwyNFzlGFeqIIrlFvG4qf0ZCd62PfBiDsksNtJp6msyBR9Me77XpGHwJOs6C9jM0
+	 tZAD6OQEN3f7hjXL6/ySvkQpAtMIOudIUnZxvQdM+wkKGvGqR5IUGa54hfIlfjfJe3
+	 5xGyzaZzJgYAKyQjCB8eKxW+8ga6Ow07SBAxopLEifmFmEt5+RyhgBtLHXARFNX6wU
+	 3X8wVFiibfGsvADWkrFPs1peKvgkQ9+ERSljRbCUQw1VfersfjJdvF+/2dgaGRjMiD
+	 4AiG38CbsZWaMVDEPYxConzvEX+pE4DqFv/U7ZRnUS5p+pQMo+D/0La/3tRd9Huzmx
+	 yKo+iosQGdm+u/K24XFUDqyU=
+Received: from zn.tnic (pd9530b86.dip0.t-ipconnect.de [217.83.11.134])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 94ADC40E019C;
+	Mon, 18 Nov 2024 11:43:44 +0000 (UTC)
+Date: Mon, 18 Nov 2024 12:43:43 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-edac <linux-edac@vger.kernel.org>,
+	lkml <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] EDAC updates for v6.13
+Message-ID: <20241118114343.GAZzsob_d_C5sYNHUn@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <8bddfee7f6f0f90eeb6da7156e30ab3bd553deb1.1731704917.git.christophe.jaillet@wanadoo.fr>
 
-On Fri, Nov 15, 2024 at 10:08:55PM +0100, Christophe JAILLET wrote:
-> 'struct pci_device_id' is not modified in these drivers.
-> 
-> Constifying this structure moves some data to a read-only section, so
-> increase overall security.
-> 
-> On a x86_64, with allmodconfig, as an example:
-> Before:
-> ======
->    text	   data	    bss	    dec	    hex	filename
->    4245	   1454	      4	   5703	   1647	drivers/ata/ata_generic.o
-> 
-> After:
-> =====
->    text	   data	    bss	    dec	    hex	filename
->    4725	    974	      4	   5703	   1647	drivers/ata/ata_generic.o
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Compile tested-only.
-> ---
-> ---
->  drivers/ata/ata_generic.c  | 2 +-
->  drivers/ata/pata_atp867x.c | 2 +-
->  drivers/ata/pata_piccolo.c | 2 +-
->  3 files changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/ata/ata_generic.c b/drivers/ata/ata_generic.c
-> index 2f57ec00ab82..e70b6c089cf1 100644
-> --- a/drivers/ata/ata_generic.c
-> +++ b/drivers/ata/ata_generic.c
-> @@ -209,7 +209,7 @@ static int ata_generic_init_one(struct pci_dev *dev, const struct pci_device_id
->  	return ata_pci_bmdma_init_one(dev, ppi, &generic_sht, (void *)id, 0);
->  }
->  
-> -static struct pci_device_id ata_generic[] = {
-> +static const struct pci_device_id ata_generic[] = {
->  	{ PCI_DEVICE(PCI_VENDOR_ID_PCTECH, PCI_DEVICE_ID_PCTECH_SAMURAI_IDE), },
->  	{ PCI_DEVICE(PCI_VENDOR_ID_HOLTEK, PCI_DEVICE_ID_HOLTEK_6565), },
->  	{ PCI_DEVICE(PCI_VENDOR_ID_UMC,    PCI_DEVICE_ID_UMC_UM8673F), },
-> diff --git a/drivers/ata/pata_atp867x.c b/drivers/ata/pata_atp867x.c
-> index aaef5924f636..308f86f9e2f0 100644
-> --- a/drivers/ata/pata_atp867x.c
-> +++ b/drivers/ata/pata_atp867x.c
-> @@ -525,7 +525,7 @@ static int atp867x_reinit_one(struct pci_dev *pdev)
->  }
->  #endif
->  
-> -static struct pci_device_id atp867x_pci_tbl[] = {
-> +static const struct pci_device_id atp867x_pci_tbl[] = {
->  	{ PCI_VDEVICE(ARTOP, PCI_DEVICE_ID_ARTOP_ATP867A),	0 },
->  	{ PCI_VDEVICE(ARTOP, PCI_DEVICE_ID_ARTOP_ATP867B),	0 },
->  	{ },
-> diff --git a/drivers/ata/pata_piccolo.c b/drivers/ata/pata_piccolo.c
-> index ced906bf56be..beb53bd990be 100644
-> --- a/drivers/ata/pata_piccolo.c
-> +++ b/drivers/ata/pata_piccolo.c
-> @@ -97,7 +97,7 @@ static int ata_tosh_init_one(struct pci_dev *dev, const struct pci_device_id *id
->  	return ata_pci_bmdma_init_one(dev, ppi, &tosh_sht, NULL, 0);
->  }
->  
-> -static struct pci_device_id ata_tosh[] = {
-> +static const struct pci_device_id ata_tosh[] = {
->  	{ PCI_DEVICE(PCI_VENDOR_ID_TOSHIBA,PCI_DEVICE_ID_TOSHIBA_PICCOLO_1), },
->  	{ PCI_DEVICE(PCI_VENDOR_ID_TOSHIBA,PCI_DEVICE_ID_TOSHIBA_PICCOLO_2),  },
->  	{ PCI_DEVICE(PCI_VENDOR_ID_TOSHIBA,PCI_DEVICE_ID_TOSHIBA_PICCOLO_3),  },
-> -- 
-> 2.47.0
-> 
+Hi Linus,
 
-Looks good to me:
-Reviewed-by: Niklas Cassel <cassel@kernel.org>
+please pull the EDAC pile for v6.13.
 
-However, since we are in the middle of the merge window, expect to wait
-until 6.13-rc1 is out until this is picked up.
+Thx.
+
+---
+
+The following changes since commit 42f7652d3eb527d03665b09edac47f85fb600924:
+
+  Linux 6.12-rc4 (2024-10-20 15:19:38 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/ras/ras.git tags/edac_updates_for_v6.13
+
+for you to fetch changes up to 1b38da0115598e30cc7cdd84761fc427c18b281f:
+
+  Merge branch 'edac-misc' into edac-updates (2024-11-18 11:33:23 +0100)
+
+----------------------------------------------------------------
+- Add support for Bluefield-2 SOCs to bluefield_edac
+
+- Add support for Intel Panther Lake-H to igen6_edac
+
+- Add polling support to igen6_edac as some Intel M100 chips have trouble with
+  error interrupts
+
+- Add Kaby Lake-S support to ie31200_edac
+
+- Fix memory source detection in the SKX common module which is used by
+  a couple of Intel EDAC drivers
+
+- Add support for the NXP i.MX9 memory controller to fsl_edac
+
+- The usual fixes and cleanups all over the place
+
+----------------------------------------------------------------
+Borislav Petkov (AMD) (1):
+      Merge branch 'edac-misc' into edac-updates
+
+David Thompson (2):
+      EDAC/bluefield: Fix potential integer overflow
+      EDAC/bluefield: Use Arm SMC for EMI access on BlueField-2
+
+Frank Li (3):
+      EDAC/fsl_ddr: Pass down fsl_mc_pdata in ddr_in32() and ddr_out32()
+      EDAC/fsl_ddr: Move global variables into struct fsl_mc_pdata
+      dt-bindings: memory: fsl: Add compatible string nxp,imx9-memory-controller
+
+James Ye (1):
+      EDAC/ie31200: Add Kaby Lake-S dual-core host bridge ID
+
+Krzysztof Kozlowski (1):
+      MAINTAINERS: Change FSL DDR EDAC maintainership
+
+Lili Li (1):
+      EDAC/igen6: Add Intel Panther Lake-H SoCs support
+
+Orange Kao (2):
+      EDAC/igen6: Avoid segmentation fault on module unload
+      EDAC/igen6: Add polling support
+
+Priyanka Singh (1):
+      EDAC/fsl_ddr: Fix bad bit shift operations
+
+Qiuxu Zhuo (3):
+      EDAC/skx_common: Differentiate memory error sources
+      EDAC/{skx_common,i10nm}: Fix incorrect far-memory error source indicator
+      EDAC/igen6: Initialize edac_op_state according to the configuration data
+
+Yazen Ghannam (1):
+      RAS/AMD/ATL: Add debug prints for DF register reads
+
+Ye Li (1):
+      EDAC/fsl_ddr: Add support for i.MX9 DDR controller
+
+ CREDITS                                            |   4 +
+ .../bindings/memory-controllers/fsl/fsl,ddr.yaml   |  31 +++-
+ MAINTAINERS                                        |   3 +-
+ drivers/edac/bluefield_edac.c                      | 170 ++++++++++++++++++---
+ drivers/edac/fsl_ddr_edac.c                        | 141 +++++++++++------
+ drivers/edac/fsl_ddr_edac.h                        |  13 ++
+ drivers/edac/i10nm_base.c                          |   1 +
+ drivers/edac/ie31200_edac.c                        |   8 +-
+ drivers/edac/igen6_edac.c                          |  49 +++++-
+ drivers/edac/layerscape_edac.c                     |   1 +
+ drivers/edac/skx_common.c                          |  57 ++++---
+ drivers/edac/skx_common.h                          |   8 +
+ drivers/ras/amd/atl/access.c                       |   8 +-
+ 13 files changed, 398 insertions(+), 96 deletions(-)
 
 
-Kind regards,
-Niklas
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
