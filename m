@@ -1,148 +1,168 @@
-Return-Path: <linux-kernel+bounces-412985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49B4F9D120D
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 14:37:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C4749D115B
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 14:06:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23D63B2BED1
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 13:34:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6315283DF1
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 13:06:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E19C91C1F11;
-	Mon, 18 Nov 2024 13:29:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F9141AC43E;
+	Mon, 18 Nov 2024 13:03:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=imgtec.com header.i=@imgtec.com header.b="OZFkp+kf"
-Received: from mx07-00376f01.pphosted.com (mx07-00376f01.pphosted.com [185.132.180.163])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ixSaVm8A"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB0361BCA0C;
-	Mon, 18 Nov 2024 13:29:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.180.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FD421AA1D0
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 13:03:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731936598; cv=none; b=XSMbPxLFZT6pilY+WQ/9jiQ4DRCoS9PlMsw6zRtEwOMk7voiejsPrNS4mSrBWIK+/pJockBPTUkguteHFmt/MLhNmAnIL9iAX5ciyPJY5//Lv5Iq1AFnDeJ0764FMR6deH0M40Q5v3dprjb8IuOnzww4Y0AN7niuk1d23TJspaM=
+	t=1731935000; cv=none; b=ir0AjJcmgvXnNu4Kq16Ibza/GO/AgUDm78scHf8nIHnwG/KuTqex4b2GbZAFH7dAae/vmGkWRDo1y3QpCjmBOzDN2/xHkBYahJl7B5UGBiiyS4Ms8Ai/3xE2uIw4Aw448KMEy0yAjA7g80V5eHp0No64x0uVQu/rGCytgJqZU2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731936598; c=relaxed/simple;
-	bh=Ntq50dzXPF1u84iPH0ii+gq7ncmvQWESeBQmF/KzVcI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=u5lG88G9Q6rS3MF+sQs7tOCkeXq6drh7jOVoLFxPGPIeR5CpJUdQTO77xzMjcfNvYRltSMWu7Vv7WfNF9nGNc1LPdYyXnlildN9FEsHt+CiyiKbW8V+45q4E3svBjFwhPWou17ZZnWEgYr4IX7gj2Aq3CkKHB75GgA3Lq/z3CIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=imgtec.com; spf=pass smtp.mailfrom=imgtec.com; dkim=pass (2048-bit key) header.d=imgtec.com header.i=@imgtec.com header.b=OZFkp+kf; arc=none smtp.client-ip=185.132.180.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=imgtec.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=imgtec.com
-Received: from pps.filterd (m0168889.ppops.net [127.0.0.1])
-	by mx07-00376f01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AICK2Aq027968;
-	Mon, 18 Nov 2024 13:02:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=imgtec.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=dk201812; bh=B
-	o2I2ESRILj0OhfqmXY+0n+Gsl8OPjyRH9ZU4sJ6oz4=; b=OZFkp+kfOQxXDgAhN
-	HZIOkJDXoWcnpcIhPOOoCxKEED292Uk8inMLkybmBOyTPKrnwekjL1ZOZtaIquiY
-	fnQZfXxBPUK4GMvEOrsbt9ns7IKq7sEgb4JgwIvqSqiLP3Fb0aOaNmQuL5W6axh5
-	Ufbq1dRor35SmEvzYjsWYARdP10JGbZwDvAaYoutF41qrhPjTzEloESbvyUg1qxA
-	18ihrtUdOgzc12ThWI2P4g6zKIFbztC9qvOjIolZZI3AaqkbZ5Im8sxSnbRDQ4ky
-	VNk+UoCW5aAeUAn+QhK9h4FcRmtH6nsMTcY5JmBQBpadVWm9ek+NmTUUdp4Pb5Rt
-	/FUOA==
-Received: from hhmail05.hh.imgtec.org (83-244-153-141.cust-83.exponential-e.net [83.244.153.141])
-	by mx07-00376f01.pphosted.com (PPS) with ESMTPS id 42xmc1hmj6-5
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Mon, 18 Nov 2024 13:02:46 +0000 (GMT)
-Received: from
- 1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.ip6.arpa
- (172.25.16.114) by HHMAIL05.hh.imgtec.org (10.100.10.120) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.37; Mon, 18 Nov 2024 13:02:45 +0000
-From: Matt Coster <matt.coster@imgtec.com>
-Date: Mon, 18 Nov 2024 13:02:13 +0000
-Subject: [PATCH v2 21/21] arm64: dts: ti: k3-j721s2: Add GPU node
+	s=arc-20240116; t=1731935000; c=relaxed/simple;
+	bh=4S1yj6D8n9xTzysddADwluvLVjQoCCuayJpjFaeuwUM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uZg+zW2089wQqVb3tbnJdni+sRnQ/Mbq/spoTansTypuN6yA8z7FCVS7PsAHoKXuB3iB9r7VhW5cpnWCjTEw4shl84gS4Xvk4ha4mpEho8bstT26z/UW5b4ANPUS7kDHeaK/IzxBg/JwmrDKNPHOSwsrji9F45epRyF4wIAUerc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ixSaVm8A; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-53c779ef19cso3636340e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 05:03:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731934996; x=1732539796; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=qPQYHCecUB6gZDvxkmvxtfaY7PsTEfXFdnw9uFXrBvQ=;
+        b=ixSaVm8AeFJteBNBLM4yKL6LsNrayKaccabwRNwkK7wtWOwTQYEvwC5ViWBhIQQLXR
+         aJcT3wB9YgnJmx/C4gIWryk4iu7/e4e5kh8LQz95/OFL0vLdTJRu81OWO8BfQiifjlQN
+         jgzjEDkgPOLdLu6iROc4bQEDAmoCrGypcdnemnt3ErSCWL3Hl+epOT1/dHTsrV4vNXrk
+         4o0UoA4fRUer/k/IpEzxpGlqrnOEkI13KMeGS4MCpSFYwjHaVsD4diqftDpuqfeyc1cf
+         N0VDKx+aHXGd0sbkGDvi5RRieCClNTFhu8+yrwhqs7gD4FTBux53t5Of0LpIrnJCguLT
+         dlxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731934996; x=1732539796;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qPQYHCecUB6gZDvxkmvxtfaY7PsTEfXFdnw9uFXrBvQ=;
+        b=oR92mSITp2wtzNIkh2vy6jHj6WTgx9G2mGIozAIhyT8y24Ns/fRAUDf9UcYbIvDokh
+         /5nePckyiUGA25h2sGEVl1jf6Gp0QlzwDL/GKy8tSpOkXHRzVJhUvN7tgwkXCyws+i5V
+         JqPOIy+YPcKRrFEoZz31+zORIIKG73E6F6NjfP0qxhmrNtXDJG2V2JyU3f7XMx2rtl9L
+         Cc78VEBan4sOt4bwM4FGQwxMPW4zr6CJWrcNUTJMPfNsbb+26bWrVdeJKXgb+6yXoQ7G
+         uAc8G4gqs5fKjROag2DJLX2iwBtok9cfC77tCgDiE2UiWePU89yUkwpVW+EalF8FMR/f
+         1uxA==
+X-Forwarded-Encrypted: i=1; AJvYcCVZc9bJACD+aaakurjIaboSwSz9jLpMWtTCMIH4WMhEWq3qNYr6Tbr01hVwpBQrzPfoLvUya79ej2QNpbM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxxa4QjlT4npQxY79lVt61bZf2SJkVgchAkV1gql6NWwnwiVchk
+	smR0fMYDl07RQcaYSgX6kWpDrfJgmjS9au7MRDZaxYi2kGKo9n719DG8uXg1QAY=
+X-Google-Smtp-Source: AGHT+IHCtcPfqdDo63JVjFZLu6nUCmFGqB7Ru0IT9/fdlLVlgUtoxdVwZ+BrziK8/If7+6YhMMbKgg==
+X-Received: by 2002:a05:6512:2350:b0:539:9f52:9e4 with SMTP id 2adb3069b0e04-53dab3bfb25mr4119393e87.48.1731934996192;
+        Mon, 18 Nov 2024 05:03:16 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53da64f2ba8sm1587542e87.6.2024.11.18.05.03.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Nov 2024 05:03:14 -0800 (PST)
+Date: Mon, 18 Nov 2024 15:03:12 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] clk: qcom: common: Add support for power-domain
+ attachment
+Message-ID: <xtah7t5fvixbvuukkzthvq7p7crmwujqxnuuvddihzibxkqlyt@bxzvdwkigf6k>
+References: <20241118-b4-linux-next-24-11-18-clock-multiple-power-domains-v1-0-b7a2bd82ba37@linaro.org>
+ <20241118-b4-linux-next-24-11-18-clock-multiple-power-domains-v1-1-b7a2bd82ba37@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20241118-sets-bxs-4-64-patch-v1-v2-21-3fd45d9fb0cf@imgtec.com>
-References: <20241118-sets-bxs-4-64-patch-v1-v2-0-3fd45d9fb0cf@imgtec.com>
-In-Reply-To: <20241118-sets-bxs-4-64-patch-v1-v2-0-3fd45d9fb0cf@imgtec.com>
-To: Frank Binns <frank.binns@imgtec.com>,
-        Matt Coster
-	<matt.coster@imgtec.com>,
-        David Airlie <airlied@gmail.com>, Simona Vetter
-	<simona@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>,
-        "Vignesh
- Raghavendra" <vigneshr@ti.com>,
-        Tero Kristo <kristo@kernel.org>
-CC: <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        Randolph Sapp <rs@ti.com>, Darren Etheridge <detheridge@ti.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1741;
- i=matt.coster@imgtec.com; h=from:subject:message-id;
- bh=Ntq50dzXPF1u84iPH0ii+gq7ncmvQWESeBQmF/KzVcI=;
- b=owGbwMvMwCFWuUfy8817WRsYT6slMaRbWz2btX9to+2i67x3vJyCXPg61z4sFS810jhWrNvyT
- DL0zvJFHaUsDGIcDLJiiiw7VliuUPujpiVx41cxzBxWJpAhDFycAjCRKgWG/1mFuvzdj1vKHF+n
- vdV5/WNm6U+RvVe8pOP7uNMjP/s69DMyXGWKcpa/1ubv5zVDa7tOqtizHWu3rFRrlxCIe+mVUXS
- GAQA=
-X-Developer-Key: i=matt.coster@imgtec.com; a=openpgp;
- fpr=05A40CFCE7269D61D97100A1747F0A9036F90DFA
-X-EXCLAIMER-MD-CONFIG: 15a78312-3e47-46eb-9010-2e54d84a9631
-X-Proofpoint-ORIG-GUID: y9THFNVnkJv49gUP9ineJIyRJ3fKU6fj
-X-Authority-Analysis: v=2.4 cv=E4efprdl c=1 sm=1 tr=0 ts=673b3af6 cx=c_pps a=AKOq//PuzOIrVTIF9yBwbA==:117 a=AKOq//PuzOIrVTIF9yBwbA==:17 a=hzDjp0mCheYA:10 a=IkcTkHD0fZMA:10 a=VlfZXiiP6vEA:10 a=sozttTNsAAAA:8 a=VwQbUJbxAAAA:8 a=r_1tXGB3AAAA:8
- a=rLJv8WYccUdZFC7c5UsA:9 a=QEXdDO2ut3YA:10 a=S-JV1fTmrHgA:10 a=j2-svP0xy3wA:10 a=t8nPyN_e6usw4ciXM-Pk:22
-X-Proofpoint-GUID: y9THFNVnkJv49gUP9ineJIyRJ3fKU6fj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241118-b4-linux-next-24-11-18-clock-multiple-power-domains-v1-1-b7a2bd82ba37@linaro.org>
 
-The J721S2 binding is based on the TI downstream binding in 54b0f2a00d92
-("arm64: dts: ti: k3-j721s2-main: add gpu node") from [1] but with updated
-compatible strings.
+On Mon, Nov 18, 2024 at 02:24:32AM +0000, Bryan O'Donoghue wrote:
+> Right now we have a plethora of singleton power-domains which power clock
+> controllers. These singletons are switched on by core logic when we probe
+> the clocks.
+> 
+> However when multiple power-domains are attached to a clock controller that
+> list of power-domains needs to be managed outside of core logic.
+> 
+> Use dev_pm_domain_attach_list() to automatically hook the list of given
+> power-domains in the dtsi for the clock being registered in
+> qcom_cc_really_probe().
+> 
+> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> ---
+>  drivers/clk/qcom/common.c | 24 ++++++++++++++++++++++++
+>  1 file changed, 24 insertions(+)
+> 
+> diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
+> index 33cc1f73c69d1f875a193aea0552902268dc8716..b4377fa09f7c0ec8d3c63dfc97d04fbb8cd6e10b 100644
+> --- a/drivers/clk/qcom/common.c
+> +++ b/drivers/clk/qcom/common.c
+> @@ -22,6 +22,7 @@ struct qcom_cc {
+>  	struct qcom_reset_controller reset;
+>  	struct clk_regmap **rclks;
+>  	size_t num_rclks;
+> +	struct dev_pm_domain_list *pd_list;
+>  };
+>  
+>  const
+> @@ -283,6 +284,25 @@ static int qcom_cc_icc_register(struct device *dev,
+>  						     desc->num_icc_hws, icd);
+>  }
+>  
+> +static int qcom_cc_pds_attach(struct device *dev, struct qcom_cc *cc)
+> +{
+> +	struct dev_pm_domain_attach_data pd_data = {
+> +		.pd_names = 0,
+> +		.num_pd_names = 0,
+> +	};
+> +	int ret;
+> +
+> +	/* Only one power-domain platform framework will hook it up */
+> +	if (dev->pm_domain)
+> +		return 0;
+> +
+> +	ret = dev_pm_domain_attach_list(dev, &pd_data, &cc->pd_list);
+> +	if (ret < 0)
+> +		return ret;
 
-The clock[2] and power[3] indices were verified from docs, but the
-source of the interrupt index remains elusive.
+I don't think it is enough to just attach to power domains. We also need
+to power on some of them (MMCX) in order to be able to access clock
+controller registers.
 
-References for indices: clocks[1], interrupts[2], power[3].
-
-[1]: https://git.ti.com/cgit/ti-linux-kernel/ti-linux-kernel
-[2]: https://downloads.ti.com/tisci/esd/latest/5_soc_doc/j721s2/clocks.html
-[3]: https://downloads.ti.com/tisci/esd/latest/5_soc_doc/j721s2/devices.html
-
-Signed-off-by: Matt Coster <matt.coster@imgtec.com>
----
-Changes in v2:
-- Use normal reg syntax for 64-bit values
-- Link to v1: https://lore.kernel.org/r/20241105-sets-bxs-4-64-patch-v1-v1-21-4ed30e865892@imgtec.com
----
- arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi b/arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi
-index 9ed6949b40e9dfafdaf6861944b0b128b053a44f..9adc2c704ba4b38d1a0e7c9ded035fe79630451d 100644
---- a/arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi
-@@ -2047,4 +2047,16 @@ watchdog8: watchdog@23f0000 {
- 		/* reserved for MAIN_R5F1_1 */
- 		status = "reserved";
- 	};
-+
-+	gpu: gpu@4e20000000 {
-+		compatible = "ti,j721s2-gpu", "img,img-bxs-4-64", "img,img-rogue";
-+		reg = <0x4e 0x20000000 0x00 0x80000>;
-+		clocks = <&k3_clks 130 1>;
-+		clock-names = "core";
-+		interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
-+		power-domains = <&k3_pds 130 TI_SCI_PD_EXCLUSIVE>,
-+				<&k3_pds 373 TI_SCI_PD_EXCLUSIVE>;
-+		power-domain-names = "a", "b";
-+		dma-coherent;
-+	};
- };
+> +
+> +	return 0;
+> +}
+> +
+>  int qcom_cc_really_probe(struct device *dev,
+>  			 const struct qcom_cc_desc *desc, struct regmap *regmap)
+>  {
+> @@ -299,6 +319,10 @@ int qcom_cc_really_probe(struct device *dev,
+>  	if (!cc)
+>  		return -ENOMEM;
+>  
+> +	ret = qcom_cc_pds_attach(dev, cc);
+> +	if (ret)
+> +		return ret;
+> +
+>  	reset = &cc->reset;
+>  	reset->rcdev.of_node = dev->of_node;
+>  	reset->rcdev.ops = &qcom_reset_ops;
+> 
+> -- 
+> 2.45.2
+> 
 
 -- 
-2.47.0
-
+With best wishes
+Dmitry
 
