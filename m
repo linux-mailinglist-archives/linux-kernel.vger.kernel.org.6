@@ -1,89 +1,149 @@
-Return-Path: <linux-kernel+bounces-413061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE5D69D12E0
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 15:22:49 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BD009D12E1
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 15:22:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7420B2835C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 14:22:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72E50B2AAD6
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 14:15:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 185191BD9CA;
-	Mon, 18 Nov 2024 14:20:41 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5FF41A08BC;
+	Mon, 18 Nov 2024 14:14:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DbvXGSlZ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA5661AF0A5;
-	Mon, 18 Nov 2024 14:20:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2133719C54B;
+	Mon, 18 Nov 2024 14:14:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731939640; cv=none; b=TZB/oVfZ6oRSq4VhEy3lrRyUvCBkd3y4KJdWj0YfnKSNxxF9iaN0up5r67+69rbMt20iNJsrGd+6Wl8DCL68+eUPpq3nIGDwCy/I5IXXWGlvxvsxt2Hghar3hrE/djRFmQIEAsR8nkRbZK3XnpR1N0oCEo/AEzMcjHTVK3qhcow=
+	t=1731939298; cv=none; b=gkvWpxu4RKf7SDXIdg1/il4nzY/K64u2FlqmImE1CPx30CqJaWYH3JFSNM94a/0+oCnkj1Up9ThNGigNR5f2RxpXzsKKS0AxwP8ovqPrXAdmDI1ve7GemQ0oZSHtNXiWqFPVSt492A1d760E+RqNqOsnt9u12IB38XYIzdOtVEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731939640; c=relaxed/simple;
-	bh=FUDxglx01sRgab9GHliuU2m1EoSE1igfBs/5yoKEftc=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Wd3OlpK/H62mHDWUsyAT5h9P8puUp20r+6TulG8kh4+GkFtw5kHNdTqcphr9fUz1Wz9tURb2E9WP6l7j6iKqUSDdv8aVa0ju+6QCg8SlaUd+x2kHqPzG/WbyWp+qEN6ydkSwz0JAbestsY7U0EYV1qU/4Ibbu7A/r+tyrGH3MW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4XsV8S28zNz1V4dV;
-	Mon, 18 Nov 2024 22:18:00 +0800 (CST)
-Received: from kwepemk100013.china.huawei.com (unknown [7.202.194.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id 24454180064;
-	Mon, 18 Nov 2024 22:20:36 +0800 (CST)
-Received: from localhost.localdomain (10.90.30.45) by
- kwepemk100013.china.huawei.com (7.202.194.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 18 Nov 2024 22:20:35 +0800
-From: Jijie Shao <shaojijie@huawei.com>
-To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <andrew+netdev@lunn.ch>, <horms@kernel.org>
-CC: <shenjian15@huawei.com>, <wangpeiyang1@huawei.com>,
-	<liuyonglong@huawei.com>, <chenhao418@huawei.com>, <sudongming1@huawei.com>,
-	<xujunsheng@huawei.com>, <shiyongbang@huawei.com>, <libaihan@huawei.com>,
-	<jonathan.cameron@huawei.com>, <shameerali.kolothum.thodi@huawei.com>,
-	<salil.mehta@huawei.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <shaojijie@huawei.com>, <hkelam@marvell.com>
-Subject: [PATCH V4 net-next 7/7] net: hibmcge: Add nway_reset supported in this module
-Date: Mon, 18 Nov 2024 22:13:39 +0800
-Message-ID: <20241118141339.3224263-8-shaojijie@huawei.com>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20241118141339.3224263-1-shaojijie@huawei.com>
-References: <20241118141339.3224263-1-shaojijie@huawei.com>
+	s=arc-20240116; t=1731939298; c=relaxed/simple;
+	bh=GpI8lRABSdwbFRSzHGnkl6CDaoqumg8eqpp6Bxfw5fg=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=Qq5nJs6zpg1Ppd0m3fCBz0G8jSW/hdznNnmeG6Qy8W58EN1bWOsvbaNEwOIYRrt6GXSp7Frbsx4w+lcCwocQX9aEGxZVmjNgK4BkPtRBeX3MqiZFTYkC46bc4Dm8rdfHU5HB+N7aVvURCtpdzZMh3WWAuM1AaSN85nWsGOP4szI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DbvXGSlZ; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731939296; x=1763475296;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=GpI8lRABSdwbFRSzHGnkl6CDaoqumg8eqpp6Bxfw5fg=;
+  b=DbvXGSlZDQYjtW7DaYC2fzo4yoa7zEALG8ga3jUmFwf0JhnRZi2B5GIT
+   S9SfqsPOQp7g1q3FL+SBzVtSwAo/TNLef8OoWuRGwAjYL+ECBjGD8WDFp
+   AeNTizjjPb/VFNwXjgg+Gt5dRASu54ARgIThuTw0KqNILm/+r3LWUmvRu
+   B1VyX5stbGyaMU3w6HdT4ecWOW0hs9nTRPwz3vmYsaTk8V9eXdOxswn98
+   Y5jGuim+AIX1MtMy2dNn47h4xtxxG8tJzC4L4bLmWfovL4Vht5KOBdYww
+   fG2LNGj6ho1nYL2hC3o9d8x9R9vOaF1GJcKVez9jImJH8IhlUQH3kq6zt
+   Q==;
+X-CSE-ConnectionGUID: MbrCVx2dRxezyTwhxKJyeg==
+X-CSE-MsgGUID: 2lVmVBp+RamXnB9PH39MeA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11260"; a="42536356"
+X-IronPort-AV: E=Sophos;i="6.12,164,1728975600"; 
+   d="scan'208";a="42536356"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2024 06:14:26 -0800
+X-CSE-ConnectionGUID: QAK2gS4ASq++OiWGQ1jlbQ==
+X-CSE-MsgGUID: iVZFi8/dTVKAAN86aZsUMw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,164,1728975600"; 
+   d="scan'208";a="89261282"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.193])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2024 06:14:24 -0800
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Mon, 18 Nov 2024 16:14:20 +0200 (EET)
+To: Borislav Petkov <bp@alien8.de>
+cc: linux-serial <linux-serial@vger.kernel.org>, 
+    Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+    Jiri Slaby <jirislaby@kernel.org>, lkml <linux-kernel@vger.kernel.org>
+Subject: Re: serial 00:06: Runtime PM usage count underflow!
+In-Reply-To: <20241116170727.GCZzjRT5WGcOMKFDYq@fat_crate.local>
+Message-ID: <ca76fb23-013d-9745-188b-b519096aa784@linux.intel.com>
+References: <20241116170727.GCZzjRT5WGcOMKFDYq@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemk100013.china.huawei.com (7.202.194.61)
+Content-Type: multipart/mixed; boundary="8323328-1024098145-1731939260=:933"
 
-Add nway_reset supported in this module
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Signed-off-by: Jijie Shao <shaojijie@huawei.com>
+--8323328-1024098145-1731939260=:933
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+
+On Sat, 16 Nov 2024, Borislav Petkov wrote:
+
+> Hi folks,
+>=20
+> got a box here which says:
+>=20
+> [    4.654361] Serial: 8250/16550 driver, 4 ports, IRQ sharing enabled
+> [    4.660820] 00:06: ttyS0 at I/O 0x3f8 (irq =3D 4, base_baud =3D 115200=
+) is a 16550A
+> [    4.668313] printk: legacy console [ttyS0] disabled
+> [    4.676903] serial 00:06: Runtime PM usage count underflow!
+> [    4.677175] serial 00:06: disabled
+> [    4.677264] serial 00:06: unable to assign resources
+> [    4.677356] serial 00:06: probe with driver serial failed with error -=
+16
+> [    4.677923] printk: legacy console [ttyS0] disabled
+>=20
+> Any suggestions?
+>=20
+> I'd like to use the serial cable to catch dmesg but somehow the driver do=
+esn't
+> like the chip...
+
+I think "Runtime PM usage count underflow!" is not related to the probe=20
+problem you're seeing. Nonetheless, this patch might solve the underflow:
+
+--
+[PATCH 1/1] tty: serial: 8250: Fix another runtime PM usage counter underfl=
+ow
+
+The commit f9b11229b79c ("serial: 8250: Fix PM usage_count for console
+handover") fixed one runtime PM usage counter balance problem that
+occurs because .dev is not set during univ8250 setup preventing call to
+pm_runtime_get_sync(). Later, univ8250_console_exit() will trigger the
+runtime PM usage counter underflow as .dev is already set at that time.
+
+Call pm_runtime_get_sync() to balance the RPM usage counter also in
+serial8250_register_8250_port() before trying to add the port.
+
+Signed-off-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
 ---
- drivers/net/ethernet/hisilicon/hibmcge/hbg_ethtool.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/tty/serial/8250/8250_core.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/net/ethernet/hisilicon/hibmcge/hbg_ethtool.c b/drivers/net/ethernet/hisilicon/hibmcge/hbg_ethtool.c
-index e27f835a3230..9ff08154908d 100644
---- a/drivers/net/ethernet/hisilicon/hibmcge/hbg_ethtool.c
-+++ b/drivers/net/ethernet/hisilicon/hibmcge/hbg_ethtool.c
-@@ -186,6 +186,7 @@ static const struct ethtool_ops hbg_ethtool_ops = {
- 	.get_pauseparam         = hbg_ethtool_get_pauseparam,
- 	.set_pauseparam         = hbg_ethtool_set_pauseparam,
- 	.reset			= hbg_ethtool_reset,
-+	.nway_reset		= phy_ethtool_nway_reset,
- };
- 
- void hbg_ethtool_set_ops(struct net_device *netdev)
--- 
-2.33.0
+diff --git a/drivers/tty/serial/8250/8250_core.c b/drivers/tty/serial/8250/=
+8250_core.c
+index 5f9f06911795..68baf75bdadc 100644
+--- a/drivers/tty/serial/8250/8250_core.c
++++ b/drivers/tty/serial/8250/8250_core.c
+@@ -812,6 +812,9 @@ int serial8250_register_8250_port(const struct uart_825=
+0_port *up)
+ =09=09=09uart->dl_write =3D up->dl_write;
+=20
+ =09=09if (uart->port.type !=3D PORT_8250_CIR) {
++=09=09=09if (uart_console_registered(&uart->port))
++=09=09=09=09pm_runtime_get_sync(uart->port.dev);
++
+ =09=09=09if (serial8250_isa_config !=3D NULL)
+ =09=09=09=09serial8250_isa_config(0, &uart->port,
+ =09=09=09=09=09=09&uart->capabilities);
+--=20
+2.39.5
 
+--8323328-1024098145-1731939260=:933--
 
