@@ -1,102 +1,191 @@
-Return-Path: <linux-kernel+bounces-413345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D593E9D17C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 19:12:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A05559D17CE
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 19:14:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38348B268D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 18:12:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 297E21F22719
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 18:14:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33F881DED5D;
-	Mon, 18 Nov 2024 18:12:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 706071DEFD9;
+	Mon, 18 Nov 2024 18:13:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tq/vcwfl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92D7319DF4A;
-	Mon, 18 Nov 2024 18:12:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="WgQq6VDm"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 384F719DF4A;
+	Mon, 18 Nov 2024 18:13:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731953570; cv=none; b=urTxlLjZrq9JJdq8cetkgl/0QV77LSONDdxjtHyjTp+oC0TVR8lTD5xY/5Ad/0CtGJ1JhEsvYBpgLn7AgpmUJ+c5+VjFKn8WvhRQgK+PcPC9+oHpcxVAaGXCjG+0ydCvs4mje2m68iGweY13efNxtMF+T1XCozBs4Y17JnnbaTU=
+	t=1731953608; cv=none; b=VeVXNtmicbc6GYbSrmfMWdK+wBTQh2WQ6JQFO+nkZvRuqraxNQed89neyfMw8bJIPR/+KgS6tk2t8yByXFziDiB0gJbXuIlfN0XUC6N0/TUy2H2KG9vIgjhgqXEUxe1P4JcL5uLpQ8eh7akZsZTdDkgMtxUhbGhIwMevTZRV1Xk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731953570; c=relaxed/simple;
-	bh=YwZjBB6hgO/g9UA0GSo0eqjMxLvqj//2HoPj9LGIuMs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZlgohCMkOewT1wOMagsJO1+XO7mP+WdwZBk/W504uQtDUmTPEe9UbVvndzh1km6MzmGBnv9DV/5eUiRLVWcdc968I58b7MwAQnn/mp6V6ci2p+wS5xDlLg3Ftxgh1ven7f2ntMh9vV4Vl1xN0HuQ5eNJSn37Ep8+giyUiy9cv/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tq/vcwfl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4EEDC4CECC;
-	Mon, 18 Nov 2024 18:12:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731953570;
-	bh=YwZjBB6hgO/g9UA0GSo0eqjMxLvqj//2HoPj9LGIuMs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tq/vcwflmqImOGUZmEW9UM2uYdEbX4QKT+2zvTkCSQL7S3aQoPihoKL4uTCG7Fva3
-	 CpBCn3ekbkvAeZw+3sYi5/4LPYYEre5LEIac+R2gKoECrmVLML/C2K/lDNxlRwhNIj
-	 8OEb6KMT0GclJFfmiYAIXI+dTH5SLRv1xG36Panx6m4gplAbvhL92Lwk/DIniLT2G3
-	 oro9AhKJMi08nPnf9TZ6MeHmbYR7nrQw26DTDHUPBnbh8GOnJ1YFjZu/rBxusUTm1d
-	 /DUN3Q3eQfpYb7F2G7DElVKRJcmqvDbNg4zKDQq3sqFZXaa3j2sgTiZJvqH9q2jGXN
-	 4IMB6bkylZgnw==
-Date: Mon, 18 Nov 2024 18:12:45 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Yunsheng Lin <yunshenglin0825@gmail.com>
-Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com,
-	linyunsheng@huawei.com, Andrew Morton <akpm@linux-foundation.org>,
-	Alexander Duyck <alexanderduyck@fb.com>,
-	Linux-MM <linux-mm@kvack.org>, Shuah Khan <shuah@kernel.org>,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] mm: page_frag: fix a compile error when kernel
- is not compiled
-Message-ID: <91e7e9c3-fbf9-40c7-9a7e-52fc800fe6a7@sirena.org.uk>
-References: <20241116042314.100400-1-yunshenglin0825@gmail.com>
+	s=arc-20240116; t=1731953608; c=relaxed/simple;
+	bh=OBNItpyvTBKDI5z8ZJby2ujKIi6upHKcdBfh3njptUI=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=hF385OmQeFR6RTLCCEU291BoFXakI60ReyXGZK+svkhyoLvrkNL4IOuf+vh01pVN3xTcQipF//uojTNcXj1FCcMShFsenECZ3IkA4NmmBIFhKU/m4D3+oQlQhyaXWt+tituZi7RSB/MNvDl5tSjxX+Q3w6fP1vpleySQtgEyRDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=WgQq6VDm; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [192.168.35.166] (c-73-118-245-227.hsd1.wa.comcast.net [73.118.245.227])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 079B420B7D5F;
+	Mon, 18 Nov 2024 10:13:24 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 079B420B7D5F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1731953606;
+	bh=4rGKqWlJzIh5S6WJog1UbY+9wr2RIzuf6CA98XkvD9A=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=WgQq6VDmQPqDVd9HrdDJWYVeePI1o6O7aH2e5YK2i2MPTb79KOYC8kOEtCVdZyQyl
+	 eQBQq4Gru6AuE3dhO0MWMctvjnMle6WwOzCHVKzijDojX1XF1tLPvCR2mFqRKiKQA2
+	 T8BTz//c1DSiW16jlJvFvYtwS5WkMEtzzK+2O4cI=
+Message-ID: <c2a5d9d2-ac73-46b0-9d2e-6960e2a13c1e@linux.microsoft.com>
+Date: Mon, 18 Nov 2024 10:13:23 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="IaKl+DyrWtyGOQED"
-Content-Disposition: inline
-In-Reply-To: <20241116042314.100400-1-yunshenglin0825@gmail.com>
-X-Cookie: Used staples are good with SOY SAUCE!
+User-Agent: Mozilla Thunderbird
+Cc: Pablo Neira Ayuso <pablo@netfilter.org>,
+ Jozsef Kadlecsik <kadlec@netfilter.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, Julia Lawall <Julia.Lawall@inria.fr>,
+ Nicolas Palix <nicolas.palix@imag.fr>, Daniel Mack <daniel@zonque.org>,
+ Haojian Zhuang <haojian.zhuang@gmail.com>,
+ Robert Jarzmik <robert.jarzmik@free.fr>, Russell King
+ <linux@armlinux.org.uk>, Heiko Carstens <hca@linux.ibm.com>,
+ Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
+ <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>, Ofir Bitton <obitton@habana.ai>,
+ Oded Gabbay <ogabbay@kernel.org>, Lucas De Marchi
+ <lucas.demarchi@intel.com>,
+ =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Jeroen de Borst <jeroendb@google.com>,
+ Praveen Kaligineedi <pkaligineedi@google.com>,
+ Shailend Chand <shailend@google.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ James Smart <james.smart@broadcom.com>,
+ Dick Kennedy <dick.kennedy@broadcom.com>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ =?UTF-8?Q?Roger_Pau_Monn=C3=A9?= <roger.pau@citrix.com>,
+ Jens Axboe <axboe@kernel.dk>, Kalle Valo <kvalo@kernel.org>,
+ Jeff Johnson <jjohnson@kernel.org>, Catalin Marinas
+ <catalin.marinas@arm.com>, Andrew Morton <akpm@linux-foundation.org>,
+ Jack Wang <jinpu.wang@cloud.ionos.com>, Marcel Holtmann
+ <marcel@holtmann.org>, Johan Hedberg <johan.hedberg@gmail.com>,
+ Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui
+ <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Xiubo Li <xiubli@redhat.com>,
+ Ilya Dryomov <idryomov@gmail.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
+ Jiri Kosina <jikos@kernel.org>, Miroslav Benes <mbenes@suse.cz>,
+ Petr Mladek <pmladek@suse.com>, Joe Lawrence <joe.lawrence@redhat.com>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ Lucas Stach <l.stach@pengutronix.de>,
+ Russell King <linux+etnaviv@armlinux.org.uk>,
+ Christian Gmeiner <christian.gmeiner@gmail.com>,
+ Louis Peens <louis.peens@corigine.com>, Michael Ellerman
+ <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Naveen N Rao <naveen@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>,
+ eahariha@linux.microsoft.com, netfilter-devel@vger.kernel.org,
+ coreteam@netfilter.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, cocci@inria.fr,
+ linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
+ linux-scsi@vger.kernel.org, xen-devel@lists.xenproject.org,
+ linux-block@vger.kernel.org, linux-wireless@vger.kernel.org,
+ ath11k@lists.infradead.org, linux-mm@kvack.org,
+ linux-bluetooth@vger.kernel.org, linux-staging@lists.linux.dev,
+ linux-rpi-kernel@lists.infradead.org, ceph-devel@vger.kernel.org,
+ live-patching@vger.kernel.org, linux-sound@vger.kernel.org,
+ etnaviv@lists.freedesktop.org, oss-drivers@corigine.com,
+ linuxppc-dev@lists.ozlabs.org, Anna-Maria Behnsen <anna-maria@linutronix.de>
+Subject: Re: [PATCH v2 01/21] netfilter: conntrack: Cleanup timeout
+ definitions
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+References: <20241115-converge-secs-to-jiffies-v2-0-911fb7595e79@linux.microsoft.com>
+ <20241115-converge-secs-to-jiffies-v2-1-911fb7595e79@linux.microsoft.com>
+ <b370e8d0-2f87-4819-8f30-1181946295d9@csgroup.eu>
+From: Easwar Hariharan <eahariha@linux.microsoft.com>
+Content-Language: en-US
+In-Reply-To: <b370e8d0-2f87-4819-8f30-1181946295d9@csgroup.eu>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+On 11/16/2024 1:40 AM, Christophe Leroy wrote:
+> 
+> 
+> Le 15/11/2024 à 22:26, Easwar Hariharan a écrit :
+>> [Vous ne recevez pas souvent de courriers de
+>> eahariha@linux.microsoft.com. Découvrez pourquoi ceci est important à
+>> https://aka.ms/LearnAboutSenderIdentification ]
+>>
+>> None of the higher order definitions are used anymore, so remove
+>> definitions for minutes, hours, and days timeouts. Convert the seconds
+>> denominated timeouts to secs_to_jiffies()
+> 
+> There is very similar things with tcp_timeouts[] in
+> nf_conntrack_proto_tcp.c, why not convert it as well ?
 
---IaKl+DyrWtyGOQED
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This patch happens to have been hand-modified and not by Coccinelle.
+I'll consider tcp_timeouts[] for v3, but that actually seems to have
+minute, hour, and days denominated timeouts, and replacing the 4 SECS
+timeouts may actually hinder readability in that file.
 
-On Sat, Nov 16, 2024 at 12:23:13PM +0800, Yunsheng Lin wrote:
-> page_frag test module is an out of tree module, but built
-> using KDIR as the main kernel tree, the mm test suite is
-> just getting skipped if newly added page_frag test module
-> fails to compile due to kernel not yet compiled.
->=20
-> Fix the above problem by ensuring both kernel is built first
-> and a newer kernel which has page_frag_cache.h is used.
+> 
+>>
+>> Signed-off-by: Easwar Hariharan <eahariha@linux.microsoft.com>
+>> ---
+>>   net/netfilter/nf_conntrack_proto_sctp.c | 21 ++++++++-------------
+>>   1 file changed, 8 insertions(+), 13 deletions(-)
+>>
+>> diff --git a/net/netfilter/nf_conntrack_proto_sctp.c b/net/netfilter/
+>> nf_conntrack_proto_sctp.c
+>> index
+>> 4cc97f971264ed779434ab4597dd0162586b3736..6c95ac96fa42a39acafb5b88a7cf8898010e911c 100644
+>> --- a/net/netfilter/nf_conntrack_proto_sctp.c
+>> +++ b/net/netfilter/nf_conntrack_proto_sctp.c
+>> @@ -39,20 +39,15 @@ static const char *const sctp_conntrack_names[] = {
+>>          [SCTP_CONNTRACK_HEARTBEAT_SENT]         = "HEARTBEAT_SENT",
+>>   };
+>>
+>> -#define SECS  * HZ
+>> -#define MINS  * 60 SECS
+>> -#define HOURS * 60 MINS
+>> -#define DAYS  * 24 HOURS
+>> -
+>>   static const unsigned int sctp_timeouts[SCTP_CONNTRACK_MAX] = {
+>> -       [SCTP_CONNTRACK_CLOSED]                 = 10 SECS,
+>> -       [SCTP_CONNTRACK_COOKIE_WAIT]            = 3 SECS,
+>> -       [SCTP_CONNTRACK_COOKIE_ECHOED]          = 3 SECS,
+>> -       [SCTP_CONNTRACK_ESTABLISHED]            = 210 SECS,
+>> -       [SCTP_CONNTRACK_SHUTDOWN_SENT]          = 3 SECS,
+>> -       [SCTP_CONNTRACK_SHUTDOWN_RECD]          = 3 SECS,
+>> -       [SCTP_CONNTRACK_SHUTDOWN_ACK_SENT]      = 3 SECS,
+>> -       [SCTP_CONNTRACK_HEARTBEAT_SENT]         = 30 SECS,
+>> +       [SCTP_CONNTRACK_CLOSED]                 = secs_to_jiffies(10),
+>> +       [SCTP_CONNTRACK_COOKIE_WAIT]            = secs_to_jiffies(3),
+>> +       [SCTP_CONNTRACK_COOKIE_ECHOED]          = secs_to_jiffies(3),
+>> +       [SCTP_CONNTRACK_ESTABLISHED]            = secs_to_jiffies(210),
+>> +       [SCTP_CONNTRACK_SHUTDOWN_SENT]          = secs_to_jiffies(3),
+>> +       [SCTP_CONNTRACK_SHUTDOWN_RECD]          = secs_to_jiffies(3),
+>> +       [SCTP_CONNTRACK_SHUTDOWN_ACK_SENT]      = secs_to_jiffies(3),
+>> +       [SCTP_CONNTRACK_HEARTBEAT_SENT]         = secs_to_jiffies(3),
+> 
+> Was 30 before, if you think it must be changed to 3 you must explain it
+> in the commit message, or maybe do another patch for that change.
 
-Tested-by: Mark Brown <broonie@kernel.org>
+This one's a typo, I'll fix it in v3.
 
-(for the case where we skip the build.)
-
---IaKl+DyrWtyGOQED
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmc7g5wACgkQJNaLcl1U
-h9DsvAf/bePfZQEkqvzyO5YOYn9KTkYZndX0ym/FzYdhPQwrMfr++Hrv8SgujAiE
-IYM0Fxi/AVXCMFZCjfrdLdK4XGPuSMepPRSmu/EM+Yp0dwSksMHLReoUit23qAKK
-zgeprOGfU0LYC2c4yWo7Ia5RnX+kbsGJg/7H0GGH80wlzzEwGPEnADZORpxymiln
-KbLqOfg0jyPbuVR4Q1RDFzasY+1n347g9Umuj/g966D6HJeOsBWj8L3LOYH9IcOr
-SsVqNhNUM4EKvn4N0rzcpiRqxCidlY5FWwzLF8Qn7JLG6D0kipTLzkx9j+tIKLSt
-VYn/BdrtF97+2OeYiRgqm1sAkc4jqQ==
-=M4um
------END PGP SIGNATURE-----
-
---IaKl+DyrWtyGOQED--
+Thanks,
+Easwar
 
