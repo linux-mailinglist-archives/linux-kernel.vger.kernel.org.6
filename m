@@ -1,170 +1,99 @@
-Return-Path: <linux-kernel+bounces-413476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CB929D1982
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 21:14:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 833B29D198D
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 21:20:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC5241F22DE6
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 20:14:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F1281F213DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 20:20:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E5521E7679;
-	Mon, 18 Nov 2024 20:14:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 074C71E6316;
+	Mon, 18 Nov 2024 20:19:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U/jU1AoC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C35A91E6DD4
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 20:14:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AE3814D2BB;
+	Mon, 18 Nov 2024 20:19:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731960867; cv=none; b=aY6boxqiJx+IxSL5uL2gVqvHZ4cIfs9hp8Re75EcEdhE1cb9sherSbzOjfMEmWWi6dEJfRDqcNIUIxS0156UqnmOSgAsapL3LQk4dE5XocxU/fNE3RFjZY36R33iAl6+2xKwjfgyG9/wKJR3ObA02g2LzZ6RbZqwowKZeUzadpk=
+	t=1731961197; cv=none; b=bQSDrU+WY4o8IM8Z9mOPgvniJ3GBEkrOUmac5ECXqCyDkpRiFQXPyJhqIZOb1dZc90yf+Vr8u0DXOcJrgGO7gQXhOXraHgvZB37AmUTu267uBBY+MUwH5lDsrzCtLrCvTZBgMD7giA5Qj3Kk164wlGwooIntKnHQX9yLi11sRTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731960867; c=relaxed/simple;
-	bh=1bsicQsClz2mA5LGmCCz633UWz8AMxCoyQFRdHoj6LQ=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=qMpWwcpcWoWmiB0f306g0aj3BZgGkKZsCG88FmGJG1s1WA6fZg2SdLclvELfD2YYZ9JABucX0ohaMRaV7PEnYJiARXA+O+MUjShqHUjgxg/xPLYGgioJ8ELCN0pvyjM+5S/TT6a90/2Kig8doGtyOWwreIE7Z/9dcgT4BdRjKjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71469C4CECC;
-	Mon, 18 Nov 2024 20:14:27 +0000 (UTC)
-Received: from rostedt by gandalf with local (Exim 4.98)
-	(envelope-from <rostedt@goodmis.org>)
-	id 1tD89D-0000000D8ye-2a8H;
-	Mon, 18 Nov 2024 15:14:59 -0500
-Message-ID: <20241118201459.464858475@goodmis.org>
-User-Agent: quilt/0.68
-Date: Mon, 18 Nov 2024 15:14:35 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: linux-kernel@vger.kernel.org
-Cc: Tomas Glozar <tglozar@redhat.com>,
- John Kacur <jkacur@redhat.com>,
- "lgoncalv@redhat.com" <lgoncalv@redhat.com>,
- Furkan Onder <furkanonder@protonmail.com>
-Subject: [for-next][PATCH 4/4] tools/rtla: Improve exception handling in timerlat_load.py
-References: <20241118201431.871648641@goodmis.org>
+	s=arc-20240116; t=1731961197; c=relaxed/simple;
+	bh=oqc9MQbspo8H9Zcz1ill1uclc62dJI8etdU+Jyax5Oo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JI0oskFJdhBwGoD0WLB97+Sycd2a5P4Uukn9JzOdfDZizL5gYSc3BOAgCq3KSoTfru/sGdBN380tGjqWJFrJZ8y3xndoup+UpwvwEfLJmaitL145r1QlaV87kckzzckua6euf3ltsH2985OVjUBwn+Ee2yK8tjnGLtV5vV3m0gA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U/jU1AoC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3AAFC4AF0B;
+	Mon, 18 Nov 2024 20:19:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731961196;
+	bh=oqc9MQbspo8H9Zcz1ill1uclc62dJI8etdU+Jyax5Oo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=U/jU1AoCv4XqtWA7Kqs5lvLPMyKVVxqRRqfdOvxNl0sqg/Oz8+BBe/ICDa6c+4i0K
+	 Ypk9OuK2CONkU15IxDkHLuTMphgmT2GhPRLUc7+WvR+mYGXWqe88tbkEAkziN8ppuU
+	 Xr7wcJnWn3jd5UDzYIsyQIQr++p88U6k7id/t2b2dXeglTZPoAi3/ORyBAIHa/gyS1
+	 1bdplthpN7LsQM31iTE51FluBSu+jnh3Fuz+cQ0QVBSyRqL9GVVpx7SS8OXPViySBg
+	 kD2lu++N72u/6GnWvL5IFdCb2D5BhmXrXUoxXrSpZppOdBeyOYLBgUpB8WzNQLNKGK
+	 G6cElayTBCypA==
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-6e9ba45d67fso45892267b3.1;
+        Mon, 18 Nov 2024 12:19:56 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUlzVoSt7CS8KIZzafUOa/JtlEUz89wMv/60iLNKSuv9TXrUJnbspLsyVPSuefqi/fwySu5t69tgehCXiGbj6FH7LE=@vger.kernel.org, AJvYcCW55xvwBmcT25kmbxaAULw3bJSLYPgFmF3mHJqUDW+bcp0XMEfpoacEdvjD1+3zfkjntyMVAijijNUVJMBQ@vger.kernel.org, AJvYcCX3Y2KwjrCMXYyz7hY8KQB8bQKnSfizNPDgFHeeYoYCmZRHNOy0ExZjcFbSmKiJIpVG95QmJEK/ijsh@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEz+N+CNT65nPYVRmjb7fl8Z2L/pi5lgM2Kpxb3oini/TGrrEv
+	+k6Ki9klhKq2ZMn2c+MH0enrA/SiwlN3NNOX4hyxMkpnheJ3+9ckWuddw5QlqCVcwUk7aWiPBhL
+	ACRiks00dxCPWmVJI9WbrVrGLpQ==
+X-Google-Smtp-Source: AGHT+IGVTY+KxKz7I7bGRzLljhpEqdXXlPFcDGIN6A3edYN00yljzh7MPFOegvKHYkp0012p1HVz0/xpidNiTXtNIr8=
+X-Received: by 2002:a05:690c:610f:b0:6e7:e76e:5852 with SMTP id
+ 00721157ae682-6ee55ca37dbmr146529117b3.32.1731961196054; Mon, 18 Nov 2024
+ 12:19:56 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+References: <20241113225742.1784723-2-robh@kernel.org>
+In-Reply-To: <20241113225742.1784723-2-robh@kernel.org>
+From: Rob Herring <robh@kernel.org>
+Date: Mon, 18 Nov 2024 14:19:45 -0600
+X-Gmail-Original-Message-ID: <CAL_Jsq+=DzjZCDC2OxL4wTueTpFv0o-Ah3RwzPZsbQ8CLFY=qg@mail.gmail.com>
+Message-ID: <CAL_Jsq+=DzjZCDC2OxL4wTueTpFv0o-Ah3RwzPZsbQ8CLFY=qg@mail.gmail.com>
+Subject: Re: [PATCH net-next] dt-bindings: net: renesas,ether: Drop
+ undocumented "micrel,led-mode"
+To: Sergey Shtylyov <s.shtylyov@omp.ru>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Sergei Shtylyov <sergei.shtylyov@gmail.com>
+Cc: netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: furkanonder <furkanonder@protonmail.com>
+On Wed, Nov 13, 2024 at 4:58=E2=80=AFPM Rob Herring (Arm) <robh@kernel.org>=
+ wrote:
+>
+> "micrel,led-mode" is not yet documented by a schema. It's irrelevant to
+> the example, so just drop it.
+>
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+>  Documentation/devicetree/bindings/net/renesas,ether.yaml | 1 -
+>  1 file changed, 1 deletion(-)
 
-The enhancements made to timerlat_load.py are intended to improve the script's exception handling.
+I see this is marked rejected in PW. While there was some discussion,
+there aren't any objections to it. While micrel.txt binding is being
+converted now, there are some issues (with it and phy bindings in
+general). Keeping this property in this example will eventually
+require some changes to it. What phy is connected to this ethernet
+controller is beyond the scope of this binding, so having a specific
+phy is not necessary.
 
-Summary of the changes:
-  - Specific exceptions are now caught for CPU affinity and priority
-    settings, with clearer error messages provided.
-  - The timerlat file descriptor opening now includes handling for
-    PermissionError and OSError, with informative messages.
-  - In the infinite loop, generic exceptions have been replaced with
-    specific types like KeyboardInterrupt and IOError, improving feedback.
+Rob
 
- Before:
-    $ sudo python timerlat_load.py 122
-    Error setting affinity
- After:
-    $ sudo python timerlat_load.py 122
-    Error setting affinity: [Errno 22] Invalid argument
-
- Before:
-    $ sudo python timerlat_load.py 1 -p 950
-    Error setting priority
- After:
-    $ sudo python timerlat_load.py 1 -p 950
-    Error setting priority: [Errno 22] Invalid argument
-
- Before:
-    $ python timerlat_load.py 1
-    Error opening timerlat fd, did you run timerlat -U?
- After:
-    $ python timerlat_load.py 1
-    Permission denied. Please check your access rights.
-
-Cc: "lgoncalv@redhat.com" <lgoncalv@redhat.com>
-Cc: "jkacur@redhat.com" <jkacur@redhat.com>
-Link: https://lore.kernel.org/Q_k1s4hBtUy2px8ou0QKenjEK2_T_LoV8IxAE79aBakBogb-7uHp2fpET3oWtI1t3dy8uKjWeRzQOdKNzIzOOpyM4OjutJOriZ9TrGY6b-g=@protonmail.com
-Signed-off-by: Furkan Onder <furkanonder@protonmail.com>
-Reviewed-by: Tomas Glozar <tglozar@redhat.com>
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- tools/tracing/rtla/sample/timerlat_load.py | 37 ++++++++++++----------
- 1 file changed, 21 insertions(+), 16 deletions(-)
-
-diff --git a/tools/tracing/rtla/sample/timerlat_load.py b/tools/tracing/rtla/sample/timerlat_load.py
-index d7341ed5127a..a819c3588073 100644
---- a/tools/tracing/rtla/sample/timerlat_load.py
-+++ b/tools/tracing/rtla/sample/timerlat_load.py
-@@ -31,43 +31,48 @@ args = parser.parse_args()
- 
- try:
-     affinity_mask = {args.cpu}
--except:
--    print("Invalid cpu: " + args.cpu)
--    exit(1)
--
--try:
-     os.sched_setaffinity(0, affinity_mask)
--except:
--    print("Error setting affinity")
--    exit(1)
-+except Exception as e:
-+    print(f"Error setting affinity: {e}")
-+    sys.exit(1)
- 
- if args.prio:
-     try:
-         param = os.sched_param(args.prio)
-         os.sched_setscheduler(0, os.SCHED_FIFO, param)
--    except:
--        print("Error setting priority")
--        exit(1)
-+    except Exception as e:
-+        print(f"Error setting priority: {e}")
-+        sys.exit(1)
- 
- try:
-     timerlat_path = f"/sys/kernel/tracing/osnoise/per_cpu/cpu{args.cpu}/timerlat_fd"
-     timerlat_fd = open(timerlat_path, 'r')
--except:
-+except PermissionError:
-+    print("Permission denied. Please check your access rights.")
-+    sys.exit(1)
-+except OSError:
-     print("Error opening timerlat fd, did you run timerlat -U?")
--    exit(1)
-+    sys.exit(1)
- 
- try:
-     data_fd = open("/dev/full", 'r')
--except:
--    print("Error opening data fd")
-+except Exception as e:
-+    print(f"Error opening data fd: {e}")
-+    sys.exit(1)
- 
- while True:
-     try:
-         timerlat_fd.read(1)
-         data_fd.read(20 * 1024 * 1024)
--    except:
-+    except KeyboardInterrupt:
-         print("Leaving")
-         break
-+    except IOError as e:
-+        print(f"I/O error occurred: {e}")
-+        break
-+    except Exception as e:
-+        print(f"Unexpected error: {e}")
-+        break
- 
- timerlat_fd.close()
- data_fd.close()
--- 
-2.45.2
-
-
+pw-bot: new
 
