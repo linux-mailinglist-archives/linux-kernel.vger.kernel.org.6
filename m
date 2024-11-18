@@ -1,99 +1,196 @@
-Return-Path: <linux-kernel+bounces-412886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37E5E9D10AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 13:39:34 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 853D79D10B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 13:40:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B9461B23B1D
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 12:39:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F1F8FB24AE2
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 12:40:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 734FC1993BD;
-	Mon, 18 Nov 2024 12:39:25 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8ECB19AD8C;
+	Mon, 18 Nov 2024 12:40:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="k3JhEAHK"
+Received: from smtp-fw-6002.amazon.com (smtp-fw-6002.amazon.com [52.95.49.90])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1DFD13A86A
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 12:39:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E36B613A86A;
+	Mon, 18 Nov 2024 12:40:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.95.49.90
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731933565; cv=none; b=Cr0m+aHyhKSZlFA0TCgMegFK4R4phhB/FSMT0yGLstw4fhSYcxmXTxKkCzPm1p7nvmRoGocZJnP7kl/ptHnpPf6NdbCO6YsUL0Fjq2oeZWOFn+5EXjt7RfSXoPi8SBeHWnYCBEVlAfIlkGLbj98qnlwESBKbrYBPNjETqAijiQg=
+	t=1731933604; cv=none; b=hU4IBOlNhD66vDixbncrbKSAeDpnoArT1/chrR/CszgP1AtABkBfx81d70YFlaNzOOGRcfHVDw4oqi4T9qSrxDtm+Cfxa8+JTyv/FAZET/r9L+SL4ShAzoeYgiHyVtqcgNoRImvJh/5mtMqeY57zWnKIGwACEnrKd2Zf6Idh8no=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731933565; c=relaxed/simple;
-	bh=KUJYBhG01UQlZh3Dd02MxaH9pV5dWECzvNzW5QV/e5I=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=h5xjYHAiEbbtro5Z/1O2qHn3on+ve+wk2TqlRkzEICQvjPLVnGVXAF0hNdQIhUidtfukoOkB/NKY9AIG+xKgsQT+wT8IAfva8sYWxI4Vks/W4BEtZYrjr+855r4pfnslWRViTwQW6/Sp10rtZtz5bxvlVn62DfxebGIHu7tj77E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-83aba93c01bso456397239f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 04:39:23 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731933563; x=1732538363;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=JoqvCgtdU4lMJOv2UffTj7/ARJEytxGntBglXk5Ifig=;
-        b=mREBJfO73hCtVHGz77a5zHDHbHm5in7CI4a2ZPi+CGmcnKwRJ9BRV8OyWUtmCmFNby
-         NJDdmbgGN1XmfdlcN2hFdyhyVeBjQjDNkFkt+3yKQqxQ9SFKupuRsm1H79pT058IkKvT
-         ePB0/n23T9dqT0HLeA60FY7y5uzULaObLQYvl24nR5vhtFmyRXAnhi56su3CnSiq3/EL
-         aVASmQSKAKdplaS28cnlJhRE8UE+in+Gew7SgOFfxMISyblNH0fB/jdsHd0ztJt1pTOd
-         /7lkPwzJyow7QlNouXWr5bEe20uNo6PLnTCExa6tlTc5efGqDVWxen/gFmE0ayQS+cVL
-         U7Fw==
-X-Forwarded-Encrypted: i=1; AJvYcCURf7CVwCwhGke4RyFDs4lE55Qu6kkQLTU9Gy6BbiZ1mZcIX5RtFi8RFZCrU222oYS7wu68+ncLYg1Gy44=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHFnQABFlU/mO1YWBL6az6b4LMGUpGIf2ihHS0/5a67hVGXkbw
-	Yf+TuL187KjAUJyzTCAVGj+81kc1Gkpk7516g+LmHgaZTqmigEiuTUPRjmaY/Z5PG0T5MYgJiCr
-	dXEEbIsBvHceHgGf8/LWivrZaI9/aPbMivryqsQQRYGgcWSu5bWwZMn0=
-X-Google-Smtp-Source: AGHT+IF9mcBCCC9GPfOHSylucVBFguajg0Mg0J0fl5nAp/fpCTpCUXZ8MqkHvUNsT32nxmJyXSVkb35ODLRRyU28ZknoHd3/PNYu
+	s=arc-20240116; t=1731933604; c=relaxed/simple;
+	bh=00M39CEkTVs3xVd4M1e0BsfnsNXxWk5Gp34SYT7JxJk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=F0UaWqF4rJUjGsO3YGVGIK5re1+rwk0MQ3djA2PaoGJ9uq9HwwrscpnCYQuw+nKB7Dlv6xVLAqtbclZ0COJJ9ikj8Otoq2tjzSY+MPv01TYh4OrmQaIV8fE9SucBfSzFIWQANgHSkRvirUhEDVBjdsqqS4CtPb3l/PKgb0Wyw9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=k3JhEAHK; arc=none smtp.client-ip=52.95.49.90
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1731933603; x=1763469603;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=0KIdbqYUO6Zv8eVf+NQoyrINVlwuJ6bN4A3SGV37H6Y=;
+  b=k3JhEAHKCayrIiy5OfCzeXI1TXUoUSh9O0uJSvcFUZbte4+wnY1YBGD/
+   nhVS0XA5Ptr76gfqHkOqJiHAic0UnvXEkVN1KeuwMx8gZj+QjpnVBD6et
+   ri94WqbdScdysJo17r+ImybRrI60VGs85xKnM5n/t0IRxEhtg0x9vzrQh
+   g=;
+X-IronPort-AV: E=Sophos;i="6.12,164,1728950400"; 
+   d="scan'208";a="449876552"
+Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.124.125.6])
+  by smtp-border-fw-6002.iad6.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2024 12:39:58 +0000
+Received: from EX19MTAEUB001.ant.amazon.com [10.0.17.79:64963]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.5.74:2525] with esmtp (Farcaster)
+ id 0c3fabae-6b8b-4c0f-81ad-6b8450cdad29; Mon, 18 Nov 2024 12:39:56 +0000 (UTC)
+X-Farcaster-Flow-ID: 0c3fabae-6b8b-4c0f-81ad-6b8450cdad29
+Received: from EX19D014EUA004.ant.amazon.com (10.252.50.41) by
+ EX19MTAEUB001.ant.amazon.com (10.252.51.28) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Mon, 18 Nov 2024 12:39:54 +0000
+Received: from EX19MTAUEC002.ant.amazon.com (10.252.135.146) by
+ EX19D014EUA004.ant.amazon.com (10.252.50.41) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Mon, 18 Nov 2024 12:39:53 +0000
+Received: from email-imr-corp-prod-pdx-all-2b-dbd438cc.us-west-2.amazon.com
+ (10.124.125.6) by mail-relay.amazon.com (10.252.135.146) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id
+ 15.2.1258.34 via Frontend Transport; Mon, 18 Nov 2024 12:39:53 +0000
+Received: from dev-dsk-kalyazin-1a-a12e27e2.eu-west-1.amazon.com (dev-dsk-kalyazin-1a-a12e27e2.eu-west-1.amazon.com [172.19.103.116])
+	by email-imr-corp-prod-pdx-all-2b-dbd438cc.us-west-2.amazon.com (Postfix) with ESMTPS id 8482DA018B;
+	Mon, 18 Nov 2024 12:39:49 +0000 (UTC)
+From: Nikita Kalyazin <kalyazin@amazon.com>
+To: <pbonzini@redhat.com>, <seanjc@google.com>, <corbet@lwn.net>,
+	<tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
+	<dave.hansen@linux.intel.com>, <hpa@zytor.com>, <rostedt@goodmis.org>,
+	<mhiramat@kernel.org>, <mathieu.desnoyers@efficios.com>,
+	<kvm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>
+CC: <jthoughton@google.com>, <david@redhat.com>, <peterx@redhat.com>,
+	<oleg@redhat.com>, <vkuznets@redhat.com>, <gshan@redhat.com>,
+	<graf@amazon.de>, <jgowans@amazon.com>, <roypat@amazon.co.uk>,
+	<derekmn@amazon.com>, <nsaenz@amazon.es>, <xmarcalx@amazon.com>,
+	<kalyazin@amazon.com>
+Subject: [RFC PATCH 0/6] KVM: x86: async PF user
+Date: Mon, 18 Nov 2024 12:39:42 +0000
+Message-ID: <20241118123948.4796-1-kalyazin@amazon.com>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1522:b0:3a7:6721:7adb with SMTP id
- e9e14a558f8ab-3a767217ba0mr32243355ab.2.1731933562939; Mon, 18 Nov 2024
- 04:39:22 -0800 (PST)
-Date: Mon, 18 Nov 2024 04:39:22 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <673b357a.050a0220.87769.003c.GAE@google.com>
-Subject: [syzbot] Monthly f2fs report (Nov 2024)
-From: syzbot <syzbot+list9deb5e64e2106995cbb1@syzkaller.appspotmail.com>
-To: chao@kernel.org, jaegeuk@kernel.org, 
-	linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-Hello f2fs maintainers/developers,
+Async PF [1] allows to run other processes on a vCPU while the host
+handles a stage-2 fault caused by a process on that vCPU. When using
+VM-exit-based stage-2 fault handling [2], async PF functionality is lost
+because KVM does not run the vCPU while a fault is being handled so no
+other process can execute on the vCPU. This patch series extends
+VM-exit-based stage-2 fault handling with async PF support by letting
+userspace handle faults instead of the kernel, hence the "async PF user"
+name.
 
-This is a 31-day syzbot report for the f2fs subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/f2fs
+I circulated the idea with Paolo, Sean, David H, and James H at the LPC,
+and the only concern I heard was about injecting the "page not present"
+event via #PF exception in the CoCo case, where it may not work. In my
+implementation, I reused the existing code for doing that, so the async
+PF user implementation is on par with the present async PF
+implementation in this regard, and support for the CoCo case can be
+added separately.
 
-During the period, 1 new issues were detected and 0 were fixed.
-In total, 6 issues are still open and 47 have already been fixed.
+Please note that this series is applied on top of the VM-exit-based
+stage-2 fault handling RFC [2].
 
-Some of the still happening issues:
+Implementation
 
-Ref Crashes Repro Title
-<1> 1182    Yes   INFO: task hung in f2fs_balance_fs
-                  https://syzkaller.appspot.com/bug?extid=8b85865808c8908a0d8c
-<2> 72      No    INFO: task hung in vfs_rename
-                  https://syzkaller.appspot.com/bug?extid=6165bc9800cd6e1fe958
-<3> 4       No    WARNING: locking bug in f2fs_getxattr (2)
-                  https://syzkaller.appspot.com/bug?extid=44090b62afaabafe828a
+The following workflow is implemented:
+ - A process in the guest causes a stage-2 fault.
+ - KVM checks whether the fault can be handled asynchronously. If it
+   can, KVM prepares the VM exit info that contains a newly added "async
+   PF flag" raised and an async PF token value corresponding to the
+   fault.
+ - Userspace reads the VM exit info and resumes the vCPU immediately.
+   Meanwhile it processes the fault.
+ - When the fault is resolved, userspace calls a new async ioctl using
+   the token to notify KVM.
+ - KVM communicates to the guest that the process can be resumed.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Notes:
+ - No changes to the x86 async PF PV interface are required
+ - The series does not introduce new dependencies on x86 compared to the
+   existing async PF
 
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
+Testing
 
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
+Inspired by [3], I built a Firecracker-based setup, where Firecracker
+implemented the VM-exit-based fault handling. I observed that a workload
+consisting of a CPU-bound and memory-bound threads running concurrently
+was executing faster with async PF user enabled: with 10 ms-long fault
+processing, it was 26% faster.
 
-You may send multiple commands in a single email message.
+It is difficult to provide an objective performance comparison between
+async PF kernel and async PF user, because async PF user can only work
+with VM-exit-based fault handling, which has its own performance
+characteristics compared to in-kernel fault handling or UserfaultFD.
+
+The patch series is built on top of the VM-exit-based stage-2 fault
+handling RFC [2].
+
+Patch 1 updates documentation to reflect [2] changes.
+Patches 2-6 add the implementation of async PF user.
+
+Questions:
+ - Are there any general concerns about the approach?
+ - Can we leave the CoCo use case aside for now, or do we need to
+   support it straight away?
+ - What is the desired level of coupling between async PF and async PF
+   user? For now, I kept the coupling to the bare minimum (only the
+   PV-related data structure is shared between the two).
+
+[1] https://kvm-forum.qemu.org/2021/sdei_apf_for_arm64_gavin.pdf
+[2] https://lore.kernel.org/kvm/CADrL8HUHRMwUPhr7jLLBgD9YLFAnVHc=N-C=8er-x6GUtV97pQ@mail.gmail.com/T/
+[3] https://lore.kernel.org/all/20200508032919.52147-1-gshan@redhat.com/
+
+Nikita
+
+Nikita Kalyazin (6):
+  Documentation: KVM: add userfault KVM exit flag
+  Documentation: KVM: add async pf user doc
+  KVM: x86: add async ioctl support
+  KVM: trace events: add type argument to async pf
+  KVM: x86: async_pf_user: add infrastructure
+  KVM: x86: async_pf_user: hook to fault handling and add ioctl
+
+ Documentation/virt/kvm/api.rst  |  35 ++++++
+ arch/x86/include/asm/kvm_host.h |  12 +-
+ arch/x86/kvm/Kconfig            |   7 ++
+ arch/x86/kvm/lapic.c            |   2 +
+ arch/x86/kvm/mmu/mmu.c          |  68 ++++++++++-
+ arch/x86/kvm/x86.c              | 101 +++++++++++++++-
+ arch/x86/kvm/x86.h              |   2 +
+ include/linux/kvm_host.h        |  30 +++++
+ include/linux/kvm_types.h       |   1 +
+ include/trace/events/kvm.h      |  50 +++++---
+ include/uapi/linux/kvm.h        |  12 +-
+ virt/kvm/Kconfig                |   3 +
+ virt/kvm/Makefile.kvm           |   1 +
+ virt/kvm/async_pf.c             |   2 +-
+ virt/kvm/async_pf_user.c        | 197 ++++++++++++++++++++++++++++++++
+ virt/kvm/async_pf_user.h        |  24 ++++
+ virt/kvm/kvm_main.c             |  14 +++
+ 17 files changed, 535 insertions(+), 26 deletions(-)
+ create mode 100644 virt/kvm/async_pf_user.c
+ create mode 100644 virt/kvm/async_pf_user.h
+
+
+base-commit: 15f01813426bf9672e2b24a5bac7b861c25de53b
+-- 
+2.40.1
+
 
