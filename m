@@ -1,157 +1,114 @@
-Return-Path: <linux-kernel+bounces-413568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D63F09D1B17
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 23:25:55 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 224B09D1B1E
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 23:27:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24F332859B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 22:25:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A2F0AB21538
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 22:27:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F4D51E7C26;
-	Mon, 18 Nov 2024 22:25:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B7A11E7643;
+	Mon, 18 Nov 2024 22:27:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wSMucEB5"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="YulGoWQn"
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD7CE158DAC
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 22:25:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F0C818A950
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 22:27:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731968747; cv=none; b=YgIh1pidaMKUwR6W20UIigqdiTe14wVzBH8mlEQGr6a+otrMy4/knRFwRTx2auzErDrj9b6vRNRL7dsLK6QDwJEyWQG9YVDwn5YV5sMxnEsegyTqNDbsCiK8XdB1puMS2SeZVmQ9Z54BCAp5zlz7EbbVbp5diwjsKYW0BSAy1I0=
+	t=1731968839; cv=none; b=h4k7Ayox4A6hQKqSI4PvmOclpW41BWF5043UjEWLu2CKKAsFCtCCefH9bJ51gHqtPZswZ7W/bbMxxhQkLdUyU+AjauO6QeTOLW3e+wyVs83gVSW/GiZOBqMhHkYrU1KyMfSTgNar7d7VpcUMQbhCuYvhgg7Gf+abDzUZJagMv5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731968747; c=relaxed/simple;
-	bh=gP4UrWxmVwADGYWCtmu+TyIRa/S+bnajwdjRKoNwMvg=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=YagSQ1m3TeNavUo1rvHFQYm6CCp+dI8pXtM2gh0QdVvq7JlJWt0Rakf1WTKpkhMJm7jxkfjVVKfpcsAd3SbqUy76DOWN+LrKskK+O1WwS2Mu2xLq+m3JB0pf6ZgyaPP/cHisAYbEedo6kK89Nyt1nJMCGoNC/9pMwKTcWK8rUy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--yabinc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wSMucEB5; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--yabinc.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6ea8a5e862eso62432107b3.0
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 14:25:45 -0800 (PST)
+	s=arc-20240116; t=1731968839; c=relaxed/simple;
+	bh=Rvg5bbdOvYJPMLoczIrnRiEARLYMNTvHZS3WZenhK6o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=u2F3BWakb6OUuGf0ZIMkHviGjIqRBxQH9RGvTKfOFhE5XeN7PoFzbm3pXly1K/UMpd0S7m5WPGXhS4opl5f2xZEBIxAwxDpUh8ooRR2NT5+erPsah3todEZ/sJLUOQi7WTKVPjHBLlP8kNM2vHGNyrr2BjFW3CxSwElU9cQhjnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=YulGoWQn; arc=none smtp.client-ip=209.85.160.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4609b968452so32819101cf.3
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 14:27:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731968745; x=1732573545; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=14OsMhdGfdcpS80IHQ9XNfdJp63ZxqrrUOpqJIR6RjE=;
-        b=wSMucEB54wQK64K2/YAfcjNw4fzLmbmujoJNfeIn2j2dwFyxEmkkFWZeiQKOAb7k22
-         IVkNF8bNFzTFTolD2GPCsrpr2kQdXsz8+3lUO5c+m+kan0mHROxyYmx+EcbZ3RzxM+n0
-         TZLTdA/WHU0tl7SzaFpkYkzRXtBGX44Y3NiMVvCGOD17vDQFp0hk0aiyo0Kq0YN+58ln
-         rRZtKVkkLr3Qijf6zI07056XgjDrx+t2qV8cwFLYhwSiXifbeEIRUmb9ml6ESXBZ3xT+
-         8hZVrFnjhOYK4E0yWdYLMetBc39smYIoniHaXC9r0+t63ixqjrwPwKSFVntzpk9kL0pN
-         G0Pw==
+        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1731968837; x=1732573637; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Rvg5bbdOvYJPMLoczIrnRiEARLYMNTvHZS3WZenhK6o=;
+        b=YulGoWQn5V95Hr3GXX0a47ucZAzvekLRFK2k3z9O8NbgJUuKRTUV8+xqUEdMQxUBaY
+         C5JXglBWXhMbUaZuqzxXecsIC4Jt1AOa99aPFa5AZ0t+FL0zlhgIhmuIne1Zn91EqAQG
+         0hDKd3WlSNXN7L3SGwwbjZwRnvYlMQx7s7FWiITa4aGIyf/80pH65xO/1LtsJcAGpDX8
+         BWTnX/Spi7bDhX5s5ljb9xVd6xcEpb0PHgM61bv5/9rdebsE1z3xlNhkbKY9i1ZCYpjL
+         XsxLssZkg7bphL/DyOxeEjd9v+7ur9lbIYt8ivA6DqpU3Hqa0Njx+IHxlxJgfet6DMR6
+         0qcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731968745; x=1732573545;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=14OsMhdGfdcpS80IHQ9XNfdJp63ZxqrrUOpqJIR6RjE=;
-        b=ueaXbMsTxdQ7vQFYuhgjP82r6+Wp9lkrPfYB/gD3I5awmS5YpT8RtwdXEcM/mjfq1s
-         79ozLQPzGiUKoNNAJeoHiqq9aEVyxLnkSMBeiFsnLuEUiNxM7bG9xb5CPLongWHMAe18
-         b/Rttlpqqnx2kPMfweejwMIVor3K7q/mf1BCv4qijyjum/sb0ULwxCpzLLE1X1KNJx3y
-         IpJ8GN+673gAxRQaccA7NLQvCLFxevnqt8Gqubskdcs6Gc/pTG5n7Gv+wSX0V1t6LtqX
-         tMdE8atKCjlVwqw4ihSkgW74XHW0+Zyr3BXj5tMgmFmSHThgYtSifIjOgYjm6vaV9rHS
-         y33A==
-X-Forwarded-Encrypted: i=1; AJvYcCXbzFv5hKQYwAgVwwnIMTEsW1yGXaZDVn7lxHbIaWh63CZ9PU/a1dF7MUUbCuMNCJtHfZf/fz81qR2XbAo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzGAeXBhg419LEU1sQ093DDTenhQzzfvZp+9MZBgoeuBW2AHZd
-	VnfqT7BjviqHSAcZtzgN3spaPDxBAkppBqaaLF/eSV690qOcrJjs9anzx6CMFF/zhhepyZMTTTI
-	d
-X-Google-Smtp-Source: AGHT+IHaqSLX7qNc1UhlL7DMMonDFnZRihYI5SIMh0lBI+T2x10S5W6DAGbzQyiEudeWnrky5v96GHNZfoI=
-X-Received: from yabinc-desktop.mtv.corp.google.com ([2a00:79e0:2e3f:8:bc56:3202:f6e1:c119])
- (user=yabinc job=sendgmr) by 2002:a05:690c:2e08:b0:6ee:9a08:7686 with SMTP id
- 00721157ae682-6eeaa3a3e90mr127907b3.4.1731968744961; Mon, 18 Nov 2024
- 14:25:44 -0800 (PST)
-Date: Mon, 18 Nov 2024 14:25:40 -0800
+        d=1e100.net; s=20230601; t=1731968837; x=1732573637;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Rvg5bbdOvYJPMLoczIrnRiEARLYMNTvHZS3WZenhK6o=;
+        b=SmG5s4EYGUk9TjMo1qeDvkhGMRKUkqyMKHKMrIqT5t8k+uxZNxzofS+1YRPZL5qkdl
+         ChBUXA5p6UAU4OjOZ5kYyzJw83roYuqBUbaZlxGAd66pmX2WolskjxcTrdR2hQIL7SyF
+         1TynBJJFx1jd9sDpVM81tsTkzr79YSjKLq+1OOyYLRtPVbJ4+Tw+VSv8TkDoP+8z+Z/K
+         RFEfd1PPC7LeBDAT6Yx0g44f9McTO3R2Layp36LmphXAVO2j08+KRL4tk3u3uIXG59IN
+         uqQ/wBXfKTulFIsK7LLfeouDRq+9CEIBS4VcAOrSRCIdRJjSfTpv4WTbMzDbfW6Lc1qn
+         ySTw==
+X-Forwarded-Encrypted: i=1; AJvYcCUfMwnRhyaytgrgb/bS9xhFl2FgDyHf2oWKnXp1du7/xHeRqzyS8YFYPhrf2fqqkmpENmWwAPcWfFJZjR8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUQFfMKUh9D2tCJp5kpmFud5OZws/oGzb77aUApxWHSeEUsONy
+	DdzrRil+2j0fRzW23PDt7WpU4KopKlitMJpBorXkhUHnrdshdQQ3nhUwf6hIfEVP29iqSJpGM5M
+	KIMOY/BqNHeh+r3GuQ61qSGbbipyuESiUUKDamw==
+X-Google-Smtp-Source: AGHT+IHqiNZSSuRgMIGzeQbAsyUzuR5eC/kcwrOx7kFHxfRG4MSHz3HHm0p1YAsqzGlVtXTmEOgHQPQhoyYoLazVVIo=
+X-Received: by 2002:a05:622a:2a1a:b0:461:41cb:823c with SMTP id
+ d75a77b69052e-46363b72104mr162429471cf.0.1731968837193; Mon, 18 Nov 2024
+ 14:27:17 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-Message-ID: <20241118222540.27495-1-yabinc@google.com>
-Subject: [PATCH v2] arm64: Allow CONFIG_AUTOFDO_CLANG to be selected
-From: Yabin Cui <yabinc@google.com>
-To: Rong Xu <xur@google.com>, Han Shen <shenhan@google.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Masahiro Yamada <masahiroy@kernel.org>, Kees Cook <kees@kernel.org>, 
-	Nick Desaulniers <ndesaulniers@google.com>, workflows@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org
-Cc: Yabin Cui <yabinc@google.com>
+MIME-Version: 1.0
+References: <20241116175922.3265872-1-pasha.tatashin@soleen.com>
+ <20241116175922.3265872-2-pasha.tatashin@soleen.com> <8871d4b3-0cd8-4499-afe6-38a9c3426527@lucifer.local>
+ <CA+CK2bBqi7+RExARBq5m91kaxC+w+nLYnLf4wyM_MJjaxr2rAw@mail.gmail.com> <ZzunOu4TcHcJIOht@casper.infradead.org>
+In-Reply-To: <ZzunOu4TcHcJIOht@casper.infradead.org>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Mon, 18 Nov 2024 17:26:40 -0500
+Message-ID: <CA+CK2bAhB5KXnm8WSXe2SocMj1zyQnswQ0a=4AgDawcCcisSxg@mail.gmail.com>
+Subject: Re: [RFCv1 1/6] mm: Make get_vma_name() function public
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	cgroups@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	akpm@linux-foundation.org, corbet@lwn.net, derek.kiernan@amd.com, 
+	dragan.cvetic@amd.com, arnd@arndb.de, gregkh@linuxfoundation.org, 
+	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, tj@kernel.org, 
+	hannes@cmpxchg.org, mhocko@kernel.org, roman.gushchin@linux.dev, 
+	shakeel.butt@linux.dev, muchun.song@linux.dev, Liam.Howlett@oracle.com, 
+	vbabka@suse.cz, jannh@google.com, shuah@kernel.org, vegard.nossum@oracle.com, 
+	vattunuru@marvell.com, schalla@marvell.com, david@redhat.com, 
+	osalvador@suse.de, usama.anjum@collabora.com, andrii@kernel.org, 
+	ryan.roberts@arm.com, peterx@redhat.com, oleg@redhat.com, 
+	tandersen@netflix.com, rientjes@google.com, gthelen@google.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Select ARCH_SUPPORTS_AUTOFDO_CLANG to allow AUTOFDO_CLANG to be
-selected.
+On Mon, Nov 18, 2024 at 3:44=E2=80=AFPM Matthew Wilcox <willy@infradead.org=
+> wrote:
+>
+> On Mon, Nov 18, 2024 at 03:40:57PM -0500, Pasha Tatashin wrote:
+> > > You're putting something in an mm/ C-file and the header in fs.h? Eh?
+> >
+> > This is done so we do not have to include struct path into vma.h. fs.h
+> > already has some vma functions like: vma_is_dax() and vma_is_fsdax().
+>
+> Yes, but DAX is a monumental layering violation, not something to be
+> emulated.
 
-On ARM64, ETM traces can be recorded and converted to AutoFDO profiles.
-Experiments on Android show 4% improvement in cold app startup time
-and 13% improvement in binder benchmarks.
+Fair enough, but I do not like adding "struct path" dependency to
+vma.h, is there a better place to put it?
 
-Signed-off-by: Yabin Cui <yabinc@google.com>
----
-
-Change-Logs in V2:
-
-1. Use "For ARM platforms with ETM trace" in autofdo.rst.
-2. Create an issue and a change to use extbinary format in instructions:
-   https://github.com/Linaro/OpenCSD/issues/65
-   https://android-review.googlesource.com/c/platform/system/extras/+/3362107
-
- Documentation/dev-tools/autofdo.rst | 18 +++++++++++++++++-
- arch/arm64/Kconfig                  |  1 +
- 2 files changed, 18 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/dev-tools/autofdo.rst b/Documentation/dev-tools/autofdo.rst
-index 1f0a451e9ccd..a890e84a2fdd 100644
---- a/Documentation/dev-tools/autofdo.rst
-+++ b/Documentation/dev-tools/autofdo.rst
-@@ -55,7 +55,7 @@ process consists of the following steps:
-    workload to gather execution frequency data. This data is
-    collected using hardware sampling, via perf. AutoFDO is most
-    effective on platforms supporting advanced PMU features like
--   LBR on Intel machines.
-+   LBR on Intel machines, ETM traces on ARM machines.
- 
- #. AutoFDO profile generation: Perf output file is converted to
-    the AutoFDO profile via offline tools.
-@@ -141,6 +141,22 @@ Here is an example workflow for AutoFDO kernel:
- 
-       $ perf record --pfm-events RETIRED_TAKEN_BRANCH_INSTRUCTIONS:k -a -N -b -c <count> -o <perf_file> -- <loadtest>
- 
-+   - For ARM platforms with ETM trace:
-+
-+     Follow the instructions in the `Linaro OpenCSD document
-+     https://github.com/Linaro/OpenCSD/blob/master/decoder/tests/auto-fdo/autofdo.md`_
-+     to record ETM traces for AutoFDO::
-+
-+      $ perf record -e cs_etm/@tmc_etr0/k -a -o <etm_perf_file> -- <loadtest>
-+      $ perf inject -i <etm_perf_file> -o <perf_file> --itrace=i500009il
-+
-+     For ARM platforms running Android, follow the instructions in the
-+     `Android simpleperf document
-+     <https://android.googlesource.com/platform/system/extras/+/main/simpleperf/doc/collect_etm_data_for_autofdo.md>`_
-+     to record ETM traces for AutoFDO::
-+
-+      $ simpleperf record -e cs-etm:k -a -o <perf_file> -- <loadtest>
-+
- 4) (Optional) Download the raw perf file to the host machine.
- 
- 5) To generate an AutoFDO profile, two offline tools are available:
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index fd9df6dcc593..c3814df5e391 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -103,6 +103,7 @@ config ARM64
- 	select ARCH_SUPPORTS_PER_VMA_LOCK
- 	select ARCH_SUPPORTS_HUGE_PFNMAP if TRANSPARENT_HUGEPAGE
- 	select ARCH_SUPPORTS_RT
-+	select ARCH_SUPPORTS_AUTOFDO_CLANG
- 	select ARCH_WANT_BATCHED_UNMAP_TLB_FLUSH
- 	select ARCH_WANT_COMPAT_IPC_PARSE_VERSION if COMPAT
- 	select ARCH_WANT_DEFAULT_BPF_JIT
--- 
-2.47.0.338.g60cca15819-goog
-
+Pasha
 
