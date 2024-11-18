@@ -1,442 +1,117 @@
-Return-Path: <linux-kernel+bounces-412908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3C309D1109
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 13:55:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CEB69D110D
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 13:56:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 531E3B24533
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 12:55:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB153B24E28
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 12:56:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FED81993B4;
-	Mon, 18 Nov 2024 12:55:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B5CC19ABD4;
+	Mon, 18 Nov 2024 12:56:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="bn7ycOIc"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QowslvRV"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F162B190468
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 12:55:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B53A192D97
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 12:56:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731934527; cv=none; b=qMmWaAZMWGEaukOzG1cvsuc9R7T42lzQMHrqZa73b3+OqagjVI/HvHgrMR8zMMBEzsRTIJZaYLruY9saIxsAetHaJcDlCr2BZpNawhJRgJMpr5hP/xWHn74ic7RKewYhmTYeLkilVRopDBTUCreahWcgfyVP1u6KIvyouKpDElw=
+	t=1731934572; cv=none; b=m6RSfxTbN6j8iEhaBN9oOjegza6t5E6lC+LpW6vukng97+FOcHhSq+u/7vVzDVOmZSXt2aNyYjW8mliWFXR4IEtXcSGKOeTkjBFHcSlleA9rbMoPgDiTzSaqGVVaiCL4XG162Oja5cJGbSpkzt/nI5GTmlve7FSQv5fjAE4Q9J8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731934527; c=relaxed/simple;
-	bh=rVBsrXcOdUN8m26bJZJbAlLD2IOhgdVgr14wO0WaJBA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IkByt6Duc3b2mCc5efZ8sL+UvlQBTKLjzVRFnw5ftmgFKD2Qh5u3krRF+HDd32AgYv/mvFgIsBWGzyO1Pew09G1z8swhm2Po6TSf2FzFtaNATwWSgthdZpe0AJgkajYh1lxzFCIXbmGpOL5eBU6K1qIoWLJnj+3feAudF3lY+vA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=bn7ycOIc; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-38231f84dccso2046289f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 04:55:24 -0800 (PST)
+	s=arc-20240116; t=1731934572; c=relaxed/simple;
+	bh=GeWAFYEO669F+1bbu0zR8yfp+pZj13YEcoliIrUfJzQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pNY7I3EDZgH6lWRL0Ch/X7FPyCvoR/X2yOT+0du1KDurERzZIVAaGMh/OLHGBSrKzpqIZPOpPTBiarFMvKrXJjl6ZwNoY1IPKtPmZFqytwfmpp0k4BGDdqY56gXpo+2IhWO2rgRgc6OFQ4pR/62r+uGVgbHqt32Xt9puko5P6C0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QowslvRV; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-539e8607c2aso4279674e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 04:56:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1731934523; x=1732539323; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=fg1rJv9OkIfRgkL2PvM3ymVvMMLTERHKCSpQa1kYhbQ=;
-        b=bn7ycOIcI3l8gqVxtk1s1DWkH7l79aq4Z4s4GI8slCooWjFUoymkfxVD/xJZWYvflN
-         USacJ9K7NaT2WUv6jO3PZHdWX9js8Vn2dlQOZGEvERWxWQHgaKkpeIamHKtlpZhF+KhM
-         WWQFL59KI0dxHbii7N2RSs4BTqL1x8i5/MVxSX4GbZFg51Hsl7t7qzwYxmn1CHnOMynZ
-         R4Nz47wmYD7FXJ6tjeN6tt7XCfDXDakxiPrOvTRppvYQPSi1a4cUh9DLDMap7wCXkU3S
-         UaKRTbSHPCwu2re1BN2UUJNzbv8Vtb1o6rKTubYPvTcSe/MIbUl16u3OYldbA8Aho4ga
-         5TAQ==
+        d=linaro.org; s=google; t=1731934568; x=1732539368; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=jAqwMGBkTmHKZ4CNoWBz4QXL8qsRGD9BwJ8T1sZ1LU8=;
+        b=QowslvRVYHIVzOIctggEZqu/EQzBnqzrAC0R1WBT/Oaa/WRvODHeupezsjz/VlC+mU
+         es0NDSZ0n7OLA18On4OMFa7RwqJj8O3wdjhYmKzAgxZAUpumiwFX8SXEsfau2ziiqWc2
+         sWI47f3x38ojxkHr39NztTpz6Y1MaS2ewHT1SeLvokVjSuo1VXhFMRzzkaZVeb1BUMnd
+         R/nHlcE6ey173ZHpB8gC19dS5gHDUE52cpRcTp66ynMIXNZYHLZBcCO/PhxMxiXRpMZt
+         L9AtQq3qRCwJhPnG2NmQBMCWwnJxnFf6BLfpNa9+WqqbDmbpahP/xtoRtJHv+1mZj3mQ
+         s7OQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731934523; x=1732539323;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fg1rJv9OkIfRgkL2PvM3ymVvMMLTERHKCSpQa1kYhbQ=;
-        b=xLluS5YheG4Qy+jtoGUBYFcImIuaES+RL5JcQ6S5HypPktBMVsjUAkYwAB+sJW9cP6
-         pyNlAmdl7Lbnr78eB+mAN0Cn/XYAcHbrffcsgHRC5PM45c2NZOpe339XUd2YIKiiKvxG
-         V0sbaUU4ABVX0dxltfBi8lBkFYGE0Pe1UfEYLXmmyim9ODfJ8rVrnTkjgwmmh20luiub
-         FJnf3bdnMpdpcs0LyFhp6Kjwmc7/odPNukcGhQapIovFWOe9Lz15qTQ0gEfT/0FDgUkx
-         J6xzIsgeJXPbqw5cjt+6VJHID9zGECcFpAICPFQyXDzpMgHSzu8WaWbHBC/q6r/YqNJu
-         qKmA==
-X-Forwarded-Encrypted: i=1; AJvYcCWALVkMkhzw4Be0vfBJCO8T1q9m5sNYfYKfMpnKtYo6Ug9n/c+y5K1kEHmKxR7LNlPZkWItqGXtubBlA10=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMlwmSzPoFfT7L1FaVAsqmmpFmBE4PPNgt8L3ln9/xdHdFkKE3
-	LHLCm1fJMBIcKiZIl8lSQY557zVtksvpUWz+N31gPmGa6HWhlly1ZzvVT4Byrk2wX/j4fEwBmCV
-	e
-X-Google-Smtp-Source: AGHT+IGLddhdcjHgoc2FXldna9zElU6K+HbysJRBCI4EznzKye8X/VteFhQ+afl7061fcEAcd/1Hzg==
-X-Received: by 2002:a5d:6dac:0:b0:382:4b7c:349a with SMTP id ffacd0b85a97d-3824b7c3863mr176046f8f.4.1731934523105;
-        Mon, 18 Nov 2024 04:55:23 -0800 (PST)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:b8ce:8ea9:933b:1ec6])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-382321b7fc2sm8220536f8f.75.2024.11.18.04.55.22
+        d=1e100.net; s=20230601; t=1731934568; x=1732539368;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jAqwMGBkTmHKZ4CNoWBz4QXL8qsRGD9BwJ8T1sZ1LU8=;
+        b=hAmv91zB53NLH8Gz6b9o+OxmXn2/7MgeMbm894zOxE0wbkKWbLWRsIIAv7YfLZmzLr
+         p3EyVjRyToMdq9EE7AwQIv2Yy8c797LtIJeleVTD8JgrNh1r66NgjPyt8qlsdLcXSzvW
+         GUiwOncqbhk6LZF7PE+i4x5PVlUM0e5A/wiN7dREtDnoU7tXAEvwz8Ulg/BE283RfVbM
+         G054YnNX4PW1g9csPEwZcDaf1wrU4zeni7zgEdHbOYMDkzcFK01MottMCwuPQBh4/+bK
+         PmW7cMwLpU/xeBGv64O0/t9p6Z2iFlRpf5n5ZXsr6SbF5rI9bRiq3qOFN1C6ZOdg50tO
+         tNtA==
+X-Forwarded-Encrypted: i=1; AJvYcCX4wCCDRaQgBGxp3iKdXlVJxoB5eSgi5AuSOnQjUNvf0Wb39HiIiDG2/Oil+zFJOijwS9ey5GKUAKsi3og=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHfOEODF9OdKUpoW3xYp2OWMY4nkxcrPLi+FS21aTCSuzDrPJl
+	XYG+RNKfxG+82BhDmjUNzea6TtUqwvnQtp+Gtu4sErm817E9ZDPjv1f+gmVAypM=
+X-Google-Smtp-Source: AGHT+IE1rwlqvuyY2O92e5DgZac5q8JPauzE9y+A00EL2MXWGS+FvI+OvGI5kWfZ80rMTLt0Z01AUQ==
+X-Received: by 2002:a05:6512:398e:b0:53c:7652:6c7a with SMTP id 2adb3069b0e04-53dab298aedmr3661459e87.8.1731934567633;
+        Mon, 18 Nov 2024 04:56:07 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53da6548e40sm1594497e87.258.2024.11.18.04.56.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Nov 2024 04:55:22 -0800 (PST)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [GIT PULL] gpio updates for v6.13-rc1
-Date: Mon, 18 Nov 2024 13:55:12 +0100
-Message-ID: <20241118125515.49743-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.45.2
+        Mon, 18 Nov 2024 04:56:06 -0800 (PST)
+Date: Mon, 18 Nov 2024 14:56:04 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Varadarajan Narayanan <quic_varada@quicinc.com>
+Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, gregkh@linuxfoundation.org, 
+	andersson@kernel.org, konradybcio@kernel.org, mantas@8devices.com, 
+	manivannan.sadhasivam@linaro.org, abel.vesa@linaro.org, quic_kriskura@quicinc.com, 
+	quic_rohiagar@quicinc.com, quic_kbajaj@quicinc.com, quic_wcheng@quicinc.com, 
+	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
+Subject: Re: [PATCH v4 6/6] arm64: dts: qcom: Add USB controller and phy
+ nodes for IPQ5424
+Message-ID: <q3twp57aiwvsj2wimvszp7ecr5s4ldacxghzzepmxzcasgy5a4@nnqvq6tgruaa>
+References: <20241118052839.382431-1-quic_varada@quicinc.com>
+ <20241118052839.382431-7-quic_varada@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241118052839.382431-7-quic_varada@quicinc.com>
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Mon, Nov 18, 2024 at 10:58:39AM +0530, Varadarajan Narayanan wrote:
+> The IPQ5424 SoC has both USB2.0 and USB3.0 controllers. The USB3.0
+> can connect to either of USB2.0 or USB3.0 phy and operate in the
+> respective mode.
+> 
+> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> ---
+> v4: Fix regulator names to match with other Qualcomm DT files
+> 
+> v3: Regulator node names, labels and 'regulator-name' changed per review suggestions
+>     Stray newline removed
+> 
+> v2: Add dm/dp_hs_phy_irq to usb3@8a00000 node
+>     Add u1/u2-entry quirks to usb@8a00000 node
+> ---
+>  arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts |  66 ++++++++
+>  arch/arm64/boot/dts/qcom/ipq5424.dtsi       | 159 ++++++++++++++++++++
+>  2 files changed, 225 insertions(+)
+> 
 
-Linus,
-
-Here's the majority of changes for this merge window from the GPIO subsystem.
-
-We have three new drivers, support for some new models in existing ones and
-lots of various tweaks and improvements across the board (switching to using
-recommended APIs, code shrink and simplification, etc.).
-
-We also have a new feature in the character device uAPI where we now notify
-the user-space about changes triggered by in-kernel users as well, not only
-when they were done by other user-space agents.
-
-Details are in the signed tag as usual.
-
-The merge commits you'll see here were done to pull Intel changes from Andy,
-MFD dependencies from Lee and to pull back upstream fixes to avoid conflicts.
-
-The non-gpio commits in this PR are either pulled from the MFD tree or were
-acked by relevant maintainers and concern the removal of a deprecated GPIO
-symbol from various drivers across the kernel tree.
-
-I will be picking up some more fixes over the course of this week so there'll
-be another small PR in the second week.
-
-Please pull.
-
-Best Regards,
-Bartosz Golaszewski
-
-The following changes since commit 59b723cd2adbac2a34fc8e12c74ae26ae45bf230:
-
-  Linux 6.12-rc6 (2024-11-03 14:05:52 -1000)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git tags/gpio-updates-for-v6.13-rc1
-
-for you to fetch changes up to bef29ca3a6458582ac13320d47bf2646e5734dc8:
-
-  gpio: tegra186: Allow to enable driver on Tegra234 (2024-11-18 11:45:06 +0100)
-
-----------------------------------------------------------------
-gpio updates for v6.13-rc1
-
-GPIOLIB core:
-- use the new mem_is_zero() instead of memchr_inv(s, 0, n)
-- don't store debounce period twice needlessly
-- clean-up debugfs handling
-- remove leftover comments referring to no longer used spinlocks
-- unduplicate some operations like SRCU locks and initializing GPIO descriptors
-- constify the sysfs class struct
-- use lock guards in GPIO sysfs code
-- update GPIO uAPI internal flags all at once atomically for consistency with
-  other places
-- modify the behavior of the sysfs interface by no longer exporting lines that
-  are named inside the driver code or board files with the sysfs links bearing
-  the line names as this has for many years been largely unused due to the
-  prevalence of DT, ACPI and firmware nodes over board files and made the API
-  inconsistent
-- for GPIO interrupt providers: free irqs that are still requested by users
-  when removing the chip
-
-GPIO uAPI:
-- notify user-space about changes to GPIO lines' state (requested, released,
-  reconfigured) triggered from the kernel as well (until now we'd only do
-  this for changes triggered from user-space)
-- to that end: modify the internal workings of the notification mechanism by
-  switching to an atomic notifier which allows us to send events from atomic
-  context
-- also to that end store the debounce period in the GPIO descriptor struct
-  and not in the character device context struct
-- while at it, also cover the corner-case of users introducing changes over
-  sysfs while others watch them via the character device
-- don't report GPIO lines requested as interrupts as "used" to user-space as it
-  can still request them as GPIOs
-
-New drivers:
-- add a driver for the GPIO functionality of the MFD Congatec Board Controller
-- add a driver for the PolarFire GPIO controller
-- add a driver supporting the GPIOs on FTDI FT2232H
-
-Driver improvements:
-- use generic device property accessors instead of OF-specific ones across
-  many GPIO drivers (mpc8xxx, vf610, eic-sprd, davinci, ts4900, xilinx, mvebu)
-- use devres helpers to simplify error paths and either shrink or entirely
-  remove the driver's remove() callback (grgpio, amdpt, menz127, max730x,
-  ftgpio010, 74x164, ljca)
-- use helper variables to store the address of pdev->dev and avoid some
-  line-breaks
-- use device_for_each_child_node_scoped() to avoid having to put the fwnode
-  on breaks or errors (gpio-sim, gpio-dwapb, gpiolib-acpi)
-- use a scoped bitmap to simplify the code and drop goto labels in
-  gpio-aggregator
-- drop unneeded Kconfig dependencies on OF_GPIO (grgpio, mveby, xilinx)
-- add support for new models to gpio-aspeed, gpio-rockchip and gpio-dwapb
-- clean-up ACPI handling and some other bits in gpio-xgene-sb
-- replace deprecated PCI functions in pcie-idio-24 and pci-idio-16
-- allow to build davinci and mvebu drivers with COMPILE_TEST=y
-- remove dead code in gpio-mb86s7x
-- switch back to using platform_driver::remove() (after the conversion to
-  remove_new()) across the GPIO drivers
-- remove remaining uses of GPIOF_ACTIVE_LOW across the tree and drop this
-  deprecated symbol
-- convert the gpio-altera driver to no longer pull in the deprecated
-  legacy-of-mm-gpiochip.h header
-- use of_property_present() instead of of_property_read_bool() in gpiolib-of
-  and gpio-rockchip
-- allow to build the tegra186 driver on Tegra234 platforms in Kconfig
-
-Late fixes:
-- add a missing return value check after devm_kasprintf() to gpio-grgpio
-
-DT bindings:
-- document the ngpios property of gpio-mmio
-- add support for a new aspeed model
-- fix the example for st,nomadik-gpio
-
-Other:
-- kernel doc and comments tweaks
-- fix typos in TODO
-- reorder headers alphabetically in some drivers
-- fix incorrect format specifiers in gpio tools
-
-----------------------------------------------------------------
-Andy Shevchenko (13):
-      gpio: xgene-sb: Remove unneeded definitions for properties
-      gpio: xgene-sb: Drop ACPI_PTR() and CONFIG_ACPI guards
-      gpio: xgene-sb: Tidy up ACPI and OF ID tables
-      gpio: xgene-sb: don't use "proxy" headers
-      gpio: mpsse: Check for error code from devm_mutex_init() call
-      gpio: altera: Drop legacy-of-mm-gpiochip.h header
-      Input: gpio_keys - avoid using GPIOF_ACTIVE_LOW
-      Input: gpio_keys_polled - avoid using GPIOF_ACTIVE_LOW
-      leds: gpio: Avoid using GPIOF_ACTIVE_LOW
-      pcmcia: soc_common: Avoid using GPIOF_ACTIVE_LOW
-      USB: gadget: pxa27x_udc: Avoid using GPIOF_ACTIVE_LOW
-      gpio: Get rid of GPIOF_ACTIVE_LOW
-      gpiolib: cdev: use !mem_is_zero() instead of memchr_inv(s, 0, n)
-
-Arnd Bergmann (1):
-      gpiolib: avoid format string weakness in workqueue interface
-
-Bartosz Golaszewski (52):
-      gpio: free irqs that are still requested when the chip is being removed
-      gpio: sysfs: make the sysfs export behavior consistent
-      gpio: aggregator: simplify aggr_parse() with scoped bitmap
-      gpio: mvebu: allow building the module with COMPILE_TEST=y
-      gpio: mvebu: use generic device properties
-      gpio: xilinx: drop dependency on GPIO_OF
-      gpio: xilinx: use helper variable to store the address of pdev->dev
-      gpio: xilinx: use generic device properties
-      gpiolib: use v2 defines for line state change events
-      gpiolib: unify two loops initializing GPIO descriptors
-      gpio: cdev: update flags at once when reconfiguring from user-space
-      Merge tag 'ib-mfd-gpio-i2c-watchdog-v6.13' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/lee/mfd into gpio/for-next
-      Merge tag 'v6.12-rc3' of git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux into gpio/for-next
-      gpio: mvebu: drop dependency on OF_GPIO
-      gpio: ts4900: use generic device properties
-      gpio: davinci: allow building the module with COMPILE_TEST=y
-      gpio: davinci: use generic device properties
-      gpio: eic-sprd: use generic device_get_match_data()
-      gpio: vf610: use generic device_get_match_data()
-      gpio: mpc8xxx: use a helper variable to store the address of pdev->dev
-      gpio: mpc8xxx: use generic device_is_compatible()
-      gpio: ljca: use devm_mutex_init() to simplify the error path and remove()
-      gpio: sysfs: constify gpio class
-      gpio: fold the Kconfig prompt into the option type for GPIO CDEV
-      gpio: amdpt: remove remove()
-      gpio: menz127: simplify error path and remove remove()
-      gpio: 74x164: shrink code
-      gpio: ftgpio010: shrink code
-      gpio: max730x: use devres to shrink and simplify code
-      gpiolib: notify user-space when a driver requests its own desc
-      gpiolib: unduplicate chip guard in set_config path
-      gpio: cdev: go back to storing debounce period in the GPIO descriptor
-      gpio: cdev: prepare gpio_desc_to_lineinfo() for being called from atomic
-      gpiolib: add a per-gpio_device line state notification workqueue
-      gpio: cdev: put emitting the line state events on a workqueue
-      gpiolib: switch the line state notifier to atomic
-      gpiolib: notify user-space about in-kernel line state changes
-      gpio: grgpio: drop Kconfig dependency on OF_GPIO
-      gpio: grgpio: order headers alphabetically
-      gpio: grgpio: use a helper variable to store the address of ofdev->dev
-      gpio: grgpio: remove remove()
-      gpiolib: fix a NULL-pointer dereference when setting direction
-      gpiolib: remove leftover spinlock bits
-      gpio: sysfs: demote warning messages on invalid user input to debug
-      Merge tag 'v6.12-rc6' of git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux into gpio/for-next
-      gpio: sysfs: use cleanup guards for gpiod_data::mutex
-      gpio: sysfs: use cleanup guards for the sysfs_lock mutex
-      gpio: sysfs: emit chardev line-state events on GPIO export
-      gpio: sysfs: emit chardev line-state events on active-low changes
-      gpio: sysfs: emit chardev line-state events on edge store
-      gpio: cdev: don't report GPIOs requested as interrupts as used
-      Merge tag 'intel-gpio-v6.13-1' of git://git.kernel.org/pub/scm/linux/kernel/git/andy/linux-gpio-intel into gpio/for-next
-
-Billy Tsai (5):
-      gpio: aspeed: Change the macro to support deferred probe
-      gpio: aspeed: Remove the name for bank array
-      gpio: aspeed: Create llops to handle hardware access
-      dt-bindings: gpio: aspeed,ast2400-gpio: Support ast2700
-      gpio: aspeed: Support G7 Aspeed gpio controller
-
-Charles Han (1):
-      gpio: grgpio: Add NULL check in grgpio_probe
-
-Conor Dooley (2):
-      MAINTAINERS: add gpio driver to PolarFire entry
-      gpio: mpfs: add CoreGPIO support
-
-Dan Carpenter (1):
-      gpio: mb86s7x: remove some dead code in mb86s70_gpio_to_irq()
-
-Javier Carrasco (3):
-      gpio: acpi: switch to device_for_each_child_node_scoped()
-      gpio: dwapb: switch to device_for_each_child_node_scoped()
-      gpio: sim: switch to device_for_each_child_node_scoped()
-
-Johan Hovold (1):
-      gpiolib: clean up debugfs separator handling
-
-Kent Gibson (2):
-      gpiolib: cdev: Fix reference to linereq_set_config_unlocked()
-      gpiolib: cdev: remove redundant store of debounce_period_us
-
-Lars-Peter Clausen (1):
-      gpio: tegra186: Allow to enable driver on Tegra234
-
-Lewis Hanly (1):
-      gpio: mpfs: add polarfire soc gpio support
-
-Linus Walleij (1):
-      dt-bindings: gpio-mmio: Add ngpios property
-
-Luo Yifan (1):
-      tools: gpio: Fix several incorrect format specifiers
-
-Mary Strodl (1):
-      gpio: add support for FTDI's MPSSE as GPIO
-
-Rob Herring (Arm) (2):
-      dt-bindings: gpio: st,nomadik-gpio: Add missing "#interrupt-cells" to example
-      gpio: Use of_property_present() for non-boolean properties
-
-Shivam Chaudhary (1):
-      Fix typos in GPIO TODO document
-
-Srikar Dronamraju (1):
-      gpio: sloppy-logic-analyzer remove reference to rcu_momentary_dyntick_idle()
-
-Thomas Richard (5):
-      mfd: Add Congatec Board Controller driver
-      gpio: Congatec Board Controller gpio driver
-      i2c: Congatec Board Controller i2c bus driver
-      watchdog: Congatec Board Controller watchdog timer driver
-      MAINTAINERS: Add entry for Congatec Board Controller
-
-Uwe Kleine-König (1):
-      gpio: Switch back to struct platform_driver::remove()
-
-William Breathitt Gray (2):
-      gpio: pci-idio-16: Replace deprecated PCI functions
-      gpio: pcie-idio-24: Replace deprecated PCI functions
-
-Ye Zhang (3):
-      gpio: rockchip: explan the format of the GPIO version ID
-      gpio: rockchip: change the GPIO version judgment logic
-      gpio: rockchip: support new version GPIO
-
-Yoshihiro Furudera (1):
-      gpio: dwapb: Add ACPI HID for DWAPB GPIO controller on Fujitsu MONAKA
-
- .../bindings/gpio/aspeed,ast2400-gpio.yaml         |  19 +-
- .../devicetree/bindings/gpio/gpio-mmio.yaml        |  13 +-
- .../devicetree/bindings/gpio/st,nomadik-gpio.yaml  |   1 +
- MAINTAINERS                                        |  10 +
- drivers/gpio/Kconfig                               |  41 +-
- drivers/gpio/Makefile                              |   3 +
- drivers/gpio/TODO                                  |   4 +-
- drivers/gpio/gpio-74x164.c                         |  21 +-
- drivers/gpio/gpio-aggregator.c                     |  16 +-
- drivers/gpio/gpio-altera.c                         | 178 +++---
- drivers/gpio/gpio-amdpt.c                          |  10 +-
- drivers/gpio/gpio-aspeed.c                         | 618 +++++++++++++--------
- drivers/gpio/gpio-brcmstb.c                        |   2 +-
- drivers/gpio/gpio-cadence.c                        |   2 +-
- drivers/gpio/gpio-cgbc.c                           | 196 +++++++
- drivers/gpio/gpio-davinci.c                        |  10 +-
- drivers/gpio/gpio-dln2.c                           |   2 +-
- drivers/gpio/gpio-dwapb.c                          |   5 +-
- drivers/gpio/gpio-eic-sprd.c                       |   4 +-
- drivers/gpio/gpio-ftgpio010.c                      |  45 +-
- drivers/gpio/gpio-grgpio.c                         |  75 +--
- drivers/gpio/gpio-ljca.c                           |  17 +-
- drivers/gpio/gpio-lpc18xx.c                        |   2 +-
- drivers/gpio/gpio-max730x.c                        |  17 +-
- drivers/gpio/gpio-mb86s7x.c                        |   4 +-
- drivers/gpio/gpio-menz127.c                        |  58 +-
- drivers/gpio/gpio-mm-lantiq.c                      |   2 +-
- drivers/gpio/gpio-mpc5200.c                        |   4 +-
- drivers/gpio/gpio-mpc8xxx.c                        |  56 +-
- drivers/gpio/gpio-mpfs.c                           | 188 +++++++
- drivers/gpio/gpio-mpsse.c                          | 527 ++++++++++++++++++
- drivers/gpio/gpio-mvebu.c                          |   8 +-
- drivers/gpio/gpio-omap.c                           |   2 +-
- drivers/gpio/gpio-pci-idio-16.c                    |  17 +-
- drivers/gpio/gpio-pcie-idio-24.c                   |  19 +-
- drivers/gpio/gpio-rcar.c                           |   2 +-
- drivers/gpio/gpio-rockchip.c                       |  28 +-
- drivers/gpio/gpio-sim.c                            |   7 +-
- drivers/gpio/gpio-sloppy-logic-analyzer.c          |   2 +-
- drivers/gpio/gpio-tb10x.c                          |   2 +-
- drivers/gpio/gpio-ts4900.c                         |   6 +-
- drivers/gpio/gpio-ts5500.c                         |   2 +-
- drivers/gpio/gpio-uniphier.c                       |   2 +-
- drivers/gpio/gpio-vf610.c                          |   7 +-
- drivers/gpio/gpio-xgene-sb.c                       |  39 +-
- drivers/gpio/gpio-xgs-iproc.c                      |   2 +-
- drivers/gpio/gpio-xilinx.c                         |  51 +-
- drivers/gpio/gpio-zynq.c                           |   2 +-
- drivers/gpio/gpiolib-acpi.c                        |   4 +-
- drivers/gpio/gpiolib-cdev.c                        | 384 ++++++-------
- drivers/gpio/gpiolib-legacy.c                      |   3 -
- drivers/gpio/gpiolib-of.c                          |   2 +-
- drivers/gpio/gpiolib-sysfs.c                       | 182 +++---
- drivers/gpio/gpiolib.c                             | 202 +++++--
- drivers/gpio/gpiolib.h                             |  14 +-
- drivers/i2c/busses/Kconfig                         |  10 +
- drivers/i2c/busses/Makefile                        |   1 +
- drivers/i2c/busses/i2c-cgbc.c                      | 406 ++++++++++++++
- drivers/input/keyboard/gpio_keys.c                 |  10 +-
- drivers/input/keyboard/gpio_keys_polled.c          |  12 +-
- drivers/leds/leds-gpio.c                           |   9 +-
- drivers/mfd/Kconfig                                |  12 +
- drivers/mfd/Makefile                               |   1 +
- drivers/mfd/cgbc-core.c                            | 411 ++++++++++++++
- drivers/pcmcia/soc_common.c                        |  12 +-
- drivers/usb/gadget/udc/pxa27x_udc.c                |   7 +-
- drivers/watchdog/Kconfig                           |  10 +
- drivers/watchdog/Makefile                          |   1 +
- drivers/watchdog/cgbc_wdt.c                        | 211 +++++++
- include/linux/gpio.h                               |   3 -
- include/linux/mfd/cgbc.h                           |  44 ++
- tools/gpio/gpio-event-mon.c                        |   8 +-
- tools/gpio/gpio-sloppy-logic-analyzer.sh           |   2 +-
- 73 files changed, 3245 insertions(+), 1064 deletions(-)
- create mode 100644 drivers/gpio/gpio-cgbc.c
- create mode 100644 drivers/gpio/gpio-mpfs.c
- create mode 100644 drivers/gpio/gpio-mpsse.c
- create mode 100644 drivers/i2c/busses/i2c-cgbc.c
- create mode 100644 drivers/mfd/cgbc-core.c
- create mode 100644 drivers/watchdog/cgbc_wdt.c
- create mode 100644 include/linux/mfd/cgbc.h
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+-- 
+With best wishes
+Dmitry
 
