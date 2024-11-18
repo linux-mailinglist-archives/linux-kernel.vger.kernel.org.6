@@ -1,44 +1,44 @@
-Return-Path: <linux-kernel+bounces-413409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37B2D9D18BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 20:15:18 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41E109D18BF
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 20:16:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56070282DBA
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 19:15:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A4C1B2132F
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 19:16:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D482D1E5701;
-	Mon, 18 Nov 2024 19:15:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDCE11DED7D;
+	Mon, 18 Nov 2024 19:15:56 +0000 (UTC)
 Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFA691E5027
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 19:15:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E131B17597
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 19:15:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731957311; cv=none; b=R6KCchUShmnzSoXaOpUXRH+LGDCp6pjFR5FRhpzsEW/RGk6WVm0P5fpdpjC0Rp3/556faDfY9a8Kt86eohygg9en1QS9aiDmv+2a7akKSVSl6sshRLF7/vK6KVD3tVqHRVGpFzTTiD2RaeD7hobZwKzj0/avynX8WbHH4zcYbFM=
+	t=1731957356; cv=none; b=nrCHEzdTQ7cSMMwRy57LnZ/U0HeR69wto5vHuog42Btb2/Lh8sMLMojPuEdQcshj31Z9gO8+igGij2qkc9blsu3Nsnt+MKsXsTdHv+quzsm70JQmIBWp9UOQqz/0mSuS2a72PEp8ePh9pJ/eqs8GIirRYlFagSlpcbynJTFEC68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731957311; c=relaxed/simple;
-	bh=2EpvyN9CxJEj4ZXsu28zRv9w2icqPvbVOpd6OJzKK7g=;
+	s=arc-20240116; t=1731957356; c=relaxed/simple;
+	bh=igb3jrCi8N0kaaUYkWu8zs4q28/tALgnxPMV8XGKQDE=;
 	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=FiWZcdmUR3XRnmYTM4gEXXI0Ttw423z1Xa/T3T5OVETffKGStFxCXfvxUxi3wc7M+k8jMBqtJ2KRl/DMgAAugIaHT3X2FIUMjMVOTbX8Lxgs8b4t/Zcw1zhWjwflGh5mPfJ7pnK4NeZDIWZA2BqKtizRnZcxgHhxoxKGIZt7WNM=
+	 MIME-Version:Content-Type; b=ao7W2hzv0n5YNvYg+LNvz+Dw+mMtmkQ7/eVSnDfXP80hXVU0MDBDrNI1J+ZIW+FhDaaDdbF9bFNG8DD09WxmnYOoLVp4b78a6gJi+KpbHugtJZHbRFDHsSxzkF0tJBYcHAtYGFH9B4K7tRO7nXpdfOjWpIz6wuzAscxEqh4qwuQ=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
 Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
  relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-1-Li-56pJWM8mS-HZ_UNxcng-1; Mon, 18 Nov 2024 19:15:06 +0000
-X-MC-Unique: Li-56pJWM8mS-HZ_UNxcng-1
-X-Mimecast-MFC-AGG-ID: Li-56pJWM8mS-HZ_UNxcng
+ uk-mta-53-13-iqr8aPEKNwrfrKL2jEg-1; Mon, 18 Nov 2024 19:15:52 +0000
+X-MC-Unique: 13-iqr8aPEKNwrfrKL2jEg-1
+X-Mimecast-MFC-AGG-ID: 13-iqr8aPEKNwrfrKL2jEg
 Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
  (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Mon, 18 Nov
- 2024 19:15:05 +0000
+ 2024 19:15:51 +0000
 Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Mon, 18 Nov 2024 19:15:05 +0000
+ id 15.00.1497.048; Mon, 18 Nov 2024 19:15:51 +0000
 From: David Laight <David.Laight@ACULAB.COM>
 To: Linus Torvalds <torvalds@linux-foundation.org>
 CC: 'Arnd Bergmann' <arnd@kernel.org>, "'linux-kernel@vger.kernel.org'"
@@ -50,11 +50,13 @@ CC: 'Arnd Bergmann' <arnd@kernel.org>, "'linux-kernel@vger.kernel.org'"
 	"'pedro.falcato@gmail.com'" <pedro.falcato@gmail.com>, 'Mateusz Guzik'
 	<mjguzik@gmail.com>, "'linux-mm@kvack.org'" <linux-mm@kvack.org>, "'Lorenzo
  Stoakes'" <lorenzo.stoakes@oracle.com>
-Subject: [PATCH next 6/7] minmax.h: Simplify the variants of clamp()
-Thread-Topic: [PATCH next 6/7] minmax.h: Simplify the variants of clamp()
-Thread-Index: Ads57ipn63eWKuUFSOOk3Sda6NOThQ==
-Date: Mon, 18 Nov 2024 19:15:05 +0000
-Message-ID: <8f69f4deac014f558bab186444bac2e8@AcuMS.aculab.com>
+Subject: [PATCH next 7/7] minmax.h: Remove some #defines that are only
+ expanded once
+Thread-Topic: [PATCH next 7/7] minmax.h: Remove some #defines that are only
+ expanded once
+Thread-Index: Ads57kK39EnzR0zLSLWjfI7GoDxEdQ==
+Date: Mon, 18 Nov 2024 19:15:51 +0000
+Message-ID: <9386d1ebb8974fbabbed2635160c3975@AcuMS.aculab.com>
 References: <c50365d214e04f9ba256d417c8bebbc0@AcuMS.aculab.com>
 In-Reply-To: <c50365d214e04f9ba256d417c8bebbc0@AcuMS.aculab.com>
 Accept-Language: en-GB, en-US
@@ -68,92 +70,74 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: IMuDVPd0wJHazzc97IwBF5caQx74jK1M1gbO88qh3FI_1731957305
+X-Mimecast-MFC-PROC-ID: LVEWnDLR-vaMMGf6-ZUy3MlpKY_mO9TXxlpyV8RKvwY_1731957351
 X-Mimecast-Originator: aculab.com
 Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-Always pass a 'type' through to __clamp_once(), pass '__auto_type'
-from clamp() itself.
+The bodies of __signed_type_use() and __unsigned_type_use() are
+much the same size as their names - so put the bodies in the only
+line that expands them.
 
-The expansion of __types_ok3() is reasonable so it isn't worth the
-added complexity of avoiding it when a fixed type is used for all
-three values.
+Similarly __signed_type() is defined separately for 64bit and then
+used exactly once just below.
+
+Change the test for __signed_type from CONFIG_64BIT to one based
+on gcc defined macros so that the code is valid if it gets used
+outside of a kernel build.
 
 Signed-off-by: David Laight <david.laight@aculab.com>
 ---
- include/linux/minmax.h | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+ include/linux/minmax.h | 14 ++++++--------
+ 1 file changed, 6 insertions(+), 8 deletions(-)
 
 diff --git a/include/linux/minmax.h b/include/linux/minmax.h
-index 75fb7a6ad4c6..2bbdd5b5e07e 100644
+index 2bbdd5b5e07e..eaaf5c008e4d 100644
 --- a/include/linux/minmax.h
 +++ b/include/linux/minmax.h
-@@ -183,29 +183,29 @@
- #define __clamp(val, lo, hi)=09\
- =09((val) >=3D (hi) ? (hi) : ((val) <=3D (lo) ? (lo) : (val)))
-=20
--#define __clamp_once(val, lo, hi, uval, ulo, uhi) ({=09=09=09=09\
--=09__auto_type uval =3D (val);=09=09=09=09=09=09\
--=09__auto_type ulo =3D (lo);=09=09=09=09=09=09=09\
--=09__auto_type uhi =3D (hi);=09=09=09=09=09=09=09\
-+#define __clamp_once(type, val, lo, hi, uval, ulo, uhi) ({=09=09=09\
-+=09type uval =3D (val);=09=09=09=09=09=09=09\
-+=09type ulo =3D (lo);=09=09=09=09=09=09=09\
-+=09type uhi =3D (hi);=09=09=09=09=09=09=09\
- =09BUILD_BUG_ON_MSG(statically_true(ulo > uhi),=09=09=09=09\
- =09=09"clamp() low limit " #lo " greater than high limit " #hi);=09\
- =09BUILD_BUG_ON_MSG(!__types_ok3(uval, ulo, uhi),=09=09=09=09\
- =09=09"clamp("#val", "#lo", "#hi") signedness error");=09=09\
- =09__clamp(uval, ulo, uhi); })
-=20
--#define __careful_clamp(val, lo, hi) \
--=09__clamp_once(val, lo, hi, __UNIQUE_ID(v_), __UNIQUE_ID(l_), __UNIQUE_ID=
-(h_))
-+#define __careful_clamp(type, val, lo, hi) \
-+=09__clamp_once(type, val, lo, hi, __UNIQUE_ID(v_), __UNIQUE_ID(l_), __UNI=
-QUE_ID(h_))
-=20
- /**
-- * clamp - return a value clamped to a given range with strict typecheckin=
-g
-+ * clamp - return a value clamped to a given range with typechecking
-  * @val: current value
-  * @lo: lowest allowable value
-  * @hi: highest allowable value
-  *
-- * This macro does strict typechecking of @lo/@hi to make sure they are of=
- the
-- * same type as @val.  See the unnecessary pointer comparisons.
-+ * This macro checks @val/@lo/@hi to make sure they have compatible
-+ * signedness.
+@@ -46,10 +46,8 @@
+  * comparison, and these expressions only need to be careful to not cause
+  * warnings for pointer use.
   */
--#define clamp(val, lo, hi) __careful_clamp(val, lo, hi)
-+#define clamp(val, lo, hi) __careful_clamp(__auto_type, val, lo, hi)
-=20
- /**
-  * clamp_t - return a value clamped to a given range using a given type
-@@ -217,7 +217,7 @@
-  * This macro does no typechecking and uses temporary variables of type
-  * @type to make all the comparisons.
-  */
--#define clamp_t(type, val, lo, hi) __careful_clamp((type)(val), (type)(lo)=
-, (type)(hi))
-+#define clamp_t(type, val, lo, hi) __careful_clamp(type, val, lo, hi)
-=20
- /**
-  * clamp_val - return a value clamped to a given range using val's type
-@@ -230,7 +230,7 @@
-  * type and @lo and @hi are literals that will otherwise be assigned a sig=
-ned
-  * integer type.
-  */
--#define clamp_val(val, lo, hi) clamp_t(typeof(val), val, lo, hi)
-+#define clamp_val(val, lo, hi) __careful_clamp(typeof(val), val, lo, hi)
+-#define __signed_type_use(ux) (2 + __is_nonneg(ux))
+-#define __unsigned_type_use(ux) (1 + 2 * (sizeof(ux) < 4))
+ #define __sign_use(ux) (is_signed_type(typeof(ux)) ? \
+-=09__signed_type_use(ux) : __unsigned_type_use(ux))
++=09(2 + __is_nonneg(ux)) : (1 + 2 * (sizeof(ux) < 4)))
 =20
  /*
-  * Do not check the array parameter using __must_be_array().
+  * Check whether a signed value is always non-negative.
+@@ -57,7 +55,7 @@
+  * A cast is needed to avoid any warnings from values that aren't signed
+  * integer types (in which case the result doesn't matter).
+  *
+- * On 64-bit any integer or pointer type can safely be cast to 'long'.
++ * On 64-bit any integer or pointer type can safely be cast to 'long long'=
+.
+  * But on 32-bit we need to avoid warnings about casting pointers to integ=
+ers
+  * of different sizes without truncating 64-bit values so 'long' or 'long =
+long'
+  * must be used depending on the size of the value.
+@@ -66,12 +64,12 @@
+  * them, but we do not use s128 types in the kernel (we do use 'u128',
+  * but they are handled by the !is_signed_type() case).
+  */
+-#ifdef CONFIG_64BIT
+-  #define __signed_type(ux) long
++#if __SIZEOF_POINTER__ =3D=3D __SIZEOF_LONG_LONG__
++#define __is_nonneg(ux) statically_true((long long)(ux) >=3D 0)
+ #else
+-  #define __signed_type(ux) typeof(__builtin_choose_expr(sizeof(ux) > 4, 1=
+LL, 1L))
++#define __is_nonneg(ux) statically_true( \
++=09(typeof(__builtin_choose_expr(sizeof(ux) > 4, 1LL, 1L)))(ux) >=3D 0)
+ #endif
+-#define __is_nonneg(ux) statically_true((__signed_type(ux))(ux) >=3D 0)
+=20
+ #define __types_ok(ux, uy) \
+ =09(__sign_use(ux) & __sign_use(uy))
 --=20
 2.17.1
 
