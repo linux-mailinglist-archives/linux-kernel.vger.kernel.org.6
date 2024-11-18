@@ -1,87 +1,93 @@
-Return-Path: <linux-kernel+bounces-413018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3D199D12B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 15:11:02 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 929B99D1289
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 14:59:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 578BAB2F495
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 13:46:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D7ECFB25D98
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 13:46:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 819641A0B00;
-	Mon, 18 Nov 2024 13:41:06 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4748E1AA1D9;
+	Mon, 18 Nov 2024 13:41:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="FcJ1Tbvx"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B797519AA63
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 13:41:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03EEC19AD7E
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 13:41:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731937266; cv=none; b=OQ/7lGqk8HtezFqotp08LhmMKAH9szeCAmVgccOUEmQtYvtjbrthCjJ/qXONAjK9IXXwmQCsjIZVH/O6JtTz7GeSQUAGQuE1HvFs9Uu7zixvxGzzDu8c7KAb2S1sH3PB418FyIWu8oiHObBibyKHRzTPNDDgqZXNOkfAD3A+H/Q=
+	t=1731937294; cv=none; b=kUKYJZ3Ee2oJibJqR/JLUEF63XNJwZ3Ef66PYugHal7ppCKqKRs355njhmQY5vggpRPlCwayw1n8bCVBOaO8R99SwVRMFOFmX8yzOy7b3WxGUETnCAdUtrjBN6NA3F7nsxoSfNvqTm4EGFRDo0gfkWIKbJTDHkA2lnKuabTa3Ck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731937266; c=relaxed/simple;
-	bh=g3GNsMnTLhukQa4thuSub/EwWdjggPuMhd3nDrGe694=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=qUsZqdRLO0Ie5SWE8A723W1R3q5Q/iiTwbgshs9HVOPB9D/B3n48dlYJi+N0HdVyZ0iA7f2jJfqVxDGwWha+3SzhWmWKI9vGLMZCWPb+nsoI9kSR62SQ9PERxeKdlkLbZoMfnbB83uhhYZBUG/kmfUZeRtUf2pRv9XZzyDAZw7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-83abf68e7ffso479647239f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 05:41:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731937264; x=1732542064;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lGchWN+fhp+tr75N9iVHWT7Zjo+XXifF4dFEhTK8yfE=;
-        b=wf/iFc9uP45RiRftIDsue035/0ZWF0sDhH7lzn7EJVQEs/IzNKchTTpcLQSYiBkzfF
-         4BHboTlKPjBfP1bX/mxXE879cUFl8WlTuv5xz1r6J9IUeXRns4End6ViPE1FGrrEq06Y
-         OvM0E3pmyOymD9LzXdJzqBLcre9yNMzrCfVNyNw9BXHBXygelpLRnPWRSk1+XjCiHjAw
-         TSajMTOfO8hTK01DMdD1KyWfYqRyrVi8k3M1dxgVLtfnXVWp6kiFQvKy1qfBX2vUo+2Y
-         nvBQBDzRrfTeCxGfBAUTdbosh6idYhjWsr6okxZVYZ1cwNAMgtEwSD0lQ+DKGVeqp9T3
-         RU/g==
-X-Gm-Message-State: AOJu0YxIRiV8ZCiWvzul63Kwkvssxqf8SgEdOgp17OlrOk8g3xutoHqp
-	2NA8qXk7HsVXDzwRZ3BEVT3yAqRuiqJEVwXD6RrP+OBm9yB+rNMssilaHXUt1nItP7xRJpig1Ec
-	QZhlwahiUlAf0XFnQJROcpBJGs96g86hjAA/TUyQmG1aK2rBdvweMpiw=
-X-Google-Smtp-Source: AGHT+IGUSDvVOyJuhib3JS40fD+0nHoZQkOKmM8P2hslZ6piUtWXDVoLYncQgWkVz+QZRDiON0lC1AdkZmdSyCDFdFRC3UqrZEBe
+	s=arc-20240116; t=1731937294; c=relaxed/simple;
+	bh=N+wkVNWq5O5wqzLl+pe4K8hwXpV5Z++skWgMkbBTPdY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=DTzf29nVSRCnqAZKy9CPfUYfTbo+JzAPjURn6LbZwXgKEqp0J7Qw7Tq4rm91vA2YmvKSkNojUQEVg+rVFhit+vteKB2K1sk8Lp3Fz6F9TuBZcB9i+Ov7PtlBSyEzafNdsVo7druO/MvOHbmfp4RnmfVCyKDE0A6iOi1wsgNXTlo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=FcJ1Tbvx; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 190701BF20B;
+	Mon, 18 Nov 2024 13:41:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1731937290;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=N+wkVNWq5O5wqzLl+pe4K8hwXpV5Z++skWgMkbBTPdY=;
+	b=FcJ1Tbvx995+nm4Hf5K1dmWYQSQI878Nyq9P4vfpNDuOCKkmMJRGz5d7LAzmv2Sb2iAUtK
+	vbOeCuOe6v8bDRqSfym/opNgDhr+O7NNbmFUequCU6w0o6hC9UPHNSZWz/zRnAIaFtIx/v
+	86ui4y806Xy/pM1eP+GJ8HxeFq1pgkQSMFHXygV/ohQywBb5n4TC8rJNyBtyqNaBnP5VWW
+	iCa194ABW9gnRPaN4q5JG6o9FbDVJA/YB1IR2iJ5TkFDuE+i54pkxld9Prmh5HV/LjCJK5
+	+N9itm0frh+Fks/mQwR23dA5JJFLIag3/ddEe0EwuabKol0HkCKT0H7VmjlALQ==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: "Oetken, Andreas" <andreas.oetken@siemens-energy.com>
+Cc: Andreas Oetken <ennoerlangen@gmail.com>,  Richard Weinberger
+ <richard@nod.at>,  Vignesh Raghavendra <vigneshr@ti.com>,
+  "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+  "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1] mtd: core/part: trying to delete partition with
+ usecount > 0 corrupt partition
+In-Reply-To: <FR0P281MB1626159D92BE16A35E8272BAAE272@FR0P281MB1626.DEUP281.PROD.OUTLOOK.COM>
+	(Andreas Oetken's message of "Mon, 18 Nov 2024 12:03:18 +0000")
+References: <20241115085516.1852668-1-andreas.oetken@siemens-energy.com>
+	<87ldxg26hn.fsf@bootlin.com>
+	<FR0P281MB1626159D92BE16A35E8272BAAE272@FR0P281MB1626.DEUP281.PROD.OUTLOOK.COM>
+User-Agent: mu4e 1.12.1; emacs 29.4
+Date: Mon, 18 Nov 2024 14:41:29 +0100
+Message-ID: <87mshwwtfa.fsf@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a44:b0:3a7:44d9:c7dd with SMTP id
- e9e14a558f8ab-3a74800e6admr133899825ab.6.1731937264000; Mon, 18 Nov 2024
- 05:41:04 -0800 (PST)
-Date: Mon, 18 Nov 2024 05:41:03 -0800
-In-Reply-To: <CAHiZj8im=xETmWAt7yi7X3KwwLy4Ad+i6Yk7NwWqJMfJR_kd-A@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <673b43ef.050a0220.87769.0040.GAE@google.com>
-Subject: Re: [syzbot] [acpi?] [nvdimm?] KASAN: vmalloc-out-of-bounds Read in
- acpi_nfit_ctl (2)
-From: syzbot <syzbot+7534f060ebda6b8b51b3@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, surajsonawane0215@gmail.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-Hello,
+Hi Andreas,
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+On 18/11/2024 at 12:03:18 GMT, "Oetken, Andreas" <andreas.oetken@siemens-en=
+ergy.com> wrote:
 
-Reported-by: syzbot+7534f060ebda6b8b51b3@syzkaller.appspotmail.com
-Tested-by: syzbot+7534f060ebda6b8b51b3@syzkaller.appspotmail.com
+> Hi Miqu=C3=A8l,
+>
+> Thanks for reviewing. You are right. The issue was already fixed with 19b=
+fa9eb.=20
+> I had the issue with v5.10.x.
+> Sorry for submitting the patch in a hurry without rebasing and
+> checking if it's already fixed.
 
-Tested on:
+No problem. You can however submit your patch to stable@ if you want to
+fix this in 5.10.
 
-commit:         adc21867 Linux 6.12
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1189bb5f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e31661728c1a4027
-dashboard link: https://syzkaller.appspot.com/bug?extid=7534f060ebda6b8b51b3
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=12086ac0580000
+Also, mind you have a double \n\n somewhere which will have to be fixed.
 
-Note: testing is done by a robot and is best-effort only.
+Cheers,
+Miqu=C3=A8l
 
