@@ -1,271 +1,141 @@
-Return-Path: <linux-kernel+bounces-413381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72D9A9D185B
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 19:44:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 757C59D1862
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 19:45:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B399BB23F56
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 18:44:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 241CC1F24616
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 18:45:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC1941E7643;
-	Mon, 18 Nov 2024 18:43:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC98A1E882F;
+	Mon, 18 Nov 2024 18:43:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="UaBD0gR6"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="mrp5yqsZ"
+Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE6071E571B
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 18:43:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A30D01E8826
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 18:43:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731955411; cv=none; b=VxeXnhihx5IGYUG0e9LtsvOei6wpQRYjLTyX5hPpFxBcu9H+qW4tpLCBuzznfECMQwTtk/HKL20ewSOgJCSQrK0jaUD2ImYgSEnZqBPAtu1VsuQobGwhUt7hkSvNx9B+MmRIvvpn8TRVSrT9iCCjOgDGA6LR6s8FISx7SftcjjU=
+	t=1731955421; cv=none; b=Y6QO1qL2GexDFZGgiCRq51xQTtkU6iWJxAUMim5WxxZmHpRqDfgxkxRdl/rNjRtuZ58PNHa/BW4MBI/U4joj93YvLNZBsx1NtcORG0jj9NdLvJm8mpfbmEakt/hFhpxVNZVaaUcqiFyi5Mx4Sv161hFu8dQu89+0LvViEYwVq/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731955411; c=relaxed/simple;
-	bh=pdIaunJJF4CWVPOnG7K6niTRKEbjlEEe4erWjuMuFRo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=bs9OvCqzB7G1zerrx7x9URs5dJ5dMuDGcFoVARnTXr8vEAAqIV09ZO4MTkbPPOhTqcJ6W46hg7Kp3hDPvW/nrhf2qhmSF9qkeHLvyhatKQk1Sqhj3zs95hRBhDEp96N7HlwCLi+2akQOgCXZ9QK7Dj0Iqd/WCxDX1Lc+Al1G/n8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=UaBD0gR6; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 7442D1BF213;
-	Mon, 18 Nov 2024 18:43:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1731955407;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YvsXl9pw709fdtnCyN0TWV5ZnrmwtIlJKpLd27O+Wnk=;
-	b=UaBD0gR6XvkUJAwWKTDxNdrJf6Vv0zNBo2xxpm7jriJnMM73ay3PiY5ZsMNsAz/VNei8xI
-	dRee9iTplQm3JqZmFyCSG/kPbBW+BoJR7R5DOyUnQiXagGcmW241rc8dxb1A+DEzOb7arH
-	QLDTHOkCQPq+FI+B4XlIYQc4BL1MAQdOCeWjfC+1vHKlDbTX47WybAAVoxeRwwO14HmKHA
-	9KrbByCqIffRFTCOM+EgXSzT1xTOkH/w3rPcFeRo7iQhMg6OAzfyWZ1f2dv27qlvdDaJpc
-	sV+I6G1NmyT5cJawDou+eu+7lkHvW5v9LM30pM4/jw36B/sveAAJNAG3Lxr/kA==
-From: Louis Chauvet <louis.chauvet@bootlin.com>
-Date: Mon, 18 Nov 2024 19:43:20 +0100
-Subject: [PATCH v13 7/7] drm/vkms: Add support for DRM_FORMAT_R*
+	s=arc-20240116; t=1731955421; c=relaxed/simple;
+	bh=2Ct+B8awPnldFMpopuvJ0mHQdWAvzuiku4XskzT+NJc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qRQ090nF4+cvpfwnkzPDOa+b5/SQzGnqEsoZJW211LKIopVCbsv3kJYA6Fk2C79h302cunIGIf1RzED4Zf07zqz1iMI37kFyTyYzZ6cCKhpGlQRzLsXSiDM67wtHqv1zwdnM/61o5xkh/hpuV04PA7u3P+uQgcmC5DkUhPcU3WE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=mrp5yqsZ; arc=none smtp.client-ip=209.85.219.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6d40d77aa97so918746d6.1
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 10:43:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1731955417; x=1732560217; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=aiGoxS9y5bO8WAr6g5LjnG9Zf3/IZMgtxFJaSmFRzL8=;
+        b=mrp5yqsZUyKB3RmYzXDGCMCtmElakMdYMyz9M3J2edCUEGQEKrfyDzELl9FK0bAAGO
+         DLmm6gf/xc8BVOXQwF5gnspaItZo80KOyml7WFS1iRIFTPayOSOg5RAIDh2NUbUndgRG
+         iOhEkFz2fLensRKMw0HQKuyKsv79z/LO9UCQnDcxLTfv3kPee/tK9iok7Fw3cAAKYCF9
+         mYZJy+9lQzVM5mVyw0l4aNtqqbmVquoq0Z4T9N8wp5LAf9xl5RD625702hcelCtCUUz4
+         AADXssppvrYS7GrNdBDxku5EQjI5DiBI4EZhJ3Gx/UhVxL01M4BdqeXfM4XYeipBBYX/
+         m/PQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731955417; x=1732560217;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aiGoxS9y5bO8WAr6g5LjnG9Zf3/IZMgtxFJaSmFRzL8=;
+        b=ez88bExUUaZMsLwsLr3MAKXaQz9KDH/NP/u0L7HLvvmzvSxWk/j+G6qc27nGJmSa34
+         LBlKstMvk1aPaQ9PcnUjtL5DtGbsLcte18rDDWavRasAM/QUKjaMj/EVc48Ons5i2zDg
+         pS58Bq1HnRJoUJj65ACLTxeCEemtarktOTzhpUXSPZSr+tvX3UGfwjqF6Sg+7CHLSsD0
+         qbOg/wxMdZi1TSbHSnaxOEw6ELDDhsKZf5EOHPoATFyvtK+4mg2orQacv7g99Plzz2bu
+         CyviMZyo3FFUFwXoriCUSptCngJuxwll5JjpX880kLHvIj3/+65ygYNZVYIEQOWfqYdm
+         U45A==
+X-Forwarded-Encrypted: i=1; AJvYcCUgd9+h5rQd23z/GK7ISlNYb/jnj4mpfeSd2vtuckoqNtBfpJFiNzICl4qeJvzR3/meHTcGVt83pOQkNIw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyX1GztAS+K7eUxAA61sG4MjIEJmf/oUUsqhUVhi+wTXPHzefH7
+	Kz9mVJ6TEZosnrQrgAwZeCC+hHFoTajubSyd+rz4ug3XbK0+2c4s3MqzWONZ4ss=
+X-Google-Smtp-Source: AGHT+IGAvD7jve9I99GoT/BKI80P6y8fMglPCbeBoUgHhPAkZfkRJUQQV//W1VAPjwl3J6cuHo9G2g==
+X-Received: by 2002:ad4:5cef:0:b0:6d4:12c:c6cc with SMTP id 6a1803df08f44-6d4012ccda3mr213242956d6.25.1731955417599;
+        Mon, 18 Nov 2024 10:43:37 -0800 (PST)
+Received: from ziepe.ca (hlfxns017vw-142-68-128-5.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.128.5])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d40dc41b4fsm38829916d6.59.2024.11.18.10.43.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Nov 2024 10:43:36 -0800 (PST)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1tD6im-000000037qC-1a8F;
+	Mon, 18 Nov 2024 14:43:36 -0400
+Date: Mon, 18 Nov 2024 14:43:36 -0400
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Andrew Jones <ajones@ventanamicro.com>
+Cc: iommu@lists.linux.dev, kvm-riscv@lists.infradead.org,
+	kvm@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org, tjeznach@rivosinc.com,
+	zong.li@sifive.com, joro@8bytes.org, will@kernel.org,
+	robin.murphy@arm.com, anup@brainfault.org, atishp@atishpatra.org,
+	tglx@linutronix.de, alex.williamson@redhat.com,
+	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu
+Subject: Re: [RFC PATCH 08/15] iommu/riscv: Add IRQ domain for interrupt
+ remapping
+Message-ID: <20241118184336.GB559636@ziepe.ca>
+References: <20241114161845.502027-17-ajones@ventanamicro.com>
+ <20241114161845.502027-25-ajones@ventanamicro.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241118-yuv-v13-7-ac0dd4129552@bootlin.com>
-References: <20241118-yuv-v13-0-ac0dd4129552@bootlin.com>
-In-Reply-To: <20241118-yuv-v13-0-ac0dd4129552@bootlin.com>
-To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>, 
- Melissa Wen <melissa.srw@gmail.com>, 
- =?utf-8?q?Ma=C3=ADra_Canal?= <mairacanal@riseup.net>, 
- Haneen Mohammed <hamohammed.sa@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, rdunlap@infradead.org, 
- arthurgrillo@riseup.net, Jonathan Corbet <corbet@lwn.net>, 
- pekka.paalanen@haloniitty.fi, Simona Vetter <simona.vetter@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- jeremie.dautheribes@bootlin.com, miquel.raynal@bootlin.com, 
- thomas.petazzoni@bootlin.com, seanpaul@google.com, marcheu@google.com, 
- nicolejadeyee@google.com, Louis Chauvet <louis.chauvet@bootlin.com>, 
- Pekka Paalanen <pekka.paalanen@collabora.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6494;
- i=louis.chauvet@bootlin.com; h=from:subject:message-id;
- bh=pdIaunJJF4CWVPOnG7K6niTRKEbjlEEe4erWjuMuFRo=;
- b=owEBbQKS/ZANAwAIASCtLsZbECziAcsmYgBnO4rFHmCNdC1pCX4g4A4JekvZ5fmECPV9U0g/B
- VVY4cgZB0eJAjMEAAEIAB0WIQRPj7g/vng8MQxQWQQgrS7GWxAs4gUCZzuKxQAKCRAgrS7GWxAs
- 4j54D/0fDbqIy3QQA6GzMCoqG1Hzkb2DSQ9O2DnC4aGMazcoJrx1wfFek4MVOd91V5kqXrOS8v/
- NtdaxUEXMgRlTuUa3mGe6LBoGqEqTUyFca3oql1ozAceT3z2MmzcTGnJSnPfr9HHfLx95Nxc4FR
- tkeA9bKRaHOuPHwB+WYewfy6qhQMKUrg1xSvBicinH5rCdgEj9bhqiilSM4gR0QW1Toqb47AJOi
- h1vIHbjL6D+3l9JjrKyLGDtMgH5nbRVEFPmjWZ3l9N8PP1Fbv8fhUWWnfYGICjmqrGrJNHbHA3J
- cEBycwtoA5ZiNzlSEjpEQCdPuYrLtdwbXwt50QKX3Y8nhaKlkJXCbfBaxHazrum9PpJZrTAYoJA
- lfI8SwqIgK0Ux5x/OlacD6GnY8Oa4eZ9IFgwmJGEZrhO6W6Yqz98F062TZpQse8y1/+58+Sga+y
- QyA94H6kmz8aROP27ZHcjNOkpTxtqUC4qfxy26rZ0oi1EjEUshGafIDLDON1ylxWUcG5rtH4X77
- OOsQktk/ZEhmF9j8ZDBA1vQzUHY0AunTOYG8zXOXmZswIA2cqrXHY3TxWTGPhaYfUpA+tVYG22j
- gubp8fqiL/OuE2/l9WtCS4t6pIXg5UbOQoQIwtJ0BNJemdxlgWPpADnsGgXNyLr57XXJRG/zuuP
- Ppfzk6Am66KwwMw==
-X-Developer-Key: i=louis.chauvet@bootlin.com; a=openpgp;
- fpr=8B7104AE9A272D6693F527F2EC1883F55E0B40A5
-X-GND-Sasl: louis.chauvet@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241114161845.502027-25-ajones@ventanamicro.com>
 
-This add the support for:
-- R1/R2/R4/R8
+On Thu, Nov 14, 2024 at 05:18:53PM +0100, Andrew Jones wrote:
+> @@ -1276,10 +1279,30 @@ static int riscv_iommu_attach_paging_domain(struct iommu_domain *iommu_domain,
+>  	struct riscv_iommu_device *iommu = dev_to_iommu(dev);
+>  	struct riscv_iommu_info *info = dev_iommu_priv_get(dev);
+>  	struct riscv_iommu_dc dc = {0};
+> +	int ret;
+>  
+>  	if (!riscv_iommu_pt_supported(iommu, domain->pgd_mode))
+>  		return -ENODEV;
+>  
+> +	if (riscv_iommu_bond_link(domain, dev))
+> +		return -ENOMEM;
+> +
+> +	if (iommu_domain->type == IOMMU_DOMAIN_UNMANAGED) {
 
-R1 format was tested with [1] and [2].
+Drivers should not be making tests like this.
 
-[1]: https://lore.kernel.org/r/20240313-new_rotation-v2-0-6230fd5cae59@bootlin.com
-[2]: https://lore.kernel.org/igt-dev/20240306-b4-kms_tests-v1-0-8fe451efd2ac@bootlin.com/
+> +		domain->gscid = ida_alloc_range(&riscv_iommu_gscids, 1,
+> +						RISCV_IOMMU_MAX_GSCID, GFP_KERNEL);
+> +		if (domain->gscid < 0) {
+> +			riscv_iommu_bond_unlink(domain, dev);
+> +			return -ENOMEM;
+> +		}
+> +
+> +		ret = riscv_iommu_irq_domain_create(domain, dev);
+> +		if (ret) {
+> +			riscv_iommu_bond_unlink(domain, dev);
+> +			ida_free(&riscv_iommu_gscids, domain->gscid);
+> +			return ret;
+> +		}
+> +	}
 
-Reviewed-by: Pekka Paalanen <pekka.paalanen@collabora.com>
-Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
----
- drivers/gpu/drm/vkms/vkms_formats.c | 110 +++++++++++++++++++++++++++++++++++-
- drivers/gpu/drm/vkms/vkms_plane.c   |   4 ++
- 2 files changed, 113 insertions(+), 1 deletion(-)
+What are you trying to do? Make something behave different for VFIO?
+That isn't OK, we are trying to remove all the hacky VFIO special
+cases in drivers.
 
-diff --git a/drivers/gpu/drm/vkms/vkms_formats.c b/drivers/gpu/drm/vkms/vkms_formats.c
-index 0b867444999105262c855a24bf03bc66d9ebea1b..2edf1ceccd37ad3a2f9f6d2dcf2044c98d9e10f0 100644
---- a/drivers/gpu/drm/vkms/vkms_formats.c
-+++ b/drivers/gpu/drm/vkms/vkms_formats.c
-@@ -249,6 +249,16 @@ static struct pixel_argb_u16 argb_u16_from_RGB565(const __le16 *pixel)
- 	return out_pixel;
- }
- 
-+static struct pixel_argb_u16 argb_u16_from_gray8(u8 gray)
-+{
-+	return argb_u16_from_u8888(255, gray, gray, gray);
-+}
-+
-+static struct pixel_argb_u16 argb_u16_from_grayu16(u16 gray)
-+{
-+	return argb_u16_from_u16161616(0xFFFF, gray, gray, gray);
-+}
-+
- VISIBLE_IF_KUNIT struct pixel_argb_u16 argb_u16_from_yuv888(u8 y, u8 channel_1, u8 channel_2,
- 							    const struct conversion_matrix *matrix)
- {
-@@ -286,7 +296,7 @@ EXPORT_SYMBOL_IF_KUNIT(argb_u16_from_yuv888);
-  * The following functions are read_line function for each pixel format supported by VKMS.
-  *
-  * They read a line starting at the point @x_start,@y_start following the @direction. The result
-- * is stored in @out_pixel and in the format ARGB16161616.
-+ * is stored in @out_pixel and in a 64 bits format, see struct pixel_argb_u16.
-  *
-  * These functions are very repetitive, but the innermost pixel loops must be kept inside these
-  * functions for performance reasons. Some benchmarking was done in [1] where having the innermost
-@@ -295,6 +305,96 @@ EXPORT_SYMBOL_IF_KUNIT(argb_u16_from_yuv888);
-  * [1]: https://lore.kernel.org/dri-devel/d258c8dc-78e9-4509-9037-a98f7f33b3a3@riseup.net/
-  */
- 
-+static void Rx_read_line(const struct vkms_plane_state *plane, int x_start,
-+			 int y_start, enum pixel_read_direction direction, int count,
-+			 struct pixel_argb_u16 out_pixel[])
-+{
-+	struct pixel_argb_u16 *end = out_pixel + count;
-+	int bits_per_pixel = drm_format_info_bpp(plane->frame_info->fb->format, 0);
-+	u8 *src_pixels;
-+	int rem_x, rem_y;
-+
-+	WARN_ONCE(drm_format_info_block_height(plane->frame_info->fb->format, 0) != 1,
-+		  "%s() only support formats with block_h == 1", __func__);
-+
-+	packed_pixels_addr(plane->frame_info, x_start, y_start, 0, &src_pixels, &rem_x, &rem_y);
-+	int bit_offset = (8 - bits_per_pixel) - rem_x * bits_per_pixel;
-+	int step = get_block_step_bytes(plane->frame_info->fb, direction, 0);
-+	int mask = (0x1 << bits_per_pixel) - 1;
-+	int lum_per_level = 0xFFFF / mask;
-+
-+	if (direction == READ_LEFT_TO_RIGHT || direction == READ_RIGHT_TO_LEFT) {
-+		int restart_bit_offset;
-+		int step_bit_offset;
-+
-+		if (direction == READ_LEFT_TO_RIGHT) {
-+			restart_bit_offset = 8 - bits_per_pixel;
-+			step_bit_offset = -bits_per_pixel;
-+		} else {
-+			restart_bit_offset = 0;
-+			step_bit_offset = bits_per_pixel;
-+		}
-+
-+		while (out_pixel < end) {
-+			u8 val = ((*src_pixels) >> bit_offset) & mask;
-+
-+			*out_pixel = argb_u16_from_grayu16((int)val * lum_per_level);
-+
-+			bit_offset += step_bit_offset;
-+			if (bit_offset < 0 || 8 <= bit_offset) {
-+				bit_offset = restart_bit_offset;
-+				src_pixels += step;
-+			}
-+			out_pixel += 1;
-+		}
-+	} else if (direction == READ_TOP_TO_BOTTOM || direction == READ_BOTTOM_TO_TOP) {
-+		while (out_pixel < end) {
-+			u8 val = (*src_pixels >> bit_offset) & mask;
-+			*out_pixel = argb_u16_from_grayu16((int)val * lum_per_level);
-+			src_pixels += step;
-+			out_pixel += 1;
-+		}
-+	}
-+}
-+
-+static void R1_read_line(const struct vkms_plane_state *plane, int x_start,
-+			 int y_start, enum pixel_read_direction direction, int count,
-+			 struct pixel_argb_u16 out_pixel[])
-+{
-+	Rx_read_line(plane, x_start, y_start, direction, count, out_pixel);
-+}
-+
-+static void R2_read_line(const struct vkms_plane_state *plane, int x_start,
-+			 int y_start, enum pixel_read_direction direction, int count,
-+			 struct pixel_argb_u16 out_pixel[])
-+{
-+	Rx_read_line(plane, x_start, y_start, direction, count, out_pixel);
-+}
-+
-+static void R4_read_line(const struct vkms_plane_state *plane, int x_start,
-+			 int y_start, enum pixel_read_direction direction, int count,
-+			 struct pixel_argb_u16 out_pixel[])
-+{
-+	Rx_read_line(plane, x_start, y_start, direction, count, out_pixel);
-+}
-+
-+static void R8_read_line(const struct vkms_plane_state *plane, int x_start,
-+			 int y_start, enum pixel_read_direction direction, int count,
-+			 struct pixel_argb_u16 out_pixel[])
-+{
-+	struct pixel_argb_u16 *end = out_pixel + count;
-+	u8 *src_pixels;
-+	int step = get_block_step_bytes(plane->frame_info->fb, direction, 0);
-+
-+	packed_pixels_addr_1x1(plane->frame_info, x_start, y_start, 0, &src_pixels);
-+
-+	while (out_pixel < end) {
-+		*out_pixel = argb_u16_from_gray8(*src_pixels);
-+		src_pixels += step;
-+		out_pixel += 1;
-+	}
-+}
-+
- static void ARGB8888_read_line(const struct vkms_plane_state *plane, int x_start, int y_start,
- 			       enum pixel_read_direction direction, int count,
- 			       struct pixel_argb_u16 out_pixel[])
-@@ -606,6 +706,14 @@ pixel_read_line_t get_pixel_read_line_function(u32 format)
- 	case DRM_FORMAT_YVU422:
- 	case DRM_FORMAT_YVU444:
- 		return &planar_yuv_read_line;
-+	case DRM_FORMAT_R1:
-+		return &R1_read_line;
-+	case DRM_FORMAT_R2:
-+		return &R2_read_line;
-+	case DRM_FORMAT_R4:
-+		return &R4_read_line;
-+	case DRM_FORMAT_R8:
-+		return &R8_read_line;
- 	default:
- 		/*
- 		 * This is a bug in vkms_plane_atomic_check(). All the supported
-diff --git a/drivers/gpu/drm/vkms/vkms_plane.c b/drivers/gpu/drm/vkms/vkms_plane.c
-index 8f764a108b00a00e06370db1fc8a90163c8532bc..67f891e7ac585c8406c40b4dd22c2297b3c52766 100644
---- a/drivers/gpu/drm/vkms/vkms_plane.c
-+++ b/drivers/gpu/drm/vkms/vkms_plane.c
-@@ -30,6 +30,10 @@ static const u32 vkms_formats[] = {
- 	DRM_FORMAT_YVU420,
- 	DRM_FORMAT_YVU422,
- 	DRM_FORMAT_YVU444,
-+	DRM_FORMAT_R1,
-+	DRM_FORMAT_R2,
-+	DRM_FORMAT_R4,
-+	DRM_FORMAT_R8,
- };
- 
- static struct drm_plane_state *
+What is the HW issue here? It is very very strange (and probably not
+going to work right) that the irq domains change when domain
+attachment changes.
 
--- 
-2.47.0
+The IRQ setup should really be fixed before any device drivers probe
+onto the device.
 
+Jason
 
