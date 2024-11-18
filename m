@@ -1,343 +1,115 @@
-Return-Path: <linux-kernel+bounces-412694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEB939D0DE0
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:11:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 900899D0DE6
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:11:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C348B27DE3
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 10:10:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BD311F216FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 10:11:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52C64195980;
-	Mon, 18 Nov 2024 10:10:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 974EC193426;
+	Mon, 18 Nov 2024 10:10:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cmOcnvvF"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IPI1gr6I"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 079731946B8;
-	Mon, 18 Nov 2024 10:10:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32090193071;
+	Mon, 18 Nov 2024 10:10:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731924607; cv=none; b=DxrKXrmBGIprxnEOlsjXAgxp52uAh+KnYxrYNCPV54NGiRQmobCpzx9clrEQ/QzkZ1aNqHWqx8myrgJMlp2o7bw/IadTBkA922Rm4CnYvqtf38h/SXEYgINSGnR4/RHepNDPwX3fRrg9qJICOncrwl6mh8GurrdUUNcP1f+CS4I=
+	t=1731924632; cv=none; b=sHrKe7JbJEHvk2uRfMpldQyWs+PJYZFB4lK7chNOTQkM9BALnYvA97LhCGAtXOSs105wF+h1mBJaFQeUGP8y34mMRJNKg39GlzlY5WlB+mVpzoYyJ14PZqtpVbvmn+qt5lTN4Ghos/qzMdA+adQwPrliexgBXIoqGTfq/1ipM3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731924607; c=relaxed/simple;
-	bh=08avkvJXc6YpLMi35Ewq9sInOmvPK/XUfpBoJCW4Zgo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=o1t2G5JZOM4fVj5HspTiom3GmFQrXj7ncRv0EEZyvIBp3L7mF0cHpqBTEnIA6Eu9/LbrTMynWTg/sXIcBJ+AWScoA1cypVPijE8AvcJKoCJR5eG2PTXvI0rWnHBN8dR3wf1VeQSLNUPj49KpEgC/fvlTPsE0HvQVBCfItzPsHok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cmOcnvvF; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2fb4af0b6beso20999761fa.3;
-        Mon, 18 Nov 2024 02:10:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731924603; x=1732529403; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9fOyYhW/88qHGGmM9QOYNQJqLo1yTsoyhwIyniU1DSY=;
-        b=cmOcnvvFay3INRxclkkyVeCeevPXKk3aHnqR8HmOP55pB4/FpZg/2IFlkzGy8KiGvp
-         j/H7ZA/j8Mvk/i9F4JJzA0Pr9SyflC6MX+/2c6L+a1tz3TurxmoJ35IBOm7xwgODK4n4
-         k7FSOpAPnGmTWAS8RP9HsRgBNo32UWfNOCOw9razWYCvPuZgqiZet5eUmn+IPZm8wvhR
-         LWZGX8OCLpKfaPXFv4gcG403GPA51WjtaPeH1rOsRP3wPZRqAganDGYlT0zqPWhAC4Qd
-         kysK2Ik5lDvGtbsfJs033WgbQSLtzIdmSgXqgWK3i/zVKW8M7UM2Z8YPLvVlUw0EYJaZ
-         RXCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731924603; x=1732529403;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9fOyYhW/88qHGGmM9QOYNQJqLo1yTsoyhwIyniU1DSY=;
-        b=WeXfCbpPlyfSgKYKo7pOXB+epSRTOSvHUh77u4M3F5ACHVHUTodn/wYnZw+HMNbho/
-         aLV/86FhzwSMF/Jgo3UBYJikUzuFxnkT5/AXv2D1VSYv4kALhhlShVeMKM6c3CzCmnk2
-         W9h+QUtSJaGmPJb4H41oF0oo3M4LPKnw1igoO4bY4hc3aYYLyY+NiwbhRQMQSxVGxtHb
-         UsPWqovgsARETiMg4WGmnKSVOEZT9HjFYieBUgR9MhsF2Sd1WPxwQ8SYljnC6cX+9/Rz
-         aBLqE1phvOZ/GmznV4vXFrFQ6S3GlHu8WRadvQ20rkq7HjRtqiP4lYNw4aYkkAe1LMkg
-         5nFg==
-X-Forwarded-Encrypted: i=1; AJvYcCUSEmMiKwLXHXSs5BI/h2KzcQNbPu8TM+um6x38JT0fHlrAex6RwgntTq71vwHcdoVffi1Dx8LqtpqDpdgbEA==@vger.kernel.org, AJvYcCVJl3LFInkI96IS+DeO+wdjj5kw3sk4urGBfRyV+VvXYZQQhD8kYhVkI6+UJx2HI3c/UYv8Ax0zJmMPecz/0jfNrpE=@vger.kernel.org, AJvYcCXL3DOUbHHm9vfYiJ1QX14N+rhZPp4jguIP/L2CsOdVLgAkbHUnQe2UoqpCqr4hjXY3fD1r9YbwFCB7@vger.kernel.org, AJvYcCXMg1bj7VOyftlLJhS0oXSc4I6lUQDARFrhTWbyktuv3c5R463jSxc/nxIUIxxW7prOZ7H0Y4bDgVVevf7Q@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgBrM6fo6Eu9tWer+566EJVS1GSyuDWPh8HRIvpksqga9BAzzZ
-	H5qRgPGnrymP/0REose5jsOb8yVBAB0AQzCWyJeUFG/TRbwJsuV1
-X-Google-Smtp-Source: AGHT+IEsM+bEYVWPcdxMX4ty+jlvxNzXr16PKephGvFY1LmTwDkGEiU9Vu06vwaLgV1jjEKcvAJWkw==
-X-Received: by 2002:a05:6512:2391:b0:53d:a6c8:fb95 with SMTP id 2adb3069b0e04-53dab29efffmr5766910e87.19.1731924602776;
-        Mon, 18 Nov 2024 02:10:02 -0800 (PST)
-Received: from [127.0.1.1] ([46.53.242.72])
-        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-aa20e046932sm518546366b.170.2024.11.18.02.10.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Nov 2024 02:10:02 -0800 (PST)
-From: Dzmitry Sankouski <dsankouski@gmail.com>
-Date: Mon, 18 Nov 2024 13:09:54 +0300
-Subject: [PATCH v3 2/2] power: supply: max17042: add platform driver
- variant
+	s=arc-20240116; t=1731924632; c=relaxed/simple;
+	bh=VT3MocuM8iVtea2DfkImyHdM0ECQhC+eoTcrkAWWu7E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rPxECbAd5faf2Cv6/xG5vvjU/c9QwpK6hkOer2MqCaKPkQeQFv8KnMjPv00D07IwGS2n8Amg4ZMXu0oDpz+f4WCRta8fcLD/BbmP3iiG1FwgWqXrSuiES3qq12PxyhHmd3g0sTt6My7lokdN8iiWz5mpvIy/YXI3ocYIy/bmjI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=IPI1gr6I; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=oBC2RAZHZE5tY2EgMgmKFBOrYGolwmLsreVLSDBJ/Ds=; b=IPI1gr6IH12pFfqdw+IT8Eq31M
+	Bo03y/GXq5gaG1MmNUwwQBDS4i4Fkny3IGKyyDwWsKJJ0jUfrGBZk6BTbFsvkq9cFrRyMNXaK8EAf
+	EJ1QgTVcyIlDEffPwmgx5XE/MuTC38W6HvPQwUTKCGWvfSJ9lV1kymEtoBVILw0SOtu4ggpLPVSmm
+	z9hmKq/lo3CfY9bZbSG1p+lAgz1fH/8OrBwN2bx5xgR98Cw4aQasIQsSRMig4ecayomgigjTjuacg
+	x4+O2EBoRvrNVQu41cdqGYJzLwanjWaDTQUhYYo/ptTw2NnOw5wzsNBqPHXiTbHnsyeNlXgHeyjBj
+	9EMUQv/A==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tCyi7-00000002onA-2NS1;
+	Mon, 18 Nov 2024 10:10:24 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id B216A30049D; Mon, 18 Nov 2024 11:10:23 +0100 (CET)
+Date: Mon, 18 Nov 2024 11:10:23 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Yafang Shao <laoar.shao@gmail.com>
+Cc: Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>, mingo@redhat.com,
+	juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, hannes@cmpxchg.org,
+	surenb@google.com, cgroups@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 0/4] sched: Fix missing irq time when
+ CONFIG_IRQ_TIME_ACCOUNTING is enabled
+Message-ID: <20241118101023.GI39245@noisy.programming.kicks-ass.net>
+References: <20241108132904.6932-1-laoar.shao@gmail.com>
+ <dmibxkog4sdbuddotjslmyv6zgyptgbq5voujhfnitdag2645m@bl4jphfz3xzg>
+ <CALOAHbC54QZ6ZrRBHHKKz8F79C1J8fYcA1q59iwotuBBKtFGmA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241118-b4-max17042-v3-2-9bcaeda42a06@gmail.com>
-References: <20241118-b4-max17042-v3-0-9bcaeda42a06@gmail.com>
-In-Reply-To: <20241118-b4-max17042-v3-0-9bcaeda42a06@gmail.com>
-To: Hans de Goede <hdegoede@redhat.com>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Marek Szyprowski <m.szyprowski@samsung.com>, 
- Sebastian Krzyszkowiak <sebastian.krzyszkowiak@puri.sm>, 
- Purism Kernel Team <kernel@puri.sm>, Sebastian Reichel <sre@kernel.org>, 
- Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, Shawn Guo <shawnguo@kernel.org>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, imx@lists.linux.dev, 
- linux-arm-msm@vger.kernel.org, Dzmitry Sankouski <dsankouski@gmail.com>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1731924598; l=7718;
- i=dsankouski@gmail.com; s=20240619; h=from:subject:message-id;
- bh=08avkvJXc6YpLMi35Ewq9sInOmvPK/XUfpBoJCW4Zgo=;
- b=Tb5f0aAMBx2MGt3QTrkgclj08UpXH0InARdTWId9PBKICIi4GRNuva4CIHo0xUUNPX4OG64yq
- tgZv4Ji6Oe6DCAShAYu8XgKwIixcAaIg1oTLpWOdRFCFDU6SObAAzr3
-X-Developer-Key: i=dsankouski@gmail.com; a=ed25519;
- pk=YJcXFcN1EWrzBYuiE2yi5Mn6WLn6L1H71J+f7X8fMag=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CALOAHbC54QZ6ZrRBHHKKz8F79C1J8fYcA1q59iwotuBBKtFGmA@mail.gmail.com>
 
-Maxim PMICs may include fuel gauge with additional features, which is
-out of single Linux power supply driver scope.
+On Sun, Nov 17, 2024 at 10:56:21AM +0800, Yafang Shao wrote:
+> On Fri, Nov 15, 2024 at 9:41 PM Michal Koutný <mkoutny@suse.com> wrote:
 
-For example, in max77705 PMIC fuelgauge has additional registers,
-like IIN_REG, VSYS_REG, ISYS_REG. Those needed to measure PMIC input
-current, system voltage and current respectively. Those measurements
-cannot be bound to any of fuelgauge properties.
+> > > The load balancer is malfunctioning due to the exclusion of IRQ time from
+> > > CPU utilization calculations.
+> >
+> > Could this be fixed by subtracting (global) IRQ time from (presumed
+> > total) system capacity that the balancer uses for its decisions? (i.e.
+> > without exact per-cgroup breakdown of IRQ time)
+> 
+> The issue here is that the global IRQ time may include the interrupted
+> time of tasks outside the target cgroup. As a result, I don't believe
+> it's possible to find a reliable solution without modifying the
+> kernel.
 
-The solution here add and option to use max17042 driver as a MFD
-sub device, thus allowing any additional functionality be implemented as
-another sub device. This will help to reduce code duplication in MFD
-fuel gauge drivers.
+Since there is no relation between the interrupt and the interrupted
+task (and through that its cgroup) -- all time might or might not be
+part of your cgroup of interest. Consider it a random distribution if
+you will.
 
-Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
----
-Changes in v3:
-- pass dev pointer in max17042_probe
-- remove prints
----
- drivers/power/supply/max17042_battery.c | 114 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++------------------------
- 1 file changed, 90 insertions(+), 24 deletions(-)
+What Michael suggests seems no less fair, and possible more fair than
+what you propose:
 
-diff --git a/drivers/power/supply/max17042_battery.c b/drivers/power/supply/max17042_battery.c
-index 99bf6915aa23..d11bf37aaae2 100644
---- a/drivers/power/supply/max17042_battery.c
-+++ b/drivers/power/supply/max17042_battery.c
-@@ -16,6 +16,7 @@
- #include <linux/i2c.h>
- #include <linux/delay.h>
- #include <linux/interrupt.h>
-+#include <linux/platform_device.h>
- #include <linux/pm.h>
- #include <linux/mod_devicetable.h>
- #include <linux/power_supply.h>
-@@ -1029,14 +1030,12 @@ static const struct power_supply_desc max17042_no_current_sense_psy_desc = {
- 	.num_properties	= ARRAY_SIZE(max17042_battery_props) - 2,
- };
- 
--static int max17042_probe(struct i2c_client *client)
-+static int max17042_probe(struct i2c_client *client, struct device *dev,
-+			  enum max170xx_chip_type chip_type)
- {
--	const struct i2c_device_id *id = i2c_client_get_device_id(client);
- 	struct i2c_adapter *adapter = client->adapter;
- 	const struct power_supply_desc *max17042_desc = &max17042_psy_desc;
- 	struct power_supply_config psy_cfg = {};
--	const struct acpi_device_id *acpi_id = NULL;
--	struct device *dev = &client->dev;
- 	struct max17042_chip *chip;
- 	int ret;
- 	int i;
-@@ -1045,33 +1044,24 @@ static int max17042_probe(struct i2c_client *client)
- 	if (!i2c_check_functionality(adapter, I2C_FUNC_SMBUS_WORD_DATA))
- 		return -EIO;
- 
--	chip = devm_kzalloc(&client->dev, sizeof(*chip), GFP_KERNEL);
-+	chip = devm_kzalloc(dev, sizeof(*chip), GFP_KERNEL);
- 	if (!chip)
- 		return -ENOMEM;
- 
- 	chip->client = client;
--	if (id) {
--		chip->chip_type = id->driver_data;
--	} else {
--		acpi_id = acpi_match_device(dev->driver->acpi_match_table, dev);
--		if (!acpi_id)
--			return -ENODEV;
--
--		chip->chip_type = acpi_id->driver_data;
--	}
- 	chip->regmap = devm_regmap_init_i2c(client, &max17042_regmap_config);
- 	if (IS_ERR(chip->regmap)) {
--		dev_err(&client->dev, "Failed to initialize regmap\n");
-+		dev_err(dev, "Failed to initialize regmap\n");
- 		return -EINVAL;
- 	}
- 
- 	chip->pdata = max17042_get_pdata(chip);
- 	if (!chip->pdata) {
--		dev_err(&client->dev, "no platform data provided\n");
-+		dev_err(dev, "no platform data provided\n");
- 		return -EINVAL;
- 	}
- 
--	i2c_set_clientdata(client, chip);
-+	dev_set_drvdata(dev, chip);
- 	psy_cfg.drv_data = chip;
- 	psy_cfg.of_node = dev->of_node;
- 
-@@ -1095,17 +1085,17 @@ static int max17042_probe(struct i2c_client *client)
- 		regmap_write(chip->regmap, MAX17042_LearnCFG, 0x0007);
- 	}
- 
--	chip->battery = devm_power_supply_register(&client->dev, max17042_desc,
-+	chip->battery = devm_power_supply_register(dev, max17042_desc,
- 						   &psy_cfg);
- 	if (IS_ERR(chip->battery)) {
--		dev_err(&client->dev, "failed: power supply register\n");
-+		dev_err(dev, "failed: power supply register\n");
- 		return PTR_ERR(chip->battery);
- 	}
- 
- 	if (client->irq) {
- 		unsigned int flags = IRQF_ONESHOT | IRQF_SHARED | IRQF_PROBE_SHARED;
- 
--		ret = devm_request_threaded_irq(&client->dev, client->irq,
-+		ret = devm_request_threaded_irq(dev, client->irq,
- 						NULL,
- 						max17042_thread_handler, flags,
- 						chip->battery->desc->name,
-@@ -1118,7 +1108,7 @@ static int max17042_probe(struct i2c_client *client)
- 		} else {
- 			client->irq = 0;
- 			if (ret != -EBUSY)
--				dev_err(&client->dev, "Failed to get IRQ\n");
-+				dev_err(dev, "Failed to get IRQ\n");
- 		}
- 	}
- 	/* Not able to update the charge threshold when exceeded? -> disable */
-@@ -1127,7 +1117,7 @@ static int max17042_probe(struct i2c_client *client)
- 
- 	regmap_read(chip->regmap, MAX17042_STATUS, &val);
- 	if (val & STATUS_POR_BIT) {
--		ret = devm_work_autocancel(&client->dev, &chip->work,
-+		ret = devm_work_autocancel(dev, &chip->work,
- 					   max17042_init_worker);
- 		if (ret)
- 			return ret;
-@@ -1139,6 +1129,38 @@ static int max17042_probe(struct i2c_client *client)
- 	return 0;
- }
- 
-+static int max17042_i2c_probe(struct i2c_client *client)
-+{
-+	const struct i2c_device_id *id = i2c_client_get_device_id(client);
-+	const struct acpi_device_id *acpi_id = NULL;
-+	struct device *dev = &client->dev;
-+	enum max170xx_chip_type chip_type;
-+
-+	if (id) {
-+		chip_type = id->driver_data;
-+	} else {
-+		acpi_id = acpi_match_device(dev->driver->acpi_match_table, dev);
-+		if (!acpi_id)
-+			return -ENODEV;
-+
-+		chip_type = acpi_id->driver_data;
-+	}
-+
-+	return max17042_probe(client, dev, chip_type);
-+}
-+
-+static int max17042_platform_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct i2c_client *i2c = dev_get_platdata(dev);
-+	const struct platform_device_id *id = platform_get_device_id(pdev);
-+
-+	if (!i2c)
-+		return -EINVAL;
-+
-+	return max17042_probe(i2c, dev, id->driver_data);
-+}
-+
- #ifdef CONFIG_PM_SLEEP
- static int max17042_suspend(struct device *dev)
- {
-@@ -1204,6 +1226,16 @@ static const struct i2c_device_id max17042_id[] = {
- };
- MODULE_DEVICE_TABLE(i2c, max17042_id);
- 
-+static const struct platform_device_id max17042_platform_id[] = {
-+	{ "max17042", MAXIM_DEVICE_TYPE_MAX17042 },
-+	{ "max17047", MAXIM_DEVICE_TYPE_MAX17047 },
-+	{ "max17050", MAXIM_DEVICE_TYPE_MAX17050 },
-+	{ "max17055", MAXIM_DEVICE_TYPE_MAX17055 },
-+	{ "max77849-battery", MAXIM_DEVICE_TYPE_MAX17047 },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(platform, max17042_platform_id);
-+
- static struct i2c_driver max17042_i2c_driver = {
- 	.driver	= {
- 		.name	= "max17042",
-@@ -1211,10 +1243,44 @@ static struct i2c_driver max17042_i2c_driver = {
- 		.of_match_table = of_match_ptr(max17042_dt_match),
- 		.pm	= &max17042_pm_ops,
- 	},
--	.probe		= max17042_probe,
-+	.probe		= max17042_i2c_probe,
- 	.id_table	= max17042_id,
- };
--module_i2c_driver(max17042_i2c_driver);
-+
-+static struct platform_driver max17042_platform_driver = {
-+	.driver	= {
-+		.name	= "max17042",
-+		.acpi_match_table = ACPI_PTR(max17042_acpi_match),
-+		.of_match_table = of_match_ptr(max17042_dt_match),
-+		.pm	= &max17042_pm_ops,
-+	},
-+	.probe		= max17042_platform_probe,
-+	.id_table	= max17042_platform_id,
-+};
-+
-+static int __init __driver_max17042_platform_init(void)
-+{
-+	int ret = 0;
-+
-+	ret = platform_driver_register(&max17042_platform_driver);
-+
-+	if (ret) {
-+		platform_driver_unregister(&max17042_platform_driver);
-+		return ret;
-+	}
-+
-+	ret = i2c_add_driver(&max17042_i2c_driver);
-+
-+	return ret;
-+}
-+module_init(__driver_max17042_platform_init);
-+
-+static void __exit __driver_max17042_platform_exit(void)
-+{
-+	i2c_del_driver(&max17042_i2c_driver);
-+	platform_driver_unregister(&max17042_platform_driver);
-+}
-+module_exit(__driver_max17042_platform_exit);
- 
- MODULE_AUTHOR("MyungJoo Ham <myungjoo.ham@samsung.com>");
- MODULE_DESCRIPTION("MAX17042 Fuel Gauge");
+ \Sum cgroup = total - IRQ
 
--- 
-2.39.2
+As opposed to what you propose:
 
+ \Sum (cgroup + cgroup-IRQ) = total - remainder-IRQ
+
+Like I argued earlier, if you have two cgroups, one doing a while(1)
+loop (proxy for doing computation) and one cgroup doing heavy IO or
+networking, then per your accounting the computation cgroup will get a
+significant amount of IRQ time 'injected', even though it is effidently
+not of that group.
+
+Injecting 'half' of the interrupts in the computation group, and missing
+'half' of the interrupts from the network group will get 'wrong'
+load-balance results too.
+
+I remain unconvinced that any of this makes sense.
 
