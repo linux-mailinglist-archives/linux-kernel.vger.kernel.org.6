@@ -1,188 +1,92 @@
-Return-Path: <linux-kernel+bounces-412303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 302E39D074A
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 01:39:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FEB39D074B
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 01:40:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ADD58B21571
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 00:39:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47DB31F218E0
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 00:40:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6052A8C07;
-	Mon, 18 Nov 2024 00:39:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74447C2F2;
+	Mon, 18 Nov 2024 00:40:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Lb4A/ulF"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ZsfWDZc/"
+Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B8677464
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 00:39:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB99453A7
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 00:39:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731890380; cv=none; b=dcufLaChJutfNT6j2PV+KWWY9ABFI6SjklXi+sGTVweriJmpkpYR+VNzxfAZhogOp4sRqg8Bs42v3QwM5pvWIdIOIaRFSuFL+Bf68fR1ZCOQ+RcguYQlvvnBKHFa9DbxF9GsqqFtCeOYBpJqjCtkLujT82PARvX2MZVe2a/8sjE=
+	t=1731890402; cv=none; b=QuEYblc9Tmu4Aj/Dr0cHboXvuGsMjgNfu/w/OVptqfEWxelINUCsTnvo2R1M8boaFyKZPtMuaCMhHp7Ynfb01HFWLm0MlMQOQJOTUmBnQ6L//nYrBU9LIULAANQTgxE+kWkT3mo0VuiNYUk2pAriTDVYVcAIX5sXgnNxhNO0DIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731890380; c=relaxed/simple;
-	bh=25Tj53r+qJlyFZW1NArnoTNcs2qjWPG2PZbq/ZE1tLY=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=HjG7hmZJ5TcqqW24TTbMVNl6NWtqj9UbUbeidUj5GPPpr+KEOKPyA4YlI5xCCNzuGL5xsEoFvLoo+GkIkDnzQgDGy9qHGyYp6JHT8egWwKoe/BACdhCd6IcGeHhmoNWCnymasedpr/GtAF2SF5c0UjeNuOtFswkSKSe8pbleMaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Lb4A/ulF; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731890379; x=1763426379;
-  h=date:from:to:cc:subject:message-id;
-  bh=25Tj53r+qJlyFZW1NArnoTNcs2qjWPG2PZbq/ZE1tLY=;
-  b=Lb4A/ulFYEaC3nCXviFBncf95eYoQfZj+06hZBZDTgEX4Vfi3qK2e2dQ
-   Uv4ET/BOqXUXwUBLpeh8pM8LbQQlmqDiv5gHK+j/TxhZauOI4a/SK1ayj
-   fPoGQZLj7b77PtDd7lzM8/HGpYLq6TfyYS/Oq/eBqtmbacxoFbt1TdN3z
-   rhupGqEqusCSetQ1OVPDWXeCRHqI/udP89hSgc4OLeMJmfqTp5iZhMW9H
-   /2H/TW0eaf6zzE1IysQZz/WI2+AtaDaregauNPCenID/yqPcvZDRHtMEb
-   DrTyxbl5bQEmDchYlmAmJ75mksL86flwhHKlNRMgqi3gUUmfGy9GOMu2u
-   A==;
-X-CSE-ConnectionGUID: ej+Otg6fS8CCB4YGvl3Txg==
-X-CSE-MsgGUID: aWUqZdGtQxaZ4LLfrxSDFg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11259"; a="35747802"
-X-IronPort-AV: E=Sophos;i="6.12,163,1728975600"; 
-   d="scan'208";a="35747802"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Nov 2024 16:39:38 -0800
-X-CSE-ConnectionGUID: 7DVGomYWQ4G5jEBa0xpnTw==
-X-CSE-MsgGUID: +nFjLVbFQlyaycTYyXjSJA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,163,1728975600"; 
-   d="scan'208";a="93151026"
-Received: from lkp-server01.sh.intel.com (HELO 1e3cc1889ffb) ([10.239.97.150])
-  by fmviesa003.fm.intel.com with ESMTP; 17 Nov 2024 16:39:37 -0800
-Received: from kbuild by 1e3cc1889ffb with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tCpni-00029z-37;
-	Mon, 18 Nov 2024 00:39:34 +0000
-Date: Mon, 18 Nov 2024 08:39:03 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:tip/urgent] BUILD SUCCESS
- 468fbe038f2fc42547db8ba47c9e552e76f52eeb
-Message-ID: <202411180856.o2UeImx7-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1731890402; c=relaxed/simple;
+	bh=4RF8roOPstTpy7twDEtnddURNg3Z9e4HWF5kkzLn7wA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B90Q9vsj+KDSdjtRlHqAlt/r1YtV2Pkf1KmIJLGYDrO/l/MJtwsNN0aX5QrKTafwVBsawRzpP+KzMseaI1itSiGN5jYcEhBedYGo8Cg0yiBEdgWqO/XWIkgoPh+/90SlmtCk26XCGxjogJUc3u0R6RnPnbZOdhDjSb8SiplaYTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ZsfWDZc/; arc=none smtp.client-ip=91.218.175.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Sun, 17 Nov 2024 19:39:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1731890397;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wlfDgOeR/Mb2TWDTd1i3WXtlzuMdvzFZ6f33zvNnJ4M=;
+	b=ZsfWDZc/J7TL00fbdlwBlvwiRkm8Le4ViwHNG0vyNlMV1iWtRkLn1UDrWv99Icn2NbReDN
+	VKFOiK4wkS+U+6cwrZ+ApYOlv8pk0KZoO6/S+HXualedPeVj7DT9kwiFcuDULcP0y+/plC
+	MqDGUQb7iRK+MJ1LjThTxODmcV4EhNg=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Piotr Zalewski <pZ010001011111@proton.me>
+Cc: syzbot <syzbot+62f5ae3a10a9e97accd4@syzkaller.appspotmail.com>, 
+	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [bcachefs?] KMSAN: uninit-value in
+ bch2_btree_node_iter_init (2)
+Message-ID: <bazxq46aftvo7bv5st4tkpebntekbi6th42vcsgvguoafl3qvb@d3zygvbnkb6m>
+References: <6739af3b.050a0220.87769.0008.GAE@google.com>
+ <TNxAApRrZdXR4QxAVnv4G3kjNaa0xFOi94VAboFOlyOtiAY8oIR8evv4ZHrrl2lPngndHbqKBWTpS_N8HlaFq0YfE-amWQBOPks6cXz3B-I=@proton.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <TNxAApRrZdXR4QxAVnv4G3kjNaa0xFOi94VAboFOlyOtiAY8oIR8evv4ZHrrl2lPngndHbqKBWTpS_N8HlaFq0YfE-amWQBOPks6cXz3B-I=@proton.me>
+X-Migadu-Flow: FLOW_OUT
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git tip/urgent
-branch HEAD: 468fbe038f2fc42547db8ba47c9e552e76f52eeb  Merge branch into tip/master: 'x86/urgent'
+On Sun, Nov 17, 2024 at 11:51:39PM +0000, Piotr Zalewski wrote:
+> Hi, all
+> 
+> This seems to be the proper way to fix this?:
+> 
+> diff --git a/fs/bcachefs/btree_io.c b/fs/bcachefs/btree_io.c
+> index 89a42ee81e5c..f92a3fb946de 100644
+> --- a/fs/bcachefs/btree_io.c
+> +++ b/fs/bcachefs/btree_io.c
+> @@ -324,6 +324,7 @@ static void btree_node_sort(struct bch_fs *c, struct btree *b,
+>  	start_time = local_clock();
+>  
+>  	u64s = bch2_sort_keys(out->keys.start, &sort_iter.iter);
+> +	memset((out->keys.start + u64s), 0, bytes - sizeof(struct btree_node) - u64s * sizeof(u64));
+>  
+>  	out->keys.u64s = cpu_to_le16(u64s);
 
-elapsed time: 732m
+Did you do any analysis you can share?
 
-configs tested: 96
-configs skipped: 129
+It seems like zeroing out the rest of the buffer shouldn't be necessary:
+we do that at write time, where it really is necessary, otherwise we
+shouldn't be accessing parts of the buffer that don't have valid keys in
+them.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
-
-tested configs:
-alpha                             allnoconfig    gcc-14.2.0
-alpha                            allyesconfig    clang-20
-arc                              allmodconfig    clang-20
-arc                               allnoconfig    gcc-14.2.0
-arc                              allyesconfig    clang-20
-arc                        nsimosci_defconfig    clang-20
-arm                              allmodconfig    clang-20
-arm                               allnoconfig    gcc-14.2.0
-arm                              allyesconfig    clang-20
-arm                       aspeed_g5_defconfig    clang-20
-arm                         axm55xx_defconfig    clang-20
-arm                          ep93xx_defconfig    clang-20
-arm64                            allmodconfig    clang-20
-arm64                             allnoconfig    gcc-14.2.0
-csky                              allnoconfig    gcc-14.2.0
-hexagon                          allmodconfig    clang-20
-hexagon                           allnoconfig    gcc-14.2.0
-hexagon                          allyesconfig    clang-20
-i386                             allmodconfig    clang-19
-i386                              allnoconfig    clang-19
-i386                             allyesconfig    clang-19
-i386        buildonly-randconfig-001-20241118    gcc-12
-i386        buildonly-randconfig-002-20241118    gcc-12
-i386        buildonly-randconfig-003-20241118    gcc-12
-i386        buildonly-randconfig-004-20241118    gcc-12
-i386        buildonly-randconfig-005-20241118    gcc-12
-i386        buildonly-randconfig-006-20241118    gcc-12
-i386                                defconfig    clang-19
-i386                  randconfig-001-20241118    gcc-12
-i386                  randconfig-002-20241118    gcc-12
-i386                  randconfig-003-20241118    gcc-12
-i386                  randconfig-004-20241118    gcc-12
-i386                  randconfig-005-20241118    gcc-12
-i386                  randconfig-006-20241118    gcc-12
-i386                  randconfig-011-20241118    gcc-12
-i386                  randconfig-012-20241118    gcc-12
-i386                  randconfig-013-20241118    gcc-12
-i386                  randconfig-014-20241118    gcc-12
-i386                  randconfig-015-20241118    gcc-12
-i386                  randconfig-016-20241118    gcc-12
-loongarch                         allnoconfig    gcc-14.2.0
-m68k                              allnoconfig    gcc-14.2.0
-m68k                       m5475evb_defconfig    clang-20
-microblaze                        allnoconfig    gcc-14.2.0
-mips                              allnoconfig    gcc-14.2.0
-mips                         db1xxx_defconfig    clang-20
-mips                           ip27_defconfig    clang-20
-nios2                             allnoconfig    gcc-14.2.0
-openrisc                          allnoconfig    clang-20
-parisc                            allnoconfig    clang-20
-powerpc                           allnoconfig    clang-20
-powerpc                     ep8248e_defconfig    clang-20
-powerpc                    gamecube_defconfig    clang-20
-powerpc                    sam440ep_defconfig    clang-20
-powerpc                 xes_mpc85xx_defconfig    clang-20
-powerpc64                        alldefconfig    clang-20
-riscv                             allnoconfig    clang-20
-s390                              allnoconfig    clang-20
-sh                                allnoconfig    gcc-14.2.0
-sh                 kfr2r09-romimage_defconfig    clang-20
-sh                           se7750_defconfig    clang-20
-sh                   sh7770_generic_defconfig    clang-20
-sh                            shmin_defconfig    clang-20
-um                               allmodconfig    clang-20
-um                                allnoconfig    clang-20
-um                               allyesconfig    clang-20
-x86_64                            allnoconfig    clang-19
-x86_64                           allyesconfig    clang-19
-x86_64      buildonly-randconfig-001-20241118    gcc-12
-x86_64      buildonly-randconfig-002-20241118    gcc-12
-x86_64      buildonly-randconfig-003-20241118    gcc-12
-x86_64      buildonly-randconfig-004-20241118    gcc-12
-x86_64      buildonly-randconfig-005-20241118    gcc-12
-x86_64      buildonly-randconfig-006-20241118    gcc-12
-x86_64                              defconfig    clang-19
-x86_64                                  kexec    clang-19
-x86_64                randconfig-001-20241118    gcc-12
-x86_64                randconfig-002-20241118    gcc-12
-x86_64                randconfig-003-20241118    gcc-12
-x86_64                randconfig-004-20241118    gcc-12
-x86_64                randconfig-005-20241118    gcc-12
-x86_64                randconfig-006-20241118    gcc-12
-x86_64                randconfig-011-20241118    gcc-12
-x86_64                randconfig-012-20241118    gcc-12
-x86_64                randconfig-013-20241118    gcc-12
-x86_64                randconfig-014-20241118    gcc-12
-x86_64                randconfig-015-20241118    gcc-12
-x86_64                randconfig-016-20241118    gcc-12
-x86_64                randconfig-071-20241118    gcc-12
-x86_64                randconfig-072-20241118    gcc-12
-x86_64                randconfig-073-20241118    gcc-12
-x86_64                randconfig-074-20241118    gcc-12
-x86_64                randconfig-075-20241118    gcc-12
-x86_64                randconfig-076-20241118    gcc-12
-x86_64                               rhel-8.3    gcc-12
-xtensa                            allnoconfig    gcc-14.2.0
-
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+varint_decode_fast, used for inodes, does do reads (that aren't used) up
+to 7 bytes past the valid data, so it could be needed if we were seeing
+kmsan splats there - but this is bkey comparison, so something fishy
+seems to be going on.
 
