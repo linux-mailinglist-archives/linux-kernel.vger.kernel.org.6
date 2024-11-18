@@ -1,117 +1,209 @@
-Return-Path: <linux-kernel+bounces-412609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E30D29D0B58
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 10:03:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A47E29D0B59
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 10:03:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D3A4B21EB8
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 09:03:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65118282887
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 09:03:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9EF31714B7;
-	Mon, 18 Nov 2024 09:03:20 +0000 (UTC)
-Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91EDA2907;
-	Mon, 18 Nov 2024 09:03:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEDCF161302;
+	Mon, 18 Nov 2024 09:03:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ob59wJak"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09CA12907
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 09:03:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731920600; cv=none; b=HSN4nNjNZZjih0XkfZxT+6Qro7ru0CR58NO6KSGl7sddMKFhSERblWpsh7z0dSLcxhYbLte6zSDmt2rv4hu/53mfSu5QnEEDfYae/mE9MeLF67bbE/BGaJiGskLyEaD+ymPpQZruAxE9YMpKr38Jxm/xMTByX3CKHembtDEzd/8=
+	t=1731920626; cv=none; b=bM32mGScoIFKPqE4a4w7q0/YSsUOJNeLNNksYxmpOQq9HNCvOQ9iPjLnwQNcwjMZkhq11UcM1PoF4gA6DR2RtE6aiQlajClc36BvYaTI2hh3Nyhn1NzEsDrXfjQnPa8NsyrU313LxWLlqvTxYZ1whClcEZSwU6jXyHNpeKmEs3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731920600; c=relaxed/simple;
-	bh=exWOnmLwl232I82JkhJYQ8DE0w1MXTwqbQtBMmKk16M=;
+	s=arc-20240116; t=1731920626; c=relaxed/simple;
+	bh=SPLHhyfMcYNJIihTAb++6ZxHd/96Bu1vqadZjuhb/v0=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Jf8fwg+T2U0dc7zIrsywHeSH8bvE+zq+7v9rADGG5ACGpddVLK1JiND613BgQum+6LL1WQhcfS9IXqHwQ+or0AcqlzLcCCQ4ChsWBLe/EsTP7NB7HuOe0j4yTUWe/IhGAifBsC8gKd5iPC15ITiK3nTZ5KpmGdK1PwN4B+qhJus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
-Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
-	id 1tCxez-0007lT-00; Mon, 18 Nov 2024 10:03:05 +0100
-Received: by alpha.franken.de (Postfix, from userid 1000)
-	id AEAF9C0110; Mon, 18 Nov 2024 10:02:56 +0100 (CET)
-Date: Mon, 18 Nov 2024 10:02:56 +0100
-From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To: torvalds@linux-foundation.org
-Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] MIPS changes for v6.13
-Message-ID: <ZzsCwEfGZ0m6dNVS@alpha.franken.de>
+	 Content-Disposition; b=UeZ/9Gee6zWw0Qf5VRFzT4ah+QZfYWXzJcokPGfR3SoFblzsvPxEHJBXn9IvxQM6o7FQzDRz9laMcpedjR9tCwdkQWiW8PmqdreIKcsw07rNneb0neU80lxW2dsuGa00JdYjGLojisgprX5xkBdBgo69F9y0N5CQmcroqJRiSrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ob59wJak; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BC9BC4CED6;
+	Mon, 18 Nov 2024 09:03:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731920625;
+	bh=SPLHhyfMcYNJIihTAb++6ZxHd/96Bu1vqadZjuhb/v0=;
+	h=Date:From:To:Cc:Subject:From;
+	b=ob59wJak6oYW1Q0BXf/fJxAVzzQ9vSXyUNGYzotHOlbBABjRKyJofMg0AUJrNusSo
+	 QQYjWMyb82IL3soDfgl24O8qKTofSwxE2qTMPoUenlH6m2Rzielp60bLOa2tGxHUML
+	 N0wYhNv5NTjq5ISctwcvzgbSzZAQkr0fzhPbmmQYS/55/JgJkYVIA10WxsKX/dyxMO
+	 kLF6VrYYSK/MIhd+Ct1ADeU1xE8Qg0JE3R57xybzNQDsPHW4WgM3AHzWKkJhEnmXDW
+	 3NKERTEh+4DVvYpuOTrEYR/eL2QSqJIS/dZbbm971J51PwY8Yx+br11M6LyRRFYKh3
+	 rOf1v8Pyo46YQ==
+Date: Mon, 18 Nov 2024 10:03:40 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>, Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
+	Borislav Petkov <bp@alien8.de>
+Subject: [GIT PULL] locking changes for v6.13
+Message-ID: <ZzsC7HOiJ8Mwk8D6@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-The following changes since commit 81983758430957d9a5cb3333fe324fd70cf63e7e:
+Linus,
 
-  Linux 6.12-rc5 (2024-10-27 12:52:02 -1000)
+Please pull the latest locking/core Git tree from:
 
-are available in the Git repository at:
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git locking-core-2024-11-18
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/mips/linux.git/ tags/mips_6.13
+   # HEAD: 3b49a347d751553b1d1be69c8619ae2e85fdc28d locking/Documentation: Fix grammar in percpu-rw-semaphore.rst
 
-for you to fetch changes up to 56131e6d1fcce8e7359a2445711cc1a4ddb8325c:
+Locking changes for v6.13 are:
 
-  mips: dts: realtek: Add I2C controllers (2024-11-12 15:51:21 +0100)
+ - lockdep:
+    - Enable PROVE_RAW_LOCK_NESTING with PROVE_LOCKING (Sebastian Andrzej Siewior)
+    - Add lockdep_cleanup_dead_cpu() (David Woodhouse)
 
-----------------------------------------------------------------
-just cleanups and fixes
+ - futexes:
+    - Use atomic64_inc_return() in get_inode_sequence_number() (Uros Bizjak)
+    - Use atomic64_try_cmpxchg_relaxed() in get_inode_sequence_number() (Uros Bizjak)
 
-----------------------------------------------------------------
-Chris Packham (2):
-      mips: dts: realtek: Add syscon-reboot node
-      mips: dts: realtek: Add I2C controllers
+ - RT locking:
+    - Add sparse annotation PREEMPT_RT's locking (Sebastian Andrzej Siewior)
 
-Christian Marangi (1):
-      mips: bmips: bcm6358/6368: define required brcm,bmips-cbr-reg
+ - spinlocks:
+    - Use atomic_try_cmpxchg_release() in osq_unlock() (Uros Bizjak)
 
-Gregory CLEMENT (2):
-      MIPS: Allow using more than 32-bit addresses for reset vectors when possible
-      MIPS: mobileye: eyeq6h-epm6: Use eyeq6h in the board device tree
+ - atomics:
+    - x86: Use ALT_OUTPUT_SP() for __alternative_atomic64() (Uros Bizjak)
+    - x86: Use ALT_OUTPUT_SP() for __arch_{,try_}cmpxchg64_emu() (Uros Bizjak)
 
-Jonas Gorski (1):
-      mips: asm: fix warning when disabling MIPS_FP_SUPPORT
+ - KCSAN, seqlocks:
+    - Support seqcount_latch_t (Marco Elver)
 
-Maciej W. Rozycki (2):
-      MAINTAINERS: Retire Ralf Baechle
-      MAINTAINERS: Remove linux-mips.org references
+ - <linux/cleanup.h>:
+    - Add if_not_cond_guard() conditional guard helper (David Lechner)
+    - Adjust scoped_guard() macros to avoid potential warning (Przemek Kitszel)
+    - Remove address space of returned pointer (Uros Bizjak)
 
-Paulo Miguel Almeida (1):
-      mips: sgi-ip22: Replace "s[n]?printf" with sysfs_emit in sysfs callbacks
+ - WW mutexes:
+    - locking/ww_mutex: Adjust to lockdep nest_lock requirements (Thomas Hellström)
 
-Thorsten Blum (1):
-      MIPS: kernel: proc: Use str_yes_no() helper function
+ - Rust integration:
+    - Fix raw_spin_lock initialization on PREEMPT_RT (Eder Zulian)
 
-WangYuli (2):
-      MIPS: loongson3_defconfig: Update configs dependencies
-      MIPS: loongson3_defconfig: Enable blk_dev_nvme by default
+ - miscellaneous cleanups & fixes:
+    - lockdep: Fix wait-type check related warnings (Ahmed Ehab)
+    - lockdep: Use info level for initial info messages (Jiri Slaby)
+    - spinlocks: Make __raw_* lock ops static (Geert Uytterhoeven)
+    - pvqspinlock: Convert fields of 'enum vcpu_state' to uppercase (Qiuxu Zhuo)
+    - iio: magnetometer: Fix if () scoped_guard() formatting (Stephen Rothwell)
+    - rtmutex: Fix misleading comment (Peter Zijlstra)
+    - percpu-rw-semaphores: Fix grammar in percpu-rw-semaphore.rst (Xiu Jianfeng)
 
-zhang jiao (1):
-      TC: Fix the wrong format specifier
+ Thanks,
 
- .get_maintainer.ignore                             |  1 +
- CREDITS                                            |  5 +++
- MAINTAINERS                                        | 17 +++-----
- arch/mips/boot/dts/brcm/bcm6358.dtsi               |  1 +
- arch/mips/boot/dts/brcm/bcm6368.dtsi               |  1 +
- arch/mips/boot/dts/mobileye/eyeq6h-epm6.dts        |  2 +-
- .../dts/realtek/cameo-rtl9302c-2x-rtl8224-2xge.dts |  2 +-
- arch/mips/boot/dts/realtek/rtl9302c.dtsi           | 15 +++++++
- arch/mips/boot/dts/realtek/rtl930x.dtsi            | 29 ++++++++++++++
- arch/mips/configs/loongson3_defconfig              | 32 +++++----------
- arch/mips/include/asm/mips-cm.h                    |  2 +
- arch/mips/include/asm/switch_to.h                  |  2 +-
- arch/mips/kernel/proc.c                            | 17 ++++----
- arch/mips/kernel/smp-cps.c                         | 46 ++++++++++++++++++----
- arch/mips/sgi-ip22/ip22-gio.c                      |  7 ++--
- drivers/tc/tc.c                                    |  2 +-
- 16 files changed, 123 insertions(+), 58 deletions(-)
- create mode 100644 arch/mips/boot/dts/realtek/rtl9302c.dtsi
+	Ingo
 
--- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+------------------>
+Ahmed Ehab (2):
+      locking/lockdep: Avoid creating new name string literals in lockdep_set_subclass()
+      locking/lockdep: Add a test for lockdep_set_subclass()
+
+David Lechner (1):
+      cleanup: Add conditional guard helper
+
+David Woodhouse (1):
+      lockdep: Add lockdep_cleanup_dead_cpu()
+
+Eder Zulian (1):
+      rust: helpers: Avoid raw_spin_lock initialization for PREEMPT_RT
+
+Geert Uytterhoeven (1):
+      locking/spinlocks: Make __raw_* lock ops static
+
+Jiri Slaby (SUSE) (1):
+      lockdep: Use info level for lockdep initial info messages
+
+Marco Elver (5):
+      time/sched_clock: Swap update_clock_read_data() latch writes
+      time/sched_clock: Broaden sched_clock()'s instrumentation coverage
+      kcsan, seqlock: Support seqcount_latch_t
+      seqlock, treewide: Switch to non-raw seqcount_latch interface
+      kcsan, seqlock: Fix incorrect assumption in read_seqbegin()
+
+Peter Zijlstra (1):
+      locking/rtmutex: Fix misleading comment
+
+Przemek Kitszel (1):
+      cleanup: Adjust scoped_guard() macros to avoid potential warning
+
+Qiuxu Zhuo (1):
+      locking/pvqspinlock: Convert fields of 'enum vcpu_state' to uppercase
+
+Sebastian Andrzej Siewior (5):
+      lockdep: Enable PROVE_RAW_LOCK_NESTING with PROVE_LOCKING.
+      locking/rt: Add sparse annotation PREEMPT_RT's sleeping locks.
+      locking/rt: Remove one __cond_lock() in RT's spin_trylock_irqsave()
+      locking/rt: Add sparse annotation for RCU.
+      locking/rt: Annotate unlock followed by lock for sparse.
+
+Stephen Rothwell (1):
+      iio: magnetometer: fix if () scoped_guard() formatting
+
+Thomas Hellström (1):
+      locking/ww_mutex: Adjust to lockdep nest_lock requirements
+
+Uros Bizjak (6):
+      futex: Use atomic64_inc_return() in get_inode_sequence_number()
+      futex: Use atomic64_try_cmpxchg_relaxed() in get_inode_sequence_number()
+      cleanup: Remove address space of returned pointer
+      locking/osq_lock: Use atomic_try_cmpxchg_release() in osq_unlock()
+      locking/atomic/x86: Use ALT_OUTPUT_SP() for __alternative_atomic64()
+      locking/atomic/x86: Use ALT_OUTPUT_SP() for __arch_{,try_}cmpxchg64_emu()
+
+Xiu Jianfeng (1):
+      locking/Documentation: Fix grammar in percpu-rw-semaphore.rst
+
+
+ Documentation/locking/percpu-rw-semaphore.rst |  4 +-
+ Documentation/locking/seqlock.rst             |  2 +-
+ arch/x86/include/asm/atomic64_32.h            |  3 +-
+ arch/x86/include/asm/cmpxchg_32.h             |  6 +-
+ arch/x86/kernel/tsc.c                         |  5 +-
+ drivers/iio/magnetometer/af8133j.c            |  3 +-
+ include/linux/cleanup.h                       | 69 ++++++++++++++++---
+ include/linux/irqflags.h                      |  6 ++
+ include/linux/lockdep.h                       |  2 +-
+ include/linux/rbtree_latch.h                  | 20 +++---
+ include/linux/rwlock_rt.h                     | 10 +--
+ include/linux/seqlock.h                       | 98 ++++++++++++++++++++-------
+ include/linux/spinlock_rt.h                   | 28 ++++----
+ include/linux/ww_mutex.h                      | 14 ++++
+ kernel/cpu.c                                  |  1 +
+ kernel/futex/core.c                           |  6 +-
+ kernel/locking/lockdep.c                      | 46 ++++++++++---
+ kernel/locking/osq_lock.c                     |  3 +-
+ kernel/locking/qspinlock_paravirt.h           | 36 +++++-----
+ kernel/locking/rtmutex.c                      |  2 +
+ kernel/locking/rtmutex_api.c                  |  8 +--
+ kernel/locking/spinlock.c                     |  8 +--
+ kernel/locking/spinlock_rt.c                  | 14 ++--
+ kernel/locking/test-ww_mutex.c                |  8 ++-
+ kernel/printk/printk.c                        |  9 +--
+ kernel/time/sched_clock.c                     | 34 +++++++---
+ kernel/time/timekeeping.c                     | 12 ++--
+ lib/Kconfig.debug                             | 12 +---
+ lib/locking-selftest.c                        | 39 +++++++++++
+ rust/helpers/spinlock.c                       |  8 ++-
+ 30 files changed, 355 insertions(+), 161 deletions(-)
 
