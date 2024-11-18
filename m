@@ -1,88 +1,156 @@
-Return-Path: <linux-kernel+bounces-413495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 449949D19D8
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 21:45:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BA5AA9D19DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 21:48:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7E561F21D71
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 20:45:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D0D51F23094
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 20:48:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7077C1E7677;
-	Mon, 18 Nov 2024 20:44:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C46881E0DD4;
+	Mon, 18 Nov 2024 20:48:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="EBei7hg9"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="fNqL/akK"
+Received: from mail-oo1-f53.google.com (mail-oo1-f53.google.com [209.85.161.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E3F713E8AE;
-	Mon, 18 Nov 2024 20:44:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78E9C1487F6
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 20:48:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731962697; cv=none; b=Z5ElKtxQHySxhfcTtVjzTLWEl9xmm6zYGXZQKjUMhAZXY1MAMbipevFtWMrZMso/ZDcswb9F+hX+DqGbWmLaXaJHSn43MydO1eC/moXSLP5MKpiUPeyMGPsVWrXoup4cluJPUfIdsFqYb7Ch4F5/XEIc3Labm9hKN000nh2qbTE=
+	t=1731962889; cv=none; b=EsqBadGCFia7J5X9ZpfD2AaHOr5lq2oB+FHJpszAJcxj+GFj8Jf9hLItPeO0rbq++q68ZVfTWhGxXTMgB1qwXH+FGBDaj5LVauC5tSQdi7j4+VvISzdGnvsncYp1dvb009YpfyCo0R/+vYbnJ1ED56E6D57SQE4c6wWxll+fZlo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731962697; c=relaxed/simple;
-	bh=hxr6X589nGkzN6isc/wO1nfdUP4sjSft0/ICAC7Lvkw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GWz05SQn5a4Jnxn/h13tVOUKZT4Bopbn18hwyoYDSGBlxD5aV39Avg4okQPBYOKsUgJ0xYdya5ddd53auZAhO5p+F1iK/GzuI+pR3InoTG+1u5mAoDE727Ze9AijVHXoWK7CPBVDJimjexKM7YWWbS0JqRZO1Z8WHbG721NYMM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=EBei7hg9; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=5Jgjkxw4frr4EM5zhmh3R/CldBWmsGrdOdfJ7IL6ZAI=; b=EBei7hg9WWtBfJ85ufetVruukj
-	onGrC3lUzzex4kMnVu+CSIWj7mfyZNp+cMTnmS+H/ZDMVclWpoE1u4feMWjWqSuz0Gtm7cKycOUAt
-	zxPkWQ3DjYGbvyrh9rt8dZ8tqz7ZpoEmZ/JdyL/0QsJNCyiH1K1Z3J+LPr2v30NY70UW3VY7F2C5K
-	8HDjn5YCRbxY2zGmc2wA/Kj9F/C6jwn9l9Nr7SpdvRKqMSltnQ+SaXu8Rac7RNyvNhyr3C1SDUr+P
-	WoxtO50BEt5+ZbupPHLpXRmmt/s+a6s5VQtpeyBEMmVsuNw8RcSOQ7Leis6Ch1d4c0tzhOnHJfFM8
-	pvWFqzRQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tD8bz-00000003Kov-0P6q;
-	Mon, 18 Nov 2024 20:44:43 +0000
-Date: Mon, 18 Nov 2024 20:44:42 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	cgroups@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	akpm@linux-foundation.org, corbet@lwn.net, derek.kiernan@amd.com,
-	dragan.cvetic@amd.com, arnd@arndb.de, gregkh@linuxfoundation.org,
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	tj@kernel.org, hannes@cmpxchg.org, mhocko@kernel.org,
-	roman.gushchin@linux.dev, shakeel.butt@linux.dev,
-	muchun.song@linux.dev, Liam.Howlett@oracle.com, vbabka@suse.cz,
-	jannh@google.com, shuah@kernel.org, vegard.nossum@oracle.com,
-	vattunuru@marvell.com, schalla@marvell.com, david@redhat.com,
-	osalvador@suse.de, usama.anjum@collabora.com, andrii@kernel.org,
-	ryan.roberts@arm.com, peterx@redhat.com, oleg@redhat.com,
-	tandersen@netflix.com, rientjes@google.com, gthelen@google.com
-Subject: Re: [RFCv1 1/6] mm: Make get_vma_name() function public
-Message-ID: <ZzunOu4TcHcJIOht@casper.infradead.org>
-References: <20241116175922.3265872-1-pasha.tatashin@soleen.com>
- <20241116175922.3265872-2-pasha.tatashin@soleen.com>
- <8871d4b3-0cd8-4499-afe6-38a9c3426527@lucifer.local>
- <CA+CK2bBqi7+RExARBq5m91kaxC+w+nLYnLf4wyM_MJjaxr2rAw@mail.gmail.com>
+	s=arc-20240116; t=1731962889; c=relaxed/simple;
+	bh=ewt5rJFrb2PczIbA7CRaAPtPfqvfDkdOKYNyeNpSJxw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ekPHcB+5P5t+TMJkUluaWK/Gafo8NZjCwFT01w25zmWgifZaDYc/ygN7ipW01TAUvb1gDErL4whn1aJAiRVeFKHTXp2/neAcZDj+v98rlwwlagSxsZfRJuxoUk3bYH586HFVuLv2FpGjX+p8cbKPKfYK0IOh9m2T/9lQdm1u01o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=fNqL/akK; arc=none smtp.client-ip=209.85.161.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-5ebc4e89240so828318eaf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 12:48:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1731962885; x=1732567685; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=s3NX4CqYzFbD4W9x/5neCum/lsR8s0Xk5YK42Mhzu2s=;
+        b=fNqL/akKX1bPNXpPKiFAbajXJzsK+hg1m19O3z6In660lHdl2CNFVQf/Mmn1KEChBk
+         UTdw00yUO5NVfmAWvinHW/LpQ8C+UiaAvio7Np007a0Ba5VG4V6L1/lxMeYr1Huu4tAq
+         NAZUdYHxpGsCzEGArIahRmcYsFNYHe6+8FKbumB1kF/hbOKqtF5AfgnXfZip/mnQCDxG
+         z1eP7WH+g4AhSX5HQ2wamSp1rtTXtiTgsICfbaJxKDdCRIQrKv0dU1qwxucMcwFLm8P3
+         SyTfWF/OX8+N7d6YwPh03iQ8jSrQuOk17GXfYjXyGMFjus+fkfa00JOzIPGIjfKkobj5
+         BoKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731962885; x=1732567685;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=s3NX4CqYzFbD4W9x/5neCum/lsR8s0Xk5YK42Mhzu2s=;
+        b=cDF3NX5KxqMM3ymzK7JJoDjTGPuzF7fnVEmg36QT46/l7Zzq0+XMkVx0AHFQdpNNnh
+         IVD4oyWAbOMJsyvOXS8bmTPJxsgnkFy01mMDDVGhXwQI7JK0pvzZiphc5xRgB3i8yMd7
+         u6ypv+3+STUuI+iXvz4EATZp6OCOeCw3SnGsOm/LZPLqTP1dDrnIKNwLWLIF73BdRthA
+         y/3bUo/kgfvOW5Ki385z++2JQLzW9y8CBuHzdJLkXx5zrLFpisHmctBQJkgrKj4T76to
+         hCTrjGsRP32D7I8FCISEQGhl+Ufou4Uok+a4ifsFxNJV12UBvo6FIAt60IJv8DY32agk
+         l7sw==
+X-Forwarded-Encrypted: i=1; AJvYcCVN0vJ2jvCaQbpTwqsNOib3bdDG8jZ4KOSke8hGk8ln6XLDZRMcMtQM2YYR0YnfUvlTv3Ehtu4aY1GKjIo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyO75IbJJFeIwdVEKAzAgQJQhA8exaEywZl4dQ9LRg5W72NEUP7
+	4bt5XADqsgoLGyBAP5y3HWveTdVmyA3Y7rQhVhQ6FYEhdIvmcMfBUZNHhEUPzxc=
+X-Google-Smtp-Source: AGHT+IFQMUjCRk8/5H5HabAhGt8VwRvx4UoJQUDc2dxsboC81OzNcr9+ZSOGYGwT+IkT0YFcX5+FEg==
+X-Received: by 2002:a05:6870:7009:b0:295:eb52:87e1 with SMTP id 586e51a60fabf-2962dd8ba31mr9965984fac.12.1731962885567;
+        Mon, 18 Nov 2024 12:48:05 -0800 (PST)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-29690223767sm1185050fac.47.2024.11.18.12.48.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 Nov 2024 12:48:04 -0800 (PST)
+Message-ID: <b296a23d-bc65-481c-a194-cb16535d8c24@baylibre.com>
+Date: Mon, 18 Nov 2024 14:48:02 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+CK2bBqi7+RExARBq5m91kaxC+w+nLYnLf4wyM_MJjaxr2rAw@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC] iio: adc: ad7173: add openwire detection support for
+ single conversions
+To: Guillaume Ranquet <granquet@baylibre.com>,
+ Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241115-ad4111_openwire-v1-1-db97ac8bf250@baylibre.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <20241115-ad4111_openwire-v1-1-db97ac8bf250@baylibre.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Nov 18, 2024 at 03:40:57PM -0500, Pasha Tatashin wrote:
-> > You're putting something in an mm/ C-file and the header in fs.h? Eh?
+On 11/15/24 4:34 AM, Guillaume Ranquet wrote:
+> Some chips of the ad7173 family supports open wire detection.
 > 
-> This is done so we do not have to include struct path into vma.h. fs.h
-> already has some vma functions like: vma_is_dax() and vma_is_fsdax().
+> Generate a threshold event whenever an external source is disconnected
+> from the system input on single conversions.
+> 
+> Signed-off-by: Guillaume Ranquet <granquet@baylibre.com>
+> ---
+> Hi.
+> 
+> This patch adds the openwire detection support for the ad4111 chip.
+> 
+> The openwire detection is done in software and relies on comparing the
+> results of two conversions on different channels.
+> 
+> As presented here, the code sends a THRESH Rising event tied to the
+> in_voltageX_raw channel on which it happened.
+> 
+> We think this is not correct but we can't seem to find an implementation
+> that would be elegant.
+> 
+> The main idea would be to add a specific channel for openwire detection
+> but we still would need to have the openwire enablement and threshold
+> tied to the voltage channel.
+> 
+> Any thought on this?
+> 
+Just to spell this out in a bit more detail, my understanding is that
+the procedure works like this...
 
-Yes, but DAX is a monumental layering violation, not something to be
-emulated.
+To detect an open wire on a single-ended input, we measure the voltage
+on pin VIN0 using channel register 15, the we read the voltage on the
+same pin again using channel register 0. The datasheet isn't clear on
+the details, but on one or the other or both of these, the ADC chip is
+applying some kind of pull up or pull down on the input pin so that
+each measurement will be nearly the same if there is a wire attached
+with a 0-10V signal on it. Or if the wire is detached and the pins are
+left floating, the two measurements will be different (> 300 mV).
+
+So this threshold value (the 300 mV) is measured in terms of the
+difference between two voltage measurements, but of the same input pin.
+
+My suggestion is to create extra differential channels like
+in_voltage0-involtage100_* where 100 is an arbitrary number. These
+channels would be defined as the difference between the two measurements
+on the same pin. The event attributes would use these channels since they
+are triggered by exceeding the threshold value according to this difference
+measurement.
+
+To complicate matters, these chips can also be configured so that two
+input pins can be configured as a fully differential pair. And we can
+also do open wire detection on these differential pairs. In this case
+we would configure input pins VIN0 and VIN1 as a differential pair, then
+read the difference of those two pins using channel register 1, then
+read again using channel register 2. The we see if the difference of the
+two differences exceeds the threshold.
+
+In this case, we can't have in_(voltage0-voltage1)-(voltage100-voltage101)_*
+attributes. So I guess we would have to do something like
+in_voltage200-voltage300 to handle this case? (voltage200 would represent
+the first measurement of voltage0-voltage1 and voltage300 would represent
+the 2nd measurement of the same).
+
+
 
