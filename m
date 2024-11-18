@@ -1,145 +1,142 @@
-Return-Path: <linux-kernel+bounces-413121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A98119D13D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 16:01:07 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4EDD9D13D8
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 16:01:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F6EB284269
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 15:01:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 40AE4B2B17A
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 14:58:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F3471AA1FD;
-	Mon, 18 Nov 2024 15:01:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A47A1AA1F1;
+	Mon, 18 Nov 2024 14:58:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QbPfpbLH"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xp9rGTLn"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37E081991DB;
-	Mon, 18 Nov 2024 15:01:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A06F1A9B26
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 14:58:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731942062; cv=none; b=VpxOyG0gslMHOyHJyaNoHiEFWTEf9spnbuHXcXYalWf2JwAspVNiIP9rlqf2GTUfKuhKw/w71Xi41CmxkHzpGxBvdfa1Qnq3ELUTZoAUXmV2Tgx6x4rQ52XVg1OWH36i+iZj/r/SHZwHdtuahDD5Q0ykygefKG0EWbnAJJTDW2U=
+	t=1731941908; cv=none; b=LlMcO5lZNf2LpO7LcBEF37rZYANoAinEjhE3tVmxSMIORTnNQhAIxDu+f13lQjavmMxzffF6IDwigEWcwY8qCJyAkmaKCDKWpKtgBienSaL/ounbjZh34C+dk3tjjeMAlT7yvb2D3EJcelreTKfEiXHdFqPjA4XXDNzIailptEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731942062; c=relaxed/simple;
-	bh=igJQtacPhIM9ztn/DHiLLB8CIzFq/PkCp1VV0gLJ29o=;
+	s=arc-20240116; t=1731941908; c=relaxed/simple;
+	bh=TWzvGZ8KRSmRHzydZETL80z6/QZ2aw2ZYkM4Nl2AVr8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C+kO1vl1DL55FuBMAXVhpTi8wWmCxV0FOLrVUA7xK51A3M7StmBIaITY7gDjIO6lJ6aH0QwjdLYmkpSDFD405+UMg7qJkNX5LgnzMC8gqeewMyOVsb1O9QSMLxRoYeX2sU3r6qrackjSJzA3CmBoCzvDpCXn2iRuVAdGlySaffA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QbPfpbLH; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731942061; x=1763478061;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=igJQtacPhIM9ztn/DHiLLB8CIzFq/PkCp1VV0gLJ29o=;
-  b=QbPfpbLHglt8X2AL8TULm7qbndLBigYLK+TD3A7urdGzEV8i75KKzRYK
-   /oApUd7H/fVAwjj4JD4HUmf4qXbJ3KJwxP3iqw/rsprm7Ih2LQ0ulqrrv
-   vNpx/6HhRCYrgB/6FQZ3FnLiorih5E2u/D18nZfLSvnxNa6205TpgeSwW
-   rbjxfgeLyYSEZQuDsk44g8B5UweFa6redMq0NkXchDKpmPfIXpao/TMFO
-   llSwh81HBcR2GYlGLhlO0y7SWDPJsM5c8/oQ6Ia+Lwk1iI3/TRvuNnOw/
-   WSWpilfuEg/U9bsIZCbOFsZPoP4AUbcwojyrSQhbjE37ulklnALVzhbek
-   g==;
-X-CSE-ConnectionGUID: Wkk+Vt0QQ9WpUcXcTzXNfA==
-X-CSE-MsgGUID: 0zHT0ec6Slyuqv/EgalLqg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11260"; a="42532138"
-X-IronPort-AV: E=Sophos;i="6.12,164,1728975600"; 
-   d="scan'208";a="42532138"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2024 07:01:01 -0800
-X-CSE-ConnectionGUID: lUmt5vy+Qey91SmHNCEM4g==
-X-CSE-MsgGUID: jZMmC9XvSXeX+aqrxbDwLA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,164,1728975600"; 
-   d="scan'208";a="126789252"
-Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
-  by orviesa001.jf.intel.com with ESMTP; 18 Nov 2024 07:00:58 -0800
-Date: Mon, 18 Nov 2024 22:58:05 +0800
-From: Xu Yilun <yilun.xu@linux.intel.com>
-To: Peter Colberg <peter.colberg@intel.com>
-Cc: Wu Hao <hao.wu@intel.com>, Tom Rix <trix@redhat.com>,
-	Moritz Fischer <mdf@kernel.org>, Xu Yilun <yilun.xu@intel.com>,
-	linux-fpga@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Russ Weight <russ.weight@linux.dev>,
-	Marco Pagani <marpagan@redhat.com>,
-	Matthew Gerlach <matthew.gerlach@linux.intel.com>,
-	Basheer Ahmed Muddebihal <basheer.ahmed.muddebihal@linux.intel.com>
-Subject: Re: [PATCH v4 17/19] fpga: dfl: remove unneeded function
- build_info_create_dev()
-Message-ID: <ZztV/d8PPk2f33wk@yilunxu-OptiPlex-7050>
-References: <20241025223714.394533-1-peter.colberg@intel.com>
- <20241025223714.394533-18-peter.colberg@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=pBCRTeIfLOpEKNDIVIPR49pcgCSAaxmKKS5drro4m5DLyuaJ3tEj4aQ09CFeE2v/+WKQaGs1gvgD6nooDD5tKuWTVhVy4+HlGSwj3eCTO1yDJSym2rjKeg1u1xekXO+b5KSgR3owX9VjvCKcDh4fhAQynwrs0QPRGBDztl5WrTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xp9rGTLn; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-7e6cbf6cd1dso2861618a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 06:58:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731941906; x=1732546706; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=5Kj40amW5IpporSjQ73hgk+ubBMNelSpX7cTHNX0nDY=;
+        b=xp9rGTLnyVA35a576MzaiHUZXCxCl1zD8++LP8jzDpYp3Q+u8s80tRqymsT1DimmKR
+         wSLHWnaEBfkBGfigUhLFIst7hQYMRZllOoKxfYBlxx7kMaAF/cdbdAAREjQPSW5QbyuW
+         zEKiBtMlNcItd+x6HNnFlXlCbQGAWqsG41hd7vdMHidCIfewwbcsYtTzg6QXQprDQkMD
+         cATV1JWv8b1QtQBJBVk5/M0Oh9EkN7Ukeyp+VQFGr4L9bUpozmD+U1/CGrNPaBeq5Xo9
+         HdMA7iBCRUUREPOvHzazsNnuO4RpYI74AW7T5YatS8056hK83SEIkYHodRdXxmg9RTD0
+         wBfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731941906; x=1732546706;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5Kj40amW5IpporSjQ73hgk+ubBMNelSpX7cTHNX0nDY=;
+        b=uZoW9MOO+VmIDsQvGC3nwbQzTeeEFv932iz7K7eEM4cMe8EWWNw4mOhNvIUV96qjB1
+         hdD4oPiWjvWPC0umLOy7q2U5PHwvmamvmG0+GOn/2/4O6S/P+82lLQWP+E3rGuUkcgFb
+         417UBh1BpeqhfV9EOnRZBjoka1z6f4BlyLZbdPMgpVjmn9pquTMrJuPoqWJfM+lBD0jW
+         nX8jLnYHGfOhTD4i89qzQmIS48PJtYfsd+4M2zuzXLGEkHGMW+qNxGoqIIPwWaUzFiPn
+         hgrstXlwkMo03XSpSOkA9IjQpPpPJO4XtDvaXB/IXLvNLB9gecggCSfezn4Enw3Tc0qz
+         t+5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVxjyFlxnJvD9cv4j08E1khM4m9mTITlEXygzuoyZQ28yi+3w59WF9qSIapxCzkrZOCoTpZ6JtpWdCZas0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzO8359TkQ3rhh3Z+0K+ndgumz/lOVhX3730UN8dAwHex4AKyWQ
+	5gRv0NTJ+23tThYvXouIwz43kG+KpdLJmx1jtV0ZMh3cJNs2TrQXtrMHWajBNw==
+X-Google-Smtp-Source: AGHT+IFXhxjuxnpcBK6VkRM8ka4xfCsVzl6RCq9DZi8mELcnE7vPbPlemi6MxwH3EwSL+aB5tXXoZQ==
+X-Received: by 2002:a05:6a21:7881:b0:1db:dbad:ce3b with SMTP id adf61e73a8af0-1dc90b60450mr18251249637.23.1731941906610;
+        Mon, 18 Nov 2024 06:58:26 -0800 (PST)
+Received: from thinkpad ([36.255.17.190])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724771e5c0csm6291226b3a.164.2024.11.18.06.58.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Nov 2024 06:58:26 -0800 (PST)
+Date: Mon, 18 Nov 2024 20:28:20 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: kbusch@kernel.org, axboe@kernel.dk, sagi@grimberg.me,
+	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, andersson@kernel.org,
+	konradybcio@kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
+	"Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: [PATCH] nvme-pci: Shutdown the device if D3Cold is allowed by
+ the user
+Message-ID: <20241118145820.2ecu5hzb2r5ygjvi@thinkpad>
+References: <20241118082344.8146-1-manivannan.sadhasivam@linaro.org>
+ <20241118125817.GA28046@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241025223714.394533-18-peter.colberg@intel.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241118125817.GA28046@lst.de>
 
-On Fri, Oct 25, 2024 at 06:37:12PM -0400, Peter Colberg wrote:
-> Now that the platform device allocation has been moved from
-> build_info_create_dev() to feature_dev_register(), the former
-> no longer serves its original purpose and may be removed.
+On Mon, Nov 18, 2024 at 01:58:17PM +0100, Christoph Hellwig wrote:
+> On Mon, Nov 18, 2024 at 01:53:44PM +0530, Manivannan Sadhasivam wrote:
+> > PCI core allows users to configure the D3Cold state for each PCI device
+> > through the sysfs attribute '/sys/bus/pci/devices/.../d3cold_allowed'. This
+> > attribute sets the 'pci_dev:d3cold_allowed' flag and could be used by users
+> > to allow/disallow the PCI devices to enter D3Cold during system suspend.
+> >
+> > So make use of this flag in the NVMe driver to shutdown the NVMe device
+> > during system suspend if the user has allowed D3Cold for the device.
+> > Existing checks in the NVMe driver decide whether to shut down the device
+> > (based on platform/device limitations), so use this flag as the last resort
+> > to keep the existing behavior.
+> 
+> Umm, what?  The documentation of this attribute says:
+> 
+> "d3cold_allowed is bit to control whether the corresponding PCI
+>  device can be put into D3Cold state.  If it is cleared, the
+>  device will never be put into D3Cold state.  If it is set, the
+>  device may be put into D3Cold state if other requirements are
+>  satisfied too.  Reading this attribute will show the current
+>  value of d3cold_allowed bit. Writing this attribute will
+>  the value of d3cold_allowed bit."
+> 
+> Which honestly already sounds rather non-specific, but everything but
+> a mandate for drivers to act on it.
+> 
+> The only place currently checking it is pci_dev_check_d3cold in the
+> PCI core, which is used to set the bridge_d3 attibute.
+> 
 
-may be removed? It is removed in this patch, please be confirmative.
+Yeah, it is pretty much used internally up until now. But the attribute looks
+like a close match of what I could find for this usecase and that's why I used
+it.
 
-Thanks,
-Yilun
+> So blindly using it in a driver to force a different PM strategy feels
+> completely wrong.  Even if the attrite should have that effect it
+> needs to happen through a well documented PCI or PM layer helper and
+> open coded like this.
+> 
 
-> 
-> Signed-off-by: Peter Colberg <peter.colberg@intel.com>
-> Reviewed-by: Matthew Gerlach <matthew.gerlach@linux.intel.com>
-> Reviewed-by: Basheer Ahmed Muddebihal <basheer.ahmed.muddebihal@linux.intel.com>
-> ---
-> Changes since v3:
-> - New patch extracted from last patch of v3 series.
-> ---
->  drivers/fpga/dfl.c | 17 ++---------------
->  1 file changed, 2 insertions(+), 15 deletions(-)
-> 
-> diff --git a/drivers/fpga/dfl.c b/drivers/fpga/dfl.c
-> index d9cef150ed0d..a2459b0cbc68 100644
-> --- a/drivers/fpga/dfl.c
-> +++ b/drivers/fpga/dfl.c
-> @@ -858,16 +858,6 @@ binfo_create_feature_dev_data(struct build_feature_devs_info *binfo)
->  	return fdata;
->  }
->  
-> -static int
-> -build_info_create_dev(struct build_feature_devs_info *binfo)
-> -{
-> -	binfo->feature_num = 0;
-> -
-> -	INIT_LIST_HEAD(&binfo->sub_features);
-> -
-> -	return 0;
-> -}
-> -
->  /*
->   * register current feature device, it is called when we need to switch to
->   * another feature parsing or we have parsed all features on given device
-> @@ -1316,11 +1306,8 @@ static int parse_feature_fiu(struct build_feature_devs_info *binfo,
->  		return -EINVAL;
->  
->  	binfo->type = type;
-> -
-> -	/* create platform device for dfl feature dev */
-> -	ret = build_info_create_dev(binfo);
-> -	if (ret)
-> -		return ret;
-> +	binfo->feature_num = 0;
-> +	INIT_LIST_HEAD(&binfo->sub_features);
->  
->  	ret = create_feature_instance(binfo, 0, 0, 0);
->  	if (ret)
-> -- 
-> 2.47.0
-> 
-> 
+Ok. I'd like to get some feedback from Bjorn H (PCI maintainer) about using this
+attribute before moving forward with a helper.
+
+Thanks!
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
