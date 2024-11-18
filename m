@@ -1,163 +1,165 @@
-Return-Path: <linux-kernel+bounces-413066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1406C9D12F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 15:28:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B40BC9D132C
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 15:36:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F4D4B27996
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 14:27:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 397631F2330F
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 14:36:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8C151A08B6;
-	Mon, 18 Nov 2024 14:27:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="fMOQgNn7"
-Received: from mail-4325.protonmail.ch (mail-4325.protonmail.ch [185.70.43.25])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EED71C07E2;
+	Mon, 18 Nov 2024 14:33:53 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4521819B5A9
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 14:26:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C52291AA1F1
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 14:33:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731940021; cv=none; b=R5BMfScdfZgo70bUVAPhb1RFzoZ/0mnBysP9FMGWXdAlmj227Kcp8PdYcfObSvICIk5kkvZoMnVStjzOInDwJPID7q8bTlYtJdMArg6QZRLUUGolFhhKPveOKImWYhjw4IjjctFfNbLRcpkmLtptzA+ha0X7788sy4o2jP4zJKs=
+	t=1731940432; cv=none; b=KhmVmS3tVkoibqliEmMWGxWcY3TF+3E4EP+LrSRtS+MWuGWR3OMCIKgGEFTRAqbOs512zj13L6PIHsuW+cOQISyv5g5JtSS7WGRjCPYVQwJru2J2LZ1RcgAo7CCKdc94xqtKl9ptapgSl47y7Ajuh7Y2sZXLtY6kA+nJvSc3nX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731940021; c=relaxed/simple;
-	bh=0EXa1CPhmAEoX+usJWl5u8IQDS8dhCaxg2cvfbvN4g4=;
-	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=n4YFZskIGIn69eig9ZebqsGulnB1c+YGz9TiBWj0BGsTQya8PCbJRwxpceAGvKp6ClJETRDl965Vsk4MNcFjgwMLDsgFYmX61F/YmNZgw4tYpIfaA9l/gRS4LcEG83GObioYEG9QUBiz0r0IFzKhZWnyQ7NCmtuokQt3n2gFGn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=fMOQgNn7; arc=none smtp.client-ip=185.70.43.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-	s=protonmail3; t=1731940012; x=1732199212;
-	bh=TJDdDjTfTxsjHsZO1nDp+Ad+deAqxZFr/XWaP/LHA0o=;
-	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
-	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector:
-	 List-Unsubscribe:List-Unsubscribe-Post;
-	b=fMOQgNn7JG7mbMdFTBwouURbLfYPVwo9pEwCKzhwlvxjfa0j2+JgUVYMgx7iDgE1L
-	 3KeQ0ryt1BQd6uy+/5eE4hRDYgE7TYVoHHhyxhbeh+KVklZORzQh8z7vASyvgj6xgI
-	 MuGgtonKeUlbiiI+tFk2HtOozt52Ux6VGgjl9jxgV+l39BPYECupA1QeV6srQ6BlzG
-	 dBM+MzWOPboqi81vaqvfBjmnwLML2/1zcdDWU3J+D/0gNgxz0W+Vm6upv3aLWEnGa+
-	 l8mPNL72QcB7kX43pAvu+WzbfvxIh5plVNM48Es977X9SqVoRA1K0JQrtpTlWJBl/Z
-	 bKIIo26DaN6jg==
-Date: Mon, 18 Nov 2024 14:26:49 +0000
-To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-From: Kostadin Shishmanov <kostadinshishmanov@protonmail.com>
-Cc: "sam@gentoo.org" <sam@gentoo.org>
-Subject: Build failure with GCC 15 (-std=gnu23)
-Message-ID: <4OAhbllK7x4QJGpZjkYjtBYNLd_2whHx9oFiuZcGwtVR4hIzvduultkgfAIRZI3vQpZylu7Gl929HaYFRGeMEalWCpeMzCIIhLxxRhq4U-Y=@protonmail.com>
-Feedback-ID: 25269289:user:proton
-X-Pm-Message-ID: 1bf3c078a99314428643e5a46076ce3b4bca3ead
+	s=arc-20240116; t=1731940432; c=relaxed/simple;
+	bh=cbRZRKYOmkOk6vGFl1pvEQfZm+kmrk1FpWlFiWklO7M=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OLNZb650nceNmoev4UGNrlt/C9UatpDxmxN5c2dczRdmlcb+AEXHSFIPEVETYQJeTbu8IkOZ60rnLmazkpDkhndN+KDRbf4kMhVjvmtrDFFQ5miWfjNXFbYOKWH7V/Ue+JAn4HyiWWbofZCi/+iT/OUtTyDF0+U+AMgqwQsF3P0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4XsVSV51Q5zqSPZ;
+	Mon, 18 Nov 2024 22:31:54 +0800 (CST)
+Received: from kwepemd500013.china.huawei.com (unknown [7.221.188.12])
+	by mail.maildlp.com (Postfix) with ESMTPS id 60105180064;
+	Mon, 18 Nov 2024 22:33:46 +0800 (CST)
+Received: from localhost.huawei.com (10.169.71.169) by
+ kwepemd500013.china.huawei.com (7.221.188.12) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Mon, 18 Nov 2024 22:33:44 +0800
+From: Yongbang Shi <shiyongbang@huawei.com>
+To: <xinliang.liu@linaro.org>, <tiantao6@hisilicon.com>,
+	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
+	<kong.kongxinwei@hisilicon.com>
+CC: <liangjian010@huawei.com>, <chenjianmin@huawei.com>,
+	<lidongming5@huawei.com>, <shiyongbang@huawei.com>, <libaihan@huawei.com>,
+	<shenjian15@huawei.com>, <shaojijie@huawei.com>,
+	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v5 drm-dp 0/5] Add dp module in hibmc driver
+Date: Mon, 18 Nov 2024 22:28:00 +0800
+Message-ID: <20241118142805.3326443-1-shiyongbang@huawei.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemd500013.china.huawei.com (7.221.188.12)
 
-Whenever I try to build the kernel with upcoming GCC 15 which defaults to -=
-std=3Dgnu23 I get a build failure:
+From: baihan li <libaihan@huawei.com>
 
-```
-In file included from ./include/uapi/linux/posix_types.h:5,
-                 from ./include/uapi/linux/types.h:14,
-                 from ./include/linux/types.h:6,
-                 from ./include/uapi/linux/mei_uuid.h:12,
-                 from ./include/uapi/linux/mei.h:10,
-                 from ./include/linux/mod_devicetable.h:12,
-                 from scripts/mod/devicetable-offsets.c:3:
-./include/linux/stddef.h:11:9: error: expected identifier before =E2=80=
-=98false=E2=80=99
-   11 |         false   =3D 0,
-./include/linux/types.h:35:33: error: two or more data types in declaration=
- specifiers
-   35 | typedef _Bool                   bool;
-./include/linux/types.h:35:1: warning: useless type name in empty declarati=
-on
-   35 | typedef _Bool                   bool;
-```
+Realizing the basic display function of DP cable for DP connector
+displaying. Add DP module in hibmc drm driver, which is for Hisilicon
+Hibmc SoC which used for Out-of-band management. Blow is the general
+hardware connection, both the Hibmc and the host CPU are on the same
+mother board.
 
-This can be reproduced on older GCC versions with KCFLAGS=3D"-std=3Dgnu23"
++----------+       +----------+      +----- ----+      +----------------+
+|          | PCIe  |  Hibmc   |      |          |      |                |
+|host CPU( |<----->| display  |<---->| dp kapi  |<---->| dp aux moduel  |
+|arm64,x86)|       |subsystem |      |  moduel  |<---->| dp link moduel |
++----------+       +----------+      +----------+      +----------------+
 
+---
+ChangeLog:
+v4 -> v5:
+  - fixing build errors reported by kernel test robot <lkp@intel.com>
+    Closes: https://lore.kernel.org/oe-kbuild-all/202411131438.RZWYrWTE-lkp@intel.com/
+  v4:https://lore.kernel.org/all/20241112132348.2631150-1-shiyongbang@huawei.com/
+v3 -> v4:
+  - retun error codes in  result incorrect branch, suggested by Dmitry Baryshkov.
+  - replacing all ret= with returns, suggested by Dmitry Baryshkov.
+  - moving the comment below the judgment statement, suggested by Dmitry Baryshkov.
+  - moving definations to the source file and clearing headers, suggested by Dmitry Baryshkov.
+  - reanaming dp_prefix to hibmc_dp_prefix, suggested by Dmitry Baryshkov.
+  - changing hibmc_dp_reg_write_field to static inline and lock, suggested by Dmitry Baryshkov.
+  - moving some structs to later patch, suggested by Dmitry Baryshkov.
+  - optimizing hibmc_dp_link_get_adjust_train() to delete for loop, suggested by Dmitry Baryshkov.
+  - changing ELNRNG to EIO error code, suggested by Dmitry Baryshkov.
+  - deleting meaningless macro, suggested by Dmitry Baryshkov.
+  - fixing build errors reported by kernel test robot <lkp@intel.com>
+    Closes: https://lore.kernel.org/oe-kbuild-all/202411041559.WIfxRN6n-lkp@intel.com/
+  - changed the type of train_set to array, suggested by Dmitry Baryshkov.
+  - using actual link rate instead of magic num, suggested by Dmitry Baryshkov.
+  - deleting hibmc_dp_hw_uninit(), suggested by Dmitry Baryshkov.
+  - separating hibmc_vdac and hibmc_dp changes into separate patche, suggested by Dmitry Baryshkov.
+  - static int hibmc_dp_prepare(), suggested by Dmitry Baryshkov.
+  v3:https://lore.kernel.org/all/20241101105028.2177274-1-shiyongbang@huawei.com/
+v2 -> v3:
+  - put the macro definations in latter patch where they are actually used, suggested by Dmitry Baryshkov.
+  - rename some macro definations to make them sensible, suggested by Dmitry Baryshkov.
+  - using FIELD_PREP and FIELD_GET, suggested by Dmitry Baryshkov.
+  - using DP_DPCD_REV_foo, suggested by Dmitry Baryshkov.
+  - using switchcase in dp_link_reduce_lane, suggested by Dmitry Baryshkov.
+  - deleting dp_link_pattern2dpcd function and using macros directly, suggested by Dmitry Baryshkov.
+  - deleting EFAULT error codes, suggested by Dmitry Baryshkov.
+  - fix build errors reported by kernel test robot <lkp@intel.com>
+    Closes: https://lore.kernel.org/oe-kbuild-all/202410250305.UHKDhtxy-lkp@intel.com/
+    Closes: https://lore.kernel.org/oe-kbuild-all/202410250931.UDQ9s66H-lkp@intel.com/
+    Closes: https://lore.kernel.org/oe-kbuild-all/202410251136.1m7BlR68-lkp@intel.com/
+  v2:https://lore.kernel.org/all/20241022124148.1952761-1-shiyongbang@huawei.com/
+v1 -> v2:
+  - using drm_dp_aux frame implement dp aux read and write functions, suggested by Jani Nikula.
+  - using drm dp header files' dp macros instead, suggested by Andy Yan.
+  - using drm_dp_* functions implement dp link training process, suggested by Jani Nikula.
+  - changed some defines and functions to former patch, suggested by Dmitry Baryshkov.
+  - sorting the headers including in dp_hw.h and hibmc_drm_drv.c files, suggested by Dmitry Baryshkov.
+  - deleting struct dp_mode and dp_mode_cfg function, suggested by Dmitry Baryshkov.
+  - modifying drm_simple_encoder_init function, suggested by Dmitry Baryshkov.
+  - refactoring struct hibmc_connector, suggested by Dmitry Baryshkov.
+  - withdrawing the modification in hibmc_kms_init, suggested by Dmitry Baryshkov.
+  - fix build errors reported by kernel test robot <lkp@intel.com>
+    Closes: https://lore.kernel.org/oe-kbuild-all/202410031735.8iRZZR6T-lkp@intel.com/
+    Closes: https://lore.kernel.org/oe-kbuild-all/202410040328.VeVxM9yB-lkp@intel.com/
+  v1:https://lore.kernel.org/all/20240930100610.782363-1-shiyongbang@huawei.com/
+---
 
-With Clang 18 and KCFLAGS=3D"-std=3Dc23" it's an even bigger mess:
+baihan li (5):
+  drm/hisilicon/hibmc: add dp aux in hibmc drivers
+  drm/hisilicon/hibmc: add dp link moduel in hibmc drivers
+  drm/hisilicon/hibmc: add dp hw moduel in hibmc driver
+  drm/hisilicon/hibmc: refactored struct hibmc_drm_private
+  drm/hisilicon/hibmc: add dp module in hibmc
 
-```
-In file included from ./arch/x86/include/asm/jump_label.h:7,
-                 from ./include/linux/jump_label.h:112,
-                 from ./arch/x86/include/asm/string_64.h:6,
-                 from ./arch/x86/include/asm/string.h:5,
-                 from ./include/linux/string.h:64,
-                 from ./include/linux/uuid.h:11,
-                 from ./include/linux/mod_devicetable.h:14:
-./arch/x86/include/asm/asm.h: In function =E2=80=98rip_rel_ptr=E2=80=99:
-./arch/x86/include/asm/asm.h:120:9: error: implicit declaration of function=
- =E2=80=98asm=E2=80=99 [-Wimplicit-function-declaration]
-  120 |         asm("leaq %c1(%%rip), %0" : "=3Dr"(p) : "i"(p));
-./arch/x86/include/asm/asm.h:120:34: error: expected =E2=80=98)=E2=80=99 be=
-fore =E2=80=98:=E2=80=99 token
-  120 |         asm("leaq %c1(%%rip), %0" : "=3Dr"(p) : "i"(p));
-./arch/x86/include/asm/asm.h: At top level:
-./arch/x86/include/asm/asm.h:222:46: error: expected =E2=80=98=3D=E2=80=
-=99, =E2=80=98,=E2=80=99, =E2=80=98;=E2=80=99, =E2=80=98asm=E2=80=99 or =
-=E2=80=98__attribute__=E2=80=99 before =E2=80=98asm=E2=80=99
-  222 | register unsigned long current_stack_pointer asm(_ASM_SP);
-./arch/x86/include/asm/jump_label.h: In function =E2=80=98arch_static_branc=
-h=E2=80=99:
-./arch/x86/include/asm/jump_label.h:27:9: error: =E2=80=98asm=E2=80=99 unde=
-clared (first use in this function)
-   27 |         asm goto("1:"
-./arch/x86/include/asm/jump_label.h:27:9: note: each undeclared identifier =
-is reported only once for each function it appears in
-./arch/x86/include/asm/jump_label.h:27:12: error: expected =E2=80=98;=
-=E2=80=99 before =E2=80=98goto=E2=80=99
-   27 |         asm goto("1:"
-                  ;
-In file included from ./include/uapi/linux/swab.h:8,
-                 from ./include/linux/swab.h:5,
-                 from ./include/uapi/linux/byteorder/little_endian.h:14,
-                 from ./include/linux/byteorder/little_endian.h:5,
-                 from ./arch/x86/include/uapi/asm/byteorder.h:5,
-                 from ./include/linux/bitfield.h:11,
-                 from ./include/linux/fortify-string.h:5,
-                 from ./include/linux/string.h:390:
-./arch/x86/include/uapi/asm/swab.h: In function =E2=80=98__arch_swab32=
-=E2=80=99:
-./arch/x86/include/uapi/asm/swab.h:10:24: error: expected =E2=80=98)=
-=E2=80=99 before =E2=80=98:=E2=80=99 token
-   10 |         asm("bswapl %0" : "=3Dr" (val) : "0" (val));
-                               )
-./arch/x86/include/uapi/asm/swab.h: In function =E2=80=98__arch_swab64=
-=E2=80=99:
-./arch/x86/include/uapi/asm/swab.h:31:24: error: expected =E2=80=98)=
-=E2=80=99 before =E2=80=98:=E2=80=99 token
-   31 |         asm("bswapq %0" : "=3Dr" (val) : "0" (val));
-                               )
-In file included from scripts/mod/devicetable-offsets.c:2:
-scripts/mod/devicetable-offsets.c: In function =E2=80=98main=E2=80=99:
-./include/linux/kbuild.h:6:9: error: =E2=80=98asm=E2=80=99 undeclared (firs=
-t use in this function)
-    6 |         asm volatile("\n.ascii \"->" #sym " %0 " #val "\"" : : "i" =
-(val))
-scripts/mod/devicetable-offsets.c:5:22: note: in expansion of macro =
-=E2=80=98DEFINE=E2=80=99
-    5 | #define DEVID(devid) DEFINE(SIZE_##devid, sizeof(struct devid))
-scripts/mod/devicetable-offsets.c:11:9: note: in expansion of macro =
-=E2=80=98DEVID=E2=80=99
-   11 |         DEVID(usb_device_id);
-./include/linux/kbuild.h:6:13: error: expected =E2=80=98;=E2=80=99 before =
-=E2=80=98volatile=E2=80=99
-    6 |         asm volatile("\n.ascii \"->" #sym " %0 " #val "\"" : : "i" =
-(val))
-```
+ drivers/gpu/drm/hisilicon/hibmc/Makefile      |   3 +-
+ drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.c   | 164 +++++++++
+ drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h  |  62 ++++
+ .../gpu/drm/hisilicon/hibmc/dp/dp_config.h    |  19 +
+ drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c    | 217 +++++++++++
+ drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h    |  28 ++
+ drivers/gpu/drm/hisilicon/hibmc/dp/dp_link.c  | 339 ++++++++++++++++++
+ drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h   |  76 ++++
+ .../gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c    | 118 ++++++
+ .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c   |  12 +
+ .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h   |  19 +-
+ .../gpu/drm/hisilicon/hibmc/hibmc_drm_i2c.c   |  41 ++-
+ .../gpu/drm/hisilicon/hibmc/hibmc_drm_vdac.c  |  20 +-
+ 13 files changed, 1079 insertions(+), 39 deletions(-)
+ create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.c
+ create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h
+ create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_config.h
+ create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
+ create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h
+ create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_link.c
+ create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h
+ create mode 100644 drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
 
-There is a lot more output from the compiler that i've cut off because the =
-email would become way too long.
-
-Regards,
-Kostadin
+-- 
+2.33.0
 
 
