@@ -1,133 +1,108 @@
-Return-Path: <linux-kernel+bounces-413521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7D4A9D1A91
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 22:24:15 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1181D9D1A96
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 22:27:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DFFC281459
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 21:24:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E4CFB21C6A
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 21:27:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABAC31E6DDE;
-	Mon, 18 Nov 2024 21:24:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C8351E7C0B;
+	Mon, 18 Nov 2024 21:27:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fqQ4Enoj"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LQBDn/7M"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66FE11C07DE;
-	Mon, 18 Nov 2024 21:24:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A2F7178395;
+	Mon, 18 Nov 2024 21:27:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731965045; cv=none; b=qg6KgJyIM5jJ5Wtl+Qf93IxqOxskpTmDxbXy4I66jTVvJ6b+a+GrUeKjigPRXg7xCQvEjk7te7vtI5IqLEtxqRnaOcUbjP/IHEMmv3bCB0HiG1t+uydTMDc5KgrnkexjLhfRXDLPz7hcLGMXXs6BKuE1HT/jDEMXWSxnt8Qarpo=
+	t=1731965239; cv=none; b=dP7i1jq8q5uGFVsCCDjWvB7+Hhui1MeAEvwvIxfV2TAwi3JiVdpLgjKydS+QfSLISqUQQ8qD6/wDVA31jQ9Y3qtW6wmjNd3CXDuChjEHMMfayK18QXn2IBEVPXrnz+/6gwLI83qvThmkfltbpUgLAmmoBsYBwg1cAjIy9NFTvzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731965045; c=relaxed/simple;
-	bh=c9UhAjUBlkxv9mlymFO0Ge+Bp5TE8IQsom42POhP/8A=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:MIME-Version:
-	 Content-Type; b=bR7iPArt/IhH5ipq+Q6r9jQAGYEkn7dwOdWkNy0QVh7s+I6DbYSvE4rTrNqgKYNGdgyDHkN7EY9pP7av8Yfk91R++5GUrF9yAHRacYQpmGqcCq1CdjYpaWu1oBCqf8SLU3aPvr4vzRXDC2wR5Ljb8CDWhVmVuJEd9XBj0mbA75w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fqQ4Enoj; arc=none smtp.client-ip=209.85.167.44
+	s=arc-20240116; t=1731965239; c=relaxed/simple;
+	bh=zfKorbfLTg80uK/1yhsHbfHfK26iiqFiUQdzeT8KWqg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=arjBUPHs8JZ5K887kTqOYIt3BOUXxSwI7Tcaa/hZYd2TSEzWVX4HN/wJJW3KV+9qHcvpMZbJbjB2qmJbsvjOBsflxRt0qYoM995OAqhcca5G5UPML0aABksImU9Ri/03Hu03IoM/K+SS/mMJGR3gnZ0NnLpVUnrNnYft0dk44bs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LQBDn/7M; arc=none smtp.client-ip=209.85.214.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-539fb49c64aso3344422e87.0;
-        Mon, 18 Nov 2024 13:24:03 -0800 (PST)
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2110a622d76so1411325ad.3;
+        Mon, 18 Nov 2024 13:27:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731965041; x=1732569841; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:in-reply-to:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=du7rn+xd73aBEFKmEKLpUk9SFO0TFC/LlPx37xg2nPM=;
-        b=fqQ4EnojbPh9eTkZiaTSuog+S1E2IiHN4K433AtA6mK+M5PY7WUebq3vpi1+BKttAR
-         xC8X8xdCd6CWDhCZVhDj8wPTA4QDWd2Q0Kb+lTupV7x9ksEg6wysNF3KkJInJKmpuDIb
-         qnk9V+PyUWPXnsdggZYxbEOe8menWM9swSsFUIRWR0uRBsCUytvHfGhrb1OczC9qMg7f
-         FZnTwQeKzkil+INpwg6lFm+qN9lGMEXxlX3WoQQMUh3FnXxUkeQBmuzfLhQenCKZYeuX
-         gpUqt8BfbI1dfa5mOQwsYtetTEb8NYWiD2F8AMpTqVRRdFTGhKWUShax9rMRaZJ4sqgS
-         Peqg==
+        d=gmail.com; s=20230601; t=1731965237; x=1732570037; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=aQcbLRCt/rMQ9iPFPCRullq+Lat4IaQX3afm1lqhHdY=;
+        b=LQBDn/7MHHjY9lke5uQpHYA8Lzg+QsibTKd9oq+o4nWPOpHH0A9z9D4OmMKHzbvxVA
+         5PcmxtlTrItZuGB83rMqom4Ioq0AxXDgb/p+fXxnZCIF0MPabXS00cc10scu8X3AqsO1
+         70hOGkxXi2aEDTbx/ICXfz7HIgPmAxJqMVAGL6Y8AYfUC8RSaFqrvSljEw23JZ/uJhkN
+         DwtJRVJgqXU82wfwwGu19xB2gTwi+G9L0l0bc+cwZUV6LCANoSxv+pPb4C37GW51Gk81
+         nAzRvxSqMyRNHzSrnugDKl7PvxkvNCxPBH2eoK+oMG+WP4V9zb6VhxT4LnV30qZqfxCI
+         Uzuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731965041; x=1732569841;
-        h=content-transfer-encoding:mime-version:in-reply-to:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=du7rn+xd73aBEFKmEKLpUk9SFO0TFC/LlPx37xg2nPM=;
-        b=ird04b+5E4aTdHSDVUM9ftHNUhD2NIpLS3hLkiYUMLhuR+E+ctM/ua8C5HIqJlXT80
-         LQ1RvhPBGFrJ7qR5cVq4r/0fqU5ORmz2+WcdI3gDyHMe95vD4IzxtLd8Q9EybECrVDpR
-         eUvlOKsrj3g+J2eyl+nfRHTWFYgqNWnD8DEHmEEwkOK/idXcCdzgNrkzWQhLQqWS5/fl
-         UMZj+0yH/5+J+DaZ0hM4KgRpYmVrLbgVMGL8QC5FoEv5or9YtzMyioomZ4QLPayRa172
-         pUEigVcJwLbfS8C59bTRx5wqvL0znCV6YXBYpCOrpsiiNdFCiCfVd8C9eYJNr/hgnCCl
-         Ba8w==
-X-Forwarded-Encrypted: i=1; AJvYcCUvDMV3cvTG/tyOXgk1iHTXum/kqWFxT+xsQZHSjQhSZ3FxzFxlRs9cjmgVfqyaccVFqGhMYFnllSQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbWg7PFSyvwgrym03cNOzt6xXruSD/fSabg9ME9JrZCQuNDxLJ
-	mbAwcDrgM27dEtwejN5kpzxthK3kvNIoz2Xbcm+CYKmX660JwgEO
-X-Google-Smtp-Source: AGHT+IG1m/2Bl2HtT20tIO/hOr+2WAW27qY11aZSIxhG9F72VHsMZMT0o8huZvd+PKFiULX3DtPpJw==
-X-Received: by 2002:a05:6512:1155:b0:53d:a998:51b5 with SMTP id 2adb3069b0e04-53dab29f183mr8244205e87.20.1731965041094;
-        Mon, 18 Nov 2024 13:24:01 -0800 (PST)
-Received: from foxbook (bhf154.neoplus.adsl.tpnet.pl. [83.28.95.154])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53dbd47b595sm69326e87.250.2024.11.18.13.23.58
-        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
-        Mon, 18 Nov 2024 13:24:00 -0800 (PST)
-Date: Mon, 18 Nov 2024 22:23:55 +0100
-From: =?UTF-8?B?TWljaGHFgg==?= Pecio <michal.pecio@gmail.com>
-To: linuxusb.ml@sundtek.de
-Cc: linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
- stern@rowland.harvard.edu
-Subject: Re: Highly critical bug in XHCI Controller
-Message-ID: <20241118222355.482cf783@foxbook>
-In-Reply-To: <f34636ebeda843de9329ac0aa4ec51c6627a0e5c.camel@sundtek.de>
+        d=1e100.net; s=20230601; t=1731965237; x=1732570037;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aQcbLRCt/rMQ9iPFPCRullq+Lat4IaQX3afm1lqhHdY=;
+        b=mNKKLRFHSTFeBG+kXUM07wVkeP1DQxesyyfSGXq/+XmDX8QASVx53SUDkTJsI5UNt8
+         bhGzNBneDlYtxQdzI8dNrxexfRHNUpbFC/40crqgcM+9E1ztWOhEZZxngKMlJqKEi0My
+         Ihlm4GrggHZnT9zmE2LAfK2gwBrGS9DKcMjxztuqcBIHXC3us5LThVbw0KpQkDtYQ/PV
+         zdZh5fGto91qRVry0a8ShC9E3N1dxtOa2WLlOhRqALA/pmvknKHICUOeFtztheOMSuXB
+         3sFOp8Ehmhgm2806HsV1fCbCXQ9NosFDJiQCIwy7oT9vXZNsjhHKdj7PC6eqE7JO8GDY
+         QOCg==
+X-Forwarded-Encrypted: i=1; AJvYcCXa9JA1bBqumLdaYbIiUp3+UVKjJMAlrPz13ukTH+sHynInMa53TLR07i/GTwRv+x0hnGq/Q276FF/oFC4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+SshbnVcC8Oh0zaBClLCO4JHLglZkB7rG1L1FgM+yBzNdh23B
+	qOb1AxGpuyoWmW9DFtNYO6idNx7d+CMFpBKls6wE41ZJylBSwhbUYM/8tyiW
+X-Google-Smtp-Source: AGHT+IGxKw/q5XTChASp9HhI8qW3vZDiGHDXs14SWa3fypk6bIqeNO9a8qqYdQnlrVTjaz+SRvzo3A==
+X-Received: by 2002:a17:902:ec84:b0:212:514:b31f with SMTP id d9443c01a7336-2120514b620mr94499495ad.18.1731965237533;
+        Mon, 18 Nov 2024 13:27:17 -0800 (PST)
+Received: from ryzen.lan ([2601:644:8200:dab8::a86])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211e4c48490sm50681455ad.38.2024.11.18.13.27.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Nov 2024 13:27:17 -0800 (PST)
+From: Rosen Penev <rosenp@gmail.com>
+To: netdev@vger.kernel.org
+Cc: Claudiu Manoil <claudiu.manoil@nxp.com>,
+	maxime.chevallier@bootlin.com,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCHv2 net-next 0/6] gianfar cleanups
+Date: Mon, 18 Nov 2024 13:27:09 -0800
+Message-ID: <20241118212715.10808-1-rosenp@gmail.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-> In my experience with USB anything that is a 'temporary' failure can
-> be considered as 'permanent' failure and I've really seen a lot over
-> the last 1 1/2 decades.
-> However issues are mostly related to immature controllers / missing
-> quirks for some controllers.
-> Our devices in the field since 2008 usually pump around 100-300mbit
-> through the USB 2 link,
-> streaming  devices which usually run for a long period of time (up to
-> months / years).
-> 'retrying' something on a link where something has gone wrong for sure
-> never worked properly for me, it would have continued with another
-> followup issue at some point.
+Mostly devm adjustments and bugfixes along the way.
 
-You may have simply seen hardware going dead or buggy drivers failing
-to recover from recoverable errors.
+This was tested on a WatchGuard T10.
 
-Random bit errors really happen and (excepting isochronous endpoints)
-can be recovered from. But if you get -EPROTO on a bulk endpoint, for
-example, it means the endpoint halted and should be reset. Few Linux
-drivers seem to bother with such things.
+Rosen Penev (6):
+  v2: remove request_irq change. Fix NULL pointer deref with ofdev.
+  net: gianfar: use devm_alloc_etherdev_mqs
+  net: gianfar: use devm for register_netdev
+  net: gianfar: assign ofdev to priv struct
+  net: gianfar: remove free_gfar_dev
+  net: gianfar: alloc queues with devm
+  net: gianfar: iomap with devm
 
-I even think xHCI's handling of halted endpoints and usb_clear_halt()
-is broken, but it looks like fixing it would break all the buggy class
-drivers on the other hand, which are currently "sort of functional".
+ drivers/net/ethernet/freescale/gianfar.c | 93 +++++-------------------
+ 1 file changed, 19 insertions(+), 74 deletions(-)
 
-> Anyway can you give a particular example where this 'retrying'
-> mechanism and reloading the endpoint size solves or solved a problem?
+-- 
+2.47.0
 
-It seems to happen when you insert the plug slowly or at an angle, and
-contact is briefly lost while the device is being initialized.
-
-The first three lines below come from hub_port_init(), which looks like
-it is being called by hub_port_connect() in a loop.
-
-[81169.840924] usb 5-1: new full-speed USB device number 61 using ohci-pci
-[81170.387927] usb 5-1: device not accepting address 61, error -62
-[81170.742931] usb 5-1: new full-speed USB device number 62 using ohci-pci
-[81170.901914] usb 5-1: New USB device found, idVendor=067b, idProduct=2303, bcdDevice= 3.00
-[81170.901919] usb 5-1: New USB device strings: Mfr=1, Product=2, SerialNumber=0
-[81170.901921] usb 5-1: Product: USB-Serial Controller
-[81170.901922] usb 5-1: Manufacturer: Prolific Technology Inc.
-
-Another example which could trigger retries is a device which includes
-a permanent "presence detect" resistor (such as PL2303, coincidentally)
-but takes a long time to initialize itself and start responding.
-
-Regards,
-Michal
 
