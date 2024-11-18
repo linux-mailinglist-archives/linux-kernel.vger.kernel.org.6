@@ -1,173 +1,189 @@
-Return-Path: <linux-kernel+bounces-412488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FD559D099E
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 07:26:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5BCE9D099B
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 07:26:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B2EA6B2305A
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 06:26:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F1E81F21894
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 06:26:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6185A14AD0D;
-	Mon, 18 Nov 2024 06:26:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79F2D1494A6;
+	Mon, 18 Nov 2024 06:26:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ZW6uvM6u"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="BIu2xzZD"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45062148FE6;
-	Mon, 18 Nov 2024 06:26:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B14D2145A16;
+	Mon, 18 Nov 2024 06:26:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731911177; cv=none; b=cP+KEfU40j7Qxkd/7B7UFYprJ+ZvzfdBnx2GYRzZEZQMQLtQkH/Lpw1LYIXiYzCq6fI0DkcVSAxkdXJlKFBbK6p7TyU2h3fb6woTKj31x2736nn3vlQf2znMZqHAQpsLQifERJ3DLgXJ1QLGltWr9cy3w+G84SFcMl5r43xU3mY=
+	t=1731911175; cv=none; b=e2Fh1g68NXe2/hPrAqHTwNWXTciG0qu8bNmLHXUFvEsiejA1KguuCz3EhWCb6EgaWZgoAhMzTuIpWT8GkARw6isGPrP+EJI80uCc48ASBOOfYZYdgQYRJWsB9LQ/ew4IyadbffnnOE/rpD/2K1kcdgl0zmL5c5RubxZQN7BXRm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731911177; c=relaxed/simple;
-	bh=nDqdES7Ff79ezcggCO1Eg8UYHldbpHxKoVKh+vJf6L8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=TT6Y+FZNwQ/KWQW5tKgpDFI3JcwkjVoe4XNKrWyqZ1SWdnpgaYI9eC+X3D672UZVeBh3YRMvPlDillw4Ebm6ik7cEaqFNyzLUyNXq9XsD7aZ5NozjHUMP/8mIVz+T3bOABMBNpx8jv6CC3fAGYCgezMw0QKWBbCmNhXZyqyUFEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ZW6uvM6u; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AI5RlvS029968;
-	Mon, 18 Nov 2024 06:25:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	mtN7HaNLk92Shd3TrhFCwIdNZ4NaCLNwJBs2aJnO8bA=; b=ZW6uvM6ufwj/v0np
-	MkdZe3Eu1T0XuUt08LBTubz6LWnaVKRL0D2SjfecudOGQ2C2CPSBOYXJhKl2FLev
-	MRrvfJ3oZ6sdHDU+DkGpLL+TTLdUCv9xRTOxHCKyx0vqlD0ZleaHCUqHk/uoT56Q
-	ydAmEYK89Zfn3kDDwH2KLuIurqM852gPrF6O28SKKxGphV6A9WymkkXjQlKzeEHB
-	5FIKfjPLxJtfrlHlvODfAgrS25VI0axJ36wgNFhAZ3Auc+fGLnRD0/TUc9OHJLs9
-	auhxcmOcM9+Ys88Crq19kQumFeFdhnViL1siyw9LqmX0zU9WxghcEzonr6FNgfWq
-	pRLcPg==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42xks6kkcy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 18 Nov 2024 06:25:55 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AI6PsKY011914
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 18 Nov 2024 06:25:54 GMT
-Received: from [10.64.16.151] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 17 Nov
- 2024 22:25:47 -0800
-Message-ID: <1a0c1a49-d1fc-4b64-ae11-c4d343458133@quicinc.com>
-Date: Mon, 18 Nov 2024 14:25:44 +0800
+	s=arc-20240116; t=1731911175; c=relaxed/simple;
+	bh=Lqsipl3W4T/IW74TauH9Ii2sgwnoJbsQeKLVispAMic=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=aQGZgkahECTwFEE7Y0r+e68liuE7T3cGhmGGw0Iu3mole/j5Ddw99jXlRk0eXusSUNNC+FXQW18mSulV4lcgRK5qOG/t4qpGFeUB5G/3150ji1RLr8j4vTdvrUlb58LsfjKSXD2Qb0WWs1b23WdnqDW9pmrrvyJ8QsGvpYr7OOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=BIu2xzZD; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1731911165;
+	bh=pzdHO+GJiiSzs6NT6aXnsZPJcpu5ZFP/wUcExbRIogQ=;
+	h=Date:From:To:Cc:Subject:From;
+	b=BIu2xzZDU66COpBHoiqhkFnwS08kV1EkKwXgOfOCki4bYs85albCQh1Q0930xSAdW
+	 1kOxqS3LzjEMPKhO9YtmWsRIgXzdQxEn/QADoThNbNqg7PBrzBNdS+l13eK1smYScd
+	 jYHtuaYxb+4As7Gg+FvqG7YzEXD4XgOJaUp98I4LZxDqZDr6JwtWcrr2eSHXfjGJ4j
+	 H8vrX1ZcbUtCG7Yi8ZNgNUhVnhY5yZlEjtjUX8Pb00lLGXAzx7mp06rGyX9pVYqa+6
+	 fjTciHi9v+ZsRWUvl+rpxRtvqfpyJ3o0Z7+B+PwadaNR+U2DUEEXwpdKskrBwXHYsP
+	 0r/zzevHoLfTg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XsHgv5f2qz4wcy;
+	Mon, 18 Nov 2024 17:26:03 +1100 (AEDT)
+Date: Mon, 18 Nov 2024 17:26:05 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: "Michael S. Tsirkin" <mst@redhat.com>, David Miller
+ <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+ <pabeni@redhat.com>
+Cc: Networking <netdev@vger.kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Wenyu Huang <huangwenyu1998@gmail.com>, Xuan
+ Zhuo <xuanzhuo@linux.alibaba.com>
+Subject: linux-next: manual merge of the vhost tree with the net_next tree
+Message-ID: <20241118172605.19ee6f25@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 6/9] drm/msm/dsi: Add support for QCS615
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Konrad Dybcio
-	<konrad.dybcio@oss.qualcomm.com>
-CC: Rob Clark <robdclark@gmail.com>,
-        Abhinav Kumar
-	<quic_abhinavk@quicinc.com>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Rob Herring <robh@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        "Krishna
- Manikandan" <quic_mkrishn@quicinc.com>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        "Catalin
- Marinas" <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Li Liu
-	<quic_lliu6@quicinc.com>,
-        Xiangxu Yin <quic_xiangxuy@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-References: <20241113-add-display-support-for-qcs615-platform-v2-0-2873eb6fb869@quicinc.com>
- <20241113-add-display-support-for-qcs615-platform-v2-6-2873eb6fb869@quicinc.com>
- <404f006b-46e5-44db-9f22-ec2139468ecc@oss.qualcomm.com>
- <CAA8EJpqQSp5eXoKHHEchKpGq9ZpU0k0RDASA8T+t+SENNx+_fQ@mail.gmail.com>
-Content-Language: en-US
-From: fange zhang <quic_fangez@quicinc.com>
-In-Reply-To: <CAA8EJpqQSp5eXoKHHEchKpGq9ZpU0k0RDASA8T+t+SENNx+_fQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: wWvdmn5f1Rc_thBbYjuCjU4IWId8jPsg
-X-Proofpoint-GUID: wWvdmn5f1Rc_thBbYjuCjU4IWId8jPsg
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
- priorityscore=1501 lowpriorityscore=0 phishscore=0 suspectscore=0
- mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0 clxscore=1015
- spamscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411180052
+Content-Type: multipart/signed; boundary="Sig_/7k4v_N_aVib7tYhIeXMi/Nd";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
+--Sig_/7k4v_N_aVib7tYhIeXMi/Nd
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
-On 2024/11/14 21:41, Dmitry Baryshkov wrote:
-> On Thu, 14 Nov 2024 at 15:32, Konrad Dybcio
-> <konrad.dybcio@oss.qualcomm.com> wrote:
->>
->> On 13.11.2024 12:51 PM, Fange Zhang wrote:
->>> From: Li Liu <quic_lliu6@quicinc.com>
->>>
->>> Add support for DSI 2.3.1 (block used on QCS615).
->>> Add phy configuration for QCS615
->>>
->>> Signed-off-by: Li Liu <quic_lliu6@quicinc.com>
->>> Signed-off-by: Fange Zhang <quic_fangez@quicinc.com>
->>> ---
->>>   drivers/gpu/drm/msm/dsi/dsi_cfg.c          | 17 +++++++++++++++++
->>>   drivers/gpu/drm/msm/dsi/dsi_cfg.h          |  1 +
->>>   drivers/gpu/drm/msm/dsi/phy/dsi_phy.c      |  2 ++
->>>   drivers/gpu/drm/msm/dsi/phy/dsi_phy.h      |  1 +
->>>   drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c | 21 +++++++++++++++++++++
->>>   5 files changed, 42 insertions(+)
->>>
->>> diff --git a/drivers/gpu/drm/msm/dsi/dsi_cfg.c b/drivers/gpu/drm/msm/dsi/dsi_cfg.c
->>> index 10ba7d153d1cfc9015f527c911c4658558f6e29e..edbe50305d6e85fb615afa41f3b0db664d2f4413 100644
->>> --- a/drivers/gpu/drm/msm/dsi/dsi_cfg.c
->>> +++ b/drivers/gpu/drm/msm/dsi/dsi_cfg.c
->>> @@ -221,6 +221,21 @@ static const struct msm_dsi_config sc7280_dsi_cfg = {
->>>        },
->>>   };
->>>
->>> +static const struct regulator_bulk_data qcs615_dsi_regulators[] = {
->>> +     { .supply = "vdda", .init_load_uA = 21800 },
->>> +};
->>
->> I believe refgen is also present here and you can reuse dsi_v2_4_regulators
-> 
-> This was in feedback for v1... And the patch should be further split,
-> having DSI and PHY parts separately.
+Today's linux-next merge of the vhost tree got a conflict in:
 
-ok will split the patch
+  drivers/virtio/virtio_ring.c
 
-- DSI part
-drivers/gpu/drm/msm/dsi/dsi_cfg.c          | 17 +++++++++++++++++
-drivers/gpu/drm/msm/dsi/dsi_cfg.h          |  1 +
-- DSI phy part
-drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c | 21 +++++++++++++++++++++
-drivers/gpu/drm/msm/dsi/phy/dsi_phy.h      |  1 +
-drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c | 21 +++++++++++++++++++++
-> 
+between commits:
 
+  9f19c084057a ("virtio_ring: introduce vring_need_unmap_buffer")
+  880ebcbe0663 ("virtio_ring: remove API virtqueue_set_dma_premapped")
+
+from the net_next tree and commit:
+
+  a49c26f761d2 ("virtio: Make vring_new_virtqueue support packed vring")
+
+from the vhost tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/virtio/virtio_ring.c
+index 8167be01b400,48b297f88aba..000000000000
+--- a/drivers/virtio/virtio_ring.c
++++ b/drivers/virtio/virtio_ring.c
+@@@ -1135,6 -1129,66 +1126,64 @@@ static int vring_alloc_queue_split(stru
+  	return 0;
+  }
+ =20
++ static struct virtqueue *__vring_new_virtqueue_split(unsigned int index,
++ 					       struct vring_virtqueue_split *vring_split,
++ 					       struct virtio_device *vdev,
++ 					       bool weak_barriers,
++ 					       bool context,
++ 					       bool (*notify)(struct virtqueue *),
++ 					       void (*callback)(struct virtqueue *),
++ 					       const char *name,
++ 					       struct device *dma_dev)
++ {
++ 	struct vring_virtqueue *vq;
++ 	int err;
++=20
++ 	vq =3D kmalloc(sizeof(*vq), GFP_KERNEL);
++ 	if (!vq)
++ 		return NULL;
++=20
++ 	vq->packed_ring =3D false;
++ 	vq->vq.callback =3D callback;
++ 	vq->vq.vdev =3D vdev;
++ 	vq->vq.name =3D name;
++ 	vq->vq.index =3D index;
++ 	vq->vq.reset =3D false;
++ 	vq->we_own_ring =3D false;
++ 	vq->notify =3D notify;
++ 	vq->weak_barriers =3D weak_barriers;
++ #ifdef CONFIG_VIRTIO_HARDEN_NOTIFICATION
++ 	vq->broken =3D true;
++ #else
++ 	vq->broken =3D false;
++ #endif
++ 	vq->dma_dev =3D dma_dev;
++ 	vq->use_dma_api =3D vring_use_dma_api(vdev);
+ -	vq->premapped =3D false;
+ -	vq->do_unmap =3D vq->use_dma_api;
++=20
++ 	vq->indirect =3D virtio_has_feature(vdev, VIRTIO_RING_F_INDIRECT_DESC) &&
++ 		!context;
++ 	vq->event =3D virtio_has_feature(vdev, VIRTIO_RING_F_EVENT_IDX);
++=20
++ 	if (virtio_has_feature(vdev, VIRTIO_F_ORDER_PLATFORM))
++ 		vq->weak_barriers =3D false;
++=20
++ 	err =3D vring_alloc_state_extra_split(vring_split);
++ 	if (err) {
++ 		kfree(vq);
++ 		return NULL;
++ 	}
++=20
++ 	virtqueue_vring_init_split(vring_split, vq);
++=20
++ 	virtqueue_init(vq, vring_split->vring.num);
++ 	virtqueue_vring_attach_split(vq, vring_split);
++=20
++ 	spin_lock(&vdev->vqs_list_lock);
++ 	list_add_tail(&vq->vq.list, &vdev->vqs);
++ 	spin_unlock(&vdev->vqs_list_lock);
++ 	return &vq->vq;
++ }
++=20
+  static struct virtqueue *vring_create_virtqueue_split(
+  	unsigned int index,
+  	unsigned int num,
+
+--Sig_/7k4v_N_aVib7tYhIeXMi/Nd
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmc63f0ACgkQAVBC80lX
+0GyY3Qf/cW2nX+CGnMfamWThl+HzXZ5Vg/KDYhtqqzoy2LNYtwcgHjVOwyOdpG/F
+6cED3rq2/xtb6DmUTIyPSiqiolgEJYpakioqgFgg9r9Ahuf7argM82ku1jGOZYO7
+EaTzz7fOiIaR+k3JEo3fssDvwh2pwyoDi6dCkQeIFIE8jmM3S9nNb1LaOhz8A+CG
+hA8f8R/mWqct8A1tARjMLqt4wJkTCrJQyGDK3+MrTGYGSCsxDQRq6ckqjNKRS2R1
+R2hO4t3Wyrcus4jYjLTH2hzb5BZyZGwh6uX1QjUiX8GIM+cbCeWYRuqvHTK2uDbb
+rTq6Gj8m55x1TeNEOCA8ZcFn6i9JMw==
+=RSl2
+-----END PGP SIGNATURE-----
+
+--Sig_/7k4v_N_aVib7tYhIeXMi/Nd--
 
