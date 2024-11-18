@@ -1,149 +1,144 @@
-Return-Path: <linux-kernel+bounces-413410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41E109D18BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 20:16:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFDC59D18C0
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 20:16:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A4C1B2132F
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 19:16:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6466D1F22A5B
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 19:16:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDCE11DED7D;
-	Mon, 18 Nov 2024 19:15:56 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97B6E1E0DF0;
+	Mon, 18 Nov 2024 19:16:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Uyc8sFzS"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E131B17597
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 19:15:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C9E314900F
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 19:16:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731957356; cv=none; b=nrCHEzdTQ7cSMMwRy57LnZ/U0HeR69wto5vHuog42Btb2/Lh8sMLMojPuEdQcshj31Z9gO8+igGij2qkc9blsu3Nsnt+MKsXsTdHv+quzsm70JQmIBWp9UOQqz/0mSuS2a72PEp8ePh9pJ/eqs8GIirRYlFagSlpcbynJTFEC68=
+	t=1731957385; cv=none; b=e3UK+nP9OGDvzDRnPkeb9W2G8QqCNVc72zHbfdDeOxQXmmM9HbNYMsWHBCPWxdfnoZtvXjHNtqfHMvMxRlEe/ZaB0L+YG+4zXNtijAxGp2N9iEEEfvMvGryS8KkR0ywPGGfIdU/RKDwd2v3qzGgh1tu7p0Z9IJQvNAKNxHeiFYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731957356; c=relaxed/simple;
-	bh=igb3jrCi8N0kaaUYkWu8zs4q28/tALgnxPMV8XGKQDE=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=ao7W2hzv0n5YNvYg+LNvz+Dw+mMtmkQ7/eVSnDfXP80hXVU0MDBDrNI1J+ZIW+FhDaaDdbF9bFNG8DD09WxmnYOoLVp4b78a6gJi+KpbHugtJZHbRFDHsSxzkF0tJBYcHAtYGFH9B4K7tRO7nXpdfOjWpIz6wuzAscxEqh4qwuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-53-13-iqr8aPEKNwrfrKL2jEg-1; Mon, 18 Nov 2024 19:15:52 +0000
-X-MC-Unique: 13-iqr8aPEKNwrfrKL2jEg-1
-X-Mimecast-MFC-AGG-ID: 13-iqr8aPEKNwrfrKL2jEg
-Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
- (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Mon, 18 Nov
- 2024 19:15:51 +0000
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Mon, 18 Nov 2024 19:15:51 +0000
-From: David Laight <David.Laight@ACULAB.COM>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-CC: 'Arnd Bergmann' <arnd@kernel.org>, "'linux-kernel@vger.kernel.org'"
-	<linux-kernel@vger.kernel.org>, 'Jens Axboe' <axboe@kernel.dk>, "'Matthew
- Wilcox'" <willy@infradead.org>, 'Christoph Hellwig' <hch@infradead.org>,
-	'Andrew Morton' <akpm@linux-foundation.org>, 'Andy Shevchenko'
-	<andriy.shevchenko@linux.intel.com>, 'Dan Carpenter'
-	<dan.carpenter@linaro.org>, "'Jason A . Donenfeld'" <Jason@zx2c4.com>,
-	"'pedro.falcato@gmail.com'" <pedro.falcato@gmail.com>, 'Mateusz Guzik'
-	<mjguzik@gmail.com>, "'linux-mm@kvack.org'" <linux-mm@kvack.org>, "'Lorenzo
- Stoakes'" <lorenzo.stoakes@oracle.com>
-Subject: [PATCH next 7/7] minmax.h: Remove some #defines that are only
- expanded once
-Thread-Topic: [PATCH next 7/7] minmax.h: Remove some #defines that are only
- expanded once
-Thread-Index: Ads57kK39EnzR0zLSLWjfI7GoDxEdQ==
-Date: Mon, 18 Nov 2024 19:15:51 +0000
-Message-ID: <9386d1ebb8974fbabbed2635160c3975@AcuMS.aculab.com>
-References: <c50365d214e04f9ba256d417c8bebbc0@AcuMS.aculab.com>
-In-Reply-To: <c50365d214e04f9ba256d417c8bebbc0@AcuMS.aculab.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1731957385; c=relaxed/simple;
+	bh=NG99sCIzkMZ517IWyj4bVoKCkpvbNzxlXOMeu+PJSDg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CGdJIQ0zF3LutShBOZ91hXgWINAkLHc6iMgHmH5bkA9+zImBx3ImFYwetKXO7WwJ9ZY4Uu6IDH7XDvW7iosLNAbWXANu1670eIVpjgVZXU0gHQqbBMFIo1TpIw3mER6XPC7gHubmG1vaiSX/9YroeY/EYydtq7C7PVLb57GsjQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Uyc8sFzS; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 2A6F540E0261;
+	Mon, 18 Nov 2024 19:16:21 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id k2Xa3fHTjXrI; Mon, 18 Nov 2024 19:16:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1731957376; bh=SpfJjirS99dAr5ULucJWFrWYI4PMFQheWC+X4jWoQuc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Uyc8sFzSV/0GcsT3ewA0kv1ptuBlLc/fOpc1Wfb5bjWzZ3oq4qWDhCF6oegMrp2QM
+	 WlGNFNs6EbYHKYGnGZkXkwfvTVPIOdy4S9bKpzY1ooDdVK80ZzC8foTB6nE2YmowiW
+	 8bG/s4Y+Trnc1H9Ki3+cSZqYyU4JJB4lq1/7tAtZAzKM1ntWTog93Gfi7xtEy5H8O1
+	 PNzIDn4/Jv+RyfMNAq4sqvtBrBIchLbxfH4KUqJVIqNbmxKtCj2Px5Hi0LW9yisup2
+	 /R9SPfdZP7mh9QqUMjPtGToy8z/5TaXOIl+FjwvCYsyB/5Mlit74YdAs5y4N4stcNy
+	 yDSaq8odaRYOAfWiSVsmpkKX0GddtLb88KwBVNrtWKd47AwEUy6hzn1N95w0wxmVr5
+	 bXml/AntTxD9ENEphN2XV3jXCS63c27GgrLdO+zqutOCN7w9MT7+BlqZAqmuIJ6suY
+	 sgyp2UsDqtAz8+Du1cq6dHgJT9Ov2TXNyBFs+7T3kRiJH1UAsklMX037bbbamXanLd
+	 IsmMIY4OTykhN9MSrLRtVmDbADZHxbuUvAJodn5oyV1Qmm30TQidI+zGjZ7sF5c29p
+	 UqUhp9L8YNOVJWDjqlhebPOkynV9LvnejxvWUZIgkGCRVcV9Q0scDK/V3hse9bFBE+
+	 m9wlG6g5gsXFzD9TAAUIXYOc=
+Received: from zn.tnic (pd9530b86.dip0.t-ipconnect.de [217.83.11.134])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 7774D40E021C;
+	Mon, 18 Nov 2024 19:16:12 +0000 (UTC)
+Date: Mon, 18 Nov 2024 20:16:05 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Andrew Cooper <andrew.cooper3@citrix.com>
+Cc: Thomas De Schampheleire <thomas.de_schampheleire@nokia.com>,
+	linux-kernel@vger.kernel.org, x86@kernel.org
+Subject: Re: x86/amd late microcode thread loading slows down boot
+Message-ID: <20241118191605.GEZzuSdRMZ0CICHdcZ@fat_crate.local>
+References: <ZyulbYuvrkshfsd2@antipodes>
+ <6449aa6c-43b1-40eb-ab54-48803481d11b@citrix.com>
+ <20241107153036.GCZyzdHEwm9-LPQOzY@fat_crate.local>
+ <Zy0p5DT0SOWsCDn7@antipodes>
+ <20241114095639.GDZzXJV1EDJlMqv24c@fat_crate.local>
+ <3f6a84bd-af4a-4ffa-8205-25b2c9084893@citrix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: LVEWnDLR-vaMMGf6-ZUy3MlpKY_mO9TXxlpyV8RKvwY_1731957351
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <3f6a84bd-af4a-4ffa-8205-25b2c9084893@citrix.com>
 
-The bodies of __signed_type_use() and __unsigned_type_use() are
-much the same size as their names - so put the bodies in the only
-line that expands them.
+On Thu, Nov 14, 2024 at 12:03:41PM +0000, Andrew Cooper wrote:
+> > +static inline void invlpg(unsigned long addr)
+> > +{
+> > +	asm volatile("invlpg (%0)" ::"r" (addr) : "memory");
+> 
+> "invlpg %0" :: "m" (*(char *)addr) : "memory"
+> 
+> The compiler can usually do a better job than forcing it into a plain
+> register.
 
-Similarly __signed_type() is defined separately for 64bit and then
-used exactly once just below.
+I think it is pretty smart and DTRT regardless.
 
-Change the test for __signed_type from CONFIG_64BIT to one based
-on gcc defined macros so that the code is valid if it gets used
-outside of a kernel build.
+The diff is only comments - insns are the same.
 
-Signed-off-by: David Laight <david.laight@aculab.com>
----
- include/linux/minmax.h | 14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
+--- /tmp/before	2024-11-18 20:11:08.942464511 +0100
++++ /tmp/after	2024-11-18 20:10:37.722620293 +0100
+@@ -3,27 +3,27 @@
+ 	movl	%ebp, %esi	# psize, psize
+ # arch/x86/kernel/cpu/microcode/amd.c:495: 		unsigned long p_addr_end = p_addr + psize - 1;
+ 	leaq	-1(%rbx,%rsi), %rax	#, p_addr_end
+-# ./arch/x86/include/asm/tlb.h:39: 	asm volatile("invlpg (%0)" ::"r" (addr) : "memory");
++# ./arch/x86/include/asm/tlb.h:39: 	asm volatile("invlpg %0" ::"m" (*(char *)addr) : "memory");
+ #APP
+ # 39 "./arch/x86/include/asm/tlb.h" 1
+-	invlpg (%rbx)	# mc
++	invlpg (%rbx)	# MEM[(char *)_1]
+ # 0 "" 2
+ # arch/x86/kernel/cpu/microcode/amd.c:503: 		if (p_addr >> PAGE_SHIFT != p_addr_end >> PAGE_SHIFT)
+ #NO_APP
+-	movq	%rbx, %rcx	# mc, tmp110
++	movq	%rbx, %rcx	# mc, tmp111
+ # arch/x86/kernel/cpu/microcode/amd.c:503: 		if (p_addr >> PAGE_SHIFT != p_addr_end >> PAGE_SHIFT)
+-	movq	%rax, %rdx	# p_addr_end, tmp111
++	movq	%rax, %rdx	# p_addr_end, tmp112
+ # arch/x86/kernel/cpu/microcode/amd.c:503: 		if (p_addr >> PAGE_SHIFT != p_addr_end >> PAGE_SHIFT)
+-	shrq	$12, %rcx	#, tmp110
++	shrq	$12, %rcx	#, tmp111
+ # arch/x86/kernel/cpu/microcode/amd.c:503: 		if (p_addr >> PAGE_SHIFT != p_addr_end >> PAGE_SHIFT)
+-	shrq	$12, %rdx	#, tmp111
++	shrq	$12, %rdx	#, tmp112
+ # arch/x86/kernel/cpu/microcode/amd.c:503: 		if (p_addr >> PAGE_SHIFT != p_addr_end >> PAGE_SHIFT)
+-	cmpq	%rdx, %rcx	# tmp111, tmp110
++	cmpq	%rdx, %rcx	# tmp112, tmp111
+ 	je	.L5	#,
+-# ./arch/x86/include/asm/tlb.h:39: 	asm volatile("invlpg (%0)" ::"r" (addr) : "memory");
++# ./arch/x86/include/asm/tlb.h:39: 	asm volatile("invlpg %0" ::"m" (*(char *)addr) : "memory");
+ #APP
+ # 39 "./arch/x86/include/asm/tlb.h" 1
+-	invlpg (%rax)	# p_addr_end
++	invlpg (%rax)	# *addr.16_25
+ # 0 "" 2
+ # ./arch/x86/include/asm/tlb.h:40: }
+ #NO_APP
 
-diff --git a/include/linux/minmax.h b/include/linux/minmax.h
-index 2bbdd5b5e07e..eaaf5c008e4d 100644
---- a/include/linux/minmax.h
-+++ b/include/linux/minmax.h
-@@ -46,10 +46,8 @@
-  * comparison, and these expressions only need to be careful to not cause
-  * warnings for pointer use.
-  */
--#define __signed_type_use(ux) (2 + __is_nonneg(ux))
--#define __unsigned_type_use(ux) (1 + 2 * (sizeof(ux) < 4))
- #define __sign_use(ux) (is_signed_type(typeof(ux)) ? \
--=09__signed_type_use(ux) : __unsigned_type_use(ux))
-+=09(2 + __is_nonneg(ux)) : (1 + 2 * (sizeof(ux) < 4)))
-=20
- /*
-  * Check whether a signed value is always non-negative.
-@@ -57,7 +55,7 @@
-  * A cast is needed to avoid any warnings from values that aren't signed
-  * integer types (in which case the result doesn't matter).
-  *
-- * On 64-bit any integer or pointer type can safely be cast to 'long'.
-+ * On 64-bit any integer or pointer type can safely be cast to 'long long'=
-.
-  * But on 32-bit we need to avoid warnings about casting pointers to integ=
-ers
-  * of different sizes without truncating 64-bit values so 'long' or 'long =
-long'
-  * must be used depending on the size of the value.
-@@ -66,12 +64,12 @@
-  * them, but we do not use s128 types in the kernel (we do use 'u128',
-  * but they are handled by the !is_signed_type() case).
-  */
--#ifdef CONFIG_64BIT
--  #define __signed_type(ux) long
-+#if __SIZEOF_POINTER__ =3D=3D __SIZEOF_LONG_LONG__
-+#define __is_nonneg(ux) statically_true((long long)(ux) >=3D 0)
- #else
--  #define __signed_type(ux) typeof(__builtin_choose_expr(sizeof(ux) > 4, 1=
-LL, 1L))
-+#define __is_nonneg(ux) statically_true( \
-+=09(typeof(__builtin_choose_expr(sizeof(ux) > 4, 1LL, 1L)))(ux) >=3D 0)
- #endif
--#define __is_nonneg(ux) statically_true((__signed_type(ux))(ux) >=3D 0)
-=20
- #define __types_ok(ux, uy) \
- =09(__sign_use(ux) & __sign_use(uy))
---=20
-2.17.1
+-- 
+Regards/Gruss,
+    Boris.
 
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
-PT, UK
-Registration No: 1397386 (Wales)
-
+https://people.kernel.org/tglx/notes-about-netiquette
 
