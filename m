@@ -1,240 +1,202 @@
-Return-Path: <linux-kernel+bounces-413331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B822B9D1779
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 18:56:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EADE9D177A
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 18:58:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78B19285433
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 17:55:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFE9D1F22BA8
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 17:58:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 846FF1BE226;
-	Mon, 18 Nov 2024 17:55:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72A961B0F2C;
+	Mon, 18 Nov 2024 17:58:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TfThQ0bR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DvkGxnGA"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C58F1101E6
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 17:55:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1753101E6
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 17:58:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731952552; cv=none; b=kQdry9S04H6z7VG8KwSXffA0vPU9DJ3RD2KABAscu49ly3esDQ0s5NroqRcsLKg16v3RnPW/CjHgBd9+RYPLBw77KYDVf4BNGb/2N11/+nrLFlXHrdQfIZ9xZDt2F0eJLtAEwmOkDqx2VZc6AXt3vGMhPKjxI5sfoJWyxr3IX84=
+	t=1731952708; cv=none; b=WKdQELrUV50Qntbcc+3aPKrc3RvqRFhJfQobhnhbeVMhgdy2EMeZcCkQH2m2mayjW/o4Se9irVj1sdPV3cTalIDEdeDMPWB+fK9XYYFFGRfQq8Wlg6uFdDKqbCoHLddM5S2+DYwXMlrbOPdUe8eB5fj2RbDcnbJeT6vG8hJYeq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731952552; c=relaxed/simple;
-	bh=BMIWKiwktnsx0QpaXqCvaw4Fuf0XJoqeDaf/wmZQI2s=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=NilKsW47E9FRNkjSgOqp8yDbObIN/SZirxbY5P0gSRFCQZbXJsdkpBiT7FBXoJVboDjne7iL7aFk3pRqcvMyfaPO3/lPP8nn8zJbyc6HcOhG3Kr5FvOcDOWILNoBD9HT25U4CUZOzSxphxgMnWq1rQVjiEBKm1k6DcXImtLErFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TfThQ0bR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 414C3C4CECC;
-	Mon, 18 Nov 2024 17:55:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731952552;
-	bh=BMIWKiwktnsx0QpaXqCvaw4Fuf0XJoqeDaf/wmZQI2s=;
-	h=Date:From:To:Cc:Subject:From;
-	b=TfThQ0bR0FJrx/1xWFSg6lysb1DmYJ4aqYeQJ3ywP90xMs1mba/x3lGDwSChwqrge
-	 DZCMu+1t4b5/T1pLukGY0whnUz5Tv3c0ljKQufg6YnbI/nd2zVnSh+s38UQ1xm5ak6
-	 od+u8kdNb0L8GDnKZLQqErCuEqh7J0WLG8SA2r7WEhlpKarzx8k5rTAsAusjQDgDaS
-	 F2RRBWTBZ74N5xRsSCdbY70TC6sslupQNjZ626zH/oqoinoYuR/7Dnv3LsyXa1SN4e
-	 YJRqrPpmJHtvef+I8ozu0HhEKSMb219J5WiwFmzBU0zbV7KAtT5SqRV4Iy6uGjesLM
-	 8V0MFCNmRhv+g==
-Date: Mon, 18 Nov 2024 18:55:46 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Shrikanth Hegde <sshegde@linux.ibm.com>, Tejun Heo <tj@kernel.org>
-Subject: [GIT PULL] Scheduler changes for v6.13
-Message-ID: <Zzt_or2E2KEypfbi@gmail.com>
+	s=arc-20240116; t=1731952708; c=relaxed/simple;
+	bh=JqTmRdYi1wuGDDC5+p/6Fc1NAZon9XviF0QyolxElwc=;
+	h=From:To:Cc:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=fH9pu0ftK2NOEThJw8ltGeXxhj4F6zRWb44zjV+iEPV7gbNvlclb1C5pT428++9SKtYeH5F2k5+3Gxonr9vSiE0FTprrIpDbGHvxdPv5QGTaj0eea3e1upuZDJVgsDfpzPm4wbutW02lR6xZNTQKuHRrqTgeb3NvOvJllqKJxzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=fail (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DvkGxnGA reason="signature verification failed"; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731952705;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5t7mHGoD0ziOQwsQdSn42HldEeq3FwqUBLOYEJnZ86c=;
+	b=DvkGxnGAwMcXI5r8rMnO3dztaMBMZz3+8vxSIYzNS4fm3K/k3dqwIU2h3ncSoniBvRW6mV
+	b8QbP2RryeNEir7NjRb7jpVh5KJQ14aLaqkRvYy8FBNDSKbxv1UDpUD8T/tWJ1uzfDp0tZ
+	l5695T7eY7RZgm44JjUVJRkvUqBY9WA=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-79-FkRnHC85PmyYAagNnZr2dg-1; Mon,
+ 18 Nov 2024 12:58:22 -0500
+X-MC-Unique: FkRnHC85PmyYAagNnZr2dg-1
+X-Mimecast-MFC-AGG-ID: FkRnHC85PmyYAagNnZr2dg
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 855F41955F41;
+	Mon, 18 Nov 2024 17:58:20 +0000 (UTC)
+Received: from fedora (unknown [10.39.192.15])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 82CF91956086;
+	Mon, 18 Nov 2024 17:58:13 +0000 (UTC)
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
+To: Nikita Kalyazin <kalyazin@amazon.com>
+Cc: pbonzini@redhat.com, seanjc@google.com, tglx@linutronix.de,
+ mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+ hpa@zytor.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: david@redhat.com, peterx@redhat.com, oleg@redhat.com, gshan@redhat.com,
+ graf@amazon.de, jgowans@amazon.com, roypat@amazon.co.uk,
+ derekmn@amazon.com, nsaenz@amazon.es, xmarcalx@amazon.com,
+ kalyazin@amazon.com
+Subject: Re: [PATCH] KVM: x86: async_pf: check earlier if can deliver async pf
+In-Reply-To: <20241118130403.23184-1-kalyazin@amazon.com>
+References: <20241118130403.23184-1-kalyazin@amazon.com>
+Date: Mon, 18 Nov 2024 18:58:03 +0100
+Message-ID: <87h684ctlg.fsf@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
+Nikita Kalyazin <kalyazin@amazon.com> writes:
 
-Linus,
+> On x86, async pagefault events can only be delivered if the page fault
+> was triggered by guest userspace, not kernel.  This is because
+> the guest may be in non-sleepable context and will not be able
+> to reschedule.
 
-Please pull the latest sched/core Git tree from:
+We used to set KVM_ASYNC_PF_SEND_ALWAYS for Linux guests before
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git sched-core-2024-11-18
+commit 3a7c8fafd1b42adea229fd204132f6a2fb3cd2d9
+Author: Thomas Gleixner <tglx@linutronix.de>
+Date:   Fri Apr 24 09:57:56 2020 +0200
 
-   # HEAD: 771d271b2b908cf660d6789bb4355ed553250edc sched, x86: Update the comment for TIF_NEED_RESCHED_LAZY.
+    x86/kvm: Restrict ASYNC_PF to user space
 
-Scheduler changes for v6.13:
+but KVM side of the feature is kind of still there, namely
 
- - Core facilities:
+kvm_pv_enable_async_pf() sets
 
-    - Add the "Lazy preemption" model (CONFIG_PREEMPT_LAZY=y), which optimizes
-      fair-class preemption by delaying preemption requests to the
-      tick boundary, while working as full preemption for RR/FIFO/DEADLINE
-      classes. (Peter Zijlstra)
+    vcpu->arch.apf.send_user_only = !(data & KVM_ASYNC_PF_SEND_ALWAYS);
 
-        - x86:   Enable Lazy preemption (Peter Zijlstra)
-        - riscv: Enable Lazy preemption (Jisheng Zhang)
+and then we check it in 
 
-    - Initialize idle tasks only once (Thomas Gleixner)
+kvm_can_deliver_async_pf():
 
-    - sched/ext: Remove sched_fork() hack (Thomas Gleixner)
+     if (vcpu->arch.apf.send_user_only &&
+         kvm_x86_call(get_cpl)(vcpu) == 0)
+             return false;
 
- - Fair scheduler:
-    - Optimize the PLACE_LAG when se->vlag is zero (Huang Shijie)
+and this can still be used by some legacy guests I suppose. How about
+we start with removing this completely? It does not matter if some
+legacy guest wants to get an APF for CPL0, we are never obliged to
+actually use the mechanism.
 
- - Idle loop:
-      Optimize the generic idle loop by removing unnecessary
-      memory barrier (Zhongqiu Han)
+>
+> However existing implementation pays the following overhead even for the
+> kernel-originated faults, even though it is known in advance that they
+> cannot be processed asynchronously:
+>  - allocate async PF token
+>  - create and schedule an async work
+>
+> This patch avoids the overhead above in case of kernel-originated faults
+> by moving the `kvm_can_deliver_async_pf` check from
+> `kvm_arch_async_page_not_present` to `__kvm_faultin_pfn`.
+>
+> Note that the existing check `kvm_can_do_async_pf` already calls
+> `kvm_can_deliver_async_pf` internally, however it only does that if the
+> `kvm_hlt_in_guest` check is true, ie userspace requested KVM not to exit
+> on guest halts via `KVM_CAP_X86_DISABLE_EXITS`.  In that case the code
+> proceeds with the async fault processing with the following
+> justification in 1dfdb45ec510ba27e366878f97484e9c9e728902 ("KVM: x86:
+> clean up conditions for asynchronous page fault handling"):
+>
+> "Even when asynchronous page fault is disabled, KVM does not want to pause
+> the host if a guest triggers a page fault; instead it will put it into
+> an artificial HLT state that allows running other host processes while
+> allowing interrupt delivery into the guest."
+>
+> Signed-off-by: Nikita Kalyazin <kalyazin@amazon.com>
+> ---
+>  arch/x86/kvm/mmu/mmu.c | 3 ++-
+>  arch/x86/kvm/x86.c     | 5 ++---
+>  arch/x86/kvm/x86.h     | 2 ++
+>  3 files changed, 6 insertions(+), 4 deletions(-)
+>
+> diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+> index 22e7ad235123..11d29d15b6cd 100644
+> --- a/arch/x86/kvm/mmu/mmu.c
+> +++ b/arch/x86/kvm/mmu/mmu.c
+> @@ -4369,7 +4369,8 @@ static int __kvm_mmu_faultin_pfn(struct kvm_vcpu *vcpu,
+>  			trace_kvm_async_pf_repeated_fault(fault->addr, fault->gfn);
+>  			kvm_make_request(KVM_REQ_APF_HALT, vcpu);
+>  			return RET_PF_RETRY;
+> -		} else if (kvm_arch_setup_async_pf(vcpu, fault)) {
+> +		} else if (kvm_can_deliver_async_pf(vcpu) &&
+> +			kvm_arch_setup_async_pf(vcpu, fault)) {
+>  			return RET_PF_RETRY;
+>  		}
+>  	}
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index 2e713480933a..8edae75b39f7 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -13355,7 +13355,7 @@ static inline bool apf_pageready_slot_free(struct kvm_vcpu *vcpu)
+>  	return !val;
+>  }
+>  
+> -static bool kvm_can_deliver_async_pf(struct kvm_vcpu *vcpu)
+> +bool kvm_can_deliver_async_pf(struct kvm_vcpu *vcpu)
+>  {
+>  
+>  	if (!kvm_pv_async_pf_enabled(vcpu))
+> @@ -13406,8 +13406,7 @@ bool kvm_arch_async_page_not_present(struct kvm_vcpu *vcpu,
+>  	trace_kvm_async_pf_not_present(work->arch.token, work->cr2_or_gpa);
+>  	kvm_add_async_pf_gfn(vcpu, work->arch.gfn);
+>  
+> -	if (kvm_can_deliver_async_pf(vcpu) &&
+> -	    !apf_put_user_notpresent(vcpu)) {
+> +	if (!apf_put_user_notpresent(vcpu)) {
+>  		fault.vector = PF_VECTOR;
+>  		fault.error_code_valid = true;
+>  		fault.error_code = 0;
+> diff --git a/arch/x86/kvm/x86.h b/arch/x86/kvm/x86.h
+> index ec623d23d13d..9647f41e5c49 100644
+> --- a/arch/x86/kvm/x86.h
+> +++ b/arch/x86/kvm/x86.h
+> @@ -387,6 +387,8 @@ int x86_emulate_instruction(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa,
+>  fastpath_t handle_fastpath_set_msr_irqoff(struct kvm_vcpu *vcpu);
+>  fastpath_t handle_fastpath_hlt(struct kvm_vcpu *vcpu);
+>  
+> +bool kvm_can_deliver_async_pf(struct kvm_vcpu *vcpu);
+> +
+>  extern struct kvm_caps kvm_caps;
+>  extern struct kvm_host_values kvm_host;
+>  
+>
+> base-commit: d96c77bd4eeba469bddbbb14323d2191684da82a
 
- - RSEQ:
-    - Improve cache locality of RSEQ concurrency IDs for
-      intermittent workloads (Mathieu Desnoyers)
+-- 
+Vitaly
 
- - Waitqueues:
-    - Make wake_up_{bit,var} less fragile (Neil Brown)
-
- - PSI:
-    - Pass enqueue/dequeue flags to psi callbacks directly (Johannes Weiner)
-
- - Preparatory patches for proxy execution:
-    - core: Add move_queued_task_locked helper (Connor O'Brien)
-    - core: Consolidate pick_*_task to task_is_pushable helper (Connor O'Brien)
-    - core: Split out __schedule() deactivate task logic into a helper (John Stultz)
-    - core: Split scheduler and execution contexts (Peter Zijlstra)
-    - locking/mutex: Make mutex::wait_lock irq safe (Juri Lelli)
-    - locking/mutex: Expose __mutex_owner() (Juri Lelli)
-    - locking/mutex: Remove wakeups from under mutex::wait_lock (Peter Zijlstra)
-
- - Misc fixes and cleanups:
-    - core: Remove unused __HAVE_THREAD_FUNCTIONS hook support (David Disseldorp)
-    - core: Update the comment for TIF_NEED_RESCHED_LAZY (Sebastian Andrzej Siewior)
-    - wait: Remove unused bit_wait_io_timeout (Dr. David Alan Gilbert)
-    - fair: remove the DOUBLE_TICK feature (Huang Shijie)
-    - fair: fix the comment for PREEMPT_SHORT (Huang Shijie)
-    - uclamp: Fix unnused variable warning (Christian Loehle)
-    - rt: No PREEMPT_RT=y for all{yes,mod}config
-
- Thanks,
-
-	Ingo
-
------------------->
-Christian Loehle (1):
-      sched/uclamp: Fix unnused variable warning
-
-Connor O'Brien (2):
-      sched: Add move_queued_task_locked helper
-      sched: Consolidate pick_*_task to task_is_pushable helper
-
-David Disseldorp (1):
-      sched: remove unused __HAVE_THREAD_FUNCTIONS hook support
-
-Dr. David Alan Gilbert (1):
-      sched/wait: Remove unused bit_wait_io_timeout
-
-Huang Shijie (3):
-      sched/fair: remove the DOUBLE_TICK feature
-      sched/fair: optimize the PLACE_LAG when se->vlag is zero
-      sched/fair: fix the comment for PREEMPT_SHORT
-
-Ingo Molnar (1):
-      fs/bcachefs: Fix __wait_on_freeing_inode() definition of waitqueue entry
-
-Jisheng Zhang (1):
-      riscv: add PREEMPT_LAZY support
-
-Johannes Weiner (1):
-      sched: psi: pass enqueue/dequeue flags to psi callbacks directly
-
-John Stultz (1):
-      sched: Split out __schedule() deactivate task logic into a helper
-
-Juri Lelli (2):
-      locking/mutex: Make mutex::wait_lock irq safe
-      locking/mutex: Expose __mutex_owner()
-
-Mathieu Desnoyers (1):
-      sched: Improve cache locality of RSEQ concurrency IDs for intermittent workloads
-
-NeilBrown (7):
-      sched: change wake_up_bit() and related function to expect unsigned long *
-      sched: Improve documentation for wake_up_bit/wait_on_bit family of functions
-      sched: Document wait_var_event() family of functions and wake_up_var()
-      sched: Add test_and_clear_wake_up_bit() and atomic_dec_and_wake_up()
-      sched: Add wait/wake interface for variable updated under a lock.
-      sched: add wait_var_event_io()
-      softirq: use bit waits instead of var waits.
-
-Peter Zijlstra (7):
-      locking/mutex: Remove wakeups from under mutex::wait_lock
-      sched: Split scheduler and execution contexts
-      sched: Add TIF_NEED_RESCHED_LAZY infrastructure
-      sched: Add Lazy preemption model
-      sched: Enable PREEMPT_DYNAMIC for PREEMPT_RT
-      sched, x86: Enable Lazy preemption
-      sched: No PREEMPT_RT=y for all{yes,mod}config
-
-Sebastian Andrzej Siewior (1):
-      sched, x86: Update the comment for TIF_NEED_RESCHED_LAZY.
-
-Thomas Gleixner (2):
-      sched: Initialize idle tasks only once
-      sched/ext: Remove sched_fork() hack
-
-Zhongqiu Han (1):
-      sched: idle: Optimize the generic idle loop by removing needless memory barrier
-
-
- arch/riscv/Kconfig                   |   1 +
- arch/riscv/include/asm/thread_info.h |  10 +-
- arch/x86/Kconfig                     |   1 +
- arch/x86/include/asm/thread_info.h   |   6 +-
- fs/exec.c                            |   2 +-
- include/linux/entry-common.h         |   3 +-
- include/linux/entry-kvm.h            |   5 +-
- include/linux/mm_types.h             |  72 +++++-
- include/linux/preempt.h              |   8 +-
- include/linux/sched.h                |   5 +-
- include/linux/sched/ext.h            |   1 -
- include/linux/sched/task_stack.h     |   2 +-
- include/linux/thread_info.h          |  21 +-
- include/linux/wait_bit.h             | 444 ++++++++++++++++++++++++++++-------
- kernel/Kconfig.preempt               |  27 ++-
- kernel/entry/common.c                |   2 +-
- kernel/entry/kvm.c                   |   4 +-
- kernel/fork.c                        |   2 +-
- kernel/futex/pi.c                    |   6 +-
- kernel/locking/mutex.c               |  59 ++---
- kernel/locking/mutex.h               |  27 +++
- kernel/locking/rtmutex.c             |  51 ++--
- kernel/locking/rtmutex_api.c         |  12 +-
- kernel/locking/rtmutex_common.h      |   3 +-
- kernel/locking/rwbase_rt.c           |   8 +-
- kernel/locking/rwsem.c               |   4 +-
- kernel/locking/spinlock_rt.c         |   5 +-
- kernel/locking/ww_mutex.h            |  51 ++--
- kernel/sched/core.c                  | 289 +++++++++++++++--------
- kernel/sched/deadline.c              |  57 ++---
- kernel/sched/debug.c                 |   7 +-
- kernel/sched/ext.c                   |   7 +-
- kernel/sched/fair.c                  |  42 ++--
- kernel/sched/features.h              |   3 +-
- kernel/sched/idle.c                  |   1 -
- kernel/sched/pelt.c                  |   2 +-
- kernel/sched/rt.c                    |  67 +++---
- kernel/sched/sched.h                 | 155 ++++++++----
- kernel/sched/stats.h                 |  29 ++-
- kernel/sched/syscalls.c              |   4 +-
- kernel/sched/wait_bit.c              |  90 ++++---
- kernel/softirq.c                     |  14 +-
- 42 files changed, 1105 insertions(+), 504 deletions(-)
 
