@@ -1,133 +1,92 @@
-Return-Path: <linux-kernel+bounces-412354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16F4B9D07FC
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 03:55:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BB879D07FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 03:55:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A54A3281647
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 02:55:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 299C028167C
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 02:55:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 818E643ABD;
-	Mon, 18 Nov 2024 02:55:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A84441C71;
+	Mon, 18 Nov 2024 02:55:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="r9DxHmAm"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hi4h7hlV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1B66EAE7;
-	Mon, 18 Nov 2024 02:55:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 570A3282FD;
+	Mon, 18 Nov 2024 02:55:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731898519; cv=none; b=puHD3hEHd7jtb+z4gIhQsqz0LSp5uPUT8fx0XYyuDzkJOt1axrm917hWPdCiYstOudCr8/XJwgpKBn88EnFG80h/MEP8mYkqHyv9lNZgA5Au1Fx7hL3Ox4vc/+1C9ii2ZWNmDp+t0EtuIJlBn+FYAznx04eKm5IoWWlgFmuKSb0=
+	t=1731898539; cv=none; b=Fr4qzrPdiZ7RRDsZDLlv5uQSX5jTPLkauYY7qqZz8ZnvsodTVXb8Rvgy0k1arviA9NnYCmQwIuYngbqqE6kS5jW0lz3RS6h04IpLgpU9TgcPajudXEnz2qU5p8k0lGmSeecQiZaICVSseIghRGKYZPQnKcX/JAyRmRSBF0vPPe4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731898519; c=relaxed/simple;
-	bh=wRPgT1yObEHD6svJnaOip0QGxnZUBOU5xL/pq0EZDYk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=dCZvbOFul9wPQ0Pzk4oEyZWa+FB3815t23N6HlZiYidZRX+z2xURBY2zyLJgtbnA3X4e0tOeScPKVc/WQY3mHhlV8Yu8TEEmj9edAzSqcGoV58ulWKq9pFD1KGVf+cpIVJogPkoGIyOKugqA0n1sixumwY2Wrys9jbaYF1Bl6vc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=r9DxHmAm; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1731898511;
-	bh=lA9p/6FlZ0uog6Hp8Mfew1zkqnhfYb5W0Rbs/v3d/MA=;
-	h=Date:From:To:Cc:Subject:From;
-	b=r9DxHmAm7s/FlNVmJ5oX4b8Tn63VDPyWgkdf0QAEkHnSdVb5b6/TR/1+dot+5M09q
-	 Xt1mP1rwfXsSok2qEpqWgvkHwdRa4sjquKPu1iOGpLvFOJ2qm2/RCB5k9QIgJ3TIg+
-	 7RvuzOY/adSf1h10szEZT3HF2Y6MKK75/PBB8ordVt5shMFUlpJwwgmfaBRSDsN2Uu
-	 mbPaYYhyqc3ustpb6OzQZNnOG/N22vYZQcGpeJcgvPxE2jMgDRnHJ9mW4N3Y3N1EtY
-	 faXu6EgvV/tIMQDxF5c65yckXBMZE6Kp0CAQtTgMhTc5rRWJxFRA3OyLkZrtFMFFXv
-	 Vi7594J7p25Lw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XsC0b0bgLz4xfL;
-	Mon, 18 Nov 2024 13:55:10 +1100 (AEDT)
-Date: Mon, 18 Nov 2024 13:55:12 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: David Miller <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>
-Cc: Networking <netdev@vger.kernel.org>, Heiner Kallweit
- <hkallweit1@gmail.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, "Russell King (Oracle)"
- <rmk+kernel@armlinux.org.uk>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Message-ID: <20241118135512.1039208b@canb.auug.org.au>
+	s=arc-20240116; t=1731898539; c=relaxed/simple;
+	bh=xycCTkPAMxVmEBCtJ3fKBhiomdxXuNBsMRlYWcVziKg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ndkptsFaazX74584U6cDHiVuLg1UJqAhmYlTyMfhryLG7/YUlcYkjXb0gQo0+vXLTG7r7qc5oEbUOuhO3oujDf6iMTEinK7aXKaGGZtu+09zpYB+GQN5pyyNDOo3FXaBebDL/cNxLzUACWFpGZerGEPVUDns+vc4nOUHxegEJ1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hi4h7hlV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E43CC4CECD;
+	Mon, 18 Nov 2024 02:55:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731898539;
+	bh=xycCTkPAMxVmEBCtJ3fKBhiomdxXuNBsMRlYWcVziKg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=hi4h7hlVvcqoqlSMmHL5AdL/6NBtbnqLUstPSmPODFEMFS8h9XEN0rXvEp9lyM/YT
+	 PTYM1FJ7zvG+uKbwhmVnhwpNMxT+v2RfjDy587hDfEjWoIcv5IOwJuFXMaLIEMFdvj
+	 lx7HsLadUGMofZOZ2EoEgPld2QePx91sAj3BgvDhxRI1tIWW5855s7RjiGYmDmkwRL
+	 HQVdSm9qRTjRZ07G8oo0FT5wYQWrTgloXKsuLFxcGQRz6OTLb4/XdB6/XOGwGW6WxG
+	 jXlMMIdXP5dtm0cvbt3MDE9jTXS0Igv3+jHibdKgOQO55iA9AANiUtjudapPQpzI6M
+	 kNHvM4BhpcFmg==
+From: Mario Limonciello <superm1@kernel.org>
+To: Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Vijendar Mukunda <Vijendar.Mukunda@amd.com>
+Cc: linux-sound@vger.kernel.org (open list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM...),
+	linux-kernel@vger.kernel.org (open list),
+	Mario Limonciello <mario.limonciello@amd.com>,
+	kernel test robot <lkp@intel.com>
+Subject: [PATCH] ASoC: amd: Fix build dependencies for `SND_SOC_AMD_PS`
+Date: Sun, 17 Nov 2024 20:55:27 -0600
+Message-ID: <20241118025527.3318493-1-superm1@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/_/vmX0Hz1vripoj/QLgQntj";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 
---Sig_/_/vmX0Hz1vripoj/QLgQntj
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+From: Mario Limonciello <mario.limonciello@amd.com>
 
-Hi all,
+The pci-ps module now must have `SND_SOC_ACPI_AMD_MATCH` selected
+to reference the `snd_soc_acpi_amd_acp63_sdw_machines` symbol.
 
-Today's linux-next merge of the net-next tree got a conflict in:
+Fixes: 56d540befd59 ("ASoC: amd: ps: add soundwire machines for acp6.3 platform")
+Cc: Vijendar.Mukunda@amd.com
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202411180658.mIeWje2V-lkp@intel.com/
+Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+---
+ sound/soc/amd/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-  include/linux/phy.h
+diff --git a/sound/soc/amd/Kconfig b/sound/soc/amd/Kconfig
+index 6dec44f516c13..c7590d4989bba 100644
+--- a/sound/soc/amd/Kconfig
++++ b/sound/soc/amd/Kconfig
+@@ -163,6 +163,7 @@ config SND_SOC_AMD_SOUNDWIRE
+ config SND_SOC_AMD_PS
+         tristate "AMD Audio Coprocessor-v6.3 Pink Sardine support"
+ 	select SND_SOC_AMD_SOUNDWIRE_LINK_BASELINE
++	select SND_SOC_ACPI_AMD_MATCH
+         depends on X86 && PCI && ACPI
+         help
+           This option enables Audio Coprocessor i.e ACP v6.3 support on
+-- 
+2.43.0
 
-between commit:
-
-  41ffcd95015f ("net: phy: fix phylib's dual eee_enabled")
-
-from the net tree and commit:
-
-  721aa69e708b ("net: phy: convert eee_broken_modes to a linkmode bitmap")
-
-from the net-next tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc include/linux/phy.h
-index 44890cdf40a2,b8346db42727..000000000000
---- a/include/linux/phy.h
-+++ b/include/linux/phy.h
-@@@ -720,6 -721,11 +720,10 @@@ struct phy_device=20
-  	/* used for eee validation and configuration*/
-  	__ETHTOOL_DECLARE_LINK_MODE_MASK(supported_eee);
-  	__ETHTOOL_DECLARE_LINK_MODE_MASK(advertising_eee);
-+ 	/* Energy efficient ethernet modes which should be prohibited */
-+ 	__ETHTOOL_DECLARE_LINK_MODE_MASK(eee_broken_modes);
- -	bool eee_enabled;
-+ 	bool enable_tx_lpi;
-+ 	struct eee_config eee_cfg;
- =20
-  	/* Host supported PHY interface types. Should be ignored if empty. */
-  	DECLARE_PHY_INTERFACE_MASK(host_interfaces);
-
---Sig_/_/vmX0Hz1vripoj/QLgQntj
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmc6rJAACgkQAVBC80lX
-0GyAOAf+JsvkHQtN6HM1uzq93ryqcOg8/QM2rbDuGAxiMphDc4vg+jUtiEuuOtHP
-Y1VwGaFYffonnh+nj72fZTx+hxWLk/SsQ4++ovlPKRRA7egDnMZ+lvFTiw5CjisH
-PqrDPPKYBixXnpP7lJZdMW9OzPUn3ziOOmlMbc1/OQVahLOYq5Nv6dCw6OCexgWT
-JCLRq1J0SwM6chF574CXu5iENguUEUGkTk+bZsRjX6bjhSodCEhMIwD6NZjAkOND
-dYQ1TyewL/Q7pWdcGrRwthWLZj7cA2HpM4zZ9kioZBqxh3pcIQoYdQT586T6hJ22
-/vEWrBHL+ofwDsE/sY6nbHYQCkFW4w==
-=VEEF
------END PGP SIGNATURE-----
-
---Sig_/_/vmX0Hz1vripoj/QLgQntj--
 
