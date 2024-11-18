@@ -1,271 +1,161 @@
-Return-Path: <linux-kernel+bounces-412726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93B8D9D0E5B
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:22:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F3069D0E5D
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:23:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19D7E1F21CD8
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 10:22:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 045F81F22310
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 10:23:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B46AE197A8E;
-	Mon, 18 Nov 2024 10:19:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OyWSlQSP"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DEE5198E99;
+	Mon, 18 Nov 2024 10:20:27 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AFB6E55B
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 10:19:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21247198E6D
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 10:20:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731925178; cv=none; b=fB6DeVJLjhFUanVDBmWxg4VudJC/2OYVChvcYspIAR9Kp4NvuSEt4v6mnhccHIrm1epRwoJhQCRoCdNuns6ODXy3UpfY7wYq7KXWUEVTolQqLAvKjnJDpOPFeayxfCkFsZmtJ7crpz6SeJkj2LulMea7NT9ydgNXZFAbrgCnf4M=
+	t=1731925226; cv=none; b=NWuLuE+hUGMVUYwoQ/CylnQatYcWq+r933NvVLMZccTE/sgFWfFtotNJs48tpNW3bJf/mQlwheFKKjejiNmJ6aMdFGEeFTrH1iY9M3vFrXuiTiE+dX+/ecvL9QlAT7qCwpC+tePWrhGgDomjsuoeLCPJbTOAzpidd1FI9v0fh3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731925178; c=relaxed/simple;
-	bh=Rax6lueyWacS3m5xDCDewow2hehHpuuYcm6qKoAPoGM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oy4pr32QKdELr+INmrmoGUbXbAxdwVm/EWIgzL7GrEElaWdtIXX81fFAnFgq3n/lI+VD3LIePW1gDu2PBnoyPM48a36IEkN8eWnPvgQrlIV+mPzZ/nPhzpnSzCUQNyTdktOSlH30qjhu3LVpsPvJwVoNcwtKB3EvGoGJWxI+EXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OyWSlQSP; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-382378f359dso1132225f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 02:19:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731925174; x=1732529974; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kwWADfyCr2BC5TAT+DCbNFAyRnnXgdXIFe6xs1I/TUI=;
-        b=OyWSlQSPHZtr5DN+PzopxWo+28jsbGU7otKxAv4a1NRTHBMDRoALWHbH0mEFrhttHB
-         jArR3DCPtZ9z8r4fYhSnfaKijBTziiuDNEQRWNoskp5W7d9cj10Uwps0weHvndTkb4p0
-         Pik++Pk94o0tweOOoYkf8fq/ILah09OpRTeiaPXYDTq/XJ7MPr7HmayEY/dMDWA/GX2r
-         kSZeVstZ6nCC6Ezey+sMQLqJljmN/qLU0YpUQUACcN42mkUNDkKMYZmx1+EzwQxEd/DE
-         SliGp3qy5FO66lGIaHmefBS1kifR7O0UkuIyhrz+f4Yx2p80ZPbmhu1TeYMKor4an7fA
-         jR0A==
+	s=arc-20240116; t=1731925226; c=relaxed/simple;
+	bh=DfrduIENpQdNSLfxvj6S+QXiwukzrpZhuGSW1W62ccs=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=rfHRZb8edz3S4LYIUKMaOeBB/esIodGEtNzBZjn4aMz73G6jnfouVPdmnCY/K6XyIePirRlANBmHQZd//u3MOKk+QCXlfzuC/lID8ArPpnBDUZZt7UYVwsLpxeAJ6xC1yA7V/Tg8jabIaSs3yZDPcp8Jes7RZfekeKhMq71nzdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-83ab369a523so404727439f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 02:20:24 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731925174; x=1732529974;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kwWADfyCr2BC5TAT+DCbNFAyRnnXgdXIFe6xs1I/TUI=;
-        b=b9x1zCUOsJvXPSfGqze387uk01Dbof1+w+FVMRLWTNa/o09qpLuowXybKWBmByKwQW
-         /TxzlyUI11DkptD9LYIGzwvnRniTeydJ9MGMe9qINo9WdAhJllWN1VT3ftMKaRKbizFm
-         at9xfFNZYXw2j/wcYVl3RlMc3qqFikvhkHMJgngoxnqUhQYmJWTsxxtQ4tq3/oo/jViA
-         glENFycdX7X11EzHAm6PWTFE3cpTW3UG6cr3DkojRWCPsESU4+hJT/aXCl1jyDMMrBHA
-         RZnjjANEZOvN8AL9WGFqpXzA83KRS7F2xDBgDG5XwqQLVekgforPzPI0GL5Pa4kQ/N5T
-         +Ucw==
-X-Forwarded-Encrypted: i=1; AJvYcCVTYls/YxU1mYYMfPcGmCZDJLCTbh7ItkEklsS/UFCp5SqtbLz0IlGj1SswwdduIZ7dMU/2AT/TdQ/cbk0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFHuQmYKdpOC7YN3SvfAN7+0B0MTJo1BhbeSVDIEfzos4zWpHL
-	aRGiNeS840fhgaJPZkYeyNj5IEdSILupZ1u4ETLxc0stD5lcHn5G1V8F6SypgmRAEqV/VenLwKB
-	HjKbyHuPqb86C05rOkIFiwbv5ywzcdVUQtE8i
-X-Google-Smtp-Source: AGHT+IFDuCFFF9qAITz79FZE1ou75NV3hWq3UbrD7F/i3+vJePDzNP2hkzupaucOBe8Jv8KaJYYyGiWVfLp+FISbZC4=
-X-Received: by 2002:a05:6000:2587:b0:37e:d2b7:acd5 with SMTP id
- ffacd0b85a97d-38225a428f4mr8915076f8f.8.1731925172936; Mon, 18 Nov 2024
- 02:19:32 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731925224; x=1732530024;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vWCP09PtMIrn/p6f+QrfsR2pAtcMYL/4xReyhIlXj+s=;
+        b=egzec8xuZVJEU7XxLW1kRJ8avkZMu70yJCnUHxBvsWsLuPC+20yXPafGZ9bTWtvr7I
+         nSklma4x2Vnhbuduwz/7WD7gr0Q4i0rL5eOWMh2Miq1mU2FbpmXDsEWtCTxuEV5VmJts
+         Kpp9xB+CLJz0vUwAlPcAbYzGCuFU8e8Pdv3S18NEjsn5m5GJUvKQwb9gRfz2McYxQ4nd
+         gCfuUide8sixIzvbmoR2O2fJw9mvwLAmrz+/yqm5A+8WxkMjZo1zgyGpw8EcJQJf2j4u
+         akFdKYnWNPNzmX/QglXpc5v9+i9USIvcW8IIsCeOOkFbsLdPVXlaffdR7bW5lpUoZBVd
+         9dcg==
+X-Forwarded-Encrypted: i=1; AJvYcCWX2KapKcQ2BzAiPwThV//9oBGzwnJsj7K5VjY22gHdhzAp2ku6eklJ/v+hEiTYtJi4e9x5uxGMp3j3Ce8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwxocsX3qiydSq0KqnNWmv4v0lcdRcvRxZBtgCLUtUbo1bpzAv
+	TFs84aPSk2YHv6GMdqQAioQ7W0P+phlrjTABTt9DptMA33A4HrFUHeHMxjjSjq72Y1L5Af94526
+	eSuo3HtLNZ0gtkXBS5KOwSeFR98ZnM5oGk1iXLeSDBsI9qAiQi9vBjgs=
+X-Google-Smtp-Source: AGHT+IGIdl38PxnTTWZOQk+icemQSRocUVG0DNNavA387T5grlyHOAuBs2La6KqQOXYn0iF802pdvvpP7DHFG6VNXYzqIzEosJUj
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241009105759.579579-1-me@kloenk.dev> <20241009105759.579579-2-me@kloenk.dev>
- <snsf4cc6valp5ovrrbjv7fefxtkthifsis5el4teajzwjhmv4x@ghxovfdqkhop>
-In-Reply-To: <snsf4cc6valp5ovrrbjv7fefxtkthifsis5el4teajzwjhmv4x@ghxovfdqkhop>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Mon, 18 Nov 2024 11:19:21 +0100
-Message-ID: <CAH5fLghthWr4r0v=2xNE_UJntG6o6qRzdqHj_nu8AKUwUWh2Aw@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/2] rust: LED abstraction
-To: =?UTF-8?B?TWFyZWsgQmVow7pu?= <kabel@kernel.org>
-Cc: Fiona Behrens <me@kloenk.dev>, Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
-	linux-leds@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, FUJITA Tomonori <fujita.tomonori@gmail.com>, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+X-Received: by 2002:a05:6e02:b43:b0:3a7:158d:6510 with SMTP id
+ e9e14a558f8ab-3a74800e163mr104599765ab.5.1731925224346; Mon, 18 Nov 2024
+ 02:20:24 -0800 (PST)
+Date: Mon, 18 Nov 2024 02:20:24 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <673b14e8.050a0220.87769.0029.GAE@google.com>
+Subject: [syzbot] [bpf?] BUG: using smp_processor_id() in preemptible code in bpf_mem_alloc
+From: syzbot <syzbot+fd2873203c2ed428828a@syzkaller.appspotmail.com>
+To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
+	daniel@iogearbox.net, eddyz87@gmail.com, haoluo@google.com, 
+	john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org, 
+	linux-kernel@vger.kernel.org, martin.lau@linux.dev, memxor@gmail.com, 
+	netdev@vger.kernel.org, sdf@fomichev.me, song@kernel.org, 
+	syzkaller-bugs@googlegroups.com, yonghong.song@linux.dev
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Sat, Nov 16, 2024 at 4:47=E2=80=AFPM Marek Beh=C3=BAn <kabel@kernel.org>=
- wrote:
->
-> On Wed, Oct 09, 2024 at 12:57:58PM +0200, Fiona Behrens wrote:
->
-> > +/// Color of an LED.
-> > +#[derive(Copy, Clone)]
-> > +pub enum Color {
-> > +    /// White
-> > +    White,
-> > +    /// Red
-> > +    Red,
-> > +    /// Green
-> > +    Green,
-> > +    /// Blue
-> > +    Blue,
-> > +    /// Amber
-> > +    Amber,
-> > +    /// Violet
-> > +    Violet,
-> > +    /// Yellow
-> > +    Yellow,
-> > +    /// Purple
-> > +    Purple,
-> > +    /// Orange
-> > +    Orange,
-> > +    /// Pink
-> > +    Pink,
-> > +    /// Cyan
-> > +    Cyan,
-> > +    /// Lime
-> > +    Lime,
->
-> Why these repetitions?
+Hello,
 
-My guess is that it's to silence the warning about undocumented public
-items. It may make sense to just silence the warning in this case.
+syzbot found the following issue on:
 
-> > +impl TryFrom<u32> for Color {
-> > +    type Error =3D Error;
-> > +
-> > +    fn try_from(value: u32) -> Result<Self, Self::Error> {
-> > +        Ok(match value {
-> > +            bindings::LED_COLOR_ID_WHITE =3D> Color::White,
-> > +            bindings::LED_COLOR_ID_RED =3D> Color::Red,
-> > +            bindings::LED_COLOR_ID_GREEN =3D> Color::Green,
-> > +            bindings::LED_COLOR_ID_BLUE =3D> Color::Blue,
-> > +            bindings::LED_COLOR_ID_AMBER =3D> Color::Amber,
-> > +            bindings::LED_COLOR_ID_VIOLET =3D> Color::Violet,
-> > +            bindings::LED_COLOR_ID_YELLOW =3D> Color::Yellow,
-> > +            bindings::LED_COLOR_ID_PURPLE =3D> Color::Purple,
-> > +            bindings::LED_COLOR_ID_ORANGE =3D> Color::Orange,
-> > +            bindings::LED_COLOR_ID_PINK =3D> Color::Pink,
-> > +            bindings::LED_COLOR_ID_CYAN =3D> Color::Cyan,
-> > +            bindings::LED_COLOR_ID_LIME =3D> Color::Lime,
-> > +            bindings::LED_COLOR_ID_IR =3D> Color::IR,
-> > +            bindings::LED_COLOR_ID_MULTI =3D> Color::Multi,
-> > +            bindings::LED_COLOR_ID_RGB =3D> Color::RGB,
-> > +            _ =3D> return Err(EINVAL),
-> > +        })
-> > +    }
-> > +}
->
-> How does Rust compile these? If these constants compile to the same
-> numeric values, i.e. if
->   LED_COLOR_ID_AMBER =3D=3D Color::Amber,
-> will the compiler compile away the function?
+HEAD commit:    379d5ee624ed Merge branch 'bpf-range_tree-for-bpf-arena'
+git tree:       bpf-next
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=115ecb5f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d2aeec8c0b2e420c
+dashboard link: https://syzkaller.appspot.com/bug?extid=fd2873203c2ed428828a
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12636ce8580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11f0f4c0580000
 
-Well, it can't compile away the part where it returns EINVAL when the
-u32 is not a valid color. But other than that, these matches are
-usually optimized pretty well. I just tried a few different examples
-in godbolt to confirm it. See e.g.:
-https://rust.godbolt.org/z/WWM7891zW
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/e83cf63a68cf/disk-379d5ee6.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/ff1f89f228ad/vmlinux-379d5ee6.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/8a715c466ecd/bzImage-379d5ee6.xz
 
-That said, this relies on the assumption that they are represented
-using the same values. We probably want to change the declaration to
-this:
+The issue was bisected to:
 
-#[derive(Copy, Clone)]
-pub enum Color {
-    White =3D bindings::LED_COLOR_ID_WHITE,
-    Red =3D bindings::LED_COLOR_ID_RED,
-    Green =3D bindings::LED_COLOR_ID_GREEN,
-    ...
-}
+commit b795379757eb054925fbb6783559c86f01c1a614
+Author: Alexei Starovoitov <ast@kernel.org>
+Date:   Fri Nov 8 02:56:15 2024 +0000
 
-That way we are guaranteed that the enum uses the right values for the
-enum to make the conversion free.
+    bpf: Introduce range_tree data structure and use it in bpf arena
 
-> How do enums work in Rust?
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=10b2ab5f980000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=12b2ab5f980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=14b2ab5f980000
 
-In this case, the enum has no fields. In that case, the enum is a
-value that is only allowed to have certain values.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+fd2873203c2ed428828a@syzkaller.appspotmail.com
+Fixes: b795379757eb ("bpf: Introduce range_tree data structure and use it in bpf arena")
 
-Enums are also allowed to have fields. In this case, you can think of
-it as a discriminated union, though in some cases Rust will store it
-in a more clever way. You can look up the "null pointer optimization"
-for an example of that.
+BUG: using smp_processor_id() in preemptible [00000000] code: syz-executor373/5838
+caller is bpf_mem_alloc+0x117/0x220 kernel/bpf/memalloc.c:903
+CPU: 1 UID: 0 PID: 5838 Comm: syz-executor373 Not tainted 6.12.0-rc7-syzkaller-g379d5ee624ed #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ check_preemption_disabled+0x10e/0x120 lib/smp_processor_id.c:49
+ bpf_mem_alloc+0x117/0x220 kernel/bpf/memalloc.c:903
+ range_tree_set+0x971/0x1830 kernel/bpf/range_tree.c:238
+ arena_map_alloc+0x36f/0x440 kernel/bpf/arena.c:137
+ map_create+0x946/0x11c0 kernel/bpf/syscall.c:1441
+ __sys_bpf+0x6d1/0x810 kernel/bpf/syscall.c:5741
+ __do_sys_bpf kernel/bpf/syscall.c:5866 [inline]
+ __se_sys_bpf kernel/bpf/syscall.c:5864 [inline]
+ __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:5864
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f5cb29a1329
+Code: 48 83 c4 28 c3 e8 37 17 00 00 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffee3bcaa18 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
+RAX: ffffffffffffffda RBX: 00007ffee3bcabf8 RCX: 00007f5cb29a1329
+RDX: 0000000000000048 RSI: 0000000020003940 RDI: 0000000000000000
+RBP: 00007f5cb2a14610 R08: 0000000000000000 R09: 0000000000000000
+R10: 00000000ffffffff R11: 0000000000000246 R12: 0000000000000001
+R13: 00007ffee3bcabe8 R14: 0000000000000001 R15: 0000000000000001
+ </TA
 
-> > +impl<'a, T> Led<T>
->
-> offtopic, what is 'a ? What does the ' mean? Is impl<> something like
-> template in c++?
 
-Things starting with a tick are lifetimes, so 'a is the name of a
-lifetime. That said, this usage of lifetimes looks incorrect to me, so
-I wouldn't look too closely at this instance.
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-As for impl<>, then yes sort of. It is the <> that makes it like a
-template. When you have an `impl TypeName { ... }` block, then that
-defines methods for `TypeName`, which you can call as either
-`value.method(...)` or `TypeName::method(...)` depending on the
-signature. When you write `impl<T>`, then this means that it is a
-template (we use the word "generic" in Rust rather than "template"),
-that is
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
-impl<T> TypeName<T> { ... }
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-becomes the following infinite list of impl blocks:
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
-impl TypeName<i32> { ... }
-impl TypeName<u32> { ... }
-impl TypeName<String> { ... }
-impl TypeName<TcpStream> { ... }
-// ... and so on for all possible types
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-This logic works anywhere that <T> appears. For example, `struct
-TypeName<T> { ... }` is short-hand for the following infinite list of
-structs:
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
-struct TypeName<i32> { ... }
-struct TypeName<u32> { ... }
-struct TypeName<String> { ... }
-struct TypeName<TcpStream> { ... }
-// ... and so on for all possible types
-
-Of course, only things in this infinite list that you actually use end
-up in the final binary.
-
-The `where T: Operations` part is a filter for the infinite list. It
-restricts it so that only types `T` that implement the `Operations`
-trait are present in the list; all other types are filtered out.
-
-> > +where
-> > +    T: Operations + 'a,
->
-> What does + mean here?
-
-This is the same as:
-where
-    T: Operations,
-    T: 'a
-that is, apply two filters to the infinite list I mentioned above. The
-meaning of `T: 'a` when the RHS is a lifetime is that `T` must not be
-a type containing a lifetime annotation shorter than 'a.
-
-> > +/// LED brightness.
-> > +#[derive(Debug, Copy, Clone)]
-> > +pub enum Brightness {
-> > +    /// LED off.
-> > +    Off,
-> > +    /// Led set to the given value.
-> > +    On(NonZeroU8),
-> > +}
-> > +
-> > +impl Brightness {
-> > +    /// Half LED brightness
-> > +    // SAFETY: constant value non zero
-> > +    pub const HALF: Self =3D Self::On(unsafe { NonZeroU8::new_unchecke=
-d(127) });
-> > +    /// Full LED brightness.
-> > +    pub const FULL: Self =3D Self::On(NonZeroU8::MAX);
->
-> These LED_OFF, LED_ON, LED_HALF and LED_FULL are deprecated constants
-> that should not be used anymore. enum led_brightness will be either
-> uint8_t or usigned int in the future.
->
-> Is it possible to not infect Rust with these deprecated constants?
->
-> Marek
+If you want to undo deduplication, reply with:
+#syz undup
 
