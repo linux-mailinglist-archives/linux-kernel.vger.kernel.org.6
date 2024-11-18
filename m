@@ -1,132 +1,138 @@
-Return-Path: <linux-kernel+bounces-413423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E71859D18DB
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 20:26:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CCB29D18DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 20:27:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABA6F281136
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 19:26:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41F18281956
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 19:27:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2E6A1E5027;
-	Mon, 18 Nov 2024 19:26:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD71C1E503C;
+	Mon, 18 Nov 2024 19:27:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Ggvmb8Mc"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="WXiN559Z"
+Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43CC11E2838
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 19:26:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B2211E1301;
+	Mon, 18 Nov 2024 19:27:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731957993; cv=none; b=WiKgdRovrTlPXsloNUpPceKEMn+ZJpezG01GueB1aY/7JCtOTTjEg0q+IGdbD4nOv3ozjtYAB2Ig+g/OAB/jfGe5rAasd0c+PBScujyh4rRAL24HrdVQ4xzoX2dmYKJdfn3aVsHp/bEW4CdJtc90eO+MaA5KpFzSUXEbzOYB5fA=
+	t=1731958054; cv=none; b=CAP/bq9+Jc1xCXtkrtIyEAbUR7h7cUsXVS+RrRWCw9PvNORN6/Hw+78BkQFcUEKGD25aqsWcov2l6jot5sJOaZ/VDpgJnDwhp/Tsy0IHlD3+liZDs+MSY1zC3ftghS9DpIlUIuA1ma+wlzyaP4GidT4Ww4jFinQhbeXHLdAdY9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731957993; c=relaxed/simple;
-	bh=zUVH/uAD+IJTLUQDBYc09NFu0bSjr4OlrRtyJAhnrBA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XlZh3sVr0l/az25uJgqbkGL/v8C0vMXf9zWFhI/eJnQ9dAi5CiYFz9tEGhpZdChRfO1sMPfqOFkL97d631QiUAwfc5ebVQTGrF+1lK8w6Gq+hV6i4wtJJOVXge9Ly4mKtHEw/093d8LqDacGD/NpYAjLdSO41I09zWS7uMQhDKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Ggvmb8Mc; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5cfaeed515bso2824846a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 11:26:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1731957989; x=1732562789; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=JYCS3Z6MiUnPrDvgzVamv2lmS38BP+UrcMAAY23BZP8=;
-        b=Ggvmb8McADv0dJS5a1c+bREFDDd2pmnuS6SCw18hzYkx7Nz3UtZka8bWh6x0SWc5vG
-         uZmYbDmy4n1v6jQKAuOwTXUUtgC/YYVhT5BgTcWIsTUvMlFMIyX7/rslfJtl3oLiibBD
-         CHLK874swKbu0j5236YgyzUdCsvqWh5V4cn1A=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731957989; x=1732562789;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JYCS3Z6MiUnPrDvgzVamv2lmS38BP+UrcMAAY23BZP8=;
-        b=K+1ig2JBr37kxHBqM2HBj1EhM/K4iIqQDayAkCELh+KI42ojHcYVR9tZuj/d9VKatu
-         ZpTA/vouDHsTbyu+v2ECcWCEL41SZNXdPnPi3qTuj+Qbc8RfxR8Nw1Xfgih5VPagRw25
-         SPoAOya/5xK7/vvXwsfj44yRI1icGy4lIQIZn/crg6JCtkJvvHG1HbokWuIxUqbi6co9
-         iPBiEzDia8dL5ePPjC3XW5IWjmt6EaX+qR29PolBeNY6tpBEUHHDRCfswzanDfMAXH9O
-         THlU7ILlWLa14X0n1GJ8tTsggkACHZL/XoMPgUYuB2v42lx1QrzuV+0m4zjgESivdg4o
-         zw1A==
-X-Forwarded-Encrypted: i=1; AJvYcCX9Mt1vNM9kN373jNOmrCivIo6iPqh4nIIdAHF5RDKoJVM8gk8RFaCdGP9nIg7osEiSlL/c1a5gju6PsHA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbOXymcmJPRm1HZf6vDJWkEmmk9491HF4nJzab3g73ho0kLQ2b
-	TGgistNlOjT49LZX1z3ozVqRdvHt7qZRk3rUT4uQKDDtdV7L51mCfAFlKoKPrxHHxa+CJHH3SlY
-	1QmA3cw==
-X-Google-Smtp-Source: AGHT+IGutuoOP5c7mh+SdGeoHNen20nLKdz2BqFrb+su3HbgkYqNju6teyNZCV0AvfqkW5X2whTitg==
-X-Received: by 2002:a17:907:3f98:b0:a9e:d539:86c4 with SMTP id a640c23a62f3a-aa4833f41cdmr1121603566b.9.1731957989279;
-        Mon, 18 Nov 2024 11:26:29 -0800 (PST)
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com. [209.85.208.53])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20df74fb6sm568925266b.82.2024.11.18.11.26.28
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Nov 2024 11:26:28 -0800 (PST)
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5cfaeed515bso2824825a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 11:26:28 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVZ4AZPxpF0b/vq+WFBjYAzfktOn1tZNP2QZ/eYuhOGMaeYBWdzwkrZGQocqJKehNl8yIsqVRZh/SxgeRY=@vger.kernel.org
-X-Received: by 2002:a17:906:d7cb:b0:aa4:c8f0:6ea1 with SMTP id
- a640c23a62f3a-aa4c8f06f4fmr18763766b.54.1731957988223; Mon, 18 Nov 2024
- 11:26:28 -0800 (PST)
+	s=arc-20240116; t=1731958054; c=relaxed/simple;
+	bh=RcPIYbyMlZ34oP2LBXyEIbCgPpT3+dQrSy/cfQ6AqU4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=DCNUbhp6CxC6mKttYIXFUIhGYAMD8b370NvR8iUIQMVpwVs7xeOD6Dvxch0e2QxJy8rolGntL8rGxwkskcxFDopFywKtpy0ixtjUFhlGjCFPjXQS/dQgq0kNAw4itOFtkOHobBhwaWtpn7flCnfuecT9T7ZotjpJToAvCSGhftw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=WXiN559Z; arc=none smtp.client-ip=199.89.1.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 009.lax.mailroute.net (Postfix) with ESMTP id 4Xsd1T6y26zlgVXv;
+	Mon, 18 Nov 2024 19:27:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1731958042; x=1734550043; bh=pJOpEX/ldT1R99usUkIIxpTX
+	afIC3dd1RVWEnQ/TPLU=; b=WXiN559ZnZZDMueOh0xvD2n/D9hm0No2wx1qNojw
+	DlY2a3a5XW+0RMKwVM9VQaTdcsHa8k5l8UFXJPCe6aXGD+ECURHliJmvrtlZJ3Yx
+	/kbkQzUMahEKbHcNMHHpjx02omMgbRI/epYuQI8pQeRjhiGfCVrnci7m2+H4OOfL
+	iWaYXjy/DtHVhbBiYWB9VL5jf6geb+HUFTxaDA5fE8+m2uCJ9HyGk0oIx72Xb9+0
+	c4CQGSOsdj/msK/lOpPQuliDBFIdQLbraEIDRk9SGW4viISdmLeHye9dtRy77Qk6
+	46rs/eO2mf3bhCmSSlmEcXPxfrJ/Xp11eFugm32Mjm0M3g==
+X-Virus-Scanned: by MailRoute
+Received: from 009.lax.mailroute.net ([127.0.0.1])
+ by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id fOWhWX0pm2FQ; Mon, 18 Nov 2024 19:27:22 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4Xsd1P3mYJzlgTWQ;
+	Mon, 18 Nov 2024 19:27:20 +0000 (UTC)
+Message-ID: <6bc47ad5-e815-46c4-b689-3e2cdcea16ea@acm.org>
+Date: Mon, 18 Nov 2024 11:27:17 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241115-vfs-tmpfs-d443d413eb26@brauner>
-In-Reply-To: <20241115-vfs-tmpfs-d443d413eb26@brauner>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 18 Nov 2024 11:26:12 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wgqUNhk8awrnf+WaJQc9henwvXsYTyLbF2UFSL7vCuVyg@mail.gmail.com>
-Message-ID: <CAHk-=wgqUNhk8awrnf+WaJQc9henwvXsYTyLbF2UFSL7vCuVyg@mail.gmail.com>
-Subject: Re: [GIT PULL] vfs tmpfs
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [scsi?] [usb?] KASAN: slab-use-after-free Read in
+ sg_release
+To: linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
+ linux-usb@vger.kernel.org
+References: <6737dd3b.050a0220.85a0.0005.GAE@google.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <6737dd3b.050a0220.85a0.0005.GAE@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, 15 Nov 2024 at 06:07, Christian Brauner <brauner@kernel.org> wrote:
->
-> This adds case-insensitive support for tmpfs.
+On 11/15/24 3:46 PM, syzbot wrote:
+> Hello,
+> 
+> syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+> KASAN: slab-use-after-free Read in sg_release
+> 
+> ==================================================================
+> BUG: KASAN: slab-use-after-free in sg_device_destroy+0x57/0x180 drivers/scsi/sg.c:1572
+> Read of size 8 at addr ffff888034a06008 by task syz.3.47/7437
+> 
+> CPU: 1 UID: 0 PID: 7437 Comm: syz.3.47 Not tainted 6.12.0-rc1-syzkaller-00116-g9024d215a5d3 #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
+> Call Trace:
+>   <TASK>
+>   __dump_stack lib/dump_stack.c:94 [inline]
+>   dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+>   print_address_description mm/kasan/report.c:377 [inline]
+>   print_report+0x169/0x550 mm/kasan/report.c:488
+>   kasan_report+0x143/0x180 mm/kasan/report.c:601
+>   sg_device_destroy+0x57/0x180 drivers/scsi/sg.c:1572
+>   kref_put include/linux/kref.h:65 [inline]
+>   sg_release+0x274/0x3c0 drivers/scsi/sg.c:404
+>   __fput+0x23f/0x880 fs/file_table.c:431
+>   task_work_run+0x24f/0x310 kernel/task_work.c:228
+>   resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+>   exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
+>   exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+>   __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+>   syscall_exit_to_user_mode+0x168/0x370 kernel/entry/common.c:218
+>   do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
+>   entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-Ugh.
+The above output shows that the tested patch postponed the use-after-
+free from the mutex_unlock() call in sg_release to the code that I
+inserted after that call. This is the patch that has been tested:
 
-I've pulled this, but I don't love it.
+diff --git a/drivers/scsi/sg.c b/drivers/scsi/sg.c
+index 84334ab39c81..6c6e03f37b5f 100644
+--- a/drivers/scsi/sg.c
++++ b/drivers/scsi/sg.c
+@@ -385,6 +385,8 @@ sg_release(struct inode *inode, struct file *filp)
+  		return -ENXIO;
+  	SCSI_LOG_TIMEOUT(3, sg_printk(KERN_INFO, sdp, "sg_release\n"));
 
-This pattern:
++	kref_get(&sdp->d_ref);
++
+  	mutex_lock(&sdp->open_rel_lock);
+  	kref_put(&sfp->f_ref, sg_remove_sfp);
+  	sdp->open_cnt--;
+@@ -398,6 +400,9 @@ sg_release(struct inode *inode, struct file *filp)
+  		wake_up_interruptible(&sdp->open_wait);
+  	}
+  	mutex_unlock(&sdp->open_rel_lock);
++
++	kref_put(&sdp->d_ref, sg_device_destroy);
++
+  	return 0;
+  }
 
-    if (IS_ENABLED(CONFIG_UNICODE) && IS_CASEFOLDED(dir))
-        d_add(dentry, inode);
-    else
-        d_instantiate(dentry, inode);
 
-needs an explanation, and probably a helper.
-
-And
-
->  include/linux/shmem_fs.h            |   6 +-
->  mm/shmem.c                          | 265 ++++++++++++++++++++++++++++++++++--
-
-I'm starting to think this should be renamed and/or possibly split up
-a bit. The actual path component handling functions should be moved
-out of mm/shmem.c.
-
-The whole "mm/shmem.c" thing made sense back in the days when this was
-mainly about memory management functions with some thing wrappers for
-exposing them as a filesystem, and tmpfs was kind of an odd special
-case.
-
-Those thin wrappers aren't very thin any more, and "shmem" is becoming
-something of a misnomer with the actual filesystem being called
-"tmpfs".
-
-We also actually have *two* different implementations of "tmpfs" -
-both in that same file - which is really annoying. The other one is
-based on the ramfs code.
-
-Would it be possible to try to make this a bit saner?
-
-           Linus
 
