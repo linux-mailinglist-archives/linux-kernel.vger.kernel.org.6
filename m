@@ -1,120 +1,106 @@
-Return-Path: <linux-kernel+bounces-412451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00A009D0926
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 07:01:05 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C21B49D0928
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 07:02:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D7A9281BC9
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 06:01:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 307F0B21921
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 06:02:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D772142E78;
-	Mon, 18 Nov 2024 06:00:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B83CC13D251;
+	Mon, 18 Nov 2024 06:02:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k3HINUEj"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="HxyE6IXT"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36A58DDC5;
-	Mon, 18 Nov 2024 06:00:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17940DDC5;
+	Mon, 18 Nov 2024 06:02:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731909654; cv=none; b=XlxBLAaZGpCAojq16nDO73YkE4Md4zdDZCEb3cmypzHoio9wnLCAU3yXZKZTuRW/PWKsRFXJ1yoUPacAL6qfe/MglxaxE+rvbmpelscUcajrJyjGuAXmhqacYhWwmOA/puhwvbmgLQtk2w2qKnH1UY+XJb1A9qCzYN/9+bgTO2Q=
+	t=1731909733; cv=none; b=g+9Ej8pQC6ZX/4Q8PLXkL9cX3ZtvZq5f5IhDNJ5q5D4Vynl9H9VXutMLTZWaD2iXxPogIEgT7JT6uzfpqY0LpIouu6hOTz3gC9gT+StrpAz+yVJhKwtbrYD8WlWOhLoLIoej7uQyw6Il+G4mB0GyJlFufNeZ2pvY+YgwK5x112w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731909654; c=relaxed/simple;
-	bh=sgFGmAJSWz62h5J0gaOs0tTJ0+JIkMwQW8wgYGPyNjw=;
-	h=Content-Type:From:Mime-Version:Subject:Date:Message-Id:References:
-	 Cc:In-Reply-To:To; b=ZBdUuTe2RObH9vQHS2/z+HeghRBCm9zoQMAIy9dCrg028ByqZVd/YM6gbfmJPZIKYW0QxFzRhrQ9XkRdL3MD4BHfv/4qsx9Zd91K1pStygoQHkxqA9J1Hc2fNR0hUC0SRuE1AE+n0lPVb5wQN/xutxdUCup0pB6VU/YjZLB6Zbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k3HINUEj; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-21210fe8775so5314035ad.1;
-        Sun, 17 Nov 2024 22:00:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731909652; x=1732514452; darn=vger.kernel.org;
-        h=to:in-reply-to:cc:references:message-id:date:subject:mime-version
-         :from:content-transfer-encoding:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kO+QtFpKfgzNuqO1kZp/2nPap7iCfAUCSQud9ZT+/+Q=;
-        b=k3HINUEjcyuCyACMEeizV1B5Dj86tZQqBhZ2PXX4ZrTbGKvNAqse7ZbZJD0PfY4eRS
-         wLG1DBYo2FzFZ6FeA8bgJ5dXP0PoUufKkkJQU8jGCVbik29gEJFGk0o21ffD8wPXyfEW
-         yjSGsQiU59+1ZJ/QHLT4p+kQQsWnHk6WV9zU2cL1yQZkYdlqmNTm21Fjx3pIrxOg0LAe
-         D8wxIYepF4YMusf6ByyRH4uXRyqTiPN9HfXExchu8gD+mVUHler8ppmvwlBlkbHmUFwb
-         9SyUiB0l0RPoCkdgnYHS4E2uDnDAGH9xdqPJBFXrYJG8ZA0H9b6Top4vHwnzPNmO9PXk
-         kWZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731909652; x=1732514452;
-        h=to:in-reply-to:cc:references:message-id:date:subject:mime-version
-         :from:content-transfer-encoding:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kO+QtFpKfgzNuqO1kZp/2nPap7iCfAUCSQud9ZT+/+Q=;
-        b=xJACQ1pPD7+1fk8eCCKGnQScFV3iFvtFR3uMXIPochwCBkgeitM3hd5VteF4t4qAPA
-         4lu1l8EJl90R6CWTkqX50+oX5y0pipliYAdV3U6/WhRHAEf6e8DR+e9LI2U2/8ZobMOM
-         TI9P6FQxyrw2CaYDIG7BskFJoGbSsA8um6RGOP1T8aQVhFOB9SYyb2QVj4Wn2fUIzJrD
-         DKr8vHFiN4qDCvGnNQu0UAzqVyPPwu7jQU2nEcvxwZ4CCZt09PksOTV2ItdLk1t7TNk8
-         JOz41Bkv/gPrKxOhZ+Mjd/fDe4Ib91K+rg5Wzdsjw2FkCevtHAFch4imNtg0eFT+Yzgz
-         wV1g==
-X-Forwarded-Encrypted: i=1; AJvYcCWSW6rGdsntcVO1udcOBEbSTxk94hpgfQu9pkx7NTYglaQh5jtz3VbHPVSvCcVX2h3S3GjYqDyp@vger.kernel.org, AJvYcCXnKkgXJPvdk6opIn1c/rTZNqwIzXy47OKQUCHkre3oC1hlL/K9yfYMbQcL5PrYyH2my5Tp0H/BJV3X3ixd@vger.kernel.org, AJvYcCXyPH8nBow3B8ZHDTlQr/JLPZMuJ3NsAYQ4hnE9FYbCsheNireN1B3wAjiZBdeYUG9o9bKBljgn9eo0ymgO@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVUoih+UjHMKS7WC4HV+QDd2uR7+T9wKKlWUFLhTohZqCxyEG0
-	bGUEHOW90zgBENqqrngeH4V0ZaaiOp2XqDupykQrtKMEPWZ9Hh4Y21vVMwwK
-X-Google-Smtp-Source: AGHT+IFdxyTPCM6q1QU17AqfiduUvqhQ1jdXop17N8bmnqw3ZxHsAmLAuld0aAwN/RD4QYOI9Rf7Tg==
-X-Received: by 2002:a17:902:ce0e:b0:20b:a73b:3f5 with SMTP id d9443c01a7336-211d06f619cmr172400875ad.14.1731909651862;
-        Sun, 17 Nov 2024 22:00:51 -0800 (PST)
-Received: from smtpclient.apple ([2001:e60:a40b:abbe:19cc:3a68:771c:24a1])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211d0ec7b9csm49435665ad.73.2024.11.17.22.00.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 17 Nov 2024 22:00:51 -0800 (PST)
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-From: Jeongjun Park <aha310510@gmail.com>
+	s=arc-20240116; t=1731909733; c=relaxed/simple;
+	bh=K7vRR3PICpmX4+NW+QKL36XvwQqMOpMiqtREAJo3mCo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oFst2Uxi09hk/0+XBg2WpGZiUSO4tleDa219glW+5ROcX/NCLTZR/XOq1tAWc11eb+G3y4j54Me3oilWvYHlwWjiodfQQgMKzXPUlVLPMpkswUf+eiXzyNCKNBS11m5eAf+xQatga/ulnJjOgkrwi+BlGSNcdit0+xo4C7sGpaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=HxyE6IXT; arc=none smtp.client-ip=212.227.17.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
+	s=s31663417; t=1731909715; x=1732514515; i=wahrenst@gmx.net;
+	bh=K7vRR3PICpmX4+NW+QKL36XvwQqMOpMiqtREAJo3mCo=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=HxyE6IXTtlFxApFrih9mES0rN4BW2vHr8HivWUeUjGAy04ZgjqWs21cUuVJpi/7j
+	 77ltcXX2cfG/G5WRDKNz255Mf+6dWOrmQjaUfEgLfqsZ5jbBB3rAgUklwoU/5Ycp4
+	 7g2DtXh7SBceCv9IbEOGWmjW/vklCUj7VRPU4XhxYVxyWSKYTH2ETQHRSvUUOD0eu
+	 GSKQ6gGRGGyYjJ43rT6b9gTGZPFF9FPlorLhHxAvFs7oFRN2PI4qHKWcn6LexQxtf
+	 wdfHag75YgpncPSTVsnvE9TX1ta8gnT0vZVuCiIGSxFEXKk/wX7s1y1TKe5mr27lp
+	 tNvJNualfxEoTrNOzQ==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.1.105] ([37.4.248.43]) by mail.gmx.net (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MTRMi-1tKZnb1g7Q-00RsRv; Mon, 18
+ Nov 2024 07:01:55 +0100
+Message-ID: <70188a17-cf5d-4b0d-a575-900dad8f9c66@gmx.net>
+Date: Mon, 18 Nov 2024 07:01:54 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH] fs: prevent data-race due to missing inode_lock when calling vfs_getattr
-Date: Mon, 18 Nov 2024 15:00:39 +0900
-Message-Id: <E79FF080-A233-42F6-80EB-543384A0C3AC@gmail.com>
-References: <20241117165540.GF3387508@ZenIV>
-Cc: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-In-Reply-To: <20241117165540.GF3387508@ZenIV>
-To: Al Viro <viro@zeniv.linux.org.uk>
-X-Mailer: iPhone Mail (21G93)
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6] soc: imx: Add SoC device register for i.MX9
+To: alice.guo@oss.nxp.com, alexander.stein@ew.tq-group.com,
+ shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+ festevam@gmail.com
+Cc: imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, "alice.guo" <alice.guo@nxp.com>
+References: <20241118021716.396001-1-alice.guo@oss.nxp.com>
+Content-Language: en-US
+From: Stefan Wahren <wahrenst@gmx.net>
+In-Reply-To: <20241118021716.396001-1-alice.guo@oss.nxp.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:rLk4OWx6ljgfKFCL1ZiTAiqssGrPxUkR15IXSqDOTfOg3xbBvOE
+ 4Nbtq4AFQ8TyIv6dmAe4gaLgHr+lLvmergPk2s9UUQejZvMKTVlqJW1inMySCcne3Zmb4if
+ d4got78nvMCDM9bT1lT6/lFbukxjB9Js/1XFinUfp9yOWyzgFJLIUFO1lfohW3GDdjCerMp
+ Y7NaPK/tY2mM7Va/nEU8A==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:zzK4fJzHw4Q=;4YihpUZvk/BUGl5vFAVpjYBSqC1
+ fZIs3Ih4QtGM1QFE/Uo4pNikVLNxr9P54uXNd9VJHjPrLnJgT0jzZqEmM77srypLhyXfv/+BJ
+ sb9sr8TawDG4Ua19VIzyLI4zm8awXJGiTBLq35JwKFHQD//mkrPz6MAwWFtEAjbcD1/261PCg
+ qXidRnGIhslRUOW0r7uXCsyAu+OZPooi1G466phMGC1qWtY83sUnlBpQAQFDm83PrwndXyt73
+ 516pF8iLJBy8WDu4s1b/LPzklCCzE/sa6IVjOHsYdonjFNlUZtKLsnAFKNFWM4sF1crNF6x/+
+ UzeqprIdIbv4UsD6fAHnv9AbanaBBuWjYCgeAA7QCu0224AunRXZ+1319pz1ZWLWYZ/q7sh3b
+ u94mqX2u7nYAj4U/IkMByY4tKJppl8j5tyzewWhpVZyJI+bINzZMTd589VZp9Ie3lZBSgWT8l
+ S7jXqGVBYQu6eo4IVoAkAvCABGjPOuYnSZ3UUBsbMWeOw6baclklwXRmAI7kKwONFLYLCnbs8
+ bMs5GKimEOkjn8PbkGappkb3vmAIieKBgty1uK9RtJeY7LgwXKKsxY8A3RUU3dOQfeHg7Tpi1
+ OpcA3UqdbSc0NWBrGukBhv7fTYHcLOEOGQ9q/oWDnmL5Oofy48PyRyNrdU5KthZGDldysHLzF
+ 3Z2NQ+yWpPVq0kIhRWmeLunBW02YhAcl6DYO+k/jcx0ekutRpDmPY1uWm5gh+FxCNzXI2rzRr
+ YOlsw0hdLpVEx1IkmfUCTDaR97100Go5tWwqfx901qSLdNHbxrZUu9/YU2S0uHUouIdnTtF7+
+ QQ8mz3YGyKkA0mI6STFNQm2+QEFQBXeh3CFo4KgHn5BjOdd19mOj3o3FMkUIMtgg/T/MG2uWQ
+ GZx63ezRqPERoagwNGBNX41bfZPg9iFpFOw3YJx9+xbMBWXUvIowOpMFU
 
+Am 18.11.24 um 03:17 schrieb alice.guo@oss.nxp.com:
+> From: "alice.guo" <alice.guo@nxp.com>
+>
+> i.MX9 SoCs have SoC ID, SoC revision number and chip unique identifier
+> which are provided by the corresponding ARM trusted firmware API. This
+> patch intends to use SMC call to obtain these information and then
+> register i.MX9 SoC as a device.
+>
+> Signed-off-by: Alice Guo <alice.guo@nxp.com>
+> Tested-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+> Reviewed-by: Stefan Wahren <wahrenst@gmx.net>
+Looks good to me
 
-Hello,
-
-> Al Viro <viro@zeniv.linux.org.uk> wrote:
->=20
-> =EF=BB=BFOn Mon, Nov 18, 2024 at 01:37:19AM +0900, Jeongjun Park wrote:
->> Many filesystems lock inodes before calling vfs_getattr, so there is no
->> data-race for inodes. However, some functions in fs/stat.c that call
->> vfs_getattr do not lock inodes, so the data-race occurs.
->>=20
->> Therefore, we need to apply a patch to remove the long-standing data-race=
-
->> for inodes in some functions that do not lock inodes.
->=20
-> Why do we care?  Slapping even a shared lock on a _very_ hot path, with
-> possible considerable latency, would need more than "theoretically it's
-> a data race".
-
-All the functions that added lock in this patch are called only via syscall,=
-
-so in most cases there will be no noticeable performance issue. And
-this data-race is not a problem that only occurs in theory. It is
-a bug that syzbot has been reporting for years. Many file systems that
-exist in the kernel lock inode_lock before calling vfs_getattr, so
-data-race does not occur, but only fs/stat.c has had a data-race
-for years. This alone shows that adding inode_lock to some
-functions is a good way to solve the problem without much=20
-performance degradation.
-
-Regards,
-
-Jeongjun Park=
+Thanks
 
