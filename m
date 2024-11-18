@@ -1,214 +1,451 @@
-Return-Path: <linux-kernel+bounces-412721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F27279D0E4E
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:20:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B00189D0E52
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:21:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 778A51F21004
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 10:20:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 346A11F21EF9
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 10:21:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65B3719A28D;
-	Mon, 18 Nov 2024 10:16:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9781519B5B1;
+	Mon, 18 Nov 2024 10:16:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="zO4LE0SZ"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2084.outbound.protection.outlook.com [40.107.243.84])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="BIKbbPtx"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05A2A199EB0;
-	Mon, 18 Nov 2024 10:16:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.84
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731924962; cv=fail; b=hNBpZxsm96EJUUgSPepFjpMnUbFfa2FBwp0rHLNfA8VNfiXvmnGe7DtDK+6VHImqV72ixbLX6kcfK2vkYyQoUI3k672JpUXy763xNcDshIVhLr7NCZQx4RhF0UTczBX4P5j7fzJjlJomhTq8uLmobve+Fz0XegJVWgvNdJJ1TWg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731924962; c=relaxed/simple;
-	bh=TurhxZCYKf45Hvp+9ayxTFHDgfYZJ4hFUUH33Lj7eFo=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=SC7n9KuHS9rwC8GwrKPCjHciSky2MqavRzveHXok6isenuLQ0iQWk8r6DgVCc2a69c5/p0f0PfcPosXzeWzShX+Tq890+fGxWA8sWAZ0NVpJjP/VGuTtN4Q/I95KbFd2tsfel6ncL1SnGGXVJx4OMCTlVy5cr/7POfT566nkFzU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=zO4LE0SZ; arc=fail smtp.client-ip=40.107.243.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=tIqG3KF1jYoGVra4JY4da95wh3xRdRE2CINnE6APb2oxgcoEuhfVp9XHS4bh8LMmJaOdans37TDFL2mjS67vXzyYrqy++ETTsbTiB7i1nvNegNFNcN80PNJogTYTFeylXjVCTG29Ppa+DVNqSlj3kcoZY3RKWnLYnLXzf8+t0VTHV8IzZKn+O21m3tCxhcbma2X/JIABRZAOWkfntD2BJwE+R5qgvpxZGlA8MgeQmhhigL7kCAt+Jg9w9jg+d9KAdefSLe26RHQmghyH8+gjwvMs1UEwv9o848qaUSmtf5NVkRTvfX4r3RVVim5KfSTh8D2n7Tsj3z/KSGbKhiCCIQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=TurhxZCYKf45Hvp+9ayxTFHDgfYZJ4hFUUH33Lj7eFo=;
- b=d4NMXTMKYMkJ/V+BYuyQtELpqlwuaY6UkdWqOvTDmZDX331b3Nr6f8VB3J/trBxSwMUrg5Yxes6ZZ9XpcDfLycxBbO9b1IrAGXVTWTF3H4zMJzDiPIXAX3M/U9J3T1wZVNrnRvL9m415GHbjAdmhRzNDyoeEngjScZ9W1ljjHutObjlQGTWjUjPisxw+2wafmbpXSOA0W2LskJPzyKeGR8gbAwzw28sJCBYoSWKgTaRYAv92FeOp5KfgN5kg797a39ni3sUENXCI70j75YzX466wCli5XfPMlJOwvgfmMX3CEvReiRGzUkwAfVH15abkW82b+kD42b7fGRU9gtzeBA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TurhxZCYKf45Hvp+9ayxTFHDgfYZJ4hFUUH33Lj7eFo=;
- b=zO4LE0SZcKj9gBf6dp2THvn5sIx5xopTONvwuxyonaRedJ5X/jlw14Kd/HQ8KTXo1Jfz5PRkiuulGAk02HfwntOXW1S5DA5M0oTWjHGOSdmh2lpMlS1YgqLPeSJD/f8Syv9Q+SBIsbiP7dywWd1LpLhJOR2UUyQpkQP5Xz3Mkmo=
-Received: from PH8PR12MB6938.namprd12.prod.outlook.com (2603:10b6:510:1bd::8)
- by PH8PR12MB6986.namprd12.prod.outlook.com (2603:10b6:510:1bd::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.21; Mon, 18 Nov
- 2024 10:15:56 +0000
-Received: from PH8PR12MB6938.namprd12.prod.outlook.com
- ([fe80::16e0:b570:3abe:e708]) by PH8PR12MB6938.namprd12.prod.outlook.com
- ([fe80::16e0:b570:3abe:e708%2]) with mapi id 15.20.8158.023; Mon, 18 Nov 2024
- 10:15:56 +0000
-From: "Shah, Amit" <Amit.Shah@amd.com>
-To: "pawan.kumar.gupta@linux.intel.com" <pawan.kumar.gupta@linux.intel.com>,
-	"jpoimboe@kernel.org" <jpoimboe@kernel.org>, "amit@kernel.org"
-	<amit@kernel.org>
-CC: "corbet@lwn.net" <corbet@lwn.net>, "kvm@vger.kernel.org"
-	<kvm@vger.kernel.org>, "andrew.cooper3@citrix.com"
-	<andrew.cooper3@citrix.com>, "kai.huang@intel.com" <kai.huang@intel.com>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "Lendacky,
- Thomas" <Thomas.Lendacky@amd.com>, "daniel.sneddon@linux.intel.com"
-	<daniel.sneddon@linux.intel.com>, "boris.ostrovsky@oracle.com"
-	<boris.ostrovsky@oracle.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "seanjc@google.com" <seanjc@google.com>,
-	"mingo@redhat.com" <mingo@redhat.com>, "pbonzini@redhat.com"
-	<pbonzini@redhat.com>, "tglx@linutronix.de" <tglx@linutronix.de>, "Moger,
- Babu" <Babu.Moger@amd.com>, "Das1, Sandipan" <Sandipan.Das@amd.com>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "dwmw@amazon.co.uk"
-	<dwmw@amazon.co.uk>, "hpa@zytor.com" <hpa@zytor.com>, "peterz@infradead.org"
-	<peterz@infradead.org>, "bp@alien8.de" <bp@alien8.de>, "Kaplan, David"
-	<David.Kaplan@amd.com>, "x86@kernel.org" <x86@kernel.org>
-Subject: Re: [RFC PATCH v2 1/3] x86: cpu/bugs: update SpectreRSB comments for
- AMD
-Thread-Topic: [RFC PATCH v2 1/3] x86: cpu/bugs: update SpectreRSB comments for
- AMD
-Thread-Index:
- AQHbNFhQwY6CJIvrmU2tNHgQpSE0v7KyeFwAgABS0QCAABWWAIABTnUAgAF7OYCAAF1RgIAACjqAgABcFgCAAW1DAIAAyceAgAAFZICABDKEgA==
-Date: Mon, 18 Nov 2024 10:15:56 +0000
-Message-ID: <2eab0a67613c35ec1aea57b47f6808a507270ad6.camel@amd.com>
-References: <20241111193304.fjysuttl6lypb6ng@jpoimboe>
-	 <564a19e6-963d-4cd5-9144-2323bdb4f4e8@citrix.com>
-	 <20241112014644.3p2a6te3sbh5x55c@jpoimboe>
-	 <20241112214241.fzqq6sqszqd454ei@desk>
-	 <20241113202105.py5imjdy7pctccqi@jpoimboe>
-	 <20241114015505.6kghgq33i4m6jrm4@desk>
-	 <20241114023141.n4n3zl7622gzsf75@jpoimboe>
-	 <20241114075403.7wxou7g5udaljprv@desk>
-	 <20241115054836.oubgh4jbyvjum4tk@jpoimboe>
-	 <20241115175047.bszpeakeodajczav@desk>
-	 <20241115181005.xxlebbykksmimgqj@jpoimboe>
-In-Reply-To: <20241115181005.xxlebbykksmimgqj@jpoimboe>
-Accept-Language: en-DE, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PH8PR12MB6938:EE_|PH8PR12MB6986:EE_
-x-ms-office365-filtering-correlation-id: c1d542af-e86e-4bfd-7bf3-08dd07b9fdb2
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|7416014|376014|1800799024|366016|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?Y3NYd0pwbU9oNjVxRFpGWGNpeG81VGVMMmRaa0pZV0VsMVNkelFIbTVPeXY4?=
- =?utf-8?B?RmRVSzdiTU9iTDdvVFF4cWJPSWJtRTIzVE5BUXF3MTByQ1kvTE1uMXdoUlls?=
- =?utf-8?B?ZVZURGpRc1YweE9EeGVkd084RTJEd0lwVmk2aFhGYkY3bFhwdnhtUDlNNTB6?=
- =?utf-8?B?Z3AyN0w3T2R4eTNLQXovRmM0TTZWeDdlaUVWQ0s2eCtWZFpBS1dVaUsxbFZo?=
- =?utf-8?B?bXRFRys2SUttd0tPbjFwc25zclVRdXd1RlFGSy9kQXkyTFVwYk94Zjh6S092?=
- =?utf-8?B?MlVaQU5yY1huL2xBUGNEais5MXVuL1NsZXdrZ2tFTnFTa1MvTXIrRklRRkRu?=
- =?utf-8?B?Q0pvUTBka3NhdDdKc2xoK2ZRSzRyL3V4NjNCN3pQcThKa2JOR0hxTUZQQlU3?=
- =?utf-8?B?YTlwTVpKWTRnLythU1VwYTh1cUdzWjhIZUhlS2hJSTA0Z1Y5clFnenBLTzZC?=
- =?utf-8?B?Wmwrc0xlYUNSVm5QVngrb3dKVGo2NkJhMnFaRElOcXNqSjA4SmVVOXhqNWlu?=
- =?utf-8?B?K1d5T0FGcG5oVWxPZElGazJPK1dVeUpQeWFZTDQ1Ym9qR1FnbzcwMDJqWjdn?=
- =?utf-8?B?V295ODFMa1NJbm12enVZZ01KMWNRMWJmQ2tKUkpBNmsyQVE3TXNsaG5tdGhh?=
- =?utf-8?B?dmp3dFI3dG8yam8vcXVEMHR0UGFiTFZ2YktEVVVuM2ZYV3JxVXNnL2hJaUsy?=
- =?utf-8?B?eDdKWFQ2ZndFZGlJQmpTMml5Mnlqc3dNTVVvaERUdnB3M2EwUXVEQ3Y3MnVF?=
- =?utf-8?B?K1kxVmdSSU5SWWdveU1DVC9QMkhZdklOTWo5REpZSEluc3AyalM4UEFwc3N6?=
- =?utf-8?B?dWlDOTBiWkRSVzljVCtMd2Y1MHlwQ3RIOXlqbHNLZlA3emp0WU5CYjZ3dVkz?=
- =?utf-8?B?dzdlWTQxKzFORWpqblExaDVGRW5yR0RLZnJJeWtlaFh5dUZwQkdBTDJPa1c5?=
- =?utf-8?B?c0RjcXdzSWtJRkhSQU12K0VVVWxaalJ6TU9uYm5oZ2ZrQWx5WHRiVzAxT3Jk?=
- =?utf-8?B?c1JMMG96MzFvcnNCcjg2UDN4dDAvbDRBMlpRcFoyVG9tS1NNVVZWakNZRFFH?=
- =?utf-8?B?eUkxQkwvQmRxZ25Oc0lvckF4ZGtRbTNQR3B2UXZPT2tTeWlxUFQ2WFNwM0s4?=
- =?utf-8?B?bEcyR01jZmhSaGJ6T045SzRzeFhDTUJzTmptbEY3QmtZYUpWMTEwRitTVlVQ?=
- =?utf-8?B?QStuVUhBZVVXQzNYWEllN2pReWZyMGlJbnNtWmhISlErQk1sR1AvY2dMTzlt?=
- =?utf-8?B?Y1phZTh2TWRxdU1LWURnV3krczAwZFp4bWZZQ080Qkx1U0FyRjRsb2I3MHVa?=
- =?utf-8?B?NDdUd3lSRDdVajJyc0xPaEJBL3NRRzVLVktndElFMnRQbXVibTJRaDVSU1Rm?=
- =?utf-8?B?UHczelZFZFFMeVJXbldLb1hjcEtjanRBVlhvdE1KQWlaQjR4OS9LYkZ2RjE4?=
- =?utf-8?B?b3BaQmVOZDRjekZPSlB6UkdKQjI0alhtZFJtOVV1WHhud0ZicWRVYWpxbkcr?=
- =?utf-8?B?NitDVDYrcEhPZFdsWUsrOWk0UHNXeUc1QnFtK2hYZWg4bUhEcS94ZS9MMG9x?=
- =?utf-8?B?UWlYY0NjZVUrODVVVXZsRTMxMzNnRG94SFp1T1ZraUlxRjRTNnZ5Zk9VcC9C?=
- =?utf-8?B?QXQyRFZLRGMyZDRFQVl0cHJnRFRpRGRTRytmRUtmYi9zS3U0Q3dpZEIxbEw2?=
- =?utf-8?B?NVc4b3dpeU1WQUY4LzdhL0o5TnBXYXBZR283R2lsaWpKV1ZBSjU0alU2UWVz?=
- =?utf-8?B?N1NwMlBkU09ESWJ3c014allTM2VicjFodGFLeWp3ODNDdHpRVC96WjZUNmpQ?=
- =?utf-8?Q?4PGSpZbe3xNj+Hu/RGwIO4WX8zFGQvAjtZoSg=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR12MB6938.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?eTVBSnpmUU04NEdFNWtWekkrbWoxZDRJQmNrd0t2TW9WZFNIMkFJTXhBc2JZ?=
- =?utf-8?B?TGZLVUU3amxGSnloalc1YXQrbW41N0FwUUl0azI5NlowdllUVXRDVFYzUUFl?=
- =?utf-8?B?QU5tZ01NbVFCR0wwZ3hJdDNHTFAwZmpNcEJXOXZ2dWZkTEpSdEcwa3JqeVZZ?=
- =?utf-8?B?QkR2UlhWZ0pwQVFJRFF0MXdhNDViM2JXalBEY1Myb1UwQU8zcUdyRlZydFBC?=
- =?utf-8?B?TjM1YnBPOEpYM05GR1plTXNtWGdHeXlaTjR4UFpEaVBkTytsN2FUQWNCU0VT?=
- =?utf-8?B?MVhLcWhVOWRKWmc4Q1YvZC9iWDhUSmh0bXgya0V1U0NGWHkya09xVmhZeCtu?=
- =?utf-8?B?YmZNZXpWQVovZ2RBY0hEQUpxNnpCbEphWlVaZWpuWUk3Ykt2REpHVDRVZmw2?=
- =?utf-8?B?OHIzOGRRcmVBb0VtSFI4c1lrb0RGOHlwbEdVc1M5M2VuaGludHNsREZlaFRq?=
- =?utf-8?B?MTdwZENkMVNQNEY4YXkrb2JlOEkxdmZGRDMyZXJLSUw5aEIyV3BZK3MvaDZV?=
- =?utf-8?B?YW9BNGwySDJVNU1iVHZIWG8wL3ZuaC84K01RMUNERFE0SFB4Z09CRFRoeWd0?=
- =?utf-8?B?Z2hwYWJwVmpqcmFOamhrNjBmeXNzRFI5OXlBR292aVoxNlFZaUVzVnpWMFFI?=
- =?utf-8?B?Vm5hNHlLN3pQci9UWVBHOWRYY055dHpWUlJ6WU96RzFHMzNxYmUrUXh4NGNS?=
- =?utf-8?B?ZEttekFwVjhMcDhnRC9SRStyakRGQndMREdtbHhOdVE3M1Jsd1pWajc5dzhZ?=
- =?utf-8?B?c3pPY3lBWUMzU0xCeDBiVWNyditHUG1GUHVrMmZ2UDZreFlJNjA3Sit3VEli?=
- =?utf-8?B?K0VCdVMzbEdOZ1BmV21URkUxUmkrdlV1eS9GOW5iZzhhVEY1dEpDRjhZM0ww?=
- =?utf-8?B?N0gyT0VINVBHdlg5NElEYytaOE1keDBvTVpGWDdxcm1KMllrM0N1cXkyVXFn?=
- =?utf-8?B?T1BVUmJBU2pBNEVud2NGckJ5K2lhWStSbXBMNDJmc2t0K2EzbDhzckROZlhR?=
- =?utf-8?B?UG9HT0Z4VmhJNTd0QzR2Y0lLZ1RxK3FBcnFudnNOSlVDZjBpNUFjQTdSeEsr?=
- =?utf-8?B?OGMyYlBDQXhYYUlCVCs5Y2JyZWdqZ2dhMEZqQ1FPOVVlampYdVZuZFRNTkFM?=
- =?utf-8?B?azR1ZTg5Uzk5U0kzSytrQm4rdkwrd2lnV1RMOUFUZWQ3Z1MzakU5RXRZeWtW?=
- =?utf-8?B?bmU4Rk9kOXZtM2pjR0xYa2k2ekxUcm9wSDJtNnMxSmw0d0gzbDVjOHMyRHNQ?=
- =?utf-8?B?eG1lUXdpcnQzNjhzSkJPcmVrVGFmelE4Yk11NHlrVHpuZGNoQWNhYVFTQWZO?=
- =?utf-8?B?ekltYVVCWit3WWxQU0xwKzh3Z1Y4R2c3Wm1Ld0pObWFZZmc3QU9HWVRKYWp2?=
- =?utf-8?B?eXNCTmt2ZTZXNHdybjlxQ1pDZTRod2FtdlpRMjAxZkRMQndIS0lyYXhRZldW?=
- =?utf-8?B?S3lwS3ZmV2dUU0RSZ1hSWDhPUGxONTBLbzZKRjB0akVORktqWDVNOGVzNWdB?=
- =?utf-8?B?aFdaNXZTeUFqWlF5ZXBFVVl6R2Z1aTdnZUI5L3FGNml5ODRnd2RhZzU4UnFG?=
- =?utf-8?B?TWNJTHV3c0VseWNScVgvZXl4OCtnam84R0VhRS9hSkVBcXRWbnhpUmU0Mm1Z?=
- =?utf-8?B?YWErRmFtRm5uUWtOSmZHR3l1OEVLWnRtK2w3bEJFd0tmRitwbk43QlVyVmdm?=
- =?utf-8?B?eklWT0V2VTVKdEw1d2hqNk1TcGZkNnlKeXVjek1MYW12eGh1anQ0WVVpdk1u?=
- =?utf-8?B?UVFwTEQ0cWlSNmpnRytvd1B3U1NDZGNoOE5kSXgxODJEMFNnTkFZVU9TRjU3?=
- =?utf-8?B?a1lkVEhXeS8vQjlOOWF1ZDBDT3hUWlRtc3cwYmhZNU0vOFA4amJmZFdKeWZC?=
- =?utf-8?B?RU00L2J4NWRCNXBCUFh1Y2JuaXNRS1djWEYra1oxZ2RoWjNWWnRqajdnbHN1?=
- =?utf-8?B?VERLdFd0ekZ3QXNwRkR5VXZEaXBVa1g2VnFLdGtMZ3lHNEpOWjRIYmJjNVYz?=
- =?utf-8?B?UEljbjNRZU5WcDZROGorendxTGI0L0JHMEZtdWg3MDlpeWdkZTNqbjNKUVd0?=
- =?utf-8?B?UEVDZjE3UTUyejhLVmlIblYzeks1TnUwemZ2M05JaUpRVlJLb3FHRGZiVHcx?=
- =?utf-8?Q?u/7hYghNQqOvOEhfoUw6+WOQ/?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <F3B0E46A84C71F4C83C18CD15E7BA5AB@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9949517C224
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 10:16:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731925004; cv=none; b=ioKscTX0u2Ib6PXE2bJuFV77ridvMbZ8BfyCdIRv9zHBaI+lSFQjn0ker2UdbohLdzrRJo/JQrucpBK+q6Woc2rgrQK8aGDn1kKMOH+Xh+7WQdYD2x1tSVcn3h40notWi2ibWx6aF/0qmnn2Yq8A+4RC6A3m3nUNl0KHQf8njag=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731925004; c=relaxed/simple;
+	bh=VfjBuO2EVgO3uYHnyTCW8puoidomQ+oBPm3Fp9ubau8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZzZuMQttwKog45h85pCpszeI9md6NW42W2BntFtFsZEeUdSc0SGNYcAXNK4TfQERCFWDE9PC2WHnTUdjfxIzUnrncsD4q3lnVxdTii3Chi+9XZrqbhX5wUYixPSGbFuVQMbrh2Z4muNfplyCHf2D1Ck7f2GvwO5dmJdw+PjEoRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=BIKbbPtx; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-20cb47387ceso39611955ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 02:16:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1731925002; x=1732529802; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7Y2TA9eGVB7H88xAHF+/6WLIDqt1ULw8AsQKOOSLgoU=;
+        b=BIKbbPtxK4m6Reu48xWdkPHobpxL36WAq+/F/Cz9n+KZ7WRr4gVvs3TYmoPBRrQF5G
+         a+tBENSbOhulbvM15JFW1JqzpGBQMHzGPigASAWPLQ1utto8S9ut3RRze5suaeMq25oR
+         mvQ28fu66zdeJzAwQvnDacpkoPhAZjExIQqn23e7mJHw6a6hOMRWCV7NFb2K1IXbgyCc
+         5am4PP0UJIZxKk89nDQRU19Gx/t1GsFYxpiUZuhtq7fxhjhzWfQIlDUNFVPm6jo45epD
+         /er5CuBjCW3spKObJaJ+/vFRswormEq3hzWWPEAL6Q/M6Nqnx+wzmNOAw253+ZoriwEn
+         9/Aw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731925002; x=1732529802;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7Y2TA9eGVB7H88xAHF+/6WLIDqt1ULw8AsQKOOSLgoU=;
+        b=oAw80gKgpj3NZdPz1eg230uiCtWdIHfXSZ8tjJVQL1llKx+7xPoQ9Sge6f+ZqGxoFr
+         a3Fq7ktkkPXXmbm5gZYzRpuESiFL4qdDj9rcFM8FBD/+rX+K/cEUpf63Q4E8ajQ9nfDf
+         YVlDK6X03TmADVdKKcfhSNU5SiBYWgI+q+9W41VnPF38ij0PvCRnsjolZCG7U4iM+LB3
+         buYXcsIu1RBIUwkbFspjsFUu4Yy4wmGgX4rlepQBA7jqlf+Fg9w860BYLDt5aYLdXnL3
+         lOzItcYqB/Uefa+8xqTrWTqvj470jyvrldX1TjUL8u/BsAoSN7h+vk1shxL4sPsfXpJq
+         9stw==
+X-Forwarded-Encrypted: i=1; AJvYcCVFX9mTfPsTndcM8nKLQ7fIY4xX5+IsSiVfMlKSIhKELFHSW16fqHlyEjQZ5ndrzEVBk0D1poKXvJUaxDE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYrTfPB5ifHr5KZjRQgd5KX6p0zJbzrBltVTHIL775ijWLnEWz
+	bytjAPYFU6U+T3nZRPFdAFG6G/mp4V9FHRGYS+mG94eUC09MGxzw+6Cod5tvh6nzpLgoyTYBa7j
+	U38M=
+X-Google-Smtp-Source: AGHT+IHcDDMXQ+RIcoRMeDxDq+QAN0o5h5dEoM1KsPEjD5+nTAvM3j/SJMUxbOyx+Yp3fqbRRh61Rg==
+X-Received: by 2002:a17:902:d4ce:b0:20d:cb6:11e with SMTP id d9443c01a7336-211d0d83bdcmr146953755ad.26.1731925001841;
+        Mon, 18 Nov 2024 02:16:41 -0800 (PST)
+Received: from tianci-mac.bytedance.net ([61.213.176.7])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211d0f35143sm52934985ad.148.2024.11.18.02.16.39
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Mon, 18 Nov 2024 02:16:41 -0800 (PST)
+From: Zhang Tianci <zhangtianci.1997@bytedance.com>
+To: miklos@szeredi.hu
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	xieyongji@bytedance.com,
+	Zhang Tianci <zhangtianci.1997@bytedance.com>,
+	Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>
+Subject: [PATCH v2] fuse: check attributes staleness on fuse_iget()
+Date: Mon, 18 Nov 2024 18:16:00 +0800
+Message-ID: <20241118101600.21710-1-zhangtianci.1997@bytedance.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PH8PR12MB6938.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c1d542af-e86e-4bfd-7bf3-08dd07b9fdb2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Nov 2024 10:15:56.2887
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: d9NBkwKP562h0vwV1V/gM4o8VbDKk5LBzHnVZxi4zrWmdeY4mnInclqEOgQnjupHz6jGeNkETJmUedK+nhwY2w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB6986
+Content-Transfer-Encoding: 8bit
 
-T24gRnJpLCAyMDI0LTExLTE1IGF0IDEwOjEwIC0wODAwLCBKb3NoIFBvaW1ib2V1ZiB3cm90ZToN
-Cj4gT24gRnJpLCBOb3YgMTUsIDIwMjQgYXQgMDk6NTA6NDdBTSAtMDgwMCwgUGF3YW4gR3VwdGEg
-d3JvdGU6DQo+ID4gVGhpcyBMR1RNLg0KPiA+IA0KPiA+IEkgdGhpbmsgU1BFQ1RSRV9WMl9FSUJS
-U19SRVRQT0xJTkUgaXMgcGxhY2VkIGluIHRoZSB3cm9uZyBsZWcsIGl0DQo+ID4gZG9lc24ndCBu
-ZWVkIFJTQiBmaWxsaW5nIG9uIGNvbnRleHQgc3dpdGNoLCBhbmQgb25seSBuZWVkcw0KPiA+IFZN
-RVhJVF9MSVRFLg0KPiA+IERvZXMgYmVsb3cgY2hhbmdlIG9uIHRvcCBvZiB5b3VyIHBhdGNoIGxv
-b2sgb2theT8NCj4gDQo+IFllYWgsIEkgd2FzIHdvbmRlcmluZyBhYm91dCB0aGF0IHRvby7CoCBT
-aW5jZSBpdCBjaGFuZ2VzIGV4aXN0aW5nDQo+IFZNRVhJVF9MSVRFIGJlaGF2aW9yIEknbGwgbWFr
-ZSBpdCBhIHNlcGFyYXRlIHBhdGNoLsKgIEFuZCBJJ2xsDQo+IHByb2JhYmx5DQo+IGRvIHRoZSBj
-b21tZW50IGNoYW5nZXMgaW4gYSBzZXBhcmF0ZSBwYXRjaCBhcyB3ZWxsLg0KDQpTbyBhbGwgb2Yg
-dGhhdCBsb29rcyBnb29kIHRvIG1lIGFzIHdlbGwuICBJIHRoaW5rIGEgc3RhbmRhbG9uZSBzZXJp
-ZXMNCm1ha2VzIHNlbnNlIC0gbWF5YmUgZXZlbiBmb3IgNi4xMy4gIEknbGwgYmFzZSBteSBwYXRj
-aGVzIG9uIHRvcCBvZg0KeW91cnMuDQoNClRoYW5rcyENCg0KCQlBbWl0DQo=
+Function fuse_direntplus_link() might call fuse_iget() to initialize a new
+fuse_inode and change its attributes. If fi->attr_version is always
+initialized with 0, even if the attributes returned by the FUSE_READDIR
+request is staled, as the new fi->attr_version is 0, fuse_change_attributes
+will still set the staled attributes to inode. This wrong behaviour may
+cause file size inconsistency even when there is no changes from
+server-side.
+
+To reproduce the issue, consider the following 2 programs (A and B) are
+running concurrently,
+
+        A                                               B
+----------------------------------      --------------------------------
+{ /fusemnt/dir/f is a file path in a fuse mount, the size of f is 0. }
+
+readdir(/fusemnt/dir) start
+//Daemon set size 0 to f direntry
+                                        fallocate(f, 1024)
+                                        stat(f) // B see size 1024
+                                        echo 2 > /proc/sys/vm/drop_caches
+readdir(/fusemnt/dir) reply to kernel
+Kernel set 0 to the I_NEW inode
+
+                                        stat(f) // B see size 0
+
+In the above case, only program B is modifying the file size, however, B
+observes file size changing between the 2 'readonly' stat() calls. To fix
+this issue, we should make sure readdirplus still follows the rule of
+attr_version staleness checking even if the fi->attr_version is lost due to
+inode eviction.
+
+To identify this situation, the new fc->evict_ctr is used to record whether
+the eviction of inodes occurs during the readdirplus request processing.
+If it does, the result of readdirplus may be inaccurate; otherwise, the
+result of readdirplus can be trusted. Although this may still lead to
+incorrect invalidation, considering the relatively low frequency of
+evict occurrences, it should be acceptable.
+
+Link: https://lore.kernel.org/lkml/20230711043405.66256-2-zhangjiachen.jaycee@bytedance.com/
+Link: https://lore.kernel.org/lkml/20241114070905.48901-1-zhangtianci.1997@bytedance.com/
+
+Reported-by: Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>
+Suggested-by: Miklos Szeredi <miklos@szeredi.hu>
+Signed-off-by: Miklos Szeredi <miklos@szeredi.hu>
+Signed-off-by: Zhang Tianci <zhangtianci.1997@bytedance.com>
+---
+ fs/fuse/dir.c     | 11 +++++-----
+ fs/fuse/fuse_i.h  | 14 ++++++++++--
+ fs/fuse/inode.c   | 56 +++++++++++++++++++++++++++++++++++++----------
+ fs/fuse/readdir.c | 15 ++++++++-----
+ 4 files changed, 71 insertions(+), 25 deletions(-)
+
+diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+index 54104dd48af7c..59be2877786f2 100644
+--- a/fs/fuse/dir.c
++++ b/fs/fuse/dir.c
+@@ -366,7 +366,7 @@ int fuse_lookup_name(struct super_block *sb, u64 nodeid, const struct qstr *name
+ 	struct fuse_mount *fm = get_fuse_mount_super(sb);
+ 	FUSE_ARGS(args);
+ 	struct fuse_forget_link *forget;
+-	u64 attr_version;
++	u64 attr_version, evict_ctr;
+ 	int err;
+ 
+ 	*inode = NULL;
+@@ -381,6 +381,7 @@ int fuse_lookup_name(struct super_block *sb, u64 nodeid, const struct qstr *name
+ 		goto out;
+ 
+ 	attr_version = fuse_get_attr_version(fm->fc);
++	evict_ctr = fuse_get_evict_ctr(fm->fc);
+ 
+ 	fuse_lookup_init(fm->fc, &args, nodeid, name, outarg);
+ 	err = fuse_simple_request(fm, &args);
+@@ -398,7 +399,7 @@ int fuse_lookup_name(struct super_block *sb, u64 nodeid, const struct qstr *name
+ 
+ 	*inode = fuse_iget(sb, outarg->nodeid, outarg->generation,
+ 			   &outarg->attr, ATTR_TIMEOUT(outarg),
+-			   attr_version);
++			   attr_version, evict_ctr);
+ 	err = -ENOMEM;
+ 	if (!*inode) {
+ 		fuse_queue_forget(fm->fc, forget, outarg->nodeid, 1);
+@@ -691,7 +692,7 @@ static int fuse_create_open(struct mnt_idmap *idmap, struct inode *dir,
+ 	ff->nodeid = outentry.nodeid;
+ 	ff->open_flags = outopenp->open_flags;
+ 	inode = fuse_iget(dir->i_sb, outentry.nodeid, outentry.generation,
+-			  &outentry.attr, ATTR_TIMEOUT(&outentry), 0);
++			  &outentry.attr, ATTR_TIMEOUT(&outentry), 0, 0);
+ 	if (!inode) {
+ 		flags &= ~(O_CREAT | O_EXCL | O_TRUNC);
+ 		fuse_sync_release(NULL, ff, flags);
+@@ -822,7 +823,7 @@ static int create_new_entry(struct mnt_idmap *idmap, struct fuse_mount *fm,
+ 		goto out_put_forget_req;
+ 
+ 	inode = fuse_iget(dir->i_sb, outarg.nodeid, outarg.generation,
+-			  &outarg.attr, ATTR_TIMEOUT(&outarg), 0);
++			  &outarg.attr, ATTR_TIMEOUT(&outarg), 0, 0);
+ 	if (!inode) {
+ 		fuse_queue_forget(fm->fc, forget, outarg.nodeid, 1);
+ 		return -ENOMEM;
+@@ -2028,7 +2029,7 @@ int fuse_do_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
+ 
+ 	fuse_change_attributes_common(inode, &outarg.attr, NULL,
+ 				      ATTR_TIMEOUT(&outarg),
+-				      fuse_get_cache_mask(inode));
++				      fuse_get_cache_mask(inode), 0);
+ 	oldsize = inode->i_size;
+ 	/* see the comment in fuse_change_attributes() */
+ 	if (!is_wb || is_truncate)
+diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+index e6cc3d552b138..a98fb243b9130 100644
+--- a/fs/fuse/fuse_i.h
++++ b/fs/fuse/fuse_i.h
+@@ -884,6 +884,9 @@ struct fuse_conn {
+ 	/** Version counter for attribute changes */
+ 	atomic64_t attr_version;
+ 
++	/** Version counter for evict inode */
++	atomic64_t evict_ctr;
++
+ 	/** Called on final put */
+ 	void (*release)(struct fuse_conn *);
+ 
+@@ -978,6 +981,11 @@ static inline u64 fuse_get_attr_version(struct fuse_conn *fc)
+ 	return atomic64_read(&fc->attr_version);
+ }
+ 
++static inline u64 fuse_get_evict_ctr(struct fuse_conn *fc)
++{
++	return atomic64_read(&fc->evict_ctr);
++}
++
+ static inline bool fuse_stale_inode(const struct inode *inode, int generation,
+ 				    struct fuse_attr *attr)
+ {
+@@ -1037,7 +1045,8 @@ extern const struct dentry_operations fuse_root_dentry_operations;
+  */
+ struct inode *fuse_iget(struct super_block *sb, u64 nodeid,
+ 			int generation, struct fuse_attr *attr,
+-			u64 attr_valid, u64 attr_version);
++			u64 attr_valid, u64 attr_version,
++			u64 evict_ctr);
+ 
+ int fuse_lookup_name(struct super_block *sb, u64 nodeid, const struct qstr *name,
+ 		     struct fuse_entry_out *outarg, struct inode **inode);
+@@ -1127,7 +1136,8 @@ void fuse_change_attributes(struct inode *inode, struct fuse_attr *attr,
+ 
+ void fuse_change_attributes_common(struct inode *inode, struct fuse_attr *attr,
+ 				   struct fuse_statx *sx,
+-				   u64 attr_valid, u32 cache_mask);
++				   u64 attr_valid, u32 cache_mask,
++				   u64 evict_ctr);
+ 
+ u32 fuse_get_cache_mask(struct inode *inode);
+ 
+diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+index fd3321e29a3e5..f9b292c1cc7e5 100644
+--- a/fs/fuse/inode.c
++++ b/fs/fuse/inode.c
+@@ -173,6 +173,14 @@ static void fuse_evict_inode(struct inode *inode)
+ 			fuse_cleanup_submount_lookup(fc, fi->submount_lookup);
+ 			fi->submount_lookup = NULL;
+ 		}
++		/*
++		 * Evict of non-deleted inode may race with outstanding
++		 * LOOKUP/READDIRPLUS requests and result in inconsistency when
++		 * the request finishes.  Deal with that here by bumping a
++		 * counter that can be compared to the starting value.
++		 */
++		if (inode->i_nlink > 0)
++			atomic64_inc(&fc->evict_ctr);
+ 	}
+ 	if (S_ISREG(inode->i_mode) && !fuse_is_bad(inode)) {
+ 		WARN_ON(fi->iocachectr != 0);
+@@ -206,17 +214,30 @@ static ino_t fuse_squash_ino(u64 ino64)
+ 
+ void fuse_change_attributes_common(struct inode *inode, struct fuse_attr *attr,
+ 				   struct fuse_statx *sx,
+-				   u64 attr_valid, u32 cache_mask)
++				   u64 attr_valid, u32 cache_mask,
++				   u64 evict_ctr)
+ {
+ 	struct fuse_conn *fc = get_fuse_conn(inode);
+ 	struct fuse_inode *fi = get_fuse_inode(inode);
+ 
+ 	lockdep_assert_held(&fi->lock);
+ 
++	/*
++	 * Clear basic stats from invalid mask.
++	 *
++	 * Don't do this if this is coming from a fuse_iget() call and there
++	 * might have been a racing evict which would've invalidated the result
++	 * if the attr_version would've been preserved.
++	 *
++	 * !evict_ctr -> this is create
++	 * fi->attr_version != 0 -> this is not a new inode
++	 * evict_ctr == fuse_get_evict_ctr() -> no evicts while during request
++	 */
++	if (!evict_ctr || fi->attr_version || evict_ctr == fuse_get_evict_ctr(fc))
++		set_mask_bits(&fi->inval_mask, STATX_BASIC_STATS, 0);
++
+ 	fi->attr_version = atomic64_inc_return(&fc->attr_version);
+ 	fi->i_time = attr_valid;
+-	/* Clear basic stats from invalid mask */
+-	set_mask_bits(&fi->inval_mask, STATX_BASIC_STATS, 0);
+ 
+ 	inode->i_ino     = fuse_squash_ino(attr->ino);
+ 	inode->i_mode    = (inode->i_mode & S_IFMT) | (attr->mode & 07777);
+@@ -295,9 +316,9 @@ u32 fuse_get_cache_mask(struct inode *inode)
+ 	return STATX_MTIME | STATX_CTIME | STATX_SIZE;
+ }
+ 
+-void fuse_change_attributes(struct inode *inode, struct fuse_attr *attr,
+-			    struct fuse_statx *sx,
+-			    u64 attr_valid, u64 attr_version)
++static void fuse_change_attributes_i(struct inode *inode, struct fuse_attr *attr,
++				     struct fuse_statx *sx, u64 attr_valid,
++				     u64 attr_version, u64 evict_ctr)
+ {
+ 	struct fuse_conn *fc = get_fuse_conn(inode);
+ 	struct fuse_inode *fi = get_fuse_inode(inode);
+@@ -331,7 +352,8 @@ void fuse_change_attributes(struct inode *inode, struct fuse_attr *attr,
+ 	}
+ 
+ 	old_mtime = inode_get_mtime(inode);
+-	fuse_change_attributes_common(inode, attr, sx, attr_valid, cache_mask);
++	fuse_change_attributes_common(inode, attr, sx, attr_valid, cache_mask,
++				      evict_ctr);
+ 
+ 	oldsize = inode->i_size;
+ 	/*
+@@ -372,6 +394,13 @@ void fuse_change_attributes(struct inode *inode, struct fuse_attr *attr,
+ 		fuse_dax_dontcache(inode, attr->flags);
+ }
+ 
++void fuse_change_attributes(struct inode *inode, struct fuse_attr *attr,
++			    struct fuse_statx *sx, u64 attr_valid,
++			    u64 attr_version)
++{
++	fuse_change_attributes_i(inode, attr, sx, attr_valid, attr_version, 0);
++}
++
+ static void fuse_init_submount_lookup(struct fuse_submount_lookup *sl,
+ 				      u64 nodeid)
+ {
+@@ -426,7 +455,8 @@ static int fuse_inode_set(struct inode *inode, void *_nodeidp)
+ 
+ struct inode *fuse_iget(struct super_block *sb, u64 nodeid,
+ 			int generation, struct fuse_attr *attr,
+-			u64 attr_valid, u64 attr_version)
++			u64 attr_valid, u64 attr_version,
++			u64 evict_ctr)
+ {
+ 	struct inode *inode;
+ 	struct fuse_inode *fi;
+@@ -487,8 +517,8 @@ struct inode *fuse_iget(struct super_block *sb, u64 nodeid,
+ 	fi->nlookup++;
+ 	spin_unlock(&fi->lock);
+ done:
+-	fuse_change_attributes(inode, attr, NULL, attr_valid, attr_version);
+-
++	fuse_change_attributes_i(inode, attr, NULL, attr_valid, attr_version,
++				 evict_ctr);
+ 	return inode;
+ }
+ 
+@@ -940,6 +970,7 @@ void fuse_conn_init(struct fuse_conn *fc, struct fuse_mount *fm,
+ 	fc->initialized = 0;
+ 	fc->connected = 1;
+ 	atomic64_set(&fc->attr_version, 1);
++	atomic64_set(&fc->evict_ctr, 1);
+ 	get_random_bytes(&fc->scramble_key, sizeof(fc->scramble_key));
+ 	fc->pid_ns = get_pid_ns(task_active_pid_ns(current));
+ 	fc->user_ns = get_user_ns(user_ns);
+@@ -1001,7 +1032,7 @@ static struct inode *fuse_get_root_inode(struct super_block *sb, unsigned mode)
+ 	attr.mode = mode;
+ 	attr.ino = FUSE_ROOT_ID;
+ 	attr.nlink = 1;
+-	return fuse_iget(sb, FUSE_ROOT_ID, 0, &attr, 0, 0);
++	return fuse_iget(sb, FUSE_ROOT_ID, 0, &attr, 0, 0, 0);
+ }
+ 
+ struct fuse_inode_handle {
+@@ -1610,7 +1641,8 @@ static int fuse_fill_super_submount(struct super_block *sb,
+ 		return -ENOMEM;
+ 
+ 	fuse_fill_attr_from_inode(&root_attr, parent_fi);
+-	root = fuse_iget(sb, parent_fi->nodeid, 0, &root_attr, 0, 0);
++	root = fuse_iget(sb, parent_fi->nodeid, 0, &root_attr, 0, 0,
++			 fuse_get_evict_ctr(fm->fc));
+ 	/*
+ 	 * This inode is just a duplicate, so it is not looked up and
+ 	 * its nlookup should not be incremented.  fuse_iget() does
+diff --git a/fs/fuse/readdir.c b/fs/fuse/readdir.c
+index 0377b6dc24c80..ceb5aefd6012f 100644
+--- a/fs/fuse/readdir.c
++++ b/fs/fuse/readdir.c
+@@ -149,7 +149,7 @@ static int parse_dirfile(char *buf, size_t nbytes, struct file *file,
+ 
+ static int fuse_direntplus_link(struct file *file,
+ 				struct fuse_direntplus *direntplus,
+-				u64 attr_version)
++				u64 attr_version, u64 evict_ctr)
+ {
+ 	struct fuse_entry_out *o = &direntplus->entry_out;
+ 	struct fuse_dirent *dirent = &direntplus->dirent;
+@@ -233,7 +233,7 @@ static int fuse_direntplus_link(struct file *file,
+ 	} else {
+ 		inode = fuse_iget(dir->i_sb, o->nodeid, o->generation,
+ 				  &o->attr, ATTR_TIMEOUT(o),
+-				  attr_version);
++				  attr_version, evict_ctr);
+ 		if (!inode)
+ 			inode = ERR_PTR(-ENOMEM);
+ 
+@@ -284,7 +284,8 @@ static void fuse_force_forget(struct file *file, u64 nodeid)
+ }
+ 
+ static int parse_dirplusfile(char *buf, size_t nbytes, struct file *file,
+-			     struct dir_context *ctx, u64 attr_version)
++			     struct dir_context *ctx, u64 attr_version,
++			     u64 evict_ctr)
+ {
+ 	struct fuse_direntplus *direntplus;
+ 	struct fuse_dirent *dirent;
+@@ -319,7 +320,7 @@ static int parse_dirplusfile(char *buf, size_t nbytes, struct file *file,
+ 		buf += reclen;
+ 		nbytes -= reclen;
+ 
+-		ret = fuse_direntplus_link(file, direntplus, attr_version);
++		ret = fuse_direntplus_link(file, direntplus, attr_version, evict_ctr);
+ 		if (ret)
+ 			fuse_force_forget(file, direntplus->entry_out.nodeid);
+ 	}
+@@ -337,7 +338,7 @@ static int fuse_readdir_uncached(struct file *file, struct dir_context *ctx)
+ 	struct fuse_io_args ia = {};
+ 	struct fuse_args_pages *ap = &ia.ap;
+ 	struct fuse_page_desc desc = { .length = PAGE_SIZE };
+-	u64 attr_version = 0;
++	u64 attr_version = 0, evict_ctr = 0;
+ 	bool locked;
+ 
+ 	page = alloc_page(GFP_KERNEL);
+@@ -351,6 +352,7 @@ static int fuse_readdir_uncached(struct file *file, struct dir_context *ctx)
+ 	ap->descs = &desc;
+ 	if (plus) {
+ 		attr_version = fuse_get_attr_version(fm->fc);
++		evict_ctr = fuse_get_evict_ctr(fm->fc);
+ 		fuse_read_args_fill(&ia, file, ctx->pos, PAGE_SIZE,
+ 				    FUSE_READDIRPLUS);
+ 	} else {
+@@ -368,7 +370,8 @@ static int fuse_readdir_uncached(struct file *file, struct dir_context *ctx)
+ 				fuse_readdir_cache_end(file, ctx->pos);
+ 		} else if (plus) {
+ 			res = parse_dirplusfile(page_address(page), res,
+-						file, ctx, attr_version);
++						file, ctx, attr_version,
++						evict_ctr);
+ 		} else {
+ 			res = parse_dirfile(page_address(page), res, file,
+ 					    ctx);
+-- 
+2.46.0.rc2
+
 
