@@ -1,117 +1,110 @@
-Return-Path: <linux-kernel+bounces-412604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52C469D0B4B
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 09:57:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BEE79D0B46
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 09:57:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E905E2827C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 08:57:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42B621F22CAA
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 08:57:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E645186E2E;
-	Mon, 18 Nov 2024 08:57:46 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81A69185B62;
+	Mon, 18 Nov 2024 08:56:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=gaisler.com header.i=@gaisler.com header.b="kKJM8VXZ"
+Received: from smtp-out3.simply.com (smtp-out3.simply.com [94.231.106.210])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A32681714DF
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 08:57:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E486E1547E8;
+	Mon, 18 Nov 2024 08:56:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.231.106.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731920265; cv=none; b=bu82MDgNGUkZRPlpMd9qUllFJV0CgAZrzxI62XvwgltIT3uF5n2pSiW75PEri/dB/stMj41EBwfCMelbTqd9cKvvVRLSyoPo43Mw6MfOMuroVdhI8QV4r2tRmtarizbAeZAcM1pIcy9GXj0pVu3OceQ6DMt+WcReEuX26N8A3vY=
+	t=1731920218; cv=none; b=sjSM+b63zY8P2W8Y2tLwZc03Pg+NfbWnHTxj4CJHqYRQXeqOoA35LyfE153y/KXXwNs0CSDEWmZsmKRBmMAJbuSb8tAiWFV85Jx4Igw1at7LtwhD0xD49HXtDQL+cWCpYz4u4gaR79Taz5e1zEdSAuuF0Ef47wqQEXYbDr/ocaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731920265; c=relaxed/simple;
-	bh=pd0vV6YrjI+3YN9U+/SNmqU/0Mvbed6i2C/mZN+9+E8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gliFOk/McCXOtGEg1J7ys67geQg3XnLJjp9GBK1jZEDP+X4Lmf1kx59mPGg5VYUHgGWZ3fcoIsoUpBS5XigLGmxoWgd5s1AlpiPuJW4It1uQG+YP5AQO+yO5XIl1TJJc07cdp2ftl7dlrzAJ3TQSM9t0BdBNsUjq96pXT2ZWfXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1tCxZY-0001PD-DS; Mon, 18 Nov 2024 09:57:28 +0100
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1tCxZW-001MYc-0f;
-	Mon, 18 Nov 2024 09:57:26 +0100
-Received: from pengutronix.de (pd9e59fec.dip0.t-ipconnect.de [217.229.159.236])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	s=arc-20240116; t=1731920218; c=relaxed/simple;
+	bh=2U7wGQ9m2NCDWn7AGB2gkQ9TsQ3ZFz7HnNSljH6wIwg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=L6UO2gArWw08Nzs9FG4dKuC6gdSrgfkVuvHIJaZFtbuP4MD1WMwXBrRwPvzfpjh8Nvhv9tEHMrgVj0WB//FpcqcUXR7/SsipRL3Wk1NrLiw1dCir7KVTKndL6BpRx/dJUzPuC0iU2UGwAy7xjvxTxCkMGpMJY/iowDVK8i6MjA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com; spf=pass smtp.mailfrom=gaisler.com; dkim=pass (1024-bit key) header.d=gaisler.com header.i=@gaisler.com header.b=kKJM8VXZ; arc=none smtp.client-ip=94.231.106.210
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gaisler.com
+Received: from localhost (localhost [127.0.0.1])
+	by smtp.simply.com (Simply.com) with ESMTP id 4XsM1n5qNPz1DHYn;
+	Mon, 18 Nov 2024 09:56:45 +0100 (CET)
+Received: from [10.10.15.6] (h-98-128-223-123.NA.cust.bahnhof.se [98.128.223.123])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 529B0375F45;
-	Mon, 18 Nov 2024 08:55:32 +0000 (UTC)
-Date: Mon, 18 Nov 2024 09:55:32 +0100
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Sean Nyekjaer <sean@geanix.com>
-Cc: Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-can@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH can-next v5 0/2] can: tcan4x5x: add option for selecting
- nWKRQ voltage
-Message-ID: <20241118-horned-beautiful-finch-db5770-mkl@pengutronix.de>
-References: <20241114-tcan-wkrqv-v5-0-a2d50833ed71@geanix.com>
+	by smtp.simply.com (Simply.com) with ESMTPSA id 4XsM1n1wZ8z1DHYt;
+	Mon, 18 Nov 2024 09:56:45 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gaisler.com;
+	s=unoeuro; t=1731920205;
+	bh=AZ2xmScEhh4sMIaYAomJrulPARaT80ep1DcAlgorYws=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=kKJM8VXZPx50OpbtfTmKJO0DWFKcfv+7yMhBeib4mYxufmI8oe3r8lJ43S1xkLIDF
+	 ljYmQWSy5DwsrIvoC5oECW/Z3oZA2941zGc7gj8ADOXSU0HVrGsU6OiN6K0I1BPvlM
+	 t3sX5DzjgZndl7RxnxTjm+4E6gWKOOop3PozEj9Q=
+Message-ID: <0963a508-6014-43e4-b64c-89b09538b68e@gaisler.com>
+Date: Mon, 18 Nov 2024 09:56:44 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ef4k4v6jgw3outty"
-Content-Disposition: inline
-In-Reply-To: <20241114-tcan-wkrqv-v5-0-a2d50833ed71@geanix.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] sparc/vdso: Add helper function for 64-bit right shift
+ on 32-bit target
+To: Koakuma <koachan@protonmail.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Andy Lutomirski
+ <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Vincenzo Frascino <vincenzo.frascino@arm.com>,
+ Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
+ <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+ sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org,
+ llvm@lists.linux.dev
+References: <20240808-sparc-shr64-v2-1-fd18f1b2cea9@protonmail.com>
+ <1b2e776e-0ae3-4f48-a2b9-99b486d49368@gaisler.com>
+ <gecz9pMRccdD2v_dImhonTGStG4FmiUko8IM2fkc9Rh2thw_QuSOvlsYTspZSf9bjtidQOD2uVL2aSaQ29-neWABRm1cpyXQr6xV0wELTU0=@protonmail.com>
+Content-Language: en-US
+From: Andreas Larsson <andreas@gaisler.com>
+In-Reply-To: <gecz9pMRccdD2v_dImhonTGStG4FmiUko8IM2fkc9Rh2thw_QuSOvlsYTspZSf9bjtidQOD2uVL2aSaQ29-neWABRm1cpyXQr6xV0wELTU0=@protonmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 2024-11-17 00:44, Koakuma wrote:
+> Andreas Larsson <andreas@gaisler.com> wrote:
+>> Koakuma via B4 Relay wrote:
+>>> +notrace static __always_inline u64 __shr64(u64 val, int amt)
+>>> +{
+>>> + u64 ret;
+>>> +
+>>> + asm volatile("sllx %H1, 32, %%g1\n\t"
+>>> + "srl %L1, 0, %L1\n\t"
+>>> + "or %%g1, %L1, %%g1\n\t"
+>>> + "srlx %%g1, %2, %L0\n\t"
+>>> + "srlx %L0, 32, %H0"
+>>> + : "=r" (ret)
+>>> + : "r" (val), "r" (amt)
+>>> + : "g1");
+>>> + return ret;
+>>> +}
+>>
+>> Can not residual in bits 63:32 of %L0 potentially pose a problem?
+> 
+> It shouldn't be a problem, upon returning the caller should treat
+> the upper bits of %L0 as an unspecified value and not depend on/use
+> its contents.
 
---ef4k4v6jgw3outty
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH can-next v5 0/2] can: tcan4x5x: add option for selecting
- nWKRQ voltage
-MIME-Version: 1.0
+Yes, of course. Lapse of logic on my part.
 
-On 14.11.2024 10:14:48, Sean Nyekjaer wrote:
-> This series adds support for setting the nWKRQ voltage.
->=20
-> Signed-off-by: Sean Nyekjaer <sean@geanix.com>
+Reviewed-by: Andreas Larsson <andreas@gaisler.com>
 
-Applied to linux-can-next.
+Picking this up to my for-next.
 
 Thanks,
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---ef4k4v6jgw3outty
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmc7AQEACgkQKDiiPnot
-vG/Jnwf+IKkLE3rizG6Qj6BPTfBWTmEaePsRJxFn2dCItaRyYi/bfnNydXTIEuh7
-Z4lbHefEAjLp1pqTfPOwtfxdXjabd3ocvswOeRaMr1Zv2A/VZ2JRqeOtg3nYd97E
-4khcEkwQXR0bWb4Fch+lwkKldvNOTxSY/QUC9eCN0hvJ5aeVCjxC35UykuJ8HN/j
-DF8l/vesXXO2RhXpxMF6nrr86LuGV+S6pHQvNPvmJ0whBOdmIraMnTRsyftnrNIQ
-GQFUGxRNyVbmpcP4pOzPIc2vwAFHK4xG5HRVh/Xisa9XeKkFhjd8U9B+y4gPL16o
-mrYYnEb+I+0c/xBAY5yV0bnRIh3Ayg==
-=BsHD
------END PGP SIGNATURE-----
-
---ef4k4v6jgw3outty--
+Andreas
 
