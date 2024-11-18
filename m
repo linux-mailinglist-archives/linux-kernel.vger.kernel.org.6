@@ -1,106 +1,191 @@
-Return-Path: <linux-kernel+bounces-413169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 189879D1487
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 16:36:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CC7D9D148D
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 16:36:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C75021F22B28
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 15:36:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0ADED282A67
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 15:36:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6CAA1C1AB3;
-	Mon, 18 Nov 2024 15:34:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A41B1B6D0D;
+	Mon, 18 Nov 2024 15:36:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4AggMtFd"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="fU5Svm76"
+Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99BD41AC45F
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 15:34:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 912BF1ABEA6
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 15:36:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731944069; cv=none; b=PsZlkVCCRyIkWz+aCKKKB6fbCu18JPZqZwoacK9NG5/xc0EUjl2sqt3smUOcV8mxapx+aCYzUrSpFi+ANlpvjFKQPJDJ2uZnfyao3iJOjgsIOU4aGuoVzru1bL29PmmcPDMsdTpOADAuJSYkjxcRNYX7/L79J81f91jXuEbEgYE=
+	t=1731944176; cv=none; b=uUfFg/CVHpeB18ObCdAbFvJUjAo5e9+KW20jHC/0hzipfNTocUYuZ5Q6uCyBwb7Ztabg1QQvGOH7m5+Q71N0JmFmP7WBgJQmCIjp4zEsv//IA62tzvaPY5npaBP6vdBdd5M6lDJjsIrFha67InSKfWSWRafzR9P9ntNsLNixfwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731944069; c=relaxed/simple;
-	bh=IzZ8vrLDeheWfdUYDbyaJVPjAgEM3gmJvyf15rXhHCI=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=jxmrBXm6+DKH2QD7MmFo9Eb+vuER06tWjSMc8T9O9ZScx2kiAXHHOtkKNyxDgIi08j0EPdCpFaKNfsiPKo1Q+E9MsmdwWNfTp1EZzWupeXlN10m65PfcfGNg2q6ZeJzEy685j+c4Ypqx6b1zVGHXAgsB82gLYUYv+siAYIwOvfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4AggMtFd; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6ee4662b307so37099507b3.1
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 07:34:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731944066; x=1732548866; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=a7K6U0T/XQ8gx+tHZUWr2faguGniMnPfsq2eZoyEnrU=;
-        b=4AggMtFdv+qaXVV9v8HNVQaB5u1tFZxwWz0nyCrvOrK4qgWl/5Rj3r7o3AVy0XhejV
-         9P7Ebs1tEZmtB/moDX49rAi23AiLC48T2+A1MuhmEVamzlaAxlwn8g9rEqAf9rUZ0sxX
-         r30BUIJBLQNuaB3IYyuNQmBdvzl5FWUId/xtR1Ly9whJACbjlxECABtCDXryU3CdNWlh
-         Hp7dCUmZuVEGrDGfM9hgKBssvO7vU+hNnVjk3av3EiN47GTGn/jddnhwlXiZTJsNXYnm
-         EnoqF+u+vL+tChtpoHk0yYUn7NUPs+CpSwADYwFviEvneXQulB77RVyEXW61zWn3yu4w
-         PmJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731944066; x=1732548866;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=a7K6U0T/XQ8gx+tHZUWr2faguGniMnPfsq2eZoyEnrU=;
-        b=dPE3SGTdpCx1VirHbyJEUFZTcN+e8LB4B5vaHKlJpA0sMX2jrc4TlqKNsADpPF4mHD
-         8JRBHiDK9X2s86R10D4bz7EjlDB5b7xx1VFgTB7C8Wwz+QWacCJfK4K9/EEuzaMU/Fq/
-         HjrOZfbxl0aUaDjcWKKb3gsJls0PrSZPz8/QupPzBZ84zr45sKH5AItenKbf92sllOWj
-         xqY1Hl0hB8VrHE89tmpJSvYJtzcyTjkg+EiKDhiQXMuq0cpsQpr7WbNjSQeZQGMGeCct
-         7bh3Z3MV7eqaPlfhFk7cFPnQW2QIKAOD/DoQRzVAeljKiIktN6arCDQjgefyrsCD1+v4
-         MyAA==
-X-Forwarded-Encrypted: i=1; AJvYcCXQyEl3OERax4nFMAX4PNNvmFoDGq/5tNX99pVZyBG8SqfTXyLOdDljM1btNxJf6EH78DiTGXB4AJxsgp4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8CHS1fv2hvyY14zT3hQ66UwiXN4fD1SexwrrozFnCm1BiLxf7
-	dShPTB6+Jt5UtTqtMNsXe8QtN9NHagn/J+FRZKF7NEFXX6Q2mSZ7rTwQi3lkTMOkIXMc0TyEgHg
-	N8w==
-X-Google-Smtp-Source: AGHT+IG53BeA5Fnt7TchljlmDo3D4tY72ogWA2od7hmQmMsBLO0ga3hzcJvpmUfayiR1at+ew1OgbLok9Wc=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a05:690c:424a:b0:6e2:1ab6:699a with SMTP id
- 00721157ae682-6ee55ccc2e3mr1066877b3.7.1731944066382; Mon, 18 Nov 2024
- 07:34:26 -0800 (PST)
-Date: Mon, 18 Nov 2024 07:34:24 -0800
-In-Reply-To: <20241118031502.2102-1-bajing@cmss.chinamobile.com>
+	s=arc-20240116; t=1731944176; c=relaxed/simple;
+	bh=w2mRxyU6Wer/awZVdAQivc4uUlAOwE/wI67hCUOwwFs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=U9Z/Pt+nMrn8A275fbynt6td7qQkYw4OL528xIo/jUn68gPhKWxj4TW18Bfaoly5Hqurn1KBcKyewV7jzxkgDL1lqIN/y1fj+fe1Xb3kjyAOA+DV/vbNkI5+wiLrpIOtsfAGLmrYm4+nKRyFkPv34WyHk7VjTw67y8d088voSBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=fU5Svm76; arc=none smtp.client-ip=95.215.58.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <0e5f84c7-40fc-42e9-8521-f0f1e82e4d9c@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1731944171;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yM1hknJVFS7HCJh8Bw8WhrGpM3PfCvn6SKwbNFv5FAY=;
+	b=fU5Svm76Z/VZZbJo2p5VhsyP12LlV0UA1Uytbdbxy5qBssiZCK13lQN3MOK/zoFdS+uU9G
+	I3syYlgTcuRE22SKlpaP5MlmAvh7dYl2WxZtJ21mGibK/OZDMcOIbb20oLwWufXOX6lNQA
+	ue+93MK0iQfvxGMWu5tkJxE2eNsOtrE=
+Date: Mon, 18 Nov 2024 10:36:02 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241118031502.2102-1-bajing@cmss.chinamobile.com>
-Message-ID: <ZztRPUTWm5K1bsgJ@google.com>
-Subject: Re: [PATCH] kvm: hardware_disable_test: remove unused macro
-From: Sean Christopherson <seanjc@google.com>
-To: Ba Jing <bajing@cmss.chinamobile.com>
-Cc: pbonzini@redhat.com, shuah@kernel.org, kvm@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Subject: Re: [PATCH net-next 1/2] dt-bindings: net: xlnx,axi-ethernet: Add
+ bindings for AXI 2.5G MAC
+To: Suraj Gupta <suraj.gupta2@amd.com>, andrew+netdev@lunn.ch,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, michal.simek@amd.com, radhey.shyam.pandey@amd.com,
+ horms@kernel.org
+Cc: netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, git@amd.com, harini.katakam@amd.com
+References: <20241118081822.19383-1-suraj.gupta2@amd.com>
+ <20241118081822.19383-2-suraj.gupta2@amd.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sean Anderson <sean.anderson@linux.dev>
+In-Reply-To: <20241118081822.19383-2-suraj.gupta2@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Nov 18, 2024, Ba Jing wrote:
-> After reviewing the code, it was found that the macro GUEST_CODE_PIO_PORT
-> is never referenced in the code. Just remove it.
+On 11/18/24 03:18, Suraj Gupta wrote:
+> AXI 1G/2.5G Ethernet subsystem supports 1G and 2.5G speeds. "max-speed"
+> property is used to distinguish 1G and 2.5G MACs of AXI 1G/2.5G IP.
+> max-speed is made a required property, and it breaks DT ABI but driver
+> implementation ensures backward compatibility and assumes 1G when this
+> property is absent.
+> Modify existing bindings description for 2.5G MAC.
 > 
-> Signed-off-by: Ba Jing <bajing@cmss.chinamobile.com>
+> Signed-off-by: Suraj Gupta <suraj.gupta2@amd.com>
 > ---
->  tools/testing/selftests/kvm/hardware_disable_test.c | 1 -
->  1 file changed, 1 deletion(-)
+>  .../bindings/net/xlnx,axi-ethernet.yaml       | 44 +++++++++++++++++--
+>  1 file changed, 40 insertions(+), 4 deletions(-)
 > 
-> diff --git a/tools/testing/selftests/kvm/hardware_disable_test.c b/tools/testing/selftests/kvm/hardware_disable_test.c
-> index bce73bcb973c..94bd6ed24cf3 100644
-> --- a/tools/testing/selftests/kvm/hardware_disable_test.c
-> +++ b/tools/testing/selftests/kvm/hardware_disable_test.c
-> @@ -20,7 +20,6 @@
->  #define SLEEPING_THREAD_NUM (1 << 4)
->  #define FORK_NUM (1ULL << 9)
->  #define DELAY_US_MAX 2000
-> -#define GUEST_CODE_PIO_PORT 4
+> diff --git a/Documentation/devicetree/bindings/net/xlnx,axi-ethernet.yaml b/Documentation/devicetree/bindings/net/xlnx,axi-ethernet.yaml
+> index fb02e579463c..69e84e2e2b63 100644
+> --- a/Documentation/devicetree/bindings/net/xlnx,axi-ethernet.yaml
+> +++ b/Documentation/devicetree/bindings/net/xlnx,axi-ethernet.yaml
+> @@ -9,10 +9,12 @@ title: AXI 1G/2.5G Ethernet Subsystem
+>  description: |
+>    Also called  AXI 1G/2.5G Ethernet Subsystem, the xilinx axi ethernet IP core
+>    provides connectivity to an external ethernet PHY supporting different
+> -  interfaces: MII, GMII, RGMII, SGMII, 1000BaseX. It also includes two
+> +  interfaces: MII, GMII, RGMII, SGMII, 1000BaseX and 2500BaseX. It also includes two
+>    segments of memory for buffering TX and RX, as well as the capability of
+>    offloading TX/RX checksum calculation off the processor.
+>  
+> +  AXI 2.5G MAC is incremental speed upgrade of AXI 1G and supports 2.5G speed.
+> +
+>    Management configuration is done through the AXI interface, while payload is
+>    sent and received through means of an AXI DMA controller. This driver
+>    includes the DMA driver code, so this driver is incompatible with AXI DMA
+> @@ -62,6 +64,7 @@ properties:
+>        - rgmii
+>        - sgmii
+>        - 1000base-x
+> +      - 2500base-x
+>  
+>    xlnx,phy-type:
+>      description:
+> @@ -118,9 +121,9 @@ properties:
+>      type: object
+>  
+>    pcs-handle:
+> -    description: Phandle to the internal PCS/PMA PHY in SGMII or 1000Base-X
+> -      modes, where "pcs-handle" should be used to point to the PCS/PMA PHY,
+> -      and "phy-handle" should point to an external PHY if exists.
+> +    description: Phandle to the internal PCS/PMA PHY in SGMII or 1000base-x/
+> +      2500base-x modes, where "pcs-handle" should be used to point to the
+> +      PCS/PMA PHY, and "phy-handle" should point to an external PHY if exists.
+>      maxItems: 1
+>  
+>    dmas:
+> @@ -137,12 +140,17 @@ properties:
+>      minItems: 2
+>      maxItems: 32
+>  
+> +  max-speed:
+> +    description:
+> +      Indicates max MAC rate. 1G and 2.5G MACs of AXI 1G/2.5G IP are distinguished using it.
+> +
 
-You already sent this patch, albeit with a slightly different shortlog+changelog,
-and said patch was applied.
+Can't you read this from the TEMAC ability register?
 
-https://lore.kernel.org/all/20240903043135.11087-1-bajing@cmss.chinamobile.com
+--Sean
+
+>  required:
+>    - compatible
+>    - interrupts
+>    - reg
+>    - xlnx,rxmem
+>    - phy-handle
+> +  - max-speed
+>  
+>  allOf:
+>    - $ref: /schemas/net/ethernet-controller.yaml#
+> @@ -164,6 +172,7 @@ examples:
+>          xlnx,rxmem = <0x800>;
+>          xlnx,txcsum = <0x2>;
+>          phy-handle = <&phy0>;
+> +        max-speed = <1000>;
+>  
+>          mdio {
+>              #address-cells = <1>;
+> @@ -188,6 +197,7 @@ examples:
+>          xlnx,txcsum = <0x2>;
+>          phy-handle = <&phy1>;
+>          axistream-connected = <&dma>;
+> +        max-speed = <1000>;
+>  
+>          mdio {
+>              #address-cells = <1>;
+> @@ -198,3 +208,29 @@ examples:
+>              };
+>          };
+>      };
+> +
+> +# AXI 2.5G MAC
+> +  - |
+> +    axi_ethernet_eth2: ethernet@a4000000 {
+> +        compatible = "xlnx,axi-ethernet-1.00.a";
+> +        interrupts = <0>;
+> +        clock-names = "s_axi_lite_clk", "axis_clk", "ref_clk", "mgt_clk";
+> +        clocks = <&axi_clk>, <&axi_clk>, <&pl_enet_ref_clk>, <&mgt_clk>;
+> +        phy-mode = "2500base-x";
+> +        reg = <0x40000000 0x40000>;
+> +        xlnx,rxcsum = <0x2>;
+> +        xlnx,rxmem = <0x800>;
+> +        xlnx,txcsum = <0x2>;
+> +        phy-handle = <&phy1>;
+> +        axistream-connected = <&dma>;
+> +        max-speed = <2500>;
+> +
+> +        mdio {
+> +            #address-cells = <1>;
+> +            #size-cells = <0>;
+> +            phy2: ethernet-phy@1 {
+> +                device_type = "ethernet-phy";
+> +                reg = <1>;
+> +            };
+> +        };
+> +    };
+
 
