@@ -1,87 +1,104 @@
-Return-Path: <linux-kernel+bounces-413531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7CAF9D1AAB
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 22:37:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 303959D1AAD
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 22:38:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6665F1F225E0
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 21:37:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF0502831E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 21:38:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59B431E47DD;
-	Mon, 18 Nov 2024 21:37:06 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6168B1E7657;
+	Mon, 18 Nov 2024 21:38:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="DQz2+WS4"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97B301DED7B
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 21:37:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4B1D14D71A;
+	Mon, 18 Nov 2024 21:38:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731965826; cv=none; b=CxJZNC0BHSJEsVr9WB5erUZEwce8Zz+OBopOaNAnSkjaPCuEQ1uY3uNxIbngKgzIy2IBSIRvff97pISXC4ej05IGeIiz7p8a5CeNNM+cOcLd0uI46WMN30XDZwqrqCGMOzFUeERJ1yYpHUbXLko7pJ6FrarMX+74tAui+8ijMxc=
+	t=1731965893; cv=none; b=o+CjacdodQteWr1dgKFMMm4/8D6DjVPzmR3XbT7sK0n3WL3HP9l+KKJU1Se3z8Er3HLIUpcGbUJYhiMDGysJ7pNONlmQJeIyGlbx3fDu1DyECHsuWZbRRz8J2iEnJdMHYA78R1AeXE9da0j50isyMbjTdHoldxoxJ6dbwJ5U7/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731965826; c=relaxed/simple;
-	bh=AD8RL+a16qS304XyMe5fRqoLGy5XqE4pyAEjYUVdeB0=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=aMZYf2fwPCF4yA0Lb4ZDXXf6zRNeACeRbu5CW/2jlVyatJa8S3iJ3yJQlDEWRRAYvlcWeeGkiYBQcPEx4mdba4F/YTu5qNOVuWynhYlWhfYr7TZ+dHX1vTI+s9/ZY3vP8p1o9pv2LRdKQqOAadF65yXyhTaQZeb0IJ5CnQENWRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a76acda477so15337715ab.3
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 13:37:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731965824; x=1732570624;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nICKXi7/BY4L+b4MgIKYet21aV0bch1WeZjTtJNx1VM=;
-        b=hl66n+EmBYqFLrhx6a1tmXlq6X3HoNNT3dXYuJ72UBVeMhF83V1/wejzXv8gHDeXnl
-         Dpnq4Zs4fHoYXHTv4LvSRT5y2T05XDnGbdyYO6TFQiC/hvPKeKKyuik84J3PwTcEn4i8
-         fDfJG0guybLcjYOkycBoYIXVGKDmIW6iB6ea8i5nIVdOktuNMjWgTQ/FiQLoqJQ+QU6P
-         0hhREpClKr0HFYL/0x9B2zqnWLDqv0sJBHPCwY17c/r2XcKoPY3QRv4qK31y7fcse0H2
-         iu9Ghd7JVAydukUD4/GzWZ7CASWDZZDf8N22a1XiG/vcA/bLwtfkcnNs0FFPjmvlne+S
-         Sq/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUtfMTytkfu6ZaMJOp9dVmt+qy5WcBIMR6mxFBE3ELk48STCq8IgG1SBpI53l3iLzR8s6H+sGJvAr/ydJU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWxDsVa+fiLbflxSMkoViSvfrznIuB9wjniYzK+HdZqsq+BKug
-	+Lz4jnYVmtwLdnurrycUdf34AytR8uLTT9iz6n1Y3UVBB7cY/l4lOkSHfiTBzVliYMd9Xluumqy
-	HZTCBicjCr+x42ARe/Ai0wUs+O8D05VJO9O9Tv77fuIVYHCpxSQJ+lWo=
-X-Google-Smtp-Source: AGHT+IGJW+n7lvA83sJnLZWBSzq5D53guT7v7kIGh3rmiBABzveN4sxuyZ+8da1KEFDylZ92PG81tcaxMFqjeI71tSx+BKKbO1L+
+	s=arc-20240116; t=1731965893; c=relaxed/simple;
+	bh=UNg6qY2w/vPJZEPaRf1+NeUjUf7xuNclQpzB0R+mkU4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Cx/gMyQ2Y0KU6UZ3VsvXdz8ZpDYY9gA6jlmhdoxWL4M9YsAhhZnX0MUu6H81jrq2JfHcLGshad7J7GY7bssNIeryu/79/Jeg/320ORFyBk2Mplwq/CT5u1R2pttNi+X+5hfN5VxKMHg/aqBNoqlodtcNCQw9HUOeW2u8gvj2VDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=DQz2+WS4; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=xtGptwAPqUHyxRvP/wAQ+2bFiCnqxRoaLpG+WpTq/e0=; b=DQz2+WS4LWUMHyB52nprtsJARA
+	QbsQouioQs0VLOrmQx8/qA7ChTOeRBJIoNazS/4WvuP1rayjV5j+VUPktnzaiAQRHMN/cOSgQA9bY
+	7c559BKFnmRT9w+B48A+3ndQq3vxdA25ObOp8B71kxtoUOxu5m3EXW0QBXSezHAP3+1dpTaLLnWEF
+	twXIOvO7X9LicR3aY69Ccjo75tTbt9DTriUW7sKUKPPrAGfsoDLaNjacxpj0kCeUTO8k2UQUuhYpi
+	guxkQc/cvPBtU0PqbhTp3NFz7VKsUxecWjAVNY6lUHLkreqdffGtlJ8FlDGHn4XU/QwwdzBaGb8oC
+	gGg09V8w==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tD9Rg-0000000GW0v-3Hot;
+	Mon, 18 Nov 2024 21:38:08 +0000
+Date: Mon, 18 Nov 2024 21:38:08 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [git pull] statx stuff
+Message-ID: <20241118213808.GI3387508@ZenIV>
+References: <20241115150806.GU3387508@ZenIV>
+ <20241115153344.GW3387508@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c2d:b0:3a7:74e1:d54d with SMTP id
- e9e14a558f8ab-3a774e1d777mr22152385ab.21.1731965823827; Mon, 18 Nov 2024
- 13:37:03 -0800 (PST)
-Date: Mon, 18 Nov 2024 13:37:03 -0800
-In-Reply-To: <CAHiZj8j7dp5L_A_nvN4zv9q9qH865MDhhzgEgtZUBMq9H1gPMg@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <673bb37f.050a0220.87769.005d.GAE@google.com>
-Subject: Re: [syzbot] [keyrings?] [lsm?] KASAN: slab-use-after-free Read in key_put
-From: syzbot <syzbot+6105ffc1ded71d194d6d@syzkaller.appspotmail.com>
-To: dhowells@redhat.com, jarkko@kernel.org, jmorris@namei.org, 
-	keyrings@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, paul@paul-moore.com, serge@hallyn.com, 
-	surajsonawane0215@gmail.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241115153344.GW3387508@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Hello,
+[now that the part shared with vfs.xattr2 is merged...]
 
-syzbot tried to test the proposed patch but the build/boot failed:
+The following changes since commit e896474fe4851ffc4dd860c92daa906783090346:
 
-security/keys/gc.c:146:40: error: 'KEY_IS_DEAD' undeclared (first use in this function); did you mean 'KEY_USR_READ'?
+  getname_maybe_null() - the third variant of pathname copy-in (2024-10-19 20:33:34 -0400)
 
+are available in the Git repository at:
 
-Tested on:
+  git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git tags/pull-statx
 
-commit:         9fb2cfa4 Merge tag 'pull-ufs' of git://git.kernel.org/..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=55f8591b98dd132
-dashboard link: https://syzkaller.appspot.com/bug?extid=6105ffc1ded71d194d6d
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1781eac0580000
+for you to fetch changes up to 6c056ae4b27575d9230b883498d3cd02315ce6cc:
 
+  libfs: kill empty_dir_getattr() (2024-11-13 11:46:44 -0500)
+
+----------------------------------------------------------------
+sanitize struct filename and lookup flags handling in statx
+and friends
+
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+
+----------------------------------------------------------------
+Al Viro (4):
+      io_statx_prep(): use getname_uflags()
+      kill getname_statx_lookup_flags()
+      fs/stat.c: switch to CLASS(fd_raw)
+      libfs: kill empty_dir_getattr()
+
+Stefan Berger (1):
+      fs: Simplify getattr interface function checking AT_GETATTR_NOSEC flag
+
+ fs/ecryptfs/inode.c        | 12 ++----------
+ fs/internal.h              |  1 -
+ fs/libfs.c                 | 11 -----------
+ fs/overlayfs/inode.c       | 10 +++++-----
+ fs/overlayfs/overlayfs.h   |  8 --------
+ fs/stat.c                  | 24 +++++++-----------------
+ include/uapi/linux/fcntl.h |  4 ----
+ io_uring/statx.c           |  3 +--
+ 8 files changed, 15 insertions(+), 58 deletions(-)
 
