@@ -1,55 +1,73 @@
-Return-Path: <linux-kernel+bounces-413462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 068169D1958
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 20:54:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DCA39D195F
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 20:57:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 56CA7B22AF9
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 19:54:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE526B23430
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 19:57:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CC4B1E572D;
-	Mon, 18 Nov 2024 19:54:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A78B21E5733;
+	Mon, 18 Nov 2024 19:57:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="U9Pe1zE3"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="HLW1cliL"
+Received: from mail-oo1-f45.google.com (mail-oo1-f45.google.com [209.85.161.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4206F191F99;
-	Mon, 18 Nov 2024 19:54:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A5121E571C
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 19:57:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731959682; cv=none; b=XpM88SdU4kdnC+JokJue5mtTb3Ycksfo0inB6WKz8pzk/wnL7I7G5kkVsU/1T+tLIP7KsmJqLz3l/jH4Wakk8y1xA1VYjIcW0RL50UaA7S1XwjebXB8fJkP4rKj6ZFde3IenlFJlWu4rMJu5kqBRuLhJE6D1/NaeZs8EyLLZD50=
+	t=1731959830; cv=none; b=Ht1U98qTGDfkkr1EMXxRrI1/bEmbd7O3or7TMypoxByiuty/nkI/RaNXcnaJuiWNjJlcXwmfMDFTRmAZgMpmnOXebo0oqXXlCSO9/ZplBBF7MByNMsw82pY7EMUUw6SJsYmjote2qif7j7bm90mcElA/UmuYCSm/dupuKwEe6/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731959682; c=relaxed/simple;
-	bh=PhoZZLsSsraRjUZyLb9VT4KXzNtJeWOiHlWXghtTBN4=;
+	s=arc-20240116; t=1731959830; c=relaxed/simple;
+	bh=C3yvYvgaYqHUASV6J8b58Cin5xvUMyMbEuA9GZfTzY8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bCqPZzeX0fI9EkSkwSxzWK/wpmLMPRytraSOzVzLLLy3Px/G5E3thPAh38jchiIVnMIJIfGeb3FJkp8N/e7AR9H7fr9L0ZJRnUjgEdUAaPMAsb9aC5UP4JIp+GftpqqS3jRSF4VGztlRK4EyeFeCGnZSMWZNTLul5YoUq7kfEXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=U9Pe1zE3; arc=none smtp.client-ip=212.227.17.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1731959596; x=1732564396; i=w_armin@gmx.de;
-	bh=C23UJENaeAkNp4VGbRLo2NOGyzcrjl/JJgauoA6EQf0=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=U9Pe1zE3piC0I1vuelzV89zd44E8twM2oxREfHfEZrJjfx1UI/T/nAvuv4npX5cy
-	 /+JXc0pO3P3XJoOVIUMP/KRlSNv4qvPn4LvI0fCCP1m06zibqgPEOq4eDD562+YOQ
-	 X2SnQaJC/afmmm00peY3YFIlZrcSntAheWSvICGp+uOJAD/24minLlQ82NbbQBRjn
-	 FPtnt8cGolFY6gXJ8N27s4VZea6dMdDvLSVVE0G2u6zZzntTh8G0JI8c6om8TJQ3c
-	 0M44RLqA/rdaT3fnah2/pBpfYUnITDmXnHhoyMGBpjPrcoP5mkOLevInebN3VefyP
-	 yKKY606bcgsmj3kNNg==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.0.14] ([141.30.226.119]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1Mwfac-1twfz73yna-00zZsX; Mon, 18
- Nov 2024 20:53:16 +0100
-Message-ID: <5c961eaa-9a3b-48cb-a0dc-f704dbb267ab@gmx.de>
-Date: Mon, 18 Nov 2024 20:53:11 +0100
+	 In-Reply-To:Content-Type; b=WoGwLtkF3gUjUGIs84btQJMmKCpwpxbm6yfaJrgwubUwBOZWIzvXpSWjDW6FQTkz2PIs1iWKnMFT+n96znIgoCMcPoROE2oTgue5jxfKxm7ZvOAlXv3PK0/eBvDgTl2W3FIv/UxMBV3A+cEIxc9aNWnIalMqP88Ca8s0TpZ12vg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=HLW1cliL; arc=none smtp.client-ip=209.85.161.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-5eb70a779baso2324634eaf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 11:57:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1731959826; x=1732564626; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WpUyZvuIqoP+1REy1b0f27OiKQUxfmn+lI7QAkmm/bc=;
+        b=HLW1cliLAleXC0tByReogt14ePO6yc2ynZoDWPcAkapgQPTy4xQI7Aw46W4zeM5x6g
+         AF50e8jJiio8s1LYWBwITxOqBPtVwD0vQ5dR/8ffzwQqaFMGfO6EHnZJWUzkhhBPZfty
+         pE+cpLrXImTHtekUBIaMjVAfSzWdx465TWCas1SZjwkJTzXHWf96JVI0BqErLF85bUhq
+         i0pt8iSAzMTPwqjOj/psvl7H6CljblyaFbuUucqVJuhvYBA4olU7rJH//tQly57T3Sw8
+         y0mL7z/kesy0Krl8Nz+2ZRD/FYubh0HllnITXtqA7V4Ku9L+CYtPc4PiKeMBB4Zh64SE
+         +Ixg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731959826; x=1732564626;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WpUyZvuIqoP+1REy1b0f27OiKQUxfmn+lI7QAkmm/bc=;
+        b=boBaL2ho785nkvVZDHtfaVVZQX9Hb0Ey1VDO+M60daFgT7fH50VLi3eTrR0VQX+Ktn
+         LN+8OVD8kyTFDvCXD9W+aUJiAovkz+veLwdbnNAQC9Fai24kWJ6OjVy+BCn26t7NpwLQ
+         /WcEhZZ6m2kU+TYIqqJ66RzQJf9IhFpj9eG9XCwvXkQG+uO2bjlwp78hYdcVIwV/uZ8H
+         YY39eQry7khGd1ib79fLMm9XTuBM49iPM+nZQ2gkr0Qa1rG/a/lAU9exRn44S8tbNKFZ
+         sBCatRbfR6QntxiMUHv7Kxd2t5pnS8n4hgGOovFGy95d+JHwqWdob2XxpJCgid8w59Ee
+         Jlqg==
+X-Forwarded-Encrypted: i=1; AJvYcCXVq9ipvJt2MpDzA/jxfzPUlRQD3++pmKFQa6t+djTWtAEdpn8M7dBUmWRSOcoGR+mU7A9o9gnAbcFP660=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzY7ls28xqg8SUAO6zyIwioNXq269sRnQPLmANMhTUcwfj4GdMM
+	5hF2AYQ8hGhdwjszVMq1+9VA7ICoLu2la27aGUMfjK3FYQIYk2K2aMg5PnGZxD8=
+X-Google-Smtp-Source: AGHT+IHQm8AvqbRlq+Us9nwiXv4QXlkWwfjqJbIZ5ekm5NvDdp7rFZJFhnT0J5xgIqNqiBjstaFupA==
+X-Received: by 2002:a05:6820:4c17:b0:5c4:144b:1ff9 with SMTP id 006d021491bc7-5eeab41f3ecmr10418542eaf.5.1731959826665;
+        Mon, 18 Nov 2024 11:57:06 -0800 (PST)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5eeabd520c4sm3043554eaf.27.2024.11.18.11.57.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 Nov 2024 11:57:05 -0800 (PST)
+Message-ID: <74ae05a9-6fff-4088-a46c-0a68a5b64614@baylibre.com>
+Date: Mon, 18 Nov 2024 13:57:03 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,132 +75,42 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 18/22] ACPI: platform_profile: Check all profile
- handler to calculate next
-To: Mario Limonciello <mario.limonciello@amd.com>,
- Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>,
- Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
- Corentin Chary <corentin.chary@gmail.com>, "Luke D . Jones"
- <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>,
- Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
- Alexis Belmonte <alexbelm48@gmail.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>,
- open list <linux-kernel@vger.kernel.org>,
- "open list:ACPI" <linux-acpi@vger.kernel.org>,
- "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER"
- <platform-driver-x86@vger.kernel.org>,
- "open list:THINKPAD ACPI EXTRAS DRIVER"
- <ibm-acpi-devel@lists.sourceforge.net>,
- Mark Pearson <mpearson-lenovo@squebb.ca>,
- Matthew Schwartz <matthew.schwartz@linux.dev>
-References: <20241109044151.29804-1-mario.limonciello@amd.com>
- <20241109044151.29804-19-mario.limonciello@amd.com>
+Subject: Re: [PATCH v2 3/4] iio: adc: ad4000: Use device specific timing for
+ SPI transfers
+To: Marcelo Schmitt <marcelo.schmitt@analog.com>, lars@metafoo.de,
+ Michael.Hennerich@analog.com, jic23@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, marcelo.schmitt1@gmail.com
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <cover.1731953012.git.marcelo.schmitt@analog.com>
+ <284478615dd32deff29e4e10815cb49fa7d3b5d0.1731953012.git.marcelo.schmitt@analog.com>
 Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <20241109044151.29804-19-mario.limonciello@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:5iusdkqTQ9qtlTcEOYBndv5kdflset66miZ2lr+7S2MbuNdLH6B
- e7U0bTPFJKSPI6dJ/Q5QbaJO9GuW/H2O+CxKiEwGHEwFob2GnkVBmzNKxGS966YKvIV4smX
- j2gkw3YmI1wISh4l0F2FywjWAfmJbb9qFcxk3lA3/UVTmclhRDUWv/+yCCuDMHSS89MJJwj
- WL60/13OfrMqzZtvVNaSw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:P31X0yxX8Go=;diyw0izFH3r3WFq5U0DW4Aiapcs
- xjl6WxV3O+n1a2tzy8aStwTn2uBAQpsuiQEIFYZJbe0TwvJYluOkTVg7ySDE495B08Cv/wQUR
- nCeNJ3/MZNgxrjlohiBlNgD9xctFcON5VwVEvfnyvZ3stVzI/eFbMbH1ZHiq1yalufmrAtqwk
- rMpIFPDWHsDYsszCrVHsM6r/3Vth4GD/S/AjhDCb8XAhBTeWqlejAY9YrEDoIHe1EkJqdlM72
- Ce6enchV+5+bGqD1MnIgN+eX4IJSpqU7uiw5l1ClePcnFSs3QKvNahKUNUVpCeeYicg0/bNcx
- mj7mJ3Ua1qPzl4YuOiRZAykxI8fQVWQqcAtOjUxyb1+pA92L3LB28QaroEi1YMnOp+hGchd4y
- IXjuAh31X5t62eKQIB4gquVeG+MQ4c19ZB6gUMJQ/m9ydFJKilaKYiAAxV4K5b4wPBsGvOhsz
- 1QtDNiy8Yw9u0/+4iHCF3D9dHfp2Y8bt8lC1e+D9bDm2n/D+9HCWAVrTuxHh30idwZaEUXeXv
- +7d6nObRImNS+YwZOWOfiSRH+DzntuqxL0wrEodu8wn0OK1CLBoT2IPDZMZGm2o4Q1lhmxyuq
- ejG/er3QXNm3JzswArP3BBK90sD5nZ6zlzI2r8+wXzvQfBHi8kXILyCqvdw+85EbAROT3O7u1
- BxhpfyabpoPEOg0XBxwq+bk1b017suS8e6y+fNDzCNx4AvHming9Q03wI70X9wA195wOjZ030
- M3vUOT24psj4//Utm8CwclmIlGnbUeqma+OpS5z+ysggiHNg+8yMzw+Mb3Dga+UWJBNSzqhna
- FrHhB1yCwT/FV/AyiQL/Lso5ecLKhI6RipaCOk4CBHZHeFq4xjgeJfHUXtcGI2v3lITMzKAOy
- UZld0vLA68iT+gQzXJaSWpxIeuqByBtV4k7m6HrOlJ4osaBcQDzvhbFAo
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <284478615dd32deff29e4e10815cb49fa7d3b5d0.1731953012.git.marcelo.schmitt@analog.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Am 09.11.24 um 05:41 schrieb Mario Limonciello:
-
-> As multiple platform profile handlers might not all support the same
-> profile, cycling to the next profile could have a different result
-> depending on what handler are registered.
->
-> Check what is active and supported by all handlers to decide what
-> to do.
-
-Reviewed-by: Armin Wolf <W_Armin@gmx.de>
-
-> Tested-by: Mark Pearson <mpearson-lenovo@squebb.ca>
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+On 11/18/24 12:53 PM, Marcelo Schmitt wrote:
+> The SPI transfers for AD4020, AD4021, and AD4022 have slightly different
+> timing specifications. Use device specific timing constraints to set SPI
+> transfer parameters. While tweaking time constraints, remove time related
+> defines including unused AD4000_TQUIET1_NS.
+> 
+> Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
 > ---
-> v6:
->   * Handle cases of inconsistent profiles or all profile handlers
->     supporting custom.
-> v5:
->   * Adjust mutex use
-> ---
->   drivers/acpi/platform_profile.c | 30 +++++++++++++++++++++---------
->   1 file changed, 21 insertions(+), 9 deletions(-)
->
-> diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/platform_pro=
-file.c
-> index 2676f4a13689e..c574483be4fd1 100644
-> --- a/drivers/acpi/platform_profile.c
-> +++ b/drivers/acpi/platform_profile.c
-> @@ -423,28 +423,40 @@ EXPORT_SYMBOL_GPL(platform_profile_notify);
->
->   int platform_profile_cycle(void)
->   {
-> -	enum platform_profile_option profile;
-> -	enum platform_profile_option next;
-> +	enum platform_profile_option next =3D PLATFORM_PROFILE_LAST;
-> +	enum platform_profile_option profile =3D PLATFORM_PROFILE_LAST;
-> +	unsigned long choices[BITS_TO_LONGS(PLATFORM_PROFILE_LAST)];
->   	int err;
->
->   	if (!class_is_registered(&platform_profile_class))
->   		return -ENODEV;
->
-> +	set_bit(PLATFORM_PROFILE_LAST, choices);
->   	scoped_cond_guard(mutex_intr, return -ERESTARTSYS, &profile_lock) {
-> -		if (!cur_profile)
-> -			return -ENODEV;
-> +		err =3D class_for_each_device(&platform_profile_class, NULL,
-> +					    &profile, _aggregate_profiles);
-> +		if (err)
-> +			return err;
->
-> -		err =3D cur_profile->profile_get(cur_profile, &profile);
-> +		if (profile =3D=3D PLATFORM_PROFILE_CUSTOM ||
-> +		    profile =3D=3D PLATFORM_PROFILE_LAST)
-> +			return -EINVAL;
+
+...
+
+> +/*
+> + * Same timing specifications for all of AD4000, AD4001, ..., AD4008, AD4010,
+> + * ADAQ4001, and ADAQ4003.
+> + */
+> +static const struct ad4000_time_spec ad4000_t_spec = AD4000_TSPEC(320, 60);
 > +
-> +		err =3D class_for_each_device(&platform_profile_class, NULL,
-> +					    choices, _aggregate_choices);
->   		if (err)
->   			return err;
->
-> -		next =3D find_next_bit_wrap(cur_profile->choices, PLATFORM_PROFILE_LA=
-ST,
-> +		/* never iterate into a custom if all drivers supported it */
-> +		clear_bit(PLATFORM_PROFILE_CUSTOM, choices);
-> +
-> +		next =3D find_next_bit_wrap(choices,
-> +					  PLATFORM_PROFILE_LAST,
->   					  profile + 1);
->
-> -		if (WARN_ON(next =3D=3D PLATFORM_PROFILE_LAST))
-> -			return -EINVAL;
-> +		err =3D class_for_each_device(&platform_profile_class, NULL, &next,
-> +					    _store_class_profile);
->
-> -		err =3D cur_profile->profile_set(cur_profile, next);
->   		if (err)
->   			return err;
->   	}
+> +/* AD4020, AD4021, AD4022 */
+> +static const struct ad4000_time_spec ad4020_t_spec = AD4000_TSPEC(350, 60);
+
+I actually liked the way you did it in v1 better. This makes it harder to
+see which number is which.
+
 
