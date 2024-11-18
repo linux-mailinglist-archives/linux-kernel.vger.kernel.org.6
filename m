@@ -1,114 +1,129 @@
-Return-Path: <linux-kernel+bounces-413569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 224B09D1B1E
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 23:27:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5DDC9D1B22
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 23:28:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A2F0AB21538
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 22:27:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 863792817AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 22:28:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B7A11E7643;
-	Mon, 18 Nov 2024 22:27:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43AF61E8831;
+	Mon, 18 Nov 2024 22:28:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="YulGoWQn"
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="NhOZx2qh"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F0C818A950
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 22:27:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 492131E5711
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 22:28:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731968839; cv=none; b=h4k7Ayox4A6hQKqSI4PvmOclpW41BWF5043UjEWLu2CKKAsFCtCCefH9bJ51gHqtPZswZ7W/bbMxxhQkLdUyU+AjauO6QeTOLW3e+wyVs83gVSW/GiZOBqMhHkYrU1KyMfSTgNar7d7VpcUMQbhCuYvhgg7Gf+abDzUZJagMv5I=
+	t=1731968920; cv=none; b=dgkGrDEZAoQo6Wfihdv3lCMaUF0QWHm4v9Cov5RsD8tyvSz8oVMox8pdEgQ2ZmsEcZyV8znQz7L9ZGB92khRmXxbvt+cUHGlUGI3HQP54Te48j0MUSIO7ibrCuQxXAf9/nsIddpim4j3JhKKu11w+yYk1gZhWZRt6BJu7nVagEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731968839; c=relaxed/simple;
-	bh=Rvg5bbdOvYJPMLoczIrnRiEARLYMNTvHZS3WZenhK6o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=u2F3BWakb6OUuGf0ZIMkHviGjIqRBxQH9RGvTKfOFhE5XeN7PoFzbm3pXly1K/UMpd0S7m5WPGXhS4opl5f2xZEBIxAwxDpUh8ooRR2NT5+erPsah3todEZ/sJLUOQi7WTKVPjHBLlP8kNM2vHGNyrr2BjFW3CxSwElU9cQhjnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=YulGoWQn; arc=none smtp.client-ip=209.85.160.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4609b968452so32819101cf.3
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 14:27:17 -0800 (PST)
+	s=arc-20240116; t=1731968920; c=relaxed/simple;
+	bh=AMRwCOm6PPsMK1+VolimqEuMDwoiKrof204t0pu7GY0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=iF/Dsc/mPhezoZxftD85yNj1gNCSKtRDRYzwQdr8uSxIdXrqNS4iqxlO9Z+q5iHF0+5vlVJZEyCxao02SH7ZkZi+sQvgnx0mhBGDnmTLmrognYVCYdwE00vwIvaNelMKkk3Hp+hnwIEoXkASW1CLzE7x2/S2SLHtNlFWmQLEawU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=NhOZx2qh; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4315839a7c9so1933635e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 14:28:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1731968837; x=1732573637; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Rvg5bbdOvYJPMLoczIrnRiEARLYMNTvHZS3WZenhK6o=;
-        b=YulGoWQn5V95Hr3GXX0a47ucZAzvekLRFK2k3z9O8NbgJUuKRTUV8+xqUEdMQxUBaY
-         C5JXglBWXhMbUaZuqzxXecsIC4Jt1AOa99aPFa5AZ0t+FL0zlhgIhmuIne1Zn91EqAQG
-         0hDKd3WlSNXN7L3SGwwbjZwRnvYlMQx7s7FWiITa4aGIyf/80pH65xO/1LtsJcAGpDX8
-         BWTnX/Spi7bDhX5s5ljb9xVd6xcEpb0PHgM61bv5/9rdebsE1z3xlNhkbKY9i1ZCYpjL
-         XsxLssZkg7bphL/DyOxeEjd9v+7ur9lbIYt8ivA6DqpU3Hqa0Njx+IHxlxJgfet6DMR6
-         0qcA==
+        d=ionos.com; s=google; t=1731968915; x=1732573715; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=aELIIOy3P0XH2d0/thP7GBbWQkXjiSTD8BNOrpNwIQg=;
+        b=NhOZx2qh8pw8Vqnl8A34eIB+i4o5cGnBS2X4VcWjtUpoTW2IJAvMQHBj7rkRtz8MdR
+         KueZKl2wYtqlIJ/I087OfqMSNv9XHWzj1tYgqZIaBVBbpAdspW1CdpQ83NQF3t5R/8B5
+         hApuOlRREsCLP8txcc6QmS5MdUvJqxW5RsrHYsQ7AjFz99ECSNcGhWuBQez+JwaDHuMD
+         l2mIzd5TDcLklvCjmyl5WFSsA6WWOq256ezlBL3piELaU6d/W4zEh8ggtPUVU4K0/8A5
+         aMyQtPNhsOFkdQWbltGy9KuvrfoWyvRJnKoMOaZScqcjKrFTK0jC9fE8XKv+UPZxtsob
+         SOlg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731968837; x=1732573637;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Rvg5bbdOvYJPMLoczIrnRiEARLYMNTvHZS3WZenhK6o=;
-        b=SmG5s4EYGUk9TjMo1qeDvkhGMRKUkqyMKHKMrIqT5t8k+uxZNxzofS+1YRPZL5qkdl
-         ChBUXA5p6UAU4OjOZ5kYyzJw83roYuqBUbaZlxGAd66pmX2WolskjxcTrdR2hQIL7SyF
-         1TynBJJFx1jd9sDpVM81tsTkzr79YSjKLq+1OOyYLRtPVbJ4+Tw+VSv8TkDoP+8z+Z/K
-         RFEfd1PPC7LeBDAT6Yx0g44f9McTO3R2Layp36LmphXAVO2j08+KRL4tk3u3uIXG59IN
-         uqQ/wBXfKTulFIsK7LLfeouDRq+9CEIBS4VcAOrSRCIdRJjSfTpv4WTbMzDbfW6Lc1qn
-         ySTw==
-X-Forwarded-Encrypted: i=1; AJvYcCUfMwnRhyaytgrgb/bS9xhFl2FgDyHf2oWKnXp1du7/xHeRqzyS8YFYPhrf2fqqkmpENmWwAPcWfFJZjR8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUQFfMKUh9D2tCJp5kpmFud5OZws/oGzb77aUApxWHSeEUsONy
-	DdzrRil+2j0fRzW23PDt7WpU4KopKlitMJpBorXkhUHnrdshdQQ3nhUwf6hIfEVP29iqSJpGM5M
-	KIMOY/BqNHeh+r3GuQ61qSGbbipyuESiUUKDamw==
-X-Google-Smtp-Source: AGHT+IHqiNZSSuRgMIGzeQbAsyUzuR5eC/kcwrOx7kFHxfRG4MSHz3HHm0p1YAsqzGlVtXTmEOgHQPQhoyYoLazVVIo=
-X-Received: by 2002:a05:622a:2a1a:b0:461:41cb:823c with SMTP id
- d75a77b69052e-46363b72104mr162429471cf.0.1731968837193; Mon, 18 Nov 2024
- 14:27:17 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731968915; x=1732573715;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aELIIOy3P0XH2d0/thP7GBbWQkXjiSTD8BNOrpNwIQg=;
+        b=xCE0PIkEEXqz3g1uLmDA8jQ1h8E93ho85pgUs0l7+pxNcSFRygCbYQIGcmMXZFjBcw
+         G3EKG3EN50IeXWk2J6SMtXeWpfgOvAx4gin2e3QzKk2zxI6VMiAp+gPEW4N1TR1OgJw/
+         1cxgHUPH6Q4VKUx+ZDFxOg/9hKX75+6DfZed10WvMw241RY1kvnX6VPYg3bwfJWHeAj/
+         iPd8R32ldoQrHjgbZ6VyVYoTwsUJAF6jNQWBV4bG3drUwRgqVdMeZ/YfOMqNWlRPiIBo
+         tMAvP/x5zbEqg0uyWuw+YzTtACh+DzwvH2WNJG1V5phXJGSugawC3iV2TC5l5DyYJmmD
+         ZMgw==
+X-Forwarded-Encrypted: i=1; AJvYcCW7+Oe7D+is5cP1apJbYWjBPoDGKp4+l+jdy68nn+4reV3k74dlqy0CZec05b9+j9AMhU00uR8/f6FBsbc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTb9nblwDlys1FjXWgok3a7LoP/XA7N5/JtY0bhgIl0SMeLSZ4
+	jBbUChTVBcC8MWaOoogjvTJrUh9biZZeHRkBJXaD/gvsSagup8BBEZruVr+P0Kc=
+X-Google-Smtp-Source: AGHT+IG051lv97ph0aZr4al15OTxoT+XUgzRS4h6XjL8falTMSmWXyru1OZtOCYZDfSMFASCZhXhuA==
+X-Received: by 2002:a05:600c:1f14:b0:42c:b1ee:4b04 with SMTP id 5b1f17b1804b1-432df79193emr100670675e9.28.1731968915579;
+        Mon, 18 Nov 2024 14:28:35 -0800 (PST)
+Received: from raven.intern.cm-ag (p200300dc6f12b600023064fffe740809.dip0.t-ipconnect.de. [2003:dc:6f12:b600:230:64ff:fe74:809])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432da265907sm178325795e9.13.2024.11.18.14.28.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Nov 2024 14:28:35 -0800 (PST)
+From: Max Kellermann <max.kellermann@ionos.com>
+To: xiubli@redhat.com,
+	idryomov@gmail.com,
+	ceph-devel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	dario@cure53.de
+Cc: stable@vger.kernel.org,
+	Max Kellermann <max.kellermann@ionos.com>
+Subject: [PATCH] fs/ceph/mds_client: give up on paths longer than PATH_MAX
+Date: Mon, 18 Nov 2024 23:28:28 +0100
+Message-ID: <20241118222828.240530-1-max.kellermann@ionos.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241116175922.3265872-1-pasha.tatashin@soleen.com>
- <20241116175922.3265872-2-pasha.tatashin@soleen.com> <8871d4b3-0cd8-4499-afe6-38a9c3426527@lucifer.local>
- <CA+CK2bBqi7+RExARBq5m91kaxC+w+nLYnLf4wyM_MJjaxr2rAw@mail.gmail.com> <ZzunOu4TcHcJIOht@casper.infradead.org>
-In-Reply-To: <ZzunOu4TcHcJIOht@casper.infradead.org>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Mon, 18 Nov 2024 17:26:40 -0500
-Message-ID: <CA+CK2bAhB5KXnm8WSXe2SocMj1zyQnswQ0a=4AgDawcCcisSxg@mail.gmail.com>
-Subject: Re: [RFCv1 1/6] mm: Make get_vma_name() function public
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	cgroups@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	akpm@linux-foundation.org, corbet@lwn.net, derek.kiernan@amd.com, 
-	dragan.cvetic@amd.com, arnd@arndb.de, gregkh@linuxfoundation.org, 
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, tj@kernel.org, 
-	hannes@cmpxchg.org, mhocko@kernel.org, roman.gushchin@linux.dev, 
-	shakeel.butt@linux.dev, muchun.song@linux.dev, Liam.Howlett@oracle.com, 
-	vbabka@suse.cz, jannh@google.com, shuah@kernel.org, vegard.nossum@oracle.com, 
-	vattunuru@marvell.com, schalla@marvell.com, david@redhat.com, 
-	osalvador@suse.de, usama.anjum@collabora.com, andrii@kernel.org, 
-	ryan.roberts@arm.com, peterx@redhat.com, oleg@redhat.com, 
-	tandersen@netflix.com, rientjes@google.com, gthelen@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Nov 18, 2024 at 3:44=E2=80=AFPM Matthew Wilcox <willy@infradead.org=
-> wrote:
->
-> On Mon, Nov 18, 2024 at 03:40:57PM -0500, Pasha Tatashin wrote:
-> > > You're putting something in an mm/ C-file and the header in fs.h? Eh?
-> >
-> > This is done so we do not have to include struct path into vma.h. fs.h
-> > already has some vma functions like: vma_is_dax() and vma_is_fsdax().
->
-> Yes, but DAX is a monumental layering violation, not something to be
-> emulated.
+If the full path to be built by ceph_mdsc_build_path() happens to be
+longer than PATH_MAX, then this function will enter an endless (retry)
+loop, effectively blocking the whole task.  Most of the machine
+becomes unusable, making this a very simple and effective DoS
+vulnerability.
 
-Fair enough, but I do not like adding "struct path" dependency to
-vma.h, is there a better place to put it?
+I cannot imagine why this retry was ever implemented, but it seems
+rather useless and harmful to me.  Let's remove it and fail with
+ENAMETOOLONG instead.
 
-Pasha
+Cc: stable@vger.kernel.org
+Reported-by: Dario Weißer <dario@cure53.de>
+Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
+---
+ fs/ceph/mds_client.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
+
+diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+index c4a5fd94bbbb..4f6ac015edcd 100644
+--- a/fs/ceph/mds_client.c
++++ b/fs/ceph/mds_client.c
+@@ -2808,12 +2808,11 @@ char *ceph_mdsc_build_path(struct ceph_mds_client *mdsc, struct dentry *dentry,
+ 
+ 	if (pos < 0) {
+ 		/*
+-		 * A rename didn't occur, but somehow we didn't end up where
+-		 * we thought we would. Throw a warning and try again.
++		 * The path is longer than PATH_MAX and this function
++		 * cannot ever succeed.  Creating paths that long is
++		 * possible with Ceph, but Linux cannot use them.
+ 		 */
+-		pr_warn_client(cl, "did not end path lookup where expected (pos = %d)\n",
+-			       pos);
+-		goto retry;
++		return ERR_PTR(-ENAMETOOLONG);
+ 	}
+ 
+ 	*pbase = base;
+-- 
+2.45.2
+
 
