@@ -1,70 +1,73 @@
-Return-Path: <linux-kernel+bounces-413110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2420D9D1417
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 16:12:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75CA89D13B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 15:55:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C95DFB29E73
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 14:55:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 207C81F213CE
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 14:55:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF0E61ADFE4;
-	Mon, 18 Nov 2024 14:54:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E92CF1AF0A3;
+	Mon, 18 Nov 2024 14:55:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=remote-tech-co-uk.20230601.gappssmtp.com header.i=@remote-tech-co-uk.20230601.gappssmtp.com header.b="YM7I9hXY"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	dkim=pass (2048-bit key) header.d=remote-tech-co-uk.20230601.gappssmtp.com header.i=@remote-tech-co-uk.20230601.gappssmtp.com header.b="nJ0hICrP"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8986F1A9B4E
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 14:54:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 771A31AED3F
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 14:55:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731941699; cv=none; b=OPh2K6IwJpbGoRZYVVpeweQ/4kN6zyA9ojpQ6S1rApekN5y17otCUcGrUGyT3Vj4akU0k33bS2XCvpF3lcvnqQRBglTliJKRAGZrq2075uhA9quK3tPPyuV+1PccXO+c180Z4XjTO7ppMvz9pLsI8ahx/Fgd7YmKlrCJzcWe7O4=
+	t=1731941702; cv=none; b=bINdjva7RDDGQf14i60NQctHxu7BRJKMQTt7C4Muj3ruMkT2RqnIzR6ahXrCXYIEXoECbov3NOcASKy6pl30xZwoYgnjVulcAMuGC3wGYX6S8a8SuUhifGNj1T6/ddoiqZ9OliXB7uROzSxygZrW0gh/z2VbWXbZYnmstDe30u4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731941699; c=relaxed/simple;
-	bh=pX/kmk4dMi+me3Tj39icaG8AADaQ/icrVmhqYu7ELFQ=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version; b=EkVUVVnEJ7r1ws6Miiv2sTdALD6lK87qZIIFPy17NzAd3jYRUOPorCBdJ4hdTC9Xv0J5Ou6ANZyDr4X/6X37QrAmk4CLFNmtgo5LVtJpuzFS9GndiJBXKtdGcEvTVzChSZz2kllDyppBh64tW1JtS0O1rXBaxY2PmPylZaxLC/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=remote-tech.co.uk; spf=pass smtp.mailfrom=remote-tech.co.uk; dkim=pass (2048-bit key) header.d=remote-tech-co-uk.20230601.gappssmtp.com header.i=@remote-tech-co-uk.20230601.gappssmtp.com header.b=YM7I9hXY; arc=none smtp.client-ip=209.85.218.44
+	s=arc-20240116; t=1731941702; c=relaxed/simple;
+	bh=BjUHWeRL5XhFoFRQbACC2LDGQOEjVIksyw691+eLQ00=;
+	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=utkWZohGL6b3GYWSbwITeCbNLsj1gs/kyoPBHXBfDG6+IFJcc9j12ffnMgpuimKEXB5rtj2CCKGWJwCAXXJ5jWIh8Fqi33Vo5n32DhtX1yvIyJroxSGaDrnQLsVsQYwgdU/armXaT0RQcMsLaycgY1k2TsQT1NfaW9aKR4sYEkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=remote-tech.co.uk; spf=pass smtp.mailfrom=remote-tech.co.uk; dkim=pass (2048-bit key) header.d=remote-tech-co-uk.20230601.gappssmtp.com header.i=@remote-tech-co-uk.20230601.gappssmtp.com header.b=nJ0hICrP; arc=none smtp.client-ip=209.85.218.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=remote-tech.co.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=remote-tech.co.uk
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a9ed49edd41so762285566b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 06:54:56 -0800 (PST)
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a99f646ff1bso666392266b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 06:55:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=remote-tech-co-uk.20230601.gappssmtp.com; s=20230601; t=1731941695; x=1732546495; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=rsuZnZU2NXOf5EqgKE4593+R4sGiA8pml1jXet44X9M=;
-        b=YM7I9hXYSM0PPXUdSDRpu4tk9bs+YUTh3O3xq5ICnq917dEAa5QBAS+1hRMOSQdOQI
-         X4c4qf/0lBhn1UXs1Zb0ayhu8vx55G2o4zpTy290KoNDbsU4/V0uOyoVcetHnNsDjkmR
-         AjIkCzRhoM1yvq9o1TMshBbjoqfXYj+FvyWRuc24PvBiLRHQbpv/t1kGZEiG0Vzb9DYU
-         PPso4cSItSyA91wX4TDYtR1o77IkjpgUNwpis79GU+jKgvVYqYAk8kkLWb2RoBvn8H1y
-         kiWenoAZ4SL/30RPK4Qw5IpTZ2br/dLkTZ0kNV589qqgWK4ri2lnufz80wnbXj9lVFyr
-         Ph6w==
+        d=remote-tech-co-uk.20230601.gappssmtp.com; s=20230601; t=1731941699; x=1732546499; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Rb5KhQmw4LslJ+rFvwG7oSd7/IR0vOX8Cf3hoYX7Tng=;
+        b=nJ0hICrPufB4tMHHl0kCWKaL2Hv09jGWCXnSYjZMOi5CtWSi7qkAc9GHA2sQLB/l3U
+         00sO3s5UWOJzesBqKTl76BN+95t5OWhiBxFTcwP3UganxQ0+uwjIdjZgnjFc9VeX8eDu
+         Vhg2gwzKN4izAbRAKxIcOcEv2LVR1TU4XPdVrq7w7cPKZx/kZPumAhqIvHJhvCuDQdws
+         XR7FLItvYyc5a6wuamkvjYdv4LTwrCFPEBLUR4pjtenJzeB/AUa3n7V7EvnMPFYvncXi
+         vFeOuXQvE11XtM1+KG50IEjrobfLceFyxui6gRkX3lfnb0IyvngsfpaVh6Sf7G1T7MDU
+         C/ew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731941695; x=1732546495;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rsuZnZU2NXOf5EqgKE4593+R4sGiA8pml1jXet44X9M=;
-        b=ledMa+wlRKl8qZSOCdKLn9vbsFm5BdgNSMKa/QCPYPIzvlH8TkO5aWPF7uimCUrS/P
-         Yl3gZ4pljby3YS0k+QFJTEBInF9IFwrYx1g+dN3PqCtCAar5JhX6CIaNHVrzvjHyQHtF
-         i/nuqxYTrg8ZTz2e921KZpE6+3SLRX1m1OFkgiil2GSMP4aObiQCVsK6QwImeXkNCdml
-         n+i3BQAt+6pLmVzqkGICyh6EUPcxnOEgTx6LNol6uwFvIoH0+uTGmkx0dJjO27ospBYw
-         Zg90Dc1fwKEkQBlBVRhQVY67Tn+8UmXc36/ZqFgZK6bXpF9YfF1Szex6tSHm87hSSiZ1
-         l1Zw==
-X-Forwarded-Encrypted: i=1; AJvYcCVJNt/8ooJloL5UdprEK40b8R/9LIX7t5ajfqu+yxlnyrh/LRj727fxWlrFuxZqNFQaGbfx6+xnY3g1W9A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLLsWONavINKDhLjYtaNdOk8ktjnnPzmz9cSla3Ldb+jZ7qC0x
-	F0bOjCpET6jE6oYKAVMo89eOVT1saHzrpa0go2gVckRT+eWJ1H6Ju1eLEpSCL7LuVdyPW/TqiXj
-	ZGBzS30DgvhpDi4yMR4CkTYSuW7gz2YwxOllhuCHTNQqxaYLZi8DE9shmA57hpDnrgh+Uz6XrP/
-	YydeyBAQoHNAxF8GjuFs1+DurwY2E=
-X-Google-Smtp-Source: AGHT+IHCB4Wc32uEHZri4oww6OJhPXtytvSqmqVrU9ZKviS0h48ZGxo+7ifzbJmdixx5PpIWTHmi3w==
-X-Received: by 2002:a17:906:dc8c:b0:a9e:c460:ef4e with SMTP id a640c23a62f3a-aa4834824b1mr1321963666b.32.1731941694872;
-        Mon, 18 Nov 2024 06:54:54 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731941699; x=1732546499;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Rb5KhQmw4LslJ+rFvwG7oSd7/IR0vOX8Cf3hoYX7Tng=;
+        b=CXLIGqjvX7qO9pIZ2VzNweMbhh8ZvnU7uISLHufMldpXw/RDb/h9cTUyFYAUSIibQc
+         XgqIRGupw2MEhmF00mkiCqjI5FS295ELtqWTL/BRfg/y+nUO+XMnhxBFnFpBHlKpy8xZ
+         iiCJnMwEnXPWumGKGQl9eElFwTEOqqflEfrsDKjo8thC+K33+QrIMzXH1tDSvfyffa4e
+         UWtwNGZd38Nk15lf5dzlJ6WfXJkkQsKLNgH+sFHXiGQIKNxRvC9pMEwuFgxx5v4JhXcM
+         3DKpFaY/VH06e88fVzSa2OxPv1PIhSDcT5tLUKrhJgGaV9hRCglgYD2gxE025j7b9GTA
+         T2og==
+X-Forwarded-Encrypted: i=1; AJvYcCUct/t61O6PlYMKuKHDHlYqWfWBH8xuU6okduh2NKODSiycLe5k1GWw4Dtr8jNUjvCug73zpYqH1BUhIzg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsK2J6nDAsnrfmkgmO6MX306h5D54rDZFe8ys1Oim7rui19Bdc
+	uhDxrvHBiKFsRf+pA5TjtjGaY1h3OFe5B+8xDxgXiYuK84L/LvNv6d8LzZ+0yUjPXy00L1Ug++Z
+	mkZjnDK5WxTiKF1MhfcI0iLi0kRiX+ny0gMluY7aZ+H0gIrril3cQnfV8FlpqRo901a8+6U5AdJ
+	wNCQWfSdphrKWG/a1YWzu20VGycEQ=
+X-Google-Smtp-Source: AGHT+IGakfYoRwIFD+fAHqlh39MXBNvGeTyqIDQ/4FiU/c+03NRrIZyHHule8AgQu9QGgBrK3+YxFg==
+X-Received: by 2002:a17:907:3d86:b0:a9e:c446:c284 with SMTP id a640c23a62f3a-aa48354f048mr1218450766b.55.1731941698849;
+        Mon, 18 Nov 2024 06:54:58 -0800 (PST)
 Received: from localhost.localdomain ([178.27.36.125])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20df1b642sm546125666b.40.2024.11.18.06.54.54
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20df1b642sm546125666b.40.2024.11.18.06.54.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Nov 2024 06:54:54 -0800 (PST)
+        Mon, 18 Nov 2024 06:54:58 -0800 (PST)
 From: Vicentiu Galanopulo <vicentiu.galanopulo@remote-tech.co.uk>
 To: Pavel Machek <pavel@ucw.cz>,
 	Lee Jones <lee@kernel.org>,
@@ -77,10 +80,12 @@ To: Pavel Machek <pavel@ucw.cz>,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-doc@vger.kernel.org
-Subject: [PATCH v7 0/3] Add LED1202 LED Controller
-Date: Mon, 18 Nov 2024 14:54:42 +0000
-Message-Id: <20241118145449.7370-1-vicentiu.galanopulo@remote-tech.co.uk>
+Subject: [PATCH v7 1/3] Documentation:leds: Add leds-st1202.rst
+Date: Mon, 18 Nov 2024 14:54:43 +0000
+Message-Id: <20241118145449.7370-2-vicentiu.galanopulo@remote-tech.co.uk>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20241118145449.7370-1-vicentiu.galanopulo@remote-tech.co.uk>
+References: <20241118145449.7370-1-vicentiu.galanopulo@remote-tech.co.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,38 +94,67 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The LED1202 is a 12-channel low quiescent current LED driver with:
-  * Supply range from 2.6 V to 5 V
-  * 20 mA current capability per channel
-  * 1.8 V compatible I2C control interface
-  * 8-bit analog dimming individual control
-  * 12-bit local PWM resolution
-  * 8 programmable patterns
+Add usage for sysfs hw_pattern entry for leds-st1202
 
-Internal volatile memory allows the user to store up to 8 different patterns,
-each pattern is a particular output configuration in terms of PWM
-duty-cycle (on 4096 steps). Analog dimming (on 256 steps) is per channel but
-common to all patterns. Each device tree LED node will have a corresponding
-entry in /sys/class/leds with the label name. The brightness property
-corresponds to the per channel analog dimming, while the patterns[1-8] to the
-PWM dimming control.  
-
-Vicentiu Galanopulo (3):
-  Documentation:leds: Add leds-st1202.rst
-  dt-bindings: leds: Add LED1202 LED Controller
-  leds: Add LED1202 I2C driver
-
- .../devicetree/bindings/leds/st,led1202.yaml  | 132 +++++
- Documentation/leds/index.rst                  |   1 +
- Documentation/leds/leds-st1202.rst            |  36 ++
- drivers/leds/Kconfig                          |  11 +
- drivers/leds/Makefile                         |   1 +
- drivers/leds/leds-st1202.c                    | 510 ++++++++++++++++++
- 6 files changed, 691 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/leds/st,led1202.yaml
+Signed-off-by: Vicentiu Galanopulo <vicentiu.galanopulo@remote-tech.co.uk>
+---
+ Documentation/leds/index.rst       |  1 +
+ Documentation/leds/leds-st1202.rst | 36 ++++++++++++++++++++++++++++++
+ 2 files changed, 37 insertions(+)
  create mode 100644 Documentation/leds/leds-st1202.rst
- create mode 100644 drivers/leds/leds-st1202.c
 
+diff --git a/Documentation/leds/index.rst b/Documentation/leds/index.rst
+index 3ade16c18328..0ab0a2128a11 100644
+--- a/Documentation/leds/index.rst
++++ b/Documentation/leds/index.rst
+@@ -28,4 +28,5 @@ LEDs
+    leds-mlxcpld
+    leds-mt6370-rgb
+    leds-sc27xx
++   leds-st1202.rst
+    leds-qcom-lpg
+diff --git a/Documentation/leds/leds-st1202.rst b/Documentation/leds/leds-st1202.rst
+new file mode 100644
+index 000000000000..e647966e496c
+--- /dev/null
++++ b/Documentation/leds/leds-st1202.rst
+@@ -0,0 +1,36 @@
++.. SPDX-License-Identifier: GPL-2.0
++
++============================================
++Kernel driver for STMicroelectronics LED1202
++============================================
++
++/sys/class/leds/<led>/hw_pattern
++--------------------------------
++
++Specify a hardware pattern for the ST1202 LED. The LED
++controller implements 12 low-side current generators
++with independent dimming control. Internal volatile memory
++allows the user to store up to 8 different patterns.
++Each pattern is a particular output configuration in terms
++of PWM duty-cycle and duration (ms).
++
++To be compatible with the hardware pattern
++format, maximum 8 tuples of brightness (PWM) and duration must
++be written to hw_pattern.
++
++- Min pattern duration: 22 ms
++- Max pattern duration: 5660 ms
++
++The format of the hardware pattern values should be:
++"brightness duration brightness duration ..."
++
++/sys/class/leds/<led>/repeat
++----------------------------
++
++Specify a pattern repeat number, which is common for all channels.
++Default is 1; negative numbers and 0 are invalid.
++
++This file will always return the originally written repeat number.
++
++When the 255 value is written to it, all patterns will repeat
++indefinitely.
 -- 
 2.39.3 (Apple Git-145)
 
