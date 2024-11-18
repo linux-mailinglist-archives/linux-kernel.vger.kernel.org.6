@@ -1,245 +1,116 @@
-Return-Path: <linux-kernel+bounces-413118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77B6B9D13D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 16:01:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33AA39D13D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 16:00:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C6188B28A39
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 14:59:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 928621F21ED4
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 15:00:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A84021ACE12;
-	Mon, 18 Nov 2024 14:59:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19F821AE00C;
+	Mon, 18 Nov 2024 15:00:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G6Bg2k8C"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b="g0GjTl7Q"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCCC113D518;
-	Mon, 18 Nov 2024 14:59:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C8C81AA1FA
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 15:00:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731941979; cv=none; b=EuAyZcZ5COrNDoEhNt7hNIYs5PobeNgvmGhYRqLWtTqArK73dpcGwbvJ5pSL8gx9HKYQFY+Jj8AtT29D9cms6IH6TWDuoyLizyb0d8Ywj4I2uE/wypGjv/ok1XrBZmy6e3QEAx2u9oF5G9V3blh1GfopHMGDNeMFzUUWtmPweGg=
+	t=1731942006; cv=none; b=Rp16DDBV0EYhB06QBO3Df6uKCKJGhbl7tiQfHqvWkaxMkc09ZymE9gMhJguqFC29+Vh+DtP5KO/teFbu7qnBnLRLjCNe3/4jxxPAiTP+ai6hcz41JGNC3RoyrWYPCnWpVzk/KxO7guwSSXE/dBPfShWtWnQhfMZzJ+OaQicE/Us=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731941979; c=relaxed/simple;
-	bh=B8pGggj3ynn83Ub48krJi7CHfczmBiFlV+ZzKagAU8c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C/d9wvR+6XtDC8PYFYizEURs90zApDyiYz26Im3mnMH3wSYtg71gf9TQyALRTpxQj3eaeyRS5U8dAIQggiuMXO8z6s8D1kbPAFs6sj1bssleTroQg3LqOT9Kj7Pz9J9lCvCkmVvZBoHp2t5ydTd8MF9Grbt030Lp4j1eF5hXbuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G6Bg2k8C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD6BEC4CECC;
-	Mon, 18 Nov 2024 14:59:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731941978;
-	bh=B8pGggj3ynn83Ub48krJi7CHfczmBiFlV+ZzKagAU8c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=G6Bg2k8CB4cyv7GvpsoK3J+5RLs/2u5H29iEyh4i6ZqGoXct/Mu22+XNHflmRvT6s
-	 KZe6NXydVtOw41QSE4Mu0hI142rjcw2NGNoa3hORXv8QPudQ2LNbI7CL1PQllBv1zJ
-	 PVg5OIMdYI/sifgmlsljRU/Jxm7UY+Ka84poM2U08EXGlKgrcyVUOBN2rs8H4k42SQ
-	 UuahBUOxDy3vM9OoqFVolfL209f3W00Ro+weBEcZGMM2MXHHmc4mlPpCvaZhG6b4ib
-	 avxefeiazL/Eyx8Z0HkLX7S1VbKRCfbXLdz1veV0FzQoJ7m9izmVY5DPnmgs81YoQr
-	 LHwDUV8zWxLxA==
-Date: Mon, 18 Nov 2024 14:59:30 +0000
-From: Will Deacon <will@kernel.org>
-To: Leon Romanovsky <leon@kernel.org>
-Cc: Jens Axboe <axboe@kernel.dk>, Jason Gunthorpe <jgg@ziepe.ca>,
-	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
-	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
-	Leon Romanovsky <leonro@nvidia.com>,
-	Keith Busch <kbusch@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Logan Gunthorpe <logang@deltatee.com>,
-	Yishai Hadas <yishaih@nvidia.com>,
-	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-	linux-rdma@vger.kernel.org, iommu@lists.linux.dev,
-	linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org,
-	kvm@vger.kernel.org, linux-mm@kvack.org,
-	Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH v3 07/17] dma-mapping: Implement link/unlink ranges API
-Message-ID: <20241118145929.GB27795@willie-the-truck>
-References: <cover.1731244445.git.leon@kernel.org>
- <f8c7f160c9ae97fef4ccd355f9979727552c7374.1731244445.git.leon@kernel.org>
+	s=arc-20240116; t=1731942006; c=relaxed/simple;
+	bh=DV0wLt/fJAQ1zmwK7t51dfn7cg2V4txHVmffmYrdNDE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FGD/a6zMK8nB2BDZvhi6wW1k9KRGpsC0neGW61qwDEuOhUm/WgE24gJggrUg1RLeArxhbphTKAxgDHZpn176doDdIBcPPqhxs1KsV4mw8fTFq6ijbHPLM7Q/jVPFtoVkrGAw40WHBH2XLNwU/2JEcFReMb3U+Dj4A21IyZO5k6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mihalicyn.com; spf=pass smtp.mailfrom=mihalicyn.com; dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b=g0GjTl7Q; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mihalicyn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mihalicyn.com
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-539d9fffea1so4202023e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 07:00:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=mihalicyn.com; s=mihalicyn; t=1731942003; x=1732546803; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6zJ4FGoi5ftTI56Hvv5JnS/WGB8iYYkvstT7BpBSm10=;
+        b=g0GjTl7QCbDHMhHMIvfAz1rO2ckf/Fmvo+VKilnZ8gjPGrYWF8Hy6ySwwND1UQ/uek
+         0KZfrbUTO92b3RLK92Dk+JEeEEg9aO7lp7Tj+IuHNM+1b2cB4bSWfavk5Sck4efbfHG8
+         QESm+k2GToiwr6BbTashhbnVCBWKWEUydEhfk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731942003; x=1732546803;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6zJ4FGoi5ftTI56Hvv5JnS/WGB8iYYkvstT7BpBSm10=;
+        b=wqG4JyiapoL6xhqfHzBp6SM/LiThl0rCbX2WM0Q/Bk3Ig1B4O2x0BUxr7snViXEUb7
+         ceeQbaiB1Y+zwnPuu4kDefh1LmfbX8oZhehv7lxagGK9pmHgjZLP9BS/Q9vc+jB8tmD9
+         hHsqvikJijydWzj9Hbt2KuCiyjMxWtymcj9DDcCZu2v/wao4UTMvkY4WGuCH8eqKdUkb
+         l87hU6tCZf8egL8Mu6AYEEzBm3LubVLH8wN9OEB4YSQeBqB+0aRRnJsO9UbnBKYR9/17
+         YHUhuZvsd7v6H5jj46q1JCz2MhXZLlBHQWyIFe+stwPzH/O2eJN+g1vVigyLwreZb21W
+         rlyQ==
+X-Gm-Message-State: AOJu0YwfOBSVsfnszF72bWU+Puvkcf+4zeWCEawCiE0hO7fQIFlY6lwm
+	j+f6wkPohvU6UfkKBLUmgzt4fNmda7DO88UJqBsDAzdD4L6Kg21ZWvhTQ/nyiiGoCMOYnyPMnXk
+	iRyfC01PixWcHZZoLH5dbdFRgJBuX2qB3kVInJw==
+X-Google-Smtp-Source: AGHT+IEye5AclSa0Dtqlqp4wT1D/SzXX4+blQIj+JyQyDIjVt4YGD2ypM1int4wOl7MFpC8uCGhhzy1mK8dlUxsjQ5k=
+X-Received: by 2002:ac2:4342:0:b0:53d:b0ea:9efa with SMTP id
+ 2adb3069b0e04-53db0eaa7aemr2498033e87.31.1731942002224; Mon, 18 Nov 2024
+ 07:00:02 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f8c7f160c9ae97fef4ccd355f9979727552c7374.1731244445.git.leon@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20241117091313.10251-1-stsp2@yandex.ru> <CAJqdLrp4J57k67R3OWM-_6QZSv8EV9UANzdAtBCiLGQZPTXDcQ@mail.gmail.com>
+ <d1e90994-ca11-4a3e-b627-e3425dc5bf26@yandex.ru> <d99a9ccc-6cc0-4978-9930-7021979703c8@yandex.ru>
+In-Reply-To: <d99a9ccc-6cc0-4978-9930-7021979703c8@yandex.ru>
+From: Alexander Mikhalitsyn <alexander@mihalicyn.com>
+Date: Mon, 18 Nov 2024 15:59:50 +0100
+Message-ID: <CAJqdLrr1oet6F_EQSaiSfwnMCvt0Omvicw5Ed7FkiyrQagfgMQ@mail.gmail.com>
+Subject: Re: [PATCH net v2] scm: fix negative fds with SO_PASSPIDFD
+To: stsp <stsp2@yandex.ru>
+Cc: linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Simon Horman <horms@kernel.org>, Christian Brauner <brauner@kernel.org>, Kees Cook <kees@kernel.org>, 
+	Kuniyuki Iwashima <kuniyu@amazon.com>, netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Nov 10, 2024 at 03:46:54PM +0200, Leon Romanovsky wrote:
-> From: Leon Romanovsky <leonro@nvidia.com>
-> 
-> Introduce new DMA APIs to perform DMA linkage of buffers
-> in layers higher than DMA.
-> 
-> In proposed API, the callers will perform the following steps.
-> In map path:
-> 	if (dma_can_use_iova(...))
-> 	    dma_iova_alloc()
-> 	    for (page in range)
-> 	       dma_iova_link_next(...)
-> 	    dma_iova_sync(...)
-> 	else
-> 	     /* Fallback to legacy map pages */
->              for (all pages)
-> 	       dma_map_page(...)
-> 
-> In unmap path:
-> 	if (dma_can_use_iova(...))
-> 	     dma_iova_destroy()
-> 	else
-> 	     for (all pages)
-> 		dma_unmap_page(...)
-> 
-> Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
-> ---
->  drivers/iommu/dma-iommu.c   | 259 ++++++++++++++++++++++++++++++++++++
->  include/linux/dma-mapping.h |  32 +++++
->  2 files changed, 291 insertions(+)
+Am So., 17. Nov. 2024 um 11:11 Uhr schrieb stsp <stsp2@yandex.ru>:
+>
+> 17.11.2024 13:04, stsp =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > 17.11.2024 12:40, Alexander Mikhalitsyn =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> >> Hi Stas,
+> >>
+> >> Actually, it's not a forgotten check. It's intended behavior to pass
+> >> through errors from pidfd_prepare() to
+> >> the userspace. In my first version [1] of the patch I tried to return
+> >> ESRCH instead of EINVAL in your case, but
+> >> then during discussions we decided to remove that.
+> >>
+> >> [1]
+> >> https://lore.kernel.org/all/20230316131526.283569-2-aleksandr.mikhalit=
+syn@canonical.com/
+> > Yes, the patch you referenced above,
+> > only calls put_cmsg() with an error code.
+> >
+> > But the code I can see now in git, does
+> > much more. Namely,
+> > if (pidfd_file)
+> >     fd_install(pidfd, pidfd_file);
+> Ah, I guess pidfd_file is a culprit.
 
-[...]
+Hey,
 
-> +/**
-> + * dma_iova_link - Link a range of IOVA space
-> + * @dev: DMA device
-> + * @state: IOVA state
-> + * @phys: physical address to link
-> + * @offset: offset into the IOVA state to map into
-> + * @size: size of the buffer
-> + * @dir: DMA direction
-> + * @attrs: attributes of mapping properties
-> + *
-> + * Link a range of IOVA space for the given IOVA state without IOTLB sync.
-> + * This function is used to link multiple physical addresses in contigueous
-> + * IOVA space without performing costly IOTLB sync.
-> + *
-> + * The caller is responsible to call to dma_iova_sync() to sync IOTLB at
-> + * the end of linkage.
-> + */
-> +int dma_iova_link(struct device *dev, struct dma_iova_state *state,
-> +		phys_addr_t phys, size_t offset, size_t size,
-> +		enum dma_data_direction dir, unsigned long attrs)
-> +{
-> +	struct iommu_domain *domain = iommu_get_dma_domain(dev);
-> +	struct iommu_dma_cookie *cookie = domain->iova_cookie;
-> +	struct iova_domain *iovad = &cookie->iovad;
-> +	size_t iova_start_pad = iova_offset(iovad, phys);
-> +
-> +	if (WARN_ON_ONCE(iova_start_pad && offset > 0))
-> +		return -EIO;
-> +
-> +	if (dev_use_swiotlb(dev, size, dir) && iova_offset(iovad, phys | size))
-> +		return iommu_dma_iova_link_swiotlb(dev, state, phys, offset,
-> +				size, dir, attrs);
-> +
-> +	return __dma_iova_link(dev, state->addr + offset - iova_start_pad,
-> +			phys - iova_start_pad,
-> +			iova_align(iovad, size + iova_start_pad), dir, attrs);
-> +}
-> +EXPORT_SYMBOL_GPL(dma_iova_link);
-> +
-> +/**
-> + * dma_iova_sync - Sync IOTLB
-> + * @dev: DMA device
-> + * @state: IOVA state
-> + * @offset: offset into the IOVA state to sync
-> + * @size: size of the buffer
-> + *
-> + * Sync IOTLB for the given IOVA state. This function should be called on
-> + * the IOVA-contigous range created by one ore more dma_iova_link() calls
-> + * to sync the IOTLB.
-> + */
-> +int dma_iova_sync(struct device *dev, struct dma_iova_state *state,
-> +		size_t offset, size_t size)
-> +{
-> +	struct iommu_domain *domain = iommu_get_dma_domain(dev);
-> +	struct iommu_dma_cookie *cookie = domain->iova_cookie;
-> +	struct iova_domain *iovad = &cookie->iovad;
-> +	dma_addr_t addr = state->addr + offset;
-> +	size_t iova_start_pad = iova_offset(iovad, addr);
-> +
-> +	return iommu_sync_map(domain, addr - iova_start_pad,
-> +		      iova_align(iovad, size + iova_start_pad));
-> +}
-> +EXPORT_SYMBOL_GPL(dma_iova_sync);
-> +
-> +static void iommu_dma_iova_unlink_range_slow(struct device *dev,
-> +		dma_addr_t addr, size_t size, enum dma_data_direction dir,
-> +		unsigned long attrs)
-> +{
-> +	struct iommu_domain *domain = iommu_get_dma_domain(dev);
-> +	struct iommu_dma_cookie *cookie = domain->iova_cookie;
-> +	struct iova_domain *iovad = &cookie->iovad;
-> +	size_t iova_start_pad = iova_offset(iovad, addr);
-> +	dma_addr_t end = addr + size;
-> +
-> +	do {
-> +		phys_addr_t phys;
-> +		size_t len;
-> +
-> +		phys = iommu_iova_to_phys(domain, addr);
-> +		if (WARN_ON(!phys))
-> +			continue;
-> +		len = min_t(size_t,
-> +			end - addr, iovad->granule - iova_start_pad);
-> +
-> +		if (!dev_is_dma_coherent(dev) &&
-> +		    !(attrs & DMA_ATTR_SKIP_CPU_SYNC))
-> +			arch_sync_dma_for_cpu(phys, len, dir);
-> +
-> +		swiotlb_tbl_unmap_single(dev, phys, len, dir, attrs);
-> +
-> +		addr += len;
-> +		iova_start_pad = 0;
-> +	} while (addr < end);
-> +}
-> +
-> +static void __iommu_dma_iova_unlink(struct device *dev,
-> +		struct dma_iova_state *state, size_t offset, size_t size,
-> +		enum dma_data_direction dir, unsigned long attrs,
-> +		bool free_iova)
-> +{
-> +	struct iommu_domain *domain = iommu_get_dma_domain(dev);
-> +	struct iommu_dma_cookie *cookie = domain->iova_cookie;
-> +	struct iova_domain *iovad = &cookie->iovad;
-> +	dma_addr_t addr = state->addr + offset;
-> +	size_t iova_start_pad = iova_offset(iovad, addr);
-> +	struct iommu_iotlb_gather iotlb_gather;
-> +	size_t unmapped;
-> +
-> +	if ((state->__size & DMA_IOVA_USE_SWIOTLB) ||
-> +	    (!dev_is_dma_coherent(dev) && !(attrs & DMA_ATTR_SKIP_CPU_SYNC)))
-> +		iommu_dma_iova_unlink_range_slow(dev, addr, size, dir, attrs);
-> +
-> +	iommu_iotlb_gather_init(&iotlb_gather);
-> +	iotlb_gather.queued = free_iova && READ_ONCE(cookie->fq_domain);
-> +
-> +	size = iova_align(iovad, size + iova_start_pad);
-> +	addr -= iova_start_pad;
-> +	unmapped = iommu_unmap_fast(domain, addr, size, &iotlb_gather);
-> +	WARN_ON(unmapped != size);
+Precisely, when an error happens then pidfd_file is NULL.
 
-Does the new API require that the 'size' passed to dma_iova_unlink()
-exactly match the 'size' passed to the corresponding call to
-dma_iova_link()? I ask because the IOMMU page-table code is built around
-the assumption that partial unmap() operations never occur (i.e.
-operations which could require splitting a huge mapping). We just
-removed [1] that code from the Arm IO page-table implementations, so it
-would be good to avoid adding it back for this.
+Kind regards,
+Alex
 
-Will
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/iommu/linux.git/commit/?h=arm/smmu&id=33729a5fc0caf7a97d20507acbeee6b012e7e519
+> Thanks.
 
