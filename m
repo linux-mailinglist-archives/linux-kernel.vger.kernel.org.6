@@ -1,420 +1,231 @@
-Return-Path: <linux-kernel+bounces-412871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17C239D106D
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 13:13:12 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E83EC9D1074
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 13:14:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BE131F213E0
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 12:13:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6607FB22C0D
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 12:14:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA7F71991DA;
-	Mon, 18 Nov 2024 12:13:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86CCF1991C8;
+	Mon, 18 Nov 2024 12:14:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="OLGpmL2S"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FU7qFXCl"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1DE91990C7;
-	Mon, 18 Nov 2024 12:13:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22355198A35
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 12:14:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731931984; cv=none; b=VMhbj7oR+RNR7r8daIXOPckFS6AAygG/TIDMt6d3zdKeFDH1l3AVsVYbEONIkZXoNDwimJaQSw/bHQh2DPOBzsoXAhqSGKXdXF5ll+KF7SYgNlzx6MiOrN673zF9V7a4UYpa8IvAz67N7R9O3ZVXsrcv5Qw5ZWv5TU2AU8BAHTA=
+	t=1731932077; cv=none; b=KGx+fNWQI6xD1YxjfRwwK+jTYOQQtbCxPMgppZ8vT/SDFKj2eo6i4B+dEFn/gUs7Z6B1f018tg791dUIikYbNnDPwOUTaEI11lLf2Fiw0iMNDT/7B2nTV6LHU9SJu3kCHXAXUqWQ+xxY70nZ2m1h9T6BFiPMgi17sAWB+u8/3JA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731931984; c=relaxed/simple;
-	bh=kiBM5nnYf6Ai0wFHr0TnezVM3rip73kNyXX0sqyNUdc=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=TCUAhynUpZPtElHT898M17qn+QOgYgYTPja5GSSU3NT+0eRfM23wybPuUXjHrMoDRGL1Fr7GPVrLFOleCrLEnq23dxFFmUQuqLxC+eFNBgQ5SgnZe9NP2iH4EhroXYDSM/U7xCuCtAjAIBqGmv3aNylyb7jEHTWAT8Ci0VQSFNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=OLGpmL2S; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AI5Rh9w028919;
-	Mon, 18 Nov 2024 12:12:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	wOOpNinW4QrjpfoPyJgIEirD6N55nfqMJMQd5VPmt2I=; b=OLGpmL2St8cZDLqG
-	xrOzVCTrc5kW4hCaJfQy1/anyAg7HK4p7do5XPW0DILDyh1ZtgCBYzQUv3MlvWRy
-	lrfLtbKMtERBZEREGwIw/mdYMYXNA8w0Awn1FRLpK41U55LJ1TZcNdtUEFRDhBt5
-	Mg/HkJmrC1ag4j8aeTC4H+QwcRCPLsBgJ52i+JnDfjBYCcQ+fG4SzS7vO8QMdoBX
-	p1H9yAgJfQMroKxWSXdzWq7DX48Th+B5dQhszWc4taSPMHpEOicVIsJ51a2CJ/Fl
-	wfI4mumIbDjcPOTL3zS82Nu3T8BrGhta6LYnof7imwx+/xKDBv3iu19s5SggrJ20
-	52rsxw==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42xkv9vh12-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 18 Nov 2024 12:12:44 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AICChfT008812
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 18 Nov 2024 12:12:43 GMT
-Received: from [10.218.27.127] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 18 Nov
- 2024 04:12:39 -0800
-Message-ID: <348605e8-a583-49c2-8921-dafed033f53d@quicinc.com>
-Date: Mon, 18 Nov 2024 17:42:31 +0530
+	s=arc-20240116; t=1731932077; c=relaxed/simple;
+	bh=EiiG1OYFiM264BUD590kDMC4+EsgRNZ1XnqziSSQoC8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=s9Vs8b17xYQUhiHzYnMrOzOB5vazAu42QkQY0dLnmzsLpF1TBCuCULVjEPp3NOowSD+3juj6BN8zA7ksrO1OYQY7YssJDHH+CNcPVeSXZ54bUg7k31j3OKsi4/BTlIy6kvob4wmwf+9ralzzAwZ8ym2mfgzOcpsbsX1t+uDt2Bs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FU7qFXCl; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731932076; x=1763468076;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=EiiG1OYFiM264BUD590kDMC4+EsgRNZ1XnqziSSQoC8=;
+  b=FU7qFXClm2fI7Xi9m1MdGpHFtOV0WTXon4BgebpTcW71ZarLkHxypXxk
+   BPj+S2Paan/S7riN6+yxQ6RBCfez1vSVo3iWEneR43pK8iJ/pFTbn1HYk
+   jLiH9riwC/CSDOa7II6dIfFqGsUJa3DmmaJU16LEnDdbLOJBwnIurzzrB
+   Vlrsh7PWXsIPtdWpXfjKWuLNAueYUp6V5oEenuXDaZ/vLV5SnE9mnrRwi
+   Zl5ZKqBpPoon4TBEBbzfvdqwjSIBwvQQfGlGKyTjuLDJleBlvGqUUgfDe
+   /XuGUg4YzreWIyvCHT33r737RwV93rcb0FBtDVUCxSV/UGckCH7GbBY+v
+   Q==;
+X-CSE-ConnectionGUID: vIK338PNRtWiOwr8FW/oRQ==
+X-CSE-MsgGUID: 0GqNtJ+kSqOJTcJG5PZN/A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11259"; a="43281784"
+X-IronPort-AV: E=Sophos;i="6.12,164,1728975600"; 
+   d="scan'208";a="43281784"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2024 04:14:35 -0800
+X-CSE-ConnectionGUID: XbvVhdfeTrOnBECuMbsWnQ==
+X-CSE-MsgGUID: L4NYPEHgSSelCortqBt2JA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,164,1728975600"; 
+   d="scan'208";a="94025518"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2024 04:14:33 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tD0eE-0000000FzuA-2TDL;
+	Mon, 18 Nov 2024 14:14:30 +0200
+Date: Mon, 18 Nov 2024 14:14:30 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
+	"Daniel Walker (danielwa)" <danielwa@cisco.com>,
+	Ilpo =?utf-8?Q?J=EF=BF=BDrvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Klara Modin <klarasmodin@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Danil Rybakov <danilrybakov249@gmail.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"xe-linux-external(mailer list)" <xe-linux-external@cisco.com>
+Subject: Re: platform/x86: p2sb: Allow p2sb_bar() calls during PCI device
+ probe
+Message-ID: <Zzsvphcxy-70Uz7E@smile.fi.intel.com>
+References: <ZzTI+biIUTvFT6NC@goliath>
+ <cd1cedcc-c9b8-4f3c-ac83-4b0c0ba52a82@redhat.com>
+ <82ab3d06-40e6-41dd-bb43-9179d4497313@redhat.com>
+ <2c828592-dbdd-4cd4-b366-70797d63329d@redhat.com>
+ <ZzTk5kyPa5kUxA+f@goliath>
+ <a5bafe87-e8f6-40d9-a5d8-34cf6aa576a4@redhat.com>
+ <wxb4hmju5jknxr2bclxlu5gujgmb3vvqwub7jrt4wofllqp7li@pdvthto4jf47>
+ <ZzdhTsuRNk1YWg8p@goliath>
+ <5qjbimedzeertdham2smgktt54gzdc7yg4dwgiz7eezt2tf5a2@szhhpvzo3uhj>
+ <afdb6114-07ef-4e25-91f0-9fb9be192153@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND v17 0/5] iommu/arm-smmu: introduction of ACTLR
- implementation for Qualcomm SoCs
-From: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <robdclark@gmail.com>, <will@kernel.org>, <robin.murphy@arm.com>,
-        <joro@8bytes.org>, <jgg@ziepe.ca>, <jsnitsel@redhat.com>,
-        <robh@kernel.org>, <krzysztof.kozlowski@linaro.org>,
-        <quic_c_gdjako@quicinc.com>, <iommu@lists.linux.dev>,
-        <linux-arm-msm@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20241114160721.1527934-1-quic_bibekkum@quicinc.com>
- <mcyes5nikfr6ptzorlttrzvtjgh5zugmbo5ao3pkh4q2r5h6j4@vonmpvsqykv4>
- <95843301-2061-49bd-80aa-c443e3694438@quicinc.com>
-Content-Language: en-US
-In-Reply-To: <95843301-2061-49bd-80aa-c443e3694438@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: -Siq5b892rYwkyChjdvCCD5fHpBvJB-H
-X-Proofpoint-ORIG-GUID: -Siq5b892rYwkyChjdvCCD5fHpBvJB-H
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
- mlxlogscore=999 priorityscore=1501 lowpriorityscore=0 adultscore=0
- spamscore=0 suspectscore=0 impostorscore=0 clxscore=1015 mlxscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411180102
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <afdb6114-07ef-4e25-91f0-9fb9be192153@redhat.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
+On Mon, Nov 18, 2024 at 12:42:18PM +0100, Hans de Goede wrote:
+> On 18-Nov-24 12:30 PM, Shinichiro Kawasaki wrote:
+> > On Nov 15, 2024 / 14:57, Daniel Walker (danielwa) wrote:
+> >> On Fri, Nov 15, 2024 at 11:35:46AM +0000, Shinichiro Kawasaki wrote:
+> >>> On Nov 13, 2024 / 19:34, Hans de Goede wrote:
+> >>>> On 13-Nov-24 6:41 PM, Daniel Walker (danielwa) wrote:
+> >>>>> On Wed, Nov 13, 2024 at 06:04:44PM +0100, Hans de Goede wrote:
+> >>>>>> On 13-Nov-24 5:33 PM, Hans de Goede wrote:
+> >>>>>>> On 13-Nov-24 5:24 PM, Hans de Goede wrote:
 
+[...]
 
-On 11/15/2024 10:43 PM, Bibek Kumar Patro wrote:
-> 
-> 
-> On 11/15/2024 4:26 AM, Dmitry Baryshkov wrote:
->> On Thu, Nov 14, 2024 at 09:37:16PM +0530, Bibek Kumar Patro wrote:
->>> This patch series consist of six parts and covers the following:
->>>
->>> 1. Provide option to re-enable context caching to retain prefetcher
->>>     settings during reset and runtime suspend.
->>>
->>> 2. Remove cfg inside qcom_smmu structure and replace it with single
->>>     pointer to qcom_smmu_match_data avoiding replication of multiple
->>>     members from same.
->>>
->>> 3. Add support for ACTLR PRR bit setup via adreno-smmu-priv interface.
->>>
->>> 4. Introduce intital set of driver changes to implement ACTLR register
->>>     for custom prefetcher settings in Qualcomm SoCs.
->>>
->>> 5. Add ACTLR data and support for qcom_smmu_500.
->>>
->>> Resend of v17:
->>>   Addition of minor fix of the build warning reported by kernel test 
->>> robot [1] by powerpc_random config [2].
->>>   [1]:https://lore.kernel.org/all/202411140748.6mcFdJdO-lkp@intel.com/#t
->>>   [2]:https://download.01.org/0day-ci/ 
->>> archive/20241114/202411140748.6mcFdJdO-lkp@intel.com/config
->>
->> Nit: then it's not a resend, but a new iteration. RESEND literally means
->> resending the same patchset.
-> 
-> I see. Since it is a simple "int i" and so did not feel worth a new 
-> iteration.
-> 
-> Thanks & regards,
-> Bibek
-> 
+> >>>>>>> It probably has something to do with these 2 messages:
+> >>>>>>>
+> >>>>>>> pci 0000:00:1f.1: BAR 0 [mem 0xfd000000-0xfdffffff 64bit]: can't claim; no compatible bridge window
+> >>>>>>> pci 0000:00:1f.1: BAR 0 [mem 0x280000000-0x280ffffff 64bit]: assigned
+> >>>>>>>
+> >>>>>>> I'm guessing that this re-assignment is messing up
+> >>>>>>> the p2sb BAR caching, after which things go wrong.
+> >>>>>>
+> >>>>>> Hmm, but that should be fixed by 2c6370e66076 ("platform/x86: p2sb: Don't init until unassigned resources have been assigned")
+> >>>>>>
+> >>>>>> and you are seeing this with 6.12, which has that.
+> >>>>>>
+> >>>>>> Can you try adding a pr_info() to the top of p2sb_cache_resources()
+> >>>>>> with 6.12 and then collec a new dmesg ?
+> >>>>>>
+> >>>>>> If that pr_info() is done after the:
+> >>>>>>
+> >>>>>> pci 0000:00:1f.1: BAR 0 [mem 0x280000000-0x280ffffff 64bit]: assigned
+> >>>>>>
+> >>>>>> message then that does not explain things.
+> >>>>>
+> >>>>> I haven't testing adding a pr_info() but the messages seem to happen in the same
+> >>>>> order in both working and non-working cases.
+> >>>>>
+> >>>>> Does that matter?
+> >>>>
+> >>>> The working case does not do the bar caching, we want to know if the
+> >>>> bar caching in the non working case happens before or after the assignment:
+> >>>>
+> >>>> pci 0000:00:1f.1: BAR 0 [mem 0x280000000-0x280ffffff 64bit]: assigned
+> >>>>
+> >>>> It should happen after the assignment.
+> >>>
+> >>> Hello Daniel,
+> >>>
+> >>> It's my sorrow that the change cause this trouble. I have created a debug patch
+> >>> for the kernel and attached to this e-mail. It adds some pr_info() to answer
+> >>> the question from Hans. It will also show us a bit more things. Could you try it
+> >>> on your system? It should apply to v6.12-rcX kernels without conflicts.
+> >>
+> >> Ok.. The dmesg with the patch applied is attached.
+> > 
+> > Thank you. Here I quote the relevant part of the debug log.
+> > 
+> > --------------------------------------------------------------------------------
+> > ...
+> > pci 0000:00:1f.0: [8086:19dc] type 00 class 0x060100 conventional PCI endpoint
+> > pci 0000:00:1f.1: [8086:19dd] type 00 class 0x058000 conventional PCI endpoint ... [A]
+> > pci 0000:00:1f.1: BAR 0 [mem 0xfd000000-0xfdffffff 64bit]
+> > pci 0000:00:1f.2: [8086:19de] type 00 class 0x058000 conventional PCI endpoint
+> > pci 0000:00:1f.2: BAR 0 [mem 0x88c00000-0x88c03fff]
+> > ...
+> > PCI: Using ACPI for IRQ routing
+> > pci 0000:00:1f.1: BAR 0 [mem 0xfd000000-0xfdffffff 64bit]: can't claim; no compatible bridge window ... [B]
+> > hpet0: at MMIO 0xfed00000, IRQs 2, 8, 0, 0, 0, 0, 0, 0
+> > ...
+> > NET: Registered PF_XDP protocol family
+> > pci 0000:00:1f.1: BAR 0 [mem 0x280000000-0x280ffffff 64bit]: assigned ... [C]
+> > pci 0000:00:09.0: PCI bridge to [bus 01-06]
+> > ...
+> > PCI: CLS 64 bytes, default 64
+> > p2sb_cache_resources
+> > p2sb_cache_resources: P2SBC_HIDE=0  ... [D]
+> > p2sb_scan_and_cache_devfn: devfn=1f.1
+> > p2sb_scan_and_cache_devfn: 280000000-280ffffff: 140204 ... [E]
+> > PCI-DMA: Using software bounce buffering for IO (SWIOTLB)
+> > ...
+> > --------------------------------------------------------------------------------
+> > 
+> > Also, here I list my observations.
+> > 
+> > [A] The P2SB device was detected with DEVFN 1f.1, and device id 8086:19dd
+> > [B] Failed to claim its resource
+> > [C] Assigned new resource
+> > [D] p2sb_cache_resource() was called after the new resource assignment.
+> >     P2SBC_HIDE bit is not set.
+> > [E] The new resource was cached. IORESOURCE flags: MEM_64,SIZE_ALIGN,MEM.
+> > 
+> > So it was confirmed that the p2sb_cache_resource() was called after the new
+> > resource assignment, but Hans and Andy discuss that this order is not the
+> > problem cause, probably.
+> > 
+> > One thing I noticed is that p2sb_bar() call is not recorded in the log. My
+> > understanding is that all device drivers which use P2SB resource shouled call
+> > p2sb_bar(). Daniel, you noted that "a custom gpio device" disappeared. Does its
+> > device driver call p2sb_bar()?
 
-Let me know if you still feel this should be a new patch, I will send 
-the new iteration then in that case or I'll wait till further reviews on 
-this series.
+FYI: if we are talking about on-die GPIO (that's usually covered by
+the drivers/intel/pinctrl-denverton.c), the new kernels have the piece
+of the code to enumerate it via p2sb (the code is located in the
+drivers/mfd/lpc_ich.c).
 
-Thanks & regards,
-Bibek
+> > On the other hand, Daniel noted that,
+> > 
+> >   "The vendor and device details for the pci device are 8086:19dd."
+> > 
+> > I think 8086:19dd is the P2SB device itself. When p2sb_cache_resource() is
+> > called, pci_stop_and_remove_bus_device() is called for it, so I guess it is
+> > expected the device 8086:19dd disappears. Before applying the commit
+> > 5913320eb0b3, this pci_stop_and_remove_bus_device() call happened when
+> > p2sb_bar() was called. So, my mere guess is that Daniel's system's drivers do
+> > not call p2sb_bar() during the boot process, then the 8086:19dd P2SB device was
+> > still visible after boot.
+> 
+> Thank you that is a great analysis.
 
->>
->>> Changes in v17 from v16:
->>>   Tags provided earlier not collected yet on patch 1/5, 3/5, 4/5, 5/5
->>>   due to the following revisions:
->>>   - 1/5 : Move the CPRE workaround out of qualcomm specific logic and 
->>> gate with config
->>>           , update the silicon-errata.rst file
->>>   - 2/5 : No changes - reviewed-by tags collected
->>>   - 3/5 : Move the compatible check before assignment of callback as 
->>> suggested.
->>>   - 4/5 : Add the actlr setting for *adreno variant* of MMU-500 as well.
->>>   - 5/5 : Due to changes in 1/5, minor refactoring had to be done 
->>> before adding table.
->>>   Link to v16:
->>>   https://lore.kernel.org/all/20241008125410.3422512-1- 
->>> quic_bibekkum@quicinc.com/
->>>
->>> Changes in v16 from v15:
->>>   - Incorporate Dimitry's suggestion on patch 4/5 to use dev_dbg 
->>> instead of dev_notice.
->>>   - Fix kernel test robot warning [1] coming for 32bit architecture 
->>> configuration.
->>>   - Updatingthe tags
->>>   [1]: https://lore.kernel.org/all/202409230343.Q8KnYl2w-lkp@intel.com/
->>>   Link to v15:
->>>   https://lore.kernel.org/all/20240920155813.3434021-1- 
->>> quic_bibekkum@quicinc.com/
->>>
->>> Changes in v15 from v14:
->>>   - As discussed with Robin and Dmitry modify the actlr table and 
->>> logic to use
->>>     compatible string instead of sid, mask for device matching which is
->>>     similar to qcom_smmu_client_of_match mechanism.
->>>   - Expand the comment in qcom_smmu500_reset to document reason why 
->>> CPRE bit is re-enabled again
->>>     after arm_mmu500_reset resets the bit.
->>>   - Rearrange the series in order to keep prefetch setting patches in 
->>> the end.
->>>   Link to v14:
->>>   https://lore.kernel.org/all/20240816174259.2056829-1- 
->>> quic_bibekkum@quicinc.com/
->>>
->>> Changes in v14 from v13:
->>>   Patch 6/6:
->>>   - As discussed incorprate changes to carry out PRR implementation 
->>> only for
->>>     targets based on MMU-500 by using compat string based SMMU 
->>> version detection.
->>>   - Split the set_actlr interface into two separate interface namely 
->>> set_prr_bit
->>>     and set_prr_addr to set the prr enable bit and prr page address 
->>> resepectively.
->>>   Patch 3/6:
->>>    - Fix a bug in gfx actlr_config which is uncovered while testing 
->>> the gfx actlr setting in sc7280
->>>      during PRR experiment which prevented clients on certain sids of 
->>> gfx smmmu to be skipped during
->>>      setting up of the ACTLR values : Fix involves swapping the 
->>> arguments passed in smr_is_subset to make
->>>       device smr <from devicetree> a subset of actlr_config table 
->>> entries < defined in the driver>.
->>>   Patch 4/6, 5/6:
->>>    - Sort the actlr table values in increasing order of the SIDs.
->>>   Link to v13:
->>>   https://lore.kernel.org/all/20240628140435.1652374-1- 
->>> quic_bibekkum@quicinc.com/
->>>
->>> Changes in v13 from v12:
->>>   - Fix the compilation issues reported by kernel test robot [1].
->>>   [1]: https://lore.kernel.org/all/202406281241.xEX0TWjt- 
->>> lkp@intel.com/#t
->>>   Link to v12:
->>>   https://lore.kernel.org/all/20240626143020.3682243-1- 
->>> quic_bibekkum@quicinc.com/
->>>
->>> Changes in v12 from v11:
->>>   Changes to incorporate suggestion from Rob:
->>>   - Fix the set and reset logic for prr bit as pointed out in v11-6/6.
->>>   - Rename set_actlr_bit function name to set_prr.
->>>   - Add extension for PRR name as Partially-Resident-Region in comments
->>>     for set_prr function.
->>>   - Add few missing sids for sc7280 in patch-5/6.
->>>   Link to v11:
->>>   https://lore.kernel.org/all/20240605121713.3596499-1- 
->>> quic_bibekkum@quicinc.com/
->>>
->>> Changes in v11 from v10:
->>>   - Include a new patch 6/6 to add support for ACTLR PRR bit
->>>     through adreno-smmu-priv interface as suggested by Rob and Dmitry.
->>>   Link to v10:
->>>   https://lore.kernel.org/all/20240524131800.2288259-1- 
->>> quic_bibekkum@quicinc.com/
->>>
->>> Changes in v10 from v9:
->>>   - Added reviewed-by tags 1/5,2/5,3/5.
->>>   Changes incorporated:
->>>   - Remove redundant PRR bit setting from gfx actlr table(patch 4/5,5/5)
->>>     as this bit needs special handling in the gfx driver along with
->>>     the associated register settings.
->>>   Link to discussion on PRR bit:
->>>   https://lore.kernel.org/all/f2222714-1e00-424e-946d- 
->>> c314d55541b8@quicinc.com/
->>>   Link to v9:
->>>   https://lore.kernel.org/all/20240123144543.9405-1- 
->>> quic_bibekkum@quicinc.com/
->>>
->>> Changes in v9 from v8:
->>>   Changes to incorporate suggestions from Konrad as follows:
->>>   - Re-wrap struct members of actlr_variant in patch 4/5,5/5
->>>     in a cleaner way.
->>>   - Move actlr_config members to the header.
->>>   Link to v8:
->>>   https://lore.kernel.org/all/20240116150411.23876-1- 
->>> quic_bibekkum@quicinc.com/
->>>
->>> Changes in v8 from v7:
->>>   - Added reviewed-by tags on patch 1/5, 2/5.
->>>   Changes to incorporate suggestions from Pavan and Konrad:
->>>   - Remove non necessary extra lines.
->>>   - Use num_smmu and num_actlrcfg to store the array size and use the
->>>     same to traverse the table and save on sentinel space along with
->>>     indentation levels.
->>>   - Refactor blocks containing qcom_smmu_set_actlr to remove block
->>>     repetition in patch 3/5.
->>>   - Change copyright year from 2023 to 2022-2023 in patch 3/5.
->>>   - Modify qcom_smmu_match_data.actlrvar and actlr_variant.actlrcfg to
->>>     const pointer to a const resource.
->>>   - use C99 designated initializers and put the address first.
->>>   Link to v7:
->>>   https://lore.kernel.org/all/20240109114220.30243-1- 
->>> quic_bibekkum@quicinc.com/
->>>
->>> Changes in v7 from v6:
->>>   Changes to incorporate suggestions from Dmitry as follows:
->>>   - Use io_start address instead of compatible string to identify the
->>>     correct instance by comparing with smmu start address and check for
->>>     which smmu the corresponding actlr table is to be picked.
->>> Link to v6:
->>> https://lore.kernel.org/all/20231220133808.5654-1- 
->>> quic_bibekkum@quicinc.com/
->>>
->>> Changes in v6 from v5:
->>>   - Remove extra Suggested-by tags.
->>>   - Add return check for arm_mmu500_reset in 1/5 as discussed.
->>> Link to v5:
->>> https://lore.kernel.org/all/20231219135947.1623-1- 
->>> quic_bibekkum@quicinc.com/
->>>
->>> Changes in v5 from v4:
->>>   New addition:
->>>   - Modify copyright year in arm-smmu-qcom.h to 2023 from 2022.
->>>   Changes to incorporate suggestions from Dmitry as follows:
->>>   - Modify the defines for prefetch in (foo << bar) format
->>>     as suggested.(FIELD_PREP could not be used in defines
->>>     is not inside any block/function)
->>>   Changes to incorporate suggestions from Konrad as follows:
->>>   - Shift context caching enablement patch as 1/5 instead of 5/5 to
->>>     be picked up as independent patch.
->>>   - Fix the codestyle to orient variables in reverse xmas tree format
->>>     for patch 1/5.
->>>   - Fix variable name in patch 1/5 as suggested.
->>>   Link to v4:
->>> https://lore.kernel.org/all/20231215101827.30549-1- 
->>> quic_bibekkum@quicinc.com/
->>>
->>> Changes in v4 from v3:
->>>   New addition:
->>>   - Remove actlrcfg_size and use NULL end element instead to traverse
->>>     the actlr table, as this would be a cleaner approach by removing
->>>     redundancy of actlrcfg_size.
->>>   - Renaming of actlr set function to arm_smmu_qcom based proprietary
->>>     convention.
->>>   - break from loop once sid is found and ACTLR value is initialized
->>>     in qcom_smmu_set_actlr.
->>>   - Modify the GFX prefetch value separating into 2 sensible defines.
->>>   - Modify comments for prefetch defines as per SMMU-500 TRM.
->>>   Changes to incorporate suggestions from Konrad as follows:
->>>   - Use Reverse-Christmas-tree sorting wherever applicable.
->>>   - Pass arguments directly to arm_smmu_set_actlr instead of creating
->>>     duplicate variables.
->>>   - Use array indexing instead of direct pointer addressed by new
->>>     addition of eliminating actlrcfg_size.
->>>   - Switch the HEX value's case from upper to lower case in SC7280
->>>     actlrcfg table.
->>>   Changes to incorporate suggestions from Dmitry as follows:
->>>   - Separate changes not related to ACTLR support to different commit
->>>     with patch 5/5.
->>>   - Using pointer to struct for arguments in smr_is_subset().
->>>   Changes to incorporate suggestions from Bjorn as follows:
->>>   - fix the commit message for patch 2/5 to properly document the
->>>     value space to avoid confusion.
->>>   Fixed build issues reported by kernel test robot [1] for
->>>   arm64-allyesconfig [2].
->>>   [1]: https://lore.kernel.org/all/202312011750.Pwca3TWE-lkp@intel.com/
->>>   [2]:
->>> https://download.01.org/0day-ci/ 
->>> archive/20231201/202312011750.Pwca3TWE-lkp@intel.com/config
->>>   Link to v3:
->>> https://lore.kernel.org/all/20231127145412.3981-1- 
->>> quic_bibekkum@quicinc.com/
->>>
->>> Changes in v3 from v2:
->>>   New addition:
->>>   - Include patch 3/4 for adding ACTLR support and data for SC7280.
->>>   - Add driver changes for actlr support in gpu smmu.
->>>   - Add target wise actlr data and implementation ops for gpu smmu.
->>>   Changes to incorporate suggestions from Robin as follows:
->>>   - Match the ACTLR values with individual corresponding SID instead
->>>     of assuming that any SMR will be programmed to match a superset of
->>>     the data.
->>>   - Instead of replicating each elements from qcom_smmu_match_data to
->>>     qcom_smmu structre during smmu device creation, replace the
->>>     replicated members with qcom_smmu_match_data structure inside
->>>     qcom_smmu structre and handle the dereference in places that
->>>     requires them.
->>>   Changes to incorporate suggestions from Dmitry and Konrad as follows:
->>>   - Maintain actlr table inside a single structure instead of
->>>     nested structure.
->>>   - Rename prefetch defines to more appropriately describe their
->>>     behavior.
->>>   - Remove SM8550 specific implementation ops and roll back to default
->>>     qcom_smmu_500_impl implementation ops.
->>>   - Add back the removed comments which are NAK.
->>>   - Fix commit description for patch 4/4.
->>>   Link to v2:
->>> https://lore.kernel.org/all/20231114135654.30475-1- 
->>> quic_bibekkum@quicinc.com/
->>>
->>> Changes in v2 from v1:
->>>   - Incorporated suggestions on v1 from Dmitry,Konrad,Pratyush.
->>>   - Added defines for ACTLR values.
->>>   - Linked sm8550 implementation structure to corresponding
->>>     compatible string.
->>>   - Repackaged actlr value set implementation to separate function.
->>>   - Fixed indentation errors.
->>>   - Link to v1:
->>> https://lore.kernel.org/all/20231103215124.1095-1- 
->>> quic_bibekkum@quicinc.com/
->>>
->>> Changes in v1 from RFC:
->>>   - Incorporated suggestion form Robin on RFC
->>>   - Moved the actlr data table into driver, instead of maintaining
->>>     it inside soc specific DT and piggybacking on exisiting iommus
->>>     property (iommu = <SID, MASK, ACTLR>) to set this value during
->>>     smmu probe.
->>>   - Link to RFC:
->>> https://lore.kernel.org/all/a01e7e60-6ead-4a9e- 
->>> ba90-22a8a6bbd03f@quicinc.com/
->>>
->>> Bibek Kumar Patro (5):
->>>    iommu/arm-smmu: re-enable context caching in smmu reset operation
->>>    iommu/arm-smmu: refactor qcom_smmu structure to include single 
->>> pointer
->>>    iommu/arm-smmu: add support for PRR bit setup
->>>    iommu/arm-smmu: introduction of ACTLR for custom prefetcher settings
->>>    iommu/arm-smmu: add ACTLR data and support for qcom_smmu_500
->>>
->>>   Documentation/arch/arm64/silicon-errata.rst   |   3 +-
->>>   drivers/iommu/Kconfig                         |  12 ++
->>>   drivers/iommu/arm/arm-smmu/arm-smmu-impl.c    |   5 +-
->>>   .../iommu/arm/arm-smmu/arm-smmu-qcom-debug.c  |   2 +-
->>>   drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c    | 105 +++++++++++++++++-
->>>   drivers/iommu/arm/arm-smmu/arm-smmu-qcom.h    |   3 +-
->>>   drivers/iommu/arm/arm-smmu/arm-smmu.h         |   2 +
->>>   include/linux/adreno-smmu-priv.h              |  14 +++
->>>   8 files changed, 140 insertions(+), 6 deletions(-)
->>>
->>> -- 
->>> 2.34.1
->>>
->>
++1 here, indeed a great analysis!
+
+> It sounds to me like calling pci_stop_and_remove_bus_device() on an unhidden
+> PCI device is the real problem here. And that we were not hitting that before
+> was more or less luck.
 > 
-> 
+> I wonder if we can cache the bar in some other way, or even delay retrieving
+> it till p2sb_bar() call time in the case when it is not hidden ?
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
