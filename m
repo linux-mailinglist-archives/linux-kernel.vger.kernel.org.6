@@ -1,72 +1,80 @@
-Return-Path: <linux-kernel+bounces-413395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66F959D1896
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 19:55:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96AB29D189B
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 19:59:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C65B282810
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 18:55:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 415AF1F25A29
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 18:59:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 398DD1E4908;
-	Mon, 18 Nov 2024 18:55:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F8741E261F;
+	Mon, 18 Nov 2024 18:59:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P67NkgKp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="igeMlSqZ"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 642CD3BBF2;
-	Mon, 18 Nov 2024 18:55:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 040513BBF2;
+	Mon, 18 Nov 2024 18:58:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731956139; cv=none; b=Rt0hyiJsRkxLgocbJoJD14VQ08GhqPTBymMtZE4krnyvqJbXcq0pDHjwtvCCrXSxxANjePgPx2xpVMj+zA8cajIm/FwQ1UYwFQ+WIenusoGvkfqtQPTh6RxX9qmXHoQnmhGA2UXjMWZVjALw7Oqf6lPIfBi3Wi5ax19V3nngYSA=
+	t=1731956340; cv=none; b=OqLoqK/IAn1950rCY4EpeiWZQ298PONqMulNaS965kVKV8taC+Q7WqHU5vXTducWjevwP2wtvYSBUUYZoirs/CgzgvjsAd8qcOaqAOvjW1DXFXYbPqeos+NeXk4PqpDYiMdvjhPb9KjLz4Z/D6ZeBXNHW0fgoaeLQmOPko5/r78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731956139; c=relaxed/simple;
-	bh=/gmHJa/TBxEDstIIvnX3KmYFWImvFtyFP0gjXaeuHFM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=os4d5qnBaJPvYWbQvRegf5IevZMGsSTIqJVhZ8Igx44DJK/yk7+/aHpM1+6sO5pJ8Scn6hpcRIRJ4wAgI5oiPmn6mtq9E8w4knq07m7W5aXf02WYzMDajYfZN5EX/PUywlLsGtLgIvbEmPtaqd52olRU2isnfsrJ6MfvuhjBK4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P67NkgKp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45CA9C4CECC;
-	Mon, 18 Nov 2024 18:55:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731956138;
-	bh=/gmHJa/TBxEDstIIvnX3KmYFWImvFtyFP0gjXaeuHFM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=P67NkgKpagD5QPwkoLn48IDjtjZ7XiI7hB74ktXAOzTjzFx25SdPGIQTsJPn3c/+1
-	 7mKXhe/08HVsqBRSEOx0tOKdadCpjOBrUyOGIzap4a8CF3tcQQzVYOpA4KCKlbL9eG
-	 FZDNA127wqunzK1pyu+ixL9pn3cpHGQTiZ/HklwS4zlyqRfWpfZR7WpwvZo4s6XE1b
-	 33uAWW/5I0UcpudrKi/56u1/L85PdWYLjkcUUGZXni1xcq/PN0bKJ29dpyNBUK3NkQ
-	 hg7XGXtOx8q1P8cuRCDFQtSWlcXwLibDCDFZaRJ8t0FlQaoTBba1d1kPOW8eXaQxfI
-	 AghFYrjiJkifw==
-Date: Mon, 18 Nov 2024 20:55:33 +0200
-From: Leon Romanovsky <leon@kernel.org>
-To: Will Deacon <will@kernel.org>
-Cc: Jens Axboe <axboe@kernel.dk>, Jason Gunthorpe <jgg@ziepe.ca>,
-	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
-	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
-	Keith Busch <kbusch@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Logan Gunthorpe <logang@deltatee.com>,
-	Yishai Hadas <yishaih@nvidia.com>,
-	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-	linux-rdma@vger.kernel.org, iommu@lists.linux.dev,
-	linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org,
-	kvm@vger.kernel.org, linux-mm@kvack.org,
-	Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH v3 07/17] dma-mapping: Implement link/unlink ranges API
-Message-ID: <20241118185533.GA24154@unreal>
-References: <cover.1731244445.git.leon@kernel.org>
- <f8c7f160c9ae97fef4ccd355f9979727552c7374.1731244445.git.leon@kernel.org>
- <20241118145929.GB27795@willie-the-truck>
+	s=arc-20240116; t=1731956340; c=relaxed/simple;
+	bh=S76Rfh639+VfBtQ21xgiTdDC7GZpkSdG9sRufGpmVM0=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=REGJjvcDyKwYbybm+wYM62y7SqcaT1JrtEmiDylxGjCTn6XLx6hD1F43yDA6Y01opMicmu9FceuYxnnuQ1gTRDuNDdCu9z37/fHi9Rcn1Jgv2Ep0d8GEjPntayjANU7tFbUxbjdsKMuR1SXIkIv/l7T8WoBfbLlgYxedl+ym7pE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=igeMlSqZ; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-20cdbe608b3so45090085ad.1;
+        Mon, 18 Nov 2024 10:58:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731956338; x=1732561138; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=p/8svAxxqkAxdJBVg3Tlaph+be2+jLA/SHffe+1gqvc=;
+        b=igeMlSqZee8PgqYWTOrswgwBiKe6wQ8C3/RuvTUVY3oTPhgQDSk28fTYM1kBR/a9Nt
+         VCJXkq9Yv8Zaj0nlvQGo5ElNvAM7KS00B1nWA/MRNQhHwu3A/I1JEqkgLeE5yVG/y+8F
+         yhQl3KswtdC12I5lobp0tSrJGiwC7LUguDiPPYPpNNoL17XlHkfjhryjmtZerHvFnrQB
+         n3FDzgQQpQggLdLh5ZFoUBpsNiMCaRWfijHKYqzohVgPCgT1UuTuXwEih/ALMXkbG3r/
+         M7+m3bJwQNW59h4/YXxwhfe3UOUSu7JsE9/jWVzOO/wbRcEMXvRpvA/RwuYAkHk9crIu
+         NJug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731956338; x=1732561138;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=p/8svAxxqkAxdJBVg3Tlaph+be2+jLA/SHffe+1gqvc=;
+        b=L5JFImYZzfb9JDSNRzteXATxoQEHG97/IyndXcbG9J8n/bwFcMdgk51ocNbNG9+guA
+         8VmILAy5bdBRmePzSBn6Mq8EN4nliBlmmVNJUZD/iAdLtvVi3Y3rWPDdvZvQbElBeYT7
+         BIDFeuFvKvAmUXe4KGCN+e9sJ6ljUx60zgqADeO2saVfOJqWWdqc/eiGPCyOCKTf8f7G
+         j7SHsPMCfjza/4okGXYodPD1TbO2GRxTl/zCGBxFFYj63hRhyC31PwVuyWpxukpDy5G8
+         /ITHzvYtPrJIJHhxCJEVbtWghrwRusdL5Fqxk9FmMqIVNyPFEQYf9+0R+vOVlo1g/uqR
+         odSA==
+X-Forwarded-Encrypted: i=1; AJvYcCUMDFig8qDQXajxuMVUM8aMFCZdyaTR2bNDyZXDusQA2gxEDg8BmKgiNeOzMxvzQ33xJ7BLqB9vxmghboIx@vger.kernel.org, AJvYcCXmknE7QdOAG4UkHe2DWBEBY5CQ7Ry0JM7SXyPRNMB/hkAJyLYLydS9oQMRpk0m1c4rrwh6b4Whh/Ep5sak@vger.kernel.org
+X-Gm-Message-State: AOJu0YwiLtMpwjcLpQWLVgm3KTsTXl7ZSA9Fon5TRD9N0rl/CNhPzjKr
+	O2Tvwlurmtk1+2uGeAb+mMKHlJpQlDpg0g8K6emO2FQVgAy+H8CqgKGTlw==
+X-Google-Smtp-Source: AGHT+IH5VI1YSwqg21Tf2pRrRbtZjEUIg4GT2sb0c9M6MvwXvcKWabpVmA/ImFdhwy8xc2cgMciTzA==
+X-Received: by 2002:a17:903:2283:b0:20c:5533:36da with SMTP id d9443c01a7336-211d0ebe463mr195398745ad.42.1731956338168;
+        Mon, 18 Nov 2024 10:58:58 -0800 (PST)
+Received: from DESKTOP-DUKSS9G. (c-67-164-59-41.hsd1.ca.comcast.net. [67.164.59.41])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-212099db514sm31211165ad.51.2024.11.18.10.58.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Nov 2024 10:58:51 -0800 (PST)
+Message-ID: <673b8e6b.170a0220.1104a1.d903@mx.google.com>
+X-Google-Original-Message-ID: <ZzuOaboiM4-2H4LA@DESKTOP-DUKSS9G.>
+Date: Mon, 18 Nov 2024 10:58:49 -0800
+From: Vishal Moola <vishal.moola@gmail.com>
+To: linux@treblig.org
+Cc: willy@infradead.org, akpm@linux-foundation.org,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] filemap: Remove unused folio_add_wait_queue
+References: <20241116151446.95555-1-linux@treblig.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,84 +83,16 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241118145929.GB27795@willie-the-truck>
+In-Reply-To: <20241116151446.95555-1-linux@treblig.org>
 
-On Mon, Nov 18, 2024 at 02:59:30PM +0000, Will Deacon wrote:
-> On Sun, Nov 10, 2024 at 03:46:54PM +0200, Leon Romanovsky wrote:
-> > From: Leon Romanovsky <leonro@nvidia.com>
-> > 
-> > Introduce new DMA APIs to perform DMA linkage of buffers
-> > in layers higher than DMA.
-> > 
-> > In proposed API, the callers will perform the following steps.
-> > In map path:
-> > 	if (dma_can_use_iova(...))
-> > 	    dma_iova_alloc()
-> > 	    for (page in range)
-> > 	       dma_iova_link_next(...)
-> > 	    dma_iova_sync(...)
-> > 	else
-> > 	     /* Fallback to legacy map pages */
-> >              for (all pages)
-> > 	       dma_map_page(...)
-> > 
-> > In unmap path:
-> > 	if (dma_can_use_iova(...))
-> > 	     dma_iova_destroy()
-> > 	else
-> > 	     for (all pages)
-> > 		dma_unmap_page(...)
-> > 
-> > Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
-> > ---
-> >  drivers/iommu/dma-iommu.c   | 259 ++++++++++++++++++++++++++++++++++++
-> >  include/linux/dma-mapping.h |  32 +++++
-> >  2 files changed, 291 insertions(+)
+On Sat, Nov 16, 2024 at 03:14:46PM +0000, linux@treblig.org wrote:
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
 > 
-
-<...>
-
-> > +static void __iommu_dma_iova_unlink(struct device *dev,
-> > +		struct dma_iova_state *state, size_t offset, size_t size,
-> > +		enum dma_data_direction dir, unsigned long attrs,
-> > +		bool free_iova)
-> > +{
-> > +	struct iommu_domain *domain = iommu_get_dma_domain(dev);
-> > +	struct iommu_dma_cookie *cookie = domain->iova_cookie;
-> > +	struct iova_domain *iovad = &cookie->iovad;
-> > +	dma_addr_t addr = state->addr + offset;
-> > +	size_t iova_start_pad = iova_offset(iovad, addr);
-> > +	struct iommu_iotlb_gather iotlb_gather;
-> > +	size_t unmapped;
-> > +
-> > +	if ((state->__size & DMA_IOVA_USE_SWIOTLB) ||
-> > +	    (!dev_is_dma_coherent(dev) && !(attrs & DMA_ATTR_SKIP_CPU_SYNC)))
-> > +		iommu_dma_iova_unlink_range_slow(dev, addr, size, dir, attrs);
-> > +
-> > +	iommu_iotlb_gather_init(&iotlb_gather);
-> > +	iotlb_gather.queued = free_iova && READ_ONCE(cookie->fq_domain);
-> > +
-> > +	size = iova_align(iovad, size + iova_start_pad);
-> > +	addr -= iova_start_pad;
-> > +	unmapped = iommu_unmap_fast(domain, addr, size, &iotlb_gather);
-> > +	WARN_ON(unmapped != size);
+> folio_add_wait_queue() has been unused since 2021's
+> commit 850cba069c26 ("cachefiles: Delete the cachefiles driver pending
+> rewrite")
 > 
-> Does the new API require that the 'size' passed to dma_iova_unlink()
-> exactly match the 'size' passed to the corresponding call to
-> dma_iova_link()? I ask because the IOMMU page-table code is built around
-> the assumption that partial unmap() operations never occur (i.e.
-> operations which could require splitting a huge mapping). We just
-> removed [1] that code from the Arm IO page-table implementations, so it
-> would be good to avoid adding it back for this.
+> Remove it.
 
-dma_iova_link/dma_iova_unlink() don't have any assumptions in addition
-to already existing for dma_map_sg/dma_unmap_sg(). In reality, it means
-that all calls to unlink will have same size as for link.
-
-Thanks
-
-> 
-> Will
-> 
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/iommu/linux.git/commit/?h=arm/smmu&id=33729a5fc0caf7a97d20507acbeee6b012e7e519
+Reviewed-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
 
