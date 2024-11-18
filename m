@@ -1,361 +1,204 @@
-Return-Path: <linux-kernel+bounces-413565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C95489D1B0C
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 23:21:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AD5459D1B12
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 23:24:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0DCB285683
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 22:21:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E79E285A0B
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 22:24:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D508F1E7C16;
-	Mon, 18 Nov 2024 22:21:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE7A91E883E;
+	Mon, 18 Nov 2024 22:24:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="G0fblqgN"
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2082.outbound.protection.outlook.com [40.107.95.82])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="FASkpsrj"
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02CCA13DBBE;
-	Mon, 18 Nov 2024 22:21:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.82
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731968472; cv=fail; b=AdBI7QTF4xXTDo8FocTFOC6zogEF1ZeBDKjZIVNQeb/Z5FJ1KWM3+dFmWVhFzqsRe4qwGqUN9HAlwRdq8NxYoLX7HJIolq1RwVch1LhmLC20A7Ae0M/Y3uIWR8WWCRkA5YpSiUo//0CXsS+YIseN+VLnFMSvLQM4eB45qDR7BYs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731968472; c=relaxed/simple;
-	bh=p2Bc5ctZulIbTobSEJ8cW9NbDTYkrhHhr3TlZiM8p80=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=KevXbFconoqMk62ieiALeFxaryOXi/PVP6NQ6kws1e4HS0NWbPIvTQCmPnLu8sUT/X09miH1gz6Y/0p8BdlU290xkQvv9TEATIIzE1gDIIeZaU+zABdO307GYG+PmCnt2Ai32uk9++t8Hn9aY1c6dzkOUO2BqxXKRcZPjWmbCts=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=G0fblqgN; arc=fail smtp.client-ip=40.107.95.82
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Lkjcq5Z1vLlHzgurIPrzRdxMbj1lOZYn62Z/jxTPQ2AQhLMSpKv1LFOrqAu7ixYl5ahV6r2aR4TMNYyBtgmiAgO5eOPte/LvkPTP7pP8WeYYAByRLCZ9ULKZSKgVGxplxTJMAI0HOj3j9AHY9IezIsbfSW5tWOKZyko/I2jGqpEgJXdzQnNm3r5Sm7lvEjYSo207LjgsqaFHz5idJEsHekud5mNDC0uD/XbZfPN/1JBajLZehutpxboNEBHVoB1umstMBBMzaWi7I52FdTplLa51ltcX6FSqFHNM1NbqXT0KCWnfdiQXoR5Mih4VZBWCagq6FZJE0HIadNZkxiT4nA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=k2p+UrqzbT50wXEqlKz2O2TjEkRA2Cqc2lBDAaYFlTg=;
- b=A188psJfHsPbdELg5gZeTWrzojluseOphVwryYJLnedSDJAJmNIGB2rTp9N0lar/pgxt/hTqfhYaRADpvFmGVvv8GJ2u3d4GAdIVFAq9EwwYRxXE5zlMrn0fV9kulwfsBHp3Fi6OPFx9wgpkY2nRTRyr6a0aoj8ILG0dKUjubIhP79u3WburLYJ56/ltEz9JBYVoiQ8JmGxKcyStDk9JaCQSg5si3AtoGCekQ/l9HJZdwLZkGmDrepmNJrj6FwciDS1V6U3aZtypbgD6GJf79cC/pUCUopxwebLfDUxrWX2a4C//MRxXvcJqYm/AJQZfDIABsuHNaPQgQOEzgn/eXw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=k2p+UrqzbT50wXEqlKz2O2TjEkRA2Cqc2lBDAaYFlTg=;
- b=G0fblqgNULeZw2W5BGcXyXUg9QtkKd8XEQLpQH1XUgljJnO3P1HOmEgi/QtmaKbgP0ForifAZnSHBNEA0e8hp3/lZ58Ozgr24xlpNu6LLOPoB91fxJ8j/3igSWTyDizlqOHSpDCnL9ZCwCAqSSM4qEt18St1FIUhuvRKS4gnY48=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from BL1PR12MB5995.namprd12.prod.outlook.com (2603:10b6:208:39b::20)
- by SJ0PR12MB6734.namprd12.prod.outlook.com (2603:10b6:a03:478::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.23; Mon, 18 Nov
- 2024 22:21:08 +0000
-Received: from BL1PR12MB5995.namprd12.prod.outlook.com
- ([fe80::7298:510:d37d:fa92]) by BL1PR12MB5995.namprd12.prod.outlook.com
- ([fe80::7298:510:d37d:fa92%5]) with mapi id 15.20.8158.021; Mon, 18 Nov 2024
- 22:21:08 +0000
-Date: Mon, 18 Nov 2024 16:20:53 -0600
-From: John Allen <john.allen@amd.com>
-To: Zaid Alali <zaidal@os.amperecomputing.com>
-Cc: rafael@kernel.org, lenb@kernel.org, james.morse@arm.com,
-	tony.luck@intel.com, bp@alien8.de, robert.moore@intel.com,
-	dan.j.williams@intel.com, Jonathan.Cameron@huawei.com,
-	Benjamin.Cheatham@amd.com, Avadhut.Naik@amd.com,
-	viro@zeniv.linux.org.uk, arnd@arndb.de, ira.weiny@intel.com,
-	dave.jiang@intel.com, sthanneeru.opensrc@micron.com,
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	acpica-devel@lists.linux.dev
-Subject: Re: [PATCH 7/8] ACPI: APEI: EINJ: Enable EINJv2 error injections
-Message-ID: <Zzu9xWllk6GsT3a+@AUSJOHALLEN.amd.com>
-References: <20241022213429.1561784-1-zaidal@os.amperecomputing.com>
- <20241022213429.1561784-8-zaidal@os.amperecomputing.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241022213429.1561784-8-zaidal@os.amperecomputing.com>
-X-ClientProxiedBy: BYAPR11CA0090.namprd11.prod.outlook.com
- (2603:10b6:a03:f4::31) To BL1PR12MB5995.namprd12.prod.outlook.com
- (2603:10b6:208:39b::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74D0F1E6DD4
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 22:24:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731968682; cv=none; b=lk0ZTBnb7OMssvwPLqIZSsD45jy60j37a0jJSGwcERwTEosqLeestpCxvtL64sNb+XDV1Wmg8vFCW0bMUf/BZaS4+h4znNzIixL+EUYobXGfL4BKJu0gxUV7C3yi2/5gu5jYKsrFzTdnfrgkMFuzu+mNaTyiSTlNI25GPP3VVzg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731968682; c=relaxed/simple;
+	bh=mr6iDGZX6WZlOIa/AqtWy4H1dbsMF9ugeMcnS6HxJNE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DkfNdci4X5US0YzjjtbvIFr2toTmD66OVIlnJ/Yr/iNG5oCki8fPQfKWdnEC6kHpnBeGSV8NAwIWG59KB9yDZO+ZsWvoS0dpwxXpuRXUnuCzVMTlQGAcaJo21WinGTVjtmQAD1Oj8Y++3FdMWlpEpfcBAJTJpi6FmK6wVguoBDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=FASkpsrj; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-460ab1bc2aeso17850141cf.3
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 14:24:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1731968679; x=1732573479; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mr6iDGZX6WZlOIa/AqtWy4H1dbsMF9ugeMcnS6HxJNE=;
+        b=FASkpsrjoGaamnWrNHj3IJ7LmrVMskP3FHdBcUEZrPq0ROkT0wa2q39WszDCA3pTtt
+         KXo0YU1awi84gbfNj1SOJtJ3m3zXvfvsLPlk96vY00XY8IWYgW7QNRsq/6mAWB618SsJ
+         HbmNCRv4rx7YyflaUhTZ7Q0nmAEo4HTxJlffte36/nfNiZWeS8tjOJlCSgFOpfGl0mij
+         QEm309m0hARE5w7s4HdYnzo/OVPaTqYaOzDbAgNxAIX+r+v7MFVZf11yA+aB6BR3MG17
+         VyHcrgx2tUhI0t3pNh72BTxRiQ0JsYwD5mDYhaQ0r6dIJqhn9Wv/hFG6SiYwSgMa1Vnz
+         4PwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731968679; x=1732573479;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mr6iDGZX6WZlOIa/AqtWy4H1dbsMF9ugeMcnS6HxJNE=;
+        b=fHCy1WvLPeOTDh3KKsHxQeydwBDlxrJQm227LQvef1KXuoPP90zj0feO/bUo7CzNf7
+         fsX3OPT78Z+h2CCGDjq/HCAxKkbpSn4vsxm6OBTCueYwNApbcxn3gp/8TMF4mUmrWZe9
+         gEnfl7idrs6wl6ccOSB106ZmN9TvR2pfPfTx6nywe2Lbc6+EGAWfNrdANraOg0tb43NW
+         FHbY5T2o4prOW1EqvEMbDq4dh1P+OQKusSWx3o4GbQbdt0A3g2nYjkGqJi9Mgdh0/Xbw
+         rDXSoiWSReLQxXYvvmhgAYoNGptX40x8RNZetFiVXcp4UU/u3BR6UZNwXiN8jOfD2but
+         xpRg==
+X-Forwarded-Encrypted: i=1; AJvYcCXQd3wpiNOKhGovVOwC8Br34yJFtG6QFTjzq2OOZlOsacAWECbl/PBXzCJA7SARcolAH91GRAEFlGih9+k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJZelYe4Jl3YS4e7Fl42ng3fDTOEaX5xBV+RgQrA5DP4DF3M5I
+	v7FC3Li2fX1UDLDjte05woPjgNg6BSOd1ewtvFd2HbJO38+pYkrjRBcRdOh6nduLE4bJ3/15+5o
+	QKFEA1o/xhCsdO5pi6IZ45ylOJSWREOpVuTRgAA==
+X-Google-Smtp-Source: AGHT+IFJn12BEIzoEKgSqnP8cIUM9l+AVMCmmrovlugeE4ncddPOm9spXZtngGYQPZw7li3y2om6vXnU1SKoOL9vTX0=
+X-Received: by 2002:ac8:45c8:0:b0:463:788e:7912 with SMTP id
+ d75a77b69052e-463788e81b9mr128943351cf.56.1731968679432; Mon, 18 Nov 2024
+ 14:24:39 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL1PR12MB5995:EE_|SJ0PR12MB6734:EE_
-X-MS-Office365-Filtering-Correlation-Id: f65eacdb-4809-4a37-0795-08dd081f4c80
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?jRdja2Zi9yN+L+LxL90gxhIGrq0BFQsk8Y8shncN25200MJgDatSFot9WMO7?=
- =?us-ascii?Q?9MkpSeQauH8YKFR2bGU2GD4D5o1jey/Wu8L6T90diKpe4hO5o2BNSyu6QEZ0?=
- =?us-ascii?Q?qdMD46rtaZY/GV6oFXdCbG9gJuQTsr7oeC3pKQozeAq0Qry89B5LLRHUwqbG?=
- =?us-ascii?Q?puf97MGPgfpfGWz9lZf2HfSnPcDMkEzu7gAevH04PeC9lP+fJ9FrAdhNmSUB?=
- =?us-ascii?Q?ahcm2qlP92MwcnvJ0yavlFhTykIZuIMYom8fRRRxwGRZd17q3rx86fRBgQMl?=
- =?us-ascii?Q?1mzI9vYjI+KIHzzYWaUxQm9fJAq02QdyZQqt6VVKDNz8dfxCD8YPbNn6TN3q?=
- =?us-ascii?Q?Ipf37utGputSxyviPcSfwak3OShf12ujJc9LDSl+KyZKzwH3O4VmPKr/FUwN?=
- =?us-ascii?Q?U5xQ0sck+FINr7M3G3t6XSGQ80u+GpxYAhoIud25Zlyi9/ILXPoN+i9PPxvi?=
- =?us-ascii?Q?0pXBsjIlDVlHB+ROBYy+3HTh0VZA7mqBsdTRSnGVtwA6VLcQvGHOovBbMaUQ?=
- =?us-ascii?Q?LiRGal/lZFCnmlgttbvhG8svf1qXal651lIuWU9gau2OVc8SPOh4tpHzs41E?=
- =?us-ascii?Q?yohJ8OP/ooZ9gCGxuXl7Nks+stK9kKc38j4SdLyIqJDUNr4IwrQ53yrVoxYG?=
- =?us-ascii?Q?sX6wTljEV8dY2LGlS9iFltYy5mZqSt6ViRBPq3lAkF/ftMj9wAqcxVd+OcAX?=
- =?us-ascii?Q?2WtTFfr8+ZyjIlI3tWeHx6zuN7wJEYHlRyx5O2fMsXmL1Y6VhzsDWuIFj6Yv?=
- =?us-ascii?Q?74RoegGjA96SUvuBL1Ypqu9CGQEeXllzAH7BvrHfR7+54Mzel7cb3TQLVIJC?=
- =?us-ascii?Q?yk/GIgjPyvU+jIOS8wi+RA/+mB6/K4ty05OBehHP+UDF4yqLOQxPv9edY9Dm?=
- =?us-ascii?Q?1evUTH5TThVEfWSsMvrDKIbD0ewDrExQlcZwAtFV67LndZ4uuK5ZgkH8rJXu?=
- =?us-ascii?Q?SLMEL5kPfOaqw6RA8YMAP1Yt5Qa3bafW/iG9ytpgCtOqg03BUsrJIiugKBNm?=
- =?us-ascii?Q?pW+u00rOv992UuTQYdX4VPw7LfUU6GkRGuAzMg6qnakkYDN/Vv2U8zAv0irh?=
- =?us-ascii?Q?/bw6fAmRaoguGIlTOk3oTef4NM0sJGAwVLOqNZYhfjCTmaBBgfJ1mQZTZATI?=
- =?us-ascii?Q?K9zc4bb6CIilx4oHLOCEPTmvb0eyKi67fiInxAd4sWBscyEv5SR37fIl9DXB?=
- =?us-ascii?Q?DR1rvCAXRM4MtgwTUl2doLA/rK7KmhMlQ8KQk0c/zQqqr6v/D5D/r+kPOAUR?=
- =?us-ascii?Q?GMf3FNNVZFUMvi2om2zgHIeMApWYE1DWzPBSBDwPspMXQ5OUaVDYdFVQZyVS?=
- =?us-ascii?Q?+jf2GkFBdVsY5u7OVq8CYJ6J?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR12MB5995.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?okjyBTvjkPN4+zZM73RsxmWLyrPy6f2f7pw4ccsGHE45UF49cLMLv8+BD3eI?=
- =?us-ascii?Q?twADLU8B3bifz19r+SgqHQ/oKGXfEzzSljMU8mlp1KK+pngWvK2uWS0uWwdF?=
- =?us-ascii?Q?Qja1SHkNcmdd9H4uOqnMJmVlraROSJMiFQ0V4ais5G7Lw380NXkhZ0TDr6te?=
- =?us-ascii?Q?b7ntmmt3Wis2cKdyGWQcrl5t9rvOe3OS1TlPW3oYlhTCR5Um8L/LvZbIEcK9?=
- =?us-ascii?Q?zbLsKDPmYVwJLKL6GQ+Azls1TP+oSZtkTVZnthCu+gR/2d5h6Z4KqKGOXMib?=
- =?us-ascii?Q?fPji6wd9qhWv6g/ErQ8QK4dYirwQBj3rsxHJQ0xtYLV+w5IActLP1FXs74wv?=
- =?us-ascii?Q?srO68ObuZxjAW7s2OxbAEzOD2gpjkkgfTsUMXk28omF925zRJS9mzNXQbL+d?=
- =?us-ascii?Q?h/G/gt8IP+uTtLqkRD+K0ao0YnwoxGdbCIpiZ4WzxIuTs2lZFboP0d07Zj7x?=
- =?us-ascii?Q?23TMpzVYCbjB1hp937jsVLdXNxs7h30P04aNWfD/lqgnQrwbOWznGna73ACp?=
- =?us-ascii?Q?HMOH6PuAf34jbMdVVK3RvHH7039qGc1xTDeSRDBUj1xOx1o4cfb06IWlHZg3?=
- =?us-ascii?Q?bKKm9TgGbi3Mr2b5QX0tJVdBasNUCWjhUS1LVKb47FlI/cXyjh76mzovXhmM?=
- =?us-ascii?Q?+eJmoy1lAbDEGIYWGqrUmbvzkt27VHrSvGQjKGYEsa453fEtAutYWmFcUauU?=
- =?us-ascii?Q?RjBPovMD55ePZgTuOuj73vh8GJ39JGJrc2ilUaxqvmueIKFfR3UimF/3yA+g?=
- =?us-ascii?Q?T4q6Hp7dxnGKlUxeZs2jgGrsENKTBCp+01uTG+/KNGE1y8gfRqy/yC1/IX3h?=
- =?us-ascii?Q?GJtFzQGZzH8Jcpa80loQ0k/djbF7Xkw6mV2ocRhRVsgYtVoAEt3M+naptLyq?=
- =?us-ascii?Q?VshN2BxEXhGJuLqlRa0gMu2EuIDD1u+dmXdVe5hePM/dlSjwyixbbJcersw1?=
- =?us-ascii?Q?AlIDk62lVaaPWWuVWnWtKfzNphHJ6X6ZTATJfhFsh2U+WJFbJEECyEoR8o/+?=
- =?us-ascii?Q?1TPnSdzLxGgUDHHEU3+rpzx/1VC7zMG+GPKzbPLL+wWG1U++CfzCarF5ssbG?=
- =?us-ascii?Q?/ddf34cixhU7iqDaF3mec/1y8/feLoKrvo/M5l8oLAxKWRbrKFcGFs17O65S?=
- =?us-ascii?Q?ws2imQazIVP+SqPvNjOPRBQe2soB6V4LOK1d+JZh5fpIqXonCIp65cTno6wD?=
- =?us-ascii?Q?Avt2P0Hrf6PiGTtls65o+a5SYr21oUsKE9juMbEe8Ypoi6tgzzohYgLd64RH?=
- =?us-ascii?Q?0/nnE609hWuTKL9OY+DX6CTRsXEgTtfoa0mXsPqVUXReOl+LZwj2ETVzjMR1?=
- =?us-ascii?Q?wnp+CQFkTVZqNidCGFjnzZxeZDiag+MlZ/JLjV57uQRewFbCn2yQToMiyHkL?=
- =?us-ascii?Q?NOVZrCvab+1eysKes3EZ3Nn/KtBlJ5+Pd8y3C2XSWYymOvNsYuHTnUYI0n3n?=
- =?us-ascii?Q?tCIQUS8P4fucRc/vIhloylRj/JvAfgJdcHN2W3CLKfzpec4HN0B5LAdN9tX4?=
- =?us-ascii?Q?Asya9VFZ+LAPL5QkgWnDqAZX5WpMiFwRdiXJFgvlqQ8qqLsAi/rQ5ubiEUKM?=
- =?us-ascii?Q?i4D/HOVS4sqTd7MJscam5qEu4SnrX1GU7maQYAcA?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f65eacdb-4809-4a37-0795-08dd081f4c80
-X-MS-Exchange-CrossTenant-AuthSource: BL1PR12MB5995.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Nov 2024 22:21:07.9652
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 6LFywxfqTsv7alYseIYz/EXaR7vhdT98Y3H+L8d9+o5hPiPCOQ/FVT1C/Zs6Wt0w0T8VkNU1+N8VO/Ez9DYUdw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB6734
+References: <20241116175922.3265872-1-pasha.tatashin@soleen.com>
+ <a0372f7f-9a85-4d3e-ba20-b5911a8189e3@lucifer.local> <CAG48ez2vG0tr=H8csGes7HN_5HPQAh4WZU8U1G945K1GKfABPg@mail.gmail.com>
+In-Reply-To: <CAG48ez2vG0tr=H8csGes7HN_5HPQAh4WZU8U1G945K1GKfABPg@mail.gmail.com>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Mon, 18 Nov 2024 17:24:02 -0500
+Message-ID: <CA+CK2bB0w=i1z78AJbr2gZE9ybYki4Vz_s53=8URrxwyPvvB+A@mail.gmail.com>
+Subject: Re: [RFCv1 0/6] Page Detective
+To: Jann Horn <jannh@google.com>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	cgroups@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	akpm@linux-foundation.org, corbet@lwn.net, derek.kiernan@amd.com, 
+	dragan.cvetic@amd.com, arnd@arndb.de, gregkh@linuxfoundation.org, 
+	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, tj@kernel.org, 
+	hannes@cmpxchg.org, mhocko@kernel.org, roman.gushchin@linux.dev, 
+	shakeel.butt@linux.dev, muchun.song@linux.dev, Liam.Howlett@oracle.com, 
+	vbabka@suse.cz, shuah@kernel.org, vegard.nossum@oracle.com, 
+	vattunuru@marvell.com, schalla@marvell.com, david@redhat.com, 
+	willy@infradead.org, osalvador@suse.de, usama.anjum@collabora.com, 
+	andrii@kernel.org, ryan.roberts@arm.com, peterx@redhat.com, oleg@redhat.com, 
+	tandersen@netflix.com, rientjes@google.com, gthelen@google.com, 
+	linux-hardening@vger.kernel.org, 
+	Kernel Hardening <kernel-hardening@lists.openwall.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 22, 2024 at 02:34:28PM -0700, Zaid Alali wrote:
-> Enable the driver to inject EINJv2 type errors. The component
-> array values are parsed from user_input and expected to contain
-> hex values for component id and syndrome separated by space,
-> and multiple components are separated by new line as follows:
-> 
-> component_id1 component_syndrome1
-> component_id2 component_syndrome2
->  :
-> component_id(n) component_syndrome(n)
-> 
-> for example:
-> 
-> $comp_arr="0x1 0x2
-> >0x1 0x4
-> >0x2 0x4"
-> $cd /sys/kernel/debug/apei/einj/
-> $echo "$comp_arr" > einjv2_component_array
-> 
-> Signed-off-by: Zaid Alali <zaidal@os.amperecomputing.com>
-> ---
->  drivers/acpi/apei/einj-core.c | 76 +++++++++++++++++++++++++++++++++--
->  1 file changed, 72 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/acpi/apei/einj-core.c b/drivers/acpi/apei/einj-core.c
-> index bd46a611eef7..bc833f42dfc7 100644
-> --- a/drivers/acpi/apei/einj-core.c
-> +++ b/drivers/acpi/apei/einj-core.c
-> @@ -87,6 +87,13 @@ enum {
->  	SETWA_FLAGS_APICID = 1,
->  	SETWA_FLAGS_MEM = 2,
->  	SETWA_FLAGS_PCIE_SBDF = 4,
-> +	SETWA_FLAGS_EINJV2 = 8,
-> +};
-> +
-> +enum {
-> +	EINJV2_PROCESSOR_ERROR = 0x1,
-> +	EINJV2_MEMORY_ERROR = 0x2,
-> +	EINJV2_PCIE_ERROR = 0x4,
->  };
->  
->  /*
-> @@ -111,6 +118,7 @@ static char vendor_dev[64];
->  static struct debugfs_blob_wrapper einjv2_component_arr;
->  static u64 component_count;
->  static void *user_input;
-> +static int nr_components;
->  static u32 available_error_type;
->  static u32 available_error_type_v2;
->  
-> @@ -287,8 +295,18 @@ static void *einj_get_parameter_address(void)
->  
->  		v5param = acpi_os_map_iomem(pa_v5, sizeof(*v5param));
->  		if (v5param) {
-> +			int offset, len;
-> +
->  			acpi5 = 1;
->  			check_vendor_extension(pa_v5, v5param);
-> +			if (available_error_type & ACPI65_EINJV2_SUPP) {
-> +				len = v5param->einjv2_struct.length;
-> +				offset = offsetof(struct einjv2_extension_struct, component_arr);
-> +				nr_components = (len - offset) / 32;
-> +				acpi_os_unmap_iomem(v5param, sizeof(*v5param));
-> +				v5param = acpi_os_map_iomem(pa_v5, sizeof(*v5param) + (
-> +					(nr_components) * sizeof(struct syndrome_array)));
+On Mon, Nov 18, 2024 at 7:54=E2=80=AFAM Jann Horn <jannh@google.com> wrote:
+>
+> On Mon, Nov 18, 2024 at 12:17=E2=80=AFPM Lorenzo Stoakes
+> <lorenzo.stoakes@oracle.com> wrote:
+> > On Sat, Nov 16, 2024 at 05:59:16PM +0000, Pasha Tatashin wrote:
+> > > It operates through the Linux debugfs interface, with two files: "vir=
+t"
+> > > and "phys".
+> > >
+> > > The "virt" file takes a virtual address and PID and outputs informati=
+on
+> > > about the corresponding page.
+> > >
+> > > The "phys" file takes a physical address and outputs information abou=
+t
+> > > that page.
+> > >
+> > > The output is presented via kernel log messages (can be accessed with
+> > > dmesg), and includes information such as the page's reference count,
+> > > mapping, flags, and memory cgroup. It also shows whether the page is
+> > > mapped in the kernel page table, and if so, how many times.
+> >
+> > I mean, even though I'm not a huge fan of kernel pointer hashing etc. t=
+his
+> > is obviously leaking as much information as you might want about kernel
+> > internal state to the point of maybe making the whole kernel pointer
+> > hashing thing moot.
+> >
+> > I know this requires CAP_SYS_ADMIN, but there are things that also requ=
+ire
+> > that which _still_ obscure kernel pointers.
+> >
+> > And you're outputting it all to dmesg.
+> >
+> > So yeah, a security person (Jann?) would be better placed to comment on
+> > this than me, but are we sure we want to do this when not in a
+> > CONFIG_DEBUG_VM* kernel?
+>
+> I guess there are two parts to this - what root is allowed to do, and
+> what information we're fine with exposing to dmesg.
+>
+> If the lockdown LSM is not set to LOCKDOWN_CONFIDENTIALITY_MAX, the
+> kernel allows root to read kernel memory through some interfaces - in
+> particular, BPF allows reading arbitrary kernel memory, and perf
+> allows reading at least some stuff (like kernel register states). With
+> lockdown in the most restrictive mode, the kernel tries to prevent
+> root from reading arbitrary kernel memory, but we don't really change
+> how much information goes into dmesg. (And I imagine you could
+> probably still get kernel pointers out of BPF somehow even in the most
+> restrictive lockdown mode, but that's probably not relevant.)
+>
+> The main issue with dmesg is that some systems make its contents
+> available to code that is not running with root privileges; and I
+> think it is also sometimes stored persistently in unencrypted form
+> (like in EFI pstore) even when everything else on the system is
+> encrypted.
+> So on one hand, we definitely shouldn't print the contents of random
+> chunks of memory into dmesg without a good reason; on the other hand,
+> for example we do already print kernel register state on WARN() (which
+> often includes kernel pointers and could theoretically include more
+> sensitive data too).
+>
+> So I think showing page metadata to root when requested is probably
+> okay as a tradeoff? And dumping that data into dmesg is maybe not
+> great, but acceptable as long as only root can actually trigger this?
+>
+> I don't really have a strong opinion on this...
+>
+>
+> To me, a bigger issue is that dump_page() looks like it might be racy,
+> which is maybe not terrible in debugging code that only runs when
+> something has already gone wrong, but bad if it is in code that root
+> can trigger on demand?
 
-The way this line is broken up doesn't look quite right. That paren on
-the top line should get pulled on to the next line and aligned with the
-beginning of acpi_os_unmap_iomem. See below example.
+Hi Jann, thank you for reviewing this proposal.
 
-Also, it's a little awkward here to map the v5param above just to unmap it
-here in the case of EINJv2. Is there a reason it needs to be done like
-this or can we do something like this instead?
+Presumably, the interface should be used only when something has gone
+wrong but has not been noticed by the kernel. That something is
+usually checksums failures that are outside of the kernel: i.e. during
+live migration, snapshotting, filesystem journaling, etc. We already
+have interfaces that provide data from the live kernel that could be
+racy, i.e. crash utility.
 
-		if (available_error_type & ACPI65_EINJV2_SUPP) {
-			len = v5param->einjv2_struct.length;
-			offset = offsetof(struct einjv2_extension_struct, component_arr);
-			nr_components = (len - offset) / 32;
-			v5param = acpi_os_map_iomem(pa_v5, sizeof(*v5param) +
-				  ((nr_components) * sizeof(struct syndrome_array)));
-		else {
-			v5param = acpi_os_map_iomem(pa_v5, sizeof(*v5param));
-		}
+> __dump_page() copies the given page with
+> memcpy(), which I don't think guarantees enough atomicity with
+> concurrent updates of page->mapping or such, so dump_mapping() could
+> probably run on a bogus pointer. Even without torn pointers, I think
+> there could be a UAF if the page's mapping is destroyed while we're
+> going through dump_page(), since the page might not be locked. And in
+> dump_mapping(), the strncpy_from_kernel_nofault() also doesn't guard
+> against concurrent renaming of the dentry, which I think again would
+> probably result in UAF.
 
-		if (v5param) {
-			acpi5 = 1;
-			check_vendor_extension(pa_v5, v5param);
-			return v5param;
-		}
+Since we are holding a reference on the page at the time of
+dump_page(), the identity of the page should not really change, but
+dentry can be renamed.
 
-> +			}
->  			return v5param;
->  		}
->  	}
-> @@ -496,8 +514,49 @@ static int __einj_error_inject(u32 type, u32 flags, u64 param1, u64 param2,
->  			v5param->flags = flags;
->  			v5param->memory_address = param1;
->  			v5param->memory_address_range = param2;
-> -			v5param->apicid = param3;
-> -			v5param->pcie_sbdf = param4;
-> +
-> +			if (flags & SETWA_FLAGS_EINJV2) {
+> So I think dump_page() in its current form is not something we should
+> expose to a userspace-reachable API.
 
-IMO, moving this chunk inside the conditional here to a helper function
-would improve readability. As written, there are a couple too many
-levels of indentation.
-
-> +				int count = 0, bytes_read, pos = 0;
-> +				unsigned int comp, synd;
-> +				struct syndrome_array *component_arr;
-> +
-> +				if (component_count > nr_components)
-> +					goto err_out;
-> +
-> +				v5param->einjv2_struct.component_arr_count = component_count;
-> +				component_arr = v5param->einjv2_struct.component_arr;
-> +
-> +				while (sscanf(user_input+pos, "%x %x\n%n", &comp, &synd,
-
-Arithmetic operators should have a single space on each side:
-user_input + pos
-
-> +							&bytes_read) == 2) {
-
-Another alignment issue here. This would be nice to have aligned after
-the sscanf paren. Like:
-				while (sscanf(user_input+pos, "%x %x\n%n", &comp, &synd,
-					      &bytes_read) == 2) {
-
-Thanks,
-John
-
-> +					pos += bytes_read;
-> +					if (count > component_count)
-> +						goto err_out;
-> +
-> +					switch (type) {
-> +					case EINJV2_PROCESSOR_ERROR:
-> +						component_arr[count].comp_id.acpi_id = comp;
-> +						component_arr[count].comp_synd.proc_synd = synd;
-> +						break;
-> +					case EINJV2_MEMORY_ERROR:
-> +						component_arr[count].comp_id.device_id = comp;
-> +						component_arr[count].comp_synd.mem_synd = synd;
-> +						break;
-> +					case EINJV2_PCIE_ERROR:
-> +						component_arr[count].comp_id.pcie_sbdf = comp;
-> +						component_arr[count].comp_synd.pcie_synd = synd;
-> +						break;
-> +					}
-> +					count++;
-> +				}
-> +				if (count != component_count - 1)
-> +					goto err_out;
-> +
-> +				/* clear buffer after user input for next injection */
-> +				memset(user_input, 0, COMP_ARR_SIZE);
-> +			} else {
-> +				v5param->apicid = param3;
-> +				v5param->pcie_sbdf = param4;
-> +			}
->  		} else {
->  			switch (type) {
->  			case ACPI_EINJ_PROCESSOR_CORRECTABLE:
-> @@ -570,6 +629,9 @@ static int __einj_error_inject(u32 type, u32 flags, u64 param1, u64 param2,
->  	rc = apei_exec_run_optional(&ctx, ACPI_EINJ_END_OPERATION);
->  
->  	return rc;
-> +err_out:
-> +	memset(user_input, 0, COMP_ARR_SIZE);
-> +	return -EINVAL;
->  }
->  
->  /* Inject the specified hardware error */
-> @@ -581,9 +643,14 @@ int einj_error_inject(u32 type, u32 flags, u64 param1, u64 param2, u64 param3,
->  
->  	/* If user manually set "flags", make sure it is legal */
->  	if (flags && (flags &
-> -		~(SETWA_FLAGS_APICID|SETWA_FLAGS_MEM|SETWA_FLAGS_PCIE_SBDF)))
-> +		~(SETWA_FLAGS_APICID|SETWA_FLAGS_MEM|SETWA_FLAGS_PCIE_SBDF|SETWA_FLAGS_EINJV2)))
->  		return -EINVAL;
->  
-> +	/*check if type is a valid EINJv2 error type*/
-> +	if (flags & SETWA_FLAGS_EINJV2) {
-> +		if (!(type & available_error_type_v2))
-> +			return -EINVAL;
-> +	}
->  	/*
->  	 * We need extra sanity checks for memory errors.
->  	 * Other types leap directly to injection.
-> @@ -913,7 +980,8 @@ static void __exit einj_remove(struct platform_device *pdev)
->  			sizeof(struct set_error_type_with_address) :
->  			sizeof(struct einj_parameter);
->  
-> -		acpi_os_unmap_iomem(einj_param, size);
-> +		acpi_os_unmap_iomem(einj_param,
-> +				size + (nr_components * sizeof(struct syndrome_array)));
->  		if (vendor_errors.size)
->  			acpi_os_unmap_memory(vendor_errors.data, vendor_errors.size);
->  	}
-> -- 
-> 2.34.1
-> 
+We use dump_page() all over WARN_ONs in MM code where pages might not
+be locked, but this is a good point, that while even the existing
+usage might be racy, providing a user-reachable API potentially makes
+it worse. I will see if I could add some locking before dump_page(),
+or make a dump_page variant that does not do dump_mapping().
 
