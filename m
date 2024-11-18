@@ -1,174 +1,137 @@
-Return-Path: <linux-kernel+bounces-413563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FDCF9D1B07
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 23:19:07 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B22A9D1B0A
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 23:20:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3069628495D
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 22:19:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC305B2203C
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 22:20:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A2791E7C0B;
-	Mon, 18 Nov 2024 22:18:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B35CB1E7C1C;
+	Mon, 18 Nov 2024 22:20:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FHWviz50"
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WmPr89Xu"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EAB8158DAC;
-	Mon, 18 Nov 2024 22:18:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78FAA158DAC;
+	Mon, 18 Nov 2024 22:20:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731968336; cv=none; b=p0pWKxdk/JKEH6fvnY28WpSii04B7pBCZw6PmFyZehWyX6z15Rl76pAnXyMkNouXBQrsedlYJ+0crZlIWwjHw8u5SETnIyanzdaaAxzNUIggp2383U+WjKjoW4BSM2SXAc1p1vZXnT1VSR3khMrCQhvB8HTd36DI27nE2WA0kyU=
+	t=1731968404; cv=none; b=CoEUt1zmi79MhcY14KsIYlZTNcfijcNe2HaHe1+wCJe5tsXc3uD369xyY9V7+eIK/twACgrvoK75wdPNhUXz/Tn1pxE5Df/6Qu710MfDJc5N/alyORQ320p8atOKY3oUwCb2PxlYhwYIzcRlCnxyB9dRReeqblayeOAND93BQrk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731968336; c=relaxed/simple;
-	bh=94Md2Bbdg2uJ/1C8DXzJpKoyTMxBfehGgIwyiwleNFk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fPBrpkfMtggM/z0jt2pUgRE//THshMzYVZC8x07JlB3XAS1wekooGJWpaRPgN7NoEaSkQtVGGgz7jcYktAtys4whfxjNQW7VLpj0ZL5mggBfypyzij6We2mkisfg1JT6oYR3wWToLh0vU53/Kl3bpMvyOk07w1KY1xZGOVcQKQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FHWviz50; arc=none smtp.client-ip=209.85.222.180
+	s=arc-20240116; t=1731968404; c=relaxed/simple;
+	bh=bsXiz7UT10hwFu7zTn8p15kzJpEBtSpS5WxrH6zvpP4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tvhK5kbxpJX7W32fcsQk5S58uOR5nyCfwVgzJgj5PIGF2N8605c7csHSfbi6m0bnbhCeHAv0/XuIKBLBXK5HiFuh0AoVa/CKafJnlNVeNpsVt3hrNO0qkC2qa9ENu3KVDT6IPEC+DHLx1/4xgZIYAq00OOXvHa5ksLCdeosu6HU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WmPr89Xu; arc=none smtp.client-ip=209.85.218.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7b157c9ad12so14837285a.1;
-        Mon, 18 Nov 2024 14:18:54 -0800 (PST)
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-aa20944ce8cso856259266b.0;
+        Mon, 18 Nov 2024 14:20:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731968334; x=1732573134; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cdl+PoGf0HmpGeKu+Tb56R/ClTlR2kQttntRDnLIb7I=;
-        b=FHWviz50b6+C35O5eM8c5Y3YODy+O2RnSMKk1P7Uyzc6w883n5SzCXsTxsubX8I5A2
-         CXdjz5YNMMtLJKJt3Ysum0kC6O8UcxnkSCCrY9f5U1AbhpipQ6TUDzpQzJjLOjvqB9xl
-         iKLKuMpnxVykqdkgrQVQHQQXsKi1emETridLnFVi+w8/JsoV9BSpReLW3YADbNOTJYE5
-         r1VjYL7qVIzFFz9gG7Aq7zbXMywfhR0QRYDlJT9U4lgtbMzot7JqCaLF/z2Ov07E2g89
-         Q4NJ8KW1SKmK4gsin7fAJl1s0S0QZbLHz15waXUACdf7kWRQ7q2MfCybR2oDOK2c+sXS
-         DfMw==
+        d=gmail.com; s=20230601; t=1731968401; x=1732573201; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jYtGEYKooR3k70+jqsHoRxERDWbVZz+C79qNhsZlccU=;
+        b=WmPr89Xu+x4Kd9KWIOSlngY0DNUM8qNxh8KMuPmvWGl2AGbxBCFYm6hFZM+rKVUAru
+         oGrnRju/znEHmNX5II4BgjqDTsYpWigk/nG3Yk2+v2gxVgx+L8rtArNWsXu0azlh9csP
+         jvWR5TtxOs1lZtP/Vd2LG3yOw/G2Z3tySQj3VWxYMgYQWgjUORPgjgj58ESYVNKQuklU
+         9MbsSYptxHOFkpqW97/yviBaj6wRcwtUyz3Nh3AnUH6eKVNSWVT8apiqqIz0LSbeMSJ6
+         UhFlTMHm1RyYVK0UNqoNnArfv478q9MoiBt62ajeqPfrZEqcbqxN2Q8CkOpj7Hx0pWQp
+         2evA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731968334; x=1732573134;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cdl+PoGf0HmpGeKu+Tb56R/ClTlR2kQttntRDnLIb7I=;
-        b=pSLNKGrZtBklgsyg+6VciwTOmwYctGC0kk0f7Yflel5eo5y0PMqYPCbATi9fxl0Mky
-         D8Nk5lR/SFwewdPHPiTXHctRaxm2Ze1HZeO0xg82DYTNicu4NF1adIggIHXvTcEmvZbj
-         6rYpBo7NEnvjWBqtlTAFKKx/IkEz9LZg956oyhZ546/aQzY+1aSsCXhqbPQE89fElNG4
-         ygH5tAzRQL2YadoEYD2Czq3ItnS9Ko3d7tXKcq3Rc7XR8Z2YQnNbANT9vmEvsNuJ0ARg
-         pfGb0wPjuxWIGuAgysESrvvSU2Uo+DlzlxjIzMn4PDbP0GxuENF+WeCH9cCWLNtnnefg
-         ONKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUaNLcMRWSh3z6poq0Dv0u1SX0dgkNbrev0PImTIZYOXWc5HJKp21oqAJQoWT+oY2l0eNCSm+TSgl+eelw=@vger.kernel.org, AJvYcCWmvvmWLALOmihvK2zL32iJx0d6lLHx6VUdvuGegmqX4ZX86EhUV2EasWDBsNQ4luUL2FJxyPRQVtWcEpk/XYw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwowN7L5NLQQJv8gtNrvQS1HdDx6qhlmv3Blsh4YJr0VRRJ7jV
-	F3WlNwtUjJgVg+X9WdugNNKsuNuntFhLYgHMRt140W1DrwkP2/hbe9DHFg==
-X-Google-Smtp-Source: AGHT+IHyG5J2Avt5/hIxZwJRsRm/OHmF8fSepmAnvcQZIldqSDkhpyqZGQjOXYBb6tg5brtBYC7+1Q==
-X-Received: by 2002:a05:620a:319f:b0:7a9:b9c6:ab4d with SMTP id af79cd13be357-7b36236620dmr1773169685a.51.1731968333945;
-        Mon, 18 Nov 2024 14:18:53 -0800 (PST)
-Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-46392b9b2besm3635661cf.10.2024.11.18.14.18.52
+        d=1e100.net; s=20230601; t=1731968401; x=1732573201;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jYtGEYKooR3k70+jqsHoRxERDWbVZz+C79qNhsZlccU=;
+        b=rdzG0kK8+w9VxIeYi6drJpAD6yugIh1KYyy3DWKeTDCCgTj2LimI2RuepiRqsonEGy
+         vAoA0FX4ONR7zLoxwVvdDM2Lo8i3zropN2ydXI5lyuCywLvhENaINTnrg7pqTZPzl52K
+         Y2lnlaAdapYvLGpB/wMmykQp5Q5uCaTzbRyINgFtDmgIUfS7iK0cE1ZYKR/UfJJMJETn
+         B4RYCOZ/JOwtmMmpIo7Dn2hmVp/5u6CkiKPtgiZCilh3ITfSOqK4vmBY3OSrywjObkY8
+         wq+UMXcoLpQoZvf7a9Ug1405bJmdHF8Kop1U6Hz8yBV1+BIDxdX3sv2e2kWzBbvkcGDQ
+         mHNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVNyqKaJMGpnIyXGpM7lKST42WvwsCv0LyJxJvN2Z0Wk5sD8S16/rcZp3t3wqayj3Lguwg7r+1P@vger.kernel.org, AJvYcCXKJcL4b+T4x4Ya9ColcAsJjGOln0qQSVy1vd7uPIvoOhFrwuCBfRV1kSjcGnEgO+I96DZhrY/Jw+A/kvc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPlmiq7UvI/S4OhLUfhs1S4ioTgQL34Bo3Sw62+eLios+sYrYQ
+	0BhArPwV/QvES/qHKh6IAVqJPgEndnTL+Byt+Y65T4lTyPcxmq0qdfY4eiRm
+X-Google-Smtp-Source: AGHT+IHzyzhLjxv2Vl4C59o5aYbPpYinJKFAwD2oK6Fnp2vAcv4hP5NceZ2ycS6tUBogOMQIR7kSbg==
+X-Received: by 2002:a17:907:1c04:b0:a9a:e0b8:5bac with SMTP id a640c23a62f3a-aa4c7ed4dfdmr63138766b.23.1731968400653;
+        Mon, 18 Nov 2024 14:20:00 -0800 (PST)
+Received: from localhost.localdomain (62-178-82-42.cable.dynamic.surfer.at. [62.178.82.42])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20df26c84sm584323966b.35.2024.11.18.14.19.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Nov 2024 14:18:53 -0800 (PST)
-Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 7E6461200043;
-	Mon, 18 Nov 2024 17:18:52 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-06.internal (MEProxy); Mon, 18 Nov 2024 17:18:52 -0500
-X-ME-Sender: <xms:TL07ZxVnuA_8uQ9Y6os94HW2gDLKMM3WuxDNi0WrPidZDtqE16PpbQ>
-    <xme:TL07ZxnecuMM9g2KW4IY6JRpc4XlNaYnUrGdQG0kHxxGphNr-iDxac6zECZ6hhI7t
-    XWPsOgA36Ik99_knQ>
-X-ME-Received: <xmr:TL07Z9Ze329j1BZbquhombh2SBtuWqc2YhwFCXR_2K_KgEpm6ceZX7TGdKVrAg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrfedtgdduheejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvden
-    ucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrd
-    gtohhmqeenucggtffrrghtthgvrhhnpeehudfgudffffetuedtvdehueevledvhfelleei
-    vedtgeeuhfegueevieduffeivdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhi
-    thihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmh
-    grihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohepudehpdhmohgu
-    vgepshhmthhpohhuthdprhgtphhtthhopehtrghmihhrugesghhmrghilhdrtghomhdprh
-    gtphhtthhopegurghkrheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepohhjvggurges
-    khgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghlvgigrdhgrgihnhhorhesghhmrghilh
-    drtghomhdprhgtphhtthhopehgrghrhiesghgrrhihghhuohdrnhgvthdprhgtphhtthho
-    pegsjhhorhhnfegpghhhsehprhhothhonhhmrghilhdrtghomhdprhgtphhtthhopegsvg
-    hnnhhordhlohhsshhinhesphhrohhtohhnrdhmvgdprhgtphhtthhopegrrdhhihhnuggs
-    ohhrgheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghlihgtvghrhihhlhesghhooh
-    hglhgvrdgtohhm
-X-ME-Proxy: <xmx:TL07Z0URe5dmgu4wFSeiqFJ_m8Fa7_5Sa5aSRLSIsBmsdxX3NYzD3Q>
-    <xmx:TL07Z7kcyg5-WDEoqkoxLiSSbPipR8HezoyUe9pQ6-Jh1Ip91gGXbA>
-    <xmx:TL07ZxcNT0tMWD8D14rPoWFDinohLnD2Qp3lwdyyMiymPB8uZs2pqw>
-    <xmx:TL07Z1HOPIw7bHmStErFC816kfZiq-a6OIleD0BabuJbOSYU4cxBeg>
-    <xmx:TL07Z1lrndDsE4JlMDz0nhzYnZ3G13lZHzbmPR8nETnkKvkEUK7OB8jU>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 18 Nov 2024 17:18:51 -0500 (EST)
-Date: Mon, 18 Nov 2024 14:18:51 -0800
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	=?iso-8859-1?Q?Ma=EDra?= Canal <mcanal@igalia.com>,
-	Asahi Lina <lina@asahilina.net>, rust-for-linux@vger.kernel.org,
+        Mon, 18 Nov 2024 14:19:59 -0800 (PST)
+From: Christian Gmeiner <christian.gmeiner@gmail.com>
+To: Melissa Wen <mwen@igalia.com>,
+	=?UTF-8?q?Ma=C3=ADra=20Canal?= <mcanal@igalia.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	"Juan A. Suarez Romero" <jasuarez@igalia.com>
+Cc: kernel-dev@igalia.com,
+	Christian Gmeiner <cgmeiner@igalia.com>,
+	stable@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v9 2/2] rust: xarray: Add an abstraction for XArray
-Message-ID: <Zzu9SzkDoq_1YQnJ@tardis.local>
-References: <20241118-rust-xarray-bindings-v9-0-3219cdb53685@gmail.com>
- <20241118-rust-xarray-bindings-v9-2-3219cdb53685@gmail.com>
+Subject: [PATCH] drm/v3d: Stop active perfmon if it is being destroyed
+Date: Mon, 18 Nov 2024 23:19:47 +0100
+Message-ID: <20241118221948.1758130-1-christian.gmeiner@gmail.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241118-rust-xarray-bindings-v9-2-3219cdb53685@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Nov 18, 2024 at 11:33:36AM -0500, Tamir Duberstein wrote:
-[...]
-> +
-> +/// A lock guard.
-> +///
-> +/// The lock is unlocked when the guard goes out of scope.
-> +#[must_use = "the lock unlocks immediately when the guard is unused"]
-> +pub struct Guard<'a, T: ForeignOwnable> {
-> +    xa: &'a XArray<T>,
-> +}
+From: Christian Gmeiner <cgmeiner@igalia.com>
 
-`Guard` would be `Send` if `XArray<T>` is `Sync`, however, it's
-incorrect since `Guard` represents an xa_lock() held, and that's a
-spin_lock, so cannot be dropped on another thread/context. `Guard`
-should probably be marked as `!Send`. Or am I missing something subtle
-here?
+If the active performance monitor (v3d->active_perfmon) is being
+destroyed, stop it first. Currently, the active perfmon is not
+stopped during destruction, leaving the v3d->active_perfmon pointer
+stale. This can lead to undefined behavior and instability.
 
-Regards,
-Boqun
+This patch ensures that the active perfmon is stopped before being
+destroyed, aligning with the behavior introduced in commit
+7d1fd3638ee3 ("drm/v3d: Stop the active perfmon before being destroyed").
 
-> +
-> +impl<T: ForeignOwnable> Drop for Guard<'_, T> {
-> +    fn drop(&mut self) {
-> +        // SAFETY: `self.xa.xa` is always valid by the type invariant.
-> +        //
-> +        // SAFETY: The caller holds the lock, so it is safe to unlock it.
-> +        unsafe { bindings::xa_unlock(self.xa.xa.get()) };
-> +    }
-> +}
-> +
-[...]
-> +// SAFETY: It is safe to send `XArray<T>` to another thread when the underlying `T` is `Send`
-> +// because XArray is thread-safe and all mutation operations are synchronized.
-> +unsafe impl<T: ForeignOwnable + Send> Send for XArray<T> {}
-> +
-> +// SAFETY: It is safe to send `&XArray<T>` to another thread when the underlying `T` is `Sync`
-> +// because it effectively means sharing `&T` (which is safe because `T` is `Sync`). Additionally,
-> +// `T` is `Send` because XArray is thread-safe and all mutation operations are internally locked.
-> +unsafe impl<T: ForeignOwnable + Send + Sync> Sync for XArray<T> {}
-> 
-> -- 
-> 2.47.0
-> 
-> 
+Cc: stable@vger.kernel.org # v5.15+
+Fixes: 26a4dc29b74a ("drm/v3d: Expose performance counters to userspace")
+Signed-off-by: Christian Gmeiner <cgmeiner@igalia.com>
+---
+ drivers/gpu/drm/v3d/v3d_perfmon.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/drivers/gpu/drm/v3d/v3d_perfmon.c b/drivers/gpu/drm/v3d/v3d_perfmon.c
+index 00cd081d7873..909288d43f2f 100644
+--- a/drivers/gpu/drm/v3d/v3d_perfmon.c
++++ b/drivers/gpu/drm/v3d/v3d_perfmon.c
+@@ -383,6 +383,7 @@ int v3d_perfmon_destroy_ioctl(struct drm_device *dev, void *data,
+ {
+ 	struct v3d_file_priv *v3d_priv = file_priv->driver_priv;
+ 	struct drm_v3d_perfmon_destroy *req = data;
++	struct v3d_dev *v3d = v3d_priv->v3d;
+ 	struct v3d_perfmon *perfmon;
+ 
+ 	mutex_lock(&v3d_priv->perfmon.lock);
+@@ -392,6 +393,10 @@ int v3d_perfmon_destroy_ioctl(struct drm_device *dev, void *data,
+ 	if (!perfmon)
+ 		return -EINVAL;
+ 
++	/* If the active perfmon is being destroyed, stop it first */
++	if (perfmon == v3d->active_perfmon)
++		v3d_perfmon_stop(v3d, perfmon, false);
++
+ 	v3d_perfmon_put(perfmon);
+ 
+ 	return 0;
+-- 
+2.47.0
+
 
