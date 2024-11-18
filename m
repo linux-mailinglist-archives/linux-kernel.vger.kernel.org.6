@@ -1,163 +1,116 @@
-Return-Path: <linux-kernel+bounces-412317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FB5C9D0776
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 02:15:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19FC99D0788
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 02:20:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47D5D1F21D48
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 01:15:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5825281FFE
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 01:20:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 773621946B;
-	Mon, 18 Nov 2024 01:14:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B5AD199B9;
+	Mon, 18 Nov 2024 01:20:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="YiwdVwu5"
-Received: from smtp.smtpout.orange.fr (smtp-17.smtpout.orange.fr [80.12.242.17])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cAIYygd+"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFE6420322;
-	Mon, 18 Nov 2024 01:14:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23EC9C2F2;
+	Mon, 18 Nov 2024 01:20:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731892497; cv=none; b=J9+uCjR3q4+A+Cplc7cEziriIU/K2YxAJB6wxtV/6PKKWt/vTHq0JhgzN4rQkUwMo0Z50U6QSlFUt2w6QDPAx7kGziFpc2et+CLcFl2U6jmnDMym9O5Tqc0xen82FpDNFymBGT9tugt1cI68iuU3sxLX0hz92NQ32ULUgkb3Hl4=
+	t=1731892805; cv=none; b=b/B20KO0A9BFWUcSLWueZ9uTGuzgk01koz2iRzBLPNK/0uqiCJUf8JzjuQVtOfYCg6qN30Kfu9zQewdL/QamKuhx5PKgCFJNQZ3wjGSyYIbNy07jcf2d0HBMkVXmbeOd/Ke1RhA3sVsj4chpXmOjPX9S8X3fwnjtq8gm5l5qnek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731892497; c=relaxed/simple;
-	bh=HWCsUhpHDgwWC8g6ua6DorxLt16W8NnJfN6BZYQS3wA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Xpou+kJj/JJ7lmWX99L3H0vzEh3Nt2lTaqDYQxEzp42i/U8Sr4PRmi1H2zD2GOgb4EBk8RCVmABIw05hBMKus1vwJMmPGo8tqmx6c3WdebdtTm/PQVVDgommd7QglhHjb0fwnHxtYTPdssf98wppuVOrflNXWUUlkvXVNKW28eU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=YiwdVwu5; arc=none smtp.client-ip=80.12.242.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from mail-ej1-f43.google.com ([209.85.218.43])
-	by smtp.orange.fr with ESMTPSA
-	id CqLltb6R1t7pwCqLltFMAi; Mon, 18 Nov 2024 02:14:45 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1731892485;
-	bh=5EWXBlUu5q5BB5RerBonB4WBVQK2DymyLKEc60KRR6Y=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To;
-	b=YiwdVwu5qneVTcxE/QWSdtQTjvyMLSiJOGhcgt0uiZwymHYbXGv7h46jUJzQGjC7I
-	 YTdgeTsdFYa5MohoNeUyGeBf9AcdseVxfwodTFgJnlNpQivqMm43QsJxCAT2OmN8ET
-	 Re55OQT+THX1O3ayqlAwXwmVmG9NhvTdaUl3GRCFFJjxP9dAeN7alSki/mWVX+78sh
-	 8KYLE6+gTgnUh4hHCs8yDbKbB2CUhN+gInOYLbXKGamP8TkVS4qHz2QFSmtgDCbwy0
-	 4RRKVB1M5ts7lF6jzgSC10kw+5wN46mNb5JdpTxXyZlMFk8Gb1c7+6zDn6tb22Upzg
-	 jswFutc6YbWjw==
-X-ME-Helo: mail-ej1-f43.google.com
-X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 18 Nov 2024 02:14:45 +0100
-X-ME-IP: 209.85.218.43
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a99f646ff1bso563893466b.2;
-        Sun, 17 Nov 2024 17:14:45 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXe2A9RxveQEahSB67S+bHEge4NI4uio417CoNO5fwUNDD5ey6NhFuX7BeVcmJqFH+1BkY5eJEJt4ZXU/o=@vger.kernel.org, AJvYcCXeszYDEYyL+664dz1t7gNrPXtCzR7iuLCwN7fFiyEEysXNbL29fsmAXKZcEj+jH92Lqiq31pKFMr7rCdNm@vger.kernel.org
-X-Gm-Message-State: AOJu0YytRK8x6tCfk3FGg5q82ctW4FVv/b5jBoQ/jFVPPn4mYvkpbXPP
-	uQgqwMZ7/9sn/ACDu9FZZd6FwHVmjJIDN+3oY7uwZPUWXDdOOa4XI8vJTNIc2BuZv1qjIO/OZCx
-	Wxfr+KAW895fXI5E6U9sTf28okJs=
-X-Google-Smtp-Source: AGHT+IFxLXimI3zJLX8n92Ypx5/5vhRGW8wOjcu/xvcEwYo4fR29uj4cq887t3sAQrSeYP0wy5wul4J4KJAX1ByYzWY=
-X-Received: by 2002:a17:906:f903:b0:aa4:a3be:28f5 with SMTP id
- a640c23a62f3a-aa4a3be2a67mr381142766b.50.1731892485361; Sun, 17 Nov 2024
- 17:14:45 -0800 (PST)
+	s=arc-20240116; t=1731892805; c=relaxed/simple;
+	bh=7m6ySIhLBBRzLq9/jBuW03io/LurkIwAx0Tvz70c4ag=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AGCSc2zyMvQnUGq2JKUn0P8ZzCADC6MXe1w9SR/NYLAebj8yT7Z7N/UEGGA4zYtx70SXy1uI3uBB1lCurOoM7F1MC0EaTk5ggqoftmDLw5RPWFrHrm1yQB0gPvi+0XSUQchLxOe/0fWgrwJJ+GjZHuJQPK3kUSx6xp1XmFHzy8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cAIYygd+; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2110a622d76so31564865ad.3;
+        Sun, 17 Nov 2024 17:20:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731892803; x=1732497603; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=WLZ4j+0JUQhKuRCNLddjQ5xW+03k8o1dg2/JeNfFHJU=;
+        b=cAIYygd+KtRRVkw/vrnDxZOOyXuJzH2aVsHyw9m4x8eVgEQU7fiV8SygHMMaP8BYri
+         cwa7aaQW4S/48O5tZtoTIqBpDKroE0qZEOZTIjsgKMC/dXvg6tLpwVhaJanhdOn65IpG
+         WghMeGgd5rOiwldZgs6DDfgNJgXPYeDb8ROnkjwhnMowBBAA/htSHXC2q197HWdkqNc0
+         RGnu2eU1eW2cezHcGcSSY11bKC3tava0abpYNLDXthpOVe+p218eHLLFNmSfHY7BPnai
+         vodVqZDvRaacfA4HymNJWfzlN2e9Bl15uHsA7+I+cO9oCSpqniSFBvpXFF6MD10tzi5V
+         KMMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731892803; x=1732497603;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WLZ4j+0JUQhKuRCNLddjQ5xW+03k8o1dg2/JeNfFHJU=;
+        b=I4XgvHT0Z0NT3JfCvbGCXLIKjzEddzBC31xgZZeb92vIqMKHjqJpTeg3FdhUdefu6Q
+         Y5tcwgJXCtUL+Szlruwp+uM1cY9ACBZMD+kqJUFr4IuTKujXNG7KeL/hjefmRKuGPjgm
+         cioosURtL+uBr9CXxpvsiBzjcYkU7OrWWWxfM58HQeApEoSttKymMg6uMHCJFtbCtxgi
+         PsOOYXb27nh2YUuI/Hfh1vzlgYhRkO4jJdhdcvWczi3tFS2eDsQZonX+adhld9bwaQAA
+         dj623lia8ro8MXjyrK3kOyZaoZ4zZsdli+DE8HU1s2IlFZhEu0DhW8cmHZZOA9ff2c4D
+         K6Fw==
+X-Forwarded-Encrypted: i=1; AJvYcCWawjwa1K5+coGrAIpoxne+RFZj7JEna6ogn2Ugx6B2eGBKsCYZO8Q94wxfuvtnkbY5obF0hklUA9cvSVVfpvOe@vger.kernel.org, AJvYcCXtFEXitfIbEECd3g4zGJ2CrymXaeG7akiKNtpPJq51lj2g6TNkvkKFaK4f82UEVHZhfitsHu2Lsbg8KZY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/049fbhdqJzPV8MkJyc+YOwpw+YBJHbFP4u2oIr1xeRsDV5L5
+	hzxfbW1Xxq6/65KdittlzXBQRARZRcsVH5tPphcEmUPDn61WkPRD
+X-Google-Smtp-Source: AGHT+IGhiPGHhKmnXPU7h0WAB1XDX4Fg4zXTJHpboU0k/C710xRReeYMO/J3EgZ7Bi/CiHe6T3iK0w==
+X-Received: by 2002:a17:902:ce92:b0:212:b2b:6f1d with SMTP id d9443c01a7336-2120b2b759dmr66546715ad.32.1731892803413;
+        Sun, 17 Nov 2024 17:20:03 -0800 (PST)
+Received: from fedora ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211fe7244b0sm23679655ad.198.2024.11.17.17.19.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 17 Nov 2024 17:20:02 -0800 (PST)
+Date: Mon, 18 Nov 2024 01:19:55 +0000
+From: Hangbin Liu <liuhangbin@gmail.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+	David Ahern <dsahern@kernel.org>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>, Shuah Khan <shuah@kernel.org>,
+	Sam Edwards <cfsworks@gmail.com>, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH net 2/2] selftests/rtnetlink.sh: add mngtempaddr test
+Message-ID: <ZzqWOysS6fdqjtpZ@fedora>
+References: <20241113125152.752778-1-liuhangbin@gmail.com>
+ <20241113125152.752778-3-liuhangbin@gmail.com>
+ <20241113115612.1717575a@kernel.org>
+ <ZzVZoe_N4_h4qWVP@fedora>
+ <20241113184312.7a33a83d@kernel.org>
+ <ZzWyk9QHb9qseMYO@fedora>
+ <20241114071340.2b4929a4@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241113172939.747686-4-mailhol.vincent@wanadoo.fr>
- <20241113172939.747686-6-mailhol.vincent@wanadoo.fr> <8bf9eb4434104a3b960d52bd1d38caea@AcuMS.aculab.com>
- <f5692429eb4b43738f562e5fc402ead2@AcuMS.aculab.com>
-In-Reply-To: <f5692429eb4b43738f562e5fc402ead2@AcuMS.aculab.com>
-From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Date: Mon, 18 Nov 2024 10:14:34 +0900
-X-Gmail-Original-Message-ID: <CAMZ6RqJzULnu4X=FB6xQpEm034QUtn6kiSX-P0_JQW1JBMABaA@mail.gmail.com>
-Message-ID: <CAMZ6RqJzULnu4X=FB6xQpEm034QUtn6kiSX-P0_JQW1JBMABaA@mail.gmail.com>
-Subject: Re: [PATCH v4 2/2] linux/bits.h: simplify GENMASK_INPUT_CHECK()
-To: David Laight <David.Laight@aculab.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Yury Norov <yury.norov@gmail.com>, 
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Luc Van Oostenryck <luc.vanoostenryck@gmail.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-sparse@vger.kernel.org" <linux-sparse@vger.kernel.org>, 
-	Rikard Falkeborn <rikard.falkeborn@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241114071340.2b4929a4@kernel.org>
 
-On Mon. 18 Nov. 2024 at 04:45, David Laight <David.Laight@aculab.com> wrote:
-> From: David Laight
-> > Sent: 17 November 2024 17:25
-> >
-> > From: Vincent Mailhol
-> > > Sent: 13 November 2024 17:19
-> > >
-> > > In GENMASK_INPUT_CHECK(),
-> > >
-> > >   __builtin_choose_expr(__is_constexpr((l) > (h)), (l) > (h), 0)
-> > >
-> > > is the exact expansion of:
-> > >
-> > >   const_true((l) > (h))
-> > >
-> > > Apply const_true() to simplify GENMASK_INPUT_CHECK().
-> >
-> > Wouldn't statically_true() give better coverage ?
+On Thu, Nov 14, 2024 at 07:13:40AM -0800, Jakub Kicinski wrote:
+> > I will modify the test with Sam's suggestions and see if it could pass.
+> 
+> The other option is that some other test doesn't clean up after itself,
+> since we reuse VMs. We have a script in NIPA to map things:
+> contest/cithreadmap
+> 
+> Looks like we run rtnetlink.sh after pmtu.sh, I wonder if pmtu.sh is to
+> blame:
+> 
+> Thread3-VM0
+> 	 4-pmtu-sh/
+> 	 5-rtnetlink-sh/
+> 	....
 
-Yes, it would.
+I can't see how the pmtu test affects the dummy interface test in
+a single namespace... I may add some debug info in the next version.
 
-> > I wouldn't have though that GENMASK() got used anywhere where a constant
-> > integer expression was needed.
-
-It is used in many places, including some inline functions such as bitmap_set():
-
-  https://elixir.bootlin.com/linux/v6.11/source/include/linux/bitmap.h#L469
-
-where the input is not an integer constant expression (thus preventing
-the use of statically_true()).
-
-> If it is, maybe add a GENMASK_CONST() that uses BUILD_BUG_ON_ZERO_MSG()
-> (recently proposed) and so validates that the values are constants.
-> And then use statically_true() in the normal case to pick up more errors.
-
-The issue if you introduce GENMASK_CONST() is that there is no gain.
-
-The only advantage of const_true(x) is that it works on cases where
-statically_true(x) would cause a compilation error. But for
-statically_true(x) to cause a compilation error, x has to be a non
-constant expression. And if x is non constant, then const_true(x)
-returns false.
-
-Regardless, considering the number of times where GENMASK() is used
-with integer literals, I do not think it would be worth it to replace
-all of these with GENMASK_CONST() tree wide.
-
-Trying to go in your direction, we already have two genmasks:
-
-   - GENMASK(): which uses GENMASK_INPUT_CHECK()
-
-  - __GENMASK(): no check, used in uapi
-
-What would make more sense to me would be to:
-
-  1. replace const_true() by statically_true() in GENMASK_INPUT_CHECK()
-
-  2. replace all the instances where GENMASK() breaks compilation with
-     __GENMASK()
-
-But this idea was already proposed in the past and was rejected here:
-
-  https://lore.kernel.org/lkml/YJm5Dpo+RspbAtye@rikard/
-
-> (Or just remove the check because coders really aren't that stupid!)
-
-I think that this check exists in the first place *because* such a
-mistake was made in the past.
-
-> The interesting cases are the ones using variables.
-> And they'd need run-time checks of some form.
-
-Then, instead of introducing GENMASK_CONST(), maybe introduce
-GENMASK_NON_CONST()? But then, the number of instances in which
-GENMASK() is used with something other than literal integers is pretty
-rare. So probably not worth it.
-
-
-Yours sincerely,
-Vincent Mailhol
+Thanks
+Hangbin
 
