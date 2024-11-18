@@ -1,238 +1,93 @@
-Return-Path: <linux-kernel+bounces-413231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A17A9D1568
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 17:34:23 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 962AD9D156D
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 17:35:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 35331B2CC0C
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 16:31:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA011B2A87A
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 16:31:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0170E1C07C2;
-	Mon, 18 Nov 2024 16:31:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C0911BDA8C;
+	Mon, 18 Nov 2024 16:31:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="oBk29yea"
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2045.outbound.protection.outlook.com [40.107.96.45])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NpARf6cA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 619981AA1E4
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 16:31:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.45
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731947482; cv=fail; b=SGYVGzTqpjjyvzUraRq5WL1yB6Yy5BTkxh3nvl2exSHMou/5n8Xd7h7pSiapGnY4AhxnLbgjROEvH8mNAf78YaSiVyGGIZVbfY8l9KMqywvXhE/8kF8CH3RaprdDin+7D9lNHdK/UskbxioNtWGIJK/oCkO7Iyk2C7dgsmhDwRc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731947482; c=relaxed/simple;
-	bh=8xkRj+2YYbKh0jGm2YGYKKBhe7InRI7HxmP02GWzjJw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=SxMnWCeIGp/JXoVfLN9bk8UEeUKNZHJ/uImgMmJrl8AmKPjCVUOlq9X4tVxhxOQgqCBTUMeGEyV6jgktDePAKEfzZgpvuzagBLXhluxaftrKSDeEmbun5yl84fvLsV0IWN6AD2/2NS9MhEj1wBr63IpTuTJAN+p88YK7gEvDKk4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=oBk29yea; arc=fail smtp.client-ip=40.107.96.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=eY6ciCykRCG6HgL/7BVmrJnyEC8zqzeS+ysbeFoImFM4iJ75/pKoJcduz8iRZ0M6N2jCoBLypXfJXIVZYBUVT5KKL6sSl1PZJtnxobJ4sQBZtqqIt95CpN6ojfBRYG3t1CwiboZWP5aD0gQ8h8UiKpXCa/MNWeAKy70WBMeeZcPjT7gVY6EfY2C24FLmi5aqftxeRCpYrbZTjuExm+0Nm4oHLbHvcu2E+fWEhLkUEKQNleOJDzmiKz3Q/9A7gONEbBK6tgwGSVQAq3oXhVmHhpolP2NuDioCSl9YLyQ2VWZDLXKEzu6FyYGLQslCA/hIF4Kp6+KDXGJ5aoTCE8yCkQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ZrqpW6SOIG5GfjLRUe8drriiOwIeklpTxVMqgXOtarc=;
- b=chMV0Xi2VPJBeFTe9M/h9xv5BqI0nZ+YUTvfhOc6juxLjPze3hepUdCX1J5yj465V9LBBsUeNgYxt6KborOugHYk3EGb2fkY7dITGOjll/UHlVfk8HwNm/uNW/SMx5IHKXQJQJE77aCJz96XTYP366oHXqhB+ox8vv4x4SUDtuW29phteQBhcK+iy7i584to8Ak+z2ypKVKurpqy+OtFhIqp4s8C+jK3whS7IYKofGFor6/bG3YUxlhIZFn3pDYO4kTZh6SdxOhXZv4IPoATtoyy6tgSWP3FRKdwelck8NafH9xg/RXnMry/8YVrcWoAYc21w6bksWVFWjoff54cPg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.12) smtp.rcpttodomain=quicinc.com smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZrqpW6SOIG5GfjLRUe8drriiOwIeklpTxVMqgXOtarc=;
- b=oBk29yeaJKmJRc2F6CdGJixzd0xi7ptuTNqf+cZAW+ccTNN7+JmK1nB1bcAbjJaakdKkcnRJJuJYNP/6fIniKQQ5/lDahmBWvtRMGXGZ+5dekZ5DhVn9cv1qvElmaGINmWwaUd/a4S638wOSPUuUsuOYcFTDxgdJD7aHqZ3a4/w=
-Received: from MW4PR04CA0146.namprd04.prod.outlook.com (2603:10b6:303:84::31)
- by SJ2PR12MB7797.namprd12.prod.outlook.com (2603:10b6:a03:4c5::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.24; Mon, 18 Nov
- 2024 16:31:14 +0000
-Received: from CO1PEPF000042A7.namprd03.prod.outlook.com
- (2603:10b6:303:84:cafe::a7) by MW4PR04CA0146.outlook.office365.com
- (2603:10b6:303:84::31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.23 via Frontend
- Transport; Mon, 18 Nov 2024 16:31:14 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.12)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.12 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.12; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.12) by
- CO1PEPF000042A7.mail.protection.outlook.com (10.167.243.36) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8158.14 via Frontend Transport; Mon, 18 Nov 2024 16:31:13 +0000
-Received: from SATLEXMB06.amd.com (10.181.40.147) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 18 Nov
- 2024 10:31:13 -0600
-Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB06.amd.com
- (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 18 Nov
- 2024 10:31:12 -0600
-Received: from [172.19.71.207] (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Mon, 18 Nov 2024 10:31:12 -0600
-Message-ID: <aabe8b73-32e0-7123-bcc7-6b6515815047@amd.com>
-Date: Mon, 18 Nov 2024 08:31:12 -0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 955B81B393F;
+	Mon, 18 Nov 2024 16:31:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731947511; cv=none; b=U7puTHp37XdRo1IhpRtwSILq76mGFkO4/gCtHVsLLqXgVCLaeuQqM6w3b9XqixYuFFnNSJwz+qVXm2XqfArY9EdpMoZnAiu0yC+KQVr1Bo+WCUAdJUkcGa3JynvKzAyX1CWHAH7CdBRHhEHof1MIfHTnwMTy2BhC/xg3DsXZwNA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731947511; c=relaxed/simple;
+	bh=x31hXLbjYV3wi9biP4K+7rZS3e6ndOZvglcnzxylZHY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NZrHMQyqtpyhacw+kBLs/1dK96GBN43m1Z9A0YjaWxMrLoShKJBpcsn19sYMgK67hppSGY4JPvHIBYDXCSVy4mZbQ3ERftvom4JdsQO1iH6zeQy2nGj+C3QiVoynub58a9ebV7qN783/0BG9OoPizzLedHBoKb7KrOnSqiCedoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NpARf6cA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 543C8C4CED6;
+	Mon, 18 Nov 2024 16:31:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731947511;
+	bh=x31hXLbjYV3wi9biP4K+7rZS3e6ndOZvglcnzxylZHY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=NpARf6cAiEWNNEMmssyDT9yyHlXJeFhtN4Xmp+owA4i7fHuykWm9E3qAfQBmvDTTt
+	 LOduWA3XtvjqgXlS8PB+7jHGRVazuJRsbZlLeBQHwhytZ10K95AGh2LtgwbbXi9hT5
+	 kyw3hAF1gR+UA8ahCNwB/1OeXFLb+UsM6I3HLkia/SoZC7WEQTa4LWVpWVPqlysrpV
+	 0nAD3NmiczhhcJn/O7JtIQ7KPHGPesZZegZZF5ZL1GwfOEVv8m9x2j5Xx1tg9QmWO4
+	 ThsmdnJKn9TLiGKlTgP0pNRq8IVzP6BhDCcys7q61L5gRkMaSNyarzz7LnR2Zi886U
+	 +dt1SMTyG2c9Q==
+Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e388d8850d3so1359675276.3;
+        Mon, 18 Nov 2024 08:31:51 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVBClIwaugA5+Mmk6Xx0uttn9DgL5lW5AxbiUuY3bvX0b9VX2vepPCIGE+rlsD9SXfmuthURKoJXHqs@vger.kernel.org, AJvYcCVzUYRp7PUpmEC9J/DIvFeWR6Ntfjf8D0rwqNd7NIlOP42McviC6ie5AUR7PZ0KBgip31MdzrVeAUNur6Z1@vger.kernel.org, AJvYcCXi/WSs+K85wFFAER+SEQnsT2IvdrLTUTQ0OJdnJSHlQS4DPse3kw0+Um8f8mRH17iAewp49wb1CAzGsMs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1gWWUOn6yu2arppSaUrWwaXfdDZLmLn16lRa8CE0SCzgrXC+p
+	z6yCIlkj9XTe+0K4rXgDRfcWZfJq8ycSwQS2ExU7wFYU60WFJUPhlBMIYBYQMo1AuW3ByGFlKYV
+	BVBkNfvCE3QB6eaUlq6Q1sWwI0w==
+X-Google-Smtp-Source: AGHT+IHgWFGBpHakcpgOPIljqoMGrStpMMrXYqwxsjF16duHhASCw+zuAKS78YVpDNsXsy2xlxtfkrziGx+PnoDYKfU=
+X-Received: by 2002:a05:690c:604:b0:6ee:381b:eb74 with SMTP id
+ 00721157ae682-6ee55c2bad7mr122627077b3.22.1731947510541; Mon, 18 Nov 2024
+ 08:31:50 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH V10 07/10] accel/amdxdna: Add command execution
-Content-Language: en-US
-To: Jeffrey Hugo <quic_jhugo@quicinc.com>, <ogabbay@kernel.org>,
-	<dri-devel@lists.freedesktop.org>
-CC: <linux-kernel@vger.kernel.org>, <min.ma@amd.com>, <max.zhen@amd.com>,
-	<sonal.santan@amd.com>, <king.tam@amd.com>
-References: <20241112194745.854626-1-lizhi.hou@amd.com>
- <20241112194745.854626-8-lizhi.hou@amd.com>
- <749e9a1d-7bcf-0c04-41b3-e0a4b89068bd@quicinc.com>
-From: Lizhi Hou <lizhi.hou@amd.com>
-In-Reply-To: <749e9a1d-7bcf-0c04-41b3-e0a4b89068bd@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF000042A7:EE_|SJ2PR12MB7797:EE_
-X-MS-Office365-Filtering-Correlation-Id: 653e08c6-9362-493e-c995-08dd07ee6b66
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|1800799024|82310400026|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?czVQamRWK28va0NXalExeEg2WVg2ekdXKzZlU2RPdDB1WVBCbDV2MCt6UGpm?=
- =?utf-8?B?SExycVRsbk9EZk1mZnNVaWtra2FJQzdZSlJkN0Z6S0k0OW5xYXhSYnZONTlo?=
- =?utf-8?B?eXF0Q2EycFZqbk5JNmh3cUJoLys2dkZKQmU3ejVrbTJHcXZjT1NLSnZQQlNR?=
- =?utf-8?B?dGVoN2dHUmxtRTI2YTJPWHVRa1R0Qm51OGlwK1pRVmJhMUV2M0ZObE95R0l4?=
- =?utf-8?B?WWhQY29BeCtuR09USXJsSCtjNEwzNGRPeFZHMlJMMCtrTjJXdFEwVkw1ejhF?=
- =?utf-8?B?QkRwWEFLWjZyMkxvSTRuM0w5YnV6eWVOb2J4czJ5NkdiVnJIWEw2Ti9UdlNN?=
- =?utf-8?B?THg5TWVsR051SXo2WlNmc3l1SEZGTUJaOEdBYmljL2lyclU0RnZuT1pUazJY?=
- =?utf-8?B?YlV0T05TaVM2YUpJdVBMSXJHT0xiblpCQjZRSHlycGxod2s5S0s1cnVCTjZ3?=
- =?utf-8?B?WHJ4eVJtVEVIWGFGdjFCWWdmU1VsTzI4eEFKaVBKQVBJQ2szbDZKVmdZcmxQ?=
- =?utf-8?B?eEl3d0ZTM2UxcVk2TGdDb1Q4SkJOMzVUcjhMYXdNWG1uVVVyZWJmT080MUVu?=
- =?utf-8?B?Y3ZJV1lXczVYZFBMV0JIQVY3M3hlcUJlcDZmYURhTVJIbXBXa3JaSGR2MFIy?=
- =?utf-8?B?MWFpb3JtajJmb2xleVBTUmRGcTJSZ1lZOXl2UlJFU2J1NUFhMHlLdGxuTmFx?=
- =?utf-8?B?R3E3K1FVZGVva3duallQVGFwakJvNjVMMmNNcHQ5TWtZVGh1Zmx5dTZyRmpk?=
- =?utf-8?B?NjRaN3dMNUxoMGJ5ZzN2OWgxRDE2Vngxa05TSkdWWXFOSCtiUkl5UndDUGFi?=
- =?utf-8?B?UTVZMW9idnB0ZlZYTldubURPa2l2aFFDSWErdmxUSnBoeGd5ZXZoTFZEQzBK?=
- =?utf-8?B?UXliVXppQ2FMUnVlMGpFRDAxVlVWK3UydVBVeVFUYmh6UGwyM2UzS0dkOU9o?=
- =?utf-8?B?UGhjeXhNSUtLOXQyYjg4bk1RWFBNM0ZHeGRwdDlDNXdWaUxNK3hiVUM5ejVl?=
- =?utf-8?B?eEhYQlFlZ1pzSTFDKzZiTGJKbG9QNFFIK3A1L0JncTAxRmpEaTVnRmxjNjRR?=
- =?utf-8?B?MnRUT2kreSt4QVVMQUIyUzQ3dDRUWGxWalNBamV2bkdncG9HbE40eEtYdE41?=
- =?utf-8?B?WmI1T0tjR0hQRTh4enl1OXdPbVlweUY2WXRtN2p4dVJkMXhyVFBDbkdHSzg5?=
- =?utf-8?B?NTR0Q3hHSHdQR00wN3VxdVYzY2F1WTdISEJ1d1poeStsaHpoc0pra0V3MEVu?=
- =?utf-8?B?eGk1OGN0OUl6MVZxNUhPVXBpemlLVXBqbDBqWXREbUZmdFZiTEI5ODlabDBV?=
- =?utf-8?B?MzJNRURGdlkvbjlLUHRGVVVXYndjSEdzVVptYy94VWRkV0tWNCtOd0pZODlO?=
- =?utf-8?B?Wm9pdzFQUUk0eDZOc1JEVU9VcnRuVUZ4Y3BGTkgvaFE1d1NyczhDdy93UGd3?=
- =?utf-8?B?V2ZiMHlVc1lwMWdMZXh3clMxRnVYRCtxV0tjejZ5MHdtODQ5NmZsNUtYUkoz?=
- =?utf-8?B?MnczM2NhK1FNUC9mNlo2ZUpyWE1Ba3ZaTExSQ0V4TVlzT3pFSlNOZFd1bGdi?=
- =?utf-8?B?czRsenY0ZnZKRHlzQU9pK05KVWRQSTdvWFpLR2orSytCUFM0M1hCYmJMdUVv?=
- =?utf-8?B?bVJiR0w5aDZ1MkJTVTFvTVRRQzZFMWVVR1NPSFJRcHFvZXRaZDA1czNJNFdy?=
- =?utf-8?B?VVhaYTBFVGRaQU1nYnZjVWh2Vm9UK240WDAzUStNQWhHdHNtbnpoU3Bvd0h5?=
- =?utf-8?B?YkJEZnFRYm5PdS80b3BpK0VnM21ZemN4SjFuMEl1M1JrNWVJemFDMW9Ebllp?=
- =?utf-8?B?L3ZUTXE5MUgwbEVWc2c3VnppUUFlSUJmRUUrcWhDVFA3d2N5MEVnQ0d3Tmox?=
- =?utf-8?B?MlhXdlRDUTE0VCtXZ05uMGhiQitKZEtqOEtvQlhJQ080UGc9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.12;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:atlvpn-bp.amd.com;CAT:NONE;SFS:(13230040)(376014)(1800799024)(82310400026)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Nov 2024 16:31:13.9800
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 653e08c6-9362-493e-c995-08dd07ee6b66
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.12];Helo=[SATLEXMB03.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CO1PEPF000042A7.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB7797
+References: <20241028-esai_fix-v1-0-3c1432a5613c@nxp.com> <20241028-esai_fix-v1-2-3c1432a5613c@nxp.com>
+In-Reply-To: <20241028-esai_fix-v1-2-3c1432a5613c@nxp.com>
+From: Rob Herring <robh@kernel.org>
+Date: Mon, 18 Nov 2024 10:31:39 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJY5RHnfo9TWFLWBcj5h+FuvbkTYSg+gwN1L_r2ysSMgw@mail.gmail.com>
+Message-ID: <CAL_JsqJY5RHnfo9TWFLWBcj5h+FuvbkTYSg+gwN1L_r2ysSMgw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] arm64: dts: imx8-ss-audio: add fallback compatible
+ string fsl,imx6ull-esai for esai
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Shengjiu Wang <shengjiu.wang@nxp.com>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, linux-sound@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Sure. I will fix these two and post v11 patch set.
+On Mon, Oct 28, 2024 at 2:49=E2=80=AFPM Frank Li <Frank.Li@nxp.com> wrote:
+>
+> The ESAI of i.MX8QM is the same as i.MX6ULL. So add fsl,imx6ull-esai for
+> esai.
+>
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+>  arch/arm64/boot/dts/freescale/imx8-ss-audio.dtsi   | 2 +-
+>  arch/arm64/boot/dts/freescale/imx8qm-ss-audio.dtsi | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
 
+Shawn, please pick this up for 6.13. The binding change landed
+introducing new warnings.
 
-Lizhi
-
-On 11/17/24 12:03, Jeffrey Hugo wrote:
-> On 11/12/2024 12:47 PM, Lizhi Hou wrote:
->> @@ -88,6 +91,8 @@ struct amdxdna_client {
->>       struct list_head        node;
->>       pid_t                pid;
->>       struct mutex            hwctx_lock; /* protect hwctx */
->> +    /* do NOT wait this srcu when hwctx_lock is hold */
->
-> do NOT wait on this srcu when hwctx_lock is held
->
->> +    struct srcu_struct        hwctx_srcu;
->>       struct idr            hwctx_idr;
->>       struct amdxdna_dev        *xdna;
->>       struct drm_file            *filp;
->
->
-> The significant problem I see currently is that this got merged -
->
-> commit b2ef808786d93df36585cee42cfb973fc41636eb
-> Author: Christian König <ckoenig.leichtzumerken@gmail.com>
-> Date:   Mon Aug 26 14:25:38 2024 +0200
->
->     drm/sched: add optional errno to drm_sched_start()
->
-> I can no longer compile this patch.  Specifically I see -
->
->   INSTALL libsubcmd_headers
->   UPD     include/config/kernel.release
->   UPD     include/generated/utsrelease.h
->   CALL    scripts/checksyscalls.sh
->   CC      init/version.o
->   AR      init/built-in.a
->   CC      kernel/sys.o
->   CC      drivers/base/firmware_loader/main.o
->   CC      kernel/module/main.o
->   CC [M]  drivers/accel/amdxdna/aie2_ctx.o
->   CC [M]  drivers/accel/amdxdna/aie2_message.o
->   CC [M]  drivers/accel/amdxdna/aie2_pci.o
->   CC [M]  drivers/accel/amdxdna/aie2_psp.o
->   CC [M]  drivers/accel/amdxdna/aie2_smu.o
->   CC [M]  drivers/accel/amdxdna/amdxdna_ctx.o
->   CC [M]  drivers/accel/amdxdna/amdxdna_gem.o
->   CC [M]  drivers/accel/amdxdna/amdxdna_mailbox.o
->   CC [M]  drivers/accel/amdxdna/amdxdna_mailbox_helper.o
->   CC [M]  drivers/accel/amdxdna/amdxdna_pci_drv.o
->   CC [M]  drivers/accel/amdxdna/amdxdna_sysfs.o
->   CC [M]  drivers/accel/amdxdna/npu1_regs.o
->   CC [M]  drivers/accel/amdxdna/npu2_regs.o
->   CC [M]  drivers/accel/amdxdna/npu4_regs.o
->   CC [M]  drivers/accel/amdxdna/npu5_regs.o
-> drivers/accel/amdxdna/aie2_ctx.c: In function ‘aie2_hwctx_restart’:
-> drivers/accel/amdxdna/aie2_ctx.c:84:9: error: too few arguments to 
-> function ‘drm_sched_start’
->    84 |         drm_sched_start(&hwctx->priv->sched);
->       |         ^~~~~~~~~~~~~~~
-> In file included from ./include/trace/events/amdxdna.h:12,
->                  from drivers/accel/amdxdna/aie2_ctx.c:14:
-> ./include/drm/gpu_scheduler.h:593:6: note: declared here
->   593 | void drm_sched_start(struct drm_gpu_scheduler *sched, int errno);
->       |      ^~~~~~~~~~~~~~~
-> make[5]: *** [scripts/Makefile.build:229: 
-> drivers/accel/amdxdna/aie2_ctx.o] Error 1
-> make[5]: *** Waiting for unfinished jobs....
->   AR      drivers/base/firmware_loader/built-in.a
->   AR      drivers/base/built-in.a
-> make[4]: *** [scripts/Makefile.build:478: drivers/accel/amdxdna] Error 2
-> make[3]: *** [scripts/Makefile.build:478: drivers/accel] Error 2
-> make[2]: *** [scripts/Makefile.build:478: drivers] Error 2
-> make[2]: *** Waiting for unfinished jobs....
->   AR      kernel/module/built-in.a
->   AR      kernel/built-in.a
->
-> With the above two things fixed:
->
-> Reviewed-by: Jeffrey Hugo <quic_jhugo@quicinc.com>
->
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
