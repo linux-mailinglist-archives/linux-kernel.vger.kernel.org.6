@@ -1,111 +1,218 @@
-Return-Path: <linux-kernel+bounces-412930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 084E79D1161
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 14:06:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8000B9D116F
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 14:08:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3F571F2123E
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 13:06:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0FE3E1F23506
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 13:08:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B3071B4F10;
-	Mon, 18 Nov 2024 13:04:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6430D1A0B0C;
+	Mon, 18 Nov 2024 13:06:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="I4xI+4NR"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="aKvYvzsM"
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41D4C1AF0A5
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 13:04:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80D5819EED3
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 13:06:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731935066; cv=none; b=GSlOlxfWl0h1pbIHPPn8bGd4oEy6zcwajO6IXdnMv5gFbAMddi7goCDLCk2w57OvMzuJkGsNgK9tCwvp0Jd6vPK6R95HK83r6lIe5AQoNHZkP4CW7h9nWluvHFgJ+t9iE2zdDramfecy0q9vOKpWHBZ9xeFGTM3NpfINUChQFvk=
+	t=1731935182; cv=none; b=CLZziLuOE/0Dvbad+n/oSGhscKSMTvKTN/mSJtqS20TMulGdLXhH1NrK2kiGiGXqvGXr3Xr0a37tlKw03J80FqzM5XDvE3bWPigA/ttmiEiB41NFUtWnSLmHmVl6wS4KHIoaTPVJhCS83U4OGj9WHBzPUQm+FupElvFMsnZernk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731935066; c=relaxed/simple;
-	bh=6FWzUYWFCrsnvBdRA5DjNCEJdOaye5Th9KK3CZXgcSI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ZdtyD4Ydm8oRpYDVtc3R765nPiJ9xCXS+3M94GCehNpYdym/DuKBonoYJVxrfkxuqGtL1QveDdm6sA1sAh1KAlulRcI+H6LVFlC30LoG5Wr8t/RffTN15T7gdFu2TQhfqkoC8v6PlzcbrF9ImCeXcfGSsHyfSHRXdCtSetrWPK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=I4xI+4NR; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3824446d2bcso1333253f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 05:04:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1731935062; x=1732539862; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GxWmoEeugVS1v5FyiW6L+8vxmWvgvGVYr+32bhSNYVY=;
-        b=I4xI+4NRNwIdqEl4aflVO7Kmj0AcLq/HsTkPdfNSTzP/xkuJTfQaW0ozzMQWPVtMrm
-         /phHSN7AC2S3XrUHAFRlKqK0UVzBM0fS4t4KUXcol1Pp8PChXmX3A3V8eSSvRQqHO/kf
-         owQ1Hiaqep96yfg3F+hPCYjOs/OmlLVant5SicgiwXt0a5kOgTBPDfYAu8QOre9PRqcB
-         qrLYcmIkN7U9BgRB8QzTSSXJ5Zru26knyWezZAfrAhBonrCj2uD2v5IEEULTbpdHqHuB
-         8GDP8F5+QNobc9LalJArdeO/8kzv5O0I+9bQug0bxmmjdNSJQGSvaBP1KOqCP1pzC3iK
-         4alA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731935062; x=1732539862;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GxWmoEeugVS1v5FyiW6L+8vxmWvgvGVYr+32bhSNYVY=;
-        b=dfe199gj3BP+1W6GMXLy7QCxuiD0rlvP6asMelxfkeKtbwmvUhmldCDORnczLBy/EZ
-         zBGtAluGIxnS59EG1a2+hpGormcYNUEs9zB2dApYXW98/cirzhkopLTyiK0Gg+jkYwsi
-         rOtAVCyD0TPTGyNKvDF3mcYVRcFXBL86KfEHGSyIWfzqLzy3ad4kGuUT0PCf6KK2Rl5j
-         J1vo2OsADH0k6HBAXBxO0BGEBrTp1D+hO8d6KlogpRgWQLME2QtVwqxU8o1HPkXcAPLD
-         9iRCNEJV51l1BZnzRMRXAFcinee/Qal/ZYhdi3BrqYvT429OEtRme8wh+nsPdsqKvW4t
-         Fe3Q==
-X-Gm-Message-State: AOJu0YzYciZLrugQ1eT8DKy5/+SOo2ka56i5miCjbZC1s1ZH6+156/CZ
-	tfU//SxcqnYo8dAszPe5B1MDbjExs1v3NatT1/1PpfBRolxMUJiL6aVwK5ORXCQ=
-X-Google-Smtp-Source: AGHT+IHy/xNjbMBwdkC38nxZZYbLABoxkMezarb7il7wix1uC6BXNWVekYNhmn0yGD3yIBODDTuVhA==
-X-Received: by 2002:a5d:5850:0:b0:382:24b1:e762 with SMTP id ffacd0b85a97d-38225ac4bb6mr12329038f8f.56.1731935062634;
-        Mon, 18 Nov 2024 05:04:22 -0800 (PST)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-382455820absm3879797f8f.84.2024.11.18.05.04.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Nov 2024 05:04:22 -0800 (PST)
-Date: Mon, 18 Nov 2024 14:04:19 +0100
-From: Petr Mladek <pmladek@suse.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, live-patching@vger.kernel.org
-Subject: [GIT PULL] livepatching for 6.13
-Message-ID: <Zzs7U8VsO8YmxxD4@pathway.suse.cz>
+	s=arc-20240116; t=1731935182; c=relaxed/simple;
+	bh=GRNV3bW7c0K4s5GFCHqyPX3ATGSiaeDuuNtCBOzaiUY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=CgDz79gxqftFb09CL1v5XvEE5TpjhvQ3vn82j6OH5OfscIdws8b2pdUcnHTussb7x3xLNphP7RuIWIUaXB6jsCGliaoyS5JWuo9Dzxak1QJm4tgvmGO65jLinw4/Po9eur0JGo0m4oYVO2lcVsv3Z1fzmTchAx+koSb5cUtqVrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=aKvYvzsM; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id D80FEFF806;
+	Mon, 18 Nov 2024 13:06:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1731935172;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CgitSO12Tcu39jjcYc9b4qcvZmSoxQsq/VM/TY8Chgw=;
+	b=aKvYvzsMXQQ+ls8zRUxnMN6GkySr1qXCFabheMfnb2re1dpmlDRs93dxj9kRjTynCcg02/
+	1lc4TLcQyEjdG3NW5kg5VBTiF1fQvkygHr6+KILeTA2Wnlol83xPMKVD9p4hwtueAlHR2k
+	pJrl8oMnVn2K+jZXZEpETa0cG/fnJbFRbaxFDDXPlvfikQsC0lKc4EH+U0Ogv3HOAOL0Fh
+	plKibB+fHaASv3ksfyfd2T3Z/6Nw9sJOzKVLdL0pr0wdQ6LGnzKINLswMe6BBtwk0cFd9M
+	i0i/AMm4tNZjYt2Sz915at6l1cB72cQgMnfWgm6vfcxTI4IIDYnmMYJHaFZcuA==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Sky Huang <SkyLake.Huang@mediatek.com>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>,  AngeloGioacchino Del Regno
+ <angelogioacchino.delregno@collabora.com>,  Richard Weinberger
+ <richard@nod.at>,  Vignesh Raghavendra <vigneshr@ti.com>,  Daniel Golle
+ <daniel@makrotopia.org>,  Chia-Lin Kao <acelan.kao@canonical.com>,  "Mika
+ Westerberg" <mika.westerberg@linux.intel.com>,  Cheng Ming Lin
+ <chengminglin@mxic.com.tw>,  <linux-kernel@vger.kernel.org>,
+  <linux-mtd@lists.infradead.org>,  <linux-arm-kernel@lists.infradead.org>,
+  <linux-mediatek@lists.infradead.org>,  Steven Liu
+ <Steven.Liu@mediatek.com>
+Subject: Re: [RFC PATCH nand/next 3/4] include: mtd: spinand: Add CASN page
+ related macros and flags.
+In-Reply-To: <20241020132722.20565-4-SkyLake.Huang@mediatek.com> (Sky Huang's
+	message of "Sun, 20 Oct 2024 21:27:21 +0800")
+References: <20241020132722.20565-1-SkyLake.Huang@mediatek.com>
+	<20241020132722.20565-4-SkyLake.Huang@mediatek.com>
+User-Agent: mu4e 1.12.1; emacs 29.4
+Date: Mon, 18 Nov 2024 14:06:08 +0100
+Message-ID: <87r078y9mn.fsf@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-Hi Linus,
+On 20/10/2024 at 21:27:21 +08, Sky Huang <SkyLake.Huang@mediatek.com> wrote:
 
-please pull the latest changes for the kernel livepatching from
+> From: "Sky Huang" <skylake.huang@mediatek.com>
+>
+> This patch adds SPINAND CASN page manipulation macros for
+> SPI-NAND driver to use. Also, some important flag bits, like
+> SPINAND_SUPR_CR(continuous read), are added to show the
+> SPI-NAND device's capability.
+>
+> Signed-off-by: Sky Huang <skylake.huang@mediatek.com>
+> ---
+>  include/linux/mtd/spinand.h | 100 +++++++++++++++++++++++++++++++++++-
+>  1 file changed, 98 insertions(+), 2 deletions(-)
+>
+> diff --git a/include/linux/mtd/spinand.h b/include/linux/mtd/spinand.h
+> index 702e5fb13dae..de97994c357b 100644
+> --- a/include/linux/mtd/spinand.h
+> +++ b/include/linux/mtd/spinand.h
+> @@ -62,6 +62,59 @@
+>  		   SPI_MEM_OP_NO_DUMMY,					\
+>  		   SPI_MEM_OP_NO_DATA)
+>=20=20
+> +/* Macros for CASN */
+> +#define SPINAND_CASN_PAGE_READ_FROM_CACHE_OP(fast, naddr, addr, ndummy, =
+buf, len) \
+> +	SPI_MEM_OP(SPI_MEM_OP_CMD(fast ? 0x0b : 0x03, 1),		\
+> +		   SPI_MEM_OP_ADDR(naddr, addr, 1),			\
+> +		   SPI_MEM_OP_DUMMY(ndummy, 1),			\
+> +		   SPI_MEM_OP_DATA_IN(len, buf, 1))
+> +
+> +#define SPINAND_CASN_PAGE_READ_FROM_CACHE_X2_OP(naddr, addr, ndummy, buf=
+, len)	\
+> +	SPI_MEM_OP(SPI_MEM_OP_CMD(0x3b, 1),			\
+> +		   SPI_MEM_OP_ADDR(naddr, addr, 1),			\
+> +		   SPI_MEM_OP_DUMMY(ndummy, 1),			\
+> +		   SPI_MEM_OP_DATA_IN(len, buf, 2))
+> +
+> +#define SPINAND_CASN_PAGE_READ_FROM_CACHE_DUALIO_OP(naddr, addr, ndummy,=
+ buf, len)	\
+> +		SPI_MEM_OP(SPI_MEM_OP_CMD(0xbb, 1),			\
+> +			   SPI_MEM_OP_ADDR(naddr, addr, 2),			\
+> +			   SPI_MEM_OP_DUMMY(ndummy, 2),			\
+> +			   SPI_MEM_OP_DATA_IN(len, buf, 2))
+> +
+> +#define SPINAND_CASN_PAGE_READ_FROM_CACHE_X4_OP(naddr, addr, ndummy, buf=
+, len)	\
+> +	SPI_MEM_OP(SPI_MEM_OP_CMD(0x6b, 1),				\
+> +		   SPI_MEM_OP_ADDR(naddr, addr, 1),				\
+> +		   SPI_MEM_OP_DUMMY(ndummy, 1),				\
+> +		   SPI_MEM_OP_DATA_IN(len, buf, 4))
+> +
+> +#define SPINAND_CASN_PAGE_READ_FROM_CACHE_QUADIO_OP(naddr, addr, ndummy,=
+ buf, len)	\
+> +	SPI_MEM_OP(SPI_MEM_OP_CMD(0xeb, 1),				\
+> +		   SPI_MEM_OP_ADDR(naddr, addr, 4),				\
+> +		   SPI_MEM_OP_DUMMY(ndummy, 4),				\
+> +		   SPI_MEM_OP_DATA_IN(len, buf, 4))
+> +
+> +#define SPINAND_CASN_PROG_LOAD(reset, naddr, addr, buf, len)			\
+> +	SPI_MEM_OP(SPI_MEM_OP_CMD(reset ? 0x02 : 0x84, 1),		\
+> +		   SPI_MEM_OP_ADDR(naddr, addr, 1),				\
+> +		   SPI_MEM_OP_NO_DUMMY,					\
+> +		   SPI_MEM_OP_DATA_OUT(len, buf, 1))
+> +
+> +#define SPINAND_CASN_PROG_LOAD_X4(reset, naddr, addr, buf, len)			\
+> +	SPI_MEM_OP(SPI_MEM_OP_CMD(reset ? 0x32 : 0x34, 1),		\
+> +		   SPI_MEM_OP_ADDR(naddr, addr, 1),				\
+> +		   SPI_MEM_OP_NO_DUMMY,					\
+> +		   SPI_MEM_OP_DATA_OUT(len, buf, 4))
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/livepatching/livepatching.git tags/livepatching-for-6.13
+Why would you need to redefine all these?
 
-=============================================
+> +
+> +#define SPINAND_CASN_ADVECC_OP(casn_adv_ecc_status, buf)			\
+> +	SPI_MEM_OP(SPI_MEM_OP_CMD(casn_adv_ecc_status.cmd, 1),			\
+> +		   SPI_MEM_OP_ADDR(casn_adv_ecc_status.addr_nbytes,		\
+> +				   casn_adv_ecc_status.addr,			\
+> +				   casn_adv_ecc_status.addr_buswidth),		\
+> +		   SPI_MEM_OP_DUMMY(casn_adv_ecc_status.dummy_nbytes,		\
+> +				    casn_adv_ecc_status.dummy_buswidth),	\
+> +		   SPI_MEM_OP_DATA_IN(casn_adv_ecc_status.status_nbytes, buf, 1))
+> +/* Macros for CASN end */
+> +
+>  #define SPINAND_PAGE_READ_FROM_CACHE_OP(fast, addr, ndummy, buf, len)	\
+>  	SPI_MEM_OP(SPI_MEM_OP_CMD(fast ? 0x0b : 0x03, 1),		\
+>  		   SPI_MEM_OP_ADDR(2, addr, 1),				\
+> @@ -312,8 +365,11 @@ struct spinand_ecc_info {
+>=20=20
+>  #define SPINAND_HAS_QE_BIT		BIT(0)
+>  #define SPINAND_HAS_CR_FEAT_BIT		BIT(1)
+> -#define SPINAND_HAS_PROG_PLANE_SELECT_BIT		BIT(2)
+> -#define SPINAND_HAS_READ_PLANE_SELECT_BIT		BIT(3)
 
-- A new selftest for livepatching of a kprobed function.
+Why do you remove that?
 
-----------------------------------------------------------------
-Michael Vetter (3):
-      selftests: livepatch: rename KLP_SYSFS_DIR to SYSFS_KLP_DIR
-      selftests: livepatch: save and restore kprobe state
-      selftests: livepatch: test livepatching a kprobed function
+> +#define SPINAND_SUP_CR			BIT(2)
+> +#define SPINAND_SUP_ON_DIE_ECC		BIT(3)
+> +#define SPINAND_SUP_LEGACY_ECC_STATUS	BIT(4)
+> +#define SPINAND_SUP_ADV_ECC_STATUS	BIT(5)
+> +#define SPINAND_ECC_PARITY_READABLE	BIT(6)
+>=20=20
+>  /**
+>   * struct spinand_ondie_ecc_conf - private SPI-NAND on-die ECC engine st=
+ructure
+> @@ -406,6 +462,28 @@ struct spinand_dirmap {
+>  	struct spi_mem_dirmap_desc *rdesc_ecc;
+>  };
+>=20=20
+> +/**
+> + * struct CASN_ADVECC - CASN's advanced ECC description
+> + * @cmd: Command to access SPI-NAND on-chip ECC status registers
+> + * @mask: Mask to access SPI-NAND on-chip ECC status registers.
+> + *	  ADV_ECC_STATUS->status_nbytes | CASN_ADVECC->mask
+> + *			1		|      0 to 0xff
+> + *			2		|     0 to 0xffff
+> + * @shift: How many bits to shift to get on-chip ECC status
+> + * @pre_op: This comes from CASN page's ADV_ECC_STATUS's pre_op.
+> + *	    After reading on-chip ECC status, we need to do some math
+> + *	    operations if this is specified.
 
- tools/testing/selftests/livepatch/Makefile         |  3 +-
- tools/testing/selftests/livepatch/functions.sh     | 29 ++++++----
- .../testing/selftests/livepatch/test-callbacks.sh  | 24 ++++-----
- tools/testing/selftests/livepatch/test-ftrace.sh   |  2 +-
- tools/testing/selftests/livepatch/test-kprobe.sh   | 62 ++++++++++++++++++++++
- .../testing/selftests/livepatch/test-livepatch.sh  | 12 ++---
- tools/testing/selftests/livepatch/test-state.sh    |  8 +--
- tools/testing/selftests/livepatch/test-syscall.sh  |  6 +--
- tools/testing/selftests/livepatch/test-sysfs.sh    |  8 +--
- .../selftests/livepatch/test_modules/Makefile      |  3 +-
- .../livepatch/test_modules/test_klp_kprobe.c       | 38 +++++++++++++
- 11 files changed, 152 insertions(+), 43 deletions(-)
- create mode 100755 tools/testing/selftests/livepatch/test-kprobe.sh
- create mode 100644 tools/testing/selftests/livepatch/test_modules/test_klp_kprobe.c
+I'm not sure I understand how you'll encode a math operation there.
+
+> + * @pre_mask: This comes from CASN page's ADV_ECC_STATUS's pre_mask.
+> + *	      This is used in companion with pre_op above.
+> + */
+> +struct CASN_ADVECC {
+
+This is usually changing when continuous reads are enabled, it would
+need to be handled.
+
+> +	u8 cmd;
+> +	u16 mask;
+> +	u8 shift;
+> +	u8 pre_op;
+> +	u8 pre_mask;
+> +};
+> +
+
+Thanks,
+Miqu=C3=A8l
+
 
