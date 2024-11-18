@@ -1,165 +1,255 @@
-Return-Path: <linux-kernel+bounces-413510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 879A79D1A14
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 22:06:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15CB39D1A1C
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 22:07:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A732B22B17
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 21:06:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99790282E13
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 21:06:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BABC1E882A;
-	Mon, 18 Nov 2024 21:05:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1E9B1E7664;
+	Mon, 18 Nov 2024 21:06:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="FYyM8k8S"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="Zx9GsvLE"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD12B1E631D
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 21:05:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DF081E0E0D;
+	Mon, 18 Nov 2024 21:06:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731963933; cv=none; b=hoODBzzABd5jzsc7Cz9D9Aa0ApcHhojRQKE7ISi49rTHqPueo83wLdDcQMvSzEtdQjiONQJsiO9EXqDEdpjVMSzXHYGIKtoravXFSURCK2rSUqXUhyI5d1YwPuULmjWLzSSImhLg4u3hhq74Bf0ltCbJF8/9HTzNj6bmGwwZXQQ=
+	t=1731963998; cv=none; b=IV2VsKogkpGGyV+a9g7QWiZUg0bDo/HxWi5Kv0ScguTwiAKlZNCE/sGkiy7ijOKLFxW3oFpwXCUVZleDkTQV8y4NKqEa2fX1tGF4JKXTcAtwRwSTABJE/oKefC90ijI1dyMPtxpnpVpFrnYY3rnrqYvG61PtQ7UC6+XdTSxI2TY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731963933; c=relaxed/simple;
-	bh=blGWhtR6NF+x/0PawezFXFF9gzLHyA0/qJ5zJXb9UnQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=sKsp+LSagati+IpMFts2+6maCDlckUrZQ3Hhld+eTMX8rKUwVbyiigS9+looKj9156ktVtK9YEfC5MgMLjFkfeN1rs4rFgLPyhwHDPeynbsrfu2OJivmAeJ9geCS8SdcCVdRR2CXsD0TodKYXNCtVbEWtMXuDqMT2On0Shk+FhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=FYyM8k8S; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 4D58440E0261;
-	Mon, 18 Nov 2024 21:05:23 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id NhHVV1MGu5is; Mon, 18 Nov 2024 21:05:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1731963918; bh=FEUECKS5LfLmJmfLtdQqFhCDBN/wXLX44MGyApGQMO8=;
-	h=Date:From:To:Cc:Subject:From;
-	b=FYyM8k8SEKd2SyF9/dTC2EQn2Llvg1eJgQABaqsyxOmZNJf6Ims0McmWUQwX50+7K
-	 vHZJEEGgFiEGHNrx8xGyK3OQYn2o3dS30iRYBttHokImBPgoSDsM2BAt+pNxua8/zg
-	 02HbcrpjmLRGi0MGop63PnYy7Xzq6dnstNxpzwmq4hORGlpqe9IlDDXpy6BWybMQLu
-	 uXk8g0F024zjM5tACl1MeL0mWrg46ATQ4MEVL/zFgAU5iOWmQVuc6ukxKnHRLoMtCM
-	 N8qDMXfUc4QTe2+Bl2nFFJdZKV3qYofEvmdKc+SSsvSV5fT+KEZRvMoWXG5MO8XtGB
-	 LGwapT2kGF2ivf+SM9L414vlDVAPMJDoGSjri/aKq3HQ7rmWROtn2JxGF6+bKMVbkL
-	 R4hU0dDwaPHk0GDV7Z2qbfN9P0xVL3Xt/8IOnd4gBc8Nbn6NVIt0QT0w9wJqse9CHZ
-	 VArHyLZl4luSzgh5ya02i+yCD58+pZ8ErmUsZM+mMwOgRvLUnTABdkSyUTi3LC7F2n
-	 Gzd8wHC007+Unwo8LSAEtklAlkVnkrJOfi7SQbwZCoQWgzpWP4P4qnY0kW/odcL1gR
-	 DkZvK1hUbB67YMvQKhOJZaU1gNt/EZ57RuUsEvS+WOAjUa0SDvywFSZUItbnhPYJJV
-	 QP2qlBx2PZzrnadlolBoDEwc=
-Received: from zn.tnic (pd9530b86.dip0.t-ipconnect.de [217.83.11.134])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id D978140E019C;
-	Mon, 18 Nov 2024 21:05:14 +0000 (UTC)
-Date: Mon, 18 Nov 2024 22:05:08 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] x86/cpu for v6.13
-Message-ID: <20241118210508.GAZzusBLFPq3Rqt50z@fat_crate.local>
+	s=arc-20240116; t=1731963998; c=relaxed/simple;
+	bh=VMpSpxTh1rjF9OETalGtIZer5YwrqGwAQQcuh02CKb8=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Bz5lPKZQmmBmMcNmTt6qF+yeVN07a84KrTEgGqLGWcwuZt9Rcl3BLtwAZdlsKv4pJd9wLb6JISjLU+X+ciFwPU97gfM9Ne2eSMxyjRBtqhRfh/xOP1M8QTaAPAfecrC+dnJ5CcjnuODEP4fyRDMymln2E9JDDQhwQHW3ZI9GArM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=Zx9GsvLE; arc=none smtp.client-ip=212.227.17.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1731963914; x=1732568714; i=w_armin@gmx.de;
+	bh=VMpSpxTh1rjF9OETalGtIZer5YwrqGwAQQcuh02CKb8=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
+	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=Zx9GsvLEqkNRuAUYTGUHFnpYPuP5dijUlE5cSuXZsSmSKDUb1+Yiwoxpe8XzvVn8
+	 eU8fwEOcpXp1yU25EeAc+Mp8WrruJr/dIXOPu1zUVAfbgevAqutc/zOJtXhcm6Ji2
+	 lnBvpTzSN771m1X0RptWINRRIwwumsZ2stor13XxrpkoZGNYOrErZRcbixGQegHlj
+	 sEY0dh5Hwct1/qWjoqKQZbl0WaCKbIKhI98Sh3bDVv3tacDEtMvWnTiFzx6SQaTRr
+	 Df+UWfC3J0Oih9Ir7HZr1wsyY3TKIM6qGcNz6gusFRvgW6ZgdT7yhd/ChdlUJt+/n
+	 eZicFkNRDXVGwYN9Aw==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.0.14] ([141.30.226.119]) by mail.gmx.net (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1Mplbx-1tXbK31VLp-00nhG8; Mon, 18
+ Nov 2024 22:05:14 +0100
+Message-ID: <c05d3199-03e3-4e60-a1a1-19e36150f3e3@gmx.de>
+Date: Mon, 18 Nov 2024 22:05:10 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 00/22] Add support for binding ACPI platform profile to
+ multiple drivers
+From: Armin Wolf <W_Armin@gmx.de>
+To: Mario Limonciello <mario.limonciello@amd.com>,
+ Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>,
+ Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+ Corentin Chary <corentin.chary@gmail.com>, "Luke D . Jones"
+ <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>,
+ Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
+ Alexis Belmonte <alexbelm48@gmail.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+ Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>,
+ open list <linux-kernel@vger.kernel.org>,
+ "open list:ACPI" <linux-acpi@vger.kernel.org>,
+ "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER"
+ <platform-driver-x86@vger.kernel.org>,
+ "open list:THINKPAD ACPI EXTRAS DRIVER"
+ <ibm-acpi-devel@lists.sourceforge.net>,
+ Mark Pearson <mpearson-lenovo@squebb.ca>,
+ Matthew Schwartz <matthew.schwartz@linux.dev>
+References: <20241109044151.29804-1-mario.limonciello@amd.com>
+ <7d06c91a-bf89-4880-b640-1fce38d51036@gmx.de>
+Content-Language: en-US
+In-Reply-To: <7d06c91a-bf89-4880-b640-1fce38d51036@gmx.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:xoNGxhYF660ENn6icr8X5bH8Jk+CCpBpGPk8fnZFcGbEcB61Ruw
+ SEfmxA6seeJVRKy9qUpIZPeQs+EiKaFc0FuRMneNrsHP+Q7ijFyX3k8kwooxRc1D4l4Eq9d
+ io1rEr0byVvogM0aw3EdBYCTH+ZEdZZS/oVwVDw7K/MPkVRzkh88VQ1r3FKENqfPtZ5c8og
+ keb2Jmyc9m2i4JpijozMw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:nMqnwR/4YBk=;4I2b5Iv7AUngtckLhitFHo5JbgV
+ EFAV7fbilvha6Rf9aNYLWMGxVuaITSJAnYAZdXHg2fcPgbjt4UNw7AdEsZnWxk3W9pIBfWwax
+ FXYp95cRMwfCoiWcIKnmtF1/q7huQ06p3SvkZB8fhQi14XvN/MU1qg9DHrz2B3AdWskxqNDW0
+ Z+JcIouKsuWGH4oShfGPn53hOx1RSMKIO6qdCx9DdH3F66NO3aodfF8PXNffMICRZmCEQhUBC
+ jEd3w7vbhj3yf0DwUEoopZkTjvRRw53HgRPbTAlRCX0s2pCxsRpKLQ6Z7E7W2RezZIpdGVMRE
+ NGAIiS/sQSgMN3WWJJBWULSDstUIaZtuV+ibJvS11nQuVXUfFHwxbVujBRCPnZhbiyqQjTB9F
+ on9pBCM1r64vgehj9S8VZYtKTGfETBUN+VSTQibwXw4S0HKcAK0vZXBYA1j+0pGcxi2vZrluS
+ Vjpsql/iPDGq53gnRupHGSu4llwZZksXhIvI6Fak2JSWx0FBLEbebRDyF41478tixepgxHERd
+ xPheLXwBAvHj90dmBDEfzp7GGCw0bAsugO68MwH8aHorEIkQwUCz0niRclhWiPBDIvUbCwppa
+ 8Nt1zE2pLjrrjJ37tJ7ppXUj58tBvyDclDGk29K3RKD1ZIWCpiGXOTdxVVesTvABtU2qR/TUd
+ arwyFqiowz0Xj/FwhhdZUJPuKtMP0cp3Deex+fsOaOJYbg1F1Ku2pUmycdWDZiONhPAWegLG6
+ cp0ZAJSYhe34kFIRBmsU315XKptIgkoq88Nv/pv4LOXHeI7umIQOoLp0Gq7lT3sa0J32ragET
+ 9zxifggQVySfmmlEhax/Zq4o46ea6d4QCBFIvD3aTePwQTna8TL0MoHI/yt5DHHTLVhtwt7yH
+ quC+6aMR8DNnL36JebYYK18Y+LYh9bWs9V/G8J6Qu3HWgLTKkCgbGzem7
 
-Hi Linus,
+Am 14.11.24 um 22:57 schrieb Armin Wolf:
 
-please pull the x86/cpu lineup for v6.13.
+> Am 09.11.24 um 05:41 schrieb Mario Limonciello:
+>
+>> Currently there are a number of ASUS products on the market that
+>> happen to
+>> have ACPI objects for amd-pmf to bind to as well as an ACPI platform
+>> profile provided by asus-wmi.
+>>
+>> The ACPI platform profile support created by amd-pmf on these ASUS
+>> products is "Function 9" which is specifically for "BIOS or EC
+>> notification" of power slider position. This feature is actively used
+>> by some designs such as Framework 13 and Framework 16.
+>>
+>> On these ASUS designs we keep on quirking more and more of them to turn
+>> off this notification so that asus-wmi can bind.
+>>
+>> This however isn't how Windows works.=C2=A0 "Multiple" things are notif=
+ied
+>> for
+>> the power slider position. This series adjusts Linux to behave
+>> similarly.
+>>
+>> Multiple drivers can now register an ACPI platform profile and will
+>> react
+>> to set requests.
+>>
+>> To avoid chaos, only positions that are common to both drivers are
+>> accepted when the legacy /sys/firmware/acpi/platform_profile interface
+>> is used.
+>>
+>> This series also adds a new concept of a "custom" profile.=C2=A0 This a=
+llows
+>> userspace to discover that there are multiple driver handlers that are
+>> configured differently.
+>>
+>> This series also allows dropping all of the PMF quirks from amd-pmf.
+>
+> Sorry for taking a bit long to respond, i am currently quite busy. I
+> will try to review this series
+> in the coming days.
+>
+> Thanks,
+> Armin Wolf
+>
+So far the patch series looks quite good, but a single issue remains: the =
+locking around the class attributes.
+Maybe someone with some knowledge about sysfs can help us here.
 
-Thx.
+Also can you please rebase the patch series onto the current for-net branc=
+h? This would solve a merge conflict
+inside the asus-wmi driver.
 
----
+Thanks,
+Armin WOlf
 
-The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758edc:
-
-  Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip tags/x86_cpu_for_v6.13
-
-for you to fetch changes up to f74642d81c24d9e69745cd0b75e1bddc81827606:
-
-  x86/cpu: Remove redundant CONFIG_NUMA guard around numa_add_cpu() (2024-11-12 11:00:50 +0100)
-
-----------------------------------------------------------------
-- Add a feature flag which denotes AMD CPUs supporting workload classification
-  with the purpose of using such hints when making scheduling decisions
-
-- Determine the boost enumerator for each AMD core based on its type: efficiency
-  or performance, in the cppc driver
-
-- Add the type of a CPU to the topology CPU descriptor with the goal of
-  supporting and making decisions based on the type of the respective core
-
-- Add a feature flag to denote AMD cores which have heterogeneous topology and
-  enable SD_ASYM_PACKING for those
-
-- Check microcode revisions before disabling PCID on Intel
-
-- Cleanups and fixlets
-
-----------------------------------------------------------------
-Borislav Petkov (AMD) (1):
-      x86/cpu: Fix formatting of cpuid_bits[] in scattered.c
-
-Mario Limonciello (2):
-      x86/cpufeatures: Rename X86_FEATURE_FAST_CPPC to have AMD prefix
-      x86/amd: Use heterogeneous core topology for identifying boost numerator
-
-Pawan Gupta (1):
-      x86/cpu: Add CPU type to struct cpuinfo_topology
-
-Perry Yuan (3):
-      x86/cpufeatures: Add X86_FEATURE_AMD_HETEROGENEOUS_CORES
-      x86/cpu: Enable SD_ASYM_PACKING for PKG domain on AMD
-      x86/cpufeatures: Add X86_FEATURE_AMD_WORKLOAD_CLASS feature bit
-
-Shivank Garg (1):
-      x86/cpu: Remove redundant CONFIG_NUMA guard around numa_add_cpu()
-
-Tony Luck (1):
-      x86/cpu: Fix FAM5_QUARK_X1000 to use X86_MATCH_VFM()
-
-Xi Ruoyao (1):
-      x86/mm: Don't disable PCID when INVLPG has been fixed by microcode
-
- arch/x86/include/asm/cpufeatures.h              |  4 +-
- arch/x86/include/asm/intel-family.h             |  7 +++-
- arch/x86/include/asm/processor.h                | 18 ++++++++
- arch/x86/include/asm/topology.h                 |  9 ++++
- arch/x86/kernel/acpi/cppc.c                     | 23 ++++++++++
- arch/x86/kernel/cpu/common.c                    |  2 -
- arch/x86/kernel/cpu/debugfs.c                   |  1 +
- arch/x86/kernel/cpu/scattered.c                 | 56 +++++++++++++------------
- arch/x86/kernel/cpu/topology_amd.c              |  3 ++
- arch/x86/kernel/cpu/topology_common.c           | 34 +++++++++++++++
- arch/x86/kernel/smpboot.c                       |  5 ++-
- arch/x86/mm/init.c                              | 23 ++++++----
- arch/x86/platform/efi/quirks.c                  |  3 +-
- arch/x86/platform/intel-quark/imr.c             |  2 +-
- arch/x86/platform/intel-quark/imr_selftest.c    |  2 +-
- drivers/cpufreq/amd-pstate.c                    |  2 +-
- drivers/thermal/intel/intel_quark_dts_thermal.c |  2 +-
- tools/arch/x86/include/asm/cpufeatures.h        |  2 +-
- 18 files changed, 149 insertions(+), 49 deletions(-)
-
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+>> ---
+>> v6:
+>> =C2=A0 * Add patch dev patch but don't make mandatory
+>> =C2=A0 * See other patches changelogs for individualized changes
+>>
+>> Mario Limonciello (22):
+>> =C2=A0=C2=A0 ACPI: platform-profile: Add a name member to handlers
+>> =C2=A0=C2=A0 platform/x86/dell: dell-pc: Create platform device
+>> =C2=A0=C2=A0 ACPI: platform_profile: Add device pointer into platform p=
+rofile
+>> =C2=A0=C2=A0=C2=A0=C2=A0 handler
+>> =C2=A0=C2=A0 ACPI: platform_profile: Add platform handler argument to
+>> =C2=A0=C2=A0=C2=A0=C2=A0 platform_profile_remove()
+>> =C2=A0=C2=A0 ACPI: platform_profile: Pass the profile handler into
+>> =C2=A0=C2=A0=C2=A0=C2=A0 platform_profile_notify()
+>> =C2=A0=C2=A0 ACPI: platform_profile: Move sanity check out of the mutex
+>> =C2=A0=C2=A0 ACPI: platform_profile: Move matching string for new profi=
+le out of
+>> =C2=A0=C2=A0=C2=A0=C2=A0 mutex
+>> =C2=A0=C2=A0 ACPI: platform_profile: Use guard(mutex) for register/unre=
+gister
+>> =C2=A0=C2=A0 ACPI: platform_profile: Use `scoped_cond_guard`
+>> =C2=A0=C2=A0 ACPI: platform_profile: Create class for ACPI platform pro=
+file
+>> =C2=A0=C2=A0 ACPI: platform_profile: Add name attribute to class interf=
+ace
+>> =C2=A0=C2=A0 ACPI: platform_profile: Add choices attribute for class in=
+terface
+>> =C2=A0=C2=A0 ACPI: platform_profile: Add profile attribute for class in=
+terface
+>> =C2=A0=C2=A0 ACPI: platform_profile: Notify change events on register a=
+nd
+>> =C2=A0=C2=A0=C2=A0=C2=A0 unregister
+>> =C2=A0=C2=A0 ACPI: platform_profile: Only show profiles common for all =
+handlers
+>> =C2=A0=C2=A0 ACPI: platform_profile: Add concept of a "custom" profile
+>> =C2=A0=C2=A0 ACPI: platform_profile: Make sure all profile handlers agr=
+ee on
+>> =C2=A0=C2=A0=C2=A0=C2=A0 profile
+>> =C2=A0=C2=A0 ACPI: platform_profile: Check all profile handler to calcu=
+late next
+>> =C2=A0=C2=A0 ACPI: platform_profile: Notify class device from
+>> =C2=A0=C2=A0=C2=A0=C2=A0 platform_profile_notify()
+>> =C2=A0=C2=A0 ACPI: platform_profile: Allow multiple handlers
+>> =C2=A0=C2=A0 platform/x86/amd: pmf: Drop all quirks
+>> =C2=A0=C2=A0 Documentation: Add documentation about class interface for=
+ platform
+>> =C2=A0=C2=A0=C2=A0=C2=A0 profiles
+>>
+>> =C2=A0 .../ABI/testing/sysfs-platform_profile=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 5 +
+>> =C2=A0 .../userspace-api/sysfs-platform_profile.rst=C2=A0 |=C2=A0 28 +
+>> =C2=A0 drivers/acpi/platform_profile.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 537 ++++++++++++++--=
+--
+>> =C2=A0 .../surface/surface_platform_profile.c=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 8 +-
+>> =C2=A0 drivers/platform/x86/acer-wmi.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 12 +-
+>> =C2=A0 drivers/platform/x86/amd/pmf/Makefile=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 2 +-
+>> =C2=A0 drivers/platform/x86/amd/pmf/core.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 1 -
+>> =C2=A0 drivers/platform/x86/amd/pmf/pmf-quirks.c=C2=A0=C2=A0=C2=A0=C2=
+=A0 |=C2=A0 66 ---
+>> =C2=A0 drivers/platform/x86/amd/pmf/pmf.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 3 -
+>> =C2=A0 drivers/platform/x86/amd/pmf/sps.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 4 +-
+>> =C2=A0 drivers/platform/x86/asus-wmi.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 10 +-
+>> =C2=A0 drivers/platform/x86/dell/alienware-wmi.c=C2=A0=C2=A0=C2=A0=C2=
+=A0 |=C2=A0=C2=A0 8 +-
+>> =C2=A0 drivers/platform/x86/dell/dell-pc.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 36 +-
+>> =C2=A0 drivers/platform/x86/hp/hp-wmi.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 8 +-
+>> =C2=A0 drivers/platform/x86/ideapad-laptop.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 6 +-
+>> =C2=A0 .../platform/x86/inspur_platform_profile.c=C2=A0=C2=A0=C2=A0 |=
+=C2=A0=C2=A0 7 +-
+>> =C2=A0 drivers/platform/x86/thinkpad_acpi.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 16 +-
+>> =C2=A0 include/linux/platform_profile.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 9 +-
+>> =C2=A0 18 files changed, 553 insertions(+), 213 deletions(-)
+>> =C2=A0 delete mode 100644 drivers/platform/x86/amd/pmf/pmf-quirks.c
+>>
+>>
+>> base-commit: d68cb6023356af3bd3193983ad4ec03954a0b3e2
+>
 
