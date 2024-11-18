@@ -1,260 +1,499 @@
-Return-Path: <linux-kernel+bounces-413382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 671089D1860
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 19:45:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD5709D185A
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 19:44:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26BEE282E7E
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 18:45:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D918282D38
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 18:44:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D3C91E102A;
-	Mon, 18 Nov 2024 18:43:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A98331E630D;
+	Mon, 18 Nov 2024 18:43:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20230601.gappssmtp.com header.i=@amacapital-net.20230601.gappssmtp.com header.b="FdmI5Cu9"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="EfcDR8De"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B1D81E6DD5
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 18:43:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5F4E1E283A
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 18:43:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731955413; cv=none; b=nN2JI9Lc/FLfEGvn+AtSB6dEQnYOpM9PfOjFvYTeVRRD02AFEpcUE8GyYTOqfFvExXCuo8qT7HELHY4hVubEYYdR7uRmjkr7mTriFbKl9KVAE4dyLnF8mI5nzMh1YipK7DRmMo/PyrtVm/IU7SMv124TmEcgqDDG21e7TxfhGtg=
+	t=1731955409; cv=none; b=lkQEG9kR0SmaDESLpTx2HftdDcTrmrvQxugqSKTS19b6tFkYpKQOsCt9yQh+O21Yjpjns9JdqVoi+tf7m9EWqOly6+LBZfh6krYeJaZhD9pLSmlRKZEBEw5/3iwQDH2Jo7awUtoYnf72VP2Vwr+bG97RLNZDkrbB7OZe8yJe2Ls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731955413; c=relaxed/simple;
-	bh=5EbucahBpE6Z5ffhhmWSz0sxUgazFs27WG+T9CJqMug=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iGjdA8A5Pn8NvUNtUFtrclbCK14tBoPYKTOt4/XLEQGDSuEjXmu/5jD1MVzPczNHUJRHy/7UMYArt5HB+4KxItnlK03H06jxUzoOT/jqfGEOYlqlPMaVMsKREYlfvo0zYFd8PbYfQMYDtbmpTHxSu5zMQd2iFt4G05IyFEtZ7ts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net; spf=pass smtp.mailfrom=amacapital.net; dkim=pass (2048-bit key) header.d=amacapital-net.20230601.gappssmtp.com header.i=@amacapital-net.20230601.gappssmtp.com header.b=FdmI5Cu9; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amacapital.net
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-aa3a79d4d59so14913666b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 10:43:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20230601.gappssmtp.com; s=20230601; t=1731955410; x=1732560210; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=O1w+lsuqWYRJntMtz2qLI0BlT/+XwPoIEjRUBsn52Fc=;
-        b=FdmI5Cu9qc4cdZ0NUVExvefijiGNdAAPlpUFZWf5NRMjAAvjBMJEtoiG+iqZ26eqVq
-         6OioO7a7iyOQFlEFaN2VptEBZC4WvyfJgJnsXCxdGhopI9djB/DRCFRyQ4zP4a6YAadh
-         y3IXL25J7DcuceWSyK3DTIInUp5sNycPZjlaodsIU4SavNxIrioR08BUHLBi2i3H3xYP
-         mAU0AJgLD3P6l/OUPT4mLKAlEf3hqDnpRydTCcrr+havgCgU58N0hv0qeJOjBwCSVLq/
-         WoXsUBMIB3+uHVbm2VZVVnLgNVVrWkp9zJlzoaE00VG9r/h3m2wHeWUa7TNJ14IkeGRl
-         j+kA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731955410; x=1732560210;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=O1w+lsuqWYRJntMtz2qLI0BlT/+XwPoIEjRUBsn52Fc=;
-        b=V/zZyuxw8q2Tva/cntJPZn+cKFhBmu/WukPkq5nbwOLQLlBNAS82nqpDgXiyXI/a8G
-         QSKAualYn8yiRnXv2YJVuI3VPhqx0EY1YnRf3MYqHPC4e6TW4dnyVZgc6n2OqpuTUEqZ
-         7ia7hRU/ev5kLybm1VGyajVXtSggEVWElnZGGfFJXsnPO4Eel4HwwFOlXjN+4ABC8cts
-         EnD5lx7U9Cvf4QjLrGofYChJz3QvfiqliV2Gi1zPoBFix4TUx8nHE6p0TLpNvuEiu+/1
-         8pegHw9h9m70vYaVZRbjWKfjlITiM2HGt7DA6EzX0ZJgEF2PkF12068eMgIpjxN2sF+p
-         Sp2g==
-X-Forwarded-Encrypted: i=1; AJvYcCX8te2iS7vxskXzUdGLbjDVnjfx9CicjPBPDdQEN9qfWiiQ4xUgiMhQpfWv7I9JFLKaPa7kIo5+iYZBfyg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0DNZBRk5+4OOidVkgihxWKBjmh1KFLgMnTYCkZHRr8T+usN1T
-	nRbI1yg1J2Mhg6e4nMnRon4B9dVZz6ITIdttSd+UGtF0M7Mf9jO3Hrr/eQHaOxOjilP2g7Yfnnt
-	suSFZNmcgEtVDmOsUU7uDu/FBxVuB+bTYI4+s
-X-Google-Smtp-Source: AGHT+IHAyobrpYhrEBcyr/G7yiagryncHdMlgXIut6kTA6vbnwPpNOKPrExpgWDFQU6kYcKY6TYMJKk/J77ccxtsq0w=
-X-Received: by 2002:a17:907:701:b0:a99:eb94:3e37 with SMTP id
- a640c23a62f3a-aa483552bc2mr1302741366b.58.1731955409669; Mon, 18 Nov 2024
- 10:43:29 -0800 (PST)
+	s=arc-20240116; t=1731955409; c=relaxed/simple;
+	bh=lanzwa7uQd2dq1WnL5/RSe7oqA47QKCr+LG82Ajh5t8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=oIZouXo9TTzIiWSnjvshVNkW59K8gE7DfYesmwIDrUa42DxCsA0zBDBDk86ul3hQk+p6mSwoXvB18WYbOo7v3lamKDiWl5tYrDShPfJi4l8vEl9RufltGaDSZQyPe2G+ETir0noOXGD6EPI/35RtV7xcsKKWGNwsMla24JwAB7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=EfcDR8De; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 301A31BF20B;
+	Mon, 18 Nov 2024 18:43:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1731955405;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KjrcxqxWYEGsMln6iyAVr49KF9gr9HWs0h5gPvFthYE=;
+	b=EfcDR8DeF7wj72qDZ+Qc3YthIMVx7RA9TaE8ZxjB3s0TZwjayis+BNSTSRbO8Nqip4WBuU
+	+Dey1tXQ3BcY1eV+Z/s3dTpdJrXiIlLm9xFpHg+aoVHUrIco93auJdTwWgV/PfEz5eGBHn
+	YZzBWtWyn/KVX89bWnr1zNk8ZIvHeRliNXCW20HBy9lT4+01+CZIXGZNd8FccS7Hhtiflx
+	+eRhrwpv667PIwNIfMWFkEuj/dU3GJtBVpyJVF/Zpk9sqiO1Ryos3kx65X/CsnnTtRSGgH
+	yiFFlHB2r4dakvR5jG0iXdOlxG2ynknM0ypxFAlebHTH2CYGFAoFXjCEnCIlUg==
+From: Louis Chauvet <louis.chauvet@bootlin.com>
+Date: Mon, 18 Nov 2024 19:43:18 +0100
+Subject: [PATCH v13 5/7] drm/vkms: Create KUnit tests for YUV conversions
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240531010331.134441-1-ross.philipson@oracle.com>
- <20240531010331.134441-7-ross.philipson@oracle.com> <20240531021656.GA1502@sol.localdomain>
- <874jaegk8i.fsf@email.froward.int.ebiederm.org> <5b1ce8d3-516d-4dfd-a976-38e5cee1ef4e@apertussolutions.com>
- <87ttflli09.ffs@tglx> <CALCETrXQ7rChWLDqTG0+KY7rsfajSPguMnHO1G4VJi_mgwN9Zw@mail.gmail.com>
- <1a1f0c41-70de-4f46-b91d-6dc7176893ee@apertussolutions.com>
- <8a0b59a4-a5a2-42ae-bc1c-1ddc8f2aad16@apertussolutions.com>
- <CALCETrX8caT5qvCUu24hQfxUF_wUC2XdGpS2YFP6SR++7FiM3Q@mail.gmail.com>
- <c466ed57-35a8-41c0-9647-c70e588ad1d3@apertussolutions.com>
- <CALCETrW9WNNGh1dEPKfQoeU+m5q6_m97d0_bzRkZsv2LxqB_ew@mail.gmail.com>
- <ff0c8eed-8981-48c4-81d9-56b040ef1c7b@apertussolutions.com>
- <446cf9c70184885e4cec6dd4514ae8daf7accdcb.camel@HansenPartnership.com> <5d1e41d6-b467-4013-a0d0-45f9511c15c6@apertussolutions.com>
-In-Reply-To: <5d1e41d6-b467-4013-a0d0-45f9511c15c6@apertussolutions.com>
-From: Andy Lutomirski <luto@amacapital.net>
-Date: Mon, 18 Nov 2024 10:43:18 -0800
-Message-ID: <CALCETrW6vMYZo-b7N9ojVSeZLVxhZjLBjnMHsULMGP6TaVYRHA@mail.gmail.com>
-Subject: Re: [PATCH v9 06/19] x86: Add early SHA-1 support for Secure Launch
- early measurements
-To: "Daniel P. Smith" <dpsmith@apertussolutions.com>
-Cc: James Bottomley <James.Bottomley@hansenpartnership.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, "Eric W. Biederman" <ebiederm@xmission.com>, 
-	Eric Biggers <ebiggers@kernel.org>, Ross Philipson <ross.philipson@oracle.com>, 
-	linux-kernel@vger.kernel.org, x86@kernel.org, linux-integrity@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-crypto@vger.kernel.org, 
-	kexec@lists.infradead.org, linux-efi@vger.kernel.org, 
-	iommu@lists.linux-foundation.org, mingo@redhat.com, bp@alien8.de, 
-	hpa@zytor.com, dave.hansen@linux.intel.com, ardb@kernel.org, 
-	mjg59@srcf.ucam.org, peterhuewe@gmx.de, jarkko@kernel.org, jgg@ziepe.ca, 
-	nivedita@alum.mit.edu, herbert@gondor.apana.org.au, davem@davemloft.net, 
-	corbet@lwn.net, dwmw2@infradead.org, baolu.lu@linux.intel.com, 
-	kanth.ghatraju@oracle.com, andrew.cooper3@citrix.com, 
-	trenchboot-devel@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241118-yuv-v13-5-ac0dd4129552@bootlin.com>
+References: <20241118-yuv-v13-0-ac0dd4129552@bootlin.com>
+In-Reply-To: <20241118-yuv-v13-0-ac0dd4129552@bootlin.com>
+To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>, 
+ Melissa Wen <melissa.srw@gmail.com>, 
+ =?utf-8?q?Ma=C3=ADra_Canal?= <mairacanal@riseup.net>, 
+ Haneen Mohammed <hamohammed.sa@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, rdunlap@infradead.org, 
+ arthurgrillo@riseup.net, Jonathan Corbet <corbet@lwn.net>, 
+ pekka.paalanen@haloniitty.fi, Simona Vetter <simona.vetter@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ jeremie.dautheribes@bootlin.com, miquel.raynal@bootlin.com, 
+ thomas.petazzoni@bootlin.com, seanpaul@google.com, marcheu@google.com, 
+ nicolejadeyee@google.com, Louis Chauvet <louis.chauvet@bootlin.com>, 
+ Pekka Paalanen <pekka.paalanen@collabora.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=15885;
+ i=louis.chauvet@bootlin.com; h=from:subject:message-id;
+ bh=lTwttDRftCz+MGppk5OGuAtu/rZkMajBmioh9zqJii8=;
+ b=owEBbQKS/ZANAwAIASCtLsZbECziAcsmYgBnO4rFg847xiqdVcmMP5hPTSq3sSYxjy0sSys4V
+ qOGhx83s0qJAjMEAAEIAB0WIQRPj7g/vng8MQxQWQQgrS7GWxAs4gUCZzuKxQAKCRAgrS7GWxAs
+ 4uHXEACUrMVP2+qgurQKfOMgIya6AA7HEVuL4+Q1S9elmQFG4RpQ02FKnFF54MzWXfNsrNXw0ec
+ G7PV39weTLEeeC7YrruC4DhgcZWkCQlFljCoEu0Svam8r6IVk/Dl88Whr8CnH1ZrZ+d4C32c8bL
+ Qod2NM3m8d2GDtLLtfLdWjMhw+CxY4jxGiYcBalCPCl0SabbDDuIOWOEJkPdFFOI4YRp2g80l58
+ wbVCm3Wca3DuS8CLCf4LvgSVFcCLp+dipVlD22SnRdWVRsuDniGLPgJAz3iF+8fo1MjagQ64EoR
+ 9aJCbR8ZHveNBUfNVH1miLA/9Nny9BgPg3Yr06aztpniLogQ9DUjvG4MteolQM8IANrBVKuhrhy
+ 2pZllYMmPg4RvW35b/x5+qkvZprXEsuq7QpGOkwRakpAR9HPAt3x/gde+TUNSz/RDSfE13RuZdv
+ hDF/5aKY4oG42OtAWiUpAkbHbboW+1oCCAEkcnvfBPU+le6pyuQGtze0qlyzrHyD8mgyNawGrUt
+ ehxiDBmFbP3+AFyBsgCt2zHuRJkwEsOu+aa6XfcswGr8p9aWaJCaUmrUF4Su0HM4Wjcl9onJc7+
+ c05gRLR1vpMFssbmzxpIHrAsHVn+zM3Vjo4Fxi91GbTYa9Xhy0acPY8e8psJHpMf4pconx0b17U
+ Og9vvWbC0SobKQA==
+X-Developer-Key: i=louis.chauvet@bootlin.com; a=openpgp;
+ fpr=8B7104AE9A272D6693F527F2EC1883F55E0B40A5
+X-GND-Sasl: louis.chauvet@bootlin.com
 
-On Thu, Nov 14, 2024 at 5:17=E2=80=AFPM Daniel P. Smith
-<dpsmith@apertussolutions.com> wrote:
->
-> On 11/2/24 12:04, James Bottomley wrote:
-> > On Sat, 2024-11-02 at 10:53 -0400, Daniel P. Smith wrote:
-> >> Hi Luto,
-> >>
-> >> My apologies, I missed this response and the active on v11 cause me
-> >> to
-> >> get an inquiry why I hadn't responded.
-> >>
-> >> On 9/21/24 18:40, Andy Lutomirski wrote:
-> > [...]
-> >>> I assumed that "deliberately cap" meant that there was an actual
-> >>> feature where you write something to the event log (if applicable)
-> >>> and extend the PCR in a special way that *turns that PCR off*.
-> >>> That is, it does something such that later-loaded software *can't*
-> >>> use that PCR to attest or unseal anything, etc.
-> >>>
-> >>> But it sounds like you're saying that no such feature exists.  And
-> >>> a quick skim of the specs doesn't come up with anything.  And the
-> >>> SHA1 banks may well be susceptible to a collision attack.
-> >>
-> >> Correct, the only entity that can disable PCR banks is the firmware.
-> >
-> > No, that's not correct.  Any user can use TPM_PCR_Allocate to activate
-> > or deactivate individual banks.  The caveat is the change is not
-> > implemented until the next TPM reset (which should involve a reboot).
-> > BIOS also gets to the TPM before the kernel does, so it can, in theory,
-> > check what banks a TPM has and call TPM_PCR_Allocate to change them.
-> > In practice, because this requires a reboot, this is usually only done
-> > from the BIOS menus not on a direct boot ... so you can be reasonably
-> > sure that whatever changes were made will stick.
->
-> Okay, since there is a desire for exactness. Any system software can
-> send the TPM_PCR_Allocate command, specifying which PCRs should be
-> activated on next _TPM_init. There are restrictions such that if
-> DRTM_PCR is defined, then at least one bank must have a D-RTM PCR
-> allocation. In agreement with my statement, this is the mechanism used
-> by firmware to select the banks. Depending on the firmware
-> implementation, the firmware request will likely override the request
-> sent by the system software.
->
-> This brings us back to an earlier point, if one disables the SHA1 banks
-> in BIOS menu, then TXT will not use them and thus neither will Secure
-> Launch. Secure Launch will only use the algorithms used by the CPU and
-> the ACM.
->
-> >> When it initializes the TPM, it can disable banks/algorithms. After
-> >> that, when an extend operation is done, the TPM is expecting an entry
-> >> for all active PCR banks and the TPM itself does the extend hash that
-> >> is stored into the PCRs.
-> >
-> > This, also, is not quite correct: an extend is allowed to specify banks
-> > that don't exist (in which case nothing happens and no error is
-> > reported) and miss banks that do (in which case no extend is done to
-> > that bank).  In the early days of TPM2, some BIOS implementations only
-> > extended sha1 for instance, meaning the sha256 banks were all zero when
-> > the kernel started.
-> >
-> > Even today, if you activate a bank the BIOS doesn't know about, it
-> > likely won't extend it.  You can see this in VM boots with OVMF and
-> > software TPMs having esoteric banks like SM3.
+From: Arthur Grillo <arthurgrillo@riseup.net>
 
-How is this not a security hole you could drive a truck through?
-Indeed, looking at the docs, TPM2_PCR_Extend says "If no digest value
-is specified for a bank, then the PCR in that bank is not modified."
+Create KUnit tests to test the conversion between YUV and RGB. Test each
+conversion and range combination with some common colors.
 
->
-> Let me correct myself here and again be extremely precise. When an
-> extend operation is done, the TPM driver expects to receive an array of
-> digests that is the same size as the number of allocated/active banks.
-> Specifically, it loops from 0 to chip->nr_allocated_banks, filling
-> TPML_DIGEST_VALUES with an entry for all the active banks, to include
-> SHA1 if it is active. Coming back to my response to Luto, we can either
-> populate it with 0 or a well-known value for each extend we send.
-> Regardless of what the value is, the TPM will use its implementation of
-> SHA1 to calculate the resulting extend value.
+The code used to compute the expected result can be found in comment.
 
-At least extending unknown/unsupported banks with 0 modifies the bank,
-which gives software that might rely on that bank an indication that
-something in the chain doesn't support the bank.  But does actual
-TPM-using software in the wild actually look up the event log and
-notice that it contains a 0?
+[Louis Chauvet:
+- fix minor formating issues (whitespace, double line)
+- change expected alpha from 0x0000 to 0xffff
+- adapt to the new get_conversion_matrix usage
+- apply the changes from Arthur
+- move struct pixel_yuv_u8 to the test itself]
 
-This sucks.  How on Earth didn't the TPM2 spec do this instead of
-having explicit handling for "a PCR got extended, and the code that
-extended it didn't support a given bank, and therefore *the resulting
-PCR value cannot be relied on*?  It would have been *one single bit
-per PCR, bank* indicating that the PCR's value is incomplete, along
-with some basic logic that an incomplete PCR cannot magically become
-complete, nor can it be used to authorize anything unless the
-authorization policy explicitly allows it?
+Signed-off-by: Arthur Grillo <arthurgrillo@riseup.net>
+Acked-by: Pekka Paalanen <pekka.paalanen@collabora.com>
+Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+---
+ drivers/gpu/drm/vkms/Kconfig                  |  15 ++
+ drivers/gpu/drm/vkms/Makefile                 |   1 +
+ drivers/gpu/drm/vkms/tests/.kunitconfig       |   4 +
+ drivers/gpu/drm/vkms/tests/Makefile           |   3 +
+ drivers/gpu/drm/vkms/tests/vkms_format_test.c | 270 ++++++++++++++++++++++++++
+ drivers/gpu/drm/vkms/vkms_formats.c           |   7 +-
+ drivers/gpu/drm/vkms/vkms_formats.h           |   5 +
+ 7 files changed, 303 insertions(+), 2 deletions(-)
 
-Anyway, other than the fact that everyone (presumably?) expects
-software to be aware of SHA-1 and (mostly) SHA256, and presumably
-users of SM3 already expect that a lot of things don't support it,
-SHA1 doesn't seem very different from SM3 in the sense that (a) people
-might not want to support it and (b) the actual behavior of a boot
-chain component that doesn't support a cryptosystem is FUNDAMENTALLY
-DANGEROUS.
+diff --git a/drivers/gpu/drm/vkms/Kconfig b/drivers/gpu/drm/vkms/Kconfig
+index 9def079f685bd30e1df3e4082e4818e402395391..d4665e913de7702fbd5c0f047876dad9715c690a 100644
+--- a/drivers/gpu/drm/vkms/Kconfig
++++ b/drivers/gpu/drm/vkms/Kconfig
+@@ -14,3 +14,18 @@ config DRM_VKMS
+ 	  a VKMS.
+ 
+ 	  If M is selected the module will be called vkms.
++
++config DRM_VKMS_KUNIT_TESTS
++	tristate "KUnit tests for VKMS." if !KUNIT_ALL_TESTS
++	depends on DRM_VKMS && KUNIT
++	default KUNIT_ALL_TESTS
++	help
++	  This builds unit tests for VKMS. This option is not useful for
++	  distributions or general kernels, but only for kernel
++	  developers working on VKMS.
++
++	  For more information on KUnit and unit tests in general,
++	  please refer to the KUnit documentation in
++	  Documentation/dev-tools/kunit/.
++
++	  If in doubt, say "N".
+diff --git a/drivers/gpu/drm/vkms/Makefile b/drivers/gpu/drm/vkms/Makefile
+index 1b28a6a32948b557867dda51d2ccfdea687a2b62..8d3e46dde6350558a0aab4254df0dfe863f9c6ce 100644
+--- a/drivers/gpu/drm/vkms/Makefile
++++ b/drivers/gpu/drm/vkms/Makefile
+@@ -9,3 +9,4 @@ vkms-y := \
+ 	vkms_writeback.o
+ 
+ obj-$(CONFIG_DRM_VKMS) += vkms.o
++obj-$(CONFIG_DRM_VKMS_KUNIT_TESTS) += tests/
+diff --git a/drivers/gpu/drm/vkms/tests/.kunitconfig b/drivers/gpu/drm/vkms/tests/.kunitconfig
+new file mode 100644
+index 0000000000000000000000000000000000000000..70e378228cbdaa025f01641f207a93a6c01f0853
+--- /dev/null
++++ b/drivers/gpu/drm/vkms/tests/.kunitconfig
+@@ -0,0 +1,4 @@
++CONFIG_KUNIT=y
++CONFIG_DRM=y
++CONFIG_DRM_VKMS=y
++CONFIG_DRM_VKMS_KUNIT_TESTS=y
+diff --git a/drivers/gpu/drm/vkms/tests/Makefile b/drivers/gpu/drm/vkms/tests/Makefile
+new file mode 100644
+index 0000000000000000000000000000000000000000..2d1df668569e4f243ed9a06c1e16e595c131c4f6
+--- /dev/null
++++ b/drivers/gpu/drm/vkms/tests/Makefile
+@@ -0,0 +1,3 @@
++# SPDX-License-Identifier: GPL-2.0-only
++
++obj-$(CONFIG_DRM_VKMS_KUNIT_TESTS) += vkms_format_test.o
+diff --git a/drivers/gpu/drm/vkms/tests/vkms_format_test.c b/drivers/gpu/drm/vkms/tests/vkms_format_test.c
+new file mode 100644
+index 0000000000000000000000000000000000000000..4f565ecb591c34b08d9df577860488702200a384
+--- /dev/null
++++ b/drivers/gpu/drm/vkms/tests/vkms_format_test.c
+@@ -0,0 +1,270 @@
++// SPDX-License-Identifier: GPL-2.0+
++
++#include <kunit/test.h>
++
++#include <drm/drm_fixed.h>
++#include <drm/drm_fourcc.h>
++
++#include "../../drm_crtc_internal.h"
++
++#include "../vkms_formats.h"
++
++#define TEST_BUFF_SIZE 50
++
++MODULE_IMPORT_NS(EXPORTED_FOR_KUNIT_TESTING);
++
++struct pixel_yuv_u8 {
++	u8 y, u, v;
++};
++
++/*
++ * struct yuv_u8_to_argb_u16_case - Reference values to test the color
++ * conversions in VKMS between YUV to ARGB
++ *
++ * @encoding: Encoding used to convert RGB to YUV
++ * @range: Range used to convert RGB to YUV
++ * @n_colors: Count of test colors in this case
++ * @format_pair.name: Name used for this color conversion, used to
++ *                    clarify the test results
++ * @format_pair.rgb: RGB color tested
++ * @format_pair.yuv: Same color as @format_pair.rgb, but converted to
++ *                   YUV using @encoding and @range.
++ */
++struct yuv_u8_to_argb_u16_case {
++	enum drm_color_encoding encoding;
++	enum drm_color_range range;
++	size_t n_colors;
++	struct format_pair {
++		char *name;
++		struct pixel_yuv_u8 yuv;
++		struct pixel_argb_u16 argb;
++	} colors[TEST_BUFF_SIZE];
++};
++
++/*
++ * The YUV color representation were acquired via the colour python framework.
++ * Below are the function calls used for generating each case.
++ *
++ * For more information got to the docs:
++ * https://colour.readthedocs.io/en/master/generated/colour.RGB_to_YCbCr.html
++ */
++static struct yuv_u8_to_argb_u16_case yuv_u8_to_argb_u16_cases[] = {
++	/*
++	 * colour.RGB_to_YCbCr(<rgb color in 16 bit form>,
++	 *                     K=colour.WEIGHTS_YCBCR["ITU-R BT.601"],
++	 *                     in_bits = 16,
++	 *                     in_legal = False,
++	 *                     in_int = True,
++	 *                     out_bits = 8,
++	 *                     out_legal = False,
++	 *                     out_int = True)
++	 *
++	 * Test cases for conversion between YUV BT601 full range and RGB
++	 * using the ITU-R BT.601 weights.
++	 */
++	{
++		.encoding = DRM_COLOR_YCBCR_BT601,
++		.range = DRM_COLOR_YCBCR_FULL_RANGE,
++		.n_colors = 6,
++		.colors = {
++			{ "white", { 0xff, 0x80, 0x80 }, { 0xffff, 0xffff, 0xffff, 0xffff }},
++			{ "gray",  { 0x80, 0x80, 0x80 }, { 0xffff, 0x8080, 0x8080, 0x8080 }},
++			{ "black", { 0x00, 0x80, 0x80 }, { 0xffff, 0x0000, 0x0000, 0x0000 }},
++			{ "red",   { 0x4c, 0x55, 0xff }, { 0xffff, 0xffff, 0x0000, 0x0000 }},
++			{ "green", { 0x96, 0x2c, 0x15 }, { 0xffff, 0x0000, 0xffff, 0x0000 }},
++			{ "blue",  { 0x1d, 0xff, 0x6b }, { 0xffff, 0x0000, 0x0000, 0xffff }},
++		},
++	},
++	/*
++	 * colour.RGB_to_YCbCr(<rgb color in 16 bit form>,
++	 *                     K=colour.WEIGHTS_YCBCR["ITU-R BT.601"],
++	 *                     in_bits = 16,
++	 *                     in_legal = False,
++	 *                     in_int = True,
++	 *                     out_bits = 8,
++	 *                     out_legal = True,
++	 *                     out_int = True)
++	 * Test cases for conversion between YUV BT601 limited range and RGB
++	 * using the ITU-R BT.601 weights.
++	 */
++	{
++		.encoding = DRM_COLOR_YCBCR_BT601,
++		.range = DRM_COLOR_YCBCR_LIMITED_RANGE,
++		.n_colors = 6,
++		.colors = {
++			{ "white", { 0xeb, 0x80, 0x80 }, { 0xffff, 0xffff, 0xffff, 0xffff }},
++			{ "gray",  { 0x7e, 0x80, 0x80 }, { 0xffff, 0x8080, 0x8080, 0x8080 }},
++			{ "black", { 0x10, 0x80, 0x80 }, { 0xffff, 0x0000, 0x0000, 0x0000 }},
++			{ "red",   { 0x51, 0x5a, 0xf0 }, { 0xffff, 0xffff, 0x0000, 0x0000 }},
++			{ "green", { 0x91, 0x36, 0x22 }, { 0xffff, 0x0000, 0xffff, 0x0000 }},
++			{ "blue",  { 0x29, 0xf0, 0x6e }, { 0xffff, 0x0000, 0x0000, 0xffff }},
++		},
++	},
++	/*
++	 * colour.RGB_to_YCbCr(<rgb color in 16 bit form>,
++	 *                     K=colour.WEIGHTS_YCBCR["ITU-R BT.709"],
++	 *                     in_bits = 16,
++	 *                     in_legal = False,
++	 *                     in_int = True,
++	 *                     out_bits = 8,
++	 *                     out_legal = False,
++	 *                     out_int = True)
++	 * Test cases for conversion between YUV BT709 full range and RGB
++	 * using the ITU-R BT.709 weights.
++	 */
++	{
++		.encoding = DRM_COLOR_YCBCR_BT709,
++		.range = DRM_COLOR_YCBCR_FULL_RANGE,
++		.n_colors = 4,
++		.colors = {
++			{ "white", { 0xff, 0x80, 0x80 }, { 0xffff, 0xffff, 0xffff, 0xffff }},
++			{ "gray",  { 0x80, 0x80, 0x80 }, { 0xffff, 0x8080, 0x8080, 0x8080 }},
++			{ "black", { 0x00, 0x80, 0x80 }, { 0xffff, 0x0000, 0x0000, 0x0000 }},
++			{ "red",   { 0x36, 0x63, 0xff }, { 0xffff, 0xffff, 0x0000, 0x0000 }},
++			{ "green", { 0xb6, 0x1e, 0x0c }, { 0xffff, 0x0000, 0xffff, 0x0000 }},
++			{ "blue",  { 0x12, 0xff, 0x74 }, { 0xffff, 0x0000, 0x0000, 0xffff }},
++		},
++	},
++	/*
++	 * colour.RGB_to_YCbCr(<rgb color in 16 bit form>,
++	 *                     K=colour.WEIGHTS_YCBCR["ITU-R BT.709"],
++	 *                     in_bits = 16,
++	 *                     int_legal = False,
++	 *                     in_int = True,
++	 *                     out_bits = 8,
++	 *                     out_legal = True,
++	 *                     out_int = True)
++	 * Test cases for conversion between YUV BT709 limited range and RGB
++	 * using the ITU-R BT.709 weights.
++	 */
++	{
++		.encoding = DRM_COLOR_YCBCR_BT709,
++		.range = DRM_COLOR_YCBCR_LIMITED_RANGE,
++		.n_colors = 4,
++		.colors = {
++			{ "white", { 0xeb, 0x80, 0x80 }, { 0xffff, 0xffff, 0xffff, 0xffff }},
++			{ "gray",  { 0x7e, 0x80, 0x80 }, { 0xffff, 0x8080, 0x8080, 0x8080 }},
++			{ "black", { 0x10, 0x80, 0x80 }, { 0xffff, 0x0000, 0x0000, 0x0000 }},
++			{ "red",   { 0x3f, 0x66, 0xf0 }, { 0xffff, 0xffff, 0x0000, 0x0000 }},
++			{ "green", { 0xad, 0x2a, 0x1a }, { 0xffff, 0x0000, 0xffff, 0x0000 }},
++			{ "blue",  { 0x20, 0xf0, 0x76 }, { 0xffff, 0x0000, 0x0000, 0xffff }},
++		},
++	},
++	/*
++	 * colour.RGB_to_YCbCr(<rgb color in 16 bit form>,
++	 *                     K=colour.WEIGHTS_YCBCR["ITU-R BT.2020"],
++	 *                     in_bits = 16,
++	 *                     in_legal = False,
++	 *                     in_int = True,
++	 *                     out_bits = 8,
++	 *                     out_legal = False,
++	 *                     out_int = True)
++	 * Test cases for conversion between YUV BT2020 full range and RGB
++	 * using the ITU-R BT.2020 weights.
++	 */
++	{
++		.encoding = DRM_COLOR_YCBCR_BT2020,
++		.range = DRM_COLOR_YCBCR_FULL_RANGE,
++		.n_colors = 4,
++		.colors = {
++			{ "white", { 0xff, 0x80, 0x80 }, { 0xffff, 0xffff, 0xffff, 0xffff }},
++			{ "gray",  { 0x80, 0x80, 0x80 }, { 0xffff, 0x8080, 0x8080, 0x8080 }},
++			{ "black", { 0x00, 0x80, 0x80 }, { 0xffff, 0x0000, 0x0000, 0x0000 }},
++			{ "red",   { 0x43, 0x5c, 0xff }, { 0xffff, 0xffff, 0x0000, 0x0000 }},
++			{ "green", { 0xad, 0x24, 0x0b }, { 0xffff, 0x0000, 0xffff, 0x0000 }},
++			{ "blue",  { 0x0f, 0xff, 0x76 }, { 0xffff, 0x0000, 0x0000, 0xffff }},
++		},
++	},
++	/*
++	 * colour.RGB_to_YCbCr(<rgb color in 16 bit form>,
++	 *                     K=colour.WEIGHTS_YCBCR["ITU-R BT.2020"],
++	 *                     in_bits = 16,
++	 *                     in_legal = False,
++	 *                     in_int = True,
++	 *                     out_bits = 8,
++	 *                     out_legal = True,
++	 *                     out_int = True)
++	 * Test cases for conversion between YUV BT2020 limited range and RGB
++	 * using the ITU-R BT.709 weights.
++	 */
++	{
++		.encoding = DRM_COLOR_YCBCR_BT2020,
++		.range = DRM_COLOR_YCBCR_LIMITED_RANGE,
++		.n_colors = 4,
++		.colors = {
++			{ "white", { 0xeb, 0x80, 0x80 }, { 0xffff, 0xffff, 0xffff, 0xffff }},
++			{ "gray",  { 0x7e, 0x80, 0x80 }, { 0xffff, 0x8080, 0x8080, 0x8080 }},
++			{ "black", { 0x10, 0x80, 0x80 }, { 0xffff, 0x0000, 0x0000, 0x0000 }},
++			{ "red",   { 0x4a, 0x61, 0xf0 }, { 0xffff, 0xffff, 0x0000, 0x0000 }},
++			{ "green", { 0xa4, 0x2f, 0x19 }, { 0xffff, 0x0000, 0xffff, 0x0000 }},
++			{ "blue",  { 0x1d, 0xf0, 0x77 }, { 0xffff, 0x0000, 0x0000, 0xffff }},
++		},
++	},
++};
++
++/*
++ * vkms_format_test_yuv_u8_to_argb_u16 - Testing the conversion between YUV
++ * colors to ARGB colors in VKMS
++ *
++ * This test will use the functions get_conversion_matrix_to_argb_u16 and
++ * argb_u16_from_yuv888 to convert YUV colors (stored in
++ * yuv_u8_to_argb_u16_cases) into ARGB colors.
++ *
++ * As there is a different range between YUV input (8 bits) and RGB output (16
++ * bits), the values are not checked exactly but ensured that they are within
++ * the uncertainty range.
++ */
++static void vkms_format_test_yuv_u8_to_argb_u16(struct kunit *test)
++{
++	const struct yuv_u8_to_argb_u16_case *param = test->param_value;
++	struct pixel_argb_u16 argb;
++
++	for (size_t i = 0; i < param->n_colors; i++) {
++		const struct format_pair *color = &param->colors[i];
++		struct conversion_matrix matrix;
++
++		get_conversion_matrix_to_argb_u16
++			(DRM_FORMAT_NV12, param->encoding, param->range, &matrix);
++
++		argb = argb_u16_from_yuv888(color->yuv.y, color->yuv.u, color->yuv.v, &matrix);
++
++		KUNIT_EXPECT_LE_MSG(test, abs_diff(argb.a, color->argb.a), 257,
++				    "On the A channel of the color %s expected 0x%04x, got 0x%04x",
++				    color->name, color->argb.a, argb.a);
++		KUNIT_EXPECT_LE_MSG(test, abs_diff(argb.r, color->argb.r), 257,
++				    "On the R channel of the color %s expected 0x%04x, got 0x%04x",
++				    color->name, color->argb.r, argb.r);
++		KUNIT_EXPECT_LE_MSG(test, abs_diff(argb.g, color->argb.g), 257,
++				    "On the G channel of the color %s expected 0x%04x, got 0x%04x",
++				    color->name, color->argb.g, argb.g);
++		KUNIT_EXPECT_LE_MSG(test, abs_diff(argb.b, color->argb.b), 257,
++				    "On the B channel of the color %s expected 0x%04x, got 0x%04x",
++				    color->name, color->argb.b, argb.b);
++	}
++}
++
++static void vkms_format_test_yuv_u8_to_argb_u16_case_desc(struct yuv_u8_to_argb_u16_case *t,
++							  char *desc)
++{
++	snprintf(desc, KUNIT_PARAM_DESC_SIZE, "%s - %s",
++		 drm_get_color_encoding_name(t->encoding), drm_get_color_range_name(t->range));
++}
++
++KUNIT_ARRAY_PARAM(yuv_u8_to_argb_u16, yuv_u8_to_argb_u16_cases,
++		  vkms_format_test_yuv_u8_to_argb_u16_case_desc
++);
++
++static struct kunit_case vkms_format_test_cases[] = {
++	KUNIT_CASE_PARAM(vkms_format_test_yuv_u8_to_argb_u16, yuv_u8_to_argb_u16_gen_params),
++	{}
++};
++
++static struct kunit_suite vkms_format_test_suite = {
++	.name = "vkms-format",
++	.test_cases = vkms_format_test_cases,
++};
++
++kunit_test_suite(vkms_format_test_suite);
++
++MODULE_LICENSE("GPL");
++MODULE_DESCRIPTION("Kunit test for vkms format conversion");
+diff --git a/drivers/gpu/drm/vkms/vkms_formats.c b/drivers/gpu/drm/vkms/vkms_formats.c
+index 1f3ce4f334be9560e62c9a7fd933fa0ed6640e8f..0b867444999105262c855a24bf03bc66d9ebea1b 100644
+--- a/drivers/gpu/drm/vkms/vkms_formats.c
++++ b/drivers/gpu/drm/vkms/vkms_formats.c
+@@ -7,6 +7,8 @@
+ #include <drm/drm_rect.h>
+ #include <drm/drm_fixed.h>
+ 
++#include <kunit/visibility.h>
++
+ #include "vkms_formats.h"
+ 
+ /**
+@@ -247,8 +249,8 @@ static struct pixel_argb_u16 argb_u16_from_RGB565(const __le16 *pixel)
+ 	return out_pixel;
+ }
+ 
+-static struct pixel_argb_u16 argb_u16_from_yuv888(u8 y, u8 channel_1, u8 channel_2,
+-						  const struct conversion_matrix *matrix)
++VISIBLE_IF_KUNIT struct pixel_argb_u16 argb_u16_from_yuv888(u8 y, u8 channel_1, u8 channel_2,
++							    const struct conversion_matrix *matrix)
+ {
+ 	u16 r, g, b;
+ 	s64 fp_y, fp_channel_1, fp_channel_2;
+@@ -278,6 +280,7 @@ static struct pixel_argb_u16 argb_u16_from_yuv888(u8 y, u8 channel_1, u8 channel
+ 
+ 	return argb_u16_from_u16161616(0xffff, r, g, b);
+ }
++EXPORT_SYMBOL_IF_KUNIT(argb_u16_from_yuv888);
+ 
+ /*
+  * The following functions are read_line function for each pixel format supported by VKMS.
+diff --git a/drivers/gpu/drm/vkms/vkms_formats.h b/drivers/gpu/drm/vkms/vkms_formats.h
+index d583855cb32027d16b73d2a5b5a0644b13191d08..b4fe62ab9c65d465925d29911f26612193a80799 100644
+--- a/drivers/gpu/drm/vkms/vkms_formats.h
++++ b/drivers/gpu/drm/vkms/vkms_formats.h
+@@ -13,4 +13,9 @@ void get_conversion_matrix_to_argb_u16(u32 format, enum drm_color_encoding encod
+ 				       enum drm_color_range range,
+ 				       struct conversion_matrix *matrix);
+ 
++#if IS_ENABLED(CONFIG_KUNIT)
++struct pixel_argb_u16 argb_u16_from_yuv888(u8 y, u8 channel_1, u8 channel_2,
++					   const struct conversion_matrix *matrix);
++#endif
++
+ #endif /* _VKMS_FORMATS_H_ */
 
-Is there explicit guidance from TCG as to how this is supposed to work?
+-- 
+2.47.0
 
-
-In any case, I have a strawman suggestion to resolve this issue much
-better from Linux's perspective.  It's a strawman because, while I
-attempted to read the relevant part of the specs, the specs and the
-ecosystem are a mess, so I could be wrong.
-
-Linux should not use TPM2_PCR_Extend *at all*.  Instead, Linux should
-exclusively use TPM2_PCR_Event.  I would expect that passing, say, the
-entire kernel image to TPM2_PCR_Event would be a big mistake, so
-instead Linux should hash the relevant data with a reasonable
-suggestion of hashes (which includes, mandatorily, SHA-384 and *does
-not* include SHA-1, and may or may not be configurable at build time
-to include things like SM3), concatenate them, and pass that to
-TPM2_PCR_Event.  And Linux should make the value that it passed to
-TPM2_PCR_Event readily accessible to software using it, and should
-also include some straightforward tooling to calculate it from a given
-input so that software that wants to figure out what value to expect
-in a PCR can easily do so.
-
-And then software that wants to use a SHA-1 bank will work every bit
-as well as it would if Linux actually implemented it, but Linux can
-happily not implement it, and even users of oddball algorithms that
-Linux has never heard of will get secure behavior.
-
-(Why SHA-384?  Because it's mandatory in the TPM Client profile, and
-anyone who's happy with SHA-256 should also be willing to accept
-SHA-384.)
-
->
-> Even with these clarifications, the conclusion does not change. If the
-> firmware enables SHA1, there is nothing that can be done to disable or
-> block its usage from the user. Linux Secure Launch sending measurements
-> to all the banks that the hardware used to start the DRTM chain does not
-> create a vulnerability in and of itself. The user is free to leverage
-> the SHA1 bank in any of the TPM's Integrity Collection suite of
-> operations, regardless of what Secure Launch sends for the SHA1 hash.
-> Whereas, neutering the solution of SHA1 breaks the ability for it to
-> support any hardware that has a TPM1.2, of which there are still many in
-> use.
->
-> V/r,
-> Daniel P. Smith
->
->
-
-
---=20
-Andy Lutomirski
-AMA Capital Management, LLC
 
