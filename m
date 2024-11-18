@@ -1,99 +1,58 @@
-Return-Path: <linux-kernel+bounces-412856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 708949D103A
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 12:54:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC08E9D103D
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 12:54:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D77928341E
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:54:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89A291F22365
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:54:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFB381990AE;
-	Mon, 18 Nov 2024 11:54:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="JJR3/Fj/";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="t9odybke";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="JJR3/Fj/";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="t9odybke"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65B6E194A63;
+	Mon, 18 Nov 2024 11:54:26 +0000 (UTC)
+Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [83.223.95.100])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20060192B83;
-	Mon, 18 Nov 2024 11:54:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBF01176AA9;
+	Mon, 18 Nov 2024 11:54:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.95.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731930843; cv=none; b=Ixf/pV0fvTI8LbXCXKQF0VUbHAIfE2ZkrNgQRubySyPUev5GwtV0pcFmrbF2qiS6Nz+wsjLHkJj2iuMv3iawBAdfIxcuT3DgaVh1vdVItmc4NYFV4x77FqlRDgONh4Cd7dI8QlYebc0Pccb/OzeQPzT0EJzGCk8rKTIZUtydneI=
+	t=1731930866; cv=none; b=eG3syhTDJSWIN0MUusCRISrHnQTmjcueme5zfb24ea4JFPzErRzzUHE4BjN2egsxFEd9Cuqdt5+LBZ5FDUxtjh0dAkA+nvewnAfGKBqJxKJa2PyD8oUSRvhZrOX6DgLU6c7QMAtc8fOnoAPniNu3UndpstB6l1MO/FCRInOLJN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731930843; c=relaxed/simple;
-	bh=9K0skQr+EdtdZq7OjMJRx3mFXy+Jo/jUCpFh4T0wXY4=;
+	s=arc-20240116; t=1731930866; c=relaxed/simple;
+	bh=vbsFQ4wtDdiSJxS8w7T+TNXEWoASRuInqA3wQIlkhhM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JV0pGh0z73UlDvA42bwq849fTXF5ieY5WalGFCDp3wL3LfIrcbiGnqsqQZPGCzHH26MTlv+/JKVZRBHicdZM465JcJoPgOXGMfNTrs6S0Fku6qCpNItejsjkkVvW8OVdIpjxL7wiyL25Z7vaD/mRwNBBdFwmmtyduKBJ2DvYgKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=JJR3/Fj/; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=t9odybke; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=JJR3/Fj/; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=t9odybke; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	 Content-Type:Content-Disposition:In-Reply-To; b=GZuLsef0JNC0JpxfAnO/gE2ccidKHRmqpFhzworSJwilH7XsYEyR/XVG2KFGiqMI8JHsXUk2jxsj/Vp62RsXgBAbDnHS0EvhkWxTfzB0OmRpGIaPS7YW/zFIuukdHQJAFaQzW9tEV+ZTeHYoPz/PZi5p0qwlqnRd0B4ubHZi0Aw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.95.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 5C4DE1F365;
-	Mon, 18 Nov 2024 11:53:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1731930839; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bLf7ZLQq0TKYPEc5Ejp0DTc+VSVjliRrTmW46Mm3Ccw=;
-	b=JJR3/Fj/QS0RT1xVrH8Wfxy8AWfOnynqCP/2eaSFu1CM0OiSKIqJ8fFK4zaWoVkQzCqI1c
-	iz4QL/gFjJFEWMWGUrgXBnwx7etDww0lhGtzmF4RorW4q/Migii1vlEYSo3jDo5REHI0AE
-	tIZfOOiLdzY3AFzZqhQWhoHojzCfE8o=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1731930839;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bLf7ZLQq0TKYPEc5Ejp0DTc+VSVjliRrTmW46Mm3Ccw=;
-	b=t9odybkeVcK8w6ssXXnLPAOVMJEz/kJBlsljxl02spWLyY1yeCzbXMfTTGI3mojYkO90xc
-	wwMarSOxSQExZGCg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1731930839; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bLf7ZLQq0TKYPEc5Ejp0DTc+VSVjliRrTmW46Mm3Ccw=;
-	b=JJR3/Fj/QS0RT1xVrH8Wfxy8AWfOnynqCP/2eaSFu1CM0OiSKIqJ8fFK4zaWoVkQzCqI1c
-	iz4QL/gFjJFEWMWGUrgXBnwx7etDww0lhGtzmF4RorW4q/Migii1vlEYSo3jDo5REHI0AE
-	tIZfOOiLdzY3AFzZqhQWhoHojzCfE8o=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1731930839;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bLf7ZLQq0TKYPEc5Ejp0DTc+VSVjliRrTmW46Mm3Ccw=;
-	b=t9odybkeVcK8w6ssXXnLPAOVMJEz/kJBlsljxl02spWLyY1yeCzbXMfTTGI3mojYkO90xc
-	wwMarSOxSQExZGCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4DF5E134A0;
-	Mon, 18 Nov 2024 11:53:59 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id y2TFEtcqO2cvSQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 18 Nov 2024 11:53:59 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 10507A0984; Mon, 18 Nov 2024 12:53:59 +0100 (CET)
-Date: Mon, 18 Nov 2024 12:53:59 +0100
-From: Jan Kara <jack@suse.cz>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH] vfs: dodge strlen() in vfs_readlink() when ->i_link
- is populated
-Message-ID: <20241118115359.mzzx3avongvfqaha@quack3>
-References: <20241118085357.494178-1-mjguzik@gmail.com>
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout1.hostsharing.net (Postfix) with ESMTPS id A8725300034CC;
+	Mon, 18 Nov 2024 12:54:19 +0100 (CET)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id 8C0A35FAC42; Mon, 18 Nov 2024 12:54:19 +0100 (CET)
+Date: Mon, 18 Nov 2024 12:54:19 +0100
+From: Lukas Wunner <lukas@wunner.de>
+To: Terry Bowman <terry.bowman@amd.com>
+Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, nifan.cxl@gmail.com, ming4.li@intel.com,
+	dave@stgolabs.net, jonathan.cameron@huawei.com,
+	dave.jiang@intel.com, alison.schofield@intel.com,
+	vishal.l.verma@intel.com, dan.j.williams@intel.com,
+	bhelgaas@google.com, mahesh@linux.ibm.com, ira.weiny@intel.com,
+	oohall@gmail.com, Benjamin.Cheatham@amd.com, rrichter@amd.com,
+	nathan.fontenot@amd.com, Smita.KoralahalliChannabasappa@amd.com
+Subject: Re: [PATCH v3 15/15] PCI/AER: Enable internal errors for CXL
+ upstream and downstream switch ports
+Message-ID: <Zzsq6-GN0GFKb3_S@wunner.de>
+References: <20241113215429.3177981-1-terry.bowman@amd.com>
+ <20241113215429.3177981-16-terry.bowman@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -102,71 +61,47 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241118085357.494178-1-mjguzik@gmail.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-0.998];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_TO(0.00)[gmail.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
-X-Spam-Score: -3.80
-X-Spam-Flag: NO
+In-Reply-To: <20241113215429.3177981-16-terry.bowman@amd.com>
 
-On Mon 18-11-24 09:53:57, Mateusz Guzik wrote:
-> This gives me about 1.5% speed up when issuing readlink on /initrd.img
-> on ext4.
-> 
-> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
-> ---
-> 
-> I had this running with the following debug:
-> 
-> if (strlen(link) != inode->i_size)
->        printk(KERN_CRIT "mismatch [%s] %l %l\n", link,
->            strlen(link), inode->i_size);
-> 
-> nothing popped up
+On Wed, Nov 13, 2024 at 03:54:29PM -0600, Terry Bowman wrote:
+> Export the AER service driver's pci_aer_unmask_internal_errors() function
+> to CXL namsespace.
+         ^^^^^^^^^^
+	 namespace
 
-Then you didn't run with UDF I guess ;). There inode->i_size is the length
-of on-disk symlink encoding which is definitely different from the length
-of the string we return to VFS (it uses weird standards-defined cross OS
-compatible encoding of a path and I'm not even mentioning its own special
-encoding of character sets somewhat resembling UCS-2).
+> Remove the function's dependency on the CONFIG_PCIEAER_CXL kernel config
+> because it is now an exported function.
+[...]
+> --- a/drivers/pci/pcie/aer.c
+> +++ b/drivers/pci/pcie/aer.c
+> @@ -949,7 +949,6 @@ static bool is_internal_error(struct aer_err_info *info)
+>  	return info->status & PCI_ERR_UNC_INTN;
+>  }
+>  
+> -#ifdef CONFIG_PCIEAER_CXL
+>  /**
+>   * pci_aer_unmask_internal_errors - unmask internal errors
+>   * @dev: pointer to the pcie_dev data structure
+> @@ -960,7 +959,7 @@ static bool is_internal_error(struct aer_err_info *info)
+>   * Note: AER must be enabled and supported by the device which must be
+>   * checked in advance, e.g. with pcie_aer_is_native().
+>   */
+> -static void pci_aer_unmask_internal_errors(struct pci_dev *dev)
+> +void pci_aer_unmask_internal_errors(struct pci_dev *dev)
 
-> I would leave something of that sort in if it was not defeating the
-> point of the change.
-> 
-> However, I'm a little worried some crap fs *does not* fill this in
-> despite populating i_link.
-> 
-> Perhaps it would make sense to keep the above with the patch hanging out
-> in next and remove later?
-> 
-> Anyhow, worst case, should it turn out i_size does not work there are at
-> least two 4-byte holes which can be used to store the length (and
-> chances are some existing field can be converted into a union instead).
+Hm, it seems the reason why you're moving pci_aer_unmask_internal_errors()
+outside of "ifdef CONFIG_PCIEAER_CXL" is that drivers/cxl/core/pci.c
+is conditional on CONFIG_CXL_BUS, whereas CONFIG_PCIEAER_CXL depends
+on CONFIG_CXL_PCI.
 
-I'm not sure I completely follow your proposal here...
+In other words, you need this to avoid build breakage if CONFIG_CXL_BUS
+is enabled but CONFIG_CXL_PCI is not.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+I'm wondering (as a CXL ignoramus) why that can happen in the first
+place, i.e. why is drivers/cxl/core/pci.c compiled at all if
+CONFIG_CXL_PCI is disabled?
+
+Thanks,
+
+Lukas
 
