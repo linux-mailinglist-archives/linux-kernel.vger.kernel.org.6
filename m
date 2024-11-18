@@ -1,148 +1,147 @@
-Return-Path: <linux-kernel+bounces-412700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3E569D0DFE
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:12:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 412D79D0E08
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:13:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B3BE7B28BC3
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 10:12:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED5751F22B79
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 10:13:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 954171925B3;
-	Mon, 18 Nov 2024 10:12:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73E2F194A60;
+	Mon, 18 Nov 2024 10:13:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="GYZbxqqj"
-Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="LhcD49P7"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48F8E193418;
-	Mon, 18 Nov 2024 10:11:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D8D8193060;
+	Mon, 18 Nov 2024 10:13:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731924719; cv=none; b=ooZYKMa6JjR3MgfXxsAPkFct6OufOlPWFUZvx6uQH3tQQDCV7lL7uVvSO2czwoF/jWI3Zo4eqo4wbyDLaKLjc6BWFqkOHKZPtcUTsGoC1BaxUPqcfAQ+9Qmbj8338sYsI9fk9gSQAiYp6oQvYcKHODFozTR0X0N3yKntvfnqd7E=
+	t=1731924799; cv=none; b=eXpMBqg5eC2BIDj3/kl7yWvnrYVrNusuQczyZCmL3aeMPtrJ2D/vgR6WabxaNgldKzL9NapkKIBsWArI8izbg9NTK45wezAxAJDwEUYmodKcU9sOwKakMS39NChRHpJtqX0BoxjydWsJHUc2W8DpU7O+H3cWKc2rnH2MVR9Qklg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731924719; c=relaxed/simple;
-	bh=y0KL+I4yWQYvU8GZSwrNnW4aW64mki/BNWUAW3tIfnk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=asLTMzcSkgJe73l56PTwpxao2Q6jW05usXLD/E8IoWjJY6V9m6EgVWq70/ClMfmVZmhUxejkMr4THgFBddPcYHtJdWNjDk6v4CbTCUf05uFIKBLvfu7MUgQOQlsmgNmkFY7r8vJtrDBl/JVe64AxFvtq/XZ3DLWM71B94Yhl5jE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=GYZbxqqj; arc=none smtp.client-ip=157.90.84.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
-Received: from [192.168.42.96] (p5de457db.dip0.t-ipconnect.de [93.228.87.219])
-	(Authenticated sender: wse@tuxedocomputers.com)
-	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id E84442FC0061;
-	Mon, 18 Nov 2024 11:11:53 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
-	s=default; t=1731924714;
+	s=arc-20240116; t=1731924799; c=relaxed/simple;
+	bh=VIIMBI0K2FJ+33FTK2CZfmZFFmVVhe/6BXur878pLF4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=U+L5Nl4x9gsUE2GNhpKIBdzWrbdjngJJ+nlF0rCE2Ey01NmCSh21RYC7/z2HQbCE1GzyoYizbhLuW4LpgMWvc1QIHxlzeZ/c64Qx1Rbf//NlUO0Ql0MOinQcMXUH0T9cGz2dq/ipEyuQ4/0mG714SBlbroUjK3b97qCFRxahl7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=LhcD49P7; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 941B11BF203;
+	Mon, 18 Nov 2024 10:13:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1731924788;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VyH+jygpYBBLCCseYTOLHa8NhRgcFqWbrqJs95FspFE=;
-	b=GYZbxqqjICQmMWfuhSyyLl+hOHiA/gaWvIv+1EW8y38lQvnEf3eXa0o6pdfWZEN1tlktO/
-	fY+/c49/81rUJsPzbECBhrQdAJlNIRNYbq/lKiElNot/xAYdHDoXdmdnVwJyE5ZmL2Ns+t
-	j+LK6wXUZ2aHbyh4n9JZt6sdXLq8vjQ=
-Authentication-Results: mail.tuxedocomputers.com;
-	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
-Message-ID: <ac82a35e-4fe0-4f22-a371-59a546fdab18@tuxedocomputers.com>
-Date: Mon, 18 Nov 2024 11:11:53 +0100
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=ACDFHfM+SiIy9UjEXXOYcBvbsceiPAkm0g+8DdoGhXQ=;
+	b=LhcD49P7lHg0SccJBsjPVy2tmQbfuaxhed/4EpPZCpefxGC7uVP66uJox7KYaldqonlmlw
+	rzaW+iQAA7gV6ZAQt9mjWKZIufs04ZpOkJmqOtoSI14zpMmcGe6g6ksPXxETdt3WfwcReY
+	JI94VZPV0kOEQ361M+/7cSJKnTE4usuIHxrqdC3ElehQdMg7bGPl6d4XeQ9q3wMnQp4L1W
+	gspGq230YBgXFnFjcwE3p5ZCVf1GVXaVWSZ6H1lwZA2U1LEzXmD7R7o7dDnZfg5M/IovlG
+	gCB8FePLEbqlkwr7ER95XODME4MG5PWV6ZjRD/9Kk1D1NfOM4nLlcGm5Md4fIQ==
+From: Romain Gantois <romain.gantois@bootlin.com>
+Subject: [PATCH v2 0/9] misc: Support TI FPC202 dual-port controller
+Date: Mon, 18 Nov 2024 11:12:59 +0100
+Message-Id: <20241118-fpc202-v2-0-744e4f192a2d@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] module: Block modules by Tuxedo from accessing GPL
- symbols
-To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
- Luis Chamberlain <mcgrof@kernel.org>
-Cc: tux@tuxedocomputers.com, Petr Pavlu <petr.pavlu@suse.com>,
- Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez
- <da.gomez@samsung.com>, linux-modules@vger.kernel.org,
- linux-kernel@vger.kernel.org, Thorsten Leemhuis <linux@leemhuis.info>
-References: <20241114103133.547032-4-ukleinek@kernel.org>
- <20241114103133.547032-6-ukleinek@kernel.org>
-Content-Language: en-US
-From: Werner Sembach <wse@tuxedocomputers.com>
-In-Reply-To: <20241114103133.547032-6-ukleinek@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIACwTO2cC/zWMwQ7CIBAFf6XZsxjApoCn/ofpQRDsJgoNNETT8
+ O+uNd5mXl5mg+Iz+gLnboPsKxZMkUQeOnDzNd49wxs5SC57wYViYXHEbAjcqpMhVhrovGQf8LW
+ HLhP5jGVN+b13q/iuv4Tg+p+ognEWfC/dYLR1Ro42pfWB8ejSE6bW2gdCNQDSngAAAA==
+X-Change-ID: 20241017-fpc202-6f0b739c2078
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
+ Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+ Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Derek Kiernan <derek.kiernan@amd.com>, 
+ Dragan Cvetic <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Kory Maincent <kory.maincent@bootlin.com>, linux-i2c@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-media@vger.kernel.org, linux-gpio@vger.kernel.org, 
+ Romain Gantois <romain.gantois@bootlin.com>
+X-Mailer: b4 0.14.2
+X-GND-Sasl: romain.gantois@bootlin.com
 
-Hi,
+Hello everyone,
 
-Am 14.11.24 um 11:31 schrieb Uwe Kleine-König:
-> Tuxedo licenses the modules used on their hardware under GPLv3+, to
-> "keep control of the upstream pacing" – and want to re-license the code
-> while upstreaming.
->
-> They were asked to then at least not use MODULE_LICENSE("GPL") which
-> declares compatibility to the kernel's GPLv2. They accepted the pull
-> request and shortly after reverted the change and so continue to lie
-> about the license.
->
-> So teach the module loader that these modules are proprietary despite
-> their declaration to be GPLv2 compatible "until the legal stuff is
-> sorted out".
+This is version two of my series which adds support for the TI FPC202
+dual-port controller. This is an unusual kind of device which is used as a
+low-speed signal aggregator for various types of SFP-like hardware ports.
 
-The relicensing is complete so this patch can be dropped entirely (everything is 
-now GPLv2+)
+The FPC202 exposes an I2C, or SPI (not supported in this series) control
+interface, which can be used to access two downstream I2C busses, along
+with a set of low-speed GPIO signals for each port. It also has I2C address
+translation (ATR) features, which allow multiple I2C devices with the same
+address (e.g. SFP EEPROMs at address 0x50) to be accessed from the upstream
+control interface on different addresses.
 
-Regards,
+I've chosen to add this driver to the misc subsystem, as it doesn't
+strictly belong in either the i2c or gpio sybsystem, and as far as I know
+it is the first device of its kind to be added to the kernel.
 
-Werner Sembach
+Along with the FPC202 driver itself, this series also adds support for
+dynamic address translation to the i2c-atr module. This allows I2C address
+translators to update their translation table on-the-fly when they receive
+transactions to unmapped clients. This feature is needed by the FPC202
+driver to access up to three logical I2C devices per-port, given that the
+FPC202 address translation table only has two address slots.
 
->
-> Link: https://gitlab.com/tuxedocomputers/development/packages/tuxedo-drivers/-/commit/a8c09b6c2ce6393fe39d8652d133af9f06cfb427
-> Signed-off-by: Uwe Kleine-König <ukleinek@kernel.org>
-> ---
->   kernel/module/main.c | 33 +++++++++++++++++++++++++++++++++
->   1 file changed, 33 insertions(+)
->
-> diff --git a/kernel/module/main.c b/kernel/module/main.c
-> index 878191c65efc..46badbb09d5e 100644
-> --- a/kernel/module/main.c
-> +++ b/kernel/module/main.c
-> @@ -2338,6 +2338,39 @@ static const char *module_license_offenders[] = {
->   
->   	/* lve claims to be GPL but upstream won't provide source */
->   	"lve",
-> +
-> +	/*
-> +	 * Tuxedo distributes their kernel modules under GPLv3, but intentially
-> +	 * lies in their MODULE_LICENSE() calls.
-> +	 * See https://gitlab.com/tuxedocomputers/development/packages/tuxedo-drivers/-/commit/a8c09b6c2ce6393fe39d8652d133af9f06cfb427
-> +	 */
-> +	"gxtp7380",
-> +	"ite_8291",
-> +	"ite_8291_lb",
-> +	"ite_8297",
-> +	"ite_829x",
-> +	"stk8321",
-> +	"tuxedo_compatibility_check",
-> +	"tuxedo_io",
-> +	"tuxedo_nb02_nvidia_power_ctrl",
-> +	"tuxedo_nb04_keyboard",
-> +	"tuxedo_nb04_wmi_ab",
-> +	"tuxedo_nb04_wmi_bs",
-> +	"tuxedo_nb04_sensors",
-> +	"tuxedo_nb04_power_profiles",
-> +	"tuxedo_nb04_kbd_backlight",
-> +	"tuxedo_nb05_keyboard",
-> +	"tuxedo_nb05_kbd_backlight",
-> +	"tuxedo_nb05_power_profiles",
-> +	"tuxedo_nb05_ec",
-> +	"tuxedo_nb05_sensors",
-> +	"tuxedo_nb05_fan_control",
-> +	"tuxi_acpi",
-> +	"tuxedo_tuxi_fan_control",
-> +	"clevo_wmi",
-> +	"tuxedo_keyboard",
-> +	"clevo_acpi",
-> +	"uniwill_wmi",
->   };
->   
->   /*
+Best Regards,
+
+Romain
+
+Signed-off-by: Romain Gantois <romain.gantois@bootlin.com>
+---
+Changes in v2:
+- Renamed port nodes to match i2c adapter bindings.
+- Declared atr ops struct as static const.
+- Free downstream ports during FPC202 removal.
+- Link to v1: https://lore.kernel.org/r/20241108-fpc202-v1-0-fe42c698bc92@bootlin.com
+
+---
+Romain Gantois (9):
+      dt-bindings: misc: Describe TI FPC202 dual port controller
+      media: i2c: ds90ub960: Replace aliased clients list with bitmap
+      media: i2c: ds90ub960: Protect alias_use_mask with a mutex
+      i2c: use client addresses directly in ATR interface
+      i2c: move ATR alias pool to a separate struct
+      i2c: rename field 'alias_list' of struct i2c_atr_chan to 'alias_pairs'
+      i2c: support per-channel ATR alias pools
+      i2c: Support dynamic address translation
+      misc: add FPC202 dual port controller driver
+
+ .../devicetree/bindings/misc/ti,fpc202.yaml        |  83 ++++
+ MAINTAINERS                                        |   7 +
+ drivers/i2c/i2c-atr.c                              | 480 ++++++++++++++-------
+ drivers/media/i2c/ds90ub913.c                      |   9 +-
+ drivers/media/i2c/ds90ub953.c                      |   9 +-
+ drivers/media/i2c/ds90ub960.c                      |  65 +--
+ drivers/misc/Kconfig                               |  11 +
+ drivers/misc/Makefile                              |   1 +
+ drivers/misc/ti_fpc202.c                           | 440 +++++++++++++++++++
+ include/linux/i2c-atr.h                            |  67 ++-
+ 10 files changed, 976 insertions(+), 196 deletions(-)
+---
+base-commit: adc218676eef25575469234709c2d87185ca223a
+change-id: 20241017-fpc202-6f0b739c2078
+
+Best regards,
+-- 
+Romain Gantois <romain.gantois@bootlin.com>
+
 
