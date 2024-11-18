@@ -1,230 +1,119 @@
-Return-Path: <linux-kernel+bounces-413006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C95919D1240
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 14:41:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 448749D121F
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 14:39:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8447D282E1C
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 13:41:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4E201F22A66
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 13:39:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8C3F1AE016;
-	Mon, 18 Nov 2024 13:40:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 509BD1E505;
+	Mon, 18 Nov 2024 13:39:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="WsGmFeZN"
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VTY9t9jT"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D57453A7;
-	Mon, 18 Nov 2024 13:40:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2543192B79
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 13:39:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731937216; cv=none; b=WKn8uuyq6IZowelBJ0fODxvHJgCpVblAZlXT/kqGNuOttm/OhEIfqhhvR7Dki8Cr1KBAtYKyOKcL+/E1MyOLVzlmu/QcKTUUkwb2xwrEQQ/mos+o5fa5dL03dbwbXy9taeekhj/fC4RuwpvOIbp/eT5iyXFL6Xp0aVzGqwJ63ss=
+	t=1731937156; cv=none; b=IGADVOTwKe8EOfHpsqEsm0LLZYogQEMy0GLB6RfIlDlpLyw8ZweEH8/JcCflVADnNzPGIusBJWQzbQCwekF0QKuBSvbZXHB1yyc2o9ikc8rvcYYk6YDSn6bko9RPu7JoLkN1tmNvp10MXiigVIL2ErHtQ1DxAai8DJnyneQF/VA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731937216; c=relaxed/simple;
-	bh=t0g3tyGLXDa9mEU8ERU+pY2ZJyv+jnWCEShMpLm4R7o=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=Q/qBKTh++pqFqhiwj1Dwi26KWx6EZzzzJOVZoS+nH5I0b+FFUu1K+KWr+mHmMrif9G1HjUAmPU5+MKRK5MADtGKuyTUeAl2ln60NxlFKpKqfoftnkqzQsWt8oJHHmImL2Y3uTocSahfyTPLidmxQ4VhTvatp7wbV9cvTi8Vbj2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=WsGmFeZN; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AIBWncd032001;
-	Mon, 18 Nov 2024 14:39:40 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	i0SEXjer4NUU2DKUJapl8bqAlE+SwlDXXIr03qjV7WU=; b=WsGmFeZNfXpWzr1t
-	ZjPJIzd5lXu2bbvc8+LL0V1RSkYcDytf3M2dgkQB8/XI0PpHJJnnNJBoaP7hoUV3
-	mA/a/pabRama9ZeoV5ykwjChXY4pKG4Z+wDOqqC6FSS867LnUWVMqG7Hn/Hc7qnH
-	NqPxnUZd750F3HOERDZOJWmcRlpfQWIbrSyKV+eVafx53dMD2CqP/PVly4liwbWT
-	AHkJBQVPFmhPUyks+kwfEUFxRKQ0b82Hd5O+byr488e6JPAxVkXkkHjUSLcbLI90
-	PV7czHidpOnRDAOJptOYLbj8l6xXXvjOsQIGdKSpyqWSQT3ihLLYtVSBVLBLAL5Y
-	wLunow==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 42xkqh77nv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 18 Nov 2024 14:39:39 +0100 (CET)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id B030A40046;
-	Mon, 18 Nov 2024 14:38:35 +0100 (CET)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 6318D2786FB;
-	Mon, 18 Nov 2024 14:35:35 +0100 (CET)
-Received: from localhost (10.129.178.213) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Mon, 18 Nov
- 2024 14:35:35 +0100
-From: Alain Volmat <alain.volmat@foss.st.com>
-Date: Mon, 18 Nov 2024 14:35:38 +0100
-Subject: [PATCH v3 15/15] arm64: dts: st: enable imx335/csi/dcmipp pipeline
- on stm32mp257f-ev1
+	s=arc-20240116; t=1731937156; c=relaxed/simple;
+	bh=O+/I9qHbRpEyeLkPgEks20gDqSxELQADYxBEFYBKk6s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mD252l1VntEJoA5BjwfnKpZUM8Xxq5wKFb//OU6zMsBkJnDGcpgTc7wUc3h4UUTzDp5wE84PN7uqi1ixlvWWlHx1Xkg8jLv2E9OKAd7IAsRD5IocAnsPnThU2rfMxmehBTRns+Gs4hQW11uNirsDbmJ7JLBL031GPqzYKyJIP7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VTY9t9jT; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-539d9fffea1so4101478e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 05:39:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731937153; x=1732541953; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Vo8qgK/zmm16hQsGKSDsWMd+1rjPC2LBS5AhoiRhMVU=;
+        b=VTY9t9jTDEFM921i7t6ODafEfowW7lL58a1XIXt5JBpb8Ws9zbf54s5SCD8b+z7CEn
+         izWCoDOqHW4cbmHmWGmVjR3GjMSkDexWCCODI4owBf6gfylr51LB7XlCc+3ktiqypK74
+         Nw6XMkOqlEvipXZGJYCkWiOOIq09gzd6JzUKt5ds+Fcwtfh9+bhoRS0rxCTitzy+7UdP
+         1GbCf9GjdE9CzCnzgUsuPrR6BoclTodU+l8d05SDL6KnnqyFMtKgdiu1HNGA3+PHJA2V
+         /w2c3iKQWbizaB4Nv97mgB88XmEC4TeoT7Uq1a+1bx61OoOXLwLPXLz+0IdFHQwcRvjB
+         Ktng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731937153; x=1732541953;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Vo8qgK/zmm16hQsGKSDsWMd+1rjPC2LBS5AhoiRhMVU=;
+        b=TTx3BkUrVoE6df7+yiRLg6YYpJoHLFMvBJFCIaWZ1cBRH5q3BcT07RSwbI5uwqz/Y8
+         6rwqjkd9sWhfz0nKVYAGnL2MA+BNWbEGwDFG1iZbQ1EAfyMzyalcWjjU1O4rnKkeHW20
+         YmQpt0k0/9ERG3hcqt0Xic2KCUaMGlWk0Teg0ycwxU3WTXHKphxF+zp1iNrl9okdgHck
+         t/JrBTt4hTTPz4BH3dMjLzJKuTB4eZLwN4fNzGir3VXtEvnbOptKcoBWv/S18TN4pRHX
+         LjTdzOdleLbNimbOM1xgCtnRbO8aR7I4Yb4h8JYi2qGgNBHye3yh8JWV5jAlhHIlk7l4
+         Qsdg==
+X-Forwarded-Encrypted: i=1; AJvYcCXhlM4ZziFBmX6fUeNb5q2E6RajYxiVRWfxHCrp2bL1xjb7oPjgVbuYNcpVsH3eBP35ljr4kU4wK4QcBL8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYhDdaNaKcaAdCEwsVuSUVgpfhYW3SdYt3UxJGGjgYq608vhcY
+	U9yRNUwAtFnZwmzzhAdNXOTVaO1n4GjtQ2WWk2jJ+qhbSCgmTqN0BApunLy3b9U=
+X-Google-Smtp-Source: AGHT+IE9fOapCm7K6Pg/umhgP6p9aceiGkaGBaQq40IEeWEJt8CsTs1Go6vdmUC+YTfkqwr39h1xgA==
+X-Received: by 2002:a05:651c:158f:b0:2ff:5988:ddcf with SMTP id 38308e7fff4ca-2ff6080823bmr48735431fa.0.1731937151490;
+        Mon, 18 Nov 2024 05:39:11 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ff69b3bd8fsm8953911fa.124.2024.11.18.05.39.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Nov 2024 05:39:10 -0800 (PST)
+Date: Mon, 18 Nov 2024 15:39:08 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] clk: qcom: gdsc: Add pm_runtime hooks
+Message-ID: <5lg7rsndxrcogrwywlciek4fdfejnpmvuibpwhh33whg2ebtlt@jli5g3qliota>
+References: <20241118-b4-linux-next-24-11-18-clock-multiple-power-domains-v1-0-b7a2bd82ba37@linaro.org>
+ <20241118-b4-linux-next-24-11-18-clock-multiple-power-domains-v1-2-b7a2bd82ba37@linaro.org>
+ <atg6yw64f4aojcbjyarljb57cejqk56g2qnddrloa3smmupm6d@fk3oyiycnuco>
+ <45c0950a-0cde-4bb9-9e3d-7f25b8a3da31@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20241118-csi_dcmipp_mp25-v3-15-c1914afb0a0f@foss.st.com>
-References: <20241118-csi_dcmipp_mp25-v3-0-c1914afb0a0f@foss.st.com>
-In-Reply-To: <20241118-csi_dcmipp_mp25-v3-0-c1914afb0a0f@foss.st.com>
-To: Hugues Fruchet <hugues.fruchet@foss.st.com>,
-        Mauro Carvalho Chehab
-	<mchehab@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre
- Torgue <alexandre.torgue@foss.st.com>,
-        Hans Verkuil
-	<hverkuil-cisco@xs4all.nl>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Rob
- Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor
- Dooley <conor+dt@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-CC: <linux-media@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, Alain Volmat <alain.volmat@foss.st.com>
-X-Mailer: b4 0.14.2
-X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <45c0950a-0cde-4bb9-9e3d-7f25b8a3da31@linaro.org>
 
-Enable the camera pipeline with a imx335 sensor connected to the
-dcmipp via the csi interface.
+On Mon, Nov 18, 2024 at 01:19:49PM +0000, Bryan O'Donoghue wrote:
+> On 18/11/2024 13:10, Dmitry Baryshkov wrote:
+> > > Introduce pm_runtime_get() and pm_runtime_put_sync() on the
+> > > gdsc_toggle_logic().
+> > > 
+> > > This allows for the switching of the GDSC on/off to propagate to the parent
+> > > clock controller and consequently for any list of power-domains powering
+> > > that controller to be switched on/off.
+> > What is the end result of this patch? Does it bring up a single PM
+> > domain or all of them? Or should it be a part of the driver's PM
+> > callbacks? If the CC has multiple parent PM domains, shouldn't we also
+> > use some of them as GDSC's parents?
+> 
+> It brings up every PM domain in the list
+> 
+> clock_cc {
+>     power-domains = <somedomain0>, <another-domain>;
+> };
+> 
+> No different to what the core code does for a single domain - except we can
+> actually turn the PDs off with the pm_runtime_put().
 
-Signed-off-by: Alain Volmat <alain.volmat@foss.st.com>
+I see. I missed the device link part of the dev_pm_domain_attach_list().
 
----
-
-v2:
-  - correct regulators & camera node names
-  - removal of powerdown property within imx335 node
-  - removal of useless status property within imx335 node
-  - correct imx335 reset-gpio polarity
----
- arch/arm64/boot/dts/st/stm32mp257f-ev1.dts | 85 ++++++++++++++++++++++++++++++
- 1 file changed, 85 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts b/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
-index 214191a8322b81e7ae453503863b4465d9b625e0..d45851b3904d760f73298bf7b260f917b582db55 100644
---- a/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
-+++ b/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
-@@ -27,6 +27,38 @@ chosen {
- 		stdout-path = "serial0:115200n8";
- 	};
- 
-+	clocks {
-+		clk_ext_camera: clk-ext-camera {
-+			#clock-cells = <0>;
-+			compatible = "fixed-clock";
-+			clock-frequency = <24000000>;
-+		};
-+	};
-+
-+	imx335_2v9: regulator-2v9 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "imx335-avdd";
-+		regulator-min-microvolt = <2900000>;
-+		regulator-max-microvolt = <2900000>;
-+		regulator-always-on;
-+	};
-+
-+	imx335_1v8: regulator-1v8 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "imx335-ovdd";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-always-on;
-+	};
-+
-+	imx335_1v2: regulator-1v2 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "imx335-dvdd";
-+		regulator-min-microvolt = <1200000>;
-+		regulator-max-microvolt = <1200000>;
-+		regulator-always-on;
-+	};
-+
- 	memory@80000000 {
- 		device_type = "memory";
- 		reg = <0x0 0x80000000 0x1 0x0>;
-@@ -50,6 +82,40 @@ &arm_wdt {
- 	status = "okay";
- };
- 
-+&csi {
-+	vdd-supply =  <&scmi_vddcore>;
-+	vdda18-supply = <&scmi_v1v8>;
-+	status = "okay";
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		port@0 {
-+			reg = <0>;
-+			csi_sink: endpoint {
-+				remote-endpoint = <&imx335_ep>;
-+				data-lanes = <1 2>;
-+				bus-type = <4>;
-+			};
-+		};
-+		port@1 {
-+			reg = <1>;
-+			csi_source: endpoint {
-+				remote-endpoint = <&dcmipp_0>;
-+			};
-+		};
-+	};
-+};
-+
-+&dcmipp {
-+	status = "okay";
-+	port {
-+		dcmipp_0: endpoint {
-+			remote-endpoint = <&csi_source>;
-+			bus-type = <4>;
-+		};
-+	};
-+};
-+
- &ethernet2 {
- 	pinctrl-names = "default", "sleep";
- 	pinctrl-0 = <&eth2_rgmii_pins_a>;
-@@ -81,6 +147,25 @@ &i2c2 {
- 	i2c-scl-falling-time-ns = <13>;
- 	clock-frequency = <400000>;
- 	status = "okay";
-+
-+	imx335: camera@1a {
-+		compatible = "sony,imx335";
-+		reg = <0x1a>;
-+		clocks = <&clk_ext_camera>;
-+		avdd-supply = <&imx335_2v9>;
-+		ovdd-supply = <&imx335_1v8>;
-+		dvdd-supply = <&imx335_1v2>;
-+		reset-gpios = <&gpioi 7 (GPIO_ACTIVE_LOW | GPIO_PUSH_PULL)>;
-+
-+		port {
-+			imx335_ep: endpoint {
-+				remote-endpoint = <&csi_sink>;
-+				clock-lanes = <0>;
-+				data-lanes = <1 2>;
-+				link-frequencies = /bits/ 64 <594000000>;
-+			};
-+		};
-+	};
- };
- 
- &i2c8 {
-
+Just to check, have you checked that this provides no splats in
+lockdep-enabled kernels? 
 -- 
-2.25.1
-
+With best wishes
+Dmitry
 
