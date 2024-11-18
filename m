@@ -1,160 +1,132 @@
-Return-Path: <linux-kernel+bounces-413421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 125D79D18D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 20:26:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E71859D18DB
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 20:26:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5630282AF6
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 19:26:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABA6F281136
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 19:26:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD4F71E503C;
-	Mon, 18 Nov 2024 19:26:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2E6A1E5027;
+	Mon, 18 Nov 2024 19:26:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NGbJCi/m"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Ggvmb8Mc"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85C851B0F29;
-	Mon, 18 Nov 2024 19:25:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43CC11E2838
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 19:26:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731957962; cv=none; b=n8dw0X2fu4uadOlazkBCbcCpktlLh1mJwY+5FUuIevDPYyxxU/+9hg/u9oI/2jEkcMzLJd2O0+o7Yl2qTZyddu0vjUgWE3Dp+JY3s4jRPwGSP6XByQoGLX+tEDfWwt2V3JEZygKKfbM1Ic2GH9Fi0NPhY7tYUp1778KJgyNlA4Q=
+	t=1731957993; cv=none; b=WiKgdRovrTlPXsloNUpPceKEMn+ZJpezG01GueB1aY/7JCtOTTjEg0q+IGdbD4nOv3ozjtYAB2Ig+g/OAB/jfGe5rAasd0c+PBScujyh4rRAL24HrdVQ4xzoX2dmYKJdfn3aVsHp/bEW4CdJtc90eO+MaA5KpFzSUXEbzOYB5fA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731957962; c=relaxed/simple;
-	bh=IvvPfEQx8+njDlP7eg+rVy3Zr9WN9X65JlqiJMcGRGU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=emKaT9eNrnuIG0UloXvcc/UqrJLJUXjLsNdOXM5mHwIKCqOjWK4QRy5Wm5rEvwYzildj6nCwmErGeIJhrf1ngcwo9s7DKUPeyb7Y2omWZeIEuKOCjF3st9PRsdx+k98JyXu1OOiwByGDIhUGcjgPu7jplg4twa4COBJ4kbCpUPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NGbJCi/m; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4314f38d274so34322885e9.1;
-        Mon, 18 Nov 2024 11:25:59 -0800 (PST)
+	s=arc-20240116; t=1731957993; c=relaxed/simple;
+	bh=zUVH/uAD+IJTLUQDBYc09NFu0bSjr4OlrRtyJAhnrBA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XlZh3sVr0l/az25uJgqbkGL/v8C0vMXf9zWFhI/eJnQ9dAi5CiYFz9tEGhpZdChRfO1sMPfqOFkL97d631QiUAwfc5ebVQTGrF+1lK8w6Gq+hV6i4wtJJOVXge9Ly4mKtHEw/093d8LqDacGD/NpYAjLdSO41I09zWS7uMQhDKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Ggvmb8Mc; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5cfaeed515bso2824846a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 11:26:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731957958; x=1732562758; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9pD0Ic6pq3x9QjpEUEJLIp8QMqGQFkQZMFW6bkNDgUM=;
-        b=NGbJCi/mlaXf66xjltm3wbnqgsr6gw4KnBQrEddbXgEMWaMazD4qgZzbvn+7DbXBV6
-         CaLTV/L8DJRMyf4NWjsXhGlwem9noMF4V+9dW9xYoSwoDhg2EVYgmT+uS5m0jdueejks
-         uW1mcA9swheFOr7nAClPVpicB/TUE3v4fShItDWPIYwF5aMJVGuu+/BZ+WGGvhVwxPXI
-         G2RglzJbD9yt/GMp2I+ysQF6Umzgq0f2j0Uv0Ie5Ic95ngq7WPp5tQc2QObd+7i20zoS
-         Tks+BUlz+PSOKvFHFXbKd7AySk/Id+R7RYoacW68qR5qsKsxcIt7LzIoCvWI5nMLKaBm
-         7KaQ==
+        d=linux-foundation.org; s=google; t=1731957989; x=1732562789; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=JYCS3Z6MiUnPrDvgzVamv2lmS38BP+UrcMAAY23BZP8=;
+        b=Ggvmb8McADv0dJS5a1c+bREFDDd2pmnuS6SCw18hzYkx7Nz3UtZka8bWh6x0SWc5vG
+         uZmYbDmy4n1v6jQKAuOwTXUUtgC/YYVhT5BgTcWIsTUvMlFMIyX7/rslfJtl3oLiibBD
+         CHLK874swKbu0j5236YgyzUdCsvqWh5V4cn1A=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731957958; x=1732562758;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9pD0Ic6pq3x9QjpEUEJLIp8QMqGQFkQZMFW6bkNDgUM=;
-        b=ggmUfgQC0qO9W9JgSo57CqeyKrlfx9wx0O8GIOrRU3+GwBdAtsNEcIqvfeI2xYGcHj
-         i1coJdinvGcCjKQR06Ajh/3lpH14spA/Pv52YMSkf2b8zLdkKh9ioh7ytbli0h/8AleQ
-         D+p3NVMg0EHKsImVg40ZOEHUfYgOGHswGhSHhaGP72uV2sjTddgXkvanucwzicrzJsmW
-         pHSNKzOZxfgh2dL0yrKjz8zxbRrlOo9LkEUkvTjif0bYa2LaUwqxOVOsw/s9QRLt6mV2
-         jqN5CFhWs4eJore9I+esSSuvyVEB5WvbEweK9OUo6Ufq8/QWsDU7FCnVzO0RkZd0b+Vi
-         z7Lg==
-X-Forwarded-Encrypted: i=1; AJvYcCW3g6H6yHx97QOikq+TiMr4Q40Ubd71N7BYpTaQKvuDUXTW/iR20tKT80OX4pAH0XrzmDDbZU6IgXKOuoJmH3YDlGM=@vger.kernel.org, AJvYcCWHldM0H9iHRVVxfij/uE5GjRs8i/yQRgxmfLQ/YZXB0QvZzmcg0q7iPxSGVgfTp8SxEbDWDA4Wha5esI8d@vger.kernel.org, AJvYcCX+hsNxE4Cez3taX/G8hikNI45TuqqpOhlr3n0cZzp0W3b6E2pb0XpLVL5t4g5uL/hktgBfcFEj3uu27cc=@vger.kernel.org, AJvYcCX5MtRSG2lcmES6Onf0jM/6BkkAV8vb+AB6B7usA2cUquzmEuwYTPZfG/JzG4RQ1gVMGjLOvnTM0FMD5MpB@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRrTbAshYyfHyUO9mN9X7kmrn+ewd8wTd3KwdMVeW2CRD8C+S0
-	l+p6ihFSL5AgyekiV+2hDO3U/IS9kNSXA0R9Vq4cLAn63RfO4f04TwLomFoT
-X-Google-Smtp-Source: AGHT+IH+lcOQ8Rj8oM11CtrUWBNXK6zZA1wltL3ZBTXjDjqXIpvoTVhgtssacVRTup7RXCuDYGl00g==
-X-Received: by 2002:a05:600c:1d97:b0:426:59fe:ac27 with SMTP id 5b1f17b1804b1-432df78f3demr130180715e9.26.1731957957571;
-        Mon, 18 Nov 2024 11:25:57 -0800 (PST)
-Received: from ?IPV6:2001:861:3385:e20:6384:4cf:52c5:3194? ([2001:861:3385:e20:6384:4cf:52c5:3194])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432da298c81sm172023915e9.39.2024.11.18.11.25.55
+        d=1e100.net; s=20230601; t=1731957989; x=1732562789;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JYCS3Z6MiUnPrDvgzVamv2lmS38BP+UrcMAAY23BZP8=;
+        b=K+1ig2JBr37kxHBqM2HBj1EhM/K4iIqQDayAkCELh+KI42ojHcYVR9tZuj/d9VKatu
+         ZpTA/vouDHsTbyu+v2ECcWCEL41SZNXdPnPi3qTuj+Qbc8RfxR8Nw1Xfgih5VPagRw25
+         SPoAOya/5xK7/vvXwsfj44yRI1icGy4lIQIZn/crg6JCtkJvvHG1HbokWuIxUqbi6co9
+         iPBiEzDia8dL5ePPjC3XW5IWjmt6EaX+qR29PolBeNY6tpBEUHHDRCfswzanDfMAXH9O
+         THlU7ILlWLa14X0n1GJ8tTsggkACHZL/XoMPgUYuB2v42lx1QrzuV+0m4zjgESivdg4o
+         zw1A==
+X-Forwarded-Encrypted: i=1; AJvYcCX9Mt1vNM9kN373jNOmrCivIo6iPqh4nIIdAHF5RDKoJVM8gk8RFaCdGP9nIg7osEiSlL/c1a5gju6PsHA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbOXymcmJPRm1HZf6vDJWkEmmk9491HF4nJzab3g73ho0kLQ2b
+	TGgistNlOjT49LZX1z3ozVqRdvHt7qZRk3rUT4uQKDDtdV7L51mCfAFlKoKPrxHHxa+CJHH3SlY
+	1QmA3cw==
+X-Google-Smtp-Source: AGHT+IGutuoOP5c7mh+SdGeoHNen20nLKdz2BqFrb+su3HbgkYqNju6teyNZCV0AvfqkW5X2whTitg==
+X-Received: by 2002:a17:907:3f98:b0:a9e:d539:86c4 with SMTP id a640c23a62f3a-aa4833f41cdmr1121603566b.9.1731957989279;
+        Mon, 18 Nov 2024 11:26:29 -0800 (PST)
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com. [209.85.208.53])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20df74fb6sm568925266b.82.2024.11.18.11.26.28
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Nov 2024 11:25:57 -0800 (PST)
-Message-ID: <8a4f69dd-b393-4e84-be3c-58f8b33bd59d@gmail.com>
-Date: Mon, 18 Nov 2024 20:25:49 +0100
+        Mon, 18 Nov 2024 11:26:28 -0800 (PST)
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5cfaeed515bso2824825a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 11:26:28 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVZ4AZPxpF0b/vq+WFBjYAzfktOn1tZNP2QZ/eYuhOGMaeYBWdzwkrZGQocqJKehNl8yIsqVRZh/SxgeRY=@vger.kernel.org
+X-Received: by 2002:a17:906:d7cb:b0:aa4:c8f0:6ea1 with SMTP id
+ a640c23a62f3a-aa4c8f06f4fmr18763766b.54.1731957988223; Mon, 18 Nov 2024
+ 11:26:28 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/5] drm/sti: hda: pass const struct drm_display_mode* to
- hda_get_mode_idx()
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Jani Nikula <jani.nikula@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>,
- Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
- Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>,
- Danilo Krummrich <dakr@redhat.com>, Harry Wentland <harry.wentland@amd.com>,
- Leo Li <sunpeng.li@amd.com>, Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
- Alex Deucher <alexander.deucher@amd.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Xinhui Pan <Xinhui.Pan@amd.com>, Alain Volmat <alain.volmat@foss.st.com>,
- Liviu Dudau <liviu.dudau@arm.com>, Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Peter Senna Tschudin <peter.senna@gmail.com>, Ian Ray <ian.ray@ge.com>,
- Martyn Welch <martyn.welch@collabora.co.uk>, Inki Dae
- <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>,
- Kyungmin Park <kyungmin.park@samsung.com>,
- Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
- <alim.akhtar@samsung.com>, Stefan Agner <stefan@agner.ch>,
- Alison Wang <alison.wang@nxp.com>,
- Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
- Philipp Zabel <p.zabel@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Rob Clark <robdclark@gmail.com>,
- Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- Dave Airlie <airlied@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>,
- Sandy Huang <hjc@rock-chips.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?=
- <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>,
- Chen-Yu Tsai <wens@csie.org>, Samuel Holland <samuel@sholland.org>,
- Thierry Reding <thierry.reding@gmail.com>,
- Mikko Perttunen <mperttunen@nvidia.com>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Dave Stevenson <dave.stevenson@raspberrypi.com>,
- =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>,
- Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
- Gurchetan Singh <gurchetansingh@chromium.org>, Chia-I Wu
- <olvaffe@gmail.com>, Zack Rusin <zack.rusin@broadcom.com>,
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
-Cc: intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- nouveau@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-msm@vger.kernel.org,
- freedreno@lists.freedesktop.org, virtualization@lists.linux.dev,
- spice-devel@lists.freedesktop.org, linux-rockchip@lists.infradead.org,
- linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org
-References: <20241115-drm-connector-mode-valid-const-v1-0-b1b523156f71@linaro.org>
- <20241115-drm-connector-mode-valid-const-v1-3-b1b523156f71@linaro.org>
-Content-Language: en-US, fr
-From: =?UTF-8?Q?Rapha=C3=ABl_Gallais-Pou?= <rgallaispou@gmail.com>
-In-Reply-To: <20241115-drm-connector-mode-valid-const-v1-3-b1b523156f71@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20241115-vfs-tmpfs-d443d413eb26@brauner>
+In-Reply-To: <20241115-vfs-tmpfs-d443d413eb26@brauner>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 18 Nov 2024 11:26:12 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgqUNhk8awrnf+WaJQc9henwvXsYTyLbF2UFSL7vCuVyg@mail.gmail.com>
+Message-ID: <CAHk-=wgqUNhk8awrnf+WaJQc9henwvXsYTyLbF2UFSL7vCuVyg@mail.gmail.com>
+Subject: Re: [GIT PULL] vfs tmpfs
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+On Fri, 15 Nov 2024 at 06:07, Christian Brauner <brauner@kernel.org> wrote:
+>
+> This adds case-insensitive support for tmpfs.
 
+Ugh.
 
-> Make hda_get_mode_idx() accept const struct drm_display_mode pointer
-> instead of just raw struct drm_display_mode.  This is a preparation to
-> converting the mode_valid() callback of drm_connector to accept const
-> struct drm_display_mode argument.
-> 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
+I've pulled this, but I don't love it.
 
-Hi Dmitry,
+This pattern:
 
-Thank you for the patch.
+    if (IS_ENABLED(CONFIG_UNICODE) && IS_CASEFOLDED(dir))
+        d_add(dentry, inode);
+    else
+        d_instantiate(dentry, inode);
 
-Acked-by: Raphael Gallais-Pou <rgallaispou@gmail.com>
+needs an explanation, and probably a helper.
 
+And
 
-Regards,
-Raphaël
+>  include/linux/shmem_fs.h            |   6 +-
+>  mm/shmem.c                          | 265 ++++++++++++++++++++++++++++++++++--
+
+I'm starting to think this should be renamed and/or possibly split up
+a bit. The actual path component handling functions should be moved
+out of mm/shmem.c.
+
+The whole "mm/shmem.c" thing made sense back in the days when this was
+mainly about memory management functions with some thing wrappers for
+exposing them as a filesystem, and tmpfs was kind of an odd special
+case.
+
+Those thin wrappers aren't very thin any more, and "shmem" is becoming
+something of a misnomer with the actual filesystem being called
+"tmpfs".
+
+We also actually have *two* different implementations of "tmpfs" -
+both in that same file - which is really annoying. The other one is
+based on the ramfs code.
+
+Would it be possible to try to make this a bit saner?
+
+           Linus
 
