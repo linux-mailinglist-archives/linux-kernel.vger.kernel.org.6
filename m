@@ -1,295 +1,218 @@
-Return-Path: <linux-kernel+bounces-412825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D4A89D0F93
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 12:24:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A08609D0F99
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 12:25:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DF522826CA
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:24:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 594E41F2260C
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:25:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD6FB198E77;
-	Mon, 18 Nov 2024 11:24:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8F49194A7C;
+	Mon, 18 Nov 2024 11:25:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A1aJyXbV"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="NutoibJR"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2041.outbound.protection.outlook.com [40.107.220.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63B20190493;
-	Mon, 18 Nov 2024 11:24:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731929061; cv=none; b=brvxpE7wLlLVBqqb05IVnacmXjCBmzRtFSmvrgUUYUSCmJne5pc5wn5ZPd+RIkEH//+lkNtIv2V5Gi3vhcZY/NFYcexqokANMOhYdCeAmiKazJq7JCgZetRyBKDjIDVcw4DTfwk8eX39sqMzBS3urgdvf7vwPfU1OFQ4hGmdHQY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731929061; c=relaxed/simple;
-	bh=cwfWqKb2oPi2VN5fRBTiB9MYZwt5qGyqB4hWNJzllj4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LzsYv4p/dMfQE+iAl5wd/sOBIRcl4d5eeUlrTgBl4ySZmRBrCQs+WeOOwHW6+bcbr4SmkIQdEUjbIDtaSALSXLJddEdHk9ChMn/HKpXjg1R3cY5hY9QhX9C4r7UzxcUJssz0eRwFnO4YTXTDJOlXLezSon9EUA5Ar0SS68gkEuI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A1aJyXbV; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-723f37dd76cso2421209b3a.0;
-        Mon, 18 Nov 2024 03:24:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731929060; x=1732533860; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=zQ2rPkNXPPvcolTw44Nc6tDll7Wen7YOVi3JKZbs/yI=;
-        b=A1aJyXbV9YDWwPPWhWVuafMtrLCgNVVBEbB7N0aEykHuYN30ILKWULuhT0y3PLT1Wb
-         uGXd/5gAA8bOUTgLZcNOQTGrY6WMXBM/nBonbpyLvJBGcyMUK5+X7w9QsvYwpnRumPJ1
-         H5wyefF+zUXCBFhsgmeXzbGz1mhLzzi//OfZeEdnpEHoZw5FrLCshblXkxSCRmGVJXtL
-         wTok+SdZLHajdXSBmNYEp7qzjwRfsjDdawfI+NgCEgleILxQ99m8H3CYPjdaSz868aWS
-         jrR3s4i6UwYvu3jQ39a4F3wWo/aiVLyVM06wEzM3PdgK4K1nD0273wcCEMJk43iis2s3
-         nKlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731929060; x=1732533860;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zQ2rPkNXPPvcolTw44Nc6tDll7Wen7YOVi3JKZbs/yI=;
-        b=B5vfZMwXC7JIpEOb7pGrD+EAkpKJ3ZafNfJpnwRmv5UTliErBYHfRABIpr8DPGi+4v
-         MBs+E2hi63EW7sLkeBglVDb8Hw3Efq0gzf5hzA4AlhNjht40ldWGqHDGJRiGmm0VtQAX
-         SMYsAWuJ2FraB9qE+b2Bk5B/hbsp9ZXIV/OSWdeGLr0Uq4tPblHn/NHzFE3KOw+el4B2
-         2fGETgJmrmWXZ5hhidJZ42/fikWPiT6g7sLQvPLeZDdP/gN2+fsDzzrXYosIUFMoEuLU
-         y0cgwYH6Bk+/57IA5euNPiy1T9d2Id9osMWYvMZGuC3xbLVpVzAWN68qCHeLL7R417IT
-         0Wlg==
-X-Forwarded-Encrypted: i=1; AJvYcCUO4sfcNnT1es/KtKzbgmhmbb9dEEXudVOdrjatzcJxA6lneQYDVcxox0pe7IN5tlO3Dbjjp4RAC7Rm@vger.kernel.org, AJvYcCUdhVsGY71HhbedjmM2FMTnEdGjgDnakNw3docUcC4ELm4gacqN4CbSjy6PC/xTv34YbtAYfNTkjNWfd9KH@vger.kernel.org, AJvYcCUgnK9bAGoGIYQXNG9QWrlWVA++xCyvyp5nAKa9hfrdt7tJ7lZUIyW4IPUr+NI0Tz+6kc9sxpEQhYmh@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvZ+DqUdBKYlS//nz4XfICudY46/UynPeSLb/Q0sv0YQGAJ1Ov
-	y9lQ0APIouS2gHLImMtIBQwZ8Id4kVhcboxKTsD1d47IukPKmOlL
-X-Google-Smtp-Source: AGHT+IFtMQFJC1y6uYyHpQbY8vkIy3CfXLJjbydMNPSXbqdvu3VmA4+1HEEbkkSSN4MxoMPyrmDoiA==
-X-Received: by 2002:a05:6a00:1890:b0:71e:634e:fe0d with SMTP id d2e1a72fcca58-72476bb01dbmr14956848b3a.12.1731929059402;
-        Mon, 18 Nov 2024 03:24:19 -0800 (PST)
-Received: from localhost ([2804:30c:1618:9800:694b:286f:2b3a:5414])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724772012fcsm6093086b3a.187.2024.11.18.03.24.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Nov 2024 03:24:18 -0800 (PST)
-Date: Mon, 18 Nov 2024 08:24:39 -0300
-From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>, lars@metafoo.de,
-	Michael.Hennerich@analog.com, jic23@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/4] dt-bindings: iio: adc: adi,ad4000: Add PulSAR
-Message-ID: <Zzsj9_HVBO5wrJv_@debian-BULLSEYE-live-builder-AMD64>
-References: <cover.1731626099.git.marcelo.schmitt@analog.com>
- <a155d0d0fb1d9b5eece86099af9b5c0fb76dcac2.1731626099.git.marcelo.schmitt@analog.com>
- <0b8a2d07-feea-409f-a850-7ee0c752a949@baylibre.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D58D190493;
+	Mon, 18 Nov 2024 11:25:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.41
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731929108; cv=fail; b=KIlDlYjhOH+DIvV+0qLIJEJqqJAr7rkENHpGmdeKsjPJELdB0XrpIp7nUC/9dEuFMixN++dsK8lo3Jp06GB3o+tTpLj/S3NpGBba1sePNUI3PEztUEgl+wCqtdJOvuMkTXETqjDU2OtsQbl/k91EJALw5hBNoQnwG38KDMLmrAQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731929108; c=relaxed/simple;
+	bh=gtnweQaa6tiiCi2CDFHcSjxULpDo/wjlJP6+PutqqXk=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=jDAz6Pg8CU7spuGfyyzQgQlXUID6kJxyzjJNvWrkzEpPhazJhjsngiWoqjZZ+kE87Ro5is9OutBmi1pUNXk188FuTIdR5FCB7EtOkqyzyNyK0H8s4Pfn5UYCu7VpSgk7ZTyPmqUE0D3eWJlVPjqEpWTh2FkoaCXDMJ7AmIaIhRo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=NutoibJR; arc=fail smtp.client-ip=40.107.220.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Tg1wRT0OT0PT60uroMrEAsvyUuAYWnCQMvH1w0khxDP+oscWunLjYmSV7wE2ITYwdrCcEddl28acl3gafBfBV6m8bg5hWZHD1jeHLm2ky1ZPZexcAmdz5GIU2Xcz7A0CU6hCVkcYdDmHiKBBZmJ4hyotUAT/Z8RKURd5R1Kn5JqaC1Z4S8y810ZfRAhVE+zjClSMfwxp0ARnkXAsQwioJ/HjFiiut+KRaxzgjkPwCYWk5H96j36QNrA/5cxJC+PZGkX8WSGblf8OUZesXoIaCfvUshISaUWiO0TNMfOog1Dy4G/YgZD8NLD09Bx8OI7VbNzJyXD4ZwbqG94HdOwOdw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=rz2HIVaXzdzvD1O9sYnNpYX5boYbEHl8K7jJAO9HuIc=;
+ b=JNzEcTrqos7kktf5Zx40EETe5FtNNj0iGwYRIg99sGlNNgUBVW0wkPHcftH2kbqlUCG+n13R3WZRgDQ0sjOS5ZzHkLSY/4Bb/UQdv+af1B0kNoBQOmzKHA1xLGh9yAnJACkj5egSz+m6vRtzmqZx25esi/I5MSf7QgFLGwNVIGlpz2cDkohR8AvyT0PqYO4eAB4M6gbC0Ix9IQOzD8b8XEr5a4iK4Dt04dTvhHXxO7e5MzVHKjbQNl8l15eYB5JZ1rvZ3At54IO99aPNyoIPZJUi5Esbjoqnj9dYETUYe5FtROYU2HqUn2+Kpn2zVeyToB+F2EYalxFW57IQosEJTQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rz2HIVaXzdzvD1O9sYnNpYX5boYbEHl8K7jJAO9HuIc=;
+ b=NutoibJR4FqFEYkm8fSdhjh46dIbB5DEMV5rdm24vTIduJmkTPgylHVwSmfAehkAbntFmjhLi+8Rz3pY4Pl4lKbYN2M4JH09NAbh+xT7ioT5mxRse1pj6dqlmfnP384JEHQwddCIeB6rLjfcrZGBF3nCrHuUf6JNvfAzTUfT7jQ=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
+ by CH0PR12MB8461.namprd12.prod.outlook.com (2603:10b6:610:183::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.23; Mon, 18 Nov
+ 2024 11:25:03 +0000
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5%5]) with mapi id 15.20.8158.019; Mon, 18 Nov 2024
+ 11:25:03 +0000
+Message-ID: <acd637f7-a1ce-443b-8d05-d285c28cea7d@amd.com>
+Date: Mon, 18 Nov 2024 12:24:56 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/radeon: Constify struct pci_device_id
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, linux@weissschuh.net,
+ broonie@kernel.org, lee@kernel.org, Alex Deucher
+ <alexander.deucher@amd.com>, Xinhui Pan <Xinhui.Pan@amd.com>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+References: <039846c0278276e7c652395730f36051216fd4c3.1731691556.git.christophe.jaillet@wanadoo.fr>
+Content-Language: en-US
+From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+In-Reply-To: <039846c0278276e7c652395730f36051216fd4c3.1731691556.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: FR3P281CA0096.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:a1::8) To PH7PR12MB5685.namprd12.prod.outlook.com
+ (2603:10b6:510:13c::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0b8a2d07-feea-409f-a850-7ee0c752a949@baylibre.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|CH0PR12MB8461:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2f5e7aa8-0ce1-4cea-ff58-08dd07c3a53d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?eHZQa1ozd3hpay9qZ0hNVHQ5bVpyUUF5VVV1U2wxYlptMHVEZDcwamlYcjlU?=
+ =?utf-8?B?RG5aTVBXZkY4OThJTFQ3dWhKREtWdndIYWZxYlRuWGRYMlZjSHB5d0dORGtw?=
+ =?utf-8?B?MFR2QkoxS2REUitiUklhaEhZdmNaTzVIRmYxYWplZ0NIQ0NzSDlsUm80Sm9Z?=
+ =?utf-8?B?TnhIOVBMWk9oVE1qZHNmK0JyVlIvYytrYzVTVDVja2VubjZjb2N6SW5oaGVO?=
+ =?utf-8?B?MmdLcVNtVCtPcUhXbnU3Vzl1WHBXRG1jcTA2YWdUNUVrdmQvQ0Y0SysyeVRp?=
+ =?utf-8?B?d0tyNFZYWDl5dTY3K0JSVDBHSHZJWmVXMHkzcHl6dlZnOFRtQ3JxTkFuNGlD?=
+ =?utf-8?B?ck8ybnNOSlFaMDE0RmNmOUZnUmZwRjhqTFlmSHdwWGxwOTVBMmpTRjNzNXUw?=
+ =?utf-8?B?aE9Sa1FjK3VyWGNiTjlzYTBnd1pPM1U2YXZpMVhwUldiaUlVcitUNzkxRHFx?=
+ =?utf-8?B?MkhEb293Nmx0cHVsa0ZxYkpIZTF6d1RSalk5cU56eWxiSVFhMGxsQ3BPbmRC?=
+ =?utf-8?B?QzJWWHVLRmRjRkpvSlBwSEFNcE5kQ3pQZ0hyVWFPR1dRb3lzM0lNRXFQSDYv?=
+ =?utf-8?B?YW4xWDZZU25uU1dyUmdSMVVmUjlEVVZlR1dMLy9JZkdtNjlHRGpyWHpoN09W?=
+ =?utf-8?B?c1JaS0cvc3hVNTRvWXQ2VTlIdlM5TE1IUWMxOVIyZHhHeHhmcERYOFhXWHI3?=
+ =?utf-8?B?UkFiVStlNVhWeUV5NVlUbCtzeVJyN091WnpML05zZW5FUzR1R2ZXK1FXcHhE?=
+ =?utf-8?B?M3doNTBDWE1uUW1WM1drZmppQytQWnlJN0NId0lsOTk2QUpoNzVIU3l6U2d2?=
+ =?utf-8?B?b0FyUFZqRVJqNXA2b1kzN2duU3NJWFVnV2lqYWNhVDVqc3MxeElvbnZRdEk3?=
+ =?utf-8?B?eGt4cGtxNHkvY1R0ZUpQQUk5anhQL0VacDBoOUFrZDBMOHBZWXRpdWMxTmdO?=
+ =?utf-8?B?WnJRUGI4OXFiaGlGdDRxQmNoaElQT0lpRjRndyt2RFhkcjgxSVZjRjMxQzNV?=
+ =?utf-8?B?d2NtVHVTWDJRVHJjRC9heEFmVHNianJPeFB0ZExXYmQ5Tyt1OWtmd3pISVU0?=
+ =?utf-8?B?dDVIYU83cXNESVlEbGF0MnJLMTVSclZvSUZiKzhML1JKREs3dElPQzE4c1Ft?=
+ =?utf-8?B?eER5RWRPV242U3l4eVhYbDVKWEo1Z29iZ3lVMjNBTVhhaVgraTR2aFhpYWRv?=
+ =?utf-8?B?UjQyMEg4dE0vZkRhcDd0M1lvMmFMN05nK2gzeE1HV2xSTlFXQmc4eEtsNG1G?=
+ =?utf-8?B?VjlteVVXckpLZ0xHM0hFSlp4Nlp5L0NjNm95WWJ3WkNGNUNvVFlGZjNnTGFS?=
+ =?utf-8?B?VittNXRUSW5yNEJyWmFJRlBLRVZCcHkyaTQzRkMwdGxkUGV2b0h3MXhDZjlP?=
+ =?utf-8?B?Q1IrdWpCbHdTOHdXaUhlbGZ4RGJXNEVvQU91MjRKZlRyL1dmamdzSnRXUlh5?=
+ =?utf-8?B?eXRIVnBFWWkyWjVRRmhEaldkdWo2bWMvRDVXV3FQRlZHMWpUQ3FWQ1JxQ0Q0?=
+ =?utf-8?B?NjRFUnZaOVAyNTBtQlJvTnlLd0t2K0lYdlgyWVF0T25iTGU5TWVVUkova1RH?=
+ =?utf-8?B?VUxkcGhIalZkUzdjWDJzbHNZZzVrQzFsZ2lQdnRaKzk1MzJ1cFBqcndjdEpw?=
+ =?utf-8?B?Sk5lVnRmSURwbUdtb3pwWlkvWHkyZFZUZVVKNm1QeDRPZzNRRXFJRVV0TEFB?=
+ =?utf-8?B?bFcvYUkzWmZpekg5dkxUMFg4ZUo5dndKeWlkcmZlVUFxSjBGZUdsbXZoM1hm?=
+ =?utf-8?Q?omWYGgqpRFMAAlEni3Aw9sV5CmIvNh3Vp6BKjZy?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?RmZDRzB6ay9ENnlkdGhSYzZhZm50Qi9aSjB6OGRzQnh5bzVEWmxMdm1ZaFdw?=
+ =?utf-8?B?dGg3cXBJaHhDTGxXTEVkUGJEcFhhS2wwRVozbWdxMUxiZW85Yks5NnRDTUxE?=
+ =?utf-8?B?anpwQkhFZU9jZUZodHd2VW9kcm43NnovcjRrb3ZHczFvaHJLbHFlZUpzQ3Vw?=
+ =?utf-8?B?czRZMUgzUU95TmNHaU1iSTd0ZFY2Yk0ySUpKSGJwcTdEQU1ENkluUyt6bU9i?=
+ =?utf-8?B?M2YyeC93K3pHMldOUHJuTkZSbE8zYUZHaFZSQ1A0Wk52OEtJMGRZdnRSVjBY?=
+ =?utf-8?B?TWltcmR2bHA4dHJjcUJqQU11azQyUlVzd1FHd0p4YkNlbnMyaE1vN1RjdHM3?=
+ =?utf-8?B?cUNaN1JPeitWTlNBcEZXVDJxc3lJM09DVjB6TDc2NFRJU2c0WnRLMWpNS3Bz?=
+ =?utf-8?B?YzhYcHp3dm5MS3UvN2RoVGtIdEFVWjIzODR6SzlqQnhFdUN5dHdlZ1ZtellE?=
+ =?utf-8?B?M3NuZjQrbEU4K1paU2NSekJBQmZlOXFqc2UzVnVySXlTV1F3NzhxcXNQWm9r?=
+ =?utf-8?B?dTRpSlVnRlB1SjhYeU9hZk5ONldzWVJmV2pURjBrQnBWVkxiUnc2WndjcG4y?=
+ =?utf-8?B?ZU1VRTN6L3ZUSEZOcDlIcTEvWWVtSmxLYm9PbTVxd0g0SXA5YXY4Zkl6QmNT?=
+ =?utf-8?B?VGE0UWJWUlpydmJDOE9pNzA5akNMZ1M2S1Q4REJFU3U2eXoyRVFBMENrMHFs?=
+ =?utf-8?B?eWluZWRGTWh0QVlnbWIyemZ2c0ZFTjFVUG0rakZBSlpaL25CNEFETy84eUhu?=
+ =?utf-8?B?RXZKUHV4NzBCa01YaGRnNnptZFBnSFhycnZEVmZ1L0MweC9XNWdtNWxPN0M1?=
+ =?utf-8?B?Q0FBUlVlWmdsaDl4UnlOUGRGYzh6eXhzQkEwOWs2Ny82ZWFhREQ4b2NJMTdS?=
+ =?utf-8?B?cDRHcW96eHZvY2Z1a3RPcGhGNnQ0UUl3Z1d5OXZGbTd6Slo2TEwxcFhzS21k?=
+ =?utf-8?B?M2t0R00ySzd5Vmt2ZXNURDlkdE9RczBQL3d4VnVKS0dHYmxCQXZLNUdubldp?=
+ =?utf-8?B?cWRuRGJMZUtKQW50eUtzbnEwVDNxYytRSDhBTzlad0pBM28yaVVDRGFEQUp4?=
+ =?utf-8?B?OUlMZWdaZFdwY3pTUGo2Mzh2NW90dDB5QWw5YUV5UGlQRVBna2xxVjBlS3Y3?=
+ =?utf-8?B?dlZRNE52dTN2aGxDNHdhcVhoZC9BQ3g4ZmV0U2R4b0tkOC90WEROeEkyRFFL?=
+ =?utf-8?B?Z3p6UloyREVhTmhhS09VNzlIZjlmc082bkJnaGk3SDRtaG9NN2NuaUJFTEh2?=
+ =?utf-8?B?QVRuTUxONG9WRWU5aEZYbDJZN0VHMDF2VjF2RnpMRW5CckxlUE5YcFRwNU9Z?=
+ =?utf-8?B?NWg3QzRMSStOMmVZVFBsZHg1TWMyRWtoSVVvbW1HdTRZcVJ5dU1OY3lpVWhh?=
+ =?utf-8?B?akZQR3RVbTBBeEhyYkZOTyt4bW16ME0zQ1dxcDJidVZkcVUwQTZZdDNjU0hF?=
+ =?utf-8?B?SkZPNkF5NVNRdVUyVXAxQkV2R1JVeHFGeHVWeFloZ3craTZBbktheUxNOHo5?=
+ =?utf-8?B?eVYzd2VmenYzYS9nRkFBTnc3Mzc1MFNuNVBTOVk0UTRmYVd1NWlsSy93WWx6?=
+ =?utf-8?B?Z1dBZlRFcnNYVXVmLzY5ZlF2NG9JbXZPUGxSQUFwZERUc1hDbEcvVG1BOFps?=
+ =?utf-8?B?VktmTFU0ZWIvdWVkcGlkRHZFWTViTXYyOW43SWRmbVUrY213ei91V29MbE9m?=
+ =?utf-8?B?WVB6K3hDSmdMU1VLa3JYQnpldzZyMUN2VjdHdDN2dG1saHBLYTB0UDliRmhm?=
+ =?utf-8?B?Ry81VXk0L3k5b3QvVndmTk82MUFvNmpCYURlU1hzTVl0NSs0RU1PaVVkRE1M?=
+ =?utf-8?B?aU1LWkJUeVBGWUlBdlMrb2owbUt6Q3lJS2tBN2lpbkxsOVdkUnRZbGtMMUNB?=
+ =?utf-8?B?SjJrS0RJUUNRalF0NUFmUzR5ZWFLSmNCMTV6MExGWUR3cDlJa2EvK0QxTlA3?=
+ =?utf-8?B?TnNCYkVNY0ZJRmU5TmNJOUkvZUlxR25IdFUwVVgzZXpyMFdvRWgyYko5T1Jo?=
+ =?utf-8?B?SkgvK1V5TGMxU1d6dEJWVWlvclZCSDYxci9pQ0orNFIyNWc5TDY0RHpuZnhR?=
+ =?utf-8?B?Q1ZEdnJlaVZBeWtrMGdmUlJxV3JxTjhac201YnI1VEwvMEhQVjBwS2dmYmxC?=
+ =?utf-8?Q?QZ0aLaWEQrp5/lBlJ4hjitQ5T?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2f5e7aa8-0ce1-4cea-ff58-08dd07c3a53d
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Nov 2024 11:25:03.1231
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: SInMB3XqjMUkEBwdAKl4V39rtCosse/V5POUGEDkUztrx1SebyrHeuK0Bent0HB8
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR12MB8461
 
-On 11/15, David Lechner wrote:
-> On 11/14/24 5:50 PM, Marcelo Schmitt wrote:
-> > Extend the AD4000 series device tree documentation to also describe
-> > PulSAR devices.
-> > 
-> > Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
-> > ---
-> >  .../bindings/iio/adc/adi,ad4000.yaml          | 115 +++++++++++++++++-
-> >  1 file changed, 114 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad4000.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad4000.yaml
-> > index e413a9d8d2a2..35049071a9de 100644
-> > --- a/Documentation/devicetree/bindings/iio/adc/adi,ad4000.yaml
-> > +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad4000.yaml
-> > @@ -19,6 +19,21 @@ description: |
-> >      https://www.analog.com/media/en/technical-documentation/data-sheets/ad4020-4021-4022.pdf
-> >      https://www.analog.com/media/en/technical-documentation/data-sheets/adaq4001.pdf
-> >      https://www.analog.com/media/en/technical-documentation/data-sheets/adaq4003.pdf
-> > +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7685.pdf
-> > +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7686.pdf
-> > +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7687.pdf
-> > +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7688.pdf
-> > +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7690.pdf
-> > +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7691.pdf
-> > +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7693.pdf
-> > +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7694.pdf
-> > +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7942.pdf
-> > +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7946.pdf
-> > +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7980.pdf
-> > +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7982.pdf
-> > +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7983.pdf
-> > +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7984.pdf
-> > +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7988-1_7988-5.pdf
-> 
-> It would be nice to sort these lowest number first.
+Am 15.11.24 um 18:26 schrieb Christophe JAILLET:
+> 'struct pci_device_id' is not modified in this driver.
+>
+> Constifying this structure moves some data to a read-only section, so
+> increase overall security.
+>
+> On a x86_64, with allmodconfig:
+> Before:
+> ======
+>     text	   data	    bss	    dec	    hex	filename
+>    11984	  28672	     44	  40700	   9efc	drivers/gpu/drm/radeon/radeon_drv.o
+>
+> After:
+> =====
+>     text	   data	    bss	    dec	    hex	filename
+>    40000	    664	     44	  40708	   9f04	drivers/gpu/drm/radeon/radeon_drv.o
 
-Ack
+Mhm that's a bit more than "some data" :)
 
-> 
-> >  
-> >  $ref: /schemas/spi/spi-peripheral-props.yaml#
-> >  
-> > @@ -63,6 +78,38 @@ properties:
-> >  
-> >        - const: adi,adaq4003
-> >  
-> > +      - const: adi,ad7946
-> > +      - items:
-> > +          - enum:
-> > +              - adi,ad7942
-> > +          - const: adi,ad7946
-> > +
-> > +      - const: adi,ad7983
-> > +      - items:
-> > +          - enum:
-> > +              - adi,ad7980
-> > +              - adi,ad7988-5
-> > +              - adi,ad7686
-> > +              - adi,ad7685
-> > +              - adi,ad7694
-> > +              - adi,ad7988-1
-> > +          - const: adi,ad7983
-> > +
-> > +      - const: adi,ad7688
-> > +      - items:
-> > +          - enum:
-> > +              - adi,ad7693
-> > +              - adi,ad7687
-> > +          - const: adi,ad7688
-> > +
-> > +      - const: adi,ad7984
-> > +      - items:
-> > +          - enum:
-> > +              - adi,ad7982
-> > +              - adi,ad7690
-> > +              - adi,ad7691
-> > +          - const: adi,ad7984
-> > +
-> 
-> IMHO, having fallbacks just makes the bindings harder to use and doesn't
-> actually provide any useful benefit.
-> 
-Having fallbacks was a suggestion from a dt maintainer to the ad4000 series.
-I assumed they would ask it for PulSAR too. Will wait a comment from a dt
-maintainer to change it.
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-> And with this many chips, it can be easy to overlook a small difference
-> in one chips, like ad7694 not having VIO pin, so is it really fallback
-> compatible? Easier to just avoid the question and not have fallbacks.
-> 
-The absence of a VIO pin does not change how the driver handles the devices.
-They are compatible from software perspective.
+Acked-by: Christian König <christian.koenig@amd.com>
 
-> >    reg:
-> >      maxItems: 1
-> >  
-> > @@ -129,10 +176,76 @@ required:
-> >    - compatible
-> >    - reg
-> >    - vdd-supply
-> > -  - vio-supply
-> >    - ref-supply
-> >  
-> >  allOf:
-> > +  # AD7694 doesn't have a VIO pin
-> 
-> It sounds like using not: could make this if: a lot shorter.
+> ---
+> Compile tested-only.
+> ---
+>   drivers/gpu/drm/radeon/radeon_drv.c | 3 +--
+>   1 file changed, 1 insertion(+), 2 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/radeon/radeon_drv.c b/drivers/gpu/drm/radeon/radeon_drv.c
+> index 23d6d1a2586d..5e958cc223f4 100644
+> --- a/drivers/gpu/drm/radeon/radeon_drv.c
+> +++ b/drivers/gpu/drm/radeon/radeon_drv.c
+> @@ -248,10 +248,9 @@ int radeon_cik_support = 1;
+>   MODULE_PARM_DESC(cik_support, "CIK support (1 = enabled (default), 0 = disabled)");
+>   module_param_named(cik_support, radeon_cik_support, int, 0444);
+>   
+> -static struct pci_device_id pciidlist[] = {
+> +static const struct pci_device_id pciidlist[] = {
+>   	radeon_PCI_IDS
+>   };
+> -
+>   MODULE_DEVICE_TABLE(pci, pciidlist);
+>   
+>   static const struct drm_driver kms_driver;
 
-Ack
-
-> 
-> Also, it looks like ad7983 doesn't have the pin either.
-
-Ack
-
-> 
-> > +  - if:
-> > +      properties:
-> > +        compatible:
-> > +          contains:
-> > +            enum:
-> > +              - adi,ad4000
-> > +              - adi,ad4001
-> > +              - adi,ad4002
-> > +              - adi,ad4003
-> > +              - adi,ad4004
-> > +              - adi,ad4005
-> > +              - adi,ad4006
-> > +              - adi,ad4007
-> > +              - adi,ad4008
-> > +              - adi,ad4010
-> > +              - adi,ad4011
-> > +              - adi,ad4020
-> > +              - adi,ad4021
-> > +              - adi,ad4022
-> > +              - adi,adaq4001
-> > +              - adi,adaq4003
-> > +              - adi,ad7685
-> > +              - adi,ad7686
-> > +              - adi,ad7687
-> > +              - adi,ad7688
-> > +              - adi,ad7690
-> > +              - adi,ad7691
-> > +              - adi,ad7693
-> > +              - adi,ad7942
-> > +              - adi,ad7946
-> > +              - adi,ad7980
-> > +              - adi,ad7982
-> > +              - adi,ad7983
-> > +              - adi,ad7984
-> > +              - adi,ad7988-1
-> > +              - adi,ad7988-5
-> > +    then:
-> > +      required:
-> > +        - vio-supply
-> > +  # Single-channel PulSAR devices have SDI either tied to VIO, GND, or host CS.
-> 
-> To me, the more interesting thing to say here is that the sdi
-> option is omitted because these chips don't have a programmable
-> register.
-
-Yes, that's correct. But the adi,sdi-pin property is about what is connected
-to the SDI/MOSI pin so I kept the comment about hw connections only.
-We could in theory connect SDI to host MOSI and set MOSI idle high (if the
-controller supports that), but that is harder to describe.
-
-> 
-> > +  - if:
-> > +      properties:
-> > +        compatible:
-> > +          contains:
-> > +            enum:
-> > +              - adi,ad7685
-> > +              - adi,ad7686
-> > +              - adi,ad7687
-> > +              - adi,ad7688
-> > +              - adi,ad7690
-> > +              - adi,ad7691
-> > +              - adi,ad7693
-> > +              - adi,ad7694
-> > +              - adi,ad7942
-> > +              - adi,ad7946
-> > +              - adi,ad7980
-> > +              - adi,ad7982
-> > +              - adi,ad7983
-> > +              - adi,ad7984
-> > +              - adi,ad7988-1
-> > +              - adi,ad7988-5
-> > +    then:
-> > +      properties:
-> > +        adi,sdi-pin:
-> > +          enum: [ high, low, cs ]
-> > +          default: high
-> 
-> For the similar ad7944, Rob suggested that the default should be the equivalent
-> of "cs" since that is most like "regular" SPI. So I think it makes sense do the
-> same here. (The adi,spi-mode property in the ad7944 binding is named a bit
-> different, single = high, chain = low and _property omitted_ (default) = cs)
-Ack
-
-> 
-> >    # The configuration register can only be accessed if SDI is connected to MOSI
-> >    - if:
-> >        required:
-> 
 
