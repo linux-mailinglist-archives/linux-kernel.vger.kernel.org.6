@@ -1,156 +1,164 @@
-Return-Path: <linux-kernel+bounces-412834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 552239D0FCE
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 12:34:35 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E34B39D0FD4
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 12:37:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0209F1F225F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:34:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71AB3B22E7F
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:36:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 042331990AD;
-	Mon, 18 Nov 2024 11:34:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C19D194A68;
+	Mon, 18 Nov 2024 11:36:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iJg7+kp6"
-Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="hyFykbrM"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 027D13BBF2;
-	Mon, 18 Nov 2024 11:34:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FE21188A0D
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 11:36:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731929664; cv=none; b=BuaIPXvmaKbo8oqZ/6jBbOioJSuHGxhXNnpkhCoggQO1k8S8lIcfs/WU9HrGKbD5ZChGSAKEvDyBXfPln27sWlTZo9mygeJ7ZkSLh/mLVPGdCBg7WVcQx1ATf6o2Uc3uh/zmKR9O9SuJsGe7pZ2nSTAkoHwvr1hdekbfamSYd84=
+	t=1731929801; cv=none; b=mjfzmfRg1Sik9QMtHNLDT/SNrRSJJicjtBuXjmTiGJAQS1QdL+BnVpk7fVUvooSDq/S1lFWzz9cd3bBVjs6NR6je71OmrIaAf52rto4FCBD+0Gl9tL2hGDGc/O01QIrWbBk+uzJt8nY5RgN28f+qmzwe3xghefUk1VBPRtnIdVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731929664; c=relaxed/simple;
-	bh=RdC1LlnbhGN7esaUqZ1ZsXKq0EcLZt7thcJkXxrpVjE=;
+	s=arc-20240116; t=1731929801; c=relaxed/simple;
+	bh=6CKW1PZZXpj2YUvD7cXnvJodB4Lzp685MarqaX86D2U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Zt13ou9yUqrtL542+y7aybQINYDvOi2MFB8hQ3BqUUrwLa7+0KiGryxSGAQqX33Zq9NkZD1t0kQrwGQp55mUiZxi+610jDAI4hMSvADVeAbuY3k79FSLg7FVLkNQ6jy6R/A9M/votyWiH+VEUJ70o2vsk3194XT6x9YB11cPt1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iJg7+kp6; arc=none smtp.client-ip=209.85.166.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-3a70315d38dso5421175ab.0;
-        Mon, 18 Nov 2024 03:34:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731929662; x=1732534462; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xBt+VM3XUf38/2UTMI3czA73IaeQUs1IwdyKg6N5eu4=;
-        b=iJg7+kp6HaQtOXeYJlCN+Q+JioNABTGa/VALHOlfDwRtTAUDyt5GD9Vcc9+g6DfBsb
-         wJKJiy0i0+jSCeWyMDxnCUW3oJOewvz02nlGjyA0CYAQINjGETAH9E/uK7atuK0DvX29
-         hwYaJ3ub6FRc0acVJCybOQMKJr6ay7ddMRYs4En6dimdUmflylPodM8ubn+MQt9qNtsW
-         VNqhZObDcS6ogYmYW+d3QIzp5dhSSGushSKHsDvf00FPWIKW206cZdv01MATOamWITY8
-         c+6u5V1Cb0k5YMrGHJb5IMqk8LJb/S2IC0GaN0LcB64gttTrkmpluOMRRkxK8msoDHyV
-         gWqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731929662; x=1732534462;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xBt+VM3XUf38/2UTMI3czA73IaeQUs1IwdyKg6N5eu4=;
-        b=w9chGeiNGENjR8SIQmfcKQHYWXdtrGfGGKSNa/wXQCgahMeTQvgeE74DDDiIs9bAnw
-         Ny5JLMKTF4DeQQ4zec4XdFfFUJcpHrO3QKbyLtu3mseNEPyJC15DdMnLawRIu610NaDB
-         XFIoslwy5behqlsn4sUcwhpz2wf+YmfIzu/MGHkLSSIr33zr3smpt8YYBFcl2JnzjNws
-         TAjoxf5AmIZjNCvrL8jeI3Vy8xKUlnSZ1s/xvlVk9oS4B+xWk0Rj4FMrwNUQ6u8WbWGT
-         ch26/zyBacb7APE5qLdNmlQzDypbtbW+xXYfD9HXVx/evXKF0btSoilDv6npZdnSNRSD
-         enqA==
-X-Forwarded-Encrypted: i=1; AJvYcCUhkFyH0lh97TChTHpc9dq6/maV7t9nKljuuMLOA2T0qcJX5Im3kM+gc+q5puULjoo6BFX9ln8IcA81@vger.kernel.org, AJvYcCUw8Nl79HFZy07jmmNTGFx0AqbR2r6E7tFL62y3N126QWDomjx8o5mBCG8YfFlbDqZ7wCE1jAa7OQ6mC0CD@vger.kernel.org, AJvYcCVLjDBDzdtgaNKT/vAlUckON/IKG0tIZ6YqW9BXWop95y7pb0W+OsfudLf4xIjwU6X5YuKyFNosgx7/@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTT3ehk5BCRuTscuPeRgasjNRJI41PwDPn2prjA6XMY6erziY0
-	M+uSQv6f21zPtWL0nE88SUfsklNL/qClLeyzovar0McmLQM5cJGAZolB/wuB
-X-Google-Smtp-Source: AGHT+IGPLb61oLo5RtwBoYSmDN9uJM1DNkfCadfAXWDi+2vMIybRV5hFOvHZIMgDw69aXWcJH2qtYA==
-X-Received: by 2002:a92:c248:0:b0:3a7:6c5c:9aa4 with SMTP id e9e14a558f8ab-3a76c5c9b34mr18835875ab.12.1731929661993;
-        Mon, 18 Nov 2024 03:34:21 -0800 (PST)
-Received: from localhost ([2804:30c:1618:9800:694b:286f:2b3a:5414])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7f8c1c616a7sm5779706a12.39.2024.11.18.03.34.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Nov 2024 03:34:21 -0800 (PST)
-Date: Mon, 18 Nov 2024 08:34:42 -0300
-From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>, lars@metafoo.de,
-	Michael.Hennerich@analog.com, jic23@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/4] iio: adc: ad4000: Use device specific timing for SPI
- transfers
-Message-ID: <ZzsmUqqyAll9BBCv@debian-BULLSEYE-live-builder-AMD64>
-References: <cover.1731626099.git.marcelo.schmitt@analog.com>
- <81370b043de208795738e5679c33de37439c0a2e.1731626099.git.marcelo.schmitt@analog.com>
- <7e302a49-db5a-444d-aae1-3c80ab75b471@baylibre.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=iFnH6K/2SGfYYy8+uXp8SI0ugoR7Cj1naUhmk5dvvp8AVM2xT9ZNBCp7derLShVQWlyH94Yp/zum+tMUIdArpIjk2/7TF45rhUmhnvG1ueWUb8vApccPDBaf2qz1ahydzVwBY7IRI6Waiwhe57JsevNdvQ0yu+Sb+p1p7yPbU18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=hyFykbrM; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1731929790;
+	bh=6CKW1PZZXpj2YUvD7cXnvJodB4Lzp685MarqaX86D2U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hyFykbrMhhu6zI5bqdP4p2IIw21E8xyGjKAMvZvWz1CXNWVPHpeJWMVAI4kz+vShH
+	 j56XAsoZ05/gDW9k9BPbEwyk1XLcq5lLRfibPdz91fG6YcwxOa0W21sUAYaPgPmMER
+	 zmIEc31T1nvG2HYxl/rYvZ6mRI65TZi2Y9TZrg6g=
+Date: Mon, 18 Nov 2024 12:36:06 +0100
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rafael@kernel.org>
+Subject: Re: [PATCH 1/2] sysfs: attribute_group: allow registration of const
+ bin_attribute
+Message-ID: <71fe4030-d6a1-47da-b8a7-28b899187168@t-8ch.de>
+References: <20241115-b4-sysfs-const-bin_attr-group-v1-0-2c9bb12dfc48@weissschuh.net>
+ <20241115-b4-sysfs-const-bin_attr-group-v1-1-2c9bb12dfc48@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <7e302a49-db5a-444d-aae1-3c80ab75b471@baylibre.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241115-b4-sysfs-const-bin_attr-group-v1-1-2c9bb12dfc48@weissschuh.net>
 
-On 11/15, David Lechner wrote:
-> On 11/14/24 5:51 PM, Marcelo Schmitt wrote:
-> > The SPI transfers for AD4020, AD4021, and AD4022 have slightly different
-> > timing specifications. Use device specific timing constraints to set SPI
-> > transfer parameters.
-> > 
-> > Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
-> > ---
-> >  drivers/iio/adc/ad4000.c | 50 ++++++++++++++++++++++++++++++++--------
-> >  1 file changed, 41 insertions(+), 9 deletions(-)
-> > 
-> > diff --git a/drivers/iio/adc/ad4000.c b/drivers/iio/adc/ad4000.c
-> > index 21731c4d31ee..68ac77494263 100644
-> > --- a/drivers/iio/adc/ad4000.c
-> > +++ b/drivers/iio/adc/ad4000.c
-> > @@ -35,10 +35,6 @@
-> >  
-> >  #define AD4000_SCALE_OPTIONS		2
-> >  
-> > -#define AD4000_TQUIET1_NS		190
-> > -#define AD4000_TQUIET2_NS		60
-> > -#define AD4000_TCONV_NS			320
-> 
-> We are removing 3 but only adding 2 in the struct below?
-> 
-> If one of these was unused, best to mention it in the commit message.
+Hi Greg,
 
-One of them was unused (AD4000_TQUIET1_NS IRCC).
-Sure, will add a comment about it in the commit body.
+On 2024-11-15 17:42:48+0100, Thomas Weißschuh wrote:
 
-> 
-> > -
-> >  #define __AD4000_DIFF_CHANNEL(_sign, _real_bits, _storage_bits, _reg_access)	\
-> >  {										\
-> >  	.type = IIO_VOLTAGE,							\
-> > @@ -122,10 +118,30 @@ static const int ad4000_gains[] = {
-> >  	454, 909, 1000, 1900,
-> >  };
-> >  
-> > +struct ad4000_time_spec {
-> > +	int t_conv_ns;
-> > +	int t_quiet2_ns;
-> > +};
-> > +
-> > +/*
-> > + * Same timing specifications for all of AD4000, AD4001, ..., AD4008, AD4010,
-> > + * ADAQ4001, and ADAQ4003.
-> > + */
-> > +static const struct ad4000_time_spec ad4000_t_spec = {
-> > +	.t_conv_ns = 320,
-> > +	.t_quiet2_ns = 60,
-> > +};
-> > +
-> > +static const struct ad4000_time_spec ad4020_t_spec = {
-> > +	.t_conv_ns = 350,
-> > +	.t_quiet2_ns = 60,
-> > +};
-> 
-> t_quiet2_ns is the same in both cases, so do we actually need to
-> add it here instead of using a common macro? Or if it is for future
-> differences, mention that in the commit message.
+> [..]
 
-Okay, will add a macro for setting ad4000_time_spec. My plan is to also add a
-t_quiet1_ns filed which will be needed for offloading support.
-t_quiet1_ns will also differ between AD4000 and AD4020.
+> diff --git a/include/linux/sysfs.h b/include/linux/sysfs.h
+> index d713a6445a6267145a7014f308df3bb25b8c3287..0f2fcd244523f050c5286f19d4fe1846506f9214 100644
+> --- a/include/linux/sysfs.h
+> +++ b/include/linux/sysfs.h
+> @@ -106,7 +106,10 @@ struct attribute_group {
+>  					    const struct bin_attribute *,
+>  					    int);
+>  	struct attribute	**attrs;
+> -	struct bin_attribute	**bin_attrs;
+> +	union {
+> +		struct bin_attribute		**bin_attrs;
+> +		const struct bin_attribute	*const *bin_attrs_new;
+> +	};
+
+Unfortunately this triggers warnings in two drivers.
+These incorrectly have a trailing NULL literal in their struct attribute
+definition (full list at the end of the mail):
+
+>> drivers/perf/arm-ni.c:248:63: warning: missing braces around initializer [-Wmissing-braces]
+     248 | static const struct attribute_group arm_ni_other_attr_group = {
+         |                                                               ^
+
+
+vim +248 drivers/perf/arm-ni.c
+
+4d5a7680f2b4d0 Robin Murphy 2024-09-04  247
+4d5a7680f2b4d0 Robin Murphy 2024-09-04 @248  static const struct attribute_group arm_ni_other_attr_group = {
+4d5a7680f2b4d0 Robin Murphy 2024-09-04  249  	.attrs = arm_ni_other_attrs,
+4d5a7680f2b4d0 Robin Murphy 2024-09-04  250  	NULL
+4d5a7680f2b4d0 Robin Murphy 2024-09-04  251  };
+4d5a7680f2b4d0 Robin Murphy 2024-09-04  252
+
+These trailing NULLs should first be removed.
+How do you want to proceed?
+
+Cocci script and results, only the first two results are relevant at
+this moment.
+
+	virtual patch
+
+	@@
+	identifier ag, pattrs;
+	@@
+
+	  struct attribute_group ag = {
+	    .attrs = pattrs,
+	-   NULL
+	  };
+
+diff -u -p a/drivers/s390/char/con3215.c b/drivers/s390/char/con3215.c
+--- a/drivers/s390/char/con3215.c
++++ b/drivers/s390/char/con3215.c
+@@ -803,7 +803,6 @@ static struct attribute *con3215_drv_att
+
+ static struct attribute_group con3215_drv_attr_group = {
+ 	.attrs = con3215_drv_attrs,
+-	NULL,
+ };
+
+ static const struct attribute_group *con3215_drv_attr_groups[] = {
+diff -u -p a/drivers/perf/arm-ni.c b/drivers/perf/arm-ni.c
+--- a/drivers/perf/arm-ni.c
++++ b/drivers/perf/arm-ni.c
+@@ -247,7 +247,6 @@ static struct attribute *arm_ni_other_at
+
+ static const struct attribute_group arm_ni_other_attr_group = {
+ 	.attrs = arm_ni_other_attrs,
+-	NULL
+ };
+
+ static const struct attribute_group *arm_ni_attr_groups[] = {
+diff -u -p a/kernel/cpu.c b/kernel/cpu.c
+--- a/kernel/cpu.c
++++ b/kernel/cpu.c
+@@ -2866,7 +2866,6 @@ static struct attribute *cpuhp_cpu_attrs
+ static const struct attribute_group cpuhp_cpu_attr_group = {
+ 	.attrs = cpuhp_cpu_attrs,
+ 	.name = "hotplug",
+-	NULL
+ };
+
+ static ssize_t states_show(struct device *dev,
+@@ -2898,7 +2897,6 @@ static struct attribute *cpuhp_cpu_root_
+ static const struct attribute_group cpuhp_cpu_root_attr_group = {
+ 	.attrs = cpuhp_cpu_root_attrs,
+ 	.name = "hotplug",
+-	NULL
+ };
+
+ #ifdef CONFIG_HOTPLUG_SMT
+@@ -3020,7 +3018,6 @@ static struct attribute *cpuhp_smt_attrs
+ static const struct attribute_group cpuhp_smt_attr_group = {
+ 	.attrs = cpuhp_smt_attrs,
+ 	.name = "smt",
+-	NULL
+ };
+
+ static int __init cpu_smt_sysfs_init(void)
 
