@@ -1,58 +1,56 @@
-Return-Path: <linux-kernel+bounces-413335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F01A29D1783
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 19:01:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79A9C9D178A
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 19:02:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7717AB21C05
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 18:01:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E717282E85
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 18:02:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 728D41D1F7F;
-	Mon, 18 Nov 2024 18:01:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54FF91DE3DE;
+	Mon, 18 Nov 2024 18:02:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ADFMxlH5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HOVtZbhj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6B671D1F56;
-	Mon, 18 Nov 2024 18:01:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4CB41DE3C9
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 18:02:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731952882; cv=none; b=YVDwO8bSVuARxsqT+cMpWeZigXtUky1+ISj3Rb4uxRSZ6CNph/KfakeQ8B5x1ekJt07R3xh3tvzCH+fQ013UO1zmuNk6H/AC76oKgezhUC48io9x5opbqtxm6cnrglJBJYnKAIKE90ffFquN1pVhXV/q8qHGlXRgkZccgZbeqKc=
+	t=1731952955; cv=none; b=kwWdSfM2+WLq058r0+yheLd/OFlG3TkU+O3FTLTsS1Ix0OaafwbO2kA8wui22wVCIPoiCf0PpxZwKtWuKthRLyhPtN4iWEg3zeN13ZAVzrplu2S+BxBPyT0FymklzvhkDVkb+xrO7l/fdT4Kr0mjjkytNNRc+J9YdX6aTp/BPhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731952882; c=relaxed/simple;
-	bh=zfB93JeM7MiYyZSDcH+Cv62cIp0qVV5wlF6CFxF1K18=;
+	s=arc-20240116; t=1731952955; c=relaxed/simple;
+	bh=OitMnpPTLbNgGuBGp3c4MjmLfT4VC6qhFbyzp/4NhIM=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=FlZ2cUBopiXuO1CwhtbGZmU/F5DbL5WPEVqLUfl1tfiI5zQN8yDHCQQKdquCAINL2NVxnLAOrnzF9fnMWFjL30kX3iV8gCMw9d+Vc2Ah3c1+QdSho5//Y+nI4YtU+d3EZs80/tM4oHgIo7JT03T72EYjraFDX8BWy9mL/X16IQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ADFMxlH5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43352C4CEDB;
-	Mon, 18 Nov 2024 18:01:20 +0000 (UTC)
+	 Content-Disposition; b=G6hRuCksw1glAXloMobC+74uLegOikmgci0Hmf3mv02Y4HR1k6xkTPZtQ/xVhGL0ZCpKGQ2JdydX3sBbWl1NiTv2N8RLKaymrd5pYSZIHxwmEH2ONiAk5vDjT42f+rSMMQyKSQVOCc/u2Q/fIuNpP0uMUnkBuVxKPaby8ipAVgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HOVtZbhj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C6EAC4CECC;
+	Mon, 18 Nov 2024 18:02:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731952882;
-	bh=zfB93JeM7MiYyZSDcH+Cv62cIp0qVV5wlF6CFxF1K18=;
+	s=k20201202; t=1731952955;
+	bh=OitMnpPTLbNgGuBGp3c4MjmLfT4VC6qhFbyzp/4NhIM=;
 	h=Date:From:To:Cc:Subject:From;
-	b=ADFMxlH5rEq8MwweLsqJrwre6fEPPlvK7CfR5WASeU6ROG/lDPKs4cDH3pGwbh+L0
-	 2Cxs/HCqT8+pYR3g+KpjUwpu72SIMJRMsCm4mTnczc2KwtZC93Lc3Akrz6bRcw3NBv
-	 1gJtB1Df5vt1jxPkN1YHiWP6QPhdMgOkX2TktPc4n42dqyFVlwZtwD9fixO7UspKF1
-	 h1pTL//ZOUmRluUB6LBq5wS7vDbXIHyMtSlIL+Ew+si0+mYUuAGpVMPfoDdtlG0Ih0
-	 Vc9KchHneimofvsWYT/chcPV8espz8AFrjPSr0xH4sRyrxIW6lxw5ioC/dPiGU/fWo
-	 LmpLLNIi/tpwg==
-Date: Mon, 18 Nov 2024 12:01:17 -0600
-From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-To: Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Jeff Layton <jlayton@kernel.org>, Neil Brown <neilb@suse.de>,
-	Olga Kornievskaia <okorniev@redhat.com>,
-	Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>
-Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH][next] fs: nfs: acl: Avoid -Wflex-array-member-not-at-end
- warning
-Message-ID: <ZzuA7SRUjFPK7Ayf@kspp>
+	b=HOVtZbhjtyBrpEnvYqU9Lhyojy0f41IHWswABzbwM2N7kDs0qpXtnqaTWiDAsYXff
+	 E9zupPi4x0mg2bV/UP3TLFFae/0Zt1hRoGwZN38r5/9CTAsrTAyjjYZrOp046q3R/D
+	 B/T1l2vuBLNjlv2WzRNBphnOYEwjfO/joVoeZRAxdo9kpjUwgXjS/ozaTtjMNPbSI3
+	 z1nS+Xkr5Gco7bBltbHVfNRcuumli5iw4jpLz40RNF0AP5Ano8zFN6Fw/tDMrWju9e
+	 0m/anL1YAc1Tx+QfyG3wxooYkNNIKz1qqkhg1E9jPOe/vPv/FS2UEqaDBndxWDbv3N
+	 ejS5p0NCqq2eQ==
+Date: Mon, 18 Nov 2024 19:02:30 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, Borislav Petkov <bp@alien8.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Ravi Bangoria <ravi.bangoria@amd.com>,
+	Tom Lendacky <thomas.lendacky@amd.com>
+Subject: [GIT PULL] x86/splitlock changes for v6.13
+Message-ID: <ZzuBNj4JImJGUNJc@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,103 +60,38 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
--Wflex-array-member-not-at-end was introduced in GCC-14, and we are
-getting ready to enable it, globally.
+Linus,
 
-So, in order to avoid ending up with a flexible-array member in the
-middle of other structs, we use the `struct_group_tagged()` helper
-to create a new tagged `struct posix_acl_hdr`. This structure
-groups together all the members of the flexible `struct posix_acl`
-except the flexible array.
+Please pull the latest x86/splitlock Git tree from:
 
-As a result, the array is effectively separated from the rest of the
-members without modifying the memory layout of the flexible structure.
-We then change the type of the middle struct member currently causing
-trouble from `struct posix_acl` to `struct posix_acl_hdr`.
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-splitlock-2024-11-18
 
-We also want to ensure that when new members need to be added to the
-flexible structure, they are always included within the newly created
-tagged struct. For this, we use `static_assert()`. This ensures that the
-memory layout for both the flexible structure and the new tagged struct
-is the same after any changes.
+   # HEAD: 408eb7417a92c5354c7be34f7425b305dfe30ad9 x86/bus_lock: Add support for AMD
 
-This approach avoids having to implement `struct posix_acl_hdr` as a
-completely separate structure, thus preventing having to maintain two
-independent but basically identical structures, closing the door to
-potential bugs in the future.
+x86/splitlock changes for v6.13:
 
-We also use `container_of()` whenever we need to retrieve a pointer to
-the flexible structure, through which we can access the flexible-array
-member, if necessary.
+ - Move Split and Bus lock code to a dedicated file (Ravi Bangoria)
+ - Add split/bus lock support for AMD (Ravi Bangoria)
 
-So, with these changes, fix the following warning:
+ Thanks,
 
-fs/nfs_common/nfsacl.c:45:26: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+	Ingo
 
-Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
----
- fs/nfs_common/nfsacl.c    |  8 +++++---
- include/linux/posix_acl.h | 11 ++++++++---
- 2 files changed, 13 insertions(+), 6 deletions(-)
+------------------>
+Ravi Bangoria (2):
+      x86/split_lock: Move Split and Bus lock code to a dedicated file
+      x86/bus_lock: Add support for AMD
 
-diff --git a/fs/nfs_common/nfsacl.c b/fs/nfs_common/nfsacl.c
-index ea382b75b26c..e2eaac14fd8e 100644
---- a/fs/nfs_common/nfsacl.c
-+++ b/fs/nfs_common/nfsacl.c
-@@ -42,7 +42,7 @@ struct nfsacl_encode_desc {
- };
- 
- struct nfsacl_simple_acl {
--	struct posix_acl acl;
-+	struct posix_acl_hdr acl;
- 	struct posix_acl_entry ace[4];
- };
- 
-@@ -112,7 +112,8 @@ int nfsacl_encode(struct xdr_buf *buf, unsigned int base, struct inode *inode,
- 	    xdr_encode_word(buf, base, entries))
- 		return -EINVAL;
- 	if (encode_entries && acl && acl->a_count == 3) {
--		struct posix_acl *acl2 = &aclbuf.acl;
-+		struct posix_acl *acl2 =
-+			container_of(&aclbuf.acl, struct posix_acl, hdr);
- 
- 		/* Avoid the use of posix_acl_alloc().  nfsacl_encode() is
- 		 * invoked in contexts where a memory allocation failure is
-@@ -177,7 +178,8 @@ bool nfs_stream_encode_acl(struct xdr_stream *xdr, struct inode *inode,
- 		return false;
- 
- 	if (encode_entries && acl && acl->a_count == 3) {
--		struct posix_acl *acl2 = &aclbuf.acl;
-+		struct posix_acl *acl2 =
-+			container_of(&aclbuf.acl, struct posix_acl, hdr);
- 
- 		/* Avoid the use of posix_acl_alloc().  nfsacl_encode() is
- 		 * invoked in contexts where a memory allocation failure is
-diff --git a/include/linux/posix_acl.h b/include/linux/posix_acl.h
-index e2d47eb1a7f3..62d497763e25 100644
---- a/include/linux/posix_acl.h
-+++ b/include/linux/posix_acl.h
-@@ -27,11 +27,16 @@ struct posix_acl_entry {
- };
- 
- struct posix_acl {
--	refcount_t		a_refcount;
--	unsigned int		a_count;
--	struct rcu_head		a_rcu;
-+	/* New members MUST be added within the struct_group() macro below. */
-+	struct_group_tagged(posix_acl_hdr, hdr,
-+		refcount_t		a_refcount;
-+		unsigned int		a_count;
-+		struct rcu_head		a_rcu;
-+	);
- 	struct posix_acl_entry	a_entries[] __counted_by(a_count);
- };
-+static_assert(offsetof(struct posix_acl, a_entries) == sizeof(struct posix_acl_hdr),
-+	      "struct member likely outside of struct_group_tagged()");
- 
- #define FOREACH_ACL_ENTRY(pa, acl, pe) \
- 	for(pa=(acl)->a_entries, pe=pa+(acl)->a_count; pa<pe; pa++)
--- 
-2.43.0
 
+ Documentation/arch/x86/buslock.rst |   3 +-
+ arch/x86/Kconfig                   |   8 +
+ arch/x86/include/asm/cpu.h         |  11 +-
+ arch/x86/kernel/cpu/Makefile       |   2 +
+ arch/x86/kernel/cpu/bus_lock.c     | 406 ++++++++++++++++++++++++++++++++++++
+ arch/x86/kernel/cpu/common.c       |   2 +
+ arch/x86/kernel/cpu/intel.c        | 407 -------------------------------------
+ include/linux/sched.h              |   2 +-
+ kernel/fork.c                      |   2 +-
+ 9 files changed, 431 insertions(+), 412 deletions(-)
+ create mode 100644 arch/x86/kernel/cpu/bus_lock.c
 
