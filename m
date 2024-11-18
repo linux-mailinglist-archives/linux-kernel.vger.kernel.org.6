@@ -1,253 +1,163 @@
-Return-Path: <linux-kernel+bounces-413559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFD1B9D1AFD
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 23:16:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 394549D1AFF
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 23:17:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 44505B21BEE
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 22:16:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F092C283C48
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 22:16:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1AA51E7C11;
-	Mon, 18 Nov 2024 22:16:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4055B1E7C01;
+	Mon, 18 Nov 2024 22:16:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="LUKlTLWn"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="geCQMTcq"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99A63158DAC;
-	Mon, 18 Nov 2024 22:16:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD935158DAC;
+	Mon, 18 Nov 2024 22:16:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731968193; cv=none; b=E78AhyyKPWOgV9yw8e9UY9sNxFz5ZpFJfVO+a95vwe6/Ii6LSIqHVfDmF0ojHnmqd4UbDSl1W9kMkJR896ju2OQbWm4Q54ZEeDhNGtXw5woGMuZRSu7oXcuRkhI28TaiyjCzr58lE91ha2+L5wmEevveyH6Tdaxa9Jqjj6rvKqo=
+	t=1731968207; cv=none; b=LHNnjxctXMBe6PkERUOfFQnUGmbpsFj0QsykUKHBHX6W6M/Rg3v+lB6S8T5VKD45a+vL4oHHrzTsT95Qx9ltGFf7Gw/ooMJ0llrnmbwvYs8mvZyQ+iR9hxQLE6ZKZBtCcqW5J/fmsedkYIvhGo5/2Xk4S8v7FHsR5TE1hj85IRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731968193; c=relaxed/simple;
-	bh=/YuEiaBYaheoUGiGxF4r0WgQr1b56tLNgo/VqdVCka4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ZOASGIrhgxqOwqrgE+AsrXP5v1tMZ7g9Sn4M9di3s0Yl/ZbfmN+gEVHJEiC9wrDOjrn9g/UzH7MvDR2aOU/8VWKGMRIp4741Z/ckx90APPJDjPydtoSJNsBhzHbI56ak2YpBI0vbF2GfD6s4kRdCjmyg9Xhpq0eNdTiDJY9HFls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=LUKlTLWn; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AIGGpkX006018;
-	Mon, 18 Nov 2024 22:16:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	XJNsNXFftV73a7f1HlGoO9KUog+cN+4rISawA+ehEYI=; b=LUKlTLWnHdiiqCAP
-	CsNY9tbAK+DLSLDayvQefHLy/B6Q7r6X9cYT44c7fBsl4jVlV5aEeFeAAXcGR8tZ
-	5Vw2zoW10l2Vj2ORIitP7hHHGpt7ztISw3pUFkxK1BVPqpUUt67eNMvOJI1ME6bP
-	LIiE+ouAZ5Vl/2PNw5uWE7YtUbC8XTZ5WgFCUie8yxsHxA8G1HVeV20TaTPwp3QM
-	xLImPnNr6Hg84O+mi97QWGdkmUeJVpS7z8vReBXY3DvGkFiP+hc9S5VK62sgTfzi
-	m8ocRzcWrKw9DjQmYakuarSwcZrevA7731a0VY4iNg4JGwLLrSYSPNqBtmMidTik
-	itWe5g==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4308y8grm0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 18 Nov 2024 22:16:19 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AIMGAsb007634
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 18 Nov 2024 22:16:10 GMT
-Received: from [10.71.108.63] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 18 Nov
- 2024 14:16:09 -0800
-Message-ID: <7062700e-1e96-4856-816a-ceefa0afd75c@quicinc.com>
-Date: Mon, 18 Nov 2024 14:16:09 -0800
+	s=arc-20240116; t=1731968207; c=relaxed/simple;
+	bh=EzPpcOTQFNeHFA1obe3HvBAvPzz42yRBtFd9GRiJwSU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fTu57BQHrcIBP9hvAcopwvC36+5jSDytUTui8YUc1XBU+HvBbxkcp05pJlIVdeMPtVCQJc289pG+K8+TWHm55SflTjSGOxFeNwvnB/wBLmZCR6F2y6/eEGySW2v21E8tYPZi6SCFjPyleVm233FVuX0ERmvOjgpH1xl8YoP5ETI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=geCQMTcq; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1731968197;
+	bh=vY7LRjT373NVXOmT9Jz0uUdmdGpVOfj8aJRMwjuzs9s=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=geCQMTcq7qi5sivrew/2A87DTEztF6xbXpYHIt97peqcCkc1PWNZm1GreLVaI+aWC
+	 T/DdqHjGL1Bp2oVGZjMOk3N/5sIJWeOkINEkVd19U3jJtiWRf7u8b5bMZf+w02vygZ
+	 xUTKWqKLtWztDVhCw0uRpE2gKKwP4L9Jxzw4jVGkuVlO/lKMcmXWWImP9TLz89twuW
+	 gLo0ZZ/wZdpMRe5iHrlPYH8VsZfvJKNTse2NZDfdHR05iLMhhcaKieWp+YyZVy6yD7
+	 Ln+64naKLD9fuAz/zWSpEvfWKZk72/gNaoXd21ptF+7hFyg/MmmoiBh3vY9SI5L1ew
+	 RaiyFo3TaaFdw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Xshmj1b8dz4x33;
+	Tue, 19 Nov 2024 09:16:37 +1100 (AEDT)
+Date: Tue, 19 Nov 2024 09:16:39 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: David Sterba <dsterba@suse.cz>
+Cc: Christian Brauner <brauner@kernel.org>, David Sterba <dsterba@suse.com>,
+ Jeff Layton <jlayton@kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the vfs-brauner tree with the btrfs
+ tree
+Message-ID: <20241119091639.2216ae57@canb.auug.org.au>
+In-Reply-To: <20241016085129.3954241d@canb.auug.org.au>
+References: <20241016085129.3954241d@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/6] arm64: dts: qcom: Add pmd8028 and pmih0108 PMICs
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Catalin Marinas
-	<catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Geert Uytterhoeven
-	<geert+renesas@glider.be>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        "Arnd
- Bergmann" <arnd@arndb.de>,
-        =?UTF-8?Q?N=C3=ADcolas_F_=2E_R_=2E_A_=2E_Prado?=
-	<nfraprado@collabora.com>,
-        Trilok Soni <quic_tsoni@quicinc.com>,
-        "Satya Durga
- Srinivasu Prabhala" <quic_satyap@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        Jishnu Prakash <quic_jprakash@quicinc.com>
-References: <20241112004936.2810509-1-quic_molvera@quicinc.com>
- <20241112004936.2810509-3-quic_molvera@quicinc.com>
- <r4slda74u7rpqiybsylrnoqiqo5qm4442rfwzhtjkwkkgqt25g@n5idmspl7sfd>
-Content-Language: en-US
-From: Melody Olvera <quic_molvera@quicinc.com>
-In-Reply-To: <r4slda74u7rpqiybsylrnoqiqo5qm4442rfwzhtjkwkkgqt25g@n5idmspl7sfd>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: s2vAzRuX-8NLCGbpzQenK-qU99mxDK-3
-X-Proofpoint-GUID: s2vAzRuX-8NLCGbpzQenK-qU99mxDK-3
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- mlxlogscore=878 lowpriorityscore=0 clxscore=1015 malwarescore=0
- adultscore=0 impostorscore=0 mlxscore=0 spamscore=0 phishscore=0
- suspectscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411180183
+Content-Type: multipart/signed; boundary="Sig_/np4oKuvmNuRF.NFrWGH.o.p";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
+--Sig_/np4oKuvmNuRF.NFrWGH.o.p
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
-On 11/15/2024 6:58 AM, Dmitry Baryshkov wrote:
-> On Mon, Nov 11, 2024 at 04:49:32PM -0800, Melody Olvera wrote:
->> From: Jishnu Prakash <quic_jprakash@quicinc.com>
->>
->> Add descriptions of pmd8028 and pmih0108 PMICs used on SM8750
->> platforms.
-> Up/lower case?
-
-Up; will change.
-
+On Wed, 16 Oct 2024 08:51:29 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
 >
->> Signed-off-by: Jishnu Prakash <quic_jprakash@quicinc.com>
->> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
->> ---
->>   arch/arm64/boot/dts/qcom/pmd8028.dtsi  | 56 +++++++++++++++++++++++
->>   arch/arm64/boot/dts/qcom/pmih0108.dtsi | 62 ++++++++++++++++++++++++++
-> Those two are independent changes. Please use two separate patches.
+> Today's linux-next merge of the vfs-brauner tree got a conflict in:
+>=20
+>   fs/btrfs/file.c
+>=20
+> between commit:
+>=20
+>   377781e9e6f8 ("btrfs: drop unused parameter iov_iter from btrfs_write_c=
+heck()")
+>=20
+> from the btrfs tree and commit:
+>=20
+>   e2e801d6e625 ("btrfs: convert to multigrain timestamps")
+>=20
+> from the vfs-brauner tree.
+>=20
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>=20
+> --=20
+> Cheers,
+> Stephen Rothwell
+>=20
+> diff --cc fs/btrfs/file.c
+> index 033f85ea8c9d,e5384ceb8acf..000000000000
+> --- a/fs/btrfs/file.c
+> +++ b/fs/btrfs/file.c
+> @@@ -1124,27 -1120,7 +1124,7 @@@ void btrfs_check_nocow_unlock(struct bt
+>   	btrfs_drew_write_unlock(&inode->root->snapshot_lock);
+>   }
+>  =20
+> - static void update_time_for_write(struct inode *inode)
+> - {
+> - 	struct timespec64 now, ts;
+> -=20
+> - 	if (IS_NOCMTIME(inode))
+> - 		return;
+> -=20
+> - 	now =3D current_time(inode);
+> - 	ts =3D inode_get_mtime(inode);
+> - 	if (!timespec64_equal(&ts, &now))
+> - 		inode_set_mtime_to_ts(inode, now);
+> -=20
+> - 	ts =3D inode_get_ctime(inode);
+> - 	if (!timespec64_equal(&ts, &now))
+> - 		inode_set_ctime_to_ts(inode, now);
+> -=20
+> - 	if (IS_I_VERSION(inode))
+> - 		inode_inc_iversion(inode);
+> - }
+> -=20
+>  -int btrfs_write_check(struct kiocb *iocb, struct iov_iter *from, size_t=
+ count)
+>  +int btrfs_write_check(struct kiocb *iocb, size_t count)
+>   {
+>   	struct file *file =3D iocb->ki_filp;
+>   	struct inode *inode =3D file_inode(file);
 
-Sure thing. Will split.
+This is now a conflict between the btrfs tree and Linus' tree.
 
->
->>   2 files changed, 118 insertions(+)
->>   create mode 100644 arch/arm64/boot/dts/qcom/pmd8028.dtsi
->>   create mode 100644 arch/arm64/boot/dts/qcom/pmih0108.dtsi
->>
->> diff --git a/arch/arm64/boot/dts/qcom/pmd8028.dtsi b/arch/arm64/boot/dts/qcom/pmd8028.dtsi
->> new file mode 100644
->> index 000000000000..f8ef8e133854
->> --- /dev/null
->> +++ b/arch/arm64/boot/dts/qcom/pmd8028.dtsi
->> @@ -0,0 +1,56 @@
->> +// SPDX-License-Identifier: BSD-3-Clause
->> +/*
->> + * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
->> + */
->> +
->> +#include <dt-bindings/interrupt-controller/irq.h>
->> +#include <dt-bindings/spmi/spmi.h>
->> +
->> +/ {
->> +	thermal-zones {
->> +		pmd8028-thermal {
->> +			polling-delay-passive = <100>;
->> +			thermal-sensors = <&pmd8028_temp_alarm>;
->> +
->> +			trips {
->> +				pmd8028_trip0: trip0 {
->> +					temperature = <95000>;
->> +					hysteresis = <0>;
->> +					type = "passive";
->> +				};
->> +
->> +				pmd8028_trip1: trip1 {
->> +					temperature = <115000>;
->> +					hysteresis = <0>;
->> +					type = "hot";
-> "critical" ?
+--=20
+Cheers,
+Stephen Rothwell
 
-Will add.
+--Sig_/np4oKuvmNuRF.NFrWGH.o.p
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
->
->> +				};
->> +			};
->> +		};
->> +	};
->> +};
->> +
->> +&spmi_bus {
->> +	pmd8028: pmic@4 {
->> +		compatible = "qcom,pmd8028", "qcom,spmi-pmic";
->> +		reg = <0x4 SPMI_USID>;
->> +		#address-cells = <1>;
->> +		#size-cells = <0>;
->> +
->> +		pmd8028_temp_alarm: temp-alarm@a00 {
->> +			compatible = "qcom,spmi-temp-alarm";
->> +			reg = <0xa00>;
->> +			interrupts = <0x4 0xa 0x0 IRQ_TYPE_EDGE_BOTH>;
->> +			#thermal-sensor-cells = <0>;
->> +		};
->> +
->> +		pmd8028_gpios: gpio@8800 {
->> +			compatible = "qcom,pmd8028-gpio", "qcom,spmi-gpio";
->> +			reg = <0x8800>;
->> +			gpio-controller;
->> +			gpio-ranges = <&pmd8028_gpios 0 0 4>;
->> +			#gpio-cells = <2>;
->> +			interrupt-controller;
->> +			#interrupt-cells = <2>;
->> +		};
->> +	};
->> +};
->> diff --git a/arch/arm64/boot/dts/qcom/pmih0108.dtsi b/arch/arm64/boot/dts/qcom/pmih0108.dtsi
->> new file mode 100644
->> index 000000000000..3907d8fbcf78
->> --- /dev/null
->> +++ b/arch/arm64/boot/dts/qcom/pmih0108.dtsi
->> @@ -0,0 +1,62 @@
->> +// SPDX-License-Identifier: BSD-3-Clause
->> +/*
->> + * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
->> + */
->> +
->> +#include <dt-bindings/interrupt-controller/irq.h>
->> +#include <dt-bindings/spmi/spmi.h>
->> +
->> +/ {
->> +	thermal-zones {
->> +		pmih0108-thermal {
->> +			polling-delay-passive = <100>;
->> +			thermal-sensors = <&pmih0108_temp_alarm>;
->> +
->> +			trips {
->> +				trip0 {
->> +					temperature = <95000>;
->> +					hysteresis = <0>;
->> +					type = "passive";
->> +				};
->> +
->> +				trip1 {
->> +					temperature = <115000>;
->> +					hysteresis = <0>;
->> +					type = "hot";
-> "critical" ?
+-----BEGIN PGP SIGNATURE-----
 
-Will add.
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmc7vMcACgkQAVBC80lX
+0Gw3FggAno4JmFUvWw4dE8DyYnmf2HI6NQqxW+GMz1xJJdUklzfcZRSdWaa3ZmJb
+ciuyBwOYp2ed/+L1VEeG9Um+hrG2SL7Zo3jjbVTwn89dOxeNKFhEJyhcvaLPEQLE
+D5Hxk+XQg+Ob4GczbTigg6o20P06Y46l/LxUTUEyhYMYOFqCLdaRvdaZH6BLq30s
+K8DN0T6RF36GgKyg4POH2RrmtxUJrdMygJPW4gMWWSSZaz6k87VYHqhcpGCbyWau
+PHdpaMGsDGzXwv14aouhS8+TMJvBKD1/H4Ar48B98ZIdKBhXr8atuIhfBxinHhkq
+pN3LnREP4bS+QDTNF4ko3y4/CxcQtA==
+=2b8Q
+-----END PGP SIGNATURE-----
 
-Thanks,
-Melody
-
->
->> +				};
->> +			};
->> +		};
->> +	};
->> +};
->> +[...]
+--Sig_/np4oKuvmNuRF.NFrWGH.o.p--
 
