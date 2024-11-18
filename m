@@ -1,167 +1,196 @@
-Return-Path: <linux-kernel+bounces-412675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 059B39D0DAA
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:02:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 082E29D0DAB
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:03:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88C2D1F21289
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 10:02:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CA4B1F21244
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 10:03:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FBD818E03A;
-	Mon, 18 Nov 2024 10:02:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CDF91922F1;
+	Mon, 18 Nov 2024 10:03:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mandelbit.com header.i=@mandelbit.com header.b="EQSAuhoC"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KTbwSX+r"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 074B438F9C
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 10:02:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05C8338F9C;
+	Mon, 18 Nov 2024 10:03:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731924124; cv=none; b=nNqi5tYEyviHnV2kZjoJ0gstimlK9gIa7ukMn87WahSlQMBn4iLcWcOPpcoQPIk/2+H95VT2JK6eAtyl36R8jRMAOyoeXdsXOjpsOauP/cPNp5OhbRicFc7OsBSpxFs1zt0+Ksst8PaWcbMnMK4Xi3o2rCYeviVDQgIUFmCz1eM=
+	t=1731924183; cv=none; b=T36Cps/g+KPxfs49t9YEXL0upZsQgTfjr+mgjeCvj9qLevNNIa2r6QXVTbiKN8aUPVQad6CewhXeFWHAcyC70EQpQTOmDzp6ge9XwxANtQ+bk2CcV2YJv3FN9kPSqbrvIGjfS9JthuIAaSLFWoNj+0fyKp5R79L6/uu4i+m4duM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731924124; c=relaxed/simple;
-	bh=X3rALBrsWbhNwYRL7eVm/R0AlUu7sUXAMt5veo43cbs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GAnlKopdXNnaooD3iVzXbhwRFciQGxPYjgLph6vCyVwCCBusaiLwXjAq2tFwP4oSH72z6GoAI4zSQ1tiBLJiL9fhb4iEyfVsNhWrP4hjybIxcaq4BGEc1HTE2+GAfSj48MgaSAE8XI480X1fBonknku5pILMIEJamOPLNxLr49g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mandelbit.com; spf=pass smtp.mailfrom=mandelbit.com; dkim=pass (2048-bit key) header.d=mandelbit.com header.i=@mandelbit.com header.b=EQSAuhoC; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mandelbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mandelbit.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5cefa22e9d5so4935574a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 02:02:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mandelbit.com; s=google; t=1731924119; x=1732528919; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=jHURZFy9aiwdhHHnil8gSGPlV/OUVmD0EY6yA24x9iA=;
-        b=EQSAuhoCxzDhSlNkTUzK1nTjMzRUJHp1XRoMuQq6oIElupzAOhcVmyHF14TOk+nIoc
-         qscMAPEjHHRIC+sPYaROZoLEMCxqzocuyJF/xEU1s/mQEiHOynnQClElsPf+jaEoyJc3
-         4mtseRkfq1KSlUrLNiLYLvURjfpCYn0QwUYoxVKyGYeM+GTKeyqqbPGCP+13ANHP80z7
-         aB4OJV7vYlACZFcd2ctExDMOWNgClTwj27TAhXEJo127BW0TZJUNTEzzwsiqnN7yHoNm
-         IzqyGDLoaOI4xggQvT1a6C4mTcerVq/1Ib+cb1QTTj1ZgYzfva32KnigIIsCxfXvL6XY
-         aNXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731924119; x=1732528919;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jHURZFy9aiwdhHHnil8gSGPlV/OUVmD0EY6yA24x9iA=;
-        b=ol29KShbOYZB+S1V4DQ9NtFeyHMnpJS7plwTJKNsvsYOyHlXbz0g5KVE4HzuyarUkZ
-         36O2Rs/xCZEls1WttVRSWADWqQnb4f1hoBjjb32IhgNfvwoga/L2A8iCNoJ+F19ABixZ
-         jUhooVsgvMeIJoQb848aErDNxhvyQ7UfljSwGmlZ2V3lpOXrGoI/O+gfoO6dcAXdj2fP
-         7XoPNQA4xu1LexKJZzJB4+EhZ3kRk8P+jL1id/nQdCwO68VKYtrIWwgX+ELih0BNv9EJ
-         B7JCRBvSZewYBOPTBBV4ntisIlJVzWfXCdGHeYTeXdwP748wwegCSP1/MdJoIvAUO+ic
-         LnYw==
-X-Forwarded-Encrypted: i=1; AJvYcCWfzQIpWuzozBH2+MUDLpDXPCGSML1QRMTgK6V1LqiNMaVDXTBTmQzLR9ENJOxdhxMc0cGhic9LZAuwdX8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIohr5HpKz0r9BajI+5fCNGDQxZ5kLQIgYdth0YPzivXAp1lHg
-	E4oNMXpb41mPmd0bZDrfL91Nkbly7pWipDDb9uGVY6mmvadBrKYQC82JWwZ1gIw=
-X-Google-Smtp-Source: AGHT+IFvQRH2J7KQ/l0wOkiACkGuFYXbMUXAHLt55EapsIvf0tSTlVwd4hcelD8gzVitr/KCqIV4XA==
-X-Received: by 2002:a05:6402:348d:b0:5cf:a759:b27b with SMTP id 4fb4d7f45d1cf-5cfa759c16bmr5593330a12.33.1731924119280;
-        Mon, 18 Nov 2024 02:01:59 -0800 (PST)
-Received: from ?IPV6:2001:67c:2fbc:1:3371:f05f:468d:9cb? ([2001:67c:2fbc:1:3371:f05f:468d:9cb])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20df50b65sm522242466b.54.2024.11.18.02.01.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Nov 2024 02:01:58 -0800 (PST)
-Message-ID: <307a2ff6-eeb7-4b86-a5c6-c438dcec618e@mandelbit.com>
-Date: Mon, 18 Nov 2024 11:02:27 +0100
+	s=arc-20240116; t=1731924183; c=relaxed/simple;
+	bh=oZC1ed1sfLvebXHdVBfc8m0S/2K29wIF9TyDeHdhG7Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dd5En+S3V2sq+kK0RA5s+eprDDJ8gz6kfMLLysY+kEY2K6KeLLoJ/UDrIMrO0FJQA6oV1xW40zF1vTuMsueMCPi6WRaRobBtYk+oPsTsRTNgM16cGJHqGQ5imMKmKZPlqN6dm3+CK+N2RaqKSYd5/Hkdm3tjgEAmeUGHvXeLW2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KTbwSX+r; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731924183; x=1763460183;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=oZC1ed1sfLvebXHdVBfc8m0S/2K29wIF9TyDeHdhG7Q=;
+  b=KTbwSX+rK6j2g7UzWh8VOPTuXYRg9vCIqJvW/5b4Mg1AHNGDjCQ+z0JD
+   3KyO5AowdP+Egp6Rq6k0WZ1m4NGLe/tmJcVLKPaGD5VF3nV+toAr4LtpG
+   RZamGylVRwCDgjX5TH2u1vELWYX1tiG5CDqvBuDnUAO0TsFyyPuchIVQX
+   5hUdotwgXUuGxlQmFd5T1MqYTYGnCL4AB4xoqjPlCvoiyJGfjlldsfP0D
+   bMK0jFmvv07gxLOv8Fcj/FcaGw2TKkD4sb5w+GrFbB33uixGNsiP5ypgZ
+   TzgnRU3Zpu+3cTMMaZTL5RJZouvNmnaqAPmKp4/EW7gZZXTurl9wLyyVM
+   A==;
+X-CSE-ConnectionGUID: 7DmdGUB7ScKNOC+6dY9X0A==
+X-CSE-MsgGUID: zheAlziiR9SNeaoflb5b4w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11259"; a="32011209"
+X-IronPort-AV: E=Sophos;i="6.12,163,1728975600"; 
+   d="scan'208";a="32011209"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2024 02:03:02 -0800
+X-CSE-ConnectionGUID: JxIrzfjvQU+VJaOBLt3W5A==
+X-CSE-MsgGUID: AjZ+8XJHTTaY0MXTMmzA4A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,163,1728975600"; 
+   d="scan'208";a="89593924"
+Received: from kuha.fi.intel.com ([10.237.72.152])
+  by fmviesa010.fm.intel.com with SMTP; 18 Nov 2024 02:02:58 -0800
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Mon, 18 Nov 2024 12:02:57 +0200
+Date: Mon, 18 Nov 2024 12:02:57 +0200
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Oliver Facklam <oliver.facklam@zuehlke.com>
+Cc: Biju Das <biju.das@bp.renesas.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Benedict von Heyl <benedict.vonheyl@zuehlke.com>,
+	Mathis Foerst <mathis.foerst@zuehlke.com>,
+	Michael Glettig <michael.glettig@zuehlke.com>
+Subject: Re: [PATCH v2 1/4] usb: typec: hd3ss3220: configure advertised power
+ opmode based on fwnode property
+Message-ID: <ZzsQ0QeFS6qWdHd6@kuha.fi.intel.com>
+References: <20241114-usb-typec-controller-enhancements-v2-0-362376856aea@zuehlke.com>
+ <20241114-usb-typec-controller-enhancements-v2-1-362376856aea@zuehlke.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ubifs: fix uninitialized variable usage
-To: Zhihao Cheng <chengzhihao1@huawei.com>, linux-mtd@lists.infradead.org
-Cc: Richard Weinberger <richard@nod.at>, linux-kernel@vger.kernel.org
-References: <20241115222634.32259-1-antonio@mandelbit.com>
- <e26aea85-988c-17a1-7fff-c14387ca4b57@huawei.com>
-Content-Language: en-US
-From: Antonio Quartulli <antonio@mandelbit.com>
-Autocrypt: addr=antonio@mandelbit.com; keydata=
- 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
-Organization: Mandelbit SRL
-In-Reply-To: <e26aea85-988c-17a1-7fff-c14387ca4b57@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241114-usb-typec-controller-enhancements-v2-1-362376856aea@zuehlke.com>
 
-On 16/11/2024 03:02, Zhihao Cheng wrote:
-> 在 2024/11/16 6:26, Antonio Quartulli 写道:
->> In ubifs_jnl_write_inode(), when an inode cannot be deleted
->> due to too many xattrs, err is passed to ubifs_ro_mode()
->> uninitialized, thus leading to bogus error reporting.
->>
->> Fix this case by passing -EPERM, which is the same value that
->> ubifs_jnl_write_inode() is going to return to the caller.
->>
->> This fixes 1 UNINIT issue reported by Coverity
->> Report: CID 1601860: Uninitialized scalar variable (UNINIT)
->>
->> Cc: Richard Weinberger <richard@nod.at>
->> Cc: Zhihao Cheng <chengzhihao1@huawei.com>
->> Cc: linux-kernel@vger.kernel.org (open list)
->> Signed-off-by: Antonio Quartulli <antonio@mandelbit.com>
->> ---
->>   fs/ubifs/journal.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
+On Thu, Nov 14, 2024 at 09:02:06AM +0100, Oliver Facklam wrote:
+> The TI HD3SS3220 Type-C controller supports configuring its advertised
+> power operation mode over I2C using the CURRENT_MODE_ADVERTISE field
+> of the Connection Status Register.
 > 
-> Hi Antonio, thanks for the patch. Nathan has sent a patch to fix it.
-> https://lore.kernel.org/linux-mtd/ 
-> b560f413-70f1-8ebb-7403-34591658ca86@huawei.com/T/#t
+> Configure this power mode based on the existing (optional) property
+> "typec-power-opmode" of /schemas/connector/usb-connector.yaml
+> 
+> Signed-off-by: Oliver Facklam <oliver.facklam@zuehlke.com>
 
-Perfect!
-Thanks for letting me know.
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-Regards,
-
+> ---
+>  drivers/usb/typec/hd3ss3220.c | 53 +++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 53 insertions(+)
+> 
+> diff --git a/drivers/usb/typec/hd3ss3220.c b/drivers/usb/typec/hd3ss3220.c
+> index fb1242e82ffdc64a9a3330f50155bb8f0fe45685..56f74bf70895ca701083bde44a5bbe0b691551e1 100644
+> --- a/drivers/usb/typec/hd3ss3220.c
+> +++ b/drivers/usb/typec/hd3ss3220.c
+> @@ -16,10 +16,17 @@
+>  #include <linux/delay.h>
+>  #include <linux/workqueue.h>
+>  
+> +#define HD3SS3220_REG_CN_STAT		0x08
+>  #define HD3SS3220_REG_CN_STAT_CTRL	0x09
+>  #define HD3SS3220_REG_GEN_CTRL		0x0A
+>  #define HD3SS3220_REG_DEV_REV		0xA0
+>  
+> +/* Register HD3SS3220_REG_CN_STAT */
+> +#define HD3SS3220_REG_CN_STAT_CURRENT_MODE_MASK		(BIT(7) | BIT(6))
+> +#define HD3SS3220_REG_CN_STAT_CURRENT_MODE_DEFAULT	0x00
+> +#define HD3SS3220_REG_CN_STAT_CURRENT_MODE_MID		BIT(6)
+> +#define HD3SS3220_REG_CN_STAT_CURRENT_MODE_HIGH		BIT(7)
+> +
+>  /* Register HD3SS3220_REG_CN_STAT_CTRL*/
+>  #define HD3SS3220_REG_CN_STAT_CTRL_ATTACHED_STATE_MASK	(BIT(7) | BIT(6))
+>  #define HD3SS3220_REG_CN_STAT_CTRL_AS_DFP		BIT(6)
+> @@ -43,6 +50,31 @@ struct hd3ss3220 {
+>  	bool poll;
+>  };
+>  
+> +static int hd3ss3220_set_power_opmode(struct hd3ss3220 *hd3ss3220, int power_opmode)
+> +{
+> +	int current_mode;
+> +
+> +	switch (power_opmode) {
+> +	case TYPEC_PWR_MODE_USB:
+> +		current_mode = HD3SS3220_REG_CN_STAT_CURRENT_MODE_DEFAULT;
+> +		break;
+> +	case TYPEC_PWR_MODE_1_5A:
+> +		current_mode = HD3SS3220_REG_CN_STAT_CURRENT_MODE_MID;
+> +		break;
+> +	case TYPEC_PWR_MODE_3_0A:
+> +		current_mode = HD3SS3220_REG_CN_STAT_CURRENT_MODE_HIGH;
+> +		break;
+> +	case TYPEC_PWR_MODE_PD: /* Power delivery not supported */
+> +	default:
+> +		dev_err(hd3ss3220->dev, "bad power operation mode: %d\n", power_opmode);
+> +		return -EINVAL;
+> +	}
+> +
+> +	return regmap_update_bits(hd3ss3220->regmap, HD3SS3220_REG_CN_STAT,
+> +				  HD3SS3220_REG_CN_STAT_CURRENT_MODE_MASK,
+> +				  current_mode);
+> +}
+> +
+>  static int hd3ss3220_set_source_pref(struct hd3ss3220 *hd3ss3220, int src_pref)
+>  {
+>  	return regmap_update_bits(hd3ss3220->regmap, HD3SS3220_REG_GEN_CTRL,
+> @@ -162,6 +194,23 @@ static irqreturn_t hd3ss3220_irq_handler(int irq, void *data)
+>  	return hd3ss3220_irq(hd3ss3220);
+>  }
+>  
+> +static int hd3ss3220_configure_power_opmode(struct hd3ss3220 *hd3ss3220,
+> +					    struct fwnode_handle *connector)
+> +{
+> +	/*
+> +	 * Supported power operation mode can be configured through device tree
+> +	 */
+> +	const char *cap_str;
+> +	int ret, power_opmode;
+> +
+> +	ret = fwnode_property_read_string(connector, "typec-power-opmode", &cap_str);
+> +	if (ret)
+> +		return 0;
+> +
+> +	power_opmode = typec_find_pwr_opmode(cap_str);
+> +	return hd3ss3220_set_power_opmode(hd3ss3220, power_opmode);
+> +}
+> +
+>  static const struct regmap_config config = {
+>  	.reg_bits = 8,
+>  	.val_bits = 8,
+> @@ -223,6 +272,10 @@ static int hd3ss3220_probe(struct i2c_client *client)
+>  		goto err_put_role;
+>  	}
+>  
+> +	ret = hd3ss3220_configure_power_opmode(hd3ss3220, connector);
+> +	if (ret < 0)
+> +		goto err_unreg_port;
+> +
+>  	hd3ss3220_set_role(hd3ss3220);
+>  	ret = regmap_read(hd3ss3220->regmap, HD3SS3220_REG_CN_STAT_CTRL, &data);
+>  	if (ret < 0)
+> 
+> -- 
+> 2.34.1
 
 -- 
-Antonio Quartulli
-
-CEO and Co-Founder
-Mandelbit Srl
-https://www.mandelbit.com
-
+heikki
 
