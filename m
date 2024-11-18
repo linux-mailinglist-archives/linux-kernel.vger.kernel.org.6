@@ -1,115 +1,95 @@
-Return-Path: <linux-kernel+bounces-413134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D24E39D13FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 16:06:48 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB73D9D1480
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 16:32:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 986B62835D4
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 15:06:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 260A7B273FA
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 15:07:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BA821BD9D0;
-	Mon, 18 Nov 2024 15:03:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6DE71ABEA6;
+	Mon, 18 Nov 2024 15:04:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="RoqiBvWD"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LSzBdrrh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5ED21AC43E
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 15:03:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 344A71AF0A5;
+	Mon, 18 Nov 2024 15:03:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731942224; cv=none; b=QvCyUaKkN2Pn3B/I4ECE5q3rBktl4T7qMI65JSkuNfIpAw+7/fklPR2RfiM3Oi+VmmKpEljQN3TScm6P3oWlPoVqcIuQ6r1tJJFV1eg+B0cLqPGOzfVqkRHLcOcz1bt60Asl79oXEkTA9h6ERvbuOiqYCDhkpD/6c7Y4rf5IL2M=
+	t=1731942240; cv=none; b=nIVVzX12sBDyewPSqIGQaFYY/7Dresesr1nwQf6+z6FT12E4Q/0rDxPa9wS6YA8IfYvCArMvWIvKg9FDbojubxHiSK6+eQSqAUkMEyXSP9XZgJy0UpJbnVu2wJ4c4DuDLiA0WmXpLtPXztyYyXzHHnurIaeZO9M++Av8zdJZI0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731942224; c=relaxed/simple;
-	bh=K3Dm9N8RgDQVKjLySeNTpGXytJD8NFVPT4+evyr480A=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=kyhC8RA+KDhTS/5mn66FK8xFAnjj0MbNAMEGH/bAS2W1UiyhaWo2qGYpDxWW9IscuNSyLO+10qJqUB97NnnPqlMg29bcg3FlLGdPuCICrFAJUt67ifZlu57K2xVaOzi5y5FnpYsWzcAti7sg3A4aS22vAWKWR6i9nP720+f6nTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=RoqiBvWD; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id C80C240E021C;
-	Mon, 18 Nov 2024 15:03:39 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id bpBu-gdcuYx2; Mon, 18 Nov 2024 15:03:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1731942215; bh=vGG+JtqpZ683PXXYiaVi3ln3CS179qfl7ulOTwGKP+Q=;
-	h=Date:From:To:Cc:Subject:From;
-	b=RoqiBvWDIjnNB945X456HDSUl19nFhTbxbidGdIff/M5pnEa73eTWB0/M67IIVANx
-	 XR8Oq6fx+1mRPBLTsNEzBtDCVvryQ0kTqjNLZFRxkV62qPdLGk5ExO0y6neSV2XA+I
-	 GXovamaGgM+7vv/DSmTcEwzfqra0TE/l+n+pgJDUPxHBuUPfSGA37pI3Dv6mWzeI89
-	 QKzoTSTsOBTqXRmgQwDYVjKH8tJzBTcBJHb57kXTry2MGub9q1IDEH3PLQ+bW5VKPp
-	 enmQjUeqAC42A3I3KwBPg+yRxRdBxN0mi7poB8aLPxBQ40QHTk3XY6ERt4MYe8S/8Q
-	 YROpPcq/2UyzU63rMk4c9whSi1CZIGI5VpBBaz8yvMFqJSK3lzd/t4XZbK/cDk+655
-	 rQ8S2inVVhPgihglKkK7P0p9MpcRa76Wl7+VF+2IyY9UzpvAyS12qH0iHezOqNBV9B
-	 70hpnWj2yG26r29EeSGGcgBJ+WiOXLPtM4p9cI5e2cEZ12OUk7a/LH9DjxepxR1H6Y
-	 jzg0m19iQk0YII7DV2YWxZknW+fmZDykWkLk4cdAeRIiNZZ346xXRYSukh376nHJCQ
-	 0AUq9EZSLuh9B3CMdQB1GQqehp8S0Rr2xP4X4Lu7VOaoMKIPa4HGYLJq8cskgfoiBG
-	 NtelWaq4tkE2tLqjpthJSlcg=
-Received: from zn.tnic (pd9530b86.dip0.t-ipconnect.de [217.83.11.134])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 89C6E40E019C;
-	Mon, 18 Nov 2024 15:03:32 +0000 (UTC)
-Date: Mon, 18 Nov 2024 16:03:27 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] x86/microcode for v6.13
-Message-ID: <20241118150327.GAZztXP3hswdK38kJK@fat_crate.local>
+	s=arc-20240116; t=1731942240; c=relaxed/simple;
+	bh=x7JTV8+qhEMe4IqVD8RW293cWMHp4TzzImSTS5jdvqw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=cJ0DKKywdWs8b0nv3oXcQRux2iIvMsTvGTV6u4PFJ6Qmn2b/U+/e9BXua3jX7pRYLDK68OhpIjomxkd10bHlr8X7g1SKLbMNPIYXmbZvTLaCH2JwHeS5tW7u0CbECVSDwz/r9yWQBXf8PS7oRw27XblmJRfoPjuuEnybmArudSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LSzBdrrh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E20E2C4CECC;
+	Mon, 18 Nov 2024 15:03:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731942239;
+	bh=x7JTV8+qhEMe4IqVD8RW293cWMHp4TzzImSTS5jdvqw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=LSzBdrrhKfGFZiKMtUHO/K6aIxDfe6yixouGNG56cV7si1nFVkloijfKY/AQ5Y/AW
+	 j/bKUKFnKozZ/lAF6ItEKw6VYyR5EV9ZcH0GUqy3A5nQNAda/bCBrNR1OwshUodXS7
+	 UeUoway6LcTtHC8aXgHY6qniGeFgQDubsq114zlHeHW6UK7olo1kJe1BZmb6L3ZQK9
+	 8J5xdSSSi7yMftS9KR2jbnlbYWyKJtCeJwX1JzIoEBUktbu+pVMgxH8vx0xVs5hfE9
+	 EM6w5iYU0pI1aFy2G/8CKrlfX6Agf2284YgEV5+o5D99hXhuVdmjwC20rQxNVgrc4J
+	 kB4kmXr50C3xA==
+From: cel@kernel.org
+To: Neil Brown <neilb@suse.de>,
+	Dai Ngo <Dai.Ngo@oracle.com>,
+	Tom Talpey <tom@talpey.com>,
+	Jeff Layton <jlayton@kernel.org>
+Cc: Chuck Lever <chuck.lever@oracle.com>,
+	Olga Kornievskaia <okorniev@redhat.com>,
+	linux-nfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5] nfsd: allow for up to 32 callback session slots
+Date: Mon, 18 Nov 2024 10:03:50 -0500
+Message-ID: <173194219548.79489.7363996743894936823.b4-ty@oracle.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20241118-bcwide-v5-1-e21f211f2543@kernel.org>
+References: <20241118-bcwide-v5-1-e21f211f2543@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1287; i=chuck.lever@oracle.com; h=from:subject:message-id; bh=YCbZvaOuS25AufY48WzxiTmsYNusBd9t6jIscvoh0wM=; b=owEBbQKS/ZANAwAIATNqszNvZn+XAcsmYgBnO1dWlQ0udTkKcI/dSwueg9/pFGoMycOwQNN0G sjWv+YFwU6JAjMEAAEIAB0WIQQosuWwEobfJDzyPv4zarMzb2Z/lwUCZztXVgAKCRAzarMzb2Z/ l1rGEACVS9yqk41BIrxD2gEZpfVWFBi9mO6o5/LtethWw49W9zRhKCgObVLOrY7ooApyWL7JPu3 MESWPJW3Po1yNzssudLO9/LJ4KnAQh9bfm/5EU7oNahtFhFoHtkbs/vwik876vyizBylXPG4USL /Dw9Uj8H3uL+ZP7i+U25BNifps5wZF8l6QEYztIN2m6ajRMnwzV08S/NUygFwjogqVEXXS8iuTr vRYmsHbj/av+MRR0FgaaobCcP+3roIV8RrHiVJ9vP8UwK9tSpte6rSzAuqAwAYVoVFQJW6fZ0SU 53KVddgHO1q07nS6Xd8NqK6eYdUiZ8FsfzHhieGbX3ctfL+du2h9aIan7AI5OX7UwVcSFyjBub+ VvyRl8EtBU+zKzJ8ZR350m76ohq3/xKQUbZgui8aNPdNDKqtWsZy17nsHgp7oUa3BlgNSL21YAF 959eFIsYaLxw5a6e7NwaOdxl8z+FxcpBla9+PYEsgM1fb+NDaYTtEM7JDf6xgfV8UB4USTaJJ1l aOjXV7MDAS6H9wXgdT3zOinEi3F6oNlO+PKXvkIFO+4NblTtwxB1F5EJYZ1Axm1cDKS4RN26BvB 08b+qdNGr3h4hgRb75YPbY09BhI8mjlZIeRp/V39l/5ZiRgwyQyGefTm6UuR4kZ4v9dcj5olhL/ aUe4bD
+ CcV/PawDg==
+X-Developer-Key: i=chuck.lever@oracle.com; a=openpgp; fpr=28B2E5B01286DF243CF23EFE336AB3336F667F97
+Content-Transfer-Encoding: 8bit
 
-Hi Linus,
+From: Chuck Lever <chuck.lever@oracle.com>
 
-please pull a single microcode loader optimization for v6.13.
+On Mon, 18 Nov 2024 09:54:34 -0500, Jeff Layton wrote:                                              
+> nfsd currently only uses a single slot in the callback channel, which is
+> proving to be a bottleneck in some cases. Widen the callback channel to
+> a max of 32 slots (subject to the client's target_maxreqs value).
+> 
+> Change the cb_holds_slot boolean to an integer that tracks the current
+> slot number (with -1 meaning "unassigned").  Move the callback slot
+> tracking info into the session. Add a new u32 that acts as a bitmap to
+> track which slots are in use, and a u32 to track the latest callback
+> target_slotid that the client reports. To protect the new fields, add
+> a new per-session spinlock (the se_lock). Fix nfsd41_cb_get_slot to always
+> search for the lowest slotid (using ffs()).
+> 
+> [...]                                                                        
 
-Thx.
+Applied to nfsd-next for v6.13, thanks!                                                                
 
----
+[1/1] nfsd: allow for up to 32 callback session slots
+      commit: a47e0534dc9cc3f9ee7c914cfddd6912855b5d61                                                                      
 
-The following changes since commit 42f7652d3eb527d03665b09edac47f85fb600924:
+--                                                                              
+Chuck Lever
 
-  Linux 6.12-rc4 (2024-10-20 15:19:38 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip x86_microcode_for_v6.13
-
-for you to fetch changes up to 9a819753b0209c6edebdea447a1aa53e8c697653:
-
-  x86/microcode/intel: Remove unnecessary cache writeback and invalidation (2024-10-25 18:12:03 +0200)
-
-----------------------------------------------------------------
-- Remove the unconditional cache writeback and invalidation after loading the
-  microcode patch on Intel as this was addressing a microcode bug for which
-  there is a concrete microcode revision check instead
-
-----------------------------------------------------------------
-Chang S. Bae (1):
-      x86/microcode/intel: Remove unnecessary cache writeback and invalidation
-
- arch/x86/kernel/cpu/microcode/intel.c | 10 ++--------
- 1 file changed, 2 insertions(+), 8 deletions(-)
-
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
 
