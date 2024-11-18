@@ -1,56 +1,64 @@
-Return-Path: <linux-kernel+bounces-412541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 548009D0A48
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 08:32:19 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF48D9D0A49
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 08:32:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18793280F72
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 07:32:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B8EBB2233E
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 07:32:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F13041940A1;
-	Mon, 18 Nov 2024 07:29:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 140241940A2;
+	Mon, 18 Nov 2024 07:29:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="gp+Jy/xU"
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="BNYKDxgs"
 Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BC32191F75
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 07:29:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CED0191F78
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 07:29:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731914997; cv=none; b=sT2DWBCFUTpurvyOLVkOsQFlKeYyyWXxyvRXsfyzxwcijYklPqhTIix1k0EpPHaz7bJwEA1kNuVZKd728vWjt+WnQ4QrGoR1PbtBa2tqtQZYWVgI+uHWCH9rCo3T81bYLh+oauHmw/aBPi4RngtytbyQAJYEj0+ETQlsQks0jkE=
+	t=1731914997; cv=none; b=HuQzBm/i3/NbYvvOdH5/7amH50FCukh5ObSzUhQ792VR90IjXmiscxIN6zcA9pxTC5n1pB2ChABR5wSCOKw/1XwyxR1f9ViN3Jg4pbKhZfzW37IHW6QqRQwdPGh/bBLczYn1iK8EQxTwQkKup/JSmjD8hSlZVkTO4agzyl5F4qU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1731914997; c=relaxed/simple;
-	bh=94qwWOo7QTWYKV/Sooqe52Aii0FwTnDZQrIkGfFMP2k=;
+	bh=uQ1T56TYuNCOPZ5PR+UdSX4hgLyYi4afMVp3XFbzVuA=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=TqxNwijSEnkvQ6e3ISlXAzvaCyyNWaUunYjhCvsci1YG0qJ1MlsXEPrMw5l8huc0MpZ30kANinPnwQX2E1aovb5cSDSY8Xpph9hXPjFja37uZv2vd5QHh82uJFDY9FwiRRDH1dH11rrijshLp8YUrMIq4S9b7YpgDdkZankaQDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=gp+Jy/xU; arc=none smtp.client-ip=194.117.254.33
+	 MIME-Version; b=EQgPtfkKXmqMhLRpbZPQZKCeARffRt7LgULet7DMLmaytv8YDusWse/uYc87XVzP4VYP5NZqUDr1QMcEJoHtzwYH73HU5BPBJUtpORi7vxIV4Zx9sARwOdtq9l6mmWWNttVJdF+B78oICvJJl9lX1qG5fT+eWzCoEUvoGvFVIgg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=BNYKDxgs; arc=none smtp.client-ip=194.117.254.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	sang-engineering.com; h=from:to:cc:subject:date:message-id
 	:in-reply-to:references:mime-version:content-transfer-encoding;
-	 s=k1; bh=3h32pvFwgdQwwoj/jDtNsBZmb+nL7PZupdbpCoD9vLQ=; b=gp+Jy/
-	xUSA6CivLIykTPkkxGPhZwwmLJt3q9gsN3kQ1+d8hiVrMF+mtchh77opr/W/5TxJ
-	D0mm/z6Z/hxZ2ZhEdEJfVPprunzwno79NVO3YfXd/beg7aIj1Y7HYlN9FU1Cejjb
-	yy/XG/pZnJS2Eekou/nfFVhNeCVgEY6C+ogaE33VOaNiEPJDloNIyLf51iuibu7r
-	JsBAjzrALOFhVQfVCwg0p5Iw/EyrlnicF3OcCBiJfqeRr+5fZBXt76vRYXWlh72Y
-	YhaQC4nHuejFPKVFuvQwQ9veUa2b0Xef+MybH1BHxpNS5hxxM8Ea43bm0177QkOh
-	Hqh3wze7czj4AbJA==
-Received: (qmail 112470 invoked from network); 18 Nov 2024 08:29:40 +0100
+	 s=k1; bh=y0XyrUg96ZZS1QFaM8OqueFKIMml64CiZTHIvthrgck=; b=BNYKDx
+	gsMAswLoKsC0QXpufXq4uOF+/g0Tf8+7LUFcXOVpGU8CX6QqgCsH3gCsPriFib5N
+	dTbxRxWzUL+hFyIOnV9iTAGrv3IPNkzDztoMmoMm40OWHfI2BOouZhXBpSbigZcY
+	NxcJi9Uj1h60p3THa1H+9it+4bq9YFclhm6qozLERoJD/VjjMz2dIRmFosqy04qJ
+	gsql8xqOPNfK+XEQlU/yJnBj7LvhFn3YAefyWQLZqM50SbKyxF8WoeHlzpN8UMWD
+	pPoBWxnvlklRrlwuabLnDJewLxiNWyPDwxmQe/ItMkWIk0zDMh2DE7Y9wwgfv4sc
+	Z1qc119oU/9B4nWA==
+Received: (qmail 112494 invoked from network); 18 Nov 2024 08:29:40 +0100
 Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 18 Nov 2024 08:29:40 +0100
-X-UD-Smtp-Session: l3s3148p1@ynAn4Son/NUujntT
+X-UD-Smtp-Session: l3s3148p1@79ow4SonDNYujntT
 From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 To: linux-kernel@vger.kernel.org
 Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	linux-mmc@vger.kernel.org
-Subject: [PATCH 08/15] mmc: core: don't include 'pm_wakeup.h' directly
-Date: Mon, 18 Nov 2024 08:29:07 +0100
-Message-Id: <20241118072917.3853-9-wsa+renesas@sang-engineering.com>
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org
+Subject: [PATCH 09/15] net: phy: broadcom: don't include 'pm_wakeup.h' directly
+Date: Mon, 18 Nov 2024 08:29:08 +0100
+Message-Id: <20241118072917.3853-10-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20241118072917.3853-1-wsa+renesas@sang-engineering.com>
 References: <20241118072917.3853-1-wsa+renesas@sang-engineering.com>
@@ -68,34 +76,22 @@ direct inclusion.
 
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/mmc/core/core.c | 1 -
- drivers/mmc/core/host.c | 1 -
- 2 files changed, 2 deletions(-)
+ drivers/net/phy/broadcom.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
-index d6c819dd68ed..c877dae8b4e2 100644
---- a/drivers/mmc/core/core.c
-+++ b/drivers/mmc/core/core.c
-@@ -19,7 +19,6 @@
- #include <linux/scatterlist.h>
- #include <linux/log2.h>
- #include <linux/pm_runtime.h>
+diff --git a/drivers/net/phy/broadcom.c b/drivers/net/phy/broadcom.c
+index ddded162c44c..5b55137c9d55 100644
+--- a/drivers/net/phy/broadcom.c
++++ b/drivers/net/phy/broadcom.c
+@@ -16,7 +16,7 @@
+ #include <linux/delay.h>
+ #include <linux/module.h>
+ #include <linux/phy.h>
 -#include <linux/pm_wakeup.h>
- #include <linux/suspend.h>
- #include <linux/fault-inject.h>
- #include <linux/random.h>
-diff --git a/drivers/mmc/core/host.c b/drivers/mmc/core/host.c
-index 48bda70145ee..bdb22998357e 100644
---- a/drivers/mmc/core/host.c
-+++ b/drivers/mmc/core/host.c
-@@ -14,7 +14,6 @@
- #include <linux/idr.h>
++#include <linux/device.h>
+ #include <linux/brcmphy.h>
  #include <linux/of.h>
- #include <linux/pagemap.h>
--#include <linux/pm_wakeup.h>
- #include <linux/export.h>
- #include <linux/leds.h>
- #include <linux/slab.h>
+ #include <linux/interrupt.h>
 -- 
 2.39.2
 
