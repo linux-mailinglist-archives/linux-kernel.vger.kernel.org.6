@@ -1,93 +1,97 @@
-Return-Path: <linux-kernel+bounces-412398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FA3D9D0875
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 05:39:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 409949D3234
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 03:32:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4EFBB1F21588
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 04:39:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEE2C1F23E09
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 02:32:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0110E13B2B4;
-	Mon, 18 Nov 2024 04:39:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ivS5mdQ2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 540701EB48;
-	Mon, 18 Nov 2024 04:39:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ADF24EB45;
+	Wed, 20 Nov 2024 02:32:41 +0000 (UTC)
+Received: from cmccmta2.chinamobile.com (cmccmta2.chinamobile.com [111.22.67.135])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55ACD3F9C5;
+	Wed, 20 Nov 2024 02:32:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731904745; cv=none; b=K45LOlD9DLdJ//G7/dAIDWta1PDP5zNV+FI2nEHg1gRUF4CDnFJUEYC5SUjKluIrdEy02k0BVqKn4LC1WI83YhmH7hSaK6vW4o4tCGfoEdEoahjFUeda4MC5iL2f6Rr6XdIN2FN2dsUnYUY9rXUHAAUumNlwQ6SYN/rrd8VnRbQ=
+	t=1732069961; cv=none; b=jtfI+y9SbI7V6Kk3ZZhbscejuF6KPYigpNsEt6hckwR4dg9/PaVDRi8BVQfvEiT2gIXwoMa1qF6BdYGg5Cx9SqGlUQ8/HLJDiX8+YYJ/RaXdvbmBnosNQX2DNj56aWouQGq1WD0GfnamZdsIbOLTuPL+NFVAtH7yXXleESosu3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731904745; c=relaxed/simple;
-	bh=7plGjMDEMlt/J3128k/TPdaPFrereg8GAEnNA6ZDp3o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ti0NMpGkVEGpLsqIxUx5hLXdP49IWOOPQ/wuzfnpX8Twrih0wAQtrWK8xkkga2AjaMZ6Wu6/sxM8Xa0mGkZz4F+N5Q43qaXL6XwZbPz1JxEgqEnX0iByizX71csz0NBlulmo8XratCXs2IkuPl4a58Kn4ZDR2Q82/XZyM3ne4N4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ivS5mdQ2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D74D1C4CECC;
-	Mon, 18 Nov 2024 04:39:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731904744;
-	bh=7plGjMDEMlt/J3128k/TPdaPFrereg8GAEnNA6ZDp3o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ivS5mdQ2YkVCKsa/1qf47Je485JGu12/Co9/jGQ1gHijuFDoXJFh614PN2wglbj+Z
-	 O9HBn8AJG2i/CoS12cxA0CZ+uxRp7/GzFAmfKcN8kG3VTZ7JAuXcazj/zdtpt0NUTS
-	 UKShj+y+gdup+spREckOegw9/Ll34z2KgO+TO8PF3rkAaEdlhS4ghJosvfTVbfQvWP
-	 xr7FSkse4t7zTd2eqkeWvBZV3HsB/rXPpz30+gSLC6RwHUZO7T0pkU4ADbs1FL2dBi
-	 CUjBBgafrcwC7Uu8dmc3YGigpfTKByuV7GfFD/s3m3F1be9CN9GPfv5aJ/uBQtFy03
-	 Msot7QvTcXYFQ==
-Date: Sun, 17 Nov 2024 20:39:01 -0800
-From: Kees Cook <kees@kernel.org>
-To: Marek Vasut <marex@denx.de>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>, Luca Ellero <l.ellero@asem.it>,
-	linux-input@vger.kernel.org,
-	Alexander Stein <alexander.stein@ew.tq-group.com>,
-	Al Viro <viro@zeniv.linux.org.uk>, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] Input: ads7846 - Expand xfer array to match usage
-Message-ID: <202411172038.DF2CF9CD@keescook>
-References: <20241117033445.work.274-kees@kernel.org>
- <5b203f2a-755a-448b-946a-f14d6060dbb7@denx.de>
+	s=arc-20240116; t=1732069961; c=relaxed/simple;
+	bh=M6eWbrJh9EXvL33sg7IgSaTZviGzfJgQ7VzmUtmc9Jw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fU7jDLMYYcd1URlQzuU8Ao42n8ZoQ/3yAcq4H5uYgt58DczriQob33GRJNMWZtQG5+bIorEmaFmAcSljONgAvmoO368WCjCo22NyA8t+4qMZVsuyNsJzOMD/ziyqD5bxtMh0DS0uArU0ixqJjarLOmf1GvQ0enWAam0dz0jWtlY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app07-12007 (RichMail) with SMTP id 2ee7673d4a4122a-50247;
+	Wed, 20 Nov 2024 10:32:33 +0800 (CST)
+X-RM-TRANSID:2ee7673d4a4122a-50247
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from localhost.localdomain (unknown[223.108.79.101])
+	by rmsmtp-syy-appsvr03-12003 (RichMail) with SMTP id 2ee3673d4a30dd0-5c7b3;
+	Wed, 20 Nov 2024 10:32:33 +0800 (CST)
+X-RM-TRANSID:2ee3673d4a30dd0-5c7b3
+From: guanjing <guanjing@cmss.chinamobile.com>
+To: peterz@infradead.org,
+	mingo@redhat.com,
+	acme@kernel.org,
+	namhyung@kernel.org,
+	mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org,
+	irogers@google.com,
+	adrian.hunter@intel.com,
+	kan.liang@linux.intel.com,
+	james.clark@linaro.org,
+	yangjihong1@huawei.com
+Cc: linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org,
+	guanjing <guanjing@cmss.chinamobile.com>
+Subject: [PATCH v2] perf kwork: Fix unnecessary conversion to bool in 'valid_kwork_class_type'
+Date: Mon, 18 Nov 2024 12:39:39 +0800
+Message-Id: <20241118043939.270819-1-guanjing@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5b203f2a-755a-448b-946a-f14d6060dbb7@denx.de>
+Content-Transfer-Encoding: 8bit
 
-On Sun, Nov 17, 2024 at 11:06:27PM +0100, Marek Vasut wrote:
-> On 11/17/24 4:34 AM, Kees Cook wrote:
-> > Commit 781a07da9bb9 ("Input: ads7846 - add dummy command register
-> > clearing cycle") added commands to struct ser_req::xfer without
-> > expanding it to hold them. Expand the array to the correct size.
-> > 
-> > ../drivers/input/touchscreen/ads7846.c: In function 'ads7846_read12_ser':
-> > ../drivers/input/touchscreen/ads7846.c:416:18: error: array subscript 7 is above array bounds of 'struct spi_transfer[6]' [-Werror=array-bounds=]
-> >    416 |         req->xfer[7].rx_buf = &req->scratch;
-> >        |         ~~~~~~~~~^~~
-> > ../drivers/input/touchscreen/ads7846.c:334:33: note: while referencing 'xfer'
-> >    334 |         struct spi_transfer     xfer[6];
-> >        |                                 ^~~~
-> > 
-> > Fixes: 781a07da9bb9 ("Input: ads7846 - add dummy command register clearing cycle")
-> > Signed-off-by: Kees Cook <kees@kernel.org>
-> I think Nathan already sent a fix too.
+Fixes the following coccicheck:
 
-Oh excellent! I did a search in lore before sending it but must have
-failed to find it. Do you have a link to it?
+tools/perf/util/bpf_kwork.c:145:53-58: WARNING: conversion to bool not needed here
 
--Kees
+Fixes: daf07d220710 ("perf kwork: Implement BPF trace")
+Signed-off-by: guanjing <guanjing@cmss.chinamobile.com>
+---
+ tools/perf/util/bpf_kwork.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/tools/perf/util/bpf_kwork.c b/tools/perf/util/bpf_kwork.c
+index 6c7126b7670d..c71461082683 100644
+--- a/tools/perf/util/bpf_kwork.c
++++ b/tools/perf/util/bpf_kwork.c
+@@ -142,7 +142,7 @@ kwork_class_bpf_supported_list[KWORK_CLASS_MAX] = {
+ 
+ static bool valid_kwork_class_type(enum kwork_class_type type)
+ {
+-	return type >= 0 && type < KWORK_CLASS_MAX ? true : false;
++	return type >= 0 && type < KWORK_CLASS_MAX;
+ }
+ 
+ static int setup_filters(struct perf_kwork *kwork)
 -- 
-Kees Cook
+2.33.0
+
+
+
 
