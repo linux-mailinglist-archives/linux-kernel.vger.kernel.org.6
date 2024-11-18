@@ -1,196 +1,192 @@
-Return-Path: <linux-kernel+bounces-412888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 853D79D10B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 13:40:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78AD89D10B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 13:40:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F1F8FB24AE2
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 12:40:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E5052837BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 12:40:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8ECB19AD8C;
-	Mon, 18 Nov 2024 12:40:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 070A4199EB2;
+	Mon, 18 Nov 2024 12:39:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="k3JhEAHK"
-Received: from smtp-fw-6002.amazon.com (smtp-fw-6002.amazon.com [52.95.49.90])
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="PwCWYp9K"
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E36B613A86A;
-	Mon, 18 Nov 2024 12:40:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.95.49.90
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99F12198842
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 12:39:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731933604; cv=none; b=hU4IBOlNhD66vDixbncrbKSAeDpnoArT1/chrR/CszgP1AtABkBfx81d70YFlaNzOOGRcfHVDw4oqi4T9qSrxDtm+Cfxa8+JTyv/FAZET/r9L+SL4ShAzoeYgiHyVtqcgNoRImvJh/5mtMqeY57zWnKIGwACEnrKd2Zf6Idh8no=
+	t=1731933598; cv=none; b=iVcWX/o5XvPtvCM0SvD4rZrGPyeUiDpKGiA6Pk27S6XStJPFRyXP4KYCxTzyQlvlNZcc5zY8gPmLHfhJXOC4FxGx+uxP8buBF8zu+xa9EZAgOkX5gkBZSJdTzSYCMqxg1BHkrsN3aBt1F+jn11PHW68eAhCorRC8dd8CpnaLV7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731933604; c=relaxed/simple;
-	bh=00M39CEkTVs3xVd4M1e0BsfnsNXxWk5Gp34SYT7JxJk=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=F0UaWqF4rJUjGsO3YGVGIK5re1+rwk0MQ3djA2PaoGJ9uq9HwwrscpnCYQuw+nKB7Dlv6xVLAqtbclZ0COJJ9ikj8Otoq2tjzSY+MPv01TYh4OrmQaIV8fE9SucBfSzFIWQANgHSkRvirUhEDVBjdsqqS4CtPb3l/PKgb0Wyw9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=k3JhEAHK; arc=none smtp.client-ip=52.95.49.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1731933603; x=1763469603;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=0KIdbqYUO6Zv8eVf+NQoyrINVlwuJ6bN4A3SGV37H6Y=;
-  b=k3JhEAHKCayrIiy5OfCzeXI1TXUoUSh9O0uJSvcFUZbte4+wnY1YBGD/
-   nhVS0XA5Ptr76gfqHkOqJiHAic0UnvXEkVN1KeuwMx8gZj+QjpnVBD6et
-   ri94WqbdScdysJo17r+ImybRrI60VGs85xKnM5n/t0IRxEhtg0x9vzrQh
-   g=;
-X-IronPort-AV: E=Sophos;i="6.12,164,1728950400"; 
-   d="scan'208";a="449876552"
-Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.124.125.6])
-  by smtp-border-fw-6002.iad6.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2024 12:39:58 +0000
-Received: from EX19MTAEUB001.ant.amazon.com [10.0.17.79:64963]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.5.74:2525] with esmtp (Farcaster)
- id 0c3fabae-6b8b-4c0f-81ad-6b8450cdad29; Mon, 18 Nov 2024 12:39:56 +0000 (UTC)
-X-Farcaster-Flow-ID: 0c3fabae-6b8b-4c0f-81ad-6b8450cdad29
-Received: from EX19D014EUA004.ant.amazon.com (10.252.50.41) by
- EX19MTAEUB001.ant.amazon.com (10.252.51.28) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Mon, 18 Nov 2024 12:39:54 +0000
-Received: from EX19MTAUEC002.ant.amazon.com (10.252.135.146) by
- EX19D014EUA004.ant.amazon.com (10.252.50.41) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Mon, 18 Nov 2024 12:39:53 +0000
-Received: from email-imr-corp-prod-pdx-all-2b-dbd438cc.us-west-2.amazon.com
- (10.124.125.6) by mail-relay.amazon.com (10.252.135.146) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id
- 15.2.1258.34 via Frontend Transport; Mon, 18 Nov 2024 12:39:53 +0000
-Received: from dev-dsk-kalyazin-1a-a12e27e2.eu-west-1.amazon.com (dev-dsk-kalyazin-1a-a12e27e2.eu-west-1.amazon.com [172.19.103.116])
-	by email-imr-corp-prod-pdx-all-2b-dbd438cc.us-west-2.amazon.com (Postfix) with ESMTPS id 8482DA018B;
-	Mon, 18 Nov 2024 12:39:49 +0000 (UTC)
-From: Nikita Kalyazin <kalyazin@amazon.com>
-To: <pbonzini@redhat.com>, <seanjc@google.com>, <corbet@lwn.net>,
-	<tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
-	<dave.hansen@linux.intel.com>, <hpa@zytor.com>, <rostedt@goodmis.org>,
-	<mhiramat@kernel.org>, <mathieu.desnoyers@efficios.com>,
-	<kvm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>
-CC: <jthoughton@google.com>, <david@redhat.com>, <peterx@redhat.com>,
-	<oleg@redhat.com>, <vkuznets@redhat.com>, <gshan@redhat.com>,
-	<graf@amazon.de>, <jgowans@amazon.com>, <roypat@amazon.co.uk>,
-	<derekmn@amazon.com>, <nsaenz@amazon.es>, <xmarcalx@amazon.com>,
-	<kalyazin@amazon.com>
-Subject: [RFC PATCH 0/6] KVM: x86: async PF user
-Date: Mon, 18 Nov 2024 12:39:42 +0000
-Message-ID: <20241118123948.4796-1-kalyazin@amazon.com>
-X-Mailer: git-send-email 2.40.1
+	s=arc-20240116; t=1731933598; c=relaxed/simple;
+	bh=Y89whwxsnH+T4B1CM6x6ApN7ZbvJ4mHDuHMCVmwwWbk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=bht8TIOtts4pJj2fOj/tPrbW4X7SI4+97s9pWyaRICwNxHrf5OKcMlNajhtAzA6/7MWJp9LwwlWZfUoelIzbc3FTNMg2pGhFXMSGsB3AfqILzNj0vhtjXFE/8PQJoEzu8uDjgAW7oBCELATRov0Ue/BWoxH3PYhMZmvq0NhgfX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=PwCWYp9K; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from cwcc.thunk.org (pool-173-48-111-28.bstnma.fios.verizon.net [173.48.111.28])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 4AICdgh0029145
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 18 Nov 2024 07:39:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1731933584; bh=8i/2Dtxs9WU+cyaV0nWb6hSxHSnSMU6XQ6w15BE/fUA=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=PwCWYp9Kh49O8wVQERyl5O1qp6oLDsV6QM+UlYiomsdhNdKYICFeMFe7Bt0CJTJIc
+	 zLSOzm+q3VrF1NbBkjzB/zp6ZPGypvvMXSXbwYTk3haE7JzognMGP+rRdBjKas8Ztu
+	 m1PG56fGofSmmSkiLGN1oRwK1HXhiqZrrRj80S8IUdUTf6zeBBE0OnsEicus5Fs9JT
+	 48AxuXnEwVvAGW7aIYoXdfc5w7fycIPoeZ6gX7+NTvL5pgd4s2yveTt7h0ntL6X6We
+	 NXsAPyWc9cnVWoBfbtJ2iIFmsNeXXEs2jUrf/ij7Rv5Hj5E8XLpWXUTqpabPYe3SVv
+	 VbA7KyQTSN91w==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+	id 55A8515C02FD; Mon, 18 Nov 2024 07:39:42 -0500 (EST)
+Date: Mon, 18 Nov 2024 07:39:42 -0500
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux Kernel Developers List <linux-kernel@vger.kernel.org>,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>
+Subject: [GIT PULL] ext4 updates for v6.13-rc1
+Message-ID: <20241118123942.GA1745460@mit.edu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-Async PF [1] allows to run other processes on a vCPU while the host
-handles a stage-2 fault caused by a process on that vCPU. When using
-VM-exit-based stage-2 fault handling [2], async PF functionality is lost
-because KVM does not run the vCPU while a fault is being handled so no
-other process can execute on the vCPU. This patch series extends
-VM-exit-based stage-2 fault handling with async PF support by letting
-userspace handle faults instead of the kernel, hence the "async PF user"
-name.
+The following changes since commit 42f7652d3eb527d03665b09edac47f85fb600924:
 
-I circulated the idea with Paolo, Sean, David H, and James H at the LPC,
-and the only concern I heard was about injecting the "page not present"
-event via #PF exception in the CoCo case, where it may not work. In my
-implementation, I reused the existing code for doing that, so the async
-PF user implementation is on par with the present async PF
-implementation in this regard, and support for the CoCo case can be
-added separately.
+  Linux 6.12-rc4 (2024-10-20 15:19:38 -0700)
 
-Please note that this series is applied on top of the VM-exit-based
-stage-2 fault handling RFC [2].
+are available in the Git repository at:
 
-Implementation
+  https://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4.git tags/ext4_for_linus-6.13-rc1
 
-The following workflow is implemented:
- - A process in the guest causes a stage-2 fault.
- - KVM checks whether the fault can be handled asynchronously. If it
-   can, KVM prepares the VM exit info that contains a newly added "async
-   PF flag" raised and an async PF token value corresponding to the
-   fault.
- - Userspace reads the VM exit info and resumes the vCPU immediately.
-   Meanwhile it processes the fault.
- - When the fault is resolved, userspace calls a new async ioctl using
-   the token to notify KVM.
- - KVM communicates to the guest that the process can be resumed.
+for you to fetch changes up to 3e7c69cdb053f9edea95502853f35952ab6cbf06:
 
-Notes:
- - No changes to the x86 async PF PV interface are required
- - The series does not introduce new dependencies on x86 compared to the
-   existing async PF
+  jbd2: Fix comment describing journal_init_common() (2024-11-13 12:56:48 -0500)
 
-Testing
+----------------------------------------------------------------
+A lot of miscellaneous ext4 bug fixes and cleanups this cycle, most
+notably in the journaling code, bufered I/O, and compiler warning
+cleanups.
 
-Inspired by [3], I built a Firecracker-based setup, where Firecracker
-implemented the VM-exit-based fault handling. I observed that a workload
-consisting of a CPU-bound and memory-bound threads running concurrently
-was executing faster with async PF user enabled: with 10 ms-long fault
-processing, it was 26% faster.
+----------------------------------------------------------------
+Amir Goldstein (1):
+      ext4: return error on syncfs after shutdown
 
-It is difficult to provide an objective performance comparison between
-async PF kernel and async PF user, because async PF user can only work
-with VM-exit-based fault handling, which has its own performance
-characteristics compared to in-kernel fault handling or UserfaultFD.
+Andy Shevchenko (1):
+      ext4: mark ctx_*_flags() with __maybe_unused
 
-The patch series is built on top of the VM-exit-based stage-2 fault
-handling RFC [2].
+Baokun Li (2):
+      ext4: show the default enabled prefetch_block_bitmaps option
+      ext4: WARN if a full dir leaf block has only one dentry
 
-Patch 1 updates documentation to reflect [2] changes.
-Patches 2-6 add the implementation of async PF user.
+Brian Foster (2):
+      ext4: partial zero eof block on unaligned inode size extension
+      mm: zero range of eof folio exposed by inode size extension
 
-Questions:
- - Are there any general concerns about the approach?
- - Can we leave the CoCo use case aside for now, or do we need to
-   support it straight away?
- - What is the desired level of coupling between async PF and async PF
-   user? For now, I kept the coupling to the bare minimum (only the
-   PV-related data structure is shared between the two).
+Dan Carpenter (1):
+      ext4: cleanup variable name in ext4_fc_del()
 
-[1] https://kvm-forum.qemu.org/2021/sdei_apf_for_arm64_gavin.pdf
-[2] https://lore.kernel.org/kvm/CADrL8HUHRMwUPhr7jLLBgD9YLFAnVHc=N-C=8er-x6GUtV97pQ@mail.gmail.com/T/
-[3] https://lore.kernel.org/all/20200508032919.52147-1-gshan@redhat.com/
+Daniel Martín Gómez (1):
+      jbd2: Fix comment describing journal_init_common()
 
-Nikita
+Gustavo A. R. Silva (1):
+      jbd2: avoid dozens of -Wflex-array-member-not-at-end warnings
 
-Nikita Kalyazin (6):
-  Documentation: KVM: add userfault KVM exit flag
-  Documentation: KVM: add async pf user doc
-  KVM: x86: add async ioctl support
-  KVM: trace events: add type argument to async pf
-  KVM: x86: async_pf_user: add infrastructure
-  KVM: x86: async_pf_user: hook to fault handling and add ioctl
+Jan Kara (1):
+      ext4: avoid remount errors with 'abort' mount option
 
- Documentation/virt/kvm/api.rst  |  35 ++++++
- arch/x86/include/asm/kvm_host.h |  12 +-
- arch/x86/kvm/Kconfig            |   7 ++
- arch/x86/kvm/lapic.c            |   2 +
- arch/x86/kvm/mmu/mmu.c          |  68 ++++++++++-
- arch/x86/kvm/x86.c              | 101 +++++++++++++++-
- arch/x86/kvm/x86.h              |   2 +
- include/linux/kvm_host.h        |  30 +++++
- include/linux/kvm_types.h       |   1 +
- include/trace/events/kvm.h      |  50 +++++---
- include/uapi/linux/kvm.h        |  12 +-
- virt/kvm/Kconfig                |   3 +
- virt/kvm/Makefile.kvm           |   1 +
- virt/kvm/async_pf.c             |   2 +-
- virt/kvm/async_pf_user.c        | 197 ++++++++++++++++++++++++++++++++
- virt/kvm/async_pf_user.h        |  24 ++++
- virt/kvm/kvm_main.c             |  14 +++
- 17 files changed, 535 insertions(+), 26 deletions(-)
- create mode 100644 virt/kvm/async_pf_user.c
- create mode 100644 virt/kvm/async_pf_user.h
+Jeongjun Park (1):
+      ext4: supress data-race warnings in ext4_free_inodes_{count,set}()
 
+Jiapeng Chong (1):
+      ext4: simplify if condition
 
-base-commit: 15f01813426bf9672e2b24a5bac7b861c25de53b
--- 
-2.40.1
+Jinliang Zheng (1):
+      ext4: disambiguate the return value of ext4_dio_write_end_io()
 
+Long Li (1):
+      ext4: fix race in buffer_head read fault injection
+
+Markus Elfring (1):
+      ext4: Call ext4_journal_stop(handle) only once in ext4_dio_write_iter()
+
+Mathieu Othacehe (1):
+      ext4: prevent an infinite loop in the lazyinit thread
+
+Nicolas Bretz (1):
+      ext4: prevent delalloc to nodelalloc on remount
+
+R Sundar (1):
+      ext4: use string choices helpers
+
+Theodore Ts'o (1):
+      ext4: fix FS_IOC_GETFSMAP handling
+
+Thorsten Blum (3):
+      ext4: use str_yes_no() helper function
+      ext4: annotate struct fname with __counted_by()
+      ext4: use struct_size() to improve ext4_htree_store_dirent()
+
+Ye Bin (6):
+      jbd2: remove redundant judgments for check v1 checksum
+      jbd2: unified release of buffer_head in do_one_pass()
+      jbd2: refactor JBD2_COMMIT_BLOCK process in do_one_pass()
+      jbd2: factor out jbd2_do_replay()
+      jbd2: remove useless 'block_error' variable
+      jbd2: remove the 'success' parameter from the jbd2_do_replay() function
+
+Yu Jiaoliang (1):
+      ext4: use ERR_CAST to return an error-valued pointer
+
+Zhang Yi (1):
+      ext4: don't pass full mapping flags to ext4_es_insert_extent()
+
+Zhaoyang Huang (1):
+      fs: ext4: Don't use CMA for buffer_head
+
+Zhihao Cheng (1):
+      jbd2: make b_frozen_data allocation always succeed
+
+j.xia (1):
+      ext4: pass write-hint for buffered IO
+
+ fs/ext4/balloc.c         |   4 +-
+ fs/ext4/dir.c            |   7 +-
+ fs/ext4/ext4.h           |  12 +--
+ fs/ext4/extents.c        |  13 +++-
+ fs/ext4/extents_status.c |   8 +-
+ fs/ext4/extents_status.h |   3 +-
+ fs/ext4/fast_commit.c    |   8 +-
+ fs/ext4/file.c           |  12 ++-
+ fs/ext4/fsmap.c          |  54 ++++++++++++-
+ fs/ext4/ialloc.c         |   5 +-
+ fs/ext4/indirect.c       |   2 +-
+ fs/ext4/inode.c          |  70 ++++++++++++-----
+ fs/ext4/mballoc.c        |  22 ++++--
+ fs/ext4/mballoc.h        |   1 +
+ fs/ext4/mmp.c            |   2 +-
+ fs/ext4/move_extent.c    |   2 +-
+ fs/ext4/namei.c          |  18 ++++-
+ fs/ext4/page-io.c        |   4 +-
+ fs/ext4/resize.c         |   2 +-
+ fs/ext4/super.c          |  80 ++++++++++++-------
+ fs/jbd2/commit.c         |   4 -
+ fs/jbd2/journal.c        |  15 ++--
+ fs/jbd2/recovery.c       | 311 +++++++++++++++++++++++++++++++++++--------------------------------------
+ include/linux/jbd2.h     |  15 ++--
+ mm/truncate.c            |  15 ++++
+ 25 files changed, 402 insertions(+), 287 deletions(-)
 
