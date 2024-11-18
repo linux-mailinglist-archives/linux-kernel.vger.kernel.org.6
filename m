@@ -1,352 +1,171 @@
-Return-Path: <linux-kernel+bounces-412944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFB469D1193
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 14:14:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A0A39D11B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 14:22:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B08D4281E7B
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 13:14:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44B751F22026
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 13:22:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45A9A19ABCB;
-	Mon, 18 Nov 2024 13:14:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CBA01A2564;
+	Mon, 18 Nov 2024 13:21:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z1RWmucf"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=uliege.be header.i=@uliege.be header.b="kCOXYhhc"
+Received: from serv108.segi.ulg.ac.be (serv108.segi.ulg.ac.be [139.165.32.111])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5936219DF75;
-	Mon, 18 Nov 2024 13:14:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FB9319AD7E;
+	Mon, 18 Nov 2024 13:21:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=139.165.32.111
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731935646; cv=none; b=eMfPWF071Vu7b+UJUXiirBeNMbkVyWdijK3VPJWrvFpQ0rgCgntJ+n9SYSAsMO+4sFwZUNP4NjpywF+fyhSCG+4HnSCnMYcVBeRWoJIOeQVEbU2ZgT4WbCEokwC+7bzmfn/5T2ywWwrntJeDTf6+DTykEkdSPaNZLz893EaMzo8=
+	t=1731936088; cv=none; b=TGA4n4TqlpzpRN8j74mpUTVNabmp908RM5ok9TvcUuY5+YemlOwCglWW0J7BSRbzhJDqMm/9DIv56l3qinSR1yyJc6+fQhMGAn3E2EU1OAsAVw+BpXvOXRtXjGqi4BD9abp/qSDJEh+Q4LLQ8UmqTFt9kodyibRtyTPyEVVLvXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731935646; c=relaxed/simple;
-	bh=fhhmaJHU04moJHFYYU1sSibfF6v5D2x9wWOFvR4GGy4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EM4VYuwv4AVIeaiagpYYm9/WFhQg6uPnlIa/mleIn+XTVUlMBtQSZmH8D7nHomNQFqgUgZBBi/VrmxZHq/nZBijFmnvwwnzBswHs5WcliBIOW6awYYNAkfWPpaRxe9De93HxQ1U2JgAcLRBwvDyTU8km7iw0WJGkwW84oP1weDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z1RWmucf; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2fb6110c8faso35751781fa.1;
-        Mon, 18 Nov 2024 05:14:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731935642; x=1732540442; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=h8vUOATTSQCg4EagntX8WxKpBYFrnGu2LTsiskBXNkU=;
-        b=Z1RWmucfU8KCDpqbzieB0gso+yJqGF5DLJSZUNoFcS4mc701ce80WufHGBuCLXLYZw
-         sWmzApDz63VnFY2D1O6IUgkcTFehG7jCY0Ssf3e2KW1AxcXZma1AhBcq525szX52hDOG
-         vB20IGsToRPsQ78Dj7hwAlFno4xCubW+t+Ao8yQaBvXEjtFFhXQBqOQHFlsK9wCzgmGb
-         QGbD4r6E1m/AUKUnzGbi/kBoRclqnQt3uErzDr8YKvunG1tHnFF5gl+1isBh0n4gWV8n
-         aIoQmiXHmNhlHtJDKkmej6wLyCqq4weYbn6BGF7EtTKt5kgtEnWYxbsVGLutelu9gHM7
-         IwOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731935642; x=1732540442;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=h8vUOATTSQCg4EagntX8WxKpBYFrnGu2LTsiskBXNkU=;
-        b=q9X53C2nWCitEPM3xKO4WssVA0rYY3EX6trvoSm9xFp80/keLVRz3M+R4nEexoLv0J
-         BF5DiAkId/ZqwzKqSK+k5Mg65jnkIuwYD33gyxwFWui9UaU/lkaVnTjATq+0nc2G/dfE
-         /qaOKIZl0wuE5jjFy2pxn9Ww3A4Npe4SPOefDOJCoHsvdshTyYezMesZI2oCTTNv0KZK
-         wh5WRcL8MOi6NgMDggVyv0B1RVcmMqXA7Cl8UC5E9fg67LzmQ3leodujiQUeTLaJ54BJ
-         3fdOL5xVpQmtAij+NA5SMN/8uOXLph8HX/DzuhrLyTgzlOZXtA136f0emdLn1UXET3R4
-         6phA==
-X-Forwarded-Encrypted: i=1; AJvYcCU43o4LFGF5KHHglnaJGOXw6URCzPP8h7usFfuP3kug6Ef3Hhh94XJHlrKctL1C49riMeouaB68JQ+gtSI=@vger.kernel.org, AJvYcCXrvSdwMIMff3b2Q4mUw68IftzjENDHoXZitKU5PplXOyEW9eDkVrUoGqMaVu3gCXFMkUQ1@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2lpePxCwoO0UOgqEVGmIpWhs69wwX2vB3h8Sg24B42JHwyJi1
-	2/JfItd/fNpShytXMV5e7/sYDT3QSU4vaxif90uD1pZpiR2Ku2K3TRtej+fuU+4rI1ceMmmxJjP
-	K5bndJD622lD+C5WqXpnuZbrvTBc=
-X-Google-Smtp-Source: AGHT+IGRXbCOadoDXFTX1FRfSdaATe1H9mmUBJ3su9Mywu8Hgpb/IM2wLQgbCq5tcHKFeKVYqh8N2rwn7WnmYmGg1mI=
-X-Received: by 2002:a2e:a9a4:0:b0:2fb:5014:c941 with SMTP id
- 38308e7fff4ca-2ff60917f01mr56388391fa.14.1731935642054; Mon, 18 Nov 2024
- 05:14:02 -0800 (PST)
+	s=arc-20240116; t=1731936088; c=relaxed/simple;
+	bh=ukp9D4QNFnqQgIx33t+FEeznz5RbRDWC5wYe9t+Ofqw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=vBGxY7pnHEG8SpukE5S02LgM2aAdyZXfFQ22w68T+5a8W6m65XJg+tEaT3cBd48xIuGCYfs2uE1e4omA0aZ1r95EU5lJeolSYIzKwGcTMJuBt0zvOOCcU6TN65ocyCLulFN/Bj11aQURTTr0YvTKV7TyGOEAZzB6mgaTEcHk8Dw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uliege.be; spf=pass smtp.mailfrom=uliege.be; dkim=pass (2048-bit key) header.d=uliege.be header.i=@uliege.be header.b=kCOXYhhc; arc=none smtp.client-ip=139.165.32.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uliege.be
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uliege.be
+Received: from localhost.localdomain (220.24-245-81.adsl-dyn.isp.belgacom.be [81.245.24.220])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by serv108.segi.ulg.ac.be (Postfix) with ESMTPSA id 8A251200DF80;
+	Mon, 18 Nov 2024 14:15:17 +0100 (CET)
+DKIM-Filter: OpenDKIM Filter v2.11.0 serv108.segi.ulg.ac.be 8A251200DF80
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uliege.be;
+	s=ulg20190529; t=1731935717;
+	bh=FdARQ9FDv6A1GuZWWmG8cFQIe3+wSYh7fXDonFFduzM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=kCOXYhhchSCZXM7C9u7+2ApZ0nRp0slCAPLQYvYA/u8syf10ftoaJTktAKI1M/BEi
+	 nvK8aQ9wri7GDkWw0GyFkTDObD2CZ4WJDHY09BUcOApvpd+ToKY31rqpws4dzbkNM+
+	 8nvvg46ZXfI492pJcc2dFaVGp4BUvCAk+yzLtxAxvqzXNpjXNQHKnLnrSaWOEjQgGU
+	 vA4BT1+XOhluPsnRsavP9I2U0YfOF6PL0V9sqSCR2E/9IowauX5KfGTlfmBjhGdep1
+	 NYC6ZozLuZgeQ0rIb1fdOuZ/B7KYjv6YjWJR7UgGq4I9tZEHUFncFCxIbWXk32pEEO
+	 nf1MJlcddHlsA==
+From: Justin Iurman <justin.iurman@uliege.be>
+To: netdev@vger.kernel.org
+Cc: davem@davemloft.net,
+	dsahern@kernel.org,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	linux-kernel@vger.kernel.org,
+	justin.iurman@uliege.be
+Subject: [PATCH net-next v4 0/4] Mitigate the two-reallocations issue for iptunnels
+Date: Mon, 18 Nov 2024 14:14:58 +0100
+Message-Id: <20241118131502.10077-1-justin.iurman@uliege.be>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241112-slub-percpu-caches-v1-0-ddc0bdc27e05@suse.cz> <20241112-slub-percpu-caches-v1-6-ddc0bdc27e05@suse.cz>
-In-Reply-To: <20241112-slub-percpu-caches-v1-6-ddc0bdc27e05@suse.cz>
-From: Hyeonggon Yoo <42.hyeyoo@gmail.com>
-Date: Mon, 18 Nov 2024 22:13:49 +0900
-Message-ID: <CAB=+i9QoavVWZ6HxiOb8ypqov0rM+HAK4ge7nKHdQRPUaNPmkw@mail.gmail.com>
-Subject: Re: [PATCH RFC 6/6] mm, slub: sheaf prefilling for guaranteed allocations
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Suren Baghdasaryan <surenb@google.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Christoph Lameter <cl@linux.com>, David Rientjes <rientjes@google.com>, Pekka Enberg <penberg@kernel.org>, 
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Matthew Wilcox <willy@infradead.org>, Boqun Feng <boqun.feng@gmail.com>, 
-	Uladzislau Rezki <urezki@gmail.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	rcu@vger.kernel.org, maple-tree@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Nov 13, 2024 at 1:39=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz> wr=
-ote:
->
-> Add three functions for efficient guaranteed allocations in a critical
-> section (that cannot sleep) when the exact number of allocations is not
-> known beforehand, but an upper limit can be calculated.
->
-> kmem_cache_prefill_sheaf() returns a sheaf containing at least given
-> number of objects.
->
-> kmem_cache_alloc_from_sheaf() will allocate an object from the sheaf
-> and is guaranteed not to fail until depleted.
->
-> kmem_cache_return_sheaf() is for giving the sheaf back to the slab
-> allocator after the critical section. This will also attempt to refill
-> it to cache's sheaf capacity for better efficiency of sheaves handling,
-> but it's not stricly necessary to succeed.
->
-> TODO: the current implementation is limited to cache's sheaf_capacity
->
-> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-> ---
->  include/linux/slab.h |  11 ++++
->  mm/slub.c            | 149 +++++++++++++++++++++++++++++++++++++++++++++=
-++++++
->  2 files changed, 160 insertions(+)
->
-> diff --git a/include/linux/slab.h b/include/linux/slab.h
-> index 23904321992ad2eeb9389d0883cf4d5d5d71d896..a87dc3c6392fe235de2eabe17=
-92df86d40c3bbf9 100644
-> --- a/include/linux/slab.h
-> +++ b/include/linux/slab.h
-> @@ -820,6 +820,17 @@ void *kmem_cache_alloc_node_noprof(struct kmem_cache=
- *s, gfp_t flags,
->                                    int node) __assume_slab_alignment __ma=
-lloc;
->  #define kmem_cache_alloc_node(...)     alloc_hooks(kmem_cache_alloc_node=
-_noprof(__VA_ARGS__))
->
-> +struct slab_sheaf *
-> +kmem_cache_prefill_sheaf(struct kmem_cache *s, gfp_t gfp, unsigned int c=
-ount);
-> +
-> +void kmem_cache_return_sheaf(struct kmem_cache *s, gfp_t gfp,
-> +                                      struct slab_sheaf *sheaf);
-> +
-> +void *kmem_cache_alloc_from_sheaf_noprof(struct kmem_cache *cachep, gfp_=
-t gfp,
-> +                       struct slab_sheaf *sheaf) __assume_slab_alignment=
- __malloc;
-> +#define kmem_cache_alloc_from_sheaf(...)       \
-> +                       alloc_hooks(kmem_cache_alloc_from_sheaf_noprof(__=
-VA_ARGS__))
-> +
->  /*
->   * These macros allow declaring a kmem_buckets * parameter alongside siz=
-e, which
->   * can be compiled out with CONFIG_SLAB_BUCKETS=3Dn so that a large numb=
-er of call
-> diff --git a/mm/slub.c b/mm/slub.c
-> index 1900afa6153ca6d88f9df7db3ce84d98629489e7..a0e2cb7dfb5173f39f36bea1e=
-b9760c3c1b99dd7 100644
-> --- a/mm/slub.c
-> +++ b/mm/slub.c
-> @@ -444,6 +444,7 @@ struct slab_sheaf {
->         union {
->                 struct rcu_head rcu_head;
->                 struct list_head barn_list;
-> +               bool oversize;
->         };
->         struct kmem_cache *cache;
->         unsigned int size;
-> @@ -2819,6 +2820,30 @@ static int barn_put_full_sheaf(struct node_barn *b=
-arn, struct slab_sheaf *sheaf,
->         return ret;
->  }
->
-> +static struct slab_sheaf *barn_get_full_or_empty_sheaf(struct node_barn =
-*barn)
-> +{
-> +       struct slab_sheaf *sheaf =3D NULL;
-> +       unsigned long flags;
-> +
-> +       spin_lock_irqsave(&barn->lock, flags);
-> +
-> +       if (barn->nr_empty) {
-> +               sheaf =3D list_first_entry(&barn->sheaves_empty,
-> +                                        struct slab_sheaf, barn_list);
-> +               list_del(&sheaf->barn_list);
-> +               barn->nr_empty--;
-> +       } else if (barn->nr_full) {
-> +               sheaf =3D list_first_entry(&barn->sheaves_full, struct sl=
-ab_sheaf,
-> +                                       barn_list);
-> +               list_del(&sheaf->barn_list);
-> +               barn->nr_full--;
-> +       }
-> +
-> +       spin_unlock_irqrestore(&barn->lock, flags);
-> +
-> +       return sheaf;
-> +}
-> +
->  /*
->   * If a full sheaf is available, return it and put the supplied empty on=
-e to
->   * barn. We ignore the limit on empty sheaves as the number of sheaves d=
-oesn't
-> @@ -4893,6 +4918,130 @@ void *kmem_cache_alloc_node_noprof(struct kmem_ca=
-che *s, gfp_t gfpflags, int nod
->  }
->  EXPORT_SYMBOL(kmem_cache_alloc_node_noprof);
->
-> +
-> +/*
-> + * returns a sheaf that has least the given count of objects
-> + * when prefilling is needed, do so with given gfp flags
-> + *
-> + * return NULL if prefilling failed, or when the requested count is
-> + * above cache's sheaf_capacity (TODO: lift this limitation)
-> + */
-> +struct slab_sheaf *
-> +kmem_cache_prefill_sheaf(struct kmem_cache *s, gfp_t gfp, unsigned int c=
-ount)
-> +{
-> +       struct slub_percpu_sheaves *pcs;
-> +       struct slab_sheaf *sheaf =3D NULL;
-> +
-> +       //TODO: handle via oversize sheaf
-> +       if (count > s->sheaf_capacity)
-> +               return NULL;
-> +
-> +       pcs =3D cpu_sheaves_lock(s->cpu_sheaves);
-> +
-> +       if (pcs->spare && pcs->spare->size > 0) {
-> +               sheaf =3D pcs->spare;
-> +               pcs->spare =3D NULL;
-> +       }
-> +
-> +       if (!sheaf)
-> +               sheaf =3D barn_get_full_or_empty_sheaf(pcs->barn);
-> +
-> +       cpu_sheaves_unlock(s->cpu_sheaves);
-> +
-> +       if (!sheaf)
-> +               sheaf =3D alloc_empty_sheaf(s, gfp);
-> +
-> +       if (sheaf && sheaf->size < count) {
-> +               if (refill_sheaf(s, sheaf, gfp)) {
-> +                       sheaf_flush(s, sheaf);
-> +                       free_empty_sheaf(s, sheaf);
-> +                       sheaf =3D NULL;
-> +               }
-> +       }
-> +
-> +       return sheaf;
-> +}
-> +
-> +/*
-> + * Use this to return a sheaf obtained by kmem_cache_prefill_sheaf()
-> + * It tries to refill the sheaf back to the cache's sheaf_capacity
-> + * to avoid handling partially full sheaves.
-> + *
-> + * If the refill fails because gfp is e.g. GFP_NOWAIT, the sheaf is
-> + * instead dissolved
-> + */
-> +void kmem_cache_return_sheaf(struct kmem_cache *s, gfp_t gfp,
-> +                            struct slab_sheaf *sheaf)
-> +{
-> +       struct slub_percpu_sheaves *pcs;
-> +       bool refill =3D false;
-> +       struct node_barn *barn;
-> +
-> +       //TODO: handle oversize sheaf
-> +
-> +       pcs =3D cpu_sheaves_lock(s->cpu_sheaves);
-> +
-> +       if (!pcs->spare) {
-> +               pcs->spare =3D sheaf;
-> +               sheaf =3D NULL;
-> +       }
-> +
-> +       /* racy check */
-> +       if (!sheaf && pcs->barn->nr_full >=3D MAX_FULL_SHEAVES) {
-> +               barn =3D pcs->barn;
-> +               refill =3D true;
-> +       }
-> +
-> +       cpu_sheaves_unlock(s->cpu_sheaves);
-> +
-> +       if (!sheaf)
-> +               return;
-> +
-> +       /*
-> +        * if the barn is full of full sheaves or we fail to refill the s=
-heaf,
-> +        * simply flush and free it
-> +        */
-> +       if (!refill || refill_sheaf(s, sheaf, gfp)) {
-> +               sheaf_flush(s, sheaf);
-> +               free_empty_sheaf(s, sheaf);
-> +               return;
-> +       }
-> +
-> +       /* we racily determined the sheaf would fit, so now force it */
-> +       barn_put_full_sheaf(barn, sheaf, true);
-> +}
-> +
-> +/*
-> + * Allocate from a sheaf obtained by kmem_cache_prefill_sheaf()
-> + *
-> + * Guaranteed not to fail as many allocations as was the requested count=
-.
-> + * After the sheaf is emptied, it fails - no fallback to the slab cache =
-itself.
-> + *
-> + * The gfp parameter is meant only to specify __GFP_ZERO or __GFP_ACCOUN=
-T
-> + * memcg charging is forced over limit if necessary, to avoid failure.
-> + */
-> +void *
-> +kmem_cache_alloc_from_sheaf_noprof(struct kmem_cache *s, gfp_t gfp,
-> +                                  struct slab_sheaf *sheaf)
-> +{
-> +       void *ret =3D NULL;
-> +       bool init;
-> +
-> +       if (sheaf->size =3D=3D 0)
-> +               goto out;
-> +
-> +       ret =3D sheaf->objects[--sheaf->size];
-> +
-> +       init =3D slab_want_init_on_alloc(gfp, s);
-> +
-> +       /* add __GFP_NOFAIL to force successful memcg charging */
-> +       slab_post_alloc_hook(s, NULL, gfp | __GFP_NOFAIL, 1, &ret, init, =
-s->object_size);
+v4:
+- move static inline function to include/net/dst.h
+v3:
+- fix compilation error in seg6_iptunnel
+v2:
+- add missing "static" keywords in seg6_iptunnel
+- use a static-inline function to return the dev overhead (as suggested
+  by Olek, thanks)
 
-Maybe I'm missing something, but how can this be used for non-sleepable con=
-texts
-if __GFP_NOFAIL is used? I think we have to charge them when the sheaf
-is returned
-via kmem_cache_prefill_sheaf(), just like users of bulk alloc/free?
+The same pattern is found in ioam6, rpl6, and seg6. Basically, it first
+makes sure there is enough room for inserting a new header:
 
-Best,
-Hyeonggon
+(1) err = skb_cow_head(skb, len + skb->mac_len);
 
-> +out:
-> +       trace_kmem_cache_alloc(_RET_IP_, ret, s, gfp, NUMA_NO_NODE);
-> +
-> +       return ret;
-> +}
-> +
->  /*
->   * To avoid unnecessary overhead, we pass through large allocation reque=
-sts
->   * directly to the page allocator. We use __GFP_COMP, because we will ne=
-ed to
->
-> --
-> 2.47.0
->
+Then, when the insertion (encap or inline) is performed, the input and
+output handlers respectively make sure there is enough room for layer 2:
+
+(2) err = skb_cow_head(skb, LL_RESERVED_SPACE(dst->dev));
+
+skb_cow_head() does nothing when there is enough room. Otherwise, it
+reallocates more room, which depends on the architecture. Briefly,
+skb_cow_head() calls __skb_cow() which then calls pskb_expand_head() as
+follows:
+
+pskb_expand_head(skb, ALIGN(delta, NET_SKB_PAD), 0, GFP_ATOMIC);
+
+"delta" represents the number of bytes to be added. This value is
+aligned with NET_SKB_PAD, which is defined as follows:
+
+NET_SKB_PAD = max(32, L1_CACHE_BYTES)
+
+... where L1_CACHE_BYTES also depends on the architecture. In our case
+(x86), it is defined as follows:
+
+L1_CACHE_BYTES = (1 << CONFIG_X86_L1_CACHE_SHIFT)
+
+... where (again, in our case) CONFIG_X86_L1_CACHE_SHIFT equals 6
+(=X86_GENERIC).
+
+All this to say, skb_cow_head() would reallocate to the next multiple of
+NET_SKB_PAD (in our case a 64-byte multiple) when there is not enough
+room.
+
+Back to the main issue with the pattern: in some cases, two
+reallocations are triggered, resulting in a performance drop (i.e.,
+lines (1) and (2) would both trigger an implicit reallocation). How's
+that possible? Well, this is kind of bad luck as we hit an exact
+NET_SKB_PAD boundary and when skb->mac_len (=14) is smaller than
+LL_RESERVED_SPACE(dst->dev) (=16 in our case). For an x86 arch, it
+happens in the following cases (with the default needed_headroom):
+
+- ioam6:
+ - (inline mode) pre-allocated data trace of 236 or 240 bytes
+ - (encap mode) pre-allocated data trace of 196 or 200 bytes
+- seg6:
+ - (encap mode) for 13, 17, 21, 25, 29, 33, ...(+4)... prefixes
+
+Let's illustrate the problem, i.e., when we fall on the exact
+NET_SKB_PAD boundary. In the case of ioam6, for the above problematic
+values, the total overhead is 256 bytes for both modes. Based on line
+(1), skb->mac_len (=14) is added, therefore passing 270 bytes to
+skb_cow_head(). At that moment, the headroom has 206 bytes available (in
+our case). Since 270 > 206, skb_cow_head() performs a reallocation and
+the new headroom is now 206 + 64 (NET_SKB_PAD) = 270. Which is exactly
+the room we needed. After the insertion, the headroom has 0 byte
+available. But, there's line (2) where 16 bytes are still needed. Which,
+again, triggers another reallocation.
+
+The same logic is applied to seg6 (although it does not happen with the
+inline mode, i.e., -40 bytes). It happens with other L1 cache shifts too
+(the larger the cache shift, the less often it happens). For example,
+with a +32 cache shift (instead of +64), the following number of
+segments would trigger two reallocations: 11, 15, 19, ... With a +128
+cache shift, the following number of segments would trigger two
+reallocations: 17, 25, 33, ... And so on and so forth. Note that it is
+the same for both the "encap" and "l2encap" modes. For the "encap.red"
+and "l2encap.red" modes, it is the same logic but with "segs+1" (e.g.,
+14, 18, 22, 26, etc for a +64 cache shift). Note also that it may happen
+with rpl6 (based on some calculations), although it did not in our case.
+
+This series provides a solution to mitigate the aforementioned issue for
+ioam6, seg6, and rpl6. It provides the dst_entry (in the cache) to
+skb_cow_head() **before** the insertion (line (1)). As a result, the
+very first iteration would still trigger two reallocations (i.e., empty
+cache), while next iterations would only trigger a single reallocation.
+
+Justin Iurman (4):
+  include: net: add static inline dst_dev_overhead() to dst.h
+  net: ipv6: ioam6_iptunnel: mitigate 2-realloc issue
+  net: ipv6: seg6_iptunnel: mitigate 2-realloc issue
+  net: ipv6: rpl_iptunnel: mitigate 2-realloc issue
+
+ include/net/dst.h         |   8 +++
+ net/ipv6/ioam6_iptunnel.c |  82 ++++++++++++++---------------
+ net/ipv6/rpl_iptunnel.c   |  59 ++++++++++-----------
+ net/ipv6/seg6_iptunnel.c  | 106 +++++++++++++++++++++-----------------
+ 4 files changed, 137 insertions(+), 118 deletions(-)
+
+-- 
+2.34.1
+
 
