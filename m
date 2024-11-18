@@ -1,234 +1,294 @@
-Return-Path: <linux-kernel+bounces-413301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3846B9D1712
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 18:26:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A8609D171A
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 18:27:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5EF8284040
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 17:26:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B6632848C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 17:27:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 896CE199EB2;
-	Mon, 18 Nov 2024 17:26:06 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 243951BE86A;
+	Mon, 18 Nov 2024 17:27:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="PT7YBJLd"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AAC0199EA3
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 17:26:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BF06199EA3;
+	Mon, 18 Nov 2024 17:27:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731950766; cv=none; b=B0cIgMrVLTcPPn+z8aYZPe+SPOTJG2/qi/QnnviVSIZ8e/qtIFobIh5rz6Cxnmc+G+JV3TbrrFNQViwbcllAy44ErIsbnuTpJBmuS37FDbl3Xy9D1QrWFoO0QfSIyOW1ReY/cHfErgLw+DcRmtTHitxhHe3bIyzHG5ePTovaISs=
+	t=1731950843; cv=none; b=k4YnCZdPbJ2G39XuqL6bJl1c/6bHII8SKL0DXEMaE8xV32MzQ6JBS5rL5RgjEEEEam6Ah7dUNyl6oZYi9fWH5aiw6bhPEyNVXVb5GglVLDFntUJR5/ynEJNs6XsCfdC6oCi4IS/7ljvU4hzvMxxmq+lBwYGWYs96dJQk06BmGNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731950766; c=relaxed/simple;
-	bh=lyWqLBBReYhxA5zuT4mRVoVncJsM5iVPnkDnxe8obhE=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=BEyBsY3Pq7PhhVsLOyVOKnVSFO5rPl/lEY1UeoJ6ISty2PL/lZWeU6N55XJPzLhP1gAlWooWFGA69//GOSdoDpy7w378ynL46TESyZBOn4gFywmZC/AH6OipEtVLpHFw+LXLqy44dRb1o+jlTQWu/dQBtGngyzGwZ7KaBSMKBp0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-83abf9b6bfaso198986439f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 09:26:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731950763; x=1732555563;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2DoJ/HF1D8S3CzoPu5IJj2gmUmIpGzKo3JDfUM5HOOQ=;
-        b=pVr7aoiZi1ZBEZJ2wVepoiFhITmfl5mJZXpYXJmQPLBAdAQLG304XjNGk6EP4roOx7
-         F7P6m0kMiOwWg/H4X1e11AAp/8NOROW0rTY3TsEqqJ4B31Twhp04JIv0taYKrZpHm0Fh
-         JlSF6c8lrg1syz4cZ7MYuuElUpm2tZtVv30nuFYacfX3ziwq4XoWgtwT+iD+0fOArlSZ
-         JgmKbEmDuE4N2cTBplN+sl2pzVAqo/mHjXqsXVwNOAjIcf91EAAgN0SnCOG4ui54+YyP
-         Rx0NjJlT7C1324S3atSBcIY2eucA+mN+Kztc8ft5rbL/vlpnQD7dwvv8KbsWGFW442Cj
-         8FNw==
-X-Forwarded-Encrypted: i=1; AJvYcCUr4rLxF4E1nDRlRGm/qwxq5gYsO0yBtliFhAJEeZZZpfowGy2vgGuig/2DGL4jepnRdqEFtW7gvG/xzHA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSXqIEklRWBKM9LrNM5KQFFY0hyLCp2iG3/fN7SIewnm1IWtEl
-	V8/YJ5yE2cR5IuuoCUfyu92aWQ1chA1dqEj40WcALDsnmYVqbaYztOQQhCo2fw+4992690smnlC
-	t8c2Pl5wqkD6jsMJPxKMg3DnUmgtUAHQy1pg02nKeDIZ53UD/akrI6Fw=
-X-Google-Smtp-Source: AGHT+IGn6Ql/rSf/wppVWYqH5r82dtbFl+kcqXuLuGv417jh1dRzxt0PTJ0wmkhRIoHhKzvS9sH3Mz7P1FGo/jgDtth0X/dHmxzd
+	s=arc-20240116; t=1731950843; c=relaxed/simple;
+	bh=bwHnSCuQVtrTlpQhyPlWKj23jixqEZbgkt3Y4UsfgWk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=aTLGmJSZERZIT34DOPO0BtQBEvYX6vQBbIGKbqCHSpBTDhtnoVH2tVKxlUltmBnShYZukTjRhHX7/zETwikJfNe7vCYITFTQniA6mBzXlfF+mVUI7xTuu8bSpVrFe77ZbET8Ro631Yra2iqE7pCb9gQbRBQujMkNioxu59Ilyow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=PT7YBJLd; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net ED886403E6
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1731950830; bh=JXQT22vUpsoX4nj2NKfGNaZxp9pjkBawPibRTSeTtOg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=PT7YBJLdEGCZpS4I5SLgmOps48dfHP802NzL8SiW5Fl6WuIqh98y51fnjjTuyx9Lp
+	 e6bDdAeu6NglPqYGkMzkUk7S8sx1HQY6N3I/ldz0gVbv/LHneAVrACuutIgPSu5M6d
+	 CWWl12R3PPuUyxrsgtc3UTlW0DcvxmmeaOQfKmeoZRsAISzsPKPw4OI+N3FNDIFXTj
+	 tVuS3nsSbxKdpN/B4N9roD0tweauKnRb0rCFPZzWnTKPKHVtmIx8YzxcAphdd/G2Du
+	 7jejUyGLEZvz3B8H2KWvnDsDWgSPVYKCH8tM//V3sLlZ9/F/csFEjECnb1fXMK8UoR
+	 OClEa8q+enu5w==
+Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id ED886403E6;
+	Mon, 18 Nov 2024 17:27:09 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Linus Torvalds <torvalds@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: [GIT PULL] Documentation for 6.13
+Date: Mon, 18 Nov 2024 10:27:09 -0700
+Message-ID: <87seroh2qa.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a0f:b0:3a7:635e:d36f with SMTP id
- e9e14a558f8ab-3a7635ed416mr50270875ab.2.1731950763490; Mon, 18 Nov 2024
- 09:26:03 -0800 (PST)
-Date: Mon, 18 Nov 2024 09:26:03 -0800
-In-Reply-To: <CABBYNZKUmL=xekhLMfF9vza3agxtAX5qh1NTJVuRD9R9hwHmQg@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <673b78ab.050a0220.87769.0050.GAE@google.com>
-Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in set_powered_sync
-From: syzbot <syzbot+03d6270b6425df1605bf@syzkaller.appspotmail.com>
-To: linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	luiz.dentz@gmail.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+The following changes since commit 8cf0b93919e13d1e8d4466eb4080a4c4d9d66d7b:
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-KASAN: slab-use-after-free Read in settings_rsp
+  Linux 6.12-rc2 (2024-10-06 15:32:27 -0700)
 
-==================================================================
-BUG: KASAN: slab-use-after-free in settings_rsp+0xd0/0x3c0 net/bluetooth/mgmt.c:1446
-Read of size 8 at addr ffff888026bff128 by task syz.0.615/7359
+are available in the Git repository at:
 
-CPU: 0 UID: 0 PID: 7359 Comm: syz.0.615 Not tainted 6.12.0-rc7-syzkaller-01702-gd7ef9eeef072-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:377 [inline]
- print_report+0x169/0x550 mm/kasan/report.c:488
- kasan_report+0x143/0x180 mm/kasan/report.c:601
- settings_rsp+0xd0/0x3c0 net/bluetooth/mgmt.c:1446
- mgmt_pending_foreach+0xd1/0x130 net/bluetooth/mgmt_util.c:259
- __mgmt_power_off+0x106/0x430 net/bluetooth/mgmt.c:9531
- hci_dev_close_sync+0x6c4/0x11c0 net/bluetooth/hci_sync.c:5208
- hci_dev_do_close net/bluetooth/hci_core.c:483 [inline]
- hci_dev_close+0x112/0x210 net/bluetooth/hci_core.c:508
- sock_do_ioctl+0x158/0x460 net/socket.c:1227
- sock_ioctl+0x626/0x8e0 net/socket.c:1346
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:907 [inline]
- __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:893
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fa2e757cef9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fa2e8325038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007fa2e7736058 RCX: 00007fa2e757cef9
-RDX: 0000000000000000 RSI: 00000000400448ca RDI: 0000000000000008
-RBP: 00007fa2e75ef046 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007fa2e7736058 R15: 00007ffd79fe2218
- </TASK>
+  git://git.lwn.net/linux.git tags/docs-6.13
 
-Allocated by task 7360:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
- poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
- __kasan_kmalloc+0x98/0xb0 mm/kasan/common.c:394
- kasan_kmalloc include/linux/kasan.h:257 [inline]
- __kmalloc_cache_noprof+0x19c/0x2c0 mm/slub.c:4295
- kmalloc_noprof include/linux/slab.h:878 [inline]
- kzalloc_noprof include/linux/slab.h:1014 [inline]
- mgmt_pending_new+0x65/0x250 net/bluetooth/mgmt_util.c:269
- mgmt_pending_add+0x36/0x120 net/bluetooth/mgmt_util.c:296
- set_powered+0x3cd/0x5e0 net/bluetooth/mgmt.c:1401
- hci_mgmt_cmd+0xc47/0x11d0 net/bluetooth/hci_sock.c:1712
- hci_sock_sendmsg+0x7b8/0x11c0 net/bluetooth/hci_sock.c:1832
- sock_sendmsg_nosec net/socket.c:729 [inline]
- __sock_sendmsg+0x221/0x270 net/socket.c:744
- sock_write_iter+0x2d7/0x3f0 net/socket.c:1165
- new_sync_write fs/read_write.c:590 [inline]
- vfs_write+0xaeb/0xd30 fs/read_write.c:683
- ksys_write+0x183/0x2b0 fs/read_write.c:736
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+for you to fetch changes up to c818d5c64c9a8cc14853d716bf7ce6674a6126d0:
 
-Freed by task 7359:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
- kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:579
- poison_slab_object mm/kasan/common.c:247 [inline]
- __kasan_slab_free+0x59/0x70 mm/kasan/common.c:264
- kasan_slab_free include/linux/kasan.h:230 [inline]
- slab_free_hook mm/slub.c:2342 [inline]
- slab_free mm/slub.c:4579 [inline]
- kfree+0x1a0/0x440 mm/slub.c:4727
- mgmt_set_powered_complete+0x4c5/0x6c0 net/bluetooth/mgmt.c:1348
- _hci_cmd_sync_cancel_entry net/bluetooth/hci_sync.c:645 [inline]
- hci_cmd_sync_dequeue+0x22b/0x3d0 net/bluetooth/hci_sync.c:890
- settings_rsp+0xa8/0x3c0 net/bluetooth/mgmt.c:1444
- mgmt_pending_foreach+0xd1/0x130 net/bluetooth/mgmt_util.c:259
- __mgmt_power_off+0x106/0x430 net/bluetooth/mgmt.c:9531
- hci_dev_close_sync+0x6c4/0x11c0 net/bluetooth/hci_sync.c:5208
- hci_dev_do_close net/bluetooth/hci_core.c:483 [inline]
- hci_dev_close+0x112/0x210 net/bluetooth/hci_core.c:508
- sock_do_ioctl+0x158/0x460 net/socket.c:1227
- sock_ioctl+0x626/0x8e0 net/socket.c:1346
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:907 [inline]
- __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:893
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+  Documentation/CoC: spell out enforcement for unacceptable behaviors (2024=
+-11-15 14:31:59 -0700)
 
-The buggy address belongs to the object at ffff888026bff100
- which belongs to the cache kmalloc-96 of size 96
-The buggy address is located 40 bytes inside of
- freed 96-byte region [ffff888026bff100, ffff888026bff160)
+----------------------------------------------------------------
+Another moderately busy cycle in docsland:
 
-The buggy address belongs to the physical page:
-page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x26bff
-ksm flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
-page_type: f5(slab)
-raw: 00fff00000000000 ffff88801ac41280 ffffea0001ea6140 dead000000000003
-raw: 0000000000000000 0000000080200020 00000001f5000000 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 0, migratetype Unmovable, gfp_mask 0x52cc0(GFP_KERNEL|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP), pid 1, tgid 1 (swapper/0), ts 8941535213, free_ts 7525892719
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1556
- prep_new_page mm/page_alloc.c:1564 [inline]
- get_page_from_freelist+0x3649/0x3790 mm/page_alloc.c:3474
- __alloc_pages_noprof+0x292/0x710 mm/page_alloc.c:4750
- alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2265
- alloc_slab_page+0x6a/0x140 mm/slub.c:2412
- allocate_slab+0x5a/0x2f0 mm/slub.c:2578
- new_slab mm/slub.c:2631 [inline]
- ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3818
- __slab_alloc+0x58/0xa0 mm/slub.c:3908
- __slab_alloc_node mm/slub.c:3961 [inline]
- slab_alloc_node mm/slub.c:4122 [inline]
- __kmalloc_cache_noprof+0x1d5/0x2c0 mm/slub.c:4290
- kmalloc_noprof include/linux/slab.h:878 [inline]
- kzalloc_noprof include/linux/slab.h:1014 [inline]
- usb_hub_create_port_device+0xc8/0xc10 drivers/usb/core/port.c:743
- hub_configure drivers/usb/core/hub.c:1710 [inline]
- hub_probe+0x2503/0x3640 drivers/usb/core/hub.c:1965
- usb_probe_interface+0x645/0xbb0 drivers/usb/core/driver.c:399
- really_probe+0x2b8/0xad0 drivers/base/dd.c:658
- __driver_probe_device+0x1a2/0x390 drivers/base/dd.c:800
- driver_probe_device+0x50/0x430 drivers/base/dd.c:830
- __device_attach_driver+0x2d6/0x530 drivers/base/dd.c:958
-page last free pid 8 tgid 8 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1127 [inline]
- free_unref_page+0xdf9/0x1140 mm/page_alloc.c:2657
- vfree+0x186/0x2e0 mm/vmalloc.c:3361
- delayed_vfree_work+0x56/0x80 mm/vmalloc.c:3282
- process_one_work kernel/workqueue.c:3229 [inline]
- process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
- worker_thread+0x870/0xd30 kernel/workqueue.c:3391
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+- Work on Chinese translations has picked up again.  Happily, they are
+  maintaining the existing translations and not just adding new ones.
 
-Memory state around the buggy address:
- ffff888026bff000: fa fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
- ffff888026bff080: 00 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc
->ffff888026bff100: fa fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
-                                  ^
- ffff888026bff180: 00 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc
- ffff888026bff200: 00 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc
-==================================================================
+- Some maintenance of the Japanese and Italian translations as well.
 
+- The removal of the venerable "dontdiff" file.  It has long outlived its
+  usefulness and contained entries ("parse.*") that would actively mask
+  actual source change.
 
-Tested on:
+- The addition of enforcement information to the code-of-conduct
+  documentation.
 
-commit:         d7ef9eee Merge branch 'am65-cpsw-rx-dscp-prio-map'
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=102db378580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d9e1e43bf6b46a4d
-dashboard link: https://syzkaller.appspot.com/bug?extid=03d6270b6425df1605bf
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=15ce72e8580000
+Along with some build-system fixes and a lot of typo and language fixes.
 
+----------------------------------------------------------------
+Abhinav Saxena (1):
+      docs: fix typos and whitespace in Documentation/process/backporting.r=
+st
+
+Akira Yokosawa (1):
+      docs/ja_JP: howto: Catch up changes in v6.11
+
+Andrew Kreimer (2):
+      docs: backporting: fix a typo
+      Documentation/maintainer-tip: Fix typos
+
+Andr=C3=A9 Almeida (1):
+      scripts/kernel-doc: Fix build time warnings
+
+Bernhard M. Wiedemann (1):
+      docs/zh_TW+zh_CN: Make rst references unique
+
+Carlos Bilbao (1):
+      kernel-docs: Add new section for Rust learning materials
+
+Changhuang Liang (1):
+      Documentation: kgdb: Correct parameter error
+
+Chen-Yu Tsai (1):
+      scripts/kernel-doc: Do not track section counter across processed fil=
+es
+
+Dongliang Mu (15):
+      docs/zh_CN: add the translation of kbuild/kconfig.rst
+      docs/zh_CN: add the translation of kbuild/kbuild.rst
+      docs/zh_CN: add the translations of kbuild/reproducible-builds.rst
+      docs/zh_CN: update the translation of process/submitting-patches.rst
+      docs/zh_CN: update the translation of process/email-clients.rst
+      docs/zh_CN: update the translation of process/coding-style.rst
+      docs/zh_CN: update the translation of mm/hmm.rst
+      docs/zh_CN: update the translation of mm/active_mm.rst
+      docs/zh_CN: update the translation of mm/admon/faq.rst
+      docs/zh_CN: update the translation of mm/overcommit-accounting.rst
+      docs/zh_CN: update the translation of mm/page_table_check.rst
+      docs/zh_CN: update the translation of mm/page_owner.rst
+      docs/zh_CN: update the translation of process/programming-language.rst
+      docs/zh_CN: add the translation of kbuild/llvm.rst
+      docs/zh_CN: fix one sentence in llvm.rst
+
+Eder Zulian (1):
+      docs/core-api: swiotlb: fix typos
+
+Federico Vaga (2):
+      doc:it_IT: update I2C summary
+      doc:it_IT: update documents in process/
+
+Gabriele Monaco (1):
+      tracing: doc: Fix typo in ftrace histogram
+
+Guilherme G. Piccoli (1):
+      Documentation: Improve crash_kexec_post_notifiers description
+
+Haoyang Liu (2):
+      docs/dev-tools: fix a typo
+      docs/zh_CN: add translation of dev-tools/kmsan.rst
+
+Jonathan Corbet (2):
+      Add Yanteng Si to .mailmap
+      docs: remove Documentation/dontdiff
+
+Lucas De Marchi (1):
+      Documentation: core-api/cpuhotplug: Fix missing prefix
+
+Matthieu Baerts (NGI0) (1):
+      docs: gcov: fix link to LCOV website
+
+Nihar Chaithanya (1):
+      docs:process:changes: fix version command for btrfs-progs
+
+Nir Lichtman (2):
+      Documentation: English fixes in kgdb/kdb article
+      Documentation: Fix incorrect paths/magic in magic numbers rst
+
+Pengyu Zhang (4):
+      Docs/mm: Fix a mistake for pfn in page_tables.rst
+      Docs/zh_CN: Translate page_tables.rst to Simplified Chinese
+      Docs/zh_CN: Fix the pfn calculation error in page_tables.rst
+      docs/zh_CN: Add a entry in Chinese glossary
+
+Randy Dunlap (2):
+      kernel-doc: allow object-like macros in ReST output
+      Documentation: admin: reorganize kernel-parameters intro
+
+Sergio Gonz=C3=A1lez Collado (1):
+      docs/sp_SP: Add translation for scheduler/sched-bwc.rst
+
+Shuah Khan (1):
+      Documentation/CoC: spell out enforcement for unacceptable behaviors
+
+Steven Rostedt (1):
+      Documentation/tracing: Mention that RESET_ATTACK_MITIGATION can clear=
+ memory
+
+SurajSonawane2415 (1):
+      docs: fix WARNING document not included in any toctree
+
+Thorsten Blum (1):
+      docs: Remove redundant word "for"
+
+Thorsten Leemhuis (1):
+      docs: bug-bisect: add a note about bisecting -next
+
+Vishnu Sanal T (1):
+      fix grammar on false-sharing.rst
+
+Yaxin Wang (1):
+      Docs/zh_CN: Translate physical_memory.rst to Simplified Chinese
+
+ .mailmap                                           |   1 +
+ Documentation/admin-guide/bug-bisect.rst           |  21 ++
+ Documentation/admin-guide/kernel-parameters.rst    |  36 +-
+ Documentation/admin-guide/kernel-parameters.txt    |  22 +-
+ Documentation/core-api/cpu_hotplug.rst             |   2 +-
+ Documentation/core-api/swiotlb.rst                 |   4 +-
+ Documentation/dev-tools/gcov.rst                   |   2 +-
+ Documentation/dev-tools/kgdb.rst                   |  20 +-
+ Documentation/dev-tools/kmsan.rst                  |   2 +-
+ Documentation/dontdiff                             | 271 --------------
+ Documentation/kernel-hacking/false-sharing.rst     |   4 +-
+ Documentation/maintainer/pull-requests.rst         |   2 +-
+ Documentation/mm/page_tables.rst                   |   2 +-
+ Documentation/process/5.Posting.rst                |   5 -
+ Documentation/process/backporting.rst              |   8 +-
+ Documentation/process/changes.rst                  |   2 +-
+ .../process/code-of-conduct-interpretation.rst     |  87 +++++
+ Documentation/process/kernel-docs.rst              | 163 ++++++++-
+ Documentation/process/maintainer-tip.rst           |   4 +-
+ Documentation/rust/index.rst                       |   3 +
+ Documentation/staging/magic-number.rst             |   6 +-
+ Documentation/trace/histogram.rst                  |   2 +-
+ Documentation/trace/index.rst                      |   1 +
+ .../it_IT/{process =3D> dev-tools}/clang-format.rst  |   0
+ .../translations/it_IT/dev-tools/index.rst         |  17 +
+ Documentation/translations/it_IT/i2c/summary.rst   |  72 ++--
+ Documentation/translations/it_IT/index.rst         |   8 +-
+ .../translations/it_IT/process/2.Process.rst       |   6 +-
+ .../translations/it_IT/process/4.Coding.rst        |   2 +-
+ .../translations/it_IT/process/5.Posting.rst       |   5 -
+ .../translations/it_IT/process/changes.rst         |  33 +-
+ .../translations/it_IT/process/coding-style.rst    |  37 +-
+ .../translations/it_IT/process/email-clients.rst   |  33 +-
+ Documentation/translations/it_IT/process/howto.rst |  10 +-
+ Documentation/translations/it_IT/process/index.rst |  10 -
+ .../it_IT/process/submit-checklist.rst             | 167 ++++-----
+ .../it_IT/process/submitting-patches.rst           |  23 +-
+ Documentation/translations/it_IT/staging/index.rst |  13 +
+ .../it_IT/{process =3D> staging}/magic-number.rst    |   0
+ Documentation/translations/ja_JP/process/howto.rst |  10 +-
+ .../translations/sp_SP/scheduler/index.rst         |   1 +
+ .../translations/sp_SP/scheduler/sched-bwc.rst     | 287 +++++++++++++++
+ .../translations/zh_CN/dev-tools/gcov.rst          |   8 +-
+ .../translations/zh_CN/dev-tools/index.rst         |   2 +-
+ .../translations/zh_CN/dev-tools/kmsan.rst         | 392 +++++++++++++++++=
+++++
+ Documentation/translations/zh_CN/glossary.rst      |   1 +
+ Documentation/translations/zh_CN/kbuild/index.rst  |   9 +-
+ Documentation/translations/zh_CN/kbuild/kbuild.rst | 304 ++++++++++++++++
+ .../translations/zh_CN/kbuild/kconfig.rst          | 259 ++++++++++++++
+ Documentation/translations/zh_CN/kbuild/llvm.rst   | 203 +++++++++++
+ .../zh_CN/kbuild/reproducible-builds.rst           | 114 ++++++
+ Documentation/translations/zh_CN/mm/active_mm.rst  |   5 +
+ Documentation/translations/zh_CN/mm/damon/faq.rst  |  17 -
+ Documentation/translations/zh_CN/mm/hmm.rst        |   8 +-
+ Documentation/translations/zh_CN/mm/index.rst      |   2 +
+ .../zh_CN/mm/overcommit-accounting.rst             |   3 +-
+ Documentation/translations/zh_CN/mm/page_owner.rst |  46 +++
+ .../translations/zh_CN/mm/page_table_check.rst     |  13 +
+ .../translations/zh_CN/mm/page_tables.rst          | 221 ++++++++++++
+ .../translations/zh_CN/mm/physical_memory.rst      | 356 +++++++++++++++++=
+++
+ .../translations/zh_CN/process/5.Posting.rst       |   4 -
+ .../translations/zh_CN/process/coding-style.rst    |  11 -
+ .../translations/zh_CN/process/email-clients.rst   |   9 +-
+ .../zh_CN/process/programming-language.rst         |  78 ++--
+ .../zh_CN/process/submitting-patches.rst           |  19 +-
+ .../translations/zh_TW/dev-tools/gcov.rst          |   8 +-
+ .../translations/zh_TW/process/5.Posting.rst       |   4 -
+ scripts/kernel-doc                                 |  49 ++-
+ 68 files changed, 2892 insertions(+), 657 deletions(-)
+ delete mode 100644 Documentation/dontdiff
+ rename Documentation/translations/it_IT/{process =3D> dev-tools}/clang-for=
+mat.rst (100%)
+ create mode 100644 Documentation/translations/it_IT/dev-tools/index.rst
+ create mode 100644 Documentation/translations/it_IT/staging/index.rst
+ rename Documentation/translations/it_IT/{process =3D> staging}/magic-numbe=
+r.rst (100%)
+ create mode 100644 Documentation/translations/sp_SP/scheduler/sched-bwc.rst
+ create mode 100644 Documentation/translations/zh_CN/dev-tools/kmsan.rst
+ create mode 100644 Documentation/translations/zh_CN/kbuild/kbuild.rst
+ create mode 100644 Documentation/translations/zh_CN/kbuild/kconfig.rst
+ create mode 100644 Documentation/translations/zh_CN/kbuild/llvm.rst
+ create mode 100644 Documentation/translations/zh_CN/kbuild/reproducible-bu=
+ilds.rst
+ create mode 100644 Documentation/translations/zh_CN/mm/page_tables.rst
+ create mode 100644 Documentation/translations/zh_CN/mm/physical_memory.rst
 
