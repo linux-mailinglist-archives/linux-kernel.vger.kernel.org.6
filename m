@@ -1,154 +1,141 @@
-Return-Path: <linux-kernel+bounces-412586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 019759D0B03
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 09:36:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94BC49D0B07
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 09:38:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8AE6282169
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 08:36:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F2EF1F211CD
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 08:38:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B110155389;
-	Mon, 18 Nov 2024 08:35:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DCB0154BF0;
+	Mon, 18 Nov 2024 08:38:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="vWEw68TX"
-Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
+	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="xMI2PmcG"
+Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 801C841C71
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 08:35:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.121
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF80B41C71;
+	Mon, 18 Nov 2024 08:38:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731918956; cv=none; b=LQBN6cSizMtVKZi515NTNsREXvvDSojNjFqCaP6mv018UTIfs/z6QlbL+5fcqnEp87s3sxa6FRxmEx0xmW09ITK+jyJ1bfPZHv5X4/39giqw+zFYFqNJ/h4xH4LLewch6oJzBbQkkhTQvgEu4pUNjkWBvpxqaKlyphVcXAykFHY=
+	t=1731919092; cv=none; b=JMGyvvDEzHq8Dr/GegHcKuOuTLlTdiQlvp8srzO5kZF8+uX5cQVZ6bIkj4Xl+61W0VQQAQ2EaeRh4akwNS6Gz6XSmvNKb39w+yjQMTFosiBX7bcYIhreJXeAeUBRoQ0DqSt8Yd2nEjz2lBgqv3FK4GbItlyFluS01QZ8Nr4h45A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731918956; c=relaxed/simple;
-	bh=JIcoWFlbZOkqRmXq4oMrLnogzoIBJmoIamDPFloRlUg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=jwED6wQPJxsX5yML2gP/np5piK0Xl+Yr2DQBH4uxbkGw+B4zkq4W+LUd9mmMpsFkxiKvgqCuwYn4qBS4iOOEo6gxHssC8kkSbMJD1rn2ZuRxlRGyibUcysPnXWk7+upd40BRoHMQqiUIKCGiVZe0gEATEnmTrBwtVaIebZoI+2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=vWEw68TX; arc=none smtp.client-ip=185.125.188.121
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from graphene.canonical.com (1.general.amurray.uk.vpn [10.172.193.220])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 3863A40911;
-	Mon, 18 Nov 2024 08:35:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1731918945;
-	bh=hFLtNZC8vP+NEJtmisEsyjGNuVTssiQ5ORg9s4G8Os8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type;
-	b=vWEw68TXoKg2l8Is9qDytQqwcwQDzAKHc0YuVKAqM4tTSmpY4U7P8a3mMnEaJHxeP
-	 VF+WgSoE2tlyXVfXUrTPLqKXtxCRu9tB1aFKRMchbmyz5Zo/IbbUISs08hbaqfqqd5
-	 ivtCIVvXBI6dK89G8VfxPaxWRQb3PQicA4lWe62mH+0/JljWiNmYXy/CIAGibiENsP
-	 dip31+WxOrFBHWvju2VRRmTfAd54hgNNhPi3cVYMV/Y3YxLJshb3bzvD9Herk41uYo
-	 pkDliTHVPXZxDutCxYpGMSWE5R2TP0PYijg2QaVWk9K8JcmlZcHli7ZKAzEnv4UgzZ
-	 85KruhzDowM1g==
-From: Alex Murray <alex.murray@canonical.com>
-To: Dave Hansen <dave.hansen@intel.com>, dave.hansen@linux.intel.com
-Cc: bp@alien8.de, linux-kernel@vger.kernel.org, tglx@linutronix.de,
- x86@kernel.org
-Subject: Re: [RFC][PATCH] x86/cpu/bugs: Consider having old Intel microcode
- to be a vulnerability
-In-Reply-To: <844f58da-638f-4a91-88e7-f66f7fcefe51@intel.com>
-References: <87v7wtvty0.fsf@canonical.com>
- <1c1015f8-1a47-4e5b-b088-f83054d2f613@intel.com>
- <87iksrhkv8.fsf@canonical.com>
- <7fc07eff-b4a1-4f8d-a9de-dba057d5c9c6@intel.com>
- <87h68avg81.fsf@canonical.com>
- <844f58da-638f-4a91-88e7-f66f7fcefe51@intel.com>
-Date: Mon, 18 Nov 2024 19:05:36 +1030
-Message-ID: <87serpgcrr.fsf@canonical.com>
+	s=arc-20240116; t=1731919092; c=relaxed/simple;
+	bh=Mg2DqvS2DykVm8ELO3zSX/NqxoFrpfVOjrorNQ6Yv+g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U/rG8AzPR2Cy1fLnVlcwtgcoam5/dVG/dhSHliZHrxCvvEqA77P83+rLAjDNdLyT+33Jkwzu4RBEmoFpHK2wUVPoVgJ7Kh4JQFLLaZ/0aghd89Z8uV+KhSSWThdT8ULdjLq5ayJNsJ3IJ9oZW1vOPv5/41YjIl7DSauXwZxi9cI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=xMI2PmcG; arc=none smtp.client-ip=188.40.30.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
+	s=default2211; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID; bh=kVWAamB4L0vXXgZc8HB6QQQSIWa6kPeGnIA5GIky6TY=; b=xMI2Pm
+	cGaj7DkR9+XkqIMMcoasgntMCnMtkQBA9dvXsvontZYBQkT2+rtKpjlnqjM8yZa98mvOwRZzmJDVO
+	k4Eqc9qVtvhgZdBDs4EsMBMM2zepCItwHIKr8m7Ch2C0KZSnSekCUDOpLYmBou1VA3Ne4SsSmSieE
+	2Yja2dfRxvp3j9TYW4zuyaCpS0GmOfN0+pqm5K/+6kX4pHYMPTw7Fv1jI5cQ02gpccLqjkelcKCkY
+	uLX1VjELxj292rufylNg0dSCce5voeYRr9gp04Xlq5hCP4XBiBWNvFq44nbjIaIsk26an58nEiM5F
+	n7uiLJSUA0VdVU9E0+cKS9abi1Qg==;
+Received: from sslproxy05.your-server.de ([78.46.172.2])
+	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <sean@geanix.com>)
+	id 1tCxGh-0004vU-9c; Mon, 18 Nov 2024 09:37:59 +0100
+Received: from [185.17.218.86] (helo=Seans-MacBook-Pro.local)
+	by sslproxy05.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <sean@geanix.com>)
+	id 1tCxGg-000IZn-2Q;
+	Mon, 18 Nov 2024 09:37:58 +0100
+Date: Mon, 18 Nov 2024 09:37:58 +0100
+From: Sean Nyekjaer <sean@geanix.com>
+To: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Cc: Chandrasekar Ramakrishnan <rcsekar@samsung.com>, 
+	Marc Kleine-Budde <mkl@pengutronix.de>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, linux-can@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH can-next v2 1/3] can: m_can: add deinit callback
+Message-ID: <ijxrgzolqpnnlpgzt22lparoeuqznqxz77ryx7o6tfzc7owp7h@n46bsemyqdxc>
+References: <20241115-tcan-standby-v2-0-4eb02026b237@geanix.com>
+ <20241115-tcan-standby-v2-1-4eb02026b237@geanix.com>
+ <e18c1e3d-4342-4ddc-93d3-975ecc336185@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <e18c1e3d-4342-4ddc-93d3-975ecc336185@wanadoo.fr>
+X-Authenticated-Sender: sean@geanix.com
+X-Virus-Scanned: Clear (ClamAV 0.103.10/27461/Sun Nov 17 10:35:57 2024)
 
-On Wed, 2024-11-13 at 16:37:31 -0800, Dave Hansen wrote:
-> On 11/13/24 15:58, Alex Murray wrote:
-> ...
->> The only other data point then to mention is that all the major distros
->> (Debian[1], Ubuntu[2] and Fedora[3]) are still only shipping the previous
->> security update release (20240910) in their stable releases - *not* the
->> more recent release with the functional updates in 20241029 - in which
->> case anyone running a current stable release would then show as being
->> "vulnerable". I can't speak for the other distros, but for Ubuntu we
->> generally only ship things which are called out as specific security
->> fixes in our security updates *and* we generally prioritise security
->> updates over bug fixes (which these 'functional' updates appear be
->> rather than fixing actual exploitable security issues).
->
-> That's a very important data point. Thanks for that.
->
-> Like I said in the original changelog, I'm open to relaxing things to
-> define old to allow folks to be a release or two behind. But I'd want to
-> hear a lot more about _why_ the distros lag. I'd probably also have some
-> chats to see what other folks at Intel think about it.
+On Fri, Nov 15, 2024 at 11:23:49PM +0100, Vincent Mailhol wrote:
+> On 15/11/2024 at 17:15, Sean Nyekjaer wrote:
+> > This is added in preparation for calling standby mode in the tcan4x5x
+> > driver or other users of m_can.
+> > For the tcan4x5x; If Vsup 12V, standby mode will save 7-8mA, when the
+> > interface is down.
+> > 
+> > Signed-off-by: Sean Nyekjaer <sean@geanix.com>
+> > ---
+> >  drivers/net/can/m_can/m_can.c | 10 +++++++---
+> >  drivers/net/can/m_can/m_can.h |  1 +
+> >  2 files changed, 8 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/drivers/net/can/m_can/m_can.c b/drivers/net/can/m_can/m_can.c
+> > index a7b3bc439ae596527493a73d62b4b7a120ae4e49..667c70f8dc5e7e8b15b667119b63dea1fe667e8a 100644
+> > --- a/drivers/net/can/m_can/m_can.c
+> > +++ b/drivers/net/can/m_can/m_can.c
+> > @@ -1750,12 +1750,16 @@ static void m_can_stop(struct net_device *dev)
+> >  
+> >  	/* Set init mode to disengage from the network */
+> >  	ret = m_can_cccr_update_bits(cdev, CCCR_INIT, CCCR_INIT);
+> > -	if (ret)
+> > -		netdev_err(dev, "failed to enter standby mode: %pe\n",
+> > -			   ERR_PTR(ret));
+> >  
+> >  	/* set the state as STOPPED */
+> >  	cdev->can.state = CAN_STATE_STOPPED;
+> > +
+> > +	if (!ret && cdev->ops->deinit)
+> > +		ret = cdev->ops->deinit(cdev);
+> 
+> Question: is there a reason not to try to deinit() even if the
+> m_can_cccr_update_bits() failed?
 
-Again, I can't speak for other distros but for Ubuntu see my comment
-above re prioritising security vs functional updates.
+Good question.
+If the call the m_can core fails, then there bigger problems than setting
+the (in nmy case) tcan4x5x in standby mode.
 
->
-> So what would you propose the rules be?  Are you suggesting that we go
-> through the microcode changelogs for each CPU for each release and only
-> update the "old" revisions for security issues?  If there were only
-> functional issues fixed for, say, 2 years, on a CPU would the "old"
-> version get updated?
+> 
+> > +	if (ret)
+> > +		netdev_err(dev, "failed to enter standby mode: %pe\n",
+> > +			   ERR_PTR(ret));>  }
+> >  
+> >  static int m_can_close(struct net_device *dev)
+> > diff --git a/drivers/net/can/m_can/m_can.h b/drivers/net/can/m_can/m_can.h
+> > index 92b2bd8628e6b31370f4accbc2e28f3b2257a71d..6206535341a22a68d7c5570f619e6c4d05e6fcf4 100644
+> > --- a/drivers/net/can/m_can/m_can.h
+> > +++ b/drivers/net/can/m_can/m_can.h
+> > @@ -68,6 +68,7 @@ struct m_can_ops {
+> >  	int (*write_fifo)(struct m_can_classdev *cdev, int addr_offset,
+> >  			  const void *val, size_t val_count);
+> >  	int (*init)(struct m_can_classdev *cdev);
+> > +	int (*deinit)(struct m_can_classdev *cdev);
+> >  };
+> >  
+> >  struct m_can_tx_op {
+> > 
+> 
+> Yours sincerely,
+> Vincent Mailhol
+> 
 
-For calling out old microcode as a vulnerability, yes I would prefer
-that only releases which your colleagues state as fixing security issues
-get included. However, for the tainted case, anything older than the
-current release would make sense. In which case you would have to
-maintain two different revision IDs per MCU - one which is the latest,
-and the other which is the latest with a security fix for a given
-platform. From my experience though it is a more rare occasion that a
-new upstream microcode release does not contain some security fixes. So
-perhaps this distinction will be mostly irrelevant in practice assuming
-most all MCU releases contain a fix for some security issue.
-
->
->>> So I'm leaning toward setting:
->>>
->>> 	TAINT_CPU_OUT_OF_SPEC
->>> plus
->>> 	X86_BUG_OLD_MICROCODE
->>>
->>> and calling it a day.
->> 
->> Does this mean you are thinking of dropping the userspace entry in the
->> cpu vulnerablities sysfs tree? 
->
-> No, I plan to keep X86_BUG_OLD_MICROCODE and the corresponding sysfs entry.
->
->> If so then I am not so concerned, since my primary concern is having
->> something which looks scary to users/sysadmins ("your CPU has an
->> unpatched vulnerablity") which they can't do anything about since
->> their distribution has a different definition of what counts as a
->> security update compared to the upstream kernel maintainers. If the
->> sysfs entry is dropped then this is not so visible to end-users and
->> hence there is less panic.
->
-> Right, we don't want to unnecessarily scare anyone.
->
-> But if a distro is being too slow in getting microcode out, then it
-> would be good to inform users about known functional or security gaps
-> they're exposed to.
->
-> That's the thing we need to focus on.  Not: "Can users do anything about
-> it?" Rather: "What's best for the users?"
-
-Yep I agree, end-users should always be the primary concern especially
-for new user visible things like new entries in the vulnerabilities
-sysfs tree. Also I am not averse to calling out the situation of running
-an out-of-date microcode *which has known security issues* as a
-vulnerability, I think providing more data to users to help them make
-the best assessment of any given risk is always a good thing, but we
-just need to be mindful to do it in a way that is hopefully actionable
-as well.
+/Sean
 
