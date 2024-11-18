@@ -1,355 +1,349 @@
-Return-Path: <linux-kernel+bounces-413431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16C299D18F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 20:31:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 767249D1901
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 20:33:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A28DB228A9
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 19:31:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 370DD2828B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 19:33:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D36B1E767B;
-	Mon, 18 Nov 2024 19:30:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69C651E5725;
+	Mon, 18 Nov 2024 19:33:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lLsxmTu2"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="K1ryGqmB"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0F1B1E5713
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 19:30:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BDE31E5707;
+	Mon, 18 Nov 2024 19:33:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731958241; cv=none; b=q827GI8PZzMNpIs0agtT/LCsb9dxrZCxtGANGC3x28hdzqGa84T4XGt7rhYoHPG3CrGdmJSe/PcFtDDfRIL+8NEYYXOY1On/Skrt3biaVO5j2xqfhTEKNa0ifeUp6KzNtoOUfRVyGHl/x6hkhClnGeSLU1kdB2isYA9z+HqqM2Y=
+	t=1731958386; cv=none; b=HOK4ZwIxYY5SUXbkcRjvSp4I4nU+jhEcVTMGVye3dbA2VQAl/HlPaTSHu9Xa3KSmgjHiVV/dmwh3hTngbrWPtPoS1dX32mSL648ESiC9BDUrQh284lg7sFLlYFk70MePrw8vPhVilgcWQBLTETuF4eoHquANlRtVkte9qRi/GuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731958241; c=relaxed/simple;
-	bh=td9vYL42XQudNEN+8jFo86Viz34b4OIqizRZCdCexg4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=HXRCgRPxK1geCdwF+CbeF3CHOcg/Br7r3pJnMw4jIH8KPe6Gj9fTmQGWLTwJtUawgjaqbV0vlS6WTaHAI0Z7mK4JvcTTx7kCDGd34uikn85hQZNxESYmyqlEN0t5TlWmVkViMloREBE5BcdczK6KNItwBYBxedmh2K8leAX8kEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jperaza.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lLsxmTu2; arc=none smtp.client-ip=209.85.219.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jperaza.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e3886f4cee2so2253604276.0
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 11:30:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731958239; x=1732563039; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=b+pvl25Ke4atXFJeCOh6KmNiscogjhJJHhnkl2/5XRs=;
-        b=lLsxmTu2nLMwg1E/8KIbhe4nLuKqkNnkQnaXCUFByXN1tFF4g3qQ0brtR+tvlA5FSn
-         LarZ8yHZY1bmq1onXrqmcTRYVVu7HGlcE/v57u9Z9MQO1yxqIFYLDy2ii0453/6GP2/G
-         Nagg8h8/zBZdoqnhWhbvAfPv3qAb0FcsmuGmXp1EvqAj5FfzJZfyv4RDtUmPEMYf4oJk
-         MawLbtoLFv559xDaTwTEQhpd7sm2IdtGRSDDj9kyNs9jlMyt3dcFHdje4ZNrnxxdebjF
-         JAIGVEKTEbpVGRouCoRLHEgLcifRJxc7e46U9Nqbeqa2tb0p5AGnP5DwkKr6KBuZ0kIf
-         p9aA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731958239; x=1732563039;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=b+pvl25Ke4atXFJeCOh6KmNiscogjhJJHhnkl2/5XRs=;
-        b=hB/xjYPP1hJIYqoDBKgyzcCc91JNDqbZX8L6/WDFXoE0p/Pi0wT1QWwFIJk9QwdYl1
-         3+Yw1l6UZ30JFxSZpM1HU3aspqpwTPotFHRLkF2sI8MS6969/ETFyaUNvRIq8WRbaVLZ
-         QR46gPYCliva5V8Wi0Lxj11ejiH1lj88FpiZlnUJIXmALSedRf3j4mxeJUyQk/EhBtKF
-         /BkyN9iQYT7KOY2ynJ1OIuqpjGupardpBXHBuKAr5vkGcEkqpDhttrlStSyFbWNZJvID
-         iMHndgpbtdPoLxVIToso3I3NOrHuTggQbqkvsPkeEGOxdZy4BR5+5xGCBCR1m3AjA2+g
-         EJ8A==
-X-Forwarded-Encrypted: i=1; AJvYcCXEemiat7ChFWenh6BNLSdeMrG7VLe58+g3omCNUeDZ6N8I5qHWTNJ2UiZ6bugVnQd+dWLeDnP4YGWCeZc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzmLYNZjqcHK7eUWsG1SRk9zDVo1xMZBp7bBAwlo7tYOC7rg51
-	TJCxxYx3MVyV5b4xpW+/7i4mLZoImv4UqNthgkT9A4xTn8d17E5x3Ubm7EYo6tLP8ovGeKHBJ97
-	b1mJ0Ig==
-X-Google-Smtp-Source: AGHT+IFybVuddM7p6vumMyd0W6qcjGgrhUDr1SZrFs3g1fT5Rf71/ZN2YHRL0nsAQtGNq9I3XiUcY8Ti4Pxs
-X-Received: from jperaza.c.googlers.com ([fda3:e722:ac3:cc00:20:ed76:c0a8:f86])
- (user=jperaza job=sendgmr) by 2002:a25:c5d3:0:b0:e30:b89f:e3d with SMTP id
- 3f1490d57ef6-e38b76f605emr10686276.1.1731958238885; Mon, 18 Nov 2024 11:30:38
- -0800 (PST)
-Date: Mon, 18 Nov 2024 19:30:24 +0000
-In-Reply-To: <20241118193024.2695876-1-jperaza@google.com>
+	s=arc-20240116; t=1731958386; c=relaxed/simple;
+	bh=YwP/ggEc7qw7KFHiC7zCXcy3+FzxjaBaBB2tJdHifFs=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EFs7fg7xP/+M6Uvdo5y7+Ao4ZU+AngcNPctEH46jQUYXJQVoKtaykjLbHhjn4Lzdcps5eKiIRweeJMPgII6HntQQGUA5hwqXe4uiNuvqVG1pcQjyWRTW98Pg5oSiWbIqbdUZfhPApsvKU4aJ+kAS8uAdl04hnSgVZpH+yNxbOQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=K1ryGqmB; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AIGGdGi028408;
+	Mon, 18 Nov 2024 19:32:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=3Q3ojtv7fWl5gl6mcxAf+43n
+	DGDMTVQEx0St1RjFirI=; b=K1ryGqmBynkPz6iVL9YpcWVuGImfqiLKJdG2hwZa
+	KJc/ivpgJ5X362hjpsQkKKBnQLaJublpN9tPubB+24wvQSC5GmqCoGf+19nvEDPx
+	BTRQhvJJIrqZmAWQE/FYxahg0yUxAli2/D+40E6Ry146llZZRuricqTF9lSWT0U7
+	dKgRTw1gjhblu3Pa+JzfQ8WLS/AYaOvlLD6J0T/LLkmusuqZApBdwrg5G8nsfrQ1
+	tnI4UyshotU3MRYbXoDztkoTYDh1qWaMEkdjQFsphDHkOVpL5T/GUxkW5kO7Gic9
+	0REUZll1DfQl8iSVyB23CuQGjKllclTnWsmq6E7/euQyNQ==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4308y5reng-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 18 Nov 2024 19:32:44 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AIJWgkD018501
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 18 Nov 2024 19:32:42 GMT
+Received: from hu-eberman-lv.qualcomm.com (10.49.16.6) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 18 Nov 2024 11:30:38 -0800
+Date: Mon, 18 Nov 2024 11:30:38 -0800
+From: Elliot Berman <quic_eberman@quicinc.com>
+To: Lorenzo Pieralisi <lpieralisi@kernel.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Sebastian Reichel
+	<sre@kernel.org>, Rob Herring <robh@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        Andy Yan
+	<andy.yan@rock-chips.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "Bartosz
+ Golaszewski" <bartosz.golaszewski@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, <cros-qcom-dts-watchers@chromium.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>,
+        Satya Durga Srinivasu Prabhala
+	<quic_satyap@quicinc.com>,
+        Melody Olvera <quic_molvera@quicinc.com>,
+        Shivendra Pratap <quic_spratap@quicinc.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Florian Fainelli <florian.fainelli@broadcom.com>,
+        Stephen Boyd
+	<swboyd@chromium.org>, <linux-pm@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>
+Subject: Re: [PATCH v8 3/6] firmware: psci: Read and use vendor reset types
+Message-ID: <20241118112859866-0800.eberman@hu-eberman-lv.qualcomm.com>
+References: <20241107-arm-psci-system_reset2-vendor-reboots-v8-0-e8715fa65cb5@quicinc.com>
+ <20241107-arm-psci-system_reset2-vendor-reboots-v8-3-e8715fa65cb5@quicinc.com>
+ <ZzdR1HuTpnU1OL/i@lpieralisi>
+ <20241115103434410-0800.eberman@hu-eberman-lv.qualcomm.com>
+ <ZzsyiC/dwv8dgySN@lpieralisi>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241118193024.2695876-1-jperaza@google.com>
-X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-Message-ID: <20241118193024.2695876-3-jperaza@google.com>
-Subject: [PATCH 2/2] PCI: Rename pci_dev->untrusted to pci_dev->requires_dma_protection
-From: Joshua Peraza <jperaza@google.com>
-To: gregkh@linuxfoundation.org
-Cc: baolu.lu@linux.intel.com, bhelgaas@google.com, dtor@google.com, 
-	dwmw2@infradead.org, helgaas@kernel.org, iommu@lists.linux-foundation.org, 
-	jean-philippe@linaro.org, joro@8bytes.org, jperaza@google.com, 
-	jsbarnes@google.com, lenb@kernel.org, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
-	mika.westerberg@linux.intel.com, oohall@gmail.com, pavel@denx.de, 
-	rafael.j.wysocki@intel.com, rafael@kernel.org, rajatja@google.com, 
-	rajatxjain@gmail.com, will@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <ZzsyiC/dwv8dgySN@lpieralisi>
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 8DhnPeyG1GwH2tJoJnJsQTe0EWGLKIxH
+X-Proofpoint-ORIG-GUID: 8DhnPeyG1GwH2tJoJnJsQTe0EWGLKIxH
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ bulkscore=0 suspectscore=0 malwarescore=0 mlxscore=0 adultscore=0
+ clxscore=1015 spamscore=0 impostorscore=0 priorityscore=1501
+ mlxlogscore=999 phishscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2409260000 definitions=main-2411180160
 
-From: Rajat Jain <rajatja@google.com>
+On Mon, Nov 18, 2024 at 01:26:48PM +0100, Lorenzo Pieralisi wrote:
+> On Fri, Nov 15, 2024 at 11:08:13AM -0800, Elliot Berman wrote:
+> > On Fri, Nov 15, 2024 at 02:51:16PM +0100, Lorenzo Pieralisi wrote:
+> > > On Thu, Nov 07, 2024 at 03:38:27PM -0800, Elliot Berman wrote:
+> > > > SoC vendors have different types of resets and are controlled through
+> > > > various registers. For instance, Qualcomm chipsets can reboot to a
+> > > > "download mode" that allows a RAM dump to be collected. Another example
+> > > > is they also support writing a cookie that can be read by bootloader
+> > > > during next boot. PSCI offers a mechanism, SYSTEM_RESET2, for these
+> > > > vendor reset types to be implemented without requiring drivers for every
+> > > > register/cookie.
+> > > > 
+> > > > Add support in PSCI to statically map reboot mode commands from
+> > > > userspace to a vendor reset and cookie value using the device tree.
+> > > > 
+> > > > A separate initcall is needed to parse the devicetree, instead of using
+> > > > psci_dt_init because mm isn't sufficiently set up to allocate memory.
+> > > 
+> > > Nit: information below this point is more a cover letter than for the
+> > > commit log.
+> > > 
+> > > > Reboot mode framework is close but doesn't quite fit with the
+> > > > design and requirements for PSCI SYSTEM_RESET2. Some of these issues can
+> > > > be solved but doesn't seem reasonable in sum:
+> > > >  1. reboot mode registers against the reboot_notifier_list, which is too
+> > > >     early to call SYSTEM_RESET2. PSCI would need to remember the reset
+> > > >     type from the reboot-mode framework callback and use it
+> > > >     psci_sys_reset.
+> > > >  2. reboot mode assumes only one cookie/parameter is described in the
+> > > >     device tree. SYSTEM_RESET2 uses 2: one for the type and one for
+> > > >     cookie.
+> > > >  3. psci cpuidle driver already registers a driver against the
+> > > >     arm,psci-1.0 compatible. Refactoring would be needed to have both a
+> > > >     cpuidle and reboot-mode driver.
+> > > > 
+> > > > Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+> > > > Signed-off-by: Elliot Berman <quic_eberman@quicinc.com>
+> > > > ---
+> > > >  drivers/firmware/psci/psci.c | 104 +++++++++++++++++++++++++++++++++++++++++++
+> > > >  1 file changed, 104 insertions(+)
+> > > > 
+> > > > diff --git a/drivers/firmware/psci/psci.c b/drivers/firmware/psci/psci.c
+> > > > index 2328ca58bba61fdb677ac20a1a7447882cd0cf22..e60e3f8749c5a6732c51d23a2c1f453361132d9a 100644
+> > > > --- a/drivers/firmware/psci/psci.c
+> > > > +++ b/drivers/firmware/psci/psci.c
+> > > > @@ -79,6 +79,14 @@ struct psci_0_1_function_ids get_psci_0_1_function_ids(void)
+> > > >  static u32 psci_cpu_suspend_feature;
+> > > >  static bool psci_system_reset2_supported;
+> > > >  
+> > > > +struct psci_reset_param {
+> > > > +	const char *mode;
+> > > > +	u32 reset_type;
+> > > > +	u32 cookie;
+> > > > +};
+> > > > +static struct psci_reset_param *psci_reset_params __ro_after_init;
+> > > > +static size_t num_psci_reset_params __ro_after_init;
+> > > > +
+> > > >  static inline bool psci_has_ext_power_state(void)
+> > > >  {
+> > > >  	return psci_cpu_suspend_feature &
+> > > > @@ -305,9 +313,38 @@ static int get_set_conduit_method(const struct device_node *np)
+> > > >  	return 0;
+> > > >  }
+> > > >  
+> > > > +static void psci_vendor_system_reset2(const char *cmd)
+> > > > +{
+> > > > +	unsigned long ret;
+> > > > +	size_t i;
+> > > > +
+> > > > +	for (i = 0; i < num_psci_reset_params; i++) {
+> > > > +		if (!strcmp(psci_reset_params[i].mode, cmd)) {
+> > > > +			ret = invoke_psci_fn(PSCI_FN_NATIVE(1_1, SYSTEM_RESET2),
+> > > > +					     psci_reset_params[i].reset_type,
+> > > > +					     psci_reset_params[i].cookie, 0);
+> > > > +			/*
+> > > > +			 * if vendor reset fails, log it and fall back to
+> > > > +			 * architecture reset types
+> > > > +			 */
+> > > > +			pr_err("failed to perform reset \"%s\": %ld\n", cmd,
+> > > > +			       (long)ret);
+> > > > +			return;
+> > > > +		}
+> > > > +	}
+> > > > +}
+> > > > +
+> > > >  static int psci_sys_reset(struct notifier_block *nb, unsigned long action,
+> > > >  			  void *data)
+> > > >  {
+> > > > +	/*
+> > > > +	 * try to do the vendor system_reset2
+> > > > +	 * If the reset fails or there wasn't a match on the command,
+> > > > +	 * fall back to architectural resets
+> > > > +	 */
+> > > > +	if (data && num_psci_reset_params)
+> > > > +		psci_vendor_system_reset2(data);
+> > > > +
+> > > >  	if ((reboot_mode == REBOOT_WARM || reboot_mode == REBOOT_SOFT) &&
+> > > >  	    psci_system_reset2_supported) {
+> > > 
+> > > This is a mess. To issue architectural warm reset we check reboot_mode,
+> > > for vendor resets we ignore it - there is no rationale, that's the point
+> > > I am making.
+> > 
+> > If I expand the comment to:
+> > 
+> > 
+> >  * try todo the vendor system_reset2
+> >  * If the reset fails or there wasn't a match on the command,
+> >  * fall back to architectural resets.
+> >  * Ignore reboot_mode enum to behave like setting a cookie, which don't
+> >  * care about the reboot_mode.
+> 
+> /*
+>  * Check if the system supports vendor resets and issue
+>  * SYSTEM_RESET2 if the reboot command matches a vendor reset.
+>  * Ignore reboot_mode and execute SYSTEM_RESET2 with type and
+>  * cookie as defined by the firmware bindings.
+>  *
+>  * If the reset fails or there is not a match for the command
+>  * fall back to architectural resets; reset type detection in
+>  * this case will be done using reboot_mode.
+>  */
+> 
+> ?
+> 
+> > Help to address this concern?
+> 
+> Not entirely, sorry, I will get back to this.
+> 
+> > > Also see my question on the other thread re: user space and reset
+> > > "modes".
+> > > 
+> > > I appreciate we are not making progress but I don't want to pick up
+> > > the pieces later after merging this code - it is unclear to me what's
+> > > the best path forward - I would like to understand how other
+> > > platforms/arches behave in this respect.
+> > > 
+> > 
+> > I went through the couple hundred drivers which register reboot and
+> > restart handlers. The majority don't care about reboot command nor
+> > reboot_mode enum. The few that do:
+> > 
+> > Two drivers which I could find which care about the reboot command don't
+> > look at the reboot_mode argument.
+> > 
+> > [1]: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/firmware/efi/efibc.c?h=v6.11#n35
+> > [2]: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/power/reset/reboot-mode.c?h=v6.11#n42
+> > 
+> > One driver looks at the reboot command overrides the reboot_mode
+> > argument:
+> > 
+> > [3]: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/watchdog/pnx4008_wdt.c?h=v6.11#n125
+> 
+> Thanks for doing that, that helps.
+> 
+> > I wasn't able to find any platform/arches which check the reboot_mode
+> > before reading the reboot command.
+> > 
+> > > >  		/*
+> > > > @@ -750,6 +787,73 @@ static const struct of_device_id psci_of_match[] __initconst = {
+> > > >  	{},
+> > > >  };
+> > > >  
+> > > > +#define REBOOT_PREFIX "mode-"
+> > > > +
+> > > > +static int __init psci_init_system_reset2_modes(void)
+> > > > +{
+> > > > +	const size_t len = strlen(REBOOT_PREFIX);
+> > > > +	struct psci_reset_param *param;
+> > > > +	struct device_node *psci_np __free(device_node) = NULL;
+> > > > +	struct device_node *np __free(device_node) = NULL;
+> > > > +	struct property *prop;
+> > > > +	size_t count = 0;
+> > > > +	u32 magic[2];
+> > > > +	int num;
+> > > > +
+> > > > +	if (!psci_system_reset2_supported)
+> > > > +		return 0;
+> > > > +
+> > > > +	psci_np = of_find_matching_node(NULL, psci_of_match);
+> > > > +	if (!psci_np)
+> > > > +		return 0;
+> > > > +
+> > > > +	np = of_find_node_by_name(psci_np, "reset-types");
+> > > > +	if (!np)
+> > > > +		return 0;
+> > > > +
+> > > > +	for_each_property_of_node(np, prop) {
+> > > > +		if (strncmp(prop->name, REBOOT_PREFIX, len))
+> > > > +			continue;
+> > > > +		num = of_property_count_u32_elems(np, prop->name);
+> > > > +		if (num != 1 && num != 2)
+> > > > +			continue;
+> > > > +
+> > > > +		count++;
+> > > > +	}
+> > > > +
+> > > > +	param = psci_reset_params =
+> > > > +		kcalloc(count, sizeof(*psci_reset_params), GFP_KERNEL);
+> > > > +	if (!psci_reset_params)
+> > > > +		return -ENOMEM;
+> > > > +
+> > > > +	for_each_property_of_node(np, prop) {
+> > > > +		if (strncmp(prop->name, REBOOT_PREFIX, len))
+> > > > +			continue;
+> > > > +
+> > > > +		param->mode = kstrdup_const(prop->name + len, GFP_KERNEL);
+> > > 
+> > > FWIW - I think you need to keep the logic in the previous loop into account
+> > > because that's what is used to allocate param, it is not a given that
+> > > param is valid at this stage if I am not mistaken - the previous loop
+> > > checked:
+> > > 
+> > > 	num = of_property_count_u32_elems(np, prop->name);
+> > > 	if (num != 1 && num != 2)
+> > > 		continue;
+> > 
+> > of_property_read_variable_u32_array() performs effectively the same
+> > check.  It returns -EOVERFLOW if it couldn't find enough (== 0) or too
+> > many values (>2). I currently have the added bonus of complaining in
+> > dmesg about the bad reboot mode property, instead of silently ignoring.
+> 
+> Right but we are dereferencing param (param->mode) before carrying out that
+> check.
+> 
 
-Rename the field to make it more clear, that the device can execute DMA
-attacks on the system, and thus the system may need protection from
-such attacks from this device.
+Ah, right, I see the problem. I'll send out another version after
+settling on the other part of the discussion!
 
-No functional change intended.
-
-Signed-off-by: Rajat Jain <rajatja@google.com>
-Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
-Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Signed-off-by: Joshua Peraza <jperaza@google.com>
----
- drivers/iommu/amd/iommu.c   |  3 +--
- drivers/iommu/dma-iommu.c   | 16 ++++++++--------
- drivers/iommu/intel/iommu.c | 10 +++++-----
- drivers/iommu/iommu.c       |  5 ++---
- drivers/pci/ats.c           |  2 +-
- drivers/pci/pci-acpi.c      |  2 +-
- drivers/pci/pci.c           |  2 +-
- drivers/pci/probe.c         |  8 ++++----
- drivers/pci/quirks.c        |  4 ++--
- include/linux/pci.h         |  7 ++++---
- 10 files changed, 29 insertions(+), 30 deletions(-)
-
-diff --git a/drivers/iommu/amd/iommu.c b/drivers/iommu/amd/iommu.c
-index 8364cd6fa47d..6bf4944834b2 100644
---- a/drivers/iommu/amd/iommu.c
-+++ b/drivers/iommu/amd/iommu.c
-@@ -2776,8 +2776,7 @@ static int amd_iommu_def_domain_type(struct device *dev)
- 	if (!dev_data)
- 		return 0;
- 
--	/* Always use DMA domain for untrusted device */
--	if (dev_is_pci(dev) && to_pci_dev(dev)->untrusted)
-+	if (dev_is_pci(dev) && to_pci_dev(dev)->requires_dma_protection)
- 		return IOMMU_DOMAIN_DMA;
- 
- 	/*
-diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
-index 2a9fa0c8cc00..1358f98691ab 100644
---- a/drivers/iommu/dma-iommu.c
-+++ b/drivers/iommu/dma-iommu.c
-@@ -598,16 +598,16 @@ static int iova_reserve_iommu_regions(struct device *dev,
- 	return ret;
- }
- 
--static bool dev_is_untrusted(struct device *dev)
-+static bool dev_requires_dma_protection(struct device *dev)
- {
--	return dev_is_pci(dev) && to_pci_dev(dev)->untrusted;
-+	return dev_is_pci(dev) && to_pci_dev(dev)->requires_dma_protection;
- }
- 
- static bool dev_use_swiotlb(struct device *dev, size_t size,
- 			    enum dma_data_direction dir)
- {
- 	return IS_ENABLED(CONFIG_SWIOTLB) &&
--		(dev_is_untrusted(dev) ||
-+		(dev_requires_dma_protection(dev) ||
- 		 dma_kmalloc_needs_bounce(dev, size, dir));
- }
- 
-@@ -620,7 +620,7 @@ static bool dev_use_sg_swiotlb(struct device *dev, struct scatterlist *sg,
- 	if (!IS_ENABLED(CONFIG_SWIOTLB))
- 		return false;
- 
--	if (dev_is_untrusted(dev))
-+	if (dev_requires_dma_protection(dev))
- 		return true;
- 
- 	/*
-@@ -1192,12 +1192,12 @@ dma_addr_t iommu_dma_map_page(struct device *dev, struct page *page,
- 			return DMA_MAPPING_ERROR;
- 
- 		/*
--		 * Untrusted devices should not see padding areas with random
--		 * leftover kernel data, so zero the pre- and post-padding.
-+		 * Zero the pre- and post-padding to prevent exposing kernel data to devices
-+		 * requiring DMA protection.
- 		 * swiotlb_tbl_map_single() has initialized the bounce buffer
- 		 * proper to the contents of the original memory buffer.
- 		 */
--		if (dev_is_untrusted(dev)) {
-+		if (dev_requires_dma_protection(dev)) {
- 			size_t start, virt = (size_t)phys_to_virt(phys);
- 
- 			/* Pre-padding */
-@@ -1738,7 +1738,7 @@ size_t iommu_dma_opt_mapping_size(void)
- 
- size_t iommu_dma_max_mapping_size(struct device *dev)
- {
--	if (dev_is_untrusted(dev))
-+	if (dev_requires_dma_protection(dev))
- 		return swiotlb_max_mapping_size(dev);
- 
- 	return SIZE_MAX;
-diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
-index e860bc9439a2..bcf907604c28 100644
---- a/drivers/iommu/intel/iommu.c
-+++ b/drivers/iommu/intel/iommu.c
-@@ -3134,7 +3134,7 @@ static int __init platform_optin_force_iommu(void)
- 
- 	/*
- 	 * If Intel-IOMMU is disabled by default, we will apply identity
--	 * map for all devices except those marked as being untrusted.
-+	 * map for all devices except those marked as requiring DMA protection.
- 	 */
- 	if (dmar_disabled)
- 		iommu_set_default_passthrough(false);
-@@ -4228,13 +4228,13 @@ static bool intel_iommu_is_attach_deferred(struct device *dev)
- }
- 
- /*
-- * Check that the device does not live on an external facing PCI port that is
-- * marked as untrusted. Such devices should not be able to apply quirks and
-- * thus not be able to bypass the IOMMU restrictions.
-+ * Check that the device does not require DMA protection. Such devices should
-+ * not be able to apply quirks and thus not be able to bypass the IOMMU
-+ * restrictions.
-  */
- static bool risky_device(struct pci_dev *pdev)
- {
--	if (pdev->untrusted) {
-+	if (pdev->requires_dma_protection) {
- 		pci_info(pdev,
- 			 "Skipping IOMMU quirk for dev [%04X:%04X] on untrusted PCI link\n",
- 			 pdev->vendor, pdev->device);
-diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-index 83c8e617a2c5..0165f1d232b9 100644
---- a/drivers/iommu/iommu.c
-+++ b/drivers/iommu/iommu.c
-@@ -1745,10 +1745,9 @@ static int iommu_get_default_domain_type(struct iommu_group *group,
- 		driver_type = iommu_get_def_domain_type(group, gdev->dev,
- 							driver_type);
- 
--		if (dev_is_pci(gdev->dev) && to_pci_dev(gdev->dev)->untrusted) {
-+		if (dev_is_pci(gdev->dev) && to_pci_dev(gdev->dev)->requires_dma_protection) {
- 			/*
--			 * No ARM32 using systems will set untrusted, it cannot
--			 * work.
-+			 * ARM32 systems don't support DMA protection.
- 			 */
- 			if (WARN_ON(IS_ENABLED(CONFIG_ARM_DMA_USE_IOMMU)))
- 				return -1;
-diff --git a/drivers/pci/ats.c b/drivers/pci/ats.c
-index 6afff1f1b143..05aab7c74491 100644
---- a/drivers/pci/ats.c
-+++ b/drivers/pci/ats.c
-@@ -43,7 +43,7 @@ bool pci_ats_supported(struct pci_dev *dev)
- 	if (!dev->ats_cap)
- 		return false;
- 
--	return (dev->untrusted == 0);
-+	return (dev->requires_dma_protection == 0);
- }
- EXPORT_SYMBOL_GPL(pci_ats_supported);
- 
-diff --git a/drivers/pci/pci-acpi.c b/drivers/pci/pci-acpi.c
-index a457ae3e811a..1713e2856a88 100644
---- a/drivers/pci/pci-acpi.c
-+++ b/drivers/pci/pci-acpi.c
-@@ -1465,7 +1465,7 @@ void pci_acpi_setup(struct device *dev, struct acpi_device *adev)
- 
- 	pci_acpi_optimize_delay(pci_dev, adev->handle);
- 	pci_acpi_set_external_facing(pci_dev);
--	pci_dev->untrusted |= pci_dev_has_dma_property(pci_dev);
-+	pci_dev->requires_dma_protection |= pci_dev_has_dma_property(pci_dev);
- 	pci_acpi_add_edr_notifier(pci_dev);
- 
- 	pci_acpi_add_pm_notifier(adev, pci_dev);
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index 225a6cd2e9ca..761bc845a7f2 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -1056,7 +1056,7 @@ static void pci_std_enable_acs(struct pci_dev *dev, struct pci_acs *caps)
- 	caps->ctrl |= (caps->cap & PCI_ACS_UF);
- 
- 	/* Enable Translation Blocking for external devices and noats */
--	if (pci_ats_disabled() || dev->external_facing || dev->untrusted)
-+	if (pci_ats_disabled() || dev->external_facing || dev->requires_dma_protection)
- 		caps->ctrl |= (caps->cap & PCI_ACS_TB);
- }
- 
-diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-index f1615805f5b0..7589a524c9b8 100644
---- a/drivers/pci/probe.c
-+++ b/drivers/pci/probe.c
-@@ -1631,7 +1631,7 @@ static void set_pcie_thunderbolt(struct pci_dev *dev)
- 		dev->is_thunderbolt = 1;
- }
- 
--static void set_pcie_untrusted(struct pci_dev *dev)
-+static void pci_set_requires_dma_protection(struct pci_dev *dev)
- {
- 	struct pci_dev *parent;
- 
-@@ -1640,8 +1640,8 @@ static void set_pcie_untrusted(struct pci_dev *dev)
- 	 * untrusted as well.
- 	 */
- 	parent = pci_upstream_bridge(dev);
--	if (parent && (parent->untrusted || parent->external_facing))
--		dev->untrusted = true;
-+	if (parent && (parent->requires_dma_protection || parent->external_facing))
-+		dev->requires_dma_protection = true;
- }
- 
- static void pci_set_removable(struct pci_dev *dev)
-@@ -1945,7 +1945,7 @@ int pci_setup_device(struct pci_dev *dev)
- 	/* Need to have dev->cfg_size ready */
- 	set_pcie_thunderbolt(dev);
- 
--	set_pcie_untrusted(dev);
-+	pci_set_requires_dma_protection(dev);
- 
- 	/* "Unknown power state" */
- 	dev->current_state = PCI_UNKNOWN;
-diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-index dccb60c1d9cc..cc2f4792e03b 100644
---- a/drivers/pci/quirks.c
-+++ b/drivers/pci/quirks.c
-@@ -5296,7 +5296,7 @@ static void pci_quirk_enable_intel_rp_mpc_acs(struct pci_dev *dev)
-  * PCI_ACS_SV | PCI_ACS_RR | PCI_ACS_CR | PCI_ACS_UF
-  *
-  * TODO: This quirk also needs to do equivalent of PCI_ACS_TB,
-- * if dev->external_facing || dev->untrusted
-+ * if dev->external_facing || dev->requires_dma_protection
-  */
- static int pci_quirk_enable_intel_pch_acs(struct pci_dev *dev)
- {
-@@ -5337,7 +5337,7 @@ static int pci_quirk_enable_intel_spt_pch_acs(struct pci_dev *dev)
- 	ctrl |= (cap & PCI_ACS_CR);
- 	ctrl |= (cap & PCI_ACS_UF);
- 
--	if (pci_ats_disabled() || dev->external_facing || dev->untrusted)
-+	if (pci_ats_disabled() || dev->external_facing || dev->requires_dma_protection)
- 		ctrl |= (cap & PCI_ACS_TB);
- 
- 	pci_write_config_dword(dev, pos + INTEL_SPT_ACS_CTRL, ctrl);
-diff --git a/include/linux/pci.h b/include/linux/pci.h
-index 573b4c4c2be6..b883539cfd88 100644
---- a/include/linux/pci.h
-+++ b/include/linux/pci.h
-@@ -444,13 +444,14 @@ struct pci_dev {
- 	unsigned int	shpc_managed:1;		/* SHPC owned by shpchp */
- 	unsigned int	is_thunderbolt:1;	/* Thunderbolt controller */
- 	/*
--	 * Devices marked being untrusted are the ones that can potentially
--	 * execute DMA attacks and similar. They are typically connected
-+	 * Devices marked with requires_dma_protection are the ones that can
-+	 * potentially execute DMA attacks and similar. They are typically connected
- 	 * through external ports such as Thunderbolt but not limited to
- 	 * that. When an IOMMU is enabled they should be getting full
- 	 * mappings to make sure they cannot access arbitrary memory.
- 	 */
--	unsigned int	untrusted:1;
-+	unsigned int	requires_dma_protection:1;
-+
- 	/*
- 	 * Info from the platform, e.g., ACPI or device tree, may mark a
- 	 * device as "external-facing".  An external-facing device is
--- 
-2.47.0.338.g60cca15819-goog
+Thanks,
+Elliot
 
 
