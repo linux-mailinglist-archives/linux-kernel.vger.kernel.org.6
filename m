@@ -1,92 +1,198 @@
-Return-Path: <linux-kernel+bounces-412988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 263FF9D1203
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 14:36:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 48E2A9D121A
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 14:39:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C64881F22108
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 13:35:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0DA51F2223C
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 13:39:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AD541A9B3D;
-	Mon, 18 Nov 2024 13:30:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EC581C07E2;
+	Mon, 18 Nov 2024 13:34:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="kBECa0Z/"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="ZKjfiG/W"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B5AA1A9B34
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 13:30:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C12919E998;
+	Mon, 18 Nov 2024 13:34:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731936636; cv=none; b=XP20IHOXKqlZ05Cg3ygFXENdEhjv8JsdxShLokwiJH+8NVD/B9pgmwFj9ewBsGjlH509k+oYq8YkHOIiyqW6RAJK5AIOVh+CiI3m6JPEIMNhvswsWmjg0lw3BRKGZqyzlSCi1vPmuHHyzoeXNJ/cfHDjrhkWy2zTqMC96rWhmnw=
+	t=1731936898; cv=none; b=HO1YFxwYvsedTDqvzUsGarufucNPQNHUasBoR5SYm6gaXhTA7LCjA7SClYGS60pbyxiIGTcFdHNbHT/LX2QdDNxDyV5FprFUAhhmxpfD2OSbicChv0IzC1BVpcR6YDLI55/fCgnn32JkFsvK7hiIYIoIr5J1FDmGdXe0Gu3pdxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731936636; c=relaxed/simple;
-	bh=K9TyBHKbiE5FZems96SJxHbi5QqALsjs5tT8yGQGGls=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uyqgBSQQEZJdOoOnEV4C2YlTiCF4XUcm/74o5JpVNX2PWjhnrPgTGFCxtX7aAAlhbJVLx/pwIP6zBVLWWypQsefjuIMLlXfspk59BuvowvMbd5Ge9T5/EhhJl32qzf7PYJ4IR1WQMK1Q5mX9Hc6fQXu+NbJzfbQJAjwD3fFByiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=kBECa0Z/; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 55AA51BF203;
-	Mon, 18 Nov 2024 13:30:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1731936632;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=S3YSdUFKKvYQVZsA4uIFZEUQhKLwa3K8Neu9RSQ63cU=;
-	b=kBECa0Z/TB7lLcpOPhc73KVOs/3/BXZX2w48v0lSNYFeI+e0qb37l6VHen1qy0GALus23Q
-	N+DwHlqxjtBCiBKujBCU2RReez1dwhzU1hyCHxpCZkXhTl9GoiX8DzXkUAEvrwAhj9XLHv
-	d+msTZdFrRX6pmZJjI0tvgNJUMHKcoS6MjjHxx7AcHAFH5fl9On5ShM21+VBkyLsWtNOfI
-	bg/bNC6LVFoJ+4ELmhXLSnyCWN0/ECScBivrMQ7q7JyXur8nMNrv4dBnhsXEKlOC6rHbjq
-	Z45V5qGWj06XpiSf8OLXmN4upp13zqyXaYig1c44ZJl7k3bLZOjBLTLZ9SwdZg==
-Date: Mon, 18 Nov 2024 14:30:31 +0100
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
-Cc: Sanket.Goswami@amd.com, linux-i3c@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] Introduce initial support for the AMD I3C
- (non-HCI) to DW driver
-Message-ID: <173193659469.36588.225755513735675648.b4-ty@bootlin.com>
-References: <20241114110239.660551-1-Shyam-sundar.S-k@amd.com>
+	s=arc-20240116; t=1731936898; c=relaxed/simple;
+	bh=24/EauieQXJi/pntvKLKiUH0LR79R8xUc5ZSJi/BYeY=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oGBd7YFOfNPKMy8Q9RAkeKwdCaFfB8Xs/VxM1+wvzziU/urOw/vqw56Ymhk3Z9auj0dQI8YMmy6g4q3Sb7R7GMxYFGU1CJAgofQwYL//gYWC/wQmFhoFbzZGzkTuCL01zYEPAU/Et7A8gwrZjKiZK8GvuQojUIn8ilGUqkoosCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=ZKjfiG/W; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AI92Saa027677;
+	Mon, 18 Nov 2024 14:34:21 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=selector1; bh=kk0fbCm86oNON+VzAknySsP7
+	MWSV0z1bs5jHXJw47/E=; b=ZKjfiG/Wh8lUk5ragQjXYnM5zxkVWBgG20FGAMTZ
+	bObTmd26MsJl0TVzVROI82uykK1xaUQ8T7cIv9gHxn7bI5v4hoq8irxUkSeYydFl
+	e/R8EadFRHymA3eSpaUeM6mBdGXwrBz1mCoedK/mqsjk+1YN1+qqXHw79/TEwme3
+	V2EcMlnzkGR5o45io9L3wZdShlLxadvhS0ln4U2wsKh1srWt1a8tBym9/JNLCW6r
+	QJsm4xGwtRmIsNv9M6nEPHQju/eTyDHsvyqCAKsHduaAbGOr9O479i1C4DBwEQ7S
+	k+tYziiyyt4yTdZx8YWiiIvljCf6NwLFnRieisJGu8VHYw==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 42y5u3n7tn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 18 Nov 2024 14:34:21 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 59F2140052;
+	Mon, 18 Nov 2024 14:33:03 +0100 (CET)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 20D4128AB95;
+	Mon, 18 Nov 2024 14:31:56 +0100 (CET)
+Received: from gnbcxd0016.gnb.st.com (10.129.178.213) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Mon, 18 Nov
+ 2024 14:31:55 +0100
+Date: Mon, 18 Nov 2024 14:31:50 +0100
+From: Alain Volmat <alain.volmat@foss.st.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>
+CC: Hugues Fruchet <hugues.fruchet@foss.st.com>,
+        Mauro Carvalho Chehab
+	<mchehab@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre
+ Torgue <alexandre.torgue@foss.st.com>,
+        Hans Verkuil
+	<hverkuil-cisco@xs4all.nl>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Rob
+ Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor
+ Dooley <conor+dt@kernel.org>, <linux-media@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v2 03/15] media: stm32: csi: addition of the STM32 CSI
+ driver
+Message-ID: <20241118133150.GA2001051@gnbcxd0016.gnb.st.com>
+References: <20241105-csi_dcmipp_mp25-v2-0-b9fc8a7273c2@foss.st.com>
+ <20241105-csi_dcmipp_mp25-v2-3-b9fc8a7273c2@foss.st.com>
+ <8841158ed61b2b92a92ac6d2afcbd7cff12a6680.camel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20241114110239.660551-1-Shyam-sundar.S-k@amd.com>
-X-GND-Sasl: alexandre.belloni@bootlin.com
+In-Reply-To: <8841158ed61b2b92a92ac6d2afcbd7cff12a6680.camel@pengutronix.de>
+X-Disclaimer: ce message est personnel / this message is private
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-On Thu, 14 Nov 2024 16:32:37 +0530, Shyam Sundar S K wrote:
-> In this series, support for following features has been added.
-> - Add dw-i3c-master driver with ACPI bindings
-> - Workaround for AMD hardware
-> 
-> v4:
-> ----
->  - Split the series into two
->  - add Jarkko tags
-> 
+Hi Philipp
+
+On Tue, Nov 05, 2024 at 11:14:47AM +0100, Philipp Zabel wrote:
+> On Di, 2024-11-05 at 08:49 +0100, Alain Volmat wrote:
+> > The STM32 CSI controller is tightly coupled with the DCMIPP and act as an
+> > input stage to receive data coming from the sensor and transferring
+> > them into the DCMIPP.
+> > 
+> > Signed-off-by: Alain Volmat <alain.volmat@foss.st.com>
+> > 
+> > ---
+> > v2: correct data-lanes handling, using values 1 & 2
+> >     update yaml filename in MAINTAINERS
+> > ---
+> >  MAINTAINERS                                 |    8 +
+> >  drivers/media/platform/st/stm32/Kconfig     |   14 +
+> >  drivers/media/platform/st/stm32/Makefile    |    1 +
+> >  drivers/media/platform/st/stm32/stm32-csi.c | 1144 +++++++++++++++++++++++++++
+> >  4 files changed, 1167 insertions(+)
+> > 
 > [...]
+> > diff --git a/drivers/media/platform/st/stm32/stm32-csi.c b/drivers/media/platform/st/stm32/stm32-csi.c
+> > new file mode 100644
+> > index 0000000000000000000000000000000000000000..c7f47472c6b3699e94113ce0f38b280a2e45ce15
+> > --- /dev/null
+> > +++ b/drivers/media/platform/st/stm32/stm32-csi.c
+> > @@ -0,0 +1,1144 @@
+> [...]
+> > +static int stm32_csi_get_resources(struct stm32_csi_dev *csidev,
+> > +				   struct platform_device *pdev)
+> > +{
+> > +	int irq, ret;
+> > +
+> > +	csidev->base = devm_platform_get_and_ioremap_resource(pdev, 0, NULL);
+> > +	if (IS_ERR(csidev->base))
+> > +		return dev_err_probe(&pdev->dev, PTR_ERR(csidev->base),
+> > +				     "Failed to ioremap resource\n");
+> > +
+> > +	csidev->pclk = devm_clk_get(&pdev->dev, "pclk");
+> > +	if (IS_ERR(csidev->pclk))
+> > +		return dev_err_probe(&pdev->dev, PTR_ERR(csidev->pclk),
+> > +				     "Couldn't get pclk\n");
+> > +
+> > +	csidev->txesc = devm_clk_get(&pdev->dev, "txesc");
+> > +	if (IS_ERR(csidev->txesc))
+> > +		return dev_err_probe(&pdev->dev, PTR_ERR(csidev->txesc),
+> > +				     "Couldn't get txesc\n");
+> > +
+> > +	csidev->csi2phy = devm_clk_get(&pdev->dev, "csi2phy");
+> > +	if (IS_ERR(csidev->csi2phy))
+> > +		return dev_err_probe(&pdev->dev, PTR_ERR(csidev->csi2phy),
+> > +				     "Couldn't get csi2phy\n");
+> 
+> Consider using devm_clk_bulk_get().
 
-Applied, thanks!
+Ok, I change this in the v3.
 
-[1/2] i3c: dw: Add support for AMDI0015 ACPI ID
-      https://git.kernel.org/abelloni/c/0a0d851ce1bc
-[2/2] i3c: dw: Add quirk to address OD/PP timing issue on AMD platform
-      https://git.kernel.org/abelloni/c/473d0cb48587
+> 
+> > +	csidev->rstc = devm_reset_control_get_exclusive(&pdev->dev, NULL);
+> > +	if (IS_ERR(csidev->rstc))
+> > +		return dev_err_probe(&pdev->dev, PTR_ERR(csidev->rstc),
+> > +				     "Couldn't get reset control\n");
+> 
+> If this wasn't in a separate function, rstc wouldn't have to be stored
+> on csidev as it's only ever used in stm32_csi_probe().
 
-Best regards,
+Ok, whole reset handling moved into the probe function.
 
--- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+> 
+> > +
+> > +	csidev->supplies[0].supply = "vdd";
+> > +	csidev->supplies[1].supply = "vdda18";
+> > +	ret = devm_regulator_bulk_get(&pdev->dev, ARRAY_SIZE(csidev->supplies),
+> > +				      csidev->supplies);
+> > +	if (ret)
+> > +		return dev_err_probe(&pdev->dev, ret,
+> > +				     "Failed to request regulator vdd\n");
+> > +
+> > +	irq = platform_get_irq(pdev, 0);
+> > +	if (irq < 0)
+> > +		return irq;
+> > +
+> > +	ret = devm_request_threaded_irq(&pdev->dev, irq, NULL,
+> > +					stm32_csi_irq_thread, IRQF_ONESHOT,
+> > +					dev_name(&pdev->dev), csidev);
+> > +	if (ret)
+> > +		return dev_err_probe(&pdev->dev, ret,
+> > +				     "Unable to request irq");
+> > +
+> > +	return 0;
+> > +}
+> 
+> regards
+> Philipp
+
+Regards
+Alain
 
