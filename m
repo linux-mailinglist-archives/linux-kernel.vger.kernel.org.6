@@ -1,172 +1,447 @@
-Return-Path: <linux-kernel+bounces-412838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59E889D0FDD
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 12:39:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CBC849D0FE3
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 12:42:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE0A3B26256
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:38:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E537FB2240B
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:42:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE0221991C9;
-	Mon, 18 Nov 2024 11:38:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 972091991B2;
+	Mon, 18 Nov 2024 11:41:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="G7eNNTmO"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="fWGlqWYH"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77807190468
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 11:38:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E92881946DA
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 11:41:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731929918; cv=none; b=MPjmuCBaMlhbhHK7RbwHiDegeCm4yemyjLQNDS992z0fi53C5Vwdy3eXVENZTfB+G34mATPJQTrTtCYmcCNpQ6AGPFAYy3ujby4dktg7H0V8/EtsGZd/eG7bjywPmbZkPKXmviYakyq4N6oKSoAQPIy6wVrUqMO2OLQUZ/0PqEw=
+	t=1731930109; cv=none; b=tIBgsuWkM1H+TwT5CtBDNqVY+v/M1FHa6Ktw05OFyDtz5CAsZKm0I9Y31C0zI3MjXiYw6ORhFrVmM0EQiG9woehfq4nvYeM83yWE4l6ne4/Z7zd8qjzw5yGx5ITpS4p4a1KuBTMPGF8oQswadG+TeIxhm/gr9wqQ0hgXgdLOnos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731929918; c=relaxed/simple;
-	bh=8gdflFgjNrJ0YOs0tfdGdr2zUIj1LGSP9Jx3xu2/Z2M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NWYQ4rwxyZef2XHyJ8Balcau900RKxHs7nJ8x5pYsSGl+0veVJ+Zb6BGlaZJTrMZ2p8K9dfLEGbzzQKJL+hPTGh5fL1DG1oQVfC/CDbN8RktV5UUl+mzaM3xSJhLKdqLX9A3I1oKEaxODg9Tb7dW46LOEyI2K51hlN8M/o5riA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=G7eNNTmO; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731929915;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gw5bD5S7SVN4RsLiLhtGKlhV9ZJYhsd8Se2piSJ4RY4=;
-	b=G7eNNTmONSsOBetjlaO3+jnqUiOrAfSRoIytetmx9LIsBeYAxO2vazaaIJ1PX7/DRVWUkd
-	uYen3Pf735k41L/Bcy4UhgzGa7Yz3aFMZN7Lf79DpD2Xl3oph7X4meo7tPaENz5zjI1Wxo
-	rbgP6LHMbkFgPu93MH8+f43FncMYCoE=
-Received: from mail-yb1-f199.google.com (mail-yb1-f199.google.com
- [209.85.219.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-139-jhq5s855N92IQxADzUbKmw-1; Mon, 18 Nov 2024 06:38:34 -0500
-X-MC-Unique: jhq5s855N92IQxADzUbKmw-1
-X-Mimecast-MFC-AGG-ID: jhq5s855N92IQxADzUbKmw
-Received: by mail-yb1-f199.google.com with SMTP id 3f1490d57ef6-e381c19246fso5859276276.3
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 03:38:34 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731929913; x=1732534713;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gw5bD5S7SVN4RsLiLhtGKlhV9ZJYhsd8Se2piSJ4RY4=;
-        b=rn9UlQn30slc9IDGFZypOfo6RRoeQl24rT16u2NnT4GsCLhUwt6aNAbZL/K+OBpY7a
-         iGUP36ost0pudFwJf6pklmHE0yDBsKOvPQrmX3SCUfIeeXR3rMNu6Y9iiRzFfb3wvtdo
-         zT9HRRcKN+n4Tmu96tEJaw0ZLFazdRU98pFEzx6KqCOq8anLj+JRMLqdiP5hP/r2CCvR
-         J5PzqAnjYM6ILMDIcg1LAPdixtRS/bwzYSQlFUKSakgiKp6Q4/rA7wl6eh5zq9hebzP6
-         YS40uzY7G7TxZhpW14LvJYeb163IEGF7c7CUTXzqbM1ehG9yvHlVIss0Fz7I4NMhyTZA
-         3CnA==
-X-Forwarded-Encrypted: i=1; AJvYcCWN/hgFCNUN43oVMsShTHWd6GCoz0ESPEAY7a7rTmBKBY2yrcbdHeSvwtKPgnQGQGJQw0Vs4cYZKwgTk5I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3ifPKl0nitouh+Y9ty6bx/xh66Iia3JaOz3ZwTZ5cJ8lz9Ohy
-	0MvgoDNz86PFGW/crWaxFrMIzVhJ3H2jfVZ9MXrFp2XLCsHeGcfGIJw02SCBoL2nlnddQu1bXnQ
-	YHASLHjQwkrVpYTm1/agCtU4/RRtM8fDZuOjyf4JgsYFnVvYnuELMrzmm1PRMPA==
-X-Received: by 2002:a05:6902:1109:b0:e38:a15d:409d with SMTP id 3f1490d57ef6-e38a15d4424mr2161036276.13.1731929913532;
-        Mon, 18 Nov 2024 03:38:33 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGQnbgCNr3UNGZv40fiiuJH5q+gMcuQO3YMFlFbx+8I0jqkmXUewKgQYLeMIrdZYVymoVOu/g==
-X-Received: by 2002:a05:6902:1109:b0:e38:a15d:409d with SMTP id 3f1490d57ef6-e38a15d4424mr2161024276.13.1731929913163;
-        Mon, 18 Nov 2024 03:38:33 -0800 (PST)
-Received: from [192.168.88.24] (146-241-44-112.dyn.eolo.it. [146.241.44.112])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d40da59a8dsm34584006d6.0.2024.11.18.03.38.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Nov 2024 03:38:32 -0800 (PST)
-Message-ID: <f95ec5a6-72c5-4c99-91b9-8317ca5d7207@redhat.com>
-Date: Mon, 18 Nov 2024 12:38:28 +0100
+	s=arc-20240116; t=1731930109; c=relaxed/simple;
+	bh=8sUMxyaA82v/MKpXyESv68RTP/3SGMzNUrTGXXyJDac=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=krwA24mQXTriO3GCXp7fkKVq0QYMlD3LSbhThgldrVnjnRMupeU1mUilRtC9K/tbD+s8SBKy+VNzMXoX9Oxfr9eiBguN//Pxa00qprc155X35DUrdp1S0tFgK0Uuf2PEN8BnvuEQucJWz2b4wsaPYyPkT1DBLb3krcB3Ach8zb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=fWGlqWYH; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AI0h0wE012238;
+	Mon, 18 Nov 2024 11:41:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=F3+JvQD0m/r/0rpciYdXVJtz6YwRfmTI2Oz4oZLhM
+	/c=; b=fWGlqWYHbgMImrjOGCcmx6NXkK9/B1BgoF+ZVQXC+B17oOgvhvRRZ5l7P
+	NEt27vO6aBvaP0FMAwHhKBsS5GylUM5tZ8NDxHsatOpMUcSA5E8WcbbamS71XGu1
+	ph56axzl3Z79V/JOf7kDuIYr1MXxaQlww2/1GUbKslKtr26SozoAs4g3uXEH6t6O
+	21tezQd2I+FEwG3VVo57I7QlimZoi9Y6GC8aA31W7jCngHb8QdPLk5zL1qmOZN+3
+	vv0zJfnY54JDCzEfn560EUg4/BRwo6EQLWu4xUHzq3HjuNNL1F3QQT4zDSV/iiYd
+	0lpD5Uf8l0xtXw/DbYRb87fS7tWKQ==
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42xk2vsktv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 18 Nov 2024 11:41:26 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AI3A885021892;
+	Mon, 18 Nov 2024 11:41:25 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42y6qmth1d-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 18 Nov 2024 11:41:25 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4AIBfKjd33489502
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 18 Nov 2024 11:41:20 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 37BCB20043;
+	Mon, 18 Nov 2024 11:41:20 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C19C020040;
+	Mon, 18 Nov 2024 11:41:17 +0000 (GMT)
+Received: from li-e8dccbcc-2adc-11b2-a85c-bc1f33b9b810.ibm.com.com (unknown [9.43.96.153])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 18 Nov 2024 11:41:17 +0000 (GMT)
+From: Kajol Jain <kjain@linux.ibm.com>
+To: mpe@ellerman.id.au, maddy@linux.ibm.com
+Cc: atrajeev@linux.vnet.ibm.com, kjain@linux.ibm.com, disgoel@linux.ibm.com,
+        hbathini@linux.ibm.com, adubey@linux.ibm.com, gautam@linux.ibm.com,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/4] powerpc/perf: Add perf interface to expose vpa counters
+Date: Mon, 18 Nov 2024 17:11:11 +0530
+Message-ID: <20241118114114.208964-1-kjain@linux.ibm.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next] net: ip: fix unexpected return in
- fib_validate_source()
-To: Menglong Dong <menglong8.dong@gmail.com>
-Cc: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com,
- kuba@kernel.org, horms@kernel.org, ast@kernel.org, daniel@iogearbox.net,
- hawk@kernel.org, john.fastabend@gmail.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
- Menglong Dong <dongml2@chinatelecom.cn>,
- syzbot+52fbd90f020788ec7709@syzkaller.appspotmail.com
-References: <20241118091427.2164345-1-dongml2@chinatelecom.cn>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20241118091427.2164345-1-dongml2@chinatelecom.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: _MySIRK3YXdxDNv3NUTLIS4cnS9S_Rrh
+X-Proofpoint-GUID: _MySIRK3YXdxDNv3NUTLIS4cnS9S_Rrh
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ priorityscore=1501 phishscore=0 clxscore=1015 suspectscore=0 spamscore=0
+ impostorscore=0 bulkscore=0 mlxscore=0 adultscore=0 lowpriorityscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411180096
 
-On 11/18/24 10:14, Menglong Dong wrote:
-> The errno should be replaced with drop reasons in fib_validate_source(),
-> and the "-EINVAL" shouldn't be returned. And this causes a warning, which
-> is reported by syzkaller:
-> 
-> netlink: 'syz-executor371': attribute type 4 has an invalid length.
-> ------------[ cut here ]------------
-> WARNING: CPU: 0 PID: 5842 at net/core/skbuff.c:1219 __sk_skb_reason_drop net/core/skbuff.c:1216 [inline]
-> WARNING: CPU: 0 PID: 5842 at net/core/skbuff.c:1219 sk_skb_reason_drop+0x87/0x380 net/core/skbuff.c:1241
-> Modules linked in:
-> CPU: 0 UID: 0 PID: 5842 Comm: syz-executor371 Not tainted 6.12.0-rc6-syzkaller-01362-ga58f00ed24b8 #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
-> RIP: 0010:__sk_skb_reason_drop net/core/skbuff.c:1216 [inline]
-> RIP: 0010:sk_skb_reason_drop+0x87/0x380 net/core/skbuff.c:1241
-> Code: 00 00 00 fc ff df 41 8d 9e 00 00 fc ff bf 01 00 fc ff 89 de e8 ea 9f 08 f8 81 fb 00 00 fc ff 77 3a 4c 89 e5 e8 9a 9b 08 f8 90 <0f> 0b 90 eb 5e bf 01 00 00 00 89 ee e8 c8 9f 08 f8 85 ed 0f 8e 49
-> RSP: 0018:ffffc90003d57078 EFLAGS: 00010293
-> RAX: ffffffff898c3ec6 RBX: 00000000fffbffea RCX: ffff8880347a5a00
-> RDX: 0000000000000000 RSI: 00000000fffbffea RDI: 00000000fffc0001
-> RBP: dffffc0000000000 R08: ffffffff898c3eb6 R09: 1ffff110023eb7d4
-> R10: dffffc0000000000 R11: ffffed10023eb7d5 R12: dffffc0000000000
-> R13: ffff888011f5bdc0 R14: 00000000ffffffea R15: 0000000000000000
-> FS:  000055557d41e380(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 000056519d31d608 CR3: 000000007854e000 CR4: 00000000003526f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  <TASK>
->  kfree_skb_reason include/linux/skbuff.h:1263 [inline]
->  ip_rcv_finish_core+0xfde/0x1b50 net/ipv4/ip_input.c:424
->  ip_list_rcv_finish net/ipv4/ip_input.c:610 [inline]
->  ip_sublist_rcv+0x3b1/0xab0 net/ipv4/ip_input.c:636
->  ip_list_rcv+0x42b/0x480 net/ipv4/ip_input.c:670
->  __netif_receive_skb_list_ptype net/core/dev.c:5715 [inline]
->  __netif_receive_skb_list_core+0x94e/0x980 net/core/dev.c:5762
->  __netif_receive_skb_list net/core/dev.c:5814 [inline]
->  netif_receive_skb_list_internal+0xa51/0xe30 net/core/dev.c:5905
->  netif_receive_skb_list+0x55/0x4b0 net/core/dev.c:5957
->  xdp_recv_frames net/bpf/test_run.c:280 [inline]
->  xdp_test_run_batch net/bpf/test_run.c:361 [inline]
->  bpf_test_run_xdp_live+0x1b5e/0x21b0 net/bpf/test_run.c:390
->  bpf_prog_test_run_xdp+0x805/0x11e0 net/bpf/test_run.c:1318
->  bpf_prog_test_run+0x2e4/0x360 kernel/bpf/syscall.c:4266
->  __sys_bpf+0x48d/0x810 kernel/bpf/syscall.c:5671
->  __do_sys_bpf kernel/bpf/syscall.c:5760 [inline]
->  __se_sys_bpf kernel/bpf/syscall.c:5758 [inline]
->  __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:5758
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f18af25a8e9
-> Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007ffee4090af8 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
-> RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f18af25a8e9
-> RDX: 0000000000000048 RSI: 0000000020000600 RDI: 000000000000000a
-> RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-> R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
-> 
-> Fix it by returning "-SKB_DROP_REASON_IP_LOCAL_SOURCE" instead of
-> "-EINVAL" in fib_validate_source().
-> 
-> Reported-by: syzbot+52fbd90f020788ec7709@syzkaller.appspotmail.com
-> Closes: https://lore.kernel.org/netdev/6738e539.050a0220.e1c64.0002.GAE@google.com/
-> Fixes: 82d9983ebeb8 ("net: ip: make ip_route_input_noref() return drop reasons")
-> Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
+To support performance measurement for KVM on PowerVM(KoP)
+feature, PowerVM hypervisor has added couple of new software
+counters in Virtual Process Area(VPA) of the partition.
 
-Thanks for the quick turnaround!
+Commit e1f288d2f9c69 ("KVM: PPC: Book3S HV nestedv2: Add
+support for reading VPA counters for pseries guests")
+have updated the paca fields with corresponding changes.
 
-Acked-by: Paolo Abeni <pabeni@redhat.com>
+Proposed perf interface is to expose these new software
+counters for monitoring of context switch latencies and
+runtime aggregate. Perf interface driver is called
+"vpa_pmu" and it has dependency on KVM and perf, hence
+added new config called "VPA_PMU" which depends on
+"CONFIG_KVM_BOOK3S_64_HV" and "CONFIG_HV_PERF_CTRS".
+Since, kvm and kvm_host are currently compiled as built-in
+modules, this perf interface takes the same path and
+registered as a module.
+
+vpa_pmu perf interface needs access to some of the kvm
+functions and structures like kvmhv_get_l2_counters_status(),
+hence kvm_book3s_64.h and kvm_ppc.h are included.
+Below are the events added to monitor KoP:
+
+  vpa_pmu/l1_to_l2_lat/
+  vpa_pmu/l2_to_l1_lat/
+  vpa_pmu/l2_runtime_agg/
+
+and vpa_pmu driver supports only per-cpu monitoring with this patch.
+Example usage:
+
+[command]# perf stat -e vpa_pmu/l1_to_l2_lat/ -a -I 1000
+     1.001017682            727,200      vpa_pmu/l1_to_l2_lat/
+     2.003540491          1,118,824      vpa_pmu/l1_to_l2_lat/
+     3.005699458          1,919,726      vpa_pmu/l1_to_l2_lat/
+     4.007827011          2,364,630      vpa_pmu/l1_to_l2_lat/
+
+Signed-off-by: Kajol Jain <kjain@linux.ibm.com>
+Co-developed-by: Madhavan Srinivasan <maddy@linux.ibm.com>
+Signed-off-by: Madhavan Srinivasan <maddy@linux.ibm.com>
+---
+Changelog:
+
+v1 -> v2
+- Rebase the patch on top of kvm typo fix patch:
+  https://github.com/linuxppc/linux/commit/590d2f9347f7974d7954400e5d937672fd844a8b
+- Fix the config check reported by kernel test robot:
+  https://lore.kernel.org/oe-kbuild-all/202411171117.Eq9JtACb-lkp@intel.com/
+
+ arch/powerpc/include/asm/kvm_book3s_64.h |   3 +
+ arch/powerpc/kvm/book3s_hv.c             |  19 +++
+ arch/powerpc/perf/Makefile               |   2 +
+ arch/powerpc/perf/vpa-pmu.c              | 197 +++++++++++++++++++++++
+ arch/powerpc/platforms/pseries/Kconfig   |  14 ++
+ 5 files changed, 235 insertions(+)
+ create mode 100644 arch/powerpc/perf/vpa-pmu.c
+
+diff --git a/arch/powerpc/include/asm/kvm_book3s_64.h b/arch/powerpc/include/asm/kvm_book3s_64.h
+index 11065313d4c1..f620e3126d68 100644
+--- a/arch/powerpc/include/asm/kvm_book3s_64.h
++++ b/arch/powerpc/include/asm/kvm_book3s_64.h
+@@ -688,6 +688,9 @@ int kvmhv_counters_tracepoint_regfunc(void);
+ void kvmhv_counters_tracepoint_unregfunc(void);
+ int kvmhv_get_l2_counters_status(void);
+ void kvmhv_set_l2_counters_status(int cpu, bool status);
++u64 kvmhv_get_l1_to_l2_cs_time(void);
++u64 kvmhv_get_l2_to_l1_cs_time(void);
++u64 kvmhv_get_l2_runtime_agg(void);
+ 
+ #endif /* CONFIG_KVM_BOOK3S_HV_POSSIBLE */
+ 
+diff --git a/arch/powerpc/kvm/book3s_hv.c b/arch/powerpc/kvm/book3s_hv.c
+index d575f7c7ab38..e618533dfc4b 100644
+--- a/arch/powerpc/kvm/book3s_hv.c
++++ b/arch/powerpc/kvm/book3s_hv.c
+@@ -4153,6 +4153,7 @@ void kvmhv_set_l2_counters_status(int cpu, bool status)
+ 	else
+ 		lppaca_of(cpu).l2_counters_enable = 0;
+ }
++EXPORT_SYMBOL(kvmhv_set_l2_counters_status);
+ 
+ int kvmhv_counters_tracepoint_regfunc(void)
+ {
+@@ -4192,6 +4193,24 @@ static void do_trace_nested_cs_time(struct kvm_vcpu *vcpu)
+ 	*l2_runtime_agg_ptr = l2_runtime_ns;
+ }
+ 
++u64 kvmhv_get_l1_to_l2_cs_time(void)
++{
++	return tb_to_ns(be64_to_cpu(get_lppaca()->l1_to_l2_cs_tb));
++}
++EXPORT_SYMBOL(kvmhv_get_l1_to_l2_cs_time);
++
++u64 kvmhv_get_l2_to_l1_cs_time(void)
++{
++	return tb_to_ns(be64_to_cpu(get_lppaca()->l2_to_l1_cs_tb));
++}
++EXPORT_SYMBOL(kvmhv_get_l2_to_l1_cs_time);
++
++u64 kvmhv_get_l2_runtime_agg(void)
++{
++	return tb_to_ns(be64_to_cpu(get_lppaca()->l2_runtime_tb));
++}
++EXPORT_SYMBOL(kvmhv_get_l2_runtime_agg);
++
+ #else
+ int kvmhv_get_l2_counters_status(void)
+ {
+diff --git a/arch/powerpc/perf/Makefile b/arch/powerpc/perf/Makefile
+index 4f53d0b97539..ac2cf58d62db 100644
+--- a/arch/powerpc/perf/Makefile
++++ b/arch/powerpc/perf/Makefile
+@@ -16,6 +16,8 @@ obj-$(CONFIG_FSL_EMB_PERF_EVENT_E500) += e500-pmu.o e6500-pmu.o
+ 
+ obj-$(CONFIG_HV_PERF_CTRS) += hv-24x7.o hv-gpci.o hv-common.o
+ 
++obj-$(CONFIG_VPA_PMU) += vpa-pmu.o
++
+ obj-$(CONFIG_PPC_8xx) += 8xx-pmu.o
+ 
+ obj-$(CONFIG_PPC64)		+= $(obj64-y)
+diff --git a/arch/powerpc/perf/vpa-pmu.c b/arch/powerpc/perf/vpa-pmu.c
+new file mode 100644
+index 000000000000..2c785eee2f71
+--- /dev/null
++++ b/arch/powerpc/perf/vpa-pmu.c
+@@ -0,0 +1,197 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*
++ * Performance monitoring support for Virtual Processor Area(VPA) based counters
++ *
++ * Copyright (C) 2024 IBM Corporation
++ */
++#define pr_fmt(fmt) "vpa_pmu: " fmt
++
++#include <linux/module.h>
++#include <linux/perf_event.h>
++#include <asm/kvm_ppc.h>
++#include <asm/kvm_book3s_64.h>
++
++#define MODULE_VERS "1.0"
++#define MODULE_NAME "pseries_vpa_pmu"
++
++#define EVENT(_name, _code)     enum{_name = _code}
++
++#define VPA_PMU_EVENT_VAR(_id)  event_attr_##_id
++#define VPA_PMU_EVENT_PTR(_id)  (&event_attr_##_id.attr.attr)
++
++static ssize_t vpa_pmu_events_sysfs_show(struct device *dev,
++				 struct device_attribute *attr, char *page)
++{
++	struct perf_pmu_events_attr *pmu_attr;
++
++	pmu_attr = container_of(attr, struct perf_pmu_events_attr, attr);
++
++	return sprintf(page, "event=0x%02llx\n", pmu_attr->id);
++}
++
++#define VPA_PMU_EVENT_ATTR(_name, _id)				\
++	PMU_EVENT_ATTR(_name, VPA_PMU_EVENT_VAR(_id), _id,	\
++			vpa_pmu_events_sysfs_show)
++
++EVENT(L1_TO_L2_CS_LAT,	0x1);
++EVENT(L2_TO_L1_CS_LAT,	0x2);
++EVENT(L2_RUNTIME_AGG,	0x3);
++
++VPA_PMU_EVENT_ATTR(l1_to_l2_lat,  L1_TO_L2_CS_LAT);
++VPA_PMU_EVENT_ATTR(l2_to_l1_lat,  L2_TO_L1_CS_LAT);
++VPA_PMU_EVENT_ATTR(l2_runtime_agg, L2_RUNTIME_AGG);
++
++static struct attribute *vpa_pmu_events_attr[] = {
++	VPA_PMU_EVENT_PTR(L1_TO_L2_CS_LAT),
++	VPA_PMU_EVENT_PTR(L2_TO_L1_CS_LAT),
++	VPA_PMU_EVENT_PTR(L2_RUNTIME_AGG),
++	NULL
++};
++
++static const struct attribute_group vpa_pmu_events_group = {
++	.name = "events",
++	.attrs = vpa_pmu_events_attr,
++};
++
++PMU_FORMAT_ATTR(event, "config:0-31");
++static struct attribute *vpa_pmu_format_attr[] = {
++	&format_attr_event.attr,
++	NULL,
++};
++
++static struct attribute_group vpa_pmu_format_group = {
++	.name = "format",
++	.attrs = vpa_pmu_format_attr,
++};
++
++static const struct attribute_group *vpa_pmu_attr_groups[] = {
++	&vpa_pmu_events_group,
++	&vpa_pmu_format_group,
++	NULL
++};
++
++static int vpa_pmu_event_init(struct perf_event *event)
++{
++	if (event->attr.type != event->pmu->type)
++		return -ENOENT;
++
++	/* it does not support event sampling mode */
++	if (is_sampling_event(event))
++		return -EOPNOTSUPP;
++
++	/* no branch sampling */
++	if (has_branch_stack(event))
++		return -EOPNOTSUPP;
++
++	/* Invalid event code */
++	if ((event->attr.config <= 0) || (event->attr.config > 3))
++		return -EINVAL;
++
++	return 0;
++}
++
++static unsigned long get_counter_data(struct perf_event *event)
++{
++	unsigned int config = event->attr.config;
++	u64 data;
++
++	switch (config) {
++	case L1_TO_L2_CS_LAT:
++		data = kvmhv_get_l1_to_l2_cs_time();
++		break;
++	case L2_TO_L1_CS_LAT:
++		data = kvmhv_get_l2_to_l1_cs_time();
++		break;
++	case L2_RUNTIME_AGG:
++		data = kvmhv_get_l2_runtime_agg();
++		break;
++	default:
++		data = 0;
++		break;
++	}
++
++	return data;
++}
++
++static int vpa_pmu_add(struct perf_event *event, int flags)
++{
++	u64 data;
++
++	kvmhv_set_l2_counters_status(
++			smp_processor_id(), true);
++
++	data = get_counter_data(event);
++	local64_set(&event->hw.prev_count, data);
++
++	return 0;
++}
++
++static void vpa_pmu_read(struct perf_event *event)
++{
++	u64 prev_data, new_data, final_data;
++
++	prev_data = local64_read(&event->hw.prev_count);
++	new_data = get_counter_data(event);
++	final_data = new_data - prev_data;
++
++	local64_add(final_data, &event->count);
++}
++
++static void vpa_pmu_del(struct perf_event *event, int flags)
++{
++	vpa_pmu_read(event);
++
++	/*
++	 * Disable vpa counter accumulation
++	 */
++	kvmhv_set_l2_counters_status(
++			smp_processor_id(), false);
++}
++
++static struct pmu vpa_pmu = {
++	.task_ctx_nr	= perf_sw_context,
++	.name		= "vpa_pmu",
++	.event_init	= vpa_pmu_event_init,
++	.add		= vpa_pmu_add,
++	.del		= vpa_pmu_del,
++	.read		= vpa_pmu_read,
++	.attr_groups	= vpa_pmu_attr_groups,
++	.capabilities	= PERF_PMU_CAP_NO_EXCLUDE | PERF_PMU_CAP_NO_INTERRUPT,
++};
++
++static int __init pseries_vpa_pmu_init(void)
++{
++
++	/*
++	 * List of current Linux on Power platforms and
++	 * this driver is supported only in PowerVM LPAR
++	 * (L1) platform.
++	 *
++	 *	Enabled    Linux on Power Platforms
++	 *      ----------------------------------------
++	 *        [X]      PowerVM LPAR (L1)
++	 *        [ ]      KVM Guest On PowerVM KoP(L2)
++	 *        [ ]      Baremetal(PowerNV)
++	 *        [ ]      KVM Guest On PowerNV
++	 */
++	if (!firmware_has_feature(FW_FEATURE_LPAR) || is_kvm_guest())
++		return -ENODEV;
++
++	perf_pmu_register(&vpa_pmu, vpa_pmu.name, -1);
++	pr_info("Virtual Processor Area PMU registered.\n");
++
++	return 0;
++}
++
++static void __exit pseries_vpa_pmu_cleanup(void)
++{
++	perf_pmu_unregister(&vpa_pmu);
++	pr_info("Virtual Processor Area PMU unregistered.\n");
++}
++
++module_init(pseries_vpa_pmu_init);
++module_exit(pseries_vpa_pmu_cleanup);
++MODULE_DESCRIPTION("Perf Driver for pSeries VPA pmu counter");
++MODULE_AUTHOR("Kajol Jain <kjain@linux.ibm.com>");
++MODULE_AUTHOR("Madhavan Srinivasan <maddy@linux.ibm.com>");
++MODULE_LICENSE("GPL");
+diff --git a/arch/powerpc/platforms/pseries/Kconfig b/arch/powerpc/platforms/pseries/Kconfig
+index afc0f6a61337..42fc66e97539 100644
+--- a/arch/powerpc/platforms/pseries/Kconfig
++++ b/arch/powerpc/platforms/pseries/Kconfig
+@@ -140,6 +140,20 @@ config HV_PERF_CTRS
+ 
+ 	  If unsure, select Y.
+ 
++config VPA_PMU
++	tristate "VPA PMU events"
++	depends on KVM_BOOK3S_64_HV && HV_PERF_CTRS
++	help
++	  Enable access to the VPA PMU counters via perf. This enables
++	  code that support measurement for KVM on PowerVM(KoP) feature.
++	  PAPR hypervisor has introduced three new counters in the VPA area
++	  of LPAR CPUs for KVM L2 guest observability. Two for context switches
++	  from host to guest and vice versa, and one counter for getting
++	  the total time spent inside the KVM guest. This config enables code
++	  that access these software counters via perf.
++
++	  If unsure, Select N.
++
+ config IBMVIO
+ 	depends on PPC_PSERIES
+ 	bool
+-- 
+2.43.5
 
 
