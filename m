@@ -1,241 +1,133 @@
-Return-Path: <linux-kernel+bounces-412661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEFEC9D0C96
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 10:51:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BB399D0C97
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 10:51:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B4D61F222B1
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 09:51:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2079328257A
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 09:51:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E87E018FDD8;
-	Mon, 18 Nov 2024 09:50:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7601B192B6F;
+	Mon, 18 Nov 2024 09:51:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XzDAwfRA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fHQPUMY/"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3065517C98;
-	Mon, 18 Nov 2024 09:50:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25580191F74
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 09:51:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731923451; cv=none; b=LtBZvGx0lQq7uCKRL8ZPAgrg+iVYtmJHKtDeBBUgTKyQOXGBg+C5ZuMw+s1ILBOHU+RdU+CaAP/dSIYqB6pVz/kONzJycXHZ4AZHlQ/p9dIfoEH5iuNxSZLJ5g133nHtFys39DCluIoSAlqMft2nkoM8YIRuCnGUGBLLK4YmmZw=
+	t=1731923477; cv=none; b=Zkn0Lt+AccAaOmS7QzYV0kr+9xj5epF7zr11NfZ+ZRbUXaCADUJja6syTGsi+XgO4yuDof2o+nRqO0veVeVlvkrzxSqxkh8F9s5eLhzDyEG6xrtK2xtEzIpK0ERT78xw5gQ7Z0OeVv1LnRTiB+4V5jYdnJ50E+zap6lVa9BxY0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731923451; c=relaxed/simple;
-	bh=6oua1TOlnLY4qJYcC7RO2bwhdIIjnfnGNOMkRZw0kfM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=nQGI0TLki3EBeVSNUrRuGvjVNwkkwsquiFJdrAGm3bqtgOnZi2e4M3O5ZBkp8EhkwnS9WWib0kPnoBSVkLGBR59907W2RuHwTQ1+6F3g7UB9C88RgV2qWElUKwMFWa0rtf1UVDuXYUqdVOyQrLkCRBeqcJIFw9eCN7fqDLufpuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XzDAwfRA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20BA5C4CECC;
-	Mon, 18 Nov 2024 09:50:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731923450;
-	bh=6oua1TOlnLY4qJYcC7RO2bwhdIIjnfnGNOMkRZw0kfM=;
-	h=Date:From:To:Cc:Subject:From;
-	b=XzDAwfRAkif7r4K5XgvaO2s1UO7K2iE0FR0sgOk+P/9+AwFrf67pfwdNdMY0z18Yw
-	 /NvSBNL4TYo9SgcjBDipBT8FTX+fxbhNilvoUiz+Uy5AcPVQaxRRblVIdhlVrOXRpN
-	 Jgi6LY3+DHCQHpd81Mejhi6sjpvJ8qmfo7AupUoLUMJqqb5X6GuKg/X987ZDoBcUwR
-	 LA8vXt4oLvWOxxgBNxvgQZcAqYSaDFJFhj5Rlry8yC1y0ArAWPgMRhr4zRtnPQt11m
-	 MnYYW/YopvIlV3LqleBJJwknX1r9MbZlDRjQ3O7psePuNd9z0HP7rInpzGeOcGpsuI
-	 IypVZtRzzTlGw==
-Date: Mon, 18 Nov 2024 10:50:47 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "Paul E. McKenney" <paulmck@kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Uladzislau Rezki <urezki@gmail.com>, linux-kernel@vger.kernel.org,
-	rcu@vger.kernel.org
-Subject: [GIT PULL] RCU changes for v6.13
-Message-ID: <ZzsN9wNpuDnGqKnM@pavilion.home>
+	s=arc-20240116; t=1731923477; c=relaxed/simple;
+	bh=fs4ypAPmfdq2UW6IC9ptzKTs3zVBZiwuFcsDZgF7kSo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YyfvDU+9SEYRL3gEps5NXgIeNAP8N0okh3NjJ2Wm9eLhcL1p4h53zSG8jlhVhJiiJjgzFl+xccu8oVZr7GIzJP0mN7a9CCiyzihxxDgzE1mAYoPYSWYp86ZojPwC5q99ZrD/dmeir0pEy4F6x04Fr6rR+/ti7q4YG+p9xdidXjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fHQPUMY/; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3823e45339bso990604f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 01:51:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1731923474; x=1732528274; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=q1w3/EKU4DDNibR7p4Pm58BLCBS93+Vc73KiDAGwas4=;
+        b=fHQPUMY/Oz3cBQi4wu1BnFC4bW4uKwyqMmmOiKWhIm+zvd8febxAbeddvP13bdrwem
+         W8Mhg26/QwVfPFN4JoQE66/ZxKAEQ3JDhG7cu/ANxpJBgO8iAFg8K3pZ/clEnUEbBa82
+         zXEQZQpqs3a4SH6eWhY525g2XdEzv/0nNm8tW+ceRjwVc546Ktmi3qJVFVBtREj+EHD6
+         zoPdC6hA6R0lJ82+No9Cg45sE7WDhUYYckCJt4dXTCv314sEJmwsC4NjgWZNHQrk4O90
+         /BljKEv8Ih7Xjpy/dnjGPN9KAkgLpKlSe7tKZ4tFY5CUYlfezI0iRv1zuGcx9swJvRZZ
+         HwtA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731923474; x=1732528274;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=q1w3/EKU4DDNibR7p4Pm58BLCBS93+Vc73KiDAGwas4=;
+        b=FJddxYi0uutT0r3JWWePBUdAj4rIWorUGtKsrCz98HdyloBXUEv9A1PYKVId5xrWyu
+         MNlHe0KxGOmnjUdDmfG4gG/UpZEfZpo/4foWVlAZbMEWWbmFWqOaL4xyZQAEqFUKTQbw
+         1xtGdvzfRG4nHVm/fsBIktXa4JTEyHrGhfnAHV9nkaRZThgvVz8Q+k4+yOz0YciKAqQw
+         jLoGbmE05cx3DUDyEJUSIylkMmbtqjva6R4h4byptrzRD3ynI7lhSc056fyb35tKxwGQ
+         /Kb9iPLHLHKMgWZEVHDkztNdcxDOx/OkMvrlyaHNr7QK3eyFODdkiZWYVf2DKGeXwMXX
+         kQ5g==
+X-Forwarded-Encrypted: i=1; AJvYcCXExhk9p4cJi32gSyzkJpd+yPo+OZjNuuJ0guFsExS6AWKIt3XtLdgS1JF2+PA2vR7tsIXFZYDtKDmGEVQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMhq3C2T5FVlKiX5tY6J6EdVXSOzTW/K75WjtjN+StdEkRSbRR
+	Qw9QKjKsf27wvZSltqdiTwKFd7dtlCf5X3pbHnHWuWFf2Nntrisc/WmWGeK9Po2QuK+QQ3mga1o
+	h6eX+CEkZS3C21sJ55HWDZh+YTQ9IvhGZD1ZO
+X-Google-Smtp-Source: AGHT+IF/HxwlIp/P2WNiK3LFSeQ/hhPkxBPup/QUg6YJO/2lD9/YHMs8mef1h80THaOZxVMjUMY8PZOdqonMoI53F9w=
+X-Received: by 2002:a05:6000:402c:b0:37d:50e1:b3d3 with SMTP id
+ ffacd0b85a97d-38225905999mr8490191f8f.20.1731923474385; Mon, 18 Nov 2024
+ 01:51:14 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20241116181538.369355-1-ojeda@kernel.org>
+In-Reply-To: <20241116181538.369355-1-ojeda@kernel.org>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Mon, 18 Nov 2024 10:51:02 +0100
+Message-ID: <CAH5fLgjU3BUU4nu6LscYKHTtZ8WSChXvf391v5v=xNK_2w7nrw@mail.gmail.com>
+Subject: Re: [PATCH] rust: allow `clippy::needless_lifetimes`
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello Linus,
+On Sat, Nov 16, 2024 at 7:16=E2=80=AFPM Miguel Ojeda <ojeda@kernel.org> wro=
+te:
+>
+> In beta Clippy (i.e. Rust 1.83.0), the `needless_lifetimes` lint has
+> been extended [1] to suggest eliding `impl` lifetimes, e.g.
+>
+>     error: the following explicit lifetimes could be elided: 'a
+>     --> rust/kernel/list.rs:647:6
+>         |
+>     647 | impl<'a, T: ?Sized + ListItem<ID>, const ID: u64> FusedIterator=
+ for Iter<'a, T, ID> {}
+>         |      ^^                                                        =
+          ^^
+>         |
+>         =3D help: for further information visit https://rust-lang.github.=
+io/rust-clippy/master/index.html#needless_lifetimes
+>         =3D note: `-D clippy::needless-lifetimes` implied by `-D warnings=
+`
+>         =3D help: to override `-D warnings` add `#[allow(clippy::needless=
+_lifetimes)]`
+>     help: elide the lifetimes
+>         |
+>     647 - impl<'a, T: ?Sized + ListItem<ID>, const ID: u64> FusedIterator=
+ for Iter<'a, T, ID> {}
+>     647 + impl<T: ?Sized + ListItem<ID>, const ID: u64> FusedIterator for=
+ Iter<'_, T, ID> {}
+>
+> A possibility would have been to clean them -- the RFC patch [2] did
+> this, while asking if we wanted these cleanups. There is an open issue
+> [3] in Clippy about being able to differentiate some of the new cases,
+> e.g. those that do not involve introducing `'_`. Thus it seems others
+> feel similarly.
+>
+> Thus, for the time being, we decided to `allow` the lint.
+>
+> Link: https://github.com/rust-lang/rust-clippy/pull/13286 [1]
+> Link: https://lore.kernel.org/rust-for-linux/20241012231300.397010-1-ojed=
+a@kernel.org/ [2]
+> Link: https://github.com/rust-lang/rust-clippy/issues/13514 [3]
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
 
-The following changes since commit f7345ccc62a4b880cf76458db5f320725f28e400:
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
-  rcu/nocb: Fix rcuog wake-up from offline softirq (2024-10-10 22:18:19 +0530)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/rcu/linux.git tags/rcu.release.v6.13
-
-for you to fetch changes up to d8dfba2c606ac9fa763ce3c51dcbf7335544b815:
-
-  Merge branches 'rcu/fixes', 'rcu/nocb', 'rcu/torture', 'rcu/stall' and 'rcu/srcu' into rcu/dev (2024-11-15 22:38:53 +0100)
-
-----------------------------------------------------------------
-RCU pull request for v6.13
-
-SRCU:
-
-	- Introduction of the new SRCU-lite flavour with a new pair of
-	  srcu_read_[un]lock_lite() APIs. In practice the read side using
-	  this flavour becomes lighter by removing a full memory barrier on
-	  LOCK and a full memory barrier on UNLOCK. This comes at the
-	  expense of a higher latency write side with two (in the best case
-	  of a snaphot of unused read-sides) or more RCU grace periods on
-	  the update side which now assumes by itself the whole full
-	  ordering guarantee against the LOCK/UNLOCK counters on both
-	  indexes, along with the accesses performed inside.
-
-	  Uretprobes is a known potential user.
-
-	  Note this doesn't replace the default normal flavour of SRCU which
-	  still behaves the same as usual.
-
-	- Add testing of SRCU-lite through rcutorture and rcuscale
-
-	- Various cleanups on the way.
-
-FIXES:
-
-	- Allow short-circuiting RCU-TASKS-RUDE grace periods on architectures
-	  that have sane noinstr boundaries forbidding tracing on low-level
-	  idle and kernel entry code. RCU-TASKS is enough on such configurations
-	  because it involves an RCU grace period that waits for all idle
-	  tasks to either schedule out voluntarily or enter into RCU
-	  unwatched noinstr code.
-
-	- Allow and test start_poll_synchronize_rcu() with IRQs disabled.
-
-	- Mention rcuog kthreads in relevant documentation and Kconfig help
-
-	- Various fixes and consolidations
-
-RCUTORTURE:
-
-	- Add --no-affinity on tools to leave the affinity setting of guests
-	  up to the user.
-
-	- Add guest_os_delay parameter to rcuscale for better warm-up
-	  control.
-
-	- Fix and improve some rcuscale error handling.
-
-	- Various cleanups and fixes
-
-STALL:
-
-	- Remove dead code
-
-	- Stop dumping tasks if a stalled grace period eventually ended
-	  midway as that only produces confusing output.
-
-	- Optimize detection of stalling CPUs and avoid useless node
-	  locking otherwise.
-
-NOCB:
-
-	- Fix rcu_barrier() hang due to a race against callbacks
-	  deoffloading. This is not yet used, except by rcutorture, and
-	  waits for its promised cpusets interface.
-
-	- Remove leftover function declaration
-
-----------------------------------------------------------------
-Baruch Siach (1):
-      doc: rcu: update printed dynticks counter bits
-
-Frederic Weisbecker (1):
-      Merge branches 'rcu/fixes', 'rcu/nocb', 'rcu/torture', 'rcu/stall' and 'rcu/srcu' into rcu/dev
-
-Hongbo Li (1):
-      rcu: Use bitwise instead of arithmetic operator for flags
-
-Jinjie Ruan (1):
-      rcu: Use the BITS_PER_LONG macro
-
-Michal Schmidt (1):
-      rcu/srcutiny: don't return before reenabling preemption
-
-Paul E. McKenney (32):
-      rcu: Delete unused rcu_gp_might_be_stalled() function
-      rcu: Stop stall warning from dumping stacks if grace period ends
-      srcu: Rename srcu_might_be_idle() to srcu_should_expedite()
-      srcu: Introduce srcu_gp_is_expedited() helper function
-      rcu: Finer-grained grace-period-end checks in rcu_dump_cpu_stacks()
-      srcu: Renaming in preparation for additional reader flavor
-      srcu: Bit manipulation changes for additional reader flavor
-      srcu: Standardize srcu_data pointers to "sdp" and similar
-      srcu: Improve srcu_read_lock{,_nmisafe}() comments
-      srcu: Create CPP macros for normal and NMI-safe SRCU readers
-      srcu: Add srcu_read_lock_lite() and srcu_read_unlock_lite()
-      srcu: Allow inlining of __srcu_read_{,un}lock_lite()
-      rcutorture: Expand RCUTORTURE_RDR_MASK_[12] to eight bits
-      rcutorture: Add reader_flavor parameter for SRCU readers
-      rcutorture: Add srcu_read_lock_lite() support to rcutorture.reader_flavor
-      rcutorture: Add light-weight SRCU scenario
-      refscale: Add srcu_read_lock_lite() support using "srcu-lite"
-      srcu: Improve srcu_read_lock_lite() kernel-doc comment
-      rcu: Add rcuog kthreads to RCU_NOCB_CPU help text
-      doc: Add rcuog kthreads to kernel-per-CPU-kthreads.rst
-      rcu: Allow short-circuiting of synchronize_rcu_tasks_rude()
-      rcu: Permit start_poll_synchronize_rcu*() with interrupts disabled
-      rcutorture: Test start-poll primitives with interrupts disabled
-      doc: Remove kernel-parameters.txt entry for rcutorture.read_exit
-      rcu-tasks: Remove open-coded one-byte cmpxchg() emulation
-      torture: Add --no-affinity parameter to kvm.sh
-      refscale: Correct affinity check
-      rcuscale: Add guest_os_delay module parameter
-      rcutorture: Avoid printing cpu=-1 for no-fault RCU boost failure
-      srcu: Remove smp_mb() from srcu_read_unlock_lite()
-      srcu: Check for srcu_read_lock_lite() across all CPUs
-      srcu: Unconditionally record srcu_read_lock_lite() in ->srcu_reader_flavor
-
-Uladzislau Rezki (Sony) (3):
-      rcu/kvfree: Fix data-race in __mod_timer / kvfree_call_rcu
-      rcuscale: Do a proper cleanup if kfree_scale_init() fails
-      rcuscale: Remove redundant WARN_ON_ONCE() splat
-
-Yue Haibing (1):
-      rcu: Remove unused declaration rcu_segcblist_offload()
-
-Zhen Lei (1):
-      srcu: Replace WARN_ON_ONCE() with BUILD_BUG_ON() if possible
-
-Zqiang (1):
-      rcu/nocb: Fix missed RCU barrier on deoffloading
-
- Documentation/RCU/stallwarn.rst                    |   2 +-
- Documentation/admin-guide/kernel-parameters.txt    |  13 +-
- .../admin-guide/kernel-per-CPU-kthreads.rst        |   2 +-
- include/linux/rcutiny.h                            |   1 -
- include/linux/rcutree.h                            |   1 -
- include/linux/srcu.h                               |  92 ++++++++++----
- include/linux/srcutiny.h                           |   3 +
- include/linux/srcutree.h                           |  67 ++++++++++-
- kernel/rcu/Kconfig                                 |  28 +++--
- kernel/rcu/rcu_segcblist.h                         |   1 -
- kernel/rcu/rcuscale.c                              |   8 +-
- kernel/rcu/rcutorture.c                            |  84 +++++++++----
- kernel/rcu/refscale.c                              |  56 ++++++++-
- kernel/rcu/srcutiny.c                              |   2 +-
- kernel/rcu/srcutree.c                              | 133 +++++++++++++--------
- kernel/rcu/tasks.h                                 |  20 +---
- kernel/rcu/tree.c                                  |  24 ++--
- kernel/rcu/tree_nocb.h                             |  13 +-
- kernel/rcu/tree_plugin.h                           |  22 ++--
- kernel/rcu/tree_stall.h                            |  57 +++------
- .../rcutorture/bin/kvm-test-1-run-batch.sh         |  43 +++----
- tools/testing/selftests/rcutorture/bin/kvm.sh      |   6 +
- .../selftests/rcutorture/configs/rcu/CFLIST        |   1 +
- .../selftests/rcutorture/configs/rcu/SRCU-L        |  10 ++
- .../selftests/rcutorture/configs/rcu/SRCU-L.boot   |   3 +
- .../selftests/rcutorture/configs/rcu/SRCU-N.boot   |   1 +
- .../selftests/rcutorture/configs/rcu/TREE10        |   2 +-
- 27 files changed, 468 insertions(+), 227 deletions(-)
- create mode 100644 tools/testing/selftests/rcutorture/configs/rcu/SRCU-L
- create mode 100644 tools/testing/selftests/rcutorture/configs/rcu/SRCU-L.boot
+Does this need any backports to keep old kernels warning-free on new compil=
+ers?
 
