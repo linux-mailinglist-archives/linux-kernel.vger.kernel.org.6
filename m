@@ -1,137 +1,114 @@
-Return-Path: <linux-kernel+bounces-413594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B7BD9D1B7A
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 00:00:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B31F9D1B7E
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 00:01:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ECA4EB22DF5
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 23:00:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D82D281CE0
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 23:01:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7EF31E5728;
-	Mon, 18 Nov 2024 23:00:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67F641EABA0;
+	Mon, 18 Nov 2024 23:01:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="AWsAMyOL"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="hdK29ZDk"
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CABED153BE4;
-	Mon, 18 Nov 2024 23:00:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73B9A1E7658
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 23:01:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731970848; cv=none; b=BagUqYxtbFRYThQDiB5C5TG//vOKCSBgs4ggwBT1Za69DFJW1pNQq0awDi1cyZnEe7dvoALA2dJ5EZAaBYGxS60ZaGh8j+mArpq71UKC+YHuE5EVgpxVCJkiGBM0ZG9znhJY0N+UpwzxbAmXetsFf3lmJTiTOOn7yx5hmkMzHPI=
+	t=1731970890; cv=none; b=hrBnpmBvATwE40dck6qXw1LgswJ5c02sxS8Iz4yQ8sTEw6t2SPMNYz8tu6AuoXli0fCD9iMljCZPWodHcM1XWVRkZN6kU90WgIJ4GkSVq7dLkTbcWN8i0T0T2+5dvkFag8qxW2BVXm/Ck013LRo3IoFW24gYO/svjjOFEonytqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731970848; c=relaxed/simple;
-	bh=CW49FFGZM5+j6JkPSwK06UkPkZUwSK4a4tgqhadqsvo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=DCfXaeem67zwdY0rmTX1oLIJuX0Eh47kqAnR38JGpJHjJ0uKJS5ZqO4FLowBKxFrrkOC5y8viZquIv0DUolIMqm+vpSrc+ZAOCa1tPhrjsr/rbpGPKnjxGb8TODQ9tMY2nMd+sLEh3PonkbyyHTwk+BY2AxzUueKFNxL4kdWsC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=AWsAMyOL; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+	s=arc-20240116; t=1731970890; c=relaxed/simple;
+	bh=Ee5PxbIPGEY3vOYIWLNMw8IWhhbpyXqzrak7Is/R4xc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XgFaUmgfL+DEdbLLU9YfMaX6+xy9AptCn5Y6iXUdn+GF14NGdc9k/Y7ja1PzQtlFgi44I70eKLVE3fjz+0SNL7865B+EOvL/GthBbRranhNjW6urAKQu9kn5wXq4XwQoenWgVJKhQSTnpQXkadTJUMISXIlFC2WfdMLZFYfytos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=hdK29ZDk; arc=none smtp.client-ip=209.85.222.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tenstorrent.com
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7b1457ba751so13898385a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 15:01:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1731970843;
-	bh=CW49FFGZM5+j6JkPSwK06UkPkZUwSK4a4tgqhadqsvo=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=AWsAMyOL4ww5MLzWMdBiuoq16eacUcwGCB4EJfGlASqLw5onf1XZWjU+TSR+5r65A
-	 L21wiDtUH0+4JAPb9Q7n2JyMCIz/hFjXmJkP2nhGzaWdWwpCL7TUcfgxsw3N+EDEO7
-	 wJIsEoTTuEGXwN4pYPNvAyjvC2UKkBGNqwZFLO53LPHr5XMQLjleBX/07sokLdZ9+L
-	 f/NBKIGuudfF7EBws2c1vynq3F+R+dZwuxa8LUTeqtp9B+CtOPXqotfB93PYj/Ffwz
-	 37upcwgVHFz+BNypFFIVp1Tcg99Nlbo/6EyDwcZ9R4jLOrZ1DvL6724bflFzplUFf9
-	 P8B4cBUlUquRw==
-Received: from [192.168.68.112] (ppp118-210-181-13.adl-adc-lon-bras34.tpg.internode.on.net [118.210.181.13])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 3AC8F68D9B;
-	Tue, 19 Nov 2024 07:00:40 +0800 (AWST)
-Message-ID: <219607ab74764f3d47659fb5ab3223b3034152e5.camel@codeconstruct.com.au>
-Subject: Re: [PATCH v4 1/3] watchdog: aspeed: Update bootstatus handling
-From: Andrew Jeffery <andrew@codeconstruct.com.au>
-To: Guenter Roeck <linux@roeck-us.net>, Chin-Ting Kuo
-	 <chin-ting_kuo@aspeedtech.com>, Patrick Williams <patrick@stwcx.xyz>, 
-	"wim@linux-watchdog.org"
-	 <wim@linux-watchdog.org>
-Cc: "joel@jms.id.au" <joel@jms.id.au>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>, "linux-aspeed@lists.ozlabs.org"
- <linux-aspeed@lists.ozlabs.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "linux-watchdog@vger.kernel.org"
- <linux-watchdog@vger.kernel.org>, "Peter.Yin@quantatw.com"
- <Peter.Yin@quantatw.com>, "Patrick_NC_Lin@wiwynn.com"
- <Patrick_NC_Lin@wiwynn.com>, "Bonnie_Lo@wiwynn.com" <Bonnie_Lo@wiwynn.com>,
-  "DELPHINE_CHIU@wiwynn.com" <DELPHINE_CHIU@wiwynn.com>, BMC-SW
- <BMC-SW@aspeedtech.com>,  "chnguyen@amperecomputing.com"
- <chnguyen@amperecomputing.com>
-Date: Tue, 19 Nov 2024 09:30:39 +1030
-In-Reply-To: <2531f830-6a36-4bd5-ba1e-9e19f0f66496@roeck-us.net>
-References: <20241101121201.2464091-1-chin-ting_kuo@aspeedtech.com>
-	 <20241101121201.2464091-2-chin-ting_kuo@aspeedtech.com>
-	 <ZyUcIIb1dtoNhX00@heinlein.vulture-banana.ts.net>
-	 <a0faca9a6ec7f4acdfa2f29b4ffb94b5392aea6b.camel@codeconstruct.com.au>
-	 <TYZPR06MB5203053A004676F51322DECFB25C2@TYZPR06MB5203.apcprd06.prod.outlook.com>
-	 <ed77d57facaaef0be796b4c6a742dc7bf3bff479.camel@codeconstruct.com.au>
-	 <TYZPR06MB52039B02B6D3053355F30489B25D2@TYZPR06MB5203.apcprd06.prod.outlook.com>
-	 <9a1e64ef-81d9-48b0-b871-ce4ff792eae4@roeck-us.net>
-	 <TYZPR06MB52039DB39B62E6FA5220103AB2272@TYZPR06MB5203.apcprd06.prod.outlook.com>
-	 <2531f830-6a36-4bd5-ba1e-9e19f0f66496@roeck-us.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+        d=tenstorrent.com; s=google; t=1731970887; x=1732575687; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=djuvR/hK6Phqs0gApr6Ryi9KOHrK/yeBmxBlrxcxSDU=;
+        b=hdK29ZDkpAROi9RSRi066JV6r6LPEjMSFlOBr3CzzKu2LMjKPVmQL7gh/1pE+WYnD9
+         HoLfphtWtcrbzRA4+H30S6rdLEXvtTJUhTX9sx2vs8skLAFQX3vFLNELro8/gUwwhYVx
+         8BwSU3uNSCN7DqAuZrAyvpKoXQCOajqf5kqeZO1sGWR9ywe/hk6Y0StFy865QLeYrAIr
+         KxklsP8Hz5JJ6qfBcqad7lWXouVrip7F4siVwlrED+rBtUyEcJGOvebaMbrpilHV9fdt
+         Q2oHvyswCUIINPpNmSD7m6GSBqaY2Dm+4V0K8uIoPeKYB55/QYR/OmaqsJD+sMFX1kJs
+         1U6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731970887; x=1732575687;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=djuvR/hK6Phqs0gApr6Ryi9KOHrK/yeBmxBlrxcxSDU=;
+        b=FvxCGdwJh5xqlwldqJEqigS84gIULu9tw2Uxkg+LusMVmVxbGVYGzJWRF6OQ69Bxuu
+         /iMyeoKttd9PRNKyLiGhRdmC2vbpJel75DeQPiXjH/M6jM4NG21KlnaKuNaAS2I5cFST
+         iNf+9L1PCH0UfE2XWnA7PHwOBghKwCZ7WrbOzAyPdHdexn0YOIGNtfvBi6rG7oIBd4iQ
+         HkSiZTDcFrc6iDkzdgY83epLALCPW4VHOKI2ZEwArY9fbyUCcnMCX+eBfV7Ec6GhmPw5
+         8Lq6yGh5UT9kvm1LG/yRoJxhPm5R3r5te9YfHdv4Wrin/C77jn8Tr9EfJGwDO2keKV4Z
+         iRDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVGiqZXym1LwBL0tOfeTH3duyunBmB+Witev0IXbm+o2h5FLjRNS+zgjFK4/uPQOBGE/JUqwT/rmiMlC8s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOeYGi/B5ljP6dVF0gbcUwdEQNJdiY2Hts7yndPekB7KjoqJ1i
+	EZW0aFqqFq5Qvqu8lF/HGsl8MjGCQBKQuLa7nUzoNekSFC0Gi+2jYeT7maM0kQ==
+X-Google-Smtp-Source: AGHT+IEb5VGhHOeSAKca+M48dLT2SblGVszeSfsokiKrXZGx+fD2vDeKB6QVtLklhRn01Q/fEOq68A==
+X-Received: by 2002:a05:620a:45a4:b0:7b1:4d6a:b99f with SMTP id af79cd13be357-7b3622aadbdmr2257319685a.14.1731970887347;
+        Mon, 18 Nov 2024 15:01:27 -0800 (PST)
+Received: from aus-ird.local.tenstorrent.com ([38.104.49.66])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b37a897eebsm35344185a.94.2024.11.18.15.01.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Nov 2024 15:01:26 -0800 (PST)
+From: Cyril Bur <cyrilbur@tenstorrent.com>
+To: palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	paul.walmsley@sifive.com
+Cc: linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/4] riscv: uaccess: optimizations
+Date: Mon, 18 Nov 2024 23:01:08 +0000
+Message-Id: <20241118230112.2872978-1-cyrilbur@tenstorrent.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Mon, 2024-11-18 at 12:50 -0800, Guenter Roeck wrote:
-> On 11/18/24 04:46, Chin-Ting Kuo wrote:
-> > Hi Guenter,
-> >=20
-> > Thanks for the reply.
-> >=20
-> > > -----Original Message-----
-> > > From: Guenter Roeck <groeck7@gmail.com> On Behalf Of Guenter
-> > > Roeck
-> > > Sent: Friday, November 8, 2024 10:08 PM
-> > > Subject: Re: [PATCH v4 1/3] watchdog: aspeed: Update bootstatus
-> > > handling
-> > >=20
-> > > On 11/7/24 21:42, Chin-Ting Kuo wrote:
-> > >=20
-> > > > But now, I think it will be better to add a patch for creating
-> > > > a new
-> > > > reset reason, e.g., WDIOF_REBOOT or WDIOF_RESTART, in
-> > > > watchdog.h of
-> > > > uapi. Can I include this change, creating a new reset reason,
-> > > > in this
-> > > > patch series? Or, should I create an extra new patch series for
-> > > > this
-> > > > purpose?
-> > > >=20
-> > >=20
-> > > This is a UAPI change. That is a major change. It needs to be
-> > > discussed
-> > > separately, on its own, and can not be sneaked in like this.
-> > >=20
-> >=20
-> > Agree. However, how to trigger this discussion? Can I just send a
-> > new
-> > patch separately with only this UAPI modification? This is the
-> > first time
-> > I change such common source code.
-> >=20
->=20
-> Yes. That needs to include arguments explaining why this specific new
-> flag
-> even adds value. I for my part don't immediately see that value.
+Orignally sent by Jisheng Zhang <jszhang@kernel.org>
 
-So maybe I was derailed with my WDIOF_REBOOT suggestion by the proposal
-to repurpose WDIOF_EXTERN1 to indicate a regular reboot. I still don't
-think repurposing WDIOF_EXTERN1 is the right direction. But, perhaps
-the thing to do for a regular reboot is to not set any reason flags at
-all? It just depends on whether we're wanting to separate a cold boot
-from a reboot (as they _may_ behave differently on Aspeed hardware), as
-on a cold boot we wouldn't set any reason flags either.
+This series tries to optimize riscv uaccess in the following way:
 
-Andrew
+patch1 implement the user_access_begin and families, I.E the unsafe
+accessors. when a function like strncpy_from_user() is called,
+the userspace access protection is disabled and enabled for every
+word read. After patch1, the protection is disabled at the beginning
+of the copy and enabled at the end.
+
+patch2 is a simple clean up
+
+patch3 uses 'asm goto' for put_user()
+patch4 uses 'asm goto output' for get_user()
+
+Both patch3 and patch4 are based on the fact -- 'asm goto' and
+'asm goto output'generates noticeably better code since we don't need
+to test the error etc, the exception just jumps to the error handling
+directly.
+
+V2:
+I've taken on this series as there isn't any response from Jisheng. No
+significant changes other than build fixes.
+- Fixes build breakage in patch 3 to do with not having used 'goto' keyword.
+- Fixes build breakage in patch 4 on 32bit not having delcared __ptr in the
+  macro.
+I did read the discussion this series generated. It isn't clear to me
+which direction to take the patches, if any.
+
 
