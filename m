@@ -1,41 +1,42 @@
-Return-Path: <linux-kernel+bounces-412374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0136F9D0834
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 04:48:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5109B9D0836
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 04:48:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 605DCB2185A
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 03:48:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1560C2819D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 03:48:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D00D76F06A;
-	Mon, 18 Nov 2024 03:47:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA55D7E0E4;
+	Mon, 18 Nov 2024 03:48:08 +0000 (UTC)
 Received: from freeshell.de (freeshell.de [116.202.128.144])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D07F634;
-	Mon, 18 Nov 2024 03:47:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C686645BE3;
+	Mon, 18 Nov 2024 03:48:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.202.128.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731901675; cv=none; b=Uf2r/PKeSU79VGqIyDO16ATdzPtf5VORNUklCJ/2fqpnwztVPYa+7qezoX6ZX+aPrI3b168VEQ/wp8W3dzb7qHRkHcsF5ro8yEIKjcpWqMDNvezMKe3c+O1eeCkjzdFQJQtg3xmNcX1imGYkTdWb9eL72jQ7/Peymo6/3y4XDV0=
+	t=1731901688; cv=none; b=B/qM5yGPV3q1OBpSHacHRRE0sNtGaUlyj1d34YQBY+7kGJQv1AUyrP2ic7K0WPsVeIuEsUYWPcJ9YTBR7/wcx1MREDbI3NdZUbLaLILn5rFHMmIUilZEFWG6XaaR4jZmZTtawkaZk+8j3j4mx6EINHAkbAFu0waVzYmR2ydKx0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731901675; c=relaxed/simple;
-	bh=CX9fAmaRYr8k4O8NkxIKzZlP3Qn2fscrlws9Q5f19fc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KZLf9m+HRYmWpVCJIrHuZj1JEfauA1iHHctJf82VqGFzDQhUpXm2SQ8emfE4bAIm8cde9kxMxyXCNh/pp/PD5gW/vMmVV6oi2VXqC6LhT30EK1/S5EkuSAFyYa/YfL2aTlT9RoP7APp+X5WWBM8S5RDJPprR9VnAYe2tZT4XDvI=
+	s=arc-20240116; t=1731901688; c=relaxed/simple;
+	bh=diMf6qyAZGtpRKamyqwqBZtHYf9R2FcwS4bgNZXFy9Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ucMs38S04wwn0A7TYTTlwM7Hq7GEKeU+BwFY2akVlLP9KSF44cbaLjJ9lG8eMBLxoD1vdwwwX3TmNGGDkfearEiF7Ot2YFAexDiSt0YeRMuLS8WX0IcVUdGhAlO6Wan4l7GZ/HUD1EAkmFis5ac+AnkPD5yGaVZCh3CGj3z3rTY=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freeshell.de; spf=pass smtp.mailfrom=freeshell.de; arc=none smtp.client-ip=116.202.128.144
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freeshell.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=freeshell.de
 Received: from hay.lan. (unknown [IPv6:2605:59c8:31de:bf00:6ecf:39ff:fe00:8375])
 	(Authenticated sender: e)
-	by freeshell.de (Postfix) with ESMTPSA id B6601B4B0646;
-	Mon, 18 Nov 2024 04:47:39 +0100 (CET)
+	by freeshell.de (Postfix) with ESMTPSA id 82314B4B08E6;
+	Mon, 18 Nov 2024 04:48:01 +0100 (CET)
 From: E Shattow <e@freeshell.de>
 To: Jisheng Zhang <jszhang@kernel.org>
 Cc: E Shattow <e@freeshell.de>,
-	Conor Dooley <conor@kernel.org>,
 	Emil Renner Berthing <kernel@esmil.dk>,
+	Conor Dooley <conor@kernel.org>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Paul Walmsley <paul.walmsley@sifive.com>,
@@ -44,10 +45,12 @@ Cc: E Shattow <e@freeshell.de>,
 	linux-riscv@lists.infradead.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 0/1] riscv: dts: starfive: jh7110-milkv-mars: enable usb0 host function
-Date: Sun, 17 Nov 2024 19:45:07 -0800
-Message-ID: <20241118034558.43226-2-e@freeshell.de>
+Subject: [PATCH 1/1] riscv: dts: starfive: jh7110-milkv-mars: enable usb0 host function
+Date: Sun, 17 Nov 2024 19:45:09 -0800
+Message-ID: <20241118034558.43226-4-e@freeshell.de>
 X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20241118034558.43226-2-e@freeshell.de>
+References: <20241118034558.43226-2-e@freeshell.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,32 +59,42 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Enable host mode JH7110 on-chip USB for Milk-V Mars by setting host mode
-and connect vbus pinctrl.
+Milk-V Mars set host mode and vbus pin for JH7110 on-chip USB 2.0
 
-This functionality depends on setting the USB over-current register to disable at bootloader phase, for example U-Boot:
-https://patchwork.ozlabs.org/project/uboot/patch/20241012031328.4268-6-minda.chen@starfivetech.com/
-
-If the over-current register is not prepared for us then the result is no
-change in functional outcome with this patch applied; there is an error
-visible to the user and this additional usb configuration fails (same as
-it is now). The existing three VL805 connected USB ports via PCIe on
-Milk-V Mars are not affected.
-
-Changes since v2:
- - Rebase on 6.12
-
-Changes since v1:
- - series name (was "[PATCH] riscv: dts: starfive: jh7110-milkv-mars: set host mode and vbus pin for on-chip USB 2.0")
- - adjust pin label to obey dtschema
- - use cover letter
-
-E Shattow (1):
-  riscv: dts: starfive: jh7110-milkv-mars: enable usb0 host function
-
+Signed-off-by: E Shattow <e@freeshell.de>
+---
  .../boot/dts/starfive/jh7110-milkv-mars.dts   | 21 +++++++++++++++++++
  1 file changed, 21 insertions(+)
 
+diff --git a/arch/riscv/boot/dts/starfive/jh7110-milkv-mars.dts b/arch/riscv/boot/dts/starfive/jh7110-milkv-mars.dts
+index 5cb9e99e1dac..45d4f7556521 100644
+--- a/arch/riscv/boot/dts/starfive/jh7110-milkv-mars.dts
++++ b/arch/riscv/boot/dts/starfive/jh7110-milkv-mars.dts
+@@ -35,3 +35,24 @@ &phy0 {
+ 	rx-internal-delay-ps = <1500>;
+ 	tx-internal-delay-ps = <1500>;
+ };
++
++&sysgpio {
++        usb0_pins: usb0-0 {
++                vbus-pins {
++                        pinmux = <GPIOMUX(25, GPOUT_SYS_USB_DRIVE_VBUS,
++                                              GPOEN_ENABLE,
++                                              GPI_NONE)>;
++                        bias-disable;
++                        input-disable;
++                        input-schmitt-disable;
++                        slew-rate = <0>;
++                };
++        };
++};
++
++&usb0 {
++        dr_mode = "host";
++        pinctrl-names = "default";
++        pinctrl-0 = <&usb0_pins>;
++        status = "okay";
++};
 -- 
 2.45.2
 
