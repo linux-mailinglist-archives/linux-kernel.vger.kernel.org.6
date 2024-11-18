@@ -1,102 +1,211 @@
-Return-Path: <linux-kernel+bounces-412804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9B8C9D0F3C
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 12:07:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65D889D0F35
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 12:07:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC752B23DE5
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:05:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8E901F2240E
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:07:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2592B194A7C;
-	Mon, 18 Nov 2024 11:05:49 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30180198E78;
+	Mon, 18 Nov 2024 11:06:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ekl0NLE7"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBB7F19415E
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 11:05:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FB9A194A5A
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 11:06:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731927948; cv=none; b=G6MB8/vas5Dos+RNJJwmB2iIHHbMRWkfZr+tSB4CAIXtqhINzRiMZhz6BkgQh9bmyLb7dHSQ1FksX1WUeTBzx0oDj7Ixa4XyTJ1nEY83qvuUUcW8f4zyPDFu3oHSwMw8F5ZlIi8OssIi7TkCQKN/uG6xNkQvKxw3JVa8QZ0VRWw=
+	t=1731928006; cv=none; b=UhZJhLELkfWWK9ZSmYj4W6uucZA/A8M0ohmWq2VMYXRrn1c5duSzQfPZ3yLMAVm1uJ5cHGwhfFKqZ2Kl7zHMqoRtoRaWgwFhadvvbHkuxJXtDsAWvwoQpQ7pqtghkm+NQAnK6sF85c8Ppp9fXwiBU+U7ak+GxZm5eIX611VBwkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731927948; c=relaxed/simple;
-	bh=RYHZje3x9h9Tdct7seduRTy9T2Yn15HBq+tdRfX/wcc=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=iufUttcAbqQUOvy4xKRtpWzip2LsuUHlqggEbsZ5IY/I0p6tqxBcJHrDw2D3MAyNlRQBPFEPSproJq9gBWSXHxwXmp4QU5i1z8VnOiOJtXCSJ8MXpz4Mmz9jTGTrw/iXfsxvYrO0W6gSRzYEaEgoGMY+3mY6Dm8Yi5n0uQhtFyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a3c4554d29so17209775ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 03:05:46 -0800 (PST)
+	s=arc-20240116; t=1731928006; c=relaxed/simple;
+	bh=IFcBtIn1LqFVelHm7kG7/Vy3ppN0z+ueq8gYg8sWEas=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U6xaeoVrTWohA6Nno+piV0FOQPuAo1rwP/4zPUbtvZwfLcnXTeRCfluZj1IWOrdabYMGVFbOi8Zxa9aQhmthuPUM8vurUWA+hJKG9nU7/wbBw+re5YucVz3fS1vySIiwpusAOifgsf9ktKAe55OtpsCw0XHHna6cgAlWqovkM+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ekl0NLE7; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-38232cebb0cso1490596f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 03:06:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1731928002; x=1732532802; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Q4K7ZFgLQYJQlGAzpq8RK54g3EqKOomWWOR+yhsr1qw=;
+        b=ekl0NLE713WVl+0iqMFWCUeOyXGpS1GTBNAadeC6CjQrpdNj1R2nypLRGP2uJjakH3
+         ma6jZAiH77JhVsgZkswVXE9+2l5Yia2YLgFg6gsC88yso321GFZfT27iEKVPgSJFNaM9
+         2W2NPkP0iv4jC4RM8EWyzp5JMVGQUDyQPWB8SMNIP/y8oyb8Hywli7WQnPgfo82zPfG6
+         rQCdFl5UhQJc+FctTaghJ0W1GD9XLogikkThFP7hwAl0gs65J49G1fTmGWNGUnJTfluX
+         zSVJrdJLD7Qsye3TVFGals+IXJ9hPI7Ba9b3ytrQIA7bHxP9wm9EHtPjUxegLnu5oju/
+         lOmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731927946; x=1732532746;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
+        d=1e100.net; s=20230601; t=1731928002; x=1732532802;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9rqYtyPC3C7HTaxZYhL/Y9bHQwQ4NL5dy/tnDh2J6FU=;
-        b=WRQ4SH5i6MQV9R+YpBjVq48ZrotBMAbhLsgXArwcVpJOydRM02F4aF1jioal89WKQL
-         cM+D99TJRO4p4ETw/ykvyO48sMd321U/QUHwiCx5cTDtlowG49mxksx6I3Em1G5B5zVM
-         zdzUhpaBkTnXAKKNhRgySbtvlu5u3Lw3N6+aodDM4bIeKzU/JuVI0kWouskxvPW3R0gd
-         DecCkjSsWOmvO2I0hPb/HRfMGCm7IqVqMf9VJyrkl5UQKW6uz//0TaAXP1L4/6riazVi
-         13zoJ6SvGTnxeKbFDQLFnE58LuFXu03tzyGizZbVqzVooDH54WtohwAUtxDeSDjcfbKk
-         o67Q==
-X-Gm-Message-State: AOJu0YwvdfEDpB6LiuFT4PO749u7Pyn/yedshYg2/keH7T1l2JpA/JFF
-	e0sM/27Z4mMe19+ki+v2upksfri0O9iqovm8Zum2PZEcr3Z9i0cgxa3DxkQi1cqTA7fV4ZcMNGH
-	AzoKt7Dzz/6Q91IiI74VSZDtrvV9IUElMMZAnu81xc455woi1nSGR/Ho=
-X-Google-Smtp-Source: AGHT+IHpHioBuKHK5A14TW/qT0RBdls/d6Y4BdhORy+7Os0//zHiYCvmaHiM6o/4T+vS3HgCODlMBCBo94QouC2GZjO46HLzN/ZQ
+        bh=Q4K7ZFgLQYJQlGAzpq8RK54g3EqKOomWWOR+yhsr1qw=;
+        b=QDEv+lxOVG7lRbNif1QpCSsGs0WpnfbKW1VsVqmxAKkyanujDY2SfL0Gv3BUAN4Gbp
+         FWtP+BJR2jRNQjAXBXf6syDfE4i1Bmhrwy9hCkf2rgeL5HL9arx2dLCscleWywF9zqMx
+         0qjtf/VDjwqWrjyuMlX3T+qsGFwTbQmjDaXNIyTDY6Gsyd7M0YjRmjguyFf17x8Cx9rN
+         joy2vqM87AAd+tWdXjJBYWQRx3ERyB5p1UVriXXKKKDnNHKaA3bjwYxs8ciGSjwVUu3V
+         5/GbJjZ093Nyl9SpOBNYtP+r/Dy5wnirFeydruRbTnvk8TTBKNdFJqGhP68wQBqrx4LA
+         mrvg==
+X-Forwarded-Encrypted: i=1; AJvYcCXcASyTYv9yzbqkIe5Wmgnv0Hl1qxEbo1mUQh6mjprjRIIhSIGSHBnuudohmYmdtDKFh95FcPiAg0jkudE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxluCzDa7W7ws+eL82kCZ40BfXSGDRuWQd8P1ucMeB1JutS18Wc
+	H/yk2VLIO9TDeQ5i1bDeFnghvMQZAabJCx8gAAqIAklqJB9Sgm56VqjWLzJSaK4=
+X-Google-Smtp-Source: AGHT+IEHvVmgRYFNhCs4UC7E5RjVk5JwGYVdnUZOYcUXsiEIWSohYFEZO8cTVp2lMrq4C8xPl0BQ1Q==
+X-Received: by 2002:a05:6000:18af:b0:37d:4ef1:1820 with SMTP id ffacd0b85a97d-38225a91e80mr10392779f8f.40.1731928002298;
+        Mon, 18 Nov 2024 03:06:42 -0800 (PST)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38242eef982sm4319340f8f.8.2024.11.18.03.06.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Nov 2024 03:06:41 -0800 (PST)
+Date: Mon, 18 Nov 2024 12:06:34 +0100
+From: Petr Mladek <pmladek@suse.com>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Easwar Hariharan <eahariha@linux.microsoft.com>,
+	Pablo Neira Ayuso <pablo@netfilter.org>,
+	Jozsef Kadlecsik <kadlec@netfilter.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Julia Lawall <Julia.Lawall@inria.fr>,
+	Nicolas Palix <nicolas.palix@imag.fr>,
+	Daniel Mack <daniel@zonque.org>,
+	Haojian Zhuang <haojian.zhuang@gmail.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Russell King <linux@armlinux.org.uk>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Ofir Bitton <obitton@habana.ai>, Oded Gabbay <ogabbay@kernel.org>,
+	Lucas De Marchi <lucas.demarchi@intel.com>,
+	Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Jeroen de Borst <jeroendb@google.com>,
+	Praveen Kaligineedi <pkaligineedi@google.com>,
+	Shailend Chand <shailend@google.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	James Smart <james.smart@broadcom.com>,
+	Dick Kennedy <dick.kennedy@broadcom.com>,
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Roger Pau =?iso-8859-1?Q?Monn=E9?= <roger.pau@citrix.com>,
+	Jens Axboe <axboe@kernel.dk>, Kalle Valo <kvalo@kernel.org>,
+	Jeff Johnson <jjohnson@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jack Wang <jinpu.wang@cloud.ionos.com>,
+	Marcel Holtmann <marcel@holtmann.org>,
+	Johan Hedberg <johan.hedberg@gmail.com>,
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Jiri Kosina <jikos@kernel.org>, Miroslav Benes <mbenes@suse.cz>,
+	Joe Lawrence <joe.lawrence@redhat.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Russell King <linux+etnaviv@armlinux.org.uk>,
+	Christian Gmeiner <christian.gmeiner@gmail.com>,
+	Louis Peens <louis.peens@corigine.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Naveen N Rao <naveen@kernel.org>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	cocci@inria.fr, linux-arm-kernel@lists.infradead.org,
+	linux-s390@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	intel-xe@lists.freedesktop.org, linux-scsi@vger.kernel.org,
+	xen-devel@lists.xenproject.org, linux-block@vger.kernel.org,
+	linux-wireless@vger.kernel.org, ath11k@lists.infradead.org,
+	linux-mm@kvack.org, linux-bluetooth@vger.kernel.org,
+	linux-staging@lists.linux.dev, linux-rpi-kernel@lists.infradead.org,
+	ceph-devel@vger.kernel.org, live-patching@vger.kernel.org,
+	linux-sound@vger.kernel.org, etnaviv@lists.freedesktop.org,
+	oss-drivers@corigine.com, linuxppc-dev@lists.ozlabs.org,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>
+Subject: Re: [PATCH v2 19/21] livepatch: Convert timeouts to secs_to_jiffies()
+Message-ID: <Zzsfuuv3AVomkMxn@pathway.suse.cz>
+References: <20241115-converge-secs-to-jiffies-v2-0-911fb7595e79@linux.microsoft.com>
+ <20241115-converge-secs-to-jiffies-v2-19-911fb7595e79@linux.microsoft.com>
+ <718febc4-59ee-4701-ad62-8b7a8fa7a910@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a0f:b0:3a7:635e:d36f with SMTP id
- e9e14a558f8ab-3a7635ed416mr36435905ab.2.1731927946005; Mon, 18 Nov 2024
- 03:05:46 -0800 (PST)
-Date: Mon, 18 Nov 2024 03:05:45 -0800
-In-Reply-To: <0000000000000fc50405eb48a1be@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <673b1f89.050a0220.87769.0033.GAE@google.com>
-Subject: Re: [syzbot] Re: [syzbot] [ntfs3?] possible deadlock in ni_fiemap
-From: syzbot <syzbot+c300ab283ba3bc072439@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <718febc4-59ee-4701-ad62-8b7a8fa7a910@csgroup.eu>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
-
-***
-
-Subject: Re: [syzbot] [ntfs3?] possible deadlock in ni_fiemap
-Author: jack@suse.cz
-
-On Sun 17-11-24 22:58:02, syzbot wrote:
-> syzbot suspects this issue was fixed by commit:
+On Sat 2024-11-16 11:10:52, Christophe Leroy wrote:
 > 
-> commit 6f861765464f43a71462d52026fbddfc858239a5
-> Author: Jan Kara <jack@suse.cz>
-> Date:   Wed Nov 1 17:43:10 2023 +0000
 > 
->     fs: Block writes to mounted block devices
+> Le 15/11/2024 à 22:26, Easwar Hariharan a écrit :
+> > [Vous ne recevez pas souvent de courriers de eahariha@linux.microsoft.com. Découvrez pourquoi ceci est important à https://aka.ms/LearnAboutSenderIdentification ]
+> > 
+> > Changes made with the following Coccinelle rules:
+> > 
+> > @@ constant C; @@
+> > 
+> > - msecs_to_jiffies(C * 1000)
+> > + secs_to_jiffies(C)
+> > 
+> > @@ constant C; @@
+> > 
+> > - msecs_to_jiffies(C * MSEC_PER_SEC)
+> > + secs_to_jiffies(C)
+> > 
+> > Signed-off-by: Easwar Hariharan <eahariha@linux.microsoft.com>
+> > ---
+> >   samples/livepatch/livepatch-callbacks-busymod.c |  2 +-
+> >   samples/livepatch/livepatch-shadow-fix1.c       |  2 +-
+> >   samples/livepatch/livepatch-shadow-mod.c        | 10 +++++-----
+> >   3 files changed, 7 insertions(+), 7 deletions(-)
+> > 
+> > diff --git a/samples/livepatch/livepatch-callbacks-busymod.c b/samples/livepatch/livepatch-callbacks-busymod.c
+> > index 378e2d40271a9717d09eff51d3d3612c679736fc..d0fd801a7c21b7d7939c29d83f9d993badcc9aba 100644
+> > --- a/samples/livepatch/livepatch-callbacks-busymod.c
+> > +++ b/samples/livepatch/livepatch-callbacks-busymod.c
+> > @@ -45,7 +45,7 @@ static int livepatch_callbacks_mod_init(void)
+> >   {
+> >          pr_info("%s\n", __func__);
+> >          schedule_delayed_work(&work,
+> > -               msecs_to_jiffies(1000 * 0));
+> > +               secs_to_jiffies(0));
 > 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=120c0ac0580000
-> start commit:   d537ae43f8a1 Merge tag 'gpio-fixes-for-v6.6-rc7' of git://..
-> git tree:       upstream
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=849fe52ba7c6d78a
-> dashboard link: https://syzkaller.appspot.com/bug?extid=c300ab283ba3bc072439
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1056076d680000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17093269680000
-> 
-> If the result looks correct, please mark the issue as fixed by replying with:
+> Using secs_to_jiffies() is pointless, 0 is universal, should become
+> schedule_delayed_work(&work, 0);
 
-Makes sense.
- 
-#syz fix: fs: Block writes to mounted block devices
+Yes, schedule_delayed_work(&work, 0) looks like the right solution.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Or even better, it seems that the delayed work might get replaced by
+a normal workqueue work.
+
+Anyway, I am working on a patchset which would remove this sample
+module. There is no need to put much effort into the clean up
+of this particular module. Do whatever is easiest for you.
+
+Best Regards,
+Petr
 
