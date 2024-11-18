@@ -1,258 +1,112 @@
-Return-Path: <linux-kernel+bounces-412600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFFD99D0B3E
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 09:54:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 704AC9D0B40
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 09:54:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67BF81F22231
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 08:54:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 414C31F2241C
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 08:54:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAFD518C03E;
-	Mon, 18 Nov 2024 08:54:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3DDF190493;
+	Mon, 18 Nov 2024 08:54:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JJWxoI3G"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kLZ19gA4"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28544161302;
-	Mon, 18 Nov 2024 08:54:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56B6D2907;
+	Mon, 18 Nov 2024 08:54:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731920053; cv=none; b=dFxyJ5OspkdaJTY8QymjJKVkGoiZ0uLeATGz8bBWXKjtUlHdb1SwXM9dRyWKXEz9OC3mbvVkaJCFyWFDBD/kjNHdhd+7i0PekBTUZHfzCOSxG0emEFgqsj0vVzm9+ucJcESBzkozRZBLbD942sBVcdf5vdvhPuvnQw+0cUkd7Fg=
+	t=1731920061; cv=none; b=IdCsJhTFMmuRO/PgwIhBS9EgByaMymNCXVWIwqK/sXaRbzFgB94zwWzxEEJJj6lNVAbF9v/x7qDYof6RfyfsWGecOHJh2Fe9Qz4azcZxYBmxb45+AYhxyVULf9qHMwBPvDey+SrqywxcmxY4z8Rs0QTUt6iJAzaTnmJ2p2HTMXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731920053; c=relaxed/simple;
-	bh=BHmPj2GKglel+dM6EkvB195s41aF0+QsrleQeUPbE40=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tY7p0trfvTAagLg4culX75JYDx38i274Y9VzyDvFPAo/5oLEERZu+kKo4yaSbnSfQc3MXUxYZvN3PinzOptItKbIKhoOfWmmvG1HyuRCwKlo7kSMl+gt3hY1qfC0yxMBKk6ivlQ6vqSFY59nTrg4uOq1weAb85AOsM3H53vDh/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JJWxoI3G; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5cefc36c5d4so2549614a12.0;
-        Mon, 18 Nov 2024 00:54:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731920049; x=1732524849; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ImUwhj3KLskmnmevpPwGVzAUnC3K8Cw7DOCj378hYQ4=;
-        b=JJWxoI3G/O7dceYiB+YBt1xRXX6+ngFfNHve1tO18EJfPII52NIxKlndlUmk5Tq3PH
-         mYZ+3QrZArbR7H866c4tjjgoRx4uoqSY6hYtXvUclwqD3AlUsT/BUI8Tu6Y1S9MpMIlG
-         wn4wWnmCyPc2zsNGA0rMxh5r4vKJOOFXaGdKOKViI5yY9bWQo4jAQIpluuer+43CKnfm
-         u9saqaCo1WISF/vOMkMoeLHcxHuWF2cKxOG9ijNpa2vkDbNYBEhmMP5f1crOekRlxAG2
-         mi0jvR/+q+84f9dGsMNiihazTox9IV0+RaS4a9IxYgGOkkH11WfL3dikWuUT+OApGo3a
-         JuVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731920049; x=1732524849;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ImUwhj3KLskmnmevpPwGVzAUnC3K8Cw7DOCj378hYQ4=;
-        b=KE0CTHm5CvdKsVnS/IvbqhRGf4qtlgky3Ezr9ZPpA8FkZkW3uwDyW9aPZV7RJsr3yz
-         o7q/QinBcTNmLT8rzquvUjcwqW4PN2O4BT2meR+lwpqZN4DR2tQ0/dMuv5S7Vazp4glQ
-         m3o4o/CRTMkNvDd426MH5bOhOECAN5TDB0/ctXv25TkNoZe9tU9EDOG8tYxJETHISwfm
-         cR7f4Prcr287awWBqk/0d0Rl/3o7ulM8C0DqKLzqZQb/U4KMnI2t65SjpPK5jDuDcGuQ
-         0Rjr93Aioo8btMxA799kRLFwzw+aUCHdnUKCWgKMSCtoBXIs/kA3y1JMha7Mio8RV6Uj
-         4mqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUbvaEUdH1xNgeCA3tPiEchR584IcrPOrLWF48t3GrkFM8SlGW7u4IvcdslawSB0czfFy46FtAwnkh82G2X@vger.kernel.org, AJvYcCWeUn2ma1mVH+Ym9WbXV6tY/ie5HSGi7U1Wo4AkD3RdM1ez7yD7SwWhi30xtjL32tUrcTeC3xku2b/Y+osh@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyl11hLPNqD+Hkb5SannnwwVkGiSCz0FkoiLC8xLyPvmkVJKu9f
-	8iDYbR4Vd1CaiCyoF5MbO7kyq5ZR73xm7Y9CUUc7QGgnTcZcbFs6
-X-Google-Smtp-Source: AGHT+IFMZsuRW8lyHa4uZxiVXF1UJ6529fUgXwhx7zMAEfmXDbMidud1UIVIS50bZZhM6fd+8aIv2w==
-X-Received: by 2002:a05:6402:5189:b0:5cf:cf81:c39f with SMTP id 4fb4d7f45d1cf-5cfcf81c701mr1111937a12.19.1731920047654;
-        Mon, 18 Nov 2024 00:54:07 -0800 (PST)
-Received: from f.. (cst-prg-93-87.cust.vodafone.cz. [46.135.93.87])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cf79b9e168sm4524329a12.21.2024.11.18.00.54.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Nov 2024 00:54:06 -0800 (PST)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: brauner@kernel.org
-Cc: viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [RFC PATCH] vfs: dodge strlen() in vfs_readlink() when ->i_link is populated
-Date: Mon, 18 Nov 2024 09:53:57 +0100
-Message-ID: <20241118085357.494178-1-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1731920061; c=relaxed/simple;
+	bh=/nkoC7NwftY4QWQNAuXltSmyTEaoZqHqU6pXf07AWwY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AGfE2FvrivwcvNyUiGxoe0eteFH80qJx+yiXZz65RglW1/EwBwX3t7AzUpc7oxP6Jguwd3prgP2fLkXAsm0EdO3wmDZTBhstGDlZArKPDfeJOkl4TVa6+/Z1oq/2fYPT5lN2VHUPpH+h7CLkgrU30nk7W2qTWmEck2SkBRiJeGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kLZ19gA4; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731920060; x=1763456060;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=/nkoC7NwftY4QWQNAuXltSmyTEaoZqHqU6pXf07AWwY=;
+  b=kLZ19gA40CyZLwB/w/dIEnGX85G8Mai236YV1EOc8/v0RWVxEKqqR5Ta
+   Prd6U+ECk7HrKmecJiaUJClQffD2cTQBFxXuMrExMuF+fc1feclxoUzY9
+   x8tzfMJqb3ItoGGkgWtPw+jHiMXCrS8dra8TBT3FP92P5nnn/Nw/tsEQb
+   yGzkJ2bBbyxcLVMYEhKYHqNGNQo5CPaZOXaILlmDLR4KcnbFSPYkpm6/W
+   hfY4kaYgJ3yFsTveV/+zJVYGL2+gu7KzBcE/ebtUdsbXfkLHEutskayP2
+   9SFrChGPbt9Mcmwa5NtJtxtCYaakAAv5rLCKQ3wiVi07BeVP7oS8m4u8w
+   Q==;
+X-CSE-ConnectionGUID: Or/INIu9Rk+3NF8qNdsRCA==
+X-CSE-MsgGUID: /WwurzVoSQSBuY4l7GfXmw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11259"; a="43258650"
+X-IronPort-AV: E=Sophos;i="6.12,163,1728975600"; 
+   d="scan'208";a="43258650"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2024 00:54:19 -0800
+X-CSE-ConnectionGUID: 1dtxitoBQhiqmvgoC6y2ZQ==
+X-CSE-MsgGUID: mTuBJLA4TlyRF75rZn8Zdw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,163,1728975600"; 
+   d="scan'208";a="89077810"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2024 00:54:17 -0800
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id 0FE5411F8D9;
+	Mon, 18 Nov 2024 10:54:14 +0200 (EET)
+Date: Mon, 18 Nov 2024 08:54:14 +0000
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: linux@treblig.org
+Cc: andriy.shevchenko@linux.intel.com, djrscally@gmail.com,
+	heikki.krogerus@linux.intel.com, rafael@kernel.org,
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] device: property: Remove deadcode
+Message-ID: <ZzsAtql66f4hd4d1@kekkonen.localdomain>
+References: <20241116003253.335337-1-linux@treblig.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241116003253.335337-1-linux@treblig.org>
 
-This gives me about 1.5% speed up when issuing readlink on /initrd.img
-on ext4.
+Hi David,
 
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
----
+Thanks for the patch.
 
-I had this running with the following debug:
+On Sat, Nov 16, 2024 at 12:32:53AM +0000, linux@treblig.org wrote:
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> 
+> fwnode_graph_get_endpoint_count() was added in 2021 by
+> commit c87b8fc56966 ("device property: Implement
+> fwnode_graph_get_endpoint_count()")
+> 
+> but has never been used.
+> 
+> fwnode_graph_get_remote_port() has been unused since 2017's
+> commit 6a71d8d77795 ("device property: Add fwnode_graph_get_port_parent")
+> 
+> Remove them.
+> 
+> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
 
-if (strlen(link) != inode->i_size)
-       printk(KERN_CRIT "mismatch [%s] %l %l\n", link,
-           strlen(link), inode->i_size);
+Both of the functions also exist to span the same scope as the OF API,
+hence they should exist as long as the OF framework continues to provide
+these API functions. The equivalent OF functions are used by drivers
+currently.
 
-nothing popped up
-
-I would leave something of that sort in if it was not defeating the
-point of the change.
-
-However, I'm a little worried some crap fs *does not* fill this in
-despite populating i_link.
-
-Perhaps it would make sense to keep the above with the patch hanging out
-in next and remove later?
-
-Anyhow, worst case, should it turn out i_size does not work there are at
-least two 4-byte holes which can be used to store the length (and
-chances are some existing field can be converted into a union instead).
-
-Bench:
-$ cat tests/readlink1.c
-#include <stdlib.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <assert.h>
-#include <string.h>
-
-char *testcase_description = "readlink /initrd.img";
-
-void testcase(unsigned long long *iterations, unsigned long nr)
-{
-        char *tmplink = "/initrd.img";
-        char buf[1024];
-
-        while (1) {
-                int error = readlink(tmplink, buf, sizeof(buf));
-                assert(error > 0);
-
-                (*iterations)++;
-        }
-}
-
- fs/namei.c                     | 43 ++++++++++++++++++----------------
- fs/proc/namespaces.c           |  2 +-
- include/linux/fs.h             |  2 +-
- security/apparmor/apparmorfs.c |  2 +-
- 4 files changed, 26 insertions(+), 23 deletions(-)
-
-diff --git a/fs/namei.c b/fs/namei.c
-index 9d30c7aa9aa6..7aced8aca0f6 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -5272,19 +5272,16 @@ SYSCALL_DEFINE2(rename, const char __user *, oldname, const char __user *, newna
- 				getname(newname), 0);
- }
- 
--int readlink_copy(char __user *buffer, int buflen, const char *link)
-+int readlink_copy(char __user *buffer, int buflen, const char *link, int linklen)
- {
--	int len = PTR_ERR(link);
--	if (IS_ERR(link))
--		goto out;
-+	int copylen;
- 
--	len = strlen(link);
--	if (len > (unsigned) buflen)
--		len = buflen;
--	if (copy_to_user(buffer, link, len))
--		len = -EFAULT;
--out:
--	return len;
-+	copylen = linklen;
-+	if (unlikely(copylen > (unsigned) buflen))
-+		copylen = buflen;
-+	if (copy_to_user(buffer, link, copylen))
-+		copylen = -EFAULT;
-+	return copylen;
- }
- 
- /**
-@@ -5317,13 +5314,15 @@ int vfs_readlink(struct dentry *dentry, char __user *buffer, int buflen)
- 	}
- 
- 	link = READ_ONCE(inode->i_link);
--	if (!link) {
--		link = inode->i_op->get_link(dentry, inode, &done);
--		if (IS_ERR(link))
--			return PTR_ERR(link);
-+	if (link)
-+		return readlink_copy(buffer, buflen, link, inode->i_size);
-+
-+	link = inode->i_op->get_link(dentry, inode, &done);
-+	res = PTR_ERR(link);
-+	if (!IS_ERR(link)) {
-+		res = readlink_copy(buffer, buflen, link, strlen(link));
-+		do_delayed_call(&done);
- 	}
--	res = readlink_copy(buffer, buflen, link);
--	do_delayed_call(&done);
- 	return res;
- }
- EXPORT_SYMBOL(vfs_readlink);
-@@ -5391,10 +5390,14 @@ EXPORT_SYMBOL(page_put_link);
- 
- int page_readlink(struct dentry *dentry, char __user *buffer, int buflen)
- {
-+	const char *link;
-+	int res;
-+
- 	DEFINE_DELAYED_CALL(done);
--	int res = readlink_copy(buffer, buflen,
--				page_get_link(dentry, d_inode(dentry),
--					      &done));
-+	link = page_get_link(dentry, d_inode(dentry), &done);
-+	res = PTR_ERR(link);
-+	if (!IS_ERR(link))
-+		res = readlink_copy(buffer, buflen, link, strlen(link));
- 	do_delayed_call(&done);
- 	return res;
- }
-diff --git a/fs/proc/namespaces.c b/fs/proc/namespaces.c
-index 8e159fc78c0a..c610224faf10 100644
---- a/fs/proc/namespaces.c
-+++ b/fs/proc/namespaces.c
-@@ -83,7 +83,7 @@ static int proc_ns_readlink(struct dentry *dentry, char __user *buffer, int bufl
- 	if (ptrace_may_access(task, PTRACE_MODE_READ_FSCREDS)) {
- 		res = ns_get_name(name, sizeof(name), task, ns_ops);
- 		if (res >= 0)
--			res = readlink_copy(buffer, buflen, name);
-+			res = readlink_copy(buffer, buflen, name, strlen(name));
- 	}
- 	put_task_struct(task);
- 	return res;
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 972147da71f9..7d456db6a381 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3351,7 +3351,7 @@ extern const struct file_operations generic_ro_fops;
- 
- #define special_file(m) (S_ISCHR(m)||S_ISBLK(m)||S_ISFIFO(m)||S_ISSOCK(m))
- 
--extern int readlink_copy(char __user *, int, const char *);
-+extern int readlink_copy(char __user *, int, const char *, int);
- extern int page_readlink(struct dentry *, char __user *, int);
- extern const char *page_get_link(struct dentry *, struct inode *,
- 				 struct delayed_call *);
-diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
-index 01b923d97a44..60959cfba672 100644
---- a/security/apparmor/apparmorfs.c
-+++ b/security/apparmor/apparmorfs.c
-@@ -2611,7 +2611,7 @@ static int policy_readlink(struct dentry *dentry, char __user *buffer,
- 	res = snprintf(name, sizeof(name), "%s:[%lu]", AAFS_NAME,
- 		       d_inode(dentry)->i_ino);
- 	if (res > 0 && res < sizeof(name))
--		res = readlink_copy(buffer, buflen, name);
-+		res = readlink_copy(buffer, buflen, name, strlen(name));
- 	else
- 		res = -ENOENT;
- 
 -- 
-2.43.0
+Kind regards,
 
+Sakari Ailus
 
