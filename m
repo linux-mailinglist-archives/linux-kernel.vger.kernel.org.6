@@ -1,194 +1,108 @@
-Return-Path: <linux-kernel+bounces-413304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 627649D1723
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 18:30:34 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96F789D1737
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 18:35:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C35F284B23
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 17:30:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8AEB4B2470F
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 17:33:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E1091C1F28;
-	Mon, 18 Nov 2024 17:30:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3E801C1F24;
+	Mon, 18 Nov 2024 17:31:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nnV0rmH0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="jK941Ie9"
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46BDD1C1F14;
-	Mon, 18 Nov 2024 17:30:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71C5D1BD9FB;
+	Mon, 18 Nov 2024 17:31:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731951003; cv=none; b=nzXMq3xi525lXwR4/meRgl1eS/+wF7rH2HpxYNaU1Gduiozf3eeJa08vlbQZIhHwpCSIXTCE84k9CQYSHD7K0INUNCmyWSMQQv9rOyTiHcymbRLNJ6WJ2++getcRac6QobggMfCDguk/FFRw/TLGMLbAlSPCwV8Ai0k+s38gDqs=
+	t=1731951081; cv=none; b=PG0ORnqxu4Gq1q1N7UPsST4sjKlXZ9xRAsXSle2ECvWCUHCvoYpuh5KiZcCl/3XHcl9j6d8xdOT0nolg1ebkAy9vhd4iomprUDcmn29OnOz0ApTGghgipOjR+HQPWtWlaaoLB80Lmgqfw3vnEWNxI5HOcQ42mfCF99xAWtGExSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731951003; c=relaxed/simple;
-	bh=AAOwy+5Dxmw1BsBJE62bzHW+0ABCsWiqj+yUUpz71cs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=V0un6KEeSk6pf+PPYQ0DLCsjz5m3zH8uWJFklXhVG+IJ2fULFWWsd8bx4+FWcowXBXBZDVxIEx1JIFw5rIrFNY8XtfGBz9WgyK/JmreBvZ/R2NxR3hk0WgGU55MBOamvNYxiEuA1W02pof788ktk5sXe4+Mv612qeEWh9N+FHDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nnV0rmH0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D2DAC4CECC;
-	Mon, 18 Nov 2024 17:30:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731951002;
-	bh=AAOwy+5Dxmw1BsBJE62bzHW+0ABCsWiqj+yUUpz71cs=;
-	h=Date:From:To:Cc:Subject:From;
-	b=nnV0rmH0kWgH9s7PawZS1vOlsLqs9gcgtYKSh1V06ZapPSX69z5YJDIH9hRbK9cp6
-	 RY8D1mktBYfXWC2Qf7zPHdw2WXp1ICFFWGHp16aMba1RPlyxnsWSb80T9ruS+bQ0Br
-	 EaWAs9ooDGCAerPVU5Lt3fuT8C+n5MonfVgG+WpSv9F+GGhtuKr0utfUOPP1XcprDj
-	 R570nFvO+hQtgXKfGzfXH/FOyTf+/wEbhbM00mV1wMKnjNXIEA/aMEKv1LcmuJm/AO
-	 i2P8Mkt53YVekKzpFHv8gsLRs7b7tm+hm0HPAq63nb3fmPVD+gg15BVx0waIGv7x9y
-	 fxl3sO7MDpSQg==
-Date: Mon, 18 Nov 2024 18:29:57 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-	Arnaldo Carvalho de Melo <acme@redhat.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: [GIT PULL] Performance events changes for v6.13
-Message-ID: <Zzt5lYZGF8IOrgpB@gmail.com>
+	s=arc-20240116; t=1731951081; c=relaxed/simple;
+	bh=85G7UTP1K7kTdCA3yQ/1SDqQWbdyEWfjArDXx9ZLIV8=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=ZyDCs9VkSyROJ7D4+5vOLimMcDHUTKwvXYk9BN2wuNwfCWcLmqwJDNyxKnx9yDSOJ91CfIwRzJKH6HR1D7nJMn3yP5rmpyV035NboGwLU/zwcdSSKqbv9JJNKoG8LgQaTEyUCHgz/FqjGgwlC7rLl+Uc2cstjdJq/osBwS8hRGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=jK941Ie9; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1731951054; x=1732555854; i=markus.elfring@web.de;
+	bh=85G7UTP1K7kTdCA3yQ/1SDqQWbdyEWfjArDXx9ZLIV8=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=jK941Ie9o6x/SsaTl/5prNUj9JwcJLVEDXq5713J9G5ltJ5vM+PAUXoKqG4ocHqE
+	 4gJ7RVvsQUlSIzwuNnD0DPMKQiqUvxmvxH4Jrv7Tz19dHI5pv28j5aKgbXLwfHl6z
+	 NqILQXIEQ5Vd86dF3WJ6AyzblON1Wb0xxln8l2bBAh5n/f9YcfXzh+LIKaG+hjlNI
+	 y5iHbzqJFOhrHVKingNNhybIYYhoPzBwmExyDCV657WJvPRMkgRSQEzH1FM4Rx0QD
+	 R+fnB9xsmpTZ3gKV9ltSMSMcLr6pgPwEBKT9N8ktsYgWL1rcIhHw6rnHM1vA6bB9z
+	 1b2wdNziSkKFftNC+g==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.88.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1Mmymz-1tds1x1aXX-00pkdw; Mon, 18
+ Nov 2024 18:30:54 +0100
+Message-ID: <a9f86b63-6645-49e8-88d5-a5dbab2aaccd@web.de>
+Date: Mon, 18 Nov 2024 18:30:53 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+To: guanjing@cmss.chinamobile.com, Barret Rhoden <brho@google.com>,
+ David Vernet <void@manifault.com>, Hao Luo <haoluo@google.com>,
+ Josh Don <joshdon@google.com>, Tejun Heo <tj@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+References: <20241116230258.140098-1-guanjing@cmss.chinamobile.com>
+Subject: Re: [PATCH] sched_ext: fix application of sizeof to pointer
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20241116230258.140098-1-guanjing@cmss.chinamobile.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:SOfWYe3CAgBGvO68l+vi7ssFmFkfpSaq8XAdHA8ij8GYalRdzOL
+ /N0S/AwfIFJ1Nz72W9p5QI4zDurA+9L4eteICqkQCaFvh6rmL/BNH0WjSm1R5lra44tbS80
+ QnESlVP3kWoHT66Y3RBinX/KrPwwlx/ro72Uobt7a4//rvPYrI7Wtc7t8ARELVydRwXHoio
+ zhtXAd9JLj3AxACpnHFkA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:p0neG0qW/e4=;refRek5BDM8epMyGJ82SMKH+npA
+ SuBnTkzVod+jINn4rAjEkvzsi7KMcGndy1CDpU/66ZHUmrTNaej0NNURlq1xMKxc6+oPD4YMX
+ k5Cwd1SsYhDaNW6AsL0si+R7TBrdCs/PauXya7Z6hVJHU4Fzdjbsi960VoNC0ZrAQlnjxrPjR
+ m8AcBhmflLOwIycEZETbsaauXxof04/W2uOGUq2dgdttDyLVcHmwIMWnZ0cYMI8JCka95ktL1
+ JWKI+L1DKNlmLcLgwDFxQGe1I/udkNZWKm4IkMvGXKKgSSsfszEqvIa07MBUV/Gts56NF5vC3
+ mbBu3PwieoIn5McORUltRdFHfFT2rWzcsapGU+IQiAqbntT/0W8/AKzyn4uAG1Xd870IIpLm9
+ wkD3sh0pQQEBog0F2qZTCuGvoUsvL5/2x2K7CzJubJhJI9mt0gHAbv9AvgD82JcM6rlQ19Iux
+ PInB6x/Me2pXE4Nh+oaytJmpC1Al7ue+/mzxwdmQwjbylVigghkh/d6kkYCX6OGNacfVGM0Zz
+ fD56UoKKn4QWG7FSxH8Ginj5+Yh/w9toxRN1f9pEeeHHfjRH9VjYnap2vULHq3mDM81TlhbZG
+ fkwvKCv3C56+s8ix25MvMaicy1f4cknrhb9062mLgtrc5sEvkaBAgpb6ebo4V+4DCYx9tVs/b
+ UQI/BB6SZcD0kpHzJ3qUYNmjoOT3xopeUC7+LhFo7HaKicAo0/2RYnWcCXpmXTNyFDXk4I6pB
+ WGr5CwtkgzXXhm7X5ptZcZeGwcwJa/nbmT1cNpkygsg/RCB4WDxQIVAuGLmHdALQ1uVsiHAE3
+ 7vS47532ruRLFOTfk3wyrzkOBbNNZD2jFtVuf6uoxf1mo+Yp7wdU8rWQu+0tlzwZtpAYvsOtq
+ 5IgOylDbnaR7kUgTU6pvykQpaholTNgKpLos9UdBi7M1otZixTi0dmV3Q
 
-Linus,
+> sizeof when applied to a pointer typed expression gives the size of
+> the pointer.
+>
+> The proper fix in this particular case is to code sizeof(cpu_set_t)
+> instead of sizeof(cpuset).
+=E2=80=A6
 
-Please pull the latest perf/core Git tree from:
+I suggest to reconsider this view once more.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf-core-2024-11-18
+See also:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/coding-style.rst?h=3Dv6.12#n941
 
-   # HEAD: 2c47e7a74f445426d156278e339b7abb259e50de perf/core: Correct perf sampling with guest VMs
+Would the specification =E2=80=9Csizeof(*cpuset)=E2=80=9D be more appropri=
+ate here?
 
-Performance events changes for v6.13:
-
- - Uprobes:
-    - Add BPF session support (Jiri Olsa)
-    - Switch to RCU Tasks Trace flavor for better performance (Andrii Nakryiko)
-    - Massively increase uretprobe SMP scalability by SRCU-protecting
-      the uretprobe lifetime (Andrii Nakryiko)
-    - Kill xol_area->slot_count (Oleg Nesterov)
-
- - Core facilities:
-    - Implement targeted high-frequency profiling by adding the ability
-      for an event to "pause" or "resume" AUX area tracing (Adrian Hunter)
-
- - VM profiling/sampling:
-    - Correct perf sampling with guest VMs (Colton Lewis)
-
- - New hardware support:
-    - x86/intel: Add PMU support for Intel ArrowLake-H CPUs (Dapeng Mi)
-
- - Misc fixes and enhancements:
-    - x86/intel/pt: Fix buffer full but size is 0 case (Adrian Hunter)
-    - x86/amd: Warn only on new bits set (Breno Leitao)
-    - x86/amd/uncore: Avoid a false positive warning about snprintf
-                      truncation in amd_uncore_umc_ctx_init (Jean Delvare)
-    - uprobes: Re-order struct uprobe_task to save some space (Christophe JAILLET)
-    - x86/rapl: Move the pmu allocation out of CPU hotplug (Kan Liang)
-    - x86/rapl: Clean up cpumask and hotplug (Kan Liang)
-    - uprobes: Deuglify xol_get_insn_slot/xol_free_insn_slot paths (Oleg Nesterov)
-
- Thanks,
-
-	Ingo
-
------------------->
-Adrian Hunter (4):
-      perf/x86/intel/pt: Fix buffer full but size is 0 case
-      perf/core: Add aux_pause, aux_resume, aux_start_paused
-      perf/x86/intel/pt: Add support for pause / resume
-      perf/x86/intel: Do not enable large PEBS for events with aux actions or aux sampling
-
-Andrii Nakryiko (3):
-      uprobes: switch to RCU Tasks Trace flavor for better performance
-      uprobes: allow put_uprobe() from non-sleepable softirq context
-      uprobes: SRCU-protect uretprobe lifetime (with timeout)
-
-Breno Leitao (1):
-      perf/x86/amd: Warn only on new bits set
-
-Christophe JAILLET (1):
-      uprobes: Re-order struct uprobe_task to save some space
-
-Colton Lewis (5):
-      perf/arm: Drop unused functions
-      perf/core: Hoist perf_instruction_pointer() and perf_misc_flags()
-      perf/powerpc: Use perf_arch_instruction_pointer()
-      perf/x86: Refactor misc flag assignments
-      perf/core: Correct perf sampling with guest VMs
-
-Dapeng Mi (4):
-      perf/x86: Refine hybrid_pmu_type defination
-      x86/cpu/intel: Define helper to get CPU core native ID
-      perf/x86/intel: Support hybrid PMU with multiple atom uarchs
-      perf/x86/intel: Add PMU support for ArrowLake-H
-
-Jean Delvare (1):
-      perf/x86/amd/uncore: Avoid a false positive warning about snprintf truncation in amd_uncore_umc_ctx_init
-
-Jiri Olsa (2):
-      uprobe: Add data pointer to consumer handlers
-      uprobe: Add support for session consumer
-
-Kan Liang (2):
-      perf/x86/rapl: Move the pmu allocation out of CPU hotplug
-      perf/x86/rapl: Clean up cpumask and hotplug
-
-Oleg Nesterov (9):
-      uprobes: don't abuse get_utask() in pre_ssout() and prepare_uretprobe()
-      uprobes: sanitiize xol_free_insn_slot()
-      uprobes: kill the unnecessary put_uprobe/xol_free_insn_slot in uprobe_free_utask()
-      uprobes: simplify xol_take_insn_slot() and its caller
-      uprobes: move the initialization of utask->xol_vaddr from pre_ssout() to xol_get_insn_slot()
-      uprobes: pass utask to xol_get_insn_slot() and xol_free_insn_slot()
-      uprobes: deny mremap(xol_vma)
-      uprobes: kill xol_area->slot_count
-      uprobes: fold xol_take_insn_slot() into xol_get_insn_slot()
-
-
- arch/Kconfig                                       |   1 +
- arch/arm/include/asm/perf_event.h                  |   7 -
- arch/arm/kernel/perf_callchain.c                   |  17 -
- arch/arm64/include/asm/perf_event.h                |   4 -
- arch/arm64/kernel/perf_callchain.c                 |  28 -
- arch/powerpc/include/asm/perf_event_server.h       |   6 +-
- arch/powerpc/perf/callchain.c                      |   2 +-
- arch/powerpc/perf/callchain_32.c                   |   2 +-
- arch/powerpc/perf/callchain_64.c                   |   2 +-
- arch/powerpc/perf/core-book3s.c                    |   4 +-
- arch/s390/include/asm/perf_event.h                 |   6 +-
- arch/s390/kernel/perf_event.c                      |   4 +-
- arch/x86/events/amd/core.c                         |  10 +-
- arch/x86/events/amd/uncore.c                       |   5 +-
- arch/x86/events/core.c                             |  64 ++-
- arch/x86/events/intel/core.c                       | 137 ++++-
- arch/x86/events/intel/ds.c                         |  21 +
- arch/x86/events/intel/pt.c                         |  84 ++-
- arch/x86/events/intel/pt.h                         |   6 +
- arch/x86/events/perf_event.h                       |  34 +-
- arch/x86/events/rapl.c                             | 130 ++---
- arch/x86/include/asm/cpu.h                         |   6 +
- arch/x86/include/asm/perf_event.h                  |  12 +-
- arch/x86/kernel/cpu/intel.c                        |  15 +
- include/linux/cpuhotplug.h                         |   1 -
- include/linux/perf_event.h                         |  54 +-
- include/linux/uprobes.h                            |  83 ++-
- include/uapi/linux/perf_event.h                    |  11 +-
- kernel/events/core.c                               | 102 +++-
- kernel/events/internal.h                           |   1 +
- kernel/events/uprobes.c                            | 608 +++++++++++++++------
- kernel/trace/bpf_trace.c                           |   6 +-
- kernel/trace/trace_uprobe.c                        |  12 +-
- .../selftests/bpf/bpf_testmod/bpf_testmod.c        |   2 +-
- 34 files changed, 1069 insertions(+), 418 deletions(-)
+Regards,
+Markus
 
