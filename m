@@ -1,102 +1,172 @@
-Return-Path: <linux-kernel+bounces-413503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E7AC9D19F5
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 21:56:35 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F23989D19F7
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 21:56:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7B21281118
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 20:56:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3ACB9B2353F
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 20:56:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26A4F1E5020;
-	Mon, 18 Nov 2024 20:56:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78C9E1E7C02;
+	Mon, 18 Nov 2024 20:56:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="B0EgTl3q"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="phmi8UAX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA3FD1E1311
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 20:56:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C10F31E1311;
+	Mon, 18 Nov 2024 20:56:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731963384; cv=none; b=FicKKyXVKR7YndB8NYYOLJe3D0y/NGda6vfWt+KRG+sSkTJKomsF3XtFkTUKLSPTP+c/L5Imimk9EPV0AOvjh15CeSwS4MKM5+yLCQgmo03BH9tZrnU/wSAy8mYFrOF/z9lD5V5v1JRMbIiBX7I5MBHLn/CDNTHVJ42vd4VtERA=
+	t=1731963391; cv=none; b=EfsJqBVKR8tsNE1kERlCQwF6kBEdBWqm/lq3rCCoyhzkNslQDqMHmak1+3FtUmZ76gCf2iWRb3KUZewomTb93buVGFD25xg7XpsDoNibQZFfI8hHyiDy3ZejT3TMWGsj2Qej85y0WCStb4Knth02PQqJqR9kBO1Vbd5J+7jFszA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731963384; c=relaxed/simple;
-	bh=ungsn3f8/dGSKSyUBpjU3yOgOagSqTfbI/z8PJup3NI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZkE16J9TC24Qij1k2eYDf49s1n5+LZ4no5jjeu+tGcDviapacG/mJGWvQ43BJw3Mc9Ied2EzDYnszFboXdU3Z7w5i9ho3a5owZjcWtUjNgjJfAUYgqATql5rtdenspfiCjbxHaT8L9A4MrCHrfL48wJdZ6rKJJTl121jERTDymM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=B0EgTl3q; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2fb518014b9so2112231fa.3
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 12:56:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731963381; x=1732568181; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ungsn3f8/dGSKSyUBpjU3yOgOagSqTfbI/z8PJup3NI=;
-        b=B0EgTl3qbS7cuYWbgybOgxl1Rb2LJyAccQeryYHbjAtNHsr1UwdQUWQbVpONPmabN9
-         Zn2S3vdFWP/jqjFCBJR7zhlyiVdz19q8CxzI6wcZ3o9H+vwXYPlBzdVMq1nlSIjw8iTw
-         fjk9s7WbCMHfXif2Y63ejBWs0lFeeMcbs636uDqcddtcBbyK7vYwBMFKDiSCw7xn25ey
-         7QUynhpx7060U5EguPdOw8SM80oin7bZNha3V88u+ZUe/w+JvXFOrARjZq84a4mLjVPx
-         aqkqkyjEPlw92gCb1AFEdNFJkLhF9AVR1dxc2Mc+piBwvLWYrCRzaxKvx3CvRJ+vgdHv
-         vqCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731963381; x=1732568181;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ungsn3f8/dGSKSyUBpjU3yOgOagSqTfbI/z8PJup3NI=;
-        b=GcwesXkrame7u+QY/04aJ7dQUDa8YOr6FJB8SrgNyxfPSKZ6xRjpDZF4Dcks/5D1WD
-         Nx3vvBZ+B3vZhKJyg8k0kQdPmTL5Ok3negqR+z1g5gMkndm7Ija0OrEzhlA2Qtiwcp4U
-         EtHElYtkKxOrsmn0W6SVQlx44c5gJiC7E/g8UfqilSTXvrHjkkiKUTZ0q5c039cZQntm
-         UKAaq7IaiU2BOh6kWX1msofJJ51AgaEOelKhheUmHTuOlI76u13hEOgIsSEL+/7coFW5
-         EMvt/PUCBxwzY/lYbqGaBnJb0a+vjXjvBQLdsRJ2k/IRk6DQhA1dDu614jAo9nP770bd
-         hblQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWmhkbKJBbyx+7zBwi7ZSgb17g9mUfK30YleVNCVYDA6D2jskay1FOJJpKddt8hOQauYEIsUt3Bjx1e1I4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLkZKmxasVgNLb7CUSCLj6keL3o+GNOJ1+Og0h/vQF5L29SI50
-	9q2nH+nptROyqoWx7m1Eqrox8YYt0mCQE5nZ0ssaq5aUtH4Li9iCY9wjsB/pZI6lyTc+isdTHtS
-	TtuD09g8JjRynDAqqU8uQMubbBcQRtSaCQUvOJA==
-X-Google-Smtp-Source: AGHT+IE5OdhKXuCh58Mqv4p1qJzmEnzQXakg8UJU6KGo30C3j9D1Doc5fsgG1JzjlFj3maLKmuS7KbwwvmXI9w/Max8=
-X-Received: by 2002:a05:651c:1543:b0:2fc:b10c:df4 with SMTP id
- 38308e7fff4ca-2ff6093369fmr56865951fa.20.1731963381090; Mon, 18 Nov 2024
- 12:56:21 -0800 (PST)
+	s=arc-20240116; t=1731963391; c=relaxed/simple;
+	bh=C/75dlNTZVVctHgjkR2wxTlbf5aGs3bgMgbYh1A3x3w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QSWkOSf+0DkxGpsj670B9QFNbQA1u6BE5l9gJvk8M+CMwpLSjjRQgg22/QiKc8Nzde/gRHIz6MSuv/Y7iZHWvAGHgAH6B+d/L+DdpomwBd2AH9Q7IzTAENGLQkWTiVsDnm5e/+ROqjWPVX+JomN21MN13TxZ/ySyzWLPFzwh2OI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=phmi8UAX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 013B0C4CECC;
+	Mon, 18 Nov 2024 20:56:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731963391;
+	bh=C/75dlNTZVVctHgjkR2wxTlbf5aGs3bgMgbYh1A3x3w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=phmi8UAXzawnyrf1Mok1RJa2zC/F0QO0kj/gkLvrYII2QAfXVDlfeSq2x/JwwNSjr
+	 KFCJdFDYSV1nElXUN/puKdll9nhZc6ul2vRC0ezGHw5h/Ng5IqW+e1PfvnsW/qQhUb
+	 Blglb2HEIqGDAKqkgcuYislTMysxb5MagQZXemC95QCE6bL8AdSjTm9HOuYsUyygfP
+	 8MUMHa9R9O4Wlhb/REX2TwPOWMTdGK1QFhyb98e4daRxg/NMXWRQL2mSNBjTq/P+Ke
+	 1b691aq/UOxISsdwE5BOnMp6lou/kP1lHsQAYbCx7MfNHeCliOfNzCSgC1IoNOuf/z
+	 DIvjxfVy/68yQ==
+Date: Mon, 18 Nov 2024 13:56:29 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Kostadin Shishmanov <kostadinshishmanov@protonmail.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"sam@gentoo.org" <sam@gentoo.org>, arnd@arndb.de,
+	linux-kbuild@vger.kernel.org
+Subject: Re: Build failure with GCC 15 (-std=gnu23)
+Message-ID: <20241118205629.GA15698@thelio-3990X>
+References: <4OAhbllK7x4QJGpZjkYjtBYNLd_2whHx9oFiuZcGwtVR4hIzvduultkgfAIRZI3vQpZylu7Gl929HaYFRGeMEalWCpeMzCIIhLxxRhq4U-Y=@protonmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241113-ramble-blaspheme-b303dbf37271@spud> <20241113-jovial-atlantic-cd07f05eb2e5@spud>
-In-Reply-To: <20241113-jovial-atlantic-cd07f05eb2e5@spud>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 18 Nov 2024 21:56:10 +0100
-Message-ID: <CACRpkdbF0sqg1Q_qxFn5zz1rFn7VN9x_mmpMPt=YS81vazJe1g@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] gpio: mpfs: add CoreGPIO support
-To: Conor Dooley <conor@kernel.org>
-Cc: linux-gpio@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>, 
-	Daire McNamara <daire.mcnamara@microchip.com>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <4OAhbllK7x4QJGpZjkYjtBYNLd_2whHx9oFiuZcGwtVR4hIzvduultkgfAIRZI3vQpZylu7Gl929HaYFRGeMEalWCpeMzCIIhLxxRhq4U-Y=@protonmail.com>
 
-On Wed, Nov 13, 2024 at 1:01=E2=80=AFPM Conor Dooley <conor@kernel.org> wro=
-te:
+Hi Kostadin,
 
-> From: Conor Dooley <conor.dooley@microchip.com>
->
-> coreGPIO, which the "hard" core in PolarFire SoC is based on, has
-> different offsets for inp/outp. Add some match_data handling to account
-> for the differences.
->
-> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+Just a quick FYI off the bat, you only directed this to LKML, which is
+basically like sending it into the void because very few people actually
+read every message on LKML. I only caught it because I have a filter set
+up for mentions of Clang and LLVM. I'd suggest adding at least the
+Kbuild mailing list, which I have done now. I have also added Arnd
+because I seem to recall him looking into how hard it would be to build
+the kernel with C23.
 
-Looks like a solid patch to me!
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+On Mon, Nov 18, 2024 at 02:26:49PM +0000, Kostadin Shishmanov wrote:
+> Whenever I try to build the kernel with upcoming GCC 15 which defaults to -std=gnu23 I get a build failure:
+> 
+> ```
+> In file included from ./include/uapi/linux/posix_types.h:5,
+>                  from ./include/uapi/linux/types.h:14,
+>                  from ./include/linux/types.h:6,
+>                  from ./include/uapi/linux/mei_uuid.h:12,
+>                  from ./include/uapi/linux/mei.h:10,
+>                  from ./include/linux/mod_devicetable.h:12,
+>                  from scripts/mod/devicetable-offsets.c:3:
+> ./include/linux/stddef.h:11:9: error: expected identifier before ‘false’
+>    11 |         false   = 0,
+> ./include/linux/types.h:35:33: error: two or more data types in declaration specifiers
+>    35 | typedef _Bool                   bool;
+> ./include/linux/types.h:35:1: warning: useless type name in empty declaration
+>    35 | typedef _Bool                   bool;
+> ```
+> 
+> This can be reproduced on older GCC versions with KCFLAGS="-std=gnu23"
 
-Yours,
-Linus Walleij
+The kernel builds explicitly with '-std=gnu11' (see Makefile), so I
+would not expect the default switch on the GCC side to matter. That
+signals to me that we are not actually using that flag everywhere then?
+Building with V=1, I can see '-std=gnu11' in the compiler command for
+scripts/mod/devicetable-offsets.s, which is generated from
+scripts/mod/devicetable-offsets.c, so it seems like something else is
+going on here?
+
+> With Clang 18 and KCFLAGS="-std=c23" it's an even bigger mess:
+
+I think the error below occurs because you used 'c23' instead of
+'gnu23'. GCC's documentation states:
+
+"The asm keyword is a GNU extension. When writing code that can be
+compiled with -ansi and the various -std options, use __asm__ instead of
+asm (see Alternate Keywords)."
+
+https://gcc.gnu.org/onlinedocs/gcc/Extended-Asm.html
+
+Cheers,
+Nathan
+
+> ```
+> In file included from ./arch/x86/include/asm/jump_label.h:7,
+>                  from ./include/linux/jump_label.h:112,
+>                  from ./arch/x86/include/asm/string_64.h:6,
+>                  from ./arch/x86/include/asm/string.h:5,
+>                  from ./include/linux/string.h:64,
+>                  from ./include/linux/uuid.h:11,
+>                  from ./include/linux/mod_devicetable.h:14:
+> ./arch/x86/include/asm/asm.h: In function ‘rip_rel_ptr’:
+> ./arch/x86/include/asm/asm.h:120:9: error: implicit declaration of function ‘asm’ [-Wimplicit-function-declaration]
+>   120 |         asm("leaq %c1(%%rip), %0" : "=r"(p) : "i"(p));
+> ./arch/x86/include/asm/asm.h:120:34: error: expected ‘)’ before ‘:’ token
+>   120 |         asm("leaq %c1(%%rip), %0" : "=r"(p) : "i"(p));
+> ./arch/x86/include/asm/asm.h: At top level:
+> ./arch/x86/include/asm/asm.h:222:46: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘asm’
+>   222 | register unsigned long current_stack_pointer asm(_ASM_SP);
+> ./arch/x86/include/asm/jump_label.h: In function ‘arch_static_branch’:
+> ./arch/x86/include/asm/jump_label.h:27:9: error: ‘asm’ undeclared (first use in this function)
+>    27 |         asm goto("1:"
+> ./arch/x86/include/asm/jump_label.h:27:9: note: each undeclared identifier is reported only once for each function it appears in
+> ./arch/x86/include/asm/jump_label.h:27:12: error: expected ‘;’ before ‘goto’
+>    27 |         asm goto("1:"
+>                   ;
+> In file included from ./include/uapi/linux/swab.h:8,
+>                  from ./include/linux/swab.h:5,
+>                  from ./include/uapi/linux/byteorder/little_endian.h:14,
+>                  from ./include/linux/byteorder/little_endian.h:5,
+>                  from ./arch/x86/include/uapi/asm/byteorder.h:5,
+>                  from ./include/linux/bitfield.h:11,
+>                  from ./include/linux/fortify-string.h:5,
+>                  from ./include/linux/string.h:390:
+> ./arch/x86/include/uapi/asm/swab.h: In function ‘__arch_swab32’:
+> ./arch/x86/include/uapi/asm/swab.h:10:24: error: expected ‘)’ before ‘:’ token
+>    10 |         asm("bswapl %0" : "=r" (val) : "0" (val));
+>                                )
+> ./arch/x86/include/uapi/asm/swab.h: In function ‘__arch_swab64’:
+> ./arch/x86/include/uapi/asm/swab.h:31:24: error: expected ‘)’ before ‘:’ token
+>    31 |         asm("bswapq %0" : "=r" (val) : "0" (val));
+>                                )
+> In file included from scripts/mod/devicetable-offsets.c:2:
+> scripts/mod/devicetable-offsets.c: In function ‘main’:
+> ./include/linux/kbuild.h:6:9: error: ‘asm’ undeclared (first use in this function)
+>     6 |         asm volatile("\n.ascii \"->" #sym " %0 " #val "\"" : : "i" (val))
+> scripts/mod/devicetable-offsets.c:5:22: note: in expansion of macro ‘DEFINE’
+>     5 | #define DEVID(devid) DEFINE(SIZE_##devid, sizeof(struct devid))
+> scripts/mod/devicetable-offsets.c:11:9: note: in expansion of macro ‘DEVID’
+>    11 |         DEVID(usb_device_id);
+> ./include/linux/kbuild.h:6:13: error: expected ‘;’ before ‘volatile’
+>     6 |         asm volatile("\n.ascii \"->" #sym " %0 " #val "\"" : : "i" (val))
+> ```
+> 
+> There is a lot more output from the compiler that i've cut off because the email would become way too long.
+> 
+> Regards,
+> Kostadin
+> 
 
