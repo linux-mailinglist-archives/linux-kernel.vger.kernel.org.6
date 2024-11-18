@@ -1,124 +1,103 @@
-Return-Path: <linux-kernel+bounces-412306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43A909D0754
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 01:54:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 588C29D0755
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 01:55:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFE301F21B7E
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 00:54:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E5EF281D1F
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 00:55:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7727117BA3;
-	Mon, 18 Nov 2024 00:54:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43C6628370;
+	Mon, 18 Nov 2024 00:54:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VdkkoqbE"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ef20KjDD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89190360;
-	Mon, 18 Nov 2024 00:54:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B00F1DFD1;
+	Mon, 18 Nov 2024 00:54:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731891274; cv=none; b=kz8QuFK42IQjC+MKGdREH+2jnQtoBfbIKD6xEQb5P5DAoJbVI4Xx05g7EhCW9MLSxuQ9QzI8/sBs7U6UGIoOG9tQ8hNQBzsKMh7Qauf7ZVtE7yiGKuxLUIbBe47PzKJ2NzKuXKbif1VpsPAQqjweJecnFomeKRp534F6Og14tJY=
+	t=1731891276; cv=none; b=Emok2r48gJOmIgPt1K4GhcKORqJrlGclFVRaxEmIykfJyTNG2+SudkW55YUpHECYlUIfDbSZdlR1I+AvKyQlkIBkMgK6o9wuLPXrm9RIvABGRUTLQI3xCRyt/LVgGGu2yya98sP21SNcjp30QSiYmKvYT52IRxKLqpAmUFACpws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731891274; c=relaxed/simple;
-	bh=5cayApTr2paonudUm6trrjRWCAbJtB1ywGRYA/HENls=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PwrROd1bwftRtXHvAdKCZUEpLnhqhPVyV00j20AXmfVflGKOVZovVjtEaf6pO4lzfZ+zHdsNALNZ9FMmovo60YAKmgat5C74IAFHTYurvJZVOSX6zPF/c0JV1Bnt7RXjB7KKyPbBeWUqfIJqDtKA23Vh+cnaZBJ7AVjrsy0BnQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VdkkoqbE; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7ea85fa4f45so680486a12.2;
-        Sun, 17 Nov 2024 16:54:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731891273; x=1732496073; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Pj5vXREp5Phb5f9hnuV8h6A8ggipr27FdyKL2fmuRYo=;
-        b=VdkkoqbEU2/jecRha/FYu7zDrvbFbRIAranpq9hLWrZoOYo3a9lna6inCbzY7Z1ul5
-         XY9c58V/NXh2rT89Dkf6HGyBCkkADLpAe8ohHCq/c6vp+YShv6PvEN1nacuEr2sbDwfw
-         yYuh/rN67ezyxxiDbmADAGSLFPcEMdMs+k8nimTDNoUN+AJJ8XOyatsC5WjlbDMA5GHr
-         3QBDgkM5t8rs/0f+E0SwtqFSIUQohL5kmEJ80FYiHyaAhvf3ATTIkeAvTw9ko2UAGh/R
-         vSEsvpszT3EvakxTGdP95jc1u7sndgSHAR64Ghs9f1jqo4gs0lQbndYfu1Oc8RtsSVNc
-         6y9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731891273; x=1732496073;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Pj5vXREp5Phb5f9hnuV8h6A8ggipr27FdyKL2fmuRYo=;
-        b=BnB6xPL90XQ+P56klT7gmFz2XkDQGTQP9u9JjAIqyW0OasbWj7cjt9o/IQles0s+RM
-         wrT+4m4VL9hvyY6wuZacYCGMcjIHzsq56p5ihwP+uBMzxuANGWeIobGIZXXNlWKUh8nP
-         zoN0F1AXjuw+LZRhDqY81Oy+KJAGWa4mmJAtPGwnv81EpiCFwgp6sRkQd8EGChWEzUvG
-         o5Wf1Dnfr6mkGik2olkA6nZBX3Eqx5ev80RVg4qrgLN5WUhfhHn3ZjxZ/Ejh6QPBNdXV
-         XFo2dM4P89BTd4TKySO+WVUh95aBb4SoQk4Szd+4Lkzk8HgrF10zaAhKNo2H0JkZ+MTv
-         9sNA==
-X-Forwarded-Encrypted: i=1; AJvYcCUJ3rrS2DHUKT3FommznCDT9oQmucHTa7esBr2jeenKLD/dOfeCbrKRKnOCMLReLedB8yNYXCs6zNQTMwLP@vger.kernel.org, AJvYcCUsFAmZmCIW22m2gGJBbLYaSeieO3KRzahMXNf2MkZIziGdcNloXZ326XMmXlce4+th5YlNV+Ul@vger.kernel.org, AJvYcCVFKLfIqbG4szEiwPQvtzTFw5gVH+UqFH8UNk3IHL7Lp73lqwqrvV7Y0YeRKya84xIL0c6+auVKoJKDHzgVNxo=@vger.kernel.org, AJvYcCVsUq6luUBxUTK/AnD8LafU4gQqBLctFQZtRbUwkkgrbIme+7oThatV5FCux2+yW9nCOsj6D74TJeWn5w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyiwdPNxGYQsBwr6tBJpIHuifvcC773vx3iiqzevaODZ0YAdtzw
-	SsG3cwYI+Qzvp6eyYtmwdO1c208WiVk5obgjEyu9GGN22KsqLtdEgp8ownvuTWcf6n8BDqXdrsk
-	0HlYlR7wnOBOP7sR7f4nu2hHryrI=
-X-Google-Smtp-Source: AGHT+IHqGELc5Y+kxz8+Tb9M6VaWYYG3G9aYBazKpHHQIpj4J642GiPW72vDkPeL3k1eBcqk7D4YSidm5OV2b2IWvXk=
-X-Received: by 2002:a17:90b:1645:b0:2e2:da69:e3fa with SMTP id
- 98e67ed59e1d1-2ea154be694mr5114170a91.2.1731891272805; Sun, 17 Nov 2024
- 16:54:32 -0800 (PST)
+	s=arc-20240116; t=1731891276; c=relaxed/simple;
+	bh=+mfZEmfDpvilp55+DEhzjae1Q5MvdDNXhWMFri7nCfQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LAjnxJ/8uSRoTuvQQYnAB2PpZ5pq7Y0vqc84VTCxaUQ/sEgHQW4waFPN9e6P7HcoIYKB+oLS2G1ec6DQFKlJq4WRvU35z2nN4EeyG3qAuPmAQ9nt2eI+EL2N8Xu0jwea5OVcK9SLIWUIGSlSCDhchlL4girQRkmBPN4ilpTwL5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ef20KjDD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1228C4CED8;
+	Mon, 18 Nov 2024 00:54:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731891276;
+	bh=+mfZEmfDpvilp55+DEhzjae1Q5MvdDNXhWMFri7nCfQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ef20KjDDzJmoSAWjpsrqZzRdA8n08YSRc2YvAVXGCyyyG/0seVPqe4HOInWRbtbhL
+	 MkxgD6XrPQxHFWA3kMQaSJOx86PfoUJYgnK15G3CuekybX7di7E5+X4ZelP57JdAbf
+	 gA6SIbc1p9f2Qz7K+Xu/IlCpsJzOXzpbiRPBnCnz/UYjW1wDhXWAT5aZIV9TE/i6Nx
+	 KOlv0SVg/5pCK27f3az6nhLzAVg720xy0qHhFl1A6sNZf7mFRUAbhf1EOdME0YdwOQ
+	 zfZJQYuI8lorofif1FyoCf6CJqtSZZ185diu+Qni86brDkneB8rQ5rFbsmOklM5Cuy
+	 kOGsUsRc9npZw==
+Date: Sun, 17 Nov 2024 17:54:34 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Kent Overstreet <kent.overstreet@linux.dev>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] bcachefs
+Message-ID: <20241118005434.GA3588455@thelio-3990X>
+References: <e7xjq5qdnmh2rga5aymowasfe32harb3wqrpktisy3ynikaqyo@xtawzmqxidif>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241117-simplify-result-v1-1-5b01bd230a6b@iiitd.ac.in>
- <3721a7b2-4a8f-478c-bbeb-fdf22ded44c9@lunn.ch> <CANiq72kk0gsC8gohDT9aqY6r4E+pxNC6=+v8hZqthbaqzrFhLg@mail.gmail.com>
- <q5xmd3g65jr4lmnio72pcpmkmvlha3u2q3fohe2wxlclw64adv@wjon44dqnn7e>
-In-Reply-To: <q5xmd3g65jr4lmnio72pcpmkmvlha3u2q3fohe2wxlclw64adv@wjon44dqnn7e>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Mon, 18 Nov 2024 01:54:20 +0100
-Message-ID: <CANiq72kQJw4=qBEPwykrWBsqmycwS+mR27OE2dTPQd3tKjx-Tw@mail.gmail.com>
-Subject: Re: [PATCH] rust: simplify Result<()> uses
-To: Manas <manas18244@iiitd.ac.in>
-Cc: Andrew Lunn <andrew@lunn.ch>, FUJITA Tomonori <fujita.tomonori@gmail.com>, 
-	Trevor Gross <tmgross@umich.edu>, Heiner Kallweit <hkallweit1@gmail.com>, 
-	Russell King <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>, 
-	Shuah Khan <skhan@linuxfoundation.org>, Anup Sharma <anupnewsmail@gmail.com>, 
-	netdev@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e7xjq5qdnmh2rga5aymowasfe32harb3wqrpktisy3ynikaqyo@xtawzmqxidif>
 
-On Mon, Nov 18, 2024 at 1:11=E2=80=AFAM Manas <manas18244@iiitd.ac.in> wrot=
-e:
->
-> I can split it in the following subsystems:
->
->    rust: block:
->    rust: uaccess:
->    rust: macros:
->    net: phy: qt2025:
->
-> Should I do a patch series for first three, and put an individual patch f=
-or
-> qt2025?
+Hi Kent,
 
-Up to Andrew et al., either way is fine for me.
+On Fri, Nov 15, 2024 at 03:35:16PM -0500, Kent Overstreet wrote:
+>       bcachefs: Kill bch2_get_next_backpointer()
 
-> Also, I can work on the checkpatch.pl after this.
+As pointed out by the kbuild test robot [1], this change introduces several
+-Wuninitialized warnings:
 
-That is great, thanks a lot!
+  fs/bcachefs/move.c:814:36: error: variable 'dirty_sectors' is uninitialized when used here [-Werror,-Wuninitialized]
+    814 |         trace_evacuate_bucket(c, &bucket, dirty_sectors, bucket_size, fragmentation, ret);
+        |                                           ^~~~~~~~~~~~~
+  fs/bcachefs/move.c:677:24: note: initialize the variable 'dirty_sectors' to silence this warning
+    677 |         unsigned dirty_sectors, bucket_size;
+        |                               ^
+        |                                = 0
+  fs/bcachefs/move.c:814:51: error: variable 'bucket_size' is uninitialized when used here [-Werror,-Wuninitialized]
+    814 |         trace_evacuate_bucket(c, &bucket, dirty_sectors, bucket_size, fragmentation, ret);
+        |                                                          ^~~~~~~~~~~
+  fs/bcachefs/move.c:677:37: note: initialize the variable 'bucket_size' to silence this warning
+    677 |         unsigned dirty_sectors, bucket_size;
+        |                                            ^
+        |                                             = 0
+  fs/bcachefs/move.c:814:64: error: variable 'fragmentation' is uninitialized when used here [-Werror,-Wuninitialized]
+    814 |         trace_evacuate_bucket(c, &bucket, dirty_sectors, bucket_size, fragmentation, ret);
+        |                                                                       ^~~~~~~~~~~~~
+  fs/bcachefs/move.c:678:19: note: initialize the variable 'fragmentation' to silence this warning
+    678 |         u64 fragmentation;
+        |                          ^
+        |                           = 0
+  3 errors generated.
 
-By the way, for the purposes of the Signed-off-by, is "Manas" a "known
-identity" (please see [1])?
+I see you were already sent a change [2] to fix this but the fix should
+go with the problematic change atomically. Build failures during the
+merge window suck because they potentially hide other issues. I have a
+further comment on that patch that I will send shortly.
 
-[1] https://docs.kernel.org/process/submitting-patches.html#sign-your-work-=
-the-developer-s-certificate-of-origin
+[1]: https://lore.kernel.org/202411171154.RatlgkMz-lkp@intel.com/
+[2]: https://lore.kernel.org/20241117234334.722730-4-pZ010001011111@proton.me/
 
 Cheers,
-Miguel
+Nathan
 
