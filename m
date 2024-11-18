@@ -1,68 +1,131 @@
-Return-Path: <linux-kernel+bounces-413467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 409319D196C
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 21:06:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC6309D1972
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 21:10:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E86791F224BC
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 20:06:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56E331F21733
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 20:10:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE0641E570E;
-	Mon, 18 Nov 2024 20:06:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B42B51E6311;
+	Mon, 18 Nov 2024 20:10:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p8xchKHW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RH18qS6k"
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DFC014D2B7;
-	Mon, 18 Nov 2024 20:06:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 413AE14D2B7;
+	Mon, 18 Nov 2024 20:10:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731960405; cv=none; b=rfxAnLM+u8VnptPTRX4pZ5DbxgZ0OuEpNqruIfZDzFZ3qhlPd8yjQrWI4RbwlVKk+aSZuDa6lnK9BsjM7GntuTLxRF7hQXWFe8Z8zC+ZJdtituNh8oRKh4xSBRhNx5doibEW0SLQUFSho/Cu9qtDOW1t9+v1Gd8S+lx49YffXEI=
+	t=1731960617; cv=none; b=n69576/wyQNwJmfrjqGTfp/VTb0YtEen+Y8NFtULBDrkT3m189qbAk1OHYwzU8sO8FDiX0uYSBZCrPOrruwLucgOkIepiVtDwvEY8VInCSKhSrXm1FmXjcnIc/ppFCwYbyE9N2mrQhoU+bBK+pdwUYnuEbOIUI6NATVP5dgV97o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731960405; c=relaxed/simple;
-	bh=BZLFINsMS8pPfEa2wS5Xd+1akLeYv9BQloWJ6y92+qs=;
+	s=arc-20240116; t=1731960617; c=relaxed/simple;
+	bh=bHBXpZXBAjoQnfNOBBIrqLz9ubBLFDnaeaQVAe+inHw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d5XqRF/WMIW7X3o7EDEaSoV23rngDKADIi6WOSIdBKPy/3KyUKe1CENZGxgYYyp0ZJXII4mbXPlCZT+KoohMSqLPipV1YSy+890I/rMnOcm3+0CK/epi6ZW6bmBxO38El8bHu8Jznd8l1dnpCZM+FZgbqbNGUfdaaUOb0HUtuVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p8xchKHW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E787C4CECC;
-	Mon, 18 Nov 2024 20:06:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731960404;
-	bh=BZLFINsMS8pPfEa2wS5Xd+1akLeYv9BQloWJ6y92+qs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=p8xchKHWTiB7DLpXpMZ/rokpIHqbjnduyfTKuCNXQEAf8AeSOLePjc+Vz+G2TUAL4
-	 bpBKb6XqAuQNCqFX71br72A+J0DklZhUq/degpMQJQGgb2vb8XA6KKCowg04xS8aP9
-	 9GTvY56pB99209v+dvdbbNjXAb79yBrula6Js7cz390kTxZLT+qxkPy1pYX0HGQq6c
-	 0QVFz2Ighd7iypAIMlF7glyswIWxYg32oKez0Dq9SDXou1+K7vLbJeBLnVe1HGSK2L
-	 kQArLC61iaOrvMcnTbSZeEkWLfCv6VWoAqoktmiFSkES/ka9EAobpzLoBIWgMGz1Qn
-	 quba2HIWN95Sw==
-Date: Mon, 18 Nov 2024 13:06:41 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Tiffany Lin <tiffany.lin@mediatek.com>,
-	Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
-	Yunfei Dong <yunfei.dong@mediatek.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Sebastian Fricke <sebastian.fricke@collabora.com>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, llvm@lists.linux.dev
-Subject: Re: [PATCH] media: mediatek: vcodec: mark
- vdec_vp9_slice_map_counts_eob_coef noinline
-Message-ID: <20241118200641.GA768549@thelio-3990X>
-References: <20241018151448.3694052-1-arnd@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=EumemAq0oJJkG+8cZQxjhtLYDUVT/awhjb25nRG4niSIA9Hbxkx42ww7Pl1hq4uA1aPvHkNHdWK9BCq+SHUv8pMdzOVv3M1JHfbu3fqImWDTxucwBnoj9dl5D1k97BaQKiDt/eNZ4ts+/Ly8Tu211JagCnFR18HU/uX0hQRFX+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RH18qS6k; arc=none smtp.client-ip=209.85.160.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-460af1a1154so23424991cf.0;
+        Mon, 18 Nov 2024 12:10:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731960614; x=1732565414; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aStUmJGWcEVU2U4ZG/1PNyEw0LtVjfqAOBMh9J6hhz0=;
+        b=RH18qS6kSFuz35EJaQJ+9C7W5XLaYJTyMCMQPQI2FRxygEBUQ+EtoWPbJWVfhNvk2C
+         NAi7oN/Ik7HPpU2QU/4n4KRMsWGnyGhEIxFvHUG5H7kTStTOr3Sf1J5UmaPVUgyQqmgA
+         m5nnghwmk9dQO3Iqt4lhmzrhPKrBzng/E9SL2j+IrYf1ktl9A5/YMbKnvc+I7L0Bvm8j
+         nSBNVA87Y7tEMptPSEKq4apAxQRQguOY7fEBrYbIBmCEgtihC7nrFH7qfMy4763c80ZF
+         jtlBHqqhI1le0gFYWJVTxkQBkGp+90jjUUc6YxSPj1WXDYyM4BI1sXBvLyi294XCjZeS
+         yovA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731960614; x=1732565414;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aStUmJGWcEVU2U4ZG/1PNyEw0LtVjfqAOBMh9J6hhz0=;
+        b=Lks+rHkcRZ/vEpcQRwXjKEXFY41+9ZDLmaOZnlf50zzlhZMD6MuW3jQQ6qEpsc5Aa5
+         0LBu023arvKK7uFHQQO8XP4tBu4MvTY3FRCHPsfYocgjtagWCb8iJi0IglVqvBFjjhPy
+         9OqegCAjP/uJO/VbDrhfNbAvXlwIRlKX1882B7BsWPo7Jm2yWzFlcr8irkPG1sDg48Y7
+         KurFedphuyPOWHhW8+vyLFFfiQRzFNBnQXhK7Hc6YZLf0XGLl1Fjc2L0vhOi3th1DAjg
+         u3Uzy+uNQI7h22oB9QqVCyoYqvjSDC9+KUeaYclMyv84p25ZbMiwhtJKGX5UEiM7RyT7
+         xRGA==
+X-Forwarded-Encrypted: i=1; AJvYcCUkHXEnGEsPFDopQbIkFm87gCA8/DBDV1hwABsqDk6JqH2v9VY5C/zx5I8Z0jTFOAXjTn2gtkzNh9DOBg==@vger.kernel.org, AJvYcCVOjHgNJYkBw7hf11Tb/pErgR5EVtnZHKGcEqYe9sd0kIBGN2RfvBca4+3wcaXzlBEaXGtTs/BRAliebLiQ@vger.kernel.org, AJvYcCWsTOZCWF8bq1X9UW4raqnfLvXwLW7m3K3bTTdqky20wCAzldWkOrx++4oIBSyFzHnRfdJ5Gd2Kn52NIQBIc6U=@vger.kernel.org, AJvYcCXsFil88bW+qd+lgQXZkfgFFuTv55z7U2rq2svRDwRfc1ogB9/5dF1G9MeTSbNGQuqsKDfq8Oyh@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYVtHOB5yKxTBgoKs3G+saCbKvmJvWcgkLMYJfuQZvCLhY52lA
+	QBUnIBz2hL7RSNNETT829XY14Ss6jxrw32k5paGz4Krz9hzG7zD/
+X-Google-Smtp-Source: AGHT+IGLeWkbonbMABjzKBD7EcO31d28MccNrsXLLqKWclvwDRhkuxdDuO9H19GAnDo5YYZ5W1ATtA==
+X-Received: by 2002:a05:622a:453:b0:461:2526:964 with SMTP id d75a77b69052e-46363edf815mr222751701cf.56.1731960612556;
+        Mon, 18 Nov 2024 12:10:12 -0800 (PST)
+Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-46392c1a24fsm2346661cf.56.2024.11.18.12.10.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Nov 2024 12:10:11 -0800 (PST)
+Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
+	by mailfauth.phl.internal (Postfix) with ESMTP id BF463120007A;
+	Mon, 18 Nov 2024 15:10:10 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-01.internal (MEProxy); Mon, 18 Nov 2024 15:10:10 -0500
+X-ME-Sender: <xms:Ip87ZwU7Uxvz8Pd3jjqDrnxYYq380LpsOuTbF0_MA4rrlz9KQgepDg>
+    <xme:Ip87Z0m7CHD5Is2jMFowjqnxRFd0cRfV_z08qpPpkXN7OdHoAiircY_mnG3d6ae1T
+    lC7X_8Y4cr1KA2IXw>
+X-ME-Received: <xmr:Ip87Z0asp3jut0ttwCWJj6VhPUwFn04PC-V3ine3kJjXAR0d8OYgt9RJbFZztA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrfedtgddufedvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvden
+    ucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrd
+    gtohhmqeenucggtffrrghtthgvrhhnpefftdeihfeigedtvdeuueffieetvedtgeejuefh
+    hffgudfgfeeggfeftdeigeehvdenucffohhmrghinhepghhithhhuhgsrdgtohhmnecuve
+    hluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhunhdo
+    mhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqddujeejke
+    ehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdrnhgr
+    mhgvpdhnsggprhgtphhtthhopedvgedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoh
+    epmhgrnhgrshdukedvgeegsehiihhithgurdgrtgdrihhnpdhrtghpthhtohepfhhujhhi
+    thgrrdhtohhmohhnohhrihesghhmrghilhdrtghomhdprhgtphhtthhopehtmhhgrhhosh
+    hssehumhhitghhrdgvughupdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhr
+    tghpthhtohephhhkrghllhifvghithdusehgmhgrihhlrdgtohhmpdhrtghpthhtoheplh
+    hinhhugiesrghrmhhlihhnuhigrdhorhhgrdhukhdprhgtphhtthhopegurghvvghmsegu
+    rghvvghmlhhofhhtrdhnvghtpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvg
+    drtghomhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:Ip87Z_Wpls1Rzk-f_Ar7IVRoiPYMK6wUdkjUrPrh7QsErTgMPUWNgA>
+    <xmx:Ip87Z6k_-EUZOWO_xVz4JtqnGga8n8fjPMHjRxqsHd3RlhVH0gLRjg>
+    <xmx:Ip87Z0eNl5Lxq_KXArmQ2OnOV3WVkiakJTpp22iNKNrNVTM_-Med6w>
+    <xmx:Ip87Z8GChtXsZtf5H0iduTWyoqDAqZl1mnW5wcF5elZcrPGf6_BFZA>
+    <xmx:Ip87ZwnfW7RpGQusSyIlKaYulzjZaeSwAxYI5eXYmY7a7XxIClmeS5lX>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 18 Nov 2024 15:10:10 -0500 (EST)
+Date: Mon, 18 Nov 2024 12:10:08 -0800
+From: Boqun Feng <boqun.feng@gmail.com>
+To: manas18244@iiitd.ac.in
+Cc: FUJITA Tomonori <fujita.tomonori@gmail.com>,
+	Trevor Gross <tmgross@umich.edu>, Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Anup Sharma <anupnewsmail@gmail.com>, netdev@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-block@vger.kernel.org
+Subject: Re: [PATCH v3 2/3] rust: uaccess: simplify Result<()> in
+ bytes_add_one return
+Message-ID: <ZzufIPTmbvLzSIb0@tardis.local>
+References: <20241118-simplify-result-v3-0-6b1566a77eab@iiitd.ac.in>
+ <20241118-simplify-result-v3-2-6b1566a77eab@iiitd.ac.in>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,54 +134,53 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241018151448.3694052-1-arnd@kernel.org>
+In-Reply-To: <20241118-simplify-result-v3-2-6b1566a77eab@iiitd.ac.in>
 
-On Fri, Oct 18, 2024 at 03:14:42PM +0000, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> With KASAN enabled, clang fails to optimize the inline version of
-> vdec_vp9_slice_map_counts_eob_coef() properly, leading to kilobytes
-> of temporary values spilled to the stack:
-> 
-> drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_vp9_req_lat_if.c:1526:12: error: stack frame size (2160) exceeds limit (2048) in 'vdec_vp9_slice_update_prob' [-Werror,-Wframe-larger-than]
-> 
-> This seems to affect all versions of clang including the latest (clang-20),
-> but the degree of stack overhead is different per release.
-> 
-> Marking the function as noinline_for_stack is harmless here and avoids
-> the problem completely.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Hi Manas,
 
-Unfortunately, I have seen no moment on my upstream report and this
-warning is breaking allmodconfig builds because of -Werror. Can this be
-applied as a workaround for now (preferrably with a Cc: stable on it)?
+On Mon, Nov 18, 2024 at 08:06:59PM +0530, Manas via B4 Relay wrote:
+> From: Manas <manas18244@iiitd.ac.in>
+> 
+> bytes_add_one returns `Result<()>`, a result over unit type. This can be
 
-Reviewed-by: Nathan Chancellor <nathan@kernel.org>
+This is a bit nitpicking from my side, but usually when referring to the
+name of a function, I would suggest adding the parentheses, i.e.
+"bytes_add_one()". In this way, it's more clear that it's a function
+(instead of a variable or something else).
+
+> simplified to `Result` as default type parameters are unit `()` and
+> `Error` types. Thus keep the usage of `Result` consistent throughout
+> codebase.
+> 
+> Suggested-by: Miguel Ojeda <ojeda@kernel.org>
+> Link: https://github.com/Rust-for-Linux/linux/issues/1128
+> Signed-off-by: Manas <manas18244@iiitd.ac.in>
+
+Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
+
+Regards,
+Boqun
 
 > ---
-> I have not come to a conclusion on how exactly clang fails to do this
-> right, but can provide the .config and/or preprocessed source files
-> and command line if we think this should be fixed in clang.
-> ---
->  .../mediatek/vcodec/decoder/vdec/vdec_vp9_req_lat_if.c         | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+>  rust/kernel/uaccess.rs | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_vp9_req_lat_if.c b/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_vp9_req_lat_if.c
-> index eea709d93820..47c302745c1d 100644
-> --- a/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_vp9_req_lat_if.c
-> +++ b/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_vp9_req_lat_if.c
-> @@ -1188,7 +1188,8 @@ static int vdec_vp9_slice_setup_lat(struct vdec_vp9_slice_instance *instance,
->  	return ret;
->  }
->  
-> -static
-> +/* clang stack usage explodes if this is inlined */
-> +static noinline_for_stack
->  void vdec_vp9_slice_map_counts_eob_coef(unsigned int i, unsigned int j, unsigned int k,
->  					struct vdec_vp9_slice_frame_counts *counts,
->  					struct v4l2_vp9_frame_symbol_counts *counts_helper)
+> diff --git a/rust/kernel/uaccess.rs b/rust/kernel/uaccess.rs
+> index 05b0b8d13b10da731af62be03e1c2c13ced3f706..7c21304344ccd943816e38119a5be2ccf8d8e154 100644
+> --- a/rust/kernel/uaccess.rs
+> +++ b/rust/kernel/uaccess.rs
+> @@ -49,7 +49,7 @@
+>  /// use kernel::error::Result;
+>  /// use kernel::uaccess::{UserPtr, UserSlice};
+>  ///
+> -/// fn bytes_add_one(uptr: UserPtr, len: usize) -> Result<()> {
+> +/// fn bytes_add_one(uptr: UserPtr, len: usize) -> Result {
+>  ///     let (read, mut write) = UserSlice::new(uptr, len).reader_writer();
+>  ///
+>  ///     let mut buf = KVec::new();
+> 
 > -- 
-> 2.39.5
+> 2.47.0
+> 
 > 
 
