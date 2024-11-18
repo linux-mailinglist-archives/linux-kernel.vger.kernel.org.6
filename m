@@ -1,46 +1,62 @@
-Return-Path: <linux-kernel+bounces-412472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D3349D0968
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 07:16:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78DC69D0973
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 07:18:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A23A1F2129B
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 06:16:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DDAF2811D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 06:18:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD5941494C2;
-	Mon, 18 Nov 2024 06:16:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16D631487D5;
+	Mon, 18 Nov 2024 06:18:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="gvwt19Ie"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="KbPe1YiT"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D56E680BFF;
-	Mon, 18 Nov 2024 06:16:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08FC31C6B8;
+	Mon, 18 Nov 2024 06:18:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731910568; cv=none; b=S1wpn/ETvpHFQM3J9zhpPGQMi7Z6zt86lJBTVgNSwCIR6ORpSspJ/0DWWDfX5PLsMwkrniZIo0MKCZKl1jBCPARhMNWHMiecKPi71CLxCEswtbtgOd4NMGTLsX749SgQ2AFi85yD79CSFLr3qI9/Kss/9f+3vzg5ky6EFygS7Ko=
+	t=1731910721; cv=none; b=GH3JXDNH8duaE7OuYhBDbhqzqitCs6ilBe9uxeBtXz6PUQJGq7UyUkQZe/d0KTtqRgIv4d2QbenPgxO8Ow+66XLplEwmMx3R7RKMh/ZaiU7xtOo7Xgm6ODtigm1CwVvzG2i2WhQ9lJ2c4oOnqorNS/07c6Z/mLgCujSq0IupKw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731910568; c=relaxed/simple;
-	bh=XQgvZFznm/KTm80suFUAjYCJpg8vLqeuB0js8ihQD+w=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=pyEG12Y2RVEcMOVmQqRNCvhwmFNtf/bBUYszZjZc/kMGQQJmTSrtlSmFyj2m/V0uBBiF13CIScVbmyC6Ais2ICLmBVXS26Y3GJjG3CLJaBKFhlIrg5yMCsTbPwxppI6rkXgVW76q/9uLokyYKhlbDoDWU4EPg4cvqXPDpl3TCO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=gvwt19Ie; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1731910561;
-	bh=XQgvZFznm/KTm80suFUAjYCJpg8vLqeuB0js8ihQD+w=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=gvwt19Iel5AVInp6oXH5A1Cbzqlqs/6PDKtFpkkHaawZQ76C7Nk+o4TWPz5JQziyf
-	 Rhwm1WDvNdDuCcJKBpowoDZm/apEj6WTenoiUIkU8y6nTqzYOykzZLkP4Rkhg2SCoa
-	 4Ko9Ie+xuSCCrc976ThnU50SfbjIBxEPbI9KbsrU=
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Mon, 18 Nov 2024 07:15:59 +0100
-Subject: [PATCH v3 2/2] hwmon: (core) Avoid ifdef CONFIG_THERMAL in C
- source file
+	s=arc-20240116; t=1731910721; c=relaxed/simple;
+	bh=Zm9tehsSs7BLjNfhUeRO8pHHmppIjYVtYgtpVwgrIP4=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=Wp7lW0IFLMM4pJYi8IsFYNqTjp+iUtUPDlVux70i1fjKrEJu+SqD8Ba27ceHHACdLKYFfAiE+T5WrnfbzGK+XzAiH/MwOxEklyAQkv7CRw3mZtC954wXN+u4SY6TVNtxqlCTGq2SSuhbRO9bnXhJn3+/Hd6Xfiy7+1Qu4z2YNo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=KbPe1YiT; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AI5SF22003568;
+	Mon, 18 Nov 2024 06:18:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=CpCdAQqS4w3V1Exr745zFN
+	JoIIAlh+Y7MPwMKhJZx18=; b=KbPe1YiTWzVvfqMQPhhVrLEgdhB3b3+QrBaUI3
+	9Uu3iTaACIm2p4oenpp6zfL0YSA3Fssodw9gn4DfVHyMMAYISp4nvJvJzAmjzg6j
+	gsLhbZxrDuZKdiF9Qxegbf8lpFPh6cOGgcQa/BPrJKN5X+cbPJU4J5TvvziTu4nd
+	/dQ7Jj8nS+0XVtAzO6e2SwZL2YmlLK7O7EUP/DmL+yqfS+K2Tqh7E10Ta2udNi5U
+	JsXt1HwZXpoRXcmep3yEDtXQsiX25aE+GxL8x+K5UuHKjZBg4p1TfBwtz91BUcBZ
+	szgmMGBJmQaYtSNB1WIVqajadCbbn25q4BMovMCQyB9DOUDA==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42xkv9ujqg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 18 Nov 2024 06:18:13 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AI6IBjN014966
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 18 Nov 2024 06:18:12 GMT
+Received: from yijiyang-gv.ap.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Sun, 17 Nov 2024 22:18:04 -0800
+From: Yijie Yang <quic_yijiyang@quicinc.com>
+Subject: [PATCH 0/3] Add standalone ethernet MAC entries for qcs615
+Date: Mon, 18 Nov 2024 14:16:49 +0800
+Message-ID: <20241118-schema-v1-0-11b7c1583c0c@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,97 +64,84 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20241118-hwmon-thermal-v3-2-9c17973e7342@weissschuh.net>
-References: <20241118-hwmon-thermal-v3-0-9c17973e7342@weissschuh.net>
-In-Reply-To: <20241118-hwmon-thermal-v3-0-9c17973e7342@weissschuh.net>
-To: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, 
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
- Lukasz Luba <lukasz.luba@arm.com>
-Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-pm@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANLbOmcC/1WOyw6CMBREf4V0bU1fyGPlfxgXpVykC4q22GAI/
+ +7lodHZTTJnZiYSwFsIpEwm4iHaYHuHhh8SYlrtbkBtjZ4IJhRH0WBa6DTNCp5mWcEEa1KC4bu
+ Hxo5r0eWKvtIBaOW1M+2Cb9Qe9PB44tCwpbeo6bvODmXiYBzoNsZysjS1Ngy9f60PI1+J/Yz4n
+ ImcMqpUfspSXeWFqs84YKwzR6xdS6L4BeUXFAhKcdKNVKnUuvkH53l+A/If+s8hAQAA
+X-Change-ID: 20241111-schema-7915779020f5
+To: Vinod Koul <vkoul@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+        "David
+ S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        "Jakub
+ Kicinski" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+        Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Bhupesh Sharma <bhupesh.sharma@linaro.org>,
+        "Alexandre
+ Torgue" <alexandre.torgue@foss.st.com>,
+        Giuseppe Cavallaro
+	<peppe.cavallaro@st.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>
+CC: <quic_yijiyang@quicinc.com>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski@linaro.org>,
+        <netdev@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <quic_tingweiz@quicinc.com>,
+        <quic_aiquny@quicinc.com>, <quic_tengfan@quicinc.com>,
+        <quic_jiegan@quicinc.com>, <quic_jingyw@quicinc.com>,
+        <quic_jsuraj@quicinc.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1731910561; l=2293;
- i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=XQgvZFznm/KTm80suFUAjYCJpg8vLqeuB0js8ihQD+w=;
- b=WEIs60uRkDtK8HMWMK5J2YA8reycwreYFxJTMjU5qXgPwOujG0KcQfIUaSPKnVj69BdehRPWa
- +e2AJ6tqDpRB4R6XrF9oM92haadQmnuBy957+ActuAPb7GiEM9lJWU4
-X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
- pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1731910683; l=824;
+ i=quic_yijiyang@quicinc.com; s=20240408; h=from:subject:message-id;
+ bh=Zm9tehsSs7BLjNfhUeRO8pHHmppIjYVtYgtpVwgrIP4=;
+ b=4WX46OMtEAR1pPzx/Y36ezeXe0o/tfSt3fX7rS2RoXdlQD+kvx0bcmg6YudNXySJ1bdQJKPnD
+ Oy9KbJMqD9TBJUqYOil9GB6sUDLz7YLJDmU3UPUxNMCj4WzU9wHLPco
+X-Developer-Key: i=quic_yijiyang@quicinc.com; a=ed25519;
+ pk=XvMv0rxjrXLYFdBXoFjTdOdAwDT5SPbQ5uAKGESDihk=
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: GfrKfr-53M1u1xTlWARFwCoWmY_EveUL
+X-Proofpoint-GUID: GfrKfr-53M1u1xTlWARFwCoWmY_EveUL
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ adultscore=0 mlxlogscore=635 priorityscore=1501 suspectscore=0
+ malwarescore=0 phishscore=0 impostorscore=0 mlxscore=0 bulkscore=0
+ clxscore=1011 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411180051
 
-Using an #ifdef in a C source files to have different definitions
-of the same symbol makes the code harder to read and understand.
-Furthermore it makes it harder to test compilation of the different
-branches.
+Add separate EMAC entries for qcs615 since its core version is 2.3.1,
+compared to sm8150's 2.1.2.
 
-Replace the ifdeffery with IS_ENABLED() which is just a normal
-conditional.
-The resulting binary is still the same as before as the compiler
-optimizes away all the unused code and definitions.
-
-Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Yijie Yang <quic_yijiyang@quicinc.com>
 ---
- drivers/hwmon/hwmon.c | 21 ++++++---------------
- 1 file changed, 6 insertions(+), 15 deletions(-)
+Yijie Yang (3):
+      dt-bindings: net: qcom,ethqos: revise description for qcs615
+      dt-bindings: net: snps,dwmac: add description for qcs615
+      net: stmmac: dwmac-qcom-ethqos: add support for EMAC on qcs615 platforms
 
-diff --git a/drivers/hwmon/hwmon.c b/drivers/hwmon/hwmon.c
-index 9c35c4d0369d7aad7ea61ccd25f4f63fc98b9e02..86fb674c85d3f54d475be014c3fd3dd74c815c57 100644
---- a/drivers/hwmon/hwmon.c
-+++ b/drivers/hwmon/hwmon.c
-@@ -147,11 +147,6 @@ static DEFINE_IDA(hwmon_ida);
- 
- /* Thermal zone handling */
- 
--/*
-- * The complex conditional is necessary to avoid a cyclic dependency
-- * between hwmon and thermal_sys modules.
-- */
--#ifdef CONFIG_THERMAL_OF
- static int hwmon_thermal_get_temp(struct thermal_zone_device *tz, int *temp)
- {
- 	struct hwmon_thermal_data *tdata = thermal_zone_device_priv(tz);
-@@ -257,6 +252,9 @@ static int hwmon_thermal_register_sensors(struct device *dev)
- 	void *drvdata = dev_get_drvdata(dev);
- 	int i;
- 
-+	if (!IS_ENABLED(CONFIG_THERMAL_OF))
-+		return 0;
-+
- 	for (i = 1; info[i]; i++) {
- 		int j;
- 
-@@ -285,6 +283,9 @@ static void hwmon_thermal_notify(struct device *dev, int index)
- 	struct hwmon_device *hwdev = to_hwmon_device(dev);
- 	struct hwmon_thermal_data *tzdata;
- 
-+	if (!IS_ENABLED(CONFIG_THERMAL_OF))
-+		return;
-+
- 	list_for_each_entry(tzdata, &hwdev->tzdata, node) {
- 		if (tzdata->index == index) {
- 			thermal_zone_device_update(tzdata->tzd,
-@@ -293,16 +294,6 @@ static void hwmon_thermal_notify(struct device *dev, int index)
- 	}
- }
- 
--#else
--static int hwmon_thermal_register_sensors(struct device *dev)
--{
--	return 0;
--}
--
--static void hwmon_thermal_notify(struct device *dev, int index) { }
--
--#endif /* IS_REACHABLE(CONFIG_THERMAL) && ... */
--
- static int hwmon_attr_base(enum hwmon_sensor_types type)
- {
- 	if (type == hwmon_in || type == hwmon_intrusion)
+ Documentation/devicetree/bindings/net/qcom,ethqos.yaml  |  5 +----
+ Documentation/devicetree/bindings/net/snps,dwmac.yaml   |  2 ++
+ drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c | 17 +++++++++++++++++
+ 3 files changed, 20 insertions(+), 4 deletions(-)
+---
+base-commit: 3664e6c4f4d07fa51834cd59d94b42b7f803e79b
+change-id: 20241111-schema-7915779020f5
 
+Best regards,
 -- 
-2.47.0
+Yijie Yang <quic_yijiyang@quicinc.com>
 
 
