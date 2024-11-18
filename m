@@ -1,108 +1,104 @@
-Return-Path: <linux-kernel+bounces-412696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 330CD9D0DEB
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:11:34 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E6009D0DCC
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:09:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E021B1F22575
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 10:11:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 07E32B27545
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 10:09:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A2591925B3;
-	Mon, 18 Nov 2024 10:10:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C04D192D9C;
+	Mon, 18 Nov 2024 10:09:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="XMNzrBc6"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d+F2JxXO"
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 865A3193432;
-	Mon, 18 Nov 2024 10:10:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AAF83D551;
+	Mon, 18 Nov 2024 10:09:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731924635; cv=none; b=YN4gzLW14JyadXo6WH3XCvu8Fp1ofYZVAHy79lonmfsxD1bQeSgR/fwTqpY70TuIMoxFzJNHaLpdr7taMxrwsmQHYoyQcDfYCculcH7bvK5u+6tJ+1H2IPZvbGqrV22sPRkE64yyxnWFvL/9dfPjio+ievLZ0Cj3yv8q2kpLQno=
+	t=1731924544; cv=none; b=DVAdD4uUZJ6p7TQxbo6nhj4s9+SpB88R5cfEkcrP/SUXTQnv5w0AMy5I0qAKXu6qIlmhdV7tE1uhfe95RbTpA8CJcr2X7kskz0Eb3No+1HdEOOcZxuSPt2mpUYlM9rwv7xEWlyvkHo2ye/Kyls/uAFQiNmNeTkGb9tK/5+L98GU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731924635; c=relaxed/simple;
-	bh=G8RQyr4OGxhyplbDi80Z0G0RmfHSLulpn812PX1WlAc=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=LBtMeE+bnl7TfHG+eC+OTh6sPIDNdA36kjoRnF9hiB2b1KfPs7+coeq/GY6eW/srHZP5fJz8InSbIoEN7hnkbKoMKNpN9m0jwWonllE45d/WFT47MmWOqQqgZDOEszQFJ4HKG4ZvGPt1BoifE/jAlwYFmLOUPBsSkExljiM0ubQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=XMNzrBc6; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1731924583; x=1732529383; i=markus.elfring@web.de;
-	bh=G8RQyr4OGxhyplbDi80Z0G0RmfHSLulpn812PX1WlAc=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=XMNzrBc69JsaS3A2HwQJqxGxEOQFRsXHa+IHJlbtOVdCP5laTW3vUUtMp+clDsC2
-	 6jkAZvE9jyot/l4SnJZKFICpk29Xpe+FKduA7KaL8HsITzuoT0/wH5nZ/hQKwMAxF
-	 XvTZLg6kav0pKK3X7/q7HMzpVSmwEbjCTlW4fe6kP3Xwkgldu27vleHCiScUO4ULN
-	 r53bR8sTueuQuZ9GwJFu6W4rD6karH3FskK+TauVaUVK5s11LLSJ5nOnDWtUiJ7zW
-	 HESXdcbeguxPJzRYR2NDVNHil7+WwIgnz1IHPMrC09+qVjA9YP+Of8gwiF9dOGBK+
-	 Ce8G8JotJ3izFEzeDA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.88.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MqqPT-1tYrFW25NR-00kmc9; Mon, 18
- Nov 2024 11:09:43 +0100
-Message-ID: <ba5e2b95-12d9-490b-b58d-131dedba6446@web.de>
-Date: Mon, 18 Nov 2024 11:08:47 +0100
+	s=arc-20240116; t=1731924544; c=relaxed/simple;
+	bh=uOa3gBdo4b6Q4eMJGRlTULLTC7vcRFD/paGu9QaEraI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B3nnfYem/2KxnDtTiHXMMgehBS2nUjA+1hNUBFXv6d8L/WIB8QMoHdeQ1DnHwsddRmSeer5uRhFrYUhrHr0nqHsproB+H5rTr+kTnOga0eQe2CmFo/GLgvpznXNzCW3AxFBgWqF0cf7rhyFwx8clu7Uqzgmf5Lgx60/friVTMKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d+F2JxXO; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-7f8095a200eso2751308a12.1;
+        Mon, 18 Nov 2024 02:09:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731924543; x=1732529343; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4Goi/04yT5xIN7OeRKBKYdqRHma0hsyOKgiMd+irV+s=;
+        b=d+F2JxXOVzzW2dipq/Ore0dUIzfhMaYwnJ2E6okGJjay3n4JcMwdT2aJStev7XH0H1
+         Lt+/EZmxqB+opdiMxY5ow1C+uKdg6sLfR6Nuw+IjLou4cOpmJEsn5eN4jeo9M5UiWbA0
+         2QeianR8HXPbnKXw8deJ54CumAg5weh2gGsXW3z+T5NlW4rclzcHLZRrtPlgfdjH7d94
+         FIGXxGPWCEtVvDhnvhZP23mIQpCszgQ6yDbNrX7qMRQ/V7EPrSxJ77LrcfXR32rOwYPK
+         K85rJZEii7AQcewioZvAERQC4h1lxXlx75/mTr4ZcMz4MAVxuJjfCPDTAlrRav2ywys1
+         iE/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731924543; x=1732529343;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4Goi/04yT5xIN7OeRKBKYdqRHma0hsyOKgiMd+irV+s=;
+        b=whZrgpgY9iiLEHUcMz60hxs39ZH5mN33YJ9kQfa2R4Cj2w4kvsO6xRWqGUf3zoRIdN
+         llR+CbrwShXVCYgyZH3sxY2o05SSUxBYHPa/6XTzHz3iXN7wXNNRTmYl8TDXBb5w9ZE6
+         XUBu4RYosrDED1sHbJbYgvJJq/JW+Al9KOdZNArUiMka/380MR8DXWRvKk+kVdDzOaBI
+         b42gca/AdHxz4Vubu38hgGVnVFZsIIkccaWD2Ok5KxvNYXrbkIuxDkya3uji5tAQgtJ5
+         PEWhl61PDR1jVPxv6ivJ7Woq3QlcZ3G3megNEMgFDx7PPcpHzRfGkInsTYuyBcWO5LGv
+         ioBg==
+X-Forwarded-Encrypted: i=1; AJvYcCUFYmznzBMLtSsqTff9g+WYNMMhpfLU28Lo0r/bcb/y39mPBzAdfXpilXFcaJLQNpEscDDSbEhDz7xI+TxyNn+T@vger.kernel.org, AJvYcCVqZurtBIYRb7Ss1XK6iy348ZSv3CEw0MD6HhU6N0RP8fFc6OS4cye9uOynXHnahh2YqZcIRm/1r3htUXQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDI/8rx2YtbAu6flQwJ90gaXLZQdNcaSpC7MQxu0pDRTO5uKMj
+	SUD3V/1OKhvH/a+DftDLBDjJoB8SNyiapM5SgpOJW6MCPxZ94+IpiwZdMPS3VYY=
+X-Google-Smtp-Source: AGHT+IGUsm9S0hEZ6xp7ESqNA2ThEEcxKekQUPQciNMBgUVwcC33mAfegzLfpusuFWYQvVKGptTr9A==
+X-Received: by 2002:a05:6a21:3282:b0:1d4:f7e9:172a with SMTP id adf61e73a8af0-1dc8069161bmr27734319637.23.1731924542658;
+        Mon, 18 Nov 2024 02:09:02 -0800 (PST)
+Received: from fedora ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7f8c1dc658csm5605511a12.69.2024.11.18.02.08.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Nov 2024 02:09:01 -0800 (PST)
+Date: Mon, 18 Nov 2024 10:08:55 +0000
+From: Hangbin Liu <liuhangbin@gmail.com>
+To: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc: netdev@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Florian Westphal <fw@strlen.de>, Phil Sutter <phil@nwl.cc>,
+	wireguard@lists.zx2c4.com, linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv2 net-next] selftests: wireguards: use nft by default
+Message-ID: <ZzsSN49rftIlBhtf@fedora>
+References: <20241111041902.25814-1-liuhangbin@gmail.com>
+ <ZzpNXM17NX3nVzMl@zx2c4.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Charles Han <hanchunchao@inspur.com>, linux-iio@vger.kernel.org,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Dan Carpenter <dan.carpenter@linaro.org>, Jonathan Cameron
- <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
- Mike Looijmans <mike.looijmans@topic.nl>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>, Alexander Viro <viro@zeniv.linux.org.uk>,
- Yu Jiaoliang <yujiaoliang@vivo.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20241118090208.14586-1-hanchunchao@inspur.com>
-Subject: Re: [PATCH] iio: adc: ti-ads1298: Add NULL check in ads1298_init()
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20241118090208.14586-1-hanchunchao@inspur.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:BHgIA96HuK3bkxuoMLZH5eiWj1cl6oyGDaHp6pWh8DKisYvisct
- pYUWOz2K8iJ6QGH+5gRmUHshmIDB+H66Eg1PiWkrRckV3ftiBo4Ms/AdwVPUk00CpcJ4UlF
- eNAciiuYWH7VLbYB/rhPYRmDdM3BVMaIgl5SgNS0iRKYf4ExtOhz6JmxulxfZ5yjDsPDRPe
- 6sbREXE3Z5D2VSteSpdjA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:W0Z3npiPk9g=;Wv4s8NTLtXqx+SdhbG7dAFW84Cl
- qx91KCXc8aLcQ8QXXcQ98IK/3iQ/2NMYvEv06J0s864hlX1cCpgrlV3ZzvwveM8KyfGulqsdP
- NsjI+23Q6hg57pDVLtIgLzW31kCR4FZLpJ04J0eHrnbfZT3qZNB/RPcTW2ziz2g2n/N+szOR+
- RKe3yeJrhlOhp9q7AeB4qFg7VS0BmNsHkD+Oplz8Po+fFyDIVYQ97g/VRP3lU/tHW1rYEaGMu
- s1aMCH7d9MdwXtleD7hJTWmQKkyuoTUF5ditde8YccHwREeqKdSCvtzFlx99/m4B71WsVPzte
- YegjUYkxkQA1DDPVrLyAZ4GQ8hJ6qqgP8cSFHwOxbtC2pY7Nx7fKH8FSIRG2vPd96640yD1Tn
- ItY3aZmt+96WbppeTUoSO4r3TJARAucxOu2kEZ4ZyOv3EVCq/bKxNOpYPINfzY44Z2ZiLhgsm
- vO2LNvdMD+LFhYKdl4a3Qay/nh7S1S/DvMpd3r03Hr2yqtJVNc4c33LKN7h7YPRc9fpl8u9/E
- FacfX1PNnSLJj8CSWpVhiTa60d2hIwE+TgL4j31DGKiFot44FWwRXwS2QkzRE010O1IsUGIe3
- s8ceS18X7EHqWeRNDneqyg0luOXY8U8fUjwCkWnIrepBi9/rwRIpCWe/YZNeQ+depIOBv5WS4
- akmCZs2sbRsOzsd00dUnFcPOuEvXWDPIBfOGBgoVfRKNF4HEs8vwx/++eK8Xw/yrQlLkkuzED
- dUSDDZZvJGd0qITlbJih5imYY/uhxQz5DPD23o74AV6P5dlR9DEpxjjLkYIMGhePHKxJyV6wL
- gF3U8PSm+0afPhuAFtX43Yctz2BvGPP3Y96cDbQqyhew3T5owEU082xCU9E0U33QAPas9uVdP
- N75i3zXopUAza11w1aaZTUGIae3rg+rej5i16U3ZWnuN6eTjN5PAYBaV/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZzpNXM17NX3nVzMl@zx2c4.com>
 
-> devm_kasprintf() can return a NULL pointer on failure,but this
-> returned value in ads1298_init() is not checked.
-> Add NULL check in ads1298_init(), to handle kernel NULL
-> pointer dereference error.
+On Sun, Nov 17, 2024 at 09:09:00PM +0100, Jason A. Donenfeld wrote:
+> On Mon, Nov 11, 2024 at 04:19:02AM +0000, Hangbin Liu wrote:
+> > Use nft by default if it's supported, as nft is the replacement for iptables,
+> > which is used by default in some releases. Additionally, iptables is dropped
+> > in some releases.
+>  
+> Rather than having this optionality, I'd rather just do everything in
+> one way or the other. So if you're adamant that we need to use nft, just
+> convert the whole thing. And then subsequently, make sure that the qemu
+> test harness supports it. That should probably be a series.
 
-Another wording suggestion:
-A devm_kasprintf() call can return a null pointer on failure.
-But such a return value was not checked in this function implementation.
-Thus add a corresponding check so that a null pointer dereference
-will be avoided.
+Thanks, I will do an update for the qemu test.
 
-
-Regards,
-Markus
+Hangbin
 
