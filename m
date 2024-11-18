@@ -1,87 +1,89 @@
-Return-Path: <linux-kernel+bounces-413221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 257629D153E
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 17:22:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 296D79D1547
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 17:24:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E02B22834ED
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 16:22:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E34BB2836CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 16:24:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 348231BD9E0;
-	Mon, 18 Nov 2024 16:22:07 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30A3022F19;
+	Mon, 18 Nov 2024 16:24:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CdeTmHEO"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6AAE22F19
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 16:22:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 022F71B219F
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 16:24:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731946926; cv=none; b=JrEPZxiQpQ1bwWIjRRABFAdIFBXjUT/CcXOs5Mj/0WkML8n69cE48+UCzJZNcQ5mXsGxZx96mNsJOHyEe741mwFStWz6zqaztVwwaPH0vXnkXGG1szGg5H84RUGCbNcvQaauujtNWVuudrpPiL4pYwb4oLhQqiCTCx02M+DU+qc=
+	t=1731947074; cv=none; b=BRtdJwifdwe7q21dOsX+A+iGQimqLQirUXQ15yh72wAQlRPV08l0EW8f+KrYY1nTqp+WWzbF4HpHFMpjr+qAyQt/YaJ8UXHYg0wxDrgLtNUGE7PFlVNaz/trVTntzqfvUhNjM7CnPV+hBWIBMzMvkHmRUSjT1Z9Ooizpj4KxY88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731946926; c=relaxed/simple;
-	bh=HBqa+dyHp+JWQfTMxG51GNFgsk0+x+FM1VXMuvUv34Y=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=CzehmI5BkhTZDSkSgjPBYK5+8ec3WgSZMPT7K+du/vOW9f8tX+6kPNwRL7YbLb1+CtnhAiCYyoVPJ0Ydv8Elcz9fmc8nxrlPlcAEXoZC4EB5aNcpmNbxuab9+DAwAhsEbFlpAGn6huvFR7GleruOXwjtal2xX3iy3od6K1tjDvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a743d76ed9so33659905ab.0
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 08:22:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731946924; x=1732551724;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VO6x8yo+/9leiWoU/onzCw+ANv08Uw3GoKpPFkHalfs=;
-        b=Fy/psoTf1fgYwJgU1A/mFfDd15yisQiLM9RbP+buJKs753vyxiEF3mz4gtJGJ2+hh6
-         0iB37tuqT4fuuOi+vN5V2mr4jnNI1cpQypOp1WksImlySZpIeysobwBFwypGTafJvWM7
-         3lJ1ctHDykwuTUqVCV5BGz+KH1NE5h4riTb8ebjAbT226mvlb67ssGJLPZ3FTg2PstNI
-         gIHsVcSdwcexQWODS8raMvaHM0yc0CbQcB8CkklIeK3UGuPCbA2h9LzN4s/QyNYbuvID
-         4omXdf30/bgQWa1YADrE6818AqZEAAMWxowz4kACupAHSm/0hs+gH2HOKeu00Py5ZXCb
-         C1zQ==
-X-Gm-Message-State: AOJu0YyEm5kv0R9uxp2o3yHQpWNHDQTTRmyHinbCjBCZ+8xK2a9NZ6tI
-	pfnjyN0Gzs9hlV04ot2sXmybByVUKhWGEcv5FDe7/RA9Zg+VLtIMh5+9xV1qM96sWuEVuBg8HM0
-	1jacQHR+k7XX33t3RTAPxbQoNer4Oq5KfCgsNYFK7VKmtLug2sfNdTeY=
-X-Google-Smtp-Source: AGHT+IHuvFppAG744L6xVKHmyokyL74qoLAJKdT84tSyW4IkDxEf5RFDGArQRaOvoKR82bmXLEr3i0kgGcvYFaV5LpQ0XzH1UWGU
+	s=arc-20240116; t=1731947074; c=relaxed/simple;
+	bh=U/kZg6wRRAGFaUyq3MwugoqyLVhimU1xugPQde6x/+U=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=MVechoO2SaAQFTSFByItugwzpVcOtjBFP8bqqkSrA7dfj9fwe1icaEtQKQvkPRWRbVYVGzvga1aawrjd9YLFZ4IbNMjpG7YG8hUMNNzHnVdOsf0dTbPkuWh6mRcxvVTED4AH8LPdUMaOoj4UgJ+WZRcrGrsNM0fZsfJXHiebTwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CdeTmHEO; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731947071;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=U/kZg6wRRAGFaUyq3MwugoqyLVhimU1xugPQde6x/+U=;
+	b=CdeTmHEOhYhe4dfD3DDzIyAEFoTaBr16T44XFusIerqNe112YbUP4upCcAUhoZvgb4mPmg
+	dUStwlupEKypTR+Ch8flV5fjyYu66uTZ1MwEHx9wTU8tCXt4Z+tCZVHkTp/WlPcGQeFi+p
+	m5/h7cjyCVDmAwGVs+uEAVGvQNVJ+cM=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-523-dhQ99ud4NJO1pQxSCMBWGQ-1; Mon,
+ 18 Nov 2024 11:24:21 -0500
+X-MC-Unique: dhQ99ud4NJO1pQxSCMBWGQ-1
+X-Mimecast-MFC-AGG-ID: dhQ99ud4NJO1pQxSCMBWGQ
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7E88D18F661D;
+	Mon, 18 Nov 2024 16:23:58 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.207])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B65711955F43;
+	Mon, 18 Nov 2024 16:23:54 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <6739490e.050a0220.87769.0000.GAE@google.com>
+References: <6739490e.050a0220.87769.0000.GAE@google.com>
+To: syzbot <syzbot+885c03ad650731743489@syzkaller.appspotmail.com>
+Cc: dhowells@redhat.com, akpm@linux-foundation.org,
+    asmadeus@codewreck.org, ericvh@kernel.org,
+    linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+    linux_oss@crudebyte.com, lucho@ionkov.net,
+    syzkaller-bugs@googlegroups.com, v9fs@lists.linux.dev
+Subject: Re: [syzbot] [mm?] [v9fs?] BUG: stack guard page was hit in sys_open
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:88:b0:3a7:1e66:ea32 with SMTP id
- e9e14a558f8ab-3a74700ddc0mr144020855ab.10.1731946923997; Mon, 18 Nov 2024
- 08:22:03 -0800 (PST)
-Date: Mon, 18 Nov 2024 08:22:03 -0800
-In-Reply-To: <CAHiZj8g8JxdvFOTfkyi6nzHVfirswrdVkrmOPOCFPpqSf_rRqg@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <673b69ab.050a0220.87769.0047.GAE@google.com>
-Subject: Re: [syzbot] [acpi?] [nvdimm?] KASAN: vmalloc-out-of-bounds Read in
- acpi_nfit_ctl (2)
-From: syzbot <syzbot+7534f060ebda6b8b51b3@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, surajsonawane0215@gmail.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <941061.1731947033.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 18 Nov 2024 16:23:53 +0000
+Message-ID: <941062.1731947033@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-Hello,
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs=
+.git netfs-writeback
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
-
-Reported-by: syzbot+7534f060ebda6b8b51b3@syzkaller.appspotmail.com
-Tested-by: syzbot+7534f060ebda6b8b51b3@syzkaller.appspotmail.com
-
-Tested on:
-
-commit:         adc21867 Linux 6.12
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14664930580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e31661728c1a4027
-dashboard link: https://syzkaller.appspot.com/bug?extid=7534f060ebda6b8b51b3
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=10e16ac0580000
-
-Note: testing is done by a robot and is best-effort only.
 
