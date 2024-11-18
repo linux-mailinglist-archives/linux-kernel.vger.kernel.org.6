@@ -1,168 +1,86 @@
-Return-Path: <linux-kernel+bounces-412336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BF799D07C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 03:10:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B1CE69D07CD
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 03:11:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CEECF281F4C
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 02:10:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7506B2814E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 02:11:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52AA149638;
-	Mon, 18 Nov 2024 02:10:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="hGDnlNRQ"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E72F6C8CE;
+	Mon, 18 Nov 2024 02:11:05 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 528AB286A9
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 02:10:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23398E55B
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 02:11:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731895823; cv=none; b=QkXaHhgPg/isyLHhlSSPwtPfV9nae9xpcib0L8KBU/CqXP0xUI6NBjeenLDXA/t46zAbeqHKV61uzTdA03ugPt+Nq5dhjkYiTDXsiQ+JMDosIRefaWYA29+amAGcr2Nh1z7Rye0nhlajobB4uEs0B7KYkhpWqwwR1Kb4+oPdUaQ=
+	t=1731895865; cv=none; b=HqyN03ui+ktXihl8X2PDhvYBU33DnZwf9PlvUji+akGSAWcaMycaUbg4SUjwshb7J5gjCg7UOdJ4jS1Ol7S7CB7GqOFfypM8D+tkhZudks8Zs7gsb/9Yl4JaNU5rRL0BaJeaXhAgqFGK65dkP8c212xYw+8QUg2/5b/QSmzEB0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731895823; c=relaxed/simple;
-	bh=2+nwIlSYQpG0rH92v0TPYYdisZdIhViNljLwg0Z/2eA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=rO2YqUPgBnkQ+RqbA1Oce32dijnGWtuZb2Vrb646G2NMDp+XViYLUyoVI+a53q4bYHJ4q/i0AtQoPHgzVykooblqVbxwk4tmUOogN0AfSkSq5lbINpUHOY2lZTRvg3JGxt6vnQGU/D0gOiixUF6j8X2jxHrX1Q2lmV+XSobSzL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=hGDnlNRQ; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20241118021013epoutp039e7ab2612037f8284e2c7ebf3e9fd2c6~I7hEJ9NJY3195931959epoutp03g
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 02:10:13 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20241118021013epoutp039e7ab2612037f8284e2c7ebf3e9fd2c6~I7hEJ9NJY3195931959epoutp03g
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1731895813;
-	bh=mINgoMpMMdlYTYCpgiwdm0Dg+SMqFB6I05t2LeYQtTo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=hGDnlNRQMqH2LGh2L0KSXEW7xtNw6mHapBpCYMII42Op8YC1lekPtwGud8jGoJE83
-	 Ry43GvVcrXObkbrpYUoqd3Hm7H/LkGnYyFag5V7Kx/0yBRc0SU2fkqoRlSUdGIlpa+
-	 oTVS1+rcKIr2NUK1BlRnj91PjE2c98X/vsjzUCO8=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-	epcas2p1.samsung.com (KnoxPortal) with ESMTP id
-	20241118021012epcas2p18989fe00936ba6e6b57931ed4eda4d5e~I7hDcGuyh2660526605epcas2p1N;
-	Mon, 18 Nov 2024 02:10:12 +0000 (GMT)
-Received: from epsmgec2p1.samsung.com (unknown [182.195.36.97]) by
-	epsnrtp3.localdomain (Postfix) with ESMTP id 4XsB0g72gMz4x9QC; Mon, 18 Nov
-	2024 02:10:11 +0000 (GMT)
-Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
-	epsmgec2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	D0.85.08559.302AA376; Mon, 18 Nov 2024 11:10:11 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
-	20241118021011epcas2p3db133a3cffb13fba8ce3c973d8ffff65~I7hCIlWaS0163701637epcas2p31;
-	Mon, 18 Nov 2024 02:10:11 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20241118021011epsmtrp255bbed424660a744d2323bf7c2d215b0~I7hCHjDCj2522625226epsmtrp2U;
-	Mon, 18 Nov 2024 02:10:11 +0000 (GMT)
-X-AuditID: b6c32a43-761ff7000000216f-1e-673aa2032ef7
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	68.6C.18937.302AA376; Mon, 18 Nov 2024 11:10:11 +0900 (KST)
-Received: from asswp146.dsn.sec.samsung.com (unknown [10.229.19.146]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20241118021011epsmtip13ab02fa5782ed0ed6ef761f555abed7e~I7hB6jKJj3234932349epsmtip1X;
-	Mon, 18 Nov 2024 02:10:11 +0000 (GMT)
-From: Sowon Na <sowon.na@samsung.com>
-To: robh@kernel.org, krzk@kernel.org, conor+dt@kernel.org, vkoul@kernel.org,
-	alim.akhtar@samsung.com, kishon@kernel.org
-Cc: krzk+dt@kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	sowon.na@samsung.com
-Subject: [PATCH v3 3/3] arm64: dts: exynosautov920: add ufs phy for
- ExynosAutov920 SoC
-Date: Mon, 18 Nov 2024 11:10:06 +0900
-Message-ID: <20241118021009.2858849-4-sowon.na@samsung.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241118021009.2858849-1-sowon.na@samsung.com>
+	s=arc-20240116; t=1731895865; c=relaxed/simple;
+	bh=QK7sIY8M+IrW+RZvWRlrIl2NsnTi+YW+tfhTh0csUes=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=L3HncJMBbxHGbGEWFvrN7Uzk+BqDLqZiAhYhs5pifKKkzODiHhYH5lp81d7x4o96o9GWsUgD5so4Bscx3EzHdO2rYAwuo+IQKqnJoSsc4CsgRcVDDQutV1m31NnLxRoLmEMBuqYWdzmSz42Q2bJtZM+QVEUh707u1T7qcLPpBKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a5b2ec15a9so14553745ab.3
+        for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 18:11:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731895863; x=1732500663;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6hJIx6WfDmpxQ/UBdnh4/0BL3aYTumuuJumPpL2ygUk=;
+        b=J4qLJBCZRijfaVGytdA4U6SFZG5r56b9zrCYprMtkacCflK1s7Q6AP42461mfpu6pu
+         Ja5EALE9Npr4waNe0M0Ffn3PfU5wW3DtC5QYwXPY2hk8Xg0Z+stmVbxCV+ydx2oasv4Q
+         uQR12uYVIO7yBXkCrU+2HtV26oVinkizLEZlidlCn7oOKw+FrMIQKFxe1R9Z3tMZnmNG
+         tbG/6WRGYVbtBjUwQKtUo0d81yPSCBQJ1sBpzXT+tSCSeCw1vliNlXe6r/YebYhb0ral
+         EJ3IVX6gN5eUSHa+6Ck8OrySF1HRH/ogjsdF8QML5m9tZTatspi/qlpvtZPYyPQd1X4w
+         xVoQ==
+X-Gm-Message-State: AOJu0YyJxlf0CTDMoJCuDTxofNRVFkoYuj3fxkYNPiAjc1XXs7QBoNHP
+	VXwVKmgfojmbM5li0hX/JhI4lMUlRNh+Lq7Amk8JKmej/cyl40h6msnpkQC5wcm6JcZfV/6YueS
+	H8/j4vFHjPoAb1txE3j5egiebRek3Kt6MH6qJ86Sd7vpC1wKFnWIsZ5g=
+X-Google-Smtp-Source: AGHT+IEjp5C8xmbQeGhesA4I5ppfhkMssRjnIfI9WGZK8LiKEBJb2fZlLZRwRskyzvtqk9GJ7HrJglIGTdt7nE6nQdACr/3oHsyh
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprEJsWRmVeSWpSXmKPExsWy7bCmqS7zIqt0g2fHjC0ezNvGZrFm7zkm
-	i/lHzrFaHG39z2zxctY9Novz5zewW1zeNYfNYsb5fUwW//fsYLf4/fMQk8XOOyeYHbg9Nq3q
-	ZPPo27KK0ePzJrkA5qhsm4zUxJTUIoXUvOT8lMy8dFsl7+B453hTMwNDXUNLC3MlhbzE3FRb
-	JRefAF23zBygg5QUyhJzSoFCAYnFxUr6djZF+aUlqQoZ+cUltkqpBSk5BeYFesWJucWleel6
-	eaklVoYGBkamQIUJ2RmPl59gLHjLUfFhxRGWBsZl7F2MnBwSAiYSnY1nmEFsIYEdjBLLz7J2
-	MXIB2Z8YJW7PP8oO55ya/JoFpmPz1YlsEImdjBKzTn5khWj/xSixemJKFyMHB5uAqsS1hioQ
-	U0SgUmLuMmeQcmaBXkaJ/jtrweYIC0RIPG9dA3YFC1D5qZ1/GEHqeQWsJfbNj4NYJS9xcc1z
-	NhCbU8BGYvbmVWDlvAKCEidnPgEbwwxU07x1NjPIfAmBr+wSd8/8ZIZodpF4sPkTI4QtLPHq
-	+Baoj6UkPr/bywZh50usf3gXyq6QuHvoP9SP9hKLzvxkB7mHWUBTYv0ufRBTQkBZ4sgtqLV8
-	Eh2H/7JDhHklOtqEIBqVJDrOz2GCsCUkVr2YDDXcQ+Ls1fMskEDrZ5Q42NvMOoFRYRaSb2Yh
-	+WYWwuIFjMyrGMVSC4pz01OTjQoM4bGbnJ+7iRGcOLWcdzBemf9P7xAjEwfjIUYJDmYlEd5L
-	rubpQrwpiZVVqUX58UWlOanFhxhNgUE9kVlKNDkfmLrzSuINTSwNTMzMDM2NTA3MlcR577XO
-	TRESSE8sSc1OTS1ILYLpY+LglGpgSu4PC/TQUzNTepVlscN/63rha01FVUVlYicZ3hXclt+c
-	xZfKaLfxt2GHgYladZ2p1uHZb6YwLot4evfF0VsRLErcTxj+zv3oG6P+w2vOMqmzXG3xarvu
-	ssVe2By2WfqVi6RN3d0Ve9OVuEtZFwWGGWzd9beQpVp//q3Knf8f1JrvD9jW9/PW+r/KGy8+
-	E5CrMqqU+3sh7n98R/vxfZcuec2N3jil+MLn2HPzl/1P3/878ee2zqcCL+9+4vv6aZtK8Np/
-	PFICFrZ6CzK6XA8/n5Z6QDAhJbdryg032cDvas3zqzbNtNgUKcRolfT4agfPd2tNhj/P9U8X
-	dH36myQY/eCPvdGjkPkGP2XWmej+VGIpzkg01GIuKk4EAAd+EEglBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrNLMWRmVeSWpSXmKPExsWy7bCSnC7zIqt0g3MLpCwezNvGZrFm7zkm
-	i/lHzrFaHG39z2zxctY9Novz5zewW1zeNYfNYsb5fUwW//fsYLf4/fMQk8XOOyeYHbg9Nq3q
-	ZPPo27KK0ePzJrkA5igum5TUnMyy1CJ9uwSujMfLTzAWvOWo+LDiCEsD4zL2LkZODgkBE4nN
-	VyeydTFycQgJbGeUuH7/GBNEQkLi25s9ULawxP2WI6wgtpDAD0aJFWdkuxg5ONgEVCWuNVSB
-	9IoINDJKPP8wmRnEYRaYyChxft4RsA3CAmESbbsfsYHYLEANp3b+YQRp5hWwltg3Pw5ivrzE
-	xTXPwUo4BWwkZm9exQ5SIgRU0nkgHCTMKyAocXLmExYQmxmovHnrbOYJjAKzkKRmIUktYGRa
-	xSiaWlCcm56bXGCoV5yYW1yal66XnJ+7iREc3lpBOxiXrf+rd4iRiYPxEKMEB7OSCO8lV/N0
-	Id6UxMqq1KL8+KLSnNTiQ4zSHCxK4rzKOZ0pQgLpiSWp2ampBalFMFkmDk6pBqbKrqP5l5by
-	Z74sfH2tODf70FPuzKOzA4XdVuxZu2/+ajOR+jrB63lT3LKsToVGhFwqKj+e4pPke+rpKpMc
-	k3qVVa6np/R4bHSO081b3iBi9HNJbJm7t+3kiw/XZgvJ3r5lf7BZ/OquZ3fOrQu85Ldi+kpR
-	mam5/eyOO/eeur7bduEZreA16172K1rZhxzgF7aybld4rTKLQdY20a1pl3z4VrPm+IOa2kvL
-	VzZnLvwyyTpnv/SiL7b3hTkrJk58fGSjmG3aVldha82jm09WSJ9i6dQo3XI8x3dqzgSZHkf9
-	7NDrx3dV5K5Q+9L1XCD7oGF7/u1lNfsYtfMVgpqlXO4d2/pvj0VYmtw3pzPv5JRYijMSDbWY
-	i4oTATaxYkXeAgAA
-X-CMS-MailID: 20241118021011epcas2p3db133a3cffb13fba8ce3c973d8ffff65
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20241118021011epcas2p3db133a3cffb13fba8ce3c973d8ffff65
-References: <20241118021009.2858849-1-sowon.na@samsung.com>
-	<CGME20241118021011epcas2p3db133a3cffb13fba8ce3c973d8ffff65@epcas2p3.samsung.com>
+X-Received: by 2002:a05:6e02:1a89:b0:3a5:e532:799d with SMTP id
+ e9e14a558f8ab-3a74800f3efmr120124935ab.3.1731895863266; Sun, 17 Nov 2024
+ 18:11:03 -0800 (PST)
+Date: Sun, 17 Nov 2024 18:11:03 -0800
+In-Reply-To: <20241118015156.3320638-1-lizhi.xu@windriver.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <673aa237.050a0220.87769.001b.GAE@google.com>
+Subject: Re: [syzbot] [mm?] [v9fs?] BUG: stack guard page was hit in sys_open
+From: syzbot <syzbot+885c03ad650731743489@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, lizhi.xu@windriver.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Add UFS Phy for ExynosAutov920
+Hello,
 
-Like ExynosAutov9, this also uses fixed-rate clock nodes until clock driver
-has been supported. The clock nodes are initialized on bootloader stage
-thus we don't need to control them so far.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Signed-off-by: Sowon Na <sowon.na@samsung.com>
----
- arch/arm64/boot/dts/exynos/exynosautov920.dtsi | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+Reported-by: syzbot+885c03ad650731743489@syzkaller.appspotmail.com
+Tested-by: syzbot+885c03ad650731743489@syzkaller.appspotmail.com
 
-diff --git a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-index c759134c909e..505ba04722de 100644
---- a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-@@ -361,6 +361,17 @@ pinctrl_aud: pinctrl@1a460000 {
- 			compatible = "samsung,exynosautov920-pinctrl";
- 			reg = <0x1a460000 0x10000>;
- 		};
-+
-+		ufs_0_phy: phy@16e04000 {
-+			compatible = "samsung,exynosautov920-ufs-phy";
-+			reg = <0x16e04000 0x4000>;
-+			reg-names = "phy-pma";
-+			clocks = <&xtcxo>;
-+			clock-names = "ref_clk";
-+			samsung,pmu-syscon = <&pmu_system_controller>;
-+			#phy-cells = <0>;
-+			status = "disabled";
-+		};
- 	};
- 
- 	timer {
--- 
-2.45.2
+Tested on:
 
+commit:         adc21867 Linux 6.12
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=15cf32e8580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=55f8591b98dd132
+dashboard link: https://syzkaller.appspot.com/bug?extid=885c03ad650731743489
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=15ae3b5f980000
+
+Note: testing is done by a robot and is best-effort only.
 
