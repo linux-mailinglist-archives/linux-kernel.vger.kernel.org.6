@@ -1,387 +1,193 @@
-Return-Path: <linux-kernel+bounces-412966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F4D49D11D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 14:26:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5531F9D11D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 14:27:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 267E71F21FBC
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 13:26:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17217283CBC
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 13:27:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AFDD19C54B;
-	Mon, 18 Nov 2024 13:26:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5437919D89D;
+	Mon, 18 Nov 2024 13:27:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YqxrlWMZ"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="TjnKsS73"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B81471991C6
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 13:26:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D92921990C7;
+	Mon, 18 Nov 2024 13:27:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731936392; cv=none; b=VG1uk/jM6SIbqwT1hJy8FaLMekdfcYzT6fWwnQIK+zKgstGCnQ8PRopeJcc6EJNWQ9QtDFqZ/TSWsvQ73cJPT1fd1J0EsYvtBHyn1BcbY+8Y1Rd0B0kz2XDUe2LUoohTDgOt5OMnRPJFKLNOpjCyUAsWHeRIzFTjs6Pglo69p6k=
+	t=1731936448; cv=none; b=LIngyT0waQWCJN4paJgEOKl3/sTkvu+atoxyNGlWUM4JL/WHR0jVMjRA15TQNG8jNJy7AD02+9i2arQPlowSDHQAVptKWUlvhd9fe9KHCVwOF10ko4mgSKuPGKTHk5GS0rH3pHlL2soF/SZVJZbxyRbHIvQOZAqKERdwweVInOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731936392; c=relaxed/simple;
-	bh=2MVTUfen1RWZT5hJmZCePwCRZMgcIj+pQYCwhfY7tW8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IBZ7PXWNQMfFSVyvFkfm/LrCBPH5x1fCi1S4GtYNh3Im5d3vMS6UZrOOG1rYE/p9MoWV4VFtknEYPI294H4YQ6aerVc3RLldnSOYaEJoYQX7L9BGkSni1XN0tnuwIR46Lc5xmESRoZkHoIqog5xCwOhTptqNqaYzzlw6h/INxw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YqxrlWMZ; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-539f76a6f0dso3022229e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 05:26:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731936387; x=1732541187; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=NJmngtdVFPw1k6bMA8TBSEtjQSwpb2SPnmx7DsuiM3w=;
-        b=YqxrlWMZ9BVb6uZNMG/K0U1VFnIn8XGwrz6/NwBMlxP0PYvn09dlqYb2c9tRHAGarF
-         /oSd8cDqaliKKapNnpXFC7UM+eKijM8xRkSAjbp2ebwowKh4t2sFi4lLPeHcZXKp73KE
-         YgQsMOkx06Z16n/eHJ/hmbXQKO9ZiLa3SzFaoHz2E9s8YApt+hjqMlKLBE4mLpejXASm
-         VAbEN24UC9fdk0BBMIlpYpbP9zJUBVck0+xi9p2pBYv3dHwf9UD+DlTnSrZ/1DTBeG77
-         tu/7bSuaf7LPHw8yl16YLpFWzj53Ry5zSmcTSUODrhYs1cJ20K1qAZx1g6OKBxSoLSfY
-         Xr3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731936387; x=1732541187;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NJmngtdVFPw1k6bMA8TBSEtjQSwpb2SPnmx7DsuiM3w=;
-        b=bwofHAOQNst4OK28R/n9lBANGstGOqJCEYfSYa6FMtmQHiZRBM6PB5vJoHATPHodZQ
-         ci39Fz+zunA+6xpG1sKgICK4iSgnTIMbyGlMknlMoVxFBHeFYE3YabVpG04R7M7X9EX6
-         pp2d1wVMuN9Y1zsbaXhUmQXePZq+PvjwqvWm4S/+goghXC1CydwVz9xJjdjn921jn8H7
-         Iw3b09qunqIYbbAUjniej7zy1xUQVXqNDv0Ywkm8V/fSk1qInzx2mC3phpBIuFFKCTWy
-         1mVe5T78tcBIHL9EkMNTeRb1/jEBgzD/KdcWmzTUN7pR/caEQ/ATOBNHwN2s8u7uG5Cm
-         N9mQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUhdn1jUDZSmq15bSPjrmNbvNDXBQ9Cuem8W/KCAG46ghUzg3Q5uLvGu94t19lJt4YSQNRLwIgfM5z7Wag=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKoWS9p/K+WkqPYVcwcKA1FvRPa8DQx3wS8NguuK+onCOoIzY8
-	JuITaQSQ5wmKtSMp8iIFSIl/zyzwfHKXYNnBCBBjCXf6MOk3ba+5Xzw5YL8+4Ny2eJTdKpd3WJZ
-	h
-X-Google-Smtp-Source: AGHT+IEh6GXKWTDakzWsiCEpUPxaMtj5HhoHBUCOdIygj+PoJZ4K7ArSL0KdovIiw1C/HlOgGaD8JQ==
-X-Received: by 2002:a05:6512:118d:b0:53d:a4f9:6141 with SMTP id 2adb3069b0e04-53dab29caa4mr4989795e87.14.1731936386755;
-        Mon, 18 Nov 2024 05:26:26 -0800 (PST)
-Received: from uffe-tuxpro14.. (h-178-174-189-39.A498.priv.bahnhof.se. [178.174.189.39])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53da653124bsm1615338e87.157.2024.11.18.05.26.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Nov 2024 05:26:25 -0800 (PST)
-From: Ulf Hansson <ulf.hansson@linaro.org>
-To: Linus <torvalds@linux-foundation.org>,
-	linux-mmc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [GIT PULL] MMC and MEMSTICK updates for v6.13
-Date: Mon, 18 Nov 2024 14:26:13 +0100
-Message-ID: <20241118132623.154217-1-ulf.hansson@linaro.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1731936448; c=relaxed/simple;
+	bh=j+2aLqPO8jT7pUqSoOdhBzttb3wUlOWGxh1jMETKNlc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=RS3dOiBZS7UHY6HzWw8bCct0HDQRsRaV/GZdaJ+OxYd4qtKHfEWLsAYgydvHXcYqGLRuVZp3VjK2BQ4ib/+XDw4nJ53dupsc4F4Wr5JciPbVUj8fKC7rXLbyKlgW4xo3aHBJ7XWsoL7oFdixdXeAd+zis2z4DMNo89b8DjjjW8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=TjnKsS73; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 491CE6000C;
+	Mon, 18 Nov 2024 13:27:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1731936443;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=C3aT8RFdCdTNdeyQreq16da7/I4iz4pcsvKIIFnCgCA=;
+	b=TjnKsS73E0DI6Iz1Q01nvGmPESd+7DxF6LViNdUq0cX9Z0fhcRy+zhf1rsWcq79PUow3za
+	RedWyADTe3BipekMwV1ef4XY/nveNr9lfcgJe4eucg+cC4f9nqXU1Al0w+rzpPv1ZlTkL4
+	HWjP5twPA9CmE/HK7Q7xBEyU4DBsvYCeyZt+WyrLoXwfeDK9DI6KYjnW7Ab8tBOVTaZS3K
+	YNrfEQzODkE3MW1LaAnQM5yksYIAph0J7GYoc5gRUVBOMDwH6TOBPu39VY25t+GtnWI1PU
+	t+GuJMr7+z3Ssm8X8RkzTw6qDTocV4cBUXJ4Bck+T4PF979v2jPhGguDTJplDw==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>
+Cc: <tudor.ambarus@linaro.org>,  <michael@walle.cc>,  <broonie@kernel.org>,
+  <pratyush@kernel.org>,  <richard@nod.at>,  <vigneshr@ti.com>,
+  <robh@kernel.org>,  <conor+dt@kernel.org>,  <krzk+dt@kernel.org>,
+  <venkatesh.abbarapu@amd.com>,  <linux-spi@vger.kernel.org>,
+  <linux-kernel@vger.kernel.org>,  <linux-mtd@lists.infradead.org>,
+  <nicolas.ferre@microchip.com>,  <alexandre.belloni@bootlin.com>,
+  <claudiu.beznea@tuxon.dev>,  <michal.simek@amd.com>,
+  <linux-arm-kernel@lists.infradead.org>,  <alsa-devel@alsa-project.org>,
+  <patches@opensource.cirrus.com>,  <git@amd.com>,
+  <amitrkcian2002@gmail.com>,  <beanhuo@micron.com>
+Subject: Re: [RFC PATCH 1/2] dt-bindings: mtd: Add bindings for describing
+ concatinated MTD devices
+In-Reply-To: <20241026075347.580858-2-amit.kumar-mahapatra@amd.com> (Amit
+	Kumar Mahapatra's message of "Sat, 26 Oct 2024 13:23:46 +0530")
+References: <20241026075347.580858-1-amit.kumar-mahapatra@amd.com>
+	<20241026075347.580858-2-amit.kumar-mahapatra@amd.com>
+User-Agent: mu4e 1.12.1; emacs 29.4
+Date: Mon, 18 Nov 2024 14:27:21 +0100
+Message-ID: <87frnoy8na.fsf@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-Hi Linus,
+On 26/10/2024 at 13:23:46 +0530, Amit Kumar Mahapatra <amit.kumar-mahapatra=
+@amd.com> wrote:
 
-Here's the pull-request with updates for MMC and MEMSTICK for v6.13. Details
-about the highlights are as usual found in the signed tag.
+> This approach was suggested by Rob [1] during a discussion on Miquel's
+> initial approach [2] to extend the MTD-CONCAT driver to support stacked
+> memories.
+> Define each flash node separately with its respective partitions, and add
+> a 'concat-parts' binding to link the partitions of the two flash nodes th=
+at
+> need to be concatenated.
+>
+> flash@0 {
+>         compatible =3D "jedec,spi-nor"
+>         ...
+>                 partitions {
 
-Please pull this in!
+Wrong indentation here and below which makes the example hard to read.
 
-Kind regards
-Ulf Hansson
+>                 compatible =3D "fixed-partitions";
+>                         concat-partition =3D <&flash0_partition &flash1_p=
+artition>;
+>                         flash0_partition: partition@0 {
+>                                 label =3D "part0_0";
+>                                 reg =3D <0x0 0x800000>;
+>                         }
+>                 }
+> }
+> flash@1 {
+>         compatible =3D "jedec,spi-nor"
+>         ...
+>                 partitions {
+>                 compatible =3D "fixed-partitions";
+>                         concat-partition =3D <&flash0_partition &flash1_p=
+artition>;
+>                         flash1_partition: partition@0 {
+>                                 label =3D "part0_1";
+>                                 reg =3D <0x0 0x800000>;
+>                         }
+>                 }
+> }
 
+This approach has a limitation I didn't think about before: you cannot
+use anything else than fixed partitions as partition parser.
 
-The following changes since commit 1635e407a4a64d08a8517ac59ca14ad4fc785e75:
+> Based on the bindings the MTD-CONCAT driver need to be updated to create
+> virtual mtd-concat devices.
+>
+> [1] https://lore.kernel.org/all/20191118221341.GA30937@bogus/
+> [2] https://lore.kernel.org/all/20191113171505.26128-4-miquel.raynal@boot=
+lin.com/
+>
+> Signed-off-by: Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>
+> ---
+>  .../mtd/partitions/fixed-partitions.yaml       | 18 ++++++++++++++++++
+>  .../bindings/mtd/partitions/partitions.yaml    |  6 ++++++
+>  2 files changed, 24 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/mtd/partitions/fixed-parti=
+tions.yaml b/Documentation/devicetree/bindings/mtd/partitions/fixed-partiti=
+ons.yaml
+> index 058253d6d889..df4ccb3dfeba 100644
+> --- a/Documentation/devicetree/bindings/mtd/partitions/fixed-partitions.y=
+aml
+> +++ b/Documentation/devicetree/bindings/mtd/partitions/fixed-partitions.y=
+aml
+> @@ -183,3 +183,21 @@ examples:
+>              read-only;
+>          };
+>      };
+> +
+> +  - |
+> +    partitions {
+> +        compatible =3D "fixed-partitions";
+> +        #address-cells =3D <1>;
+> +        #size-cells =3D <1>;
 
-  Revert "mmc: dw_mmc: Fix IDMAC operation with pages bigger than 4K" (2024-11-12 19:40:40 +0100)
+This is not strictly related but I believe we will soon have issues with
+these, as we will soon cross the 4GiB boundary.
 
-are available in the Git repository at:
+> +        concat-parts =3D <&part0 &part1>;
+> +
+> +        part0: partition@0 {
+> +            label =3D "flash0-part0";
+> +            reg =3D <0x0000000 0x100000>;
+> +        };
+> +
+> +        part1: partition@100000 {
+> +            label =3D "flash1-part0";
+> +            reg =3D <0x0100000 0x200000>;
+> +        };
+> +    };
+> diff --git a/Documentation/devicetree/bindings/mtd/partitions/partitions.=
+yaml b/Documentation/devicetree/bindings/mtd/partitions/partitions.yaml
+> index 1dda2c80747b..86bbd83c3f6d 100644
+> --- a/Documentation/devicetree/bindings/mtd/partitions/partitions.yaml
+> +++ b/Documentation/devicetree/bindings/mtd/partitions/partitions.yaml
+> @@ -32,6 +32,12 @@ properties:
+>    '#size-cells':
+>      enum: [1, 2]
+>=20=20
+> +  concat-parts:
+> +    description: List of MTD partitions phandles that should be concaten=
+ated.
+> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> +    minItems: 2
+> +    maxItems: 4
+> +
+>  patternProperties:
+>    "^partition(-.+|@[0-9a-f]+)$":
+>      $ref: partition.yaml
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git tags/mmc-v6.13
+Fine by me otherwise.
 
-for you to fetch changes up to c0baf6ead75d6db16798ae48a4ac38c3af4e9280:
-
-  mmc: Merge branch fixes into next (2024-11-12 19:41:24 +0100)
-
-----------------------------------------------------------------
-MMC core:
- - Add support for Ultra Capacity SD cards (SDUC, 2TB to 128TB)
- - Add support for Ultra High-Speed II SD cards (UHS-II)
- - Use a reset control for pwrseq_simple
- - Add SD card quirk for broken poweroff notification
- - Use GFP_NOIO for SD ACMD22
-
-MMC host:
- - bcm2835: Introduce proper clock handling
- - mtk-sd: Add support for the Host-Software-Queue interface
- - mtk-sd: Add support for the mt7988/mt8196 variants
- - mtk-sd: Fix a couple of error paths in ->probe()
- - sdhci: Add interface to support UHS-II SD cards
- - sdhci_am654: Fixup support for changing the signal voltage level
- - sdhci-cadence: Add support for the Microchip PIC64GX variant
- - sdhci-esdhc-imx: Add support for eMMC HW-reset
- - sdhci-msm: Add support for the X1E80100/IPQ5424/SAR2130P/QCS615 variants
- - sdhci-of-arasan: Add support for eMMC HW-reset
- - sdhci-pci-gli: Add UHS-II support for the GL9767/GL9755 variants
-
-MEMSTICK:
- - A couple of minor updates
-
-----------------------------------------------------------------
-Abel Vesa (1):
-      dt-bindings: mmc: sdhci-msm: Document the X1E80100 SDHCI Controller
-
-Andy-ld Lu (5):
-      dt-bindings: mmc: mtk-sd: Add support for MT8196
-      mmc: mtk-sd: Add stop_dly_sel and pop_en_cnt to platform data
-      mmc: mtk-sd: Add support for MT8196
-      mmc: mtk-sd: Fix error handle of probe function
-      mmc: mtk-sd: Fix MMC_CAP2_CRYPTO flag setting
-
-AngeloGioacchino Del Regno (1):
-      mmc: mtk-sd: Implement Host Software Queue for eMMC and SD Card
-
-Avri Altman (11):
-      mmc: sd: SDUC Support Recognition
-      mmc: sd: Add Extension memory addressing
-      mmc: core: Don't use close-ended rw for SDUC
-      mmc: core: Add open-ended Ext memory addressing
-      mmc: core: Allow mmc erase to carry large addresses
-      mmc: core: Add Ext memory addressing for erase
-      mmc: core: Adjust ACMD22 to SDUC
-      mmc: core: Disable SDUC for mmc_test
-      mmc: core: Prevent HSQ from enabling for SDUC
-      mmc: core: Enable SDUC
-      mmc: core: Use GFP_NOIO in ACMD22
-
-Bartosz Golaszewski (3):
-      mmc: davinci: order includes alphabetically
-      mmc: davinci: use generic device_get_match_data()
-      mmc: mmc_spi: drop buggy snprintf()
-
-Ben Chuang (2):
-      mmc: sdhci-uhs2: add pre-detect_init hook
-      mmc: sdhci-uhs2: Remove unnecessary NULL check
-
-Catalin Popescu (1):
-      mmc: pwrseq_simple: add support for one reset control
-
-Christophe JAILLET (1):
-      memstick: Constify struct memstick_device_id
-
-Dmitry Baryshkov (1):
-      dt-bindings: mmc: sdhci-msm: Add SAR2130P compatible
-
-Frank Wunderlich (2):
-      dt-bindings: mmc: mtk-sd: Add mt7988 SoC
-      mmc: mtk-sd: add support for mt7988
-
-Geert Uytterhoeven (1):
-      mmc: sdhci: Make MMC_SDHCI_UHS2 config symbol invisible
-
-Josua Mayer (2):
-      mmc: sdhci-esdhc-imx: Implement emmc hardware reset
-      mmc: sdhci-esdhc-imx: Update esdhc sysctl dtocv bitmask
-
-Judith Mendez (1):
-      mmc: sdhci_am654: Add sdhci_am654_start_signal_voltage_switch
-
-Keita Aihara (1):
-      mmc: core: Add SD card quirk for broken poweroff notification
-
-Paul Alvin (1):
-      mmc: sdhci-of-arasan: Support for emmc hardware reset
-
-Peng Fan (1):
-      mmc: sdhci-esdhc-imx: enable quirks SDHCI_QUIRK_NO_LED
-
-Pierre-Henry Moussay (2):
-      dt-bindings: mmc: cdns: document Microchip PIC64GX MMC/SDHCI controller
-      dt-bindings: mmc: cdns,sdhci: ref sdhci-common.yaml
-
-Rosen Penev (3):
-      mmc: mtk-sd: use devm_mmc_alloc_host
-      mmc: mtd-sd: use devm_platform_ioremap_resource
-      mmc: mtk-sd: fix devm_clk_get_optional usage
-
-Sricharan Ramabadhran (1):
-      dt-bindings: mmc: sdhci-msm: add IPQ5424 compatible
-
-Stefan Wahren (3):
-      mmc: bcm2835: Fix type of current clock speed
-      mmc: bcm2835: Introduce proper clock handling
-      mmc: pwrseq_simple: Handle !RESET_CONTROLLER properly
-
-Ulf Hansson (9):
-      mmc: core: Cleanup printing of speed mode at card insertion
-      mmc: core: Prepare to support SD UHS-II cards
-      mmc: core: Announce successful insertion of an SD UHS-II card
-      mmc: core: Extend support for mmc regulators with a vqmmc2
-      mmc: Merge branch fixes into next
-      mmc: core: Simplify sd_uhs2_power_up()
-      mmc: core: Add error handling of sd_uhs2_power_up()
-      mmc: core: Fix error paths for UHS-II card init and re-init
-      mmc: Merge branch fixes into next
-
-Uwe Kleine-König (1):
-      mmc: Switch back to struct platform_driver::remove()
-
-Victor Shih (22):
-      mmc: core: Add definitions for SD UHS-II cards
-      mmc: core: Factor out some of the code in mmc_go_idle()
-      mmc: core: Support UHS-II card control and access
-      mmc: sdhci: add UHS-II related definitions in headers
-      mmc: sdhci: add UHS-II module and add a kernel configuration
-      mmc: sdhci-uhs2: dump UHS-II registers
-      mmc: sdhci-uhs2: add reset function
-      mmc: sdhci-uhs2: add set_power() to support vdd2
-      mmc: sdhci-uhs2: add set_timeout()
-      mmc: sdhci-uhs2: add add_host() and others to set up the driver
-      mmc: sdhci-uhs2: add set_ios()
-      mmc: sdhci-uhs2: add related functions to initialize the interface
-      mmc: sdhci-uhs2: add irq() and others
-      mmc: sdhci-uhs2: add request() and others
-      mmc: sdhci-pci: add UHS-II support framework
-      mmc: sdhci-pci-gli: enable UHS-II mode for GL9755
-      mmc: sdhci-pci-gli: enable UHS-II mode for GL9767
-      mmc: sdhci-uhs2: Correct incorrect type in argument
-      mmc: sdhci-uhs2: Remove unnecessary variables
-      mmc: sdhci-uhs2: correction a warning caused by incorrect type in argument
-      mmc: core: Correct type in variable assignment for UHS-II
-      mmc: core: Correction a warning caused by incorrect type in assignment for UHS-II
-
-Wolfram Sang (1):
-      mmc: sh_mmcif: correctly report success when obtaining DMA channels
-
-Yu Jiaoliang (2):
-      memstick: Fix typo in comment
-      mmc: host: Fix typos in comments across various files
-
-Yuanjie Yang (1):
-      dt-bindings: mmc: Add sdhci compatible for QCS615
-
- .../devicetree/bindings/mmc/cdns,sdhci.yaml        |    3 +-
- Documentation/devicetree/bindings/mmc/mtk-sd.yaml  |   24 +
- .../devicetree/bindings/mmc/sdhci-msm.yaml         |    4 +
- drivers/memstick/core/memstick.c                   |    4 +-
- drivers/memstick/core/ms_block.c                   |    8 +-
- drivers/memstick/core/mspro_block.c                |    2 +-
- drivers/memstick/host/r592.c                       |    2 +-
- drivers/mmc/core/Makefile                          |    2 +-
- drivers/mmc/core/block.c                           |   39 +-
- drivers/mmc/core/bus.c                             |   42 +-
- drivers/mmc/core/card.h                            |   10 +
- drivers/mmc/core/core.c                            |   73 +-
- drivers/mmc/core/core.h                            |   17 +-
- drivers/mmc/core/mmc_ops.c                         |   24 +-
- drivers/mmc/core/mmc_ops.h                         |    1 +
- drivers/mmc/core/mmc_test.c                        |    6 +
- drivers/mmc/core/pwrseq_emmc.c                     |    2 +-
- drivers/mmc/core/pwrseq_sd8787.c                   |    2 +-
- drivers/mmc/core/pwrseq_simple.c                   |   48 +-
- drivers/mmc/core/quirks.h                          |    9 +
- drivers/mmc/core/regulator.c                       |   34 +
- drivers/mmc/core/sd.c                              |   44 +-
- drivers/mmc/core/sd.h                              |    4 +-
- drivers/mmc/core/sd_ops.c                          |   24 +
- drivers/mmc/core/sd_ops.h                          |    3 +
- drivers/mmc/core/sd_uhs2.c                         | 1304 ++++++++++++++++++++
- drivers/mmc/core/sdio.c                            |    2 +-
- drivers/mmc/host/Kconfig                           |   11 +
- drivers/mmc/host/Makefile                          |    1 +
- drivers/mmc/host/alcor.c                           |    2 +-
- drivers/mmc/host/atmel-mci.c                       |    4 +-
- drivers/mmc/host/au1xmmc.c                         |    4 +-
- drivers/mmc/host/bcm2835.c                         |   33 +-
- drivers/mmc/host/cavium-octeon.c                   |    4 +-
- drivers/mmc/host/cb710-mmc.c                       |    2 +-
- drivers/mmc/host/davinci_mmc.c                     |   25 +-
- drivers/mmc/host/dw_mmc-bluefield.c                |    2 +-
- drivers/mmc/host/dw_mmc-exynos.c                   |    2 +-
- drivers/mmc/host/dw_mmc-hi3798cv200.c              |    2 +-
- drivers/mmc/host/dw_mmc-hi3798mv200.c              |    2 +-
- drivers/mmc/host/dw_mmc-k3.c                       |    2 +-
- drivers/mmc/host/dw_mmc-pltfm.c                    |    2 +-
- drivers/mmc/host/dw_mmc-rockchip.c                 |    2 +-
- drivers/mmc/host/dw_mmc-starfive.c                 |    2 +-
- drivers/mmc/host/dw_mmc.c                          |    2 +-
- drivers/mmc/host/jz4740_mmc.c                      |    2 +-
- drivers/mmc/host/litex_mmc.c                       |    2 +-
- drivers/mmc/host/meson-gx-mmc.c                    |    4 +-
- drivers/mmc/host/meson-mx-sdhc-mmc.c               |    2 +-
- drivers/mmc/host/meson-mx-sdio.c                   |    2 +-
- drivers/mmc/host/mmc_spi.c                         |    9 +-
- drivers/mmc/host/mmci.h                            |    2 +-
- drivers/mmc/host/moxart-mmc.c                      |    2 +-
- drivers/mmc/host/mtk-sd.c                          |  292 +++--
- drivers/mmc/host/mvsdio.c                          |    2 +-
- drivers/mmc/host/mxcmmc.c                          |    2 +-
- drivers/mmc/host/mxs-mmc.c                         |    2 +-
- drivers/mmc/host/omap.c                            |    2 +-
- drivers/mmc/host/omap_hsmmc.c                      |    2 +-
- drivers/mmc/host/owl-mmc.c                         |    2 +-
- drivers/mmc/host/pxamci.c                          |    2 +-
- drivers/mmc/host/renesas_sdhi_internal_dmac.c      |    2 +-
- drivers/mmc/host/renesas_sdhi_sys_dmac.c           |    2 +-
- drivers/mmc/host/rtsx_pci_sdmmc.c                  |    2 +-
- drivers/mmc/host/rtsx_usb_sdmmc.c                  |    2 +-
- drivers/mmc/host/sdhci-acpi.c                      |    2 +-
- drivers/mmc/host/sdhci-bcm-kona.c                  |    2 +-
- drivers/mmc/host/sdhci-brcmstb.c                   |    2 +-
- drivers/mmc/host/sdhci-cadence.c                   |    2 +-
- drivers/mmc/host/sdhci-dove.c                      |    2 +-
- drivers/mmc/host/sdhci-esdhc-imx.c                 |   31 +-
- drivers/mmc/host/sdhci-esdhc-mcf.c                 |    2 +-
- drivers/mmc/host/sdhci-iproc.c                     |    2 +-
- drivers/mmc/host/sdhci-milbeaut.c                  |    2 +-
- drivers/mmc/host/sdhci-msm.c                       |    4 +-
- drivers/mmc/host/sdhci-npcm.c                      |    2 +-
- drivers/mmc/host/sdhci-of-arasan.c                 |   20 +-
- drivers/mmc/host/sdhci-of-aspeed.c                 |    4 +-
- drivers/mmc/host/sdhci-of-at91.c                   |    2 +-
- drivers/mmc/host/sdhci-of-dwcmshc.c                |    2 +-
- drivers/mmc/host/sdhci-of-esdhc.c                  |    2 +-
- drivers/mmc/host/sdhci-of-hlwd.c                   |    2 +-
- drivers/mmc/host/sdhci-of-ma35d1.c                 |    2 +-
- drivers/mmc/host/sdhci-of-sparx5.c                 |    2 +-
- drivers/mmc/host/sdhci-omap.c                      |    2 +-
- drivers/mmc/host/sdhci-pci-core.c                  |   16 +-
- drivers/mmc/host/sdhci-pci-gli.c                   |  437 ++++++-
- drivers/mmc/host/sdhci-pci.h                       |    3 +
- drivers/mmc/host/sdhci-pic32.c                     |    2 +-
- drivers/mmc/host/sdhci-pxav2.c                     |    2 +-
- drivers/mmc/host/sdhci-pxav3.c                     |    2 +-
- drivers/mmc/host/sdhci-s3c.c                       |    2 +-
- drivers/mmc/host/sdhci-spear.c                     |    2 +-
- drivers/mmc/host/sdhci-sprd.c                      |    2 +-
- drivers/mmc/host/sdhci-st.c                        |    2 +-
- drivers/mmc/host/sdhci-tegra.c                     |    2 +-
- drivers/mmc/host/sdhci-uhs2.c                      | 1250 +++++++++++++++++++
- drivers/mmc/host/sdhci-uhs2.h                      |  188 +++
- drivers/mmc/host/sdhci-xenon.c                     |    2 +-
- drivers/mmc/host/sdhci.c                           |  281 +++--
- drivers/mmc/host/sdhci.h                           |   75 +-
- drivers/mmc/host/sdhci_am654.c                     |   32 +-
- drivers/mmc/host/sdhci_f_sdh30.c                   |    2 +-
- drivers/mmc/host/sh_mmcif.c                        |    7 +-
- drivers/mmc/host/sunplus-mmc.c                     |    2 +-
- drivers/mmc/host/sunxi-mmc.c                       |    2 +-
- drivers/mmc/host/uniphier-sd.c                     |    2 +-
- drivers/mmc/host/usdhi6rol0.c                      |    2 +-
- drivers/mmc/host/wbsd.c                            |    2 +-
- drivers/mmc/host/wmt-sdmmc.c                       |    2 +-
- include/linux/memstick.h                           |    2 +-
- include/linux/mmc/card.h                           |   39 +-
- include/linux/mmc/core.h                           |   21 +
- include/linux/mmc/host.h                           |   80 ++
- include/linux/mmc/sd.h                             |    4 +
- include/linux/mmc/sd_uhs2.h                        |  240 ++++
- 116 files changed, 4580 insertions(+), 398 deletions(-)
- create mode 100644 drivers/mmc/core/sd_uhs2.c
- create mode 100644 drivers/mmc/host/sdhci-uhs2.c
- create mode 100644 drivers/mmc/host/sdhci-uhs2.h
- create mode 100644 include/linux/mmc/sd_uhs2.h
+Thanks,
+Miqu=C3=A8l
 
