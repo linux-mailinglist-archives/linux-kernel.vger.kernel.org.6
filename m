@@ -1,148 +1,152 @@
-Return-Path: <linux-kernel+bounces-412410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4694C9D08C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 06:20:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB5449D08C9
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 06:22:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2E6A1F21A7B
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 05:20:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0D6A281D16
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 05:22:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C273613D89D;
-	Mon, 18 Nov 2024 05:19:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="K6E0u7e3"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD8B113D245;
+	Mon, 18 Nov 2024 05:22:27 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB48413D24E;
-	Mon, 18 Nov 2024 05:19:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F058613A863;
+	Mon, 18 Nov 2024 05:22:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731907191; cv=none; b=uenMXyBV1rTCwjTMCRJqzXCbkkWS0P02n7P2uxip7+09dtIR6i4ClrnRM/zDIl4ULJKF5TRMq2d7NGpBYNF5qGBCW6ugOyRIG894WQxMH5Qv1ve3XUVvkb0Sz6blbwr+adSYFMRW3zbkiX/aSC40mHcGUon/Griu05I6M2J7KBg=
+	t=1731907347; cv=none; b=NhDRQ/70z2RlJKGl3V/+43uhaU4nPp2wULn+R1V9My0GUKgaofHpuIKE8Eb8CBscz9chsLZ9dJHnzn5Nxkl8KxHmlH/TYHexUwcV6kuLvhiImVwBcbS48Zw9izA4N5Zg7Zh6l+di1yaJtRPuL0j5G10/IaBfM7zZS6ODO1hJqB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731907191; c=relaxed/simple;
-	bh=t7xtRzyOlLAXeS/GZkTnfowlx9arz3amp/eepwEQOlc=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Bhs5lrstYFWV9Ci1i+RM5eA6wAPzXzSzQ3i6YRffdvTQLLPu74EA3XPuaa05cE9pueYy8szvmlTHNYreHGbm6XPHi0OQa1HB+ViBAZ/YrX6Ziz6WNK9RyFoW3VQ0ctkj2/T08U/ujjv2x2EJO/39fVSXNGtjfiSJSWi4oTR3PiU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=K6E0u7e3; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4AI5JSDQ028295;
-	Sun, 17 Nov 2024 23:19:28 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1731907168;
-	bh=s9IN5OznuVVvXmBLPtTBjQEWZ4OA6WUbSbNTYMWN6WA=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=K6E0u7e3WsIjif7EOuC9F3PTnNOWSQB8+jUwLn0vzZ61QkP36fat2C7kpe1XNUFfY
-	 7MOZcbqFMYOcOV7P5Lec7KlWPisr66sHDrOBJeO36SCs02RZ6dbudnO4Z+tZSEzlqo
-	 gRoArPSH81jwbP5k4of75z5+uG4QEwN5b48JGf9Y=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4AI5JStC124683
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Sun, 17 Nov 2024 23:19:28 -0600
-Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sun, 17
- Nov 2024 23:19:28 -0600
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Sun, 17 Nov 2024 23:19:28 -0600
-Received: from localhost (uda0492258.dhcp.ti.com [10.24.72.81])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4AI5JRj6025092;
-	Sun, 17 Nov 2024 23:19:27 -0600
-Date: Mon, 18 Nov 2024 10:49:26 +0530
-From: Siddharth Vadapalli <s-vadapalli@ti.com>
-To: Rob Herring <robh@kernel.org>
-CC: Siddharth Vadapalli <s-vadapalli@ti.com>, <nm@ti.com>, <vigneshr@ti.com>,
-        <kristo@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>
-Subject: Re: [PATCH 1/2] arm64: dts: ti: k3-pinctrl: Introduce deep sleep
- macros
-Message-ID: <5b35c736-74d6-4fe9-ae82-272dc2e98b82@ti.com>
-References: <20241112115650.988943-1-s-vadapalli@ti.com>
- <20241112115650.988943-2-s-vadapalli@ti.com>
- <20241115154822.GA2954187-robh@kernel.org>
+	s=arc-20240116; t=1731907347; c=relaxed/simple;
+	bh=X2+RyZ7bRyBKT6+ECQvgdWgRsQgvRDABRjJMBskmZs8=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=shuGFJ210N9cjArAt5gWkMV0cNPlIjUp3PeP86fhLIB9S2A3HbqirfrCKQ32UqgzWoqgganRWq+ehtl1faqHOedTabo1ZL50wdbH5hInsMsIgFpAR5BW0vlOy+T1iCBqcNllV0s3wiI9rhjfXe34i5UwDktG5E1NN1qNlRSo2iA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4XsGD063cWz2GZky;
+	Mon, 18 Nov 2024 13:20:16 +0800 (CST)
+Received: from kwepemk500005.china.huawei.com (unknown [7.202.194.90])
+	by mail.maildlp.com (Postfix) with ESMTPS id F00B5140135;
+	Mon, 18 Nov 2024 13:22:12 +0800 (CST)
+Received: from [10.174.178.46] (10.174.178.46) by
+ kwepemk500005.china.huawei.com (7.202.194.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 18 Nov 2024 13:22:11 +0800
+Subject: Re: [PATCH 1/2] jffs2: initialize filesystem-private inode info in
+ ->alloc_inode callback
+To: Fedor Pchelkin <pchelkin@ispras.ru>, Richard Weinberger <richard@nod.at>
+CC: David Woodhouse <dwmw2@infradead.org>, Wang Yong <wang.yong12@zte.com.cn>,
+	Lu Zhongjun <lu.zhongjun@zte.com.cn>, Yang Tao <yang.tao172@zte.com.cn>, Al
+ Viro <viro@zeniv.linux.org.uk>, <linux-mtd@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>,
+	<stable@vger.kernel.org>
+References: <20241117184412.366672-1-pchelkin@ispras.ru>
+ <20241117184412.366672-2-pchelkin@ispras.ru>
+From: Zhihao Cheng <chengzhihao1@huawei.com>
+Message-ID: <c68152b5-e91a-2296-21fd-c6a80a406958@huawei.com>
+Date: Mon, 18 Nov 2024 13:22:10 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20241115154822.GA2954187-robh@kernel.org>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+In-Reply-To: <20241117184412.366672-2-pchelkin@ispras.ru>
+Content-Type: text/plain; charset="gbk"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemk500005.china.huawei.com (7.202.194.90)
 
-On Fri, Nov 15, 2024 at 09:48:22AM -0600, Rob Herring wrote:
-
-Hello Rob,
-
-> On Tue, Nov 12, 2024 at 05:26:49PM +0530, Siddharth Vadapalli wrote:
-> > The behavior of pins in deep sleep mode can be configured by programming
-> > the corresponding bits in the respective Pad Configuration register. Add
-> > macros to support this.
-> > 
-> > Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
-> > ---
-> >  arch/arm64/boot/dts/ti/k3-pinctrl.h | 19 +++++++++++++++++++
-> >  1 file changed, 19 insertions(+)
-> > 
-> > diff --git a/arch/arm64/boot/dts/ti/k3-pinctrl.h b/arch/arm64/boot/dts/ti/k3-pinctrl.h
-> > index 22b8d73cfd32..cac7cccc1112 100644
-> > --- a/arch/arm64/boot/dts/ti/k3-pinctrl.h
-> > +++ b/arch/arm64/boot/dts/ti/k3-pinctrl.h
-> > @@ -12,6 +12,12 @@
-> >  #define PULLTYPESEL_SHIFT	(17)
-> >  #define RXACTIVE_SHIFT		(18)
-> >  #define DEBOUNCE_SHIFT		(11)
-> > +#define FORCE_DS_EN_SHIFT	(15)
-> > +#define DS_EN_SHIFT		(24)
-> > +#define DS_OUT_DIS_SHIFT	(25)
-> > +#define DS_OUT_VAL_SHIFT	(26)
-> > +#define DS_PULLUD_EN_SHIFT	(27)
-> > +#define DS_PULLTYPE_SEL_SHIFT	(28)
-> >  
-> >  #define PULL_DISABLE		(1 << PULLUDEN_SHIFT)
-> >  #define PULL_ENABLE		(0 << PULLUDEN_SHIFT)
-> > @@ -38,6 +44,19 @@
-> >  #define PIN_DEBOUNCE_CONF5	(5 << DEBOUNCE_SHIFT)
-> >  #define PIN_DEBOUNCE_CONF6	(6 << DEBOUNCE_SHIFT)
-> >  
-> > +#define PIN_DS_FORCE_DISABLE		(0 << FORCE_DS_EN_SHIFT)
-> > +#define PIN_DS_FORCE_ENABLE		(1 << FORCE_DS_EN_SHIFT)
-> > +#define PIN_DS_IO_OVERRIDE_DISABLE	(0 << DS_IO_OVERRIDE_EN_SHIFT)
-> > +#define PIN_DS_IO_OVERRIDE_ENABLE	(1 << DS_IO_OVERRIDE_EN_SHIFT)
-> > +#define PIN_DS_OUT_ENABLE		(0 << DS_OUT_DIS_SHIFT)
-> > +#define PIN_DS_OUT_DISABLE		(1 << DS_OUT_DIS_SHIFT)
-> > +#define PIN_DS_OUT_VALUE_ZERO		(0 << DS_OUT_VAL_SHIFT)
-> > +#define PIN_DS_OUT_VALUE_ONE		(1 << DS_OUT_VAL_SHIFT)
-> > +#define PIN_DS_PULLUD_ENABLE		(0 << DS_PULLUD_EN_SHIFT)
-> > +#define PIN_DS_PULLUD_DISABLE		(1 << DS_PULLUD_EN_SHIFT)
-> > +#define PIN_DS_PULL_DOWN		(0 << DS_PULLTYPE_SEL_SHIFT)
-> > +#define PIN_DS_PULL_UP			(1 << DS_PULLTYPE_SEL_SHIFT)
+ÔÚ 2024/11/18 2:44, Fedor Pchelkin Ð´µÀ:
+> The symlink body (->target) should be freed at the same time as the inode
+> itself per commit 4fdcfab5b553 ("jffs2: fix use-after-free on symlink
+> traversal"). It is a filesystem-specific field but there exist several
+> error paths during generic inode allocation when ->free_inode(), namely
+> jffs2_free_inode(), is called with still uninitialized private info.
 > 
-> Are you going to go add the 0 defines to all the existing cases? If you 
-> do, it's a lot of pointless churn. If you don't, then it is inconsistent 
-> when they do get used. I would drop them all.
+> The calltrace looks like:
+>   alloc_inode
+>    inode_init_always // fails
+>     i_callback
+>      free_inode
+>      jffs2_free_inode // touches uninit ->target field
+> 
+> Commit af9a8730ddb6 ("jffs2: Fix potential illegal address access in
+> jffs2_free_inode") approached the observed problem but fixed it only
+> partially. Our local Syzkaller instance is still hitting these kinds of
+> failures.
+> 
+> The thing is that jffs2_i_init_once(), where the initialization of
+> f->target has been moved, is called once per slab allocation so it won't
+> be called for the object structure possibly retrieved later from the slab
+> cache for reuse.
+> 
+> The practice followed by many other filesystems is to initialize
+> filesystem-private inode contents in the corresponding ->alloc_inode()
+> callbacks. This also allows to drop initialization from jffs2_iget() and
+> jffs2_new_inode() as ->alloc_inode() is called in those places.
+> 
+> Found by Linux Verification Center (linuxtesting.org) with Syzkaller.
+> 
+> Fixes: 4fdcfab5b553 ("jffs2: fix use-after-free on symlink traversal")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
+> ---
+>   fs/jffs2/fs.c    | 2 --
+>   fs/jffs2/super.c | 3 ++-
+>   2 files changed, 2 insertions(+), 3 deletions(-)
+> 
 
-The "0 defines" are present for the existing cases as well, namely:
-PULL_ENABLE, PULL_DOWN and INPUT_DISABLE are all "0 defines".
+Reviewed-by: Zhihao Cheng <chengzhihao1@huawei.com>
+> diff --git a/fs/jffs2/fs.c b/fs/jffs2/fs.c
+> index d175cccb7c55..85c4b273918f 100644
+> --- a/fs/jffs2/fs.c
+> +++ b/fs/jffs2/fs.c
+> @@ -271,7 +271,6 @@ struct inode *jffs2_iget(struct super_block *sb, unsigned long ino)
+>   	f = JFFS2_INODE_INFO(inode);
+>   	c = JFFS2_SB_INFO(inode->i_sb);
+>   
+> -	jffs2_init_inode_info(f);
+>   	mutex_lock(&f->sem);
+>   
+>   	ret = jffs2_do_read_inode(c, f, inode->i_ino, &latest_node);
+> @@ -439,7 +438,6 @@ struct inode *jffs2_new_inode (struct inode *dir_i, umode_t mode, struct jffs2_r
+>   		return ERR_PTR(-ENOMEM);
+>   
+>   	f = JFFS2_INODE_INFO(inode);
+> -	jffs2_init_inode_info(f);
+>   	mutex_lock(&f->sem);
+>   
+>   	memset(ri, 0, sizeof(*ri));
+> diff --git a/fs/jffs2/super.c b/fs/jffs2/super.c
+> index 4545f885c41e..b56ff63357f3 100644
+> --- a/fs/jffs2/super.c
+> +++ b/fs/jffs2/super.c
+> @@ -42,6 +42,8 @@ static struct inode *jffs2_alloc_inode(struct super_block *sb)
+>   	f = alloc_inode_sb(sb, jffs2_inode_cachep, GFP_KERNEL);
+>   	if (!f)
+>   		return NULL;
+> +
+> +	jffs2_init_inode_info(f);
+>   	return &f->vfs_inode;
+>   }
+>   
+> @@ -58,7 +60,6 @@ static void jffs2_i_init_once(void *foo)
+>   	struct jffs2_inode_info *f = foo;
+>   
+>   	mutex_init(&f->sem);
+> -	f->target = NULL;
+>   	inode_init_once(&f->vfs_inode);
+>   }
+>   
+> 
 
-Other existing macros are defined in terms of the above, due to which it
-might have appeared to be the case that only some of the "0 defines" are
-present. For example, the following macros make use of the "0 defines":
-PIN_OUTPUT, PIN_OUTPUT_PULLUP, PIN_OUTPUT_PULLDOWN and PIN_INPUT_PULLDOWN
-
-So the current patch is consistent with the existing convention followed
-in the k3-pinctrl.h file. Please let me know if I should still drop the
-"0 defines" in this patch.
-
-Regards,
-Siddharth.
 
