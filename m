@@ -1,156 +1,120 @@
-Return-Path: <linux-kernel+bounces-413496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA5AA9D19DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 21:48:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DDF09D19E0
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 21:48:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D0D51F23094
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 20:48:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7ADE1F23296
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 20:48:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C46881E0DD4;
-	Mon, 18 Nov 2024 20:48:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C6501E6306;
+	Mon, 18 Nov 2024 20:48:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="fNqL/akK"
-Received: from mail-oo1-f53.google.com (mail-oo1-f53.google.com [209.85.161.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="I57jX91b"
+Received: from smtp-fw-52002.amazon.com (smtp-fw-52002.amazon.com [52.119.213.150])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78E9C1487F6
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 20:48:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BCBA171652;
+	Mon, 18 Nov 2024 20:48:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731962889; cv=none; b=EsqBadGCFia7J5X9ZpfD2AaHOr5lq2oB+FHJpszAJcxj+GFj8Jf9hLItPeO0rbq++q68ZVfTWhGxXTMgB1qwXH+FGBDaj5LVauC5tSQdi7j4+VvISzdGnvsncYp1dvb009YpfyCo0R/+vYbnJ1ED56E6D57SQE4c6wWxll+fZlo=
+	t=1731962924; cv=none; b=GzB/mqmvxuw4HFPLPFUbF/Tstu8516YHieZ8UvqCvONGwX6Gq/DBSZWk8tGpBYdGklY2Ti5pmz6NVx+IG/vpIfjSduZ7wZA/eRBpmojVkHc7m0FAjozSCwQr+E0Ptpc79h2nwmsUXMovefu5rzDtNtsVZYxW7agFr59f1s/PTN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731962889; c=relaxed/simple;
-	bh=ewt5rJFrb2PczIbA7CRaAPtPfqvfDkdOKYNyeNpSJxw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ekPHcB+5P5t+TMJkUluaWK/Gafo8NZjCwFT01w25zmWgifZaDYc/ygN7ipW01TAUvb1gDErL4whn1aJAiRVeFKHTXp2/neAcZDj+v98rlwwlagSxsZfRJuxoUk3bYH586HFVuLv2FpGjX+p8cbKPKfYK0IOh9m2T/9lQdm1u01o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=fNqL/akK; arc=none smtp.client-ip=209.85.161.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-5ebc4e89240so828318eaf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 12:48:06 -0800 (PST)
+	s=arc-20240116; t=1731962924; c=relaxed/simple;
+	bh=9aRhU7SYTiy9GTZdVZfR4WneooPr3fJ0MNcnsVkz+ac=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=q+hCn4aKa2D+MBm4qgXO4Wyn5nDgSN6a1HHL/KOEunZlVFCp79kH1LyUagnArlA9lzONzGYwkcQ3Y5Le84WeWOlfV8KRhlTedKMMfI9tH46IMB4dD3ds+HtOObCc5DEUsE00C6BXntbrGKqTpEPfX5suR2XZ7H9zIl94VD5JhyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=I57jX91b; arc=none smtp.client-ip=52.119.213.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1731962885; x=1732567685; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=s3NX4CqYzFbD4W9x/5neCum/lsR8s0Xk5YK42Mhzu2s=;
-        b=fNqL/akKX1bPNXpPKiFAbajXJzsK+hg1m19O3z6In660lHdl2CNFVQf/Mmn1KEChBk
-         UTdw00yUO5NVfmAWvinHW/LpQ8C+UiaAvio7Np007a0Ba5VG4V6L1/lxMeYr1Huu4tAq
-         NAZUdYHxpGsCzEGArIahRmcYsFNYHe6+8FKbumB1kF/hbOKqtF5AfgnXfZip/mnQCDxG
-         z1eP7WH+g4AhSX5HQ2wamSp1rtTXtiTgsICfbaJxKDdCRIQrKv0dU1qwxucMcwFLm8P3
-         SyTfWF/OX8+N7d6YwPh03iQ8jSrQuOk17GXfYjXyGMFjus+fkfa00JOzIPGIjfKkobj5
-         BoKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731962885; x=1732567685;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=s3NX4CqYzFbD4W9x/5neCum/lsR8s0Xk5YK42Mhzu2s=;
-        b=cDF3NX5KxqMM3ymzK7JJoDjTGPuzF7fnVEmg36QT46/l7Zzq0+XMkVx0AHFQdpNNnh
-         IVD4oyWAbOMJsyvOXS8bmTPJxsgnkFy01mMDDVGhXwQI7JK0pvzZiphc5xRgB3i8yMd7
-         u6ypv+3+STUuI+iXvz4EATZp6OCOeCw3SnGsOm/LZPLqTP1dDrnIKNwLWLIF73BdRthA
-         y/3bUo/kgfvOW5Ki385z++2JQLzW9y8CBuHzdJLkXx5zrLFpisHmctBQJkgrKj4T76to
-         hCTrjGsRP32D7I8FCISEQGhl+Ufou4Uok+a4ifsFxNJV12UBvo6FIAt60IJv8DY32agk
-         l7sw==
-X-Forwarded-Encrypted: i=1; AJvYcCVN0vJ2jvCaQbpTwqsNOib3bdDG8jZ4KOSke8hGk8ln6XLDZRMcMtQM2YYR0YnfUvlTv3Ehtu4aY1GKjIo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyO75IbJJFeIwdVEKAzAgQJQhA8exaEywZl4dQ9LRg5W72NEUP7
-	4bt5XADqsgoLGyBAP5y3HWveTdVmyA3Y7rQhVhQ6FYEhdIvmcMfBUZNHhEUPzxc=
-X-Google-Smtp-Source: AGHT+IFQMUjCRk8/5H5HabAhGt8VwRvx4UoJQUDc2dxsboC81OzNcr9+ZSOGYGwT+IkT0YFcX5+FEg==
-X-Received: by 2002:a05:6870:7009:b0:295:eb52:87e1 with SMTP id 586e51a60fabf-2962dd8ba31mr9965984fac.12.1731962885567;
-        Mon, 18 Nov 2024 12:48:05 -0800 (PST)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-29690223767sm1185050fac.47.2024.11.18.12.48.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Nov 2024 12:48:04 -0800 (PST)
-Message-ID: <b296a23d-bc65-481c-a194-cb16535d8c24@baylibre.com>
-Date: Mon, 18 Nov 2024 14:48:02 -0600
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1731962923; x=1763498923;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=3tO4Q4IodwMB3txyonk+PdRsnAHyv4Ng/JNgI4AXdKU=;
+  b=I57jX91bbvfgpEwvCLLuE4r8ofOT1oAoQezzUGk0FXBoOtB/Rw+ZsdBh
+   Krq1F7WZ4+9hDkH4/vASd59CKIN1dPKiZJQsYm8nsnpUHiJB4szWXy2HZ
+   OwoW9em+tc0rwVF9wQUR1LBDWAobjSxxIzsi5SYQOL7oItXBDsz+iRCEi
+   s=;
+X-IronPort-AV: E=Sophos;i="6.12,164,1728950400"; 
+   d="scan'208";a="674618741"
+Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.124.125.6])
+  by smtp-border-fw-52002.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2024 20:48:39 +0000
+Received: from EX19MTAUWB002.ant.amazon.com [10.0.21.151:26921]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.43.2:2525] with esmtp (Farcaster)
+ id 1bbcfe20-ac78-474e-94b5-fc72fd89125b; Mon, 18 Nov 2024 20:48:38 +0000 (UTC)
+X-Farcaster-Flow-ID: 1bbcfe20-ac78-474e-94b5-fc72fd89125b
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWB002.ant.amazon.com (10.250.64.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Mon, 18 Nov 2024 20:48:38 +0000
+Received: from 6c7e67c6786f.amazon.com (10.106.101.15) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.35;
+ Mon, 18 Nov 2024 20:48:34 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <liqiang64@huawei.com>
+CC: <alibuda@linux.alibaba.com>, <dengguangxing@huawei.com>,
+	<dust.li@linux.alibaba.com>, <gaochao24@huawei.com>,
+	<guwen@linux.alibaba.com>, <jaka@linux.ibm.com>,
+	<linux-kernel@vger.kernel.org>, <linux-s390@vger.kernel.org>,
+	<luanjianhai@huawei.com>, <netdev@vger.kernel.org>,
+	<tonylu@linux.alibaba.com>, <wenjia@linux.ibm.com>,
+	<zhangxuzhou4@huawei.com>, <kuniyu@amazon.com>
+Subject: Re: [PATCH net-next 1/1] Separate locks for rmbs/sndbufs linked lists of different lengths
+Date: Mon, 18 Nov 2024 12:48:31 -0800
+Message-ID: <20241118204831.70974-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+In-Reply-To: <20241118132147.1614-2-liqiang64@huawei.com>
+References: <20241118132147.1614-2-liqiang64@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC] iio: adc: ad7173: add openwire detection support for
- single conversions
-To: Guillaume Ranquet <granquet@baylibre.com>,
- Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Jonathan Cameron <jic23@kernel.org>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241115-ad4111_openwire-v1-1-db97ac8bf250@baylibre.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20241115-ad4111_openwire-v1-1-db97ac8bf250@baylibre.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D045UWC004.ant.amazon.com (10.13.139.203) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-On 11/15/24 4:34 AM, Guillaume Ranquet wrote:
-> Some chips of the ad7173 family supports open wire detection.
-> 
-> Generate a threshold event whenever an external source is disconnected
-> from the system input on single conversions.
-> 
-> Signed-off-by: Guillaume Ranquet <granquet@baylibre.com>
-> ---
-> Hi.
-> 
-> This patch adds the openwire detection support for the ad4111 chip.
-> 
-> The openwire detection is done in software and relies on comparing the
-> results of two conversions on different channels.
-> 
-> As presented here, the code sends a THRESH Rising event tied to the
-> in_voltageX_raw channel on which it happened.
-> 
-> We think this is not correct but we can't seem to find an implementation
-> that would be elegant.
-> 
-> The main idea would be to add a specific channel for openwire detection
-> but we still would need to have the openwire enablement and threshold
-> tied to the voltage channel.
-> 
-> Any thought on this?
-> 
-Just to spell this out in a bit more detail, my understanding is that
-the procedure works like this...
+From: liqiang <liqiang64@huawei.com>
+Date: Mon, 18 Nov 2024 21:21:47 +0800
+> @@ -596,10 +632,26 @@ static struct smc_buf_desc *smc_llc_get_next_rmb(struct smc_link_group *lgr,
+>  static struct smc_buf_desc *smc_llc_get_first_rmb(struct smc_link_group *lgr,
+>  						  int *buf_lst)
+>  {
+> -	*buf_lst = 0;
+> +	smc_llc_lock_in_turn(lgr->rmbs_lock, buf_lst, SMC_LLC_INTURN_LOCK_INIT);
+>  	return smc_llc_get_next_rmb(lgr, buf_lst, NULL);
+>  }
+>  
+> +static inline void smc_llc_bufs_wrlock_all(struct rw_semaphore *lock, int nums)
+> +{
+> +	int i = 0;
+> +
+> +	for (; i < nums; i++)
+> +		down_write(&lock[i]);
 
-To detect an open wire on a single-ended input, we measure the voltage
-on pin VIN0 using channel register 15, the we read the voltage on the
-same pin again using channel register 0. The datasheet isn't clear on
-the details, but on one or the other or both of these, the ADC chip is
-applying some kind of pull up or pull down on the input pin so that
-each measurement will be nearly the same if there is a wire attached
-with a 0-10V signal on it. Or if the wire is detached and the pins are
-left floating, the two measurements will be different (> 300 mV).
-
-So this threshold value (the 300 mV) is measured in terms of the
-difference between two voltage measurements, but of the same input pin.
-
-My suggestion is to create extra differential channels like
-in_voltage0-involtage100_* where 100 is an arbitrary number. These
-channels would be defined as the difference between the two measurements
-on the same pin. The event attributes would use these channels since they
-are triggered by exceeding the threshold value according to this difference
-measurement.
-
-To complicate matters, these chips can also be configured so that two
-input pins can be configured as a fully differential pair. And we can
-also do open wire detection on these differential pairs. In this case
-we would configure input pins VIN0 and VIN1 as a differential pair, then
-read the difference of those two pins using channel register 1, then
-read again using channel register 2. The we see if the difference of the
-two differences exceeds the threshold.
-
-In this case, we can't have in_(voltage0-voltage1)-(voltage100-voltage101)_*
-attributes. So I guess we would have to do something like
-in_voltage200-voltage300 to handle this case? (voltage200 would represent
-the first measurement of voltage0-voltage1 and voltage300 would represent
-the 2nd measurement of the same).
+LOCKDEP will complain here.  You may want to test with
+CONFIG_PROVE_LOCKING=y
 
 
+> +}
+> +
+> +static inline void smc_llc_bufs_wrunlock_all(struct rw_semaphore *lock, int nums)
+> +{
+> +	int i = 0;
+> +
+> +	for (; i < nums; i++)
+> +		up_write(&lock[i]);
+> +}
+> +
+>  static int smc_llc_fill_ext_v2(struct smc_llc_msg_add_link_v2_ext *ext,
+>  			       struct smc_link *link, struct smc_link *link_new)
+>  {
 
