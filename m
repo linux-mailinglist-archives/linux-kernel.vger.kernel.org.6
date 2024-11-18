@@ -1,124 +1,210 @@
-Return-Path: <linux-kernel+bounces-412622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15E189D0B85
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 10:21:05 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6C709D0B88
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 10:22:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF3D22819FF
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 09:21:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2C6CAB23017
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 09:22:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83FAD188904;
-	Mon, 18 Nov 2024 09:20:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7ABF188A0D;
+	Mon, 18 Nov 2024 09:22:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aaauD3Vz"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xwv68dID"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8581F17C224
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 09:20:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6100E188014
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 09:22:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731921659; cv=none; b=eqqCjFqNFOTJxYIp+fgbGwa57k9NWjOz446RbDCEuoeZI/TtOqbiLIltUBfuAobugWb3MtdCQtP03xONQ2ZQC9oetdxhV2jni7CBnWkquFgHWYPxBk3uD6EuFfjfwWS/EcLDfa8ZX6Ug6FcoZYyGeZh0/9wkgr3ylJjxnFa9Eg4=
+	t=1731921754; cv=none; b=KXsZ4+IiuN1xis5a/7+DqlCvHO96ZcVe/UdONrznoPIyuJnkl3rcSYQkXjw38zLRPZiUEsKCpk+ZmTdMq55cuIfM7SL7iRi+jJrjD9ro0tjf099qHS0LQFMbZnrhTnu7+PDFawQUgn4xVGAk3EzEdzRJY9nctO6tDIEdrGVMLPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731921659; c=relaxed/simple;
-	bh=ugfZnn5J96rAO7xJaylkbIGnNeAO2t/ZYiEJsCSX0/A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g1KweA9+CDsQPEh+RfQnLGBImIvu7Tmi89jKhwj/MHPO2S3nbdyNgz1Fl5NI0rlvMk0MUW1CJcRGc0bWIU5ftWTxq9s1jc8qq9Rh1bDLdlm8KWUsHNqAg/z4epxzb/JNPgKkGMGesPne4VKP1QRQt8wAnNGRGm59o/dliUdweLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aaauD3Vz; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731921658; x=1763457658;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=ugfZnn5J96rAO7xJaylkbIGnNeAO2t/ZYiEJsCSX0/A=;
-  b=aaauD3Vz7kttVFWEEMoODNLD3we0EwPnyEDb8F0DphbOXBRarpkU+T09
-   aZkmG74aXlK8MXhzgDsyyGGYgHArVdIXKeE3s9Xmhs7tZpRnC1+5WBgUx
-   JoH7SFZ+SbCJeEpFYgLhWAjDeOn8wcNN/WOAsUawT93RrvPsdcg0Tl6Ib
-   AfYzjlh586wITWKlV/Pop54Qwp4h+n+uIqo8T8MTuCl4bYMxiHITc5/ws
-   g9nitYwtv/qwqep1AMg1mN5V6xEyTDR7+HT+VXCeObAzMsGzIjkAW3JPu
-   XhmWLP3cjCI9LcjQzgff9B56M9uT9jviCqz+3mcl3ywtpw06Sq9NyXlhc
-   g==;
-X-CSE-ConnectionGUID: b/FgioCKQeCpZq8hiwVJpg==
-X-CSE-MsgGUID: L4IxNC0+SS2WRzAO5U0H8A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11259"; a="54367159"
-X-IronPort-AV: E=Sophos;i="6.12,163,1728975600"; 
-   d="scan'208";a="54367159"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2024 01:20:58 -0800
-X-CSE-ConnectionGUID: vyZTs5DpQiKdNdoeJy54xA==
-X-CSE-MsgGUID: ggMpVe6gQ8Wd/iuMyoVi+Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,163,1728975600"; 
-   d="scan'208";a="120022881"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2024 01:20:55 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tCxwC-0000000Fwtr-1EaC;
-	Mon, 18 Nov 2024 11:20:52 +0200
-Date: Mon, 18 Nov 2024 11:20:52 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Naveen N Rao <naveen@kernel.org>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>
-Subject: Re: [PATCH v1 1/1] powerpc/8xx: Drop legacy-of-mm-gpiochip.h header
-Message-ID: <ZzsG9EjzV82Crl2W@smile.fi.intel.com>
-References: <20241115133802.3919003-1-andriy.shevchenko@linux.intel.com>
- <5b44abcc-f629-4250-9edf-7f173b78172c@csgroup.eu>
+	s=arc-20240116; t=1731921754; c=relaxed/simple;
+	bh=6wJSLFCpyY+aHj33li6kEvGRyGIU/UY5NnjB6LORdb8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KHShDVs9tCv4DeZeck0Eb5NlbFt7ezZpd0rxzFc2DFsKnS5BMSffkGWQ8LlYXeJW7cYlLRSqmTyrIQB4DnQ1XB8TnSWjjreinI2oHtfED6jwSzTWCQdgEar/KnbRvU7YnLnk4zBRuoZofQcTSRFlcxaxDh6kegw6wSRnBbPRiNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xwv68dID; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4315eeb2601so26658165e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 01:22:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731921751; x=1732526551; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nGmI8lbwR7NCYeW11AMDl/Et4oHvlVYfxI3t1NYlUOg=;
+        b=xwv68dIDxZYqAgoEGiBRY+BDptsCPOl1j4VfiGXLEID31XvQm61rOdgzeLUlrOtWjo
+         KAyB5+6/ULTfMRWO1PDq+D3pnFNuO/6Nxbm4DIbOzkWqMw161oCsYngCDwY+tt/DGLHl
+         IApYHRbG0Li3exY+5d+p338Ol5gUYljN0pU0BXd7QL3Ciz/9sLSagIzk4cCSLXHSv5ij
+         o3/k61t6L+rPtFw1XhbuvDZVtrUhDO80cXABVHjS5nhpZotRLyM/HHM2yiwHMpYsKRKo
+         bcFc6JR47W/tAjyyrTz0lGlyy5S+cXtGvDAVHlAULIwcco70Ivky/aPNbNDOA7mQL3zn
+         pknA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731921751; x=1732526551;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nGmI8lbwR7NCYeW11AMDl/Et4oHvlVYfxI3t1NYlUOg=;
+        b=XO7a8Nm+xGQFaxU9brkHTTcQDF+dQhWRzJRGrMdl3I1YFcK/qAMq7dzB6rxdmiNxZc
+         3yZH1Y48Kf5JPMo/AG2I0rmXpley4+DXTIxZfjkE3OaCmL9TkEwzDfQAK8VUpaJYcDTj
+         6LoXIXZctzfi2sBk4KPH01Y+hxEPqdshHjDTDRIquhdTip2WC+M+VmxomRB5fffS5biW
+         SJFJm8bld73t4LlalvA5bpCO/IEMqnqTb/ldTZp2V5XWk9GXEVdKpONHkx6gR45TBzDn
+         wI3brFIbwf7ZTnG06ikgNrXkAtL4D4qgWJ7WYgXq7z50Q/CO02GInZhbAMJ8plijdsGz
+         9TbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWKGmmynYvREbQdq/VmM0kO+Fq4+HhovbTATkvW/WjWjYE/vJbsa80TWGaAZdxsm9xNA3+V0Qwg5MMRFwE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YygAXOeA18atVrDMjyUmhCFxXX4HdfS+pllu0YvaJw20ZbK8nDE
+	kJ7EPFmTFCXTvdxxKiX5Vhn3he/VsNN14yfBPNwKiiaUO13for9mgUN+4zSKE1M=
+X-Google-Smtp-Source: AGHT+IE8sqN41IKDsVujhddClddX9c86bSpUR4FW8FB4X5ekJHU4YZ5thRdSh5CzRwHbbdczRsLpKA==
+X-Received: by 2002:a05:600c:1e88:b0:431:5465:8072 with SMTP id 5b1f17b1804b1-432df793c69mr127392555e9.31.1731921750695;
+        Mon, 18 Nov 2024 01:22:30 -0800 (PST)
+Received: from [192.168.68.163] ([145.224.66.237])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432da265668sm150597475e9.10.2024.11.18.01.22.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 Nov 2024 01:22:30 -0800 (PST)
+Message-ID: <1a843735-0a94-4df7-a8b4-cad68ee2449a@linaro.org>
+Date: Mon, 18 Nov 2024 09:22:27 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <5b44abcc-f629-4250-9edf-7f173b78172c@csgroup.eu>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 04/12] KVM: arm64: Make vcpu flag macros more generic
+To: Marc Zyngier <maz@kernel.org>
+Cc: suzuki.poulose@arm.com, oliver.upton@linux.dev,
+ coresight@lists.linaro.org, kvmarm@lists.linux.dev,
+ Joey Gouly <joey.gouly@arm.com>, Zenghui Yu <yuzenghui@huawei.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Mike Leach <mike.leach@linaro.org>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Mark Rutland <mark.rutland@arm.com>, Mark Brown <broonie@kernel.org>,
+ Anshuman Khandual <anshuman.khandual@arm.com>,
+ James Morse <james.morse@arm.com>, Fuad Tabba <tabba@google.com>,
+ Shiqi Liu <shiqiliu@hust.edu.cn>, Raghavendra Rao Ananta
+ <rananta@google.com>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20241112103717.589952-1-james.clark@linaro.org>
+ <20241112103717.589952-5-james.clark@linaro.org>
+ <86y11gvruu.wl-maz@kernel.org>
+Content-Language: en-US
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <86y11gvruu.wl-maz@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sat, Nov 16, 2024 at 11:44:35AM +0100, Christophe Leroy wrote:
-> Le 15/11/2024 à 14:38, Andy Shevchenko a écrit :
-> > Remove legacy-of-mm-gpiochip.h header file, replace of_* functions
-> > and structs with appropriate alternatives.
+
+
+On 18/11/2024 9:00 am, Marc Zyngier wrote:
+> On Tue, 12 Nov 2024 10:37:03 +0000,
+> James Clark <james.clark@linaro.org> wrote:
+>>
+>> Rename vcpu_* to kvm_* so that the same flags mechanism can be used in
+>> places other than vcpu without being confusing. Wherever macros are
+>> still related to vcpu like vcpu_get_flag() with hard coded v->arch, keep
+>> the vcpu_* name, otherwise change it.
+>>
+>> Also move the "v->arch" access one macro higher for the same reason.
+>>
+>> This will be used for moving flags to host_data in a later commit.
+>>
+>> Signed-off-by: James Clark <james.clark@linaro.org>
+>> ---
+>>   arch/arm64/include/asm/kvm_host.h | 88 +++++++++++++++----------------
+>>   arch/arm64/kvm/hyp/exception.c    | 12 ++---
+>>   arch/arm64/kvm/inject_fault.c     |  4 +-
+>>   arch/arm64/kvm/mmio.c             | 10 ++--
+>>   4 files changed, 57 insertions(+), 57 deletions(-)
+>>
+>> diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
+>> index f333b189fb43..34aa59f498c4 100644
+>> --- a/arch/arm64/include/asm/kvm_host.h
+>> +++ b/arch/arm64/include/asm/kvm_host.h
+>> @@ -790,22 +790,22 @@ struct kvm_vcpu_arch {
+>>   /*
+>>    * Each 'flag' is composed of a comma-separated triplet:
+>>    *
+>> - * - the flag-set it belongs to in the vcpu->arch structure
+>> + * - the flag-set it belongs to in the structure pointed to by 'v'
+>>    * - the value for that flag
+>>    * - the mask for that flag
+>>    *
+>> - *  __vcpu_single_flag() builds such a triplet for a single-bit flag.
+>> - * unpack_vcpu_flag() extract the flag value from the triplet for
+>> + *  __kvm_single_flag() builds such a triplet for a single-bit flag.
+>> + * unpack_kvm_flag() extract the flag value from the triplet for
+>>    * direct use outside of the flag accessors.
+>>    */
+>> -#define __vcpu_single_flag(_set, _f)	_set, (_f), (_f)
+>> +#define __kvm_single_flag(_set, _f)	_set, (_f), (_f)
+>>   
+>>   #define __unpack_flag(_set, _f, _m)	_f
+>> -#define unpack_vcpu_flag(...)		__unpack_flag(__VA_ARGS__)
+>> +#define unpack_kvm_flag(...)		__unpack_flag(__VA_ARGS__)
+>>   
+>>   #define __build_check_flag(v, flagset, f, m)			\
+>>   	do {							\
+>> -		typeof(v->arch.flagset) *_fset;			\
+>> +		typeof(v.flagset) *_fset;			\
+>>   								\
+>>   		/* Check that the flags fit in the mask */	\
+>>   		BUILD_BUG_ON(HWEIGHT(m) != HWEIGHT((f) | (m)));	\
+>> @@ -813,11 +813,11 @@ struct kvm_vcpu_arch {
+>>   		BUILD_BUG_ON((sizeof(*_fset) * 8) <= __fls(m));	\
+>>   	} while (0)
+>>   
+>> -#define __vcpu_get_flag(v, flagset, f, m)			\
+>> +#define __kvm_get_flag(v, flagset, f, m)			\
+>>   	({							\
+>>   		__build_check_flag(v, flagset, f, m);		\
+>>   								\
+>> -		READ_ONCE(v->arch.flagset) & (m);		\
+>> +		READ_ONCE(v.flagset) & (m);		\
+>>   	})
+>>   
+>>   /*
+>> @@ -826,64 +826,64 @@ struct kvm_vcpu_arch {
+>>    */
+>>   #ifdef __KVM_NVHE_HYPERVISOR__
+>>   /* the nVHE hypervisor is always non-preemptible */
+>> -#define __vcpu_flags_preempt_disable()
+>> -#define __vcpu_flags_preempt_enable()
+>> +#define __kvm_flags_preempt_disable()
+>> +#define __kvm_flags_preempt_enable()
+>>   #else
+>> -#define __vcpu_flags_preempt_disable()	preempt_disable()
+>> -#define __vcpu_flags_preempt_enable()	preempt_enable()
+>> +#define __kvm_flags_preempt_disable()	preempt_disable()
+>> +#define __kvm_flags_preempt_enable()	preempt_enable()
+>>   #endif
+>>   
+>> -#define __vcpu_set_flag(v, flagset, f, m)			\
+>> +#define __kvm_set_flag(v, flagset, f, m)			\
 > 
-> Looks like you don't really have an alternative to
-> of_mm_gpiochip_add_data(), you are replacing one single line by 11 new ones,
-> and that is done twice (once for cpm1_gpiochip_add16(), once for
-> cpm1_gpiochip_add32()).
-
-True, but that's the issue that we have of_specific API. If someone propose
-the common API for the agnostic approach,  it would be nice, but I am not
-the one. And TBH I do not see the advantage of it right now as almost every
-GPIO driver is using its own labeling schema (*). Note, that this patch also
-fixes a memory leak as a side effect.
-
-*) the legacy API is mostly used by PPC code, do you want that of_mm_* thingy
-to be moved to PPC specific code instead of killing it? Would be done this
-way as well.
-
-> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > ---
-> >   arch/powerpc/platforms/8xx/cpm1.c | 119 +++++++++++++++---------------
+> Hell no. Never. The whole point of this naming is that we know what
+> this applies to. Here, you might as well have replaced 'vcpu' with
+> 'carrot', and the result would be the same.
 > 
-> Does not build:
+> Not to mention the insane churn this generates.
+> 
+> So no, not happening.
+> 
+> 	M.
+> 
 
-Crap, I most likely built something else and not these files...
-I have carefully build-test this for v2.
+Fair enough, I wasn't feeling to strongly about this either, was just 
+anticipating that there might be objection to bare flags if this more 
+abstracted mechanism existed elsewhere.
 
-Note to myself: Never ever send the patches on Friday evenings! :-)
+Looks like Oliver already did it with just flags for the same end goal 
+here [1], so I will drop this.
 
--- 
-With Best Regards,
-Andy Shevchenko
-
+[1]: 
+https://lore.kernel.org/kvmarm/20241115224924.2132364-4-oliver.upton@linux.dev/T/#u
 
 
