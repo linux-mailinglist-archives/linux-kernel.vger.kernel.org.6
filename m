@@ -1,352 +1,174 @@
-Return-Path: <linux-kernel+bounces-413212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D80F99D1525
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 17:15:24 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 020FD9D1543
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 17:23:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60B2D1F237E6
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 16:15:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B2927B293DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 16:16:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A1E31BD007;
-	Mon, 18 Nov 2024 16:15:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 388521BD508;
+	Mon, 18 Nov 2024 16:16:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="kxJbC3Xs"
-Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RireEOgb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88FB21A38F9
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 16:15:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83402199EBB;
+	Mon, 18 Nov 2024 16:16:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731946515; cv=none; b=iGjvi+9jJ2ovYlGhSGkdxFJnXG5rKP6PfxpB7XjPxZMI/7jZ/brTsOHqxg7rBokY4bXNqo0dMd5+Kal9BgYzHLPnzsWAwqm3/bS1C3CId3HEDfbx+v0wsaBrF+NuM2MFnEz6rsAcRaEgKZ6BHQ1lQVTdLB1VWJePbgKYytZfNzY=
+	t=1731946601; cv=none; b=K0oe3Q4yve2Fbej1b4WFLYQnqx181CAQzcMNnMym3/LM1DaGDpCFuJrYIBCWMBmLBD9EIUrpty2fayb6fsEHXMqWpiU+RrkntmqokrFeUC6yaFl3521R6KUXfdrIxzuX68qrNUr/3DTv9TNqfTTao87lZsdoJrsXgRznab9gOXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731946515; c=relaxed/simple;
-	bh=PKVUoUUaO8R1rCwR7AWixHIRWM/rIktvLTj7G2SXVFM=;
-	h=MIME-Version:Date:Content-Type:From:Message-ID:Subject:To:Cc:
-	 In-Reply-To:References; b=dprQ+kDJ6A1JCIs2KtyYCdZWdDLBSeL2pZxcRdbRT1CzAUndhh3ANNDq9wsdgxzj9/xGFsjUbHFAlMZ5rW5Zxi95vCVaQNF6FLO5FSq2CzrWDalIMY8hOK5vsnIqYRJGPsUUXLXYYmXZA5pCGAG0HePK+2dN9EoXnjzRUrxH7yM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=kxJbC3Xs; arc=none smtp.client-ip=91.218.175.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1731946601; c=relaxed/simple;
+	bh=I2z5foPBl/UuGPdBgcbdnOMGEorTScQwtrx+l5doXog=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RUEyLUXvUWLpo+PFdkZWrcaWXBhgKSg84m0GrzSSnr3+bcYi06XqB+FBKuzZHe7zM/8cvpmTT1e1jdLmxpGBcaC/UTiZ+XIu7idRrxisdF+RtEJGzVlT8wLQmRR1xlZYmeaWjx7OtIHLkOynEfYGwbLg/UKVZJFe1V3wInAKT8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RireEOgb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED9D5C4CEDD;
+	Mon, 18 Nov 2024 16:16:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731946601;
+	bh=I2z5foPBl/UuGPdBgcbdnOMGEorTScQwtrx+l5doXog=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=RireEOgbsSKFD8g7Jz1lDXplSvcQmgfUFggnN64swhzykIa7gb/AkGdA2iD4lBEC0
+	 dnBKyBYUgk4IV7SWFvVuaPxIG8uaMG8tCfmBKYftoI9J5rBF7TjwZkn8Tz7g5DVJEW
+	 FLwU6+p7Br71oJJLz7szSHQVcKYf/776fD+Kwal7Bd5BndiX0gQSnX4GMLaQMAMuhl
+	 HCx84M3ucCC98cWYkenvsM8SCCK+TMiqD6owcToNtm2KezG7MgkHAoCMCiK0NUUGl7
+	 qsuZMhC17P2EVSithXB5jNqbLe8FBZoo4hjRb/Nru5h0j+wM8hBLYgLNMg3A3DzBW2
+	 Ey8TQWB2p7qeQ==
+Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-514bb6953f4so81200e0c.2;
+        Mon, 18 Nov 2024 08:16:40 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCX0qkkkH5Mdb0RqNHMboQgFRuIxV7nk9Z2l3xuef8mQOkWaGNQDrOgds+KWNqHokH/r7+xXsMvgZfs1x5g=@vger.kernel.org, AJvYcCX1YEdgqrBLlLGUew0olVWl4bSlg9qbC9/MPHmbCZLUwv8PI1LZQyap/8zurthnA54xmKd/G07/3Wbvxfs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwevGeFyXTnBntRBR2UIx/gd/z23zeqhXbzV3Oh+kC3HmEphsDm
+	CPJCYceTv+peUcnVsObv9Wzd1QofrVjhpvcTiaXJuVQtzSIMnBVYgkYAYGRfu/tRYJ18ucoK9S6
+	bNPSLimk8wwcJ0s66B1/7iuO8ph8=
+X-Google-Smtp-Source: AGHT+IGjGyQYZwS1o9rlyXcvmgyCE3cSV3FYD2Clv1A7WL8SaGcJFxp+zmjH2AHAzwPpwzRsziXb6Ea8Dl0YYWRqRP4=
+X-Received: by 2002:a05:6122:896:b0:509:e80:3ed2 with SMTP id
+ 71dfb90a1353d-5147866a43bmr9866521e0c.7.1731946600020; Mon, 18 Nov 2024
+ 08:16:40 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1731946510;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NkiG9y2ehFnJbFL3/n23U9ZBpM4DCYOB9PkT+Tb9pS0=;
-	b=kxJbC3Xs6EhETaX6UCb/ofFUsRJlE3xksNe1gr2/PggMojh1IO3BrLqrbJISwSvpRB/h+u
-	xef5YjyRa8tQvdHZHcYExmig4ujzK4nTuBNmvYSNLg67tF32Afe9aLd3TpdGPh9a5fWeJr
-	T2eLd27ABN/K/p1LOaNhrvH8op5w1x0=
-Date: Mon, 18 Nov 2024 16:15:02 +0000
-Content-Type: text/plain; charset="utf-8"
+References: <20241114-uvc-roi-v15-0-64cfeb56b6f8@chromium.org>
+ <20241114-uvc-roi-v15-18-64cfeb56b6f8@chromium.org> <ac8ea4ed606cbc7dfb15057babc29e49a152ef01.camel@irl.hu>
+ <CANiDSCuZTYDsQ3yCpFV_rhbQ+vFGJnsuU-jXwOacxZVbbzEPfw@mail.gmail.com> <8151585c-cb4c-424d-a81c-939ee30d8e9d@redhat.com>
+In-Reply-To: <8151585c-cb4c-424d-a81c-939ee30d8e9d@redhat.com>
+From: Ricardo Ribalda Delgado <ribalda@kernel.org>
+Date: Mon, 18 Nov 2024 17:16:22 +0100
+X-Gmail-Original-Message-ID: <CAPybu_14EcOZw6C65ZWVGoa5bcZe1XCZbMghNzUG+wFF7affdg@mail.gmail.com>
+Message-ID: <CAPybu_14EcOZw6C65ZWVGoa5bcZe1XCZbMghNzUG+wFF7affdg@mail.gmail.com>
+Subject: Re: [PATCH v15 18/19] media: uvcvideo: implement UVC v1.5 ROI
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: Ricardo Ribalda <ribalda@chromium.org>, Gergo Koteles <soyer@irl.hu>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Hans Verkuil <hverkuil@xs4all.nl>, Yunke Cao <yunkec@chromium.org>, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Yunke Cao <yunkec@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: jeff.xie@linux.dev
-Message-ID: <991260353fbe141ffef8db7a08ed8fb2473e4ca0@linux.dev>
-TLS-Required: No
-Subject: Re: [PATCH v5] ftrace: Get the true parent ip for function tracer
-To: rostedt@goodmis.org, mhiramat@kernel.org
-Cc: mathieu.desnoyers@efficios.com, linux-trace-kernel@vger.kernel.org,
- linux-kernel@vger.kernel.org, xiehuan09@gmail.com,
- dolinux.peng@gmail.com, chensong_2000@189.cn
-In-Reply-To: <20241008033159.22459-1-jeff.xie@linux.dev>
-References: <20241008033159.22459-1-jeff.xie@linux.dev>
-X-Migadu-Flow: FLOW_OUT
 
-October 8, 2024 at 11:31 AM, "Jeff Xie" <jeff.xie@linux.dev> wrote:
+Hi
 
-I'd like to know if this patch can be merged into 6.13?
+On Mon, Nov 18, 2024 at 4:59=E2=80=AFPM Hans de Goede <hdegoede@redhat.com>=
+ wrote:
+>
+> Hi Ricardo,
+>
+> On 14-Nov-24 9:03 PM, Ricardo Ribalda wrote:
+> > Hi Gergo
+> >
+> > Sorry, I forgot to reply to your comment in v14.
+> >
+> > On Thu, 14 Nov 2024 at 20:53, Gergo Koteles <soyer@irl.hu> wrote:
+> >>
+> >> Hi Ricardo,
+> >>
+> >> On Thu, 2024-11-14 at 19:10 +0000, Ricardo Ribalda wrote:
+> >>>
+> >>> +     },
+> >>> +     {
+> >>> +             .id             =3D V4L2_CID_UVC_REGION_OF_INTEREST_AUT=
+O,
+> >>> +             .entity         =3D UVC_GUID_UVC_CAMERA,
+> >>> +             .selector       =3D UVC_CT_REGION_OF_INTEREST_CONTROL,
+> >>> +             .size           =3D 16,
+> >>> +             .offset         =3D 64,
+> >>> +             .v4l2_type      =3D V4L2_CTRL_TYPE_BITMASK,
+> >>> +             .data_type      =3D UVC_CTRL_DATA_TYPE_BITMASK,
+> >>> +             .name           =3D "Region Of Interest Auto Controls",
+> >>> +     },
+> >>>  };
+> >>>
+> >>
+> >> Wouldn't be better to use 8 V4L2_CTRL_TYPE_BOOLEAN controls for this?
+> >
+> > If I create 8 Booleans, they will always be shown in the device. And
+> > the user will not have a way to know which values are available and
+> > which are not.
+> >
+> > We will also fail the v4l2-compliance test, because there will be up
+> > to 7 boolean controls that will not be able to be set to 1, eventhough
+> > they are writable.
+>
+> So why can't these other controls be set to 1? Because only one
+> of the options in the bitmask can be selected at a time ?
+>
+> If only 1 bit in the UVC_CTRL_DATA_TYPE_BITMASK for this can be one
+> at the time, then this should be mapped to a V4L2_CTRL_TYPE_MENU
+> just like how that is done for V4L2_CID_EXPOSURE_AUTO already.
+>
+> Actually looking at existing comments about UVC_CTRL_DATA_TYPE_BITMASK
+> in the driver there is this comment on top of uvc_mapping_get_menu_value(=
+)
+>
+>  * For controls of type UVC_CTRL_DATA_TYPE_BITMASK, the UVC control value=
+ is
+>  * expressed as a bitmask and is thus guaranteed to have a single bit set=
+.
+>
+> Assuming this "guaranteed to have a single bit set" comment is valid for
+> the V4L2_CID_UVC_REGION_OF_INTEREST_AUTO part of UVC_CT_REGION_OF_INTERES=
+T_CONTROL
+> too then I think we should simply map this to a menu similar to how
+> this is done for V4L2_CID_EXPOSURE_AUTO.
+>
+> Note V4L2_CID_EXPOSURE_AUTO is the only existing user of UVC_CTRL_DATA_TY=
+PE_BITMASK
+> at the moment.
+>
+> Mapping this to a menu should nicely address Gergo's concerns here.
 
->=20
->=20When using both function tracer and function graph simultaneously,
->=20
->=20it is found that function tracer sometimes captures a fake parent ip
->=20
->=20(return_to_handler) instead of the true parent ip.
->=20
->=20This issue is easy to reproduce. Below are my reproduction steps:
->=20
->=20jeff-labs:~/bin # ./trace-net.sh
->=20
->=20jeff-labs:~/bin # cat /sys/kernel/debug/tracing/instances/foo/trace |=
- grep return_to_handler
->=20
->=20 trace-net.sh-405 [001] ...2. 31.859501: avc_has_perm+0x4/0x190 <-ret=
-urn_to_handler+0x0/0x40
->=20
->=20 trace-net.sh-405 [001] ...2. 31.859503: simple_setattr+0x4/0x70 <-re=
-turn_to_handler+0x0/0x40
->=20
->=20 trace-net.sh-405 [001] ...2. 31.859503: truncate_pagecache+0x4/0x60 =
-<-return_to_handler+0x0/0x40
->=20
->=20 trace-net.sh-405 [001] ...2. 31.859505: unmap_mapping_range+0x4/0x14=
-0 <-return_to_handler+0x0/0x40
->=20
->=20 trace-net.sh-405 [001] ...3. 31.859508: _raw_spin_unlock+0x4/0x30 <-=
-return_to_handler+0x0/0x40
->=20
->=20 [...]
->=20
->=20The following is my simple trace script:
->=20
->=20<snip>
->=20
->=20jeff-labs:~/bin # cat ./trace-net.sh
->=20
->=20TRACE_PATH=3D"/sys/kernel/debug/tracing"
->=20
->=20set_events() {
->=20
->=20 echo 1 > $1/events/net/enable
->=20
->=20 echo 1 > $1/events/tcp/enable
->=20
->=20 echo 1 > $1/events/sock/enable
->=20
->=20 echo 1 > $1/events/napi/enable
->=20
->=20 echo 1 > $1/events/fib/enable
->=20
->=20 echo 1 > $1/events/neigh/enable
->=20
->=20}
->=20
->=20set_events ${TRACE_PATH}
->=20
->=20echo 1 > ${TRACE_PATH}/options/sym-offset
->=20
->=20echo 1 > ${TRACE_PATH}/options/funcgraph-tail
->=20
->=20echo 1 > ${TRACE_PATH}/options/funcgraph-proc
->=20
->=20echo 1 > ${TRACE_PATH}/options/funcgraph-abstime
->=20
->=20echo 'tcp_orphan*' > ${TRACE_PATH}/set_ftrace_notrace
->=20
->=20echo function_graph > ${TRACE_PATH}/current_tracer
->=20
->=20INSTANCE_FOO=3D${TRACE_PATH}/instances/foo
->=20
->=20if [ ! -e $INSTANCE_FOO ]; then
->=20
->=20 mkdir ${INSTANCE_FOO}
->=20
->=20fi
->=20
->=20set_events ${INSTANCE_FOO}
->=20
->=20echo 1 > ${INSTANCE_FOO}/options/sym-offset
->=20
->=20echo 'tcp_orphan*' > ${INSTANCE_FOO}/set_ftrace_notrace
->=20
->=20echo function > ${INSTANCE_FOO}/current_tracer
->=20
->=20echo 1 > ${TRACE_PATH}/tracing_on
->=20
->=20echo 1 > ${INSTANCE_FOO}/tracing_on
->=20
->=20echo > ${TRACE_PATH}/trace
->=20
->=20echo > ${INSTANCE_FOO}/trace
->=20
->=20</snip>
->=20
->=20Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
->=20
->=20Signed-off-by: Jeff Xie <jeff.xie@linux.dev>
->=20
->=20---
->=20
->=20v5:
->=20
->=20 https://lore.kernel.org/linux-trace-kernel/5bc5b9b07d997e299b0480058=
-26bc6d592265c67@linux.dev/T/#me683cf5ac3858711230e54e5d5924a82e85917e6
->=20
->=20- Using fregs helper function to get the stack pointer=20
->=20
->=20=20
->=20
-> v4:
->=20
->=20 https://lore.kernel.org/linux-trace-kernel/20241005101320.766c1100@r=
-orschach.local.home/
->=20
->=20- fixed the crash when accessing the "current" if the arch has not im=
-plemented noinstr
->=20
->=20 thanks steve for the testing and the detailed explanation
->=20
->=20v3:
->=20
->=20 https://lore.kernel.org/linux-trace-kernel/20240910001326.87f27e6b31=
-2f1d956cf352a2@kernel.org/
->=20
->=20- fixed build error when CONFIG_FUNCTION_GRAPH_TRACER=3Dn suggested b=
-y Masami
->=20
->=20v2:
->=20
->=20 https://lore.kernel.org/linux-trace-kernel/20240821095910.1888d7fa@g=
-andalf.local.home/
->=20
->=20- Adding __always_inline to function_get_true_parent_ip suggested by =
-Steve
->=20
->=20 kernel/trace/trace_functions.c | 26 ++++++++++++++++++++++++++
->=20
->=20 1 file changed, 26 insertions(+)
->=20
->=20diff --git a/kernel/trace/trace_functions.c b/kernel/trace/trace_func=
-tions.c
->=20
->=20index 3b0cea37e029..46c79a349d8c 100644
->=20
->=20--- a/kernel/trace/trace_functions.c
->=20
->=20+++ b/kernel/trace/trace_functions.c
->=20
->=20@@ -176,6 +176,27 @@ static void function_trace_start(struct trace_ar=
-ray *tr)
->=20
->=20 tracing_reset_online_cpus(&tr->array_buffer);
->=20
->=20 }
->=20
->=20=20
->=20
-> +#ifdef CONFIG_FUNCTION_GRAPH_TRACER
->=20
->=20+static __always_inline unsigned long
->=20
->=20+function_get_true_parent_ip(unsigned long parent_ip, struct ftrace_r=
-egs *fregs)
->=20
->=20+{
->=20
->=20+ unsigned long true_parent_ip;
->=20
->=20+ int idx =3D 0;
->=20
->=20+
->=20
->=20+ true_parent_ip =3D parent_ip;
->=20
->=20+ if (unlikely(parent_ip =3D=3D (unsigned long)&return_to_handler) &&=
- fregs)
->=20
->=20+ true_parent_ip =3D ftrace_graph_ret_addr(current, &idx, parent_ip,
->=20
->=20+ (unsigned long *)ftrace_regs_get_stack_pointer(fregs));
->=20
->=20+ return true_parent_ip;
->=20
->=20+}
->=20
->=20+#else
->=20
->=20+static __always_inline unsigned long
->=20
->=20+function_get_true_parent_ip(unsigned long parent_ip, struct ftrace_r=
-egs *fregs)
->=20
->=20+{
->=20
->=20+ return parent_ip;
->=20
->=20+}
->=20
->=20+#endif
->=20
->=20+
->=20
->=20 static void
->=20
->=20 function_trace_call(unsigned long ip, unsigned long parent_ip,
->=20
->=20 struct ftrace_ops *op, struct ftrace_regs *fregs)
->=20
->=20@@ -193,6 +214,8 @@ function_trace_call(unsigned long ip, unsigned lo=
-ng parent_ip,
->=20
->=20 if (bit < 0)
->=20
->=20 return;
->=20
->=20=20
->=20
-> + parent_ip =3D function_get_true_parent_ip(parent_ip, fregs);
->=20
->=20+
->=20
->=20 trace_ctx =3D tracing_gen_ctx();
->=20
->=20=20
->=20
->  cpu =3D smp_processor_id();
->=20
->=20@@ -241,6 +264,7 @@ function_stack_trace_call(unsigned long ip, unsig=
-ned long parent_ip,
->=20
->=20 * recursive protection is performed.
->=20
->=20 */
->=20
->=20 local_irq_save(flags);
->=20
->=20+ parent_ip =3D function_get_true_parent_ip(parent_ip, fregs);
->=20
->=20 cpu =3D raw_smp_processor_id();
->=20
->=20 data =3D per_cpu_ptr(tr->array_buffer.data, cpu);
->=20
->=20 disabled =3D atomic_inc_return(&data->disabled);
->=20
->=20@@ -309,6 +333,7 @@ function_no_repeats_trace_call(unsigned long ip, =
-unsigned long parent_ip,
->=20
->=20 if (bit < 0)
->=20
->=20 return;
->=20
->=20=20
->=20
-> + parent_ip =3D function_get_true_parent_ip(parent_ip, fregs);
->=20
->  cpu =3D smp_processor_id();
->=20
->=20 data =3D per_cpu_ptr(tr->array_buffer.data, cpu);
->=20
->=20 if (atomic_read(&data->disabled))
->=20
->=20@@ -356,6 +381,7 @@ function_stack_no_repeats_trace_call(unsigned lon=
-g ip, unsigned long parent_ip,
->=20
->=20 * recursive protection is performed.
->=20
->=20 */
->=20
->=20 local_irq_save(flags);
->=20
->=20+ parent_ip =3D function_get_true_parent_ip(parent_ip, fregs);
->=20
->=20 cpu =3D raw_smp_processor_id();
->=20
->=20 data =3D per_cpu_ptr(tr->array_buffer.data, cpu);
->=20
->=20 disabled =3D atomic_inc_return(&data->disabled);
->=20
->=20--=20
->=20
-> 2.43.0
+The UVC standard is not very clear re bmAutoControls. It says:
+"""
+The bmAutoControls bitmask determines which, if any, on board features
+should track to the region of interest. To detect if a device supports
+a particular Auto Control, use GET_MAX which returns a mask indicating
+all supported Auto Controls.
+GET_CUR returns the current Region of Interest (RoI) being employed by
+the device. This RoI should be the same as specified in most recent
+SET_CUR except in the case where the =E2=80=98Auto Detect and Track=E2=80=
+=99 and/or
+=E2=80=98Image Stabilization=E2=80=99 bit have been set.
+"""
+
+Which makes me believe that you can set another Auto value + one of
+these ones. So I do not think that we can assume "guaranteed to have a
+single bit set".
+
+The behaviour will vary module to module. So I'd rather take a
+conservative approach here and let the hardware clamp the value and
+not us.
+
+>
+> Regards,
+>
+> Hans
 >
 
