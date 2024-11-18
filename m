@@ -1,166 +1,153 @@
-Return-Path: <linux-kernel+bounces-412596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D54DD9D0B28
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 09:44:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 809A69D0B2F
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 09:46:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97220281471
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 08:44:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 458F92825BF
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 08:46:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FC4916132F;
-	Mon, 18 Nov 2024 08:44:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40CA6186E46;
+	Mon, 18 Nov 2024 08:46:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QeUWMpwi"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Qiwcj9hr"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24CA32629F
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 08:43:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 228F423A9;
+	Mon, 18 Nov 2024 08:46:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731919440; cv=none; b=RUkmXVSxZ1GkyMfHK9eyNGXFw/M+NGK7SI5Ew9sUkMdh2gdhYz71t9XjRlhT1ig8t/eTKjfmwHKCtJIgRdxjOw289+wdfxpwgdm3F6bi+qw9zXvJ2VcVLKClRxN8hRhvSIqsLrmSK9vLDZbKry7/RZiT4T5QCn0Lehnmuh+dltA=
+	t=1731919599; cv=none; b=sdGggm3Up77p3sKD0XxEYNRFTlyGleofhFfyOsvX1+XeUVmVKByqtyIx2JVMQWa+wi63NLYkgta1uThkwYaBdxOp2lQkdhn1o36UA6Igur0Y9RFk3vqmefaE3HzZa9/TCqP6HlkwbTySJAj2r84/Y79omn/p6J3viOXhwkZAKrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731919440; c=relaxed/simple;
-	bh=/HAWXQeWDxquzy/wU3MHS6hMvoH29G/vOCWHCZ28Yuk=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=lN1lnzhyqyR41j8zfyZVXUuk3QuncvNh7qt8oVK/hQY1r6iAD8UOLMhplgA8dIARt+UVasqusTlE46J2EZebahjxQF1YmOm5ylaHpb+Xybb8hUp4BuL6/S3z8m3C9HEa0saZbzuPJg3xMy53LTxFExVRDGZaru/I5YrN6nvJojE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QeUWMpwi; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-38242abf421so699040f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 00:43:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731919437; x=1732524237; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ypUwUUYc52nz0VWt6hkJFRU5UFb2HonzDOj3Vy9qns0=;
-        b=QeUWMpwiPpPv08Pe233hFi+wt8Rb9MjO0sR0dIOZoq4FhPCqkpwHl7/0Hr8hG04zsD
-         5nFLsO34iyDeiMpcR1rsPdEzasa6CK83l6AdMca6n0GkOueamZRuu2vfeIU1f6jkGVkU
-         hcxub2Db7XsAJ1VpAb4rbdyzZnagF0Mcz+s3v8mJbEq7b1h7USX/95NiIolP5ZeYeKR+
-         NYHFXWu1YNi67rmUKDCSos+mMa6JSCv4Z/pxO8BvxXJ5GtVe9TsRT9b64o3E7IJvvu0N
-         PnH6AA5o/qfsbBFwc6RaX7HyR0+LyWJHmTqBtVigzNuyTGkVDCqPNqqSU/3ZEeanUyrn
-         3CEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731919437; x=1732524237;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ypUwUUYc52nz0VWt6hkJFRU5UFb2HonzDOj3Vy9qns0=;
-        b=gkfyuEVC7DP9ijMHWsD+bCt7/I/mRDYI++IlkBwxsyeV/7c1pOtpzZdMwRQi3o4F7A
-         4oiZy2ovk0vGysQRM+Zp0BFGTDSxsB/MtM7fsPyRr0UsigNGBaBz4OD9IZedsrlL9yIu
-         vbZpiEXEe0TAPPg8goUmd07YdipBdHNfprOyCaKx10PuTAPhJj8hzWv0CXs+ns47xjj0
-         4kLYDUoaiMXXjlwfErfJdRAZTSMQCN3CQnueX2+ZW86CH/esUG0Kwx0rqjx9HBLhJzZ0
-         XsO9R4hxKwuGPQQllCiVMDHtSb9ySYUYAYdgcgIwDT0Rht6mg6oMnYNxx3MMhgS7vcMl
-         ZcmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXtvfA7zSw5bI+1yC/sZgeXCmQeur45hba1nAsHRtC99683M4eB4069ojr6FimTwBOhYP6wIRBCEETv36I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3jbP4folc3lqOLQsbEryVJUnp5dht8tjp8E9xU/Xsw2GF8A5T
-	vk2HL1a+jZy/wg0IOm/GJsZkwAJkYuQ0oguKL89hcF+bCt3C9oq4bLuud6go/H4=
-X-Google-Smtp-Source: AGHT+IG4x/wSsHa4buKCI+PmRIPnd+RHX7sQl/gl5v5lsTsElHnDURLtXwCLBx6jPTcOcp0me54+bA==
-X-Received: by 2002:a5d:64a7:0:b0:382:3f31:f3b9 with SMTP id ffacd0b85a97d-3823f31f87amr4159436f8f.56.1731919437379;
-        Mon, 18 Nov 2024 00:43:57 -0800 (PST)
-Received: from ?IPV6:2a01:e0a:982:cbb0:ed47:520d:3d5c:3acf? ([2a01:e0a:982:cbb0:ed47:520d:3d5c:3acf])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-382398aa925sm6021314f8f.50.2024.11.18.00.43.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Nov 2024 00:43:56 -0800 (PST)
-Message-ID: <7ca35f75-3423-4ed3-bce0-6f3c7fa1f718@linaro.org>
-Date: Mon, 18 Nov 2024 09:43:56 +0100
+	s=arc-20240116; t=1731919599; c=relaxed/simple;
+	bh=sMCWvKB7WkMax+URJGEcDgswx+LT/PidQgFP62KmMEg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=i6bMBecHSgs+N+iofBwa4mZa6IRa5En6kHLGw0ycyUD5DFtfDqTIjidwTPtPIBbjMS1UtnATjwKC/9UEjSgjXqXtDn/kz+TBgR+iM1NM+ZRTSt6KNr4Tca97h9FHt/JRMxEGlZUbwx6e39EtayleT8VFW9JIRfNTA66wtbmF7Ko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Qiwcj9hr; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AI1XUfm002666;
+	Mon, 18 Nov 2024 08:46:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=kekD6b
+	px5PSVlj02oWh1qCXrsMNq8i3soFV5V/stK+Y=; b=Qiwcj9hrxaBUfPNe0e6n98
+	oohk2hID97IXTJaSv958RHIluuqB93BAUqJDAGWsu/ptP82ECBXGCKVusX9jtJig
+	0OOxmWGacDq1M6ZLMvuFvwVRSoqGe3i3KDUcqfQnxErZZdWrtXWrJXTPBdvGsZsM
+	/ihUmVhXb+UHVYXeqkruFGK6PY29luAU8+mkwxA6aocyypq915KJGQZKPHIVhfvQ
+	rJlirUFq1xvPy/j0Jwh27m/E4agMua02RyjZK2DjiIV6iyupz3xBOlaoFu2cHM1y
+	AVwWZCNl0vXtBcAQvTK0N111va/cXnFrGTIpzi1MKrANGQ4BjudRRjaW8eo3PNxw
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42xk20r3tx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 18 Nov 2024 08:46:34 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4AI8kY1B004109;
+	Mon, 18 Nov 2024 08:46:34 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42xk20r3tt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 18 Nov 2024 08:46:34 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AI3U5Mi012123;
+	Mon, 18 Nov 2024 08:46:33 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 42y7xjj6va-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 18 Nov 2024 08:46:33 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4AI8kTKp57541084
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 18 Nov 2024 08:46:29 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6C6382004B;
+	Mon, 18 Nov 2024 08:46:29 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id DD07D20043;
+	Mon, 18 Nov 2024 08:46:28 +0000 (GMT)
+Received: from [9.171.68.3] (unknown [9.171.68.3])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 18 Nov 2024 08:46:28 +0000 (GMT)
+Message-ID: <bd8e196839281fd324721650c5974db35b7990ec.camel@linux.ibm.com>
+Subject: Re: [PATCH net-next] net/smc: Run patches also by RDMA ML
+From: Gerd Bayer <gbayer@linux.ibm.com>
+To: Leon Romanovsky <leon@kernel.org>
+Cc: Wenjia Zhang <wenjia@linux.ibm.com>, Jan Karcher <jaka@linux.ibm.com>,
+        "D. Wythe" <alibuda@linux.alibaba.com>,
+        Tony Lu <tonylu@linux.alibaba.com>, Wen Gu <guwen@linux.alibaba.com>,
+        Halil Pasic <pasic@linux.ibm.com>, linux-rdma@vger.kernel.org,
+        netdev@vger.kernel.org, linux390-list@tuxmaker.boeblingen.de.ibm.com,
+        linux-kernel@vger.kernel.org
+Date: Mon, 18 Nov 2024 09:46:28 +0100
+In-Reply-To: <20241117100156.GA28954@unreal>
+References: <20241115-smc_lists-v1-1-a0a438125f13@linux.ibm.com>
+	 <20241117100156.GA28954@unreal>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH 1/1] drm/bridge: tc358775: Remove burst mode support
-To: Daniel Semkowicz <dse@thaumatec.com>,
- Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>
-Cc: David Airlie <airlied@gmail.com>,
- Jernej Skrabec <jernej.skrabec@gmail.com>, Jonas Karlman <jonas@kwiboo.se>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Michael Walle <mwalle@kernel.org>,
- Simona Vetter <simona@ffwll.ch>, Thomas Zimmermann <tzimmermann@suse.de>,
- Tony Lindgren <tony@atomide.com>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20241115160641.74074-1-dse@thaumatec.com>
- <20241115160641.74074-2-dse@thaumatec.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20241115160641.74074-2-dse@thaumatec.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: e4S5HiYg4CSEK4rcWnjIw9htUagIIPmv
+X-Proofpoint-GUID: Ut3Vn0GMU5dT5deJG9o1G3B4ot23WnUj
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 phishscore=0
+ mlxlogscore=999 lowpriorityscore=0 priorityscore=1501 suspectscore=0
+ malwarescore=0 clxscore=1015 mlxscore=0 spamscore=0 adultscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411180070
 
-On 15/11/2024 17:06, Daniel Semkowicz wrote:
-> Current tc358775 bridge driver implementation assumes that DSI clock
-> is used as a source for LVDS pixel clock. Moreover, clock divider
-> PCLKDIV has a hard-coded value. This means that driver expects DSI
-> clock to always match a panel pixel clock. With such assumption, LVDS
-> pixel clock is configured to be (DSI pixel clock / 3) for single link.
-> This is true for DSI non-burst video modes. In burst mode, DSI host
-> is allowed to set transmission rate higher than pixel clock to allow
-> shorter data bursts. When the transmission rate is higher than expected
-> by the bridge, LVDS output timings are still configured for the lower
-> frequency, but the output is clocked with the higher one. In most cases,
-> bad LVDS timings cause incorrect panel operation.
-> 
-> Remove support for burst mode, so the non-burst mode is used by DSI
-> host by default. Burst mode is supported by the bridge itself,
-> but requires proper implementation in the driver to operate correctly
-> in all scenarios.
-> 
-> Fixes: a4ed72e85c46 ("drm/bridge: tc358775: Add burst and low-power modes")
-> Signed-off-by: Daniel Semkowicz <dse@thaumatec.com>
-> ---
-> 
->   drivers/gpu/drm/bridge/tc358775.c | 3 +--
->   1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/bridge/tc358775.c b/drivers/gpu/drm/bridge/tc358775.c
-> index 0b4efaca6d682..7496681c7b883 100644
-> --- a/drivers/gpu/drm/bridge/tc358775.c
-> +++ b/drivers/gpu/drm/bridge/tc358775.c
-> @@ -632,8 +632,7 @@ static int tc_attach_host(struct tc_data *tc)
->   
->   	dsi->lanes = tc->num_dsi_lanes;
->   	dsi->format = MIPI_DSI_FMT_RGB888;
-> -	dsi->mode_flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_BURST |
-> -			  MIPI_DSI_MODE_LPM;
-> +	dsi->mode_flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_LPM;
->   
->   	/*
->   	 * The hs_rate and lp_rate are data rate values. The HS mode is
+On Sun, 2024-11-17 at 12:01 +0200, Leon Romanovsky wrote:
+> On Fri, Nov 15, 2024 at 06:44:57PM +0100, Gerd Bayer wrote:
+> > Commits for the SMC protocol usually get carried through the netdev
+> > mailing list. Some portions use InfiniBand verbs that are discussed on
+> > the RDMA mailing list. So run patches by that list too to increase the
+> > likelihood that all interested parties can see them.
+> >=20
+> > Signed-off-by: Gerd Bayer <gbayer@linux.ibm.com>
+> > ---
+> > ---
+> >  MAINTAINERS | 1 +
+> >  1 file changed, 1 insertion(+)
+> >=20
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index 32d157621b44fb919307e865e2481ab564eb17df..16024268b5fc1feb6c0d01e=
+ab3048bd9255d0bf9 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -20943,6 +20943,7 @@ M:	Jan Karcher <jaka@linux.ibm.com>
+> >  R:	D. Wythe <alibuda@linux.alibaba.com>
+> >  R:	Tony Lu <tonylu@linux.alibaba.com>
+> >  R:	Wen Gu <guwen@linux.alibaba.com>
+> > +L:	linux-rdma@vger.kernel.org
+> >  L:	linux-s390@vger.kernel.org
+>=20
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+Hi Leon,
+
+> Why don't we have netdev ML here too?
+
+since all smc code resides in net/smc the filter tag F: net/ in
+"NETWORKING [GENERAL]" provides that. My first internal draft contained
+an explicit L: tag for the netdev ML, but I dropped it to avoid any
+redundancy.
+
+>=20
+> Thanks
+
+Hope this helps,
+Gerd
+
 
