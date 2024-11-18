@@ -1,218 +1,190 @@
-Return-Path: <linux-kernel+bounces-412613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAA7A9D0B63
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 10:05:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 119449D0B64
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 10:07:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA9D8B21DEF
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 09:05:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B49BB282928
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 09:07:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA40E18871A;
-	Mon, 18 Nov 2024 09:05:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB002188904;
+	Mon, 18 Nov 2024 09:07:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="C/Ub49Hn"
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="NDvXShjx";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="nttq89+1";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="NDvXShjx";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="nttq89+1"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DCA514EC46
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 09:05:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4959A13D50C;
+	Mon, 18 Nov 2024 09:07:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731920741; cv=none; b=OOmbBTi5gsvxkvPP4I2C7qebAvMDXcFgH19IHK9z6rzgQfM1plsXrGo78CFpSn5os4G7JuwAj18spkijeVckJsAlYLk1qmXzuXx5pwXyz2E3CLNr1BbrglNLJ5cpzdtUB5tBN/+8EP9+3eRIOxkmkzSOafdSO9P7lqgDZOoHG8s=
+	t=1731920855; cv=none; b=Sl6P5sNdZwqdWZSB2Jy077v7fn3/Gh4sSlR9rwAx2BOlRyPzUqOEmMYuYYQ4xxYqsbLXAfeQpdduYASaHtsMu23d7qo51BN0bnXvh/UTlZB+4Yv1UCUlEUxvI1b7z6lL4ANM0ySxn70Ld4X2PapU/byeaRSlrzfjNBcHGYMp5X4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731920741; c=relaxed/simple;
-	bh=v1oPu8EK9Yje3QSYL7jhWwmGgplSWsGADQQaQ0iqSeE=;
-	h=MIME-Version:Content-Type:Date:Message-ID:Subject:CC:To:From:
-	 In-Reply-To:References; b=Ztw9XAB5F6U/8H2n6zQCKeIeq7zHURN4ktEnqPHM9od/QldrCqAX3OTimU58Zatk6Gzt0XZp9b1zJS57AXI3iTP7gISL6z64hAvkvnkbI1cNDQGZ53qQrUjthUmXTeuOItZjI2p+6f7S2StPdfGt4AdlZ5L3YAJNFBhvduCHxYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=C/Ub49Hn; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20241118090529euoutp01ec28509abc57d0518ffc7ee933303738~JBLpF6Ys90421404214euoutp01b
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 09:05:29 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20241118090529euoutp01ec28509abc57d0518ffc7ee933303738~JBLpF6Ys90421404214euoutp01b
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1731920729;
-	bh=DubZSvc6o/gsvQ8WWFf7RzJ2tiB1sSgELZFQIWXJmdQ=;
-	h=Date:Subject:CC:To:From:In-Reply-To:References:From;
-	b=C/Ub49HnD3VW9wx1owcU4FL/pCurLDKrdIF2JUnHlCyWQPmS4XcBzhz5POXfBUyQF
-	 3s6+2Q4PZv7yFXUFp/oRD9b/hB1J+w72tpP1qKO6K4SAzuUSqe5rSiWnZLkw9zkwca
-	 4T40FVWq367qbF2k7gsFYxOmh7QdP7rGc4kh8UmE=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20241118090529eucas1p1fd5ed1fca9107a75e9f2a63a22286380~JBLozzMd70349703497eucas1p1V;
-	Mon, 18 Nov 2024 09:05:29 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-	eusmges1new.samsung.com (EUCPMTA) with SMTP id 6B.6A.20821.9530B376; Mon, 18
-	Nov 2024 09:05:29 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20241118090528eucas1p218351817a7952f71bed5e24210e56ad6~JBLoW784C0342903429eucas1p2n;
-	Mon, 18 Nov 2024 09:05:28 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20241118090528eusmtrp2fb4edeb1ff0c5b4096a2f4bec8925aa2~JBLoWHxf51386113861eusmtrp2G;
-	Mon, 18 Nov 2024 09:05:28 +0000 (GMT)
-X-AuditID: cbfec7f2-b09c370000005155-fe-673b0359237a
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-	eusmgms1.samsung.com (EUCPMTA) with SMTP id 30.EB.19920.8530B376; Mon, 18
-	Nov 2024 09:05:28 +0000 (GMT)
-Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20241118090528eusmtip1d0cbfeb3bb678351b968856c211e94b4~JBLoLUYNV2217622176eusmtip15;
-	Mon, 18 Nov 2024 09:05:28 +0000 (GMT)
-Received: from mail.scsc.local (106.110.32.87) by CAMSVWEXC02.scsc.local
-	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-	Mon, 18 Nov 2024 09:05:27 +0000
+	s=arc-20240116; t=1731920855; c=relaxed/simple;
+	bh=DzBYUC0UrFi9KtHRjEyCiD3Muvs1kqsnAluX+bMd81k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R0+sMBnxRlDfj8waSkPFEERYB9EQRWFf9lHsWvDr6cOiEVBnBIZl1bkVlk/qUWIPnkhlL5DzwFG3ga/DM+hOWkk7iGTknz63KlAIqgLdDPGl45OTp3e05aTGUWb+UmMhsYVssjHOAWbBjXWGPVPu65kxHr49UBlEBJU6DiqFmUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=NDvXShjx; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=nttq89+1; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=NDvXShjx; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=nttq89+1; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 6FF7D1F381;
+	Mon, 18 Nov 2024 09:07:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1731920851; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DUPyznSG52QE728V5aAFh/3Vl0FMXdjdGWDzUT0VeZQ=;
+	b=NDvXShjxjYvN1o/6YAkwLIumrFiWs3G92RqR8LdNxEdcV+9p5vRqORKhZr2Rnkmynt7xLs
+	MsenKh4V15gn7pMJrdFeI9z1NXOrEUHsVJ9PvGJlKXbJigG2SO81FcvLuoDqsbcLELrpTY
+	WcVmk5IsiOiycT5cvDZbznxLW35xnQ4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1731920851;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DUPyznSG52QE728V5aAFh/3Vl0FMXdjdGWDzUT0VeZQ=;
+	b=nttq89+1fyp/JxL9Cz4Pt5RZFTegGvoxaFrwZTvnzdynsFHqhCf3eAI0xUe7e49vlrLLnb
+	8jjY99jY6e/Xa7Cw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1731920851; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DUPyznSG52QE728V5aAFh/3Vl0FMXdjdGWDzUT0VeZQ=;
+	b=NDvXShjxjYvN1o/6YAkwLIumrFiWs3G92RqR8LdNxEdcV+9p5vRqORKhZr2Rnkmynt7xLs
+	MsenKh4V15gn7pMJrdFeI9z1NXOrEUHsVJ9PvGJlKXbJigG2SO81FcvLuoDqsbcLELrpTY
+	WcVmk5IsiOiycT5cvDZbznxLW35xnQ4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1731920851;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DUPyznSG52QE728V5aAFh/3Vl0FMXdjdGWDzUT0VeZQ=;
+	b=nttq89+1fyp/JxL9Cz4Pt5RZFTegGvoxaFrwZTvnzdynsFHqhCf3eAI0xUe7e49vlrLLnb
+	8jjY99jY6e/Xa7Cw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5F12B1376E;
+	Mon, 18 Nov 2024 09:07:31 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id iH3dFtMDO2faFAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 18 Nov 2024 09:07:31 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id EF7CDA098A; Mon, 18 Nov 2024 10:07:26 +0100 (CET)
+Date: Mon, 18 Nov 2024 10:07:26 +0100
+From: Jan Kara <jack@suse.cz>
+To: Ian Kent <raven@themaw.net>
+Cc: Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@kernel.org>,
+	Karel Zak <kzak@redhat.com>, Christian Brauner <brauner@kernel.org>,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH v4 0/3] fs: allow statmount to fetch the fs_subtype and
+ sb_source
+Message-ID: <20241118090726.kj7o3lg7hkihfpfv@quack3>
+References: <20241111-statmount-v4-0-2eaf35d07a80@kernel.org>
+ <20241112-antiseptisch-kinowelt-6634948a413e@brauner>
+ <hss5w5in3wj3af3o2x3v3zfaj47gx6w7faeeuvnxwx2uieu3xu@zqqllubl6m4i>
+ <63f3aa4b3d69b33f1193f4740f655ce6dae06870.camel@kernel.org>
+ <20241113151848.hta3zax57z7lprxg@quack3>
+ <83b4c065-8cb4-4851-a557-aa47b7d03b6f@themaw.net>
+ <20241114115652.so2dkvhaahl2ygvl@quack3>
+ <fe9f3161-b9e5-4943-9d55-dfec08e7594e@themaw.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="UTF-8"
-Date: Mon, 18 Nov 2024 10:05:27 +0100
-Message-ID: <D5P6NQ9ZWP13.K9G49CLMO6LV@samsung.com>
-Subject: Re: [PATCH v5 2/2] module: Block a module by TUXEDO from accessing
- GPL symbols
-CC: Werner Sembach <wse@tuxedocomputers.com>, <mcgrof@kernel.org>,
-	<petr.pavlu@suse.com>, <samitolvanen@google.com>,
-	<linux-modules@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux@leemhuis.info>, <vv@tuxedocomputers.com>, <cs@tuxedo.de>,
-	<linux-spdx@vger.kernel.org>
-To: =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>, Daniel
-	Gomez <d+samsung@kruces.com>, Thomas Gleixner <tglx@linutronix.de>, Greg
-	Kroah-Hartman <gregkh@linuxfoundation.org>
-From: Daniel Gomez <da.gomez@samsung.com>
-X-Mailer: aerc 0.18.2-67-g7f69618ac1fd
-In-Reply-To: <wnfqe7q2aby76zokkh77jhlwc2dbr243kycmejc4wj5wflywgi@6sox742ip22g>
-X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
-	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrIKsWRmVeSWpSXmKPExsWy7djP87qRzNbpBr/OSVpsO2Rksfv/XWaL
-	5sXr2Swu75rDZtEw+zurxZJvB9ksVu+Mtrgx4SmjxdIv75gtlq54y2qxedNUZov5Xz+xWfyb
-	/Ibd4vzSpawOfB7vb7SyeyzYVOqxaVUnm8f/3gesHoeaHzB5vDt3jt1j/9w17B7rt1xl8di5
-	+w+bx79lDWwenzfJBXBHcdmkpOZklqUW6dslcGWcnNPDWrBXvGL+sn/sDYynhLsYOTkkBEwk
-	3j88xdjFyMUhJLCCUWJJx1NmCOcLo8S1fRuZIJzPjBLbGiYywrT8/X0bqmo5o8SL7fOY4aoe
-	/fjJDFIlJLCTUaLzMBuIzSsgKHFy5hMWEJtZQFti2cLXzBC2pkTr9t/sIDaLgKrEjHMX2SHq
-	jSU2zFsI1issECnRuOQZE0T9bCaJoxsUQZaJCBxhlPjwZD9YAxvQoH0nN7FDnKcm8b9/Itgy
-	TgE/iS0rpjNBxBUlZkxcyQJh10qc2nIL7DcJgVOcEl/W7IFKuEhcuzKZFcIWlnh1fAvUUBmJ
-	/zvnQw1Kl1iybhZUfYHEntuzgOo5gGxrib4zORBhR4l1yxezQIT5JG68FYS4n09i0rbpzBBh
-	XomONqEJjCqzkEJoFlIIzUIKoQWMzKsYxVNLi3PTU4sN81LL9YoTc4tL89L1kvNzNzECU93p
-	f8c/7WCc++qj3iFGJg7GQ4wSHMxKIryXXM3ThXhTEiurUovy44tKc1KLDzFKc7AoifOqpsin
-	CgmkJ5akZqemFqQWwWSZODilGpjav3JeMXPbyfjSeF+7/f9KWbll9qYP1n77mZeaE2Bt//u4
-	xNY3lxuV7BcdYOS6fH9yUaiyXMSMquhq35r5z1jvcd5UW9ubdUdWruNd9ifubu0Hb3o7nyvf
-	FpkhazDJeNpJhqe3xeXbEg6cM9Q5PzlwLmPXp7e23X/39c0U/DpzpwKnYOeKjr8HrEXeyRZb
-	VDOK2mXGX/HxD3779t6WvLJkjtquNXqywjVTNzosuWl2m+PFv2saM3Rr50bd2f+t38H5WsG+
-	N3+MTwSfnfK9+1KFzbboyGCBBIWa0spNr4OmpW5zTf7xUGrdRe342Vcv5gm8vGj/JjXm8Lw4
-	3/z2y2ZnX5/f4qDoULdWMdZmj4oSS3FGoqEWc1FxIgAWTvzI5AMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrDIsWRmVeSWpSXmKPExsVy+t/xu7oRzNbpBk93WlhsO2Rksfv/XWaL
-	5sXr2Swu75rDZtEw+zurxZJvB9ksVu+Mtrgx4SmjxdIv75gtlq54y2qxedNUZov5Xz+xWfyb
-	/Ibd4vzSpawOfB7vb7SyeyzYVOqxaVUnm8f/3gesHoeaHzB5vDt3jt1j/9w17B7rt1xl8di5
-	+w+bx79lDWwenzfJBXBH6dkU5ZeWpCpk5BeX2CpFG1oY6RlaWugZmVjqGRqbx1oZmSrp29mk
-	pOZklqUW6dsl6GWcnNPDWrBXvGL+sn/sDYynhLsYOTkkBEwk/v6+zdzFyMUhJLCUUaJ1+wNm
-	iISMxMYvV1khbGGJP9e62CCKPjJKnP/zD8rZySixcuoXJpAqXgFBiZMzn7CA2MwC2hLLFr5m
-	hrA1gab+ZgexWQRUJWacu8gOUW8ssWHeQjYQW1ggUqJxyTMmiPrZTBJHNyiC2CICRxglpiwE
-	O5UNaM6+k5vYIS5Sk/jfP5EF4ojNTBJbNvcwgiQ4BfwktqyYzgRRpCgxY+JKFgi7VuLz32eM
-	ExhFZiG5dRaSW2chuXUBI/MqRpHU0uLc9NxiQ73ixNzi0rx0veT83E2MwGSw7djPzTsY5736
-	qHeIkYmD8RCjBAezkgjvJVfzdCHelMTKqtSi/Pii0pzU4kOMpkBPT2SWEk3OB6ajvJJ4QzMD
-	U0MTM0sDU0szYyVxXrfL59OEBNITS1KzU1MLUotg+pg4OKUamI5ax3rWPVDS/aD+UvNqnZEc
-	55fDbOcjDaeY1P98OXVX2AYOd8b4GE7ZUJOzy3ykJu/3ntF8tnKpnPhmY41dL76sv/3xyKG+
-	/4XHKqblBEyLNX/atCr70EKG1/YKKpctlQ8dnWGStmopc71XUcjpQP7ive6qu7jPsXSsFlfV
-	2PminnH9mZIqw6JnPyPN5ljyMT/bI7NvUbazm1O94Qn2lQFhV5ImnNgtMbFa3FfqnZvltJnh
-	OZ+fbZkXZ3Gf12O1bndWu8Q+8ZbCkK29rb1W28547M/K0d87Y2HgUYZLpTFP9q+zUZTja/3/
-	UfTck9aijVrZfCe98sss/mV8ajni9Dvooq9KTqn5S7HCDK1oJZbijERDLeai4kQABPNNgY8D
-	AAA=
-X-CMS-MailID: 20241118090528eucas1p218351817a7952f71bed5e24210e56ad6
-X-Msg-Generator: CA
-X-RootMTR: 20241116172026eucas1p2ae18643501640a7c6a3a796c30b60fed
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20241116172026eucas1p2ae18643501640a7c6a3a796c30b60fed
-References: <20241115185253.1299264-1-wse@tuxedocomputers.com>
-	<20241115185253.1299264-3-wse@tuxedocomputers.com>
-	<D5NGCPSP7EO8.28YI337NY203X@kruces.com>
-	<CGME20241116172026eucas1p2ae18643501640a7c6a3a796c30b60fed@eucas1p2.samsung.com>
-	<wnfqe7q2aby76zokkh77jhlwc2dbr243kycmejc4wj5wflywgi@6sox742ip22g>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fe9f3161-b9e5-4943-9d55-dfec08e7594e@themaw.net>
+X-Spam-Score: -3.80
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Sat Nov 16, 2024 at 6:20 PM CET, Uwe Kleine-K=C3=B6nig wrote:
-> On Sat, Nov 16, 2024 at 09:15:55AM +0100, Daniel Gomez wrote:
->> On Fri Nov 15, 2024 at 7:50 PM CET, Werner Sembach wrote:
->> > From: Uwe Kleine-K=C3=B6nig <ukleinek@kernel.org>
->> >
->> > TUXEDO has not yet relicensed a module for GPLv2+ as a reply from form=
-er
->> > contributers the committed code under GPLv3+ is awaited.
->>=20
->> FYI, the SPDX identifier GPL-2.0+ is deprecated as of 2.0rc2 [1]. I thin=
-k you'd
->> need to use GPL-2.0-or-later [2] instead. And when using the SPDX identi=
-fier,
->> you don't need to include the full text boilerplate in the source of eve=
-ry file
->> as long as you include a LICENSE file or COPYRIGHT file with a copy of t=
-he
->> license. One example upstream here [3] commit 1a59d1b8e05ea ("treewide: =
-Replace
->> GPLv2 boilerplate/reference with SPDX - rule 156").
->>=20
->> [1] https://protect2.fireeye.com/v1/url?k=3D86f7819c-e78c2b15-86f60ad3-7=
-4fe48600034-4f48619e45d5b211&q=3D1&e=3D7cb2448b-7ab2-415e-b77d-ad14970bc0a0=
-&u=3Dhttps%3A%2F%2Fspdx.org%2Flicenses%2FGPL-2.0%2B.html
->> [2] https://protect2.fireeye.com/v1/url?k=3D939eb0bf-f2e51a36-939f3bf0-7=
-4fe48600034-b542784fecbfce13&q=3D1&e=3D7cb2448b-7ab2-415e-b77d-ad14970bc0a0=
-&u=3Dhttps%3A%2F%2Fspdx.org%2Flicenses%2FGPL-2.0-or-later.html
->> [3] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/c=
-ommit/?h=3Dv6.12-rc7&id=3D1a59d1b8e05ea
->
-> If you're convinced that "GPL-2.0-or-later" is the right string to use
-> (and the following somewhat agrees with you:
+On Mon 18-11-24 07:29:42, Ian Kent wrote:
+> On 14/11/24 19:56, Jan Kara wrote:
+> > On Thu 14-11-24 09:45:23, Ian Kent wrote:
+> > > On 13/11/24 23:18, Jan Kara wrote:
+> > > > On Wed 13-11-24 08:45:06, Jeff Layton wrote:
+> > > > > On Wed, 2024-11-13 at 12:27 +0100, Karel Zak wrote:
+> > > > > > On Tue, Nov 12, 2024 at 02:39:21PM GMT, Christian Brauner wrote:
+> > > > > > Next on the wish list is a notification (a file descriptor that can be
+> > > > > > used in epoll) that returns a 64-bit ID when there is a change in the
+> > > > > > mount node. This will enable us to enhance systemd so that it does not
+> > > > > > have to read the entire mount table after every change.
+> > > > > > 
+> > > > > New fanotify events for mount table changes, perhaps?
+> > > > Now that I'm looking at it I'm not sure fanotify is a great fit for this
+> > > > usecase. A lot of fanotify functionality does not really work for virtual
+> > > > filesystems such as proc and hence we generally try to discourage use of
+> > > > fanotify for them. So just supporting one type of event (like FAN_MODIFY)
+> > > > on one file inside proc looks as rather inconsistent interface. But I
+> > > > vaguely remember we were discussing some kind of mount event, weren't we?
+> > > > Or was that for something else?
+> > > I still need to have a look at the existing notifications sub-systems but,
+> > > tbh, I also don't think they offer the needed functionality.
+> > > 
+> > > The thing that was most useful with David's notifications when I was trying
+> > > to improve the mounts handling was the queuing interface. It allowed me to
+> > > batch notifications up to around a couple of hundred and grab them in one go
+> > > for processing. This significantly lowered the overhead of rapid fire event
+> > > processing. The ability to go directly to an individual mount and get it's
+> > > information only got about half the improvement I saw, the rest come from
+> > > the notifications improvement.
+> > Well, if we implemented the mount notification events in fanotify, then the
+> > mount events get queued in the notification group queue and you can process
+> > the whole batch of events in one go if you want. So I don't see batching as
+> > an issue. What I'm more worried about is that watching the whole system
+> > for new mounts is going to be somewhat cumbersome when all you can do is to
+> > watch new mounts attached under an existing mount / filesystem.
+> 
+> But, for mounts/unounts for example, isn't it the act of performing the
+> mount/unmount that triggers the notification if the path in within a file
+> system that's marked to report such events?
 
-Thomas and Greg may have decided not deprecating the old identifiers [1]
-to avoid modifying thousands of files. I think it was expected the SPDX
-to mark them as equivalent? But I'm not entirely sure if this is the
-correct approach though as SPDX marks them as deprecated as I mentioned
-earlier.
+Obviously it is the act of mounting / unmounting that will trigger the
+generation of the event. But I guess I don't understand what are you
+getting at...
 
-Thomas, Greg, are we using any specific SPDX version for kernel license
-identifiers? Why the new identifiers where amended as valid and not
-replacing [2] the old ones? Was it to avoid replacing all files with the
-old id?
-
-[1] https://lore.kernel.org/all/alpine.DEB.2.21.1804240953460.5261@nanos.te=
-c.linutronix.de/
-[2] 9376ff9ba298c983062a12cbbafde506a4eaea71 ("LICENSES/GPL2.0: Add
-GPL-2.0-only/or-later as valid identifiers")
-
-Daniel
-
->
-> 	linux$ git rev-parse next/master
-> 	744cf71b8bdfcdd77aaf58395e068b7457634b2c
->
-> 	linux$ git grep -l -F 'SPDX-License-Identifier: GPL-2.0+' next/master | =
-wc -l
-> 	3640
->
-> 	linux$ git grep -l -F 'SPDX-License-Identifier: GPL-2.0-or-later' next/m=
-aster | wc -l
-> 	9005
-> )
->
-> you can consider patching Documentation/process/license-rules.rst which
-> currently reads:
->
->    License identifiers for licenses like [L]GPL with the 'or later' optio=
-n
->    are constructed by using a "+" for indicating the 'or later' option.::
->
->       // SPDX-License-Identifier: GPL-2.0+
->       // SPDX-License-Identifier: LGPL-2.1+
->
-> Best regards
-> Uwe
-
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
