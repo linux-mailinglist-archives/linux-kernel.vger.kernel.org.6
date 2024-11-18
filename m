@@ -1,71 +1,112 @@
-Return-Path: <linux-kernel+bounces-413535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34EB49D1AB6
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBC609D1AB7
 	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 22:41:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C0A56B23D60
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 21:41:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 49861B23D79
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 21:41:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A0801E7C1A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B9571E7C1B;
 	Mon, 18 Nov 2024 21:41:18 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B24831D0DDE
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2427153BE4
 	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 21:41:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731966077; cv=none; b=lr5iAKGCw9v6SVF0nScoptLYSp52WjDR+i3obMawKJJVj9bjEZenLCWi0vboIsPmxdhLtGNqal9Q6kqeclteqfsWREXp8Bauw1OPd6gLNM/HxRW08trq51OsaVVLGHvTG4DD5V2gmnnSugh74SqXfHYMpPGV/UfTTaybVStaf2o=
+	t=1731966077; cv=none; b=VYDJk6A6YCgTQTSU0xLd30ubPKJDlaXt4AHEOOTZwBN/iPVkTqH5yqwqdPKVQYE9n7h06wb6DqPTN1oFI0NpFX/dYujrCCGm9MXcQ8AoqNnO6qmaSmGaNg7TRSg9HYMc4i8tcUw+oX0WshPCX2TXdiy1MAE1AbnG3CK0sY0dmxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1731966077; c=relaxed/simple;
-	bh=x+2RgRqhU3HoynVrJ4Q0EZu5OX0UqUefdz3GSofYfho=;
-	h=Message-ID:Date:From:To:Cc:Subject; b=QvGBV535soGJELad2bu0NRv2p3q5lT+x4tFAwSsvQYCbzs3fU03G/bDu2Y+WEmatiHy3JXJxehZ+EhufY7SxaxQAzhGCiBIpAuz8x0THgAMhnxJkWgUjTxdtAPKk8dleSit4roQbVilCr+4WL7DgFtx9R8AK0M4nJoqr7Affa4Q=
+	bh=MVdApGcyUkptaqX7YZykKxm5OO/+NabO5+9iyVWfb5o=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type; b=hHc+ezhVRjirUqlAU5Ox59fptIuK8gRZ1e3XlxA6nedjJYwAjuo7T2n+p1HQj/0VH9EyNFAcK0krbJNB3wFoNBIOA9SLk2N0uqoLB3a1sDomTPZfia3QVb0qCMivEO50DsYaw9I7jrbp4O7FUxhf5fkpmYbo8zCt8XuZGcB0Zb0=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A067C4CECC;
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 779B3C4CECF;
 	Mon, 18 Nov 2024 21:41:17 +0000 (UTC)
 Received: from rostedt by gandalf with local (Exim 4.98)
 	(envelope-from <rostedt@goodmis.org>)
-	id 1tD9VF-0000000DO3Y-2HRb;
+	id 1tD9VF-0000000DO46-30yF;
 	Mon, 18 Nov 2024 16:41:49 -0500
-Message-ID: <20241118214122.136581969@goodmis.org>
+Message-ID: <20241118214149.568045181@goodmis.org>
 User-Agent: quilt/0.68
-Date: Mon, 18 Nov 2024 16:41:22 -0500
+Date: Mon, 18 Nov 2024 16:41:23 -0500
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org
 Cc: Tomas Glozar <tglozar@redhat.com>,
  John Kacur <jkacur@redhat.com>
-Subject: [for-next][PATCH 0/5] tools/tracing: Last minute updates for 6.13
+Subject: [for-next][PATCH 1/5] rtla/timerlat: Do not set params->user_workload with -U
+References: <20241118214122.136581969@goodmis.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
-tools/for-next
+From: Tomas Glozar <tglozar@redhat.com>
 
-Head SHA1: 5f99dca95f3c208abb2b8757a2a2bd671d04d7e0
+Since commit fb9e90a67ee9 ("rtla/timerlat: Make user-space threads
+the default"), rtla-timerlat has been defaulting to
+params->user_workload if neither that or params->kernel_workload is set.
+This has unintentionally made -U, which sets only params->user_hist/top
+but not params->user_workload, to behave like -u unless -k is set,
+preventing the user from running a custom workload.
+
+Example:
+$ rtla timerlat hist -U -c 0 &
+[1] 7413
+$ python sample/timerlat_load.py 0
+Error opening timerlat fd, did you run timerlat -U?
+$ ps | grep timerlatu
+7415 pts/4    00:00:00 timerlatu/0
+
+Fix the issue by checking for params->user_top/hist instead of
+params->user_workload when setting default thread mode.
+
+Link: https://lore.kernel.org/20241021123140.14652-1-tglozar@redhat.com
+Fixes: fb9e90a67ee9 ("rtla/timerlat: Make user-space threads
+the default")
+Signed-off-by: Tomas Glozar <tglozar@redhat.com>
+Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+---
+ tools/tracing/rtla/src/timerlat_hist.c | 2 +-
+ tools/tracing/rtla/src/timerlat_top.c  | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/tools/tracing/rtla/src/timerlat_hist.c b/tools/tracing/rtla/src/timerlat_hist.c
+index 01dd337da13a..8b66387e5f35 100644
+--- a/tools/tracing/rtla/src/timerlat_hist.c
++++ b/tools/tracing/rtla/src/timerlat_hist.c
+@@ -1073,7 +1073,7 @@ timerlat_hist_apply_config(struct osnoise_tool *tool, struct timerlat_hist_param
+ 	 * If the user did not specify a type of thread, try user-threads first.
+ 	 * Fall back to kernel threads otherwise.
+ 	 */
+-	if (!params->kernel_workload && !params->user_workload) {
++	if (!params->kernel_workload && !params->user_hist) {
+ 		retval = tracefs_file_exists(NULL, "osnoise/per_cpu/cpu0/timerlat_fd");
+ 		if (retval) {
+ 			debug_msg("User-space interface detected, setting user-threads\n");
+diff --git a/tools/tracing/rtla/src/timerlat_top.c b/tools/tracing/rtla/src/timerlat_top.c
+index fca0da3caa87..f7422948205d 100644
+--- a/tools/tracing/rtla/src/timerlat_top.c
++++ b/tools/tracing/rtla/src/timerlat_top.c
+@@ -839,7 +839,7 @@ timerlat_top_apply_config(struct osnoise_tool *top, struct timerlat_top_params *
+ 	 * If the user did not specify a type of thread, try user-threads first.
+ 	 * Fall back to kernel threads otherwise.
+ 	 */
+-	if (!params->kernel_workload && !params->user_workload) {
++	if (!params->kernel_workload && !params->user_top) {
+ 		retval = tracefs_file_exists(NULL, "osnoise/per_cpu/cpu0/timerlat_fd");
+ 		if (retval) {
+ 			debug_msg("User-space interface detected, setting user-threads\n");
+-- 
+2.45.2
 
 
-Gabriele Monaco (1):
-      verification/dot2: Improve dot parser robustness
-
-Tomas Glozar (1):
-      rtla/timerlat: Do not set params->user_workload with -U
-
-furkanonder (3):
-      tools/rtla: Improve code readability in timerlat_load.py
-      tools/rtla: Enhance argument parsing in timerlat_load.py
-      tools/rtla: Improve exception handling in timerlat_load.py
-
-----
- tools/tracing/rtla/sample/timerlat_load.py | 56 ++++++++++++++++--------------
- tools/tracing/rtla/src/timerlat_hist.c     |  2 +-
- tools/tracing/rtla/src/timerlat_top.c      |  2 +-
- tools/verification/dot2/automata.py        | 18 +++++-----
- 4 files changed, 41 insertions(+), 37 deletions(-)
 
