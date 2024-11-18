@@ -1,237 +1,541 @@
-Return-Path: <linux-kernel+bounces-412558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F9B39D0A8B
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 09:04:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F110F9D0A8A
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 09:04:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F3487B217AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 08:04:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D13AB2195C
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 08:04:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51EE91537D4;
-	Mon, 18 Nov 2024 08:03:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b="HokLDZWH"
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2084.outbound.protection.outlook.com [40.107.21.84])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D207F14BF8F;
+	Mon, 18 Nov 2024 08:03:58 +0000 (UTC)
+Received: from sundtek.de (sundtek.de [85.10.198.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 663A6286A9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3835115C0
 	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 08:03:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.84
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731917038; cv=fail; b=XlfLPNuTd1LQWeQoZvwHJYO7JD3hF+MnTLVs0SiaguvhrJvUYHHbB14bw16KmL8qXJ8pb8sgtJnQIHoJLAauWWkMvqWxje88fdb3ySsEcWwnVbE6laBKCvlBF8hksrsBnmB8vjTapvldZu6U37ubw7TilhwQhZ76E+ZmXcXADHg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731917038; c=relaxed/simple;
-	bh=tnQnmQf1q7Ft9NVopKBkNS/SYAGR6qa9LYVkrDsdaf0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=tCMZVhMP02JOUftdIHq6TVQNdAhGfAO194tA8pueXoMfga49CAH0NoW3686ysu950b1Lngxk9ohldArECkeeHMTzQBfeoPUKip1GDhrNtjum91JaXwQPOWhv7hZcxdB/dCExajjlwYpr3FGlnCX+OkaeLIdLEQXfy5JB6REMbBk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com; spf=pass smtp.mailfrom=axis.com; dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b=HokLDZWH; arc=fail smtp.client-ip=40.107.21.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=axis.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=DQRjRvxdLubab8OEq1xc1cfuVnbuzrnyR4IFtmYgJLcYzA9NT5P7OblDNRo/axnnNGulyT0nwM0LbA4Y3fxstl6dDs62aUAZyrLLkm6mKNzeo7t1i0E4PjsCHJA8yscCqXHlZJcQ6Ai5kOQf5gnPkoY3WEKPzWgHiPQtJ0z6RCTOBuVnokGeVuaMYmWgYh07J7hJy9y0zQFzsJ/oSTJjsrNEaA/2/KSIWeoxi9DRsd0jLuiq0hgLduTlx3DhZf3J/IQ8ZHmpwMqhAfDtjeiqNDglGoO7R62o6jfG5PXe1d7qYy4sIAHvVUzfDiA7zo1W/UfzDBG/OdD84dT6X3AHnA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=PHGlPhmvwumxdK3g0Id1Bh/8TtzZecngJz49euIFcdY=;
- b=r+j1fgcZvXERQFm9rv/1WFALmVk8kPFmEugBMEGtW3kEUh7VyTpTrtfmV08xOYhNRXpE7P0jT3ts2ny3yciOetPTdufyaOGHG9OfHuGr7oqj/3DilVwwGaYGRkNaR4wpfrXJ/qwDk2ahqaiAgpCTMKdnA92FoX31D2FdcpATi46D8gAKtQdxtx25sfBZFu3kvy001XITuH0Oc6hIT86JlkCmC+vBeLOXQDrr0PPdf3qSyOZxokGRLDj9FKGreCVtPR2yd9gKz3h8LakuD36GPPS1hyqh26F3r5CuiT5Lv7duAFfjAbA0ibmGgBTg/fezYVj03rS/ga0Z2qKudzdQ0g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 195.60.68.100) smtp.rcpttodomain=ffwll.ch smtp.mailfrom=axis.com; dmarc=pass
- (p=none sp=none pct=100) action=none header.from=axis.com; dkim=none (message
- not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axis.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PHGlPhmvwumxdK3g0Id1Bh/8TtzZecngJz49euIFcdY=;
- b=HokLDZWH48VKcFuuthwY6eSWbscvYcdBH0xClmdR0LOXSLUMdVL08Ov0aDA60gsA5c4GvnP55ROXY8yH+LukMsDBaTGIGXgixWja/FgoSSeHLW4Zz46WOZCaez1XsRjePTGshHGBqdFBkIFxJlF3xdV/na2o7LODbVZqwjnPtmo=
-Received: from DU2PR04CA0291.eurprd04.prod.outlook.com (2603:10a6:10:28c::26)
- by VI0PR02MB10681.eurprd02.prod.outlook.com (2603:10a6:800:20c::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.23; Mon, 18 Nov
- 2024 08:03:50 +0000
-Received: from DB1PEPF000509E7.eurprd03.prod.outlook.com
- (2603:10a6:10:28c:cafe::53) by DU2PR04CA0291.outlook.office365.com
- (2603:10a6:10:28c::26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.22 via Frontend
- Transport; Mon, 18 Nov 2024 08:03:50 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 195.60.68.100)
- smtp.mailfrom=axis.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=axis.com;
-Received-SPF: Pass (protection.outlook.com: domain of axis.com designates
- 195.60.68.100 as permitted sender) receiver=protection.outlook.com;
- client-ip=195.60.68.100; helo=mail.axis.com; pr=C
-Received: from mail.axis.com (195.60.68.100) by
- DB1PEPF000509E7.mail.protection.outlook.com (10.167.242.57) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8158.14 via Frontend Transport; Mon, 18 Nov 2024 08:03:50 +0000
-Received: from se-mail01w.axis.com (10.20.40.7) by se-mail02w.axis.com
- (10.20.40.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 18 Nov
- 2024 09:03:48 +0100
-Received: from se-intmail01x.se.axis.com (10.4.0.28) by se-mail01w.axis.com
- (10.20.40.7) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Mon, 18 Nov 2024 09:03:48 +0100
-Received: from pc39391-2017.se.axis.com (pc39391-2017.se.axis.com [10.92.82.2])
-	by se-intmail01x.se.axis.com (Postfix) with ESMTP id 0421F2C5;
-	Mon, 18 Nov 2024 09:03:48 +0100 (CET)
-Received: by pc39391-2017.se.axis.com (Postfix, from userid 10612)
-	id F2D4F4462505; Mon, 18 Nov 2024 09:03:47 +0100 (CET)
-From: Stefan Ekenberg <stefan.ekenberg@axis.com>
-Date: Mon, 18 Nov 2024 09:03:33 +0100
-Subject: [PATCH v3] drm/bridge: adv7511_audio: Update Audio InfoFrame
- properly
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.10.198.106
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731917037; cv=none; b=jGDuymi0Gb5OZTN6OHdcV2HZ8mKhpF4v3nuZmFSdRBUFDPTzgMYSCLj9KzBvyggQA4wIWx0JZXf6xaxEMT2FjGssJE9sJSqWQjuhAYEg7aMGLyrlRifb6jtLRfM5pfDGtRquk5H55M9UzeaEA2ditafCYZ7aBBzDw8s5oygUPCg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731917037; c=relaxed/simple;
+	bh=SOTUAFvehKvqfZVHWM3GBNVrfrnbyLKuf2EPdinlpoE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=NlSG6Rea4y7t4YRPWMPW6ECMzZ+W+s2xc81hMxIYd4qefHeTss24R7vlrFmlnqt9lhummd7TvxVG4br87VyxiFuByupK2ZlEqVJ1rXVSsZ27YFUKUI//n072fzdFDF3Zhn3fUbBeZKsCKr3/miXMaJwVJiti6jXiiWJyX0l6h8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sundtek.de; spf=pass smtp.mailfrom=sundtek.de; arc=none smtp.client-ip=85.10.198.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sundtek.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sundtek.de
+Received: from Debian-exim by sundtek.de with spam-scanned (Exim 4.95)
+	(envelope-from <linuxusb.ml@sundtek.de>)
+	id 1tCwjc-0008q2-V2
+	for linux-kernel@vger.kernel.org;
+	Mon, 18 Nov 2024 09:03:51 +0100
+Received: from 220-143-194-41.dynamic-ip.hinet.net ([220.143.194.41] helo=[192.168.2.197])
+	by sundtek.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <linuxusb.ml@sundtek.de>)
+	id 1tCwjZ-0008pm-3W;
+	Mon, 18 Nov 2024 09:03:45 +0100
+Message-ID: <ed42d945bd0d52771f3749cb93f2e19f0fc9879f.camel@sundtek.de>
+Subject: Re: [PATCH] XHCI NULL Pointer check in xhci_check_bw_table
+From: Markus Rechberger <linuxusb.ml@sundtek.de>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
+Date: Mon, 18 Nov 2024 16:03:40 +0800
+In-Reply-To: <2024111814-guiding-crewmate-7da8@gregkh>
+References: <b90d48df16cf74bb682af870cd71d7c5cc4a9d97.camel@sundtek.de>
+	 <03c1ae453f2781dbcf3a5ea607640c696b748848.camel@sundtek.de>
+	 <2024111828-canon-smoking-8d1c@gregkh>
+	 <3a38115585916e970df139f7d4e3db23ee395782.camel@sundtek.de>
+	 <2024111814-guiding-crewmate-7da8@gregkh>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3-0ubuntu1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20241118-adv7511-audio-info-frame-v3-1-31edd9931856@axis.com>
-X-B4-Tracking: v=1; b=H4sIANT0OmcC/33NsQ6CMBDG8VchnT3D0Rask+9hHApt5QaoabXBE
- N7dQhxYdPx/yf1uZtEGspGdi5kFmyiSH3PwQ8G6Xo93C2Rys6qsBGJ5Am1SIxFBvwx5oNF5cEE
- PFqSoURgjWicbls8fwTqaNvp6y91TfPrw3j4lXNcvivw3mhAQhGp5fWqVklpe9ETx2PmBrWaq9
- o7841TZ6bRoFLeOa4U7Z1mWDzuiiwYHAQAA
-X-Change-ID: 20241108-adv7511-audio-info-frame-54614dd4bf57
-To: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
-	<neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent Pinchart
-	<Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, "Jernej
- Skrabec" <jernej.skrabec@gmail.com>, Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>
-CC: <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-	<kernel@axis.com>, Stefan Ekenberg <stefan.ekenberg@axis.com>
-X-Mailer: b4 0.14.2
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB1PEPF000509E7:EE_|VI0PR02MB10681:EE_
-X-MS-Office365-Filtering-Correlation-Id: 12bff9ac-958a-443c-beef-08dd07a7896d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|1800799024|82310400026|376014|36860700013|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?dEUyemJVQW82N3dMWXRQQWhaR1RNNVZydnhjUnFXT3VUdHNTS29jcUoxa2NG?=
- =?utf-8?B?UDBoL21iOCt1NzNGMURmOHltT3NpMm1tT1ZxcVMreVJCVlA3eTJ1bUViTFhU?=
- =?utf-8?B?N09XemRlNXBtMTNqRmNoMGJpRlNkK3R4cXFSdkxJUTRBL1VHcER3My9rRmtH?=
- =?utf-8?B?UGJyV2VnV0JlV2JsVEQzY2duaXkvU2o5S0c0dmRPNGVESVBicURuUDd1aVZV?=
- =?utf-8?B?Vk1FWFlJWDN0UTNDeXlDTlV2NUc1TE5nL0NtYjk0Vk1EMzQ1TkFCT1dFUGxR?=
- =?utf-8?B?QmlxUSsrUjFaZFhPZ1lkMmxKOGFyajhIcGkwbG5mVXVxMk4ydldHZEdSalpo?=
- =?utf-8?B?amRmZ0tRU0dIUEorbnZsVis0aEVrOGtRSG5Cd25rS1hqNE5VcWM3ZC85MGFh?=
- =?utf-8?B?eEpubTBxSGJXeXcwNlpUUFl5WWg1dS9XYWZJMTdycmw2Z2pRRS9lUG11RUcy?=
- =?utf-8?B?MDVFVkx6eEl3c3VUNGNNSzBnV2ZrMjAyUExqa3RpR3hJRC8yMVVIc2h2RUht?=
- =?utf-8?B?RFp3UUVrQzVHN3VYdHVBRGJ4MHhZM0k3cWg3WlV0Yk9jOTVwS1pqZ2twTm5j?=
- =?utf-8?B?U2xETDNVeS90a3pMRlYxOTd0NXE0VW5SNUZCd295bFVwUnFXQjJzSUE3cWVv?=
- =?utf-8?B?ckhXb3loQVRMU1hMaUlIdi9rTDRyMjAyNjZCaElnMDJNY0xHaElvVDMzTzY3?=
- =?utf-8?B?T1FWT090dXJHVTVNR2lXOGVOUENESytTazhWZldIODk4VW5hTnA1eGZrZ1Rq?=
- =?utf-8?B?dUNxa2VxUzYwMjFhYWh1QkxvN2pPT3Q0eDBlUVEyZ1pNS3JLWlE3clM5WUYr?=
- =?utf-8?B?TUliVjdmYndUb0ZlYWhpWnlPeWRvUTIrcmVic1dMNk9mYWZkRFZjTlZvaDAx?=
- =?utf-8?B?YkJqRUxXMkpHNVR1Ym5Vbk52ZnI0OW40T01MNVZ5cFFjV3FId2NkY3NkcTRq?=
- =?utf-8?B?ai9oOTZLRmtGTjBCYURlcHVaNkRhUVN2QytkOXZ2aFhqS1drUjRGdGgrbG1D?=
- =?utf-8?B?V0ZzejQ0T04yN3hzemx3OTFKbWJGZTUwMHEvWUZkb2FrWDhlRFlrZ0F2Q2xW?=
- =?utf-8?B?QndJdlBGZW5KLzAxdURJUmE0VnVVRXlPWldQQ3lmMWZkVGtnZnR1UzRObm4z?=
- =?utf-8?B?WnZUU1FaaDEwTDNycXFRSDlJMWVWUWc5VzJYdE9ENmpuSVF1OEwyUkUzdkZW?=
- =?utf-8?B?L29FU1p6N1dob013TmJFbUQ3dHcwWHQ0SUEwMXR1andnajB6N3FnNkREVlUv?=
- =?utf-8?B?R0Y3MkhvTlVBM05jV2ZNWXdWeEFIdTlNU0RlVU9zTXN6clJlcmxta0ZvUkZ4?=
- =?utf-8?B?bUduSmhYeDV4eXkzaU0wNTlLWVpSNnRmdGY2N0J2UERYYnRRRis5eWw0blhh?=
- =?utf-8?B?bEt6RjlzQkx3U0poTEVLTkQxYXVZc3pPcjJabU9BZWY5MXVkN0dqSjRmRXdh?=
- =?utf-8?B?MHpVK3hwa0RnZmswTERGTHN3VXI1ZExVbEFQMzNobDh6elBoZjd2aEFpNzZP?=
- =?utf-8?B?S21vSFJhYjFDanlhcklYaHZwVkFRRGI3ejVaMGJuVnFSZis4S3lJeU52ZHhq?=
- =?utf-8?B?MEc1YUk5eENQQkVhVDZ0c2J6OFAwZlNrblU3bkRrdlpSSUxURDRORmtBWDNh?=
- =?utf-8?B?WUpzTzlyRjRPUGIyL1VubXpJcjk1bXJYUThVS1RTdXFOV1BnS3JCSGN4ZGho?=
- =?utf-8?B?Yi9jVGtDbTlDTVgrS3dNZG5QTGJOSXJHVXFwWU96cVl5cFhybU5VSGlqUnpZ?=
- =?utf-8?B?U0Yrdnd1Rlh4Wm1BT0JDVTJ0SHlDM21LdGppUWhicnVxMENkZFY5WERsMFVk?=
- =?utf-8?B?b1dtTmpobTR0VWJsY1lncy8vZTZTbXJsUURTV3pUOXQ3RzU4M1AyYWZGc3VC?=
- =?utf-8?B?NTBFMEVWWkRzVVg4eURiNU45dDNLNklBSk1DUWhQWU1jWFJ0L2xybGNBYVJQ?=
- =?utf-8?Q?sbKpBu/MZUs=3D?=
-X-Forefront-Antispam-Report:
-	CIP:195.60.68.100;CTRY:SE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.axis.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(82310400026)(376014)(36860700013)(921020);DIR:OUT;SFP:1101;
-X-OriginatorOrg: axis.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Nov 2024 08:03:50.2457
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 12bff9ac-958a-443c-beef-08dd07a7896d
-X-MS-Exchange-CrossTenant-Id: 78703d3c-b907-432f-b066-88f7af9ca3af
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=78703d3c-b907-432f-b066-88f7af9ca3af;Ip=[195.60.68.100];Helo=[mail.axis.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DB1PEPF000509E7.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR02MB10681
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: linuxusb.ml@sundtek.de
+X-SA-Exim-Scanned: No (on sundtek.de); SAEximRunCond expanded to false
 
-AUDIO_UPDATE bit (Bit 5 of MAIN register 0x4A) needs to be set to 1
-while updating Audio InfoFrame information and then set to 0 when done.
-Otherwise partially updated Audio InfoFrames could be sent out. Two
-cases where this rule were not followed are fixed:
- - In adv7511_hdmi_hw_params() make sure AUDIO_UPDATE bit is updated
-   before/after setting ADV7511_REG_AUDIO_INFOFRAME.
- - In audio_startup() use the correct register for clearing
-   AUDIO_UPDATE bit.
+On Mon, 2024-11-18 at 07:55 +0100, Greg KH wrote:
+> On Mon, Nov 18, 2024 at 02:48:06PM +0800, Markus Rechberger wrote:
+> > On Mon, 2024-11-18 at 07:30 +0100, Greg KH wrote:
+> > > On Mon, Nov 18, 2024 at 07:27:03AM +0800, Markus Rechberger
+> > > wrote:
+> > > > This patch fixes a NULL Pointer exception when a device using
+> > > > the
+> > > > XHCI
+> > > > controller driver is not properly initialized. It's relatively
+> > > > easy
+> > > > to
+> > > > reproduce with a faulty connection to a USB Harddisk / USB
+> > > > Ethernet
+> > > > adapter.=C2=A0
+> > > > The way I used for testing this patch was to short USB D+/D-
+> > > > and
+> > > > pull
+> > > > them to ground.
+> > > >=20
+> > > > We manufacture our own USB devices and use Linux for testing,
+> > > > lately we
+> > > > upgraded the system to Ubuntu noble with Kernel 6.8.0 and our
+> > > > system
+> > > > also crashed multiple times just when plugging in some devices
+> > > > (no
+> > > > commands need to be executed).
+> > > > We connect/disconnect devices > 100 times (eg uploading
+> > > > firmware,
+> > > > do
+> > > > electrical tests etc).
+> > > >=20
+> > > > I would rate this issue as highly critical.
+> > > > The problem is triggered via some fallback code in hub.c, a
+> > > > second
+> > > > patch will follow which
+> > > > removes the endpoint reset in the particular fallback.
+> > > >=20
+> > > > 2024-11-16T22:14:09.701229+08:00 sundtek-UX32VD kernel: usb 3-
+> > > > 2:
+> > > > new
+> > > > full-speed USB device number 64 using xhci_hcd
+> > > > 2024-11-16T22:14:09.816295+08:00 sundtek-UX32VD kernel: usb 3-
+> > > > 2:
+> > > > device
+> > > > descriptor read/64, error -71
+> > > > 2024-11-16T22:14:10.006157+08:00 sundtek-UX32VD kernel: audit:
+> > > > type=3D1400 audit(1731766450.004:3206): apparmor=3D"DENIED"
+> > > > operation=3D"open" class=3D"file" profile=3D"snap.skype.skype"
+> > > > name=3D"/sys/devices/pci0000:00/ACPI0003:00/power_supply/AC0/onli
+> > > > ne"
+> > > > pid=3D4839 comm=3D"skypeforlinux" requested_mask=3D"r"
+> > > > denied_mask=3D"r"
+> > > > fsuid=3D1000 ouid=3D0
+> > > > 2024-11-16T22:14:10.035263+08:00 sundtek-UX32VD kernel: usb 3-
+> > > > 2:
+> > > > device
+> > > > descriptor read/64, error -71
+> > > > 2024-11-16T22:14:10.251221+08:00 sundtek-UX32VD kernel: usb 3-
+> > > > 2:
+> > > > new
+> > > > full-speed USB device number 65 using xhci_hcd
+> > > > 2024-11-16T22:14:10.365247+08:00 sundtek-UX32VD kernel: usb 3-
+> > > > 2:
+> > > > device
+> > > > descriptor read/64, error -71
+> > > > 2024-11-16T22:14:10.587264+08:00 sundtek-UX32VD kernel: usb 3-
+> > > > 2:
+> > > > device
+> > > > descriptor read/64, error -71
+> > > > 2024-11-16T22:14:10.689265+08:00 sundtek-UX32VD kernel: usb
+> > > > usb3-
+> > > > port2:
+> > > > attempt power cycle
+> > > > 2024-11-16T22:14:11.006217+08:00 sundtek-UX32VD kernel: audit:
+> > > > type=3D1400 audit(1731766451.004:3207): apparmor=3D"DENIED"
+> > > > operation=3D"open" class=3D"file" profile=3D"snap.skype.skype"
+> > > > name=3D"/sys/devices/pci0000:00/ACPI0003:00/power_supply/AC0/onli
+> > > > ne"
+> > > > pid=3D4839 comm=3D"skypeforlinux" requested_mask=3D"r"
+> > > > denied_mask=3D"r"
+> > > > fsuid=3D1000 ouid=3D0
+> > > > 2024-11-16T22:14:11.069247+08:00 sundtek-UX32VD kernel: usb 3-
+> > > > 2:
+> > > > new
+> > > > full-speed USB device number 66 using xhci_hcd
+> > > > 2024-11-16T22:14:11.069347+08:00 sundtek-UX32VD kernel: usb 3-
+> > > > 2:
+> > > > Device
+> > > > not responding to setup address.
+> > > > 2024-11-16T22:14:11.273256+08:00 sundtek-UX32VD kernel: usb 3-
+> > > > 2:
+> > > > Device
+> > > > not responding to setup address.
+> > > > 2024-11-16T22:14:12.122162+08:00 sundtek-UX32VD kernel: usb 3-
+> > > > 2:
+> > > > device
+> > > > not accepting address 66, error -71
+> > > > 2024-11-16T22:14:12.122196+08:00 sundtek-UX32VD kernel: BUG:
+> > > > kernel
+> > > > NULL pointer dereference, address: 0000000000000020
+> > > > 2024-11-16T22:14:12.122203+08:00 sundtek-UX32VD kernel: #PF:
+> > > > supervisor
+> > > > read access in kernel mode
+> > > > 2024-11-16T22:14:12.122206+08:00 sundtek-UX32VD kernel: #PF:
+> > > > error_code(0x0000) - not-present page
+> > > > 2024-11-16T22:14:12.122210+08:00 sundtek-UX32VD kernel: PGD 0
+> > > > P4D 0
+> > > > 2024-11-16T22:14:12.122214+08:00 sundtek-UX32VD kernel: Oops:
+> > > > 0000
+> > > > [#1]
+> > > > PREEMPT SMP PTI
+> > > > 2024-11-16T22:14:12.122216+08:00 sundtek-UX32VD kernel: CPU: 2
+> > > > PID:
+> > > > 15600 Comm: kworker/2:1 Not tainted 6.8.0-48-generic #48-Ubuntu
+> > > > 2024-11-16T22:14:12.122219+08:00 sundtek-UX32VD kernel:
+> > > > Hardware
+> > > > name:
+> > > > ASUSTeK COMPUTER INC. UX32VD/UX32VD, BIOS UX32VD.214 01/29/2013
+> > > > 2024-11-16T22:14:12.122221+08:00 sundtek-UX32VD kernel:
+> > > > Workqueue:
+> > > > usb_hub_wq hub_event
+> > > > 2024-11-16T22:14:12.122224+08:00 sundtek-UX32VD kernel: RIP:
+> > > > 0010:xhci_check_bw_table+0x100/0x4d0
+> > > > 2024-11-16T22:14:12.122227+08:00 sundtek-UX32VD kernel: Code:
+> > > > c7 c2
+> > > > 60
+> > > > 35 70 9f 48 c7 c6 70 aa 79 9e 4c 89 55 c0 4c 89 5d d0 e8 d0 c7
+> > > > 01
+> > > > 00 4c
+> > > > 8b 5d d0 4c 8b 55 c0 4c 8b 4d b8 41 8d 47 ff <41> 8b 4a 20 31
+> > > > d2 45
+> > > > 8b
+> > > > 72 08 89 45 d0 41 03 02 41 f7 f7 ba 80 00
+> > > > 2024-11-16T22:14:12.122231+08:00 sundtek-UX32VD kernel: RSP:
+> > > > 0018:ffffc3774ebeb758 EFLAGS: 00010046
+> > > > 2024-11-16T22:14:12.122234+08:00 sundtek-UX32VD kernel: RAX:
+> > > > 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
+> > > > 2024-11-16T22:14:12.122236+08:00 sundtek-UX32VD kernel: RDX:
+> > > > 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+> > > > 2024-11-16T22:14:12.122239+08:00 sundtek-UX32VD kernel: RBP:
+> > > > ffffc3774ebeb7c0 R08: 0000000000000000 R09: ffff9fcad3566000
+> > > > 2024-11-16T22:14:12.122242+08:00 sundtek-UX32VD kernel: R10:
+> > > > 0000000000000000 R11: ffff9fc9cc687260 R12: ffffc37741131000
+> > > > 2024-11-16T22:14:12.122245+08:00 sundtek-UX32VD kernel: R13:
+> > > > 0000000000000000 R14: ffff9fcad3566000 R15: 0000000000000001
+> > > > 2024-11-16T22:14:12.122247+08:00 sundtek-UX32VD kernel: FS:=20
+> > > > 0000000000000000(0000) GS:ffff9fcb65700000(0000)
+> > > > knlGS:0000000000000000
+> > > > 2024-11-16T22:14:12.122250+08:00 sundtek-UX32VD kernel: CS:=C2=A0
+> > > > 0010
+> > > > DS:
+> > > > 0000 ES: 0000 CR0: 0000000080050033
+> > > > 2024-11-16T22:14:12.122252+08:00 sundtek-UX32VD kernel: CR2:
+> > > > 0000000000000020 CR3: 000000021c23c005 CR4: 00000000001706f0
+> > > > 2024-11-16T22:14:12.122254+08:00 sundtek-UX32VD kernel: Call
+> > > > Trace:
+> > > > 2024-11-16T22:14:12.122257+08:00 sundtek-UX32VD kernel:=C2=A0 <TASK=
+>
+> > > > 2024-11-16T22:14:12.122259+08:00 sundtek-UX32VD kernel:=C2=A0 ?
+> > > > show_regs+0x6d/0x80
+> > > > 2024-11-16T22:14:12.122261+08:00 sundtek-UX32VD kernel:=C2=A0 ?
+> > > > __die+0x24/0x80
+> > > > 2024-11-16T22:14:12.122263+08:00 sundtek-UX32VD kernel:=C2=A0 ?
+> > > > page_fault_oops+0x99/0x1b0
+> > > > 2024-11-16T22:14:12.122265+08:00 sundtek-UX32VD kernel:=C2=A0 ?
+> > > > kernelmode_fixup_or_oops.isra.0+0x69/0x90
+> > > > 2024-11-16T22:14:12.122267+08:00 sundtek-UX32VD kernel:=C2=A0 ?
+> > > > __bad_area_nosemaphore+0x19d/0x2c0
+> > > > 2024-11-16T22:14:12.122269+08:00 sundtek-UX32VD kernel:=C2=A0 ?
+> > > > update_sg_lb_stats+0x97/0x5c0
+> > > > 2024-11-16T22:14:12.122271+08:00 sundtek-UX32VD kernel:=C2=A0 ?
+> > > > bad_area_nosemaphore+0x16/0x30
+> > > > 2024-11-16T22:14:12.122273+08:00 sundtek-UX32VD kernel:=C2=A0 ?
+> > > > do_user_addr_fault+0x29c/0x670
+> > > > 2024-11-16T22:14:12.122275+08:00 sundtek-UX32VD kernel:=C2=A0 ?
+> > > > exc_page_fault+0x83/0x1b0
+> > > > 2024-11-16T22:14:12.122276+08:00 sundtek-UX32VD kernel:=C2=A0 ?
+> > > > asm_exc_page_fault+0x27/0x30
+> > > > 2024-11-16T22:14:12.122279+08:00 sundtek-UX32VD kernel:=C2=A0 ?
+> > > > xhci_check_bw_table+0x100/0x4d0
+> > > > 2024-11-16T22:14:12.122281+08:00 sundtek-UX32VD kernel:=C2=A0 ?
+> > > > xhci_check_bw_table+0x357/0x4d0
+> > > > 2024-11-16T22:14:12.122283+08:00 sundtek-UX32VD kernel:=20
+> > > > xhci_reserve_bandwidth+0x298/0xb20
+> > > > 2024-11-16T22:14:12.122286+08:00 sundtek-UX32VD kernel:=C2=A0 ?
+> > > > update_load_avg+0x82/0x850
+> > > > 2024-11-16T22:14:12.122288+08:00 sundtek-UX32VD kernel:=20
+> > > > xhci_configure_endpoint+0xa8/0x730
+> > > > 2024-11-16T22:14:12.122291+08:00 sundtek-UX32VD kernel:=20
+> > > > xhci_check_ep0_maxpacket.isra.0+0x14e/0x1d0
+> > > > 2024-11-16T22:14:12.122293+08:00 sundtek-UX32VD kernel:=20
+> > > > xhci_endpoint_reset+0x254/0x4a0
+> > > > 2024-11-16T22:14:12.122295+08:00 sundtek-UX32VD kernel:=C2=A0 ?
+> > > > _raw_spin_lock_irqsave+0xe/0x20
+> > > > 2024-11-16T22:14:12.122298+08:00 sundtek-UX32VD kernel:=20
+> > > > usb_hcd_reset_endpoint+0x28/0xa0
+> > > > 2024-11-16T22:14:12.122300+08:00 sundtek-UX32VD kernel:=20
+> > > > usb_enable_endpoint+0x8c/0xa0
+> > > > 2024-11-16T22:14:12.122302+08:00 sundtek-UX32VD kernel:=20
+> > > > hub_port_connect+0x176/0xb70
+> > > > 2024-11-16T22:14:12.122305+08:00 sundtek-UX32VD kernel:=20
+> > > > hub_port_connect_change+0x88/0x2b0
+> > > > 2024-11-16T22:14:12.122307+08:00 sundtek-UX32VD kernel:=20
+> > > > port_event+0x651/0x810
+> > > > 2024-11-16T22:14:12.122309+08:00 sundtek-UX32VD kernel:=20
+> > > > hub_event+0x14a/0x450
+> > > > 2024-11-16T22:14:12.122311+08:00 sundtek-UX32VD kernel:=20
+> > > > process_one_work+0x178/0x350
+> > > > 2024-11-16T22:14:12.122313+08:00 sundtek-UX32VD kernel:=20
+> > > > worker_thread+0x306/0x440
+> > > > 2024-11-16T22:14:12.122316+08:00 sundtek-UX32VD kernel:=C2=A0 ?
+> > > > _raw_spin_lock_irqsave+0xe/0x20
+> > > > 2024-11-16T22:14:12.122318+08:00 sundtek-UX32VD kernel:=C2=A0 ?
+> > > > __pfx_worker_thread+0x10/0x10
+> > > > 2024-11-16T22:14:12.122321+08:00 sundtek-UX32VD kernel:=20
+> > > > kthread+0xf2/0x120
+> > > > 2024-11-16T22:14:12.122323+08:00 sundtek-UX32VD kernel:=C2=A0 ?
+> > > > __pfx_kthread+0x10/0x10
+> > > > 2024-11-16T22:14:12.122325+08:00 sundtek-UX32VD kernel:=20
+> > > > ret_from_fork+0x47/0x70
+> > > > 2024-11-16T22:14:12.122327+08:00 sundtek-UX32VD kernel:=C2=A0 ?
+> > > > __pfx_kthread+0x10/0x10
+> > > > 2024-11-16T22:14:12.122329+08:00 sundtek-UX32VD kernel:=20
+> > > > ret_from_fork_asm+0x1b/0x30
+> > > > 2024-11-16T22:14:12.122331+08:00 sundtek-UX32VD kernel:=C2=A0
+> > > > </TASK>
+> > > > 2024-11-16T22:14:12.122334+08:00 sundtek-UX32VD kernel: Modules
+> > > > linked
+> > > > in: cpuid ufs qnx4 hfsplus hfs minix ntfs msdos jfs
+> > > > nls_ucs2_utils
+> > > > xfs
+> > > > usbtest rfcomm snd_seq_dummy snd_hrtimer qrtr uhid hid cmac
+> > > > algif_hash
+> > > > algif_skcipher af_alg bnep sunrpc snd_hda_codec_hdmi
+> > > > intel_rapl_msr
+> > > > intel_rapl_common binfmt_misc snd_hda_codec_realtek
+> > > > x86_pkg_temp_thermal snd_hda_codec_generic intel_powerclamp
+> > > > coretemp
+> > > > kvm_intel snd_hda_intel snd_intel_dspcfg snd_intel_sdw_acpi
+> > > > uvcvideo
+> > > > snd_hda_codec kvm videobuf2_vmalloc snd_hda_core uvc btusb
+> > > > snd_hwdep
+> > > > irqbypass videobuf2_memops snd_pcm btrtl videobuf2_v4l2 iwldvm
+> > > > rtsx_usb_ms btintel videodev btbcm rapl btmtk at24 mei_pxp
+> > > > mei_hdcp
+> > > > memstick nls_iso8859_1 mac80211 asus_nb_wmi videobuf2_common
+> > > > mfd_aaeon
+> > > > libarc4 mc i915 snd_seq_midi bluetooth snd_seq_midi_event
+> > > > snd_rawmidi
+> > > > intel_cstate asus_wmi iwlwifi ledtrig_audio ecdh_generic
+> > > > sparse_keymap
+> > > > platform_profile i2c_i801 ecc mxm_wmi drm_buddy wmi_bmof
+> > > > snd_seq
+> > > > i2c_smbus cfg80211 ttm snd_seq_device snd_timer
+> > > > drm_display_helper
+> > > > snd
+> > > > acpi_als mei_me cec soundcore
+> > > > 2024-11-16T22:14:12.122337+08:00 sundtek-UX32VD kernel:=20
+> > > > industrialio_triggered_buffer rc_core lpc_ich mei i2c_algo_bit
+> > > > int3400_thermal kfifo_buf int3402_thermal industrialio
+> > > > int3403_thermal
+> > > > acpi_thermal_rel asus_wireless int340x_thermal_zone joydev
+> > > > input_leds
+> > > > mac_hid serio_raw sch_fq_codel msr parport_pc ppdev lp parport
+> > > > efi_pstore nfnetlink dmi_sysfs ip_tables x_tables autofs4 btrfs
+> > > > blake2b_generic raid10 raid456 async_raid6_recov async_memcpy
+> > > > async_pq
+> > > > async_xor async_tx xor raid6_pq libcrc32c raid1 raid0
+> > > > rtsx_usb_sdmmc
+> > > > rtsx_usb crct10dif_pclmul crc32_pclmul polyval_clmulni
+> > > > polyval_generic
+> > > > ghash_clmulni_intel sha256_ssse3 sha1_ssse3 video psmouse ahci
+> > > > xhci_pci
+> > > > libahci xhci_pci_renesas wmi aesni_intel crypto_simd cryptd
+> > > > 2024-11-16T22:14:12.122340+08:00 sundtek-UX32VD kernel: CR2:
+> > > > 0000000000000020
+> > > > 2024-11-16T22:14:12.122342+08:00 sundtek-UX32VD kernel: ---[
+> > > > end
+> > > > trace
+> > > > 0000000000000000 ]---
+> > > > 2024-11-16T22:14:12.122344+08:00 sundtek-UX32VD kernel: RIP:
+> > > > 0010:xhci_check_bw_table+0x100/0x4d0
+> > > > 2024-11-16T22:14:12.122346+08:00 sundtek-UX32VD kernel: Code:
+> > > > c7 c2
+> > > > 60
+> > > > 35 70 9f 48 c7 c6 70 aa 79 9e 4c 89 55 c0 4c 89 5d d0 e8 d0 c7
+> > > > 01
+> > > > 00 4c
+> > > > 8b 5d d0 4c 8b 55 c0 4c 8b 4d b8 41 8d 47 ff <41> 8b 4a 20 31
+> > > > d2 45
+> > > > 8b
+> > > > 72 08 89 45 d0 41 03 02 41 f7 f7 ba 80 00
+> > > > 2024-11-16T22:14:12.122349+08:00 sundtek-UX32VD kernel: RSP:
+> > > > 0018:ffffc3774ebeb758 EFLAGS: 00010046
+> > > > 2024-11-16T22:14:12.122352+08:00 sundtek-UX32VD kernel: RAX:
+> > > > 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
+> > > > 2024-11-16T22:14:12.122355+08:00 sundtek-UX32VD kernel: RDX:
+> > > > 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+> > > > 2024-11-16T22:14:12.122357+08:00 sundtek-UX32VD kernel: RBP:
+> > > > ffffc3774ebeb7c0 R08: 0000000000000000 R09: ffff9fcad3566000
+> > > > 2024-11-16T22:14:12.122359+08:00 sundtek-UX32VD kernel: R10:
+> > > > 0000000000000000 R11: ffff9fc9cc687260 R12: ffffc37741131000
+> > > > 2024-11-16T22:14:12.122361+08:00 sundtek-UX32VD kernel: R13:
+> > > > 0000000000000000 R14: ffff9fcad3566000 R15: 0000000000000001
+> > > > 2024-11-16T22:14:12.122363+08:00 sundtek-UX32VD kernel: FS:=20
+> > > > 0000000000000000(0000) GS:ffff9fcb65700000(0000)
+> > > > knlGS:0000000000000000
+> > > > 2024-11-16T22:14:12.122366+08:00 sundtek-UX32VD kernel: CS:=C2=A0
+> > > > 0010
+> > > > DS:
+> > > > 0000 ES: 0000 CR0: 0000000080050033
+> > > > 2024-11-16T22:14:12.122368+08:00 sundtek-UX32VD kernel: CR2:
+> > > > 0000000000000020 CR3: 000000011ffde004 CR4: 00000000001706f0
+> > > > 2024-11-16T22:14:12.122371+08:00 sundtek-UX32VD kernel: note:
+> > > > kworker/2:1[15600] exited with irqs disabled
+> > > > 2024-11-16T22:14:12.122373+08:00 sundtek-UX32VD kernel: note:
+> > > > kworker/2:1[15600] exited with preempt_count 1
+> > > >=20
+> > > > Signed-off-by: Markus Rechberger <linuxusb.ml@sundtek.de>
+> > > >=20
+> > > > This patch diff --git a/drivers/usb/host/xhci.c
+> > > > b/drivers/usb/host/xhci.c
+> > > > index 899c0effb5d3..f054e262176c 100644
+> > > > --- a/drivers/usb/host/xhci.c
+> > > > +++ b/drivers/usb/host/xhci.c
+> > > > @@ -2380,6 +2380,17 @@ static int xhci_check_bw_table(struct
+> > > > xhci_hcd
+> > > > *xhci,
+> > > > =C2=A0	}
+> > > > =C2=A0
+> > > > =C2=A0	bw_table =3D virt_dev->bw_table;
+> > > > +
+> > > > +	/* second line of defense, this should not happen if
+> > > > bw_table
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 is not initialized this calcu=
+lation should not be
+> > > > called
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 any issue with bw_table is su=
+pposed to be handled
+> > > > earlier
+> > > > +	*/
+> > > > +	if (bw_table =3D=3D NULL) {
+> > > > +		xhci_warn(xhci, "bw_table =3D=3D NULL, this should
+> > > > not
+> > > > happen\n"
+> > > > +				"please report\n");
+> > > > +		return -ENOMEM;
+> > > > +	}
+> > > > +
+> > > > =C2=A0	/* We need to translate the max packet size and max
+> > > > ESIT
+> > > > payloads into
+> > > > =C2=A0	 * the units the hardware uses.
+> > > > =C2=A0	 */
+> > > >=20
+> > > >=20
+> > >=20
+> > > > diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
+> > > > index 899c0effb5d3..f054e262176c 100644
+> > > > --- a/drivers/usb/host/xhci.c
+> > > > +++ b/drivers/usb/host/xhci.c
+> > > > @@ -2380,6 +2380,17 @@ static int xhci_check_bw_table(struct
+> > > > xhci_hcd *xhci,
+> > > > =C2=A0	}
+> > > > =C2=A0
+> > > > =C2=A0	bw_table =3D virt_dev->bw_table;
+> > > > +
+> > > > +	/* second line of defense, this should not happen if
+> > > > bw_table
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 is not initialized this calcu=
+lation should not be
+> > > > called
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 any issue with bw_table is su=
+pposed to be handled
+> > > > earlier
+> > > > +	*/
+> > > > +	if (bw_table =3D=3D NULL) {
+> > > > +		xhci_warn(xhci, "bw_table =3D=3D NULL, this should
+> > > > not
+> > > > happen\n"
+> > > > +				"please report\n");
+> > > > +		return -ENOMEM;
+> > > > +	}
+> > > > +
+> > > > =C2=A0	/* We need to translate the max packet size and max
+> > > > ESIT
+> > > > payloads into
+> > > > =C2=A0	 * the units the hardware uses.
+> > > > =C2=A0	 */
+> > >=20
+> > >=20
+> > > Hi,
+> > >=20
+> > > This is the friendly patch-bot of Greg Kroah-Hartman.=C2=A0 You have
+> > > sent
+> > > him
+> > > a patch that has triggered this response.=C2=A0 He used to manually
+> > > respond
+> > > to these common problems, but in order to save his sanity (he
+> > > kept
+> > > writing the same thing over and over, yet to different people), I
+> > > was
+> > > created.=C2=A0 Hopefully you will not take offence and will fix the
+> > > problem
+> > > in your patch and resubmit it so that it can be accepted into the
+> > > Linux
+> > > kernel tree.
+> > >=20
+> > > You are receiving this message because of the following common
+> > > error(s)
+> > > as indicated below:
+> > >=20
+> > > - Your patch is malformed (tabs converted to spaces, linewrapped,
+> > > etc.)
+> > > =C2=A0 and can not be applied.=C2=A0 Please read the file,
+> > > =C2=A0 Documentation/process/email-clients.rst in order to fix this.
+> > >=20
+> > > - Your patch was attached, please place it inline so that it can
+> > > be
+> > > =C2=A0 applied directly from the email message itself.
+> > >=20
+> > > - This looks like a new version of a previously submitted patch,
+> > > but
+> > > you
+> > > =C2=A0 did not list below the --- line any changes from the previous
+> > > version.
+> > > =C2=A0 Please read the section entitled "The canonical patch format"
+> > > in
+> > > the
+> > > =C2=A0 kernel file, Documentation/process/submitting-patches.rst for
+> > > what
+> > > =C2=A0 needs to be done here to properly describe this.
+> > >=20
+> >=20
+> > I'm sorry for that, can you handle the patch another way? The Linux
+> > mailclients I use are not
+> > convenient thunderbird having massive issues with timestamps (so I
+> > can't use it at all), evolution lacking some features (eg. don't
+> > convert tabs).
+>=20
+> Can you just use 'git send-email'?
+>=20
+> Thunderbird works for many people, as does evolution, so those
+> shouldn't
+> be an issue.=C2=A0 There's a whole document in the kernel Documentation/
+> directory about how to set up different email clients.
+>=20
+> > I understand that patch consistency has to be maintained across the
+> > kernel project, but I can't
+> > submit them accordingly with my current setup.
+>=20
+> It's not "consistency", it's "this will not apply at all as it is
+> corrupted" so I don't think this would work for any other project
+> either, sorry.
+>=20
+> Also, your changelog text is wonky, please trim it down to something
+> readable and relevant.=C2=A0 Look at other commits in the tree for
+> examples.
+>=20
+> And finally, use scripts/checkpatch.pl before sending your patch out
+> again, your comment style is "different".
+>=20
 
-The problem with corrupted audio infoframes were discovered by letting
-a HDMI logic analyser check the output of ADV7535.
 
-Note that this patchs replaces writing REG_GC(1) with
-REG_INFOFRAME_UPDATE. Bit 5 of REG_GC(1) is positioned within field
-GC_PP[3:0] and that field doesn't control audio infoframe and is read-
-only. My conclusion therefore was that the author if this code meant to
-clear bit 5 of REG_INFOFRAME_UPDATE from the very beginning.
+Thanks the documentation lead to a solution with evolution.
+I'll send it again later.
 
-Fixes: 53c515befe28 ("drm/bridge: adv7511: Add Audio support")
-Signed-off-by: Stefan Ekenberg <stefan.ekenberg@axis.com>
----
-Changes in v3:
-- Extend commit message and explain replacement of REG_GC(1)
-- Link to v2: https://lore.kernel.org/r/20241115-adv7511-audio-info-frame-v2-1-ca4793ef3a91@axis.com
+Best Regards,
+Markus
 
-Changes in v2:
-- Add Fixes tag
-- Link to v1: https://lore.kernel.org/r/20241113-adv7511-audio-info-frame-v1-1-49b368b995a5@axis.com
----
- drivers/gpu/drm/bridge/adv7511/adv7511_audio.c | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511_audio.c b/drivers/gpu/drm/bridge/adv7511/adv7511_audio.c
-index 61f4a38e7d2bf6905683cbc9e762b28ecc999d05..8f786592143b6c81e5a434768b51508d5e5f3c73 100644
---- a/drivers/gpu/drm/bridge/adv7511/adv7511_audio.c
-+++ b/drivers/gpu/drm/bridge/adv7511/adv7511_audio.c
-@@ -153,7 +153,16 @@ static int adv7511_hdmi_hw_params(struct device *dev, void *data,
- 			   ADV7511_AUDIO_CFG3_LEN_MASK, len);
- 	regmap_update_bits(adv7511->regmap, ADV7511_REG_I2C_FREQ_ID_CFG,
- 			   ADV7511_I2C_FREQ_ID_CFG_RATE_MASK, rate << 4);
--	regmap_write(adv7511->regmap, 0x73, 0x1);
-+
-+	/* send current Audio infoframe values while updating */
-+	regmap_update_bits(adv7511->regmap, ADV7511_REG_INFOFRAME_UPDATE,
-+			   BIT(5), BIT(5));
-+
-+	regmap_write(adv7511->regmap, ADV7511_REG_AUDIO_INFOFRAME(0), 0x1);
-+
-+	/* use Audio infoframe updated info */
-+	regmap_update_bits(adv7511->regmap, ADV7511_REG_INFOFRAME_UPDATE,
-+			   BIT(5), 0);
- 
- 	return 0;
- }
-@@ -184,8 +193,9 @@ static int audio_startup(struct device *dev, void *data)
- 	regmap_update_bits(adv7511->regmap, ADV7511_REG_GC(0),
- 				BIT(7) | BIT(6), BIT(7));
- 	/* use Audio infoframe updated info */
--	regmap_update_bits(adv7511->regmap, ADV7511_REG_GC(1),
-+	regmap_update_bits(adv7511->regmap, ADV7511_REG_INFOFRAME_UPDATE,
- 				BIT(5), 0);
-+
- 	/* enable SPDIF receiver */
- 	if (adv7511->audio_source == ADV7511_AUDIO_SOURCE_SPDIF)
- 		regmap_update_bits(adv7511->regmap, ADV7511_REG_AUDIO_CONFIG,
-
----
-base-commit: 59b723cd2adbac2a34fc8e12c74ae26ae45bf230
-change-id: 20241108-adv7511-audio-info-frame-54614dd4bf57
-
-Best regards,
--- 
-Stefan Ekenberg <stefan.ekenberg@axis.com>
+> thanks,
+>=20
+> greg k-h
 
 
