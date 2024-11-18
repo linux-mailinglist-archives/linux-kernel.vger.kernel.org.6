@@ -1,116 +1,107 @@
-Return-Path: <linux-kernel+bounces-413119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33AA39D13D1
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 16:00:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FE319D13D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 16:00:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 928621F21ED4
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 15:00:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE7AA1F23068
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 15:00:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19F821AE00C;
-	Mon, 18 Nov 2024 15:00:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 430541AF0A0;
+	Mon, 18 Nov 2024 15:00:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b="g0GjTl7Q"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iIab/NWO"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C8C81AA1FA
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 15:00:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19EB71991DB
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 15:00:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731942006; cv=none; b=Rp16DDBV0EYhB06QBO3Df6uKCKJGhbl7tiQfHqvWkaxMkc09ZymE9gMhJguqFC29+Vh+DtP5KO/teFbu7qnBnLRLjCNe3/4jxxPAiTP+ai6hcz41JGNC3RoyrWYPCnWpVzk/KxO7guwSSXE/dBPfShWtWnQhfMZzJ+OaQicE/Us=
+	t=1731942026; cv=none; b=WbjAuJcWbgCNNN5B/VQLz75UiFxtl8OGILR23gkkuY/EqyYKCByspiGiHBB5OiFNeCvfJeoPzh2Qawsmuw8nengKUpuKtHoUGAg145eHZGGofPIAPNFvm95js1IYlLSBkGZsENUGFGdWoVaU3KgZyjubi7oP8TWLhXVXq9KJn0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731942006; c=relaxed/simple;
-	bh=DV0wLt/fJAQ1zmwK7t51dfn7cg2V4txHVmffmYrdNDE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FGD/a6zMK8nB2BDZvhi6wW1k9KRGpsC0neGW61qwDEuOhUm/WgE24gJggrUg1RLeArxhbphTKAxgDHZpn176doDdIBcPPqhxs1KsV4mw8fTFq6ijbHPLM7Q/jVPFtoVkrGAw40WHBH2XLNwU/2JEcFReMb3U+Dj4A21IyZO5k6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mihalicyn.com; spf=pass smtp.mailfrom=mihalicyn.com; dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b=g0GjTl7Q; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mihalicyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mihalicyn.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-539d9fffea1so4202023e87.2
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 07:00:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mihalicyn.com; s=mihalicyn; t=1731942003; x=1732546803; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6zJ4FGoi5ftTI56Hvv5JnS/WGB8iYYkvstT7BpBSm10=;
-        b=g0GjTl7QCbDHMhHMIvfAz1rO2ckf/Fmvo+VKilnZ8gjPGrYWF8Hy6ySwwND1UQ/uek
-         0KZfrbUTO92b3RLK92Dk+JEeEEg9aO7lp7Tj+IuHNM+1b2cB4bSWfavk5Sck4efbfHG8
-         QESm+k2GToiwr6BbTashhbnVCBWKWEUydEhfk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731942003; x=1732546803;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6zJ4FGoi5ftTI56Hvv5JnS/WGB8iYYkvstT7BpBSm10=;
-        b=wqG4JyiapoL6xhqfHzBp6SM/LiThl0rCbX2WM0Q/Bk3Ig1B4O2x0BUxr7snViXEUb7
-         ceeQbaiB1Y+zwnPuu4kDefh1LmfbX8oZhehv7lxagGK9pmHgjZLP9BS/Q9vc+jB8tmD9
-         hHsqvikJijydWzj9Hbt2KuCiyjMxWtymcj9DDcCZu2v/wao4UTMvkY4WGuCH8eqKdUkb
-         l87hU6tCZf8egL8Mu6AYEEzBm3LubVLH8wN9OEB4YSQeBqB+0aRRnJsO9UbnBKYR9/17
-         YHUhuZvsd7v6H5jj46q1JCz2MhXZLlBHQWyIFe+stwPzH/O2eJN+g1vVigyLwreZb21W
-         rlyQ==
-X-Gm-Message-State: AOJu0YwfOBSVsfnszF72bWU+Puvkcf+4zeWCEawCiE0hO7fQIFlY6lwm
-	j+f6wkPohvU6UfkKBLUmgzt4fNmda7DO88UJqBsDAzdD4L6Kg21ZWvhTQ/nyiiGoCMOYnyPMnXk
-	iRyfC01PixWcHZZoLH5dbdFRgJBuX2qB3kVInJw==
-X-Google-Smtp-Source: AGHT+IEye5AclSa0Dtqlqp4wT1D/SzXX4+blQIj+JyQyDIjVt4YGD2ypM1int4wOl7MFpC8uCGhhzy1mK8dlUxsjQ5k=
-X-Received: by 2002:ac2:4342:0:b0:53d:b0ea:9efa with SMTP id
- 2adb3069b0e04-53db0eaa7aemr2498033e87.31.1731942002224; Mon, 18 Nov 2024
- 07:00:02 -0800 (PST)
+	s=arc-20240116; t=1731942026; c=relaxed/simple;
+	bh=osolB0cyVpIVsTVcw/NUpVzM/FR+xiFAx7qOUeDKt30=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=X0K1h64wZVqAVWQUiY/aKMtCkqSnUrhs2rquqSnwX3i0CfQww1psimitap2vSq7XhBr3Q8YnQ2iFbX4HyNcE0iGmtpIgQ+QDojO4dGdCzuYZTYoUMJ9M84LvUtvrnHXi/QTZOV8iYp6vjtlr7wA7p9BiuNklLLm2j3a51EnBFzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iIab/NWO; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731942023;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ChWi/k+snGKLwA/khcA5djHIdedI2XLUo5ychYHO4Uk=;
+	b=iIab/NWOOxlpTEWd5ESE6se7hf/B//IksHO1duNbHsK3ITBBU6MOAbrhgNEX41I7ps1s4v
+	a5EheyaCKGLlg0+3rtlQ3AAN2nUIrHkewtNx9Z2Wv3tumrYHL3yuNCUrpZe9+nP7SNGlQk
+	e/2Mri92PRPWHtp2Kkzli3v+nlXh3rk=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-588-77U2MGWSPr2aBou8UgLGJQ-1; Mon,
+ 18 Nov 2024 10:00:20 -0500
+X-MC-Unique: 77U2MGWSPr2aBou8UgLGJQ-1
+X-Mimecast-MFC-AGG-ID: 77U2MGWSPr2aBou8UgLGJQ
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 742891945CAE;
+	Mon, 18 Nov 2024 15:00:17 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.207])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id A126A1955F4A;
+	Mon, 18 Nov 2024 15:00:13 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <20241105191959.2871-1-zoo868e@gmail.com>
+References: <20241105191959.2871-1-zoo868e@gmail.com> <671acd8e.050a0220.381c35.0004.GAE@google.com>
+To: Matt Jan <zoo868e@gmail.com>
+Cc: dhowells@redhat.com,
+    syzbot+14c04e62ca58315571d1@syzkaller.appspotmail.com,
+    davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+    linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org,
+    marc.dionne@auristor.com, netdev@vger.kernel.org, pabeni@redhat.com,
+    syzkaller-bugs@googlegroups.com, skhan@linuxfoundation.org
+Subject: Re: [PATCH] rxrpc: Initialize sockaddr_rxrpc directly
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241117091313.10251-1-stsp2@yandex.ru> <CAJqdLrp4J57k67R3OWM-_6QZSv8EV9UANzdAtBCiLGQZPTXDcQ@mail.gmail.com>
- <d1e90994-ca11-4a3e-b627-e3425dc5bf26@yandex.ru> <d99a9ccc-6cc0-4978-9930-7021979703c8@yandex.ru>
-In-Reply-To: <d99a9ccc-6cc0-4978-9930-7021979703c8@yandex.ru>
-From: Alexander Mikhalitsyn <alexander@mihalicyn.com>
-Date: Mon, 18 Nov 2024 15:59:50 +0100
-Message-ID: <CAJqdLrr1oet6F_EQSaiSfwnMCvt0Omvicw5Ed7FkiyrQagfgMQ@mail.gmail.com>
-Subject: Re: [PATCH net v2] scm: fix negative fds with SO_PASSPIDFD
-To: stsp <stsp2@yandex.ru>
-Cc: linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Simon Horman <horms@kernel.org>, Christian Brauner <brauner@kernel.org>, Kees Cook <kees@kernel.org>, 
-	Kuniyuki Iwashima <kuniyu@amazon.com>, netdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <883285.1731942012.1@warthog.procyon.org.uk>
+Date: Mon, 18 Nov 2024 15:00:12 +0000
+Message-ID: <883286.1731942012@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-Am So., 17. Nov. 2024 um 11:11 Uhr schrieb stsp <stsp2@yandex.ru>:
->
-> 17.11.2024 13:04, stsp =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > 17.11.2024 12:40, Alexander Mikhalitsyn =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> >> Hi Stas,
-> >>
-> >> Actually, it's not a forgotten check. It's intended behavior to pass
-> >> through errors from pidfd_prepare() to
-> >> the userspace. In my first version [1] of the patch I tried to return
-> >> ESRCH instead of EINVAL in your case, but
-> >> then during discussions we decided to remove that.
-> >>
-> >> [1]
-> >> https://lore.kernel.org/all/20230316131526.283569-2-aleksandr.mikhalit=
-syn@canonical.com/
-> > Yes, the patch you referenced above,
-> > only calls put_cmsg() with an error code.
-> >
-> > But the code I can see now in git, does
-> > much more. Namely,
-> > if (pidfd_file)
-> >     fd_install(pidfd, pidfd_file);
-> Ah, I guess pidfd_file is a culprit.
+Matt Jan <zoo868e@gmail.com> wrote:
 
-Hey,
+> In rxrpc_lookup_peer_local_rcu(), removed the redundant memset call
+> that zeros out the sockaddr_rxrpc structure before setting its fields.
+> Instead, initialize the sockaddr_rxrpc structure directly in
+> rxrpc_input_error().
+> 
+> This change simplifies the code and ensures that the sockaddr_rxrpc
+> structure is properly zero-initialized.
 
-Precisely, when an error happens then pidfd_file is NULL.
+How does that actually fix the issue?
 
-Kind regards,
-Alex
+All the patch does is move the initialisation of srx from
+rxrpc_lookup_peer_local_rcu() into its only caller - and nothing samples the
+contents of srx between.
 
-> Thanks.
+Looking at the bug report, the history of the uninitialised location goes back
+further, to a network address generated/assembled in the ipv6 stack or from
+the transmission side of the rxrpc stack, possibly call->peer->srx.transport.
+
+David
+
 
