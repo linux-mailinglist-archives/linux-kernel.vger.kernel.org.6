@@ -1,199 +1,324 @@
-Return-Path: <linux-kernel+bounces-413612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A7979D1BC9
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 00:20:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E89E29D1BD0
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 00:27:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44AD81F2263B
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 23:20:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EBBE1F2230F
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 23:27:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A73271953A2;
-	Mon, 18 Nov 2024 23:20:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52EE0197A8E;
+	Mon, 18 Nov 2024 23:27:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fWVhzMyU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hhuqOd5S"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08542147C71;
-	Mon, 18 Nov 2024 23:20:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88F22147C71;
+	Mon, 18 Nov 2024 23:27:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731972020; cv=none; b=MfE8JRUrFObTVwJmBWqMtbfhp/pYloNzUzI8+nHb57pgFI8iJX0sWq4wrVtvpQI3rVFkx2Z+VZALo/NbTYuFo6l4BQvpj/DJl/QjnBtvwyIbz8Vr8FgPAZKoEwcAi1UTeAk4hYTEqBfSUV/0duCPHJWPRM+F8LVSyoVy/f8IIsU=
+	t=1731972433; cv=none; b=j643NbKAgm/442IYsdxQq7gzM4eF5vHbR7bqFbt/JyVBKSkJjKdn4C6UWiElv+fZ48oU+g++AZ+5ZsVV1IuSBgkDYWhMltc4Cq5zl+HxeCwcp3Biy48T29PlqbgvAZEmGRe6DQghVMSp0gMI11eaPKcW8GYdxcDc1t/o4YcDVWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731972020; c=relaxed/simple;
-	bh=BaVw3kfXsoiSkf74HWaBs6gPJl6E8QZFBql0KydVi50=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=q/IdDQpUG9mkxAhysaafDfFHi3GUo/IuS2tj/R1i7lJANuFrS9eEE1QSOwjjhvtVCqIC/KGUiEoO2R0aj4IQiO2eWHI0BgXdsIHrQXVGnkikRFy52p5bC9Z0jjT+3+UUBYJkgdZLS1reh+tkwdy46lHcOU7Y/Aoof1xnGbq4LCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fWVhzMyU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B8DCC4CED7;
-	Mon, 18 Nov 2024 23:20:19 +0000 (UTC)
+	s=arc-20240116; t=1731972433; c=relaxed/simple;
+	bh=7QPZIDne9o93BGUUovfbC0lKxWtZu//qeS4e3zdFdV8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VSsnmlnJeC3iibnfxU+5A2SBuezNA5OwRbzyjHcsYfS7CfezZAAa9ztUPBFDTmUAhL4M5qtOUYtv3CX1htfExWPB0INp8OVv+GZdGAk9+CJ1MC/EK1DzrJRKbp9yLkSzeBLrY1FSf4pvxLrn6xOR/8Fgs7pdxhH0UbjqOkYDkj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hhuqOd5S; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2192DC4CECC;
+	Mon, 18 Nov 2024 23:27:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731972019;
-	bh=BaVw3kfXsoiSkf74HWaBs6gPJl6E8QZFBql0KydVi50=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=fWVhzMyUDG9AqnkmCFYJLXAsQWCx4bZfg+T9FvpDERz+zkhCqa0SHzMrxUTOONGSR
-	 UP1jexdQqU2F1M1JVGgDOUi1m4H3fcOjLK+iABaln76ocTuFDsrlwC6wXUMD5eVc5S
-	 E4drNKBf6ozXI6N8ZM9MtoeBkWjtmj0fJ2Rx79Gcsn6lnDOgqNTMvuKN2pDXH6KCxv
-	 YXRqxhbAFoFvVMDy+Blr0+EUo2wMRxmjG1IpRBr//WoF8yrhDd14vVfVuBO+4LWA0o
-	 39nKrWdLjfsgbRE8466fkK5oXeRae9PNZLuA6ArB4BYRlSlcW7a0/PKwTrx6+BIdoM
-	 BDFU8ttgGM1bg==
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-53b34ed38easo362920e87.0;
-        Mon, 18 Nov 2024 15:20:19 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUtyEkdZyIxY2f9EsPuWf0yeodcgrLocE+h2G39iyp6LOmGSAZ8PtJRyV1keXJdUzbeVx8J6KF03GhidN0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVAr0ukIJWPQaacm4CR61cf6MmS80hosBwn4+LJZo09jAF5+ll
-	HIWG1zf3JirvSfqR49qah91AWxcYXwqEbvHDC0V0K0SBuCDB/kHFMuJ5cGzkjNdO21ZKZ2eXmmW
-	plDHiLQXE+WrTBDnVRHWY2UHGwBM=
-X-Google-Smtp-Source: AGHT+IG1fK7n0D0KSLQsBdJJ6+sYaXGVDS1vE2YI3gBWfE7pJTFggdp3rMlVZrE1iN2TN/x7DCTEy0VCpIkzXFhERF0=
-X-Received: by 2002:a05:6512:2389:b0:53b:1625:bcf8 with SMTP id
- 2adb3069b0e04-53dab2a71bcmr5925262e87.30.1731972018044; Mon, 18 Nov 2024
- 15:20:18 -0800 (PST)
+	s=k20201202; t=1731972433;
+	bh=7QPZIDne9o93BGUUovfbC0lKxWtZu//qeS4e3zdFdV8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hhuqOd5SqDW7NW8lx0a5T9PhrKS5dcGtnEm1E4tZHVKtoYkKIPUpdpKo9xB1IdQCV
+	 u7n7mMV++inl2ih+xTT3Wm9F3Eqdn1h5PIHCRChYjybx/w+DAExa23FZ0/yrGk+cAo
+	 +0ACvcy+bv3sO+e0CPwqReA/bB2kgvT4tLWbEHau5WlAKW9hyMJ+dPAsZkCx6b5Hh7
+	 EDt6c9TXNAouWV5np8t5x5/doemFCP/yTiX7+/HbONED1sK8/N0h+2E4wjCeOlkLp0
+	 qCFqVQXSTjUvMfBmnFCNtcWgRJ8vkPEOr92QoD6qI+eAvgoPDhDbMNLUZOkKTMq3SB
+	 zjFVYPCGb3g7g==
+Date: Mon, 18 Nov 2024 15:27:12 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, tytso@mit.edu,
+	adilger.kernel@dilger.ca, jack@suse.cz, ritesh.list@gmail.com,
+	hch@infradead.org, david@fromorbit.com, zokeefe@google.com,
+	yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com,
+	yangerkun@huawei.com
+Subject: Re: [PATCH 04/27] ext4: refactor ext4_punch_hole()
+Message-ID: <20241118232712.GB9417@frogsfrogsfrogs>
+References: <20241022111059.2566137-1-yi.zhang@huaweicloud.com>
+ <20241022111059.2566137-5-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241118110154.3711777-1-linux@rasmusvillemoes.dk>
-In-Reply-To: <20241118110154.3711777-1-linux@rasmusvillemoes.dk>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Tue, 19 Nov 2024 08:19:41 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATvMOR3qcp+-6koxnKkvMDRVHYJ0E0hyUaWLeV3-c0eBA@mail.gmail.com>
-Message-ID: <CAK7LNATvMOR3qcp+-6koxnKkvMDRVHYJ0E0hyUaWLeV3-c0eBA@mail.gmail.com>
-Subject: Re: [PATCH v3] setlocalversion: work around "git describe" performance
-To: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Jeff King <peff@peff.net>, Sean Christopherson <seanjc@google.com>, Josh Poimboeuf <jpoimboe@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241022111059.2566137-5-yi.zhang@huaweicloud.com>
 
-On Mon, Nov 18, 2024 at 8:01=E2=80=AFPM Rasmus Villemoes
-<linux@rasmusvillemoes.dk> wrote:
->
-> Contrary to expectations, passing a single candidate tag to "git
-> describe" is slower than not passing any --match options.
->
->   $ time git describe --debug
->   ...
->   traversed 10619 commits
->   ...
->   v6.12-rc5-63-g0fc810ae3ae1
->
->   real    0m0.169s
->
->   $ time git describe --match=3Dv6.12-rc5 --debug
->   ...
->   traversed 1310024 commits
->   v6.12-rc5-63-g0fc810ae3ae1
->
->   real    0m1.281s
->
-> In fact, the --debug output shows that git traverses all or most of
-> history. For some repositories and/or git versions, those 1.3s are
-> actually 10-15 seconds.
->
-> This has been acknowledged as a performance bug in git [1], and a fix
-> is on its way [2]. However, no solution is yet in git.git, and even
-> when one lands, it will take quite a while before it finds its way to
-> a release and for $random_kernel_developer to pick that up.
->
-> So rewrite the logic to use plumbing commands. For each of the
-> candidate values of $tag, we ask: (1) is $tag even an annotated
-> tag? (2) Is it eligible to describe HEAD, i.e. an ancestor of
-> HEAD? (3) If so, how many commits are in $tag..HEAD?
->
-> I have tested that this produces the same output as the current script
-> for ~700 random commits between v6.9..v6.10. For those 700 commits,
-> and in my git repo, the 'make -s kernelrelease' command is on average
-> ~4 times faster with this patch applied (geometric mean of ratios).
->
-> For the commit mentioned in Josh's original report [3], the
-> time-consuming part of setlocalversion goes from
->
-> $ time git describe --match=3Dv6.12-rc5 c1e939a21eb1
-> v6.12-rc5-44-gc1e939a21eb1
->
-> real    0m1.210s
->
-> to
->
-> $ time git rev-list --count --left-right v6.12-rc5..c1e939a21eb1
-> 0       44
->
-> real    0m0.037s
->
-> [1] https://lore.kernel.org/git/20241101113910.GA2301440@coredump.intra.p=
-eff.net/
-> [2] https://lore.kernel.org/git/20241106192236.GC880133@coredump.intra.pe=
-ff.net/
-> [3] https://lore.kernel.org/lkml/309549cafdcfe50c4fceac3263220cc3d8b109b2=
-.1730337435.git.jpoimboe@kernel.org/
->
-> Reported-by: Sean Christopherson <seanjc@google.com>
-> Closes: https://lore.kernel.org/lkml/ZPtlxmdIJXOe0sEy@google.com/
-> Reported-by: Josh Poimboeuf <jpoimboe@kernel.org>
-> Tested-by: Josh Poimboeuf <jpoimboe@kernel.org>
-> Closes: https://lore.kernel.org/lkml/309549cafdcfe50c4fceac3263220cc3d8b1=
-09b2.1730337435.git.jpoimboe@kernel.org/
-> Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+On Tue, Oct 22, 2024 at 07:10:35PM +0800, Zhang Yi wrote:
+> From: Zhang Yi <yi.zhang@huawei.com>
+> 
+> The current implementation of ext4_punch_hole() contains complex
+> position calculations and stale error tags. To improve the code's
+> clarity and maintainability, it is essential to clean up the code and
+> improve its readability, this can be achieved by: a) simplifying and
+> renaming variables; b) eliminating unnecessary position calculations;
+> c) writing back all data in data=journal mode, and drop page cache from
+> the original offset to the end, rather than using aligned blocks,
+> d) renaming the stale error tags.
+> 
+> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 > ---
-> v3:
->
-> - Update trailer tag list, per Masahiro.
-> - Drop redundant quoutes around the word tag
-> - Add a shellcheck disable directive
->
-> Masahiro, I decided to keep the changes minimal, in particular not to
-> change anything around the logic or the (unused) return values, in
-> order not to invalidate Josh' T-b tag. I think it's more important for
-> this to make it to 6.13-rc1 (if that is even still possible, given
-> that the MW is already open).
+>  fs/ext4/inode.c | 140 +++++++++++++++++++++---------------------------
+>  1 file changed, 62 insertions(+), 78 deletions(-)
+> 
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index 94b923afcd9c..1d128333bd06 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -3955,13 +3955,14 @@ int ext4_punch_hole(struct file *file, loff_t offset, loff_t length)
+>  {
+>  	struct inode *inode = file_inode(file);
+>  	struct super_block *sb = inode->i_sb;
+> -	ext4_lblk_t first_block, stop_block;
+> +	ext4_lblk_t start_lblk, end_lblk;
+>  	struct address_space *mapping = inode->i_mapping;
+> -	loff_t first_block_offset, last_block_offset, max_length;
+> -	struct ext4_sb_info *sbi = EXT4_SB(inode->i_sb);
+> +	loff_t max_end = EXT4_SB(sb)->s_bitmap_maxbytes - sb->s_blocksize;
+> +	loff_t end = offset + length;
+> +	unsigned long blocksize = i_blocksize(inode);
+>  	handle_t *handle;
+>  	unsigned int credits;
+> -	int ret = 0, ret2 = 0;
+> +	int ret = 0;
+>  
+>  	trace_ext4_punch_hole(inode, offset, length, 0);
+>  
+> @@ -3969,36 +3970,27 @@ int ext4_punch_hole(struct file *file, loff_t offset, loff_t length)
+>  
+>  	/* No need to punch hole beyond i_size */
+>  	if (offset >= inode->i_size)
+> -		goto out_mutex;
+> +		goto out;
+>  
+>  	/*
+> -	 * If the hole extends beyond i_size, set the hole
+> -	 * to end after the page that contains i_size
+> +	 * If the hole extends beyond i_size, set the hole to end after
+> +	 * the page that contains i_size, and also make sure that the hole
+> +	 * within one block before last range.
+>  	 */
+> -	if (offset + length > inode->i_size) {
+> -		length = inode->i_size +
+> -		   PAGE_SIZE - (inode->i_size & (PAGE_SIZE - 1)) -
+> -		   offset;
+> -	}
+> +	if (end > inode->i_size)
+> +		end = round_up(inode->i_size, PAGE_SIZE);
+> +	if (end > max_end)
+> +		end = max_end;
+> +	length = end - offset;
+>  
+>  	/*
+> -	 * For punch hole the length + offset needs to be within one block
+> -	 * before last range. Adjust the length if it goes beyond that limit.
+> +	 * Attach jinode to inode for jbd2 if we do any zeroing of partial
+> +	 * block.
+>  	 */
+> -	max_length = sbi->s_bitmap_maxbytes - inode->i_sb->s_blocksize;
+> -	if (offset + length > max_length)
+> -		length = max_length - offset;
+> -
+> -	if (offset & (sb->s_blocksize - 1) ||
+> -	    (offset + length) & (sb->s_blocksize - 1)) {
+> -		/*
+> -		 * Attach jinode to inode for jbd2 if we do any zeroing of
+> -		 * partial block
+> -		 */
+> +	if (offset & (blocksize - 1) || end & (blocksize - 1)) {
 
+IS_ALIGNED(offset | end, blocksize) ?
 
-This is not urgent because it has been broken more than one year.
+>  		ret = ext4_inode_attach_jinode(inode);
+>  		if (ret < 0)
+> -			goto out_mutex;
+> -
+> +			goto out;
+>  	}
+>  
+>  	/* Wait all existing dio workers, newcomers will block on i_rwsem */
+> @@ -4006,7 +3998,7 @@ int ext4_punch_hole(struct file *file, loff_t offset, loff_t length)
+>  
+>  	ret = file_modified(file);
+>  	if (ret)
+> -		goto out_mutex;
+> +		goto out;
+>  
+>  	/*
+>  	 * Prevent page faults from reinstantiating pages we have released from
+> @@ -4016,34 +4008,24 @@ int ext4_punch_hole(struct file *file, loff_t offset, loff_t length)
+>  
+>  	ret = ext4_break_layouts(inode);
+>  	if (ret)
+> -		goto out_dio;
+> -
+> -	first_block_offset = round_up(offset, sb->s_blocksize);
+> -	last_block_offset = round_down((offset + length), sb->s_blocksize) - 1;
+> +		goto out_invalidate_lock;
+>  
+> -	/* Now release the pages and zero block aligned part of pages*/
+> -	if (last_block_offset > first_block_offset) {
+> +	/*
+> +	 * For journalled data we need to write (and checkpoint) pages
+> +	 * before discarding page cache to avoid inconsitent data on
 
-Your "|| return 1" may not live long.
-https://lore.kernel.org/linux-kbuild/20241118231534.1351938-1-masahiroy@ker=
-nel.org/T/#u
+inconsistent
 
-
-If you write try_tag() like you wrote, my patch can become even simpler.
-
-
-
-
+> +	 * disk in case of crash before punching trans is committed.
+> +	 */
+> +	if (ext4_should_journal_data(inode)) {
+> +		ret = filemap_write_and_wait_range(mapping, offset, end - 1);
+> +	} else {
+>  		ret = ext4_update_disksize_before_punch(inode, offset, length);
+> -		if (ret)
+> -			goto out_dio;
+> -
+> -		/*
+> -		 * For journalled data we need to write (and checkpoint) pages
+> -		 * before discarding page cache to avoid inconsitent data on
+> -		 * disk in case of crash before punching trans is committed.
+> -		 */
+> -		if (ext4_should_journal_data(inode)) {
+> -			ret = filemap_write_and_wait_range(mapping,
+> -					first_block_offset, last_block_offset);
+> -			if (ret)
+> -				goto out_dio;
+> -		}
+> -
+> -		ext4_truncate_folios_range(inode, first_block_offset,
+> -					   last_block_offset + 1);
+> -		truncate_pagecache_range(inode, first_block_offset,
+> -					 last_block_offset);
+> +		ext4_truncate_folios_range(inode, offset, end);
+>  	}
+> +	if (ret)
+> +		goto out_invalidate_lock;
 > +
-> +       # $2 is the number of commits in the range $tag..HEAD, possibly 0=
-.
-> +       count=3D"$2"
+> +	/* Now release the pages and zero block aligned part of pages*/
+> +	truncate_pagecache_range(inode, offset, end - 1);
+>  
+>  	if (ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS))
+>  		credits = ext4_writepage_trans_blocks(inode);
+> @@ -4053,52 +4035,54 @@ int ext4_punch_hole(struct file *file, loff_t offset, loff_t length)
+>  	if (IS_ERR(handle)) {
+>  		ret = PTR_ERR(handle);
+>  		ext4_std_error(sb, ret);
+> -		goto out_dio;
+> +		goto out_invalidate_lock;
+>  	}
+>  
+> -	ret = ext4_zero_partial_blocks(handle, inode, offset,
+> -				       length);
+> +	ret = ext4_zero_partial_blocks(handle, inode, offset, length);
+>  	if (ret)
+> -		goto out_stop;
+> -
+> -	first_block = (offset + sb->s_blocksize - 1) >>
+> -		EXT4_BLOCK_SIZE_BITS(sb);
+> -	stop_block = (offset + length) >> EXT4_BLOCK_SIZE_BITS(sb);
+> +		goto out_handle;
+>  
+>  	/* If there are blocks to remove, do it */
+> -	if (stop_block > first_block) {
+> -		ext4_lblk_t hole_len = stop_block - first_block;
+> +	start_lblk = round_up(offset, blocksize) >> inode->i_blkbits;
 
-count=3D$2
+egad I wish ext4 had nicer unit conversion helpers.
 
-is enough because double-quotes are not required on the RHS
-of an assignment.
+static inline ext4_lblk_t
+EXT4_B_TO_LBLK(struct ext4_sb_info *sbi, ..., loff_t offset)
+{
+	return round_up(offset, blocksize) >> inode->i_blkbits;
+}
 
+	start_lblk = EXT4_B_TO_LBLK(sbi, offset);
 
+ah well.
 
+> +	end_lblk = end >> inode->i_blkbits;
+> +
+> +	if (end_lblk > start_lblk) {
+> +		ext4_lblk_t hole_len = end_lblk - start_lblk;
+>  
+>  		down_write(&EXT4_I(inode)->i_data_sem);
+>  		ext4_discard_preallocations(inode);
+>  
+> -		ext4_es_remove_extent(inode, first_block, hole_len);
+> +		ext4_es_remove_extent(inode, start_lblk, hole_len);
+>  
+>  		if (ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS))
+> -			ret = ext4_ext_remove_space(inode, first_block,
+> -						    stop_block - 1);
+> +			ret = ext4_ext_remove_space(inode, start_lblk,
+> +						    end_lblk - 1);
+>  		else
+> -			ret = ext4_ind_remove_space(handle, inode, first_block,
+> -						    stop_block);
+> +			ret = ext4_ind_remove_space(handle, inode, start_lblk,
+> +						    end_lblk);
+> +		if (ret) {
+> +			up_write(&EXT4_I(inode)->i_data_sem);
+> +			goto out_handle;
+> +		}
+>  
+> -		ext4_es_insert_extent(inode, first_block, hole_len, ~0,
+> +		ext4_es_insert_extent(inode, start_lblk, hole_len, ~0,
+>  				      EXTENT_STATUS_HOLE, 0);
+>  		up_write(&EXT4_I(inode)->i_data_sem);
+>  	}
+> -	ext4_fc_track_range(handle, inode, first_block, stop_block);
+> +	ext4_fc_track_range(handle, inode, start_lblk, end_lblk);
+> +
+> +	ret = ext4_mark_inode_dirty(handle, inode);
+> +	if (unlikely(ret))
+> +		goto out_handle;
+> +
+> +	ext4_update_inode_fsync_trans(handle, inode, 1);
+>  	if (IS_SYNC(inode))
+>  		ext4_handle_sync(handle);
+> -
+> -	ret2 = ext4_mark_inode_dirty(handle, inode);
+> -	if (unlikely(ret2))
+> -		ret = ret2;
+> -	if (ret >= 0)
+> -		ext4_update_inode_fsync_trans(handle, inode, 1);
+> -out_stop:
+> +out_handle:
+>  	ext4_journal_stop(handle);
+> -out_dio:
+> +out_invalidate_lock:
+>  	filemap_invalidate_unlock(mapping);
+> -out_mutex:
+> +out:
 
-> -       # If we are at the tagged commit, we ignore it because the versio=
-n is
-> -       # well-defined.
-> -       if [ "${tag}" !=3D "${desc}" ]; then
-> +       # If we are at the tagged commit, we ignore it because the
-> +       # version is well-defined. If none of the attempted tags exist
-> +       # or were usable, $count is still empty.
-> +       if [ -z "${count}" ] || [ "${count}" -gt 0 ]; then
+Why drop "_mutex"?  You're unlocking *something* on the way out.
 
-Is this code equivalent to the following?
+--D
 
-         if [ "${count}" !=3D 0 ]; then
-
-
-
-
---=20
-Best Regards
-Masahiro Yamada
+>  	inode_unlock(inode);
+>  	return ret;
+>  }
+> -- 
+> 2.46.1
+> 
+> 
 
