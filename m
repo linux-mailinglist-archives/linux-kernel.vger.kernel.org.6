@@ -1,261 +1,172 @@
-Return-Path: <linux-kernel+bounces-412855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA2879D1033
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 12:52:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 708949D103A
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 12:54:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AABEC28347C
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:52:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D77928341E
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:54:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 197681990B7;
-	Mon, 18 Nov 2024 11:52:09 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFB381990AE;
+	Mon, 18 Nov 2024 11:54:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="JJR3/Fj/";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="t9odybke";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="JJR3/Fj/";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="t9odybke"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EC301946DA
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 11:52:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20060192B83;
+	Mon, 18 Nov 2024 11:54:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731930728; cv=none; b=rnsAEM6fatRGd1RuBKgimElspsNONfhfS6wX0nfNGIT8b3WNR8eoww27paJEByBCgJ8C2T3midnRV4Sl1SQltK/yBgM01ADONAwQJ8X4tUbO2gMRr8Cd5mQAfNanQEhcjQC1Sskg0dxfHUT9QGEhGUPXsvmcCaS3g7IJ/hmD2uk=
+	t=1731930843; cv=none; b=Ixf/pV0fvTI8LbXCXKQF0VUbHAIfE2ZkrNgQRubySyPUev5GwtV0pcFmrbF2qiS6Nz+wsjLHkJj2iuMv3iawBAdfIxcuT3DgaVh1vdVItmc4NYFV4x77FqlRDgONh4Cd7dI8QlYebc0Pccb/OzeQPzT0EJzGCk8rKTIZUtydneI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731930728; c=relaxed/simple;
-	bh=AofMIkS1Rbbku1U0w4cTlE8XMy0c7VKc2nJfMNX57zk=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=n46738/tJTaa2UJ92YuTZyIPkMDkSUpedjvlb4j9iTN6XtV3KHrOMLKtK3Z1uPPFGrJE6myCWu7opjhjmT3woyNEi2+gkEK4udk0IRSOMn156ocMdxRxcRAKiBm+80JtOWZ94xaXjaNt6Y6NuBWgr4X8ESBNvkpRO3UnIkQcS4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1tD0ID-0005OW-Uj; Mon, 18 Nov 2024 12:51:45 +0100
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1tD0IB-001O8W-2a;
-	Mon, 18 Nov 2024 12:51:43 +0100
-Received: from pza by lupine with local (Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1tD0IB-0006dT-2J;
-	Mon, 18 Nov 2024 12:51:43 +0100
-Message-ID: <73350e3c7b564ae64e3f120e414c45a86598eb91.camel@pengutronix.de>
-Subject: Re: [PATCH v3 3/8] serial: sh-sci: Update the suspend/resume support
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Claudiu Beznea <claudiu.beznea@tuxon.dev>, geert+renesas@glider.be, 
- magnus.damm@gmail.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org,  mturquette@baylibre.com, sboyd@kernel.org,
- gregkh@linuxfoundation.org,  jirislaby@kernel.org, lethal@linux-sh.org,
- g.liakhovetski@gmx.de
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-serial@vger.kernel.org, Claudiu Beznea
- <claudiu.beznea.uj@bp.renesas.com>
-Date: Mon, 18 Nov 2024 12:51:43 +0100
-In-Reply-To: <3153fbd0-189a-4cfc-92cd-a1cc23928d73@tuxon.dev>
-References: <20241115134401.3893008-1-claudiu.beznea.uj@bp.renesas.com>
-	 <20241115134401.3893008-4-claudiu.beznea.uj@bp.renesas.com>
-	 <81e131554a34c7b2f795a904f2b561f3c86e0baf.camel@pengutronix.de>
-	 <3153fbd0-189a-4cfc-92cd-a1cc23928d73@tuxon.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1731930843; c=relaxed/simple;
+	bh=9K0skQr+EdtdZq7OjMJRx3mFXy+Jo/jUCpFh4T0wXY4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JV0pGh0z73UlDvA42bwq849fTXF5ieY5WalGFCDp3wL3LfIrcbiGnqsqQZPGCzHH26MTlv+/JKVZRBHicdZM465JcJoPgOXGMfNTrs6S0Fku6qCpNItejsjkkVvW8OVdIpjxL7wiyL25Z7vaD/mRwNBBdFwmmtyduKBJ2DvYgKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=JJR3/Fj/; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=t9odybke; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=JJR3/Fj/; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=t9odybke; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 5C4DE1F365;
+	Mon, 18 Nov 2024 11:53:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1731930839; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bLf7ZLQq0TKYPEc5Ejp0DTc+VSVjliRrTmW46Mm3Ccw=;
+	b=JJR3/Fj/QS0RT1xVrH8Wfxy8AWfOnynqCP/2eaSFu1CM0OiSKIqJ8fFK4zaWoVkQzCqI1c
+	iz4QL/gFjJFEWMWGUrgXBnwx7etDww0lhGtzmF4RorW4q/Migii1vlEYSo3jDo5REHI0AE
+	tIZfOOiLdzY3AFzZqhQWhoHojzCfE8o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1731930839;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bLf7ZLQq0TKYPEc5Ejp0DTc+VSVjliRrTmW46Mm3Ccw=;
+	b=t9odybkeVcK8w6ssXXnLPAOVMJEz/kJBlsljxl02spWLyY1yeCzbXMfTTGI3mojYkO90xc
+	wwMarSOxSQExZGCg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1731930839; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bLf7ZLQq0TKYPEc5Ejp0DTc+VSVjliRrTmW46Mm3Ccw=;
+	b=JJR3/Fj/QS0RT1xVrH8Wfxy8AWfOnynqCP/2eaSFu1CM0OiSKIqJ8fFK4zaWoVkQzCqI1c
+	iz4QL/gFjJFEWMWGUrgXBnwx7etDww0lhGtzmF4RorW4q/Migii1vlEYSo3jDo5REHI0AE
+	tIZfOOiLdzY3AFzZqhQWhoHojzCfE8o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1731930839;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bLf7ZLQq0TKYPEc5Ejp0DTc+VSVjliRrTmW46Mm3Ccw=;
+	b=t9odybkeVcK8w6ssXXnLPAOVMJEz/kJBlsljxl02spWLyY1yeCzbXMfTTGI3mojYkO90xc
+	wwMarSOxSQExZGCg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4DF5E134A0;
+	Mon, 18 Nov 2024 11:53:59 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id y2TFEtcqO2cvSQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 18 Nov 2024 11:53:59 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 10507A0984; Mon, 18 Nov 2024 12:53:59 +0100 (CET)
+Date: Mon, 18 Nov 2024 12:53:59 +0100
+From: Jan Kara <jack@suse.cz>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC PATCH] vfs: dodge strlen() in vfs_readlink() when ->i_link
+ is populated
+Message-ID: <20241118115359.mzzx3avongvfqaha@quack3>
+References: <20241118085357.494178-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241118085357.494178-1-mjguzik@gmail.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-0.998];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FREEMAIL_TO(0.00)[gmail.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
+X-Spam-Score: -3.80
+X-Spam-Flag: NO
 
-On Mo, 2024-11-18 at 11:47 +0200, Claudiu Beznea wrote:
-> Hi, Philipp,
->=20
-> On 15.11.2024 17:40, Philipp Zabel wrote:
-> > On Fr, 2024-11-15 at 15:43 +0200, Claudiu wrote:
-> > > From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> > >=20
-> > > The Renesas RZ/G3S supports a power saving mode where power to most o=
-f the
-> > > SoC components is turned off. When returning from this power saving m=
-ode,
-> > > SoC components need to be re-configured.
-> > >=20
-> > > The SCIFs on the Renesas RZ/G3S need to be re-configured as well when
-> > > returning from this power saving mode. The sh-sci code already config=
-ures
-> > > the SCIF clocks, power domain and registers by calling uart_resume_po=
-rt()
-> > > in sci_resume(). On suspend path the SCIF UART ports are suspended
-> > > accordingly (by calling uart_suspend_port() in sci_suspend()). The on=
-ly
-> > > missing setting is the reset signal. For this assert/de-assert the re=
-set
-> > > signal on driver suspend/resume.
-> > >=20
-> > > In case the no_console_suspend is specified by the user, the register=
-s need
-> > > to be saved on suspend path and restore on resume path. To do this th=
-e
-> > > sci_console_setup() function was added. There is no need to cache/res=
-tore
-> > > the status or FIFO registers. Only the control registers. To differen=
-tiate
-> > > b/w these, the struct sci_port_params::regs was updated with a new me=
-mber
-> > > that specifies if the register needs to be chached on suspend. Only t=
-he
-> > > RZ_SCIFA instances were updated with this new support as the hardware=
- for
-> > > the rest of variants was missing for testing.
-> > >=20
-> > > Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> > > ---
-> > >=20
-> > > Changes in v3:
-> > > - none
-> > >=20
-> > > Changes in v2:
-> > > - rebased on top of the update version of patch 2/8 from
-> > >   this series
-> > >=20
-> > >  drivers/tty/serial/sh-sci.c | 53 ++++++++++++++++++++++++++++++-----=
---
-> > >  1 file changed, 44 insertions(+), 9 deletions(-)
-> > >=20
-> > > diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.=
-c
-> > > index ade151ff39d2..e53496d2708e 100644
-> > > --- a/drivers/tty/serial/sh-sci.c
-> > > +++ b/drivers/tty/serial/sh-sci.c
-> > > @@ -101,7 +101,7 @@ enum SCI_CLKS {
-> > >  		if ((_port)->sampling_rate_mask & SCI_SR((_sr)))
-> > > =20
-> > >  struct plat_sci_reg {
-> > > -	u8 offset, size;
-> > > +	u8 offset, size, suspend_cacheable;
-> > >  };
-> > > =20
-> > >  struct sci_port_params {
-> > > @@ -134,6 +134,8 @@ struct sci_port {
-> > >  	struct dma_chan			*chan_tx;
-> > >  	struct dma_chan			*chan_rx;
-> > > =20
-> > > +	struct reset_control		*rstc;
-> > > +
-> > >  #ifdef CONFIG_SERIAL_SH_SCI_DMA
-> > >  	struct dma_chan			*chan_tx_saved;
-> > >  	struct dma_chan			*chan_rx_saved;
-> > > @@ -153,6 +155,7 @@ struct sci_port {
-> > >  	int				rx_trigger;
-> > >  	struct timer_list		rx_fifo_timer;
-> > >  	int				rx_fifo_timeout;
-> > > +	unsigned int			console_cached_regs[SCIx_NR_REGS];
-> > >  	u16				hscif_tot;
-> > > =20
-> > >  	bool has_rtscts;
-> > > @@ -298,17 +301,17 @@ static const struct sci_port_params sci_port_pa=
-rams[SCIx_NR_REGTYPES] =3D {
-> > >  	 */
-> > >  	[SCIx_RZ_SCIFA_REGTYPE] =3D {
-> > >  		.regs =3D {
-> > > -			[SCSMR]		=3D { 0x00, 16 },
-> > > -			[SCBRR]		=3D { 0x02,  8 },
-> > > -			[SCSCR]		=3D { 0x04, 16 },
-> > > +			[SCSMR]		=3D { 0x00, 16, 1 },
-> > > +			[SCBRR]		=3D { 0x02,  8, 1 },
-> > > +			[SCSCR]		=3D { 0x04, 16, 1 },
-> > >  			[SCxTDR]	=3D { 0x06,  8 },
-> > >  			[SCxSR]		=3D { 0x08, 16 },
-> > >  			[SCxRDR]	=3D { 0x0A,  8 },
-> > > -			[SCFCR]		=3D { 0x0C, 16 },
-> > > +			[SCFCR]		=3D { 0x0C, 16, 1 },
-> > >  			[SCFDR]		=3D { 0x0E, 16 },
-> > > -			[SCSPTR]	=3D { 0x10, 16 },
-> > > +			[SCSPTR]	=3D { 0x10, 16, 1 },
-> > >  			[SCLSR]		=3D { 0x12, 16 },
-> > > -			[SEMR]		=3D { 0x14, 8 },
-> > > +			[SEMR]		=3D { 0x14, 8, 1 },
-> > >  		},
-> > >  		.fifosize =3D 16,
-> > >  		.overrun_reg =3D SCLSR,
-> > > @@ -3380,6 +3383,7 @@ static struct plat_sci_port *sci_parse_dt(struc=
-t platform_device *pdev,
-> > >  	}
-> > > =20
-> > >  	sp =3D &sci_ports[id];
-> > > +	sp->rstc =3D rstc;
-> > >  	*dev_id =3D id;
-> > > =20
-> > >  	p->type =3D SCI_OF_TYPE(data);
-> > > @@ -3507,13 +3511,34 @@ static int sci_probe(struct platform_device *=
-dev)
-> > >  	return 0;
-> > >  }
-> > > =20
-> > > +static void sci_console_setup(struct sci_port *s, bool save)
-> > > +{
-> > > +	for (u16 i =3D 0; i < SCIx_NR_REGS; i++) {
-> > > +		struct uart_port *port =3D &s->port;
-> > > +
-> > > +		if (!s->params->regs[i].suspend_cacheable)
-> > > +			continue;
-> > > +
-> > > +		if (save)
-> > > +			s->console_cached_regs[i] =3D sci_serial_in(port, i);
-> > > +		else
-> > > +			sci_serial_out(port, i, s->console_cached_regs[i]);
-> > > +	}
-> > > +}
-> > > +
-> > >  static __maybe_unused int sci_suspend(struct device *dev)
-> > >  {
-> > >  	struct sci_port *sport =3D dev_get_drvdata(dev);
-> > > =20
-> > > -	if (sport)
-> > > +	if (sport) {
-> > >  		uart_suspend_port(&sci_uart_driver, &sport->port);
-> > > =20
-> > > +		if (!console_suspend_enabled && uart_console(&sport->port))
-> > > +			sci_console_setup(sport, true);
-> > > +		else
-> > > +			return reset_control_assert(sport->rstc);
-> > > +	}
-> > > +
-> > >  	return 0;
-> > >  }
-> > > =20
-> > > @@ -3521,8 +3546,18 @@ static __maybe_unused int sci_resume(struct de=
-vice *dev)
-> > >  {
-> > >  	struct sci_port *sport =3D dev_get_drvdata(dev);
-> > > =20
-> > > -	if (sport)
-> > > +	if (sport) {
-> > > +		if (!console_suspend_enabled && uart_console(&sport->port)) {
-> > > +			sci_console_setup(sport, false);
-> > > +		} else {
-> > > +			int ret =3D reset_control_deassert(sport->rstc);
-> >=20
-> > With this, is the reset_control_deassert() in sci_parse_dt() still
-> > needed?
->=20
-> If I'm not wrongly understanding your question, yes, the
-> reset_control_deassert() is still needed in the sci_parse_dt() as the
-> sci_parse_dt() is called on probe path. After resume the sci_parse_dt() i=
-s
-> not called unless the driver is unbinded and then re-binded.
+On Mon 18-11-24 09:53:57, Mateusz Guzik wrote:
+> This gives me about 1.5% speed up when issuing readlink on /initrd.img
+> on ext4.
+> 
+> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+> ---
+> 
+> I had this running with the following debug:
+> 
+> if (strlen(link) != inode->i_size)
+>        printk(KERN_CRIT "mismatch [%s] %l %l\n", link,
+>            strlen(link), inode->i_size);
+> 
+> nothing popped up
 
-Ah, I was thinking of runtime PM resume callbacks. Thank you for the
-answer, this cleared my confusion.
+Then you didn't run with UDF I guess ;). There inode->i_size is the length
+of on-disk symlink encoding which is definitely different from the length
+of the string we return to VFS (it uses weird standards-defined cross OS
+compatible encoding of a path and I'm not even mentioning its own special
+encoding of character sets somewhat resembling UCS-2).
 
-regards
-Philipp
+> I would leave something of that sort in if it was not defeating the
+> point of the change.
+> 
+> However, I'm a little worried some crap fs *does not* fill this in
+> despite populating i_link.
+> 
+> Perhaps it would make sense to keep the above with the patch hanging out
+> in next and remove later?
+> 
+> Anyhow, worst case, should it turn out i_size does not work there are at
+> least two 4-byte holes which can be used to store the length (and
+> chances are some existing field can be converted into a union instead).
+
+I'm not sure I completely follow your proposal here...
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
