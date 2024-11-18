@@ -1,327 +1,146 @@
-Return-Path: <linux-kernel+bounces-412649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2AE29D0BF0
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 10:38:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 579B49D0BF2
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 10:39:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68A111F211A1
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 09:38:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DED1284D72
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 09:39:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CFEB192B66;
-	Mon, 18 Nov 2024 09:38:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E175A190499;
+	Mon, 18 Nov 2024 09:39:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UCsI67N+"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hYU9brEX"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63CDD18E03A
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 09:38:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB4421714A1
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 09:39:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731922717; cv=none; b=pxiCpy36efxa9hdIdxP5QKHV6F0NCzywwTB8Jz+6v30Mlv7Y7do5D+1FuFG1HazwU4xQFqUKlizubM3Wq/fLGYZSseO5BxaTNdJCdwvEPEz2ge4PpDuWDKJIk7BuWEQZFLm13Xbb6AyJ09n+UkbBAbyelH6ne90yCB+ozO8vWFg=
+	t=1731922777; cv=none; b=entcTmQI4BXf+SWGq9TW19ilwMcKJ7ydFovIw96vsSfOLqg7XFSmDFMRNgA5yj5aXhaZXRtvnK/7RITvpMXWPPcc+aYOclplpjC0AnmiqLKjK4GliFbLY0bTzLtF71r7Y0iLuTTBmbLU5RgA2pADaTkYObTIu0pzvphccbv95fo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731922717; c=relaxed/simple;
-	bh=RCNvydKraMeZR7MoDtc89kltmwQsGZj67/ZYMQ/bOJQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eBJ+YtqbIvW6fKF8lB5auqGP51RF2xVC2yVOGbzZiyq5OAUNBDX9u8vOYUkkqtPLRDcIspN+qU91OQVxvSNJNW3iYXbuC09y5lQ6JlBNUllVD29MB30JryrmaK3rWIJ4iwqFcWcALDal56sGSPIKT/EU95FrqVEVj+f+4+Q+8Lo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UCsI67N+; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1731922777; c=relaxed/simple;
+	bh=ASfy3ZmkJlDJivURpQuQX8Ww/zzWEUu+7CDd1iXeFdg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fmpCL6bQCFFgu8opVi2DlYtR+Nn1dfAiryqEOM7KiDSuO8Z8d4mCmEqk24LR6Ig6gSGy81vUJYqiHS1FdTGw2Uw6loTrBtbAuwfGLarCk7hZWMYS280V46iOffuWyzK+cPjxbNCpceJZulMnAyf1bykGhO9K7lKOz67sBSTpJmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hYU9brEX; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731922714;
+	s=mimecast20190719; t=1731922775;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=+NTRjdfPcUO1aXo5xK1hvXQ8mkL4rX7RTb4WBxeB6gE=;
-	b=UCsI67N+eRm5e0rgmbrGmfxMmZ8bzD773l/E7Ktq0WWUKgNmQlD2++j/aMXZjZKmgDzLms
-	ULTLmXJG5LsFzl+vF8wmvArA4U5SFb42RBwHg81olEwgShT/cyexJaAekcc9Eu8xIaNu4m
-	/pfF7OfnhMunmr+gEbK1koQNDHpEKPA=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+	 in-reply-to:in-reply-to:references:references;
+	bh=SCTWIW9+3Ez/dT5JWYg8kZzlPGcdYEYTLifRWAR2waM=;
+	b=hYU9brEXFZs1ZdxOctdkXibu3yjTgG2dAh7FjonoooGNlIyJxdtlZgwdRKs9k7cFF3jDNJ
+	+FBh1p2Pd68vEBHV4Gnnhli9QVmS5cJl0JDAwHy6pOwmFNfndmq1QGq/ktE03v0ZQvpp9g
+	kcpOsfEBMnFFxkJWxohHoWw4717Og8A=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-407-AxttA9M5MoedqFDFrdZl5Q-1; Mon, 18 Nov 2024 04:38:32 -0500
-X-MC-Unique: AxttA9M5MoedqFDFrdZl5Q-1
-X-Mimecast-MFC-AGG-ID: AxttA9M5MoedqFDFrdZl5Q
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4315b7b0c16so31935365e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 01:38:32 -0800 (PST)
+ us-mta-379-ZTeTGCDzNY6yjwlaUiL5Ww-1; Mon, 18 Nov 2024 04:39:32 -0500
+X-MC-Unique: ZTeTGCDzNY6yjwlaUiL5Ww-1
+X-Mimecast-MFC-AGG-ID: ZTeTGCDzNY6yjwlaUiL5Ww
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4315eaa3189so18217985e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 01:39:32 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731922711; x=1732527511;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=+NTRjdfPcUO1aXo5xK1hvXQ8mkL4rX7RTb4WBxeB6gE=;
-        b=LgtBJ6317L+46XeJIe5XJxKhbY4o/RhCcu/JTgyCmizwD4xgol1XTxVa9eADwJQAs9
-         Q7G4MhZffUmdOaW2MJ7DZUEm51E1WGau+asuQvjmY+S//ngSd1zEMz4nDVI01pzRnWUC
-         gtP91X7mdivLHo1WabT+aVJ0XtRfsnW/WksELWKheaO7xkm5UMjNRCfeR2C4W8a8WXDZ
-         aOZSc6sPWmHGPm7stIc2t6SHY9BcCnWjEFXXyyjmqFE6yTKiqcXzaTw5F+t7LfPD/M5w
-         0sVUrgZRA1gPZxadYyMCO9FooFtGOR+wBNJ0x2e3UtrhrfEOmZdtdi99uIlTr9x/5OGk
-         tkaA==
-X-Forwarded-Encrypted: i=1; AJvYcCVqvRNPEgak+H0eu6s/Osqd83FJ13ma5YuoUlnRKpM4r0qXB/ul0ig19a7frtHn32wyXYsXXbTr+WBijac=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAmNpUIJRxuRerU78W1gyHyc52yIIEgUd+hYlIWk43iSjeP+WV
-	dQ7CFh0y96xmfKVP41RKadKVMFnvIoI5AWabbWKFoCM0GrW76c4ra08Tsqet3VEIpxEOOFrCvbp
-	k1tK3ZHuk8wAYVVvfre7+QOGOhg+42ZAsXAGVCYz+qQPP/bFQ1B5ta734p07nMQ==
-X-Received: by 2002:a05:600c:4595:b0:431:b42a:2978 with SMTP id 5b1f17b1804b1-432df7411f8mr96600555e9.9.1731922711665;
-        Mon, 18 Nov 2024 01:38:31 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHNdX08kgrhCDdSpGLAntBtOpOc15TdOtLfjCc8MQDp2SzDpZ/XtyXBKhpLLWnL6Ein1okH4A==
-X-Received: by 2002:a05:600c:4595:b0:431:b42a:2978 with SMTP id 5b1f17b1804b1-432df7411f8mr96600255e9.9.1731922711303;
-        Mon, 18 Nov 2024 01:38:31 -0800 (PST)
-Received: from ?IPV6:2a09:80c0:192:0:5dac:bf3d:c41:c3e7? ([2a09:80c0:192:0:5dac:bf3d:c41:c3e7])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432da2800absm151820395e9.25.2024.11.18.01.38.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Nov 2024 01:38:30 -0800 (PST)
-Message-ID: <15f665b4-2d33-41ca-ac50-fafe24ade32f@redhat.com>
-Date: Mon, 18 Nov 2024 10:38:29 +0100
+        d=1e100.net; s=20230601; t=1731922771; x=1732527571;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SCTWIW9+3Ez/dT5JWYg8kZzlPGcdYEYTLifRWAR2waM=;
+        b=NXIA2zUnbE9Qermw/cys0sIopo2hWUbpitxugGB3NjIKfoT/p4pxCCmEcssJ4Xu/MW
+         +6DmNXOdUZ0laUKS7MpL6JApKXm/hQeHzuxMS4wejS2iVrsJyoQxoWa6mKd5hCv94H70
+         XZr85X834HaPwcIPE3BTXbTg603uPaI0iiB6MshF0Wfwb2eEQxImBLDHv0kcZqg15AOA
+         2jQtbW28Zq8SHe1K0m4B156iCfAjTKIGBrk+5535ael35pk/7aaJT7Y4x0oLS8giEDDj
+         vXtslTB6iF1LQANlkbReje7fmlqTYzvwa9ZkbKmWl9pP9kfTUpyC8xblvW24FZSXuU9+
+         O+jw==
+X-Forwarded-Encrypted: i=1; AJvYcCW/yYlIx363Z5/fcjp492qVa0wZdn+xM2GKpeyHwoxDlgHXq9HQIp4fYn7qbGhFS3rpDx4gXEjKYnlXKhY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjSmlbfa9Cak70CJEQ3jompeQghQfM8zx7D5sgkcTFle7is/A4
+	p8eArujJ4gwtDEHnB6kC9QXFZGoUnM8j/rCJdPxrwOXycYB0a/Rkysnn1N2ME1DrjbBT5qFhEoa
+	yhi0XL/+rVtjjnIa673u5E5PSpE9UDXyfzT4EfggnR2vCtLTrGg8ow4f/Ve3+EOa9FzfXfkmY
+X-Received: by 2002:a05:600c:34d0:b0:431:6083:cd30 with SMTP id 5b1f17b1804b1-432df7229f6mr121513865e9.6.1731922769576;
+        Mon, 18 Nov 2024 01:39:29 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGc6yVpDr/TaAuyJ9tO0NDlNPWZ/GE7BRdiwq0stPKiYiB6rMVLY2MnHX6hc4DRwRnWcOGDEA==
+X-Received: by 2002:a05:600c:34d0:b0:431:6083:cd30 with SMTP id 5b1f17b1804b1-432df7229f6mr121512985e9.6.1731922767768;
+        Mon, 18 Nov 2024 01:39:27 -0800 (PST)
+Received: from jlelli-thinkpadt14gen4.remote.csb ([151.29.74.235])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432dab807d4sm148437785e9.21.2024.11.18.01.39.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Nov 2024 01:39:26 -0800 (PST)
+Date: Mon, 18 Nov 2024 10:39:24 +0100
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Waiman Long <llong@redhat.com>
+Cc: Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Phil Auld <pauld@redhat.com>
+Subject: Re: [PATCH] cgroup/cpuset: Disable cpuset_cpumask_can_shrink() test
+ if not load balancing
+Message-ID: <ZzsLTLEAPMljtaIK@jlelli-thinkpadt14gen4.remote.csb>
+References: <20241114181915.142894-1-longman@redhat.com>
+ <ZzcoZj90XeYj3TzG@jlelli-thinkpadt14gen4.remote.csb>
+ <1515c439-32ef-4aee-9f69-c5af1fca79e3@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v3 1/2] KVM: guest_memfd: Convert .free_folio() to
- .release_folio()
-To: Elliot Berman <quic_eberman@quicinc.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Sean Christopherson <seanjc@google.com>, Fuad Tabba <tabba@google.com>,
- Ackerley Tng <ackerleytng@google.com>, Mike Rapoport <rppt@kernel.org>,
- "H. Peter Anvin" <hpa@zytor.com>, Matthew Wilcox <willy@infradead.org>,
- James Gowans <jgowans@amazon.com>, linux-fsdevel@vger.kernel.org,
- kvm@vger.kernel.org, linux-coco@lists.linux.dev,
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org
-References: <20241113-guestmem-library-v3-0-71fdee85676b@quicinc.com>
- <20241113-guestmem-library-v3-1-71fdee85676b@quicinc.com>
- <c650066d-18c8-4711-ae22-3c6c660c713e@redhat.com>
- <d2147b7c-bb2e-4434-aa10-40cacac43d4f@redhat.com>
- <20241115121119110-0800.eberman@hu-eberman-lv.qualcomm.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20241115121119110-0800.eberman@hu-eberman-lv.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1515c439-32ef-4aee-9f69-c5af1fca79e3@redhat.com>
 
-On 15.11.24 21:13, Elliot Berman wrote:
-> On Fri, Nov 15, 2024 at 11:58:59AM +0100, David Hildenbrand wrote:
->> On 15.11.24 11:58, David Hildenbrand wrote:
->>> On 13.11.24 23:34, Elliot Berman wrote:
->>>> When guest_memfd becomes a library, a callback will need to be made to
->>>> the owner (KVM SEV) to transition pages back to hypervisor-owned/shared
->>>> state. This is currently being done as part of .free_folio() address
->>>> space op, but this callback shouldn't assume that the mapping still
->>>> exists. guest_memfd library will need the mapping to still exist to look
->>>> up its operations table.
->>>
->>> I assume you mean, that the mapping is no longer set for the folio (it
->>> sure still exists, because we are getting a callback from it :) )?
->>>
->>> Staring at filemap_remove_folio(), this is exactly what happens:
->>>
->>> We remember folio->mapping, call __filemap_remove_folio(), and then call
->>> filemap_free_folio() where we zap folio->mapping via page_cache_delete().
->>>
->>> Maybe it's easier+cleaner to also forward the mapping to the
->>> free_folio() callback, just like we do with filemap_free_folio()? Would
->>> that help?
->>>
->>> CCing Willy if that would be reasonable extension of the free_folio
->>> callback.
->>>
+On 15/11/24 12:55, Waiman Long wrote:
+> On 11/15/24 5:54 AM, Juri Lelli wrote:
+> > Hi Waiman,
+> > 
+> > On 14/11/24 13:19, Waiman Long wrote:
+> > > With some recent proposed changes [1] in the deadline server code,
+> > > it has caused a test failure in test_cpuset_prs.sh when a change
+> > > is being made to an isolated partition. This is due to failing
+> > > the cpuset_cpumask_can_shrink() check for SCHED_DEADLINE tasks at
+> > > validate_change().
+> > What sort of change is being made to that isolated partition? Which test
+> > is failing from the test_cpuset_prs.sh collection? Asking because I now
+> > see "All tests PASSED" running that locally (with all my 3 patches on
+> > top of cgroup/for-6.13 w/o this last patch from you).
 > 
-> I like this approach too. It would avoid the checks we have to do in the
-> invalidate_folio() callback and is cleaner.
+> The failing test isn't an isolated partition. The actual test failure is
+> 
+> Test TEST_MATRIX[62] failed result check!
+> C0-4:X2-4:S+ C1-4:X2-4:S+:P2 C2-4:X4:P1 . . X5 . . 0 A1:0-4,A2:1-4,A3:2-4
+> A1:P0,A2:P-2,A3:P-1
+> 
+> In this particular case, cgroup A3 has the following setting before the X5
+> operation.
+> 
+> A1/A2/A3/cpuset.cpus: 2-4
+> A1/A2/A3/cpuset.cpus.exclusive: 4
+> A1/A2/A3/cpuset.cpus.effective: 4
+> A1/A2/A3/cpuset.cpus.exclusive.effective: 4
+> A1/A2/A3/cpuset.cpus.partition: root
 
-It really should be fairly simple
+Right, and is this problematic already?
 
+Then the test, I believe, does
 
-  Documentation/filesystems/locking.rst | 2 +-
-  fs/nfs/dir.c                          | 9 +++++----
-  fs/orangefs/inode.c                   | 3 ++-
-  include/linux/fs.h                    | 2 +-
-  mm/filemap.c                          | 2 +-
-  mm/secretmem.c                        | 3 ++-
-  virt/kvm/guest_memfd.c                | 3 ++-
-  7 files changed, 14 insertions(+), 10 deletions(-)
+# echo 5 >cgroup/A1/A2/cpuset.cpus.exclusive
 
-diff --git a/Documentation/filesystems/locking.rst b/Documentation/filesystems/locking.rst
-index f5e3676db954b..f1a20ad5edbee 100644
---- a/Documentation/filesystems/locking.rst
-+++ b/Documentation/filesystems/locking.rst
-@@ -258,7 +258,7 @@ prototypes::
-  	sector_t (*bmap)(struct address_space *, sector_t);
-  	void (*invalidate_folio) (struct folio *, size_t start, size_t len);
-  	bool (*release_folio)(struct folio *, gfp_t);
--	void (*free_folio)(struct folio *);
-+	void (*free_folio)(struct address_space *, struct folio *);
-  	int (*direct_IO)(struct kiocb *, struct iov_iter *iter);
-  	int (*migrate_folio)(struct address_space *, struct folio *dst,
-  			struct folio *src, enum migrate_mode);
-diff --git a/fs/nfs/dir.c b/fs/nfs/dir.c
-index 492cffd9d3d84..f7da6d7496b06 100644
---- a/fs/nfs/dir.c
-+++ b/fs/nfs/dir.c
-@@ -218,7 +218,8 @@ static void nfs_readdir_folio_init_array(struct folio *folio, u64 last_cookie,
-  /*
-   * we are freeing strings created by nfs_add_to_readdir_array()
-   */
--static void nfs_readdir_clear_array(struct folio *folio)
-+static void nfs_readdir_clear_array(struct address_space *mapping,
-+		struct folio *folio)
-  {
-  	struct nfs_cache_array *array;
-  	unsigned int i;
-@@ -233,7 +234,7 @@ static void nfs_readdir_clear_array(struct folio *folio)
-  static void nfs_readdir_folio_reinit_array(struct folio *folio, u64 last_cookie,
-  					   u64 change_attr)
-  {
--	nfs_readdir_clear_array(folio);
-+	nfs_readdir_clear_array(folio->mapping, folio);
-  	nfs_readdir_folio_init_array(folio, last_cookie, change_attr);
-  }
-  
-@@ -249,7 +250,7 @@ nfs_readdir_folio_array_alloc(u64 last_cookie, gfp_t gfp_flags)
-  static void nfs_readdir_folio_array_free(struct folio *folio)
-  {
-  	if (folio) {
--		nfs_readdir_clear_array(folio);
-+		nfs_readdir_clear_array(folio->mapping, folio);
-  		folio_put(folio);
-  	}
-  }
-@@ -391,7 +392,7 @@ static void nfs_readdir_folio_init_and_validate(struct folio *folio, u64 cookie,
-  	if (folio_test_uptodate(folio)) {
-  		if (nfs_readdir_folio_validate(folio, cookie, change_attr))
-  			return;
--		nfs_readdir_clear_array(folio);
-+		nfs_readdir_clear_array(folio->mapping, folio);
-  	}
-  	nfs_readdir_folio_init_array(folio, cookie, change_attr);
-  	folio_mark_uptodate(folio);
-diff --git a/fs/orangefs/inode.c b/fs/orangefs/inode.c
-index aae6d2b8767df..d936694b8e91f 100644
---- a/fs/orangefs/inode.c
-+++ b/fs/orangefs/inode.c
-@@ -470,7 +470,8 @@ static bool orangefs_release_folio(struct folio *folio, gfp_t foo)
-  	return !folio_test_private(folio);
-  }
-  
--static void orangefs_free_folio(struct folio *folio)
-+static void orangefs_free_folio(struct address_space *mapping,
-+		struct folio *folio)
-  {
-  	kfree(folio_detach_private(folio));
-  }
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 3559446279c15..4dd4013541c1b 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -417,7 +417,7 @@ struct address_space_operations {
-  	sector_t (*bmap)(struct address_space *, sector_t);
-  	void (*invalidate_folio) (struct folio *, size_t offset, size_t len);
-  	bool (*release_folio)(struct folio *, gfp_t);
--	void (*free_folio)(struct folio *folio);
-+	void (*free_folio)(struct address_space *, struct folio *folio);
-  	ssize_t (*direct_IO)(struct kiocb *, struct iov_iter *iter);
-  	/*
-  	 * migrate the contents of a folio to the specified target. If
-diff --git a/mm/filemap.c b/mm/filemap.c
-index e582a1545d2ae..86f975ba80746 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -239,7 +239,7 @@ void filemap_free_folio(struct address_space *mapping, struct folio *folio)
-  
-  	free_folio = mapping->a_ops->free_folio;
-  	if (free_folio)
--		free_folio(folio);
-+		free_folio(mapping, folio);
-  
-  	if (folio_test_large(folio))
-  		refs = folio_nr_pages(folio);
-diff --git a/mm/secretmem.c b/mm/secretmem.c
-index 399552814fd0f..1d2ed3391734d 100644
---- a/mm/secretmem.c
-+++ b/mm/secretmem.c
-@@ -152,7 +152,8 @@ static int secretmem_migrate_folio(struct address_space *mapping,
-  	return -EBUSY;
-  }
-  
--static void secretmem_free_folio(struct folio *folio)
-+static void secretmem_free_folio(struct address_space *mapping,
-+		struct folio *folio)
-  {
-  	set_direct_map_default_noflush(&folio->page);
-  	folio_zero_segment(folio, 0, folio_size(folio));
-diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
-index 8f079a61a56db..573946c4fff51 100644
---- a/virt/kvm/guest_memfd.c
-+++ b/virt/kvm/guest_memfd.c
-@@ -353,7 +353,8 @@ static int kvm_gmem_error_folio(struct address_space *mapping, struct folio *fol
-  }
-  
-  #ifdef CONFIG_HAVE_KVM_ARCH_GMEM_INVALIDATE
--static void kvm_gmem_free_folio(struct folio *folio)
-+static void kvm_gmem_free_folio(struct address_space *mapping,
-+		struct folio *folio)
-  {
-  	struct page *page = folio_page(folio, 0);
-  	kvm_pfn_t pfn = page_to_pfn(page);
--- 
-2.47.0
+and that goes through and makes the setup invalid - root domain reconf
+and the following
 
+# cat cgroup/A1/cpuset.cpus.partition
+member
+# cat cgroup/A1/A2/cpuset.cpus.partition
+isolated invalid (Parent is not a partition root)
+# cat cgroup/A1/A2/A3/cpuset.cpus.partition
+root invalid (Parent is an invalid partition root)
 
--- 
-Cheers,
-
-David / dhildenb
+Is this what shouldn't happen?
 
 
