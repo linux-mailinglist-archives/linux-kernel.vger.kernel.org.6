@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-413377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 228B89D1857
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 19:43:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5C539D1858
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 19:44:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A37F4B23363
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 18:43:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52D8AB236AD
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 18:44:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 029171E47D7;
-	Mon, 18 Nov 2024 18:43:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05FC11E5037;
+	Mon, 18 Nov 2024 18:43:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Fn2N1idl"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="n7Wb+yDa"
 Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A29461E1027
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 18:43:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A77941E104F
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 18:43:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731955406; cv=none; b=N8FiSttTFVPHg4376fXKipHGMOImkLDOfUR4zxKUAtnmn+YlsRWnH4eeuiLt94ssGGGyme9H64hFA1gLV0RZ4BoiDymY33rpuuT34MxjUTaZQAilmBcxZ3rafTF7gkML9N/rjnM0A6IYcc23Mpk3j8i03H1Jh7mr0ihjWNcgmjM=
+	t=1731955407; cv=none; b=X6ugmVYKELneHB7W04WCCvLcVzh98yOnk4v5Q4qZ/pxlyGBFOMfDQv2YoghNwRsgiQnR+jEnVzuvHq3WN4YG1tyH1/PYlyCcjZ9frfco39p6I6wZZbrhRSJ/8+zzlROCbjv+DuLJxlc2xYrOVtsq3vJ5BFTX0KJVxnnqJROtnmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731955406; c=relaxed/simple;
-	bh=KCcQhPVz6PUxTkptUubEsPv0X3QW8k3JN+SJqqNicp0=;
+	s=arc-20240116; t=1731955407; c=relaxed/simple;
+	bh=axL606VOP+Vzkxig7OQTFfHk5EC8HgjRmS6iK/9rLyk=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=be8ZVpWV2X7stOgcV/kg2Ws6FCHLDB1cNtNZbwBlYeGcs+GXzi10ylE/d3YMTI3tsRJqeMchfIytHRvcUeKrysX+5snkmcYpl9ExpCswJIigJoFT135Wq680f7QeJ3I7gIxGym27rp2Twx5uTzZEPS+ka7SXbduvm+0x+mst8Ko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Fn2N1idl; arc=none smtp.client-ip=217.70.183.201
+	 In-Reply-To:To:Cc; b=mF37r1zWcs/H6Y24iuDgw4xjyfs8w54Yr1ReqFYjoczPYdOvZFTTCV2+PDsFGVQ+qUl1xiKNbB5n36eRs4sUlcDXyzZbQAoSlfgH/34f/0Ie/dEKeGQpz4J9isNy/vZ6g58ydMgYgpQucwgxakRCt4ND7R35Bn/iubJ8kcHyIUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=n7Wb+yDa; arc=none smtp.client-ip=217.70.183.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 1FE361BF208;
-	Mon, 18 Nov 2024 18:43:22 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 264A51BF20C;
+	Mon, 18 Nov 2024 18:43:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1731955403;
+	t=1731955404;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=LyuZSeQhWN8yZC/+93Agwlt6oIM4sNXPX8BuSmxPT1g=;
-	b=Fn2N1idlukmyO71g/GBJznytqRX2mHPvRxWrZnkaPkJcO3bca56ePwok9cl5XkgGQu4yEt
-	7d8oSPy7A6Cj625Gs/OspwqEP+dJ3cbL5rIh121vmAa7ru7eDEhc6F2lEaMwfjH0t9uyNC
-	nJ9ZjwRro+wXrpy4vnl6QIynERHrgqfe5keOh6kqLslNVcor0LEHZmnADNO93ewiQbrMf0
-	R7F8WsWOMGqP30gUTZggg6gJUMnPvhkDCQ0YlQtq1pwZZ2VuJlA+y2JUKEe+PiO2teR/ub
-	gDBj68OqKkis/FDUqsxH029/1PPkgr4h7EutvPISRFdc8gSandAFG3a2ZLHXZg==
+	bh=7ROA9s97zr/TnBShjvPt9n/VC1Dc0gzXiBJZ5MkzKUk=;
+	b=n7Wb+yDaayzEWGz44mm8+0Wv02/af9bivC4WIe0eIlxWxgOcfGLANrr2Cpt7Y4JaVPXq1x
+	kcBFf2RMzmwEM8MU2t4rlw03//R1DbU4g+WPD+KRd53FWpDRaBKxX/DAqrIQs9cQ5FJn1a
+	1PUCbH/nABFcZZWG/WPBHLqkrjkayxw/9SgNuT8FBZ42fAPOw2PvsKqGC9AJ3z9h7ih/SS
+	dOQ8/dN/iLDMSTkuQIbF6Bs+NjYquYi3byPD4/e0sYC13Wl/833RxjK6ZvaHgZuHDOSiXp
+	SqBcnDp5K+nz0I1LmU/rick9sq6t+/zn4F4EAJ21c6ToCkHO9lCGdWviOGvCKg==
 From: Louis Chauvet <louis.chauvet@bootlin.com>
-Date: Mon, 18 Nov 2024 19:43:16 +0100
-Subject: [PATCH v13 3/7] drm/vkms: Drop YUV formats TODO
+Date: Mon, 18 Nov 2024 19:43:17 +0100
+Subject: [PATCH v13 4/7] drm: Export symbols to use in tests
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,7 +55,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241118-yuv-v13-3-ac0dd4129552@bootlin.com>
+Message-Id: <20241118-yuv-v13-4-ac0dd4129552@bootlin.com>
 References: <20241118-yuv-v13-0-ac0dd4129552@bootlin.com>
 In-Reply-To: <20241118-yuv-v13-0-ac0dd4129552@bootlin.com>
 To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>, 
@@ -72,50 +72,52 @@ Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
  thomas.petazzoni@bootlin.com, seanpaul@google.com, marcheu@google.com, 
  nicolejadeyee@google.com, Louis Chauvet <louis.chauvet@bootlin.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=937;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1064;
  i=louis.chauvet@bootlin.com; h=from:subject:message-id;
- bh=iDZ/HJ7Gex8d9aGNH0HIIVbXcYQeibofjLc/H+dZBcg=;
- b=owEBbQKS/ZANAwAIASCtLsZbECziAcsmYgBnO4rEbq/nLWfL1OQUs3buDRzlKKkI6fbaXdC5I
- ubtYOeAjFeJAjMEAAEIAB0WIQRPj7g/vng8MQxQWQQgrS7GWxAs4gUCZzuKxAAKCRAgrS7GWxAs
- 4kLpEACgu0VeMHjosh8+2D15PqD86N9fZXtF0j8+Jzqwyb/HafWMef0r2oNcFXfGmeuU6Z3kt3C
- Pqq1RMvuBhNk2OBE0sraz34N74xSYrXxL8tihN4mdJWaQi3LUGFYsSOE22QbDw11AZ+SYSIBt+T
- Kbz1+L3tVHWG8Dam+1cz5BFNRu4M246xM1iuGV57wIV0ECzk1Z5QjR91/5hMfdGa2+AsyNMHszM
- TSWoC3p9/0J+naA0i9LjVC7bNlqIe0sjKPfDb+UfPFUdX1Ce5sS1dSmPXra+iMjd+vqp+35rzaH
- CQwafIcSmXCFPZItTk5j43vB1qArwZ93JjLXOOTDFpPiyAuC2fQcYc7y5oncVlm+ogpx6q3jvhP
- zIXKpd4Ueg9Bsk//c5r8Fh8VsiVFqFNbV5YP3br7eVDr7AhoPCsnC8ZW2jZcHgit2WGApft3LgZ
- bog69t39IiLpH6YqSNtzmV3VqLms9rUz9aDwPzFRVHYXAsR2I+ZlvEJ3yoAljKctT9+E150vnOY
- BEQiYQDHxKdBoKcyRN5WxXXswx7ziiAsqXqQ3MTULip7G+yY2j5bHcLWJQfPtVeXNuWciMj6EHP
- UQ6801yhmSltFIj3Hp3gdoc6SHS7kx7nU1uo1jf2EfkJbJS7DBgKWumQW4WP1bUMQREUDfvhaD5
- lyckCgWT9i+2jeA==
+ bh=axL606VOP+Vzkxig7OQTFfHk5EC8HgjRmS6iK/9rLyk=;
+ b=owEBbQKS/ZANAwAIASCtLsZbECziAcsmYgBnO4rEdyRYcspheKMPUWgrhgvQwTgPP6Sk+atTG
+ rUUBSAOOAWJAjMEAAEIAB0WIQRPj7g/vng8MQxQWQQgrS7GWxAs4gUCZzuKxAAKCRAgrS7GWxAs
+ 4hIZD/9H+iynSmSGhCU5eDOlmCj3KCd+2hx4wLnQc8IWvQhuoP6RXQp1y0VFTAa8YRi91Bj74SJ
+ Sp17WwlAt858MnZwQ3QVsJM4YEXlhg8523Qi5OB4h097aDq9NEvo9ANQ7bJ5NeQ4c6sSM8/c71/
+ WtytJGuntaTvjEoR0amm4fvKj8bTDkSakAFmixVBAJdimYNhZpuPOw12vACdnm+3CAMw8TPO0wr
+ XIaNXVVz9Vff4lpdAJdQ5QSxGD1YrVXqF7Q1Uyie9O3efbJO012iI/BAw+pfPgQ4Co+mGhpBuQi
+ vie9TBptjFTW7Hlg100uWa16wNqkNp/j6MsXmbul9MRjBNKpfLiY+rgtQ47YwadExIQcO64qlwY
+ +GniO/atU3NHnDMcCBbvdDHazf++V/fR6IWNSukXvmCysFHMBJG6bATAR720zZ+KkikcKAYPlIf
+ Am4szjnTvTCcngm+sjoWjF8WTssw483Zylvf6ZCyWhXP7S/mGqS/86t7idaKP7zuGndG34Evl8j
+ cOlUM61rhWGZU3IhXXAus3K8XuSvzLO8yqdc8Im8hsEaBnXh2LvZ0FhUDKmeQBHx14if7tQfh5Q
+ 6DiZRK7M4zRBgWCTx1hyVKZmIUAgAOptcyrjMIGyFxpMdwjJXW27t7r937pOG/L0hQiiM+bK+10
+ p4e3b/ClCUeNlSw==
 X-Developer-Key: i=louis.chauvet@bootlin.com; a=openpgp;
  fpr=8B7104AE9A272D6693F527F2EC1883F55E0B40A5
 X-GND-Sasl: louis.chauvet@bootlin.com
 
-From: Arthur Grillo <arthurgrillo@riseup.net>
-
-VKMS has support for YUV formats now. Remove the task from the TODO
-list.
-
-Signed-off-by: Arthur Grillo <arthurgrillo@riseup.net>
-Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+The functions drm_get_color_encoding_name and drm_get_color_range_name
+are useful for clarifying test results. Therefore, export them so they
+can be used in tests built as modules.
 ---
- Documentation/gpu/vkms.rst | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/gpu/drm/drm_color_mgmt.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/Documentation/gpu/vkms.rst b/Documentation/gpu/vkms.rst
-index ba04ac7c2167a9d484c54c69a09a2fb8f2d9c0aa..13b866c3617cd44043406252d3caa912c931772f 100644
---- a/Documentation/gpu/vkms.rst
-+++ b/Documentation/gpu/vkms.rst
-@@ -122,8 +122,7 @@ There's lots of plane features we could add support for:
+diff --git a/drivers/gpu/drm/drm_color_mgmt.c b/drivers/gpu/drm/drm_color_mgmt.c
+index 3969dc548cff605cbdd3d56dceafb2ca00a5c886..509aa4325391340f8cfc50bd0fc277c48c889d3d 100644
+--- a/drivers/gpu/drm/drm_color_mgmt.c
++++ b/drivers/gpu/drm/drm_color_mgmt.c
+@@ -494,6 +494,7 @@ const char *drm_get_color_encoding_name(enum drm_color_encoding encoding)
  
- - Scaling.
+ 	return color_encoding_name[encoding];
+ }
++EXPORT_SYMBOL(drm_get_color_encoding_name);
  
--- Additional buffer formats, especially YUV formats for video like NV12.
--  Low/high bpp RGB formats would also be interesting.
-+- Additional buffer formats. Low/high bpp RGB formats would be interesting.
+ /**
+  * drm_get_color_range_name - return a string for color range
+@@ -509,6 +510,7 @@ const char *drm_get_color_range_name(enum drm_color_range range)
  
- - Async updates (currently only possible on cursor plane using the legacy
-   cursor api).
+ 	return color_range_name[range];
+ }
++EXPORT_SYMBOL(drm_get_color_range_name);
+ 
+ /**
+  * drm_plane_create_color_properties - color encoding related plane properties
 
 -- 
 2.47.0
