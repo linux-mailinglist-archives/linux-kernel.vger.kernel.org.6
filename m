@@ -1,166 +1,91 @@
-Return-Path: <linux-kernel+bounces-412512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EAF59D09EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 07:58:08 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28F849D09F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 07:58:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6DC6282520
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 06:58:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A7AD8B213B5
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 06:58:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 893B814E2C2;
-	Mon, 18 Nov 2024 06:57:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="AzLLkMc/"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9415714D29D;
+	Mon, 18 Nov 2024 06:58:05 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B4DD14B092;
-	Mon, 18 Nov 2024 06:57:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C81B214AD02
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 06:58:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731913069; cv=none; b=OtWzWYgDK855Um0N2QByXk4ZMlhToCII0PPsnMgHEhfTBwrAkZOcJ/oSpo/yukitKDkUQmj/ECkvdlriFjlaXRUh8x0pHqkfgxjVdJM0LrTp66GXQW3QGLUCPrZamUI36w6+FxF6DaPZIc0IBjqKrL9xCbLyGkXrzoAjy1N/Tc4=
+	t=1731913085; cv=none; b=QU4k9bOLDHOG9x2TZ6CNe3szS1Ckjz+1FNr5YzKH+n81/MQfczbSRLbYY6y0l46X8bfxSVBtL0cEwoyxQSahacVMxqlhJNJLxwy3y9YsqUv9+Fu5CjTBlbsPTE0HceRCPUacIJURhrMbyNk0/U76WdFy7SXPAOzhyAAFTxLeOnM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731913069; c=relaxed/simple;
-	bh=K1qUyK3DCr7kySVsqypCRz/q4FPFum6GHAhp8LI+UVA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=qxRXar5C+iX+qpB+qUrzHUVGkqHoWX1+SA+pWAJXeu3Iyl97Hcn9aZEiTAQctjk/z2acRyWhNzQ0lpX9IIF+d4X6N3hikV+z/PI/bE9JciLTV3b+KwELQqWi2nnRbVMwvMj/7ylVLCDrJ3NUjKEi8MK4iNaoH92qoyQTgYDnxNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=AzLLkMc/; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AI5RdZu001081;
-	Mon, 18 Nov 2024 06:57:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	/Enk6OigKE9HeDXJAojnMi3vDdZMDLytoyuoacIrOFI=; b=AzLLkMc/M1NeqmJX
-	+2cC3KmRFuFRYzk0cQ9Ah8IOZNNufmh/X/Nx7ItkkPiQDP2Q6iOZkMrVCWdaBIgc
-	ywlVzBH6fvw4XNVjzdXwyU7CurYWB8qQezXuD+fGSTLjn2Lzrri4Smay9wMLYr4j
-	sgi7KEHYAS0zUff+53a2WKuzIpTkJ7oTDulXVnP6EwZAQSgHj9eDnusx26lh/hB+
-	VrBsct6efXjKkQ1q+9V5zVEkEaET2lWrYgsGF3+Jq6XGhEnZcE2R7Csc/W3lv7MZ
-	XVWaS8Oi5lKD/RXokEneN4tUoFlqOGBrhrQtvrXQuC1uSXxj1UFjbK3XlIKaa7XE
-	sc/dNg==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42ycuf9n84-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 18 Nov 2024 06:57:30 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AI6vTCj021226
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 18 Nov 2024 06:57:29 GMT
-Received: from [10.64.16.151] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 17 Nov
- 2024 22:57:22 -0800
-Message-ID: <0f5a1ce9-060b-44d3-b6f0-da88b26fc57d@quicinc.com>
-Date: Mon, 18 Nov 2024 14:57:19 +0800
+	s=arc-20240116; t=1731913085; c=relaxed/simple;
+	bh=xphumfc+8v+hZxlhemmR0uazoP3uH9uQvMf4ECWjmcU=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=YK3TY8WMuOTARkzIaRZSX1KqpsdxauyF2U44y4clwj2ZsjGOcIwwUrlBY3ClmfiC9b/mh9h51wKTWexohxKO00b2+QUzAiaCogI12Ob5iWn3KDVz6cFWOhsiVVpnh+vFiMxirr+M/7XpFB88ftpKAsumwqWjLEB9XCirVibhBbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-83dff8bc954so387591539f.1
+        for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 22:58:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731913083; x=1732517883;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WTxLF36+Z28UFe0muHYp/+Q2EWoocHPS7WBe2Dr+vRg=;
+        b=dpetodxXfKGyJFJ2o2dTNGOQ586Fxfqe3XtU7d4mlFtGY8TuFQeE8NzD21a0SDvjFK
+         I5uT7W6V948PXqxZcbLKnTi1kWY4fM1e+vNMi8jzR5XwRAAE1rvn/E9xe4NZPKkGgnCu
+         6ZUKOtkKwm6TtT5DjXHmtI6py6zeCdgCNwyAKSmzn2cOEaHV6DGa9dwBfkBgTLLpt/1y
+         JzC+xStxvVZ6XEED03AXM1LabM/H1ps8zcKmOSoKfCsbxfdvzYJ63rh4S3fKODram9ke
+         s+52k7dFEwPFluwt/clTUCatIB8m0PX3turBcEhAK7tK712H0izuyipGCvrjaI0JsjrB
+         KZ9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVFS519yi/mUtVSThkF6Ur8JJjNbom6XnJlqJfND24+WDJ8s3Ycu6piyG2K7U1tvNmeJb/AXQmwD/PSYb4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyH6sBivKU3PO9wgx0oJdEFvx2onTORmWw0OXTBwlAuEKmvKP4G
+	zqi9NXHwsa6sDk+yHO0hszH+VHdu2M0Jx+5+yHSG/jU4RrbwDlA5eWNqw7oWpmQh1nB4kZsOA4S
+	KLnSHhZd5JfmJ8zO/9Jcww58UGzDnsxKPldRA/iS0TpymGIxdPk0vn/U=
+X-Google-Smtp-Source: AGHT+IHykOYzKiqHu0/8fmHWY2+qsP6dgdXZ51ll9DidWZFeQmHKuBeoMcXUuokaEkqdT/NY2QQr+X8bO8wpwKvRARIGH55UQqAg
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 9/9] arm64: defconfig: Enable SX150X for QCS615 ride
- board
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Rob Clark <robdclark@gmail.com>,
-        Abhinav Kumar
-	<quic_abhinavk@quicinc.com>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Rob Herring <robh@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        "Krishna
- Manikandan" <quic_mkrishn@quicinc.com>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        "Catalin
- Marinas" <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Li Liu
-	<quic_lliu6@quicinc.com>,
-        Xiangxu Yin <quic_xiangxuy@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-References: <20241113-add-display-support-for-qcs615-platform-v2-0-2873eb6fb869@quicinc.com>
- <20241113-add-display-support-for-qcs615-platform-v2-9-2873eb6fb869@quicinc.com>
- <CAA8EJpok20-7HXJJbcJi8YZYCU68g_DGThR_ckjBEz0e+gGBSA@mail.gmail.com>
-Content-Language: en-US
-From: fange zhang <quic_fangez@quicinc.com>
-In-Reply-To: <CAA8EJpok20-7HXJJbcJi8YZYCU68g_DGThR_ckjBEz0e+gGBSA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: VOJNeQms_kWtpsHJqazuKTbSkYBfIOw2
-X-Proofpoint-GUID: VOJNeQms_kWtpsHJqazuKTbSkYBfIOw2
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 clxscore=1015
- mlxlogscore=999 phishscore=0 spamscore=0 impostorscore=0 adultscore=0
- bulkscore=0 lowpriorityscore=0 priorityscore=1501 mlxscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411180057
+X-Received: by 2002:a05:6e02:1c28:b0:3a7:66e0:a96b with SMTP id
+ e9e14a558f8ab-3a766e0ad62mr22425045ab.7.1731913082968; Sun, 17 Nov 2024
+ 22:58:02 -0800 (PST)
+Date: Sun, 17 Nov 2024 22:58:02 -0800
+In-Reply-To: <0000000000000fc50405eb48a1be@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <673ae57a.050a0220.87769.0025.GAE@google.com>
+Subject: Re: [syzbot] [ntfs3?] possible deadlock in ni_fiemap
+From: syzbot <syzbot+c300ab283ba3bc072439@syzkaller.appspotmail.com>
+To: almaz.alexandrovich@paragon-software.com, axboe@kernel.dk, 
+	brauner@kernel.org, jack@suse.cz, linux-kernel@vger.kernel.org, 
+	ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
+syzbot suspects this issue was fixed by commit:
 
+commit 6f861765464f43a71462d52026fbddfc858239a5
+Author: Jan Kara <jack@suse.cz>
+Date:   Wed Nov 1 17:43:10 2023 +0000
 
-On 2024/11/13 20:21, Dmitry Baryshkov wrote:
-> On Wed, 13 Nov 2024 at 13:53, Fange Zhang <quic_fangez@quicinc.com> wrote:
->>
->> From: Li Liu <quic_lliu6@quicinc.com>
->>
->> For the QCS615 ride board, enable the SX150X to activate the ANX7625
->> allowing the DSI to output to the mDP through the external bridge.
->> The ANX7625 relies on the SX150X chip to perform reset and HPD.
->>
->> Signed-off-by: Li Liu <quic_lliu6@quicinc.com>
->> Signed-off-by: Fange Zhang <quic_fangez@quicinc.com>
->> ---
->>   arch/arm64/configs/defconfig | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
->> index c0b8482ac6ad7498487718ba01d11b1c95e7543d..599a339a19435efbee7a5ef80c093b0e8c65f7ff 100644
->> --- a/arch/arm64/configs/defconfig
->> +++ b/arch/arm64/configs/defconfig
->> @@ -631,6 +631,7 @@ CONFIG_PINCTRL_SM8350=y
->>   CONFIG_PINCTRL_SM8450=y
->>   CONFIG_PINCTRL_SM8550=y
->>   CONFIG_PINCTRL_SM8650=y
->> +CONFIG_PINCTRL_SX150X=y
-> 
-> Your commit message doesn't describe why it needs to be disabled as a
-> built-in. You are trying to enable it for all defconfig users.
-> Also the placement of the symbol is not correct. You've added it to
-> the section with msm pinctrl drivers, while the chip has nothing to do
-> with msm.
-ok, will remove it from the patch series
+    fs: Block writes to mounted block devices
 
-> 
->>   CONFIG_PINCTRL_X1E80100=y
->>   CONFIG_PINCTRL_QCOM_SPMI_PMIC=y
->>   CONFIG_PINCTRL_LPASS_LPI=m
->>
->> --
->> 2.34.1
->>
-> 
-> 
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=120c0ac0580000
+start commit:   d537ae43f8a1 Merge tag 'gpio-fixes-for-v6.6-rc7' of git://..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=849fe52ba7c6d78a
+dashboard link: https://syzkaller.appspot.com/bug?extid=c300ab283ba3bc072439
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1056076d680000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17093269680000
 
+If the result looks correct, please mark the issue as fixed by replying with:
+
+#syz fix: fs: Block writes to mounted block devices
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
