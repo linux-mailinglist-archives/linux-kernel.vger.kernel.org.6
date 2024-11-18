@@ -1,35 +1,81 @@
-Return-Path: <linux-kernel+bounces-412554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 559B89D0A6E
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 08:52:46 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45F6F9D0A74
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 08:58:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13B942818FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 07:52:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7F206B217B2
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 07:58:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDDC2153836;
-	Mon, 18 Nov 2024 07:52:34 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E04DF154426;
+	Mon, 18 Nov 2024 07:58:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="akNalX1T"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63E5515C0;
-	Mon, 18 Nov 2024 07:52:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30EA314D6E1
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 07:58:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731916354; cv=none; b=NJqgVBAeGcf1Dy3g/OdXzj5TXXlwig7GF5nRAisPtf8d8RYILAT5dLqdyhd1E7WX8icpPC6MV6/t41c88OEfa6neglzG+kI9hNzUNiUfoQoLmLFsDIsDL5Cz0n/XF4qx0dremhb+ZjE3WOiyaZiy1RkwiD0PbwL9+KLuslS0AHY=
+	t=1731916691; cv=none; b=cPIPJHlAYUYEdJHdQCdnjcBApu7YKU/4XVfr37bhw5AHMR9e4a8m6arc4EtR1ugCcrNjgvTIpS80OMtVgpCAEnnjFaMaNQAHbp9gVzNG4OxEAscfxl0VwExao/PHDj5mdcjD37mUaVDTAJQ6XaiQSw55A3oxmD7sF89guVXAKaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731916354; c=relaxed/simple;
-	bh=ds3mQwNHuP/1AgYxmIFWb3FLhI+RhvLE/XpCur/+ikY=;
+	s=arc-20240116; t=1731916691; c=relaxed/simple;
+	bh=5pPi6xKQaofhZUWR446CR2u+CiVaiisuNOSPdJrX1G8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=K9E0M1GTxo3zpsHoy7WV5TYicBsoO1uki4ZNwflcjqvOtirDfRO43MAvz4ysHeArRWDsgP8aEAG015B0ZgY+yTNUuukF4ioipj8dm6SPR5AVvmTFfecc7tVqhu8j6g+m2hfHMB7QeFDZkxbmDGSbQt1KJHMR0roxkMwBp50Abd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 526F2C4CECC;
-	Mon, 18 Nov 2024 07:52:33 +0000 (UTC)
-Message-ID: <4f8b8ce0-727c-4527-b6a5-19f7f035f3c5@xs4all.nl>
-Date: Mon, 18 Nov 2024 08:52:31 +0100
+	 In-Reply-To:Content-Type; b=DkZ7Q6Wp9JPEgessZ4rKTxZNLaUffPbKFEqpKCQIMah9uR5/0FBMuQ5BGBR3PmTK8PNySJSvVNrdvSCHdiqaB5wanxhaNO/Nho8FGWPWxLn+dtzLVpnt+yWG/c+arkr3TQo6VDwhbh+SNXnkdhxMsJbVTlItdtmoiqj9CTpAV4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=akNalX1T; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731916687;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=hyFt22iin8wQhi7T2JKypG+2tNQw0cEw4s0cRXi7n8s=;
+	b=akNalX1TxV5OZ4eZoz1Eo30wT8/QQJfT0K2tI1B8QXTMsRiuBLlpNpt9J+zjqqKejIAwim
+	blaZN/PvOWkvWj+Ua5M85TLhxHwt6UPJFCgONDcCHeo+eF71bLto+R1eqWoImF5DBB26ND
+	sKi96sLIzotuo/R2hQltGSohmAQ671c=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-368-FCDqD3PSMqC-grjdmVXBzA-1; Mon, 18 Nov 2024 02:58:06 -0500
+X-MC-Unique: FCDqD3PSMqC-grjdmVXBzA-1
+X-Mimecast-MFC-AGG-ID: FCDqD3PSMqC-grjdmVXBzA
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4315f48bd70so18432985e9.2
+        for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 23:58:05 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731916685; x=1732521485;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=hyFt22iin8wQhi7T2JKypG+2tNQw0cEw4s0cRXi7n8s=;
+        b=I+FxewXEu+o29poB9qmzpw1JRReNqa2gzYAxpCnTAM2M3wm83y9QYYmL1jibdedY3B
+         wJ5hMfG95Cuk8zidixYK3s/TeFry7UDJDpfIe3tTtk0oU2qN8fUJzhuTjpkzz5kCWFqd
+         AjQkq2fMFyVZdTnKLyWsPY6fUNV3guouCKqnSbDrD9CPUrOkzqwhuECnQpIB+6NrNJMA
+         2W2uiiQvN4XfBxwWK0KMvrsMX+R4bdZ9FwJAlS082h8z30jLhEHEJn7UGZu8ByjBLdo8
+         DLsuMozJZxsI77zvywnAsd6+hyngOSRMgOfhRsOE4aJ/LrZ1ini1lOPM5NLa3mAzUBCH
+         ps8g==
+X-Forwarded-Encrypted: i=1; AJvYcCXrC/JDSVzVGSJ1Kpk+vAedvnfTmTKUs1lwUllRbphQcr3L0zKSav2uVUCc/RT1MIMdW2iteFe0jSLGvFw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzM6XyGVqAxAd6bgKgtN8/xTvXl2aQPTgmiGLNsF0OWfNuoQeM9
+	qyVSwsbiUuliuEksDeJBii/HqZBDCfau84vGHDTYV65g6IB7M9wxjWQ/h05TWzqVMGbvG12wZoC
+	Z1fBBbrL12SQxtf5fCWprFWVdnDu1P/t8TwhRFY4Wb5tKcY+DwL5V1BIWffCTww==
+X-Received: by 2002:a05:600c:510b:b0:431:58b3:affa with SMTP id 5b1f17b1804b1-432df72c886mr97500415e9.9.1731916684904;
+        Sun, 17 Nov 2024 23:58:04 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGjKHsr81s25cB3L3ZoNX3hfoVU+74IJ4OJKX8x3YyW4uFWZgDmL9DMg8KgMA6Avluyn4gzbg==
+X-Received: by 2002:a05:600c:510b:b0:431:58b3:affa with SMTP id 5b1f17b1804b1-432df72c886mr97500295e9.9.1731916684632;
+        Sun, 17 Nov 2024 23:58:04 -0800 (PST)
+Received: from ?IPV6:2003:cb:c743:ad00:d0f3:7f1d:5dd4:a961? (p200300cbc743ad00d0f37f1d5dd4a961.dip0.t-ipconnect.de. [2003:cb:c743:ad00:d0f3:7f1d:5dd4:a961])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432dab80821sm144559615e9.23.2024.11.17.23.58.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 17 Nov 2024 23:58:03 -0800 (PST)
+Message-ID: <882c420d-0cb1-40dc-9c37-01f5e320449d@redhat.com>
+Date: Mon, 18 Nov 2024 08:58:01 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -37,106 +83,76 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] docs: media: update location of the media patches
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- stable@vger.kernel.org
-References: <cover.1731910082.git.mchehab+huawei@kernel.org>
- <544c6883e49e4b85bf5338d794f754ac0cfe3436.1731910082.git.mchehab+huawei@kernel.org>
-Content-Language: en-US, nl
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Autocrypt: addr=hverkuil@xs4all.nl; keydata=
- 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
-In-Reply-To: <544c6883e49e4b85bf5338d794f754ac0cfe3436.1731910082.git.mchehab+huawei@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH] filemap: Remove unused folio_add_wait_queue
+To: linux@treblig.org, willy@infradead.org, akpm@linux-foundation.org
+Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <20241116151446.95555-1-linux@treblig.org>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20241116151446.95555-1-linux@treblig.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 18/11/2024 07:09, Mauro Carvalho Chehab wrote:
-> Due to recent changes on the way we're maintaining media, the
-> location of the main tree was updated.
+On 16.11.24 16:14, linux@treblig.org wrote:
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
 > 
-> Change docs accordingly.
+> folio_add_wait_queue() has been unused since 2021's
+> commit 850cba069c26 ("cachefiles: Delete the cachefiles driver pending
+> rewrite")
 > 
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> Remove it.
 
-Reviewed-by: Hans Verkuil <hverkuil@xs4all.nl>
+Reviewed-by: David Hildenbrand <david@redhat.com>
 
-Regards,
+-- 
+Cheers,
 
-	Hans
-
-> ---
->  Documentation/admin-guide/media/building.rst | 2 +-
->  Documentation/admin-guide/media/saa7134.rst  | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/admin-guide/media/building.rst b/Documentation/admin-guide/media/building.rst
-> index a06473429916..7a413ba07f93 100644
-> --- a/Documentation/admin-guide/media/building.rst
-> +++ b/Documentation/admin-guide/media/building.rst
-> @@ -15,7 +15,7 @@ Please notice, however, that, if:
->  
->  you should use the main media development tree ``master`` branch:
->  
-> -    https://git.linuxtv.org/media_tree.git/
-> +    https://git.linuxtv.org/media.git/
->  
->  In this case, you may find some useful information at the
->  `LinuxTv wiki pages <https://linuxtv.org/wiki>`_:
-> diff --git a/Documentation/admin-guide/media/saa7134.rst b/Documentation/admin-guide/media/saa7134.rst
-> index 51eae7eb5ab7..18d7cbc897db 100644
-> --- a/Documentation/admin-guide/media/saa7134.rst
-> +++ b/Documentation/admin-guide/media/saa7134.rst
-> @@ -67,7 +67,7 @@ Changes / Fixes
->  Please mail to linux-media AT vger.kernel.org unified diffs against
->  the linux media git tree:
->  
-> -    https://git.linuxtv.org/media_tree.git/
-> +    https://git.linuxtv.org/media.git/
->  
->  This is done by committing a patch at a clone of the git tree and
->  submitting the patch using ``git send-email``. Don't forget to
+David / dhildenb
 
 
