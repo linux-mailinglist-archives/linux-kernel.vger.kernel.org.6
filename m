@@ -1,200 +1,293 @@
-Return-Path: <linux-kernel+bounces-413545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 727069D1AC4
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 22:45:46 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 378229D1AC6
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 22:46:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C8FA2818EA
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 21:45:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A7A24B23FA6
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 21:46:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1781F1E7C14;
-	Mon, 18 Nov 2024 21:45:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B22E1E5728;
+	Mon, 18 Nov 2024 21:46:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="oaMOXl+d"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2058.outbound.protection.outlook.com [40.107.236.58])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="fCaQR4Dy"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACF35199252;
-	Mon, 18 Nov 2024 21:45:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.58
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731966330; cv=fail; b=k1l/1aXYlX0J+UckrnAgCDQbIie0Jx8uQVUmT7QEPqEPVULhIC/16EG0o3OLmQs/lD93G73ONNXSzaT3iXBgjWqpWxTALVy+WCcz2yKnE+kDGg5gO76Evu8dhMOWJ2zX1gyxZA+wzq4OYycEIUgpUkk2zlBQtKZAo4MqhJtMDgY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731966330; c=relaxed/simple;
-	bh=q1Dlb6+XXj3LB33TEXVJurkt1IKwHSO90rYGdXkWmfc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=mSbO/uCdUQFesI2oGnC4H7SJpqDybiJSLaKTZlDH/r9MByrFgpnkIV6UXf6ez3GppChu9ilzaf7PrcJFRKv1Fs8DN/xQyFXV8JaK9v+6UZMeZbGY8Fbi1Acdcmsd3wv0ip32VW7FRpTaXucld3IxEE9x6mcmz278PpmDUeTW8Cw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=oaMOXl+d; arc=fail smtp.client-ip=40.107.236.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=V/vf1fmgBdjeP4mYk2OVqYizePp15VQm8Wjp7jxs2kE+jA+TSAhJb7gt1zpiFhPoTlmLWW0aC95vbHrjZwd8DsSb3gGdO6n4HlTHq7P9lbDIDBA+CrVSzexViwdAzTFLh1VUtmoTYRoz+PkzkdIZ9HU4JAqqIJMAJ1liSiysDt+DE03aw10hutzdhiHeoNN3dlgtIF+oYLJImvXJZ7AOHswMSoVjSwtdYi3SrdvdxlvtGkuzZ2LJbbPFwECPnmKcjNAAK4h8dlglreCGpEMbAQ+pDT/5v7avfwxqNPhdBhS6Ey1eLaiWU9clMK3+U1z+SQPtuV2O0hKuwjyU/ZAE0A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/XRQRDzpyBqrqYbQHd+pxl2/MgWlb/nLzuJ0LXKv1uo=;
- b=VVQ9SQUvYldPgmdWIgfcJdGjM59mhV6H4jgyuyY8nOQ5Czxscx/wGDOFeUxQyJv5eL+pgndeqzWIpoyG4NFL1XvJvtIaVPCBeBdQJnBE6ahU1KyjDEQeGuXbuFbIJZBhjwB6ODsnfEdD6+o+GEjoGTSVkmjtLANolkH9MhZXBdFtgvJtSCdxe0p58OBaExOzAosZvHY+xfAjoM5sS76r3WWw9KRiEtjiEjpcqe6Sgx3+pmrSvs6r45VP0juyPT7hAtQuSbmLeSVIK0egNc3EPoqS2LuOAVT1dsP0QvTgptl3kYHx726HHmBt2txg9NeQYLUhHfz8CoAla3dXW+xBYA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.12) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/XRQRDzpyBqrqYbQHd+pxl2/MgWlb/nLzuJ0LXKv1uo=;
- b=oaMOXl+dgXaDGWWmp+6W9uVIVDXb5sSGtMxLZSLWOFwpi8AIg4gY7TbpDZy3pZhpLz338NvT02uBd877bcvSL3dHYwD3eG7ePn6M5sVMzicuONlTFC3ez9p7W/ObHwG7rTQQwmkg1kr9Md2RTDvVzO82ViAYYiOWXPJOoIb1SxE=
-Received: from BL1P222CA0019.NAMP222.PROD.OUTLOOK.COM (2603:10b6:208:2c7::24)
- by LV2PR12MB5728.namprd12.prod.outlook.com (2603:10b6:408:17c::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.21; Mon, 18 Nov
- 2024 21:45:22 +0000
-Received: from BL6PEPF0001AB53.namprd02.prod.outlook.com
- (2603:10b6:208:2c7:cafe::4f) by BL1P222CA0019.outlook.office365.com
- (2603:10b6:208:2c7::24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.23 via Frontend
- Transport; Mon, 18 Nov 2024 21:45:22 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.12)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.12 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.12; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.12) by
- BL6PEPF0001AB53.mail.protection.outlook.com (10.167.241.5) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8158.14 via Frontend Transport; Mon, 18 Nov 2024 21:45:22 +0000
-Received: from [10.23.197.56] (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 18 Nov
- 2024 15:45:20 -0600
-Message-ID: <6f6c1a11-40bd-48dc-8e11-4a1f67eaa43b@amd.com>
-Date: Mon, 18 Nov 2024 13:45:13 -0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B197199252
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 21:45:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731966359; cv=none; b=nDB4PaBL09GsDr5/6J1lufkWxwkeqY8VruFXx4dyVfQZjWj4ROgYMYCK04B9DHPKeZXnJS8jkRvv9CV5DScqJUrSV+vy4rkVW8Fjhksm05fhSF7ziwndfenbNjKfxy0SHfTUUNW5Ix9YOSoNgDNQwLStPv89YXk+faW/Hu1WujM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731966359; c=relaxed/simple;
+	bh=RcHJ430j7zuHLH8dxtwFfoWvRviemutG/WmsFAOT6+s=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=dSkTfr8oxMRJz1ZyWxXWejrL9mWtHGXVSVl93I1evyY/uhym7Hztgqqsq1L/50wTZJ0h0JP+iFGLEthmovT+FRi38UejgEO8oEUZmGkIwa2iGdKLKElnxqbkfel5KGGyRlnag+8OWV2gTGS5XYkZZAxynZol4R5zR+Blo1JccxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=fCaQR4Dy; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a9e71401844so461394066b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 13:45:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fairphone.com; s=fair; t=1731966355; x=1732571155; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=HzJ9iZGrEcBbTf0nejIN5hDgxydRztwygpx5P5s5ZPk=;
+        b=fCaQR4Dy1y+cI9zEEbdjsAH6kKsreGJjTknuCgwvvdhZv6YJ5yRErSpkPMcopHNvsE
+         /Xn+gz1glLODueXERbX5abAgNlcnPjP/FJWrOFfCzrqOcqjLHgr2lu0mIV2xEhKP7UCS
+         Se6XVa8/q1pzxSamm39aGtr4UeHJvyW94dNagsLpzwHyaN7cX+D6yWowyGs8GbAudhTz
+         Hi3SxWY+ZqfnQHGza4vxoaGjLIPusTkFgF5GhbFzeLO36Eg06MZivobOJxMrpjDVSQXo
+         48hSAEBpZRzVf4i/fVfwI1WRRWX9Xgd5FBnakCSpsWq+rJYJA1evAay8/YwAuhwoBAE0
+         Lviw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731966355; x=1732571155;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HzJ9iZGrEcBbTf0nejIN5hDgxydRztwygpx5P5s5ZPk=;
+        b=fkzmAEVE1ek+E0TUF+QhCN8UWQDG82z3WHhwQhyASi4Up8p2zp5pXJicAa6EULyLBU
+         PHf6EzwDT36b14fHmbILOPaI+gFfrr/lAxyQP1Jz8b++YBBWDvj18x7S3ipEJ47XqUgw
+         9fntOvshHExsK40k5lu5A0bQLSvauTyhQSedmhw61p73CDQ1F7+YV+g9Ii6/A21nVERF
+         1r9Fdqp5eYuYqa6+nr0RkhE3EsHSTv9nlWmXiWZ4eh+kEghMVrbpW45i53QR/kLYUwwQ
+         Hc8jZevs7F5x7wlMd/Rx48M75q9wwBEe7gRnHPRsbIGMdknJbJGcySZkXy8rkCPfOMRF
+         otXw==
+X-Forwarded-Encrypted: i=1; AJvYcCVNMPloD8BXyIQysk8dQUrZJLLXqqLnCIL4acgVptN070U1NrDwhdeQjKVPkViezXZYglX7kVuac1EzGIg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwX4z3+esfe/Lp9C/064esZNy8dF4lWyZ87KeRR966GBQZdUctV
+	PEZiX1zxJWpPTLWCQ6KX8bWRRotu2mdGU6zozvxHmhZ2i0faz3/f1gVbUgSxzYw=
+X-Google-Smtp-Source: AGHT+IH1AXn+4Pbu9RiK+FuHolQEssxt1all3lVH5cqzQ5YFXDuIzlzryEivRSqXuxQtt4PLe8MK0A==
+X-Received: by 2002:a17:907:7f8a:b0:a9a:e91:68c5 with SMTP id a640c23a62f3a-aa483454536mr1156464866b.33.1731966355555;
+        Mon, 18 Nov 2024 13:45:55 -0800 (PST)
+Received: from [192.168.178.182] (2a02-a210-0a3a-6f80-f04f-3897-bedf-0fb0.cable.dynamic.v6.ziggo.nl. [2a02:a210:a3a:6f80:f04f:3897:bedf:fb0])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20dffd736sm578168266b.118.2024.11.18.13.45.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Nov 2024 13:45:54 -0800 (PST)
+From: Luca Weiss <luca.weiss@fairphone.com>
+Date: Mon, 18 Nov 2024 22:45:46 +0100
+Subject: [PATCH] media: i2c: imx412: Add missing newline to prints
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC 01/14] x86/apic: Add new driver for Secure AVIC
-To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>, <linux-kernel@vger.kernel.org>
-CC: <tglx@linutronix.de>, <mingo@redhat.com>, <dave.hansen@linux.intel.com>,
-	<Thomas.Lendacky@amd.com>, <nikunj@amd.com>, <Santosh.Shukla@amd.com>,
-	<Vasant.Hegde@amd.com>, <Suravee.Suthikulpanit@amd.com>, <bp@alien8.de>,
-	<David.Kaplan@amd.com>, <x86@kernel.org>, <hpa@zytor.com>,
-	<peterz@infradead.org>, <seanjc@google.com>, <pbonzini@redhat.com>,
-	<kvm@vger.kernel.org>
-References: <20240913113705.419146-1-Neeraj.Upadhyay@amd.com>
- <20240913113705.419146-2-Neeraj.Upadhyay@amd.com>
-Content-Language: en-US
-From: "Melody (Huibo) Wang" <huibo.wang@amd.com>
-In-Reply-To: <20240913113705.419146-2-Neeraj.Upadhyay@amd.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB53:EE_|LV2PR12MB5728:EE_
-X-MS-Office365-Filtering-Correlation-Id: fb19c698-8ddb-4832-d93d-08dd081a4dd0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|1800799024|7416014|82310400026|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?RlZsZ0JYMXZaajJnTWVSaVpVUmM3VlhOenI5UW5tTm9YQTR0bTBHb3Vzb3Uz?=
- =?utf-8?B?T0FCalJqN1RpQkpaL3EvZDR5VXhpM0NLTWhaYTE3S0RTb3dNdldCSDNlZFdN?=
- =?utf-8?B?cFdWTC9HamU3UzQ3QVhRaVg3OG9JUlBEbUdRZmkvcXM0cW5sRmYvYVIya1BG?=
- =?utf-8?B?RXg0S25LOVhRYld1SVVDWjFsWkxvS3I0a2x5eGVwaExxTHVwY1haaDdYaU41?=
- =?utf-8?B?cW5GU0Z6cEZicjlaYkZGaGIySk9kZngyTFltV2lyR0xhUjQ0eURVZW1UMDZQ?=
- =?utf-8?B?aldHOEY0NHVjYTV3MTROYXJCekdOR2RITmJZTU1sdWtOVXJwSjlZRi9NQzFh?=
- =?utf-8?B?NWt1bWhSbzNzN2pXNUJybm43U3hacE1KNnVwUjk2a3ovcUZaY0VEbFk4Tnpy?=
- =?utf-8?B?QWYvdVAvcnZ4bEQ4M3VJU09RUXhGMXpJeWU2SkJhYVlNcnA2Tnpaai9XSzRu?=
- =?utf-8?B?Y2l5RytwN1NyOUlocThmSUorSVhjMHIyVlRCd1d6UmxNZG80UlRHV1E5NENB?=
- =?utf-8?B?K0FKUjVCdWNDcGRCcUIySmdJaDJFQUNaSlZyNEwyZXorR0JJRTZYU1JzRGF1?=
- =?utf-8?B?YjZzZCtsbXRkYk1YUGdOdmdRSmVPaDNjQTBsc0xmWkxyQmJOK3NlNHFLemdC?=
- =?utf-8?B?anRHLzd5QW1nZUZlWDBtSklRNEVJUWJ2R0FJSlc1TFdXVTVmSCtaOFo4ZldD?=
- =?utf-8?B?bGkyQ2F6MmVZK0xFOFZEVVVWbE9pMG5QbjdlMWQ1UUhPdEZqTWhtK1BRb3p1?=
- =?utf-8?B?NUxhOW9lQXBTZGRxeEx1NkFOYXlVRjkyY2ZqU2VqbzZoZFJibXl4QzFSQ0JB?=
- =?utf-8?B?bHdrUGcrWnZ6U0lVdE8zcU9ybnBtQlY1anYzRFlRUGJBSUlhY09JQ1RVSmpU?=
- =?utf-8?B?eVhQN1o2WWw2ZFVCTnU5OVlQRjZObGJDZzJ6cHNQd1lTMVVMTEYvdHlTOWt4?=
- =?utf-8?B?YzZFRTFvUTNFSG41ekpFTDFteXEzenFHaTVvV3NOV3R4R1JEN09IamdjWHR4?=
- =?utf-8?B?V2hPTzc4bWp3YTd3ZDI5MnJGRWMvL0xjVzQyVmlBZytMQXFhMklLWmplRjZk?=
- =?utf-8?B?WDRweXRMc0l4SEZUeE9rZVZtQWk4RmtLZnRTcG9aQzh0Q0xiM2YvNElGbnow?=
- =?utf-8?B?dU5zcC9JUzdpbEgyRlZJeUVqV1FKNk05aVZrT2tKVXlGNGdvVW5hcWlLZi9V?=
- =?utf-8?B?K3hvUDlBRVhTb1UrbVptbnJ5U29CbjVmTUNOaHFPcnZqK0JlTW9zTnlDcE9z?=
- =?utf-8?B?ZjBmbnBYYXVHamFUZTV0Y3p6SDBXNWc0eGxjOGx2dDVoTWJQS2ZiNURtaUgw?=
- =?utf-8?B?UDlSb1V5djc1N0c4dGtSTTdRaDVJLytPd1c4ZGYyOEYyNC9PZ1FKa1RJb1Vi?=
- =?utf-8?B?MnlDWHBNZ1ZhRXZWRlFiZ1hCbGxkQ3pjclBxNm5RVlFBZ1plZlY4RWxxTFpx?=
- =?utf-8?B?MGVMc2ROSFlVMElpZm8zT3ZPbWRtcDJva2pVRjQ2cG5CSmhZclFYSFBSemp6?=
- =?utf-8?B?MWZ2UHpvOE0xck9uSVNHdTJrWFhGNko0MEVXSDdzYy9BanZITkFrQm1UNEN1?=
- =?utf-8?B?UHZ4WVNoc1R5aDlZNS9kV2JFMml0Z3AvYzRVaXNWemtzOGtyZlpkYVVYUWdS?=
- =?utf-8?B?NnozLzZFY0I5NnhJeXlKVjVicFRYdjJFb2VEMlNCUXFodUVmZ0JpYkYwVDlZ?=
- =?utf-8?B?MENrbXovb29rOXBrd2IvaGMvOTB6ZVRqUmhUVFBwSUJRY25OSExTZXdTUGl4?=
- =?utf-8?B?bURURnErMTRsNURGeFhldlJQRHQ2QVk1a2l0S3hEVXF0NDVMRWhqZVRJQWQ1?=
- =?utf-8?B?MGRKVjZHdE5IbExJNHhrdEJuek1KOWdabnZjRXdETGNOMVhXaVJsbHJVOGxX?=
- =?utf-8?B?ZFFtZ1gzZjlmdGRnbURtRzdJTHBadzJMREgraGx2bTYxaEE9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.12;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:atlvpn-bp.amd.com;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(82310400026)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Nov 2024 21:45:22.3558
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: fb19c698-8ddb-4832-d93d-08dd081a4dd0
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.12];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BL6PEPF0001AB53.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV2PR12MB5728
+Message-Id: <20241118-imx412-newlines-v1-1-152fe6863838@fairphone.com>
+X-B4-Tracking: v=1; b=H4sIAIm1O2cC/x3MQQqAIBBA0avIrBMcjaiuEi0qpxooCwcqCO+et
+ HyL/18QikwCrXoh0sXCR8jAQsG0DmEhzT4brLElItaa96dEqwPdGwcS7UbjLPqhqYyHXJ2RZn7
+ +Y9en9AEBvjsKYQAAAA==
+X-Change-ID: 20241118-imx412-newlines-3b0321da960d
+To: Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
+ linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Luca Weiss <luca.weiss@fairphone.com>
+X-Mailer: b4 0.14.2
 
-Hi Neeraj,
+Add trailing \n to dev_dbg and dev_err prints where missing.
 
-On 9/13/2024 4:36 AM, Neeraj Upadhyay wrote:
-> From: Kishon Vijay Abraham I <kvijayab@amd.com>
-> 
-> The Secure AVIC feature provides SEV-SNP guests hardware acceleration
-> for performance sensitive APIC accesses while securely managing the
-> guest-owned APIC state through the use of a private APIC backing page.
-> This helps prevent malicious hypervisor from generating unexpected
-> interrupts for a vCPU or otherwise violate architectural assumptions
-> around APIC behavior.
-> 
-> Add a new x2APIC driver that will serve as the base of the Secure AVIC
-> support. It is initially the same as the x2APIC phys driver, but will be
-> modified as features of Secure AVIC are implemented.
-> 
-> Signed-off-by: Kishon Vijay Abraham I <kvijayab@amd.com>
-> Co-developed-by: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-> Signed-off-by: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-> ---
->  arch/x86/Kconfig                    |  12 +++
->  arch/x86/boot/compressed/sev.c      |   1 +
->  arch/x86/coco/core.c                |   3 +
->  arch/x86/include/asm/msr-index.h    |   4 +-
->  arch/x86/kernel/apic/Makefile       |   1 +
->  arch/x86/kernel/apic/x2apic_savic.c | 112 ++++++++++++++++++++++++++++
->  include/linux/cc_platform.h         |   8 ++
->  7 files changed, 140 insertions(+), 1 deletion(-)
->  create mode 100644 arch/x86/kernel/apic/x2apic_savic.c
-> 
-> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> index 007bab9f2a0e..b05b4e9d2e49 100644
-> --- a/arch/x86/Kconfig
-> +++ b/arch/x86/Kconfig
-> @@ -469,6 +469,18 @@ config X86_X2APIC
->  
->  	  If you don't know what to do here, say N.
->  
-> +config AMD_SECURE_AVIC
-> +	bool "AMD Secure AVIC"
-> +	depends on X86_X2APIC && AMD_MEM_ENCRYPT
+Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+---
+ drivers/media/i2c/imx412.c | 42 +++++++++++++++++++++---------------------
+ 1 file changed, 21 insertions(+), 21 deletions(-)
 
-If we remove the dependency on X2APIC, there are only 3 X2APIC functions which you call from this driver. Can we just expose them in the header, and then simply remove the dependency on X2APIC? 
+diff --git a/drivers/media/i2c/imx412.c b/drivers/media/i2c/imx412.c
+index 0bfe3046fcc8726ef4e484d0fbf980422343fccc..c74097a59c42853ff2a1b600f28ff5aacedb1c6b 100644
+--- a/drivers/media/i2c/imx412.c
++++ b/drivers/media/i2c/imx412.c
+@@ -547,7 +547,7 @@ static int imx412_update_exp_gain(struct imx412 *imx412, u32 exposure, u32 gain)
+ 
+ 	lpfr = imx412->vblank + imx412->cur_mode->height;
+ 
+-	dev_dbg(imx412->dev, "Set exp %u, analog gain %u, lpfr %u",
++	dev_dbg(imx412->dev, "Set exp %u, analog gain %u, lpfr %u\n",
+ 		exposure, gain, lpfr);
+ 
+ 	ret = imx412_write_reg(imx412, IMX412_REG_HOLD, 1, 1);
+@@ -594,7 +594,7 @@ static int imx412_set_ctrl(struct v4l2_ctrl *ctrl)
+ 	case V4L2_CID_VBLANK:
+ 		imx412->vblank = imx412->vblank_ctrl->val;
+ 
+-		dev_dbg(imx412->dev, "Received vblank %u, new lpfr %u",
++		dev_dbg(imx412->dev, "Received vblank %u, new lpfr %u\n",
+ 			imx412->vblank,
+ 			imx412->vblank + imx412->cur_mode->height);
+ 
+@@ -613,7 +613,7 @@ static int imx412_set_ctrl(struct v4l2_ctrl *ctrl)
+ 		exposure = ctrl->val;
+ 		analog_gain = imx412->again_ctrl->val;
+ 
+-		dev_dbg(imx412->dev, "Received exp %u, analog gain %u",
++		dev_dbg(imx412->dev, "Received exp %u, analog gain %u\n",
+ 			exposure, analog_gain);
+ 
+ 		ret = imx412_update_exp_gain(imx412, exposure, analog_gain);
+@@ -622,7 +622,7 @@ static int imx412_set_ctrl(struct v4l2_ctrl *ctrl)
+ 
+ 		break;
+ 	default:
+-		dev_err(imx412->dev, "Invalid control %d", ctrl->id);
++		dev_err(imx412->dev, "Invalid control %d\n", ctrl->id);
+ 		ret = -EINVAL;
+ 	}
+ 
+@@ -803,14 +803,14 @@ static int imx412_start_streaming(struct imx412 *imx412)
+ 	ret = imx412_write_regs(imx412, reg_list->regs,
+ 				reg_list->num_of_regs);
+ 	if (ret) {
+-		dev_err(imx412->dev, "fail to write initial registers");
++		dev_err(imx412->dev, "fail to write initial registers\n");
+ 		return ret;
+ 	}
+ 
+ 	/* Setup handler will write actual exposure and gain */
+ 	ret =  __v4l2_ctrl_handler_setup(imx412->sd.ctrl_handler);
+ 	if (ret) {
+-		dev_err(imx412->dev, "fail to setup handler");
++		dev_err(imx412->dev, "fail to setup handler\n");
+ 		return ret;
+ 	}
+ 
+@@ -821,7 +821,7 @@ static int imx412_start_streaming(struct imx412 *imx412)
+ 	ret = imx412_write_reg(imx412, IMX412_REG_MODE_SELECT,
+ 			       1, IMX412_MODE_STREAMING);
+ 	if (ret) {
+-		dev_err(imx412->dev, "fail to start streaming");
++		dev_err(imx412->dev, "fail to start streaming\n");
+ 		return ret;
+ 	}
+ 
+@@ -895,7 +895,7 @@ static int imx412_detect(struct imx412 *imx412)
+ 		return ret;
+ 
+ 	if (val != IMX412_ID) {
+-		dev_err(imx412->dev, "chip id mismatch: %x!=%x",
++		dev_err(imx412->dev, "chip id mismatch: %x!=%x\n",
+ 			IMX412_ID, val);
+ 		return -ENXIO;
+ 	}
+@@ -927,7 +927,7 @@ static int imx412_parse_hw_config(struct imx412 *imx412)
+ 	imx412->reset_gpio = devm_gpiod_get_optional(imx412->dev, "reset",
+ 						     GPIOD_OUT_LOW);
+ 	if (IS_ERR(imx412->reset_gpio)) {
+-		dev_err(imx412->dev, "failed to get reset gpio %ld",
++		dev_err(imx412->dev, "failed to get reset gpio %ld\n",
+ 			PTR_ERR(imx412->reset_gpio));
+ 		return PTR_ERR(imx412->reset_gpio);
+ 	}
+@@ -935,13 +935,13 @@ static int imx412_parse_hw_config(struct imx412 *imx412)
+ 	/* Get sensor input clock */
+ 	imx412->inclk = devm_clk_get(imx412->dev, NULL);
+ 	if (IS_ERR(imx412->inclk)) {
+-		dev_err(imx412->dev, "could not get inclk");
++		dev_err(imx412->dev, "could not get inclk\n");
+ 		return PTR_ERR(imx412->inclk);
+ 	}
+ 
+ 	rate = clk_get_rate(imx412->inclk);
+ 	if (rate != IMX412_INCLK_RATE) {
+-		dev_err(imx412->dev, "inclk frequency mismatch");
++		dev_err(imx412->dev, "inclk frequency mismatch\n");
+ 		return -EINVAL;
+ 	}
+ 
+@@ -966,14 +966,14 @@ static int imx412_parse_hw_config(struct imx412 *imx412)
+ 
+ 	if (bus_cfg.bus.mipi_csi2.num_data_lanes != IMX412_NUM_DATA_LANES) {
+ 		dev_err(imx412->dev,
+-			"number of CSI2 data lanes %d is not supported",
++			"number of CSI2 data lanes %d is not supported\n",
+ 			bus_cfg.bus.mipi_csi2.num_data_lanes);
+ 		ret = -EINVAL;
+ 		goto done_endpoint_free;
+ 	}
+ 
+ 	if (!bus_cfg.nr_of_link_frequencies) {
+-		dev_err(imx412->dev, "no link frequencies defined");
++		dev_err(imx412->dev, "no link frequencies defined\n");
+ 		ret = -EINVAL;
+ 		goto done_endpoint_free;
+ 	}
+@@ -1034,7 +1034,7 @@ static int imx412_power_on(struct device *dev)
+ 
+ 	ret = clk_prepare_enable(imx412->inclk);
+ 	if (ret) {
+-		dev_err(imx412->dev, "fail to enable inclk");
++		dev_err(imx412->dev, "fail to enable inclk\n");
+ 		goto error_reset;
+ 	}
+ 
+@@ -1145,7 +1145,7 @@ static int imx412_init_controls(struct imx412 *imx412)
+ 		imx412->hblank_ctrl->flags |= V4L2_CTRL_FLAG_READ_ONLY;
+ 
+ 	if (ctrl_hdlr->error) {
+-		dev_err(imx412->dev, "control init failed: %d",
++		dev_err(imx412->dev, "control init failed: %d\n",
+ 			ctrl_hdlr->error);
+ 		v4l2_ctrl_handler_free(ctrl_hdlr);
+ 		return ctrl_hdlr->error;
+@@ -1183,7 +1183,7 @@ static int imx412_probe(struct i2c_client *client)
+ 
+ 	ret = imx412_parse_hw_config(imx412);
+ 	if (ret) {
+-		dev_err(imx412->dev, "HW configuration is not supported");
++		dev_err(imx412->dev, "HW configuration is not supported\n");
+ 		return ret;
+ 	}
+ 
+@@ -1191,14 +1191,14 @@ static int imx412_probe(struct i2c_client *client)
+ 
+ 	ret = imx412_power_on(imx412->dev);
+ 	if (ret) {
+-		dev_err(imx412->dev, "failed to power-on the sensor");
++		dev_err(imx412->dev, "failed to power-on the sensor\n");
+ 		goto error_mutex_destroy;
+ 	}
+ 
+ 	/* Check module identity */
+ 	ret = imx412_detect(imx412);
+ 	if (ret) {
+-		dev_err(imx412->dev, "failed to find sensor: %d", ret);
++		dev_err(imx412->dev, "failed to find sensor: %d\n", ret);
+ 		goto error_power_off;
+ 	}
+ 
+@@ -1208,7 +1208,7 @@ static int imx412_probe(struct i2c_client *client)
+ 
+ 	ret = imx412_init_controls(imx412);
+ 	if (ret) {
+-		dev_err(imx412->dev, "failed to init controls: %d", ret);
++		dev_err(imx412->dev, "failed to init controls: %d\n", ret);
+ 		goto error_power_off;
+ 	}
+ 
+@@ -1222,14 +1222,14 @@ static int imx412_probe(struct i2c_client *client)
+ 	imx412->pad.flags = MEDIA_PAD_FL_SOURCE;
+ 	ret = media_entity_pads_init(&imx412->sd.entity, 1, &imx412->pad);
+ 	if (ret) {
+-		dev_err(imx412->dev, "failed to init entity pads: %d", ret);
++		dev_err(imx412->dev, "failed to init entity pads: %d\n", ret);
+ 		goto error_handler_free;
+ 	}
+ 
+ 	ret = v4l2_async_register_subdev_sensor(&imx412->sd);
+ 	if (ret < 0) {
+ 		dev_err(imx412->dev,
+-			"failed to register async subdev: %d", ret);
++			"failed to register async subdev: %d\n", ret);
+ 		goto error_media_entity;
+ 	}
+ 
 
-Thanks
-Melody
+---
+base-commit: ae58226b89ac0cffa05ba7357733776542e40216
+change-id: 20241118-imx412-newlines-3b0321da960d
+
+Best regards,
+-- 
+Luca Weiss <luca.weiss@fairphone.com>
 
 
