@@ -1,55 +1,55 @@
-Return-Path: <linux-kernel+bounces-412417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10F9D9D08CF
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 06:26:33 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 976409D08D0
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 06:26:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCAB21F22EBA
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 05:26:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28518B22242
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 05:26:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65BE613C9D9;
-	Mon, 18 Nov 2024 05:26:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F3B213CA8A;
+	Mon, 18 Nov 2024 05:26:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="k7NwoTbW"
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="SC/iYJx+"
 Received: from fhigh-b3-smtp.messagingengine.com (fhigh-b3-smtp.messagingengine.com [202.12.124.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3052213A863
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 05:26:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 665AE13A863
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 05:26:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731907584; cv=none; b=LfxkwjaegL/wp+Uy17h8N2VDszc3OaehvHQ+zNGZx2kjIqsLtUr9czfaSy1fzOzne65R2iYxfywkfakkblYBzfTGutUGfyikexCScXMudz17WV78CPoru4T8A3UffD3TTCrk4vIHiZgM3jnE1T8niApxcykA/Fuh6AYgo1X+uvA=
+	t=1731907596; cv=none; b=tEDy45MfndOvIBdEAHMVexBdQN1aOX30eou7Oym1uYtqYSDcpVNsVhRYwFwYGIl8GLmMa3Wg4AX7Yl30B0Y8JOMim5gCqShGHDJmbYrilDJaV37Z2ubVYfG96RcXNXTQCrBphNoD4Aq1wndkIs0XMyPzzfEhOs5g819viCj98r8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731907584; c=relaxed/simple;
+	s=arc-20240116; t=1731907596; c=relaxed/simple;
 	bh=PBw+2l4k/U/8zjU5cemT5owgK8Rdjbs+7eB+L9/Ycbc=;
-	h=Date:Message-ID:From:To:Cc:Subject; b=AF+XZLUbMFoEBAKIM+UR9vmlDKuFuEY3A1dXiKEfNR5MKcJFdZR46rUoc8Qn9gMwtG3QLMxhlBmkQYV1ClGnYA12KyfXFIjIs8Ji+Nn6UkgsDu9SQAaTIoDg0rzyKBuiP5nB1euJ7LzKV2Q/eGmQUQ59cVJpLOjzW+IEDF4WK0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=k7NwoTbW; arc=none smtp.client-ip=202.12.124.154
+	h=Date:Message-ID:From:To:Cc:Subject; b=oDG5TiVXA5bYpuoaoVRrE30iJ4aug+FvCESIALAT7YaQpA001HoKBGwtJtoyDqeYJFb0xImUb9AkvLLNsnIqa6u/m6b9Ba+qEhN8KoAbSPQQ/pCfmjuDAv8wnq3yYOgE7hfGUcZVJQpr+8TLHpbw6CAMUnRaPDzOoUznyaA+qLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=SC/iYJx+; arc=none smtp.client-ip=202.12.124.154
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 3C7932540119;
-	Mon, 18 Nov 2024 00:26:22 -0500 (EST)
+Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id A45A82540099;
+	Mon, 18 Nov 2024 00:26:33 -0500 (EST)
 Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-04.internal (MEProxy); Mon, 18 Nov 2024 00:26:22 -0500
+  by phl-compute-12.internal (MEProxy); Mon, 18 Nov 2024 00:26:33 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
 	:feedback-id:from:from:in-reply-to:message-id:reply-to:subject
 	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm3; t=1731907582; x=1731993982; bh=r29dMPQRv+Gn3SilhPT9HklbBYac
-	hEKIULVz8FVwt98=; b=k7NwoTbW69mVKGydqbzLqZOLwbnxd/Q6r980KWc1Y8Df
-	otUwgllcAyx2ZbPDDUNjm7LrWS/U5FmG09vM/AKkryooRsdCJ5h2Zjl1NMjhooEP
-	hC3T/l+uSdtPgrIKE6KrAOo0HqiDUfXTZEcdyASfh2c3TUxZnBJPzMqpMRezqa4f
-	z8OkrbOK6Bb0Fgrp85xRkMpoTVWAkngkVB9kw2gfTlC0lVddpcGeSaXZURDEMFiD
-	Ff5LTcJIVGPv5DTkDQI5eW8Q7bneLf6f7ps8AMJ575ci9uuIkMyAAAJm+/O+3RFG
-	dNowIf2lTECpap5FKh4EHDQ6oHaMPtkggbjPhBBWjA==
-X-ME-Sender: <xms:_c86Z-nppbNlBAN3HW9LhvBqQWtpqYoAzoJPAP9DWjfHZjFWADuw8A>
-    <xme:_c86Z10KjobDkxTWd4y0ZXAZPgwisr8fhEZtRHTfDVeu3QvGRVNs-dMXXKr9zLqbe
-    RpaAedrNcqlMk4asGI>
-X-ME-Received: <xmr:_c86Z8pP5hLbM_s-ykr26uaN4lznYyv6GrFGs7puUnrDM5kAalsvoEEARy402o1j0Fa0uFgoHkIMBfcBC39sa4pM8QFHqD4Goc8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrvdelgdekgecutefuodetggdotefrodftvf
+	fm3; t=1731907593; x=1731993993; bh=r29dMPQRv+Gn3SilhPT9HklbBYac
+	hEKIULVz8FVwt98=; b=SC/iYJx+sKpMleDE+xAoZhBhE/3Mnusj5JjlquJ2nNxo
+	aGdk/YyMFID9FPszZaZWI/7PnZUG+23PMAjhoZR2UOGeothdF0YOG6dou44ab2NH
+	1CbaLvGoxA0jIPF/SZ0+FPHkfkZmy6XRElfDwR+QKJ+3mWMCP6+x2Vz017uEp7Lz
+	J8grHWFPTNbE4ypPMs1U7oCQ3FsKBl3J1X56L7wTo7uXG4J4TMn/rNJSLDX26qmJ
+	P06+A9u1+nE1dfMp9j0387k+tAhTwuUmWs+ejw4sJBnxzFnYDhfApwKwkB/Ef37F
+	TDGIDsxh8O6suOhaBhn0Ziec0a0wWrW+37eM3wQu2g==
+X-ME-Sender: <xms:CdA6ZzwpsTcUiNLU2Ah7gf5v1jYFrpd0EA8OT3UlSG6TgbbJy0zSuQ>
+    <xme:CdA6Z7SSwDQiDk4rGGw5FzuH811YOY1AXV-MiApsGj8Ise-gtbkXwnR_0qay_xfPS
+    HoRaZrybo7mM_Wtank>
+X-ME-Received: <xmr:CdA6Z9WGHMd0RNRJpqLudIoPl5pjdY58QlRH9vnxJ9ZgxMpu84DCY5lmRL7oaVMxbdtBCQARlPTLZrqn7jPjz1drDOlXDTWoQvo>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrvdelgdekfecutefuodetggdotefrodftvf
     curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
     tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
     hsucdlqddutddtmdenucfjughrpeffkffhvfevufestddtjhdttddttdenucfhrhhomhep
@@ -63,20 +63,20 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrvdelgdekgecutefuodetggdote
     hvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpdhrtghpthhtoheplhhinhhu
     gidqmheikehksehlihhsthhsrdhlihhnuhigqdhmieekkhdrohhrghdprhgtphhtthhope
     hlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:_c86Zynh2vbWVaZMwFGzijK3ECVZ90sf8Rx7OhDsYExA4jIpYj1JCw>
-    <xmx:_c86Z814jB2THHzekG-OxCtJAbDa07IG9FlbqBsk-jY5fqyBZJhElw>
-    <xmx:_c86Z5s5Om1p5moGEH1x5ykvTMtqhswRIyLtkC2XFPl3sC5EHS8OWg>
-    <xmx:_c86Z4VaDcnKdNaJSTzKUbCA3cnTfaIKYa94h7Rt3G1hMyc65ZLMPQ>
-    <xmx:_s86Z_TUGztPjDAlCPJacAiNc8nFkA1GfNMlPJx9uLG86Hx9CAxRb-a6>
+X-ME-Proxy: <xmx:CdA6Z9gyiK-uybv89e-UnMjKKSyShYW8bYHHkMfhUl9kFSs-LarbjA>
+    <xmx:CdA6Z1B6D4ZmtrCmJ3rbM3TRO3-Edt6Vt2W4a-X1DL-jhYTbDPH6Ug>
+    <xmx:CdA6Z2KQIZ_54T-8Q4lWF41eMV9dVohLksLxjF9k5NsuzI1aS2Miwg>
+    <xmx:CdA6Z0AX-HGbl7K8IvhikAPzOARtzXXA-GNj_q6F9i6nzS3HNCxoiQ>
+    <xmx:CdA6Zw9OnTiTE3LwE-DMvPIeLtuahOJb0GjVFAfhBFVvmr48RU8hLhXs>
 Feedback-ID: i58a146ae:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 18 Nov 2024 00:26:20 -0500 (EST)
-Date: Mon, 18 Nov 2024 16:26:49 +1100
-Message-ID: <768fa5661596788cd8e49b46cca853d3@linux-m68k.org>
+ 18 Nov 2024 00:26:31 -0500 (EST)
+Date: Mon, 18 Nov 2024 16:27:03 +1100
+Message-ID: <8ed2db60211f05173e66de2b084dc3f7@linux-m68k.org>
 From: Finn Thain <fthain@linux-m68k.org>
 To: stable@kernel.org
 Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Al Viro <viro@zeniv.linux.org.uk>, linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 4.19.y] m68k: Update ->thread.esp0 before calling syscall_trace() in ret_from_signal
+Subject: [PATCH 5.4.y] m68k: Update ->thread.esp0 before calling syscall_trace() in ret_from_signal
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
