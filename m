@@ -1,90 +1,96 @@
-Return-Path: <linux-kernel+bounces-412758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 449F29D0EAC
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:36:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 728CF9D0EB1
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:37:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AFD628276C
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 10:36:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AB921F21E5F
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 10:37:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2BF9198E99;
-	Mon, 18 Nov 2024 10:34:46 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D75491946A8
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 10:34:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA9871946CD;
+	Mon, 18 Nov 2024 10:37:10 +0000 (UTC)
+Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [83.223.95.100])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5166192D95;
+	Mon, 18 Nov 2024 10:37:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.95.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731926086; cv=none; b=IxCLoydUJY49SVM5sE46ZS98kB02peEQDYzVi9uKUuupFdy1sYUmyp9o8ql/oVqg3840ICJgYLP8Ykbfw5k607vrliPy8CrgGkHO4qpdoV9F+UeuYpTPKurCQGYUllQVP/JhPzL0e28/xm82Rxh4/D4D6t0pvLWdiSv3TZ32X0M=
+	t=1731926230; cv=none; b=i/E6m6EEVIqM3qrU2NTYk9/KHEAE4Pf2eoy6ndzotQ9nOqHTCM63C7i3mff8xZraGaVIczEnkuLRrNHndaUGvnl58DAgvFqgt1KqIXjux+BqvsgUqEZm3e7wyLmEZZGUfX9F0NoPf07XE7Z9iNTXcONX0+zjpDwIpYj2yVcgNkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731926086; c=relaxed/simple;
-	bh=M0g1JGb2ojBKt6plFtfcHGWM3eXuSKNK2UgHx12TrcM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fwraO8CqT6ZxQJObLN6lnpscK9fDp+Twb95DvAXsTbxe6ZoAe21MPQxJnkdkrDa4DoAzjkmuobU2urbmMznjgA73rNr0XwT7jw5386pw6YaXle8j/YTr5GvkUOEtDIKYwSbreeEbLl1nbMDaydx6hlXRUMJFqTj8PS+x8uJ2Uf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 37DC7169C;
-	Mon, 18 Nov 2024 02:35:13 -0800 (PST)
-Received: from [10.57.67.249] (unknown [10.57.67.249])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 0B7B43F5A1;
-	Mon, 18 Nov 2024 02:34:41 -0800 (PST)
-Message-ID: <ea311a21-959d-4985-9364-7c85d256ab09@arm.com>
-Date: Mon, 18 Nov 2024 10:34:41 +0000
+	s=arc-20240116; t=1731926230; c=relaxed/simple;
+	bh=Q09DCGRa5g/ILADMYzBlOOTEbKZi1gCfF5LYvWSg8zY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A/eLh6KdRpi0YuhnRwkC6r9qC7Rfol3vawic3dtIXbLC4AkAuXzY1FBAShGlpw51AeFonwPxwg/wQLkUL8XQr5fUNZ9pWQxvBmJ0dVNEpjoIL5dPcJu2VjZq3Fo/GwPr8Frt7VvEmXzFSMipgBmlqnWtt30o8lFVOCbribqx2DE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.95.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout1.hostsharing.net (Postfix) with ESMTPS id 0A21A300034CC;
+	Mon, 18 Nov 2024 11:37:01 +0100 (CET)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id CC0C65F8FA3; Mon, 18 Nov 2024 11:37:00 +0100 (CET)
+Date: Mon, 18 Nov 2024 11:37:00 +0100
+From: Lukas Wunner <lukas@wunner.de>
+To: Terry Bowman <terry.bowman@amd.com>
+Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, nifan.cxl@gmail.com, ming4.li@intel.com,
+	dave@stgolabs.net, jonathan.cameron@huawei.com,
+	dave.jiang@intel.com, alison.schofield@intel.com,
+	vishal.l.verma@intel.com, dan.j.williams@intel.com,
+	bhelgaas@google.com, mahesh@linux.ibm.com, ira.weiny@intel.com,
+	oohall@gmail.com, Benjamin.Cheatham@amd.com, rrichter@amd.com,
+	nathan.fontenot@amd.com, Smita.KoralahalliChannabasappa@amd.com
+Subject: Re: [PATCH v3 07/15] PCI/AER: Add CXL PCIe port uncorrectable error
+ recovery in AER service driver
+Message-ID: <ZzsYzN5QALTko_Ku@wunner.de>
+References: <20241113215429.3177981-1-terry.bowman@amd.com>
+ <20241113215429.3177981-8-terry.bowman@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 04/15] coresight: etm4x: don't include 'pm_wakeup.h'
- directly
-Content-Language: en-GB
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
- linux-kernel@vger.kernel.org
-Cc: Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org
-References: <20241118072917.3853-1-wsa+renesas@sang-engineering.com>
- <20241118072917.3853-5-wsa+renesas@sang-engineering.com>
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <20241118072917.3853-5-wsa+renesas@sang-engineering.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241113215429.3177981-8-terry.bowman@amd.com>
 
-On 18/11/2024 07:29, Wolfram Sang wrote:
-> The header clearly states that it does not want to be included directly,
-> only via 'device.h'. 'platform_device.h' works equally well. Remove the
-> direct inclusion.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
->   drivers/hwtracing/coresight/coresight-etm4x-core.c | 1 -
->   1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/hwtracing/coresight/coresight-etm4x-core.c b/drivers/hwtracing/coresight/coresight-etm4x-core.c
-> index 66d44a404ad0..559972a00fdf 100644
-> --- a/drivers/hwtracing/coresight/coresight-etm4x-core.c
-> +++ b/drivers/hwtracing/coresight/coresight-etm4x-core.c
-> @@ -23,7 +23,6 @@
->   #include <linux/cpu_pm.h>
->   #include <linux/coresight.h>
->   #include <linux/coresight-pmu.h>
-> -#include <linux/pm_wakeup.h>
->   #include <linux/amba/bus.h>
->   #include <linux/seq_file.h>
->   #include <linux/uaccess.h>
+On Wed, Nov 13, 2024 at 03:54:21PM -0600, Terry Bowman wrote:
+> Non-fatal CXL UCE errors will be treated as fatal.
 
-If you plan to take this as a collection outside of CoreSight tree,
+Hm, I wonder why?
 
-Acked-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> --- a/drivers/pci/pcie/aer.c
+> +++ b/drivers/pci/pcie/aer.c
+> @@ -1048,7 +1048,10 @@ static void cxl_handle_error(struct pci_dev *dev, struct aer_err_info *info)
+>  			pdrv->cxl_err_handler->cor_error_detected(dev);
+>  
+>  		pcie_clear_device_status(dev);
+> -	}
+> +	} else if (info->severity == AER_NONFATAL)
+> +		cxl_do_recovery(dev);
+> +	else if (info->severity == AER_FATAL)
+> +		cxl_do_recovery(dev);
+>  }
 
-Otherwise, I can pick this up.
+Nit: Maybe use curly braces and collapse both if-block into one.
 
+> +	cxl_walk_bridge(bridge, cxl_report_error_detected, &status);
+> +	if (status)
+> +		panic("CXL cachemem error. Invoking panic");
 
-Suzuki
+Nit: This will be prefixed by "Kernel panic - not syncing: ",
+so another "Invoking panic" message seems somewhat redundant.
+
+Thanks,
+
+Lukas
 
