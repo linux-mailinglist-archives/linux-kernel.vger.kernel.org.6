@@ -1,109 +1,113 @@
-Return-Path: <linux-kernel+bounces-412630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC5299D0BA5
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 10:27:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD10B9D0D1F
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 10:54:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 930BA282B4B
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 09:27:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69BEC1F22341
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 09:54:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ED3E18E361;
-	Mon, 18 Nov 2024 09:27:23 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DE081925B3;
+	Mon, 18 Nov 2024 09:54:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jsJjyLA+"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7C3C18C03E
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 09:27:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 339F017C98;
+	Mon, 18 Nov 2024 09:54:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731922042; cv=none; b=sXFDPxQMWcivDVNDr8ApN6rz6raFaoKvggcaD1dNuwDnxH+1AeHpwYfdd6vPRPho1KaLrsIT6IuMOyxwFFNUgsGAyS2tunoPlRpn57qg0QkzDrR40pXo2aZdcPvKMk6ZwEVK84myVbHLLWuaUvJQOCKZWdWIFe2Kggt5CWXvqkA=
+	t=1731923648; cv=none; b=d6tOIXuv2XQt31kJ5ffSG3kLWocgOqLnVAuxw8sqcjsjeux/cn+iBH7bJN2pUWNhsXf7hdC5rgVwipVhkBvIdi47Ww/5RF2GVLC8MpsCtCZejXXVbfUqdulwbzxaNHREebkwIlXs0j8zW1spN9iGnxwWLIVhaN8CSnNFdaQ3GhY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731922042; c=relaxed/simple;
-	bh=dCCdQD6c9JHMs8dqZRqRQboZUW3fsM/GJ2kNZhzY8sA=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=hWxLYgMVZBspbXDce3tHEQdvSBITq/E1tkKAAxb5EFL/pXYsP/7ycpmAmT9+G5CK13rrboRcLDXIl8Re9PNvW4gN3a+QrzaEZlewsyoS+osyVoGOl9qiE7do03omjoqxZZTiC3ImzpxtMbLWVwrY2CoExT+j4kzn6JrBITQKQjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-286-JJNqEPiRP5mr16F-M4gs8w-1; Mon, 18 Nov 2024 09:27:18 +0000
-X-MC-Unique: JJNqEPiRP5mr16F-M4gs8w-1
-X-Mimecast-MFC-AGG-ID: JJNqEPiRP5mr16F-M4gs8w
-Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
- (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Mon, 18 Nov
- 2024 09:27:17 +0000
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Mon, 18 Nov 2024 09:27:17 +0000
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Vincent Mailhol' <mailhol.vincent@wanadoo.fr>, Linus Torvalds
-	<torvalds@linux-foundation.org>
-CC: Yury Norov <yury.norov@gmail.com>, Rasmus Villemoes
-	<linux@rasmusvillemoes.dk>, Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-sparse@vger.kernel.org" <linux-sparse@vger.kernel.org>, "Rikard
- Falkeborn" <rikard.falkeborn@gmail.com>
-Subject: RE: [PATCH v4 1/2] compiler.h: add const_true()
-Thread-Topic: [PATCH v4 1/2] compiler.h: add const_true()
-Thread-Index: AQHbNfHJErTnWAqww06zGCD7FdQ1jLK7v5ZAgAAJngCAAAybIIAABtuAgAABLjCAABBOAIAAHt5QgABZWomAAGEx4A==
-Date: Mon, 18 Nov 2024 09:27:17 +0000
-Message-ID: <fea4cc244f2f4f1a8cde7c49548e74eb@AcuMS.aculab.com>
-References: <20241113172939.747686-4-mailhol.vincent@wanadoo.fr>
- <20241113172939.747686-5-mailhol.vincent@wanadoo.fr>
- <8bf6922f4bb143d1bc699aadd1c84607@AcuMS.aculab.com>
- <CAHk-=wiq=GUNWJwWh1CRAYchW73UmOaSkaCovLatfDKeveZctA@mail.gmail.com>
- <c2eabf2786c2498eae5772e5af3c456f@AcuMS.aculab.com>
- <CAHk-=whaUtqsgLGk3a+1+SJ2+KGK+GK-WbSK0dX2JpVN3bs0hQ@mail.gmail.com>
- <fab10eb9e70041c0a034f4945a978e00@AcuMS.aculab.com>
- <CAHk-=wgfpLdt7SFFGcByTfHdkvv7AEa3MDu_s_W1kfOxQs49pw@mail.gmail.com>
- <2b5282038b1f46bc9a658fb2b6d78350@AcuMS.aculab.com>
- <CAHk-=wiV+yL5qhm5FbeKz3FV6Zdi4oRv7rr3b_=16tfmwUMWFA@mail.gmail.com>
- <CAMZ6RqJ=ze66FuOrWvuY26T6p+9GftrAeVApbTLnT_HgRWJL_Q@mail.gmail.com>
-In-Reply-To: <CAMZ6RqJ=ze66FuOrWvuY26T6p+9GftrAeVApbTLnT_HgRWJL_Q@mail.gmail.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1731923648; c=relaxed/simple;
+	bh=tI+FgdPRksEAbc4BZG9O0l0bupYSJsgZBQ0vTwrBazs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SefkZs0w6RfN+GeFE32QcdaHp8Cpbt936IU/7Pi4+eOl1OH6SPlw7iVuo3a5DLYLeQYSf/z160oCTzwcHVNK6FH+P1a+hDiLR+Cv/pPXUmXe9/tXXjbLqfMyy54T8PyzMNaEncF/NVI0Ii5Gd+nO6rozIqKLOMnSjkC4qKWaZRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jsJjyLA+; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731923647; x=1763459647;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=tI+FgdPRksEAbc4BZG9O0l0bupYSJsgZBQ0vTwrBazs=;
+  b=jsJjyLA+HkTQtoTkNxa2NYL+ogpH79dlsBVMA2cLPRe5PiXP89Kl3jEp
+   ehRlU/f4hB5bxgp2M1wPSKDuPvehubN3ANEPNj8n2kfR18GJ2TaUaaqMD
+   vJbrdn5/PDhYOJApINHII4sOrpfj5vK/bCbfIdz3Ymf1G0aEhIuSkhu7N
+   MtzdLeoAs5OCaf4bBHx9WDvQlYafBmdXh36M4uRBOPgiVKp3B442Va43k
+   XNxp+xzYU2TlcVG37qgqCj2yj3DBQj5hZgRkE5BETlB60Gw1IgxKqn3na
+   qhZN7kusOVp0ScnKlBVgZFqvheXFpOPLbAYHtAdfnF8ZVdi4bkpeKOsWT
+   w==;
+X-CSE-ConnectionGUID: 9enKWM3zTTKAFiSzRrBq+w==
+X-CSE-MsgGUID: 9/GsmDXaRauxEho76TkFoQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11259"; a="42508321"
+X-IronPort-AV: E=Sophos;i="6.12,163,1728975600"; 
+   d="scan'208";a="42508321"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2024 01:54:06 -0800
+X-CSE-ConnectionGUID: fguY9azgTZO4+dracBBAZg==
+X-CSE-MsgGUID: UtVD6OTHTRW84Zwd/mYtjQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,163,1728975600"; 
+   d="scan'208";a="89303783"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa008.fm.intel.com with ESMTP; 18 Nov 2024 01:54:05 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 9DD43277; Mon, 18 Nov 2024 11:54:03 +0200 (EET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Mun Yew Tham <mun.yew.tham@intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH v2 1/1] gpio: altera: Add missed base and label initialisations
+Date: Mon, 18 Nov 2024 11:28:02 +0200
+Message-ID: <20241118095402.516989-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: XInyBU_nl4dTPst2xMtcpcvsso60r-7cRYgQG7il0ls_1731922037
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: 8bit
 
-RnJvbTogVmluY2VudCBNYWlsaG9sDQo+IFNlbnQ6IDE4IE5vdmVtYmVyIDIwMjQgMDM6MjINCj4g
-DQo+IE9uIE1vbi4gMTggbm92LiAyMDI0IMOgIDA3OjU4LCBMaW51cyBUb3J2YWxkcw0KPiA8dG9y
-dmFsZHNAbGludXgtZm91bmRhdGlvbi5vcmc+IHdyb3RlOg0KPiA+IFRoZSAiMCohKHgpIiBpcyBh
-ZG1pdHRlZGx5IGtpbmQgb2YgdWdseSwgYW5kIG1pZ2h0IGJlIHByZXR0aWVyIGFzDQo+ID4gIjAm
-Jih4KSIuIFNhbWUgbnVtYmVyIG9mIGNoYXJhY3RlcnMsIGJ1dCB0ZWNobmljYWxseSBvbmUgb3Ag
-bGVzcyBhbmQNCj4gPiBub3QgbWl4aW5nIGJvb2xlYW5zIGFuZCBpbnRlZ2VyIG9wcy4NCj4gDQo+
-IEkgZGlkIGEgdHJlZSB3aWRlIHJlcGxhY2VtZW50IG9mIF9faXNfY29uc3RleHByKCkgd2l0aCBp
-c19jb25zdCgpIGFuZA0KPiBkaWQgYW4gYWxseWVzY29uZmlnIGJ1aWxkIHRlc3QuIEl0IHlpZWxk
-cyBhIC1XaW50LWluLWJvb2wtY29udGV4dA0KPiB3YXJuaW5nIGluIEdDQyBmb3IgYm90aCB0aGUg
-IjAqISh4KSIgYW5kIHRoZSAiMCYmKHgpIiBlYWNoIHRpbWUgdGhlDQo+IGV4cHJlc3Npb24gY29u
-dGFpbnMgbm9uLWJvb2xlYW4gb3BlcmF0b3JzLCBmb3IgZXhhbXBsZTogKiBvciA8PC4NCj4gDQo+
-IEkgcmVwcm9kdWNlZCBpdCBpbiBnb2Rib2x0IGhlcmU6DQo+IA0KPiAgIGh0dHBzOi8vZ29kYm9s
-dC5vcmcvei81V2NidmFucTMNCg0KQXBwbGllcyB0byBwcmV0dHkgbXVjaCBhbGwgdGhlIHZhcmlh
-bnRzLg0KTmVlZHMgdG8gYmUgKHgpID09IDAgKG9yICh4KSAhPSAwKSByYXRoZXIgdGhhbiAhKHgp
-DQoNCkZvcnR1bmF0ZWx5IGNvbXBhcmlzb24gb3BlcmF0b3JzIChhbmQgPzopIGFyZSBhbGwgdmFs
-aWQgaW4NCmNvbnN0YW50IGludGVnZXIgZXhwcmVzc2lvbnMuDQoNCk9oLCBvbmUgYWR2YW50YWdl
-IG9mIHN0YXRpY2FsbHlfY29uc3QoKSBpcyB0aGF0IHlvdSBjYW4gZ2l2ZQ0KaXQgYSAnbG9jYWwn
-IHZhcmlhYmxlIHRoYXQgY29udGFpbnMgdGhlIHZhbHVlLg0KU28gdGhpcyB3b3JrczoNCiNkZWZp
-bmUgY2hlY2tfbG9faG8obG8sIGhpKSBkbyB7IFwNCglfX2F1dG9fdHlwZSBfbG8gPSBsbzsgXA0K
-CV9fYXV0b190eXBlIF9oaSA9IGhpOyBcDQoJQlVJTERfQlVHX09OX01TRyhfbG8gPiBfaGksICJp
-bnZlcnRlZCBib3VuZHMiKTsgXA0KfSB3aGlsZSAoMCkNCg0KSSdtIHRyeWluZyB0byBmaW5hbGlz
-ZSBhIHBhdGNoIGZvciBtaW4oKSBhbmQgbWF4KCkuDQoNCglEYXZpZA0KDQoJDQoNCi0NClJlZ2lz
-dGVyZWQgQWRkcmVzcyBMYWtlc2lkZSwgQnJhbWxleSBSb2FkLCBNb3VudCBGYXJtLCBNaWx0b24g
-S2V5bmVzLCBNSzEgMVBULCBVSw0KUmVnaXN0cmF0aW9uIE5vOiAxMzk3Mzg2IChXYWxlcykNCg==
+During conversion driver to modern APIs the base field initial value
+of the GPIO chip was moved from -1 to 0, which triggers a warning.
+Add missed base initialisation as it was in the original code.
+
+Initialise the GPIO chip label correctly as it was done by
+of_mm_gpiochip_add_data() before the below mentioned change.
+
+Fixes: 50dded8d9d62 ("gpio: altera: Drop legacy-of-mm-gpiochip.h header")
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+v2: explained why label should be initialised (Bart)
+ drivers/gpio/gpio-altera.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/drivers/gpio/gpio-altera.c b/drivers/gpio/gpio-altera.c
+index 039fef26546e..73e660c5e38a 100644
+--- a/drivers/gpio/gpio-altera.c
++++ b/drivers/gpio/gpio-altera.c
+@@ -261,6 +261,11 @@ static int altera_gpio_probe(struct platform_device *pdev)
+ 	altera_gc->gc.set		= altera_gpio_set;
+ 	altera_gc->gc.owner		= THIS_MODULE;
+ 	altera_gc->gc.parent		= &pdev->dev;
++	altera_gc->gc.base		= -1;
++
++	altera_gc->gc.label = devm_kasprintf(dev, GFP_KERNEL, "%pfw", dev_fwnode(dev));
++	if (!altera_gc->gc.label)
++		return -ENOMEM;
+ 
+ 	altera_gc->regs = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(altera_gc->regs))
+-- 
+2.43.0.rc1.1336.g36b5255a03ac
 
 
