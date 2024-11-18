@@ -1,113 +1,94 @@
-Return-Path: <linux-kernel+bounces-413160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FAD69D1458
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 16:22:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 254E19D14A3
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 16:44:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1366F282E63
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 15:22:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E05172837B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 15:44:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A41019AD7E;
-	Mon, 18 Nov 2024 15:22:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D044B1AC45F;
+	Mon, 18 Nov 2024 15:44:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="K/cKf/xc"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ckg/Vk0s"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23F501A9B51
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 15:22:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAA4F79DC7;
+	Mon, 18 Nov 2024 15:44:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731943341; cv=none; b=OQoqsRi5m+qORF7V00CXlMFfV1mLYb0s3S26h2bbhlv9x5EfgF4iWwvnjlZWQpxbhz/0Ez1klyBeBM2pQ3Vp2TxAtnqOxnyOuFpV+5Syrs2MsY2zXeXr3uojXTeDf97OmFxpNpx19bB7WnmSLZuH38kSPN8ZRhMhueed+jIkmO4=
+	t=1731944660; cv=none; b=Ppwon3F6BtD7kNtLuVN+v2TXAYf32jXZcZuloXVMyIx4A1ACvm/fKdCXPn4U1PBn0CHnffenA/WmMfRsyBCZmcRgK4IN+GbVDKIK0EZFAHlXR7iSfJaiDlfmbiViSZe6LbwtrcyVhLuJmCdoukpmq0eqQAiKL+mSyCliCrS9G5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731943341; c=relaxed/simple;
-	bh=rfscN9LreANPm71G6IcmzMglWMfix8zvLltWpIltm5o=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=LLAj+OrHtof2Cl+5Rb7Os+lIsgAAFA5HZQtpM1j/X8wfkWs4BN5rMYLw8Z9sf39OR/9WlL8aXflPcKGPwD3NDvlILOb9dZJvnWlk8A4EUgEuvND5fu2dMQ7CPEODzJ/KBhelwQ3r1Dlp8M1OCFo2y6WHKpR3FPJSE+qyp8FmYOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=K/cKf/xc; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id AB28940E0261;
-	Mon, 18 Nov 2024 15:22:17 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id UmJOoXyyW1as; Mon, 18 Nov 2024 15:22:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1731943333; bh=yJxQxwiuDlZNdXpGwAeh8WpiaiQhI2lII45pzAIQxuA=;
-	h=Date:From:To:Cc:Subject:From;
-	b=K/cKf/xcrxpw6h38RmFPrPOJzaj1FqGMhehibBCqDN5FEjuMJnMJZTo9ehfFM/TCL
-	 ew7KN5slGi/oq6p0I4ASwewhm1mPyZH+O2FPGoEJEvs426Y3NLTmjpBmX2iA7kTOZj
-	 cXLvdeUNp4sAEPD+j0sf9ggHP/3jgusoKPtAMZEVadBVp8wBZ6fOJK4p3PsusZ/irp
-	 5/G5SwycRD5zGuScaVc2wibi5aYUqLIMn4gZQxOb8cQMZzBWhZ6Gqhx5cRx4xRgc6J
-	 nY3vVyVXLzfCeX6lhF27A9HZXMOc52hTWzJL38Y5apJn1y51r9A5wg5fphBIAPf56f
-	 ANQmDH1Ib9kb8qzHqFlKziOI0vXM6o9nWQtdR1NuXJdk36h4ji6KKVwql+Z4NNz/pZ
-	 b/lnAP+svYerK7R8fvDr9wW0ztdYF38f8aDms2hO5JlI+kYtSP1W7kUWhfj2nOUnl4
-	 j6MAOnU8gZFrdeW2/p62za0C0dMk4LAbX6pcEVeoJK5WBlnVWIokfI+/2YDFxW8elV
-	 ZFZSrgA0/KczvDKji2yZ8rnQGQIcq087XjI8u6FzFUjOs2lJgGXCF2yqyYelgJ50Sv
-	 lugPWHbkUMQ/pbRmwVjUAiqbG5kY7uVpyiN+VEvaqEaJD9vxh+Q9MCbLb1gJ7GUYcH
-	 YaBgjVWtgeNFF0WwcPHYGraQ=
-Received: from zn.tnic (pd9530b86.dip0.t-ipconnect.de [217.83.11.134])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 66D7740E019C;
-	Mon, 18 Nov 2024 15:22:10 +0000 (UTC)
-Date: Mon, 18 Nov 2024 16:22:04 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] x86/platform for v6.13
-Message-ID: <20241118152204.GAZztbnHMPrcQOkacl@fat_crate.local>
+	s=arc-20240116; t=1731944660; c=relaxed/simple;
+	bh=6lfS5m0L5sAIIFt8Olzxk6U3G2hwwOEHH7gfpjErpxY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kp4plNKVW69dmXcnUB5sq+GyhnKVGKQqTHVYm3VdM8xMZKaG9UB1p28krZv5vnhmGW9LUGJUzU9nwXfQN2NDSQI+5Gs5NxqEOlySxIjPfk6MEHWy5t2j81Zsh6AnsfCDXH4daE2Ol8HYitC2feUxMuF5hF5B4LrEMQrjB2ElEEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ckg/Vk0s; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46FFCC4CECC;
+	Mon, 18 Nov 2024 15:44:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1731944659;
+	bh=6lfS5m0L5sAIIFt8Olzxk6U3G2hwwOEHH7gfpjErpxY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ckg/Vk0sB0utTnyYclq9aYw8ZIt6rOgyYWigZJV+xIyZ90ZFurgr/jmJ0XITw4Hxs
+	 AYQHlUUJAD6TBWqWhidg89x4ildm/+wSHYeDtX9m19PRqUo5UU06vKefhAg4xNjF4f
+	 wGDEhxe1xbd6p5nHKb0MKlonT3X9I1Y90krxcnDY=
+Date: Mon, 18 Nov 2024 16:22:08 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>, Will Deacon <will@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-s390@vger.kernel.org
+Subject: Re: [PATCH 0/3] sysfs: treewide: Remove spurious NULL in
+ attribute_group definition
+Message-ID: <2024111856-busboy-unglue-1022@gregkh>
+References: <20241118-sysfs-const-attribute_group-fixes-v1-0-48e0b0ad8cba@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241118-sysfs-const-attribute_group-fixes-v1-0-48e0b0ad8cba@weissschuh.net>
 
-Hi Linus,
+On Mon, Nov 18, 2024 at 04:02:46PM +0100, Thomas Weiﬂschuh wrote:
+> Generated with the following coccinelle script:
+> 
+> virtual patch
+> 
+> 	@@
+> 	identifier ag, pattrs;
+> 	@@
+> 
+> 	  struct attribute_group ag = {
+> 	    .attrs = pattrs,
+> 	-   NULL
+> 	  };
+> 
+> This series is meant to be applied through the driver-core tree.
+> 
+> See also:
+> https://lore.kernel.org/lkml/71fe4030-d6a1-47da-b8a7-28b899187168@t-8ch.de/
+> 
+> Signed-off-by: Thomas Weiﬂschuh <linux@weissschuh.net>
 
-please a single x86/platform cleanup for v6.13.
+All now applied, thanks!
 
-Thx.
-
----
-
-The following changes since commit 2d5404caa8c7bb5c4e0435f94b28834ae5456623:
-
-  Linux 6.12-rc7 (2024-11-10 14:19:35 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip x86_platform_for_v6.13
-
-for you to fetch changes up to 90f1b42b179487ee77d182893408cc1c40d50b13:
-
-  x86/platform/intel-mid: Replace deprecated PCI functions (2024-11-11 11:59:21 +0100)
-
-----------------------------------------------------------------
-- Replace deprecated PCI functions used in intel-mid
-
-----------------------------------------------------------------
-Philipp Stanner (1):
-      x86/platform/intel-mid: Replace deprecated PCI functions
-
- arch/x86/platform/intel-mid/pwr.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
-
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+greg k-h
 
