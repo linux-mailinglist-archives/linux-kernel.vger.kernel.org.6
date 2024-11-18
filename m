@@ -1,272 +1,188 @@
-Return-Path: <linux-kernel+bounces-413161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFB669D145B
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 16:22:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAF709D1456
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 16:22:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FC131F223C9
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 15:22:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87B9C1F21E51
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 15:22:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 370591ABEA6;
-	Mon, 18 Nov 2024 15:22:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EE751AC45F;
+	Mon, 18 Nov 2024 15:22:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="KULXIRXh";
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="KULXIRXh"
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2072.outbound.protection.outlook.com [40.107.22.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zKUnbotV"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 768CE1A9B51
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 15:22:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.72
-ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731943354; cv=fail; b=Wuedngd3nVfvvL7w+UZrFbtPeIxJNRw/uya8HPplXTiAporlwq3JyS1S9qJnBW/8NqxZ2NvFXRah/BHrGGFZuP+amEinrXxr++6DvlM1xHrK0wdv2LpeYun0CKMZV/fBfm7oGbsrPsBn9XtDiBsHiznn9oANHuJl9IF4DCfq754=
-ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731943354; c=relaxed/simple;
-	bh=wR8iE3g/yn6jjXx8zn08fb9AHEjMnUrZrjLg6f5G4bY=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=LuivXseT94NAmBZcaCMJJmbtnVP0SZTufWbFvTFNQNLeWglH9VQxj0eWOBmbzb1EOBXWHw2P3BCnzdpDVAN6LrjUMLqcvwX/OSFqk58k4LmFOCjEzXt964M08n56TON9fACSwLpaHR96XguMnKMd3p2l5T8DXqj743/x6VqVkSs=
-ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=KULXIRXh; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=KULXIRXh; arc=fail smtp.client-ip=40.107.22.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
- b=oHQWKV2f2Agt3zeVjGWc9UO3lQzGBxtidSVvLBGDozxrj5DYpvZbpIA6hy9/zmgrr6lJxRk1gS5Z1O2oNWnmOVXOXzG3sOJXJiH5Ca8fyTpswZBftJqXKw0zMdI3qUgYo4hOkLvx1Q/rUcEtbmGc9NXhSsbDBzX4LhCtsRQmVc6FG64jqFL2OiH6EHWBSb+3ALGDm2rSZOxAtPEUHGV97S/HgALquYvyQmpXWubk8fdO07rckoq3vgXx4KgPJIYf7u6HMxzVs93uRPpgVTEIFAh037mvpOIV7LmxA7JnZKc51Bll5dtjQxR38ZZB0jl8cWvnAH0Hr9O0yD+OonX6CA==
-ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=NBQB3tGPXPbSrSjl5rSCs75wItOFoSzWVcYhVKWY2Yg=;
- b=O5R0YjmP3EaXrI5sQhhnSS/6lcoG7G3WtqyKCM/9mdj+J7vA/DlffgNIsT6BDHzpfJ0fwaj7Cf4edLu06SnD8Z0IaVmQxlLR2y4PU8z3k9qSnCTedVbQ/gqAY07rw5B3lpr83gzYkkXj71MGw4bcGTO1JoXoqnTkLdmRDY8dTwVPHrp1dfFYxoz550s/i5jlrr01gwR/cWCmyMv+F/9UVuUvnM/150h9YPJ9Ov7GhxGaA5s9kdim6lVt0PB2efaMXJV3ocxPi93p2kvOH+JVQGux/yU2E9eZhwVvuIRdfAZRRnTqjmFovI67wulJuvwh5NSfsoc7tb/PtFc8OE/0fA==
-ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
- 63.35.35.123) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=arm.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=arm.com;
- dkim=pass (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
- spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
- dmarc=[1,1,header.from=arm.com])
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NBQB3tGPXPbSrSjl5rSCs75wItOFoSzWVcYhVKWY2Yg=;
- b=KULXIRXhlkGBlw7LbRMoF1KjCHbkHNZYk5Dn9M0MvGpiubVMePgcozi3SU8AG2lOlMkwW505xpwmGIQThKiqaRKanKms9UvaXV0DDue11QhHCFxh4olups36E+UtgNmJlhJwwzLKSzDQH3COYYbX83EOq4kOYHBqV/B05UX2uSM=
-Received: from AM4PR0302CA0003.eurprd03.prod.outlook.com (2603:10a6:205:2::16)
- by PA4PR08MB7484.eurprd08.prod.outlook.com (2603:10a6:102:2a8::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.23; Mon, 18 Nov
- 2024 15:22:27 +0000
-Received: from AMS0EPF000001AB.eurprd05.prod.outlook.com
- (2603:10a6:205:2:cafe::8a) by AM4PR0302CA0003.outlook.office365.com
- (2603:10a6:205:2::16) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.23 via Frontend
- Transport; Mon, 18 Nov 2024 15:22:26 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 63.35.35.123)
- smtp.mailfrom=arm.com; dkim=pass (signature was verified)
- header.d=arm.com;dmarc=pass action=none header.from=arm.com;
-Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
- 63.35.35.123 as permitted sender) receiver=protection.outlook.com;
- client-ip=63.35.35.123; helo=64aa7808-outbound-1.mta.getcheckrecipient.com;
- pr=C
-Received: from 64aa7808-outbound-1.mta.getcheckrecipient.com (63.35.35.123) by
- AMS0EPF000001AB.mail.protection.outlook.com (10.167.16.151) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8158.14
- via Frontend Transport; Mon, 18 Nov 2024 15:22:26 +0000
-Received: ("Tessian outbound 99d3b165dfe9:v490"); Mon, 18 Nov 2024 15:22:26 +0000
-X-CheckRecipientChecked: true
-X-CR-MTA-CID: 61c78397ef9216f5
-X-TessianGatewayMetadata: WiQ7RdN0t9x8Xot5PkRzjJcZbLmwcL0QxD6+lFINXKRdECeo/IqvCb0FB3E5mpbd2BVo0m9wYEqz+wfBX+TpZYCW8ItqTRvZaL2B2DpxPSYbl3ZJjgyosEoPgRovM+Tf0CH3no83T4U2ZSKOS+pNVS/q0gZl85PSNyKdYihVg4o=
-X-CR-MTA-TID: 64aa7808
-Received: from Lbfceeb3ba0a6.1
-	by 64aa7808-outbound-1.mta.getcheckrecipient.com id 40365822-C5F6-4E32-8B98-174E90EF275E.1;
-	Mon, 18 Nov 2024 15:22:19 +0000
-Received: from EUR02-DB5-obe.outbound.protection.outlook.com
-    by 64aa7808-outbound-1.mta.getcheckrecipient.com with ESMTPS id Lbfceeb3ba0a6.1
-    (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
-    Mon, 18 Nov 2024 15:22:19 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ivaiMtuTvBIaS3ooLwh9GVsarxShY5KPCk/8BBBQqTo4OJ2t8U6L6sdOEjXhw2D6udBIrekfg2maLv3ec+lxD6uwzfQBIesuuwcdGBYwDIJcFOnEgKA7H82whRQDkvi9HOFCZsq9HYBkoS9DdHLUGmhwReij/Q1+18rx9R+r9DVqox/2OxTYAsG4UkgCLd8HvhUGIyIgEY9Ksi9x0iJ1SyDVTdoFsEkR/ydNWSvrLb7V7PoOGn7mTu91CVhPFJ3PDcAQjnvB0EbpEqWDgGeTuvZeFMTBCYp0ozcYGXrDNFZKEg7kK5ZK0RCwZA+OFHmdtGHpqCM+oh9ntEMX3q2Mmw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=NBQB3tGPXPbSrSjl5rSCs75wItOFoSzWVcYhVKWY2Yg=;
- b=TV5qbJ9jkjlbHEnKKbSzCCWsKfhRg/5RtenCBT5QQahHROYlAl0W28uh9skA6J1F0yNfpMjwwHozA7XHABYm/8fNkZDeSCIreVdgYIvhcg1UpxaLB67W7nlgk60lyMTgRBvXPzlWHgbQUjvRu2Jpb2TWl6tnvKxM4NOx3AmT0i3h68nlFStEin9Ix25ojhjIp2p2FWCFe/KPe7isQE74RSMZDyPxW7AgXFY5SmYvoaCFSGlqoeRcSM1nptm9fJMTHTUJprxdAwBpR+1Oel+lNvafJtaOrbDybXIrTb1foQt93PZtVGUcRAshoAc6ftfDcN07Dq/0UnLh1SKfUW5Hhg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
- header.d=arm.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NBQB3tGPXPbSrSjl5rSCs75wItOFoSzWVcYhVKWY2Yg=;
- b=KULXIRXhlkGBlw7LbRMoF1KjCHbkHNZYk5Dn9M0MvGpiubVMePgcozi3SU8AG2lOlMkwW505xpwmGIQThKiqaRKanKms9UvaXV0DDue11QhHCFxh4olups36E+UtgNmJlhJwwzLKSzDQH3COYYbX83EOq4kOYHBqV/B05UX2uSM=
-Authentication-Results-Original: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=arm.com;
-Received: from VI0PR08MB11200.eurprd08.prod.outlook.com
- (2603:10a6:800:257::18) by DB5PR08MB10062.eurprd08.prod.outlook.com
- (2603:10a6:10:48f::10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.21; Mon, 18 Nov
- 2024 15:22:15 +0000
-Received: from VI0PR08MB11200.eurprd08.prod.outlook.com
- ([fe80::d594:64a:dfc:db74]) by VI0PR08MB11200.eurprd08.prod.outlook.com
- ([fe80::d594:64a:dfc:db74%7]) with mapi id 15.20.8158.021; Mon, 18 Nov 2024
- 15:22:15 +0000
-From: Karunika Choo <karunika.choo@arm.com>
-To: boris.brezillon@collabora.com
-Cc: nd@arm.com,
-	Steven Price <steven.price@arm.com>,
-	Liviu Dudau <liviu.dudau@arm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/panthor: Simplify FW fast reset path
-Date: Mon, 18 Nov 2024 15:21:52 +0000
-Message-Id: <20241118152152.2921611-1-karunika.choo@arm.com>
-X-Mailer: git-send-email 2.25.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: LO4P265CA0171.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:312::17) To VI0PR08MB11200.eurprd08.prod.outlook.com
- (2603:10a6:800:257::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCF7A19AD7E
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 15:22:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731943327; cv=none; b=lkuSMf8UVdaa33NDHH7iykCK/7JyIvuJWAsHfsInVQjsHWyguZyvWxix8nQx9mF+x+MVxSCiaRhaZGTJyG3dvvZ98HVleR/EzTtRu4smZzRJdUefGCabx4Avea5mGyNnFufS+R3SLflG8wg95HZLZ1tDAJg2X0uDpyjME10mNVg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731943327; c=relaxed/simple;
+	bh=jn5XT3hwcJVDiUuJsC/BYq6tWkmdqvb3lDZ1dl8ivUQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RwjRsARMflsH4owq95Al563J2NppEmtqBn/fyYpXumMHHAI9w2zyi27M+V3RjaihV6NjmBcofiZWia1wNyH2yEjv/IumyyRFiHKRPZF4BV0Zy1rup+6bpCfNU9g7ZHkszTWkMm+RyAulIqQR0Ye30XJJ/2KYsSZsmsNdpASUt0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zKUnbotV; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-432d9bb168cso24896785e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 07:22:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731943324; x=1732548124; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=yS/g2Uu8h88uKdC3kSKMEY90IlJiDjaSvhZlfRQ3+U8=;
+        b=zKUnbotVDS6JOrWURjZxpf86UHiOuWgrOLT9lyAoaO2gxJAmGkYTYl7jNK+abkMwiO
+         9Fzg/PigzURuTp/OGG9pudkulbQ5KhElgjKLjk1j+v1MBOWxuFwiXi11OjACb24PlEsu
+         eAOIk+Y8ySa/BMyArJ5yVXBo8nbGmjhkmrKWN+p70xP6JcnmI+bYVEcYNjTjJemmWgys
+         LfPqIQQSjQziYy7N+mw+puWP/7+0WHuZCUNDh/sS0EoPSGbrlA9rngbDDlJmNbvgCioO
+         vXknR7mVSZYRgxcwNIsIwrcHPnEPnaF1EubH8LFB6r0VW8PgwUebXv4DUdYBjrq7Mguu
+         npJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731943324; x=1732548124;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yS/g2Uu8h88uKdC3kSKMEY90IlJiDjaSvhZlfRQ3+U8=;
+        b=jM7rU/8warkqVuWbKjr/k0GvGGFr0iONZgm2uZIGRCef0HiKAJLFHkxGM26hTS1R9w
+         KHXjh3rdWZ8AfHihMAX45VVi4AFPR7rsYzVTiVxBdy1AuU0hCX7NFEmTUWm6m4yWaAq3
+         PUGqZrCszbWc4Jn7CSZANh1DX9F/gq2GqcXV2OXdX+4VemLPKVJveh0uZtJstG/HmtMD
+         aHHsb1eLT2Wujt4hP6wXC8vHO/fJmgfVAikrZRC6vk6QQccaLpTLPSvQwW93gNlavZOL
+         22CQW4Byt5gSaZaKXeYBZd3enr4R1Gh+dWGbIwKsQuK/OY86B0HoRPey4yNNWYIpjQAD
+         OW4g==
+X-Forwarded-Encrypted: i=1; AJvYcCXiMlwTB97+V+ms901EUbjEGuNFgvallWOn2C2tHsn+JZ3Mvw8v7peGrEVf3F8cZJ+anvQYZURHlzqbPQ8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJO2+oU0uDBt7NlBHGlAaKq7cyaNQ4nN4o1V7gG0lhTGhj6uEX
+	wR+0UHJJtL9n1b6iEezVz7BfFn1EXCptiPhlsj54Vki4R/J7ZB9t5rsesQWLKCo=
+X-Google-Smtp-Source: AGHT+IF5i912SxZj9aROjXMiBc6XZF1g7Bx1Z3E6lXHo6tsdVujyqT7a1uumivdREl9IH5QQ7U8UBQ==
+X-Received: by 2002:a05:6000:69a:b0:382:2386:ceaf with SMTP id ffacd0b85a97d-38224fd034amr12681351f8f.27.1731943324150;
+        Mon, 18 Nov 2024 07:22:04 -0800 (PST)
+Received: from [192.168.0.14] ([79.115.63.27])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-382308532cbsm9147678f8f.88.2024.11.18.07.22.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 Nov 2024 07:22:03 -0800 (PST)
+Message-ID: <603407a6-93c7-4d45-b171-7bbc871a3569@linaro.org>
+Date: Mon, 18 Nov 2024 15:22:01 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-TrafficTypeDiagnostic:
-	VI0PR08MB11200:EE_|DB5PR08MB10062:EE_|AMS0EPF000001AB:EE_|PA4PR08MB7484:EE_
-X-MS-Office365-Filtering-Correlation-Id: 379578f5-673f-4fa6-ae82-08dd07e4cf4f
-X-LD-Processed: f34e5979-57d9-4aaa-ad4d-b122a662184d,ExtAddr
-x-checkrecipientrouted: true
-NoDisclaimer: true
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam-Untrusted: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info-Original:
- =?us-ascii?Q?sg9JdL5ZcNLz6oWmZAhdHGTVIIKwA6noBRu2k449pFjrmND2/fGgq6QjINws?=
- =?us-ascii?Q?0rEOJSx9aNglSlOQqoR0pMTk3vQQuJvm/AR27Gjtct5M5zxBiQpKkX3oK3fk?=
- =?us-ascii?Q?pcmtf7q4Vo7FECzkFbeR+tGTc+AOu/8UR6DOyrtVAMxi8brkL+BQkPnWPTow?=
- =?us-ascii?Q?Mye4c5f7vJO0K1Ho3CMZWTQfczz436Vpli2aukG2thHkmt+NtcSKsQr1zWRG?=
- =?us-ascii?Q?J04o0nUwprCPtru/j+4G0km4O7Bl21Qj1q/n3sr4vrHu2K8ghxcJ8zZrMvx+?=
- =?us-ascii?Q?6lAbAMN2izv+p3/TqHsbEPFkhn/+09RGNZYMBPuOWC5GwJ9hKGNjgbM0GwJZ?=
- =?us-ascii?Q?ZQagzIMsOtxwhTjf+7SvTUiKUt2FsNPY1RYuN5BtpD67aGAsOtboid2CjYGL?=
- =?us-ascii?Q?UdqKDTiTLzb3PzlYH4a/xhkYH8N08oklLS3KYkM1rJt9YGIDGOKtTLXRycir?=
- =?us-ascii?Q?DekVEFpEyqD870pvMiAxtcG3TQsz5f8p9D/2UtmoCRE+zIDXG+ovEpZQhJ/4?=
- =?us-ascii?Q?IIwK3fr35VgbKgAAgMd/GEMyLnnpfPIndjSiP5TWcp+RrraCSpihGGeSHEy9?=
- =?us-ascii?Q?cM3ZG2EKrDX7CIbGy1nMJ6Ib6W+zYRoPkY+YoLH3D1cRfMKBwesxEarOcKYD?=
- =?us-ascii?Q?SL0u9DZF7VJiHGUBYYb5KyN6nnMK5JB394AZ7GcTH0zV7NzHBEKa6QNEw6HT?=
- =?us-ascii?Q?SJYYlyau4fVtyqFcqDOO6gswizhe0mwTlQ+dsiHtivv/JkRtoW0jN24gYEC3?=
- =?us-ascii?Q?q55AMdWnREycPvSq3407T0qF83ggmD0eAC1UP45aeoKzwriwR9aPbDFeVnpn?=
- =?us-ascii?Q?AIRBJ9qYVAKqrJLBWBLlUbOrMykpza0G+XvLnCoTIu3pQLhztWUZyT2muQlx?=
- =?us-ascii?Q?2zfBPsMlGUztT1L3xKysVRWqqP6kCdE/Tbv4pD5spOEYOtb9vGM68lzhlp1j?=
- =?us-ascii?Q?SrJLQLsSw+izPRLVUXeZGjCdrWVuCemG7zlrRNKnG1r4CKc6wqvnM/e4+urf?=
- =?us-ascii?Q?Kju9crMqyfTwMMdRnvEOrN/NFRRokTNBvBDNC4Vh11jAJ9/lF/qRfyjaZs0t?=
- =?us-ascii?Q?0CgPqfqc5rBueLZCScAIb4bKxT9YM7+9dfHyCpbinPbKZa6dJs05k3cxVjA/?=
- =?us-ascii?Q?koNeB2lGbfnCHoocP/5uQNFAEDOsd9GyYrhdzc/iiPj+bD9xdsFDa7g7JMJF?=
- =?us-ascii?Q?Wf7DYtPx8ZkyzKY6CvknWSQAh2fT/Mwn+RWxLVvcBRqHuBO6helfaUoe3+E4?=
- =?us-ascii?Q?NSUCcUuiHs1IxHz2i/l+FQExW8CVw7XuNI+pjca8FHnzwvNBU3RtlFFUXuJ6?=
- =?us-ascii?Q?sA62mdrfc7YFoavdi6r3mulx?=
-X-Forefront-Antispam-Report-Untrusted:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI0PR08MB11200.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB5PR08MB10062
-Original-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=arm.com;
-X-EOPAttributedMessage: 0
-X-MS-Exchange-SkipListedInternetSender:
- ip=[2603:10a6:800:257::18];domain=VI0PR08MB11200.eurprd08.prod.outlook.com
-X-MS-Exchange-Transport-CrossTenantHeadersStripped:
- AMS0EPF000001AB.eurprd05.prod.outlook.com
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id-Prvs:
-	24b80560-b09c-4d56-ecf6-08dd07e4c87c
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|14060799003|82310400026|1800799024|376014|36860700013|35042699022;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Ol8neUgUPGw4HnhakQPCstDGCBFYmVNAFSXG8K7fvMEAMtzgxyHPZH/LPpfg?=
- =?us-ascii?Q?uySQb7dS07/tb+OqtABy2+7/dITrQdPR38lnQIX1FkL6lHgPKN84dF3aEgKD?=
- =?us-ascii?Q?LCN9xQztcyA9zwCAkiG7lSeDkHtMLqoqmUtuL1vyxYt+6fpvmKke0xHdMQgT?=
- =?us-ascii?Q?4Q8aWZcnPxVHSYcNMF/z/9Cm2SMUqDMI+MGwLDYherJ+v7vOTZ4tYoatIY9s?=
- =?us-ascii?Q?mqWARsiifIJ1TUe+KhunefW4grwXbR4USw9Y9rGV1BVfRlEFp4hK8ToUngrB?=
- =?us-ascii?Q?4NsA4Y2tOUg1QxHB+RhVH9PdeNeRJn6At3E921xBOV4VQ08sHWRNMVSgxUJq?=
- =?us-ascii?Q?La6ZtMjeWkPcWLIctn9OLcZCNbgKouM6WvQHCloEBHdurmZIc/d3K/dx9XlO?=
- =?us-ascii?Q?JB2I9fJSP4jhcl37SETIjONxQZzZq6rQ/auOkPslP/DQYrurykNjy22nAYd9?=
- =?us-ascii?Q?dtWcgvP9m98gLsEvafP+ku0xCgHPqXom2pVT81oh9cbyz15y+ORAMplMOksh?=
- =?us-ascii?Q?k2bg8gJcwcvpm81Ow8y1CXQd0s8uWiN2EWU7WvmWI3wD/FOvZ0iBBqhuYQML?=
- =?us-ascii?Q?Dwo8fWmK+YTNexLYGoIYW5m03LQlwdStLIn5ArKzaQFvCLyFYdoFc+yJs0Xr?=
- =?us-ascii?Q?AmQ+hVfnrf05tWKXOdjKqobKaj+2mcj4eFhrxH3ERHjS4dyf3M/xLW1lNLui?=
- =?us-ascii?Q?5h7KmymGhi7YPwUwXYM75kB55tRu1UgRFwfz0RWVhccVqxjP091CbHDIPNuo?=
- =?us-ascii?Q?8/28YZGcw+7OVc8c+IACDBWYNcC2Q07gVEJNaaBZMAYCzhid58CWrlYjZvIx?=
- =?us-ascii?Q?yB8XFkDyDeXlfUhwHSDzjXDJWi7R0Y681e6aTyhT3X4DjtIWzBUDREesQuK3?=
- =?us-ascii?Q?knFJME33K2pDgyGoRQsjRfwRv7QQJAJyQ33gnVZtLphKfOsLWzUUb+tJZwlw?=
- =?us-ascii?Q?JvCuJsUNGkKXbgRbb3a2Tvun4mdDMoekXaHziTYaLu6muwShyzTGG/AO6TxM?=
- =?us-ascii?Q?yOtnWWsUEWrIzVAwZgophQQGfK1uhA9YqzHTYau2I/uNQjfNzYz8TCpIzJdP?=
- =?us-ascii?Q?MayAoF3iDO4dDAJz8erQDSrUqkI2D7ghFhz8dyqu8f7mb44IyLX9Xjp4Gz0i?=
- =?us-ascii?Q?yOkZkDeEYFuFcXguAKurnU60EtpODXsj4BASAu8m63SPVIe2KN/kcTxPfi72?=
- =?us-ascii?Q?iZaZjINfw2haqF7emlT8JtH6qqgLT84z0zIH9tHvfOvJwOoVQwg7FhKVmXYO?=
- =?us-ascii?Q?7X1EBYxs5jLZFLOMG/cVMbUymLEafcq/85yjXf+gu1rddGeH0zZustwGO18I?=
- =?us-ascii?Q?w83O9UCBfinvO3cXBtS5fB7nl8juY1+zahGwIgzAdVEKkXDqLicnJy1Mo2ki?=
- =?us-ascii?Q?pglppD8ZWzr5nXBGvTjTDQC+Hjvnph5aLUwCfHUUJAEeiEMTog=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:63.35.35.123;CTRY:IE;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:64aa7808-outbound-1.mta.getcheckrecipient.com;PTR:64aa7808-outbound-1.mta.getcheckrecipient.com;CAT:NONE;SFS:(13230040)(14060799003)(82310400026)(1800799024)(376014)(36860700013)(35042699022);DIR:OUT;SFP:1101;
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Nov 2024 15:22:26.7897
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 379578f5-673f-4fa6-ae82-08dd07e4cf4f
-X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[63.35.35.123];Helo=[64aa7808-outbound-1.mta.getcheckrecipient.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	AMS0EPF000001AB.eurprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR08MB7484
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] mailbox: add async request mechanism to empower
+ controllers w/ hw queues
+To: Jassi Brar <jassisinghbrar@gmail.com>
+Cc: krzk@kernel.org, alim.akhtar@samsung.com, mst@redhat.com,
+ javierm@redhat.com, tzimmermann@suse.de, bartosz.golaszewski@linaro.org,
+ luzmaximilian@gmail.com, sudeep.holla@arm.com, conor.dooley@microchip.com,
+ bjorn@rivosinc.com, ulf.hansson@linaro.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, marcan@marcan.st, neal@gompa.dev,
+ alyssa@rosenzweig.io, broonie@kernel.org, andre.draszik@linaro.org,
+ willmcvicker@google.com, peter.griffin@linaro.org, kernel-team@android.com,
+ vincent.guittot@linaro.org, daniel.lezcano@linaro.org,
+ Arnd Bergmann <arnd@arndb.de>
+References: <20241017163649.3007062-1-tudor.ambarus@linaro.org>
+ <20241017163649.3007062-2-tudor.ambarus@linaro.org>
+ <CABb+yY0_NSLAs-mP=vHeNsfKRcS2hcFWmWfcvsr=nFcXQOi5uA@mail.gmail.com>
+ <a7274a6e-1da3-47f2-8725-b0c534bf6608@linaro.org>
+ <1df84f83-40d7-4719-a9f9-dfa10d25c667@linaro.org>
+ <CABb+yY0H4cATB9Gz2EitnR6R179aKDzR1N87fz7Hq9Hm-_8Rmw@mail.gmail.com>
+ <779fc372-a4d9-4425-a580-2173a0f6a945@linaro.org>
+ <CABb+yY0bhjRYLwyo-t6djttP2bq_irX+Rad71wDX++nQV69cAw@mail.gmail.com>
+ <a2065dc8-10da-42e9-b093-b0b541ca2305@linaro.org>
+ <CABb+yY3W3Cv7a6wZhvJe80xn5sp1Y_A_nbY_=cj0U4Z1YC61vw@mail.gmail.com>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <CABb+yY3W3Cv7a6wZhvJe80xn5sp1Y_A_nbY_=cj0U4Z1YC61vw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Stop checking the FW halt_status as MCU_STATUS should be sufficient.
-This should make the check for successful FW halt and subsequently
-setting fast_reset to true more robust.
+Hi, Jassi,
 
-We should also clear GLB_REQ.GLB_HALT bit only on post-reset prior
-to starting the FW.
+Sorry for the late reply, I was off for a while.
 
-Signed-off-by: Karunika Choo <karunika.choo@arm.com>
----
- drivers/gpu/drm/panthor/panthor_fw.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+On 10/29/24 3:59 PM, Jassi Brar wrote:
+>>> If your usecase is not currently handled, please let me know. We can
+>>> discuss that.
+>> It's not handled. I have a list of requirements I have to fulfill which
+>> are not covered by the mailbox core:
+>>
+>> 1/ allow multiple TX in-flight. We need to let the controller handle its
+>> hardware queue, otherwise the hardware queue has no sense at all.
+>>
+> As I said this one is currently handled by assuming TX-done by
+> depositing in the h/w queue/fifo.
 
-diff --git a/drivers/gpu/drm/panthor/panthor_fw.c b/drivers/gpu/drm/panthor/panthor_fw.c
-index ecca5565ce41..6d41089b84ab 100644
---- a/drivers/gpu/drm/panthor/panthor_fw.c
-+++ b/drivers/gpu/drm/panthor/panthor_fw.c
-@@ -1098,17 +1098,11 @@ void panthor_fw_pre_reset(struct panthor_device *ptdev, bool on_hang)
- 		panthor_fw_update_reqs(glb_iface, req, GLB_HALT, GLB_HALT);
- 		gpu_write(ptdev, CSF_DOORBELL(CSF_GLB_DOORBELL_ID), 1);
- 		if (!readl_poll_timeout(ptdev->iomem + MCU_STATUS, status,
--					status == MCU_STATUS_HALT, 10, 100000) &&
--		    glb_iface->output->halt_status == PANTHOR_FW_HALT_OK) {
-+					status == MCU_STATUS_HALT, 10, 100000)) {
- 			ptdev->fw->fast_reset = true;
- 		} else {
- 			drm_warn(&ptdev->base, "Failed to cleanly suspend MCU");
- 		}
--
--		/* The FW detects 0 -> 1 transitions. Make sure we reset
--		 * the HALT bit before the FW is rebooted.
--		 */
--		panthor_fw_update_reqs(glb_iface, req, 0, GLB_HALT);
- 	}
- 
- 	panthor_job_irq_suspend(&ptdev->fw->irq);
-@@ -1134,6 +1128,11 @@ int panthor_fw_post_reset(struct panthor_device *ptdev)
- 	 * the FW sections. If it fails, go for a full reset.
- 	 */
- 	if (ptdev->fw->fast_reset) {
-+		/* The FW detects 0 -> 1 transitions. Make sure we reset
-+		 * the HALT bit before the FW is rebooted.
-+		 */
-+		panthor_fw_update_reqs(glb_iface, req, 0, GLB_HALT);
-+
- 		ret = panthor_fw_start(ptdev);
- 		if (!ret)
- 			goto out;
--- 
-2.25.1
+This may work indeed. I would have a TXDONE_BY_ACK controller. Its
+`.send_data` would be a one liner, where I just raise the interrupt to
+the firmware. TX ring would be written by `cl->tx_prepare()`.
 
+Then in the protocol driver I would do:
+ret = mbox_send_message(mbox_chan, msg);
+if (ret < 0)
+	return ret;
+
+/* TX-done when depositing in the h/w queue. */
+mbox_client_txdone(mbox_chan, 0);
+
+ret = exynos_acpm_wait_for_message_response(mbox_chan, msg);
+if (ret)
+	return ret;
+
+> You will have the same perf as with your attempt to have "multiple
+
+I'm still forced to pass all the messages to the mailbox's core software
+queue. I also don't need the locking from the core. For my case the mbox
+core just needs to do:
+
+if (chan->cl->tx_prepare)
+	chan->cl->tx_prepare(chan->cl, data);
+
+return chan->mbox->ops->send_data(chan, data);
+
+Would it make sense to introduce such a method?
+
+BTW, what are the minimum requirements for a controller to be considered
+a mailbox controller? As you saw, I'm using the mailbox controller just
+to raise the interrupt to the firmware, no messages are written to the
+controller's buffers.
+
+Does message size matter? On my device the ACPM protocol is using
+messages of 0, 2, 16 or 32 bytes, but it also allows the possibility to
+pass a pointer to an indirection command SRAM buffer, where one is able
+to write up to 412 bytes.
+
+> in-flight" while neither of these approaches handles in-flight
+> failures. We can discuss this.
+
+Do you mean that there's no retry mechanism? The crypto subsystem has
+one, we may look at what's done there if we care.
+
+> 
+>> 2/ allow to tie a TX to a RX. I need to know to what TX the response
+>> corresponds to.
+>> 3/ allow multiple clients to the same channel. ACPM allows this. Support
+>> would have come as an extra patch.
+>>
+> These are nothing new. A few other platforms too have shared channels
+> and that is implemented above the mailbox.
+> 
+okay
+
+>> 4/ allow polling and IRQ channels for the same mailbox controller (not
+>> urgent).
+>>
+> It is very easy to populate them as separate controllers.
+
+Do you mean to call devm_mbox_controller_register() twice for the same dev?
+
+Thanks,
+ta
 
