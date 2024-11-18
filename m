@@ -1,105 +1,78 @@
-Return-Path: <linux-kernel+bounces-413255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CF979D15E5
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 17:52:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E68F9D1622
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 17:54:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E09302828F0
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 16:52:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 046391F21968
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 16:54:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 580B11BD9F9;
-	Mon, 18 Nov 2024 16:52:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E96111BD9F0;
+	Mon, 18 Nov 2024 16:54:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F5SZyhzo"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="nwE6SKbQ"
+Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71F641B0F1C;
-	Mon, 18 Nov 2024 16:52:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E76A71A00F8;
+	Mon, 18 Nov 2024 16:54:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731948730; cv=none; b=ejpEGrWvcuFnqKVHN70CHxMvxm32kI55uLLikE9lNNKFCNwKtdpJjsHeDm7Itx+mTBdLYLyardx9QX+mLqpoFU8FjUO7jtZexY/vN2xr+hM1YsSszTEzCcySBS7dn6TWZtEfP3DgoqPxHlBLH6wCZnT5eTBe+U5Z/pBsYKlhknA=
+	t=1731948880; cv=none; b=R1b/l+DRVThSxJ40Qne/97v0sE/0qthdzTWFg35g+6InMGErmMjknw6CPWDwwIF0xepQhXu4M3D8noAd8vnXODJq1RYPchgRlP17U4sb7Gx84hnM212P0HXXJtH3Tp1kJ9Vr5WMZoYQVPjqSFo9CbnY0ow0G5qlYm8eOHQnB8KA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731948730; c=relaxed/simple;
-	bh=y3YxOTjy8J2Gu+uSpzZwxYtD3Og+KLDtn3aZ5JbtH8o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=olkbcU/yiZBdlrT9Id9JV4yj5Akwo6NS+FWpxdqZ6DWBSC6Y/Raw38FiT2mxQH/7+fXOfUUgn9fH08F9D79xFuIr+/YSGGwMdHnERL7pJ/+OfLLO94O7tnq5giJ4kn3uaJjPzIUypK8Ft8wulOQerN3OwiSopdMju08Y2EDL2Dc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F5SZyhzo; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2121858db03so1040015ad.2;
-        Mon, 18 Nov 2024 08:52:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731948729; x=1732553529; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=y3YxOTjy8J2Gu+uSpzZwxYtD3Og+KLDtn3aZ5JbtH8o=;
-        b=F5SZyhzoQnqrO/C5wx6sV7TwITJgcnwY6/SsA3aYJlcrmrz/uCcY1/24dc5jmjccPz
-         XjDd4CS4HezYME0RFdCAuwQsmXOxVZ8QYODqIoCeURAKJpAOjR1JbSkx2FfNALZI/6xd
-         2V6C4OE021IVAVlnjs661qMUAfOo4vYhwtR3UWu4ebffDUooLUwg6ZvCkov24XYYPLUT
-         t8hkX2rkllkFFbpFYClD5n1bdxiwC9Wuo51hrlZco0OIM2eoIJElE4Q3bNmZKGLrtTk7
-         Wa+3jDK+HXqyGOG20N00YljW9dZoLfTIIbk3zhyz5qPKcq2XniZm+ib4GlYGmZrD4iRT
-         rQKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731948729; x=1732553529;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=y3YxOTjy8J2Gu+uSpzZwxYtD3Og+KLDtn3aZ5JbtH8o=;
-        b=XaZNHLjaP41VSQO6td+OrE1UeOmp/3VXA0IDy26t2G9gr9AJgRktoZyHKUiq4g7iBB
-         GHPlOo9sEtde8YHy5mVCsh1I8TRO/ChtkWjt6oxmR8BjwT801ySbGt6O4cwTnvvh3aHN
-         VxSU4SceKHchn1w9qcUI5BtpB3MFheX1739vzceywGHDlLFbsclNAyWEnSRSsTZvTOse
-         31O5vNmKy8UqOjg5Pge2c48KS2sKuBBMwFkdahF5UqbJGw+9Owl5dZsKWAsq0t5KoMy7
-         uR15E3EZYeNJoIew2yJmTDCQ0y0Vm2Uk9H7ooK4Vech8CbrfSJKOloyFaG8vBXvw5ZIQ
-         6bmw==
-X-Forwarded-Encrypted: i=1; AJvYcCVbhPD9vf9d62lgTuQqWJ30l71WN8qHK1OuEXV1a8/aCLY6cWfGSZgensQ/ELMLvf6wcJpjEcfnHcGUVGk=@vger.kernel.org, AJvYcCWKUnWsNxCIeYmJ4TxWpzrkpUbsA35buYyavIyUQmSgkyk2qn3K6jIpr+013CXeWIgftdWZYNaHJcZltWM09gI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLpFtg+PcnVcYkGYfTWksAgDtfQodWcLTgBgURhkVThCqVllYZ
-	imtix5lT1OwSzNpnmhSm1e/AQHlrkD4hxONJRkSFzHd/6mvzdfGpCmCq/Z96sqDKtQmXCE+JXtH
-	06X5OE66aoWMktyBYI0wQ8sZVrf8=
-X-Google-Smtp-Source: AGHT+IFhTLNuO/iZ9wjJasIhzAOKPrDHwGg3OeSzWihHBzoXmMw9qE8g/a1zv3DNURaTq6zsirYooYLim3kFy73SKtY=
-X-Received: by 2002:a17:902:fc84:b0:20c:6bff:4a26 with SMTP id
- d9443c01a7336-211d0ef6e18mr66685165ad.15.1731948728551; Mon, 18 Nov 2024
- 08:52:08 -0800 (PST)
+	s=arc-20240116; t=1731948880; c=relaxed/simple;
+	bh=zPj/dC98kkRn+UKiK2vA5JU2TJ53OmJyxLTKysXIbmc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nqAHBo83QH30pxauibTHQp98n5bxXxMnlho0YkBHZpih8CJIw1QvY+nf5S/CdqtxCVbGhkmHS0whkZBuEwcLZzr96MFQhH99VAo5+j/+NN7Agxu9RBhiocrldaHxVgudt+S0DbESDnsD3HV+nJ+0c5e1ETpvG0EUmtqXNV67+jE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=nwE6SKbQ; arc=none smtp.client-ip=95.215.58.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 18 Nov 2024 16:54:29 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1731948875;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7reLWwmTn1z5R7AVGPER+NDMgklm9tqFwDlMhXCXMPo=;
+	b=nwE6SKbQGlEXsiLlOIPmBPT9alBQzKvp9gQnn3qacGfc3ApieCYGqsqJpzDNzW2KeJPmU6
+	CM2n7M43mumhCI/t3mnn8obZfpm32o0t0x4BQqfp2u0mkH8bUTLu/97sVEmX4AuMSqdcPs
+	YrQ2r0V0aq1wPr6M0NzyTo3ObbEzCQM=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Roman Gushchin <roman.gushchin@linux.dev>
+To: Keren Sun <kerensun@google.com>
+Cc: akpm@linux-foundation.org, hannes@cmpxchg.org, mhocko@kernel.org,
+	shakeel.butt@linux.dev, muchun.song@linux.dev,
+	cgroups@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] mm: prefer 'unsigned int' to bare use of 'unsigned'
+Message-ID: <ZztxRbTVAbvh-9kb@google.com>
+References: <20241115235744.1419580-1-kerensun@google.com>
+ <20241115235744.1419580-2-kerensun@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241118-rust-xarray-bindings-v9-0-3219cdb53685@gmail.com>
-In-Reply-To: <20241118-rust-xarray-bindings-v9-0-3219cdb53685@gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Mon, 18 Nov 2024 17:51:56 +0100
-Message-ID: <CANiq72=13uaXS+mptTiQZ7OLpyO_=r7-06cXEujFqtej=150YQ@mail.gmail.com>
-Subject: Re: [PATCH v9 0/2] rust: xarray: Add a minimal abstraction for XArray
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	=?UTF-8?B?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>, 
-	Asahi Lina <lina@asahilina.net>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241115235744.1419580-2-kerensun@google.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Nov 18, 2024 at 5:33=E2=80=AFPM Tamir Duberstein <tamird@gmail.com>=
- wrote:
->
-> This is a reimagining relative to earlier versions[0] by Asahi Lina and
-> Ma=C3=ADra Canal.
+On Fri, Nov 15, 2024 at 03:57:42PM -0800, Keren Sun wrote:
+> Change the param 'mode' from type 'unsigned' to 'unsigned int' in
+> memcg_event_wake() and memcg_oom_wake_function(), and for the param
+> 'nid' in VM_BUG_ON().
+> 
+> Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
+> Signed-off-by: Keren Sun <kerensun@google.com>
 
-Ma=C3=ADra's latest version has both of them listed as co-authors in the
-main patch -- how close is this to that version? (I see some bits that
-look fairly similar)
+A small nit: Acked-by tags should follow your signature.
+
+Reviewed-by: Roman Gushchin <roman.gushchin@linux.dev>
 
 Thanks!
-
-Cheers,
-Miguel
 
