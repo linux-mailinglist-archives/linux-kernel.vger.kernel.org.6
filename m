@@ -1,98 +1,117 @@
-Return-Path: <linux-kernel+bounces-413253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B3319D15D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 17:51:32 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E74619D15E3
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 17:52:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 03CF4B25E8D
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 16:50:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F122B2516B
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 16:52:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C06A1C2333;
-	Mon, 18 Nov 2024 16:48:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CD511BE852;
+	Mon, 18 Nov 2024 16:51:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="kH36CJex"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=iiitd.ac.in header.i=@iiitd.ac.in header.b="EU57mqSF"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B96B31C07C6;
-	Mon, 18 Nov 2024 16:48:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 181DC19CC24
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 16:51:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731948537; cv=none; b=ZFZk9nLNx69ktgtQ1jzBGMxPHXZrAzyTBdE+WvRuKdW8ad8WGJyVh2QvtdZ1hRRLrK4ngeZ0MDqvY1NqftHyPzCOcj50llw0HL4t7t0YTuRJyUmdRjf1TtdyfQ9LmvS++K3NYFjQM+5vGVzNdsKMmVk43cKLR6OacnQ3OQy4OZk=
+	t=1731948713; cv=none; b=uXiPSG4YKu4O/unQuo4DR+JA3Ct0iAoBF5YZBoP+qt6/8Ds7Eica/AOXHxs6Y3K5Oh9o4CW9ND+uGJLN0IyCEggoJ0QL6rhbBL9OH05v4cYkzojQ/H1yhrAIPt9rzn79PqWmZh72jL1j8XTDHtazsUiPFZRtVRBw//GVDM7TI38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731948537; c=relaxed/simple;
-	bh=zIQeWwJ+pfS9DFKK3RoUNLwGyQDKX2H45Zh+d447qhU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BtpsH4bUhc/9Y9swG6pUMeknqMw4tFZtuxPJxOeZ/HN3eTfzk4Z9oDBjO/zA1DZdXA97m0IYtkpmaHPNQBrL0WxwbOGbI/p5ePqPEv2o5HQ432DfT8axYThtf3n4S02keKkLGsy5XccJ0Cx+DE6THziugB/wqQE/cGrrVS/1JuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=kH36CJex; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 84B08FF804;
-	Mon, 18 Nov 2024 16:48:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1731948532;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JVJqH9n/jJwlvCP9b5z3vYbe7PNTT4pmvW1puNDkeyY=;
-	b=kH36CJexIfTu6JSm/wcRdyWnStbBINE+QSDP80P+q+FDc46VzjkqLWfzAjMe8g97MoS+ni
-	NDaCfoquskzKNcln8+epbgANKt8YEKQdrC6MeYoZC/Tj8r4FDyoMJxkmeOEV/smcv93uJc
-	N2SIV6lQBJch4wZJR5HaWVGa7kB2ASLArBA52MkyepmmyEIjcjovzHdgtFjohAX0OYD0c2
-	b+jxrHwcAhv9xje43WasohKAHv+FysMAwFZl7OiOd8ZrNaFjSNImwdrhopDKmNtsZkLzk9
-	1BshxjCQ0hGQivMgjteATbd9as0CrN9/auQGAFKCQexjD/kAvJAQ4LpoCbEVwg==
-Date: Mon, 18 Nov 2024 17:48:49 +0100
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: "David S. Miller" <davem@davemloft.net>, Andrew Lunn <andrew@lunn.ch>,
- Eric Dumazet <edumazet@google.com>, Florian Fainelli
- <f.fainelli@gmail.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
- <pabeni@redhat.com>, Woojung Huh <woojung.huh@microchip.com>, Arun Ramadoss
- <arun.ramadoss@microchip.com>, Heiner Kallweit <hkallweit1@gmail.com>,
- Russell King <linux@armlinux.org.uk>, Yuiko Oshino
- <yuiko.oshino@microchip.com>, kernel@pengutronix.de,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- UNGLinuxDriver@microchip.com, Phil Elwell <phil@raspberrypi.org>
-Subject: Re: [PATCH net v1 1/1] net: phy: microchip: Reset LAN88xx PHY to
- ensure clean link state on LAN7800/7850
-Message-ID: <20241118174849.5625064f@fedora.home>
-In-Reply-To: <20241117102147.1688991-1-o.rempel@pengutronix.de>
-References: <20241117102147.1688991-1-o.rempel@pengutronix.de>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1731948713; c=relaxed/simple;
+	bh=WDu2Oikl/jGzfO+avQIVSWVRgrEBYjNnYbhhmbfvVXo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DlhysHz4XZzBPZ0IVuatOEQghJ0InQe9TxFEG68rsulu2hx538R4eJPS1wJbeZQdRmVCF47GlXzR9tcGNuI/LCHYZSoEgEBpRHzgA4bYBsN3J+YSmiGu0qkWU+Gs8oxU0tymPXQTBti4acJYC2EOFpMDs7bA7k2+/YxiKlb0FP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iiitd.ac.in; spf=pass smtp.mailfrom=iiitd.ac.in; dkim=pass (1024-bit key) header.d=iiitd.ac.in header.i=@iiitd.ac.in header.b=EU57mqSF; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iiitd.ac.in
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iiitd.ac.in
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-71e49ad46b1so28057b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 08:51:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=iiitd.ac.in; s=google; t=1731948711; x=1732553511; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=sMdXwLgVF7Z3n3YGDkjgiYYFwcIaUbZAvIKsYx7KubM=;
+        b=EU57mqSFCncLGjdx/BpNLWa7Zn4njWc8iFABe2R/qJeRmKuvNQXTUXAt18AxRBR4UT
+         QlAwlAVUDDe972eOGpXUEw78+EGGFpXQxGWM4VBrFYpWP/fBIbdlgdAmx3RjSoXhg3R0
+         RIXIUjsQAppmvZT+dFXoq5TLEyfAp7ZaT5o1Q=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731948711; x=1732553511;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=sMdXwLgVF7Z3n3YGDkjgiYYFwcIaUbZAvIKsYx7KubM=;
+        b=Bir0Z9zdeHHOSZBZJHCDlqCOvc8uh29Q3rW1HeSfNVpWkX+POecVGRTRc2RuVB9Aq4
+         jmrSMuuu9nblG3KE0xMeMzMjAzEdYLe3xd3z+Pc65YVMPO3wC0nSQ7lofjOGMElDHehe
+         /rUNynDsDB2l8wxu4T16i6DCyUkBy9uyNBqvKqPm2KazcoACelmZWZqdM3bEIHoCnSgu
+         7amzc5c5GG4rNi4gLaQdY3B+Z6thUQgKYeRyE3tO1fWLqj1a8CMdI7ERtCV1kIwh23/m
+         AfHr1FR+yIP5ZdPrKboV3I9ODipTZGN/1YHGVmBBLegvpu8/kyBGfWWsL4G4SX72SpHC
+         WI0g==
+X-Forwarded-Encrypted: i=1; AJvYcCXJq/XFohuzNZntsud100+0ewZxJ9x5OPhfJX7xSBnUuvQd6T0WQl16uPAgw5N2bdKRFw+0oeUUArt5VMM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRhfEwQiTdLYybnTXa/FTdsXnMMdtBSsO3gtNPjbOqhuyZzJE3
+	UM6XpUCLnbv6Wa0Rewy06qZ1VusrOnjzSWx/M855hacXbpHTG0YAQCly2gNgXMI=
+X-Google-Smtp-Source: AGHT+IFbZeO0TLbTg5btgg7zj4JUOeReCx8mqTM5Hq9wbFjWmOUBqAKamCJ+ej5gh5GsIGXWoJfdnw==
+X-Received: by 2002:a05:6a00:3c95:b0:71e:b1dc:f229 with SMTP id d2e1a72fcca58-72476d171aemr18109816b3a.19.1731948711313;
+        Mon, 18 Nov 2024 08:51:51 -0800 (PST)
+Received: from fedora ([103.3.204.127])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724770eefe7sm6353059b3a.31.2024.11.18.08.51.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Nov 2024 08:51:50 -0800 (PST)
+Date: Mon, 18 Nov 2024 22:21:38 +0530
+From: Manas <manas18244@iiitd.ac.in>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: FUJITA Tomonori <fujita.tomonori@gmail.com>, 
+	Trevor Gross <tmgross@umich.edu>, Andrew Lunn <andrew@lunn.ch>, 
+	Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Alice Ryhl <aliceryhl@google.com>, Shuah Khan <skhan@linuxfoundation.org>, 
+	Anup Sharma <anupnewsmail@gmail.com>, netdev@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] rust: block: simplify Result<()> in
+ validate_block_size return
+Message-ID: <6x6kvvfmjaeihfnfy3j42sijo42rhdblzby25y6cziiddmnk3g@q2tkqkem2dk4>
+References: <20241118-simplify-result-v2-0-9d280ada516d@iiitd.ac.in>
+ <20241118-simplify-result-v2-1-9d280ada516d@iiitd.ac.in>
+ <CANiq72=o56xxJLEo7VL=-wUfKa7jZ75Tg3rRHv+CHg9jaxqRQA@mail.gmail.com>
+ <oc2pslg33lfkwpjeho2trjltrg6nw2plxizvb7dq3gvlzkme6t@eauzzfnizzqu>
+ <CANiq72mcGs61PPDi2FHiqDtdNc7R8-G7R4R35zK=CVCRTQdWwQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: maxime.chevallier@bootlin.com
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANiq72mcGs61PPDi2FHiqDtdNc7R8-G7R4R35zK=CVCRTQdWwQ@mail.gmail.com>
 
-Hi Oleksij,
+On 18.11.2024 17:29, Miguel Ojeda wrote:
+>On Mon, Nov 18, 2024 at 3:22 PM Manas <manas18244@iiitd.ac.in> wrote:
+>>
+>> Actually, "Manas" is my __official__ name.
+>
+>I didn't say otherwise (nor I meant to offend, I apologize if that is the case).
+>
+I didn't take an offense at all. :) No worries.
 
-On Sun, 17 Nov 2024 11:21:47 +0100
-Oleksij Rempel <o.rempel@pengutronix.de> wrote:
+>I worded my comment that way because a "known identity" does not need
+>to be an official/legal/birth name, e.g. some contributors prefer to
+>use a nickname, and that is perfectly fine too.
+>
+I am in private talks with Andrew about this. I will CC you.
 
-> Fix outdated MII_LPA data in the LAN88xx PHY, which is used in LAN7800
-> and LAN7850 USB Ethernet controllers. Due to a hardware limitation, the
-> PHY cannot reliably update link status after parallel detection when the
-> link partner does not support auto-negotiation. To mitigate this, add a
-> PHY reset in `lan88xx_link_change_notify()` when `phydev->state` is
-> `PHY_NOLINK`, ensuring the PHY starts in a clean state and reports
-> accurate fixed link parallel detection results.
-> 
-> Fixes: 792aec47d59d9 ("add microchip LAN88xx phy driver")
-> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 
-This looks like the issue in the Asix AX88772A, but your patch has
-better error handling :)
-
-Reviewed-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
-
-Maxime
+-- 
+Manas
 
