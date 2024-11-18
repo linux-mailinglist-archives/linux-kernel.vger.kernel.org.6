@@ -1,191 +1,116 @@
-Return-Path: <linux-kernel+bounces-413170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CC7D9D148D
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 16:36:49 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4CBE9D14D3
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 16:55:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0ADED282A67
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 15:36:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7AC15B30A47
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 15:37:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A41B1B6D0D;
-	Mon, 18 Nov 2024 15:36:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 701421BCA0C;
+	Mon, 18 Nov 2024 15:36:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="fU5Svm76"
-Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z5Z0fNkR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 912BF1ABEA6
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 15:36:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8BA11B6CFC;
+	Mon, 18 Nov 2024 15:36:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731944176; cv=none; b=uUfFg/CVHpeB18ObCdAbFvJUjAo5e9+KW20jHC/0hzipfNTocUYuZ5Q6uCyBwb7Ztabg1QQvGOH7m5+Q71N0JmFmP7WBgJQmCIjp4zEsv//IA62tzvaPY5npaBP6vdBdd5M6lDJjsIrFha67InSKfWSWRafzR9P9ntNsLNixfwY=
+	t=1731944209; cv=none; b=MLkVz3B2Ms0sYLZ5s+WmnYaCp98PwE1MNW7d1F00nbKZcMyhv6aChGJ/VdRz4kp2eV8zZWnFxhwfdTL0eaABZBnLVL8h0JOTBi6Ik7wQE43pxf9BVIfbKdCPh+8otBiWhQ1cU4g5T0nMpkjBMeGJPdlNymd6ViMN1+OD0pO1ejc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731944176; c=relaxed/simple;
-	bh=w2mRxyU6Wer/awZVdAQivc4uUlAOwE/wI67hCUOwwFs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=U9Z/Pt+nMrn8A275fbynt6td7qQkYw4OL528xIo/jUn68gPhKWxj4TW18Bfaoly5Hqurn1KBcKyewV7jzxkgDL1lqIN/y1fj+fe1Xb3kjyAOA+DV/vbNkI5+wiLrpIOtsfAGLmrYm4+nKRyFkPv34WyHk7VjTw67y8d088voSBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=fU5Svm76; arc=none smtp.client-ip=95.215.58.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <0e5f84c7-40fc-42e9-8521-f0f1e82e4d9c@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1731944171;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yM1hknJVFS7HCJh8Bw8WhrGpM3PfCvn6SKwbNFv5FAY=;
-	b=fU5Svm76Z/VZZbJo2p5VhsyP12LlV0UA1Uytbdbxy5qBssiZCK13lQN3MOK/zoFdS+uU9G
-	I3syYlgTcuRE22SKlpaP5MlmAvh7dYl2WxZtJ21mGibK/OZDMcOIbb20oLwWufXOX6lNQA
-	ue+93MK0iQfvxGMWu5tkJxE2eNsOtrE=
-Date: Mon, 18 Nov 2024 10:36:02 -0500
+	s=arc-20240116; t=1731944209; c=relaxed/simple;
+	bh=Z1F/WWyh2Br9EzCFAJEMyj5kDOKy73YHKCPpES500bI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lIC0673t70US1qbmpBAaIP4D6jscvWDY5f1V2ojoWCC409lQeP4D3UF2xxk/g3Qw549SngGqas948O0smLGcAzIaByXJ3y74V2AOi8HaB3BkOCecx3xF+Ke5SHcZGWRz/XwzpXQGzHNgLrfNX91Hl4aLav2ixzuxaG+djhVREws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z5Z0fNkR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71055C4CED9;
+	Mon, 18 Nov 2024 15:36:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731944209;
+	bh=Z1F/WWyh2Br9EzCFAJEMyj5kDOKy73YHKCPpES500bI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Z5Z0fNkRnjTm0IZXW2zvx37V1hMc1SiJyYJMC00zEObYgv1mbaRxWImHuHcBnm8R6
+	 JmUzT8F+nnCVD0SEOxnnY8LOsvQblPKgQZZI/hWgRc8KUX/z0L2WsNOJ7R0nikOnnW
+	 8bRJh83qn5mrr0APrsALEgS9Daz7o4YyEeLZqWZk7Jsv4HClspSf4cJ4a+lH5MhH+1
+	 qWbuIQ+RtMk305B8I9Oolu9+KS7r44GtXNSCOfIPaPD0KVoV7kr5jwvI1EcwV4RS5v
+	 W9yODhpt/CWQhjFsh0frkI5fbJMO8gbRocCxprparKAk7CpGzjMqQ0dv0csIPrRqQX
+	 f3iGOJuzDkVHA==
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e38261653aaso1620912276.2;
+        Mon, 18 Nov 2024 07:36:49 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVZhOAaaANbCYWMBmjMEJ4xwKMP7Iy1Pxmuen2UZCALvm1LGqa7zOI6l2Jd0vbHnI96FsqV9zCWtgdzfG8=@vger.kernel.org, AJvYcCX85Sxc+BVMUyu82IfNsR3mtXT66iznpX6MW4Y+Ynv07lvI4DQTy6opkv3rGB94SzCwJBjEj8nIcNs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywsurqi23qG4SdmB7PbfOnKQvve4mswI1P8Sduri6ZWoUQ2xzJ5
+	ASw22QiqOiIocNMFYvJR+bLVTHzgPZf80gtN6r6CDJhsOSeeohGXSh5zoDMnBZpiJI62Git1zz+
+	aD1X0TEr+F2qp5yMENvQWRszarQ==
+X-Google-Smtp-Source: AGHT+IEEIGFak9qKklcZsvCILXL3wsmYpRQVXReSreMGbi2y4CLvncVZuNk4Ue6AECvkVYWTyDD0MnYKDyXhx+DEKJg=
+X-Received: by 2002:a05:6902:1701:b0:e38:8579:7e44 with SMTP id
+ 3f1490d57ef6-e3885797fb6mr6028789276.50.1731944208623; Mon, 18 Nov 2024
+ 07:36:48 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net-next 1/2] dt-bindings: net: xlnx,axi-ethernet: Add
- bindings for AXI 2.5G MAC
-To: Suraj Gupta <suraj.gupta2@amd.com>, andrew+netdev@lunn.ch,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, michal.simek@amd.com, radhey.shyam.pandey@amd.com,
- horms@kernel.org
-Cc: netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, git@amd.com, harini.katakam@amd.com
-References: <20241118081822.19383-1-suraj.gupta2@amd.com>
- <20241118081822.19383-2-suraj.gupta2@amd.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sean Anderson <sean.anderson@linux.dev>
-In-Reply-To: <20241118081822.19383-2-suraj.gupta2@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+References: <20241031070232.1793078-1-masterr3c0rd@epochal.quest>
+ <20241031070232.1793078-13-masterr3c0rd@epochal.quest> <20241111041311.hleaz5fgipsyxigm@vireshk-i7>
+ <CAGb2v646NHFAni=P+iC8OZsWMpg0PJc=kYbuWaY=C0-W-q6qAw@mail.gmail.com> <20241111055504.2f3szrd5ahudvtqm@vireshk-i7>
+In-Reply-To: <20241111055504.2f3szrd5ahudvtqm@vireshk-i7>
+From: Rob Herring <robh@kernel.org>
+Date: Mon, 18 Nov 2024 09:36:37 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJJ5A+nYKg1aU5zqGZsmtNJxpS3Gw04pSH-3xOkQ9Vzew@mail.gmail.com>
+Message-ID: <CAL_JsqJJ5A+nYKg1aU5zqGZsmtNJxpS3Gw04pSH-3xOkQ9Vzew@mail.gmail.com>
+Subject: Re: [PATCH v2 12/13] cpufreq: sun50i: add a100 cpufreq support
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Chen-Yu Tsai <wens@csie.org>, Cody Eksal <masterr3c0rd@epochal.quest>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Yangtao Li <tiny.windzz@gmail.com>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Maxime Ripard <mripard@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Nishanth Menon <nm@ti.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Vinod Koul <vkoul@kernel.org>, Viresh Kumar <vireshk@kernel.org>, 
+	Parthiban <parthiban@linumiz.com>, Andre Przywara <andre.przywara@arm.com>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-sunxi@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/18/24 03:18, Suraj Gupta wrote:
-> AXI 1G/2.5G Ethernet subsystem supports 1G and 2.5G speeds. "max-speed"
-> property is used to distinguish 1G and 2.5G MACs of AXI 1G/2.5G IP.
-> max-speed is made a required property, and it breaks DT ABI but driver
-> implementation ensures backward compatibility and assumes 1G when this
-> property is absent.
-> Modify existing bindings description for 2.5G MAC.
-> 
-> Signed-off-by: Suraj Gupta <suraj.gupta2@amd.com>
-> ---
->  .../bindings/net/xlnx,axi-ethernet.yaml       | 44 +++++++++++++++++--
->  1 file changed, 40 insertions(+), 4 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/net/xlnx,axi-ethernet.yaml b/Documentation/devicetree/bindings/net/xlnx,axi-ethernet.yaml
-> index fb02e579463c..69e84e2e2b63 100644
-> --- a/Documentation/devicetree/bindings/net/xlnx,axi-ethernet.yaml
-> +++ b/Documentation/devicetree/bindings/net/xlnx,axi-ethernet.yaml
-> @@ -9,10 +9,12 @@ title: AXI 1G/2.5G Ethernet Subsystem
->  description: |
->    Also called  AXI 1G/2.5G Ethernet Subsystem, the xilinx axi ethernet IP core
->    provides connectivity to an external ethernet PHY supporting different
-> -  interfaces: MII, GMII, RGMII, SGMII, 1000BaseX. It also includes two
-> +  interfaces: MII, GMII, RGMII, SGMII, 1000BaseX and 2500BaseX. It also includes two
->    segments of memory for buffering TX and RX, as well as the capability of
->    offloading TX/RX checksum calculation off the processor.
->  
-> +  AXI 2.5G MAC is incremental speed upgrade of AXI 1G and supports 2.5G speed.
-> +
->    Management configuration is done through the AXI interface, while payload is
->    sent and received through means of an AXI DMA controller. This driver
->    includes the DMA driver code, so this driver is incompatible with AXI DMA
-> @@ -62,6 +64,7 @@ properties:
->        - rgmii
->        - sgmii
->        - 1000base-x
-> +      - 2500base-x
->  
->    xlnx,phy-type:
->      description:
-> @@ -118,9 +121,9 @@ properties:
->      type: object
->  
->    pcs-handle:
-> -    description: Phandle to the internal PCS/PMA PHY in SGMII or 1000Base-X
-> -      modes, where "pcs-handle" should be used to point to the PCS/PMA PHY,
-> -      and "phy-handle" should point to an external PHY if exists.
-> +    description: Phandle to the internal PCS/PMA PHY in SGMII or 1000base-x/
-> +      2500base-x modes, where "pcs-handle" should be used to point to the
-> +      PCS/PMA PHY, and "phy-handle" should point to an external PHY if exists.
->      maxItems: 1
->  
->    dmas:
-> @@ -137,12 +140,17 @@ properties:
->      minItems: 2
->      maxItems: 32
->  
-> +  max-speed:
-> +    description:
-> +      Indicates max MAC rate. 1G and 2.5G MACs of AXI 1G/2.5G IP are distinguished using it.
-> +
+On Sun, Nov 10, 2024 at 11:55=E2=80=AFPM Viresh Kumar <viresh.kumar@linaro.=
+org> wrote:
+>
+> On 11-11-24, 13:30, Chen-Yu Tsai wrote:
+> > On Mon, Nov 11, 2024 at 12:13=E2=80=AFPM Viresh Kumar <viresh.kumar@lin=
+aro.org> wrote:
+> > >
+> > > On 31-10-24, 04:02, Cody Eksal wrote:
+> > > > From: Shuosheng Huang <huangshuosheng@allwinnertech.com>
+> > > >
+> > > > Let's add cpufreq nvmem based for allwinner a100 soc. It's similar =
+to h6,
+> > > > let us use efuse_xlate to extract the differentiated part.
+> > > >
+> > > > Signed-off-by: Shuosheng Huang <huangshuosheng@allwinnertech.com>
+> > > > [masterr3c0rd@epochal.quest: add A100 to opp_match_list]
+> > > > Signed-off-by: Cody Eksal <masterr3c0rd@epochal.quest>
+> > > > ---
+> > > > Changes in V2:
+> > > >  - Add the A100 to the cpufreq-dt-platdev blacklist.
+> > >
+> > > Can this be applied to the cpufreq tree separately ?
+> >
+> > Yes.
+> >
+> > Acked-by: Chen-Yu Tsai <wens@csie.org>
+>
+> Applied. Thanks.
 
-Can't you read this from the TEMAC ability register?
+You missed the binding patch, so
+"allwinner,sun50i-a100-operating-points" is undocumented. Can you pick
+that up please.
 
---Sean
-
->  required:
->    - compatible
->    - interrupts
->    - reg
->    - xlnx,rxmem
->    - phy-handle
-> +  - max-speed
->  
->  allOf:
->    - $ref: /schemas/net/ethernet-controller.yaml#
-> @@ -164,6 +172,7 @@ examples:
->          xlnx,rxmem = <0x800>;
->          xlnx,txcsum = <0x2>;
->          phy-handle = <&phy0>;
-> +        max-speed = <1000>;
->  
->          mdio {
->              #address-cells = <1>;
-> @@ -188,6 +197,7 @@ examples:
->          xlnx,txcsum = <0x2>;
->          phy-handle = <&phy1>;
->          axistream-connected = <&dma>;
-> +        max-speed = <1000>;
->  
->          mdio {
->              #address-cells = <1>;
-> @@ -198,3 +208,29 @@ examples:
->              };
->          };
->      };
-> +
-> +# AXI 2.5G MAC
-> +  - |
-> +    axi_ethernet_eth2: ethernet@a4000000 {
-> +        compatible = "xlnx,axi-ethernet-1.00.a";
-> +        interrupts = <0>;
-> +        clock-names = "s_axi_lite_clk", "axis_clk", "ref_clk", "mgt_clk";
-> +        clocks = <&axi_clk>, <&axi_clk>, <&pl_enet_ref_clk>, <&mgt_clk>;
-> +        phy-mode = "2500base-x";
-> +        reg = <0x40000000 0x40000>;
-> +        xlnx,rxcsum = <0x2>;
-> +        xlnx,rxmem = <0x800>;
-> +        xlnx,txcsum = <0x2>;
-> +        phy-handle = <&phy1>;
-> +        axistream-connected = <&dma>;
-> +        max-speed = <2500>;
-> +
-> +        mdio {
-> +            #address-cells = <1>;
-> +            #size-cells = <0>;
-> +            phy2: ethernet-phy@1 {
-> +                device_type = "ethernet-phy";
-> +                reg = <1>;
-> +            };
-> +        };
-> +    };
-
+Rob
 
