@@ -1,118 +1,125 @@
-Return-Path: <linux-kernel+bounces-412415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 439F69D08CB
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 06:23:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AF079D08CE
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 06:25:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E41EC1F229C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 05:23:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E933281D03
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 05:25:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D485B13C69E;
-	Mon, 18 Nov 2024 05:22:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="FPCP0wl4"
-Received: from fout-b1-smtp.messagingengine.com (fout-b1-smtp.messagingengine.com [202.12.124.144])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDE7413C9D9;
+	Mon, 18 Nov 2024 05:24:57 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 401AE13C9B8
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 05:22:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3CAE13A863;
+	Mon, 18 Nov 2024 05:24:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731907373; cv=none; b=uMUHnD8JH5//MfwpyOKJgB/Jj7lcHsIZgQ4dD7Jksui2jrXsm47fA1zZ3vMD2CEC+qHKRI/ieIfA8qYvH1NB+CtN/ipD6ZeG2ZsyCBG+oBwrKY0F24kpWaf44xNgHE6TvLd9VCBOVevdU8HsTk2VoYNhLoNmoIAIYR/lgeIeDnE=
+	t=1731907497; cv=none; b=CH0xKGYzoh8j6qElCW7qxzdOmHGNKLlF0Tua+kt1/H0kTIEfItGi5C1pW6Gm7piMzwnnRil1O3m8OvChq2lH0IgKq2A77ruNXzRVPli/pyoWSb07KM+nSo/M4tSRBvJzDk3PRC0fT6i7A98Z6xJ03gz429HECwyslnGM1IQoYWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731907373; c=relaxed/simple;
-	bh=KelfrUEDKn1STr/uyl6Wn/gXFShtj7LS2NXx40teaXU=;
-	h=Date:Message-ID:From:To:Cc:Subject; b=dGInRn4o2nwnjqXVYP2A9H/LZtrChPmPCCgfz7MxvxsaM4r4ZlM2IMCzy5Xqp1MAMjKAe1HYM5vi1VE0QksHyxt3Wpn5QpxWqv20b3Ug+WUgKWEIC2VjtlnZYuw85fsR+APkgOAQrwU87+Zl+2qkN17imGDhfxnrHGLa+daXjlA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=FPCP0wl4; arc=none smtp.client-ip=202.12.124.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
-	by mailfout.stl.internal (Postfix) with ESMTP id 4258E114011A;
-	Mon, 18 Nov 2024 00:22:50 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-04.internal (MEProxy); Mon, 18 Nov 2024 00:22:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
-	:feedback-id:from:from:in-reply-to:message-id:reply-to:subject
-	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm3; t=1731907370; x=1731993770; bh=2pmDU7e3MlYtu8haZn4roILPX83I
-	3ITd6BRmfCF1ljE=; b=FPCP0wl417Yh0xaRiGtO+HJKqiD/wLfQVbNbWqEXlqv4
-	nzUrRBM8YO0HAHHLV2zzZJI+6hekHaCRKUJWEfw6ztKjMTM5Utp3Ym2L3DR7QRki
-	sdo1C7ImuGtMZvWLPzqYNCC5jQuZ9g/u8juh26iF1H3KrmTSrpiV4oWjZX1N8s2a
-	Df2MVjOSIOxN+Balg28RXXPj0Y/DFvxxA/3LNSN2TGFIGGjYvKTNUBo39zH0xXiI
-	ONYSR1dARkks2gUFNHfPw7bOhN6ZxMmaQIZ274eXQAMChEvzUUuIjDu3rQHfB6EL
-	hxhp8eJ3+6obmjg517/ASj6noKnEv72oXJyNbbFFsg==
-X-ME-Sender: <xms:Kc86Z7IQfltj3MRoIBYYj0LQbUaPVHqTD4XhTjKvQPbKopkXYee7Nw>
-    <xme:Kc86Z_Ijuz86OcqQEIABrilhEJavFHMW4GbK5uHUb4mlVhLN2SSUshqPErq6rV-BD
-    4VF3CXtcFDDDli8J9s>
-X-ME-Received: <xmr:Kc86ZzsScjsQu3IhravUTabWijEBMMoWJ0t8G3XgLDmhtWUUlFNkMv42KoLT0T6MUNYIlxeLFs-1sljx23H1fOFlDMCONNlcZAM>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrvdelgdekvdcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpeffkffhvfevufestddtjhdttddttdenucfhrhhomhep
-    hfhinhhnucfvhhgrihhnuceofhhthhgrihhnsehlihhnuhigqdhmieekkhdrohhrgheqne
-    cuggftrfgrthhtvghrnhepiedugfduhffgheekjeekffduueejudevffehiedtledttdek
-    veekuefhvdfftedunecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvg
-    hrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehfthhhrghinheslhhinhhu
-    gidqmheikehkrdhorhhgpdhnsggprhgtphhtthhopeehpdhmohguvgepshhmthhpohhuth
-    dprhgtphhtthhopehsthgrsghlvgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepghgv
-    vghrtheslhhinhhugidqmheikehkrdhorhhgpdhrtghpthhtoheplhhirghmrdhhohiflh
-    gvthhtsehorhgrtghlvgdrtghomhdprhgtphhtthhopehlihhnuhigqdhmieekkheslhhi
-    shhtshdrlhhinhhugidqmheikehkrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrh
-    hnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:Kc86Z0YxOglhFzPN2j0fEDehz8oqxU7NrC-WfppLvH18e0C03lfCEA>
-    <xmx:Kc86Zyaj15LeZkjRqmJhhfM4h0GKhiwQFFVggfE3EjynErCgRgNSww>
-    <xmx:Kc86Z4A3Ux6RChzYJAwoIXseFSpt_ttmvR7N762MflkZLJyJqzpdNQ>
-    <xmx:Kc86ZwYz6UkHwkw2oJuY3nOZi-S7ibn_XwteI8Kj887Az3lnYLqxMg>
-    <xmx:Ks86Z5Xcj8zUIoVAWsEkihdK8e8Zjfb0K0dRR7VCPQF_ugrj0JxMlu7h>
-Feedback-ID: i58a146ae:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 18 Nov 2024 00:22:46 -0500 (EST)
-Date: Mon, 18 Nov 2024 16:23:16 +1100
-Message-ID: <6280f364e7773aafabdd388a68c99eb4@linux-m68k.org>
-From: Finn Thain <fthain@linux-m68k.org>
-To: stable@kernel.org
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Liam Howlett <liam.howlett@oracle.com>, linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 5.4.y] m68k: Add missing mmap_read_lock() to sys_cacheflush()
+	s=arc-20240116; t=1731907497; c=relaxed/simple;
+	bh=ckvDb3fapY7BF3jRYQuWCEPO5x9k7IjKePH5akN4J7A=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=D2gkOvO37iw9y+6ooqUe3rQ7UakVsNKS+ghwAJypMdJjQxcMqBnc6lVaMecLRDLugq1/oa7AUcNOd+yXarR1Qtf3THUbpHbnjJpU/cXLWX4aOlgGingc0tQJ31f9M6JylHdqGCxgig/qeZQaL/KeU8iYZsqD8ErVHGGYl6dXDps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4XsGG353sgz92Gv;
+	Mon, 18 Nov 2024 13:22:03 +0800 (CST)
+Received: from kwepemk500005.china.huawei.com (unknown [7.202.194.90])
+	by mail.maildlp.com (Postfix) with ESMTPS id 0EDD41401E0;
+	Mon, 18 Nov 2024 13:24:46 +0800 (CST)
+Received: from [10.174.178.46] (10.174.178.46) by
+ kwepemk500005.china.huawei.com (7.202.194.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 18 Nov 2024 13:24:44 +0800
+Subject: Re: [PATCH 2/2] jffs2: initialize inocache earlier
+To: Fedor Pchelkin <pchelkin@ispras.ru>, Richard Weinberger <richard@nod.at>
+CC: David Woodhouse <dwmw2@infradead.org>, Wang Yong <wang.yong12@zte.com.cn>,
+	Lu Zhongjun <lu.zhongjun@zte.com.cn>, Yang Tao <yang.tao172@zte.com.cn>, Al
+ Viro <viro@zeniv.linux.org.uk>, <linux-mtd@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>,
+	<stable@vger.kernel.org>
+References: <20241117184412.366672-1-pchelkin@ispras.ru>
+ <20241117184412.366672-3-pchelkin@ispras.ru>
+From: Zhihao Cheng <chengzhihao1@huawei.com>
+Message-ID: <b4865aaf-8253-b44e-55fe-d1fab1f5f092@huawei.com>
+Date: Mon, 18 Nov 2024 13:24:43 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+In-Reply-To: <20241117184412.366672-3-pchelkin@ispras.ru>
+Content-Type: text/plain; charset="gbk"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemk500005.china.huawei.com (7.202.194.90)
 
-From: Liam Howlett <liam.howlett@oracle.com>
+ÔÚ 2024/11/18 2:44, Fedor Pchelkin Ð´µÀ:
+> Inside jffs2_new_inode() there is a small gap when jffs2_init_acl_pre() or
+> jffs2_do_new_inode() may fail e.g. due to a memory allocation error while
+> uninit inocache field is touched upon subsequent inode eviction.
+> 
+> general protection fault, probably for non-canonical address 0xdffffc0000000005: 0000 [#1] PREEMPT SMP KASAN NOPTI
+> KASAN: null-ptr-deref in range [0x0000000000000028-0x000000000000002f]
+> CPU: 0 PID: 10592 Comm: syz-executor.1 Not tainted 5.10.209-syzkaller #0
+> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.12.0-1 04/01/2014
+> RIP: 0010:jffs2_xattr_delete_inode+0x35/0x130 fs/jffs2/xattr.c:602
+> Call Trace:
+>   jffs2_do_clear_inode+0x4c/0x570 fs/jffs2/readinode.c:1418
+>   evict+0x281/0x6b0 fs/inode.c:577
+>   iput_final fs/inode.c:1697 [inline]
+>   iput.part.0+0x4df/0x6d0 fs/inode.c:1723
+>   iput+0x58/0x80 fs/inode.c:1713
+>   jffs2_new_inode+0xb12/0xdb0 fs/jffs2/fs.c:469
+>   jffs2_create+0x90/0x400 fs/jffs2/dir.c:177
+>   lookup_open.isra.0+0xead/0x1260 fs/namei.c:3169
+>   open_last_lookups fs/namei.c:3239 [inline]
+>   path_openat+0x96c/0x2670 fs/namei.c:3428
+>   do_filp_open+0x1a4/0x3f0 fs/namei.c:3458
+>   do_sys_openat2+0x171/0x420 fs/open.c:1186
+>   do_sys_open fs/open.c:1202 [inline]
+>   __do_sys_openat fs/open.c:1218 [inline]
+>   __se_sys_openat fs/open.c:1213 [inline]
+>   __x64_sys_openat+0x13c/0x1f0 fs/open.c:1213
+>   do_syscall_64+0x30/0x40 arch/x86/entry/common.c:46
+> 
+> Initialize the inocache pointer to a NULL value while preparing an inode
+> in jffs2_init_inode_info(). jffs2_xattr_delete_inode() will handle it
+> later just fine.
+> 
+> Found by Linux Verification Center (linuxtesting.org) with Syzkaller.
+> 
+> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
+> ---
+>   fs/jffs2/os-linux.h | 1 +
+>   1 file changed, 1 insertion(+)
 
-[ Upstream commit f829b4b212a315b912cb23fd10aaf30534bb5ce9 ]
+Reviewed-by: Zhihao Cheng <chengzhihao1@huawei.com>
+> 
+> diff --git a/fs/jffs2/os-linux.h b/fs/jffs2/os-linux.h
+> index 86ab014a349c..39b6565f10c9 100644
+> --- a/fs/jffs2/os-linux.h
+> +++ b/fs/jffs2/os-linux.h
+> @@ -55,6 +55,7 @@ static inline void jffs2_init_inode_info(struct jffs2_inode_info *f)
+>   	f->metadata = NULL;
+>   	f->dents = NULL;
+>   	f->target = NULL;
+> +	f->inocache = NULL;
+>   	f->flags = 0;
+>   	f->usercompr = 0;
+>   }
+> 
 
-When the superuser flushes the entire cache, the mmap_read_lock() is not
-taken, but mmap_read_unlock() is called.  Add the missing
-mmap_read_lock() call.
-
-Fixes: cd2567b6850b1648 ("m68k: call find_vma with the mmap_sem held in sys_cacheflush()")
-Signed-off-by: Liam R. Howlett <Liam.Howlett@Oracle.com>
-Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-Link: https://lore.kernel.org/r/20210407200032.764445-1-Liam.Howlett@Oracle.com
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-[ mmap_read_lock() open-coded using down_read() as was done prior to v5.8 ]
-Signed-off-by: Finn Thain <fthain@linux-m68k.org>
----
- arch/m68k/kernel/sys_m68k.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/arch/m68k/kernel/sys_m68k.c b/arch/m68k/kernel/sys_m68k.c
-index 6363ec83a290..38dcc1a2097d 100644
---- a/arch/m68k/kernel/sys_m68k.c
-+++ b/arch/m68k/kernel/sys_m68k.c
-@@ -388,6 +388,8 @@ sys_cacheflush (unsigned long addr, int scope, int cache, unsigned long len)
- 		ret = -EPERM;
- 		if (!capable(CAP_SYS_ADMIN))
- 			goto out;
-+
-+		down_read(&current->mm->mmap_sem);
- 	} else {
- 		struct vm_area_struct *vma;
- 
 
