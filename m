@@ -1,125 +1,260 @@
-Return-Path: <linux-kernel+bounces-413378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5C539D1858
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 19:44:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 671089D1860
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 19:45:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52D8AB236AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 18:44:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26BEE282E7E
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 18:45:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05FC11E5037;
-	Mon, 18 Nov 2024 18:43:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D3C91E102A;
+	Mon, 18 Nov 2024 18:43:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="n7Wb+yDa"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=amacapital-net.20230601.gappssmtp.com header.i=@amacapital-net.20230601.gappssmtp.com header.b="FdmI5Cu9"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A77941E104F
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 18:43:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B1D81E6DD5
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 18:43:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731955407; cv=none; b=X6ugmVYKELneHB7W04WCCvLcVzh98yOnk4v5Q4qZ/pxlyGBFOMfDQv2YoghNwRsgiQnR+jEnVzuvHq3WN4YG1tyH1/PYlyCcjZ9frfco39p6I6wZZbrhRSJ/8+zzlROCbjv+DuLJxlc2xYrOVtsq3vJ5BFTX0KJVxnnqJROtnmM=
+	t=1731955413; cv=none; b=nN2JI9Lc/FLfEGvn+AtSB6dEQnYOpM9PfOjFvYTeVRRD02AFEpcUE8GyYTOqfFvExXCuo8qT7HELHY4hVubEYYdR7uRmjkr7mTriFbKl9KVAE4dyLnF8mI5nzMh1YipK7DRmMo/PyrtVm/IU7SMv124TmEcgqDDG21e7TxfhGtg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731955407; c=relaxed/simple;
-	bh=axL606VOP+Vzkxig7OQTFfHk5EC8HgjRmS6iK/9rLyk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=mF37r1zWcs/H6Y24iuDgw4xjyfs8w54Yr1ReqFYjoczPYdOvZFTTCV2+PDsFGVQ+qUl1xiKNbB5n36eRs4sUlcDXyzZbQAoSlfgH/34f/0Ie/dEKeGQpz4J9isNy/vZ6g58ydMgYgpQucwgxakRCt4ND7R35Bn/iubJ8kcHyIUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=n7Wb+yDa; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 264A51BF20C;
-	Mon, 18 Nov 2024 18:43:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1731955404;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7ROA9s97zr/TnBShjvPt9n/VC1Dc0gzXiBJZ5MkzKUk=;
-	b=n7Wb+yDaayzEWGz44mm8+0Wv02/af9bivC4WIe0eIlxWxgOcfGLANrr2Cpt7Y4JaVPXq1x
-	kcBFf2RMzmwEM8MU2t4rlw03//R1DbU4g+WPD+KRd53FWpDRaBKxX/DAqrIQs9cQ5FJn1a
-	1PUCbH/nABFcZZWG/WPBHLqkrjkayxw/9SgNuT8FBZ42fAPOw2PvsKqGC9AJ3z9h7ih/SS
-	dOQ8/dN/iLDMSTkuQIbF6Bs+NjYquYi3byPD4/e0sYC13Wl/833RxjK6ZvaHgZuHDOSiXp
-	SqBcnDp5K+nz0I1LmU/rick9sq6t+/zn4F4EAJ21c6ToCkHO9lCGdWviOGvCKg==
-From: Louis Chauvet <louis.chauvet@bootlin.com>
-Date: Mon, 18 Nov 2024 19:43:17 +0100
-Subject: [PATCH v13 4/7] drm: Export symbols to use in tests
+	s=arc-20240116; t=1731955413; c=relaxed/simple;
+	bh=5EbucahBpE6Z5ffhhmWSz0sxUgazFs27WG+T9CJqMug=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iGjdA8A5Pn8NvUNtUFtrclbCK14tBoPYKTOt4/XLEQGDSuEjXmu/5jD1MVzPczNHUJRHy/7UMYArt5HB+4KxItnlK03H06jxUzoOT/jqfGEOYlqlPMaVMsKREYlfvo0zYFd8PbYfQMYDtbmpTHxSu5zMQd2iFt4G05IyFEtZ7ts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net; spf=pass smtp.mailfrom=amacapital.net; dkim=pass (2048-bit key) header.d=amacapital-net.20230601.gappssmtp.com header.i=@amacapital-net.20230601.gappssmtp.com header.b=FdmI5Cu9; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amacapital.net
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-aa3a79d4d59so14913666b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 10:43:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20230601.gappssmtp.com; s=20230601; t=1731955410; x=1732560210; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=O1w+lsuqWYRJntMtz2qLI0BlT/+XwPoIEjRUBsn52Fc=;
+        b=FdmI5Cu9qc4cdZ0NUVExvefijiGNdAAPlpUFZWf5NRMjAAvjBMJEtoiG+iqZ26eqVq
+         6OioO7a7iyOQFlEFaN2VptEBZC4WvyfJgJnsXCxdGhopI9djB/DRCFRyQ4zP4a6YAadh
+         y3IXL25J7DcuceWSyK3DTIInUp5sNycPZjlaodsIU4SavNxIrioR08BUHLBi2i3H3xYP
+         mAU0AJgLD3P6l/OUPT4mLKAlEf3hqDnpRydTCcrr+havgCgU58N0hv0qeJOjBwCSVLq/
+         WoXsUBMIB3+uHVbm2VZVVnLgNVVrWkp9zJlzoaE00VG9r/h3m2wHeWUa7TNJ14IkeGRl
+         j+kA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731955410; x=1732560210;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=O1w+lsuqWYRJntMtz2qLI0BlT/+XwPoIEjRUBsn52Fc=;
+        b=V/zZyuxw8q2Tva/cntJPZn+cKFhBmu/WukPkq5nbwOLQLlBNAS82nqpDgXiyXI/a8G
+         QSKAualYn8yiRnXv2YJVuI3VPhqx0EY1YnRf3MYqHPC4e6TW4dnyVZgc6n2OqpuTUEqZ
+         7ia7hRU/ev5kLybm1VGyajVXtSggEVWElnZGGfFJXsnPO4Eel4HwwFOlXjN+4ABC8cts
+         EnD5lx7U9Cvf4QjLrGofYChJz3QvfiqliV2Gi1zPoBFix4TUx8nHE6p0TLpNvuEiu+/1
+         8pegHw9h9m70vYaVZRbjWKfjlITiM2HGt7DA6EzX0ZJgEF2PkF12068eMgIpjxN2sF+p
+         Sp2g==
+X-Forwarded-Encrypted: i=1; AJvYcCX8te2iS7vxskXzUdGLbjDVnjfx9CicjPBPDdQEN9qfWiiQ4xUgiMhQpfWv7I9JFLKaPa7kIo5+iYZBfyg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0DNZBRk5+4OOidVkgihxWKBjmh1KFLgMnTYCkZHRr8T+usN1T
+	nRbI1yg1J2Mhg6e4nMnRon4B9dVZz6ITIdttSd+UGtF0M7Mf9jO3Hrr/eQHaOxOjilP2g7Yfnnt
+	suSFZNmcgEtVDmOsUU7uDu/FBxVuB+bTYI4+s
+X-Google-Smtp-Source: AGHT+IHAyobrpYhrEBcyr/G7yiagryncHdMlgXIut6kTA6vbnwPpNOKPrExpgWDFQU6kYcKY6TYMJKk/J77ccxtsq0w=
+X-Received: by 2002:a17:907:701:b0:a99:eb94:3e37 with SMTP id
+ a640c23a62f3a-aa483552bc2mr1302741366b.58.1731955409669; Mon, 18 Nov 2024
+ 10:43:29 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241118-yuv-v13-4-ac0dd4129552@bootlin.com>
-References: <20241118-yuv-v13-0-ac0dd4129552@bootlin.com>
-In-Reply-To: <20241118-yuv-v13-0-ac0dd4129552@bootlin.com>
-To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>, 
- Melissa Wen <melissa.srw@gmail.com>, 
- =?utf-8?q?Ma=C3=ADra_Canal?= <mairacanal@riseup.net>, 
- Haneen Mohammed <hamohammed.sa@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, rdunlap@infradead.org, 
- arthurgrillo@riseup.net, Jonathan Corbet <corbet@lwn.net>, 
- pekka.paalanen@haloniitty.fi, Simona Vetter <simona.vetter@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- jeremie.dautheribes@bootlin.com, miquel.raynal@bootlin.com, 
- thomas.petazzoni@bootlin.com, seanpaul@google.com, marcheu@google.com, 
- nicolejadeyee@google.com, Louis Chauvet <louis.chauvet@bootlin.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1064;
- i=louis.chauvet@bootlin.com; h=from:subject:message-id;
- bh=axL606VOP+Vzkxig7OQTFfHk5EC8HgjRmS6iK/9rLyk=;
- b=owEBbQKS/ZANAwAIASCtLsZbECziAcsmYgBnO4rEdyRYcspheKMPUWgrhgvQwTgPP6Sk+atTG
- rUUBSAOOAWJAjMEAAEIAB0WIQRPj7g/vng8MQxQWQQgrS7GWxAs4gUCZzuKxAAKCRAgrS7GWxAs
- 4hIZD/9H+iynSmSGhCU5eDOlmCj3KCd+2hx4wLnQc8IWvQhuoP6RXQp1y0VFTAa8YRi91Bj74SJ
- Sp17WwlAt858MnZwQ3QVsJM4YEXlhg8523Qi5OB4h097aDq9NEvo9ANQ7bJ5NeQ4c6sSM8/c71/
- WtytJGuntaTvjEoR0amm4fvKj8bTDkSakAFmixVBAJdimYNhZpuPOw12vACdnm+3CAMw8TPO0wr
- XIaNXVVz9Vff4lpdAJdQ5QSxGD1YrVXqF7Q1Uyie9O3efbJO012iI/BAw+pfPgQ4Co+mGhpBuQi
- vie9TBptjFTW7Hlg100uWa16wNqkNp/j6MsXmbul9MRjBNKpfLiY+rgtQ47YwadExIQcO64qlwY
- +GniO/atU3NHnDMcCBbvdDHazf++V/fR6IWNSukXvmCysFHMBJG6bATAR720zZ+KkikcKAYPlIf
- Am4szjnTvTCcngm+sjoWjF8WTssw483Zylvf6ZCyWhXP7S/mGqS/86t7idaKP7zuGndG34Evl8j
- cOlUM61rhWGZU3IhXXAus3K8XuSvzLO8yqdc8Im8hsEaBnXh2LvZ0FhUDKmeQBHx14if7tQfh5Q
- 6DiZRK7M4zRBgWCTx1hyVKZmIUAgAOptcyrjMIGyFxpMdwjJXW27t7r937pOG/L0hQiiM+bK+10
- p4e3b/ClCUeNlSw==
-X-Developer-Key: i=louis.chauvet@bootlin.com; a=openpgp;
- fpr=8B7104AE9A272D6693F527F2EC1883F55E0B40A5
-X-GND-Sasl: louis.chauvet@bootlin.com
+References: <20240531010331.134441-1-ross.philipson@oracle.com>
+ <20240531010331.134441-7-ross.philipson@oracle.com> <20240531021656.GA1502@sol.localdomain>
+ <874jaegk8i.fsf@email.froward.int.ebiederm.org> <5b1ce8d3-516d-4dfd-a976-38e5cee1ef4e@apertussolutions.com>
+ <87ttflli09.ffs@tglx> <CALCETrXQ7rChWLDqTG0+KY7rsfajSPguMnHO1G4VJi_mgwN9Zw@mail.gmail.com>
+ <1a1f0c41-70de-4f46-b91d-6dc7176893ee@apertussolutions.com>
+ <8a0b59a4-a5a2-42ae-bc1c-1ddc8f2aad16@apertussolutions.com>
+ <CALCETrX8caT5qvCUu24hQfxUF_wUC2XdGpS2YFP6SR++7FiM3Q@mail.gmail.com>
+ <c466ed57-35a8-41c0-9647-c70e588ad1d3@apertussolutions.com>
+ <CALCETrW9WNNGh1dEPKfQoeU+m5q6_m97d0_bzRkZsv2LxqB_ew@mail.gmail.com>
+ <ff0c8eed-8981-48c4-81d9-56b040ef1c7b@apertussolutions.com>
+ <446cf9c70184885e4cec6dd4514ae8daf7accdcb.camel@HansenPartnership.com> <5d1e41d6-b467-4013-a0d0-45f9511c15c6@apertussolutions.com>
+In-Reply-To: <5d1e41d6-b467-4013-a0d0-45f9511c15c6@apertussolutions.com>
+From: Andy Lutomirski <luto@amacapital.net>
+Date: Mon, 18 Nov 2024 10:43:18 -0800
+Message-ID: <CALCETrW6vMYZo-b7N9ojVSeZLVxhZjLBjnMHsULMGP6TaVYRHA@mail.gmail.com>
+Subject: Re: [PATCH v9 06/19] x86: Add early SHA-1 support for Secure Launch
+ early measurements
+To: "Daniel P. Smith" <dpsmith@apertussolutions.com>
+Cc: James Bottomley <James.Bottomley@hansenpartnership.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, "Eric W. Biederman" <ebiederm@xmission.com>, 
+	Eric Biggers <ebiggers@kernel.org>, Ross Philipson <ross.philipson@oracle.com>, 
+	linux-kernel@vger.kernel.org, x86@kernel.org, linux-integrity@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-crypto@vger.kernel.org, 
+	kexec@lists.infradead.org, linux-efi@vger.kernel.org, 
+	iommu@lists.linux-foundation.org, mingo@redhat.com, bp@alien8.de, 
+	hpa@zytor.com, dave.hansen@linux.intel.com, ardb@kernel.org, 
+	mjg59@srcf.ucam.org, peterhuewe@gmx.de, jarkko@kernel.org, jgg@ziepe.ca, 
+	nivedita@alum.mit.edu, herbert@gondor.apana.org.au, davem@davemloft.net, 
+	corbet@lwn.net, dwmw2@infradead.org, baolu.lu@linux.intel.com, 
+	kanth.ghatraju@oracle.com, andrew.cooper3@citrix.com, 
+	trenchboot-devel@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The functions drm_get_color_encoding_name and drm_get_color_range_name
-are useful for clarifying test results. Therefore, export them so they
-can be used in tests built as modules.
----
- drivers/gpu/drm/drm_color_mgmt.c | 2 ++
- 1 file changed, 2 insertions(+)
+On Thu, Nov 14, 2024 at 5:17=E2=80=AFPM Daniel P. Smith
+<dpsmith@apertussolutions.com> wrote:
+>
+> On 11/2/24 12:04, James Bottomley wrote:
+> > On Sat, 2024-11-02 at 10:53 -0400, Daniel P. Smith wrote:
+> >> Hi Luto,
+> >>
+> >> My apologies, I missed this response and the active on v11 cause me
+> >> to
+> >> get an inquiry why I hadn't responded.
+> >>
+> >> On 9/21/24 18:40, Andy Lutomirski wrote:
+> > [...]
+> >>> I assumed that "deliberately cap" meant that there was an actual
+> >>> feature where you write something to the event log (if applicable)
+> >>> and extend the PCR in a special way that *turns that PCR off*.
+> >>> That is, it does something such that later-loaded software *can't*
+> >>> use that PCR to attest or unseal anything, etc.
+> >>>
+> >>> But it sounds like you're saying that no such feature exists.  And
+> >>> a quick skim of the specs doesn't come up with anything.  And the
+> >>> SHA1 banks may well be susceptible to a collision attack.
+> >>
+> >> Correct, the only entity that can disable PCR banks is the firmware.
+> >
+> > No, that's not correct.  Any user can use TPM_PCR_Allocate to activate
+> > or deactivate individual banks.  The caveat is the change is not
+> > implemented until the next TPM reset (which should involve a reboot).
+> > BIOS also gets to the TPM before the kernel does, so it can, in theory,
+> > check what banks a TPM has and call TPM_PCR_Allocate to change them.
+> > In practice, because this requires a reboot, this is usually only done
+> > from the BIOS menus not on a direct boot ... so you can be reasonably
+> > sure that whatever changes were made will stick.
+>
+> Okay, since there is a desire for exactness. Any system software can
+> send the TPM_PCR_Allocate command, specifying which PCRs should be
+> activated on next _TPM_init. There are restrictions such that if
+> DRTM_PCR is defined, then at least one bank must have a D-RTM PCR
+> allocation. In agreement with my statement, this is the mechanism used
+> by firmware to select the banks. Depending on the firmware
+> implementation, the firmware request will likely override the request
+> sent by the system software.
+>
+> This brings us back to an earlier point, if one disables the SHA1 banks
+> in BIOS menu, then TXT will not use them and thus neither will Secure
+> Launch. Secure Launch will only use the algorithms used by the CPU and
+> the ACM.
+>
+> >> When it initializes the TPM, it can disable banks/algorithms. After
+> >> that, when an extend operation is done, the TPM is expecting an entry
+> >> for all active PCR banks and the TPM itself does the extend hash that
+> >> is stored into the PCRs.
+> >
+> > This, also, is not quite correct: an extend is allowed to specify banks
+> > that don't exist (in which case nothing happens and no error is
+> > reported) and miss banks that do (in which case no extend is done to
+> > that bank).  In the early days of TPM2, some BIOS implementations only
+> > extended sha1 for instance, meaning the sha256 banks were all zero when
+> > the kernel started.
+> >
+> > Even today, if you activate a bank the BIOS doesn't know about, it
+> > likely won't extend it.  You can see this in VM boots with OVMF and
+> > software TPMs having esoteric banks like SM3.
 
-diff --git a/drivers/gpu/drm/drm_color_mgmt.c b/drivers/gpu/drm/drm_color_mgmt.c
-index 3969dc548cff605cbdd3d56dceafb2ca00a5c886..509aa4325391340f8cfc50bd0fc277c48c889d3d 100644
---- a/drivers/gpu/drm/drm_color_mgmt.c
-+++ b/drivers/gpu/drm/drm_color_mgmt.c
-@@ -494,6 +494,7 @@ const char *drm_get_color_encoding_name(enum drm_color_encoding encoding)
- 
- 	return color_encoding_name[encoding];
- }
-+EXPORT_SYMBOL(drm_get_color_encoding_name);
- 
- /**
-  * drm_get_color_range_name - return a string for color range
-@@ -509,6 +510,7 @@ const char *drm_get_color_range_name(enum drm_color_range range)
- 
- 	return color_range_name[range];
- }
-+EXPORT_SYMBOL(drm_get_color_range_name);
- 
- /**
-  * drm_plane_create_color_properties - color encoding related plane properties
+How is this not a security hole you could drive a truck through?
+Indeed, looking at the docs, TPM2_PCR_Extend says "If no digest value
+is specified for a bank, then the PCR in that bank is not modified."
 
--- 
-2.47.0
+>
+> Let me correct myself here and again be extremely precise. When an
+> extend operation is done, the TPM driver expects to receive an array of
+> digests that is the same size as the number of allocated/active banks.
+> Specifically, it loops from 0 to chip->nr_allocated_banks, filling
+> TPML_DIGEST_VALUES with an entry for all the active banks, to include
+> SHA1 if it is active. Coming back to my response to Luto, we can either
+> populate it with 0 or a well-known value for each extend we send.
+> Regardless of what the value is, the TPM will use its implementation of
+> SHA1 to calculate the resulting extend value.
 
+At least extending unknown/unsupported banks with 0 modifies the bank,
+which gives software that might rely on that bank an indication that
+something in the chain doesn't support the bank.  But does actual
+TPM-using software in the wild actually look up the event log and
+notice that it contains a 0?
+
+This sucks.  How on Earth didn't the TPM2 spec do this instead of
+having explicit handling for "a PCR got extended, and the code that
+extended it didn't support a given bank, and therefore *the resulting
+PCR value cannot be relied on*?  It would have been *one single bit
+per PCR, bank* indicating that the PCR's value is incomplete, along
+with some basic logic that an incomplete PCR cannot magically become
+complete, nor can it be used to authorize anything unless the
+authorization policy explicitly allows it?
+
+Anyway, other than the fact that everyone (presumably?) expects
+software to be aware of SHA-1 and (mostly) SHA256, and presumably
+users of SM3 already expect that a lot of things don't support it,
+SHA1 doesn't seem very different from SM3 in the sense that (a) people
+might not want to support it and (b) the actual behavior of a boot
+chain component that doesn't support a cryptosystem is FUNDAMENTALLY
+DANGEROUS.
+
+Is there explicit guidance from TCG as to how this is supposed to work?
+
+
+In any case, I have a strawman suggestion to resolve this issue much
+better from Linux's perspective.  It's a strawman because, while I
+attempted to read the relevant part of the specs, the specs and the
+ecosystem are a mess, so I could be wrong.
+
+Linux should not use TPM2_PCR_Extend *at all*.  Instead, Linux should
+exclusively use TPM2_PCR_Event.  I would expect that passing, say, the
+entire kernel image to TPM2_PCR_Event would be a big mistake, so
+instead Linux should hash the relevant data with a reasonable
+suggestion of hashes (which includes, mandatorily, SHA-384 and *does
+not* include SHA-1, and may or may not be configurable at build time
+to include things like SM3), concatenate them, and pass that to
+TPM2_PCR_Event.  And Linux should make the value that it passed to
+TPM2_PCR_Event readily accessible to software using it, and should
+also include some straightforward tooling to calculate it from a given
+input so that software that wants to figure out what value to expect
+in a PCR can easily do so.
+
+And then software that wants to use a SHA-1 bank will work every bit
+as well as it would if Linux actually implemented it, but Linux can
+happily not implement it, and even users of oddball algorithms that
+Linux has never heard of will get secure behavior.
+
+(Why SHA-384?  Because it's mandatory in the TPM Client profile, and
+anyone who's happy with SHA-256 should also be willing to accept
+SHA-384.)
+
+>
+> Even with these clarifications, the conclusion does not change. If the
+> firmware enables SHA1, there is nothing that can be done to disable or
+> block its usage from the user. Linux Secure Launch sending measurements
+> to all the banks that the hardware used to start the DRTM chain does not
+> create a vulnerability in and of itself. The user is free to leverage
+> the SHA1 bank in any of the TPM's Integrity Collection suite of
+> operations, regardless of what Secure Launch sends for the SHA1 hash.
+> Whereas, neutering the solution of SHA1 breaks the ability for it to
+> support any hardware that has a TPM1.2, of which there are still many in
+> use.
+>
+> V/r,
+> Daniel P. Smith
+>
+>
+
+
+--=20
+Andy Lutomirski
+AMA Capital Management, LLC
 
