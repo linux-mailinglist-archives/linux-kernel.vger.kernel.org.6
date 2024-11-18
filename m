@@ -1,141 +1,127 @@
-Return-Path: <linux-kernel+bounces-413593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3D979D1B5C
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 23:59:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40BFD9D1B5A
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 23:59:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 404A6B23128
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 22:59:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEA611F2211D
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 22:59:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BF811E906D;
-	Mon, 18 Nov 2024 22:59:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACF521E8851;
+	Mon, 18 Nov 2024 22:59:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=eurecom.fr header.i=@eurecom.fr header.b="mkDNjK+5"
-Received: from smtp.eurecom.fr (smtp.eurecom.fr [193.55.113.210])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b1Xhk9ri"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F24731E9060;
-	Mon, 18 Nov 2024 22:59:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.55.113.210
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C55C01A9B34
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 22:59:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731970773; cv=none; b=Ph1Cuq9SPNqn8KbGkb28JvUPqMysUCUSbRBsCz76Kwm22sgBA9CE3ZoHESXTyKLigdHRHCezW5EVbBRwAOlhgb0EvBRwNaL+VJCNZePxiUCT3QyT5imeD0aiGKjCu+xvoeqEKWCvHfNnGMEiZsPOZeCUDH25VBnGegYBWweDnzc=
+	t=1731970745; cv=none; b=K4YEy8iEgCubfosD0sOgPA7zYlVDGok/f+S0F3qkhCiqT4bLrwP21/TTNRF6f/KehRmn1FnQdcuLmbqDRZcMRNVppqnxYyJv751zAMlSamt+fKzMzAC/jjdWwGvISXy9g8E2R9EIYKPPma1w/JFsT0AEfRH4lAbQ6pw5nvKPyyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731970773; c=relaxed/simple;
-	bh=uOCkzoSHiJAiDYZFusLJ9OBEz5FlpCa8Y8HqQeFA+1E=;
-	h=From:Content-Type:Date:Cc:To:MIME-Version:Message-ID:Subject; b=OVITbaoftdxUt82XywAxYeLizq6miGyg0SJyHWJICMF/Pr2n8U26/wN+5PzbWZJ1a4tsPr4BHEoDZHB1BiAmEI68jWi1iUSHvyzmcZRe9Ew2V6ShGZPPej2ixj3q4ZBckv8eDUiabelmTwyRrFSRD3kCWHXZuj00qif7TNIRwVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=eurecom.fr; spf=pass smtp.mailfrom=eurecom.fr; dkim=pass (1024-bit key) header.d=eurecom.fr header.i=@eurecom.fr header.b=mkDNjK+5; arc=none smtp.client-ip=193.55.113.210
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=eurecom.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eurecom.fr
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=eurecom.fr; i=@eurecom.fr; q=dns/txt; s=default;
-  t=1731970770; x=1763506770;
-  h=from:date:cc:to:mime-version:message-id:subject:
-   content-transfer-encoding;
-  bh=uOCkzoSHiJAiDYZFusLJ9OBEz5FlpCa8Y8HqQeFA+1E=;
-  b=mkDNjK+5oXGMcneWBxWlDF1RyrVVErgT9wLKAnXgL+nCS4bvldQeQPlS
-   keDwWycSrJumxOhOJOaj5mbGs/xCqvffXpATG4C/PKBuJtxKJvTzoG/8c
-   dWvmVkJKfWi/E0QrVrNLh/taPsv18i9hAuCVy2d0RsZeK1yfO6CfbJ31G
-   U=;
-X-CSE-ConnectionGUID: kke0BuBSRh+JtWNKrNCVXw==
-X-CSE-MsgGUID: 74tnPZa7RO2m9bpH3+iY2Q==
-X-IronPort-AV: E=Sophos;i="6.12,165,1728943200"; 
-   d="scan'208";a="27706713"
-Received: from quovadis.eurecom.fr ([10.3.2.233])
-  by drago1i.eurecom.fr with ESMTP; 18 Nov 2024 23:58:18 +0100
-From: "Ariel Otilibili-Anieli" <Ariel.Otilibili-Anieli@eurecom.fr>
-Content-Type: text/plain; charset="utf-8"
-X-Forward: 88.183.119.157
-Date: Mon, 18 Nov 2024 23:58:18 +0100
-Cc: =?utf-8?q?Jason_A=2E_Donenfeld?= <Jason@zx2c4.com>, "Andrew Lunn" <andrew+netdev@lunn.ch>, =?utf-8?q?David_S=2E_Miller?= <davem@davemloft.net>, "Eric Dumazet" <edumazet@google.com>, "Jakub Kicinski" <kuba@kernel.org>, "Paolo Abeni" <pabeni@redhat.com>
-To: wireguard@lists.zx2c4.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1731970745; c=relaxed/simple;
+	bh=QqVl+NjUCRT6QDlOEMA6fw+qelIPNF5bBIahHZJccoE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pEWCkod4TbwgWn/7oNvfrPc7LB3J+ZJzH3osAEcncCgipJBYGrTaZkCjHBAUUR3WApmqOIcVCfAlIQVBZuZLKu01wWxrcBdKhhgpvRmN++db25SRscaxzMT5eSpzy/eq6eBvPfG8n3h15jCB7K49UzwQ3wGlFXpKoiQ0gQgLLS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b1Xhk9ri; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-211fb27cc6bso20831485ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 14:59:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731970743; x=1732575543; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=AbHTE8mRQYflZeqQtKwhcMBhbRS66x3BS/fqofAiajw=;
+        b=b1Xhk9rifydPRMJ+aVLv/lor87SjEpTM2TOGBkLmOH1TWOZ7mtXiPELRCtD4BZc/or
+         MnOJRKmuXc2G+NFlGNhIKPKuo8+92AaQgden9KoQJqE041QDJF8Xoj+bd2CCNQZDWppo
+         G2/xW1nWI29WrNmNF+VO+RtCPNHOU2Npql+F/JIa7vmE5sl93fxnhQ4hssFg04GgpKrQ
+         dliokYlIYmq0tV/K40PGB24DOWFc2Yy25j6Cr0biMPfklEPCOxhISqPU9dtj1nGxiHhW
+         gTQoZX7NjQn4jc1pcSak7UHIs3OAkokG5jXmGL7Q+zZa3/ou2Hq+NerMvlBSzJxDv5Fk
+         2o0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731970743; x=1732575543;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AbHTE8mRQYflZeqQtKwhcMBhbRS66x3BS/fqofAiajw=;
+        b=krYW7gXLdAdKI1Y/uvLQkD6xqRITlw8ixL1e6V5+cEXq6taQbQEv/7F0ujAmVfKcYN
+         hqXTx3ruK2c9WgY6tYh8w6Jy1veeJLW3dGzHAbhO8CPMPaqXdDibU7B8eZ12Af+imrou
+         Dr2jqQKJapn2HUSJNgRs6ALU1bMzMRc7bty2Wb9paQyFaYfnWOnIAsO60xBBrXgaERE6
+         6ObHIQv7re4uKBjb1Zmb4HfTbETD8ztubOozQynBxJa8rS4SXCTS/+EqvvJQwi8n8ycm
+         NvFlIiGBkhXrglp1QstUPy7nVW4cJFkGKXJ99pc5Y7UlkQo4pgq1slJW9xllEr0cYzIt
+         lbrw==
+X-Forwarded-Encrypted: i=1; AJvYcCVc99E7R+CuJoOmT19IjvIUGmZSz2sBw+Gh+3wLquC0YkYBlCu5DnfaDpjK1UBEWMtoNiyxL5m7uUCKGhY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXTWtaOJXf031wmjyEHLrB/dIRoraO7UFxj5RBki5lQGAObQHp
+	F1R9L6h/e8Jql9OqS8TTXY2FkwtQPx+rsnlxBUWh48+J29S7+AZ/
+X-Google-Smtp-Source: AGHT+IFeqHikFsu/GhmWbEmvdVXwrl0rB5o/TnuHjj/IBZKYf5Rb/RBelv1SJ1CHmz13ywVND9poHg==
+X-Received: by 2002:a17:902:ced0:b0:20c:ee32:7597 with SMTP id d9443c01a7336-211d0d5ba76mr188024505ad.8.1731970742663;
+        Mon, 18 Nov 2024 14:59:02 -0800 (PST)
+Received: from localhost ([38.141.211.103])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211d0ec8608sm62530925ad.96.2024.11.18.14.59.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Nov 2024 14:59:02 -0800 (PST)
+From: Ragavendra <ragavendra.bn@gmail.com>
+To: tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	hpa@zytor.com,
+	thomas.lendacky@amd.com,
+	ardb@kernel.org,
+	tzimmermann@suse.de,
+	bhelgaas@google.com
+Cc: x86@kernel.org,
+	linux-kernel@vger.kernel.org,
+	Ragavendra <ragavendra.bn@gmail.com>
+Subject: [PATCH v2] x86/sev: Initialize ctxt variable and zero fi
+Date: Mon, 18 Nov 2024 14:58:29 -0800
+Message-ID: <20241118225828.123945-2-ragavendra.bn@gmail.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <15e782-673bc680-4ed-422b5480@29006332>
-Subject: [PATCH] =?utf-8?q?wireguard-tools=3A?= Extracted error message for the sake 
- of legibility
-User-Agent: SOGoMail 5.11.1
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Updating the ctxt value to {} in the svsm_perform_ghcb_protocol as
+it was not initialized. Updating memory to zero for the ctxt->fi
+variable in verify_exception_info when ES_EXCEPTION is returned.
 
-This is a reminder about a patch sent to the WireGuard mailing list; CC=
-ing the maintainers of drivers/net/wireguard/; below a verbatim of my c=
-over letter.
-
-Thank you,
-
-**
-
-I have been using WireGuard for some time; it does ease the configurati=
-on of
-VPNs. This is my first patch to the list, I asked to be subscribed; ple=
-ase
-confirm me it is the case.
-
-I would like to improve my C programming skills; your feedback will be =
-much
-appreciated.
-
-Ariel
-
--------- Original Message --------
-Subject: [PATCH] wireguard-tools: Extracted error message for the sake =
-of legibility
-Date: Thursday, August 01, 2024 11:43 CEST
-From: Ariel Otilibili <Ariel.Otilibili-Anieli@eurecom.fr>
-Reply-To: Ariel Otilibili <Ariel.Otilibili-Anieli@eurecom.fr>
-
-To: wireguard@lists.zx2c4.com
-CC: "Jason A . Donenfeld" <Jason@zx2c4.com>,	Ariel Otilibili <Ariel.Oti=
-libili-Anieli@eurecom.fr>
-
-References: <20240725204917.192647-2-otilibil@eurecom.fr> <202408010949=
-32.4502-1-otilibil@eurecom.fr>
-
-
-
-Signed-off-by: Ariel Otilibili <otilibil@eurecom.fr>
+Fixes: 34ff65901735 x86/sev: Use kernel provided SVSM Calling Areas
+Signed-off-by: Ragavendra Nagraj <ragavendra.bn@gmail.com>
 ---
- src/set.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ arch/x86/coco/sev/shared.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/src/set.c b/src/set.c
-index 75560fd..b2fbd54 100644
---- a/src/set.c
-+++ b/src/set.c
-@@ -16,9 +16,19 @@ int set=5Fmain(int argc, const char *argv[])
+diff --git a/arch/x86/coco/sev/shared.c b/arch/x86/coco/sev/shared.c
+index 71de53194089..5e0f6fbf4dd2 100644
+--- a/arch/x86/coco/sev/shared.c
++++ b/arch/x86/coco/sev/shared.c
+@@ -239,6 +239,8 @@ static enum es_result verify_exception_info(struct ghcb *ghcb, struct es_em_ctxt
+ 		if ((info & SVM_EVTINJ_VALID) &&
+ 		    ((v == X86_TRAP_GP) || (v == X86_TRAP_UD)) &&
+ 		    ((info & SVM_EVTINJ_TYPE_MASK) == SVM_EVTINJ_TYPE_EXEPT)) {
++			memset(&ctxt->fi, 0, sizeof(ctxt->fi));
++
+ 			ctxt->fi.vector = v;
+ 
+ 			if (info & SVM_EVTINJ_VALID_ERR)
+@@ -335,7 +337,7 @@ static int svsm_perform_msr_protocol(struct svsm_call *call)
+ 
+ static int svsm_perform_ghcb_protocol(struct ghcb *ghcb, struct svsm_call *call)
  {
- 	struct wgdevice *device =3D NULL;
- 	int ret =3D 1;
-+	const char *error=5Fmessage =3D "Usage: %s %s <interface>"
-+	  " [listen-port <port>]"
-+	  " [fwmark <mark>]"
-+	  " [private-key <file path>]"
-+	  " [peer <base64 public key> [remove]"
-+	  " [preshared-key <file path>]"
-+	  " [endpoint <ip>:<port>]"
-+	  " [persistent-keepalive <interval seconds>]"
-+	  " [allowed-ips <ip1>/<cidr1>[,<ip2>/<cidr2>]...]"
-+	  " ]...\n";
-=20
- 	if (argc < 3) {
--		fprintf(stderr, "Usage: %s %s <interface> [listen-port <port>] [fwma=
-rk <mark>] [private-key <file path>] [peer <base64 public key> [remove]=
- [preshared-key <file path>] [endpoint <ip>:<port>] [persistent-keepali=
-ve <interval seconds>] [allowed-ips <ip1>/<cidr1>[,<ip2>/<cidr2>]...] ]=
-...\n", PROG=5FNAME, argv[0]);
-+		fprintf(stderr, error=5Fmessage, PROG=5FNAME, argv[0]);
- 		return 1;
- 	}
-=20
---=20
-2.45.2
+-	struct es_em_ctxt ctxt;
++	struct es_em_ctxt ctxt = {};
+ 	u8 pending = 0;
+ 
+ 	vc_ghcb_invalidate(ghcb);
+-- 
+2.46.1
 
 
