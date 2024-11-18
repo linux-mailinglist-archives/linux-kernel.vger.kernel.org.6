@@ -1,117 +1,81 @@
-Return-Path: <linux-kernel+bounces-413606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2450A9D1BA4
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 00:06:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C56099D1BB0
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 00:07:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2A3C1F212B9
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 23:05:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 804BC1F21CB2
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 23:07:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 022A81E8849;
-	Mon, 18 Nov 2024 23:05:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCD571E8849;
+	Mon, 18 Nov 2024 23:07:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="eQ9tesHA"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qEQ8vphv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27233199252;
-	Mon, 18 Nov 2024 23:05:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D5EE153BE4;
+	Mon, 18 Nov 2024 23:07:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731971148; cv=none; b=TAQx+/hN/WGkZ9qZ5WooKjGs0ErsZFvfc2wXh24C7RFHr1EwMTIOJU+g0IMo5FOFn+f3jWOK+Io69fZ421hDQKiel5raryhzS+EEnFItynGv0EFV6c9teLY8ze9CWlLMZ51Vjpx2d0LEPxUYsO+MFwxQFTJ5ujnuKY3CZy4OWtE=
+	t=1731971226; cv=none; b=VZaCbwdltJfK3AiCEiV48ChE5VSne0xP9JJIKFf79Bs00Aj4Gn+MOBPuHENLck7BneJaac1jiw4hGaq8DYdTT33qAsISEFFPwOekqaMqvwXa+BKwObeMbVaZ+L1Dikb7MOW0j918lHoeNIf3WYbVAg+J6UXZKelxTuExQ9ayrx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731971148; c=relaxed/simple;
-	bh=+OxDHwQ+LwgR6Jb7OIDjCgKY879pFmYdyYNHXVCDwog=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=En3Dez0Iz/OojeTOJBLJBhhy8hJww9upuxerU/s2WzWU59L/5UvSumpZ5/bEYzWR0q045MsrvZqO0glvCnO2eVQlVJcXiSow31Vu05w3sn/i5Xn6kNz+GC0afg+aYzih1DbBmdmuaEzu2XhxUfo3WiFPzn2LqLyLY4wqfWhf9Wc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=eQ9tesHA; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1731971143;
-	bh=+OxDHwQ+LwgR6Jb7OIDjCgKY879pFmYdyYNHXVCDwog=;
-	h=Subject:From:To:Date:In-Reply-To:References;
-	b=eQ9tesHA9Iuny+nyiRBUQMhg56mp5yBbcOvuBP4P9VvuulUB1B9pwUMqTLaOflq0p
-	 NWDJi2a7YW8/K7l8nTmi3QzuEmCyzVAwcVp49VZIR81EtCuMPkLpCRzcl753hR29K3
-	 pkKEs3a/l2+6kwP9QvQlURg8KqmhuTK1LLZr91FOh4QABe2/a+EO1weSdgRCby8tfk
-	 fOIX7v+tKMQ+5Nq+oTf6pZkUJJDlsp/MuGX6FPDmA5JsuS1COoy+NHGiQ+Crb/r28d
-	 JtxDWS5h2ntqSglCcnDvK4y4/VHvLEyOOvqX5VqN0cxjOq7hg00ktmJL2gH/j8RhvB
-	 T9rwNRyKA6KzQ==
-Received: from [192.168.68.112] (ppp118-210-181-13.adl-adc-lon-bras34.tpg.internode.on.net [118.210.181.13])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 76E9668D9B;
-	Tue, 19 Nov 2024 07:05:40 +0800 (AWST)
-Message-ID: <0d53f5fbb6b3f1eb01e601255f7e5ee3d1c45f93.camel@codeconstruct.com.au>
-Subject: Re: [net-next 3/3] net: mdio: aspeed: Add dummy read for fire
- control
-From: Andrew Jeffery <andrew@codeconstruct.com.au>
-To: Jacky Chou <jacky_chou@aspeedtech.com>, andrew+netdev@lunn.ch, 
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com,  robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, joel@jms.id.au,  hkallweit1@gmail.com,
- linux@armlinux.org.uk, netdev@vger.kernel.org,  devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,  linux-aspeed@lists.ozlabs.org,
- linux-kernel@vger.kernel.org
-Date: Tue, 19 Nov 2024 09:35:39 +1030
-In-Reply-To: <20241118104735.3741749-4-jacky_chou@aspeedtech.com>
-References: <20241118104735.3741749-1-jacky_chou@aspeedtech.com>
-	 <20241118104735.3741749-4-jacky_chou@aspeedtech.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1731971226; c=relaxed/simple;
+	bh=fh5vfCSCeb43TV7A2AsjLqNdJNOU6PnEihKyQ0nQZ/o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AsM/V4DjzJZOKCjpF37o6uO56OBJ9akIjeErsIHq/YkiPl9NTK9ICWVLqNfRb4PbMnLaEkWXTilVHm9Go0kg0rtSaQsOMFi1P/XLX22ouE1FKAWbU9hzdhlVtSoR/9bnjl+yl7a0zVk3jafGH1Jb50hI7n9lU3kLKReuO4J5aRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qEQ8vphv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94574C4CECC;
+	Mon, 18 Nov 2024 23:07:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731971226;
+	bh=fh5vfCSCeb43TV7A2AsjLqNdJNOU6PnEihKyQ0nQZ/o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qEQ8vphvSV9M2xhI6pJFo+o1vvf60WfjuFvPo06MLXAoQWvNgLjQsZQv6s7hL7dG0
+	 /iGDEI24WczNIPkOvUaTut/JsIddtlTRH5bZFKvAbo7rNNvIpNV7vGYzoDhxy24biS
+	 8SdnWloKmuOQheu5jeJtBiYGiFGyS5YolagUrg6nULepY/zCecRROUIJHdC4IphWwZ
+	 6j6y9G4fAr5d6FhpBiP2ZzY1rHIGF4QmpGCP0pTK+rjjUtctlcEfkh/IKg01pgJyfK
+	 S07nUMpToQ+jdVF2fOF94bK/bCzj66k40aaLWWQNarkVYo+6573W4fpYOHaX6pq/Gj
+	 68Sb9Cyti4UvA==
+Date: Tue, 19 Nov 2024 00:07:02 +0100
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Andre Przywara <andre.przywara@arm.com>
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Gregory CLEMENT <gregory.clement@bootlin.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
+Subject: Re: [PATCH 05/14] dt-bindings: i2c: mv64xxx: Add Allwinner A523
+ compatible string
+Message-ID: <vwwxve2juvplj7m6tvdmhmui32nrmjxslpxs26jyyb5r3mvspr@5xvvn5edr5bw>
+References: <20241111013033.22793-1-andre.przywara@arm.com>
+ <20241111013033.22793-6-andre.przywara@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241111013033.22793-6-andre.przywara@arm.com>
 
-Hi Jacky,
+Hi Andre,
 
-On Mon, 2024-11-18 at 18:47 +0800, Jacky Chou wrote:
-> Add a dummy read to ensure triggering mdio controller before starting
-> polling the status of mdio controller.
->=20
-> Signed-off-by: Jacky Chou <jacky_chou@aspeedtech.com>
-> ---
-> =C2=A0drivers/net/mdio/mdio-aspeed.c | 2 ++
-> =C2=A01 file changed, 2 insertions(+)
->=20
-> diff --git a/drivers/net/mdio/mdio-aspeed.c b/drivers/net/mdio/mdio-
-> aspeed.c
-> index 4d5a115baf85..feae30bc3e78 100644
-> --- a/drivers/net/mdio/mdio-aspeed.c
-> +++ b/drivers/net/mdio/mdio-aspeed.c
-> @@ -62,6 +62,8 @@ static int aspeed_mdio_op(struct mii_bus *bus, u8
-> st, u8 op, u8 phyad, u8 regad,
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0| FIELD_PREP(ASPEED_MDIO_DATA_MIIRDATA, data);
-> =C2=A0
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0iowrite32(ctrl, ctx->base=
- + ASPEED_MDIO_CTRL);
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/* Add dummy read to ensure tr=
-iggering mdio controller */
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0(void)ioread32(ctx->base + ASP=
-EED_MDIO_CTRL);
+On Mon, Nov 11, 2024 at 01:30:24AM +0000, Andre Przywara wrote:
+> The I2C controller IP used in the Allwinner A523/T527 SoCs is
+> compatible with the ones used in the other recent Allwinner SoCs.
+> 
+> Add the A523 specific compatible string to the list of existing names
+> falling back to the allwinner,sun8i-v536-i2c string.
+> 
+> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
 
-Why do this when the same register is immediately read by
-readl_poll_timeout() below?
+Just this patch 5, pushed to i2c/i2c-host.
 
-If there is a reason, I'd like some more explanation in the comment
-you've added, discussing the details of the problem it's solving when
-taking into account the readl_poll_timeout() call.
-
-> =C2=A0
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return readl_poll_timeout=
-(ctx->base + ASPEED_MDIO_CTRL, ctrl,
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0!(ctrl & ASPEED_MDIO_CTRL_FIRE=
-),
-
-Cheers,
-
-Andrew
+Thanks,
+Andi
 
