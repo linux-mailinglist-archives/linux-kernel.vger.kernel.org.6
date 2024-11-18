@@ -1,237 +1,143 @@
-Return-Path: <linux-kernel+bounces-413262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25CE59D168E
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 17:58:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26AC09D16C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 18:08:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1DC00B28F26
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 16:58:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE918282A9D
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 17:08:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5393B1C07C4;
-	Mon, 18 Nov 2024 16:58:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FD081C07C9;
+	Mon, 18 Nov 2024 17:08:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gi4e7kLa"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b="HGRvEieg"
+Received: from caracal.ash.relay.mailchannels.net (caracal.ash.relay.mailchannels.net [23.83.222.30])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D5941BD9F0
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 16:58:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731949087; cv=none; b=dlPJBelTHep/g+lk7Dqt5AhgwimFDUTzH32HSWe+k0/8UBFQpQu3lteV2Qw4qispenewaG3NrL+87IhUjKjNWz3yLDOKKlB8GVMTvzEIpwHEY4sL3ImrSog9+aB7XYewChqcYNtGZRMfzCLFeo17ckSopgIIdos6BWcXvW5y4Wc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731949087; c=relaxed/simple;
-	bh=b+qjRPJJgFh/DH2mn8cdZ+TY0xPgQ1QeLHwseux++Tc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pyGdHWoIwqrhSm6cLLPjXfHRKOxeomNsTqL8CTTUXzXuI1FQ84WGMbgb0pIByApa4YzjZIzcvaJfGlmCTOxGD91WpEz/zFfCzPwmTsdvjq3rg/ZHCW9iRayr0soYCClacA7dHgKssb6okv+RndhgPxzR2nDtF0+hYocgg1IfuyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=gi4e7kLa; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-21207f0d949so17846795ad.2
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 08:58:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1731949085; x=1732553885; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=M67tOapBFVJdyFLK/dKrm6uvvMAbWzWdqgLPM/DLv6o=;
-        b=gi4e7kLaucGzLNNAjqxFpxvtpV97N4rkAi415MnYbVkHbfSQZPx0BOO9wtohlQYxFK
-         ZRLE45soaabRl0xmp/sFnycB4qPxSk6j9Hlu0hY2e93drRClY+CUgGfjeLaD6Jumek9+
-         d5NqfzzY2A2/7VKvpVO6gD3hn2VtFxnUNyiqQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731949085; x=1732553885;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=M67tOapBFVJdyFLK/dKrm6uvvMAbWzWdqgLPM/DLv6o=;
-        b=YxJdngYEj2Ze9Zf+kg88Psot0Yi+6rEVbg/E9Bb6yV50ZUU1LTpKlVvqaIHZFyAFqV
-         X0hODknriL7lt3jcbeVVi1Hf6/zrOCpChtIKXxub2WkFLtGf65cBZF0Sa9sNjvxGZ3jU
-         Zp+RVFdbbG7fTT4CSFV9bb2XlHP+FrF94H/sZdeDSfj4yYthkqFmZCMwO99CAtJ6nOm9
-         weZv7KNKA6lLGufc4WwUS9AQL+yePa32UAGtMcomjIvv52nwz5f0PGmWOY1YjZpfRNsK
-         oJkQF1L63gbWzzQCzFoOWAoUzPDZP6x3lZNHZA+qWRPzQkVQqoDKeh625IoCK5jvhcl8
-         Dccw==
-X-Forwarded-Encrypted: i=1; AJvYcCUHXb25xh9NGY5EVnTsfZYTEGRo2tBl444VhAbEyIwOmL/7XWbpz1v5+WN2jtNipn0LnLbvcPE05MKRJdg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+TV7TQdhRlW/VTt54uY2IUSUG0AEvupPKDhfsH4QswoV2wynp
-	dk+uk1BEDnoKpNbcUTzQ14HR6McIKTlmhJbkUafeLCMO5nVw94pUiDSmWctI+uKlp5hIjhC3lPo
-	=
-X-Google-Smtp-Source: AGHT+IGjeuc308HXW8Rym7WcEoOGrX6ERwztTwGD0WpaZFHjLvo8j/pSaxoeYJ28XFntZckEINkvzg==
-X-Received: by 2002:a17:902:c406:b0:20c:8cc4:cf2c with SMTP id d9443c01a7336-211d0d6f55emr185961625ad.10.1731949084683;
-        Mon, 18 Nov 2024 08:58:04 -0800 (PST)
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com. [209.85.210.175])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211f8abb052sm40010165ad.255.2024.11.18.08.58.03
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Nov 2024 08:58:03 -0800 (PST)
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-7246c8c9b1cso1609668b3a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 08:58:03 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXG9MDjjFe0CswFAIlvQjGTpfZ0wn+l6Tw5Ezq73UpH6iG1BKEdrBk4xao33ERnsl2XmMQdtMrWGDGzUeA=@vger.kernel.org
-X-Received: by 2002:a05:6a00:1902:b0:724:6bac:1003 with SMTP id
- d2e1a72fcca58-7247709df42mr18330165b3a.24.1731949082889; Mon, 18 Nov 2024
- 08:58:02 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86CAE1BD4E2;
+	Mon, 18 Nov 2024 17:08:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.222.30
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731949693; cv=pass; b=HdNpil7VW4xZ3K7SzKdLYH+n9D12Xlccc400O+DUCTlMbfnfMlljoFJsHHw5++EK/45r4n/Y3v7mIALFIQ0JEBPTb7Yd3WEFYb1o2DUjG+hQeejRGeP1GtTOeEiJ6sxbwld5tLO5UswNnNKPiwORdHiUXEy8dVU7ZxbX/6cOTJI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731949693; c=relaxed/simple;
+	bh=M6rsCIHZcAigq8kHezC+lUPcy49ca27h0PYMGsT2oMY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iSaLTbr6Vgu6SjZrDnDt/Niu3pspcZEaEa6jakk1QwEBLEwYba+iwW5PtVvoKvwmMK+CTDlEZGE1TiUAUd6Edo+tM3p8iJmJ5mZNqCQ37pOd3D2+X1XJ/q4ZBJ3rumVgC/FyaLgyxPwx/YB13E2jSf54ePwiD5/c6xpIYHOeR6s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net; spf=pass smtp.mailfrom=stgolabs.net; dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b=HGRvEieg; arc=pass smtp.client-ip=23.83.222.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stgolabs.net
+X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+	by relay.mailchannels.net (Postfix) with ESMTP id 5D85A824828;
+	Mon, 18 Nov 2024 16:57:57 +0000 (UTC)
+Received: from pdx1-sub0-mail-a282.dreamhost.com (trex-9.trex.outbound.svc.cluster.local [100.112.137.144])
+	(Authenticated sender: dreamhost)
+	by relay.mailchannels.net (Postfix) with ESMTPA id C804282483B;
+	Mon, 18 Nov 2024 16:57:56 +0000 (UTC)
+ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1731949077; a=rsa-sha256;
+	cv=none;
+	b=kxlMbF7fMut/J0FfDoiLWatuAmR/osRD1WepZKhSPAkKq7fIaybk8HTe0kN8EGHgpCFGPm
+	2tfP2Zz3m2vrsHxw4cXsLDoJcD4xBPEmiWM+7Php7cLRBX4lPVZwHoFWrhQbb5z9BC22P5
+	f9HZHKZCsTZHjxfTW54TWc06vTzdk3/4jny74S0CPxSsY2s5p9z7ips12cGZmXmOCPtV2c
+	m/C+ToEOPhUvKNvtQNbkh6I82uUeq8F2Egb0e8U3wmqH0mU8B/L0sZYH5lj96m4334TZfW
+	4er+qvkjyuX35Q3mPIh5UYLEfVJNxKWzZ0v9aZlZ+mAgzkUGrXZzylAc2FNbQA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mailchannels.net;
+	s=arc-2022; t=1731949077;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references:dkim-signature;
+	bh=M6rsCIHZcAigq8kHezC+lUPcy49ca27h0PYMGsT2oMY=;
+	b=0AnASXnxXV82VsEVPxvxRvNUvSzBoMYCYl9xdDSKIujJm5FAnRy+j7AEt9DgnVMjPA7bv3
+	D8QYmIRRmrWDGp2VA3uFbdd7/JNXQSylmM1o2YYxvYNMcWSpEmVPaSFmR/MKc6muff/w/X
+	4oydx42ZVikWJb4wcduElaexfCNA+AsH67XVya0JRcG0sD1vgNsyGv67+EQrHZNaEPSYlr
+	fSSmnSZn9TdJoFogr2puwiuOEUfz0K0c9E1OcxMF3aF/3DE3iexoeUQsPI7QesHaGFNTc3
+	utX981wCB11bYVbG54q9wcA4jKLx91F0kXzEkqi+uV2lIZSXKGwB1wRcaRcw/g==
+ARC-Authentication-Results: i=1;
+	rspamd-7456989c76-b5jgc;
+	auth=pass smtp.auth=dreamhost smtp.mailfrom=dave@stgolabs.net
+X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
+X-MC-Relay: Neutral
+X-MailChannels-SenderId: dreamhost|x-authsender|dave@stgolabs.net
+X-MailChannels-Auth-Id: dreamhost
+X-Minister-Trail: 6a6ba2de313d51c7_1731949077250_3014021018
+X-MC-Loop-Signature: 1731949077250:3532320025
+X-MC-Ingress-Time: 1731949077250
+Received: from pdx1-sub0-mail-a282.dreamhost.com (pop.dreamhost.com
+ [64.90.62.162])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
+	by 100.112.137.144 (trex/7.0.2);
+	Mon, 18 Nov 2024 16:57:57 +0000
+Received: from offworld (ip72-199-50-187.sd.sd.cox.net [72.199.50.187])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dave@stgolabs.net)
+	by pdx1-sub0-mail-a282.dreamhost.com (Postfix) with ESMTPSA id 4XsYhy63Fvz1H;
+	Mon, 18 Nov 2024 08:57:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=stgolabs.net;
+	s=dreamhost; t=1731949076;
+	bh=M6rsCIHZcAigq8kHezC+lUPcy49ca27h0PYMGsT2oMY=;
+	h=Date:From:To:Cc:Subject:Content-Type;
+	b=HGRvEiegxQf07F+hiZxIcchbcVgmTg8utpA/HWsbnrb8YlxssaFf8ozofTHVzK1c5
+	 ttfl2FGNqS6ruR9w+mVMs7dYB0SnXq0rMtRGVW3r5mLw1PrUwIJ782FNvX5DiEYco4
+	 0flD75MIp+0xg+v+Ng2aHrijbABz7SfZaC72HOFvQGjSreuXZNkPZprToMWt3A4IxO
+	 5ljZKeqGMcoGar7dmHZYSdpyCjWO6Y5KP+NpCGhXckE3Kl2McNvs79jNB7q+klrrKF
+	 3fyD70v/SEiEpEzWOQzXSczN87pEWFBcEKMlN1NTFLU4nSDrw+l0NO9s8mQvXs6Vik
+	 7YbCHbExPFuFQ==
+Date: Mon, 18 Nov 2024 08:57:51 -0800
+From: Davidlohr Bueso <dave@stgolabs.net>
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: akpm@linux-foundation.org, willy@infradead.org, liam.howlett@oracle.com,
+	lorenzo.stoakes@oracle.com, mhocko@suse.com, vbabka@suse.cz,
+	hannes@cmpxchg.org, mjguzik@gmail.com, oliver.sang@intel.com,
+	mgorman@techsingularity.net, david@redhat.com, peterx@redhat.com,
+	oleg@redhat.com, paulmck@kernel.org, brauner@kernel.org,
+	dhowells@redhat.com, hdanton@sina.com, hughd@google.com,
+	minchan@google.com, jannh@google.com, shakeel.butt@linux.dev,
+	souravpanda@google.com, pasha.tatashin@soleen.com, corbet@lwn.net,
+	linux-doc@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, kernel-team@android.com
+Subject: Re: [PATCH v3 1/5] mm: introduce vma_start_read_locked{_nested}
+ helpers
+Message-ID: <20241118165751.3eqb5d4vobslkjpi@offworld>
+Mail-Followup-To: Suren Baghdasaryan <surenb@google.com>,
+	akpm@linux-foundation.org, willy@infradead.org,
+	liam.howlett@oracle.com, lorenzo.stoakes@oracle.com,
+	mhocko@suse.com, vbabka@suse.cz, hannes@cmpxchg.org,
+	mjguzik@gmail.com, oliver.sang@intel.com,
+	mgorman@techsingularity.net, david@redhat.com, peterx@redhat.com,
+	oleg@redhat.com, paulmck@kernel.org, brauner@kernel.org,
+	dhowells@redhat.com, hdanton@sina.com, hughd@google.com,
+	minchan@google.com, jannh@google.com, shakeel.butt@linux.dev,
+	souravpanda@google.com, pasha.tatashin@soleen.com, corbet@lwn.net,
+	linux-doc@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, kernel-team@android.com
+References: <20241117080931.600731-1-surenb@google.com>
+ <20241117080931.600731-2-surenb@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241008-uvc-readless-v2-0-04d9d51aee56@chromium.org>
- <20241008-uvc-readless-v2-1-04d9d51aee56@chromium.org> <5a5de76c-31a4-47af-bd31-b3a09b411663@redhat.com>
-In-Reply-To: <5a5de76c-31a4-47af-bd31-b3a09b411663@redhat.com>
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Mon, 18 Nov 2024 17:57:49 +0100
-X-Gmail-Original-Message-ID: <CANiDSCtXfdCT=-56m9crxW6hmVjuqBKvRE3NRQBf7nftW=OpNg@mail.gmail.com>
-Message-ID: <CANiDSCtXfdCT=-56m9crxW6hmVjuqBKvRE3NRQBf7nftW=OpNg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] media: uvcvideo: Support partial control reads
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20241117080931.600731-2-surenb@google.com>
+User-Agent: NeoMutt/20220429
 
-On Mon, 18 Nov 2024 at 17:41, Hans de Goede <hdegoede@redhat.com> wrote:
->
-> Hi Ricardo,
->
-> Thank you for your patch.
->
-> On 8-Oct-24 5:00 PM, Ricardo Ribalda wrote:
-> > Some cameras, like the ELMO MX-P3, do not return all the bytes
-> > requested from a control if it can fit in less bytes.
-> > Eg: Returning 0xab instead of 0x00ab.
-> > usb 3-9: Failed to query (GET_DEF) UVC control 3 on unit 2: 1 (exp. 2).
-> >
-> > Extend the returned value from the camera and return it.
-> >
-> > Cc: stable@vger.kernel.org
-> > Fixes: a763b9fb58be ("media: uvcvideo: Do not return positive errors in uvc_query_ctrl()")
-> > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> > ---
-> >  drivers/media/usb/uvc/uvc_video.c | 19 +++++++++++++++++--
-> >  1 file changed, 17 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/media/usb/uvc/uvc_video.c b/drivers/media/usb/uvc/uvc_video.c
-> > index cd9c29532fb0..f125b3ba50f2 100644
-> > --- a/drivers/media/usb/uvc/uvc_video.c
-> > +++ b/drivers/media/usb/uvc/uvc_video.c
-> > @@ -76,14 +76,29 @@ int uvc_query_ctrl(struct uvc_device *dev, u8 query, u8 unit,
-> >
-> >       ret = __uvc_query_ctrl(dev, query, unit, intfnum, cs, data, size,
-> >                               UVC_CTRL_CONTROL_TIMEOUT);
-> > -     if (likely(ret == size))
-> > +     if (ret > 0) {
-> > +             if (size == ret)
-> > +                     return 0;
-> > +
-> > +             /*
-> > +              * In UVC the data is represented in little-endian by default.
-> > +              * Some devices return shorter control packages that expected
-> > +              * for GET_DEF/MAX/MIN if the return value can fit in less
-> > +              * bytes.
->
-> What about GET_CUR/GET_RES ? are those not affected?
->
-> And if it is not affected should we limit this special handling to
-> GET_DEF/MAX/MIN ?
+On Sun, 17 Nov 2024, Suren Baghdasaryan wrote:
 
-I have only seen it with GET_DEF, but I would not be surprised if it
-happens for all of them.
-
-before:
-a763b9fb58be ("media: uvcvideo: Do not return positive errors in
-uvc_query_ctrl()")
-We were applying the quirk to all the call types, so I'd rather keep
-the old behaviour.
-
-The extra logging will help us find bugs (if any).
-
-Let me fix the doc.
-
->
->
-> > +              * Zero all the bytes that the device have not written.
-> > +              */
-> > +             memset(data + ret, 0, size - ret);
->
-> So your new work around automatically applies to all UVC devices which
-> gives us a short return. I think that is both good and bad at the same
-> time. Good because it avoids the need to add quirks. Bad because what
-> if we get a short return for another reason.
->
-> You do warn on the short return. So if we get bugs due to hitting the short
-> return for another reason the warning will be i the logs.
->
-> So all in all think the good outways the bad.
->
-> So yes this seems like a good solution.
->
-> > +             dev_warn(&dev->udev->dev,
-> > +                      "UVC non compliance: %s control %u on unit %u returned %d bytes when we expected %u.\n",
-> > +                      uvc_query_name(query), cs, unit, ret, size);
->
-> I do wonder if we need to use dev_warn_ratelimited()
-> or dev_warn_once() here though.
->
-> If this only impacts GET_DEF/MAX/MIN we will only hit this
-> once per ctrl, after which the cache will be populated.
->
-> But if GET_CUR is also affected then userspace can trigger
-> this warning. So in that case I think we really should use
-> dev_warn_once() or have a flag per ctrl to track this
-> and only warn once per ctrl if we want to know which
-> ctrls exactly are buggy.
-
-Let me use dev_warn_once()
-
->
-> What we really do not want is userspace repeatedly calling
-> VIDIOC_G_CTRL / VIDIOC_G_EXT_CTRLS resulting in a message
-> in dmesg every call.
->
-> >               return 0;
-> > +     }
-> >
-> >       if (ret != -EPIPE) {
-> >               dev_err(&dev->udev->dev,
-> >                       "Failed to query (%s) UVC control %u on unit %u: %d (exp. %u).\n",
-> >                       uvc_query_name(query), cs, unit, ret, size);
-> > -             return ret < 0 ? ret : -EPIPE;
-> > +             return ret ? ret : -EPIPE;
->
-> It took me a minute to wrap my brain around this and even
-> though I now understand this change I do not like it.
->
-> There is no need to optimize an error-handling path like this
-> and IMHO the original code is much easier to read:
->
->                 return ret < 0 ? ret : -ESOMETHING;
->
-> is a well known pattern to check results from functions which
-> return a negative errno, or the amount of bytes read, combined
-> with an earlier success check for ret == amount-expected .
->
-> By changing this to:
->
->                 return ret ? ret : -EPIPE;
->
-> You are breaking the pattern recognition people familiar with
-> this kinda code have and IMHO this is not necessary.
->
-> Also not changing this reduces the patch-size / avoids code-churn
-> which also is a good thing.
->
-> Please drop this part of the patch.
-ack
->
-> Regards,
->
-> Hans
->
+>Introduce helper functions which can be used to read-lock a VMA when
+>holding mmap_lock for read. Replace direct accesses to vma->vm_lock
+>with these new helpers.
 >
 
+Reviewed-by: Davidlohr Bueso <dave@stgolabs.net>
 
--- 
-Ricardo Ribalda
+>Signed-off-by: Suren Baghdasaryan <surenb@google.com>
 
