@@ -1,212 +1,154 @@
-Return-Path: <linux-kernel+bounces-412792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 448499D0F0B
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:56:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C57D79D0F07
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:55:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD8A61F2276F
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 10:56:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BE461F222C4
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 10:55:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EC7B198E77;
-	Mon, 18 Nov 2024 10:55:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aMkceYBh"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E83F21974F4;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12FE1194C96;
 	Mon, 18 Nov 2024 10:55:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hb5Rnlwh"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10F25194A53
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 10:55:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731927347; cv=none; b=CaOhA7rRZSH5U3IKBWg3wGn+dqPkGGvcaJXh0drkIqzwKDhtGibUXk1LlET3gUEV227/mRZxbQ1xyVlAbo5OkDog02a+8d8JbgsaTFaDqJVO3hfb+rrLChtTwnuZJjyQNBPAvDqFaKoF54pWO4Fkowk5d1CfaHxQdeuocxERStc=
+	t=1731927344; cv=none; b=muLDdIy4TX2oKwkioOhTqm39tjElLOPwc7mAF+1VhrGicJumRtncG1FfNW6f/yI+kFaph8gDuJKK/iTX5PhhpXRym2Z1bRvKCzbKFfOXgSa/O7JyUbZkyA8r6zSUKuWr625uXPTzxiP/rljF7cOMXiZeBZvnTdjm8sXRQbl9v+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731927347; c=relaxed/simple;
-	bh=XrxJFbR4MQoW2o/fbLY4lLQhXloc5UbZCeFW3e4x++4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CB2lTaQ60PMLFLLAv9f3Kqwa5zzTlAM7nifc5CDsAUSO2auId0CNcL8q7QSV1XgGno06pZ/qG8BCREmkKV20ureW2e83mxgQx0ky+jkoP2xgDL909dwkH78a/5iVBXq4b8hdWJJyVGVCzzki3D/Yz2Sp/6w+QoVQUdXlrnzex/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aMkceYBh; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-71e49ad46b1so2941272b3a.1;
-        Mon, 18 Nov 2024 02:55:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731927345; x=1732532145; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zyoUF906vNtPyaYS/wrAUzlwsqzoKAFutcf7XV6IzlU=;
-        b=aMkceYBhHTjkf/lbcgGW+KfrCgzSSF5cTU2DCk9UCkXIksjPYvM3fkitXs+D68M88C
-         j2gaqgzIYFCGb0G/H+Xsh2oEm+UNVDQLsrRhhiwb2bVNWOZtMzFocEG2Vdn7ysijNfkk
-         VMWiB0pT32HfauZNpVBJCSnxj6Bx3QA7jSxUXZzRHxRLSCPDLQTMyMY6nqXeZ9nTRE1j
-         Pi99ReOuM+EUbFF6kU4IHxqOFadTQeH0NKlxUaCr1lIt1XwCe7lO9dzNGv1lS0d6qhFa
-         bhMGWSNI1d9KZPEK4khcO/ke1bxl8aerIpN3Aw0Rlo/j54qJ4p2d7IwP83DJf0MAZuGX
-         jCGg==
+	s=arc-20240116; t=1731927344; c=relaxed/simple;
+	bh=ZcFDjxCikiIDehFzhPFoKi4SBUA/t82ryu7kG31flDg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dgFs+LKFyw5m+eeW14shZ2+146CqBq4IoY8izQvxurcxwIL+0tUmPEIA6HrBCrC5dPCq07RguwxXInW4v/wUMRu+QKFZPyw6ISaARpup+ShHbXxJCMRIkyvUC9ku81kYlp76KNMJLeEVB3ikvttkIyMZexyCPbnGjaCjt4B4w6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hb5Rnlwh; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731927341;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AnKB6OxF/nzSNsYCRUDY/ZZFnQ2D348/yl+VsYaNxvk=;
+	b=hb5RnlwhJZd9uYV7dmkpNuh5s7ne3bbgbiK45l/c8SiESei5uuOP+Q+4zYt4mJ/zkN/1Nl
+	YoFv/8UgEnIlOiSBL+Ha3xdwvuKckOgE4XOjyCeuB+osdwuhYBCnFc2gJ9OBmXElLKgS6L
+	DztIC0i/X9akmep/Wdwe2o9FYlqHao0=
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
+ [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-686-0ETeO1n6OoOaRxzJex9qcg-1; Mon, 18 Nov 2024 05:55:40 -0500
+X-MC-Unique: 0ETeO1n6OoOaRxzJex9qcg-1
+X-Mimecast-MFC-AGG-ID: 0ETeO1n6OoOaRxzJex9qcg
+Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-a9a1e429a8fso136384966b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 02:55:40 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731927345; x=1732532145;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zyoUF906vNtPyaYS/wrAUzlwsqzoKAFutcf7XV6IzlU=;
-        b=n/8ckeMr3OSkdH/BS1wdpGQo8LJJw/nSb4ze1Cc5zoaug34JSTGkfvv6Vc7fNiUqpg
-         Hzeoyaa7bPbUnEF/ofl9wvoLMR9iI2CF1nzRLb5uISPmiefiCvWCnibvNaTM6dQL+KCe
-         AR6+4aYPH5UAX97Xn0ti6HI/58MYcRnetAIdOBCbqYirwQtwHjfAF1/NP8lMnaqd+wHT
-         Y/6v7IZbLRVM3UNx+DGBUZSmaA6WPfBJZiPq/sGkuzGgkuEE41gKlYJNn8+Q1LTO8z4y
-         N72Bk6WwTj+QNqZMCQB5zezJMiED6tcC0kECP4rqH7GCx4nHfPfIQFxW/pz1jm71JK4E
-         HUZg==
-X-Forwarded-Encrypted: i=1; AJvYcCV8pvxiJpO6RcY2msiKOezKrBwJAdRhWDFlxG2shdngNGgJ+HrmMuzAHqdrgJy3pzFFxk8yfox3O9vwYzOQ@vger.kernel.org, AJvYcCVjrzsL2m6f5x7M5RHoni75c4rWtdnAN0xRoeCFuF9DORf8rUSXAR38oNttLxRn+iLLqm4k+U9i5XCM@vger.kernel.org
-X-Gm-Message-State: AOJu0YzgUuF4iS6vHldg5cZWGTalds4jIXrhLY/TjVpRyWZN7W4yOMRv
-	9HbEHXTpLPgnxxhZLsuCX4/b56SsYQnToc2B/PdNcc0wdsSBSXv4bhMhoZO9B8mC0P4rpBTqlz2
-	rqIqztmNDsbOb89vPf6GsULFlBqg=
-X-Google-Smtp-Source: AGHT+IHd9jGYZ2LfCXCCzgcTK3nczwcWZWElt9W3tdeSrUmsSdK8SCvUKEicnE44ToNpMw0wHSdxbKt5yUFWNXw91Lg=
-X-Received: by 2002:a05:6a00:cc2:b0:70d:265a:eec6 with SMTP id
- d2e1a72fcca58-72476bb89bemr17584252b3a.13.1731927345149; Mon, 18 Nov 2024
- 02:55:45 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731927339; x=1732532139;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AnKB6OxF/nzSNsYCRUDY/ZZFnQ2D348/yl+VsYaNxvk=;
+        b=wgy5vky5W18GMJeMVF3S+amH0y7zR90aED+fX5ycvZGzVBinj5bWfzTo8e2btosU0K
+         UtLeqNHwtONzRIQ6ehuyrSp3xjU+GrCvhP/2mQv9pEJYZvsG4FKdBoIX8rrX6LIGFSfA
+         JKQWvhyxcGvRFjypU9GQvJV830TlDG/jMAP9aIxNhVLY2zo2WLva8IU26wUfFNoGf4fK
+         xsu2L7FBa/ln3P1eLxiiOS4ZCoB1pt2sQeUSy6mg68YVY5UHjYyKwanJVt1uIBFlkEUK
+         uG4A9D0mf6dpr0CjFkU1g+RkusER7elPevU28sPCsEOIHJhK1D18arJGjW9ZqZENswPw
+         lXIg==
+X-Forwarded-Encrypted: i=1; AJvYcCWyn4IQQAkBgjc3GkzmTvqR6BajlTJBIAklrQUSCYw+DB0UwmZE9J5ZGz4Jph8IZjaKIKtNfzpFDB8iu64=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOrarLRYsCXxJ3XBybroNCoZVv3FPKkEm+ISuDLDWwCR22I+NZ
+	A6C7Ni6St8G38iIX4fgUeiDwjswHN6tFEhgnLXvQBb3HOV9O5zbrDhbq/1SPx6uAxyuRQ6dB2sq
+	7KsM5Bcn6IbYi+YC5sGHqLoDhqpuPd5X9Y+zjLThX4sdstYjhLul6fP+Ga40tvA==
+X-Received: by 2002:a17:907:d24:b0:a87:31c:c6c4 with SMTP id a640c23a62f3a-aa483420c9dmr1098522866b.24.1731927339056;
+        Mon, 18 Nov 2024 02:55:39 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IE2vTdiBnn4PitIg3NGPzUBSRlMyCFj1MIDShUo/ICNJU5eRSVBn7pak/o015A12IJGuEwz+g==
+X-Received: by 2002:a17:907:d24:b0:a87:31c:c6c4 with SMTP id a640c23a62f3a-aa483420c9dmr1098518766b.24.1731927338635;
+        Mon, 18 Nov 2024 02:55:38 -0800 (PST)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20dffd721sm536956766b.107.2024.11.18.02.55.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 Nov 2024 02:55:38 -0800 (PST)
+Message-ID: <322acf33-4569-4e57-a4b5-af60cb0091b7@redhat.com>
+Date: Mon, 18 Nov 2024 11:55:36 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241022144838.1049499-1-batrick@batbytes.com> <20241022144838.1049499-3-batrick@batbytes.com>
-In-Reply-To: <20241022144838.1049499-3-batrick@batbytes.com>
-From: Ilya Dryomov <idryomov@gmail.com>
-Date: Mon, 18 Nov 2024 11:55:34 +0100
-Message-ID: <CAOi1vP_S75CpvjRG5DXinG20PUOqc3Kf+nxtRjmZekjDbM+q1g@mail.gmail.com>
-Subject: Re: [PATCH 2/3] ceph: correct ceph_mds_cap_peer field name
-To: Patrick Donnelly <batrick@batbytes.com>
-Cc: Xiubo Li <xiubli@redhat.com>, Patrick Donnelly <pdonnell@redhat.com>, 
-	"open list:CEPH DISTRIBUTED FILE SYSTEM CLIENT (CEPH)" <ceph-devel@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] power: supply: max17042: make interrupt shared
+To: Dzmitry Sankouski <dsankouski@gmail.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ Sebastian Krzyszkowiak <sebastian.krzyszkowiak@puri.sm>,
+ Purism Kernel Team <kernel@puri.sm>, Sebastian Reichel <sre@kernel.org>,
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-msm@vger.kernel.org
+References: <20241118-b4-max17042-v3-0-9bcaeda42a06@gmail.com>
+ <20241118-b4-max17042-v3-1-9bcaeda42a06@gmail.com>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20241118-b4-max17042-v3-1-9bcaeda42a06@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 22, 2024 at 4:49=E2=80=AFPM Patrick Donnelly <batrick@batbytes.=
-com> wrote:
->
-> See also ceph.git commit: "include/ceph_fs: correct ceph_mds_cap_peer fie=
-ld name".
->
-> See-also: https://tracker.ceph.com/issues/66704
-> Signed-off-by: Patrick Donnelly <pdonnell@redhat.com>
+Hi Dzmitry,
+
+On 18-Nov-24 11:09 AM, Dzmitry Sankouski wrote:
+> Fuelgauge blocks often are incorporated in bigger chip,
+> which may use only 1 line for interrupts. Make interrupt
+> shared.
+> 
+> Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
+
+Thanks, patch looks good to me:
+
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+
+Regards,
+
+Hans
+
+
+
 > ---
->  fs/ceph/caps.c               | 23 ++++++++++++-----------
->  include/linux/ceph/ceph_fs.h |  2 +-
->  2 files changed, 13 insertions(+), 12 deletions(-)
->
-> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-> index bed34fc11c91..88a674cf27a8 100644
-> --- a/fs/ceph/caps.c
-> +++ b/fs/ceph/caps.c
-> @@ -4086,17 +4086,17 @@ static void handle_cap_export(struct inode *inode=
-, struct ceph_mds_caps *ex,
->         struct ceph_inode_info *ci =3D ceph_inode(inode);
->         u64 t_cap_id;
->         unsigned mseq =3D le32_to_cpu(ex->migrate_seq);
-> -       unsigned t_seq, t_mseq;
-> +       unsigned t_issue_seq, t_mseq;
->         int target, issued;
->         int mds =3D session->s_mds;
->
->         if (ph) {
->                 t_cap_id =3D le64_to_cpu(ph->cap_id);
-> -               t_seq =3D le32_to_cpu(ph->seq);
-> +               t_issue_seq =3D le32_to_cpu(ph->issue_seq);
->                 t_mseq =3D le32_to_cpu(ph->mseq);
->                 target =3D le32_to_cpu(ph->mds);
->         } else {
-> -               t_cap_id =3D t_seq =3D t_mseq =3D 0;
-> +               t_cap_id =3D t_issue_seq =3D t_mseq =3D 0;
->                 target =3D -1;
->         }
->
-> @@ -4134,12 +4134,12 @@ static void handle_cap_export(struct inode *inode=
-, struct ceph_mds_caps *ex,
->         if (tcap) {
->                 /* already have caps from the target */
->                 if (tcap->cap_id =3D=3D t_cap_id &&
-> -                   ceph_seq_cmp(tcap->seq, t_seq) < 0) {
-> +                   ceph_seq_cmp(tcap->seq, t_issue_seq) < 0) {
->                         doutc(cl, " updating import cap %p mds%d\n", tcap=
-,
->                               target);
->                         tcap->cap_id =3D t_cap_id;
-> -                       tcap->seq =3D t_seq - 1;
-> -                       tcap->issue_seq =3D t_seq - 1;
-> +                       tcap->seq =3D t_issue_seq - 1;
-> +                       tcap->issue_seq =3D t_issue_seq - 1;
->                         tcap->issued |=3D issued;
->                         tcap->implemented |=3D issued;
->                         if (cap =3D=3D ci->i_auth_cap) {
-> @@ -4154,7 +4154,7 @@ static void handle_cap_export(struct inode *inode, =
-struct ceph_mds_caps *ex,
->                 int flag =3D (cap =3D=3D ci->i_auth_cap) ? CEPH_CAP_FLAG_=
-AUTH : 0;
->                 tcap =3D new_cap;
->                 ceph_add_cap(inode, tsession, t_cap_id, issued, 0,
-> -                            t_seq - 1, t_mseq, (u64)-1, flag, &new_cap);
-> +                            t_issue_seq - 1, t_mseq, (u64)-1, flag, &new=
-_cap);
->
->                 if (!list_empty(&ci->i_cap_flush_list) &&
->                     ci->i_auth_cap =3D=3D tcap) {
-> @@ -4268,14 +4268,14 @@ static void handle_cap_import(struct ceph_mds_cli=
-ent *mdsc,
->                 doutc(cl, " remove export cap %p mds%d flags %d\n",
->                       ocap, peer, ph->flags);
->                 if ((ph->flags & CEPH_CAP_FLAG_AUTH) &&
-> -                   (ocap->seq !=3D le32_to_cpu(ph->seq) ||
-> +                   (ocap->seq !=3D le32_to_cpu(ph->issue_seq) ||
->                      ocap->mseq !=3D le32_to_cpu(ph->mseq))) {
->                         pr_err_ratelimited_client(cl, "mismatched seq/mse=
-q: "
->                                         "%p %llx.%llx mds%d seq %d mseq %=
-d"
->                                         " importer mds%d has peer seq %d =
-mseq %d\n",
->                                         inode, ceph_vinop(inode), peer,
->                                         ocap->seq, ocap->mseq, mds,
-> -                                       le32_to_cpu(ph->seq),
-> +                                       le32_to_cpu(ph->issue_seq),
->                                         le32_to_cpu(ph->mseq));
->                 }
->                 ceph_remove_cap(mdsc, ocap, (ph->flags & CEPH_CAP_FLAG_RE=
-LEASE));
-> @@ -4350,7 +4350,7 @@ void ceph_handle_caps(struct ceph_mds_session *sess=
-ion,
->         struct ceph_snap_realm *realm =3D NULL;
->         int op;
->         int msg_version =3D le16_to_cpu(msg->hdr.version);
-> -       u32 seq, mseq;
-> +       u32 seq, mseq, issue_seq;
->         struct ceph_vino vino;
->         void *snaptrace;
->         size_t snaptrace_len;
-> @@ -4375,6 +4375,7 @@ void ceph_handle_caps(struct ceph_mds_session *sess=
-ion,
->         vino.snap =3D CEPH_NOSNAP;
->         seq =3D le32_to_cpu(h->seq);
->         mseq =3D le32_to_cpu(h->migrate_seq);
-> +       issue_seq =3D le32_to_cpu(h->issue_seq);
->
->         snaptrace =3D h + 1;
->         snaptrace_len =3D le32_to_cpu(h->snap_trace_len);
-> @@ -4598,7 +4599,7 @@ void ceph_handle_caps(struct ceph_mds_session *sess=
-ion,
->                 cap->cap_id =3D le64_to_cpu(h->cap_id);
->                 cap->mseq =3D mseq;
->                 cap->seq =3D seq;
-> -               cap->issue_seq =3D seq;
-> +               cap->issue_seq =3D issue_seq;
+>  drivers/power/supply/max17042_battery.c | 9 +--------
+>  1 file changed, 1 insertion(+), 8 deletions(-)
+> 
+> diff --git a/drivers/power/supply/max17042_battery.c b/drivers/power/supply/max17042_battery.c
+> index 496c3e1f2ee6..99bf6915aa23 100644
+> --- a/drivers/power/supply/max17042_battery.c
+> +++ b/drivers/power/supply/max17042_battery.c
+> @@ -1103,14 +1103,7 @@ static int max17042_probe(struct i2c_client *client)
+>  	}
+>  
+>  	if (client->irq) {
+> -		unsigned int flags = IRQF_ONESHOT;
+> -
+> -		/*
+> -		 * On ACPI systems the IRQ may be handled by ACPI-event code,
+> -		 * so we need to share (if the ACPI code is willing to share).
+> -		 */
+> -		if (acpi_id)
+> -			flags |= IRQF_SHARED | IRQF_PROBE_SHARED;
+> +		unsigned int flags = IRQF_ONESHOT | IRQF_SHARED | IRQF_PROBE_SHARED;
+>  
+>  		ret = devm_request_threaded_irq(&client->dev, client->irq,
+>  						NULL,
+> 
 
-Hi Patrick,
-
-This isn't just a rename -- a different field is decoded and assigned
-to cap->issue_seq now.  What is the impact of this change and should it
-be mentioned in the commit message?
-
-Thanks,
-
-                Ilya
 
