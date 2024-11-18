@@ -1,190 +1,128 @@
-Return-Path: <linux-kernel+bounces-412807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B1D39D0F42
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 12:09:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3400F9D0EFF
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:54:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50A8A285322
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:09:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF49E282947
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 10:54:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69C40196C67;
-	Mon, 18 Nov 2024 11:09:15 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE59E198E65;
+	Mon, 18 Nov 2024 10:53:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="fMbqfWZb"
+Received: from smtp-fw-52005.amazon.com (smtp-fw-52005.amazon.com [52.119.213.156])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CDB715534E
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 11:09:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 722D8194C6F;
+	Mon, 18 Nov 2024 10:53:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731928155; cv=none; b=bhvuXwQjxkjFJ7qwNd7Js1qBWG+xAYbYh33Vzx5fGRrDY4k0UL1G4FDlZGl3vbU0Wiovc08wLvEhiNbcy9m+jNjdTRyKH4OiO1o0mEg56Rc0Ja5aaao8eUkxz+emDLtky+iTrPcMAdD9RTV9cebpgCRhSE9c3+WzG2ZhVH0zWIE=
+	t=1731927190; cv=none; b=GSwqhhMe7WdZAAPYnuGKcRpjHiBtH6gssIa2YZzvUGP7VHNV5Af17fMv3VNZHCBpkBkPang6si57ivk6iOLBcgbSuQCu8TD3KBTTPQhbModksY16Dp57Vb0x3P8kYTon/oWSzqlRwfW2XjvG5+ojE/aOGLeNASoiU0bgdojS9BM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731928155; c=relaxed/simple;
-	bh=vS0dy50gHtBI3qtWTLGOq7IKXIx0DqIKI0/4TYfJMyI=;
-	h=CC:Subject:To:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=Egzp6FZknsenLqA+31VnCSnynsVTqCYCu3Vp2C9LGroJLQ8ipoz4QGm9LIEeqaisxkEJ3iObMc9CMAzQpy7Afvhtz/XAN/EsLSrK6KNPEIkwLDJ136VSLxn9BeZ9Yphf8oL6sdLTYqPHrFBw9wFgh3Of1w2oNMosAsH90riD3wk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4XsPVK4mdRz92JG;
-	Mon, 18 Nov 2024 18:48:09 +0800 (CST)
-Received: from kwepemd200014.china.huawei.com (unknown [7.221.188.8])
-	by mail.maildlp.com (Postfix) with ESMTPS id 1CD971800CF;
-	Mon, 18 Nov 2024 18:50:52 +0800 (CST)
-Received: from [10.67.121.177] (10.67.121.177) by
- kwepemd200014.china.huawei.com (7.221.188.8) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Mon, 18 Nov 2024 18:50:50 +0800
-CC: <yangyicong@hisilicon.com>, <linuxppc-dev@lists.ozlabs.org>,
-	<dietmar.eggemann@arm.com>, <x86@kernel.org>, <bp@alien8.de>,
-	<mingo@redhat.com>, <linux-arm-kernel@lists.infradead.org>,
-	<mpe@ellerman.id.au>, <peterz@infradead.org>, <tglx@linutronix.de>,
-	<sudeep.holla@arm.com>, <catalin.marinas@arm.com>, <will@kernel.org>,
-	<linux-kernel@vger.kernel.org>, <morten.rasmussen@arm.com>,
-	<msuchanek@suse.de>, <gregkh@linuxfoundation.org>, <rafael@kernel.org>,
-	<jonathan.cameron@huawei.com>, <prime.zeng@hisilicon.com>,
-	<linuxarm@huawei.com>, <xuwei5@huawei.com>, <guohanjun@huawei.com>,
-	<dave.hansen@linux.intel.com>
-Subject: Re: [PATCH v9 1/4] cpu/SMT: Provide a default
- topology_is_primary_thread()
-To: Pierre Gondois <pierre.gondois@arm.com>
-References: <20241114141127.23232-1-yangyicong@huawei.com>
- <20241114141127.23232-2-yangyicong@huawei.com>
- <427bd639-33c3-47e4-9e83-68c428eb1a7d@arm.com>
-From: Yicong Yang <yangyicong@huawei.com>
-Message-ID: <3876e185-2fcc-25dd-e70d-93fdcbf8fc37@huawei.com>
-Date: Mon, 18 Nov 2024 18:50:50 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.5.1
+	s=arc-20240116; t=1731927190; c=relaxed/simple;
+	bh=+x9gh2Y5UcQuq8aK2A9oGJ1F6zkRC9ZHYRXLcWailTY=;
+	h=Subject:MIME-Version:Content-Type:Date:Message-ID:CC:From:To:
+	 References:In-Reply-To; b=J/y6REugz8ulayuu2stOtuTUIbvz3mYD31V9it6gcHdeIn5KOdtQ5IundRfQvWD3j/+skI0OkODRvAhsj1hG5+ipsRVvw5GVxSs/S15doay+hf12u25OH47ftNjlaWEA9Q2cQVVZSoqO8FdCC2PtOpSyIToYUnqjdmUMouuFY9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.es; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=fMbqfWZb; arc=none smtp.client-ip=52.119.213.156
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.es
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1731927189; x=1763463189;
+  h=mime-version:content-transfer-encoding:date:message-id:
+   cc:from:to:references:in-reply-to:subject;
+  bh=+x9gh2Y5UcQuq8aK2A9oGJ1F6zkRC9ZHYRXLcWailTY=;
+  b=fMbqfWZbJeocjYY4bYz5kM0yjX4lViqld/qPJzFeoc6IkrMe0wbfzD3G
+   O8dEOuaJGToPwgd1mpQla7MLD6rrD/ftRVnJrkQNJ9eTsv334vGkN1zW1
+   gYpri1NStlIzwsi8gkG96d2nchHAlJodrw0gUJr6hjwelMZ4+1WHtXWCK
+   w=;
+X-IronPort-AV: E=Sophos;i="6.12,163,1728950400"; 
+   d="scan'208";a="696016659"
+Subject: Re: [PATCH v2 2/2] x86/efi: Apply EFI Memory Attributes after kexec
+Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.124.125.6])
+  by smtp-border-fw-52005.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2024 10:53:05 +0000
+Received: from EX19MTAEUA001.ant.amazon.com [10.0.10.100:44201]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.18.131:2525] with esmtp (Farcaster)
+ id faa7a066-a7f2-435f-ad58-ea2403f89473; Mon, 18 Nov 2024 10:53:04 +0000 (UTC)
+X-Farcaster-Flow-ID: faa7a066-a7f2-435f-ad58-ea2403f89473
+Received: from EX19D004EUC001.ant.amazon.com (10.252.51.190) by
+ EX19MTAEUA001.ant.amazon.com (10.252.50.223) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Mon, 18 Nov 2024 10:53:03 +0000
+Received: from localhost (10.13.235.138) by EX19D004EUC001.ant.amazon.com
+ (10.252.51.190) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34; Mon, 18 Nov 2024
+ 10:52:59 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <427bd639-33c3-47e4-9e83-68c428eb1a7d@arm.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemd200014.china.huawei.com (7.221.188.8)
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
+Date: Mon, 18 Nov 2024 10:52:56 +0000
+Message-ID: <D5P8Y0SCMRJZ.2VAI4IK2RCOAC@amazon.com>
+CC: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+	<x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>, Matt Fleming
+	<matt@codeblueprint.co.uk>, <linux-efi@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <stanspas@amazon.de>,
+	<nh-open-source@amazon.com>, <stable@vger.kernel.org>
+From: Nicolas Saenz Julienne <nsaenz@amazon.com>
+To: Ard Biesheuvel <ardb@kernel.org>
+X-Mailer: aerc 0.18.2-87-gd0484b153aa5-dirty
+References: <20241112185217.48792-1-nsaenz@amazon.com>
+ <20241112185217.48792-2-nsaenz@amazon.com>
+ <CAMj1kXGopsux6+xnsXW6vvQDJH9Y3_Ofq_QYvDa-SGt8AJ0nWQ@mail.gmail.com>
+In-Reply-To: <CAMj1kXGopsux6+xnsXW6vvQDJH9Y3_Ofq_QYvDa-SGt8AJ0nWQ@mail.gmail.com>
+X-ClientProxiedBy: EX19D032UWA002.ant.amazon.com (10.13.139.81) To
+ EX19D004EUC001.ant.amazon.com (10.252.51.190)
 
-On 2024/11/15 17:42, Pierre Gondois wrote:
-> Hello Yicong,
-> 
-> 
-> On 11/14/24 15:11, Yicong Yang wrote:
->> From: Yicong Yang <yangyicong@hisilicon.com>
+On Fri Nov 15, 2024 at 4:39 PM UTC, Ard Biesheuvel wrote:
+> On Tue, 12 Nov 2024 at 19:53, Nicolas Saenz Julienne <nsaenz@amazon.com> =
+wrote:
 >>
->> Currently if architectures want to support HOTPLUG_SMT they need to
->> provide a topology_is_primary_thread() telling the framework which
->> thread in the SMT cannot offline. However arm64 doesn't have a
->> restriction on which thread in the SMT cannot offline, a simplest
->> choice is that just make 1st thread as the "primary" thread. So
->> just make this as the default implementation in the framework and
->> let architectures like x86 that have special primary thread to
->> override this function (which they've already done).
+>> Kexec bypasses EFI's switch to virtual mode. In exchange, it has its own
+>> routine, kexec_enter_virtual_mode(), which replays the mappings made by
+>> the original kernel. Unfortunately, that function fails to reinstate
+>> EFI's memory attributes, which would've otherwise been set after
+>> entering virtual mode. Remediate this by calling
+>> efi_runtime_update_mappings() within kexec's routine.
 >>
->> There's no need to provide a stub function if !CONFIG_SMP or
->> !CONFIG_HOTPLUG_SMP. In such case the testing CPU is already
->> the 1st CPU in the SMT so it's always the primary thread.
+>> Cc: stable@vger.kernel.org
+>> Fixes: 18141e89a76c ("x86/efi: Add support for EFI_MEMORY_ATTRIBUTES_TAB=
+LE")
+>> Signed-off-by: Nicolas Saenz Julienne <nsaenz@amazon.com>
 >>
->> Signed-off-by: Yicong Yang <yangyicong@hisilicon.com>
 >> ---
->>   arch/powerpc/include/asm/topology.h |  1 +
->>   arch/x86/include/asm/topology.h     |  2 +-
->>   include/linux/topology.h            | 20 ++++++++++++++++++++
->>   3 files changed, 22 insertions(+), 1 deletion(-)
 >>
->> diff --git a/arch/powerpc/include/asm/topology.h b/arch/powerpc/include/asm/topology.h
->> index 16bacfe8c7a2..da15b5efe807 100644
->> --- a/arch/powerpc/include/asm/topology.h
->> +++ b/arch/powerpc/include/asm/topology.h
->> @@ -152,6 +152,7 @@ static inline bool topology_is_primary_thread(unsigned int cpu)
->>   {
->>       return cpu == cpu_first_thread_sibling(cpu);
->>   }
->> +#define topology_is_primary_thread topology_is_primary_thread
->>     static inline bool topology_smt_thread_allowed(unsigned int cpu)
->>   {
->> diff --git a/arch/x86/include/asm/topology.h b/arch/x86/include/asm/topology.h
->> index 92f3664dd933..d84d9b6d8678 100644
->> --- a/arch/x86/include/asm/topology.h
->> +++ b/arch/x86/include/asm/topology.h
->> @@ -219,11 +219,11 @@ static inline bool topology_is_primary_thread(unsigned int cpu)
->>   {
->>       return cpumask_test_cpu(cpu, cpu_primary_thread_mask);
->>   }
->> +#define topology_is_primary_thread topology_is_primary_thread
->>     #else /* CONFIG_SMP */
->>   static inline int topology_phys_to_logical_pkg(unsigned int pkg) { return 0; }
->>   static inline int topology_max_smt_threads(void) { return 1; }
->> -static inline bool topology_is_primary_thread(unsigned int cpu) { return true; }
->>   static inline unsigned int topology_amd_nodes_per_pkg(void) { return 1; }
->>   #endif /* !CONFIG_SMP */
->>   diff --git a/include/linux/topology.h b/include/linux/topology.h
->> index 52f5850730b3..b8e860276518 100644
->> --- a/include/linux/topology.h
->> +++ b/include/linux/topology.h
->> @@ -240,6 +240,26 @@ static inline const struct cpumask *cpu_smt_mask(int cpu)
->>   }
->>   #endif
->>   +#ifndef topology_is_primary_thread
->> +
->> +#define topology_is_primary_thread topology_is_primary_thread
->> +
->> +static inline bool topology_is_primary_thread(unsigned int cpu)
->> +{
->> +    /*
->> +     * On SMT hotplug the primary thread of the SMT won't be disabled.
->> +     * Architectures do have a special primary thread (e.g. x86) need
->> +     * to override this function. Otherwise just make the first thread
->> +     * in the SMT as the primary thread.
->> +     *
->> +     * The sibling cpumask of an offline CPU contains always the CPU
->> +     * itself.
-> 
-> As Thomas suggested, would it be possible to check it for other
-> architectures ?
-> For instance for loongarch at arch/loongarch/kernel/smp.c,
-> clear_cpu_sibling_map() seems to completely clear &cpu_sibling_map[cpu]
-> when a CPU is put offline. This would make topology_sibling_cpumask(cpu)
-> to be empty and cpu_bootable() return false if the CPU never booted before.
-> 
+>> Notes:
+>> - Tested with QEMU/OVMF.
+>>
+>
+>
+> I'll queue these up,
 
-cpu_bootable() only affects architectures select HOTPLUG_SMT, otherwise it'll always
-return true. Since x86 and powerpc have their own illustration of primary thread and
-have an override version of this funciton, arm64 is the only user now by this patchset.
-We have this guarantee for arm64 and also for other architectures using arch_topology.c
-(see clear_cpu_topology()). So if loogarch has a different implementation, they
-should implement a topology_is_primary_thread() variant to support HOTPLUG_SMT.
+Thanks!
 
-> Personal note:
-> cpu_bootable() is called from an already online CPU:
-> cpu_bootable (kernel/cpu.c:678)
-> cpu_up (kernel/cpu.c:1722 kernel/cpu.c:1702)
-> bringup_nonboot_cpus (kernel/cpu.c:1793 kernel/cpu.c:1901)
-> smp_init (./include/linux/bitmap.h:445 ./include/linux/nodemask.h:241 ./include/linux/nodemask.h:438 kernel/smp.c:1011)
-> kernel_init_freeable (init/main.c:1573)
-> kernel_init (init/main.c:1473)
-> ret_from_fork (arch/arm64/kernel/entry.S:861)
-> 
-> store_cpu_topology() for arm64 is called from the booting CPU:
-> store_cpu_topology (drivers/base/arch_topology.c:921)
-> secondary_start_kernel (arch/arm64/kernel/smp.c:251)
-> __secondary_switched (arch/arm64/kernel/head.S:418)
-> 
->> +     */
->> +    return cpu == cpumask_first(topology_sibling_cpumask(cpu));
->> +}
->> +
->> +#endif
->> +
->>   static inline const struct cpumask *cpu_cpu_mask(int cpu)
->>   {
->>       return cpumask_of_node(cpu_to_node(cpu));
-> 
-> .
+> but I am going drop the cc stable: the memory attributes table is an
+> overlay of the EFI memory map with restricted permissions for EFI
+> runtime services regions, which are only mapped while a EFI runtime
+> call is in progress.
+>
+> So if the table is not taken into account after kexec, the runtime
+> code and data mappings will all be RWX but I think this is a situation
+> we can live with. If nothing breaks, we can always revisit this later
+> if there is an actual need.
+
+My intention was backporting the fix all the way to
+'stable/linux-5.10.y'. But I'm happy to wait, or even to maintain an
+internal backport. It's simple enough.
+
+Nicolas
 
