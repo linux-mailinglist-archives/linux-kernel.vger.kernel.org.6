@@ -1,149 +1,152 @@
-Return-Path: <linux-kernel+bounces-412822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6401E9D0F83
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 12:20:42 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61F3A9D0FC0
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 12:30:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBF521F22439
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:20:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 676D2B25F03
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:21:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 489341991DD;
-	Mon, 18 Nov 2024 11:20:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B186915B102;
+	Mon, 18 Nov 2024 11:21:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="aOveGGGv"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Z+oLHsSa"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D491A196C6C
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 11:20:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70EF9194151
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 11:21:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731928814; cv=none; b=jtnULkITPn+zoUg5qseE+E6Yjpe2/+s9zmFfkYX1BzDf8KCllyy6P71vRjZCTMewuLvsWTSO24Okb5siLqZPgE4mGTlNw2rEAs7Oro9mWPgQgqu/0DYY5edeNIAQQ/tnIABwt+9cKwk8T29i0OWIY9YYRDYoKCgcujVHoc3e3AQ=
+	t=1731928888; cv=none; b=ZJD4sXQLkUmbjEMrsaSmRfliHT3i/dQDP1kRfC3DT/Pjz0ep8fHDEnxOCMrledWZUeUnepeVMqkpKJMzVTFBvJTXnWDNJoJXUgUlgalw3JREfeco4ES7MuzFKey9PQ+fhu3Ib0CD1R67Eg0iaIhYACriA+HonsarBN9g4DGkoe0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731928814; c=relaxed/simple;
-	bh=gkebMvifaHHqYyg3wApsDhnNPWqEu8s40kTTe7mYLOw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QAJt4flP9S3XlU/LzkdIINHHsExnR7PCjqhXbmjINB+PycWCXRmfxISn0xxYwis+i+oW2whcLaPO9skB8586X9KSDybejWwU7tUmeTahcvuXLE70c5bZoKQ+/XseeGXDWqgyTmwKvaLALRjeVYhhZs8n+fUA7BTyVQFOjh85+YA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=aOveGGGv; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4315e62afe0so37242595e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 03:20:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1731928811; x=1732533611; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Asv+1zcPSdtmvj/jsSINOJXF2sibgY7PXKflhCuFup4=;
-        b=aOveGGGvoNZ0O1eTy9ZV8x1nd207pxAH+TQTN6Zr7InPAIMK5jFI4ZOPj9Oq6VxefQ
-         3ZXXz+MKbFbdEHSXyIDW56SfYa/yl4SDfca+i33F0jwmTX77XAihv+jJAOvsLNKP0XSR
-         Y4NKk2KnavF0JeO2b8q69UmOY8ITyzTUGSQA1SjVWhSc3eWC9hQUP1u5ANXMPgzI4lDM
-         99hgdWeejbOD6oPxKMXk0EL5EL7O4LeCiIA1LKkUO84Yw3sI4Bv/O1aEg9Gx8uPpaXTC
-         /LdjOy6/OnKO0Kq2+FaDhSTvnXd1/klOg26wAeh++dkpOplJ7PNsmzHB9VS+puucCxsR
-         ON0g==
+	s=arc-20240116; t=1731928888; c=relaxed/simple;
+	bh=gCjdTwJtgC8pvpKGrKkLfZzj0vbHT92cffiGbzomHu8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KEDRcs+ut7azkd5rRBaeTrWdo+uoxIHYItBgG8aEbWlTbRT8rsvh9acYtCW316TnRrS5Wi44Vn2k5LI0UynZjsZykenc3VZSVRR1AF1nmkV6FR3pWXi1ztEKO1iBFjtf+rSiMaYfXV4t11+iF8JB0rVsusF7iqH8azT6QY8ZyrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Z+oLHsSa; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731928885;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=J/vhtRuGapTYfwMrUTXvgOIYZYR68jtcwBM26NHmo8w=;
+	b=Z+oLHsSadrhu28Ja6A1T3nrGvLGGM+9W1Y02ymnndpzPCf+2FUaGH2n9d50Ao/mOhRI5+X
+	xFWviNmYKWUyWDPaPl3SY3Ab8I36B+0r/8eThvdnMqmN/4rAkwsBANtFDj6mCsxiQdSG6P
+	0Z7v8Gqk7Iw5Qwa7a+VHdCsPFTSCBBw=
+Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
+ [209.85.208.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-425-v6i_-ZHRP--ZCQCl5c9FKA-1; Mon, 18 Nov 2024 06:21:23 -0500
+X-MC-Unique: v6i_-ZHRP--ZCQCl5c9FKA-1
+X-Mimecast-MFC-AGG-ID: v6i_-ZHRP--ZCQCl5c9FKA
+Received: by mail-ed1-f71.google.com with SMTP id 4fb4d7f45d1cf-5cfca6de3f5so669731a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 03:21:23 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731928811; x=1732533611;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Asv+1zcPSdtmvj/jsSINOJXF2sibgY7PXKflhCuFup4=;
-        b=lFid7vH06VasdvCxtqMXbcGY6Ne2JOOeG4M0GVsGvw6eQ2bEU5uzaDEt4DszAvjT2q
-         sryEgPEGoHPjamBK57zQewpnKI03YISL74NNC1wOMwuKUUVQxAZX3ON7yLPszdn5469j
-         LGw+6UZSGjrcdtGYxJVUpPpEyixQ/rk1LfpBD6WCQtopHb+TxusEAKUi2KHpE1Wj+hkY
-         fwbR5ZY2dAIsi9vABfTsNWLJkwI+kepm/zVpeprOux8ixNQNBtB16WwkDhtqVJtXyBJF
-         m9opKyTwxuGnw4i+sRR0CeGZr07kTlvV0z3CTSmg+yaNxAhH5kUqEV+sipxQtopUBkSX
-         IooQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVEojEmuIdVQ7r2jAsZZh4upb9nj+BRqTADiYcXv9CbGyi8oqWv4159YjPnStt1HAofFDoKXpIrf/KYQkg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyucwDjCX9y/EQvt0gc1EOrPQsMu29uZiTA91ttFc8squJgvw/i
-	Q7ME9TkgV/z/vMZQiFNrcfsFHpBGOYLb02AHwLo559mHF1BYrW7gzNZlPywzg58=
-X-Google-Smtp-Source: AGHT+IG8WB54uuUl8Kw673I1UaAQsV/m9AUVgJQSJZ7e5WATQjmgWaIOnj9DxIM7Tr7wJGPWfVKJVg==
-X-Received: by 2002:a05:6000:1544:b0:37d:393a:97c5 with SMTP id ffacd0b85a97d-38225a059a1mr9276421f8f.28.1731928811238;
-        Mon, 18 Nov 2024 03:20:11 -0800 (PST)
-Received: from localhost (p509159f1.dip0.t-ipconnect.de. [80.145.89.241])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3824af06e02sm517377f8f.32.2024.11.18.03.20.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Nov 2024 03:20:10 -0800 (PST)
-From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>
-Cc: linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] iio: adc: ad7124: Refuse invalid input specifiers
-Date: Mon, 18 Nov 2024 12:19:56 +0100
-Message-ID:  <b083836da51827154a0a215d6e9910da71eb1aab.1731404695.git.u.kleine-koenig@baylibre.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <cover.1731404695.git.u.kleine-koenig@baylibre.com>
-References: <cover.1731404695.git.u.kleine-koenig@baylibre.com>
+        d=1e100.net; s=20230601; t=1731928882; x=1732533682;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=J/vhtRuGapTYfwMrUTXvgOIYZYR68jtcwBM26NHmo8w=;
+        b=ayfuK+/EromZObFKkJgMDLfFl8EYMCRciAvpLvbj4us3t4AHLr0FEYx+slUwABjd2H
+         KNqhQHzRBTr0j8xElOzBo73TIYNZsFFAVt0C9AGcHW0N8TzZEZv9dQu3hQFWqP3DtTHj
+         eMAkZjevwBzSatff0buAC+DIMRC0TAdZT9n5zxYqoG8oCVdHrvBVSqlG+/1M68+EP8IM
+         jnAiCkYT2yxkW6oFB+ZX0HPoRSvqOJq4PebcFkzgR1w2kBh+KB3j3cZaAMYvsk9qsXLe
+         CLTKRVIQQzr7khP72qcQjcaaXM6alvDgt33mRBqjaHfY8X7FYOpIpZ4Yz4fNXzFTcb0Q
+         rv9A==
+X-Forwarded-Encrypted: i=1; AJvYcCXBVSkD/crLmQYqkbfgXINoadq8iQi4YS2ldW1bd34gcXTEIP4xT/Xs/oU9aXrtmgpwXkAlLQMVWsPOoJw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwpapyG0Wh6LkFW1M/o1EHKODvYgtw3/4vi5BQzqE3wDBTBRaKY
+	3qZGv+lyadGCyG5MYGd2sVRd3TvTeO5O2jmOV/No8OPd4OBCt4r6iErXxPQXE54OJC0KF+HLAtc
+	RsllsBhaC0Hmv7GvjNxmz3i5iIpvJ1yFB7ZjPcNh5P11Jk8enkkAaIsxH30/+cA==
+X-Received: by 2002:a05:6402:d05:b0:5ce:fa47:18b6 with SMTP id 4fb4d7f45d1cf-5cf8fc8c279mr8212963a12.12.1731928882643;
+        Mon, 18 Nov 2024 03:21:22 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGyn/GEysF6WORMzNW3q8gK3j2rSf3hJU2HyR4Q6dLKfu1IWv3ThPBnLW69j4Xl3SiqiqZiPg==
+X-Received: by 2002:a05:6402:d05:b0:5ce:fa47:18b6 with SMTP id 4fb4d7f45d1cf-5cf8fc8c279mr8212941a12.12.1731928882287;
+        Mon, 18 Nov 2024 03:21:22 -0800 (PST)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cfce9e1e38sm620404a12.37.2024.11.18.03.21.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 Nov 2024 03:21:21 -0800 (PST)
+Message-ID: <646da4cc-0030-4f11-8a1d-4e4aaa1f609d@redhat.com>
+Date: Mon, 18 Nov 2024 12:21:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] platform/x86: panasonic-laptop: Return errno correctly in
+ show callback
+To: Yao Zi <ziyao@disroot.org>, Kenneth Chan <kenneth.t.chan@gmail.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: "open list:PANASONIC LAPTOP ACPI EXTRAS DRIVER"
+ <platform-driver-x86@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20241118064637.61832-3-ziyao@disroot.org>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20241118064637.61832-3-ziyao@disroot.org>
 Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2144; i=u.kleine-koenig@baylibre.com; h=from:subject:message-id; bh=gkebMvifaHHqYyg3wApsDhnNPWqEu8s40kTTe7mYLOw=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBnOyLfGsCIByaVZGarVHFl3mkS+B0/j1LFfwxB1 8fYuZZ1IT+JATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZzsi3wAKCRCPgPtYfRL+ Ts+bCACIz+mk+hqNkhtGHLZ6hP8yd0qzFgyJFsUKKkzO536lI8s6cM4YJbIpKlRBwMrlDULO0Nk W6FItS/1LvFpl35M6Ea3q8CiZhf4W7CRKrQqxGzpGYis/jBD79JQXQAIUm5211E7yRJz1adqSwA +sKLNn1aZKg0uCJmQY25DtAnXcm1L8oVeXxLYp/cYHJ7bec5ea8Kn/2aL8RhTyccE7K07BF+x2k Tw2lXhP0I7yR12eLck5B7bCtA+aOjzkGhQ4Z/3vejJNjkOyq9NM9+tgTMzEnU7yq5DRCgN8g7Hm wL9JCgOcR39Zp5/qVMyWBn7ODUZyjNXbpS7LEuo1p/VOZ2+B
-X-Developer-Key: i=u.kleine-koenig@baylibre.com; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-The ad7124-4 has 8 analog inputs; the input select values 8 to 15 are
-reserved and not to be used. These are fine for ad7124-8. For both
-ad7124-4 and ad7124-8 values bigger than 15 are internal channels that
-might appear as inputs in the channels specified in the device
-description according to the description of commit f1794fd7bdf7 ("iio:
-adc: ad7124: Remove input number limitation"), values bigger than 31
-don't fit into the respective register bit field and the driver masked
-them to smaller values.
+Hi,
 
-Check for these invalid input specifiers and fail to probe if one is
-found.
+On 18-Nov-24 7:46 AM, Yao Zi wrote:
+> When an error occurs in sysfs show callback, we should return the errno
+> directly instead of formatting it as the result, which produces
+> meaningless output and doesn't inform the userspace of the error.
+> 
+> Fixes: 468f96bfa3a0 ("platform/x86: panasonic-laptop: Add support for battery charging threshold (eco mode)")
+> Fixes: d5a81d8e864b ("platform/x86: panasonic-laptop: Add support for optical driver power in Y and W series")
+> Signed-off-by: Yao Zi <ziyao@disroot.org>
 
-Fixes: f1794fd7bdf7 ("iio: adc: ad7124: Remove input number limitation")
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
----
- drivers/iio/adc/ad7124.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+Thanks, patch looks good to me:
 
-diff --git a/drivers/iio/adc/ad7124.c b/drivers/iio/adc/ad7124.c
-index 4de69bb8653a..bfeec59e33ba 100644
---- a/drivers/iio/adc/ad7124.c
-+++ b/drivers/iio/adc/ad7124.c
-@@ -807,6 +807,19 @@ static int ad7124_check_chip_id(struct ad7124_state *st)
- 	return 0;
- }
- 
-+/*
-+ * Input specifiers 8 - 15 are explicitly reserved for ad7124-4
-+ * while they are fine for ad7124-8. Values above 31 don't fit
-+ * into the register field and so are invalid for sure.
-+ */
-+static bool ad7124_valid_input_select(unsigned int ain, const struct ad7124_chip_info *info)
-+{
-+	if (ain >= info->num_inputs && ain < 16)
-+		return false;
-+
-+	return ain <= FIELD_MAX(AD7124_CHANNEL_AINM_MSK);
-+}
-+
- static int ad7124_parse_channel_config(struct iio_dev *indio_dev,
- 				       struct device *dev)
- {
-@@ -859,6 +872,11 @@ static int ad7124_parse_channel_config(struct iio_dev *indio_dev,
- 		if (ret)
- 			return ret;
- 
-+		if (!ad7124_valid_input_select(ain[0], st->chip_info) ||
-+		    !ad7124_valid_input_select(ain[1], st->chip_info))
-+			return dev_err_probe(dev, -EINVAL,
-+					     "diff-channels property of %pfwP contains invalid data\n", child);
-+
- 		st->channels[channel].nr = channel;
- 		st->channels[channel].ain = AD7124_CHANNEL_AINP(ain[0]) |
- 						  AD7124_CHANNEL_AINM(ain[1]);
--- 
-2.45.2
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+
+Regards,
+
+Hans
+
+
+> ---
+>  drivers/platform/x86/panasonic-laptop.c | 10 +++++++---
+>  1 file changed, 7 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/platform/x86/panasonic-laptop.c b/drivers/platform/x86/panasonic-laptop.c
+> index 2bf94d0ab324..22ca70eb8227 100644
+> --- a/drivers/platform/x86/panasonic-laptop.c
+> +++ b/drivers/platform/x86/panasonic-laptop.c
+> @@ -614,8 +614,7 @@ static ssize_t eco_mode_show(struct device *dev, struct device_attribute *attr,
+>  		result = 1;
+>  		break;
+>  	default:
+> -		result = -EIO;
+> -		break;
+> +		return -EIO;
+>  	}
+>  	return sysfs_emit(buf, "%u\n", result);
+>  }
+> @@ -761,7 +760,12 @@ static ssize_t current_brightness_store(struct device *dev, struct device_attrib
+>  static ssize_t cdpower_show(struct device *dev, struct device_attribute *attr,
+>  			    char *buf)
+>  {
+> -	return sysfs_emit(buf, "%d\n", get_optd_power_state());
+> +	int state = get_optd_power_state();
+> +
+> +	if (state < 0)
+> +		return state;
+> +
+> +	return sysfs_emit(buf, "%d\n", state);
+>  }
+>  
+>  static ssize_t cdpower_store(struct device *dev, struct device_attribute *attr,
 
 
