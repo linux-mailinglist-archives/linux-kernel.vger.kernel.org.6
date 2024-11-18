@@ -1,87 +1,189 @@
-Return-Path: <linux-kernel+bounces-413517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E02379D1A43
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 22:16:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87ECC9D1A4A
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 22:17:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4BF3282555
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 21:16:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3606C1F2270F
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 21:17:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B17D61E7C11;
-	Mon, 18 Nov 2024 21:16:06 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A69191E7C1A;
+	Mon, 18 Nov 2024 21:17:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YFWfgJjk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D708B155312
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 21:16:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08D321E7674;
+	Mon, 18 Nov 2024 21:17:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731964566; cv=none; b=Y871exdxVCIAoYU98AKTgt45Mi40sGKAfPrU3/xp5HYrlI0hvspLO7Er6pLC0fkIwFVuPsXC5rsLVJlkNMp0tImdmcjz0hwtzJLsCalcdGh9a8Iu7LYKEkQDs7O/LW/WVo4iAIFlfl+1iA9Vc4ROPgqnq2pgAWJxgy7vaBcbS14=
+	t=1731964630; cv=none; b=O/SY7TS5w9YsJa7lJIgEtUkGctFXhAqNPWryFHEm5CcYcIiXB4DIxJPSce74mr+5w2u6lje8lH7S0KljhWkS2YPFoVHXMukcQzO8eStI/9hme9JXw5V17tJXW+29YCg4HVYa4oLWX2GJ4tkHUzpIwvrJ92c6HOPhGgqBsXRp22o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731964566; c=relaxed/simple;
-	bh=Yvbzap5GUns2E5E9yO5Z2P8Mk6Bcww+S4mM7sihaT1Y=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=ecdn6BJJp12Q/BKMXb4M6furHFN4fIiWBefy9jzPtuP/N/Ti0Jzzb+oZfXpvf8y45j3qUNzTe/rD8LhPyzozlWdEVEBieeUxMkdt5DHFaB+pondjYfVJkGDR6QANkhreu5Hxh0hZO7JEtNbchUYa/g/IyFtHDB11uY75B/hK6Q0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a7162d1485so2811895ab.0
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 13:16:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731964564; x=1732569364;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dWyQ4VaAd+gfDclkQci7PLxjAOBd3WOZtaBU3RlnMwQ=;
-        b=OGlM/WXccrWaLXuYhyIlfAYgU/VOowLj3WwQabYXSv9Ly/wnXC7aAD312ONnO70DlW
-         ZEybdNzW57f7sHkXNr7rxd3KLcVPT6zGF7bLy7LqNy7YtecB+jLfKImpUuIGWnKqc8q4
-         Bxa/cGn5+DvxYY5xtgvMf4rYQ+kT77ddcdOpnz1KBpuJ179r2J+JRcW5Qi1QK9iPUskw
-         fPCI1Xu3H/kH8TLkkzllwP3Bv1tXeZArMAP/pm0EIDwNgr+aH5WFY62UnDF3SCsHsBjg
-         y2AUMzv4PZQRebE5utuPYAPuG8BNtyOR2fGjg07AsLUAVrWyg0hZiGp+mEwhQpBNfX2A
-         Y17A==
-X-Forwarded-Encrypted: i=1; AJvYcCWxfvDVha+PnfOC1xmdAnD43u3Xi3ab85ze43caxyZKpmtUGbMLXmT1fOUI26LUalSzA0EZ4xC7tSHFyBE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7z3or4C/mRhvookJ9RZSfrenLgF9JB21bwNV4Lh6eoMrwLzKR
-	hiWvBvbNYwJO/dwmNcIKYTCZhGreoO2mm9cbRGydQnUF++T5oHj4EFzUyTsfn5Y/hpPwuBiQbHv
-	arLCjT3nFoC1L3O7iwXzLHz22sGPnzxOg5DeavH31+GySBU42sG3Ppq0=
-X-Google-Smtp-Source: AGHT+IE9CQk2sRP8pASvnozQPGwaKYk2aXALQtkAgaNI6SDi5oY9uYA4IP8fes48qRki3At1KbEI3eIXzOsbLK+59NdsW63ZA16A
+	s=arc-20240116; t=1731964630; c=relaxed/simple;
+	bh=9TBxA42ZTn5iyvXFYCgi43nTdVs128UxQ3PPtNhVW0U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R7HmY3U5XgX8/eVth/G7GUNanDn30HLIcRzDwe2wu7FHj9LY8QnAE9lfu0ySiopEzxJ7aAzA3PlWgcwM3EVOcIf2oaIWZ7LDTGUJkbrHqyVO4+dCbsBO1AlHJe2rP6TeFJ8AEuc+2GNvX692+1nEtfjMYDpaWbhoQibWHJYChYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YFWfgJjk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BC1EC4CED7;
+	Mon, 18 Nov 2024 21:17:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731964629;
+	bh=9TBxA42ZTn5iyvXFYCgi43nTdVs128UxQ3PPtNhVW0U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YFWfgJjkJUQ+OP98HTM7UPtE6PwDOeExCIjKKGH8Df5l43b2tLak/hTFl+1WLxYu9
+	 wrP+TVgiegF2Hos7ZHj0iRYOQ0tb8usBqtg0q8YwwIZOt3+jYE8KdGZnyu3L+V7Gzm
+	 nkI9zqe1hrj8BFfq+ZpLBhkLaIP8FRbmfRUMbJLfpXemRG9tITRA30I7C1JVN8UnZ7
+	 VGf/Qvt1p8jqGGCgWAksbvVy3vWgJoS+Bg0ezWSWi0rnhhXMbZBN8lXDAfW2UpXVKw
+	 I0MAMD4Dje5OX4d4WFA0wXHHqERgTwHba4+uBFFq0GOGAkbFxHnrPaQokd9hKwO/la
+	 89o1C/ZUnE57w==
+Date: Mon, 18 Nov 2024 13:17:07 -0800
+From: Namhyung Kim <namhyung@kernel.org>
+To: Howard Chu <howardchu95@gmail.com>
+Cc: acme@kernel.org, peterz@infradead.org, irogers@google.com,
+	mingo@redhat.com, jolsa@kernel.org, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	James Clark <james.clark@linaro.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: Re: [PATCH v8 03/10] perf record --off-cpu: Parse off-cpu event
+Message-ID: <Zzuu06ybvy8IpH5m@google.com>
+References: <20241113002818.3578645-1-howardchu95@gmail.com>
+ <20241113002818.3578645-4-howardchu95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2169:b0:3a7:6792:60f with SMTP id
- e9e14a558f8ab-3a767920751mr48361945ab.4.1731964564134; Mon, 18 Nov 2024
- 13:16:04 -0800 (PST)
-Date: Mon, 18 Nov 2024 13:16:04 -0800
-In-Reply-To: <CABBYNZ+=qNj8=Osdzxx2n0Yt0H0AjKtOAx__QkZw_Gk3a1ygbw@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <673bae94.050a0220.87769.005b.GAE@google.com>
-Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in set_powered_sync
-From: syzbot <syzbot+03d6270b6425df1605bf@syzkaller.appspotmail.com>
-To: linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	luiz.dentz@gmail.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241113002818.3578645-4-howardchu95@gmail.com>
 
-Hello,
+On Tue, Nov 12, 2024 at 04:28:11PM -0800, Howard Chu wrote:
+> Parse the off-cpu event using parse_event(), as bpf-output.
+> 
+> no-inherit should be set to 1, here's the reason:
+> 
+> We update the BPF perf_event map for direct off-cpu sample dumping (in
+> following patches), it executes as follows:
+> 
+> bpf_map_update_value()
+>  bpf_fd_array_map_update_elem()
+>   perf_event_fd_array_get_ptr()
+>    perf_event_read_local()
+> 
+> In perf_event_read_local(), there is:
+> 
+> int perf_event_read_local(struct perf_event *event, u64 *value,
+> 			  u64 *enabled, u64 *running)
+> {
+> ...
+> 	/*
+> 	 * It must not be an event with inherit set, we cannot read
+> 	 * all child counters from atomic context.
+> 	 */
+> 	if (event->attr.inherit) {
+> 		ret = -EOPNOTSUPP;
+> 		goto out;
+> 	}
+> 
+> Which means no-inherit has to be true for updating the BPF perf_event
+> map.
+> 
+> Moreover, for bpf-output events, we primarily want a system-wide event
+> instead of a per-task event.
+> 
+> The reason is that in BPF's bpf_perf_event_output(), BPF uses the CPU
+> index to retrieve the perf_event file descriptor it outputs to.
+> 
+> Making a bpf-output event system-wide naturally satisfies this
+> requirement by mapping CPU appropriately.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+I'm afraid the inherit attribute would be updated later:
 
-Reported-by: syzbot+03d6270b6425df1605bf@syzkaller.appspotmail.com
-Tested-by: syzbot+03d6270b6425df1605bf@syzkaller.appspotmail.com
+  __cmd_record()
+    evlist__config()
+      evsel__config()
 
-Tested on:
+You can add a logic to check the config term when setting the inherit
+value.
 
-commit:         d7ef9eee Merge branch 'am65-cpsw-rx-dscp-prio-map'
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=111eeac0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d9e1e43bf6b46a4d
-dashboard link: https://syzkaller.appspot.com/bug?extid=03d6270b6425df1605bf
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=120f4930580000
+Thanks,
+Namhyung
 
-Note: testing is done by a robot and is best-effort only.
+> 
+> Suggested-by: Namhyung Kim <namhyung@kernel.org>
+> Reviewed-by: Ian Rogers <irogers@google.com>
+> Signed-off-by: Howard Chu <howardchu95@gmail.com>
+> Cc: Adrian Hunter <adrian.hunter@intel.com>
+> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: James Clark <james.clark@linaro.org>
+> Cc: Jiri Olsa <jolsa@kernel.org>
+> Cc: Kan Liang <kan.liang@linux.intel.com>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Link: https://lore.kernel.org/r/20241108204137.2444151-4-howardchu95@gmail.com
+> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> ---
+>  tools/perf/util/bpf_off_cpu.c | 33 +++++++++++----------------------
+>  1 file changed, 11 insertions(+), 22 deletions(-)
+> 
+> diff --git a/tools/perf/util/bpf_off_cpu.c b/tools/perf/util/bpf_off_cpu.c
+> index a590a8ac1f9d..558c5e5c2dc3 100644
+> --- a/tools/perf/util/bpf_off_cpu.c
+> +++ b/tools/perf/util/bpf_off_cpu.c
+> @@ -38,32 +38,21 @@ union off_cpu_data {
+>  
+>  static int off_cpu_config(struct evlist *evlist)
+>  {
+> +	char off_cpu_event[64];
+>  	struct evsel *evsel;
+> -	struct perf_event_attr attr = {
+> -		.type	= PERF_TYPE_SOFTWARE,
+> -		.config = PERF_COUNT_SW_BPF_OUTPUT,
+> -		.size	= sizeof(attr), /* to capture ABI version */
+> -	};
+> -	char *evname = strdup(OFFCPU_EVENT);
+> -
+> -	if (evname == NULL)
+> -		return -ENOMEM;
+>  
+> -	evsel = evsel__new(&attr);
+> -	if (!evsel) {
+> -		free(evname);
+> -		return -ENOMEM;
+> +	scnprintf(off_cpu_event, sizeof(off_cpu_event), "bpf-output/no-inherit=1,name=%s/", OFFCPU_EVENT);
+> +	if (parse_event(evlist, off_cpu_event)) {
+> +		pr_err("Failed to open off-cpu event\n");
+> +		return -1;
+>  	}
+>  
+> -	evsel->core.attr.freq = 1;
+> -	evsel->core.attr.sample_period = 1;
+> -	/* off-cpu analysis depends on stack trace */
+> -	evsel->core.attr.sample_type = PERF_SAMPLE_CALLCHAIN;
+> -
+> -	evlist__add(evlist, evsel);
+> -
+> -	free(evsel->name);
+> -	evsel->name = evname;
+> +	evlist__for_each_entry(evlist, evsel) {
+> +		if (evsel__is_offcpu_event(evsel)) {
+> +			evsel->core.system_wide = true;
+> +			break;
+> +		}
+> +	}
+>  
+>  	return 0;
+>  }
+> -- 
+> 2.43.0
+> 
 
