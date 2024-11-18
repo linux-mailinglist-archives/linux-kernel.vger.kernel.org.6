@@ -1,111 +1,105 @@
-Return-Path: <linux-kernel+bounces-413241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 785519D1578
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 17:39:30 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FC3E9D1589
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 17:42:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85BC9283718
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 16:39:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 739C6B2C57E
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 16:39:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 783D51BD9FF;
-	Mon, 18 Nov 2024 16:39:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA89A1BE226;
+	Mon, 18 Nov 2024 16:39:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dlUs0A4Y"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hCuE6eZJ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F852225D6;
-	Mon, 18 Nov 2024 16:39:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92629225D6
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 16:39:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731947959; cv=none; b=hBxXUU5jpuoIlA9DyfGDfJiH0mwFxrKli/JZO8PgEJqx4MxyjJvfRvrsJfUwqki9gaQOi/RY8mPiP+ftv7/7uYs9kZpLDZX2TZj3ONUJ5zTFmqGgJ0XmX3X0uj/sC/0doG2mfFqGCY56gPSBR2uEYU9clACcjk2+Pg5IGMNYKwI=
+	t=1731947976; cv=none; b=totlY8n8+k6Hrka2OPJAY6C+vCB7yfoTpv9SmTa6Vjp6nyOS4lobCQcmhiGrpw8z4xCaR15pDU+VprfSXRnyUBVnky344S68+SafIHY/Arel8hJYC/6AufRDk7CUcp275qsdMC0TB2ZLNZJlO8NETeMDEiVoZL2tHL02I8jCfSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731947959; c=relaxed/simple;
-	bh=nmA4ppkMTICL/gt5CLE+iRaWAkj1SjTpLtPXZChoHAs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EBSwSVg/3sZCg6SrqqtrU+fOTEffPlaCNF5Oq3tyrZTL3asm5fkSCXgUra3xGOi3v3bOOU70fAw6zweitbTIsj1zDRWgWUkXe3sbq5qbuzBVtbPxXjAl3gtWfuB8y+nKaJoFn5xPf3jldRA+tJ5WUDzkOxbyEgH3nE3IXtHKNno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dlUs0A4Y; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2ea93311724so90568a91.2;
-        Mon, 18 Nov 2024 08:39:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731947958; x=1732552758; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nmA4ppkMTICL/gt5CLE+iRaWAkj1SjTpLtPXZChoHAs=;
-        b=dlUs0A4YD8J6+HWn5TIwqvGPk9oRN0mJv4l4k163lWc1khktL7Jak4sd3BWsy96VJ0
-         R6fxfDIL6Gm2jW0lKuiIwsYJnwDCI/NBlnE/MWh+koC/V+RcnCzFJ2xrYMeteipENBIq
-         8I4rJs87+tRIIflY1lO6xikYrnmnKCEDYO8Sxn+srjb22RrFkadigpiI3dQQ8brNL/Qc
-         1WhJuEwdctgZWKL9Y2rHmKAvtljvtu+8F8ymB43YF3g27XYzHN7EG0snFzG+HewM1KlZ
-         7BC/zbmjyoDyT8HTIjzxHPeX7y/J2t3ppTCHgFFuQ01SgWLbGjnw2hZl4xfBMH9a5UQ8
-         Pt1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731947958; x=1732552758;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nmA4ppkMTICL/gt5CLE+iRaWAkj1SjTpLtPXZChoHAs=;
-        b=GPftFPEd51CGNLw/PKrPc8GIp5S/AxEllBQZKVcrdY4maxKaZK+41hMYpQdzgRVweO
-         SWw2HdMltKOlItLqx7VsUZAaCTiaz1stjxPvlh90HHSsjaG+uu5vs7DCo5zKoKv+ImG8
-         Ilf4MSnsNAjYF1b8QIPJd+pehYF7sFlVDaBom7mBMNfxUmE/gGkqldIx+hY7EoNc2ORQ
-         IjgYZsSmnTp0oTkupW9/e9eLf7AaCZNdIKg3bpnesm+UxbM1PMLRk7zdEpNUqbT8gTkX
-         evFhachpkx+OorVkPFpIwXgcUQ2VIrjVAAOoM2ztUEaCCgZwRBy7VUgFUPQl/QDRRrqs
-         +7Mw==
-X-Forwarded-Encrypted: i=1; AJvYcCVXkUwk6z+qkBEiHpU7NsmZiV9G4kemOqH32q/gQ48+hynMqLbl4BqxWzBGRo0+pGoZKE6d4ZVd9sqi8tI=@vger.kernel.org, AJvYcCWiGFcjqZTMeZu1/+X5yxgxZVGEtSefmnCJVv5SCWHbPTJw9FVWSycIwsTie/dIzkpHiaKdp05SfmFPTw==@vger.kernel.org, AJvYcCXeDvin8+N40iBbGyy65ZZHznMRZ5CMjv0GsGWWKAgjLYF2COi+MtWQcE7Mz0IJChOjAJbuCmGyO6yFLOjq7xQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRK9HBIcOHmjbkflcs8dUR+/25o4fAHUbQIN5nifTMIES7NLzs
-	ZA2wB1FuCcDwFjHpUKddV+KGWROXqNHM53afuZgXEnMwUU+bImOPHTcpS+MeG4F3EWe9lwe0Cnc
-	wOPt05p3NHvtgMKQRtJk5lkxeQag=
-X-Google-Smtp-Source: AGHT+IFkb2PVZdivVpOSE5c3xRxBapgeWcHncWaujmbKW/klTqGeznXMgcaMscPyBeudFOdb+1LnOwjAF07TkoKuNS8=
-X-Received: by 2002:a17:90b:1d8f:b0:2ea:6f96:64fa with SMTP id
- 98e67ed59e1d1-2ea6f967fafmr2412946a91.7.1731947957983; Mon, 18 Nov 2024
- 08:39:17 -0800 (PST)
+	s=arc-20240116; t=1731947976; c=relaxed/simple;
+	bh=4VLAsz3gLkTJFtFpCPDvTF204CR43uOYtq/o7M5cR6I=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=ooa4XOYkbQXBQpoz+hyt13Aq/Y35ziEkNKDNzH6NLGN5Kq1xj+xFMn9RiknY9N7PPpk/RTWnRlty71IphYx28eVGDJbP7jZFjPaSniZwjmLkDhElSyBEiVa1uHz6uYsNaxqdmM7wjyt9MFgFcAHwD38Lp2UBpyBGUE3FsdYh0/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hCuE6eZJ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731947973;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5TBgXpcOkE91KJWIrvCU0ksBJeSHSjTfC1vv3ct4vww=;
+	b=hCuE6eZJTMSe4Z8s5t+ekFa+ZeEvxTeto7bVLlXWzkAJBeE/Ck+bctwGHmM7T4nvMgssUz
+	hkGypEORbZ690Oot/J9DWr6AEyaWBIVf8qgKGQZYi3KXwCT/NabwRNS7DbJzzeNEgAUsxp
+	xP+xrq+X2iOPiW9Un0+/PCX3smZ3D/Q=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-226-r1Nbp_NqPiyaaS_1Yh73TA-1; Mon,
+ 18 Nov 2024 11:39:32 -0500
+X-MC-Unique: r1Nbp_NqPiyaaS_1Yh73TA-1
+X-Mimecast-MFC-AGG-ID: r1Nbp_NqPiyaaS_1Yh73TA
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6604A19560BA;
+	Mon, 18 Nov 2024 16:39:28 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.207])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 8E035195607C;
+	Mon, 18 Nov 2024 16:39:21 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <b7135da8-a04f-48ec-957f-09542178b861@ijzerbout.nl>
+References: <b7135da8-a04f-48ec-957f-09542178b861@ijzerbout.nl> <20241108173236.1382366-1-dhowells@redhat.com> <20241108173236.1382366-8-dhowells@redhat.com>
+To: Kees Bakker <kees@ijzerbout.nl>
+Cc: dhowells@redhat.com, Christian Brauner <christian@brauner.io>,
+    Steve French <smfrench@gmail.com>,
+    Matthew Wilcox <willy@infradead.org>,
+    Jeff Layton <jlayton@kernel.org>,
+    Gao Xiang <hsiangkao@linux.alibaba.com>,
+    Dominique Martinet <asmadeus@codewreck.org>,
+    Marc Dionne <marc.dionne@auristor.com>,
+    Paulo Alcantara <pc@manguebit.com>,
+    Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
+    Eric Van Hensbergen <ericvh@kernel.org>,
+    Ilya Dryomov <idryomov@gmail.com>, netfs@lists.linux.dev,
+    linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
+    linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
+    v9fs@lists.linux.dev, linux-erofs@lists.ozlabs.org,
+    linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+    netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 07/33] netfs: Abstract out a rolling folio buffer implementation
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241009105759.579579-1-me@kloenk.dev> <20241009105759.579579-2-me@kloenk.dev>
- <snsf4cc6valp5ovrrbjv7fefxtkthifsis5el4teajzwjhmv4x@ghxovfdqkhop> <CAH5fLghthWr4r0v=2xNE_UJntG6o6qRzdqHj_nu8AKUwUWh2Aw@mail.gmail.com>
-In-Reply-To: <CAH5fLghthWr4r0v=2xNE_UJntG6o6qRzdqHj_nu8AKUwUWh2Aw@mail.gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Mon, 18 Nov 2024 17:39:04 +0100
-Message-ID: <CANiq72=sGDU2JbyL6sKTJzmuLF8J-hud0WXLctkycwOV0h8VFg@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/2] rust: LED abstraction
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: =?UTF-8?B?TWFyZWsgQmVow7pu?= <kabel@kernel.org>, 
-	Fiona Behrens <me@kloenk.dev>, Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
-	linux-leds@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, FUJITA Tomonori <fujita.tomonori@gmail.com>, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <941711.1731947960.1@warthog.procyon.org.uk>
+Date: Mon, 18 Nov 2024 16:39:20 +0000
+Message-ID: <941712.1731947960@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On Mon, Nov 18, 2024 at 11:19=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> =
-wrote:
->
-> signature. When you write `impl<T>`, then this means that it is a
-> template (we use the word "generic" in Rust rather than "template"),
+Kees Bakker <kees@ijzerbout.nl> wrote:
 
-Marek: a main difference is that generics in Rust require you to spell
-out everything your type needs in order to be able to use it in the
-implementation, unlike C++ templates which will gladly accept any type
-as long as the resulting code compiles (i.e. whether the types make
-sense or not).
+> > +		wreq->buffer.iter = wreq->buffer.iter;
+> Is this correct, an assignment to itself?
 
-So in C++ you may typically do just `T`, while in Rust you typically
-restrict your types with bounds and `where`s clauses like Alice shows.
+That should just be removed.  Both branches of the preceding if-statement set
+it.
 
-I hope that clarifies a bit!
+David
 
-Cheers,
-Miguel
 
