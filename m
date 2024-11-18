@@ -1,110 +1,144 @@
-Return-Path: <linux-kernel+bounces-413295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB9AE9D16F9
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 18:20:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 840359D16FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 18:20:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACA3928457C
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 17:20:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 309C91F2233F
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 17:20:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3696E1C1F03;
-	Mon, 18 Nov 2024 17:20:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6A001C230E;
+	Mon, 18 Nov 2024 17:20:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="r6ealFvd"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MlQVdKRp"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ED291C0DED
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 17:20:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 969971C1F22
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 17:20:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731950406; cv=none; b=rLce3tJsrMVcwDpPCoI5SAnu0AdPsz50B4ygbAh9AqtoulymFZiKf7CvHalm6N6IIyP2oGKKtzTV770G5rzYa933kApMTQji6QDsZFQjgfkUBldP7j+/evTp/mBTAiwIQx1xZiGlulfYGlb8+k3is2QndtFgN7EvCfc3b5s4tz0=
+	t=1731950410; cv=none; b=V0E/XB55DOjP8NwSPgodvtENtq5wtZMa/I5F6qOuURmQIKxxjgN5U3GWRcSQkK2GNN9PfseMJJ3B+DPAKoCxbKBhjnL9BJgLZRE+k2+jvPPAEyfgJDYd7C8PXELA+VzksoX6Mb8k069pXTqAhecJtgjS5AfqOcJ2Bfrk6RVi9jI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731950406; c=relaxed/simple;
-	bh=1jI3ULDI1a9rCFZ1Us9rWYeHRUMtPt4yMIsfQh9tk4c=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=Vw8hwsCDpzLoZbNaxfVH+9jfgKp5EvT4DlAC22BD489C+5ST217gL3WuXpg8JSHoY5Qa8Fo2JObBUDrzgmDMjEMZ2fm/69Y39TYLY2ts6NXs8B2G1uz25WcaV5jJ1ZRklPeOlEmd/rDS91yV2xPeXYq/w4pcBsn6MkNEk5Qupo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=r6ealFvd; arc=none smtp.client-ip=209.85.210.201
+	s=arc-20240116; t=1731950410; c=relaxed/simple;
+	bh=M3657UEqaxjhlwGguiJIV2JlitIiGOg2Rw6A7FApcAE=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Phj15jBLqq2LgRXrpGNXAGT8bzKAA5trbt/Pd30U+RQyuqwlxaOmk962IUn5wcfvigZVnXCkWBvmKD2c4Zk6af2EEcU3QVfCjPkYOWR+nUOW7csn9monj1CSED+qvKhRU32pCslNvc3muozPLnur+D4NFGM+YLN8wzFB0QaNRDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MlQVdKRp; arc=none smtp.client-ip=209.85.219.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-720397dcc7cso3150057b3a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 09:20:05 -0800 (PST)
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e293b3e014aso2705614276.3
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 09:20:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731950404; x=1732555204; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ky6FJcmYTMi9G40huepN+3Su7qA9jw5okKykESK4qIM=;
-        b=r6ealFvdosJAkxR5ZHcw3mjmmlzsMjEzwbvdw6gGWrwW1980Dki4o3nJ1sCtVZ4r0E
-         vLTTFCdgk0UfOQTSz7xIkzRqQJcr7DW5qKNcxrDUen0IAMrjIULzyScQ64OVJgIH032S
-         HAFVq57UbvJjGYKjbqfYVqcW46v2sNuEWfqkVMuLb2+gO3nQgnUmQATWdbh04bEAWBzF
-         0kvI+kK3uDFUR8QpL71SSbmrUwZ/Fdj6ADLlCxmoiIaiqv208q6lTfwc5lCWp5gw/41p
-         VJHaAmNEeYR3ozQjLymNb9rKbKor02IdSL0yy34PwdgOMUHGQ2+JXegQswvtd6PT4YRM
-         yh0Q==
+        d=google.com; s=20230601; t=1731950407; x=1732555207; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
+        bh=LJkNhNdMu2zqacMxiFxt/S7RLEzafW8TtjYcz3deGhk=;
+        b=MlQVdKRpcL+t+4xXyRwjC260b+UqdwJWl1LQBdNJshz3z7hKdq3ABIR80mgUDBSUAs
+         8TMrtFH7B06QosCE3pZq59jkVfN7L5wLdla35I2SxDkXnk/CZyIO0sUSHvWj5nktXCgW
+         abLiMJTyfXLyNpZIoX+37YtnMA11kb4PMRU831vSikKhbk/sOae8qh0+g1g1s30sVdMz
+         w66Ma26Vu58rnnXr9WfZWcC7HDLIIBGNy6c5kaS1paYqVAoAPZNgxM/YqJgage8fVaqU
+         GX4hehZpRkguIm+Cjp3t2mERbgpNVn50yw5hgUd2LzBuBqrAONg7ikMDihYzaMv6aLNy
+         pD5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731950404; x=1732555204;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ky6FJcmYTMi9G40huepN+3Su7qA9jw5okKykESK4qIM=;
-        b=RALzyyRLvrUlLpEXxq1wy60VOH06Cw3x0kVFNZ+aaY2YumVvnndSnfwD2UsdEl0t61
-         6X1zKeI21y5Qabj3GUFX4p1PJV74umSC6aVBFie4j/kOB9CxnTKnNRaE5rKNeT2hIs4a
-         PF4HOeu2s3e49SJpd3O4YqHUrG81AktxTdfRBNsxBWyk7Fqy53Cd0khTRlCaNKjY42bJ
-         Wbf95M5TEIWjoYxHUHFqutd2/I6v7o8yg5umhqNXEpSm2lfE2m91egyOmYpWjXMVvmep
-         +a1wZ9dcxr6NVqxOk9zaYMpF33GUrSyUr3VwueLpkhOICiG2FpR3uuNWM5forLjug00R
-         WlVA==
-X-Forwarded-Encrypted: i=1; AJvYcCW7dyIZ5gdXvMXABa/zJC++a/f71d0WiYaXKaAKD60VRjhMIMePzqYDu6/Y8rV+jncqLd0Slx2lq20qzm0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQfBYBnZbSUrRx85/Ra4HE9dzEl4pLdZ4wYjwRLIQbS6lfwk9x
-	fR/nfY5ROzQ2uzIe1JPRGAxEHlz4LcTXSy9wwnqBXPu0bPK5K44IJeGQ5p962gS9Xa2d3+uo3Ce
-	rAQ==
-X-Google-Smtp-Source: AGHT+IHH4vEqXfWsqhCEybKMxEJ+7ogcipKSZwO5ZmC15IH6YH8dEDZmsqVnP2vj8hg0hg9+rNRlt61hcGo=
+        d=1e100.net; s=20230601; t=1731950407; x=1732555207;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LJkNhNdMu2zqacMxiFxt/S7RLEzafW8TtjYcz3deGhk=;
+        b=UIKeptYl4pLCEvnyhmEXyzL8FrOHJ05XfCf2suwkuG5L7lG9K87+GjSS2c/X3Kl2S0
+         0XxgAv1vie1vvMutYz+tg2atc46YwSV1e9PmQlzRUHfzsPzlel5nWQsgFRJMj9odBMeC
+         cJVI2QKHQ/mSyw/9QzjU1QC/Uf8peNKiWIFA8mIHz8hbn6emPNi+wDROsJRTxEboEMwg
+         6WKcDrJmJK+sJ5TCQEknqDWanpZGOgvSvbCCVxMUpo/W74CxSDJu5HwJj09CuA0KoYK0
+         zN7jHrbybM827g526HM5S0hUeo9TKHaigdCxDSAv0qXZog2K38aEWmcwBrSPCht26KpP
+         AmLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVWuSBaIDzSKt11SPpaq+iqnW+ZYNS4PthVQkw5J3/ZDLBdwssxexoZN2/YFZim8fhx/VoAEy3g3XfQ180=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyY6NLJl1VLrcufMgdEd0Wtf4v83KnVCUQzMu9MKhQpxcdEYs07
+	msfLWdnBXxpyuaViVZD+iQopaqGI8ktPWglN3QNMD+vCsspfiw1p/wdto7wMkPjw4pjpmIXDDYe
+	fYw==
+X-Google-Smtp-Source: AGHT+IEKCGX3iqyqIKJGlyXgIDuMTtUBvK329iOqiDt0sB2xzK6GmqPfdKdozrddvcHp5efBeol80n+RCtw=
 X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a05:6a00:234c:b0:720:b04d:8fcb with SMTP id
- d2e1a72fcca58-72476b84887mr152218b3a.1.1731950404700; Mon, 18 Nov 2024
- 09:20:04 -0800 (PST)
+ (user=seanjc job=sendgmr) by 2002:a5b:9d2:0:b0:e38:d1e:af86 with SMTP id
+ 3f1490d57ef6-e3825d2828dmr9902276.2.1731950407594; Mon, 18 Nov 2024 09:20:07
+ -0800 (PST)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Mon, 18 Nov 2024 09:20:00 -0800
+Date: Mon, 18 Nov 2024 09:20:01 -0800
+In-Reply-To: <20241118172002.1633824-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20241118172002.1633824-1-seanjc@google.com>
 X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-Message-ID: <20241118172002.1633824-1-seanjc@google.com>
-Subject: [PATCH 0/2] KVM: x86: Fix more KVM_X86 Kconfig bugs
+Message-ID: <20241118172002.1633824-2-seanjc@google.com>
+Subject: [PATCH 1/2] KVM: x86: add back X86_LOCAL_APIC dependency
 From: Sean Christopherson <seanjc@google.com>
 To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
 Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	Arnd Bergmann <arnd@arndb.de>
 Content-Type: text/plain; charset="UTF-8"
 
-Fix two more bugs in the KVM_X86 Kconfig.  The fix from Arnd resolves a
-build failure, but practically speaking is a non-issue because the failure
-only affects 32-bit !SMP builds that effectively disable the local APIC.
+From: Arnd Bergmann <arnd@arndb.de>
 
-The second fix is far more urgent.  It resolves a bug where KVM's Kconfig
-doesn't correctly define KVM_X86, and will build kvm.ko as a module when
-KVM=y if neither KVM_INTEL nor KVM_AMD is 'y', e.g. if KVM=y, KVM_INTEL,=m,
-and KVM_AMD=m.  I don't know if any distros use that combo, but it broke
-our production kernel, so it's certainly possible that it broke other
-setups too.
+Enabling KVM now causes a build failure on x86-32 if X86_LOCAL_APIC
+is disabled:
 
-Arnd's fix was already posted, but I bundled it here to avoid a trivial
-conflict and to ensure it doesn't get left behind.
+arch/x86/kvm/svm/svm.c: In function 'svm_emergency_disable_virtualization_cpu':
+arch/x86/kvm/svm/svm.c:597:9: error: 'kvm_rebooting' undeclared (first use in this function); did you mean 'kvm_irq_routing'?
+  597 |         kvm_rebooting = true;
+      |         ^~~~~~~~~~~~~
+      |         kvm_irq_routing
+arch/x86/kvm/svm/svm.c:597:9: note: each undeclared identifier is reported only once for each function it appears in
+make[6]: *** [scripts/Makefile.build:221: arch/x86/kvm/svm/svm.o] Error 1
+In file included from include/linux/rculist.h:11,
+                 from include/linux/hashtable.h:14,
+                 from arch/x86/kvm/svm/avic.c:18:
+arch/x86/kvm/svm/avic.c: In function 'avic_pi_update_irte':
+arch/x86/kvm/svm/avic.c:909:38: error: 'struct kvm' has no member named 'irq_routing'
+  909 |         irq_rt = srcu_dereference(kvm->irq_routing, &kvm->irq_srcu);
+      |                                      ^~
+include/linux/rcupdate.h:538:17: note: in definition of macro '__rcu_dereference_check'
+  538 |         typeof(*p) *local = (typeof(*p) *__force)READ_ONCE(p); \
 
-Arnd Bergmann (1):
-  KVM: x86: add back X86_LOCAL_APIC dependency
+Move the dependency to the same place as before.
 
-Sean Christopherson (1):
-  KVM: x86: Break CONFIG_KVM_X86's direct dependency on KVM_INTEL ||
-    KVM_AMD
+Fixes: ea4290d77bda ("KVM: x86: leave kvm.ko out of the build if no vendor module is requested")
+Cc: stable@vger.kernel.org
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202410060426.e9Xsnkvi-lkp@intel.com/
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Acked-by: Sean Christopherson <seanjc@google.com>
+[sean: add Cc to stable, tweak shortlog scope]
+Signed-off-by: Sean Christopherson <seanjc@google.com>
+---
+ arch/x86/kvm/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- arch/x86/kvm/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-
-base-commit: adc218676eef25575469234709c2d87185ca223a
+diff --git a/arch/x86/kvm/Kconfig b/arch/x86/kvm/Kconfig
+index f09f13c01c6b..887df30297f3 100644
+--- a/arch/x86/kvm/Kconfig
++++ b/arch/x86/kvm/Kconfig
+@@ -19,7 +19,6 @@ if VIRTUALIZATION
+ 
+ config KVM_X86
+ 	def_tristate KVM if KVM_INTEL || KVM_AMD
+-	depends on X86_LOCAL_APIC
+ 	select KVM_COMMON
+ 	select KVM_GENERIC_MMU_NOTIFIER
+ 	select HAVE_KVM_IRQCHIP
+@@ -49,6 +48,7 @@ config KVM_X86
+ 
+ config KVM
+ 	tristate "Kernel-based Virtual Machine (KVM) support"
++	depends on X86_LOCAL_APIC
+ 	help
+ 	  Support hosting fully virtualized guest machines using hardware
+ 	  virtualization extensions.  You will need a fairly recent
 -- 
 2.47.0.338.g60cca15819-goog
 
