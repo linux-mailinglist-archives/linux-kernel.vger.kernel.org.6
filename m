@@ -1,47 +1,46 @@
-Return-Path: <linux-kernel+bounces-413540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94C589D1ABB
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 22:42:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C8699D1ABA
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 22:41:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1DA01B2465F
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 21:42:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C0369B23FFE
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 21:41:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B1AA1EABD2;
-	Mon, 18 Nov 2024 21:41:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D23AC1E885E;
+	Mon, 18 Nov 2024 21:41:18 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A04A1E8823
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69FF61E8821
 	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 21:41:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731966078; cv=none; b=kZ1WPz/pu8rS+rZkilUb4pTa6RI9IJaC9AuN4txYIouG/TF2b+XMXAkLUpHzAND+2vZwK+z8XT8JdpviQnTRN73LHIzv7jgRdU1P12gjzR7DlurLDtNdJ6r1TAhLgXgmCO+kJdY8BQlYDHGfiZKn2F4xOY7b42PwNi9B0OI2b6Q=
+	t=1731966078; cv=none; b=fQ6h0wAtA12ZWG9LtLu5/kl2NL0/8yfw0SSF/NrUSocN3KNXEwA76y+2DUjcbH8/daHb0csaWQdOBCPMSAKmoeXnkBZo6dRhN0jN+EmmUJ1Y1iqFeg0fTOUgyO3Tgcvz2tYu3Xt8rNTamS52uRULRKkw96vghXpGMZJ5JMikXeo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1731966078; c=relaxed/simple;
-	bh=1bsicQsClz2mA5LGmCCz633UWz8AMxCoyQFRdHoj6LQ=;
+	bh=9jmM3A4kv4i1p8BHzYN2KcQ+8Jhsx84dLmtKtiHkF6c=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=N12gaxEptRDe3Q17CoVBL4b2DICgh9BwjN3oOq0Vx6VGJeUJgaTMGkmSJWzCWXdfCmpr/D/MHc2Mgf5c20R99k+gy6AA8wabta13PKKhiOfHc/RnHBs/YRvvplIIl7X8BWIRgs4tGjJ6p2Dwwt9wKocO+bg7vtccupmSpnnWw8U=
+	 Content-Type; b=qqOVpWT1Vi0L3k21QsViev+hxiEBEHdqrTfGFOjLTfrWAiMmMuECjJO0Q+iP8aONtjx4I/PLR2plF4C5yD443wzVDWWx+Nd6/ztpjESxbnp/bZkpA9iPLXpiDmr/xMBZcj/5ZJ5x6ONsUatoO7ckBeik16EFyK4BNXok/wv71Vk=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 031E3C4CECF;
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B230C4CECC;
 	Mon, 18 Nov 2024 21:41:18 +0000 (UTC)
 Received: from rostedt by gandalf with local (Exim 4.98)
 	(envelope-from <rostedt@goodmis.org>)
-	id 1tD9VG-0000000DO5d-0uGm;
+	id 1tD9VG-0000000DO69-1cc8;
 	Mon, 18 Nov 2024 16:41:50 -0500
-Message-ID: <20241118214150.069691382@goodmis.org>
+Message-ID: <20241118214150.235297619@goodmis.org>
 User-Agent: quilt/0.68
-Date: Mon, 18 Nov 2024 16:41:26 -0500
+Date: Mon, 18 Nov 2024 16:41:27 -0500
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org
 Cc: Tomas Glozar <tglozar@redhat.com>,
  John Kacur <jkacur@redhat.com>,
- "lgoncalv@redhat.com" <lgoncalv@redhat.com>,
- Furkan Onder <furkanonder@protonmail.com>
-Subject: [for-next][PATCH 4/5] tools/rtla: Improve exception handling in timerlat_load.py
+ Gabriele Monaco <gmonaco@redhat.com>
+Subject: [for-next][PATCH 5/5] verification/dot2: Improve dot parser robustness
 References: <20241118214122.136581969@goodmis.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,118 +50,94 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 
-From: furkanonder <furkanonder@protonmail.com>
+From: Gabriele Monaco <gmonaco@redhat.com>
 
-The enhancements made to timerlat_load.py are intended to improve the script's exception handling.
+This patch makes the dot parser used by dot2c and dot2k slightly more
+robust, namely:
+* allows parsing files with the gv extension (GraphViz)
+* correctly parses edges with any indentation
+    * used to work only with a single character (e.g. '\t')
+Additionally it fixes a couple of warnings reported by pylint such as
+wrong indentation and comparison to False instead of `not ...`
 
-Summary of the changes:
-  - Specific exceptions are now caught for CPU affinity and priority
-    settings, with clearer error messages provided.
-  - The timerlat file descriptor opening now includes handling for
-    PermissionError and OSError, with informative messages.
-  - In the infinite loop, generic exceptions have been replaced with
-    specific types like KeyboardInterrupt and IOError, improving feedback.
-
- Before:
-    $ sudo python timerlat_load.py 122
-    Error setting affinity
- After:
-    $ sudo python timerlat_load.py 122
-    Error setting affinity: [Errno 22] Invalid argument
-
- Before:
-    $ sudo python timerlat_load.py 1 -p 950
-    Error setting priority
- After:
-    $ sudo python timerlat_load.py 1 -p 950
-    Error setting priority: [Errno 22] Invalid argument
-
- Before:
-    $ python timerlat_load.py 1
-    Error opening timerlat fd, did you run timerlat -U?
- After:
-    $ python timerlat_load.py 1
-    Permission denied. Please check your access rights.
-
-Cc: "lgoncalv@redhat.com" <lgoncalv@redhat.com>
-Cc: "jkacur@redhat.com" <jkacur@redhat.com>
-Link: https://lore.kernel.org/Q_k1s4hBtUy2px8ou0QKenjEK2_T_LoV8IxAE79aBakBogb-7uHp2fpET3oWtI1t3dy8uKjWeRzQOdKNzIzOOpyM4OjutJOriZ9TrGY6b-g=@protonmail.com
-Signed-off-by: Furkan Onder <furkanonder@protonmail.com>
-Reviewed-by: Tomas Glozar <tglozar@redhat.com>
+Link: https://lore.kernel.org/20241017064238.41394-2-gmonaco@redhat.com
+Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
 Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
- tools/tracing/rtla/sample/timerlat_load.py | 37 ++++++++++++----------
- 1 file changed, 21 insertions(+), 16 deletions(-)
+ tools/verification/dot2/automata.py | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/tools/tracing/rtla/sample/timerlat_load.py b/tools/tracing/rtla/sample/timerlat_load.py
-index d7341ed5127a..a819c3588073 100644
---- a/tools/tracing/rtla/sample/timerlat_load.py
-+++ b/tools/tracing/rtla/sample/timerlat_load.py
-@@ -31,43 +31,48 @@ args = parser.parse_args()
+diff --git a/tools/verification/dot2/automata.py b/tools/verification/dot2/automata.py
+index baffeb960ff0..bdeb98baa8b0 100644
+--- a/tools/verification/dot2/automata.py
++++ b/tools/verification/dot2/automata.py
+@@ -29,11 +29,11 @@ class Automata:
  
- try:
-     affinity_mask = {args.cpu}
--except:
--    print("Invalid cpu: " + args.cpu)
--    exit(1)
--
--try:
-     os.sched_setaffinity(0, affinity_mask)
--except:
--    print("Error setting affinity")
--    exit(1)
-+except Exception as e:
-+    print(f"Error setting affinity: {e}")
-+    sys.exit(1)
+     def __get_model_name(self):
+         basename = ntpath.basename(self.__dot_path)
+-        if basename.endswith(".dot") == False:
++        if not basename.endswith(".dot") and not basename.endswith(".gv"):
+             print("not a dot file")
+             raise Exception("not a dot file: %s" % self.__dot_path)
  
- if args.prio:
-     try:
-         param = os.sched_param(args.prio)
-         os.sched_setscheduler(0, os.SCHED_FIFO, param)
--    except:
--        print("Error setting priority")
--        exit(1)
-+    except Exception as e:
-+        print(f"Error setting priority: {e}")
-+        sys.exit(1)
+-        model_name = basename[0:-4]
++        model_name = ntpath.splitext(basename)[0]
+         if model_name.__len__() == 0:
+             raise Exception("not a dot file: %s" % self.__dot_path)
  
- try:
-     timerlat_path = f"/sys/kernel/tracing/osnoise/per_cpu/cpu{args.cpu}/timerlat_fd"
-     timerlat_fd = open(timerlat_path, 'r')
--except:
-+except PermissionError:
-+    print("Permission denied. Please check your access rights.")
-+    sys.exit(1)
-+except OSError:
-     print("Error opening timerlat fd, did you run timerlat -U?")
--    exit(1)
-+    sys.exit(1)
+@@ -68,9 +68,9 @@ class Automata:
+     def __get_cursor_begin_events(self):
+         cursor = 0
+         while self.__dot_lines[cursor].split()[0] != "{node":
+-           cursor += 1
++            cursor += 1
+         while self.__dot_lines[cursor].split()[0] == "{node":
+-           cursor += 1
++            cursor += 1
+         # skip initial state transition
+         cursor += 1
+         return cursor
+@@ -94,11 +94,11 @@ class Automata:
+                 initial_state = state[7:]
+             else:
+                 states.append(state)
+-                if self.__dot_lines[cursor].__contains__("doublecircle") == True:
++                if "doublecircle" in self.__dot_lines[cursor]:
+                     final_states.append(state)
+                     has_final_states = True
  
- try:
-     data_fd = open("/dev/full", 'r')
--except:
--    print("Error opening data fd")
-+except Exception as e:
-+    print(f"Error opening data fd: {e}")
-+    sys.exit(1)
+-                if self.__dot_lines[cursor].__contains__("ellipse") == True:
++                if "ellipse" in self.__dot_lines[cursor]:
+                     final_states.append(state)
+                     has_final_states = True
  
- while True:
-     try:
-         timerlat_fd.read(1)
-         data_fd.read(20 * 1024 * 1024)
--    except:
-+    except KeyboardInterrupt:
-         print("Leaving")
-         break
-+    except IOError as e:
-+        print(f"I/O error occurred: {e}")
-+        break
-+    except Exception as e:
-+        print(f"Unexpected error: {e}")
-+        break
+@@ -110,7 +110,7 @@ class Automata:
+         # Insert the initial state at the bein og the states
+         states.insert(0, initial_state)
  
- timerlat_fd.close()
- data_fd.close()
+-        if has_final_states == False:
++        if not has_final_states:
+             final_states.append(initial_state)
+ 
+         return states, initial_state, final_states
+@@ -120,7 +120,7 @@ class Automata:
+         cursor = self.__get_cursor_begin_events()
+ 
+         events = []
+-        while self.__dot_lines[cursor][1] == '"':
++        while self.__dot_lines[cursor].lstrip()[0] == '"':
+             # transitions have the format:
+             # "all_fired" -> "both_fired" [ label = "disable_irq" ];
+             #  ------------ event is here ------------^^^^^
+@@ -161,7 +161,7 @@ class Automata:
+         # and we are back! Let's fill the matrix
+         cursor = self.__get_cursor_begin_events()
+ 
+-        while self.__dot_lines[cursor][1] == '"':
++        while self.__dot_lines[cursor].lstrip()[0] == '"':
+             if self.__dot_lines[cursor].split()[1] == "->":
+                 line = self.__dot_lines[cursor].split()
+                 origin_state = line[0].replace('"','').replace(',','_')
 -- 
 2.45.2
 
