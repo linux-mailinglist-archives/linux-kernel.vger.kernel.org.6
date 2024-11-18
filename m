@@ -1,127 +1,108 @@
-Return-Path: <linux-kernel+bounces-412689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C4CF9D0DC9
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:08:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 330CD9D0DEB
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:11:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 260B61F22CF1
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 10:08:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E021B1F22575
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 10:11:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CE6819259B;
-	Mon, 18 Nov 2024 10:08:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A2591925B3;
+	Mon, 18 Nov 2024 10:10:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="DDuGOd3A"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="XMNzrBc6"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E6EF149E0E;
-	Mon, 18 Nov 2024 10:08:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 865A3193432;
+	Mon, 18 Nov 2024 10:10:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731924524; cv=none; b=tKixfTs02aAhuylqtFn5ms46Rb4jpy0JTsXw6huq8Jv/wU4DQw1sKeTbHNJyNHMlO8slgcIBkA7aH/Plaz1ydbPVJOyWtD6zAbswcI0Ln4g51cznR4C2+r74a33cLfSzzqICs/dxGyuZ3SCbBKgV/klFIaC8YpuhQ5sIopC7FCg=
+	t=1731924635; cv=none; b=YN4gzLW14JyadXo6WH3XCvu8Fp1ofYZVAHy79lonmfsxD1bQeSgR/fwTqpY70TuIMoxFzJNHaLpdr7taMxrwsmQHYoyQcDfYCculcH7bvK5u+6tJ+1H2IPZvbGqrV22sPRkE64yyxnWFvL/9dfPjio+ievLZ0Cj3yv8q2kpLQno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731924524; c=relaxed/simple;
-	bh=+I6CBYu789NxdvDPh4vsIPgLgJkrLQ2juHoUSHgI+90=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=i+FJhUGWrEWY8wQye5imQqEdgtzTOIKkvrmzAjPo32KhxTNsWhRXE9TL2x2L0YG7Dd6gquwVDFY02j6UJKFWmLBtzR5FCv1l8x2ukj0cO/uiKAg65UF9r0N30tSqpmPJQ86LH+ZVlRb87RjnBT/GE9OSKVFgp2uQII6KjYZv9u4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=DDuGOd3A; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (cpc89244-aztw30-2-0-cust6594.18-1.cable.virginm.net [86.31.185.195])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id C6DCF8FA;
-	Mon, 18 Nov 2024 11:08:24 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1731924504;
-	bh=+I6CBYu789NxdvDPh4vsIPgLgJkrLQ2juHoUSHgI+90=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=DDuGOd3Adyic8/MBkLs0GOoSXPD9usSB5moAvma3R0HgyKWvPYn0vcy+CFPcXBspl
-	 aPH2tLG//T48ecv91XvPPW2pzRlIXyNGRGhckt5muRmJ47WM9EXFVtEpqU9xt+C6+X
-	 vZZVVt9/kp6+mLTHnwbLJ4EbMZaJPrefIGPzmGp4=
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1731924635; c=relaxed/simple;
+	bh=G8RQyr4OGxhyplbDi80Z0G0RmfHSLulpn812PX1WlAc=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=LBtMeE+bnl7TfHG+eC+OTh6sPIDNdA36kjoRnF9hiB2b1KfPs7+coeq/GY6eW/srHZP5fJz8InSbIoEN7hnkbKoMKNpN9m0jwWonllE45d/WFT47MmWOqQqgZDOEszQFJ4HKG4ZvGPt1BoifE/jAlwYFmLOUPBsSkExljiM0ubQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=XMNzrBc6; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1731924583; x=1732529383; i=markus.elfring@web.de;
+	bh=G8RQyr4OGxhyplbDi80Z0G0RmfHSLulpn812PX1WlAc=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=XMNzrBc69JsaS3A2HwQJqxGxEOQFRsXHa+IHJlbtOVdCP5laTW3vUUtMp+clDsC2
+	 6jkAZvE9jyot/l4SnJZKFICpk29Xpe+FKduA7KaL8HsITzuoT0/wH5nZ/hQKwMAxF
+	 XvTZLg6kav0pKK3X7/q7HMzpVSmwEbjCTlW4fe6kP3Xwkgldu27vleHCiScUO4ULN
+	 r53bR8sTueuQuZ9GwJFu6W4rD6karH3FskK+TauVaUVK5s11LLSJ5nOnDWtUiJ7zW
+	 HESXdcbeguxPJzRYR2NDVNHil7+WwIgnz1IHPMrC09+qVjA9YP+Of8gwiF9dOGBK+
+	 Ce8G8JotJ3izFEzeDA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.88.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MqqPT-1tYrFW25NR-00kmc9; Mon, 18
+ Nov 2024 11:09:43 +0100
+Message-ID: <ba5e2b95-12d9-490b-b58d-131dedba6446@web.de>
+Date: Mon, 18 Nov 2024 11:08:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20241115180717.10820-1-aardelean@baylibre.com>
-References: <20241115142021.574402-1-aardelean@baylibre.com> <20241115180717.10820-1-aardelean@baylibre.com>
-Subject: Re: [PATCH v2] drivers: media: imx296: Add standby delay during probe
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc: laurent.pinchart@ideasonboard.com, manivannan.sadhasivam@linaro.org, sakari.ailus@linux.intel.com, mchehab@kernel.org, naush@raspberrypi.com, Alexandru Ardelean <aardelean@baylibre.com>
-To: Alexandru Ardelean <aardelean@baylibre.com>, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
-Date: Mon, 18 Nov 2024 10:08:38 +0000
-Message-ID: <173192451835.576258.8765067630505878740@ping.linuxembedded.co.uk>
-User-Agent: alot/0.10
+User-Agent: Mozilla Thunderbird
+To: Charles Han <hanchunchao@inspur.com>, linux-iio@vger.kernel.org,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Dan Carpenter <dan.carpenter@linaro.org>, Jonathan Cameron
+ <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
+ Mike Looijmans <mike.looijmans@topic.nl>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Yu Jiaoliang <yujiaoliang@vivo.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20241118090208.14586-1-hanchunchao@inspur.com>
+Subject: Re: [PATCH] iio: adc: ti-ads1298: Add NULL check in ads1298_init()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20241118090208.14586-1-hanchunchao@inspur.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:BHgIA96HuK3bkxuoMLZH5eiWj1cl6oyGDaHp6pWh8DKisYvisct
+ pYUWOz2K8iJ6QGH+5gRmUHshmIDB+H66Eg1PiWkrRckV3ftiBo4Ms/AdwVPUk00CpcJ4UlF
+ eNAciiuYWH7VLbYB/rhPYRmDdM3BVMaIgl5SgNS0iRKYf4ExtOhz6JmxulxfZ5yjDsPDRPe
+ 6sbREXE3Z5D2VSteSpdjA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:W0Z3npiPk9g=;Wv4s8NTLtXqx+SdhbG7dAFW84Cl
+ qx91KCXc8aLcQ8QXXcQ98IK/3iQ/2NMYvEv06J0s864hlX1cCpgrlV3ZzvwveM8KyfGulqsdP
+ NsjI+23Q6hg57pDVLtIgLzW31kCR4FZLpJ04J0eHrnbfZT3qZNB/RPcTW2ziz2g2n/N+szOR+
+ RKe3yeJrhlOhp9q7AeB4qFg7VS0BmNsHkD+Oplz8Po+fFyDIVYQ97g/VRP3lU/tHW1rYEaGMu
+ s1aMCH7d9MdwXtleD7hJTWmQKkyuoTUF5ditde8YccHwREeqKdSCvtzFlx99/m4B71WsVPzte
+ YegjUYkxkQA1DDPVrLyAZ4GQ8hJ6qqgP8cSFHwOxbtC2pY7Nx7fKH8FSIRG2vPd96640yD1Tn
+ ItY3aZmt+96WbppeTUoSO4r3TJARAucxOu2kEZ4ZyOv3EVCq/bKxNOpYPINfzY44Z2ZiLhgsm
+ vO2LNvdMD+LFhYKdl4a3Qay/nh7S1S/DvMpd3r03Hr2yqtJVNc4c33LKN7h7YPRc9fpl8u9/E
+ FacfX1PNnSLJj8CSWpVhiTa60d2hIwE+TgL4j31DGKiFot44FWwRXwS2QkzRE010O1IsUGIe3
+ s8ceS18X7EHqWeRNDneqyg0luOXY8U8fUjwCkWnIrepBi9/rwRIpCWe/YZNeQ+depIOBv5WS4
+ akmCZs2sbRsOzsd00dUnFcPOuEvXWDPIBfOGBgoVfRKNF4HEs8vwx/++eK8Xw/yrQlLkkuzED
+ dUSDDZZvJGd0qITlbJih5imYY/uhxQz5DPD23o74AV6P5dlR9DEpxjjLkYIMGhePHKxJyV6wL
+ gF3U8PSm+0afPhuAFtX43Yctz2BvGPP3Y96cDbQqyhew3T5owEU082xCU9E0U33QAPas9uVdP
+ N75i3zXopUAza11w1aaZTUGIae3rg+rej5i16U3ZWnuN6eTjN5PAYBaV/
 
-Quoting Alexandru Ardelean (2024-11-15 18:07:17)
-> From: Naushir Patuck <naush@raspberrypi.com>
->=20
-> Add a 2-5ms delay when coming out of standby and before reading the
-> sensor info register durning probe, as instructed by the datasheet. This
-> standby delay is already present when the sensor starts streaming.
->=20
-> During a cold-boot, reading the IMX296_SENSOR_INFO register would often
-> return a value of 0x0000, if this delay is not present before.
->=20
-> Fixes: cb33db2b6ccfe ("media: i2c: IMX296 camera sensor driver")
-> Tested-by: Alexandru Ardelean <aardelean@baylibre.com>
-> Signed-off-by: Naushir Patuck <naush@raspberrypi.com>
-> ---
->=20
-> Changelog v1 -> v2:
-> * https://lore.kernel.org/linux-media/20241115142021.574402-1-aardelean@b=
-aylibre.com/
-> * Technically, this is not a true V2, but rather a new patch
->   - But in V1, the attempt was to fix an issue found with the upstream
->     IMX296 driver, which was pointed out by Kieran that it was already
->     fixed (more elegantly) in the RPi tree.
+> devm_kasprintf() can return a NULL pointer on failure,but this
+> returned value in ads1298_init() is not checked.
+> Add NULL check in ads1298_init(), to handle kernel NULL
+> pointer dereference error.
 
-Thanks,
+Another wording suggestion:
+A devm_kasprintf() call can return a null pointer on failure.
+But such a return value was not checked in this function implementation.
+Thus add a corresponding check so that a null pointer dereference
+will be avoided.
 
 
-Reviewed-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
-
->   - The standby delay helps during a cold-boot so that the driver can read
->     the IMX296_SENSOR_INFO register. If the delay isn't present the value
->     read is 0xx0000.
->   - Original patch can be found:
->     https://github.com/raspberrypi/linux/commit/7713ce38e6a26425ace3a57b3=
-d03ba0125c16f89
->   - From the original patch of Naushir Patuck,
->     - Added comment=20
->       -------
->       During a cold-boot, reading the IMX296_SENSOR_INFO register would o=
-ften=20
->       return a value of 0x0000, if this delay is not present before.
->       -------
->     - Added 'Tested-by: Alexandru Ardelean <aardelean@baylibre.com>
->     - Added 'Fixes: cb33db2b6ccfe ("media: i2c: IMX296 camera sensor driv=
-er")'
->=20
->  drivers/media/i2c/imx296.c | 2 ++
->  1 file changed, 2 insertions(+)
->=20
-> diff --git a/drivers/media/i2c/imx296.c b/drivers/media/i2c/imx296.c
-> index f942f66fa664..395bfe4fb23d 100644
-> --- a/drivers/media/i2c/imx296.c
-> +++ b/drivers/media/i2c/imx296.c
-> @@ -940,6 +940,8 @@ static int imx296_identify_model(struct imx296 *senso=
-r)
->                 return ret;
->         }
-> =20
-> +       usleep_range(2000, 5000);
-> +
->         ret =3D imx296_read(sensor, IMX296_SENSOR_INFO);
->         if (ret < 0) {
->                 dev_err(sensor->dev, "failed to read sensor information (=
-%d)\n",
-> --=20
-> 2.46.1
->
+Regards,
+Markus
 
