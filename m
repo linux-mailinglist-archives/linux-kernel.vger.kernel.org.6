@@ -1,87 +1,100 @@
-Return-Path: <linux-kernel+bounces-412991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDECF9D120A
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 14:36:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C48EE9D120B
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 14:37:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B43E128423B
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 13:36:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B3EB28452D
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 13:37:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AB781ABEA8;
-	Mon, 18 Nov 2024 13:32:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2C201AE016;
+	Mon, 18 Nov 2024 13:32:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="eTNRq3PV"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SXV7Mxyo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9484E19E993;
-	Mon, 18 Nov 2024 13:32:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3178919E993
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 13:32:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731936755; cv=none; b=aeY2EGfTxorQD0P+1CsbcIpF9stJjj9RgF7dYTr7Hg1qFhiZo2NtzyesE7qRrpNCX1YoXdqOR/QXVX8a58u3n6YL8PUKi4GXdT+qcDDEXzRwSBf+UJxPVjG65J8/I1XGS/d3GeWkVN7PD31e9Ie+PtuTJTVpueEV6xDiudeOJPk=
+	t=1731936764; cv=none; b=JzbA9ktzYPx4s+kZbJkRxgssePmxPbjxLE+lDuhim8UIEq1OUIkBHSi9TJYgcYQCr3kZe1DRdZzEERLzo9lpC52zuLTdK1hd7i6sCEisbAle53yaOZrQEJA1eKmcEqWKw0fr5XImY3rC2LKZNOGREYGUCG0iEDWiBwPoavhG6R4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731936755; c=relaxed/simple;
-	bh=C42YKE7jZahESTSJ5tD6AEtOflxAnn+VErruvV9Zsqg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eynPlTqrxqXTY4k/zKCBm7IDb8UyCe3ip11GpEnpI/MjeknooyG+nmd2pQ49F79wgQdQ5GjtpzlcsLAMWNPKULq2anbt5jEhsY8LEFL8LQRRfDxKT558yWs1mOO+nK3FND339Rp2sGWWl9BfbY3T9H8xIpBF/yExWZa6q4xJQdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=eTNRq3PV; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 43F7B40006;
-	Mon, 18 Nov 2024 13:32:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1731936750;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cu1ZpBnBIa3rUTwNq4XU3fAcyXszxvoc+KpdBTQ6I4M=;
-	b=eTNRq3PVhFrW3t3LNfqp6uEL4rq1pVsh5cP5qMDByhu4PgW9OGDZTddGjlOk3gqHg22OIW
-	cF13AsJF2E9e7jC+fnPRWE9ujGgru+gEz4ePRCJUFj1KKtvMW2uptFjueTDzWFr5Ozf5/M
-	hQlnF67gVu2EX4GRnf3yWIIAfZmz5oMgsv+K1u0uLdprTWhrI0D/F/si8bR6cyeJi2z2LS
-	KwRcRdzd1QIQNBbVaYwLBqGu5gFuEbRqsootDeQQsK2npHDGGfRaSCFt7pan8yoBKewKP+
-	jdESmdKmJMWVEI+B4WyWJNwtfzY13Nuri43ZzW+r+MyyPpkRHHdgX0u4J4lyCg==
-Date: Mon, 18 Nov 2024 14:32:29 +0100
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: "David S. Miller" <davem@davemloft.net>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Finn Thain <fthain@linux-m68k.org>
-Cc: Daniel Palmer <daniel@0x0f.com>, Michael Pavone <pavone@retrodev.com>,
-	linux-m68k@lists.linux-m68k.org, linux-rtc@vger.kernel.org,
-	sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: (subset) [PATCH v4 1/2] rtc: m48t59: Use platform_data struct
- for year offset value
-Message-ID: <173193673970.37302.12055966881506116157.b4-ty@bootlin.com>
-References: <cover.1731450735.git.fthain@linux-m68k.org>
- <665c3526184a8d0c4a6373297d8e7d9a12591d8b.1731450735.git.fthain@linux-m68k.org>
+	s=arc-20240116; t=1731936764; c=relaxed/simple;
+	bh=aJd26H5CoefHCDVqNQEDXHTAGKtIu1SGszUKTk5I/xQ=;
+	h=Message-ID:From:To:Cc:Subject:Date; b=jz5Tr0P/X+emlMF4dIgYfaaNdofwkcES90ADFc8xKw+MsRFxnsaZwbYLXbN1nvR/FI5o7sIxsFeYFX3f8q8kEvWZ2ju2ZyOlumD/iUxkGYD7pNr4mNk9F8Hl5ypRz9hISwtWEgAzaA4aXE/tYZZXAlXxJiXWVlVytZ859TGSoQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SXV7Mxyo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49CF0C4CECC;
+	Mon, 18 Nov 2024 13:32:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731936763;
+	bh=aJd26H5CoefHCDVqNQEDXHTAGKtIu1SGszUKTk5I/xQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=SXV7MxyoxRfHozBfvShEu/83dqTwFmBs7yOLJGwADyKEZNa7CWOizosZuVnaeZHBN
+	 P9ujByUDQkZLg1CufUqzZQgf2U6fnaOnqCPFB1UztdsAZdJ/k6QBJXDEGdKdgGmBHC
+	 n6QTZZh6gIatHeNdhz6m11UmNd/C6sP6FiPoCJ5M18iaDa6ywZLJxjINl4X2EyQPwj
+	 8moSiwUN0pzyhYJDhRG+WMyGGpyJqqLPSFzKUYFMoON27Ao2aaU5AmVFiilkZkSmEC
+	 gfLJZ1Rlw47jTsxU7fbH45f4MslfLMKhkuVfA5hda5IeMD8+jC8SSKQbNYy6E1ai37
+	 7iWI+kb7rsYWw==
+Message-ID: <4aa156874403b74722254e1e25ead0e5.broonie@kernel.org>
+From: Mark Brown <broonie@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+Subject: [GIT PULL] regmap updates for v6.13
+Date: Mon, 18 Nov 2024 13:32:32 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <665c3526184a8d0c4a6373297d8e7d9a12591d8b.1731450735.git.fthain@linux-m68k.org>
-X-GND-Sasl: alexandre.belloni@bootlin.com
 
-On Wed, 13 Nov 2024 09:32:15 +1100, Finn Thain wrote:
-> Instead of hard-coded values and ifdefs, store the year offset in the
-> platform_data struct.
-> 
-> 
+The following changes since commit 8e929cb546ee42c9a61d24fae60605e9e3192354:
 
-Applied, thanks!
+  Linux 6.12-rc3 (2024-10-13 14:33:32 -0700)
 
-[1/2] rtc: m48t59: Use platform_data struct for year offset value
-      https://git.kernel.org/abelloni/c/a06e4a93067c
+are available in the Git repository at:
 
-Best regards,
+  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git tags/regmap-v6.13
 
--- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+for you to fetch changes up to d1f4390dd28ba110f232615dc4610ac1bb2f39f2:
+
+  regmap: provide regmap_assign_bits() (2024-11-08 15:39:31 +0000)
+
+----------------------------------------------------------------
+regmap: Updates for v6.13
+
+The main thing for regmap this time around is some improvements of the
+lockdep annotations which stop some false positives.  We also have one
+new helper for setting a bitmask to the same value, and several test
+improvements.
+
+----------------------------------------------------------------
+Andy Shevchenko (2):
+      regmap-irq: Consistently use memset32() in regmap_irq_thread()
+      regmap: irq: Set lockdep class for hierarchical IRQ domains
+
+Bartosz Golaszewski (1):
+      regmap: provide regmap_assign_bits()
+
+Cheng-Cheng Lo (1):
+      regmap: kunit: Fix repeated test param
+
+Cristian Ciocaltea (1):
+      regmap: maple: Provide lockdep (sub)class for maple tree's internal lock
+
+Mark Brown (3):
+      regmap: Specifically test writing 0 as a value to sparse caches
+      regcache: Improve documentation of available cache types
+      regmap: Merge up fixes from v6.12-rc3
+
+ drivers/base/regmap/internal.h       |  1 +
+ drivers/base/regmap/regcache-maple.c |  3 +++
+ drivers/base/regmap/regmap-irq.c     |  9 ++++----
+ drivers/base/regmap/regmap-kunit.c   | 45 +++++++++++++++++++++++++++++++++++-
+ drivers/base/regmap/regmap.c         |  1 +
+ include/linux/regmap.h               | 25 +++++++++++++++++++-
+ 6 files changed, 78 insertions(+), 6 deletions(-)
 
