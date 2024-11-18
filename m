@@ -1,254 +1,300 @@
-Return-Path: <linux-kernel+bounces-413550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D6CD9D1ADA
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 22:56:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DFC89D1ADC
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 22:57:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC3D11F22937
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 21:56:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3F632828B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 21:57:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BC381E7C38;
-	Mon, 18 Nov 2024 21:56:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D793C1E7C0B;
+	Mon, 18 Nov 2024 21:57:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="J47VDU1O"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dL+vWk89"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D266A1E5728
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 21:56:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03CEE150981;
+	Mon, 18 Nov 2024 21:57:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731966964; cv=none; b=Koz4ywav1JYToIf9wvErq9+tY5+8288KHKOkuA2JjuB4/Ynhg2hQvQBjo1JxaXExICQtS3bBBkYwyPTQJbR5hLKaP97dujYazc/jizoQ+gPLeya5g21o4CnDKt3c9DtqJo/CuLjX22sulObzX0eAn45IxVu4qU9u7xhV6xvRJzs=
+	t=1731967052; cv=none; b=s/Cu3inwI1DpPgaVLhn0WouTCq06BwIyU2MCbov0QQ+CkvXaFiLNFS1/mvqFkAD8b0bDEV0MyCnUdMV76cjTxiVRIjMHOXKMpyefsaahtv9D6U+6Kxsxm6mKI50Kk9kDIC5JpAjWQ+Mci5hbZpHkjA0Nd0anY5NklK26xA2ZWhY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731966964; c=relaxed/simple;
-	bh=dFqGuN73NKg5Ul2YHfrkoQvbXBHxCp2XwiECgctCa7E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pD5KF3EC9eodUp3knp3O+dj+ZLekUjfUkX+BFSZjPlWux2/Xw/hR+bZZ6tgONxijfVikOUaxFbwbEGkONYNAoO4bVu5LJt+u6b+fkmlkxUzte76qwRwNq/H/bBmie+ljIa+d+WL2DmvWT0+sAu54y7HSrmxya0yG1QXhcXmLjNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=J47VDU1O; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5cf6f5d4939so770a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 13:56:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731966961; x=1732571761; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KcPakxF9jKHtjtmBhR2QQPFYJaNPHuWfmL+ZcLJedzc=;
-        b=J47VDU1OeDNjrsSniG5XqybBofPtkSQlSPnaEoJudBnWlNdOIy7pi9sUhPjE3d1EUB
-         qsYFOWbr39HFSAH4X68uRNb2lJKln6nb2l3RtYZ973mMRXvBwlNgnfvvPZ9AYRzYC/G8
-         F8eyvOHPeAiUcNpnVGT4/BphotyMnMxNEMix6aA3Me5PyL63xYgP4wwevTKVwpsadYqX
-         GD/kmkCenBEGYdFgIuNQfGn2xMTwEMKeNbfZ4gPaUSMrXa9ry7V3+4gJHwi/uOk4Olh0
-         MD+7ajqFBj15ABmgGhhhnSMP3ZCtxkcELssNLgV8KFgurJpXBEd4+fSmk3bwc+ya8TqD
-         bzAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731966961; x=1732571761;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KcPakxF9jKHtjtmBhR2QQPFYJaNPHuWfmL+ZcLJedzc=;
-        b=cVbl/zC1I51zblmWK/IpoiMXZuC8dtzf1plsRa1e/U7VoNNPX7l+wTARenITVHrM9C
-         DE993dv2CKPAGzCs5C4ZQ5WxStTi7TRZiKSWGTDk9iGfwNpckkyg/QZ//1vapTDAZ724
-         PYQLeY3zKYiXWigU0UNbDyXPQDuQcCw1WlWqoJ1T2jaz/vM1TPf6wAUiqAd1ZLwR6ga1
-         hY9Cfeq/+4Pn8My5HTg7lD0Txne4/sjN1CVFIfgsvEzQm1Gzd46fxn3MZYuCsIL1DZ3A
-         baMm3hAVQzkePThevzVyOaPUjj+XvHe4j36HqCPE3L47MNn5rQMpRSToVbnV0JafsaEX
-         S3TA==
-X-Gm-Message-State: AOJu0YyySl+b8sj2h2j54XmQcOq84yuigFMrosx7YoMqNzj2WPPdbDdH
-	3q/h537A9e9P/1qqS/daBAUVdRg81m3QFfq8aQLNOTAYB5vuLeT8uF+v7owb+zFYzhfQco5MuGP
-	poBqsIcSLzt17ZFShcfErbMrvrMqW3v9a4BVNqltLGgPXG+p5/FdaGVnmrA==
-X-Gm-Gg: ASbGncvUfMSAQZjXulnC1zqI+wZhd+EojP7N4azckbA5hFqaskiXcCOE36O/wQTEDkU
-	fYW7Uvot4LwhORfbLq7PFPQ6fuVUb0ZznDu6JzYVaDaHKxD31LDO57BtbnjEg
-X-Google-Smtp-Source: AGHT+IEmQBLeCGEVSsJbyVXTx3ofqhXea4Wqz/7DGUro15QCcR8ixmXK0vAE1L66ZK1G6ThZtJ4ySWriaqF8oPGf1vk=
-X-Received: by 2002:aa7:dac4:0:b0:5cf:4994:501d with SMTP id
- 4fb4d7f45d1cf-5cfdfc082ddmr14414a12.3.1731966960689; Mon, 18 Nov 2024
- 13:56:00 -0800 (PST)
+	s=arc-20240116; t=1731967052; c=relaxed/simple;
+	bh=Dla+R32ok4wTwYIuQlAVhjXzYybXhfCM9m5QRpkVQ6M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RJsabrCt+vxB+vVUo4QJBmuKD+qn98uJ0YryZrtoZ4905kjQ7aXzAkdifye2lWpEO6p2cKyTZZX9uJhH1Oe3eh8/iScgZZJcujcCQC3NFnSr/ml8c0oPoLFINHvIn0sFoUieZ6+UlaXRgz4ZRMJVY67AaBQ68sZlYoje4DNVwSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dL+vWk89; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FE21C4CECC;
+	Mon, 18 Nov 2024 21:57:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731967051;
+	bh=Dla+R32ok4wTwYIuQlAVhjXzYybXhfCM9m5QRpkVQ6M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dL+vWk89PXIcZRxke+UQ/Rn7ZrXZgguAgOy2tZDcWvZTF1ycMMYeAmatFX7boILFk
+	 +B/0NfZoRaWlfLOx/BDPYsSaCMSKLiwG37OeLjHNfP9kr+30LOiqAxXoJC94vpSquX
+	 qtqpEVBqoa4KaY9Swa3aACpkX8USjGTMg716PWgVMMNTjyPUSD8hM0rLckNYtG+/mc
+	 X1fpXp1BcQMIW4iXqfRaTPsSozL8XxINRqZD/WS43zxPAvmX+Jh0SwAxV1+gV14D+m
+	 iKDUPs86338PqkPFddRaNVmlnCVzvcrNlFVbZmY6KLajEHmTIgzh8zVHA3EVHXm3s5
+	 IqD9nB037he1A==
+Date: Mon, 18 Nov 2024 13:57:29 -0800
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Athira Jajeev <atrajeev@linux.vnet.ibm.com>,
+	James Clark <james.clark@linaro.org>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	Yang Li <yang.lee@linux.alibaba.com>,
+	Colin Ian King <colin.i.king@gmail.com>,
+	Yang Jihong <yangjihong@bytedance.com>,
+	"Steinar H. Gunderson" <sesse@google.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Ilkka Koskinen <ilkka@os.amperecomputing.com>,
+	Ze Gao <zegao2021@gmail.com>, Weilin Wang <weilin.wang@intel.com>,
+	Ben Gainey <ben.gainey@arm.com>,
+	zhaimingbing <zhaimingbing@cmss.chinamobile.com>,
+	Zixian Cai <fzczx123@gmail.com>, Andi Kleen <ak@linux.intel.com>,
+	Paran Lee <p4ranlee@gmail.com>,
+	Thomas Falcon <thomas.falcon@intel.com>,
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+	"Steven Rostedt (Google)" <rostedt@goodmis.org>
+Subject: Re: [PATCH v4 0/6] Avoid parsing tracepoint format just for id
+Message-ID: <Zzu4Sdebve-NXEMX@google.com>
+References: <20241108184751.359237-1-irogers@google.com>
+ <Zy8FIt2OMa5-GymZ@google.com>
+ <CAP-5=fXmxhaLk+qvH9nGAV-ByyhyHx=WPhXCFbBaZ3nSySSsMA@mail.gmail.com>
+ <Zy-WM779rMwczlj_@google.com>
+ <CAP-5=fVKvDLUMw_HXBoRLK3FyPvUCWGOZNECer6_fyhbTZTM6A@mail.gmail.com>
+ <ZzuH-8ZCa7BVt3ef@google.com>
+ <CAP-5=fUCtzhN75k8gWEVgb_+XoYXFf1VfNndimuHZOx814yAMQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241116175922.3265872-1-pasha.tatashin@soleen.com> <20241116175922.3265872-5-pasha.tatashin@soleen.com>
-In-Reply-To: <20241116175922.3265872-5-pasha.tatashin@soleen.com>
-From: Jann Horn <jannh@google.com>
-Date: Mon, 18 Nov 2024 22:55:24 +0100
-Message-ID: <CAG48ez10dYpom22cQNgj62wkztbjpJiuuSroE5BahNkpnN-y3Q@mail.gmail.com>
-Subject: Re: [RFCv1 4/6] misc/page_detective: Introduce Page Detective
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	cgroups@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	akpm@linux-foundation.org, corbet@lwn.net, derek.kiernan@amd.com, 
-	dragan.cvetic@amd.com, arnd@arndb.de, gregkh@linuxfoundation.org, 
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, tj@kernel.org, 
-	hannes@cmpxchg.org, mhocko@kernel.org, roman.gushchin@linux.dev, 
-	shakeel.butt@linux.dev, muchun.song@linux.dev, Liam.Howlett@oracle.com, 
-	lorenzo.stoakes@oracle.com, vbabka@suse.cz, shuah@kernel.org, 
-	vegard.nossum@oracle.com, vattunuru@marvell.com, schalla@marvell.com, 
-	david@redhat.com, willy@infradead.org, osalvador@suse.de, 
-	usama.anjum@collabora.com, andrii@kernel.org, ryan.roberts@arm.com, 
-	peterx@redhat.com, oleg@redhat.com, tandersen@netflix.com, 
-	rientjes@google.com, gthelen@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP-5=fUCtzhN75k8gWEVgb_+XoYXFf1VfNndimuHZOx814yAMQ@mail.gmail.com>
 
-On Sat, Nov 16, 2024 at 6:59=E2=80=AFPM Pasha Tatashin
-<pasha.tatashin@soleen.com> wrote:
-> Page Detective is a kernel debugging tool that provides detailed
-> information about the usage and mapping of physical memory pages.
->
-> It operates through the Linux debugfs interface, providing access
-> to both virtual and physical address inquiries. The output, presented
-> via kernel log messages (accessible with dmesg), will help
-> administrators and developers understand how specific pages are
-> utilized by the system.
->
-> This tool can be used to investigate various memory-related issues,
-> such as checksum failures during live migration, filesystem journal
-> failures, general segfaults, or other corruptions.
-[...]
-> +/*
-> + * Walk kernel page table, and print all mappings to this pfn, return 1 =
-if
-> + * pfn is mapped in direct map, return 0 if not mapped in direct map, an=
-d
-> + * return -1 if operation canceled by user.
-> + */
-> +static int page_detective_kernel_map_info(unsigned long pfn,
-> +                                         unsigned long direct_map_addr)
-> +{
-> +       struct pd_private_kernel pr =3D {0};
-> +       unsigned long s, e;
-> +
-> +       pr.direct_map_addr =3D direct_map_addr;
-> +       pr.pfn =3D pfn;
-> +
-> +       for (s =3D PAGE_OFFSET; s !=3D ~0ul; ) {
-> +               e =3D s + PD_WALK_MAX_RANGE;
-> +               if (e < s)
-> +                       e =3D ~0ul;
-> +
-> +               if (walk_page_range_kernel(s, e, &pd_kernel_ops, &pr)) {
+On Mon, Nov 18, 2024 at 11:35:19AM -0800, Ian Rogers wrote:
+> On Mon, Nov 18, 2024 at 10:31 AM Namhyung Kim <namhyung@kernel.org> wrote:
+> >
+> > On Wed, Nov 13, 2024 at 10:06:13AM -0800, Ian Rogers wrote:
+> > > On Sat, Nov 9, 2024 at 9:04 AM Namhyung Kim <namhyung@kernel.org> wrote:
+> > > >
+> > > > On Sat, Nov 09, 2024 at 08:26:20AM -0800, Ian Rogers wrote:
+> > > > > On Fri, Nov 8, 2024 at 10:45 PM Namhyung Kim <namhyung@kernel.org> wrote:
+> > > > > > On Fri, Nov 08, 2024 at 10:47:45AM -0800, Ian Rogers wrote:
+> > > > > > > Ian Rogers (6):
+> > > > > > >   tool api fs: Correctly encode errno for read/write open failures
+> > > > > > >   perf trace-event: Constify print arguments
+> > > > > > >   perf trace-event: Always build trace-event-info.c
+> > > > > > >   perf evsel: Add/use accessor for tp_format
+> > > > > > >   perf evsel: Allow evsel__newtp without libtraceevent
+> > > > > > >   perf tests: Enable tests disabled due to tracepoint parsing
+> > > > > >
+> > > > > > After applying this series, I'm seeing some test failures.  But I don't
+> > > > > > understand why it affects non-tracepoint events though.
+> > > > > >
+> > > > > >   $ sudo ./perf test -v pipe
+> > > > > >   --- start ---
+> > > > > >   test child forked, pid 3036123
+> > > > > >    1bde35-1bdecc l noploop
+> > > > > >   perf does have symbol 'noploop'
+> > > > > >
+> > > > > >   Record+report pipe test
+> > > > > >   [ perf record: Woken up 1 times to write data ]
+> > > > > >   [ perf record: Captured and wrote 0.210 MB - ]
+> > > > > >   [ perf record: Woken up 2 times to write data ]
+> > > > > >   [ perf record: Captured and wrote 0.517 MB - ]
+> > > > > >   [ perf record: Woken up 2 times to write data ]
+> > > > > >   [ perf record: Captured and wrote 0.516 MB - ]
+> > > > > >   Record+report pipe test [Success]
+> > > > > >
+> > > > > >   Inject -B build-ids test
+> > > > > >   0xa5c [0x17a4]: failed to process type: 80
+> > > > > >   Error:
+> > > > > >   failed to process sample
+> > > > > >   Inject build-ids test [Failed - cannot find noploop function in pipe #1]
+> > > > > >
+> > > > > >   Inject -b build-ids test
+> > > > > >   0xa5c [0x17a4]: failed to process type: 80
+> > > > > >   Error:
+> > > > > >   failed to process sample
+> > > > > >   Inject build-ids test [Failed - cannot find noploop function in pipe #1]
+> > > > > >
+> > > > > >   Inject --buildid-all build-ids test
+> > > > > >   0xa5c [0x17a4]: failed to process type: 80
+> > > > > >   Error:
+> > > > > >   failed to process sample
+> > > > > >   Inject build-ids test [Failed - cannot find noploop function in pipe #1]
+> > > > > >
+> > > > > >   Inject --mmap2-buildid-all build-ids test
+> > > > > >   0xa5c [0x17a4]: failed to process type: 80
+> > > > > >   Error:
+> > > > > >   failed to process sample
+> > > > > >   Inject build-ids test [Failed - cannot find noploop function in pipe #1]
+> > > > > >   ---- end(-1) ----
+> > > > > >    84: perf pipe recording and injection test                          : FAILED!
+> > > > > >
+> > > > > >   $ sudo ./perf test -v Zstd
+> > > > > >   --- start ---
+> > > > > >   test child forked, pid 3036097
+> > > > > >   Collecting compressed record file:
+> > > > > >   500+0 records in
+> > > > > >   500+0 records out
+> > > > > >   256000 bytes (256 kB, 250 KiB) copied, 0.00169127 s, 151 MB/s
+> > > > > >   [ perf record: Woken up 1 times to write data ]
+> > > > > >   [ perf record: Captured and wrote 0.032 MB /tmp/perf.data.KBo, compressed (original 0.004 MB, ratio is 3.324) ]
+> > > > > >   Checking compressed events stats:
+> > > > > >   Couldn't decompress data
+> > > > > >   0x7ca8 [0x4f2]: failed to process type: 81 [Operation not permitted]
+> > > > > >   Error:
+> > > > > >   failed to process sample
+> > > > > >   ---- end(-1) ----
+> > > > > >    86: Zstd perf.data compression/decompression                        : FAILED!
+> > > > > >
+> > > > > > Thanks,
+> > > > > > Namhyung
+> > > > >
+> > > > > I'm not able to reproduce:
+> > > > > ```
+> > > > > $ git log --oneline |head
+> > > > > a59bca6eb0a6 perf test: Add a runs-per-test flag
+> > > > > 0d0c002eb45c perf tests: Enable tests disabled due to tracepoint parsing
+> > > > > 4b8f5c9dfbda perf evsel: Allow evsel__newtp without libtraceevent
+> > > > > 7f57057c7884 perf evsel: Add/use accessor for tp_format
+> > > > > c27d357d2d4c perf trace-event: Always build trace-event-info.c
+> > > > > 20bf7a2cd68a perf trace-event: Constify print arguments
+> > > > > f18b07ee2af1 tool api fs: Correctly encode errno for read/write open failures
+> > > > > ...
+> > > > > $ sudo /tmp/perf/perf test -r 10 Zstd pipe -v
+> > > > > 84: perf pipe recording and injection test                          : Ok
+> > > > > 84: perf pipe recording and injection test                          : Ok
+> > > > > 84: perf pipe recording and injection test                          : Ok
+> > > > > 84: perf pipe recording and injection test                          : Ok
+> > > > > 84: perf pipe recording and injection test                          : Ok
+> > > > > 84: perf pipe recording and injection test                          : Ok
+> > > > > 84: perf pipe recording and injection test                          : Ok
+> > > > > 84: perf pipe recording and injection test                          : Ok
+> > > > > 84: perf pipe recording and injection test                          : Ok
+> > > > > 84: perf pipe recording and injection test                          : Ok
+> > > > > 86: Zstd perf.data compression/decompression                        : Ok
+> > > > > 86: Zstd perf.data compression/decompression                        : Ok
+> > > > > 86: Zstd perf.data compression/decompression                        : Ok
+> > > > > 86: Zstd perf.data compression/decompression                        : Ok
+> > > > > 86: Zstd perf.data compression/decompression                        : Ok
+> > > > > 86: Zstd perf.data compression/decompression                        : Ok
+> > > > > 86: Zstd perf.data compression/decompression                        : Ok
+> > > > > 86: Zstd perf.data compression/decompression                        : Ok
+> > > > > 86: Zstd perf.data compression/decompression                        : Ok
+> > > > > 86: Zstd perf.data compression/decompression                        : Ok
+> > > > > ```
+> > > > > Similarly not as root or if runs-per-test is 100.
+> > > > >
+> > > > > Agreed that the changes are for tracepoints and these tests aren't for
+> > > > > tracepoints, so an interaction wouldn't be expected. If you have a
+> > > > > reliable reproduction perhaps you can bisect it.
+> > > >
+> > > > it says:
+> > > >
+> > > > 9c10de391840a35ab095b65e9a5c4fad0ac52068 is the first bad commit
+> > > > commit 9c10de391840a35ab095b65e9a5c4fad0ac52068 (HEAD)
+> > > > Author: Ian Rogers <irogers@google.com>
+> > > > Date:   Fri Nov 8 10:47:46 2024 -0800
+> > > >
+> > > >     tool api fs: Correctly encode errno for read/write open failures
+> > > >
+> > > >     Switch from returning -1 to -errno so that callers can determine types
+> > > >     of failure.
+> > > >
+> > > >     Signed-off-by: Ian Rogers <irogers@google.com>
+> > > >     Acked-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> > > >
+> > > >  tools/lib/api/fs/fs.c | 6 +++---
+> > > >  1 file changed, 3 insertions(+), 3 deletions(-)
+> > >
+> > > So I tried to eye-ball/grep all callers to spot assumptions on the
+> > > return value like:
+> > > ```
+> > > err = ...__read_int
+> > > if (err == -1)
+> > > ```
+> > > Didn't spot anything.
+> > >
+> > > It seems in the test log the record is failing so I ran this under
+> > > gdb, set breakpoints on the 3 modified functions and then looked up
+> > > the call stack to spot bad return value assumptions. Everything looks
+> > > good.
+> > > I then tried inject and report, the only file read by these functions
+> > > is /proc/sys/kernel/perf_event_paranoid as part of symbol
+> > > initialization (nit, this should probably be read lazily and the
+> > > restriction should really come from the perf.data file, not the
+> > > running system) and those calls look good.
+> > >
+> > > The change is small and not critical for the series. It improves the
+> > > error message when reading the tracepoint id fails. So we could move
+> > > forward with the rest of the series, but that could be annoying for
+> > > tracepoint users.
+> > >
+> > > If I had a reproducer I'd revert the 1 line change on each function to
+> > > find out which is causing the regression. Once you have that then you
+> > > can binary search to find the bad call by using some global counter
+> > > where the first 'n' calls use the new return value and the later use
+> > > the old value. You can then vary 'n' to binary search and find the bad
+> > > caller.
+> > >
+> > > Is there any chance you can help diagnose this or help me to find the
+> > > reproducer?
+> >
+> > I think this depends on the system configuration.  I've debugged it
+> > failed when it gets cpu topology:
+> >
+> >   ...
+> >   read int failed: /sys/devices/system/cpu/cpu112/topology/core_id (errno=2)
+> >   read int failed: /sys/devices/system/cpu/cpu112/topology/physical_package_id (errno=2)
+> >   read int failed: /sys/devices/system/cpu/cpu112/topology/die_id (errno=2)
+> >   ...
+> >
+> > Maybe it's because # online CPUs != # possible CPUs.
+> >
+> >   $ cat /sys/devices/system/cpu/online
+> >   0-63
+> >   $ cat /sys/devices/system/cpu/possible
+> >   0-127
+> >
+> > There's a code like cpu__get_socket_id() to use the return value of
+> > sysfs__read_int() directly.  And it saves the value to aggr_cpu_id which
+> > requires exact match like in aggr_cpu_id__equal().
+> 
+> So this is a latent bug. Are you working on the fix or asking me to do
+> it? I'm not sure why we should fail to describe the topology for
+> offline cores, but if this is a kernel restriction we should probably
+> purge those logical CPUs from the topology.
 
-I think which parts of the kernel virtual address range you can safely
-pagewalk is somewhat architecture-specific; for example, X86 can run
-under Xen PV, in which case I think part of the page tables may not be
-walkable because they're owned by the hypervisor for its own use?
-Notably the x86 version of ptdump_walk_pgd_level_core starts walking
-at GUARD_HOLE_END_ADDR instead.
+It doesn't have the topology directory for the offline CPUs.
 
-See also https://kernel.org/doc/html/latest/arch/x86/x86_64/mm.html
-for an ASCII table reference on address space regions.
+  $ ls /sys/devices/system/cpu/cpu112/
+  acpi_cppc  cpufreq  cpuidle  crash_notes  crash_notes_size  driver  firmware_node  hotplug  node0  online  power  subsystem  uevent
 
-> +                       pr_info("Received a cancel signal from user, whil=
-e scanning kernel mappings\n");
-> +                       return -1;
-> +               }
-> +               cond_resched();
-> +               s =3D e;
-> +       }
-> +
-> +       if (!pr.vmalloc_maps) {
-> +               pr_info("The page is not mapped into kernel vmalloc area\=
-n");
-> +       } else if (pr.vmalloc_maps > 1) {
-> +               pr_info("The page is mapped into vmalloc area: %ld times\=
-n",
-> +                       pr.vmalloc_maps);
-> +       }
-> +
-> +       if (!pr.direct_map)
-> +               pr_info("The page is not mapped into kernel direct map\n"=
-);
-> +
-> +       pr_info("The page mapped into kernel page table: %ld times\n", pr=
-.maps);
-> +
-> +       return pr.direct_map ? 1 : 0;
-> +}
-> +
-> +/* Print kernel information about the pfn, return -1 if canceled by user=
- */
-> +static int page_detective_kernel(unsigned long pfn)
-> +{
-> +       unsigned long *mem =3D __va((pfn) << PAGE_SHIFT);
-> +       unsigned long sum =3D 0;
-> +       int direct_map;
-> +       u64 s, e;
-> +       int i;
-> +
-> +       s =3D sched_clock();
-> +       direct_map =3D page_detective_kernel_map_info(pfn, (unsigned long=
-)mem);
-> +       e =3D sched_clock() - s;
-> +       pr_info("Scanned kernel page table in [%llu.%09llus]\n",
-> +               e / NSEC_PER_SEC, e % NSEC_PER_SEC);
-> +
-> +       /* Canceled by user or no direct map */
-> +       if (direct_map < 1)
-> +               return direct_map;
-> +
-> +       for (i =3D 0; i < PAGE_SIZE / sizeof(unsigned long); i++)
-> +               sum |=3D mem[i];
+  $ ls /sys/devices/system/cpu/cpu112/topology
+  ls: cannot access '/sys/devices/system/cpu/cpu112/topology': No such file or directory
 
-If the purpose of this interface is to inspect pages in weird states,
-I wonder if it would make sense to use something like
-copy_mc_to_kernel() in case that helps avoid kernel crashes due to
-uncorrectable 2-bit ECC errors or such. But maybe that's not the kind
-of error you're concerned about here? And I also don't have any idea
-if copy_mc_to_kernel() actually does anything sensible for ECC errors.
-So don't treat this as a fix suggestion, more as a random idea that
-should probably be ignored unless someone who understands ECC errors
-says it makes sense.
+Anyway, I'm not sure if it's really needed for this change.  Maybe you
+can drop the patch 1 from the series for now and tackle it later.
 
-But I think you should at least be using READ_ONCE(), since you're
-reading from memory that can change concurrently.
+Thanks,
+Namhyung
 
-> +       if (sum =3D=3D 0)
-> +               pr_info("The page contains only zeroes\n");
-> +       else
-> +               pr_info("The page contains some data\n");
-> +
-> +       return 0;
-> +}
-[...]
-> +/*
-> + * print information about mappings of pfn by mm, return -1 if canceled
-> + * return number of mappings found.
-> + */
-> +static long page_detective_user_mm_info(struct mm_struct *mm, unsigned l=
-ong pfn)
-> +{
-> +       struct pd_private_user pr =3D {0};
-> +       unsigned long s, e;
-> +
-> +       pr.pfn =3D pfn;
-> +       pr.mm =3D mm;
-> +
-> +       for (s =3D 0; s !=3D TASK_SIZE; ) {
-
-TASK_SIZE does not make sense when inspecting another task, because
-TASK_SIZE depends on the virtual address space size of the current
-task (whether you are a 32-bit or 64-bit process). Please use
-TASK_SIZE_MAX for remote process access.
-
-> +               e =3D s + PD_WALK_MAX_RANGE;
-> +               if (e > TASK_SIZE || e < s)
-> +                       e =3D TASK_SIZE;
-> +
-> +               if (mmap_read_lock_killable(mm)) {
-> +                       pr_info("Received a cancel signal from user, whil=
-e scanning user mappings\n");
-> +                       return -1;
-> +               }
-> +               walk_page_range(mm, s, e, &pd_user_ops, &pr);
-> +               mmap_read_unlock(mm);
-> +               cond_resched();
-> +               s =3D e;
-> +       }
-> +       return pr.maps;
-> +}
 
