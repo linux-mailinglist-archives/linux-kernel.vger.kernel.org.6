@@ -1,116 +1,166 @@
-Return-Path: <linux-kernel+bounces-413156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D4429D144C
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 16:20:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B5FD9D144D
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 16:20:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 440F728252F
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 15:20:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5420D1F2207A
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 15:20:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB3E11AE01D;
-	Mon, 18 Nov 2024 15:19:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A46B11AE875;
+	Mon, 18 Nov 2024 15:20:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=streamunlimited.com header.i=@streamunlimited.com header.b="wOQ2tS6l"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="IhW34m+f"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89FAF1AA1C5
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 15:19:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB7201AA1C5
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 15:20:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731943198; cv=none; b=m3GTOjOaHQ6WANOIQ9yTL12pt7n3VuHzUNopXXydNX08EwMNpRsYxnf0UKo+RtMJaTcP+8fZ+oDWuFw+fwy4oypFYW/2Nsz7cYrtmxRMLUUDaA1yCVD2Z93eI67/wp3hC1ZN9FrWLmNoYTAJswVtR6hnqhoy06cg2EdiXS2Pw6Y=
+	t=1731943205; cv=none; b=UHp/M5J6Ghtzo6Z4dAudLCQ+LJXjZiZDxoMRxy2Xi19yPqVF6JYMbjXFmhydSiKw9CtNPaTr7Kc93JKRqJ1fqg7EETDAW55NE/shTVFzlT2iWZ/OHgqawjK0SFtNEle+qxrgEQpATBasqySVP0XI3uMnm3fwW3R+K9g20ZO9vco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731943198; c=relaxed/simple;
-	bh=OTAgyHwKQAzNe9QHWBOL4pcfrn4VHbdGP753enF+jN0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=V+NOeGJ6s/3ZDN3oBBl6PX06b8EZEBJCVxnMxZRLHtbHe+9YIX1+VxlmbIH7Kxd1eQogcOvrR/HsKaPT3Gfw2ccpw1c6tm64onVrwWo6gFzQQKeer2/RARgA6aqr8zDGjUNJnrQ4C4krPM+Gms76CFhtdYEx+xlAeahCvYNgrE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=streamunlimited.com; spf=pass smtp.mailfrom=streamunlimited.com; dkim=pass (1024-bit key) header.d=streamunlimited.com header.i=@streamunlimited.com header.b=wOQ2tS6l; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=streamunlimited.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=streamunlimited.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-53a097aa3daso1898545e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 07:19:54 -0800 (PST)
+	s=arc-20240116; t=1731943205; c=relaxed/simple;
+	bh=/8N7G1LGIf2kwW/o/tASz8OeeJYsPdurJirv7h6ggbA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HPnHFIcg0chbmv+c84BTN8X1m+f+3JvubqoQjJoLt/QSj0fGGwLf9gXvnCBRkNnhpOrl3Bz1SGY3Os3OkSKeEzk7sMWjNY3pA4v0IhF3Oj2HK8BRL1lw31hF3uBngqOaiLfKC/Wz9I+/6dgHuaJSOtcgVPrme1LcJlV/J7YFgoU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=IhW34m+f; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-382026ba43eso2699583f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 07:20:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=streamunlimited.com; s=google; t=1731943192; x=1732547992; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=kKnpzF/evUVWyiFRJwNk/oMNhYJbJ4rIzEz6848rwBI=;
-        b=wOQ2tS6lUlTKyUIsSMX5CS/yzS1Thuu0OzksrRbkMB3t40YShpEsp/tEJ76o1qrtSD
-         LpRFphTW5RTvPSK/4obvAgoRGliGSccpz5M9GIxFNAnF2mzsQ+yVHMQBjGazDM01OUpD
-         cKiHN/g+eNaSQXmfFqoRmpe7rpo7dFrWQIYmA=
+        d=suse.com; s=google; t=1731943201; x=1732548001; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=bO7a20ZjW6t4mhdM7n1pAeRm1m0R6IPvHl5SqBK9cpM=;
+        b=IhW34m+f/mt+ktlLgPDBZbaAOoew/8I6DIVBmlPTPxFO95cYt+SqXb+GUVWRtvwq8Z
+         XXFKXT9eaUV9vHgwjZgkR4hOzl6TOUW436YRyiSisAeg6w/hvl561EcgSXxEn69GdXND
+         NfWFLoq+jNMFhvoNLBOTAW7v/f/vGrVizsOm6wmGQs78JGZYNPrXLGV1jY6bqxDrp8Lu
+         /5vmygjFV811OI79aBZcXek2U6QNUiggbOnEjApaK2ZCCLtvRZ+jW4IFbNb1M/F/lFWS
+         0TSjhJed38WuP6ZDQm4dH+PaVrCblbZYtf714tpk2vaURKHDMG1ZeCuFdDtOJRPe1qhC
+         HDnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731943192; x=1732547992;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kKnpzF/evUVWyiFRJwNk/oMNhYJbJ4rIzEz6848rwBI=;
-        b=d65kfoaXU48KlUYAkLdKulPsiZGHOxc+QCuCNGNDkETlbfYWLS+c8iiBDCW4qgCdeS
-         uyQkyXYsuOYOqVh52MyEuduexOx3oYLm/ZNhH+JK/E1XQ3369ebl8lFW3nGh4SAaA1/k
-         bnAwoVSm7ZCBtfEqd8eKH+cwDS9D2An5l2C7ELy49ZKF5jvZ8MslkBTtZ6mAB55dBXye
-         3yIFvIJXChMhh5v6l7HkgFUo/DgTwKjB77U2QQpvCbWnuQP0ureJlNBAKbWV4uigRU+U
-         9/JtY4HOvudw4ISmiRkoHGRfXG/xMdYk1QOaABj5FMD31Mi1GmZFaMGXqc3eHv7BUNLF
-         dCEw==
-X-Forwarded-Encrypted: i=1; AJvYcCUS80MuTQJoyAXqmaJOgMe4CSpWUCV+qxTePZ/3YmS27jBKjFVM3/3ySSnLKmOSLHgOOcbeb4EN7gcpn2U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywou0iwCrSk9jgqElhaANsFbM3CUKem+xaeENsJa161PBPEdOxY
-	ilrBSIu7p2cuAfNhF6Pk8DpPv4G/etAbkqC5B6W6X7EEskGKhFhyxcpXarc2OAo=
-X-Google-Smtp-Source: AGHT+IGMh+VURa9zuCTt64zmS+qjwv8VHVXqaYbqFcsqZND2XPKqiN8HRYTEfD4pR+PluX1PYo3A9g==
-X-Received: by 2002:a05:6512:3baa:b0:530:aa82:a50a with SMTP id 2adb3069b0e04-53dab2b41e8mr5690507e87.45.1731943192580;
-        Mon, 18 Nov 2024 07:19:52 -0800 (PST)
-Received: from localhost.localdomain (vpn.streamunlimited.com. [91.114.0.140])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b35c99eadbsm488494585a.39.2024.11.18.07.19.51
+        d=1e100.net; s=20230601; t=1731943201; x=1732548001;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bO7a20ZjW6t4mhdM7n1pAeRm1m0R6IPvHl5SqBK9cpM=;
+        b=DNtH7+GpQnAFzBBq10L0yTeL8gTOUcJhj3B62ReMW0Hib5M/l+4iTJ3jbmjK6sZFv0
+         klx2HZq/5g0UdGrNY4vrSenAObho4LRj7cGCCZqWzaR38nxiqSgwHhjryNWgwBNGH85f
+         um5SfXs251T9QWOpkjMco1C7TopGPnRd2YR46FESOt7sZz0pjzCCZimuYFFRxoTpF5KK
+         709Pr0Xiv7kQ4NGwnn2cCI71p3ZIlO0hYtB7qp9z6tKuhcPISqp/1Qo34AS+vbO89HYt
+         NeblDFlGUC6aabLrbwdp4dMZCJWHC2NVuTct/1x6QXMN5zj7hthBmbpddmjhBS9qKqWf
+         fvhA==
+X-Gm-Message-State: AOJu0YyvNwkXb99udQiPbUco3LvasG7iVIZrT2LGV3SFO1Sa4O/X79SB
+	X6MdYL9SQJ/FEuA05odBnyBnokLOOXv4CM5HosBQkKS946yE/pQs+/kEh4IEh/Q=
+X-Google-Smtp-Source: AGHT+IHeOtr1o8whI0XBVWRpAUpDFR2h4NEYvMu7h66Jpqioq14woKarCM8IE+8e4XvE5o1qJg9jpQ==
+X-Received: by 2002:a05:6000:1ac5:b0:382:31a1:8dc3 with SMTP id ffacd0b85a97d-38231a18dcamr7116321f8f.35.1731943201054;
+        Mon, 18 Nov 2024 07:20:01 -0800 (PST)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3824a8109a7sm1617726f8f.104.2024.11.18.07.20.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Nov 2024 07:19:52 -0800 (PST)
-From: =?UTF-8?q?Andr=C3=A9=20Groenewald?= <andre.groenewald@streamunlimited.com>
-To: marcel@holtmann.org,
-	johan.hedberg@gmail.com,
-	luiz.dentz@gmail.com,
-	linux-bluetooth@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: =?UTF-8?q?Andr=C3=A9=20Groenewald?= <andre.groenewald@streamunlimited.com>
-Subject: [PATCH] Bluetooth: hci_sync: fix LE init stage 3 failure
-Date: Mon, 18 Nov 2024 16:19:47 +0100
-Message-Id: <20241118151947.3323927-1-andre.groenewald@streamunlimited.com>
-X-Mailer: git-send-email 2.34.1
+        Mon, 18 Nov 2024 07:20:00 -0800 (PST)
+Date: Mon, 18 Nov 2024 16:19:58 +0100
+From: Petr Mladek <pmladek@suse.com>
+To: Chris Down <chris@chrisdown.name>
+Cc: linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Tony Lindgren <tony.lindgren@linux.intel.com>, kernel-team@fb.com
+Subject: Re: register_device: was: Re: [PATCH v6 06/11] printk: console:
+ Introduce sysfs interface for per-console loglevels
+Message-ID: <ZztbHhHc14kqz0Dc@pathway.suse.cz>
+References: <cover.1730133890.git.chris@chrisdown.name>
+ <0312cd1e80e68a1450a194ebce27728cdf497575.1730133890.git.chris@chrisdown.name>
+ <ZzTM04qQXOg2RsOa@pathway.suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZzTM04qQXOg2RsOa@pathway.suse.cz>
 
-A controller may indicate support for the extended advertising feature but
-doesn't support the HCI_LE_Read_Number_of_Supported_Advertising_Sets
-command, which will cause the initialization to fail.
+On Wed 2024-11-13 16:59:17, Petr Mladek wrote:
+> > A sysfs interface under /sys/class/console/ is created that permits
+> > viewing and configuring per-console attributes. This is the main
+> > interface with which we expect users to interact with and configure
+> > per-console loglevels.
+> 
+> > diff --git a/kernel/printk/sysfs.c b/kernel/printk/sysfs.c
+> > new file mode 100644
+> > index 000000000000..e24590074861
+> > --- /dev/null
+> > +++ b/kernel/printk/sysfs.c
+> > +ATTRIBUTE_GROUPS(console_sysfs);
+> > +
+> > +static void console_classdev_release(struct device *dev)
+> > +{
+> > +	kfree(dev);
+> > +}
+> > +
+> > +void console_register_device(struct console *con)
+> > +{
+> > +	/*
+> > +	 * We might be called from register_console() before the class is
+> > +	 * registered. If that happens, we'll take care of it in
+> > +	 * printk_late_init.
+> > +	 */
+> > +	if (IS_ERR_OR_NULL(console_class))
+> > +		return;
+> > +
+> > +	if (WARN_ON(con->classdev))
+> > +		return;
+> > +
+> > +	con->classdev = kzalloc(sizeof(struct device), GFP_KERNEL);
+> > +	if (!con->classdev)
+> > +		return;
+> > +
+> > +	device_initialize(con->classdev);
+> > +	dev_set_name(con->classdev, "%s%d", con->name, con->index);
+> > +	dev_set_drvdata(con->classdev, con);
+> > +	con->classdev->release = console_classdev_release;
+> > +	con->classdev->class = console_class;
+> > +	if (device_add(con->classdev))
+> > +		put_device(con->classdev);
+> 
+> Honestly, I am not sure how to review this. I am not familiar with
+> these APIs. I have spent few hours trying to investigate various
+> drivers but I did not find any similar use case. I tried to look
+> for documentation but I did not find any good HOWTO.
 
-Signed-off-by: André Groenewald <andre.groenewald@streamunlimited.com>
----
- net/bluetooth/hci_sync.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+BTW: When investigating other users of these APIs, I saw
+a use of pm_runtime_no_callbacks() in
 
-diff --git a/net/bluetooth/hci_sync.c b/net/bluetooth/hci_sync.c
-index c86f4e42e69c..c07be5813113 100644
---- a/net/bluetooth/hci_sync.c
-+++ b/net/bluetooth/hci_sync.c
-@@ -4416,6 +4416,15 @@ static int hci_le_read_num_support_adv_sets_sync(struct hci_dev *hdev)
- 	if (!ext_adv_capable(hdev))
- 		return 0;
- 
-+	/* Checking for extended advertising capabilities is not enough; refine
-+	 * by checking if the HCI_LE_Read_Number_of_Supported_Advertising_Sets
-+	 * command is supported. Since this command is part of the LE init
-+	 * stage 3, the initialization will fail whenever the command is not
-+	 * supported for devices that indicate extended advertising features.
-+	 */
-+	if (!(hdev->commands[36] & 0x80))
-+		return 0;
-+
- 	return __hci_cmd_sync_status(hdev,
- 				     HCI_OP_LE_READ_NUM_SUPPORTED_ADV_SETS,
- 				     0, NULL, HCI_CMD_TIMEOUT);
--- 
-2.34.1
+static int i2c_register_adapter(struct i2c_adapter *adap)
+{
+	dev_set_name(&adap->dev, "i2c-%d", adap->nr);
+[...]
+	device_initialize(&adap->dev);
+[...]
+	/*
+	 * This adapter can be used as a parent immediately after device_add(),
+	 * setup runtime-pm (especially ignore-children) before hand.
+	 */
+	device_enable_async_suspend(&adap->dev);
+	pm_runtime_no_callbacks(&adap->dev);
 
+It removed part of the sysfs interface in the power subdirectory.
+
+It might make sense to use this for the console devices as well.
+If I get it correctly then the newly added struct device in
+struct console can't affect the power management of the underlying
+HW device.
+
+Best Regards,
+Petr
 
