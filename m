@@ -1,196 +1,190 @@
-Return-Path: <linux-kernel+bounces-412904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 123999D10F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 13:50:43 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3023F9D1AF0
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 23:12:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 21BD6B27169
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 12:50:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 84A57B21110
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 22:12:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E26C19ABC2;
-	Mon, 18 Nov 2024 12:50:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49E391E7655;
+	Mon, 18 Nov 2024 22:11:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ssi.bg header.i=@ssi.bg header.b="si6TuWGl"
-Received: from mg.ssi.bg (mg.ssi.bg [193.238.174.37])
+	dkim=pass (2048-bit key) header.d=maxima.ru header.i=@maxima.ru header.b="mhiL004E"
+Received: from ksmg02.maxima.ru (ksmg02.maxima.ru [81.200.124.39])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0239F26AD0;
-	Mon, 18 Nov 2024 12:50:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.238.174.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B2A41925A2
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 22:11:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.200.124.39
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731934224; cv=none; b=clCNXHv/pkEtNGTVJ8pkGRXQsLPieaWnGK+55nnAGlxiyDPWvEyqDo0WQJ3OxuW990IjaSqNedzXCb/+HW7UiwOucvxFP94tsspTTAutu6u32XFbFt1S3XqQ72srkVfKdT4L8ZAas7kkwnBS/Nn+IaANT/h5MSGnJCl4aWtq00M=
+	t=1731967914; cv=none; b=OWOnkuiYEJbgGN5oczm3CZqjzxTERQpaufLPLbo+OKMdYUKFcruhZEAmtNX/8dpvs9Hdafan+7+eE3ysipCV/tF23FTi58UsWk//+u+wSsNJdCylxCfoQUOFMDiBdRB+9eyZLflvF1edfy8BopHVRcc1mxcc8GSiZ0qbcgW9WQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731934224; c=relaxed/simple;
-	bh=s58+oJpUcZU53E8zvr9EuG43vMWpmCCxA/lYnCWlie0=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=Hvmnk37iy0Th1NByTYlyvqG+J9gw9zP1U7VeWWd03TT7xSzTAVsjkiLFqmIvkHFl8IqdBHWfo+DgstntJcMwBwLPAIBDdq9tX8FCR4OYEqzPlSJ+Z9foXEGxVA0DcdJWaHJrZnId6fMq3XJbwZOYCqOnEMIHQaONlUEjv6e6rp0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ssi.bg; spf=pass smtp.mailfrom=ssi.bg; dkim=pass (1024-bit key) header.d=ssi.bg header.i=@ssi.bg header.b=si6TuWGl; arc=none smtp.client-ip=193.238.174.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ssi.bg
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ssi.bg
-Received: from mg.ssi.bg (localhost [127.0.0.1])
-	by mg.ssi.bg (Proxmox) with ESMTP id 3F034835D7;
-	Mon, 18 Nov 2024 14:41:34 +0200 (EET)
-Received: from ink.ssi.bg (ink.ssi.bg [193.238.174.40])
-	by mg.ssi.bg (Proxmox) with ESMTPS;
-	Mon, 18 Nov 2024 14:41:33 +0200 (EET)
-Received: from ja.ssi.bg (unknown [213.16.62.126])
-	by ink.ssi.bg (Postfix) with ESMTPSA id 7D5553026AC;
-	Mon, 18 Nov 2024 14:41:25 +0200 (EET)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=ssi.bg; s=ink;
-	t=1731933686; bh=s58+oJpUcZU53E8zvr9EuG43vMWpmCCxA/lYnCWlie0=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References;
-	b=si6TuWGlYBk+G6fQqyuo9TlTiEl6043HtoNQHe+IIoPBtwwMj3UWFkDQyq2VSIaDo
-	 +4GmqhYXrYKydei89Nsky+aPap/JMujkMQl2fi0XxSXBIb5TfnK492EcxKAjZ5X3Ba
-	 elu5nyO9AmeHEQgX2MdmaFtExY9aP4Kpn2LjPuDU=
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by ja.ssi.bg (8.18.1/8.17.1) with ESMTP id 4AICfNOD034252;
-	Mon, 18 Nov 2024 14:41:23 +0200
-Date: Mon, 18 Nov 2024 14:41:23 +0200 (EET)
-From: Julian Anastasov <ja@ssi.bg>
-To: Jinghao Jia <jinghao7@illinois.edu>
-cc: Simon Horman <horms@verge.net.au>, Pablo Neira Ayuso <pablo@netfilter.org>,
-        Jozsef Kadlecsik <kadlec@netfilter.org>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Bill Wendling <morbo@google.com>,
-        Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>,
-        netdev@vger.kernel.org, lvs-devel@vger.kernel.org,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        linux-kernel <linux-kernel@vger.kernel.org>, llvm@lists.linux.dev,
-        kernel test robot <lkp@intel.com>, Ruowen Qin <ruqin@redhat.com>
-Subject: Re: [PATCH] ipvs: fix UB due to uninitialized stack access in
- ip_vs_protocol_init()
-In-Reply-To: <20241111065105.82431-1-jinghao7@illinois.edu>
-Message-ID: <f97ef69b-a15e-03ab-5e24-c1dfd3c4542b@ssi.bg>
-References: <20241111065105.82431-1-jinghao7@illinois.edu>
+	s=arc-20240116; t=1731967914; c=relaxed/simple;
+	bh=ViWUTm5YLllJxtuiwR7b6gWuZ4LAmdj22suzOl11QZ4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=l9pFpOJ0cIR/q0ugzugGnN2PqXdJHI6bTBOIu588T/GO0VCAXy18h09pO8uEdhwID1Okd+IYSDoAuyHNRQCTFwy/XWGicCGFnTM1pNtugUiEtxRV0qFzIisnt14pNzV2DIJXeg0QcTUlXYVIPWMcQo4yVZZtLN7dT5yeIGufuyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maxima.ru; spf=pass smtp.mailfrom=maxima.ru; dkim=pass (2048-bit key) header.d=maxima.ru header.i=@maxima.ru header.b=mhiL004E; arc=none smtp.client-ip=81.200.124.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maxima.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maxima.ru
+Received: from ksmg02.maxima.ru (localhost [127.0.0.1])
+	by ksmg02.maxima.ru (Postfix) with ESMTP id F0D291E0008;
+	Mon, 18 Nov 2024 15:42:52 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 ksmg02.maxima.ru F0D291E0008
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maxima.ru; s=sl;
+	t=1731933772; bh=j5rebjL+mlIZO9+tBTCrAr7sdKNYnS0zH0ITX1r28zg=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
+	b=mhiL004EOfb/i23Uf6HPyZDhiOCRKbSfR6joCbYcyhowapXjRPx28SuF3zMUnDbzv
+	 slWm0rkEpB4ioYV4QWDHJO743PGz/MOvO6Dv31alMkuMrb6yz4Z8MtwDUfS0XjEbsI
+	 ymiKTZY5zXGKHTAaF2a13i/Y7iqW21nWllh5H6sfWCHif5iB8uVMl9pdxHg1LZ3jvk
+	 f6L/QO1ic3ml+VZzJpkAt6YkyYPR2gP3yqq+Ui1J+GmNHBteETeuWMdftOdGbkml/E
+	 INVFGEjMj9tb22js5+ETDZOecqeoCtJWqALqaVAzuznMzWYO1TvAt5PirZtAHtx8dv
+	 EDSBeGfsjH6pw==
+Received: from ksmg02.maxima.ru (mail.maxima.ru [81.200.124.62])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(Client CN "*.maxima.ru", Issuer "GlobalSign GCC R3 DV TLS CA 2020" (verified OK))
+	by ksmg02.maxima.ru (Postfix) with ESMTPS;
+	Mon, 18 Nov 2024 15:42:52 +0300 (MSK)
+Received: from GS-NOTE-190.mt.ru (10.0.246.216) by mmail-p-exch02.mt.ru
+ (81.200.124.62) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1544.4; Mon, 18 Nov
+ 2024 15:42:49 +0300
+From: Murad Masimov <m.masimov@maxima.ru>
+To: Kenneth Feng <kenneth.feng@amd.com>
+CC: Murad Masimov <m.masimov@maxima.ru>, Alex Deucher
+	<alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?=
+	<christian.koenig@amd.com>, Xinhui Pan <Xinhui.Pan@amd.com>, David Airlie
+	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Ma Jun
+	<Jun.Ma2@amd.com>, Lijo Lazar <lijo.lazar@amd.com>, Yang Wang
+	<kevinyang.wang@amd.com>, Asad Kamal <asad.kamal@amd.com>, Hawking Zhang
+	<Hawking.Zhang@amd.com>, Srinivasan Shanmugam <srinivasan.shanmugam@amd.com>,
+	Tim Huang <Tim.Huang@amd.com>, Tao Zhou <tao.zhou1@amd.com>, Mario
+ Limonciello <mario.limonciello@amd.com>, Jesse Zhang <jesse.zhang@amd.com>,
+	Evan Quan <quanliangl@hotmail.com>, Kevin Wang <kevin1.wang@amd.com>,
+	<amd-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
+	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>
+Subject: [PATCH] drm/amd/pm: prevent invalid fan speed value in smu13 driver
+Date: Mon, 18 Nov 2024 15:42:17 +0300
+Message-ID: <20241118124220.274-1-m.masimov@maxima.ru>
+X-Mailer: git-send-email 2.46.0.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: mt-exch-01.mt.ru (91.220.120.210) To mmail-p-exch02.mt.ru
+ (81.200.124.62)
+X-KSMG-Rule-ID: 7
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 189241 [Nov 18 2024]
+X-KSMG-AntiSpam-Version: 6.1.1.7
+X-KSMG-AntiSpam-Envelope-From: m.masimov@maxima.ru
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dmarc=none header.from=maxima.ru;spf=none smtp.mailfrom=maxima.ru;dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 41 0.3.41 623e98d5198769c015c72f45fabbb9f77bdb702b, {rep_avail}, {Tracking_from_domain_doesnt_match_to}, 127.0.0.199:7.1.2;maxima.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;ksmg02.maxima.ru:7.1.1;81.200.124.62:7.1.2, FromAlignment: s, ApMailHostAddress: 81.200.124.62
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean
+X-KSMG-LinksScanning: Clean
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/11/18 10:31:00 #26875800
+X-KSMG-AntiVirus-Status: Clean, skipped
 
+If user-provided fan speed is higher than max speed, ->set_fan_speed_rpm() won't
+return error code, which can lead not only to problems with the hardware, but
+also to a zero division in smu_v13_0_set_fan_speed_rpm, since (8 * speed), which
+is used as a divisor, can evaluate to zero because of an integer overflow.
 
-	Hello,
+Define ->get_fan_parameters() callbacks for smu_v13_0_0 and smu_v13_0_7 in order
+to have smu->fan_max_rpm variable initialized. Modify ->set_fan_speed_rpm()
+callback to fail if speed is higher than smu->fan_max_rpm.
 
-On Mon, 11 Nov 2024, Jinghao Jia wrote:
+Fixes: c05d1c401572 ("drm/amd/swsmu: add aldebaran smu13 ip support (v3)")
+Signed-off-by: Murad Masimov <m.masimov@maxima.ru>
+---
+ drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0.c       |  2 +-
+ drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_0_ppt.c | 11 +++++++++++
+ drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_7_ppt.c | 11 +++++++++++
+ 3 files changed, 23 insertions(+), 1 deletion(-)
 
-> Under certain kernel configurations when building with Clang/LLVM, the
-> compiler does not generate a return or jump as the terminator
-> instruction for ip_vs_protocol_init(), triggering the following objtool
-> warning during build time:
-> 
->   vmlinux.o: warning: objtool: ip_vs_protocol_init() falls through to next function __initstub__kmod_ip_vs_rr__935_123_ip_vs_rr_init6()
-> 
-> At runtime, this either causes an oops when trying to load the ipvs
-> module or a boot-time panic if ipvs is built-in. This same issue has
-> been reported by the Intel kernel test robot previously.
-> 
-> Digging deeper into both LLVM and the kernel code reveals this to be a
-> undefined behavior problem. ip_vs_protocol_init() uses a on-stack buffer
-> of 64 chars to store the registered protocol names and leaves it
-> uninitialized after definition. The function calls strnlen() when
-> concatenating protocol names into the buffer. With CONFIG_FORTIFY_SOURCE
-> strnlen() performs an extra step to check whether the last byte of the
-> input char buffer is a null character (commit 3009f891bb9f ("fortify:
-> Allow strlen() and strnlen() to pass compile-time known lengths")).
-> This, together with possibly other configurations, cause the following
-> IR to be generated:
-> 
->   define hidden i32 @ip_vs_protocol_init() local_unnamed_addr #5 section ".init.text" align 16 !kcfi_type !29 {
->     %1 = alloca [64 x i8], align 16
->     ...
-> 
->   14:                                               ; preds = %11
->     %15 = getelementptr inbounds i8, ptr %1, i64 63
->     %16 = load i8, ptr %15, align 1
->     %17 = tail call i1 @llvm.is.constant.i8(i8 %16)
->     %18 = icmp eq i8 %16, 0
->     %19 = select i1 %17, i1 %18, i1 false
->     br i1 %19, label %20, label %23
-> 
->   20:                                               ; preds = %14
->     %21 = call i64 @strlen(ptr noundef nonnull dereferenceable(1) %1) #23
->     ...
-> 
->   23:                                               ; preds = %14, %11, %20
->     %24 = call i64 @strnlen(ptr noundef nonnull dereferenceable(1) %1, i64 noundef 64) #24
->     ...
->   }
-> 
-> The above code calculates the address of the last char in the buffer
-> (value %15) and then loads from it (value %16). Because the buffer is
-> never initialized, the LLVM GVN pass marks value %16 as undefined:
-> 
->   %13 = getelementptr inbounds i8, ptr %1, i64 63
->   br i1 undef, label %14, label %17
-> 
-> This gives later passes (SCCP, in particular) to more DCE opportunities
-> by propagating the undef value further, and eventually removes
-> everything after the load on the uninitialized stack location:
-> 
->   define hidden i32 @ip_vs_protocol_init() local_unnamed_addr #0 section ".init.text" align 16 !kcfi_type !11 {
->     %1 = alloca [64 x i8], align 16
->     ...
-> 
->   12:                                               ; preds = %11
->     %13 = getelementptr inbounds i8, ptr %1, i64 63
->     unreachable
->   }
-> 
-> In this way, the generated native code will just fall through to the
-> next function, as LLVM does not generate any code for the unreachable IR
-> instruction and leaves the function without a terminator.
-> 
-> Zero the on-stack buffer to avoid this possible UB.
-> 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202402100205.PWXIz1ZK-lkp@intel.com/
-> Co-developed-by: Ruowen Qin <ruqin@redhat.com>
-> Signed-off-by: Ruowen Qin <ruqin@redhat.com>
-> Signed-off-by: Jinghao Jia <jinghao7@illinois.edu>
+diff --git a/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0.c b/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0.c
+index e17466cc1952..6f3277639fe9 100644
+--- a/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0.c
++++ b/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0.c
+@@ -1228,7 +1228,7 @@ int smu_v13_0_set_fan_speed_rpm(struct smu_context *smu,
+ 	uint32_t tach_period;
+ 	int ret;
 
-	Looks good to me, thanks! I assume it is for
-net-next/nf-next, right?
+-	if (!speed)
++	if (!speed || speed > smu->fan_max_rpm)
+ 		return -EINVAL;
 
-Acked-by: Julian Anastasov <ja@ssi.bg>
+ 	ret = smu_v13_0_auto_fan_control(smu, 0);
+diff --git a/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_0_ppt.c b/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_0_ppt.c
+index d53e162dcd8d..44844cddb3bf 100644
+--- a/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_0_ppt.c
++++ b/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_0_ppt.c
+@@ -947,6 +947,16 @@ static int smu_v13_0_0_get_dpm_ultimate_freq(struct smu_context *smu,
+ 	return 0;
+ }
 
-> ---
->  net/netfilter/ipvs/ip_vs_proto.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/net/netfilter/ipvs/ip_vs_proto.c b/net/netfilter/ipvs/ip_vs_proto.c
-> index f100da4ba3bc..a9fd1d3fc2cb 100644
-> --- a/net/netfilter/ipvs/ip_vs_proto.c
-> +++ b/net/netfilter/ipvs/ip_vs_proto.c
-> @@ -340,7 +340,7 @@ void __net_exit ip_vs_protocol_net_cleanup(struct netns_ipvs *ipvs)
->  
->  int __init ip_vs_protocol_init(void)
->  {
-> -	char protocols[64];
-> +	char protocols[64] = { 0 };
->  #define REGISTER_PROTOCOL(p)			\
->  	do {					\
->  		register_ip_vs_protocol(p);	\
-> @@ -348,8 +348,6 @@ int __init ip_vs_protocol_init(void)
->  		strcat(protocols, (p)->name);	\
->  	} while (0)
->  
-> -	protocols[0] = '\0';
-> -	protocols[2] = '\0';
->  #ifdef CONFIG_IP_VS_PROTO_TCP
->  	REGISTER_PROTOCOL(&ip_vs_protocol_tcp);
->  #endif
-> -- 
-> 2.47.0
++static int smu_v13_0_0_get_fan_parameters(struct smu_context *smu)
++{
++	struct smu_table_context *table_context = &smu->smu_table;
++	PPTable_t *smc_pptable = table_context->driver_pptable;
++
++	smu->fan_max_rpm = smc_pptable->SkuTable.FanMaximumRpm;
++
++	return 0;
++}
++
+ static int smu_v13_0_0_read_sensor(struct smu_context *smu,
+ 				   enum amd_pp_sensors sensor,
+ 				   void *data,
+@@ -3045,6 +3055,7 @@ static const struct pptable_funcs smu_v13_0_0_ppt_funcs = {
+ 	.get_dpm_ultimate_freq = smu_v13_0_0_get_dpm_ultimate_freq,
+ 	.get_vbios_bootup_values = smu_v13_0_get_vbios_bootup_values,
+ 	.read_sensor = smu_v13_0_0_read_sensor,
++	.get_fan_parameters = smu_v13_0_0_get_fan_parameters,
+ 	.feature_is_enabled = smu_cmn_feature_is_enabled,
+ 	.print_clk_levels = smu_v13_0_0_print_clk_levels,
+ 	.force_clk_levels = smu_v13_0_0_force_clk_levels,
+diff --git a/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_7_ppt.c b/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_7_ppt.c
+index b891a5e0a396..b305bce1bccc 100644
+--- a/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_7_ppt.c
++++ b/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_7_ppt.c
+@@ -936,6 +936,16 @@ static int smu_v13_0_7_get_dpm_ultimate_freq(struct smu_context *smu,
+ 	return 0;
+ }
 
-Regards
-
++static int smu_v13_0_7_get_fan_parameters(struct smu_context *smu)
++{
++	struct smu_table_context *table_context = &smu->smu_table;
++	PPTable_t *smc_pptable = table_context->driver_pptable;
++
++	smu->fan_max_rpm = smc_pptable->SkuTable.FanMaximumRpm;
++
++	return 0;
++}
++
+ static int smu_v13_0_7_read_sensor(struct smu_context *smu,
+ 				   enum amd_pp_sensors sensor,
+ 				   void *data,
+@@ -2628,6 +2638,7 @@ static const struct pptable_funcs smu_v13_0_7_ppt_funcs = {
+ 	.get_dpm_ultimate_freq = smu_v13_0_7_get_dpm_ultimate_freq,
+ 	.get_vbios_bootup_values = smu_v13_0_get_vbios_bootup_values,
+ 	.read_sensor = smu_v13_0_7_read_sensor,
++	.get_fan_parameters = smu_v13_0_7_get_fan_parameters,
+ 	.feature_is_enabled = smu_cmn_feature_is_enabled,
+ 	.print_clk_levels = smu_v13_0_7_print_clk_levels,
+ 	.force_clk_levels = smu_v13_0_7_force_clk_levels,
 --
-Julian Anastasov <ja@ssi.bg>
+2.39.2
 
 
