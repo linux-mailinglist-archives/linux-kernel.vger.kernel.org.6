@@ -1,152 +1,221 @@
-Return-Path: <linux-kernel+bounces-413198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40DE99D14F9
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 17:04:15 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 732049D1520
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 17:13:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06B812815F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 16:04:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA4E2B282EA
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 16:05:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCEEA1BD007;
-	Mon, 18 Nov 2024 16:04:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC8001BD01F;
+	Mon, 18 Nov 2024 16:04:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="PNKBHiB2"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yuCy5bZs"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8EA0199EBB
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 16:04:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 680A5199234
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 16:04:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731945849; cv=none; b=sCJWh+pGdKYsbD9/lcCzzSj0XPrXvDbccUI/yoMFhnTXWXeU+rTSNZtsUHqrVSFN/NsQlboaw5mqucbbS5QDnp3Rr3lfC5GftepIroU0twoIzmJJIHbZVz3pZuX4GphinDASJvMsCd2YxHrkirKSb4uDd2zrKBa9J4te3vEVsco=
+	t=1731945892; cv=none; b=TwlLWC7R4Pn9CSTVIh6cwy2QKcVo0wP7cbT4qgSzbOW7BZ3Jl7VwhraxCOwH62BEhEdCT/w0uEjLJR0ZzO23Ejvy5EnWzpkAddODnXCPs3zN1mmjavKSjAAizOLSI4gj5mOblUWeE6Q7cUAZEJdhcryK1oy0kdXNnPLclo6YslU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731945849; c=relaxed/simple;
-	bh=UNwvC7+JQW+t38JLVdpNSvOICUT6xwl2Dw7cw0XyIxw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ZcVf/Sdspaa3bfZmcVdE4qJ/QzMShOsW7FZFOVSaoSLgN7SrIaI8cxrIaUhL9+rN0CJxl+YA2NnzMkoYV1jx5SPTrREY32JBppQR3CnpcdcKkT31NfxqqTVVX/dsN8ShsvBNC9z6Phaimat0BkOXxsPlUOMq1cZpr9uYBtE5Eds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=PNKBHiB2; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id CF60340E021C;
-	Mon, 18 Nov 2024 16:04:04 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id u6YCgIoVhhUy; Mon, 18 Nov 2024 16:04:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1731945840; bh=9vBz61TnIEUPx/fZ7hGYJ7Mz0Fi/X6ghV01dIXJ5kYk=;
-	h=Date:From:To:Cc:Subject:From;
-	b=PNKBHiB2a845C2HArYP5GlO1trmO9eJ3rZmLf0FzkP5pxJZ0Hq/IAMoEZDNL5uK68
-	 u+D0slis3G/RI8P8KvJK2Xh+wtUSE9bHZFGrlWl9HRPruBuubv/ryBWSIElF2U4yy/
-	 PXDWq7P1JjknLVPx6twrxwVc9ptJ9gQ89WKeBgbjmq+1xJtAuYdr+19nv/zxwuxC83
-	 EAlFHU54cPPssWiOiQGt3TP5rvZLxLFcc8jLpsyBuHi8pPPGX28tJFvrIarl0rHV6d
-	 XZ9jEwpPysggfOsB+q7dwBkzjstJXuND8AjMNcDt3BYhyrZrwPAJcYXzEb6IkJKjCS
-	 0GE37M2bZv11fWOAI3qcZ6sS6IKpaTh+DpoQVM2RujaU49oa5Td4kfDWIW672QHEqH
-	 UPy6M5NMTUW8622oztFlNg9ynCJLWf3wZOg7jMUyg6whVhmSDD8cDQZUDzYplPARy4
-	 HkiA/jKTkjvg7/V6yW/MLhgGHBGaa6cjtqkjjh/A3O0gQ6nEYI5o4h/o8SvhA6pZ+n
-	 gVvRNWUn1EmQ6qUCdGQogdPxR21foOhwnxkI6hixIQ7K1Vz3Glw3sCqxX5TchfGEBO
-	 nQVZtJNqxZ5afLg8ghvb/87cRL7EfUFXXWMf/7TAmmvhVb5LOizXTsAUSQX16VL0Ow
-	 guxAc6Pd5FnTeUxnJy3Ak9es=
-Received: from zn.tnic (pd9530b86.dip0.t-ipconnect.de [217.83.11.134])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 5449140E015F;
-	Mon, 18 Nov 2024 16:03:57 +0000 (UTC)
-Date: Mon, 18 Nov 2024 17:03:51 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] x86/sev for v6.13
-Message-ID: <20241118160351.GAZztlZxg0V5LMzeUq@fat_crate.local>
+	s=arc-20240116; t=1731945892; c=relaxed/simple;
+	bh=T0v5StaSRjfBhvrabVXlxuCF8Qiemfgf57ndxphCAIk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ALJFIoYsLcixNfc7/v4A9zGvST+eWjW35FKde627E1xJlaZc/x22yNOYyK5cfA3IQZd4C6ZK+CCVb8zk1ZSnMlhDzVwoqkSX8HR5VX5N82JAKUQmCljehTSTzmyMr9dX0HABI+HvEwKKqp3SSnoU4KXsKVBqAeNane7QttbBDBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yuCy5bZs; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-53da5511f3cso4352140e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 08:04:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731945887; x=1732550687; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=BFCqTpO5hD3gV9Gw4+aN5wSpGMUVExHmp0FBXsCj+e0=;
+        b=yuCy5bZseU9YFv72VbruAa1iRn/ulmeWIv5M3Hjgqy294Ak59bsrIoHjN0USFUMG2h
+         XPhz9nLk0WkXrA5Wv6GgNeFe/+GIDq3uKknngc09F9/ko4AnmUowAZBeT2a1luakzcj6
+         MwgIVIzedyAtwjcXQ0UtcP22DlfBmjlHCFTtbDm8JboqlSMOyATF/TJeqj3reNvC+nFJ
+         JelPy2T1oFCls7Ep++QrVUashZMTUoQkDMxJ4flaDEtLLS3cP06rPCzj98atUcaZoV18
+         kJu2Y9pfHH5Q+BeFlikkCrxEfM9Ibxw4xCFFC26DT5qle++pq6Xi8nM6olvimkSpA0DH
+         DmCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731945887; x=1732550687;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BFCqTpO5hD3gV9Gw4+aN5wSpGMUVExHmp0FBXsCj+e0=;
+        b=r12DzQKmimt2cF5sN1uEj5/DO7hQeMutBmZ1MHn5YGeGiWI7kzC509Djs2TCDXfzMi
+         4c+TjbzQOwuNu2IDMvcfptcHWOFnZDMCrp/im6eNRTD0qWPFnap1+vwLwDaVBf2zpZsx
+         MfawzHId7qlg4bx2gznQFCabFVhRAA7/FSBAJAgMvjrIa3//D50DoiN8FKzpqIpGmVNC
+         Ox1d15Xe6xHGkSJstjbmqChY0UfTIOEYKSDFypbu4pqaQOxp7fkz8CZc/uZVa1SIVoBz
+         v2nH7S5IJUJ9kH+Hn9t6DBeQwDA+j/xAXbLhJ7W0FXj392sWAh4wAeURsmvBKQQ5Z0Ap
+         BlDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWJGuUlDcWrNYr9FhJsn/rwA48IKOE5Wn1oKOSCrGJKRrMpKuWq3DwDqbbTJzB0Fa1rYmfeVcWhg63BPEQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVEwAimai3XgkfrO+ASoqjnsSiXUsxTWgcyYtyBuNVtTceClcu
+	4gXBBpcXst+SdVq9TVlun0j+PdztkOUK4bdNr5OqB7B0+dWeJrT7Zo2nl6rv4J4=
+X-Google-Smtp-Source: AGHT+IGd4eVkYYJwl96txBLQUWoJ/8rW9jwI1uP17ARS3pwojFY5Z+QVuAfMzsRsnsHNz1ibQ9S7Ig==
+X-Received: by 2002:a05:6512:39c7:b0:52f:ca2b:1d33 with SMTP id 2adb3069b0e04-53dab29e8e1mr5424291e87.20.1731945887460;
+        Mon, 18 Nov 2024 08:04:47 -0800 (PST)
+Received: from uffe-tuxpro14.. (h-178-174-189-39.A498.priv.bahnhof.se. [178.174.189.39])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53da64f9c0dsm1674649e87.35.2024.11.18.08.04.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Nov 2024 08:04:46 -0800 (PST)
+From: Ulf Hansson <ulf.hansson@linaro.org>
+To: Linus <torvalds@linux-foundation.org>,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Viresh Kumar <vireshk@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	linux-arm-kernel@lists.infradead.org
+Subject: [GIT PULL] pmdomain updates for v6.13
+Date: Mon, 18 Nov 2024 17:04:44 +0100
+Message-ID: <20241118160444.161917-1-ulf.hansson@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
 Hi Linus,
 
-please pull the SEV lineup for v6.13.
+Here's the pull-request with the pmdomain updates for v6.13. Details about
+the highlights are as usual found in the signed tag.
 
-Thx.
+Note that, this time there is also a signed-tag that I have pulled from Mark's
+regulator tree.
 
----
+Please pull this in!
 
-The following changes since commit 8e929cb546ee42c9a61d24fae60605e9e3192354:
+Kind regards
+Ulf Hansson
 
-  Linux 6.12-rc3 (2024-10-13 14:33:32 -0700)
+
+The following changes since commit d2fab3fc27cbca7ba65c539a2c5fc7f941231983:
+
+  mailbox: qcom-cpucp: Mark the irq with IRQF_NO_SUSPEND flag (2024-11-12 19:45:25 +0100)
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip tags/x86_sev_for_v6.13
+  git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/linux-pm.git tags/pmdomain-v6.13
 
-for you to fetch changes up to 8bca85cc1eb72e21a3544ab32e546a819d8674ca:
+for you to fetch changes up to 5812b95b7ff47d2ccc07b8f050652604ac54cdcf:
 
-  x86/sev: Cleanup vc_handle_msr() (2024-11-07 12:10:01 +0100)
-
-----------------------------------------------------------------
-- Do the proper memory conversion of guest memory in order to be able to kexec
-  kernels in SNP guests along with other adjustments and cleanups to that
-  effect
-
-- Start converting and moving functionality from the sev-guest driver into
-  core code with the purpose of supporting the secure TSC SNP feature where
-  the hypervisor cannot influence the TSC exposed to the guest anymore
-
-- Add a "nosnp" cmdline option in order to be able to disable SNP support in
-  the hypervisor and thus free-up resources which are not going to be used
-
-- Cleanups
+  pmdomain: Merge branch fixes into next (2024-11-12 19:46:55 +0100)
 
 ----------------------------------------------------------------
-Ashish Kalra (3):
-      x86/boot: Skip video memory access in the decompressor for SEV-ES/SNP
-      x86/mm: Refactor __set_clr_pte_enc()
-      x86/sev: Convert shared memory back to private on kexec
+pmdomain core:
+ - Set the required dev for a required OPP during genpd attach
+ - Add support for required OPPs to dev_pm_domain_attach_list()
 
-Borislav Petkov (AMD) (1):
-      x86/sev: Cleanup vc_handle_msr()
+pmdomain providers:
+ - ti: Enable GENPD_FLAG_ACTIVE_WAKEUP flag for ti_sci PM domains
+ - mediatek: Add support for MT6735 PM domains
+ - mediatek: Use OF-specific regulator API to get power domain supply
+ - qcom: Add support for the SM8750/SAR2130P/qcs615/qcs8300 rpmhpds
 
-Nikunj A Dadhania (6):
-      virt: sev-guest: Use AES GCM crypto library
-      x86/sev: Handle failures from snp_init()
-      x86/sev: Cache the secrets page address
-      virt: sev-guest: Consolidate SNP guest messaging parameters to a struct
-      virt: sev-guest: Reduce the scope of SNP command mutex
-      virt: sev-guest: Carve out SNP message context structure
+pmdomain consumers:
+ - Convert a couple of consumer drivers to *_pm_domain_attach|detach_list()
 
-Pavan Kumar Paluri (2):
-      x86/virt: Move SEV-specific parsing into arch/x86/virt/svm
-      x86/virt: Provide "nosnp" boot option for sev kernel command line
+opp core:
+ - Rework and cleanup some code that manages required OPPs
+ - Remove *_opp_attach|detach_genpd()
 
- Documentation/arch/x86/x86_64/boot-options.rst |   5 +
- arch/x86/boot/compressed/misc.c                |  15 +
- arch/x86/coco/sev/core.c                       | 269 ++++++++++------
- arch/x86/include/asm/sev-common.h              |  27 ++
- arch/x86/include/asm/sev.h                     |  67 +++-
- arch/x86/mm/mem_encrypt_amd.c                  |  77 +++--
- arch/x86/mm/mem_encrypt_identity.c             |  11 +-
- arch/x86/virt/svm/Makefile                     |   1 +
- arch/x86/virt/svm/cmdline.c                    |  45 +++
- drivers/virt/coco/sev-guest/Kconfig            |   4 +-
- drivers/virt/coco/sev-guest/sev-guest.c        | 416 ++++++++++---------------
- 11 files changed, 543 insertions(+), 394 deletions(-)
- create mode 100644 arch/x86/virt/svm/cmdline.c
+----------------------------------------------------------------
+Chen-Yu Tsai (3):
+      regulator: Add of_regulator_get_optional() for pure DT regulator lookup
+      regulator: Add devres version of of_regulator_get_optional()
+      pmdomain: mediatek: Use OF-specific regulator API to get power domain supply
 
+Dario Binacchi (1):
+      pmdomain: imx: gpcv2: replace dev_err() with dev_err_probe()
 
--- 
-Regards/Gruss,
-    Boris.
+Dmitry Baryshkov (2):
+      dt-bindings: power: rpmpd: Add SAR2130P compatible
+      pmdomain: qcom: rpmhpd: add support for SAR2130P
 
-https://people.kernel.org/tglx/notes-about-netiquette
+Jishnu Prakash (1):
+      pmdomain: qcom: rpmhpd: Add rpmhpd support for SM8750
+
+Rob Herring (Arm) (1):
+      pmdomain: imx: Use of_property_present() for non-boolean properties
+
+Taniya Das (1):
+      dt-bindings: power: qcom,rpmpd: document the SM8750 RPMh Power Domains
+
+Thomas Richard (1):
+      pmdomain: ti-sci: set the GENPD_FLAG_ACTIVE_WAKEUP flag for all PM domains
+
+Tingguo Cheng (4):
+      dt-bindings: power: qcom,rpmpd: document qcs8300 RPMh power domains
+      dt-bindings: power: qcom,rpmpd: document qcs615 RPMh power domains
+      pmdomain: qcom: rpmhpd: Add qcs8300 power domains
+      pmdomain: qcom: rpmhpd: Add qcs615 power domains
+
+Ulf Hansson (17):
+      Merge tag 'regulator-of-get-optional' of git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator
+      pmdomain: Merge branch dt into next
+      pmdomain: Merge branch fixes into next
+      pmdomain: Merge branch fixes into next
+      OPP: Rework _set_required_devs() to manage a single device per call
+      PM: domains: Support required OPPs in dev_pm_domain_attach_list()
+      pmdomain: core: Manage the default required OPP from a separate function
+      pmdomain: core: Set the required dev for a required OPP during genpd attach
+      OPP: Drop redundant code in _link_required_opps()
+      drm/tegra: gr3d: Convert into devm_pm_domain_attach_list()
+      media: venus: Convert into devm_pm_domain_attach_list() for OPP PM domain
+      cpufreq: qcom-nvmem: Convert to dev_pm_domain_attach|detach_list()
+      OPP: Drop redundant *_opp_attach|detach_genpd()
+      pmdomain: Merge branch dt into next
+      pmdomain: Merge branch fixes into next
+      pmdomain: Merge branch fixes into next
+      pmdomain: Merge branch fixes into next
+
+Yassine Oudjana (2):
+      dt-bindings: power: Add binding for MediaTek MT6735 power controller
+      pmdomain: mediatek: Add support for MT6735
+
+Zhang Zekun (2):
+      pmdomain: ti-sci: Add missing of_node_put() for args.np
+      pmdomain: ti-sci: Use scope based of_node_put() to simplify code.
+
+ .../bindings/power/mediatek,power-controller.yaml  |   1 +
+ .../devicetree/bindings/power/qcom,rpmpd.yaml      |   4 +
+ .../devicetree/bindings/soc/mediatek/scpsys.txt    |   1 +
+ drivers/base/power/common.c                        |  21 ++-
+ drivers/cpufreq/qcom-cpufreq-nvmem.c               |  82 +++------
+ drivers/gpu/drm/tegra/gr3d.c                       |  39 +---
+ drivers/media/platform/qcom/venus/core.c           |   8 +-
+ drivers/media/platform/qcom/venus/core.h           |   6 +-
+ drivers/media/platform/qcom/venus/pm_helpers.c     |  44 ++---
+ drivers/opp/core.c                                 | 199 +++++----------------
+ drivers/opp/of.c                                   |  39 +---
+ drivers/opp/opp.h                                  |   5 +-
+ drivers/pmdomain/core.c                            |  76 ++++++--
+ drivers/pmdomain/imx/gpc.c                         |   4 +-
+ drivers/pmdomain/imx/gpcv2.c                       |   4 +-
+ drivers/pmdomain/mediatek/mt6735-pm-domains.h      |  96 ++++++++++
+ drivers/pmdomain/mediatek/mtk-pm-domains.c         |  17 +-
+ drivers/pmdomain/mediatek/mtk-pm-domains.h         |   2 +
+ drivers/pmdomain/qcom/rpmhpd.c                     |  87 +++++++++
+ drivers/pmdomain/ti/ti_sci_pm_domains.c            |  25 ++-
+ drivers/regulator/core.c                           |   4 +-
+ drivers/regulator/devres.c                         |  39 ++++
+ drivers/regulator/internal.h                       |  18 +-
+ drivers/regulator/of_regulator.c                   |  51 +++++-
+ .../power/mediatek,mt6735-power-controller.h       |  14 ++
+ include/dt-bindings/power/qcom-rpmpd.h             |   2 +
+ include/linux/pm_domain.h                          |   9 +
+ include/linux/pm_opp.h                             |  42 +----
+ include/linux/regulator/consumer.h                 |  37 ++++
+ include/linux/soc/mediatek/infracfg.h              |   5 +
+ 30 files changed, 569 insertions(+), 412 deletions(-)
+ create mode 100644 drivers/pmdomain/mediatek/mt6735-pm-domains.h
+ create mode 100644 include/dt-bindings/power/mediatek,mt6735-power-controller.h
 
