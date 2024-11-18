@@ -1,346 +1,188 @@
-Return-Path: <linux-kernel+bounces-412605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 884219D0B4D
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 09:58:27 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 393F99D0B51
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 10:00:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F070CB2231C
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 08:58:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C015B21DE1
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 09:00:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51748187352;
-	Mon, 18 Nov 2024 08:58:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC52A186E2F;
+	Mon, 18 Nov 2024 09:00:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="HcNJDjga"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c49nwjN+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 145D81547E8;
-	Mon, 18 Nov 2024 08:58:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 080FB13DBBE;
+	Mon, 18 Nov 2024 09:00:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731920294; cv=none; b=pTxGeZdzbSLNBGjHgBzNAnxGVgRYihUvEEbX3/uNZCaVxWB//uSpijQuAg9rMop/PTauF9MLufR3BMfPz+UdVwAK50nqDPpG9P8nxB2Q2pkMu08YDRTjlytY3pUvYzeyQErqzj1Cyfng2gz+LHFNIe4bFQadY43hdUOD/T3QR6E=
+	t=1731920445; cv=none; b=M5iuvMBne43OCRS7WgbjXLXQ80t6dRFQYYftvCghwocWXlmZVaNvoXYV633S/JhwSYXJvSARgSu+aVjfmK6NwgPjF6w1oDGUacWRu8mC4r/nwjmzsZRbTITPIRvV7sluBhFTl2+eH+8/tCbD0u78rJjqPBmKoHn+LgxytB7XjNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731920294; c=relaxed/simple;
-	bh=fVGcv5NHUTodxydSx4548Ah1LtAP0wAXvss061Rv5ks=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Q6P3HxBMw3ICB1pFyEblCphkFvvVZGVIwKau6at4PRy/TAXjTDTaGT5wfMbge+VZA17qzNNxomHxJ7v8fsJkGy07SCMYDgk2gJrsjeppyWIuCrZ2g63vjf+Lh10Om6cU5l6+bhWdiIsvN8POdf6g1Lj7dpjaE6YCHGqykWvwnt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=HcNJDjga; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 4AI8w1Yu9426099, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
-	t=1731920281; bh=fVGcv5NHUTodxydSx4548Ah1LtAP0wAXvss061Rv5ks=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:
-	 Content-Transfer-Encoding:Content-Type;
-	b=HcNJDjgaFbBY67fmr2232wAzTK00sH/4TkYMfwEdwMSgrut40xoZxCoSmGTlCL5KE
-	 xSWAwTC19gdlN5eQwjaa+JFmjkyQxM/tRdmT31zQjOY5JuxWmYt7+/7CqtMxu49Zu1
-	 d/rwT5p/rOOmOuuykhh44lWg/RhRIKjXsBQRt4QQijNhjtnmR5q1MCDQLwWlB28mfd
-	 8GSgxVkx5bVTFAAJQpCh7wibRYQVrYJj4uxtI8TC06RZGJFC9vwt5EhSpGxInLJ27H
-	 7l7ez+bdBPO5j30TMz+3I6w2AnqGsTS2iFMN6PRSNv5Lbd5ftBcYFHZOXOmthXU7Bk
-	 l78LsFmvX0PJA==
-Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
-	by rtits2.realtek.com.tw (8.15.2/3.06/5.92) with ESMTPS id 4AI8w1Yu9426099
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 18 Nov 2024 16:58:01 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 18 Nov 2024 16:58:02 +0800
-Received: from localhost.localhost (172.21.132.53) by RTEXMBS04.realtek.com.tw
- (172.21.6.97) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Mon, 18 Nov
- 2024 16:58:01 +0800
-From: Hilda Wu <hildawu@realtek.com>
-To: <marcel@holtmann.org>
-CC: <luiz.dentz@gmail.com>, <linux-bluetooth@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <max.chou@realtek.com>,
-        <alex_lu@realsil.com.cn>, <kidman@realtek.com>
-Subject: [PATCH v2] bluetooth: add quirk using packet size 60
-Date: Mon, 18 Nov 2024 16:57:57 +0800
-Message-ID: <20241118085757.3678244-1-hildawu@realtek.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1731920445; c=relaxed/simple;
+	bh=l9ycbKZl1O/s1sF56Ep8snxmvqADeI+bcDjz6IkJLv0=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=i0sUOW5khUmaA0IWGXtgO5wXW1Qm791VilC4RyckvqLlnlYeSSccUodxo0EtwE5BwmaGhptxK54uEqIDTQRL3vH1O0Y+Htqa4KrmASHJN6wE1vH/O5XqtN3FiNF5oKY5zd1uNh96i9k6Gm3w49oBGt5aDGjRCH8ThiY46y6uV/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c49nwjN+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75D65C4CECC;
+	Mon, 18 Nov 2024 09:00:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731920444;
+	bh=l9ycbKZl1O/s1sF56Ep8snxmvqADeI+bcDjz6IkJLv0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=c49nwjN+w56fry5JQGdarHi3gUObH15Pz3ygCTCD1AeLwBk0UzbSt7GG82voagb9m
+	 b6p7HrUmv4IKHyMFwVhMvlti5emv544Ui/NNAflz5s4fxRCQ+tr1zP1/S8xYMDnrAy
+	 9+GD470KnTPoM1uXR9NY+BLyCBAudVfE1UExiN62dKmPaNaEmAFhq3n7JYqVyXP9hd
+	 eFysR+mBaCRxsWUypPCmdQ3S26ih93uP38MG8X+ihVgND7RRy7laohzQ35DVLYMa7z
+	 iIVwrPT28Awn7BS7y+6YdnsUYqNwA8CKAUYP/BNLsGGFA7Vwa7s8H/g9VxoJNC+EZp
+	 gzZ0uxaLjok+w==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1tCxcf-00DiQT-SA;
+	Mon, 18 Nov 2024 09:00:42 +0000
+Date: Mon, 18 Nov 2024 09:00:41 +0000
+Message-ID: <86y11gvruu.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: James Clark <james.clark@linaro.org>
+Cc: suzuki.poulose@arm.com,
+	oliver.upton@linux.dev,
+	coresight@lists.linaro.org,
+	kvmarm@lists.linux.dev,
+	Joey Gouly <joey.gouly@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Mike Leach <mike.leach@linaro.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mark Brown <broonie@kernel.org>,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	James Morse <james.morse@arm.com>,
+	Fuad Tabba <tabba@google.com>,
+	Shiqi Liu <shiqiliu@hust.edu.cn>,
+	Raghavendra Rao Ananta <rananta@google.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 04/12] KVM: arm64: Make vcpu flag macros more generic
+In-Reply-To: <20241112103717.589952-5-james.clark@linaro.org>
+References: <20241112103717.589952-1-james.clark@linaro.org>
+	<20241112103717.589952-5-james.clark@linaro.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: RTEXH36505.realtek.com.tw (172.21.6.25) To
- RTEXMBS04.realtek.com.tw (172.21.6.97)
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: james.clark@linaro.org, suzuki.poulose@arm.com, oliver.upton@linux.dev, coresight@lists.linaro.org, kvmarm@lists.linux.dev, joey.gouly@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, mike.leach@linaro.org, alexander.shishkin@linux.intel.com, mark.rutland@arm.com, broonie@kernel.org, anshuman.khandual@arm.com, james.morse@arm.com, tabba@google.com, shiqiliu@hust.edu.cn, rananta@google.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-The RTL8852BE-VT supports USB alternate setting 6.
-However, its descriptor does not report this capability to the host.
-Therefore, a quirk is needed to bypass the RTL8852BE-VT's descriptor
-and allow it to use USB ALT 6 directly.
+On Tue, 12 Nov 2024 10:37:03 +0000,
+James Clark <james.clark@linaro.org> wrote:
+> 
+> Rename vcpu_* to kvm_* so that the same flags mechanism can be used in
+> places other than vcpu without being confusing. Wherever macros are
+> still related to vcpu like vcpu_get_flag() with hard coded v->arch, keep
+> the vcpu_* name, otherwise change it.
+> 
+> Also move the "v->arch" access one macro higher for the same reason.
+> 
+> This will be used for moving flags to host_data in a later commit.
+> 
+> Signed-off-by: James Clark <james.clark@linaro.org>
+> ---
+>  arch/arm64/include/asm/kvm_host.h | 88 +++++++++++++++----------------
+>  arch/arm64/kvm/hyp/exception.c    | 12 ++---
+>  arch/arm64/kvm/inject_fault.c     |  4 +-
+>  arch/arm64/kvm/mmio.c             | 10 ++--
+>  4 files changed, 57 insertions(+), 57 deletions(-)
+> 
+> diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
+> index f333b189fb43..34aa59f498c4 100644
+> --- a/arch/arm64/include/asm/kvm_host.h
+> +++ b/arch/arm64/include/asm/kvm_host.h
+> @@ -790,22 +790,22 @@ struct kvm_vcpu_arch {
+>  /*
+>   * Each 'flag' is composed of a comma-separated triplet:
+>   *
+> - * - the flag-set it belongs to in the vcpu->arch structure
+> + * - the flag-set it belongs to in the structure pointed to by 'v'
+>   * - the value for that flag
+>   * - the mask for that flag
+>   *
+> - *  __vcpu_single_flag() builds such a triplet for a single-bit flag.
+> - * unpack_vcpu_flag() extract the flag value from the triplet for
+> + *  __kvm_single_flag() builds such a triplet for a single-bit flag.
+> + * unpack_kvm_flag() extract the flag value from the triplet for
+>   * direct use outside of the flag accessors.
+>   */
+> -#define __vcpu_single_flag(_set, _f)	_set, (_f), (_f)
+> +#define __kvm_single_flag(_set, _f)	_set, (_f), (_f)
+>  
+>  #define __unpack_flag(_set, _f, _m)	_f
+> -#define unpack_vcpu_flag(...)		__unpack_flag(__VA_ARGS__)
+> +#define unpack_kvm_flag(...)		__unpack_flag(__VA_ARGS__)
+>  
+>  #define __build_check_flag(v, flagset, f, m)			\
+>  	do {							\
+> -		typeof(v->arch.flagset) *_fset;			\
+> +		typeof(v.flagset) *_fset;			\
+>  								\
+>  		/* Check that the flags fit in the mask */	\
+>  		BUILD_BUG_ON(HWEIGHT(m) != HWEIGHT((f) | (m)));	\
+> @@ -813,11 +813,11 @@ struct kvm_vcpu_arch {
+>  		BUILD_BUG_ON((sizeof(*_fset) * 8) <= __fls(m));	\
+>  	} while (0)
+>  
+> -#define __vcpu_get_flag(v, flagset, f, m)			\
+> +#define __kvm_get_flag(v, flagset, f, m)			\
+>  	({							\
+>  		__build_check_flag(v, flagset, f, m);		\
+>  								\
+> -		READ_ONCE(v->arch.flagset) & (m);		\
+> +		READ_ONCE(v.flagset) & (m);		\
+>  	})
+>  
+>  /*
+> @@ -826,64 +826,64 @@ struct kvm_vcpu_arch {
+>   */
+>  #ifdef __KVM_NVHE_HYPERVISOR__
+>  /* the nVHE hypervisor is always non-preemptible */
+> -#define __vcpu_flags_preempt_disable()
+> -#define __vcpu_flags_preempt_enable()
+> +#define __kvm_flags_preempt_disable()
+> +#define __kvm_flags_preempt_enable()
+>  #else
+> -#define __vcpu_flags_preempt_disable()	preempt_disable()
+> -#define __vcpu_flags_preempt_enable()	preempt_enable()
+> +#define __kvm_flags_preempt_disable()	preempt_disable()
+> +#define __kvm_flags_preempt_enable()	preempt_enable()
+>  #endif
+>  
+> -#define __vcpu_set_flag(v, flagset, f, m)			\
+> +#define __kvm_set_flag(v, flagset, f, m)			\
 
-The btmon log below shows the case that WBS with the USB alternate
-setting 6.
+Hell no. Never. The whole point of this naming is that we know what
+this applies to. Here, you might as well have replaced 'vcpu' with
+'carrot', and the result would be the same.
 
-> ACL Data RX: Handle 2 flags 0x02 dlen 18       #5338 [hci0] 91.977373
-      Channel: 70 len 14 [PSM 3 mode Basic (0x00)] {chan 3}
-      RFCOMM: Unnumbered Info with Header Check (UIH) (0xef)
-         Address: 0x09 cr 0 dlci 0x02
-         Control: 0xff poll/final 1
-         Length: 9
-         FCS: 0x5c
-         Credits: 4
-        41 54 2b 42 43 53 3d 32 0d 5c                    AT+BCS=2.\    >
-< ACL Data TX: Handle 2 flags 0x00 dlen 15       #5339 [hci0] 91.978294
-      Channel: 64 len 11 [PSM 3 mode Basic (0x00)] {chan 3}
-      RFCOMM: Unnumbered Info with Header Check (UIH) (0xef)
-         Address: 0x0b cr 1 dlci 0x02
-         Control: 0xff poll/final 1
-         Length: 6
-         FCS: 0x86
-         Credits: 1
-        0d 0a 4f 4b 0d 0a 86                             ..OK...       >
-< HCI Command: Enhanced.. (0x01|0x003d) plen 59  #5340 [hci0] 91.978326
-        Handle: 2
-        Transmit bandwidth: 8000
-        Receive bandwidth: 8000
-        Max latency: 13
-        Packet type: 0x0380
-          3-EV3 may not be used
-          2-EV5 may not be used
-          3-EV5 may not be used
-        Retransmission effort: Optimize for link quality (0x02)
-> HCI Event: Command Status (0x0f) plen 4        #5341 [hci0] 91.981723
-      Enhanced Setup Synchronous Connection (0x01|0x003d) ncmd 2
-        Status: Success (0x00)
-> HCI Event: Number of Complete.. (0x13) plen 5  #5342 [hci0] 91.982705
-        Num handles: 1
-        Handle: 2
-        Count: 1
-> HCI Event: Synchronous Conne.. (0x2c) plen 17  #5343 [hci0] 92.015758
-        Status: Success (0x00)
-        Handle: 3
-        Address: 78:A7:EB:4C:53:4D (OUI 78-A7-EB)
-        Link type: eSCO (0x02)
-        Transmission interval: 0x0c
-        Retransmission window: 0x04
-        RX packet length: 60
-        TX packet length: 60
-        Air mode: Transparent (0x03)
-@ MGMT Open: bt_main_th.. (privileged) version 1.22  {0x0003} 92.016366
-@ MGMT Command: Unknown (0x0101) plen 11             {0x0003} 92.016374
-        00 00 78 a7 eb 4c 53 4d 00 01 02                 ..x..LSM...   >
-@ MGMT Close: bt_main_thread                         {0x0003} 92.016409
-< ACL Data TX: Handle 2 flags 0x00 dlen 22       #5344 [hci0] 92.017651
-      Channel: 64 len 18 [PSM 3 mode Basic (0x00)] {chan 3}
-      RFCOMM: Unnumbered Info with Header Check (UIH) (0xef)
-         Address: 0x0b cr 1 dlci 0x02
-         Control: 0xef poll/final 0
-         Length: 14
-         FCS: 0x9a
-        0d 0a 2b 43 49 45 56 3a 20 32 2c 32 0d 0a 9a     ..+CIEV: 2,2..>
-...
-> SCO Data RX: Handle 3 flags 0x00 dlen 60       #5349 [hci0] 92.037778
-< SCO Data TX: Handle 3 flags 0x00 dlen 60       #5350 [hci0] 92.038218
-> HCI Event: Max Slots Change (0x1b) plen 3      #5351 [hci0] 92.040758
-        Handle: 2
-        Max slots: 1
-> HCI Event: Number of Complete.. (0x13) plen 5  #5352 [hci0] 92.041760
-        Num handles: 1
-        Handle: 2
-        Count: 1
-> HCI Event: Number of Complete.. (0x13) plen 5  #5353 [hci0] 92.044784
-        Num handles: 1
-        Handle: 2
-        Count: 1
-> SCO Data RX: Handle 3 flags 0x00 dlen 60       #5354 [hci0] 92.047706
-< SCO Data TX: Handle 3 flags 0x00 dlen 60       #5355 [hci0] 92.048226
-> SCO Data RX: Handle 3 flags 0x00 dlen 60       #5356 [hci0] 92.057706
-< SCO Data TX: Handle 3 flags 0x00 dlen 60       #5357 [hci0] 92.058179
-...
-> SCO Data RX: Handle 3 flags 0x00 dlen 60       #5362 [hci0] 92.067775
-> SCO Data RX: Handle 3 flags 0x00 dlen 60       #5363 [hci0] 92.067780
-< SCO Data TX: Handle 3 flags 0x00 dlen 60       #5364 [hci0] 92.068288
-< SCO Data TX: Handle 3 flags 0x00 dlen 60       #5365 [hci0] 92.068322
-> SCO Data RX: Handle 3 flags 0x00 dlen 60       #5366 [hci0] 92.077733
-< SCO Data TX: Handle 3 flags 0x00 dlen 60       #5367 [hci0] 92.078263
+Not to mention the insane churn this generates.
 
-Signed-off-by: Alex Lu <alex_lu@realsil.com.cn>
-Signed-off-by: Hilda Wu <hildawu@realtek.com>
+So no, not happening.
 
----
-Change:
-v2: Use btusb_find_altsetting replace duplicating logic, add tested log.
----
----
- drivers/bluetooth/btrtl.c |  3 ++
- drivers/bluetooth/btrtl.h |  1 +
- drivers/bluetooth/btusb.c | 82 +++++++++++++++++++++++++++++----------
- 3 files changed, 66 insertions(+), 20 deletions(-)
+	M.
 
-diff --git a/drivers/bluetooth/btrtl.c b/drivers/bluetooth/btrtl.c
-index 83025f457ca0..7efd733f9e84 100644
---- a/drivers/bluetooth/btrtl.c
-+++ b/drivers/bluetooth/btrtl.c
-@@ -1312,6 +1312,9 @@ void btrtl_set_quirks(struct hci_dev *hdev, struct btrtl_device_info *btrtl_dev)
- 		    btrtl_dev->project_id == CHIP_ID_8852C)
- 			set_bit(HCI_QUIRK_USE_MSFT_EXT_ADDRESS_FILTER, &hdev->quirks);
- 
-+		if (btrtl_dev->project_id == CHIP_ID_8852BT)
-+			btrealtek_set_flag(hdev, REALTEK_ALT6_FORCE);
-+
- 		hci_set_aosp_capable(hdev);
- 		break;
- 	default:
-diff --git a/drivers/bluetooth/btrtl.h b/drivers/bluetooth/btrtl.h
-index a2d9d34f9fb0..ffec2fca88ec 100644
---- a/drivers/bluetooth/btrtl.h
-+++ b/drivers/bluetooth/btrtl.h
-@@ -105,6 +105,7 @@ struct rtl_vendor_cmd {
- 
- enum {
- 	REALTEK_ALT6_CONTINUOUS_TX_CHIP,
-+	REALTEK_ALT6_FORCE,
- 
- 	__REALTEK_NUM_FLAGS,
- };
-diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-index 279fe6c115fa..0a2107baf18a 100644
---- a/drivers/bluetooth/btusb.c
-+++ b/drivers/bluetooth/btusb.c
-@@ -814,6 +814,7 @@ struct qca_dump_info {
- #define BTUSB_USE_ALT3_FOR_WBS	15
- #define BTUSB_ALT6_CONTINUOUS_TX	16
- #define BTUSB_HW_SSR_ACTIVE	17
-+#define BTUSB_ISOC_ALT_CHANGED	18
- 
- struct btusb_data {
- 	struct hci_dev       *hdev;
-@@ -866,6 +867,7 @@ struct btusb_data {
- 	unsigned int air_mode;
- 	bool usb_alt6_packet_flow;
- 	int isoc_altsetting;
-+	u16 isoc_mps;
- 	int suspend_count;
- 
- 	int (*recv_event)(struct hci_dev *hdev, struct sk_buff *skb);
-@@ -2140,16 +2142,58 @@ static void btusb_notify(struct hci_dev *hdev, unsigned int evt)
- 	}
- }
- 
-+static struct usb_host_interface *btusb_find_altsetting(struct btusb_data *data,
-+							int alt)
-+{
-+	struct usb_interface *intf = data->isoc;
-+	int i;
-+
-+	BT_DBG("Looking for Alt no :%d", alt);
-+
-+	if (!intf)
-+		return NULL;
-+
-+	for (i = 0; i < intf->num_altsetting; i++) {
-+		if (intf->altsetting[i].desc.bAlternateSetting == alt)
-+			return &intf->altsetting[i];
-+	}
-+
-+	return NULL;
-+}
-+
- static inline int __set_isoc_interface(struct hci_dev *hdev, int altsetting)
- {
- 	struct btusb_data *data = hci_get_drvdata(hdev);
- 	struct usb_interface *intf = data->isoc;
- 	struct usb_endpoint_descriptor *ep_desc;
-+	struct usb_host_interface *alt;
- 	int i, err;
- 
- 	if (!data->isoc)
- 		return -ENODEV;
- 
-+	/* For some Realtek chips, they actually have the altsetting 6, but its
-+	 * altsetting descriptor is not exposed. We can activate altsetting 6 by
-+	 * replacing the altsetting 5.
-+	 */
-+	if (altsetting == 6 && !btusb_find_altsetting(data, 6) &&
-+	    btrealtek_test_flag(hdev, REALTEK_ALT6_FORCE)) {
-+		alt = btusb_find_altsetting(data, 5);
-+		if (alt) {
-+			data->isoc_mps = 49;
-+			for (i = 0; i < alt->desc.bNumEndpoints; i++) {
-+				ep_desc = &alt->endpoint[i].desc;
-+				if (!usb_endpoint_xfer_isoc(ep_desc))
-+					continue;
-+				data->isoc_mps =
-+					le16_to_cpu(ep_desc->wMaxPacketSize);
-+				ep_desc->wMaxPacketSize = cpu_to_le16(63);
-+			}
-+			alt->desc.bAlternateSetting = 6;
-+			set_bit(BTUSB_ISOC_ALT_CHANGED, &data->flags);
-+		}
-+	}
-+
- 	err = usb_set_interface(data->udev, data->isoc_ifnum, altsetting);
- 	if (err < 0) {
- 		bt_dev_err(hdev, "setting interface failed (%d)", -err);
-@@ -2161,6 +2205,22 @@ static inline int __set_isoc_interface(struct hci_dev *hdev, int altsetting)
- 	data->isoc_tx_ep = NULL;
- 	data->isoc_rx_ep = NULL;
- 
-+	/* Recover alt 5 desc if alt 0 is set. */
-+	if (!altsetting && test_bit(BTUSB_ISOC_ALT_CHANGED, &data->flags)) {
-+		alt = btusb_find_altsetting(data, 6);
-+		if (alt) {
-+			for (i = 0; i < alt->desc.bNumEndpoints; i++) {
-+				ep_desc = &alt->endpoint[i].desc;
-+				if (!usb_endpoint_xfer_isoc(ep_desc))
-+					continue;
-+				ep_desc->wMaxPacketSize =
-+					cpu_to_le16(data->isoc_mps);
-+			}
-+			alt->desc.bAlternateSetting = 5;
-+			clear_bit(BTUSB_ISOC_ALT_CHANGED, &data->flags);
-+		}
-+	}
-+
- 	for (i = 0; i < intf->cur_altsetting->desc.bNumEndpoints; i++) {
- 		ep_desc = &intf->cur_altsetting->endpoint[i].desc;
- 
-@@ -2223,25 +2283,6 @@ static int btusb_switch_alt_setting(struct hci_dev *hdev, int new_alts)
- 	return 0;
- }
- 
--static struct usb_host_interface *btusb_find_altsetting(struct btusb_data *data,
--							int alt)
--{
--	struct usb_interface *intf = data->isoc;
--	int i;
--
--	BT_DBG("Looking for Alt no :%d", alt);
--
--	if (!intf)
--		return NULL;
--
--	for (i = 0; i < intf->num_altsetting; i++) {
--		if (intf->altsetting[i].desc.bAlternateSetting == alt)
--			return &intf->altsetting[i];
--	}
--
--	return NULL;
--}
--
- static void btusb_work(struct work_struct *work)
- {
- 	struct btusb_data *data = container_of(work, struct btusb_data, work);
-@@ -2279,7 +2320,8 @@ static void btusb_work(struct work_struct *work)
- 			 * MTU >= 3 (packets) * 25 (size) - 3 (headers) = 72
- 			 * see also Core spec 5, vol 4, B 2.1.1 & Table 2.1.
- 			 */
--			if (btusb_find_altsetting(data, 6))
-+			if (btusb_find_altsetting(data, 6) ||
-+			    btrealtek_test_flag(hdev, REALTEK_ALT6_FORCE))
- 				new_alts = 6;
- 			else if (btusb_find_altsetting(data, 3) &&
- 				 hdev->sco_mtu >= 72 &&
 -- 
-2.34.1
-
+Without deviation from the norm, progress is not possible.
 
