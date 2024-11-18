@@ -1,157 +1,190 @@
-Return-Path: <linux-kernel+bounces-412784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E7A59D0F0A
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:56:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B1D39D0F42
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 12:09:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38C07B21D54
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 10:52:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50A8A285322
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:09:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD7071993B9;
-	Mon, 18 Nov 2024 10:50:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="2QMRM1DI"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69C40196C67;
+	Mon, 18 Nov 2024 11:09:15 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 813EE198E9E;
-	Mon, 18 Nov 2024 10:50:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CDB715534E
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 11:09:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731927055; cv=none; b=EyCp86qQBXkGRbrm+lji1C0hOHZLxiAV9vFG8VHoakiNptdW/Z84zdFaU8xxNTb+PKfjuy2ce5hST+biCdOnAhvf0SX1TZKTcfJDYiIgSOq8i7fOrC9Jpe1l8WpOnph/B56QRZClF/4tr6CMRVGfYRQg88o9KaCTEuRHyIinwFk=
+	t=1731928155; cv=none; b=bhvuXwQjxkjFJ7qwNd7Js1qBWG+xAYbYh33Vzx5fGRrDY4k0UL1G4FDlZGl3vbU0Wiovc08wLvEhiNbcy9m+jNjdTRyKH4OiO1o0mEg56Rc0Ja5aaao8eUkxz+emDLtky+iTrPcMAdD9RTV9cebpgCRhSE9c3+WzG2ZhVH0zWIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731927055; c=relaxed/simple;
-	bh=WHcuBnfq6kHAKbfDJXcBfPiEZxhyghgKgTGkb1xpg/A=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bMg0KcyrUl2ATwvcONypVqCgecT5gSQVmj0cMetYcDct12DFctbppNIGZ+Mx0AV8ciPssSGy8+GUEVdqTAYa1f5VyA98REiy9aYHIbQ6j05db4f9iBHhGOZfVO2mnpjBA5NSJtJVKeBl2WxGycjQY7SsnFGk3KRdyXqhsfqoW5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=2QMRM1DI; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1731927053; x=1763463053;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=WHcuBnfq6kHAKbfDJXcBfPiEZxhyghgKgTGkb1xpg/A=;
-  b=2QMRM1DIElhNIshC7/I3idPgfU1jdX2m2bo1ySDwSOdOGgXIKz0USFxA
-   r8AqU3rvUqav7kUK4gr4Wy4A9lzOGoJXE1dvT88dzepPitXuLUHJ2RdJO
-   UnV7YQdJgzF5Qayp2EnYfHSSkR1gdPNNee12zIziXOJ8R8hQzk/0PkPDt
-   jeozMDdaO3zyK32t/TkvAcZQL6Tj1tq12USNGyepjJj9dj3w7GYnBvxTU
-   PzOUgjdfzrcYWkPJosTKmjx/RxXjFuakQJz9qWcOGebmdKzPIvigR8MyP
-   UtBNLxr7IRKhht4GCE7Eh6NtzyUvz2rdfy21aCHAs2gs4+R9dF2qH149A
-   Q==;
-X-CSE-ConnectionGUID: uRFJ4ooxRyO7bYFqsKsN5w==
-X-CSE-MsgGUID: G0gMqKqvRCGGT/jdUE4tjA==
-X-IronPort-AV: E=Sophos;i="6.12,163,1728975600"; 
-   d="scan'208";a="34949119"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 18 Nov 2024 03:50:47 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Mon, 18 Nov 2024 03:50:29 -0700
-Received: from DEN-DL-M70577 (10.10.85.11) by chn-vm-ex02.mchp-main.com
- (10.10.85.144) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
- Transport; Mon, 18 Nov 2024 03:50:25 -0700
-Date: Mon, 18 Nov 2024 10:50:25 +0000
-From: Daniel Machon <daniel.machon@microchip.com>
-To: Conor Dooley <conor@kernel.org>
-CC: <UNGLinuxDriver@microchip.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, "Lars
- Povlsen" <lars.povlsen@microchip.com>, Steen Hegelund
-	<Steen.Hegelund@microchip.com>, Horatiu Vultur
-	<horatiu.vultur@microchip.com>, Russell King <linux@armlinux.org.uk>,
-	<jacob.e.keller@intel.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>, <devicetree@vger.kernel.org>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH net-next v2 8/8] dt-bindings: net: sparx5: document RGMII
- MAC delays
-Message-ID: <20241118105025.hjtji5cnl75rcrb4@DEN-DL-M70577>
-References: <20241113-sparx5-lan969x-switch-driver-4-v2-0-0db98ac096d1@microchip.com>
- <20241113-sparx5-lan969x-switch-driver-4-v2-8-0db98ac096d1@microchip.com>
- <20241114-liquefy-chasing-a85e284f14b9@spud>
+	s=arc-20240116; t=1731928155; c=relaxed/simple;
+	bh=vS0dy50gHtBI3qtWTLGOq7IKXIx0DqIKI0/4TYfJMyI=;
+	h=CC:Subject:To:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=Egzp6FZknsenLqA+31VnCSnynsVTqCYCu3Vp2C9LGroJLQ8ipoz4QGm9LIEeqaisxkEJ3iObMc9CMAzQpy7Afvhtz/XAN/EsLSrK6KNPEIkwLDJ136VSLxn9BeZ9Yphf8oL6sdLTYqPHrFBw9wFgh3Of1w2oNMosAsH90riD3wk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4XsPVK4mdRz92JG;
+	Mon, 18 Nov 2024 18:48:09 +0800 (CST)
+Received: from kwepemd200014.china.huawei.com (unknown [7.221.188.8])
+	by mail.maildlp.com (Postfix) with ESMTPS id 1CD971800CF;
+	Mon, 18 Nov 2024 18:50:52 +0800 (CST)
+Received: from [10.67.121.177] (10.67.121.177) by
+ kwepemd200014.china.huawei.com (7.221.188.8) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Mon, 18 Nov 2024 18:50:50 +0800
+CC: <yangyicong@hisilicon.com>, <linuxppc-dev@lists.ozlabs.org>,
+	<dietmar.eggemann@arm.com>, <x86@kernel.org>, <bp@alien8.de>,
+	<mingo@redhat.com>, <linux-arm-kernel@lists.infradead.org>,
+	<mpe@ellerman.id.au>, <peterz@infradead.org>, <tglx@linutronix.de>,
+	<sudeep.holla@arm.com>, <catalin.marinas@arm.com>, <will@kernel.org>,
+	<linux-kernel@vger.kernel.org>, <morten.rasmussen@arm.com>,
+	<msuchanek@suse.de>, <gregkh@linuxfoundation.org>, <rafael@kernel.org>,
+	<jonathan.cameron@huawei.com>, <prime.zeng@hisilicon.com>,
+	<linuxarm@huawei.com>, <xuwei5@huawei.com>, <guohanjun@huawei.com>,
+	<dave.hansen@linux.intel.com>
+Subject: Re: [PATCH v9 1/4] cpu/SMT: Provide a default
+ topology_is_primary_thread()
+To: Pierre Gondois <pierre.gondois@arm.com>
+References: <20241114141127.23232-1-yangyicong@huawei.com>
+ <20241114141127.23232-2-yangyicong@huawei.com>
+ <427bd639-33c3-47e4-9e83-68c428eb1a7d@arm.com>
+From: Yicong Yang <yangyicong@huawei.com>
+Message-ID: <3876e185-2fcc-25dd-e70d-93fdcbf8fc37@huawei.com>
+Date: Mon, 18 Nov 2024 18:50:50 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.5.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20241114-liquefy-chasing-a85e284f14b9@spud>
+In-Reply-To: <427bd639-33c3-47e4-9e83-68c428eb1a7d@arm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemd200014.china.huawei.com (7.221.188.8)
 
-Hi Conor,
+On 2024/11/15 17:42, Pierre Gondois wrote:
+> Hello Yicong,
+> 
+> 
+> On 11/14/24 15:11, Yicong Yang wrote:
+>> From: Yicong Yang <yangyicong@hisilicon.com>
+>>
+>> Currently if architectures want to support HOTPLUG_SMT they need to
+>> provide a topology_is_primary_thread() telling the framework which
+>> thread in the SMT cannot offline. However arm64 doesn't have a
+>> restriction on which thread in the SMT cannot offline, a simplest
+>> choice is that just make 1st thread as the "primary" thread. So
+>> just make this as the default implementation in the framework and
+>> let architectures like x86 that have special primary thread to
+>> override this function (which they've already done).
+>>
+>> There's no need to provide a stub function if !CONFIG_SMP or
+>> !CONFIG_HOTPLUG_SMP. In such case the testing CPU is already
+>> the 1st CPU in the SMT so it's always the primary thread.
+>>
+>> Signed-off-by: Yicong Yang <yangyicong@hisilicon.com>
+>> ---
+>>   arch/powerpc/include/asm/topology.h |  1 +
+>>   arch/x86/include/asm/topology.h     |  2 +-
+>>   include/linux/topology.h            | 20 ++++++++++++++++++++
+>>   3 files changed, 22 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/arch/powerpc/include/asm/topology.h b/arch/powerpc/include/asm/topology.h
+>> index 16bacfe8c7a2..da15b5efe807 100644
+>> --- a/arch/powerpc/include/asm/topology.h
+>> +++ b/arch/powerpc/include/asm/topology.h
+>> @@ -152,6 +152,7 @@ static inline bool topology_is_primary_thread(unsigned int cpu)
+>>   {
+>>       return cpu == cpu_first_thread_sibling(cpu);
+>>   }
+>> +#define topology_is_primary_thread topology_is_primary_thread
+>>     static inline bool topology_smt_thread_allowed(unsigned int cpu)
+>>   {
+>> diff --git a/arch/x86/include/asm/topology.h b/arch/x86/include/asm/topology.h
+>> index 92f3664dd933..d84d9b6d8678 100644
+>> --- a/arch/x86/include/asm/topology.h
+>> +++ b/arch/x86/include/asm/topology.h
+>> @@ -219,11 +219,11 @@ static inline bool topology_is_primary_thread(unsigned int cpu)
+>>   {
+>>       return cpumask_test_cpu(cpu, cpu_primary_thread_mask);
+>>   }
+>> +#define topology_is_primary_thread topology_is_primary_thread
+>>     #else /* CONFIG_SMP */
+>>   static inline int topology_phys_to_logical_pkg(unsigned int pkg) { return 0; }
+>>   static inline int topology_max_smt_threads(void) { return 1; }
+>> -static inline bool topology_is_primary_thread(unsigned int cpu) { return true; }
+>>   static inline unsigned int topology_amd_nodes_per_pkg(void) { return 1; }
+>>   #endif /* !CONFIG_SMP */
+>>   diff --git a/include/linux/topology.h b/include/linux/topology.h
+>> index 52f5850730b3..b8e860276518 100644
+>> --- a/include/linux/topology.h
+>> +++ b/include/linux/topology.h
+>> @@ -240,6 +240,26 @@ static inline const struct cpumask *cpu_smt_mask(int cpu)
+>>   }
+>>   #endif
+>>   +#ifndef topology_is_primary_thread
+>> +
+>> +#define topology_is_primary_thread topology_is_primary_thread
+>> +
+>> +static inline bool topology_is_primary_thread(unsigned int cpu)
+>> +{
+>> +    /*
+>> +     * On SMT hotplug the primary thread of the SMT won't be disabled.
+>> +     * Architectures do have a special primary thread (e.g. x86) need
+>> +     * to override this function. Otherwise just make the first thread
+>> +     * in the SMT as the primary thread.
+>> +     *
+>> +     * The sibling cpumask of an offline CPU contains always the CPU
+>> +     * itself.
+> 
+> As Thomas suggested, would it be possible to check it for other
+> architectures ?
+> For instance for loongarch at arch/loongarch/kernel/smp.c,
+> clear_cpu_sibling_map() seems to completely clear &cpu_sibling_map[cpu]
+> when a CPU is put offline. This would make topology_sibling_cpumask(cpu)
+> to be empty and cpu_bootable() return false if the CPU never booted before.
+> 
 
-> > The lan969x switch device supports two RGMII port interfaces that can be
-> > configured for MAC level rx and tx delays.
-> > 
-> > Document two new properties {rx,tx}-internal-delay-ps. Make them
-> > required properties, if the phy-mode is one of: rgmii, rgmii_id,
-> > rgmii-rxid or rgmii-txid. Also specify accepted values.
-> > 
-> > Signed-off-by: Daniel Machon <daniel.machon@microchip.com>
-> > ---
-> >  .../bindings/net/microchip,sparx5-switch.yaml        | 20 ++++++++++++++++++++
-> >  1 file changed, 20 insertions(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/net/microchip,sparx5-switch.yaml b/Documentation/devicetree/bindings/net/microchip,sparx5-switch.yaml
-> > index dedfad526666..a3f2b70c5c77 100644
-> > --- a/Documentation/devicetree/bindings/net/microchip,sparx5-switch.yaml
-> > +++ b/Documentation/devicetree/bindings/net/microchip,sparx5-switch.yaml
-> > @@ -129,6 +129,26 @@ properties:
-> >              minimum: 0
-> >              maximum: 383
-> >  
-> > +        allOf:
-> > +          - if:
-> > +              properties:
-> > +                phy-mode:
-> > +                  contains:
-> > +                    enum:
-> > +                      - rgmii
-> > +                      - rgmii-rxid
-> > +                      - rgmii-txid
-> > +                      - rgmii-id
-> > +            then:
-> > +              properties:
-> > +                rx-internal-delay-ps:
-> > +                  enum: [0, 1000, 1700, 2000, 2500, 3000, 3300]
-> > +                tx-internal-delay-ps:
-> > +                  enum: [0, 1000, 1700, 2000, 2500, 3000, 3300]
-> 
-> Properties should be define at the top level and constrained in the
-> if/then parts. Please move the property definitions out, and just leave
-> the required: bit here.
-> 
-> > +              required:
-> > +                - rx-internal-delay-ps
-> > +                - tx-internal-delay-ps
-> 
-> You've got no else, so these properties are valid even for !rgmii?
-> 
-> > +
-> >          required:
-> >            - reg
-> >            - phys
-> 
-> Additionally, please move the conditional bits below the required
-> property list.
-> 
-> Cheers,
-> Conor.
+cpu_bootable() only affects architectures select HOTPLUG_SMT, otherwise it'll always
+return true. Since x86 and powerpc have their own illustration of primary thread and
+have an override version of this funciton, arm64 is the only user now by this patchset.
+We have this guarantee for arm64 and also for other architectures using arch_topology.c
+(see clear_cpu_topology()). So if loogarch has a different implementation, they
+should implement a topology_is_primary_thread() variant to support HOTPLUG_SMT.
 
-I will be getting rid of the 'required' constraints in v3. What I hear
-you say, is that the two {rx,tx}-internal-delay-ps properties (incl.
-their enum values) should be moved out of the if/else and to the
-top-level - can you confirm this? Is specifying the values
-a property can take not considered a constraint?
-
-Thanks,
-Daniel
+> Personal note:
+> cpu_bootable() is called from an already online CPU:
+> cpu_bootable (kernel/cpu.c:678)
+> cpu_up (kernel/cpu.c:1722 kernel/cpu.c:1702)
+> bringup_nonboot_cpus (kernel/cpu.c:1793 kernel/cpu.c:1901)
+> smp_init (./include/linux/bitmap.h:445 ./include/linux/nodemask.h:241 ./include/linux/nodemask.h:438 kernel/smp.c:1011)
+> kernel_init_freeable (init/main.c:1573)
+> kernel_init (init/main.c:1473)
+> ret_from_fork (arch/arm64/kernel/entry.S:861)
+> 
+> store_cpu_topology() for arm64 is called from the booting CPU:
+> store_cpu_topology (drivers/base/arch_topology.c:921)
+> secondary_start_kernel (arch/arm64/kernel/smp.c:251)
+> __secondary_switched (arch/arm64/kernel/head.S:418)
+> 
+>> +     */
+>> +    return cpu == cpumask_first(topology_sibling_cpumask(cpu));
+>> +}
+>> +
+>> +#endif
+>> +
+>>   static inline const struct cpumask *cpu_cpu_mask(int cpu)
+>>   {
+>>       return cpumask_of_node(cpu_to_node(cpu));
+> 
+> .
 
