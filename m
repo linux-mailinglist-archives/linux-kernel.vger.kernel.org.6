@@ -1,246 +1,345 @@
-Return-Path: <linux-kernel+bounces-413427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05FC09D18E9
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 20:30:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 489799D18E5
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 20:29:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD7CF1F22153
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 19:30:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0971D282997
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 19:29:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18E561E570B;
-	Mon, 18 Nov 2024 19:30:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 768BB1E5020;
+	Mon, 18 Nov 2024 19:29:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="eQLxlO6h"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="CL5fFL46"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2058.outbound.protection.outlook.com [40.107.94.58])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8774317BBF;
-	Mon, 18 Nov 2024 19:30:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731958223; cv=none; b=svcPZthNysXEmFTdjNsis3gvI2dI6o3BUIrGbqRAJx4auq8JavHCGJ3EDL4JI+NPem+nyoYvl2GybQ2LEaTHECRFra9YbnjEBUhxeM2oNUtIFuOlSnHiuX5w45DJ8udYRWt6imBm3J/kQpZPRIBu8fxxE8vS4vR0SKb9hsh3RLQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731958223; c=relaxed/simple;
-	bh=9pb/UfvTZ5ffQXilPmxRhQXCj6SzJeUV/mNoDJqfciM=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PKRmwTUHw3BsRTnEwJGuYAuZtDkLNICQUv/jy7GOa1HvZxxcaG1eaHrMmHKNFYDQnVUssOETUwaC6oOc6WH00NtUdWTtdkTpqgY1CLSUhBuTn/bBAlAZwE9dGcTqgdBlP4I3//UwC8AtsgLiuHEP+ic1wlVUthAJXS2rKbMgRBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=eQLxlO6h; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AIGLnb7011441;
-	Mon, 18 Nov 2024 19:30:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=Ch9g1xvXWHfnC8QbBYmpT0Nb
-	kpyf73TTNFt0J/RmQMM=; b=eQLxlO6hymPS3O3mNb2kcthKG2rd9unt4wgpewwm
-	Sts+wtgmsWvmn4gqRz/+DcEgyVuykl+x/lFmkDyPPZesKpO6hoDH0M5eaRH82fJ0
-	fNxKVbCntCwj7Ssn+mp732IIIctuwtqOlJQb7M88MhhkAGqvPWljNWoFPLyJMikE
-	uKdWMS8NuPiGFaZKbZ6qZsKZZaka755cp0jI4zHsGEkNDVeNQEfmoSpgAbwbD8Vb
-	OokGecy8Yiu7VUV8FMuMJtLaptZpK51uzD9oHoeBFCPl0RpNaa/NuFPtvUB4FmIv
-	SwI66cbv08iKiyXR5dODOMLdJFo/dehxc4mHOt6JzWzIvQ==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43091m8dq1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 18 Nov 2024 19:30:00 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AIJTxC6011016
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 18 Nov 2024 19:29:59 GMT
-Received: from hu-eberman-lv.qualcomm.com (10.49.16.6) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 18 Nov 2024 11:27:53 -0800
-Date: Mon, 18 Nov 2024 11:27:53 -0800
-From: Elliot Berman <quic_eberman@quicinc.com>
-To: Lorenzo Pieralisi <lpieralisi@kernel.org>
-CC: Stephen Boyd <swboyd@chromium.org>, Andy Yan <andy.yan@rock-chips.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Bartosz Golaszewski
-	<bartosz.golaszewski@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>, Olof Johansson <olof@lixom.net>,
-        Rob Herring <robh@kernel.org>, "Sebastian
- Reichel" <sre@kernel.org>,
-        Vinod Koul <vkoul@kernel.org>, Will Deacon
-	<will@kernel.org>,
-        <cros-qcom-dts-watchers@chromium.org>,
-        "Satya Durga
- Srinivasu Prabhala" <quic_satyap@quicinc.com>,
-        Melody Olvera
-	<quic_molvera@quicinc.com>,
-        Shivendra Pratap <quic_spratap@quicinc.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Florian Fainelli
-	<florian.fainelli@broadcom.com>,
-        <linux-pm@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
-Subject: Re: [PATCH v6 3/5] firmware: psci: Read and use vendor reset types
-Message-ID: <20241118104725157-0800.eberman@hu-eberman-lv.qualcomm.com>
-References: <20241018-arm-psci-system_reset2-vendor-reboots-v6-0-50cbe88b0a24@quicinc.com>
- <20241018-arm-psci-system_reset2-vendor-reboots-v6-3-50cbe88b0a24@quicinc.com>
- <CAE-0n515sUkmTWptgY8pOaMDBPfDp5pZBy9Nby+4cMdMAnAZfA@mail.gmail.com>
- <20241023092251529-0700.eberman@hu-eberman-lv.qualcomm.com>
- <ZzdOOP0KuMMdo64W@lpieralisi>
- <20241115101401666-0800.eberman@hu-eberman-lv.qualcomm.com>
- <ZztZq1ksXCkyLOvj@lpieralisi>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B93101AA1FF;
+	Mon, 18 Nov 2024 19:29:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.58
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731958156; cv=fail; b=HAbCN3PP6j0NsE3aWtGQWJNu7kCAvxS7/vuDq/9a+K+zwBBi5igq92QS6GPFoy6db+56Fdqu0Oxcr60w9NLg6ehkn5zGp/ZCMDiQ7rexzQrQG7Bg9N/XpVGJuFcCADAHE2k5+e1RJezPhxXKITDD7RLSpn+aGnNwejTMqEFR66I=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731958156; c=relaxed/simple;
+	bh=VXvnW0oZYJMRIfiH6t6O3laSj5EqcfM/Gi9CsCCKzoE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GClzz1XltG5G+MUMUY0v7zIn5O/bVPDRt4owUof58U3mg2n8dCL9QHtz+dwXSHQwZ0t+HkekTJZY9IFdEG2BHD4vfsi98DSVHQDDqbBKLJ5LOoVuYRQDMz5dEG58UJnTvg0CXtzDiO8BJVcjC3H0pElK/NLm3VaZrAgwATVWkLk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=CL5fFL46; arc=fail smtp.client-ip=40.107.94.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Urx6vlTup2gLF1CkLLzdx3raX9D27U2tPuHK42qNQeKOkVyBS7Z6TDjlQgVZfEGe+x+gOuV9VX/LD7aQGia6hWBTDbI2wU9vyrPdhWa2+HLDsPaN0wcC1zS+A74CWJa0uguUXVyM3gHCzsHsCX1l2+vuBwKCALp5tFH/Pzb70NadoSGWzi5fXDgMVRths6gEIS5zFUt1R7L/DWpPqpmS+FSS1dfFdo0Kx9ZOoVF8PMe0TVFbSY+wm3VS3XLfx1T4O/dSQxI9FJFhVjRWa3N4rIuqiaMPCVLnyLKCyMcG1Y8WEE0CjfGyNjjuV4KNw7OuzUHukvBQHAtpbwhar0uBNw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=mWJ/s5DI3ooMSM1ein/u/gaaf9/dYeqyHHhyMeKlrOE=;
+ b=y89fmDNTX//oQyG4TtJEoISEHMxELSvDpQ5OkMW/YQPNqUwog9zW9USQasv7n+BseTsKaLVC8g++qQEOQpW1tDc8e4M9UKrYQuq8lNpOUs2BIhV4+p8uzJImUO7ugbMZVui+Ob6mGBDNgW/yk1AprMi6rZj2wa6/llz4bmqMLvwBmpSlyMa7N50tYZOUvN5GsGpNCkTyD4LMAIF2Iu0MHXE/zw4GVtbG5ZIC2EExoUvCleEgUMfcrdSDllRpP5mDRJUvDFgHGOZsUX/exhObFDTXdy3UTb+f5aQrHXxUQGhZcIv5d0nsVsbOS7x+sGPvvC8YaRWZRtloyOaxyQaEdA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=mWJ/s5DI3ooMSM1ein/u/gaaf9/dYeqyHHhyMeKlrOE=;
+ b=CL5fFL462JwOBeyZBVkwXH6MayeNCkmM7a4eT2Ut/qq8G2EJW60lTxalysp7r3D9mIod3hzB8z/+1zHKFNrxVbAkvsvJ5xNVm2vJgIElOwNOr2h6D0PkurQPYOfiCldkPBVr6ltgILV9W3qCvrfhNUAmH7rxY08GNd58Sq7hKzE3+9+3Fnct1UVtd/52uS5DiiBH7fIGEbxBZSOI5gbFcKU0UeORFmNv+sWHWWyiyhqMTqZIR0uoZ4YlJkCeTOX1IehGMiyVUaRPUD/z+ravBbWqP0r6UIBcnDyNrgE8KWIYxNwBrmkmoTOoY3FbhRhNXwP6eBYnYOVhrsN8tMC/cQ==
+Received: from CH0PR03CA0012.namprd03.prod.outlook.com (2603:10b6:610:b0::17)
+ by IA1PR12MB6649.namprd12.prod.outlook.com (2603:10b6:208:3a2::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.22; Mon, 18 Nov
+ 2024 19:29:07 +0000
+Received: from DS3PEPF000099D6.namprd04.prod.outlook.com
+ (2603:10b6:610:b0:cafe::46) by CH0PR03CA0012.outlook.office365.com
+ (2603:10b6:610:b0::17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.24 via Frontend
+ Transport; Mon, 18 Nov 2024 19:29:07 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ DS3PEPF000099D6.mail.protection.outlook.com (10.167.17.7) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8158.14 via Frontend Transport; Mon, 18 Nov 2024 19:29:06 +0000
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 18 Nov
+ 2024 11:28:49 -0800
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail204.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 18 Nov
+ 2024 11:28:49 -0800
+Received: from vdi.nvidia.com (10.127.8.9) by mail.nvidia.com (10.129.68.6)
+ with Microsoft SMTP Server id 15.2.1544.4 via Frontend Transport; Mon, 18 Nov
+ 2024 11:28:49 -0800
+From: Chris Babroski <cbabroski@nvidia.com>
+To: <andi.shyti@kernel.org>, <kblaiech@nvidia.com>, <asmaa@nvidia.com>
+CC: <davthompson@nvidia.com>, <linux-i2c@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <cbabroski@nvidia.com>
+Subject: [PATCH v1] i2c-mlxbf: Add repeated start condition support
+Date: Mon, 18 Nov 2024 19:28:33 +0000
+Message-ID: <20241118192833.346064-1-cbabroski@nvidia.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <ZztZq1ksXCkyLOvj@lpieralisi>
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: XItZRysGkyZ-UJyI7NkUjXCXCsSwFEnA
-X-Proofpoint-GUID: XItZRysGkyZ-UJyI7NkUjXCXCsSwFEnA
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- impostorscore=0 spamscore=0 priorityscore=1501 phishscore=0 malwarescore=0
- clxscore=1015 bulkscore=0 mlxlogscore=999 lowpriorityscore=0 adultscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411180160
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS3PEPF000099D6:EE_|IA1PR12MB6649:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8973cc40-e6cb-4109-6d7c-08dd080744e6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|36860700013|376014|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?RaqEupBSQpR45N9EAhrQuY1+j/V0dT3VAfUh8U2rWbz1Jz52Oo+n3e2lm8xp?=
+ =?us-ascii?Q?t9A+G6AysFQIsNZ4NperoCrtswSeXTd+pf0DpYdfRDdgN+KSA1meXXWJggQq?=
+ =?us-ascii?Q?o732aqAWvUuxesVxh+t5qZK9slsmDqlmA2d0JA5Gzy79KL3vRA44sTBF3D0M?=
+ =?us-ascii?Q?dAiZQZGdnSrwlhyEj/4oQTeXAFJavB5xXhAvOXWVZSqNzSZ4/0J/jC1nPHhU?=
+ =?us-ascii?Q?UOgsF62CVXlwGUFdoqZy6/HQp3iCWqYgnd52BPmfiXML+bI4yHERFx0QaXqX?=
+ =?us-ascii?Q?voMwo7qye5RTvD4qFoHuAQExjrHKpmgZuA4U4+Z76kN9XNF4AoqbIB93NPFz?=
+ =?us-ascii?Q?CJ6vnq1eKg98WZIxAHzvxBHsRtfqI/As7dFHMDN0kW9/DZJInqGUdmd68Tde?=
+ =?us-ascii?Q?D+A5KS0o+DlLqiz2aN8KaSw56qPkU8LDjp6YGVETffJqZgCzsp5gdhExjIWg?=
+ =?us-ascii?Q?vUjjq70on/4TuWvi8senO0jVcLwHxbbLnuoMhRG1hT9LKgvnffrCMHYZsfHI?=
+ =?us-ascii?Q?dZ5QQKhha8+DvBjr0uJkPghGPaH1uz0Fhdo9Jr3V6QyZhsEsE5uhUDF2BYQz?=
+ =?us-ascii?Q?9MaGWZkRBVE+woLwd0BUWwFvy7KLq6i6hZ2Mp+az5+G5r/YVVhcKF9icNk/0?=
+ =?us-ascii?Q?2BxZ400R0mhsxsS9iWTuhErc1Qy2ZAxJk6ghL9rLUBOVZ+EOaWxqSGW7TOXp?=
+ =?us-ascii?Q?Yl2+mNwT+I2PIorYoPJRpZqqkHLmDjqvfWZkUL5zoUGy+d6yzWp205Dfj/6g?=
+ =?us-ascii?Q?a8WImk6Z24MV2c2YkamG8LOoZsWpUxlTQ0p0y/VbNm5EHLpyWbM4zluddna1?=
+ =?us-ascii?Q?duztE4GjkTZUtfX3TAmxNq9cBdcpVS/L0b2GWDc9NOeAsJPCeR58TAS/3CDk?=
+ =?us-ascii?Q?u/o7WW91M7vb23j6CuKocOicwodBq7AlMyYhlDuHq2YZY03TnjCvSuj2pf9s?=
+ =?us-ascii?Q?G0vemRNFwMCXPDT5aeItdMw36XRnQYSSr8MzzMtGe04beHBjUIK2IGwgrkgR?=
+ =?us-ascii?Q?GdenuWQwDhtC9ml72xVvIr+06mN1TPY0Qyj1q64tTfX/NkrNVUrcJUthNkNR?=
+ =?us-ascii?Q?qmWYTfWBC3cU7ISD17HOlo9+2Ovjs5D9A4pC+SObBMBDgsJuBxhK5fzgcGXp?=
+ =?us-ascii?Q?4WHDkkssxfCNSlNplVR0rIxszyKzJr9hkCePQNHlfK8xrr6KSgfr2NyS808R?=
+ =?us-ascii?Q?TsqTDMNGZTBm/yzspqDNP6Gc115/XLNsYDPlBjl8T8q1Tt96yWAUEU1ZNi2T?=
+ =?us-ascii?Q?8ijmKOraaXaVNFcrW0TRejDMSNPqzTUeo3QfdiKkzIr65jl823gE0hMcbS6u?=
+ =?us-ascii?Q?Cj1Q3sfseRUxOjup48wQ2A7kJHhVaLoMOo7r3/kP1mfgaPScMo+eZJ+rNbiT?=
+ =?us-ascii?Q?7qVY/DVKOSqYyjePqnqQopU4UpsolzRMJsZpYB6uPageEVNSxg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(376014)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Nov 2024 19:29:06.8661
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8973cc40-e6cb-4109-6d7c-08dd080744e6
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS3PEPF000099D6.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6649
 
-On Mon, Nov 18, 2024 at 04:13:47PM +0100, Lorenzo Pieralisi wrote:
-> On Fri, Nov 15, 2024 at 11:08:22AM -0800, Elliot Berman wrote:
-> > On Fri, Nov 15, 2024 at 02:35:52PM +0100, Lorenzo Pieralisi wrote:
-> > > On Wed, Oct 23, 2024 at 09:30:21AM -0700, Elliot Berman wrote:
-> > > > On Fri, Oct 18, 2024 at 10:42:46PM -0700, Stephen Boyd wrote:
-> > > > > Quoting Elliot Berman (2024-10-18 12:39:48)
-> > > > > > diff --git a/drivers/firmware/psci/psci.c b/drivers/firmware/psci/psci.c
-> > > > > > index 2328ca58bba6..60bc285622ce 100644
-> > > > > > --- a/drivers/firmware/psci/psci.c
-> > > > > > +++ b/drivers/firmware/psci/psci.c
-> > > > > > @@ -29,6 +29,8 @@
-> > > > > >  #include <asm/smp_plat.h>
-> > > > > >  #include <asm/suspend.h>
-> > > > > >
-> > > > > > +#define REBOOT_PREFIX "mode-"
-> > > > > 
-> > > > > Maybe move this near the function that uses it.
-> > > > > 
-> > > > > > +
-> > > > > >  /*
-> > > > > >   * While a 64-bit OS can make calls with SMC32 calling conventions, for some
-> > > > > >   * calls it is necessary to use SMC64 to pass or return 64-bit values.
-> > > > > > @@ -305,9 +315,29 @@ static int get_set_conduit_method(const struct device_node *np)
-> > > > > >         return 0;
-> > > > > >  }
-> > > > > >
-> > > > > > +static void psci_vendor_sys_reset2(unsigned long action, void *data)
-> > > > > > +{
-> > > > > > +       const char *cmd = data;
-> > > > > > +       unsigned long ret;
-> > > > > > +       size_t i;
-> > > > > > +
-> > > > > > +       for (i = 0; i < num_psci_reset_params; i++) {
-> > > > > > +               if (!strcmp(psci_reset_params[i].mode, cmd)) {
-> > > > > > +                       ret = invoke_psci_fn(PSCI_FN_NATIVE(1_1, SYSTEM_RESET2),
-> > > > > > +                                            psci_reset_params[i].reset_type,
-> > > > > > +                                            psci_reset_params[i].cookie, 0);
-> > > > > > +                       pr_err("failed to perform reset \"%s\": %ld\n",
-> > > > > > +                               cmd, (long)ret);
-> > > > > 
-> > > > > Do this intentionally return? Should it be some other function that's
-> > > > > __noreturn instead and a while (1) if the firmware returns back to the
-> > > > > kernel?
-> > > > > 
-> > > > 
-> > > > Yes, I think it's best to make sure we fall back to the architectural
-> > > > reset (whether it's the SYSTEM_RESET or architectural SYSTEM_RESET2)
-> > > > since device would reboot then.
-> > > 
-> > > Well, that's one of the doubts I have about enabling this code. From
-> > > userspace we are requesting a reboot (I don't even think that user
-> > > space knows which reboot modes are actually implemented (?)) and we may
-> > > end up issuing one with completely different semantics ?
-> > 
-> > You're right here, userspace issue a "reboot bootloader" and if kernel
-> > doesn't have the support to set up the right cookie, the device would do
-> > a normal reboot and not stop at the bootloader. This problem exists
-> > today and I think whether this is an issue to solve is out of scope here.
-> 
-> That's true. It is the same issue we have with reboot_mode anyway.
-> 
-> Is it a fair statement to say that currently when we request a reboot,
-> the reboot mode is the one set through /sys/kernel/reboot/mode ?
-> 
-> Does user space use that file today ?
-> 
-> I guess userspace does not take specific actions according to the
-> reset it thinks it issues - it is a question.
-> 
+Add support for SMBus repeated start conditions to the Mellanox I2C
+driver. This support is specifically enabled for the
+I2C_FUNC_SMBUS_WRITE_I2C_BLOCK implementation which is required for
+communication with various I2C devices on Bluefield 3.
 
-Yes, user space can write to that file. User space has to configure both
-the mode and command to get the desired reboot configuration. I view the
-vendor reset types as replacing "both", in the sense userspace may not
-need to configure the reboot mode anymore. If "reboot bootloader" or
-"reboot edl" requires a warm reset, the firmware knows that's how the
-PMIC needs to be configured. I don't currently see any need for Linux to
-be aware that a particular vendor reset type is "like a soft" or "like a
-warm" or "like a cold" reset.
+The I2C bus timing configuration values have also been updated based on
+latest HW testing results and found to be necessary to support repeated
+start transactions.
 
-> > > Are these "reset types" exported to user space ?
-> > > 
-> > 
-> > No mechanism exists to do that. We could do something specific for PSCI
-> > or do something generic for everybody. I don't think something specific
-> > for PSCI is the right approach because it's a general problem. I don't
-> > think there's enough interest to change reboot command plumbing to
-> > advertise valid reset types to userspace.
-> 
-> That's for sure. I suppose the most important bit is making sure that
-> all resets comply with the kernel semantics expected from a *reset*;
-> I appreciate that's a vague statement (and I have no idea how to enforce
-> it) but that's the gist of this discussion.
-> 
-> Another thing I am worried about is device drivers restart handlers
-> (ie having to parse a command that might be platform specific in a
-> generic driver to grok what reset was actually issued and what action
-> should be taken).
+Signed-off-by: Chris Babroski <cbabroski@nvidia.com>
+Reviewed-by: Asmaa Mnebhi <asmaa@nvidia.com>
+Reviewed-by: Khalil Blaiech <kblaiech@nvidia.com>
+---
+ drivers/i2c/busses/i2c-mlxbf.c | 69 +++++++++++++++++++++-------------
+ 1 file changed, 42 insertions(+), 27 deletions(-)
 
-Right, I got your point! I haven't seen any drivers that care about it,
-besides the ones that actually do the resetting.
+diff --git a/drivers/i2c/busses/i2c-mlxbf.c b/drivers/i2c/busses/i2c-mlxbf.c
+index b3a73921ab69..8926dafa0270 100644
+--- a/drivers/i2c/busses/i2c-mlxbf.c
++++ b/drivers/i2c/busses/i2c-mlxbf.c
+@@ -196,6 +196,7 @@
+ 
+ #define MLXBF_I2C_MASK_8    GENMASK(7, 0)
+ #define MLXBF_I2C_MASK_16   GENMASK(15, 0)
++#define MLXBF_I2C_MASK_32   GENMASK(31, 0)
+ 
+ #define MLXBF_I2C_MST_ADDR_OFFSET         0x200
+ 
+@@ -221,8 +222,7 @@
+ #define MLXBF_I2C_MASTER_STOP_BIT         BIT(3)  /* Control stop. */
+ 
+ #define MLXBF_I2C_MASTER_ENABLE \
+-	(MLXBF_I2C_MASTER_LOCK_BIT | MLXBF_I2C_MASTER_BUSY_BIT | \
+-	 MLXBF_I2C_MASTER_START_BIT | MLXBF_I2C_MASTER_STOP_BIT)
++	(MLXBF_I2C_MASTER_LOCK_BIT | MLXBF_I2C_MASTER_BUSY_BIT | MLXBF_I2C_MASTER_START_BIT)
+ 
+ #define MLXBF_I2C_MASTER_ENABLE_WRITE \
+ 	(MLXBF_I2C_MASTER_ENABLE | MLXBF_I2C_MASTER_CTL_WRITE_BIT)
+@@ -336,6 +336,7 @@ enum {
+ 	MLXBF_I2C_F_SMBUS_BLOCK = BIT(5),
+ 	MLXBF_I2C_F_SMBUS_PEC = BIT(6),
+ 	MLXBF_I2C_F_SMBUS_PROCESS_CALL = BIT(7),
++	MLXBF_I2C_F_WRITE_WITHOUT_STOP = BIT(8),
+ };
+ 
+ /* Mellanox BlueField chip type. */
+@@ -694,16 +695,19 @@ static void mlxbf_i2c_smbus_read_data(struct mlxbf_i2c_priv *priv,
+ }
+ 
+ static int mlxbf_i2c_smbus_enable(struct mlxbf_i2c_priv *priv, u8 slave,
+-				  u8 len, u8 block_en, u8 pec_en, bool read)
++				  u8 len, u8 block_en, u8 pec_en, bool read, bool no_stop)
+ {
+-	u32 command;
++	u32 command = 0;
+ 
+ 	/* Set Master GW control word. */
++	if (!no_stop)
++		command |= MLXBF_I2C_MASTER_STOP_BIT;
++
+ 	if (read) {
+-		command = MLXBF_I2C_MASTER_ENABLE_READ;
++		command |= MLXBF_I2C_MASTER_ENABLE_READ;
+ 		command |= rol32(len, MLXBF_I2C_MASTER_READ_SHIFT);
+ 	} else {
+-		command = MLXBF_I2C_MASTER_ENABLE_WRITE;
++		command |= MLXBF_I2C_MASTER_ENABLE_WRITE;
+ 		command |= rol32(len, MLXBF_I2C_MASTER_WRITE_SHIFT);
+ 	}
+ 	command |= rol32(slave, MLXBF_I2C_MASTER_SLV_ADDR_SHIFT);
+@@ -738,9 +742,11 @@ mlxbf_i2c_smbus_start_transaction(struct mlxbf_i2c_priv *priv,
+ 	u8 op_idx, data_idx, data_len, write_len, read_len;
+ 	struct mlxbf_i2c_smbus_operation *operation;
+ 	u8 read_en, write_en, block_en, pec_en;
+-	u8 slave, flags, addr;
++	bool write_wo_stop = false;
++	u8 slave, addr;
+ 	u8 *read_buf;
+ 	int ret = 0;
++	u32 flags;
+ 
+ 	if (request->operation_cnt > MLXBF_I2C_SMBUS_MAX_OP_CNT)
+ 		return -EINVAL;
+@@ -799,7 +805,16 @@ mlxbf_i2c_smbus_start_transaction(struct mlxbf_i2c_priv *priv,
+ 			memcpy(data_desc + data_idx,
+ 			       operation->buffer, operation->length);
+ 			data_idx += operation->length;
++
++			/*
++			 * The stop condition can be skipped when writing on the bus
++			 * to implement a repeated start condition on the next read
++			 * as required for several SMBus and I2C operations.
++			 */
++			if (flags & MLXBF_I2C_F_WRITE_WITHOUT_STOP)
++				write_wo_stop = true;
+ 		}
++
+ 		/*
+ 		 * We assume that read operations are performed only once per
+ 		 * SMBus transaction. *TBD* protect this statement so it won't
+@@ -825,7 +840,7 @@ mlxbf_i2c_smbus_start_transaction(struct mlxbf_i2c_priv *priv,
+ 
+ 	if (write_en) {
+ 		ret = mlxbf_i2c_smbus_enable(priv, slave, write_len, block_en,
+-					 pec_en, 0);
++					 pec_en, 0, write_wo_stop);
+ 		if (ret)
+ 			goto out_unlock;
+ 	}
+@@ -835,7 +850,7 @@ mlxbf_i2c_smbus_start_transaction(struct mlxbf_i2c_priv *priv,
+ 		mlxbf_i2c_smbus_write_data(priv, (const u8 *)&addr, 1,
+ 					   MLXBF_I2C_MASTER_DATA_DESC_ADDR, true);
+ 		ret = mlxbf_i2c_smbus_enable(priv, slave, read_len, block_en,
+-					 pec_en, 1);
++					 pec_en, 1, false);
+ 		if (!ret) {
+ 			/* Get Master GW data descriptor. */
+ 			mlxbf_i2c_smbus_read_data(priv, data_desc, read_len + 1,
+@@ -940,6 +955,9 @@ mlxbf_i2c_smbus_i2c_block_func(struct mlxbf_i2c_smbus_request *request,
+ 	request->operation[0].flags |= pec_check ? MLXBF_I2C_F_SMBUS_PEC : 0;
+ 	request->operation[0].buffer = command;
+ 
++	if (read)
++		request->operation[0].flags |= MLXBF_I2C_F_WRITE_WITHOUT_STOP;
++
+ 	/*
+ 	 * As specified in the standard, the max number of bytes to read/write
+ 	 * per block operation is 32 bytes. In Golan code, the controller can
+@@ -1174,7 +1192,8 @@ static void mlxbf_i2c_set_timings(struct mlxbf_i2c_priv *priv,
+ 				     MLXBF_I2C_MASK_16, MLXBF_I2C_SHIFT_16);
+ 	writel(timer, priv->timer->io + MLXBF_I2C_SMBUS_THIGH_MAX_TBUF);
+ 
+-	timer = timings->timeout;
++	timer = mlxbf_i2c_set_timer(priv, timings->timeout, false,
++				    MLXBF_I2C_MASK_32, MLXBF_I2C_SHIFT_0);
+ 	writel(timer, priv->timer->io + MLXBF_I2C_SMBUS_SCL_LOW_TIMEOUT);
+ }
+ 
+@@ -1184,11 +1203,7 @@ enum mlxbf_i2c_timings_config {
+ 	MLXBF_I2C_TIMING_CONFIG_1000KHZ,
+ };
+ 
+-/*
+- * Note that the mlxbf_i2c_timings->timeout value is not related to the
+- * bus frequency, it is impacted by the time it takes the driver to
+- * complete data transmission before transaction abort.
+- */
++/* Timing values are in nanoseconds */
+ static const struct mlxbf_i2c_timings mlxbf_i2c_timings[] = {
+ 	[MLXBF_I2C_TIMING_CONFIG_100KHZ] = {
+ 		.scl_high = 4810,
+@@ -1203,8 +1218,8 @@ static const struct mlxbf_i2c_timings mlxbf_i2c_timings[] = {
+ 		.scl_fall = 50,
+ 		.hold_data = 300,
+ 		.buf = 20000,
+-		.thigh_max = 5000,
+-		.timeout = 106500
++		.thigh_max = 50000,
++		.timeout = 35000000
+ 	},
+ 	[MLXBF_I2C_TIMING_CONFIG_400KHZ] = {
+ 		.scl_high = 1011,
+@@ -1219,24 +1234,24 @@ static const struct mlxbf_i2c_timings mlxbf_i2c_timings[] = {
+ 		.scl_fall = 50,
+ 		.hold_data = 300,
+ 		.buf = 20000,
+-		.thigh_max = 5000,
+-		.timeout = 106500
++		.thigh_max = 50000,
++		.timeout = 35000000
+ 	},
+ 	[MLXBF_I2C_TIMING_CONFIG_1000KHZ] = {
+-		.scl_high = 600,
+-		.scl_low = 1300,
++		.scl_high = 383,
++		.scl_low = 460,
+ 		.hold_start = 600,
+-		.setup_start = 600,
+-		.setup_stop = 600,
+-		.setup_data = 100,
++		.setup_start = 260,
++		.setup_stop = 260,
++		.setup_data = 50,
+ 		.sda_rise = 50,
+ 		.sda_fall = 50,
+ 		.scl_rise = 50,
+ 		.scl_fall = 50,
+ 		.hold_data = 300,
+-		.buf = 20000,
+-		.thigh_max = 5000,
+-		.timeout = 106500
++		.buf = 500,
++		.thigh_max = 50000,
++		.timeout = 35000000
+ 	}
+ };
+ 
 
-I'm okay to say that all vendor SYSTEM_RESET2 need to be treated like a
-REBOOT_COLD, but we might run into issue in future where we might want
-some vendor SYSTEM_RESET2 to act be closer to some other mode. I suppose
-then a device-specific driver is needed there.
+base-commit: 0a9b9d17f3a781dea03baca01c835deaa07f7cc3
+-- 
+2.47.0
 
-In the hypothetical situation where we need reboot_mode to be a specific
-value for a vendor SYSTEM_RESET2, I like my current approach.  Userspace
-already needs to align the mode and command without the kernel enforcing
-it, so it's possible we could still use the generic PSCI driver without
-needing to write a device-specific driver to issue the vendor
-SYSTEM_RESET2. If we hard-code that vendor SYSTEM_RESET2 must be like a
-cold reset, then we definitely need a device-specific driver if we'd
-rather it be like a warm or soft mode.
-
-> I admit it is a tough nut to crack this one - apologies for the time
-> it is taking to reach an agreement.
-> 
-
-This is a weird one :) It seems simple at first but it flexes the design
-of reboot mode and command. I appreciate the time you've taken to look
-at this!
-
-- Elliot
 
