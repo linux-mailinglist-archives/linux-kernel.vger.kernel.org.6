@@ -1,181 +1,182 @@
-Return-Path: <linux-kernel+bounces-413352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB0809D17F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 19:19:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 612219D17F8
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 19:21:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B7D72828B1
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 18:19:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E90521F222EF
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 18:21:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C9D81E0E1B;
-	Mon, 18 Nov 2024 18:18:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5756F1E0DE0;
+	Mon, 18 Nov 2024 18:21:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="AG9s/uyD"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D7211E0DDC;
-	Mon, 18 Nov 2024 18:18:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RvWca04m"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01C2D1DFD1;
+	Mon, 18 Nov 2024 18:21:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731953934; cv=none; b=I+ewMs+jcwTdrR8H33kTqiA9Yr1bbEAp05CDIfhAZIu20HO8ST6T9O1PHTvrshWT6SHrBjJgZn/OMoxqTACkAPYM5xGyzFL9FD3HgeR7Rqukdnu28NreQ8/iMpVRG5c/ALXQmZuodmpKOgHjsPqE6YXBRW7tq1lPBdbN1heGRaI=
+	t=1731954066; cv=none; b=cWf7tFMSGW+LPNR6T5fCsndF6SVYEGZgeuCIS4Lbb85eatAcRk113ePZY4H9IGDBQqQCqqkI5YSXFpraVRcUhnFaiIeJDu7UP2fDe7bs1x0S572N96eFdOgSDz9RVqqzyGe2rjZko+Jh1fXexqjdggwhoM2HLUE+Vbn7k9bN3iU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731953934; c=relaxed/simple;
-	bh=hgF/oIRVcDsAwDmsucM+0Q7Wf268WYzD9jbj6ZltTbU=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=ge0ajBIp7g5bZWroHoPSHnHz1ATCi8P64xMb2XEsiEFoM5S8vlgUuwMaiNadmiwaQ87PFZ23AJTV3GgYhIW6FztWGSipIh+TyupGuqFNTbOFD5L8Wwc7BaEwAcZpfSh+IIDiIgZ1VZl92uOur7SetGSMAgkb3KL3r7B9leyF4X8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=AG9s/uyD; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [192.168.35.166] (c-73-118-245-227.hsd1.wa.comcast.net [73.118.245.227])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 7B6DB206BCF9;
-	Mon, 18 Nov 2024 10:18:49 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 7B6DB206BCF9
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1731953932;
-	bh=fIQzgF1WsNR1uKKNTq0/EQo7zmlio+cixqR17RrtuRg=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=AG9s/uyDx0OBII3cr4HUzEtCn4nG6edMY2UD6tMYQJ1OpbxvtlkXS/eCyyKzQSDkC
-	 KcdCHl5p58vf39EYGhD7mqQUrW1VKQADyz79vhjulvgZLmWmAZisUXU71InKFz7Poi
-	 T4lQlDCJsC2Y9ZlNmbnEUe8f/zo4dQilCRsXYjpY=
-Message-ID: <96f3b51b-c28c-4ea8-b61e-a4982196215f@linux.microsoft.com>
-Date: Mon, 18 Nov 2024 10:18:49 -0800
+	s=arc-20240116; t=1731954066; c=relaxed/simple;
+	bh=Ifz6ll1kWwF6NqROMr2/4icSY3LHmpPaoSvVtk4lTJ0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=K/RTO7Uv1oLR1O/oLeVS0gb7Eg9+YLV+1ivPRH0/Jel/D5BBfLCHxiPN3dVqvRgNXSAVzLYfWJIsTvcxZxtVkFoMXkFaA9fAUBcPXw7y6bJtF5DulvtEPP2mCQjSOT2vD0hdKvwxBA5xxx4I6XcDdqIEAdAbhmh2/RHm3wivkic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RvWca04m; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a9a850270e2so461143866b.0;
+        Mon, 18 Nov 2024 10:21:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731954063; x=1732558863; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4lKXYtHkcL95i4UI7uiZ3CUOmGk+PvyJuJo1wQg863E=;
+        b=RvWca04mOmx2aE2YOctyvlThBuXt1ZdGTDNzY5ieipXI/q4NiKJrnU9RZwTjeKR771
+         bgDOtusT0oeeM7iwRYRoFsokjmP2Xf62ewyEI4aznVWQfw8Aca2tIVRIEVP5ksTRIIrr
+         K8oGUfkK3N1x3bV4w/R1jBOM4tPxDCjL2jxKCHn6Z5ZSSDWc4y/SPhor89CTSNtsXJ0j
+         kzzi+iayfs0pBMnqXNW8NjKRM5wbjGaAym/MyniXa4i62NGPOUbIyncb0HduEN8/OoF9
+         I61piVG9Vi/k/GufZcWLBrGfJyx/cwWGRzg6XDPSJlMoa6OarT0FG3khR6heHq7X0oEx
+         ThKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731954063; x=1732558863;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4lKXYtHkcL95i4UI7uiZ3CUOmGk+PvyJuJo1wQg863E=;
+        b=VJ/hZ5aL5UclUusNeJroj6xu/Uq7TaUPkb2KtPw41iH0nT2/11bmNuG6ikvLzyDmjb
+         EOvkZiToZMWhtPsMAkxP57HUu/9Fkz9Cs5kzeDUxRWCW6lXEFg/zFA+8tHeBTIZlgBBP
+         XJoxmdZ2GJ4ufQSac8ooHxj912r0jbLxYbda8apEMSAZCRJBN1ajNR/4Jci1RLo/JKdS
+         NCMbObS2f0zZUwx4zG6vlu0xap6egNpSOt7L0/95CbZqhoixmnmwJHqntF4x8TdDew7m
+         9htLhl2Mc2Kqq0B4wJaIF9L8ZtTf2PLm1C2ojWP69fmvUWpjP+zRh3q2rWXy32UqRgYx
+         BGYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWb4f9CIoU1ne6EvO6EFN5OkTTfkVbvkwFFJQEsgdk6m2niFIQgmQEA2ozarpxWpHrtkaBOr0KpKX915Jye/Q==@vger.kernel.org, AJvYcCWeg6axfaaVRpHkSmzf0yZC3NKSE0C60Bus3wPzYNo3soUl8Pizle4r9rpj6TD4DY4YBU1eDYWJ8HTqEvQJ@vger.kernel.org, AJvYcCXT9Xouq0b8Hf95Bx6Hagxqvor79ky7a1vTOCt8+EMG+Mo3y2r/gk42qXKoLPah8Hk1bMp04ni4vPnRMAFgzMs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQAdMCnSQGo3cjO0dEkMkQFXb1hirUmpxTVPMMj0jgWXl/GlJL
+	Xj/TJxLI7kQDUbd9HnUArtp1kmYc5VAvWyZzotVB8d7K0UUDB1YzgOOpRDSJienWD2uw0n7Y+x0
+	GSXqSOeKH59+QeitNOhKmoeidxMg=
+X-Google-Smtp-Source: AGHT+IFSsZTy095W0foFVPdW/HtKWRBZITkWoNj6K/qYOyKdlRMA7EQr39EUOLvRkdOFYkUGKNlvJoMIO7FqCaee1LQ=
+X-Received: by 2002:a17:907:9802:b0:a9a:1778:7024 with SMTP id
+ a640c23a62f3a-aa483421c64mr1322039766b.20.1731954063079; Mon, 18 Nov 2024
+ 10:21:03 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
- eahariha@linux.microsoft.com, Pablo Neira Ayuso <pablo@netfilter.org>,
- Jozsef Kadlecsik <kadlec@netfilter.org>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, Julia Lawall <Julia.Lawall@inria.fr>,
- Nicolas Palix <nicolas.palix@imag.fr>, Daniel Mack <daniel@zonque.org>,
- Haojian Zhuang <haojian.zhuang@gmail.com>,
- Robert Jarzmik <robert.jarzmik@free.fr>, Russell King
- <linux@armlinux.org.uk>, Heiko Carstens <hca@linux.ibm.com>,
- Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
- <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>, Ofir Bitton <obitton@habana.ai>,
- Oded Gabbay <ogabbay@kernel.org>, Lucas De Marchi
- <lucas.demarchi@intel.com>,
- =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Jeroen de Borst <jeroendb@google.com>,
- Praveen Kaligineedi <pkaligineedi@google.com>,
- Shailend Chand <shailend@google.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
- James Smart <james.smart@broadcom.com>,
- Dick Kennedy <dick.kennedy@broadcom.com>,
- "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- =?UTF-8?Q?Roger_Pau_Monn=C3=A9?= <roger.pau@citrix.com>,
- Jens Axboe <axboe@kernel.dk>, Kalle Valo <kvalo@kernel.org>,
- Jeff Johnson <jjohnson@kernel.org>, Catalin Marinas
- <catalin.marinas@arm.com>, Andrew Morton <akpm@linux-foundation.org>,
- Jack Wang <jinpu.wang@cloud.ionos.com>, Marcel Holtmann
- <marcel@holtmann.org>, Johan Hedberg <johan.hedberg@gmail.com>,
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui
- <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Xiubo Li <xiubli@redhat.com>,
- Ilya Dryomov <idryomov@gmail.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
- Jiri Kosina <jikos@kernel.org>, Miroslav Benes <mbenes@suse.cz>,
- Joe Lawrence <joe.lawrence@redhat.com>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, Lucas Stach <l.stach@pengutronix.de>,
- Russell King <linux+etnaviv@armlinux.org.uk>,
- Christian Gmeiner <christian.gmeiner@gmail.com>,
- Louis Peens <louis.peens@corigine.com>, Michael Ellerman
- <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Naveen N Rao <naveen@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>,
- netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org, cocci@inria.fr,
- linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org,
- dri-devel@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
- linux-scsi@vger.kernel.org, xen-devel@lists.xenproject.org,
- linux-block@vger.kernel.org, linux-wireless@vger.kernel.org,
- ath11k@lists.infradead.org, linux-mm@kvack.org,
- linux-bluetooth@vger.kernel.org, linux-staging@lists.linux.dev,
- linux-rpi-kernel@lists.infradead.org, ceph-devel@vger.kernel.org,
- live-patching@vger.kernel.org, linux-sound@vger.kernel.org,
- etnaviv@lists.freedesktop.org, oss-drivers@corigine.com,
- linuxppc-dev@lists.ozlabs.org, Anna-Maria Behnsen <anna-maria@linutronix.de>
-Subject: Re: [PATCH v2 19/21] livepatch: Convert timeouts to secs_to_jiffies()
-To: Petr Mladek <pmladek@suse.com>
-References: <20241115-converge-secs-to-jiffies-v2-0-911fb7595e79@linux.microsoft.com>
- <20241115-converge-secs-to-jiffies-v2-19-911fb7595e79@linux.microsoft.com>
- <718febc4-59ee-4701-ad62-8b7a8fa7a910@csgroup.eu>
- <Zzsfuuv3AVomkMxn@pathway.suse.cz>
-From: Easwar Hariharan <eahariha@linux.microsoft.com>
-Content-Language: en-US
-In-Reply-To: <Zzsfuuv3AVomkMxn@pathway.suse.cz>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20241117044612.work.304-kees@kernel.org>
+In-Reply-To: <20241117044612.work.304-kees@kernel.org>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Mon, 18 Nov 2024 19:20:52 +0100
+Message-ID: <CAOQ4uxg8rNPUTk8dqz2HmvT9Avy_6WMW4xOMPtG0b8tSUWAKcQ@mail.gmail.com>
+Subject: Re: [PATCH] ovl: Check for NULL OVL_E() results
+To: Kees Cook <kees@kernel.org>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-unionfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/18/2024 3:06 AM, Petr Mladek wrote:
-> On Sat 2024-11-16 11:10:52, Christophe Leroy wrote:
->>
->>
->> Le 15/11/2024 à 22:26, Easwar Hariharan a écrit :
->>> [Vous ne recevez pas souvent de courriers de eahariha@linux.microsoft.com. Découvrez pourquoi ceci est important à https://aka.ms/LearnAboutSenderIdentification ]
->>>
->>> Changes made with the following Coccinelle rules:
->>>
->>> @@ constant C; @@
->>>
->>> - msecs_to_jiffies(C * 1000)
->>> + secs_to_jiffies(C)
->>>
->>> @@ constant C; @@
->>>
->>> - msecs_to_jiffies(C * MSEC_PER_SEC)
->>> + secs_to_jiffies(C)
->>>
->>> Signed-off-by: Easwar Hariharan <eahariha@linux.microsoft.com>
->>> ---
->>>   samples/livepatch/livepatch-callbacks-busymod.c |  2 +-
->>>   samples/livepatch/livepatch-shadow-fix1.c       |  2 +-
->>>   samples/livepatch/livepatch-shadow-mod.c        | 10 +++++-----
->>>   3 files changed, 7 insertions(+), 7 deletions(-)
->>>
->>> diff --git a/samples/livepatch/livepatch-callbacks-busymod.c b/samples/livepatch/livepatch-callbacks-busymod.c
->>> index 378e2d40271a9717d09eff51d3d3612c679736fc..d0fd801a7c21b7d7939c29d83f9d993badcc9aba 100644
->>> --- a/samples/livepatch/livepatch-callbacks-busymod.c
->>> +++ b/samples/livepatch/livepatch-callbacks-busymod.c
->>> @@ -45,7 +45,7 @@ static int livepatch_callbacks_mod_init(void)
->>>   {
->>>          pr_info("%s\n", __func__);
->>>          schedule_delayed_work(&work,
->>> -               msecs_to_jiffies(1000 * 0));
->>> +               secs_to_jiffies(0));
->>
->> Using secs_to_jiffies() is pointless, 0 is universal, should become
->> schedule_delayed_work(&work, 0);
-> 
-> Yes, schedule_delayed_work(&work, 0) looks like the right solution.
-> 
-> Or even better, it seems that the delayed work might get replaced by
-> a normal workqueue work.
-> 
-> Anyway, I am working on a patchset which would remove this sample
-> module. There is no need to put much effort into the clean up
-> of this particular module. Do whatever is easiest for you.
-> 
-> Best Regards,
-> Petr
+On Sun, Nov 17, 2024 at 5:46=E2=80=AFAM Kees Cook <kees@kernel.org> wrote:
+>
+> GCC notices that it is possible for OVL_E() to return NULL (which
+> implies that d_inode(dentry) may be NULL).
 
-If we're removing the module, I'll drop it from the series. Just to
-clarify, do you mean to remove all of samples/livepatch/* or some
-particular file(s)?
+I cannot follow this logic.
+
+Yes, OVL_E() can be NULL, but
+it does not imply that inode is NULL, so if you think that
+code should to be fortified, what's wrong with:
+
+ struct dentry *ovl_dentry_upper(struct dentry *dentry)
+ {
+-       return ovl_upperdentry_dereference(OVL_I(d_inode(dentry)));
++       struct inode *inode =3D d_inode(dentry);
++
++       return inode ? ovl_upperdentry_dereference(OVL_I(inode)) : NULL;
+ }
+
+TBH, I don't know where the line should be drawn for fortifying against
+future bugs, but if the goal of this patch is to silene a compiler warning
+then please specify this in the commit message, because I don't think
+there is any evidence of an actual bug, is there?
 
 Thanks,
-Easwar
+Amir.
+
+> This would result in out
+> of bounds reads via container_of(), seen with GCC 15's -Warray-bounds
+> -fdiagnostics-details. For example:
+>
+> In file included from ./arch/x86/include/generated/asm/rwonce.h:1,
+>                  from ../include/linux/compiler.h:339,
+>                  from ../include/linux/export.h:5,
+>                  from ../include/linux/linkage.h:7,
+>                  from ../include/linux/fs.h:5,
+>                  from ../fs/overlayfs/util.c:7:
+> In function 'ovl_upperdentry_dereference',
+>     inlined from 'ovl_dentry_upper' at ../fs/overlayfs/util.c:305:9,
+>     inlined from 'ovl_path_type' at ../fs/overlayfs/util.c:216:6:
+> ../include/asm-generic/rwonce.h:44:26: error: array subscript 0 is outsid=
+e array bounds of 'struct inode[7486503276667837]' [-Werror=3Darray-bounds=
+=3D]
+>    44 | #define __READ_ONCE(x)  (*(const volatile __unqual_scalar_typeof(=
+x) *)&(x))                       |                         ~^~~~~~~~~~~~~~~=
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                 ../include/asm-generic/=
+rwonce.h:50:9: note: in expansion of macro '__READ_ONCE'
+>    50 |         __READ_ONCE(x);                                          =
+       \
+>       |         ^~~~~~~~~~~
+> ../fs/overlayfs/ovl_entry.h:195:16: note: in expansion of macro 'READ_ONC=
+E'                           195 |         return READ_ONCE(oi->__upperdent=
+ry);
+>       |                ^~~~~~~~~
+>   'ovl_path_type': event 1
+>   185 |         return inode ? OVL_I(inode)->oe : NULL;
+>   'ovl_path_type': event 2
+>
+> Explicitly check the result of OVL_E() and return accordingly.
+>
+> Signed-off-by: Kees Cook <kees@kernel.org>
+> ---
+> Cc: Miklos Szeredi <miklos@szeredi.hu>
+> Cc: Amir Goldstein <amir73il@gmail.com>
+> Cc: linux-unionfs@vger.kernel.org
+> ---
+>  fs/overlayfs/util.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+>
+> diff --git a/fs/overlayfs/util.c b/fs/overlayfs/util.c
+> index 3bb107471fb4..32ec5eec32fa 100644
+> --- a/fs/overlayfs/util.c
+> +++ b/fs/overlayfs/util.c
+> @@ -213,6 +213,9 @@ enum ovl_path_type ovl_path_type(struct dentry *dentr=
+y)
+>         struct ovl_entry *oe =3D OVL_E(dentry);
+>         enum ovl_path_type type =3D 0;
+>
+> +       if (WARN_ON_ONCE(oe =3D=3D NULL))
+> +               return 0;
+> +
+>         if (ovl_dentry_upper(dentry)) {
+>                 type =3D __OVL_PATH_UPPER;
+>
+> @@ -1312,6 +1315,9 @@ bool ovl_is_metacopy_dentry(struct dentry *dentry)
+>  {
+>         struct ovl_entry *oe =3D OVL_E(dentry);
+>
+> +       if (WARN_ON_ONCE(oe =3D=3D NULL))
+> +               return false;
+> +
+>         if (!d_is_reg(dentry))
+>                 return false;
+>
+> --
+> 2.34.1
+>
 
