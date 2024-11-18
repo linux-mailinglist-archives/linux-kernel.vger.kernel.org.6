@@ -1,103 +1,123 @@
-Return-Path: <linux-kernel+bounces-412588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3F439D0B0D
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 09:40:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 075D29D0B1D
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 09:42:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 437A1B218F5
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 08:40:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF5BD2824B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 08:42:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 512FB16F0FE;
-	Mon, 18 Nov 2024 08:40:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E9FE1925A1;
+	Mon, 18 Nov 2024 08:41:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="bp8VGoSJ"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YmmbyvQT"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82DF042A8F;
-	Mon, 18 Nov 2024 08:40:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89EF2158DAC;
+	Mon, 18 Nov 2024 08:41:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731919215; cv=none; b=rux1+ETP+9tYUQkizc6zAQ1adLvTNFzl1wDAKFFdzvj7UNpZfxqhr3oiFkCLRM3HdzQBx+JTOOblpQM3iFHdH4x28lmvtNoVrFZkVuvm08t2RVHckB0BIfXzMTJLYr7InIiGedg2F+sH5jusNSDpEup/493NcKUd9Q0jZJTy7QY=
+	t=1731919279; cv=none; b=l5gw8ZiS0u/BsVKnzk122FffBpRwCAAO0nm16K6STKvaN7kvc307nZ2tGCbw95HwB3PDKRKSKrsoIJAvv9TiLuHZnheRUH2HJbNOV/qs7yvPBVUGa3dt/Tqkm8dUstnPniuYv3Cg3baGOfTzK39yInvt2hYwAOrx4EbYYmzXldw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731919215; c=relaxed/simple;
-	bh=9rhsOy1npArVRZxrM1QqowCPEAatyskkCkgVm55/upY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=hkE+q3oN+H67JVYsiWv4wgVZwZ6653AnXa5Xde47EUo+RkJwBXkBqQFoCyTEaal3ML0WJ16oaV8eMgUxdX3cSfIOWMDz8VqoF+DEvBX/cUPvOP6Gd1UO/WzPAantcqClgsoEniRi6s41rlvZLGHm3qAKC6BEFYN/0mfWfHgwfFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=bp8VGoSJ; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1731919205;
-	bh=oXzbC6jXxrWn16SQh2lFZBZLcRv91D6UOV0DV7aRiVQ=;
-	h=Date:From:To:Cc:Subject:From;
-	b=bp8VGoSJClY5xGuXVlEXEJY1thkvQ9+LjaBjs/li4aIHebKomTpOh8n4CK5SafOV4
-	 6ssTZ4ibO45BP6F9r/PjxYZ6WyFqSOUDqoAW63YCodxGiCx8JZTdZU1AkSwWunXdhw
-	 J09pj8Goy9GVZ4HswuM5g3v1GZoXhkgDh+5pRSFMner5F4q2+Gzzbp9VfeHXq2S8VN
-	 +4eg9yxff0jWbuGvdrUh5zIEXuLQ/4Z28fHC+NhKzDJ4/V3HGAmAssKgufTS9HklxU
-	 +aJBo24VHCDLSObChvBooC699B5PYVzK2RwFeltjbfHZ6CX6tTTGU52E2JgYgm6N8m
-	 EJTmIENI97tdw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XsLfX2w11z4xfp;
-	Mon, 18 Nov 2024 19:40:04 +1100 (AEDT)
-Date: Mon, 18 Nov 2024 19:40:06 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Greg KH <greg@kroah.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thinh Nguyen
- <Thinh.Nguyen@synopsys.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build warning after merge of the usb tree
-Message-ID: <20241118194006.77c7b126@canb.auug.org.au>
+	s=arc-20240116; t=1731919279; c=relaxed/simple;
+	bh=sx3fK/qBKEtjeLYINEtHCWONg70OjqjT5CjXRLOx/Gc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WPQf2kGkLP2hPn+/K/29UMsgTeu+4y7N6X1iuwa3ioXH9yIh/kkYZCRsh976HxQC2QtIn30O8oRtxCliarr7ie5X1SDVlA90YloEVQxQ7n0ZQnQHTpOhImHIshd7afhmS4yMxfN21QGaDC8fAIYgSMtNa6rGQDUkGepZEJu/Hpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=YmmbyvQT; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AI5SFmi020604;
+	Mon, 18 Nov 2024 08:41:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=D/ecP6hf5e7oCT4ilNkdMX
+	VyoZZdR+8QDoAbAQq9LPI=; b=YmmbyvQTNrcuj5UBT/24cwt+GWgA9Hcxq9j8CL
+	8LYlXqWJfurKzbo2bLKnwZYHIkZ4UVkNHlsq4NG1qJoppF8rxpz6Myl1/08hyARD
+	4Qij6UqYmEVpPbC/LW6bTe75cc7r5q6BOnTVTsKS3sqkI22cAQOzlRsT6chnBZyQ
+	JakToNqb5vMLKpmfylxfjrH4AAoxGzTI/qYXFPWCaOQkQrQ8wxmcLnHphmGGs08Z
+	yvHA5LtLOAwaA/1BYCtvkDYXZKw1+TBZZwsakvJcwUBLRysTrVfQhgVORNMTLvOl
+	9/mowZuTyZpGmX9pVgwBPpik7juyjv7Xx16iMXELJrq2+J8g==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42xkqs3yy3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 18 Nov 2024 08:41:13 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AI8evcZ022160
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 18 Nov 2024 08:40:57 GMT
+Received: from hu-ekangupt-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 18 Nov 2024 00:40:54 -0800
+From: Ekansh Gupta <quic_ekangupt@quicinc.com>
+To: <srinivas.kandagatla@linaro.org>, <linux-arm-msm@vger.kernel.org>
+CC: <gregkh@linuxfoundation.org>, <quic_bkumar@quicinc.com>,
+        <linux-kernel@vger.kernel.org>, <quic_chennak@quicinc.com>,
+        <dri-devel@lists.freedesktop.org>, <arnd@arndb.de>
+Subject: [PATCH v1 0/4] Add debugfs support for fastrpc driver
+Date: Mon, 18 Nov 2024 14:10:42 +0530
+Message-ID: <20241118084046.3201290-1-quic_ekangupt@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/2/dWTyU2eXJhLfsHGlSSx+f";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: dN2USy7Hd5NGGEyZDHp-TpsOEyhgnzVw
+X-Proofpoint-GUID: dN2USy7Hd5NGGEyZDHp-TpsOEyhgnzVw
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 bulkscore=0
+ clxscore=1015 malwarescore=0 spamscore=0 lowpriorityscore=0 adultscore=0
+ phishscore=0 priorityscore=1501 impostorscore=0 mlxlogscore=895
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411180071
 
---Sig_/2/dWTyU2eXJhLfsHGlSSx+f
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Following changes are getting added as part of this patch series:
+  - Move fastrpc driver to /misc/driver/ to enable maintainance of new
+    files to support additional features.
+  - Move macro and structure definitions to a new header file. These
+    date are consumed by features to be added in new files.
+  - Add support for debugfs for fastrpc driver. Most of the fastrpc
+    user and channel context information are getting capture as part of
+    patch.
 
-Hi all,
+Ekansh Gupta (4):
+  misc: fastrpc: Move fastrpc driver to misc/fastrpc/
+  misc: fastrpc: Rename fastrpc.c to fastrpc_main.c
+  misc: fastrpc: Introduce fastrpc_shared.h header
+  misc: fastrpc: Add debugfs support for fastrpc
 
-After merging the usb tree, today's linux-next build (htmldocs) produced
-this warning:
+ MAINTAINERS                                   |   2 +-
+ drivers/misc/Kconfig                          |  13 +-
+ drivers/misc/Makefile                         |   2 +-
+ drivers/misc/fastrpc/Kconfig                  |  16 ++
+ drivers/misc/fastrpc/Makefile                 |   4 +
+ drivers/misc/fastrpc/fastrpc_debug.c          | 156 ++++++++++++++++++
+ drivers/misc/fastrpc/fastrpc_debug.h          |  31 ++++
+ .../{fastrpc.c => fastrpc/fastrpc_main.c}     | 154 ++---------------
+ drivers/misc/fastrpc/fastrpc_shared.h         | 155 +++++++++++++++++
+ 9 files changed, 382 insertions(+), 151 deletions(-)
+ create mode 100644 drivers/misc/fastrpc/Kconfig
+ create mode 100644 drivers/misc/fastrpc/Makefile
+ create mode 100644 drivers/misc/fastrpc/fastrpc_debug.c
+ create mode 100644 drivers/misc/fastrpc/fastrpc_debug.h
+ rename drivers/misc/{fastrpc.c => fastrpc/fastrpc_main.c} (94%)
+ create mode 100644 drivers/misc/fastrpc/fastrpc_shared.h
 
-drivers/usb/dwc3/core.h:982: warning: Function parameter or struct member '=
-sg' not described in 'dwc3_request'
+-- 
+2.34.1
 
-Introduced by commit
-
-  61440628a4ff ("usb: dwc3: gadget: Cleanup SG handling")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/2/dWTyU2eXJhLfsHGlSSx+f
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmc6/WYACgkQAVBC80lX
-0Gyt3wgAnomssfmvgSLvP6Tf3Zxhzxuud/6idWaiTE8XYEMooO3zEmm+qH3nGNks
-olgvKE6M5r7p11RYVK99ZRAQtWHDSuy7RnR+iAViCeCJmJlLGceMR+M57OFQeRZr
-oFRCl9ddmYnyBL+qs8bVra3a2GTdC67DfmTjYl3C404yBeaHkDGM+/0WR3NPY1If
-n0GyEQQbK1y1t2S8G/wEDjk0wCU/6ca6slBvNHT81usM/QkIRtqAU7i8tFvY3MNQ
-Rn4S5m6YnOOk0OHq3+wtrZUkH25I59arU0W6mPZLkq/J8j2o31+v4ByVAv8GCgo3
-i4fAqTvD5qzjjoEb914sWZdp0LDzyw==
-=boDz
------END PGP SIGNATURE-----
-
---Sig_/2/dWTyU2eXJhLfsHGlSSx+f--
 
