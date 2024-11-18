@@ -1,109 +1,165 @@
-Return-Path: <linux-kernel+bounces-413509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6C0B9D1A06
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 22:03:14 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 879A79D1A14
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 22:06:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 604931F2238C
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 21:03:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A732B22B17
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 21:06:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C750C1E6DE0;
-	Mon, 18 Nov 2024 21:03:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BABC1E882A;
+	Mon, 18 Nov 2024 21:05:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="XUpg1C6P"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="FYyM8k8S"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0E791E102A;
-	Mon, 18 Nov 2024 21:03:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD12B1E631D
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 21:05:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731963785; cv=none; b=Edp9o9mIw14eoOws9PpnvgyfFQZArsHlCp7WgzzW5Nm04gNhypufPo5CIqFuPeV2fRGQQgRkcN7lYSH1LUAceaaPmogVQFYGt0tvTZtTr61WNnsLENoIk5Bgjc9PVayyEJpVJGi3P6cJ9RW0iDIFpoBSqi+BU4n0ZH5zkW9OOvc=
+	t=1731963933; cv=none; b=hoODBzzABd5jzsc7Cz9D9Aa0ApcHhojRQKE7ISi49rTHqPueo83wLdDcQMvSzEtdQjiONQJsiO9EXqDEdpjVMSzXHYGIKtoravXFSURCK2rSUqXUhyI5d1YwPuULmjWLzSSImhLg4u3hhq74Bf0ltCbJF8/9HTzNj6bmGwwZXQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731963785; c=relaxed/simple;
-	bh=NlBwZHGHPMGyDW7AEDK2z2JS8dvBsx9JXfIEwGotLck=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=GYw2eAUIr+PCauS+OtRbRBC+8lZ8wSknwRG/56ahVAH8E4/RG7kxIv3sjhfh6G+VDvzqVJIs5iUlKIgxWPh8NQXkif59qdjBjPGvGzMOPKHpJ23mwrE+EVHfygrk3A6BeUBGpUhRb5c0ZdThTxZaS+sQpjZyO3gpChI7zkykiq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=XUpg1C6P; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1731963777;
-	bh=S2m2ISQL/DLp88Wm59cUZgwGAj8kc1IQWeWRU2sVVww=;
+	s=arc-20240116; t=1731963933; c=relaxed/simple;
+	bh=blGWhtR6NF+x/0PawezFXFF9gzLHyA0/qJ5zJXb9UnQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=sKsp+LSagati+IpMFts2+6maCDlckUrZQ3Hhld+eTMX8rKUwVbyiigS9+looKj9156ktVtK9YEfC5MgMLjFkfeN1rs4rFgLPyhwHDPeynbsrfu2OJivmAeJ9geCS8SdcCVdRR2CXsD0TodKYXNCtVbEWtMXuDqMT2On0Shk+FhI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=FYyM8k8S; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 4D58440E0261;
+	Mon, 18 Nov 2024 21:05:23 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id NhHVV1MGu5is; Mon, 18 Nov 2024 21:05:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1731963918; bh=FEUECKS5LfLmJmfLtdQqFhCDBN/wXLX44MGyApGQMO8=;
 	h=Date:From:To:Cc:Subject:From;
-	b=XUpg1C6PMe3RkY3i0xFmBaJ2GJAJPlLUMXc5dT6z3P+HpZFvbpNKh2xDrCvXS112h
-	 bjYSOSZWMF4vzcY5yrYjScVJK25GBpHP3autbAVHt4hYnM1dOQ4o/8Dl4rGmSEo8Rf
-	 01hf1MCXnyEee+K6rgftzjrgIyGjT025GaMNdd+G/LXe/o7aTa40XdqwBIGjeaQ/D4
-	 6o4XkbLFhtbY0MlrjCuz3bj7PLSmMmmy5uXWSQLR2h41LHm6oFfEtoBu8jmwmY6vat
-	 82ZZ33gmrU6p8B30reKO7IJKi7I8fTmp93KnrTIgjOOW1PYy/osPmghHYvkdTKRqaj
-	 5sIRQkjFf8kIg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	b=FYyM8k8SEKd2SyF9/dTC2EQn2Llvg1eJgQABaqsyxOmZNJf6Ims0McmWUQwX50+7K
+	 vHZJEEGgFiEGHNrx8xGyK3OQYn2o3dS30iRYBttHokImBPgoSDsM2BAt+pNxua8/zg
+	 02HbcrpjmLRGi0MGop63PnYy7Xzq6dnstNxpzwmq4hORGlpqe9IlDDXpy6BWybMQLu
+	 uXk8g0F024zjM5tACl1MeL0mWrg46ATQ4MEVL/zFgAU5iOWmQVuc6ukxKnHRLoMtCM
+	 N8qDMXfUc4QTe2+Bl2nFFJdZKV3qYofEvmdKc+SSsvSV5fT+KEZRvMoWXG5MO8XtGB
+	 LGwapT2kGF2ivf+SM9L414vlDVAPMJDoGSjri/aKq3HQ7rmWROtn2JxGF6+bKMVbkL
+	 R4hU0dDwaPHk0GDV7Z2qbfN9P0xVL3Xt/8IOnd4gBc8Nbn6NVIt0QT0w9wJqse9CHZ
+	 VArHyLZl4luSzgh5ya02i+yCD58+pZ8ErmUsZM+mMwOgRvLUnTABdkSyUTi3LC7F2n
+	 Gzd8wHC007+Unwo8LSAEtklAlkVnkrJOfi7SQbwZCoQWgzpWP4P4qnY0kW/odcL1gR
+	 DkZvK1hUbB67YMvQKhOJZaU1gNt/EZ57RuUsEvS+WOAjUa0SDvywFSZUItbnhPYJJV
+	 QP2qlBx2PZzrnadlolBoDEwc=
+Received: from zn.tnic (pd9530b86.dip0.t-ipconnect.de [217.83.11.134])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Xsg7h6fB2z4xfX;
-	Tue, 19 Nov 2024 08:02:56 +1100 (AEDT)
-Date: Tue, 19 Nov 2024 08:02:59 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patches in the tip tree
-Message-ID: <20241119080259.2d77b558@canb.auug.org.au>
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id D978140E019C;
+	Mon, 18 Nov 2024 21:05:14 +0000 (UTC)
+Date: Mon, 18 Nov 2024 22:05:08 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] x86/cpu for v6.13
+Message-ID: <20241118210508.GAZzusBLFPq3Rqt50z@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/H.6msWpGgaWpz7s6CreEqS9";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
---Sig_/H.6msWpGgaWpz7s6CreEqS9
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Linus,
 
-Hi all,
+please pull the x86/cpu lineup for v6.13.
 
-The following commits are also in Linus Torvalds' tree as different
-commits (but the same patches):
+Thx.
 
-  96f9a366ec8a ("timekeeping: Add percpu counter for tracking floor swap ev=
-ents"
-  70c8fd00a9bd ("timekeeping: Add interfaces for handling timestamps with a=
- floor value")
+---
 
-These are commits
+The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758edc:
 
-  2a15385742c6 ("timekeeping: Add percpu counter for tracking floor swap ev=
-ents")
-  ee3283c608df ("timekeeping: Add interfaces for handling timestamps with a=
- floor value")
+  Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
 
-in Linus' tree.
+are available in the Git repository at:
 
---=20
-Cheers,
-Stephen Rothwell
+  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip tags/x86_cpu_for_v6.13
 
---Sig_/H.6msWpGgaWpz7s6CreEqS9
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+for you to fetch changes up to f74642d81c24d9e69745cd0b75e1bddc81827606:
 
------BEGIN PGP SIGNATURE-----
+  x86/cpu: Remove redundant CONFIG_NUMA guard around numa_add_cpu() (2024-11-12 11:00:50 +0100)
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmc7q4MACgkQAVBC80lX
-0Gz91Af8DFwqomYNK5Z+PlP6zDNbDQXwNE+suYV89BHfiwbcMoTe5YZtyS9/R7df
-Amkc3p/G97hzKvCkIFeegmzGfBWXDA2nnpUPW7XiTX6UT7j86ebz/qJBA+meHXB7
-u4OiR7jp7d4xw9U8B20MxfFFhYw9QZwhfg+J5d4zTulFR72m9ZMflcztQQ1UDmL0
-ogyJQZyh66TK+2TM4hlKHxOl2gCZSX1HHo+vQ6lsxlUbnnbVVinqvK9iqI10PPpR
-GRb9WyrrjDB9WsMv2TBNc1B4lce+WCVXo00P5mI2SJ3yiTQl4Xttc+gPCkObuqQ/
-f5qmEPiTqLCDJb3X1FPOlgwJdJ5IHw==
-=6hgl
------END PGP SIGNATURE-----
+----------------------------------------------------------------
+- Add a feature flag which denotes AMD CPUs supporting workload classification
+  with the purpose of using such hints when making scheduling decisions
 
---Sig_/H.6msWpGgaWpz7s6CreEqS9--
+- Determine the boost enumerator for each AMD core based on its type: efficiency
+  or performance, in the cppc driver
+
+- Add the type of a CPU to the topology CPU descriptor with the goal of
+  supporting and making decisions based on the type of the respective core
+
+- Add a feature flag to denote AMD cores which have heterogeneous topology and
+  enable SD_ASYM_PACKING for those
+
+- Check microcode revisions before disabling PCID on Intel
+
+- Cleanups and fixlets
+
+----------------------------------------------------------------
+Borislav Petkov (AMD) (1):
+      x86/cpu: Fix formatting of cpuid_bits[] in scattered.c
+
+Mario Limonciello (2):
+      x86/cpufeatures: Rename X86_FEATURE_FAST_CPPC to have AMD prefix
+      x86/amd: Use heterogeneous core topology for identifying boost numerator
+
+Pawan Gupta (1):
+      x86/cpu: Add CPU type to struct cpuinfo_topology
+
+Perry Yuan (3):
+      x86/cpufeatures: Add X86_FEATURE_AMD_HETEROGENEOUS_CORES
+      x86/cpu: Enable SD_ASYM_PACKING for PKG domain on AMD
+      x86/cpufeatures: Add X86_FEATURE_AMD_WORKLOAD_CLASS feature bit
+
+Shivank Garg (1):
+      x86/cpu: Remove redundant CONFIG_NUMA guard around numa_add_cpu()
+
+Tony Luck (1):
+      x86/cpu: Fix FAM5_QUARK_X1000 to use X86_MATCH_VFM()
+
+Xi Ruoyao (1):
+      x86/mm: Don't disable PCID when INVLPG has been fixed by microcode
+
+ arch/x86/include/asm/cpufeatures.h              |  4 +-
+ arch/x86/include/asm/intel-family.h             |  7 +++-
+ arch/x86/include/asm/processor.h                | 18 ++++++++
+ arch/x86/include/asm/topology.h                 |  9 ++++
+ arch/x86/kernel/acpi/cppc.c                     | 23 ++++++++++
+ arch/x86/kernel/cpu/common.c                    |  2 -
+ arch/x86/kernel/cpu/debugfs.c                   |  1 +
+ arch/x86/kernel/cpu/scattered.c                 | 56 +++++++++++++------------
+ arch/x86/kernel/cpu/topology_amd.c              |  3 ++
+ arch/x86/kernel/cpu/topology_common.c           | 34 +++++++++++++++
+ arch/x86/kernel/smpboot.c                       |  5 ++-
+ arch/x86/mm/init.c                              | 23 ++++++----
+ arch/x86/platform/efi/quirks.c                  |  3 +-
+ arch/x86/platform/intel-quark/imr.c             |  2 +-
+ arch/x86/platform/intel-quark/imr_selftest.c    |  2 +-
+ drivers/cpufreq/amd-pstate.c                    |  2 +-
+ drivers/thermal/intel/intel_quark_dts_thermal.c |  2 +-
+ tools/arch/x86/include/asm/cpufeatures.h        |  2 +-
+ 18 files changed, 149 insertions(+), 49 deletions(-)
+
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
