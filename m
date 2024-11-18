@@ -1,138 +1,183 @@
-Return-Path: <linux-kernel+bounces-412702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 812609D0E02
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:13:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 768D09D0DFD
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:12:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E11E1F21226
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 10:13:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 367502833DA
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 10:12:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92FE1198826;
-	Mon, 18 Nov 2024 10:12:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4C661946CD;
+	Mon, 18 Nov 2024 10:12:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FbZhR4WY"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b="hDPSgR28"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A4D1194C6F;
-	Mon, 18 Nov 2024 10:12:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6967193071;
+	Mon, 18 Nov 2024 10:11:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731924726; cv=none; b=l996AAettv+sInuG74O1YzEdV6Zxg0C8QiAq5ZSYRfr5xdSHrdqgppHr9206QxNhIddSJWFNdQjXioWG9e3c2HatLnHofuZRedNwDGxOPZOSXwLrAAr3uHCgicF9zWor+SLiCfJQo9ogHGfi3he6IWLmOTlhp+f7OTcxonwxwdQ=
+	t=1731924721; cv=none; b=jHr8wUSU+Zn5yaLH2kKERXuneou+8qGeRorY/z8FDFaHOMRDLIfOtZNQB/uGEeobySSGtp/PR2ppCur6PiBgo5qpXOiaDoYkyOz0o739ZYvKuSV1ZAtuCkc4tcwxDx9moFN4sVelBDf+NrLH/m4ZuyxPWRV7KLm7szuP85lqduk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731924726; c=relaxed/simple;
-	bh=tvZh19UrT7RhLG31esa3Q+Wb623PF1oP3Z3DIP8DHuU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Uz3MbpbmJEaAhydc+G2BMwcWoJPsA0wzuK9ubAjF8lWF7yeHb+LGwoRa+wCQVGSBstKKZBVlOFzzMid/LhMrnz8eGzZSyD52dhCjDYISr+opi+sROcJwPV6XP31EljgXmaJdYGtyrbg6TLtUtrKXNjr7pS81ZY2OpwhTApJMSHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FbZhR4WY; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731924726; x=1763460726;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=tvZh19UrT7RhLG31esa3Q+Wb623PF1oP3Z3DIP8DHuU=;
-  b=FbZhR4WYmb6BRRIbUciN7k3vn5BVeUVu5jIKVFyAhtt39SYujaptTVGl
-   cJXEuKJE2n4x3BkzVsmAby3w1e3DzKPqn3Cf9Rjl5bHS8mNWkzolPk8lf
-   arULmNOIChx8gO1hx744ziuZiyK6o/SfABU+FnOA1YGbITAgGTjnTFmdT
-   TXKvLv7knRvFdJXag4tHxtFLQ0YwgTnWcDnG5Y5fbGbWCZxBZe/5pNCR9
-   /Y2VSwNbjCt/4tYlL4zIzIihMu0NA40bje0HJVM9pH2/xFYEgJPZQG2oF
-   m0zsgqCS+j2aSOuoLks6zKeES+anChyCvvSGvzuFNiAnZ2tmXSy/M9G6z
-   Q==;
-X-CSE-ConnectionGUID: r9oZE2MdTEmlIez4SUoi8w==
-X-CSE-MsgGUID: j85yFea8TqKFeyQWpMvq2w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11259"; a="31723849"
-X-IronPort-AV: E=Sophos;i="6.12,163,1728975600"; 
-   d="scan'208";a="31723849"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2024 02:12:05 -0800
-X-CSE-ConnectionGUID: YDbs2x0ITtmplL0jZe8pGw==
-X-CSE-MsgGUID: U7Vin29dRNK1mgt6lMVUiw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,163,1728975600"; 
-   d="scan'208";a="89100237"
-Received: from jkrzyszt-mobl2.ger.corp.intel.com (HELO localhost) ([10.245.246.148])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2024 02:11:40 -0800
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Rodrigo Vivi
- <rodrigo.vivi@intel.com>, Joonas Lahtinen
- <joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Karol
- Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>, Danilo
- Krummrich <dakr@redhat.com>, Harry Wentland <harry.wentland@amd.com>, Leo
- Li <sunpeng.li@amd.com>, Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, Alex
- Deucher <alexander.deucher@amd.com>, Christian =?utf-8?Q?K=C3=B6nig?=
- <christian.koenig@amd.com>, Xinhui Pan <Xinhui.Pan@amd.com>, Alain Volmat
- <alain.volmat@foss.st.com>, Raphael Gallais-Pou <rgallaispou@gmail.com>,
- Liviu Dudau <liviu.dudau@arm.com>, Andrzej Hajda
- <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>,
- Robert Foss <rfoss@kernel.org>, Laurent Pinchart
- <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>,
- Jernej Skrabec <jernej.skrabec@gmail.com>, Peter Senna Tschudin
- <peter.senna@gmail.com>, Ian Ray <ian.ray@ge.com>, Martyn Welch
- <martyn.welch@collabora.co.uk>, Inki Dae <inki.dae@samsung.com>, Seung-Woo
- Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>,
- Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
- <alim.akhtar@samsung.com>, Stefan Agner <stefan@agner.ch>, Alison Wang
- <alison.wang@nxp.com>, Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
- Philipp Zabel <p.zabel@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team
- <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Rob Clark
- <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean
- Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>,
- Dave Airlie <airlied@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>, Sandy
- Huang <hjc@rock-chips.com>, Heiko =?utf-8?Q?St=C3=BCbner?=
- <heiko@sntech.de>, Andy Yan
- <andy.yan@rock-chips.com>, Chen-Yu Tsai <wens@csie.org>, Samuel Holland
- <samuel@sholland.org>, Thierry Reding <thierry.reding@gmail.com>, Mikko
- Perttunen <mperttunen@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>,
- Dave Stevenson <dave.stevenson@raspberrypi.com>, =?utf-8?Q?Ma=C3=ADra?=
- Canal
- <mcanal@igalia.com>, Raspberry Pi Kernel Maintenance
- <kernel-list@raspberrypi.com>, Gurchetan Singh
- <gurchetansingh@chromium.org>, Chia-I Wu <olvaffe@gmail.com>, Zack Rusin
- <zack.rusin@broadcom.com>, Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>
-Cc: intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- nouveau@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-msm@vger.kernel.org,
- freedreno@lists.freedesktop.org, virtualization@lists.linux.dev,
- spice-devel@lists.freedesktop.org, linux-rockchip@lists.infradead.org,
- linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 5/5] drm/connector: make mode_valid accept const struct
- drm_display_mode
-In-Reply-To: <20241115-drm-connector-mode-valid-const-v1-5-b1b523156f71@linaro.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20241115-drm-connector-mode-valid-const-v1-0-b1b523156f71@linaro.org>
- <20241115-drm-connector-mode-valid-const-v1-5-b1b523156f71@linaro.org>
-Date: Mon, 18 Nov 2024 12:11:37 +0200
-Message-ID: <87jzd04zs6.fsf@intel.com>
+	s=arc-20240116; t=1731924721; c=relaxed/simple;
+	bh=U8nw4h3WxjfIRfM1kXzgmn15xmJ6v3U/YsCQKiWW/Es=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=rPo+cpRD2y6n4kJwUVO2A2RYdkclI2iHIQwjcumx9jPfxix5EF5bIgZaHdQPxAbpNePJ4G8fIYBxQpUuuXxwmIzvJHGNF6PT7C4lgkpUHUzfZH8pzekM2xXSx6TDryJhzJkr6HE1qfUuzFLanZ7MZru5EeotKRGP4PyuCUCr/ow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org; spf=none smtp.mailfrom=yoseli.org; dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b=hDPSgR28; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=yoseli.org
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 969E31C0006;
+	Mon, 18 Nov 2024 10:11:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yoseli.org; s=gm1;
+	t=1731924710;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RufrWCtbGANzxJBJmt6VNTP2weS/VbTSAKxO/0eHr1c=;
+	b=hDPSgR28mEPNZXrlklYcO4wnOBbV11x6GnWy5ZUpqHm2Zb8RtRW7sSqIRDNxK32GNaPAxr
+	8R1BJ7S4X1Xdo/53+NAL5NuiWmq4v9hIsau96uwP6pjhwPAp9mEwhsUHkhU97eqtc0L7Lo
+	7C24lVSqFtdlOziOsk4MYBw1meeyQYevNI1Zw3dKNiA58Tn4v8Bl9NK4nH9X6cIfQ4unuY
+	y5buvDrPSYQaKDLkDS8AHnMKEL7lFqg3qrlCpcha9NnUhU4P25DeYgwDJU65hjo5BN+Jkm
+	Qu5jiBepDHVjWuNUxljzfO1BcVpMWXnB5BzhXzRLOl/IPuL2yiEmpOr1T128iA==
+Message-ID: <2c43288a-517d-4220-ad31-f84dda8c1805@yoseli.org>
+Date: Mon, 18 Nov 2024 11:11:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+From: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
+Subject: Re: [PATCH RFC 0/2] Add basic tracing support for m68k
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, Geert Uytterhoeven
+ <geert@linux-m68k.org>, Greg Ungerer <gerg@linux-m68k.org>
+References: <20241021-add-m68k-tracing-support-v1-0-0883d704525b@yoseli.org>
+ <3a8f6faa-62c6-4d32-b544-3fb7c00730d7@yoseli.org>
+ <20241115102554.29232d34@gandalf.local.home>
+ <cbb67ee2-8b37-4a4d-b542-f89ddae90e94@yoseli.org>
+ <20241115145502.631c9a2c@gandalf.local.home>
+Content-Language: en-US
+In-Reply-To: <20241115145502.631c9a2c@gandalf.local.home>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: jeanmichel.hautbois@yoseli.org
 
-On Fri, 15 Nov 2024, Dmitry Baryshkov <dmitry.baryshkov@linaro.org> wrote:
-> The mode_valid() callbacks of drm_encoder, drm_crtc and drm_bridge
-> accept const struct drm_display_mode argument. Change the mode_valid
-> callback of drm_connector to also accept const argument.
->
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Hi Steve,
 
-Acked-by: Jani Nikula <jani.nikula@intel.com>
+On 15/11/2024 20:55, Steven Rostedt wrote:
+> On Fri, 15 Nov 2024 16:33:06 +0100
+> Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org> wrote:
+> 
+>> Hi Steve,
+>>
+>> On 15/11/2024 16:25, Steven Rostedt wrote:
+>>> On Fri, 15 Nov 2024 09:26:07 +0100
+>>> Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org> wrote:
+>>>    
+>>>> Nevertheless it sounds like a really high latency for wake_up().
+>>>>
+>>>> I have a custom driver which basically gets an IRQ, and calls wake_up on
+>>>> a read() call. This wake_up() on a high cpu usage can be more than 1ms !
+>>>> Even with a fifo/99 priority for my kernel thread !
+>>>>
+>>>> I don't know if it rings any bell ?
+>>>> I can obviously do more tests if it can help getting down to the issue :-).
+>>>
+>>> Try running timerlat.
+>>
+>> Thanks !
+>> Here is what I get:
+>> # echo timerlat > current_tracer
+>> # echo 1 > events/osnoise/enable
+>> # echo 25 > osnoise/stop_tracing_total_us
+>> # tail -10 trace
+>>               bash-224     [000] d.h..   153.268917: #77645 context  irq timer_latency     45056 ns
+>>               bash-224     [000] dnh..   153.268987: irq_noise: timer:206  start 153.268879083 duration 93957 ns
+>>               bash-224     [000] d....   153.269056: thread_noise:  bash:224 start 153.268905324 duration 71045 ns
+>>         timerlat/0-271     [000] .....   153.269103: #77645 context thread timer_latency    230656 ns
+>>               bash-224     [000] d.h..   153.269735: irq_noise: timer:206 start 153.269613847 duration 103558 ns
+>>               bash-224     [000] d.h..   153.269911: #77646 context irq timer_latency     40640 ns
+>>               bash-224     [000] dnh..   153.269982: irq_noise: timer:206 start 153.269875367 duration 93190 ns
+>>               bash-224     [000] d....   153.270053: thread_noise: bash:224 start 153.269900969 duration 72709 ns
+>>         timerlat/0-271     [000] .....   153.270100: #77646 context thread timer_latency    227008 ns
+>>         timerlat/0-271     [000] .....   153.270155: timerlat_main: stop tracing hit on cpu 0
+>>
+>> It looks awful, right ?
+> 
+> awful is relative ;-) If that was on x86, I would say it was bad.
+> 
+> Also check out rtla (in tools/trace/rtla).
 
+Thanks ! I knew it only by name, so I watched a presentation recorded 
+during OSS summit given by Daniel Bristot de Oliveira who wrote it and 
+it is really impressive !
 
--- 
-Jani Nikula, Intel
+I had to modify the source code a bit, as it does not compile with my 
+uclibc toolchain:
+diff --git a/tools/tracing/rtla/Makefile.rtla 
+b/tools/tracing/rtla/Makefile.rtla
+index cc1d6b615475..b22016a88d09 100644
+--- a/tools/tracing/rtla/Makefile.rtla
++++ b/tools/tracing/rtla/Makefile.rtla
+@@ -15,7 +15,7 @@ $(call allow-override,LD_SO_CONF_PATH,/etc/ld.so.conf.d/)
+  $(call allow-override,LDCONFIG,ldconfig)
+  export CC AR STRIP PKG_CONFIG LD_SO_CONF_PATH LDCONFIG
+
+-FOPTS          := -flto=auto -ffat-lto-objects -fexceptions 
+-fstack-protector-strong   \
++FOPTS          := -flto=auto -ffat-lto-objects -fexceptions \
+                 -fasynchronous-unwind-tables -fstack-clash-protection
+  WOPTS          := -O -Wall -Werror=format-security 
+-Wp,-D_FORTIFY_SOURCE=2             \
+                 -Wp,-D_GLIBCXX_ASSERTIONS -Wno-maybe-uninitialized
+diff --git a/tools/tracing/rtla/src/timerlat_u.c 
+b/tools/tracing/rtla/src/timerlat_u.c
+index 01dbf9a6b5a5..92ad2388b123 100644
+--- a/tools/tracing/rtla/src/timerlat_u.c
++++ b/tools/tracing/rtla/src/timerlat_u.c
+@@ -15,10 +15,16 @@
+  #include <pthread.h>
+  #include <sys/wait.h>
+  #include <sys/prctl.h>
++#include <sys/syscall.h>
+
+  #include "utils.h"
+  #include "timerlat_u.h"
+
++static inline pid_t gettid(void)
++{
++       return syscall(SYS_gettid);
++}
++
+  /*
+   * This is the user-space main for the tool timerlatu/ threads.
+   *
+diff --git a/tools/tracing/rtla/src/utils.c b/tools/tracing/rtla/src/utils.c
+index 9ac71a66840c..b754dc1016a4 100644
+--- a/tools/tracing/rtla/src/utils.c
++++ b/tools/tracing/rtla/src/utils.c
+@@ -229,6 +229,9 @@ long parse_ns_duration(char *val)
+  #elif __s390x__
+  # define __NR_sched_setattr    345
+  # define __NR_sched_getattr    346
++#elif __m68k__
++# define __NR_sched_setattr    349
++# define __NR_sched_getattr    350
+  #endif
+
+  #define SCHED_DEADLINE         6
+
+But it is not enough, as executing rtla fails with a segfault.
+I can dump a core, but I could not manage to build gdb for my board so I 
+can't debug it (I don't know how to debug a coredump without gdb !).
+
+JM
 
