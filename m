@@ -1,190 +1,125 @@
-Return-Path: <linux-kernel+bounces-413557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3023F9D1AF0
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 23:12:05 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DDFC9D10D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 13:43:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 84A57B21110
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 22:12:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 307A4B26BE0
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 12:43:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49E391E7655;
-	Mon, 18 Nov 2024 22:11:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86A0619ABB6;
+	Mon, 18 Nov 2024 12:42:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maxima.ru header.i=@maxima.ru header.b="mhiL004E"
-Received: from ksmg02.maxima.ru (ksmg02.maxima.ru [81.200.124.39])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IYawFjZ2"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B2A41925A2
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 22:11:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.200.124.39
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 278D3199EAF
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 12:42:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731967914; cv=none; b=OWOnkuiYEJbgGN5oczm3CZqjzxTERQpaufLPLbo+OKMdYUKFcruhZEAmtNX/8dpvs9Hdafan+7+eE3ysipCV/tF23FTi58UsWk//+u+wSsNJdCylxCfoQUOFMDiBdRB+9eyZLflvF1edfy8BopHVRcc1mxcc8GSiZ0qbcgW9WQo=
+	t=1731933764; cv=none; b=gu6n3mYyBCcT5LgfuSkwXhlRHCh2ZRhFc3dY1czEaFijdT1kThgbIcBsXlvqIpcITTsya6ZvSTkE5ruD3RK5Yq/pGfrwAji1WI8bMvbS5bxS05Pybq7yYkt8lWRS1DP8FL010qRmNdeWJorpQj5AjTaJ5weqCLGeduuBIvnxei0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731967914; c=relaxed/simple;
-	bh=ViWUTm5YLllJxtuiwR7b6gWuZ4LAmdj22suzOl11QZ4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=l9pFpOJ0cIR/q0ugzugGnN2PqXdJHI6bTBOIu588T/GO0VCAXy18h09pO8uEdhwID1Okd+IYSDoAuyHNRQCTFwy/XWGicCGFnTM1pNtugUiEtxRV0qFzIisnt14pNzV2DIJXeg0QcTUlXYVIPWMcQo4yVZZtLN7dT5yeIGufuyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maxima.ru; spf=pass smtp.mailfrom=maxima.ru; dkim=pass (2048-bit key) header.d=maxima.ru header.i=@maxima.ru header.b=mhiL004E; arc=none smtp.client-ip=81.200.124.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maxima.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maxima.ru
-Received: from ksmg02.maxima.ru (localhost [127.0.0.1])
-	by ksmg02.maxima.ru (Postfix) with ESMTP id F0D291E0008;
-	Mon, 18 Nov 2024 15:42:52 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 ksmg02.maxima.ru F0D291E0008
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maxima.ru; s=sl;
-	t=1731933772; bh=j5rebjL+mlIZO9+tBTCrAr7sdKNYnS0zH0ITX1r28zg=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=mhiL004EOfb/i23Uf6HPyZDhiOCRKbSfR6joCbYcyhowapXjRPx28SuF3zMUnDbzv
-	 slWm0rkEpB4ioYV4QWDHJO743PGz/MOvO6Dv31alMkuMrb6yz4Z8MtwDUfS0XjEbsI
-	 ymiKTZY5zXGKHTAaF2a13i/Y7iqW21nWllh5H6sfWCHif5iB8uVMl9pdxHg1LZ3jvk
-	 f6L/QO1ic3ml+VZzJpkAt6YkyYPR2gP3yqq+Ui1J+GmNHBteETeuWMdftOdGbkml/E
-	 INVFGEjMj9tb22js5+ETDZOecqeoCtJWqALqaVAzuznMzWYO1TvAt5PirZtAHtx8dv
-	 EDSBeGfsjH6pw==
-Received: from ksmg02.maxima.ru (mail.maxima.ru [81.200.124.62])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(Client CN "*.maxima.ru", Issuer "GlobalSign GCC R3 DV TLS CA 2020" (verified OK))
-	by ksmg02.maxima.ru (Postfix) with ESMTPS;
-	Mon, 18 Nov 2024 15:42:52 +0300 (MSK)
-Received: from GS-NOTE-190.mt.ru (10.0.246.216) by mmail-p-exch02.mt.ru
- (81.200.124.62) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1544.4; Mon, 18 Nov
- 2024 15:42:49 +0300
-From: Murad Masimov <m.masimov@maxima.ru>
-To: Kenneth Feng <kenneth.feng@amd.com>
-CC: Murad Masimov <m.masimov@maxima.ru>, Alex Deucher
-	<alexander.deucher@amd.com>, =?UTF-8?q?Christian=20K=C3=B6nig?=
-	<christian.koenig@amd.com>, Xinhui Pan <Xinhui.Pan@amd.com>, David Airlie
-	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Ma Jun
-	<Jun.Ma2@amd.com>, Lijo Lazar <lijo.lazar@amd.com>, Yang Wang
-	<kevinyang.wang@amd.com>, Asad Kamal <asad.kamal@amd.com>, Hawking Zhang
-	<Hawking.Zhang@amd.com>, Srinivasan Shanmugam <srinivasan.shanmugam@amd.com>,
-	Tim Huang <Tim.Huang@amd.com>, Tao Zhou <tao.zhou1@amd.com>, Mario
- Limonciello <mario.limonciello@amd.com>, Jesse Zhang <jesse.zhang@amd.com>,
-	Evan Quan <quanliangl@hotmail.com>, Kevin Wang <kevin1.wang@amd.com>,
-	<amd-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
-	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>
-Subject: [PATCH] drm/amd/pm: prevent invalid fan speed value in smu13 driver
-Date: Mon, 18 Nov 2024 15:42:17 +0300
-Message-ID: <20241118124220.274-1-m.masimov@maxima.ru>
-X-Mailer: git-send-email 2.46.0.windows.1
+	s=arc-20240116; t=1731933764; c=relaxed/simple;
+	bh=FCpTZ+OXty+6I/LwhoSAfoMCBQPfYWa97QmGJQZD/Es=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ftW11elgYSiAeDTeFzwcQXRi9aU80GaPQNtIcsaYnQdBjXJUVT/ZWqUu0YnTlpGjJDufaMwMNgeRb2Siv3CbsMFfoA/wdILElmy9j6b11d6/AtH3ziRIBT7p5pkRG8QUj0W2cVMCauRoQ7pdcXft5Y/nZkk3fq++P1LU58pThnM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IYawFjZ2; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731933762;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=T7Sl+0ry/66y5Ln6cucWmrZ7ZUf6a8KZ/clf2OlUzn8=;
+	b=IYawFjZ20nZt0S5Ddm0CE5sdrL58EKOPoM2NuebnKQdrUNWL5ueCFiMSFo7hXaq6oivQQr
+	INnRSHwWt/tNRJPrgnlU+Twd7n2oknRyxVtKVPvfrQRxPdu8c4CrWCfh1WfSPT6pncvGf1
+	6zVo1EZJDqIgKYMuEEW+xxo1PTg9f9I=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-13-aLrUsOXhPjCveX0KPSE-5Q-1; Mon, 18 Nov 2024 07:42:40 -0500
+X-MC-Unique: aLrUsOXhPjCveX0KPSE-5Q-1
+X-Mimecast-MFC-AGG-ID: aLrUsOXhPjCveX0KPSE-5Q
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-382428c257eso615268f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 04:42:40 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731933759; x=1732538559;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=T7Sl+0ry/66y5Ln6cucWmrZ7ZUf6a8KZ/clf2OlUzn8=;
+        b=bLdfyw9+Eqtfh5U3EsYoc+4/UJzMyPyA7v6RbZFwI7p9Hnw9m0Xf/3GIozd361w4Hp
+         gcfSPKwQfGv0S3SV07LRJLlHQCgMHvPVcbpwA9iq0Ju5feAgjX1SUUoKpSB4H2JkzC5m
+         lwEBGgA1JvgmeM5xEjH0vNU9dFF71eTuw+vzuhRrG0aoAxpOtxMffckHz6tz2Q1CIYeH
+         S8BDl0I5lS2IIOL6eHQyDs2WZ4CyeiQDya3hlYtIoLCfzaoBIQIYZJjXs+IXENGCa1yr
+         3/MopM8Q6SnxfP3kP4LdbbeDbkUq83oYAlF1sm4FmnlJtF1iGYnDwkrt+A3jy7i2lGoE
+         qjRQ==
+X-Gm-Message-State: AOJu0Yxh1mUOVGPnzrmZsvz4a3FM8CgB604LijV339/+g9ivnFawEWuS
+	nXqgajWJ3PYd4WSaKA9ih59XfLqJHbjj9i5DZljWJalqZThxfgKa5DURRbFnU9GMCiUk+I1EICs
+	pwPyx4I313ItWlwoK1/pyZT6p5Pkt4anAzBlcRmGZOSejj3AJTfTm4cJ6v4zmamMDgEpAwDD26U
+	IA5TKvlY/f57jdGrCW/KDoHZr8gZbsTT+EBj9z
+X-Received: by 2002:a5d:5888:0:b0:382:4a69:ae11 with SMTP id ffacd0b85a97d-3824a69b1aamr1300427f8f.42.1731933759338;
+        Mon, 18 Nov 2024 04:42:39 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IG1eUySvRKvHgaDBZuHDcttwQpLs5scn4ecD2wAoOE+UAhHhEQ3Kutp85qvyoc832LHDNr+gBR8RNIX+d3RGu0=
+X-Received: by 2002:a5d:5888:0:b0:382:4a69:ae11 with SMTP id
+ ffacd0b85a97d-3824a69b1aamr1300414f8f.42.1731933759009; Mon, 18 Nov 2024
+ 04:42:39 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: mt-exch-01.mt.ru (91.220.120.210) To mmail-p-exch02.mt.ru
- (81.200.124.62)
-X-KSMG-Rule-ID: 7
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 189241 [Nov 18 2024]
-X-KSMG-AntiSpam-Version: 6.1.1.7
-X-KSMG-AntiSpam-Envelope-From: m.masimov@maxima.ru
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dmarc=none header.from=maxima.ru;spf=none smtp.mailfrom=maxima.ru;dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 41 0.3.41 623e98d5198769c015c72f45fabbb9f77bdb702b, {rep_avail}, {Tracking_from_domain_doesnt_match_to}, 127.0.0.199:7.1.2;maxima.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;ksmg02.maxima.ru:7.1.1;81.200.124.62:7.1.2, FromAlignment: s, ApMailHostAddress: 81.200.124.62
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean
-X-KSMG-LinksScanning: Clean
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/11/18 10:31:00 #26875800
-X-KSMG-AntiVirus-Status: Clean, skipped
+References: <20241108130737.126567-1-pbonzini@redhat.com> <rl5s5eykuzs4dgp23vpbagb4lntyl3uptwh54jzjjgfydynqvx@6xbbcjvb7zpn>
+In-Reply-To: <rl5s5eykuzs4dgp23vpbagb4lntyl3uptwh54jzjjgfydynqvx@6xbbcjvb7zpn>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Date: Mon, 18 Nov 2024 13:42:27 +0100
+Message-ID: <CABgObfbUzKswAjPuq_+KL9jyQegXgjSRQmc6uSm1cAXifNo_Xw@mail.gmail.com>
+Subject: Re: [PATCH] KVM: x86: switch hugepage recovery thread to vhost_task
+To: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+	michael.christie@oracle.com, Tejun Heo <tj@kernel.org>, 
+	Luca Boccassi <bluca@debian.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-If user-provided fan speed is higher than max speed, ->set_fan_speed_rpm() won't
-return error code, which can lead not only to problems with the hardware, but
-also to a zero division in smu_v13_0_set_fan_speed_rpm, since (8 * speed), which
-is used as a divisor, can evaluate to zero because of an integer overflow.
+On Fri, Nov 15, 2024 at 5:59=E2=80=AFPM Michal Koutn=C3=BD <mkoutny@suse.co=
+m> wrote:
+>
+> On Fri, Nov 08, 2024 at 08:07:37AM GMT, Paolo Bonzini <pbonzini@redhat.co=
+m> wrote:
+> > Since the worker kthread is tied to a user process, it's better if
+> > it behaves similarly to user tasks as much as possible, including
+> > being able to send SIGSTOP and SIGCONT.
+>
+> Do you mean s/send/receive/?
 
-Define ->get_fan_parameters() callbacks for smu_v13_0_0 and smu_v13_0_7 in order
-to have smu->fan_max_rpm variable initialized. Modify ->set_fan_speed_rpm()
-callback to fail if speed is higher than smu->fan_max_rpm.
+I mean being able to send it to the threads with an effect.
 
-Fixes: c05d1c401572 ("drm/amd/swsmu: add aldebaran smu13 ip support (v3)")
-Signed-off-by: Murad Masimov <m.masimov@maxima.ru>
----
- drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0.c       |  2 +-
- drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_0_ppt.c | 11 +++++++++++
- drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_7_ppt.c | 11 +++++++++++
- 3 files changed, 23 insertions(+), 1 deletion(-)
+> Consequently, it's OK if a (possibly unprivileged) user stops this
+> thread forever (they only harm themselves, not the rest of the system),
+> correct?
 
-diff --git a/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0.c b/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0.c
-index e17466cc1952..6f3277639fe9 100644
---- a/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0.c
-+++ b/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0.c
-@@ -1228,7 +1228,7 @@ int smu_v13_0_set_fan_speed_rpm(struct smu_context *smu,
- 	uint32_t tach_period;
- 	int ret;
+Yes, they will run with fewer huge pages and worse TLB performance.
 
--	if (!speed)
-+	if (!speed || speed > smu->fan_max_rpm)
- 		return -EINVAL;
+Paolo
 
- 	ret = smu_v13_0_auto_fan_control(smu, 0);
-diff --git a/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_0_ppt.c b/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_0_ppt.c
-index d53e162dcd8d..44844cddb3bf 100644
---- a/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_0_ppt.c
-+++ b/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_0_ppt.c
-@@ -947,6 +947,16 @@ static int smu_v13_0_0_get_dpm_ultimate_freq(struct smu_context *smu,
- 	return 0;
- }
-
-+static int smu_v13_0_0_get_fan_parameters(struct smu_context *smu)
-+{
-+	struct smu_table_context *table_context = &smu->smu_table;
-+	PPTable_t *smc_pptable = table_context->driver_pptable;
-+
-+	smu->fan_max_rpm = smc_pptable->SkuTable.FanMaximumRpm;
-+
-+	return 0;
-+}
-+
- static int smu_v13_0_0_read_sensor(struct smu_context *smu,
- 				   enum amd_pp_sensors sensor,
- 				   void *data,
-@@ -3045,6 +3055,7 @@ static const struct pptable_funcs smu_v13_0_0_ppt_funcs = {
- 	.get_dpm_ultimate_freq = smu_v13_0_0_get_dpm_ultimate_freq,
- 	.get_vbios_bootup_values = smu_v13_0_get_vbios_bootup_values,
- 	.read_sensor = smu_v13_0_0_read_sensor,
-+	.get_fan_parameters = smu_v13_0_0_get_fan_parameters,
- 	.feature_is_enabled = smu_cmn_feature_is_enabled,
- 	.print_clk_levels = smu_v13_0_0_print_clk_levels,
- 	.force_clk_levels = smu_v13_0_0_force_clk_levels,
-diff --git a/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_7_ppt.c b/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_7_ppt.c
-index b891a5e0a396..b305bce1bccc 100644
---- a/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_7_ppt.c
-+++ b/drivers/gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_7_ppt.c
-@@ -936,6 +936,16 @@ static int smu_v13_0_7_get_dpm_ultimate_freq(struct smu_context *smu,
- 	return 0;
- }
-
-+static int smu_v13_0_7_get_fan_parameters(struct smu_context *smu)
-+{
-+	struct smu_table_context *table_context = &smu->smu_table;
-+	PPTable_t *smc_pptable = table_context->driver_pptable;
-+
-+	smu->fan_max_rpm = smc_pptable->SkuTable.FanMaximumRpm;
-+
-+	return 0;
-+}
-+
- static int smu_v13_0_7_read_sensor(struct smu_context *smu,
- 				   enum amd_pp_sensors sensor,
- 				   void *data,
-@@ -2628,6 +2638,7 @@ static const struct pptable_funcs smu_v13_0_7_ppt_funcs = {
- 	.get_dpm_ultimate_freq = smu_v13_0_7_get_dpm_ultimate_freq,
- 	.get_vbios_bootup_values = smu_v13_0_get_vbios_bootup_values,
- 	.read_sensor = smu_v13_0_7_read_sensor,
-+	.get_fan_parameters = smu_v13_0_7_get_fan_parameters,
- 	.feature_is_enabled = smu_cmn_feature_is_enabled,
- 	.print_clk_levels = smu_v13_0_7_print_clk_levels,
- 	.force_clk_levels = smu_v13_0_7_force_clk_levels,
---
-2.39.2
+> > In fact, vhost_task is all that kvm_vm_create_worker_thread() wanted
+> > to be and more: not only it inherits the userspace process's cgroups,
+> > it has other niceties like being parented properly in the process
+> > tree.  Use it instead of the homegrown alternative.
+>
+> It is nice indeed.
+> I think the bugs we saw are not so serious to warrant
+> Fixes: c57c80467f90e ("kvm: Add helper function for creating VM worker th=
+reads")
+> .
+> (But I'm posting it here so that I can find the reference later.)
 
 
