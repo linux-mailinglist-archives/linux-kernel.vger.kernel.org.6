@@ -1,114 +1,96 @@
-Return-Path: <linux-kernel+bounces-412323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEF159D0795
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 02:30:04 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2F5B9D0799
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 02:34:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67D87281C88
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 01:30:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 700F4B21933
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 01:34:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9890208C4;
-	Mon, 18 Nov 2024 01:29:54 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 013F817BA3;
-	Mon, 18 Nov 2024 01:29:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 750F52110E;
+	Mon, 18 Nov 2024 01:34:05 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74F4417BA3
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 01:33:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731893394; cv=none; b=HHa2K9b/w2C0cp2I3ut7kcDjlhK/aiVc5dQgJE8qQb0N0sX+YdizfriwjL1XWYE+w+lrtrLt7WiixtlfS2SjvkopoxPSyAa9pxbJ99f5lD2P2Enwmrtk+XaYtdh5qjrPOe5T7UCp7GXzg0HEs4xKK9VF8C/C8vAuW7eucJWAmt8=
+	t=1731893645; cv=none; b=aMzvcPreuDN1NQw4jsPYoVrDLzEXd0NftP3AjBf3uPO3v9fn+kGgBr8MnZIIp79hokHv/oC8GkcRcdY2nwfiMCtQ7yT0WoISqeORFgx9pkhqFAtxR8+R3hEhonPntfDCj1k7xyXgiFbreaU6VWVX7A3itg7Q346ULCtuGT57aE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731893394; c=relaxed/simple;
-	bh=lM9XoLTlH4w7aBEstkNtGMfmVvVr+vxFBznR54ornks=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=BJtIqxzeVeUxaeTZ1EZ6jKFh78/8POUOzD5um2mkc90WKMMJE/cbI+hqUPfKsVFv/pm7Q0hnV/Fl6RmjonGY093jbFRG0UtYkq8Lr/UPXi2ADmA02la7fjcvF1yXO5Cm/igWCdsWVeRt8F0Xr02yPtlZ0CmmzU4HdNPJ5YBMg1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Xs93019Fwz10Rt3;
-	Mon, 18 Nov 2024 09:27:08 +0800 (CST)
-Received: from dggemv704-chm.china.huawei.com (unknown [10.3.19.47])
-	by mail.maildlp.com (Postfix) with ESMTPS id 93C8F1403A0;
-	Mon, 18 Nov 2024 09:29:43 +0800 (CST)
-Received: from kwepemn100009.china.huawei.com (7.202.194.112) by
- dggemv704-chm.china.huawei.com (10.3.19.47) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 18 Nov 2024 09:29:43 +0800
-Received: from [10.67.121.59] (10.67.121.59) by kwepemn100009.china.huawei.com
- (7.202.194.112) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 18 Nov
- 2024 09:29:42 +0800
-Message-ID: <ee3f6294-dc62-11d2-9467-53fd9241a922@huawei.com>
-Date: Mon, 18 Nov 2024 09:29:42 +0800
+	s=arc-20240116; t=1731893645; c=relaxed/simple;
+	bh=8mOs4oxYbYD+FWRf6UUyMcunl959DqhJVom8TB+XMh0=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=OgrXyEz9DIRVCMaT3eA9GtYxdKR23VLFdsOzXgKwNVciifflg55xxu6ILLQHTzn/0BMHefNNufeXcTLuyRqK9QfFSfPosteEs2SgjznmpLlvEZFpkaDNiARrH9O0z/jYTHMvkeDLo56WWDpD59aB9+RPYcINe5tw6aU1cgIdxjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.42.164])
+	by gateway (Coremail) with SMTP id _____8AxUa9_mTpniuNAAA--.62577S3;
+	Mon, 18 Nov 2024 09:33:51 +0800 (CST)
+Received: from [10.20.42.164] (unknown [10.20.42.164])
+	by front1 (Coremail) with SMTP id qMiowMBxqsF9mTpn1N1aAA--.6147S2;
+	Mon, 18 Nov 2024 09:33:50 +0800 (CST)
+Subject: Re: [PATCH] soc: loongson: add Loongson Security Module driver
+To: Xi Ruoyao <xry111@xry111.site>
+Cc: arnd@arndb.de, olof@lixom.net, soc@lists.linux.dev,
+ linux-kernel@vger.kernel.org, loongarch@lists.linux.dev
+References: <20241116085729.12651-1-zhaoqunqin@loongson.cn>
+ <0509da76bd3be0d4c7ff433da854ae74cd367d5b.camel@xry111.site>
+From: Zhao Qunqin <zhaoqunqin@loongson.cn>
+Message-ID: <f580c60d-3608-0f82-9639-34f529825cde@loongson.cn>
+Date: Mon, 18 Nov 2024 09:32:02 +0800
+User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.2.0
-Subject: Re: [PATCH v2] ACPI: thermal: Support for linking devices associated
- with the thermal zone
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-CC: <linux-pm@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <rui.zhang@intel.com>,
-	<liuyonglong@huawei.com>, <zhanjie9@hisilicon.com>, <zhenglifeng1@huawei.com>
-References: <20241113085634.7657-1-lihuisong@huawei.com>
- <CAJZ5v0jTMg=Wipt2VPU1DDnnO7Rh5pu0VYvUjHRW5Nada--O8A@mail.gmail.com>
- <52539572-6128-8c87-84e6-3f539d887b34@huawei.com>
- <CAJZ5v0heL_wa=bimMDijn-x6G0SxsMf=yGhKZAe282P5+h2O3w@mail.gmail.com>
-From: "lihuisong (C)" <lihuisong@huawei.com>
-In-Reply-To: <CAJZ5v0heL_wa=bimMDijn-x6G0SxsMf=yGhKZAe282P5+h2O3w@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+In-Reply-To: <0509da76bd3be0d4c7ff433da854ae74cd367d5b.camel@xry111.site>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemn100009.china.huawei.com (7.202.194.112)
+Content-Language: en-US
+X-CM-TRANSID:qMiowMBxqsF9mTpn1N1aAA--.6147S2
+X-CM-SenderInfo: 52kd01pxqtx0o6or00hjvr0hdfq/
+X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
+	ZEXasCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29K
+	BjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26c
+	xKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vE
+	j48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxV
+	AFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAF
+	wI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx
+	1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv
+	67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07
+	AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02
+	F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw
+	1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7Cj
+	xVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r
+	1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU8zw
+	Z7UUUUU==
 
 
-在 2024/11/14 19:53, Rafael J. Wysocki 写道:
-> Hi,
->
-> On Thu, Nov 14, 2024 at 9:37 AM lihuisong (C) <lihuisong@huawei.com> wrote:
->> Hi Rafael,
->>
->> 在 2024/11/13 17:26, Rafael J. Wysocki 写道:
->>> On Wed, Nov 13, 2024 at 10:07 AM Huisong Li <lihuisong@huawei.com> wrote:
->>>> There are many 'cdevX' files which link cooling devices under
->>>> '/sys/class/thermal/thermal_zoneX/'. These devices contain active cooling
->>>> devices and passive cooling devices. And user cann't directly know which
->>>> devices temperature is represented by the thermal zone.
->>>>
->>>> However, ACPI spec provides a '_TZD' object which evaluates to a package
->>>> of device names. Each name corresponds to a device in the ACPI namespace
->>>> that is associated with the thermal zone. The temperature reported by the
->>>> thermal zone is roughly correspondent to that of each of the devices.
->>>>
->>>> User can get all devices a thermal zone measured by the 'measures'
->>>> directory under the thermal zone device.
->>> Well, that's kind of clear, but what exactly is the use case?  Why
->>> does the user need to know that?
->> IMO, this makes thermal zone information more friendly.
->> For instance, user can directly know the temperature of CPUs or other
->> devices is roughly represented by which thermal zone.
->> This may offer the convenience for further usersapce application.
->>
->> BTW, the '_TZD' method is similar to the '_PMD' in acpi power meter.
->> Since ACPI spec provides them, they should also have a role in their
->> existence.
-> So there is no specific use case, but it is possible that somebody may
-> want to use this information, IIUC.
->
-> Well, let's defer making kernel changes until there is a user
-> wanting/needing this information.  Then we'll decide how to expose it.
->
-> For one, I'm not convinced that exposing it under the ACPI
-> representation of a thermal zone is going to be really useful.
-All right. Thanks for your review.
->
-> .
+在 2024/11/16 下午5:42, Xi Ruoyao 写道:
+> On Sat, 2024-11-16 at 16:57 +0800, Qunqin Zhao wrote:
+>> +config LOONGSON_SE
+>> +	tristate "LOONGSON SECURITY MODULE Interface"
+> "Loongson Security Module" as there's no reason to use all upper-case
+> form here.
+
+Agreed.
+
+Thanks.
+
+>> +	depends on LOONGARCH && ACPI
+>> +	help
+>> +	  The Loongson security module provides the control for
+>> hardware
+>> +	  encryption acceleration devices. Each device uses at least
+>> one
+>> +	  channel to interacts with security module, and each channel
+>> may
+>> +	  has its own buffer provided by security module.
+
 
