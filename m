@@ -1,301 +1,211 @@
-Return-Path: <linux-kernel+bounces-413022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B9EE9D129E
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 15:05:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3BE79D1277
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 14:50:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83343B26842
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 13:47:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EE521F232F9
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 13:50:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF1D61B2181;
-	Mon, 18 Nov 2024 13:43:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25ACF19D087;
+	Mon, 18 Nov 2024 13:50:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=softing.com header.i=@softing.com header.b="54VEXfs0"
-Received: from BEUP281CU002.outbound.protection.outlook.com (mail-germanynorthazon11020081.outbound.protection.outlook.com [52.101.169.81])
+	dkim=pass (2048-bit key) header.d=finest.io header.i=parker@finest.io header.b="z0HrbVKc"
+Received: from mout.perfora.net (mout.perfora.net [74.208.4.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AA901AE018;
-	Mon, 18 Nov 2024 13:43:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.169.81
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731937390; cv=fail; b=D2EZqlEbmgfXaL+/8rjuHH5kI8kDyhWN2go6DuH1+4YM+Zf1teySn4i151JCuGqqRTit3Lvl7+KMo3Z4YC6CxlO/x6N5+ccVMH3yTeIDQvox6z2sKHmZ3Y0k+nPMWFCXSJzHA3UUiatxlRJrEzBVT2AnEeJQ3ShTLlpiTy1XifQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731937390; c=relaxed/simple;
-	bh=xoqZH0iMkpW1bDRt9SnQ7dS3ZVhtVyGTkC+gYE+3xFw=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=TckC9GLgvjxwYUSF7v5gNjc5cvfq3Tc+oPomvOPqYbv2NPwMfTO8hLsKO09vwjg2EOceLrr9svwF/yRTliqwcxlxHA9FTTkQ3/VHtVRfE19c/FApfSFE7pRT4XxMbtX1NQE7/yhTfugBlHEweVcEfz4Lnohn2rkdLdNiJUvkJaM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=Softing.com; spf=pass smtp.mailfrom=Softing.com; dkim=pass (2048-bit key) header.d=softing.com header.i=@softing.com header.b=54VEXfs0; arc=fail smtp.client-ip=52.101.169.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=Softing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=Softing.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=cMEsNWDmnQR3HrAoQKyLXpwiPrJ6cbIodw3Dr983R69kq3S12xuLhxCad5W3DvL9YqyLSt8CZn8O+NE8puX71VqYEeeK+SDG8X00MycxS2u/06JgDr6qd6IYoQ61iF+mSwtsoykbXn0uHQ/PKSWxUjqS8OxHNZ4yYTYTHV9FDTD3WPwykytiUNQThwvx2iMPo5WPrcFZJayBmPfNsSF9ZZRLHjS1KJsdqJHqxHL21aaMuuAUdBRSxfD0b2m7uic7LKdJkEgC4H/VVEo0CgUkzcFusvpOLM940O00NFYMRpM/qjIXGUlu5SpXX8nY8gPNsSF+ABDg+t1EATAGOkm4kA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ElFMmvEkGvLWHm3I2T4Th2gHGU0dL7dKvZFAcA8bQgg=;
- b=W5WPZjASa2umLtxUZnwI4gz3n0aJHnJKfLqIINCt/sakNEJnGW7GwGjZjdTaOiJTbWBA+EoOyhPW+mjgdIOZmtDRG8Toq35/2A7IRfodWAf0jMyZbzLUQ93hvyfW7kFIAGwqFY4K9IOOakQyEMV8O62KgUDOXpfdA+mKgorNEc3m1it5if1K3d3vEFVLV98rWhf1d9jGBeRV0X5cdNC4H+M4qE5qyjVJR/OHWXF8/AEMLwN6dgi5hotz8sNefYEiLcQTtH1m3dc/uPNu3h95JSSUYO3r4dxO0Osda7cxjhee9RCh8SFrhKs2fUH5pApIbDC/lm/L2vfT0rJRxN967Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=softing.com; dmarc=pass action=none header.from=softing.com;
- dkim=pass header.d=softing.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=softing.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ElFMmvEkGvLWHm3I2T4Th2gHGU0dL7dKvZFAcA8bQgg=;
- b=54VEXfs07TrruSfNfNuEgeHpbbZ/NyjWZQL/HoXtUeaO37bdvSLryDUqqPqTzHy3qtZb0INzfNhe6qdPgsoj+96BSJPci9tfu4rTyndqUaGTIx7tf/IYyz3EVjOY/K9ic6qul134G1wmHaCFn2lbWuMbcsQXbrs+RYAMrd7feZ0a2Yil+589ywOp/OjY38d6cA81L4M1jbucfEkMnzJTTi9OisRRoXle6EXbIiVUsgr1smPrqSzzDMy7SJqoy+P0QtjZOL1ER6W3Vmh7NUaXEOtNwCsJEm6V2MGdzHggw/psm9EfB9+oBQeDE2F3CJj7nf0SlJD9MhaVSR8jSK+Rgg==
-Received: from BE1P281MB2420.DEUP281.PROD.OUTLOOK.COM (2603:10a6:b10:43::7) by
- FR2PPFA8ABE82B9.DEUP281.PROD.OUTLOOK.COM (2603:10a6:d18:2::7a) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8158.23; Mon, 18 Nov 2024 13:43:02 +0000
-Received: from BE1P281MB2420.DEUP281.PROD.OUTLOOK.COM
- ([fe80::8de2:b2ba:4092:939a]) by BE1P281MB2420.DEUP281.PROD.OUTLOOK.COM
- ([fe80::8de2:b2ba:4092:939a%3]) with mapi id 15.20.8158.023; Mon, 18 Nov 2024
- 13:43:02 +0000
-From: "Sperling, Tobias" <Tobias.Sperling@Softing.com>
-To: Rob Herring <robh@kernel.org>
-CC: "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"jic23@kernel.org" <jic23@kernel.org>, "lars@metafoo.de" <lars@metafoo.de>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org"
-	<conor+dt@kernel.org>
-Subject: Re: [PATCH 1/2] dt-bindings: iio: adc: Introduce ADS7138
-Thread-Topic: [PATCH 1/2] dt-bindings: iio: adc: Introduce ADS7138
-Thread-Index: Ads12IHP2U4PDLQ0TyOYbwP76vIxkwBrHX6AAI60TzA=
-Date: Mon, 18 Nov 2024 13:43:02 +0000
-Message-ID:
- <BE1P281MB24200EE5C1D08DB1C330A51EEF272@BE1P281MB2420.DEUP281.PROD.OUTLOOK.COM>
-References:
- <BE1P281MB24207662EAC941780807F88BEF5A2@BE1P281MB2420.DEUP281.PROD.OUTLOOK.COM>
- <20241115173657.GA3440948-robh@kernel.org>
-In-Reply-To: <20241115173657.GA3440948-robh@kernel.org>
-Accept-Language: de-DE, en-US
-Content-Language: de-DE
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=Softing.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BE1P281MB2420:EE_|FR2PPFA8ABE82B9:EE_
-x-ms-office365-filtering-correlation-id: e0d9f0a1-f62c-4736-a27f-08dd07d6ec39
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|376014|10070799003|1800799024|366016|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?BsU3g+uo4qPM8+Frm2UqrpUCDLtgrzYZoxbxWU0/E1e91mOtQ+nNfje1pMPi?=
- =?us-ascii?Q?TBj2mwRMON6Sbau/CZyUVI+3xZ7s4QqP9JIDgXIHbLH5xt1crCOA1Cc9Xvx9?=
- =?us-ascii?Q?wRz2lAdECfMrPHo1FV106KPOUbLtawo3z06gAdaohetUqbhvsPzhkMq+OK/I?=
- =?us-ascii?Q?tv75+YuKGpWRAvWnZa93yqhAfZj2KOzN0J51prtT18VpmCjeir3WncvicPjS?=
- =?us-ascii?Q?gStYugeo4+KLU1qCVP25Ud2V3q4vMdx9Jz/2XAB+6D2w9zitshvveU5UmCnz?=
- =?us-ascii?Q?9VvE/dhFZ/a0V6jJwPidzg/ZRfdq96JRyHrsmMVgXVxnnFQQZMihsbInOyR2?=
- =?us-ascii?Q?elRsz1E7iCKDqh4rhyw9ZoRu+uOUmm21Rbz1nQYtpDt1m/lTA+Gt3ievy6z7?=
- =?us-ascii?Q?7/aqJ5EPECW4GLgSEYavP8w1XQ+M0i/8NcrJteLmJADoqxuQHAP5Y4u4w/5Y?=
- =?us-ascii?Q?SLjeLhjKIZygFP6dg5jfUmI/1IRlRrnYK1/eC3vVNGfHKvx4qLZTQ3qo/F6+?=
- =?us-ascii?Q?hv1cPk62iTaHeRwi4UGHP6RXmlUpTATZgahSZLJfQ5cFMBA5KZgw7iq9Lim5?=
- =?us-ascii?Q?pqqqnkfpUJK8SI8Dh3kSdb/g5QZhExH7Law3xCSwEb03L1+S/M1lJLswFr0R?=
- =?us-ascii?Q?kXinDMyoqbsB1hgsDwRxwmWqrlJ25bxrrDKNk+6+k8rafddSv3pF5SzxYz9I?=
- =?us-ascii?Q?hFTaqop5dz5r18Jp2MaWQskavDUQoeoc8l1KOzYxsCPM8wqAMFRDjfGeod8l?=
- =?us-ascii?Q?M33I40n9/SZa635uyJg0uNoIlYNMK/z79tPThm6wCT0JKcBfHjVWziCMuTNM?=
- =?us-ascii?Q?Zx7IntdcHOUGJw8YLjM472UMuOOSUezN0Hfd2gdbknG3B4100BO8okY5oVV/?=
- =?us-ascii?Q?jh8n6uj603EhuXMtLLgdZoTUAWXec8koGQesG4jzQxb4aKwp5RSLYL5VRmXT?=
- =?us-ascii?Q?SGNI2/uFlSnI6gi1cs867DozJXW+4sPrJWH/U2+5BIX1VdzUH8keGwKdVZzm?=
- =?us-ascii?Q?Pxy8QfWokGkL2KCzRFKkM0i5wuJch0pwiwD82vbA9cvCo6P1DTSyDK+b84I+?=
- =?us-ascii?Q?XIqHiJQBSDtWDg4L5sYBHrsvLo+flrIxzpcITEGHmgKCvRyRXWtugPcoGIsD?=
- =?us-ascii?Q?EwkV+MuJFoBq4m+XIXT4d/0jg6XhlrrsBD1jstubMp6RytSXn/fKdJV2B2a7?=
- =?us-ascii?Q?B6BkIKFLcz6B/VFFZ+53A4zJje473G1zyGTlP9vxmK3XqwkE9rbwM1C6qK9G?=
- =?us-ascii?Q?JbfU0LCnq7vvS1sTNSAMQfKaoax4OZ2ZCxzktFPtaL+85M650EJNQqxQ1Yai?=
- =?us-ascii?Q?E7twPg5x+6u73KyIy+u/dDtt?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BE1P281MB2420.DEUP281.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(10070799003)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?Y9e+4Wzh2YDrWy82EiLjZ+P5pxNdJqJE3iVhthYnmyJZiS4wS6eIAD5GaBRH?=
- =?us-ascii?Q?f40ubJXKIzZtYVmobKIjoTO78dGnR4KToiAQKxCv9aE2rrz5kF6weIPZvDuR?=
- =?us-ascii?Q?wOEXELLzpftmcrJFbJiPw5Es4XkL4k1FWJftNCLforC/RHxaiJH0eX/NNYtC?=
- =?us-ascii?Q?rJm0xmqq+IXLEKuZX7wmE5NvS2usqlM9kYAUpH6EAIadr6I3oPAibigRM2+M?=
- =?us-ascii?Q?PgCjVLtxPFL1IPaR8wXTHWUVqYfVItGh/2tXHQNVAa0gmGNRDWlTHzSe5D4/?=
- =?us-ascii?Q?PZEvXTk6iTDPKjlMnpuKLwQEdmn/5P9hlcTwKPakQqGMdxARJ2iJgj9VeXFH?=
- =?us-ascii?Q?YbBGjBD0TBRjoDrlhWiMHyjD/TIJqNb9g1cPtICFiQx9MYQuM5WSxxZlLPTS?=
- =?us-ascii?Q?w/9qTxuyEWa2W/3Au24zFDJn/CicvAdb+iXAP6eFwaLvGiAVfgFV37kXLuqb?=
- =?us-ascii?Q?Z6I4c3BGu+h67i7h5S5iP3ZBNXutBc+Lmg3xu1VqECx7j67gvT+RikXKbluZ?=
- =?us-ascii?Q?HdWGwhAubFO95WfLje+Ls+UaIPGbiMA2+XlYJFkL99BRA873Ocy+QWaDDkSC?=
- =?us-ascii?Q?QNGzdpLxQ/T7oviqn611Ptm8Po01TFRjumdojpujOCowi3qyN34KmLemHTxZ?=
- =?us-ascii?Q?HfQ1FvmAT4r2G6abzZhQH51y/J5B2KPuseZFa9ieKpbwnDSsSsyorCTd+MIU?=
- =?us-ascii?Q?Wh3dV+6tOstuVm0hp/zh5RS8J89J/IQy8xwrUqfTgWV1qSeeHsMkTdq1vLTR?=
- =?us-ascii?Q?EzOUuGEC0FEwyl/Mg17vFfTJiK59PEcqGz2Hhaoa/PP1GjG6QjtZWVaZSLzl?=
- =?us-ascii?Q?xh4oSR6zfP3Yrz9Tcu4CyGMoq9GothyPSOwND05BhkHE8hQ8hcFt79WO40Zu?=
- =?us-ascii?Q?MMeBAeJq3UsuL/uIrntucYRzhIAogERyS7A58Nbhksi/La/5g5BpmUIVwXRb?=
- =?us-ascii?Q?ubQWMbdtjiInqU8tF1P/KZh6NG/Ffhc6zDweLIn7wntkvXNceQrpGwOAltPn?=
- =?us-ascii?Q?/FnFjJXPmwGz8f3ki9wkCfIn6IqXeYBvMRD5IMu+nCSrbfymeSKNDyXB1Ap3?=
- =?us-ascii?Q?iEt4SPqYzqRxFe8+lkc7G/v3Y/jA8h8jp5LD/Pe5eaeATcSR5RAHCmoZ9WU+?=
- =?us-ascii?Q?8UMY1EnUs1njOPDmbeY9uzw/vEcKa/vPYlnKFarPSjplm7dZ5+yvas0n0Rmv?=
- =?us-ascii?Q?gptrZ5iWKzfvVC9rrX57QDNIB18Zn+oK9QOCyTHnw6+26rn2Mz2qrYP/LT+c?=
- =?us-ascii?Q?qOiOpn/cNqpdnkveANrZlmTvF2RFmKewEtqKPDANuyQIqTKZvXxqrqV0Fn+k?=
- =?us-ascii?Q?UnJW00YBsU80HIOGam6VauEGUjAuK6c/qYN2AnO3Nz/VWw/Y//A3vBH5u+mE?=
- =?us-ascii?Q?saKTaAwWF4mwNx0wdWymtmjve+GVnGCpB2usxO0EY4JYtClkStA4NpXzlU2N?=
- =?us-ascii?Q?TiyXGRg3raAojkLkteljmkvbTen63Pc6+kruH61QU0xsD1vhvZ3avVvPPtgr?=
- =?us-ascii?Q?YWcTyziZmrinod4Ovbe1+ftMksHbmYwPk6R1eM3QLyNboYBwwOQmaI88THuA?=
- =?us-ascii?Q?gzB/f+KOMZBgTBeB5sKR5sWvGqzg2DUeFLlMJoMsBTRXKYhL7qEjqG5AABBE?=
- =?us-ascii?Q?TXI2YiBxE2OlQvwxmpTUm3GCjrkJ9sqk5jVW243PmzGgZT/t/dpnwda5W963?=
- =?us-ascii?Q?cvr2bQ=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EFCA53A7;
+	Mon, 18 Nov 2024 13:50:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.208.4.194
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731937816; cv=none; b=Ju6WSL/Nfca/FpVQ1vchnF3fF+yqTm7ePCu02jy12EAPix0ZBMz5MyE9XcG2l+WJK3LyR0cI9oN6Yf4w9NHwMKgTu2MgZN1/L1OoUJPMrmUy0bqKWpLy53GvB56lrAaPdbQA59wROAE190oLZa7v01rQzBNG0y/KkceVZXukk8I=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731937816; c=relaxed/simple;
+	bh=qA/3glSjU1zbPWaKBtZERwuu0G9Ypp6ewx59EMjM2W4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RKzTgXOFYzqkZm0GLc9W6T49NYoWSv6SNSY1ayDYieJ0GOdfg57oE5mSbj7gBWJjFCHYS+ZlBcH56mEMiqBYGvYx4jS+zMW/pHDm5pu2DwWXtJZl7tN9g2SRhLmK1me4BHLOWPsXGT8DVHEKsHkg7fVqel2W+SSBWmDiCQNEfkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=finest.io; spf=pass smtp.mailfrom=finest.io; dkim=pass (2048-bit key) header.d=finest.io header.i=parker@finest.io header.b=z0HrbVKc; arc=none smtp.client-ip=74.208.4.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=finest.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=finest.io
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=finest.io;
+	s=s1-ionos; t=1731937809; x=1732542609; i=parker@finest.io;
+	bh=b3Pjbz/GSF9pG8ylznqiAUCGfHFGePVPHSwvADAHbxk=;
+	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:In-Reply-To:
+	 References:MIME-Version:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=z0HrbVKccaTsRkJF0X3+qJDIt6zApfVzhT4iqMnCXac4K91c9JTnX9PW/TY3Kn8b
+	 LXV05c68tQkIemKS8rMlhUu490we39FyxifFiPRSrRy5y1wq4Joq/XtM1J3Mjg/jA
+	 shgW9zic/kCLmt/XR/Ree0fTe3Bhs91TK6iMpgZ+Ozo/TkPH2+IuzXIUHMtHjobTe
+	 EEl+uRaOJXAu6UPcUqfxOXgQvwGOCUeveYoR0YMnaKG8U10JXpjxVfDzfMpbELCl1
+	 g7p7mGLP0dP/AlNGycHIP3ILr/7gz5Pk40AEKYxg3FrvBZCtzICBk3zPq74FQ1zMw
+	 9WEtHfdH3kTDJJIEhw==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from SWDEV2.connecttech.local ([98.159.241.229]) by
+ mrelay.perfora.net (mreueus004 [74.208.5.2]) with ESMTPSA (Nemesis) id
+ 1MScQ1-1tJKeL40Eb-00QdK2; Mon, 18 Nov 2024 14:44:05 +0100
+Date: Mon, 18 Nov 2024 08:44:00 -0500
+From: Parker Newman <parker@finest.io>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Paolo Abeni <pabeni@redhat.com>, Alexandre Torgue
+ <alexandre.torgue@foss.st.com>, Jose Abreu <joabreu@synopsys.com>, Andrew
+ Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Maxime
+ Coquelin <mcoquelin.stm32@gmail.com>, Thierry Reding
+ <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>,
+ netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Parker Newman <pnewman@connecttech.com>
+Subject: Re: [PATCH v1 1/1] net: stmmac: dwmac-tegra: Read iommu stream id
+ from device tree
+Message-ID: <20241118084400.35f4697a.parker@finest.io>
+In-Reply-To: <bb52bdc1-df2e-493d-a58f-df3143715150@lunn.ch>
+References: <cover.1731685185.git.pnewman@connecttech.com>
+	<f2a14edb5761d372ec939ccbea4fb8dfd1fdab91.1731685185.git.pnewman@connecttech.com>
+	<ed2ec1c2-65c7-4768-99f1-987e5fa39a54@redhat.com>
+	<20241115135940.5f898781.parker@finest.io>
+	<bb52bdc1-df2e-493d-a58f-df3143715150@lunn.ch>
+Organization: Connect Tech Inc.
+X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: softing.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BE1P281MB2420.DEUP281.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: e0d9f0a1-f62c-4736-a27f-08dd07d6ec39
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Nov 2024 13:43:02.3805
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: fe3606fa-d397-4238-9997-68dcd7851f64
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: +J8lEguK4LEK0b4y9Y/7GiEnP4c3ef77VJsvONfX8nEIaJSNkaKu6cROJKhcz4xFz6PRlTGo5HFOuUUlGhE9RU02YeEIUFNxEzBNK2VBn/o=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: FR2PPFA8ABE82B9
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:b2G6KXDe8gzQmPCDojvaXK5OwJiaOjeUL/OAy4fEaNFv4Q5aKIo
+ mhL09ZNLedzJODU2GzkC/HWh8N2RTb2nLPUMCzmhJgss4K/Rn1ATnAGlRZIpQ6t3Dd3tWvt
+ e4yt8/6oFRnYqO1E3AWr2Rd3FeQRRHYtCEjJgHx2X8fyIgPB1brbQSfZMZ5rzk1F7gYxdWQ
+ paVLM7vpd5yCSvHVAay5g==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:Sw0gA4BRG6w=;CvyJoIM1CSQYrW5eVmFWOmXtqMD
+ K9k7Te2raPujkCRyH9vSBdb0YwnLikf7FlmTN25W+BTB3Km35A6xvmBpw7MZFejstqiWiDvbk
+ /J06UE7rEyz8XceWUXdBGXreARPYvrY1qVzCQLwKY9oneulqSUCZsi1mYScvtLbeehpVm6mvr
+ +GMDc7YdZpAJZmhkHwxr3cEW6Yk67Izlnmt7+H0j4CQ2yMriYRVL+qCxQPHVhH1TkL2WDiAaA
+ TL1cBdJt6rpTjPNmmFqRZ/REpb8f1NdmxBCLH3Z3T1sKixD7JN8wkHt8Wte0VB/14m/6Th7EH
+ VVSkzueh2L9jGB2K6+HH+js29g6mUzVvKJ+37x65zAHli0irqaa0Bdu5PdTfaJKknaIh3msMI
+ MV+tW4I23Rz7aXGDg/vZBVTDP0ErHAbB6g7724yLEi99DS0CPstNS/KNbM2DjOMphyEBRd2jK
+ yHayKnygG7ZihAyDCTXIpSXkeWEjfVJiZKRhlXjWb09zc9kwzCACdbc9ncNGNfq5JY9SpyM2t
+ 7zS6HP2xkGdYgAzf9083MQK+N5UApmO57ip++0YpWAsOyE2GYQqTkulQq2q/XmrgxkTUXwwoc
+ aOk4JG4W1C0rUHJcdFYASVQurvu9UoiGgsgFKoh/x7u3kiHfpGfB+nNT1k6CwzayBIbQXozWL
+ 3ujNwnSxhzD84Qn8RjKa2Gs2FySqDTDjBXJzyKiPeC4iueyQyTOYO+kJ6joSDQRex7bnGjvFq
+ WlrhVcL7aJRll5hFjE5+wYVGeSGjlPX0JWqlhEqBBbqEcXYu8IOMalDj50QnDxN/ZaWpIYSOu
+ RqwXRKE8b96/DZfok0DCT762s4JgXQpNAyjbdJKhgWEd2yWKI9z61QkDpsRlF6Skno
 
-> On Wed, Nov 13, 2024 at 02:41:08PM +0000, Sperling, Tobias wrote:
-> > >From 6a06973e1023ca6a128c8d426b4c87887117c084 Mon Sep 17 00:00:00
-> 2001
-> > From: Tobias Sperling <tobias.sperling@softing.com>
-> > Date: Wed, 13 Nov 2024 14:52:49 +0100
-> > Subject: [PATCH 1/2] dt-bindings: iio: adc: Introduce ADS7138
+On Sat, 16 Nov 2024 20:22:53 +0100
+Andrew Lunn <andrew@lunn.ch> wrote:
+
+> On Fri, Nov 15, 2024 at 01:59:40PM -0500, Parker Newman wrote:
+> > On Fri, 15 Nov 2024 18:17:07 +0100
+> > Paolo Abeni <pabeni@redhat.com> wrote:
+> >
+> > > On 11/15/24 17:31, Parker Newman wrote:
+> > > > From: Parker Newman <pnewman@connecttech.com>
+> > > >
+> > > > Read the iommu stream id from device tree rather than hard coding =
+to mgbe0.
+> > > > Fixes kernel panics when using mgbe controllers other than mgbe0.
+> > >
+> > > It's better to include the full Oops backtrace, possibly decoded.
+> > >
+> >
+> > Will do, there are many different ones but I can add the most common.
+> >
+> > > > Tested with Orin AGX 64GB module on Connect Tech Forge carrier boa=
+rd.
+> > >
+> > > Since this looks like a fix, you should include a suitable 'Fixes' t=
+ag
+> > > here, and specify the 'net' target tree in the subj prefix.
+> > >
+> >
+> > Sorry I missed the "net" tag.
+> >
+> > The bug has existed since dwmac-tegra.c was added. I can add a Fixes t=
+ag but
+> > in the past I was told they aren't needed in that situation?
+> >
+> > > > @@ -241,6 +243,12 @@ static int tegra_mgbe_probe(struct platform_d=
+evice *pdev)
+> > > >  	if (IS_ERR(mgbe->xpcs))
+> > > >  		return PTR_ERR(mgbe->xpcs);
+> > > >
+> > > > +	/* get controller's stream id from iommu property in device tree=
+ */
+> > > > +	if (!tegra_dev_iommu_get_stream_id(mgbe->dev, &mgbe->iommu_sid))=
+ {
+> > > > +		dev_err(mgbe->dev, "failed to get iommu stream id\n");
+> > > > +		return -EINVAL;
+> > > > +	}
+> > >
+> > > I *think* it would be better to fallback (possibly with a warning or
+> > > notice) to the previous default value when the device tree property =
+is
+> > > not available, to avoid regressions.
+> > >
+> >
+> > I debated this as well... In theory the iommu must be setup for the
+> > mgbe controller to work anyways. Doing it this way means the worst cas=
+e is
+> > probe() fails and you lose an ethernet port.
 >
-> Your patch is corrupted.
-
-Yeah, might look a little different from what you are usually used to see, =
-as
-I had to copy the patch manually to the mails body. SMTP doesn't work
-for us unfortunately. Anyway, the patch applies just fine with "git apply",
-doesn't it for you?
-
-> > Add documentation for the driver of ADS7128 and ADS7138 12-bit, 8-chann=
-el
-> > analog-to-digital converters. These ADCs have a wide operating range an=
-d
-> > a wide feature set. Communication is based on the I2C interface.
-> >
-> > Signed-off-by: Tobias Sperling <tobias.sperling@softing.com>
-> > ---
-> >  .../bindings/iio/adc/ti,ads7138.yaml          | 60 +++++++++++++++++++
-> >  1 file changed, 60 insertions(+)
-> >  create mode 100644
-> Documentation/devicetree/bindings/iio/adc/ti,ads7138.yaml
-> >
-> > diff --git a/Documentation/devicetree/bindings/iio/adc/ti,ads7138.yaml
-> b/Documentation/devicetree/bindings/iio/adc/ti,ads7138.yaml
-> > new file mode 100644
-> > index 000000000000..c70ad5747828
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/iio/adc/ti,ads7138.yaml
-> > @@ -0,0 +1,60 @@
-> > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id:
-> http://devicetree/.
-> org%2Fschemas%2Fiio%2Fadc%2Fti%2Cads7138.yaml%23&data=3D05%7C02%7C%
-> 7Cf943e3cd23dd4c28422608dd059c1cd9%7Cfe3606fad3974238999768dcd7851f
-> 64%7C1%7C0%7C638672890241515102%7CUnknown%7CTWFpbGZsb3d8eyJFb
-> XB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpb
-> CIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=3DKFK6uoMuDUTlwSRv5jUd%2FQ
-> mBqKRHIDCq%2Bb1nWhOkZTk%3D&reserved=3D0
-> > +$schema:
-> http://devicetree/.
-> org%2Fmeta-
-> schemas%2Fcore.yaml%23&data=3D05%7C02%7C%7Cf943e3cd23dd4c28422608d
-> d059c1cd9%7Cfe3606fad3974238999768dcd7851f64%7C1%7C0%7C638672890
-> 241534499%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOi
-> IwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%
-> 7C%7C%7C&sdata=3D2Dj6PlC%2BzKkjcxWosWYMd9Wnh71dKJZfXx5af85vQf8%3D
-> &reserved=3D0
-> > +
-> > +title: Texas Instruments ADS7128/ADS7138 Analog to Digital Converter (=
-ADC)
-> > +
-> > +maintainers:
-> > +  - Tobias Sperling <tobias.sperling@softing.com>
-> > +
-> > +description: |
-> > +  The ADS7128 is 12-Bit, 8-Channel Sampling Analog to Digital Converte=
-r (ADC)
-> > +  with an I2C interface.
-> > +
-> > +  Datasheets:
-> > +
-> https://www.ti.co/
-> m%2Fproduct%2FADS7128&data=3D05%7C02%7C%7Cf943e3cd23dd4c28422608d
-> d059c1cd9%7Cfe3606fad3974238999768dcd7851f64%7C1%7C0%7C638672890
-> 241551566%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOi
-> IwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%
-> 7C%7C%7C&sdata=3DMtZjBaLGanD7%2BwQJZDc54CWVVkDbUV1jAv9PixBdOxk%3
-> D&reserved=3D0
-> > +
-> https://www.ti.co/
-> m%2Fproduct%2FADS7138&data=3D05%7C02%7C%7Cf943e3cd23dd4c28422608d
-> d059c1cd9%7Cfe3606fad3974238999768dcd7851f64%7C1%7C0%7C638672890
-> 241564942%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOi
-> IwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%
-> 7C%7C%7C&sdata=3DDlLY9HTzdOyvooQA%2FCI%2BQJu0REGlwP2mpR%2Bp6M8C
-> 5yk%3D&reserved=3D0
-> > +
-> > +properties:
-> > +  compatible:
-> > +    enum:
-> > +      - ti,ads7128
-> > +      - ti,ads7138
+> New DT properties are always optional. Take the example of a board
+> only using a single controller. It should happily work. It probably
+> does not have this property because it is not needed. Your change is
+> likely to cause a regression on such a board.
 >
-> What's the difference between the 2?
+> Also, is a binding patch needed?
+>
+> 	Andrew
 
-The 7128 has some more hardware features like a root-mean-square
-module and a zero-crossing-detect module. Base functionality and
-therefore, what's implemented in the driver yet, is the same, however.
+This is not a new dt property, the "iommus" property is an existing proper=
+ty
+that is parsed by the Nvidia implementation of the arm-smmu driver.
 
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  avdd-supply:
-> > +    description:
-> > +      The regulator used as analog supply voltage as well as reference=
- voltage.
-> > +
-> > +  interrupts:
-> > +    description:
-> > +      Interrupt on ALERT pin, triggers on low level.
-> > +    maxItems: 1
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +  - avdd-supply
-> > +
-> > +additionalProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +    #include <dt-bindings/interrupt-controller/irq.h>
-> > +    i2c {
-> > +        #address-cells =3D <1>;
-> > +        #size-cells =3D <0>;
-> > +
-> > +        adc@10 {
-> > +            compatible =3D "ti,ads7138";
-> > +            reg =3D <0x10>;
-> > +            avdd-supply =3D <&reg_stb_3v3>;
-> > +            interrupt-parent =3D <&gpio2>;
-> > +            interrupts =3D <12 IRQ_TYPE_LEVEL_LOW>;
-> > +        };
-> > +    };
-> > +...
-> > --
-> > 2.34.1
-> >
+Here is a snippet from the device tree:
+
+smmu_niso0: iommu@12000000 {
+        compatible =3D "nvidia,tegra234-smmu", "nvidia,smmu-500";
+...
+}
+
+/* MGBE0 */
+ethernet@6800000 {
+	compatible =3D "nvidia,tegra234-mgbe";
+...
+	iommus =3D <&smmu_niso0 TEGRA234_SID_MGBE>;
+...
+}
+
+/* MGBE1 */
+ethernet@6900000 {
+	compatible =3D "nvidia,tegra234-mgbe";
+...
+	iommus =3D <&smmu_niso0 TEGRA234_SID_MGBE_VF1>;
+...
+}
+
+The 2nd field of the iommus propert is the "Stream ID" which arm-smmu stor=
+es
+in the device's struct iommu_fwspec *fwspec. This is what the existing
+tegra_dev_iommu_get_stream_id() function uses to get the SID.
+
+If the iommus property is missing completely from the MGBE's device tree n=
+ode it
+causes secure read/write errors which spam the kernel log and can cause cr=
+ashes.
+
+I can add the fallback in V2 with a warning if that is preferred.
+
+Thanks,
+Parker
+
+
+
+
 
