@@ -1,107 +1,102 @@
-Return-Path: <linux-kernel+bounces-412857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC08E9D103D
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 12:54:34 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEA019D1040
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 12:56:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89A291F22365
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:54:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AEB31B266AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:55:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65B6E194A63;
-	Mon, 18 Nov 2024 11:54:26 +0000 (UTC)
-Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [83.223.95.100])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBF01176AA9;
-	Mon, 18 Nov 2024 11:54:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.95.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC7A7198E77;
+	Mon, 18 Nov 2024 11:55:22 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91936176AA9;
+	Mon, 18 Nov 2024 11:55:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731930866; cv=none; b=eG3syhTDJSWIN0MUusCRISrHnQTmjcueme5zfb24ea4JFPzErRzzUHE4BjN2egsxFEd9Cuqdt5+LBZ5FDUxtjh0dAkA+nvewnAfGKBqJxKJa2PyD8oUSRvhZrOX6DgLU6c7QMAtc8fOnoAPniNu3UndpstB6l1MO/FCRInOLJN0=
+	t=1731930922; cv=none; b=p4IF5Vgf/QFP+wK1F21B5TQnBuERQqzuFEhzjmzx/UPvdVYV97ixSBZtcgK1g3spmNj6We5UFCLp7DHI7gAGZTcEY5F1zOxFu/cMjU3jVZmcKvEuFAGMFo3YT6VEg0Gi7+I5tRkFFz0hDC5v1MDH/aUSnRBZvuzmi1U3KVKbeRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731930866; c=relaxed/simple;
-	bh=vbsFQ4wtDdiSJxS8w7T+TNXEWoASRuInqA3wQIlkhhM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GZuLsef0JNC0JpxfAnO/gE2ccidKHRmqpFhzworSJwilH7XsYEyR/XVG2KFGiqMI8JHsXUk2jxsj/Vp62RsXgBAbDnHS0EvhkWxTfzB0OmRpGIaPS7YW/zFIuukdHQJAFaQzW9tEV+ZTeHYoPz/PZi5p0qwlqnRd0B4ubHZi0Aw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.95.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout1.hostsharing.net (Postfix) with ESMTPS id A8725300034CC;
-	Mon, 18 Nov 2024 12:54:19 +0100 (CET)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id 8C0A35FAC42; Mon, 18 Nov 2024 12:54:19 +0100 (CET)
-Date: Mon, 18 Nov 2024 12:54:19 +0100
-From: Lukas Wunner <lukas@wunner.de>
-To: Terry Bowman <terry.bowman@amd.com>
-Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, nifan.cxl@gmail.com, ming4.li@intel.com,
-	dave@stgolabs.net, jonathan.cameron@huawei.com,
-	dave.jiang@intel.com, alison.schofield@intel.com,
-	vishal.l.verma@intel.com, dan.j.williams@intel.com,
-	bhelgaas@google.com, mahesh@linux.ibm.com, ira.weiny@intel.com,
-	oohall@gmail.com, Benjamin.Cheatham@amd.com, rrichter@amd.com,
-	nathan.fontenot@amd.com, Smita.KoralahalliChannabasappa@amd.com
-Subject: Re: [PATCH v3 15/15] PCI/AER: Enable internal errors for CXL
- upstream and downstream switch ports
-Message-ID: <Zzsq6-GN0GFKb3_S@wunner.de>
-References: <20241113215429.3177981-1-terry.bowman@amd.com>
- <20241113215429.3177981-16-terry.bowman@amd.com>
+	s=arc-20240116; t=1731930922; c=relaxed/simple;
+	bh=0r33ICqjyC0L0V5SWoWMae0zplpmsmgOQKIXnCevyRM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=g0900DlCeNzJfnsSpXc+4mMF9JAmu10bdojZ3A18z4EtKN2NUQxdSYoHFqky/bjrpbKVhkVX74nXKlK5bvdiyhGEoHd1tcx2I6D6p0r4XcYAR5SvjYgOLQqV97FTePIcVeEspfb30fsLrdZloWXS2dcqWUJ6BVO6p/oiF5MR/nY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CD21B1682;
+	Mon, 18 Nov 2024 03:55:49 -0800 (PST)
+Received: from [10.57.91.28] (unknown [10.57.91.28])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B7F253F6A8;
+	Mon, 18 Nov 2024 03:55:18 -0800 (PST)
+Message-ID: <fc308d9b-9b8b-4932-9f24-1756f5c089db@arm.com>
+Date: Mon, 18 Nov 2024 11:55:17 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241113215429.3177981-16-terry.bowman@amd.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] perf: arm-ni: Fix attribute_group definition syntax
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
+ Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20241117-arm-ni-syntax-v1-1-1894efca38ac@weissschuh.net>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20241117-arm-ni-syntax-v1-1-1894efca38ac@weissschuh.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Nov 13, 2024 at 03:54:29PM -0600, Terry Bowman wrote:
-> Export the AER service driver's pci_aer_unmask_internal_errors() function
-> to CXL namsespace.
-         ^^^^^^^^^^
-	 namespace
+On 2024-11-17 10:20 am, Thomas Weißschuh wrote:
+> The sentinel NULL value does not make sense and is a syntax error in a
+> structure definition.
 
-> Remove the function's dependency on the CONFIG_PCIEAER_CXL kernel config
-> because it is now an exported function.
-[...]
-> --- a/drivers/pci/pcie/aer.c
-> +++ b/drivers/pci/pcie/aer.c
-> @@ -949,7 +949,6 @@ static bool is_internal_error(struct aer_err_info *info)
->  	return info->status & PCI_ERR_UNC_INTN;
->  }
->  
-> -#ifdef CONFIG_PCIEAER_CXL
->  /**
->   * pci_aer_unmask_internal_errors - unmask internal errors
->   * @dev: pointer to the pcie_dev data structure
-> @@ -960,7 +959,7 @@ static bool is_internal_error(struct aer_err_info *info)
->   * Note: AER must be enabled and supported by the device which must be
->   * checked in advance, e.g. with pcie_aer_is_native().
->   */
-> -static void pci_aer_unmask_internal_errors(struct pci_dev *dev)
-> +void pci_aer_unmask_internal_errors(struct pci_dev *dev)
+What error? It's an initialiser following a designator in a structure 
+*declaration*, and the corresponding bin_attrs member is a pointer, so 
+NULL is a perfectly appropriate value to initialise it with.
 
-Hm, it seems the reason why you're moving pci_aer_unmask_internal_errors()
-outside of "ifdef CONFIG_PCIEAER_CXL" is that drivers/cxl/core/pci.c
-is conditional on CONFIG_CXL_BUS, whereas CONFIG_PCIEAER_CXL depends
-on CONFIG_CXL_PCI.
-
-In other words, you need this to avoid build breakage if CONFIG_CXL_BUS
-is enabled but CONFIG_CXL_PCI is not.
-
-I'm wondering (as a CXL ignoramus) why that can happen in the first
-place, i.e. why is drivers/cxl/core/pci.c compiled at all if
-CONFIG_CXL_PCI is disabled?
+Of course that is redundant when it's static anyway, and indeed wasn't 
+actually intentional, but it's also not doing any harm - the cosmetic 
+cleanup is welcome, but is not a stable-worthy fix.
 
 Thanks,
+Robin.
 
-Lukas
+> Remove it.
+> 
+> Fixes: 4d5a7680f2b4 ("perf: Add driver for Arm NI-700 interconnect PMU")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+> ---
+> Cc stable because although this commit is not yet released, it most
+> likely will be by the time it hits mainline.
+> ---
+>   drivers/perf/arm-ni.c | 1 -
+>   1 file changed, 1 deletion(-)
+> 
+> diff --git a/drivers/perf/arm-ni.c b/drivers/perf/arm-ni.c
+> index 90fcfe693439ef3e18e23c6351433ac3c5ea78b5..fd7a5e60e96302fada29cd44e7bf9c582e93e4ce 100644
+> --- a/drivers/perf/arm-ni.c
+> +++ b/drivers/perf/arm-ni.c
+> @@ -247,7 +247,6 @@ static struct attribute *arm_ni_other_attrs[] = {
+>   
+>   static const struct attribute_group arm_ni_other_attr_group = {
+>   	.attrs = arm_ni_other_attrs,
+> -	NULL
+>   };
+>   
+>   static const struct attribute_group *arm_ni_attr_groups[] = {
+> 
+> ---
+> base-commit: 4a5df37964673effcd9f84041f7423206a5ae5f2
+> change-id: 20241117-arm-ni-syntax-250a83058529
+> 
+> Best regards,
+
 
