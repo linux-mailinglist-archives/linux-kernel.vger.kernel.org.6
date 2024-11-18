@@ -1,175 +1,123 @@
-Return-Path: <linux-kernel+bounces-412629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 351719D0BA3
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 10:26:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0146C9D0BA9
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 10:27:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA224282AB5
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 09:26:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6613EB23E5A
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 09:27:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74198192B66;
-	Mon, 18 Nov 2024 09:26:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D87119047C;
+	Mon, 18 Nov 2024 09:27:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Q6LqlZAK"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YKos5JwR"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C267D188A0D;
-	Mon, 18 Nov 2024 09:26:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36C4D18B47E;
+	Mon, 18 Nov 2024 09:27:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731921992; cv=none; b=stbM27wlpF5WH31R93KNKKVVanEMJClQM3FoCh6Uz7MgNjsoxw1RsLrSTHO9QreT+9vnEbkNWYREtspbbt4+ExOaqJ2gamxv1ZsN0tl5a3CF0c/Wj7YlNBYBx6kpA33oDvfC2QqHGMF8Vixg5hhXL976MarBWiLHbsq9lcf9nqk=
+	t=1731922055; cv=none; b=T7UhTXywrB2mjo1ljpvFTCMjbkL4kQRJksqfJw7MSiYV5FcFfOP73E6tmCtyYxHD/S8AY6rhgZQac65rX0DwT4vQbv8txH/nvwftV2T3Lb1tmKwh8bPSSErqQH9h/6xJzuPFQc9a+LhpQ90gsZGjxxWZimVxo7waSCGULKJdeE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731921992; c=relaxed/simple;
-	bh=7y8SBkGv/+YxRzHcRFNsbkKg4SWkg6W8LTweSUKKcPY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=IXGl6xclJ0y47wXHScZdqBoiB5iwRMS/XqJPeLhMfTSGmUmUoRgAyoZDWcnHfuR8OoW4FM0n/JWgCWt5yvOlbNo+SjZWRo/Mzs9aJKBWpq1deC0F/+U31K4/9Z27LZ+mUVmur7FQyTGrlWkVc4WPmC5fPMSgPxj03EPFCEzOsDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Q6LqlZAK; arc=none smtp.client-ip=192.198.163.17
+	s=arc-20240116; t=1731922055; c=relaxed/simple;
+	bh=yiJoYmZ+1mxJIynIPiaYtUku1lFQL80mp5dxepxukDA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qmEp3rvEo9mNl9/mcla28CX17qDolvhbpyoZuNSat9+CvCKXYXOs5CUR3SweKa14ydzTROYLks+sozz8+Xn3aKXtyd4gJJFa5viDbwMkFJ3GRyzw3IpYdnxChpKewkisgmp8jPJoUKGbH2fdnJHG4++6HJ0eDHQrLrRL2ZTul4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YKos5JwR; arc=none smtp.client-ip=192.198.163.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731921991; x=1763457991;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=7y8SBkGv/+YxRzHcRFNsbkKg4SWkg6W8LTweSUKKcPY=;
-  b=Q6LqlZAK3GrpWoAyb1IuFLpkjP83NebArx2N1iDVYp2lKRDkvvNBFNec
-   LRMf0p0u9iyaC/4PrVWi9UoqbfNwxCUv33IWtUZK3LQ6UbxqoSfdvLDnT
-   qq+qR/kL7L2Wtjsd2epxmjYJbpCOyTWDoPSJvsBQ1Dvg4BEkFLcXg0iVx
-   Q25lhrSflWPkH/1OoUvvRb1q93sqyzGe86kFOgtrWGCOQwuqUk6h21hkP
-   ZwXJybv7VqI70oAsqlmAwRytvEfTNhe2/FXR8SFq5XdBXNrtRv3QUHMWz
-   r9A9D/lQusn74rbkA4IbdCp+gmv8Us2GrE9y3mQ7ciUTwpgc0z0WPxTtM
-   g==;
-X-CSE-ConnectionGUID: lgSwWsVwQYuoAxGz7Il1eQ==
-X-CSE-MsgGUID: HDz0vglCRE6A5LBSfwxL3A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11259"; a="31794392"
+  t=1731922054; x=1763458054;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=yiJoYmZ+1mxJIynIPiaYtUku1lFQL80mp5dxepxukDA=;
+  b=YKos5JwRtpfONvEjS6oBN0CO61jUF8d012EkCXnVrXyjswwhIMnov32I
+   yH9jsCqxFcEiI5Lrfd4gqVEChW1gDn8w2RaAIPu+I4LzzFsrs/pnbN3Gk
+   31ecPGOuYZejfaaZSNY9YFaah4worBHAFK+4qKcSnPxSS9r9kNEUY+GM+
+   auMyKfo+j2EFyq12oZ1DNWkY/g27oeraRdLZeiUn3/YDwt73p/uktslUg
+   ADC0mWlajPUNCA6J2WnCRNQOhJD1ZF4MjcjX7e0H5TKq3MYoIZqazwkNg
+   BUujnxIzRLGWU1VfmVnfjEr4m8NOBQxcURXS2EznuscirDOtOx5udmXht
+   Q==;
+X-CSE-ConnectionGUID: vHSbAuEsTeiBcgQZSYujPA==
+X-CSE-MsgGUID: 4O0eI1hwSQOdYZrDxJrNdQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11259"; a="32105654"
 X-IronPort-AV: E=Sophos;i="6.12,163,1728975600"; 
-   d="scan'208";a="31794392"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2024 01:26:30 -0800
-X-CSE-ConnectionGUID: MgkHwhaoTQqCebQt/Ozq/g==
-X-CSE-MsgGUID: HhCNlcMdTpy5FLhWGx+s5w==
+   d="scan'208";a="32105654"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2024 01:27:33 -0800
+X-CSE-ConnectionGUID: nbY3P3a1TYCAyW/CowvkbA==
+X-CSE-MsgGUID: p+bnMUpGTi2Z9ijlUKIUBg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.12,163,1728975600"; 
-   d="scan'208";a="89572008"
-Received: from jkrzyszt-mobl2.ger.corp.intel.com (HELO localhost) ([10.245.246.148])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2024 01:26:07 -0800
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Laurent Pinchart
- <laurent.pinchart@ideasonboard.com>
-Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>, Joonas Lahtinen
- <joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Karol
- Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>, Danilo
- Krummrich <dakr@redhat.com>, Harry Wentland <harry.wentland@amd.com>, Leo
- Li <sunpeng.li@amd.com>, Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, Alex
- Deucher <alexander.deucher@amd.com>, Christian =?utf-8?Q?K=C3=B6nig?=
- <christian.koenig@amd.com>, Xinhui Pan <Xinhui.Pan@amd.com>, Alain Volmat
- <alain.volmat@foss.st.com>, Raphael Gallais-Pou <rgallaispou@gmail.com>,
- Liviu Dudau <liviu.dudau@arm.com>, Andrzej Hajda
- <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>,
- Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>, Jernej
- Skrabec <jernej.skrabec@gmail.com>, Peter Senna Tschudin
- <peter.senna@gmail.com>, Ian Ray <ian.ray@ge.com>, Martyn Welch
- <martyn.welch@collabora.co.uk>, Inki Dae <inki.dae@samsung.com>, Seung-Woo
- Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>,
- Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
- <alim.akhtar@samsung.com>, Stefan Agner <stefan@agner.ch>, Alison Wang
- <alison.wang@nxp.com>, Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
- Philipp Zabel <p.zabel@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team
- <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Rob Clark
- <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean
- Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>,
- Dave Airlie <airlied@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>, Sandy
- Huang <hjc@rock-chips.com>, Heiko =?utf-8?Q?St=C3=BCbner?=
- <heiko@sntech.de>, Andy Yan
- <andy.yan@rock-chips.com>, Chen-Yu Tsai <wens@csie.org>, Samuel Holland
- <samuel@sholland.org>, Thierry Reding <thierry.reding@gmail.com>, Mikko
- Perttunen <mperttunen@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>,
- Dave Stevenson <dave.stevenson@raspberrypi.com>, =?utf-8?Q?Ma=C3=ADra?=
- Canal
- <mcanal@igalia.com>, Raspberry Pi Kernel Maintenance
- <kernel-list@raspberrypi.com>, Gurchetan Singh
- <gurchetansingh@chromium.org>, Chia-I Wu <olvaffe@gmail.com>, Zack Rusin
- <zack.rusin@broadcom.com>, Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, intel-gfx@lists.freedesktop.org,
- intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, nouveau@lists.freedesktop.org,
- amd-gfx@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
- virtualization@lists.linux.dev, spice-devel@lists.freedesktop.org,
- linux-rockchip@lists.infradead.org, linux-sunxi@lists.linux.dev,
- linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 1/5] drm/encoder_slave: make mode_valid accept const
- struct drm_display_mode
-In-Reply-To: <CAA8EJpq6Gkp4W=rGbpY6ASPgoDt=64HTFDk4_OZsTmbSUxhhGw@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20241115-drm-connector-mode-valid-const-v1-0-b1b523156f71@linaro.org>
- <20241115-drm-connector-mode-valid-const-v1-1-b1b523156f71@linaro.org>
- <20241117205426.GE12409@pendragon.ideasonboard.com>
- <CAA8EJpr=4AQVRKbtR2MaCQfguGW0a=3ay-ttew-mFR4f086Uyg@mail.gmail.com>
- <20241117233250.GK12409@pendragon.ideasonboard.com>
- <CAA8EJpq6Gkp4W=rGbpY6ASPgoDt=64HTFDk4_OZsTmbSUxhhGw@mail.gmail.com>
-Date: Mon, 18 Nov 2024 11:26:03 +0200
-Message-ID: <87plms51w4.fsf@intel.com>
+   d="scan'208";a="93237403"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa003.fm.intel.com with ESMTP; 18 Nov 2024 01:27:32 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id EB378277; Mon, 18 Nov 2024 11:27:30 +0200 (EET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH v2 1/1] gpio: zevio: Add missed label initialisation
+Date: Mon, 18 Nov 2024 11:27:07 +0200
+Message-ID: <20241118092729.516736-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-On Mon, 18 Nov 2024, Dmitry Baryshkov <dmitry.baryshkov@linaro.org> wrote:
-> On Mon, 18 Nov 2024 at 01:33, Laurent Pinchart
-> <laurent.pinchart@ideasonboard.com> wrote:
->>
->> On Mon, Nov 18, 2024 at 01:22:12AM +0200, Dmitry Baryshkov wrote:
->> > On Sun, 17 Nov 2024 at 22:54, Laurent Pinchart wrote:
->> > > On Fri, Nov 15, 2024 at 11:09:26PM +0200, Dmitry Baryshkov wrote:
->> > > > The mode_valid() callbacks of drm_encoder, drm_crtc and drm_bridge
->> > > > accept const struct drm_display_mode argument. Change the mode_valid
->> > > > callback of drm_encoder_slave to also accept const argument.
->> > > >
->> > > > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->> > >
->> > > Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
->> > >
->> > > On a side note, there's only two I2C slave encoder drivers left... I
->> > > wonder if we could so something about them. The ch7006 and sil164
->> > > drivers seem to be used by nouveau only, could they be moved to
->> > > drivers/gpu/drm/nouveau/ ? We would move the whole drm_encoder_slave
->> > > implementation there too, and leave it to die (or get taken out of limbo
->> > > and fixed) with dispnv04.
->> >
->> > Or it might be better to switch to drm_bridge. Currently we also have
->> > sil164 (sub)drivers in ast and i915 drivers. I don't know if there is
->> > any common code to share or not. If there is some, it might be nice to
->> > use common framework.
->>
->> That would require porting nouveau and i915 to drm_bridge. As much as
->> I'd love to see that happening, I won't hold my breath.
->
-> Me neither. Probably moving those two and drm_encoder_slave to nouveau
-> is really the best course for now.
+Initialise the GPIO chip label correctly as it was done by
+of_mm_gpiochip_add_data() before the below mentioned change.
 
-Granted, the dvo part of i915 is ugly, but it's also only relevant for
-the oldest hardware i915 supports. Like 20 years old. Not sure there's
-much return on investment in big refactoring, more risk that it breaks
-without nobody noticing. Just let it be in i915?
+Fixes: cf8f4462e5fa ("gpio: zevio: drop of_gpio.h header")
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+v2: explained why label should be initialised (Bart)
+ drivers/gpio/gpio-zevio.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-BR,
-Jani.
-
-
-
+diff --git a/drivers/gpio/gpio-zevio.c b/drivers/gpio/gpio-zevio.c
+index 2de61337ad3b..d7230fd83f5d 100644
+--- a/drivers/gpio/gpio-zevio.c
++++ b/drivers/gpio/gpio-zevio.c
+@@ -11,6 +11,7 @@
+ #include <linux/io.h>
+ #include <linux/mod_devicetable.h>
+ #include <linux/platform_device.h>
++#include <linux/property.h>
+ #include <linux/slab.h>
+ #include <linux/spinlock.h>
+ 
+@@ -169,6 +170,7 @@ static const struct gpio_chip zevio_gpio_chip = {
+ /* Initialization */
+ static int zevio_gpio_probe(struct platform_device *pdev)
+ {
++	struct device *dev = &pdev->dev;
+ 	struct zevio_gpio *controller;
+ 	int status, i;
+ 
+@@ -180,6 +182,10 @@ static int zevio_gpio_probe(struct platform_device *pdev)
+ 	controller->chip = zevio_gpio_chip;
+ 	controller->chip.parent = &pdev->dev;
+ 
++	controller->chip.label = devm_kasprintf(dev, GFP_KERNEL, "%pfw", dev_fwnode(dev));
++	if (!controller->chip.label)
++		return -ENOMEM;
++
+ 	controller->regs = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(controller->regs))
+ 		return dev_err_probe(&pdev->dev, PTR_ERR(controller->regs),
 -- 
-Jani Nikula, Intel
+2.43.0.rc1.1336.g36b5255a03ac
+
 
