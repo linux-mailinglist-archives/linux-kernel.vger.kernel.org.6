@@ -1,220 +1,143 @@
-Return-Path: <linux-kernel+bounces-412841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34FAE9D0FE5
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 12:42:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39F9C9D0FF6
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 12:45:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C47EDB25550
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:42:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E66EE1F231D0
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:45:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83E8C199FA1;
-	Mon, 18 Nov 2024 11:41:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="nnz0yyww"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C332119C540;
+	Mon, 18 Nov 2024 11:44:20 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B244199381
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 11:41:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2F21194A63;
+	Mon, 18 Nov 2024 11:44:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731930113; cv=none; b=CJwrQyvlPpgJYN/N3AusInJaYCqEvJyxjvfRI7tngut1o0N9u6QY1qciTQlzujNC9FMIe3cqs3CaEjaMj/NLFCVI+1igiBnhFlx64stWrnMPz139KQ7kxW2ztk9sY9CsiW1/dCztNHamY43DyB9yK6JJi+wkYWlXFBziOOw4t1E=
+	t=1731930260; cv=none; b=mky4ei1Ag8VelKBUUr6GPMlRT56Eus25tCU4X03ESLUWp6DSuziBVga92ZL0/z3/NUBONCce3VOnt4beqPUVaUbWtlTBe40Zny3Kazg62aadXP7xxV6UVlYo8HqEBxGWhXMQyS71jTsp1h2ViWNhgNxfauOCRBsXEYIcR/UihKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731930113; c=relaxed/simple;
-	bh=eZEjcc9v2hvll074sfZkOybDSXhhU9eWPAK5coAQjcQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pDP9M2OibMK2pwtoPBpV3iH7JnsmF4qcxWDG17z2n0Rjy7pt+r+cSzFkkVxlZMgL3SVKP+ozZQy52gj2+woLITWYCdml/PIq4sg5yRrBwYFgDDfZbPN9guW9SKFGgFAzvwJKdspiTw0gbZy5obpjeIkxsKsrjWYPYI/A4nQn0hc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=nnz0yyww; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AI5fh2L008868;
-	Mon, 18 Nov 2024 11:41:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=RXuRG5xyNCHlIqEvV
-	SmZoIl1pS6WmakUVIg1aZ5hNUw=; b=nnz0yyww/F5A1TlwNPnSbVQy4aHMPTX2d
-	gvu3qclm0zT0ACi0DbZ5UIGPhBbrRkqsHp8t5q/OboK9yZCWK/wNR7M2FqERM48m
-	JiVOTrOGaznvt1+4OUQet7ZALV/BOYH8FUlpe/45B8c5xB+ZGzPvfdZETrlZu+Lx
-	T5vQVJC6X6DSWlFwb8ci+C7hB1rLmZB+qb7vVfIEMaQhvoCwyk5a0sWth09h17p/
-	pTtwFQVYz/d9G7mc9KPCEHtGP45YkE2FHoRXzXgORJxxS5VzxKdXgm7tt5vVIxwZ
-	SnFiG+W17Q9m0wP1fMDCZmeN0+tL0Gcpn5ZFiJJ484KOLsBzZUgpw==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42xk2vskuh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 18 Nov 2024 11:41:36 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AI1ox3b030682;
-	Mon, 18 Nov 2024 11:41:35 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 42y5qsajqd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 18 Nov 2024 11:41:35 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4AIBfVTM50790840
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 18 Nov 2024 11:41:31 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 768B820043;
-	Mon, 18 Nov 2024 11:41:31 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 14F5620040;
-	Mon, 18 Nov 2024 11:41:29 +0000 (GMT)
-Received: from li-e8dccbcc-2adc-11b2-a85c-bc1f33b9b810.ibm.com.com (unknown [9.43.96.153])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 18 Nov 2024 11:41:28 +0000 (GMT)
-From: Kajol Jain <kjain@linux.ibm.com>
-To: mpe@ellerman.id.au, maddy@linux.ibm.com
-Cc: atrajeev@linux.vnet.ibm.com, kjain@linux.ibm.com, disgoel@linux.ibm.com,
-        hbathini@linux.ibm.com, adubey@linux.ibm.com, gautam@linux.ibm.com,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 4/4] powerpc/perf: Add per-task/process monitoring to vpa_pmu driver
-Date: Mon, 18 Nov 2024 17:11:14 +0530
-Message-ID: <20241118114114.208964-4-kjain@linux.ibm.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20241118114114.208964-1-kjain@linux.ibm.com>
-References: <20241118114114.208964-1-kjain@linux.ibm.com>
+	s=arc-20240116; t=1731930260; c=relaxed/simple;
+	bh=j+L80QTVaLAsIQmV5Hx5cn3KWXUNzn+m2TCxIwARhgw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=D0CaG1UwjQvZl81PZBZ3WiwCb5flK9SLoyouQYivOfJrVt1K3kqduL2V7XrJ5bcdMU4uYV6qtsNggoEjBzAomAvEvLbDJUg1D/TcrQNCxAML66B1I5tSH8NlWS6USUGfqcoUbG/2n1E5roCpEE/HmpOGDnw/ZCrvrLF0Lrd6Jr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4XsQkf40K5z4f3jJ5;
+	Mon, 18 Nov 2024 19:43:54 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 029FB1A0359;
+	Mon, 18 Nov 2024 19:44:13 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgBHI4eKKDtn_9+KCA--.2699S4;
+	Mon, 18 Nov 2024 19:44:12 +0800 (CST)
+From: Yu Kuai <yukuai1@huaweicloud.com>
+To: song@kernel.org,
+	xni@redhat.com
+Cc: linux-raid@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	yukuai3@huawei.com,
+	yukuai1@huaweicloud.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com
+Subject: [PATCH md-6.13 0/5] md/md-bitmap: move bitmap_{start,end}write to md upper layer
+Date: Mon, 18 Nov 2024 19:41:52 +0800
+Message-Id: <20241118114157.355749-1-yukuai1@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: uXaG0UGimiCFI3dngSYvbYvBAehKy3zV
-X-Proofpoint-GUID: uXaG0UGimiCFI3dngSYvbYvBAehKy3zV
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- priorityscore=1501 phishscore=0 clxscore=1015 suspectscore=0 spamscore=0
- impostorscore=0 bulkscore=0 mlxscore=0 adultscore=0 lowpriorityscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411180096
+X-CM-TRANSID:gCh0CgBHI4eKKDtn_9+KCA--.2699S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxZrW8XF1UCr4kZrW3Xr4ruFg_yoW5Kw1xpF
+	47Jry5Jw18Gr47Jr47Jr1UJryrJr18Jr1UXr17Jr1UXw1UJw4UtrnrJr1UJr1DJr1UCr1U
+	Jr1UAr1UGr1UJwUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkG14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY1x0262kKe7AKxVWU
+	AVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14
+	v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkG
+	c2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI
+	0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4U
+	MIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUBVbkUUU
+	UU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-Enhance the vpa_pmu driver with a feature to observe context switch
-latency event for both per-task (tid) and per-pid (pid) option.
-Couple of new helper functions are added to hide the abstraction of
-reading the context switch latency counter from kvm_vcpu_arch struct
-and these helper functions are defined in the "kvm/book3s_hv.c".
+From: Yu Kuai <yukuai3@huawei.com>
 
-"PERF_ATTACH_TASK" flag is used to decide whether to read the counter
-values from lppaca or kvm_vcpu_arch struct.
+While reviewing raid5 code, it's found that bitmap operations can be
+optimized. For example, for a 4 disks raid5, with chunksize=8k, if user
+issue a IO (0 + 48k) to the array:
 
-Signed-off-by: Kajol Jain <kjain@linux.ibm.com>
-Co-developed-by: Madhavan Srinivasan <maddy@linux.ibm.com>
-Signed-off-by: Madhavan Srinivasan <maddy@linux.ibm.com>
----
- arch/powerpc/include/asm/kvm_book3s_64.h |  3 ++
- arch/powerpc/kvm/book3s_hv.c             | 45 ++++++++++++++++++++++++
- arch/powerpc/perf/vpa-pmu.c              | 15 ++++++--
- 3 files changed, 60 insertions(+), 3 deletions(-)
+┌────────────────────────────────────────────────────────────┐
+│chunk 0                                                     │
+│      ┌────────────┬─────────────┬─────────────┬────────────┼
+│  sh0 │A0: 0 + 4k  │A1: 8k + 4k  │A2: 16k + 4k │A3: P       │
+│      ┼────────────┼─────────────┼─────────────┼────────────┼
+│  sh1 │B0: 4k + 4k │B1: 12k + 4k │B2: 20k + 4k │B3: P       │
+┼──────┴────────────┴─────────────┴─────────────┴────────────┼
+│chunk 1                                                     │
+│      ┌────────────┬─────────────┬─────────────┬────────────┤
+│  sh2 │C0: 24k + 4k│C1: 32k + 4k │C2: P        │C3: 40k + 4k│
+│      ┼────────────┼─────────────┼─────────────┼────────────┼
+│  sh3 │D0: 28k + 4k│D1: 36k + 4k │D2: P        │D3: 44k + 4k│
+└──────┴────────────┴─────────────┴─────────────┴────────────┘
 
-diff --git a/arch/powerpc/include/asm/kvm_book3s_64.h b/arch/powerpc/include/asm/kvm_book3s_64.h
-index f620e3126d68..b936e174eefd 100644
---- a/arch/powerpc/include/asm/kvm_book3s_64.h
-+++ b/arch/powerpc/include/asm/kvm_book3s_64.h
-@@ -691,6 +691,9 @@ void kvmhv_set_l2_counters_status(int cpu, bool status);
- u64 kvmhv_get_l1_to_l2_cs_time(void);
- u64 kvmhv_get_l2_to_l1_cs_time(void);
- u64 kvmhv_get_l2_runtime_agg(void);
-+u64 kvmhv_get_l1_to_l2_cs_time_vcpu(void);
-+u64 kvmhv_get_l2_to_l1_cs_time_vcpu(void);
-+u64 kvmhv_get_l2_runtime_agg_vcpu(void);
- 
- #endif /* CONFIG_KVM_BOOK3S_HV_POSSIBLE */
- 
-diff --git a/arch/powerpc/kvm/book3s_hv.c b/arch/powerpc/kvm/book3s_hv.c
-index 4284437fedeb..ddc380982233 100644
---- a/arch/powerpc/kvm/book3s_hv.c
-+++ b/arch/powerpc/kvm/book3s_hv.c
-@@ -4214,6 +4214,51 @@ u64 kvmhv_get_l2_runtime_agg(void)
- }
- EXPORT_SYMBOL(kvmhv_get_l2_runtime_agg);
- 
-+u64 kvmhv_get_l1_to_l2_cs_time_vcpu(void)
-+{
-+	struct kvm_vcpu *vcpu;
-+	struct kvm_vcpu_arch *arch;
-+
-+	vcpu = local_paca->kvm_hstate.kvm_vcpu;
-+	if (vcpu) {
-+		arch = &vcpu->arch;
-+		return arch->l1_to_l2_cs;
-+	} else {
-+		return 0;
-+	}
-+}
-+EXPORT_SYMBOL(kvmhv_get_l1_to_l2_cs_time_vcpu);
-+
-+u64 kvmhv_get_l2_to_l1_cs_time_vcpu(void)
-+{
-+	struct kvm_vcpu *vcpu;
-+	struct kvm_vcpu_arch *arch;
-+
-+	vcpu = local_paca->kvm_hstate.kvm_vcpu;
-+	if (vcpu) {
-+		arch = &vcpu->arch;
-+		return arch->l2_to_l1_cs;
-+	} else {
-+		return 0;
-+	}
-+}
-+EXPORT_SYMBOL(kvmhv_get_l2_to_l1_cs_time_vcpu);
-+
-+u64 kvmhv_get_l2_runtime_agg_vcpu(void)
-+{
-+	struct kvm_vcpu *vcpu;
-+	struct kvm_vcpu_arch *arch;
-+
-+	vcpu = local_paca->kvm_hstate.kvm_vcpu;
-+	if (vcpu) {
-+		arch = &vcpu->arch;
-+		return arch->l2_runtime_agg;
-+	} else {
-+		return 0;
-+	}
-+}
-+EXPORT_SYMBOL(kvmhv_get_l2_runtime_agg_vcpu);
-+
- #else
- int kvmhv_get_l2_counters_status(void)
- {
-diff --git a/arch/powerpc/perf/vpa-pmu.c b/arch/powerpc/perf/vpa-pmu.c
-index 2c785eee2f71..601de245392c 100644
---- a/arch/powerpc/perf/vpa-pmu.c
-+++ b/arch/powerpc/perf/vpa-pmu.c
-@@ -97,13 +97,22 @@ static unsigned long get_counter_data(struct perf_event *event)
- 
- 	switch (config) {
- 	case L1_TO_L2_CS_LAT:
--		data = kvmhv_get_l1_to_l2_cs_time();
-+		if (event->attach_state & PERF_ATTACH_TASK)
-+			data = kvmhv_get_l1_to_l2_cs_time_vcpu();
-+		else
-+			data = kvmhv_get_l1_to_l2_cs_time();
- 		break;
- 	case L2_TO_L1_CS_LAT:
--		data = kvmhv_get_l2_to_l1_cs_time();
-+		if (event->attach_state & PERF_ATTACH_TASK)
-+			data = kvmhv_get_l2_to_l1_cs_time_vcpu();
-+		else
-+			data = kvmhv_get_l2_to_l1_cs_time();
- 		break;
- 	case L2_RUNTIME_AGG:
--		data = kvmhv_get_l2_runtime_agg();
-+		if (event->attach_state & PERF_ATTACH_TASK)
-+			data = kvmhv_get_l2_runtime_agg_vcpu();
-+		else
-+			data = kvmhv_get_l2_runtime_agg();
- 		break;
- 	default:
- 		data = 0;
+Before this set, 4 stripe head will be used, and each sh will attach
+bio for 3 disks, and each attached bio will trigger
+bitmap_startwrite() once, which means total 12 times.
+ - 3 times (0 + 4k), for (A0, A1 and A2)
+ - 3 times (4 + 4k), for (B0, B1 and B2)
+ - 3 times (8 + 4k), for (C0, C1 and C3)
+ - 3 times (12 + 4k), for (D0, D1 and D3)
+
+After this set, md upper layer will calculate that IO range (0 + 48k)
+is corresponding to the bitmap (0 + 16k), and call bitmap_startwrite()
+just once.
+
+Noted that this patch will align bitmap ranges to the chunks, for example,
+if user issue a IO (0 + 4k) to array:
+
+- Before this set, 1 time (0 + 4k), for A0;
+- After this set, 1 time (0 + 8k) for chunk 0;
+
+Usually, one bitmap bit will represent more than one disk chunk, and this
+doesn't have any difference. And even if user really created a array
+that one chunk contain multiple bits, the overhead is that more data
+will be recovered after power failure.
+
+Yu Kuai (5):
+  md/md-bitmap: factor behind write counters out from
+    bitmap_{start/end}write()
+  md/md-bitmap: remove the last parameter for bimtap_ops->endwrite()
+  md: add a new callback pers->bitmap_sector()
+  md/raid5: implement pers->bitmap_sector()
+  md/md-bitmap: move bitmap_{start, end}write to md upper layer
+
+ drivers/md/md-bitmap.c   | 74 ++++++++++++++++++++++++----------------
+ drivers/md/md-bitmap.h   |  7 ++--
+ drivers/md/md.c          | 29 ++++++++++++++++
+ drivers/md/md.h          |  5 +++
+ drivers/md/raid1.c       | 11 +++---
+ drivers/md/raid10.c      |  6 ----
+ drivers/md/raid5-cache.c |  4 ---
+ drivers/md/raid5.c       | 48 ++++++++++++--------------
+ 8 files changed, 109 insertions(+), 75 deletions(-)
+
 -- 
-2.43.5
+2.39.2
 
 
