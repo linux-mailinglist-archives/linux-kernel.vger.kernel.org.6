@@ -1,163 +1,180 @@
-Return-Path: <linux-kernel+bounces-413560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 394549D1AFF
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 23:17:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE23B9D1B02
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 23:17:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F092C283C48
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 22:16:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42ECB1F2218A
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 22:17:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4055B1E7C01;
-	Mon, 18 Nov 2024 22:16:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91DD21E7C1A;
+	Mon, 18 Nov 2024 22:17:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="geCQMTcq"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hcp8S/pc"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD935158DAC;
-	Mon, 18 Nov 2024 22:16:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 375531E5712
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 22:17:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731968207; cv=none; b=LHNnjxctXMBe6PkERUOfFQnUGmbpsFj0QsykUKHBHX6W6M/Rg3v+lB6S8T5VKD45a+vL4oHHrzTsT95Qx9ltGFf7Gw/ooMJ0llrnmbwvYs8mvZyQ+iR9hxQLE6ZKZBtCcqW5J/fmsedkYIvhGo5/2Xk4S8v7FHsR5TE1hj85IRo=
+	t=1731968242; cv=none; b=E9ES7+2En9VB5t5f31tmGO5ELmEE0HWu5g3HsYE5belwyUN1ylx6BRJiRYppt/xRc2xt7xYxekdyzyVC9hZfL+rbfdwQ5ShDWRAQuaNm4zGssVDqSAnAgT2CGcz2uHimIkxSNNQfA4b6R8YxEbnmVRvASLcB5blXoe700OD0iVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731968207; c=relaxed/simple;
-	bh=EzPpcOTQFNeHFA1obe3HvBAvPzz42yRBtFd9GRiJwSU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fTu57BQHrcIBP9hvAcopwvC36+5jSDytUTui8YUc1XBU+HvBbxkcp05pJlIVdeMPtVCQJc289pG+K8+TWHm55SflTjSGOxFeNwvnB/wBLmZCR6F2y6/eEGySW2v21E8tYPZi6SCFjPyleVm233FVuX0ERmvOjgpH1xl8YoP5ETI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=geCQMTcq; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1731968197;
-	bh=vY7LRjT373NVXOmT9Jz0uUdmdGpVOfj8aJRMwjuzs9s=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=geCQMTcq7qi5sivrew/2A87DTEztF6xbXpYHIt97peqcCkc1PWNZm1GreLVaI+aWC
-	 T/DdqHjGL1Bp2oVGZjMOk3N/5sIJWeOkINEkVd19U3jJtiWRf7u8b5bMZf+w02vygZ
-	 xUTKWqKLtWztDVhCw0uRpE2gKKwP4L9Jxzw4jVGkuVlO/lKMcmXWWImP9TLz89twuW
-	 gLo0ZZ/wZdpMRe5iHrlPYH8VsZfvJKNTse2NZDfdHR05iLMhhcaKieWp+YyZVy6yD7
-	 Ln+64naKLD9fuAz/zWSpEvfWKZk72/gNaoXd21ptF+7hFyg/MmmoiBh3vY9SI5L1ew
-	 RaiyFo3TaaFdw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Xshmj1b8dz4x33;
-	Tue, 19 Nov 2024 09:16:37 +1100 (AEDT)
-Date: Tue, 19 Nov 2024 09:16:39 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: David Sterba <dsterba@suse.cz>
-Cc: Christian Brauner <brauner@kernel.org>, David Sterba <dsterba@suse.com>,
- Jeff Layton <jlayton@kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the vfs-brauner tree with the btrfs
- tree
-Message-ID: <20241119091639.2216ae57@canb.auug.org.au>
-In-Reply-To: <20241016085129.3954241d@canb.auug.org.au>
-References: <20241016085129.3954241d@canb.auug.org.au>
+	s=arc-20240116; t=1731968242; c=relaxed/simple;
+	bh=hZIvMyXtZWni8q5+iCDoHqgTW0z1eP+nNGIo28NDmRI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=H/didxhS/tTZksAY27NacbzZwEf6lQDPElib66BEd+YUW5xNi2EwFm9kI7LcoZe7Z5YDrfpJOuH49usFmfjstsn3AEwXfrowuM9oUhUmDnZ+qZht3KSVJMrrJ3V5Ee4IyfqH1rp55LAZFPCnfeIzuEaqyMMIQa4Cy8JGG5w1wQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hcp8S/pc; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-539ec09d690so626021e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 14:17:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731968239; x=1732573039; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4J2lS2YmBPhVneBwHBuX6J9t5XJoyMza4FciI9dZ0VI=;
+        b=hcp8S/pctrgE4OmEV+M6xkDxoMo4Y0PMgJ+U0IoD8UY5Bw9IVM19ORZn1vMLNuGCKN
+         PsXR1yGDoYwlF8HcZb9m4HvEkjZT1lQfol24cUYzaqKhugkteskA2/CDusf6k4OF8ptR
+         4KoAByn1iL6oIwfEnl5UJehtF+MDVdVRG/vOWCh4XwobZu27feA13rQtmuYA7W94+rD3
+         ywwt8qtGyT2QmbmAuKdc3X4L821xUBmLPdbrCyP7FUsMDC+3WIk38u8QQv8siEVgfgNG
+         fQAvlo1X2TPzdv8XxtjjP+ienhQjrmuDQ3+ydRi0d7/NB0rVYM05LJXIi9/PQcWXNZvJ
+         IuBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731968239; x=1732573039;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4J2lS2YmBPhVneBwHBuX6J9t5XJoyMza4FciI9dZ0VI=;
+        b=mZMyRC9K4N1gdux++UXvicVL4x9kOqmHc75NZOu/nuF3JgrzkPh+eEtbHxnHgBd15y
+         wYaYY7lBuuDEYhDw4qBIaLZYk1Vp89F0ijifiGMZM/FvqiCGBqO3y6oxytRlrumv1q6e
+         YrGo/7AUzf7wEU/1GwRENW2oKedPIjMncVwv3CSRiUjQrtwyN/+xcepOKJSub3BJAh7t
+         wFPDrK4YoIIlTUjFNQ9yRfSlOevGWZz8wWUbDWQ6jjuS8Jmv8RjTnRJ08W0Bkt6+1259
+         ts7zwShmsGgvYApVE+x69lNxJE8JngSTKgytvt/cMNEBxQQT0IlZWMbFvCcdxh47gYX2
+         1xUw==
+X-Forwarded-Encrypted: i=1; AJvYcCVguIlWKCUl83Fd5+cVOoHZCDO5Z3yYdzhbsbkDf1C41ekpzhNgSyJ3RC1ieP7sqOkPRSMRPTwOdEorxA4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzV47MyyxbvAqAthQ0EDvI8J3AhpFoBmK7xpe9H/FrXMfMDn9lA
+	PufToO7trnw51pC/feI/nyQwQYkcLJ2+ZC70gsoanfkU7nkgavTGi365DH9CwGI=
+X-Gm-Gg: ASbGnctC+bvIkzwar9iLEWvVt6m2sufKfuhqkl/Qo6zPZI70PzIPRzB36H2J2mW7pTY
+	EmViI+LXe+zhk8s6Qwa+95YlsZ0yYS/T35Do+5XTZLZ6C9p74Y/uP/eA5wMmdDbBYx6QTr8Aipl
+	iA1FXGoTAOnYB0+PRru86k6UWZmFTnQYZZUladeAMVtJEtZtcWaEtmm9b7/xoz01CeUpPJ+6JEq
+	Rs94f2eY81xKWYnTBNwlffnyOdEQy/31sng+rZFtRNJfmM3I8PCEQSAO2Nutliujj6oNzQeocMW
+	Cyk0JNdFiImxEZ2QHlH6TcaBIu3R
+X-Google-Smtp-Source: AGHT+IH7yutk9OuFHF7vFU1p9lx+sgBcPdw4/+MxXchsSnYtkuyHmZwIoY0dub0Kym16dEsIApX+Dw==
+X-Received: by 2002:a2e:b8c1:0:b0:2fb:55b0:8293 with SMTP id 38308e7fff4ca-2ff60668453mr11518611fa.5.1731968239323;
+        Mon, 18 Nov 2024 14:17:19 -0800 (PST)
+Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ff6985118fsm10566341fa.2.2024.11.18.14.17.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 Nov 2024 14:17:17 -0800 (PST)
+Message-ID: <8a33c0ff-0c6d-4995-b239-023d2a2c2af5@linaro.org>
+Date: Tue, 19 Nov 2024 00:17:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/np4oKuvmNuRF.NFrWGH.o.p";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] clk: qcom: common: Add support for power-domain
+ attachment
+Content-Language: en-US
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241118-b4-linux-next-24-11-18-clock-multiple-power-domains-v1-0-b7a2bd82ba37@linaro.org>
+ <20241118-b4-linux-next-24-11-18-clock-multiple-power-domains-v1-1-b7a2bd82ba37@linaro.org>
+From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+In-Reply-To: <20241118-b4-linux-next-24-11-18-clock-multiple-power-domains-v1-1-b7a2bd82ba37@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
---Sig_/np4oKuvmNuRF.NFrWGH.o.p
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi all,
-
-On Wed, 16 Oct 2024 08:51:29 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> Today's linux-next merge of the vfs-brauner tree got a conflict in:
->=20
->   fs/btrfs/file.c
->=20
-> between commit:
->=20
->   377781e9e6f8 ("btrfs: drop unused parameter iov_iter from btrfs_write_c=
-heck()")
->=20
-> from the btrfs tree and commit:
->=20
->   e2e801d6e625 ("btrfs: convert to multigrain timestamps")
->=20
-> from the vfs-brauner tree.
->=20
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
->=20
-> --=20
-> Cheers,
-> Stephen Rothwell
->=20
-> diff --cc fs/btrfs/file.c
-> index 033f85ea8c9d,e5384ceb8acf..000000000000
-> --- a/fs/btrfs/file.c
-> +++ b/fs/btrfs/file.c
-> @@@ -1124,27 -1120,7 +1124,7 @@@ void btrfs_check_nocow_unlock(struct bt
->   	btrfs_drew_write_unlock(&inode->root->snapshot_lock);
+On 11/18/24 04:24, Bryan O'Donoghue wrote:
+> Right now we have a plethora of singleton power-domains which power clock
+> controllers. These singletons are switched on by core logic when we probe
+> the clocks.
+> 
+> However when multiple power-domains are attached to a clock controller that
+> list of power-domains needs to be managed outside of core logic.
+> 
+> Use dev_pm_domain_attach_list() to automatically hook the list of given
+> power-domains in the dtsi for the clock being registered in
+> qcom_cc_really_probe().
+> 
+> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> ---
+>   drivers/clk/qcom/common.c | 24 ++++++++++++++++++++++++
+>   1 file changed, 24 insertions(+)
+> 
+> diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
+> index 33cc1f73c69d1f875a193aea0552902268dc8716..b4377fa09f7c0ec8d3c63dfc97d04fbb8cd6e10b 100644
+> --- a/drivers/clk/qcom/common.c
+> +++ b/drivers/clk/qcom/common.c
+> @@ -22,6 +22,7 @@ struct qcom_cc {
+>   	struct qcom_reset_controller reset;
+>   	struct clk_regmap **rclks;
+>   	size_t num_rclks;
+> +	struct dev_pm_domain_list *pd_list;
+>   };
+>   
+>   const
+> @@ -283,6 +284,25 @@ static int qcom_cc_icc_register(struct device *dev,
+>   						     desc->num_icc_hws, icd);
 >   }
->  =20
-> - static void update_time_for_write(struct inode *inode)
-> - {
-> - 	struct timespec64 now, ts;
-> -=20
-> - 	if (IS_NOCMTIME(inode))
-> - 		return;
-> -=20
-> - 	now =3D current_time(inode);
-> - 	ts =3D inode_get_mtime(inode);
-> - 	if (!timespec64_equal(&ts, &now))
-> - 		inode_set_mtime_to_ts(inode, now);
-> -=20
-> - 	ts =3D inode_get_ctime(inode);
-> - 	if (!timespec64_equal(&ts, &now))
-> - 		inode_set_ctime_to_ts(inode, now);
-> -=20
-> - 	if (IS_I_VERSION(inode))
-> - 		inode_inc_iversion(inode);
-> - }
-> -=20
->  -int btrfs_write_check(struct kiocb *iocb, struct iov_iter *from, size_t=
- count)
->  +int btrfs_write_check(struct kiocb *iocb, size_t count)
+>   
+> +static int qcom_cc_pds_attach(struct device *dev, struct qcom_cc *cc)
+> +{
+> +	struct dev_pm_domain_attach_data pd_data = {
+> +		.pd_names = 0,
+> +		.num_pd_names = 0,
+> +	};
+> +	int ret;
+> +
+> +	/* Only one power-domain platform framework will hook it up */
+> +	if (dev->pm_domain)
+> +		return 0;
+> +
+> +	ret = dev_pm_domain_attach_list(dev, &pd_data, &cc->pd_list);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	return 0;
+> +}
+> +
+>   int qcom_cc_really_probe(struct device *dev,
+>   			 const struct qcom_cc_desc *desc, struct regmap *regmap)
 >   {
->   	struct file *file =3D iocb->ki_filp;
->   	struct inode *inode =3D file_inode(file);
+> @@ -299,6 +319,10 @@ int qcom_cc_really_probe(struct device *dev,
+>   	if (!cc)
+>   		return -ENOMEM;
+>   
+> +	ret = qcom_cc_pds_attach(dev, cc);
+> +	if (ret)
+> +		return ret;
+> +
 
-This is now a conflict between the btrfs tree and Linus' tree.
+	ret = devm_pm_domain_attach_list(dev, NULL, &cc->pd_list);
+	if (ret < 0 && ret != -EEXIST)
+		return ret;
 
---=20
-Cheers,
-Stephen Rothwell
+That's it. No need to introduce a new function, not saying about 20 LoC off.
 
---Sig_/np4oKuvmNuRF.NFrWGH.o.p
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Next, you have to call dev_pm_domain_detach_list() in your version of the
+change on the error paths etc., fortunately this can be easily avoided,
+if the resource management flavour of the same function is in use.
 
------BEGIN PGP SIGNATURE-----
+>   	reset = &cc->reset;
+>   	reset->rcdev.of_node = dev->of_node;
+>   	reset->rcdev.ops = &qcom_reset_ops;
+> 
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmc7vMcACgkQAVBC80lX
-0Gw3FggAno4JmFUvWw4dE8DyYnmf2HI6NQqxW+GMz1xJJdUklzfcZRSdWaa3ZmJb
-ciuyBwOYp2ed/+L1VEeG9Um+hrG2SL7Zo3jjbVTwn89dOxeNKFhEJyhcvaLPEQLE
-D5Hxk+XQg+Ob4GczbTigg6o20P06Y46l/LxUTUEyhYMYOFqCLdaRvdaZH6BLq30s
-K8DN0T6RF36GgKyg4POH2RrmtxUJrdMygJPW4gMWWSSZaz6k87VYHqhcpGCbyWau
-PHdpaMGsDGzXwv14aouhS8+TMJvBKD1/H4Ar48B98ZIdKBhXr8atuIhfBxinHhkq
-pN3LnREP4bS+QDTNF4ko3y4/CxcQtA==
-=2b8Q
------END PGP SIGNATURE-----
-
---Sig_/np4oKuvmNuRF.NFrWGH.o.p--
+--
+Best wishes,
+Vladimir
 
