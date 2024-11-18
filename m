@@ -1,202 +1,159 @@
-Return-Path: <linux-kernel+bounces-413332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EADE9D177A
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 18:58:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D59D9D177F
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 19:00:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFE9D1F22BA8
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 17:58:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE44B2834DB
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 18:00:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72A961B0F2C;
-	Mon, 18 Nov 2024 17:58:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD8851C1F1B;
+	Mon, 18 Nov 2024 18:00:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DvkGxnGA"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XAI6wHU2"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1753101E6
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 17:58:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B07351D0DFE
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 18:00:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731952708; cv=none; b=WKdQELrUV50Qntbcc+3aPKrc3RvqRFhJfQobhnhbeVMhgdy2EMeZcCkQH2m2mayjW/o4Se9irVj1sdPV3cTalIDEdeDMPWB+fK9XYYFFGRfQq8Wlg6uFdDKqbCoHLddM5S2+DYwXMlrbOPdUe8eB5fj2RbDcnbJeT6vG8hJYeq0=
+	t=1731952823; cv=none; b=Ma7971k0Z2WKLj2RKmNYPt1xSEe4y0h7Yp1tIw2mZ2hSHhOXUIpjpUQOueFPIKABkp/MIq8RJi3+yUXvRAEAnw/cZbXk/VG6WOAnssDNeGIHUIgor5/BLxIJIsMeRH0BMwC1PZNNR2a7CF0/xghJdco+Ma1zvJ3kS4QK4yCbjKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731952708; c=relaxed/simple;
-	bh=JqTmRdYi1wuGDDC5+p/6Fc1NAZon9XviF0QyolxElwc=;
-	h=From:To:Cc:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=fH9pu0ftK2NOEThJw8ltGeXxhj4F6zRWb44zjV+iEPV7gbNvlclb1C5pT428++9SKtYeH5F2k5+3Gxonr9vSiE0FTprrIpDbGHvxdPv5QGTaj0eea3e1upuZDJVgsDfpzPm4wbutW02lR6xZNTQKuHRrqTgeb3NvOvJllqKJxzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=fail (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DvkGxnGA reason="signature verification failed"; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731952705;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5t7mHGoD0ziOQwsQdSn42HldEeq3FwqUBLOYEJnZ86c=;
-	b=DvkGxnGAwMcXI5r8rMnO3dztaMBMZz3+8vxSIYzNS4fm3K/k3dqwIU2h3ncSoniBvRW6mV
-	b8QbP2RryeNEir7NjRb7jpVh5KJQ14aLaqkRvYy8FBNDSKbxv1UDpUD8T/tWJ1uzfDp0tZ
-	l5695T7eY7RZgm44JjUVJRkvUqBY9WA=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-79-FkRnHC85PmyYAagNnZr2dg-1; Mon,
- 18 Nov 2024 12:58:22 -0500
-X-MC-Unique: FkRnHC85PmyYAagNnZr2dg-1
-X-Mimecast-MFC-AGG-ID: FkRnHC85PmyYAagNnZr2dg
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 855F41955F41;
-	Mon, 18 Nov 2024 17:58:20 +0000 (UTC)
-Received: from fedora (unknown [10.39.192.15])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 82CF91956086;
-	Mon, 18 Nov 2024 17:58:13 +0000 (UTC)
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
-To: Nikita Kalyazin <kalyazin@amazon.com>
-Cc: pbonzini@redhat.com, seanjc@google.com, tglx@linutronix.de,
- mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
- hpa@zytor.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: david@redhat.com, peterx@redhat.com, oleg@redhat.com, gshan@redhat.com,
- graf@amazon.de, jgowans@amazon.com, roypat@amazon.co.uk,
- derekmn@amazon.com, nsaenz@amazon.es, xmarcalx@amazon.com,
- kalyazin@amazon.com
-Subject: Re: [PATCH] KVM: x86: async_pf: check earlier if can deliver async pf
-In-Reply-To: <20241118130403.23184-1-kalyazin@amazon.com>
-References: <20241118130403.23184-1-kalyazin@amazon.com>
-Date: Mon, 18 Nov 2024 18:58:03 +0100
-Message-ID: <87h684ctlg.fsf@redhat.com>
+	s=arc-20240116; t=1731952823; c=relaxed/simple;
+	bh=QsjSrbMQadoK4kWwZoO09P1xz68z2hpgAaGO9d7ls5o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qWyvu6vP/42pNFz6P728cB1EiP63z16ii0RKrRtm+2Zqn8xP2A1iTYF+oBRwAKxHATfRXU/Wn9US0el08Qlv9iza+sNuAVHe1HFCSoSixCoqIDQ6lFuMUHkk9fTUWRerTW2J3IyKeope9AwxSgtEJwBaelvjQ82/o70zoPt8JQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XAI6wHU2; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-71e592d7f6eso1483288b3a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 10:00:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1731952821; x=1732557621; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=paCLR7IijVyeUeVe8LL4hZL7nuFgS1QPO7Bsd6hORws=;
+        b=XAI6wHU2stTL3lryYCFXJsQASRpddrNLAFT+QUZ+hdLoBL62jISNWh4MWQijOTX3MS
+         lQ7ZsdCm7+W5ox2QVDmOxhDDi4pi5muHVyBFg1zVta/8kFtAwA6hbL6nBvuAv0lbGIBL
+         x4u+4nC9HyIqFQT2F/+KiPv46Nx1IhETDd/9XezaOWNxzYBBe21BzjjPH68L5LOOuuMU
+         4md3M+POizYuNBd0w23+Qpvl97XIPXqXBZ1uLnOBNTmhcgKbysx8BqcNjCQb2ZSBze86
+         DSW2kwUZqH5jMzBY5Q79aG+x+VdRNcvqJHstv3L5WTHGj0w5T6wNW23XDJqtjSAtfng0
+         sg4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731952821; x=1732557621;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=paCLR7IijVyeUeVe8LL4hZL7nuFgS1QPO7Bsd6hORws=;
+        b=kWVAxXdkrFHcM/FugawnxzKAJsw2VN7qplUwFuQg2EwyF/zOysv1217oEDwBpi0BZr
+         9avznu2bLYrF5xhrlNE2PdRg8cUwI7rr+ydRGU10/TorobL2izpVx7diktM4+BPTz+bC
+         gmS6dbId2wbc5LtK9dCxANzXEOMborq6it7PyUMhZMmaocauMD/Ti+94tqWhSjiECFKP
+         bG1rlXWBVI1n4pQTFCRpgK+1JPu8YW8XlyjSYg6Il2DBtTJOfphX/rhzgbwYUZUFnJ8N
+         sImBOZriowc/zFu+A1/2iCJjih6u8rGh5UCh0+b1MmIWjOvT0Cud0Zd5iog7k2ruU+Qa
+         D0ew==
+X-Forwarded-Encrypted: i=1; AJvYcCVJUDtmwxno95nelonSYhnAwnM+nH74DXyqm9gwywpc9iWGFydDcTUg+TpLxwVoasDlSmnEmlbNaMp+zAI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEHRp/poUw1Sc/LSdJpKtDVkJDJdMdTcyj1kOoTvLRhGnwxlXE
+	onmvLC3mMJf+sgFTlffQnS/ko78Qg96bhoQd9PCxTQDU9jCON9tiwKAsv4kfMiQmevDLCPsOLH0
+	9t7to7QN6XaXszcYgZ+X1c89u+bew8uzDadXW
+X-Google-Smtp-Source: AGHT+IEvP+Hgm5H20x8pvUxEcKp1XAOvvO4NdK41CM3JBoEaSiwByV//WtdDkIh33mYoYd53GkX130MHcohV2iDxSxc=
+X-Received: by 2002:a05:6a00:3a14:b0:71e:3b51:e850 with SMTP id
+ d2e1a72fcca58-72476b72b0emr18120513b3a.2.1731952820747; Mon, 18 Nov 2024
+ 10:00:20 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+References: <20240709160013.634308-1-tadamsjr@google.com> <784f6b4a-7c43-4484-988e-73fad594c99d@oracle.com>
+In-Reply-To: <784f6b4a-7c43-4484-988e-73fad594c99d@oracle.com>
+From: TJ Adams <tadamsjr@google.com>
+Date: Mon, 18 Nov 2024 10:00:09 -0800
+Message-ID: <CAL54JgdupgdfeBQwETPv3jCh8iYROqA_DthLQ8cJf7Th1XSV_g@mail.gmail.com>
+Subject: Re: [PATCH] scsi: pm80xx: Remove msleep() loop from pm8001_dev_gone_notify()
+To: John Garry <john.g.garry@oracle.com>
+Cc: Jack Wang <jinpu.wang@cloud.ionos.com>, 
+	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>, 
+	"Martin K . Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Igor Pylypiv <ipylypiv@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Nikita Kalyazin <kalyazin@amazon.com> writes:
+Sorry for the late response.
 
-> On x86, async pagefault events can only be delivered if the page fault
-> was triggered by guest userspace, not kernel.  This is because
-> the guest may be in non-sleepable context and will not be able
-> to reschedule.
-
-We used to set KVM_ASYNC_PF_SEND_ALWAYS for Linux guests before
-
-commit 3a7c8fafd1b42adea229fd204132f6a2fb3cd2d9
-Author: Thomas Gleixner <tglx@linutronix.de>
-Date:   Fri Apr 24 09:57:56 2020 +0200
-
-    x86/kvm: Restrict ASYNC_PF to user space
-
-but KVM side of the feature is kind of still there, namely
-
-kvm_pv_enable_async_pf() sets
-
-    vcpu->arch.apf.send_user_only = !(data & KVM_ASYNC_PF_SEND_ALWAYS);
-
-and then we check it in 
-
-kvm_can_deliver_async_pf():
-
-     if (vcpu->arch.apf.send_user_only &&
-         kvm_x86_call(get_cpl)(vcpu) == 0)
-             return false;
-
-and this can still be used by some legacy guests I suppose. How about
-we start with removing this completely? It does not matter if some
-legacy guest wants to get an APF for CPL0, we are never obliged to
-actually use the mechanism.
-
+> > It's possible to end up in a state where pm8001_dev->running_req never
+> > reaches zero.
 >
-> However existing implementation pays the following overhead even for the
-> kernel-originated faults, even though it is known in advance that they
-> cannot be processed asynchronously:
->  - allocate async PF token
->  - create and schedule an async work
->
-> This patch avoids the overhead above in case of kernel-originated faults
-> by moving the `kvm_can_deliver_async_pf` check from
-> `kvm_arch_async_page_not_present` to `__kvm_faultin_pfn`.
->
-> Note that the existing check `kvm_can_do_async_pf` already calls
-> `kvm_can_deliver_async_pf` internally, however it only does that if the
-> `kvm_hlt_in_guest` check is true, ie userspace requested KVM not to exit
-> on guest halts via `KVM_CAP_X86_DISABLE_EXITS`.  In that case the code
-> proceeds with the async fault processing with the following
-> justification in 1dfdb45ec510ba27e366878f97484e9c9e728902 ("KVM: x86:
-> clean up conditions for asynchronous page fault handling"):
->
-> "Even when asynchronous page fault is disabled, KVM does not want to pause
-> the host if a guest triggers a page fault; instead it will put it into
-> an artificial HLT state that allows running other host processes while
-> allowing interrupt delivery into the guest."
->
-> Signed-off-by: Nikita Kalyazin <kalyazin@amazon.com>
-> ---
->  arch/x86/kvm/mmu/mmu.c | 3 ++-
->  arch/x86/kvm/x86.c     | 5 ++---
->  arch/x86/kvm/x86.h     | 2 ++
->  3 files changed, 6 insertions(+), 4 deletions(-)
->
-> diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-> index 22e7ad235123..11d29d15b6cd 100644
-> --- a/arch/x86/kvm/mmu/mmu.c
-> +++ b/arch/x86/kvm/mmu/mmu.c
-> @@ -4369,7 +4369,8 @@ static int __kvm_mmu_faultin_pfn(struct kvm_vcpu *vcpu,
->  			trace_kvm_async_pf_repeated_fault(fault->addr, fault->gfn);
->  			kvm_make_request(KVM_REQ_APF_HALT, vcpu);
->  			return RET_PF_RETRY;
-> -		} else if (kvm_arch_setup_async_pf(vcpu, fault)) {
-> +		} else if (kvm_can_deliver_async_pf(vcpu) &&
-> +			kvm_arch_setup_async_pf(vcpu, fault)) {
->  			return RET_PF_RETRY;
->  		}
->  	}
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index 2e713480933a..8edae75b39f7 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -13355,7 +13355,7 @@ static inline bool apf_pageready_slot_free(struct kvm_vcpu *vcpu)
->  	return !val;
->  }
->  
-> -static bool kvm_can_deliver_async_pf(struct kvm_vcpu *vcpu)
-> +bool kvm_can_deliver_async_pf(struct kvm_vcpu *vcpu)
->  {
->  
->  	if (!kvm_pv_async_pf_enabled(vcpu))
-> @@ -13406,8 +13406,7 @@ bool kvm_arch_async_page_not_present(struct kvm_vcpu *vcpu,
->  	trace_kvm_async_pf_not_present(work->arch.token, work->cr2_or_gpa);
->  	kvm_add_async_pf_gfn(vcpu, work->arch.gfn);
->  
-> -	if (kvm_can_deliver_async_pf(vcpu) &&
-> -	    !apf_put_user_notpresent(vcpu)) {
-> +	if (!apf_put_user_notpresent(vcpu)) {
->  		fault.vector = PF_VECTOR;
->  		fault.error_code_valid = true;
->  		fault.error_code = 0;
-> diff --git a/arch/x86/kvm/x86.h b/arch/x86/kvm/x86.h
-> index ec623d23d13d..9647f41e5c49 100644
-> --- a/arch/x86/kvm/x86.h
-> +++ b/arch/x86/kvm/x86.h
-> @@ -387,6 +387,8 @@ int x86_emulate_instruction(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa,
->  fastpath_t handle_fastpath_set_msr_irqoff(struct kvm_vcpu *vcpu);
->  fastpath_t handle_fastpath_hlt(struct kvm_vcpu *vcpu);
->  
-> +bool kvm_can_deliver_async_pf(struct kvm_vcpu *vcpu);
-> +
->  extern struct kvm_caps kvm_caps;
->  extern struct kvm_host_values kvm_host;
->  
->
-> base-commit: d96c77bd4eeba469bddbbb14323d2191684da82a
+> Is that a driver bug then?
 
--- 
-Vitaly
+I haven't seen this unless artificially creating the situation. This
+is a preventative change rather than a response to a specific issue
+seen.
 
+> > In that state we will be sleeping forever.
+> >
+> > sas_execute_internal_abort_dev() can wait for a response for
+> > up to 60 seconds (3 retries x 20 seconds). 60 seconds should be enough
+> > for pm8001_dev->running_req to get to zero.
+
+> May I suggest you drop running_req at some stage, and use other methods
+> to find how many IOs are active?
+I haven't given much thought about better ways to keep track of active
+ios, so it will have to come later but definitely noted!
+
+On Tue, Jul 9, 2024 at 9:09=E2=80=AFAM John Garry <john.g.garry@oracle.com>=
+ wrote:
+>
+> On 09/07/2024 17:00, TJ Adams wrote:
+> > From: Igor Pylypiv <ipylypiv@google.com>
+> >
+> > It's possible to end up in a state where pm8001_dev->running_req never
+> > reaches zero.
+>
+> Is that a driver bug then?
+>
+> > In that state we will be sleeping forever.
+> >
+> > sas_execute_internal_abort_dev() can wait for a response for
+> > up to 60 seconds (3 retries x 20 seconds). 60 seconds should be enough
+> > for pm8001_dev->running_req to get to zero.
+>
+> May I suggest you drop running_req at some stage, and use other methods
+> to find how many IOs are active?
+>
+> >
+> > Signed-off-by: Igor Pylypiv <ipylypiv@google.com>
+> > Signed-off-by: TJ Adams <tadamsjr@google.com>
+> > ---
+> >   drivers/scsi/pm8001/pm8001_sas.c | 7 +++++--
+> >   1 file changed, 5 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/scsi/pm8001/pm8001_sas.c b/drivers/scsi/pm8001/pm8=
+001_sas.c
+> > index a5a31dfa4512..513e9a49838c 100644
+> > --- a/drivers/scsi/pm8001/pm8001_sas.c
+> > +++ b/drivers/scsi/pm8001/pm8001_sas.c
+> > @@ -712,8 +712,11 @@ static void pm8001_dev_gone_notify(struct domain_d=
+evice *dev)
+> >               if (atomic_read(&pm8001_dev->running_req)) {
+> >                       spin_unlock_irqrestore(&pm8001_ha->lock, flags);
+> >                       sas_execute_internal_abort_dev(dev, 0, NULL);
+> > -                     while (atomic_read(&pm8001_dev->running_req))
+> > -                             msleep(20);
+> > +                     if (atomic_read(&pm8001_dev->running_req)) {
+> > +                             pm8001_dbg(pm8001_ha, FAIL,
+> > +                                        "device_id: %u: Failed to abor=
+t %d requests!\n",
+> > +                                        device_id, atomic_read(&pm8001=
+_dev->running_req));
+> > +                     }
+> >                       spin_lock_irqsave(&pm8001_ha->lock, flags);
+> >               }
+> >               PM8001_CHIP_DISP->dereg_dev_req(pm8001_ha, device_id);
+>
 
