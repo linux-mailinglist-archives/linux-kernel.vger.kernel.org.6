@@ -1,138 +1,113 @@
-Return-Path: <linux-kernel+bounces-412386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F349F9D0858
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 05:10:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8549B9D0859
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 05:11:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 46309B214D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 04:10:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B8432823E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 04:11:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25BD513A888;
-	Mon, 18 Nov 2024 04:10:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64F2113AA3F;
+	Mon, 18 Nov 2024 04:10:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="H4E0+XAk"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gsFjVtvP"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3AB817C98;
-	Mon, 18 Nov 2024 04:10:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E92476048;
+	Mon, 18 Nov 2024 04:10:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731903045; cv=none; b=FKF8hv6NaayFskU8QQne5UZ5D5bPWp1rG21/mGUW9nxBa5cfnJcP7WcpcPppslBMkQSPsvxEHbVfIvaHwWPcZOpnIO/880qPphyaW5Oifc3FVXkZMCpL3TncwPeG26AlmkSs7zNeBY9dQd7srizbQQ2nd/q2mFvRVNjxZBGM3kc=
+	t=1731903056; cv=none; b=P0YvFF4ET/hZYeJKqIRf+60JlXOPc1TIL/4m+AKy54yXFHwXu4b10R4A+g3bakJlfY5b6DlsrKvmKZiTviyTR3yzbtJfzGtKmzndv7z+lTXEumGMYSy81skLwWiUREJofA2nvDWInCYhdRL2fD5jVsDUwHo9C/1KiXSbh50+lB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731903045; c=relaxed/simple;
-	bh=ow1vGg4eO+2OEbxNFP6nOJmj1FB88Ng9OVoBewOdaRY=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JIDH5XN2Jl/USp5hiQ3naNDadge5eHeVj6bOmI93tOYd0iABrXCUToWeYumxS+jB7tzY9JSBsl05alv/VJ2Dawtaw/y0TZbF/bi5ZhjJYt7WJb6RHukhewiFLswSMTPi2DdWjIwel7PBeQTaaIOEmx3rLO8bgRkY6wrZlySWWic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=H4E0+XAk; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 4AI4AS8w8108806, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
-	t=1731903028; bh=ow1vGg4eO+2OEbxNFP6nOJmj1FB88Ng9OVoBewOdaRY=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Transfer-Encoding:Content-Type;
-	b=H4E0+XAkkFu5/Skl/CXhtETYuUPBjwTEnZfAPjRxGvh2KRcldtILrVJrZOJvshvcJ
-	 U2T8LDB0ZgxtwGi7cmwEDnm64xpy6BG67C6Kntu63aIxLrmxIVIdwf+slo2uHQZ1+q
-	 7uEnTc3xbt/uRnrORsdhNbv9Z4ADzatvpcRHyWScHVDhXHG6EP4VNNDz9HiXc20z1m
-	 KIKV+4sTmKDE3TWQoEdiT6kZm/CJ0ky3UKVvN+ekUl0qk2IKRkHqX/myri9qCCnIMo
-	 A6qmfgi+DvRL4besCHQd98RX4kdbp4DLzKkW0/7WvPIizc6z1uKp1OMe6q++8VnV3j
-	 e2ctgsPM/mSTg==
-Received: from mail.realtek.com (rtexh36505.realtek.com.tw[172.21.6.25])
-	by rtits2.realtek.com.tw (8.15.2/3.06/5.92) with ESMTPS id 4AI4AS8w8108806
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 18 Nov 2024 12:10:28 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXH36505.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 18 Nov 2024 12:10:28 +0800
-Received: from RTDOMAIN (172.21.210.74) by RTEXMBS04.realtek.com.tw
- (172.21.6.97) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Mon, 18 Nov
- 2024 12:10:28 +0800
-From: Justin Lai <justinlai0215@realtek.com>
-To: <kuba@kernel.org>
-CC: <davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
-        <andrew+netdev@lunn.ch>, <linux-kernel@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <horms@kernel.org>, <pkshih@realtek.com>,
-        <larry.chiu@realtek.com>, Justin Lai <justinlai0215@realtek.com>
-Subject: [PATCH net v3 4/4] rtase: Add defines for hardware version id
-Date: Mon, 18 Nov 2024 12:08:28 +0800
-Message-ID: <20241118040828.454861-5-justinlai0215@realtek.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241118040828.454861-1-justinlai0215@realtek.com>
-References: <20241118040828.454861-1-justinlai0215@realtek.com>
+	s=arc-20240116; t=1731903056; c=relaxed/simple;
+	bh=5hya0c9GlAmUVAappSh9msAuKRyN4kcO/L1gB49AvO4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i/0OEnVAzMNGgRjzBNCEzJp4S95BjGU1D565SGIvZHqFg2uCqaUJD6aDPIy7uZialdEEtnJSBhe9UtF/dt0hylujtiAJsz/r8tLK2NV5aSG6TwG/+bxlhWtDlTjvIwDEvw/FXWOYeiB4o2XEpcHW74ILJ4BJar5PGd9Pz5L4PfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=gsFjVtvP; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=9ZDIRBgFpCZrfxRdrYUTcVGYUj9o3eyEGynCSyQQ3T0=; b=gsFjVtvPA+fXkbHMP/RPM0jP46
+	tDXOZSgUnV459KQB1ZQjuJEeFNGjI+s+P62y9TFp6jw2NvncM8m36M1P9qjXE09AzuHuRKBNnFQh3
+	D9wNVHaWAaThvlKum/I3rJQemxX4ko8zxtv08KxG8Gt8p9dO9MgHgghdPQ6TcmvttVCjUYkU8Inal
+	MGIy4afnUEKInO2HRLDGKT5fOiiCJjs9Le0BVQ+rIansKkvkd1NRgZ0zhLT7nyUOIrD1KTAgJi7GJ
+	il7IB26XiEKeX+eVIX4YNgs0hpM0ABvn7SVDwKY/GpwrN7afCLVd7AaSHp9PWUGAnR3J/45DCP2sa
+	OWS8B8+Q==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tCt6D-00000002YNw-0LVn;
+	Mon, 18 Nov 2024 04:10:53 +0000
+Date: Mon, 18 Nov 2024 04:10:52 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Kees Cook <kees@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] mm: Handle compound pages better in __dump_page()
+Message-ID: <Zzq-TJlSKXoo80Fo@casper.infradead.org>
+References: <20241117055243.work.907-kees@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: RTEXH36505.realtek.com.tw (172.21.6.25) To
- RTEXMBS04.realtek.com.tw (172.21.6.97)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241117055243.work.907-kees@kernel.org>
 
-Add defines for hardware version id.
+On Sat, Nov 16, 2024 at 09:52:44PM -0800, Kees Cook wrote:
+> GCC 15's -Warray-bounds reports:
+> 
+> In function 'page_fixed_fake_head',
+>     inlined from '_compound_head' at ../include/linux/page-flags.h:251:24,
+>     inlined from '__dump_page' at ../mm/debug.c:123:11:
+> ../include/asm-generic/rwonce.h:44:26: warning: array subscript 9 is outside array bounds of 'struct page[1]' [-Warray-bounds=]
 
-Signed-off-by: Justin Lai <justinlai0215@realtek.com>
----
- drivers/net/ethernet/realtek/rtase/rtase.h      |  5 ++++-
- drivers/net/ethernet/realtek/rtase/rtase_main.c | 12 ++++++------
- 2 files changed, 10 insertions(+), 7 deletions(-)
+Thanks for bringing this back up.  I have a somewhat orphaned patch in
+my tree that has a terrible commit message which was no help.
 
-diff --git a/drivers/net/ethernet/realtek/rtase/rtase.h b/drivers/net/ethernet/realtek/rtase/rtase.h
-index 547c71937b01..4a4434869b10 100644
---- a/drivers/net/ethernet/realtek/rtase/rtase.h
-+++ b/drivers/net/ethernet/realtek/rtase/rtase.h
-@@ -9,7 +9,10 @@
- #ifndef RTASE_H
- #define RTASE_H
- 
--#define RTASE_HW_VER_MASK 0x7C800000
-+#define RTASE_HW_VER_MASK     0x7C800000
-+#define RTASE_HW_VER_906X_7XA 0x00800000
-+#define RTASE_HW_VER_906X_7XC 0x04000000
-+#define RTASE_HW_VER_907XD_V1 0x04800000
- 
- #define RTASE_RX_DMA_BURST_256       4
- #define RTASE_TX_DMA_BURST_UNLIMITED 7
-diff --git a/drivers/net/ethernet/realtek/rtase/rtase_main.c b/drivers/net/ethernet/realtek/rtase/rtase_main.c
-index 26331a2b7b2d..1bfe5ef40c52 100644
---- a/drivers/net/ethernet/realtek/rtase/rtase_main.c
-+++ b/drivers/net/ethernet/realtek/rtase/rtase_main.c
-@@ -1720,11 +1720,11 @@ static int rtase_get_settings(struct net_device *dev,
- 						supported);
- 
- 	switch (tp->hw_ver) {
--	case 0x00800000:
--	case 0x04000000:
-+	case RTASE_HW_VER_906X_7XA:
-+	case RTASE_HW_VER_906X_7XC:
- 		cmd->base.speed = SPEED_5000;
- 		break;
--	case 0x04800000:
-+	case RTASE_HW_VER_907XD_V1:
- 		cmd->base.speed = SPEED_10000;
- 		break;
- 	}
-@@ -1990,9 +1990,9 @@ static int rtase_check_mac_version_valid(struct rtase_private *tp)
- 	tp->hw_ver = rtase_r32(tp, RTASE_TX_CONFIG_0) & RTASE_HW_VER_MASK;
- 
- 	switch (tp->hw_ver) {
--	case 0x00800000:
--	case 0x04000000:
--	case 0x04800000:
-+	case RTASE_HW_VER_906X_7XA:
-+	case RTASE_HW_VER_906X_7XC:
-+	case RTASE_HW_VER_907XD_V1:
- 		ret = 0;
- 		break;
- 	}
--- 
-2.34.1
+That said, this patch is definitely wrong because it's unsafe to
+call page_fixed_fake_head().
+
+> (Not noted in this warning is that the code passes through page_folio()
+> _Generic macro.)
+> 
+> It may not be that "precise" is always 1 page, so accessing "page[1]"
+> in either page_folio() or folio_test_large() may cause problems.
+
+folio_test_large() does not touch page[1].  Look:
+
+static inline bool folio_test_large(const struct folio *folio)
+{
+        return folio_test_head(folio);
+
+static __always_inline bool folio_test_head(const struct folio *folio)
+{
+        return test_bit(PG_head, const_folio_flags(folio, FOLIO_PF_ANY));
+
+#define FOLIO_PF_ANY            0
+
+static const unsigned long *const_folio_flags(const struct folio *folio,
+                unsigned n)
+{
+        const struct page *page = &folio->page;
+
+        VM_BUG_ON_PGFLAGS(PageTail(page), page);
+        VM_BUG_ON_PGFLAGS(n > 0 && !test_bit(PG_head, &page->flags), page);
+        return &page[n].flags;
+
+so we only look at page[0].
+
+> Instead, explicitly make precise 2 pages. Just open-coding page_folio()
+> isn't sufficient to avoid the warning[1].
+
+Why not?  What goes wrong?  I'm trying to get gcc-15 installed here now
+...
 
 
