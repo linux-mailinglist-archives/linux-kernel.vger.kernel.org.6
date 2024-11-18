@@ -1,91 +1,96 @@
-Return-Path: <linux-kernel+bounces-412548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DCA49D0A57
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 08:34:08 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41AE19D0A5A
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 08:37:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33D4A28260E
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 07:34:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CAD8BB22866
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 07:37:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FEC71991AF;
-	Mon, 18 Nov 2024 07:30:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 308AF149C7B;
+	Mon, 18 Nov 2024 07:37:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Mm/7i0Va"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="C4VPWOIh";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="AfSIjs2e"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01DE919755B
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 07:30:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 366CA2907
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 07:37:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731915003; cv=none; b=FNpuZC14RG6Cnjs8N/XrxN7Xu7kU1YUTurhPacPZsLyw6TzFq3uvPxIfGP6d+UKdNh9sHmMV8uHYGdsPLb/I+u8QO9+AjvK9dAE463d+S5BJwVeNQ/3rkt2kdOor7iGLmZLRatPqn2gQOsU5bCD3QDqgddCsCSr3ln17gnhsTNw=
+	t=1731915423; cv=none; b=kqcNWh9dGHGqLOLmOumek/9yCIhXJr9+2nJKZFqA18gz54nwlfmWskZJSRfLNRoTPlUNmboeBQFUno6OSmRC7XFQAWuIzfJTUsSapAlbRAxkr1J43RoH9xGHr6NzucuHbFb/zQnBQVxacfg+uSG+W8q0NRGql8TvNAxcAHbSsAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731915003; c=relaxed/simple;
-	bh=tf/n/Vd2Qey2MSMkUj+THLnyykLaED63+olpFeHg3ps=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=geDftqkfPmpu+N0Szi+mKzE521OvHzKql72pZHIjA8CFqKxVvihLuTiYNwltqCPGnJuZZ891ysv9AWF1WvMuCOyOM5ciqdOqSLC/2/p5QbwNZ3OR/13MHIDuIFqpdQE/Itbz3L89UN84jtJWS8Ltsoy0GWFpPya8myCGZRGJU4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=Mm/7i0Va; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=from:to:cc:subject:date:message-id
-	:in-reply-to:references:mime-version:content-transfer-encoding;
-	 s=k1; bh=9HmycQ3Q7Y5MjAcI/7v5Syt7rKnHNfDgqZTswGXx3ic=; b=Mm/7i0
-	VaDHscWaBeRw1E6Ns7S/hIZ3c5XipVyVDOF1qPzPpYLOcsQ7j8CipgqeZykrw7aI
-	koPXWw+fAQBO6BZty7gz5CRXyxHPUxukZHrNsR95YEcL4TKh0gQLn2lc6KlW27tf
-	GoxBYDFhd4XzGXEqxOu4a4Zf4K0l1BCK0+yZcfXV+h01UZSnVRpIniyCtY6DLfo6
-	s8pxj+sqlF7xRyzc7XhJeL8KOZJYiQcSs1tDJO/9CiD9oOeEX4WmViH7jQ9OgOdI
-	q8G0+6zcfr3XGF3cyC12GGyAUkOw3I5cJzx12YPQ8YAhKxAANuNG1mLntqvRMKkr
-	1R4/cOC/pZ0uskkg==
-Received: (qmail 112606 invoked from network); 18 Nov 2024 08:29:44 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 18 Nov 2024 08:29:44 +0100
-X-UD-Smtp-Session: l3s3148p1@oAto4SonxIYujntT
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: linux-kernel@vger.kernel.org
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Pavel Machek <pavel@ucw.cz>,
-	Len Brown <len.brown@intel.com>,
-	linux-pm@vger.kernel.org
-Subject: [PATCH 15/15] PM / Sleep: don't include 'pm_wakeup.h' directly
-Date: Mon, 18 Nov 2024 08:29:14 +0100
-Message-Id: <20241118072917.3853-16-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20241118072917.3853-1-wsa+renesas@sang-engineering.com>
-References: <20241118072917.3853-1-wsa+renesas@sang-engineering.com>
+	s=arc-20240116; t=1731915423; c=relaxed/simple;
+	bh=YyvnxTnBcTuuXnXZtwh+ACzFix1LLAzXEttk/EZpdFI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RAxlev98rRHnDe7u50IsrZ+tOCyWvrVMS0EQLyh50Ju+cWP8Z6Wwp6TG8zJ84kpN7TqfkdSkhhBFp58id23plkj0NzozWdIGVQvWCTxHSWlffHKQpP7Valjr7PbudYn53yEq0AFUl23vl4ZFZ0mt48AaMaNLkNtsrkbm3SJKhws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=C4VPWOIh; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=AfSIjs2e; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 18 Nov 2024 08:36:59 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1731915420;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bIrxfE4o6IC0+LqwFA2chdFLQyrI2KeBikkNuFo4Vkc=;
+	b=C4VPWOIhdliAFcOSIg+kS4Cj7JrXi1ZKuC7m4GCxyLUg7I9HPKKcMQHK/pf5xPvpHUUs+R
+	x5qlPstIxfVlHh76rmw/GgWfUomka9f6hkxc2hY52kOA5bAwD+JeLY7tVbEynC2nNnYqna
+	LgpG3PRuVT6klxd9z/G62cCor9NP47apwscT76TZQWG7okPzOC1rlXiSQOotGaWh6ykjbH
+	22QE0fY0sKGu9i97bfJss2Eci/gRBalkVuKcmARNDLgu7h2wVQJTUdm4VrBWNh3sOY3Wob
+	l0NK5z6T2ajFQWP11E+BtQGUphazsNUO2tKTRvJy0NuGsDdOTZqxOLbO867TdA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1731915420;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bIrxfE4o6IC0+LqwFA2chdFLQyrI2KeBikkNuFo4Vkc=;
+	b=AfSIjs2eVU0wR60uP2y8dkZKdmn4BTWDyl1jUoZ945MnEtOKSFsSW/Dl3C5UFzCRFmg9xo
+	8iciotMjnjs7PSDQ==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Clark Williams <clrkwllms@kernel.org>
+Cc: Huacai Chen <chenhuacai@kernel.org>,
+	Huacai Chen <chenhuacai@loongson.cn>,
+	Xuerui Wang <kernel@xen0n.name>, loongarch@lists.linux.dev,
+	Steven Rostedt <rostedt@goodmis.org>,
+	linux-rt-devel@lists.linux.dev, Guo Ren <guoren@kernel.org>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] LoongArch: Allow to enable PREEMPT_RT
+Message-ID: <20241118073659.MGircGsm@linutronix.de>
+References: <20241108091545.4182229-1-chenhuacai@loongson.cn>
+ <20241108091545.4182229-4-chenhuacai@loongson.cn>
+ <20241114103111.5W5ZY0D4@linutronix.de>
+ <CAAhV-H72YSNBGutYPOVi=S7nwLb6YOiQOFqnimAp=9D0wAJc3g@mail.gmail.com>
+ <20241114111409.LWKp5YEg@linutronix.de>
+ <CAAhV-H4ecBZsV+9SxLZ-JFiUK=b3tMqkLZe0djac0_390==MMw@mail.gmail.com>
+ <20241114113018.Ilo9ZsQo@linutronix.de>
+ <CAAhV-H4jDNG8nsW30U9zE1-c6dHwy2fSjy5hkZhpWWu3=og64A@mail.gmail.com>
+ <20241114132956.wafcHvaB@linutronix.de>
+ <ZzYMie7ktV8ByaQF@demetrius>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZzYMie7ktV8ByaQF@demetrius>
 
-The header clearly states that it does not want to be included directly,
-only via 'device.h'. 'platform_device.h' works equally well. Remove the
-direct inclusion.
+On 2024-11-14 08:43:21 [-0600], Clark Williams wrote:
+> We see similar problems with chronyd accessing the RTC on aarch64
+> systems that use UEFI. Accessing anything via the EFI Runtime is very
+> slow. Probably going to turn off 'rtcsync' in chronyd when running
+> low-latency workloads. 
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- kernel/power/autosleep.c | 1 -
- 1 file changed, 1 deletion(-)
+But isn't "we call into EFI and have no clue what happens" exactly the
+reason why we disable EFI runtime services?
 
-diff --git a/kernel/power/autosleep.c b/kernel/power/autosleep.c
-index b29c8aca7486..865df641b97c 100644
---- a/kernel/power/autosleep.c
-+++ b/kernel/power/autosleep.c
-@@ -9,7 +9,6 @@
- 
- #include <linux/device.h>
- #include <linux/mutex.h>
--#include <linux/pm_wakeup.h>
- 
- #include "power.h"
- 
--- 
-2.39.2
+> Clark
 
+Sebastian
 
