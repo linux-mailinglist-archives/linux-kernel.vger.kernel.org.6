@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-412747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E7CE9D0F04
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:55:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3DE59D0E97
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:33:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2FDE7B2C0DE
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 10:32:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 906E21F22511
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 10:33:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0EEA194AD6;
-	Mon, 18 Nov 2024 10:31:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6CB0192D95;
+	Mon, 18 Nov 2024 10:31:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="EwbzPl5y"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="n/N+bMQC"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1322198A35
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 10:31:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0547198E9E
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 10:31:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731925890; cv=none; b=RVBrnYxZuwO1qMGkNKGs+e+i/6uOtor3HMqGe/NLgGjHbWlaeahQnEImnU7lK/Mbr3fDMGlqsgRiYUhIIjdrhpAJa/5X5Fi29E9E5r4R4rQVnCt6tQLDJaTVm0XPVqlrfAOGgpMBs0463Yr2q1p+lEz8tC6Kkw3oKnOa9HLF6dE=
+	t=1731925893; cv=none; b=beXInYwinQQx6+J1ZwqY2RigokoKxZVAo1hdOYKZFe8fkFHQUzJ/GwZjEJ1F3D2TSRiBA6HC/qqOhGjJ+GTtS7fUHLGY3upD2FIAHIGMCEQAonC3UWFiqC0B43nHk5WmOJukYNnFzx7JKGyiwde+71fS9I1ubFdGRqENbjuwdnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731925890; c=relaxed/simple;
-	bh=URZDAqrp93EaHp3z5wCKmGin51pgZg/9Vvo9b4ImMZQ=;
+	s=arc-20240116; t=1731925893; c=relaxed/simple;
+	bh=xVzGpsMG9LnU1tZySVmIfVy5ZCYPebEJXiildOSUkyA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=N+YcAf018iQ0zIUB1MSbr9Grw4+KWvugtF13s0HL/n9n4qDsVErPVFbuQFygtTkLniPCeqPwVkAiCMuGqyuYaV7jDcfIKXUu7NrbOjdeiOlk1t+5KMs05FDlU1QqxMgenZPBiMdI0jmMID8pN71lLw10mATFpJSGKp/3uIitKZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=EwbzPl5y; arc=none smtp.client-ip=209.85.214.179
+	 MIME-Version; b=F8cJMoUuEx5zlWc+Tv0V3na385tVZa0brvgSX1sdkN2JwB0acc802pkncHvZwYIy5U2KlWuI2Y0rOdhIk0tu2L1Kwh/SKYDfkqNQfPw6f5/3ikRiB7coGQvsl3WFDOthBJ34bMKR4/O74xqfvC3Sjdx3YA0YPSKiLLaY0aYzOtw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=n/N+bMQC; arc=none smtp.client-ip=209.85.215.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-211a4682fcaso26290995ad.2
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 02:31:27 -0800 (PST)
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7ea8de14848so1447721a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 02:31:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1731925887; x=1732530687; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1731925890; x=1732530690; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=90w3pZT9FJvUmWsGdeMpl5t+GScBHGHvQ60IcDxysHU=;
-        b=EwbzPl5y2Ewa8Z7T3CFoD6o4/YwVNxJH9+wPgkXjXROtjv/OfxKWvrSKXneqW5+w6C
-         eLm8+CNBWF/fPBwy99ooXvDNnt258Uz8vLhes2pyy0lvZoh0/EfB/l+8KTcBl7ZhgzUl
-         7r/X7GiRFKDOEoYkzDuea9xfwVmU9D5HVeGvk=
+        bh=dzBs8nZr7t4qyXsSXVR6Mvnn4ykaCUyDwpEIlMiVaNs=;
+        b=n/N+bMQCYZtkta5/l9hPnLQZ87TgfOHKbhujL2DPkwyvh0gz6DxTiDlD/KUoK7TQny
+         111mWDiHJjWfobdv2vvsH7fQkZHgqL3YvuB0zg2EkkJWxSILOR/hG6Mo+jrReAcoPY7/
+         aPY6VClOcuOWUVUahFZvCtk4Ro02H6PCqirJs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731925887; x=1732530687;
+        d=1e100.net; s=20230601; t=1731925890; x=1732530690;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=90w3pZT9FJvUmWsGdeMpl5t+GScBHGHvQ60IcDxysHU=;
-        b=BBIaa6J+96+Y3V33O/LW+n1L1QhbIzyZbGFyF/acijCYbhZ5QV7mv8lu7CiFcN8AU1
-         qFSnnESiAR+G2YEqcrcnsoWblC3aOsvlGb7T3/R+bmpkXMZzXd66fi2BmLeClDFNDT4F
-         Wivn6/msTlINwtoUuQN0Zk0cHNLIizYSOI96i3UbS4Rs2DlJstG96eE9ZYT6s76q/+gg
-         p3MWvj7W8quapTDLuKj4nEwyu1msr+LeHvGsJjpXi6Z4eAwpcOr6cWWQPxbh5vqX78P4
-         jynfUZHS7M/K7tPzet6xAp1/zWpdJmldIC30CXTR+VWkPsDsAL1veLkmEk9dqGzwDnys
-         j9uQ==
-X-Gm-Message-State: AOJu0YwjLX0YuItbT++KtiQT6vnd02EXj2qvNDkSYfCqWCji/Zpz4cxC
-	tWoC67uQGgD848aGWOZ3UHAyue+yawWA3xM+n8z2efOpOQdxMEAZ/GmXQQz39bHXu2LcOCoQrJQ
+        bh=dzBs8nZr7t4qyXsSXVR6Mvnn4ykaCUyDwpEIlMiVaNs=;
+        b=C63MRCcmwNGYMgzWP4FRxwbhsozzF6l+l/fg+zQQUGWzo98KDLdz7/nqbO7V0RsgK8
+         yy5D40pzGwrVYrU2y2vnaCS/5UvwT1/3S5umZXW634Uvj8sozdvedcPId45gg+RA8o3a
+         PWcxxS9CdDR8sKxJZcM/m86adHsGtZu4F/f3ECDQEs8w1klber3jBwnP8PbmNmpx9Fvi
+         MpT0J6Sfa8UwpXhOLRCrE9IJsVR9tUQEYEBKborU+KYabh4R0c7Mz0yeAFM+c79Ip347
+         d8k7G1obijbIAD/As0nS13so8PIU3T/GQR1UMqsRFALHbgPooEeLSmP0kkApl9l2sYv0
+         njEw==
+X-Gm-Message-State: AOJu0YwNKsvzpsOEo/L80XYC7uH5v/xcGiDh8GxGaBIGkixzwbC9+Vmm
+	pIb+JidbDTQIpDAiszbdOyAsvX8PwS1L8PKWFtXRbKbN4tfzwXenvzWn+1ArW0mKq4sujH+7+7o
 	=
-X-Google-Smtp-Source: AGHT+IGx/uWi0Il9dEaPy65pYV4oOs3sdmOEUPIIfBWJ7G3iE5vWr6wc30DSLaD5I+/GGx6VPa0fcA==
-X-Received: by 2002:a17:903:32c7:b0:20d:2848:2bee with SMTP id d9443c01a7336-211d0d72d87mr172575205ad.16.1731925887044;
-        Mon, 18 Nov 2024 02:31:27 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFGhf9MPrSPXzUeQ74KTVU1NoLTG/jtQEg9tsUyi5MjDWNEBL8DjEi9nzYhqML2jb9KUmH1bQ==
+X-Received: by 2002:a05:6a20:258f:b0:1db:d998:513e with SMTP id adf61e73a8af0-1dc90b55109mr19012107637.22.1731925890544;
+        Mon, 18 Nov 2024 02:31:30 -0800 (PST)
 Received: from localhost ([2401:fa00:8f:203:8826:78b8:a8fe:1066])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-211d0dc32acsm54573725ad.53.2024.11.18.02.31.25
+        by smtp.gmail.com with UTF8SMTPSA id 41be03b00d2f7-7f8c1afa67bsm5703029a12.0.2024.11.18.02.31.29
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Nov 2024 02:31:26 -0800 (PST)
+        Mon, 18 Nov 2024 02:31:30 -0800 (PST)
 From: Sergey Senozhatsky <senozhatsky@chromium.org>
 To: Andrew Morton <akpm@linux-foundation.org>,
 	Minchan Kim <minchan@kernel.org>
 Cc: linux-kernel@vger.kernel.org,
 	Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: [RFC PATCH 6/8] zram: factor out ZRAM_HUGE read
-Date: Mon, 18 Nov 2024 19:30:37 +0900
-Message-ID: <20241118103054.3191944-7-senozhatsky@chromium.org>
+Subject: [RFC PATCH 7/8] zsmalloc: move ZS_HANDLE_SIZE to zmslloc header
+Date: Mon, 18 Nov 2024 19:30:38 +0900
+Message-ID: <20241118103054.3191944-8-senozhatsky@chromium.org>
 X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
 In-Reply-To: <20241118103054.3191944-1-senozhatsky@chromium.org>
 References: <20241118103054.3191944-1-senozhatsky@chromium.org>
@@ -82,112 +82,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Similarly to write, move ZRAM_HUGE read handlig to a separate
-function.  This will make more sense with introduction of
-multi-handle entries later in the series.
+It will be used in object's split size calculations.
 
 Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
 ---
- drivers/block/zram/zram_drv.c | 71 ++++++++++++++++++++++-------------
- 1 file changed, 44 insertions(+), 27 deletions(-)
+ include/linux/zsmalloc.h | 2 ++
+ mm/zsmalloc.c            | 2 --
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
-index 55ffd0534470..745207597e23 100644
---- a/drivers/block/zram/zram_drv.c
-+++ b/drivers/block/zram/zram_drv.c
-@@ -1525,6 +1525,46 @@ static void zram_free_page(struct zram *zram, size_t index)
- 	zram_set_obj_size(zram, index, 0);
- }
+diff --git a/include/linux/zsmalloc.h b/include/linux/zsmalloc.h
+index a48cd0ffe57d..c17803da7f18 100644
+--- a/include/linux/zsmalloc.h
++++ b/include/linux/zsmalloc.h
+@@ -16,6 +16,8 @@
  
-+static int read_incompressible_page(struct zram *zram, struct page *page,
-+				    u32 index)
-+{
-+	unsigned long handle;
-+	void *src, *dst;
-+
-+	handle = zram_get_handle(zram, index);
-+	src = zs_map_object(zram->mem_pool, handle, ZS_MM_RO);
-+	dst = kmap_local_page(page);
-+	copy_page(dst, src);
-+	kunmap_local(dst);
-+	zs_unmap_object(zram->mem_pool, handle);
-+
-+	return 0;
-+}
-+
-+static int read_compressible_page(struct zram *zram, struct page *page,
-+				  u32 index)
-+{
-+	struct zcomp_strm *zstrm;
-+	unsigned long handle;
-+	unsigned int size;
-+	void *src, *dst;
-+	int ret, prio;
-+
-+	handle = zram_get_handle(zram, index);
-+	size = zram_get_obj_size(zram, index);
-+	prio = zram_get_priority(zram, index);
-+
-+	zstrm = zcomp_stream_get(zram->comps[prio]);
-+	src = zs_map_object(zram->mem_pool, handle, ZS_MM_RO);
-+	dst = kmap_local_page(page);
-+	ret = zcomp_decompress(zram->comps[prio], zstrm, src, size, dst);
-+	kunmap_local(dst);
-+	zs_unmap_object(zram->mem_pool, handle);
-+	zcomp_stream_put(zram->comps[prio]);
-+
-+	return ret;
-+}
+ #include <linux/types.h>
+ 
++#define ZS_HANDLE_SIZE (sizeof(unsigned long))
 +
  /*
-  * Reads (decompresses if needed) a page from zspool (zsmalloc).
-  * Corresponding ZRAM slot should be locked.
-@@ -1532,12 +1572,7 @@ static void zram_free_page(struct zram *zram, size_t index)
- static int zram_read_from_zspool(struct zram *zram, struct page *page,
- 				 u32 index)
- {
--	struct zcomp_strm *zstrm;
- 	unsigned long handle;
--	unsigned int size;
--	void *src, *dst;
--	u32 prio;
--	int ret;
+  * zsmalloc mapping modes
+  *
+diff --git a/mm/zsmalloc.c b/mm/zsmalloc.c
+index 64b66a4d3e6e..466d5f49eb91 100644
+--- a/mm/zsmalloc.c
++++ b/mm/zsmalloc.c
+@@ -78,8 +78,6 @@
+  */
+ #define ZS_ALIGN		8
  
- 	handle = zram_get_handle(zram, index);
- 	if (!handle || zram_test_flag(zram, index, ZRAM_SAME)) {
-@@ -1549,28 +1584,10 @@ static int zram_read_from_zspool(struct zram *zram, struct page *page,
- 		return 0;
- 	}
- 
--	size = zram_get_obj_size(zram, index);
+-#define ZS_HANDLE_SIZE (sizeof(unsigned long))
 -
--	if (size != PAGE_SIZE) {
--		prio = zram_get_priority(zram, index);
--		zstrm = zcomp_stream_get(zram->comps[prio]);
--	}
--
--	src = zs_map_object(zram->mem_pool, handle, ZS_MM_RO);
--	if (size == PAGE_SIZE) {
--		dst = kmap_local_page(page);
--		copy_page(dst, src);
--		kunmap_local(dst);
--		ret = 0;
--	} else {
--		dst = kmap_local_page(page);
--		ret = zcomp_decompress(zram->comps[prio], zstrm,
--				       src, size, dst);
--		kunmap_local(dst);
--		zcomp_stream_put(zram->comps[prio]);
--	}
--	zs_unmap_object(zram->mem_pool, handle);
--	return ret;
-+	if (!zram_test_flag(zram, index, ZRAM_HUGE))
-+		return read_compressible_page(zram, page, index);
-+	else
-+		return read_incompressible_page(zram, page, index);
- }
- 
- static int zram_read_page(struct zram *zram, struct page *page, u32 index,
+ /*
+  * Object location (<PFN>, <obj_idx>) is encoded as
+  * a single (unsigned long) handle value.
 -- 
 2.47.0.338.g60cca15819-goog
 
