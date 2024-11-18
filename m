@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-412434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23CF39D08FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 06:39:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D522B9D08FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 06:40:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D623A281E65
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 05:39:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D9EF1F21935
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 05:40:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB0AB13D279;
-	Mon, 18 Nov 2024 05:39:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED7A12AE8A;
+	Mon, 18 Nov 2024 05:39:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="GMaQ+UtW"
-Received: from fhigh-b3-smtp.messagingengine.com (fhigh-b3-smtp.messagingengine.com [202.12.124.154])
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="X06QFUt1"
+Received: from fout-b1-smtp.messagingengine.com (fout-b1-smtp.messagingengine.com [202.12.124.144])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C8AF2AE8A
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 05:39:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D690C13CA95
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 05:39:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731908382; cv=none; b=iQ4pabt9PuvSZqViaK1OGN5OsMRd6Unjfi0nmCUchPqbR5mFCbO2+UxvXhDyKkMp4YhXy1S6D7O5v3Fwxiv2sK4xJClDtT82T8CnFowup5W1h5Bo1+7upQIgMgL4m162R6eArcqdyaosQoOWEn/yycXU5HAtrni0M3upPXPIODg=
+	t=1731908396; cv=none; b=tqddUvcCFnFfdDd0Q/g4U3SM7uiyfosZds0lDoeHQKAOe3Yu6+B9U59ODku6sGFejpR0DK7ntQbBoDwfgXhOV4Mx1vtqmQ6iSq6ojkZNa8x5HIkUXCoeF5U1d+lWPRAIEVpa8kBo1alW1IhoBKmEafpiCrV/K/QoLROS8MXNSsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731908382; c=relaxed/simple;
-	bh=z/X55CJ4Amiz0wZbkHt0gq98rMad9RgnWcfw7QI1kL4=;
-	h=Date:Message-ID:From:To:Cc:Subject; b=Qv92VPfYJDT4OD3fz1Jfg3Q5+ToavLTDR/lJpq8Gkzs0cHSgvjxpnm8KidIiANXZjPcM2WwmROo2Gn2MCohs3ItgfD6X0XpO80LzcRBKaiXva/iNp91cwP/Sdb4CF9bIg1nVelTT8VnVrWPFNAESSJveBv3EWWKwc4p8Dk4ENJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=GMaQ+UtW; arc=none smtp.client-ip=202.12.124.154
+	s=arc-20240116; t=1731908396; c=relaxed/simple;
+	bh=xrG9LIF/fHfeOPNdl6wGssMUkqv/ZQNpmH3fhzp0TT0=;
+	h=Date:Message-ID:From:To:Cc:Subject; b=dvF+Ai6cGXi3wbJXqU1+cRPCop6CTgft4clmvWKGLo3Bf15Zx2HtSXKcAAiiLRzd7q6KxypyFJf0vUwdaqV1vfi8QH6i2WCzun+693w8x1yeZNGxIZ3LgQ+Dbx+Q0J48docN7lqI7RuBP2qYyAFAT4YapIHe7+vBgvqKeaJQt+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=X06QFUt1; arc=none smtp.client-ip=202.12.124.144
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id B2F852540099;
-	Mon, 18 Nov 2024 00:39:39 -0500 (EST)
+Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
+	by mailfout.stl.internal (Postfix) with ESMTP id 0B7FC11400F5;
+	Mon, 18 Nov 2024 00:39:54 -0500 (EST)
 Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-10.internal (MEProxy); Mon, 18 Nov 2024 00:39:39 -0500
+  by phl-compute-12.internal (MEProxy); Mon, 18 Nov 2024 00:39:54 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
 	:feedback-id:from:from:in-reply-to:message-id:reply-to:subject
 	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm3; t=1731908379; x=1731994779; bh=Kpjd1dlpYPRSKTDwyzlMgPlazmO2
-	anW6vzHpGHs+Oh4=; b=GMaQ+UtWu3EumEAvQ0CoHB6QMIELv2EPRb8uoWQq5PG+
-	+dMqAkJN3tsJQQ4evmD3/jDWbHyeVuZK8PPqgM34qcoEmZTRbxD5fCfWB76tCf1d
-	jqabBNmOtrNh9Mv1IRN+loBdkWlqry6thWJXfR9oGk66H8pE0m0hoi7QRcA5k2Eb
-	sYkj4ICnGO+rKbLzn+PYTYxFRYDcHg+xQ+RmLar7FXrlqu+ujH+U8OZw0Jgk4I1W
-	Yb9V8+n4NVroKbsafsDqvN/IhjOLEGmtaETBbOwrE5IDWmFRDP80Ykq5fp/9/w9s
-	nsoD4AYQVIbiwTFbi33o6rmmzFUJX4iDtUjkY+qdTw==
-X-ME-Sender: <xms:G9M6ZyaWynhx7vCZTAehhKGHaPRcSdMrF9QoRvECRqC_kwnxKRzlqg>
-    <xme:G9M6Z1YuJhioltcH27kj6PR2gz_7pWh0x-l3iflNOj_eSyc7o_kXYRvoIVC6-ZRNg
-    U9kRAdSFEIvwCUEb7s>
-X-ME-Received: <xmr:G9M6Z89Wi9ipoRMauFLiPJxROb5zHu33cjVlgYrWMRs-X5c2Dc5JhwDaSaiYLpPn3uR_6GS9Vqpm4EHSGPalFVexMqseqAfe13Y>
+	fm3; t=1731908393; x=1731994793; bh=8lLsJIqL/6PoxS2ijobyqT6bj4Vf
+	imlESCZI8eca0q0=; b=X06QFUt14LpL+qOR14S0+2iHhkGjQd3bDcMQVZnXJN4E
+	Tfa8TdPybkUPlm5gaoRrnyVLH+9jLtIf1bIE0V9DZV8f60zVh1UI7B8XAc/mF3je
+	KGwi2ZDu5hB5yCQaaUyn6dnNyo52o5jFANdSYu/yTTud4N4lcW2lSgL9Q8VwcTHB
+	c+WD8Wj0d8N0gglnyzIkL+Ld0Kc1NnsyKAMThnzy9WIaeyNAIjJAFvKxbMeqvArj
+	g65AIMTU0YnKZgXEfAyadT12lpetaC2RBGnaWos6LYk1Xl00iSYa5WRHbsHEgf4f
+	BQ36M9UkC3KLX2zCzUUj4z8xbIGuro/ndChWs7T2Hg==
+X-ME-Sender: <xms:KdM6Z-uf6Q1XSkQCb49g0p1pfu7aa_Or-02drSgsH6ZBHse5txutmA>
+    <xme:KdM6ZzdVwFCUcgAFjWUMmLBNHv3XyccAknNNauaf-b_tGskxS9Q44xCv--zyw4rNH
+    qz1xR2Gdo6jOtzKvbQ>
+X-ME-Received: <xmr:KdM6Z5wKiGYc2gbsGO4L8wQGXbuhMu4nfGXWpXxofyi9JgrfhHTa1eddRuiHPAeKRfvbcLrCrZuE0Ax_5BogJri4mu0mTX_vNrM>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrvdelgdekiecutefuodetggdotefrodftvf
     curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
     tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
@@ -63,20 +63,20 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrvdelgdekiecutefuodetggdote
     htohepvggsihgvuggvrhhmseigmhhishhsihhonhdrtghomhdprhgtphhtthhopehlihhn
     uhigqdhmieekkheslhhishhtshdrlhhinhhugidqmheikehkrdhorhhgpdhrtghpthhtoh
     eplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:G9M6Z0pcCTFGgbcJdnzMMAP68nXoLUp7TFmDgP-_CZrTXCTa6-YYgQ>
-    <xmx:G9M6Z9qLYsb6P5Zn-T1jabTr9avbGuTzpS29xCoSen8RHh7M6X3obg>
-    <xmx:G9M6ZyQEenu2ZMVBFejBMU1pOhiAXvty2JAQQh7Wv-_9ln9c2S_yjg>
-    <xmx:G9M6Z9qsea4PdHfmvU706ossuLmNsvQ71SvtVn_ircz4Fpvk1IHjAQ>
-    <xmx:G9M6Z2A7jlcnbJODSYzmZatx80jR5QM57Ex42HkfiZuo0sgUFRPKOQjX>
+X-ME-Proxy: <xmx:KdM6Z5MYKDY4bj-IP_yP12zpH91AiBIiefna5wicRRw4jGxgiZ-UCg>
+    <xmx:KdM6Z-9M7nIeExbSWlTVVpoSGLTLvBUowLGw7Wu1bV6KTpQx6Iyk1Q>
+    <xmx:KdM6ZxUY0Ldf6bJr4zFBpPzNG2TTLajjgBAeknm5nc1_8pSEl4IbdA>
+    <xmx:KdM6Z3ewNhVAcZBRL2wGlbWTsqFV7ZgIdpNZ8vr2a9hZ6SB9KzjtbQ>
+    <xmx:KdM6ZyY3y3LLO3GiFam18fXZTdno1aXz50dWymtsG6L0CsSPLj_eGNno>
 Feedback-ID: i58a146ae:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 18 Nov 2024 00:39:36 -0500 (EST)
-Date: Mon, 18 Nov 2024 16:40:05 +1100
-Message-ID: <5ebf14205f64602dad0af8a80428398c@linux-m68k.org>
+ 18 Nov 2024 00:39:51 -0500 (EST)
+Date: Mon, 18 Nov 2024 16:40:20 +1100
+Message-ID: <a154b51c4bff7aa15bf26e4404605e7a@linux-m68k.org>
 From: Finn Thain <fthain@linux-m68k.org>
 To: stable@kernel.org
 Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Eric W. Biederman <ebiederm@xmission.com>, linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 4.19.y] signal/m68k: Use force_sigsegv(SIGSEGV) in fpsp040_die
+Subject: [PATCH 5.4.y] signal/m68k: Use force_sigsegv(SIGSEGV) in fpsp040_die
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -111,7 +111,6 @@ v1: https://lkml.kernel.org/r/87a6m8kgtx.fsf_-_@disp2133
 Link: https://lkml.kernel.org/r/87tukghjfs.fsf_-_@disp2133
 Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
 Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
-[ Pass 'current' to force_sigsegv() as was done prior to v5.3 ]
 Signed-off-by: Finn Thain <fthain@linux-m68k.org>
 ---
  arch/m68k/fpsp040/skeleton.S | 3 ++-
@@ -141,7 +140,7 @@ index 35f706d836c5..c6f18dc5884b 100644
  asmlinkage void fpsp040_die(void)
  {
 -	do_exit(SIGSEGV);
-+	force_sigsegv(SIGSEGV, current);
++	force_sigsegv(SIGSEGV);
  }
  
  #ifdef CONFIG_M68KFPU_EMU
