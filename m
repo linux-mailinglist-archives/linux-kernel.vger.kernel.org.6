@@ -1,189 +1,119 @@
-Return-Path: <linux-kernel+bounces-413519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87ECC9D1A4A
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 22:17:26 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B5929D1A82
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 22:23:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3606C1F2270F
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 21:17:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0AA4B22A54
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 21:23:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A69191E7C1A;
-	Mon, 18 Nov 2024 21:17:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59A051E766A;
+	Mon, 18 Nov 2024 21:23:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YFWfgJjk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="IfJRWo4k"
+Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08D321E7674;
-	Mon, 18 Nov 2024 21:17:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06C76178395
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 21:23:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731964630; cv=none; b=O/SY7TS5w9YsJa7lJIgEtUkGctFXhAqNPWryFHEm5CcYcIiXB4DIxJPSce74mr+5w2u6lje8lH7S0KljhWkS2YPFoVHXMukcQzO8eStI/9hme9JXw5V17tJXW+29YCg4HVYa4oLWX2GJ4tkHUzpIwvrJ92c6HOPhGgqBsXRp22o=
+	t=1731964999; cv=none; b=F2UlcHDK56kpUD5pihKlKN8sYBZADUsQchxwMi11iCqIY1KxqG2VDAZtBEHaANOi7RY494hNrYBFLJwnWEfBPPfST9U8N4vhTx5lOnU6I6PjsW4VTA9gytuI0BkBSHK6DLfZyV48SFj6fus7RCfLoRVgKpNnsx/aZBjcQQwMCHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731964630; c=relaxed/simple;
-	bh=9TBxA42ZTn5iyvXFYCgi43nTdVs128UxQ3PPtNhVW0U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R7HmY3U5XgX8/eVth/G7GUNanDn30HLIcRzDwe2wu7FHj9LY8QnAE9lfu0ySiopEzxJ7aAzA3PlWgcwM3EVOcIf2oaIWZ7LDTGUJkbrHqyVO4+dCbsBO1AlHJe2rP6TeFJ8AEuc+2GNvX692+1nEtfjMYDpaWbhoQibWHJYChYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YFWfgJjk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BC1EC4CED7;
-	Mon, 18 Nov 2024 21:17:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731964629;
-	bh=9TBxA42ZTn5iyvXFYCgi43nTdVs128UxQ3PPtNhVW0U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YFWfgJjkJUQ+OP98HTM7UPtE6PwDOeExCIjKKGH8Df5l43b2tLak/hTFl+1WLxYu9
-	 wrP+TVgiegF2Hos7ZHj0iRYOQ0tb8usBqtg0q8YwwIZOt3+jYE8KdGZnyu3L+V7Gzm
-	 nkI9zqe1hrj8BFfq+ZpLBhkLaIP8FRbmfRUMbJLfpXemRG9tITRA30I7C1JVN8UnZ7
-	 VGf/Qvt1p8jqGGCgWAksbvVy3vWgJoS+Bg0ezWSWi0rnhhXMbZBN8lXDAfW2UpXVKw
-	 I0MAMD4Dje5OX4d4WFA0wXHHqERgTwHba4+uBFFq0GOGAkbFxHnrPaQokd9hKwO/la
-	 89o1C/ZUnE57w==
-Date: Mon, 18 Nov 2024 13:17:07 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: Howard Chu <howardchu95@gmail.com>
-Cc: acme@kernel.org, peterz@infradead.org, irogers@google.com,
-	mingo@redhat.com, jolsa@kernel.org, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	James Clark <james.clark@linaro.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: Re: [PATCH v8 03/10] perf record --off-cpu: Parse off-cpu event
-Message-ID: <Zzuu06ybvy8IpH5m@google.com>
-References: <20241113002818.3578645-1-howardchu95@gmail.com>
- <20241113002818.3578645-4-howardchu95@gmail.com>
+	s=arc-20240116; t=1731964999; c=relaxed/simple;
+	bh=zQrZapCNTmA++R+1yxOgnkiRv1lT4Ubz58S6wkr4b1s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=P54d6kXjO32XO2O64bObBd22ZI6ndp+t0aq5Xlr8AoCbOMajQsPP5HPJOgNbBp8Grh603bZ/21WhvNXWjzAasXP+HGVbNTvOphQGbw3EVTRmh02m8EDFjKJTfX3mpEEXAsdtY3BuesrtiJzfP+vjyMn1id7h1Jz+xXj6E9Q7Cy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=IfJRWo4k; arc=none smtp.client-ip=209.85.166.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-83abe7fc77eso8120239f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 13:23:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1731964997; x=1732569797; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ZyDvAGYi5T8+sdcs8eDCmKmBYh7FKG7ipAEEuipY0ik=;
+        b=IfJRWo4k4IMtT/AVf2rNS+je8YjkQz9Cr5xXZhJgpQqDtqDA1AAiPwkj++dU8f5v4X
+         aN/vuh2S6K9mNIrDL0eLYWJSM3HLvQ2VW9H6dnfZNQo5zviRGbqsFLH1A8Lh8eyc7klp
+         JCRRpkFuskz+BiBkN6TddI0QQv8a0+vvJDEgQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731964997; x=1732569797;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZyDvAGYi5T8+sdcs8eDCmKmBYh7FKG7ipAEEuipY0ik=;
+        b=Rn3IqFg0/vEYoyh9kH/CiHKuUh6LUrWOeDT5xK4z2XFpBMxlH2A/rQqgbC9YtaAHT/
+         NMT9oN82cx+1fPAlgayCeMpyuTAJ5GMnSacEhUVB18chXTGr4Uw+yatDkg3zi5gYionU
+         bMHSu+AxdvNO1xlnKtsAMd6Oc2Rty9Xquhtah23U+vVOwR/i9HzHQmo7E0c7c7XFbA4D
+         kT1GrSSlwGh86TfzPQCJi8ADYgVoSg7VqVKvF2lF8DeWQ03lp51um4DfUWqgMRDNhkGb
+         VvHzyiqChAn2oO3TpSYyu//S4xCVub5LN/97nwvZEoDJwJdajbRbgVC1p5s8nbVzObWP
+         Lp6w==
+X-Forwarded-Encrypted: i=1; AJvYcCWFIgXQ8KM6KlzMqvGA55rLNPJ6OVuj+aDx6SOwoPYEZwku0vOEW+k0Wo6dKBYdtsJ2/QDES1lTFvpLWHk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzy7fwv5MuOze3egnFCvgkd0CpscJL3IG9X5bCGzPavtH13oegi
+	9nXSg3R0Z7ASmTT4PM61xw4QcWAUJQU6gQHnabK0DJh5Vf6fVI5XixWZ9pMlTzg=
+X-Google-Smtp-Source: AGHT+IGftuaEBzutGH+8Aquw3I/5OGKpN71hV5gOnkYelzzleuOKQUzkqND82BIARdwSZ5YNDjxkDQ==
+X-Received: by 2002:a05:6602:1614:b0:83a:7a19:1de0 with SMTP id ca18e2360f4ac-83e6c315b31mr1545981939f.14.1731964997144;
+        Mon, 18 Nov 2024 13:23:17 -0800 (PST)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4e06d6eb863sm2310326173.30.2024.11.18.13.23.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 Nov 2024 13:23:16 -0800 (PST)
+Message-ID: <c7f483b0-31de-4098-9416-18dfd0944550@linuxfoundation.org>
+Date: Mon, 18 Nov 2024 14:23:15 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241113002818.3578645-4-howardchu95@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next] net: phy: qt2025: simplify Result<()> in probe
+ return
+To: Manas <manas18244@iiitd.ac.in>, Andrew Lunn <andrew@lunn.ch>
+Cc: FUJITA Tomonori <fujita.tomonori@gmail.com>,
+ Trevor Gross <tmgross@umich.edu>, Heiner Kallweit <hkallweit1@gmail.com>,
+ Russell King <linux@armlinux.org.uk>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Anup Sharma <anupnewsmail@gmail.com>, netdev@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20241118-simplify-result-qt2025-v1-1-f2d9cef17fca@iiitd.ac.in>
+ <2f3b1fc2-70b1-4ffe-b41c-09b52ce21277@lunn.ch>
+ <otjcobbaclrdv4uz3oikh5gdtusvxdoczopgfnf6erz5kdlsto@mgpf4mne3uqb>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <otjcobbaclrdv4uz3oikh5gdtusvxdoczopgfnf6erz5kdlsto@mgpf4mne3uqb>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Nov 12, 2024 at 04:28:11PM -0800, Howard Chu wrote:
-> Parse the off-cpu event using parse_event(), as bpf-output.
+On 11/18/24 07:28, Manas wrote:
+> On 18.11.2024 15:15, Andrew Lunn wrote:
+>> On Mon, Nov 18, 2024 at 06:39:34PM +0530, Manas via B4 Relay wrote:
+>>> From: Manas <manas18244@iiitd.ac.in>
+>>>
+>>> probe returns a `Result<()>` type, which can be simplified as `Result`,
+>>> due to default type parameters being unit `()` and `Error` types. This
+>>> maintains a consistent usage of `Result` throughout codebase.
+>>>
+>>> Signed-off-by: Manas <manas18244@iiitd.ac.in>
+>>
+>> Miguel has already pointed out, this is probably not sufficient for a
+>> signed-off-by: You need a real name here, in order to keep the lawyers happy.
+>>
+> Hi Andrew, I did clarify that "Manas" is my real name, (as in what the official
+> documents have). It is not a pseudonym. I am unsure if I am missing something
+> here.
 > 
-> no-inherit should be set to 1, here's the reason:
-> 
-> We update the BPF perf_event map for direct off-cpu sample dumping (in
-> following patches), it executes as follows:
-> 
-> bpf_map_update_value()
->  bpf_fd_array_map_update_elem()
->   perf_event_fd_array_get_ptr()
->    perf_event_read_local()
-> 
-> In perf_event_read_local(), there is:
-> 
-> int perf_event_read_local(struct perf_event *event, u64 *value,
-> 			  u64 *enabled, u64 *running)
-> {
-> ...
-> 	/*
-> 	 * It must not be an event with inherit set, we cannot read
-> 	 * all child counters from atomic context.
-> 	 */
-> 	if (event->attr.inherit) {
-> 		ret = -EOPNOTSUPP;
-> 		goto out;
-> 	}
-> 
-> Which means no-inherit has to be true for updating the BPF perf_event
-> map.
-> 
-> Moreover, for bpf-output events, we primarily want a system-wide event
-> instead of a per-task event.
-> 
-> The reason is that in BPF's bpf_perf_event_output(), BPF uses the CPU
-> index to retrieve the perf_event file descriptor it outputs to.
-> 
-> Making a bpf-output event system-wide naturally satisfies this
-> requirement by mapping CPU appropriately.
 
-I'm afraid the inherit attribute would be updated later:
+Using your full name in your Signed-off-by clearly identifies the author.
+I would recommend going that route.
 
-  __cmd_record()
-    evlist__config()
-      evsel__config()
-
-You can add a logic to check the config term when setting the inherit
-value.
-
-Thanks,
-Namhyung
-
-> 
-> Suggested-by: Namhyung Kim <namhyung@kernel.org>
-> Reviewed-by: Ian Rogers <irogers@google.com>
-> Signed-off-by: Howard Chu <howardchu95@gmail.com>
-> Cc: Adrian Hunter <adrian.hunter@intel.com>
-> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: James Clark <james.clark@linaro.org>
-> Cc: Jiri Olsa <jolsa@kernel.org>
-> Cc: Kan Liang <kan.liang@linux.intel.com>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Link: https://lore.kernel.org/r/20241108204137.2444151-4-howardchu95@gmail.com
-> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-> ---
->  tools/perf/util/bpf_off_cpu.c | 33 +++++++++++----------------------
->  1 file changed, 11 insertions(+), 22 deletions(-)
-> 
-> diff --git a/tools/perf/util/bpf_off_cpu.c b/tools/perf/util/bpf_off_cpu.c
-> index a590a8ac1f9d..558c5e5c2dc3 100644
-> --- a/tools/perf/util/bpf_off_cpu.c
-> +++ b/tools/perf/util/bpf_off_cpu.c
-> @@ -38,32 +38,21 @@ union off_cpu_data {
->  
->  static int off_cpu_config(struct evlist *evlist)
->  {
-> +	char off_cpu_event[64];
->  	struct evsel *evsel;
-> -	struct perf_event_attr attr = {
-> -		.type	= PERF_TYPE_SOFTWARE,
-> -		.config = PERF_COUNT_SW_BPF_OUTPUT,
-> -		.size	= sizeof(attr), /* to capture ABI version */
-> -	};
-> -	char *evname = strdup(OFFCPU_EVENT);
-> -
-> -	if (evname == NULL)
-> -		return -ENOMEM;
->  
-> -	evsel = evsel__new(&attr);
-> -	if (!evsel) {
-> -		free(evname);
-> -		return -ENOMEM;
-> +	scnprintf(off_cpu_event, sizeof(off_cpu_event), "bpf-output/no-inherit=1,name=%s/", OFFCPU_EVENT);
-> +	if (parse_event(evlist, off_cpu_event)) {
-> +		pr_err("Failed to open off-cpu event\n");
-> +		return -1;
->  	}
->  
-> -	evsel->core.attr.freq = 1;
-> -	evsel->core.attr.sample_period = 1;
-> -	/* off-cpu analysis depends on stack trace */
-> -	evsel->core.attr.sample_type = PERF_SAMPLE_CALLCHAIN;
-> -
-> -	evlist__add(evlist, evsel);
-> -
-> -	free(evsel->name);
-> -	evsel->name = evname;
-> +	evlist__for_each_entry(evlist, evsel) {
-> +		if (evsel__is_offcpu_event(evsel)) {
-> +			evsel->core.system_wide = true;
-> +			break;
-> +		}
-> +	}
->  
->  	return 0;
->  }
-> -- 
-> 2.43.0
-> 
+thanks,
+-- Shuah
 
