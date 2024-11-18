@@ -1,112 +1,228 @@
-Return-Path: <linux-kernel+bounces-413601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE4BC9D1B8A
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 00:03:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB11F9D1B92
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 00:04:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4054281319
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 23:03:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3657B1F222DB
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 23:04:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 319E6194120;
-	Mon, 18 Nov 2024 23:02:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 444FE1E7647;
+	Mon, 18 Nov 2024 23:03:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QHwhjzGk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VlbRViDy"
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D0A61953BA;
-	Mon, 18 Nov 2024 23:02:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC99D153BE4;
+	Mon, 18 Nov 2024 23:03:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731970940; cv=none; b=Jw225NP+fDCRHjsOA3fKgKG4WOyIoJ+zCXH+0iLwu3Fb0dmt6BpEn75V0UK5SUhTHGj/WEZZ8BqIBYux7VYrlyGiNptx3q4MnDip33pNhWflHdxNnHhMWSPaZISS5N+O5/Ur5Bn6JPUPIi23NoqEa58lbDFWeu0LB0NPmoUX6VU=
+	t=1731971035; cv=none; b=YOfPfEAyxPCKbhulxR/O7dT910ZYMqowaqIIoJohEZCkDRa1B4/ATFM47YWD9orDJvPlGTxEJ6/iV4rQcxcDSG+5Tp2ClWLEitu2HTZO+Ha8nr3S9Gql9//O9P9eTmTqgSJbMt+vqmmV5IiwRC6gDQFryE2Ei+O6p5CAZU0QrsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731970940; c=relaxed/simple;
-	bh=jZl5sE1plneil6LuvF++8p7ci3M5MVwlM2vSp93SABA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YN3JkLZoBNL/zn3dy/iardNcrhVn5olXtcfhmB1UnTDchHb/sPKzhRFYeqISFG/+bjhMI8FfSQX1/N8r0VsL3cfcL7iFVeIkug9iXwTDqCpbxHWbeG5xM4X7Y2y1aem5npqJw7AsUQy/1IbW/HK2vuM462MALK2hAYf1k6DLVy0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QHwhjzGk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7845CC4CECC;
-	Mon, 18 Nov 2024 23:02:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731970940;
-	bh=jZl5sE1plneil6LuvF++8p7ci3M5MVwlM2vSp93SABA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QHwhjzGkqYePXOvD8evT53FrJqTPjzV93ytnB2Xr1Vi9Jn1Al4Ri0cS4+Wf9cjv7h
-	 3/1KPJ9/AHTTM8LYCPeJbv72znY6Zif7z+NA3InNUU+XtF1i+SmWZM9NY5dCJek31E
-	 AYG2GMAEJuMFQ/ywG3yd2CA2RmzQkq1mAPI2dMy3/hZQUi1Y0Rw6xyT01ESo8o/VjO
-	 eksL75wS9jrRIUppwKl5fs7Ov2WbMzcj11Auq1G3EvhOBzT97PAH8HUwxOdu4dqrHU
-	 mx4Y8Zumbdqc0s9JPVlDNnD2Fjq/ucm8V5Jk5G1p12kT7fWBHETyh3CGO+r9DhNih8
-	 HfCr8zgrei+Fw==
-Date: Tue, 19 Nov 2024 00:02:16 +0100
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Yoshihiro Furudera <fj5100bi@fujitsu.com>
-Cc: Jarkko Nikula <jarkko.nikula@linux.intel.com>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, 
-	Jan Dabros <jsd@semihalf.com>, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] i2c: designware: Add ACPI HID for DWAPB I2C
- controller on FUJITSU-MONAKA
-Message-ID: <uvuogmg5eenuhp73chlddelrl5shtkuy67rhis5afs2nejymmb@cmdnn6fzcjks>
-References: <20241024071553.3073864-1-fj5100bi@fujitsu.com>
+	s=arc-20240116; t=1731971035; c=relaxed/simple;
+	bh=y5eJvZEKw6c/vP8EEPZ+YKx54VlZZ2cyAkOZGSc85ss=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hXtqf6ktFxlSNSd6PPWhWJhvac4gmHXL6hCokzJ0TKutOEQcIDkOrO6ovLF8onUUpQCnux3w5vH/ioIVFuzuG+B+JdmRDm8nwgW16KbzWm9UJ3PLQOcaIWCAOUD1GLTMLjlll26i3bj7wSfdkSeW9hxUqTPnJdlVapO2ZvYNjAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VlbRViDy; arc=none smtp.client-ip=209.85.128.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6e9f8dec3daso3442747b3.0;
+        Mon, 18 Nov 2024 15:03:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731971033; x=1732575833; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BLGOlEVr1tSmo5mAOsdbIqpFPwvL8S5zsKZlb2YOAjE=;
+        b=VlbRViDybb1ipThoDkUhyCPFFY0v4n2SaA+sKKE8nson9LsrAWX9tlk/vlflseaL6V
+         LI8PH+7rlR28hKhvFAxGSJtkElDR/q9kjIDcNVg9mVMh5ThmuWRxuIQgLqHqW/fsWAVu
+         LCP7TzS9Ky3xrN9rr4lYwXLCV1KDyb+RyuwblxhqynV/8DZhzeYd6dncM6MlRWMC7d3F
+         2vhVD+oFSCLJ5pX64z8K9GcKqqYMZS3wIl7YrPwQvs4K/jimDB6u+aTgM0OskzpvsFzs
+         uY91WPTjFFocYaPSrmQOX/FEJtOopCqNJ40NeqUgxwtRwQs+GCyVBpr/2k4KAgYb+adX
+         lvyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731971033; x=1732575833;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BLGOlEVr1tSmo5mAOsdbIqpFPwvL8S5zsKZlb2YOAjE=;
+        b=af914IEclIUa7dboKviVWCO1NrWG+87K/sW2KRBPw+Rw4FldwrHHkG7A2q8MyGweKS
+         f7e5s0kvh4D/m33fAxWu8YCTrXVC11oQ40a2RoL5g0ZNnJ2fc6DGMR2jXCk8tTdnvuZj
+         yPz7ZsMsfaKRQ0JCjMo4p/oB6exdRcAw34BEcSwd0YjC2YeRk3OsnmZsS0StvuViXn+b
+         7gtdlANTGY0tSVsEF4Qft7Vgl9V/gHOUG1P6Gd8TUOchfK2+TUBzxU0WAjHkEJEIj8Mt
+         Joihn8hsMREg0G8vVVrFVw5I0S5U/VLraNy2q64doFz3CAXuMjZNuwayUNudpeRpNq3j
+         avOg==
+X-Forwarded-Encrypted: i=1; AJvYcCVk3yk6bMM6HKzqSlpf5O1MCMbyYtJKD1hoMMiSw5LqX7uqRM3Wc99iG2wijQIS+PYSntSnV5/fyRYr7TecEzeixw==@vger.kernel.org, AJvYcCW+fL9bKhI72YDfLbgoOfWxE0/MYnShdIy3lfcK2V1HKiq1V7s0pDbEop8uebPlQJCs5bpfxX7Yuz/UI5s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNhPblQeSx+X2/lPyp7sxdgMYEBycnsbUE/SEwamQFAzVbe7HC
+	sKnrJkoe8eDKm5nEJsl4wn8zSahvi8yoTOCs3KzwTBR7uRh3J+H/QRmkJSGkb33iX40sacZJGLH
+	cZrGcoOkQCFbt5T9oJnD1BviJEvQEiR/0
+X-Google-Smtp-Source: AGHT+IHKoqBVmNRIWiniQcXlArtto7smxYj78UZGvMfwkUBqetj7kPVtOb/o3T5992XSQF0rv9XkQAjmm4QjQMOBL9w=
+X-Received: by 2002:a05:690c:62c7:b0:6ea:8dad:c3cf with SMTP id
+ 00721157ae682-6ee55a77fbcmr141106937b3.20.1731971032786; Mon, 18 Nov 2024
+ 15:03:52 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241024071553.3073864-1-fj5100bi@fujitsu.com>
+References: <20241113002818.3578645-1-howardchu95@gmail.com>
+ <20241113002818.3578645-2-howardchu95@gmail.com> <ZzutCSbEU-5UZXc3@google.com>
+In-Reply-To: <ZzutCSbEU-5UZXc3@google.com>
+From: Howard Chu <howardchu95@gmail.com>
+Date: Mon, 18 Nov 2024 15:03:41 -0800
+Message-ID: <CAH0uvoj5EY3mkgtduKV7VY8iTWCrhokCtuZimy=N7=3Ah9gGgw@mail.gmail.com>
+Subject: Re: [PATCH v8 01/10] perf record --off-cpu: Add --off-cpu-thresh option
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: acme@kernel.org, peterz@infradead.org, irogers@google.com, 
+	mingo@redhat.com, jolsa@kernel.org, adrian.hunter@intel.com, 
+	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, James Clark <james.clark@linaro.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Arnaldo Carvalho de Melo <acme@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Yoshihiro,
+Hello Namhyung,
 
-On Thu, Oct 24, 2024 at 07:15:53AM +0000, Yoshihiro Furudera wrote:
-> Enable DWAPB I2C controller support on FUJITSU-MONAKA.
-> This will be used in the FUJITSU-MONAKA server scheduled
-> for shipment in 2027.
-> 
-> The DSDT information obtained when verified using an
-> in-house simulator is presented below.
-> 
->      Device (SMB0)
->      {
->          Name (_HID, "FUJI200B")  // _HID: Hardware ID
->          Name (_UID, Zero)  // _UID: Unique ID
->          ...
->          Name (_CRS, ResourceTemplate ()
->          {
->              Memory32Fixed (ReadWrite,
->                  0x2A4B0000,         // Address Base
->                  0x00010000,         // Address Length
->                  )
->              Interrupt (ResourceConsumer, Level, ActiveHigh, Exclusive, ,, )
->              {
->                  0x00000159,
->              }
->          })
->          ...
->      }
-> 
-> The expression SMB0 is used to indicate SMBus HC#0,
-> a string of up to four characters.
-> 
-> Created the SMB0 object according to the following
-> specifications:
-> 
-> ACPI Specification
-> 13.2. Accessing the SMBus from ASL Code
-> https://uefi.org/htmlspecs/ACPI_Spec_6_4_html/13_ACPI_System_Mgmt_Bus_Interface_Spec/accessing-the-smbus-from-asl-code.html
-> 
-> IPMI Specification
-> Example 4: SSIF Interface(P574)
-> https://www.intel.co.jp/content/www/jp/ja/products/docs/servers/ipmi/ipmi-second-gen-interface-spec-v2-rev1-1.html
-> 
-> Signed-off-by: Yoshihiro Furudera <fj5100bi@fujitsu.com>
+On Mon, Nov 18, 2024 at 1:09=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
+wrote:
+>
+> Hello Howard,
+>
+> On Tue, Nov 12, 2024 at 04:28:09PM -0800, Howard Chu wrote:
+> > Specify the threshold for dumping offcpu samples with --off-cpu-thresh,
+> > the unit is us (microsecond). Default value is 500000us (500ms, 0.5s).
+>
+> I think it's better to add an option after you implemented the feature.
+> Before that you may hardcode the threshold if necessary.
+>
+> Also it'd be a good practice to add an example for the option in the
+> commit message.
 
-Pushed to i2c/i2c-host.
+Sure.
+
+>
+> >
+> > Suggested-by: Ian Rogers <irogers@google.com>
+> > Reviewed-by: Ian Rogers <irogers@google.com>
+> > Signed-off-by: Howard Chu <howardchu95@gmail.com>
+> > Cc: Adrian Hunter <adrian.hunter@intel.com>
+> > Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+> > Cc: Ingo Molnar <mingo@redhat.com>
+> > Cc: James Clark <james.clark@linaro.org>
+> > Cc: Jiri Olsa <jolsa@kernel.org>
+> > Cc: Kan Liang <kan.liang@linux.intel.com>
+> > Cc: Mark Rutland <mark.rutland@arm.com>
+> > Cc: Namhyung Kim <namhyung@kernel.org>
+> > Cc: Peter Zijlstra <peterz@infradead.org>
+> > Link: https://lore.kernel.org/r/20241108204137.2444151-2-howardchu95@gm=
+ail.com
+> > Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> > ---
+> >  tools/perf/builtin-record.c | 26 ++++++++++++++++++++++++++
+> >  tools/perf/util/off_cpu.h   |  1 +
+> >  tools/perf/util/record.h    |  1 +
+>
+> Please update the documentation if you add a new option.
+
+Ok sure.
 
 Thanks,
-Andi
+Howard
+>
+> Thanks,
+> Namhyung
+>
+>
+> >  3 files changed, 28 insertions(+)
+> >
+> > diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
+> > index f83252472921..c069000efe5c 100644
+> > --- a/tools/perf/builtin-record.c
+> > +++ b/tools/perf/builtin-record.c
+> > @@ -3149,6 +3149,28 @@ static int record__parse_mmap_pages(const struct=
+ option *opt,
+> >       return ret;
+> >  }
+> >
+> > +static int record__parse_off_cpu_thresh(const struct option *opt,
+> > +                                     const char *str,
+> > +                                     int unset __maybe_unused)
+> > +{
+> > +     struct record_opts *opts =3D opt->value;
+> > +     char *endptr;
+> > +     u64 off_cpu_thresh_us;
+> > +
+> > +     if (!str)
+> > +             return -EINVAL;
+> > +
+> > +     off_cpu_thresh_us =3D strtoull(str, &endptr, 10);
+> > +
+> > +     /* threshold isn't string "0", yet strtoull() returns 0, parsing =
+failed */
+> > +     if (*endptr || (off_cpu_thresh_us =3D=3D 0 && strcmp(str, "0")))
+> > +             return -EINVAL;
+> > +     else
+> > +             opts->off_cpu_thresh_us =3D off_cpu_thresh_us;
+> > +
+> > +     return 0;
+> > +}
+> > +
+> >  void __weak arch__add_leaf_frame_record_opts(struct record_opts *opts =
+__maybe_unused)
+> >  {
+> >  }
+> > @@ -3342,6 +3364,7 @@ static struct record record =3D {
+> >               .ctl_fd              =3D -1,
+> >               .ctl_fd_ack          =3D -1,
+> >               .synth               =3D PERF_SYNTH_ALL,
+> > +             .off_cpu_thresh_us   =3D OFFCPU_THRESH,
+> >       },
+> >  };
+> >
+> > @@ -3564,6 +3587,9 @@ static struct option __record_options[] =3D {
+> >       OPT_BOOLEAN(0, "off-cpu", &record.off_cpu, "Enable off-cpu analys=
+is"),
+> >       OPT_STRING(0, "setup-filter", &record.filter_action, "pin|unpin",
+> >                  "BPF filter action"),
+> > +     OPT_CALLBACK(0, "off-cpu-thresh", &record.opts, "us",
+> > +                  "Dump off-cpu samples if off-cpu time reaches this t=
+hreshold. The unit is microsecond (default: 500000)",
+> > +                  record__parse_off_cpu_thresh),
+> >       OPT_END()
+> >  };
+> >
+> > diff --git a/tools/perf/util/off_cpu.h b/tools/perf/util/off_cpu.h
+> > index 2dd67c60f211..c6edc0f7c40d 100644
+> > --- a/tools/perf/util/off_cpu.h
+> > +++ b/tools/perf/util/off_cpu.h
+> > @@ -16,6 +16,7 @@ struct record_opts;
+> >                             PERF_SAMPLE_PERIOD | PERF_SAMPLE_CALLCHAIN =
+| \
+> >                             PERF_SAMPLE_CGROUP)
+> >
+> > +#define OFFCPU_THRESH 500000ull
+> >
+> >  #ifdef HAVE_BPF_SKEL
+> >  int off_cpu_prepare(struct evlist *evlist, struct target *target,
+> > diff --git a/tools/perf/util/record.h b/tools/perf/util/record.h
+> > index a6566134e09e..2ca74add26c0 100644
+> > --- a/tools/perf/util/record.h
+> > +++ b/tools/perf/util/record.h
+> > @@ -79,6 +79,7 @@ struct record_opts {
+> >       int           synth;
+> >       int           threads_spec;
+> >       const char    *threads_user_spec;
+> > +     u64           off_cpu_thresh_us;
+> >  };
+> >
+> >  extern const char * const *record_usage;
+> > --
+> > 2.43.0
+> >
 
