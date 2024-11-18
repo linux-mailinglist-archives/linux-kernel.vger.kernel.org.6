@@ -1,405 +1,321 @@
-Return-Path: <linux-kernel+bounces-413098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D09E9D13C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 15:58:53 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 186839D1380
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 15:46:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A2433B30740
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 14:45:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4534B29943
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 14:43:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 942C51AC43E;
-	Mon, 18 Nov 2024 14:44:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FF261AA1C2;
+	Mon, 18 Nov 2024 14:43:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="rfqWPOkY"
-Received: from esa4.hgst.iphmx.com (esa4.hgst.iphmx.com [216.71.154.42])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="nn5ZXFoK"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2079.outbound.protection.outlook.com [40.107.243.79])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7AF11991A5;
-	Mon, 18 Nov 2024 14:44:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.71.154.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731941046; cv=none; b=qLKo0RTrBzq83aCICAgrWnFosflsgiJoSkHU05cBCcdCTHaZSnEZC+iTptmUjRE+FQCmO+Ez1FV+rVQ5R/4okLNZoDZHBBHQmCteFt9CGErtnzRtZE6tLObtVv+0/jjNrP93jDmb2MI4uBoHskpw0XAQMEKy6Rzd4+1uvJeya0Q=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731941046; c=relaxed/simple;
-	bh=BgZZEKQgTvB3T9/Y7JrXTY2XVIN7R2zTzPUYq/mUWUs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=sQQ1kt0ECs5xoWSz5OxxIFgCdPQ5nZ2SkgMmd10P3PWOM04d+NGYI/r466D9GyNA1JN+8utREEjMNKFNX9VQ2H2NsUC6pQFulI+hh8Hcu6YYzL0ghBXPvaWDgni0o53oLCovAgsaKKESXnlyebisfNIl/PT3Dl+j+JFFtu90zKM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com; spf=pass smtp.mailfrom=wdc.com; dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b=rfqWPOkY; arc=none smtp.client-ip=216.71.154.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wdc.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1731941044; x=1763477044;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=BgZZEKQgTvB3T9/Y7JrXTY2XVIN7R2zTzPUYq/mUWUs=;
-  b=rfqWPOkYJJVR28Fsz2D3IeSennmAdAiC8fhvXPoUQUEDNAthc1Z6p/fM
-   xwJD1ylNuxGud2YI26n+QR592C94Lwixuiqs3bRuSuLCCtideTZn4WU5K
-   bbdKvTZW9h2WdsSSucAhIaSs/x/FALsZkOcGLed/+BjD1PvhvzK3b0FNk
-   0fVnycbQkOQ3hxqLiZJJvZ7IT6qiI/eMgT9sFJ68Sozf2Kr//8q8BEpzh
-   RRqgbg43XerNDQGrwkwRUiXJjLsmM0vEH92+aJDldmnia28TfHKe5wY+q
-   7OYqCVE+vZcOBLjDNTKVKHhsFflaefg399CY4vjKs1wj5X3Xo/+c53hTS
-   Q==;
-X-CSE-ConnectionGUID: FEmDar4uSN6Hw7QaST7nSg==
-X-CSE-MsgGUID: cVD/vBGyR5iAxhFHN7taJw==
-X-IronPort-AV: E=Sophos;i="6.12,164,1728921600"; 
-   d="scan'208";a="31114485"
-Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 18 Nov 2024 22:43:58 +0800
-IronPort-SDR: 673b441d_10nP0zElHGg5hvAUmtJVjYehiYrFqPBG9i7ZG5OC+O+t7ID
- e6lY/31Z45rWhPhGl/vksdHRP1YPtYPcVWbVSkA==
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 18 Nov 2024 05:41:50 -0800
-WDCIronportException: Internal
-Received: from avri-office.ad.shared (HELO avri-office.sdcorp.global.sandisk.com) ([10.45.31.142])
-  by uls-op-cesaip02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 18 Nov 2024 06:43:56 -0800
-From: Avri Altman <avri.altman@wdc.com>
-To: "Martin K . Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bart Van Assche <bvanassche@acm.org>,
-	Bean Huo <beanhuo@micron.com>,
-	Avri Altman <avri.altman@wdc.com>
-Subject: [PATCH v4 3/3] scsi: ufs: core: Introduce a new clock_scaling lock
-Date: Mon, 18 Nov 2024 16:41:17 +0200
-Message-Id: <20241118144117.88483-4-avri.altman@wdc.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241118144117.88483-1-avri.altman@wdc.com>
-References: <20241118144117.88483-1-avri.altman@wdc.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E0F4199236;
+	Mon, 18 Nov 2024 14:43:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.79
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731940986; cv=fail; b=sJ2kwzjzY1bdq7uzeqlJ+O/Eqw4/oawXHqVAn8EH0CM7E6kFmsS/rMBe3ztrn/BTFp2BG+QN5/xE+SIMUZuxmMMZV1COid7zH02uwInhyZ0x00dR5D/bTAtJmPXONaMuL8kfcP5QPuaJAviBRb39cFNDNI5StaOEBvUAkJ4UhUI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731940986; c=relaxed/simple;
+	bh=lBGGG9H+O8K2lz9CvkpkbSFzCAHhPTHeEDC0MN4TMDQ=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=r1vEKHg1+HseIrSVWxACYo5iBZuMdGedLkajgBk+uIdhor5Wy5VPOgtlNr7+M24E8VkdfsFvI9jbHRKrt59iUuzbzN9AhYqSQcIuGDfs5Q0r5ZtlRUBy9Eo72VNAIX9NuF0zI6EkXM7Vy/6bI9ImqCuISesVvmiXn72Pc4/BuOE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=nn5ZXFoK; arc=fail smtp.client-ip=40.107.243.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=M6KaNhHvmAzm5JZRysLgqDOmnh94FmKQ4NvVhZXn8htQwGOQguE85OAxsUue7do/xnmdyAZKrMgpNgJ6zxKp76ySOU/y+I2VRja+t/BBudCcqmHemrx6PuEJ/GqIsBjRN1Fcw6bZqOc4SjqMxof8whQa6LGj5NDr8mig9gDfiii5vG62T3t5Nxg2+eNkyZ3kObSWmhzyJyHAWWyjRDy56EDQijRDqoxXqMIQeOVAVVyjBZAz2u+djibqCZrWOtpxxRnl8ASY34+TcPyq1d7Q5UjC4o+3n2dT9vklNV2G9xx4pAbTvNoTEMfIdMC/WuNAfzSS639r0QX75mjba4okcg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=57Zk5pb/1mXummfCwv6xmcKXu3ytU6+jOecynDoC1Sw=;
+ b=G5Tgz8R77ylFloAxTCAULC0lRrNZ26ezJUCbwf7YBDs6isourggrBLCDaA4jWXeWY6Z45BxbuFkDuHKMjFDOJykiXQFG3U2wFdlVJIYjbumaKzEgVHfGXxBeF1BMLkJ7+hGV6rTFmVQEyWnDYShYy8p3kA+XfMRo5DlrQvD6BbvU1qmvIh0wI/AJiTmFUkME3ffTCrFgIVoS9fhG4OhdOXQqRC+PfSWMGOhg9TZsW9x66Cr/0Gg0G2/KWV68mNblu7/5Rh3Z592Hh9Y7crW4JfczdGApqyC9F1Pd7YOj1poCtsbam378hg/W9ch7YgiqGsQqXK9xvqHPYCZNmKK5Gw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=57Zk5pb/1mXummfCwv6xmcKXu3ytU6+jOecynDoC1Sw=;
+ b=nn5ZXFoK/7Pcs0/fOcmn5bHMCJ9jPsOG5iZNxytF4vd7el8W6JGWVZvpV2UCBpaRCnlTB9xnf7VTDGSV6Pimz55NvYyJNsuSXrTFFQoLwnByDRF+n/J9TH4+RJUTNvRfpthH2FzNU0d+aNpa/sg1Y24PeY+sfn0Whq28QGUDbLo=
+Received: from MN0PR12MB5953.namprd12.prod.outlook.com (2603:10b6:208:37c::15)
+ by CH3PR12MB9021.namprd12.prod.outlook.com (2603:10b6:610:173::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.24; Mon, 18 Nov
+ 2024 14:42:58 +0000
+Received: from MN0PR12MB5953.namprd12.prod.outlook.com
+ ([fe80::6798:13c6:d7ba:e01c]) by MN0PR12MB5953.namprd12.prod.outlook.com
+ ([fe80::6798:13c6:d7ba:e01c%3]) with mapi id 15.20.8158.023; Mon, 18 Nov 2024
+ 14:42:58 +0000
+From: "Pandey, Radhey Shyam" <radhey.shyam.pandey@amd.com>
+To: "Gupta, Suraj" <Suraj.Gupta2@amd.com>, "andrew+netdev@lunn.ch"
+	<andrew+netdev@lunn.ch>, "davem@davemloft.net" <davem@davemloft.net>,
+	"edumazet@google.com" <edumazet@google.com>, "kuba@kernel.org"
+	<kuba@kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>, "Simek, Michal"
+	<michal.simek@amd.com>, "sean.anderson@linux.dev" <sean.anderson@linux.dev>,
+	"horms@kernel.org" <horms@kernel.org>
+CC: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "git (AMD-Xilinx)" <git@amd.com>, "Katakam,
+ Harini" <harini.katakam@amd.com>
+Subject: RE: [PATCH net-next 2/2] net: axienet: Add support for AXI 2.5G MAC
+Thread-Topic: [PATCH net-next 2/2] net: axienet: Add support for AXI 2.5G MAC
+Thread-Index: AQHbObk35YvZESLwV0+n1uONXKXyWbK9HGng
+Date: Mon, 18 Nov 2024 14:42:57 +0000
+Message-ID:
+ <MN0PR12MB595399792A32D8832F1B54EAB7272@MN0PR12MB5953.namprd12.prod.outlook.com>
+References: <20241118081822.19383-1-suraj.gupta2@amd.com>
+ <20241118081822.19383-3-suraj.gupta2@amd.com>
+In-Reply-To: <20241118081822.19383-3-suraj.gupta2@amd.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: MN0PR12MB5953:EE_|CH3PR12MB9021:EE_
+x-ms-office365-filtering-correlation-id: b1d70008-ae10-40ee-a5f6-08dd07df4b69
+x-ld-processed: 3dd8961f-e488-4e60-8e11-a82d994e183d,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|7416014|376014|1800799024|366016|921020|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?b+6vgiZ0y2FeNO5lrzaN7YJw8LFnPSyD7WK10NmOW6MQiSrgHGpqgCvcHFL0?=
+ =?us-ascii?Q?kYDVxbskGN/yxfls+BKaGfHLN6zimDMBbqSnSRzVZ4oiDLnNi6QIvcv1xY4i?=
+ =?us-ascii?Q?nwsWYhFlX6+2YkBoYUMxpma8lyeqUR7NHfs6KQv3nkIJMmpVeYDQuGnbTZUS?=
+ =?us-ascii?Q?qNGjj23k0GbcDUD7VsAHXqXCY3ipuYR2tr8WgS4Uue0P8Q5N9VtEoCgWjMlx?=
+ =?us-ascii?Q?SJw4bkeh+9RZNPuigeXPESPmaSx9VU7+WpRaqJ2dwyyI2nURzV7KPXtKCZa6?=
+ =?us-ascii?Q?a+9R8zbfZQiqUAtCruFfFD0o0ZseMy+mAW9wMSa3CixYjMcJNpNwZWj+9DvW?=
+ =?us-ascii?Q?YafDoCft4Y/VQqO/OER6MzB+ZnlpzX7NFU8oi2XSCHpw9CxKsWMDXTjggq4P?=
+ =?us-ascii?Q?T5wfWO2sAzw5iXs7/EAz4hVF9oreTu4mYJC6XoUw7lSnSab6cys7vszu9VaB?=
+ =?us-ascii?Q?cPks9RfQQV2RannDYA6oApjdJdQkg/RkhPFjaEmJes3Z5FiEU8bqgDFVfa3d?=
+ =?us-ascii?Q?JrOd1SoO/DyGwszBhw0ymNQiJ6d6vwFuMhFgG0te7fvUTvPYGlofk3Torz0u?=
+ =?us-ascii?Q?rYTyf5WhkNZ0JCZYFWXOILcb5S1uJYgoRf7atr2Vi1vIQUkTmwq2oKMs05eu?=
+ =?us-ascii?Q?KW4QHa+0ejyvWWE3cnsTqyhZgZ8bX8P2HlZdnAwfMNCkV2ns4KS+OFohPiKg?=
+ =?us-ascii?Q?UQnNhd6vnotBPI9OFXGQICp9Tu0dC7vQBV+rEZx4UcSmr2QOd1MhH3AXU/JB?=
+ =?us-ascii?Q?kCtJ4itRMP4BaZ5StQyRsLi37/BhoKL6kYpGLzn1/aaQ+3DkVVgP5zISNKvk?=
+ =?us-ascii?Q?SgRHvFAunUKj/aotPhuML//nwBExfsqOX3SmlJjxW3dZvwxZfvkdafY9L/TX?=
+ =?us-ascii?Q?GWl6jS3W0TKBvVC/RvDw0NS0nxoic2QR6IhFNtjaTB68XuJXJ4lJVNh5Q4iT?=
+ =?us-ascii?Q?RXK25SXovrqjisbycxy/ZJN6Z87YOd4V0c/kYyUM/NN/JcX9n3+o2PrXpA/5?=
+ =?us-ascii?Q?tb3zVeLvzfT95l5FEvAyQIigCsCrNtIgbtoWSP7ywp/dJhxraG1ype41KN9N?=
+ =?us-ascii?Q?g/Y9OW8aDRiY3e4ouxOUjkKmKGqX7HASGru3SWzPFtB/Ijz3xxlUf4xC6vlv?=
+ =?us-ascii?Q?MHfX7PpzYX0mQGKHwivDG+5MiAtlOCi+kpy8UBMiC/QQO1nA2goI/sy9ysFh?=
+ =?us-ascii?Q?GKXYI71pMD8PgPkBP3wrRssrTHM0rVz/Ov5Sto8HTjuEldlpbIIdsr/QCuJx?=
+ =?us-ascii?Q?0ef5JUK50VXAX00FwB/lJAjRSkAEJeTGoipxr6L8j5mWZZ6XF7SfG1x050y4?=
+ =?us-ascii?Q?SVdFykO1fr0WWxSfqVtSjE5HdebW4fbFnuLrcXW/wIFjb2KfXMKPRWHHsi6D?=
+ =?us-ascii?Q?xkSPi7D2yjuxzZGFMab/XvzqBvgI?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB5953.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(921020)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?OHOHtwbftgMEyBX20cB8+eS+3hpfirDjT2aPTjis2tuu5JJgj8s8ysgra+2H?=
+ =?us-ascii?Q?G+hncpXv8IZT5/w3fINwDB4QLoE9Rs6emW5mc7g5lqMPx32uz+OQUDYs/z3Y?=
+ =?us-ascii?Q?x/IbZU0gL8ZTh1Ur8ypI/F6pAa1TEvCtpmAEOShIBi2/G5jqEZxPm+T3THvb?=
+ =?us-ascii?Q?I/Wk/CEBV/y1bJV7r3YSGwHWU2M0xy/8MEcCenqoC5ctGg+MDHXVb4GXxJYu?=
+ =?us-ascii?Q?K4nGOsgVJFl2t4vUqwqAOf3+I34sXlZP03dKcHIu+EpIWhddMt5HpCoHYVTG?=
+ =?us-ascii?Q?yubUurRIBmP91GwzcSEh4W8icTgq6cHywtc8omp5+POjwQcLvWEZ9x3qeatY?=
+ =?us-ascii?Q?aGRiEqIts7mShuegZa7nwHHzGMmqMIQQJgYAbT4Q0S5TEUkWR+Zf8582KmCk?=
+ =?us-ascii?Q?DUYcTJRGJRWkK85lASd7D2mFs0SczFpOu1wFJPDGAPvhqoIeR7l/hG2j3JdA?=
+ =?us-ascii?Q?x5TyJ1KSrzR6t8ulRrql3Vvih8/anlWOEHe9Og5VNEneNeRmTb5qwKMKlwnl?=
+ =?us-ascii?Q?iogxW8h+lcZUcF2PHKgNB9SEywytWMCGxvGioZ3pMCJz5hxQeNB9O1S8BQ+0?=
+ =?us-ascii?Q?nkbPMrLJCSSdHckRJzEiU+emzHBY7cBk1msAk4zESDZICZWc2qrYev8ZdJ2f?=
+ =?us-ascii?Q?B6XyVuDAQ2teIEapyLQiil31vy60iDvRRk7x1BUOygJ5dwoNIhenTJTwcDRE?=
+ =?us-ascii?Q?q89lOBJ5WI35cVJf6WSrY8NcUScElUUn2tBPUYoPP/MZT170dehpuxNsAomY?=
+ =?us-ascii?Q?Zhh3zfDPwQc4CHxhmUGkkKhGphInBgoWbc1tQXjgpuOWJL45y9UIgTXqXgG1?=
+ =?us-ascii?Q?nKa7mF/omts35YbvqIRCP9JaRh3EiX/+1gq/b/uT1xtK7dj8t5epBuQHb24m?=
+ =?us-ascii?Q?/SvCSWpoGbvLmHSiPiWw+9tSHdzotc8C3ME6YE1FQwm7szO4baM6BaYeDMri?=
+ =?us-ascii?Q?yLwDifTqOgeJjltVWwn9e6Nvva9Yx8cPMzlzkWTClSknq+8Jp/0kuMHvbQMu?=
+ =?us-ascii?Q?wPF84Ij0C0uWN2fm384Rp5xTEbCXDogIZ7bOMrH1WmdILu2xC7zA3Ys10egz?=
+ =?us-ascii?Q?ptqoYZF5GoY0PPfHUotoxy+08ufXPnvXtVYMbzlObS4tY2W3zWN7RxH5VijS?=
+ =?us-ascii?Q?M3Kz/BzC985+ajVxFi86RHPb1K2q2v+jQBeh9qS9A2DVnchJ9VK/MmRWtXSk?=
+ =?us-ascii?Q?4bROzc7xAHRDFjOSFYtj3nrQ3dwMsx//yY6G9S0xSebc3b+Y26Y3VR5ngeKT?=
+ =?us-ascii?Q?YWFWngqQ7pv0IMwAuHiZxcrY54uDf/7syg4ttxUy0I2muukBSR3n4CXp6gKE?=
+ =?us-ascii?Q?n6/ntiJjjqc6VDz7OqthpYxMZesjZpuhMHWibz9ckV5HUv5s+7a5//rrUJR7?=
+ =?us-ascii?Q?yPSaOm9c8vNQR+Ezw/vW/4z97O31I9DfggiyNFgKv/IMqSF5gzmdkk13VDtc?=
+ =?us-ascii?Q?4b4dgBW5D/Vj/gs6sbrcvJtJ7HQzbzYW/8aohlv3sWq1oRT51idFSykDlYH4?=
+ =?us-ascii?Q?eDxS0KBmGM9lxODOBE2FSvkqeeDFJBAOHW9L27oa706wNdCOjjxw4zya9gJs?=
+ =?us-ascii?Q?thTkAwe0wojBf+Di7Ok=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB5953.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b1d70008-ae10-40ee-a5f6-08dd07df4b69
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Nov 2024 14:42:58.0176
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: wWMo1NbOxyfsPQKk6bk3sE5peZZK9jeNK2VvgVsgk4hv6ezr7kfhiK5oZRP2v9F2
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9021
 
-Introduce a new clock scaling lock to serialize access to some of the
-clock scaling members instead of the host_lock. here also, simplify the
-code with the guard() macro and co.
+> -----Original Message-----
+> From: Suraj Gupta <suraj.gupta2@amd.com>
+> Sent: Monday, November 18, 2024 1:48 PM
+> To: andrew+netdev@lunn.ch; davem@davemloft.net; edumazet@google.com;
+> kuba@kernel.org; pabeni@redhat.com; Simek, Michal <michal.simek@amd.com>;
+> sean.anderson@linux.dev; Pandey, Radhey Shyam
+> <radhey.shyam.pandey@amd.com>; horms@kernel.org
+> Cc: netdev@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
+> kernel@vger.kernel.org; git (AMD-Xilinx) <git@amd.com>; Katakam, Harini
+> <harini.katakam@amd.com>
+> Subject: [PATCH net-next 2/2] net: axienet: Add support for AXI 2.5G MAC
+>=20
+> Add AXI 2.5G MAC support, which is an incremental speed upgrade
+> of AXI 1G MAC and supports 2.5G speed only. "max-speed" DT property
+> is used in driver to distinguish 1G and 2.5G MACs of AXI 1G/2.5G IP.
+> If max-speed property is missing, 1G is assumed to support backward
+> compatibility.
+>=20
+> Co-developed-by: Harini Katakam <harini.katakam@amd.com>
+> Signed-off-by: Harini Katakam <harini.katakam@amd.com>
+> Signed-off-by: Suraj Gupta <suraj.gupta2@amd.com>
 
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
-Signed-off-by: Avri Altman <avri.altman@wdc.com>
----
- drivers/ufs/core/ufshcd.c | 132 ++++++++++++++++++--------------------
- include/ufs/ufshcd.h      |  16 +++--
- 2 files changed, 71 insertions(+), 77 deletions(-)
-
-diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
-index 638d9c0e2603..6eb8d7e5d443 100644
---- a/drivers/ufs/core/ufshcd.c
-+++ b/drivers/ufs/core/ufshcd.c
-@@ -1452,16 +1452,16 @@ static void ufshcd_clk_scaling_suspend_work(struct work_struct *work)
- {
- 	struct ufs_hba *hba = container_of(work, struct ufs_hba,
- 					   clk_scaling.suspend_work);
--	unsigned long irq_flags;
- 
--	spin_lock_irqsave(hba->host->host_lock, irq_flags);
--	if (hba->clk_scaling.active_reqs || hba->clk_scaling.is_suspended) {
--		spin_unlock_irqrestore(hba->host->host_lock, irq_flags);
--		return;
-+	scoped_guard(spinlock_irqsave, &hba->clk_scaling.lock)
-+	{
-+		if (hba->clk_scaling.active_reqs ||
-+		    hba->clk_scaling.is_suspended)
-+			return;
-+
-+		hba->clk_scaling.is_suspended = true;
-+		hba->clk_scaling.window_start_t = 0;
- 	}
--	hba->clk_scaling.is_suspended = true;
--	hba->clk_scaling.window_start_t = 0;
--	spin_unlock_irqrestore(hba->host->host_lock, irq_flags);
- 
- 	devfreq_suspend_device(hba->devfreq);
- }
-@@ -1470,15 +1470,13 @@ static void ufshcd_clk_scaling_resume_work(struct work_struct *work)
- {
- 	struct ufs_hba *hba = container_of(work, struct ufs_hba,
- 					   clk_scaling.resume_work);
--	unsigned long irq_flags;
- 
--	spin_lock_irqsave(hba->host->host_lock, irq_flags);
--	if (!hba->clk_scaling.is_suspended) {
--		spin_unlock_irqrestore(hba->host->host_lock, irq_flags);
--		return;
-+	scoped_guard(spinlock_irqsave, &hba->clk_scaling.lock)
-+	{
-+		if (!hba->clk_scaling.is_suspended)
-+			return;
-+		hba->clk_scaling.is_suspended = false;
- 	}
--	hba->clk_scaling.is_suspended = false;
--	spin_unlock_irqrestore(hba->host->host_lock, irq_flags);
- 
- 	devfreq_resume_device(hba->devfreq);
- }
-@@ -1492,7 +1490,6 @@ static int ufshcd_devfreq_target(struct device *dev,
- 	bool scale_up = false, sched_clk_scaling_suspend_work = false;
- 	struct list_head *clk_list = &hba->clk_list_head;
- 	struct ufs_clk_info *clki;
--	unsigned long irq_flags;
- 
- 	if (!ufshcd_is_clkscaling_supported(hba))
- 		return -EINVAL;
-@@ -1513,43 +1510,38 @@ static int ufshcd_devfreq_target(struct device *dev,
- 		*freq =	(unsigned long) clk_round_rate(clki->clk, *freq);
- 	}
- 
--	spin_lock_irqsave(hba->host->host_lock, irq_flags);
--	if (ufshcd_eh_in_progress(hba)) {
--		spin_unlock_irqrestore(hba->host->host_lock, irq_flags);
--		return 0;
--	}
-+	scoped_guard(spinlock_irqsave, &hba->clk_scaling.lock)
-+	{
-+		if (ufshcd_eh_in_progress(hba))
-+			return 0;
- 
--	/* Skip scaling clock when clock scaling is suspended */
--	if (hba->clk_scaling.is_suspended) {
--		spin_unlock_irqrestore(hba->host->host_lock, irq_flags);
--		dev_warn(hba->dev, "clock scaling is suspended, skip");
--		return 0;
--	}
-+		/* Skip scaling clock when clock scaling is suspended */
-+		if (hba->clk_scaling.is_suspended) {
-+			dev_warn(hba->dev, "clock scaling is suspended, skip");
-+			return 0;
-+		}
- 
--	if (!hba->clk_scaling.active_reqs)
--		sched_clk_scaling_suspend_work = true;
-+		if (!hba->clk_scaling.active_reqs)
-+			sched_clk_scaling_suspend_work = true;
- 
--	if (list_empty(clk_list)) {
--		spin_unlock_irqrestore(hba->host->host_lock, irq_flags);
--		goto out;
--	}
-+		if (list_empty(clk_list))
-+			goto out;
- 
--	/* Decide based on the target or rounded-off frequency and update */
--	if (hba->use_pm_opp)
--		scale_up = *freq > hba->clk_scaling.target_freq;
--	else
--		scale_up = *freq == clki->max_freq;
-+		/* Decide based on the target or rounded-off frequency and update */
-+		if (hba->use_pm_opp)
-+			scale_up = *freq > hba->clk_scaling.target_freq;
-+		else
-+			scale_up = *freq == clki->max_freq;
- 
--	if (!hba->use_pm_opp && !scale_up)
--		*freq = clki->min_freq;
-+		if (!hba->use_pm_opp && !scale_up)
-+			*freq = clki->min_freq;
- 
--	/* Update the frequency */
--	if (!ufshcd_is_devfreq_scaling_required(hba, *freq, scale_up)) {
--		spin_unlock_irqrestore(hba->host->host_lock, irq_flags);
--		ret = 0;
--		goto out; /* no state change required */
-+		/* Update the frequency */
-+		if (!ufshcd_is_devfreq_scaling_required(hba, *freq, scale_up)) {
-+			ret = 0;
-+			goto out; /* no state change required */
-+		}
- 	}
--	spin_unlock_irqrestore(hba->host->host_lock, irq_flags);
- 
- 	start = ktime_get();
- 	ret = ufshcd_devfreq_scale(hba, *freq, scale_up);
-@@ -1574,7 +1566,6 @@ static int ufshcd_devfreq_get_dev_status(struct device *dev,
- {
- 	struct ufs_hba *hba = dev_get_drvdata(dev);
- 	struct ufs_clk_scaling *scaling = &hba->clk_scaling;
--	unsigned long flags;
- 	ktime_t curr_t;
- 
- 	if (!ufshcd_is_clkscaling_supported(hba))
-@@ -1582,7 +1573,8 @@ static int ufshcd_devfreq_get_dev_status(struct device *dev,
- 
- 	memset(stat, 0, sizeof(*stat));
- 
--	spin_lock_irqsave(hba->host->host_lock, flags);
-+	guard(spinlock_irqsave)(&hba->clk_scaling.lock);
-+
- 	curr_t = ktime_get();
- 	if (!scaling->window_start_t)
- 		goto start_window;
-@@ -1618,7 +1610,7 @@ static int ufshcd_devfreq_get_dev_status(struct device *dev,
- 		scaling->busy_start_t = 0;
- 		scaling->is_busy_started = false;
- 	}
--	spin_unlock_irqrestore(hba->host->host_lock, flags);
-+
- 	return 0;
- }
- 
-@@ -1682,19 +1674,19 @@ static void ufshcd_devfreq_remove(struct ufs_hba *hba)
- 
- static void ufshcd_suspend_clkscaling(struct ufs_hba *hba)
- {
--	unsigned long flags;
- 	bool suspend = false;
- 
- 	cancel_work_sync(&hba->clk_scaling.suspend_work);
- 	cancel_work_sync(&hba->clk_scaling.resume_work);
- 
--	spin_lock_irqsave(hba->host->host_lock, flags);
--	if (!hba->clk_scaling.is_suspended) {
--		suspend = true;
--		hba->clk_scaling.is_suspended = true;
--		hba->clk_scaling.window_start_t = 0;
-+	scoped_guard(spinlock_irqsave, &hba->clk_scaling.lock)
-+	{
-+		if (!hba->clk_scaling.is_suspended) {
-+			suspend = true;
-+			hba->clk_scaling.is_suspended = true;
-+			hba->clk_scaling.window_start_t = 0;
-+		}
- 	}
--	spin_unlock_irqrestore(hba->host->host_lock, flags);
- 
- 	if (suspend)
- 		devfreq_suspend_device(hba->devfreq);
-@@ -1702,15 +1694,15 @@ static void ufshcd_suspend_clkscaling(struct ufs_hba *hba)
- 
- static void ufshcd_resume_clkscaling(struct ufs_hba *hba)
- {
--	unsigned long flags;
- 	bool resume = false;
- 
--	spin_lock_irqsave(hba->host->host_lock, flags);
--	if (hba->clk_scaling.is_suspended) {
--		resume = true;
--		hba->clk_scaling.is_suspended = false;
-+	scoped_guard(spinlock_irqsave, &hba->clk_scaling.lock)
-+	{
-+		if (hba->clk_scaling.is_suspended) {
-+			resume = true;
-+			hba->clk_scaling.is_suspended = false;
-+		}
- 	}
--	spin_unlock_irqrestore(hba->host->host_lock, flags);
- 
- 	if (resume)
- 		devfreq_resume_device(hba->devfreq);
-@@ -1796,6 +1788,8 @@ static void ufshcd_init_clk_scaling(struct ufs_hba *hba)
- 	INIT_WORK(&hba->clk_scaling.resume_work,
- 		  ufshcd_clk_scaling_resume_work);
- 
-+	spin_lock_init(&hba->clk_scaling.lock);
-+
- 	hba->clk_scaling.workq = alloc_ordered_workqueue(
- 		"ufs_clkscaling_%d", WQ_MEM_RECLAIM, hba->host->host_no);
- 
-@@ -2165,19 +2159,17 @@ static void ufshcd_clk_scaling_start_busy(struct ufs_hba *hba)
- {
- 	bool queue_resume_work = false;
- 	ktime_t curr_t = ktime_get();
--	unsigned long flags;
- 
- 	if (!ufshcd_is_clkscaling_supported(hba))
- 		return;
- 
--	spin_lock_irqsave(hba->host->host_lock, flags);
-+	guard(spinlock_irqsave)(&hba->clk_scaling.lock);
-+
- 	if (!hba->clk_scaling.active_reqs++)
- 		queue_resume_work = true;
- 
--	if (!hba->clk_scaling.is_enabled || hba->pm_op_in_progress) {
--		spin_unlock_irqrestore(hba->host->host_lock, flags);
-+	if (!hba->clk_scaling.is_enabled || hba->pm_op_in_progress)
- 		return;
--	}
- 
- 	if (queue_resume_work)
- 		queue_work(hba->clk_scaling.workq,
-@@ -2193,18 +2185,17 @@ static void ufshcd_clk_scaling_start_busy(struct ufs_hba *hba)
- 		hba->clk_scaling.busy_start_t = curr_t;
- 		hba->clk_scaling.is_busy_started = true;
- 	}
--	spin_unlock_irqrestore(hba->host->host_lock, flags);
- }
- 
- static void ufshcd_clk_scaling_update_busy(struct ufs_hba *hba)
- {
- 	struct ufs_clk_scaling *scaling = &hba->clk_scaling;
--	unsigned long flags;
- 
- 	if (!ufshcd_is_clkscaling_supported(hba))
- 		return;
- 
--	spin_lock_irqsave(hba->host->host_lock, flags);
-+	guard(spinlock_irqsave)(&hba->clk_scaling.lock);
-+
- 	hba->clk_scaling.active_reqs--;
- 	if (!scaling->active_reqs && scaling->is_busy_started) {
- 		scaling->tot_busy_t += ktime_to_us(ktime_sub(ktime_get(),
-@@ -2212,7 +2203,6 @@ static void ufshcd_clk_scaling_update_busy(struct ufs_hba *hba)
- 		scaling->busy_start_t = 0;
- 		scaling->is_busy_started = false;
- 	}
--	spin_unlock_irqrestore(hba->host->host_lock, flags);
- }
- 
- static inline int ufshcd_monitor_opcode2dir(u8 opcode)
-diff --git a/include/ufs/ufshcd.h b/include/ufs/ufshcd.h
-index 8f9997b0dbf9..c449b6cdc1dc 100644
---- a/include/ufs/ufshcd.h
-+++ b/include/ufs/ufshcd.h
-@@ -435,6 +435,10 @@ struct ufs_clk_gating {
- 
- /**
-  * struct ufs_clk_scaling - UFS clock scaling related data
-+ * @workq: workqueue to schedule devfreq suspend/resume work
-+ * @suspend_work: worker to suspend devfreq
-+ * @resume_work: worker to resume devfreq
-+ * @lock: serialize access to some struct ufs_clk_scaling members
-  * @active_reqs: number of requests that are pending. If this is zero when
-  * devfreq ->target() function is called then schedule "suspend_work" to
-  * suspend devfreq.
-@@ -444,9 +448,6 @@ struct ufs_clk_gating {
-  * @enable_attr: sysfs attribute to enable/disable clock scaling
-  * @saved_pwr_info: UFS power mode may also be changed during scaling and this
-  * one keeps track of previous power mode.
-- * @workq: workqueue to schedule devfreq suspend/resume work
-- * @suspend_work: worker to suspend devfreq
-- * @resume_work: worker to resume devfreq
-  * @target_freq: frequency requested by devfreq framework
-  * @min_gear: lowest HS gear to scale down to
-  * @is_enabled: tracks if scaling is currently enabled or not, controlled by
-@@ -458,15 +459,18 @@ struct ufs_clk_gating {
-  * @is_suspended: tracks if devfreq is suspended or not
-  */
- struct ufs_clk_scaling {
-+	struct workqueue_struct *workq;
-+	struct work_struct suspend_work;
-+	struct work_struct resume_work;
-+
-+	spinlock_t lock;
-+
- 	int active_reqs;
- 	unsigned long tot_busy_t;
- 	ktime_t window_start_t;
- 	ktime_t busy_start_t;
- 	struct device_attribute enable_attr;
- 	struct ufs_pa_layer_attr saved_pwr_info;
--	struct workqueue_struct *workq;
--	struct work_struct suspend_work;
--	struct work_struct resume_work;
- 	unsigned long target_freq;
- 	u32 min_gear;
- 	bool is_enabled;
--- 
-2.25.1
+Reviewed-by: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
+Thanks!
+> ---
+>  drivers/net/ethernet/xilinx/xilinx_axienet.h  |  4 +++-
+>  .../net/ethernet/xilinx/xilinx_axienet_main.c | 24 +++++++++++++++----
+>  2 files changed, 22 insertions(+), 6 deletions(-)
+>=20
+> diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet.h
+> b/drivers/net/ethernet/xilinx/xilinx_axienet.h
+> index d64b8abcf018..ebad1c147aa2 100644
+> --- a/drivers/net/ethernet/xilinx/xilinx_axienet.h
+> +++ b/drivers/net/ethernet/xilinx/xilinx_axienet.h
+> @@ -274,7 +274,7 @@
+>  #define XAE_EMMC_RX16BIT	0x01000000 /* 16 bit Rx client enable */
+>  #define XAE_EMMC_LINKSPD_10	0x00000000 /* Link Speed mask for 10 Mbit */
+>  #define XAE_EMMC_LINKSPD_100	0x40000000 /* Link Speed mask for
+> 100 Mbit */
+> -#define XAE_EMMC_LINKSPD_1000	0x80000000 /* Link Speed mask for
+> 1000 Mbit */
+> +#define XAE_EMMC_LINKSPD_1000_2500	0x80000000 /* Link Speed
+> mask for 1000 or 2500 Mbit */
+>=20
+>  /* Bit masks for Axi Ethernet PHYC register */
+>  #define XAE_PHYC_SGMIILINKSPEED_MASK	0xC0000000 /* SGMII link
+> speed mask*/
+> @@ -542,6 +542,7 @@ struct skbuf_dma_descriptor {
+>   * @tx_ring_tail: TX skb ring buffer tail index.
+>   * @rx_ring_head: RX skb ring buffer head index.
+>   * @rx_ring_tail: RX skb ring buffer tail index.
+> + * @max_speed: Maximum possible MAC speed.
+>   */
+>  struct axienet_local {
+>  	struct net_device *ndev;
+> @@ -620,6 +621,7 @@ struct axienet_local {
+>  	int tx_ring_tail;
+>  	int rx_ring_head;
+>  	int rx_ring_tail;
+> +	u32 max_speed;
+>  };
+>=20
+>  /**
+> diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
+> b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
+> index 273ec5f70005..52a3703bd604 100644
+> --- a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
+> +++ b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
+> @@ -2388,6 +2388,7 @@ static struct phylink_pcs *axienet_mac_select_pcs(s=
+truct
+> phylink_config *config,
+>  	struct axienet_local *lp =3D netdev_priv(ndev);
+>=20
+>  	if (interface =3D=3D PHY_INTERFACE_MODE_1000BASEX ||
+> +	    interface =3D=3D PHY_INTERFACE_MODE_2500BASEX ||
+>  	    interface =3D=3D  PHY_INTERFACE_MODE_SGMII)
+>  		return &lp->pcs;
+>=20
+> @@ -2421,8 +2422,9 @@ static void axienet_mac_link_up(struct phylink_conf=
+ig
+> *config,
+>  	emmc_reg &=3D ~XAE_EMMC_LINKSPEED_MASK;
+>=20
+>  	switch (speed) {
+> +	case SPEED_2500:
+>  	case SPEED_1000:
+> -		emmc_reg |=3D XAE_EMMC_LINKSPD_1000;
+> +		emmc_reg |=3D XAE_EMMC_LINKSPD_1000_2500;
+>  		break;
+>  	case SPEED_100:
+>  		emmc_reg |=3D XAE_EMMC_LINKSPD_100;
+> @@ -2432,7 +2434,7 @@ static void axienet_mac_link_up(struct phylink_conf=
+ig
+> *config,
+>  		break;
+>  	default:
+>  		dev_err(&ndev->dev,
+> -			"Speed other than 10, 100 or 1Gbps is not supported\n");
+> +			"Speed other than 10, 100, 1Gbps or 2.5Gbps is not
+> supported\n");
+>  		break;
+>  	}
+>=20
+> @@ -2681,6 +2683,12 @@ static int axienet_probe(struct platform_device *p=
+dev)
+>  	lp->switch_x_sgmii =3D of_property_read_bool(pdev->dev.of_node,
+>  						   "xlnx,switch-x-sgmii");
+>=20
+> +	ret =3D of_property_read_u32(pdev->dev.of_node, "max-speed", &lp-
+> >max_speed);
+> +	if (ret) {
+> +		lp->max_speed =3D SPEED_1000;
+> +		netdev_warn(ndev, "Please upgrade your device tree to use max-
+> speed\n");
+> +	}
+> +
+>  	/* Start with the proprietary, and broken phy_type */
+>  	ret =3D of_property_read_u32(pdev->dev.of_node, "xlnx,phy-type", &value=
+);
+>  	if (!ret) {
+> @@ -2854,7 +2862,8 @@ static int axienet_probe(struct platform_device *pd=
+ev)
+>  			 "error registering MDIO bus: %d\n", ret);
+>=20
+>  	if (lp->phy_mode =3D=3D PHY_INTERFACE_MODE_SGMII ||
+> -	    lp->phy_mode =3D=3D PHY_INTERFACE_MODE_1000BASEX) {
+> +	    lp->phy_mode =3D=3D PHY_INTERFACE_MODE_1000BASEX ||
+> +	    lp->phy_mode =3D=3D PHY_INTERFACE_MODE_2500BASEX) {
+>  		np =3D of_parse_phandle(pdev->dev.of_node, "pcs-handle", 0);
+>  		if (!np) {
+>  			/* Deprecated: Always use "pcs-handle" for pcs_phy.
+> @@ -2882,8 +2891,13 @@ static int axienet_probe(struct platform_device *p=
+dev)
+>=20
+>  	lp->phylink_config.dev =3D &ndev->dev;
+>  	lp->phylink_config.type =3D PHYLINK_NETDEV;
+> -	lp->phylink_config.mac_capabilities =3D MAC_SYM_PAUSE |
+> MAC_ASYM_PAUSE |
+> -		MAC_10FD | MAC_100FD | MAC_1000FD;
+> +	lp->phylink_config.mac_capabilities =3D MAC_SYM_PAUSE |
+> MAC_ASYM_PAUSE;
+> +
+> +	/* Set MAC capabilities based on MAC type */
+> +	if (lp->max_speed =3D=3D SPEED_1000)
+> +		lp->phylink_config.mac_capabilities |=3D MAC_10FD | MAC_100FD |
+> MAC_1000FD;
+> +	else
+> +		lp->phylink_config.mac_capabilities |=3D MAC_2500FD;
+>=20
+>  	__set_bit(lp->phy_mode, lp->phylink_config.supported_interfaces);
+>  	if (lp->switch_x_sgmii) {
+> --
+> 2.25.1
 
 
