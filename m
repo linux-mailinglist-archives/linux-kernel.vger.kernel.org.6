@@ -1,150 +1,124 @@
-Return-Path: <linux-kernel+bounces-412401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85F8B9D087C
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 05:56:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3539F9D087E
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 05:57:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1783EB213EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 04:56:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA3B0281760
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 04:57:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB3A613B58E;
-	Mon, 18 Nov 2024 04:56:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB84713B79F;
+	Mon, 18 Nov 2024 04:57:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FpZ+sdo/"
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kwh29RCP"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFCCC28E8;
-	Mon, 18 Nov 2024 04:56:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD32828E8;
+	Mon, 18 Nov 2024 04:57:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731905784; cv=none; b=YpO/Afo2Hf3wJNPbvvLG3Q/chYLN6mLBd0TzoVbtLUsMX6MPdcD0ZkUDQz0C8l1XtUyJFQWlJWjNLGilnQAExy0slJcX3jCZzOe6WhyUGFwp9MCrpr0tLN20u4+IzF1gSkc3WIeopVrOyMdgThzuV9FOdtI/iWvcg+pmMy3lDXU=
+	t=1731905842; cv=none; b=BIOGClrOIiCg/+pRwl2vDIidsFMGjnQpsmfHMsVDN8vx8bh+LbwOPsGqPPfoM0tFe4zQpeXGGnUwyxgxs/lfk05KMcVinJ+RTSb5zD13u7UBY21rjXG1LXE/sEDvT+Uf5hkrBSQbdAS2/d31FAVN33CGdFgir8SP2yMAlCqyXtM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731905784; c=relaxed/simple;
-	bh=lWcnN8ec/LyhSAHqzCFQMl4RjZ1aXYxLSWM9IlmfB8g=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GK6ZBEHJSSwTQTqHgirV8mwcRlnWuohxQJdYpRKMaVRDFrjaIfvvpazVqnLLL/w3ZJa8RT8cb4KSCtMbFM+rwoDK5+UrlpgsHapFDekE6turv85rrhBsk1he89BBfcpcW7ZV2NZ7RNthUZlBVO1P9h/yKWesAeOw1SLDggjtcpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FpZ+sdo/; arc=none smtp.client-ip=209.85.215.177
+	s=arc-20240116; t=1731905842; c=relaxed/simple;
+	bh=RDFoccmBbUG9mDMuNRjLsJp+c4tSDmLr0ljFQUAJiNU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fnEtZK6qRGObm81MCwJPun1Y62KguoyEKKN8UunG158sgIOitAnfLoAiFR5aCZNKQhkx7y8kAHkNcDbwy8jyuPJ89xHRox79+7rqREX5hCj9Z1IL4v7WccAPkzyC6fHma8rqHHYP7q4/rNGjergmr/pX26g0cvPcV4CmY9wIW1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Kwh29RCP; arc=none smtp.client-ip=209.85.210.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7fb632bfc0eso849099a12.0;
-        Sun, 17 Nov 2024 20:56:22 -0800 (PST)
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-7248c1849bdso1061380b3a.3;
+        Sun, 17 Nov 2024 20:57:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731905782; x=1732510582; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=MIzb7uKmpBMgFz+tDnGmizcbHL7RIhkfCyBnVkIL8Ew=;
-        b=FpZ+sdo/8oi4kY0xr4sSokX46wHu7Nk+Hg/I/mWwI7p1roz7p14C2pbyaXIn+XoLYy
-         c9uy9LL8MvneEtAz3SyWrMEEYfhTa7+hW3PCfeze7Acu/23Y07GX8LNFbajuiK/A9mqg
-         Kfx8IU/0W3U47k3xzjhpG0ekTYoEuEhKOys1J82E0gE67Tyl+q4qkuIqr7dpd75rnmPZ
-         kd0b9UjHzQWgV6lYfKg2+OUz8CdUx1rbHbiYt6tTSonn7mLazhGhplckboVBxAX+UGt2
-         Nit0QpRuGJbitTrkJmvVGfS3MjNpICo1vHfu9cJ3B3gETJJGhW8mgK9CqX0+KHPlUBV4
-         sq1g==
+        d=gmail.com; s=20230601; t=1731905839; x=1732510639; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ivpk/6a9FVTK14LGJxyzJRLvkjX9z5WDNg6sgfAnKMA=;
+        b=Kwh29RCPTwrkczdt3Pkdz3EZMZUMj+iUmeQENd8pQtn1rc1wU4I0pa8+Sqbus5ymJv
+         e7sUeRmbgVkl4Q3O9evkHMY+KiW8wFTR6WWn1KkFP/U9i4gudb1xc4mPXs/p0a1VjeyI
+         KD1iXS3CBPJPL5D1NuQWw7+4xeV7gj1CpoTJhsgbTpgA3IhPfdIqjRmsiNNv8lJRNXwG
+         YHoJU7gMHHMvlpsLdDYA5NMtJt2tn0b6PEVSHsaC69NHA4kKe7TRJcFuW3Q6G/t9Gnea
+         XQbSQYNCZDTOynpCksTGYXg3lv7bwNRDcFHiQV8KhMMrDozGeCuL9auDCBuHDSZszIla
+         IZdQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731905782; x=1732510582;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MIzb7uKmpBMgFz+tDnGmizcbHL7RIhkfCyBnVkIL8Ew=;
-        b=oPrvnJJonbT73LJxYrJ5YCAqKrQPuMmS3Hpjkrw238q5u6iZlE/3crisHS55MCYSZO
-         wRNNk/SmRhYbU2e/QPTwR6dZ8n6v9dfCpfSXL3zIg4d/NEAsSV6pRIRveXVSSetAMxOg
-         bAcWIQF/ymhn328Jkjmn21mHtw41eesa27ZvTNx8mdoX86qzUzF+iWz75flO26VK1lNx
-         zzJgHKSJVobICfmH8agLqr6YVFRqd0pP76P+2eWFZFxwobbPRQ0SiOwgjqeq9uZLEExS
-         ZHnKRc6Wo7YTtALWxHhUxWiJbanxUUhFcBcOmhDv2hMKwWRlDgluI60nlkN196zTkS2d
-         or2w==
-X-Forwarded-Encrypted: i=1; AJvYcCU67arRc6N2+0ujTb1DPuA3eajtoXKyCc0O8znwKA0RiBAjp5yWeyHgelzXsPogPF3qajxJ3TgrPw5GBvw=@vger.kernel.org, AJvYcCX8sL1HlGC2sWNb94KoERsW8WcCp2NwnsrVwLVfPYyaH/5aufk63MRV8vPdCDpz2QYt3JVyfBQhFv+b+To=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1hfjK1UBCuP4j1DNWz6VZxsZ6lib02R02HSS8hHCk1tBadzg9
-	qameJhq7VHF2vNnx+vFBxs9juJsxrnErNbBWQP4WvkFPi0CVIFwg
-X-Google-Smtp-Source: AGHT+IGM5q/XQhELTyhomnrivxdQ/jJhyyr8CxujelNS3o0So9Pf9jvqU/iscpoImttt0BHLahuDBw==
-X-Received: by 2002:a05:6a21:7e85:b0:1d4:fc66:30e8 with SMTP id adf61e73a8af0-1dc90b225a2mr11710103637.10.1731905782118;
-        Sun, 17 Nov 2024 20:56:22 -0800 (PST)
-Received: from HOME-PC ([223.185.133.4])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7f8c1c644b1sm5009044a12.42.2024.11.17.20.56.21
+        d=1e100.net; s=20230601; t=1731905839; x=1732510639;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ivpk/6a9FVTK14LGJxyzJRLvkjX9z5WDNg6sgfAnKMA=;
+        b=QyB+tOH0AoBRw69qvCI4cDYwhH+LGuWA3WSrLMu4Uc9//+Xipy4Qju3dlq4p35v3vj
+         2/6MeMdzhB1eUID/+x7YTB55Ap1Vsv+wGzn29mowldp/lAbPEzN/LQgcvfdMTypy5+ff
+         sFdlPfaiEQ7BDeOxRBohvHh3HOfzwPNU+H4FlT2G9KHeEJqsFbvMcMNDC6NUTdrKsbQm
+         119k+UmlcsdRpzDgnuod/Rro0yC0n38m2VEeEIa8IvHT/FwHiPnftBnGVdu7jXEmDsYM
+         NZye+t/IVUKRCjYAbHWmGqT8lMmJ1ipos74nDAbz4py383BfDSrcjx3GGljpDgAlfvFd
+         /rOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUDlxhCRDnawAwuCRUsv7rkXV8LJ3Wny+A7zygEnwe50OWjvASNXO08zXyOeiJWKmCGhp1h3xQZth5I92Fjo0Q=@vger.kernel.org, AJvYcCWf8ARiCiN3+xOEr+FsVRSoH5UO/f7sQPsLa5ZCyb/7hB8eBja9yCU58ylnbk7OZGRUHsakfmhxSQ54DYc=@vger.kernel.org, AJvYcCX/mlGf7x+jy3HuJoVrYBoCe+P1hBqBREMlk+JghQxJKUnl9OcPCfSa7VaIj3YkSXq9GJyM+CeEwukgQC7e@vger.kernel.org
+X-Gm-Message-State: AOJu0YyiYk2Cpvs0Lec06A+uELDLxs/68dgWHxEj9ty3wimA20iYydU9
+	AnkrU8AbCFx4DKgVCH5+BsVSSDKOUmCJwBgXnSeoOWBxmkVj/g1o
+X-Google-Smtp-Source: AGHT+IFY/PEHeJv1qHCjVc9kKffOdgoPKdsLp+gjBkjeOi717Fmwl99g42EhrK4uTdUZIcA+VtE+Tw==
+X-Received: by 2002:a05:6a20:258f:b0:1db:d998:513e with SMTP id adf61e73a8af0-1dc90b55109mr18184479637.22.1731905839000;
+        Sun, 17 Nov 2024 20:57:19 -0800 (PST)
+Received: from google.com ([2401:fa00:8f:201:980d:1149:a629:ef93])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724771c083dsm5388204b3a.103.2024.11.17.20.57.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 17 Nov 2024 20:56:21 -0800 (PST)
-From: Dheeraj Reddy Jonnalagadda <dheeraj.linuxdev@gmail.com>
-To: frattaroli.nicolas@gmail.com,
-	linux-rockchip@lists.infradead.org
-Cc: lgirdwood@gmail.com,
-	broonie@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com,
-	heiko@sntech.de,
-	linux-sound@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Dheeraj Reddy Jonnalagadda <dheeraj.linuxdev@gmail.com>
-Subject: [PATCHv2,sound-next] ASoC: rockchip: i2s-tdm: Fix a useless call issue
-Date: Mon, 18 Nov 2024 10:26:05 +0530
-Message-Id: <20241118045605.48440-1-dheeraj.linuxdev@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        Sun, 17 Nov 2024 20:57:18 -0800 (PST)
+Date: Mon, 18 Nov 2024 04:57:12 +0000
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Kees Cook <kees@kernel.org>
+Cc: Marek Vasut <marex@denx.de>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>, Luca Ellero <l.ellero@asem.it>,
+	linux-input@vger.kernel.org,
+	Alexander Stein <alexander.stein@ew.tq-group.com>,
+	Al Viro <viro@zeniv.linux.org.uk>, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] Input: ads7846 - Expand xfer array to match usage
+Message-ID: <ZzrJKKoCr7cUNVwC@google.com>
+References: <20241117033445.work.274-kees@kernel.org>
+ <5b203f2a-755a-448b-946a-f14d6060dbb7@denx.de>
+ <202411172038.DF2CF9CD@keescook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202411172038.DF2CF9CD@keescook>
 
-This commit fixes a useless call issue detected by Coverity
-(CID 1507978). The call to rockchip_i2s_ch_to_io is unnecessary as its
-return value is never checked or used. As a result, the function
-definition and call is removed.
+On Sun, Nov 17, 2024 at 08:39:01PM -0800, Kees Cook wrote:
+> On Sun, Nov 17, 2024 at 11:06:27PM +0100, Marek Vasut wrote:
+> > On 11/17/24 4:34 AM, Kees Cook wrote:
+> > > Commit 781a07da9bb9 ("Input: ads7846 - add dummy command register
+> > > clearing cycle") added commands to struct ser_req::xfer without
+> > > expanding it to hold them. Expand the array to the correct size.
+> > > 
+> > > ../drivers/input/touchscreen/ads7846.c: In function 'ads7846_read12_ser':
+> > > ../drivers/input/touchscreen/ads7846.c:416:18: error: array subscript 7 is above array bounds of 'struct spi_transfer[6]' [-Werror=array-bounds=]
+> > >    416 |         req->xfer[7].rx_buf = &req->scratch;
+> > >        |         ~~~~~~~~~^~~
+> > > ../drivers/input/touchscreen/ads7846.c:334:33: note: while referencing 'xfer'
+> > >    334 |         struct spi_transfer     xfer[6];
+> > >        |                                 ^~~~
+> > > 
+> > > Fixes: 781a07da9bb9 ("Input: ads7846 - add dummy command register clearing cycle")
+> > > Signed-off-by: Kees Cook <kees@kernel.org>
+> > I think Nathan already sent a fix too.
+> 
+> Oh excellent! I did a search in lore before sending it but must have
+> failed to find it. Do you have a link to it?
 
-Signed-off-by: Dheeraj Reddy Jonnalagadda <dheeraj.linuxdev@gmail.com>
----
- sound/soc/rockchip/rockchip_i2s_tdm.c | 28 ---------------------------
- 1 file changed, 28 deletions(-)
+I am pretty sure I applied the fix already, but I might have forgotten
+to push it out. My workstation is offline at the moment, when it comes
+back online I'll make sure the fix is there.
 
-diff --git a/sound/soc/rockchip/rockchip_i2s_tdm.c b/sound/soc/rockchip/rockchip_i2s_tdm.c
-index d1f28699652f..bd0dc586e24a 100644
---- a/sound/soc/rockchip/rockchip_i2s_tdm.c
-+++ b/sound/soc/rockchip/rockchip_i2s_tdm.c
-@@ -514,33 +514,6 @@ static void rockchip_i2s_tdm_xfer_resume(struct snd_pcm_substream *substream,
- 			   I2S_XFER_RXS_START);
- }
- 
--static int rockchip_i2s_ch_to_io(unsigned int ch, bool substream_capture)
--{
--	if (substream_capture) {
--		switch (ch) {
--		case I2S_CHN_4:
--			return I2S_IO_6CH_OUT_4CH_IN;
--		case I2S_CHN_6:
--			return I2S_IO_4CH_OUT_6CH_IN;
--		case I2S_CHN_8:
--			return I2S_IO_2CH_OUT_8CH_IN;
--		default:
--			return I2S_IO_8CH_OUT_2CH_IN;
--		}
--	} else {
--		switch (ch) {
--		case I2S_CHN_4:
--			return I2S_IO_4CH_OUT_6CH_IN;
--		case I2S_CHN_6:
--			return I2S_IO_6CH_OUT_4CH_IN;
--		case I2S_CHN_8:
--			return I2S_IO_8CH_OUT_2CH_IN;
--		default:
--			return I2S_IO_2CH_OUT_8CH_IN;
--		}
--	}
--}
--
- static int rockchip_i2s_io_multiplex(struct snd_pcm_substream *substream,
- 				     struct snd_soc_dai *dai)
- {
-@@ -577,7 +550,6 @@ static int rockchip_i2s_io_multiplex(struct snd_pcm_substream *substream,
- 			return -EINVAL;
- 		}
- 
--		rockchip_i2s_ch_to_io(val, true);
- 	} else {
- 		struct snd_pcm_str *capture_str =
- 			&substream->pcm->streams[SNDRV_PCM_STREAM_CAPTURE];
+Thanks.
+
 -- 
-2.34.1
-
+Dmitry
 
