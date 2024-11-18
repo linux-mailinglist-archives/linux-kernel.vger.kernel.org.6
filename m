@@ -1,174 +1,299 @@
-Return-Path: <linux-kernel+bounces-413213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 020FD9D1543
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 17:23:03 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 140999D152B
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 17:18:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B2927B293DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 16:16:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AED25B29773
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 16:17:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 388521BD508;
-	Mon, 18 Nov 2024 16:16:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FE5C1B6CF3;
+	Mon, 18 Nov 2024 16:17:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RireEOgb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="EWpPVUO0"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83402199EBB;
-	Mon, 18 Nov 2024 16:16:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731946601; cv=none; b=K0oe3Q4yve2Fbej1b4WFLYQnqx181CAQzcMNnMym3/LM1DaGDpCFuJrYIBCWMBmLBD9EIUrpty2fayb6fsEHXMqWpiU+RrkntmqokrFeUC6yaFl3521R6KUXfdrIxzuX68qrNUr/3DTv9TNqfTTao87lZsdoJrsXgRznab9gOXY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731946601; c=relaxed/simple;
-	bh=I2z5foPBl/UuGPdBgcbdnOMGEorTScQwtrx+l5doXog=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RUEyLUXvUWLpo+PFdkZWrcaWXBhgKSg84m0GrzSSnr3+bcYi06XqB+FBKuzZHe7zM/8cvpmTT1e1jdLmxpGBcaC/UTiZ+XIu7idRrxisdF+RtEJGzVlT8wLQmRR1xlZYmeaWjx7OtIHLkOynEfYGwbLg/UKVZJFe1V3wInAKT8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RireEOgb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED9D5C4CEDD;
-	Mon, 18 Nov 2024 16:16:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731946601;
-	bh=I2z5foPBl/UuGPdBgcbdnOMGEorTScQwtrx+l5doXog=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=RireEOgbsSKFD8g7Jz1lDXplSvcQmgfUFggnN64swhzykIa7gb/AkGdA2iD4lBEC0
-	 dnBKyBYUgk4IV7SWFvVuaPxIG8uaMG8tCfmBKYftoI9J5rBF7TjwZkn8Tz7g5DVJEW
-	 FLwU6+p7Br71oJJLz7szSHQVcKYf/776fD+Kwal7Bd5BndiX0gQSnX4GMLaQMAMuhl
-	 HCx84M3ucCC98cWYkenvsM8SCCK+TMiqD6owcToNtm2KezG7MgkHAoCMCiK0NUUGl7
-	 qsuZMhC17P2EVSithXB5jNqbLe8FBZoo4hjRb/Nru5h0j+wM8hBLYgLNMg3A3DzBW2
-	 Ey8TQWB2p7qeQ==
-Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-514bb6953f4so81200e0c.2;
-        Mon, 18 Nov 2024 08:16:40 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCX0qkkkH5Mdb0RqNHMboQgFRuIxV7nk9Z2l3xuef8mQOkWaGNQDrOgds+KWNqHokH/r7+xXsMvgZfs1x5g=@vger.kernel.org, AJvYcCX1YEdgqrBLlLGUew0olVWl4bSlg9qbC9/MPHmbCZLUwv8PI1LZQyap/8zurthnA54xmKd/G07/3Wbvxfs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwevGeFyXTnBntRBR2UIx/gd/z23zeqhXbzV3Oh+kC3HmEphsDm
-	CPJCYceTv+peUcnVsObv9Wzd1QofrVjhpvcTiaXJuVQtzSIMnBVYgkYAYGRfu/tRYJ18ucoK9S6
-	bNPSLimk8wwcJ0s66B1/7iuO8ph8=
-X-Google-Smtp-Source: AGHT+IGjGyQYZwS1o9rlyXcvmgyCE3cSV3FYD2Clv1A7WL8SaGcJFxp+zmjH2AHAzwPpwzRsziXb6Ea8Dl0YYWRqRP4=
-X-Received: by 2002:a05:6122:896:b0:509:e80:3ed2 with SMTP id
- 71dfb90a1353d-5147866a43bmr9866521e0c.7.1731946600020; Mon, 18 Nov 2024
- 08:16:40 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 974521B6CFC
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 16:17:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731946637; cv=pass; b=SKwMbcEFc93CBcT3YArAVkP3FCqmqOn2mSKbbJvA7ZljxUADtLQXFlyAVOblpPhbPlTW1oOBTch8bHDmWR5Hzp1juSWcPGgpNGZw/9dZsHm1t5e0G2KdaL6oyKmmNFIEdZgT5UAAhNr6TcXma4Yj9rk1XH3bjD8VduRyliOtmF4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731946637; c=relaxed/simple;
+	bh=t2FERUmmplHerJE3dPry6Oygn7sB5iMF085SUB3CI6g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ALWdTyobwlB3z+ni33WuVTtOLulXtcJeii1PLYzOqPuM2Gq+aUMm0Db9kHlNs1n34ooveMraBFOE8PLCuq8K2Z8NL2Fob35S7QTPEg8XZYWxB6kMhkJtp6YNL3flM1NQjY6J6wTKZYKax6ItU/rT5pMZWmPJaBDodhnDqSsZf6g=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=EWpPVUO0; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1731946619; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=EjX99rYKMKpe+4qAyaiz4WV0Y0y43xMQCqt60IlX4Jt3IoHhaGLaIuSMvPKEuLAKM1dC2PX9sBfJfXIuu/jru/imqXKMdURtrheUYTSDsRjdsw7y1fpkcJysdHtIvWfyPOUbo948KudjhHNgGWcjUTg7gRYOnfcR0JEQPNSARco=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1731946619; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=Zd6CgBIQAUUeDjZPP0+TxMRYrOx8gekX99SnHY/7F0s=; 
+	b=F+IYG8VpfdffTRgbAkWDKi96Le3yR5sBcyXBpRQQPOhwjnMMRkXLtf3Ky8v3zxxHkPwI3FouciK7b5F4Mqc/CuisGDKnEObWyiM3SLZdJJQQBz3XXuC03GSOxkc6bLEd3v3x333cZFRwNHW5XCbDiFOo/r0JmSc7Fl2ukBC89kY=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
+	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1731946619;
+	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=Zd6CgBIQAUUeDjZPP0+TxMRYrOx8gekX99SnHY/7F0s=;
+	b=EWpPVUO0guR8h6fnQiFBveB2eWQ2v1H2WZvIT0WU9EzLerq55b0ALMHf+7384wxC
+	jmT1OBSsd113l3F8Dcd0x7k8ryHggWZs39O6sekK828q1mSDAPylxHAOkvJH0m38iXL
+	YwAHgJ0ihW5Px51JBLlsQq322PmlpgRh3DfGOPyo=
+Received: by mx.zohomail.com with SMTPS id 1731946618743272.2388897538434;
+	Mon, 18 Nov 2024 08:16:58 -0800 (PST)
+Message-ID: <f31a8d1f-73d5-424e-ad09-2ae39712e230@collabora.com>
+Date: Mon, 18 Nov 2024 19:16:54 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241114-uvc-roi-v15-0-64cfeb56b6f8@chromium.org>
- <20241114-uvc-roi-v15-18-64cfeb56b6f8@chromium.org> <ac8ea4ed606cbc7dfb15057babc29e49a152ef01.camel@irl.hu>
- <CANiDSCuZTYDsQ3yCpFV_rhbQ+vFGJnsuU-jXwOacxZVbbzEPfw@mail.gmail.com> <8151585c-cb4c-424d-a81c-939ee30d8e9d@redhat.com>
-In-Reply-To: <8151585c-cb4c-424d-a81c-939ee30d8e9d@redhat.com>
-From: Ricardo Ribalda Delgado <ribalda@kernel.org>
-Date: Mon, 18 Nov 2024 17:16:22 +0100
-X-Gmail-Original-Message-ID: <CAPybu_14EcOZw6C65ZWVGoa5bcZe1XCZbMghNzUG+wFF7affdg@mail.gmail.com>
-Message-ID: <CAPybu_14EcOZw6C65ZWVGoa5bcZe1XCZbMghNzUG+wFF7affdg@mail.gmail.com>
-Subject: Re: [PATCH v15 18/19] media: uvcvideo: implement UVC v1.5 ROI
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Ricardo Ribalda <ribalda@chromium.org>, Gergo Koteles <soyer@irl.hu>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Hans Verkuil <hverkuil@xs4all.nl>, Yunke Cao <yunkec@chromium.org>, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Yunke Cao <yunkec@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4] drm/virtio: Add drm_panic support
+To: Ryosuke Yasuoka <ryasuoka@redhat.com>, airlied@redhat.com,
+ kraxel@redhat.com, gurchetansingh@chromium.org, olvaffe@gmail.com,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ simona@ffwll.ch
+Cc: Jocelyn Falempe <jfalempe@redhat.com>, dri-devel@lists.freedesktop.org,
+ virtualization@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20241113084438.3283737-1-ryasuoka@redhat.com>
+Content-Language: en-US
+From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+In-Reply-To: <20241113084438.3283737-1-ryasuoka@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 
-Hi
+On 11/13/24 11:44, Ryosuke Yasuoka wrote:
+> From: Jocelyn Falempe <jfalempe@redhat.com>
+> 
+> Virtio gpu supports the drm_panic module, which displays a message to
+> the screen when a kernel panic occurs.
+> 
+> Signed-off-by: Ryosuke Yasuoka <ryasuoka@redhat.com>
+> Signed-off-by: Jocelyn Falempe <jfalempe@redhat.com>
+> ---
 
-On Mon, Nov 18, 2024 at 4:59=E2=80=AFPM Hans de Goede <hdegoede@redhat.com>=
- wrote:
->
-> Hi Ricardo,
->
-> On 14-Nov-24 9:03 PM, Ricardo Ribalda wrote:
-> > Hi Gergo
-> >
-> > Sorry, I forgot to reply to your comment in v14.
-> >
-> > On Thu, 14 Nov 2024 at 20:53, Gergo Koteles <soyer@irl.hu> wrote:
-> >>
-> >> Hi Ricardo,
-> >>
-> >> On Thu, 2024-11-14 at 19:10 +0000, Ricardo Ribalda wrote:
-> >>>
-> >>> +     },
-> >>> +     {
-> >>> +             .id             =3D V4L2_CID_UVC_REGION_OF_INTEREST_AUT=
-O,
-> >>> +             .entity         =3D UVC_GUID_UVC_CAMERA,
-> >>> +             .selector       =3D UVC_CT_REGION_OF_INTEREST_CONTROL,
-> >>> +             .size           =3D 16,
-> >>> +             .offset         =3D 64,
-> >>> +             .v4l2_type      =3D V4L2_CTRL_TYPE_BITMASK,
-> >>> +             .data_type      =3D UVC_CTRL_DATA_TYPE_BITMASK,
-> >>> +             .name           =3D "Region Of Interest Auto Controls",
-> >>> +     },
-> >>>  };
-> >>>
-> >>
-> >> Wouldn't be better to use 8 V4L2_CTRL_TYPE_BOOLEAN controls for this?
-> >
-> > If I create 8 Booleans, they will always be shown in the device. And
-> > the user will not have a way to know which values are available and
-> > which are not.
-> >
-> > We will also fail the v4l2-compliance test, because there will be up
-> > to 7 boolean controls that will not be able to be set to 1, eventhough
-> > they are writable.
->
-> So why can't these other controls be set to 1? Because only one
-> of the options in the bitmask can be selected at a time ?
->
-> If only 1 bit in the UVC_CTRL_DATA_TYPE_BITMASK for this can be one
-> at the time, then this should be mapped to a V4L2_CTRL_TYPE_MENU
-> just like how that is done for V4L2_CID_EXPOSURE_AUTO already.
->
-> Actually looking at existing comments about UVC_CTRL_DATA_TYPE_BITMASK
-> in the driver there is this comment on top of uvc_mapping_get_menu_value(=
-)
->
->  * For controls of type UVC_CTRL_DATA_TYPE_BITMASK, the UVC control value=
- is
->  * expressed as a bitmask and is thus guaranteed to have a single bit set=
-.
->
-> Assuming this "guaranteed to have a single bit set" comment is valid for
-> the V4L2_CID_UVC_REGION_OF_INTEREST_AUTO part of UVC_CT_REGION_OF_INTERES=
-T_CONTROL
-> too then I think we should simply map this to a menu similar to how
-> this is done for V4L2_CID_EXPOSURE_AUTO.
->
-> Note V4L2_CID_EXPOSURE_AUTO is the only existing user of UVC_CTRL_DATA_TY=
-PE_BITMASK
-> at the moment.
->
-> Mapping this to a menu should nicely address Gergo's concerns here.
+On a second look, I spotted few problems, see them below:
 
-The UVC standard is not very clear re bmAutoControls. It says:
-"""
-The bmAutoControls bitmask determines which, if any, on board features
-should track to the region of interest. To detect if a device supports
-a particular Auto Control, use GET_MAX which returns a mask indicating
-all supported Auto Controls.
-GET_CUR returns the current Region of Interest (RoI) being employed by
-the device. This RoI should be the same as specified in most recent
-SET_CUR except in the case where the =E2=80=98Auto Detect and Track=E2=80=
-=99 and/or
-=E2=80=98Image Stabilization=E2=80=99 bit have been set.
-"""
+...
+> +/* For drm_panic */
+> +static int virtio_gpu_panic_resource_flush(struct drm_plane *plane,
+> +					   struct virtio_gpu_vbuffer *vbuf,
+> +					   uint32_t x, uint32_t y,
+> +					   uint32_t width, uint32_t height)
+> +{
+> +	int ret;
+> +	struct drm_device *dev = plane->dev;
+> +	struct virtio_gpu_device *vgdev = dev->dev_private;
+> +	struct virtio_gpu_framebuffer *vgfb;
+> +	struct virtio_gpu_object *bo;
+> +
+> +	vgfb = to_virtio_gpu_framebuffer(plane->state->fb);
+> +	bo = gem_to_virtio_gpu_obj(vgfb->base.obj[0]);
+> +
+> +	ret = virtio_gpu_panic_cmd_resource_flush(vgdev, vbuf, bo->hw_res_handle, x, y,
+> +						  width, height);
+> +	return ret;
 
-Which makes me believe that you can set another Auto value + one of
-these ones. So I do not think that we can assume "guaranteed to have a
-single bit set".
+Nit: return directly directly in such cases, dummy ret variable not needed
 
-The behaviour will vary module to module. So I'd rather take a
-conservative approach here and let the hardware clamp the value and
-not us.
+> +}
+> +
+>  static void virtio_gpu_resource_flush(struct drm_plane *plane,
+>  				      uint32_t x, uint32_t y,
+>  				      uint32_t width, uint32_t height)
+> @@ -359,11 +406,128 @@ static void virtio_gpu_cursor_plane_update(struct drm_plane *plane,
+>  	virtio_gpu_cursor_ping(vgdev, output);
+>  }
+>  
+> +static int virtio_drm_get_scanout_buffer(struct drm_plane *plane,
+> +					 struct drm_scanout_buffer *sb)
+> +{
+> +	struct virtio_gpu_object *bo;
+> +
+> +	if (!plane->state || !plane->state->fb || !plane->state->visible)
+> +		return -ENODEV;
+> +
+> +	bo = gem_to_virtio_gpu_obj(plane->state->fb->obj[0]);
 
->
-> Regards,
->
-> Hans
->
+VRAM BOs aren't vmappable and should be rejected.
+
+In the virtio_panic_flush() below,
+virtio_gpu_panic_cmd_transfer_to_host_2d() is invoked only for dumb BOs.
+Thus, only dumb BO supports panic output and should be accepted by
+get_scanout_buffer(), other should be rejected with ENODEV here, AFAICT.
+Correct?
+
+> +	/* try to vmap it if possible */
+> +	if (!bo->base.vaddr) {
+> +		int ret;
+> +
+> +		ret = drm_gem_shmem_vmap(&bo->base, &sb->map[0]);
+> +		if (ret)
+> +			return ret;
+> +	} else {
+> +		iosys_map_set_vaddr(&sb->map[0], bo->base.vaddr);
+> +	}
+> +
+> +	sb->format = plane->state->fb->format;
+> +	sb->height = plane->state->fb->height;
+> +	sb->width = plane->state->fb->width;
+> +	sb->pitch[0] = plane->state->fb->pitches[0];
+> +	return 0;
+> +}
+> +
+> +struct virtio_gpu_panic_object_array {
+> +	struct ww_acquire_ctx ticket;
+> +	struct list_head next;
+> +	u32 nents, total;
+> +	struct drm_gem_object *objs;
+> +};
+
+This virtio_gpu_panic_object_array struct is a hack, use
+virtio_gpu_array_alloc(). Maybe add atomic variant of the array_alloc().
+
+> +static void virtio_gpu_panic_put_vbuf(struct virtqueue *vq,
+> +				      struct virtio_gpu_vbuffer *vbuf,
+> +				      struct virtio_gpu_object_array *objs)
+> +{
+> +	unsigned int len;
+> +	int i;
+> +
+> +	/* waiting vbuf to be used */
+> +	for (i = 0; i < 500; i++) {
+> +		if (vbuf == virtqueue_get_buf(vq, &len)) {
+
+Is it guaranteed that virtio_gpu_dequeue_ctrl_func() never runs in
+parallel here?
+
+> +			if (objs != NULL && vbuf->objs)
+> +				drm_gem_object_put(objs->objs[0]);
+
+This drm_gem_object_put(objs->objs) is difficult to follow. Why
+vbuf->objs can't be used directly?
+
+Better to remove all error handlings for simplicity. It's not important
+if a bit of memory leaked on panic.
+
+> +			break;
+> +		}
+> +		udelay(1);
+> +	}
+> +}
+> +
+> +static void virtio_panic_flush(struct drm_plane *plane)
+> +{
+> +	int ret;
+> +	struct virtio_gpu_object *bo;
+> +	struct drm_device *dev = plane->dev;
+> +	struct virtio_gpu_device *vgdev = dev->dev_private;
+> +	struct drm_rect rect;
+> +	void *vp_buf = vgdev->virtio_panic_buffer;
+> +	struct virtio_gpu_vbuffer *vbuf_dumb_bo = vp_buf;
+> +	struct virtio_gpu_vbuffer *vbuf_resource_flush = vp_buf + VBUFFER_SIZE;
+> +
+> +	rect.x1 = 0;
+> +	rect.y1 = 0;
+> +	rect.x2 = plane->state->fb->width;
+> +	rect.y2 = plane->state->fb->height;
+> +
+> +	bo = gem_to_virtio_gpu_obj(plane->state->fb->obj[0]);
+> +
+> +	struct drm_gem_object obj;
+> +	struct virtio_gpu_panic_object_array objs = {
+> +		.next = { NULL, NULL },
+> +		.nents = 0,
+> +		.total = 1,
+> +		.objs = &obj
+> +	};
+
+This &obj is unitialized stack data. The .objs points to an array of obj
+pointers and you pointing it to object. Like I suggested above, let's
+remove this hack and use proper virtio_gpu_array_alloc().
+
+> +	if (bo->dumb) {
+> +		ret = virtio_gpu_panic_update_dumb_bo(vgdev,
+> +						      plane->state,
+> +						      &rect,
+> +						      (struct virtio_gpu_object_array *)&objs,
+> +						      vbuf_dumb_bo);
+> +		if (ret) {
+> +			if (vbuf_dumb_bo->objs)
+> +				drm_gem_object_put(&objs.objs[0]);
+> +			return;
+> +		}
+> +	}
+> +
+> +	ret = virtio_gpu_panic_resource_flush(plane, vbuf_resource_flush,
+> +					      plane->state->src_x >> 16,
+> +					      plane->state->src_y >> 16,
+> +					      plane->state->src_w >> 16,
+> +					      plane->state->src_h >> 16);
+> +	if (ret) {
+> +		virtio_gpu_panic_put_vbuf(vgdev->ctrlq.vq,
+> +					  vbuf_dumb_bo,
+> +					  (struct virtio_gpu_object_array *)&objs);
+
+The virtio_gpu_panic_notify() hasn't been invoked here, thus this
+put_vbuf should always time out because vq hasn't been kicked. Again,
+best to leak resources on error than to have broken/untested error
+handling code paths.
+
+> +		return;
+> +	}
+> +
+> +	virtio_gpu_panic_notify(vgdev);
+> +
+> +	virtio_gpu_panic_put_vbuf(vgdev->ctrlq.vq,
+> +				  vbuf_dumb_bo,
+> +				  (struct virtio_gpu_object_array *)&objs);
+> +	virtio_gpu_panic_put_vbuf(vgdev->ctrlq.vq,
+> +				  vbuf_resource_flush,
+> +				  NULL);
+> +}
+> +
+>  static const struct drm_plane_helper_funcs virtio_gpu_primary_helper_funcs = {
+>  	.prepare_fb		= virtio_gpu_plane_prepare_fb,
+>  	.cleanup_fb		= virtio_gpu_plane_cleanup_fb,
+>  	.atomic_check		= virtio_gpu_plane_atomic_check,
+>  	.atomic_update		= virtio_gpu_primary_plane_update,
+> +	.get_scanout_buffer	= virtio_drm_get_scanout_buffer,
+> +	.panic_flush		= virtio_panic_flush,
+>  };
+>  
+>  static const struct drm_plane_helper_funcs virtio_gpu_cursor_helper_funcs = {
+> @@ -383,6 +547,13 @@ struct drm_plane *virtio_gpu_plane_init(struct virtio_gpu_device *vgdev,
+>  	const uint32_t *formats;
+>  	int nformats;
+>  
+> +	/* allocate panic buffers */
+> +	if (index == 0 && type == DRM_PLANE_TYPE_PRIMARY) {
+> +		vgdev->virtio_panic_buffer = drmm_kzalloc(dev, 2 * VBUFFER_SIZE, GFP_KERNEL);
+> +		if (!vgdev->virtio_panic_buffer)
+> +			return ERR_PTR(-ENOMEM);
+> +	}
+
+If there is more than one virtio-gpu display, then this panic buffer is
+reused by other displays. It seems to work okay, but potential
+implications are unclear. Won't it be more robust to have a panic buffer
+per CRTC?
+
+Also, please rename vgdev->virtio_panic_buffer to vgdev->panic_vbuf for
+brevity.
+
+-- 
+Best regards,
+Dmitry
+
 
