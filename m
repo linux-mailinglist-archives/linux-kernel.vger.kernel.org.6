@@ -1,119 +1,194 @@
-Return-Path: <linux-kernel+bounces-412936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C7DC9D1178
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 14:09:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E5A49D117A
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 14:10:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F529B226E2
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 13:09:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D429E1F20F32
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 13:10:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD93819D090;
-	Mon, 18 Nov 2024 13:09:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E9DC19AA56;
+	Mon, 18 Nov 2024 13:10:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hOCS299h"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="T+PRR6P6"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EAD71E49B;
-	Mon, 18 Nov 2024 13:09:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDD631991BB
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 13:10:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731935383; cv=none; b=Xyrm15qg1GRYWDxFrxD/u1qY6eXv6/unul9OxYZ6noP7AV/pB2MQNKsXg3Yzsfu8WtsVW7m7kK2DNzHE5JeGRlNZKPBo7Wl4VVZHsaqP5ntLUa/U5nAlIvnac2enUllKErUuHfBLAE0IRv89uN67m4kT9Imi8k1XTaBHp/sbV6A=
+	t=1731935418; cv=none; b=TM5lUuqlZRDALOdWJx8l29D8uWiQi4XwuuKRom3GNhHRA+Q9pkOelby5Lo/JuhFOyczDUL6Zab2LsbXsk0FTvGynR/axCkRqlL7nYy1COvItLIBBRBCq3dlRcIZlH7mfF9Spe5HSqPdBggomZP2oWXzep616MAj6PvUjWBOGS7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731935383; c=relaxed/simple;
-	bh=cQo4iAMdE75Iju1hmRvTp8v+SSIrunOvBCkb1Gi4F2E=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ULOrakvaSX5HZN20FCEln7b/Ba45ENh8AyaEdhe5HmiZdaYadkNNdd1JU8XpPd4j7OtNwRptq4Te9wF7DfaE8N2TvG2R2fcBPyPGyfYqt8mKFWb6enbgtDW3fSfZweNOD5Ptg44KJkGBiq9QqXJjbqjvPGUMLWhyaJP+okezZok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hOCS299h; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id B8AA0C4CECC;
-	Mon, 18 Nov 2024 13:09:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731935381;
-	bh=cQo4iAMdE75Iju1hmRvTp8v+SSIrunOvBCkb1Gi4F2E=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=hOCS299hs+zrZICivNdsbZn90+4ryiqcy4A6IfFKQqJdNjPqtuc0b6nXQIyZ+QTtD
-	 2r0f1E2Nd/Khv/yzP5CAXaMdGVEPvs2Ea5BTJIEaa16kp+d80+LLHcFAhXNugG3ucL
-	 XKjE4/5l8q3Lv7IFd5YcRzN7Yb/MAp/SRR+O7z1TveTepu0m/EEzxLGf2D8gWi1pIz
-	 5GxPzS2p+XfSDm9UvYSB1exFSKSTcTVrYDRuWdLjY0gEbokm8qvTrozBo0cLFLiaPb
-	 iePIowrO8kUZ0VLTPlEnTMA9fMhaW+pLy2zrAQof2HJ3XKYdCBVuNC++j+JdemNLJv
-	 v+SJDxhTNJrcA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A46AED4921E;
-	Mon, 18 Nov 2024 13:09:41 +0000 (UTC)
-From: Manas via B4 Relay <devnull+manas18244.iiitd.ac.in@kernel.org>
-Date: Mon, 18 Nov 2024 18:39:34 +0530
-Subject: [PATCH net-next] net: phy: qt2025: simplify Result<()> in probe
- return
+	s=arc-20240116; t=1731935418; c=relaxed/simple;
+	bh=Qo3j9K87oklHHttMGW7FxuFJ5OAHNu0KyF5/pme2whI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CQXvEIxDYwvn9BaQPDJg04vv5946Gudd38DKvB9Nh68gkUzzcp4d9273+fWA4dycW7M7a9CgrCuFCYrTAF3WH4YE2pXiRr5qlmHuO0IWXOZatBsrfekPrbRaAJ97BIeyByYc5hILiEqq84CWAxw0by3PX4+H27+eXnkbQjDooUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=T+PRR6P6; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-53d9ff92b14so4296583e87.1
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 05:10:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1731935415; x=1732540215; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=7MgID1rDBH0q2g66wNaYzuYle0Mjw6YJwKmhz7O5g2U=;
+        b=T+PRR6P6krZcprQwWVW9sBhWjtsWLzB22fYpopRtXCygX3tjByPwysgGA/efjagD0F
+         dugHa6j6xmmeqIRqToFT92rX56DrZYomRDIS55wTbUF0aKa4abR0eFYZMQa5gjwHDAlT
+         2kOPCteR0v31joZS43w76JUL/gLcPMpGVoKncEZVD9McZTv84UrFvQyAPfXRPZuDsJ6J
+         lYOxHqEM+HxFBZDrrnWvfPBYqjhkVIlIAY8tyUpDkrA09XCF7/HC1PPEy8Zui5uvpfES
+         jz398Y8sX/NdyvKNKhzeQM1qPzS5NXv19pQf4q9ReIWp/WAa/hwK3I5rS2f7nSxgZBdp
+         ockA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731935415; x=1732540215;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7MgID1rDBH0q2g66wNaYzuYle0Mjw6YJwKmhz7O5g2U=;
+        b=j//OoNfUnDAbsrtRdB4e7TJJ3UcEkgSun2Ru9fjQdHoIUy9zlkHEloa2DtC9URaRax
+         1vM9N48W7DfqGdiebQvNtVYOP1GxLFvg/lJLAt3AduoLiRofwy+anH/gu7WWsBvDFeyK
+         T3DV6x0vES66r4V36d/0IgFPSTHwU/YMV8wuXOeHrgugMMX1ZbhetrbHNMKiYryQ8DRW
+         tiVROYzKqeaZkWCHCJDXbgwqLTE7Z0Bn27kGKCypFLE1k7HZTnmvA1sxHSEnury2GMYL
+         BAwGRT9BaU0kSrKdR/S26Jldm2OZVNp12shPQXcrLSrroGX+TFCIhC7GqLY8xlzSIFRx
+         pF9g==
+X-Forwarded-Encrypted: i=1; AJvYcCWprdc+TuaMnwaMd3BAsP926iEJXqKBpfw29uK8Z4S+vAcQp+NlvNfOyQgzIAJIfFmmGCr8vCuyrlVq7EE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwW3XLTL1iDH+ouVDpzvl8Mb9/ODY0aVDgFdN07VSKQECLXJ49u
+	DcVwZ+QFGvTcpq/424PQGM+xWrcRP5IBMA4hJPSua8qwrc2EIv6Ih9I5kUiOWkE=
+X-Google-Smtp-Source: AGHT+IFp+UyivweqpjmdInjrNQsnahm8prNYSiTJ88LG9qmFM6mGU5RDHMsWJlSnsGNLGahvS/sWSA==
+X-Received: by 2002:a05:6512:2389:b0:53b:1625:bcf8 with SMTP id 2adb3069b0e04-53dab2a71bcmr4913816e87.30.1731935415010;
+        Mon, 18 Nov 2024 05:10:15 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53db3324b55sm685584e87.202.2024.11.18.05.10.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Nov 2024 05:10:13 -0800 (PST)
+Date: Mon, 18 Nov 2024 15:10:11 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] clk: qcom: gdsc: Add pm_runtime hooks
+Message-ID: <atg6yw64f4aojcbjyarljb57cejqk56g2qnddrloa3smmupm6d@fk3oyiycnuco>
+References: <20241118-b4-linux-next-24-11-18-clock-multiple-power-domains-v1-0-b7a2bd82ba37@linaro.org>
+ <20241118-b4-linux-next-24-11-18-clock-multiple-power-domains-v1-2-b7a2bd82ba37@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241118-simplify-result-qt2025-v1-1-f2d9cef17fca@iiitd.ac.in>
-X-B4-Tracking: v=1; b=H4sIAI48O2cC/x2MSwqDQBAFryK9tsH2A+pVgouoz6RBRzM9EUW8e
- 4Ysi6LqIoNXGLXJRR67mq4ugqQJDe+ne4F1jEx5lpciUrPpss06nexh3znwJ0RVsfR904w1qgI
- DxXjzmPT4jx/kENjhCNTd9w9rgZsTcgAAAA==
-X-Change-ID: 20241118-simplify-result-qt2025-1bb99d8e53ec
-To: FUJITA Tomonori <fujita.tomonori@gmail.com>, 
- Trevor Gross <tmgross@umich.edu>, Andrew Lunn <andrew@lunn.ch>, 
- Heiner Kallweit <hkallweit1@gmail.com>, 
- Russell King <linux@armlinux.org.uk>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: Shuah Khan <skhan@linuxfoundation.org>, 
- Anup Sharma <anupnewsmail@gmail.com>, netdev@vger.kernel.org, 
- rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Manas <manas18244@iiitd.ac.in>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1731935374; l=1232;
- i=manas18244@iiitd.ac.in; s=20240813; h=from:subject:message-id;
- bh=b+u/enFxPC2OQb24qeuinsUzhoPbbFPNjp30yv8A78E=;
- b=VVCd959mHl3fdAs00yFofntkbHvAfCQ2XltcauKLxVDNZfmtVWdVj1Nm4rF9y767uXY4UvSAY
- qf/QRFW7KT3CjzzeOo61XIcbXoEmUYDUqLjvqyWWmeNhZuE4CwcHlJT
-X-Developer-Key: i=manas18244@iiitd.ac.in; a=ed25519;
- pk=pXNEDKd3qTkQe9vsJtBGT9hrfOR7Dph1rfX5ig2AAoM=
-X-Endpoint-Received: by B4 Relay for manas18244@iiitd.ac.in/20240813 with
- auth_id=196
-X-Original-From: Manas <manas18244@iiitd.ac.in>
-Reply-To: manas18244@iiitd.ac.in
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241118-b4-linux-next-24-11-18-clock-multiple-power-domains-v1-2-b7a2bd82ba37@linaro.org>
 
-From: Manas <manas18244@iiitd.ac.in>
+On Mon, Nov 18, 2024 at 02:24:33AM +0000, Bryan O'Donoghue wrote:
+> Introduce pm_runtime_get() and pm_runtime_put_sync() on the
+> gdsc_toggle_logic().
+> 
+> This allows for the switching of the GDSC on/off to propagate to the parent
+> clock controller and consequently for any list of power-domains powering
+> that controller to be switched on/off.
 
-probe returns a `Result<()>` type, which can be simplified as `Result`,
-due to default type parameters being unit `()` and `Error` types. This
-maintains a consistent usage of `Result` throughout codebase.
+What is the end result of this patch? Does it bring up a single PM
+domain or all of them? Or should it be a part of the driver's PM
+callbacks? If the CC has multiple parent PM domains, shouldn't we also
+use some of them as GDSC's parents?
 
-Signed-off-by: Manas <manas18244@iiitd.ac.in>
----
- drivers/net/phy/qt2025.rs | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> ---
+>  drivers/clk/qcom/gdsc.c | 26 ++++++++++++++++++--------
+>  drivers/clk/qcom/gdsc.h |  2 ++
+>  2 files changed, 20 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+> index fa5fe4c2a2ee7786c2e8858f3e41301f639e5d59..ff5df942147f87e0df24a70cf9ee53bb2df36e54 100644
+> --- a/drivers/clk/qcom/gdsc.c
+> +++ b/drivers/clk/qcom/gdsc.c
+> @@ -11,6 +11,7 @@
+>  #include <linux/kernel.h>
+>  #include <linux/ktime.h>
+>  #include <linux/pm_domain.h>
+> +#include <linux/pm_runtime.h>
+>  #include <linux/regmap.h>
+>  #include <linux/regulator/consumer.h>
+>  #include <linux/reset-controller.h>
+> @@ -141,10 +142,14 @@ static int gdsc_toggle_logic(struct gdsc *sc, enum gdsc_status status,
+>  {
+>  	int ret;
+>  
+> -	if (status == GDSC_ON && sc->rsupply) {
+> -		ret = regulator_enable(sc->rsupply);
+> -		if (ret < 0)
+> -			return ret;
+> +	if (status == GDSC_ON) {
+> +		if (sc->rsupply) {
+> +			ret = regulator_enable(sc->rsupply);
+> +			if (ret < 0)
+> +				return ret;
+> +		}
+> +		if (pm_runtime_enabled(sc->dev))
+> +			pm_runtime_resume_and_get(sc->dev);
+>  	}
+>  
+>  	ret = gdsc_update_collapse_bit(sc, status == GDSC_OFF);
+> @@ -177,10 +182,14 @@ static int gdsc_toggle_logic(struct gdsc *sc, enum gdsc_status status,
+>  	ret = gdsc_poll_status(sc, status);
+>  	WARN(ret, "%s status stuck at 'o%s'", sc->pd.name, status ? "ff" : "n");
+>  
+> -	if (!ret && status == GDSC_OFF && sc->rsupply) {
+> -		ret = regulator_disable(sc->rsupply);
+> -		if (ret < 0)
+> -			return ret;
+> +	if (!ret && status == GDSC_OFF) {
+> +		if (pm_runtime_enabled(sc->dev))
+> +			pm_runtime_put_sync(sc->dev);
+> +		if (sc->rsupply) {
+> +			ret = regulator_disable(sc->rsupply);
+> +			if (ret < 0)
+> +				return ret;
+> +		}
+>  	}
+>  
+>  	return ret;
+> @@ -544,6 +553,7 @@ int gdsc_register(struct gdsc_desc *desc,
+>  			continue;
+>  		scs[i]->regmap = regmap;
+>  		scs[i]->rcdev = rcdev;
+> +		scs[i]->dev = dev;
+>  		ret = gdsc_init(scs[i]);
+>  		if (ret)
+>  			return ret;
+> diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
+> index 1e2779b823d1c8ca077c9b4cd0a0dbdf5f9457ef..71ca02c78c5d089cdf96deadc417982ad6079255 100644
+> --- a/drivers/clk/qcom/gdsc.h
+> +++ b/drivers/clk/qcom/gdsc.h
+> @@ -30,6 +30,7 @@ struct reset_controller_dev;
+>   * @resets: ids of resets associated with this gdsc
+>   * @reset_count: number of @resets
+>   * @rcdev: reset controller
+> + * @dev: device associated with this gdsc
+>   */
+>  struct gdsc {
+>  	struct generic_pm_domain	pd;
+> @@ -74,6 +75,7 @@ struct gdsc {
+>  
+>  	const char 			*supply;
+>  	struct regulator		*rsupply;
+> +	struct device			*dev;
+>  };
+>  
+>  struct gdsc_desc {
+> 
+> -- 
+> 2.45.2
+> 
 
-diff --git a/drivers/net/phy/qt2025.rs b/drivers/net/phy/qt2025.rs
-index 1ab065798175b4f54c5f2fd6c871ba2942c48bf1..25c12a02baa255d3d5952e729a890b3ccfe78606 100644
---- a/drivers/net/phy/qt2025.rs
-+++ b/drivers/net/phy/qt2025.rs
-@@ -39,7 +39,7 @@ impl Driver for PhyQT2025 {
-     const NAME: &'static CStr = c_str!("QT2025 10Gpbs SFP+");
-     const PHY_DEVICE_ID: phy::DeviceId = phy::DeviceId::new_with_exact_mask(0x0043a400);
- 
--    fn probe(dev: &mut phy::Device) -> Result<()> {
-+    fn probe(dev: &mut phy::Device) -> Result {
-         // Check the hardware revision code.
-         // Only 0x3b works with this driver and firmware.
-         let hw_rev = dev.read(C45::new(Mmd::PMAPMD, 0xd001))?;
-
----
-base-commit: 8cf0b93919e13d1e8d4466eb4080a4c4d9d66d7b
-change-id: 20241118-simplify-result-qt2025-1bb99d8e53ec
-
-Best regards,
 -- 
-Manas <manas18244@iiitd.ac.in>
-
-
+With best wishes
+Dmitry
 
