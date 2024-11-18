@@ -1,111 +1,186 @@
-Return-Path: <linux-kernel+bounces-412615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D64D19D0B69
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 10:09:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A19F79D0B6D
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 10:11:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70BEE282928
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 09:09:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62884282868
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 09:11:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0D2618C936;
-	Mon, 18 Nov 2024 09:09:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB55E189905;
+	Mon, 18 Nov 2024 09:11:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SrHKJxVR"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dr46EKwS"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 711A2153836;
-	Mon, 18 Nov 2024 09:09:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49E7215B0F2
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 09:11:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731920958; cv=none; b=SuSiLriHRK/KW5xdvDsB8R4nON46U4DL2dRu2Sr6gCJRkyXE0x8TQ5odToXUE2wwTzwkBVtoDTaoCV4qSO141U2xOBd3HKoFV2p30/oHgEoDRLryeu7fRmQ/2toapSQf/FHOOYmmT3FwpPetB0pEuxby8R3NOro2SeWMi+pbd6Y=
+	t=1731921073; cv=none; b=tRvfUheG/2MCsuNvlSqwQMa+efc+kC5nJq64zkKuvyVQsOYxGysodlc61tYDpgOhzG9UiVSSwjcAIUxFr4jPt20bWfvrLX+sJDKhCe+V0oT+CpUxH/ZJDA0yw78ON6CLAJcRBbFn1iicwugGOjApMpExAWazCLFyAX1QKe6/HsQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731920958; c=relaxed/simple;
-	bh=YWLswSe7WZP9b/xSFZ5CYmi1IPuOZDQasiG6yEaMH7c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kPATJDQxnuDqq3HIird9NgfoYm62/XskzLCsn4tSnMO4OVudE8bHxyAoqhIkmBQHN/wSysTzBmPyu79ILaIpctipU+/Ipeq+HgwQ9xlsk3rCxvJmWXecPA1qCmgpBaWZzuDpiW/S7x9DnrG/gElmsY5c6VUY72o0XxfZRor7oYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SrHKJxVR; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-211f6e1c865so3390455ad.3;
-        Mon, 18 Nov 2024 01:09:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731920956; x=1732525756; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YWLswSe7WZP9b/xSFZ5CYmi1IPuOZDQasiG6yEaMH7c=;
-        b=SrHKJxVR7m3oU7mRrxp5tp8195/a4J6qbqwx0P9bQd7Knry67ARKGLZGc/ChpUs4J6
-         qbYAKwJe+9+JZFRVNcFJ/S9ph2QAMq/XIf8m1GH44EqLZ9IpZ1m+FY4m8sqjT/TJiVih
-         m4zIzrUnyDn3S5JK3/VfiltW7ATbAkEdTzOQhNNQl9g9+pRjckhBP2e3u/edPQTbx7Pm
-         oeONCrxqOzYtmBj2ABTN8bCWRqFEKWOcj2qANX1O6CSz2HBCvCJ7gW4we0xqHCSDoWI9
-         XB0WWn5e1VC+mblw1PtkIx4Hs0Uu7lulKxRKtkdkw2WmDnVcvOCKIYdJgjV/+FgLemR7
-         TWDQ==
+	s=arc-20240116; t=1731921073; c=relaxed/simple;
+	bh=DwR7VXUazf58wWSPiH9dmeN+GYZK9jzN2V6DznCGx6k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E71iHxENAdkbbXIrqm4fTeZjvq8nINDgVVIps4fhnFhM05snQbAXj/XS7f5LdkbSw5pVGeqnzBAhdaM47lwdVU/tt4XVU0U1G6AReOowqSCUoVOkHjZdIcPmIoXo0kZtsidgFiwaE7wjB5bFgT7lL8e01pb8kmdQixXy9DZg1ak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dr46EKwS; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731921069;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zaPvO86EJKOHufTcTTk7TOivaHoUoSkP3MPU2pK0O34=;
+	b=dr46EKwSEVsBIJtN5mPfsxNXq7eLLBVx8KtMJD/4mJvhPOQY0qVQZnHUOv03SsMQuVyZO6
+	vb7bn8/8v2UNeMPmc2cXw9/4AcGKvj2JbCuUL3tZWJkHMgnWG9tooS4UiwFR3/nWjM6YjU
+	VYcpA1W3QQws95LOEunOXY1b/LUAbbE=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-417-mmXhGmhJPuqGApOO6Hm8QA-1; Mon, 18 Nov 2024 04:11:08 -0500
+X-MC-Unique: mmXhGmhJPuqGApOO6Hm8QA-1
+X-Mimecast-MFC-AGG-ID: mmXhGmhJPuqGApOO6Hm8QA
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-38249bf9e82so232524f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 01:11:08 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731920956; x=1732525756;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YWLswSe7WZP9b/xSFZ5CYmi1IPuOZDQasiG6yEaMH7c=;
-        b=Y3h4G0aZ+M1822mX2CQnmJj6hrMKc3c+GkYktG5vi22ZmN1qlWwhO7iZhU2XvJaiOw
-         MplHCo1w5DOvwUy1d6AJtRT86Oi8fnc4F/giGvOB1HPSgw9hhFtds5ZJX+Km/5Hyvs6o
-         uLIs29bX95fquM5WwnrkJFoj8sxvotohmb4XRtEJyWk4mmt2K/noD/UdFDhV6dIi24pi
-         o165Gcz96ImiNP87qAd7Ev+H30mA91fLfKgLibk+Mk9UJKLcCcqYXGivQfmcJ2IZp4ot
-         5PXxhaVyxrTkhwUDN+Vid5QYDnDHeVB+yHSUOfqINjL9s4gtMFrjJezqf33njBTsC2wr
-         jTBA==
-X-Forwarded-Encrypted: i=1; AJvYcCU03h+yQ9j8YpWkmc8W/CafvKWk+WILvJJTyP9Ct2F7jMFVVjlBbNJMujOaiJPN9g+hHMuf0XjcVY3PzpoEfDw=@vger.kernel.org, AJvYcCVanOkH3CTEMcQgtBeinFSjgUD0dNL6pOwxSvXtVjaj1G9vanx+aBBQk02FkRyBPL0UTVSFU9/CWDyhsw==@vger.kernel.org, AJvYcCWlKh5mnQg1gyTrHyPTM/lF+rBEf0GIBcDWXfuyWUK+E0NsU71JpoVkwwvSYcZ54LdVXmZKSkN4@vger.kernel.org, AJvYcCXUk5TAd4YxOB+1GmpcWssfhQ7NDa7hbAnwfpNGVJWe22VyhqCSP+xbgHSS+UhhBFMY3+R5YugdmxcDJdCx@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQ0azNHph2gIIKIoqeTklXIexz+vGkdviQnAuJO8a9t/Q79ft4
-	u36DAp9xjSJRcmz4185sMqRUcBBZ3s7SoWYbCvosccudJMdIa+EqGLR+8Rsd3Kr48xnwXWYVlCM
-	UzB/4TYAEVGb8/xha6cfDprKAVzQ=
-X-Google-Smtp-Source: AGHT+IFpWfv5PIcWHbtZu/kn7bRyyJbKbZRumMvg1pEzQh+tSLDv2nY2KMHanrDXfZai+jdjAHxB8cHLncAz8ePurYk=
-X-Received: by 2002:a17:90b:1e50:b0:2ea:715b:72ba with SMTP id
- 98e67ed59e1d1-2ea715b7581mr1460462a91.9.1731920955682; Mon, 18 Nov 2024
- 01:09:15 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731921067; x=1732525867;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zaPvO86EJKOHufTcTTk7TOivaHoUoSkP3MPU2pK0O34=;
+        b=lvPBLr186KAMKw5NkoJGKEMIhY9ponmCAZ7KrSjVPyjoIhERxUf9wldiEfiOLtg62U
+         VmhTksLlPHqMtLwJ87eiUYC7ZbT8q8JUlHiLNbD98FilDrGbZEuW1RUklX8V5umTyhCX
+         ePS+y2fCSmgslybNk0rcJtOlb2TRz6yZZupTUS2oQSW7rzCyL91km0sn2VgqPhPZGKdH
+         k4cFzx9qhfJ84XwBh8/VUXoH5z8xTYne+eraoP/ztjBBvTygwVNRsBYR9bH5qn+E+9Ei
+         bEdWqXCmWo2Me/86yaTMjg0J1+Crfb0gXQG32BYXiYIlpn7OQNgytk0W6SkbM7AZmjr+
+         M23Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUM3HeH6YYjWfqqPLoeK+PPheDqR1mdHCY7fEVUfQ04jhfQCla4ELCcD1BywqAu0J/7kJ1tbT1jCKfWkIk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6Twzck8Ha0UdJFmoRja11EaXJIAnwQ8pnZaVbrnwyNWIsQNYj
+	b0skmR0kPXqBhwBhcNso+dOi8gM5sa1fphTsD1ELOMz4z5YruEPlUltX7PyPF+XarpygXQUruEP
+	EmWieaMh1dX7yUv9k5Pr09INtdh7GFjLSHg6xxABJob3dIDC8V0O3IFzwXHUK3g==
+X-Received: by 2002:a05:6000:697:b0:382:4aeb:91c7 with SMTP id ffacd0b85a97d-3824aeb965emr175653f8f.18.1731921067331;
+        Mon, 18 Nov 2024 01:11:07 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHBFkYfubeKYO+1/Zbi1MMMRab+sljXJXFMhFzqShUuBgkM4JE8RmYzuikIvzc3S/jxthVH+A==
+X-Received: by 2002:a05:6000:697:b0:382:4aeb:91c7 with SMTP id ffacd0b85a97d-3824aeb965emr175635f8f.18.1731921066975;
+        Mon, 18 Nov 2024 01:11:06 -0800 (PST)
+Received: from jlelli-thinkpadt14gen4.remote.csb ([151.29.74.235])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3823a0e8f26sm5942270f8f.31.2024.11.18.01.11.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Nov 2024 01:11:05 -0800 (PST)
+Date: Mon, 18 Nov 2024 10:11:03 +0100
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Waiman Long <llong@redhat.com>
+Cc: Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Koutny <mkoutny@suse.com>, linux-kernel@vger.kernel.org,
+	cgroups@vger.kernel.org
+Subject: Re: Additional issue with cpuset isolated partitions?
+Message-ID: <ZzsEpyU99iRLvK_3@jlelli-thinkpadt14gen4.remote.csb>
+References: <Zzd3G67_UwBUJaRt@jlelli-thinkpadt14gen4.remote.csb>
+ <bfbedc6a-9f04-472f-afe9-828efe0387e6@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241117-simplify-result-v1-1-5b01bd230a6b@iiitd.ac.in>
- <3721a7b2-4a8f-478c-bbeb-fdf22ded44c9@lunn.ch> <CANiq72kk0gsC8gohDT9aqY6r4E+pxNC6=+v8hZqthbaqzrFhLg@mail.gmail.com>
- <q5xmd3g65jr4lmnio72pcpmkmvlha3u2q3fohe2wxlclw64adv@wjon44dqnn7e>
- <CANiq72kQJw4=qBEPwykrWBsqmycwS+mR27OE2dTPQd3tKjx-Tw@mail.gmail.com> <5qtqdzljvzly5onzhfdq63fzcqcj26ybktm2cgomijpnfnyrbj@ln2kbp73csf6>
-In-Reply-To: <5qtqdzljvzly5onzhfdq63fzcqcj26ybktm2cgomijpnfnyrbj@ln2kbp73csf6>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Mon, 18 Nov 2024 10:09:03 +0100
-Message-ID: <CANiq72koO_gdhP_5hzNz5AH-JQNoAzpszpeVR_BV14Nw-OWhzw@mail.gmail.com>
-Subject: Re: [PATCH] rust: simplify Result<()> uses
-To: Manas <manas18244@iiitd.ac.in>
-Cc: Andrew Lunn <andrew@lunn.ch>, FUJITA Tomonori <fujita.tomonori@gmail.com>, 
-	Trevor Gross <tmgross@umich.edu>, Heiner Kallweit <hkallweit1@gmail.com>, 
-	Russell King <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>, 
-	Shuah Khan <skhan@linuxfoundation.org>, Anup Sharma <anupnewsmail@gmail.com>, 
-	netdev@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bfbedc6a-9f04-472f-afe9-828efe0387e6@redhat.com>
 
-On Mon, Nov 18, 2024 at 2:12=E2=80=AFAM Manas <manas18244@iiitd.ac.in> wrot=
-e:
->
-> Yes.
+On 15/11/24 12:47, Waiman Long wrote:
+> On 11/15/24 11:30 AM, Juri Lelli wrote:
+> > Hello,
+> > 
+> > While working on the recent cpuset/deadline fixes [1], I encountered
+> > what looks like an issue to me. What I'm doing is (based on one of the
+> > tests of test_cpuset_prs.sh):
+> > 
+> > # echo Y >/sys/kernel/debug/sched/verbose
+> > # echo +cpuset >cgroup/cgroup.subtree_control
+> > # mkdir cgroup/A1
+> > # echo 0-3 >cgroup/A1/cpuset.cpus
+> > # echo +cpuset >cgroup/A1/cgroup.subtree_control
+> > # mkdir cgroup/A1/A2
+> > # echo 1-3 >cgroup/A1/A2/cpuset.cpus
+> > # echo +cpuset >cgroup/A1/A2/cgroup.subtree_control
+> > # mkdir cgroup/A1/A2/A3
+> > # echo 2-3 >cgroup/A1/A2/A3/cpuset.cpus
+> > # echo 2-3 >cgroup/A1/cpuset.cpus.exclusive
+> > # echo 2-3 >cgroup/A1/A2/cpuset.cpus.exclusive
+> > # echo 2-3 >cgroup/A1/A2/A3/cpuset.cpus.exclusive
+> > # echo isolated >cgroup/A1/A2/A3/cpuset.cpus.partition
+> > 
+> > and with this, on my 8 CPUs system, I correctly get a root domain for
+> > 0-1,4-7 and 2,3 are left isolated (attached to default root domain).
+> > 
+> > I now put the shell into the A1/A2/A3 cpuset
+> > 
+> > # echo $$ >cgroup/A1/A2/A3/cgroup.procs
+> > 
+> > and hotplug CPU 2,3
+> > 
+> > # echo 0 >/sys/devices/system/cpu/cpu2/online
+> > # echo 0 >/sys/devices/system/cpu/cpu3/online
+> > 
+> > guess the shell is moved to the non-isolated domain. So far so good
+> > then, only that if I turn CPUs 2,3 back on they are attached to the root
+> > domain containing the non-isolated cpus
+> A valid partition must have CPUs associated with it. If no CPU is available,
+> it becomes invalid and fall back to use the CPUs from the parent cgroup.
 
-I was asking because the kernel does not accept anonymous
-contributions, so when someone uses a single (common, I think?) word
-as their identity, it may not be enough to find the contributor again
-in the future if the email changes.
+Hummm, OK. But, if I don't put any process in the partition the behavior
+is different, in that the partition still reads as correctly isolated
+and CPUs are not moved to the root domain after hotplug, i.e.,
 
-Thanks!
+# echo 0 >/sys/devices/system/cpu/cpu2/online
+# echo 0 >/sys/devices/system/cpu/cpu3/online
+# cat cgroup/A1/A2/A3/cpuset.cpus.partition
+isolated
+# echo 1 >/sys/devices/system/cpu/cpu2/online
+# echo 1 >/sys/devices/system/cpu/cpu3/online
+# cat cgroup/A1/A2/A3/cpuset.cpus.partition
+isolated
 
-Cheers,
-Miguel
+This is what puzzled me, the difference in behavior w/ or w/o a process
+in the cgroup.
+
+> > # echo 1 >/sys/devices/system/cpu/cpu2/online
+> > ...
+> > [  990.133593] root domain span: 0-2,4-7
+> > [  990.134480] rd 0-2,4-7
+> > 
+> > # echo 1 >/sys/devices/system/cpu/cpu3/online
+> > ...
+> > [ 1082.858992] root domain span: 0-7
+> > [ 1082.859530] rd 0-7
+> > 
+> > And now the A1/A2/A3 partition is not valid anymore
+> > 
+> > # cat cgroup/A1/A2/A3/cpuset.cpus.partition
+> > isolated invalid (Invalid cpu list in cpuset.cpus.exclusive)
+> > 
+> > Is this expected? It looks like one need to put at least one process in
+> > the partition before hotplugging its cpus for the above to reproduce
+> > (hotpluging w/o processes involved leaves CPUs 2,3 in the default domain
+> > and isolated).
+> 
+> Once a partition becomes invalid, there is no self recovery if the CPUs
+> become online again. Users have to explicitly re-enable it. It is really a
+> very rare case and so we don't spend effort to do that.
+> 
+> If only one of 2 CPUs are offline and then online again, the full 2-CPU
+> isolated partition can be recovered.
+> 
+> Please let me know if you have further question.
+
+I see the point, but please see above my only remaining question. :)
+
+Thanks,
+Juri
+
 
