@@ -1,47 +1,45 @@
-Return-Path: <linux-kernel+bounces-412321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E4389D078D
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 02:24:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC2A99D0791
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 02:29:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA8F11F21734
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 01:24:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FD2B281C88
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 01:29:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1DBB1946B;
-	Mon, 18 Nov 2024 01:24:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t6rgAx+H"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DA4E208C4;
+	Mon, 18 Nov 2024 01:29:33 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B5FC14263
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 01:24:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BED8610D;
+	Mon, 18 Nov 2024 01:29:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731893042; cv=none; b=B+Hc3R6+Wq6BoBeTkMPcNIpd9HoT/tC83An83Gc5lOde1fHQnwWHewICv1TNDeL3WOCouUUYP58IxbZQzJeyLz0XGlZ0+AxxCfF05yDNmBt0LOrGPt4qBMN9J6WWVv2SC1EYzbDjNSKWZ8Vd0SbXVrOWHbObwdObshMtrME+384=
+	t=1731893373; cv=none; b=eUxbwmFqBsXTnpTSWf3Sn1R8JiAmu0rZZVACW7HW1G+lG7zmZQDLjNmKfUqm0q5gNQhtWVeP1NS42Rk4k9VYpn/nT3aZaWf6uYkJuMgtx8xEfs7kxLI+cZ2igi/iLPWpQyBHZ/s/dm2ZbRyV2kVboyyF989BXuvHuomkq3o3BrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731893042; c=relaxed/simple;
-	bh=n7HW7ffDUaOV4zb7zTAhMB+RX8C9iEP9O0qaQLZbQIM=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=iayYzlB5zOAlGU3sbkunK/fXXvWtf4QtOTUhpGSuGnPEl3dk2P1cS+QybU30w3tgjkzmPGOPF8IeVHGO2Lw1FDyo5kkkL1HHThhQvXW7U8yKLf/ZtvNarTym81AThtOeOP15GUJP350jZqnZyhmCk2YkbqWwFl8tQRUixNKzzY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t6rgAx+H; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02390C4CECD;
-	Mon, 18 Nov 2024 01:23:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731893041;
-	bh=n7HW7ffDUaOV4zb7zTAhMB+RX8C9iEP9O0qaQLZbQIM=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=t6rgAx+H046q+RaOVZr0JNJaTXidHVIVHvMUd1PRQ1V2tTD1oyQQPQ9Gg0olyV2z6
-	 TXsugy/WD8R7aCHBtvSe7oKwowFlJsp8IrLKqFysoovDOFiGaLijHprJnOvC15ak+9
-	 2V9oKVgjj6KhmY/0I2zRUlfeVaJl2+9REQ/WR3n2zhz91uC0N7pROm8ZvRk/07fJXO
-	 eun8a1gjCZr/NjZP3zJTsDdkGd/NCl2mD4ciPh8bVr5NKIwaFEqoYbvSBbUo50dxTj
-	 rmFtz8RRBnYcK9NXa21K45fTOAYPSlMM7M6nFmw/9AeYVVfUNSpO+l8AlgnDbwj3IQ
-	 0Clt6JbdzI4nA==
-Message-ID: <065b2dea-0c0a-4961-ac18-2ddd62f0b808@kernel.org>
-Date: Mon, 18 Nov 2024 09:23:57 +0800
+	s=arc-20240116; t=1731893373; c=relaxed/simple;
+	bh=IAgjN1C4/DyHBzGR3jNG5O1uDHZ9aJY7evMyRoUgrjA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=LbOoRBgB0PYmmflCK4uQzA6O+V+ZqlYhk7KYHyVUc0RUKC39QLRfU4fAOwmLyQeka6K+bXYQ6Jlmv4JUy30SeomLyj8TeYdh5t1S6q+yCVY4sVrS34qE2hU81B6MQ7aKdqFF87btzYT2t1pzx5lrRm+ujnuX5Xb0ltnvs15KmYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Xs9001sKXz1JB8c;
+	Mon, 18 Nov 2024 09:24:32 +0800 (CST)
+Received: from kwepemg500008.china.huawei.com (unknown [7.202.181.45])
+	by mail.maildlp.com (Postfix) with ESMTPS id F398E1A0188;
+	Mon, 18 Nov 2024 09:29:20 +0800 (CST)
+Received: from [127.0.0.1] (10.174.177.71) by kwepemg500008.china.huawei.com
+ (7.202.181.45) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 18 Nov
+ 2024 09:29:20 +0800
+Message-ID: <7077c905-2a19-46f2-9f45-d82ed673d48b@huawei.com>
+Date: Mon, 18 Nov 2024 09:29:19 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,78 +47,137 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Cc: Chao Yu <chao@kernel.org>
-Subject: Re: [PATCH v2] f2fs: replace deprecated strcpy with strscpy
-To: Daniel Yang <danielyangkang@gmail.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
- "open list:F2FS FILE SYSTEM" <linux-f2fs-devel@lists.sourceforge.net>,
- open list <linux-kernel@vger.kernel.org>
-References: <20241109013819.5952-1-danielyangkang@gmail.com>
+Subject: Re: [PATCH 1/1] quota: flush quota_release_work upon quota writeback
+To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+CC: Ritesh Harjani <ritesh.list@gmail.com>, <linux-ext4@vger.kernel.org>, Jan
+ Kara <jack@suse.com>, <linux-kernel@vger.kernel.org>,
+	<linux-fsdevel@vger.kernel.org>, Disha Goel <disgoel@linux.ibm.com>, Yang
+ Erkun <yangerkun@huawei.com>
+References: <20241115183449.2058590-1-ojaswin@linux.ibm.com>
+ <20241115183449.2058590-2-ojaswin@linux.ibm.com> <87plmwcjcd.fsf@gmail.com>
+ <ZzjdggicyuGqaVs8@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
 Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20241109013819.5952-1-danielyangkang@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Baokun Li <libaokun1@huawei.com>
+In-Reply-To: <ZzjdggicyuGqaVs8@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemg500008.china.huawei.com (7.202.181.45)
 
-On 2024/11/9 9:38, Daniel Yang wrote:
-> strcpy is deprecated. Kernel docs recommend replacing strcpy with
-> strscpy. The function strcpy() return value isn't used so there
-> shouldn't be an issue replacing with the safer alternative strscpy.
-> 
-> Signed-off-by: Daniel Yang <danielyangkang@gmail.com>
-> ---
-> V1 -> V2: handle strscpy errors, changed prefix to f2fs
-> 
->   fs/f2fs/super.c | 11 +++++++++--
->   1 file changed, 9 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index 87ab5696b..4721a8a8f 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -5,6 +5,7 @@
->    * Copyright (c) 2012 Samsung Electronics Co., Ltd.
->    *             http://www.samsung.com/
->    */
->   #include <linux/module.h>
->   #include <linux/init.h>
->   #include <linux/fs.h>
-> @@ -1158,7 +1159,10 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
->   				break;
->   			}
->   
-> -			strcpy(ext[ext_cnt], name);
-> +			if (strscpy(ext[ext_cnt], name) == -E2BIG) {
-> +				kfree(name);
-> +				return -EINVAL;
+On 2024/11/17 1:59, Ojaswin Mujoo wrote:
+> On Sat, Nov 16, 2024 at 02:20:26AM +0530, Ritesh Harjani wrote:
+>> Ojaswin Mujoo <ojaswin@linux.ibm.com> writes:
+>>
+>>> One of the paths quota writeback is called from is:
+>>>
+>>> freeze_super()
+>>>    sync_filesystem()
+>>>      ext4_sync_fs()
+>>>        dquot_writeback_dquots()
+>>>
+>>> Since we currently don't always flush the quota_release_work queue in
+>>> this path, we can end up with the following race:
+>>>
+>>>   1. dquot are added to releasing_dquots list during regular operations.
+>>>   2. FS freeze starts, however, this does not flush the quota_release_work queue.
+>>>   3. Freeze completes.
+>>>   4. Kernel eventually tries to flush the workqueue while FS is frozen which
+>>>      hits a WARN_ON since transaction gets started during frozen state:
+>>>
+>>>    ext4_journal_check_start+0x28/0x110 [ext4] (unreliable)
+>>>    __ext4_journal_start_sb+0x64/0x1c0 [ext4]
+>>>    ext4_release_dquot+0x90/0x1d0 [ext4]
+>>>    quota_release_workfn+0x43c/0x4d0
+>>>
+>>> Which is the following line:
+>>>
+>>>    WARN_ON(sb->s_writers.frozen == SB_FREEZE_COMPLETE);
+>>>
+>>> Which ultimately results in generic/390 failing due to dmesg
+>>> noise. This was detected on powerpc machine 15 cores.
+>>>
+>>> To avoid this, make sure to flush the workqueue during
+>>> dquot_writeback_dquots() so we dont have any pending workitems after
+>>> freeze.
+>> Not just that, sync_filesystem can also be called from other places and
+>> quota_release_workfn() could write out and and release the dquot
+>> structures if such are found during processing of releasing_dquots list.
+>> IIUC, this was earlier done in the same dqput() context but had races
+>> with dquot_mark_dquot_dirty(). Hence the final dqput() will now add the
+>> dquot structures to releasing_dquots list and will schedule a delayed
+>> workfn which will process the releasing_dquots list.
+> Hi Ritesh,
+>
+> Ohh right, thanks for the context. I see this was done here:
+>
+>    dabc8b207566 quota: fix dqput() to follow the guarantees dquot_srcu
+>    should provide
+>
+> Which went in v6.5. Let me cc Baokun as well.
+Hello Ojaswin,
 
-How about?
+Nice catch! Thanks for fixing this up!
 
-ret = strscpy(ext[ext_cnt], name);
-if (ret < 0) {
-	kfree(name);
-	return ret;
-}
+Have you tested the performance impact of this patch? It looks like the
+unconditional call to flush_delayed_work() in dquot_writeback_dquots()
+may have some performance impact for frequent chown/sync scenarios.
 
-> +			}
->   			F2FS_OPTION(sbi).compress_ext_cnt++;
->   			kfree(name);
->   			break;
-> @@ -1187,7 +1191,10 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
->   				break;
->   			}
->   
-> -			strcpy(noext[noext_cnt], name);
-> +			if (strscpy(noext[noext_cnt], name) == -E2BIG) {
-> +				kfree(name);
-> +				return -EINVAL;
-> +			}
+When calling release_dquot(), we will only remove the quota of an object
+(user/group/project) from disk if it is not quota-limited and does not
+use any inode or block.
 
-Ditto
+Asynchronous removal is now much more performance friendly, not only does
+it make full use of the multi-core, but for scenarios where we have to
+repeatedly chown between two objects, delayed release avoids the need to
+repeatedly allocate/free space in memory and on disk.
+
+Overall, since the actual dirty data is already on the disk, there is no
+consistency issue here as it is just clearing unreferenced quota on the
+disk, so I thought maybe it would be better to call flush_delayed_work()
+in the freeze context.
+
 
 Thanks,
+Baokun
+>> And so after the final dqput and before the release_workfn gets
+>> scheduled, if dquot gets marked as dirty or dquot_transfer gets called -
+>> then I am suspecting that it could lead to a dirty or an active dquot.
+>>
+>> Hence, flushing the delayed quota_release_work at the end of
+>> dquot_writeback_dquots() looks like the right thing to do IMO.
+>>
+>> But I can give another look as this part of the code is not that well
+>> known to me.
+>>
+>>> Reported-by: Disha Goel <disgoel@linux.ibm.com>
+>>> Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+>>> ---
+>> Maybe a fixes tag as well?
+> Right, I'll add that in the next revision. I believe it would be:
+>
+> Fixes: dabc8b207566 ("quota: fix dqput() to follow the guarantees dquot_srcu should provide")
+>
+> Regards,
+> ojaswin
+>
+>>>   fs/quota/dquot.c | 2 ++
+>>>   1 file changed, 2 insertions(+)
+>>>
+>>> diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
+>>> index 3dd8d6f27725..2782cfc8c302 100644
+>>> --- a/fs/quota/dquot.c
+>>> +++ b/fs/quota/dquot.c
+>>> @@ -729,6 +729,8 @@ int dquot_writeback_dquots(struct super_block *sb, int type)
+>>>   			sb->dq_op->write_info(sb, cnt);
+>>>   	dqstats_inc(DQST_SYNCS);
+>>>   
+>>> +	flush_delayed_work(&quota_release_work);
+>>> +
+>>>   	return ret;
+>>>   }
+>>>   EXPORT_SYMBOL(dquot_writeback_dquots);
+>>> -- 
+>>> 2.43.5
 
->   			F2FS_OPTION(sbi).nocompress_ext_cnt++;
->   			kfree(name);
->   			break;
 
 
