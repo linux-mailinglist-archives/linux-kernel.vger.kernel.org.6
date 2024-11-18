@@ -1,204 +1,111 @@
-Return-Path: <linux-kernel+bounces-413240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDB9A9D157E
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 17:40:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 785519D1578
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 17:39:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C9E0B273CD
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 16:37:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85BC9283718
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 16:39:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27F871BD9D0;
-	Mon, 18 Nov 2024 16:37:39 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 783D51BD9FF;
+	Mon, 18 Nov 2024 16:39:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dlUs0A4Y"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFFF01A0BD8
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 16:37:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F852225D6;
+	Mon, 18 Nov 2024 16:39:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731947858; cv=none; b=ptc5oEGMkdlZA3W6nOP1kQE+q8PEPLwWnJp8Gx6dMMGcup49dK32JNIRL7SObdAugHunM+wqg0siqnqAE4qrEYqm6yvtVyPEvsetABN/kyFITZOiPYrQo5ehEuxOIMBj2PueDFq+vlWfbXHv32e6/9nVct20ZdH/gRyKZ7HK6dM=
+	t=1731947959; cv=none; b=hBxXUU5jpuoIlA9DyfGDfJiH0mwFxrKli/JZO8PgEJqx4MxyjJvfRvrsJfUwqki9gaQOi/RY8mPiP+ftv7/7uYs9kZpLDZX2TZj3ONUJ5zTFmqGgJ0XmX3X0uj/sC/0doG2mfFqGCY56gPSBR2uEYU9clACcjk2+Pg5IGMNYKwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731947858; c=relaxed/simple;
-	bh=ayBpu8TDSonOGKWcl6EEK8IjaqJk5BC4CO06hlnp+ZQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=QFo6AJjCxJXmb39vuKQjHPxSzZ+MMaYQ49+WEnnUZPhtNtZWzWt3aQbDfvrjgZLU95OVHGaJ0TuVSs5kKwkEICbh9Qh9A5ofYMLBk1JRaaXDBQKUcrPbf9oKjhOEzPaP53saH/+UvZeCeAqHIhoNs2R6/efzM3TZAagCIQH5vM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CE3DC4CECC;
-	Mon, 18 Nov 2024 16:37:36 +0000 (UTC)
-Date: Mon, 18 Nov 2024 11:38:07 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Mathieu
- Desnoyers <mathieu.desnoyers@efficios.com>, Donglin Peng
- <pengdonglin@xiaomi.com>, Oleg Nesterov <oleg@redhat.com>, Stephen Rothwell
- <sfr@canb.auug.org.au>
-Subject: [GIT PULL] ftrace: Updates for v6.13
-Message-ID: <20241118113807.7071ee24@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1731947959; c=relaxed/simple;
+	bh=nmA4ppkMTICL/gt5CLE+iRaWAkj1SjTpLtPXZChoHAs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EBSwSVg/3sZCg6SrqqtrU+fOTEffPlaCNF5Oq3tyrZTL3asm5fkSCXgUra3xGOi3v3bOOU70fAw6zweitbTIsj1zDRWgWUkXe3sbq5qbuzBVtbPxXjAl3gtWfuB8y+nKaJoFn5xPf3jldRA+tJ5WUDzkOxbyEgH3nE3IXtHKNno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dlUs0A4Y; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2ea93311724so90568a91.2;
+        Mon, 18 Nov 2024 08:39:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731947958; x=1732552758; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nmA4ppkMTICL/gt5CLE+iRaWAkj1SjTpLtPXZChoHAs=;
+        b=dlUs0A4YD8J6+HWn5TIwqvGPk9oRN0mJv4l4k163lWc1khktL7Jak4sd3BWsy96VJ0
+         R6fxfDIL6Gm2jW0lKuiIwsYJnwDCI/NBlnE/MWh+koC/V+RcnCzFJ2xrYMeteipENBIq
+         8I4rJs87+tRIIflY1lO6xikYrnmnKCEDYO8Sxn+srjb22RrFkadigpiI3dQQ8brNL/Qc
+         1WhJuEwdctgZWKL9Y2rHmKAvtljvtu+8F8ymB43YF3g27XYzHN7EG0snFzG+HewM1KlZ
+         7BC/zbmjyoDyT8HTIjzxHPeX7y/J2t3ppTCHgFFuQ01SgWLbGjnw2hZl4xfBMH9a5UQ8
+         Pt1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731947958; x=1732552758;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nmA4ppkMTICL/gt5CLE+iRaWAkj1SjTpLtPXZChoHAs=;
+        b=GPftFPEd51CGNLw/PKrPc8GIp5S/AxEllBQZKVcrdY4maxKaZK+41hMYpQdzgRVweO
+         SWw2HdMltKOlItLqx7VsUZAaCTiaz1stjxPvlh90HHSsjaG+uu5vs7DCo5zKoKv+ImG8
+         Ilf4MSnsNAjYF1b8QIPJd+pehYF7sFlVDaBom7mBMNfxUmE/gGkqldIx+hY7EoNc2ORQ
+         IjgYZsSmnTp0oTkupW9/e9eLf7AaCZNdIKg3bpnesm+UxbM1PMLRk7zdEpNUqbT8gTkX
+         evFhachpkx+OorVkPFpIwXgcUQ2VIrjVAAOoM2ztUEaCCgZwRBy7VUgFUPQl/QDRRrqs
+         +7Mw==
+X-Forwarded-Encrypted: i=1; AJvYcCVXkUwk6z+qkBEiHpU7NsmZiV9G4kemOqH32q/gQ48+hynMqLbl4BqxWzBGRo0+pGoZKE6d4ZVd9sqi8tI=@vger.kernel.org, AJvYcCWiGFcjqZTMeZu1/+X5yxgxZVGEtSefmnCJVv5SCWHbPTJw9FVWSycIwsTie/dIzkpHiaKdp05SfmFPTw==@vger.kernel.org, AJvYcCXeDvin8+N40iBbGyy65ZZHznMRZ5CMjv0GsGWWKAgjLYF2COi+MtWQcE7Mz0IJChOjAJbuCmGyO6yFLOjq7xQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRK9HBIcOHmjbkflcs8dUR+/25o4fAHUbQIN5nifTMIES7NLzs
+	ZA2wB1FuCcDwFjHpUKddV+KGWROXqNHM53afuZgXEnMwUU+bImOPHTcpS+MeG4F3EWe9lwe0Cnc
+	wOPt05p3NHvtgMKQRtJk5lkxeQag=
+X-Google-Smtp-Source: AGHT+IFkb2PVZdivVpOSE5c3xRxBapgeWcHncWaujmbKW/klTqGeznXMgcaMscPyBeudFOdb+1LnOwjAF07TkoKuNS8=
+X-Received: by 2002:a17:90b:1d8f:b0:2ea:6f96:64fa with SMTP id
+ 98e67ed59e1d1-2ea6f967fafmr2412946a91.7.1731947957983; Mon, 18 Nov 2024
+ 08:39:17 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20241009105759.579579-1-me@kloenk.dev> <20241009105759.579579-2-me@kloenk.dev>
+ <snsf4cc6valp5ovrrbjv7fefxtkthifsis5el4teajzwjhmv4x@ghxovfdqkhop> <CAH5fLghthWr4r0v=2xNE_UJntG6o6qRzdqHj_nu8AKUwUWh2Aw@mail.gmail.com>
+In-Reply-To: <CAH5fLghthWr4r0v=2xNE_UJntG6o6qRzdqHj_nu8AKUwUWh2Aw@mail.gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Mon, 18 Nov 2024 17:39:04 +0100
+Message-ID: <CANiq72=sGDU2JbyL6sKTJzmuLF8J-hud0WXLctkycwOV0h8VFg@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/2] rust: LED abstraction
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: =?UTF-8?B?TWFyZWsgQmVow7pu?= <kabel@kernel.org>, 
+	Fiona Behrens <me@kloenk.dev>, Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
+	linux-leds@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, FUJITA Tomonori <fujita.tomonori@gmail.com>, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Nov 18, 2024 at 11:19=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> =
+wrote:
+>
+> signature. When you write `impl<T>`, then this means that it is a
+> template (we use the word "generic" in Rust rather than "template"),
 
-Linus,
+Marek: a main difference is that generics in Rust require you to spell
+out everything your type needs in order to be able to use it in the
+implementation, unlike C++ templates which will gladly accept any type
+as long as the resulting code compiles (i.e. whether the types make
+sense or not).
 
-ftrace updates for v6.13:
+So in C++ you may typically do just `T`, while in Rust you typically
+restrict your types with bounds and `where`s clauses like Alice shows.
 
-- Merged tag ftrace-v6.12-rc4
+I hope that clarifies a bit!
 
-  There was a fix to locking in register_ftrace_graph() for shadow stacks
-  that was sent upstream. But this code was also being rewritten, and the
-  locking fix was needed. Merging this fix was required to continue the
-  work.
-
-- Restructure the function graph shadow stack to prepare it for use with
-  kretprobes
-
-  With the goal of merging the shadow stack logic of function graph and
-  kretprobes, some more restructuring of the function shadow stack is
-  required.
-
-  Move out function graph specific fields from the fgraph infrastructure and
-  store it on the new stack variables that can pass data from the entry
-  callback to the exit callback.
-
-  Hopefully, with this change, the merge of kretprobes to use fgraph shadow
-  stacks will be ready by the next merge window.
-
-- Make shadow stack 4k instead of using PAGE_SIZE.
-
-  Some architectures have very large PAGE_SIZE values which make its use for
-  shadow stacks waste a lot of memory.
-
-- Give shadow stacks its own kmem cache.
-
-  When function graph is started, every task on the system gets a shadow
-  stack. In the future, shadow stacks may not be 4K in size. Have it have
-  its own kmem cache so that whatever size it becomes will still be
-  efficient in allocations.
-
-- Initialize profiler graph ops as it will be needed for new updates to fgraph
-
-- Convert to use guard(mutex) for several ftrace and fgraph functions
-
-- Add more comments and documentation
-
-- Show function return address in function graph tracer
-
-  Add an option to show the caller of a function at each entry of the
-  function graph tracer, similar to what the function tracer does.
-
-- Abstract out ftrace_regs from being used directly like pt_regs
-
-  ftrace_regs was created to store a partial pt_regs. It holds only the
-  registers and stack information to get to the function arguments and
-  return values. On several archs, it is simply a wrapper around pt_regs.
-  But some users would access ftrace_regs directly to get the pt_regs which
-  will not work on all archs. Make ftrace_regs an abstract structure that
-  requires all access to its fields be through accessor functions.
-
-- Show how long it takes to do function code modifications
-
-  When code modification for function hooks happen, it always had the time
-  recorded in how long it took to do the conversion. But this value was
-  never exported. Recently the code was touched due to new ROX modification
-  handling that caused a large slow down in doing the modifications and
-  had a significant impact on boot times.
-
-  Expose the timings in the dyn_ftrace_total_info file. This file was
-  created a while ago to show information about memory usage and such to
-  implement dynamic function tracing. It's also an appropriate file to store
-  the timings of this modification as well. This will make it easier to see
-  the impact of changes to code modification on boot up timings.
-
-- Other clean ups and small fixes
-
-
-[
-  NOTE: Reminder that this has a conflict with the powerpc tree.
-  https://lore.kernel.org/all/20241106140414.760b502c@canb.auug.org.au/
-]
-
-Please pull the latest ftrace-v6.13 tree, which can be found at:
-
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
-ftrace-v6.13
-
-Tag SHA1: f66edaf1213965180f6935c52a303e5e478e8692
-Head SHA1: 36a367b8912a3aac023d9e35c815f7b1e609f4a3
-
-
-Donglin Peng (1):
-      function_graph: Support recording and printing the function return address
-
-Masami Hiramatsu (Google) (5):
-      tracing: Fix function timing profiler to initialize hashtable
-      tracing: Add a comment about ftrace_regs definition
-      fgraph: Simplify return address printing in function graph tracer
-      ftrace: Use arch_ftrace_regs() for ftrace_regs_*() macros
-      ftrace: Rename ftrace_regs_return_value to ftrace_regs_get_return_value
-
-Oleg Nesterov (1):
-      function_graph: Remove unnecessary initialization in ftrace_graph_ret_addr()
-
-Steven Rostedt (16):
-      fgraph: Use fgraph data to store subtime for profiler
-      ftrace: Use a running sleeptime instead of saving on shadow stack
-      ftrace: Have calltime be saved in the fgraph storage
-      fgragh: No need to invoke the function call_filter_check_discard()
-      ftrace: Make ftrace_regs abstract from direct use
-      ftrace: Consolidate ftrace_regs accessor functions for archs using pt_regs
-      selftests/ftrace: Fix check of return value in fgraph-retval.tc test
-      Merge tag 'ftrace-v6.12-rc4' into trace/ftrace/core
-      fgraph: Separate size of ret_stack from PAGE_SIZE
-      fgraph: Give ret_stack its own kmem cache
-      fgraph: Use guard(mutex)(&ftrace_lock) for unregister_ftrace_graph()
-      ftrace: Use guard for match_records()
-      ftrace: Use guard to lock ftrace_lock in cache_mod()
-      ftrace: Use guard to take the ftrace_lock in release_probe()
-      ftrace: Use guard to take ftrace_lock in ftrace_graph_set_hash()
-      ftrace: Show timings of how long nop patching took
-
-----
- arch/arm64/include/asm/ftrace.h                    |  21 +-
- arch/arm64/kernel/asm-offsets.c                    |  22 +-
- arch/arm64/kernel/ftrace.c                         |  10 +-
- arch/loongarch/include/asm/ftrace.h                |  29 +--
- arch/loongarch/kernel/ftrace_dyn.c                 |   2 +-
- arch/powerpc/include/asm/ftrace.h                  |  27 +--
- arch/powerpc/kernel/trace/ftrace.c                 |   4 +-
- arch/powerpc/kernel/trace/ftrace_64_pg.c           |   2 +-
- arch/riscv/include/asm/ftrace.h                    |  22 +-
- arch/riscv/kernel/asm-offsets.c                    |  28 +--
- arch/riscv/kernel/ftrace.c                         |   2 +-
- arch/s390/include/asm/ftrace.h                     |  29 +--
- arch/s390/kernel/asm-offsets.c                     |   4 +-
- arch/s390/kernel/ftrace.c                          |   2 +-
- arch/s390/lib/test_unwind.c                        |   4 +-
- arch/x86/include/asm/ftrace.h                      |  30 +--
- arch/x86/kernel/ftrace.c                           |   2 +-
- include/linux/ftrace.h                             |  85 +++++--
- include/linux/ftrace_regs.h                        |  36 +++
- include/linux/sched.h                              |   1 +
- kernel/trace/Kconfig                               |  10 +
- kernel/trace/fgraph.c                              | 155 ++++++++----
- kernel/trace/ftrace.c                              | 115 ++++-----
- kernel/trace/trace.c                               |  15 +-
- kernel/trace/trace.h                               |  11 +
- kernel/trace/trace_entries.h                       |  29 ++-
- kernel/trace/trace_functions_graph.c               | 264 +++++++++++++++++----
- kernel/trace/trace_selftest.c                      |   1 +
- .../ftrace/test.d/ftrace/fgraph-retval.tc          |   2 +-
- 29 files changed, 632 insertions(+), 332 deletions(-)
- create mode 100644 include/linux/ftrace_regs.h
----------------------------
+Cheers,
+Miguel
 
