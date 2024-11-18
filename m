@@ -1,149 +1,87 @@
-Return-Path: <linux-kernel+bounces-413019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08EB19D12AB
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 15:09:33 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3D199D12B2
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 15:11:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A9430B2C65F
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 13:46:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 578BAB2F495
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 13:46:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F08D01A9B50;
-	Mon, 18 Nov 2024 13:41:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="A59KTjoq";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="5citjI6q";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="jlnLQJ+Z";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="3dt8dq7Y"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 819641A0B00;
+	Mon, 18 Nov 2024 13:41:06 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3721199EA3;
-	Mon, 18 Nov 2024 13:41:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B797519AA63
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 13:41:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731937267; cv=none; b=OSZgqhbrI4itGm4iXYQ5j6SiE6TDqd9NlA+hGk8CxZvdNS6+ZvVh+hMUgm7y5aJJaVQShw/n31qdIWlkQgrSx6x39suopsMDctE0256Sm9HI8Ds+s3GdZ6Mp4B4CWHQtV2ZEv5FGt9bO42hf8DatAygZNJLyJ78qHqVUpCtXfsc=
+	t=1731937266; cv=none; b=OQ/7lGqk8HtezFqotp08LhmMKAH9szeCAmVgccOUEmQtYvtjbrthCjJ/qXONAjK9IXXwmQCsjIZVH/O6JtTz7GeSQUAGQuE1HvFs9Uu7zixvxGzzDu8c7KAb2S1sH3PB418FyIWu8oiHObBibyKHRzTPNDDgqZXNOkfAD3A+H/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731937267; c=relaxed/simple;
-	bh=uKE/0a42PrVZhu/VkkIYnHs6rtFBFgty5o6WzC8DIbc=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Tt4bELSZglqFON8tOakqh+VDrS0RoD9NpiJB6pZwPcM/FIA1der4TRst1FVQ6mfk9vagZlBCS1c19eJ3vhyzrBnztoLeELJolSvM1ZpjKTTnO4L8jd5o6w1wT+sWCEWYrp6fSC49XWqvrt6zTXcRO3I+bVOzbfkS8G4args3M0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=A59KTjoq; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=5citjI6q; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=jlnLQJ+Z; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=3dt8dq7Y; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 1B09921151;
-	Mon, 18 Nov 2024 13:41:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1731937264; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mRvlMHRqPsHvF+Y4rop7W+Ht8NphPpCypBNENGLLC/I=;
-	b=A59KTjoqJ52YEpalyBsLvAt5DDQUvVT1zw3mLOCGmUeUWEpdwkZm/+/WNVJyCnZ3WrZWST
-	p/m03KtJ7N83qNhjpncBNA/mWbwKNXfD/LtY8RMxV8tzhX/f1Smo94qjyueiDs8cQcFoDK
-	IjsmnFpk+FLorhhkNxKP4O686LhVhfU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1731937264;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mRvlMHRqPsHvF+Y4rop7W+Ht8NphPpCypBNENGLLC/I=;
-	b=5citjI6q1pv2FRPxDSJpfbvRIrE5B0aizTCu4iszUGo6GGpVWWdhD+ZjA8sGL4pzRmr6wT
-	YUWEsOOU8Aq8ZXBg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1731937263; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mRvlMHRqPsHvF+Y4rop7W+Ht8NphPpCypBNENGLLC/I=;
-	b=jlnLQJ+ZV5TkzrX0FZRtDFKxpyJDm/7JTRmHiiPGyGIlnvazZtoovlc3g0lqi45AA5KX/m
-	jCA2uXaMCD+ZHaHydpO2aI8Pu8iO9ngB/fiiXxL0AyTFgIL14O6kSYd5SLHpwI2wu4FauK
-	wiQFpL4jCTZWrTw9x0MKj4y+/KUdpGE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1731937263;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mRvlMHRqPsHvF+Y4rop7W+Ht8NphPpCypBNENGLLC/I=;
-	b=3dt8dq7YM1dyOm1huS3cAFDmhKjeyK/dBjn87wg+kFMazRt3IoXGh32YZxT4gZpiPBav8w
-	ordxHetS65LUtNAg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CF81E134A0;
-	Mon, 18 Nov 2024 13:41:02 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id RIxjMe5DO2cuaQAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Mon, 18 Nov 2024 13:41:02 +0000
-Date: Mon, 18 Nov 2024 14:41:02 +0100
-Message-ID: <87frno7j81.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Huacai Chen <chenhuacai@loongson.cn>
-Cc: Takashi Iwai <tiwai@suse.com>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Xuerui Wang <kernel@xen0n.name>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] ALSA: hda: Poll jack events for LS7A HD-Audio
-In-Reply-To: <20241115150653.2819100-1-chenhuacai@loongson.cn>
-References: <20241115150653.2819100-1-chenhuacai@loongson.cn>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1731937266; c=relaxed/simple;
+	bh=g3GNsMnTLhukQa4thuSub/EwWdjggPuMhd3nDrGe694=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=qUsZqdRLO0Ie5SWE8A723W1R3q5Q/iiTwbgshs9HVOPB9D/B3n48dlYJi+N0HdVyZ0iA7f2jJfqVxDGwWha+3SzhWmWKI9vGLMZCWPb+nsoI9kSR62SQ9PERxeKdlkLbZoMfnbB83uhhYZBUG/kmfUZeRtUf2pRv9XZzyDAZw7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-83abf68e7ffso479647239f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 05:41:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731937264; x=1732542064;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lGchWN+fhp+tr75N9iVHWT7Zjo+XXifF4dFEhTK8yfE=;
+        b=wf/iFc9uP45RiRftIDsue035/0ZWF0sDhH7lzn7EJVQEs/IzNKchTTpcLQSYiBkzfF
+         4BHboTlKPjBfP1bX/mxXE879cUFl8WlTuv5xz1r6J9IUeXRns4End6ViPE1FGrrEq06Y
+         OvM0E3pmyOymD9LzXdJzqBLcre9yNMzrCfVNyNw9BXHBXygelpLRnPWRSk1+XjCiHjAw
+         TSajMTOfO8hTK01DMdD1KyWfYqRyrVi8k3M1dxgVLtfnXVWp6kiFQvKy1qfBX2vUo+2Y
+         nvBQBDzRrfTeCxGfBAUTdbosh6idYhjWsr6okxZVYZ1cwNAMgtEwSD0lQ+DKGVeqp9T3
+         RU/g==
+X-Gm-Message-State: AOJu0YxIRiV8ZCiWvzul63Kwkvssxqf8SgEdOgp17OlrOk8g3xutoHqp
+	2NA8qXk7HsVXDzwRZ3BEVT3yAqRuiqJEVwXD6RrP+OBm9yB+rNMssilaHXUt1nItP7xRJpig1Ec
+	QZhlwahiUlAf0XFnQJROcpBJGs96g86hjAA/TUyQmG1aK2rBdvweMpiw=
+X-Google-Smtp-Source: AGHT+IGUSDvVOyJuhib3JS40fD+0nHoZQkOKmM8P2hslZ6piUtWXDVoLYncQgWkVz+QZRDiON0lC1AdkZmdSyCDFdFRC3UqrZEBe
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid]
-X-Spam-Score: -3.30
-X-Spam-Flag: NO
+MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:1a44:b0:3a7:44d9:c7dd with SMTP id
+ e9e14a558f8ab-3a74800e6admr133899825ab.6.1731937264000; Mon, 18 Nov 2024
+ 05:41:04 -0800 (PST)
+Date: Mon, 18 Nov 2024 05:41:03 -0800
+In-Reply-To: <CAHiZj8im=xETmWAt7yi7X3KwwLy4Ad+i6Yk7NwWqJMfJR_kd-A@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <673b43ef.050a0220.87769.0040.GAE@google.com>
+Subject: Re: [syzbot] [acpi?] [nvdimm?] KASAN: vmalloc-out-of-bounds Read in
+ acpi_nfit_ctl (2)
+From: syzbot <syzbot+7534f060ebda6b8b51b3@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, surajsonawane0215@gmail.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 15 Nov 2024 16:06:53 +0100,
-Huacai Chen wrote:
-> 
-> LS7A HD-Audio disable interrupts and use polling mode due to hardware
-> drawbacks. As a result, unsolicited jack events are also unusable. If
-> we want to support headphone hotplug, we need to also poll jack events.
-> 
-> Here we use 1500ms as the poll interval if no module parameter specify
-> it.
-> 
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
+Hello,
 
-Thanks, applied now.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
+Reported-by: syzbot+7534f060ebda6b8b51b3@syzkaller.appspotmail.com
+Tested-by: syzbot+7534f060ebda6b8b51b3@syzkaller.appspotmail.com
 
-Takashi
+Tested on:
+
+commit:         adc21867 Linux 6.12
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1189bb5f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e31661728c1a4027
+dashboard link: https://syzkaller.appspot.com/bug?extid=7534f060ebda6b8b51b3
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=12086ac0580000
+
+Note: testing is done by a robot and is best-effort only.
 
