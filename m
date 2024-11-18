@@ -1,116 +1,207 @@
-Return-Path: <linux-kernel+bounces-413463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DCA39D195F
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 20:57:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 810E19D1967
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 21:02:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE526B23430
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 19:57:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 174851F222E6
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 20:02:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A78B21E5733;
-	Mon, 18 Nov 2024 19:57:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1939A1E5732;
+	Mon, 18 Nov 2024 20:02:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="HLW1cliL"
-Received: from mail-oo1-f45.google.com (mail-oo1-f45.google.com [209.85.161.45])
+	dkim=pass (2048-bit key) header.d=amacapital-net.20230601.gappssmtp.com header.i=@amacapital-net.20230601.gappssmtp.com header.b="M5Vg+RuI"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A5121E571C
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 19:57:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 601CF1E130F
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 20:02:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731959830; cv=none; b=Ht1U98qTGDfkkr1EMXxRrI1/bEmbd7O3or7TMypoxByiuty/nkI/RaNXcnaJuiWNjJlcXwmfMDFTRmAZgMpmnOXebo0oqXXlCSO9/ZplBBF7MByNMsw82pY7EMUUw6SJsYmjote2qif7j7bm90mcElA/UmuYCSm/dupuKwEe6/k=
+	t=1731960149; cv=none; b=gPBe66SoY4fY+vPqnC5vnOEs4Z3tT+/Fr/2I3392pT3yTpQlcITdH/jozQoHyad/y5jXwWVjZ24J9TXsHeepCIwmR3Quq2qx4R/PcUJiGhn560b7E9TIprom0Czuym9s8Ur3xhgZoxtTsUMmAEgzPWVm/pSonTnDSTWLA0w1f0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731959830; c=relaxed/simple;
-	bh=C3yvYvgaYqHUASV6J8b58Cin5xvUMyMbEuA9GZfTzY8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WoGwLtkF3gUjUGIs84btQJMmKCpwpxbm6yfaJrgwubUwBOZWIzvXpSWjDW6FQTkz2PIs1iWKnMFT+n96znIgoCMcPoROE2oTgue5jxfKxm7ZvOAlXv3PK0/eBvDgTl2W3FIv/UxMBV3A+cEIxc9aNWnIalMqP88Ca8s0TpZ12vg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=HLW1cliL; arc=none smtp.client-ip=209.85.161.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-5eb70a779baso2324634eaf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 11:57:07 -0800 (PST)
+	s=arc-20240116; t=1731960149; c=relaxed/simple;
+	bh=E+LBwBRF8DHoVawLtfgdfdbwEfo68/6NPCRK+oRI+No=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=A2uPedJ29pvDZlwAnQeZ8N01woMSFMiHF3Jqw4luxf+Yp5VpVviYo6t/5Yae7cOcJyG+SoSoVHFCGepSW2nNOq1mEVvzV3LtSBLod+b5LeEohApPTC4P/I6qs6HCNNUpSJW3RXi6KfDjsdBwKv+y6XD+g7OplDUVOr5rhquBuCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net; spf=pass smtp.mailfrom=amacapital.net; dkim=pass (2048-bit key) header.d=amacapital-net.20230601.gappssmtp.com header.i=@amacapital-net.20230601.gappssmtp.com header.b=M5Vg+RuI; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amacapital.net
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a9a68480164so23560666b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 12:02:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1731959826; x=1732564626; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WpUyZvuIqoP+1REy1b0f27OiKQUxfmn+lI7QAkmm/bc=;
-        b=HLW1cliLAleXC0tByReogt14ePO6yc2ynZoDWPcAkapgQPTy4xQI7Aw46W4zeM5x6g
-         AF50e8jJiio8s1LYWBwITxOqBPtVwD0vQ5dR/8ffzwQqaFMGfO6EHnZJWUzkhhBPZfty
-         pE+cpLrXImTHtekUBIaMjVAfSzWdx465TWCas1SZjwkJTzXHWf96JVI0BqErLF85bUhq
-         i0pt8iSAzMTPwqjOj/psvl7H6CljblyaFbuUucqVJuhvYBA4olU7rJH//tQly57T3Sw8
-         y0mL7z/kesy0Krl8Nz+2ZRD/FYubh0HllnITXtqA7V4Ku9L+CYtPc4PiKeMBB4Zh64SE
-         +Ixg==
+        d=amacapital-net.20230601.gappssmtp.com; s=20230601; t=1731960144; x=1732564944; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=F56XnCiPK1ucbtbbIcuwS+1n5yBs1+kTrZwft20AGGo=;
+        b=M5Vg+RuIEJo5nRlwRuJBceZfl7J/tp7FoRljht/aHjwm80g8gaL4PAKFGneLmac5UA
+         huSPyBi/fanJIwXS8dXkMJtp5Dcx3N2CmMWu53Bymxf5xKqPzMmeKxXpYP3E3puqyzpu
+         J/fmz+9M9Lb8KyShD9HYNb5A3p3pXfkLMkT8blTdBWRJh+YFA8PXqWFG521vWbmES848
+         tBRvstqL/iJJmmUzW7WrS2wLG1qlQpCf3f0Y5Kf1h9bG/eG2KTis3yxBjjtyrGqchec0
+         T0jjenqN5ThrFV3h6Exs7LALNdLFKzDyh/vSdyUauzmqodePjGToGNrMUUTo4FUvxQwg
+         4wpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731959826; x=1732564626;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WpUyZvuIqoP+1REy1b0f27OiKQUxfmn+lI7QAkmm/bc=;
-        b=boBaL2ho785nkvVZDHtfaVVZQX9Hb0Ey1VDO+M60daFgT7fH50VLi3eTrR0VQX+Ktn
-         LN+8OVD8kyTFDvCXD9W+aUJiAovkz+veLwdbnNAQC9Fai24kWJ6OjVy+BCn26t7NpwLQ
-         /WcEhZZ6m2kU+TYIqqJ66RzQJf9IhFpj9eG9XCwvXkQG+uO2bjlwp78hYdcVIwV/uZ8H
-         YY39eQry7khGd1ib79fLMm9XTuBM49iPM+nZQ2gkr0Qa1rG/a/lAU9exRn44S8tbNKFZ
-         sBCatRbfR6QntxiMUHv7Kxd2t5pnS8n4hgGOovFGy95d+JHwqWdob2XxpJCgid8w59Ee
-         Jlqg==
-X-Forwarded-Encrypted: i=1; AJvYcCXVq9ipvJt2MpDzA/jxfzPUlRQD3++pmKFQa6t+djTWtAEdpn8M7dBUmWRSOcoGR+mU7A9o9gnAbcFP660=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzY7ls28xqg8SUAO6zyIwioNXq269sRnQPLmANMhTUcwfj4GdMM
-	5hF2AYQ8hGhdwjszVMq1+9VA7ICoLu2la27aGUMfjK3FYQIYk2K2aMg5PnGZxD8=
-X-Google-Smtp-Source: AGHT+IHQm8AvqbRlq+Us9nwiXv4QXlkWwfjqJbIZ5ekm5NvDdp7rFZJFhnT0J5xgIqNqiBjstaFupA==
-X-Received: by 2002:a05:6820:4c17:b0:5c4:144b:1ff9 with SMTP id 006d021491bc7-5eeab41f3ecmr10418542eaf.5.1731959826665;
-        Mon, 18 Nov 2024 11:57:06 -0800 (PST)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5eeabd520c4sm3043554eaf.27.2024.11.18.11.57.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Nov 2024 11:57:05 -0800 (PST)
-Message-ID: <74ae05a9-6fff-4088-a46c-0a68a5b64614@baylibre.com>
-Date: Mon, 18 Nov 2024 13:57:03 -0600
+        d=1e100.net; s=20230601; t=1731960144; x=1732564944;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=F56XnCiPK1ucbtbbIcuwS+1n5yBs1+kTrZwft20AGGo=;
+        b=b6fhqzKXbZyP4ozn4XDxS7Bq1aV5y0hpyJlEnt2dW5LRPU1bwfLJNEY+g2/QIeu0Jr
+         2sq2lQNQzroeWleGhFGgA/ahS+OTjEzWdZ0ZZsNleFO+0zx3kPGagEKUtV2xTBO4BiDr
+         myrQogybFhnx8eKBBrK+EaHJgdwzDQ0hK6p1CiyiIsb+4j3m/gqIfkVVAQhOiKAaHnrc
+         v78VR7CvEmW9X786ed8MvrXRnsrB5Hn30gPz1LIYKR55mL6WAd/o9p0rmfC07oV+n/wk
+         kDu+fzi5JcUxmgRvLpKfo1RgxCeQfjBKHL5s4w7Jhqa5PBRNy0iEmCJlPwuiG5jHyhXT
+         1avg==
+X-Forwarded-Encrypted: i=1; AJvYcCVeKElIDRGa3x6HLD5e73yMrPKm2ZDSwzo+FeMb1eQJxkjkS4CwlUqTi9QxJbb4lldr/d53HmCH9nrnGcY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSUwyIr3rgA2v9qM/EGNLexM+oohoWQAkN/C+skniy/FnNO5j+
+	PKnU86rBGAjDbRvZW+dg7drV8ulJjMgKPqiOo2baqkqxisayH1xTMMScLfSOmjovea3DqnypzMN
+	vGxnEhRSmSRBJk74TyCZyONiH5cjNI+xO5t/w
+X-Google-Smtp-Source: AGHT+IFoQ/M1Rp3ASKc7+vFPOEp+9oiYAQ8ueOL2fLtrqLS19jm7uOri1Atv932nS8Gcqo/IWYlS3CoMIuiDqjl4zlU=
+X-Received: by 2002:a17:907:9412:b0:a9e:d7e3:ccae with SMTP id
+ a640c23a62f3a-aa483427760mr1375196366b.16.1731960144547; Mon, 18 Nov 2024
+ 12:02:24 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/4] iio: adc: ad4000: Use device specific timing for
- SPI transfers
-To: Marcelo Schmitt <marcelo.schmitt@analog.com>, lars@metafoo.de,
- Michael.Hennerich@analog.com, jic23@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, marcelo.schmitt1@gmail.com
-Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <cover.1731953012.git.marcelo.schmitt@analog.com>
- <284478615dd32deff29e4e10815cb49fa7d3b5d0.1731953012.git.marcelo.schmitt@analog.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <284478615dd32deff29e4e10815cb49fa7d3b5d0.1731953012.git.marcelo.schmitt@analog.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240531010331.134441-1-ross.philipson@oracle.com>
+ <20240531010331.134441-7-ross.philipson@oracle.com> <20240531021656.GA1502@sol.localdomain>
+ <874jaegk8i.fsf@email.froward.int.ebiederm.org> <5b1ce8d3-516d-4dfd-a976-38e5cee1ef4e@apertussolutions.com>
+ <87ttflli09.ffs@tglx> <CALCETrXQ7rChWLDqTG0+KY7rsfajSPguMnHO1G4VJi_mgwN9Zw@mail.gmail.com>
+ <1a1f0c41-70de-4f46-b91d-6dc7176893ee@apertussolutions.com>
+ <8a0b59a4-a5a2-42ae-bc1c-1ddc8f2aad16@apertussolutions.com>
+ <CALCETrX8caT5qvCUu24hQfxUF_wUC2XdGpS2YFP6SR++7FiM3Q@mail.gmail.com>
+ <c466ed57-35a8-41c0-9647-c70e588ad1d3@apertussolutions.com>
+ <CALCETrW9WNNGh1dEPKfQoeU+m5q6_m97d0_bzRkZsv2LxqB_ew@mail.gmail.com>
+ <ff0c8eed-8981-48c4-81d9-56b040ef1c7b@apertussolutions.com>
+ <446cf9c70184885e4cec6dd4514ae8daf7accdcb.camel@HansenPartnership.com>
+ <5d1e41d6-b467-4013-a0d0-45f9511c15c6@apertussolutions.com>
+ <CALCETrW6vMYZo-b7N9ojVSeZLVxhZjLBjnMHsULMGP6TaVYRHA@mail.gmail.com> <9c80e779b6268fde33c93ed3765ff93b1d6d007b.camel@HansenPartnership.com>
+In-Reply-To: <9c80e779b6268fde33c93ed3765ff93b1d6d007b.camel@HansenPartnership.com>
+From: Andy Lutomirski <luto@amacapital.net>
+Date: Mon, 18 Nov 2024 12:02:13 -0800
+Message-ID: <CALCETrX4vHnVorqWjPEOP0XLaA0uUWkKikDcCXWtbs2a7EBuiA@mail.gmail.com>
+Subject: Re: [PATCH v9 06/19] x86: Add early SHA-1 support for Secure Launch
+ early measurements
+To: James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc: "Daniel P. Smith" <dpsmith@apertussolutions.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	"Eric W. Biederman" <ebiederm@xmission.com>, Eric Biggers <ebiggers@kernel.org>, 
+	Ross Philipson <ross.philipson@oracle.com>, linux-kernel@vger.kernel.org, x86@kernel.org, 
+	linux-integrity@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-crypto@vger.kernel.org, kexec@lists.infradead.org, 
+	linux-efi@vger.kernel.org, iommu@lists.linux-foundation.org, mingo@redhat.com, 
+	bp@alien8.de, hpa@zytor.com, dave.hansen@linux.intel.com, ardb@kernel.org, 
+	mjg59@srcf.ucam.org, peterhuewe@gmx.de, jarkko@kernel.org, jgg@ziepe.ca, 
+	nivedita@alum.mit.edu, herbert@gondor.apana.org.au, davem@davemloft.net, 
+	corbet@lwn.net, dwmw2@infradead.org, baolu.lu@linux.intel.com, 
+	kanth.ghatraju@oracle.com, andrew.cooper3@citrix.com, 
+	trenchboot-devel@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/18/24 12:53 PM, Marcelo Schmitt wrote:
-> The SPI transfers for AD4020, AD4021, and AD4022 have slightly different
-> timing specifications. Use device specific timing constraints to set SPI
-> transfer parameters. While tweaking time constraints, remove time related
-> defines including unused AD4000_TQUIET1_NS.
-> 
-> Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
-> ---
+On Mon, Nov 18, 2024 at 11:12=E2=80=AFAM James Bottomley
+<James.Bottomley@hansenpartnership.com> wrote:
+>
+> On Mon, 2024-11-18 at 10:43 -0800, Andy Lutomirski wrote:
+> > Linux should not use TPM2_PCR_Extend *at all*.  Instead, Linux should
+> > exclusively use TPM2_PCR_Event.  I would expect that passing, say,
+> > the entire kernel image to TPM2_PCR_Event would be a big mistake, so
+> > instead Linux should hash the relevant data with a reasonable
+> > suggestion of hashes (which includes, mandatorily, SHA-384 and *does
+> > not* include SHA-1, and may or may not be configurable at build time
+> > to include things like SM3), concatenate them, and pass that to
+> > TPM2_PCR_Event.  And Linux should make the value that it passed to
+> > TPM2_PCR_Event readily accessible to software using it, and should
+> > also include some straightforward tooling to calculate it from a
+> > given input so that software that wants to figure out what value to
+> > expect in a PCR can easily do so.
+>
+> Just for clarity, this is about how the agile log format works.  Each
+> event entry in the log contains a list of bank hashes and the extends
+> occur in log event order, so replaying a log should get you to exactly
+> the head PCR value of each bank.  If a log doesn't understand a format,
+> like SM3, then an entry for it doesn't appear in the log and a replay
+> says nothing about the PCR value.
 
-...
+I have no idea what the "agile log format" is or what all the formats
+in existence are.  I found section 4.2.4 here:
 
-> +/*
-> + * Same timing specifications for all of AD4000, AD4001, ..., AD4008, AD4010,
-> + * ADAQ4001, and ADAQ4003.
-> + */
-> +static const struct ad4000_time_spec ad4000_t_spec = AD4000_TSPEC(320, 60);
-> +
-> +/* AD4020, AD4021, AD4022 */
-> +static const struct ad4000_time_spec ad4020_t_spec = AD4000_TSPEC(350, 60);
+https://trustedcomputinggroup.org/wp-content/uploads/TCG_IWG_CEL_v1_r0p41_p=
+ub.pdf
 
-I actually liked the way you did it in v1 better. This makes it harder to
-see which number is which.
+It says:
 
+This field contains the list of the digest values Extended. The Extend
+method varies with TPM command, so there is
+no uniform meaning of TPM Extend in this instance, and separate
+descriptions are unavoidable. If using the
+TPM2_PCR_Extend command, this field is the data sent to the TPM (i.e.,
+not the resulting value of the PCR after the
+TPM2_PCR_Extend command completes). If using the TPM2_PCR_Event
+command, this field contains the digest
+structure returned by the TPM2_PCR_Event command (that contains the
+digest(s) submitted to each PCR bank as
+the internal Extend operation). This field SHALL contain the
+information from the TPML_DIGEST_VALUES used in
+the Extend operation.
+
+So we're logging the values with which we extend the PCRs.  Once upon
+a time, someone decided it was okay to skip extending a PCR bank:
+
+https://google.github.io/security-research/pocs/bios/tpm-carte-blanche/writ=
+eup.html
+
+and it was not a great idea.
+
+There seem to be six (!) currently defined hashes: SHA1, SHA256,
+SHA384, SHA512, SM2 and SM3.  I haven't spotted anything promising not
+to add more.  It seems to be that Linux really really ought to:
+
+(a) extend all banks.  Not all banks that the maintainers like, and
+not all banks that the maintainers knew about when having this
+discussion.  *All* banks.  That means TPM2_PCR_Event().  (Or we refuse
+to boot if there's a bank we don't like.)
+
+(b) Make a best effort to notice if something is wrong with the TPM
+and/or someone is MITMing us and messing with us.  That means
+computing the hash algorithms we actually support and checking whether
+TPM2_PCR_Event() returns the right thing.  I'm not seeing a specific
+attack that seems likely that this prevents, but it does seem like
+decent defense in depth, and if someone chooses to provision a machine
+by reading its event log and then subsequently getting an attestation
+that a future event log matches what was read, then avoiding letting
+an attacker who temporarily controls the TPM connection from
+corrupting the results seems wise.  And I don't see anything at all
+that we gain by removing a check that (TPM's reported SHA1 =3D=3D what we
+calculated) in the name of "not supporting SHA1") other than a few
+hundred bytes of object code.  (And yes, SHA1 is much more likely to
+be supported than SM3, so it's not absurd to implement SHA1 and not
+implement SM3.)
+
+>
+> For some events, the hash is actually the hash of the event entry
+> itself and for others, the entry is just a hint and the hash is of
+> something else.
+>
+> I think part of the confusion stems from the twofold issues of PCRs: at
+> their simplest they were expected to provide the end policy values
+> (this turns out to be problematic because there are quite a few ways,
+> that will produce different end PCR values, that a system could get to
+> the same state).  If you don't trust a bank (or don't know about it),
+> you don't code it into a required policy statement and its value
+> becomes irrelevant.
+
+I think that "you" refers to multiple entities, and this is a problem.
+
+If the vendor of an attestation-dependent thing trusts SM3 but *Linux*
+does not like SM3, then the vendor's software should not become wildly
+insecure because Linux does not like SM3.  And, as that 2004 CVE
+shows, even two groups that are nominally associated with Microsoft
+can disagree on which banks they like, causing a vulnerability.
 
