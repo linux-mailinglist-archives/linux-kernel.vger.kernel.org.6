@@ -1,369 +1,259 @@
-Return-Path: <linux-kernel+bounces-412813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E32A9D0F5F
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 12:14:14 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9D379D0FB9
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 12:29:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84AF71F223B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:14:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4BCDFB26DD3
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:15:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2AD219885D;
-	Mon, 18 Nov 2024 11:14:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2735215098A;
+	Mon, 18 Nov 2024 11:15:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="A2l/pWR0"
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="W/gt8AwZ"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68673194A63
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 11:14:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 782CD194151
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 11:15:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731928445; cv=none; b=Hmj53b3QPyjL+9lRo0VJDNNs5mR0NJxRp5B4O5dmL8NYnW22xshzgeeLAJbMWJHicrYwcDeARToT/xydHnrPZgp8EF50RZP0wUVbi33gey9AE3ps5Tnq5jMIZCQ/CPNirFKEvCad/Gr/tlWzShd4N9dKNsUEf5S3yHg8QfavIUw=
+	t=1731928509; cv=none; b=cbBNcNWBJcdi3A1gXZLRKnx9eRnl7sLbNoENCUW4Aozsd5acAjYIVVniC0tkQFNzNJx0YGzX7QfIzd7PVlnm/H4hcseFIF3fU2gv819dig8VyxvraDzIDNUfGEcDWckUEF8Rc2IoUaJsMM8qEGc/JXp1IySmJgiSyV6jM2wrg5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731928445; c=relaxed/simple;
-	bh=pyErrRXkhifmAwSePxwTdGqPL4ScPIP2rk07J3ovzkg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OcFdUz+nosQhZlqCEBVcpuplxzPX2YmIBmGmiiwbqLcYygoIiqFYGE59UjhWxt4ezNM5BYCnEWSQxlmMISpetFhBOOw9rJNd561TmO8lKMaselF5bI3GhEa+seQOQpzWsDN0f+cTfyXrBdHf/HC1VlD/plwlGUOuAgtb/iKmtpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=A2l/pWR0; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-7ee020ec76dso3141832a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 03:14:03 -0800 (PST)
+	s=arc-20240116; t=1731928509; c=relaxed/simple;
+	bh=sJUTlnBSwsG8OmoEj9g6GSrcQrO4OkMEGLeEOJAWU6s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KYfFF4VlXgcyKTz+W5/LtcY/Ua5sWqe6/kbdnDO3C98vPtSIgmaNqsyD2KYySlAKJtCVXcbA+rAIieApQ78tdn+NbG9MxnfVtith7+nKr4dbjDuHA4/cqdrLVlGM9W23d8U/POs/X3MtLWF4XAcg0acV9BIbxYi81vhHYvdhYZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=W/gt8AwZ; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-53da209492cso3362880e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 03:15:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1731928443; x=1732533243; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ORrVs+s0V5otpD68MhZ7rAWmPvfENIKBy1EC12UuyQs=;
-        b=A2l/pWR0YqqigB7afob7sOlpW70OKqjyi4/sELGretnVr6HGf0XZsLPtm8kz/VfQ82
-         TNWHV+NQJJcBL5OPK6IGsNcPLAhVbdyqIvPlx8ls/P3lxbCqWHspsOp5kXdRzlo4Sdhi
-         S/VmkgEsL8cR0Hf+GgXXhSM58jmN7UsDZbD0xF4HlE5JQC2WfM44sx2LLr/rf75zX54V
-         avwPCwXyPeInZhb1o0Dv5c8+mJOBESGbUtdyDF+7X1hnjoSnliEU8b0j8Tukf8jRnfUx
-         FmdWbScpT3M1ikPpwOpNP9ntIduiKhD6rMakq8EUili42fTvqntO8wYAELPqAkqoyYOt
-         sM5Q==
+        d=linaro.org; s=google; t=1731928506; x=1732533306; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ueCD+q2zQmY/7YkNPGnLJZ4H8YDacRal4x3H4VT+8ig=;
+        b=W/gt8AwZvjHOwjAXmJGBPG2W1zq3nKan6YII2E1Ih+m9bQ3+dNlt4f8O0i60kawQDt
+         A7e8s/P6wydG71kfGbDrchwMvHNTu2j0o/E9HG9tW5emqnngElDqZNlec/e6X8p/9H4p
+         TRvgCjoi7NK/4bZbFNWRv6o/CPjUtuS5ASwjDnXiWcaXqXmv42mZF3vUiCCEJ34ji+g7
+         ZOW2U/0jYL8rqzwCTar7Mm0mknuNXFwfu8E4Bwr3X4OhYfK9A/kACFCDFhNe5SHa2SI4
+         gu6ayKtUXLqG7/6xIHF1ijLmTcUlRlkkBXhkFw7y/WyIKevYp05empsuma5gjXo2UPQK
+         yTgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731928443; x=1732533243;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ORrVs+s0V5otpD68MhZ7rAWmPvfENIKBy1EC12UuyQs=;
-        b=FyarPCRqA9l3k31aLtNSHz9PLT8aHLnmWSN4jZkp1M6aevlcnpGovBrJUQ2dVwzBVR
-         Z8EWcwpZZeBwF7WLUj8ltIhLA1iQw7Cz3C8+oraJNwfpcIZkpmvxZlmCif0PS1BwjlB8
-         ttAs7zCuMZ2gtV9JzHouDSKb8T8qMMFH86EIQ+UGhuVjLeL+pdYdy1e2eh4+hf4RhYc/
-         0Uc7QmjphNbaoU4kPeoNLLs5xQxKFL0Mcl+BK33323tcriTm6GFlkKq6NKLcLVuBwwz6
-         aSrKkPUty1RsgNFJRY16FSxtKTny52lexNUFCdPDJperGJcODIXhqqSp0gkDqE1hoQud
-         4vAA==
-X-Forwarded-Encrypted: i=1; AJvYcCWa1yYKqAZ3cUtVoq0KXso6nY3eskMpG/oUJI5H1mxuKIZTiNfQS+xpIXT7cBvcQ4oN6zbT9wQVo4JXDXw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxqw5UQymRH7nwxndIEe5EWnH0xxgVjDQwaLjLL0XKN9GlbQR2u
-	mBxw4RuSXQDxZuFPb9L91/RxayeKVGnYWvW38FBmAmF8czZ4QKx+xypdeKFpWj0=
-X-Google-Smtp-Source: AGHT+IEH6pemOWN/YAryx+DlY/pBV3dgpcgNKO/QEpdyCBZYCTXDYKz3IjnBXx8ovLRGEl/XltUULA==
-X-Received: by 2002:a05:6a20:394d:b0:1d9:c78f:4207 with SMTP id adf61e73a8af0-1dc90b1c34amr16642798637.11.1731928442746;
-        Mon, 18 Nov 2024 03:14:02 -0800 (PST)
-Received: from [10.84.149.95] ([203.208.167.151])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724771394ffsm5899231b3a.90.2024.11.18.03.13.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Nov 2024 03:14:02 -0800 (PST)
-Message-ID: <d897a1d3-bf72-48f2-b4df-1f7acb3ac311@bytedance.com>
-Date: Mon, 18 Nov 2024 19:13:53 +0800
+        d=1e100.net; s=20230601; t=1731928506; x=1732533306;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ueCD+q2zQmY/7YkNPGnLJZ4H8YDacRal4x3H4VT+8ig=;
+        b=MZqAHrFpnOw28aJhmS2l/HoF0j8Zp0jtBuNHjPWfL02p8I6Y5/vKb5+T2qWs8rXK06
+         +1AV8EUMz+U1go6JP/kpF35wTzUnvQQiqheJD89sPVuETtj3KlQ0PZkfdjvdMfjBWkpN
+         KRl9s9ilZoYz54u/djas2zmxJFrzjEwBwGVG49ZZLn1ko+Nb4yxh6uMxRgO4LLz9dx2C
+         mne4vShCM3beCOfp5huwQkDk3U8ZniB4E9mwDPYl0S4CaX4DZr3W3AJ1afOE8D4ZdmDm
+         RVf6STZ70Lcxm1NBSiz27seVXpU3nZCVYIJTNfxENM9z6L0NGsqVCYES9TTuPoLTzUjn
+         2k2w==
+X-Forwarded-Encrypted: i=1; AJvYcCXvdTqtpVHWHTtPJyO4wcvCEMikAz+Du6bws0Z/AK4yGIS79FFZp+ij7iQcV26rMnZiUfwt9Tq7x3YFik4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfHUQJbtZDX+rYmwVbGIKxljb7XbbNzeDZ+vaUFFNhHP4l8osj
+	T44haL0TCQ638BvTGYF6ldOdBPzOkmZu97s5NK7grWWB7RXAOlMDM0vdEFcay/k=
+X-Google-Smtp-Source: AGHT+IEUgWujqarYJLRGIXqX4efB6WP1xJ2RKrxxUOdVOeuS9AsGg98BIlDWVAaoRlKSwDHri4RUnw==
+X-Received: by 2002:ac2:4bc1:0:b0:539:8fcd:524 with SMTP id 2adb3069b0e04-53dab2a6af0mr4788179e87.30.1731928505602;
+        Mon, 18 Nov 2024 03:15:05 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53da653e19csm1575151e87.199.2024.11.18.03.15.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Nov 2024 03:15:04 -0800 (PST)
+Date: Mon, 18 Nov 2024 13:15:01 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
+Cc: vkoul@kernel.org, kishon@kernel.org, robh+dt@kernel.org, 
+	manivannan.sadhasivam@linaro.org, bhelgaas@google.com, kw@linux.com, lpieralisi@kernel.org, 
+	quic_qianyu@quicinc.com, conor+dt@kernel.org, neil.armstrong@linaro.org, 
+	andersson@kernel.org, konradybcio@kernel.org, quic_shashim@quicinc.com, 
+	quic_kaushalk@quicinc.com, quic_tdas@quicinc.com, quic_tingweiz@quicinc.com, 
+	quic_aiquny@quicinc.com, kernel@quicinc.com, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, 
+	Krishna chaitanya chundru <quic_krichai@quicinc.com>
+Subject: Re: [PATCH 2/5] phy: qcom: qmp: Add phy register and clk setting for
+ QCS615 PCIe
+Message-ID: <2rygkimclano4hcgf5vaz7eyuhcqdal5ybnh5eyci3ig2b5jcl@sq5ygemgdhwr>
+References: <20241118082619.177201-1-quic_ziyuzhan@quicinc.com>
+ <20241118082619.177201-3-quic_ziyuzhan@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/9] mm: introduce skip_none_ptes()
-Content-Language: en-US
-To: David Hildenbrand <david@redhat.com>
-Cc: jannh@google.com, hughd@google.com, willy@infradead.org,
- muchun.song@linux.dev, vbabka@kernel.org, akpm@linux-foundation.org,
- peterx@redhat.com, mgorman@suse.de, catalin.marinas@arm.com,
- will@kernel.org, dave.hansen@linux.intel.com, luto@kernel.org,
- peterz@infradead.org, x86@kernel.org, lorenzo.stoakes@oracle.com,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, zokeefe@google.com,
- rientjes@google.com
-References: <cover.1731566457.git.zhengqi.arch@bytedance.com>
- <574bc9b646c87d878a5048edb63698a1f8483e10.1731566457.git.zhengqi.arch@bytedance.com>
- <c7eeac93-3619-4443-896f-ef2e02f0bef0@redhat.com>
- <617a063e-bd84-4da5-acf4-6ff516512055@bytedance.com>
- <fa3fc933-cd51-4be5-944e-250da9289eda@redhat.com>
- <b524a568-fa3b-4618-80cc-e8c31ea4eeac@bytedance.com>
- <d27a75fa-b968-43d3-bbd3-cc607feee495@redhat.com>
- <253e5fd0-7e98-43fd-b0d7-8a5b739ae4aa@bytedance.com>
- <77b1eddf-7c1b-43e9-9352-229998ce3fc7@redhat.com>
- <5a3428bd-743a-4d51-8b75-163ab560bca7@bytedance.com>
- <4edccc1a-2761-4a5a-89a6-7869c1b6b08a@redhat.com>
- <2b48d313-4f66-47c8-98d8-8aa78db62b1b@bytedance.com>
- <995804f4-b658-44b2-bb40-c84b8a322616@redhat.com>
- <f3adf382-d252-4007-b8ca-c557814cb5c8@bytedance.com>
- <4ee60b7b-a81e-4b94-96c9-52b1bd9d5061@redhat.com>
- <e2870a81-840a-4b33-b65b-318a4a526c26@bytedance.com>
- <332cbacb-cad3-4522-a74b-b5ad5efee4af@redhat.com>
-From: Qi Zheng <zhengqi.arch@bytedance.com>
-In-Reply-To: <332cbacb-cad3-4522-a74b-b5ad5efee4af@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241118082619.177201-3-quic_ziyuzhan@quicinc.com>
 
-
-
-On 2024/11/18 18:59, David Hildenbrand wrote:
-> On 18.11.24 11:56, Qi Zheng wrote:
->>
->>
->> On 2024/11/18 18:41, David Hildenbrand wrote:
->>> On 18.11.24 11:34, Qi Zheng wrote:
->>>>
->>>>
->>>> On 2024/11/18 17:29, David Hildenbrand wrote:
->>>>> On 18.11.24 04:35, Qi Zheng wrote:
->>>>>>
->>>>>>
->>>>>> On 2024/11/15 22:59, David Hildenbrand wrote:
->>>>>>> On 15.11.24 15:41, Qi Zheng wrote:
->>>>>>>>
->>>>>>>>
->>>>>>>> On 2024/11/15 18:22, David Hildenbrand wrote:
->>>>>>>>>>>> *nr_skip = nr;
->>>>>>>>>>>>
->>>>>>>>>>>> and then:
->>>>>>>>>>>>
->>>>>>>>>>>> zap_pte_range
->>>>>>>>>>>> --> nr = do_zap_pte_range(tlb, vma, pte, addr, end, details,
->>>>>>>>>>>> &skip_nr,
->>>>>>>>>>>>                               rss, &force_flush, &force_break);
->>>>>>>>>>>>            if (can_reclaim_pt) {
->>>>>>>>>>>>                none_nr += count_pte_none(pte, nr);
->>>>>>>>>>>>                none_nr += nr_skip;
->>>>>>>>>>>>            }
->>>>>>>>>>>>
->>>>>>>>>>>> Right?
->>>>>>>>>>>
->>>>>>>>>>> Yes. I did not look closely at the patch that adds the 
->>>>>>>>>>> counting of
->>>>>>>>>>
->>>>>>>>>> Got it.
->>>>>>>>>>
->>>>>>>>>>> pte_none though (to digest why it is required :) ).
->>>>>>>>>>
->>>>>>>>>> Because 'none_nr == PTRS_PER_PTE' is used in patch #7 to detect
->>>>>>>>>> empty PTE page.
->>>>>>>>>
->>>>>>>>> Okay, so the problem is that "nr" would be "all processed
->>>>>>>>> entries" but
->>>>>>>>> there are cases where we "process an entry but not zap it".
->>>>>>>>>
->>>>>>>>> What you really only want to know is "was any entry not zapped",
->>>>>>>>> which
->>>>>>>>> could be a simple input boolean variable passed into
->>>>>>>>> do_zap_pte_range?
->>>>>>>>>
->>>>>>>>> Because as soon as any entry was processed but  no zapped, you can
->>>>>>>>> immediately give up on reclaiming that table.
->>>>>>>>
->>>>>>>> Yes, we can set can_reclaim_pt to false when a !pte_none() entry is
->>>>>>>> found in count_pte_none().
->>>>>>>
->>>>>>> I'm not sure if well need cont_pte_none(), but I'll have to take a
->>>>>>> look
->>>>>>> at your new patch to see how this fits together with doing the
->>>>>>> pte_none
->>>>>>> detection+skipping in do_zap_pte_range().
->>>>>>>
->>>>>>> I was wondering if you cannot simply avoid the additional 
->>>>>>> scanning and
->>>>>>> simply set "can_reclaim_pt" if you skip a zap.
->>>>>>
->>>>>> Maybe we can return the information whether the zap was skipped from
->>>>>> zap_present_ptes() and zap_nonpresent_ptes() through parameters 
->>>>>> like I
->>>>>> did in [PATCH v1 3/7] and [PATCH v1 4/7].
->>>>>>
->>>>>> In theory, we can detect empty PTE pages in the following two ways:
->>>>>>
->>>>>> 1) If no zap is skipped, it means that all pte entries have been
->>>>>>        zap, and the PTE page must be empty.
->>>>>> 2) If all pte entries are detected to be none, then the PTE page is
->>>>>>        empty.
->>>>>>
->>>>>> In the error case, 1) may cause non-empty PTE pages to be reclaimed
->>>>>> (which is unacceptable), while the 2) will at most cause empty PTE
->>>>>> pages
->>>>>> to not be reclaimed.
->>>>>>
->>>>>> So the most reliable and efficient method may be:
->>>>>>
->>>>>> a. If there is a zap that is skipped, stop scanning and do not 
->>>>>> reclaim
->>>>>>        the PTE page;
->>>>>> b. Otherwise, as now, detect the empty PTE page through
->>>>>> count_pte_none()
->>>>>
->>>>> Is there a need for count_pte_none() that I am missing?
->>>>
->>>> When any_skipped == false, at least add VM_BUG_ON() to recheck none 
->>>> ptes.
->>>>
->>>>>
->>>>> Assume we have
->>>>>
->>>>> nr = do_zap_pte_range(&any_skipped)
->>>>>
->>>>>
->>>>> If "nr" is the number of processed entries (including pte_none()), and
->>>>> "any_skipped" is set whenever we skipped to zap a !pte_none entry, we
->>>>> can detect what we need, no?
->>>>>
->>>>> If any_skipped == false after the call, we now have "nr" pte_none()
->>>>> entries. -> We can continue trying to reclaim
->>>>
->>>> I prefer that "nr" should not include pte_none().
->>>>
->>>
->>> Why? do_zap_pte_range() should tell you how far to advance, nothing
->>> less, nothing more.
->>>
->>> Let's just keep it simple and avoid count_pte_none().
->>>
->>> I'm probably missing something important?
->>
->> As we discussed before, we should skip all consecutive none ptes,
->  > pte and addr are already incremented before returning.
+On Mon, Nov 18, 2024 at 04:26:16PM +0800, Ziyue Zhang wrote:
+> From: Krishna chaitanya chundru <quic_krichai@quicinc.com>
 > 
-> It's probably best to send the resulting patch so I can either 
-> understand why count_pte_none() is required or comment on how to get rid 
-> of it.
-
-Something like this:
-
-diff --git a/mm/memory.c b/mm/memory.c
-index bd9ebe0f4471f..e9bec3cd49d44 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -1657,6 +1657,66 @@ static inline int zap_nonpresent_ptes(struct 
-mmu_gather *tlb,
-         return nr;
-  }
-
-+static inline int do_zap_pte_range(struct mmu_gather *tlb,
-+                                  struct vm_area_struct *vma, pte_t *pte,
-+                                  unsigned long addr, unsigned long end,
-+                                  struct zap_details *details, int *rss,
-+                                  bool *force_flush, bool *force_break,
-+                                  bool *any_skipped)
-+{
-+       pte_t ptent = ptep_get(pte);
-+       int max_nr = (end - addr) / PAGE_SIZE;
-+
-+       /* Skip all consecutive pte_none(). */
-+       if (pte_none(ptent)) {
-+               int nr;
-+
-+               for (nr = 1; nr < max_nr; nr++) {
-+                       ptent = ptep_get(pte + nr);
-+                       if (!pte_none(ptent))
-+                               break;
-+               }
-+               max_nr -= nr;
-+               if (!max_nr)
-+                       return 0;
-+               pte += nr;
-+               addr += nr * PAGE_SIZE;
-+       }
-+
-+       if (pte_present(ptent))
-+               return zap_present_ptes(tlb, vma, pte, ptent, max_nr,
-+                                       addr, details, rss, force_flush,
-+                                       force_break, any_skipped);
-+
-+       return zap_nonpresent_ptes(tlb, vma, pte, ptent, max_nr, addr,
-+                                  details, rss, any_skipped);
-+}
-+
-+static inline int count_pte_none(pte_t *pte, int nr)
-+{
-+       int none_nr = 0;
-+
-+       /*
-+        * If PTE_MARKER_UFFD_WP is enabled, the uffd-wp PTEs may be
-+        * re-installed, so we need to check pte_none() one by one.
-+        * Otherwise, checking a single PTE in a batch is sufficient.
-+        */
-+#ifdef CONFIG_PTE_MARKER_UFFD_WP
-+       for (;;) {
-+               if (pte_none(ptep_get(pte)))
-+                       none_nr++;
-+               if (--nr == 0)
-+                       break;
-+               pte++;
-+       }
-+#else
-+       if (pte_none(ptep_get(pte)))
-+               none_nr = nr;
-+#endif
-+       return none_nr;
-+}
-+
-+
-  static unsigned long zap_pte_range(struct mmu_gather *tlb,
-                                 struct vm_area_struct *vma, pmd_t *pmd,
-                                 unsigned long addr, unsigned long end,
-@@ -1667,6 +1727,7 @@ static unsigned long zap_pte_range(struct 
-mmu_gather *tlb,
-         int rss[NR_MM_COUNTERS];
-         spinlock_t *ptl;
-         pte_t *start_pte;
-+       bool can_reclaim_pt;
-         pte_t *pte;
-         int nr;
-
-@@ -1679,28 +1740,22 @@ static unsigned long zap_pte_range(struct 
-mmu_gather *tlb,
-         flush_tlb_batched_pending(mm);
-         arch_enter_lazy_mmu_mode();
-         do {
--               pte_t ptent = ptep_get(pte);
--               int max_nr;
--
--               nr = 1;
--               if (pte_none(ptent))
--                       continue;
-+               bool any_skipped;
-
-                 if (need_resched())
-                         break;
-
--               max_nr = (end - addr) / PAGE_SIZE;
--               if (pte_present(ptent)) {
--                       nr = zap_present_ptes(tlb, vma, pte, ptent, max_nr,
--                                             addr, details, rss, 
-&force_flush,
--                                             &force_break);
--                       if (unlikely(force_break)) {
--                               addr += nr * PAGE_SIZE;
--                               break;
--                       }
--               } else {
--                       nr = zap_nonpresent_ptes(tlb, vma, pte, ptent, 
-max_nr,
--                                                addr, details, rss);
-+               nr = do_zap_pte_range(tlb, vma, pte, addr, end, details,
-+                                     rss, &force_flush, &force_break,
-+                                     &any_skipped);
-+               if (can_reclaim_pt) {
-+                       VM_BUG_ON(!any_skipped && count_pte_none(pte, 
-nr) == nr);
-+                       if (any_skipped)
-+                               can_reclaim_pt = false;
-+               }
-+               if (unlikely(force_break)) {
-+                       addr += nr * PAGE_SIZE;
-+                       break;
-                 }
-         } while (pte += nr, addr += PAGE_SIZE * nr, addr != end);
-
-
+> Add support for GEN3 x1 PCIe PHY found on Qualcomm QCS615 platform.
 > 
+> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+> Signed-off-by: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
+> ---
+>  drivers/phy/qualcomm/phy-qcom-qmp-pcie.c   | 105 +++++++++++++++++++++
+>  drivers/phy/qualcomm/phy-qcom-qmp-pcs-v2.h |   1 +
+>  2 files changed, 106 insertions(+)
+> 
+> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c b/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
+> index f71787fb4d7e..df82f95a1fa2 100644
+> --- a/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
+> +++ b/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
+> @@ -726,6 +726,83 @@ static const struct qmp_phy_init_tbl ipq9574_gen3x2_pcie_pcs_misc_tbl[] = {
+>  	QMP_PHY_INIT_CFG(QPHY_V5_PCS_PCIE_ENDPOINT_REFCLK_DRIVE, 0xc1),
+>  };
+>  
+> +static const struct qmp_phy_init_tbl qcs615_pcie_serdes_tbl[] = {
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_BIAS_EN_CLKBUFLR_EN, 0x18),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_CLK_ENABLE1, 0x10),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_BG_TRIM, 0xf),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_LOCK_CMP_EN, 0x1),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_VCO_TUNE_MAP, 0x0),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_VCO_TUNE_TIMER1, 0xff),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_VCO_TUNE_TIMER2, 0x1f),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_CMN_CONFIG, 0x6),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_PLL_IVCO, 0xf),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_HSCLK_SEL, 0x0),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_SVS_MODE_CLK_SEL, 0x1),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_CORE_CLK_EN, 0x20),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_CORECLK_DIV, 0xa),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_RESETSM_CNTRL, 0x20),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_BG_TIMER, 0x9),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_SYSCLK_EN_SEL, 0x4),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_DEC_START_MODE0, 0x82),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_DIV_FRAC_START3_MODE0, 0x3),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_DIV_FRAC_START2_MODE0, 0x55),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_DIV_FRAC_START1_MODE0, 0x55),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_LOCK_CMP3_MODE0, 0x0),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_LOCK_CMP2_MODE0, 0xD),
+
+lowercase the hex. LGTM otherwise.
+
+
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_LOCK_CMP1_MODE0, 0x04),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_CLK_SELECT, 0x35),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_SYS_CLK_CTRL, 0x2),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_SYSCLK_BUF_ENABLE, 0x1f),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_CP_CTRL_MODE0, 0x4),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_PLL_RCTRL_MODE0, 0x16),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_PLL_CCTRL_MODE0, 0x30),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_INTEGLOOP_GAIN1_MODE0, 0x0),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_INTEGLOOP_GAIN0_MODE0, 0x80),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_BIAS_EN_CTRL_BY_PSM, 0x1),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_BG_TIMER, 0xa),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_SSC_EN_CENTER, 0x1),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_SSC_PER1, 0x31),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_SSC_PER2, 0x1),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_SSC_ADJ_PER1, 0x2),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_SSC_ADJ_PER2, 0x0),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_SSC_STEP_SIZE1, 0x2f),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_SSC_STEP_SIZE2, 0x19),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_CLK_EP_DIV, 0x19),
+> +};
+> +
+> +static const struct qmp_phy_init_tbl qcs615_pcie_rx_tbl[] = {
+> +	QMP_PHY_INIT_CFG(QSERDES_RX_SIGDET_ENABLES, 0x1c),
+> +	QMP_PHY_INIT_CFG(QSERDES_RX_SIGDET_DEGLITCH_CNTRL, 0x14),
+> +	QMP_PHY_INIT_CFG(QSERDES_RX_RX_EQU_ADAPTOR_CNTRL2, 0x1),
+> +	QMP_PHY_INIT_CFG(QSERDES_RX_RX_EQU_ADAPTOR_CNTRL3, 0x0),
+> +	QMP_PHY_INIT_CFG(QSERDES_RX_RX_EQU_ADAPTOR_CNTRL4, 0xdb),
+> +	QMP_PHY_INIT_CFG(QSERDES_RX_UCDR_SO_SATURATION_AND_ENABLE, 0x4b),
+> +	QMP_PHY_INIT_CFG(QSERDES_RX_UCDR_SO_GAIN, 0x4),
+> +	QMP_PHY_INIT_CFG(QSERDES_RX_UCDR_SO_GAIN_HALF, 0x4),
+> +};
+> +
+> +static const struct qmp_phy_init_tbl qcs615_pcie_tx_tbl[] = {
+> +	QMP_PHY_INIT_CFG(QSERDES_TX_HIGHZ_TRANSCEIVEREN_BIAS_DRVR_EN, 0x45),
+> +	QMP_PHY_INIT_CFG(QSERDES_TX_LANE_MODE, 0x6),
+> +	QMP_PHY_INIT_CFG(QSERDES_TX_RES_CODE_LANE_OFFSET, 0x2),
+> +	QMP_PHY_INIT_CFG(QSERDES_TX_RCV_DETECT_LVL_2, 0x12),
+> +};
+> +
+> +static const struct qmp_phy_init_tbl qcs615_pcie_pcs_tbl[] = {
+> +	QMP_PHY_INIT_CFG(QPHY_V2_PCS_ENDPOINT_REFCLK_DRIVE, 0x4),
+> +	QMP_PHY_INIT_CFG(QPHY_V2_PCS_OSC_DTCT_ACTIONS, 0x0),
+> +	QMP_PHY_INIT_CFG(QPHY_V2_PCS_PWRUP_RESET_DLY_TIME_AUXCLK, 0x40),
+> +	QMP_PHY_INIT_CFG(QPHY_V2_PCS_L1SS_WAKEUP_DLY_TIME_AUXCLK_MSB, 0x0),
+> +	QMP_PHY_INIT_CFG(QPHY_V2_PCS_L1SS_WAKEUP_DLY_TIME_AUXCLK_LSB, 0x40),
+> +	QMP_PHY_INIT_CFG(QPHY_V2_PCS_PLL_LOCK_CHK_DLY_TIME_AUXCLK_LSB, 0x0),
+> +	QMP_PHY_INIT_CFG(QPHY_V2_PCS_LP_WAKEUP_DLY_TIME_AUXCLK, 0x40),
+> +	QMP_PHY_INIT_CFG(QPHY_V2_PCS_PLL_LOCK_CHK_DLY_TIME, 0x73),
+> +	QMP_PHY_INIT_CFG(QPHY_V2_PCS_SIGDET_CNTRL, 0x7),
+> +	QMP_PHY_INIT_CFG(QPHY_V2_PCS_RX_SIGDET_LVL, 0x99),
+> +	QMP_PHY_INIT_CFG(QPHY_V2_PCS_TXDEEMPH_M6DB_V0, 0x15),
+> +	QMP_PHY_INIT_CFG(QPHY_V2_PCS_TXDEEMPH_M3P5DB_V0, 0xe),
+> +};
+> +
+>  static const struct qmp_phy_init_tbl sdm845_qmp_pcie_serdes_tbl[] = {
+>  	QMP_PHY_INIT_CFG(QSERDES_V3_COM_BIAS_EN_CLKBUFLR_EN, 0x14),
+>  	QMP_PHY_INIT_CFG(QSERDES_V3_COM_CLK_SELECT, 0x30),
+> @@ -2963,6 +3040,31 @@ static const struct qmp_phy_cfg ipq9574_gen3x2_pciephy_cfg = {
+>  	.pipe_clock_rate	= 250000000,
+>  };
+>  
+> +static const struct qmp_phy_cfg qcs615_pciephy_cfg = {
+> +	.lanes			= 1,
+> +
+> +	.offsets		= &qmp_pcie_offsets_v2,
+> +
+> +	.tbls = {
+> +		.serdes		= qcs615_pcie_serdes_tbl,
+> +		.serdes_num	= ARRAY_SIZE(qcs615_pcie_serdes_tbl),
+> +		.tx		= qcs615_pcie_tx_tbl,
+> +		.tx_num		= ARRAY_SIZE(qcs615_pcie_tx_tbl),
+> +		.rx		= qcs615_pcie_rx_tbl,
+> +		.rx_num		= ARRAY_SIZE(qcs615_pcie_rx_tbl),
+> +		.pcs		= qcs615_pcie_pcs_tbl,
+> +		.pcs_num	= ARRAY_SIZE(qcs615_pcie_pcs_tbl),
+> +	},
+> +	.reset_list		= sdm845_pciephy_reset_l,
+> +	.num_resets		= ARRAY_SIZE(sdm845_pciephy_reset_l),
+> +	.vreg_list		= qmp_phy_vreg_l,
+> +	.num_vregs		= ARRAY_SIZE(qmp_phy_vreg_l),
+> +	.regs			= pciephy_v2_regs_layout,
+> +
+> +	.pwrdn_ctrl		= SW_PWRDN | REFCLK_DRV_DSBL,
+> +	.phy_status		= PHYSTATUS,
+> +};
+> +
+>  static const struct qmp_phy_cfg sdm845_qmp_pciephy_cfg = {
+>  	.lanes			= 1,
+>  
+> @@ -4400,6 +4502,9 @@ static const struct of_device_id qmp_pcie_of_match_table[] = {
+>  	}, {
+>  		.compatible = "qcom,msm8998-qmp-pcie-phy",
+>  		.data = &msm8998_pciephy_cfg,
+> +	}, {
+> +		.compatible = "qcom,qcs615-qmp-gen3x1-pcie-phy",
+> +		.data = &qcs615_pciephy_cfg,
+>  	}, {
+>  		.compatible = "qcom,sa8775p-qmp-gen4x2-pcie-phy",
+>  		.data = &sa8775p_qmp_gen4x2_pciephy_cfg,
+> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-pcs-v2.h b/drivers/phy/qualcomm/phy-qcom-qmp-pcs-v2.h
+> index bf36399d0057..1ecf4b5beba6 100644
+> --- a/drivers/phy/qualcomm/phy-qcom-qmp-pcs-v2.h
+> +++ b/drivers/phy/qualcomm/phy-qcom-qmp-pcs-v2.h
+> @@ -34,6 +34,7 @@
+>  #define QPHY_V2_PCS_USB_PCS_STATUS			0x17c /* USB */
+>  #define QPHY_V2_PCS_PLL_LOCK_CHK_DLY_TIME_AUXCLK_LSB	0x1a8
+>  #define QPHY_V2_PCS_OSC_DTCT_ACTIONS			0x1ac
+> +#define QPHY_V2_PCS_SIGDET_CNTRL			0x1b0
+>  #define QPHY_V2_PCS_RX_SIGDET_LVL			0x1d8
+>  #define QPHY_V2_PCS_L1SS_WAKEUP_DLY_TIME_AUXCLK_LSB	0x1dc
+>  #define QPHY_V2_PCS_L1SS_WAKEUP_DLY_TIME_AUXCLK_MSB	0x1e0
+> -- 
+> 2.34.1
+> 
+
+-- 
+With best wishes
+Dmitry
 
