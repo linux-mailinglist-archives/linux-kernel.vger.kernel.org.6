@@ -1,90 +1,102 @@
-Return-Path: <linux-kernel+bounces-413344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD0749D17BB
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 19:10:44 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D593E9D17C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 19:12:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 652011F210A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 18:10:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38348B268D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 18:12:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3B731DE4F4;
-	Mon, 18 Nov 2024 18:10:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33F881DED5D;
+	Mon, 18 Nov 2024 18:12:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nrdw2N5g"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tq/vcwfl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B55B1AE01D
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 18:10:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92D7319DF4A;
+	Mon, 18 Nov 2024 18:12:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731953437; cv=none; b=sKXdfQfmT+gTUmxxn65IDi/T4URMQ6nl7M9vy2LMjUkn/z5zMgZB/syA1rjo9ARaZjA7U8g5KkRp3c1S55SOFJX7lSC+Lpp0xOJfxwtESQHYQNIWs/xv9L/ELEwNgvQl6Cp+0xJdIL5W/7z60cPGyTiY3g8H3XSoRM9K7TvflOc=
+	t=1731953570; cv=none; b=urTxlLjZrq9JJdq8cetkgl/0QV77LSONDdxjtHyjTp+oC0TVR8lTD5xY/5Ad/0CtGJ1JhEsvYBpgLn7AgpmUJ+c5+VjFKn8WvhRQgK+PcPC9+oHpcxVAaGXCjG+0ydCvs4mje2m68iGweY13efNxtMF+T1XCozBs4Y17JnnbaTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731953437; c=relaxed/simple;
-	bh=1LD1OjvX7MvGySu3HX8WI19LSyFazrCL61ZaCKX7ZcU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ml0xpkFPMHYxivb4U5G3fQDBmI0RRVH10NehNZzeA2QDbh6W0f/ImhQOtNSV2JT9RUA/e9OBTIBWdludG3vmnb8uFTiTgpqc4hAsxirEzqr9xEtmwDu8q8KfMb4lPbPhZZkEmKUYh+M1gmH6554fFlJuYkTzkvBy3VF6UKGYlB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nrdw2N5g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95F70C4CECC;
-	Mon, 18 Nov 2024 18:10:35 +0000 (UTC)
+	s=arc-20240116; t=1731953570; c=relaxed/simple;
+	bh=YwZjBB6hgO/g9UA0GSo0eqjMxLvqj//2HoPj9LGIuMs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZlgohCMkOewT1wOMagsJO1+XO7mP+WdwZBk/W504uQtDUmTPEe9UbVvndzh1km6MzmGBnv9DV/5eUiRLVWcdc968I58b7MwAQnn/mp6V6ci2p+wS5xDlLg3Ftxgh1ven7f2ntMh9vV4Vl1xN0HuQ5eNJSn37Ep8+giyUiy9cv/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tq/vcwfl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4EEDC4CECC;
+	Mon, 18 Nov 2024 18:12:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731953436;
-	bh=1LD1OjvX7MvGySu3HX8WI19LSyFazrCL61ZaCKX7ZcU=;
-	h=Date:From:To:Cc:Subject:From;
-	b=nrdw2N5gJvOmTtVxzxgUsQpZWYtz3JG8iDTFxxo5aa2rs0ZTd7tQPBpDzKGyLyjOD
-	 rYP0ZVRZnEwYtChmqvhMNieULw1VLYNoGeBGJDPM9JCC09+lNUcux5+kFVrIMq0k4N
-	 QHba+bnQ4yHix5XK4uTTcU/5ASiznywYl2GtL/nDmRGJLAyQ1b8S/51fALOZRkkbsF
-	 LMPCiluRQqqP/uSe0SmuZXOqXR4PNlMZgA/NsEheNRG6K8AzRrTU8xaDDhgiGeBTLl
-	 RqXJCwbPIh8O1Pd7zbYkLtVl+6mMfX1HXNm/Am4yvsibjIKV3m4FSjACTb+OBk3Kyu
-	 mxzXgFZsCef3g==
-Date: Mon, 18 Nov 2024 19:10:32 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, the arch/x86 maintainers <x86@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>
-Subject: [GIT PULL] x86/mm changes for v6.13
-Message-ID: <ZzuDGEhcbe3slIgt@gmail.com>
+	s=k20201202; t=1731953570;
+	bh=YwZjBB6hgO/g9UA0GSo0eqjMxLvqj//2HoPj9LGIuMs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tq/vcwflmqImOGUZmEW9UM2uYdEbX4QKT+2zvTkCSQL7S3aQoPihoKL4uTCG7Fva3
+	 CpBCn3ekbkvAeZw+3sYi5/4LPYYEre5LEIac+R2gKoECrmVLML/C2K/lDNxlRwhNIj
+	 8OEb6KMT0GclJFfmiYAIXI+dTH5SLRv1xG36Panx6m4gplAbvhL92Lwk/DIniLT2G3
+	 oro9AhKJMi08nPnf9TZ6MeHmbYR7nrQw26DTDHUPBnbh8GOnJ1YFjZu/rBxusUTm1d
+	 /DUN3Q3eQfpYb7F2G7DElVKRJcmqvDbNg4zKDQq3sqFZXaa3j2sgTiZJvqH9q2jGXN
+	 4IMB6bkylZgnw==
+Date: Mon, 18 Nov 2024 18:12:45 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Yunsheng Lin <yunshenglin0825@gmail.com>
+Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com,
+	linyunsheng@huawei.com, Andrew Morton <akpm@linux-foundation.org>,
+	Alexander Duyck <alexanderduyck@fb.com>,
+	Linux-MM <linux-mm@kvack.org>, Shuah Khan <shuah@kernel.org>,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] mm: page_frag: fix a compile error when kernel
+ is not compiled
+Message-ID: <91e7e9c3-fbf9-40c7-9a7e-52fc800fe6a7@sirena.org.uk>
+References: <20241116042314.100400-1-yunshenglin0825@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="IaKl+DyrWtyGOQED"
+Content-Disposition: inline
+In-Reply-To: <20241116042314.100400-1-yunshenglin0825@gmail.com>
+X-Cookie: Used staples are good with SOY SAUCE!
+
+
+--IaKl+DyrWtyGOQED
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Linus,
+On Sat, Nov 16, 2024 at 12:23:13PM +0800, Yunsheng Lin wrote:
+> page_frag test module is an out of tree module, but built
+> using KDIR as the main kernel tree, the mm test suite is
+> just getting skipped if newly added page_frag test module
+> fails to compile due to kernel not yet compiled.
+>=20
+> Fix the above problem by ensuring both kernel is built first
+> and a newer kernel which has page_frag_cache.h is used.
 
-Please pull the latest x86/mm Git tree from:
+Tested-by: Mark Brown <broonie@kernel.org>
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-mm-2024-11-18
+(for the case where we skip the build.)
 
-   # HEAD: 7e33001b8b9a78062679e0fdf5b0842a49063135 x86/mm/tlb: Put cpumask_test_cpu() check in switch_mm_irqs_off() under CONFIG_DEBUG_VM
+--IaKl+DyrWtyGOQED
+Content-Type: application/pgp-signature; name="signature.asc"
 
-x86/mm changes for v6.13:
+-----BEGIN PGP SIGNATURE-----
 
- - x86/mm/tlb: Put cpumask_test_cpu() check in switch_mm_irqs_off()
-               under CONFIG_DEBUG_VM, to micro-optimize the context-switching
-	       code (Rik van Riel)
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmc7g5wACgkQJNaLcl1U
+h9DsvAf/bePfZQEkqvzyO5YOYn9KTkYZndX0ym/FzYdhPQwrMfr++Hrv8SgujAiE
+IYM0Fxi/AVXCMFZCjfrdLdK4XGPuSMepPRSmu/EM+Yp0dwSksMHLReoUit23qAKK
+zgeprOGfU0LYC2c4yWo7Ia5RnX+kbsGJg/7H0GGH80wlzzEwGPEnADZORpxymiln
+KbLqOfg0jyPbuVR4Q1RDFzasY+1n347g9Umuj/g966D6HJeOsBWj8L3LOYH9IcOr
+SsVqNhNUM4EKvn4N0rzcpiRqxCidlY5FWwzLF8Qn7JLG6D0kipTLzkx9j+tIKLSt
+VYn/BdrtF97+2OeYiRgqm1sAkc4jqQ==
+=M4um
+-----END PGP SIGNATURE-----
 
- - x86/mm/doc: Add missing details in virtual memory layout (Kirill A. Shutemov)
-
- Thanks,
-
-	Ingo
-
------------------->
-Kirill A. Shutemov (1):
-      x86/mm/doc: Add missing details in virtual memory layout
-
-Rik van Riel (1):
-      x86/mm/tlb: Put cpumask_test_cpu() check in switch_mm_irqs_off() under CONFIG_DEBUG_VM
-
-
- Documentation/arch/x86/x86_64/mm.rst | 35 +++++++++++++++++++++++++++++------
- arch/x86/mm/tlb.c                    |  2 +-
- 2 files changed, 30 insertions(+), 7 deletions(-)
+--IaKl+DyrWtyGOQED--
 
