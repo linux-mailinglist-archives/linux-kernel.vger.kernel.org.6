@@ -1,165 +1,148 @@
-Return-Path: <linux-kernel+bounces-412308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 397A39D075A
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 02:00:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63D119D075E
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 02:02:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D75D91F218FC
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 01:00:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 052EF1F21BC4
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 01:02:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B8FE175BF;
-	Mon, 18 Nov 2024 01:00:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEC951CA94;
+	Mon, 18 Nov 2024 01:02:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a/sbYKbB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="EXd+wdK8"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3FCC4A35;
-	Mon, 18 Nov 2024 01:00:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7532B79CF;
+	Mon, 18 Nov 2024 01:02:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731891643; cv=none; b=ixF+woLHXKHTyZ94Bg7J8ZefVT5+E3ba9MUriJ4tVGkHYYyJFtsy+n0e4i4m9LZeCZJgyIKES221ILd8tRjKV5+eea6kMeZmlDGkFLG8qvS9gnOoAVJ3l3wSPVuEmoh1l+DxvqqIdBjYP/vdGEzTRgZkhmelcQHxd5ef6zzShUc=
+	t=1731891744; cv=none; b=A3h3dkybeE6OSLVjAzxBwLRGq5KGG34gdz/CXCe1v32u4HGTsvTCIq0myHQSsu/N4hBf30VnDk9HjqoRfTGLNv8P+b5zGaDKh73PCXpATTkWIZSL/b2/hVnnMyHVX+m+HpOje4kUvu13GV6oKJabx9EC8uGR26XcFwCCt3cLPBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731891643; c=relaxed/simple;
-	bh=Cd87xfvt+xDaiNXRe88pN17P05Pejn7OP7xc2z+Lb10=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PgdOOCCprEF3PFerpr7h7+A1aJSNYcYARAElLWM4MrD70hCiizdkWuZUr8nXJhopFUH3Rmma6ETAT1qstT+ySreo6fko6swXa3A/Y7D5zJLuMnB2byZ/YauBKNYGsuoGQmeSzbeyeuhpdqLpbfl16c76caqxe+3BLtY1HVp2pek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a/sbYKbB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6DE9C4CECD;
-	Mon, 18 Nov 2024 01:00:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731891642;
-	bh=Cd87xfvt+xDaiNXRe88pN17P05Pejn7OP7xc2z+Lb10=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=a/sbYKbBhHo+HBD5o/qZn0iUltf2E+Bo4qRp4unvn0CiZvcrUjWUUwT+6l/iRdy0G
-	 3nt9ine8ancIP0x0T2+yYgwARrWfuJUpx1k1wYXBzABDkkGOc0g16L7RCZTfl5odov
-	 KgbnGMwhiiJjMN1LZ55WIVR1BqBc6pPFHiyo62cyaUe43mEFHzBHmgl795QPB5vQ/u
-	 D4tVAxELG1BCzmX3ytJplowRiSyOU/QnL2ORMFbhH25CwRi7tOfcj/Dqk5BRYdaC1N
-	 7FNtk7V5bjSrZEqT24WfN8fv/ULAdFEfYkc4khH9GJExvpkmwv1nmjiK6Ga2ZerqIz
-	 npQyqYd+jtYFw==
-Date: Sun, 17 Nov 2024 18:00:40 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Piotr Zalewski <pZ010001011111@proton.me>, kent.overstreet@linux.dev
-Cc: ndesaulniers@google.com, morbo@google.com, justinstitt@google.com,
-	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev, skhan@linuxfoundation.org
-Subject: Re: [PATCH] bcachefs: initialize local variables in
- bch2_evacuate_bucket
-Message-ID: <20241118010040.GB3588455@thelio-3990X>
-References: <20241117234334.722730-4-pZ010001011111@proton.me>
+	s=arc-20240116; t=1731891744; c=relaxed/simple;
+	bh=IGNouuMdJ5XOR/9dlU6EcY6EPlihRfta8uOShRul4vI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Qba81UimtPyD5R2m+2TntA4dVQ1DhF3a8pC7awn2Fv5F9rMOpA1sr0aNqyifu0PtyI0X3Gp4UJJDuwOKK8KO1sN+LkgQYcoHrPqhVcQ/pNH3iMMay9y7kXDIjK1jjyBBj5V+rwf6qUFKa7hzwDXBlh8kuyP0WKXDfW+KyituQgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=EXd+wdK8; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AHDuAdB003341;
+	Mon, 18 Nov 2024 01:02:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	dBDM9G0SVfojD6pu0UvAgUdsM+YYMATzysm281v9ueU=; b=EXd+wdK8HIC/Nvtl
+	NGive39yhottlqLNbn5bNKrZHq2qv3PmlWfmKAknt0ijOq57vCafjBkVNFzfcOVg
+	UUQFUI3V9tGNDqyIEMhXh7oJrL1f+fosSQLxAtIu1VEcBTVTnqDcXzDa+Xz2VnfV
+	GmYTN71ftizHRxbIbdEe5sbxIB+MyV+JuFRuqY9Ur8Tv/LDWJ3sV0PwIwON2hAlF
+	9mI4Spzjf4ck2BWQRz6yVpqU1sCVstDuMCmUKXKCueGsGUehrZ/ENSpwv20P4aqO
+	smplmIU/rqTiq3qiKww/0shEDh/hhu/CYsRLNQ8o1vq7koGlGNkgVQ420q62hcXp
+	86TIMw==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42xkv9u01w-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 18 Nov 2024 01:02:05 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AI124rC019347
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 18 Nov 2024 01:02:04 GMT
+Received: from [10.253.15.8] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 17 Nov
+ 2024 17:02:00 -0800
+Message-ID: <6fd79a88-bab4-477c-aaf0-0dffb80e103c@quicinc.com>
+Date: Mon, 18 Nov 2024 09:01:58 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241117234334.722730-4-pZ010001011111@proton.me>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] arm64: dts: qcom: qcs615: add ethernet node
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Richard Cochran <richardcochran@gmail.com>
+CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <quic_tingweiz@quicinc.com>, <quic_aiquny@quicinc.com>
+References: <20241010-dts_qcs615-v1-0-05f27f6ac4d3@quicinc.com>
+ <20241010-dts_qcs615-v1-1-05f27f6ac4d3@quicinc.com>
+ <1e902d79-5dad-4d12-a80e-464dbcf851c3@oss.qualcomm.com>
+Content-Language: en-US
+From: Yijie Yang <quic_yijiyang@quicinc.com>
+In-Reply-To: <1e902d79-5dad-4d12-a80e-464dbcf851c3@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: IAhippoAc_vikBIui2nQ2bnbb1RPaiPx
+X-Proofpoint-GUID: IAhippoAc_vikBIui2nQ2bnbb1RPaiPx
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ adultscore=0 mlxlogscore=908 priorityscore=1501 suspectscore=0
+ malwarescore=0 phishscore=0 impostorscore=0 mlxscore=0 bulkscore=0
+ clxscore=1015 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411180008
 
-On Sun, Nov 17, 2024 at 11:48:23PM +0000, Piotr Zalewski wrote:
-> Compiling bcachefs sources with LLVM triggers uninitialized variables
-> warnings.
+
+
+On 2024-11-16 03:11, Konrad Dybcio wrote:
+> On 10.10.2024 5:05 AM, Yijie Yang wrote:
+>> Add ethqos ethernet controller node for QCS615 SoC.
+>>
+>> Signed-off-by: Yijie Yang <quic_yijiyang@quicinc.com>
+>> ---
+>>   arch/arm64/boot/dts/qcom/qcs615.dtsi | 27 +++++++++++++++++++++++++++
+>>   1 file changed, 27 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/qcs615.dtsi b/arch/arm64/boot/dts/qcom/qcs615.dtsi
+>> index 0d8fb557cf48..ba737cd89679 100644
+>> --- a/arch/arm64/boot/dts/qcom/qcs615.dtsi
+>> +++ b/arch/arm64/boot/dts/qcom/qcs615.dtsi
+>> @@ -420,6 +420,33 @@ soc: soc@0 {
+>>   		#address-cells = <2>;
+>>   		#size-cells = <2>;
+>>   
+>> +		ethernet: ethernet@20000 {
+>> +			compatible = "qcom,qcs615-ethqos", "qcom,sm8150-ethqos";
+>> +			reg = <0x0 0x20000 0x0 0x10000>,
+>> +			      <0x0 0x36000 0x0 0x100>;
 > 
-> Signed-off-by: Piotr Zalewski <pZ010001011111@proton.me>
-> ---
->  fs/bcachefs/move.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> Please pad the address part to 8 hex digits with leading zeroes
 > 
-> diff --git a/fs/bcachefs/move.c b/fs/bcachefs/move.c
-> index 8c032ef3a567..94cac498d372 100644
-> --- a/fs/bcachefs/move.c
-> +++ b/fs/bcachefs/move.c
-> @@ -674,8 +674,8 @@ int bch2_evacuate_bucket(struct moving_context *ctxt,
->  	struct bkey_buf sk;
->  	struct bkey_s_c k;
->  	struct data_update_opts data_opts;
-> -	unsigned dirty_sectors, bucket_size;
-> -	u64 fragmentation;
-> +	unsigned dirty_sectors = 0, bucket_size = 0;
-> +	u64 fragmentation = 0;
+>> +			reg-names = "stmmaceth", "rgmii";
+>> +
+>> +			clocks = <&gcc GCC_EMAC_AXI_CLK>,
+>> +			         <&gcc GCC_EMAC_SLV_AHB_CLK>,
+>> +			         <&gcc GCC_EMAC_PTP_CLK>,
+>> +			         <&gcc GCC_EMAC_RGMII_CLK>;
+>> +			clock-names = "stmmaceth", "pclk", "ptp_ref", "rgmii";
+> 
+> Please make this a vertical list, just like clocks
 
-Shouldn't these just be removed altogether...? They are only used in a
-trace event and now only zero.
+Sure, I will revise.
 
-$ rg 'dirty_sectors|bucket_size|fragmentation' fs/bcachefs/move.c
-677:    unsigned dirty_sectors, bucket_size;
-678:    u64 fragmentation;
-814:    trace_evacuate_bucket(c, &bucket, dirty_sectors, bucket_size, fragmentation, ret);
+> 
+> Konrad
 
-Something like below seems to compile.
+-- 
+Best Regards,
+Yijie
 
-Cheers,
-Nathan
-
-diff --git a/fs/bcachefs/move.c b/fs/bcachefs/move.c
-index 88ab9d7e1a1b..412ef9897361 100644
---- a/fs/bcachefs/move.c
-+++ b/fs/bcachefs/move.c
-@@ -674,8 +674,6 @@ int bch2_evacuate_bucket(struct moving_context *ctxt,
- 	struct bkey_buf sk;
- 	struct bkey_s_c k;
- 	struct data_update_opts data_opts;
--	unsigned dirty_sectors, bucket_size;
--	u64 fragmentation;
- 	int ret = 0;
- 
- 	struct bch_dev *ca = bch2_dev_tryget(c, bucket.inode);
-@@ -811,7 +809,7 @@ int bch2_evacuate_bucket(struct moving_context *ctxt,
- 		bch2_btree_iter_advance(&bp_iter);
- 	}
- 
--	trace_evacuate_bucket(c, &bucket, dirty_sectors, bucket_size, fragmentation, ret);
-+	trace_evacuate_bucket(c, &bucket, ret);
- err:
- 	bch2_trans_iter_exit(trans, &bp_iter);
- 	bch2_dev_put(ca);
-diff --git a/fs/bcachefs/trace.h b/fs/bcachefs/trace.h
-index 5597b9d6297f..f67914367acf 100644
---- a/fs/bcachefs/trace.h
-+++ b/fs/bcachefs/trace.h
-@@ -846,18 +846,13 @@ TRACE_EVENT(move_data,
- );
- 
- TRACE_EVENT(evacuate_bucket,
--	TP_PROTO(struct bch_fs *c, struct bpos *bucket,
--		 unsigned sectors, unsigned bucket_size,
--		 u64 fragmentation, int ret),
--	TP_ARGS(c, bucket, sectors, bucket_size, fragmentation, ret),
-+	TP_PROTO(struct bch_fs *c, struct bpos *bucket, int ret),
-+	TP_ARGS(c, bucket, ret),
- 
- 	TP_STRUCT__entry(
- 		__field(dev_t,		dev		)
- 		__field(u64,		member		)
- 		__field(u64,		bucket		)
--		__field(u32,		sectors		)
--		__field(u32,		bucket_size	)
--		__field(u64,		fragmentation	)
- 		__field(int,		ret		)
- 	),
- 
-@@ -865,17 +860,12 @@ TRACE_EVENT(evacuate_bucket,
- 		__entry->dev			= c->dev;
- 		__entry->member			= bucket->inode;
- 		__entry->bucket			= bucket->offset;
--		__entry->sectors		= sectors;
--		__entry->bucket_size		= bucket_size;
--		__entry->fragmentation		= fragmentation;
- 		__entry->ret			= ret;
- 	),
- 
--	TP_printk("%d,%d %llu:%llu sectors %u/%u fragmentation %llu ret %i",
-+	TP_printk("%d,%d %llu:%llu ret %i",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
--		  __entry->member, __entry->bucket,
--		  __entry->sectors, __entry->bucket_size,
--		  __entry->fragmentation, __entry->ret)
-+		  __entry->member, __entry->bucket, __entry->ret)
- );
- 
- TRACE_EVENT(copygc,
 
