@@ -1,158 +1,129 @@
-Return-Path: <linux-kernel+bounces-412518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB2139D09FE
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 08:04:03 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D14C9D09FD
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 08:03:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22C142827B9
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 07:04:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 197CAB224C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 07:03:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 607D413AA4C;
-	Mon, 18 Nov 2024 07:03:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16AFB1494D9;
+	Mon, 18 Nov 2024 07:03:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fNHLe9tq"
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Qg9yzeki"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC45C322E
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 07:03:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DC47322E;
+	Mon, 18 Nov 2024 07:03:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731913429; cv=none; b=uaAxy2PjdWGxMVDSawz1u+e7RzxcbiE2uDSXi0MPz6UwaJQqmkMud7HzAyG+uocZw5G2dHsbnhEnd1LIMXvKE3OxOyCZUrPZXT5TlWdGvtjIpjmRFKpVjcvTZ7itYhBGoOneom9uEFdiyl/6dbUFtXGWqWAMsMQShNsnSMNeLLQ=
+	t=1731913416; cv=none; b=jxdFo/JgjWMx2kKMK03LPm6UsCgDNstm7q6sdZel87ihPtf8VVivC3mlg4fwTH5vKLFpc7loa8M1htD9DGylUOsoLohM9+JXMIwWHZYVsCaJtxcSLN2kK+W6zZ4Y8FgmWfrgp9gd3QjcG7mf1ILIEwL5YonOfGYpH967+JLrHuM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731913429; c=relaxed/simple;
-	bh=d1e4eZjC8SC8rU1hW8U3lxcUMIYZETjRd7XIDiOv6OQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=px1lJaHqhJ+6gZpTSGCwFLyeHZSK+Ob0JSSHdFFxHiOSqJztp+QRZU/nMu9Fp4kmRnFJiMNdvY7SDRyZNkPSose3sZm+bueY0qK+M0TOSQWmbdxzjOib24SVlljLY8cJ59i0MWdz/lu/40OiJlJ7fwZimHKAk4wuPWkLADpBsZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fNHLe9tq; arc=none smtp.client-ip=209.85.128.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6ee676b4e20so19782347b3.3
-        for <linux-kernel@vger.kernel.org>; Sun, 17 Nov 2024 23:03:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731913427; x=1732518227; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VLPV6VvTQgCuByNHMKVl9QG7CmMBn7jYkbg8c2F0yrQ=;
-        b=fNHLe9tq5BiErcaEWaEiBs5BvVoufJhPYNny4GyIKyPU6kzxGtGnFitnEkmIc3+CAv
-         4RKAOpu+5j3OKbxC9nWKNSkOJkEApQXX+RYKvCWj+5zaY/k9yWY+plVt/BF9cUqYKHTD
-         whTuqXxio/FMq79JoejlvZk5H5ptkKcJcq9KlR4xuJSWSeCE9bLKo+NqKBoXEDZFmK7H
-         blNG46KR15odWiNYPEcvoaRNjOyqvi/5t7qAX1xypVT+E0EU3pZgbmOJ/qDGMapqGxNW
-         6Po8vCCexuvpdWQnpzFSXTAH3N8NqBmvgGNzKVeD7nLLjRF7T7stcJHp/NKfTM8xNVIM
-         4m2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731913427; x=1732518227;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VLPV6VvTQgCuByNHMKVl9QG7CmMBn7jYkbg8c2F0yrQ=;
-        b=xAxJpYDVAqaxMTqHSwcBcZzQwQH4qEJ1XflnwzwoFT+6a/9CFO2PZAYRjjZ6MTKJ84
-         ivPNiXQuUA5S0rPG8r2AIe+p6YFJvtx/nN6Jqfrt4A2Z3fK6j0SfrRTwKPKCnGwKOesj
-         cVh5lZ9dT4CYuGbO7Bk8J4rzmTkn2+oBcATVPCFgn3R3/Gl4DnhjBPXMXes+1PJG4ANl
-         TnI4pjoy5m9L49Jib30zHUSaojydh2UShEEJXFDKAFtGnDdu3gpL22FOCbiVbKlgrXDn
-         TkeG6BwLMBpjLmuru7acdViyXojNfgGt/Ymkon2XkCSmpq+tIqjxj5/ZoGloGIasBxoz
-         leNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXlgrErKFsIf1s5a43oPg3RIjTVxAsLowD2mOH25vqJnZU1X+43XuppsKuuQZbBgOhoIoaZpmluviXdlRE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbKELzSS6aQz1t7/JjiHl2I3iD1ziBAWuwpUyNx3ElwOUbSQjz
-	0krl6UiIPyjBR72MAnO2/bNND4Azqsc6+J1r1YjtW6YHVEC6lpA6sxXzK0w1n2kxiJNmHrJA9Gg
-	f8ficVToJUrreOnH/8pXgcx42IKk=
-X-Google-Smtp-Source: AGHT+IGl7r9eTTY6DbGjkT8AzG4rZwLNXHhz58BMG08MWeCm1Ep0CHhz/nibBtdCGAr6NSzhNQ9l56WyOwchQRHJKWs=
-X-Received: by 2002:a05:690c:f06:b0:6eb:3f6:bc20 with SMTP id
- 00721157ae682-6ee55cf4bcbmr117127367b3.41.1731913426798; Sun, 17 Nov 2024
- 23:03:46 -0800 (PST)
+	s=arc-20240116; t=1731913416; c=relaxed/simple;
+	bh=oEltPeUPlVF+TBkOrghRwb2ODhbY7aIsbaCsGT8RZMk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mAc0PfvXgH8WQwZuNUPNVnQFC5dPSNxPLmwLapQEVyNKxQ+oH8mzEpZ/4yyn8Bl9KrPWLbc1QYS0O9EuUIZpnnwgt84bz/uAQyoxRE0lJMiTO3CP5RUcekMOwl0n0X8+27fOEX15oyKJzIADv5ex3Sg1qRtjmVeOpTCPgjCKu7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=Qg9yzeki; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
+	bh=GK+QvS1NaDpuClV7licehKvxkGcFMiW2ifaIQoP8yRM=; b=Qg9yzekis7kbfpAllVIVQFLePw
+	oUelVmASsQMoD7bmcMeX0lIe3D33fHDnsznOHgwjwDjdkCDCAUVxwIfUtwWbaN9aYKzDRnesPGAwN
+	XIuYVN88BrVxkJVvI7t2FH4c9KFecp1eyKqZPjk75QH9AG9kdti4SakM8YxVofYw9rzDzbZqO6yGE
+	RfYA3FKFGVkHprHscYkRNqLxqHmuRhbdTjXKBSm8qhz40HjodN/t1o3yMM5IirNniuC/HNXIP7L+k
+	RVZtbqGQasNMflxthe4uaeXD5DY4QQ3KrEEqRc5g/o2LPjJf/H6QM1NaBZUpkE2HVv3dYIisO0VMc
+	2nf7mlRg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tCvnG-0000000GIzs-3V5f;
+	Mon, 18 Nov 2024 07:03:30 +0000
+Date: Mon, 18 Nov 2024 07:03:30 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Jeongjun Park <aha310510@gmail.com>
+Cc: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] fs: prevent data-race due to missing inode_lock when
+ calling vfs_getattr
+Message-ID: <20241118070330.GG3387508@ZenIV>
+References: <20241117165540.GF3387508@ZenIV>
+ <E79FF080-A233-42F6-80EB-543384A0C3AC@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241109013819.5952-1-danielyangkang@gmail.com> <065b2dea-0c0a-4961-ac18-2ddd62f0b808@kernel.org>
-In-Reply-To: <065b2dea-0c0a-4961-ac18-2ddd62f0b808@kernel.org>
-From: Daniel Yang <danielyangkang@gmail.com>
-Date: Sun, 17 Nov 2024 23:03:10 -0800
-Message-ID: <CAGiJo8TbZPpOBqrGRf3ofXk-TxKQD88Z1YDjM4L8VXV5ccv0Og@mail.gmail.com>
-Subject: Re: [PATCH v2] f2fs: replace deprecated strcpy with strscpy
-To: Chao Yu <chao@kernel.org>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, 
-	"open list:F2FS FILE SYSTEM" <linux-f2fs-devel@lists.sourceforge.net>, 
-	open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <E79FF080-A233-42F6-80EB-543384A0C3AC@gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Sun, Nov 17, 2024 at 5:24=E2=80=AFPM Chao Yu <chao@kernel.org> wrote:
->
-> On 2024/11/9 9:38, Daniel Yang wrote:
-> > strcpy is deprecated. Kernel docs recommend replacing strcpy with
-> > strscpy. The function strcpy() return value isn't used so there
-> > shouldn't be an issue replacing with the safer alternative strscpy.
-> >
-> > Signed-off-by: Daniel Yang <danielyangkang@gmail.com>
-> > ---
-> > V1 -> V2: handle strscpy errors, changed prefix to f2fs
-> >
-> >   fs/f2fs/super.c | 11 +++++++++--
-> >   1 file changed, 9 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> > index 87ab5696b..4721a8a8f 100644
-> > --- a/fs/f2fs/super.c
-> > +++ b/fs/f2fs/super.c
-> > @@ -5,6 +5,7 @@
-> >    * Copyright (c) 2012 Samsung Electronics Co., Ltd.
-> >    *             http://www.samsung.com/
-> >    */
-> >   #include <linux/module.h>
-> >   #include <linux/init.h>
-> >   #include <linux/fs.h>
-> > @@ -1158,7 +1159,10 @@ static int parse_options(struct super_block *sb,=
- char *options, bool is_remount)
-> >                               break;
-> >                       }
-> >
-> > -                     strcpy(ext[ext_cnt], name);
-> > +                     if (strscpy(ext[ext_cnt], name) =3D=3D -E2BIG) {
-> > +                             kfree(name);
-> > +                             return -EINVAL;
->
-> How about?
->
-> ret =3D strscpy(ext[ext_cnt], name);
-> if (ret < 0) {
->         kfree(name);
->         return ret;
-> }
->
-> > +                     }
-> >                       F2FS_OPTION(sbi).compress_ext_cnt++;
-> >                       kfree(name);
-> >                       break;
-> > @@ -1187,7 +1191,10 @@ static int parse_options(struct super_block *sb,=
- char *options, bool is_remount)
-> >                               break;
-> >                       }
-> >
-> > -                     strcpy(noext[noext_cnt], name);
-> > +                     if (strscpy(noext[noext_cnt], name) =3D=3D -E2BIG=
-) {
-> > +                             kfree(name);
-> > +                             return -EINVAL;
-> > +                     }
->
-> Ditto
->
-> Thanks,
->
-> >                       F2FS_OPTION(sbi).nocompress_ext_cnt++;
-> >                       kfree(name);
-> >                       break;
->
+On Mon, Nov 18, 2024 at 03:00:39PM +0900, Jeongjun Park wrote:
+> 
+> Hello,
+> 
+> > Al Viro <viro@zeniv.linux.org.uk> wrote:
+> > 
+> > ﻿On Mon, Nov 18, 2024 at 01:37:19AM +0900, Jeongjun Park wrote:
+> >> Many filesystems lock inodes before calling vfs_getattr, so there is no
+> >> data-race for inodes. However, some functions in fs/stat.c that call
+> >> vfs_getattr do not lock inodes, so the data-race occurs.
+> >> 
+> >> Therefore, we need to apply a patch to remove the long-standing data-race
+> >> for inodes in some functions that do not lock inodes.
+> > 
+> > Why do we care?  Slapping even a shared lock on a _very_ hot path, with
+> > possible considerable latency, would need more than "theoretically it's
+> > a data race".
+> 
+> All the functions that added lock in this patch are called only via syscall,
+> so in most cases there will be no noticeable performance issue.
 
-Thanks for the feedback. That does look much cleaner. I've applied the
-changes and sent v3.
+Pardon me, but I am unable to follow your reasoning.
 
-- Daniel
+> And
+> this data-race is not a problem that only occurs in theory. It is
+> a bug that syzbot has been reporting for years. Many file systems that
+> exist in the kernel lock inode_lock before calling vfs_getattr, so
+> data-race does not occur, but only fs/stat.c has had a data-race
+> for years. This alone shows that adding inode_lock to some
+> functions is a good way to solve the problem without much 
+> performance degradation.
+
+Explain.  First of all, these are, by far, the most frequent callers
+of vfs_getattr(); what "many filesystems" are doing around their calls
+of the same is irrelevant.  Which filesystems, BTW?  And which call
+chains are you talking about?  Most of the filesystems never call it
+at all.
+
+Furthermore, on a lot of userland loads stat(2) is a very hot path -
+it is called a lot.  And the rwsem in question has a plenty of takers -
+both shared and exclusive.  The effect of piling a lot of threads
+that grab it shared on top of the existing mix is not something
+I am ready to predict without experiments - not beyond "likely to be
+unpleasant, possibly very much so".
+
+Finally, you have not offered any explanations of the reasons why
+that data race matters - and "syzbot reporting" is not one.  It is
+possible that actual observable bugs exist, but it would be useful
+to have at least one of those described in details.
+
+Please, spell your reasoning out.  Note that fetch overlapping with
+store is *NOT* a bug in itself.  It may become such if you observe
+an object in inconsistent state - e.g. on a 32bit architecture
+reading a 64bit value in parallel with assignment to the same may
+end up with a problem.  And yes, we do have just such a value
+read there - inode size.  Which is why i_size_read() is used there,
+with matching i_size_write() in the writers.
+
+Details matter; what is and what is not an inconsistent state
+really does depend upon the object you are talking about.
+There's no way in hell for syzbot to be able to determine that.
 
