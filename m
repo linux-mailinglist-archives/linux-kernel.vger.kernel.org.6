@@ -1,114 +1,120 @@
-Return-Path: <linux-kernel+bounces-413144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E56269D1478
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 16:29:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DDD39D1416
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 16:12:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1B768B2CE3C
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 15:12:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB1D81F2225C
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 15:12:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1331F1AF0A7;
-	Mon, 18 Nov 2024 15:12:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 339041AE016;
+	Mon, 18 Nov 2024 15:11:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MZ3yufXq"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZxtknAct"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C19FF1AA1F1;
-	Mon, 18 Nov 2024 15:12:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 838701A08B6;
+	Mon, 18 Nov 2024 15:11:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731942727; cv=none; b=Jvl8MTyCUnqSlXey51LV9XZFhavSeNrpLwSqHtr2hhvpz0igie9sOS4rJuYNK7P47sJjWWvzJB2ji9TeHD3ApVk9ZBjfCbIihqRK++IXKmhQgPn6UPTVsm4rfRY+0nRH+itfexcVNYLm2zPDWqEKQHD0jzxW5QxfS5TQhmTCAks=
+	t=1731942712; cv=none; b=FqHsCWsQNtBxeH/D8sA7rwEQgcRIUd4aAoiW3tdR89TWkuL6uh9YSfDuH+705DoHHPEPGyF4VHs/mB0vn1kh6J0Zc12H1fL+8p/56l0aBTjRX2b/tkQaLy68tC0FhsAD1/8JELORylsu1kL67ioMbboU8Yiv/SRgFnYXvMd3YYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731942727; c=relaxed/simple;
-	bh=e+6TGWeze1du0twh0dAjcga/QpJzm4lJ2Zj3KW40l+0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LVsV+Gs8f2HtiFVaaAOIfV3b7NTimL5VwlMGwJtsPdh8kwGhBN0EoB1GJZxE1aAxpTLSaXi/TfilKh55+BO5U2QlVp71rV0ju6aESX8Md5iN9MLKXNzXazhfgG0Uz6079anoBgT7nbl11JrcRq4g/is5cngJ4FDGaZgsRBo1XsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MZ3yufXq; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731942725; x=1763478725;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=e+6TGWeze1du0twh0dAjcga/QpJzm4lJ2Zj3KW40l+0=;
-  b=MZ3yufXqkSXeHXFlVpBFzhVMNdec3Oz2PExZZlZuhmpc/NiZMHwBKMsr
-   pTthJbOsKI82I+kjw512AN9FDfxUCYOQZxQcknsQ37MPRlOc/9OOEE//Q
-   tskGuVyMymiP/ctC8EVDXmdl5g02p76JH7RGWoNDhz8+VItL/Ei7oy3k1
-   QbONnxCsx/6PKgTfE19G3VC/dCrMzyOR68MHonb4n+6gkhzbxBecn8Njo
-   ei9fM8j+zmMbaFniKfVd3gsYNPnXahzcyopnTjEaUdFzYApZ2V6A/kvtL
-   rZMoQWoSGjX+9fC9UCnW8kX9/TNxUQwSPMaG73OkoUB+eVCvPClYAzmcF
-   w==;
-X-CSE-ConnectionGUID: vtJM4ZolTNKSnsR5MezBoQ==
-X-CSE-MsgGUID: jG39sfXYSx6K6sc1YrMOGg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11260"; a="31841440"
-X-IronPort-AV: E=Sophos;i="6.12,164,1728975600"; 
-   d="scan'208";a="31841440"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2024 07:12:04 -0800
-X-CSE-ConnectionGUID: XMfkiXedS+CtE2Xukq5FNQ==
-X-CSE-MsgGUID: w8ZuklYiSbyDsxpGD95KWg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,164,1728975600"; 
-   d="scan'208";a="120113954"
-Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
-  by orviesa002.jf.intel.com with ESMTP; 18 Nov 2024 07:12:03 -0800
-Date: Mon, 18 Nov 2024 23:09:09 +0800
-From: Xu Yilun <yilun.xu@linux.intel.com>
-To: Peter Colberg <peter.colberg@intel.com>
-Cc: Wu Hao <hao.wu@intel.com>, Tom Rix <trix@redhat.com>,
-	Moritz Fischer <mdf@kernel.org>, Xu Yilun <yilun.xu@intel.com>,
-	linux-fpga@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Russ Weight <russ.weight@linux.dev>,
-	Marco Pagani <marpagan@redhat.com>,
-	Matthew Gerlach <matthew.gerlach@linux.intel.com>,
-	Basheer Ahmed Muddebihal <basheer.ahmed.muddebihal@linux.intel.com>,
-	Russ Weight <russell.h.weight@intel.com>
-Subject: Re: [PATCH v4 19/19] fpga: dfl: destroy/recreate feature platform
- device on port release/assign
-Message-ID: <ZztYlcidn3zU2vn5@yilunxu-OptiPlex-7050>
-References: <20241025223714.394533-1-peter.colberg@intel.com>
- <20241025223714.394533-20-peter.colberg@intel.com>
+	s=arc-20240116; t=1731942712; c=relaxed/simple;
+	bh=TExeTFz1ilJ8Wj+pToJnI0x993GlFRsjNQUz/EXz1Rc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZTfggCvJdez+CzbHZboJYtjaI+w/J7nR9xfUeiELKxXvNbQiGQjAIWK3abOPY/U/jt3GUDSrJmdnoSPJk5hJ91SBPDCaLR5ayqzEsP9KXjKZhJZx9R+VUWxAfHzs5C/auLYOOX+bqiCsZFgurOuHlj694o+3zd6BioUNVUxa2XY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZxtknAct; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A3C3C4CECC;
+	Mon, 18 Nov 2024 15:11:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731942712;
+	bh=TExeTFz1ilJ8Wj+pToJnI0x993GlFRsjNQUz/EXz1Rc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ZxtknAct4kAdFJ4YgK/gVZ8EBkvmlYRDhUlFtXfWsmvDYSluSC+6dBtR6BJoS/iXq
+	 jpE1jyK3ODuVm6GohUgVQYIxEawnJZk43u9b23IQeeu+weWsYdQHinofwo9xTmDy0d
+	 mVvnPeYG5sYec6tYDQgLDl0XPVkb3HjdcHwo3zfqoQpiVa9LNsZQmSY8F62AIQU8Dm
+	 2DWY1xhEtPsb8mw79ZMFMsfZ0dcNHt+Mmaedobd4isTwCbyLDXEIJAJZ8KJr9FKkWD
+	 Bk9SH2vvObBvN7Ga3p5BZr2ZknCfAQnLjzglDDInUUsyUryTYrOZLCaymvje+V0kJ3
+	 G+9fYSxKxqw7w==
+Message-ID: <17a24d69-7bf0-412c-a32a-b25d82bb4159@kernel.org>
+Date: Mon, 18 Nov 2024 16:11:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241025223714.394533-20-peter.colberg@intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v3 3/3] page_pool: fix IOMMU crash when driver
+ has already unbound
+To: Yunsheng Lin <linyunsheng@huawei.com>,
+ =?UTF-8?Q?Toke_H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>,
+ davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com
+Cc: zhangkun09@huawei.com, fanghaiqing@huawei.com, liuyonglong@huawei.com,
+ Robin Murphy <robin.murphy@arm.com>,
+ Alexander Duyck <alexander.duyck@gmail.com>, IOMMU <iommu@lists.linux.dev>,
+ Andrew Morton <akpm@linux-foundation.org>, Eric Dumazet
+ <edumazet@google.com>, Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ kernel-team <kernel-team@cloudflare.com>
+References: <20241022032214.3915232-1-linyunsheng@huawei.com>
+ <20241022032214.3915232-4-linyunsheng@huawei.com>
+ <dbd7dca7-d144-4a0f-9261-e8373be6f8a1@kernel.org>
+ <113c9835-f170-46cf-92ba-df4ca5dfab3d@huawei.com> <878qudftsn.fsf@toke.dk>
+ <d8e0895b-dd37-44bf-ba19-75c93605fc5e@huawei.com> <87r084e8lc.fsf@toke.dk>
+ <0c146fb8-4c95-4832-941f-dfc3a465cf91@kernel.org>
+ <204272e7-82c3-4437-bb0d-2c3237275d1f@huawei.com>
+ <4564c77b-a54d-4307-b043-d08e314c4c5f@huawei.com> <87ldxp4n9v.fsf@toke.dk>
+ <eab44c89-5ada-48b6-b880-65967c0f3b49@huawei.com>
+ <be049c33-936a-4c93-94ff-69cd51b5de8e@kernel.org>
+ <40c9b515-1284-4c49-bdce-c9eeff5092f9@huawei.com>
+Content-Language: en-US
+From: Jesper Dangaard Brouer <hawk@kernel.org>
+In-Reply-To: <40c9b515-1284-4c49-bdce-c9eeff5092f9@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, Oct 25, 2024 at 06:37:14PM -0400, Peter Colberg wrote:
-> From: Xu Yilun <yilun.xu@intel.com>
+
+
+On 18/11/2024 10.08, Yunsheng Lin wrote:
+> On 2024/11/12 22:19, Jesper Dangaard Brouer wrote:
+>>>
+>>> Yes, there seems to be many MM system internals, like the CONFIG_SPARSEMEM*
+>>> config, memory offline/online and other MM specific optimization that it
+>>> is hard to tell it is feasible.
+>>>
+>>> It would be good if MM experts can clarify on this.
+>>>
+>>
+>> Yes, please.  Can Alex Duyck or MM-experts point me at some code walking
+>> entire system page table?
+>>
+>> Then I'll write some kernel code (maybe module) that I can benchmark how
+>> long it takes on my machine with 384GiB. I do like Alex'es suggestion,
+>> but I want to assess the overhead of doing this on modern hardware.
+>>
 > 
-> Now that the internal DFL APIs have been converted to consume DFL
-> enumeration info from a separate structure, dfl_feature_dev_data, which
-> lifetime is independent of the feature device, proceed to completely
-> destroy and recreate the feature platform device on port release and
-> assign, respectively. This resolves a longstanding issue in the use of
-> platform_device_add(), which states to "not call this routine more than
-> once for any device structure" and which used to print a kernel warning.
+> After looking more closely into MM subsystem, it seems there is some existing
+> pattern or API to walk the entire pages from the buddy allocator subsystem,
+> see the kmemleak_scan() in mm/kmemleak.c:
+> https://elixir.bootlin.com/linux/v6.12/source/mm/kmemleak.c#L1680
 > 
-> The function feature_dev_unregister() resets the device pointer in the
-> feature data to NULL to signal that the feature platform device has been
-> destroyed. This substitutes the previous device_is_registered() checks.
+> I used that to walk the pages in a arm64 system with over 300GB memory,
+> it took about 1.3 sec to do the walking, which seems acceptable?
 
-Acked-by: Xu Yilun <yilun.xu@intel.com>
+Yes, that seems acceptable to me.
 
-for this patch and all other patches that I didn't comment in this
-series.
+I'll also do a test on one of my 384 GB systems.
+  - It took approx 0.391661 seconds.
 
-Thanks.
+I just deref page->pp_magic and counted the pages, not many page were
+in-use (page_count(page) > 0) as machine has just been rebooted into
+this kernel:
+  - pages=100592572 in-use:2079607
 
-> 
-> Signed-off-by: Xu Yilun <yilun.xu@intel.com>
-> Signed-off-by: Russ Weight <russell.h.weight@intel.com>
-> Signed-off-by: Peter Colberg <peter.colberg@intel.com>
-> Reviewed-by: Matthew Gerlach <matthew.gerlach@linux.intel.com>
-> Reviewed-by: Basheer Ahmed Muddebihal <basheer.ahmed.muddebihal@linux.intel.com>
+--Jesper
 
