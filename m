@@ -1,194 +1,181 @@
-Return-Path: <linux-kernel+bounces-413091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB4CE9D1364
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 15:42:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7BD19D136F
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 15:43:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B84D1F22981
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 14:42:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E00D1F237E1
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 14:43:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6B021ADFE4;
-	Mon, 18 Nov 2024 14:39:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D5001B86DC;
+	Mon, 18 Nov 2024 14:41:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="D2SXBmTl"
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="FoW/MwKZ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="V5k7U3VH";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="FoW/MwKZ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="V5k7U3VH"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 840D31A9B56
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 14:39:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C9741AA786;
+	Mon, 18 Nov 2024 14:41:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731940792; cv=none; b=HNpG0QtNL6PY9H7u9jX+8jl8a0+sD96OAUcS/odXUKDz709AOxHnFIHa6lOq1QR9MEmYMwohGdJzG9Jx/gAzqZLz9FFVy1KBMzlfn1H8/tU99iszNJe/Dh8NwXMjU4EM5Y1diT5dWrsmX1t+8xGcroAh5D9+rcfloxr5OZ25KWo=
+	t=1731940869; cv=none; b=hvoRLBA30ACUoQYbihFfir5V2gGntU7xfHkwBh9DxJfjHn8D4chXJ/CKW0TjchBnqJffEppfIgTdNwwOTkxV/0TDNSjKb/aljTwzIKLyt+A0hGfc193YdK35ggwlBaptMPJTa0por2Je3QLKypF1MTg85zsuTol7yL39rlGLyxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731940792; c=relaxed/simple;
-	bh=6OxsRk/yPJyDXFI5pv6/HtQ2SC7vaQPk3DaXR38kGVI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZEH0On51DsIWYlp7YJDlaNVIn3pzKhMXF8wMLHRqBc0jwcd0G5bdBLEq8lPTClAR4bfkdXZUst3HooeLquX3B/Yvb1qCNh07NjF+nvZ/AhCGIIhm13iDrPFNqjGuzqRhj2VW75q7OdSDJCc+wWZVV2mAZf35gsNHLhhdpZs5HDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=D2SXBmTl; arc=none smtp.client-ip=209.85.219.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e388c3b0b76so1256884276.0
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 06:39:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731940789; x=1732545589; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=r9ByUzP6+73RBqmQ54+FUS5a2RqUQJq8/v72072Hlm4=;
-        b=D2SXBmTlS0Do7w9xiP9PZl6/zU0GTcrT47ekBVECE65U4AfnFkYsCIe0amUCblcu0o
-         dZWmc/wi79+SafuH4uHi9YaFjRolXHvgJ6ibp5jM6hV2QhmlYKjubSGJ+UlYxv17bnyd
-         6mGoqV1mMmj3svgSEcAwkueJiseUkqAYyEjUfVv1zrOlcfJwtMJq3ddSsEdV5Q3MaLTO
-         Cfpln93H9+aLafOtKXWAD56W1q+Y8AuIVIRQCQSEtYcVZSW91KjMXh3SodBccqVQy1Zz
-         Qfuw+mZBFl+iRxGsqSq69pxecTGFR0+d/W0gAnbAfb7Z4umHUIYKzESFFCdx1aU4gI8H
-         9zng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731940789; x=1732545589;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=r9ByUzP6+73RBqmQ54+FUS5a2RqUQJq8/v72072Hlm4=;
-        b=VkTBoAy4CQs67he6aX4amERlfB2sAZ6WI9Hg4G0ILFmXuspGXrN2SupVAIHjNy2Mcn
-         Mepr0HF5PmS4XPXBK8hXxTklzS2aaLA/vdO6nXOSchi7Qj5T4nrk4sfM2EzEi4Y2JnZK
-         1SWpboeVtcFoaD5SBqb7CJ0tEwNJJ+2CuyxTR4gC6V5aR7e4jpF7hMGSr7qUL8+vyP8Q
-         lfbmuUhfxdVyG9eE3twgYywfKeO7ABzbBxjde+W18u2KiXo6lB27jfwXZsAEDOxhN9I5
-         f07RqH0+nwuChv0e60P7lYLD/wtYObctbEe/z8JWx7+S3s9PHl+2vVntjxgLQLmsVP/K
-         VO3g==
-X-Forwarded-Encrypted: i=1; AJvYcCXspJfLUL5gEeY7AuwQMRqcjwBwqvqAf1qLlNcZnGgHmHbcUCYjY5ciKgiWWermOfaQtFuWB2ZdZ8k220I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6gpmCr4bllFfo9l9MdI1x8/PFGwINYRgZhZ/ZPju2nYeFyHI4
-	1bMcf8Sdh/bgEK4tm09vXCtEDHhrPYP10q0i8NWqfPYEgHH887ZFVjOaxjHd3kUgIT6MMaoyCEU
-	MeUCn1HO7ZEFgunrV6sUt/i/6TTBLMiZZZIWIRQ==
-X-Google-Smtp-Source: AGHT+IEEpyD2A4JYQ5Rg/9zTZnt5t5baJqVCTEDDP7vQeL7ALYKTj4alMmxiJWSoMJkT89RKqFeUMQC/HuG0OMTqlRs=
-X-Received: by 2002:a05:6902:3381:b0:e30:c76e:960d with SMTP id
- 3f1490d57ef6-e3826176347mr9019615276.27.1731940789418; Mon, 18 Nov 2024
- 06:39:49 -0800 (PST)
+	s=arc-20240116; t=1731940869; c=relaxed/simple;
+	bh=SIuvV3VD2j3G90+eZLIpoq2ZsTLJi+JfgetwI5O2vKo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kwOwFLmXhwmzKkvZRg8+T7clZ30uyJgjagn7BLzZ8bZ2rWbpT1kVfiYJwx+RweKAHIP/3O/l3tgo9c3XMOtrInpvViJeHGXI0aqL66LBnvcks+oyifcMe/d8bNReDV63aumOYlpizw4dloIzKS/5p3K6mBZfx9C83Eqf4z+nOM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=FoW/MwKZ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=V5k7U3VH; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=FoW/MwKZ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=V5k7U3VH; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id A9BE9216E0;
+	Mon, 18 Nov 2024 14:41:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1731940864; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3+qp5UmTXJS4iT0bVhrQ+R9X2mN8vQAiVC4/OWr2qww=;
+	b=FoW/MwKZ2TExqmpFJX4cxQdumGLcn1b5lPFHOITYfjSggpl+CQQUY/gVLWTpQXPkJMiXys
+	izFNEGxVTdz39HoZ5GnM/htT3fWCHkLTL6MwE+CMaR15qOhoCYaR9CUnBBBCnr/3TszqCN
+	5KCKee15SdcVUVWDZfExGFZUP4Li/zg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1731940864;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3+qp5UmTXJS4iT0bVhrQ+R9X2mN8vQAiVC4/OWr2qww=;
+	b=V5k7U3VHtThbNP8MaNNlVPE0yM4vynIWceWwMnTjCgWDqPrIq9wE7/J9gzElRwH7Dj5Low
+	yoHzcWLndCcvQHBQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1731940864; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3+qp5UmTXJS4iT0bVhrQ+R9X2mN8vQAiVC4/OWr2qww=;
+	b=FoW/MwKZ2TExqmpFJX4cxQdumGLcn1b5lPFHOITYfjSggpl+CQQUY/gVLWTpQXPkJMiXys
+	izFNEGxVTdz39HoZ5GnM/htT3fWCHkLTL6MwE+CMaR15qOhoCYaR9CUnBBBCnr/3TszqCN
+	5KCKee15SdcVUVWDZfExGFZUP4Li/zg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1731940864;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3+qp5UmTXJS4iT0bVhrQ+R9X2mN8vQAiVC4/OWr2qww=;
+	b=V5k7U3VHtThbNP8MaNNlVPE0yM4vynIWceWwMnTjCgWDqPrIq9wE7/J9gzElRwH7Dj5Low
+	yoHzcWLndCcvQHBQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 977231376E;
+	Mon, 18 Nov 2024 14:41:04 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id eIiwJABSO2ejfAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 18 Nov 2024 14:41:04 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 1AF14A0984; Mon, 18 Nov 2024 15:41:04 +0100 (CET)
+Date: Mon, 18 Nov 2024 15:41:04 +0100
+From: Jan Kara <jack@suse.cz>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Jan Kara <jack@suse.cz>, brauner@kernel.org, viro@zeniv.linux.org.uk,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC PATCH] vfs: dodge strlen() in vfs_readlink() when ->i_link
+ is populated
+Message-ID: <20241118144104.wjoxtdumjr4xaxcv@quack3>
+References: <20241118085357.494178-1-mjguzik@gmail.com>
+ <20241118115359.mzzx3avongvfqaha@quack3>
+ <CAGudoHHezVS1Z00N1EvC-QC5Z_R7pAbJw+B0Z1rijEN_OdFO1g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241113-topic-sm8x50-gpu-bw-vote-v1-0-3b8d39737a9b@linaro.org>
- <20241113-topic-sm8x50-gpu-bw-vote-v1-6-3b8d39737a9b@linaro.org>
- <nw2sqnxmhntvizzvygfho6nhiwfni4xfquwst5gd5g2tel6pnr@h66d4mw46jcf>
- <8df952a8-3599-4198-9ff0-f7fac6d5feaf@linaro.org> <p4pqswgaxbx2aji6y5v2qngn3xp4gdlruthhbzpb4cgfs2earz@mo7zbsgqwc4b>
- <e76a2531-a96a-441d-ac2d-bc1557370aa5@linaro.org>
-In-Reply-To: <e76a2531-a96a-441d-ac2d-bc1557370aa5@linaro.org>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Mon, 18 Nov 2024 16:39:38 +0200
-Message-ID: <CAA8EJpoO6sE8noSvvn0s7bu4Vi6-3YZ=kuxnv4+Vn_MfM3hSaw@mail.gmail.com>
-Subject: Re: [PATCH RFC 6/8] drm/msm: adreno: enable GMU bandwidth for A740
- and A750
-To: neil.armstrong@linaro.org
-Cc: Akhil P Oommen <quic_akhilpo@quicinc.com>, Viresh Kumar <vireshk@kernel.org>, 
-	Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Connor Abbott <cwabbott0@gmail.com>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGudoHHezVS1Z00N1EvC-QC5Z_R7pAbJw+B0Z1rijEN_OdFO1g@mail.gmail.com>
+X-Spam-Score: -3.80
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-0.998];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FREEMAIL_TO(0.00)[gmail.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Mon, 18 Nov 2024 at 15:43, Neil Armstrong <neil.armstrong@linaro.org> wrote:
->
-> On 15/11/2024 15:39, Dmitry Baryshkov wrote:
-> > On Fri, Nov 15, 2024 at 10:20:01AM +0100, Neil Armstrong wrote:
-> >> On 15/11/2024 08:33, Dmitry Baryshkov wrote:
-> >>> On Wed, Nov 13, 2024 at 04:48:32PM +0100, Neil Armstrong wrote:
-> >>>> Now all the DDR bandwidth voting via the GPU Management Unit (GMU)
-> >>>> is in place, let's declare the Bus Control Modules (BCMs) and
-> >>>
-> >>> s/let's //g
-> >>>
-> >>>> it's parameters in the GPU info struct and add the GMU_BW_VOTE
-> >>>> quirk to enable it.
-> >>>
-> >>> Can we define a function that checks for info.bcm[0].name isntead of
-> >>> adding a quirk?
-> >>
-> >> Probably, I'll need ideas to how design this better, perhaps a simple
-> >> capability bitfield in a6xx_info ?
+On Mon 18-11-24 13:20:09, Mateusz Guzik wrote:
+> On Mon, Nov 18, 2024 at 12:53 PM Jan Kara <jack@suse.cz> wrote:
 > >
-> > I'm not sure if I follow the question. I think it's better to check for
-> > the presens of the data rather than having a separate 'cap' bit in
-> > addition to that data.
->
-> I don't fully agree here, I just follow the other features (CACHED_COHERENT/APRIV/...)
-> nothing fancy.
-> I'll introduce a features bitfield, so we don't mix them with quirks
+> > On Mon 18-11-24 09:53:57, Mateusz Guzik wrote:
+> > > This gives me about 1.5% speed up when issuing readlink on /initrd.img
+> > > on ext4.
+> > >
+> > > Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+> > > ---
+...
+> > > I would leave something of that sort in if it was not defeating the
+> > > point of the change.
+> > >
+> > > However, I'm a little worried some crap fs *does not* fill this in
+> > > despite populating i_link.
+> > >
+> > > Perhaps it would make sense to keep the above with the patch hanging out
+> > > in next and remove later?
+> > >
+> > > Anyhow, worst case, should it turn out i_size does not work there are at
+> > > least two 4-byte holes which can be used to store the length (and
+> > > chances are some existing field can be converted into a union instead).
+> >
+> > I'm not sure I completely follow your proposal here...
+> >
+> 
+> I am saying if the size has to be explicitly stored specifically for
+> symlinks, 2 options are:
+> - fill up one of the holes
+> - find a field which is never looked at for symlink inodes and convert
+> into a union
+> 
+> I'm going to look into it.
 
-SGTM
+I guess there's limited enthusiasm for complexity to achieve 1.5% improvement
+in readlink which is not *that* common. But I haven't seen the patch and
+other guys may have different opinions :) So we'll see.
 
->
-> >
-> >> There's other feature that are lacking, like ACD or BCL which are not supported
-> >> on all a6xx/a7xx gpus.
-> >
-> > Akhil is currently working on ACD, as you have seen from the patches.
->
-> Yep I've tested and reviewed the patches
->
-> >
-> >>
-> >>>
-> >>>>
-> >>>> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> >>>> ---
-> >>>>    drivers/gpu/drm/msm/adreno/a6xx_catalog.c | 26 ++++++++++++++++++++++++--
-> >>>>    1 file changed, 24 insertions(+), 2 deletions(-)
-> >>>>
-> >>>> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
-> >>>> index 0c560e84ad5a53bb4e8a49ba4e153ce9cf33f7ae..014a24256b832d8e03fe06a6516b5348a5c0474a 100644
-> >>>> --- a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
-> >>>> +++ b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
-> >>>> @@ -1379,7 +1379,8 @@ static const struct adreno_info a7xx_gpus[] = {
-> >>>>                    .inactive_period = DRM_MSM_INACTIVE_PERIOD,
-> >>>>                    .quirks = ADRENO_QUIRK_HAS_CACHED_COHERENT |
-> >>>>                              ADRENO_QUIRK_HAS_HW_APRIV |
-> >>>> -                    ADRENO_QUIRK_PREEMPTION,
-> >>>> +                    ADRENO_QUIRK_PREEMPTION |
-> >>>> +                    ADRENO_QUIRK_GMU_BW_VOTE,
-> >>>>                    .init = a6xx_gpu_init,
-> >>>>                    .zapfw = "a740_zap.mdt",
-> >>>>                    .a6xx = &(const struct a6xx_info) {
-> >>>> @@ -1388,6 +1389,16 @@ static const struct adreno_info a7xx_gpus[] = {
-> >>>>                            .pwrup_reglist = &a7xx_pwrup_reglist,
-> >>>>                            .gmu_chipid = 0x7020100,
-> >>>>                            .gmu_cgc_mode = 0x00020202,
-> >>>> +                  .bcm = {
-> >>>> +                          [0] = { .name = "SH0", .buswidth = 16 },
-> >>>> +                          [1] = { .name = "MC0", .buswidth = 4 },
-> >>>> +                          [2] = {
-> >>>> +                                  .name = "ACV",
-> >>>> +                                  .fixed = true,
-> >>>> +                                  .perfmode = BIT(3),
-> >>>> +                                  .perfmode_bw = 16500000,
-> >>>
-> >>> Is it a platform property or GPU / GMU property? Can expect that there
-> >>> might be several SoCs having the same GPU, but different perfmode_bw
-> >>> entry?
-> >>
-> >> I presume this is SoC specific ? But today the XXX_build_bw_table() are
-> >> already SoC specific, so where should this go ?
-> >
-> > XXX_build_bw_table() are GPU-specific. There are cases of several SoCs
-> > sharing the same GPU on them.
->
-> So it's gpu-specific
->
-> >
-> >> Downstream specifies this in the adreno-gpulist.h, which is the equivalent
-> >> here.
-> >
->
-
-
+								Honza
 -- 
-With best wishes
-Dmitry
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
