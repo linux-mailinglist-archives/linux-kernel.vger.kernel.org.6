@@ -1,88 +1,117 @@
-Return-Path: <linux-kernel+bounces-412608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C5C09D0B54
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 10:02:33 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E30D29D0B58
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 10:03:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE1091F238F2
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 09:02:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D3A4B21EB8
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 09:03:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17AC917B418;
-	Mon, 18 Nov 2024 09:02:25 +0000 (UTC)
-Received: from unicom145.biz-email.net (unicom145.biz-email.net [210.51.26.145])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 545BC2907;
-	Mon, 18 Nov 2024 09:02:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.26.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9EF31714B7;
+	Mon, 18 Nov 2024 09:03:20 +0000 (UTC)
+Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91EDA2907;
+	Mon, 18 Nov 2024 09:03:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731920544; cv=none; b=FoPb/ABQN51KEwOd4xsvPoBFmLRW+OBR1KJpLw96fXQX+Qn9sCPYYWAbpaiEfJHWl5k2e5MQ251eNAfdjIxK/Y34eBHL3pbJC7sqBj73I5Y5cE4JeunmZ5qHx4HtdQM3XnCUwKW+eIdk+M/UC0ZWO/dE1SvcfQtu3NFm3QglBaU=
+	t=1731920600; cv=none; b=HSN4nNjNZZjih0XkfZxT+6Qro7ru0CR58NO6KSGl7sddMKFhSERblWpsh7z0dSLcxhYbLte6zSDmt2rv4hu/53mfSu5QnEEDfYae/mE9MeLF67bbE/BGaJiGskLyEaD+ymPpQZruAxE9YMpKr38Jxm/xMTByX3CKHembtDEzd/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731920544; c=relaxed/simple;
-	bh=iUoKBVB/z1PEswfHo5ffqPcf7Ek4yj/Xd2hiOyUmolI=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GP0COJTIwfZFYlARjP9yd6quDuaKwJShjAK13mbWgta6ePY1fRCLXWeiOBpDcFLKH26kSQbYaKYI4yTsp0IZELG9cf4efQk0FOQMVqovpBgedly0ryiaPdanQ2OwGfI+FKeYPKR4rsYXG2U3hAaVH1jarFgfYGVON6pafZmJmIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.26.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
-Received: from unicom145.biz-email.net
-        by unicom145.biz-email.net ((D)) with ASMTP (SSL) id PMV00010;
-        Mon, 18 Nov 2024 17:02:10 +0800
-Received: from localhost.localdomain (10.94.9.174) by
- jtjnmail201605.home.langchao.com (10.100.2.5) with Microsoft SMTP Server id
- 15.1.2507.39; Mon, 18 Nov 2024 17:02:09 +0800
-From: Charles Han <hanchunchao@inspur.com>
-To: <mike.looijmans@topic.nl>, <jic23@kernel.org>, <lars@metafoo.de>,
-	<dan.carpenter@linaro.org>, <nuno.sa@analog.com>,
-	<andriy.shevchenko@linux.intel.com>, <viro@zeniv.linux.org.uk>,
-	<yujiaoliang@vivo.com>
-CC: <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Charles Han
-	<hanchunchao@inspur.com>
-Subject: [PATCH] iio: adc: ti-ads1298: Add NULL check in ads1298_init
-Date: Mon, 18 Nov 2024 17:02:08 +0800
-Message-ID: <20241118090208.14586-1-hanchunchao@inspur.com>
-X-Mailer: git-send-email 2.31.1
+	s=arc-20240116; t=1731920600; c=relaxed/simple;
+	bh=exWOnmLwl232I82JkhJYQ8DE0w1MXTwqbQtBMmKk16M=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Jf8fwg+T2U0dc7zIrsywHeSH8bvE+zq+7v9rADGG5ACGpddVLK1JiND613BgQum+6LL1WQhcfS9IXqHwQ+or0AcqlzLcCCQ4ChsWBLe/EsTP7NB7HuOe0j4yTUWe/IhGAifBsC8gKd5iPC15ITiK3nTZ5KpmGdK1PwN4B+qhJus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
+Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
+	id 1tCxez-0007lT-00; Mon, 18 Nov 2024 10:03:05 +0100
+Received: by alpha.franken.de (Postfix, from userid 1000)
+	id AEAF9C0110; Mon, 18 Nov 2024 10:02:56 +0100 (CET)
+Date: Mon, 18 Nov 2024 10:02:56 +0100
+From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To: torvalds@linux-foundation.org
+Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] MIPS changes for v6.13
+Message-ID: <ZzsCwEfGZ0m6dNVS@alpha.franken.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-tUid: 202411181702103f599d7c91711c50224c9150cc7d6926
-X-Abuse-Reports-To: service@corp-email.com
-Abuse-Reports-To: service@corp-email.com
-X-Complaints-To: service@corp-email.com
-X-Report-Abuse-To: service@corp-email.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-devm_kasprintf() can return a NULL pointer on failure,but this
-returned value in ads1298_init() is not checked.
-Add NULL check in ads1298_init(), to handle kernel NULL
-pointer dereference error.
+The following changes since commit 81983758430957d9a5cb3333fe324fd70cf63e7e:
 
-Fixes: 00ef7708fa60 ("iio: adc: ti-ads1298: Add driver")
-Signed-off-by: Charles Han <hanchunchao@inspur.com>
----
- drivers/iio/adc/ti-ads1298.c | 2 ++
- 1 file changed, 2 insertions(+)
+  Linux 6.12-rc5 (2024-10-27 12:52:02 -1000)
 
-diff --git a/drivers/iio/adc/ti-ads1298.c b/drivers/iio/adc/ti-ads1298.c
-index 36d43495f603..03f762415fa5 100644
---- a/drivers/iio/adc/ti-ads1298.c
-+++ b/drivers/iio/adc/ti-ads1298.c
-@@ -613,6 +613,8 @@ static int ads1298_init(struct iio_dev *indio_dev)
- 	}
- 	indio_dev->name = devm_kasprintf(dev, GFP_KERNEL, "ads129%u%s",
- 					 indio_dev->num_channels, suffix);
-+	if (!indio_dev->name)
-+		return -ENOMEM;
- 
- 	/* Enable internal test signal, double amplitude, double frequency */
- 	ret = regmap_write(priv->regmap, ADS1298_REG_CONFIG2,
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/mips/linux.git/ tags/mips_6.13
+
+for you to fetch changes up to 56131e6d1fcce8e7359a2445711cc1a4ddb8325c:
+
+  mips: dts: realtek: Add I2C controllers (2024-11-12 15:51:21 +0100)
+
+----------------------------------------------------------------
+just cleanups and fixes
+
+----------------------------------------------------------------
+Chris Packham (2):
+      mips: dts: realtek: Add syscon-reboot node
+      mips: dts: realtek: Add I2C controllers
+
+Christian Marangi (1):
+      mips: bmips: bcm6358/6368: define required brcm,bmips-cbr-reg
+
+Gregory CLEMENT (2):
+      MIPS: Allow using more than 32-bit addresses for reset vectors when possible
+      MIPS: mobileye: eyeq6h-epm6: Use eyeq6h in the board device tree
+
+Jonas Gorski (1):
+      mips: asm: fix warning when disabling MIPS_FP_SUPPORT
+
+Maciej W. Rozycki (2):
+      MAINTAINERS: Retire Ralf Baechle
+      MAINTAINERS: Remove linux-mips.org references
+
+Paulo Miguel Almeida (1):
+      mips: sgi-ip22: Replace "s[n]?printf" with sysfs_emit in sysfs callbacks
+
+Thorsten Blum (1):
+      MIPS: kernel: proc: Use str_yes_no() helper function
+
+WangYuli (2):
+      MIPS: loongson3_defconfig: Update configs dependencies
+      MIPS: loongson3_defconfig: Enable blk_dev_nvme by default
+
+zhang jiao (1):
+      TC: Fix the wrong format specifier
+
+ .get_maintainer.ignore                             |  1 +
+ CREDITS                                            |  5 +++
+ MAINTAINERS                                        | 17 +++-----
+ arch/mips/boot/dts/brcm/bcm6358.dtsi               |  1 +
+ arch/mips/boot/dts/brcm/bcm6368.dtsi               |  1 +
+ arch/mips/boot/dts/mobileye/eyeq6h-epm6.dts        |  2 +-
+ .../dts/realtek/cameo-rtl9302c-2x-rtl8224-2xge.dts |  2 +-
+ arch/mips/boot/dts/realtek/rtl9302c.dtsi           | 15 +++++++
+ arch/mips/boot/dts/realtek/rtl930x.dtsi            | 29 ++++++++++++++
+ arch/mips/configs/loongson3_defconfig              | 32 +++++----------
+ arch/mips/include/asm/mips-cm.h                    |  2 +
+ arch/mips/include/asm/switch_to.h                  |  2 +-
+ arch/mips/kernel/proc.c                            | 17 ++++----
+ arch/mips/kernel/smp-cps.c                         | 46 ++++++++++++++++++----
+ arch/mips/sgi-ip22/ip22-gio.c                      |  7 ++--
+ drivers/tc/tc.c                                    |  2 +-
+ 16 files changed, 123 insertions(+), 58 deletions(-)
+ create mode 100644 arch/mips/boot/dts/realtek/rtl9302c.dtsi
+
 -- 
-2.31.1
-
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
 
