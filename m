@@ -1,193 +1,269 @@
-Return-Path: <linux-kernel+bounces-413106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9536F9D13A5
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 15:52:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F5AC9D13B1
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 15:54:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C544283369
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 14:52:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D11F12835D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 14:54:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0258C1A9B44;
-	Mon, 18 Nov 2024 14:51:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAEA71A9B4E;
+	Mon, 18 Nov 2024 14:54:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IOrY1pnh"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ddLCclG/"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A47A81991A5;
-	Mon, 18 Nov 2024 14:51:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 924031991A5;
+	Mon, 18 Nov 2024 14:54:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731941510; cv=none; b=nuybXdPUH41LCphyugiF0B5jVgGisogA/JfotTGqfuOLgDlBOvNWNBdNIdyhP27OywXiMuMntuQMaAIyhI0UfKL7NmVMQY3rDfSf/tTAoG7XFG8giXC53ebRyHCVK/EAt4xVYD1dEzw01cFVuKKJe3njAl6BGJXVWqOdf7L8x4M=
+	t=1731941678; cv=none; b=QkjMDtmydFY7mr4Kc2IE0tw2m7oDBq779LJh9HGrK10lmUjJc4gzcuFlsgdES/4FPxBBEytNnRIj0ZObLL8EvLG9YNJ/vGrdMTx5Sb3G8397OtaiQrk4oez7owQ149POsX60WLogSny3cQjlhh7o9RqhGUOXJUZXhfzCGKhcwz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731941510; c=relaxed/simple;
-	bh=wNnqMd6SoS8kS5UvIG4kuoxk28enFJPa0N656u0caPs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Uw0mKnA/Hktf6l9rI9iDdDcVOMfWuGzL2Bo1MaixeZ3DArWU5iYcfYK6cgmgn2uXdKt+i6iHXeqWNLAK8fTKWDL0irMlie8+CMVZNYjjr3gXN38JsAu9irZMwXxjGvUFoVToS7eXhW2vhzwnyTu1fh1+5q/gfs7xh7V6ait3VBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IOrY1pnh; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5cfaeed515bso2504820a12.1;
-        Mon, 18 Nov 2024 06:51:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731941507; x=1732546307; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0do7/GS0AB0mKftTyCdKEcg/MUUcVldvwUhJTa2fBws=;
-        b=IOrY1pnhpyv5kI7iCzvxHwB+pBi5z5NZdTnt8IYT1zXqQDqduCtMyqwL87y5fEJHYf
-         gKDsKzHhzSlGYTD2YQgKbtEdAHH6yxVPUUdiqB73zjy52hmS9ZHR76MxG6cxnDxwIyY7
-         6hcq/1CMObQGIiVidtNzF3UKF1RstPTqgUfs9j2SdpPJiXllIiqu5ZgCvVOZ36Dqd7O/
-         iII2mh/Aykk9n0tWvPHif6YxLKImP4G36ApqMkaxiFHGMjOnn6pBmDrglWEddt1JDrOE
-         9j9JzwFiJT5gbz8VJcOCnP5fqyv1CL9rAOYtNTUzHBc0C/BWiY7aOWMjkDOm2EZ2mosi
-         D/fg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731941507; x=1732546307;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0do7/GS0AB0mKftTyCdKEcg/MUUcVldvwUhJTa2fBws=;
-        b=R/zD5rsGb5Iz+a2Y/XPnpXHwWEd6yyLauBzmxHN9uYrn6Snk62Xn7MGEG5JDXlyojv
-         5+ijgtFLyvhA6hDcr31nFVV2XLvEkrB803uYOTMDVFUq5XbRVY/gzxSenP2Vd+KOx/3u
-         kMTtHDyCs/m638Ok2cCgm1UetYcnklJpXIFrZ+lKN7HoM9XDMRPajIDPLHbTKgiFPFc6
-         oGKVmroNjy6Bgs6NRvEPCq5z/qmgXHPa4ZYK7/jaB0EPKpu2/s9TJKM/bBXGOmWSBgRE
-         V39sU5N+GYtWZm5Nz2tLuII2TjryrVZ0nNUhlRuFqMjG3RY+RvYt3LelEsrPwC2RNKHS
-         soZA==
-X-Forwarded-Encrypted: i=1; AJvYcCUWbH49axMfRZX/VhjxI04Z2ihUDVU80GApnD/16uyVR52thXNP3gbPR3sa/lSg7ZVe4fWN4awuf5vFg+Up@vger.kernel.org, AJvYcCXOGu5bYSIkdAqtmvKNNq57aRio93C5pnOAKFJxnq6gBtLSjn/4CWiWlsXVtZHQzqUH/h6eyhFnjT7Q93oT@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0Yk1YXCr4pq0+KYAjMXh2lVTjoebP6PkSI9zC31LmaAprXqzJ
-	PZu0x6l8hPruKU2pPtagztnWDB7spZy9yNILMrvpsPGFRLEz9C0xhoFGTJHV6oZ+nVW7+ZsvmbB
-	DNYt8gB5CAwBQu7isNumlu3XkZr8=
-X-Google-Smtp-Source: AGHT+IHLFYUxP05dz64LY6QAUl7LyO9eUZ592GiYqBde0c0f2ekwEP3VpAzjjdmXIf6oeuQVIgujffpUCRbFzco8/xU=
-X-Received: by 2002:a05:6402:5189:b0:5cf:cf81:c39f with SMTP id
- 4fb4d7f45d1cf-5cfcf81c701mr2133768a12.19.1731941506742; Mon, 18 Nov 2024
- 06:51:46 -0800 (PST)
+	s=arc-20240116; t=1731941678; c=relaxed/simple;
+	bh=W7Iw+nwV/pvu+lZwClyli84z5GYvXURSdRLGRQzVuSU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mfkQXggyu6SllpEvbHPKthOP4gqC4SoV5DUCh8mU4bZiLtbVhJdijIfumus/zzdxlPsKif4+r+6S3DIHDCfUulVWhb77gHpUzH798JexWjt7UIcf+iY7R3blGagniMhlHYRMBcRAvoLdlSYJBn+bylvVfnn3tTqIP5Lx6ywaDRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ddLCclG/; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731941677; x=1763477677;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=W7Iw+nwV/pvu+lZwClyli84z5GYvXURSdRLGRQzVuSU=;
+  b=ddLCclG/J6KmWJxc1SuR/lk8vkaguB9w0po38pBZpbTNlEVDeAJ4UIYk
+   +fYnBQjbAHERt5/bLnZ8z5CX560TrjC446dAV2QYWlIpQiu7Br+1/XQyb
+   jatMZ/ws1emTwIiu4WE3cKiQ0LuI6Vqyf95cNoEP61TBMVyr4+pSoNPuG
+   jQ3T1M4HXsuadEpWQOIcugTP6h+Mx24zZDUkq4CdJ90OvJubiQebKdHcm
+   lyHdeGqOr7skRaxTI2DPqzWZa1g3/eL6ltZ3hyHqtoSJ3KQ95lN3KN8bl
+   QZmXSLQwuKuHpXu2OixT8i2G2xjHxIGklbPYTpOfk7/Ot9aU5le4c5JIB
+   Q==;
+X-CSE-ConnectionGUID: 8fZrTui9SGmMSxuZ5w5kdw==
+X-CSE-MsgGUID: PyFTitp/SQClWmpqY7jZ0A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11260"; a="31955262"
+X-IronPort-AV: E=Sophos;i="6.12,164,1728975600"; 
+   d="scan'208";a="31955262"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2024 06:54:36 -0800
+X-CSE-ConnectionGUID: sGxlG9pBSj+Fm5miKVpypw==
+X-CSE-MsgGUID: riC4UFwQTWm2brj89PKtRw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="94289909"
+Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
+  by orviesa003.jf.intel.com with ESMTP; 18 Nov 2024 06:54:33 -0800
+Date: Mon, 18 Nov 2024 22:51:40 +0800
+From: Xu Yilun <yilun.xu@linux.intel.com>
+To: Peter Colberg <peter.colberg@intel.com>
+Cc: Wu Hao <hao.wu@intel.com>, Tom Rix <trix@redhat.com>,
+	Moritz Fischer <mdf@kernel.org>, Xu Yilun <yilun.xu@intel.com>,
+	linux-fpga@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Russ Weight <russ.weight@linux.dev>,
+	Marco Pagani <marpagan@redhat.com>,
+	Matthew Gerlach <matthew.gerlach@linux.intel.com>,
+	Basheer Ahmed Muddebihal <basheer.ahmed.muddebihal@linux.intel.com>
+Subject: Re: [PATCH v4 16/19] fpga: dfl: allocate platform device after
+ feature device data
+Message-ID: <ZztUfN8ySl0ck3h4@yilunxu-OptiPlex-7050>
+References: <20241025223714.394533-1-peter.colberg@intel.com>
+ <20241025223714.394533-17-peter.colberg@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241118085357.494178-1-mjguzik@gmail.com> <20241118115359.mzzx3avongvfqaha@quack3>
- <CAGudoHHezVS1Z00N1EvC-QC5Z_R7pAbJw+B0Z1rijEN_OdFO1g@mail.gmail.com> <20241118144104.wjoxtdumjr4xaxcv@quack3>
-In-Reply-To: <20241118144104.wjoxtdumjr4xaxcv@quack3>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Mon, 18 Nov 2024 15:51:34 +0100
-Message-ID: <CAGudoHECQkQQrcHuWkP2badRP6eXequEiBD2=VTcMfd_Tfj+rA@mail.gmail.com>
-Subject: Re: [RFC PATCH] vfs: dodge strlen() in vfs_readlink() when ->i_link
- is populated
-To: Jan Kara <jack@suse.cz>
-Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241025223714.394533-17-peter.colberg@intel.com>
 
-On Mon, Nov 18, 2024 at 3:41=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
->
-> On Mon 18-11-24 13:20:09, Mateusz Guzik wrote:
-> > On Mon, Nov 18, 2024 at 12:53=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
-> > >
-> > > On Mon 18-11-24 09:53:57, Mateusz Guzik wrote:
-> > > > This gives me about 1.5% speed up when issuing readlink on /initrd.=
-img
-> > > > on ext4.
-> > > >
-> > > > Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
-> > > > ---
-> ...
-> > > > I would leave something of that sort in if it was not defeating the
-> > > > point of the change.
-> > > >
-> > > > However, I'm a little worried some crap fs *does not* fill this in
-> > > > despite populating i_link.
-> > > >
-> > > > Perhaps it would make sense to keep the above with the patch hangin=
-g out
-> > > > in next and remove later?
-> > > >
-> > > > Anyhow, worst case, should it turn out i_size does not work there a=
-re at
-> > > > least two 4-byte holes which can be used to store the length (and
-> > > > chances are some existing field can be converted into a union inste=
-ad).
-> > >
-> > > I'm not sure I completely follow your proposal here...
-> > >
-> >
-> > I am saying if the size has to be explicitly stored specifically for
-> > symlinks, 2 options are:
-> > - fill up one of the holes
-> > - find a field which is never looked at for symlink inodes and convert
-> > into a union
-> >
-> > I'm going to look into it.
->
-> I guess there's limited enthusiasm for complexity to achieve 1.5% improve=
-ment
-> in readlink which is not *that* common. But I haven't seen the patch and
-> other guys may have different opinions :) So we'll see.
->
+On Fri, Oct 25, 2024 at 06:37:11PM -0400, Peter Colberg wrote:
+> Delay calling platform_device_alloc() from build_info_create_dev() to
+> feature_dev_register(), now that the feature device data contains all
+> necessary data to create the feature device. This completes the new
+> function feature_dev_register(), which will be reused in a subsequent
+> commit to fully recreate the feature device when assigning a port.
+> 
+> Signed-off-by: Peter Colberg <peter.colberg@intel.com>
+> Reviewed-by: Matthew Gerlach <matthew.gerlach@linux.intel.com>
+> Reviewed-by: Basheer Ahmed Muddebihal <basheer.ahmed.muddebihal@linux.intel.com>
+> ---
+> Changes since v3:
+> - New patch extracted from last patch of v3 series.
+> ---
+>  drivers/fpga/dfl.c | 59 +++++++++++++++++-----------------------------
+>  1 file changed, 22 insertions(+), 37 deletions(-)
+> 
+> diff --git a/drivers/fpga/dfl.c b/drivers/fpga/dfl.c
+> index a9ec37278b2d..d9cef150ed0d 100644
+> --- a/drivers/fpga/dfl.c
+> +++ b/drivers/fpga/dfl.c
+> @@ -681,7 +681,6 @@ EXPORT_SYMBOL_GPL(dfl_fpga_dev_ops_unregister);
+>   * @nr_irqs: number of irqs for all feature devices.
+>   * @irq_table: Linux IRQ numbers for all irqs, indexed by local irq index of
+>   *	       this device.
+> - * @feature_dev: current feature device.
+>   * @type: the current FIU type.
+>   * @ioaddr: header register region address of current FIU in enumeration.
+>   * @start: register resource start of current FIU.
+> @@ -695,7 +694,6 @@ struct build_feature_devs_info {
+>  	unsigned int nr_irqs;
+>  	int *irq_table;
+>  
+> -	struct platform_device *feature_dev;
+>  	enum dfl_id_type type;
+>  	void __iomem *ioaddr;
+>  	resource_size_t start;
+> @@ -750,7 +748,6 @@ static void dfl_id_free_action(void *arg)
+>  static struct dfl_feature_dev_data *
+>  binfo_create_feature_dev_data(struct build_feature_devs_info *binfo)
+>  {
+> -	struct platform_device *fdev = binfo->feature_dev;
+>  	enum dfl_id_type type = binfo->type;
+>  	struct dfl_feature_info *finfo, *p;
+>  	struct dfl_feature_dev_data *fdata;
+> @@ -773,7 +770,6 @@ binfo_create_feature_dev_data(struct build_feature_devs_info *binfo)
+>  	if (!fdata->resources)
+>  		return ERR_PTR(-ENOMEM);
+>  
+> -	fdata->dev = fdev;
+>  	fdata->type = type;
+>  
+>  	fdata->pdev_id = dfl_id_alloc(type, binfo->dev);
+> @@ -784,8 +780,6 @@ binfo_create_feature_dev_data(struct build_feature_devs_info *binfo)
+>  	if (ret)
+>  		return ERR_PTR(ret);
+>  
+> -	fdev->id = fdata->pdev_id;
+> -
+>  	fdata->pdev_name = dfl_devs[type].name;
+>  	fdata->num = binfo->feature_num;
+>  	fdata->dfl_cdev = binfo->cdev;
+> @@ -809,7 +803,6 @@ binfo_create_feature_dev_data(struct build_feature_devs_info *binfo)
+>  		unsigned int i;
+>  
+>  		/* save resource information for each feature */
+> -		feature->dev = fdev;
+>  		feature->id = finfo->fid;
+>  		feature->revision = finfo->revision;
+>  		feature->dfh_version = finfo->dfh_version;
+> @@ -868,18 +861,6 @@ binfo_create_feature_dev_data(struct build_feature_devs_info *binfo)
+>  static int
+>  build_info_create_dev(struct build_feature_devs_info *binfo)
+>  {
+> -	enum dfl_id_type type = binfo->type;
+> -	struct platform_device *fdev;
+> -
+> -	/*
+> -	 * we use -ENODEV as the initialization indicator which indicates
+> -	 * whether the id need to be reclaimed
+> -	 */
+> -	fdev = platform_device_alloc(dfl_devs[type].name, -ENODEV);
+> -	if (!fdev)
+> -		return -ENOMEM;
+> -
+> -	binfo->feature_dev = fdev;
+>  	binfo->feature_num = 0;
+>  
+>  	INIT_LIST_HEAD(&binfo->sub_features);
+> @@ -895,27 +876,43 @@ build_info_create_dev(struct build_feature_devs_info *binfo)
+>  static int feature_dev_register(struct dfl_feature_dev_data *fdata)
+>  {
+>  	struct dfl_feature_platform_data pdata = {};
+> -	struct platform_device *fdev = fdata->dev;
+> +	struct platform_device *fdev;
+> +	struct dfl_feature *feature;
+>  	int ret;
+>  
+> +	fdev = platform_device_alloc(fdata->pdev_name, fdata->pdev_id);
+> +	if (!fdev)
+> +		return -ENOMEM;
+> +
+> +	fdata->dev = fdev;
+> +
+>  	fdev->dev.parent = &fdata->dfl_cdev->region->dev;
+>  	fdev->dev.devt = dfl_get_devt(dfl_devs[fdata->type].devt_type, fdev->id);
+>  
+> +	dfl_fpga_dev_for_each_feature(fdata, feature)
+> +		feature->dev = fdev;
+> +
+>  	ret = platform_device_add_resources(fdev, fdata->resources,
+>  					    fdata->resource_num);
+>  	if (ret)
+> -		return ret;
+> +		goto err_put_dev;
+>  
+>  	pdata.fdata = fdata;
+>  	ret = platform_device_add_data(fdev, &pdata, sizeof(pdata));
+>  	if (ret)
+> -		return ret;
+> +		goto err_put_dev;
+>  
+>  	ret = platform_device_add(fdev);
+>  	if (ret)
+> -		return ret;
+> +		goto err_put_dev;
+>  
+>  	return 0;
+> +
+> +err_put_dev:
+> +	platform_device_put(fdev);
+> +	fdata->dev = NULL;
 
-I'm thinking an i_opflag "this inode has a cached symlink with size
-stored in i_linklen", so I don't think there is much in way of
-complexity here. Then interested filesystems could call a helper like
-so:
+Do we also need to clean up all the feature->dev?
 
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 3d17753afd94..9dedf432ae13 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -3870,6 +3870,7 @@ static int shmem_symlink(struct mnt_idmap
-*idmap, struct inode *dir,
-        int len;
-        struct inode *inode;
-        struct folio *folio;
-+       const char *link;
+Thanks,
+Yilun
 
-        len =3D strlen(symname) + 1;
-        if (len > PAGE_SIZE)
-@@ -3891,12 +3892,13 @@ static int shmem_symlink(struct mnt_idmap
-*idmap, struct inode *dir,
-
-        inode->i_size =3D len-1;
-        if (len <=3D SHORT_SYMLINK_LEN) {
--               inode->i_link =3D kmemdup(symname, len, GFP_KERNEL);
--               if (!inode->i_link) {
-+               link=3D kmemdup(symname, len, GFP_KERNEL);
-+               if (!link) {
-                        error =3D -ENOMEM;
-                        goto out_remove_offset;
-                }
-                inode->i_op =3D &shmem_short_symlink_operations;
-+               inode_set_cached_link(link, len);
-        } else {
-                inode_nohighmem(inode);
-                inode->i_mapping->a_ops =3D &shmem_aops;
-
-
-This is only 1.5% because of other weird slowdowns which don't need to
-be there, notably putname using atomics. If the other crap was already
-fixed it would be closer to 5%.
-
-Here comes a funny note that readlink is used to implement realpath
-and vast majority of calls are for directories(!), for which the patch
-is a nop.
-
-However, actual readlinks on symlinks do happen every time you run gcc
-for example:
-readlink("/usr/bin/cc", "/etc/alternatives/cc", 1023) =3D 20
-readlink("/etc/alternatives/cc", "/usr/bin/gcc", 1023) =3D 12
-readlink("/usr/bin/gcc", "gcc-12", 1023) =3D 6
-readlink("/usr/bin/gcc-12", "x86_64-linux-gnu-gcc-12", 1023) =3D 23
-readlink("/usr/bin/cc", "/etc/alternatives/cc", 1023) =3D 20
-readlink("/etc/alternatives/cc", "/usr/bin/gcc", 1023) =3D 12
-readlink("/usr/bin/gcc", "gcc-12", 1023) =3D 6
-readlink("/usr/bin/gcc-12", "x86_64-linux-gnu-gcc-12", 1023) =3D 23
-
-that said, no, this is not earth shattering by any means but I don't
-see any reason to *object* to it
---=20
-Mateusz Guzik <mjguzik gmail.com>
+> +
+> +	return ret;
+>  }
+>  
+>  static void feature_dev_unregister(struct dfl_feature_dev_data *fdata)
+> @@ -940,16 +937,7 @@ static int build_info_commit_dev(struct build_feature_devs_info *binfo)
+>  	if (binfo->type == PORT_ID)
+>  		dfl_fpga_cdev_add_port_data(binfo->cdev, fdata);
+>  	else
+> -		binfo->cdev->fme_dev = get_device(&binfo->feature_dev->dev);
+> -
+> -	/*
+> -	 * reset it to avoid build_info_free() freeing their resource.
+> -	 *
+> -	 * The resource of successfully registered feature devices
+> -	 * will be freed by platform_device_unregister(). See the
+> -	 * comments in build_info_create_dev().
+> -	 */
+> -	binfo->feature_dev = NULL;
+> +		binfo->cdev->fme_dev = get_device(&fdata->dev->dev);
+>  
+>  	/* reset the binfo for next FIU */
+>  	binfo->type = DFL_ID_MAX;
+> @@ -966,8 +954,6 @@ static void build_info_free(struct build_feature_devs_info *binfo)
+>  		kfree(finfo);
+>  	}
+>  
+> -	platform_device_put(binfo->feature_dev);
+> -
+>  	devm_kfree(binfo->dev, binfo);
+>  }
+>  
+> @@ -1262,8 +1248,7 @@ static int parse_feature_afu(struct build_feature_devs_info *binfo,
+>  	case PORT_ID:
+>  		return parse_feature_port_afu(binfo, ofst);
+>  	default:
+> -		dev_info(binfo->dev, "AFU belonging to FIU %s is not supported yet.\n",
+> -			 binfo->feature_dev->name);
+> +		dev_info(binfo->dev, "AFU belonging to FIU is not supported yet.\n");
+>  	}
+>  
+>  	return 0;
+> -- 
+> 2.47.0
+> 
+> 
 
