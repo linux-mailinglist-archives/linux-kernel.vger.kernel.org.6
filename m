@@ -1,294 +1,301 @@
-Return-Path: <linux-kernel+bounces-413302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A8609D171A
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 18:27:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A2569D171D
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 18:30:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B6632848C7
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 17:27:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD3321F23078
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 17:30:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 243951BE86A;
-	Mon, 18 Nov 2024 17:27:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E31DC1BE86A;
+	Mon, 18 Nov 2024 17:29:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="PT7YBJLd"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="taJrxGKc"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2083.outbound.protection.outlook.com [40.107.93.83])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BF06199EA3;
-	Mon, 18 Nov 2024 17:27:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731950843; cv=none; b=k4YnCZdPbJ2G39XuqL6bJl1c/6bHII8SKL0DXEMaE8xV32MzQ6JBS5rL5RgjEEEEam6Ah7dUNyl6oZYi9fWH5aiw6bhPEyNVXVb5GglVLDFntUJR5/ynEJNs6XsCfdC6oCi4IS/7ljvU4hzvMxxmq+lBwYGWYs96dJQk06BmGNc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731950843; c=relaxed/simple;
-	bh=bwHnSCuQVtrTlpQhyPlWKj23jixqEZbgkt3Y4UsfgWk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=aTLGmJSZERZIT34DOPO0BtQBEvYX6vQBbIGKbqCHSpBTDhtnoVH2tVKxlUltmBnShYZukTjRhHX7/zETwikJfNe7vCYITFTQniA6mBzXlfF+mVUI7xTuu8bSpVrFe77ZbET8Ro631Yra2iqE7pCb9gQbRBQujMkNioxu59Ilyow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=PT7YBJLd; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net ED886403E6
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1731950830; bh=JXQT22vUpsoX4nj2NKfGNaZxp9pjkBawPibRTSeTtOg=;
-	h=From:To:Cc:Subject:Date:From;
-	b=PT7YBJLdEGCZpS4I5SLgmOps48dfHP802NzL8SiW5Fl6WuIqh98y51fnjjTuyx9Lp
-	 e6bDdAeu6NglPqYGkMzkUk7S8sx1HQY6N3I/ldz0gVbv/LHneAVrACuutIgPSu5M6d
-	 CWWl12R3PPuUyxrsgtc3UTlW0DcvxmmeaOQfKmeoZRsAISzsPKPw4OI+N3FNDIFXTj
-	 tVuS3nsSbxKdpN/B4N9roD0tweauKnRb0rCFPZzWnTKPKHVtmIx8YzxcAphdd/G2Du
-	 7jejUyGLEZvz3B8H2KWvnDsDWgSPVYKCH8tM//V3sLlZ9/F/csFEjECnb1fXMK8UoR
-	 OClEa8q+enu5w==
-Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id ED886403E6;
-	Mon, 18 Nov 2024 17:27:09 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Linus Torvalds <torvalds@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: [GIT PULL] Documentation for 6.13
-Date: Mon, 18 Nov 2024 10:27:09 -0700
-Message-ID: <87seroh2qa.fsf@trenco.lwn.net>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EB7F199EA3
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 17:29:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.83
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731950999; cv=fail; b=bIq0ZOwUsdQcch/RF17KsL7E7Mzii7ttTf/pwyunTfJq7hpg121x7HbLiIll3IxPuqQXAluOZ7ukfeWydw8PzAujeE6Nab3ZcbnAZbhGQHJxdwz2R/8dtgTv7lqFubDJmHkzaVM21FrSQu30mfrT7JVC5fW3XTeVoE0p7FzJbXI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731950999; c=relaxed/simple;
+	bh=w1q8b3bQXce9v+ZcJsS90abLMXNMoA0qp2KxRlcpcVI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Wffuqm88kA5G07lvLyT10kX/ATrtK8FbliAPB7a6Soz58TY1jg4egnAKy9GhQZAw/XlBuMa3Do5XR1XhnZliw+uOBQa+99Ut9qHf3GjKmY80XS47891sEzdAu/9wisDV+4aho2HDeWkJM/zMD7HvDq2HZDZ6b/GfIRG9sB8+3bA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=taJrxGKc; arc=fail smtp.client-ip=40.107.93.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ZdWqwTmYJvdMHxW/mnbGcY+rHQTvmPzjTirJcTfNW6mFI3uvYb1tKO3B9slq/e8SFyf3UeZCMGVKYFyKTfeywvgcmKvuBEglW5TMPdWSvc32H8YfpxrQWgIiom3WnvA2QMEZpXJLJsldgAzsFmybakqV3VzdXsynrI2Yf1jMfHai1MKL1i0M8KkonA2AM0KlMGwgPmbf/HDyJ9NzQNIQDEFPYh0XqTkxKEn1x1o+YaLsj4q8OGfBlNWffUwaYrxSK2unKati+7Rm+6JESLWFp8ijSWfS/OPABTV290beDMF1aCcs9PFwkz30HeE/zmO++WGm8I43KG3dZcDFoZuVYw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=NRpaPcO/RXuq4Qde8hUEHqFx9hLMe4m11ddf1p14D4g=;
+ b=OTTFOlLcC4foPA1ysrnBa8PvA2y7csXQ0XkKM4pNId78OVuMZbYjy25/kx9EXs0eZ6QiG3W5pZaqi+flfT9A51TgmvRXuXzMUEQ84uQMswR+pko1pCRKeFAw0pH1goOeEVs82l+iWiAg97bz2KigvpWX4ZDTXD8GSYuyxIlrdTq5/TA1V6Tl/wzpsa1ajTTzJrzA7AOHBir2s4j9II7ZhugfCqAhvlBLLSqDsNOPmq1n66LBCu3G2yFKlKMjfdFtZIR4Md2yZ67Qo2h/mF9wd8++BMn7XBVIW5VnmfFzoeD3Vd6dB1zkdY3dETqkXH3bhL/WM3tbPyt7yidJGH2KVQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.12) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NRpaPcO/RXuq4Qde8hUEHqFx9hLMe4m11ddf1p14D4g=;
+ b=taJrxGKcXdIMzz7iQlLObY2nn0rrXS138IF7k48pcMk+0ZBWFMA21kRR2ZaT9NY1hfgKZPyh0uaJWag+9b3LONP40mV4YKci0bNVn4ZTRvdksDWKaUo4aP51yrDfbSAyBgsIz0s9DL8tQYLEZh3jtreaeiytjyu6wu11bkS/8Fc=
+Received: from BL1PR13CA0333.namprd13.prod.outlook.com (2603:10b6:208:2c6::8)
+ by MN0PR12MB5908.namprd12.prod.outlook.com (2603:10b6:208:37c::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.21; Mon, 18 Nov
+ 2024 17:29:54 +0000
+Received: from MN1PEPF0000ECD5.namprd02.prod.outlook.com
+ (2603:10b6:208:2c6:cafe::3e) by BL1PR13CA0333.outlook.office365.com
+ (2603:10b6:208:2c6::8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.13 via Frontend
+ Transport; Mon, 18 Nov 2024 17:29:53 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.12)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.12 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.12; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.12) by
+ MN1PEPF0000ECD5.mail.protection.outlook.com (10.167.242.133) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8158.14 via Frontend Transport; Mon, 18 Nov 2024 17:29:53 +0000
+Received: from SATLEXMB06.amd.com (10.181.40.147) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 18 Nov
+ 2024 11:29:53 -0600
+Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB06.amd.com
+ (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 18 Nov
+ 2024 11:29:53 -0600
+Received: from xsjlizhih51.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Mon, 18 Nov 2024 11:29:52 -0600
+From: Lizhi Hou <lizhi.hou@amd.com>
+To: <ogabbay@kernel.org>, <quic_jhugo@quicinc.com>,
+	<dri-devel@lists.freedesktop.org>
+CC: Lizhi Hou <lizhi.hou@amd.com>, <linux-kernel@vger.kernel.org>,
+	<min.ma@amd.com>, <max.zhen@amd.com>, <sonal.santan@amd.com>,
+	<king.tam@amd.com>
+Subject: [PATCH V11 00/10] AMD XDNA driver
+Date: Mon, 18 Nov 2024 09:29:32 -0800
+Message-ID: <20241118172942.2014541-1-lizhi.hou@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN1PEPF0000ECD5:EE_|MN0PR12MB5908:EE_
+X-MS-Office365-Filtering-Correlation-Id: b0c4c120-201f-4393-620b-08dd07f69d41
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|36860700013|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?W+f4PMStg/HOmKIUCmOns41BgXiAetZdOjbR/C/BXRCxVv+pM+mIDD5blA+n?=
+ =?us-ascii?Q?00x9kxn94ZMode7SxPp6KwbuCWs5srmmhdSFgPPzJTprvGKsr62M5ICSrc+v?=
+ =?us-ascii?Q?l6kpmOXHcp8CK6+unog8EtjBjqazP7/1OcOgJ4p0TvgRve6XBUztLwG/+s6h?=
+ =?us-ascii?Q?TsereqGHL4GFjqjv9kTnwWaKYpYeU5AE1znZ8B9iUp8/Vd24kGL2YKBwquw3?=
+ =?us-ascii?Q?4HDtKSFyfpg3j8O9Nwbu2Aglj+Q0e4IEUQshvhm/cbEHyFE1gWJiOIKGgr57?=
+ =?us-ascii?Q?BeoGpNcUAmqj2DTcjAOOpE9X+CYdPkuqq/AxsMZ88QEZ/mD4Bwxkt5oXNLVr?=
+ =?us-ascii?Q?RCrcJCXs1IMv/th+DL0bbeOJdAWXU/HlpCQx6avigr0139uYE0b9UkBOcFBs?=
+ =?us-ascii?Q?q1qIh44LJk8oXZg4PvV6ZoD7s9mrab/r0gAcg3EYCZRLuht4L7ww6PeYw+Cn?=
+ =?us-ascii?Q?bqud4KA6dLuDyXrabB3BxUzkO3qaWqSdC9NjhInLRiTGZWcqzmEZ4aPkgz73?=
+ =?us-ascii?Q?NHwhIxpqSUPhMeHoRjIsmumg2NMWenTuLCODSX8RqG49B2bgF8XrBxJSJRdI?=
+ =?us-ascii?Q?zgq7UrYEKb7+GBYgYB9iLr1UeHdtaDCgqtZ/q4CxLNNAAxSq/vKv13wBCjcY?=
+ =?us-ascii?Q?wrsbvd7pU9kAWDYXq4iiTHy0XLTHwxnjsrwzod0Bo476NtoPIaEpVYxjHfKm?=
+ =?us-ascii?Q?Mv83cCf/s/au6Dc85skTGrT06/a5JUS85qi0jYUeJA50MVDQuirli682GQe5?=
+ =?us-ascii?Q?eSAKaheRfIpB1j1KB2XpFlgI9yIFLHSCeIldoejYFMyr911vfRKDQnZKb8SZ?=
+ =?us-ascii?Q?gVOYgCh4yxWv5xb0WS8EyNqb9cHtqDsUm1h4GnSQT8zeQL9W8Q7XawXBM9Hg?=
+ =?us-ascii?Q?PUguDDZFZ2B3tIcsVZS+5Z9+ASWk7GciuL4Ng3iKnkzqZumlJhwY/HQUHtoj?=
+ =?us-ascii?Q?DtD7CHdYgYSmFSPR90h9u+J6wq2p4bTVAjQn8fDKPWTam5PcjQ48gUx4hTVi?=
+ =?us-ascii?Q?+nEli+niHfGIjqaQ6JvWfPmn9jbchr5j1bxIyA+htPb67RPCXev6WAIBsnP3?=
+ =?us-ascii?Q?QheJS1J3g9XAhoytWkBAGVGmXC3kmeXS3XES7zIifFjRYfUVUdTHa7bsaqsi?=
+ =?us-ascii?Q?Z4W9WeoVBuPn4ltKitEcutl5Ogfe6CM6RrJOZPpIXKCJJP+HAGRlp9dqQjxw?=
+ =?us-ascii?Q?gRwL/fmNVAikZuK+IDgDcFOkcIaVJKIJXSx4iDZEdxCikdcVKL0utzHDXU+h?=
+ =?us-ascii?Q?1bzRhNDykUmbgFp7ZDiXzR8E7hucCc6bslg5K1Ai4Ftd6qUlVZNVJeppmZWe?=
+ =?us-ascii?Q?V1IjZOACQMDnhe32n10CSCPYQ4RLm0CLryDyfnnHIbxp6j42wUGwTbpi994G?=
+ =?us-ascii?Q?8fpx2Dc=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.12;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:atlvpn-bp.amd.com;CAT:NONE;SFS:(13230040)(1800799024)(376014)(36860700013)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Nov 2024 17:29:53.7510
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b0c4c120-201f-4393-620b-08dd07f69d41
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.12];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	MN1PEPF0000ECD5.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB5908
 
-The following changes since commit 8cf0b93919e13d1e8d4466eb4080a4c4d9d66d7b:
+This patchset introduces a new Linux Kernel Driver, amdxdna for AMD NPUs.
+The driver is based on Linux accel subsystem.
 
-  Linux 6.12-rc2 (2024-10-06 15:32:27 -0700)
+NPU (Neural Processing Unit) is an AI inference accelerator integrated
+into AMD client CPUs. NPU enables efficient execution of Machine Learning
+applications like CNNs, LLMs, etc.  NPU is based on AMD XDNA
+architecture [1].
 
-are available in the Git repository at:
+AMD NPU consists of the following components:
 
-  git://git.lwn.net/linux.git tags/docs-6.13
+  - Tiled array of AMD AI Engine processors.
+  - Micro Controller which runs the NPU Firmware responsible for
+    command processing, AIE array configuration, and execution management.
+  - PCI EP for host control of the NPU device.
+  - Interconnect for connecting the NPU components together.
+  - SRAM for use by the NPU Firmware.
+  - Address translation hardware for protected host memory access by the
+    NPU.
 
-for you to fetch changes up to c818d5c64c9a8cc14853d716bf7ce6674a6126d0:
+NPU supports multiple concurrent fully isolated contexts. Concurrent
+contexts may be bound to AI Engine array spatially and or temporarily.
 
-  Documentation/CoC: spell out enforcement for unacceptable behaviors (2024=
--11-15 14:31:59 -0700)
+The driver is licensed under GPL-2.0 except for UAPI header which is
+licensed GPL-2.0 WITH Linux-syscall-note.
 
-----------------------------------------------------------------
-Another moderately busy cycle in docsland:
+User mode driver stack consists of XRT [2] and AMD AIE Plugin for IREE [3].
 
-- Work on Chinese translations has picked up again.  Happily, they are
-  maintaining the existing translations and not just adding new ones.
+The firmware for the NPU is distributed as a closed source binary, and has
+already been pushed to the DRM firmware repository [4].
 
-- Some maintenance of the Japanese and Italian translations as well.
+[1] https://www.amd.com/en/technologies/xdna.html
+[2] https://github.com/Xilinx/XRT
+[3] https://github.com/nod-ai/iree-amd-aie
+[4] https://gitlab.freedesktop.org/drm/firmware/-/tree/amd-ipu-staging/amdnpu
 
-- The removal of the venerable "dontdiff" file.  It has long outlived its
-  usefulness and contained entries ("parse.*") that would actively mask
-  actual source change.
+Changes since v10:
+- Fix build error against drm-misc
 
-- The addition of enforcement information to the code-of-conduct
-  documentation.
+Changes since v9:
+- Change notifier_lock to rw_semaphore
 
-Along with some build-system fixes and a lot of typo and language fixes.
+Changes since v8:
+- Fix mis-merged line
 
-----------------------------------------------------------------
-Abhinav Saxena (1):
-      docs: fix typos and whitespace in Documentation/process/backporting.r=
-st
+Changes since v7:
+- Prealloc dma fence chain before publishing dma-fence
+- Install the job's finished fence in dma-resv rather than driver fence
 
-Akira Yokosawa (1):
-      docs/ja_JP: howto: Catch up changes in v6.11
+Changes since v6:
+- Revise command submission flow
 
-Andrew Kreimer (2):
-      docs: backporting: fix a typo
-      Documentation/maintainer-tip: Fix typos
+Changes since v5:
+- Remove wait_cmd ioctl and use syncobj instead
+- Cleanup spelling errors
+- Add dependencies in Kconfig
 
-Andr=C3=A9 Almeida (1):
-      scripts/kernel-doc: Fix build time warnings
+Changes since v4:
+- Fix lockdep errors
+- Use __u* structure for struct aie_error
 
-Bernhard M. Wiedemann (1):
-      docs/zh_TW+zh_CN: Make rst references unique
+Changes since v3:
+- Remove debug BO patch
+- Changes based on code review comments
 
-Carlos Bilbao (1):
-      kernel-docs: Add new section for Rust learning materials
+Changes since v2:
+- Add document amdnpu.rst
+- Change AIE2_DEVM_SIZE to 64M due to firmware change
+- Changes based on code review comments
 
-Changhuang Liang (1):
-      Documentation: kgdb: Correct parameter error
+Changes since v1:
+- Remove some inline defines
+- Minor changes based on code review comments
 
-Chen-Yu Tsai (1):
-      scripts/kernel-doc: Do not track section counter across processed fil=
-es
+Lizhi Hou (10):
+  accel/amdxdna: Add documentation for AMD NPU accelerator driver
+  accel/amdxdna: Add a new driver for AMD AI Engine
+  accel/amdxdna: Support hardware mailbox
+  accel/amdxdna: Add hardware resource solver
+  accel/amdxdna: Add hardware context
+  accel/amdxdna: Add GEM buffer object management
+  accel/amdxdna: Add command execution
+  accel/amdxdna: Add suspend and resume
+  accel/amdxdna: Add error handling
+  accel/amdxdna: Add query functions
 
-Dongliang Mu (15):
-      docs/zh_CN: add the translation of kbuild/kconfig.rst
-      docs/zh_CN: add the translation of kbuild/kbuild.rst
-      docs/zh_CN: add the translations of kbuild/reproducible-builds.rst
-      docs/zh_CN: update the translation of process/submitting-patches.rst
-      docs/zh_CN: update the translation of process/email-clients.rst
-      docs/zh_CN: update the translation of process/coding-style.rst
-      docs/zh_CN: update the translation of mm/hmm.rst
-      docs/zh_CN: update the translation of mm/active_mm.rst
-      docs/zh_CN: update the translation of mm/admon/faq.rst
-      docs/zh_CN: update the translation of mm/overcommit-accounting.rst
-      docs/zh_CN: update the translation of mm/page_table_check.rst
-      docs/zh_CN: update the translation of mm/page_owner.rst
-      docs/zh_CN: update the translation of process/programming-language.rst
-      docs/zh_CN: add the translation of kbuild/llvm.rst
-      docs/zh_CN: fix one sentence in llvm.rst
+ Documentation/accel/amdxdna/amdnpu.rst        | 281 ++++++
+ Documentation/accel/amdxdna/index.rst         |  11 +
+ Documentation/accel/index.rst                 |   1 +
+ MAINTAINERS                                   |  11 +
+ drivers/accel/Kconfig                         |   1 +
+ drivers/accel/Makefile                        |   1 +
+ drivers/accel/amdxdna/Kconfig                 |  18 +
+ drivers/accel/amdxdna/Makefile                |  21 +
+ drivers/accel/amdxdna/TODO                    |   5 +
+ drivers/accel/amdxdna/aie2_ctx.c              | 900 ++++++++++++++++++
+ drivers/accel/amdxdna/aie2_error.c            | 360 +++++++
+ drivers/accel/amdxdna/aie2_message.c          | 791 +++++++++++++++
+ drivers/accel/amdxdna/aie2_msg_priv.h         | 370 +++++++
+ drivers/accel/amdxdna/aie2_pci.c              | 762 +++++++++++++++
+ drivers/accel/amdxdna/aie2_pci.h              | 259 +++++
+ drivers/accel/amdxdna/aie2_psp.c              | 146 +++
+ drivers/accel/amdxdna/aie2_smu.c              | 119 +++
+ drivers/accel/amdxdna/aie2_solver.c           | 330 +++++++
+ drivers/accel/amdxdna/aie2_solver.h           | 154 +++
+ drivers/accel/amdxdna/amdxdna_ctx.c           | 553 +++++++++++
+ drivers/accel/amdxdna/amdxdna_ctx.h           | 162 ++++
+ drivers/accel/amdxdna/amdxdna_gem.c           | 622 ++++++++++++
+ drivers/accel/amdxdna/amdxdna_gem.h           |  65 ++
+ drivers/accel/amdxdna/amdxdna_mailbox.c       | 576 +++++++++++
+ drivers/accel/amdxdna/amdxdna_mailbox.h       | 124 +++
+ .../accel/amdxdna/amdxdna_mailbox_helper.c    |  61 ++
+ .../accel/amdxdna/amdxdna_mailbox_helper.h    |  42 +
+ drivers/accel/amdxdna/amdxdna_pci_drv.c       | 409 ++++++++
+ drivers/accel/amdxdna/amdxdna_pci_drv.h       | 123 +++
+ drivers/accel/amdxdna/amdxdna_sysfs.c         |  67 ++
+ drivers/accel/amdxdna/npu1_regs.c             | 101 ++
+ drivers/accel/amdxdna/npu2_regs.c             | 118 +++
+ drivers/accel/amdxdna/npu4_regs.c             | 118 +++
+ drivers/accel/amdxdna/npu5_regs.c             | 118 +++
+ include/trace/events/amdxdna.h                | 101 ++
+ include/uapi/drm/amdxdna_accel.h              | 436 +++++++++
+ 36 files changed, 8337 insertions(+)
+ create mode 100644 Documentation/accel/amdxdna/amdnpu.rst
+ create mode 100644 Documentation/accel/amdxdna/index.rst
+ create mode 100644 drivers/accel/amdxdna/Kconfig
+ create mode 100644 drivers/accel/amdxdna/Makefile
+ create mode 100644 drivers/accel/amdxdna/TODO
+ create mode 100644 drivers/accel/amdxdna/aie2_ctx.c
+ create mode 100644 drivers/accel/amdxdna/aie2_error.c
+ create mode 100644 drivers/accel/amdxdna/aie2_message.c
+ create mode 100644 drivers/accel/amdxdna/aie2_msg_priv.h
+ create mode 100644 drivers/accel/amdxdna/aie2_pci.c
+ create mode 100644 drivers/accel/amdxdna/aie2_pci.h
+ create mode 100644 drivers/accel/amdxdna/aie2_psp.c
+ create mode 100644 drivers/accel/amdxdna/aie2_smu.c
+ create mode 100644 drivers/accel/amdxdna/aie2_solver.c
+ create mode 100644 drivers/accel/amdxdna/aie2_solver.h
+ create mode 100644 drivers/accel/amdxdna/amdxdna_ctx.c
+ create mode 100644 drivers/accel/amdxdna/amdxdna_ctx.h
+ create mode 100644 drivers/accel/amdxdna/amdxdna_gem.c
+ create mode 100644 drivers/accel/amdxdna/amdxdna_gem.h
+ create mode 100644 drivers/accel/amdxdna/amdxdna_mailbox.c
+ create mode 100644 drivers/accel/amdxdna/amdxdna_mailbox.h
+ create mode 100644 drivers/accel/amdxdna/amdxdna_mailbox_helper.c
+ create mode 100644 drivers/accel/amdxdna/amdxdna_mailbox_helper.h
+ create mode 100644 drivers/accel/amdxdna/amdxdna_pci_drv.c
+ create mode 100644 drivers/accel/amdxdna/amdxdna_pci_drv.h
+ create mode 100644 drivers/accel/amdxdna/amdxdna_sysfs.c
+ create mode 100644 drivers/accel/amdxdna/npu1_regs.c
+ create mode 100644 drivers/accel/amdxdna/npu2_regs.c
+ create mode 100644 drivers/accel/amdxdna/npu4_regs.c
+ create mode 100644 drivers/accel/amdxdna/npu5_regs.c
+ create mode 100644 include/trace/events/amdxdna.h
+ create mode 100644 include/uapi/drm/amdxdna_accel.h
 
-Eder Zulian (1):
-      docs/core-api: swiotlb: fix typos
+-- 
+2.34.1
 
-Federico Vaga (2):
-      doc:it_IT: update I2C summary
-      doc:it_IT: update documents in process/
-
-Gabriele Monaco (1):
-      tracing: doc: Fix typo in ftrace histogram
-
-Guilherme G. Piccoli (1):
-      Documentation: Improve crash_kexec_post_notifiers description
-
-Haoyang Liu (2):
-      docs/dev-tools: fix a typo
-      docs/zh_CN: add translation of dev-tools/kmsan.rst
-
-Jonathan Corbet (2):
-      Add Yanteng Si to .mailmap
-      docs: remove Documentation/dontdiff
-
-Lucas De Marchi (1):
-      Documentation: core-api/cpuhotplug: Fix missing prefix
-
-Matthieu Baerts (NGI0) (1):
-      docs: gcov: fix link to LCOV website
-
-Nihar Chaithanya (1):
-      docs:process:changes: fix version command for btrfs-progs
-
-Nir Lichtman (2):
-      Documentation: English fixes in kgdb/kdb article
-      Documentation: Fix incorrect paths/magic in magic numbers rst
-
-Pengyu Zhang (4):
-      Docs/mm: Fix a mistake for pfn in page_tables.rst
-      Docs/zh_CN: Translate page_tables.rst to Simplified Chinese
-      Docs/zh_CN: Fix the pfn calculation error in page_tables.rst
-      docs/zh_CN: Add a entry in Chinese glossary
-
-Randy Dunlap (2):
-      kernel-doc: allow object-like macros in ReST output
-      Documentation: admin: reorganize kernel-parameters intro
-
-Sergio Gonz=C3=A1lez Collado (1):
-      docs/sp_SP: Add translation for scheduler/sched-bwc.rst
-
-Shuah Khan (1):
-      Documentation/CoC: spell out enforcement for unacceptable behaviors
-
-Steven Rostedt (1):
-      Documentation/tracing: Mention that RESET_ATTACK_MITIGATION can clear=
- memory
-
-SurajSonawane2415 (1):
-      docs: fix WARNING document not included in any toctree
-
-Thorsten Blum (1):
-      docs: Remove redundant word "for"
-
-Thorsten Leemhuis (1):
-      docs: bug-bisect: add a note about bisecting -next
-
-Vishnu Sanal T (1):
-      fix grammar on false-sharing.rst
-
-Yaxin Wang (1):
-      Docs/zh_CN: Translate physical_memory.rst to Simplified Chinese
-
- .mailmap                                           |   1 +
- Documentation/admin-guide/bug-bisect.rst           |  21 ++
- Documentation/admin-guide/kernel-parameters.rst    |  36 +-
- Documentation/admin-guide/kernel-parameters.txt    |  22 +-
- Documentation/core-api/cpu_hotplug.rst             |   2 +-
- Documentation/core-api/swiotlb.rst                 |   4 +-
- Documentation/dev-tools/gcov.rst                   |   2 +-
- Documentation/dev-tools/kgdb.rst                   |  20 +-
- Documentation/dev-tools/kmsan.rst                  |   2 +-
- Documentation/dontdiff                             | 271 --------------
- Documentation/kernel-hacking/false-sharing.rst     |   4 +-
- Documentation/maintainer/pull-requests.rst         |   2 +-
- Documentation/mm/page_tables.rst                   |   2 +-
- Documentation/process/5.Posting.rst                |   5 -
- Documentation/process/backporting.rst              |   8 +-
- Documentation/process/changes.rst                  |   2 +-
- .../process/code-of-conduct-interpretation.rst     |  87 +++++
- Documentation/process/kernel-docs.rst              | 163 ++++++++-
- Documentation/process/maintainer-tip.rst           |   4 +-
- Documentation/rust/index.rst                       |   3 +
- Documentation/staging/magic-number.rst             |   6 +-
- Documentation/trace/histogram.rst                  |   2 +-
- Documentation/trace/index.rst                      |   1 +
- .../it_IT/{process =3D> dev-tools}/clang-format.rst  |   0
- .../translations/it_IT/dev-tools/index.rst         |  17 +
- Documentation/translations/it_IT/i2c/summary.rst   |  72 ++--
- Documentation/translations/it_IT/index.rst         |   8 +-
- .../translations/it_IT/process/2.Process.rst       |   6 +-
- .../translations/it_IT/process/4.Coding.rst        |   2 +-
- .../translations/it_IT/process/5.Posting.rst       |   5 -
- .../translations/it_IT/process/changes.rst         |  33 +-
- .../translations/it_IT/process/coding-style.rst    |  37 +-
- .../translations/it_IT/process/email-clients.rst   |  33 +-
- Documentation/translations/it_IT/process/howto.rst |  10 +-
- Documentation/translations/it_IT/process/index.rst |  10 -
- .../it_IT/process/submit-checklist.rst             | 167 ++++-----
- .../it_IT/process/submitting-patches.rst           |  23 +-
- Documentation/translations/it_IT/staging/index.rst |  13 +
- .../it_IT/{process =3D> staging}/magic-number.rst    |   0
- Documentation/translations/ja_JP/process/howto.rst |  10 +-
- .../translations/sp_SP/scheduler/index.rst         |   1 +
- .../translations/sp_SP/scheduler/sched-bwc.rst     | 287 +++++++++++++++
- .../translations/zh_CN/dev-tools/gcov.rst          |   8 +-
- .../translations/zh_CN/dev-tools/index.rst         |   2 +-
- .../translations/zh_CN/dev-tools/kmsan.rst         | 392 +++++++++++++++++=
-++++
- Documentation/translations/zh_CN/glossary.rst      |   1 +
- Documentation/translations/zh_CN/kbuild/index.rst  |   9 +-
- Documentation/translations/zh_CN/kbuild/kbuild.rst | 304 ++++++++++++++++
- .../translations/zh_CN/kbuild/kconfig.rst          | 259 ++++++++++++++
- Documentation/translations/zh_CN/kbuild/llvm.rst   | 203 +++++++++++
- .../zh_CN/kbuild/reproducible-builds.rst           | 114 ++++++
- Documentation/translations/zh_CN/mm/active_mm.rst  |   5 +
- Documentation/translations/zh_CN/mm/damon/faq.rst  |  17 -
- Documentation/translations/zh_CN/mm/hmm.rst        |   8 +-
- Documentation/translations/zh_CN/mm/index.rst      |   2 +
- .../zh_CN/mm/overcommit-accounting.rst             |   3 +-
- Documentation/translations/zh_CN/mm/page_owner.rst |  46 +++
- .../translations/zh_CN/mm/page_table_check.rst     |  13 +
- .../translations/zh_CN/mm/page_tables.rst          | 221 ++++++++++++
- .../translations/zh_CN/mm/physical_memory.rst      | 356 +++++++++++++++++=
-++
- .../translations/zh_CN/process/5.Posting.rst       |   4 -
- .../translations/zh_CN/process/coding-style.rst    |  11 -
- .../translations/zh_CN/process/email-clients.rst   |   9 +-
- .../zh_CN/process/programming-language.rst         |  78 ++--
- .../zh_CN/process/submitting-patches.rst           |  19 +-
- .../translations/zh_TW/dev-tools/gcov.rst          |   8 +-
- .../translations/zh_TW/process/5.Posting.rst       |   4 -
- scripts/kernel-doc                                 |  49 ++-
- 68 files changed, 2892 insertions(+), 657 deletions(-)
- delete mode 100644 Documentation/dontdiff
- rename Documentation/translations/it_IT/{process =3D> dev-tools}/clang-for=
-mat.rst (100%)
- create mode 100644 Documentation/translations/it_IT/dev-tools/index.rst
- create mode 100644 Documentation/translations/it_IT/staging/index.rst
- rename Documentation/translations/it_IT/{process =3D> staging}/magic-numbe=
-r.rst (100%)
- create mode 100644 Documentation/translations/sp_SP/scheduler/sched-bwc.rst
- create mode 100644 Documentation/translations/zh_CN/dev-tools/kmsan.rst
- create mode 100644 Documentation/translations/zh_CN/kbuild/kbuild.rst
- create mode 100644 Documentation/translations/zh_CN/kbuild/kconfig.rst
- create mode 100644 Documentation/translations/zh_CN/kbuild/llvm.rst
- create mode 100644 Documentation/translations/zh_CN/kbuild/reproducible-bu=
-ilds.rst
- create mode 100644 Documentation/translations/zh_CN/mm/page_tables.rst
- create mode 100644 Documentation/translations/zh_CN/mm/physical_memory.rst
 
