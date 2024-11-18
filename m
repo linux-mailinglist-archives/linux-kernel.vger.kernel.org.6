@@ -1,225 +1,141 @@
-Return-Path: <linux-kernel+bounces-413433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 390329D18FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 20:33:14 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9559E9D18F6
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 20:32:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDC3C2824AA
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 19:33:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32891B2183D
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 19:32:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 298C0153BF0;
-	Mon, 18 Nov 2024 19:32:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="lL684pmW"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 784521E1C0B;
+	Mon, 18 Nov 2024 19:32:43 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1FC917BBF;
-	Mon, 18 Nov 2024 19:32:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A44117BBF;
+	Mon, 18 Nov 2024 19:32:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731958369; cv=none; b=UURKmKmxF9ke6fdzG8aWUylxYUqikmz4LESa94zvKYdrBCQQlJ7I5NGTraeBqp/60jJjqxCwyPmuYRG+IMHNpxK5GrQaPrQYxQ/HHKeqVp4UhgwtnCd26R974XXL5ZqWVoqc5uCAcPwDw6i3K+wVI+ijUL0K6on3IxFG2I6OU0k=
+	t=1731958363; cv=none; b=QVPYv+BEjVOJ6EjoItbhwEx3UNFhj1F1drp85iIgSnCZwL6C/zDZ5ukxoSNIi7ZpXLyWd/qYwyJCa+WpXuQPOYmGZH+RHL4Wi4UQcpU5g9eLZGDfgpMHLWvp9L+EC7y83yKZsOlQxkwu9VXBhHGb6Oa/6wDBD4BwvMha4GHoR98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731958369; c=relaxed/simple;
-	bh=bP1URl5nKrZExSKFJ41Ci/Pz7V0c2saZOgAFc/C90IU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=WaBEYVwYsqfHtgY6gmdBgSZ47Jw385c5ibij8W80Z1G+YOTdSFKPEUe117D6wXi8WymzsQwsVrD46T3qON9MuG9pNvxDEZOHC53bawIfhL37IyiOa8v9EiG51nJ+yNYqyEt5dURw4fmHOMYs9aSZi9QMyBgSf9VyirFeOXEj0Rw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=lL684pmW; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AIGGppi030145;
-	Mon, 18 Nov 2024 19:32:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	+HAJEdoM3MeaolcFlpfhJDfsb1O8wvRG1r5/khyoe0M=; b=lL684pmWq1NO0lB1
-	6GdUzBjy7afR686IXklleZVSnPS5J+wUhl+8ZrS9g4zmeA8jagoxBUNLaQI7x08w
-	G83rf51AjRB3WS183Ptv/QD5ENJfa1obNw1PpAQAIvHe3PWwNnm1/xYvRFXy1N+Q
-	8jRGPCizyPevKW/RpzMpJTDH8MuKpQwH4qsuVub8VXVZrCS44f/2UuK6DGiv8MuQ
-	gb2mLo85bP/dhCxLg/80SE2x5W3cs0p1vaUI5o7ELBUKeomJ3JXEJa+lYVS2SfR1
-	U94Kt8kD8r/Xx0qlQubcI+VzBM1rXLdzOiM0KBxIPn95dyklrfV/SWo93ZrIDMyC
-	c9BLLw==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4308y68f01-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 18 Nov 2024 19:32:43 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AIJWgkB018501
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 18 Nov 2024 19:32:42 GMT
-Received: from [10.71.108.63] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 18 Nov
- 2024 11:30:58 -0800
-Message-ID: <f2bf7790-7387-4eb6-8e1e-e555a20a717b@quicinc.com>
-Date: Mon, 18 Nov 2024 11:30:58 -0800
+	s=arc-20240116; t=1731958363; c=relaxed/simple;
+	bh=jwf9mr6ZqGV+aRwYqQV3XDJze1+KZMmOLGtdZOcQrx8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sB3S0aOb0HSjhpLhzoYTB7Z8dYTpbthAwRoh+FArCWPvOEDzTa3dp0o3uFnrV3gvZh+ON2Rm/Ta5LUkDgZE6+JHBBW5n3f6cpQ+CNqXr3IJJMvRb4/LZ8APCClpPHnJl2FawJ+7G8OyYjfZueMTdza3V8I/BpUREehvwRFFtUzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4572C4CECC;
+	Mon, 18 Nov 2024 19:32:40 +0000 (UTC)
+Date: Mon, 18 Nov 2024 14:33:11 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Suleiman Souhlal <suleiman@google.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot
+ <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, Valentin
+ Schneider <vschneid@redhat.com>, Paolo Bonzini <pbonzini@redhat.com>,
+ seanjc@google.com, Srikar Dronamraju <srikar@linux.ibm.com>, David
+ Woodhouse <dwmw2@infradead.org>, joelaf@google.com, vineethrp@google.com,
+ linux-kernel@vger.kernel.org, kvm@vger.kernel.org, ssouhlal@freebsd.org
+Subject: Re: [PATCH v3] sched: Don't try to catch up excess steal time.
+Message-ID: <20241118143311.3ca94405@gandalf.local.home>
+In-Reply-To: <20241118043745.1857272-1-suleiman@google.com>
+References: <20241118043745.1857272-1-suleiman@google.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/7] clk: qcom: Add support for GCC clock controller on
- SM8750
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Trilok Soni
-	<quic_tsoni@quicinc.com>,
-        Satya Durga Srinivasu Prabhala
-	<quic_satyap@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20241112002807.2804021-1-quic_molvera@quicinc.com>
- <20241112002807.2804021-6-quic_molvera@quicinc.com>
- <n4h4jvxrsyahgmxedfsifhgmarw4rzn2cbg5pcvzo4ll3edziq@vgpvjco5hyb4>
-Content-Language: en-US
-From: Melody Olvera <quic_molvera@quicinc.com>
-In-Reply-To: <n4h4jvxrsyahgmxedfsifhgmarw4rzn2cbg5pcvzo4ll3edziq@vgpvjco5hyb4>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 6YKrk9oTcMu71sE_CN3jL0DZZP4-7rMU
-X-Proofpoint-GUID: 6YKrk9oTcMu71sE_CN3jL0DZZP4-7rMU
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- mlxlogscore=999 suspectscore=0 mlxscore=0 bulkscore=0 malwarescore=0
- lowpriorityscore=0 spamscore=0 clxscore=1015 adultscore=0 phishscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411180161
+
+On Mon, 18 Nov 2024 13:37:45 +0900
+Suleiman Souhlal <suleiman@google.com> wrote:
+
+> When steal time exceeds the measured delta when updating clock_task, we
+> currently try to catch up the excess in future updates.
+> However, this results in inaccurate run times for the future things using
+> clock_task, in some situations, as they end up getting additional steal
+> time that did not actually happen.
+> This is because there is a window between reading the elapsed time in
+> update_rq_clock() and sampling the steal time in update_rq_clock_task().
+> If the VCPU gets preempted between those two points, any additional
+> steal time is accounted to the outgoing task even though the calculated
+> delta did not actually contain any of that "stolen" time.
+> When this race happens, we can end up with steal time that exceeds the
+> calculated delta, and the previous code would try to catch up that excess
+> steal time in future clock updates, which is given to the next,
+> incoming task, even though it did not actually have any time stolen.
+> 
+> This behavior is particularly bad when steal time can be very long,
+> which we've seen when trying to extend steal time to contain the duration
+> that the host was suspended [0]. When this happens, clock_task stays
+> frozen, during which the running task stays running for the whole
+> duration, since its run time doesn't increase.
+> However the race can happen even under normal operation.
+> 
+> Ideally we would read the elapsed cpu time and the steal time atomically,
+> to prevent this race from happening in the first place, but doing so
+> is non-trivial.
+> 
+> Since the time between those two points isn't otherwise accounted anywhere,
+> neither to the outgoing task nor the incoming task (because the "end of
+> outgoing task" and "start of incoming task" timestamps are the same),
+> I would argue that the right thing to do is to simply drop any excess steal
+> time, in order to prevent these issues.
+> 
+> [0] https://lore.kernel.org/kvm/20240820043543.837914-1-suleiman@google.com/
+> 
+> Signed-off-by: Suleiman Souhlal <suleiman@google.com>
+> ---
+> v3:
+> - Reword commit message.
+> - Revert back to v1 code, since it's more understandable.
+> 
+> v2: https://lore.kernel.org/lkml/20240911111522.1110074-1-suleiman@google.com
+> - Slightly changed to simply moving one line up instead of adding
+>   new variable.
+> 
+> v1: https://lore.kernel.org/lkml/20240806111157.1336532-1-suleiman@google.com
+> ---
+>  kernel/sched/core.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index a1c353a62c56..13f70316ef39 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -766,13 +766,15 @@ static void update_rq_clock_task(struct rq *rq, s64 delta)
+>  #endif
+>  #ifdef CONFIG_PARAVIRT_TIME_ACCOUNTING
+>  	if (static_key_false((&paravirt_steal_rq_enabled))) {
+> -		steal = paravirt_steal_clock(cpu_of(rq));
+> +		u64 prev_steal;
+> +
+> +		steal = prev_steal = paravirt_steal_clock(cpu_of(rq));
+>  		steal -= rq->prev_steal_time_rq;
+>  
+>  		if (unlikely(steal > delta))
+>  			steal = delta;
+
+So is the problem just the above if statement? That is, delta is already
+calculated, but if we get interrupted by the host before steal is
+calculated and the time then becomes greater than delta, the time
+difference between delta and steal gets pushed off to the next task, right?
+
+-- Steve
 
 
 
-On 11/15/2024 7:34 AM, Dmitry Baryshkov wrote:
-> On Mon, Nov 11, 2024 at 04:28:05PM -0800, Melody Olvera wrote:
->> From: Taniya Das <quic_tdas@quicinc.com>
->>
->> Add support for GCC Clock Controller for SM8750 platform.
->>
->> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
->> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
->> ---
->>   drivers/clk/qcom/Kconfig      |    9 +
->>   drivers/clk/qcom/Makefile     |    1 +
->>   drivers/clk/qcom/gcc-sm8750.c | 3274 +++++++++++++++++++++++++++++++++
->>   3 files changed, 3284 insertions(+)
->>   create mode 100644 drivers/clk/qcom/gcc-sm8750.c
->>
->> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
->> index ef89d686cbc4..26bfb607235b 100644
->> --- a/drivers/clk/qcom/Kconfig
->> +++ b/drivers/clk/qcom/Kconfig
->> @@ -1130,6 +1130,15 @@ config SM_GCC_8650
->>   	  Say Y if you want to use peripheral devices such as UART,
->>   	  SPI, I2C, USB, SD/UFS, PCIe etc.
->>   
->> +config SM_GCC_8750
->> +	tristate "SM8750 Global Clock Controller"
->> +	depends on ARM64 || COMPILE_TEST
->> +	select QCOM_GDSC
->> +	help
->> +	  Support for the global clock controller on SM8750 devices.
->> +	  Say Y if you want to use peripheral devices such as UART,
->> +	  SPI, I2C, USB, SD/UFS, PCIe etc.
->> +
->>   config SM_GPUCC_4450
->>   	tristate "SM4450 Graphics Clock Controller"
->>   	depends on ARM64 || COMPILE_TEST
->> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
->> index b09dbdc210eb..1875018d1100 100644
->> --- a/drivers/clk/qcom/Makefile
->> +++ b/drivers/clk/qcom/Makefile
->> @@ -143,6 +143,7 @@ obj-$(CONFIG_SM_GCC_8350) += gcc-sm8350.o
->>   obj-$(CONFIG_SM_GCC_8450) += gcc-sm8450.o
->>   obj-$(CONFIG_SM_GCC_8550) += gcc-sm8550.o
->>   obj-$(CONFIG_SM_GCC_8650) += gcc-sm8650.o
->> +obj-$(CONFIG_SM_GCC_8750) += gcc-sm8750.o
->>   obj-$(CONFIG_SM_GPUCC_4450) += gpucc-sm4450.o
->>   obj-$(CONFIG_SM_GPUCC_6115) += gpucc-sm6115.o
->>   obj-$(CONFIG_SM_GPUCC_6125) += gpucc-sm6125.o
->> diff --git a/drivers/clk/qcom/gcc-sm8750.c b/drivers/clk/qcom/gcc-sm8750.c
->> new file mode 100644
->> index 000000000000..faaefa42a039
->> --- /dev/null
->> +++ b/drivers/clk/qcom/gcc-sm8750.c
->> @@ -0,0 +1,3274 @@
->> +// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +/*
->> + * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
->> + */
->> +
->> +#include <linux/clk-provider.h>
->> +#include <linux/mod_devicetable.h>
->> +#include <linux/module.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/regmap.h>
->> +
->> +#include <dt-bindings/clock/qcom,sm8750-gcc.h>
->> +
->> +#include "clk-alpha-pll.h"
->> +#include "clk-branch.h"
->> +#include "clk-pll.h"
->> +#include "clk-rcg.h"
->> +#include "clk-regmap.h"
->> +#include "clk-regmap-divider.h"
->> +#include "clk-regmap-mux.h"
->> +#include "clk-regmap-phy-mux.h"
->> +#include "common.h"
->> +#include "gdsc.h"
->> +#include "reset.h"
->> +
->> +enum {
->> +	DT_BI_TCXO,
->> +	DT_BI_TCXO_AO,
->> +	DT_PCIE_0_PIPE_CLK,
->> +	DT_SLEEP_CLK,
->> +	DT_UFS_PHY_RX_SYMBOL_0_CLK,
->> +	DT_UFS_PHY_RX_SYMBOL_1_CLK,
->> +	DT_UFS_PHY_TX_SYMBOL_0_CLK,
->> +	DT_USB3_PHY_WRAPPER_GCC_USB30_PIPE_CLK,
-> This doesn't match Documentation/devicetree/bindings/clock/qcom,sm8650-gcc.yaml
-
-Hmmm I see what seems to have happened here. You're correct; this 
-doesn't match the bindings
-in sm8650-gcc. The v1 patchset had a new bindings file which matched the 
-sm8650 bindings, but also
-didn't match the driver; however we only seemed to catch that the two 
-bindings matched and not the
-fact that they didn't match the drivers.
-
-In terms of remedy I see two options. I'm fairly certain the driver here 
-is correct, so we can either
-add the sm8750 bindings file back and remove the two lines about the 
-PCIE 1 clocks or adjust the
-sm8650 binding to encompass both sm8650 and sm8750. It's unclear to me 
-how precedented the latter
-is; certainly having a single bindings file encompass both chips is 
-feasible, but I think I'm currently
-leaning towards bringing back the original bindings file as that seems 
-more precedented. Lmk
-your thoughts.
-
-Thanks,
-Melody
-
->> +};
->> +
+>  
+> -		rq->prev_steal_time_rq += steal;
+> +		rq->prev_steal_time_rq = prev_steal;
+>  		delta -= steal;
+>  	}
+>  #endif
 
 
