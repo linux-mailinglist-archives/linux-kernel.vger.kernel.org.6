@@ -1,237 +1,216 @@
-Return-Path: <linux-kernel+bounces-412913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B10C39D111B
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 14:00:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E42969D1126
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 14:02:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11365B257B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 13:00:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 61F48B250DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 13:02:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE93919AD7E;
-	Mon, 18 Nov 2024 13:00:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E3F31A0BFE;
+	Mon, 18 Nov 2024 13:01:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="oDOTJg/H";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="OJJponx9";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="JvIffgMJ";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="2pt5Odh/"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="1/65y0er"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6350A1E49B
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 13:00:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99AA419D092;
+	Mon, 18 Nov 2024 13:01:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731934835; cv=none; b=Ex4isxX1Q5CmYFyUVLo3emjSq2ICatpHB513gTHDINi+GatxWYEyTT1rnhOAGhW5MlVRX0iPB6fxU5vfZpM7MI4BCXty/lWFdZBMkSGDTSUjctmHywoYxYtQA7YPJY3xHl0jeLHcM7IiF/s9nvobQI2m9HjgWynaRRHdhAhpMpk=
+	t=1731934884; cv=none; b=Jh1jw1nqEewUHQU2NvnZmfm7nZ//bpWB41ZoNeiU/aG5WjvVSSVM7pE8oFSp6Mqa0rF6T1zeOtO56Qc6UmXVHWSD1qy2HOFKypKNzTMfn/ORHUKo8FISS0LNWTz2dnqfngB3XpJp4yuSyQfwO5Qpr48fZ7PwT2vd1YhKQrKd4Xk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731934835; c=relaxed/simple;
-	bh=KnMrBV+eNAVchflp35mrcRbGVqmoYRNEvJaP/XUdZRI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JsXQEaJbY2dkr8uxPBTmHFIcZlxUNlBFvD7EgE5ooCxeQU+xCAubKKEUFXrw3OFNT6RKg4jC6rB17lRt/rVS+ljNdJMMIIEIXbI0+k4VA9ZuAtP6a1BWcI2gLmm9vN0qOKyVFeFkUSxfpOa/MhTi3PhrDzunr3F0UYtoGr/V0Zc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=oDOTJg/H; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=OJJponx9; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=JvIffgMJ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=2pt5Odh/; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 882E21F365;
-	Mon, 18 Nov 2024 13:00:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1731934831; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=POCAvtbjbAn8l2UZV3oni2RrCLdjYMrNXKbkCUwnVXI=;
-	b=oDOTJg/HS08v4qluhgz9sYxlARHb/mvm6zVBtcDo/y5kPtQCIuwzTuFGCYz32MA5mMtxft
-	wF/miIfxV25thn0cGf7JF5Htk6lsa89BkGGALGIBTYMUZ4+lOJdV2zWbEGiKg9X8owdUdf
-	xemp6pFjRge6a9LdSDcq+FHyoOMV/y8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1731934831;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=POCAvtbjbAn8l2UZV3oni2RrCLdjYMrNXKbkCUwnVXI=;
-	b=OJJponx9hocVmam/85kF4JbA67GKqES96kPbMvp9I4PzHdaQV9Yq2CxNT2ulF4uGPG9iD/
-	AHVZ0mUQ40mWbvCQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1731934830; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=POCAvtbjbAn8l2UZV3oni2RrCLdjYMrNXKbkCUwnVXI=;
-	b=JvIffgMJbJkG3UMWgkZUQxNpadZhzLHAzFoRLmREd0jjsJ0rUcOihpNYOhzleb1D3f+MJ/
-	1DsTpOpjWdoBlm7OfFzOMFCRqV9utrVKTRZm08Il+apqICec4JvTu4gNhrO1lixBieLb3W
-	Z1ZPb5Yiwn9EwZcEJquV9HeIEbTb6Vk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1731934830;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=POCAvtbjbAn8l2UZV3oni2RrCLdjYMrNXKbkCUwnVXI=;
-	b=2pt5Odh/Vb0VeKbfQ7HCYGCUBCraYnDWZrRXgCqbxz+8PlPbDhCCtm+UoW58trTVbiLSlt
-	YATBXR2j2uz1aXBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 250A01376E;
-	Mon, 18 Nov 2024 13:00:30 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id wy0WB246O2e7XAAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Mon, 18 Nov 2024 13:00:30 +0000
-Message-ID: <11c45b3b-4ffd-4587-9585-c62442f632f5@suse.de>
-Date: Mon, 18 Nov 2024 14:00:29 +0100
+	s=arc-20240116; t=1731934884; c=relaxed/simple;
+	bh=ZHjrUlq66zs8efI7yyCOtRV2kHJYGGuesQuTNPW2bvI=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=vAmfv0taEvLQI+dM9idh9uiC6oa+gKJxVU8XMwrtCr4JtAG0t1NsenXv3/js4BqRH8zQwnS6acKyplE5Y4qoRupVM8m3RpiUMx7twSnHT1YhsujfBybyvv6u0i648N1RXQgvZhKI2g4N6Otw0XGTebGXVCkKHKb9mxFXp1ox7BM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=1/65y0er; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1731934882; x=1763470882;
+  h=from:subject:date:message-id:mime-version:
+   content-transfer-encoding:to:cc;
+  bh=ZHjrUlq66zs8efI7yyCOtRV2kHJYGGuesQuTNPW2bvI=;
+  b=1/65y0ermd99qnoJHPSp4spuqA7qNZjpPSV2Ila8CLBG8n80fthptI4D
+   DXiwS43raRjy8v/ZEqkLdZ5aEHoStWZ4jO/9dX+Ps4GOVJVBqstw/P1wG
+   W9f7vpONdDdqDGamadfEakz6xZvRemmPjrtKE8U8hMb3tyK05hQOkoULi
+   44iBsifGiimQk1xFwlT+C45YxbRTzKntUT96YCSA3xRlVdiYtMsFnwEub
+   Gdn/RyW9/vhTYq330bgcYvodwLYdjLUiFKsO/Epk3UvxwTqQHVIScqkhG
+   8jzjSUpckI0jKpNTqvjLYNGxUwOTF/9bmshluXty7424sXBbeS2BoGecx
+   w==;
+X-CSE-ConnectionGUID: DbRaG4tGSXe42+jZNuS/Pw==
+X-CSE-MsgGUID: 8tKiatfDTPeGBJ/uTe1xlA==
+X-IronPort-AV: E=Sophos;i="6.12,164,1728975600"; 
+   d="scan'208";a="37994315"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 18 Nov 2024 06:01:15 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Mon, 18 Nov 2024 06:00:56 -0700
+Received: from DEN-DL-M70577.microchip.com (10.10.85.11) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Mon, 18 Nov 2024 06:00:53 -0700
+From: Daniel Machon <daniel.machon@microchip.com>
+Subject: [PATCH net-next v3 0/8] net: lan969x: add RGMII support
+Date: Mon, 18 Nov 2024 14:00:46 +0100
+Message-ID: <20241118-sparx5-lan969x-switch-driver-4-v3-0-3cefee5e7e3a@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] [v2] drm: rework FB_CORE dependency
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Jocelyn Falempe <jfalempe@redhat.com>,
- Javier Martinez Canillas <javierm@redhat.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Jani Nikula <jani.nikula@intel.com>, Harry Wentland
- <harry.wentland@amd.com>, Masahiro Yamada <masahiroy@kernel.org>,
- Jonathan Cavitt <jonathan.cavitt@intel.com>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20241115162323.3555229-1-arnd@kernel.org>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <20241115162323.3555229-1-arnd@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Spam-Score: -2.80
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_TLS_ALL(0.00)[];
-	TAGGED_RCPT(0.00)[renesas];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[15];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[arndb.de,linux.intel.com,kernel.org,gmail.com,ffwll.ch,redhat.com,glider.be,intel.com,amd.com,lists.freedesktop.org,vger.kernel.org];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[arndb.de:email,imap1.dmz-prg2.suse.org:helo,suse.de:mid]
-X-Spam-Flag: NO
-X-Spam-Level: 
+X-B4-Tracking: v=1; b=H4sIAH46O2cC/4WOS27EIBBErzJinY4AY2yyyj2iWfBzaCnGVmMRj
+ 0a+exgriyibWZZK9V7dWYmEsbC3y51RrFhwyS10Lxfmk82fETC0zCSXSgiuoKyW9h6+bDba7FC
+ +cfMJAmGNBApCb9wwSq7G3rIGWSlOuJ+CD5bjBjnuG7u2xtkSwZHNPj0Es8X8GCQs20K381AV5
+ +zXrZ+5qwAO0zANndCq0y68z+hp8QnXV7/Mp7XKP0jRPUXKhuTBmdF6bnQQ/5HHcfwAfTg1BkQ
+ BAAA=
+To: <UNGLinuxDriver@microchip.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, "Lars
+ Povlsen" <lars.povlsen@microchip.com>, Steen Hegelund
+	<Steen.Hegelund@microchip.com>, Horatiu Vultur
+	<horatiu.vultur@microchip.com>, Russell King <linux@armlinux.org.uk>,
+	<jacob.e.keller@intel.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>
+CC: <devicetree@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+X-Mailer: b4 0.14-dev
 
-Hi
+== Description:
 
+This series is the fourth of a multi-part series, that prepares and adds
+support for the new lan969x switch driver.
 
-Am 15.11.24 um 17:23 schrieb Arnd Bergmann:
-> From: Arnd Bergmann <arnd@arndb.de>
->
-> The 'select FB_CORE' statement moved from CONFIG_DRM to DRM_CLIENT_LIB,
-> but there are now configurations that have code calling into fb_core
-> as built-in even though the client_lib itself is a loadable module:
->
-> x86_64-linux-ld: drivers/gpu/drm/drm_fbdev_shmem.o: in function `drm_fbdev_shmem_driver_fbdev_probe':
-> drm_fbdev_shmem.c:(.text+0x1fc): undefined reference to `fb_deferred_io_init'
-> x86_64-linux-ld: drivers/gpu/drm/drm_fbdev_shmem.o: in function `drm_fbdev_shmem_fb_destroy':
-> drm_fbdev_shmem.c:(.text+0x2e1): undefined reference to `fb_deferred_io_cleanup'
-> ...
-> x86_64-linux-ld: drivers/gpu/drm/drm_fb_helper.o: in function `drm_fb_helper_set_suspend':
-> drm_fb_helper.c:(.text+0x2c6): undefined reference to `fb_set_suspend'
-> x86_64-linux-ld: drivers/gpu/drm/drm_fb_helper.o: in function `drm_fb_helper_resume_worker':
-> drm_fb_helper.c:(.text+0x2e1): undefined reference to `fb_set_suspend'
->
-> In addition to DRM_CLIENT_LIB, the 'select' needs to be at least in
-> two more parts, DRM_KMS_HELPER and DRM_GEM_SHMEM_HELPER, so add those
-> here.
->
-> Fixes: dadd28d4142f ("drm/client: Add client-lib module")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
-> v2: keep the select in DRM_CLIENT_LIB, keep alphabetic sorting
-> ---
->   drivers/gpu/drm/Kconfig | 2 ++
->   1 file changed, 2 insertions(+)
->
-> diff --git a/drivers/gpu/drm/Kconfig b/drivers/gpu/drm/Kconfig
-> index a4a092ee70d9..410bd6d78408 100644
-> --- a/drivers/gpu/drm/Kconfig
-> +++ b/drivers/gpu/drm/Kconfig
-> @@ -98,6 +98,7 @@ config DRM_KUNIT_TEST
->   config DRM_KMS_HELPER
->   	tristate
->   	depends on DRM
-> +	select FB_CORE if DRM_FBDEV_EMULATION
->   	help
->   	  CRTC helpers for KMS drivers.
->   
-> @@ -371,6 +372,7 @@ config DRM_GEM_DMA_HELPER
->   config DRM_GEM_SHMEM_HELPER
->   	tristate
->   	depends on DRM && MMU
-> +	select FB_CORE if DRM_FBDEV_EMULATION
+The upstreaming efforts is split into multiple series (might change a
+bit as we go along):
 
-This select statement is also required for DRM_GEM_DMA_HELPER and 
-DRM_GEM_TTM_HELPER
+        1) Prepare the Sparx5 driver for lan969x (merged)
 
-Best regards
-Thomas
+        2) Add support for lan969x (same basic features as Sparx5
+           provides excl. FDMA and VCAP, merged).
 
->   	select FB_SYSMEM_HELPERS_DEFERRED if DRM_FBDEV_EMULATION
->   	help
->   	  Choose this if you need the GEM shmem helper functions
+        3) Add lan969x VCAP functionality (merged).
 
+    --> 4) Add RGMII support.
+
+        5) Add FDMA support.
+
+== RGMII support:
+
+The lan969x switch device includes two RGMII interfaces (port 28 and 29)
+supporting data speeds of 1 Gbps, 100 Mbps and 10 Mbps.
+
+Details are in the commit description of the patches.
+
+== Patch breakdown:
+
+Patch #1 does some preparation work.
+
+Patch #2 adds new function: is_port_rgmii() to the match data ops.
+
+Patch #3 uses the is_port_rgmii() in a number of places.
+
+Patch #4 uses the phy_interface_mode_is_rgmii() in a number of places.
+
+Patch #5 adds checks for RGMII PHY modes in sparx5_verify_speeds().
+
+Patch #6 adds registers required to configure RGMII.
+
+Patch #7 adds RGMII implementation.
+
+Patch #8 document RGMII delays.
+
+To: UNGLinuxDriver@microchip.com
+To: Andrew Lunn <andrew+netdev@lunn.ch>
+To: David S. Miller <davem@davemloft.net>
+To: Eric Dumazet <edumazet@google.com>
+To: Jakub Kicinski <kuba@kernel.org>
+To: Paolo Abeni <pabeni@redhat.com>
+To: Lars Povlsen <lars.povlsen@microchip.com>
+To: Steen Hegelund <Steen.Hegelund@microchip.com>
+To: Horatiu Vultur <horatiu.vultur@microchip.com>
+To: Russell King <linux@armlinux.org.uk>
+To: jacob.e.keller@intel.com
+To: robh@kernel.org
+To: krzk+dt@kernel.org
+To: conor+dt@kernel.org
+Cc: devicetree@vger.kernel.org
+Cc: netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+
+Signed-off-by: Daniel Machon <daniel.machon@microchip.com>
+---
+Changes in v3:
+
+v2 was kindly tested by Robert Marko. Not carrying the tag to v3 since
+we have changes to the handling of the delays.
+
+- Modified lan969x_rgmii_delay_config() to not apply any MAC delay when
+  the {rx,tx}-internal-delay-ps properties are missing or set to 0
+  (patch #7).
+
+- Removed 'required' constraint from {rx-tx}-internal-delay-ps
+  properties. Also added description and default value (Patch #8).
+
+- Link to v2: https://lore.kernel.org/r/20241113-sparx5-lan969x-switch-driver-4-v2-0-0db98ac096d1@microchip.com
+
+Changes in v2:
+
+  Most changes are in patch #7. RGMII implementation has been moved to
+  it's own file lan969x_rgmii.c.
+
+  Details:
+
+    - Use ETH_P_8021Q and ETH_P_8021AD instead of the Sparx5 provided
+      equivalents (patch #7).
+    - Configure MAC delays through "{rx,tx}-internal-delay-ps"
+      properties (patch #7).
+    - Add selectors for all the phase shifts that the hardware supports
+      (instead of only 2.0 ns, patch #7).
+    - Add selectors for all the port speeds (instead of only 1000 mbps.)
+    - Document RGMII delays in dt-bindings.
+
+  - Link to v1: https://lore.kernel.org/r/20241106-sparx5-lan969x-switch-driver-4-v1-0-f7f7316436bd@microchip.com
+
+---
+Daniel Machon (8):
+      net: sparx5: do some preparation work
+      net: sparx5: add function for RGMII port check
+      net: sparx5: use is_port_rgmii() throughout
+      net: sparx5: use phy_interface_mode_is_rgmii()
+      net: sparx5: verify RGMII speeds
+      net: lan969x: add RGMII registers
+      net: lan969x: add RGMII implementation
+      dt-bindings: net: sparx5: document RGMII delays
+
+ .../bindings/net/microchip,sparx5-switch.yaml      |  18 ++
+ drivers/net/ethernet/microchip/lan969x/Makefile    |   2 +-
+ drivers/net/ethernet/microchip/lan969x/lan969x.c   |   5 +
+ drivers/net/ethernet/microchip/lan969x/lan969x.h   |  10 +
+ .../net/ethernet/microchip/lan969x/lan969x_rgmii.c | 224 +++++++++++++++++++++
+ .../net/ethernet/microchip/sparx5/sparx5_main.c    |  29 ++-
+ .../net/ethernet/microchip/sparx5/sparx5_main.h    |   3 +
+ .../ethernet/microchip/sparx5/sparx5_main_regs.h   | 145 +++++++++++++
+ .../net/ethernet/microchip/sparx5/sparx5_phylink.c |   3 +
+ .../net/ethernet/microchip/sparx5/sparx5_port.c    |  57 ++++--
+ .../net/ethernet/microchip/sparx5/sparx5_port.h    |   5 +
+ 11 files changed, 473 insertions(+), 28 deletions(-)
+---
+base-commit: d7ef9eeef0723cc47601923c508ecbebd864f0c0
+change-id: 20241104-sparx5-lan969x-switch-driver-4-d59b7820485a
+
+Best regards,
 -- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
+Daniel Machon <daniel.machon@microchip.com>
 
 
