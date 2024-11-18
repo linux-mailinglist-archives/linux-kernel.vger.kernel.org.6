@@ -1,117 +1,168 @@
-Return-Path: <linux-kernel+bounces-412697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78E2C9D0DEC
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:11:48 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44DAC9D0DFB
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:12:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D30E282A37
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 10:11:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ACF0AB2897B
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 10:12:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B0C4194AD8;
-	Mon, 18 Nov 2024 10:10:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5931196DA2;
+	Mon, 18 Nov 2024 10:11:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="vCf2LIna"
-Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="h8W2Oucq"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E75F119755B;
-	Mon, 18 Nov 2024 10:10:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E98E15575C;
+	Mon, 18 Nov 2024 10:11:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731924641; cv=none; b=SS1rL412DKjZk9kIn0cjTvrRoJf3DCwpeP/UETgRfLoSExQECmuUpYmcHMlfSV9HFf15SqWXfTDhgAfApIMTfF7Warjef/nkdUyfEOK+dfvEHgRXHNRGTvbX9OYIUUeUJxjhWpn2Tpy5PLkwnt6+VJ2MUgbgZLQVkNC2Yj1XsDo=
+	t=1731924676; cv=none; b=UDuT+o25Pb/yhRAKbYcDFfJQGHA3QGGyxWX49zHqHO54a26Sp0elfUhv/iY4uZscwXCzWgWsxSqzlrd0Yztew8zBoyT6dzXL33XrLHM6l8i/YiWcyphDe6C3YnJp27pfZC4SSO38Uwuc7oXSF6Mwce2x7aRn09kzEo+IYB9eCgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731924641; c=relaxed/simple;
-	bh=AsieFpbexJKtUk8eIuykamU1K9nbRjpbMm+gXVLySTI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ra+CpN5Nn7552+NPjLESxmCBKr1yfYkF+a9vYpzL/02Xahew5q4bcs360gpTySlm7aKrjYVdgiYDCJyf8dsqcNxdLyvnLmeXk60G9jctDZlLqF+YwqkKKJGLaViBI//MMrR/TfgeFHxelVtV0iYM8xDGey68w7OEjZGSwgpgwBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=vCf2LIna; arc=none smtp.client-ip=157.90.84.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
-Received: from [192.168.42.96] (p5de457db.dip0.t-ipconnect.de [93.228.87.219])
-	(Authenticated sender: wse@tuxedocomputers.com)
-	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id BF6D52FC005F;
-	Mon, 18 Nov 2024 11:10:28 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
-	s=default; t=1731924629;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=L8qv68rG+2chYRW9td3DqO1Q1cLGkq82AFGH5/cGGXQ=;
-	b=vCf2LInaIE5s7vmsMluUWoakYxpw6hwEKptOgQndAZPs/1FDfyg7lC4OPKGAIHmq20P6Pj
-	GGvzNWJ+7vM3uDMgX4V+AJRjhYFk42KQAVnBF8Kp9ylk8qwTI0C58n0FCduuajMdtH6NeX
-	I1Vql9LouGJwtBwPASMrzR7zwJ43IXY=
-Authentication-Results: mail.tuxedocomputers.com;
-	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
-Message-ID: <0f663358-e5e1-452b-8280-0be90ae7e7de@tuxedocomputers.com>
-Date: Mon, 18 Nov 2024 11:10:28 +0100
+	s=arc-20240116; t=1731924676; c=relaxed/simple;
+	bh=LPVEc3SBnqPhNLow8kd01cndoiNDR2c0uBbFgG5wFCA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=UiY546ol+69fWG6PHUVFAHNkULkDxYQ0nxNQfUnPl8y47ZYb77vaHUEkirsBzYe8iS604IdygpYwLKNWr4XzdgB0f70DeMkpXM3NJ4R8sqQW6Xjrl9kZK2JGHnyT3uMGEP9yGN87m+4/PGVFmTQnJZYl8nfrCrbmzHbT5+NrkU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=h8W2Oucq; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731924673; x=1763460673;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=LPVEc3SBnqPhNLow8kd01cndoiNDR2c0uBbFgG5wFCA=;
+  b=h8W2Oucqd+wkzpck8iFm4v0ubQ4gXxAkeGT7DIpah2FlR7iVQqzF5aSd
+   9Gu2u+MNRsvKliFp93m2tNn4ZyBVhDEJAnuddOYs3FzGylMtbruq/MjS4
+   +zpa4vjKdOVs1ubWpPeM0E7gdfMdA5Gg+Jw7f2KNaX7bu+VZV6LOSu0Xc
+   x3maOGQu36nxYU/DBj0fZko7rPnGcVV0IzxQaLEH/cs4bPdfjb+F9DuxO
+   QKHKEI/7F+B9b7KUojpmTSl5PpesRE1fNInhlfYBkaX6r+PFwVycCGBaV
+   5Of0Bxg9FKnfHo2al0+e6vdu1l14G1nfItYSMXC7DiZGNp9ipJQqYVYNO
+   Q==;
+X-CSE-ConnectionGUID: Z5Qt8oNHRJef3IKFRdEtFQ==
+X-CSE-MsgGUID: NcBhnMhUTcuQX2DaqXelSQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11259"; a="31278877"
+X-IronPort-AV: E=Sophos;i="6.12,163,1728975600"; 
+   d="scan'208";a="31278877"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2024 02:11:12 -0800
+X-CSE-ConnectionGUID: Ye9B2MTzSreXL8hy2uW3Yw==
+X-CSE-MsgGUID: 1IaCFaIKSn+u08XITnRaAg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,163,1728975600"; 
+   d="scan'208";a="112478172"
+Received: from jkrzyszt-mobl2.ger.corp.intel.com (HELO localhost) ([10.245.246.148])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2024 02:10:48 -0800
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Rodrigo Vivi
+ <rodrigo.vivi@intel.com>, Joonas Lahtinen
+ <joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Karol
+ Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>, Danilo
+ Krummrich <dakr@redhat.com>, Harry Wentland <harry.wentland@amd.com>, Leo
+ Li <sunpeng.li@amd.com>, Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, Alex
+ Deucher <alexander.deucher@amd.com>, Christian =?utf-8?Q?K=C3=B6nig?=
+ <christian.koenig@amd.com>, Xinhui Pan <Xinhui.Pan@amd.com>, Alain Volmat
+ <alain.volmat@foss.st.com>, Raphael Gallais-Pou <rgallaispou@gmail.com>,
+ Liviu Dudau <liviu.dudau@arm.com>, Andrzej Hajda
+ <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>,
+ Robert Foss <rfoss@kernel.org>, Laurent Pinchart
+ <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>, Peter Senna Tschudin
+ <peter.senna@gmail.com>, Ian Ray <ian.ray@ge.com>, Martyn Welch
+ <martyn.welch@collabora.co.uk>, Inki Dae <inki.dae@samsung.com>, Seung-Woo
+ Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
+ <alim.akhtar@samsung.com>, Stefan Agner <stefan@agner.ch>, Alison Wang
+ <alison.wang@nxp.com>, Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team
+ <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Rob Clark
+ <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean
+ Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>,
+ Dave Airlie <airlied@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>, Sandy
+ Huang <hjc@rock-chips.com>, Heiko =?utf-8?Q?St=C3=BCbner?=
+ <heiko@sntech.de>, Andy Yan
+ <andy.yan@rock-chips.com>, Chen-Yu Tsai <wens@csie.org>, Samuel Holland
+ <samuel@sholland.org>, Thierry Reding <thierry.reding@gmail.com>, Mikko
+ Perttunen <mperttunen@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>,
+ Dave Stevenson <dave.stevenson@raspberrypi.com>, =?utf-8?Q?Ma=C3=ADra?=
+ Canal
+ <mcanal@igalia.com>, Raspberry Pi Kernel Maintenance
+ <kernel-list@raspberrypi.com>, Gurchetan Singh
+ <gurchetansingh@chromium.org>, Chia-I Wu <olvaffe@gmail.com>, Zack Rusin
+ <zack.rusin@broadcom.com>, Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>
+Cc: intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ nouveau@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-msm@vger.kernel.org,
+ freedreno@lists.freedesktop.org, virtualization@lists.linux.dev,
+ spice-devel@lists.freedesktop.org, linux-rockchip@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 4/5] drm/connector: make mode_valid_ctx accept const
+ struct drm_display_mode
+In-Reply-To: <20241115-drm-connector-mode-valid-const-v1-4-b1b523156f71@linaro.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20241115-drm-connector-mode-valid-const-v1-0-b1b523156f71@linaro.org>
+ <20241115-drm-connector-mode-valid-const-v1-4-b1b523156f71@linaro.org>
+Date: Mon, 18 Nov 2024 12:10:44 +0200
+Message-ID: <87mshw4ztn.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/2] module: Block a module by TUXEDO from accessing
- GPL symbols
-To: u.kleine-koenig@baylibre.com, mcgrof@kernel.org, petr.pavlu@suse.com,
- samitolvanen@google.com, da.gomez@samsung.com,
- linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux@leemhuis.info, vv@tuxedocomputers.com, cs@tuxedo.de
-Cc: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-References: <20241115185253.1299264-1-wse@tuxedocomputers.com>
- <20241115185253.1299264-3-wse@tuxedocomputers.com>
-Content-Language: en-US
-From: Werner Sembach <wse@tuxedocomputers.com>
-In-Reply-To: <20241115185253.1299264-3-wse@tuxedocomputers.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Hi,
-
-Am 15.11.24 um 19:50 schrieb Werner Sembach:
-> From: Uwe Kleine-König <ukleinek@kernel.org>
+On Fri, 15 Nov 2024, Dmitry Baryshkov <dmitry.baryshkov@linaro.org> wrote:
+> The mode_valid() callbacks of drm_encoder, drm_crtc and drm_bridge
+> accept const struct drm_display_mode argument. Change the mode_valid_ctx
+> callback of drm_connector to also accept const argument.
 >
-> TUXEDO has not yet relicensed a module for GPLv2+ as a reply from former
-> contributers the committed code under GPLv3+ is awaited.
->
-> Teach the module loader that this module is not GPLv2 compatible despite
-> the declaration to be GPLv2 compatible until the relicensing is complete.
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-The relicensing is complete so this patch can be dropped entierly
+Acked-by: Jani Nikula <jani.nikula@intel.com>
 
-Regards,
-
-Werner Sembach
-
->
-> Signed-off-by: Uwe Kleine-König <ukleinek@kernel.org>
-> [Remove relicensed modules and accusatory language]
-> Signed-off-by: Werner Sembach <wse@tuxedocomputers.com>
 > ---
->   kernel/module/main.c | 8 ++++++++
->   1 file changed, 8 insertions(+)
+>  drivers/gpu/drm/i915/display/intel_dp_mst.c | 2 +-
+>  include/drm/drm_modeset_helper_vtables.h    | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
 >
-> diff --git a/kernel/module/main.c b/kernel/module/main.c
-> index 905d7b60dd709..df2549352ca8a 100644
-> --- a/kernel/module/main.c
-> +++ b/kernel/module/main.c
-> @@ -2029,6 +2029,14 @@ static const char *module_license_offenders[] = {
->   
->   	/* lve claims to be GPL but upstream won't provide source */
->   	"lve",
-> +
-> +	/*
-> +	 * TUXEDO awaits 2 final answers to relicense the last module to GPLv2+
-> +	 * See https://gitlab.com/tuxedocomputers/development/packages/tuxedo-drivers/-/merge_requests/21 ,
-> +	 * https://gitlab.com/tuxedocomputers/development/packages/tuxedo-drivers/-/commit/dd34594ab880ed477bb75725176c3fb9352a07eb ,
-> +	 * and https://gitlab.com/tuxedocomputers/development/packages/tuxedo-drivers/-/commit/c8893684c2f869b2a6b13f1ef1ddeb4922f2ffe3
-> +	 */
-> +	"clevo_acpi",
->   };
->   
->   /*
+> diff --git a/drivers/gpu/drm/i915/display/intel_dp_mst.c b/drivers/gpu/drm/i915/display/intel_dp_mst.c
+> index 7be8fb047b6c17cb37b9021a2dbf430f0aaecfa2..cfefd89209ca864e19771c538ca00016f9322e74 100644
+> --- a/drivers/gpu/drm/i915/display/intel_dp_mst.c
+> +++ b/drivers/gpu/drm/i915/display/intel_dp_mst.c
+> @@ -1432,7 +1432,7 @@ static int intel_dp_mst_get_modes(struct drm_connector *connector)
+>  
+>  static int
+>  intel_dp_mst_mode_valid_ctx(struct drm_connector *connector,
+> -			    struct drm_display_mode *mode,
+> +			    const struct drm_display_mode *mode,
+>  			    struct drm_modeset_acquire_ctx *ctx,
+>  			    enum drm_mode_status *status)
+>  {
+> diff --git a/include/drm/drm_modeset_helper_vtables.h b/include/drm/drm_modeset_helper_vtables.h
+> index ec59015aec3cf3ba01510031c55df8c0b3e0b382..fa9ee6a128bec0205f501df6f7634757f5fcb9ee 100644
+> --- a/include/drm/drm_modeset_helper_vtables.h
+> +++ b/include/drm/drm_modeset_helper_vtables.h
+> @@ -1006,7 +1006,7 @@ struct drm_connector_helper_funcs {
+>  	 *
+>  	 */
+>  	int (*mode_valid_ctx)(struct drm_connector *connector,
+> -			      struct drm_display_mode *mode,
+> +			      const struct drm_display_mode *mode,
+>  			      struct drm_modeset_acquire_ctx *ctx,
+>  			      enum drm_mode_status *status);
+
+-- 
+Jani Nikula, Intel
 
