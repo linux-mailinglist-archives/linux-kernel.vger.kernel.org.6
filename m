@@ -1,153 +1,352 @@
-Return-Path: <linux-kernel+bounces-413211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 419259D1544
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 17:23:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D80F99D1525
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 17:15:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB593B25F3D
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 16:14:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60B2D1F237E6
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 16:15:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AA741BD9C8;
-	Mon, 18 Nov 2024 16:14:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A1E31BD007;
+	Mon, 18 Nov 2024 16:15:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NiTnu74c"
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="kxJbC3Xs"
+Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF45A1B6D08
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 16:14:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88FB21A38F9
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 16:15:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731946449; cv=none; b=eLHE16UajvFyhBbyG1bf7lAcjJYnykoeIIQJBho+wEUrpLOJWfmBQ1WY22b08tAodg9TXOT6pfyFc9/P4O+1EDhojwRCYvtLad5HWYlKbHo/U5afZ6Hgd9jk4tI5a3BA5sTFTnpzq85uO2UjTnxMUI4j3/bCaSg95s9aKPr3bjY=
+	t=1731946515; cv=none; b=iGjvi+9jJ2ovYlGhSGkdxFJnXG5rKP6PfxpB7XjPxZMI/7jZ/brTsOHqxg7rBokY4bXNqo0dMd5+Kal9BgYzHLPnzsWAwqm3/bS1C3CId3HEDfbx+v0wsaBrF+NuM2MFnEz6rsAcRaEgKZ6BHQ1lQVTdLB1VWJePbgKYytZfNzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731946449; c=relaxed/simple;
-	bh=vUYlcJUjbev1i/9+ZP5KIlinBPO9JzcGVAfOO+t4xiQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fXrjrCi2laAgmWok8fNk1yHsi/bAxnPf3FTw62b7OzeZciRWBCJuKoovQJPQew61qkaeiR3zotpfIkbjLE03Pjybn3NqFQFZHffyO2QxJvluYe6CBWgvmbHyGkFMbFy6zipdlhHgiEJm1ZRYvrM4bKqqusc2QwbDYvwwyAIfXG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NiTnu74c; arc=none smtp.client-ip=209.85.160.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-460a8d1a9b7so500891cf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 08:14:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731946446; x=1732551246; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KgQtX3b2sNjnE8zCLQLIEHU/IGPvSB2hdJmfWtj8vrk=;
-        b=NiTnu74c6aWegdnG4bJoSHF0DdMXwYyKMVBpiBcxfuf8smvX2QhLYS1cYyMY6X8Ijo
-         r1fNCLvx/Zln3WIc673FwhBGcvE2dYXqdWaBpujLFZcAk/zRjXrD9EAILxfmGHkPZEri
-         5saznyZuMx3JAEBxGfx/uPOaz2SANumqTl8S5wIm8bWuQcTQfop3e28J1uNsjNVab7o7
-         /13vj6xyE6vzQPEcRPgSkIk0MaXbA6vNSkY3c9PwnQMd6aqiM24wsn0HKYEw2hoEigE4
-         wE4J2+Rp5cIrGUh0+adkPpzxNeyE9hEvn6HiRaoyTNdXBZlWrN6jINqQPJqQQhrycrO1
-         LGCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731946446; x=1732551246;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KgQtX3b2sNjnE8zCLQLIEHU/IGPvSB2hdJmfWtj8vrk=;
-        b=IQleSD56b6k9xqwmu5W1QcQqUJhrHnkPPYbWbEuWghCOHFaPSQRjyRwmSAQKh4kyaH
-         0hJboAZQ9WXBzn40x/EBirA/9lPXa3spzToGp9YT5xy0f0qRIwmGTICKKr6gggCcwgwS
-         zytz1SHozloYqpUevwcW9iDyczG3KPeGXExUmv4IFTeMI/yCmRZepD5GV1U9KqH2Gv1R
-         hjs0TgKGOK/FsL9syfVwotW/sgyIIV9LIEXWWUrA7MtZwLkeew7PiYRfYakL4MVopi8F
-         585hvCKwdH5YtpoZ+LuIbVc+lwk0NHzHlgJehBF0foEH0N6+ktq7W+f1CkyCcTDZ0Num
-         HgYg==
-X-Forwarded-Encrypted: i=1; AJvYcCVbTQ08aJp6eaNr7k/Yb1FK2wAb2z4uDit39aDlOc5aGBve6K8CCUtVefmemLtosAJOx/yobIfCVGPhdo4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVeyv2YJwmHk6sa4AXaW8RGXCcDn5TarOUbY0od5+ncXETxEBL
-	2r4VgDmD52SSUo8KY9pxuIvxYAZyT+m1T/pzsPuhKCB9Vp3FhZWCjR7CxMh9I82BIQ1qb9o35zG
-	Pe0ONaZgpNl4AD8UQ+dpWZpqT6l0A1po9+SFn
-X-Gm-Gg: ASbGnctM+qfQyS1dJbuhqmRkssEdQja0duPaK1QDd/wJt3NPZoZ9hH5I+YKmN84WcW9
-	OtGFMTx6Dv3xyT/vu+50c+ljsuxm57A==
-X-Google-Smtp-Source: AGHT+IHoE7/aCHotukRoUu4H4VbQ1/F4lGejyuSD3dcDuVxfpACZZ6+M09T7GFjLtVDZR877r1fa0KWxO45WSo9TeDk=
-X-Received: by 2002:a05:622a:2988:b0:462:c158:9f5b with SMTP id
- d75a77b69052e-4637156d12fmr5824231cf.19.1731946445606; Mon, 18 Nov 2024
- 08:14:05 -0800 (PST)
+	s=arc-20240116; t=1731946515; c=relaxed/simple;
+	bh=PKVUoUUaO8R1rCwR7AWixHIRWM/rIktvLTj7G2SXVFM=;
+	h=MIME-Version:Date:Content-Type:From:Message-ID:Subject:To:Cc:
+	 In-Reply-To:References; b=dprQ+kDJ6A1JCIs2KtyYCdZWdDLBSeL2pZxcRdbRT1CzAUndhh3ANNDq9wsdgxzj9/xGFsjUbHFAlMZ5rW5Zxi95vCVaQNF6FLO5FSq2CzrWDalIMY8hOK5vsnIqYRJGPsUUXLXYYmXZA5pCGAG0HePK+2dN9EoXnjzRUrxH7yM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=kxJbC3Xs; arc=none smtp.client-ip=91.218.175.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241117170326.1971113-1-tjmercier@google.com> <468d41ad-9f89-4a83-8eb1-9bd7efaf1367@ursulin.net>
-In-Reply-To: <468d41ad-9f89-4a83-8eb1-9bd7efaf1367@ursulin.net>
-From: "T.J. Mercier" <tjmercier@google.com>
-Date: Mon, 18 Nov 2024 08:13:54 -0800
-Message-ID: <CABdmKX2203KMx5P2x02C=YFCtiR6b5u2JzLS9SbPRh08FzqAKw@mail.gmail.com>
-Subject: Re: [PATCH] dma-buf: Fix __dma_buf_debugfs_list_del argument for !CONFIG_DEBUG_FS
-To: Tvrtko Ursulin <tursulin@ursulin.net>
-Cc: Sumit Semwal <sumit.semwal@linaro.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	=?UTF-8?B?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>, linux-media@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1731946510;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NkiG9y2ehFnJbFL3/n23U9ZBpM4DCYOB9PkT+Tb9pS0=;
+	b=kxJbC3Xs6EhETaX6UCb/ofFUsRJlE3xksNe1gr2/PggMojh1IO3BrLqrbJISwSvpRB/h+u
+	xef5YjyRa8tQvdHZHcYExmig4ujzK4nTuBNmvYSNLg67tF32Afe9aLd3TpdGPh9a5fWeJr
+	T2eLd27ABN/K/p1LOaNhrvH8op5w1x0=
+Date: Mon, 18 Nov 2024 16:15:02 +0000
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: jeff.xie@linux.dev
+Message-ID: <991260353fbe141ffef8db7a08ed8fb2473e4ca0@linux.dev>
+TLS-Required: No
+Subject: Re: [PATCH v5] ftrace: Get the true parent ip for function tracer
+To: rostedt@goodmis.org, mhiramat@kernel.org
+Cc: mathieu.desnoyers@efficios.com, linux-trace-kernel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, xiehuan09@gmail.com,
+ dolinux.peng@gmail.com, chensong_2000@189.cn
+In-Reply-To: <20241008033159.22459-1-jeff.xie@linux.dev>
+References: <20241008033159.22459-1-jeff.xie@linux.dev>
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Nov 18, 2024 at 1:15=E2=80=AFAM Tvrtko Ursulin <tursulin@ursulin.ne=
-t> wrote:
->
->
-> On 17/11/2024 17:03, T.J. Mercier wrote:
-> > The arguments for __dma_buf_debugfs_list_del do not match for both the
-> > CONFIG_DEBUG_FS case and the !CONFIG_DEBUG_FS case. The !CONFIG_DEBUG_F=
-S
-> > case should take a struct dma_buf *, but it's currently struct file *.
-> > This can lead to the build error:
-> >
-> > error: passing argument 1 of =E2=80=98__dma_buf_debugfs_list_del=E2=80=
-=99 from
-> > incompatible pointer type [-Werror=3Dincompatible-pointer-types]
-> >
-> > dma-buf.c:63:53: note: expected =E2=80=98struct file *=E2=80=99 but arg=
-ument is of
-> > type =E2=80=98struct dma_buf *=E2=80=99
-> >     63 | static void __dma_buf_debugfs_list_del(struct file *file)
-> >
-> > Fixes: bfc7bc539392 ("dma-buf: Do not build debugfs related code when !=
-CONFIG_DEBUG_FS")
-> > Signed-off-by: T.J. Mercier <tjmercier@google.com>
-> > ---
-> >   drivers/dma-buf/dma-buf.c | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-buf.c
-> > index 8892bc701a66..afb8c1c50107 100644
-> > --- a/drivers/dma-buf/dma-buf.c
-> > +++ b/drivers/dma-buf/dma-buf.c
-> > @@ -60,7 +60,7 @@ static void __dma_buf_debugfs_list_add(struct dma_buf=
- *dmabuf)
-> >   {
-> >   }
-> >
-> > -static void __dma_buf_debugfs_list_del(struct file *file)
-> > +static void __dma_buf_debugfs_list_del(struct dma_buf *dmabuf)
-> >   {
-> >   }
-> >   #endif
->
-> Huh I wonder how this sneaked by until now.. thanks for fixing!
->
-> Reviewed-by: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
->
-> Regards,
->
-> Tvrtko
+October 8, 2024 at 11:31 AM, "Jeff Xie" <jeff.xie@linux.dev> wrote:
 
-Thanks Tvrtko. Upstream there is currently only the one use where it's
-called with a void pointer which doesn't generate the error, but
-KernelCI caught the problem on an Android branch where it's also
-called with a dma_buf pointer:
+I'd like to know if this patch can be merged into 6.13?
 
-https://dashboard.kernelci.org/tree/5a4c93e2f794001a5efa13c0dec931235240d38=
-4/build/maestro:6737e60d1a48e7821930345d?tableFilter=3D%7B%22buildsTable%22=
-%3A%22invalid%22%2C%22bootsTable%22%3A%22all%22%2C%22testsTable%22%3A%22all=
-%22%7D&origin=3Dmaestro&currentPageTab=3DtreeDetails.builds&diffFilter=3D%7=
-B%7D&treeInfo=3D%7B%22gitBranch%22%3A%22android16-6.12%22%2C%22gitUrl%22%3A=
-%22https%3A%2F%2Fandroid.googlesource.com%2Fkernel%2Fcommon%22%2C%22treeNam=
-e%22%3A%22android%22%2C%22commitName%22%3A%22ASB-2024-11-05_16-6.12-370-g5a=
-4c93e2f7940%22%2C%22headCommitHash%22%3A%225a4c93e2f794001a5efa13c0dec93123=
-5240d384%22%7D&intervalInDays=3D7
+>=20
+>=20When using both function tracer and function graph simultaneously,
+>=20
+>=20it is found that function tracer sometimes captures a fake parent ip
+>=20
+>=20(return_to_handler) instead of the true parent ip.
+>=20
+>=20This issue is easy to reproduce. Below are my reproduction steps:
+>=20
+>=20jeff-labs:~/bin # ./trace-net.sh
+>=20
+>=20jeff-labs:~/bin # cat /sys/kernel/debug/tracing/instances/foo/trace |=
+ grep return_to_handler
+>=20
+>=20 trace-net.sh-405 [001] ...2. 31.859501: avc_has_perm+0x4/0x190 <-ret=
+urn_to_handler+0x0/0x40
+>=20
+>=20 trace-net.sh-405 [001] ...2. 31.859503: simple_setattr+0x4/0x70 <-re=
+turn_to_handler+0x0/0x40
+>=20
+>=20 trace-net.sh-405 [001] ...2. 31.859503: truncate_pagecache+0x4/0x60 =
+<-return_to_handler+0x0/0x40
+>=20
+>=20 trace-net.sh-405 [001] ...2. 31.859505: unmap_mapping_range+0x4/0x14=
+0 <-return_to_handler+0x0/0x40
+>=20
+>=20 trace-net.sh-405 [001] ...3. 31.859508: _raw_spin_unlock+0x4/0x30 <-=
+return_to_handler+0x0/0x40
+>=20
+>=20 [...]
+>=20
+>=20The following is my simple trace script:
+>=20
+>=20<snip>
+>=20
+>=20jeff-labs:~/bin # cat ./trace-net.sh
+>=20
+>=20TRACE_PATH=3D"/sys/kernel/debug/tracing"
+>=20
+>=20set_events() {
+>=20
+>=20 echo 1 > $1/events/net/enable
+>=20
+>=20 echo 1 > $1/events/tcp/enable
+>=20
+>=20 echo 1 > $1/events/sock/enable
+>=20
+>=20 echo 1 > $1/events/napi/enable
+>=20
+>=20 echo 1 > $1/events/fib/enable
+>=20
+>=20 echo 1 > $1/events/neigh/enable
+>=20
+>=20}
+>=20
+>=20set_events ${TRACE_PATH}
+>=20
+>=20echo 1 > ${TRACE_PATH}/options/sym-offset
+>=20
+>=20echo 1 > ${TRACE_PATH}/options/funcgraph-tail
+>=20
+>=20echo 1 > ${TRACE_PATH}/options/funcgraph-proc
+>=20
+>=20echo 1 > ${TRACE_PATH}/options/funcgraph-abstime
+>=20
+>=20echo 'tcp_orphan*' > ${TRACE_PATH}/set_ftrace_notrace
+>=20
+>=20echo function_graph > ${TRACE_PATH}/current_tracer
+>=20
+>=20INSTANCE_FOO=3D${TRACE_PATH}/instances/foo
+>=20
+>=20if [ ! -e $INSTANCE_FOO ]; then
+>=20
+>=20 mkdir ${INSTANCE_FOO}
+>=20
+>=20fi
+>=20
+>=20set_events ${INSTANCE_FOO}
+>=20
+>=20echo 1 > ${INSTANCE_FOO}/options/sym-offset
+>=20
+>=20echo 'tcp_orphan*' > ${INSTANCE_FOO}/set_ftrace_notrace
+>=20
+>=20echo function > ${INSTANCE_FOO}/current_tracer
+>=20
+>=20echo 1 > ${TRACE_PATH}/tracing_on
+>=20
+>=20echo 1 > ${INSTANCE_FOO}/tracing_on
+>=20
+>=20echo > ${TRACE_PATH}/trace
+>=20
+>=20echo > ${INSTANCE_FOO}/trace
+>=20
+>=20</snip>
+>=20
+>=20Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+>=20
+>=20Signed-off-by: Jeff Xie <jeff.xie@linux.dev>
+>=20
+>=20---
+>=20
+>=20v5:
+>=20
+>=20 https://lore.kernel.org/linux-trace-kernel/5bc5b9b07d997e299b0480058=
+26bc6d592265c67@linux.dev/T/#me683cf5ac3858711230e54e5d5924a82e85917e6
+>=20
+>=20- Using fregs helper function to get the stack pointer=20
+>=20
+>=20=20
+>=20
+> v4:
+>=20
+>=20 https://lore.kernel.org/linux-trace-kernel/20241005101320.766c1100@r=
+orschach.local.home/
+>=20
+>=20- fixed the crash when accessing the "current" if the arch has not im=
+plemented noinstr
+>=20
+>=20 thanks steve for the testing and the detailed explanation
+>=20
+>=20v3:
+>=20
+>=20 https://lore.kernel.org/linux-trace-kernel/20240910001326.87f27e6b31=
+2f1d956cf352a2@kernel.org/
+>=20
+>=20- fixed build error when CONFIG_FUNCTION_GRAPH_TRACER=3Dn suggested b=
+y Masami
+>=20
+>=20v2:
+>=20
+>=20 https://lore.kernel.org/linux-trace-kernel/20240821095910.1888d7fa@g=
+andalf.local.home/
+>=20
+>=20- Adding __always_inline to function_get_true_parent_ip suggested by =
+Steve
+>=20
+>=20 kernel/trace/trace_functions.c | 26 ++++++++++++++++++++++++++
+>=20
+>=20 1 file changed, 26 insertions(+)
+>=20
+>=20diff --git a/kernel/trace/trace_functions.c b/kernel/trace/trace_func=
+tions.c
+>=20
+>=20index 3b0cea37e029..46c79a349d8c 100644
+>=20
+>=20--- a/kernel/trace/trace_functions.c
+>=20
+>=20+++ b/kernel/trace/trace_functions.c
+>=20
+>=20@@ -176,6 +176,27 @@ static void function_trace_start(struct trace_ar=
+ray *tr)
+>=20
+>=20 tracing_reset_online_cpus(&tr->array_buffer);
+>=20
+>=20 }
+>=20
+>=20=20
+>=20
+> +#ifdef CONFIG_FUNCTION_GRAPH_TRACER
+>=20
+>=20+static __always_inline unsigned long
+>=20
+>=20+function_get_true_parent_ip(unsigned long parent_ip, struct ftrace_r=
+egs *fregs)
+>=20
+>=20+{
+>=20
+>=20+ unsigned long true_parent_ip;
+>=20
+>=20+ int idx =3D 0;
+>=20
+>=20+
+>=20
+>=20+ true_parent_ip =3D parent_ip;
+>=20
+>=20+ if (unlikely(parent_ip =3D=3D (unsigned long)&return_to_handler) &&=
+ fregs)
+>=20
+>=20+ true_parent_ip =3D ftrace_graph_ret_addr(current, &idx, parent_ip,
+>=20
+>=20+ (unsigned long *)ftrace_regs_get_stack_pointer(fregs));
+>=20
+>=20+ return true_parent_ip;
+>=20
+>=20+}
+>=20
+>=20+#else
+>=20
+>=20+static __always_inline unsigned long
+>=20
+>=20+function_get_true_parent_ip(unsigned long parent_ip, struct ftrace_r=
+egs *fregs)
+>=20
+>=20+{
+>=20
+>=20+ return parent_ip;
+>=20
+>=20+}
+>=20
+>=20+#endif
+>=20
+>=20+
+>=20
+>=20 static void
+>=20
+>=20 function_trace_call(unsigned long ip, unsigned long parent_ip,
+>=20
+>=20 struct ftrace_ops *op, struct ftrace_regs *fregs)
+>=20
+>=20@@ -193,6 +214,8 @@ function_trace_call(unsigned long ip, unsigned lo=
+ng parent_ip,
+>=20
+>=20 if (bit < 0)
+>=20
+>=20 return;
+>=20
+>=20=20
+>=20
+> + parent_ip =3D function_get_true_parent_ip(parent_ip, fregs);
+>=20
+>=20+
+>=20
+>=20 trace_ctx =3D tracing_gen_ctx();
+>=20
+>=20=20
+>=20
+>  cpu =3D smp_processor_id();
+>=20
+>=20@@ -241,6 +264,7 @@ function_stack_trace_call(unsigned long ip, unsig=
+ned long parent_ip,
+>=20
+>=20 * recursive protection is performed.
+>=20
+>=20 */
+>=20
+>=20 local_irq_save(flags);
+>=20
+>=20+ parent_ip =3D function_get_true_parent_ip(parent_ip, fregs);
+>=20
+>=20 cpu =3D raw_smp_processor_id();
+>=20
+>=20 data =3D per_cpu_ptr(tr->array_buffer.data, cpu);
+>=20
+>=20 disabled =3D atomic_inc_return(&data->disabled);
+>=20
+>=20@@ -309,6 +333,7 @@ function_no_repeats_trace_call(unsigned long ip, =
+unsigned long parent_ip,
+>=20
+>=20 if (bit < 0)
+>=20
+>=20 return;
+>=20
+>=20=20
+>=20
+> + parent_ip =3D function_get_true_parent_ip(parent_ip, fregs);
+>=20
+>  cpu =3D smp_processor_id();
+>=20
+>=20 data =3D per_cpu_ptr(tr->array_buffer.data, cpu);
+>=20
+>=20 if (atomic_read(&data->disabled))
+>=20
+>=20@@ -356,6 +381,7 @@ function_stack_no_repeats_trace_call(unsigned lon=
+g ip, unsigned long parent_ip,
+>=20
+>=20 * recursive protection is performed.
+>=20
+>=20 */
+>=20
+>=20 local_irq_save(flags);
+>=20
+>=20+ parent_ip =3D function_get_true_parent_ip(parent_ip, fregs);
+>=20
+>=20 cpu =3D raw_smp_processor_id();
+>=20
+>=20 data =3D per_cpu_ptr(tr->array_buffer.data, cpu);
+>=20
+>=20 disabled =3D atomic_inc_return(&data->disabled);
+>=20
+>=20--=20
+>=20
+> 2.43.0
+>
 
