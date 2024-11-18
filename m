@@ -1,147 +1,106 @@
-Return-Path: <linux-kernel+bounces-413400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DE559D18AB
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 20:09:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A4749D18AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 20:09:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CA9E1F21B9D
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 19:09:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40204282C2E
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 19:09:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B14DD1E5022;
-	Mon, 18 Nov 2024 19:08:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="naprKXhB"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3ADD1E2827;
+	Mon, 18 Nov 2024 19:09:19 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 709101A08BC;
-	Mon, 18 Nov 2024 19:08:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A72681E2615
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 19:09:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731956929; cv=none; b=ETNK7rcunuXFl/qwlUS1wNsi8dWzsJmWRwc/VzrvQUsBDr61r5mNP/kuWR1SbPIDg+Q9TYsW3DP5uv4/zpUkEaI9seTpAdfZuTTWNVOSs4+CNZyMyDMRb9iofle7R3W+G7pbHWsoA6HjaboXctCGRrXyZD24dC1RR15qDexMF6Y=
+	t=1731956959; cv=none; b=mRnW4iDnhCfhA5p5yKiztkKgQKM8hrJGSACcZIbOOc3F1Pb0PaVuUzarpwCPVX08JEpFWXOncfB/c6BkLRBevRuDgdZae9etHWVLZ1SJSsC2zfxMgMgbNEWxNfhWQBc8ZglnFrAdscB1Kmb4z58uRrf3WrtKjk1vNTaWcQM/ffI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731956929; c=relaxed/simple;
-	bh=FRctSKTi4ljQmoGIf11xuFgeMolp1npsrZG651smQnc=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=lHm6ytJA21DmeqA18QaR90hV5/R0/hF3oAwPN2PBidQRwZhbZ6MldLmR/QcitqDnplexu3BpYy3kUlLEd2zf1a8QA+mzq1iV+KEtsOKTsP85fK1ri+4RZ14E/Ld4g+VIQM4i8wKlnSDL3PW1ePskQeUGVXhEtSp58LteYs3EH74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=naprKXhB; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3824709ee03so944965f8f.2;
-        Mon, 18 Nov 2024 11:08:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731956926; x=1732561726; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:subject:from:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=U/TGKajPIRXs7eCh5oRymh/TdrEMqDOgCG5uyDJWT70=;
-        b=naprKXhB+u8UJ7Vl/wGwlEF73FcEdRFJlJLRPpRArLvHsmj1sjMGbME26/f7B+PTja
-         TkXreC+ArVXMeXTzVkXHtjPf4b5taRZMKQCO/Cva0sEEq5clozp1hyKVx65YnwQl7PHB
-         zZvursv21mrTXQ2zPUHEJc8hijgHi7WOiWXs4IXKG1jXXE+FVVu6+XrGWY/TMQ/VCNqt
-         +EIhDpp4GLPCwdoVvXQlLhJnoFPt/e4HSDCJSk+2e7gPa7/sbMbmCMwb4Swx2dkf2ZmA
-         UxeWDMM+DvrIgRAmD+rM2k0l7XsC2xiPvpKwHkhVeBiAO1xAKZRFM1yqq8BSngOLb/mE
-         +2ag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731956926; x=1732561726;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:subject:from:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=U/TGKajPIRXs7eCh5oRymh/TdrEMqDOgCG5uyDJWT70=;
-        b=EMm9IA9niAHVuyDlTqcWz+jLlOHwO16B/25thR356HsGg1BiuMvmVHgm4WPkyPk6ee
-         U/J9BAsQe0L6Ed8PjcinL7CObFVq+pZS3dueGOeXmwUy2Zpbd6wPzHlca5sCRHDsMcZF
-         cusvrAJgoToDNvg9fQP67AY2h91fqbh0aZo16zNcj/9VzDZZoIlRZ03u4leq0i/LGqd5
-         eAnPhztC6KuLANJ/V0rlUqjADG50k9v0oI/7QPOoghOXlSuN+mZ3GvVSythTpNT4YMVl
-         3+ZPVnlsORX0jwCpJ47pJwkRNAo+dcUiKdYQXUoTj8stC3s1cqMZ9HnTLMtdvBtPj23g
-         /xrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX3OzzRjlIwL5r2L/8MLq2r0oVov3q3GOWqrhVuvu+W8YK2W/jyQX3mGwEe1YvF8Ely8syXbpnelydizg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7qN0S5ntkh/Z45lGAtWoc9WnVAovGv38P8HEhkI4r/urj1Uvt
-	XKgsdnKkbcbEOmT8MTMaRWUCxmJXRN5h6Ady5Mw6FxkVU1DH6Ltotuvnkw==
-X-Google-Smtp-Source: AGHT+IHjHA8BxaGM1W7OtJm8OHCc0InkOfY6KcceBQ3ARwEUH3AfIbNaWsWdvm+p4Lih8ygNBuhYKA==
-X-Received: by 2002:a5d:584f:0:b0:382:4a6c:fdd4 with SMTP id ffacd0b85a97d-3824a6cfde2mr2344890f8f.9.1731956925597;
-        Mon, 18 Nov 2024 11:08:45 -0800 (PST)
-Received: from ?IPV6:2a01:e34:ecab:8c20:70d8:4e22:e28c:4e7d? ([2a01:e34:ecab:8c20:70d8:4e22:e28c:4e7d])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3824a855aedsm2254290f8f.83.2024.11.18.11.08.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Nov 2024 11:08:45 -0800 (PST)
-Message-ID: <82148acf-3998-47b7-8fad-ba0118662cf9@gmail.com>
-Date: Mon, 18 Nov 2024 20:08:44 +0100
+	s=arc-20240116; t=1731956959; c=relaxed/simple;
+	bh=uFuHKZOqAt8u1V+nrFIjGfO+qFM4wiGG/dMRdL97s9Y=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HcphifG+4xh1fTahF3klTPEC3qCvCGSqbyNxT4PI5WrLjJjg2vfSD1oyovB4n5dFS0ab4SnxvWa6aWP+E56BcHMoHFDqtsMkj4Tda7Y4pO+kYuOUjeaOzy1IuYyAoLn/t4ZKpx6z5Ys6uts/dnTQJGVSs0wJ/CpbYRz/0btph5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-82-aUZ0AiFpPY6ZW4XCRBTyQQ-1; Mon, 18 Nov 2024 19:09:07 +0000
+X-MC-Unique: aUZ0AiFpPY6ZW4XCRBTyQQ-1
+X-Mimecast-MFC-AGG-ID: aUZ0AiFpPY6ZW4XCRBTyQQ
+Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
+ (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Mon, 18 Nov
+ 2024 19:09:06 +0000
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Mon, 18 Nov 2024 19:09:06 +0000
+From: David Laight <David.Laight@ACULAB.COM>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+CC: 'Arnd Bergmann' <arnd@kernel.org>, "'linux-kernel@vger.kernel.org'"
+	<linux-kernel@vger.kernel.org>, 'Jens Axboe' <axboe@kernel.dk>, "'Matthew
+ Wilcox'" <willy@infradead.org>, 'Christoph Hellwig' <hch@infradead.org>,
+	'Andrew Morton' <akpm@linux-foundation.org>, 'Andy Shevchenko'
+	<andriy.shevchenko@linux.intel.com>, 'Dan Carpenter'
+	<dan.carpenter@linaro.org>, "'Jason A . Donenfeld'" <Jason@zx2c4.com>,
+	"'pedro.falcato@gmail.com'" <pedro.falcato@gmail.com>, 'Mateusz Guzik'
+	<mjguzik@gmail.com>, "'linux-mm@kvack.org'" <linux-mm@kvack.org>, "'Lorenzo
+ Stoakes'" <lorenzo.stoakes@oracle.com>
+Subject: [PATCH next 0/7] minmax.h: Cleanups and minor optimisations
+Thread-Topic: [PATCH next 0/7] minmax.h: Cleanups and minor optimisations
+Thread-Index: Ads57NOVmVgyyNpHRyKrutlNFx/4hw==
+Date: Mon, 18 Nov 2024 19:09:06 +0000
+Message-ID: <c50365d214e04f9ba256d417c8bebbc0@AcuMS.aculab.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Nicolas Lorin <androw95220@gmail.com>
-Subject: Re: [BUG?] media: ipu6 / ov01a10 webcam not detected
-To: "Cao, Bingbu" <bingbu.cao@intel.com>,
- "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
-References: <cb2c20c3-e9f9-4758-92bc-43591946ed9d@gmail.com>
- <50811f23-4d59-4ea3-9259-042e7bf557fa@gmail.com>
- <DM8PR11MB5653FF8ED0A4E9BA67B42CF799272@DM8PR11MB5653.namprd11.prod.outlook.com>
-Content-Language: en-US, fr
-Autocrypt: addr=androw95220@gmail.com; keydata=
- xjMEY1VgjBYJKwYBBAHaRw8BAQdAz2n7kjNHne7ZkxorNsqC6fW9enBx9zGLd5L8iYFVaprN
- JU5pY29sYXMgTG9yaW4gPGFuZHJvdzk1MjIwQGdtYWlsLmNvbT7CtQQTFgoAXQIbAwUJCWYB
- gAULCQgHAgIiAgYVCgkICwIEFgIDAQIeBwIXgAIZARYhBFiBbK6iLbQ0x0TKoL3p1BRts4Ek
- BQJjoy18GBhoa3BzOi8va2V5cy5vcGVucGdwLm9yZwAKCRC96dQUbbOBJGeWAP479DfET1mN
- k5stAx1NoauJjUgqxFsCQnN0FRRKkERzgAD+M9EWStug/IJWh/i0oMufsUJUU1Liqm7zbSRZ
- /uLVbgPOOARjVWCMEgorBgEEAZdVAQUBAQdA7+DEoQ7KinwNOZmseIdLPEkAYpayeJM0f5Be
- Y5mPsgwDAQgHwn4EGBYKACYWIQRYgWyuoi20NMdEyqC96dQUbbOBJAUCY1VgjAIbDAUJCWYB
- gAAKCRC96dQUbbOBJBfXAQDNSRfNEZhM7p3hq5AikRiJ0tEWQ52iChfQ+IhbfK8PKAEAzhBt
- bREc3AKOcWQ7+PPLOL7ztWFKc3xykDOLoxHrcQ4=
-In-Reply-To: <DM8PR11MB5653FF8ED0A4E9BA67B42CF799272@DM8PR11MB5653.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: 5Jc2cvaVDkmE7jGjMtXHZ9ZP6DgCy40WZej7qwGwZXc_1731956946
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Bingdu,
+Some tidyups and minor changes to minmax.h.
 
-How can I enforce secure mode? I didn't find any way to change that.
+Patches 1, 2 and 5 have no functional changes.
+Patch 3 changes the statically_true() tests in __types_ok() to use the
+  local 'unique' variables rather than the caller supplied expressions.
+  This will reduce the line length of the preprocessor output.
+Patch 4 uses statically_true() for clamp's (lo) < (hi) check.
+Patch 6 passes '__auto_type' as the 'fixed type' to reduce the number
+  of variants.
+Patch 7 removes a level of indirection from __sign_use() and=20
+  __is_nonneg().
 
-The computer is running Dell BIOS firmware 1.24.0. What do you mean with 
-correct?
+David Laight (7):
+  1) Add whitespace around operators and after commas
+  2) Update some comments
+  3) Reduce the #define expansion of min(), max() and clamp()
+  4) Use BUILD_BUG_ON_MSG() for the lo < hi test in clamp()
+  5) Move all the clamp() definitions after the min/max() ones.
+  6) Simplify the variants of clamp()
+  7) Remove some #defines that are only expanded once
 
-Regards,
+ include/linux/minmax.h | 205 +++++++++++++++++++----------------------
+ 1 file changed, 95 insertions(+), 110 deletions(-)
 
-Nicolas Lorin
+--=20
+2.17.1
 
-Le 18/11/2024 à 05:46, Cao, Bingbu a écrit :
-> Nicolas,
->
-> Why was your IPU device  running on non-secure mode?
-> `intel-ipu6 0000:00:05.0: IPU6 in non-secure mode touch 0x0 mask 0xff`
->
-> Could you please confirm that you are running with a correct IFWI(BIOS)?
->
->
-> ------------------------------------------------------------------------
-> BRs,
-> Bingbu Cao
->
->> -----Original Message-----
->> From: Nicolas Lorin<androw95220@gmail.com>
->> Sent: Saturday, November 16, 2024 2:06 PM
->> To: Cao, Bingbu<bingbu.cao@intel.com>;sakari.ailus@linux.intel.com
->> Cc:linux-kernel@vger.kernel.org;linux-media@vger.kernel.org
->> Subject: Re: [BUG?] media: ipu6 / ov01a10 webcam not detected
->>
->> Same thing on latest mainline:
->>
->>    󱞪 uname -a
->> Linux androwbook 6.12.0-rc7-1-git #1 SMP PREEMPT_DYNAMIC Fri, 15 Nov
->> 2024 23:35:35 +0000 x86_64 GNU/Linux
->>
->> dmesg also show this after stopping repeating the two lines:
->>
->> [   17.272302] pci 0000:00:05.0: deferred probe pending: intel-ipu6:
->> IPU6 bridge init failed
->>
->> --
->> Nicolas Lorin
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
+PT, UK
+Registration No: 1397386 (Wales)
+
 
