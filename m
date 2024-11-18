@@ -1,293 +1,150 @@
-Return-Path: <linux-kernel+bounces-413546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 378229D1AC6
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 22:46:07 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 475079D1AC8
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 22:46:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A7A24B23FA6
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 21:46:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ABDAFB2448A
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 21:46:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B22E1E5728;
-	Mon, 18 Nov 2024 21:46:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A755B1E7C0B;
+	Mon, 18 Nov 2024 21:46:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="fCaQR4Dy"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="km4gGBnW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B197199252
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 21:45:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0188E199252;
+	Mon, 18 Nov 2024 21:46:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731966359; cv=none; b=nDB4PaBL09GsDr5/6J1lufkWxwkeqY8VruFXx4dyVfQZjWj4ROgYMYCK04B9DHPKeZXnJS8jkRvv9CV5DScqJUrSV+vy4rkVW8Fjhksm05fhSF7ziwndfenbNjKfxy0SHfTUUNW5Ix9YOSoNgDNQwLStPv89YXk+faW/Hu1WujM=
+	t=1731966389; cv=none; b=HU7LeyZOf3uBOu2NEDwC0HYfwVXTaKnQVNUqMeBZSpqoiudx6NW6OVtkPsA+mWFyOo6fLSwq8CAfmEXT8YVRX6UHe83M+ZQGILMr3mvb2sue7og47MY9H8ak7hP0vSS0pwe0cO6AC7kyj4lsRgtjI9uxk6swuqe6GLnTpKer5Yc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731966359; c=relaxed/simple;
-	bh=RcHJ430j7zuHLH8dxtwFfoWvRviemutG/WmsFAOT6+s=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=dSkTfr8oxMRJz1ZyWxXWejrL9mWtHGXVSVl93I1evyY/uhym7Hztgqqsq1L/50wTZJ0h0JP+iFGLEthmovT+FRi38UejgEO8oEUZmGkIwa2iGdKLKElnxqbkfel5KGGyRlnag+8OWV2gTGS5XYkZZAxynZol4R5zR+Blo1JccxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=fCaQR4Dy; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a9e71401844so461394066b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 13:45:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1731966355; x=1732571155; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=HzJ9iZGrEcBbTf0nejIN5hDgxydRztwygpx5P5s5ZPk=;
-        b=fCaQR4Dy1y+cI9zEEbdjsAH6kKsreGJjTknuCgwvvdhZv6YJ5yRErSpkPMcopHNvsE
-         /Xn+gz1glLODueXERbX5abAgNlcnPjP/FJWrOFfCzrqOcqjLHgr2lu0mIV2xEhKP7UCS
-         Se6XVa8/q1pzxSamm39aGtr4UeHJvyW94dNagsLpzwHyaN7cX+D6yWowyGs8GbAudhTz
-         Hi3SxWY+ZqfnQHGza4vxoaGjLIPusTkFgF5GhbFzeLO36Eg06MZivobOJxMrpjDVSQXo
-         48hSAEBpZRzVf4i/fVfwI1WRRWX9Xgd5FBnakCSpsWq+rJYJA1evAay8/YwAuhwoBAE0
-         Lviw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731966355; x=1732571155;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HzJ9iZGrEcBbTf0nejIN5hDgxydRztwygpx5P5s5ZPk=;
-        b=fkzmAEVE1ek+E0TUF+QhCN8UWQDG82z3WHhwQhyASi4Up8p2zp5pXJicAa6EULyLBU
-         PHf6EzwDT36b14fHmbILOPaI+gFfrr/lAxyQP1Jz8b++YBBWDvj18x7S3ipEJ47XqUgw
-         9fntOvshHExsK40k5lu5A0bQLSvauTyhQSedmhw61p73CDQ1F7+YV+g9Ii6/A21nVERF
-         1r9Fdqp5eYuYqa6+nr0RkhE3EsHSTv9nlWmXiWZ4eh+kEghMVrbpW45i53QR/kLYUwwQ
-         Hc8jZevs7F5x7wlMd/Rx48M75q9wwBEe7gRnHPRsbIGMdknJbJGcySZkXy8rkCPfOMRF
-         otXw==
-X-Forwarded-Encrypted: i=1; AJvYcCVNMPloD8BXyIQysk8dQUrZJLLXqqLnCIL4acgVptN070U1NrDwhdeQjKVPkViezXZYglX7kVuac1EzGIg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwX4z3+esfe/Lp9C/064esZNy8dF4lWyZ87KeRR966GBQZdUctV
-	PEZiX1zxJWpPTLWCQ6KX8bWRRotu2mdGU6zozvxHmhZ2i0faz3/f1gVbUgSxzYw=
-X-Google-Smtp-Source: AGHT+IH1AXn+4Pbu9RiK+FuHolQEssxt1all3lVH5cqzQ5YFXDuIzlzryEivRSqXuxQtt4PLe8MK0A==
-X-Received: by 2002:a17:907:7f8a:b0:a9a:e91:68c5 with SMTP id a640c23a62f3a-aa483454536mr1156464866b.33.1731966355555;
-        Mon, 18 Nov 2024 13:45:55 -0800 (PST)
-Received: from [192.168.178.182] (2a02-a210-0a3a-6f80-f04f-3897-bedf-0fb0.cable.dynamic.v6.ziggo.nl. [2a02:a210:a3a:6f80:f04f:3897:bedf:fb0])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20dffd736sm578168266b.118.2024.11.18.13.45.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Nov 2024 13:45:54 -0800 (PST)
-From: Luca Weiss <luca.weiss@fairphone.com>
-Date: Mon, 18 Nov 2024 22:45:46 +0100
-Subject: [PATCH] media: i2c: imx412: Add missing newline to prints
+	s=arc-20240116; t=1731966389; c=relaxed/simple;
+	bh=peMY/XdTMJJWJ5Pyke2fhJXs2TjS23XsZl0pD54mdkM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fhtg9cS5OpOFr8GBfx9F76HAkj4Uw5oW1Y3qkA1leMEOEktIWiH7X8ahFazaI1EsraVqfwlCPsXBZ0ZV175RWLleicNQa7la8uzRJCUWVqj31RD/NsxY61h2kcmkKrvzRQf7oafgMFvE9YU04wf2RgKRbmtqMLJQ/jaAo7a7FxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=km4gGBnW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED1C5C4CECC;
+	Mon, 18 Nov 2024 21:46:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731966386;
+	bh=peMY/XdTMJJWJ5Pyke2fhJXs2TjS23XsZl0pD54mdkM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=km4gGBnWG4bpKH7oE2o487c2NzdoijSIdmnrnFZ4XNzizE4DM9mxyeCEJDxsP+4RR
+	 bQsrMfesHcXXX57TNSMEzqERuB0JthWmTDYuPCaXXuqUDsuk7E9wAKCgldyjd6oLH+
+	 h2hcM7haZ0qiLsZlZKFX0L9q83n+JxwX/6zYSZ/auTjslgSaTdfz5cPK/BeKUHC7LN
+	 v2dzCYS46Jqhu4xmFcAc5mQacVzylYVo4Imv+WAjyIl01mvauFgfjdsfvVREX73yKy
+	 vx/V4PFzf3Y2n+beDDzjtyGBhbPn/hIDgefud3JyyrHil9c/pFOLdQkEftq0d+uIlB
+	 UsSo+9IQ4I0lA==
+Date: Mon, 18 Nov 2024 13:46:24 -0800
+From: Namhyung Kim <namhyung@kernel.org>
+To: Howard Chu <howardchu95@gmail.com>
+Cc: acme@kernel.org, peterz@infradead.org, irogers@google.com,
+	mingo@redhat.com, jolsa@kernel.org, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	James Clark <james.clark@linaro.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: Re: [PATCH v8 06/10] perf evsel: Assemble offcpu samples
+Message-ID: <Zzu1sI8E_vX26MgX@google.com>
+References: <20241113002818.3578645-1-howardchu95@gmail.com>
+ <20241113002818.3578645-7-howardchu95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241118-imx412-newlines-v1-1-152fe6863838@fairphone.com>
-X-B4-Tracking: v=1; b=H4sIAIm1O2cC/x3MQQqAIBBA0avIrBMcjaiuEi0qpxooCwcqCO+et
- HyL/18QikwCrXoh0sXCR8jAQsG0DmEhzT4brLElItaa96dEqwPdGwcS7UbjLPqhqYyHXJ2RZn7
- +Y9en9AEBvjsKYQAAAA==
-X-Change-ID: 20241118-imx412-newlines-3b0321da960d
-To: Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Luca Weiss <luca.weiss@fairphone.com>
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241113002818.3578645-7-howardchu95@gmail.com>
 
-Add trailing \n to dev_dbg and dev_err prints where missing.
+On Tue, Nov 12, 2024 at 04:28:14PM -0800, Howard Chu wrote:
+> Use the data in bpf-output samples, to assemble offcpu samples.
 
-Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
----
- drivers/media/i2c/imx412.c | 42 +++++++++++++++++++++---------------------
- 1 file changed, 21 insertions(+), 21 deletions(-)
+Now it requires PERF_SAMPLE_RAW for the off-cpu events.  But it's not
+compatible with the earlier format.  Can you please make sure if it can
+read old off-cpu data recorded before your change?  Maybe you need to
+check or add new info (like in a header.misc field) to distinguish them.
 
-diff --git a/drivers/media/i2c/imx412.c b/drivers/media/i2c/imx412.c
-index 0bfe3046fcc8726ef4e484d0fbf980422343fccc..c74097a59c42853ff2a1b600f28ff5aacedb1c6b 100644
---- a/drivers/media/i2c/imx412.c
-+++ b/drivers/media/i2c/imx412.c
-@@ -547,7 +547,7 @@ static int imx412_update_exp_gain(struct imx412 *imx412, u32 exposure, u32 gain)
- 
- 	lpfr = imx412->vblank + imx412->cur_mode->height;
- 
--	dev_dbg(imx412->dev, "Set exp %u, analog gain %u, lpfr %u",
-+	dev_dbg(imx412->dev, "Set exp %u, analog gain %u, lpfr %u\n",
- 		exposure, gain, lpfr);
- 
- 	ret = imx412_write_reg(imx412, IMX412_REG_HOLD, 1, 1);
-@@ -594,7 +594,7 @@ static int imx412_set_ctrl(struct v4l2_ctrl *ctrl)
- 	case V4L2_CID_VBLANK:
- 		imx412->vblank = imx412->vblank_ctrl->val;
- 
--		dev_dbg(imx412->dev, "Received vblank %u, new lpfr %u",
-+		dev_dbg(imx412->dev, "Received vblank %u, new lpfr %u\n",
- 			imx412->vblank,
- 			imx412->vblank + imx412->cur_mode->height);
- 
-@@ -613,7 +613,7 @@ static int imx412_set_ctrl(struct v4l2_ctrl *ctrl)
- 		exposure = ctrl->val;
- 		analog_gain = imx412->again_ctrl->val;
- 
--		dev_dbg(imx412->dev, "Received exp %u, analog gain %u",
-+		dev_dbg(imx412->dev, "Received exp %u, analog gain %u\n",
- 			exposure, analog_gain);
- 
- 		ret = imx412_update_exp_gain(imx412, exposure, analog_gain);
-@@ -622,7 +622,7 @@ static int imx412_set_ctrl(struct v4l2_ctrl *ctrl)
- 
- 		break;
- 	default:
--		dev_err(imx412->dev, "Invalid control %d", ctrl->id);
-+		dev_err(imx412->dev, "Invalid control %d\n", ctrl->id);
- 		ret = -EINVAL;
- 	}
- 
-@@ -803,14 +803,14 @@ static int imx412_start_streaming(struct imx412 *imx412)
- 	ret = imx412_write_regs(imx412, reg_list->regs,
- 				reg_list->num_of_regs);
- 	if (ret) {
--		dev_err(imx412->dev, "fail to write initial registers");
-+		dev_err(imx412->dev, "fail to write initial registers\n");
- 		return ret;
- 	}
- 
- 	/* Setup handler will write actual exposure and gain */
- 	ret =  __v4l2_ctrl_handler_setup(imx412->sd.ctrl_handler);
- 	if (ret) {
--		dev_err(imx412->dev, "fail to setup handler");
-+		dev_err(imx412->dev, "fail to setup handler\n");
- 		return ret;
- 	}
- 
-@@ -821,7 +821,7 @@ static int imx412_start_streaming(struct imx412 *imx412)
- 	ret = imx412_write_reg(imx412, IMX412_REG_MODE_SELECT,
- 			       1, IMX412_MODE_STREAMING);
- 	if (ret) {
--		dev_err(imx412->dev, "fail to start streaming");
-+		dev_err(imx412->dev, "fail to start streaming\n");
- 		return ret;
- 	}
- 
-@@ -895,7 +895,7 @@ static int imx412_detect(struct imx412 *imx412)
- 		return ret;
- 
- 	if (val != IMX412_ID) {
--		dev_err(imx412->dev, "chip id mismatch: %x!=%x",
-+		dev_err(imx412->dev, "chip id mismatch: %x!=%x\n",
- 			IMX412_ID, val);
- 		return -ENXIO;
- 	}
-@@ -927,7 +927,7 @@ static int imx412_parse_hw_config(struct imx412 *imx412)
- 	imx412->reset_gpio = devm_gpiod_get_optional(imx412->dev, "reset",
- 						     GPIOD_OUT_LOW);
- 	if (IS_ERR(imx412->reset_gpio)) {
--		dev_err(imx412->dev, "failed to get reset gpio %ld",
-+		dev_err(imx412->dev, "failed to get reset gpio %ld\n",
- 			PTR_ERR(imx412->reset_gpio));
- 		return PTR_ERR(imx412->reset_gpio);
- 	}
-@@ -935,13 +935,13 @@ static int imx412_parse_hw_config(struct imx412 *imx412)
- 	/* Get sensor input clock */
- 	imx412->inclk = devm_clk_get(imx412->dev, NULL);
- 	if (IS_ERR(imx412->inclk)) {
--		dev_err(imx412->dev, "could not get inclk");
-+		dev_err(imx412->dev, "could not get inclk\n");
- 		return PTR_ERR(imx412->inclk);
- 	}
- 
- 	rate = clk_get_rate(imx412->inclk);
- 	if (rate != IMX412_INCLK_RATE) {
--		dev_err(imx412->dev, "inclk frequency mismatch");
-+		dev_err(imx412->dev, "inclk frequency mismatch\n");
- 		return -EINVAL;
- 	}
- 
-@@ -966,14 +966,14 @@ static int imx412_parse_hw_config(struct imx412 *imx412)
- 
- 	if (bus_cfg.bus.mipi_csi2.num_data_lanes != IMX412_NUM_DATA_LANES) {
- 		dev_err(imx412->dev,
--			"number of CSI2 data lanes %d is not supported",
-+			"number of CSI2 data lanes %d is not supported\n",
- 			bus_cfg.bus.mipi_csi2.num_data_lanes);
- 		ret = -EINVAL;
- 		goto done_endpoint_free;
- 	}
- 
- 	if (!bus_cfg.nr_of_link_frequencies) {
--		dev_err(imx412->dev, "no link frequencies defined");
-+		dev_err(imx412->dev, "no link frequencies defined\n");
- 		ret = -EINVAL;
- 		goto done_endpoint_free;
- 	}
-@@ -1034,7 +1034,7 @@ static int imx412_power_on(struct device *dev)
- 
- 	ret = clk_prepare_enable(imx412->inclk);
- 	if (ret) {
--		dev_err(imx412->dev, "fail to enable inclk");
-+		dev_err(imx412->dev, "fail to enable inclk\n");
- 		goto error_reset;
- 	}
- 
-@@ -1145,7 +1145,7 @@ static int imx412_init_controls(struct imx412 *imx412)
- 		imx412->hblank_ctrl->flags |= V4L2_CTRL_FLAG_READ_ONLY;
- 
- 	if (ctrl_hdlr->error) {
--		dev_err(imx412->dev, "control init failed: %d",
-+		dev_err(imx412->dev, "control init failed: %d\n",
- 			ctrl_hdlr->error);
- 		v4l2_ctrl_handler_free(ctrl_hdlr);
- 		return ctrl_hdlr->error;
-@@ -1183,7 +1183,7 @@ static int imx412_probe(struct i2c_client *client)
- 
- 	ret = imx412_parse_hw_config(imx412);
- 	if (ret) {
--		dev_err(imx412->dev, "HW configuration is not supported");
-+		dev_err(imx412->dev, "HW configuration is not supported\n");
- 		return ret;
- 	}
- 
-@@ -1191,14 +1191,14 @@ static int imx412_probe(struct i2c_client *client)
- 
- 	ret = imx412_power_on(imx412->dev);
- 	if (ret) {
--		dev_err(imx412->dev, "failed to power-on the sensor");
-+		dev_err(imx412->dev, "failed to power-on the sensor\n");
- 		goto error_mutex_destroy;
- 	}
- 
- 	/* Check module identity */
- 	ret = imx412_detect(imx412);
- 	if (ret) {
--		dev_err(imx412->dev, "failed to find sensor: %d", ret);
-+		dev_err(imx412->dev, "failed to find sensor: %d\n", ret);
- 		goto error_power_off;
- 	}
- 
-@@ -1208,7 +1208,7 @@ static int imx412_probe(struct i2c_client *client)
- 
- 	ret = imx412_init_controls(imx412);
- 	if (ret) {
--		dev_err(imx412->dev, "failed to init controls: %d", ret);
-+		dev_err(imx412->dev, "failed to init controls: %d\n", ret);
- 		goto error_power_off;
- 	}
- 
-@@ -1222,14 +1222,14 @@ static int imx412_probe(struct i2c_client *client)
- 	imx412->pad.flags = MEDIA_PAD_FL_SOURCE;
- 	ret = media_entity_pads_init(&imx412->sd.entity, 1, &imx412->pad);
- 	if (ret) {
--		dev_err(imx412->dev, "failed to init entity pads: %d", ret);
-+		dev_err(imx412->dev, "failed to init entity pads: %d\n", ret);
- 		goto error_handler_free;
- 	}
- 
- 	ret = v4l2_async_register_subdev_sensor(&imx412->sd);
- 	if (ret < 0) {
- 		dev_err(imx412->dev,
--			"failed to register async subdev: %d", ret);
-+			"failed to register async subdev: %d\n", ret);
- 		goto error_media_entity;
- 	}
- 
+Thanks,
+Namhyung
 
----
-base-commit: ae58226b89ac0cffa05ba7357733776542e40216
-change-id: 20241118-imx412-newlines-3b0321da960d
-
-Best regards,
--- 
-Luca Weiss <luca.weiss@fairphone.com>
-
+> 
+> Suggested-by: Namhyung Kim <namhyung@kernel.org>
+> Reviewed-by: Ian Rogers <irogers@google.com>
+> Signed-off-by: Howard Chu <howardchu95@gmail.com>
+> Cc: Adrian Hunter <adrian.hunter@intel.com>
+> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: James Clark <james.clark@linaro.org>
+> Cc: Jiri Olsa <jolsa@kernel.org>
+> Cc: Kan Liang <kan.liang@linux.intel.com>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Link: https://lore.kernel.org/r/20241108204137.2444151-7-howardchu95@gmail.com
+> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> ---
+>  tools/perf/util/evsel.c | 32 ++++++++++++++++++++++++++++++++
+>  1 file changed, 32 insertions(+)
+> 
+> diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+> index 8d0308f62484..654fb5196ecf 100644
+> --- a/tools/perf/util/evsel.c
+> +++ b/tools/perf/util/evsel.c
+> @@ -2792,6 +2792,35 @@ static inline bool evsel__has_branch_counters(const struct evsel *evsel)
+>  	return false;
+>  }
+>  
+> +static int __set_offcpu_sample(struct perf_sample *data)
+> +{
+> +	u64 *array = data->raw_data;
+> +	u32 max_size = data->raw_size, *p32;
+> +	const void *endp = (void *)array + max_size;
+> +
+> +	if (array == NULL)
+> +		return -EFAULT;
+> +
+> +	OVERFLOW_CHECK_u64(array);
+> +	p32 = (void *)array++;
+> +	data->pid = p32[0];
+> +	data->tid = p32[1];
+> +
+> +	OVERFLOW_CHECK_u64(array);
+> +	data->period = *array++;
+> +
+> +	OVERFLOW_CHECK_u64(array);
+> +	data->callchain = (struct ip_callchain *)array++;
+> +	OVERFLOW_CHECK(array, data->callchain->nr * sizeof(u64), max_size);
+> +	data->ip = data->callchain->ips[1];
+> +	array += data->callchain->nr;
+> +
+> +	OVERFLOW_CHECK_u64(array);
+> +	data->cgroup = *array;
+> +
+> +	return 0;
+> +}
+> +
+>  int evsel__parse_sample(struct evsel *evsel, union perf_event *event,
+>  			struct perf_sample *data)
+>  {
+> @@ -3143,6 +3172,9 @@ int evsel__parse_sample(struct evsel *evsel, union perf_event *event,
+>  		array = (void *)array + sz;
+>  	}
+>  
+> +	if (evsel__is_offcpu_event(evsel))
+> +		return __set_offcpu_sample(data);
+> +
+>  	return 0;
+>  }
+>  
+> -- 
+> 2.43.0
+> 
 
