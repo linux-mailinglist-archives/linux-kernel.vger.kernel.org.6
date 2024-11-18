@@ -1,175 +1,193 @@
-Return-Path: <linux-kernel+bounces-413151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E5029D1437
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 16:15:16 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04BAE9D1447
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 16:19:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44427282656
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 15:15:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3AF83B2A843
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 15:17:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A66D01B0F0B;
-	Mon, 18 Nov 2024 15:14:35 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 118391AC45F;
+	Mon, 18 Nov 2024 15:17:33 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C3701AE016
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 15:14:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00DFD199385
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 15:17:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731942875; cv=none; b=cMKQ7NnyfXKuMizLY5zLTrx7henb00oj9cdVpOPn8DOxMj3l1JqZr+exqRz2oAcGCiJRynOmSbOrXc/Ybk+brgiOWBk/nB2R50fSERXDZ/wSohX/01l8I8DbDVMmpgAFQqLkthPGlD+07eO6w734wVmJqNRWE0vSyRRjixU4gRI=
+	t=1731943052; cv=none; b=oSaiSonJlSOoQRmUa1/YeBb94THjx6ywykOcfVW+jzBgVXKYrM1v/b5zf0JfUJorXX9WLTiW487SKycDCL+yLJnY1Uu9wlKGzPcl5oWBMLWRxWGcgC8g4PKODlRTQ2Q8jzudQEkRNJzoyHvBQvr0K5pNe7YBDLu3QkwOXUNjGZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731942875; c=relaxed/simple;
-	bh=mBqnyF8F99Ri8pipwkHs2XCwUZan8IXCijA7+v397NQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dj1aVzRfxfzHpYT0mY98UB3mLJ1sEe6CQSmYiyCQMjeJN5qN0uucMeOf2CmqjV9LH0DD6xw/0KvWnoKkjcIEJlAL1VOkbj6Mox0cpVPMBlD4QlKPWzRoAvoZt2TUiQbGPOtfFRtDiXk7NudFZEsrQ7x/786NT3Xdk3hpU7bKpxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1tD3S7-0003Be-RU; Mon, 18 Nov 2024 16:14:11 +0100
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1tD3S6-001PyT-20;
-	Mon, 18 Nov 2024 16:14:10 +0100
-Received: from pengutronix.de (pd9e59fec.dip0.t-ipconnect.de [217.229.159.236])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 35B103765CD;
-	Mon, 18 Nov 2024 15:14:10 +0000 (UTC)
-Date: Mon, 18 Nov 2024 16:14:09 +0100
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Sean Nyekjaer <sean@geanix.com>
-Cc: Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-can@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH can-next v5 2/2] can: tcan4x5x: add option for selecting
- nWKRQ voltage
-Message-ID: <20241118-impetuous-mackerel-of-glamour-f482ed-mkl@pengutronix.de>
-References: <20241114-tcan-wkrqv-v5-0-a2d50833ed71@geanix.com>
- <20241114-tcan-wkrqv-v5-2-a2d50833ed71@geanix.com>
- <clwiowhd5jwf7uzbcbexelsspdpflqhshq6ev5wsabhuugemlp@bbktuqgjd2gg>
+	s=arc-20240116; t=1731943052; c=relaxed/simple;
+	bh=qRdu+W3MecDQXrO1b1xbVvcFFHBRaRg27GrWOgzU93w=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Td82SEtR/dWuzXWLLKtiGuwLvmq9NjAMlv6Zf9AGrhbcli8kKfCgAk3H1VN4aEze6DTsZ8ywgLhBD0VyP7K570x3wziLjFvdeph8ZEBxu0agiN8KuGTCjWNtL07gtVrdIK8eVqW8nmUYB60GwJvxZvBP2lq1ZGtuiwPwqDWuddo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a3b9c5bcd8so45570055ab.2
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 07:17:30 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731943050; x=1732547850;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=MMrFntecqL6JFmwjB+HrMvBdRfZbPU+p3Yo/qXqmg/Q=;
+        b=QLnZ7QyCUjZeLvPAi70sauUR7fBdN7YYto6ZIvi/xBSPszQnY6xueMN/stDPHpcke6
+         pJETrqvGI7eJfFXRKMt4IbAacdyMMvLr6xNCe+vEDtYhr0r8fNquWzr3VcSRPGIsB3Vw
+         LxRXQd1j6EAqTyQC+UihbomebLyUToHApG+VAUOLnOXAYGyb2SEpSTM+R3H5acLfXweR
+         UYAsB5yGScpwPknCB7+ASW1TmnJa3I0uCogq3/8G4F+fWa6Q/BOwgYsIypYP3iB9uYli
+         bWQr8TqbXi6bHgXSbwWBeZj8Zl/OpkOZ5FkHU5wFP4m3+l/YSqYQ5GKu42q4XvnbcsYA
+         YoKA==
+X-Forwarded-Encrypted: i=1; AJvYcCU442lb7GyMuHWL5JO5ley+wb1WCP23qicxb+YPcAOnQWGMJA07VzNVteRyaAkWBjH2czR/wMxUtMO3AnM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwuMrl0TMVLAWXd07Wn8MNjk/hm16r9llufs2Mzk+rL+H5+XSYI
+	CEoCoekD1hoE+IaR+JZStlGOENwXpqWagJiIOy+cMEXH0plJtHBjGEuUXgRSWnNd7CTAmC8wGm0
+	yYJMGZai3IZyNX5k9FJUOsGPf9O3dLMnUu+0vHp9HnsFKAJ3YVS6GhAU=
+X-Google-Smtp-Source: AGHT+IGPIsq6/yaP7fwU8ausne4uz0KbEqvEiQQi+jkfH2FRE8pytf9PPBxQPun5r1JkEi+SBQAE/soq4BdR/qAsBcCuxo945xjQ
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="5lc3tcsgin2oixnj"
-Content-Disposition: inline
-In-Reply-To: <clwiowhd5jwf7uzbcbexelsspdpflqhshq6ev5wsabhuugemlp@bbktuqgjd2gg>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+X-Received: by 2002:a92:cda3:0:b0:3a6:b0a3:5400 with SMTP id
+ e9e14a558f8ab-3a748087603mr105580875ab.16.1731943050158; Mon, 18 Nov 2024
+ 07:17:30 -0800 (PST)
+Date: Mon, 18 Nov 2024 07:17:30 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <673b5a8a.050a0220.87769.0043.GAE@google.com>
+Subject: [syzbot] [virt?] INFO: trying to register non-static key in stats_request
+From: syzbot <syzbot+f303608297c771a7de35@syzkaller.appspotmail.com>
+To: david@redhat.com, eperezma@redhat.com, jasowang@redhat.com, 
+	linux-kernel@vger.kernel.org, mst@redhat.com, syzkaller-bugs@googlegroups.com, 
+	virtualization@lists.linux.dev, xuanzhuo@linux.alibaba.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    0a9b9d17f3a7 Merge tag 'pm-6.12-rc8' of git://git.kernel.o..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=17bf6ce8580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d2aeec8c0b2e420c
+dashboard link: https://syzkaller.appspot.com/bug?extid=f303608297c771a7de35
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/8a8c49f7786f/disk-0a9b9d17.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/0f9c24f45e74/vmlinux-0a9b9d17.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/b1f469ce7e16/bzImage-0a9b9d17.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+f303608297c771a7de35@syzkaller.appspotmail.com
+
+INFO: trying to register non-static key.
+The code is fine but needs lockdep annotation, or maybe
+you didn't initialize this object before use?
+turning off the locking correctness validator.
+CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.12.0-rc7-syzkaller-00070-g0a9b9d17f3a7 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
+Call Trace:
+ <IRQ>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ assign_lock_key+0x241/0x280 kernel/locking/lockdep.c:981
+ register_lock_class+0x1cf/0x980 kernel/locking/lockdep.c:1295
+ __lock_acquire+0xf0/0x2050 kernel/locking/lockdep.c:5077
+ lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5825
+ __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+ _raw_spin_lock_irqsave+0xd5/0x120 kernel/locking/spinlock.c:162
+ start_wakeup_event drivers/virtio/virtio_balloon.c:150 [inline]
+ stats_request+0xb3/0x230 drivers/virtio/virtio_balloon.c:440
+ vring_interrupt+0x21d/0x380 drivers/virtio/virtio_ring.c:2595
+ vp_vring_interrupt drivers/virtio/virtio_pci_common.c:92 [inline]
+ vp_interrupt+0x192/0x200 drivers/virtio/virtio_pci_common.c:123
+ __handle_irq_event_percpu+0x29a/0xa80 kernel/irq/handle.c:158
+ handle_irq_event_percpu kernel/irq/handle.c:193 [inline]
+ handle_irq_event+0x89/0x1f0 kernel/irq/handle.c:210
+ handle_fasteoi_irq+0x48a/0xae0 kernel/irq/chip.c:720
+ generic_handle_irq_desc include/linux/irqdesc.h:173 [inline]
+ handle_irq arch/x86/kernel/irq.c:247 [inline]
+ call_irq_handler arch/x86/kernel/irq.c:259 [inline]
+ __common_interrupt+0x136/0x230 arch/x86/kernel/irq.c:285
+ common_interrupt+0xb4/0xd0 arch/x86/kernel/irq.c:278
+ </IRQ>
+ <TASK>
+ asm_common_interrupt+0x26/0x40 arch/x86/include/asm/idtentry.h:693
+RIP: 0010:lock_acquire+0x264/0x550 kernel/locking/lockdep.c:5829
+Code: 2b 00 74 08 4c 89 f7 e8 ea 6c 8e 00 f6 44 24 61 02 0f 85 85 01 00 00 41 f7 c7 00 02 00 00 74 01 fb 48 c7 44 24 40 0e 36 e0 45 <4b> c7 44 25 00 00 00 00 00 43 c7 44 25 09 00 00 00 00 43 c7 44 25
+RSP: 0000:ffffc90000067360 EFLAGS: 00000206
+RAX: 0000000000000001 RBX: 1ffff9200000ce78 RCX: c155c4d26c75e500
+RDX: dffffc0000000000 RSI: ffffffff8c0adc40 RDI: ffffffff8c610b20
+RBP: ffffc900000674a8 R08: ffffffff942d0857 R09: 1ffffffff285a10a
+R10: dffffc0000000000 R11: fffffbfff285a10b R12: 1ffff9200000ce74
+R13: dffffc0000000000 R14: ffffc900000673c0 R15: 0000000000000246
+ down_write+0x99/0x220 kernel/locking/rwsem.c:1577
+ __blocking_notifier_chain_register kernel/notifier.c:271 [inline]
+ blocking_notifier_chain_register+0x50/0xc0 kernel/notifier.c:290
+ virtballoon_probe+0x551/0xf60 drivers/virtio/virtio_balloon.c:1015
+ virtio_dev_probe+0x931/0xc80 drivers/virtio/virtio.c:341
+ really_probe+0x2b8/0xad0 drivers/base/dd.c:658
+ __driver_probe_device+0x1a2/0x390 drivers/base/dd.c:800
+ driver_probe_device+0x50/0x430 drivers/base/dd.c:830
+ __driver_attach+0x45f/0x710 drivers/base/dd.c:1216
+ bus_for_each_dev+0x239/0x2b0 drivers/base/bus.c:370
+ bus_add_driver+0x346/0x670 drivers/base/bus.c:675
+ driver_register+0x23a/0x320 drivers/base/driver.c:246
+ do_one_initcall+0x248/0x880 init/main.c:1269
+ do_initcall_level+0x157/0x210 init/main.c:1331
+ do_initcalls+0x3f/0x80 init/main.c:1347
+ kernel_init_freeable+0x435/0x5d0 init/main.c:1580
+ kernel_init+0x1d/0x2b0 init/main.c:1469
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+----------------
+Code disassembly (best guess):
+   0:	2b 00                	sub    (%rax),%eax
+   2:	74 08                	je     0xc
+   4:	4c 89 f7             	mov    %r14,%rdi
+   7:	e8 ea 6c 8e 00       	call   0x8e6cf6
+   c:	f6 44 24 61 02       	testb  $0x2,0x61(%rsp)
+  11:	0f 85 85 01 00 00    	jne    0x19c
+  17:	41 f7 c7 00 02 00 00 	test   $0x200,%r15d
+  1e:	74 01                	je     0x21
+  20:	fb                   	sti
+  21:	48 c7 44 24 40 0e 36 	movq   $0x45e0360e,0x40(%rsp)
+  28:	e0 45
+* 2a:	4b c7 44 25 00 00 00 	movq   $0x0,0x0(%r13,%r12,1) <-- trapping instruction
+  31:	00 00
+  33:	43 c7 44 25 09 00 00 	movl   $0x0,0x9(%r13,%r12,1)
+  3a:	00 00
+  3c:	43                   	rex.XB
+  3d:	c7                   	.byte 0xc7
+  3e:	44                   	rex.R
+  3f:	25                   	.byte 0x25
 
 
---5lc3tcsgin2oixnj
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH can-next v5 2/2] can: tcan4x5x: add option for selecting
- nWKRQ voltage
-MIME-Version: 1.0
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-On 18.11.2024 16:05:42, Sean Nyekjaer wrote:
-> Hi Marc,
->=20
-> On Thu, Nov 14, 2024 at 10:14:50AM +0100, Sean Nyekjaer wrote:
-> > The nWKRQ pin supports an output voltage of either the internal referen=
-ce
-> > voltage (3.6V) or the reference voltage of
-> > the digital interface 0-6V (VIO).
-> > Add the devicetree option ti,nwkrq-voltage-vio to set it to VIO.
-> >=20
-> > If this property is omitted the reset default, the internal reference
-> > voltage, is used.
-> >=20
-> > Signed-off-by: Sean Nyekjaer <sean@geanix.com>
-> > Reviewed-by: Marc Kleine-Budde <mkl@pengutronix.de>
-> > Reviewed-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-> > ---
-> >  drivers/net/can/m_can/tcan4x5x-core.c | 20 ++++++++++++++++++++
-> >  drivers/net/can/m_can/tcan4x5x.h      |  2 ++
-> >  2 files changed, 22 insertions(+)
-> >=20
-> > diff --git a/drivers/net/can/m_can/tcan4x5x-core.c b/drivers/net/can/m_=
-can/tcan4x5x-core.c
-> > index 2f73bf3abad889c222f15c39a3d43de1a1cf5fbb..7213d9894c82d079bf92f1e=
-c62d4eebb500cdfa4 100644
-> > --- a/drivers/net/can/m_can/tcan4x5x-core.c
-> > +++ b/drivers/net/can/m_can/tcan4x5x-core.c
-> > @@ -92,6 +92,8 @@
-> >  #define TCAN4X5X_MODE_STANDBY BIT(6)
-> >  #define TCAN4X5X_MODE_NORMAL BIT(7)
-> > =20
-> > +#define TCAN4X5X_NWKRQ_VOLTAGE_VIO BIT(19)
-> > +
-> >  #define TCAN4X5X_DISABLE_WAKE_MSK	(BIT(31) | BIT(30))
-> >  #define TCAN4X5X_DISABLE_INH_MSK	BIT(9)
-> > =20
-> > @@ -267,6 +269,13 @@ static int tcan4x5x_init(struct m_can_classdev *cd=
-ev)
-> >  	if (ret)
-> >  		return ret;
-> > =20
-> > +	if (tcan4x5x->nwkrq_voltage_vio) {
-> > +		ret =3D regmap_set_bits(tcan4x5x->regmap, TCAN4X5X_CONFIG,
-> > +				      TCAN4X5X_NWKRQ_VOLTAGE_VIO);
-> > +		if (ret)
-> > +			return ret;
-> > +	}
-> > +
-> >  	return ret;
-> >  }
-> > =20
-> > @@ -318,6 +327,15 @@ static const struct tcan4x5x_version_info
-> >  	return &tcan4x5x_versions[TCAN4X5X];
-> >  }
-> > =20
-> > +static void tcan4x5x_get_dt_data(struct m_can_classdev *cdev)
-> > +{
-> > +	struct tcan4x5x_priv *tcan4x5x =3D cdev_to_priv(cdev);
-> > +	struct device_node *np =3D cdev->dev->of_node;
->=20
-> Guess we can remove this line. Sorry
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-ACK. Will fixup here.
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-Marc
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
---5lc3tcsgin2oixnj
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmc7Wb8ACgkQKDiiPnot
-vG/WZwf/XeUCg+GNtKoHxa7Fx7ZdaV02WLfPg/Ln0FyQOu6eIgXMA55aG+yd/9t0
-w6oW5AkGXr1oPHA2ytYNuTVwcZRJev4haqNzHjLosBc41zlO2aNSflvlRanQbF0F
-inQBVXdTgKtiW399Df86kTiGfAlH+f8MUqEX4QYcCzF7u0jtVRq95DOYk/CC/45z
-ICj8C46MGxJjtnhj7G31UfGtNG3vCabBwct9WJsfk03/8vvAVJ56LIaKPcQPO2T6
-SC/0Tru3cTBI6urc+9SddTXgRacACJOHi82e9iS5a9OiCqvc3n/X+C0mgF3wosp3
-FlmGZeGKfGFQFCIrmCBioI7lZMcsvg==
-=Efuo
------END PGP SIGNATURE-----
-
---5lc3tcsgin2oixnj--
+If you want to undo deduplication, reply with:
+#syz undup
 
