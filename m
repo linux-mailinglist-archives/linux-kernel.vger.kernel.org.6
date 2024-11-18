@@ -1,206 +1,137 @@
-Return-Path: <linux-kernel+bounces-412683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EA5B9D0DBC
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:06:29 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FBFD9D0DC0
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:07:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB3EB281483
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 10:06:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74905B27276
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 10:06:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 962B8192D66;
-	Mon, 18 Nov 2024 10:06:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="nSPYUiOl"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 661061946BA;
+	Mon, 18 Nov 2024 10:06:25 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFE8A188A0D
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 10:06:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F917193075
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 10:06:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731924380; cv=none; b=iL4UafvrOKd+YMTjnrgIjEWgSnvT2trS2RYKb9CZPNgToScam2VAhnb91ytmWiKn3pKk+p3Qb05rFW9wltfNsBR/eBJb/BDKUWizK2gkqVrMbypAs6HkHWivNbd1Ehe1K2qCHgrv73scTvv8ym8FHuXg7mMVOcjEBQqlNBaF3UM=
+	t=1731924385; cv=none; b=nWhwSgIDn9Q9HTI2h26ao7Bo3JmU3WB9gpHElzElphmR9oT8DOvjm9PQTRuinTe+MpHL9jBM2srsbaAA4L6swYbDDVzmKYYqeYe0POckK2U9MfTM8GGZhbWmh4c2PXPnR9PYFc1wgnjwVnuzXZdsUkjd8WTAoOMOiaZ05zk0cDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731924380; c=relaxed/simple;
-	bh=osaXyN6BouvX3a3zCIwNrMGR31b+e+AEEftUE3CdIyY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=sh6OJ8/x+pHX6uPdCnmQ3ul2zf/xgWbVALir/xJyjhtfb8wgFYQuenjbyt3SatNW7SibnghPfutVNgPzHZ8ut1PnghmNFJm9AFLRGdx+9qIg8IbGcxcUiYb1PI/d0Paj1KioEIPlLN4KSwTRBjgXeEEGgvK6ghMKhVruzAVmadc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=nSPYUiOl; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-432d866f70fso34771815e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 02:06:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1731924375; x=1732529175; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6XJLItd9ejKzlDHl0N9KDnlBxbviG3QWmhzLzjOLKeM=;
-        b=nSPYUiOlL4Wb4ZyKwlUTl3kjKFjyuqPWhLczl1NnqnIkPf5btazWs5pj0LT3W8BoS/
-         u8c8ke7NaiMCBp6S0mUDVWw+he3H6eam2Z4lQupYsab/RYTL1l2CW6kRP8uWoNCBgiIF
-         xEDewbyOHG017Iv4avdNDcQASzp/z28Tde3znDZD1orJk0dlgYGdBYu/OtydrJvRKBp4
-         +YuHRR8GY7iLhSw2FMKDbx1fNxvQ8CmW5aWt2SHHEB1hIG9arEUOkDvT2Iym9+uzsJHD
-         BVapcyl0Z65TOhtTueJln36qNO8gT66yc82BX6A/F+yQoYiS5uVEpW9gD2EDxkOyBcrc
-         kRCQ==
+	s=arc-20240116; t=1731924385; c=relaxed/simple;
+	bh=9PkD9Q/kE7hICbwwb1hSIC1rtP89m2CMQSEfhG73Qck=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=QQ3JZOdPRcA5wsY7mfNukkiBK4FyZO9IzuhXDuNGQx1+hxp/7WsRZ3iOYZ3u5jysxZFTUIpnSbmv2+ysQknYXUVn+DRQGQjwd9jGQnDvBDSkjHVUrPsQC5RRiGzBqxPq0QEcQApr096e+l+hB9UwdLIYfkjiAv5aAR8IyiC+QYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-83aaca0efc6so423787739f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 02:06:23 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731924375; x=1732529175;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1731924382; x=1732529182;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6XJLItd9ejKzlDHl0N9KDnlBxbviG3QWmhzLzjOLKeM=;
-        b=AI9tVn1lH5wh2BBdoHULiSfd1zdKVsij5Yf6oic+8Cs29Dy6q+OcljsQ8puE+dNwOl
-         KshUSq85h8UlwsqpZYL4lpNDD2mLUs5L0d60P18oil/le65k5ypG+m2vU7ypbucxcd4R
-         jqP/fvoksDAMjZbFrTvZFK0gdCgAAXoK48UkoABIr66GEucfMUCs9wW/QzDPCUftPPEW
-         ixzEb+V1d+hn+j7GwqttaP/+3JD1oOJUTKZ3s79RTvMyHa071IV9B+7zMEpRFt16dE/q
-         1w8fAyuL3zEIsrWiqVcr15VTHpDcwX2VHR0tio7yOgeRcYItz1wjBEZDcFc0KtuQqdcV
-         0FMQ==
-X-Gm-Message-State: AOJu0Yx0e+XOgif8pVH2gS7HF4sbCnXgK51QPIShnmI705BHaA2nJLHy
-	Q6KsNxLzwVucsS6o8k3Yh8YdIOFEbWVqGWacBGFW/r6welX/6Xu3lT7A7cQASi6LWakLfm6olmy
-	1
-X-Google-Smtp-Source: AGHT+IGpCz7tiOpQ6i6dlG9gd1pHCo/Wa+oYfLAhSYidRkbPfpBglZLzLG5HnJrxMZAy3ckz5sMtww==
-X-Received: by 2002:a05:600c:4fcf:b0:42c:b995:2100 with SMTP id 5b1f17b1804b1-432df722e4bmr93843775e9.6.1731924374816;
-        Mon, 18 Nov 2024 02:06:14 -0800 (PST)
-Received: from localhost (p509159f1.dip0.t-ipconnect.de. [80.145.89.241])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432da298760sm153013935e9.37.2024.11.18.02.06.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Nov 2024 02:06:14 -0800 (PST)
-Date: Mon, 18 Nov 2024 11:06:12 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org, 
-	Jonathan Cameron <jic23@kernel.org>, linux-iio@vger.kernel.org
-Subject: [GIT PULL] pwm: Changes for 6.13-rc1
-Message-ID: <karzhndxysg5whnrp5pby3ulvmircl76a7dkcbinkdyuyx5flg@6al4vimzwjhc>
+        bh=Ylip8umtXskYMIajfOQpxRLbG1VkTKbl1GYfVrPBfP4=;
+        b=juu7IoO6Z67mHvKm/Y9MTojvzSRkHTakqpvzv5zS5gMP4QJneDkAGq24ZF7ym5sKBW
+         MRt0YEvzj2v2ErXOCpF3W5Rmbm4XucZd7UbiSDzsQXA3Mhu7HhIF8lwsC7UJ0nYsQ023
+         Yj1n2Y4PmOhAnZvhJPU78zVe80GD4IVx/hL/7DhsttCpG6khhffYAdBVQzDnHI12Fnhj
+         WhRW4JYfLW2frkzUKEiYDPFvlO4ZFG9sgE8jlEvcUYbTeoEwzHFzcrml3iI5qV7biwIC
+         nUHzv40c6Mh8ZTSWhV+5y01H6G6Kp6aOr/sBJgoUIGZVfwXqFdp31tyrwap4KvmNQHJX
+         cZyQ==
+X-Gm-Message-State: AOJu0YxhTbuPKkfzDHhTH5c5QPSFAeGGjfmyuH5RmMBWwqUUanxXmR8x
+	FglQoZ3h+lwmvx6zaCO2TKX9uLAqowsOuRQPkC7MMklOFFxUPRVNmhkw733pBVQZ4rfH7++meuO
+	9SiWSbcQDYI0U5MSpsHtFkykcdY6rkGS4Frc1Dh1qkZrWwywzC6a2m2c=
+X-Google-Smtp-Source: AGHT+IH6E9f2wZAa+uh+cuyYCFXXmTyYhh0FKeQ6fOew+AzZ5Gl6aORlLEnBuG+M8DDUaN06Ft3ZV141R29co8K6VusjLm/XuCT7
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="57l3bzelwfcxov3e"
-Content-Disposition: inline
+X-Received: by 2002:a05:6e02:1ca3:b0:3a7:2194:fd3d with SMTP id
+ e9e14a558f8ab-3a748041fc6mr86801075ab.14.1731924382582; Mon, 18 Nov 2024
+ 02:06:22 -0800 (PST)
+Date: Mon, 18 Nov 2024 02:06:22 -0800
+In-Reply-To: <67381991.050a0220.57553.0045.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <673b119e.050a0220.87769.0028.GAE@google.com>
+Subject: Re: [syzbot] Re: general protection fault in jfs_error()
+From: syzbot <syzbot+5f0d7af0e45fae10edd1@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
---57l3bzelwfcxov3e
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: [GIT PULL] pwm: Changes for 6.13-rc1
-MIME-Version: 1.0
+***
 
-Hello Linus,
+Subject: Re: general protection fault in jfs_error()
+Author: dmantipov@yandex.ru
 
-The following changes since commit 517fb4d77c44c7519ae6937329c496894461f416:
+#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git adc218676eef25575469234709c2d87185ca223a
 
-  MAINTAINERS: add self as reviewer for AXI PWM GENERATOR (2024-10-25 11:31=
-:17 +0200)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git tags/p=
-wm/for-6.13-rc1
-
-for you to fetch changes up to b2eaa1170e45dc18eb09dcc9abafbe9a7502e960:
-
-  pwm: Assume a disabled PWM to emit a constant inactive output (2024-11-07=
- 12:03:39 +0100)
-
-----------------------------------------------------------------
-pwm: Changes for v6.13-rc1
-
-This pull request prominently contains a new abstraction for PWM
-waveforms that is more expressive that the legacy one. Compared to the
-old abstraction it contains a duty_offset member instead of polarity.
-This new abstraction is already used in an ADC driver merged into the
-iio tree. So I expect you will get a part of this tree also via the iio
-pull request for 6.13-rc1 (tag pwm/duty_offset-for-6.13-rc1).
-
-Otherwise it's the usual collection of fixes, cleanups and dt doc
-updates.
-
-This time around thanks go to Andy Shevchenko, Clark Wang, Conor Dooley,
-David Lechner, Dimitri Fedrau, Frank Li, Jun Li, Kelvin Zhang, Krzysztof
-Kozlowski, Nuno Sa, Shen Lichuan and Trevor Gamblin for code
-contributions, testing and review.
-
-----------------------------------------------------------------
-
-The new API requires changes to the lowlevel drivers. For now there are
-two drivers that are converted to the new API (axi-pwmgen and stm32).
-Converted drivers continue to work with the old API. Drivers not yet
-converted only work with the older API.
-
-Please pull these changes for 6.13-rc1.
-
-Thanks
-Uwe
-
-Andy Shevchenko (1):
-      pwm: core: use device_match_name() instead of strcmp(dev_name(...
-
-Clark Wang (1):
-      pwm: imx27: Workaround of the pwm output bug when decrease the duty c=
-ycle
-
-David Lechner (3):
-      pwm: axi-pwmgen: Rename 0x10 register
-      pwm: axi-pwmgen: Enable FORCE_ALIGN by default
-      pwm: core: export pwm_get_state_hw()
-
-Frank Li (1):
-      pwm: imx27: Use clk_bulk_*() API to simplify clock handling
-
-Kelvin Zhang (1):
-      dt-bindings: pwm: amlogic: Document C3 PWM
-
-Shen Lichuan (1):
-      pwm: atmel-tcb: Use min() macro
-
-Uwe Kleine-K=F6nig (13):
-      pwm: Add more locking
-      pwm: New abstraction for PWM waveforms
-      pwm: Provide new consumer API functions for waveforms
-      pwm: Add tracing for waveform callbacks
-      pwm: axi-pwmgen: Implementation of the waveform callbacks
-      pwm: stm32: Implementation of the waveform callbacks
-      pwm: Reorder symbols in core.c
-      pwm: Add kernel doc for members added to pwm_ops recently
-      pwm: stm32: Fix error checking for a regmap_read() call
-      pwm: axi-pwmgen: Create a dedicated function for getting driver data =
-=66rom a chip
-      Merge tag 'pwm/duty_offset-for-6.13-rc1' of https://git.kernel.org/pu=
-b/scm/linux/kernel/git/ukleinek/linux
-      dt-bindings: pwm: adi,axi-pwmgen: Increase #pwm-cells to 3
-      pwm: Assume a disabled PWM to emit a constant inactive output
-
- .../devicetree/bindings/pwm/adi,axi-pwmgen.yaml    |   4 +-
- .../devicetree/bindings/pwm/pwm-amlogic.yaml       |   1 +
- drivers/pwm/core.c                                 | 885 +++++++++++++++++=
-----
- drivers/pwm/pwm-atmel-tcb.c                        |   4 +-
- drivers/pwm/pwm-axi-pwmgen.c                       | 199 +++--
- drivers/pwm/pwm-imx27.c                            | 161 +++-
- drivers/pwm/pwm-stm32.c                            | 612 +++++++++-----
- include/linux/pwm.h                                |  66 +-
- include/trace/events/pwm.h                         | 134 +++-
- 9 files changed, 1571 insertions(+), 495 deletions(-)
-
-
---57l3bzelwfcxov3e
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmc7EZIACgkQj4D7WH0S
-/k6cZwgAoMkjVDFUq9QM8g87/DWUZABFHzVKCIyRCCmql+pxVSnE5xBrG9fNK70Q
-ijkdSDtrRpCWSHBMLm09+Qnb2vkJpyy0fYwMUfgaU0GcE+z9zpgfbu4Z8mY4A59d
-Nj7yfpmYYrusKAZRgUnijI7QC5hC7EJa598qPhZP/D91fm89BlK7y6TJosRzCbpq
-m9xAzXGzQiKq1Z1tX3XzmVn5Mt2KrfXCUjFX75Zk3eKrzOOuWQ804X4g+qynKDuz
-STyRfyrskqfKZOGENAJr/N5G1bT4dDybkBp6Zz1dB7s5TQ0GXnSSA9n8LHl3ojPk
-F1b+lwfWaQqwDS1qjEGU2pHbWUUwxg==
-=R4t8
------END PGP SIGNATURE-----
-
---57l3bzelwfcxov3e--
+diff --git a/fs/jfs/namei.c b/fs/jfs/namei.c
+index d68a4e6ac345..d2eff3375aad 100644
+--- a/fs/jfs/namei.c
++++ b/fs/jfs/namei.c
+@@ -96,24 +96,29 @@ static int jfs_create(struct mnt_idmap *idmap, struct inode *dip,
+ 	}
+ 
+ 	tid = txBegin(dip->i_sb, 0);
++	/* Do not go further if jfs_handle_error() marks us read-only. */
++	if (unlikely(dip->i_sb->s_flags & SB_RDONLY)) {
++		rc = -EROFS;
++		goto out3;
++	}
+ 
+ 	mutex_lock_nested(&JFS_IP(dip)->commit_mutex, COMMIT_MUTEX_PARENT);
+ 	mutex_lock_nested(&JFS_IP(ip)->commit_mutex, COMMIT_MUTEX_CHILD);
+ 
+ 	rc = jfs_init_acl(tid, ip, dip);
+ 	if (rc)
+-		goto out3;
++		goto out4;
+ 
+ 	rc = jfs_init_security(tid, ip, dip, &dentry->d_name);
+ 	if (rc) {
+ 		txAbort(tid, 0);
+-		goto out3;
++		goto out4;
+ 	}
+ 
+ 	if ((rc = dtSearch(dip, &dname, &ino, &btstack, JFS_CREATE))) {
+ 		jfs_err("jfs_create: dtSearch returned %d", rc);
+ 		txAbort(tid, 0);
+-		goto out3;
++		goto out4;
+ 	}
+ 
+ 	tblk = tid_to_tblock(tid);
+@@ -140,7 +145,7 @@ static int jfs_create(struct mnt_idmap *idmap, struct inode *dip,
+ 			txAbort(tid, 1);	/* Marks Filesystem dirty */
+ 		} else
+ 			txAbort(tid, 0);	/* Filesystem full */
+-		goto out3;
++		goto out4;
+ 	}
+ 
+ 	ip->i_op = &jfs_file_inode_operations;
+@@ -155,10 +160,12 @@ static int jfs_create(struct mnt_idmap *idmap, struct inode *dip,
+ 
+ 	rc = txCommit(tid, 2, &iplist[0], 0);
+ 
+-      out3:
++      out4:
+ 	txEnd(tid);
+ 	mutex_unlock(&JFS_IP(ip)->commit_mutex);
+ 	mutex_unlock(&JFS_IP(dip)->commit_mutex);
++
++      out3:
+ 	if (rc) {
+ 		free_ea_wmap(ip);
+ 		clear_nlink(ip);
 
