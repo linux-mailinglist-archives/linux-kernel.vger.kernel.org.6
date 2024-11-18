@@ -1,356 +1,242 @@
-Return-Path: <linux-kernel+bounces-412851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 983359D1002
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 12:46:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 333FB9D0FE6
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 12:42:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B44E5B28AB9
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:45:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B87DE1F22FAE
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:42:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF15F19DF5B;
-	Mon, 18 Nov 2024 11:44:21 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF1891990B7;
+	Mon, 18 Nov 2024 11:42:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cYZE7b+p"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6D5E1946DA;
-	Mon, 18 Nov 2024 11:44:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 997E418B47E
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 11:42:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731930261; cv=none; b=ctRpFa0SVcBiOvPHjjg00MCpyGG0wVXLZtoUXu4qN2SRjW/9Q7RQrFH+DY+oBYfXQ2q0nZgbxtN2bF/qqmms48rjFHQ6e/wEHEMiVMiGHQ53CyFiowYYSunbpce7B6XGHJu/qP1FLBPmodLcaN6PXIzxtnnPii7O1PgmSD/FeNc=
+	t=1731930145; cv=none; b=d7qw1XeoIBhkmAAvEtD91n9YLTNMiWdwE/I1oGoSMycaLsuPCZjVzzaQAsPJ1z5j10Di6KZtqSjXjeAc9exnU5Mu1M35MTnTrjaIABRo3eslE181duBbHo84XzZ42Kiczd7AkXwHHKLEpjYpldk0ojI3XhNEN689tFRCZw4ygNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731930261; c=relaxed/simple;
-	bh=n3vffU6ugecXsI4g2DccDSUqlNKS7QvL3JHoGcnE7dI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=l+E7Mi5Cbc/S5V8LnDovl6J06ie7qP1D9eSYd+wLrHfFvjGOKwD43QcFCjlCz/byGPeIh1ICRl/6QEr51iEQBwJ+KZTzkemFPb/h1s8BAlBZALMHZOwx+WU3PbRJjUBmViGsoE1zCLbyN2PRMqre4fsubVHj7Rpq26GDUCjm9fo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XsQkp4MXRz4f3kKt;
-	Mon, 18 Nov 2024 19:44:02 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id F19901A0568;
-	Mon, 18 Nov 2024 19:44:15 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgBHI4eKKDtn_9+KCA--.2699S9;
-	Mon, 18 Nov 2024 19:44:14 +0800 (CST)
-From: Yu Kuai <yukuai1@huaweicloud.com>
-To: song@kernel.org,
-	xni@redhat.com
-Cc: linux-raid@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	yukuai3@huawei.com,
-	yukuai1@huaweicloud.com,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com
-Subject: [PATCH md-6.13 5/5] md/md-bitmap: move bitmap_{start, end}write to md upper layer
-Date: Mon, 18 Nov 2024 19:41:57 +0800
-Message-Id: <20241118114157.355749-6-yukuai1@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20241118114157.355749-1-yukuai1@huaweicloud.com>
-References: <20241118114157.355749-1-yukuai1@huaweicloud.com>
+	s=arc-20240116; t=1731930145; c=relaxed/simple;
+	bh=kL4MpeslyfRBmV9g6AXI4hbJACY+sew4nuH8qpho+YY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kUN7h/GtUyo45rVfkH7KNwtpe+uVod8VHkD8hm8fgd3I+RkGhKvFYyxvtOS06scwFoGRxJAs1fiOBhaxaSP5u/E8GuHxkQyU95NaksT+9ZhEqBBXyTNazO5pONqKgiFdXmDF6dDhm9QNcrJ7CuZopkstgCxxtvcbKzOoFLKajYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cYZE7b+p; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731930142;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8tRwaz3uCy/0UHZCgRGVP4q4rbq4bK4vCd+Vx/V32K4=;
+	b=cYZE7b+pm/dwARVaLxdI5F5S7AJOs0WrqWS8mHMLgE6MUeUagEBrzDNw8Y7kjg+YdA+m4e
+	q5iSiE7vqtn/vxInF1+ApmZLx8E7BKu+kfGbwKIWZeLpAlYHynnaf7avTg83tDcded6qz0
+	AjHQMt24kQzXMQPX6H4OzaJ/9si0a5o=
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
+ [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-156-C4Y7nzDUO2OC7ybuIsYvdg-1; Mon, 18 Nov 2024 06:42:21 -0500
+X-MC-Unique: C4Y7nzDUO2OC7ybuIsYvdg-1
+X-Mimecast-MFC-AGG-ID: C4Y7nzDUO2OC7ybuIsYvdg
+Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-a9a0710ca24so360328866b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 03:42:20 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731930139; x=1732534939;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8tRwaz3uCy/0UHZCgRGVP4q4rbq4bK4vCd+Vx/V32K4=;
+        b=JyS81B3H6fHi4dS2/CnUMZT/beoFEgKhsbFG6qFCQdQuhhyAzC4rAkFCJ8P9PzNNKY
+         Hp07sNFqfV/T45tyABVZ9ZeSLhyZP4lpNTHoxkKL1Bdi1YCm+fvHai5okRIM8VeDsJT7
+         dls63AZNVfB1lD0blgguwK2pOapxP0YN9ej1WO3J8kwhHyeT+/28bvzBSdK57+RXimTl
+         IG7OBSZZgUiRMZlGNLkLh6fbxetaQVTPZIUoA/1tq+xshw0Oh5ap2Nkzgrq6c0U7ddGM
+         9GWCxD8BTJqk55hfGhQzZMugZjk3wViRPX7NDpezNbM3NMbU6A5owZNR1qn9UqruqYGJ
+         Ag3g==
+X-Forwarded-Encrypted: i=1; AJvYcCX/Bk7TANMitQ5otSKP+VNLsaDNkU46nNMbzQw+soCWgcPxCquT/B0U/EVXkSUqmzne4gnVtY4Ie5GJqhQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0eiQ0rgtq83JSJEJtWmwoiKH7ydeLqXWtENs+QZ8HqAbdXXmR
+	HdI6XkUyz2eof0gCux0zBHttQjfVM6Mbcqvf/Giv99tCF98Lc6JGnrAQ12XoM+KoeitbqKG9luZ
+	rQPO/m0LfSkBlXpfdFAe/W0YpNSRe1OpavBQVLDFLbfrQOtsbs30XH1QXWdNv2hQ3oIuwgw==
+X-Received: by 2002:a17:907:3684:b0:a9a:7f87:904b with SMTP id a640c23a62f3a-aa48344e747mr1241317766b.29.1731930139533;
+        Mon, 18 Nov 2024 03:42:19 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHsAa8f7C+HMJk2c6G72yhM0IUTGmcRgmGtHrgaEPPxEV1YCcaU9M5+v2k7a4+bbwZLWLRk2A==
+X-Received: by 2002:a17:907:3684:b0:a9a:7f87:904b with SMTP id a640c23a62f3a-aa48344e747mr1241315466b.29.1731930139202;
+        Mon, 18 Nov 2024 03:42:19 -0800 (PST)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20df7e177sm530497266b.84.2024.11.18.03.42.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 Nov 2024 03:42:18 -0800 (PST)
+Message-ID: <afdb6114-07ef-4e25-91f0-9fb9be192153@redhat.com>
+Date: Mon, 18 Nov 2024 12:42:18 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: platform/x86: p2sb: Allow p2sb_bar() calls during PCI device
+ probe
+To: Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
+ "Daniel Walker (danielwa)" <danielwa@cisco.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ =?UTF-8?B?SWxwbyBK77+9cnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
+ Klara Modin <klarasmodin@gmail.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Danil Rybakov <danilrybakov249@gmail.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "xe-linux-external(mailer list)" <xe-linux-external@cisco.com>
+References: <ZzTI+biIUTvFT6NC@goliath>
+ <cd1cedcc-c9b8-4f3c-ac83-4b0c0ba52a82@redhat.com>
+ <82ab3d06-40e6-41dd-bb43-9179d4497313@redhat.com>
+ <2c828592-dbdd-4cd4-b366-70797d63329d@redhat.com> <ZzTk5kyPa5kUxA+f@goliath>
+ <a5bafe87-e8f6-40d9-a5d8-34cf6aa576a4@redhat.com>
+ <wxb4hmju5jknxr2bclxlu5gujgmb3vvqwub7jrt4wofllqp7li@pdvthto4jf47>
+ <ZzdhTsuRNk1YWg8p@goliath>
+ <5qjbimedzeertdham2smgktt54gzdc7yg4dwgiz7eezt2tf5a2@szhhpvzo3uhj>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <5qjbimedzeertdham2smgktt54gzdc7yg4dwgiz7eezt2tf5a2@szhhpvzo3uhj>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBHI4eKKDtn_9+KCA--.2699S9
-X-Coremail-Antispam: 1UD129KBjvJXoW3ZrWrtr15XF48Gr4Utr4fXwb_yoWkGw1kpa
-	17Xry5J3y8Gr4YqrW7JFyUuFyrXw1UJry2qry8Jw1Yg3WUJ3yDtFs7WFyUJrn8JFy3CFy7
-	XF1jyr1UJr1UJwUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBE14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
-	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
-	z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F
-	4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq
-	3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7
-	IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4U
-	M4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY1x0262kKe7AKxVWUAV
-	WUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v2
-	6r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2
-	Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_
-	Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMI
-	IF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUvYLPUUUUU
-	=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Content-Transfer-Encoding: 7bit
 
-From: Yu Kuai <yukuai3@huawei.com>
+Hi Shinichiro,
 
-There are two BUG reports that raid5 will hang at
-bitmap_startwrite([1],[2]), root cause is that bitmap start write and end
-write is unbalanced, and while reviewing raid5 code, it's found that
-bitmap operations can be optimized. For example, for a 4 disks raid5, with
-chunksize=8k, if user issue a IO (0 + 48k) to the array:
+On 18-Nov-24 12:30 PM, Shinichiro Kawasaki wrote:
+> On Nov 15, 2024 / 14:57, Daniel Walker (danielwa) wrote:
+>> On Fri, Nov 15, 2024 at 11:35:46AM +0000, Shinichiro Kawasaki wrote:
+>>> On Nov 13, 2024 / 19:34, Hans de Goede wrote:
+>>>> Hi,
+>>>>
+>>>> On 13-Nov-24 6:41 PM, Daniel Walker (danielwa) wrote:
+>>>>> On Wed, Nov 13, 2024 at 06:04:44PM +0100, Hans de Goede wrote:
+>>>>>> Hi,
+>>>>>>
+>>>>>> On 13-Nov-24 5:33 PM, Hans de Goede wrote:
+>>>>>>> Hi,
+>>>>>>>
+>>>>>>> On 13-Nov-24 5:24 PM, Hans de Goede wrote:
+>>> [...]
+>>>>>>> It probably has something to do with these 2 messages:
+>>>>>>>
+>>>>>>> pci 0000:00:1f.1: BAR 0 [mem 0xfd000000-0xfdffffff 64bit]: can't claim; no compatible bridge window
+>>>>>>> pci 0000:00:1f.1: BAR 0 [mem 0x280000000-0x280ffffff 64bit]: assigned
+>>>>>>>
+>>>>>>> I'm guessing that this re-assignment is messing up
+>>>>>>> the p2sb BAR caching, after which things go wrong.
+>>>>>>
+>>>>>> Hmm, but that should be fixed by 2c6370e66076 ("platform/x86: p2sb: Don't init until unassigned resources have been assigned")
+>>>>>>
+>>>>>> and you are seeing this with 6.12, which has that.
+>>>>>>
+>>>>>> Can you try adding a pr_info() to the top of p2sb_cache_resources()
+>>>>>> with 6.12 and then collec a new dmesg ?
+>>>>>>
+>>>>>> If that pr_info() is done after the:
+>>>>>>
+>>>>>> pci 0000:00:1f.1: BAR 0 [mem 0x280000000-0x280ffffff 64bit]: assigned
+>>>>>>
+>>>>>> message then that does not explain things.
+>>>>>>
+>>>>>
+>>>>> I haven't testing adding a pr_info() but the messages seem to happen in the same
+>>>>> order in both working and non-working cases.
+>>>>>
+>>>>> Does that matter?
+>>>>
+>>>> The working case does not do the bar caching, we want to know if the
+>>>> bar caching in the non working case happens before or after the assignment:
+>>>>
+>>>> pci 0000:00:1f.1: BAR 0 [mem 0x280000000-0x280ffffff 64bit]: assigned
+>>>>
+>>>> It should happen after the assignment.
+>>>
+>>> Hello Daniel,
+>>>
+>>> It's my sorrow that the change cause this trouble. I have created a debug patch
+>>> for the kernel and attached to this e-mail. It adds some pr_info() to answer
+>>> the question from Hans. It will also show us a bit more things. Could you try it
+>>> on your system? It should apply to v6.12-rcX kernels without conflicts.
+>>>
+>>
+>> Ok.. The dmesg with the patch applied is attached.
+> 
+> Thank you. Here I quote the relevant part of the debug log.
+> 
+> --------------------------------------------------------------------------------
+> ...
+> pci 0000:00:1f.0: [8086:19dc] type 00 class 0x060100 conventional PCI endpoint
+> pci 0000:00:1f.1: [8086:19dd] type 00 class 0x058000 conventional PCI endpoint ... [A]
+> pci 0000:00:1f.1: BAR 0 [mem 0xfd000000-0xfdffffff 64bit]
+> pci 0000:00:1f.2: [8086:19de] type 00 class 0x058000 conventional PCI endpoint
+> pci 0000:00:1f.2: BAR 0 [mem 0x88c00000-0x88c03fff]
+> ...
+> PCI: Using ACPI for IRQ routing
+> pci 0000:00:1f.1: BAR 0 [mem 0xfd000000-0xfdffffff 64bit]: can't claim; no compatible bridge window ... [B]
+> hpet0: at MMIO 0xfed00000, IRQs 2, 8, 0, 0, 0, 0, 0, 0
+> ...
+> NET: Registered PF_XDP protocol family
+> pci 0000:00:1f.1: BAR 0 [mem 0x280000000-0x280ffffff 64bit]: assigned ... [C]
+> pci 0000:00:09.0: PCI bridge to [bus 01-06]
+> ...
+> PCI: CLS 64 bytes, default 64
+> p2sb_cache_resources
+> p2sb_cache_resources: P2SBC_HIDE=0  ... [D]
+> p2sb_scan_and_cache_devfn: devfn=1f.1
+> p2sb_scan_and_cache_devfn: 280000000-280ffffff: 140204 ... [E]
+> PCI-DMA: Using software bounce buffering for IO (SWIOTLB)
+> ...
+> --------------------------------------------------------------------------------
+> 
+> Also, here I list my observations.
+> 
+> [A] The P2SB device was detected with DEVFN 1f.1, and device id 8086:19dd
+> [B] Failed to claim its resource
+> [C] Assigned new resource
+> [D] p2sb_cache_resource() was called after the new resource assignment.
+>     P2SBC_HIDE bit is not set.
+> [E] The new resource was cached. IORESOURCE flags: MEM_64,SIZE_ALIGN,MEM.
+> 
+> So it was confirmed that the p2sb_cache_resource() was called after the new
+> resource assignment, but Hans and Andy discuss that this order is not the
+> problem cause, probably.
+> 
+> One thing I noticed is that p2sb_bar() call is not recorded in the log. My
+> understanding is that all device drivers which use P2SB resource shouled call
+> p2sb_bar(). Daniel, you noted that "a custom gpio device" disappeared. Does its
+> device driver call p2sb_bar()?
+> 
+> On the other hand, Daniel noted that,
+> 
+>   "The vendor and device details for the pci device are 8086:19dd."
+> 
+> I think 8086:19dd is the P2SB device itself. When p2sb_cache_resource() is
+> called, pci_stop_and_remove_bus_device() is called for it, so I guess it is
+> expected the device 8086:19dd disappears. Before applying the commit
+> 5913320eb0b3, this pci_stop_and_remove_bus_device() call happened when
+> p2sb_bar() was called. So, my mere guess is that Daniel's system's drivers do
+> not call p2sb_bar() during the boot process, then the 8086:19dd P2SB device was
+> still visible after boot.
 
-┌────────────────────────────────────────────────────────────┐
-│chunk 0                                                     │
-│      ┌────────────┬─────────────┬─────────────┬────────────┼
-│  sh0 │A0: 0 + 4k  │A1: 8k + 4k  │A2: 16k + 4k │A3: P       │
-│      ┼────────────┼─────────────┼─────────────┼────────────┼
-│  sh1 │B0: 4k + 4k │B1: 12k + 4k │B2: 20k + 4k │B3: P       │
-┼──────┴────────────┴─────────────┴─────────────┴────────────┼
-│chunk 1                                                     │
-│      ┌────────────┬─────────────┬─────────────┬────────────┤
-│  sh2 │C0: 24k + 4k│C1: 32k + 4k │C2: P        │C3: 40k + 4k│
-│      ┼────────────┼─────────────┼─────────────┼────────────┼
-│  sh3 │D0: 28k + 4k│D1: 36k + 4k │D2: P        │D3: 44k + 4k│
-└──────┴────────────┴─────────────┴─────────────┴────────────┘
+Thank you that is a great analysis.
 
-Before this patch, 4 stripe head will be used, and each sh will attach
-bio for 3 disks, and each attached bio will trigger
-bitmap_startwrite() once, which means total 12 times.
- - 3 times (0 + 4k), for (A0, A1 and A2)
- - 3 times (4 + 4k), for (B0, B1 and B2)
- - 3 times (8 + 4k), for (C0, C1 and C3)
- - 3 times (12 + 4k), for (D0, D1 and D3)
+It sounds to me like calling pci_stop_and_remove_bus_device() on an unhidden
+PCI device is the real problem here. And that we were not hitting that before
+was more or less luck.
 
-After this patch, md upper layer will calculate that IO range (0 + 48k)
-is corresponding to the bitmap (0 + 16k), and call bitmap_startwrite()
-just once.
+I wonder if we can cache the bar in some other way, or even delay retrieving
+it till p2sb_bar() call time in the case when it is not hidden ?
 
-Noted that this patch will align bitmap ranges to the chunks, for example,
-if user issue a IO (0 + 4k) to array:
+Regards,
 
-- Before this patch, 1 time (0 + 4k), for A0;
-- After this patch, 1 time (0 + 8k) for chunk 0;
+Hans
 
-Usually, one bitmap bit will represent more than one disk chunk, and this
-doesn't have any difference. And even if user really created a array
-that one chunk contain multiple bits, the overhead is that more data
-will be recovered after power failure.
-
-[1] https://lore.kernel.org/all/CAJpMwyjmHQLvm6zg1cmQErttNNQPDAAXPKM3xgTjMhbfts986Q@mail.gmail.com/
-[2] https://lore.kernel.org/all/ADF7D720-5764-4AF3-B68E-1845988737AA@flyingcircus.io/
-Signed-off-by: Yu Kuai <yukuai3@huawei.com>
----
- drivers/md/md.c          | 29 +++++++++++++++++++++++++++++
- drivers/md/md.h          |  2 ++
- drivers/md/raid1.c       |  4 ----
- drivers/md/raid10.c      |  3 ---
- drivers/md/raid5-cache.c |  2 --
- drivers/md/raid5.c       | 24 +-----------------------
- 6 files changed, 32 insertions(+), 32 deletions(-)
-
-diff --git a/drivers/md/md.c b/drivers/md/md.c
-index bbe002ebd584..ab37c9939ac6 100644
---- a/drivers/md/md.c
-+++ b/drivers/md/md.c
-@@ -8723,12 +8723,32 @@ void md_submit_discard_bio(struct mddev *mddev, struct md_rdev *rdev,
- }
- EXPORT_SYMBOL_GPL(md_submit_discard_bio);
- 
-+static void md_bitmap_start(struct mddev *mddev,
-+			    struct md_io_clone *md_io_clone)
-+{
-+	if (mddev->pers->bitmap_sector)
-+		mddev->pers->bitmap_sector(mddev, &md_io_clone->offset,
-+					   &md_io_clone->sectors);
-+
-+	mddev->bitmap_ops->startwrite(mddev, md_io_clone->offset,
-+				      md_io_clone->sectors);
-+}
-+
-+static void md_bitmap_end(struct mddev *mddev, struct md_io_clone *md_io_clone)
-+{
-+	mddev->bitmap_ops->endwrite(mddev, md_io_clone->offset,
-+				    md_io_clone->sectors);
-+}
-+
- static void md_end_clone_io(struct bio *bio)
- {
- 	struct md_io_clone *md_io_clone = bio->bi_private;
- 	struct bio *orig_bio = md_io_clone->orig_bio;
- 	struct mddev *mddev = md_io_clone->mddev;
- 
-+	if (bio_data_dir(orig_bio) == WRITE && mddev->bitmap)
-+		md_bitmap_end(mddev, md_io_clone);
-+
- 	if (bio->bi_status && !orig_bio->bi_status)
- 		orig_bio->bi_status = bio->bi_status;
- 
-@@ -8753,6 +8773,12 @@ static void md_clone_bio(struct mddev *mddev, struct bio **bio)
- 	if (blk_queue_io_stat(bdev->bd_disk->queue))
- 		md_io_clone->start_time = bio_start_io_acct(*bio);
- 
-+	if (bio_data_dir(*bio) == WRITE && mddev->bitmap) {
-+		md_io_clone->offset = (*bio)->bi_iter.bi_sector;
-+		md_io_clone->sectors = bio_sectors(*bio);
-+		md_bitmap_start(mddev, md_io_clone);
-+	}
-+
- 	clone->bi_end_io = md_end_clone_io;
- 	clone->bi_private = md_io_clone;
- 	*bio = clone;
-@@ -8771,6 +8797,9 @@ void md_free_cloned_bio(struct bio *bio)
- 	struct bio *orig_bio = md_io_clone->orig_bio;
- 	struct mddev *mddev = md_io_clone->mddev;
- 
-+	if (bio_data_dir(orig_bio) == WRITE && mddev->bitmap)
-+		md_bitmap_end(mddev, md_io_clone);
-+
- 	if (bio->bi_status && !orig_bio->bi_status)
- 		orig_bio->bi_status = bio->bi_status;
- 
-diff --git a/drivers/md/md.h b/drivers/md/md.h
-index de6dadb9a40b..def808064ad8 100644
---- a/drivers/md/md.h
-+++ b/drivers/md/md.h
-@@ -831,6 +831,8 @@ struct md_io_clone {
- 	struct mddev	*mddev;
- 	struct bio	*orig_bio;
- 	unsigned long	start_time;
-+	sector_t	offset;
-+	unsigned long	sectors;
- 	struct bio	bio_clone;
- };
- 
-diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
-index b9819f9c8ed2..e2adfeff5ae6 100644
---- a/drivers/md/raid1.c
-+++ b/drivers/md/raid1.c
-@@ -422,8 +422,6 @@ static void close_write(struct r1bio *r1_bio)
- 
- 	if (test_bit(R1BIO_BehindIO, &r1_bio->state))
- 		mddev->bitmap_ops->end_behind_write(mddev);
--	/* clear the bitmap if all writes complete successfully */
--	mddev->bitmap_ops->endwrite(mddev, r1_bio->sector, r1_bio->sectors);
- 	md_write_end(mddev);
- }
- 
-@@ -1616,8 +1614,6 @@ static void raid1_write_request(struct mddev *mddev, struct bio *bio,
- 
- 			if (test_bit(R1BIO_BehindIO, &r1_bio->state))
- 				mddev->bitmap_ops->start_behind_write(mddev);
--			mddev->bitmap_ops->startwrite(mddev, r1_bio->sector,
--						      r1_bio->sectors);
- 			first_clone = 0;
- 		}
- 
-diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
-index efbc0bd92479..79a209236c9f 100644
---- a/drivers/md/raid10.c
-+++ b/drivers/md/raid10.c
-@@ -428,8 +428,6 @@ static void close_write(struct r10bio *r10_bio)
- {
- 	struct mddev *mddev = r10_bio->mddev;
- 
--	/* clear the bitmap if all writes complete successfully */
--	mddev->bitmap_ops->endwrite(mddev, r10_bio->sector, r10_bio->sectors);
- 	md_write_end(mddev);
- }
- 
-@@ -1487,7 +1485,6 @@ static void raid10_write_request(struct mddev *mddev, struct bio *bio,
- 	md_account_bio(mddev, &bio);
- 	r10_bio->master_bio = bio;
- 	atomic_set(&r10_bio->remaining, 1);
--	mddev->bitmap_ops->startwrite(mddev, r10_bio->sector, r10_bio->sectors);
- 
- 	for (i = 0; i < conf->copies; i++) {
- 		if (r10_bio->devs[i].bio)
-diff --git a/drivers/md/raid5-cache.c b/drivers/md/raid5-cache.c
-index ba4f9577c737..011246e16a99 100644
---- a/drivers/md/raid5-cache.c
-+++ b/drivers/md/raid5-cache.c
-@@ -313,8 +313,6 @@ void r5c_handle_cached_data_endio(struct r5conf *conf,
- 		if (sh->dev[i].written) {
- 			set_bit(R5_UPTODATE, &sh->dev[i].flags);
- 			r5c_return_dev_pending_writes(conf, &sh->dev[i]);
--			conf->mddev->bitmap_ops->endwrite(conf->mddev,
--					sh->sector, RAID5_STRIPE_SECTORS(conf));
- 		}
- 	}
- }
-diff --git a/drivers/md/raid5.c b/drivers/md/raid5.c
-index 95caed41654c..976788138a6e 100644
---- a/drivers/md/raid5.c
-+++ b/drivers/md/raid5.c
-@@ -3578,12 +3578,6 @@ static void __add_stripe_bio(struct stripe_head *sh, struct bio *bi,
- 		 * is added to a batch, STRIPE_BIT_DELAY cannot be changed
- 		 * any more.
- 		 */
--		set_bit(STRIPE_BITMAP_PENDING, &sh->state);
--		spin_unlock_irq(&sh->stripe_lock);
--		conf->mddev->bitmap_ops->startwrite(conf->mddev, sh->sector,
--					RAID5_STRIPE_SECTORS(conf));
--		spin_lock_irq(&sh->stripe_lock);
--		clear_bit(STRIPE_BITMAP_PENDING, &sh->state);
- 		if (!sh->batch_head) {
- 			sh->bm_seq = conf->seq_flush+1;
- 			set_bit(STRIPE_BIT_DELAY, &sh->state);
-@@ -3638,7 +3632,6 @@ handle_failed_stripe(struct r5conf *conf, struct stripe_head *sh,
- 	BUG_ON(sh->batch_head);
- 	for (i = disks; i--; ) {
- 		struct bio *bi;
--		int bitmap_end = 0;
- 
- 		if (test_bit(R5_ReadError, &sh->dev[i].flags)) {
- 			struct md_rdev *rdev = conf->disks[i].rdev;
-@@ -3663,8 +3656,6 @@ handle_failed_stripe(struct r5conf *conf, struct stripe_head *sh,
- 		sh->dev[i].towrite = NULL;
- 		sh->overwrite_disks = 0;
- 		spin_unlock_irq(&sh->stripe_lock);
--		if (bi)
--			bitmap_end = 1;
- 
- 		log_stripe_write_finished(sh);
- 
-@@ -3679,10 +3670,6 @@ handle_failed_stripe(struct r5conf *conf, struct stripe_head *sh,
- 			bio_io_error(bi);
- 			bi = nextbi;
- 		}
--		if (bitmap_end)
--			conf->mddev->bitmap_ops->endwrite(conf->mddev,
--					sh->sector, RAID5_STRIPE_SECTORS(conf));
--		bitmap_end = 0;
- 		/* and fail all 'written' */
- 		bi = sh->dev[i].written;
- 		sh->dev[i].written = NULL;
-@@ -3691,7 +3678,6 @@ handle_failed_stripe(struct r5conf *conf, struct stripe_head *sh,
- 			sh->dev[i].page = sh->dev[i].orig_page;
- 		}
- 
--		if (bi) bitmap_end = 1;
- 		while (bi && bi->bi_iter.bi_sector <
- 		       sh->dev[i].sector + RAID5_STRIPE_SECTORS(conf)) {
- 			struct bio *bi2 = r5_next_bio(conf, bi, sh->dev[i].sector);
-@@ -3725,9 +3711,6 @@ handle_failed_stripe(struct r5conf *conf, struct stripe_head *sh,
- 				bi = nextbi;
- 			}
- 		}
--		if (bitmap_end)
--			conf->mddev->bitmap_ops->endwrite(conf->mddev,
--					sh->sector, RAID5_STRIPE_SECTORS(conf));
- 		/* If we were in the middle of a write the parity block might
- 		 * still be locked - so just clear all R5_LOCKED flags
- 		 */
-@@ -4076,8 +4059,7 @@ static void handle_stripe_clean_event(struct r5conf *conf,
- 					bio_endio(wbi);
- 					wbi = wbi2;
- 				}
--				conf->mddev->bitmap_ops->endwrite(conf->mddev,
--					sh->sector, RAID5_STRIPE_SECTORS(conf));
-+
- 				if (head_sh->batch_head) {
- 					sh = list_first_entry(&sh->batch_list,
- 							      struct stripe_head,
-@@ -5797,10 +5779,6 @@ static void make_discard_request(struct mddev *mddev, struct bio *bi)
- 		}
- 		spin_unlock_irq(&sh->stripe_lock);
- 		if (conf->mddev->bitmap) {
--			for (d = 0; d < conf->raid_disks - conf->max_degraded;
--			     d++)
--				mddev->bitmap_ops->startwrite(mddev, sh->sector,
--					RAID5_STRIPE_SECTORS(conf));
- 			sh->bm_seq = conf->seq_flush + 1;
- 			set_bit(STRIPE_BIT_DELAY, &sh->state);
- 		}
--- 
-2.39.2
 
 
