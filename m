@@ -1,149 +1,92 @@
-Return-Path: <linux-kernel+bounces-413049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BD009D12E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 15:22:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B623B9D12C0
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 15:15:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72E50B2AAD6
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 14:15:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D0142837E2
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 14:15:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5FF41A08BC;
-	Mon, 18 Nov 2024 14:14:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DF9F1A08B6;
+	Mon, 18 Nov 2024 14:15:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DbvXGSlZ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="ThzumbFM"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2133719C54B;
-	Mon, 18 Nov 2024 14:14:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2CE17483;
+	Mon, 18 Nov 2024 14:15:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731939298; cv=none; b=gkvWpxu4RKf7SDXIdg1/il4nzY/K64u2FlqmImE1CPx30CqJaWYH3JFSNM94a/0+oCnkj1Up9ThNGigNR5f2RxpXzsKKS0AxwP8ovqPrXAdmDI1ve7GemQ0oZSHtNXiWqFPVSt492A1d760E+RqNqOsnt9u12IB38XYIzdOtVEY=
+	t=1731939337; cv=none; b=aErUc2bR+VTco9XX1Z6bi2iyvb8I0Styd8nu9SejnMu65nV3SnOCS+kAouxM4Q/0yCoTc5yWqD4KRrqQlZ5DqMMnGZO2sV5fvv6SG1WXwhYTbqP6aDslUoAUOwZA6TicCrCRr2FkajIFWzXr2TqQ5Re6L+ApLeX00aWRTt2m0sY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731939298; c=relaxed/simple;
-	bh=GpI8lRABSdwbFRSzHGnkl6CDaoqumg8eqpp6Bxfw5fg=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=Qq5nJs6zpg1Ppd0m3fCBz0G8jSW/hdznNnmeG6Qy8W58EN1bWOsvbaNEwOIYRrt6GXSp7Frbsx4w+lcCwocQX9aEGxZVmjNgK4BkPtRBeX3MqiZFTYkC46bc4Dm8rdfHU5HB+N7aVvURCtpdzZMh3WWAuM1AaSN85nWsGOP4szI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DbvXGSlZ; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731939296; x=1763475296;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=GpI8lRABSdwbFRSzHGnkl6CDaoqumg8eqpp6Bxfw5fg=;
-  b=DbvXGSlZDQYjtW7DaYC2fzo4yoa7zEALG8ga3jUmFwf0JhnRZi2B5GIT
-   S9SfqsPOQp7g1q3FL+SBzVtSwAo/TNLef8OoWuRGwAjYL+ECBjGD8WDFp
-   AeNTizjjPb/VFNwXjgg+Gt5dRASu54ARgIThuTw0KqNILm/+r3LWUmvRu
-   B1VyX5stbGyaMU3w6HdT4ecWOW0hs9nTRPwz3vmYsaTk8V9eXdOxswn98
-   Y5jGuim+AIX1MtMy2dNn47h4xtxxG8tJzC4L4bLmWfovL4Vht5KOBdYww
-   fG2LNGj6ho1nYL2hC3o9d8x9R9vOaF1GJcKVez9jImJH8IhlUQH3kq6zt
-   Q==;
-X-CSE-ConnectionGUID: MbrCVx2dRxezyTwhxKJyeg==
-X-CSE-MsgGUID: 2lVmVBp+RamXnB9PH39MeA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11260"; a="42536356"
-X-IronPort-AV: E=Sophos;i="6.12,164,1728975600"; 
-   d="scan'208";a="42536356"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2024 06:14:26 -0800
-X-CSE-ConnectionGUID: QAK2gS4ASq++OiWGQ1jlbQ==
-X-CSE-MsgGUID: iVZFi8/dTVKAAN86aZsUMw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,164,1728975600"; 
-   d="scan'208";a="89261282"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.193])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2024 06:14:24 -0800
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Mon, 18 Nov 2024 16:14:20 +0200 (EET)
-To: Borislav Petkov <bp@alien8.de>
-cc: linux-serial <linux-serial@vger.kernel.org>, 
-    Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-    Jiri Slaby <jirislaby@kernel.org>, lkml <linux-kernel@vger.kernel.org>
-Subject: Re: serial 00:06: Runtime PM usage count underflow!
-In-Reply-To: <20241116170727.GCZzjRT5WGcOMKFDYq@fat_crate.local>
-Message-ID: <ca76fb23-013d-9745-188b-b519096aa784@linux.intel.com>
-References: <20241116170727.GCZzjRT5WGcOMKFDYq@fat_crate.local>
+	s=arc-20240116; t=1731939337; c=relaxed/simple;
+	bh=pLw8yLEbJuvUtq9sxywo7ARuhOc5cWXO/kJtX8g68XQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EoDCj8VToVId0kIUNZnxN8dYqmF1JpN/hw8hh6Em40TxMjyrjGfmEaFeZXKrjz3rbC3eAULQgXKsBxJzCC+PPlYp9pIs1EN1V2Z4cSmHqW50EZmeDds6kGn1bCI0bKHH6vnjR4vdO0ObXXph7ngbw4N/eMjKLHNgzJVvuiQ+fQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=ThzumbFM; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=osWqrHi1PTnMhMN1ifWmZoFzhh+9H9ujv9/LFvTGxmM=; b=ThzumbFMkF9hLn0QG1QYfcRDGP
+	//KKlsqblN9hrJCe7/aZIpkKJlxEtuYEjNlBX67Cw3Jgz/pQKy2+vWUhiGLm52PH2ObST/MBVf7VZ
+	Zeg+X8o7hW0YRIm9v7PZLsnPrNoTVoEU0O4WMjIgxIcN+ufS8UHeH630mQDJNP1AK6pU=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tD2XC-00Dg4Q-2X; Mon, 18 Nov 2024 15:15:22 +0100
+Date: Mon, 18 Nov 2024 15:15:22 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: manas18244@iiitd.ac.in
+Cc: FUJITA Tomonori <fujita.tomonori@gmail.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Anup Sharma <anupnewsmail@gmail.com>, netdev@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] net: phy: qt2025: simplify Result<()> in probe
+ return
+Message-ID: <2f3b1fc2-70b1-4ffe-b41c-09b52ce21277@lunn.ch>
+References: <20241118-simplify-result-qt2025-v1-1-f2d9cef17fca@iiitd.ac.in>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-1024098145-1731939260=:933"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241118-simplify-result-qt2025-v1-1-f2d9cef17fca@iiitd.ac.in>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Mon, Nov 18, 2024 at 06:39:34PM +0530, Manas via B4 Relay wrote:
+> From: Manas <manas18244@iiitd.ac.in>
+> 
+> probe returns a `Result<()>` type, which can be simplified as `Result`,
+> due to default type parameters being unit `()` and `Error` types. This
+> maintains a consistent usage of `Result` throughout codebase.
+> 
+> Signed-off-by: Manas <manas18244@iiitd.ac.in>
 
---8323328-1024098145-1731939260=:933
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Miguel has already pointed out, this is probably not sufficient for a
+signed-off-by: You need a real name here, in order to keep the lawyers happy.
 
-On Sat, 16 Nov 2024, Borislav Petkov wrote:
+Also, each subsystem has its own way of doing things. Please take a
+read of:
 
-> Hi folks,
->=20
-> got a box here which says:
->=20
-> [    4.654361] Serial: 8250/16550 driver, 4 ports, IRQ sharing enabled
-> [    4.660820] 00:06: ttyS0 at I/O 0x3f8 (irq =3D 4, base_baud =3D 115200=
-) is a 16550A
-> [    4.668313] printk: legacy console [ttyS0] disabled
-> [    4.676903] serial 00:06: Runtime PM usage count underflow!
-> [    4.677175] serial 00:06: disabled
-> [    4.677264] serial 00:06: unable to assign resources
-> [    4.677356] serial 00:06: probe with driver serial failed with error -=
-16
-> [    4.677923] printk: legacy console [ttyS0] disabled
->=20
-> Any suggestions?
->=20
-> I'd like to use the serial cable to catch dmesg but somehow the driver do=
-esn't
-> like the chip...
+https://www.kernel.org/doc/html/latest/process/maintainer-netdev.html
 
-I think "Runtime PM usage count underflow!" is not related to the probe=20
-problem you're seeing. Nonetheless, this patch might solve the underflow:
+    Andrew
 
---
-[PATCH 1/1] tty: serial: 8250: Fix another runtime PM usage counter underfl=
-ow
-
-The commit f9b11229b79c ("serial: 8250: Fix PM usage_count for console
-handover") fixed one runtime PM usage counter balance problem that
-occurs because .dev is not set during univ8250 setup preventing call to
-pm_runtime_get_sync(). Later, univ8250_console_exit() will trigger the
-runtime PM usage counter underflow as .dev is already set at that time.
-
-Call pm_runtime_get_sync() to balance the RPM usage counter also in
-serial8250_register_8250_port() before trying to add the port.
-
-Signed-off-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
 ---
- drivers/tty/serial/8250/8250_core.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/tty/serial/8250/8250_core.c b/drivers/tty/serial/8250/=
-8250_core.c
-index 5f9f06911795..68baf75bdadc 100644
---- a/drivers/tty/serial/8250/8250_core.c
-+++ b/drivers/tty/serial/8250/8250_core.c
-@@ -812,6 +812,9 @@ int serial8250_register_8250_port(const struct uart_825=
-0_port *up)
- =09=09=09uart->dl_write =3D up->dl_write;
-=20
- =09=09if (uart->port.type !=3D PORT_8250_CIR) {
-+=09=09=09if (uart_console_registered(&uart->port))
-+=09=09=09=09pm_runtime_get_sync(uart->port.dev);
-+
- =09=09=09if (serial8250_isa_config !=3D NULL)
- =09=09=09=09serial8250_isa_config(0, &uart->port,
- =09=09=09=09=09=09&uart->capabilities);
---=20
-2.39.5
-
---8323328-1024098145-1731939260=:933--
+pw-bot: cr
 
