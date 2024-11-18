@@ -1,277 +1,103 @@
-Return-Path: <linux-kernel+bounces-412659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2C249D0C57
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 10:47:56 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D68F39D0C82
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 10:48:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CFB0282BA0
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 09:47:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5AFC5B21833
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 09:48:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 225DE192B66;
-	Mon, 18 Nov 2024 09:47:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63721193079;
+	Mon, 18 Nov 2024 09:47:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="H8irSJVS"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LsFH/Xyu"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AC3018E03A
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 09:47:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4294118E03A
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 09:47:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731923267; cv=none; b=T01j2Z3duTtQCtgwjezz4pBBbRRd91xjAYrERp/Y0ufLp1ufIZyk3aCR3iwiT6fAsntucu1z/zb0PpL8cOU/jd1vuiWLaWDHM5hoZ3JO01oWfIBEy8gqiL4r31iyU208H5W9dsRQO7qd0DZhL1YwbCxnd7C//KcByoGa2N9nr8M=
+	t=1731923275; cv=none; b=B9BOgGBgVDGxd0S9HjzxW3CjTuQMJ6ts0LZFHOMw4JzKgVhWJFs/n6JhlvN/+pgVq0NH1pJHFxw2q71TU6MhCRLGBbxvUXppRn1eBGrZEz2jW08QTdU/3RAvVVKE/0OULhdZyLN6l3V+UdUxsHFU8KBLLY9xtXC06Kzk/3xNOS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731923267; c=relaxed/simple;
-	bh=DNhk+o/rPYJxkocGt/n6ACFP1HnvcJpLTbBzuk9IA/A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=P4y/5viFJX0caQjsfsnMLctTZbiKT53NE7cYj3fIMd9CIi9UI6WUGJWL4EYE9pRQzrtiw4PNeOPfkFOLJWNNwEZP/cEKVKig4CSij/sqaL111sQ9C8moigWnHYWvczuT/jsdkPnSJAZrYifX3+eeoh/+RZW0cZkQjOc6xDctIus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=H8irSJVS; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43163667f0eso14923325e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 01:47:44 -0800 (PST)
+	s=arc-20240116; t=1731923275; c=relaxed/simple;
+	bh=XXsIrjaLPtAbu9sbK4FP88OFsgTuPGUxicrKbpGG+pw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PkYAZsWx+VAbLBIwzVGcLhlWKTBWkpwdhAagKGVVVwRantJIZ14QT66R39MGFB+maJlfWjFrSROkpzllZrRnwEW+1EHypDL9s7OzWWLEDh0SEtfJFCKUoiMbRZLBDpSeUmh4t/ZYt3UJ98vkaLLlSs5MmXmDPxZrowgDT5iGtfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LsFH/Xyu; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4315839a7c9so36353385e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 01:47:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1731923263; x=1732528063; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=h0y/xmc/WDEeuxy81I63/jKzT8uzD3EOhKMs9VT0kt0=;
-        b=H8irSJVSxYLHCE1RxAFfwURS9gknGgbmt2jamxiwpMiqlkN0jytyXr/Vm1Ttun5K3H
-         iQgs395GINIsI1qas2aueip+qmZHYqE0phciHf0LNrqeiM5ap+NitdngVcr7sJ2PB4P0
-         /NSjl5isFvrCXTib1/gvui9sBcOXVSim3ARaXR5YDZurA9Wik13TT0iyxSjZVoBCARHT
-         Gy/hLlily0LNBxLZmYp8h2G5r49dg+X24nPIfK5Qc78IevsEXO4NPV9tD/QJSB+RP/V0
-         cl4EnYx4KckcQwuYbpziANdpnEVsLEQPaxu7HWeZmKWJ7nmmWExR0qcgVlyL9ExjccAw
-         46CA==
+        d=google.com; s=20230601; t=1731923272; x=1732528072; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XXsIrjaLPtAbu9sbK4FP88OFsgTuPGUxicrKbpGG+pw=;
+        b=LsFH/XyuHZ0TAiVRgIl3wQ6hzgSbe+GqQVz8y778tJcBiP2StudxriHQaDeQqx4sZc
+         dh1/cnHPBuTlhiwFBkhuPG4lfYfYFdEBh/pYknmxse1fsVrWDY4baL7WlFQ85AGLOgBC
+         hiHF16apdzojPXNulsRX1PW/xUKTBaNeQn/gQ1RJIks82ipr/kPPtLJtTO+5zgIC3sO5
+         bJGZLEwA8uA2eBliv04EdWKWuQKyUaKdjDxYJgEqSgESjBKMvnofnKvVSqYvmBI/LiQy
+         3k+iMDEYcws7YChs9KLvsiBJj2ntwTAE5AT016a+51IS1T45skutVCV8oKr7LKEKVuwm
+         SRjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731923263; x=1732528063;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=h0y/xmc/WDEeuxy81I63/jKzT8uzD3EOhKMs9VT0kt0=;
-        b=VDsMUr2xKqv/utJkw0TBzcZHt7qn6kF6SDnApvxkisnzkcjyKpJfetJ9DJ6FfBrEb4
-         dsZNoB5qUUs+5p21Ko5EF2r48wcWzTTVW9v8gUMcF4+kBpE8Oo2sY3ZO3A909YTlk3UD
-         8xpEeoJhTESTrXVqY/7PpWpCmTPubD1ZutCDbRBtQBzoHlAMfdAfb53OK9RKK0urkBEK
-         Y3f72TJVvRzpZSwniXTJhhGRxK63DuXlTtYFWcAPi6m+8zNPc3iqco0Wxda/xNmPmMK7
-         mHx3HETs4cBkEGpRWnOS6VY0zvnPJjNF4BodRA15Dn/ArRTshnPIKbUkryd1LwlUIdqX
-         o6/g==
-X-Forwarded-Encrypted: i=1; AJvYcCUNxWxnAbYAx1mlZk4KvIrjGBwF2mrk30wBK4cuCn6LRMB5xOIcTeEIZFR6QjKAYQufRdEovAKFxkt1+y0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhbjDYmfxQo1VoU38AbUAqgpHeLFLqvgz8s8xQHXeavCWZjZ0R
-	fki5ffAahjZOzyhShGVZMrQzF3wxNcsRen1Sv1fcFhxUrqnCWcrK9J46CwCM1H8=
-X-Google-Smtp-Source: AGHT+IHRh2LGPJzzI8E80ul0S2acJU4gG1JMOiN2l10QsdJHSWSuQORYzJfJwvAeRDzbGLi+P7fh6g==
-X-Received: by 2002:a05:600c:46c4:b0:431:251a:9dc9 with SMTP id 5b1f17b1804b1-432df77a985mr98478565e9.25.1731923263048;
-        Mon, 18 Nov 2024 01:47:43 -0800 (PST)
-Received: from [192.168.50.4] ([82.78.167.28])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432da244cabsm151425285e9.8.2024.11.18.01.47.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Nov 2024 01:47:42 -0800 (PST)
-Message-ID: <3153fbd0-189a-4cfc-92cd-a1cc23928d73@tuxon.dev>
-Date: Mon, 18 Nov 2024 11:47:39 +0200
+        d=1e100.net; s=20230601; t=1731923272; x=1732528072;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XXsIrjaLPtAbu9sbK4FP88OFsgTuPGUxicrKbpGG+pw=;
+        b=sjeeTADHupgYFJ1zlqyXKc778B5hCtxWoUJ5EIRM3xXSiWHMiZOpNIkkOScd0Y3hTg
+         eZjt51pCF/q4vHoKji070+YXjGkXaVlJ2OlgY1YbHI7Fe/KQOHaSQp/q1FvXDQGtnnqW
+         pL9NtMsKX9MyMhxnqNFIrlMmtHrazeFyftllINCWqKlAnnHEI7RFbz9yU3zarpSLy6Ix
+         Pd96pGuVTjIr5p5KOpT1+JB12wEpws9NVaw2hBqCpSyZ7I5xEOKm9YiKs4SSdhXgjbvj
+         bTjt8YfDclGZBinYJUnWtfegoNxHhVbaVlBfLRK7yv6Ht9kcvdayNuLCr9uUWOkcpFPw
+         yTBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUBM+empVBw2nBg5zRoIOb78IqHAKCsIzGtZk7zggpCGH7iDMcf3juIVKuVKKxjiE2kenDP4Q6K8QFQaks=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7hWtumtzCL06o6QPnwhldA4eopo5KwRo6+wL9TsmJEIJhLcWQ
+	nkQEAI7A5RQBDFEKJgKBKWVAnig1UzFa8QrDruj2CBBdDiObHuCjnnbz1//aJW7a8peqzF3o748
+	AsNtA/j/cifJrdMTjklReOVbbVT9IJXDTOkOV
+X-Google-Smtp-Source: AGHT+IFW3ZZ2HFelm2woVtQeHr8EXXk1OydjKU40b/QkCRm14XNYCXSKqUggk05fm/ig0XesvILnEgyXAhF6bD1p/U8=
+X-Received: by 2002:a5d:47ab:0:b0:382:3789:191c with SMTP id
+ ffacd0b85a97d-38237891a14mr5679855f8f.7.1731923272561; Mon, 18 Nov 2024
+ 01:47:52 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/8] serial: sh-sci: Update the suspend/resume support
-Content-Language: en-US
-To: Philipp Zabel <p.zabel@pengutronix.de>, geert+renesas@glider.be,
- magnus.damm@gmail.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
- gregkh@linuxfoundation.org, jirislaby@kernel.org, lethal@linux-sh.org,
- g.liakhovetski@gmx.de
-Cc: linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-serial@vger.kernel.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20241115134401.3893008-1-claudiu.beznea.uj@bp.renesas.com>
- <20241115134401.3893008-4-claudiu.beznea.uj@bp.renesas.com>
- <81e131554a34c7b2f795a904f2b561f3c86e0baf.camel@pengutronix.de>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <81e131554a34c7b2f795a904f2b561f3c86e0baf.camel@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241117133127.473937-1-ojeda@kernel.org>
+In-Reply-To: <20241117133127.473937-1-ojeda@kernel.org>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Mon, 18 Nov 2024 10:47:40 +0100
+Message-ID: <CAH5fLgj2ikduoBOCekGxdStemVR1EAN-fdcQxOVUJuUL5Z2KtQ@mail.gmail.com>
+Subject: Re: [PATCH] docs: rust: remove spurious item in `expect` list
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi, Philipp,
+On Sun, Nov 17, 2024 at 2:31=E2=80=AFPM Miguel Ojeda <ojeda@kernel.org> wro=
+te:
+>
+> This list started as a "when to prefer `expect`" list, but at some point
+> during writing I changed it to a "prefer `expect` unless...` one. However=
+,
+> the first bullet remained, which does not make sense anymore.
+>
+> Thus remove it. In addition, fix nearby typo.
+>
+> Fixes: 04866494e936 ("Documentation: rust: discuss `#[expect(...)]` in th=
+e guidelines")
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
 
-On 15.11.2024 17:40, Philipp Zabel wrote:
-> On Fr, 2024-11-15 at 15:43 +0200, Claudiu wrote:
->> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>
->> The Renesas RZ/G3S supports a power saving mode where power to most of the
->> SoC components is turned off. When returning from this power saving mode,
->> SoC components need to be re-configured.
->>
->> The SCIFs on the Renesas RZ/G3S need to be re-configured as well when
->> returning from this power saving mode. The sh-sci code already configures
->> the SCIF clocks, power domain and registers by calling uart_resume_port()
->> in sci_resume(). On suspend path the SCIF UART ports are suspended
->> accordingly (by calling uart_suspend_port() in sci_suspend()). The only
->> missing setting is the reset signal. For this assert/de-assert the reset
->> signal on driver suspend/resume.
->>
->> In case the no_console_suspend is specified by the user, the registers need
->> to be saved on suspend path and restore on resume path. To do this the
->> sci_console_setup() function was added. There is no need to cache/restore
->> the status or FIFO registers. Only the control registers. To differentiate
->> b/w these, the struct sci_port_params::regs was updated with a new member
->> that specifies if the register needs to be chached on suspend. Only the
->> RZ_SCIFA instances were updated with this new support as the hardware for
->> the rest of variants was missing for testing.
->>
->> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->> ---
->>
->> Changes in v3:
->> - none
->>
->> Changes in v2:
->> - rebased on top of the update version of patch 2/8 from
->>   this series
->>
->>  drivers/tty/serial/sh-sci.c | 53 ++++++++++++++++++++++++++++++-------
->>  1 file changed, 44 insertions(+), 9 deletions(-)
->>
->> diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
->> index ade151ff39d2..e53496d2708e 100644
->> --- a/drivers/tty/serial/sh-sci.c
->> +++ b/drivers/tty/serial/sh-sci.c
->> @@ -101,7 +101,7 @@ enum SCI_CLKS {
->>  		if ((_port)->sampling_rate_mask & SCI_SR((_sr)))
->>  
->>  struct plat_sci_reg {
->> -	u8 offset, size;
->> +	u8 offset, size, suspend_cacheable;
->>  };
->>  
->>  struct sci_port_params {
->> @@ -134,6 +134,8 @@ struct sci_port {
->>  	struct dma_chan			*chan_tx;
->>  	struct dma_chan			*chan_rx;
->>  
->> +	struct reset_control		*rstc;
->> +
->>  #ifdef CONFIG_SERIAL_SH_SCI_DMA
->>  	struct dma_chan			*chan_tx_saved;
->>  	struct dma_chan			*chan_rx_saved;
->> @@ -153,6 +155,7 @@ struct sci_port {
->>  	int				rx_trigger;
->>  	struct timer_list		rx_fifo_timer;
->>  	int				rx_fifo_timeout;
->> +	unsigned int			console_cached_regs[SCIx_NR_REGS];
->>  	u16				hscif_tot;
->>  
->>  	bool has_rtscts;
->> @@ -298,17 +301,17 @@ static const struct sci_port_params sci_port_params[SCIx_NR_REGTYPES] = {
->>  	 */
->>  	[SCIx_RZ_SCIFA_REGTYPE] = {
->>  		.regs = {
->> -			[SCSMR]		= { 0x00, 16 },
->> -			[SCBRR]		= { 0x02,  8 },
->> -			[SCSCR]		= { 0x04, 16 },
->> +			[SCSMR]		= { 0x00, 16, 1 },
->> +			[SCBRR]		= { 0x02,  8, 1 },
->> +			[SCSCR]		= { 0x04, 16, 1 },
->>  			[SCxTDR]	= { 0x06,  8 },
->>  			[SCxSR]		= { 0x08, 16 },
->>  			[SCxRDR]	= { 0x0A,  8 },
->> -			[SCFCR]		= { 0x0C, 16 },
->> +			[SCFCR]		= { 0x0C, 16, 1 },
->>  			[SCFDR]		= { 0x0E, 16 },
->> -			[SCSPTR]	= { 0x10, 16 },
->> +			[SCSPTR]	= { 0x10, 16, 1 },
->>  			[SCLSR]		= { 0x12, 16 },
->> -			[SEMR]		= { 0x14, 8 },
->> +			[SEMR]		= { 0x14, 8, 1 },
->>  		},
->>  		.fifosize = 16,
->>  		.overrun_reg = SCLSR,
->> @@ -3380,6 +3383,7 @@ static struct plat_sci_port *sci_parse_dt(struct platform_device *pdev,
->>  	}
->>  
->>  	sp = &sci_ports[id];
->> +	sp->rstc = rstc;
->>  	*dev_id = id;
->>  
->>  	p->type = SCI_OF_TYPE(data);
->> @@ -3507,13 +3511,34 @@ static int sci_probe(struct platform_device *dev)
->>  	return 0;
->>  }
->>  
->> +static void sci_console_setup(struct sci_port *s, bool save)
->> +{
->> +	for (u16 i = 0; i < SCIx_NR_REGS; i++) {
->> +		struct uart_port *port = &s->port;
->> +
->> +		if (!s->params->regs[i].suspend_cacheable)
->> +			continue;
->> +
->> +		if (save)
->> +			s->console_cached_regs[i] = sci_serial_in(port, i);
->> +		else
->> +			sci_serial_out(port, i, s->console_cached_regs[i]);
->> +	}
->> +}
->> +
->>  static __maybe_unused int sci_suspend(struct device *dev)
->>  {
->>  	struct sci_port *sport = dev_get_drvdata(dev);
->>  
->> -	if (sport)
->> +	if (sport) {
->>  		uart_suspend_port(&sci_uart_driver, &sport->port);
->>  
->> +		if (!console_suspend_enabled && uart_console(&sport->port))
->> +			sci_console_setup(sport, true);
->> +		else
->> +			return reset_control_assert(sport->rstc);
->> +	}
->> +
->>  	return 0;
->>  }
->>  
->> @@ -3521,8 +3546,18 @@ static __maybe_unused int sci_resume(struct device *dev)
->>  {
->>  	struct sci_port *sport = dev_get_drvdata(dev);
->>  
->> -	if (sport)
->> +	if (sport) {
->> +		if (!console_suspend_enabled && uart_console(&sport->port)) {
->> +			sci_console_setup(sport, false);
->> +		} else {
->> +			int ret = reset_control_deassert(sport->rstc);
-> 
-> With this, is the reset_control_deassert() in sci_parse_dt() still
-> needed?
-
-If I'm not wrongly understanding your question, yes, the
-reset_control_deassert() is still needed in the sci_parse_dt() as the
-sci_parse_dt() is called on probe path. After resume the sci_parse_dt() is
-not called unless the driver is unbinded and then re-binded.
-
-In case the reset_control_dessert() here fails (or not) and an
-unbind/re-bind will be requested, the unbind will call
-reset_control_assert() (though the devm action) and then the re-bind will
-call reset_control_deassert() though sci_parse_dt(). That should be safe,
-AFAICT.
-
-
-> 
-> Likewise, does the reset_control_assert() in sci_suspend() remove the
-> need for the sci_reset_control_assert() devm action?
-
-No, the sci_reset_control_assert() is still needed as explained above,
-unless I missed your point.
-
-Please let me know if missed your point and/or answered your question?
-
-
-Thank you,
-Claudiu Beznea
-
-> 
-> regards
-> Philipp
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
