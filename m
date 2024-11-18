@@ -1,383 +1,301 @@
-Return-Path: <linux-kernel+bounces-413553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 113B59D1AE1
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 23:05:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B2559D1AE4
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 23:07:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5A65281FCF
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 22:05:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFD22281F83
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 22:07:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D6951E570E;
-	Mon, 18 Nov 2024 22:05:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 997A91E570E;
+	Mon, 18 Nov 2024 22:07:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Bfewpccw"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aitcmRF7"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E5F01BD9FB
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 22:05:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731967503; cv=none; b=bEM8Q4YBkv546AByXv4NCtNwNntRHl4DU7Jzj4m8Q1H3RIdBuCswoN8ijAEhjeoftgazhjBEw1OYXgF9mkFqOyJVqAv0/9QPmomy40o2Elzpibj2LaDwemuEhNwcBgB96Iru6X+ATVYaIyQtInBwzHy3WZ48WAxCW5hNQNfqQ+c=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731967503; c=relaxed/simple;
-	bh=3UstbKIjXyPSx8DgVqxeynoM89MqWOfVES9iwkkAaBY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=A6m6fOMLljJVYfoSB/lsJOIhhjyjSsjCG/MiguzYrK5s2yWLvCmHpm8RtkiClrqDZSTeoz0ulYcB3CNyxmR3e9PV/1rZ2/ASJPvXFRLAfVwhfQeNbP04IEx5gwZuBOm3/qK4+juxomtrjoRFx69VPxANOwCFLjRmNqehG/EYDYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Bfewpccw; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-21238b669c5so47445ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 14:05:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731967501; x=1732572301; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rZpbDY5mWrDv6OnVwiqKQCXRFl0cdal4ZeypHNgk58U=;
-        b=BfewpccwjDMnDhDzy0F6VO2DMec+MYGNAhDMuVCWOHSRb06RWrk6M77nARLclZiAyI
-         6pkbTkBeBj/tOjjs+fDCCbE8Vn2dFJeCJ2csaunFO3ksyUP20Q/UYFn+KWUN5Lkpd5nm
-         1icVli3lq+Q48Jryjw7pOWiLPw0e4LEj/8nmKIWSFbVJY9XUPWXal+Mfer3XyPIRnka0
-         Jp9OZJO+fUJXtLTP991fGuSwMgyJCVqVP/4qjDhJ7mhLFMda10f94tcJ7NHEbcnjLQzc
-         k15Jrzrw70t3iXHc1P7f3pm5xcKjQd4i0ktVL1zzzpNW/CWLJflINZiYq0U1/mfDW7dY
-         yPLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731967501; x=1732572301;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rZpbDY5mWrDv6OnVwiqKQCXRFl0cdal4ZeypHNgk58U=;
-        b=a9A+iGEb5GLNQgNXh38rx/7B44Xq7I9q9FSneRN0GWBfEemyWBMi9liUpqJdOWWk6x
-         OL5Tk9EhpTaK39Z5VMoca50KM0lTkXyRM2pl8c0yG3Q+FNXTl2XOPFiY3NkTlXAhgobI
-         S1SfSsE3yA0ojv1A45YrHGxHvalGu2IIos1W8xk1Qc/pMR52v7N64IwLXy9nre5tBcMX
-         AfTItmRR8Vpki4ZR9AyZZbPrb8ZWgsMnzOMcSx/9dYA/0O+G8kRR6zqjZNLwEPKi0tzB
-         gE0EAAVU6CCbLZBc8XnJNyH+TrJ7H+WeddGMRq/DIvm5xtk7BydA3XUW26LO44sw8/hs
-         XdYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXcl93zWWfP10IA/suM5BKu/zigjVscfwkMzi1WFEJ+++XR3efQHMBzFL9jlHNvGKX7kvsJ3u1+QVNzl9E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4fbkKZljvaJ2jb4lIn4UukR0RSGDiv6d5QSSXbLy+ktJ3ofyu
-	h3nIx2TfcwLBLrogujhdkul4hvyPEM0rVOiohjStiv29JXTIw9KxZ6zD2UisgsXkb+uSB+16HKD
-	eIbGPesae0NQmr4EM54acZLklFB4MZeb/Pl7j
-X-Gm-Gg: ASbGncvHbeo+mEvnAw+0xIr62UzkRi6v4KwE536TU8ta5qEF2kSzoIxIQD8Vi9NHuwx
-	ueaeLtRygZf/2YpUV43QfAfMlRFITZc0H5Q1gu7vS3erbMIboVLzfCw51FYG2
-X-Google-Smtp-Source: AGHT+IHDU1IGm7lewxumKHELmTgTS6tIR08JzMLNeZLhHDULczS9ajfRvPk8jGcBzWoEeEzD8Ssf6fHi+EwybokLFFU=
-X-Received: by 2002:a17:902:db11:b0:20b:81bb:4a81 with SMTP id
- d9443c01a7336-2124fffa518mr437955ad.7.1731967500584; Mon, 18 Nov 2024
- 14:05:00 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7A1813DBBE;
+	Mon, 18 Nov 2024 22:07:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.16
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731967660; cv=fail; b=LMosNTdthKFoXrIhFFUKcJW6RL2ZcS2OgsayQ16rS8Vna+HjXhcmUcTj7ZcOUnoKN9q/DO8bwP9kt2yHrGXS3S0Tnc6E3AQBQxIsbyQWVGaP99q2q4+ZDxfw0jAtgXxB+qdnaLeGGnlj2u0pXePCteZtwPpPJtj4Tob38d0Yy4I=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731967660; c=relaxed/simple;
+	bh=DBKbruSUGyE4bN29ZxyiKDm8erJ1OGUDjDf3MqeS9Sg=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=EBK5uMyT8TuHvdK3+uiARh+m/nOLmLgoQGlkFkqItPknmezysNQ+SWd9rEwZD2hKmuObau5zDGmyRCVp7HDUcSupB7wA4UMMVxPyuhh2UC4PoOFsUGSfnvA6xcxDs54oZfu0P7i5y6fwEO2R3Q73KLupUqiY3iEsPqBbLfi3sZw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aitcmRF7; arc=fail smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731967659; x=1763503659;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=DBKbruSUGyE4bN29ZxyiKDm8erJ1OGUDjDf3MqeS9Sg=;
+  b=aitcmRF7oWrijFMEMXr/h8c56jSq7DcyILSRM+AnXfe7AX6SkJYvHx42
+   XhAGTmqnvH43Z2vVfFxSxOw++M4aqid4H225dGvTivyxK3mlnl6zxXYJ9
+   iTt7Wm1RYlEg1zBWwSa4+yi4o1TinSXPiJYGAa0BqSOpqcJteKN94iPcl
+   itxoafgXh3R5QV+PHYsNS/JLhLZGwm5Dx24vJeF8IDS4swE3cKeEYiW1R
+   h2EczcepegzUkswDti8wMa9w6kMyQh5WuLjOZZdrXrqHSIbO/IhC++8jQ
+   /1XRy/U2LoZTEBgjZeH8eZr/jGSzk0j0kD6rHS1E7OrZaM8NdKVH9KuuA
+   g==;
+X-CSE-ConnectionGUID: iwuCSLNoQdqEJs91IhxT7g==
+X-CSE-MsgGUID: pPsU7b5vQ52L8BGQyMFRfw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11260"; a="19557397"
+X-IronPort-AV: E=Sophos;i="6.12,165,1728975600"; 
+   d="scan'208";a="19557397"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2024 14:07:37 -0800
+X-CSE-ConnectionGUID: Wk1K9k53TiWQr3QgWg2UAw==
+X-CSE-MsgGUID: oNIPH15HSMOaq+i9DspMBA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,165,1728975600"; 
+   d="scan'208";a="89783214"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by fmviesa009.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 18 Nov 2024 14:07:36 -0800
+Received: from orsmsx602.amr.corp.intel.com (10.22.229.15) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Mon, 18 Nov 2024 14:07:36 -0800
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ orsmsx602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Mon, 18 Nov 2024 14:07:36 -0800
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.173)
+ by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 18 Nov 2024 14:07:36 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=HoIlBx8M7PKaczET0QhthBAbTnzzeIrpdb3jP0jWj+7xdj9N+psnc3vBtXPryGqZYeLVvV8gXl0nRFv4l/uyc+hl1ZqIjn8PBEFs50auXwiCiT/JOse1LUmkVzuBmPI0zWMqVX4P3QZKMmC42n5Kzjy9hE/7/xOoY3KNF4XtTX1+lhftYd11TzjR4dJ0osrFbHo1xlnOmxGh4LYDDB3wp6U2iMvncJe/QW1OwAYQ5+oltg9BsHRTCrGTD2+BcobPEeqzH/v/cCxJ8bkx42TpYQDd1gRKTL47JcRW6oA490mZ2ApDfqcKsgnBdPNmlDJUS2OHG7zVTuoFixjpZ/amdw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/Kg9TBXcMXZitNhd/mNaV5oKShvWnehwUynrMFVyTGs=;
+ b=NSRqV32t9OzsAznbqwvtip+UkPSJPTEjHpUFp19rQ7NIaPTuBIoaMeTqY4puv0XgsAB0ohedG0bw+yQ1dmRB9kbyD2G0Ri+hKagYfx6Jw/vm19mGAgM9YftWbcS+uWzTkQN/bwjiqaZRvR9CCevKs8+D1GTTeJm06o1T2F/SLEVR7RgTp5DuPbnXHPBemkrlFx5GDp7LjWaRP77iOY5MMFcpewooyQXjqN9ywzR0eg5p5BTMNr7M5xqOFyc1pMSTBBa/YX+VEeVFtXR8tbNiVbo6Q/JPx3sNLfzpyMOQPy0JZyQdzqh6CKIloBLS9TxXWYjJzXwE5csiBnW/xvECvA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
+ by SA3PR11MB7433.namprd11.prod.outlook.com (2603:10b6:806:31e::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.24; Mon, 18 Nov
+ 2024 22:07:33 +0000
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf%7]) with mapi id 15.20.8158.019; Mon, 18 Nov 2024
+ 22:07:33 +0000
+Message-ID: <d5bead60-6a38-426e-afa6-e7980a268d6f@intel.com>
+Date: Mon, 18 Nov 2024 14:07:29 -0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 08/26] x86/resctrl: Introduce the interface to display
+ monitor mode
+To: <babu.moger@amd.com>, <corbet@lwn.net>, <tglx@linutronix.de>,
+	<mingo@redhat.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>
+CC: <fenghua.yu@intel.com>, <x86@kernel.org>, <hpa@zytor.com>,
+	<thuth@redhat.com>, <paulmck@kernel.org>, <rostedt@goodmis.org>,
+	<akpm@linux-foundation.org>, <xiongwei.song@windriver.com>,
+	<pawan.kumar.gupta@linux.intel.com>, <daniel.sneddon@linux.intel.com>,
+	<perry.yuan@amd.com>, <sandipan.das@amd.com>, <kai.huang@intel.com>,
+	<xiaoyao.li@intel.com>, <seanjc@google.com>, <jithu.joseph@intel.com>,
+	<brijesh.singh@amd.com>, <xin3.li@intel.com>, <ebiggers@google.com>,
+	<andrew.cooper3@citrix.com>, <mario.limonciello@amd.com>,
+	<james.morse@arm.com>, <tan.shaopeng@fujitsu.com>, <tony.luck@intel.com>,
+	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<peternewman@google.com>, <maciej.wieczor-retman@intel.com>,
+	<eranian@google.com>, <jpoimboe@kernel.org>, <thomas.lendacky@amd.com>
+References: <cover.1730244116.git.babu.moger@amd.com>
+ <121c79ea1abe6f21f726d086eba9fa61d31da3f1.1730244116.git.babu.moger@amd.com>
+ <fe518638-a82e-4136-ae77-fa6a7abb4b2e@intel.com>
+ <33cd0cc0-4f81-4a2d-a327-0c976219996a@amd.com>
+From: Reinette Chatre <reinette.chatre@intel.com>
+Content-Language: en-US
+In-Reply-To: <33cd0cc0-4f81-4a2d-a327-0c976219996a@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MW4PR03CA0165.namprd03.prod.outlook.com
+ (2603:10b6:303:8d::20) To SJ2PR11MB7573.namprd11.prod.outlook.com
+ (2603:10b6:a03:4d2::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241115215256.578125-1-kaleshsingh@google.com>
- <CAHbLzkrVoK-y4zc10+=0hDGZLi8+i73wSHciTUOWGDBsEcD0xw@mail.gmail.com>
- <f0502143-3b37-44aa-a3fa-d468e64b3245@suse.cz> <CAHbLzkq+CwMdGprYFa4jrzc3QSJ5eCDcEtp_EwWJ3G-aJmEx6A@mail.gmail.com>
- <CAC_TJvdO7pqsmHNjvtTV3WsQvwCF9sa9PdmNE3rVEOSb20v--w@mail.gmail.com> <CAHbLzkqFfduLoWAiP3xwjMg5=JqEsKFMHAxh_ypmvGMBqAMbFg@mail.gmail.com>
-In-Reply-To: <CAHbLzkqFfduLoWAiP3xwjMg5=JqEsKFMHAxh_ypmvGMBqAMbFg@mail.gmail.com>
-From: Kalesh Singh <kaleshsingh@google.com>
-Date: Mon, 18 Nov 2024 14:04:49 -0800
-Message-ID: <CAC_TJvcNNcgO3z0DfJoSf3KSUXsLkL66NsAvft2vcJSCK2AgEw@mail.gmail.com>
-Subject: Re: [PATCH] mm: Respect mmap hint address when aligning for THP
-To: Yang Shi <shy828301@gmail.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>, kernel-team@android.com, android-mm@google.com, 
-	Andrew Morton <akpm@linux-foundation.org>, Yang Shi <yang@os.amperecomputing.com>, 
-	Rik van Riel <riel@surriel.com>, Ryan Roberts <ryan.roberts@arm.com>, 
-	Suren Baghdasaryan <surenb@google.com>, Minchan Kim <minchan@kernel.org>, Hans Boehm <hboehm@google.com>, 
-	Lokesh Gidra <lokeshgidra@google.com>, stable@vger.kernel.org, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Jann Horn <jannh@google.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|SA3PR11MB7433:EE_
+X-MS-Office365-Filtering-Correlation-Id: ae2336bb-2984-46a5-0e05-08dd081d66c9
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?VmkwRlAvdklOL0U0dDJxVlRqUGpBTzc1L3NpTmlCbmNjZjJtR1BKbEhNKzdj?=
+ =?utf-8?B?YmxXR0VsYUlzNjFOREMyRGw0OWo0d0hqN0RvelM5RHlTZGl6NVloamJUa2FW?=
+ =?utf-8?B?aWc1bzduRUpKcDRMbmlNQU5TSWRQQ1IwNmVZcGhGU1Bjakx3STZEb25PVm5z?=
+ =?utf-8?B?VkZsR1Y5SnVHaVJibTJpdEdiaXlzcC9JTC8vR1I1L2daS0JVcCtDdlViNTNS?=
+ =?utf-8?B?NWtydDdlZWRrRGNBNXExZDlXcm12UXdlMGEwUnE5azJ5N3ZKdEJ4SkJwb2Nh?=
+ =?utf-8?B?aGNWdDRjcG5iODhnVkdGaklZWVZBUklWdFNYKzNDK21hcGJNK0RRbDJMK3pp?=
+ =?utf-8?B?UHEwWk5aMUcxRlMweGQ1by9wRmNMUno2M2M4dEE5cnMxV04vRXRMdGU3dVIr?=
+ =?utf-8?B?ZS95U2lIUzhJazZIZTIyVG01emxSL3BaZjVLeDZWeTBKbzc2bUVPWEsxcnVE?=
+ =?utf-8?B?K24veFhQdERNSnJiNnFrNXc3NmRaNTE3VEtKUU9VUmpWemRGZnozbWlLVlFY?=
+ =?utf-8?B?NWRoL1VUOFVLb3Z1SEpXSWZleUNBY1lSUmxmRHVKTUsrVjdwZXJ6dTUrNlBU?=
+ =?utf-8?B?RGpwS3k2VkFqOVl5Y1VEdU1GTkJUcDdQVHEvT1AxVm56U1Jid0hOckhBQVdz?=
+ =?utf-8?B?dFRoYUw1dnBRN1RKU3ZoNUJYR1d2Vk11L3MrN05HQ1VGZmtzWklaaXVhRnRi?=
+ =?utf-8?B?NDVyMG5MWkxTQVp6ZkJSK1ZqU3RhNmhTMG0ybUtNK0JIMVJOZTdWNFV3VFli?=
+ =?utf-8?B?YjVpdDJuYWxROU50YWswbnVpL0RTNjM1RXE1QXI3bWsraXdvMWRGL3JlUWgr?=
+ =?utf-8?B?Z1JSK3JvanBYcHBVRGgyNFlNSDFOUklnVEVHWGtTVG9KeGpqalByemxUVWs0?=
+ =?utf-8?B?VmVBY1Nuamx5UTlPeFZ0ck4zUU5pUis3OVM1amw5akxWc3dEQU54cUZpVVVo?=
+ =?utf-8?B?WnJvR01CZWVqWTJUTnJ1MDFTTDhzbnB3R1Fsb2xzZU5jeEtqSUU0K0NDUzIy?=
+ =?utf-8?B?SUlHd3M4OWVkK2UxZXBjb2ZCMnBoNnpUTTNuNk9YamJ1Zm5XRjYxRmdlNFdO?=
+ =?utf-8?B?bWFISVZ4dmRwcFRRVGtmQUlFTlNVRTg1RGFBQkw3bmJ1TUxydEVsUlZBVDVT?=
+ =?utf-8?B?WWhWd0tveXVBaUZUMUprcVJoYml3ak52Z2Z0MXJuNHR3YTlJd2hhRzNOZGtP?=
+ =?utf-8?B?K1VRc2hhZjl1Z0FRUTJHU3A0cVVYdEl3OG5vWElGT3NIdVJqc09Wb1F3bDht?=
+ =?utf-8?B?T2NIRzg5VGp4aWRHZnZTWFNUc2ZZSmN6U0FEMWE4WGpKc3d4ZGllWmZKOGYr?=
+ =?utf-8?B?M3BMK0pMdEFQZ21rMnVlRWh2Qm5XaXM2T2ovYkdGWXVla1pYZzcxVVB4UENm?=
+ =?utf-8?B?eXhEVXVQY0NIUXAxSzQ3T2ZsSDZXM3VzYnd6NHp0SndIMlR5c0xxSHorR20x?=
+ =?utf-8?B?L0hxNkxxaDJOdXdzSEI1VTI5M3JCQmZaM21BMmRRSjg0WWdIc0R0UTVrbnNM?=
+ =?utf-8?B?dVRvSS93cEF0WGdxK3c3bW5IcVV0czRRd05PUE9yenJpTUlVSmttMmNNVkFM?=
+ =?utf-8?B?RzB5VEx2UW0xeGI4ZE9TQmF2cDFUZWozeTNYejlGd0h6SEpJV2lPL1F0TUhH?=
+ =?utf-8?B?WWU1Mlc4TCt1aWR1UGw4RStXQzJPYUhzeUc4a0lpV29iVTN1cmtGckRFc2ZG?=
+ =?utf-8?B?MGhGeElJMWpKako0eVM5RExYM1k1SW54V2phV0t0cFk2bmJBMkxHekpvajNq?=
+ =?utf-8?Q?bnKbLNngxTntbfz/pg4kaFaWb7tkGZUmA20dtzL?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?U3pvbkdLcWRVbzZiQjZ3YmR5WTUzSEFvclhyN1RGMkRRVUhBdDlOTmZPcThp?=
+ =?utf-8?B?UDhFTnhtNC83V2RUY2gyRndpWFdLSi9NSldkc2RMMWwydzNzTDBOTmdaUzVr?=
+ =?utf-8?B?QTJSNEQxVms4VW9Xd3AwazdrdHVURC84OThlaUdaZGM1NUxhMnNMUkljQ20z?=
+ =?utf-8?B?OW5OUEY5QStud3ROMWVPa0w1YU5WMXJZWjJVUVlycEgrdndlSU5ac1JXUlNq?=
+ =?utf-8?B?dVBtcFhwOS9Dc0FKSGszZndyVU5ZUkhmeWdjbG1IZjhhRTVVTi9HVU9GODhy?=
+ =?utf-8?B?cG9FaDJ4L3FvTTQyTjlnSi9mZ2U5L3hYYjNEOUs3eFN1UVVDcnR6MzFhY3RO?=
+ =?utf-8?B?bGlSdTYvRjdJc3d2WldNdVc4THpWVTNPY0crdHVkVkFjYkNJTVRPYWlva0FR?=
+ =?utf-8?B?WGJSUFd2c0RNWW8xcmtaYktON2U5T3l5eklNTzVpUGFHVHp5Q25pbTdTZGt6?=
+ =?utf-8?B?cytWdTJObDNYQVpIanBXLzBvSUZuTEprZVF6b0cyT1RYUXo1QnZ5Vms0b2tx?=
+ =?utf-8?B?ZU9NT2t0WWM0UmZML0xFaXhaQjA4WFlRdFZjUmF6QXEwV0Q3bGlMM3JaNFBO?=
+ =?utf-8?B?MldaL0grRitBak1EZ2pnYU4zeis3L1EzOGJ2TGd6Q25FemFkWFRZNHlJTG5Z?=
+ =?utf-8?B?VTg2VFdvQzhtTTI4bm92cWo4SitEdnNNV0F1VzRrWFpPNXRybDdVWXdNbWhn?=
+ =?utf-8?B?ajc1bWVEelRQUEdjcUhHdERlajUwNi95UWVMMzhUc3R5dmE2NVVyWi9qbllZ?=
+ =?utf-8?B?NXRxRjBBS3JiUVZYZ25UVERVNHUvc2tkV3Y3bnI3L2hsR0lxNkxJZDdUbGl2?=
+ =?utf-8?B?M0gwOEY3MkdqTDB1SHU4Vm56cU05akNJbzVOK1lZTkU4NVlYR05rZXJDck5E?=
+ =?utf-8?B?RFFNYnM3eXhETE92RWw3SkVTSWsrMUh3TFNGdEhvN3ZLUEhWWkpSQVNQQ1k3?=
+ =?utf-8?B?WklHdUs1MHA2ZldrK3h1cmJua1MwN2FjSkdWQyszN1FnMmxTYnhVUkd0UUNl?=
+ =?utf-8?B?bU5lZUQzTG1jd2tWdWRlL0x5Nk51c0lTbDAwZDU5cGt3ZTc4cVVEbzk4L3Fv?=
+ =?utf-8?B?R3ZTYjNzaDJ0SFVFbUoyeE1Za3l1ZE5MYjRoSHJNMmRhZ1c3aWtnOXZNVFh0?=
+ =?utf-8?B?UTFRNXpzQmUwWEJ1dzhDTm1NV0pJZ0VjcXlOa3ZKc2FocVJobDBDQ3VhT0Ji?=
+ =?utf-8?B?RUxtcG14YmtzaFpma3pPQkxFVGxDZVUxODRwbTBkS2RoZFloYzZoVUYvYlJM?=
+ =?utf-8?B?dCtmM2V4YTdZcEt0ZklxRDBtRFRjVk93bEVJTjdFTC85KzlGbDJiNkk2dlQz?=
+ =?utf-8?B?V0JObkMySTI0YlRkT29RQlZDMHNKZGtWYWwxYWxiSkN3dStod1Nhc1FyWHdF?=
+ =?utf-8?B?c2lhUkdIcXNjU1FhbjJZajB2NzFYbFYyVVZFUVdTdkJQY2tzb0JSeXZSUW54?=
+ =?utf-8?B?WVlGT0k2YTMxd3BWYVZaQm9EejJWVE5KWm5vU2hwVFpzV29IWEFZbSsvUmZr?=
+ =?utf-8?B?Y0FzM0oyYUxsdC8zTDJVYUYwWnRxY2EzMDZ6MHl6ODVqN0ZTRC9tUmRzNjhK?=
+ =?utf-8?B?WWwvSG92VWl6c1MwZ1FPMEhlOWxiLy9uSzR4ZldqWEkwTS8reHBLNk92Rk44?=
+ =?utf-8?B?L0U4MkxWVk84TTdjSFBKMzZZdnZhSU1hcklQOS9oYXhGU1JzWTllTFdhRyt5?=
+ =?utf-8?B?TUYxMHZYdzY2ZUo3TnBNdkYrUmVYeVY4K0RkUEZYMURHTGU0aEdCNlJJNEZy?=
+ =?utf-8?B?TWcrc3NTNUd6cjl3VU1LNWxya3hPU01Pd0JZdHJTZlEyazFWZ2FraW1tMEh1?=
+ =?utf-8?B?Y2ExQVhSZzJYdE96dUJRUERzeHQ4eTgrMTg1eE5MZ1Bsam53NUVlQlVXYVhO?=
+ =?utf-8?B?a0lUa09LQ2Zjelg4QzJMeE55ZHc0ZnJtOUZTdHJXVkdocGh5cDFscXFNWjdh?=
+ =?utf-8?B?Z0F3QXQ0bmpWb1NiVnNuWkw0SEZOZDZBdDZ1dGVqVU9yUkJBK1EvbFpZOWUz?=
+ =?utf-8?B?c05vaEwzN1VZTVBaVUtBd0xySy9JTEZpeFZPNkN5ZEFRR20vbDBpYXVGbTFq?=
+ =?utf-8?B?REZzbVBUWW5HcUpyVTRrOVdML1JqRE1paCtFdnVpZEJpUXRnZ0R6blBVWnRn?=
+ =?utf-8?B?ZFM1YjdiQlVDS2hFS1FqR0ZZcnhmNkN6NWt5VWorb2FkcXlqbDFETXhYQmV3?=
+ =?utf-8?B?OFE9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: ae2336bb-2984-46a5-0e05-08dd081d66c9
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Nov 2024 22:07:32.9202
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: etJbY0b8472CCnIuSqmhrjChIvu3Bx+nXX/xMKe1I8mgJJZ9SYTS0thYqHIzJhM8ZK4fJfyBRrGurLJdDe/CDa1hSbs8e6inWScKupUIlws=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR11MB7433
+X-OriginatorOrg: intel.com
 
-On Mon, Nov 18, 2024 at 1:44=E2=80=AFPM Yang Shi <shy828301@gmail.com> wrot=
-e:
->
-> On Mon, Nov 18, 2024 at 9:52=E2=80=AFAM Kalesh Singh <kaleshsingh@google.=
-com> wrote:
-> >
-> > On Mon, Nov 18, 2024 at 9:05=E2=80=AFAM Yang Shi <shy828301@gmail.com> =
-wrote:
-> > >
-> > > On Sun, Nov 17, 2024 at 3:12=E2=80=AFAM Vlastimil Babka <vbabka@suse.=
-cz> wrote:
-> > > >
-> > > > On 11/15/24 23:15, Yang Shi wrote:
-> > > > > On Fri, Nov 15, 2024 at 1:52=E2=80=AFPM Kalesh Singh <kaleshsingh=
-@google.com> wrote:
-> > > > >>
-> > > > >> Commit efa7df3e3bb5 ("mm: align larger anonymous mappings on THP
-> > > > >> boundaries") updated __get_unmapped_area() to align the start ad=
-dress
-> > > > >> for the VMA to a PMD boundary if CONFIG_TRANSPARENT_HUGEPAGE=3Dy=
-.
-> > > > >>
-> > > > >> It does this by effectively looking up a region that is of size,
-> > > > >> request_size + PMD_SIZE, and aligning up the start to a PMD boun=
-dary.
-> > > > >>
-> > > > >> Commit 4ef9ad19e176 ("mm: huge_memory: don't force huge page ali=
-gnment
-> > > > >> on 32 bit") opted out of this for 32bit due to regressions in mm=
-ap base
-> > > > >> randomization.
-> > > > >>
-> > > > >> Commit d4148aeab412 ("mm, mmap: limit THP alignment of anonymous
-> > > > >> mappings to PMD-aligned sizes") restricted this to only mmap siz=
-es that
-> > > > >> are multiples of the PMD_SIZE due to reported regressions in som=
-e
-> > > > >> performance benchmarks -- which seemed mostly due to the reduced=
- spatial
-> > > > >> locality of related mappings due to the forced PMD-alignment.
-> > > > >>
-> > > > >> Another unintended side effect has emerged: When a user specifie=
-s an mmap
-> > > > >> hint address, the THP alignment logic modifies the behavior, pot=
-entially
-> > > > >> ignoring the hint even if a sufficiently large gap exists at the=
- requested
-> > > > >> hint location.
-> > > > >>
-> > > > >> Example Scenario:
-> > > > >>
-> > > > >> Consider the following simplified virtual address (VA) space:
-> > > > >>
-> > > > >>     ...
-> > > > >>
-> > > > >>     0x200000-0x400000 --- VMA A
-> > > > >>     0x400000-0x600000 --- Hole
-> > > > >>     0x600000-0x800000 --- VMA B
-> > > > >>
-> > > > >>     ...
-> > > > >>
-> > > > >> A call to mmap() with hint=3D0x400000 and len=3D0x200000 behaves=
- differently:
-> > > > >>
-> > > > >>   - Before THP alignment: The requested region (size 0x200000) f=
-its into
-> > > > >>     the gap at 0x400000, so the hint is respected.
-> > > > >>
-> > > > >>   - After alignment: The logic searches for a region of size
-> > > > >>     0x400000 (len + PMD_SIZE) starting at 0x400000.
-> > > > >>     This search fails due to the mapping at 0x600000 (VMA B), an=
-d the hint
-> > > > >>     is ignored, falling back to arch_get_unmapped_area[_topdown]=
-().
-> > > >
-> >
-> > Hi all, Thanks for the reviews.
-> >
-> > > > Hmm looks like the search is not done in the optimal way regardless=
- of
-> > > > whether or not it ignores a hint - it should be able to find the ho=
-le, no?
-> >
-> > It's not able to find the hole in the example case because the size we
-> > are looking for is now
-> > (requested size + padding len) which is larger than the hole we have
-> > at the hint address.
-> >
-> > > >
-> > > > >> In general the hint is effectively ignored, if there is any
-> > > > >> existing mapping in the below range:
-> > > > >>
-> > > > >>      [mmap_hint + mmap_size, mmap_hint + mmap_size + PMD_SIZE)
-> > > > >>
-> > > > >> This changes the semantics of mmap hint; from ""Respect the hint=
- if a
-> > > > >> sufficiently large gap exists at the requested location" to "Res=
-pect the
-> > > > >> hint only if an additional PMD-sized gap exists beyond the reque=
-sted size".
-> > > > >>
-> > > > >> This has performance implications for allocators that allocate t=
-heir heap
-> > > > >> using mmap but try to keep it "as contiguous as possible" by usi=
-ng the
-> > > > >> end of the exisiting heap as the address hint. With the new beha=
-vior
-> > > > >> it's more likely to get a much less contiguous heap, adding extr=
-a
-> > > > >> fragmentation and performance overhead.
-> > > > >>
-> > > > >> To restore the expected behavior; don't use thp_get_unmapped_are=
-a_vmflags()
-> > > > >> when the user provided a hint address.
-> > > >
-> > > > Agreed, the hint should take precendence.
-> > > >
-> > > > > Thanks for fixing it. I agree we should respect the hint address.=
- But
-> > > > > this patch actually just fixed anonymous mapping and the file map=
-pings
-> > > > > which don't support thp_get_unmapped_area(). So I think you shoul=
-d
-> > > > > move the hint check to __thp_get_unmapped_area().
-> > > > >
-> > > > > And Vlastimil's fix d4148aeab412 ("mm, mmap: limit THP alignment =
-of
-> > > > > anonymous mappings to PMD-aligned sizes") should be moved to ther=
-e too
-> > > > > IMHO.
-> > > >
-> > > > This was brought up, but I didn't want to do it as part of the stab=
-le fix as
-> > > > that would change even situations that Rik's change didn't.
-> > > > If the mmap hint change is another stable hotfix, I wouldn't confla=
-te it
-> > > > either. But we can try it for further development. But careful abou=
-t just
-> > > > moving the code as-is, the file-based mappings are different than a=
-nonymous
-> > > > memory and I believe file offsets matter:
-> > > >
-> > > > https://lore.kernel.org/all/9d7c73f6-1e1a-458b-93c6-3b44959022e0@su=
-se.cz/
-> > > >
-> > > > https://lore.kernel.org/all/5f7a49e8-0416-4648-a704-a7a67e8cd894@su=
-se.cz/
-> > >
-> >
-> > I see, so I think we should keep the check here to address the
-> > immediate regression for anonymous mappings.
-> >
-> > I believe what we would need to address this longer term is to have
-> > vma_iter_lowest() [1] vma_iter_highest() [2] take into account the
-> > alignment when doing the search. That way we don't need to inflate the
-> > search size to facilitate the manual alignment after the fact. I
-> > haven't looked too too deeply into this, maybe Liam has some ideas
-> > about that?
-> >
-> > [1] https://github.com/torvalds/linux/blob/v6.12-rc7/mm/vma.h#L420
-> >
-> > [2] https://github.com/torvalds/linux/blob/v6.12-rc7/mm/vma.h#L426
-> >
-> > > Did some research about the history of the code, I found this commit:
-> > >
-> > > 97d3d0f9a1cf ("mm/huge_memory.c: thp: fix conflict of above-47bit hin=
-t
-> > > address and PMD alignment"), it tried to fix "the function would not
-> > > try to allocate PMD-aligned area if *any* hint address specified."
-> > > It was for file mapping back then since anonymous mapping THP
-> > > alignment was not supported yet.
-> > >
-> > > But it seems like this patch somehow tried to do something reverse. I=
-t
-> > > may not be correct either.
-> > >
-> >
-> > IIUC Kirill's patch is doing the right thing (mostly), i.e. it will
-> > return the hint address (without any rounding to PMD alignment). The
-> > case it doesn't handle is what I mentioned above, where we aren't able
-> > to find the hole at the hint address in the first place because the
-> > hole is smaller than (size + padding len)
->
-> Yes. But my point is your fix (just simply skip PMD alignment when
-> hint is specified) actually broke what Kirill fixed IIUC.
+Hi Babu,
 
-Hi Yang,
+On 11/18/24 11:04 AM, Moger, Babu wrote:
+> Hi Reinette,
+> 
+> On 11/15/24 18:00, Reinette Chatre wrote:
+>> Hi Babu,
+>>
+>> On 10/29/24 4:21 PM, Babu Moger wrote:
+>>> Introduce the interface file "mbm_assign_mode" to list monitor modes
+>>> supported.
+>>>
+>>> The "mbm_cntr_assign" mode provides the option to assign a counter to
+>>> an RMID, event pair and monitor the bandwidth as long as it is assigned.
+>>>
+>>> On AMD systems "mbm_cntr_assign" is backed by the ABMC (Assignable
+>>> Bandwidth Monitoring Counters) hardware feature and is enabled by default.
+>>>
+>>> The "default" mode is the existing monitoring mode that works without the
+>>> explicit counter assignment, instead relying on dynamic counter assignment
+>>> by hardware that may result in hardware not dedicating a counter resulting
+>>> in monitoring data reads returning "Unavailable".
+>>>
+>>> Provide an interface to display the monitor mode on the system.
+>>> $ cat /sys/fs/resctrl/info/L3_MON/mbm_assign_mode
+>>> [mbm_cntr_assign]
+>>> default
+>>>
+>>> Signed-off-by: Babu Moger <babu.moger@amd.com>
+>>> ---
 
-It's true the PMD alignment is skipped in that case for the anon
-mappings. Though I believe that's still what we want to have here
-initially as we shouldn't regress the hint behaviour.
+...
 
-I've posted the v2 here:
-https://lore.kernel.org/lkml/20241118214650.3667577-1-kaleshsingh@google.co=
-m/
+>> I'm concerned that users with Intel platforms may want to use the "mbm_cntr_assign" mode
+>> to make the event data "more predictable" and then be concerned when the mode does
+>> not exist.
+>>
+>> As an alternative, is it possible to know the number of hardware counters on AMD systems
+>> without ABMC? I wonder if we could perhaps always expose num_mbm_cntrs as a way for
+>> users to know if their platform may be impacted by this type of "unpredictability" (by comparing 
+>> num_mbm_cntrs to num_rmids).
+> 
+> There is some round about(or hacky) way to find that out number of RMIDs
+> that can be active.
 
->
-> >
-> > > With Vlastimis's fix, we just try to make the address THP aligned for
-> > > anonymous mapping when the size is PMD aligned. So we don't need to
-> > > take into account the padding for anonymous mapping anymore.
-> > >
-> >
-> > We still need to have padding length because PMD alignment of the size
-> > doesn't mean that the start address returned by the search will be PMD
-> > aligned. Inherently those are only PAGE aligned.
->
-> Yes, you are right, I overlooked this. I think we can do this in two
-> passes. Use len w/o padding in the first pass. If the returned address
-> equals the hint or it is already PMD aligned, just return it.
-> Otherwise it means there is no hole with suitable size and alignment.
-> In the second pass, we redo it with padding. Just off the top of my
-> head, others may have better ideas.
->
+Does this give consistent and accurate data? Is this something that can be added to resctrl?
+(Reading your other message [1] it does not sound as though it can produce an accurate
+number on boot.)
+If not then it will be up to the documentation to be accurate.
 
-You are right, it's one way we can do it. Though, I am concerned that
-the 2 passes will add overhead on mmap() performance. One idea I have
-is to move the alignment handling lower down to
-vma_iter_highest()/lowest(). Interested to hear your thoughts on that.
-We can do this in a follow up patch, which should fix file mappings as
-well.
 
-Thanks,
-Kalesh
+>>> +
+>>> +	AMD Platforms with ABMC (Assignable Bandwidth Monitoring Counters) feature
+>>> +	enable this mode by default so that counters remain assigned even when the
+>>> +	corresponding RMID is not in use by any processor.
+>>> +
+>>> +	"default":
+>>> +
+>>> +	In default mode resctrl assumes there is a hardware counter for each
+>>> +	event within every CTRL_MON and MON group. Reading mbm_total_bytes or
+>>> +	mbm_local_bytes may report 'Unavailable' if there is no counter associated
+>>> +	with that event.
+>>
+>> If I understand correctly, on AMD platforms without ABMC the events only report
+>> "Unavailable" if there is no counter assigned at the time of the query. If a counter
+>> is unassigned and then reassigned then the event count will reset and the user
+>> will get some data back but it may thus be unpredictable (to match earlier language).
+>> Is this correct? Any AMD platform in "default" mode may thus be vulnerable to
+>> "unpredictable" event counts (not just "Unavailable") ... this gets complicated
+> 
+> Yes. All the AMD systems without ABMC are affected by this problem.
+> 
+>> because users should be steered to avoid "default" mode if mbm_assign_mode is
+>> available, while not be made concerned to use "default" mode on Intel where
+>> mbm_assign_mode is not available.
+> 
+> Can we add text to clarify this?
 
-> >
-> > Thanks,
-> > Kalesh
-> >
-> > > So IIUC we should do something like:
-> > >
-> > > @@ -1085,7 +1085,11 @@ static unsigned long
-> > > __thp_get_unmapped_area(struct file *filp,
-> > >         if (off_end <=3D off_align || (off_end - off_align) < size)
-> > >                 return 0;
-> > >
-> > > -       len_pad =3D len + size;
-> > > +       if (filp)
-> > > +               len_pad =3D len + size;
-> > > +       else
-> > > +               len_pad =3D len;
-> > > +
-> > >         if (len_pad < len || (off + len_pad) < off)
-> > >                 return 0;
-> > >
-> > > >
-> > > > >> Cc: Andrew Morton <akpm@linux-foundation.org>
-> > > > >> Cc: Vlastimil Babka <vbabka@suse.cz>
-> > > > >> Cc: Yang Shi <yang@os.amperecomputing.com>
-> > > > >> Cc: Rik van Riel <riel@surriel.com>
-> > > > >> Cc: Ryan Roberts <ryan.roberts@arm.com>
-> > > > >> Cc: Suren Baghdasaryan <surenb@google.com>
-> > > > >> Cc: Minchan Kim <minchan@kernel.org>
-> > > > >> Cc: Hans Boehm <hboehm@google.com>
-> > > > >> Cc: Lokesh Gidra <lokeshgidra@google.com>
-> > > > >> Cc: <stable@vger.kernel.org>
-> > > > >> Fixes: efa7df3e3bb5 ("mm: align larger anonymous mappings on THP=
- boundaries")
-> > > > >> Signed-off-by: Kalesh Singh <kaleshsingh@google.com>
-> > > >
-> > > > Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
-> > > >
-> > > > >> ---
-> > > > >>  mm/mmap.c | 1 +
-> > > > >>  1 file changed, 1 insertion(+)
-> > > > >>
-> > > > >> diff --git a/mm/mmap.c b/mm/mmap.c
-> > > > >> index 79d541f1502b..2f01f1a8e304 100644
-> > > > >> --- a/mm/mmap.c
-> > > > >> +++ b/mm/mmap.c
-> > > > >> @@ -901,6 +901,7 @@ __get_unmapped_area(struct file *file, unsig=
-ned long addr, unsigned long len,
-> > > > >>         if (get_area) {
-> > > > >>                 addr =3D get_area(file, addr, len, pgoff, flags)=
-;
-> > > > >>         } else if (IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE)
-> > > > >> +                  && !addr /* no hint */
-> > > > >>                    && IS_ALIGNED(len, PMD_SIZE)) {
-> > > > >>                 /* Ensures that larger anonymous mappings are TH=
-P aligned. */
-> > > > >>                 addr =3D thp_get_unmapped_area_vmflags(file, add=
-r, len,
-> > > > >>
-> > > > >> base-commit: 2d5404caa8c7bb5c4e0435f94b28834ae5456623
-> > > > >> --
-> > > > >> 2.47.0.338.g60cca15819-goog
-> > > > >>
-> > > >
+Please do.
+
+Reinette
+
+[1] https://lore.kernel.org/all/35fc70fd-0281-4ac8-b32b-efa2f4516901@amd.com/
 
