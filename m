@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-412506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B1429D09DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 07:52:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D3C99D09DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 07:54:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 511D0282515
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 06:52:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52C652824E1
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 06:54:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A48114A4F0;
-	Mon, 18 Nov 2024 06:52:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CCAA14A09F;
+	Mon, 18 Nov 2024 06:54:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="REq9SpKa"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="JB1zCxRJ"
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D7D4146A87;
-	Mon, 18 Nov 2024 06:52:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 133D2146A87
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 06:54:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731912764; cv=none; b=I+pFcBjSaSwax8Rf6QzctnWSelTIWu2BdRWo43K2d8fuHGKyO45kKWxh9UHo35KC1JpmMcovvWeSdMQc5EPQyGyWM3oNVRdpXynh1u3K4uMGyHQmxJ7A7YJA3b+28V6hQE+1VZy7l9hqPwL/tlGkzxvRLIe+ryEftpmElwz6yAo=
+	t=1731912855; cv=none; b=B00hbuRx1/aOK3gpaZR7POcbHamFvWzopdh7uu0KId1pmgdtHzqijA4x/F/kDEaEW24g0QPUpvnjSeAyCc/GDGYDEaUGle8pVqQVZw4rkVcyjnFF/yy4OFNxHDRhQOH2HU3+roNSk0RMdMnPGYfoSAbNx3Cbr6Pc4YSuN3YZvc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731912764; c=relaxed/simple;
-	bh=Wzof8Ms9Bx1I7gMnTWBqwPj9iq0cMnT9zRVArVqYBMI=;
+	s=arc-20240116; t=1731912855; c=relaxed/simple;
+	bh=Z2davH3euLXzw7+JmOS0iNFu1RheIVz/v10S5oNSC4Y=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GzwH22vFbRpWo/gOoCJ0zNps+ecTspXxMXjL9JQoSQCmgFyAn+D3dvM5dhvntR8r6LKS1JSFTho/VOLp9/8dm3K2TCNCmt62/GD7GAbYY9c8MlHHlKjqdZxZcX/h1hgwPV86GL9eY59/6WSlAfn6ohbjtI+ie2ss1cW0sfoKBuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=REq9SpKa; arc=none smtp.client-ip=148.251.105.195
+	 In-Reply-To:Content-Type; b=O2zoneRoOmcgdCDD9S8LMekVpMDLxSx/1YAjEwhrpjKVH1/P8yRDJwU+SP+c8XjBjEMvU6qUzoxeaDYrj4CHd+rvjk05BUE3hxZnvejOVrE7Z0cek3t5DXBqI+UBGsReILH0EVA38P6Kb4BRdV+RmifWNibc0b2ys7fpulq1gmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=JB1zCxRJ; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1731912759;
-	bh=Wzof8Ms9Bx1I7gMnTWBqwPj9iq0cMnT9zRVArVqYBMI=;
+	s=mail; t=1731912852;
+	bh=Z2davH3euLXzw7+JmOS0iNFu1RheIVz/v10S5oNSC4Y=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=REq9SpKa55aKFUCf7qaWWO4c7scByRAFfFKwKtlJNh+w6CdWHSW3YHxLfsujwPfCV
-	 u/rw5xWvZA3YdXA1vCIv9VbUmsy9l9kMqYTbsEWdGyt96ZJ8Xn19MH7iXNq9omjra1
-	 JGGmoGLbyXriE+y+44nAx+Z4Vpg+Z6gYSRGNJkxQIsLlhcBD1q+jCwvsrypFIgCo2l
-	 EuEjAvkZxVwtNWmsghTzUe9tIoyZlWlwARlOsMBVFAjSE863P6CUrANHnq0FTymP6j
-	 JeiFTkEG1xjgsxtzAPDz2wSy/d+SHmtM23uGGdmmmJ56lPt2d5KMg3mRzuNt20l3SE
-	 IJL7ugd3ZTBjw==
+	b=JB1zCxRJ1gz78ADZYPJCeXUPq2IUttOwtcq8qjfQb5rGvUyPrtrq9zUFt6DDS+RRr
+	 reKB0vfBrersIUELTShL1XDxmj08OzGzQc4hctFlBYvlShoo13vy0H7u1axYVdRINo
+	 h99kkC36MLN2ARcdb+kRgLmvHPlioMhRtRdB7cRIhQibvtBmGX3PQJdnclABpHP2h6
+	 KS8MVRVFguZJQY2WZrLMluCmWAiuG5lSdFJmS+e5J0dlE0MxQ/ULqcMZPfeMuVuZW4
+	 awlmPNGnq3aS8mpfl90fjMCV+w/x2mFfXB/zGGqSIhbLL0hhpLj8qOcfQ49WF/eUYZ
+	 L/Zvr7WDM0frw==
 Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
 	(No client certificate requested)
 	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 2CAC717E1232;
-	Mon, 18 Nov 2024 07:52:39 +0100 (CET)
-Message-ID: <ddf945c3-8bb8-4f20-b53b-5cbf6579a1da@collabora.com>
-Date: Mon, 18 Nov 2024 07:52:38 +0100
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id EE3E217E1245;
+	Mon, 18 Nov 2024 07:54:11 +0100 (CET)
+Message-ID: <f6fe51d5-eb16-45ae-b85d-c89ad874b65d@collabora.com>
+Date: Mon, 18 Nov 2024 07:54:11 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,47 +56,31 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] pinctrl: airoha: Use unsigned long for bit search
-To: Kees Cook <kees@kernel.org>, Lorenzo Bianconi <lorenzo@kernel.org>
-Cc: Sean Wang <sean.wang@kernel.org>, Linus Walleij
- <linus.walleij@linaro.org>, linux-mediatek@lists.infradead.org,
- linux-gpio@vger.kernel.org, Matthias Brugger <matthias.bgg@gmail.com>,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-hardening@vger.kernel.org
-References: <20241117114534.work.292-kees@kernel.org>
+Subject: Re: [PATCH] drm/mediatek: Add support for 180-degree rotation in the
+ display driver
+To: "Jason-JH.Lin" <jason-jh.lin@mediatek.com>,
+ Chun-Kuang Hu <chunkuang.hu@kernel.org>
+Cc: Shawn Sung <shawn.sung@mediatek.com>, dri-devel@lists.freedesktop.org,
+ linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, Singo Chang
+ <singo.chang@mediatek.com>, Nancy Lin <nancy.lin@mediatek.com>,
+ Project_Global_Chrome_Upstream_Group@mediatek.com,
+ Fei Shao <fshao@chromium.org>
+References: <20241118025126.30808-1-jason-jh.lin@mediatek.com>
 From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Content-Language: en-US
-In-Reply-To: <20241117114534.work.292-kees@kernel.org>
+In-Reply-To: <20241118025126.30808-1-jason-jh.lin@mediatek.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Il 17/11/24 12:45, Kees Cook ha scritto:
-> Instead of risking alignment problems and causing (false positive) array
-> bound warnings when casting a u32 to (64-bit) unsigned long, just use a
-> native unsigned long for doing bit searches. Avoids warning with GCC 15's
-> -Warray-bounds -fdiagnostics-details:
+Il 18/11/24 03:51, Jason-JH.Lin ha scritto:
+> mediatek-drm driver reported the capability of 180-degree rotation by
+> adding `DRM_MODE_ROTATE_180` to the plane property, as flip-x combined
+> with flip-y equals a 180-degree rotation. However, we did not handle
+> the rotation property in the driver and lead to rotation issues.
 > 
-> In file included from ../include/linux/bitmap.h:11,
->                   from ../include/linux/cpumask.h:12,
->                   from ../arch/x86/include/asm/paravirt.h:21,
->                   from ../arch/x86/include/asm/irqflags.h:80,
->                   from ../include/linux/irqflags.h:18,
->                   from ../include/linux/spinlock.h:59,
->                   from ../include/linux/irq.h:14,
->                   from ../include/linux/irqchip/chained_irq.h:10,
->                   from ../include/linux/gpio/driver.h:8,
->                   from ../drivers/pinctrl/mediatek/pinctrl-airoha.c:11:
-> In function 'find_next_bit',
->      inlined from 'airoha_irq_handler' at ../drivers/pinctrl/mediatek/pinctrl-airoha.c:2394:3:
-> ../include/linux/find.h:65:23: error: array subscript 'long unsigned int[0]' is partly outside array bounds of 'u32[1]' {aka 'unsigned int[1]'} [-Werror=array-bounds=]
->     65 |                 val = *addr & GENMASK(size - 1, offset);
->        |                       ^~~~~
-> ../drivers/pinctrl/mediatek/pinctrl-airoha.c: In function 'airoha_irq_handler':
-> ../drivers/pinctrl/mediatek/pinctrl-airoha.c:2387:21: note: object 'status' of size 4
->   2387 |                 u32 status;
->        |                     ^~~~~~
-> 
-> Signed-off-by: Kees Cook <kees@kernel.org>
+> Fixes: 74608d8feefd ("drm/mediatek: Add DRM_MODE_ROTATE_0 to rotation property")
+> Signed-off-by: Jason-JH.Lin <jason-jh.lin@mediatek.com>
 
 Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
