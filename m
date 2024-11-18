@@ -1,167 +1,352 @@
-Return-Path: <linux-kernel+bounces-412943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48C7C9D1191
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 14:14:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EFB469D1193
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 14:14:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D75F1282380
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 13:14:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B08D4281E7B
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 13:14:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DBD519D890;
-	Mon, 18 Nov 2024 13:13:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45A9A19ABCB;
+	Mon, 18 Nov 2024 13:14:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xiBGgtxs"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z1RWmucf"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B2F719ABCB
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 13:13:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5936219DF75;
+	Mon, 18 Nov 2024 13:14:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731935588; cv=none; b=B2NAUGCUoz1M64SAyoujfZczm3qIQTXQcheSa1GqsAVYe8DqFsDq2Drab/0im6zRp8jgJlRWgoHqXk9rIxHHjeV5fVH1+OoJ7JNmLS+C8hU3N7deoRNK1Bh3H2fJhED7lisv5Ax2WYUGXNuPsfGKDp1XCE/TU3yL1bLZ8gm2FVE=
+	t=1731935646; cv=none; b=eMfPWF071Vu7b+UJUXiirBeNMbkVyWdijK3VPJWrvFpQ0rgCgntJ+n9SYSAsMO+4sFwZUNP4NjpywF+fyhSCG+4HnSCnMYcVBeRWoJIOeQVEbU2ZgT4WbCEokwC+7bzmfn/5T2ywWwrntJeDTf6+DTykEkdSPaNZLz893EaMzo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731935588; c=relaxed/simple;
-	bh=/gzVhyDLUGrlIGlmX0rVo4eduJypNngYJXly2qfBgSk=;
+	s=arc-20240116; t=1731935646; c=relaxed/simple;
+	bh=fhhmaJHU04moJHFYYU1sSibfF6v5D2x9wWOFvR4GGy4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=L0okQzdYK6Wz6pwU/Jm/ajwu250HaX8OlTTcO3KrmoiG8pg+i3mrvyXrDhWh7n6QhEVKk3JE8T/PY0pKdRywb7vtah+2qIq8ktSCN3f94ePhbFCVf9IoEsTUuTiGRxLNjGw3QQJlvfxSVrHSqcoYdPptEWPilXH2LrzEEdyaxAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xiBGgtxs; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7ea7e2ff5ceso3089053a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 05:13:07 -0800 (PST)
+	 To:Cc:Content-Type; b=EM4VYuwv4AVIeaiagpYYm9/WFhQg6uPnlIa/mleIn+XTVUlMBtQSZmH8D7nHomNQFqgUgZBBi/VrmxZHq/nZBijFmnvwwnzBswHs5WcliBIOW6awYYNAkfWPpaRxe9De93HxQ1U2JgAcLRBwvDyTU8km7iw0WJGkwW84oP1weDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z1RWmucf; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2fb6110c8faso35751781fa.1;
+        Mon, 18 Nov 2024 05:14:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731935587; x=1732540387; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
+        d=gmail.com; s=20230601; t=1731935642; x=1732540442; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=DjD22ed1DQ/Cky3/dMr2TNInWLiX8LJlYP9yWVMv3AQ=;
-        b=xiBGgtxsbH/1xwinwDCVjN8SCwMS5uXu2hrfD3l05E3Pz25foduas6Cgg4/uMzzBsZ
-         W3NrEmBKR2F2alsMBsNceQ5GUsgqYJPiTcygKCnDl1mngiCLpItrDe4uBEzn/H5AtMQ8
-         QQk1eVJWkOnxMgXVs8MZq26gzrBLEBMF8eav2ZF/Q3hsmWH0xMNiIbM9SbaUAr4q0WZK
-         OMWXNf7dcyWAfTmUBhDmChZafFx4veV4PWgrNZuMU8hD2lUinmPjx4exsVnF4dTGlQjC
-         ElUFHkJ3sJmxa3EIz2nVDiMK5xyt4Uc62KG78NvZI0RQsw69fZST8dpJTQ7A/zX3d1Fx
-         +D5A==
+        bh=h8vUOATTSQCg4EagntX8WxKpBYFrnGu2LTsiskBXNkU=;
+        b=Z1RWmucfU8KCDpqbzieB0gso+yJqGF5DLJSZUNoFcS4mc701ce80WufHGBuCLXLYZw
+         sWmzApDz63VnFY2D1O6IUgkcTFehG7jCY0Ssf3e2KW1AxcXZma1AhBcq525szX52hDOG
+         vB20IGsToRPsQ78Dj7hwAlFno4xCubW+t+Ao8yQaBvXEjtFFhXQBqOQHFlsK9wCzgmGb
+         QGbD4r6E1m/AUKUnzGbi/kBoRclqnQt3uErzDr8YKvunG1tHnFF5gl+1isBh0n4gWV8n
+         aIoQmiXHmNhlHtJDKkmej6wLyCqq4weYbn6BGF7EtTKt5kgtEnWYxbsVGLutelu9gHM7
+         IwOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731935587; x=1732540387;
-        h=content-transfer-encoding:to:subject:message-id:date:from
+        d=1e100.net; s=20230601; t=1731935642; x=1732540442;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=DjD22ed1DQ/Cky3/dMr2TNInWLiX8LJlYP9yWVMv3AQ=;
-        b=vsNZkAUApqRg7UvF5IehfX2i0rRcaNNeARrjG7CO36YURd5xeoz3zd98VQ2hfjXgU+
-         ygeUh9Xsz+MEepL2YELuFwQf6WVANXJG4FOqsfr24D8QA74EdQHZUeWj6d3K1QF8KVCm
-         wj6yn9qv4DI6OPBiZmo5gmNHql7S3cLrbaljrdLmvdLygdii6CgzqzrC+prrNRm3jyZC
-         t0gJL5+4HTAR81vV6qi6umIRE/UcORdjzk4G1Rw4v0nRhqyQSXC++P9XNtGIHsTo2NT7
-         ZOklnrhRMArd9hq4dvEhnT39YuxYpRkNv1oSSS6gmFiySslEwWileTxmJBClaBNJWO+r
-         Gecg==
-X-Forwarded-Encrypted: i=1; AJvYcCVqxl/xLl07BWQaGUoIthP6ydVTKoCATqYjwKsJpDLRHiGofkml/GLXBXulMJaUt0XOdYLMFKJlv6ZXlkk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YybD2tMGsfFgWGccA+g14MJDdSYF+iFZvpUx/8lf7i/oZW5WSVr
-	HQZT89ttvpVXdA44h8W6JMSW1bByi27bZ4n5nMHqznEMOAOl0iiFG3052AvQ96bqafk+GAUz8DA
-	nZEuMxcHGQl+XSCE2UqPnXNktCqPiemJ5i+oV
-X-Google-Smtp-Source: AGHT+IHfjoq1ktjUPs+hcA+Bukrt/keBfIi4zzuowcoaoVnZ39XvkrU9DCu5qOXzN8o6rrz4Sy1xQPbgU3kVsT8F39k=
-X-Received: by 2002:a17:90b:2403:b0:2ea:3f34:f190 with SMTP id
- 98e67ed59e1d1-2ea3f34f37fmr9172616a91.25.1731935586513; Mon, 18 Nov 2024
- 05:13:06 -0800 (PST)
+        bh=h8vUOATTSQCg4EagntX8WxKpBYFrnGu2LTsiskBXNkU=;
+        b=q9X53C2nWCitEPM3xKO4WssVA0rYY3EX6trvoSm9xFp80/keLVRz3M+R4nEexoLv0J
+         BF5DiAkId/ZqwzKqSK+k5Mg65jnkIuwYD33gyxwFWui9UaU/lkaVnTjATq+0nc2G/dfE
+         /qaOKIZl0wuE5jjFy2pxn9Ww3A4Npe4SPOefDOJCoHsvdshTyYezMesZI2oCTTNv0KZK
+         wh5WRcL8MOi6NgMDggVyv0B1RVcmMqXA7Cl8UC5E9fg67LzmQ3leodujiQUeTLaJ54BJ
+         3fdOL5xVpQmtAij+NA5SMN/8uOXLph8HX/DzuhrLyTgzlOZXtA136f0emdLn1UXET3R4
+         6phA==
+X-Forwarded-Encrypted: i=1; AJvYcCU43o4LFGF5KHHglnaJGOXw6URCzPP8h7usFfuP3kug6Ef3Hhh94XJHlrKctL1C49riMeouaB68JQ+gtSI=@vger.kernel.org, AJvYcCXrvSdwMIMff3b2Q4mUw68IftzjENDHoXZitKU5PplXOyEW9eDkVrUoGqMaVu3gCXFMkUQ1@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2lpePxCwoO0UOgqEVGmIpWhs69wwX2vB3h8Sg24B42JHwyJi1
+	2/JfItd/fNpShytXMV5e7/sYDT3QSU4vaxif90uD1pZpiR2Ku2K3TRtej+fuU+4rI1ceMmmxJjP
+	K5bndJD622lD+C5WqXpnuZbrvTBc=
+X-Google-Smtp-Source: AGHT+IGRXbCOadoDXFTX1FRfSdaATe1H9mmUBJ3su9Mywu8Hgpb/IM2wLQgbCq5tcHKFeKVYqh8N2rwn7WnmYmGg1mI=
+X-Received: by 2002:a2e:a9a4:0:b0:2fb:5014:c941 with SMTP id
+ 38308e7fff4ca-2ff60917f01mr56388391fa.14.1731935642054; Mon, 18 Nov 2024
+ 05:14:02 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <6739c892.050a0220.e1c64.0013.GAE@google.com> <ko2rebsgpuw3akuwnsghjsjokhh2m6jshbr2ahsipkyk3txylr@3xpad7pj23in>
-In-Reply-To: <ko2rebsgpuw3akuwnsghjsjokhh2m6jshbr2ahsipkyk3txylr@3xpad7pj23in>
-From: Aleksandr Nogikh <nogikh@google.com>
-Date: Mon, 18 Nov 2024 14:12:54 +0100
-Message-ID: <CANp29Y4YHHXQJ3qyd_bnDT_xz8Hkwpsckj_YM8v0XswyeBuObg@mail.gmail.com>
-Subject: Re: [syzbot] [mm?] general protection fault in mas_store_prealloc
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	syzbot <syzbot+bc6bfc25a68b7a020ee1@syzkaller.appspotmail.com>, 
-	akpm@linux-foundation.org, jannh@google.com, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, lorenzo.stoakes@oracle.com, 
-	syzkaller-bugs@googlegroups.com, vbabka@suse.cz
+References: <20241112-slub-percpu-caches-v1-0-ddc0bdc27e05@suse.cz> <20241112-slub-percpu-caches-v1-6-ddc0bdc27e05@suse.cz>
+In-Reply-To: <20241112-slub-percpu-caches-v1-6-ddc0bdc27e05@suse.cz>
+From: Hyeonggon Yoo <42.hyeyoo@gmail.com>
+Date: Mon, 18 Nov 2024 22:13:49 +0900
+Message-ID: <CAB=+i9QoavVWZ6HxiOb8ypqov0rM+HAK4ge7nKHdQRPUaNPmkw@mail.gmail.com>
+Subject: Re: [PATCH RFC 6/6] mm, slub: sheaf prefilling for guaranteed allocations
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Suren Baghdasaryan <surenb@google.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Christoph Lameter <cl@linux.com>, David Rientjes <rientjes@google.com>, Pekka Enberg <penberg@kernel.org>, 
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Matthew Wilcox <willy@infradead.org>, Boqun Feng <boqun.feng@gmail.com>, 
+	Uladzislau Rezki <urezki@gmail.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	rcu@vger.kernel.org, maple-tree@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Liam,
-
-On Mon, Nov 18, 2024 at 3:49=E2=80=AFAM 'Liam R. Howlett' via syzkaller-bug=
-s
-<syzkaller-bugs@googlegroups.com> wrote:
+On Wed, Nov 13, 2024 at 1:39=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz> wr=
+ote:
 >
-> * syzbot <syzbot+bc6bfc25a68b7a020ee1@syzkaller.appspotmail.com> [241117 =
-05:42]:
-> > Hello,
-> >
-> > syzbot found the following issue on:
-> >
-> > HEAD commit:    8e9a54d7181b Merge remote-tracking branch 'iommu/arm/sm=
-mu'..
-> > git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/lin=
-ux.git for-kernelci
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=3D17b0ace8580=
-000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3Da1eb85a42cb=
-8ccec
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=3Dbc6bfc25a68b7=
-a020ee1
-> > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for D=
-ebian) 2.40
-> > userspace arch: arm64
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D147521a79=
-80000
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D102e14c0580=
-000
-> >
-> > Downloadable assets:
-> > disk image: https://storage.googleapis.com/syzbot-assets/ad658fb4d0a2/d=
-isk-8e9a54d7.raw.xz
-> > vmlinux: https://storage.googleapis.com/syzbot-assets/1b7754fa8c67/vmli=
-nux-8e9a54d7.xz
-> > kernel image: https://storage.googleapis.com/syzbot-assets/50315382fefb=
-/Image-8e9a54d7.gz.xz
-> >
-> > IMPORTANT: if you fix the issue, please add the following tag to the co=
-mmit:
-> > Reported-by: syzbot+bc6bfc25a68b7a020ee1@syzkaller.appspotmail.com
+> Add three functions for efficient guaranteed allocations in a critical
+> section (that cannot sleep) when the exact number of allocations is not
+> known beforehand, but an upper limit can be calculated.
 >
-> I was unable to get this reproducer to work on my own image, even using
-> the config and compiler specified in the report.  The injection was not
-> happening at the same location as the crash reports.
+> kmem_cache_prefill_sheaf() returns a sheaf containing at least given
+> number of objects.
 >
-> After using the provided disk (which was tricky), I was able to get it
-> to work.
-
-Just in case: did you follow the official syzbot instructions on
-reproducing the bugs from the attached assets? [1] If yes, what extra
-information could have made the process simpler for you?
-
-[1] https://github.com/google/syzkaller/blob/master/docs/syzbot_assets.md
-
-> Booting was painfully slow, and makes me wonder if there is a
-> better way for reproducing issues in the future.
-
-I guess that unless you run it on an arm64 device with a nested
-virtualization support, this bug's reproduction will be slow anyway :(
-
-If you recompile the kernel image without CONFIG_KASAN and
-CONFIG_KCOV, that should speed it up to some degree.
-
+> kmem_cache_alloc_from_sheaf() will allocate an object from the sheaf
+> and is guaranteed not to fail until depleted.
 >
-> I've been debating just abusing the bot to debug, but it will spam the
-> entire list, but I have it reproducing now.
-
-Syzbot only makes sure that linux-kernel@vger.kernel.org and
-syzkaller-bugs@googlegroups.com are included, both are not really
-assumed to be closely followed by human beings. So I think it should
-be totally fine to debug with syzbot if you just Cc those two lists.
-
---=20
-Aleksandr
-
+> kmem_cache_return_sheaf() is for giving the sheaf back to the slab
+> allocator after the critical section. This will also attempt to refill
+> it to cache's sheaf capacity for better efficiency of sheaves handling,
+> but it's not stricly necessary to succeed.
 >
-> Thanks,
-> Liam
+> TODO: the current implementation is limited to cache's sheaf_capacity
+>
+> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+> ---
+>  include/linux/slab.h |  11 ++++
+>  mm/slub.c            | 149 +++++++++++++++++++++++++++++++++++++++++++++=
+++++++
+>  2 files changed, 160 insertions(+)
+>
+> diff --git a/include/linux/slab.h b/include/linux/slab.h
+> index 23904321992ad2eeb9389d0883cf4d5d5d71d896..a87dc3c6392fe235de2eabe17=
+92df86d40c3bbf9 100644
+> --- a/include/linux/slab.h
+> +++ b/include/linux/slab.h
+> @@ -820,6 +820,17 @@ void *kmem_cache_alloc_node_noprof(struct kmem_cache=
+ *s, gfp_t flags,
+>                                    int node) __assume_slab_alignment __ma=
+lloc;
+>  #define kmem_cache_alloc_node(...)     alloc_hooks(kmem_cache_alloc_node=
+_noprof(__VA_ARGS__))
+>
+> +struct slab_sheaf *
+> +kmem_cache_prefill_sheaf(struct kmem_cache *s, gfp_t gfp, unsigned int c=
+ount);
+> +
+> +void kmem_cache_return_sheaf(struct kmem_cache *s, gfp_t gfp,
+> +                                      struct slab_sheaf *sheaf);
+> +
+> +void *kmem_cache_alloc_from_sheaf_noprof(struct kmem_cache *cachep, gfp_=
+t gfp,
+> +                       struct slab_sheaf *sheaf) __assume_slab_alignment=
+ __malloc;
+> +#define kmem_cache_alloc_from_sheaf(...)       \
+> +                       alloc_hooks(kmem_cache_alloc_from_sheaf_noprof(__=
+VA_ARGS__))
+> +
+>  /*
+>   * These macros allow declaring a kmem_buckets * parameter alongside siz=
+e, which
+>   * can be compiled out with CONFIG_SLAB_BUCKETS=3Dn so that a large numb=
+er of call
+> diff --git a/mm/slub.c b/mm/slub.c
+> index 1900afa6153ca6d88f9df7db3ce84d98629489e7..a0e2cb7dfb5173f39f36bea1e=
+b9760c3c1b99dd7 100644
+> --- a/mm/slub.c
+> +++ b/mm/slub.c
+> @@ -444,6 +444,7 @@ struct slab_sheaf {
+>         union {
+>                 struct rcu_head rcu_head;
+>                 struct list_head barn_list;
+> +               bool oversize;
+>         };
+>         struct kmem_cache *cache;
+>         unsigned int size;
+> @@ -2819,6 +2820,30 @@ static int barn_put_full_sheaf(struct node_barn *b=
+arn, struct slab_sheaf *sheaf,
+>         return ret;
+>  }
+>
+> +static struct slab_sheaf *barn_get_full_or_empty_sheaf(struct node_barn =
+*barn)
+> +{
+> +       struct slab_sheaf *sheaf =3D NULL;
+> +       unsigned long flags;
+> +
+> +       spin_lock_irqsave(&barn->lock, flags);
+> +
+> +       if (barn->nr_empty) {
+> +               sheaf =3D list_first_entry(&barn->sheaves_empty,
+> +                                        struct slab_sheaf, barn_list);
+> +               list_del(&sheaf->barn_list);
+> +               barn->nr_empty--;
+> +       } else if (barn->nr_full) {
+> +               sheaf =3D list_first_entry(&barn->sheaves_full, struct sl=
+ab_sheaf,
+> +                                       barn_list);
+> +               list_del(&sheaf->barn_list);
+> +               barn->nr_full--;
+> +       }
+> +
+> +       spin_unlock_irqrestore(&barn->lock, flags);
+> +
+> +       return sheaf;
+> +}
+> +
+>  /*
+>   * If a full sheaf is available, return it and put the supplied empty on=
+e to
+>   * barn. We ignore the limit on empty sheaves as the number of sheaves d=
+oesn't
+> @@ -4893,6 +4918,130 @@ void *kmem_cache_alloc_node_noprof(struct kmem_ca=
+che *s, gfp_t gfpflags, int nod
+>  }
+>  EXPORT_SYMBOL(kmem_cache_alloc_node_noprof);
+>
+> +
+> +/*
+> + * returns a sheaf that has least the given count of objects
+> + * when prefilling is needed, do so with given gfp flags
+> + *
+> + * return NULL if prefilling failed, or when the requested count is
+> + * above cache's sheaf_capacity (TODO: lift this limitation)
+> + */
+> +struct slab_sheaf *
+> +kmem_cache_prefill_sheaf(struct kmem_cache *s, gfp_t gfp, unsigned int c=
+ount)
+> +{
+> +       struct slub_percpu_sheaves *pcs;
+> +       struct slab_sheaf *sheaf =3D NULL;
+> +
+> +       //TODO: handle via oversize sheaf
+> +       if (count > s->sheaf_capacity)
+> +               return NULL;
+> +
+> +       pcs =3D cpu_sheaves_lock(s->cpu_sheaves);
+> +
+> +       if (pcs->spare && pcs->spare->size > 0) {
+> +               sheaf =3D pcs->spare;
+> +               pcs->spare =3D NULL;
+> +       }
+> +
+> +       if (!sheaf)
+> +               sheaf =3D barn_get_full_or_empty_sheaf(pcs->barn);
+> +
+> +       cpu_sheaves_unlock(s->cpu_sheaves);
+> +
+> +       if (!sheaf)
+> +               sheaf =3D alloc_empty_sheaf(s, gfp);
+> +
+> +       if (sheaf && sheaf->size < count) {
+> +               if (refill_sheaf(s, sheaf, gfp)) {
+> +                       sheaf_flush(s, sheaf);
+> +                       free_empty_sheaf(s, sheaf);
+> +                       sheaf =3D NULL;
+> +               }
+> +       }
+> +
+> +       return sheaf;
+> +}
+> +
+> +/*
+> + * Use this to return a sheaf obtained by kmem_cache_prefill_sheaf()
+> + * It tries to refill the sheaf back to the cache's sheaf_capacity
+> + * to avoid handling partially full sheaves.
+> + *
+> + * If the refill fails because gfp is e.g. GFP_NOWAIT, the sheaf is
+> + * instead dissolved
+> + */
+> +void kmem_cache_return_sheaf(struct kmem_cache *s, gfp_t gfp,
+> +                            struct slab_sheaf *sheaf)
+> +{
+> +       struct slub_percpu_sheaves *pcs;
+> +       bool refill =3D false;
+> +       struct node_barn *barn;
+> +
+> +       //TODO: handle oversize sheaf
+> +
+> +       pcs =3D cpu_sheaves_lock(s->cpu_sheaves);
+> +
+> +       if (!pcs->spare) {
+> +               pcs->spare =3D sheaf;
+> +               sheaf =3D NULL;
+> +       }
+> +
+> +       /* racy check */
+> +       if (!sheaf && pcs->barn->nr_full >=3D MAX_FULL_SHEAVES) {
+> +               barn =3D pcs->barn;
+> +               refill =3D true;
+> +       }
+> +
+> +       cpu_sheaves_unlock(s->cpu_sheaves);
+> +
+> +       if (!sheaf)
+> +               return;
+> +
+> +       /*
+> +        * if the barn is full of full sheaves or we fail to refill the s=
+heaf,
+> +        * simply flush and free it
+> +        */
+> +       if (!refill || refill_sheaf(s, sheaf, gfp)) {
+> +               sheaf_flush(s, sheaf);
+> +               free_empty_sheaf(s, sheaf);
+> +               return;
+> +       }
+> +
+> +       /* we racily determined the sheaf would fit, so now force it */
+> +       barn_put_full_sheaf(barn, sheaf, true);
+> +}
+> +
+> +/*
+> + * Allocate from a sheaf obtained by kmem_cache_prefill_sheaf()
+> + *
+> + * Guaranteed not to fail as many allocations as was the requested count=
+.
+> + * After the sheaf is emptied, it fails - no fallback to the slab cache =
+itself.
+> + *
+> + * The gfp parameter is meant only to specify __GFP_ZERO or __GFP_ACCOUN=
+T
+> + * memcg charging is forced over limit if necessary, to avoid failure.
+> + */
+> +void *
+> +kmem_cache_alloc_from_sheaf_noprof(struct kmem_cache *s, gfp_t gfp,
+> +                                  struct slab_sheaf *sheaf)
+> +{
+> +       void *ret =3D NULL;
+> +       bool init;
+> +
+> +       if (sheaf->size =3D=3D 0)
+> +               goto out;
+> +
+> +       ret =3D sheaf->objects[--sheaf->size];
+> +
+> +       init =3D slab_want_init_on_alloc(gfp, s);
+> +
+> +       /* add __GFP_NOFAIL to force successful memcg charging */
+> +       slab_post_alloc_hook(s, NULL, gfp | __GFP_NOFAIL, 1, &ret, init, =
+s->object_size);
+
+Maybe I'm missing something, but how can this be used for non-sleepable con=
+texts
+if __GFP_NOFAIL is used? I think we have to charge them when the sheaf
+is returned
+via kmem_cache_prefill_sheaf(), just like users of bulk alloc/free?
+
+Best,
+Hyeonggon
+
+> +out:
+> +       trace_kmem_cache_alloc(_RET_IP_, ret, s, gfp, NUMA_NO_NODE);
+> +
+> +       return ret;
+> +}
+> +
+>  /*
+>   * To avoid unnecessary overhead, we pass through large allocation reque=
+sts
+>   * directly to the page allocator. We use __GFP_COMP, because we will ne=
+ed to
+>
+> --
+> 2.47.0
 >
 
