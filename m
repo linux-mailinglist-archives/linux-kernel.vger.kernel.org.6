@@ -1,49 +1,80 @@
-Return-Path: <linux-kernel+bounces-413293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3A579D16F3
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 18:19:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABC029D13C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 15:58:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 712D51F22EBB
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 17:19:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B549281332
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 14:58:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59D141C07FB;
-	Mon, 18 Nov 2024 17:19:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E13141A9B26;
+	Mon, 18 Nov 2024 14:58:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="fhKzbRWa"
-Received: from ec2-44-216-146-137.compute-1.amazonaws.com (ec2-44-216-146-137.compute-1.amazonaws.com [44.216.146.137])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="areC5p2a"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A80C7198E99;
-	Mon, 18 Nov 2024 17:19:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.216.146.137
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FB0813D518;
+	Mon, 18 Nov 2024 14:58:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731950362; cv=none; b=unGSDdlr7dbZfLGznmnEfT4KWUpFS/ASBcqIi8LZckSnXSFSFeUuofm9Y3p95lh4fcc0hF2uiTegPtJ/erkD9o0AnVbn5FEBvR9rz+L8QXtUeIEUrZudUOscs9gir+ZZdL84ov6TxR773t0pYAymn9nZ906VnihZ8BBaJPASBK8=
+	t=1731941890; cv=none; b=fA/SOFl6Ev9aiRe1zc71aoNF8OfkV3ZgM8g3H21IPO9U07sVzYIJD/aZJL4G+5qDNDrgPPrHQeUibvaRpnHDPmN5Hdk0VV7ZShnDCOJeO5tMwNpwDoK/+uUeaL9Ed2YpTDfGHLOYCNrqWsWN9VwqR2tZeHxMMxCaXbPL42wG2/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731950362; c=relaxed/simple;
-	bh=bS0rX26lWdgUGaXcPq2jIpYHj6Dic8ngDtC3mIhebAc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=aalY99PXnB5eUXq4jLlXH5MbDM+0DFq4bEQrR9ElgWNaZJDYPuQXg5qmiBx76qJhGgiU7nzzaxSagFHxGqfoRr0EsWVj4qZe8YAcK7W2JZHmtgxCXUHi4R9PoARoHein/wzB2odPU0knK5oHMrGaedpWjnhoVyh/6Aunp5TNN8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=fhKzbRWa; arc=none smtp.client-ip=44.216.146.137
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from rockchip.. (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 317a7f35;
-	Mon, 18 Nov 2024 22:56:48 +0800 (GMT+08:00)
-From: Jon Lin <jon.lin@rock-chips.com>
-To: broonie@kernel.org
-Cc: linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	heiko@sntech.de,
-	jon.lin@rock-chips.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-spi@vger.kernel.org
-Subject: [PATCH] spi: rockchip-sfc: Embedded DMA only support 4B aligned address
-Date: Mon, 18 Nov 2024 22:56:46 +0800
-Message-Id: <20241118145646.2609039-1-jon.lin@rock-chips.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1731941890; c=relaxed/simple;
+	bh=cY/3EZ1/rIUKj6nA/2T++bb1HPfWnyEXEsAsEslo11o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XiF6oJpgYuQZJg1B5dcbmdfF4WrnrvDnh9sRkIDBeRcZ6+K/PWh4NpAO+oU+eNoxTknoSucd7qmDhoYZv0gE2Tl3QE8c8Uxqj4SfBG4A2h8NdrwveTz57TtONxutXxqzBp4FoAp7+aAOheb9MDL69tWPsLtoKMW9eqbrHKTSlXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com; spf=none smtp.mailfrom=linux.vnet.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=areC5p2a; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.vnet.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AIDTD6G003352;
+	Mon, 18 Nov 2024 14:57:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=c6t0TcuKxeY2VY9QNhhebI8mq3rfkrSo2oexHy4Yy
+	lk=; b=areC5p2akx3l0wqMgznZPPDyzNkJKhSunaXWjJrRwiSJ2o/qQklyFxYKl
+	FTkzARjqzsdmlHZC8mW5tmMxChmudPoJrsYu5txJugvKUoLJ7ve9lVTFfD9sabyB
+	UrNQW4SfZsiXBWjHqefWSGy2qhmNVMVKztlERLQDiEH0KS4E+Y0E3U4D/I1dVSWE
+	+jSAfcAEwvX6jd1Sr+S3IPffe2S0PvOSHHRaf4wOiihE9NFaysP7SHmglMPof4sM
+	lev+N3aV9/fs1O+B2Cpy0gT9EYb9Rf1LrNyi9zqR2SijdUNDtllAC6MozCDYu98G
+	dy3rSaxvgYk6Wn+XKjq8TZ0lKrZVQ==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42xyu1gcd3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 18 Nov 2024 14:57:55 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AIDbYQY000599;
+	Mon, 18 Nov 2024 14:57:46 GMT
+Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42y77kmthy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 18 Nov 2024 14:57:46 +0000
+Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
+	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4AIEviWi43844128
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 18 Nov 2024 14:57:45 GMT
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id BB2FD58051;
+	Mon, 18 Nov 2024 14:57:44 +0000 (GMT)
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4FB665805C;
+	Mon, 18 Nov 2024 14:57:44 +0000 (GMT)
+Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
+	by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 18 Nov 2024 14:57:44 +0000 (GMT)
+From: Stefan Berger <stefanb@linux.vnet.ibm.com>
+To: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+        zohar@linux.ibm.com
+Cc: linux-kernel@vger.kernel.org, roberto.sassu@huawei.com,
+        Stefan Berger <stefanb@linux.ibm.com>,
+        Tushar Sugandhi <tusharsu@linux.microsoft.com>
+Subject: [PATCH v3] ima: Suspend PCR extends and log appends when rebooting
+Date: Mon, 18 Nov 2024 09:57:31 -0500
+Message-ID: <20241118145732.1258631-1-stefanb@linux.vnet.ibm.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,42 +82,158 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQhoaTFZCT01PTh4ZSEpOSk5WFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
-	hVSktLVUpCS0tZBg++
-X-HM-Tid: 0a933fc6ba8d09d9kunm317a7f35
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6P006SBw*SzIhQ1ELSzkPMyov
-	GBgwCkxVSlVKTEhKQk9KQ0tCTU1PVTMWGhIXVREUFVUXEhU7CRQYEFYYExILCFUYFBZFWVdZEgtZ
-	QVlOQ1VJSVVMVUpKT1lXWQgBWUFDQ083Bg++
-DKIM-Signature:a=rsa-sha256;
-	b=fhKzbRWaLMBVXGi5F1pcCy/LUI0n+JSbCyVA5a8UCaMGcee5HZb4Zw3KEK74/cUF6oOxDzAJB/Mo6VzGT9cTygrEXl87Deas3Xwkx9wSNw/7e1NFRQ/Xtnf5UsA+posFPdKhOsGodusVnV5SmP5C8KpDEs1ICFKYMi+tNV6vXCQ=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=orMLRxEgPaCVt+DUcYSRwYW0pCq8JjJqS0YZ0bC7OiQ=;
-	h=date:mime-version:subject:message-id:from;
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: MPRWE60AY8HBaGLZtXIpTHJOWOJQujsl
+X-Proofpoint-ORIG-GUID: MPRWE60AY8HBaGLZtXIpTHJOWOJQujsl
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ lowpriorityscore=0 priorityscore=1501 suspectscore=0 impostorscore=0
+ bulkscore=0 spamscore=0 mlxlogscore=999 adultscore=0 mlxscore=0
+ clxscore=1011 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411180124
 
-Controller limitations.
+From: Stefan Berger <stefanb@linux.ibm.com>
 
-Signed-off-by: Jon Lin <jon.lin@rock-chips.com>
+To avoid the following types of error messages due to a failure by the TPM
+driver to use the TPM, suspend TPM PCR extensions and the appending of
+entries to the IMA log once IMA's reboot notifier has been called. This
+avoids trying to use the TPM after the TPM subsystem has been shut down.
+
+[111707.685315][    T1] ima: Error Communicating to TPM chip, result: -19
+[111707.685960][    T1] ima: Error Communicating to TPM chip, result: -19
+
+Synchronization with the ima_extend_list_mutex to set
+ima_measurements_suspended ensures that the TPM subsystem is not shut down
+when IMA holds the mutex while appending to the log and extending the PCR.
+The alternative of reading the system_state variable would not provide this
+guarantee.
+
+This error could be observed on a ppc64 machine running SuSE Linux where
+processes are still accessing files after devices have been shut down.
+
+Suspending the IMA log and PCR extensions shortly before reboot does not
+seem to open a significant measurement gap since neither TPM quoting would
+work for attestation nor that new log entries could be written to anywhere
+after devices have been shut down. However, there's a time window between
+the invocation of the reboot notifier and the shutdown of devices. This
+includes all subsequently invoked reboot notifiers as well as
+kernel_restart_prepare() where __usermodehelper_disable() waits for all
+running_helpers to exit. During this time window IMA could now miss log
+entries even though attestation would still work. The reboot of the system
+shortly after may make this small gap insignificant.
+
+Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
 ---
+ security/integrity/ima/ima.h       |  1 +
+ security/integrity/ima/ima_init.c  |  2 ++
+ security/integrity/ima/ima_queue.c | 44 ++++++++++++++++++++++++++++++
+ 3 files changed, 47 insertions(+)
 
- drivers/spi/spi-rockchip-sfc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/spi/spi-rockchip-sfc.c b/drivers/spi/spi-rockchip-sfc.c
-index 316e3db88492..69d0f2175568 100644
---- a/drivers/spi/spi-rockchip-sfc.c
-+++ b/drivers/spi/spi-rockchip-sfc.c
-@@ -503,7 +503,7 @@ static int rockchip_sfc_exec_mem_op(struct spi_mem *mem, const struct spi_mem_op
- 	rockchip_sfc_adjust_op_work((struct spi_mem_op *)op);
- 	rockchip_sfc_xfer_setup(sfc, mem, op, len);
- 	if (len) {
--		if (likely(sfc->use_dma) && len >= SFC_DMA_TRANS_THRETHOLD) {
-+		if (likely(sfc->use_dma) && len >= SFC_DMA_TRANS_THRETHOLD && !(len & 0x3)) {
- 			init_completion(&sfc->cp);
- 			rockchip_sfc_irq_unmask(sfc, SFC_IMR_DMA);
- 			ret = rockchip_sfc_xfer_data_dma(sfc, op, len);
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index 3c323ca213d4..3f1a82b7cd71 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -278,6 +278,7 @@ unsigned long ima_get_binary_runtime_size(void);
+ int ima_init_template(void);
+ void ima_init_template_list(void);
+ int __init ima_init_digests(void);
++void __init ima_init_reboot_notifier(void);
+ int ima_lsm_policy_change(struct notifier_block *nb, unsigned long event,
+ 			  void *lsm_data);
+ 
+diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
+index 4e208239a40e..a2f34f2d8ad7 100644
+--- a/security/integrity/ima/ima_init.c
++++ b/security/integrity/ima/ima_init.c
+@@ -152,6 +152,8 @@ int __init ima_init(void)
+ 
+ 	ima_init_key_queue();
+ 
++	ima_init_reboot_notifier();
++
+ 	ima_measure_critical_data("kernel_info", "kernel_version",
+ 				  UTS_RELEASE, strlen(UTS_RELEASE), false,
+ 				  NULL, 0);
+diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/ima_queue.c
+index 532da87ce519..83d53824aa98 100644
+--- a/security/integrity/ima/ima_queue.c
++++ b/security/integrity/ima/ima_queue.c
+@@ -16,6 +16,7 @@
+  */
+ 
+ #include <linux/rculist.h>
++#include <linux/reboot.h>
+ #include <linux/slab.h>
+ #include "ima.h"
+ 
+@@ -44,6 +45,12 @@ struct ima_h_table ima_htable = {
+  */
+ static DEFINE_MUTEX(ima_extend_list_mutex);
+ 
++/*
++ * Used internally by the kernel to suspend measurements.
++ * Protected by ima_extend_list_mutex.
++ */
++static bool ima_measurements_suspended;
++
+ /* lookup up the digest value in the hash table, and return the entry */
+ static struct ima_queue_entry *ima_lookup_digest_entry(u8 *digest_value,
+ 						       int pcr)
+@@ -168,6 +175,18 @@ int ima_add_template_entry(struct ima_template_entry *entry, int violation,
+ 	int result = 0, tpmresult = 0;
+ 
+ 	mutex_lock(&ima_extend_list_mutex);
++
++	/*
++	 * Avoid appending to the measurement log when the TPM subsystem has
++	 * been shut down while preparing for system reboot.
++	 */
++	if (ima_measurements_suspended) {
++		audit_cause = "measurements_suspended";
++		audit_info = 0;
++		result = -ENODEV;
++		goto out;
++	}
++
+ 	if (!violation && !IS_ENABLED(CONFIG_IMA_DISABLE_HTABLE)) {
+ 		if (ima_lookup_digest_entry(digest, entry->pcr)) {
+ 			audit_cause = "hash_exists";
+@@ -211,6 +230,31 @@ int ima_restore_measurement_entry(struct ima_template_entry *entry)
+ 	return result;
+ }
+ 
++static void ima_measurements_suspend(void)
++{
++	mutex_lock(&ima_extend_list_mutex);
++	ima_measurements_suspended = true;
++	mutex_unlock(&ima_extend_list_mutex);
++}
++
++static int ima_reboot_notifier(struct notifier_block *nb,
++			       unsigned long action,
++			       void *data)
++{
++	ima_measurements_suspend();
++
++	return NOTIFY_DONE;
++}
++
++static struct notifier_block ima_reboot_nb = {
++	.notifier_call = ima_reboot_notifier,
++};
++
++void __init ima_init_reboot_notifier(void)
++{
++	register_reboot_notifier(&ima_reboot_nb);
++}
++
+ int __init ima_init_digests(void)
+ {
+ 	u16 digest_size;
 -- 
-2.34.1
+2.43.0
 
 
