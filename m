@@ -1,69 +1,104 @@
-Return-Path: <linux-kernel+bounces-413246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A235C9D158E
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 17:44:28 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BED79D15AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 17:47:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 76333B2664E
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 16:42:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 45906B283C9
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 16:47:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF7031BDA8C;
-	Mon, 18 Nov 2024 16:42:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF0E91C4A14;
+	Mon, 18 Nov 2024 16:45:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fXiboZzB"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8364F1B3921;
-	Mon, 18 Nov 2024 16:42:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41A961C2DCF;
+	Mon, 18 Nov 2024 16:45:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731948171; cv=none; b=mW+v3ZbR3cilPehkj85t/qEtwOWuA8LAr5ZtGJVbooiSfMc8R6NH2iiYko7rZ5OZp1HO89yf2elieGkhh8gG7JRrhUtnLLcwva/InDjuJ2Zwq+ZJwbFvs3xHTYgTiefIJnPImKBNR320do31ysiqpf6URMMRIbbJxcmI6Bz4cgE=
+	t=1731948319; cv=none; b=VyJD7f3Lpnz7nTFinZBe4sPgCHnzTFGyzRnEJ0SpqpQZhS1k2SyJrL/uPjRGJiETxHF0vbk6n88iK/k/26L3sXb2uDYbM55Gcxs6tF8GabF5lHSr6o+C11t78Tf/3/Q94quKGYkp5SKGxpYwRVSmLOTAPZE9gP/buiUhy4L6mqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731948171; c=relaxed/simple;
-	bh=wu03UBHx3W0uDaGv5wdgvG9LKRhh2UlqSuVq9FuDcEk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dMDkPGe6MWVq08SRe4ibP1VHcAvLj0TW5+gmge/nQ7NNToz61oPz8pe3W4uUqAc7bdFI6ZxANsGFcyWyLoRxoZ8VVjX4f5tnvOnI0xL7AIZZc8zI10Q7dS4DDAo2j4qwS1Rx34VAeynEtxeS5YNqJy/uPWL+6MNEECoaOx3bPVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4173C4CECC;
-	Mon, 18 Nov 2024 16:42:49 +0000 (UTC)
-Date: Mon, 18 Nov 2024 11:43:20 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: jeff.xie@linux.dev
-Cc: mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
- linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
- xiehuan09@gmail.com, dolinux.peng@gmail.com, chensong_2000@189.cn
-Subject: Re: [PATCH v5] ftrace: Get the true parent ip for function tracer
-Message-ID: <20241118114320.3ce1b022@gandalf.local.home>
-In-Reply-To: <991260353fbe141ffef8db7a08ed8fb2473e4ca0@linux.dev>
-References: <20241008033159.22459-1-jeff.xie@linux.dev>
-	<991260353fbe141ffef8db7a08ed8fb2473e4ca0@linux.dev>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1731948319; c=relaxed/simple;
+	bh=4vykr79dw2FmxfHObswN27QCeA73mIXqFkR3mxU+AyY=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=h10gR5LPdzhuw+ZhVZEh/x5QP42GkPiFdj/MsAMxyUOHOBs4dBxZiKt8RYVoyO0Gr6riT/1vYS3vMEtrrrxDqDKxVDPtOQ3asrGAr9rZPkE/7BRgyZqoLjm0lwyBWA87mbkssJKSSOwHzca+fG5NH5yViCfm6PpraVU3VMDXqkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fXiboZzB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66A9FC4CED9;
+	Mon, 18 Nov 2024 16:45:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731948318;
+	bh=4vykr79dw2FmxfHObswN27QCeA73mIXqFkR3mxU+AyY=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=fXiboZzBqxW+qipmAbotXYIxdHIspwjUn3AQtJf+vREs0d8kY3EB9e67XWUr3hj2e
+	 w/0/Rvrj89MhkVvvWczlHquHTLKwBO5OIyK5cXFA0I4U9QRLRBejfdZgD+9TgF3Njw
+	 /H4N//mMkZubYsBL64/LnxvTo2GiNBpCZjnAIqII/Z5FXYPnQ46rxgFDB+mUYAeZXg
+	 WhxmdqZ6YDLDe4sY137EzNWR0x5cUoK46y3gTg2PbULLNT6N7bTuyQAu1NLvQc9EwO
+	 xWkIXAHBagpf330ItgkbTGl8BOU4TqV6WjDuqiq3Rivw8SYYHeme7xVgoefHHTcm89
+	 uWNql/b8FveGQ==
+From: Mark Brown <broonie@kernel.org>
+To: Liam Girdwood <lgirdwood@gmail.com>, 
+ Trilok Soni <quic_tsoni@quicinc.com>, 
+ Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>, 
+ Melody Olvera <quic_molvera@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20241112002645.2803506-1-quic_molvera@quicinc.com>
+References: <20241112002645.2803506-1-quic_molvera@quicinc.com>
+Subject: Re: [PATCH v2] regulator: qcom-rpmh: Update ranges for FTSMPS525
+Message-Id: <173194831703.51309.5093146340854774646.b4-ty@kernel.org>
+Date: Mon, 18 Nov 2024 16:45:17 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-9b746
 
-On Mon, 18 Nov 2024 16:15:02 +0000
-jeff.xie@linux.dev wrote:
-
-> October 8, 2024 at 11:31 AM, "Jeff Xie" <jeff.xie@linux.dev> wrote:
+On Mon, 11 Nov 2024 16:26:45 -0800, Melody Olvera wrote:
+> All FTSMPS525 regulators support LV and MV ranges; however,
+> the boot loader firmware will determine which range to use as
+> the device boots.
 > 
-> I'd like to know if this patch can be merged into 6.13?
+> Nonetheless, the driver cannot determine which range was selected,
+> so hardcoding the ranges as either LV or MV will not cover all cases
+> as it's possible for the firmware to select a range not supported by
+> the driver's current hardcoded values.
+> 
+> [...]
 
-Bah' I missed seeing this update and it was buried in patchwork on the 3rd page :-p
+Applied to
 
-I wish you pinged me last week.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
 
-I just sent my pull request for the ftrace topic branch, but since the
-merge window just opened, I can start testing this now and then push it to
-next. Wait a few days and then send another pull request to Linus by the
-end of the week, if nothing breaks.
+Thanks!
 
--- Steve
+[1/1] regulator: qcom-rpmh: Update ranges for FTSMPS525
+      commit: eeecf953d697cb7f0d916f9908a2b9f451bb2667
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
