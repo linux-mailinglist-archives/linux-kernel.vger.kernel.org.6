@@ -1,135 +1,158 @@
-Return-Path: <linux-kernel+bounces-413393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B7059D188D
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 19:54:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66F959D1896
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 19:55:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9AF2DB21F21
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 18:54:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C65B282810
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 18:55:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1E951E0E0E;
-	Mon, 18 Nov 2024 18:54:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 398DD1E4908;
+	Mon, 18 Nov 2024 18:55:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K4mWQGUp"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P67NkgKp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D6A91E0E01;
-	Mon, 18 Nov 2024 18:54:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 642CD3BBF2;
+	Mon, 18 Nov 2024 18:55:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731956087; cv=none; b=dtrZOWISu7i7baCGrw6IMqHLMTsOD+ysvdy1GJk8CRmXTFFraDD9mLFJvgXz4Ng19QXuWW0XCdrg5pqTzU0/kRp5yFw0BWjB0fXMbBT+UXcvBwuwOqNgVR14tmGuBRMDmncPkphyUYibVzTT1REODd4RRW2kvwzKmydLIYRCauQ=
+	t=1731956139; cv=none; b=Rt0hyiJsRkxLgocbJoJD14VQ08GhqPTBymMtZE4krnyvqJbXcq0pDHjwtvCCrXSxxANjePgPx2xpVMj+zA8cajIm/FwQ1UYwFQ+WIenusoGvkfqtQPTh6RxX9qmXHoQnmhGA2UXjMWZVjALw7Oqf6lPIfBi3Wi5ax19V3nngYSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731956087; c=relaxed/simple;
-	bh=DstAgx3ogDOzxs37LnyAk7qZORc4VHUojGcMcTnHQP0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=P5BMKlz3kaLnqxQBq17fnjwQhKuMDUrGKj78F+6s6JNv2BkiDwiYBOlz6qkwtTpY3W+c75I1ozDsiHcPF93d9DaRATwR1/vkHqnM0NBE2egpUKLJ9T3QPJi8zWPfWYboHCkEh4dbeDUgX2KOl+RZipCEcoaMWNhBW7jsApcQf8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K4mWQGUp; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a9a6acac4c3so20491466b.0;
-        Mon, 18 Nov 2024 10:54:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731956083; x=1732560883; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QNbu8U7gi8hrtE1jwyMs7E81Ghy+rLRP6wPyAxZzLx0=;
-        b=K4mWQGUpAQak1lkF6K31LvWtZd3gO3d/c4IHPnADg8zJzz2WBkDlCSTrx2UONIdAHV
-         QkHS+tyoNlGw5Xh7sc08va5i1CmasoVU2er5PW+n2gp86xsbPVbAwioCluqTe2XWBLwd
-         tl4hDQjs4KhI3DzfZOeBpaUD3w/wt84RqZvVe1zhAkhHt6KgiTo7yREfCzVW/nMeA9OF
-         4Vek4DCeXlj3YWlniw16F/2C1qtMGNIlGT7O3wfKEc2dUu0mytIfsib6zZbKDuoTitTK
-         0GbNoWrnUPpkTMvwJdIBjOHapMF4ALG8/1cFvmpFb1eBgnET9L1WmL0ItL6xzbSWuNRs
-         Rm3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731956083; x=1732560883;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QNbu8U7gi8hrtE1jwyMs7E81Ghy+rLRP6wPyAxZzLx0=;
-        b=jeS9qhWPD7WPeAjjPnOqaBwQWw170wo0bi0PtHsTR8Bh/gm3ZBchHWvJOWI2G53r7e
-         nz2o/pUJNKSUHD6fgdogsK/YGT+d3tThAtgV/cMY4qC/YfYs/AexuSXveSIAZou+Z6iw
-         uSGccl+G8pZ4xaezbM2zEjOFbcy8ka6vQYg0X0gcnNTSNVo4a1OK3t48UWFNYWVPR8MZ
-         LJbD3VmybiU8hCtswcAVcfrEgz+3FWjiiLUE+p/VHnK2bt5FekfgQ5w2X72chCGmpQWF
-         WrV1oGuuulqw3fUFrU0Q7CM6KWS4nOIlV9awtnxHidkxHBgNdSEYrAhTmqQmLsCm+gfc
-         IIfw==
-X-Forwarded-Encrypted: i=1; AJvYcCUATBZHAXFqb17R8fp86dFAdvoCYJpza18IunZwKAbkJw5lc8d6Cj/ivuN9GWAGQEArPC5/6MGwtJddbg0=@vger.kernel.org, AJvYcCWlnTy3jz+MilmIyFsL2WkNBXi0RpNijjZNifmXL2WkrJvtDyK9VQhx6DrjR7P1OR/wCNadLdv9CWzo/YdOTw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyu+xKm1yrUmKVgl+vw1/W4jsNzV3230dKEa1E7pwjqRr9Pbvi2
-	sMvb05OfookldzHnOQV1/rYfRmw9GJcHwchdd57tcrdsj5IHJIQJIbXp0yLjGhV/UIOqyhoGsWu
-	jOWIdpnK3xfi5ZRPxgSQTWY/ytc0=
-X-Google-Smtp-Source: AGHT+IHrV7K8Cyj7YJ65WKJq9jdVDZI/Pp/TvrOcTY9H7suj5TqX5ZMTdvHwo3LxSOTlhRS/1fgE+k3FVKbnWZIUTkg=
-X-Received: by 2002:a17:906:c10a:b0:a9a:8a4:e090 with SMTP id
- a640c23a62f3a-aa483552321mr1242001566b.50.1731956081850; Mon, 18 Nov 2024
- 10:54:41 -0800 (PST)
+	s=arc-20240116; t=1731956139; c=relaxed/simple;
+	bh=/gmHJa/TBxEDstIIvnX3KmYFWImvFtyFP0gjXaeuHFM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=os4d5qnBaJPvYWbQvRegf5IevZMGsSTIqJVhZ8Igx44DJK/yk7+/aHpM1+6sO5pJ8Scn6hpcRIRJ4wAgI5oiPmn6mtq9E8w4knq07m7W5aXf02WYzMDajYfZN5EX/PUywlLsGtLgIvbEmPtaqd52olRU2isnfsrJ6MfvuhjBK4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P67NkgKp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45CA9C4CECC;
+	Mon, 18 Nov 2024 18:55:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731956138;
+	bh=/gmHJa/TBxEDstIIvnX3KmYFWImvFtyFP0gjXaeuHFM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=P67NkgKpagD5QPwkoLn48IDjtjZ7XiI7hB74ktXAOzTjzFx25SdPGIQTsJPn3c/+1
+	 7mKXhe/08HVsqBRSEOx0tOKdadCpjOBrUyOGIzap4a8CF3tcQQzVYOpA4KCKlbL9eG
+	 FZDNA127wqunzK1pyu+ixL9pn3cpHGQTiZ/HklwS4zlyqRfWpfZR7WpwvZo4s6XE1b
+	 33uAWW/5I0UcpudrKi/56u1/L85PdWYLjkcUUGZXni1xcq/PN0bKJ29dpyNBUK3NkQ
+	 hg7XGXtOx8q1P8cuRCDFQtSWlcXwLibDCDFZaRJ8t0FlQaoTBba1d1kPOW8eXaQxfI
+	 AghFYrjiJkifw==
+Date: Mon, 18 Nov 2024 20:55:33 +0200
+From: Leon Romanovsky <leon@kernel.org>
+To: Will Deacon <will@kernel.org>
+Cc: Jens Axboe <axboe@kernel.dk>, Jason Gunthorpe <jgg@ziepe.ca>,
+	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
+	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+	Keith Busch <kbusch@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Logan Gunthorpe <logang@deltatee.com>,
+	Yishai Hadas <yishaih@nvidia.com>,
+	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+	linux-rdma@vger.kernel.org, iommu@lists.linux.dev,
+	linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org,
+	kvm@vger.kernel.org, linux-mm@kvack.org,
+	Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [PATCH v3 07/17] dma-mapping: Implement link/unlink ranges API
+Message-ID: <20241118185533.GA24154@unreal>
+References: <cover.1731244445.git.leon@kernel.org>
+ <f8c7f160c9ae97fef4ccd355f9979727552c7374.1731244445.git.leon@kernel.org>
+ <20241118145929.GB27795@willie-the-truck>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241118141703.28510-1-kovalev@altlinux.org>
-In-Reply-To: <20241118141703.28510-1-kovalev@altlinux.org>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Mon, 18 Nov 2024 19:54:30 +0100
-Message-ID: <CAOQ4uxjxXHX4j=4PbUFrgDoDYEZ1jkjD1EAFNxf1at44t--gHg@mail.gmail.com>
-Subject: Re: [PATCH] ovl: Add check for missing lookup operation on inode
-To: Vasiliy Kovalev <kovalev@altlinux.org>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-unionfs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241118145929.GB27795@willie-the-truck>
 
-On Mon, Nov 18, 2024 at 3:17=E2=80=AFPM Vasiliy Kovalev <kovalev@altlinux.o=
-rg> wrote:
->
-> Ensure that the lookup operation is present for the inode in the overlay
-> filesystem. If the operation is missing, log a warning and return an EIO
-> error to prevent further issues in the lookup process.
->
-> Reported-by: syzbot+a8c9d476508bd14a90e5@syzkaller.appspotmail.com
-> Link: https://syzkaller.appspot.com/bug?extid=3Da8c9d476508bd14a90e5
-> Signed-off-by: Vasiliy Kovalev <kovalev@altlinux.org>
-> ---
->  fs/overlayfs/namei.c | 7 +++++++
->  1 file changed, 7 insertions(+)
->
-> diff --git a/fs/overlayfs/namei.c b/fs/overlayfs/namei.c
-> index 5764f91d283e7..a73f37e401cf0 100644
-> --- a/fs/overlayfs/namei.c
-> +++ b/fs/overlayfs/namei.c
-> @@ -1115,6 +1115,13 @@ struct dentry *ovl_lookup(struct inode *dir, struc=
-t dentry *dentry,
->         for (i =3D 0; !d.stop && i < ovl_numlower(poe); i++) {
->                 struct ovl_path lower =3D ovl_lowerstack(poe)[i];
->
-> +               if (!lower.dentry->d_inode->i_op->lookup) {
-> +                       err =3D -EIO;
-> +                       pr_warn_ratelimited("missing lookup operation for=
- inode %p\n",
-> +                                                               lower.den=
-try->d_inode);
-> +                       goto out_put;
-> +               }
-> +
+On Mon, Nov 18, 2024 at 02:59:30PM +0000, Will Deacon wrote:
+> On Sun, Nov 10, 2024 at 03:46:54PM +0200, Leon Romanovsky wrote:
+> > From: Leon Romanovsky <leonro@nvidia.com>
+> > 
+> > Introduce new DMA APIs to perform DMA linkage of buffers
+> > in layers higher than DMA.
+> > 
+> > In proposed API, the callers will perform the following steps.
+> > In map path:
+> > 	if (dma_can_use_iova(...))
+> > 	    dma_iova_alloc()
+> > 	    for (page in range)
+> > 	       dma_iova_link_next(...)
+> > 	    dma_iova_sync(...)
+> > 	else
+> > 	     /* Fallback to legacy map pages */
+> >              for (all pages)
+> > 	       dma_map_page(...)
+> > 
+> > In unmap path:
+> > 	if (dma_can_use_iova(...))
+> > 	     dma_iova_destroy()
+> > 	else
+> > 	     for (all pages)
+> > 		dma_unmap_page(...)
+> > 
+> > Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
+> > ---
+> >  drivers/iommu/dma-iommu.c   | 259 ++++++++++++++++++++++++++++++++++++
+> >  include/linux/dma-mapping.h |  32 +++++
+> >  2 files changed, 291 insertions(+)
+> 
 
-This looks like it is papering over a bug.
-The dentries in the poe lower stack are supposed to be
-d_can_lookup(), which means that they should have a ->lookup op.
+<...>
 
-See in ovl_lookup_single():
-         if (!d_can_lookup(this)) {
-                if (d->is_dir || !last_element) {
-                        d->stop =3D true;
-                        goto put_and_out;
-                }
+> > +static void __iommu_dma_iova_unlink(struct device *dev,
+> > +		struct dma_iova_state *state, size_t offset, size_t size,
+> > +		enum dma_data_direction dir, unsigned long attrs,
+> > +		bool free_iova)
+> > +{
+> > +	struct iommu_domain *domain = iommu_get_dma_domain(dev);
+> > +	struct iommu_dma_cookie *cookie = domain->iova_cookie;
+> > +	struct iova_domain *iovad = &cookie->iovad;
+> > +	dma_addr_t addr = state->addr + offset;
+> > +	size_t iova_start_pad = iova_offset(iovad, addr);
+> > +	struct iommu_iotlb_gather iotlb_gather;
+> > +	size_t unmapped;
+> > +
+> > +	if ((state->__size & DMA_IOVA_USE_SWIOTLB) ||
+> > +	    (!dev_is_dma_coherent(dev) && !(attrs & DMA_ATTR_SKIP_CPU_SYNC)))
+> > +		iommu_dma_iova_unlink_range_slow(dev, addr, size, dir, attrs);
+> > +
+> > +	iommu_iotlb_gather_init(&iotlb_gather);
+> > +	iotlb_gather.queued = free_iova && READ_ONCE(cookie->fq_domain);
+> > +
+> > +	size = iova_align(iovad, size + iova_start_pad);
+> > +	addr -= iova_start_pad;
+> > +	unmapped = iommu_unmap_fast(domain, addr, size, &iotlb_gather);
+> > +	WARN_ON(unmapped != size);
+> 
+> Does the new API require that the 'size' passed to dma_iova_unlink()
+> exactly match the 'size' passed to the corresponding call to
+> dma_iova_link()? I ask because the IOMMU page-table code is built around
+> the assumption that partial unmap() operations never occur (i.e.
+> operations which could require splitting a huge mapping). We just
+> removed [1] that code from the Arm IO page-table implementations, so it
+> would be good to avoid adding it back for this.
 
-Can you analyse what went wrong with the reproducer?
-How did we get to a state where lowerstack of parent
-has a dentry which is !d_can_lookup?
+dma_iova_link/dma_iova_unlink() don't have any assumptions in addition
+to already existing for dma_map_sg/dma_unmap_sg(). In reality, it means
+that all calls to unlink will have same size as for link.
 
-Thanks,
-Amir.
+Thanks
+
+> 
+> Will
+> 
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/iommu/linux.git/commit/?h=arm/smmu&id=33729a5fc0caf7a97d20507acbeee6b012e7e519
 
