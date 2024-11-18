@@ -1,212 +1,149 @@
-Return-Path: <linux-kernel+bounces-413001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF68C9D1220
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 14:39:54 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08EB19D12AB
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 15:09:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C8631F22E6F
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 13:39:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A9430B2C65F
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 13:46:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECBCF19E967;
-	Mon, 18 Nov 2024 13:39:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F08D01A9B50;
+	Mon, 18 Nov 2024 13:41:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="kg3o6mNG"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="A59KTjoq";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="5citjI6q";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="jlnLQJ+Z";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="3dt8dq7Y"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F033D195FD1;
-	Mon, 18 Nov 2024 13:39:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3721199EA3;
+	Mon, 18 Nov 2024 13:41:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731937178; cv=none; b=lZ+PPFTn8Cbvfh60QzvWrsD0Hq5RlXiMoK9+ll0KsLcPi4eW29Eku9M5yHCoHzrL05cxLEX2DlVkOeJa2eJxDiaF4lkVxo9SHghBkOECCti365YhiLSNynzvLWODCX0I1yWHr+LpbY/FKyVv3WYefyji20xJcW39Lq4UHjjHfyU=
+	t=1731937267; cv=none; b=OSZgqhbrI4itGm4iXYQ5j6SiE6TDqd9NlA+hGk8CxZvdNS6+ZvVh+hMUgm7y5aJJaVQShw/n31qdIWlkQgrSx6x39suopsMDctE0256Sm9HI8Ds+s3GdZ6Mp4B4CWHQtV2ZEv5FGt9bO42hf8DatAygZNJLyJ78qHqVUpCtXfsc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731937178; c=relaxed/simple;
-	bh=1dzIu+bDS3mEQECtESSifdxh9boBbAqXLDWb6o78W1w=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=DTidoQs9xegjiB00u3y+EI3+dO+pt9D8T0zHGrq9cw9IxWDJODk/6SSLP4VSVUpHiTHPYVTBCFLTA0+mYzwml38/DMi/Iv66K+Fuwf+sgyHM/KeLXf1T5yDpEENcHdf0qu+nEJaEx5v/6/zxh6la35jMw1cR5IbrzfR2QkzgDEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=kg3o6mNG; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id DB8351BF208;
-	Mon, 18 Nov 2024 13:39:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1731937174;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
+	s=arc-20240116; t=1731937267; c=relaxed/simple;
+	bh=uKE/0a42PrVZhu/VkkIYnHs6rtFBFgty5o6WzC8DIbc=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Tt4bELSZglqFON8tOakqh+VDrS0RoD9NpiJB6pZwPcM/FIA1der4TRst1FVQ6mfk9vagZlBCS1c19eJ3vhyzrBnztoLeELJolSvM1ZpjKTTnO4L8jd5o6w1wT+sWCEWYrp6fSC49XWqvrt6zTXcRO3I+bVOzbfkS8G4args3M0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=A59KTjoq; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=5citjI6q; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=jlnLQJ+Z; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=3dt8dq7Y; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 1B09921151;
+	Mon, 18 Nov 2024 13:41:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1731937264; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=WKBfmWwe0K8YK6G59KsdbaDz2+vE4JtCifokD5Jr7zc=;
-	b=kg3o6mNGQfhtXlBOIcFMtnFqK7OJJG4S/uA++2tR7IMdOehPRj+qTUkcxNKZsF0cG/F2tl
-	0ZgptP2PYC9FDYJwuWbteP+AZysqliZ5AjXxkJCmIgsRapeZgllNAdrIMyv9zvYXlwzrRx
-	ZqV098zadeIDwrUDGNzQUrlE4xBplfMZD43XGUbtqou3is7C9EK0RaSZhQXtjbCbxLyl80
-	9aEGY3YDkivEu5QHWUCM9NWfy8H6dVznjYMubOhNE5+h3OOltp9KVebf4/O6lkzkqvisQ/
-	Ywr8UohM5O+ut7DpWgSA96aAkUNb0IorayZKgQZrcFnPpicVpPrZE1EBBPPBlg==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>
-Cc: <tudor.ambarus@linaro.org>,  <michael@walle.cc>,  <broonie@kernel.org>,
-  <pratyush@kernel.org>,  <richard@nod.at>,  <vigneshr@ti.com>,
-  <robh@kernel.org>,  <conor+dt@kernel.org>,  <krzk+dt@kernel.org>,
-  <venkatesh.abbarapu@amd.com>,  <linux-spi@vger.kernel.org>,
-  <linux-kernel@vger.kernel.org>,  <linux-mtd@lists.infradead.org>,
-  <nicolas.ferre@microchip.com>,  <alexandre.belloni@bootlin.com>,
-  <claudiu.beznea@tuxon.dev>,  <michal.simek@amd.com>,
-  <linux-arm-kernel@lists.infradead.org>,  <alsa-devel@alsa-project.org>,
-  <patches@opensource.cirrus.com>,  <git@amd.com>,
-  <amitrkcian2002@gmail.com>,  <beanhuo@micron.com>
-Subject: Re: [RFC PATCH 2/2] dt-bindings: spi: Update stacked and parallel
- bindings
-In-Reply-To: <20241026075347.580858-3-amit.kumar-mahapatra@amd.com> (Amit
-	Kumar Mahapatra's message of "Sat, 26 Oct 2024 13:23:47 +0530")
-References: <20241026075347.580858-1-amit.kumar-mahapatra@amd.com>
-	<20241026075347.580858-3-amit.kumar-mahapatra@amd.com>
-User-Agent: mu4e 1.12.1; emacs 29.4
-Date: Mon, 18 Nov 2024 14:39:32 +0100
-Message-ID: <87y11gwtij.fsf@bootlin.com>
+	bh=mRvlMHRqPsHvF+Y4rop7W+Ht8NphPpCypBNENGLLC/I=;
+	b=A59KTjoqJ52YEpalyBsLvAt5DDQUvVT1zw3mLOCGmUeUWEpdwkZm/+/WNVJyCnZ3WrZWST
+	p/m03KtJ7N83qNhjpncBNA/mWbwKNXfD/LtY8RMxV8tzhX/f1Smo94qjyueiDs8cQcFoDK
+	IjsmnFpk+FLorhhkNxKP4O686LhVhfU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1731937264;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mRvlMHRqPsHvF+Y4rop7W+Ht8NphPpCypBNENGLLC/I=;
+	b=5citjI6q1pv2FRPxDSJpfbvRIrE5B0aizTCu4iszUGo6GGpVWWdhD+ZjA8sGL4pzRmr6wT
+	YUWEsOOU8Aq8ZXBg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1731937263; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mRvlMHRqPsHvF+Y4rop7W+Ht8NphPpCypBNENGLLC/I=;
+	b=jlnLQJ+ZV5TkzrX0FZRtDFKxpyJDm/7JTRmHiiPGyGIlnvazZtoovlc3g0lqi45AA5KX/m
+	jCA2uXaMCD+ZHaHydpO2aI8Pu8iO9ngB/fiiXxL0AyTFgIL14O6kSYd5SLHpwI2wu4FauK
+	wiQFpL4jCTZWrTw9x0MKj4y+/KUdpGE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1731937263;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mRvlMHRqPsHvF+Y4rop7W+Ht8NphPpCypBNENGLLC/I=;
+	b=3dt8dq7YM1dyOm1huS3cAFDmhKjeyK/dBjn87wg+kFMazRt3IoXGh32YZxT4gZpiPBav8w
+	ordxHetS65LUtNAg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CF81E134A0;
+	Mon, 18 Nov 2024 13:41:02 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id RIxjMe5DO2cuaQAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Mon, 18 Nov 2024 13:41:02 +0000
+Date: Mon, 18 Nov 2024 14:41:02 +0100
+Message-ID: <87frno7j81.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Huacai Chen <chenhuacai@loongson.cn>
+Cc: Takashi Iwai <tiwai@suse.com>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Xuerui Wang <kernel@xen0n.name>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] ALSA: hda: Poll jack events for LS7A HD-Audio
+In-Reply-To: <20241115150653.2819100-1-chenhuacai@loongson.cn>
+References: <20241115150653.2819100-1-chenhuacai@loongson.cn>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid]
+X-Spam-Score: -3.30
+X-Spam-Flag: NO
 
-Hi Amit,
+On Fri, 15 Nov 2024 16:06:53 +0100,
+Huacai Chen wrote:
+> 
+> LS7A HD-Audio disable interrupts and use polling mode due to hardware
+> drawbacks. As a result, unsolicited jack events are also unusable. If
+> we want to support headphone hotplug, we need to also poll jack events.
+> 
+> Here we use 1500ms as the poll interval if no module parameter specify
+> it.
+> 
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
 
-On 26/10/2024 at 13:23:47 +0530, Amit Kumar Mahapatra <amit.kumar-mahapatra=
-@amd.com> wrote:
+Thanks, applied now.
 
-> For implementing the proposed solution the current 'stacked-memories' &
-> 'parallel-memories' bindings need to be updated as follow.
->
-> stacked-memories binding changes:
-> - Each flash will have its own flash node. This approach allows flashes of
->   different makes and sizes to be stacked together, as each flash will be
->   probed individually.
-> - Each of the flash node will have its own =E2=80=9Creg=E2=80=9D property=
- that will contain
->   its physical CS.
-> - Remove the size information from the bindings as it can be retrived
->   drirectly from the flash.
-> - The stacked-memories DT bindings will contain the phandles of the flash
->   nodes connected in stacked mode.
->
-> The new layer will update the mtd->size and other mtd_info parameters aft=
-er
-> both the flashes are probed and will call mtd_device_register with the
-> combined information.
->
-> spi@0 {
->         ...
->         flash@0 {
->                 compatible =3D "jedec,spi-nor"
->                 reg =3D <0x00>;
->                 stacked-memories =3D <&flash@0 &flash@1>;
->                 spi-max-frequency =3D <50000000>;
->                 ...
->                         partitions {
->                         compatible =3D "fixed-partitions";
->                                 concat-partition =3D <&flash0_partition &=
-flash1_partition>;
->                                 flash0_partition: partition@0 {
->                                         label =3D "part0_0";
->                                         reg =3D <0x0 0x800000>;
->                                 }
->                         }
->         }
->         flash@1 {
->                 compatible =3D "jedec,spi-nor"
->                 reg =3D <0x01>;
->                 stacked-memories =3D <&flash@0 &flash@1>;
->                 spi-max-frequency =3D <50000000>;
->                 ...
->                         partitions {
 
-Same comment as before here.
-
->                         compatible =3D "fixed-partitions";
->                                 concat-partition =3D <&flash0_partition &=
-flash1_partition>;
->                                 flash1_partition: partition@0 {
->                                         label =3D "part0_1";
->                                         reg =3D <0x0 0x800000>;
->                                 }
->                         }
->         }
->
-> }
->
-> parallel-memories binding changes:
-> - Remove the size information from the bindings and change the type to
->   boolen.
-> - Each flash connected in parallel mode should be identical and will have
->   one flash node for both the flash devices.
-> - The =E2=80=9Creg=E2=80=9D prop will contain the physical CS number for =
-both the connected
->   flashes.
->
-> The new layer will double the mtd-> size and register it with the mtd
-> layer.
-
-Not so sure about that, you'll need a new mtd device to capture the
-whole device. But this is implementation related, not relevant for
-binding.
-
->
-> spi@1 {
->         ...
->         flash@3 {
->                 compatible =3D "jedec,spi-nor"
->                 reg =3D <0x00 0x01>;
->                 paralle-memories ;
-
-Please fix the typos and the spacing (same above).
-
->                 spi-max-frequency =3D <50000000>;
->                 ...
->                         partitions {
->                         compatible =3D "fixed-partitions";
->                                 flash0_partition: partition@0 {
->                                         label =3D "part0_0";
->                                         reg =3D <0x0 0x800000>;
->                                 }
->                         }
->         }
-> }
->
-> Signed-off-by: Amit Kumar Mahapatra <amit.kumar-mahapatra@amd.com>
-> ---
->  .../bindings/spi/spi-controller.yaml          | 23 +++++++++++++++++--
->  .../bindings/spi/spi-peripheral-props.yaml    |  9 +++-----
->  2 files changed, 24 insertions(+), 8 deletions(-)
->
-> diff --git a/Documentation/devicetree/bindings/spi/spi-controller.yaml b/=
-Documentation/devicetree/bindings/spi/spi-controller.yaml
-> index 093150c0cb87..2d300f98dd72 100644
-> --- a/Documentation/devicetree/bindings/spi/spi-controller.yaml
-> +++ b/Documentation/devicetree/bindings/spi/spi-controller.yaml
-> @@ -185,7 +185,26 @@ examples:
->          flash@2 {
->              compatible =3D "jedec,spi-nor";
->              spi-max-frequency =3D <50000000>;
-> -            reg =3D <2>, <3>;
-> -            stacked-memories =3D /bits/ 64 <0x10000000 0x10000000>;
-> +            reg =3D <2>;
-> +            stacked-memories =3D <&flash0 &flash1>;
->          };
-
-I'm sorry but this is not what you've talked about in this series.
-Either you have flash0 and flash1 and use the stacked-memories property
-in both of them (which is what you described) or you create a third
-virtual device which points to two other flashes. This example allows
-for an easier use of the partitions mechanism on top of a virtual mtd
-device but, heh, you're now describing a virtual mtd device, which is
-not a physical device as it "should" be.
-
-Thanks,
-Miqu=C3=A8l
+Takashi
 
