@@ -1,83 +1,150 @@
-Return-Path: <linux-kernel+bounces-413369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E0879D1834
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 19:33:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 970FF9D1835
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 19:33:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 531A12810F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 18:33:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F7A21F2253F
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 18:33:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1462F1E0DF6;
-	Mon, 18 Nov 2024 18:33:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B2C61E0E07;
+	Mon, 18 Nov 2024 18:33:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b="LKt38qr4"
-Received: from gentwo.org (gentwo.org [62.72.0.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="mQJ0sUnk"
+Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com [209.85.160.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6B651AA1E8
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 18:33:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.72.0.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 804131E0DF6
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 18:33:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731954789; cv=none; b=qQhmkmLfc1kYmBu1Y0/9kLKeO5BJmEsenLMdprtcqU0Xen8HiYNOhfB+QcM9ZtBWmvyJb1Xtxi5QQ65S3S3tFtyVn6zBD8O87a47WTyt7XxI4JtqSfI3pdljX8st7JYHEa/JhXij5lhJNrhkeJS0DjxErv43n+rqFozArE6/TVs=
+	t=1731954824; cv=none; b=ZbUmlKZG8S/fROU3qRdX5ExmAs1dwOPzjqVSJE1TyrsZjhywwIOylBGmd69TzB1on+eBLM9vRTJolOHB1JQnF9TAn69wCRPwbroh4behln4wU0UO/9dGWUCOi6jiOUPWU6SmfNmeG6RtYfeAgVN2NpaTyvoE13Mpk2OKD3RhyJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731954789; c=relaxed/simple;
-	bh=vABaQHltdx3jgRYXQyVoHdcwpcwDsu4UKSsK+/mK9OY=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=jCOkcoPJlzBPNMHnT9Dg6dhkfrmNCssHd5zaDgfPEMeKkhPFGG82HrDSLvKrhjge5t8HL6Oq/pUK09tA7RKMuEm7jSZvCK0o8Y60OSTW7KONMxhC3B+oefh+ChVhKbtBSSrAWJo4ww6y+Wp0wqtA/VzRxJZ2GZQhtB/1cj+AWV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org; spf=pass smtp.mailfrom=gentwo.org; dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b=LKt38qr4; arc=none smtp.client-ip=62.72.0.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentwo.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gentwo.org;
-	s=default; t=1731954781;
-	bh=vABaQHltdx3jgRYXQyVoHdcwpcwDsu4UKSsK+/mK9OY=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=LKt38qr4UgPp504lHzG9BImmpehcu7oT4tlmhYqlIrjgeaS16zE5oubUp9SJSTdxA
-	 F0f5ozNhlf2/3Vw90tz4ISLXJH3BlvzNFPiKqKAgOTVuuEQob/qIT7k8eQA458g9Ue
-	 gaOSD1IXHyhCM3UQHmJ65BLWe2k/gV7y0yJfWaxI=
-Received: by gentwo.org (Postfix, from userid 1003)
-	id 7BAB4401EF; Mon, 18 Nov 2024 10:33:01 -0800 (PST)
-Received: from localhost (localhost [127.0.0.1])
-	by gentwo.org (Postfix) with ESMTP id 7A456401EB;
-	Mon, 18 Nov 2024 10:33:01 -0800 (PST)
-Date: Mon, 18 Nov 2024 10:33:01 -0800 (PST)
-From: "Christoph Lameter (Ampere)" <cl@gentwo.org>
-To: Yang Shi <yang@os.amperecomputing.com>
-cc: catalin.marinas@arm.com, will@kernel.org, scott@os.amperecomputing.com, 
-    linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] arm64: cpufeature: workaround AmpereOne FEAT_BBM
- level 2
-In-Reply-To: <20241118181711.962576-4-yang@os.amperecomputing.com>
-Message-ID: <1a9c94ff-fad5-3440-705b-d8dc0c0b39b5@gentwo.org>
-References: <20241118181711.962576-1-yang@os.amperecomputing.com> <20241118181711.962576-4-yang@os.amperecomputing.com>
+	s=arc-20240116; t=1731954824; c=relaxed/simple;
+	bh=PbL5qU7G89QRGe1mqq27S87ShiVyJjnCIGnqWYBTVYE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Un31d+7gMxhJGzhZBgqYIcgASDeF8cma0Y5tfMkpAV64+c+I8IVDppiE/H0NznIn5lE/R491iiXtYCmdS8zi5kAlzp/hXX5TIfm1lBEqjULxifLvFzrg+q+JNV9zCMvTBshhGzfGLj10RsGScEvOmZ9g0yuzysV+Z76UrlyYs1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=mQJ0sUnk; arc=none smtp.client-ip=209.85.160.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-2969dc28dafso531180fac.2
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 10:33:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1731954821; x=1732559621; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=aneuQOiwaFYBr88lA/0AyLISQzg4VGgde4c28AMLP6Q=;
+        b=mQJ0sUnkYBzditB2hTN1FFUvTpznayKuJyEUOv5bhDcSp04nzcFEZJOKM9YHbA6E5K
+         W4J69OMkCjm2sRbGRiPaZQSVTVo1xWij2gplfecUofmIh/kVeHzoMSmkjb9w6YMZPDeu
+         M9xEJurtMKp0LRwgVAWKijimUv5CRC/jkkSiqIwzgY+sMk/FOxqufyofNys9tnatEMW+
+         sWFVS2DRSS5pctAWgdyGSfqywF+aKo6d+iElKe3z2JyH2Rsf4MOQhPCu982N3XdeGoOl
+         OkUyg6twnFoVeTK9oIR6LTHAicPhXgj8C6AuDU1s8UFLr3hU+cb7QI8Inx7E+v1TBW9c
+         TJMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731954821; x=1732559621;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aneuQOiwaFYBr88lA/0AyLISQzg4VGgde4c28AMLP6Q=;
+        b=GgcUDHozt/QbYSfumuio6rg/A9pHkz6U8jfiMlEhTGGYLwyIGe03uZ3WSV5b8m9mrh
+         w904Aj8ooeJ005kIlXBPOtqV3nZEcascg7eOq958WV5PBzoYXPJv8bo12BaN/FxgzjEA
+         tGVwLad679iIe83VpX/VQDHqcOT0Ftz67Qv7SCn5jRRdk5PpE+0lSiEr0hVvbzE1MSqD
+         fjopzs5Lq8NJeT/fQj8SKFyDNYvS/FwOU3LIYNM1qeVD/utMbwlwl/RgGHrv44dUcAE1
+         Uw4Ru9Lq6AjWwaZXCsoXbXP8TUbEDiWz7zDWocwYDTFJPVxO6+qcmzDWpxwFzz6MtLLp
+         0kzw==
+X-Forwarded-Encrypted: i=1; AJvYcCWlAh5Q99z5GiGERPd8bdAfDiTWQCCu6g+L29MZdElQEtql/qTO27WuLiH4lDu8nDb4DaXxfl/HX1nKyRw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFGBwJW5r/yDKRu9WU+vbyRMCLQqpfLfT9P9FW+MhM4OHRLq3e
+	bgzSaE+Ppd0wor1AZqzv/GYBsRzYWdRy2ntxO1htb3Mzd3VB2cQBGjCSMEF4IGk=
+X-Google-Smtp-Source: AGHT+IGAsbhwJF0VOk/JdSVM72aUtGwdsVL9k36/zRYH/9py/W7xVmgcTjrc6OIRRMTekxdNRRCHQw==
+X-Received: by 2002:a05:6870:5d8f:b0:287:7695:6a87 with SMTP id 586e51a60fabf-2962de1a23dmr11493982fac.10.1731954821562;
+        Mon, 18 Nov 2024 10:33:41 -0800 (PST)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-71a780fe329sm2913082a34.25.2024.11.18.10.33.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 Nov 2024 10:33:41 -0800 (PST)
+Message-ID: <02e0efcf-99c8-4c42-ae66-925c08a544b8@baylibre.com>
+Date: Mon, 18 Nov 2024 12:33:40 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/4] dt-bindings: iio: adc: adi,ad4000: Add PulSAR
+To: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>, lars@metafoo.de,
+ Michael.Hennerich@analog.com, jic23@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1731626099.git.marcelo.schmitt@analog.com>
+ <a155d0d0fb1d9b5eece86099af9b5c0fb76dcac2.1731626099.git.marcelo.schmitt@analog.com>
+ <0b8a2d07-feea-409f-a850-7ee0c752a949@baylibre.com>
+ <Zzsj9_HVBO5wrJv_@debian-BULLSEYE-live-builder-AMD64>
+ <ZzuGtvdrD6D06rEp@debian-BULLSEYE-live-builder-AMD64>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <ZzuGtvdrD6D06rEp@debian-BULLSEYE-live-builder-AMD64>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, 18 Nov 2024, Yang Shi wrote:
-
-> FEAT_BBM level 2 is not advertised on AmpereOne because of a bug when
-> collapsing stage 2 mappings from smaller to larger translations.  That
-> doesn't impact splitting stage 1 mappings (whether stage 2 is enabled or
-> not), so workaround it by detecting CPUID.
-
-
-Would be better to have a bblmv2_split_available() function that only
-checks for the splitting capability.
-
-If more code is added that uses the so far unused collapsing features
-also included in the BBML2 feature set then that will break on AmpereOne.
-
-bbml2_split_available() could call bbml2_available() and check the ampere
-errata when false.
-
-Should work fine for now.
-
-Reviewed-by: Christoph Lameter <cl@linux.com>
+On 11/18/24 12:25 PM, Marcelo Schmitt wrote:
+> On 11/18, Marcelo Schmitt wrote:
+>> On 11/15, David Lechner wrote:
+>>> On 11/14/24 5:50 PM, Marcelo Schmitt wrote:
+>>>> Extend the AD4000 series device tree documentation to also describe
+>>>> PulSAR devices.
+>>>>
+>>>> Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
+>>>> ---
+>>>>  .../bindings/iio/adc/adi,ad4000.yaml          | 115 +++++++++++++++++-
+>>>>  1 file changed, 114 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad4000.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad4000.yaml
+>>>> index e413a9d8d2a2..35049071a9de 100644
+>>>> --- a/Documentation/devicetree/bindings/iio/adc/adi,ad4000.yaml
+>>>> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad4000.yaml
+>>>> @@ -19,6 +19,21 @@ description: |
+>>>>      https://www.analog.com/media/en/technical-documentation/data-sheets/ad4020-4021-4022.pdf
+>>>>      https://www.analog.com/media/en/technical-documentation/data-sheets/adaq4001.pdf
+>>>>      https://www.analog.com/media/en/technical-documentation/data-sheets/adaq4003.pdf
+>>>> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7685.pdf
+>>>> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7686.pdf
+>>>> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7687.pdf
+>>>> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7688.pdf
+>>>> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7690.pdf
+>>>> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7691.pdf
+>>>> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7693.pdf
+>>>> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7694.pdf
+>>>> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7942.pdf
+>>>> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7946.pdf
+>>>> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7980.pdf
+>>>> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7982.pdf
+>>>> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7983.pdf
+>>>> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7984.pdf
+>>>> +    https://www.analog.com/media/en/technical-documentation/data-sheets/ad7988-1_7988-5.pdf
+>>>
+>>> It would be nice to sort these lowest number first.
+>>
+>> Ack
+>>
+> Actually, I didn't get how I'm expected to sort those.
+> Isn't ad4000 < ad7685?
+> Or did you mean to put adaq at the end?
+> 
+> ad4000-4004-4008.pdf
+> ...
+> ad4020-4021-4022.pdf
+> ad7685.pdf
+> ...
+> ad7988-1_7988-5.pdf
+> adaq4001.pdf
+> adaq4003.pdf
+> 
+I think all of the 6s, 8s and 9s were playing tricks on my brain when I wrote that.
+Looking again now, it looks fine to me. Sorry for the noise.
 
