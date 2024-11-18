@@ -1,124 +1,129 @@
-Return-Path: <linux-kernel+bounces-413042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CBBD9D12D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 15:20:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFB1D9D12AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 15:09:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52BAEB2B3E3
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 14:08:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 776F11F22983
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 14:09:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B78F71AA1D5;
-	Mon, 18 Nov 2024 14:08:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC9F719C54B;
+	Mon, 18 Nov 2024 14:09:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zj/IBhef"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="avRdLF8J"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9810196C67;
-	Mon, 18 Nov 2024 14:08:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E371019884B
+	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 14:09:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731938898; cv=none; b=lcUNzvarEWwtcegnqW1vFQ8FYE6Dd3nR88OS1FvdZWNXSYMq1GYCZivy1JkIeenpHIzGCjkldWs6gSn2t10N48H+RT+ypm+CU+ppTaCNEwr2dTNY+O9L7j54ZdK5M+llPyMXj1A18rL0vA/jpINaSn+Adlval3/7D2O7tb/wfFs=
+	t=1731938979; cv=none; b=Pg3uEuQra+oy7uq9lOy1eraa7BS+FOP3rHxS5XwkM1rilv6ZRpNutH1Q+ZJUfHkSgfmNGzv3O5aTlWsUsBn02EZuerpl1a0kKzCSdF4X5vHGqcZTy+SZkgol5Lg20ZIkQjkbrC6J0VlZYRVmU5wK7DPZ2V2hKWTSDSekBtKIU0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731938898; c=relaxed/simple;
-	bh=noEXu+HAE5F62nhuH2vjVRn7I7X3kce3M0rXhNmw/70=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=r41uXyxRJ1hsMeEVsZ/OKG1VRetD5Ms9RfRb1NPMkxguymYZsNGGBLpVnQW3D6QJqs09vgiiJ9HFqXfVvQKszELC1uUdxQ+2g6WXX8rVTZxJWGonvylwwMDThd+Anhu2eJznRVAcpkmZs5XU/zbzLOaKxU1areVObGRTeD9pXK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zj/IBhef; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-71e74f35acaso260569b3a.2;
-        Mon, 18 Nov 2024 06:08:16 -0800 (PST)
+	s=arc-20240116; t=1731938979; c=relaxed/simple;
+	bh=RE/NVMKfNaF8ldUmBn0IjP+h7jSECtfYeB9iBlDl/3g=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=pNs0xiFo6N+NDgr2moVBx0AwAgdEtRDiDstwIGnam8QorDBlVRRAqBRTlPxXm59JFcvbtKyDd7vzZrfnP2RR/nDtLDeQaoDpcMe2+UKceLVZViYDevU+df/rbIkS++E4rpSUR3Z9l+ujiBBIFdCr5cA0T61w0ozsGFpF+wu+c9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=avRdLF8J; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43152b79d25so25681585e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 06:09:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731938896; x=1732543696; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=noEXu+HAE5F62nhuH2vjVRn7I7X3kce3M0rXhNmw/70=;
-        b=Zj/IBhefM2j89MX9RlHk1+MugFtOpydQpuLdJuCOO/io9l7btRqW1AbIHg4hteKVXC
-         vVhIfG3cHzHrFhpDGtq6234hKTdHI2Tu0SNOtiyhoAJ9sakfEiRaE9dPQYv/A+Mqjfl5
-         NKw1UYprPzV/9MmWGjf56xy4s8g0hUE23go4GVW9hq/wc9z4cZYiDcnLbmEdH6ajf/FV
-         uvkqiBPNgzHw/ml6UD4LArywQmGni9COu7IkkhOgHidORJg8AXtO36DvZRuNha/+BsfB
-         PKvHIPGxxr9ciQA/Xmkshr9kq3AfS4DN9wOzzFawUC5j8ayqldB1ZZ0aIhuhVxNmnRRc
-         TlJg==
+        d=suse.com; s=google; t=1731938975; x=1732543775; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=AWaOAz+pJukHYrAc/q7S7WPS/E+sLMA9XGUrGJDWhW8=;
+        b=avRdLF8J1myIaSJmY9vpApHyEuxc1ZiXGr85e1gUu/G5Xsv/3VXiqlPuuqMkmLH7zv
+         QmeJDtIOnrr43igWKXF1sA3mzjZ2pDpQF4c6kxbl8z1SB3PgOK3S7m1AHwQJVO++UIih
+         PyXDQ7Eh8HY+oaysOhYjHXmiCI1EbVzdkISz9ut2JVFgXmV64sQ9AgfZn4nn/svRXa5H
+         vyTORvIcwNXwoKVR4t3Y2sQnjww1YoErKcrtSDF4VtiT3weVWUT/uPq+k3UGKcVm5QV1
+         EHhTTOByWSghRuab8fwfYxb8OUqN9OA3RIkPPECyksu8bWUWYDhQ0oMqyiRO8Ir/zrGE
+         y6cw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731938896; x=1732543696;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=noEXu+HAE5F62nhuH2vjVRn7I7X3kce3M0rXhNmw/70=;
-        b=ab2RXEpnq+CgvkgqavHc57bAJoVv5XX8vg4rF09H2As7EvLyoqkpDpYPxjzbUuvhiS
-         1gmImI5KucifdeX+N6z9fpIcHhZKWfensbFnkJrRnl/B4zO8o4Hi1dEWGgD7oV2s4VOK
-         FIofX4EhhBy9UWdRVH4C78Afx9p4Z02ihh9KYUWf2Ij/6v/dFII6+cczInrB/mbRFb0w
-         6MnCtrV67pu+EIxNViFSqDDOi8OpJpVyvCtmAEL6AwLZsoTcNeixjDkBPjsoUn48n5Iz
-         exanjap55aZUBqD4npYbErjTYrAFbum/ERueaTWVTeQ8fMO+SjtyCOhc/+sZiwGV2Swl
-         hhQw==
-X-Forwarded-Encrypted: i=1; AJvYcCUxHk6KbUMdmEPUe7ffcyI+0E4yEHfUVO4j3Ghmol4r3RHpWk823SdYSEFIAnInvVPeq4QzJuDj71ZNAQ==@vger.kernel.org, AJvYcCWFdFQvgO6u6pYJllY1OMNfXoPX4AuZ/esNbCj0x7iXBro1lHC8DxJgAL+6HoEzUKLuUJ7uWt+2@vger.kernel.org, AJvYcCWpPA+CU7L67etlgUegIjx9bFCtC2UpHTeV5h+BANbNj26BcMzZk4zSyIRUNfSX8DITxKjtvuWxim7afRZg@vger.kernel.org, AJvYcCX2iZJ5WjjRwZDGWRO7XAxrG4gxLcie3fNUUv8+HvDcIibPxS1cuWPCvypQx+cvtyTZWkhn3T3upM5sa6tSBI0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLsizByE8uEmhKSbRmTLEUbKLjSLftDvAhTxTaqwKIspJbDbZl
-	Z4VZou8pcd1/9r+rUrzzp7HMtpskNYqkuf4r96HjFvN3sdEovx/asNV6iU/jrEqD+WZKkk8XbXH
-	FwlWl9ouhdwdIS/hOfoTlPmk2B2w=
-X-Google-Smtp-Source: AGHT+IEtNzPQE0+FAlliCDqjK8iImkXC1+7tKdkigdZUUgNBkeySrk+kLThp64OB7VpHyppN5CWaQ2BEFiQqWSRTXu0=
-X-Received: by 2002:a17:90b:3b82:b0:2ea:8aac:6aab with SMTP id
- 98e67ed59e1d1-2ea8aac6be0mr1090780a91.1.1731938895959; Mon, 18 Nov 2024
- 06:08:15 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731938975; x=1732543775;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AWaOAz+pJukHYrAc/q7S7WPS/E+sLMA9XGUrGJDWhW8=;
+        b=SpPb1gU1Vgz9Yot0MlCxf1uj9QMsF6nZeAD2WyHdIko+lyRv+lKQdLFkzjALdxWRdu
+         /Q8dso6V8tkcUldYdb1QfuaCIvwQkbKFUoNs7T2FJ7ir+RNBo40aMYlvlVjqb9ZZ0PEM
+         pMH4dE+7xUXM/A5R9r/DiV7yy3mHo910XiZ9nfMmf3W7ml+a0/lJ7k7teRaUkyL9p1Lz
+         kE6dm7zScHZkV6I1oTqjiMN2phC60BOyiM6K+idaqj1G4LWsSvCR2R8NXlVnDBd3NIyL
+         fCw7Qf9+Lnc+rY3tD6XzY3jXsDpZXAqMSBh6CbIiZQXsdRntEtnCQGxI5tVod0Ytehqy
+         L+eg==
+X-Forwarded-Encrypted: i=1; AJvYcCVx+VaH6YRfjzWtmrRKDjwzl5wKjDuHc1rdfQhG6tTNtPSQPUPqg4CarEI0mcC7lt7/FvEFE3NjgBxTDKg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWpivbolxxykZYeDHVkLTWpT28xtzP6ssp05PHlhcEIt4dOU+3
+	SiAY+2X6vt8SxrigWmRhxQMPPvH7Ni6Q45Il931xSrsOVdWp6AENgMe5LHvpSwQ=
+X-Google-Smtp-Source: AGHT+IEGLzkOTgk1lUR0k3w1x4/tC7rYx3qA1FKnsVRwzvZYxcXfMC7nXE2CuV8uzkADVmU7n7mA7A==
+X-Received: by 2002:a05:600c:3d16:b0:42c:bb96:340e with SMTP id 5b1f17b1804b1-432df792c47mr111011665e9.31.1731938975250;
+        Mon, 18 Nov 2024 06:09:35 -0800 (PST)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3821ae161b5sm13171824f8f.74.2024.11.18.06.09.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Nov 2024 06:09:35 -0800 (PST)
+Date: Mon, 18 Nov 2024 15:09:32 +0100
+From: Petr Mladek <pmladek@suse.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Petr Mladek <pmladek@suse.com>, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] printk for 6.13
+Message-ID: <ZztKnBcca1OtwAcp@pathway.suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241118-simplify-result-v2-0-9d280ada516d@iiitd.ac.in> <20241118-simplify-result-v2-1-9d280ada516d@iiitd.ac.in>
-In-Reply-To: <20241118-simplify-result-v2-1-9d280ada516d@iiitd.ac.in>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Mon, 18 Nov 2024 15:08:03 +0100
-Message-ID: <CANiq72=o56xxJLEo7VL=-wUfKa7jZ75Tg3rRHv+CHg9jaxqRQA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] rust: block: simplify Result<()> in
- validate_block_size return
-To: manas18244@iiitd.ac.in
-Cc: FUJITA Tomonori <fujita.tomonori@gmail.com>, Trevor Gross <tmgross@umich.edu>, 
-	Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
-	Russell King <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>, 
-	Shuah Khan <skhan@linuxfoundation.org>, Anup Sharma <anupnewsmail@gmail.com>, 
-	netdev@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Mon, Nov 18, 2024 at 2:12=E2=80=AFPM Manas via B4 Relay
-<devnull+manas18244.iiitd.ac.in@kernel.org> wrote:
->
-> `Result` is used in place of `Result<()>` because the default type
-> parameters are unit `()` and `Error` types, which are automatically
-> inferred. This patch keeps the usage consistent throughout codebase.
+Hi Linus,
 
-The tags you had in v1 (Link, Suggested-by) seem to have been removed.
+please pull the latest printk changes from
 
-Nit: the usual style is to use the imperative tense when describing
-the change that the patch performs, although that is not a hard rule,
-e.g. you could say "Thus keep the usage consistent throughout the
-codebase." in the last sentence.
+  git://git.kernel.org/pub/scm/linux/kernel/git/printk/linux.git tags/printk-for-6.13
 
-> Signed-off-by: Manas <manas18244@iiitd.ac.in>
+=================================
 
-Same comment as in v1 about the "known identity".
+- Print more precise information about the printk log buffer memory usage.
 
-(The notes above apply to the other patches too).
+- Make sure that the sysrq title is shown on the console even
+  when deferred.
 
-The change itself looks fine to me of course, so with those fixed,
-please feel free to add in your next version:
+- Do not enable earlycon by `console=` which is meant to disable
+  the default console.
 
-Reviewed-by: Miguel Ojeda <ojeda@kernel.org>
+----------------------------------------------------------------
+Arnd Bergmann (1):
+      printk: add dummy printk_force_console_enter/exit helpers
 
-Thanks!
+Isaac J. Manjarres (1):
+      printk: Improve memory usage logging during boot
 
-Cheers,
-Miguel
+Marcos Paulo de Souza (2):
+      printk: Introduce FORCE_CON flag
+      tty: sysrq: Use printk_force_console context on __handle_sysrq
+
+Petr Mladek (1):
+      Merge branch 'for-6.13-force-console' into for-linus
+
+Raul E Rangel (1):
+      init: Don't proxy `console=` to earlycon
+
+ drivers/tty/serial/earlycon.c | 23 +++++++++++++++++++++
+ drivers/tty/sysrq.c           | 18 ++++++++---------
+ include/linux/printk.h        | 11 ++++++++++
+ init/main.c                   |  5 +----
+ kernel/printk/internal.h      |  3 +++
+ kernel/printk/printk.c        | 47 ++++++++++++++++++++++++++++++++++---------
+ kernel/printk/printk_safe.c   | 18 +++++++++++++++++
+ 7 files changed, 102 insertions(+), 23 deletions(-)
 
