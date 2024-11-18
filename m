@@ -1,259 +1,136 @@
-Return-Path: <linux-kernel+bounces-412814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-412815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9D379D0FB9
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 12:29:37 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A3799D0FAF
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 12:28:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4BCDFB26DD3
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:15:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 50D34B2C2B1
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 11:15:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2735215098A;
-	Mon, 18 Nov 2024 11:15:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="W/gt8AwZ"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79FCA198A33;
+	Mon, 18 Nov 2024 11:15:30 +0000 (UTC)
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 782CD194151
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 11:15:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71BE21EA73;
+	Mon, 18 Nov 2024 11:15:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731928509; cv=none; b=cbBNcNWBJcdi3A1gXZLRKnx9eRnl7sLbNoENCUW4Aozsd5acAjYIVVniC0tkQFNzNJx0YGzX7QfIzd7PVlnm/H4hcseFIF3fU2gv819dig8VyxvraDzIDNUfGEcDWckUEF8Rc2IoUaJsMM8qEGc/JXp1IySmJgiSyV6jM2wrg5s=
+	t=1731928530; cv=none; b=IwkxLUxPNfyYnlJYIX8wC9jIt+wmHbMl6zTVg3Sc6YuLEYBpbYkaM6YrHW7Zu7oP1IvKXh1AhGF16xy2czwX5OeirN67Y0gdlZiw9V9mlECDmBL00eNDdU/wCj6eu3PmBKnO5FbQRiIVcqK1qBK8A6SZeKIqODn0VnFhIj10Wi4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731928509; c=relaxed/simple;
-	bh=sJUTlnBSwsG8OmoEj9g6GSrcQrO4OkMEGLeEOJAWU6s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KYfFF4VlXgcyKTz+W5/LtcY/Ua5sWqe6/kbdnDO3C98vPtSIgmaNqsyD2KYySlAKJtCVXcbA+rAIieApQ78tdn+NbG9MxnfVtith7+nKr4dbjDuHA4/cqdrLVlGM9W23d8U/POs/X3MtLWF4XAcg0acV9BIbxYi81vhHYvdhYZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=W/gt8AwZ; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-53da209492cso3362880e87.3
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 03:15:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731928506; x=1732533306; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ueCD+q2zQmY/7YkNPGnLJZ4H8YDacRal4x3H4VT+8ig=;
-        b=W/gt8AwZvjHOwjAXmJGBPG2W1zq3nKan6YII2E1Ih+m9bQ3+dNlt4f8O0i60kawQDt
-         A7e8s/P6wydG71kfGbDrchwMvHNTu2j0o/E9HG9tW5emqnngElDqZNlec/e6X8p/9H4p
-         TRvgCjoi7NK/4bZbFNWRv6o/CPjUtuS5ASwjDnXiWcaXqXmv42mZF3vUiCCEJ34ji+g7
-         ZOW2U/0jYL8rqzwCTar7Mm0mknuNXFwfu8E4Bwr3X4OhYfK9A/kACFCDFhNe5SHa2SI4
-         gu6ayKtUXLqG7/6xIHF1ijLmTcUlRlkkBXhkFw7y/WyIKevYp05empsuma5gjXo2UPQK
-         yTgQ==
+	s=arc-20240116; t=1731928530; c=relaxed/simple;
+	bh=Fm7X1rCptseYOQiiHdn+GV/CEfNvRsjcmulihtwd6HY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=svtcLmE7MdTdqiBq1N3P8Sp24MWT1dF9BjWg81ijrKFMTtlHPtS+pkMHZ+Us6v2mMtvmCloiT10MClofxqEPNX9oUSY002ewg+GyGFB+TkIIYLseyzk5QUQDCexcZbliZNurrptL5T3fg3fq3sFgdTSVXvAN5y3Ez8kF7XWmX6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5cfc19065ffso1401449a12.3;
+        Mon, 18 Nov 2024 03:15:28 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731928506; x=1732533306;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ueCD+q2zQmY/7YkNPGnLJZ4H8YDacRal4x3H4VT+8ig=;
-        b=MZqAHrFpnOw28aJhmS2l/HoF0j8Zp0jtBuNHjPWfL02p8I6Y5/vKb5+T2qWs8rXK06
-         +1AV8EUMz+U1go6JP/kpF35wTzUnvQQiqheJD89sPVuETtj3KlQ0PZkfdjvdMfjBWkpN
-         KRl9s9ilZoYz54u/djas2zmxJFrzjEwBwGVG49ZZLn1ko+Nb4yxh6uMxRgO4LLz9dx2C
-         mne4vShCM3beCOfp5huwQkDk3U8ZniB4E9mwDPYl0S4CaX4DZr3W3AJ1afOE8D4ZdmDm
-         RVf6STZ70Lcxm1NBSiz27seVXpU3nZCVYIJTNfxENM9z6L0NGsqVCYES9TTuPoLTzUjn
-         2k2w==
-X-Forwarded-Encrypted: i=1; AJvYcCXvdTqtpVHWHTtPJyO4wcvCEMikAz+Du6bws0Z/AK4yGIS79FFZp+ij7iQcV26rMnZiUfwt9Tq7x3YFik4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfHUQJbtZDX+rYmwVbGIKxljb7XbbNzeDZ+vaUFFNhHP4l8osj
-	T44haL0TCQ638BvTGYF6ldOdBPzOkmZu97s5NK7grWWB7RXAOlMDM0vdEFcay/k=
-X-Google-Smtp-Source: AGHT+IEUgWujqarYJLRGIXqX4efB6WP1xJ2RKrxxUOdVOeuS9AsGg98BIlDWVAaoRlKSwDHri4RUnw==
-X-Received: by 2002:ac2:4bc1:0:b0:539:8fcd:524 with SMTP id 2adb3069b0e04-53dab2a6af0mr4788179e87.30.1731928505602;
-        Mon, 18 Nov 2024 03:15:05 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53da653e19csm1575151e87.199.2024.11.18.03.15.03
+        d=1e100.net; s=20230601; t=1731928526; x=1732533326;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Wc8nCj4TtWo7FA9cSZQ0Nu/OW7rY/eT8fw4KumJRGo4=;
+        b=RTYnz8ReIE4E5C6UhHepGwHvlpHqF59MTQ4I1TiRB9N4WydCRiLWm48kjEBw8Oc6jT
+         StKnDXD88xvXcb/XGet6q7cAxolYFupBKMIzYy9N1UEqxvhESnxnOr46qMPLAi2EygoE
+         5jrevyXT72mRnls8ijuhC7E1az9HZyjtWO/u1bL4Z6hFeTp9fBgzH4b0SLHE7cllBbWl
+         A5Z5joEUCXQMJ3duGUYe5vQYvCGMR9VROgjWg+f/GbrcKX3lzos7p70Bez/ZU8Jy28vB
+         XBFHUa6gjM98cSn2Yi3I5kki6DuKucDG2duDvJlEJRL21UTSt1E142SYpmeHH1jJ6WYg
+         Ah0g==
+X-Forwarded-Encrypted: i=1; AJvYcCUkssM7TRfjgQz00ziTIVDQ/pp6BBKyo3g8URhxTcPq6w/Dlpwt/Ho1NP7pPvl/Lmvl1+F3K7yTpoial8k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHIrCaxVnDFmG8oVpgRsbolCl917BWmpC+4JIUViyvtw8jdndm
+	5+7V8/SlEaPS72l4+ILGL14UztrMXudyYws3mr9FYYJI/0/sXDjxTGyuFQ==
+X-Google-Smtp-Source: AGHT+IH6MC6KGNivA5kwCnNlP05Ibmy/yfYeZZQl/Oq42vvjhyBR3dzRoLPk+kA0NewKoZetw+kNmA==
+X-Received: by 2002:a17:907:31c2:b0:a9e:c4d2:fff0 with SMTP id a640c23a62f3a-aa483527166mr844880166b.45.1731928526328;
+        Mon, 18 Nov 2024 03:15:26 -0800 (PST)
+Received: from localhost (fwdproxy-lla-008.fbsv.net. [2a03:2880:30ff:8::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20df779afsm526330666b.85.2024.11.18.03.15.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Nov 2024 03:15:04 -0800 (PST)
-Date: Mon, 18 Nov 2024 13:15:01 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
-Cc: vkoul@kernel.org, kishon@kernel.org, robh+dt@kernel.org, 
-	manivannan.sadhasivam@linaro.org, bhelgaas@google.com, kw@linux.com, lpieralisi@kernel.org, 
-	quic_qianyu@quicinc.com, conor+dt@kernel.org, neil.armstrong@linaro.org, 
-	andersson@kernel.org, konradybcio@kernel.org, quic_shashim@quicinc.com, 
-	quic_kaushalk@quicinc.com, quic_tdas@quicinc.com, quic_tingweiz@quicinc.com, 
-	quic_aiquny@quicinc.com, kernel@quicinc.com, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, 
-	Krishna chaitanya chundru <quic_krichai@quicinc.com>
-Subject: Re: [PATCH 2/5] phy: qcom: qmp: Add phy register and clk setting for
- QCS615 PCIe
-Message-ID: <2rygkimclano4hcgf5vaz7eyuhcqdal5ybnh5eyci3ig2b5jcl@sq5ygemgdhwr>
-References: <20241118082619.177201-1-quic_ziyuzhan@quicinc.com>
- <20241118082619.177201-3-quic_ziyuzhan@quicinc.com>
+        Mon, 18 Nov 2024 03:15:25 -0800 (PST)
+From: Breno Leitao <leitao@debian.org>
+Subject: [PATCH net 0/2] netpoll: Use RCU primitives for npinfo pointer
+ access
+Date: Mon, 18 Nov 2024 03:15:16 -0800
+Message-Id: <20241118-netpoll_rcu-v1-0-a1888dcb4a02@debian.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241118082619.177201-3-quic_ziyuzhan@quicinc.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMQhO2cC/x3MawpAQBQG0K3cvt+m3MkjsxVJHhe3NDSDlOxdO
+ Qs4D6IElQhHD4JcGnXzcMQJYVg6P4vREY5gU5sxc268HPu2rm0YTiM926rImfuSkRD2IJPe/1b
+ Dy4HmfT/WCmIAYgAAAA==
+X-Change-ID: 20241115-netpoll_rcu-eb1296511b71
+To: "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+ Herbert Xu <herbert@gondor.apana.org.au>, 
+ Stephen Hemminger <stephen@networkplumber.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Breno Leitao <leitao@debian.org>, paulmck@kernel.org
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1263; i=leitao@debian.org;
+ h=from:subject:message-id; bh=Fm7X1rCptseYOQiiHdn+GV/CEfNvRsjcmulihtwd6HY=;
+ b=owEBbAKT/ZANAwAIATWjk5/8eHdtAcsmYgBnOyHMErtDbbsgRv7aBSysHxC9Yoro18RyV4IKP
+ I3b2qvmEv2JAjIEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCZzshzAAKCRA1o5Of/Hh3
+ bdc6D/dZwS2S3pxXkN5wfeusbymKpKl6epvnYa/pl3WJRSbh5e4kqNE+NG2HxoUD3QO29EqbCSk
+ e0zVZUCj7mEYJg5OnwcEtByPsp+xYobSXomdM9dOy3CtVXfcnw58ztjukGItv4CtyJATWqNvGV7
+ 5BeTwI5anP65Rm84SD05QbK+7hw8SM8GHG66659uASymBzLX0MSMQUpy4kyTX0L/G1J2xdCm5YD
+ VqhKefrmZjqayoAmBUoSQN1DIMr8wrcODxGADdUB9a3W7qmEmpf99Cgux89DB6KvUa3p1pASsC6
+ 6lpISEzC2krM3hNr/ddPOhJIgg+3/bfoST/F1yUE5eXQx078sPa32MN/5xmCuNMh5ks/aHy3KI5
+ LVAS5FL6FaxGUC5yj/vCQ1P9DFy/InpkzZ8OyWcgAGW+325af713+h5unzE8iv2dzFjes1s8orR
+ FUb2HZKBf3Nk2ZZszuAAuZ8N6xNMLodsaERx1ZEQ4X/tGkx5jVSa2S1tw3GSyoIVAmFKKr+fKN+
+ /NZPgi50k4+iVGUmnHMmqyyw/BSFirnEhY6eZJskZe7SGT2IvSpwYGUQskIhVB6HsoMJSuG20Dz
+ U5JPufRYbBCKpXMdudaOfnNYmkQr4zDMQHDNcdXVmUT29DNsoSp7MyrIiFWbD8uiBTCIYGQd8lX
+ X8VjDgf/o9oFj
+X-Developer-Key: i=leitao@debian.org; a=openpgp;
+ fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
 
-On Mon, Nov 18, 2024 at 04:26:16PM +0800, Ziyue Zhang wrote:
-> From: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-> 
-> Add support for GEN3 x1 PCIe PHY found on Qualcomm QCS615 platform.
-> 
-> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-> Signed-off-by: Ziyue Zhang <quic_ziyuzhan@quicinc.com>
-> ---
->  drivers/phy/qualcomm/phy-qcom-qmp-pcie.c   | 105 +++++++++++++++++++++
->  drivers/phy/qualcomm/phy-qcom-qmp-pcs-v2.h |   1 +
->  2 files changed, 106 insertions(+)
-> 
-> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c b/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
-> index f71787fb4d7e..df82f95a1fa2 100644
-> --- a/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
-> +++ b/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
-> @@ -726,6 +726,83 @@ static const struct qmp_phy_init_tbl ipq9574_gen3x2_pcie_pcs_misc_tbl[] = {
->  	QMP_PHY_INIT_CFG(QPHY_V5_PCS_PCIE_ENDPOINT_REFCLK_DRIVE, 0xc1),
->  };
->  
-> +static const struct qmp_phy_init_tbl qcs615_pcie_serdes_tbl[] = {
-> +	QMP_PHY_INIT_CFG(QSERDES_COM_BIAS_EN_CLKBUFLR_EN, 0x18),
-> +	QMP_PHY_INIT_CFG(QSERDES_COM_CLK_ENABLE1, 0x10),
-> +	QMP_PHY_INIT_CFG(QSERDES_COM_BG_TRIM, 0xf),
-> +	QMP_PHY_INIT_CFG(QSERDES_COM_LOCK_CMP_EN, 0x1),
-> +	QMP_PHY_INIT_CFG(QSERDES_COM_VCO_TUNE_MAP, 0x0),
-> +	QMP_PHY_INIT_CFG(QSERDES_COM_VCO_TUNE_TIMER1, 0xff),
-> +	QMP_PHY_INIT_CFG(QSERDES_COM_VCO_TUNE_TIMER2, 0x1f),
-> +	QMP_PHY_INIT_CFG(QSERDES_COM_CMN_CONFIG, 0x6),
-> +	QMP_PHY_INIT_CFG(QSERDES_COM_PLL_IVCO, 0xf),
-> +	QMP_PHY_INIT_CFG(QSERDES_COM_HSCLK_SEL, 0x0),
-> +	QMP_PHY_INIT_CFG(QSERDES_COM_SVS_MODE_CLK_SEL, 0x1),
-> +	QMP_PHY_INIT_CFG(QSERDES_COM_CORE_CLK_EN, 0x20),
-> +	QMP_PHY_INIT_CFG(QSERDES_COM_CORECLK_DIV, 0xa),
-> +	QMP_PHY_INIT_CFG(QSERDES_COM_RESETSM_CNTRL, 0x20),
-> +	QMP_PHY_INIT_CFG(QSERDES_COM_BG_TIMER, 0x9),
-> +	QMP_PHY_INIT_CFG(QSERDES_COM_SYSCLK_EN_SEL, 0x4),
-> +	QMP_PHY_INIT_CFG(QSERDES_COM_DEC_START_MODE0, 0x82),
-> +	QMP_PHY_INIT_CFG(QSERDES_COM_DIV_FRAC_START3_MODE0, 0x3),
-> +	QMP_PHY_INIT_CFG(QSERDES_COM_DIV_FRAC_START2_MODE0, 0x55),
-> +	QMP_PHY_INIT_CFG(QSERDES_COM_DIV_FRAC_START1_MODE0, 0x55),
-> +	QMP_PHY_INIT_CFG(QSERDES_COM_LOCK_CMP3_MODE0, 0x0),
-> +	QMP_PHY_INIT_CFG(QSERDES_COM_LOCK_CMP2_MODE0, 0xD),
+The net_device->npinfo pointer is marked with __rcu, indicating it requires
+proper RCU access primitives:
 
-lowercase the hex. LGTM otherwise.
+  struct net_device {
+	...
+	struct netpoll_info __rcu *npinfo;
+	...
+  };
 
+Direct access to this pointer can lead to issues such as:
+- Compiler incorrectly caching/reusing stale pointer values
+- Missing memory ordering guarantees
+- Non-atomic pointer loads
 
-> +	QMP_PHY_INIT_CFG(QSERDES_COM_LOCK_CMP1_MODE0, 0x04),
-> +	QMP_PHY_INIT_CFG(QSERDES_COM_CLK_SELECT, 0x35),
-> +	QMP_PHY_INIT_CFG(QSERDES_COM_SYS_CLK_CTRL, 0x2),
-> +	QMP_PHY_INIT_CFG(QSERDES_COM_SYSCLK_BUF_ENABLE, 0x1f),
-> +	QMP_PHY_INIT_CFG(QSERDES_COM_CP_CTRL_MODE0, 0x4),
-> +	QMP_PHY_INIT_CFG(QSERDES_COM_PLL_RCTRL_MODE0, 0x16),
-> +	QMP_PHY_INIT_CFG(QSERDES_COM_PLL_CCTRL_MODE0, 0x30),
-> +	QMP_PHY_INIT_CFG(QSERDES_COM_INTEGLOOP_GAIN1_MODE0, 0x0),
-> +	QMP_PHY_INIT_CFG(QSERDES_COM_INTEGLOOP_GAIN0_MODE0, 0x80),
-> +	QMP_PHY_INIT_CFG(QSERDES_COM_BIAS_EN_CTRL_BY_PSM, 0x1),
-> +	QMP_PHY_INIT_CFG(QSERDES_COM_BG_TIMER, 0xa),
-> +	QMP_PHY_INIT_CFG(QSERDES_COM_SSC_EN_CENTER, 0x1),
-> +	QMP_PHY_INIT_CFG(QSERDES_COM_SSC_PER1, 0x31),
-> +	QMP_PHY_INIT_CFG(QSERDES_COM_SSC_PER2, 0x1),
-> +	QMP_PHY_INIT_CFG(QSERDES_COM_SSC_ADJ_PER1, 0x2),
-> +	QMP_PHY_INIT_CFG(QSERDES_COM_SSC_ADJ_PER2, 0x0),
-> +	QMP_PHY_INIT_CFG(QSERDES_COM_SSC_STEP_SIZE1, 0x2f),
-> +	QMP_PHY_INIT_CFG(QSERDES_COM_SSC_STEP_SIZE2, 0x19),
-> +	QMP_PHY_INIT_CFG(QSERDES_COM_CLK_EP_DIV, 0x19),
-> +};
-> +
-> +static const struct qmp_phy_init_tbl qcs615_pcie_rx_tbl[] = {
-> +	QMP_PHY_INIT_CFG(QSERDES_RX_SIGDET_ENABLES, 0x1c),
-> +	QMP_PHY_INIT_CFG(QSERDES_RX_SIGDET_DEGLITCH_CNTRL, 0x14),
-> +	QMP_PHY_INIT_CFG(QSERDES_RX_RX_EQU_ADAPTOR_CNTRL2, 0x1),
-> +	QMP_PHY_INIT_CFG(QSERDES_RX_RX_EQU_ADAPTOR_CNTRL3, 0x0),
-> +	QMP_PHY_INIT_CFG(QSERDES_RX_RX_EQU_ADAPTOR_CNTRL4, 0xdb),
-> +	QMP_PHY_INIT_CFG(QSERDES_RX_UCDR_SO_SATURATION_AND_ENABLE, 0x4b),
-> +	QMP_PHY_INIT_CFG(QSERDES_RX_UCDR_SO_GAIN, 0x4),
-> +	QMP_PHY_INIT_CFG(QSERDES_RX_UCDR_SO_GAIN_HALF, 0x4),
-> +};
-> +
-> +static const struct qmp_phy_init_tbl qcs615_pcie_tx_tbl[] = {
-> +	QMP_PHY_INIT_CFG(QSERDES_TX_HIGHZ_TRANSCEIVEREN_BIAS_DRVR_EN, 0x45),
-> +	QMP_PHY_INIT_CFG(QSERDES_TX_LANE_MODE, 0x6),
-> +	QMP_PHY_INIT_CFG(QSERDES_TX_RES_CODE_LANE_OFFSET, 0x2),
-> +	QMP_PHY_INIT_CFG(QSERDES_TX_RCV_DETECT_LVL_2, 0x12),
-> +};
-> +
-> +static const struct qmp_phy_init_tbl qcs615_pcie_pcs_tbl[] = {
-> +	QMP_PHY_INIT_CFG(QPHY_V2_PCS_ENDPOINT_REFCLK_DRIVE, 0x4),
-> +	QMP_PHY_INIT_CFG(QPHY_V2_PCS_OSC_DTCT_ACTIONS, 0x0),
-> +	QMP_PHY_INIT_CFG(QPHY_V2_PCS_PWRUP_RESET_DLY_TIME_AUXCLK, 0x40),
-> +	QMP_PHY_INIT_CFG(QPHY_V2_PCS_L1SS_WAKEUP_DLY_TIME_AUXCLK_MSB, 0x0),
-> +	QMP_PHY_INIT_CFG(QPHY_V2_PCS_L1SS_WAKEUP_DLY_TIME_AUXCLK_LSB, 0x40),
-> +	QMP_PHY_INIT_CFG(QPHY_V2_PCS_PLL_LOCK_CHK_DLY_TIME_AUXCLK_LSB, 0x0),
-> +	QMP_PHY_INIT_CFG(QPHY_V2_PCS_LP_WAKEUP_DLY_TIME_AUXCLK, 0x40),
-> +	QMP_PHY_INIT_CFG(QPHY_V2_PCS_PLL_LOCK_CHK_DLY_TIME, 0x73),
-> +	QMP_PHY_INIT_CFG(QPHY_V2_PCS_SIGDET_CNTRL, 0x7),
-> +	QMP_PHY_INIT_CFG(QPHY_V2_PCS_RX_SIGDET_LVL, 0x99),
-> +	QMP_PHY_INIT_CFG(QPHY_V2_PCS_TXDEEMPH_M6DB_V0, 0x15),
-> +	QMP_PHY_INIT_CFG(QPHY_V2_PCS_TXDEEMPH_M3P5DB_V0, 0xe),
-> +};
-> +
->  static const struct qmp_phy_init_tbl sdm845_qmp_pcie_serdes_tbl[] = {
->  	QMP_PHY_INIT_CFG(QSERDES_V3_COM_BIAS_EN_CLKBUFLR_EN, 0x14),
->  	QMP_PHY_INIT_CFG(QSERDES_V3_COM_CLK_SELECT, 0x30),
-> @@ -2963,6 +3040,31 @@ static const struct qmp_phy_cfg ipq9574_gen3x2_pciephy_cfg = {
->  	.pipe_clock_rate	= 250000000,
->  };
->  
-> +static const struct qmp_phy_cfg qcs615_pciephy_cfg = {
-> +	.lanes			= 1,
-> +
-> +	.offsets		= &qmp_pcie_offsets_v2,
-> +
-> +	.tbls = {
-> +		.serdes		= qcs615_pcie_serdes_tbl,
-> +		.serdes_num	= ARRAY_SIZE(qcs615_pcie_serdes_tbl),
-> +		.tx		= qcs615_pcie_tx_tbl,
-> +		.tx_num		= ARRAY_SIZE(qcs615_pcie_tx_tbl),
-> +		.rx		= qcs615_pcie_rx_tbl,
-> +		.rx_num		= ARRAY_SIZE(qcs615_pcie_rx_tbl),
-> +		.pcs		= qcs615_pcie_pcs_tbl,
-> +		.pcs_num	= ARRAY_SIZE(qcs615_pcie_pcs_tbl),
-> +	},
-> +	.reset_list		= sdm845_pciephy_reset_l,
-> +	.num_resets		= ARRAY_SIZE(sdm845_pciephy_reset_l),
-> +	.vreg_list		= qmp_phy_vreg_l,
-> +	.num_vregs		= ARRAY_SIZE(qmp_phy_vreg_l),
-> +	.regs			= pciephy_v2_regs_layout,
-> +
-> +	.pwrdn_ctrl		= SW_PWRDN | REFCLK_DRV_DSBL,
-> +	.phy_status		= PHYSTATUS,
-> +};
-> +
->  static const struct qmp_phy_cfg sdm845_qmp_pciephy_cfg = {
->  	.lanes			= 1,
->  
-> @@ -4400,6 +4502,9 @@ static const struct of_device_id qmp_pcie_of_match_table[] = {
->  	}, {
->  		.compatible = "qcom,msm8998-qmp-pcie-phy",
->  		.data = &msm8998_pciephy_cfg,
-> +	}, {
-> +		.compatible = "qcom,qcs615-qmp-gen3x1-pcie-phy",
-> +		.data = &qcs615_pciephy_cfg,
->  	}, {
->  		.compatible = "qcom,sa8775p-qmp-gen4x2-pcie-phy",
->  		.data = &sa8775p_qmp_gen4x2_pciephy_cfg,
-> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-pcs-v2.h b/drivers/phy/qualcomm/phy-qcom-qmp-pcs-v2.h
-> index bf36399d0057..1ecf4b5beba6 100644
-> --- a/drivers/phy/qualcomm/phy-qcom-qmp-pcs-v2.h
-> +++ b/drivers/phy/qualcomm/phy-qcom-qmp-pcs-v2.h
-> @@ -34,6 +34,7 @@
->  #define QPHY_V2_PCS_USB_PCS_STATUS			0x17c /* USB */
->  #define QPHY_V2_PCS_PLL_LOCK_CHK_DLY_TIME_AUXCLK_LSB	0x1a8
->  #define QPHY_V2_PCS_OSC_DTCT_ACTIONS			0x1ac
-> +#define QPHY_V2_PCS_SIGDET_CNTRL			0x1b0
->  #define QPHY_V2_PCS_RX_SIGDET_LVL			0x1d8
->  #define QPHY_V2_PCS_L1SS_WAKEUP_DLY_TIME_AUXCLK_LSB	0x1dc
->  #define QPHY_V2_PCS_L1SS_WAKEUP_DLY_TIME_AUXCLK_MSB	0x1e0
-> -- 
-> 2.34.1
-> 
+Replace direct NULL checks of npinfo with rcu_access_pointer(),
+which provides the necessary memory ordering guarantees without the
+overhead of a full RCU dereference, since we only need to verify
+if the pointer is NULL.
 
+In both cases, the RCU read lock is not held when the function is being
+called. I checked that by using lockdep_assert_in_rcu_read_lock(), and
+seeing the warning on both cases.
+
+Signed-off-by: Breno Leitao <leitao@debian.org>
+---
+Breno Leitao (2):
+      netpoll: Use rcu_access_pointer() in __netpoll_setup
+      netpoll: Use rcu_access_pointer() in netpoll_poll_lock
+
+ include/linux/netpoll.h | 2 +-
+ net/core/netpoll.c      | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+---
+base-commit: 8ffade77b6337a8767fae9820d57d7a6413dd1a1
+change-id: 20241115-netpoll_rcu-eb1296511b71
+
+Best regards,
 -- 
-With best wishes
-Dmitry
+Breno Leitao <leitao@debian.org>
+
 
