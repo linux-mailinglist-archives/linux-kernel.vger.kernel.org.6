@@ -1,106 +1,116 @@
-Return-Path: <linux-kernel+bounces-413192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3ABF9D151D
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 17:12:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA6C59D14E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 17:01:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 147E0B2AF07
-	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 16:00:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87C38286271
+	for <lists+linux-kernel@lfdr.de>; Mon, 18 Nov 2024 16:01:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67C891BC077;
-	Mon, 18 Nov 2024 16:00:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="WRZ32geY"
-Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4A011BD9E1;
+	Mon, 18 Nov 2024 16:00:37 +0000 (UTC)
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AEF21B6CF1
-	for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 16:00:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBF451BBBE5;
+	Mon, 18 Nov 2024 16:00:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731945633; cv=none; b=lVCJMi8zAx/lfHLCHN/N+h60yEpzP+szxEPv7SYw/nmatDzYMS7inZ70a9j5UXWAvHg5AhupbObfcnkCCLMP3AA7Cg5kkQ12DA6lRmUSAWvHsXr0XJSPpSh6mgSBv6w/5mTpJAxt4nBavRetyGIj556PW4+Zb5Hoh19hZEreTSc=
+	t=1731945637; cv=none; b=otUQGbuNwItT8JKjeqdOGzqWKGcrg3X52E3I2CNkxuBiFzPvyjUVCNXUsoMuufQJS5xOhLNCYoYLDlhme3W6IVkqxk5l87SLaeFN/M8IL14QVwSAmCjPKTtMz+S6NjCav10lXhy7wf8o+xaikezS5FY3mDlcynWi06RavRyGbLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731945633; c=relaxed/simple;
-	bh=Ge0r2Ea6KyPvO6/MOe8wxcNH8Q7DIB9dNFPGQKRqvQQ=;
+	s=arc-20240116; t=1731945637; c=relaxed/simple;
+	bh=Zb7WTimXNAmtjSJ2AjvonPJRWoVTRctyLlR21r3QJlE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=he/tenVi6DSIz3jPHISY7Uraugi4faZY4MDoQdMeKjmOSb9KGLjQv1LB1i/5klgvckRBMdtXbXWwKrZiNmw5RyKAWQGyhb84yWzF4pROdnzKRsQ8xie521uWrM2HQihbcbCV7xzxLu6wFDj/35vtf+dYCfQ/sXbc1Cd4YjylYYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=WRZ32geY; arc=none smtp.client-ip=91.218.175.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <657764fd-68a1-4826-b832-3bda91a0c13b@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1731945627;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hZI0ToznCzhjHwYsDSDb01BcP4KuLMwEBrhHNS7BIoc=;
-	b=WRZ32geYK58tbEOuvHdtvVxm1DNs9niOmZol4nD0+3Mp8Dh6xJRI+uVBqTQza9gc5xn31a
-	72onjs3SehhdwbFfty9nLDSfYnnlGGc+e29TYEanwsJgvAy5RVSwrmcCrNMPECyUdxetI4
-	aEM2/YUCYARPqIpYkKl9Nf1sh+X0xtg=
-Date: Mon, 18 Nov 2024 11:00:22 -0500
+	 In-Reply-To:Content-Type; b=GiTeU/YYdYJ39lYtYnN11sfRF5N7rCaQPu/Y1AHhhxq4muQOO1fOk0uQZFssTL6UHRy51eM5oVs9BQvr9E5h+bHi377/c64V32Xv4BGyHdYkSZBvRxv1URUXCchS2Eg5EYLgal/jijxRKXKlVqDKsUfz8vwo+OyQW0N0COEKDbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=korsgaard.com; spf=pass smtp.mailfrom=korsgaard.com; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=korsgaard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=korsgaard.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id B72082000B;
+	Mon, 18 Nov 2024 16:00:30 +0000 (UTC)
+Message-ID: <a35ba8dc-fd4a-41ae-9ad7-7702f4f48980@korsgaard.com>
+Date: Mon, 18 Nov 2024 17:00:30 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net-next 2/2] net: axienet: Add support for AXI 2.5G MAC
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>,
- Suraj Gupta <suraj.gupta2@amd.com>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, michal.simek@amd.com,
- radhey.shyam.pandey@amd.com, horms@kernel.org, netdev@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- git@amd.com, harini.katakam@amd.com
-References: <20241118081822.19383-1-suraj.gupta2@amd.com>
- <20241118081822.19383-3-suraj.gupta2@amd.com>
- <ZztjvkxbCiLER-PJ@shell.armlinux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] usb: dwc3: xilinx: make sure pipe clock is deselected
+ in usb2 only mode
+To: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
+ Thinh.Nguyen@synopsys.com, gregkh@linuxfoundation.org, michal.simek@amd.com,
+ robert.hancock@calian.com
+Cc: linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, git@amd.com, Neal Frager
+ <neal.frager@amd.com>, stable@vger.kernel.org
+References: <1731942491-1992368-1-git-send-email-radhey.shyam.pandey@amd.com>
 Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sean Anderson <sean.anderson@linux.dev>
-In-Reply-To: <ZztjvkxbCiLER-PJ@shell.armlinux.org.uk>
-Content-Type: text/plain; charset=UTF-8
+From: Peter Korsgaard <peter@korsgaard.com>
+In-Reply-To: <1731942491-1992368-1-git-send-email-radhey.shyam.pandey@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+X-GND-Sasl: peter@korsgaard.com
 
-On 11/18/24 10:56, Russell King (Oracle) wrote:
-> On Mon, Nov 18, 2024 at 01:48:22PM +0530, Suraj Gupta wrote:
->> Add AXI 2.5G MAC support, which is an incremental speed upgrade
->> of AXI 1G MAC and supports 2.5G speed only. "max-speed" DT property
->> is used in driver to distinguish 1G and 2.5G MACs of AXI 1G/2.5G IP.
->> If max-speed property is missing, 1G is assumed to support backward
->> compatibility.
->> 
->> Co-developed-by: Harini Katakam <harini.katakam@amd.com>
->> Signed-off-by: Harini Katakam <harini.katakam@amd.com>
->> Signed-off-by: Suraj Gupta <suraj.gupta2@amd.com>
->> ---
+On 11/18/24 16:08, Radhey Shyam Pandey wrote:
+> From: Neal Frager <neal.frager@amd.com>
 > 
-> ...
-> 
->> -	lp->phylink_config.mac_capabilities = MAC_SYM_PAUSE | MAC_ASYM_PAUSE |
->> -		MAC_10FD | MAC_100FD | MAC_1000FD;
->> +	lp->phylink_config.mac_capabilities = MAC_SYM_PAUSE | MAC_ASYM_PAUSE;
->> +
->> +	/* Set MAC capabilities based on MAC type */
->> +	if (lp->max_speed == SPEED_1000)
->> +		lp->phylink_config.mac_capabilities |= MAC_10FD | MAC_100FD | MAC_1000FD;
->> +	else
->> +		lp->phylink_config.mac_capabilities |= MAC_2500FD;
-> 
-> The MAC can only operate at (10M, 100M, 1G) _or_ 2.5G ?
+> When the USB3 PHY is not defined in the Linux device tree, there could
+> still be a case where there is a USB3 PHY is active on the board and
 
-It's a PCS limitation. It either does (1000Base-X and/or SGMII) OR
-(2500Base-X). The MAC itself doesn't have this limitation AFAIK.
+2nd "is " should be dropped. This sounds a bit confusing to me as the 
+PHY is on-chip on zynqmp, maybe you are referring to a reference clock 
+input to the PS-GTR instead?
 
---Sean
 
-> Normally, max speeds can be limited using phylink_limit_mac_speed()
-> which will clear any MAC capabilities for speeds faster than the
-> speed specified.
+> enabled by the first stage bootloader.  If serdes clock is being used
+> then the USB will fail to enumerate devices in 2.0 only mode.
 > 
+> To solve this, make sure that the PIPE clock is deselected whenever the
+> USB3 PHY is not defined and guarantees that the USB2 only mode will work
+> in all cases.
+> 
+> Fixes: 9678f3361afc ("usb: dwc3: xilinx: Skip resets and USB3 register settings for USB2.0 mode")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Neal Frager <neal.frager@amd.com>
+> Signed-off-by: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
+> ---
+> Changes for v2:
+> - Add stable@vger.kernel.org in CC.
+
+Other than that looks good, thanks.
+
+Acked-by: Peter Korsgaard <peter@korsgaard.com>
+
+
+> ---
+>   drivers/usb/dwc3/dwc3-xilinx.c | 5 ++++-
+>   1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/dwc3/dwc3-xilinx.c b/drivers/usb/dwc3/dwc3-xilinx.c
+> index e3738e1610db..a33a42ba0249 100644
+> --- a/drivers/usb/dwc3/dwc3-xilinx.c
+> +++ b/drivers/usb/dwc3/dwc3-xilinx.c
+> @@ -121,8 +121,11 @@ static int dwc3_xlnx_init_zynqmp(struct dwc3_xlnx *priv_data)
+>   	 * in use but the usb3-phy entry is missing from the device tree.
+>   	 * Therefore, skip these operations in this case.
+>   	 */
+> -	if (!priv_data->usb3_phy)
+> +	if (!priv_data->usb3_phy) {
+> +		/* Deselect the PIPE Clock Select bit in FPD PIPE Clock register */
+> +		writel(PIPE_CLK_DESELECT, priv_data->regs + XLNX_USB_FPD_PIPE_CLK);
+>   		goto skip_usb3_phy;
+> +	}
+>   
+>   	crst = devm_reset_control_get_exclusive(dev, "usb_crst");
+>   	if (IS_ERR(crst)) {
+> 
+> base-commit: 744cf71b8bdfcdd77aaf58395e068b7457634b2c
+
+-- 
+Bye, Peter Korsgaard
+
 
