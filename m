@@ -1,115 +1,99 @@
-Return-Path: <linux-kernel+bounces-414930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9C539D2F6A
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 21:25:34 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C4909D2F6D
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 21:28:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76BAE283BB3
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 20:25:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E72C6B24787
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 20:28:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A4001D2F64;
-	Tue, 19 Nov 2024 20:25:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56B711D2F6A;
+	Tue, 19 Nov 2024 20:28:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hY+1Y8c1"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZnutCmNf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71FBF14A098;
-	Tue, 19 Nov 2024 20:25:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B17B014A098;
+	Tue, 19 Nov 2024 20:28:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732047926; cv=none; b=X6hT06DdgpfONMEeuAYuGIDKh+MOW6FgZP3HbbSybzlK4GrtkupD1U86c0O/TpG15iOF55a7LbvSii3hPpHaBp4pzgVnrp1OmmKxW1cSDISt99ThRJXql8n6HzOZBnmQOCICWxL9sejHSpI+JQ3KuoyHqZE6GxnGtdykoUnFmys=
+	t=1732048122; cv=none; b=Y+CxtLg33XgtM3bDRlxDEkCTMedqJ0RV7ixr0GyAKLnEGHo7aW+OQHxx2L2pbFHcZIO6CEJPVBf//n6K/q2G1LdB/qv3KfaL0QhzNViW/1sTd+qc9jHLMqx0JWsMvyIAgejvFvWYA77EarG/xEEqCtYvQHAetittQETZ0y3nVww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732047926; c=relaxed/simple;
-	bh=9CPvK88OV/qNLB+5ATBB+gzFyaWUkpZCuEm5YUbDyE4=;
-	h=From:Message-ID:Subject:To:Cc:Date:Content-Type:MIME-Version; b=uMryt5FXcGMmjWG8MfIfpWX8iwuOozdQPrKeERlTTxJrikByZzd2CT0vQ2yoYPb8IeCpmPty7PdqbtRmLbt42IEhNYArtjZEKFBA4NoG9nM6wzw3LlXAV/99Yr+ZsW8Z86M8PItJLcasu1vSsOWhnuv8AGKBPgGsXBSfnKbqjMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hY+1Y8c1; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5cfcf4df87aso3109542a12.1;
-        Tue, 19 Nov 2024 12:25:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732047923; x=1732652723; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:date:cc:to
-         :subject:message-id:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=YAuKpVe3qBPu3OtLjaPPxU5rhIOwfwNASENV7Eit6MI=;
-        b=hY+1Y8c12CCtCyo3VpT1OAD+wT3yCzXkWH7RkcHJDSLmAX+lUg5bbiDT5NwcSLDzrH
-         5RCzT4fuDAaX9J51m1nKr3NGn0NtUa6u0dHhcBH7/r5fG5ty6+HurrzfhdtD0syx1nqO
-         nf2PjJaHZfpMAvD35CxzuGQMlRzlncIoS9CtiyBpsajuY1iE6rsMj3hyZV8jCuC/pyvT
-         betGHybyT6kJ2qPeTB2Rq6LJguaJdmvK4mXs+hHYFxr5WhClgT6zsdraT7OXpkmSCTue
-         9bN0mhQLLWdJV0ItQK7CDbPRL7KhSZlu9zt0DL1NQovnNBtqWJBhlH+S7A1ht0dCkDu1
-         FbVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732047923; x=1732652723;
-        h=mime-version:user-agent:content-transfer-encoding:date:cc:to
-         :subject:message-id:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YAuKpVe3qBPu3OtLjaPPxU5rhIOwfwNASENV7Eit6MI=;
-        b=G3CYnbJbVK3n7RVsTuhgXSWzzYRcvIet56dhKA6xjJRs79LIUnY6cIyjtekVth2TRM
-         EOOZG3KCmlHZmYu0PHCv+/sTqGp3EwSb/9pTI95nJxClnUXHhFswkmgbi0FDiIe/+E7E
-         2EtO4Svr5pDsemYWTPtAUzm2LCOVFVccucf+WBDsflc/cL8+xKxb+s0hkNsANn6ykTZC
-         jVAGhjkRYfDgkW6yv8hmf0ZMsjT6ReluvVbOb4xndeaxCHaK08lnS2/waA4oZHATmTW/
-         190zFVhezxTJKG2/oZMrLt34qM8g83GPIow3T+S7+fqcsgQcrrlwifnU+BTuf3W8ywIq
-         716Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXa6megbZciWAvlfBsRizoDoY4LvKeHfTbv+dccit4j5kxzHsJm7WrsqaXqTATxj5ZNe8JvwlZNFofw/xU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHXbe/vHx6qcE/NRhiOpjYU0XcpLsreGFK8GwCE72IudFzczdb
-	/gcz9NSYj2FlUOlTwa72Bt/+rC77m9Jx0dEb2mpO6QVRoYBpbyzlXKGHFA==
-X-Google-Smtp-Source: AGHT+IGMYIpH/ZnenPMmML9e9ZwGjZXHGivrg7kc7vmurkv4flw+bqs70baBfK8FFhG/SZ19oA8FLg==
-X-Received: by 2002:a05:6402:278c:b0:5c9:6f20:4cf1 with SMTP id 4fb4d7f45d1cf-5cff4cbcc75mr4210a12.27.1732047922529;
-        Tue, 19 Nov 2024 12:25:22 -0800 (PST)
-Received: from [10.0.2.15] (23-152-178-143.ftth.glasoperator.nl. [143.178.152.23])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cff4501bcfsm60584a12.47.2024.11.19.12.25.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Nov 2024 12:25:22 -0800 (PST)
-From: Liam Zuiderhoek <zuiderhoekl@gmail.com>
-X-Google-Original-From: Liam Zuiderhoek <Zuiderhoekl@gmail.com>
-Message-ID: <2921f50a7e2f112f0c16e116d2992da8a0340cab.camel@gmail.com>
-Subject: [PATCH] i2x: Fix whitespace style issue
-To: wsa+renesas@sang-engineering.com
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Tue, 19 Nov 2024 21:25:21 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3-0ubuntu1 
+	s=arc-20240116; t=1732048122; c=relaxed/simple;
+	bh=D/TUDSGFaaECMmzNkEOiI0Kb4tsy5Vzy8OBgXOmcC6s=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=A6hYeHt1ijzSue4H7lL+EWEg8Ci90Gi3ShK3/eaVvjgY6TwQRxnbLZ24hWAErtVqeoPIHHiV+kD+hrYOGq6ZUttYjEd1aqiZ46rfqGUZBdZNEytKwDsVlLiFmgX+paqBbExaaxeical4E+e8OujJlU6ffb3Bos2h/66JceJjcnY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZnutCmNf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF306C4CECF;
+	Tue, 19 Nov 2024 20:28:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732048122;
+	bh=D/TUDSGFaaECMmzNkEOiI0Kb4tsy5Vzy8OBgXOmcC6s=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=ZnutCmNfRHFBoB6DkDF8pgv0RsXdRP+BHCEIX8LMJpm9WAlTxh0OKWykNty5cJZ7A
+	 2gz+HgjJcqAVKZZ//+OkxNAFTOKTEEeMN5uPXOWQPY1JB07Hm03jfvO44Kcgbk+J0g
+	 P/fEJ7OzBMKw+pD/h8hPLrXVWbDiTE+q/adGG/DtNnn/ILVk8FUlyCsP1Ig3qTpOrB
+	 EzLcmEOdEw91TvuQmXl067lNCYYLIHlWFAoG/X+coQ4BggdSBa3V0ibXy71ZYoPm96
+	 eYcRp88dOXYEA/G7eDgbvaw6gHMz/bDA5t6rFQ8vBQ4tvYIz68imy11Dlu2K5DZnEY
+	 JvdFcBemX4Z9g==
+From: Mark Brown <broonie@kernel.org>
+To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ Vijendar Mukunda <Vijendar.Mukunda@amd.com>, 
+ Mario Limonciello <superm1@kernel.org>
+Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Mario Limonciello <mario.limonciello@amd.com>, 
+ kernel test robot <lkp@intel.com>
+In-Reply-To: <20241118025527.3318493-1-superm1@kernel.org>
+References: <20241118025527.3318493-1-superm1@kernel.org>
+Subject: Re: [PATCH] ASoC: amd: Fix build dependencies for `SND_SOC_AMD_PS`
+Message-Id: <173204812069.81544.393632760053179230.b4-ty@kernel.org>
+Date: Tue, 19 Nov 2024 20:28:40 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-9b746
 
-From 0107b1649e3f74f1cd4e0695968edb4d81028f91 Mon Sep 17 00:00:00 2001
-From: Liam Zuiderhoek <zuiderhoekl@gmail.com>
-Date: Tue, 22 Oct 2024 20:46:59 +0200
-Subject: [PATCH] i2c: Fix whitespace style issue
+On Sun, 17 Nov 2024 20:55:27 -0600, Mario Limonciello wrote:
+> The pci-ps module now must have `SND_SOC_ACPI_AMD_MATCH` selected
+> to reference the `snd_soc_acpi_amd_acp63_sdw_machines` symbol.
+> 
+> 
 
-This patch fixes a coding style issue in the alignment of parameters
-in the function i2c_smbus_write_bytes(). It replaces spaces with tabs for
-alignment,  as per the coding style guidelines.
+Applied to
 
-Signed-off-by: Liam Zuiderhoek <zuiderhoekl@gmail.com>
----
- drivers/i2c/i2c-core-smbus.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-diff --git a/drivers/i2c/i2c-core-smbus.c b/drivers/i2c/i2c-core-smbus.c
-index e3b96fc53b5c..473f8ec7fedf 100644
---- a/drivers/i2c/i2c-core-smbus.c
-+++ b/drivers/i2c/i2c-core-smbus.c
-@@ -122,7 +122,7 @@ EXPORT_SYMBOL(i2c_smbus_read_byte);
- s32 i2c_smbus_write_byte(const struct i2c_client *client, u8 value)
- {
- 	return i2c_smbus_xfer(client->adapter, client->addr, client->flags,
--	                      I2C_SMBUS_WRITE, value, I2C_SMBUS_BYTE, NULL);
-+			      I2C_SMBUS_WRITE, value, I2C_SMBUS_BYTE, NULL);
- }
- EXPORT_SYMBOL(i2c_smbus_write_byte);
-=20
---=20
-2.43.0
+Thanks!
 
+[1/1] ASoC: amd: Fix build dependencies for `SND_SOC_AMD_PS`
+      commit: 0109ee00788e0ad7b888a799c26b5a93b343876b
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
 
