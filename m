@@ -1,97 +1,109 @@
-Return-Path: <linux-kernel+bounces-414675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8227B9D2BE5
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 17:58:35 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C6B49D2CC0
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 18:35:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4240928592D
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 16:58:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D836B38FF8
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 16:58:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CEA41D12F9;
-	Tue, 19 Nov 2024 16:54:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A8961D0F49;
+	Tue, 19 Nov 2024 16:56:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EX6kUEgM"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LHi89DCS"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7D1D1CEAAA;
-	Tue, 19 Nov 2024 16:54:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6BB21D0BAE
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 16:56:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732035290; cv=none; b=g4FJ7n1/cmWpu18RBGa/hlXSzJrzNzlQ4OsZjtTyRS7h6DI1G4u7hIav2Z16ulUGIKWVII4wDKkk7ndorp/45WvRcR5q83nq881AakspPZ0tFbDLDWx5QLGpM+Y+BOVYHqhKkv6ziu3xB9Q3+izRfzixMLVMXTu7eMXMi2YuzrA=
+	t=1732035366; cv=none; b=cb7Mv4sdsvmGVyrRtusfmNkJhbCl0Ta9X0fWLkQqrragKzqtU4bnTwdiESBBh3TWDdtWPDMSzFGCkWfGtCIPCzh44s8uo/WxuZkOlAWQSdYkoo/rj2jmUElfCrtVdlhLrttzXrAjx3b2U6bA+bLYdmHF5f5lSXC543oLqDMx9Mg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732035290; c=relaxed/simple;
-	bh=Mluv7aBfcA1cyuAWxONnyoaNZ+6ghqbtWSuSeFSkhfQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LrOHIbrGUmQZhWFGMWjMVoG8amrYEdYflOs3mu/R5YMpDDufXI5MZV+MpHjc7Op6J0AkQ5osHQmX0FgFZDsg1TSBfTvs9XTJu5bFqSIFEACiKI1IU0mDqllKvNHwaXFO455BOx2xvAnXPowOD3YbeJFV30piz11a8zkaG4SBRBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EX6kUEgM; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-724455f40a0so910538b3a.0;
-        Tue, 19 Nov 2024 08:54:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732035288; x=1732640088; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=a7bNrpPNJJoTezdIAKIpa0vYI7kndoH7VAYyN95+PYM=;
-        b=EX6kUEgMO8Tiii0YbfVj+OSaw5c7zJmljijR94PyuAUuEB79PgoYwmt1huf7oN9FVn
-         ZZNjUT7wnMkeKVT82Q4ZWB3/bz51xrgrS7kchTYGhCDsnakVBAidFvRIgKuymqaAfY3g
-         4ap3OTvg2amsHVR5VX/j0OA09VbNDixhXct4C8re8+aH5aCq7R3SZkSU6Um6kyASwbG8
-         SnqtoRY0dszllacXm21bO8UDaRrdg+dBGJTkfPOVTBzwAoaK/unbNw4hxAJdPgA8FRmQ
-         JvRK+W7umt/AplJr74fYrQPr7BcN5wFKfRo2HSIO2UgcZBFPDRD5kRuOsCYUEJsQqmYF
-         goyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732035288; x=1732640088;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=a7bNrpPNJJoTezdIAKIpa0vYI7kndoH7VAYyN95+PYM=;
-        b=gujzYXE6zzQWneUsCF7mM5wA8FWVpT5N+TXk5wpYggmnrqzOmmHjmBAywENZpYVFuy
-         t6m03iV/PsewaFcx6etTMxmJ/HA4ALlyBFYi0uFdP0L0TKkB8oWBDS0b1a3eAB6egRZ6
-         p15kJepuJKXAViECVN0+BHaakCgw1xwAfVyF0f2LecJJuV0ALEzvgdKyaNlTiGxyRVQD
-         PBGZDqHwUgCUhT4U6q83tQr5XEvm4SwzSRY977Kax7MN9Mx4QXhZf7peqBpRD86mZGba
-         sTc5ACaASEdhFVvkVCoi+a5EOXGoEqgrveA2exKKRo91+W8vc1FRWic5phcklFsVFxCV
-         ZESw==
-X-Forwarded-Encrypted: i=1; AJvYcCWEs4tOLSsMHHMn+rzGTilwVHAiMjLjxt/Q9dbx+aI/Nbp3Mbea98DpViPoGRIDU/XQHPSlLb/30sJLGw==@vger.kernel.org, AJvYcCXqKnmHT81XVXmcq6DlnQmStsJoy+lLrd+taTL10Qw4epjPMbhD3w3vqxvn/dQyvKQAf2ayLXkipUwXxOZZ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw61YLGpwgXgsR3xLm8ZscyqA1jUkE+Mo/C3n/GqPyhZZGZxTBv
-	AAbxDkDsk5k5rx1hDGUT1EB2iBeSr6gCxpIqo5IILnMDNJz4ew/i
-X-Google-Smtp-Source: AGHT+IH2t0ugd98LmfJyU8kosbhs/AWCvSicwXcbXuZ3ZcMnNY497VYpTyLS5wYkBKQSE3+pGr8VVQ==
-X-Received: by 2002:a05:6a00:a1f:b0:724:59f9:491e with SMTP id d2e1a72fcca58-72476cdc786mr21989486b3a.26.1732035287817;
-        Tue, 19 Nov 2024 08:54:47 -0800 (PST)
-Received: from ?IPV6:2409:40c0:11a2:6510:4555:ca08:e78d:a9df? ([2409:40c0:11a2:6510:4555:ca08:e78d:a9df])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724771c0d29sm8596918b3a.122.2024.11.19.08.54.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 Nov 2024 08:54:47 -0800 (PST)
-Message-ID: <2c06f5eb-aa54-4b87-8ae1-c07270715bcd@gmail.com>
-Date: Tue, 19 Nov 2024 22:24:43 +0530
+	s=arc-20240116; t=1732035366; c=relaxed/simple;
+	bh=1qHk9c9UF1EeKWWeqbF/56RTbbac9fdZn150Ee2pIlM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=miICZJ4V2rlGvbt5+TfT4G4DhtWln7By1I73srHNQZV6WVDnELHHOF7a+sr3PqJNLVYup9pU2j3PtjDctILbm0ew0dinTd2/gexpRlyXSgqIfljsrJ4sRo62y3sa/k4X83P+oUXoBCmG3Z5o+Moy/N7G13IhUayRdzZcoZ3Uu44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LHi89DCS; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732035363;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eZY2bvI9jRohMLC1MiiilGj8lvWI0aPVX7q2WlrGEVY=;
+	b=LHi89DCSTUGGCRJjW0POg5SJzUPXeCDINb22xYnWO2Q9hN9DmRuBE4yk52KbolvPvnqJI6
+	RG4RnsQ25vNgZj2EakRbnNOV45cuMIhj2S8vRCbQQcm7M9esZnQaPOis8uoPl+PoJXE2cr
+	4KbPojI/O+S/ZF7weS9MFZkpZNS17ks=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-308-Von8AFHlPcutkbqohtcFAg-1; Tue,
+ 19 Nov 2024 11:56:00 -0500
+X-MC-Unique: Von8AFHlPcutkbqohtcFAg-1
+X-Mimecast-MFC-AGG-ID: Von8AFHlPcutkbqohtcFAg
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0E7A419560AD;
+	Tue, 19 Nov 2024 16:55:58 +0000 (UTC)
+Received: from localhost (unknown [10.22.89.254])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 933AB1956086;
+	Tue, 19 Nov 2024 16:55:56 +0000 (UTC)
+Date: Tue, 19 Nov 2024 13:55:55 -0300
+From: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+	Krishna Reddy <vdumpa@nvidia.com>, Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+	Steven Rostedt <rostedt@goodmis.org>,
+	linux-rt-devel@lists.linux.dev
+Subject: Re: [PATCH] iommu/tegra241-cmdqv: do not call smp_processor_id in
+ preemptible context
+Message-ID: <ZzzDG6FFprnWPnCj@uudg.org>
+References: <ZzvZkMKhwmJESpdM@uudg.org>
+ <20241119071510.-6OKEw2q@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5] block: blk-mq: fix uninit-value in blk_rq_prep_clone
- and refactor
-To: Christoph Hellwig <hch@infradead.org>
-Cc: axboe@kernel.dk, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, hare@suse.de, kbusch@kernel.org
-References: <20241119164412.37609-1-surajsonawane0215@gmail.com>
- <ZzzB3fErIdy0OHXQ@infradead.org>
-Content-Language: en-US
-From: Suraj Sonawane <surajsonawane0215@gmail.com>
-In-Reply-To: <ZzzB3fErIdy0OHXQ@infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241119071510.-6OKEw2q@linutronix.de>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On 19/11/24 22:20, Christoph Hellwig wrote:
-> Looks good:
+On Tue, Nov 19, 2024 at 08:15:10AM +0100, Sebastian Andrzej Siewior wrote:
+> On 2024-11-18 21:19:28 [-0300], Luis Claudio R. Goncalves wrote:
+> > With PREEMPT_RT enabled some of the calls to tegra241_cmdqv_get_cmdq()
+> > during boot will happen in preemptible context. As this function calls
+> > smp_processor_id(), these calls will trigger a "BUG: using smp_processor_id()
+> > in preemptible" backtrace if DEBUG_PREEMPT is enabled.
 > 
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> If this is only on PREEMPT_RT, where is the disabled preemption coming
+> from on !PREEMPT_RT?
+
+You are correct. This is not exclusive to PREEMPT_RT, also happens with the
+stock kernel. I ran more tests and this time I made sure DEBUG_PREEMPT was
+enabled. That was enough to reproduce the problem.
+ 
+> > As tegra241_cmdqv_get_cmdq() only calls smp_processor_id() to use the
+> > CPU number as a factor to balance out traffic on cmdq usage, it is safe
+> > to use raw_smp_processor_id() here.
+> > 
+> > Signed-off-by: Luis Claudio R. Goncalves <lgoncalv@redhat.com>
 > 
-Thank you for reviewing the patch.
+> Sebastian
+> 
+---end quoted text---
+
 
