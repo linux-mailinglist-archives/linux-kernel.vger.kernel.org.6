@@ -1,47 +1,45 @@
-Return-Path: <linux-kernel+bounces-413890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56CED9D2035
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 07:26:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8749D9D203E
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 07:30:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A40EB21871
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 06:25:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 295E1B21775
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 06:30:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E6BD156887;
-	Tue, 19 Nov 2024 06:25:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DPtBmu9H"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ABE31586FE;
+	Tue, 19 Nov 2024 06:30:11 +0000 (UTC)
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7383A1482E7;
-	Tue, 19 Nov 2024 06:25:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD65D155C8A;
+	Tue, 19 Nov 2024 06:30:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731997550; cv=none; b=GRWFn8IOvG7sr85cDzYHyC7RoX01EH7nd+Uw7usBrZYN2MWmDf8cZ5rD3PUoUxGOJ0d/H9xvjC5mjHvfrAjR/0jl+x1XHI3wsR6fQzzeO3Bt3awwePbkgZ9gSpcS4Cyg6ajxbiE/idQRw036OegIhoI2p2TmdLz3qSFFGMtMkts=
+	t=1731997810; cv=none; b=iGu0GkfFgvdO3DUTVtQw0HIMnjCINsFW7OTMXVU9k8kw0zi/4PWLm9j1bBQmhwkBDQhEMVQqavtEhDhwNWngpiKKf9n6H7HGY7FC3yjABXsUgtSNHrbYiLsB8eXo7F5+1gwmhp2EGcr6C6QPQ0i/SPNQiZ1q5yn1UJ9pKXSSNmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731997550; c=relaxed/simple;
-	bh=O65vK3FN7BThKSIpoOKjbWaMV1fuK2BNVeNLdrfVxnQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aaNTgu4YyE1+UeeqY1QiE09IeD8VlNR7sOrWFcgw1iXk4/7xlI/Xm74phOTZ6sY2yRUHWD+0KurpsPSoxIPpnJaz1q3UMc186gaVliCTKGD23p7/xPmcxAYhDIPR0MQzq5lmUn7diQ1oclVV0+vI4i+H8zYwq2n2V2ShBRYKu7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DPtBmu9H; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08269C4CECF;
-	Tue, 19 Nov 2024 06:25:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731997550;
-	bh=O65vK3FN7BThKSIpoOKjbWaMV1fuK2BNVeNLdrfVxnQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=DPtBmu9Hd4qU9Y1DaNj1qxDyWSogjq6ATApH9euJJ8FbcGUw9ke8rvIc7JzrFEPeD
-	 luMDh+MJ/kMl8Baj5yA6PwKCBOvqLUuAdTPi3n80m1mhjH3L+VteT9yeqYcatCgxSH
-	 52pxiqGxnecpZklfputAfw+X+LX94vJOKTnbsa+sap9HbovSvJJo08qJZkjs7cwumc
-	 /rKptqYgwO+owinLMd1R+N0bDEykjLDDodpUhjh3DERCkpEJ24YD00m1DZ50Jguvke
-	 e1k4XZ2ndudQOwaSIFTGJ0f1jyzZK6UNuZqzb/7Y9lhmgvsP3NPXQyJoTsqiHHCaCn
-	 C6ECoYzYfQ5hg==
-Message-ID: <0f117213-7001-4bc1-a9af-335d10be3489@kernel.org>
-Date: Tue, 19 Nov 2024 11:55:44 +0530
+	s=arc-20240116; t=1731997810; c=relaxed/simple;
+	bh=4qAzza/2ZTu6Ygf5D4eRWFT4hXBKg3JSc+ED4US8OMs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=UPPrJ24wF/A9aljGLlRcURVxWnP8KqfE+cR8SqRe6K/QMiOZ52QUcL7M8+ZdJch8KEknG5am5k3CfnoNw1xQbB1v0UFdO3pWxHXyMUOAn+COpppBrf2Addo+rGWRofMGnEd345gkbs5KLUcce9c4q26RzoW8HgBpKat9Eg84Hl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4XsvkC3VFZz1yqbk;
+	Tue, 19 Nov 2024 14:30:11 +0800 (CST)
+Received: from kwepemg500008.china.huawei.com (unknown [7.202.181.45])
+	by mail.maildlp.com (Postfix) with ESMTPS id C252C1A016C;
+	Tue, 19 Nov 2024 14:29:58 +0800 (CST)
+Received: from [127.0.0.1] (10.174.177.71) by kwepemg500008.china.huawei.com
+ (7.202.181.45) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 19 Nov
+ 2024 14:29:57 +0800
+Message-ID: <b2ea547a-6097-4f95-9ee7-097c8363a076@huawei.com>
+Date: Tue, 19 Nov 2024 14:29:57 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,51 +47,115 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: manual merge of the soundwire tree with the
- sound-asoc tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Vinod Koul <vkoul@kernel.org>,
- Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
-Cc: Bard Liao <yung-chuan.liao@linux.intel.com>,
- Charles Keepax <ckeepax@opensource.cirrus.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>,
- Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
- Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-References: <20241115150118.3abfa3c6@canb.auug.org.au>
+Subject: Re: [PATCH 1/1] quota: flush quota_release_work upon quota writeback
+To: Jan Kara <jack@suse.cz>
+CC: Ojaswin Mujoo <ojaswin@linux.ibm.com>, Ritesh Harjani
+	<ritesh.list@gmail.com>, <linux-ext4@vger.kernel.org>, Jan Kara
+	<jack@suse.com>, <linux-kernel@vger.kernel.org>,
+	<linux-fsdevel@vger.kernel.org>, Disha Goel <disgoel@linux.ibm.com>, Yang
+ Erkun <yangerkun@huawei.com>
+References: <20241115183449.2058590-1-ojaswin@linux.ibm.com>
+ <20241115183449.2058590-2-ojaswin@linux.ibm.com> <87plmwcjcd.fsf@gmail.com>
+ <ZzjdggicyuGqaVs8@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+ <7077c905-2a19-46f2-9f45-d82ed673d48b@huawei.com>
+ <20241118125344.a3n3kn6crvrixglb@quack3>
 Content-Language: en-US
-From: Vinod Koul <vkoul@kernel.org>
-In-Reply-To: <20241115150118.3abfa3c6@canb.auug.org.au>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Baokun Li <libaokun1@huawei.com>
+In-Reply-To: <20241118125344.a3n3kn6crvrixglb@quack3>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemg500008.china.huawei.com (7.202.181.45)
 
-On 15/11/24 09:31, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the soundwire tree got a conflict in:
-> 
->    include/linux/soundwire/sdw.h
-> 
-> between commit:
-> 
->    3a513da1ae33 ("ASoC: SDCA: add initial module")
-> 
-> from the sound-asoc tree and commit:
-> 
->    e311b04db66a ("soundwire: Update the includes on the sdw.h header")
-> 
-> from the soundwire tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+On 2024/11/18 20:53, Jan Kara wrote:
+> On Mon 18-11-24 09:29:19, Baokun Li wrote:
+>> On 2024/11/17 1:59, Ojaswin Mujoo wrote:
+>>> On Sat, Nov 16, 2024 at 02:20:26AM +0530, Ritesh Harjani wrote:
+>>>> Ojaswin Mujoo <ojaswin@linux.ibm.com> writes:
+>>>>
+>>>>> One of the paths quota writeback is called from is:
+>>>>>
+>>>>> freeze_super()
+>>>>>     sync_filesystem()
+>>>>>       ext4_sync_fs()
+>>>>>         dquot_writeback_dquots()
+>>>>>
+>>>>> Since we currently don't always flush the quota_release_work queue in
+>>>>> this path, we can end up with the following race:
+>>>>>
+>>>>>    1. dquot are added to releasing_dquots list during regular operations.
+>>>>>    2. FS freeze starts, however, this does not flush the quota_release_work queue.
+>>>>>    3. Freeze completes.
+>>>>>    4. Kernel eventually tries to flush the workqueue while FS is frozen which
+>>>>>       hits a WARN_ON since transaction gets started during frozen state:
+>>>>>
+>>>>>     ext4_journal_check_start+0x28/0x110 [ext4] (unreliable)
+>>>>>     __ext4_journal_start_sb+0x64/0x1c0 [ext4]
+>>>>>     ext4_release_dquot+0x90/0x1d0 [ext4]
+>>>>>     quota_release_workfn+0x43c/0x4d0
+>>>>>
+>>>>> Which is the following line:
+>>>>>
+>>>>>     WARN_ON(sb->s_writers.frozen == SB_FREEZE_COMPLETE);
+>>>>>
+>>>>> Which ultimately results in generic/390 failing due to dmesg
+>>>>> noise. This was detected on powerpc machine 15 cores.
+>>>>>
+>>>>> To avoid this, make sure to flush the workqueue during
+>>>>> dquot_writeback_dquots() so we dont have any pending workitems after
+>>>>> freeze.
+>>>> Not just that, sync_filesystem can also be called from other places and
+>>>> quota_release_workfn() could write out and and release the dquot
+>>>> structures if such are found during processing of releasing_dquots list.
+>>>> IIUC, this was earlier done in the same dqput() context but had races
+>>>> with dquot_mark_dquot_dirty(). Hence the final dqput() will now add the
+>>>> dquot structures to releasing_dquots list and will schedule a delayed
+>>>> workfn which will process the releasing_dquots list.
+>>> Hi Ritesh,
+>>>
+>>> Ohh right, thanks for the context. I see this was done here:
+>>>
+>>>     dabc8b207566 quota: fix dqput() to follow the guarantees dquot_srcu
+>>>     should provide
+> Yup.
+>
+>> Nice catch! Thanks for fixing this up!
+>>
+>> Have you tested the performance impact of this patch? It looks like the
+>> unconditional call to flush_delayed_work() in dquot_writeback_dquots()
+>> may have some performance impact for frequent chown/sync scenarios.
+> Well, but sync(2) or so is expensive anyway. Also dquot_writeback_dquots()
+> should persist all pending quota modifications and it is true that pending
+> dquot_release() calls can remove quota structures from the quota file and
+> thus are by definition pending modifications. So I agree with Ojaswin that
+> putting the workqueue flush there makes sense and is practically required
+> for data consistency guarantees.
+Make sense.
+>> When calling release_dquot(), we will only remove the quota of an object
+>> (user/group/project) from disk if it is not quota-limited and does not
+>> use any inode or block.
+>>
+>> Asynchronous removal is now much more performance friendly, not only does
+>> it make full use of the multi-core, but for scenarios where we have to
+>> repeatedly chown between two objects, delayed release avoids the need to
+>> repeatedly allocate/free space in memory and on disk.
+> True, but unless you call sync(2) in between these two calls this is going
+> to still hold.
+Yeah without sync or syncfs, it's the same as before.
+>> Overall, since the actual dirty data is already on the disk, there is no
+>> consistency issue here as it is just clearing unreferenced quota on the
+>> disk, so I thought maybe it would be better to call flush_delayed_work()
+>> in the freeze context.
+> To summarise, I don't think real-life workloads are going to observe the
+> benefit and conceptually the call really belongs more to
+> dquot_writeback_dquots().
+>
+> 								Honza
 
-Thanks, this looks right to me and will let Linus know when I send the 
-pull request
+Okay, thanks for the feedback!
 
--- 
-~Vinod
+
+Regards,
+Baokun
 
 
