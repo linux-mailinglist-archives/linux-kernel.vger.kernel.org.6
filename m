@@ -1,269 +1,355 @@
-Return-Path: <linux-kernel+bounces-414793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8825B9D2DE0
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 19:25:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDA909D2D7A
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 19:03:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E8CDB36EF1
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 18:02:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 815EA1F265C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 18:03:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 644E71CF7BE;
-	Tue, 19 Nov 2024 18:00:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B85161D4173;
+	Tue, 19 Nov 2024 18:01:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Rok72SAh";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="wAudpcPR"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mDxLJvKl"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63DDB13B780;
-	Tue, 19 Nov 2024 18:00:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732039218; cv=fail; b=Wlq6NNb/8K2AvkWJm9LySaT4JsOpAvpY651fK7I+//czFBZg85d59nwraOmi/djlSC2ZJvVjRc/0OsAC5yOkpjACPjc3XvXP8MraMN63NsV3gdyZx9ytE+fN2reEE85lkOK0+VSWCt9pcfAIC02HO0aJdDpfl1WN+BYsgOz3DsA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732039218; c=relaxed/simple;
-	bh=N0knngdYSsEGzsIIVL2BljdHE/U1wn5DB9xKJd2qBho=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=NwqjGXQ62ADoG51iL6NYw1hvTdyXSo9pEsgjPDM/eJ0AXqWAiB+Z4tWDkO5AmATww+13JXXxH0D10G0Q0CGBcntYcmfIrM2F5Tpggz8q31pMcx430yQVDed33L33+NKKrVjgk6NFmvCTTkoPP3NHkgwyih40xW29RXx6s40LtW8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Rok72SAh; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=wAudpcPR; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AJHBfHN027726;
-	Tue, 19 Nov 2024 18:00:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=corp-2023-11-20; bh=ROJXPTWSiIFMiy0X
-	wSEjXYpSu70jeFVcRyMN58r3aMo=; b=Rok72SAh/YfnjQCLQxt5WCXAbLNgztlt
-	UE4w7CuHBgznYTCJoz2pMG4KHQu6q3flhJLRwUtS9s6QfLnO5Txxwz6P0FrRte3q
-	ih0qKY2kO1zqQlyKnXX64j8Ml2BhzrJ6nQoq0C7SR0AXJZAElhhOrttT6OiKQHsh
-	nsegm8pr15CkeyYWAw00OCDvDbR6Mj17uuIRPNCaAOh3X2Cg68kyMZb/aQyhgoS/
-	M6oVUYJzV0Z7WF6xdim+HHurorDEaBfH4VesWne9MwvHqgjpf6mpb+G+K/X9Km8i
-	X7NpE6LiJ8wjv3YNqpQOMPw9RR1ZCx8utoEsJNY42u4o2t/tgdd1eA==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 42xjaa5mn9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 19 Nov 2024 18:00:04 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 4AJHFxAs023209;
-	Tue, 19 Nov 2024 18:00:02 GMT
-Received: from nam11-co1-obe.outbound.protection.outlook.com (mail-co1nam11lp2174.outbound.protection.outlook.com [104.47.56.174])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 42xhu9a2ab-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 19 Nov 2024 18:00:02 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QYT+ly9evLmKoWTw+bLtGQJGmTiuO+Rrm3wlpX2wXUYEmD5iVFSU2xEJiIOOr3bzfM8avae9wEAhcTYnZGl1kWttlC2EPZVTw3ZvVSwU3wPf0qoJzyGH2+RJepy9wYulAC8bJAwQpHQZV4IQlx9mghAteUuXljoIZn8Rhbpx4mK9/jAwKdwkhjF209MoUZJHyktWSK+qRkkQglqrWOlcC8edjXVndjJPq3MyrfPlo5DkklCL3DA9zqTDOXclAxEU5aAoSR2fvWiYcD50Y1idiYNqw8TmTI/yhcY2FTepgk9/eG7z+H0fb/WmDD9SxiV4SX2YFbjAFlJK5CRvr7apOw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ROJXPTWSiIFMiy0XwSEjXYpSu70jeFVcRyMN58r3aMo=;
- b=SZqKgHd0dS1lN9n8O9tr78q2dAv9UI51hJm2FtTYKOhw11irDdimruKGr2P8ppGNogwNtu5zOWfQfC4wwaYGb7ok4ymPJ7cjvq0gQd03+Lv7lrjYEjUtfms5glyGCELnazqptNMYPJYX5/QJgU5K6VcylqhpJGVgYbjQeqRv0K2p7U7qeDmmNWEA54REZL634dafPdjHXm1ewNIikPb1yZl8rFTIqty3ybJ3hqhzYkAT5WjBnh+xTn2eQAT2GIm5NP2ruDDkoa46ZYhuoPVGqpdDHBDWfPSU3W/h9uiMn3zdpibDoCdKm+S7qylpqTI/0Hbzf8goM/FLZJppos/B0A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C1AF1D221A
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 18:01:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732039297; cv=none; b=gSMw5NDowsPygCShYlmLf30l//J7WGIdmVRzxpahrJc2KQkoTkpMBQ0jrwkbHjPWRtMTDhLpA5wnPpl7CaChYk68OPGe4UdKkFdJLwIo/MtNH68okR3W2rhZ9ZaiAsqIPnK0Xa3i/lGh/DukZolX6lp9tPl0Tbc+FFhGaIrrFVA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732039297; c=relaxed/simple;
+	bh=FRCD0mklqsM8YzYKgxccyE8kvTxTAZqJyW2FOK9fwEU=;
+	h=Date:Message-Id:Mime-Version:Subject:From:To:Cc:Content-Type; b=Ia6EObg4Ew5s0pzbx2yUtgsZV8s9LlMbhXKzIUS/1tcGOqMlfd7VPsVRC0JY2xAjqCU88dagpsc8/j3SvZ6YfBfbodabkhmtNQIMzReQ6wxhfii1Hz+EOZKRvZzdJdU+W6Ahnh+GvQomdr6qjFW7E4hCccxr4yOETKgae42IA/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mDxLJvKl; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6ee57ae1133so52941927b3.0
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 10:01:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ROJXPTWSiIFMiy0XwSEjXYpSu70jeFVcRyMN58r3aMo=;
- b=wAudpcPR/liQr4qf5S0DL/8vAlHtQyrj7tiiwtkmmutehAqpVfsn7vmhGw8+B6bWFw7N/jQCU1qV1KZrn7QPo5OWzS8kHDWf19nq6K4xiSSeCdKwbFPsoa1S3sp4dI6ED1hG6aF7NnJw2pfBfv1ubWJOIG4WWbTW1Fw1z/PqSH4=
-Received: from PH0PR10MB5777.namprd10.prod.outlook.com (2603:10b6:510:128::16)
- by BLAPR10MB4932.namprd10.prod.outlook.com (2603:10b6:208:325::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.15; Tue, 19 Nov
- 2024 17:59:59 +0000
-Received: from PH0PR10MB5777.namprd10.prod.outlook.com
- ([fe80::75a8:21cc:f343:f68c]) by PH0PR10MB5777.namprd10.prod.outlook.com
- ([fe80::75a8:21cc:f343:f68c%6]) with mapi id 15.20.8158.021; Tue, 19 Nov 2024
- 17:59:58 +0000
-From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-To: stable@vger.kernel.org
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-        Jann Horn <jannh@google.com>,
-        "Liam R. Howlett" <Liam.Howlett@Oracle.com>,
-        syzbot+bc6bfc25a68b7a020ee1@syzkaller.appspotmail.com,
-        Vlastimil Babka <vbabka@suse.cz>
-Subject: [PATCH 6.12.y v2] mm/mmap: fix __mmap_region() error handling in rare merge failure case
-Date: Tue, 19 Nov 2024 12:59:45 -0500
-Message-ID: <20241119175945.2600945-1-Liam.Howlett@oracle.com>
-X-Mailer: git-send-email 2.43.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: YT1PR01CA0077.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:2d::16) To PH0PR10MB5777.namprd10.prod.outlook.com
- (2603:10b6:510:128::16)
+        d=google.com; s=20230601; t=1732039294; x=1732644094; darn=vger.kernel.org;
+        h=cc:to:from:subject:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=TQFCW5HyokM6GPCpSGZP+kz1l/ptP37eeUF9xzXvHb0=;
+        b=mDxLJvKlRVvGJrydo4xi2l7efx1WLQdpGZ1g3a9gpZHD6ESGF7Mb6bMDIb9ljZETgH
+         4zO57Jlu/+w0CO5A/0J0mPA9+Luqm4Tv1C6LMM59x/0/awq6vjwIBWX3LACuaVwBeA+B
+         r7SLcAeLib39Ag4zy+qWsaFaJC/UEEVqZ8dlYd91AUEZ5hifpZwJ9v7sYJ1bCJar78y/
+         pFzbt8aALg4bRD4omusDd6Zg/fDgi77+fih32Nn5V9+Z/ZltomI9r6uHOFoqVtWJwOmv
+         sP4nbbAiBZ6kkIQKl6DwxLyKMxGMyo8bD6TEi8CafxP0va39wRSyyCjxVbMrV9RppiFX
+         mqFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732039294; x=1732644094;
+        h=cc:to:from:subject:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=TQFCW5HyokM6GPCpSGZP+kz1l/ptP37eeUF9xzXvHb0=;
+        b=mGhXZUchrgMOuGtyFVfSJf9u+HpVI7bnpAm1YCwbfEtV5rUoKECWqu1LXs3gbLTpSD
+         EF8byKga8CCy9HroEvHFlPKYod/sVB8GKJkLK3fkhMwk/hkil+g4KsG+s0h/Wm8xXWY4
+         LSCBfYEd3t3X1SbPuk4DayA0y/B4j1L7o+T5XcSf6bmo0ZBuUe8tYsuqIMTpT07f4oxA
+         iUtc1R6V754cln3sXY0uLD3AJeivacQLDxSEhbpOFOp+kMaLFugCmB3NY5bw2rj76YjN
+         NLxgUDf+GCNXlgpssuIIaBMZR/jv+sswu7nY8EecjocqL8F8HzM6pUqlNGdW4OvmjMGV
+         zorA==
+X-Forwarded-Encrypted: i=1; AJvYcCVsKpRguKkp05EWGwu6c03i9ZbT1MM2TAXZkHXAm6IPVINoNU95CGEs2LI+PSXl3aI7VCXO8nM5mlN/6Zk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YymP2QFqHp29JS4dSaU4hrghZ/31SpmFirlHB6mQRJrvJsiJLZ2
+	RY3SyFi6lzXFhSVoV/PXMHnwD3aRY7kEeYPEkMVRQQ1eos93nm2bz5NDdI5q7g05ZKKHaEjw4QO
+	aoY/alw==
+X-Google-Smtp-Source: AGHT+IEaamOMz7Fi+3YLgkkmVXxvJJt7gmHsMBKdyAI1rOlv3UWwoAKvdNTU/6CyNZsrYp71LWCKSZKKZmJq
+X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:89d:ee73:740b:dfb3])
+ (user=irogers job=sendgmr) by 2002:a05:690c:8c1b:b0:6e3:1702:b3e6 with SMTP
+ id 00721157ae682-6ee55c8cf88mr588147b3.4.1732039294050; Tue, 19 Nov 2024
+ 10:01:34 -0800 (PST)
+Date: Tue, 19 Nov 2024 10:01:30 -0800
+Message-Id: <20241119180130.19160-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH0PR10MB5777:EE_|BLAPR10MB4932:EE_
-X-MS-Office365-Filtering-Correlation-Id: 93e66310-b3f0-4943-ec3b-08dd08c3fb3e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Glm31QuyWbC41Eiut/ZEu5lfJ+QnGuTvmuAKYXbKSPsDfnzgfcNH5aZ0hVPB?=
- =?us-ascii?Q?KGv9rfzUKD9Mrr0S79oXP/6evhnE/Zga3enJgOi6onz0XN+LLgtgHKtDn/4D?=
- =?us-ascii?Q?ceU17o8NvQBtz6zd2m7EVnk0RVmzmoOMi7O/4L7wt2pegUSpj3LpSpbxfjkn?=
- =?us-ascii?Q?28wKmAl55lQd8nmHFcHGT0ysVkFzxQvIaASqWskzP+HDLod27ALE4oYRxFy9?=
- =?us-ascii?Q?l1JPJBLmrrY+W8yjFLpDqjj7uvflTKqaYJtL8oENQYtk7gPUXLEfmtmyw8Rb?=
- =?us-ascii?Q?ja8i2zUcuCNTQsNkEXp6DFwz3cdv+tRZIvlEgkdtO5YYnyi2xXWDnvaIGNP0?=
- =?us-ascii?Q?VjiF+/BeO8yZPdHlfwx2QntdZmFuNGCz2chxoKgep0nRs+0B/mg+Io8rw7Rc?=
- =?us-ascii?Q?abkKsJZYEr17YiM42B4HNuUHDlUZXFQqtQOg+6PyaQzb9iBNsmfZxoiBZ6QP?=
- =?us-ascii?Q?a2iT83harRryn8l391swt8Ll6Ym6tNkqywZJgvI39qhlVgx7nHM5ra1cJMGk?=
- =?us-ascii?Q?Zqm8RYjbFI1JY20OEUXA7l7aoxcHOGOEb3IRCW4kPtCEQy7VfhQPnMfjJPQp?=
- =?us-ascii?Q?EDkav4ii0zIPBywLJefEYpfoPr2xartvQcKDChL/HSi8WE0j8UxcQsZXNpe2?=
- =?us-ascii?Q?EEXhMUMAE2nlUDwzkdt2NOXbl3juH4r1tVkyHTQJluqodOuLqhGwTMcZChYT?=
- =?us-ascii?Q?mpn7KE2pMfZQU49riiZhtIuGz/3n2PqMT/m/JUtKNkfLrL9sKIpyFs2ovzJA?=
- =?us-ascii?Q?4TDM6Wupk07PjgNRMcQYW22Cixr3nWHoVelS6b/oSacsWJ7yA5wvXwh1YAjx?=
- =?us-ascii?Q?bIKt7nIuxjgMBtKwppG557/9DcJSL/JK6i1De+UvwCmkpqvMWH5mOTYRdz5f?=
- =?us-ascii?Q?ePQ9DECACJXwqwX4al7VhWOd4V20Lu6UircJ9em4VSWNdIRtr41h1t4JyHMG?=
- =?us-ascii?Q?KDoLgCn21TE7t90W7Y3oW6IodgkjOAH8isH0K3UxJqz8rUiIQHJRjjtIKDmw?=
- =?us-ascii?Q?9kOzhg9LSh3qjuLCR8DIaV88pcxo8752TxdqziwBu6nFbUHRIz/Vg+QaaT8S?=
- =?us-ascii?Q?M6TVQI8yfqFa3y+Nz4AwoeluBVTkUzWPxN+QT29OcoIgnFHC6UNFHYziiV+c?=
- =?us-ascii?Q?SEkWCXpGrzb7ZW6y8QeIh6foIG9n0meqqFsJDGEZhudOkZnQNWso2/VlrGPX?=
- =?us-ascii?Q?1egt+A0lC7MKzhvnbXs3Lgcb5CuHPB6tbcIgn/QqaPiMD2Rw87Lsccz30esh?=
- =?us-ascii?Q?99PiGEdf5Mhx6mZhf2v8?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR10MB5777.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?mXrI3EYniu1IrjvF47npxEF+hS1DPLoV4tTnOO2TsMF3xpRA2ipZKxxEsyBr?=
- =?us-ascii?Q?5mSQjmJICKdkZroVk9ocP12H2ms0WYIEUh+swb3yEJTtsuZk5mqylK1yhiuB?=
- =?us-ascii?Q?XcWQg5fiP8X29l5ZrKVzoFePk7goKV3GE1wqxNiH/cIcbeoG3qgEeYhb8mpo?=
- =?us-ascii?Q?1NUvG6kgndfeUa1C8BsPEC/ztxFfMeTPID1EUsXoJxVdBEQic24a1E3m42Mj?=
- =?us-ascii?Q?vLRtY8JarkCz3NuKNE4dB3AQOocjFBzzQW/mClYrAE1tScNoFDlKg3NStfsj?=
- =?us-ascii?Q?hXCwt8KO+eNOTfX3itz/kgI10IHkpfCmTMQzN5Ouz3a805/nakkG/UbnaBr1?=
- =?us-ascii?Q?LfCFtnYjFZStNJXRsQK7rcArsXxu6vEYh3JpplFktC6rNHtVksKz1P37Tz1D?=
- =?us-ascii?Q?YZT9Wit9MEBenj+fCS0r6pOmsMGh31Jt356a9D7ZA4kSMK8pPI5PQOvp8mYW?=
- =?us-ascii?Q?/eH9oLA/eKZ2m1UcZnBIv2B2l9XLNBQWPmXaqA0m60lEiZZ04jK9bkRFq7Cf?=
- =?us-ascii?Q?HPgl3zaloKFqwHQExIIypeLpuuFKnh0/O21SakF7sPiz6ox95ERUsI5w1/q5?=
- =?us-ascii?Q?iXCceIgUoXJBobAv1D5JD72qqAXMqM9LaaTfRLEKHn3aKlEYXPt+iErlpIn8?=
- =?us-ascii?Q?hlzKYbgndiUO9DwfjuHDoYmOHl+ZfyLvW483tNoadmhRSiP2atFV2W7kOts9?=
- =?us-ascii?Q?PHzOkf4MQdTno284/O6shrGPkyjmLx3ZMmjbzhV3/jxGfCmCqc9GN25W4/Ug?=
- =?us-ascii?Q?KwT+0lf+MJLPjMqhn8fcgZaYRTkKso8+hdFKOXIialBHMhOXy+2zaT1yN50W?=
- =?us-ascii?Q?/XxQJZaEd1Iv6UQxeJecx8Jrb4S41gWhTcU7rAJgCzmhkmgVmVZWrRams0HX?=
- =?us-ascii?Q?fH7A7cJpCBuTA9xkbhYuD5SfiOPjwBCfzm05Dres6G7lxW9QqKLhYHYkvMO4?=
- =?us-ascii?Q?tpAdMy4O37sn0yHoafaHVacmXFFvbGUcMwGuUHhUF6eTLyfUcUQSZsdv6dd8?=
- =?us-ascii?Q?/KrI9jmSrFJFIM5BhFwjjVo+63VdWEnLLtyJuCZLs4tWVnhe8wq7sEx3ijRx?=
- =?us-ascii?Q?yX7BIMBzM3vcfSgRuDn4khA7HK4COwUrR2Fkgle4MJ8cJRHYiwZd+TCskSey?=
- =?us-ascii?Q?XszP/P5ZeUFYycZwYCbb8n2cZi/+j1y6BDUuya43k77xTPXrglCEkWOeghfQ?=
- =?us-ascii?Q?UflmEDQ7FaaHNDh8YqQIbh+FYChbH2gYR/Qy7i3Gg03C0Wo+lhSsV0+Ts7FE?=
- =?us-ascii?Q?tk7ezaAf60FLdO+lwJ0fA++sR0z3fN/96GxJGxUNopFYK/5Hi8NeVrmY7kW6?=
- =?us-ascii?Q?mw2PdYQPmlzUIH4w7E4ihYneZfWa3QkQvkYtUvzMrvztb5hG/+wjcLDCCAAh?=
- =?us-ascii?Q?djnNVD7T7rzA3GMCcUh6Abp8hcA+nXiATCUPlTDqAgk9m4AOGBh5tKPFyui/?=
- =?us-ascii?Q?v4iuJHsaLxhl14Ch+9ObLBc6Lu7joPiginCqk2bM3VDLQwLG0G4sZRAeaOOh?=
- =?us-ascii?Q?Bb5f76eFe+gFyjaTLLx9fKIF1YE5M7q2aPDCJHT5EcuLK5nd2iZusgcvezZQ?=
- =?us-ascii?Q?9Tt9htNnFG2gTO3/ufOuhTrW41LZ/z6vspjByvHCEco9VdlmXw7+nLi3pt/+?=
- =?us-ascii?Q?Nw=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	HVgT5DZ/wNvQe+OhUzkAWCq9v/dg2DcWZR8Y5Xm6l1mPpshX8MeLTXN2etcK/K2aznBxYwicjIXBdh+LpnZnmbatJqwCzaocOWxp1TlFhPQ5tFwI3zlty2U7n9ARGzMfw9bwfqPyS7YM88e/6Ngwz8qI9vw9B8GEBJs69MOIylr/3XCUg5pmGVBnSquogJkkHC6r+foUE4G0jWA7MkvPLWXNqKKd1E7LyBgj8tCDHK6QFKeKrX5JAUXWXv0IeLGDSNBS5Y/F3GuGWa0OEs8deLmju0cKutqqS2v8EcEjClc/GVKvYQDG+N7M/Es06s69apG2cGHJ6/rsVaetruFntCh9z2pdzP7Z9syPjbnCzo+fDrCB331Q3b5f8wkrcRaZ/HVm3xuS8AyYYZUpezcjkpM6OhsD+ehYEkAePQJVmiuZ6xG518VrCnpS9CXqc+FQyVudHCDtEIOUoIU9bQtVTkFsBRDURORCp1lIkPtolkg1yshnrS7tjyFdFrnj2gBcKPxWlZizjLivN/FBtKo1BF5lQL2U+VZsTTMLlyYrlX75hV3qcSjR9HaTIQD+K0eq9MPgXM5s/STXVY7g8OLN3Tox55buWABZTYaByNmouc4=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 93e66310-b3f0-4943-ec3b-08dd08c3fb3e
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR10MB5777.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Nov 2024 17:59:58.4625
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: o1Z5l08Evt/wKljcpZBxIFD9n9wEaFe5bEB+AeRMYBElGOWV067n8/GOWPvXTSxy230I1CMJKvBgeBQXH9eR1g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLAPR10MB4932
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-11-19_09,2024-11-18_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 bulkscore=0 suspectscore=0
- phishscore=0 spamscore=0 mlxscore=0 malwarescore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2409260000
- definitions=main-2411190134
-X-Proofpoint-ORIG-GUID: -roBxQ22CImUDGci4YRBptcdOrMokqjS
-X-Proofpoint-GUID: -roBxQ22CImUDGci4YRBptcdOrMokqjS
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.371.ga323438b13-goog
+Subject: [PATCH v1] perf script python: Improve physical mem type resolution
+From: Ian Rogers <irogers@google.com>
+To: Kan Liang <kan.liang@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: "Liam R. Howlett" <Liam.Howlett@Oracle.com>
+Previously system RAM and persistent memory were hard code matched,
+change so that the label of the memory region is just read from
+/proc/iomem. This avoids frequent N/A samples.
 
-The mmap_region() function tries to install a new vma, which requires a
-pre-allocation for the maple tree write due to the complex locking
-scenarios involved.
+Change the /proc/iomem reading, event processing and output so that
+nested entries appear and their counts count toward their parent. As
+labels may be repeated, include the memory ranges in the output to
+make it clear why, for example, "System RAM" appears twice.
 
-Recent efforts to simplify the error recovery required the relocation of
-the preallocation of the maple tree nodes (via vma_iter_prealloc()
-calling mas_preallocate()) higher in the function.
+Before:
+```
+Event: mem_inst_retired.all_loads:P
+Memory type                                    count  percentage
+----------------------------------------  ----------  ----------
+System RAM                                      9460        96.5%
+N/A                                              998         3.5%
+```
 
-The relocation of the preallocation meant that, if there was a file
-associated with the vma and the driver call (mmap_file()) modified the
-vma flags, then a new merge of the new vma with existing vmas is
-attempted.
+After:
+```
+Event: mem_inst_retired.all_loads:P
+Memory type                                    count  percentage
+----------------------------------------  ----------  ----------
+100000000-105f7fffff : System RAM              36741        96.5
+  841400000-8416599ff : Kernel data               89         0.2
+  840800000-8412a6fff : Kernel rodata             60         0.2
+  841ebe000-8423fffff : Kernel bss                34         0.1
+0-fff : Reserved                                1345         3.5
+100000-89dd9fff : System RAM                       2         0.0
+```
 
-During the attempt to merge the existing vma with the new vma, the vma
-iterator is used - the same iterator that would be used for the next
-write attempt to the tree.  In the event of needing a further allocation
-and if the new allocations fails, the vma iterator (and contained maple
-state) will cleaned up, including freeing all previous allocations and
-will be reset internally.
+Before:
+```
+Event: mem_inst_retired.any:P
+Memory type                                    count  percentage
+----------------------------------------  -----------  -----------
+System RAM                                      9460        90.5%
+N/A                                              998         9.5%
+```
 
-Upon returning to the __mmap_region() function, the error is available
-in the vma_merge_struct and can be used to detect the -ENOMEM status.
+After:
+```
+Event: mem_inst_retired.any:P
+Memory type                                    count  percentage
+----------------------------------------  ----------  ----------
+100000000-105f7fffff : System RAM               9460        90.5
+  841400000-8416599ff : Kernel data               45         0.4
+  840800000-8412a6fff : Kernel rodata             19         0.2
+  841ebe000-8423fffff : Kernel bss                12         0.1
+0-fff : Reserved                                 998         9.5
+```
 
-Hitting an -ENOMEM scenario after the driver callback leaves the system
-in a state that undoing the mapping is worse than continuing by dipping
-into the reserve.
+The code has been updated to python 3 with type hints and resolving
+issues reported by mypy and pylint. Tabs are swapped to spaces as
+preferred in PEP8, because most lines of code were modified (of this
+small file) and this makes pylint significantly less noisy.
 
-A preallocation should be performed in the case of an -ENOMEM and the
-allocations were lost during the failure scenario.  The __GFP_NOFAIL
-flag is used in the allocation to ensure the allocation succeeds after
-implicitly telling the driver that the mapping was happening.
-
-The range is already set in the vma_iter_store() call below, so it is
-not necessary and is dropped.
-
-Reported-by: syzbot+bc6bfc25a68b7a020ee1@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/x/log.txt?x=17b0ace8580000
-Fixes: 5de195060b2e2 ("mm: resolve faulty mmap_region() error path behaviour")
-Signed-off-by: Liam R. Howlett <Liam.Howlett@Oracle.com>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Cc: Jann Horn <jannh@google.com>
-Cc: <stable@vger.kernel.org>
+Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- mm/mmap.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+ tools/perf/scripts/python/mem-phys-addr.py | 177 ++++++++++++---------
+ 1 file changed, 102 insertions(+), 75 deletions(-)
 
-Changes since v1:
- - Don't bail out and force the allocation when the merge failure is
-   -ENOMEM - Thanks Lorenzo
-
-diff --git a/mm/mmap.c b/mm/mmap.c
-index 79d541f1502b2..4f6e566d52faa 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -1491,7 +1491,18 @@ static unsigned long __mmap_region(struct file *file, unsigned long addr,
- 				vm_flags = vma->vm_flags;
- 				goto file_expanded;
- 			}
--			vma_iter_config(&vmi, addr, end);
-+
-+			/*
-+			 * In the unlikely even that more memory was needed, but
-+			 * not available for the vma merge, the vma iterator
-+			 * will have no memory reserved for the write we told
-+			 * the driver was happening.  To keep up the ruse,
-+			 * ensure the allocation for the store succeeds.
-+			 */
-+			if (vmg_nomem(&vmg)) {
-+				mas_preallocate(&vmi.mas, vma,
-+						GFP_KERNEL|__GFP_NOFAIL);
-+			}
- 		}
+diff --git a/tools/perf/scripts/python/mem-phys-addr.py b/tools/perf/scripts/python/mem-phys-addr.py
+index 1f332e72b9b0..5e237a5a5f1b 100644
+--- a/tools/perf/scripts/python/mem-phys-addr.py
++++ b/tools/perf/scripts/python/mem-phys-addr.py
+@@ -3,98 +3,125 @@
+ #
+ # Copyright (c) 2018, Intel Corporation.
  
- 		vm_flags = vma->vm_flags;
+-from __future__ import division
+-from __future__ import print_function
+-
+ import os
+ import sys
+-import struct
+ import re
+ import bisect
+ import collections
++from dataclasses import dataclass
++from typing import (Dict, Optional)
+ 
+ sys.path.append(os.environ['PERF_EXEC_PATH'] + \
+-	'/scripts/python/Perf-Trace-Util/lib/Perf/Trace')
++    '/scripts/python/Perf-Trace-Util/lib/Perf/Trace')
++
++@dataclass(frozen=True)
++class IomemEntry:
++    """Read from a line in /proc/iomem"""
++    begin: int
++    end: int
++    indent: int
++    label: str
+ 
+-#physical address ranges for System RAM
+-system_ram = []
+-#physical address ranges for Persistent Memory
+-pmem = []
+-#file object for proc iomem
+-f = None
+-#Count for each type of memory
+-load_mem_type_cnt = collections.Counter()
+-#perf event name
+-event_name = None
++# Physical memory layout from /proc/iomem. Key is the indent and then
++# a list of ranges.
++iomem: Dict[int, list[IomemEntry]] = collections.defaultdict(list)
++# Child nodes from the iomem parent.
++children: Dict[IomemEntry, set[IomemEntry]] = collections.defaultdict(set)
++# Maximum indent seen before an entry in the iomem file.
++max_indent: int = 0
++# Count for each range of memory.
++load_mem_type_cnt: Dict[IomemEntry, int] = collections.Counter()
++# Perf event name set from the first sample in the data.
++event_name: Optional[str] = None
+ 
+ def parse_iomem():
+-	global f
+-	f = open('/proc/iomem', 'r')
+-	for i, j in enumerate(f):
+-		m = re.split('-|:',j,2)
+-		if m[2].strip() == 'System RAM':
+-			system_ram.append(int(m[0], 16))
+-			system_ram.append(int(m[1], 16))
+-		if m[2].strip() == 'Persistent Memory':
+-			pmem.append(int(m[0], 16))
+-			pmem.append(int(m[1], 16))
++    """Populate iomem from /proc/iomem file"""
++    global iomem
++    global max_indent
++    global children
++    with open('/proc/iomem', 'r', encoding='ascii') as f:
++        for line in f:
++            indent = 0
++            while line[indent] == ' ':
++                indent += 1
++            if indent > max_indent:
++                max_indent = indent
++            m = re.split('-|:', line, 2)
++            begin = int(m[0], 16)
++            end = int(m[1], 16)
++            label = m[2].strip()
++            entry = IomemEntry(begin, end, indent, label)
++            # Before adding entry, search for a parent node using its begin.
++            if indent > 0:
++                parent = find_memory_type(begin)
++                assert parent, f"Given indent expected a parent for {label}"
++                children[parent].add(entry)
++            iomem[indent].append(entry)
+ 
+-def print_memory_type():
+-	print("Event: %s" % (event_name))
+-	print("%-40s  %10s  %10s\n" % ("Memory type", "count", "percentage"), end='')
+-	print("%-40s  %10s  %10s\n" % ("----------------------------------------",
+-					"-----------", "-----------"),
+-					end='');
+-	total = sum(load_mem_type_cnt.values())
+-	for mem_type, count in sorted(load_mem_type_cnt.most_common(), \
+-					key = lambda kv: (kv[1], kv[0]), reverse = True):
+-		print("%-40s  %10d  %10.1f%%\n" %
+-			(mem_type, count, 100 * count / total),
+-			end='')
++def find_memory_type(phys_addr) -> Optional[IomemEntry]:
++    """Search iomem for the range containing phys_addr with the maximum indent"""
++    for i in range(max_indent, -1, -1):
++        if i not in iomem:
++            continue
++        position = bisect.bisect_right(iomem[i], phys_addr,
++                                       key=lambda entry: entry.begin)
++        if position is None:
++            continue
++        iomem_entry = iomem[i][position-1]
++        if  iomem_entry.begin <= phys_addr <= iomem_entry.end:
++            return iomem_entry
++    print(f"Didn't find {phys_addr}")
++    return None
+ 
+-def trace_begin():
+-	parse_iomem()
++def print_memory_type():
++    print(f"Event: {event_name}")
++    print(f"{'Memory type':<40}  {'count':>10}  {'percentage':>10}")
++    print(f"{'-' * 40:<40}  {'-' * 10:>10}  {'-' * 10:>10}")
++    total = sum(load_mem_type_cnt.values())
++    # Add count from children into the parent.
++    for i in range(max_indent, -1, -1):
++        if i not in iomem:
++            continue
++        for entry in iomem[i]:
++            global children
++            for child in children[entry]:
++                if load_mem_type_cnt[child] > 0:
++                    load_mem_type_cnt[entry] += load_mem_type_cnt[child]
+ 
+-def trace_end():
+-	print_memory_type()
+-	f.close()
++    def print_entries(entries):
++        """Print counts from parents down to their children"""
++        global children
++        for entry in sorted(entries,
++                            key = lambda entry: load_mem_type_cnt[entry],
++                            reverse = True):
++            count = load_mem_type_cnt[entry]
++            if count > 0:
++                mem_type = ' ' * entry.indent + f"{entry.begin:x}-{entry.end:x} : {entry.label}"
++                percent = 100 * count / total
++                print(f"{mem_type:<40}  {count:>10}  {percent:>10.1f}")
++                print_entries(children[entry])
+ 
+-def is_system_ram(phys_addr):
+-	#/proc/iomem is sorted
+-	position = bisect.bisect(system_ram, phys_addr)
+-	if position % 2 == 0:
+-		return False
+-	return True
++    print_entries(iomem[0])
+ 
+-def is_persistent_mem(phys_addr):
+-	position = bisect.bisect(pmem, phys_addr)
+-	if position % 2 == 0:
+-		return False
+-	return True
++def trace_begin():
++    parse_iomem()
+ 
+-def find_memory_type(phys_addr):
+-	if phys_addr == 0:
+-		return "N/A"
+-	if is_system_ram(phys_addr):
+-		return "System RAM"
++def trace_end():
++    print_memory_type()
+ 
+-	if is_persistent_mem(phys_addr):
+-		return "Persistent Memory"
++def process_event(param_dict):
++    if "sample" not in param_dict:
++        return
+ 
+-	#slow path, search all
+-	f.seek(0, 0)
+-	for j in f:
+-		m = re.split('-|:',j,2)
+-		if int(m[0], 16) <= phys_addr <= int(m[1], 16):
+-			return m[2]
+-	return "N/A"
++    sample = param_dict["sample"]
++    if "phys_addr" not in sample:
++        return
+ 
+-def process_event(param_dict):
+-	name       = param_dict["ev_name"]
+-	sample     = param_dict["sample"]
+-	phys_addr  = sample["phys_addr"]
++    phys_addr  = sample["phys_addr"]
++    entry = find_memory_type(phys_addr)
++    if entry:
++        load_mem_type_cnt[entry] += 1
+ 
+-	global event_name
+-	if event_name == None:
+-		event_name = name
+-	load_mem_type_cnt[find_memory_type(phys_addr)] += 1
++    global event_name
++    if event_name is None:
++        event_name  = param_dict["ev_name"]
 -- 
-2.43.0
+2.47.0.338.g60cca15819-goog
 
 
