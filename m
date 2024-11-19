@@ -1,149 +1,117 @@
-Return-Path: <linux-kernel+bounces-414974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E33049D2FDA
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 22:03:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FC149D2FDB
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 22:04:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D507281CCD
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 21:03:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8C3C28439D
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 21:04:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F408D1AAE33;
-	Tue, 19 Nov 2024 21:02:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADE5C19E838;
+	Tue, 19 Nov 2024 21:04:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GY8Q5gBn"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="iI1arhl6"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC2271547FF
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 21:02:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4A8719755B
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 21:03:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732050178; cv=none; b=TgJk4FWX5WPDNGPxN7CPApV0IO+sWL5Rs9vYx9nBTw/JRUQMTH25/B5jhq7mXtGTGdWMDhLpzVdxr4vcFvhECQHdjEanSMDVeLocl+uRk+OlXZasieZ4hqkbHKruseK0IE8AEl/ZmemsxP4sJlceTk8FMEGunzGCHOaYBqkkewo=
+	t=1732050242; cv=none; b=qVOcatu1Ms1rOPuXi5tEdDOZaINiZryzj5Qn8emaV3zbABtaq7oS+KUTcuTbDqYXnE/sY8kNQ6xto8Fuv+LCFFbvUhgttH0M8VogauljQ+v7yrpl0IkImZFAFviAqdxbmTcvZh95FngSBrQBPqiJmvtW2dLi+6iBeyogKuOfBZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732050178; c=relaxed/simple;
-	bh=sZjtNk7l7C9pzENMMAEf8CF1Tf7grENzHNXiyy+KnmU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ET+5vqhabbgOSQPov61OC+P3Iz70FnxW4kssY7pzl7mclmGHF7b1sNPlADYFNMZVeeSJg5W9sur8uuPpBdAk+ncPv7ayghlWfxi0+fyaq9sdjre7B0qDfEvHaSRRuZ8zaszbNL8dHbm+v8Y1A7dEWo56It6nCVBBNIZ2mmsYq48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GY8Q5gBn; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732050174;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=t3TBOVGPHnMk/PpScx+zP3qwXBcwdGmVH4QE3u2wmIw=;
-	b=GY8Q5gBnNYts1H4noJ4MLuPViivfcOM+LLLnIcgzlwN+senJsNiXf1zC+Sw7aWIct6zsLg
-	kUaREryrGv6hqpIw8A8nPs6vy8yEj7I7trRRFSJWCAx7NPqaB1sIqzauK4fi6YldgResgf
-	0j0Hc+RjaaUDENaoKzBcZjfWe+K8Gy8=
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com
- [209.85.166.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-140--kt2B4q7MAyu41FxbU0Uyw-1; Tue, 19 Nov 2024 16:02:53 -0500
-X-MC-Unique: -kt2B4q7MAyu41FxbU0Uyw-1
-X-Mimecast-MFC-AGG-ID: -kt2B4q7MAyu41FxbU0Uyw
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a7191aa79cso52387225ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 13:02:53 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732050173; x=1732654973;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=t3TBOVGPHnMk/PpScx+zP3qwXBcwdGmVH4QE3u2wmIw=;
-        b=aFOknD++zYGRXXXMzkichJrp7aO0VWs06jOL75McYV/zpt2E9PansMLD6grPhFv4sX
-         jso9i5nvmxZeu7WCw5Z3ThZuBmqCZsYteGRVvnatV2OAi6nve1EO14ltaoh6pDvx/qxa
-         U4Z9mX/TCkiVd0/QUNgP6mZ3fZGd83+CWY+Qdh3Lka4+QpgoVgnVBZ4LrE3KQmcGR+ed
-         VcF3QawaaV9zq1pseWYIXpm/A3MFWjgXViGlaZu/rTV8Ybecl1b/jYSguW2TnzMfLbwc
-         6dfzngMVLO2DHLAfKcJLuxlJRHZInXXXlk80FRQ23nL5hdn3wk2M3/NDRvXxUvtuAPHu
-         aQcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXH+EduGJt4xekiMoE2NktmUuHqur+fcHeMN2jJnhspSdflTnpfM68NU5hX+T2ctELz5lTRyhz2m3HM4+M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxlij6nwCux6z4aBA3sPMSHCxb0xoETGVD0oXQIZ7wYJclq5Hea
-	n7hEq3zFYy9zUUK0Dz4dV3c9XPIv2SGgj5rwBEBL3ht1PfSXuTaL764V9QMpxme1Uzn2DZS5TpS
-	tf15JBRfF/JV8ff3CFDIyCkFmxXDxyHGQLTxzuy4sthr4EvlXbrG58iX4m0uNBA==
-X-Received: by 2002:a05:6e02:2163:b0:3a7:7dc9:a4b0 with SMTP id e9e14a558f8ab-3a786457e63mr2505465ab.9.1732050172824;
-        Tue, 19 Nov 2024 13:02:52 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHNZhFi4Xzwng9eavnh81Qgmhou8NXC0G0kcJ/atGWwSCqLsA1Fb8DTEeCVsTBJAqR40j3BvA==
-X-Received: by 2002:a05:6e02:2163:b0:3a7:7dc9:a4b0 with SMTP id e9e14a558f8ab-3a786457e63mr2505235ab.9.1732050172398;
-        Tue, 19 Nov 2024 13:02:52 -0800 (PST)
-Received: from jkangas-thinkpadp1gen3.rmtuswa.csb ([2601:1c2:4301:5e20:98fe:4ecb:4f14:576b])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4e0756b0e35sm2987964173.108.2024.11.19.13.02.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Nov 2024 13:02:51 -0800 (PST)
-From: Jared Kangas <jkangas@redhat.com>
-To: ryabinin.a.a@gmail.com
-Cc: glider@google.com,
-	andreyknvl@gmail.com,
-	dvyukov@google.com,
-	vincenzo.frascino@arm.com,
-	akpm@linux-foundation.org,
-	kasan-dev@googlegroups.com,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Jared Kangas <jkangas@redhat.com>
-Subject: [PATCH] kasan: make report_lock a raw spinlock
-Date: Tue, 19 Nov 2024 13:02:34 -0800
-Message-ID: <20241119210234.1602529-1-jkangas@redhat.com>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1732050242; c=relaxed/simple;
+	bh=Mezs3R4Y45/J48KC3hFH25jrdIFUJKKYqoeYY8BWz3E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Wf4KC7eUBNK/koNGyvvdbZjdO+ga5O+/MMj/wPWqeE+V53gWvEYnKEXyUEq2bpVElWbgHxMFWZBV8mkj4KZphNRf8eqzXrfXq6IK/Y5OlujT9AorL+gzPhBTRDMVIhQTu/tiMcObwXLiZyGnLsT3JYGzJwDOLTBpKkaVAsgS26k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=iI1arhl6; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 30A5640E0261;
+	Tue, 19 Nov 2024 21:03:56 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id kp9hAphuhN0L; Tue, 19 Nov 2024 21:03:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1732050229; bh=tA3nDmIZQ2Hx9sc/b+PfGGSMtQh/HYvARhmv5kQfjq8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iI1arhl6yh3kU3hAJ7I7x86MYIF3YOUohj0TXVOHp1f7AwdZMWwJyxSYTX1xQTZ2T
+	 FynN/z5uoNgtPJhTosV1uoxSQXhedIc02xFmBmR5SW6HnTMFMssT61Xcheh1U4XgEm
+	 1kBC0INen0hsslOFoqkj5RnxVLPJDCuCmjXX9btJiy7g7rN4TaQYpqFTon9oI9Ooim
+	 2o7MgPiMsolnPNqCpJenUju2qx/8jAE2PzctGlu3E8WIE+TFqnfeUtb0Cgp+fnjK30
+	 OjbWbuQf25OBV/FRAblo/4Btbq5vydK8E2yTMXLaROjtnNOpRrvrX++Vvl2QXtRpsQ
+	 7cknA9W+qXiIc4WeN1gcRJY22sETbbW7hAK4PSeM4BnGPWOQeTQqzCnmlW0+JipyD6
+	 boSg2PVPkJWoGlWNG5hOh5C7fatPW587nFiL2UeTBmNMJHu3ggyEmxRkr+UuPowYrx
+	 bjxw9wf3M2SxHMcDO/sbXHKYqM8rKd4Xg40h+59vTzqg/sncdAybnwMVcdl2wrfiGu
+	 ++8FT2AK9C0H+iUklPULZJ3MAM7QE2pxk7lE6VZq3JyooXTNkHtt7XfDRiQoTmlWjY
+	 kiEyT5RnBrqBLouuDcPImki8T3YDwiZqK/23fkN3pACJXBNMFc+ax3I3PLFC2M2VX5
+	 8ayEMs9ZbCOlKLTd7kCkSOh4=
+Received: from zn.tnic (pd9530b86.dip0.t-ipconnect.de [217.83.11.134])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4181D40E021C;
+	Tue, 19 Nov 2024 21:03:42 +0000 (UTC)
+Date: Tue, 19 Nov 2024 22:03:36 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Shresth Prasad <shresthprasad7@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] x86/sev: Fix dereference NULL return value
+Message-ID: <20241119210336.GEZzz9KMiZwf6R9hwd@fat_crate.local>
+References: <20241120-fix-dereference-null-x86-sev-v2-1-7e637851dfe2@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241120-fix-dereference-null-x86-sev-v2-1-7e637851dfe2@gmail.com>
 
-If PREEMPT_RT is enabled, report_lock is a sleeping spinlock and must
-not be locked when IRQs are disabled. However, KASAN reports may be
-triggered in such contexts. For example:
+On Wed, Nov 20, 2024 at 02:21:13AM +0530, Shresth Prasad wrote:
+> Prevent a NULL pointer dereference in snp_kexec_finish() by checking the
+> value returned by lookup_address() call.
 
-        char *s = kzalloc(1, GFP_KERNEL);
-        kfree(s);
-        local_irq_disable();
-        char c = *s;  /* KASAN report here leads to spin_lock() */
-        local_irq_enable();
+Can this really happen?
 
-Make report_spinlock a raw spinlock to prevent rescheduling when
-PREEMPT_RT is enabled.
+> This issue was reported by Coverity scan:
+> https://scan7.scan.coverity.com/#/project-view/52279/11354?selectedIssue=1601527
 
-Signed-off-by: Jared Kangas <jkangas@redhat.com>
----
- mm/kasan/report.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+I can't open this page - all coverity folks: you either describe what the
+issue is or don't bother sending patches.
 
-diff --git a/mm/kasan/report.c b/mm/kasan/report.c
-index b48c768acc84..c7c0083203cb 100644
---- a/mm/kasan/report.c
-+++ b/mm/kasan/report.c
-@@ -200,7 +200,7 @@ static inline void fail_non_kasan_kunit_test(void) { }
- 
- #endif /* CONFIG_KUNIT */
- 
--static DEFINE_SPINLOCK(report_lock);
-+static DEFINE_RAW_SPINLOCK(report_lock);
- 
- static void start_report(unsigned long *flags, bool sync)
- {
-@@ -211,7 +211,7 @@ static void start_report(unsigned long *flags, bool sync)
- 	lockdep_off();
- 	/* Make sure we don't end up in loop. */
- 	report_suppress_start();
--	spin_lock_irqsave(&report_lock, *flags);
-+	raw_spin_lock_irqsave(&report_lock, *flags);
- 	pr_err("==================================================================\n");
- }
- 
-@@ -221,7 +221,7 @@ static void end_report(unsigned long *flags, const void *addr, bool is_write)
- 		trace_error_report_end(ERROR_DETECTOR_KASAN,
- 				       (unsigned long)addr);
- 	pr_err("==================================================================\n");
--	spin_unlock_irqrestore(&report_lock, *flags);
-+	raw_spin_unlock_irqrestore(&report_lock, *flags);
- 	if (!test_bit(KASAN_BIT_MULTI_SHOT, &kasan_flags))
- 		check_panic_on_warn("KASAN");
- 	switch (kasan_arg_fault) {
+> Fixes: 3074152e56c9 ("x86/sev: Convert shared memory back to private on kexec")
+
+So I'd hope if you report a bug against some patch, the least you could do is
+CC its author...
+
+To give you the same spiel:
+
+Please read
+
+https://kernel.org/doc/html/latest/process/development-process.html
+
+and especially
+
+https://kernel.org/doc/html/latest/process/submitting-patches.html
+
+before you submit more patches.
+
+Thx.
+
 -- 
-2.47.0
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
