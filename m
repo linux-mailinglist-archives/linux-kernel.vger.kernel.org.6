@@ -1,80 +1,44 @@
-Return-Path: <linux-kernel+bounces-413901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2156A9D2070
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 07:49:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B47D9D2072
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 07:51:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF0EDB213B5
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 06:49:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 472942816CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 06:51:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12CF8146A7B;
-	Tue, 19 Nov 2024 06:49:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="HIDPvhy7"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 063EE29CA;
-	Tue, 19 Nov 2024 06:49:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A94AC146D6E;
+	Tue, 19 Nov 2024 06:51:28 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86B9D10F4
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 06:51:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731998956; cv=none; b=e2WHHNPP2t7mf9Wc2FoO2wv47WVjqXQN/DRGB7mVE66StYijxgyBhZWK50n1QDfqlT6lZsa6CuQF6bOhsdadec2xAHzoMJEbCm0FR+CNW+ZvvZKqZUex5DHt/jaa9fn5xnloefU4k4JCmfNcXujyd1EBtvzcLqxacSv+VxNrtcE=
+	t=1731999088; cv=none; b=nRowQj6tmQSZTgJb2M8J3BTYSkrPeMUODXVq4J3gFLVVdFaTeUfnZ2FT46zv1qn60mR/osz8mHij1m8neRd/GWHCv/CEhi3LsExwYVPezUcW6M/JdRIsqIQkrhzg+oeJi7GdDl/kzkP6s1sJYT/17lpYgfeOXm3hhINMOHt1DNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731998956; c=relaxed/simple;
-	bh=8LGnNifdgqrlNX4CXKFvUsjnc6CLD/Ck8HSTIpMOTE8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=d8ONmujp9U6/aDXu6SGSn2ng3BPv5e5JEZ6nVfSnB32c04xci0uGSyPOZ4+H2fZfkrbf9E6VUyEpLzZ9RJZY4VrOAFAzYNR5IDnV0Y+66jaMqcABVoNFe0wTyHCaxPGzvJX1J7jiXmaE+4mMN1QUK25/jGbMiDll3r0GGUI6h6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=HIDPvhy7; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AIHJ8c3022084;
-	Tue, 19 Nov 2024 06:49:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pp1; bh=NWeiptRS/j6bbEgpHMZEqolaKWIO2bboeAEBvFQH/
-	64=; b=HIDPvhy7QMGLmTm8firgnQolTqlc9m6X03MhuujToDVU0eP+QY/I+B5OH
-	vNHAdUDJZXiNMnROdiPSj304LQuu+8AqqU7InEEwsuSe8XAjLB5Q19mxhCbXAmag
-	1jMbAu4SYAHeS5EKVTxgyQi1RUnQeLQVKc4RSvWNAnEqGDvOwMCQM+TzgDKzKvAV
-	xOrHxx+qRTNvdmEHsn1Z0+tLwIkHRInlFGRk4pXs7RhfI6YG3M4u89kYWXzimzgJ
-	l7Guzg/eIltiJoCOWv6gaEwGcwqTWxS+vy2K7DVBpuCss2Ni9qraSf4SfJVFFtyT
-	0ud30MHJymDaqY69+4VBZ+DCDYfwQ==
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42xk2vxc55-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 19 Nov 2024 06:49:12 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AJ1UxYf021983;
-	Tue, 19 Nov 2024 06:49:11 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42y6qmv1eu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 19 Nov 2024 06:49:11 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4AJ6n7cq20906488
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 19 Nov 2024 06:49:07 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 2CEC020040;
-	Tue, 19 Nov 2024 06:49:07 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D3C5620043;
-	Tue, 19 Nov 2024 06:49:06 +0000 (GMT)
-Received: from tuxmaker.lnxne.boe (unknown [9.152.85.9])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 19 Nov 2024 06:49:06 +0000 (GMT)
-From: Thomas Richter <tmricht@linux.ibm.com>
-To: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        acme@kernel.org, namhyung@kernel.org
-Cc: agordeev@linux.ibm.com, gor@linux.ibm.com, sumanthk@linux.ibm.com,
-        hca@linux.ibm.com, Thomas Richter <tmricht@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>
-Subject: [PATCH v3] perf/test: fix perf ftrace test on s390
-Date: Tue, 19 Nov 2024 07:48:56 +0100
-Message-ID: <20241119064856.641446-1-tmricht@linux.ibm.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1731999088; c=relaxed/simple;
+	bh=pQXaoanQc1vO50305oWY4AHRdDTnkO5qKs5Z2mC+6zQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qpT5ei/WN9YhSeYHi9XRFVogXknFS+YL36vqe+lfMGZ8zMwrglSs+SlPITkvMJj7ylPm55qi/s95kiOcXA4u8v5rxzUB+n2eaeSV8X38Bb24XkrLjSKM+VXTOnG+5JfggCNAQwUGdTlWKor62i2YZWhYaiSDZYi+vzT3XE7AknQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [113.200.148.30])
+	by gateway (Coremail) with SMTP id _____8AxQK1cNTxn6DRCAA--.25475S3;
+	Tue, 19 Nov 2024 14:51:08 +0800 (CST)
+Received: from linux.localdomain (unknown [113.200.148.30])
+	by front1 (Coremail) with SMTP id qMiowMAxDEdaNTxnWPxcAA--.28167S2;
+	Tue, 19 Nov 2024 14:51:07 +0800 (CST)
+From: Tiezhu Yang <yangtiezhu@loongson.cn>
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] LoongArch: Fix build failure with GCC 15 (-std=gnu23)
+Date: Tue, 19 Nov 2024 14:50:51 +0800
+Message-ID: <20241119065051.18449-1-yangtiezhu@loongson.cn>
+X-Mailer: git-send-email 2.42.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,60 +46,80 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: GSdleqlpY1Qmx78ybu6gsrJyJOXd19WL
-X-Proofpoint-GUID: GSdleqlpY1Qmx78ybu6gsrJyJOXd19WL
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- priorityscore=1501 phishscore=0 clxscore=1015 suspectscore=0 spamscore=0
- impostorscore=0 bulkscore=0 mlxscore=0 adultscore=0 lowpriorityscore=0
- mlxlogscore=935 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411190047
+X-CM-TRANSID:qMiowMAxDEdaNTxnWPxcAA--.28167S2
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBj93XoW7WFWxtF1kZr17Cr4DXF1fAFc_yoW8Kw4Dpa
+	nF9r1kGF4UWryIkryDA34avryDX34UGw12gay29Fy8CFyIgr1xXr409F98ZF18tw4jka4I
+	ga43GwnxWayUZwcCm3ZEXasCq-sJn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUkFb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r106r15M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
+	xVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx
+	1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv
+	67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41l42xK82IYc2
+	Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s02
+	6x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1Y6r17MIIYrxkI7VAKI48JMIIF0x
+	vE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE
+	42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6x
+	kF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07URa0PUUUUU=
 
-On s390 the perf test case ftrace sometimes fails as follows:
+Whenever I try to build the kernel with upcoming GCC 15 which defaults
+to -std=gnu23 I get a build failure:
 
-  # ./perf test ftrace
-  79: perf ftrace tests    : FAILED!
-  #
+  CC      arch/loongarch/vdso/vgetcpu.o
+In file included from ./include/uapi/linux/posix_types.h:5,
+                 from ./include/uapi/linux/types.h:14,
+                 from ./include/linux/types.h:6,
+                 from ./include/linux/kasan-checks.h:5,
+                 from ./include/asm-generic/rwonce.h:26,
+                 from ./arch/loongarch/include/generated/asm/rwonce.h:1,
+                 from ./include/linux/compiler.h:317,
+                 from ./include/asm-generic/bug.h:5,
+                 from ./arch/loongarch/include/asm/bug.h:60,
+                 from ./include/linux/bug.h:5,
+                 from ./include/linux/mmdebug.h:5,
+                 from ./include/linux/mm.h:6,
+                 from ./arch/loongarch/include/asm/vdso.h:10,
+                 from arch/loongarch/vdso/vgetcpu.c:6:
+./include/linux/stddef.h:11:9: error: expected identifier before 'false'
+   11 |         false   = 0,
+      |         ^~~~~
+./include/linux/types.h:35:33: error: two or more data types in declaration specifiers
+   35 | typedef _Bool                   bool;
+      |                                 ^~~~
+./include/linux/types.h:35:1: warning: useless type name in empty declaration
+   35 | typedef _Bool                   bool;
+      | ^~~~~~~
 
-The failure depends on the kernel .config file. Some configurations
-always work fine, some do not.  The ftrace profile test mostly fails,
-because the ring buffer was not large enough, and some lines
-(especially the interesting ones with nanosleep in it) where dropped.
+The kernel builds explicitly with -std=gnu11 in top Makefile, but
+arch/loongarch/vdso does not use KBUILD_CFLAGS from the rest of the
+kernel, just add -std=gnu11 flag to arch/loongarch/vdso/Makefile.
 
-To achieve success for all tested kernel configurations, enlarge
-the buffer to store the traces completely without wrapping.
-The default buffer size is too small for all kernel configurations.
-Set the buffer size of for the ftrace profile test to 16 MB.
+By the way, commit e8c07082a810 ("Kbuild: move to -std=gnu11") did a
+similar change for arch/arm64/kernel/vdso32/Makefile.
 
-Output after:
-  # ./perf test ftrace
-  79: perf ftrace tests     : Ok
-  #
-
-Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
-Suggested-by: Sven Schnelle <svens@linux.ibm.com>
-Suggested-by: Namhyung Kim <namhyung@kernel.org>
+Fixes: c6b99bed6b8f ("LoongArch: Add VDSO and VSYSCALL support")
+Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
 ---
- tools/perf/tests/shell/ftrace.sh | 2 +-
+ arch/loongarch/vdso/Makefile | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/tests/shell/ftrace.sh b/tools/perf/tests/shell/ftrace.sh
-index a6ee740f0d7e..a785a6274922 100755
---- a/tools/perf/tests/shell/ftrace.sh
-+++ b/tools/perf/tests/shell/ftrace.sh
-@@ -67,7 +67,7 @@ test_ftrace_latency() {
- 
- test_ftrace_profile() {
-     echo "perf ftrace profile test"
--    perf ftrace profile sleep 0.1 > "${output}"
-+    perf ftrace profile -m 16M sleep 0.1 > "${output}"
-     grep ^# "${output}"
-     grep sleep "${output}"
-     grep schedule "${output}"
+diff --git a/arch/loongarch/vdso/Makefile b/arch/loongarch/vdso/Makefile
+index 40c1175823d6..fdde1bcd4e26 100644
+--- a/arch/loongarch/vdso/Makefile
++++ b/arch/loongarch/vdso/Makefile
+@@ -19,7 +19,7 @@ ccflags-vdso := \
+ cflags-vdso := $(ccflags-vdso) \
+ 	-isystem $(shell $(CC) -print-file-name=include) \
+ 	$(filter -W%,$(filter-out -Wa$(comma)%,$(KBUILD_CFLAGS))) \
+-	-O2 -g -fno-strict-aliasing -fno-common -fno-builtin \
++	-std=gnu11 -O2 -g -fno-strict-aliasing -fno-common -fno-builtin \
+ 	-fno-stack-protector -fno-jump-tables -DDISABLE_BRANCH_PROFILING \
+ 	$(call cc-option, -fno-asynchronous-unwind-tables) \
+ 	$(call cc-option, -fno-stack-protector)
 -- 
-2.47.0
+2.42.0
 
 
