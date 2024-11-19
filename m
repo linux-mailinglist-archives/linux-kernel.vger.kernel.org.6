@@ -1,207 +1,162 @@
-Return-Path: <linux-kernel+bounces-414985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A7009D3015
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 22:38:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E4F6D9D3019
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 22:41:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 046641F230E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 21:38:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F43D1F232C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 21:41:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 819CA1D3584;
-	Tue, 19 Nov 2024 21:38:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D22EC1547FF;
+	Tue, 19 Nov 2024 21:40:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="riOe9kTP"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="K1qSdKMS"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 631331D0E07
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 21:38:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6419413E03E
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 21:40:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732052296; cv=none; b=ai7QQqLCuL6dBjS53WC/OUOnsnodzomH//6Bu6fjTMdfmln+d0k8Trm83E8U65uMvCSvhIslyGg8dunsWx0cVn05Oibz7k4APppKqYNjjWihs2IevFDlUmU7HuBd5GXRV33qwOXV+l03zZBUhRVuUVTOI/VmaP2zyLTIyogVHvc=
+	t=1732052451; cv=none; b=SVtjTxUB32QqF1v9EFhfFJn4MnkDCyuHQ+ZnPtnqdvG6tMdwuMwAqDxq06G4trdJ1X4Dg2AfUY3fiPTxsZR1WdbcxviCHQMnSNaHvffg8XBXWLef+hym3r17/dnqqRre5DVz/Y80GC6Z1z4OGyu5ijFmudh/Z2+ThcV29IXL2bI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732052296; c=relaxed/simple;
-	bh=Zd2QB6z5/nO/5q32zOMmJULah0pVbTKjUr9QlGKD+V4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qCNEw212/5jqy4cxSDMpzhgvgvOoVj8cz21tNFai1JWEMUWrtturruIw3E00BlSefPMHsoF6yDj5juoGjMrNkSgmSZD8+Ansci2oIPIsHYrzPqvMKSDr3hAHP4SU7dMPtH4TDaWle/AdhnuJDK/0PuWIeD0EyVDiDu+YI6f52FM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=riOe9kTP; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5cfc264b8b6so16970a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 13:38:14 -0800 (PST)
+	s=arc-20240116; t=1732052451; c=relaxed/simple;
+	bh=HE3n513xHhZThcE6jVMoZF6XwhCQEWW5VGxysIXxWto=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aBykJUDc/Re5d6smfDZiz1abFKo03Ux8XvAzO7bsOQqJmun3wPMIxiH1A11cVA9kBNcOfjDM+H5pk8aHBuu8ReHd6xEoPktZt+v6LNyzAq4ZNJIa6deVJfo0bjq0Shy89eGZWWblAI/9GxYZ4nWIDm/6DosOsBU7mYZQdHguFmc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=K1qSdKMS; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3823f1ed492so116183f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 13:40:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732052293; x=1732657093; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KHaLTJLv2qMAaXUVhzeSonG7VLA1CIIMmtCZ7ax6TDw=;
-        b=riOe9kTPt2Z4CGEcbASPouoXwaiHTuSrqylopYOwFm2ooik3fCWEN5wQ7CFc4BpHi1
-         Z09pMsnCRkkEtbwCNA309i5p3KGGGAAPvse4M5K6q8EC8W1Prq6kyI12w0J/ruevidYC
-         lJTWrfCwgZu/Vo8WjsutqlgwruYRy3MFheM1PCrWzoAHiBcsG//++wjvnf/U4QRdPMTr
-         1RjAlbdldv64NIOOrSdf1eOu3jMnYQQSbdWPIVo1x95LEWAeIiel/z8cIBaPrXtY66wz
-         iaKmmmsINe2jLKDJGhpqkTbFfkGe5EHL5MHcMmwNBbD6x7xNSXJbWMbJEA6qS1Ml6uet
-         CneQ==
+        d=linaro.org; s=google; t=1732052448; x=1732657248; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lkxeQUfNljLvLRiRZhalC+n4lyNit8qK2o0nRa/RK2k=;
+        b=K1qSdKMSFk3EJ+/mZ8UxMxt7TvsHiFvKVN5P+h1MNR2YD8wt8k0pcRSXQv/dfx57Km
+         Au7ku0/giiqrvxDnldqLQvSpKT7TCcyMnLMPXr8BwAq4Vt+btFg5Kv7ebShQNgaGb1My
+         7XaJgv3xAQLKAFi9/TzP6aUSALygr5ka8lByTcOV0qURAQ90gVu8aOG6x72tNWrOnrEz
+         3/CBq6TvDLjd2E42V8eyxqDwaOYEPg8i3GKUg/PfdH8OXY60EpKU7Om1KviLT1DA342B
+         xFpRzdkzvC1yPZYXtOjdZNegamh8rEUfzvEpE7qZiPBfAdu6ckYHi0rOJv4O0QGWLHpx
+         iPpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732052293; x=1732657093;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KHaLTJLv2qMAaXUVhzeSonG7VLA1CIIMmtCZ7ax6TDw=;
-        b=AoXNkTIMmpYcVx35gP2j2Xbx9IDWky4dKT74DhZG4RtFzXVLPjIXjxqKH9XZgeylE6
-         KHnLzzA2578/qSQutZ+BTB11eFkOiI2iBnZJE0BpskoPf/aH+zhweFTK+Wftejk9c5RS
-         l+bIjwRijh6Aiybnww0+OswbjBq99agy6wb/8YUXDZihLSWizshK+nSWlDaI57mjDezn
-         Q91FhfczuJt7NHpxlXlHCO1Xvckync6JGZjoSzm6/qlXzXyClYm0bPKRtbCLa28stT4q
-         o/kznZVCE6ELgcB/jj0XsDVFPXwODcrCMfLHc9PD9Z2o+Gkv0Y+pp1DH8Wcmjlkzo55X
-         JilQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWEzX1GeYQ4Y06AyPkwbl9iSJgIzBPB85Yqq5v7xj3la52C52CotLUBK8vn+2xUtN2we9xLnecF6VX1U58=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzie3W4Rf8lUo5l3MwPcJsqA+vn3X95sRtHNX+eV7UypWdATe2O
-	f+TC67VEAEEhL+zLXvuQPa2ZU2SwGdx7mpmOVfqn8+PuQDClx4vZ4b1AiugBGKgGhghOHY0emS0
-	2XjXC11ObOa9sfW5tCQp//EGiqd1OdZPnBpe5
-X-Gm-Gg: ASbGncvsm1FQSbcPCX2glXUoO2BSl181VHlcJv2gQvoeAnVjDWe+qWTgDuOBldCNU+f
-	O96b/NYKEnwkGRVpUDwlF1C1AQ1RgVCJoq/HfWfjl2zcSUsHtnKoxEHPluozHew==
-X-Google-Smtp-Source: AGHT+IEu1TvsuhTaj4Y+Akxvvr6wi40qDULQBNFY0mTnIT/+3AaCJ0gDLLAcrNpIwNcwmpaw1b+off/DTHI6qwyqUP8=
-X-Received: by 2002:a05:6402:b3a:b0:5cf:f20c:bdf0 with SMTP id
- 4fb4d7f45d1cf-5cff4314190mr20664a12.4.1732052292462; Tue, 19 Nov 2024
- 13:38:12 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732052448; x=1732657248;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lkxeQUfNljLvLRiRZhalC+n4lyNit8qK2o0nRa/RK2k=;
+        b=wtPigTbFy9bCZ67H0nK0JFV/zeqqqWZRgF/KtfsqqC7aEH28FUKFtbb3A4DVuMSE/2
+         OLU6h+sxfpAuQve23OPaXbsiQNOiRUPFbGfB1tUXHsN5jWkmyxt8YILToLM3B/JPqApb
+         WCmW1xoJeYnuN070UoEBoi5hkRKZw39r3MZ3YjI34gds64r1A3jIFx1Z4XBRIg+csD+g
+         KnKBZThshTocugGS/SBjbV96MbqJndl6Mg21Sf5Ikz3uOz2lgzq9DHKBjt3eotzBbJwZ
+         UJRydUKMAgYDNoCNnpiMoY4kPV5AmXI8TleJLUc4IUh9yEeHGs1qaEx0mErN3rif2+3d
+         YC9g==
+X-Forwarded-Encrypted: i=1; AJvYcCU9spi25OFNtL33cujVZquFInf6d6wpzYIHOXseJleFmE1CDgzkh2zITufrAogbgHQPdLhx0napagmnR0c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfgCUD3R8IFH8V/dCTHA1eRlqDVJd7rM9vmn/cjAiVKqvng4L5
+	zdklTTyeey7rlERtOXBHwZ34fjP89lb1gkVDwCD9lHOaNrLaCt82wF5pFWqJ6M8=
+X-Google-Smtp-Source: AGHT+IG6bv5/VShXyjrdqEjy+T/UO+kLOX7JIB5cP3VCGPfmzISuivqKLJjNxAIIX4ocGdqh24oTtw==
+X-Received: by 2002:a5d:5f91:0:b0:37d:47eb:b586 with SMTP id ffacd0b85a97d-3824cb30e45mr4340383f8f.4.1732052447252;
+        Tue, 19 Nov 2024 13:40:47 -0800 (PST)
+Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-382549055f2sm366236f8f.16.2024.11.19.13.40.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 19 Nov 2024 13:40:46 -0800 (PST)
+Message-ID: <cfca677b-bc74-49bb-a031-6f52629edd2b@linaro.org>
+Date: Tue, 19 Nov 2024 22:40:45 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241030170106.1501763-21-samitolvanen@google.com>
- <20241030170106.1501763-22-samitolvanen@google.com> <CAK7LNAShVzrE6uhXxZ7HepKhmOJYsZeigq6w19jRN3OH-T_Jyg@mail.gmail.com>
- <CABCJKueVjP8V-=3Ehi4QvQzg1FZh2unyVMDzSJ_vJ_E5EE+gLg@mail.gmail.com>
- <CAK7LNARVK1ZpGXZVTAynuo7CDjgB4uT5bQzcGiWseZfaEu7Tvw@mail.gmail.com>
- <CABCJKufVpx4dsr7A44qA0ydwTEx+3Qy_OMx9Ch6OKa4nzvRj2g@mail.gmail.com> <20241119204829.GA1926309@frogsfrogsfrogs>
-In-Reply-To: <20241119204829.GA1926309@frogsfrogsfrogs>
-From: Sami Tolvanen <samitolvanen@google.com>
-Date: Tue, 19 Nov 2024 13:37:35 -0800
-Message-ID: <CABCJKue+n2V5vua2=Hwc1SXBdkmdLBD7ac8imt5HO1bsy7s9dw@mail.gmail.com>
-Subject: Re: [PATCH v5 01/19] scripts: move genksyms crc32 implementation to a
- common include
-To: "Darrick J. Wong" <djwong@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Matthew Maurer <mmaurer@google.com>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	Petr Pavlu <petr.pavlu@suse.com>, Daniel Gomez <da.gomez@samsung.com>, Neal Gompa <neal@gompa.dev>, 
-	Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>, Miroslav Benes <mbenes@suse.cz>, 
-	Asahi Linux <asahi@lists.linux.dev>, Sedat Dilek <sedat.dilek@gmail.com>, 
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-modules@vger.kernel.org, rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v14] thermal/drivers/mediatek/auxadc_thermal: expose all
+ thermal sensors
+To: Hsin-Te Yuan <yuanhsinte@chromium.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
+ Lukasz Luba <lukasz.luba@arm.com>, Matthias Brugger
+ <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ James Lo <james.lo@mediatek.com>, Michael Kao <michael.kao@mediatek.com>,
+ Hsin-Yi Wang <hsinyi@chromium.org>, Ben Tseng <ben.tseng@mediatek.com>
+References: <20241025-auxadc_thermal-v14-1-96ab5b60c02e@chromium.org>
+ <5dd2d2a3-6eff-45fb-8af8-593945235dd3@linaro.org>
+ <CAHc4DNKSsrdSjqunhk+oyWw_+oKY9BgzPcqag5QrmLJqjVsE1Q@mail.gmail.com>
+Content-Language: en-US
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <CAHc4DNKSsrdSjqunhk+oyWw_+oKY9BgzPcqag5QrmLJqjVsE1Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Darrick,
+On 19/11/2024 08:38, Hsin-Te Yuan wrote:
+> On Fri, Nov 15, 2024 at 12:48 AM Daniel Lezcano
+> <daniel.lezcano@linaro.org> wrote:
+>>
+>>
+>> Hi,
+>>
+>> On 25/10/2024 14:05, Hsin-Te Yuan wrote:
+>>> From: James Lo <james.lo@mediatek.com>
+>>>
+>>> Previously, the driver only supported reading the temperature from all
+>>> sensors and returning the maximum value. This update adds another
+>>> get_temp ops to support reading the temperature from each sensor
+>>> separately.
+>>>
+>>> Especially, some thermal zones registered by this patch are needed by
+>>> MT8183 since those thermal zones are necessary for mtk-svs driver.
+>>
+>> The DT for the mt8183 describes the sensor id = 0 as the CPU. On this,
+>> there is a cooling device with trip points.
+>>
+>> The driver registers the id=0 as an aggregator for the sensors which
+>> overloads the CPU thermal zone above.
+>>
+>> Why do you need to aggregate all the sensors to retrieve the max value ?
+>>
+>> They are all contributing differently to the heat and they should be
+>> tied with their proper cooling device.
+>>
+>> I don't think the thermal configuration is correct and I suggest to fix
+>> this aggregator by removing it.
+>>
+>>
+>>
+>   As far as I know the thermal design of Mediatek's board is based on
+> the highest temperature of the whole board. Also, removing the
+> aggregator will break all the boards using this driver.
 
-On Tue, Nov 19, 2024 at 12:48=E2=80=AFPM Darrick J. Wong <djwong@kernel.org=
-> wrote:
->
-> On Mon, Nov 18, 2024 at 09:58:09PM +0000, Sami Tolvanen wrote:
-> > Hi,
-> >
-> > On Sat, Nov 16, 2024 at 9:09=E2=80=AFAM Masahiro Yamada <masahiroy@kern=
-el.org> wrote:
-> > >
-> > > On Thu, Nov 14, 2024 at 2:54=E2=80=AFAM Sami Tolvanen <samitolvanen@g=
-oogle.com> wrote:
-> > > >
-> > > > Hi,
-> > > >
-> > > > On Mon, Nov 11, 2024 at 8:06=E2=80=AFPM Masahiro Yamada <masahiroy@=
-kernel.org> wrote:
-> > > > >
-> > > > > On Thu, Oct 31, 2024 at 2:01=E2=80=AFAM Sami Tolvanen <samitolvan=
-en@google.com> wrote:
-> > > > > >
-> > > > > > To avoid duplication between host programs, move the crc32 code=
- to a
-> > > > > > shared header file.
-> > > > >
-> > > > >
-> > > > > Only the motivation to use this long table is to keep compatibili=
-ty
-> > > > > between genksyms and gendwarfksyms.
-> > > > > I do not think this should be exposed to other programs.
-> > > > >
-> > > > >
-> > > > > If you avoid the code duplication, you can do
-> > > > >
-> > > > > // scripts/gendwarfksyms/crc.c
-> > > > > #include "../genksyms/crc.c"
-> > > >
-> > > > Sure, that sounds reasonable. I'll change this in the next version.
-> > >
-> > >
-> > > BTW, is it necessary to share the same crc function
-> > > between genksyms and gendwarfksyms?
-> > >
-> > > If CONFIG_GENKSYMS and CONFIG_GENDWARFKSYMS
-> > > were able to produce the same CRC, it would be a good motivation
-> > > to share the same function.
-> > > However, as far as I tested, gendwarfksyms generates different CRC va=
-lues.
->
-> crc32() is operating on different data, right?  CONFIG_GENDWARFKSYMS
-> computes a crc of the DWARF data, whereas CONFIG_GENKSYMS computes a crc
-> of a magic string from ... the source code, right?  Hence the crcs will
-> never match?
+AFAICT, it is not a thermal design but a thermal configuration.
 
-Correct, they will never match.
+What is the rational of using power numbers related to the CPU but 
+aggregate all temperatures as an input to the governor ?
 
-> > > > > > Suggested-by: Petr Pavlu <petr.pavlu@suse.com>
-> > > > > > Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
-> > > > > > Acked-by: Neal Gompa <neal@gompa.dev>
-> > > > >
-> > > > > Does this Ack add any value?
-> > > > >
-> > > > > Acked-by is meaningful only when it is given by someone who
-> > > > > maintains the relevant area or has established a reputation.
-> > > > >
-> > > > > $ git grep "Neal Gompa"
-> > > > > $ git shortlog -n -s | grep "Neal Gompa"
-> > > > >      2 Neal Gompa
-> > > > >
-> > > > > His Ack feels more like "I like it" rather than a qualified endor=
-sement.
-> > > >
-> > > > Like Neal explained, an Ack from a potential user of this feature
-> > > > seemed relevant, but if you don't think it's meaningful, I can
-> > > > certainly drop it.
-> > >
-> > > Tested-by is more suitable if he wants to leave something.
-> >
-> > Ack. Neal, I'll drop the acks from v6, but if you end up testing that
-> > series, please feel free to add your Tested-by.
->
-> Just my 2 cents, but it seems rude to me to *remove* an Ack from an
-> existing patchset on the grounds that person doesn't appear often in the
-> kernel log.  "We won't hire you for this entry level job because you
-> don't have experience" etc.
->
-> Also, wouldn't Neal be one of the people shepherding this change into
-> distro kernels?  He seems to show up somewhat frequently in the Fedora
-> and SUSE ecosystems.
->
-> Is the problem here that you all think "Acked-by" isn't appropriate from
-> someone who isn't a subsystem maintainer, but the kernel doesn't seem to
-> have a tag for "downstream consumer of this change says they're willing
-> to put their name on the line for this"?
+And for example, the mt8173 has 4 banks and 4 sensors per banks, so 16 
+sensors. And they are all grouped together under the thermal zone 
+"cpu-thermal" with the cpu cooling device.
 
-I certainly appreciate Neal's input, but I don't have a strong opinion
-about which tag is appropriate. The documentation seems to suggest
-that Acked-by is _often_ used by maintainers and focuses on that use
-case, but doesn't explicitly rule out other folks acking patches
-either:
+So if the GPU is getting hot, we cool down the CPU ?
 
-https://docs.kernel.org/process/submitting-patches.html#when-to-use-acked-b=
-y-cc-and-co-developed-by
 
-Perhaps Greg, or someone else with more experience with the nuances of
-acking, can clarify the policy in this situation?
+> By the way, I heard that baylibre is working on multi-sensor
+> aggregation support, which can be the alternative solution for the
+> aggregator in this driver, but that should be another story and is
+> unrelated to this patch.
 
-Sami
+Right.
+
+
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
