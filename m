@@ -1,117 +1,100 @@
-Return-Path: <linux-kernel+bounces-414699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 054399D2C2D
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 18:11:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1E989D2C35
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 18:13:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3A4D1F22C1D
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 17:11:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8858A2821AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 17:13:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23A8F1D0E1C;
-	Tue, 19 Nov 2024 17:11:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58E491D0F5D;
+	Tue, 19 Nov 2024 17:13:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BSgW026t"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T+Omqzkc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECA3B1D0967;
-	Tue, 19 Nov 2024 17:11:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 914FE25763;
+	Tue, 19 Nov 2024 17:13:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732036271; cv=none; b=V+dttQlMueAgxjW/9pSj9oUroMl4XcWEuSGykQSk1s8x+KdfmxrWDgrdFkyZ/HpRP3uZauvCfkaBNRT3CY1tVUrYKT+VWAwBh8TEAJKW+J9XGPlPoDwJoCNyzWTTJihBhoNBjLkE8ypH2QaiGbK2Ia5uB//SludCyRrzG/GaSJc=
+	t=1732036398; cv=none; b=kOIgZjjDY1Fim1is78KEpVok1Xgao9YE6IAGOeIApa2oFWhbojZJL5PD33SLucnGvU8yGMc9q6iE9L50tUpjN6kqdzI1+0O05WKMSotioty2LGA+zY3PnRKzg96PNFu8P/CoTf5njF5fF3gKYtAnCKP3jEf5+Q5CK0hmE4Ayysw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732036271; c=relaxed/simple;
-	bh=3eB8JTS8q4GTl9FnLSmmAdqR6Vgm1FF7PeV0Sku2fOo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n+tokIfCr83RbO8O2PSyMiutjlgQzF4IrwQeCIzMip68s7EAeoPhRwA601b8ih6uPla3OeuwSqynqjllMFDzfJ4gSHGR3+j+qCOsyBciYLkk6AvuhStXhYM1VFFumtczvtYo/I9x/xsFARdoYOAgi7525sN2dgeXJiK+YlJvIv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BSgW026t; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a9e44654ae3so732272366b.1;
-        Tue, 19 Nov 2024 09:11:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732036268; x=1732641068; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=3eB8JTS8q4GTl9FnLSmmAdqR6Vgm1FF7PeV0Sku2fOo=;
-        b=BSgW026tMn0bZseBke1z7Zzmcpw1qbPBzmZYOL7iwCG86leOeEH5tySDlmr5ngtrc3
-         9DYtTYzvQezS5zVnCUZ209iJylmBhVFa4oqRjQuimRv/ZZbjrLRZRGSmXixuMtoD2N+c
-         7DBpyiYrN7RZrDEQy0pCG28hb+gNeHtIYPweSQJu2FKKjDyifURWYIiYFEtMDw9RJuIv
-         GD+WJbvbGT8FOu5cpJdzg/DThpftTTyXoQF1L+RSeHK+UvDGWrRz/bHVO33c9g757lZe
-         gHO04pFCGmp792YXJ6OsWW999WSYxu7HEA16DerB/mFj56j/LsBHUekFHJBZNhNnLUIw
-         jqnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732036268; x=1732641068;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3eB8JTS8q4GTl9FnLSmmAdqR6Vgm1FF7PeV0Sku2fOo=;
-        b=ZiaJAwE52t0+GkWJouV6/4Aoim2qpv0jhVNO5nzLQaB5Ny5+m5WxDinw9V9k4qzdw/
-         gwB+nuYU3AhkITWE8PIHfU8l6BGq/3ZmqCpees+EU6xdxx14MdZY2ZAqKDVig69XtPmn
-         QXRW62yZJ+NJbmnrY+htpg+THOU7caeHkCRrKBkrVtS/FS+ti8cxsIl3x6aQtG2tPrZF
-         KKhyv4xn95MxnLdzRDB51PKu0JoeZIFGdaDL/YkvRScStTwQnFfzj+zKCWtOxLdrx36h
-         NCIdiDBL8B9yvkHEkedQzCpohRakOCOCFbgWYpP5fG4hUlRvvPDKswpYIZgVVGBkLgod
-         t3BQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUDUV9bpWZD70OUWilEpisda4wN2iuG9tYiCQtwu0UX7xK2E67ZQiy3Hv+DUIc0+JWKoyAeG1yp@vger.kernel.org, AJvYcCUvvC3F508RuGKo+a9MSShx63Y/fVrVIaWWdSvzgha0EPsZSFCGTdYgfaF+JOx/p1ltiW1EEVW0iTjsWI8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYxKqlpnt9PM/w8vW9igUfNvLfZzxa4zB4f/LQRHK8EMgCBYDE
-	jrr1EspnQHPI72yPsJre3n4OmXCX5/qL1xcemA3yLGIZanK6IbVwtKJd5P4y+zysjFQSrNexrYv
-	DRDz4421JjW9m/7NYsVGD07A7akQ=
-X-Google-Smtp-Source: AGHT+IEqLza03QisK2XVyzlo7WJSd8LkXpH8Z02+OCqp+DU0oBPgqAy2zWR5gt6GUQAk71pWPVJuKjfju8RaHEwE8mg=
-X-Received: by 2002:a17:907:3181:b0:a9a:15fb:727a with SMTP id
- a640c23a62f3a-aa48340f21fmr1457050966b.13.1732036268062; Tue, 19 Nov 2024
- 09:11:08 -0800 (PST)
+	s=arc-20240116; t=1732036398; c=relaxed/simple;
+	bh=ggE7Kv8fbEJQDnLfRqnMQ5FSxw3wmUl+igo2b35kd5I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jwF9mqgmcXTp1rFvAQ8zqt7nBjwgi9C0Lg6Wt8qRA9QEkKwQNvqRUD19xYArMc8zMXtNp3f5Qun5SIHeewhv/wcdOip3hypRCn2k8PilxbM2ayH2kKxemkWguJbUj5TvcgopkZsrCaWjg4fx/7bdV8OR3PbFc1hA0OlemFWOt2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T+Omqzkc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03AA7C4CECF;
+	Tue, 19 Nov 2024 17:13:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732036397;
+	bh=ggE7Kv8fbEJQDnLfRqnMQ5FSxw3wmUl+igo2b35kd5I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=T+OmqzkcJCiucFF2UnxpJpQ/xcYpsSxBx4gI5KO1T1OwBMnQKhkkThRuwN3Gzvmqj
+	 m2XWQo+7i5YIpBsTfJm7yzOLc2LMILt6nQPlb2EofC2Tpadgp2zhxmIhF2o8r2pq2j
+	 M1GwJ5kyKMzq2r1XF/PWMw8tl0EkClBvImKVFdi8n15wS/4vO28MOcQ4Bu4le7ANTO
+	 guPpw0F7FRjkN2aKoUgUVmUwr78fyfEVQw07tnz0Dyw8WvIj5SVcwyM7Ps62uTfMSg
+	 RM1uSxB7CroCjSelz16lXVMkyCZSAkTVnVMqh9boSPRB7CpIjVt4FbURWJWiB3vYIk
+	 Xs9Zy6M2sD15w==
+Date: Tue, 19 Nov 2024 11:13:15 -0600
+From: Rob Herring <robh@kernel.org>
+To: Konrad Dybcio <konradybcio@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Wesley Cheng <quic_wcheng@quicinc.com>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH] dt-bindings: usb: qcom,dwc3: Make ss_phy_irq optional
+ for X1E80100
+Message-ID: <20241119171315.GA1805024-robh@kernel.org>
+References: <20241116-topic-x1e_usb2_bindings-v1-1-dde2d63f428f@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241113200001.3567479-1-bjohannesmeyer@gmail.com>
- <20241114193855.058f337f@kernel.org> <CAOZ5it3cgGB6D8jsFp2oRCY5DpO5hoomsi-OvP+55R2cfwkGgA@mail.gmail.com>
- <20241118161615.2d0f101b@kernel.org>
-In-Reply-To: <20241118161615.2d0f101b@kernel.org>
-From: Brian Johannesmeyer <bjohannesmeyer@gmail.com>
-Date: Tue, 19 Nov 2024 10:10:54 -0700
-Message-ID: <CAOZ5it1S+fiV5Nz8Fivq0MM3dLFS+Rv90v9izgGkZMJhz69fXQ@mail.gmail.com>
-Subject: Re: [PATCH 0/2] vmxnet3: Fix inconsistent DMA accesses
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Ronak Doshi <ronak.doshi@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
-	"David S . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Raphael Isemann <teemperor@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241116-topic-x1e_usb2_bindings-v1-1-dde2d63f428f@oss.qualcomm.com>
 
-> What is the purpose of the first patch? Is it sufficient to make
-> the device work correctly?
-The purpose of the first patch is to fix the inconsistent accesses in
-`vmxnet3_probe_device()`. This only partially fixes the issue,
-however, because there are inconsistent accesses elsewhere in the
-driver. So, no, it does not make the device work *entirely* correctly.
+On Sat, Nov 16, 2024 at 12:17:52PM +0100, Konrad Dybcio wrote:
+> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> 
+> X1 has multiple DWC3 hosts, including one that's USB2, which naturally
+> means it doesn't have a SuperSpeed interrupt. Make it optional to fix
+> warnings such as:
+> 
+> usb@a2f8800: interrupt-names: ['pwr_event', 'dp_hs_phy_irq', 'dm_hs_phy_irq'] is too short
 
-> If yes, why do we need patch 2.
-> If no, why do we have patch 1, instead of a revert / patch 2...
-The answer is that the way I submitted this patch series was a
-mistake. Specifically, I submitted it as: (i) patch 1 is applied on
-master, *and* (ii) patch 2 is applied on patch 1.
+That's a good start, but what about all the other warnings for usb 
+interrupts?:
 
-Instead, the way I should have submitted it was: (i) patch 1 is
-applied on master, *or* (ii) a corrected version of patch 2 is applied
-on master. (By "a corrected version of patch 2", I mean not
-pointlessly reverting patch 1.)
+     13  usb@f92f8800: 'interrupt-names' is a required property
+     11  usb@76f8800: interrupt-names: ['pwr_event', 'qusb2_phy', 'hs_phy_irq'] is too short
+     11  usb@6af8800: interrupts: [[0, 347, 4], [0, 243, 4]] is too short
+     11  usb@6af8800: interrupt-names:1: 'qusb2_phy' was expected
+     11  usb@6af8800: interrupt-names:0: 'pwr_event' was expected
+     11  usb@6af8800: interrupt-names: ['hs_phy_irq', 'ss_phy_irq'] is too short
+      9  usb@a2f8800: interrupt-names: ['pwr_event', 'dp_hs_phy_irq', 'dm_hs_phy_irq'] is too short
+      7  usb@c2f8800: interrupt-names: ['pwr_event', 'qusb2_phy', 'hs_phy_irq'] is too short
+      5  usb@8af8800: interrupts-extended: [[1, 0, 134, 4]] is too short
+      5  usb@8af8800: interrupt-names: ['pwr_event'] is too short
+      4  usb@8af8800: interrupts: [[0, 62, 4]] is too short
+      4  usb@8af8800: interrupt-names: ['hs_phy_irq'] is too short
 
-The difference being:
-- If `adapter` *should* be mapped to DMA, then patch 1 is the way to go. Or,
-- If `adapter` *should not* be mapped to DMA, then a corrected version
-of patch 2 is the way to go.
 
-I hope this clears things up. I'm sorry for the confusion I caused. I
-will submit a V2 patch series that makes this clear.
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> ---
+>  Documentation/devicetree/bindings/usb/qcom,dwc3.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
 
-Thanks,
-
-Brian
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
