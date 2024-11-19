@@ -1,164 +1,124 @@
-Return-Path: <linux-kernel+bounces-413875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 865DC9D1FF5
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 07:07:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0163E9D2003
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 07:08:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC70D282426
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 06:07:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF6831F223D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 06:08:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAB181537C6;
-	Tue, 19 Nov 2024 06:07:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93825E571;
+	Tue, 19 Nov 2024 06:08:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GqL/X1vt"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="onPf9kgB"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA95A2A1B2;
-	Tue, 19 Nov 2024 06:07:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B0F8154BE2;
+	Tue, 19 Nov 2024 06:08:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731996425; cv=none; b=hZaj2O7jutVLxSrLv8VmtngVc2Q/ndDJYUHHJtcjBtu4cUolUCVao3mBR56JKnDA//WPVCDn0Vg+kTaknTV2PNXjN9wvHoxHF0ZURQdpbKNUq5sc/C/qTigVmc/yyabug7d2fRU8yL0Qgs/wDVNZZErfQM9zw3vA3Ldz5Yffrfw=
+	t=1731996503; cv=none; b=LZEVTI6JNpNGG2K8s9nwLW0lUPk5k+u6My/vAWezNHe+ekB3AJ8YUnHryJaYYgqcFqlMcqDev+/c8tjrHQlzW/lboM8AXOBB8zYfv1tM5TSfolZ58sZGTcWCJA7fNb6JcIwYHAKiurmn84HXUmrk+lXKPMJ5OiDdTZ1hIBq7x5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731996425; c=relaxed/simple;
-	bh=kSn5hT/36oDDOOMjJ7TG9vM8Uzf66e0X2QvRIUOn5OM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WhLvmdum1J9+UE7nhsDnW2lJo+WMpA7RZRfxkG1iiloHyhTL3cFv8FLrlSS32O6t2/e/nuzoBCXuM6T3AGFWSuVnTprXh7ZqF4Lr/sSADM7ZSu/yhPbmapGjgywHvEgXizhQ7Uhp68OWkttE8OnKqh/ZFR8cYIlFzrj0EnH7Dmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GqL/X1vt; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-20cb7139d9dso4892815ad.1;
-        Mon, 18 Nov 2024 22:07:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731996423; x=1732601223; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JOl713F9bWIPDqTcKla/qAdbz1UXp39S0aAzrV9TNpU=;
-        b=GqL/X1vto2CnGFb7DQH9Gg9GzwN4a6Cno/RdvwtMDFddzYApNjxej4fuScCB+1ozx1
-         M+IsWh+G02hZMVaJhBUiqIreHBVKACI163dAzclQumYM9jDPEl5mMrrJmf8p/ofLFoj5
-         89nIg64GmuhEOBwsUOWMsJSzEaHOFzdCeD4x9JTNo1REWJn565TtoigHfknid9YzenOR
-         IIFPbcNKDMNDZuqSli0dslIw43K4W4sm5cF6z1aHfuNu65D5MBgwIEp/dEUye8e8aCbp
-         +vvYiSpEE4F72NdpPZ1xTPuuWWJcAAKt6wN88JY0ur3AiegKLPv/IahPfeAQpAGoXz1j
-         ctTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731996423; x=1732601223;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JOl713F9bWIPDqTcKla/qAdbz1UXp39S0aAzrV9TNpU=;
-        b=Czb3kBlCVTGcLUndIxdMvOlQ0QWyn4GFWLHELa5CsNgWLFaxioeNK8oa5tH4SKPJMq
-         +BL6QTPdU8m2FIaJ3QSeiaMvO9qHwQa2UYrnfYrlmBJ9hVgOMi1o3QPuEqnKxHVc2bUi
-         aKb0Pbn3HbHcR9F7L6MxgIEfRRgYvkIGZp+5c3mFARpmH4vuoT/ue5tBEcfv9M4TMAN2
-         AM9nZYGoG/17UcqoPsTTPRkwVACp0sPgPWg71UmlgW9aq7pnt2Flu5zn7w2+FQhyCA+y
-         GRueQpjwf0oDLz+T96uxeB+rvPtKQ9oPXgTkoJKIAbj6a0MXU0TgN5sMZIte28t8piLl
-         CDXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUcjC+8YFYCrjswSJn09LUobuQh6tUgq92pl1xd+5hhtEHDsEUkRDBg6famqAMq9cmuxXc=@vger.kernel.org, AJvYcCW9nnqWsboU/9G84LzMhROvoEV/NdkGN9pQ+w/rHC6LudcSKPUDEFbr3Kb96kQ2FLbEAmSfWODWzPkInzeE@vger.kernel.org, AJvYcCX6ZTfmPR7D2Cc0Co9cHKHwjP0x8SHgxvcg46JI5lqxnQYUi8nleCifo8kABnj0mQ0qLp+Oy6BjbPXL//Qsmuzlub0Z@vger.kernel.org
-X-Gm-Message-State: AOJu0YxC5t+qkXnPGp/ih5ghFwKkxn2MB9+/pwzptZOCz0v/g32ovzMT
-	wNwHCBFkZCuGTW9WUU0vA/W8AzTBght4+gaitMaUo+aWmocS0wnY4zXI424bSCDCxD8tzLH9yzl
-	gr4iofoeR++LeEIBx4EuHBktl79w=
-X-Google-Smtp-Source: AGHT+IFGaAlEWBDn2mPuLgPDdWeVW+qCmdjYZnkUxtySofjU+ljzQ0ZymdcEf5Trp8imtYn3Nv3JPucYh70S1eRIYl0=
-X-Received: by 2002:a17:90b:4f82:b0:2ea:a737:60a2 with SMTP id
- 98e67ed59e1d1-2eaa73795a4mr3116350a91.13.1731996422991; Mon, 18 Nov 2024
- 22:07:02 -0800 (PST)
+	s=arc-20240116; t=1731996503; c=relaxed/simple;
+	bh=TY9NixeYENtxbjzs7/819AWlaEo6jp/Hsm5Zy29oTXQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jwk5GfAPiLRRnerqv53x8cky6MFTRe7D4mPANNLXbnhkh1zPoVWasF402bmhvrP6ElLrkloGDX6/d4vpi3aYJM+U2PhEFQWRhLT/tWSkq8PJFPEEjhZogMWzXZ8e3ucq1J7zDKqAfzvLc1e/i005qxnmeY0yiuXHzBtJ7PhGikY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=onPf9kgB; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AIGHGRB031510;
+	Tue, 19 Nov 2024 06:08:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=OGduCjV0BHdPK6uF0ve+QE
+	PJPR5NXvDPYBj1UWxQXNE=; b=onPf9kgB/PHTctqLMOGo0MCSrLYtcu2I/rtNaM
+	efsYi5/MoGr2I8Z4toYST8f21TMuM0wVB3oWvE+hluDAnSjrW54ctI8hWo8/OVKd
+	pGJAZk/SKbEU38OWmpM8kg07Wa3SNyqEWJMzxADwIK0GtpHDMkOM+3r1ghiv5QKa
+	yEMgnqyQDkF04dftQY4aLAU3gh9pYOuOvJ5+4Rc3WYVM3UgkynEKYxXuqBn+oK9L
+	mmabEE0ny02U3XmahAjF1sLlsuw3WSCA7svECKPUcClgFUfwhjcYZ5qU9KVnvdRd
+	yh6vnYYPo9fBQy6AqvY9jKbD1ZwlPqIw3TOTBVxVXOzve8Kw==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4308y91kfc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 19 Nov 2024 06:08:18 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AJ68Hhm030798
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 19 Nov 2024 06:08:17 GMT
+Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 18 Nov 2024 22:08:14 -0800
+From: Varadarajan Narayanan <quic_varada@quicinc.com>
+To: <andersson@kernel.org>, <konradybcio@kernel.org>, <conor@kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC: Varadarajan Narayanan <quic_varada@quicinc.com>
+Subject: [PATCH v3 0/3] qcom: ipq5424: Add LLCC/system-cache-controller
+Date: Tue, 19 Nov 2024 11:37:51 +0530
+Message-ID: <20241119060754.3350320-1-quic_varada@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241105133405.2703607-1-jolsa@kernel.org> <20241105133405.2703607-6-jolsa@kernel.org>
- <20241105142327.GF10375@noisy.programming.kicks-ass.net> <ZypI3n-2wbS3_w5p@krava>
- <CAEf4BzZ4XgSOHz0T5nXPyd+keo=rQvH5jc0Jghw1db0a7qR9GQ@mail.gmail.com> <ZzkSKQSrbffwOFvd@krava>
-In-Reply-To: <ZzkSKQSrbffwOFvd@krava>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Mon, 18 Nov 2024 22:06:51 -0800
-Message-ID: <CAEf4BzbSrtJWUZUcq-RouwwRxK1GOAwO++aSgjbyQf26cQMfow@mail.gmail.com>
-Subject: Re: [RFC perf/core 05/11] uprobes: Add mapping for optimized uprobe trampolines
-To: Jiri Olsa <olsajiri@gmail.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Oleg Nesterov <oleg@redhat.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, Song Liu <songliubraving@fb.com>, 
-	Yonghong Song <yhs@fb.com>, John Fastabend <john.fastabend@gmail.com>, Hao Luo <haoluo@google.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Alan Maguire <alan.maguire@oracle.com>, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: UL4OUgJARymZ0OGr4B6KgWxdDnjaw_zj
+X-Proofpoint-ORIG-GUID: UL4OUgJARymZ0OGr4B6KgWxdDnjaw_zj
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ mlxlogscore=910 malwarescore=0 mlxscore=0 phishscore=0 bulkscore=0
+ adultscore=0 lowpriorityscore=0 impostorscore=0 spamscore=0 clxscore=1015
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411190044
 
-On Sat, Nov 16, 2024 at 1:44=E2=80=AFPM Jiri Olsa <olsajiri@gmail.com> wrot=
-e:
->
-> On Thu, Nov 14, 2024 at 03:44:12PM -0800, Andrii Nakryiko wrote:
-> > On Tue, Nov 5, 2024 at 8:33=E2=80=AFAM Jiri Olsa <olsajiri@gmail.com> w=
-rote:
-> > >
-> > > On Tue, Nov 05, 2024 at 03:23:27PM +0100, Peter Zijlstra wrote:
-> > > > On Tue, Nov 05, 2024 at 02:33:59PM +0100, Jiri Olsa wrote:
-> > > > > Adding interface to add special mapping for user space page that =
-will be
-> > > > > used as place holder for uprobe trampoline in following changes.
-> > > > >
-> > > > > The get_tramp_area(vaddr) function either finds 'callable' page o=
-r create
-> > > > > new one.  The 'callable' means it's reachable by call instruction=
- (from
-> > > > > vaddr argument) and is decided by each arch via new arch_uprobe_i=
-s_callable
-> > > > > function.
-> > > > >
-> > > > > The put_tramp_area function either drops refcount or destroys the=
- special
-> > > > > mapping and all the maps are clean up when the process goes down.
-> > > >
-> > > > In another thread somewhere, Andrii mentioned that Meta has executa=
-bles
-> > > > with more than 4G of .text. This isn't going to work for them, is i=
-t?
-> > > >
-> > >
-> > > not if you can't reach the trampoline from the probed address
-> >
-> > That specific example was about 1.5GB (though we might have bigger
-> > .text, I didn't do exhaustive research). As Jiri said, this would be
-> > best effort trying to find closest free mapping to stay within +/-2GB
-> > offset. If that fails, we always would be falling back to slower
-> > int3-based uprobing, yep.
-> >
-> > Jiri, we could also have an option to support 64-bit call, right? We'd
-> > need nop9 for that, but it's an option as well to future-proofing this
-> > approach, no?
->
-> hm, I don't think there's call with relative 64bit offset
+Unlike other Qcom SoCs, IPQ5424 doesn't have multiple instances
+of LLCC IP and hence doesn't have a LLCC_BROADCAST register
+space, and the LLCC & LLCC_BROADCAST point to the same register
+space.
 
-why do you need a relative, when you have 64 bits? ;) there is a call
-to absolute address, no?
+Alter the driver accordingly and add the relevant entries for
+enabling LLCC/system-cache-controller on the Qcom IPQ5424 SoC.
 
->
-> there's indirect call through register or address.. but I think we would
-> fit in nop10 with the indirect call through address
->
-> >
-> > Also, can we somehow use fs/gs-based indirect calls/jumps somehow to
-> > have a guarantee that offset is always small (<2GB away relative to
-> > the base stored in fs/gs). Not sure if this is feasible, but I thought
-> > it would be good to bring this up just to make sure it doesn't work.
-> >
-> > If segment based absolute call is somehow feasible, we can probably
-> > simplify a bunch of stuff by allocating it eagerly, once, and
-> > somewhere high up next to VDSO (or maybe even put it into VDSO, don't
-> > now).
->
-> yes, that would be convenient
->
-> jirka
->
-> >
-> > Anyways, let's brainstorm if there are any clever alternatives here.
-> >
-> >
-> > >
-> > > jirka
+Depends On:
+https://lore.kernel.org/linux-arm-msm/20241028060506.246606-1-quic_srichara@quicinc.com/
+
+---
+v3:	Rebase to ToT
+	Remove 'need_llcc_config = true'
+
+v2:	Add reviewed-by for dt-bindings and dts patches
+	Add 'no_broadcast_register' to identify SoC without LLCC_BROADCAST register space
+
+v1:	https://lore.kernel.org/linux-arm-msm/20241104073840.3686674-1-quic_varada@quicinc.com/
+
+Varadarajan Narayanan (3):
+  dt-bindings: cache: qcom,llcc: Add IPQ5424 compatible
+  soc: qcom: llcc: Update configuration data for IPQ5424
+  arm64: dts: qcom: ipq5424: Add LLCC/system-cache-controller
+
+ .../devicetree/bindings/cache/qcom,llcc.yaml  | 20 ++++++-
+ arch/arm64/boot/dts/qcom/ipq5424.dtsi         |  7 +++
+ drivers/soc/qcom/llcc-qcom.c                  | 57 ++++++++++++++++++-
+ 3 files changed, 80 insertions(+), 4 deletions(-)
+
+
+base-commit: ae58226b89ac0cffa05ba7357733776542e40216
+-- 
+2.34.1
+
 
