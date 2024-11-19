@@ -1,159 +1,150 @@
-Return-Path: <linux-kernel+bounces-414995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4C9F9D3056
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 23:15:00 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DE289D3057
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 23:15:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E3E2B23BC7
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 22:14:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D7530B241D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 22:15:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11C441D79A3;
-	Tue, 19 Nov 2024 22:14:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 347D01D47A3;
+	Tue, 19 Nov 2024 22:15:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eNxHbz+G"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="plf8DAX9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3D0B1D5CDB;
-	Tue, 19 Nov 2024 22:14:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C9CD1D415B;
+	Tue, 19 Nov 2024 22:15:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732054443; cv=none; b=dTmhn0gaqzEt6Uw69sImGukQr21V4/U3CV7UuebT6GC/v56j+aijFP67dNPgl/bpk28ZoCdyejS14d5mFuJE2+zZd8biu6Kc65QgdcJGU8TQM6nLFaMoasizY+WHrr/SpKm8oeCCqni/WnImhqRFpWoXBNuR2/f2THl6YOuVV58=
+	t=1732054511; cv=none; b=fFH2VC996MMIpmur1uaBRhoE3EcGzUY2007N3gyr74Y11A/Xpy/Sg7hpNZHzM5KONzSqLqRfod+ijEmnb1/iin5I1GBUmCb19BwKX9qdKzJim/NyurHWOTgw0Y1rbfOtJ2/905/EAmxLfxr51JHCTICLUMC7VZsvmLsdOswnv2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732054443; c=relaxed/simple;
-	bh=lzP7Gvkcx/FmhvwQSpENog9t68uKeMkJZy5qk0I1338=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=oKgL2QjJA58FLcsTW/n5e/plVKBr/jv43yjD0D6i8JnX4sGC2a1wq/evHYX/vpaRsMO/Isoxye8vgOVJDz7REXQywvNUwSmiMxn2S31uVRumP2OsnpA+Nq2N77R8IB6i1Oiw1PtdYRsStx/t1QP+1QgRw6Qr5IC0uhsbWuNACII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eNxHbz+G; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5c9c28c1ecbso2085105a12.0;
-        Tue, 19 Nov 2024 14:14:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732054440; x=1732659240; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jLg3Zgz+FEDEY+dTOsaG0ncu4gz3SWEdaD0wc9B4rSY=;
-        b=eNxHbz+Gq/W1hz5k+I/CsiJCAZXmQkeRp9OtcZAK3hW2pM2WXICWsfbE9eMOmOy4U3
-         qWKTmcOYyZDK25p2EzUM0IZykgwmcbgKz6Qfm69lfuJ6BbK2zIzrHy+DpfPeILGBNuIY
-         bTCi0NNiO/GcwswP460LYFrD8bbTxDrEH3JdLv7fMxqBRKiYzkxzSfx1dEh7c73rB9OQ
-         5UnmeZv+oV4HpIi0JfSFwSSvZ0F0ynmi8MP2UZUHbxPXJh6i3k/Gp3dSeUCh/eHa9ocW
-         YXfMyAQE809VGsLKCE/qZxuj+V+D1xT5C2fQdNQFD8hsE1xkJs6V++KVzyzxIs3QbPzO
-         h2dA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732054440; x=1732659240;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jLg3Zgz+FEDEY+dTOsaG0ncu4gz3SWEdaD0wc9B4rSY=;
-        b=GOcInnjg49R0RMaAXbM+H6gPcwLyZQBvT3BxzE5UZFJtk1pZS/UGypGxyypvfQMada
-         EH17lvx4YB2muTVdmzd5shE72L7qEKrjqaHOwbGVKJbD2/8sqg5xDacBEEPHyO3/xGhM
-         5N5C11A6EuYkd3amHp+EmB/dUvbcAi9Dj2L+YhN8pwcS6tre8wRrep42HlFYFzFslSMn
-         m04+hOXuhabIPUmbpA+dvza2WsMpd2O24If+wqdFII13ta2R0JYcsuLjxRayqT3Op1Kq
-         XqflkJ0/PgAtfjkEEptxi4Z3GQNU1LKfOaY+pUdz7Zi+2J310YhtS7t6PyodpvM1+xSN
-         gSIw==
-X-Forwarded-Encrypted: i=1; AJvYcCUoXt2kfm63qVdQEAWoy3J/7ZjdmH27/1K7QPExlXhOdl/JaK36Zpb81DBBiMz6liuoYfcN7J5zcPDPsrg=@vger.kernel.org, AJvYcCWlz/6fJeqi8BzNV3sFk3ou4uUhUN2EKAggDSJtipvynl6XaQBgE4SsUZEC+iLzP/4N1TcfxmWG@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmFqG6MDKPLO67zri9VD5LLQdFVo6TGJPLBcKfVJ8DsxVYAHWb
-	bBO1+KtLv8blFbYMBwNLaRAJJCNz3hkCEq/wke2TbPn7dq8COAQZ
-X-Google-Smtp-Source: AGHT+IF/SBX+B2+021nCX1tdeI9ozu3Mfn3ca5/E2iXbH7GqBvRnxzsFafGMnb4PILGaYjVb+4BGLw==
-X-Received: by 2002:a05:6402:524a:b0:5cf:e218:a4ae with SMTP id 4fb4d7f45d1cf-5cff4cdd75dmr163238a12.31.1732054439744;
-        Tue, 19 Nov 2024 14:13:59 -0800 (PST)
-Received: from rex.hwlab.vusec.net (lab-4.lab.cs.vu.nl. [192.33.36.4])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cff45504fcsm133484a12.89.2024.11.19.14.13.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Nov 2024 14:13:59 -0800 (PST)
-From: Brian Johannesmeyer <bjohannesmeyer@gmail.com>
-To: Ronak Doshi <ronak.doshi@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Brian Johannesmeyer <bjohannesmeyer@gmail.com>,
+	s=arc-20240116; t=1732054511; c=relaxed/simple;
+	bh=ldY6WBWPKHHhYPop1SiXo3e9JekM5N8ocuy8u2zGjI0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pSaSJJ0JzUlWnsCoQpLHzVsACxRtUUOnw8hQTr7IrCJMJBf8u/zQKDqVvRTBqyvPLNxKluVPjND+5N9Zo0miqvb+bro4qCHYw2w7Nc02BJZu8hBIXVm89YUk9QdG6XnYvJzInoxBVGJgeYPbd6p27RTMIVJljJK+d7e9V8/Dxdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=plf8DAX9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6501C4CECF;
+	Tue, 19 Nov 2024 22:15:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1732054510;
+	bh=ldY6WBWPKHHhYPop1SiXo3e9JekM5N8ocuy8u2zGjI0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=plf8DAX9AAyb/t+kWO7ybvtl8xgHZHU2wBMyBSe7T7MptghG1YljV+CMUnAdTZpZD
+	 B7naqHX+jsKVD9z5M0GXSGyybB3lczKbYDrOt19gonje9YusEFR6QhY3Jx+6VeYPgh
+	 ic4o/wwJHPZ6Sk8kSIiuNjxnGZfFYivEpUeO/J8o=
+Date: Tue, 19 Nov 2024 23:14:46 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Brian Johannesmeyer <bjohannesmeyer@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
 	Raphael Isemann <teemperor@gmail.com>,
 	Cristiano Giuffrida <giuffrida@cs.vu.nl>,
 	Herbert Bos <h.j.bos@vu.nl>
-Subject: [RFC v2 1/2] vmxnet3: Fix inconsistent DMA accesses in vmxnet3_probe_device()
-Date: Tue, 19 Nov 2024 23:13:53 +0100
-Message-Id: <20241119221353.3912257-3-bjohannesmeyer@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241119221353.3912257-1-bjohannesmeyer@gmail.com>
-References: <20241119221353.3912257-1-bjohannesmeyer@gmail.com>
+Subject: Re: [RFC v2 0/2] dmapool: Mitigate device-controllable mem.
+ corruption
+Message-ID: <2024111914-overuse-cider-7734@gregkh>
+References: <20241119205529.3871048-1-bjohannesmeyer@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241119205529.3871048-1-bjohannesmeyer@gmail.com>
 
-After mapping `adapter` to streaming DMA, but before accessing it,
-synchronize it to the CPU. Then, before returning, synchronize it back to
-the device. This mitigates any inconsistent accesses to it from
-vmxnet3_probe_device().
+On Tue, Nov 19, 2024 at 09:55:27PM +0100, Brian Johannesmeyer wrote:
+> We discovered a security-related issue in the DMA pool allocator.
+> 
+> V1 of our RFC was submitted to the Linux kernel security team. They
+> recommended submitting it to the relevant subsystem maintainers and the
+> hardening mailing list instead, as they did not consider this an explicit
+> security issue. Their rationale was that Linux implicitly assumes hardware
+> can be trusted.
+> 
+> **Threat Model**: While Linux drivers typically trust their hardware, there
+> may be specific drivers that do not operate under this assumption. Hence,
+> this threat model assumes a malicious peripheral device capable of
+> corrupting DMA data to exploit the kernel. In this scenario, the device
+> manipulates kernel-initialized data (similar to the attack described in the
+> Thunderclap paper [0]) to achieve arbitrary kernel memory corruption. 
+> 
+> **DMA pool background**. A DMA pool aims to reduce the overhead of DMA
+> allocations by creating a large DMA buffer --- the "pool" --- from which
+> smaller buffers are allocated as needed. Fundamentally, a DMA pool
+> functions like a heap: it is a structure composed of linked memory
+> "blocks", which, in this context, are DMA buffers. When a driver employs a
+> DMA pool, it grants the device access not only to these blocks but also to
+> the pointers linking them.
+> 
+> **Vulnerability**. Similar to traditional heap corruption vulnerabilities
+> --- where a malicious program corrupts heap metadata to e.g., hijack
+> control flow --- a malicious device may corrupt DMA pool metadata. This
+> corruption can trivially lead to arbitrary kernel memory corruption from
+> any driver that uses it. Indeed, because the DMA pool API is extensively
+> used, this vulnerability is not confined to a single instance. In fact,
+> every usage of the DMA pool API is potentially vulnerable. An exploit
+> proceeds with the following steps:
+> 
+> 1. The DMA `pool` initializes its list of blocks, then points to the first
+> block.
+> 2. The malicious device overwrites the first 8 bytes of the first block ---
+> which contain its `next_block` pointer --- to an arbitrary kernel address,
+> `kernel_addr`.
+> 3. The driver makes its first call to `dma_pool_alloc()`, after which, the
+> pool should point to the second block. However, it instead points to
+> `kernel_addr`.
+> 4. The driver again calls `dma_pool_alloc()`, which incorrectly returns
+> `kernel_addr`. Therefore, anytime the driver writes to this "block", it may
+> corrupt sensitive kernel data.
+> 
+> I have a PDF document that illustrates how these steps work. Please let me
+> know if you would like me to share it with you.
 
-Co-developed-by: Raphael Isemann <teemperor@gmail.com>
-Signed-off-by: Raphael Isemann <teemperor@gmail.com>
-Signed-off-by: Brian Johannesmeyer <bjohannesmeyer@gmail.com>
----
- drivers/net/vmxnet3/vmxnet3_drv.c | 18 ++++++++++++++----
- 1 file changed, 14 insertions(+), 4 deletions(-)
+I know I said it privately, but I'll say it here in public, very cool
+finding, this is nice work!
 
-diff --git a/drivers/net/vmxnet3/vmxnet3_drv.c b/drivers/net/vmxnet3/vmxnet3_drv.c
-index 7fa74b8b2100..032d3cd34be1 100644
---- a/drivers/net/vmxnet3/vmxnet3_drv.c
-+++ b/drivers/net/vmxnet3/vmxnet3_drv.c
-@@ -3623,6 +3623,8 @@ vmxnet3_probe_device(struct pci_dev *pdev,
- 	int num_rx_queues;
- 	int queues;
- 	unsigned long flags;
-+	struct device *dev;
-+	dma_addr_t adapter_pa;
- 
- 	if (!pci_msi_enabled())
- 		enable_mq = 0;
-@@ -3662,14 +3664,19 @@ vmxnet3_probe_device(struct pci_dev *pdev,
- 	}
- 
- 	spin_lock_init(&adapter->cmd_lock);
--	adapter->adapter_pa = dma_map_single(&adapter->pdev->dev, adapter,
--					     sizeof(struct vmxnet3_adapter),
--					     DMA_TO_DEVICE);
--	if (dma_mapping_error(&adapter->pdev->dev, adapter->adapter_pa)) {
-+	dev = &adapter->pdev->dev;
-+	adapter_pa = dma_map_single(dev, adapter,
-+				    sizeof(struct vmxnet3_adapter),
-+				    DMA_TO_DEVICE);
-+	if (dma_mapping_error(dev, adapter_pa)) {
- 		dev_err(&pdev->dev, "Failed to map dma\n");
- 		err = -EFAULT;
- 		goto err_set_mask;
- 	}
-+	dma_sync_single_for_cpu(dev, adapter_pa,
-+				sizeof(struct vmxnet3_adapter), DMA_TO_DEVICE);
-+	adapter->adapter_pa = adapter_pa;
-+
- 	adapter->shared = dma_alloc_coherent(
- 				&adapter->pdev->dev,
- 				sizeof(struct Vmxnet3_DriverShared),
-@@ -3928,6 +3935,9 @@ vmxnet3_probe_device(struct pci_dev *pdev,
- 	}
- 
- 	vmxnet3_check_link(adapter, false);
-+	dma_sync_single_for_device(dev, adapter_pa,
-+				   sizeof(struct vmxnet3_adapter),
-+				   DMA_TO_DEVICE);
- 	return 0;
- 
- err_register:
--- 
-2.34.1
+> **Proposed mitigation**. To mitigate the corruption of DMA pool metadata
+> (i.e., the pointers linking the blocks), the metadata should be moved into
+> non-DMA memory, ensuring it cannot be altered by a device. I have included
+> a patch series that implements this change. Since I am not deeply familiar
+> with the DMA pool internals, I would appreciate any feedback on the
+> patches. I have tested the patches with the `DMAPOOL_TEST` test and my own
+> basic unit tests that ensure the DMA pool allocator is not vulnerable.
+> 
+> **Performance**. I evaluated the patch set's performance by running the
+> `DMAPOOL_TEST` test with `DMAPOOL_DEBUG` enabled and with/without the
+> patches applied. Here is its output *without* the patches applied:
+> ```
+> dmapool test: size:16   align:16   blocks:8192 time:3194110
+> dmapool test: size:64   align:64   blocks:8192 time:4730440
+> dmapool test: size:256  align:256  blocks:8192 time:5489630
+> dmapool test: size:1024 align:1024 blocks:2048 time:517150
+> dmapool test: size:4096 align:4096 blocks:1024 time:399616
+> dmapool test: size:68   align:32   blocks:8192 time:6156527
+> ```
+> 
+> And here is its output *with* the patches applied:
+> ```
+> dmapool test: size:16   align:16   blocks:8192 time:3541031
+> dmapool test: size:64   align:64   blocks:8192 time:4227262
+> dmapool test: size:256  align:256  blocks:8192 time:4890273
+> dmapool test: size:1024 align:1024 blocks:2048 time:515775
+> dmapool test: size:4096 align:4096 blocks:1024 time:523096
+> dmapool test: size:68   align:32   blocks:8192 time:3450830
+> ```
 
+You had mentioned that the size:68 numbers were going to be re-run, has
+that happened and this really is that much of a boost to that size?  Or
+is this the original numbers?
+
+thanks,
+
+greg k-h
 
