@@ -1,158 +1,159 @@
-Return-Path: <linux-kernel+bounces-414152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F3169D23C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 11:47:17 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 018029D23C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 11:47:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D30061F22BD6
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 10:47:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6C622B242CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 10:47:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8B161C2420;
-	Tue, 19 Nov 2024 10:47:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V9HzU9CY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1243519D890;
-	Tue, 19 Nov 2024 10:47:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5E9A1C2457;
+	Tue, 19 Nov 2024 10:47:21 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C057819D890
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 10:47:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732013229; cv=none; b=gYbmiJ7YdhF1p5Ft5RAJjL6IONFBqVgl/DmIH/f9/jDtEYS+1E3i/WLtP1QWbcWQA8MX9T9xkImZv46T/tLGdmcjuN/NaoQP/WDw8p9IbRFauk/zaEO2TKc14rF3a63giYPSNcc5InYZotvfZuUpsPQ/zVTDNdYwB+TdKsX+oSE=
+	t=1732013241; cv=none; b=PzSN4fm+IU2R/vy50Hwlu0ipSFZT0Fl4hWM8U4T2gs8ZFz6oY1VhIJabBgh1Sx6xiHEPNlUdNUf638rquYVSZvr0WkfI13AghKyI5426ifKXTGkXRk7EWRzUm0Wq/GxwYfpfSHKjJFZdY0f3BD9SWD4dnmzbGtdY0b1eyqxFDP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732013229; c=relaxed/simple;
-	bh=h/pAvMzZtkBoYJwCP66IOV31rdv0Z6Es+G+aCCMOw64=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TAz0O0Xc2BztMVO/SXBVC9iN48U5sIYoOWbvU2ZUGyq8SenXMpwVBWX3ib+JbUgvIJ28dv8MGcoDvxw7l97I47+KWXGY+jBTr3xCZNTh8jgk2lCZKJvzMGOH9S9oAueTb4xGMPOXxwOb8jynC+Jo168MvJ5lUqoQRXRA6MDIO+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V9HzU9CY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98183C4CECF;
-	Tue, 19 Nov 2024 10:47:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732013228;
-	bh=h/pAvMzZtkBoYJwCP66IOV31rdv0Z6Es+G+aCCMOw64=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=V9HzU9CYql7KGeSek7R11mSaEv0hjU9jRp/299ieLXWFJlzaOZ/phdpLxdebviHBB
-	 iwH314vBqtsnyrMwhTuyBks5wS0y2MxUAf6c9/KXqjfjD7MjY1O51hDr78UBlpkoxJ
-	 yiMTjSNhyFgH68IMgL64apIpbbrkvG1fdRRbPU3LK+gr3N3AI00TxXXnkKbgxzWAdi
-	 bkqPGLzJ/qM/PiG3eo8q0GdBrwPBfN3+eKJwIjAgA9fszmLCXpUZ7FF5/nkxzgfZfO
-	 /vpGKC4qRp13Dxn2ObpOcznoN7HJqqpkYjrpqzixwRCd9jsASBJmgLvM3lgQGkzLdM
-	 R0TVW+m2trUGg==
-Message-ID: <8f3f0fac-d6f7-4962-b2ca-1b3186a74ebe@kernel.org>
-Date: Tue, 19 Nov 2024 12:47:03 +0200
+	s=arc-20240116; t=1732013241; c=relaxed/simple;
+	bh=47CuFmL36ppnQMnsOSBXOOrZcjhESTvVwEe0aPdrfdE=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=ivKJxaFp3w6dE07339hKIVCczqNOi1IjczXxUt7VZGKmTqUtU1+nT3gwkhnB0BLAbezd7fS3o1Caf1t22kVEZ8Z5C2Yfpw35taD+IMYeaJdDu9iByoaUXvb2e4fXtWEFjmfXiHw32DQVdtz5Xx0O2nBV0YmpCC20NOWyWsSwvv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [111.9.175.10])
+	by gateway (Coremail) with SMTP id _____8AxquC0bDxnaGhCAA--.65223S3;
+	Tue, 19 Nov 2024 18:47:16 +0800 (CST)
+Received: from [10.136.12.26] (unknown [111.9.175.10])
+	by front1 (Coremail) with SMTP id qMiowMCxDuGxbDxnWj5dAA--.5765S3;
+	Tue, 19 Nov 2024 18:47:15 +0800 (CST)
+Subject: Re: [PATCH v3 01/10] objtool: Handle various symbol types of rodata
+To: Tiezhu Yang <yangtiezhu@loongson.cn>, Huacai Chen
+ <chenhuacai@kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>
+Cc: loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20241119065655.21123-1-yangtiezhu@loongson.cn>
+ <20241119065655.21123-2-yangtiezhu@loongson.cn>
+From: Jinyang He <hejinyang@loongson.cn>
+Message-ID: <63446b99-84f6-a51b-bee0-2f3158ecb033@loongson.cn>
+Date: Tue, 19 Nov 2024 18:47:13 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] arm64: dts: ti: k3-am64-main: Switch ICSSG clock
- to core clock
-To: MD Danish Anwar <danishanwar@ti.com>, conor+dt@kernel.org,
- krzk+dt@kernel.org, robh@kernel.org, ssantosh@kernel.org, nm@ti.com,
- Vignesh Raghavendra <vigneshr@ti.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, s-anna@ti.com, kristo@kernel.org, srk@ti.com
-References: <20241113110955.3876045-1-danishanwar@ti.com>
- <20241113110955.3876045-3-danishanwar@ti.com>
-Content-Language: en-US
-From: Roger Quadros <rogerq@kernel.org>
-In-Reply-To: <20241113110955.3876045-3-danishanwar@ti.com>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20241119065655.21123-2-yangtiezhu@loongson.cn>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-CM-TRANSID:qMiowMCxDuGxbDxnWj5dAA--.5765S3
+X-CM-SenderInfo: pkhmx0p1dqwqxorr0wxvrqhubq/
+X-Coremail-Antispam: 1Uk129KBj93XoWxJFWDKF45Gr47ZrykWw1fXwc_yoW5Zw4DpF
+	43Gw45Kr4Yqr17WwnrtF40gF9xGws2gr17JwsrKrWrA3sIvFn5KFW3Kw1ay3WDGrnYvw47
+	XF45Kry7uF4qy3gCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUv2b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
+	xVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx
+	1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv
+	67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07
+	AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02
+	F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw
+	1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7Cj
+	xVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r
+	1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU8zw
+	Z7UUUUU==
 
+On 2024-11-19 14:56, Tiezhu Yang wrote:
 
-
-On 13/11/2024 13:09, MD Danish Anwar wrote:
-> ICSSG has 7 available clocks per instance. Add all the cloks to ICSSG
-> nodes. ICSSG currently uses ICSSG_ICLK (clk id 20) which operates at
-> 250MHz. Switch ICSSG clock to ICSSG_CORE clock (clk id 0) which operates at
-> 333MHz.
-> 
-> ICSSG_CORE clock will help get the most out of ICSSG as more cycles are
-> needed to fully support all ICSSG features.
-> 
-> This commit also changes assigned-clock-parents of coreclk-mux to
-> ICSSG_CORE clock from ICSSG_ICLK.
-> 
-> Performance update in dual mac mode
->   With ICSSG_CORE Clk @ 333MHz
->     Tx throughput - 934 Mbps
->     Rx throughput - 914 Mbps,
-> 
->   With ICSSG_ICLK clk @ 250MHz,
->     Tx throughput - 920 Mbps
->     Rx throughput - 706 Mbps
-> 
-> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+> In the relocation section ".rela.rodata" of each .o file compiled with
+> LoongArch toolchain, there are various symbol types such as STT_NOTYPE,
+> STT_OBJECT, STT_FUNC in addition to the usual STT_SECTION, it needs to
+> use reloc symbol offset instead of reloc addend to find the destination
+> instruction in find_jump_table() and add_jump_table().
+>
+> This is preparation for later patch on LoongArch, there is no effect for
+> the other archs with this patch.
+Which patch it prepares for? Please merge some patches if it is not
+independent. Otherwise I cannot find what problem it solves.
+According to the commit message I think it solve some problems independent?
+>
+> Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
 > ---
->  arch/arm64/boot/dts/ti/k3-am64-main.dtsi | 22 ++++++++++++++++++++--
-
-What about other platforms that have ICSSG?
-e.g. k3-am65-main.dtsi and k3-j721e-main.dtsi
-
->  1 file changed, 20 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/ti/k3-am64-main.dtsi b/arch/arm64/boot/dts/ti/k3-am64-main.dtsi
-> index c66289a4362b..324eb44c258d 100644
-> --- a/arch/arm64/boot/dts/ti/k3-am64-main.dtsi
-> +++ b/arch/arm64/boot/dts/ti/k3-am64-main.dtsi
-> @@ -1227,6 +1227,15 @@ icssg0: icssg@30000000 {
->  		#address-cells = <1>;
->  		#size-cells = <1>;
->  		ranges = <0x0 0x00 0x30000000 0x80000>;
-> +		clocks = <&k3_clks 81 0>,  /* icssg0_core_clk */
-> +			 <&k3_clks 81 3>,  /* icssg0_iep_clk */
-> +			 <&k3_clks 81 16>, /* icssg0_rgmii_mhz_250_clk */
-> +			 <&k3_clks 81 17>, /* icssg0_rgmii_mhz_50_clk */
-> +			 <&k3_clks 81 18>, /* icssg0_rgmii_mhz_5_clk */
-> +			 <&k3_clks 81 19>, /* icssg0_uart_clk */
-> +			 <&k3_clks 81 20>; /* icssg0_iclk */
-> +		assigned-clocks = <&k3_clks 81 0>;
-> +		assigned-clock-parents = <&k3_clks 81 2>;
->  
->  		icssg0_mem: memories@0 {
->  			reg = <0x0 0x2000>,
-> @@ -1252,7 +1261,7 @@ icssg0_coreclk_mux: coreclk-mux@3c {
->  					clocks = <&k3_clks 81 0>,  /* icssg0_core_clk */
->  						 <&k3_clks 81 20>; /* icssg0_iclk */
->  					assigned-clocks = <&icssg0_coreclk_mux>;
-> -					assigned-clock-parents = <&k3_clks 81 20>;
-> +					assigned-clock-parents = <&k3_clks 81 0>;
->  				};
->  
->  				icssg0_iepclk_mux: iepclk-mux@30 {
-> @@ -1397,6 +1406,15 @@ icssg1: icssg@30080000 {
->  		#address-cells = <1>;
->  		#size-cells = <1>;
->  		ranges = <0x0 0x00 0x30080000 0x80000>;
-> +		clocks = <&k3_clks 82 0>,  /* icssg1_core_clk */
-> +			 <&k3_clks 82 3>,  /* icssg1_iep_clk */
-> +			 <&k3_clks 82 16>, /* icssg1_rgmii_mhz_250_clk */
-> +			 <&k3_clks 82 17>, /* icssg1_rgmii_mhz_50_clk */
-> +			 <&k3_clks 82 18>, /* icssg1_rgmii_mhz_5_clk */
-> +			 <&k3_clks 82 19>, /* icssg1_uart_clk */
-> +			 <&k3_clks 82 20>; /* icssg1_iclk */
-> +		assigned-clocks = <&k3_clks 82 0>;
-> +		assigned-clock-parents = <&k3_clks 82 2>;
->  
->  		icssg1_mem: memories@0 {
->  			reg = <0x0 0x2000>,
-> @@ -1422,7 +1440,7 @@ icssg1_coreclk_mux: coreclk-mux@3c {
->  					clocks = <&k3_clks 82 0>,   /* icssg1_core_clk */
->  						 <&k3_clks 82 20>;  /* icssg1_iclk */
->  					assigned-clocks = <&icssg1_coreclk_mux>;
-> -					assigned-clock-parents = <&k3_clks 82 20>;
-> +					assigned-clock-parents = <&k3_clks 82 0>;
->  				};
->  
->  				icssg1_iepclk_mux: iepclk-mux@30 {
-
--- 
-cheers,
--roger
+>   tools/objtool/check.c | 26 ++++++++++++++++++++++----
+>   1 file changed, 22 insertions(+), 4 deletions(-)
+>
+> diff --git a/tools/objtool/check.c b/tools/objtool/check.c
+> index 6604f5d038aa..9601235e908d 100644
+> --- a/tools/objtool/check.c
+> +++ b/tools/objtool/check.c
+> @@ -2079,6 +2079,7 @@ static int add_jump_table(struct objtool_file *file, struct instruction *insn,
+>   	unsigned int prev_offset = 0;
+>   	struct reloc *reloc = table;
+>   	struct alternative *alt;
+> +	unsigned long offset;
+>   
+>   	/*
+>   	 * Each @reloc is a switch table relocation which points to the target
+> @@ -2094,12 +2095,19 @@ static int add_jump_table(struct objtool_file *file, struct instruction *insn,
+>   		if (prev_offset && reloc_offset(reloc) != prev_offset + 8)
+>   			break;
+>   
+> +		if (reloc->sym->type == STT_SECTION) {
+> +			/* Addend field in the relocation entry associated with the symbol */
+> +			offset = reloc_addend(reloc);
+> +		} else {
+> +			/* The address of the symbol in the relocation entry */
+> +			offset = reloc->sym->offset;
+> +		}
+Generally rela relocations use S + A.
+> +
+>   		/* Detect function pointers from contiguous objects: */
+> -		if (reloc->sym->sec == pfunc->sec &&
+> -		    reloc_addend(reloc) == pfunc->offset)
+> +		if (reloc->sym->sec == pfunc->sec && offset == pfunc->offset)
+>   			break;
+>   
+> -		dest_insn = find_insn(file, reloc->sym->sec, reloc_addend(reloc));
+> +		dest_insn = find_insn(file, reloc->sym->sec, offset);
+>   		if (!dest_insn)
+>   			break;
+>   
+> @@ -2137,6 +2145,7 @@ static struct reloc *find_jump_table(struct objtool_file *file,
+>   {
+>   	struct reloc *table_reloc;
+>   	struct instruction *dest_insn, *orig_insn = insn;
+> +	unsigned long offset;
+>   
+>   	/*
+>   	 * Backward search using the @first_jump_src links, these help avoid
+> @@ -2160,7 +2169,16 @@ static struct reloc *find_jump_table(struct objtool_file *file,
+>   		table_reloc = arch_find_switch_table(file, insn);
+>   		if (!table_reloc)
+>   			continue;
+> -		dest_insn = find_insn(file, table_reloc->sym->sec, reloc_addend(table_reloc));
+> +
+> +		if (table_reloc->sym->type == STT_SECTION) {
+> +			/* Addend field in the relocation entry associated with the symbol */
+> +			offset = reloc_addend(table_reloc);
+> +		} else {
+> +			/* The address of the symbol in the relocation entry */
+> +			offset = table_reloc->sym->offset;
+> +		}
+> +
+> +		dest_insn = find_insn(file, table_reloc->sym->sec, offset);
+>   		if (!dest_insn || !insn_func(dest_insn) || insn_func(dest_insn)->pfunc != func)
+>   			continue;
+>   
 
 
