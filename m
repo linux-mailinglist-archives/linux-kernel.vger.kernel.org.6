@@ -1,88 +1,189 @@
-Return-Path: <linux-kernel+bounces-414651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E3FD9D2BC0
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 17:53:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BCCA9D2BAB
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 17:51:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A2668B34F27
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 16:49:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14CEB1F261B1
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 16:51:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9FF41D2710;
-	Tue, 19 Nov 2024 16:43:35 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F2891D3656;
+	Tue, 19 Nov 2024 16:45:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EoKHa8Ux"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DA6A1D1303;
-	Tue, 19 Nov 2024 16:43:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06AB11D435C;
+	Tue, 19 Nov 2024 16:45:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732034615; cv=none; b=BV068ZAUufUhfh3fNcuEfRnpZjSFG5CbdeWmoP/pttBYi8FKesdjtdC3nWZlg9kNyWUkLtZOgtXGrWVzZ/E7jV+3BjW4Svj0e7jpGYW6YyYINTfHCdpqN4rf8KVXNFb/ON7FNGG1h157gL0t5MlbOPukRn8n/G46hUymdsenguQ=
+	t=1732034721; cv=none; b=oOuPRPgMZ8+EQtkafN1DSyOqUwZazeBc39G9ah/4CuvyLzkTz0S3l5mZHb83PQrvwOCYjH8gT6F8wRDrSqgi7woHK/JX/m3rkeSfqmjc4biy0OF1kQl5cjNJnTldugL+ROFzKTjpsQIgfrNGZLJPKC8a25MIsBG36iQ8ZASpI18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732034615; c=relaxed/simple;
-	bh=C9mHD0gHCQv2Bn7YxHs4Zu5S+fUFQt+SkrQfU84oGnk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=G0SsmsfwwQlLthh0BbxU5EzC7UMBqhzVM78Z3b/Wg4x6zRZn2hw/jEU+W/+i+e2On11E+C1rJfaRr6lWZWC/dSkG4h9wLSMIbEtekVL0/Zx8ZOZp/pDAq5pXVG2KWhIWkVkAdb9k9HFtDjN5eriX9mN1Ten1GdU+ABcecSwmVS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EDFFC4CECF;
-	Tue, 19 Nov 2024 16:43:34 +0000 (UTC)
-Date: Tue, 19 Nov 2024 11:44:07 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
-Cc: linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, Geert Uytterhoeven
- <geert@linux-m68k.org>, Greg Ungerer <gerg@linux-m68k.org>, Tomas Glozar
- <tglozar@redhat.com>
-Subject: Re: [PATCH RFC 0/2] Add basic tracing support for m68k
-Message-ID: <20241119114407.762b7ff6@gandalf.local.home>
-In-Reply-To: <20241119112850.219834f5@gandalf.local.home>
-References: <20241021-add-m68k-tracing-support-v1-0-0883d704525b@yoseli.org>
-	<3a8f6faa-62c6-4d32-b544-3fb7c00730d7@yoseli.org>
-	<20241115102554.29232d34@gandalf.local.home>
-	<cbb67ee2-8b37-4a4d-b542-f89ddae90e94@yoseli.org>
-	<20241115145502.631c9a2c@gandalf.local.home>
-	<2c43288a-517d-4220-ad31-f84dda8c1805@yoseli.org>
-	<20241118152057.13042840@gandalf.local.home>
-	<22856ed6-b9d0-4206-b88d-4226534c8675@yoseli.org>
-	<20241119102631.76363f2a@gandalf.local.home>
-	<20241119112850.219834f5@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1732034721; c=relaxed/simple;
+	bh=8ZZAjEe2oidrH5ViMWS900el+u7tKEKI536VEFp5r8s=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hQbHM3b2WiXGH6XrE40wrz5FgQ5pgZRTb5gqGIJ1oihnPqjQv7KF1ctaWlpE9DaRGYz6MjGhLi5HZnSrbdNHlSC+2+5D1ghVKe4wmHBLp2Y7NrGkTb13bx5HkI81IArPvDN8MuuflH7jrpNyf+Db5re7QYZZOJARcUhd+RDkVew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EoKHa8Ux; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-71e953f4e7cso2272121b3a.3;
+        Tue, 19 Nov 2024 08:45:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732034719; x=1732639519; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=99My6hnm/xq4qHzcMigG8ENPGdlWBw4DXu5XylnhePU=;
+        b=EoKHa8UxYGvmL1C33677A+ZTMliG/3VqO70k1bc9DuvQmrC4lkLMJ/pPaIqgKkldTj
+         jnx3IX25j/M1Zw9bwkZ5rBRV5JVME7Ytm7byLspNAUj6ZENl819mY6ydIb16QzsqfDqw
+         HPTm/39l0IwHPtRoXWXJfDGsi9UJhzz8MDx/5UBerkibAxBzKV9+Ats+RIqEED2ycVF1
+         64VnfFSJlGhvEp9gSOiC39i++dGdJxquIAjrfsW0yTFSOVrtmojv96WiK+APAHLX5jIW
+         foafzKxcexN7hgO7xMOS0U2Ut/BhWCknGWDMiHUrchFGE8wTU6jhuAXDB7g1czRF0ibP
+         Qqrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732034719; x=1732639519;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=99My6hnm/xq4qHzcMigG8ENPGdlWBw4DXu5XylnhePU=;
+        b=ba1hfXnEkDrlHmBa/zYeMnt1aw+AePJy5gAosBEy9FrSr2DjA53tCvw9aYVH/aFUGY
+         0K8w8pgTWcbIoTBL+Imwmo8IdT85DNfVmvyA9z2q14TqiVc88ukM4cNyqSyO29wDxPTO
+         kuzYy7yMyMCMuCO9NaMa7pgA5TyA+gjotBgkssiDmpaWsY80M7xcTpguByZ3C5XQNSFx
+         fEbdZsrIntRgWAaw4NrXwqroX1EttKbJS3krE9ROcr/7UuiIHMnr+izURQ/G5T9N9vRC
+         +lKg5weE/1ZYze1EyvBBSBaCXFBD29wl27/OaYDz69MTKQnc1QbPq6GLSFljXmle/nuP
+         Cfqw==
+X-Forwarded-Encrypted: i=1; AJvYcCVaF5qZwMcpF+DmRAcSrgflXUsxE4E6XbfJQt/ZCXQ+viIV6ciq/RzvqRJmvhB4OquqdybZZ8NpDtn5eBo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIxm/4ZoYMLgMVwxlCqJtzsWihdDyn/ONLsUHXE1kjExfI9Ezq
+	V1bJ34Ga5lLp5lRwdt+4kX0vTDl/dUErpkjWIhYOmVCbTD1qzPyH
+X-Google-Smtp-Source: AGHT+IFguSvc12BAGyOWftFOCJU/No/eAOkPR0RIRPTvrXX311dvzFofcrnwQM/TV8njGsHVtHkl8w==
+X-Received: by 2002:a05:6a00:1307:b0:71e:a3:935b with SMTP id d2e1a72fcca58-72476cf6e21mr21939752b3a.25.1732034719171;
+        Tue, 19 Nov 2024 08:45:19 -0800 (PST)
+Received: from purva-IdeaPad-Gaming-3-15IHU6.lan ([2409:40c0:11a2:6510:4555:ca08:e78d:a9df])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724771c0ba2sm8596992b3a.128.2024.11.19.08.45.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Nov 2024 08:45:18 -0800 (PST)
+From: Suraj Sonawane <surajsonawane0215@gmail.com>
+To: axboe@kernel.dk
+Cc: linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	hch@infradead.org,
+	hare@suse.de,
+	kbusch@kernel.org,
+	Suraj Sonawane <surajsonawane0215@gmail.com>
+Subject: [PATCH v5] block: blk-mq: fix uninit-value in blk_rq_prep_clone and refactor
+Date: Tue, 19 Nov 2024 22:14:12 +0530
+Message-Id: <20241119164412.37609-1-surajsonawane0215@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Tue, 19 Nov 2024 11:28:50 -0500
-Steven Rostedt <rostedt@goodmis.org> wrote:
+Fix an issue detected by the `smatch` tool:
 
-> print fmt: "page=%p pfn=0x%lx flags=%s", (mem_map + ((REC->pfn) - (m68k_memory[0].addr >> 13))), REC->pfn, (REC->reclaim_flags) ? __print_flags(REC->reclaim_flags, "|", {0x0001u, "RECLAIM_WB_ANON"}, {0x0002u, "RECLAIM_WB_FILE"}, {0x0010u, "RECLAIM_WB_MIXED"}, {0x0004u, "RECLAIM_WB_SYNC"}, {0x0008u, "RECLAIM_WB_ASYNC"} ) : "RECLAIM_WB_NONE"
+block/blk-mq.c:3314 blk_rq_prep_clone() error: uninitialized
+symbol 'bio'.
 
-Running gdb on this, I found that it crashed on the "m68k_memory[0].addr"
-because it failed to fail on the '.' that it doesn't know how to parse.
+This patch refactors `blk_rq_prep_clone()` to improve code
+readability and ensure safety by addressing potential misuse of
+the `bio` variable:
 
-This patch should stop the crash (against libtraceevent)
+- Move the bio_put(bio); call to the bio_ctr error handling block,
+  which is the only place where it can be triggered.
+- Move the bio variable into the __rq_for_each_bio loop scope.
+  This change removes the need to set bio to NULL at the loop's 
+  end.
 
--- Steve
+discussion on why bio remains uninitialized:
+https://lore.kernel.org/lkml/20241004141037.43277-1-surajsonawane0215@gmail.com
 
-diff --git a/src/event-parse.c b/src/event-parse.c
-index 0427061603db..a6da8f04cbf3 100644
---- a/src/event-parse.c
-+++ b/src/event-parse.c
-@@ -2498,6 +2498,10 @@ process_op(struct tep_event *event, struct tep_print_arg *arg, char **tok)
+Summary of above discussion:
+- I pointed out that `bio` can remain uninitialized if the 
+  allocation with `bio_alloc_clone` fails.
+- Keith Busch explained that `bio` is initialized to `NULL` when 
+  `bio_alloc_clone()` fails, preventing uninitialized usage.
+- John Garry questioned whether `rq_src->bio` being `NULL` could 
+  leave `bio` uninitialized. Keith clarified that in such cases, 
+  `bio` is not referenced, so it does not need initialization.
+- Christoph Hellwig recommended code improvements:
+ - move the bio_put to the bio_ctr error handling, which is the only
+   case where it can happen
+ - move the bio variable into the __rq_for_each_bio scope, which
+   also removed the need to zero it at the end of the loop
+
+These changes enhance code clarity, address static analysis tool
+warnings, and make the function more maintainable.
+
+thread of previous version patch discussion:
+https://lore.kernel.org/lkml/20241004100842.9052-1-surajsonawane0215@gmail.com
+
+Signed-off-by: Suraj Sonawane <surajsonawane0215@gmail.com>
+---
+V1 - Initialize 'bio' to NULL.
+V2 - Move bio_put(bio) into the bio_ctr error handling block,
+     ensuring memory cleanup occurs only when the bio_ctr fail.
+V3 - Move the bio declaration into the loop scope, eliminating
+     the need to set it to NULL at the end of the loop.
+V4 - Adjust position of arguments of bio_alloc_clone.
+V5 - Add commit log properly and change sign-off name from
+     SurajSonawane2415 to Suraj Sonawane (used real name).
+
+ block/blk-mq.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
+
+diff --git a/block/blk-mq.c b/block/blk-mq.c
+index 270cfd9fc..abdf44736 100644
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -3273,19 +3273,21 @@ int blk_rq_prep_clone(struct request *rq, struct request *rq_src,
+ 		      int (*bio_ctr)(struct bio *, struct bio *, void *),
+ 		      void *data)
+ {
+-	struct bio *bio, *bio_src;
++	struct bio *bio_src;
  
- 		/* higher prios need to be closer to the root */
- 		prio = get_op_prio(*tok);
-+		if (prio < 0) {
-+			token = *tok;
-+			goto out_free;
+ 	if (!bs)
+ 		bs = &fs_bio_set;
+ 
+ 	__rq_for_each_bio(bio_src, rq_src) {
+-		bio = bio_alloc_clone(rq->q->disk->part0, bio_src, gfp_mask,
+-				      bs);
++		struct bio *bio	 = bio_alloc_clone(rq->q->disk->part0, bio_src,
++					gfp_mask, bs);
+ 		if (!bio)
+ 			goto free_and_out;
+ 
+-		if (bio_ctr && bio_ctr(bio, bio_src, data))
++		if (bio_ctr && bio_ctr(bio, bio_src, data)) {
++			bio_put(bio);
+ 			goto free_and_out;
 +		}
  
- 		if (prio > arg->op.prio)
- 			return process_op(event, arg, tok);
+ 		if (rq->bio) {
+ 			rq->biotail->bi_next = bio;
+@@ -3293,7 +3295,6 @@ int blk_rq_prep_clone(struct request *rq, struct request *rq_src,
+ 		} else {
+ 			rq->bio = rq->biotail = bio;
+ 		}
+-		bio = NULL;
+ 	}
+ 
+ 	/* Copy attributes of the original request to the clone request. */
+@@ -3311,8 +3312,6 @@ int blk_rq_prep_clone(struct request *rq, struct request *rq_src,
+ 	return 0;
+ 
+ free_and_out:
+-	if (bio)
+-		bio_put(bio);
+ 	blk_rq_unprep_clone(rq);
+ 
+ 	return -ENOMEM;
+-- 
+2.34.1
+
 
