@@ -1,209 +1,201 @@
-Return-Path: <linux-kernel+bounces-414068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12E639D229A
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 10:41:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4B139D229C
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 10:42:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CA111F21499
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 09:41:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6464628332C
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 09:42:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A4011BCA0A;
-	Tue, 19 Nov 2024 09:41:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EB581C0DD6;
+	Tue, 19 Nov 2024 09:41:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=virtuozzo.com header.i=@virtuozzo.com header.b="xDgbirBe"
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2131.outbound.protection.outlook.com [40.107.22.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nlQW+30a"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41FA41AA1F8
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 09:41:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.131
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732009308; cv=fail; b=IyW4+ML7QLqib4p/YvMN/3uHZpEYI5riYEQJEmwftVDGZtwxULXiIGVs0VfspOFoOtR3G7naBgfTEqdMS7iFhPLjlpVXTVsZcjk9QCl0eSJdgHNTsh3YVP89SkaT60qS7SXz74A+EcW7aJLNpfo5ioX1noxxzEuFA/p9d4e0iss=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732009308; c=relaxed/simple;
-	bh=4zmRwFJr5DtEp1FXwf+BL1VLcSxCaTacVJMpgvHQ0fU=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=R/8gqcf+KubtQ20w7EaSHTme31eidKJroNVnx5sjuMX4UKHs1IA55SmI2szpbfGg1hidr5MmLMpHSYJJMcRwwZa6pIPkAui5O94/chIRTlnn4FA3KywZuWJi/qULSsFisyBDwcX/zNbSomRSMPqS1UXxr3upACSZv6MohCyKbmE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=virtuozzo.com; spf=pass smtp.mailfrom=virtuozzo.com; dkim=pass (2048-bit key) header.d=virtuozzo.com header.i=@virtuozzo.com header.b=xDgbirBe; arc=fail smtp.client-ip=40.107.22.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=virtuozzo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=virtuozzo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=GQ/U+HdauwJHY8iaiffbwOgp8s30CXTFJB+znIbxi33hevYUcMEJP6tIzteUQEAkc0c1qRB1T8g14aMbtM6MRTUbInEPcTaRGzeG1Cgb4NawprVgsm/cPOPgAPbOd3Qyqo8MWOUi8zWVXX76tJhNbF+9ojN+Dv/Ns8NIEJ1kOv+s9+sI4IrgqiiVLnr50Y02S0ipjpYEbMS0xOcqCNX7t0oUY8IOgtPuFI5WW2f8bMr4IU51xHnfhJwOVx9h1CnMSkaFkuS+F+oxBwAhz5vUjPW7YHiD2Lwg7yueS3GTmsi8Xjb26YiO/nYuBQuzngPxqUbj05hkrtxgykhU/9OMXg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=oU32XrD+lPx+l+AD+nDzU+k+1W+R0AWLlwzcQP1sDDo=;
- b=Z3vz6abcSU0JebgZyWyLaLHtXlJSiMgJk33U/Bv8BH6iMYXBg+87uNNjKEj/JhpB6VUHojhB9VVEThOM2WYiDr18UKF8z3vatTLiJF91zWsw7BUMvHOFxkziE1N9L9yUzVZ0RFQt16sdZXaZ0vmCtr3i/MOpogHxlwG3Hov4QRfI2ZRHB6dCiz8Q6cXIhU39NBtlOZZRG31jDHQqZWKOqgmShkRZTd/Ue8ah6cxgF0+gU1EpCZ3OB2uwr67d/o/8ObDbZM3ov9v7IqRPJ/UPFnoq7VvnOgVdMDLrYokU6A1KoyBhdjOvV7edLdsDLDJU0BFdqd1AjcjdqTzm2aOK5w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=virtuozzo.com; dmarc=pass action=none
- header.from=virtuozzo.com; dkim=pass header.d=virtuozzo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=virtuozzo.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=oU32XrD+lPx+l+AD+nDzU+k+1W+R0AWLlwzcQP1sDDo=;
- b=xDgbirBeFswwiDCfGuUNN0G+DOIAXS8Id0MTBJRsaPBIsgBWVrgYHmweUqfviLiYc+7qqOT43zZXHbOp1q2HGJWtpP8Wp1Wyh9ssHZ/wFzzH243HyUadhO8yrVllBWlo9OHTeZIlMIRuZYybZydqXJIpkTttTyWxAC7JlYOYmGTbeEZjCsTYRtXOp0TVDHiHiDsONu34nRJ+jht4BzlrW2Pb9xUkUvxaCOj1Ro/bLUqFEXPvS+u+431WruOWT5MxozFQ201gh649lycDnLwwBqQneJt+Abe7UswNLNMXj1Hzpx67Hg29/TAjlccfPnEPyN2xPIwdSPZttIg3w3MIlg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=virtuozzo.com;
-Received: from DU0PR08MB9003.eurprd08.prod.outlook.com (2603:10a6:10:471::13)
- by DU0PR08MB7689.eurprd08.prod.outlook.com (2603:10a6:10:3a7::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.22; Tue, 19 Nov
- 2024 09:41:40 +0000
-Received: from DU0PR08MB9003.eurprd08.prod.outlook.com
- ([fe80::7261:fca8:8c2e:29ce]) by DU0PR08MB9003.eurprd08.prod.outlook.com
- ([fe80::7261:fca8:8c2e:29ce%4]) with mapi id 15.20.8158.023; Tue, 19 Nov 2024
- 09:41:40 +0000
-Message-ID: <84510487-9a1e-4431-9443-3dae91d34048@virtuozzo.com>
-Date: Tue, 19 Nov 2024 17:41:35 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: Question about vmalloc(GFP_NOFS)
-To: Michal Hocko <mhocko@suse.com>
-Cc: Linux Memory Management List <linux-mm@kvack.org>,
- lkml <linux-kernel@vger.kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>
-References: <112f93f3-455a-4b89-94c9-d12844d972ef@virtuozzo.com>
- <377a6aef-46a7-4492-a44f-b2a46869a9d0@virtuozzo.com>
- <ZzxMW-AzPY7C27_L@tiehlicka>
-Content-Language: en-US
-From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
-In-Reply-To: <ZzxMW-AzPY7C27_L@tiehlicka>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: KL1PR0401CA0020.apcprd04.prod.outlook.com
- (2603:1096:820:e::7) To DU0PR08MB9003.eurprd08.prod.outlook.com
- (2603:10a6:10:471::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31AED19B59C
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 09:41:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732009316; cv=none; b=s9VU18s4ByAbIGGIWKuuC4XnKp2BLftHXrd0ppTe2eNlAe5RIRD5rV2YQilcVEiglVrFkpNQOcXAp9LZPstzAsR91Ke+a8+52T5ta2Ay0KWsr8yervD7Bj3yedIZXyT7vErffvGks6P+yiRIP2rSWYq8/V3he4rXJhQ2YKfx4bs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732009316; c=relaxed/simple;
+	bh=9fp3cv77qU/QYFjcC3FPIu9J6Muc4MXxtiOqHpmiUDU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ewxz7u3uruqI3ILQqoAb/14oh23meuqsSUMPZkWPuk+7MiGEDliUyDUmoqqJ+m0S+14qfUylmbDefiM5PhvldAlkEdloY2PmmOhvqAYs1Jv+iPJxhUtP5SkEKSXQu1jq1IyNScY6lRq3etXI5FqvJIWj/10z74MROJXGUkm7LOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nlQW+30a; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732009315; x=1763545315;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=9fp3cv77qU/QYFjcC3FPIu9J6Muc4MXxtiOqHpmiUDU=;
+  b=nlQW+30aKd4IOE4Oa5jal6t0NOl0dhQtzKhi+GT8t5WEDOMZigaJgcAL
+   Xr81L1ZsSsbfRyt90gz/ezzt8eRsi0lPMCaP52Hu5JxQjBJriSFyFB3ak
+   kmmdGuIh/MeS0lmKBGffkpfIg0sfoNv26fg1gfwuBy/9LlqSOfpcb5Ntx
+   E8aLZVT3oMXSY+Sqw9Q4j41L8GpjAPCJVF+qd+yzYyMS/UsYuU0EUYUmi
+   Ig4cOtsrSKiNv1XYGW/jYgU5M1B1P3jOMKzUPSS61Tv6Fc/NmX4giuWWP
+   O8cht62DABT47hhfsF5ZI71IkAjmlebuU9cSGABvywGMr6NKxdkB4QjY/
+   g==;
+X-CSE-ConnectionGUID: UmfVj9CcT0+fuynRCK2bxA==
+X-CSE-MsgGUID: Og+mxo6fQpiEz2YqMs69DA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11260"; a="42628616"
+X-IronPort-AV: E=Sophos;i="6.12,165,1728975600"; 
+   d="scan'208";a="42628616"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Nov 2024 01:41:55 -0800
+X-CSE-ConnectionGUID: eI6HBrCqRB6w8Ak05IvUDw==
+X-CSE-MsgGUID: PYLtHHmbSVywAlxHqpnUSw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,165,1728975600"; 
+   d="scan'208";a="89915655"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Nov 2024 01:41:52 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tDKk1-0000000GJ4i-3HNa;
+	Tue, 19 Nov 2024 11:41:49 +0200
+Date: Tue, 19 Nov 2024 11:41:49 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: "Daniel Walker (danielwa)" <danielwa@cisco.com>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
+	Ilpo =?utf-8?Q?J=EF=BF=BDrvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Klara Modin <klarasmodin@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Danil Rybakov <danilrybakov249@gmail.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"xe-linux-external(mailer list)" <xe-linux-external@cisco.com>
+Subject: Re: platform/x86: p2sb: Allow p2sb_bar() calls during PCI device
+ probe
+Message-ID: <ZzxdXa-IsfHv2IFc@smile.fi.intel.com>
+References: <ZzdhTsuRNk1YWg8p@goliath>
+ <5qjbimedzeertdham2smgktt54gzdc7yg4dwgiz7eezt2tf5a2@szhhpvzo3uhj>
+ <Zzs1rw1YcoEEeW7+@goliath>
+ <ZztABO3TyJBekZRs@smile.fi.intel.com>
+ <ZztCB5hN2NBnPgiR@goliath>
+ <ZztF7FKaBwZKs5dk@smile.fi.intel.com>
+ <ZztQwLpoZDZzbi6O@goliath>
+ <ZztjcntEj5Eo0Rw9@smile.fi.intel.com>
+ <df1fa47f-7efb-4b0c-8ef6-100b12ab1523@redhat.com>
+ <Zzt2JNchK9A0pSlZ@goliath>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU0PR08MB9003:EE_|DU0PR08MB7689:EE_
-X-MS-Office365-Filtering-Correlation-Id: b09fdc9e-6f89-4fdc-474b-08dd087e5e8c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|10070799003|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?WkNYZmZjazBGREwzWHhqTmhEUVpZOXhPV0xwT2Y4eit4TVh0M0hnQk9wc1NM?=
- =?utf-8?B?YVZ5eC9QNXQ5NkJJc044azhqM3dhekpzVEMvNE5iS0t6Z1c0TXpRZFR1Rkto?=
- =?utf-8?B?QU9SeVVxRGhsSUJaQUk0V09HRFp4eTZXbXNlblJROHRwa0graVRLM01RcnlF?=
- =?utf-8?B?YnZhakhnbnNycW9Yb296KzJqMHBhamxIcEliTGg0MXBjNDg1bjhzWkRjaU9l?=
- =?utf-8?B?ZStkRVRzTHZTcG12TERWV25yY0RWOHlQWCtOZWwrd0NhbW5GbDBrVXNsd3I2?=
- =?utf-8?B?UUJnR0NOSFMvUE9CaGNpaXFjUnBWamVpU2E2d1Rva3M5UUIzSEplSm1DSi8w?=
- =?utf-8?B?eVNwUEh5WDFwWTRsejJlREZHSStqR3UySEJ3bE9HM0dmOW1kY3FBTFRUMzFn?=
- =?utf-8?B?QjZxS04zMWdmVENRM3Rpd2QzMFNkSUhCaXE0YkpGaDhIdE5KdFB5MGFNSVFw?=
- =?utf-8?B?bktHd3V3cTVNZC84TTYrMGxvQmJjeWhma0dYR1pTSzQ0NVNxY2JYbHBFVXRH?=
- =?utf-8?B?NmxDL3h3Y2VGNVFmK1RxVlg3NklnTVhKTXhzeHkwaU1QWCtGdFU2MkpOb3l5?=
- =?utf-8?B?WmcwcnBzVE1oRFBzZGJPZEtoVUtpZEFSYmZOZnMrVXJvWkFCdW5oS2VhOUhL?=
- =?utf-8?B?THV6c2Jjb2NZSi9wNHdPRXNQVWRxTVZIUDlqN2ZLeWNvMEp2OEEza1ZmTUdv?=
- =?utf-8?B?S2loUXppd0RqQ2owdmplWFRaaWp6SS80VE5kNXgreEU5ZFRYOWVBU213YW5M?=
- =?utf-8?B?c0RKOVEwTlVZWHgrMnJjdk8veDAxOUw0bU4vTVZkUG55ZmkwT3BsWVcyd1lP?=
- =?utf-8?B?VW0zQWtFRnVtU0FaRzNLbzBLckRIV2pZVVJYV1MwYXVtNENZWTZvRGVCTTBU?=
- =?utf-8?B?SkRGbEtYS3VJblcvakNiTmxtNHhxSU9OQlh4QlF6VjM5U1ZoR0FNWnFUd3Vz?=
- =?utf-8?B?VlZUVlZUQWltRXFzcnArUE10RkFtUjFwVVYwenVuVEw0ajdKbmxDMVBpSnJO?=
- =?utf-8?B?TGpQNmtKdjdQQTF4Q21GdWt4aUVpaStEejFIdCtsREFpM3Y1MklkS0ZjVmZQ?=
- =?utf-8?B?QUtHR3VISzNZMkFiV0FSK3ErQURqK09FMnFRZk5hYVhCdjFxdkhaM3hCS1lR?=
- =?utf-8?B?ejlXejVyYkc4M1hmU0hNZEdLa3BJQjRhK3JpdXJyQTNLNlN4cTBhaUp4U2hy?=
- =?utf-8?B?SU84R2N3ZENiZ0U3STR5YjRtQjlUK1RKRTBXM2wxdWMzK2x6K2dtRFpwMEpm?=
- =?utf-8?B?OUlyeGk5em5GbGNnOEkyZmdYUTE4dlo5eExKT2ZDRzJOai9uSHFqZDBmNlpp?=
- =?utf-8?B?cTBjckF3NWR3T0dUT1lQWmZ4ZlEwQ3pJRUxiZU02dTNFNkhWZFIrdjQ3Z3Bm?=
- =?utf-8?B?YUpvSUVUdEszYXFDTzU5SHR2ZGRWUndzaVRsa3dnbGdjVUVPS0YvSm1BQ0tv?=
- =?utf-8?B?K1BJZnp0V0g4L3NiMTd4M1FtVjV3aWIxNE55L0p1Q1RNYndzZlR5YVpUeGtW?=
- =?utf-8?B?ME9XQlNjZ1FiYTZTVDRFWE10eVZxT3EwRnNERTdvSzA1UXd3SWw5eDYrc2VQ?=
- =?utf-8?B?WS90S2lkTnp6MlNZZktNYm03TG5pMXRySGpLZUZlUkdLWUYwQ0FaaS9MZWFB?=
- =?utf-8?B?a0JiTnlkdkIzMEZWcFFWNjVJSmI0Q29nSWdKeVAwRG5rWW5ldGkweHozWXQz?=
- =?utf-8?B?OFNPdXVGME5yQ1hUbDZCVEZSeUFMbFhVL2NiRWd4eGdsR2tKUmFoOFhDME5K?=
- =?utf-8?Q?WaGg1WvVvUsxh0bJKhJY9tVpIh9X+Ut1UnIxf41?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR08MB9003.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(10070799003)(1800799024)(366016);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?SGgyTzZXTUJ0ajB6SWFhMWR3NmFHNEFrY0tWcGJiQktUV0laYTY4VVEzNi9Z?=
- =?utf-8?B?ZjY0M3ZpT3JJc0lITkpxdEFtOWlLOEx2MUMrTzFqUm9ndFhzdi9QcnNxb2Ny?=
- =?utf-8?B?YkIzL0JJdSszSWw1aDE5eUJmNzZGWVVFWmVOVmZ0VENhSFhRQnNHTmhnUFlQ?=
- =?utf-8?B?QXJIc0dyZFpnV2xoaFZmMVJGeGpJNmYyTTUxb24wR051T21TL05RZm1zcFRw?=
- =?utf-8?B?cTUwbEpIZ1BhR1kycDFUMXlGOUQ4WktteHVBY3V5SmRpVnBkNGRZWlA2Q2I4?=
- =?utf-8?B?U3pWSmRvU05ucHpOMDYvUlRTM2Rwa1lzS292QXZTRUNQZU1CQVBOZkRQWllh?=
- =?utf-8?B?ejZ2Z0pyaTRGQVU5T3JDMjh1RzVBUnNXQWlOY2tTUFora1lxWlYveWZMamV4?=
- =?utf-8?B?N0d1RzkyMDRyYTNTaGNXVURsZEkyTkpVc0dXcVpCYkVwdG52RzdnYldlaUh0?=
- =?utf-8?B?YUVjdnhUUGZoRFpNaHNDV0toNWJRZ0haQXNrTVZDbGNod3hsa3IrUXBleUR3?=
- =?utf-8?B?c0RDYzI4TnJhbTVzNm5ITngzUFdBV1FSRWU0Nmt2ZFBueHBCSUt2Y0NZWGw2?=
- =?utf-8?B?c2lIc3dXL2h6SS96c1R0c1BWaFplbTYydmR6bkw2c01tcVJYVTRBQllRTVM3?=
- =?utf-8?B?V3JKeFRNUE5Od3doSGdXcCszaVNxTXR5TVVtZUhYODFzUml6Vk1VdnV5ZWJn?=
- =?utf-8?B?bDJ5dzZnUk9rWXFoSk0rVksxN1dMWkEwNGRTbE9TS2hocjVRbE9OMHJNVkVn?=
- =?utf-8?B?K1MwTVNrdzJyczBFSERrYmZGYWJDeUI3ZTNhY1pxL2NIeWZtL1Vjd1lMVjc0?=
- =?utf-8?B?bVpZUlVzQTZSTW5zb1RKMXFsK0pXK2hpVXVxOW1ENHJhaEt4S0dHVTNXV0Vo?=
- =?utf-8?B?b2FlZTRqb01PVFpyeDZDSTlJdVhmb01CVG9Sc1kvRzNyMmpKVVRjMi83U3I5?=
- =?utf-8?B?dXVzTS9uNGVKUlZPelJIZWFlNmVCcjNzV0JjZlgxUGdCMjJJQzcrWklSbHpW?=
- =?utf-8?B?aWJ4VzUyanpGcStCdzE1b1Y4ZW1JR1Qva2tZcS9xZlhFeUdFcmQ3TGRpRTls?=
- =?utf-8?B?aTc2M3NFc0JaTzNtRWI5UTFORjJrV1lvSk1mdHZlaENITU5RbXF0NzIyWmRU?=
- =?utf-8?B?aUhJaFZPcllVS1NsdmFYL1B0SEE2STREOE84TVVRRjFKQ0cxZEdacEt2MkFW?=
- =?utf-8?B?a1BtdHBqK3p2VXJFYVkvNnFVa282QXFFZGhNeVVsNXI3alhnQUYySG9xQWtw?=
- =?utf-8?B?dlVKM0t5QWlvd0RseWxnWGVLUHBxa0RON1NkUmNNblh2cnFjQk1hOW90QVNC?=
- =?utf-8?B?SWlxenZEWVAwaU5TZFRrU0pVL0dvOFVVWm1TbXcxU0MwK0JLQ092am1sTUNs?=
- =?utf-8?B?aFF2T0EzaEdDYURoSTh1UmxWeDhEaEdMOVV5TG42ZWhtZXorbzREOFg4aFpH?=
- =?utf-8?B?VkZzZzViVFhLY2NsWFB1WGdwRkdpU0wwQXNTYWwySG83MlUrbEc3cWUxOW5V?=
- =?utf-8?B?MXZLaVFqcjVMcVVFbWg0eEtPMXpuZ0Y1eTU1MXhQS29NZi91N3Jod0owYTZT?=
- =?utf-8?B?UGtyalUwNTl4K05qRGRlamdMcjMzRzczQjhqbFRrS1JHMHRoOGI2cFNBM3JX?=
- =?utf-8?B?ZDNyVER0eXRrS1c4ZWdTSXR1N3dEazZCQ0NzRndaTWZEYjFMMjFwa01yKzlJ?=
- =?utf-8?B?MXZ2U0F0OWVOY2dDSlJENDQvRnMvK3lyWlBNQ2JDYlpEZTdGV09TajFDbGlO?=
- =?utf-8?B?M1hpYUFCTzBhR21NTElrRHhOYXBLSkgzVjZCODFsS1JQYStRS0cxTllIRFdV?=
- =?utf-8?B?NEJFblBMei9GQUh5UVFMa1hTS1RxMG5TRlFNMGtoUG1DYmZCbGY0MHNRN3pu?=
- =?utf-8?B?dFJ5TzJ3cE5RRmYwMEE0Q3lnNmhEWFdlWmd5aDB1cUFqT3NETnpyMGRmOXRU?=
- =?utf-8?B?ZGRaVFlYVFpCZzVXakdlNjA2eHJpVE4xaTMvYnplQjNQRkowT1BzYkpGVWFo?=
- =?utf-8?B?cmptZVRHck5wUFNXRGNkU2NZU1FQazlqUXBodkZJRWtpOVpQbEEydlJRR1o0?=
- =?utf-8?B?UHNWMWtyTTlhSE5lUm5WdzlqUjQrcFNHcWJSSFBuSm1ob1QxZVUvK3dCQkRL?=
- =?utf-8?B?TVd6KzhIaW4zdUJrMEVtL0xNWnZLSGgvc0VRTDQ3SHErMlFZamdueG8yMVBY?=
- =?utf-8?B?R3RLQit3OFQ4d0huNjh3WWdjZXJmblZhUytnNHREZVVBSkVDM090NFhsVzN6?=
- =?utf-8?B?VUNmN1hoTTJqdmpMQ2cvcXlaTjVnPT0=?=
-X-OriginatorOrg: virtuozzo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b09fdc9e-6f89-4fdc-474b-08dd087e5e8c
-X-MS-Exchange-CrossTenant-AuthSource: DU0PR08MB9003.eurprd08.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Nov 2024 09:41:40.4820
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 3lC5GUYpU7nIDRor4LkE+ggxYwQ5JrVeCJBqZvii/vXLRLP2mm6YRvjv0M9nEfeCFjOwPAI+ji9PXYXoJP3WIcw+hMrgbPDBnZM+mjvVqK0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR08MB7689
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zzt2JNchK9A0pSlZ@goliath>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
+On Mon, Nov 18, 2024 at 05:15:17PM +0000, Daniel Walker (danielwa) wrote:
+> On Mon, Nov 18, 2024 at 05:00:52PM +0100, Hans de Goede wrote:
+> > On 18-Nov-24 4:55 PM, Andy Shevchenko wrote:
+> > > On Mon, Nov 18, 2024 at 02:35:44PM +0000, Daniel Walker (danielwa) wrote:
+> > >> On Mon, Nov 18, 2024 at 03:49:32PM +0200, Andy Shevchenko wrote:
+> > >>> On Mon, Nov 18, 2024 at 01:32:55PM +0000, Daniel Walker (danielwa) wrote:
+> > >>>> On Mon, Nov 18, 2024 at 03:24:20PM +0200, Andy Shevchenko wrote:
+> > >>>>> On Mon, Nov 18, 2024 at 12:40:16PM +0000, Daniel Walker (danielwa) wrote:
 
+...
 
-On 11/19/24 16:29, Michal Hocko wrote:
-> On Tue 19-11-24 15:24:03, Pavel Tikhomirov wrote:
-> [...]
->> In commit 451769ebb7e79 ("mm/vmalloc: alloc GFP_NO{FS,IO} for vmalloc") we
->> add implicit memalloc_noXX_save/memalloc_noXX_restore at this code path:
->>
->>    +->kvmalloc
->>      +-> ...
->>        +-> __kvmalloc_node_noprof
->>          +-> __vmalloc_node_range_noprof
->>            +-> __vmalloc_area_node
->>
->> So kvmalloc should be safe now with GFP_NOIO.
+> > >>>>> Are you referring to LPC GPIO?
+> > >>>>  
+> > >>>>  I don't know the hardware well enough to say for certain. It's whatever device 8086:19dd is.
+> > >>>
+> > >>> This is device which represents p2sb. It's not a GPIO device you are talking
+> > >>> about for sure. You can send privately more detailed info in case this is shouldn't
+> > >>> be on public to me to understand what would be the best approach to fix your issue.
+> > >>
+> > >> Here's a comment,
+> > >>
+> > >> /* INTEL Denverton GPIO registers are accessible using SBREG_BAR(bar 0) as base */
+> > >>
+> > >> We have gpio wired to an FPGA and I believe the gpio line is used to reset the
+> > >> fpga.
+> > >>
+> > >> So the pci resources attached to 8086:19dd can be used to access gpio of some
+> > >> type. 
+> > >>
+> > >> I'm not a pci expert but on the 19bb device bar 0 we use the below offset to manipulate
+> > >> the gpio,
+> > >>
+> > >> #define INTEL_GPIO_REG_RESET_OFFSET          0xC50578
+> > >>
+> > >> The comments suggest this is gpio 6. I would seems your reaction would be that
+> > >> there is no gpio on the 19dd device. Maybe our driver is access gpio thru p2sb
+> > >> or something like that.
+> > >>
+> > >> Does the offset above make sense to you in the context of the p2sb ?
+> > > 
+> > > Yes, everything makes sense. Please, enable lpc_ich driver and forget about
+> > > talking to the p2sb memory mapped IO.
+> > > 
+> > > /* Offset data for Denverton GPIO controllers */
+> > > static const resource_size_t dnv_gpio_offsets[DNV_GPIO_NR_RESOURCES] = {
+> > > 	[DNV_GPIO_NORTH] = 0xc20000,
+> > > 	[DNV_GPIO_SOUTH] = 0xc50000,
+> > > };
+> > > 
+> > > So, you are using a pin from the Community "South" of the on-die Denverton GPIO.
+> > > 
+> > > In EDS this called GPIO_6, while in the driver it's pin 88, i.e. SMB3_IE0_DATA.
+> > > 
+> > > You will need to
+> > > - enable lpc_ich driver (CONFIG_LPC_ICH)
+> > > - enable Intel Denverton pin control driver (CONFIG_PINCTRL_DENVERTON)
+> > > - replace your custom approach to:
+> > >   - GPIO lookup table
+> > >   - proper GPIO APIs, as gpiod_get() or alike
+> > > 
+> > > See how it was done in the current kernel code:
+> > > 
+> > > 8241b55f1ded ("drm/i915/dsi: Replace poking of VLV GPIOs behind the driver's back")
+> > > a6c80bec3c93 ("leds: simatic-ipc-leds-gpio: Add GPIO version of Siemens driver")
+> > > 
+> > > Hans, there will be no need to fix anything if they implement correct access
+> > > to the GPIO, i.e. via driver and board code with GPIO lookup tables.
+> > 
+> > Agreed, still I'm not sure how I feel about us hiding the previously unhidden P2SB.
+> > 
+> > OTOH I guess it may have only been unhidden in the BIOS to make the hack they
+> > are using possible in the first place.
 > 
-> Correct.
-> 
->> Should we correct the documentation?
-> 
-> Yes, please. I think it would be useful to explicitly name the above
-> commit because pre 5.17 kernels or those who haven't backported it are
-> still in same position and that could get dangerous if they try to
-> backport [k]vmalloc GFP_NOFS patches. Thanks!
-> 
+> From a flexibility POV I would suggest if you can not hide it if it's not already
+> hidden by the BIOS that would be better since some company may have a good
+> reason to make a custom driver or to export the pci device to userspace thru
+> UIO.
 
-Done 
-https://lore.kernel.org/lkml/20241119093922.567138-1-ptikhomirov@virtuozzo.com/. 
-Thank you for confirming!
+The previous emails used wrong terminology, the hidden device is left hidden, and
+all the opposite: unhidden is not touched in this sense.
+
+The problem there that for the initially unhidden devices we call pci_stop_...
+which seems incorrect and needs to be fixed, indeed.
+
+> The current situation is you can't make a custom driver if p2sb is enable
+> with this additional patch even if you unhide the device inside the BIOS.
+
+Yeah, but I do not consider that is anyhow related to upstream.
+
+> In our case it seems like we could use the already existing solution with
+> pinctrl, but others may not be able to do that or may not want to for different
+> reasons.
+
+Please, please, go with the pin control approach, let's not increase
+the surface of the untested fields. Feel free to ask for a help from me
+(and possibly Hans) if you need a such.
 
 -- 
-Best regards, Tikhomirov Pavel
-Senior Software Developer, Virtuozzo.
+With Best Regards,
+Andy Shevchenko
+
 
 
