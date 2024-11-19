@@ -1,272 +1,170 @@
-Return-Path: <linux-kernel+bounces-414827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5303D9D2DFD
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 19:35:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C0219D2E83
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 20:05:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF991B2DAE2
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 18:29:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 81C0FB2B3A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 18:33:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09F631D1F73;
-	Tue, 19 Nov 2024 18:29:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A8F31D2F55;
+	Tue, 19 Nov 2024 18:32:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Xq7txC//"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="llSGXCo4"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C7761D1F7B
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 18:29:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D60581D1E9C
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 18:32:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732040948; cv=none; b=LiMC+4nv5BL81GArJevznqzbWzwvnYmJmnE4cjKhZpwrb7iA9WMpBS1aTyDeCH73Vs04b2yHWeYoFjgoYy/hlMTuOOyPwnViFPhwLilQ4lBNiFi5Br7YXtk4H+4CqHJfj2SQRMQtStVrv50yUA4de6pWEqAj3fa6++OM+XK5ol0=
+	t=1732041176; cv=none; b=Q4bNjw0o9SpW1m7QM9eEqCEBTAzSGupY1cnWXtKRTiJxP3yVw9nd0EwZCgKJWfdcuNwQi4wPss0hq5TIwmfVV0YpIXBcykaXflMs5qyDn+bAAC/DpoBwXsdWjXRGAp97+eYKBpc8Y2ybtF6BzT/mLOkjzqYls8V+Pr2RjOOwnrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732040948; c=relaxed/simple;
-	bh=7EkmoYAIwgLMOya3DiDGaKKRi9eJcRdqgo7aEZsiTP4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mmfcKxWvtvTMIleU6htW9Ii1pNtM4L2+EzRubUGnRhBaFed7nceDJCW39aHx8fWxPvc6Nx0ZsKC5JKqTpspe/pjVpQfaq7C3cLpVM5aRLNIv3QcoPmQFz12qi7CCKlzogEDnYJ3m/xktPsYfHydQHuDskJWmF/VJJ85YBUZArW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Xq7txC//; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3824a8a5c56so1347517f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 10:29:04 -0800 (PST)
+	s=arc-20240116; t=1732041176; c=relaxed/simple;
+	bh=8vP33LW5AaA9ZhGr/tfMb2k0un2s7luzhtaIDQEFvV4=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=G1h8oTZUtp7D9hRNkXZFNs7mX6NMAb3jr4Rmrpp+OZnyRGGqsN9nDUI9tmNWEZ/7kkfMYUgvBtGyCSK45gKGwtHoLCDyLNDCqKmoLa/ilIlwAFuoCs6augCJX4HQjxrzWiWbi9NQGoauNYjFj/+BEGw85bSNYMblFLtUgvlOwn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=llSGXCo4; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-7eb0a32fc5aso1014505a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 10:32:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1732040943; x=1732645743; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=TjjEcmv2liyk/XEk1ss5lodHgFTZTAwHIgNTYP/SyTw=;
-        b=Xq7txC//hrlB38W1B3QVYa30x6KnEZzMV7r07Pw6nVuQ5Ee5K3Uctfaush223LfmCI
-         xnNEEhKE5OTxlZumHK3qIPi0xZJVdShgGtpr7S9IC1B+QGu1OzLo2RyAQHx7x3KugJvr
-         ccJ7HWSguPHuwjB18Rwtpew8SlsiTmaKIljWRpuIz70LWIarZtobVYF9oFwtmMqVxuNU
-         X3BZRBM1jTHzUX8ABaNZuCmRvTahrTg1mFa55ZmNMbkonkNMkxtN6pvE4DAyZB0MiEJE
-         2Lt/HlnTIM99ZlWUrV1giQb88Atuq30xFkeWY/4OPKLRNqU95/0JoPn6LVMVqlDuxWNj
-         L2vg==
+        d=google.com; s=20230601; t=1732041174; x=1732645974; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=nIb3A+/NUApiEgcym8ug5fBwSdfGE/gaXNrhMJv7u9Y=;
+        b=llSGXCo4RcF6W9iCRqlHHJ9Tj0d7bbkzsT7GQp7by6VxDbCbdJ1WUda+RPEO4m3ItY
+         7CpMKEuSDKA9d9KiQSK8/aXVrwEO/r6WDmxMr/PcQvw2anladIQA9VYTPPdblFy8fdVR
+         MgiqyR3PcCHwYJpp49oUUWXnd7j2A/R89r1TgpF5XznlK18Ll2/iEEGxl1vilZdxleo6
+         8wi5XQojlQeBDjA64z1t8C5Mv8Ualz/HhTAny0n940ON2PdzZbVvSKCP3LvZPJS4uiUP
+         f8f2+X+ojhNu4ikIvZO8VwhbX8OQp4VWAVHa0YMI0tbq8SBG6/tWon+9K+GJqhTgrPpi
+         0UnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732040943; x=1732645743;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TjjEcmv2liyk/XEk1ss5lodHgFTZTAwHIgNTYP/SyTw=;
-        b=MAfINLkc6jC470hO5QeDH/SplQpbw/ZkIUK/lR1xA0eLggaZXYA+bLSNhu+rGhvuXe
-         DwdDv1IGqKG8kCv4jcoaeaphx4Iq1ixYPvkAwkMji+JbzF22G7bU670F9qecTyhIZZr9
-         TFddBJOmjCVC80ox1VHSS7etYekv7VTMZWJMi7Of7n0nP9IgFdd3kmredqenerJFUtn9
-         LarKegB0w9PFCpkfxpfWswyXfCc+LEeO9jPIVlcO5te9nrHUUMLr4jAIx0KIaTW+5Ls+
-         0R6gsDDxEVvbTiPK6+yjSN6jM3UN/PciAgJnWO1Uagss2Rj+82j5DpaY2rfv0LtON/9B
-         jjhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV7SN4Rc/JFN6othTMQ8zqlusgEMNu0PbhVQViXtS3YYUsHPECC50cmsVyMyDxDGClzT9XIMq69ZX4TcWY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3eobrZgs7Xzl5QK3puUSIYN1tnD/96wXwE7kzl199pkLW+yWa
-	mf8WfMSR3c981YHdXDADeIKBsU89oKVaQG+HEdDhSPH4pwLBDkGujknEATqlelo=
-X-Google-Smtp-Source: AGHT+IFnY/REEdmz7YD1WEr3CSS+CDWUtex9JzX1ZdzW4zdq0+PcYDiFyHyYLuR7W7cpAOYMYdli5w==
-X-Received: by 2002:a5d:6c62:0:b0:382:40cc:5057 with SMTP id ffacd0b85a97d-38240cc530dmr8023061f8f.8.1732040943004;
-        Tue, 19 Nov 2024 10:29:03 -0800 (PST)
-Received: from localhost (p509159f1.dip0.t-ipconnect.de. [80.145.89.241])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38244220183sm7893379f8f.99.2024.11.19.10.29.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Nov 2024 10:29:02 -0800 (PST)
-From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: Pedro Sousa <pedrom.sousa@synopsys.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Peter Wang <peter.wang@mediatek.com>,
-	Stanley Jhu <chu.stanley@gmail.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Orson Zhai <orsonzhai@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Bart Van Assche <bvanassche@acm.org>,
-	Andrew Halaney <ahalaney@redhat.com>,
-	Nitin Rawat <quic_nitirawa@quicinc.com>,
-	Can Guo <quic_cang@quicinc.com>,
-	linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] scsi: ufs: Switch back to struct platform_driver::remove()
-Date: Tue, 19 Nov 2024 19:28:56 +0100
-Message-ID: <20241119182856.55743-2-u.kleine-koenig@baylibre.com>
-X-Mailer: git-send-email 2.45.2
+        d=1e100.net; s=20230601; t=1732041174; x=1732645974;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nIb3A+/NUApiEgcym8ug5fBwSdfGE/gaXNrhMJv7u9Y=;
+        b=xR9vaf66pK7IgbYgYDgdIQhQ/gryIUWdssq92eM8c6V59EqqX95rJyL72L7dqTUDPP
+         50icdrOcs21gNJWSdpiJeoWM7hJU0AYj9+6+8RSC5Z0QVjkuhDHUnF1ULRRI8Hq12xHa
+         HjyhAO4v6vPDFj+s7XPcNo1CHkpw/JrHdhy3w4w1tEilioCHP9/+X+tNzpFaiF1P1H5i
+         sMjNJdTB+ICkn+A7b/9ywIEbH1EK2AzXB6QjVCif1MSBcgTRhLAGpEDSBWW6f2d1XTqu
+         8D0CtGE51zZ5IztgBKINWjP5ONAnMQh3Lg36GV1GOooX/kJrpRnVac13SEBRFNTTR/pW
+         1eaA==
+X-Gm-Message-State: AOJu0Yw8OmADbgV8rSSmLlZEhPiC1KKoJvt0vucvIORNMGZEClH/bQ/T
+	ZHcCw144sz+nuxoagZPNpSq2K0DT+0a9UjeWh9GzFH1lP/e6LicMdgHJDHp7OK4pEkRVUhPRFcG
+	fTKj1On/Lpw==
+X-Google-Smtp-Source: AGHT+IF+bAMnZmIF1zrKipMtPcsso+ZfXBVuC3SIny1asI+PPc93oPdaeq+T/WEDyeu9nBSOnpW89VHzvlbcMg==
+X-Received: from xllamas.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5070])
+ (user=cmllamas job=sendgmr) by 2002:a63:77ce:0:b0:7ea:6bf4:3643 with SMTP id
+ 41be03b00d2f7-7f8c1e99549mr21953a12.0.1732041174096; Tue, 19 Nov 2024
+ 10:32:54 -0800 (PST)
+Date: Tue, 19 Nov 2024 18:32:33 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6400; i=u.kleine-koenig@baylibre.com; h=from:subject; bh=7EkmoYAIwgLMOya3DiDGaKKRi9eJcRdqgo7aEZsiTP4=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBnPNjp6LSiAa1I5FOmgMRNs6RRlpfp1I+WXQ5Jy kT+1b+r+OmJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZzzY6QAKCRCPgPtYfRL+ TpXpB/0e48BSclKJNk79t2QAL7ya486g/ZENqVkbV84wvxtryeeYwTupocnq00111eq5K0/DmGn 5N4obnl0Yz0e3KeGMA7JfzxJvPrPYGOGz28YyBN6Sd3hOEd6ySenM2sNKhrDFRa+ryLgbBtM+0r t1goFmLAz1bCbMLKdKob3arBzK0CJUYeBB/jgaipkO2eqyCWlNSt+pteiri4uI2flz9pqWJALQL QXPOzQck5OYwjzyutjQCb/e5xiDGpJriITfqlnsNsdFM2WKgrZ/R+MvqLn6nnyNroBHFtNX80WU 7OIgmZQqPyjlHlnMRJJPpcenrvoEatHfp2PJ/iqzncWGiZ5D
-X-Developer-Key: i=u.kleine-koenig@baylibre.com; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
+Message-ID: <20241119183250.3497547-1-cmllamas@google.com>
+Subject: [PATCH v4 0/9] binder: faster page installations
+From: Carlos Llamas <cmllamas@google.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, kernel-team@android.com, 
+	Carlos Llamas <cmllamas@google.com>, Alice Ryhl <aliceryhl@google.com>, 
+	Barry Song <v-songbaohua@oppo.com>, David Hildenbrand <david@redhat.com>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Matthew Wilcox <willy@infradead.org>, 
+	Minchan Kim <minchan@kernel.org>, Nhat Pham <nphamcs@gmail.com>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Suren Baghdasaryan <surenb@google.com>, Todd Kjos <tkjos@google.com>, 
+	Viktor Martensson <vmartensson@google.com>, Hillf Danton <hdanton@sina.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
 
-After commit 0edb555a65d1 ("platform: Make platform_driver::remove()
-return void") .remove() is (again) the right callback to implement for
-platform drivers.
+The main focus of these patches is to improve the performance of binder
+page installations, primarily by reducing contention on the mmap_lock.
+The idea is to allow concurrent page insertion by leveraging per-vma
+locking and get_user_pages_remote().
 
-Convert all platform drivers below drivers/ufs to use .remove(), with
-the eventual goal to drop struct platform_driver::remove_new(). As
-.remove() and .remove_new() have the same prototypes, conversion is done
-by just changing the structure member name in the driver initializer.
+Unfortunately, this required reverting the alloc->lock spinlock back
+into a mutex in order to serialize with the shrinker. At least until
+finding a better solution e.g. support page zapping with a spinlock.
+The trade off is still quite worth it though.
 
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
----
-Hello,
+Other patches are also included that remove unsafe and redundant things
+such as the alloc->vma pointer or the struct binder_lru_page concept.
 
-I did a single patch for all of drivers/ufs. While I usually prefer to
-do one logical change per patch, this seems to be overengineering here
-as the individual changes are really trivial and shouldn't be much in
-the way for stable backports. But I'll happily split the patch if you
-prefer it split. Also if you object the indentation stuff, I can rework
-that.
+Note: I'll work on setting up a page fault handler for binder next.
+I believe an idea from Alice Ryhl to deferred the page insertions will
+make this finally feasible. I only need to figure out a few performance
+bits but if/when done most of the manual page insertion code in binder
+could be dropped. :)
 
-This is based on today's next, if conflicts arise when you apply it at
-some later time and don't want to resolve them, feel free to just drop
-the changes to the conflicting files. I'll notice and followup at a
-later time then. Or ask me for a fixed resend. (Having said that, I
-recommend b4 am -3 + git am -3 which should resolve most conflicts just
-fine.)
+Changelog:
 
-Best regards
-Uwe
+v4:
+ * add explicit FOLL_NOFAULT to get_user_pages_remote()
+ * per-vma locking to shrinker path (per Liam)
 
- drivers/ufs/host/cdns-pltfrm.c        | 2 +-
- drivers/ufs/host/tc-dwc-g210-pltfrm.c | 2 +-
- drivers/ufs/host/ti-j721e-ufs.c       | 2 +-
- drivers/ufs/host/ufs-exynos.c         | 2 +-
- drivers/ufs/host/ufs-hisi.c           | 2 +-
- drivers/ufs/host/ufs-mediatek.c       | 2 +-
- drivers/ufs/host/ufs-qcom.c           | 2 +-
- drivers/ufs/host/ufs-renesas.c        | 2 +-
- drivers/ufs/host/ufs-sprd.c           | 2 +-
- 9 files changed, 9 insertions(+), 9 deletions(-)
+v3:
+https://lore.kernel.org/all/20241108191057.3288442-1-cmllamas@google.com/
+ * collect "Reviewed-by" tags from Suren
+ * use full commit subject in revert (not only sha1)
+ * add "goto unlock" label for vma_lookup() failures
+ * address -ENOMEM error override in separate patch
+ * squash "remove alloc->vma" patch into alloc->mapped patch
+ * pass 'struct binder_alloc *' to  binder_page_lookup() too
+ * factor out individual mmget_not_zero()/mmput_async() calls
+ * cleanup binder_page_insert() to avoid using goto
+ * document only one mapping allowed per binder instance
+ * check binder_alloc_is_mapped() in binder_page_lookup()
+ * remove no longer need local page_to_free pointer
 
-diff --git a/drivers/ufs/host/cdns-pltfrm.c b/drivers/ufs/host/cdns-pltfrm.c
-index 66811d8d1929..c80f770a6285 100644
---- a/drivers/ufs/host/cdns-pltfrm.c
-+++ b/drivers/ufs/host/cdns-pltfrm.c
-@@ -321,7 +321,7 @@ static const struct dev_pm_ops cdns_ufs_dev_pm_ops = {
- 
- static struct platform_driver cdns_ufs_pltfrm_driver = {
- 	.probe	= cdns_ufs_pltfrm_probe,
--	.remove_new = cdns_ufs_pltfrm_remove,
-+	.remove = cdns_ufs_pltfrm_remove,
- 	.driver	= {
- 		.name   = "cdns-ufshcd",
- 		.pm     = &cdns_ufs_dev_pm_ops,
-diff --git a/drivers/ufs/host/tc-dwc-g210-pltfrm.c b/drivers/ufs/host/tc-dwc-g210-pltfrm.c
-index a3877592604d..9bfaa36cc898 100644
---- a/drivers/ufs/host/tc-dwc-g210-pltfrm.c
-+++ b/drivers/ufs/host/tc-dwc-g210-pltfrm.c
-@@ -89,7 +89,7 @@ static const struct dev_pm_ops tc_dwc_g210_pltfm_pm_ops = {
- 
- static struct platform_driver tc_dwc_g210_pltfm_driver = {
- 	.probe		= tc_dwc_g210_pltfm_probe,
--	.remove_new	= tc_dwc_g210_pltfm_remove,
-+	.remove		= tc_dwc_g210_pltfm_remove,
- 	.driver		= {
- 		.name	= "tc-dwc-g210-pltfm",
- 		.pm	= &tc_dwc_g210_pltfm_pm_ops,
-diff --git a/drivers/ufs/host/ti-j721e-ufs.c b/drivers/ufs/host/ti-j721e-ufs.c
-index 250c22df000d..21214e5d5896 100644
---- a/drivers/ufs/host/ti-j721e-ufs.c
-+++ b/drivers/ufs/host/ti-j721e-ufs.c
-@@ -83,7 +83,7 @@ MODULE_DEVICE_TABLE(of, ti_j721e_ufs_of_match);
- 
- static struct platform_driver ti_j721e_ufs_driver = {
- 	.probe	= ti_j721e_ufs_probe,
--	.remove_new = ti_j721e_ufs_remove,
-+	.remove = ti_j721e_ufs_remove,
- 	.driver	= {
- 		.name   = "ti-j721e-ufs",
- 		.of_match_table = ti_j721e_ufs_of_match,
-diff --git a/drivers/ufs/host/ufs-exynos.c b/drivers/ufs/host/ufs-exynos.c
-index 6548f7a8562f..c4098011c4b4 100644
---- a/drivers/ufs/host/ufs-exynos.c
-+++ b/drivers/ufs/host/ufs-exynos.c
-@@ -2166,7 +2166,7 @@ static const struct dev_pm_ops exynos_ufs_pm_ops = {
- 
- static struct platform_driver exynos_ufs_pltform = {
- 	.probe	= exynos_ufs_probe,
--	.remove_new = exynos_ufs_remove,
-+	.remove = exynos_ufs_remove,
- 	.driver	= {
- 		.name	= "exynos-ufshc",
- 		.pm	= &exynos_ufs_pm_ops,
-diff --git a/drivers/ufs/host/ufs-hisi.c b/drivers/ufs/host/ufs-hisi.c
-index 5ee73ff05251..494f593702a3 100644
---- a/drivers/ufs/host/ufs-hisi.c
-+++ b/drivers/ufs/host/ufs-hisi.c
-@@ -590,7 +590,7 @@ static const struct dev_pm_ops ufs_hisi_pm_ops = {
- 
- static struct platform_driver ufs_hisi_pltform = {
- 	.probe	= ufs_hisi_probe,
--	.remove_new = ufs_hisi_remove,
-+	.remove = ufs_hisi_remove,
- 	.driver	= {
- 		.name	= "ufshcd-hisi",
- 		.pm	= &ufs_hisi_pm_ops,
-diff --git a/drivers/ufs/host/ufs-mediatek.c b/drivers/ufs/host/ufs-mediatek.c
-index 06ab1e5e8b6f..6fc848d0ada8 100644
---- a/drivers/ufs/host/ufs-mediatek.c
-+++ b/drivers/ufs/host/ufs-mediatek.c
-@@ -1962,7 +1962,7 @@ static const struct dev_pm_ops ufs_mtk_pm_ops = {
- 
- static struct platform_driver ufs_mtk_pltform = {
- 	.probe      = ufs_mtk_probe,
--	.remove_new = ufs_mtk_remove,
-+	.remove = ufs_mtk_remove,
- 	.driver = {
- 		.name   = "ufshcd-mtk",
- 		.pm     = &ufs_mtk_pm_ops,
-diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
-index 3b592492e152..d2b8d97b480e 100644
---- a/drivers/ufs/host/ufs-qcom.c
-+++ b/drivers/ufs/host/ufs-qcom.c
-@@ -1897,7 +1897,7 @@ static const struct dev_pm_ops ufs_qcom_pm_ops = {
- 
- static struct platform_driver ufs_qcom_pltform = {
- 	.probe	= ufs_qcom_probe,
--	.remove_new = ufs_qcom_remove,
-+	.remove = ufs_qcom_remove,
- 	.driver	= {
- 		.name	= "ufshcd-qcom",
- 		.pm	= &ufs_qcom_pm_ops,
-diff --git a/drivers/ufs/host/ufs-renesas.c b/drivers/ufs/host/ufs-renesas.c
-index 3ff97112e1f6..f404019dc5d9 100644
---- a/drivers/ufs/host/ufs-renesas.c
-+++ b/drivers/ufs/host/ufs-renesas.c
-@@ -404,7 +404,7 @@ static void ufs_renesas_remove(struct platform_device *pdev)
- 
- static struct platform_driver ufs_renesas_platform = {
- 	.probe	= ufs_renesas_probe,
--	.remove_new = ufs_renesas_remove,
-+	.remove = ufs_renesas_remove,
- 	.driver	= {
- 		.name	= "ufshcd-renesas",
- 		.of_match_table	= of_match_ptr(ufs_renesas_of_match),
-diff --git a/drivers/ufs/host/ufs-sprd.c b/drivers/ufs/host/ufs-sprd.c
-index d8b165908809..b1ffb9b05fa7 100644
---- a/drivers/ufs/host/ufs-sprd.c
-+++ b/drivers/ufs/host/ufs-sprd.c
-@@ -442,7 +442,7 @@ static const struct dev_pm_ops ufs_sprd_pm_ops = {
- 
- static struct platform_driver ufs_sprd_pltform = {
- 	.probe = ufs_sprd_probe,
--	.remove_new = ufs_sprd_remove,
-+	.remove = ufs_sprd_remove,
- 	.driver = {
- 		.name = "ufshcd-sprd",
- 		.pm = &ufs_sprd_pm_ops,
+v2:
+https://lore.kernel.org/all/20241107040239.2847143-1-cmllamas@google.com/
+ * fix locking order when upgrading from vma lock to mmap lock
+ * switch folio_walk_start() for get_user_pages_remote()
+ * release vma/mmap locks and mmput() right after vm_insert_page()
+ * add binder_page_alloc() helper for binder_install_single_page()
 
-base-commit: 414c97c966b69e4a6ea7b32970fa166b2f9b9ef0
+v1:
+https://lore.kernel.org/all/20241105200258.2380168-1-cmllamas@google.com/
+
+Cc: Alice Ryhl <aliceryhl@google.com>
+Cc: Barry Song <v-songbaohua@oppo.com>
+Cc: David Hildenbrand <david@redhat.com>
+Cc: Liam R. Howlett <Liam.Howlett@oracle.com>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Minchan Kim <minchan@kernel.org>
+Cc: Nhat Pham <nphamcs@gmail.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Suren Baghdasaryan <surenb@google.com>
+Cc: Todd Kjos <tkjos@google.com>
+Cc: Viktor Martensson <vmartensson@google.com>
+Cc: Hillf Danton <hdanton@sina.com>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+
+Carlos Llamas (9):
+  Revert "binder: switch alloc->mutex to spinlock_t"
+  binder: concurrent page installation
+  binder: select correct nid for pages in LRU
+  binder: remove struct binder_lru_page
+  binder: replace alloc->vma with alloc->mapped
+  binder: rename alloc->buffer to vm_start
+  binder: use per-vma lock in page installation
+  binder: propagate vm_insert_page() errors
+  binder: use per-vma lock in page reclaiming
+
+ drivers/android/binder.c                |   2 +-
+ drivers/android/binder_alloc.c          | 345 ++++++++++++++----------
+ drivers/android/binder_alloc.h          |  36 +--
+ drivers/android/binder_alloc_selftest.c |  18 +-
+ drivers/android/binder_trace.h          |   2 +-
+ 5 files changed, 233 insertions(+), 170 deletions(-)
+
 -- 
-2.45.2
+2.47.0.338.g60cca15819-goog
 
 
