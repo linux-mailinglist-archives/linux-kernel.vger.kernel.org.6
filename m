@@ -1,195 +1,116 @@
-Return-Path: <linux-kernel+bounces-414810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 536EC9D2DA1
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 19:11:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF8C59D2D9F
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 19:11:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14C59283BD9
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 18:11:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7517E283998
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 18:11:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB9CB1D31B6;
-	Tue, 19 Nov 2024 18:10:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="bybPnNME"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E11F1D2B21;
+	Tue, 19 Nov 2024 18:10:03 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B6B81D0164;
-	Tue, 19 Nov 2024 18:10:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E680B1D27B4;
+	Tue, 19 Nov 2024 18:10:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732039849; cv=none; b=MA9JQqQmwyIcaDkaLUkHVCYRHNvhvsuuV78iWa5akKYQRIm2KuJgufsIwTA8qUZmPwbz/wMfR1ss2jpEKaYkrRAuIqwXvYWDzgIkr5OmirnWJueSvbOE+K+vTk8dC4iIt+qRwhL2L0vyB9rTNdeSH5bHL7ScMj9VEvjUvHCy1LQ=
+	t=1732039803; cv=none; b=b6IfSLyNrxIldvbb9TrwsX4pbfNRNzzvrUZmCPz54diSqCgJ+g5kwJL7HHvCHEP0/FUL4AHSBx+2n257wEDp5Rk/8KBQpjdOIRHddC/72seL2B8pd/CCwDgqqoiZ143E0hkReAI9DHCOa8s4W9SrZFTyuLqGuS6m5R6Key0vkxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732039849; c=relaxed/simple;
-	bh=00N6d3fq1vN0i91RXeimmFleEY7w+R+iFQQlmAiWUoA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=uP3t5AGqSZ3kK/tbDRZlB0ryn87QM+AwRwwfT56UWIMzNpocTq0qAfp4G58pBigSGy3QQFtir7usaRfu2H5fLwLQQVv7M19i/YpGihX6x1BwOc9QAhM523nGYBQ9AQ43U9c6H3NtCduBynh/hc0iDtsWVd4l2QjpTaW/GLUzzus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=bybPnNME; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AJDMSXk016076;
-	Tue, 19 Nov 2024 18:10:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=rnZhD+
-	ID/LMS+Nr00/1M7SEoYQBZvFHRkYGvYtfv7sU=; b=bybPnNME6w7s0KL23VRCD7
-	sXDTCCRYeHe4jz1KMD9A7mc0Q3M8+i18R39AQ2h+YWztmLfjOKWneQasRwkoim8u
-	AqnrOqMt4xmjk0UJ2BW1bQcscoaubE5fdo9DtBMp19pL9njbIddZ1MKRATclAH7A
-	8p0UVyd3930ewr21caxY1cTXUhsdOqgIuoAqNIznP/d/SeirALkDVkNucUDXDM1m
-	QS459xeBXHwHcTIGmLZ1iaIB++xlWeM7WBFbzPtbqCGw6w3AE45+3dI+e9Lt+zTA
-	4WW2eZmxf/DUAy1QOrU/9ajX3sYGWso455PjQyEC7UHUdu1muZ3yZiGXqfepm86g
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42xhtjrshj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 19 Nov 2024 18:10:14 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4AJI6n8Z026354;
-	Tue, 19 Nov 2024 18:10:13 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42xhtjrshc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 19 Nov 2024 18:10:13 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AJBupUI021792;
-	Tue, 19 Nov 2024 18:10:12 GMT
-Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42y6qmw32f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 19 Nov 2024 18:10:12 +0000
-Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
-	by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4AJIACnc59703638
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 19 Nov 2024 18:10:12 GMT
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 09D2558052;
-	Tue, 19 Nov 2024 18:10:12 +0000 (GMT)
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id BE7E158045;
-	Tue, 19 Nov 2024 18:10:10 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.31.103.152])
-	by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 19 Nov 2024 18:10:10 +0000 (GMT)
-Message-ID: <b89a084a98e7427911ac4344225eca99a04a52fb.camel@linux.ibm.com>
-Subject: Re: [PATCH] ima: kexec: Add RCU read lock protection for
- ima_measurements list traversal
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Breno Leitao <leitao@debian.org>,
-        Roberto Sassu
- <roberto.sassu@huawei.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Eric Snowberg <eric.snowberg@oracle.com>,
-        Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Andrew Morton
- <akpm@linux-foundation.org>,
-        Thiago Jung Bauermann
- <bauerman@linux.vnet.ibm.com>
-Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-        noodles@earth.li
-Date: Tue, 19 Nov 2024 13:10:10 -0500
-In-Reply-To: <20241104-ima_rcu-v1-1-5157460c5907@debian.org>
-References: <20241104-ima_rcu-v1-1-5157460c5907@debian.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	s=arc-20240116; t=1732039803; c=relaxed/simple;
+	bh=cLTJ+4S41DbHMXwLJNlzcTSQqcxHabmps6W8J8gSRSI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YfEf9X7NSlJRqbIF5et88Gu1P4gRzB4fpEdW6V1XF3twa9KEXXahWE8owsPmAGtI+VZK8GiA3VEeJlR/+d9Zfnn6R+LPSBv0W6Bl0azgz/PyT4BcvEP7v3IBNCsALumDdeE0kCn19axEaGgM0QwaDyxTWI+2qhxdQspvJc6VRUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 923DDC4CECF;
+	Tue, 19 Nov 2024 18:10:01 +0000 (UTC)
+Date: Tue, 19 Nov 2024 13:10:35 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
+Cc: linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, Geert Uytterhoeven
+ <geert@linux-m68k.org>, Greg Ungerer <gerg@linux-m68k.org>, Tomas Glozar
+ <tglozar@redhat.com>
+Subject: Re: [PATCH RFC 0/2] Add basic tracing support for m68k
+Message-ID: <20241119131035.3c42a533@gandalf.local.home>
+In-Reply-To: <e4456cb1-b1bc-453b-b3b5-3ee4f03995be@yoseli.org>
+References: <20241021-add-m68k-tracing-support-v1-0-0883d704525b@yoseli.org>
+	<3a8f6faa-62c6-4d32-b544-3fb7c00730d7@yoseli.org>
+	<20241115102554.29232d34@gandalf.local.home>
+	<cbb67ee2-8b37-4a4d-b542-f89ddae90e94@yoseli.org>
+	<20241115145502.631c9a2c@gandalf.local.home>
+	<2c43288a-517d-4220-ad31-f84dda8c1805@yoseli.org>
+	<20241118152057.13042840@gandalf.local.home>
+	<22856ed6-b9d0-4206-b88d-4226534c8675@yoseli.org>
+	<20241119102631.76363f2a@gandalf.local.home>
+	<20241119112850.219834f5@gandalf.local.home>
+	<e4456cb1-b1bc-453b-b3b5-3ee4f03995be@yoseli.org>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 6KE2p3ayPT6aqwHI3JjzhenjP_Q-NCvb
-X-Proofpoint-GUID: y5i2EbHVmUtOxXQb_GpwSFzEZjUWj1HC
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
- clxscore=1011 malwarescore=0 spamscore=0 bulkscore=0 priorityscore=1501
- impostorscore=0 mlxscore=0 adultscore=0 suspectscore=0 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2411190134
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Breno,
+On Tue, 19 Nov 2024 19:06:45 +0100
+Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org> wrote:
+> > 
+> > It shouldn't crash, but it also found a bug in your code ;-)  
+> 
+> In my code is a really big assumption :-).
 
-On Mon, 2024-11-04 at 02:47 -0800, Breno Leitao wrote:
-> Fix a potential RCU issue where ima_measurements list is traversed using
-> list_for_each_entry_rcu() without proper RCU read lock protection. This
-> caused warnings when CONFIG_PROVE_RCU was enabled:
->=20
->   security/integrity/ima/ima_kexec.c:40 RCU-list traversed in non-reader =
-section!!
->=20
-> Add rcu_read_lock() before iterating over ima_measurements list to ensure
-> proper RCU synchronization, consistent with other RCU list traversals in
-> the codebase.
+Well, not your personally, but I meant "your" as in m68k code.
 
-The synchronization is to prevent freeing of data while walking the RCU lis=
-t. In
-this case, new measurements are only appended to the IMA measurement list. =
- So
-there shouldn't be an issue.
+> 
+> > You reference two variables that are not part of the event:
+> > 
+> >   "mem_map" and "m68k_memory[0].addr"
+> > 
+> > Do these variables ever change? Because the TP_printk() part of the
+> > TRACE_EVENT() macro is called a long time after the event is recorded. It
+> > could be seconds, minutes, days or even months (and unlikely possibly
+> > years) later.  
+> 
+> I am really not the best placed to answer.
+> AFAIK, it sounds like those are never changing.
 
-The IMA measurement list is being copied during kexec "load", while other
-processes are still running.  Depending on the IMA policy, the kexec "load"=
-,
-itself, and these other processes may result in additional measurements, wh=
-ich
-should be copied across kexec.  Adding the rcu_read_{lock, unlock} would
-unnecessarily prevent them from being copied.
+That would mean they are OK and will not corrupt the trace, but it will be
+meaningless for tools like perf and trace-cmd.
 
-There have been discussions about deferring copying the IMA measurement lis=
-t
-from kexec "load" to later at "exec" and about trimming the IMA measurement
-list.  At least for now, neither of these changes have been upstreamed.
+> 
+> > 
+> > The event takes place and runs the TP_fast_assign() to record the event in
+> > the ring buffer. Then some time later, when you read the "trace" file, the
+> > TP_printk() portion gets run. If you wait months before reading that, it is
+> > executed months later.
+> > 
+> > Now you have "mem_map" and "m68k_memory[0].addr" in that output that gets
+> > run months after the fact. Are they constant throughout the boot?  
+> 
+> I don't know.
+> 
+> > Now another issue is that user space has no idea what those values are. Now
+> > user space can not print the values. Currently the code crashes because you
+> > are the first one to reference a global value from a trace event print fmt.
+> > That should probably be fixed to simply fail to parse the event and ignore
+> > the print format logic (which defaults to just printing the raw fields).  
+> 
+> The patch you sent works...
+> But, it fails a bit later:
+> Dispatching timerlat u procs
+> starting loop
+> User-space timerlat pid 230 on cpu 0
+> Segmentation fault
+> 
 
-Perhaps add a comment as a reminder as to why it is currently safe.
+More printk? ;-)
 
-Mimi
-=20
->=20
-> Signed-off-by: Breno Leitao <leitao@debian.org>
-> Fixes: 7b8589cc29e7 ("ima: on soft reboot, save the measurement list")
-> ---
->  security/integrity/ima/ima_kexec.c | 2 ++
->  1 file changed, 2 insertions(+)
->=20
-> diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/=
-ima_kexec.c
-> index 52e00332defed39774c9e23e045f1377cfa30d0c..3b17ddb91d35ac806aedd2ee9=
-70ff365675dac0b 100644
-> --- a/security/integrity/ima/ima_kexec.c
-> +++ b/security/integrity/ima/ima_kexec.c
-> @@ -37,6 +37,7 @@ static int ima_dump_measurement_list(unsigned long *buf=
-fer_size, void **buffer,
-> =20
->  	memset(&khdr, 0, sizeof(khdr));
->  	khdr.version =3D 1;
-> +	rcu_read_lock();
->  	list_for_each_entry_rcu(qe, &ima_measurements, later) {
->  		if (file.count < file.size) {
->  			khdr.count++;
-> @@ -46,6 +47,7 @@ static int ima_dump_measurement_list(unsigned long *buf=
-fer_size, void **buffer,
->  			break;
->  		}
->  	}
-> +	rcu_read_unlock();
-> =20
->  	if (ret < 0)
->  		goto out;
->=20
-> ---
-> base-commit: f488649e40f8900d23b86afeab7d4b78c063d5d1
-> change-id: 20241104-ima_rcu-ee83da87d050
->=20
-> Best regards,
-
+-- Steve
 
