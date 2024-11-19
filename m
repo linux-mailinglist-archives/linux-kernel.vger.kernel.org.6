@@ -1,206 +1,130 @@
-Return-Path: <linux-kernel+bounces-414288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 910169D25C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 13:29:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCDCC9D25BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 13:28:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F576B28A7D
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 12:29:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82A2728460C
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 12:28:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DC231CCEF5;
-	Tue, 19 Nov 2024 12:28:20 +0000 (UTC)
-Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14CD51CB307;
-	Tue, 19 Nov 2024 12:28:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.10.64.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F0801CC165;
+	Tue, 19 Nov 2024 12:27:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="gGC3R1Bd"
+Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98602157472;
+	Tue, 19 Nov 2024 12:27:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.18.73.165
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732019299; cv=none; b=UDU1jeytUeIBkpE7jCnbYsuQKVG3Auy1V7v4pJ2aHWmg9dd4K6UQLAUEdq5QxgMDE6QdrmtPiMQro5fQYCmvtQCDH9C8sUj1ydszjDgO53HXvtDW28AO2LqEP1XSGX0gCcFRUlkb0rdZyylMqzyiEp7tTS3Fb1AJ1/fClBaEURE=
+	t=1732019274; cv=none; b=tGqrpWPX4hZSU5mNPYgAJDwJJQNWzAoe1D42TdqdCZm6zfyCbmdz9jb2vmnFjV10mWnlJVwpI5CG4HdsEXTQ3DjmE7dv9YuKb8/k4MqibXszDJsKacTPhmHBr0WZXqwnjDrmeQRz2TqOUuDsXyfI3+7APwDZrga6O/cR+vAnncs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732019299; c=relaxed/simple;
-	bh=KZ5pNKRTZd2Wsnop4Uo5KXxBybI54wxOzs6eCvzDSU4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n1avRW3FjLyROmMXoSujOAwRHPd5rpXyuD5Jd09cBWb8UCflTW18+yDjiuF1NycGu6j89N7QiUxwEpbmE1PomrQs60PPmgoL01p8wWXuBXxtOAeD9flfxw9vEpx/tpJjMeK/CxExEqkoV6glMn4nwdlevW+S3Dq+VsKMPw7mUW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=wind.enjellic.com; arc=none smtp.client-ip=76.10.64.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
-Received: from wind.enjellic.com (localhost [127.0.0.1])
-	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 4AJCR8jU019294;
-	Tue, 19 Nov 2024 06:27:08 -0600
-Received: (from greg@localhost)
-	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 4AJCR6eq019293;
-	Tue, 19 Nov 2024 06:27:06 -0600
-Date: Tue, 19 Nov 2024 06:27:06 -0600
-From: "Dr. Greg" <greg@enjellic.com>
-To: Song Liu <songliubraving@meta.com>
-Cc: James Bottomley <James.Bottomley@HansenPartnership.com>,
-        "jack@suse.cz" <jack@suse.cz>,
-        "brauner@kernel.org" <brauner@kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        "Dr. Greg" <greg@enjellic.com>, Song Liu <song@kernel.org>,
-        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>,
-        Kernel Team <kernel-team@meta.com>,
-        "andrii@kernel.org" <andrii@kernel.org>,
-        "eddyz87@gmail.com" <eddyz87@gmail.com>,
-        "ast@kernel.org" <ast@kernel.org>,
-        "daniel@iogearbox.net" <daniel@iogearbox.net>,
-        "martin.lau@linux.dev" <martin.lau@linux.dev>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "kpsingh@kernel.org" <kpsingh@kernel.org>,
-        "mattbobrowski@google.com" <mattbobrowski@google.com>,
-        "amir73il@gmail.com" <amir73il@gmail.com>,
-        "repnop@google.com" <repnop@google.com>,
-        "jlayton@kernel.org" <jlayton@kernel.org>,
-        Josef Bacik <josef@toxicpanda.com>,
-        "mic@digikod.net" <mic@digikod.net>,
-        "gnoack@google.com" <gnoack@google.com>
-Subject: Re: [PATCH bpf-next 0/4] Make inode storage available to tracing prog
-Message-ID: <20241119122706.GA19220@wind.enjellic.com>
-Reply-To: "Dr. Greg" <greg@enjellic.com>
-References: <ACCC67D1-E206-4D9B-98F7-B24A2A44A532@fb.com> <d7d23675-88e6-4f63-b04d-c732165133ba@schaufler-ca.com> <332BDB30-BCDC-4F24-BB8C-DD29D5003426@fb.com> <8c86c2b4-cd23-42e0-9eb6-2c8f7a4cbcd4@schaufler-ca.com> <CAPhsuW5zDzUp7eSut9vekzH7WZHpk38fKHmFVRTMiBbeW10_SQ@mail.gmail.com> <20241114163641.GA8697@wind.enjellic.com> <53a3601e-0999-4603-b69f-7bed39d4d89a@schaufler-ca.com> <4BF6D271-51D5-4768-A460-0853ABC5602D@fb.com> <b1e82da8daa1c372e4678b1984ac942c98db998d.camel@HansenPartnership.com> <A7017094-1A0C-42C8-BE9D-7352D2200ECC@fb.com>
+	s=arc-20240116; t=1732019274; c=relaxed/simple;
+	bh=INatHOUfKUefHBuvKCNTGnOli5aAvlCIxFb8+jS7Eis=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JmDFEoJzFOLTusRVr85YQ1MuWmekge993053Af23qS7Mt7+wVRnfAHK/FepqiBF1U60Mo4bHoO9N3k4lxYh5GIC8Wl/JfQjfyqSyYNyn07ztBW4b7Dl7jkIHhJrqNYgHcXqyzN9fShTAGzQejTi0muB0Wu/Msv+vvgwEuKB/sz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=gGC3R1Bd; arc=none smtp.client-ip=37.18.73.165
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
+Received: from p-infra-ksmg-sc-msk01.sberdevices.ru (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id 798DD100009;
+	Tue, 19 Nov 2024 15:27:41 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 798DD100009
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
+	s=mail; t=1732019261;
+	bh=jwM895vIW4kiPsereF3G+yaWIjMLRALxnRXpzW1bPRk=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
+	b=gGC3R1Bd+ogk9MQy+3Zesr6aTehvlJxa2+ebFjP6b8ndtRq4ijv7QMoRRET8SKiu4
+	 MZ3SZTZBVCGqQqyw+Daec3T1R6VqvLwvZOM3jUAs2rn/dKORkTUlE5xk22faVToitP
+	 2oZq3V4gVlFeyppEMrBkApF7EBsoPWHJvIFXWYN1qB651YeWJ7GfTXYPjz9Yqw1QwZ
+	 HTMjv3ZFN+9iUBTRUjoDhtkRR53AapaAxvXcwlGhEzGIhqvscLz/xYGqINokb13OOR
+	 O72F1j+TC3KW5Dd6j2bBjIPS58ZBmBQ7JxN3DnagfAB9QE7OUv5v2DbwQxd8YcMeJp
+	 oz0lHazQtSTAA==
+Received: from smtp.sberdevices.ru (p-i-exch-sc-m01.sberdevices.ru [172.16.192.107])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.sberdevices.ru (Postfix) with ESMTPS;
+	Tue, 19 Nov 2024 15:27:41 +0300 (MSK)
+From: Alexey Romanov <avromanov@salutedevices.com>
+To: <minchan@kernel.org>, <senozhatsky@chromium.org>, <axboe@kernel.dk>,
+	<terrelln@fb.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-block@vger.kernel.org>,
+	<kernel@salutedevices.com>, Alexey Romanov <avromanov@salutedevices.com>
+Subject: [PATCH v1 0/3] zram: introduce crypto-backend api
+Date: Tue, 19 Nov 2024 15:27:10 +0300
+Message-ID: <20241119122713.3294173-1-avromanov@salutedevices.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <A7017094-1A0C-42C8-BE9D-7352D2200ECC@fb.com>
-User-Agent: Mutt/1.4i
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Tue, 19 Nov 2024 06:27:08 -0600 (CST)
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: p-i-exch-a-m1.sberdevices.ru (172.24.196.116) To
+ p-i-exch-a-m1.sberdevices.ru (172.24.196.116)
+X-KSMG-Rule-ID: 10
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 189267 [Nov 19 2024]
+X-KSMG-AntiSpam-Version: 6.1.1.7
+X-KSMG-AntiSpam-Envelope-From: avromanov@salutedevices.com
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 41 0.3.41 623e98d5198769c015c72f45fabbb9f77bdb702b, {Tracking_from_domain_doesnt_match_to}, salutedevices.com:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2;smtp.sberdevices.ru:5.0.1,7.1.1, FromAlignment: s
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean
+X-KSMG-LinksScanning: Clean
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/11/19 08:41:00 #26886618
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-On Sun, Nov 17, 2024 at 10:59:18PM +0000, Song Liu wrote:
+Since we use custom backend implementation, we remove the ability
+for users to use algorithms from crypto backend. This breaks
+backward compatibility, user doesn't necessarily use one of the
+algorithms from "custom" backends defined in zram folder.
+For example, he can use some driver with hardware compression support.
 
-> Hi Christian, James and Jan, 
+This patchset adds an option that allows user to enable Crypto API
+backend support. Crypto API backend is also implemented in a separate
+file backend_crypto_api like the other custom backends.
 
-Good morning, I hope the day is starting well for everyone.
+Alexey Romanov (3):
+  zram: pass zcomp instead of zcomp_params to create_context method
+  zram: store crypto backends in list instead of array
+  zram: introduce crypto-api backend
 
-> > On Nov 14, 2024, at 1:49???PM, James Bottomley <James.Bottomley@HansenPartnership.com> wrote:
-> 
-> [...]
-> 
-> >> 
-> >> We can address this with something like following:
-> >> 
-> >> #ifdef CONFIG_SECURITY
-> >>         void                    *i_security;
-> >> #elif CONFIG_BPF_SYSCALL
-> >>         struct bpf_local_storage __rcu *i_bpf_storage;
-> >> #endif
-> >> 
-> >> This will help catch all misuse of the i_bpf_storage at compile
-> >> time, as i_bpf_storage doesn't exist with CONFIG_SECURITY=y. 
-> >> 
-> >> Does this make sense?
-> > 
-> > Got to say I'm with Casey here, this will generate horrible and failure
-> > prone code.
-> > 
-> > Since effectively you're making i_security always present anyway,
-> > simply do that and also pull the allocation code out of security.c in a
-> > way that it's always available?  That way you don't have to special
-> > case the code depending on whether CONFIG_SECURITY is defined. 
-> > Effectively this would give everyone a generic way to attach some
-> > memory area to an inode.  I know it's more complex than this because
-> > there are LSM hooks that run from security_inode_alloc() but if you can
-> > make it work generically, I'm sure everyone will benefit.
+ drivers/block/zram/Kconfig              |  10 ++
+ drivers/block/zram/Makefile             |   1 +
+ drivers/block/zram/backend_842.c        |  14 +-
+ drivers/block/zram/backend_842.h        |   2 +-
+ drivers/block/zram/backend_crypto_api.c | 117 +++++++++++++++
+ drivers/block/zram/backend_crypto_api.h |  10 ++
+ drivers/block/zram/backend_deflate.c    |  15 +-
+ drivers/block/zram/backend_deflate.h    |   2 +-
+ drivers/block/zram/backend_lz4.c        |  15 +-
+ drivers/block/zram/backend_lz4.h        |   2 +-
+ drivers/block/zram/backend_lz4hc.c      |  15 +-
+ drivers/block/zram/backend_lz4hc.h      |   2 +-
+ drivers/block/zram/backend_lzo.c        |  14 +-
+ drivers/block/zram/backend_lzo.h        |   2 +-
+ drivers/block/zram/backend_lzorle.c     |  14 +-
+ drivers/block/zram/backend_lzorle.h     |   2 +-
+ drivers/block/zram/backend_zstd.c       |  15 +-
+ drivers/block/zram/backend_zstd.h       |   2 +-
+ drivers/block/zram/zcomp.c              | 183 ++++++++++++++++++------
+ drivers/block/zram/zcomp.h              |  11 +-
+ drivers/block/zram/zram_drv.c           |   7 +
+ 21 files changed, 390 insertions(+), 65 deletions(-)
+ create mode 100644 drivers/block/zram/backend_crypto_api.c
+ create mode 100644 drivers/block/zram/backend_crypto_api.h
 
-> On a second thought, I think making i_security generic is not 
-> the right solution for "BPF inode storage in tracing use cases". 
-> 
-> This is because i_security serves a very specific use case: it 
-> points to a piece of memory whose size is calculated at system 
-> boot time. If some of the supported LSMs is not enabled by the 
-> lsm= kernel arg, the kernel will not allocate memory in 
-> i_security for them. The only way to change lsm= is to reboot 
-> the system. BPF LSM programs can be disabled at the boot time, 
-> which fits well in i_security. However, BPF tracing programs 
-> cannot be disabled at boot time (even we change the code to 
-> make it possible, we are not likely to disable BPF tracing). 
-> IOW, as long as CONFIG_BPF_SYSCALL is enabled, we expect some 
-> BPF tracing programs to load at some point of time, and these 
-> programs may use BPF inode storage. 
-> 
-> Therefore, with CONFIG_BPF_SYSCALL enabled, some extra memory 
-> always will be attached to i_security (maybe under a different 
-> name, say, i_generic) of every inode. In this case, we should 
-> really add i_bpf_storage directly to the inode, because another 
-> pointer jump via i_generic gives nothing but overhead. 
-> 
-> Does this make sense? Or did I misunderstand the suggestion?
+-- 
+2.34.1
 
-There is a colloquialism that seems relevant here: "Pick your poison".
-
-In the greater interests of the kernel, it seems that a generic
-mechanism for attaching per inode information is the only realistic
-path forward, unless Christian changes his position on expanding
-the size of struct inode.
-
-There are two pathways forward.
-
-1.) Attach a constant size 'blob' of storage to each inode.
-
-This is a similar approach to what the LSM uses where each blob is
-sized as follows:
-
-S = U * sizeof(void *)
-
-Where U is the number of sub-systems that have a desire to use inode
-specific storage.
-
-Each sub-system uses it's pointer slot to manage any additional
-storage that it desires to attach to the inode.
-
-This has the obvious advantage of O(1) cost complexity for any
-sub-system that wants to access its inode specific storage.
-
-The disadvantage, as you note, is that it wastes memory if a
-sub-system does not elect to attach per inode information, for example
-the tracing infrastructure.
-
-This disadvantage is parried by the fact that it reduces the size of
-the inode proper by 24 bytes (4 pointers down to 1) and allows future
-extensibility without colliding with the interests and desires of the
-VFS maintainers.
-
-2.) Implement key/value mapping for inode specific storage.
-
-The key would be a sub-system specific numeric value that returns a
-pointer the sub-system uses to manage its inode specific memory for a
-particular inode.
-
-A participating sub-system in turn uses its identifier to register an
-inode specific pointer for its sub-system.
-
-This strategy loses O(1) lookup complexity but reduces total memory
-consumption and only imposes memory costs for inodes when a sub-system
-desires to use inode specific storage.
-
-Approach 2 requires the introduction of generic infrastructure that
-allows an inode's key/value mappings to be located, presumably based
-on the inode's pointer value.  We could probably just resurrect the
-old IMA iint code for this purpose.
-
-In the end it comes down to a rather standard trade-off in this
-business, memory vs. execution cost.
-
-We would posit that option 2 is the only viable scheme if the design
-metric is overall good for the Linux kernel eco-system.
-
-> Thanks,
-> Song
-
-Have a good day.
-
-As always,
-Dr. Greg
-
-The Quixote Project - Flailing at the Travails of Cybersecurity
-              https://github.com/Quixote-Project
 
