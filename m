@@ -1,115 +1,78 @@
-Return-Path: <linux-kernel+bounces-414906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B01A39D2F1E
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 20:51:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2BA29D2F26
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 20:53:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76CC1282C28
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 19:51:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B86FF28147A
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 19:53:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D32A1D1E79;
-	Tue, 19 Nov 2024 19:51:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3575A1D362B;
+	Tue, 19 Nov 2024 19:52:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XcCYWmSa"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mWP0kQkt"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F38081CF2BD;
-	Tue, 19 Nov 2024 19:51:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BB5F1D1F43;
+	Tue, 19 Nov 2024 19:52:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732045882; cv=none; b=A0BGSHjG2/u7s142L4WtiZZaLvv+3mrnYp/cHwHkCbQ6LZSLzwVotWWt3M6EuQmioajv/uaDuZejnTfydfrLj6lhtc+8kP3tqXDoJcu85Jxrws4kqFL+1m3TmmygxZ+V4P4V3wMej0lx1cDQj6ZZCDRkoW88JOGEFbkQw5/KsS4=
+	t=1732045945; cv=none; b=HeYlzDrFyooUjqzsanGHTfB4+tKNnlx/T5wySmsn2viLNIkt1u7i4XUsjNo2k962qc+FFgemhf8Zch7SpKhdWa2zIsGdDfUxJnccxkQAHELTej4KI7PagaV0kVTAFeA1Bx7mHeX2hGHnRVrPJ9sOBF4sKxyeFXdRtL2eHek6XtI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732045882; c=relaxed/simple;
-	bh=CP7GeHYh1tm06iAkA9ey3zTxerSkSP4ApCcyvAC8PCk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=izXn2eRATkel1SfuGfRu559YeHkGwyrKqJyito7zojaO68xHu8oczuTZXAWDcS76fNmkOjZM2Hl1LBk9hgtt4bErOmhu78mlBR5s8pSvp6xRrTHMW7FdJbvcZGhzUw2Yc273/JOCDGG1aMtslZORUDQURpbe9bDQ+6JjnqlCt2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XcCYWmSa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2688DC4CECF;
-	Tue, 19 Nov 2024 19:51:20 +0000 (UTC)
+	s=arc-20240116; t=1732045945; c=relaxed/simple;
+	bh=rGzjCRtpoRm+G1b+kyTPMTcRYGjvsjghf4ej5AlYTGE=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=ftN19tnShmO3l6xG6gF4NAf6D4RNLqApkcCWJ4wpevEVrDNl/GAUxSJgL9l682CpPQs49F+AsAaMVTtAG7H+ZFU8ub2Yp2yKeZKRglH2jUwaTq8i+KFaD0/eQM8SYzwXPkytbqBuJe66UxldYKFWJjsjeUsK7mKL5Bg+ctyeWDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mWP0kQkt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7045AC4CECF;
+	Tue, 19 Nov 2024 19:52:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732045881;
-	bh=CP7GeHYh1tm06iAkA9ey3zTxerSkSP4ApCcyvAC8PCk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XcCYWmSadOhqVH+fZSKCtOfmAXfQq232RTsZcb3YU8hrHZVpj45QhItsNvAgsV+sH
-	 iSsHiljax6l9/qxDRjiqQrccusSekQHmZHVcErkWH22xMf+XawgjAzVJZ+JILdob2M
-	 URn8Lu1GubAYbSm6+oLv8/12JZHRCzXqynyPqNN2QjskM1h21PmJ4mCtR7In10yypA
-	 8CbIXqXPMlWeHEJ65MmTjuNt7dKU2lhY2TkdbhYNtBqe4QII4jV3QmUVdm0VPzv8vU
-	 LRMny11xvw0C8e5FzuAf2O83dqusy4c1UHA6VtUs/RKoyaxXd3NjOD4VOQMpdfG9RB
-	 zdkamKH8hontA==
-Date: Tue, 19 Nov 2024 20:51:17 +0100
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Liam Zuiderhoek <zuiderhoekl@gmail.com>
-Cc: wsa+renesas@sang-engineering.com, linux-i2c@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] i2c: i2c-core-smbus: fixed a whitespace style issue
-Message-ID: <jqidbstpdrn7k7w55rwkg6e243d7r373qfjvz2ujzstcr5oda5@v2vxvsithtb5>
-References: <2494788d943ed75741e6671e615f9e3c31cdc2ea.camel@gmail.com>
+	s=k20201202; t=1732045945;
+	bh=rGzjCRtpoRm+G1b+kyTPMTcRYGjvsjghf4ej5AlYTGE=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=mWP0kQkt+TjADK82P33TcIa7G9yKs52i8xrTi/yYHAjSvsl+7UIU+7PWR/eZpKgn2
+	 v7C9+UkzQ7BFlm+fqGb8XtzxL6266Kr6FT/hbbWT5xrNOtWlFAW1Gxyg+nGsUtW0Vv
+	 Wa11hBcCVFAUJOWxE9mf31G8buzAQk/+4pWzYy/CCzirJ8JHbdIdx39MgFX5obfdbm
+	 OwUlIyzvDYv/YM5INrs++MAvtZNR/88v3N3Q5TUCWKtLYraP0Gq29DsFfN5CTYKx3M
+	 OVGH6u9TcudfXbzouGKKOamt1FEa9QHwwRzZRhjV8v+oeuaeXvemahSh4R7wkiDLhy
+	 9wLdR/FUlfXGg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33FD43809A80;
+	Tue, 19 Nov 2024 19:52:38 +0000 (UTC)
+Subject: Re: [GIT PULL] Power management updates for v6.13-rc1
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <CAJZ5v0i90sb6CC=obDdmji-WeJnkwSp4Agd3UhGhuo+TVm4uXg@mail.gmail.com>
+References: <CAJZ5v0i90sb6CC=obDdmji-WeJnkwSp4Agd3UhGhuo+TVm4uXg@mail.gmail.com>
+X-PR-Tracked-List-Id: <linux-acpi.vger.kernel.org>
+X-PR-Tracked-Message-Id: <CAJZ5v0i90sb6CC=obDdmji-WeJnkwSp4Agd3UhGhuo+TVm4uXg@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git pm-6.13-rc1
+X-PR-Tracked-Commit-Id: c6e2a4c9eed5249c4158bc621882d44e94af3371
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: ad52c55e1d3a2e85e05e47b6d7056c662a9c0246
+Message-Id: <173204595692.668199.4524478832599875567.pr-tracker-bot@kernel.org>
+Date: Tue, 19 Nov 2024 19:52:36 +0000
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Linux PM <linux-pm@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2494788d943ed75741e6671e615f9e3c31cdc2ea.camel@gmail.com>
 
-Hi Liam,
+The pull request you sent on Mon, 18 Nov 2024 11:22:04 +0100:
 
-your patch is almost correct, just a few things need to be fixed.
+> git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git pm-6.13-rc1
 
-On Thu, Nov 14, 2024 at 05:50:06PM +0100, Liam Zuiderhoek wrote:
-> From 214adebf7cf37be941f208124fac9ea6bec0f1d2 Mon Sep 17 00:00:00 2001
-> From: Liam Zuiderhoek <zuiderhoekl@gmail.com>
-> Date: Tue, 22 Oct 2024 20:46:59 +0200
-> Subject: [PATCH] i2c: i2c-core-smbus: fixed a whitespace style issue
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/ad52c55e1d3a2e85e05e47b6d7056c662a9c0246
 
-Why the header file is in the commit log?
+Thank you!
 
-The title needs to be written in imperative form:
-
-  "Fix whitespace style issue"
-
-instead of
-
-  "fixed a whitespace..."
-
-> Fixing a coding style issue.
-
-We have plenty of space in the commit log and you can be more
-specific on the coding style you are fixing; e.g. "use tabs
-instead of white spaces for alignment".
-
-Please read Documentation/process/submitting-patches.rst.
-
-> Signed-off-by: Liam Zuiderhoek <zuiderhoekl@gmail.com>
-> ---
->  drivers/i2c/i2c-core-smbus.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/i2c/i2c-core-smbus.c b/drivers/i2c/i2c-core-smbus.c
-> index e3b96fc53b5c..6829def15933 100644
-> --- a/drivers/i2c/i2c-core-smbus.c
-> +++ b/drivers/i2c/i2c-core-smbus.c
-> @@ -122,7 +122,7 @@ EXPORT_SYMBOL(i2c_smbus_read_byte);
->  s32 i2c_smbus_write_byte(const struct i2c_client *client, u8 value)
->  {
->  	return i2c_smbus_xfer(client->adapter, client->addr, client->flags,
-> -	                      I2C_SMBUS_WRITE, value, I2C_SMBUS_BYTE, NULL);
-> +				I2C_SMBUS_WRITE, value, I2C_SMBUS_BYTE, NULL);
-
-Please align everything under the "(":
-
-	return i2c_smbus_xfer(client->adapter, client->addr, client->flags,
-			      I2C_SMBUS_WRITE, value, I2C_SMBUS_BYTE, NULL);
-
-That means, use as many tabs as you can, until you need to use
-spaces to align under the "(".
-
-Thanks,
-Andi
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
