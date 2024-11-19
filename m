@@ -1,124 +1,155 @@
-Return-Path: <linux-kernel+bounces-414349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D70FC9D26BE
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 14:21:26 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E01A9D26D4
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 14:28:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85AC91F2328C
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 13:21:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA7B6B2940F
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 13:19:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41A211CCB42;
-	Tue, 19 Nov 2024 13:21:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAFF31CCB37;
+	Tue, 19 Nov 2024 13:19:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="r30K5B7Q"
-Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="Yuo+S+AB"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F173E1514FB;
-	Tue, 19 Nov 2024 13:21:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFC2212B93;
+	Tue, 19 Nov 2024 13:19:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732022477; cv=none; b=qALgWK9F9EEKoWQoVtms4ODuzge+BA/LGPOSylqljEjLYi6Jv/Dd+J8h02hq8RtRmbF5jMOY4WjKQjq5GE3Kr5IS2DH5VmdMv/31Umzx7TVA7OS/R49GcwJew8oQK2cK1DcaRVvmpl3JIsBQwxEGX1XDYpEge7iHJofU8oXIpDQ=
+	t=1732022358; cv=none; b=XRFCrqUUtGJAqyvvs1vJ/gXDTTFxhZaJE2lrzaWFdneUs3X/qcV+LLMKCxtdYaVP5zUB8Oc/LffE8Li7TUTyTYTaAE3+EqMemBAdPWPLbdWuaRGog4xt3zz1v4rXbVU2ug7T8kZjIpOkCD8GA6zs2K/e+IJ6OwTDVH73ntYJCJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732022477; c=relaxed/simple;
-	bh=DWLhylf76f1GXIwwv4PC0rHW85ZamEL2nO9LSc8rYmc=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YVnWqMWb9MFNabayAjmpqOte7E1a72KI7+Vn+eCfFMlpVQEXBWokuTt9XUstjEfuRupPxBKef58j+txXcWhPB93GYX31O/SnhB83dhRBoTuu5fnlfoez5d//gFn+Ptiaw4UxLxrpdli7l61Xfq41zxAXyx/jm2icobLk6Ixw6LM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=r30K5B7Q; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AJD45DY028148;
-	Tue, 19 Nov 2024 14:21:00 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=selector1; bh=hIUID8xieOV5SK3rECKHKQ
-	CWffQtbOG8ZqTfYVraUjY=; b=r30K5B7QBbqWKOJ75bQublHGRF6DvENG6pUKWT
-	y7tP8+/s4f4Tl6a060p3Yw5tUQ6feEY7peIk5fGiTU43u0e6p35cH362MAUwTeSX
-	nUdxmu0B6ys+zt//xq1XokqgU+MS604NZx7ZUWk7nVnvHNXzovAdmmvGU9iSgYEo
-	CUlKPLWhEiVJn2ylEZ/Mg3vu98kxqvTdMGhfhB5l6ajaw24oLlJpzxbGxSLcjGCQ
-	+GGlJ2SVt9MHMnqWcdWSVrL+lF/WmLEbQ5Lt/EEn9UXQUdr0p+gALDOGF3cRpzeY
-	3kFrBBw4Cu99jAa9FD/lffQSVe4QHBwJaF4a4JyKGt/BnTVg==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 42y77n9x7b-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 19 Nov 2024 14:21:00 +0100 (CET)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id D7E8C40047;
-	Tue, 19 Nov 2024 14:20:08 +0100 (CET)
-Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 3E873270D6C;
-	Tue, 19 Nov 2024 14:19:43 +0100 (CET)
-Received: from localhost (10.48.86.243) by SHFDAG1NODE3.st.com (10.75.129.71)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Tue, 19 Nov
- 2024 14:19:42 +0100
-From: Patrick Delaunay <patrick.delaunay@foss.st.com>
-To: Alexandre TORGUE <alexandre.torgue@foss.st.com>,
-        Ulf Hansson
-	<ulf.hansson@linaro.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Daniel
- Lezcano <daniel.lezcano@linaro.org>
-CC: Patrick Delaunay <patrick.delaunay@foss.st.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>
-Subject: [PATCH] cpuidle: psci: Activate GENPD_FLAG_ACTIVE_WAKEUP with OSI
-Date: Tue, 19 Nov 2024 14:18:34 +0100
-Message-ID: <20241119141827.1.I6129b16ec6b558efc1707861db87e55bf7022f62@changeid>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1732022358; c=relaxed/simple;
+	bh=heC2W64u9lxX7hBxk0vAcv1W8KZWJh4QrGipH65lbFM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=csTE4VQ4wF42uBovE1YKbsLGaNbFKsOyjK7VJ3VEATqw4r8iqBgmXw9St3NCZAWAsPVwfbtALtsCp8eehChxKMh2nepSIaDu02doM2Sob2v0KT6OhDQIXX77Nkj+1szWCbqyKWgWTtz0tMzzYcvouAT3Eaca8YKO+FqrxwwxwjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=Yuo+S+AB; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=1KfrneJwcEYheNMfrfNjo9ZS+UmR5Cm/dBZt4GtnUto=; b=Yuo+S+ABzgWzxo66fZkvUu6o27
+	vfWE9FjKlYV+KJ8wcwM7CebRfvCMx7OARYV8OdeXQavI+GSleh17Vu3BiH1aJQDg9HYMutx4QxydA
+	x8YYT4e4um83vyek8UCkxqm0MKotYh/If+v/TadtBVchaqBqNjZ7F4UpO4iMdQ+itOG9kou99WkT5
+	8+Sudruhf7TBRjsVtyaqMYTn4OQWENzMYAAfVbGP+KKSgydLanki238hkjHHo7/0ZmNYhv9aC8Jht
+	Wy2vsk4WBAYk5DeDwse5jm5kepiHqpr1AGiOKAFjS9iRM1AkF7LnrZF7dmVix9kCeFKuLtXGss+Pa
+	XZsl+D4A==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:38246)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1tDO8B-0003a0-2D;
+	Tue, 19 Nov 2024 13:19:00 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1tDO89-00065G-0t;
+	Tue, 19 Nov 2024 13:18:57 +0000
+Date: Tue, 19 Nov 2024 13:18:57 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: "Gupta, Suraj" <Suraj.Gupta2@amd.com>
+Cc: Sean Anderson <sean.anderson@linux.dev>,
+	"andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	"edumazet@google.com" <edumazet@google.com>,
+	"kuba@kernel.org" <kuba@kernel.org>,
+	"pabeni@redhat.com" <pabeni@redhat.com>,
+	"Simek, Michal" <michal.simek@amd.com>,
+	"Pandey, Radhey Shyam" <radhey.shyam.pandey@amd.com>,
+	"horms@kernel.org" <horms@kernel.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"git (AMD-Xilinx)" <git@amd.com>,
+	"Katakam, Harini" <harini.katakam@amd.com>
+Subject: Re: [PATCH net-next 2/2] net: axienet: Add support for AXI 2.5G MAC
+Message-ID: <ZzyQQV4qM_fTrpMf@shell.armlinux.org.uk>
+References: <20241118081822.19383-1-suraj.gupta2@amd.com>
+ <20241118081822.19383-3-suraj.gupta2@amd.com>
+ <ZztjvkxbCiLER-PJ@shell.armlinux.org.uk>
+ <657764fd-68a1-4826-b832-3bda91a0c13b@linux.dev>
+ <Zztml-Te38P3M7cM@shell.armlinux.org.uk>
+ <BL3PR12MB65716077E66F2141CC618DD9C9202@BL3PR12MB6571.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE3.st.com
- (10.75.129.71)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <BL3PR12MB65716077E66F2141CC618DD9C9202@BL3PR12MB6571.namprd12.prod.outlook.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Set GENPD_FLAG_ACTIVE_WAKEUP flag for domain psci cpuidle when OSI
-is activated, then when a device is set as the wake-up source using
-device_set_wakeup_path, the PSCI power domain could be retained to allow
-so that the associated device can wake up the system.
+On Tue, Nov 19, 2024 at 10:28:48AM +0000, Gupta, Suraj wrote:
+> > -----Original Message-----
+> > From: Russell King <linux@armlinux.org.uk>
+> > 
+> > On Mon, Nov 18, 2024 at 11:00:22AM -0500, Sean Anderson wrote:
+> > > On 11/18/24 10:56, Russell King (Oracle) wrote:
+> > > > On Mon, Nov 18, 2024 at 01:48:22PM +0530, Suraj Gupta wrote:
+> > > >> Add AXI 2.5G MAC support, which is an incremental speed upgrade of
+> > > >> AXI 1G MAC and supports 2.5G speed only. "max-speed" DT property is
+> > > >> used in driver to distinguish 1G and 2.5G MACs of AXI 1G/2.5G IP.
+> > > >> If max-speed property is missing, 1G is assumed to support backward
+> > > >> compatibility.
+> > > >>
+> > > >> Co-developed-by: Harini Katakam <harini.katakam@amd.com>
+> > > >> Signed-off-by: Harini Katakam <harini.katakam@amd.com>
+> > > >> Signed-off-by: Suraj Gupta <suraj.gupta2@amd.com>
+> > > >> ---
+> > > >
+> > > > ...
+> > > >
+> > > >> -  lp->phylink_config.mac_capabilities = MAC_SYM_PAUSE |
+> > MAC_ASYM_PAUSE |
+> > > >> -          MAC_10FD | MAC_100FD | MAC_1000FD;
+> > > >> +  lp->phylink_config.mac_capabilities = MAC_SYM_PAUSE |
+> > > >> + MAC_ASYM_PAUSE;
+> > > >> +
+> > > >> +  /* Set MAC capabilities based on MAC type */  if (lp->max_speed
+> > > >> + == SPEED_1000)
+> > > >> +          lp->phylink_config.mac_capabilities |= MAC_10FD |
+> > > >> + MAC_100FD | MAC_1000FD;  else
+> > > >> +          lp->phylink_config.mac_capabilities |= MAC_2500FD;
+> > > >
+> > > > The MAC can only operate at (10M, 100M, 1G) _or_ 2.5G ?
+> > >
+> > > It's a PCS limitation. It either does (1000Base-X and/or SGMII) OR
+> > > (2500Base-X). The MAC itself doesn't have this limitation AFAIK.
+> > 
+> > That means the patch is definitely wrong, and the proposed DT change is also
+> > wrong.
+> > 
+> > If it's a limitation of the PCS, that limitation should be applied via the PCS's
+> > .pcs_validate() method, not at the MAC level.
+> > 
+> As mentioned in IP PG (https://docs.amd.com/r/en-US/pg051-tri-mode-eth-mac/Ethernet-Overview#:~:text=Typical%20Ethernet%20Architecture-,MAC,-For%2010/100), it's limitation in MAC also.
 
-With this flag, for S2IDLE system-wide suspend, the wake-up path is
-managed in each device driver and is tested in the power framework:
-a PSCI domain is only turned off when GENPD_FLAG_ACTIVE_WAKEUP is enabled
-and the associated device is not in the wake-up path, so PSCI CPUIdle
-selects the lowest level in the PSCI topology according to the wake-up
-path.
+I'm not reading it as a limitation of the MAC.
 
-This patch is a preliminary step to support PSCI OSI on the STM32MP25
-platform with the D1 domain (power-domain-cluster) for the A35 cortex
-cluster and for the associated peripherals including EXTI1 which manages
-the wake-up interrupts for domain D1.
+The limitation stated there is that internal mode (GMII) is only
+supported for 2.5Gbps speeds. At 2.5Gbps speeds, the clock rate is
+increased from 125MHz to 312.5MHz (which makes it non-compliant
+with 802.3-2008, because that version doesn't define 2.5Gbps speeds.)
 
-Signed-off-by: Patrick Delaunay <patrick.delaunay@foss.st.com>
----
+So long as the clock rate and interface can be safely switched, I
+don't see any reason to restrict the MAC itself to be either
+10/100/1G _or_ 2.5G.
 
- drivers/cpuidle/cpuidle-psci-domain.c | 1 +
- 1 file changed, 1 insertion(+)
+Note that 2.5G will only become available if it is supported by one
+of the supported interface modes (e.g. 2500base-X). If the supported
+interface modes do not include a mode that supports >1G, then 2.5G
+won't be available even if MAC_2500FD is set in mac_capabilities.
 
-diff --git a/drivers/cpuidle/cpuidle-psci-domain.c b/drivers/cpuidle/cpuidle-psci-domain.c
-index 146f97068022..5fb5228f6bf1 100644
---- a/drivers/cpuidle/cpuidle-psci-domain.c
-+++ b/drivers/cpuidle/cpuidle-psci-domain.c
-@@ -72,6 +72,7 @@ static int psci_pd_init(struct device_node *np, bool use_osi)
- 	 */
- 	if (use_osi) {
- 		pd->power_off = psci_pd_power_off;
-+		pd->flags |= GENPD_FLAG_ACTIVE_WAKEUP;
- 		if (IS_ENABLED(CONFIG_PREEMPT_RT))
- 			pd->flags |= GENPD_FLAG_RPM_ALWAYS_ON;
- 	} else {
 -- 
-2.25.1
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
