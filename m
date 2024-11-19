@@ -1,402 +1,243 @@
-Return-Path: <linux-kernel+bounces-413947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F9729D20DB
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 08:39:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A3399D20DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 08:40:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FA2C282BCE
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 07:39:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A677281F65
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 07:40:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9C7D15746B;
-	Tue, 19 Nov 2024 07:39:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79185156661;
+	Tue, 19 Nov 2024 07:40:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="joyTkuoP"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b="hJVkJePI"
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2060.outbound.protection.outlook.com [40.107.22.60])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBAD614A619
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 07:39:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732001966; cv=none; b=lJKL2aVUr+Pso6JPsI6kLjO7rl9Auh8wBgE4f5rrZcZBVlADUGQuvrhf6D+aupnR/LjcfpoC9Beb2ygx6Kx++EWvpF3ywSBMHH0F60kNS+Sp85t6TvLu3eOXDWuYABUXw1lPNTKnRu34yY0GxIO3KVCrytTFIKerRKWFrNCKvjQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732001966; c=relaxed/simple;
-	bh=1SBkHeUckINUsh1o5SJZ1ffsQfjtudbps0hw16i4xrI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XTaFi1Mu0XOqPg+G6YNkNasK714RyIu36VDmQhg95k2s1HgQM/KiIKf9BOS4f8d3Hhau9I7hD2jThghB44Kdwic/+r6GhJZ4A3wuWvPTEkQk3Hxcw1ySJUiF9mUCjfZvik1JEuD37TDNKKUajlFfW/A8Kao0ZuoCKP1Mxd7+FDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=joyTkuoP; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5cfcb7183deso2877097a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 23:39:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1732001963; x=1732606763; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Gc03VgYQIOfXdNIZNxM20U/iHVBib0CYjcHbGag74lQ=;
-        b=joyTkuoPE0dDBpZbZpZpGno227VErRXDhH5a/wtD8R8GjVWFNliq8XQMZ2pUY3i6WG
-         1yDx4d73f6o6a7biXPy0AhSxkBPAjWVY2I7ktvaFQj4Qn2CX8nMtMCr3BQCkPUgJzUPF
-         m0oWRBvWQqnWvwgPaZydduVh+GvfYsGNx09Ks=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732001963; x=1732606763;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Gc03VgYQIOfXdNIZNxM20U/iHVBib0CYjcHbGag74lQ=;
-        b=HezDoQdPm2Xolrj8ATWb+e+CDQO52yELkSXBv1SIX2qa9iiRj3/I0l96f8aVHCYzLA
-         dCDu+OdEF57mJVpBhYDOhAclfTMhtGQUULEDzdtkM5j3ytrItTt9VfFrY1MUeZS/FYBW
-         XpDI2XMFwrvjTOJolN0IDVGxAhLC6UjzFvvtvltpxVc1qZnB3DGhPUUjI/+x0PldPFXD
-         r9OV2nTj/u8rrWfv9NOmBCgyIJGgWOpMnBCFJBdJklyaGlbgoInSOtxIZA2as16wjaKn
-         DNtMUcZRbf5eBCg+PtFbDkDAsjdKjyHqVkgStF39N3YGwerbC+zmezOJ8aj+q6hfv98b
-         0YUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXubxczT6J6ZEZ1HtQE8eOOJeMuB/+63uRoRHlb68IFLdIhf96BdTg5oN5QifIuQwWNb6byR+oQxN0+i/M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxw0FfGMz9mWxhipm+uaqCkP6QWT0YXMRDJTBH5nZLkBxlLJbVk
-	p6Tpj2ane5AcgosY0FeOntJPbkNTVNRGzCs56s086Y6Pxh9zr4U9kLTEKdLb0T4D+tPJ8oXlF+I
-	jHg==
-X-Google-Smtp-Source: AGHT+IHj8hFIZ5dpoB8f0pnX5y0oJ0XhbRthN95OhhZIpJSbEzmwxe1GXIyITmVb/BLnb9FJZqb1xw==
-X-Received: by 2002:a17:907:7b86:b0:a9a:130e:11fd with SMTP id a640c23a62f3a-aa4c7deaad0mr203174066b.5.1732001963067;
-        Mon, 18 Nov 2024 23:39:23 -0800 (PST)
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com. [209.85.208.44])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20df26a40sm616975266b.4.2024.11.18.23.39.21
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Nov 2024 23:39:22 -0800 (PST)
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5cfc264b8b6so6625a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 23:39:21 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCX2Dl3X5Q21sZh7ufqceeEtYURLSbpv17slPAn8te/bxvvdM7Acn6LlEzpsP7O/0FyugDSk8XfVKOauXT4=@vger.kernel.org
-X-Received: by 2002:a50:eb07:0:b0:5cf:c33b:c1eb with SMTP id
- 4fb4d7f45d1cf-5cfe19be25bmr29406a12.3.1732001961040; Mon, 18 Nov 2024
- 23:39:21 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EE991482F3
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 07:40:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.60
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732002037; cv=fail; b=ktHITcbCb5kGhSURSgZeHfhkkAkiuXQDeykziCbWOFmgiV2ScjOuW9TJPSWw5jGIvRwbKdkzDCvI2shT4UcMKlVYsBJO6zRVr4o4kbYyJAzrrS8GuVmaf3EF5EQkDHKBfJ24+xmeJpU35X2KNheKQ7V+z2xu/hixRvPRTErpkQ0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732002037; c=relaxed/simple;
+	bh=YuYeuKET8loUAa1fpI46q383VfiY+R5sdVjDcbBGfBg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=FC9/eiDJjsWNCAM4Urntk1cT1Nd8qa1s0XTHUm7IvChz+YgS01IrM98sjOOhxwk2h0sNb6ye1tF7J3vYE21mPP1QgzqnlpCo6XUCWkCkfdBDpKJZY711Cj9AXshvpDl4JvmVpHTk9+Ta5QBR7tPpXCfxrv9d5KHYvufqZWaZ3OQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com; spf=pass smtp.mailfrom=axis.com; dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b=hJVkJePI; arc=fail smtp.client-ip=40.107.22.60
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=axis.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=YT9vES0bJnWBdcOfK+uvvNBFYVDFF6n06Os2jd7wtwvUSV2/HCv4FTCMPHHuibnOJB2uB8TFffmEnL7vyACGvPgtLkj9SYsZfBDjQWjMHqgm0AHpe1fMEoLMNUhCE5Z7EWTgrfOX4TY7cCtMds4PqDcTCJPd5bsE1YBURwpSO+rik/hr1EC2TYGZHwBsPxxm5G2OsYGkoHSHW2knnL9RxZulVNe9NSbzJVK9lqkmK4Yj1tFd2yFJavPDMKcAL9tnAd0+/JcJFvcPor0y5yvYA86iaLwpMzjETSbCjdx5Jg9CAcSOEQJ+Vdk+JV2HTBcCKJAxoeJZ8WiNtCAa/zD7Xw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=oJmB8fg/OjYnIRr/FDUQr2RcQ0nrrTgSYbPBkPsf328=;
+ b=Pl+d+O7fXNudYWsd5Q3dg3lubJkthXL+bn+oBnSrKVKEzzqw696QCJbXt0fZWishuW1S+pm/yip8N/o/5JvF7yoUakdeSN84iM4weszIkgRMslFtJGpsQQlYYzMAeeCsoOZ46lidah1wfbffhCtxQTVE8H7ybcVDQl92p4aVDWVMWukE6rCuMMfj2dHI5QLs3pVdZ2LXqKmkn5YA3pvD+TE0nYAts8yKtkeKVo2Im/NaNnTT+MwdPkIxUx3t3gZorS9mLRruZFpJ6lYATNfiLIBQUqR0Ld1Ns1rCz/HFr7n044fTzFSXIJ3KVbhZ51raL0wBWi0sC7DeaGaA279UtA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 195.60.68.100) smtp.rcpttodomain=bp.renesas.com smtp.mailfrom=axis.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=axis.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axis.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=oJmB8fg/OjYnIRr/FDUQr2RcQ0nrrTgSYbPBkPsf328=;
+ b=hJVkJePITEJNIyXEjh/XLOJSn/uYmShbMalsORYHc/sugQoXp5RS6aIFegm+8uOtmUzG8zYir1CXh9ByfdD1mYv9CimlVbzqrFzES9LJehHfBx34b6CBjM4g0BCW4jbnPUY618YVJgUvEJlZFKCzzWMreOUmOBHdRGfmA4YjMlE=
+Received: from AS9PR06CA0207.eurprd06.prod.outlook.com (2603:10a6:20b:45d::34)
+ by PAWPR02MB9054.eurprd02.prod.outlook.com (2603:10a6:102:337::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.14; Tue, 19 Nov
+ 2024 07:40:31 +0000
+Received: from AMS0EPF00000190.eurprd05.prod.outlook.com
+ (2603:10a6:20b:45d:cafe::c2) by AS9PR06CA0207.outlook.office365.com
+ (2603:10a6:20b:45d::34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.23 via Frontend
+ Transport; Tue, 19 Nov 2024 07:40:31 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 195.60.68.100)
+ smtp.mailfrom=axis.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=axis.com;
+Received-SPF: Pass (protection.outlook.com: domain of axis.com designates
+ 195.60.68.100 as permitted sender) receiver=protection.outlook.com;
+ client-ip=195.60.68.100; helo=mail.axis.com; pr=C
+Received: from mail.axis.com (195.60.68.100) by
+ AMS0EPF00000190.mail.protection.outlook.com (10.167.16.213) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8158.14 via Frontend Transport; Tue, 19 Nov 2024 07:40:30 +0000
+Received: from se-mail02w.axis.com (10.20.40.8) by se-mail02w.axis.com
+ (10.20.40.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 19 Nov
+ 2024 08:40:30 +0100
+Received: from se-intmail02x.se.axis.com (10.4.0.28) by se-mail02w.axis.com
+ (10.20.40.8) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Tue, 19 Nov 2024 08:40:30 +0100
+Received: from pc39391-2017.se.axis.com (pc39391-2017.se.axis.com [10.92.82.2])
+	by se-intmail02x.se.axis.com (Postfix) with ESMTP id 063B5881;
+	Tue, 19 Nov 2024 08:40:30 +0100 (CET)
+Received: by pc39391-2017.se.axis.com (Postfix, from userid 10612)
+	id 003AE4462505; Tue, 19 Nov 2024 08:40:29 +0100 (CET)
+From: Stefan Ekenberg <stefan.ekenberg@axis.com>
+Date: Tue, 19 Nov 2024 08:40:29 +0100
+Subject: [PATCH v4] drm/bridge: adv7511_audio: Update Audio InfoFrame
+ properly
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241025-auxadc_thermal-v14-1-96ab5b60c02e@chromium.org> <5dd2d2a3-6eff-45fb-8af8-593945235dd3@linaro.org>
-In-Reply-To: <5dd2d2a3-6eff-45fb-8af8-593945235dd3@linaro.org>
-From: Hsin-Te Yuan <yuanhsinte@chromium.org>
-Date: Tue, 19 Nov 2024 15:38:44 +0800
-X-Gmail-Original-Message-ID: <CAHc4DNKSsrdSjqunhk+oyWw_+oKY9BgzPcqag5QrmLJqjVsE1Q@mail.gmail.com>
-Message-ID: <CAHc4DNKSsrdSjqunhk+oyWw_+oKY9BgzPcqag5QrmLJqjVsE1Q@mail.gmail.com>
-Subject: Re: [PATCH v14] thermal/drivers/mediatek/auxadc_thermal: expose all
- thermal sensors
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Hsin-Te Yuan <yuanhsinte@chromium.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org, James Lo <james.lo@mediatek.com>, 
-	Michael Kao <michael.kao@mediatek.com>, Hsin-Yi Wang <hsinyi@chromium.org>, 
-	Ben Tseng <ben.tseng@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20241119-adv7511-audio-info-frame-v4-1-4ae68e76c89c@axis.com>
+X-B4-Tracking: v=1; b=H4sIAOxAPGcC/33PSw6CMBCA4auQrq1h+gDqynsYF4W2MgupabXBE
+ O5uIS6IiSz/SeabzESiDWgjORUTCTZhRD/kEIeCdL0ebpaiyU1YyQRA2VBtUi0BqH4Z9BQH56k
+ L+m6pFBUIY0TrZE3y+iNYh+NKX665e4xPH97rpQTL9IsC/48moECFannVtEpJLc96xHjs/J0sZ
+ mJbR+44LDudFrXi1nGt4MfhW2fnycSzw8EaoxSHRlYbZ57nD8CIjXtPAQAA
+X-Change-ID: 20241108-adv7511-audio-info-frame-54614dd4bf57
+To: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
+	<neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent Pinchart
+	<Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, "Jernej
+ Skrabec" <jernej.skrabec@gmail.com>, Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>
+CC: <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+	<kernel@axis.com>, Biju Das <biju.das.jz@bp.renesas.com>, Stefan Ekenberg
+	<stefan.ekenberg@axis.com>
+X-Mailer: b4 0.14.2
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AMS0EPF00000190:EE_|PAWPR02MB9054:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1f5950d8-dc67-41ab-e8b0-08dd086d71ad
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|1800799024|82310400026|36860700013|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?a01IdkpvYTBsWW50R1dabzg3M0NmVTN1M2s3c29EbG9JOHpZRnFBU1pydnVH?=
+ =?utf-8?B?QkFySU5xV2U5UEYwNEl1bU9YZTBrOXBFYmRaVmIzWmNPNlFBNjllNnFTRGli?=
+ =?utf-8?B?NkExcTlJT2s0SGlRMnRwQkxUdzNGQTRiWjMxcm9DaU0zWE9YOHl3Mm9GWWJk?=
+ =?utf-8?B?NW0rcWRCQXFwenYrWFJ0bWdHWXFoMzc3bnNFTmtwTXNqY1Z0RHl5NWJ4RW1V?=
+ =?utf-8?B?Mm5JclEwYUF2S1JGSjBQb2JGS1BaeHdYRzhWUnFFOXZSTG9CdG4wNU1nak5a?=
+ =?utf-8?B?OTZySUFyMTB5WWdteTFlbnB5N3lBaVF5d2FFUHVLOThHSzFCaWM5Y0RaODV4?=
+ =?utf-8?B?Q3Urc0xKNlBqdFN6Q2owRFZKV09XYktsTEtLWFBMdFdMNXFWK2pxbVMwdStv?=
+ =?utf-8?B?Q00rRVBGZzRqU29pWEx6SXc1M29CK2R5ZkorZ0RrT25sSEhKUmw5UWo1MTIr?=
+ =?utf-8?B?QmVyckhnbGE4UlV0aTVGS1VmeTVkbFhjT3VmUFM4UWpTaEFhSWw1Ym5GQzA2?=
+ =?utf-8?B?T2QybmYzQ0R6bjhCZnV1ME5wTzZqSWV0VG5EZlV6SGNhR2V2UDFUTm5kdmFu?=
+ =?utf-8?B?cldVeHNWMVJFdnRTZHVPKzc4VGRWYldtRmZFMmtucGFERWNPNXpDekdQN0J4?=
+ =?utf-8?B?VTFaMGZIczZKOEhvVk9hVGlpbVRZdzRHVlVMTGJ0T3VlK3RMOHBVZTB4cnR4?=
+ =?utf-8?B?eVA1emhJMTBPMHZzZmZMV1R3VkFBQ1JxcmI3K3lrTzVHNldNVnJUYWw5YkU1?=
+ =?utf-8?B?Sjd4VytSWDRIeXUvZFhXamJRVHRiQ2x0eTdWcXFmd0dXQjZFMzdydmRtbzI0?=
+ =?utf-8?B?aFVNSjFSbFNRbkYvTEIvR0pTVFltOHhjd2ZNVTFsdlB0MG9JOFl4elY5c3lL?=
+ =?utf-8?B?ZGRNM3RDY1hDUHdsT2ZDNXNjUkNWQkIvVHVBUmZEMlpQSHNIV2lmMXh2VEVR?=
+ =?utf-8?B?V2ZnMHdFTUxsSHc0UHNvK29IdjdFTncxNnA0a0M3Z0REYStVTS9rRWp2OUt5?=
+ =?utf-8?B?eVIxbmZKS3RuNEhjL1Y4cS9BQWJoTk91cFB0VFEzbjZRMDM4SHNZNGlvZEFt?=
+ =?utf-8?B?cVNzL29YYXhHbnBOdUFmOEkrTDhSVTVRMXdIbUxkK0dpQURkaElBWVh4bWZ6?=
+ =?utf-8?B?ZFlQZ1c2V1lKTngvcjg5TFUza2NudUxJUzkvc1ZxaWhveU9OTVAxNHYxaUxr?=
+ =?utf-8?B?TkxQZTRGalBqTjJ4Vjl3MjVscHdjS1BsSkltTkNya1FkbXhFc2JFVTJXT3cv?=
+ =?utf-8?B?eG5xSWRtRHJoTjFrNVZ2aU8wdUlSdkw3NjRrM1FqRFdYaU56S0VIQ2NVLzlJ?=
+ =?utf-8?B?TXY2R2drTVIxdm1oMExJRDkwRmdKTXdCUGl0bjVrNXM1TnIyTXdXaWV3QTVl?=
+ =?utf-8?B?MDBYWENkODcwNy9KQXorUndyMDA1b0Z3ejRPVUJTNEU2SVBVUG1rYmQzdHQ5?=
+ =?utf-8?B?Skdkbi9LZiswb0hFR3VkVXZxZ2xNaitMNzdDRFZQOVZTT1NnR1piNlpWekpG?=
+ =?utf-8?B?Z2w3MmxHSkxRUFdDNHVIa1VEdm9ONG1yWXFFSWhScVV6eFlsZGYydllmYlNs?=
+ =?utf-8?B?TndOYS9CajFrbFFTWWRRbWUxY2xOenVFYlFxRnR6blc3eVFweDYraHdzcm1q?=
+ =?utf-8?B?WnRyRkZ3TmZ6aEF2Sy9tSmRhSFJmdWVJNzU2WHBwQkVscWRaYlp2Ym54aGlS?=
+ =?utf-8?B?bXZaNS9IbmZ4cDlXLzh5L1VPTFFZUU9iaEIycEc2R1JKWTF1bjhzbUd4MGpa?=
+ =?utf-8?B?UlNINjdzU0JjTHlkQ1Vyb2hMaVZJNkdyTUl2QXBOcVV2MDhBZDhBMW5zRE16?=
+ =?utf-8?B?RDI2Zi8ySHhRaFVjbDV2WmwrSllIdVNqMU05T3JNMzYxMlBENXBKRTRqcnpp?=
+ =?utf-8?B?dkkvQU15aE5EL2JuNVQxamRlUG1OWnROdlp3QkV1SHJkMSs3d2FmSjVGdVVL?=
+ =?utf-8?Q?rcFFJDRQYDU=3D?=
+X-Forefront-Antispam-Report:
+	CIP:195.60.68.100;CTRY:SE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.axis.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(82310400026)(36860700013)(921020);DIR:OUT;SFP:1101;
+X-OriginatorOrg: axis.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Nov 2024 07:40:30.7689
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1f5950d8-dc67-41ab-e8b0-08dd086d71ad
+X-MS-Exchange-CrossTenant-Id: 78703d3c-b907-432f-b066-88f7af9ca3af
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=78703d3c-b907-432f-b066-88f7af9ca3af;Ip=[195.60.68.100];Helo=[mail.axis.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	AMS0EPF00000190.eurprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAWPR02MB9054
 
-On Fri, Nov 15, 2024 at 12:48=E2=80=AFAM Daniel Lezcano
-<daniel.lezcano@linaro.org> wrote:
->
->
-> Hi,
->
-> On 25/10/2024 14:05, Hsin-Te Yuan wrote:
-> > From: James Lo <james.lo@mediatek.com>
-> >
-> > Previously, the driver only supported reading the temperature from all
-> > sensors and returning the maximum value. This update adds another
-> > get_temp ops to support reading the temperature from each sensor
-> > separately.
-> >
-> > Especially, some thermal zones registered by this patch are needed by
-> > MT8183 since those thermal zones are necessary for mtk-svs driver.
->
-> The DT for the mt8183 describes the sensor id =3D 0 as the CPU. On this,
-> there is a cooling device with trip points.
->
-> The driver registers the id=3D0 as an aggregator for the sensors which
-> overloads the CPU thermal zone above.
->
-> Why do you need to aggregate all the sensors to retrieve the max value ?
->
-> They are all contributing differently to the heat and they should be
-> tied with their proper cooling device.
->
-> I don't think the thermal configuration is correct and I suggest to fix
-> this aggregator by removing it.
->
->
->
- As far as I know the thermal design of Mediatek's board is based on
-the highest temperature of the whole board. Also, removing the
-aggregator will break all the boards using this driver.
-By the way, I heard that baylibre is working on multi-sensor
-aggregation support, which can be the alternative solution for the
-aggregator in this driver, but that should be another story and is
-unrelated to this patch.
+AUDIO_UPDATE bit (Bit 5 of MAIN register 0x4A) needs to be set to 1
+while updating Audio InfoFrame information and then set to 0 when done.
+Otherwise partially updated Audio InfoFrames could be sent out. Two
+cases where this rule were not followed are fixed:
+ - In adv7511_hdmi_hw_params() make sure AUDIO_UPDATE bit is updated
+   before/after setting ADV7511_REG_AUDIO_INFOFRAME.
+ - In audio_startup() use the correct register for clearing
+   AUDIO_UPDATE bit.
 
-> > Signed-off-by: Michael Kao <michael.kao@mediatek.com>
-> > Signed-off-by: Hsin-Yi Wang <hsinyi@chromium.org>
-> > Signed-off-by: Ben Tseng <ben.tseng@mediatek.com>
-> > Signed-off-by: James Lo <james.lo@mediatek.com>
-> > Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@coll=
-abora.com>
-> > Signed-off-by: Hsin-Te Yuan <yuanhsinte@chromium.org>
-> > ---
-> > Changes in v14:
-> > - Remove redundant error message.
-> > - Link to v13: https://lore.kernel.org/r/20241025-auxadc_thermal-v13-1-=
-a5231c52dccb@chromium.org
-> >
-> > Changes in v13:
-> > - Make subject and commit message more clear.
-> > - Make error message more clear.
-> > - Link to v12: https://lore.kernel.org/r/20241016-auxadc_thermal-v12-1-=
-c0433e9f61af@chromium.org
-> >
-> > Changes in v12:
-> > - Remove unnecessary check and unused variable assignment in mtk_read_s=
-ensor_temp.
-> > - Add more about what this patch achieves in the commit message.
-> > - Link to v11: https://lore.kernel.org/r/20240809-auxadc_thermal-v11-1-=
-af36cc74f3a3@chromium.org
-> >
-> > Changes in V11:
-> >      - Rebase on kernel v6.11-rc2
-> >      - Use mtk_thermal_temp_is_valid in mtk_read_sensor_temp just like
-> >        mtk_thermal_bank_temperature
-> >      - Change the error handling of devm_thermal_of_zone_register retur=
-n
-> >        value
-> >      - link to V10: https://lore.kernel.org/lkml/20220519101044.16765-1=
--james.lo@mediatek.com/
-> >
-> > Changes in V10:
-> >      - Rebase to kernel-v5.18-rc7
-> >      - Resend
-> >
-> > Changes in V9:
-> >      - Rebase to kernel-v5.14-rc1
-> >      - Bind raw_to_mcelsius_v1 or raw_to_mcelsius_v2 to compatible
-> >        data of struct mtk_thermal_data
-> >      - Remove duplicate struct 'mtk_thermal_bank'
-> >      - Remove unnecessary if condition check
-> >      - Return error if any thermal zone fail to register
-> >
-> > Changes in V8:
-> >      - Rebase to kernel-v5.13-rc1
-> >      - Resend
-> >
-> > Changes in v7:
-> >      - Fix build error in v6.
-> >
-> > Changes in v6:
-> >      - Rebase to kernel-5.11-rc1.
-> >      - [1/3]
-> >          - add interrupts property.
-> >      - [2/3]
-> >          - add the Tested-by in the commit message.
-> >      - [3/3]
-> >          - use the mt->conf->msr[id] instead of conf->msr[id] in the
-> >            _get_sensor_temp and mtk_thermal_bank_temperature.
-> >          - remove the redundant space in _get_sensor_temp and
-> >            mtk_read_sensor_temp.
-> >          - change kmalloc to dev_kmalloc in mtk_thermal_probe.
-> >
-> > Changes in v5:
-> >      - Rebase to kernel-5.9-rc1.
-> >      - Revise the title of cover letter.
-> >      - Drop "[v4,7/7] thermal: mediatek: use spinlock to protect PTPCOR=
-ESEL"
-> >      - [2/2]
-> >          -  Add the judgement to the version of raw_to_mcelsius.
-> >
-> > Changes in v4:
-> >      - Rebase to kernel-5.6-rc1.
-> >      - [1/7]
-> >          - Squash thermal zone settings in the dtsi from [v3,5/8]
-> >            arm64: dts: mt8183: Increase polling frequency for CPU therm=
-al zone.
-> >          - Remove the property of interrupts and mediatek,hw-reset-temp=
-.
-> >      - [2/7]
-> >          - Correct commit message.
-> >      - [4/7]
-> >          - Change the target temperature to the 80C and change the comm=
-it message.
-> >      - [6/7]
-> >          - Adjust newline alignment.
-> >          - Fix the judgement on the return value of registering thermal=
- zone.
-> >
-> > Changes in v3:
-> >      - Rebase to kernel-5.5-rc1.
-> >      - [1/8]
-> >          - Update sustainable power of cpu, tzts1~5 and tztsABB.
-> >      - [7/8]
-> >          - Bypass the failure that non cpu_thermal sensor is not find i=
-n thermal-zones
-> >            in dts, which is normal for mt8173, so prompt a warning here=
- instead of
-> >            failing.
-> >
-> >      Return -EAGAIN instead of -EACCESS on the first read of sensor tha=
-t
-> >          often are bogus values. This can avoid following warning on bo=
-ot:
-> >
-> >            thermal thermal_zone6: failed to read out thermal zone (-13)
-> >
-> > Changes in v2:
-> >      - [1/8]
-> >          - Add the sustainable-power,trips,cooling-maps to the tzts1~tz=
-tsABB.
-> >      - [4/8]
-> >          - Add the min opp of cpu throttle.
-> > ---
-> >
-> > ---
-> >   drivers/thermal/mediatek/auxadc_thermal.c | 70 ++++++++++++++++++++++=
-+++++----
-> >   1 file changed, 62 insertions(+), 8 deletions(-)
-> >
-> > diff --git a/drivers/thermal/mediatek/auxadc_thermal.c b/drivers/therma=
-l/mediatek/auxadc_thermal.c
-> > index 9ee2e7283435acfcbb1a956303b6122a08affecc..9a9079d559a3abe9e3823f7=
-44d4c9a159a8666bd 100644
-> > --- a/drivers/thermal/mediatek/auxadc_thermal.c
-> > +++ b/drivers/thermal/mediatek/auxadc_thermal.c
-> > @@ -847,7 +847,8 @@ static int mtk_thermal_bank_temperature(struct mtk_=
-thermal_bank *bank)
-> >
-> >   static int mtk_read_temp(struct thermal_zone_device *tz, int *tempera=
-ture)
-> >   {
-> > -     struct mtk_thermal *mt =3D thermal_zone_device_priv(tz);
-> > +     struct mtk_thermal_bank *bank =3D thermal_zone_device_priv(tz);
-> > +     struct mtk_thermal *mt =3D bank->mt;
-> >       int i;
-> >       int tempmax =3D INT_MIN;
-> >
-> > @@ -866,10 +867,41 @@ static int mtk_read_temp(struct thermal_zone_devi=
-ce *tz, int *temperature)
-> >       return 0;
-> >   }
-> >
-> > +static int mtk_read_sensor_temp(struct thermal_zone_device *tz, int *t=
-emperature)
-> > +{
-> > +     struct mtk_thermal_bank *bank =3D thermal_zone_device_priv(tz);
-> > +     struct mtk_thermal *mt =3D bank->mt;
-> > +     const struct mtk_thermal_data *conf =3D mt->conf;
-> > +     int id =3D bank->id - 1;
-> > +     int temp =3D INT_MIN;
-> > +     u32 raw;
-> > +
-> > +     raw =3D readl(mt->thermal_base + conf->msr[id]);
-> > +
-> > +     temp =3D mt->raw_to_mcelsius(mt, id, raw);
-> > +
-> > +     /*
-> > +      * The first read of a sensor often contains very high bogus
-> > +      * temperature value. Filter these out so that the system does
-> > +      * not immediately shut down.
-> > +      */
-> > +
-> > +     if (unlikely(!mtk_thermal_temp_is_valid(temp)))
-> > +             return -EAGAIN;
-> > +
-> > +     *temperature =3D temp;
-> > +
-> > +     return 0;
-> > +}
-> > +
-> >   static const struct thermal_zone_device_ops mtk_thermal_ops =3D {
-> >       .get_temp =3D mtk_read_temp,
-> >   };
-> >
-> > +static const struct thermal_zone_device_ops mtk_thermal_sensor_ops =3D=
- {
-> > +     .get_temp =3D mtk_read_sensor_temp,
-> > +};
-> > +
-> >   static void mtk_thermal_init_bank(struct mtk_thermal *mt, int num,
-> >                                 u32 apmixed_phys_base, u32 auxadc_phys_=
-base,
-> >                                 int ctrl_id)
-> > @@ -1199,6 +1231,7 @@ static int mtk_thermal_probe(struct platform_devi=
-ce *pdev)
-> >       u64 auxadc_phys_base, apmixed_phys_base;
-> >       struct thermal_zone_device *tzdev;
-> >       void __iomem *apmixed_base, *auxadc_base;
-> > +     struct mtk_thermal_bank *tz;
-> >
-> >       mt =3D devm_kzalloc(&pdev->dev, sizeof(*mt), GFP_KERNEL);
-> >       if (!mt)
-> > @@ -1285,14 +1318,35 @@ static int mtk_thermal_probe(struct platform_de=
-vice *pdev)
-> >                       mtk_thermal_init_bank(mt, i, apmixed_phys_base,
-> >                                             auxadc_phys_base, ctrl_id);
-> >
-> > -     tzdev =3D devm_thermal_of_zone_register(&pdev->dev, 0, mt,
-> > -                                           &mtk_thermal_ops);
-> > -     if (IS_ERR(tzdev))
-> > -             return PTR_ERR(tzdev);
-> > +     for (i =3D 0; i <=3D mt->conf->num_sensors; i++) {
-> > +             tz =3D devm_kmalloc(&pdev->dev, sizeof(*tz), GFP_KERNEL);
-> > +             if (!tz)
-> > +                     return -ENOMEM;
-> > +
-> > +             tz->mt =3D mt;
-> > +             tz->id =3D i;
-> > +
-> > +             tzdev =3D devm_thermal_of_zone_register(&pdev->dev, i,
-> > +                                                   tz, (i =3D=3D 0) ?
-> > +                                                   &mtk_thermal_ops
-> > +                                                   : &mtk_thermal_sens=
-or_ops);
-> > +
-> > +             if (IS_ERR(tzdev)) {
-> > +                     ret =3D PTR_ERR(tzdev);
-> > +                     if (ret =3D=3D -ENODEV) {
-> > +                             dev_warn(&pdev->dev,
-> > +                                      "Can't find thermal zone for sen=
-sor %d; sensor skipped.\n", i);
-> > +                             continue;
-> > +                     }
-> > +                     return dev_err_probe(&pdev->dev, ret,
-> > +                                          "Failed to register thermal =
-zone %d.\n", i);
-> > +             }
-> >
-> > -     ret =3D devm_thermal_add_hwmon_sysfs(&pdev->dev, tzdev);
-> > -     if (ret)
-> > -             dev_warn(&pdev->dev, "error in thermal_add_hwmon_sysfs");
-> > +             ret =3D devm_thermal_add_hwmon_sysfs(&pdev->dev, tzdev);
-> > +             if (ret)
-> > +                     dev_warn(&pdev->dev,
-> > +                              "Sensor %d: Error in thermal_add_hwmon_s=
-ysfs: %d\n", i, ret);
-> > +     }
-> >
-> >       return 0;
-> >   }
-> >
-> > ---
-> > base-commit: b589839414be04b2b37e4bf6f84af576c99faf64
-> > change-id: 20240809-auxadc_thermal-9be338ec8b1c
-> >
-> > Best regards,
->
->
-> --
-> <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for AR=
-M SoCs
->
-> Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-> <http://twitter.com/#!/linaroorg> Twitter |
-> <http://www.linaro.org/linaro-blog/> Blog
+The problem with corrupted audio infoframes were discovered by letting
+a HDMI logic analyser check the output of ADV7535.
+
+Note that this patchs replaces writing REG_GC(1) with
+REG_INFOFRAME_UPDATE. Bit 5 of REG_GC(1) is positioned within field
+GC_PP[3:0] and that field doesn't control audio infoframe and is read-
+only. My conclusion therefore was that the author if this code meant to
+clear bit 5 of REG_INFOFRAME_UPDATE from the very beginning.
+
+Tested-by: Biju Das <biju.das.jz@bp.renesas.com>
+Fixes: 53c515befe28 ("drm/bridge: adv7511: Add Audio support")
+Signed-off-by: Stefan Ekenberg <stefan.ekenberg@axis.com>
+---
+Changes in v4:
+- Add Tested-by tag
+- Link to v3: https://lore.kernel.org/r/20241118-adv7511-audio-info-frame-v3-1-31edd9931856@axis.com
+
+Changes in v3:
+- Extend commit message and explain replacement of REG_GC(1)
+- Link to v2: https://lore.kernel.org/r/20241115-adv7511-audio-info-frame-v2-1-ca4793ef3a91@axis.com
+
+Changes in v2:
+- Add Fixes tag
+- Link to v1: https://lore.kernel.org/r/20241113-adv7511-audio-info-frame-v1-1-49b368b995a5@axis.com
+---
+ drivers/gpu/drm/bridge/adv7511/adv7511_audio.c | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511_audio.c b/drivers/gpu/drm/bridge/adv7511/adv7511_audio.c
+index 61f4a38e7d2bf6905683cbc9e762b28ecc999d05..8f786592143b6c81e5a434768b51508d5e5f3c73 100644
+--- a/drivers/gpu/drm/bridge/adv7511/adv7511_audio.c
++++ b/drivers/gpu/drm/bridge/adv7511/adv7511_audio.c
+@@ -153,7 +153,16 @@ static int adv7511_hdmi_hw_params(struct device *dev, void *data,
+ 			   ADV7511_AUDIO_CFG3_LEN_MASK, len);
+ 	regmap_update_bits(adv7511->regmap, ADV7511_REG_I2C_FREQ_ID_CFG,
+ 			   ADV7511_I2C_FREQ_ID_CFG_RATE_MASK, rate << 4);
+-	regmap_write(adv7511->regmap, 0x73, 0x1);
++
++	/* send current Audio infoframe values while updating */
++	regmap_update_bits(adv7511->regmap, ADV7511_REG_INFOFRAME_UPDATE,
++			   BIT(5), BIT(5));
++
++	regmap_write(adv7511->regmap, ADV7511_REG_AUDIO_INFOFRAME(0), 0x1);
++
++	/* use Audio infoframe updated info */
++	regmap_update_bits(adv7511->regmap, ADV7511_REG_INFOFRAME_UPDATE,
++			   BIT(5), 0);
+ 
+ 	return 0;
+ }
+@@ -184,8 +193,9 @@ static int audio_startup(struct device *dev, void *data)
+ 	regmap_update_bits(adv7511->regmap, ADV7511_REG_GC(0),
+ 				BIT(7) | BIT(6), BIT(7));
+ 	/* use Audio infoframe updated info */
+-	regmap_update_bits(adv7511->regmap, ADV7511_REG_GC(1),
++	regmap_update_bits(adv7511->regmap, ADV7511_REG_INFOFRAME_UPDATE,
+ 				BIT(5), 0);
++
+ 	/* enable SPDIF receiver */
+ 	if (adv7511->audio_source == ADV7511_AUDIO_SOURCE_SPDIF)
+ 		regmap_update_bits(adv7511->regmap, ADV7511_REG_AUDIO_CONFIG,
+
+---
+base-commit: 59b723cd2adbac2a34fc8e12c74ae26ae45bf230
+change-id: 20241108-adv7511-audio-info-frame-54614dd4bf57
+
+Best regards,
+-- 
+Stefan Ekenberg <stefan.ekenberg@axis.com>
+
 
