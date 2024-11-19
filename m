@@ -1,175 +1,127 @@
-Return-Path: <linux-kernel+bounces-414465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F1839D2863
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 15:42:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48F209D286D
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 15:43:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08AAA1F22B3A
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 14:42:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E9EC28385D
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 14:43:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E8FE1CEAAF;
-	Tue, 19 Nov 2024 14:42:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 932FB1CEAC0;
+	Tue, 19 Nov 2024 14:43:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZPDAM1sq"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hGky+BBR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 956ED1CEAAD
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 14:42:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0E6C1CBE9C;
+	Tue, 19 Nov 2024 14:43:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732027363; cv=none; b=MDOknhdcBCIsgdiW2s5V5ktm3ah1quzUyWwQ0afRbEnwwUUNfoFS8ldNJNjjveLDMwm2abwLsQl8+78N5gxZi1nGrHfPi5fekvXPI7mJqYPQ5by9OYwPgpTV6vABGQ+RISShBjjDt/ZqNn0laItQHhgoUZ3yrtmUfkCex9+lA9k=
+	t=1732027413; cv=none; b=ioNJVKpDqV8nkRLftfwtWyN338Rzv75wwHeNDzxNRbRljYrerEJFPZF2xjHq4Sc2nU3fON0ZHVx/x15x6MG5Hk3WvBTG0oIV3C9JIcQC8wu/GQCl3uRy4pmkN1dM3mt+CHgkMr2qV3PmUFMQhd6/6t8RKWADdi7eIMmbgHTb0Ds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732027363; c=relaxed/simple;
-	bh=R1ajexPdvIphNIra9AbXXEdtkHIsL7C7g6E/2DMe70c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FLUA4yLT86kMiEW+TFr5XZpQHuND8xJwwo3AizjCMcqqHl+uN5Y26eYGeVJPHzP5RBVo6TxCTH34zbzBvkOyEKqLX9CskUbHc+0y9296oNta8a8Hi8jTiwuNkNp8+NwsmbocbHPXhIltmsLeQGe36gNVfOu4yq1yNtzPl359eww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZPDAM1sq; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-539e576d665so809405e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 06:42:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732027360; x=1732632160; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=SurX9BN/DC6DwAYMxE7Q/YA36Hgd/kBmE7ViWjyPVZI=;
-        b=ZPDAM1sqMNXQF9A57xk1j8DmXzgOKHe50RQA8z8svMZD1z/Fe74FTqsm/RDOoj8A3K
-         IJF6pTgm2ORmMMpWNFuAIXIpVJUjqDr8SrZL39wkku5MBkKzy/RYTCdECcI5niPaQMuT
-         oDAkCWSA2DP6hV4PeRCbj6qLdow/Lh9eeLM97CYaE4d5GZSr13SqpqTRAtRUolF+Cm3r
-         Hh1C07KHsajzwbnpwtmOZkWKQ21IUj69WqlnaKEIkuuzJEkj60FDlEAmbc6SWBZF7vx8
-         Koy/Thy8dKE5W9msT8N7pvcC/Jp0wLKaUYxBlMd7mkkno4uzDZU6ZdRc+5/elqZuw07k
-         kBEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732027360; x=1732632160;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SurX9BN/DC6DwAYMxE7Q/YA36Hgd/kBmE7ViWjyPVZI=;
-        b=RxzZSr++mAbjK7Br/pjBc8tdd+3f5i2lR8/Ifw2m9mfSu9dWjk2ABRkTuTEscQaZVX
-         i7qUxFQjqAlki8rhinCIHwWq+cXGaT2Wc06CUE9/3q7EIGTJbRN+UzVCFbVTcD4G89Kx
-         Fj+az2jdCucWd38q+TJ5khxh6gLjFo/gbM95BrPdnFwo/G5LVMbQDiwmFfzKRSD7soBz
-         AdnCpgkfrob7rnFMLCig9ec5h615UR4+ISpfNSZbmIgdbSyqW4zITEfx4sz7G+xUw/HX
-         jvBDccSvP78vLeCnVnekG/hUVYAhWK1qzCct9YPwR/td0bWpDdhwYikncKGY5JVL6ilc
-         NVlw==
-X-Forwarded-Encrypted: i=1; AJvYcCVOUsdnaUZy/4UpJNN5TnrAuJX4PirWU/6ynpFrY0lG8KbVJ+hL/XrLKkVuVQA34BxDEQ63mfqTD1jtIkg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxwh4T/LZB+S8DMn/SF7abaqYBn3eWuvwJmvavj+9DZwYY54CLW
-	TmkVVWkggLiotc5V6ENiIibBhCV67s2twlvcVkDnc1lYDili6uHThUIyh24o6d8=
-X-Google-Smtp-Source: AGHT+IH6JYGkb1+ne7m5ZidGIkGxvPbPnmcyh3tZvzx/YGyvq8DGZAWthS85I5lGqDqBX/Teybn7UA==
-X-Received: by 2002:a05:6512:3404:b0:535:4144:e682 with SMTP id 2adb3069b0e04-53dab3aedf3mr2250335e87.11.1732027359788;
-        Tue, 19 Nov 2024 06:42:39 -0800 (PST)
-Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53dbd46735bsm310929e87.161.2024.11.19.06.42.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 Nov 2024 06:42:38 -0800 (PST)
-Message-ID: <c6f08190-0358-4dcf-8c6c-3ff440f6efbc@linaro.org>
-Date: Tue, 19 Nov 2024 16:42:36 +0200
+	s=arc-20240116; t=1732027413; c=relaxed/simple;
+	bh=ZxvLKM0bNhMgDY9bHlRSPhBjrdjq5IG2dfXvn+jrPY0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P0tELwMyVyDp0uGHRYwIepTclcjM65QDAuqLCnr4/cnXnrN+U8HHi0pIwdkliUPhk1oso7CHQwOmMQF9db/N1j88oqbQwXERF8LDfOCxdptY+3WvFQi6eWTthQI7GW6VziB2f8xJz4hRRsTc3ook0x7cllRXiMvIcxpRp2IZ+/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hGky+BBR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C26DC4CECF;
+	Tue, 19 Nov 2024 14:43:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732027412;
+	bh=ZxvLKM0bNhMgDY9bHlRSPhBjrdjq5IG2dfXvn+jrPY0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hGky+BBRYQduW1jWNZzx5eiIKtSEdCIWdXGSH/PbDT90uDhpfoiqtxOUgbcUT5jgX
+	 4dvnen2vCoNHtBKgnLqw3dqdFSLF35E0skC+FmiqHhzTuGY4EU8kd7SSros5NuXaLV
+	 8ThyTDf7PdNG6jejM8QFVfo4JcDkwvOkCS6vIcQ4FTfW1PYlUkzrsUOpPqV7C8ALzV
+	 6sUWqYD3HFRERD3L6Dn5uPO2baIMU9uOZmiwtiyKaP5hgx2Zhr+hH9+/0jjaEfTExi
+	 ZY8HFIrn6GT2shUdWd5cujrUi8GiVb7wVWXWLh7Fy4AmiZQ9mI3yJvmntxhLXZm4aK
+	 IQrfAugTXs0fA==
+Date: Tue, 19 Nov 2024 15:43:29 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: Paul Kocialkowski <paulk@sys-base.io>
+Cc: linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
+	Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Samuel Holland <samuel@sholland.org>, Linus Walleij <linus.walleij@linaro.org>, 
+	Paul Kocialkowski <contact@paulk.fr>
+Subject: Re: [PATCH] pinctrl: sunxi: Use minimal debouncing period as default
+Message-ID: <20241119-prudent-jasmine-lizard-195cef@houat>
+References: <20241119140805.3345412-1-paulk@sys-base.io>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/6] arm64: dts: qcom: x1e80100: Add CCI definitions
-Content-Language: en-US
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Loic Poulain <loic.poulain@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Todor Tomov <todor.too@gmail.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Jagadeesh Kona <quic_jkona@quicinc.com>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20241119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v1-0-54075d75f654@linaro.org>
- <20241119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v1-5-54075d75f654@linaro.org>
-From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-In-Reply-To: <20241119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v1-5-54075d75f654@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="bbh5op4rp7zacygy"
+Content-Disposition: inline
+In-Reply-To: <20241119140805.3345412-1-paulk@sys-base.io>
 
-Hi Bryan,
 
-On 11/19/24 15:10, Bryan O'Donoghue wrote:
-> Add in 2 CCI busses. One bus has two CCI bus master pinouts:
-> cci_i2c_scl0 = gpio101
-> cci_i2c_sda0 = gpio102
-> cci_i2c_scl1 = gpio103
-> cci_i2c_sda1 = gpio104
-> 
-> A second bus has a single CCI bus master pinout:
-> cci_i2c_scl2 = gpio105
-> cci_i2c_sda2 = gpio106
-> 
-> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> ---
->   arch/arm64/boot/dts/qcom/x1e80100.dtsi | 162 +++++++++++++++++++++++++++++++++
->   1 file changed, 162 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> index 5119cf64b461eb517e9306869ad0ec1b2cae629e..c19754fdc7e0fa4f674ce19f813db77fe2615cf3 100644
-> --- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> @@ -4648,6 +4648,88 @@ usb_1_ss1_dwc3_ss: endpoint {
->   			};
->   		};
->   
-> +		cci0: cci@ac15000 {
-> +			compatible = "qcom,x1e80100-cci", "qcom,msm8996-cci";
-> +			reg = <0 0x0ac15000 0 0x1000>;
-> +
-> +			interrupts = <GIC_SPI 460 IRQ_TYPE_EDGE_RISING>;
-> +
-> +			clocks = <&camcc CAM_CC_CAMNOC_AXI_RT_CLK>,
-> +				 <&camcc CAM_CC_SLOW_AHB_CLK_SRC>,
-> +				 <&camcc CAM_CC_CPAS_AHB_CLK>,
-> +				 <&camcc CAM_CC_CCI_0_CLK>;
-> +			clock-names = "camnoc_axi",
-> +				      "slow_ahb_src",
-> +				      "cpas_ahb",
-> +				      "cci";
+--bbh5op4rp7zacygy
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] pinctrl: sunxi: Use minimal debouncing period as default
+MIME-Version: 1.0
 
-cpas_ahb clock is a child of slow_ahb_src clock, please follow the
-newly introduced scheme, and exclude slow_ahb_src clock from the list.
+On Tue, Nov 19, 2024 at 03:08:05PM +0100, Paul Kocialkowski wrote:
+> From: Paul Kocialkowski <contact@paulk.fr>
+>=20
+> The sunxi external interrupts (available from GPIO pins) come with a
+> built-in debouncing mechanism that cannot be disabled. It can be
+> configured to use either the low-frequency oscillator (32 KHz) or the
+> high-frequency oscillator (24 MHz), with a pre-scaler.
+>=20
+> The pinctrl code supports an input-debounce device-tree property to set
+> a specific debouncing period and choose which clock source is most
+> relevant. However the property is specified in microseconds, which is
+> longer than the minimal period achievable from the high-frequency
+> oscillator without a pre-scaler.
 
-> +
-> +			power-domains = <&camcc CAM_CC_TITAN_TOP_GDSC>;
-> +
-> +			pinctrl-0 = <&cci0_default>;
-> +			pinctrl-1 = <&cci0_sleep>;
-> +			pinctrl-names = "default", "sleep";
-> +
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			status = "disabled";
-> +
-> +			cci0_i2c0: i2c-bus@0 {
-> +				reg = <0>;
-> +				clock-frequency = <1000000>;
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +			};
-> +
-> +			cci0_i2c1: i2c-bus@1 {
-> +				reg = <1>;
-> +				clock-frequency = <1000000>;
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +			};
-> +		};
-> +
+That can be fixed by introducing a new property with a ns resolution.
 
---
-Best wishes,
-Vladimir
+> When the property is missing, the reset configuration is kept, which
+> selects the low-frequency oscillator without pre-scaling. This severely
+> limits the possible interrupt periods that can be detected.
+>=20
+> Instead of keeping this default, use the minimal debouncing period from
+> the high-frequency oscillator without a pre-scaler to allow the largest
+> possible range of interrupt periods.
+>=20
+> This issue was encountered with a peripheral that generates active-low
+> interrupts for 1 us. No interrupt was detected with the default setup,
+> while it is now correctly detected with this change.
+
+I don't think it's wise. If the debouncing is kept as is, the worst case
+scenario is the one you had: a device doesn't work, you change it,
+everything works.
+
+If we set it up as fast as it can however, then our risk becomes
+thousands of spurious interrupts, which is much more detrimental to the
+system.
+
+And that's without accounting the fact that devices might have relied on
+that default for years
+
+Maxime
+
+--bbh5op4rp7zacygy
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZzykEQAKCRAnX84Zoj2+
+diw8AXwPEvKvZSexckPVmceqVmzVwPo9YwJrS+DitvJ95ldcD40YdZHdCu5AjBao
+e+XhY+ABgOgEGGr/j6zPLo8Y5ot34kniaBX5Xx/Ej3W3uHV0gQDVY5V/mn8BbSIb
+t4BJ6wtFAg==
+=iQOi
+-----END PGP SIGNATURE-----
+
+--bbh5op4rp7zacygy--
 
