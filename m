@@ -1,97 +1,72 @@
-Return-Path: <linux-kernel+bounces-413802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD64D9D1EE7
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 04:40:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 019229D1EF1
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 04:45:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 547E81F225EE
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 03:40:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5F83282D71
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 03:45:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A450F1494C9;
-	Tue, 19 Nov 2024 03:40:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E547114A09E;
+	Tue, 19 Nov 2024 03:45:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FySXWtQp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z8aWcsya"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C11A2CAB;
-	Tue, 19 Nov 2024 03:40:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4992C145323;
+	Tue, 19 Nov 2024 03:45:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731987621; cv=none; b=tk1Or9Jned52k5YugLaoIzPeF+I5j0klZ616H/3wnTFyH4c9nG/XAGjEMu3UM/mLbcdcCeG5NPe7akqFSjAkdQA5Jv1fJjl5sznSu0UhHBLAXnzKfZk9nfOxL5aOceQrsLOrl5xHl1+VFZ8EUkuws43qqAcxuFadpCjvD4pbN0A=
+	t=1731987913; cv=none; b=rCvByBbaAWTFWg26ptSPT+cqqFfDHstvcjY/NEtaIFgFyIX2mbxZBfISdxLkFwFkPP+8M+AI1AcIzcv+OKzxIsO4/+AEf/R82zTeqVrY2YC6rt7peGgniMVyEYqAfz+VSqOzPwlbvL1KrKkyIVm8xqcngU+mHPBxniBn1LL1gug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731987621; c=relaxed/simple;
-	bh=OEFb97np7hNKq0LOocbLK5JMn71iIx0bCehdMjZatf8=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=T1NnJJFHT0JfEI9PjsIcH2NEk322IZJjdgwQnI8NSRMShpTrQfu/0cQu+5cXv/9looOiWaD4XCjFpdfNwOO152MyZsRm+4K9Iw9YmAH8Rg9+4h/TFmmOptl7s7allF8dEM7ZnbDWDFYx/SLdVLzTSMsrCF2FNdm2TUeT04VCtag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FySXWtQp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87533C4CECF;
-	Tue, 19 Nov 2024 03:40:19 +0000 (UTC)
+	s=arc-20240116; t=1731987913; c=relaxed/simple;
+	bh=epo/FYAMDYLSt91Jul3hPLkqf7hc8VIzQZIw1LsmfAA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hI0m4v04iPJvCLxoEYUZH46pgUriepOukxYd4y6JYOP+qM6dJGCC0ver0mfQVQB4Dbg/4dh2ExLc6Li1b2ItNWaTNJ9/st+ZQ6wXvUfk0oPajgfvpjgzFZkO9ePjbxKg0lKQK8VApq5eamNn3Y9NE4eEHtcrpEn4TUEwIzdE9gI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z8aWcsya; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6475AC4CECF;
+	Tue, 19 Nov 2024 03:45:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731987619;
-	bh=OEFb97np7hNKq0LOocbLK5JMn71iIx0bCehdMjZatf8=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=FySXWtQp6SiYNierl/oP+VqxsgWY0aOtaR9o7Jg+LQOjnH2hQyXu/f9TkRSMFrqNy
-	 p53P07eGZxLsGKdYnVATAfx/ngfFbIQV7a4MYqGwh8PWg6xjXCC4S1a/jvBNHUHvWs
-	 n+plb1sxXmLPQKtawTevd9J1e2Jk+1bO1Tz3XNjA6Ri8SSvY9XQ+f1Tg3q1YXobFru
-	 nRsUnmBFo+NbCsEKSsaKjqmdT3rAv6SjkFBlT2PhQcgHqeqF4B8FXW115IEjggPU6R
-	 +7keqy28XiSeT9qHJvR8seSq0U3ZXojiR5LVCCYha0FoDINolkmHY1K4I03Xg2h6ov
-	 98X/YDgm2T5fQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 341DE3809A80;
-	Tue, 19 Nov 2024 03:40:32 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1731987912;
+	bh=epo/FYAMDYLSt91Jul3hPLkqf7hc8VIzQZIw1LsmfAA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Z8aWcsyaZp0U9zZO+miuX+W+MFggnG2Jz1XSKZ7Ix8MsBlcJS42rXGyJIdlNc/bTx
+	 G1RYy1oUK/mpKdBT45vdFWJ5Exk53uySEB55+ADKFyWDf0Kcr8/Gsliyd5QKAq+17N
+	 F6pg0fgtlaMWgpW9GzrwSkijPN/sOpAFy570EPkMZshAcxGZHTz1kLjHLH0VE8DYp6
+	 yNKkhvxcLVwVjGHQ7wRcqAOf0JbwzkzqfoZR79UYAlym67kpXKtx94prQQF/3V2YH+
+	 cRQlW9uM7vad6jUtUR/viPtr5A+lpRijYJevE9fxORWe3toR4bFvROeizEsZRSdxcX
+	 kabA7/iIdAWiA==
+Date: Mon, 18 Nov 2024 19:45:11 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Rosen Penev <rosenp@gmail.com>
+Cc: netdev@vger.kernel.org, Andrew Lunn <andrew+netdev@lunn.ch>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
+ Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org (open list)
+Subject: Re: [PATCH net-next 0/5] net: fsl_pq_mdio: use devm
+Message-ID: <20241118194511.338d8422@kernel.org>
+In-Reply-To: <20241115204149.6887-1-rosenp@gmail.com>
+References: <20241115204149.6887-1-rosenp@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net 0/2] netpoll: Use RCU primitives for npinfo pointer
- access
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <173198763100.93658.15150293129668090015.git-patchwork-notify@kernel.org>
-Date: Tue, 19 Nov 2024 03:40:31 +0000
-References: <20241118-netpoll_rcu-v1-0-a1888dcb4a02@debian.org>
-In-Reply-To: <20241118-netpoll_rcu-v1-0-a1888dcb4a02@debian.org>
-To: Breno Leitao <leitao@debian.org>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, horms@kernel.org, herbert@gondor.apana.org.au,
- stephen@networkplumber.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, paulmck@kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello:
-
-This series was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Mon, 18 Nov 2024 03:15:16 -0800 you wrote:
-> The net_device->npinfo pointer is marked with __rcu, indicating it requires
-> proper RCU access primitives:
+On Fri, 15 Nov 2024 12:41:44 -0800 Rosen Penev wrote:
+> Various devm conversions to simplify probe and remove the remove
+> function.
 > 
->   struct net_device {
-> 	...
-> 	struct netpoll_info __rcu *npinfo;
-> 	...
->   };
-> 
-> [...]
+> Tested on WatchGuard T10, where devm_platform_get_and_ioremap_resource
+> was failing. Added a note why.
 
-Here is the summary with links:
-  - [net,1/2] netpoll: Use rcu_access_pointer() in __netpoll_setup
-    https://git.kernel.org/netdev/net/c/c69c5e10adb9
-  - [net,2/2] netpoll: Use rcu_access_pointer() in netpoll_poll_lock
-    https://git.kernel.org/netdev/net/c/a57d5a72f8de
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Hi Rosen, we're wrapping up our 6.13 material. We don't have enough
+time to review everything that's already posted so I'll mark all our
+outstanding patches as deferred. Please resend in 2 weeks.
 
