@@ -1,73 +1,57 @@
-Return-Path: <linux-kernel+bounces-414100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8698C9D2304
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 11:08:33 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F7209D2312
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 11:10:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BD20281A69
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 10:08:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 14F89B22CD6
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 10:10:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06B031C1F19;
-	Tue, 19 Nov 2024 10:08:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3E031C2DC8;
+	Tue, 19 Nov 2024 10:09:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q6ijbOvw"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="OkP1ImM9"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EA43198A35;
-	Tue, 19 Nov 2024 10:08:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732010903; cv=none; b=e8FsJLrvjWY5RQDq/+VVP5l8BMLjZ71K1aapATlESib52EzazPq1AeJmnuYZmS8edM9Xl0CWIBsdyuydDye12ZpAn4qjShigGdvMi4N4UwCxgWmyhgjejKX/xWihAvvOYSZnjGWbHA767PoOYAlEmBYt4FJxZjw648FEJmeLgt8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732010903; c=relaxed/simple;
-	bh=PogykseyHMpD1kL58yPFmqjdSWAipjFhH6mGQqJL3oE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VsdFf2xnivO+WEwzPyNx8D9f690MK4zchC42tSSXZJmv8hmdXAGqSSBlZ2yRvJ+4frFKMJdfMUWd6ir7xVMG/0Vdec6WPu/bED/XW03z6B95NtmLUhUQ6Fxw8gsk9fP4ha3WKgZY4MnD+672tJnPJpLKqrbGu9BmHl+OENJdQ1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q6ijbOvw; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-20c9978a221so6659115ad.1;
-        Tue, 19 Nov 2024 02:08:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732010901; x=1732615701; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cWTYfL2NcNvtJ7hT2DfleWj2jSJLFnsNcjBnW0uewCg=;
-        b=Q6ijbOvwxQCWC80FgHylOW2x1o89L+xFwnSgL5ILJUBUBcEzfBVB/NyJiPBK2lISOB
-         LopRQNAvMUoyAseaa7+wqkukv+mzuYTrnn1zM7f9JLO07Yub2oT37BiTp2+Ddwo+v/93
-         8oJhnAYgFfPRKEmqQPvnMtuBQb7QcyXp49zTnj3z4cumauhoqY4wfqtvcnU0c3OiWw8q
-         y9hr1c0Y+tQJuQ5Uw0r1rqpvcG5Sa26xt2COIjTgONnTb3U55QGbb6710/ask0ScNFas
-         TeTqrGff1IojIRS9EbaRMlAh2M9QKjrJGRSB55BjraL/ELEGzSamWr58vVGS1cPFJ/eN
-         Y0qw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732010901; x=1732615701;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cWTYfL2NcNvtJ7hT2DfleWj2jSJLFnsNcjBnW0uewCg=;
-        b=DZBa4JqhdW2nnRHnS8gYT8DdhjaypumLs+bhXB1r2Wq30o7Fq5LN0z/rO6FRNZ/F2j
-         FrdHXFWBwBiv3mwXyRwkepqwkK6FoqH+n14u4v5AQp+BEDcAgp8SNOYclnNvHyiMgFul
-         moSEO3AgW00IHMLAdiCDLWfMQqsLIeN6WWlBx2QR164bORhGgs1I5vQ5D0AQX6bnG9Ej
-         az54LzovFJVr36lMzh1hI0SdkIZfUteAnEtQ7XlEY2IXaLPAwcyYafAJOnUZhQio4JS7
-         fDcvFZ/Nm/6n3iPAEYcCxQt2x7d670AKOvIvS2csboASRqLQrCSWFtg0Tc63wxxM5kd7
-         cs3A==
-X-Forwarded-Encrypted: i=1; AJvYcCWiaEoERo2hbLOXgIzHHf1rxujkQ55sheyDlQglKILrZGKFN/Bt7lWx6SI76oXkTcfZupWBi8wbweoTLXK+@vger.kernel.org, AJvYcCWwO11Kf9XDXb2E8IBsmg8Cx9vO+kuyYS3ActfGcehuXfc/fUuvQDfaCzbTcY1MS+Cga8VrnqB9KT+g@vger.kernel.org, AJvYcCX+jYTenPlefrO4tIvmw78Nh3MAMpQpDkpecyY/mpT/IM94RHE4WwtCVbRAplLhcHiyiE/yCxw/@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHtnXj//aOAH9boB+0jaamn3SQaJWvfiFxBxpfcdVU1s+VxcM6
-	sHAGWF2CxeKYUcCc7GNCNx2+7hlO+Ra7HKojwpNYrlFsJW0JzH6j
-X-Google-Smtp-Source: AGHT+IEAjyQGdRHNm7PwkX2khYpceIhQ92EAPL/Ia7j4slTtR5ja4Ryry5i8z7VVQ8n6txgqIQJr+w==
-X-Received: by 2002:a17:903:1d1:b0:20c:9983:27ae with SMTP id d9443c01a7336-211d0ecdac7mr237798475ad.48.1732010900702;
-        Tue, 19 Nov 2024 02:08:20 -0800 (PST)
-Received: from [192.168.0.102] (60-250-196-139.hinet-ip.hinet.net. [60.250.196.139])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2120ac39585sm41966965ad.261.2024.11.19.02.08.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 Nov 2024 02:08:20 -0800 (PST)
-Message-ID: <191ebf4b-231d-4ebc-9ff2-4916ef718970@gmail.com>
-Date: Tue, 19 Nov 2024 18:08:14 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8295E1C1F07
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 10:09:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732010987; cv=pass; b=lvOWcpE764ZUqpWNx7OofZAxoB7eLeVoU8+9DWg9HkFo1fTmJbWgy/sO8YpleG900nVXryFlu7ecbr1O6X+BU+PpFs6OWftIL3vEa0yPnUvwjiuWim7rkJj3wYtTtUkuI5qx67pmtKu9Mze3EQ4kYu3tavMWIQgPdQRr4z0OvCc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732010987; c=relaxed/simple;
+	bh=9QksSgcUmyeQxxmt6p3IDH6bZxplk5QL+pClopM0Shc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=BvitV0Uh0BGAKZltfI/76MR93y3hszxNhssG4xXbPzWVTzUkUMeFeGdHbHH0Hqmx2KPFR8NlzNwddNcSRav321yRE7qjQuf+jRGc4S9EZZcvUO9tHwf9JvmdpP2sgJ3ED8jkk2xq1+xROQ1WwVkDHRSlchwL9TwJxbptdpBo2Ao=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=OkP1ImM9; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1732010967; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=OWJm+P8PpGSWkuVnY+dKdmOJr9QNXvLPig7omSmwHOAf2Zo28rBFbqGJSIg3VM2ZGGfOXtK3+r48G3u+vfXOMqmfgaCVEkPbu1HVoSkm2KQGM9+gL/rsxszwOW5YzZYIru4gDxXAfjDIV8GyComVqCRaogwapY1QdoFEQWqKdoQ=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1732010967; h=Content-Type:Content-Transfer-Encoding:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To:Cc; 
+	bh=6vObRq2E+RGALjKawt1r5dY6l6TVau1KQSOylOW2doo=; 
+	b=WrCu9YOEuavHSUfdbGsj5jNaSqtEuCcmEa5ivP4DwTtt368Cy8oLRTyHrQbmlHzoVcRxDiduXGQhzEpv5XCTVMqOZ0Bt8h4L967OA6948OIddrgrnGSAztt5EvYNXvTpq2T3d2BToYd9mjwvtDwAx8ZrfZIVHuSS4GJJj7YHtpA=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
+	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1732010967;
+	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To:Cc;
+	bh=6vObRq2E+RGALjKawt1r5dY6l6TVau1KQSOylOW2doo=;
+	b=OkP1ImM9vxIcIwxt+xg/n12ilQgxh2T795cbyPYaFS7F/WLvsiaDtfOA6K2Z8/v8
+	ndFChntS9sFVWWvqVzFXHE5sIonmejkkKV2i+8ZHCYVjXdKCOoxvAzfCzA+njwRL7dS
+	bw16/xBSgWeS//rdFVqP+83TvWFCXQhCESnCS1dY=
+Received: by mx.zohomail.com with SMTPS id 1732010965656991.9554222257977;
+	Tue, 19 Nov 2024 02:09:25 -0800 (PST)
+Message-ID: <0c842e7b-5a49-404d-9647-311bfc37f003@collabora.com>
+Date: Tue, 19 Nov 2024 13:09:21 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,60 +59,46 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/3] net: stmmac: dwmac-nuvoton: Add dwmac glue for
- Nuvoton MA35 family
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, mcoquelin.stm32@gmail.com, richardcochran@gmail.com,
- alexandre.torgue@foss.st.com, joabreu@synopsys.com, ychuang3@nuvoton.com,
- schung@nuvoton.com, yclu4@nuvoton.com, peppe.cavallaro@st.com,
- linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- openbmc@lists.ozlabs.org, linux-stm32@st-md-mailman.stormreply.com
-References: <20241118082707.8504-1-a0987203069@gmail.com>
- <20241118082707.8504-4-a0987203069@gmail.com>
- <4d44bc93-6a81-4dc8-9f22-a103882f25e1@lunn.ch>
+Subject: Re: [PATCH v2 RESEND] drm/virtio: use generic dumb_map_offset
+ implementation
+To: Peter Shkenev <mustela@erminea.space>, David Airlie <airlied@redhat.com>,
+ Gerd Hoffmann <kraxel@redhat.com>,
+ Gurchetan Singh <gurchetansingh@chromium.org>, Chia-I Wu
+ <olvaffe@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org,
+ virtualization@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20241107141133.13624-1-mustela@erminea.space>
 Content-Language: en-US
-From: Joey Lu <a0987203069@gmail.com>
-In-Reply-To: <4d44bc93-6a81-4dc8-9f22-a103882f25e1@lunn.ch>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+In-Reply-To: <20241107141133.13624-1-mustela@erminea.space>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 
-
-Andrew Lunn 於 11/19/2024 9:48 AM 寫道:
->> +	if (of_property_read_u32(dev->of_node, "tx-internal-delay-ps", &arg)) {
->> +		tx_delay = 0; /* Default value is 0 */
->> +	} else {
->> +		if (arg <= 2000) {
->> +			tx_delay = (arg == 2000) ? 0xF : (arg / PATH_DELAY_DEC);
->> +			dev_dbg(dev, "Set Tx path delay to 0x%x\n", tx_delay);
-> The device tree binding says:
->
-> +  tx-internal-delay-ps:
-> +    enum: [0, 2000]
->
->
-> So only two values are allowed. Yet the C code is
->
-> arg / PATH_DELAY_DEC
->
-> which seems to allow 16 values?
->
-> Please make this consistent.
->
->
->      Andrew
-
-Oops. That was my misuse; I will change it to minimum and maximum.
-
-Thanks!
-
-BR,
-
-Joey
-
->
+On 11/7/24 17:10, Peter Shkenev wrote:
+> Currently, virtio uses its own dumb_map_offset implementation,
+> virtio_gpu_mode_dumb_mmap. It works similarly to generic implementation,
+> drm_gem_dumb_map_offset, and using the generic implementation is
+> preferable (and making drivers to do so is a task stated on the DRM
+> subsystem's TODO list).
+> 
+> Thus, make driver use the generic implementation. This includes
+> VIRTGPU_MAP ioctl so it cannot be used to circumvent rules imposed by
+> drm_gem_dumb_map_offset (imported objects cannot be mapped).
+> 
+> Signed-off-by: Peter Shkenev <mustela@erminea.space>
 > ---
-> pw-bot: cr
+> Changes in v2:
+>   - Remove excessive include of drm_gem.h from virtgpu_ioctl.h
+>   - Remove obsoleted virtio_gpu_mode_dumb_mmap prototype from
+>     virtgpu_drv.h
+> 
+
+Applied to misc-next, thanks!
+
+-- 
+Best regards,
+Dmitry
+
 
