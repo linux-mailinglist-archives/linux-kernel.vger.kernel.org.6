@@ -1,103 +1,211 @@
-Return-Path: <linux-kernel+bounces-414816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFD669D2DBE
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 19:17:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9046C9D2DBC
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 19:16:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B588C28448E
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 18:17:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49EB81F23D9C
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 18:16:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 325A240BE0;
-	Tue, 19 Nov 2024 18:16:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61CA61D26E6;
+	Tue, 19 Nov 2024 18:16:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eWP/MaX7"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RHwEy2jd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54F321D2796
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 18:16:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E46740BE0;
+	Tue, 19 Nov 2024 18:16:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732040197; cv=none; b=byGWxdnpTV/KVJsjYuZ2IVvNaZq1YmoA6mKIJ6IAJyupzpVZstS+sXwDjlTkAmIt0oB34qWI+ePCRh0grjZWtJAOe2IWofL5lwM3uDET9mzeqH66iO2nySoaLBmp0bsGY2siz9dgCFBIZBieHP7kSLX/dEe6TPbKHebgom1tUbQ=
+	t=1732040194; cv=none; b=Q2As/B89VwTBPQgEiJ8Lr2B/0MuovCGaL3ZJag4kk1v7RBsmJxPDndfv5CnSnY3QgMujO+pFQHBVWP+9IWYEf0NCG7nTsTx5zyhOz3qMLZcqYrtRlho5xaBh+i9EVXlZXJSdPqlkWGLYQpvcrY0crV0044N8VIUsIkMJvrHvRPw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732040197; c=relaxed/simple;
-	bh=ORKmO8vLWafA6MHqOIqUH1zIk53OGnSylIzR+48B7+o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hA5xsKtHV5QlIGEFCOV3MRMdZPvXf6V6c08bk2uZNprQ+lePGOxd0nOPkzW+/m7IDSY1wvlGxOZ37syO4XvB29hnqMX8gLIic940SIqu09qN+V0SqNvreD+pjhbSkwrmZhIUhMAsnmYKPxSMh32FPmexoZFMMKCGdHamQe2ITl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eWP/MaX7; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-72483f6e2f3so53043b3a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 10:16:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732040195; x=1732644995; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ORKmO8vLWafA6MHqOIqUH1zIk53OGnSylIzR+48B7+o=;
-        b=eWP/MaX7TFAwwpF8nR/lY91Sg1QiiLo+pY3xfm43p9huNd+dUcONaVXPRawyYErEQ8
-         g872iRrzWOm8T/erRi7PXt5L5bQhcUxgRSYNVQS6yu9VZmPqkV/ZJshXp3VSsouFL84H
-         SoJKFzfVr2XuDoOYlN4NVf3poOBl7zpziDID7gtJHCItws7a04CrZXk5F8z6L7S/7dy/
-         XmGWiB1MlpHngZ9BPbokoKhT17NpkvotD0OxLsrPWY4q7G2EUDhrzx47B8IXPOI+Kaht
-         C2z8A7jFSyRQYl2oZbV+4mKDOyXQtfYheQ4Nb0vxSUATUfyhIfzi8so5IIaBo0fgfqVw
-         sGKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732040195; x=1732644995;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ORKmO8vLWafA6MHqOIqUH1zIk53OGnSylIzR+48B7+o=;
-        b=gAQMaDB4wVBCKBV2q71wV8XH8VfGRkS0ynIC3yIF0gBi4dFkR7dnajglzia79U8SQo
-         yEMcl/Xwf54BIsH4S8li0lMwtrlB0WQiIuTBG4uDCpg4/cjp2hDUrm/rUgAUrt3xJIkW
-         /naisKgOPvBqSH8rIyNnUpG7rLPTdkMxr+GZQOOlbpGUTh2ZKSYTMYQZNIAxTDMoJnID
-         to43fMkKzvGh2Vam/SJFzn4HefuToBDYjJeHbfaHC0HxsZHp7V/gQBGmKQj03T7TIB5a
-         WUnlfndhf5lOhxNKosWr6gDEaf/w1fLE1yyoJ+58OOXSQDjhEOgwA080yUmMgXeHCAVA
-         iI3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXKc/L6MU4T0Y6fBvvqBvVC49fR4IXc/gaKUA/fCSY2z57ijb/NcE2K+KtB2XM1nsGcuDkQ/m0HftgATHA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhwlT9/sRXprAzyTJ0pcdrIN3R73dltTnsLG5FwjLau0jKRqEr
-	plhvJDXWVDEZzAvzb//u8eX5prsZeCpo3lctoPCcI/oVlWhc3eC0OUqKCNAWpClOK67J0yHZp5x
-	cjQeTMNla3BPv6tr0I5Rg6wg884k=
-X-Google-Smtp-Source: AGHT+IHzQmfZ7POzhbjR3U4Wf4moBg0CD9FwBYxfJ1WRdF4fmqXdupgSOES9ubngbNpift2tkO3SziU0izGEWDpMhzQ=
-X-Received: by 2002:aa7:8e06:0:b0:724:6702:faa4 with SMTP id
- d2e1a72fcca58-724af94dd23mr5151169b3a.10.1732040195516; Tue, 19 Nov 2024
- 10:16:35 -0800 (PST)
+	s=arc-20240116; t=1732040194; c=relaxed/simple;
+	bh=YEyHF7qNpdjYiVOL7NYzxys2GSXjpUHFTISRNu/EFNY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cSLoJA/wMIPzT0m1XRBMkNDA53pbgr4kfqp4QZHxTdfxdzaekiRomIqeeZqPWtpR0wDaSDWOG3/EFTXTRLowFnVOnRHLqB7ZlL1cR2dG3XTEGHUGsiZ/ZlqIISRYGaQXvuFDA6esGBWOFpqcoiIyKb1RxDrGTs0iYQkxl51g/Jo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RHwEy2jd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3F12C4CECF;
+	Tue, 19 Nov 2024 18:16:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732040194;
+	bh=YEyHF7qNpdjYiVOL7NYzxys2GSXjpUHFTISRNu/EFNY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RHwEy2jdbpbbXM9Rmn9rrT9dPGJzmy5r+SGvXoSKtIGbJv+1vZ5wC9fhnN0HmW1Gk
+	 aFIPGj7BAwwAaxWiOz3LTuUnoB5s0B5eCMDCJV208zgdnFc1GbbzC9w/4cCx1Y5QTp
+	 bNpEkcbNVUGmFjhs7Hc1NLiqBCIYU3QiA7OYZnMhCCTuMNL4nqBXlruVCkxfsBWTzh
+	 tSese9MGcZbtEewgiiJAQIoPKTQ8REOCrrue0uvzYyKgROHhf9mATmO8oYcNz5pPLc
+	 42gRLbWrXCI3861qN3nRbC+6kvC4dG3SibKMhByf3a3psVpcSXzM4XdAc46QsfeSGn
+	 CulDQVY0MiFNQ==
+Date: Tue, 19 Nov 2024 12:16:32 -0600
+From: Rob Herring <robh@kernel.org>
+To: Romain Gantois <romain.gantois@bootlin.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Kory Maincent <kory.maincent@bootlin.com>,
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-media@vger.kernel.org,
+	linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v2 1/9] dt-bindings: misc: Describe TI FPC202 dual port
+ controller
+Message-ID: <20241119181632.GA1957312-robh@kernel.org>
+References: <20241118-fpc202-v2-0-744e4f192a2d@bootlin.com>
+ <20241118-fpc202-v2-1-744e4f192a2d@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241119-fix-dereference-null-x86-sev-v1-1-82d59085e264@gmail.com>
- <9dd3d046-6949-4e42-ab5a-af505f9b3981@web.de> <CAE8VWiJ62xT9shaEmUTOPF1OAztaWsr57m-wY9jyMJt5WFke5g@mail.gmail.com>
- <ea06c201-5a99-4875-b2d1-3bc4a35e2d5a@web.de>
-In-Reply-To: <ea06c201-5a99-4875-b2d1-3bc4a35e2d5a@web.de>
-From: Shresth Prasad <shresthprasad7@gmail.com>
-Date: Tue, 19 Nov 2024 23:46:24 +0530
-Message-ID: <CAE8VWiJqTB+PB1cFv2Sj8YbRWxgcrua3ZjyeWGF-7uqrsE95iw@mail.gmail.com>
-Subject: Re: x86/sev: Fix dereference NULL return value
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: x86@kernel.org, Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	"H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241118-fpc202-v2-1-744e4f192a2d@bootlin.com>
 
-On Tue, Nov 19, 2024 at 11:03=E2=80=AFPM Markus Elfring <Markus.Elfring@web=
-.de> wrote:
->
-> > For the Fixes tag, I'm not sure which commit hash I should put. Should =
-I use
-> > the commit where the function was introduced?
->
-> How far can the overlooked function return value be traced back?
+On Mon, Nov 18, 2024 at 11:13:00AM +0100, Romain Gantois wrote:
+> The FPC202 dual port controller serves as a low speed signal aggregator for
+> common port types, notably SFP. It provides access to I2C and low-speed
+> GPIO signals of a downstream device through a single upstream control
+> interface.
+> 
+> Up to two logical I2C addresses can be accessed on each of the FPC202's
+> ports. The port controller acts as an I2C translator (ATR). It converts
+> addresses of incoming and outgoing I2C transactions. One use case of this
+> is accessing two SFP modules at logical address 0x50 from the same upstream
+> I2C controller, using two different client aliases.
+> 
+> Signed-off-by: Romain Gantois <romain.gantois@bootlin.com>
+> ---
+>  .../devicetree/bindings/misc/ti,fpc202.yaml        | 83 ++++++++++++++++++++++
+>  MAINTAINERS                                        |  6 ++
+>  2 files changed, 89 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/misc/ti,fpc202.yaml b/Documentation/devicetree/bindings/misc/ti,fpc202.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..1c7243f0325211d8cea3736cbe777c4318065b12
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/misc/ti,fpc202.yaml
+> @@ -0,0 +1,83 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/misc/ti,fpc202.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: TI FPC202 dual port controller with expanded IOs
+> +
+> +maintainers:
+> +  - Romain Gantois <romain.gantois@bootlin.com>
+> +
+> +allOf:
+> +  - $ref: /schemas/i2c/i2c-atr.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    const: ti,fpc202
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  gpio-controller: true
+> +
+> +  "#gpio-cells":
+> +    const: 2
+> +
+> +  enable-gpios:
+> +    description:
+> +      Specifier for the GPIO connected to the EN pin.
+> +    maxItems: 1
+> +
+> +  '#address-cells':
+> +    const: 1
+> +
+> +  '#size-cells':
+> +    const: 0
+> +
+> +patternProperties:
+> +  "^i2c@[0-1]$":
+> +    $ref: /schemas/i2c/i2c-controller.yaml
+> +    description: Downstream device ports 0 and 1
 
-Using git blame I see that snp_kexec_finish() was first introduced in
-3074152e56c9b
-and has stayed that way since. Should I just use that hash?
+'reg' is not covered by i2c-controller.yaml, so it needs to be 
+documented here. Along with a 'unevaluatedProperties: false'.
 
-Best Regards,
-Shresth
+> +
+> +required:
+> +  - compatible
+> +  - gpio-controller
+> +  - "#gpio-cells"
+> +  - reg
+> +  - "#address-cells"
+> +  - "#size-cells"
+> +  - i2c@0
+> +  - i2c@1
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    i2c {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        i2c-atr@f {
+> +            compatible = "ti,fpc202";
+> +            reg = <0xf>;
+> +            #address-cells = <1>;
+> +            #size-cells = <0>;
+> +
+> +            gpio-controller;
+> +            #gpio-cells = <2>;
+> +
+> +            i2c@0 {
+> +                #address-cells = <1>;
+> +                #size-cells = <0>;
+> +                reg = <0>;
+> +            };
+> +
+> +            i2c@1 {
+> +                #address-cells = <1>;
+> +                #size-cells = <0>;
+> +                reg = <1>;
+> +            };
+> +        };
+> +    };
+> +...
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index b878ddc99f94e7f6e8fa2c479c5a3f846c514730..8e702cefd2070790330eebf6d2a2b592cadb682d 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -23181,6 +23181,12 @@ F:	drivers/misc/tifm*
+>  F:	drivers/mmc/host/tifm_sd.c
+>  F:	include/linux/tifm.h
+>  
+> +TI FPC202 DUAL PORT CONTROLLER
+> +M:	Romain Gantois <romain.gantois@bootlin.com>
+> +L:	linux-kernel@vger.kernel.org
+> +S:	Maintained
+> +F:	Documentation/devicetree/bindings/misc/ti,fpc202.yaml
+> +
+>  TI FPD-LINK DRIVERS
+>  M:	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+>  L:	linux-media@vger.kernel.org
+> 
+> -- 
+> 2.47.0
+> 
 
