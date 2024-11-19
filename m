@@ -1,50 +1,51 @@
-Return-Path: <linux-kernel+bounces-414823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 111B89D2E1C
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 19:42:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA47C9D2DDC
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 19:25:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7CBCEB2A83C
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 18:24:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FCD6283DBF
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 18:25:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 460E21D279B;
-	Tue, 19 Nov 2024 18:24:35 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CDD11D2B21;
+	Tue, 19 Nov 2024 18:24:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MR8QrvcT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3BAC1D1F56;
-	Tue, 19 Nov 2024 18:24:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1E791D1F73;
+	Tue, 19 Nov 2024 18:24:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732040674; cv=none; b=c3FFu1KETK0rJGcPOB46alzULHG+m3BWrcpX+8yWhHkBDzpOVCACGV1I9Eku+jBqNMzRTBG0xLA09ToemL1DB9eMoD3RtLk7aEJ6n96KvOReTRipRV8bS9YwhbWaq5UD53kGccR6QN4KmarTAZ7Dqh3txHrXgJ5ISWQYfyFyJAg=
+	t=1732040685; cv=none; b=el/kZKrDbqGsf86JOHYqtiH9dFg7262sP3qORyRSeQD6Joq+B5IUHQMMwJyUqRytN8diT9ZZYc048mp1qf7wOiSpv4v0SJ4wCPb6+CKWTw0yUTcjGlFtcfpXmFWGcxP3wrDvOYgXFhMvY3muE/2raZTCb4LvqKtPhcQGYIsBG0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732040674; c=relaxed/simple;
-	bh=HAmZhrf/ImLigxRe22woWwNaCskR7GALOeADMe+y8TM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XwFkFPUmT/0dnyFndwtY1ohGwJvFNt35oYzh8E/gAJoaFOp3X9WjYYF5jhoB6ivqTV8mQlYAXy0pcwNc3NM3qGEqj/j+wwPJgV4OXC0OsDKdVT5wqdsMY5/xNFiqEuJYhpVSrSk+DGTZodE+Iipfnyxywlz1ujFtBKbmdzwpG/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 8E0F268D8D; Tue, 19 Nov 2024 19:24:27 +0100 (CET)
-Date: Tue, 19 Nov 2024 19:24:27 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Keith Busch <kbusch@kernel.org>
-Cc: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-	Christian Brauner <brauner@kernel.org>,
-	Sagi Grimberg <sagi@grimberg.me>,
-	Kanchan Joshi <joshi.k@samsung.com>, Hui Qi <hui81.qi@samsung.com>,
-	Nitesh Shetty <nj.shetty@samsung.com>, Jan Kara <jack@suse.cz>,
-	Pavel Begunkov <asml.silence@gmail.com>,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-	io-uring@vger.kernel.org
-Subject: Re: [PATCH 14/15] nvme: enable FDP support
-Message-ID: <20241119182427.GA20997@lst.de>
-References: <20241119121632.1225556-1-hch@lst.de> <20241119121632.1225556-15-hch@lst.de> <ZzzWQFyq0Sv7cuHb@kbusch-mbp>
+	s=arc-20240116; t=1732040685; c=relaxed/simple;
+	bh=V0QFm9faFwUNBEAolz5u06Peb4KA69sRGejzPlX6SBw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=QdsaHvgK8Qqgp7v4M2xIBOPNIqB73oaoCUtNokKDDIfm/8saL4t6Mkl8eQg+MxyplqHWno2SWwN0JJiKggXJPvK/hpu6YSA0IZoEt7XU47vCIBKrblIz/2PjfaACJ2sTYaxMahFRsgaQBsg3GHEn0kP0Sq8bsxHRDDQcnyUopPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MR8QrvcT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 182CAC4CECF;
+	Tue, 19 Nov 2024 18:24:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732040684;
+	bh=V0QFm9faFwUNBEAolz5u06Peb4KA69sRGejzPlX6SBw=;
+	h=Date:From:To:Cc:Subject:From;
+	b=MR8QrvcT8SMeNh7avKLEueEXvWzhZiqSYnHkH7tarHmasSsNJX6hzQL+PKVw7Me5P
+	 O2Trwr++OVBh31TZAg6rTtp+NJ4IIkpkMgDbXEkU9flzUDgV01R11kulxXgzL8rBen
+	 dOkoV4xuHMI9dLDps/jPA4O824KyvaODEnR0Y6ZzO0o6gGIeMUILee1UxAavHuw0LV
+	 3y/2dLYFb++uH3xse+fCmh8zrgb98OhJTtN6X/xYwdY8CxCqk3IZC54vjorxIa3k3Y
+	 koKiQT8UMJFeZTIgQA1KL05kPu/FBizgcWywBKCVBT6c5luKdE1+DWjOx+00NRMZEH
+	 x/qAfS5x7goYg==
+Date: Tue, 19 Nov 2024 11:24:42 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: llvm@lists.linux.dev, linux-kernel@vger.kernel.org
+Cc: conor@kernel.org, ojeda@kernel.org
+Subject: Prebuilt LLVM 19.1.4 uploaded
+Message-ID: <20241119182442.GA416521@thelio-3990X>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,24 +54,17 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZzzWQFyq0Sv7cuHb@kbusch-mbp>
-User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Tue, Nov 19, 2024 at 11:17:36AM -0700, Keith Busch wrote:
-> > +	if (le32_to_cpu(configs[result.fdpcidx].nrg) > 1) {
-> > +		dev_warn(ns->ctrl->device, "FDP NRG > 1 not supported\n");
-> 
-> Why not support multiple reclaim groups?
+Hi all,
 
-Can you come up with a sane API for that?  And can you find devices in
-the wild that actually support it?
+I have built and uploaded LLVM 19.1.4 to
+https://mirrors.edge.kernel.org/pub/tools/llvm/.
 
-> > +	ns->head->runs = le64_to_cpu(configs[result.fdpcidx].runs);
-> 
-> The config descriptors are variable length, so you can't just index into
-> it. You have to read each index individually to get the next index's offset.
-> Something like:
+If there are any issues found, please let us know via email or
+https://github.com/ClangBuiltLinux/linux/issues/new, so that we have an
+opportunity to get them fixed in main and backported before the 19.x
+series is no longer supported.
 
-Indeed.  The current code only works when the first config is selected.
-
+Cheers,
+Nathan
 
