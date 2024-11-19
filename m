@@ -1,111 +1,126 @@
-Return-Path: <linux-kernel+bounces-414222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0190E9D24E2
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 12:31:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFAC09D24E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 12:31:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 598ECB251C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 11:31:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D4FA1F22BBE
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 11:31:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 511D31C9EC4;
-	Tue, 19 Nov 2024 11:31:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B374D1C8788;
+	Tue, 19 Nov 2024 11:30:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="Aox4JN6B"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	dkim=pass (2048-bit key) header.d=minyard-net.20230601.gappssmtp.com header.i=@minyard-net.20230601.gappssmtp.com header.b="dE8Gk1gw"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A3AC1C8306;
-	Tue, 19 Nov 2024 11:31:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C67401C9DF3
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 11:30:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732015871; cv=none; b=bBFfDcNvjYPr7VSK70zHBKXbQdJAapF7VlaInvnd1KLyzeZyeggsYfqpjg19yQ5f1Qmp4gNJ3Ipd1lAynVFoCbBegXJ0Q2KXAlsmUYllwvTd9eRBbKuqMm/RXNZ18p4eaksFlOpgrJpfPyjGo5s2K686pxFHKCYdxCw+DqONMwg=
+	t=1732015857; cv=none; b=cyqYfro5b6mpl3dGRljDVAp9RYoGIT4Z+14EfVGpJD4shnBhd4q83KrZtuJZGQxOgGVMQkx6vZZ65JsjeO5JsNrYrQUE8kV4aVgJxFvXkGXEXO1ZTLvpG3LQizXKnS9f1FD2l+UTzYvNiQKlOE/7AypCGHM0dccdKk7ZB66weCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732015871; c=relaxed/simple;
-	bh=VGsQijzefvyWwOUR5TJb0AkEtxZrPlruPUyzcP5EKhQ=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=tttJfIX3MNEKudwTMVNCJMKuIntUY3cEBPIuyno9K9BLgkDg+oPCs7gtS55bVmET8j9Q4cqv+zyDOYbYlcTEW0uSxd9mmvOx4lefx2xyvLxx3qHOSU5keIwRXDl9MZxNwa0YW/avwinNQ6/m5oogKKQTp02x4tn6oCmZOidYOVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=Aox4JN6B; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 4AJBUZl942355100, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
-	t=1732015835; bh=VGsQijzefvyWwOUR5TJb0AkEtxZrPlruPUyzcP5EKhQ=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:MIME-Version;
-	b=Aox4JN6BqkTdDcBGwqCV+EWasIDt1+TWkk4YaRbzbCfQdfBplKpZFg4bkPqizlmNt
-	 udsOgKXfDoNLrQi7b+luuGdvvRYuELt2bscqDSdezP58u6xy29Fq4IdIIhEIAq2+vj
-	 zeCn3Gx2O6GqyYIru7hpaEwTaBk46gMhyxYemmMZ5a4fiji6DDEu816OJ5fEKXT1Qr
-	 Zv0aa1L1fke++W39J1KsGiAeKaqbQWnJBK7xSgx5QYREjxvmwW5YnsqgDi79diz/pX
-	 iNYmGFrohOFmreOtWmZefpVxpQaYVoV1mYNCBk37F8HIkSbhnt0SELlsclqa+f1oC0
-	 Gd+Agn3hNgpSg==
-Received: from mail.realtek.com (rtexh36505.realtek.com.tw[172.21.6.25])
-	by rtits2.realtek.com.tw (8.15.2/3.06/5.92) with ESMTPS id 4AJBUZl942355100
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 19 Nov 2024 19:30:35 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXH36505.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 19 Nov 2024 19:30:35 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXMBS04.realtek.com.tw (172.21.6.97) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Tue, 19 Nov 2024 19:30:34 +0800
-Received: from RTEXMBS04.realtek.com.tw ([fe80::2882:4142:db9:db1f]) by
- RTEXMBS04.realtek.com.tw ([fe80::2882:4142:db9:db1f%11]) with mapi id
- 15.01.2507.035; Tue, 19 Nov 2024 19:30:34 +0800
-From: Justin Lai <justinlai0215@realtek.com>
-To: Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew@lunn.ch>
-CC: "kuba@kernel.org" <kuba@kernel.org>,
-        "davem@davemloft.net"
-	<davem@davemloft.net>,
-        "edumazet@google.com" <edumazet@google.com>,
-        "andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "horms@kernel.org"
-	<horms@kernel.org>,
-        Ping-Ke Shih <pkshih@realtek.com>,
-        Larry Chiu
-	<larry.chiu@realtek.com>
-Subject: RE: [PATCH net v2 3/5] rtase: Add support for RTL907XD-VA PCIe port
-Thread-Topic: [PATCH net v2 3/5] rtase: Add support for RTL907XD-VA PCIe port
-Thread-Index: AQHbN0SFfyRIafwEokSyyOXB545urLK5wOOAgAKTAUCAAZNpgIAAlryQ
-Date: Tue, 19 Nov 2024 11:30:34 +0000
-Message-ID: <e65e0b67ad4b40be9191271fb183a23f@realtek.com>
-References: <20241115095429.399029-1-justinlai0215@realtek.com>
- <20241115095429.399029-4-justinlai0215@realtek.com>
- <939ab163-a537-417f-9edc-0823644a2a1d@lunn.ch>
- <a0280d8e17ce4286b8070028e069d7e9@realtek.com>
- <bf7a70f2-ab0e-467d-a451-a57062982f18@redhat.com>
-In-Reply-To: <bf7a70f2-ab0e-467d-a451-a57062982f18@redhat.com>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1732015857; c=relaxed/simple;
+	bh=7cGMC0JSae0yj/PWFPiCPDIjD4oYyoho7eIZOlOAeMQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XXUL0zqjA3G778GS6LAamLp1tRpY3KPQnsgSSBkOOXxG/dIRGThDaQiGRrg0iWzyvRx9KZvymxhuFMPh/tS06Pv48O+PH0vkis42rGmKuysfy/J9PbPXvk276faq+/F5qEp6SsoWw87Qy20FN7VUY4DyudF3VbUww8SXIhW5TH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=minyard.net; spf=none smtp.mailfrom=minyard.net; dkim=pass (2048-bit key) header.d=minyard-net.20230601.gappssmtp.com header.i=@minyard-net.20230601.gappssmtp.com header.b=dE8Gk1gw; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=minyard.net
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=minyard.net
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-53a097aa3daso2824262e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 03:30:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=minyard-net.20230601.gappssmtp.com; s=20230601; t=1732015852; x=1732620652; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rKwxKd5SMLLl6j1wqgSg6vRFE0Andwn/GjHqBxY+oho=;
+        b=dE8Gk1gwawPRwwgFezl8HgQsSIpoyFHO9eUMmjTlzQ3SzE54ERb/zKMkzO24dNGzGN
+         zO4JYq6RLfUwNKTmOyGGvDvisNwpdf51taa/sFmQ+ZJljEv/qRFOllcIIHdbMSa+CeFq
+         EXCSXVqIIDk38K/s27op7pFY7utCIPV/Zz+ZjbCwEstRsVRIUy0buLLFbuGSBwBBbr+q
+         uQ+CcXRp/+cu0skWQD2e21qB4jGTATvI5SEk6yopZkmmOSyrNOAiJHfiYM8kMqYMaSN4
+         y4I3Q+bPeXtSZnF6PxGk25R0HsxpNC/Uh3CpuVsbfCgtI9llXb9587QueoRKiop22q9J
+         FFxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732015852; x=1732620652;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rKwxKd5SMLLl6j1wqgSg6vRFE0Andwn/GjHqBxY+oho=;
+        b=FcLSOPxKDCiUHlGqqakw73RQh4bG4G5vBj+J72gjXtq0CXcOKbi9IrjcvRag6wqsPZ
+         VoPeXWZxh496vl++jAygGN6EVQI4vRlUKBoMRpMqKqjV67FkGiQe3HPHukVYLOhmDBho
+         BPwsEywXt+WDfO1Y2g0u7hRtgdwkglqnvkg8KEGL5fy5l/P8Phnj6RsZRoYIyMD9v5C6
+         HXLtjieQaCshnJqWtiu4po2Bn2GfQ5WLzuVEU7gHx0AN++yLrakxO1Cv1RUzzP0ePGPo
+         sOWgJmx8LG9Ia4WMjjO/whT6hF4U/hF6ws9A0++BpIzDbVKfO6MPHjJi3jgXioGO4SJL
+         S1nQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWVuz+C7gO8S/Fdvwy/bUyhHDYDpnvnMVMJIS8/WC/LksBX2u0lAgKgpVwp5QBiL9bzzdnBo3X3iLQpWuM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyh0IoSXUSj9lTr+WMfT4OAiX0vvf1cruzzDvcOAjTZ9MveAlaq
+	NmKvSKLOuB8p/o21PqtsJWmqlveILXS45/Cd3y2bzao4cJ2NjMVl5d11oU8xaiKS+mmMEVl1CTE
+	QvtOvXGEYcMcNwBVblnm8bbv3Lpex/Mz454Ux1A==
+X-Google-Smtp-Source: AGHT+IGgDrPcP42r6Mykqqve++SYMiYoBLLuXEcKJ8Odoey2Gw+rjXy59n0lXdXEBiuizDXRmQkISh7faoV70Zej13k=
+X-Received: by 2002:a05:6512:a8b:b0:53d:a000:1817 with SMTP id
+ 2adb3069b0e04-53dab29cc39mr6595733e87.22.1732015851781; Tue, 19 Nov 2024
+ 03:30:51 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20241022-ssif-alert-gpios-v2-0-c7dd6dd17a7e@gmail.com>
+ <20241022-ssif-alert-gpios-v2-2-c7dd6dd17a7e@gmail.com> <434333fb-5703-449e-83f2-46e85f34fd23@os.amperecomputing.com>
+In-Reply-To: <434333fb-5703-449e-83f2-46e85f34fd23@os.amperecomputing.com>
+From: Corey Minyard <corey@minyard.net>
+Date: Tue, 19 Nov 2024 05:30:40 -0600
+Message-ID: <CAB9gMfphfY0H721G9qV8_3sm1d_RTnKkWbEOeqC-0ox9p4cfCQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] ipmi: ssif_bmc: add GPIO-based alert mechanism
+To: Quan Nguyen <quan@os.amperecomputing.com>
+Cc: Potin Lai <potin.lai.pt@gmail.com>, Corey Minyard <minyard@acm.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Patrick Williams <patrick@stwcx.xyz>, openipmi-developer@lists.sourceforge.net, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Cosmo Chou <cosmo.chou@quantatw.com>, Potin Lai <potin.lai@quantatw.com>, 
+	Cosmo Chou <chou.cosmo@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-PiBPbiAxMS8xOC8yNCAwMzozMCwgSnVzdGluIExhaSB3cm90ZToNCj4gPj4NCj4gPj4gT24gRnJp
-LCBOb3YgMTUsIDIwMjQgYXQgMDU6NTQ6MjdQTSArMDgwMCwgSnVzdGluIExhaSB3cm90ZToNCj4g
-Pj4+IDEuIEFkZCBSVEw5MDdYRC1WQSBoYXJkd2FyZSB2ZXJzaW9uIGlkLg0KPiA+Pj4gMi4gQWRk
-IHRoZSByZXBvcnRlZCBzcGVlZCBmb3IgUlRMOTA3WEQtVkEuDQo+ID4+DQo+ID4+IFRoaXMgaXMg
-bm90IGEgZml4LCBpdCBuZXZlciB3b3JrZWQgb24gdGhpcyBkZXZpY2UgYXMgZmFyIGFzIGkgc2Vl
-LiBTbw0KPiA+PiB0aGlzIHNob3VsZCBiZSBmb3IgbmV0LW5leHQuDQo+ID4+DQo+ID4+IFBsZWFz
-ZSBzZXBhcmF0ZSB0aGVzZSBwYXRjaGVzIG91dCBpbnRvIHJlYWwgZml4ZXMsIGFuZCBuZXcgZmVh
-dHVyZXMuDQo+ID4+DQo+ID4+ICAgICAgICAgQW5kcmV3DQo+ID4NCj4gPiBUaGFuayB5b3UgZm9y
-IHlvdXIgcmVzcG9uc2UuIEkgd2lsbCBmb2xsb3cgdGhlc2UgZ3VpZGVsaW5lcyBmb3IgdGhlDQo+
-ID4gY2F0ZWdvcml6YXRpb24gYW5kIHVwbG9hZCB0aGUgcGF0Y2ggdG8gbmV0LW5leHQgYWNjb3Jk
-aW5nbHkuIEkNCj4gPiBhcHByZWNpYXRlIHlvdXIgYXNzaXN0YW5jZS4NCj4gDQo+IFBsZWFzZSBy
-ZS1wb3N0IHRoZSBzZXJpZXMgaW5jbHVkaW5nIG5ldCBwYXRjaGVzIG9ubHkgYW5kIHdhaXQgZm9y
-IHRoZSBtZXJnZQ0KPiB3aW5kb3cgY29tcGxldGlvbiAofjJ3IGZyb20gbm93KSBiZWZvcmUgcG9z
-dGluZyB0aGUgbmV0LW5leHQgcGF0Y2guDQo+IA0KPiBUaGFua3MhDQo+IA0KPiBQYW9sbw0KDQpI
-aSBQYW9sbw0KDQpUaGFuayB5b3UgZm9yIHRoZSBub3RpZmljYXRpb24uIEkgaGF2ZSByZW1vdmVk
-IHRoaXMgcGF0Y2ggZnJvbSB0aGUgbGF0ZXN0DQpwYXRjaCBzZXQuDQoNCkp1c3Rpbg0K
+On Wed, Oct 23, 2024 at 11:30=E2=80=AFPM Quan Nguyen
+<quan@os.amperecomputing.com> wrote:
+>
+>
+>
+> On 22/10/2024 08:20, Potin Lai wrote:
+> > From: Cosmo Chou <chou.cosmo@gmail.com>
+> >
+> > Implement GPIO-based alert mechanism in the SSIF BMC driver to notify
+> > the host when a response is ready.
+> >
+> > This improves host-BMC communication efficiency by providing immediate
+> > notification, potentially reducing host polling overhead.
+> >
+> > Signed-off-by: Cosmo Chou <chou.cosmo@gmail.com>
+> > ---
+> >   drivers/char/ipmi/ssif_bmc.c | 15 +++++++++++++++
+> >   1 file changed, 15 insertions(+)
+> >
+>
+> Thanks for adding feature to this driver, the code looks good to me.
+>
+> Reviewed-by: Quan Nguyen <quan@os.amperecomputing.com>
+>
+> I'm just have a bit of curious on how the ipmi_ssif in host side to work
+> with this mechanism? Will there be patches for ipmi_ssif to use this
+> feature followed?
+
+I just saw this.  What makes you think alerts are not supported in ipmi_ssi=
+f?
+
+-corey
+
+>
+> Thanks and Best regards,
+> - Quan
 
