@@ -1,71 +1,60 @@
-Return-Path: <linux-kernel+bounces-414815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9046C9D2DBC
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 19:16:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C2879D2DC2
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 19:17:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49EB81F23D9C
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 18:16:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E93EB1F235BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 18:17:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61CA61D26E6;
-	Tue, 19 Nov 2024 18:16:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9169C1D26F1;
+	Tue, 19 Nov 2024 18:17:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RHwEy2jd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N8EeqhnQ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E46740BE0;
-	Tue, 19 Nov 2024 18:16:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB26943179;
+	Tue, 19 Nov 2024 18:17:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732040194; cv=none; b=Q2As/B89VwTBPQgEiJ8Lr2B/0MuovCGaL3ZJag4kk1v7RBsmJxPDndfv5CnSnY3QgMujO+pFQHBVWP+9IWYEf0NCG7nTsTx5zyhOz3qMLZcqYrtRlho5xaBh+i9EVXlZXJSdPqlkWGLYQpvcrY0crV0044N8VIUsIkMJvrHvRPw=
+	t=1732040261; cv=none; b=Rq0UO7DAYDVkHKQXeWG/CjEdX0oQWGBmEieRt54t9xwYpW1ugQJ7l9U4bfvQeNN0QoEPhMoAmloyQov1wipEJL62t8/SKqssAoupj44kctOD1lgq6EHT4HTvPKWwkLIyE/cx8YV5fQFspmVSscT6t1bpWBwZ8ayZoMG1+GeLG7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732040194; c=relaxed/simple;
-	bh=YEyHF7qNpdjYiVOL7NYzxys2GSXjpUHFTISRNu/EFNY=;
+	s=arc-20240116; t=1732040261; c=relaxed/simple;
+	bh=1Rx6a5V84mNsHyGKKeXNKMM/vPdlFSELDYwqEbiBPeg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cSLoJA/wMIPzT0m1XRBMkNDA53pbgr4kfqp4QZHxTdfxdzaekiRomIqeeZqPWtpR0wDaSDWOG3/EFTXTRLowFnVOnRHLqB7ZlL1cR2dG3XTEGHUGsiZ/ZlqIISRYGaQXvuFDA6esGBWOFpqcoiIyKb1RxDrGTs0iYQkxl51g/Jo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RHwEy2jd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3F12C4CECF;
-	Tue, 19 Nov 2024 18:16:33 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Rhwngnu3Zo4z9O2XzTT2U+gVi4cOsJI0KQLcrQIPunWkmdbjEip72ZBvTiZmhQcVTEID3rn8yF67b04soWKr83u7KWIjZOEk7fF5ldfTgNGd8lW8XtX0BY0JEOihPJmlURGSOmTTCry8uyoraqzTYstkvAPXSkNiUHbjREPdosA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N8EeqhnQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CE76C4CECF;
+	Tue, 19 Nov 2024 18:17:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732040194;
-	bh=YEyHF7qNpdjYiVOL7NYzxys2GSXjpUHFTISRNu/EFNY=;
+	s=k20201202; t=1732040260;
+	bh=1Rx6a5V84mNsHyGKKeXNKMM/vPdlFSELDYwqEbiBPeg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RHwEy2jdbpbbXM9Rmn9rrT9dPGJzmy5r+SGvXoSKtIGbJv+1vZ5wC9fhnN0HmW1Gk
-	 aFIPGj7BAwwAaxWiOz3LTuUnoB5s0B5eCMDCJV208zgdnFc1GbbzC9w/4cCx1Y5QTp
-	 bNpEkcbNVUGmFjhs7Hc1NLiqBCIYU3QiA7OYZnMhCCTuMNL4nqBXlruVCkxfsBWTzh
-	 tSese9MGcZbtEewgiiJAQIoPKTQ8REOCrrue0uvzYyKgROHhf9mATmO8oYcNz5pPLc
-	 42gRLbWrXCI3861qN3nRbC+6kvC4dG3SibKMhByf3a3psVpcSXzM4XdAc46QsfeSGn
-	 CulDQVY0MiFNQ==
-Date: Tue, 19 Nov 2024 12:16:32 -0600
-From: Rob Herring <robh@kernel.org>
-To: Romain Gantois <romain.gantois@bootlin.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Kory Maincent <kory.maincent@bootlin.com>,
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-media@vger.kernel.org,
-	linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v2 1/9] dt-bindings: misc: Describe TI FPC202 dual port
- controller
-Message-ID: <20241119181632.GA1957312-robh@kernel.org>
-References: <20241118-fpc202-v2-0-744e4f192a2d@bootlin.com>
- <20241118-fpc202-v2-1-744e4f192a2d@bootlin.com>
+	b=N8EeqhnQi6uKCJjvjP6uWGWQ8590S9VIKoLh/HP/xmwfn+waAhC5hVS6XeGvcfHjM
+	 WbJkdkFCu5UF/JOREe3/7z8j1PG4tOC52enCBYjrNVysiReas4HAZYXZk8RpbJACAr
+	 fYj/9RvaTp0FA9LEtZXQ14k2n/5lEc/KwZjItXNX4Vt+w+ZsYjR0/nVE7/Hk0PtqXZ
+	 yy3boh8RLCcHgPcsZGw+PWUo3IyDOiDjchIBIiq6YQ5hpJSTx9Vfr9wCRSCx2NahZD
+	 TrTS0wtbty5NsrIWSDF7LrJ6fkG66Jlm+zyLpMoNF/N5+igSMjrHB0XBS/K8dOKrcS
+	 6kXkMdfjTLQwA==
+Date: Tue, 19 Nov 2024 11:17:36 -0700
+From: Keith Busch <kbusch@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Jens Axboe <axboe@kernel.dk>, Christian Brauner <brauner@kernel.org>,
+	Sagi Grimberg <sagi@grimberg.me>,
+	Kanchan Joshi <joshi.k@samsung.com>, Hui Qi <hui81.qi@samsung.com>,
+	Nitesh Shetty <nj.shetty@samsung.com>, Jan Kara <jack@suse.cz>,
+	Pavel Begunkov <asml.silence@gmail.com>,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+	io-uring@vger.kernel.org
+Subject: Re: [PATCH 14/15] nvme: enable FDP support
+Message-ID: <ZzzWQFyq0Sv7cuHb@kbusch-mbp>
+References: <20241119121632.1225556-1-hch@lst.de>
+ <20241119121632.1225556-15-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,138 +63,72 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241118-fpc202-v2-1-744e4f192a2d@bootlin.com>
+In-Reply-To: <20241119121632.1225556-15-hch@lst.de>
 
-On Mon, Nov 18, 2024 at 11:13:00AM +0100, Romain Gantois wrote:
-> The FPC202 dual port controller serves as a low speed signal aggregator for
-> common port types, notably SFP. It provides access to I2C and low-speed
-> GPIO signals of a downstream device through a single upstream control
-> interface.
-> 
-> Up to two logical I2C addresses can be accessed on each of the FPC202's
-> ports. The port controller acts as an I2C translator (ATR). It converts
-> addresses of incoming and outgoing I2C transactions. One use case of this
-> is accessing two SFP modules at logical address 0x50 from the same upstream
-> I2C controller, using two different client aliases.
-> 
-> Signed-off-by: Romain Gantois <romain.gantois@bootlin.com>
-> ---
->  .../devicetree/bindings/misc/ti,fpc202.yaml        | 83 ++++++++++++++++++++++
->  MAINTAINERS                                        |  6 ++
->  2 files changed, 89 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/misc/ti,fpc202.yaml b/Documentation/devicetree/bindings/misc/ti,fpc202.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..1c7243f0325211d8cea3736cbe777c4318065b12
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/misc/ti,fpc202.yaml
-> @@ -0,0 +1,83 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/misc/ti,fpc202.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+On Tue, Nov 19, 2024 at 01:16:28PM +0100, Christoph Hellwig wrote:
+> +static int nvme_read_fdp_config(struct nvme_ns *ns, struct nvme_ns_info *info)
+> +{
+> +	struct nvme_fdp_config result;
+> +	struct nvme_fdp_config_log *log;
+> +	struct nvme_fdp_config_desc *configs;
+> +	size_t log_size;
+> +	int error;
 > +
-> +title: TI FPC202 dual port controller with expanded IOs
+> +	error = nvme_get_features(ns->ctrl, NVME_FEAT_FDP, info->endgid, NULL,
+> +			0, &result);
+> +	if (error)
+> +		return error;
 > +
-> +maintainers:
-> +  - Romain Gantois <romain.gantois@bootlin.com>
+> +	if (!(result.flags & FDPCFG_FDPE)) {
+> +		dev_warn(ns->ctrl->device, "FDP not enable in current config\n");
+> +		return -EINVAL;
+> +	}
 > +
-> +allOf:
-> +  - $ref: /schemas/i2c/i2c-atr.yaml#
+> +	log_size = sizeof(*log) + (result.fdpcidx + 1) * sizeof(*configs);
+> +	log = kmalloc(log_size, GFP_KERNEL);
+> +	if (!log)
+> +		return -ENOMEM;
 > +
-> +properties:
-> +  compatible:
-> +    const: ti,fpc202
+> +	error = nvme_get_log_lsi(ns->ctrl, info->nsid, NVME_LOG_FDP_CONFIGS,
+> +			0, 0, log, log_size, 0, info->endgid);
+> +	if (error) {
+> +		dev_warn(ns->ctrl->device,
+> +			"failed to read FDP config log: 0x%x\n", error);
+> +		goto out_free_log;
+> +	}
 > +
-> +  reg:
-> +    maxItems: 1
+> +	if (le32_to_cpu(log->size) < log_size) {
+> +		dev_warn(ns->ctrl->device, "FDP log too small: %d vs %zd\n",
+> +				le32_to_cpu(log->size), log_size);
+> +		error = -EINVAL;
+> +		goto out_free_log;
+> +	}
 > +
-> +  gpio-controller: true
-> +
-> +  "#gpio-cells":
-> +    const: 2
-> +
-> +  enable-gpios:
-> +    description:
-> +      Specifier for the GPIO connected to the EN pin.
-> +    maxItems: 1
-> +
-> +  '#address-cells':
-> +    const: 1
-> +
-> +  '#size-cells':
-> +    const: 0
-> +
-> +patternProperties:
-> +  "^i2c@[0-1]$":
-> +    $ref: /schemas/i2c/i2c-controller.yaml
-> +    description: Downstream device ports 0 and 1
+> +	configs = (struct nvme_fdp_config_desc *)(log + 1);
+> +	if (le32_to_cpu(configs[result.fdpcidx].nrg) > 1) {
+> +		dev_warn(ns->ctrl->device, "FDP NRG > 1 not supported\n");
 
-'reg' is not covered by i2c-controller.yaml, so it needs to be 
-documented here. Along with a 'unevaluatedProperties: false'.
+Why not support multiple reclaim groups?
 
-> +
-> +required:
-> +  - compatible
-> +  - gpio-controller
-> +  - "#gpio-cells"
-> +  - reg
-> +  - "#address-cells"
-> +  - "#size-cells"
-> +  - i2c@0
-> +  - i2c@1
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    i2c {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        i2c-atr@f {
-> +            compatible = "ti,fpc202";
-> +            reg = <0xf>;
-> +            #address-cells = <1>;
-> +            #size-cells = <0>;
-> +
-> +            gpio-controller;
-> +            #gpio-cells = <2>;
-> +
-> +            i2c@0 {
-> +                #address-cells = <1>;
-> +                #size-cells = <0>;
-> +                reg = <0>;
-> +            };
-> +
-> +            i2c@1 {
-> +                #address-cells = <1>;
-> +                #size-cells = <0>;
-> +                reg = <1>;
-> +            };
-> +        };
-> +    };
-> +...
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index b878ddc99f94e7f6e8fa2c479c5a3f846c514730..8e702cefd2070790330eebf6d2a2b592cadb682d 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -23181,6 +23181,12 @@ F:	drivers/misc/tifm*
->  F:	drivers/mmc/host/tifm_sd.c
->  F:	include/linux/tifm.h
->  
-> +TI FPC202 DUAL PORT CONTROLLER
-> +M:	Romain Gantois <romain.gantois@bootlin.com>
-> +L:	linux-kernel@vger.kernel.org
-> +S:	Maintained
-> +F:	Documentation/devicetree/bindings/misc/ti,fpc202.yaml
-> +
->  TI FPD-LINK DRIVERS
->  M:	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
->  L:	linux-media@vger.kernel.org
-> 
-> -- 
-> 2.47.0
-> 
+> +		return -EINVAL;
+> +	}
+
+> +	ns->head->runs = le64_to_cpu(configs[result.fdpcidx].runs);
+
+The config descriptors are variable length, so you can't just index into
+it. You have to read each index individually to get the next index's offset.
+Something like:
+
+	struct nvme_fdp_config_desc *configs;
+	void *l;
+	int i;
+
+	...
+
+	l = log + 1;
+	for (i = 0; i < result.fdpcidx; i++) {
+		configs = l;
+		l += le16_to_cpu(configs->size);
+	}
+	ns->head->runs = le64_to_cpu(configs->runs);
 
