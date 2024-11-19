@@ -1,69 +1,97 @@
-Return-Path: <linux-kernel+bounces-413804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A72359D1EF3
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 04:46:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D2BB9D1EF8
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 04:48:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 552721F2260A
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 03:46:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A8C7281A86
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 03:48:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F763146A71;
-	Tue, 19 Nov 2024 03:46:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AE8B148850;
+	Tue, 19 Nov 2024 03:48:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BhV9Za8c"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="sL1hcJ4W"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6162A1863F;
-	Tue, 19 Nov 2024 03:46:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59FF81863F;
+	Tue, 19 Nov 2024 03:48:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731988003; cv=none; b=dNext894CsTBFGN5VfQXSjJq88e2eLHLpvuXZRyqQleZQWrmM0p64JSbyfMgP9fgDE7k0CgJTp+Dz3qW782z+sK6VMuZqMlomGsGIVsM2TCpxcJBuwPzx6hqxbq+8mCpRHLaw4Btl13LaQA25ig/CN1IkcuGkadwmOjOTZE/KUk=
+	t=1731988125; cv=none; b=BnPLuIaPGtlpsqHRRxUde4qFRpRK7Vh+tzUcBYbAjyGHPlqupg3+7AUraNm3qZzMSNYCsManNKjCuYRAJvtrBC37jWhR+lMDYs8yhnrzFv2RtrECYUvBKFbOJTqExJsyYMRbVrb6f5XdXYS5NvfMbH58025VQ7KZmNawtBL9zno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731988003; c=relaxed/simple;
-	bh=cLg56LdjG00AtMTGY+3z7xIAHqbtHAcB02s1qF9G0eY=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=CtN+W/DDD7DP3bdBGwB2dBWzxTbWiqYH6fFHuTzrhbKWCLVi4TSs7WL98izveTdsmFXbEReLpE7BswjzMvm3Wq5rC0MWDnIeNZ944rNglFRe0NRWPk/5C2MLfcXs7Tfo6KzNv5KRQLNZ+C2vnWXpDVSwS8SHPg0NdkiXeW9GKCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BhV9Za8c; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D04A8C4CECF;
-	Tue, 19 Nov 2024 03:46:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731988002;
-	bh=cLg56LdjG00AtMTGY+3z7xIAHqbtHAcB02s1qF9G0eY=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=BhV9Za8cmwBje8VvseR7p6vgKJZULF+9gXVR009GGw6YkYUwFEjqFAePo7UyPPlCX
-	 bXhnTUj9u/F26RcbdyeWq2W2Jz4L3S9oJRP/sabKlSh/7bTRvI0aGvMlNgQTog7pSK
-	 33/vT7qpii+g9TGwJXkUCFRY7sqwacxR2WgQr7kfrEP5503xbhmciyJZ4+oZXPnuAP
-	 yRlDNpO7TP21iVFHgTndzfZTZ7Osn83BkbNBWmfby6reie1Eux4Kv0jrR0dD/NQnnM
-	 7y2030xHsESGFiuQPm7g72YA6yLoNjqF0BDsmIl6IvylybgDMrmgSEa2sNyFIYLep/
-	 FH7ISDqpv6qeA==
-Message-ID: <0c757a374f63ab6d47b9abd95261d348.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1731988125; c=relaxed/simple;
+	bh=VpnRR6K+8elVIoxOFS16GECY/oQnwsJ7JYVzPhYaucY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IgI5WEaZCxq0JsKRWfNeAgTdy2bn5Y9csyLqWUAkw7mHdgtrfR+yxraWCuF9PkXDDoqLSYFNlOoyuwm+bOI03pO9Zt2QXEPTE0iR8EbrK9eGAerKboEmI0L7tAn7GSDeJJvEwV6UlLOzhCD7p4mMyQiZuI07Y54gEjtgyRqeX2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=sL1hcJ4W; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=MA5utSwEz7H1vxVCeqgTcx1aZwAdO3vxz9WA1oQuuDo=; b=sL1hcJ4WPqJTiz3m3wx/GPmd5I
+	W8nestadOZKntFCRt0Dwr8cMQv1w+joWj9096WaT2FfzGw6FxsP9BtU3FJ4X5vQ9Ue+WFuLevW2sB
+	1hYUZbXllabHgTYq0SN9T6KzFF+1Irzi/94uN6tMyaiB96+kOPbTaIrah/UQGdWP2Mz+r+5lOir6g
+	cpS578+3pH43s62L8bUqfcsG6vub9A2CXFlsFz1EKi3DjxxRlg41snYhoQhn3GvNQC99bzCvwhi5P
+	haX6UPkCpD4I/yNnIPX1zAQ3p5qgy+9VuOtSJ0LlGHFjXMs/Rf9QjonXu9Uf66+zCLLuJBh63y+vA
+	M6RtJXsQ==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1tDFE2-000B2k-1Q;
+	Tue, 19 Nov 2024 11:48:27 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Tue, 19 Nov 2024 11:48:26 +0800
+Date: Tue, 19 Nov 2024 11:48:26 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Breno Leitao <leitao@debian.org>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Stephen Hemminger <stephen@networkplumber.org>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	paulmck@kernel.org
+Subject: Re: [PATCH net 2/2] netpoll: Use rcu_access_pointer() in
+ netpoll_poll_lock
+Message-ID: <ZzwKipL-4Lo9L4zV@gondor.apana.org.au>
+References: <20241118-netpoll_rcu-v1-0-a1888dcb4a02@debian.org>
+ <20241118-netpoll_rcu-v1-2-a1888dcb4a02@debian.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <2c7789dd-9583-4daa-918a-1bf14635f62e@lechnology.com>
-References: <CA+G9fYs+gwu67Y0Tm2FHfNuUA5eLxT2FAWkfKvYrEbXJUXXiiA@mail.gmail.com> <2c7789dd-9583-4daa-918a-1bf14635f62e@lechnology.com>
-Subject: Re: drivers/clk/davinci/psc.c:281:10: error: incompatible integer to pointer conversion returning 'int' from a function with result type 'struct davinci_lpsc_clk *' [-Wint-conversion]
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: hanchunchao@inspur.com, Michael Turquette <mturquette@baylibre.com>, Arnd Bergmann <arnd@arndb.de>, Dan Carpenter <dan.carpenter@linaro.org>, Anders Roxell <anders.roxell@linaro.org>
-To: David Lechner <david@lechnology.com>, Linux Regressions <regressions@lists.linux.dev>, Naresh Kamboju <naresh.kamboju@linaro.org>, clang-built-linux <llvm@lists.linux.dev>, linux-clk <linux-clk@vger.kernel.org>, lkft-triage@lists.linaro.org, open list <linux-kernel@vger.kernel.org>
-Date: Mon, 18 Nov 2024 19:46:40 -0800
-User-Agent: alot/0.12.dev1+gaa8c22fdeedb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241118-netpoll_rcu-v1-2-a1888dcb4a02@debian.org>
 
-Quoting David Lechner (2024-11-18 06:28:21)
->=20
-> This is caused by [1]. I looked at it again and the patch is wrong.
-> Can you drop it from your tree or should we send another patch to
-> fix the bad patch?
->=20
+On Mon, Nov 18, 2024 at 03:15:18AM -0800, Breno Leitao wrote:
+>
+> diff --git a/include/linux/netpoll.h b/include/linux/netpoll.h
+> index cd4e28db0cbd77572a579aff2067b5864d1a904a..959a4daacea1f2f76536e309d198bc14407942a4 100644
+> --- a/include/linux/netpoll.h
+> +++ b/include/linux/netpoll.h
+> @@ -72,7 +72,7 @@ static inline void *netpoll_poll_lock(struct napi_struct *napi)
+>  {
+>  	struct net_device *dev = napi->dev;
+>  
+> -	if (dev && dev->npinfo) {
+> +	if (dev && rcu_access_pointer(dev->npinfo)) {
 
-I can drop it from the tree.
+This function is only ever called in a BH context and as such
+the correct primitive would be rcu_dereference.  Indeed calling
+this outside of BH/RCU context would be silly.
+
+Cheers,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
