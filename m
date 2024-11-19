@@ -1,189 +1,141 @@
-Return-Path: <linux-kernel+bounces-414656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BCCA9D2BAB
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 17:51:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D2ED9D2BA2
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 17:50:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14CEB1F261B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 16:51:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCFA71F25658
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 16:50:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F2891D3656;
-	Tue, 19 Nov 2024 16:45:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC83A1D2F50;
+	Tue, 19 Nov 2024 16:44:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EoKHa8Ux"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WtfkJnbO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06AB11D435C;
-	Tue, 19 Nov 2024 16:45:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D26814A639;
+	Tue, 19 Nov 2024 16:44:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732034721; cv=none; b=oOuPRPgMZ8+EQtkafN1DSyOqUwZazeBc39G9ah/4CuvyLzkTz0S3l5mZHb83PQrvwOCYjH8gT6F8wRDrSqgi7woHK/JX/m3rkeSfqmjc4biy0OF1kQl5cjNJnTldugL+ROFzKTjpsQIgfrNGZLJPKC8a25MIsBG36iQ8ZASpI18=
+	t=1732034672; cv=none; b=ijN0SswG6T3cjou3FFETbmhYtENY9JysCfoNi84GVXUmLp3F8SYVBS5gab/id0BLVUk9SxyN2NyhLDSco4zBTQ8oBi3aRs7/XoCcwAB3Wh9CQohLy0OesaBI2rLJ8yE3fjwkeDvljkBA9qotTPw6SG8saNwzm0lduKQ/54B4CVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732034721; c=relaxed/simple;
-	bh=8ZZAjEe2oidrH5ViMWS900el+u7tKEKI536VEFp5r8s=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hQbHM3b2WiXGH6XrE40wrz5FgQ5pgZRTb5gqGIJ1oihnPqjQv7KF1ctaWlpE9DaRGYz6MjGhLi5HZnSrbdNHlSC+2+5D1ghVKe4wmHBLp2Y7NrGkTb13bx5HkI81IArPvDN8MuuflH7jrpNyf+Db5re7QYZZOJARcUhd+RDkVew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EoKHa8Ux; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-71e953f4e7cso2272121b3a.3;
-        Tue, 19 Nov 2024 08:45:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732034719; x=1732639519; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=99My6hnm/xq4qHzcMigG8ENPGdlWBw4DXu5XylnhePU=;
-        b=EoKHa8UxYGvmL1C33677A+ZTMliG/3VqO70k1bc9DuvQmrC4lkLMJ/pPaIqgKkldTj
-         jnx3IX25j/M1Zw9bwkZ5rBRV5JVME7Ytm7byLspNAUj6ZENl819mY6ydIb16QzsqfDqw
-         HPTm/39l0IwHPtRoXWXJfDGsi9UJhzz8MDx/5UBerkibAxBzKV9+Ats+RIqEED2ycVF1
-         64VnfFSJlGhvEp9gSOiC39i++dGdJxquIAjrfsW0yTFSOVrtmojv96WiK+APAHLX5jIW
-         foafzKxcexN7hgO7xMOS0U2Ut/BhWCknGWDMiHUrchFGE8wTU6jhuAXDB7g1czRF0ibP
-         Qqrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732034719; x=1732639519;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=99My6hnm/xq4qHzcMigG8ENPGdlWBw4DXu5XylnhePU=;
-        b=ba1hfXnEkDrlHmBa/zYeMnt1aw+AePJy5gAosBEy9FrSr2DjA53tCvw9aYVH/aFUGY
-         0K8w8pgTWcbIoTBL+Imwmo8IdT85DNfVmvyA9z2q14TqiVc88ukM4cNyqSyO29wDxPTO
-         kuzYy7yMyMCMuCO9NaMa7pgA5TyA+gjotBgkssiDmpaWsY80M7xcTpguByZ3C5XQNSFx
-         fEbdZsrIntRgWAaw4NrXwqroX1EttKbJS3krE9ROcr/7UuiIHMnr+izURQ/G5T9N9vRC
-         +lKg5weE/1ZYze1EyvBBSBaCXFBD29wl27/OaYDz69MTKQnc1QbPq6GLSFljXmle/nuP
-         Cfqw==
-X-Forwarded-Encrypted: i=1; AJvYcCVaF5qZwMcpF+DmRAcSrgflXUsxE4E6XbfJQt/ZCXQ+viIV6ciq/RzvqRJmvhB4OquqdybZZ8NpDtn5eBo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIxm/4ZoYMLgMVwxlCqJtzsWihdDyn/ONLsUHXE1kjExfI9Ezq
-	V1bJ34Ga5lLp5lRwdt+4kX0vTDl/dUErpkjWIhYOmVCbTD1qzPyH
-X-Google-Smtp-Source: AGHT+IFguSvc12BAGyOWftFOCJU/No/eAOkPR0RIRPTvrXX311dvzFofcrnwQM/TV8njGsHVtHkl8w==
-X-Received: by 2002:a05:6a00:1307:b0:71e:a3:935b with SMTP id d2e1a72fcca58-72476cf6e21mr21939752b3a.25.1732034719171;
-        Tue, 19 Nov 2024 08:45:19 -0800 (PST)
-Received: from purva-IdeaPad-Gaming-3-15IHU6.lan ([2409:40c0:11a2:6510:4555:ca08:e78d:a9df])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724771c0ba2sm8596992b3a.128.2024.11.19.08.45.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Nov 2024 08:45:18 -0800 (PST)
-From: Suraj Sonawane <surajsonawane0215@gmail.com>
-To: axboe@kernel.dk
-Cc: linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	hch@infradead.org,
-	hare@suse.de,
-	kbusch@kernel.org,
-	Suraj Sonawane <surajsonawane0215@gmail.com>
-Subject: [PATCH v5] block: blk-mq: fix uninit-value in blk_rq_prep_clone and refactor
-Date: Tue, 19 Nov 2024 22:14:12 +0530
-Message-Id: <20241119164412.37609-1-surajsonawane0215@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1732034672; c=relaxed/simple;
+	bh=vh/rQMmWsW0eC5ZiMITfWaU9DUli0B1GXm34M8YFvSM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=efdyZcxjkBV/Zzg0awzIoTq5AmCJ5ppfTvIV/FFyy2ioBG5KUBeH1t+N4t1Wk9rjftcQPTDbFEScG4qXYAoQLck1pO/afTNjZMSOXoU72cZdSe8I2QBrJ01j8hXz9FPnCfPscmCswwD8iqPenFrDQ+0w0kB8kkKRZ6qsUY6dOmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WtfkJnbO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8208FC4CECF;
+	Tue, 19 Nov 2024 16:44:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732034671;
+	bh=vh/rQMmWsW0eC5ZiMITfWaU9DUli0B1GXm34M8YFvSM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WtfkJnbOJCF/JI0XQtHtwo9j8x5uWWgD4w2/haWwAqzx44sXThCn8lzUK3iFQjIsY
+	 eos7cAcYbkafsZSpzs9tqKPuSfRZgNJ+glswzwAbOsZhN3JCrSMga5g9DJV998OwX7
+	 jh/gJBbCi085yOlTeYZu7FlHSMLAOOn2jx2WAJZSEQ4xmujJPUoFtb0n5tPmdqqWil
+	 sKTb+kDH70tNSg0etWKTnjPbX9JVgrkbVbm25tXdRru5o4Kp+roDG2GlEWxWneEanJ
+	 LGruxQKB1hExKjMcMgiqkbMhq9VYwUrhleSsffVGe3XaeOkXfn4eHv8K+jdXx6WrHU
+	 cYK1UWusjJQGQ==
+Date: Tue, 19 Nov 2024 10:44:29 -0600
+From: Rob Herring <robh@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Mark Brown <broonie@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	David Jander <david@protonic.nl>,
+	Martin Sperl <kernel@martin.sperl.org>, linux-spi@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-iio@vger.kernel.org, linux-pwm@vger.kernel.org
+Subject: Re: [PATCH v5 03/16] spi: dt-bindings: add trigger-source.yaml
+Message-ID: <20241119164429.GB1769375-robh@kernel.org>
+References: <20241115-dlech-mainline-spi-engine-offload-2-v5-0-bea815bd5ea5@baylibre.com>
+ <20241115-dlech-mainline-spi-engine-offload-2-v5-3-bea815bd5ea5@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241115-dlech-mainline-spi-engine-offload-2-v5-3-bea815bd5ea5@baylibre.com>
 
-Fix an issue detected by the `smatch` tool:
+On Fri, Nov 15, 2024 at 02:18:42PM -0600, David Lechner wrote:
+> Add a new binding for SPI offload trigger sources.
+> 
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
+> ---
+> 
+> v5 changes:
+> * Add MAINTAINERS entry.
+> 
+> v4 changes: new patch in v4.
+> 
+> FWIW, this is essentially identical to the leds trigger-source binding.
+> ---
+>  .../devicetree/bindings/spi/trigger-source.yaml    | 28 ++++++++++++++++++++++
+>  MAINTAINERS                                        |  1 +
+>  2 files changed, 29 insertions(+)
 
-block/blk-mq.c:3314 blk_rq_prep_clone() error: uninitialized
-symbol 'bio'.
+This should go into dtschema instead and not be just for SPI.
 
-This patch refactors `blk_rq_prep_clone()` to improve code
-readability and ensure safety by addressing potential misuse of
-the `bio` variable:
+> 
+> diff --git a/Documentation/devicetree/bindings/spi/trigger-source.yaml b/Documentation/devicetree/bindings/spi/trigger-source.yaml
+> new file mode 100644
+> index 000000000000..d64367726af2
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/spi/trigger-source.yaml
+> @@ -0,0 +1,28 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/spi/trigger-source.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Trigger source providers for SPI offloads
+> +
+> +maintainers:
+> +  - David Lechner <dlechner@baylibre.com>
+> +
+> +description:
+> +  Each trigger source provider should be represented by a device tree node. It
+> +  may be e.g. a SPI peripheral chip or a clock source.
 
-- Move the bio_put(bio); call to the bio_ctr error handling block,
-  which is the only place where it can be triggered.
-- Move the bio variable into the __rq_for_each_bio loop scope.
-  This change removes the need to set bio to NULL at the loop's 
-  end.
+select: true
 
-discussion on why bio remains uninitialized:
-https://lore.kernel.org/lkml/20241004141037.43277-1-surajsonawane0215@gmail.com
+So the schema is always applied.
 
-Summary of above discussion:
-- I pointed out that `bio` can remain uninitialized if the 
-  allocation with `bio_alloc_clone` fails.
-- Keith Busch explained that `bio` is initialized to `NULL` when 
-  `bio_alloc_clone()` fails, preventing uninitialized usage.
-- John Garry questioned whether `rq_src->bio` being `NULL` could 
-  leave `bio` uninitialized. Keith clarified that in such cases, 
-  `bio` is not referenced, so it does not need initialization.
-- Christoph Hellwig recommended code improvements:
- - move the bio_put to the bio_ctr error handling, which is the only
-   case where it can happen
- - move the bio variable into the __rq_for_each_bio scope, which
-   also removed the need to zero it at the end of the loop
+> +
+> +properties:
+> +  '#trigger-source-cells':
+> +    description:
+> +      Number of cells in a source trigger. Typically 0 for nodes of simple
+> +      trigger sources. For nodes with more than one output signal, the first
+> +      cell be used to specify which output signal to use. If the same signal is
+> +      available on more than one pin, the second cell can be used to specify
+> +      which pin to use.
+> +    enum: [ 0, 1, 2 ]
 
-These changes enhance code clarity, address static analysis tool
-warnings, and make the function more maintainable.
+Not sure it's worth defining how many cells here since the specific 
+providers have to define the exact number of cells and their use.
 
-thread of previous version patch discussion:
-https://lore.kernel.org/lkml/20241004100842.9052-1-surajsonawane0215@gmail.com
+Add "trigger-sources" here with it's type. See other simple 
+provider/consumer schemas which have both properties in one schema.
 
-Signed-off-by: Suraj Sonawane <surajsonawane0215@gmail.com>
----
-V1 - Initialize 'bio' to NULL.
-V2 - Move bio_put(bio) into the bio_ctr error handling block,
-     ensuring memory cleanup occurs only when the bio_ctr fail.
-V3 - Move the bio declaration into the loop scope, eliminating
-     the need to set it to NULL at the end of the loop.
-V4 - Adjust position of arguments of bio_alloc_clone.
-V5 - Add commit log properly and change sign-off name from
-     SurajSonawane2415 to Suraj Sonawane (used real name).
+Then when you use trigger-sources in a specific binding, you just need 
+to define the entries like clocks, interrupts, resets, etc.
 
- block/blk-mq.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
 
-diff --git a/block/blk-mq.c b/block/blk-mq.c
-index 270cfd9fc..abdf44736 100644
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -3273,19 +3273,21 @@ int blk_rq_prep_clone(struct request *rq, struct request *rq_src,
- 		      int (*bio_ctr)(struct bio *, struct bio *, void *),
- 		      void *data)
- {
--	struct bio *bio, *bio_src;
-+	struct bio *bio_src;
- 
- 	if (!bs)
- 		bs = &fs_bio_set;
- 
- 	__rq_for_each_bio(bio_src, rq_src) {
--		bio = bio_alloc_clone(rq->q->disk->part0, bio_src, gfp_mask,
--				      bs);
-+		struct bio *bio	 = bio_alloc_clone(rq->q->disk->part0, bio_src,
-+					gfp_mask, bs);
- 		if (!bio)
- 			goto free_and_out;
- 
--		if (bio_ctr && bio_ctr(bio, bio_src, data))
-+		if (bio_ctr && bio_ctr(bio, bio_src, data)) {
-+			bio_put(bio);
- 			goto free_and_out;
-+		}
- 
- 		if (rq->bio) {
- 			rq->biotail->bi_next = bio;
-@@ -3293,7 +3295,6 @@ int blk_rq_prep_clone(struct request *rq, struct request *rq_src,
- 		} else {
- 			rq->bio = rq->biotail = bio;
- 		}
--		bio = NULL;
- 	}
- 
- 	/* Copy attributes of the original request to the clone request. */
-@@ -3311,8 +3312,6 @@ int blk_rq_prep_clone(struct request *rq, struct request *rq_src,
- 	return 0;
- 
- free_and_out:
--	if (bio)
--		bio_put(bio);
- 	blk_rq_unprep_clone(rq);
- 
- 	return -ENOMEM;
--- 
-2.34.1
+And eventually any types defined in the kernel can be dropped, but that 
+should wait a bit since older dtschema won't have them.
 
+Rob
 
