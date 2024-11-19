@@ -1,116 +1,244 @@
-Return-Path: <linux-kernel+bounces-414461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F12E9D284B
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 15:36:07 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D78A59D286C
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 15:43:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EA16282DAA
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 14:36:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CAC7DB2F434
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 14:35:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9BB11CDFC3;
-	Tue, 19 Nov 2024 14:36:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A50A1CC8AC;
+	Tue, 19 Nov 2024 14:35:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TY9AsjTy"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UxxdH3Hc"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80F041C68BE
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 14:36:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B707FE57D
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 14:35:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732026963; cv=none; b=BUzbjQHFMo4DzkCwzy9IwwOtEcHy06jt/noL8Z1YjLoXeym/OZXkXKUHRw1m+NLbB8VksRxgxOO9PURiTb5jeAUkz8hV9Nlr6vMlnbexn5fvq0sQeADBz1jEYNyphxpOaBGFTfHqyQsS+Ty07fTA+CX23HB2W1V5c06eVjGBhNU=
+	t=1732026940; cv=none; b=UeUCDGKT+mfXdBUO/a6Q8t7u0VvTFrDiMLDE4QjM43XQV/PisgMxQfUIjCWsrIkv6vSERRmSGzMQIdg4m2Lb/dd2vnGFqgK/LvMAbUKB2ov8IeQQI/ZokoCyBKKJTERQESFFZYBtBsk5DPaQlRnwJEbpYcK78dX/A2HBVBDqIeU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732026963; c=relaxed/simple;
-	bh=6PzimaT2ZzcfReTyS7STbVhcn8YFHF2LqCOyy+Kiepw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cePtTwnZUKucymKeDcAKMsBZ1WMbLBnHs4Zk3wj/zwI1fS44/wpYUfwMXnD/NPmtBiqhem0smtJeX03Ej9Fd5s/ezfNxS0Ev1NzIpXfnZU9XwBz9ZXpa9lMCd5MOtNoHYR3UV/w0qsm8lVJym1mZ0+WkZpt149MVWhIem50uo4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TY9AsjTy; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-aa3a79d4d59so169398266b.3
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 06:36:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732026960; x=1732631760; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=w7idQQg4D7BUihd8OeXq3fOBVuvuiTlbrkZ9vzYLBbg=;
-        b=TY9AsjTyFLk8qOfzNYT+YcutN5LbJTnThHA8YwfpWHP6oiNITl+3KnYDVTmlOaTALV
-         HCX0bfNFxwmNXpmC5OAIRIK5CSq8MS6Esioacc/NnczR0V7p74jAg+pnbz/qkozIZBXy
-         jJrjAZtZPDGQGMQeByJRSJNFDbjcVl3wEbJRo2oKdbqjkSbRB/KTGbSdn7o1gao3np8Q
-         3+z/DLCt4ze4dZLHXWAMQ7DM3HJ1UvmmjF9UC1wrdpKhMAdGlF/ogNvHBuAQSeWmT2Tk
-         KHdGeEKj9paw1sZbp2+nJ6w4F2qxo2IRiAtJt4q1ynKlw2+4t892lqrxsuRDYeSRgCUz
-         gUNQ==
+	s=arc-20240116; t=1732026940; c=relaxed/simple;
+	bh=inyP8EzpXjrTYOwbBZhVZakTi62ByPip/mFB2T5+hAk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UBpLZNRVbNds2ZG1xPFVGGNmPJfcp5zsSuXkrvwg5C1IdmpGnQoufCCo001MvNLeimXej7QueLQMY/g9rRij5R+qy7w0emYxKAERWMr0Tr7Eqo4ilKG2J9/eJuERGS/+aVO5cK/NLf7TmRzZ9a8i3vfc0r3AK2GjXq+PlZMt558=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UxxdH3Hc; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732026936;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=JKx890WpfnsU0/gagsqAu/7bg4tMVV8GUtdV3TL7xsM=;
+	b=UxxdH3Hc3xxHGVkKbPSchB0vztmPosD97VhIDHDqHVXarC/0h9H49NOP/0OFHg3a8+u9ty
+	Vyq7ZcylmRcPVgCtWq+3oyr0AA+RxELHUywJrzcjog6iFM3FGYTVJPXgKRA/P+90V5/iMS
+	V+1Tz51CovcItTC3pvDfB7y1u7uMB7Y=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-488-BYsFHhMMOwW_UYwVVAnD4A-1; Tue, 19 Nov 2024 09:35:35 -0500
+X-MC-Unique: BYsFHhMMOwW_UYwVVAnD4A-1
+X-Mimecast-MFC-AGG-ID: BYsFHhMMOwW_UYwVVAnD4A
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4315f48bd70so28990875e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 06:35:35 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732026960; x=1732631760;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=w7idQQg4D7BUihd8OeXq3fOBVuvuiTlbrkZ9vzYLBbg=;
-        b=O7yA5P8j0f7jJPyl/lLo3rRxP/obKVbBJ90MbxPqOYypb+F5DwvzSEK7GiecVz2OEJ
-         4Yq5R9haBMN1YAAXM7aXWMAM2FkpbWNIojNlWIfwCZiElXQmKGeX0GNZTElt5WZirzC2
-         0x/Of1DX7T+Sxl0SwcFJKkU4bIiSohXc0E90rMB+TPJXz8C8tzwgiUG5tCtFHBpk2koS
-         MSnW7h96kzC2DWwgOd2pLYXyCPxHGK6a83f6m4hd/i0HtUtQJWfLh+p64qmPNY9p2mZ7
-         OT6fM/HZt5xC9nhOAwxSTHUzU9xrnMBuqqGR6npeSVI+h7ZrWrC9QkuVqvmoJyF1W6Rt
-         /VEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUlPz9aaibsGlAJJJilXlnYfpLVMXVWC5VWm/AtzS8Q6/+Z/Kho99CUG5L735p0rFhDBJpM1vzm7LGw2Ok=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNftGIxKuo8hM3En6QSsm88pnZaPefcqbrpEicHe252LVb//1n
-	jB6pnbZJan85yQFwm9zmLbZ/ovQ5wbr3nrEo/JG6Uf3YBeo69YZQ
-X-Google-Smtp-Source: AGHT+IHReRAFCSlFt07494EKzoaTxnNoyKNt5Mh49aj3loZLTEjmsPWJYANZyG00j56l7UT+F/tSmg==
-X-Received: by 2002:a17:907:9309:b0:a9a:1585:dd3b with SMTP id a640c23a62f3a-aa483421c7emr1483333566b.21.1732026959694;
-        Tue, 19 Nov 2024 06:35:59 -0800 (PST)
-Received: from f.. (cst-prg-93-87.cust.vodafone.cz. [46.135.93.87])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20df570ddsm654296966b.74.2024.11.19.06.35.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Nov 2024 06:35:59 -0800 (PST)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: akpm@linux-foundation.org
-Cc: oleg@redhat.com,
-	linux-kernel@vger.kernel.org,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH] get_task_exe_file: check PF_KTHREAD locklessly
-Date: Tue, 19 Nov 2024 15:35:26 +0100
-Message-ID: <20241119143526.704986-1-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1732026934; x=1732631734;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=JKx890WpfnsU0/gagsqAu/7bg4tMVV8GUtdV3TL7xsM=;
+        b=vJplF7GCs2rvU88NG5wOt7ZnpwLMq+qgeK4pw77UIsDaVeM6og0CyaETfsRgj+kW68
+         la/f6Cf8qeTZUqlXUr6P8u3GRE2iKOhGqLv433m+y0ndur22SKU7zP0K6f8PfROCid2p
+         jDIf09Sa0/lqsZLg52mCCgxWTaKO1pZE+rgSnHecHRBMf92yEtI9uT4FxSDXp5h3TIEo
+         QyqJshqtCwfkUTZXKffhTPWZsodMquV/xD+W0Dhb041eg+lXO92YEJSmDXaRJ0Bh6hxn
+         NB/NxIUktrjXrkCTIP/VRhC5MBOk18c5hoZ+4TUVmT5hARtIrPGY5P+D11+vwkZXMg+9
+         EHOw==
+X-Forwarded-Encrypted: i=1; AJvYcCWQUwlVCGqRt2HF0GacoHnFZeHeOLKCq8RgZWSt4BymaFd5Ya3vM9rbaWB68Q1Q3DL2f8LoHeiaoqKlkA8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyeCJD6tbCCNJ/iJWEk+9PHr3M+IBZPfDx3cMW+yWKixh8NdXlx
+	MCdMXFCOk4rUwIvMsA5nYLpkeF6LswoDuJ4spcNxdRG0aI5nHnXFYVJH3nO2s5b/wC9nJpw1vBl
+	lKKpHmk0yLTjcl8+X1VxiqE1B2tdB7hItEnEETTNtnpWTDMsZkNa4q9cT5mMJpA==
+X-Received: by 2002:a05:600c:5492:b0:431:5d89:646e with SMTP id 5b1f17b1804b1-432df792df0mr123888895e9.32.1732026934041;
+        Tue, 19 Nov 2024 06:35:34 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGWNHgoarbx3hUcQezjymarz8pGO7PL0597K0482rDOTfSC0yJPFVaW9DwAPbLFRBl1lqybvA==
+X-Received: by 2002:a05:600c:5492:b0:431:5d89:646e with SMTP id 5b1f17b1804b1-432df792df0mr123888685e9.32.1732026933695;
+        Tue, 19 Nov 2024 06:35:33 -0800 (PST)
+Received: from ?IPV6:2003:cb:c74b:d000:3a9:de5c:9ae6:ccb3? (p200300cbc74bd00003a9de5c9ae6ccb3.dip0.t-ipconnect.de. [2003:cb:c74b:d000:3a9:de5c:9ae6:ccb3])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432dab80582sm195595185e9.19.2024.11.19.06.35.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 19 Nov 2024 06:35:33 -0800 (PST)
+Message-ID: <db6e1966-3824-45cd-8cae-740348780002@redhat.com>
+Date: Tue, 19 Nov 2024 15:35:31 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] mm: Respect mmap hint address when aligning for THP
+To: Kalesh Singh <kaleshsingh@google.com>
+Cc: kernel-team@android.com, android-mm@google.com,
+ Andrew Morton <akpm@linux-foundation.org>, Vlastimil Babka <vbabka@suse.cz>,
+ Yang Shi <yang@os.amperecomputing.com>, Rik van Riel <riel@surriel.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Suren Baghdasaryan <surenb@google.com>,
+ Minchan Kim <minchan@kernel.org>, Hans Boehm <hboehm@google.com>,
+ Lokesh Gidra <lokeshgidra@google.com>, stable@vger.kernel.org,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Jann Horn <jannh@google.com>,
+ Yang Shi <shy828301@gmail.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <20241118214650.3667577-1-kaleshsingh@google.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20241118214650.3667577-1-kaleshsingh@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Same thing as 8ac5dc66599c ("get_task_mm: check PF_KTHREAD lockless")
+On 18.11.24 22:46, Kalesh Singh wrote:
+> Commit efa7df3e3bb5 ("mm: align larger anonymous mappings on THP
+> boundaries") updated __get_unmapped_area() to align the start address
+> for the VMA to a PMD boundary if CONFIG_TRANSPARENT_HUGEPAGE=y.
+> 
+> It does this by effectively looking up a region that is of size,
+> request_size + PMD_SIZE, and aligning up the start to a PMD boundary.
+> 
+> Commit 4ef9ad19e176 ("mm: huge_memory: don't force huge page alignment
+> on 32 bit") opted out of this for 32bit due to regressions in mmap base
+> randomization.
+> 
+> Commit d4148aeab412 ("mm, mmap: limit THP alignment of anonymous
+> mappings to PMD-aligned sizes") restricted this to only mmap sizes that
+> are multiples of the PMD_SIZE due to reported regressions in some
+> performance benchmarks -- which seemed mostly due to the reduced spatial
+> locality of related mappings due to the forced PMD-alignment.
+> 
+> Another unintended side effect has emerged: When a user specifies an mmap
+> hint address, the THP alignment logic modifies the behavior, potentially
+> ignoring the hint even if a sufficiently large gap exists at the requested
+> hint location.
+> 
+> Example Scenario:
+> 
+> Consider the following simplified virtual address (VA) space:
+> 
+>      ...
+> 
+>      0x200000-0x400000 --- VMA A
+>      0x400000-0x600000 --- Hole
+>      0x600000-0x800000 --- VMA B
+> 
+>      ...
+> 
+> A call to mmap() with hint=0x400000 and len=0x200000 behaves differently:
+> 
+>    - Before THP alignment: The requested region (size 0x200000) fits into
+>      the gap at 0x400000, so the hint is respected.
+> 
+>    - After alignment: The logic searches for a region of size
+>      0x400000 (len + PMD_SIZE) starting at 0x400000.
+>      This search fails due to the mapping at 0x600000 (VMA B), and the hint
+>      is ignored, falling back to arch_get_unmapped_area[_topdown]().
+> 
+> In general the hint is effectively ignored, if there is any
+> existing mapping in the below range:
+> 
+>       [mmap_hint + mmap_size, mmap_hint + mmap_size + PMD_SIZE)
+> 
+> This changes the semantics of mmap hint; from ""Respect the hint if a
+> sufficiently large gap exists at the requested location" to "Respect the
+> hint only if an additional PMD-sized gap exists beyond the requested size".
+> 
+> This has performance implications for allocators that allocate their heap
+> using mmap but try to keep it "as contiguous as possible" by using the
+> end of the exisiting heap as the address hint. With the new behavior
+> it's more likely to get a much less contiguous heap, adding extra
+> fragmentation and performance overhead.
+> 
+> To restore the expected behavior; don't use thp_get_unmapped_area_vmflags()
+> when the user provided a hint address, for anonymous mappings.
+> 
+> Note: As, Yang Shi, pointed out: the issue still remains for filesystems
+> which are using thp_get_unmapped_area() for their get_unmapped_area() op.
+> It is unclear what worklaods will regress for if we ignore THP alignment
+> when the hint address is provided for such file backed mappings -- so this
+> fix will be handled separately.
+> 
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Vlastimil Babka <vbabka@suse.cz>
+> Cc: Yang Shi <yang@os.amperecomputing.com>
+> Cc: Rik van Riel <riel@surriel.com>
+> Cc: Ryan Roberts <ryan.roberts@arm.com>
+> Cc: Suren Baghdasaryan <surenb@google.com>
+> Cc: Minchan Kim <minchan@kernel.org>
+> Cc: Hans Boehm <hboehm@google.com>
+> Cc: Lokesh Gidra <lokeshgidra@google.com>
+> Cc: <stable@vger.kernel.org>
+> Fixes: efa7df3e3bb5 ("mm: align larger anonymous mappings on THP boundaries")
+> Signed-off-by: Kalesh Singh <kaleshsingh@google.com>
+> Reviewed-by: Rik van Riel <riel@surriel.com>
+> Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
+> ---
 
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
----
- kernel/fork.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+LGTM. Hopefully that's the end of this story :)
 
-diff --git a/kernel/fork.c b/kernel/fork.c
-index 22f43721d031..759902828e13 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -1500,12 +1500,13 @@ struct file *get_task_exe_file(struct task_struct *task)
- 	struct file *exe_file = NULL;
- 	struct mm_struct *mm;
- 
-+	if (task->flags & PF_KTHREAD)
-+		return NULL;
-+
- 	task_lock(task);
- 	mm = task->mm;
--	if (mm) {
--		if (!(task->flags & PF_KTHREAD))
--			exe_file = get_mm_exe_file(mm);
--	}
-+	if (mm)
-+		exe_file = get_mm_exe_file(mm);
- 	task_unlock(task);
- 	return exe_file;
- }
+Reviewed-by: David Hildenbrand <david@redhat.com>
+
 -- 
-2.43.0
+Cheers,
+
+David / dhildenb
 
 
