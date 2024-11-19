@@ -1,149 +1,155 @@
-Return-Path: <linux-kernel+bounces-413903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFBE49D2074
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 07:52:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D366A9D2077
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 07:54:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4B63DB20E34
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 06:52:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93C472812FD
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 06:54:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C74F714C5A1;
-	Tue, 19 Nov 2024 06:52:38 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6C4512CDAE;
-	Tue, 19 Nov 2024 06:52:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C8A914D44D;
+	Tue, 19 Nov 2024 06:54:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="rCahgoJO";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="cAQ+X7/z"
+Received: from fout-a4-smtp.messagingengine.com (fout-a4-smtp.messagingengine.com [103.168.172.147])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9348D13B780;
+	Tue, 19 Nov 2024 06:54:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731999158; cv=none; b=qwLcpHw7x8nfdY8n95VoBgpiRKVuvYWTV2XsG3IJePDZIC9jv1oR+i2Ov1Z7Z03K0yDS01GNx5kultToMrzcUgbPhncWBPn10tE72MIrr2Bg8JbzcxhJ17b+cVxTrhwAcPrAsYzGJHGH0kBxCFws7WhOX4xLarYM5Xxl/lxU5TQ=
+	t=1731999243; cv=none; b=g5zzPndrSPivgcxAjWq/b8apVqZb5tbTb1Ati7MdihM68Z162TLjFv9/vibUCQDVf6oYUIo3KG4ebqbPUzBbKkFMwXY7FMcOnM8Kn5UgKsAEZIs/80ILmMXuZZUFijJ6gpeNhdyvAWIj9vN44BFRUt/thcuQdVx8lIIlGqLIAJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731999158; c=relaxed/simple;
-	bh=X1+zdJ06C6wxtKvSwI4yFWv5SXK3REfFFRtQiBhbY44=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sWXg61gwnwZNzoXLNgGCagnRPkYaygIjBvloO4xrDFWxYrkkQmQMlRFXepe6NQgup2toSR2q+/Yn/8d8hWKsP6Cr03q/CVv0t6W6Mq20X2m3aj/uKr+HuUuOqrQt3xKKUhwdUvzaNrNZDz+zdkOg+YeMVG/M5JG+aH8By0fte7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [113.200.148.30])
-	by gateway (Coremail) with SMTP id _____8BxeeCyNTxncTVCAA--.64076S3;
-	Tue, 19 Nov 2024 14:52:34 +0800 (CST)
-Received: from linux.localdomain (unknown [113.200.148.30])
-	by front1 (Coremail) with SMTP id qMiowMCxtsCwNTxnx_xcAA--.27448S2;
-	Tue, 19 Nov 2024 14:52:33 +0800 (CST)
-From: Tiezhu Yang <yangtiezhu@loongson.cn>
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: loongarch@lists.linux.dev,
-	bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] LoongArch: BPF: Sign-extend return values
-Date: Tue, 19 Nov 2024 14:52:30 +0800
-Message-ID: <20241119065230.19157-1-yangtiezhu@loongson.cn>
-X-Mailer: git-send-email 2.42.0
+	s=arc-20240116; t=1731999243; c=relaxed/simple;
+	bh=Ni+Pop2lAy1JPXseeKbnhaoF8e/0VK6ECF0WV43IJtc=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=Q67AmY7K0dDETlGz1tYyQ4P55XpSc+bN2pg5fwsWgBKTyBtAudfQRVPjuTWhbf6Xeic7Cwk1Z4t7rRSpdg25lHfA3mVoc/NJcXkNEvacPr/wZVBJ7YjQCJfIRe867uDJk4bhLMA62VxT3AasVj5oNIAKDSovSpYs0t62WAjg1Ds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=rCahgoJO; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=cAQ+X7/z; arc=none smtp.client-ip=103.168.172.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfout.phl.internal (Postfix) with ESMTP id 8470213801DA;
+	Tue, 19 Nov 2024 01:53:59 -0500 (EST)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Tue, 19 Nov 2024 01:53:59 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1731999239;
+	 x=1732085639; bh=9SUiF7P24dSvxygXMVuK6YdUrxNIl/AgdNtfan71nA8=; b=
+	rCahgoJOYGZ77ZKq5Xtr4cRWWiLFlQ9zefzqUORYso7UzlaaP8or505Z0RlpuHCA
+	PBiiaqN9fIOTiLRO2p9GK+n+G/FJfa2QqWpf+9VP8nQQlGSZOSzPGWTzQVZiGUhI
+	M3VvXiNvNeFE7QFHeZ5TffMaiv/XvaA8hLeEvhMuiJYjB/otLw08B5685tWr4XVT
+	q1UWBD+ttkQsHAxxZPKYX0+3kbNwHn8iTQOkdBv57xft+DSYDofMZwgsFHXkoeFC
+	qzjkhwCyaI6VYagO+NOJz9lEif6H8iBAmgO1AmtGlPr7anQBz32xaP7iOuSg4by9
+	PiyMbJjCff+U8vlaC6SUog==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1731999239; x=
+	1732085639; bh=9SUiF7P24dSvxygXMVuK6YdUrxNIl/AgdNtfan71nA8=; b=c
+	AQ+X7/zUSaBmiTT2/3oGiX14a7mPIJUpw9S2TN/V8KqH8Np6sS9A7H+4lk8Jrdmb
+	QhffuGNYcPag0kaeJujdT+RbTNUK2Tsh7dt63+pWiPurL/vY8zT6sHcAYm4dD3zb
+	p21ergLvEBetKTgbSjd1NwYYDK1XlShjtX77rg7jWydiz562jXPpjf0m1fvxQEAh
+	2unZln71u+x7Y+KK+g4nMtKkLcFAtL2Ns0vMk9uuMK+2Gk9T7ncebtdXg4KmjBPx
+	CJSmYyHgV22XUr9PvHIuDiMZj/rXAjMHW3/0CNN2ZGV62CVTbLNIIfZ73DO9Pqaf
+	2NpLOufwfwyZNU5KyJidA==
+X-ME-Sender: <xms:BzY8Z31nHZEoRDqP6M5OA0ezM_5ndNxRDh9CXtZfkh0NChT2vG_eqQ>
+    <xme:BzY8Z2F6sUkPCiX-GQfv7cYbujVEQ_uibluI9Pm7XSY6eNA9ebKbYT__y-oslt2q9
+    4DGLj_MWRtcFLdmjoM>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrfedugddutddtucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
+    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
+    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
+    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohephedp
+    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepshgrmhesghgvnhhtohhordhorhhgpd
+    hrtghpthhtohepnhgrthhhrghnsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkohhs
+    thgrughinhhshhhishhhmhgrnhhovhesphhrohhtohhnmhgrihhlrdgtohhmpdhrtghpth
+    htoheplhhinhhugidqkhgsuhhilhgusehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghp
+    thhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:BzY8Z36ZULsLBS7gvgyzAacTA-38-lupqN2j8KAUSiVLEsQsEtjTng>
+    <xmx:BzY8Z836QzQSVRVozuM1NTQOXUD_ntVkIPF2WmYBba8rFkhtc6j6YA>
+    <xmx:BzY8Z6G7hYsCuJ4rrLWcAdranEBWbxrCWIdQeIwsIkAejX5CfGtcTg>
+    <xmx:BzY8Z98l1qUzw8LDPB7ZMvp7D29r6edQ79NkUVWXR0pA_bGa1Upgmw>
+    <xmx:BzY8Z2gwtlLsJ2Kf8XQuSmRWCTOEQw9PYoLKCWrkj6gzVYGrhUCSm32q>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 2B4982220071; Tue, 19 Nov 2024 01:53:59 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMCxtsCwNTxnx_xcAA--.27448S2
-X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBj93XoWxAF4rurW7AF1UJr1fWr17urX_yoW5Xw48pr
-	W3Cr98GrWqg34UZ3Wkt3yrWF15KFsxWrWfW3429ryUZ3Z0934xWr1Yg3y5tFZ8u34F9FWI
-	vr98C3yY9a1kA3cCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUkFb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r106r15M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
-	xVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx
-	1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r126r1DMcIj6I8E87Iv
-	67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41l42xK82IYc2
-	Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s02
-	6x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0x
-	vE2Ix0cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE
-	42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6x
-	kF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07j1LvtUUUUU=
+Date: Tue, 19 Nov 2024 07:53:37 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Nathan Chancellor" <nathan@kernel.org>, "Sam James" <sam@gentoo.org>
+Cc: "Kostadin Shishmanov" <kostadinshishmanov@protonmail.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ linux-kbuild@vger.kernel.org
+Message-Id: <10db3077-9409-446d-8e50-1a2a803db767@app.fastmail.com>
+In-Reply-To: <20241119041550.GA573925@thelio-3990X>
+References: 
+ <4OAhbllK7x4QJGpZjkYjtBYNLd_2whHx9oFiuZcGwtVR4hIzvduultkgfAIRZI3vQpZylu7Gl929HaYFRGeMEalWCpeMzCIIhLxxRhq4U-Y=@protonmail.com>
+ <20241118205629.GA15698@thelio-3990X> <8734joj5gn.fsf@gentoo.org>
+ <20241119041550.GA573925@thelio-3990X>
+Subject: Re: Build failure with GCC 15 (-std=gnu23)
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-(1) Description of Problem:
+On Tue, Nov 19, 2024, at 05:15, Nathan Chancellor wrote:
+> On Tue, Nov 19, 2024 at 02:57:28AM +0000, Sam James wrote:
+>> 
+>> -std=gnu11 certainly isn't there.
+>
+> Ugh, this is because drivers/firmware/efi/libstub does not use
+> KBUILD_CFLAGS from the rest of the kernel when targeting x86:
+>
+> $ sed -n '9,21p' drivers/firmware/efi/libstub/Makefile
+> # non-x86 reuses KBUILD_CFLAGS, x86 does not
+> cflags-y                        := $(KBUILD_CFLAGS)
+>
+> cflags-$(CONFIG_X86_32)         := -march=i386
+> cflags-$(CONFIG_X86_64)         := -mcmodel=small
+> cflags-$(CONFIG_X86)            += -m$(BITS) -D__KERNEL__ \
+>                                    -fPIC -fno-strict-aliasing 
+> -mno-red-zone \
+>                                    -mno-mmx -mno-sse -fshort-wchar \
+>                                    -Wno-pointer-sign \
+>                                    $(call cc-disable-warning, 
+> address-of-packed-member) \
+>                                    $(call cc-disable-warning, gnu) \
+>                                    -fno-asynchronous-unwind-tables \
+>                                    $(CLANG_FLAGS)
+>
+> This isn't the first time this peculiarity has bitten us :/ sticking
+> '-std=gnu11' in there should resolve that issue.
 
-When testing BPF JIT with the latest compiler toolchains on LoongArch,
-there exist some strange failed test cases, dmesg shows something like
-this:
+Could we revisit the decision to make x86 special here and
+change it to use a modified KBUILD_CFLAGS like the other ones?
 
-  # dmesg -t | grep FAIL | head -1
-  ... ret -3 != -3 (0xfffffffd != 0xfffffffd)FAIL ...
+> arch/x86/boot/compressed/Makefile might need the same treatment. It
+> might make sense to introduce something like 'CSTD_FLAG := -std=gnu11'
+> then use that in the various places within the kernel that need it so it
+> can be consistently updated in the future whenever needed. I see that
+> flag in Makefile, arch/arm64/kernel/vdso32/Makefile, and
+> arch/x86/Makefile.
 
-(2) Steps to Reproduce:
+I actually have a patch to make the entire kernel use -std=gnu2x,
+but I never sent that because that requires gcc-9 or higher, and
+has no real upsides: the main difference is the handling of 'bool'
+types, and the std=gnu1x variant is simpler here because it avoids
+using the compiler-provided "stdbool.h".
 
-  # echo 1 > /proc/sys/net/core/bpf_jit_enable
-  # modprobe test_bpf
-
-(3) Additional Info:
-
-There are no failed test cases compiled with the lower version of GCC
-such as 13.3.0, while the problems only appear with higher version of
-GCC such as 14.2.0.
-
-This is because the problems were hidden by the lower version of GCC
-due to there are redundant sign extension instructions generated by
-compiler, but with optimization of higher version of GCC, the sign
-extension instructions have been removed.
-
-(4) Root Cause Analysis:
-
-The LoongArch architecture does not expose sub-registers, and hold all
-32-bit values in a sign-extended format. While BPF, on the other hand,
-exposes sub-registers, and use zero-extension (similar to arm64/x86).
-
-This has led to some subtle bugs, where a BPF JITted program has not
-sign-extended the a0 register (return value in LoongArch land), passed
-the return value up the kernel, for example:
-
-  | int from_bpf(void);
-  |
-  | long foo(void)
-  | {
-  |    return from_bpf();
-  | }
-
-Here, a0 would be 0xffff_ffff, instead of the expected
-0xffff_ffff_ffff_ffff.
-
-Internally, the LoongArch JIT uses a5 as a dedicated register for BPF
-return values. That is to say, the LoongArch BPF uses a5 for BPF return
-values, which are zero-extended, whereas the LoongArch ABI uses a0 which
-is sign-extended.
-
-(5) Final Solution:
-
-Keep a5 zero-extended, but explicitly sign-extend a0 (which is used
-outside BPF land). Because libbpf currently defines the return value
-of an ebpf program as a 32-bit unsigned integer, just use addi.w to
-extend bit 31 into bits 63 through 32 of a5 to a0. This is similar
-with commit 2f1b0d3d7331 ("riscv, bpf: Sign-extend return values").
-
-Fixes: 5dc615520c4d ("LoongArch: Add BPF JIT support")
-Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
----
- arch/loongarch/net/bpf_jit.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/loongarch/net/bpf_jit.c b/arch/loongarch/net/bpf_jit.c
-index 7dbefd4ba210..dd350cba1252 100644
---- a/arch/loongarch/net/bpf_jit.c
-+++ b/arch/loongarch/net/bpf_jit.c
-@@ -179,7 +179,7 @@ static void __build_epilogue(struct jit_ctx *ctx, bool is_tail_call)
- 
- 	if (!is_tail_call) {
- 		/* Set return value */
--		move_reg(ctx, LOONGARCH_GPR_A0, regmap[BPF_REG_0]);
-+		emit_insn(ctx, addiw, LOONGARCH_GPR_A0, regmap[BPF_REG_0], 0);
- 		/* Return to the caller */
- 		emit_insn(ctx, jirl, LOONGARCH_GPR_RA, LOONGARCH_GPR_ZERO, 0);
- 	} else {
--- 
-2.42.0
-
+       Arnd
 
