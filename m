@@ -1,148 +1,122 @@
-Return-Path: <linux-kernel+bounces-414756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 159D59D2DBF
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 19:17:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F36E19D2CE3
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 18:46:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6AC5CB2E08F
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 17:45:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC7121F2214F
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 17:46:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D93C1D26F6;
-	Tue, 19 Nov 2024 17:45:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 337201D221C;
+	Tue, 19 Nov 2024 17:45:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ARrTl3S2"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZK9P8tzE"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D64FD1D1F44
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 17:45:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 035821D1F71
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 17:45:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732038341; cv=none; b=Ic/AaYAzrElvffwdDxA7/qPp/dp0kZon0Y+NyOJg5Ao4w0Bo+IdBG1ymtPTVoh8gR21FkMJa+fe09s7OJ+UogSl7EdbgJ55iWTHlLTa/brpzkM5incnsTpmvTQq4VnZ4sVdAPjETmOx+IOoalDPdH+wX0LdDZdexC5YG+fIlWMg=
+	t=1732038355; cv=none; b=DHA9fDcTX/GVheSjpRkNmJzgiF9gP4g0vg1g2nILbxnDAxSyBTBVv1/IuyT1/Re9qgfUmD1QNXfiqmt6XXSiTT+AnvOlrT3riAp2l2maNyt71ZDcOqxU39P9nH3oeffQMh5JkH0fK0IyCekKDZr90cvIstCQy+7Doj9464Ai3gs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732038341; c=relaxed/simple;
-	bh=ARZC07e2VA7V52AR6e6Yzy7xH9dv/4TYd1Swx9rjPDY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rlsW6fhV0rNIQAHUlQlzqeDW1TgQo+kA/s+MQD7PsiWhWNjsCMqQ79Qfxo/+FOXd3K70QQryoAUDds8gmm2JxMuAPdHi9alhkjuXLRhb7wOtEcImohwwlY7I4QkC7ky1WE+WW3UxQkpzn/e21efHLXWng/PvCn2gb4Tar+J6sMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=ARrTl3S2; arc=none smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AJHBjU7011388;
-	Tue, 19 Nov 2024 17:45:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=corp-2023-11-20; bh=oCfH9
-	2pQ9Va7b0K62RUYg0DlgYPYNRosAahDiewCId8=; b=ARrTl3S2y6tzqAjsc7kzi
-	mSrS9+SsatXH2u2pUc8kPbEljzMYZQpGW6PLyvOdg9avikFFFlLtyq9SBJ6YStdI
-	9guMIHkx8vbyTf2BJnMxrjShv7YZeLWnNGoKhmODj+1lDa443c9O2p9YW78P7L9f
-	HwrH/4VwHKZYGyllwkJ4lrgCjERbCa8FLwmHM/U6v893K6+olWnjYG2xPmyflDa0
-	Pi/NZY/+/qSdr3cWOachUc8wUXeIVK07qhwcfKTdaKi5zMgwULo2ZayZQbS7paZB
-	oOE6ZwMWj/HLJTFlb8d92ykOI8eTD7Jw3S8trBipCow1M1haKVwv6y3crF5BquPe
-	Q==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 42xhyydk46-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 19 Nov 2024 17:45:24 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 4AJHIDkP023119;
-	Tue, 19 Nov 2024 17:45:22 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 42xhu99djn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 19 Nov 2024 17:45:22 +0000
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4AJHfRnd008507;
-	Tue, 19 Nov 2024 17:45:22 GMT
-Received: from aruramak-dev.osdevelopmeniad.oraclevcn.com (aruramak-dev.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.253.155])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 42xhu99dh7-3;
-	Tue, 19 Nov 2024 17:45:22 +0000
-From: Aruna Ramakrishna <aruna.ramakrishna@oracle.com>
-To: linux-kernel@vger.kernel.org
-Cc: x86@kernel.org, dave.hansen@linux.intel.com, tglx@linutronix.de,
-        mingo@kernel.org, rudi.horn@oracle.com, joe.jin@oracle.com,
-        aruna.ramakrishna@oracle.com
-Subject: [PATCH v3 2/2] x86/pkeys: Set XSTATE_BV[PKRU] to 1 so that PKRU is XRSTOR'd correctly
-Date: Tue, 19 Nov 2024 17:45:20 +0000
-Message-ID: <20241119174520.3987538-3-aruna.ramakrishna@oracle.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20241119174520.3987538-1-aruna.ramakrishna@oracle.com>
-References: <20241119174520.3987538-1-aruna.ramakrishna@oracle.com>
+	s=arc-20240116; t=1732038355; c=relaxed/simple;
+	bh=mTdAVuUriIMRS+V3xoSSx/BGafZH3FWGBC1BWGHuswc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hDrS4n/YCztPnieaSxnKrciSJ45V5cyA0I+9sF+qvq4fwg3HuaW8X0RmHdbQhp6aYBRwsCzA/EQWndp5zCulfa7TE3Chz0ksmAauOJF03yMHePyzKQALnnCSk7jukMIqK5M3pxNe9HFrKcMzTB8MNClb0iMueXcQMKnHekF28ZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZK9P8tzE; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732038354; x=1763574354;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=mTdAVuUriIMRS+V3xoSSx/BGafZH3FWGBC1BWGHuswc=;
+  b=ZK9P8tzEELIbrtq81Rq9BaY7KJuM18NalkkqYQddvREOwZZfvHGCwvKd
+   ZlBC8Qlr/gBqTw8MxkclyOpYSNQD4xo1tuvXymnKcp69p0iClgUrPMC2c
+   Kc86InnaQHFzS3bQY642tg/NWkVfA7fn09ULAsJP3gnVDk3+ulTHugatN
+   Xil5im47XHNP0s/6Ye9+BUGvrqjRLCRIdtQbbyNuTHs8wQSJnp4qvSb/3
+   S+BqNz/0LFtPilx/BPZbVJB82I2cEvlWRLyxeuDOH/HZVlywPig4XL8Vd
+   oWmf1naAyBpH4rUWsJ7oC6gpqRk5w/LZplzhOOgzSYSbhGK5/yaOXYQeq
+   g==;
+X-CSE-ConnectionGUID: 4DiQb3I6RjiX6bf7bvD+DQ==
+X-CSE-MsgGUID: M63S6bYZSG+61iFTM9oDZw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11261"; a="32165650"
+X-IronPort-AV: E=Sophos;i="6.12,166,1728975600"; 
+   d="scan'208";a="32165650"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Nov 2024 09:45:53 -0800
+X-CSE-ConnectionGUID: hmhvNWEPSwqGVOu411YWJg==
+X-CSE-MsgGUID: sbqgqTgWRoeNl6WqcqEBhw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,166,1728975600"; 
+   d="scan'208";a="89757911"
+Received: from myoakum-mobl.amr.corp.intel.com (HELO desk) ([10.125.150.235])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Nov 2024 09:45:53 -0800
+Date: Tue, 19 Nov 2024 09:45:46 -0800
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org, tglx@linutronix.de,
+	bp@alien8.de
+Subject: Re: [RFC][PATCH] x86/cpu/bugs: Consider having old Intel microcode
+ to be a vulnerability
+Message-ID: <20241119174546.5ehj6yjiqk3baxhh@desk>
+References: <20241107170630.2A92B8D3@davehans-spike.ostc.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-11-19_09,2024-11-18_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 bulkscore=0 suspectscore=0
- phishscore=0 spamscore=0 mlxscore=0 malwarescore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2409260000
- definitions=main-2411190132
-X-Proofpoint-ORIG-GUID: efD9yKEYH-nh7erbRnLOah8AIbK0k4xD
-X-Proofpoint-GUID: efD9yKEYH-nh7erbRnLOah8AIbK0k4xD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241107170630.2A92B8D3@davehans-spike.ostc.intel.com>
 
-PKRU value is not XRSTOR'd from the XSAVE area if the corresponding
-XSTATE_BV[i] bit is 0. A wrpkru(0) sets XSTATE_BV[PKRU] to 0 on AMD
-systems, which means the PKRU value updated on the sigframe later on,
-in update_pkru_in_sigframe(), is ignored.
+On Thu, Nov 07, 2024 at 09:06:30AM -0800, Dave Hansen wrote:
+> 
+> From: Dave Hansen <dave.hansen@linux.intel.com>
+> 
+> You can't practically run old microcode and consider a system secure
+> these days.  So, let's call old microcode what it is: a vulnerability.
 
-To make this behavior consistent across Intel and AMD systems, and to
-ensure that the PKRU value updated on the sigframe is always restored
-correctly, explicitly set XSTATE_BV[PKRU] to 1.
+> Expose that vulnerability in a place that folks can find it:
+> 
+> 	/sys/devices/system/cpu/vulnerabilities/old_microcode
 
-Fixes: 70044df250d0 ("x86/pkeys: Update PKRU to enable all pkeys before XSAVE")
+Sorry for playing the devil's advocate. I am wondering who is the prime
+beneficiary of this change?
 
-Signed-off-by: Aruna Ramakrishna <aruna.ramakrishna@oracle.com>
-Suggested-by: Rudi Horn <rudi.horn@oracle.com>
----
- arch/x86/kernel/fpu/xstate.h | 16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
+Roughly dividing the user base into:
 
-diff --git a/arch/x86/kernel/fpu/xstate.h b/arch/x86/kernel/fpu/xstate.h
-index 6b2924fbe5b8..aa16f1a1bbcf 100644
---- a/arch/x86/kernel/fpu/xstate.h
-+++ b/arch/x86/kernel/fpu/xstate.h
-@@ -72,10 +72,22 @@ static inline u64 xfeatures_mask_independent(void)
- /*
-  * Update the value of PKRU register that was already pushed onto the signal frame.
-  */
--static inline int update_pkru_in_sigframe(struct xregs_state __user *buf, u32 pkru)
-+static inline int update_pkru_in_sigframe(struct xregs_state __user *buf, u64 mask, u32 pkru)
- {
-+	u64 xstate_bv;
-+	int err;
-+
- 	if (unlikely(!cpu_feature_enabled(X86_FEATURE_OSPKE)))
- 		return 0;
-+
-+	/* Mark PKRU as in-use so that it is restored correctly. */
-+	xstate_bv = (mask & xfeatures_in_use()) | XFEATURE_MASK_PKRU;
-+
-+	err =  __put_user(xstate_bv, &buf->header.xfeatures);
-+	if (err)
-+		return err;
-+
-+	/* Update PKRU value in the userspace xsave buffer. */
- 	return __put_user(pkru, (unsigned int __user *)get_xsave_addr_user(buf, XFEATURE_PKRU));
- }
- 
-@@ -292,7 +304,7 @@ static inline int xsave_to_user_sigframe(struct xregs_state __user *buf, u32 pkr
- 	clac();
- 
- 	if (!err)
--		err = update_pkru_in_sigframe(buf, pkru);
-+		err = update_pkru_in_sigframe(buf, mask, pkru);
- 
- 	return err;
- }
--- 
-2.43.5
+1. People who get their updates from distro. As distros also provide the
+   microcode, most likely, their kernel will be patched to agree that the
+   microcode that they provide has latest security fixes. Effectively
+   distros have the control over what the kernel reports.
 
+2. People who get their updates from distro, but build their own kernel
+   could benefit from this change. Broadly these would be CSPs/embedded
+   vendors/developers etc.
+
+   - I am assuming CSPs are well versed with the microcode updates and
+     hand-pick the microcode that they want to apply. So, they may not be
+     care too much about microcode being old. And majority of their users
+     that run workload in a guest VM won't see the microcode version.
+
+   - In my experience, embedded vendors generally take a very long time to
+     provide updates. They could benefit from this change when they
+     eventually update their kernel.
+
+   - Expert users/developers who submit bug reports to mailing lists can
+     now know that they are running old microcode, and should update their
+     microcode before submitting a bug report. To me they would benefit
+     the most from this change.
+
+For this to be help category 1. users, we need blessing from distro
+providers. It would be great if more and more distros provide their
+agreement/feedback on this change, as they are the ones who would enforce
+this change.
 
