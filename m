@@ -1,65 +1,84 @@
-Return-Path: <linux-kernel+bounces-413991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A298E9D2190
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 09:27:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 767C59D2192
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 09:29:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68DEB2813C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 08:27:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 303481F22AE3
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 08:29:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC07519ABC3;
-	Tue, 19 Nov 2024 08:27:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A041199EB2;
+	Tue, 19 Nov 2024 08:28:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dWrPn2qx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="mAPh4DbE"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AC46198E6D;
-	Tue, 19 Nov 2024 08:27:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 490481474CF
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 08:28:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732004855; cv=none; b=grNQt7iHh9ZJFv0EsSrswFxfc0fWKszT1aFSpXvWHfDGdJr0If2lTF48GICgY4h5EtdT/A82o1tCT0kzOAXnfrYhdD1K/sX/9UHZvKR7vfpQvkU2XF6IsiFCO7PFic67qBPL0qPkwelvuNHR/3iA5HXiZ4oybkUoF+Xmkrdca4I=
+	t=1732004931; cv=none; b=bDvJ/pZV+tL4LonZlsFLzCVRzuADpHDoBkVqSYY3ldp9b7ehDJs9z/9MAIjdE4/Y/2JfoaYUjXPUQ+ZPWJbzWmsFH+N5HKPdyWijXWV05VI3fkG0aDSvsE4TJDDOXqcAPMCiZKfLCMd5RzvYt+NjUbYA1/SdhALOIcXIyWc2oO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732004855; c=relaxed/simple;
-	bh=KShsYABY0HzBnfzl7/ev4x4qjC+imZSWj7i7D9h2PnU=;
+	s=arc-20240116; t=1732004931; c=relaxed/simple;
+	bh=0AqPpf7RNAcBW72RiT+BB+KFARadjaWyA6dvMRHwBFU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C+aolqHzsNJRl+9UdnzMxiLOXeIPkDg8ZhUFWL9xWuNCte5kfiGbmB5EZhjbwfv78Pe+q+2XXn8oXuILcphK5iOlQBrUfC+Ya9bk1MiIj7kB1V1f1JbWp/Gf5BX7Cp14+jopfooZOzMkp6euOR4QFboxWVgdIu586Xg/zVxxyeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dWrPn2qx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF192C4CECF;
-	Tue, 19 Nov 2024 08:27:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732004853;
-	bh=KShsYABY0HzBnfzl7/ev4x4qjC+imZSWj7i7D9h2PnU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dWrPn2qxPTFEKrGqyG5rXpR91zwGLGSWqRqxFgK+W8RbzGEPa3ZZJATPTWTZa5A1I
-	 hlXvZuSIV0/LQXQuI09cHnHESrpQ7ymOLfpufsINXyAVQ8+/LN87mSGQanP+CCO1eK
-	 SBbu9EAcPFPHilF2t9ebtnxRfGYKko5UyEkrc62vAtoHPDkYG2HUpj63iVZ5JbQcan
-	 9+XOql4auL96I33MZlX77/bRh0QeEwl9YO3GrzT3uth61Jar+BtjH8aI5ECOKAiKJC
-	 ajdqH0RPeaTcVcGujkOVoYVCQ5YSwgC3sJzUfQ4C8WsXQgJ7d0vDNMrwxWDZSjxsE7
-	 s3EwBl4LWOFQw==
-Date: Tue, 19 Nov 2024 09:27:28 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Yabin Cui <yabinc@google.com>
-Cc: Namhyung Kim <namhyung@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org
-Subject: Re: [PATCH v5 0/3] perf/core: Check sample_type in sample data
- saving helper functions
-Message-ID: <ZzxL8Od8CAEH4_Np@gmail.com>
-References: <20240515193610.2350456-1-yabinc@google.com>
- <CAM9d7cjmJHC91Q-_V7trfW-LtQVbraSHzm--iDiBi7LgNwD2DA@mail.gmail.com>
- <CALJ9ZPML-QNcsJfo6tBMfmJzb=wF1qQsMFTbNvtRwH-++J1a2g@mail.gmail.com>
- <CALJ9ZPNkO=_OKPDwdSY9tJw+AETaAVC2m-1UcWScZ0TaFmHRkw@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XB/JvnAqFbARBLgehf88BppUVJ827OgKJlElBXuB3nmPJmS0PHoDm73ywWaSMgSqONlXaEED5ajMG7JdTAaadwdqutRNu3rDF0WRvXNx7K9dPE0jnZgOVxPACm+TO7kSmQYphLziGo3KxHc9x2N7DE5eK6SyswxKT6rJLPpeydk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=mAPh4DbE; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43169902057so42942035e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 00:28:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1732004928; x=1732609728; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=cyUY32m7VUxlCTDLVt1b+JPHfOUSRIx7q0KXl7IQeQ4=;
+        b=mAPh4DbEDhiPH/ULRN+b/B01R39LhE09vR8+KZ80PTqokXeXTWdpdG4loHIqlVzaM/
+         vB6qPVsn9KARf4qP4ZfCFR6QZfTT85A3AHyInBAHnNdoAXj2ufCsBFxGpX7Vli/0br8j
+         XBM4QTzIBejxOD59snFhChulzCDZ/0D30WjZp2DMW1LGg1KpoHv/4KDwOsU1yFCEtHDm
+         nrCZAPH+WQ3xpAGKdBZGnSwaH0sPm4dabtSSC3ztOI9zIsuQwQ7kywhNgRYYNVVArfxE
+         +v/i3zYUitVtPlaQDgCtqvzT8ek/omKgazxfujHPySioRmOqVfcOQi70CzJXbIVHUKYs
+         CLIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732004928; x=1732609728;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cyUY32m7VUxlCTDLVt1b+JPHfOUSRIx7q0KXl7IQeQ4=;
+        b=C0tT3JzM6k7ZK6G/VaBas75iDO6UDd0+/WXXU1Mh1WW9NllX+od9Zldqn/D2Wd3Nqd
+         50+WTKXRVgsP9+iaH4TW9sNxlrq8UJjvSVhw/rQkd2WH5d+745/Ot/K8l0FL+OBC81wJ
+         reCBU19guSiMqz/2nSiEt1sQYDgOoXRBQErCcSbVx11FyXdYYfR2pV3UQv4w5VSo0AvT
+         ePQ4NPeghlL/UKKWUq3ZnpQDmIzPhWEV2TplWdvLQHrlnxwfs5XCYtw2V6qM9Amkq+1+
+         PcmqOOmbW96+gg7GhbifiVnk2JXiUeI88vcW16dD9gmaZdp3oUtinmQXgrixaF98xLiJ
+         DWRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWqYlA1y2nUdJe9TuAyf/TTZGtGaIQ7zB96xHbaosiA/pd5kTBe4BWwoxiyUKPigchHF78cn8b7qpeFaa8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxq+WXPmO0HL0oOeWDmCVDu8/U//8E7+GfKfeX049w7uuKbV1yE
+	sNltDJmMV0/QqE6IE1QwvwqQ7X21KXX/dN3/RNVuJvixnK7huf2Z9aM1JH9TBaQ=
+X-Google-Smtp-Source: AGHT+IHpZMhXyydhQ7Idy4ENb5ObblYkccalbUBLPzNSlCP+c5FRHdBQ5a3DSr77U7024nHK4LI/fg==
+X-Received: by 2002:a05:6000:2904:b0:382:4aa0:e728 with SMTP id ffacd0b85a97d-3824aa0e803mr4138031f8f.1.1732004928543;
+        Tue, 19 Nov 2024 00:28:48 -0800 (PST)
+Received: from localhost (cst2-173-13.cust.vodafone.cz. [31.30.173.13])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432dac21a15sm183138595e9.38.2024.11.19.00.28.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Nov 2024 00:28:48 -0800 (PST)
+Date: Tue, 19 Nov 2024 09:28:46 +0100
+From: Andrew Jones <ajones@ventanamicro.com>
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: iommu@lists.linux.dev, kvm-riscv@lists.infradead.org, 
+	kvm@vger.kernel.org, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	tjeznach@rivosinc.com, zong.li@sifive.com, joro@8bytes.org, will@kernel.org, 
+	anup@brainfault.org, atishp@atishpatra.org, tglx@linutronix.de, 
+	alex.williamson@redhat.com, paul.walmsley@sifive.com, palmer@dabbelt.com, 
+	aou@eecs.berkeley.edu
+Subject: Re: [RFC PATCH 04/15] iommu/riscv: report iommu capabilities
+Message-ID: <20241119-76c9ff71b8834ef886b3ca86@orel>
+References: <20241114161845.502027-17-ajones@ventanamicro.com>
+ <20241114161845.502027-21-ajones@ventanamicro.com>
+ <ddd40bc3-7f2a-43c2-8918-a10c63bd05ba@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,15 +87,73 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CALJ9ZPNkO=_OKPDwdSY9tJw+AETaAVC2m-1UcWScZ0TaFmHRkw@mail.gmail.com>
+In-Reply-To: <ddd40bc3-7f2a-43c2-8918-a10c63bd05ba@arm.com>
 
+On Fri, Nov 15, 2024 at 03:20:36PM +0000, Robin Murphy wrote:
+> On 14/11/2024 4:18 pm, Andrew Jones wrote:
+> > From: Tomasz Jeznach <tjeznach@rivosinc.com>
+> > 
+> > Report RISC-V IOMMU capabilities required by VFIO subsystem
+> > to enable PCIe device assignment.
+> 
+> IOMMU_CAP_DEFERRED_FLUSH has nothing at all to do with VFIO. As far as I can
+> tell from what's queued, riscv_iommu_unmap_pages() isn't really implementing
+> the full optimisation to get the most out of it either.
 
-* Yabin Cui <yabinc@google.com> wrote:
+Thanks, Robin. I'll drop this cap for the next version.
 
-> Hi, friendly ping again for review?
+> 
+> I guess IOMMU_CAP_CACHE_COHERENCY falls out of the assumption of a coherent
+> IOMMU and lack of PBMT support making everything implicitly IOMMU_CACHE all
+> the time whether you want it or not, but clarifying that might be nice
+> (especially since there's some chance that something will eventually come
+> along to break it...)
 
-Sorry about the delay, this feel between the cracks. I've applied your 
-series to tip:perf/core, nice work and thanks a lot!
+Yes, riscv selects ARCH_DMA_DEFAULT_COHERENT and the riscv IOMMU hardware
+descriptions don't provide any way to say otherwise. I can put a comment
+above the IOMMU_CAP_CACHE_COHERENCY case which states "The RISC-V IOMMU is
+always DMA cache coherent", or did you have something else in mind?
 
-	Ingo
+Thanks,
+drew
+
+> 
+> Thanks,
+> Robin.
+> 
+> > Signed-off-by: Tomasz Jeznach <tjeznach@rivosinc.com>
+> > Signed-off-by: Andrew Jones <ajones@ventanamicro.com>
+> > ---
+> >   drivers/iommu/riscv/iommu.c | 12 ++++++++++++
+> >   1 file changed, 12 insertions(+)
+> > 
+> > diff --git a/drivers/iommu/riscv/iommu.c b/drivers/iommu/riscv/iommu.c
+> > index 8a05def774bd..3fe4ceba8dd3 100644
+> > --- a/drivers/iommu/riscv/iommu.c
+> > +++ b/drivers/iommu/riscv/iommu.c
+> > @@ -1462,6 +1462,17 @@ static struct iommu_group *riscv_iommu_device_group(struct device *dev)
+> >   	return generic_device_group(dev);
+> >   }
+> > +static bool riscv_iommu_capable(struct device *dev, enum iommu_cap cap)
+> > +{
+> > +	switch (cap) {
+> > +	case IOMMU_CAP_CACHE_COHERENCY:
+> > +	case IOMMU_CAP_DEFERRED_FLUSH:
+> > +		return true;
+> > +	default:
+> > +		return false;
+> > +	}
+> > +}
+> > +
+> >   static int riscv_iommu_of_xlate(struct device *dev, const struct of_phandle_args *args)
+> >   {
+> >   	return iommu_fwspec_add_ids(dev, args->args, 1);
+> > @@ -1526,6 +1537,7 @@ static void riscv_iommu_release_device(struct device *dev)
+> >   static const struct iommu_ops riscv_iommu_ops = {
+> >   	.pgsize_bitmap = SZ_4K,
+> >   	.of_xlate = riscv_iommu_of_xlate,
+> > +	.capable = riscv_iommu_capable,
+> >   	.identity_domain = &riscv_iommu_identity_domain,
+> >   	.blocked_domain = &riscv_iommu_blocking_domain,
+> >   	.release_domain = &riscv_iommu_blocking_domain,
 
