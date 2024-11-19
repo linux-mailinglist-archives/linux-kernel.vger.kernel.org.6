@@ -1,200 +1,184 @@
-Return-Path: <linux-kernel+bounces-414546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E88759D29C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 16:37:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DB6E9D29CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 16:38:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E9CF1F21053
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 15:37:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E53228028F
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 15:38:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 498811D0E06;
-	Tue, 19 Nov 2024 15:36:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C793A1CEAA6;
+	Tue, 19 Nov 2024 15:36:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="T3NsXSOy"
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="AavyAmE4"
+Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B76DF1D0BAE
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 15:36:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 312241D04A6
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 15:36:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732030586; cv=none; b=n6sNpnIsTHq+PaDMpFv+IvQgjzi6Nfmk0+roP4jYLK46Bj8dBp6lp3JyYnTAPGPwxx9W2DwA8jPMdqskm9UTuhxwKV2TwaJYql+7u6e2t8kq3VqdsG5T2Zkdy58XoA1LdkndnZqNUEN2/bcD3msOEkdLH2sqG9wbyutrLESsS7Q=
+	t=1732030618; cv=none; b=pR/X5IqpC9r894gKYEYHaD/zRGvpCpoZLXsReO8v6VJGnNYjDxY5fgfrqAI9Gh4hzFmSY1RPM6/Px7yg8KCPjH8VJjOAzvl9ixNiJcON1uipAUKaA9Y2WuM7EhOT44htakMFoin7gRnR0McT8t3ZD5mt82ak//k2guPnjr6eumg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732030586; c=relaxed/simple;
-	bh=JCkAA68ZY+WP8IwqIAvaFpW2nHxEvQxCVSX6gB3J6/s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iToHpHVOsEKKT6GOFq0Np8v8u68Ym6K6T0CTzTt10N/geIVjewsPRTAgPY0YAV3PPyC4VxyRGlsgKBwNvKuvesUtJ6ADwvNR4NjMhRZdhZD0cxUAH5Qcq2OsGS+m48UsvS90Ea3QpVyaOBscnU8CIC6Qxsp12VmBpoJzGFsUMhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=T3NsXSOy; arc=none smtp.client-ip=209.85.222.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7b14df8f821so322833485a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 07:36:24 -0800 (PST)
+	s=arc-20240116; t=1732030618; c=relaxed/simple;
+	bh=K9vebJQz2YUwsc3MlNv4Uh8s8GbHzdib/lumO19eM5o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KcUVdS40wjeSdIS7TAVU/z3MFQy7fOKKZH2aAWm3bBT1Z+LniZ+Bxs42FxRUT30vXsvUse614ZoxszrJPuoE0XX1Fs+gdPNQaFZSLlRQzICrRaEp5f1JuCH2UUTN0Xn0EkHXtUCqeMt3DT0kDWNk9nCfMn5tAE5/fZM8Fe03zc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=AavyAmE4; arc=none smtp.client-ip=209.85.166.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-3a77bd62fdeso2474075ab.2
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 07:36:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1732030583; x=1732635383; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3mHQxzFmFKlA+b0zYZcHoo+aU2zGMKGJLF0Y2reUtOA=;
-        b=T3NsXSOyMLdfLOCR728lLFI50OgM5D4QCcPSo+WrvZxlr4t+ssTCeX0So65UJ9kBAe
-         GcpmKzUEnNFhux0pocscBsMU9wHSDGyRy2+H96Sv0AoUJZ89BQBmoGsfCJ2Ep4eoUiEo
-         n4vSkskJpV34AwrQJuUE5FZF3Kpw8ybT9OaG8gax4kLXk5hzpEv1++kbj17dPWLAjljb
-         tzjEDl+gvGGSgDlY+ZGFE4eAAjtU41bzX7rtJgS4cBQPbuHEqFSBkYsBmUwmQh/OlWxR
-         YmOkC4V8/yom40fTMlO5TsnwZIS5O6/Pl1TrgKMi5A4+ybEbRK2VQtVSGiaxC7yujxfy
-         BN3g==
+        d=linuxfoundation.org; s=google; t=1732030615; x=1732635415; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=bASOjfd+3IMg9ai8XUpmf9zDNUW1MPcgjDnaB/+DdHA=;
+        b=AavyAmE4tgv+i5AcWrFHyumZt4DCiZqX+3Mop7ANTmhH6ZsOImCHqWLzeLTfhA/y+t
+         V+9bkI09bCFLT7jWZwzQwm8zmeHBoSL+ksKiSurWk5HKInHVYRma1juazyIa/4RXVgmw
+         D//A/EM2vGJvoH4RsKz2oogqRdB72Uj3cJOOE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732030583; x=1732635383;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3mHQxzFmFKlA+b0zYZcHoo+aU2zGMKGJLF0Y2reUtOA=;
-        b=ofc6N4ldi5S75jWa4vBL2DX8rW/SCD+1whXuPgPbjL4kkkUv4bo+IirOkUy6WaZpK6
-         SuF1u1BO12YogcWPTmeTml7cxWbK99VIeEvgScg82QLTQiGzbWT6gtzZ+/9Tzhm/18yc
-         Ias5OgaEHcfkGXKfTs4BsXpBTxKl5U0jq0m38CgUYEay1Pn9O3DLTJEVXjusK69EePVP
-         k0Y9YYrFU4bce6aV/7yi3BFO4awwQvaELTn/HZdcrJ5lGeQXGPdqBv/En+qV+VtsSeud
-         Hn839UjwgdMpcM5Pqz2sccXtGRs9eTfkOq+1GF3Adal5XqbfxcP24XjY0qAg7rZAMFN8
-         2HgA==
-X-Forwarded-Encrypted: i=1; AJvYcCX6IW5w7XxhX+wsSGS9F2vThC+NbFFRQiH4jbyCOQfmkzlVpd0+ctdDSq+CLvGD4SpjwMGB36q1igq0dQg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBBWg+3mJ93O6rsRJsVPm15hF0xzZXp+IHHQRDXRWLyjIIhQWH
-	fJb4Zn42JUdmV3P3frJjw/3MFD5Ko72ufoMNKAwoikH1YZtEwowwSFFbdoyv6h8=
-X-Google-Smtp-Source: AGHT+IH4/mgl4haITeaqcVAP0uJ0PicTb/W5vrOpJN7LD+UFoRrLptgSOiQTXdZYlGY+OxnTFThNlg==
-X-Received: by 2002:a05:620a:28d1:b0:7ac:b04e:34c6 with SMTP id af79cd13be357-7b362363c62mr1842987085a.50.1732030583616;
-        Tue, 19 Nov 2024 07:36:23 -0800 (PST)
-Received: from ziepe.ca (hlfxns017vw-142-68-128-5.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.128.5])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b37a89fc13sm102554185a.109.2024.11.19.07.36.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Nov 2024 07:36:22 -0800 (PST)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1tDQH8-00000003ErC-0NkI;
-	Tue, 19 Nov 2024 11:36:22 -0400
-Date: Tue, 19 Nov 2024 11:36:22 -0400
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Andrew Jones <ajones@ventanamicro.com>
-Cc: iommu@lists.linux.dev, kvm-riscv@lists.infradead.org,
-	kvm@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org, tjeznach@rivosinc.com,
-	zong.li@sifive.com, joro@8bytes.org, will@kernel.org,
-	robin.murphy@arm.com, anup@brainfault.org, atishp@atishpatra.org,
-	tglx@linutronix.de, alex.williamson@redhat.com,
-	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu
-Subject: Re: [RFC PATCH 08/15] iommu/riscv: Add IRQ domain for interrupt
- remapping
-Message-ID: <20241119153622.GD559636@ziepe.ca>
-References: <20241114161845.502027-17-ajones@ventanamicro.com>
- <20241114161845.502027-25-ajones@ventanamicro.com>
- <20241118184336.GB559636@ziepe.ca>
- <20241119-62ff49fc1eedba051838dba2@orel>
- <20241119140047.GC559636@ziepe.ca>
- <DE13E1DF-7C68-461D-ADCD-8141B1ACEA5E@ventanamicro.com>
+        d=1e100.net; s=20230601; t=1732030615; x=1732635415;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bASOjfd+3IMg9ai8XUpmf9zDNUW1MPcgjDnaB/+DdHA=;
+        b=oG1xxXTqCktW2CB86SoHi1UB/t7PieTGuqwtooiaARpFRX9JUkAzflPUOq0mVXdrlC
+         gdYyT1SK/6HTFsZKY9juqD2lDqPeK5cJ4B04pOFCT/rN5RFJdLeEyxaZ1JVxgbEnz1fF
+         z6g3/bAf98B3S+rGENMjGSr1P/phjQKko3BD41t1bGAVj7AktzLTeBhAkdjJFkm/d69H
+         pQg1suQ7SUIxcBx9Jaen5913oSU7K/ez/TyfDTGqUNkSynfdzxL3IyTZraLTM4VwARMZ
+         1+LWzvkn5qz4vIwfEkGQyThkgZBRZfhn9V3yIb3ozcApuHgyySrv4mfYqZQJBIIZTqkO
+         nmhw==
+X-Forwarded-Encrypted: i=1; AJvYcCUmHUAzQZ31QJMrYZ9kCaRllG6pLBHsjRDaODmac+ivtwENPXgP98lEUj+pODfHeHXcgttwUs0oIu0ML3I=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8/nt7vYQcE//PfwBUuqsPYqe6Nr3FMvR9rsQJzhyYSwLY8Ymh
+	dQXQfwJEKsQcvjlkWzU4WPi8iFSN4qKv6O+PY7jlyPrLuiTXaF6rG/lucEq4/087TEDCIR2dzf0
+	6
+X-Google-Smtp-Source: AGHT+IHAN7wQzV37tcwUMlZ8r82+eSQ1ur4oGMRmuNc7Oy1d4b50PR5o1Q2myqNlp07Q9SDtCB6ivA==
+X-Received: by 2002:a05:6e02:1a44:b0:3a7:44d9:c7dd with SMTP id e9e14a558f8ab-3a74800e6admr197277675ab.6.1732030615241;
+        Tue, 19 Nov 2024 07:36:55 -0800 (PST)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a74807d6cdsm26165835ab.19.2024.11.19.07.36.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 19 Nov 2024 07:36:54 -0800 (PST)
+Message-ID: <ce995a53-7fbd-43a3-be4d-70fc57b07212@linuxfoundation.org>
+Date: Tue, 19 Nov 2024 08:36:53 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DE13E1DF-7C68-461D-ADCD-8141B1ACEA5E@ventanamicro.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [GIT PULL] KUnit update for Linux 6.13-rc1
+To: Kuan-Wei Chiu <visitorckw@gmail.com>, David Gow <davidgow@google.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, shuah <shuah@kernel.org>,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Brendan Higgins <brendan.higgins@linux.dev>,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <589ea100-ee1b-4a37-8f18-a25d86fdb082@linuxfoundation.org>
+ <ZzvwEUIVs0M+/3Yu@visitorckw-System-Product-Name>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <ZzvwEUIVs0M+/3Yu@visitorckw-System-Product-Name>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Nov 19, 2024 at 04:03:05PM +0100, Andrew Jones wrote:
-
-> >This is the wrong thinking entirely. There is no such thing as a "VFIO
-> >domain".
-> >
-> >Default VFIO created domains should act excatly the same as a DMA API
-> >domain.
-> >
-> >If you want your system to have irq remapping, then it should be on by
-> >default and DMA API gets remapping too. There would need to be a very
-> >strong reason not to do that in order to make something special for
-> >riscv. If so you'd need to add some kind of flag to select it.
-> >
-> >Until you reach nested translation there is no "need" for VFIO to use
-> >any particular stage. The design is that default VFIO uses the same
-> >stage as the DMA API because it is doing the same basic default
-> >translation function.
+On 11/18/24 18:55, Kuan-Wei Chiu wrote:
+> Hi Shuah,
 > 
-> The RISC-V IOMMU needs to use g-stage for device assignment, if we
-> also want to enable irqbypass, because the IOMMU is specified to
-> only look at the MSI table when g-stage is in use. This is actually
-> another reason the irq domain only makes sense for device
-> assignment.
-
-Most HW has enablable interrupt remapping and typically Linux just
-turns it always on.
-
-Is there a reason the DMA API shouldn't use this translation mode too?
-That seems to be the main issue here, you are trying to avoid
-interrupt remapping for DMA API and use it only for VFIO, and haven't
-explained why we need such complexity. Just use it always?
-
-> >Nested translation has a control to select the stage, and you can
-> >then force the g-stage for VFIO users at that point.
+> On Mon, Nov 18, 2024 at 12:19:50PM -0700, Shuah Khan wrote:
+>> Hi Linus,
+>>
+>> Please pull the following kunit update for Linux 6.13-rc1.
+>>
+>> kunit update for Linux 6.13-rc1
+>>
+>> -- fixes user-after-free (UAF) bug in kunit_init_suite()
+>>
+>> -- adds option to kunit tool to print just the summary of test results
+>>
+>> -- adds option to kunit tool to print just the failed test results
+>>
+>> -- fixes kunit_zalloc_skb() to use user passed in gfp value instead of
+>>     hardcoding GFP_KERNEL
+>>
+>> -- fixes kunit_zalloc_skb() kernel doc to include allocation flags variable
+>>
+>> diff is attached.
+>>
+>> Tests passed on my kunit repo:
+>>
+>> - Build make allmodconfig
+>>
+>> ./tools/testing/kunit/kunit.py run
+>> ./tools/testing/kunit/kunit.py run --alltests
+>>
+>> ./tools/testing/kunit/kunit.py run --arch x86_64
+>> ./tools/testing/kunit/kunit.py run --alltests --arch x86_64
+>>
+>> thanks,
+>> -- Shuah
+>>
+>> ----------------------------------------------------------------
+>> The following changes since commit 2d5404caa8c7bb5c4e0435f94b28834ae5456623:
+>>
+>>    Linux 6.12-rc7 (2024-11-10 14:19:35 -0800)
+>>
+>> are available in the Git repository at:
+>>
+>>    git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest tags/linux_kselftest-kunit-6.13-rc1
+>>
+>> for you to fetch changes up to 67b6d342fb6d5abfbeb71e0f23141b9b96cf7bb1:
+>>
+>>    kunit: tool: print failed tests only (2024-11-14 09:38:19 -0700)
+>>
+>> ----------------------------------------------------------------
+>> linux_kselftest-kunit-6.13-rc1
+>>
+>> kunit update for Linux 6.13-rc1
+>>
+>> -- fixes user-after-free (UAF) bug in kunit_init_suite()
+>>
+>> -- adds option to kunit tool to print just the summary of test results
+>>
+>> -- adds option to kunit tool to print just the failed test results
+>>
+>> -- fixes kunit_zalloc_skb() to use user passed in gfp value instead of
+>>     hardcoding GFP_KERNEL
+>>
+>> -- fixes kunit_zalloc_skb() kernel doc to include allocation flags variable
+>>
+>> ----------------------------------------------------------------
+>> Dan Carpenter (2):
+>>        kunit: skb: use "gfp" variable instead of hardcoding GFP_KERNEL
+>>        kunit: skb: add gfp to kernel doc for kunit_zalloc_skb()
+>>
+>> David Gow (1):
+>>        kunit: tool: Only print the summary
+>>
+>> Jinjie Ruan (1):
+>>        kunit: string-stream: Fix a UAF bug in kunit_init_suite()
+>>
+> The patch [1] intended to address the UAF issue in kunit_init_suite()
+> is not correct and does not actually fix the problem. A v2 patch [2]
+> with the proper fix has been sent.
 > 
-> We could force riscv device assignment to always be nested, and when
-> not providing an iommu to the guest, it will still be single-stage,
-> but g-stage, but I don't think that's currently possible with VFIO,
-> is it?
 
-That isn't what I mean, I mean you should not be forcing the kind of
-domain being created until you get to special cases like nested.
+Hmm. I picked this up because David reviewed it and added his
+Reviewed-by. I would like David's feedback on which patch we
+should be taking.
 
-Default VFIO should work the same as the DMA API.
-
-> >> The IRQ domain will only be useful for device assignment, as that's when
-> >> an MSI translation will be needed. I can't think of any problems that
-> >> could arise from only creating the IRQ domain when probing assigned
-> >> devices, but I could certainly be missing something. Do you have some
-> >> potential problems in mind?
-> >
-> >I'm not an expert in the interrupt subsystem, but my understanding was
-> >we expect the interrupt domains/etc to be static once a device driver
-> >is probed. Changing things during iommu domain attach is after drivers
-> >are probed. I don't really expect it to work correctly in all corner
-> >cases.
 > 
-> With VFIO the iommu domain attach comes after an unbind/bind, so the
-> new driver is probed.
+> [1]: https://lore.kernel.org/lkml/20241024094303.1531810-1-ruanjinjie@huawei.com
+> [2]: https://lore.kernel.org/linux-kselftest/20241112080314.407966-1-ruanjinjie@huawei.com
 
-That's the opposite of what I mean. The irq domain should be setup
-*before* VFIO binds to the driver.
+David, Can you take you let me know. I don't mind redoing the PR
+for Linus. I just have to know which patch to take.
 
-Changing the active irq_domain while VFIO is already probed to the
-device is highly unlikely to work right in all cases.
-
-> I think that's a safe time. However, if there
-> could be cases where the attach does not follow an unbind/bind, then
-> I agree that wouldn't be safe.
-
-These cases exist.
-
-> I'll consider always creating an IRQ
-> domain, even if it won't provide any additional functionality unless
-> the device is assigned.
-
-That isn't ideal, the translation under the IRQs shouldn't really be
-changing as the translation under the IOMMU changes.
-
-Further, VFIO assumes iommu_group_has_isolated_msi(), ie
-IRQ_DOMAIN_FLAG_ISOLATED_MSI, is fixed while it is is bound. Will that
-be true if the iommu is flapping all about? What will you do when VFIO
-has it attached to a blocked domain?
-
-It just doesn't make sense to change something so fundamental as the
-interrupt path on an iommu domain attachement. :\
-
-> >VFIO is allowed to change the translation as it operates and we expect
-> >that interrupts are not disturbed.
-> 
-> The IRQ domain stays the same during operation, the only changes are
-> the mappings from what the guest believes are its s-mode interrupt
-> files to the hypervisor selected guest interrupt files, and these
-> changes are made possible by the IRQ domain's vcpu-affinity support.
-
-That is only the case when talking about kvm, this all still has to
-work fully for non-kvm VFIO uses cases too.
-
-Jason
+thanks,
+-- Shuah
 
