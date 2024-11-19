@@ -1,135 +1,110 @@
-Return-Path: <linux-kernel+bounces-413799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B19B39D1EE0
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 04:37:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70C249D1EDC
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 04:35:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5DBC0B217FC
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 03:37:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1AF9928235B
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 03:35:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45D221487C1;
-	Tue, 19 Nov 2024 03:36:55 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AB311482E8;
+	Tue, 19 Nov 2024 03:35:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h/or/w+F"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C399B2CAB;
-	Tue, 19 Nov 2024 03:36:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B28BE2CAB;
+	Tue, 19 Nov 2024 03:35:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731987414; cv=none; b=pnjVCqmGfVrlF2yTEKVTLJfL7pcslLUlRKtmTa3StGvTK1nEkQ0XRltT87K3L1XVUhu1ehrVn1pNy01+so8lB8PN9zjr4M3cnvkpTLV8BsgUKDw7YPjf1yD9sekzSYW/Zc0mCWzfqXCC0ScICu62wk/5C004slLps72yp/Cp+7M=
+	t=1731987337; cv=none; b=BiZMhZBr4ITG1/tMrrN6sDIzeMs39vvb3c2nK6UYN8yU3bUmuFLQWcHhBV5QKCFSQhzWJJhlgWmBm1L2etWOIn0rrWAawcbZ/nw6YUAYBwoIe/sZ2FBFwZcYp+3FUpJ3uqo8v9nIgLUyq4CiFLVSEjgF5RxTT6J66rybUgI1K9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731987414; c=relaxed/simple;
-	bh=nmjtV/Qe+hEyTJNGnLnfm+A0Uu3kzhvt6hktxWdQ6Ko=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JRiMzHc5NXnsfPwDHTNiAgnG+Gen8ldPtWzAvdFEqcoC7hWNuxeJAMCJR+uj1FFv85jJd/Uj6I2hRawvkbZfk64fOv9s2C1JP45ylo4sg7cdN9u2a6qMPxf29w08oZuExwFSehs5bZNwQP3Aoww2MVgkM+PbLtOn0lOAiz1ZcmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4XsqmV6Yx8z1JCXn;
-	Tue, 19 Nov 2024 11:31:54 +0800 (CST)
-Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id D4CB414010C;
-	Tue, 19 Nov 2024 11:36:44 +0800 (CST)
-Received: from localhost.localdomain (10.90.30.45) by
- dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 19 Nov 2024 11:36:44 +0800
-From: Yunsheng Lin <linyunsheng@huawei.com>
-To: <davem@davemloft.net>, <kuba@kernel.org>, <pabeni@redhat.com>
-CC: <netdev@vger.kernel.org>, Yunsheng Lin <linyunsheng@huawei.com>, Andrew
- Morton <akpm@linux-foundation.org>, Alexander Duyck <alexanderduyck@fb.com>,
-	Linux-MM <linux-mm@kvack.org>, Mark Brown <broonie@kernel.org>, Shuah Khan
-	<shuah@kernel.org>, <linux-kselftest@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH net-next v2] mm: page_frag: fix a compile error when kernel is not compiled
-Date: Tue, 19 Nov 2024 11:30:11 +0800
-Message-ID: <20241119033012.257525-1-linyunsheng@huawei.com>
-X-Mailer: git-send-email 2.30.0
+	s=arc-20240116; t=1731987337; c=relaxed/simple;
+	bh=yMdgjpWa/uNZ3ldUiUE8ibXpM6RRA1oPWRCdLCYab9s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gRexobmFsV0613EBY8UhBzg0P1+TjsGeM20w9LwAttE5n0JPf8vCsb0OyvxPRVxatVG452mz26mIwJractzk9wpoUlbieXKjNIF3bMbTPunOyUUr/rFwToxPx7G5HI0MmC+iZSFHU/L9GUNZE12CxhhNDFzaNyC7vI11MeTk+Us=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h/or/w+F; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-20cdbe608b3so48603155ad.1;
+        Mon, 18 Nov 2024 19:35:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731987335; x=1732592135; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=CRdspri6WC09Szb6BqPAf0mcwTL7p9PzdKttkU4B4pQ=;
+        b=h/or/w+FkNctBbtYRF5KYD/nJ6CKFPwfc31lgMx6DhW4UOZK7qgcdobHM5HmwxHANx
+         QN5LzOH6VZXnHEB+4z+nNAi8F7fX7lt5xVNT/kmm8hr6DLGiOU+RZacwhVngVUSfktCn
+         pw7MH+R7rQKrSRZdzunUy3BWzn1WVpxsOXsz21SKGyzG/HvvXzdI10q1UWG2dDxYrlDK
+         fXhXgABsd9De5vUwJGReIKCES/9acXdnhek2Xvml+az72x/+pNhQdcGhDS6EKfy5nv1q
+         RLOHbrBG8uU8UqpbgpnbCAjFVcbE473qCy0Idxr+pAjFLTscl6xUruRYOmSaFxZQz4rI
+         3d3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731987335; x=1732592135;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CRdspri6WC09Szb6BqPAf0mcwTL7p9PzdKttkU4B4pQ=;
+        b=sT1/MSo3seAJhkxl0jtVemLTn2XILt4cudcq78m0SKbXDtDItviAPo8Kux3Y08QYpy
+         nxHPrVjbhqL/UJ/QsHnQ7sObGqhRC8ZHFg6Jn6FEj71cZrxYUp0TVZd8cFf5CTr42kw+
+         PJYWs4CW+PmYlgQ51H5I+umrICXmO62VRO9/ggjkV+UFaxdwWeICMAwCMRNO8EB+lcGL
+         39V27Mtx1VJQMm3hoYKY+jndhBKWuzI9zHDz7Y6oVn1z9B+vrHXlh0lQk49IgsLUdlTa
+         sEpl5uaDKTUwnZq+ovrNPoa5ov/tuQn/1fprxrOcsAmi5fQaU62azCh2tRDq/KWVwTDN
+         rZqw==
+X-Forwarded-Encrypted: i=1; AJvYcCVHksOWdFFwgS/qh+Wszcbby3l0iWB25GZs97sH3Ut0HMTGcQhLMq9Cr9cwsLJMcecvm0+zpaSgPbVexsk=@vger.kernel.org, AJvYcCVruL0GOuodFb4xRAv6LJptW3hZm1aI/VPfi5no/ZYbbk3ZgDclxy+glaq9/qAFxK8LOr+DmsSmQm70fTpA@vger.kernel.org, AJvYcCWoaJnQCntwExI0QKxT4eUVl+sXEFSwCdG9jzLj0Rvl/lMrFi412fNkokvJXWgvu0fafrVnNXJIKLn+CxHdBlw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yziytu4paCNt0/gTtI4Sc557ielSvddDWt2/IFG9I5jvs+liEWH
+	DzOE5GbbIkxKaMBXR141PNx3Ip4kGusaz4gacvwlwBxstvJ5BHcI
+X-Google-Smtp-Source: AGHT+IHLNfB8EgtJ05UOIBcVDWvknvO4vYdOOsW5Y7Gj4yEdEjOSf9b/6uebLnSewf2oqalNRmLVVQ==
+X-Received: by 2002:a17:903:2d2:b0:212:13e5:3ba1 with SMTP id d9443c01a7336-21213e54277mr112969095ad.36.1731987334807;
+        Mon, 18 Nov 2024 19:35:34 -0800 (PST)
+Received: from google.com ([2620:15c:9d:2:38b7:c100:6f21:312d])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-212027071bdsm37934415ad.283.2024.11.18.19.35.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Nov 2024 19:35:34 -0800 (PST)
+Date: Mon, 18 Nov 2024 19:35:31 -0800
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Yassine Oudjana <y.oudjana@protonmail.com>,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	linux-input@vger.kernel.org
+Subject: Re: [PATCH] Input: cypress-sf - Constify struct i2c_device_id
+Message-ID: <ZzwHg2nCqUsxMwqg@google.com>
+References: <4bc3e3b4d10223d9df850fe4ba48f1cefd197082.1731689418.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- dggpemf200006.china.huawei.com (7.185.36.61)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4bc3e3b4d10223d9df850fe4ba48f1cefd197082.1731689418.git.christophe.jaillet@wanadoo.fr>
 
-page_frag test module is an out of tree module, but built
-using KDIR as the main kernel tree, the mm test suite is
-just getting skipped if newly added page_frag test module
-fails to compile due to kernel not yet compiled.
+On Fri, Nov 15, 2024 at 05:50:37PM +0100, Christophe JAILLET wrote:
+> 'struct i2c_device_id' is not modified in this driver.
+> 
+> Constifying this structure moves some data to a read-only section, so
+> increase overall security.
+> 
+> On a x86_64, with allmodconfig:
+> Before:
+> ======
+>    text	   data	    bss	    dec	    hex	filename
+>    6438	    618	      0	   7056	   1b90	drivers/input/keyboard/cypress-sf.o
+> 
+> After:
+> =====
+>    text	   data	    bss	    dec	    hex	filename
+>    6502	    554	      0	   7056	   1b90	drivers/input/keyboard/cypress-sf.o
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Fix the above problem by ensuring both kernel is built first
-and a newer kernel which has page_frag_cache.h is used.
+Applied, thank you.
 
-CC: Andrew Morton <akpm@linux-foundation.org>
-CC: Alexander Duyck <alexanderduyck@fb.com>
-CC: Linux-MM <linux-mm@kvack.org>
-Fixes: 7fef0dec415c ("mm: page_frag: add a test module for page_frag")
-Fixes: 65941f10caf2 ("mm: move the page fragment allocator from page_alloc into its own file")
-Reported-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
-Tested-by: Mark Brown <broonie@kernel.org>
----
-V2: Repost by adding net-next ML.
-Note, page_frag test module is only in the net-next tree for now,
-so target the net-next tree.
----
- tools/testing/selftests/mm/Makefile           | 18 ++++++++++++++++++
- tools/testing/selftests/mm/page_frag/Makefile |  2 +-
- 2 files changed, 19 insertions(+), 1 deletion(-)
-
-diff --git a/tools/testing/selftests/mm/Makefile b/tools/testing/selftests/mm/Makefile
-index acec529baaca..04e04733fc8a 100644
---- a/tools/testing/selftests/mm/Makefile
-+++ b/tools/testing/selftests/mm/Makefile
-@@ -36,7 +36,16 @@ MAKEFLAGS += --no-builtin-rules
- CFLAGS = -Wall -I $(top_srcdir) $(EXTRA_CFLAGS) $(KHDR_INCLUDES) $(TOOLS_INCLUDES)
- LDLIBS = -lrt -lpthread -lm
- 
-+KDIR ?= /lib/modules/$(shell uname -r)/build
-+ifneq (,$(wildcard $(KDIR)/Module.symvers))
-+ifneq (,$(wildcard $(KDIR)/include/linux/page_frag_cache.h))
- TEST_GEN_MODS_DIR := page_frag
-+else
-+PAGE_FRAG_WARNING = "missing page_frag_cache.h, please use a newer kernel"
-+endif
-+else
-+PAGE_FRAG_WARNING = "missing Module.symvers, please have the kernel built first"
-+endif
- 
- TEST_GEN_FILES = cow
- TEST_GEN_FILES += compaction_test
-@@ -214,3 +223,12 @@ warn_missing_liburing:
- 	echo "Warning: missing liburing support. Some tests will be skipped." ; \
- 	echo
- endif
-+
-+ifneq ($(PAGE_FRAG_WARNING),)
-+all: warn_missing_page_frag
-+
-+warn_missing_page_frag:
-+	@echo ; \
-+	echo "Warning: $(PAGE_FRAG_WARNING). page_frag test will be skipped." ; \
-+	echo
-+endif
-diff --git a/tools/testing/selftests/mm/page_frag/Makefile b/tools/testing/selftests/mm/page_frag/Makefile
-index 58dda74d50a3..8c8bb39ffa28 100644
---- a/tools/testing/selftests/mm/page_frag/Makefile
-+++ b/tools/testing/selftests/mm/page_frag/Makefile
-@@ -1,5 +1,5 @@
- PAGE_FRAG_TEST_DIR := $(realpath $(dir $(abspath $(lastword $(MAKEFILE_LIST)))))
--KDIR ?= $(abspath $(PAGE_FRAG_TEST_DIR)/../../../../..)
-+KDIR ?= /lib/modules/$(shell uname -r)/build
- 
- ifeq ($(V),1)
- Q =
 -- 
-2.33.0
-
+Dmitry
 
