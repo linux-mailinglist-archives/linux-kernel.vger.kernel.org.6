@@ -1,101 +1,145 @@
-Return-Path: <linux-kernel+bounces-414888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D16069D2EE1
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 20:34:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 836AD9D2EE3
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 20:36:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 976B7282A3C
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 19:34:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B9381F23872
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 19:36:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D13261D14F3;
-	Tue, 19 Nov 2024 19:34:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41CCA1D0F63;
+	Tue, 19 Nov 2024 19:36:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LUF9Lsv/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DdXHSl8L"
+Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36ADE53363;
-	Tue, 19 Nov 2024 19:34:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3CFE1D097F
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 19:36:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732044876; cv=none; b=Aq5vLx/kPSYwORZOgaOnr+G+ezbx46poJa4+/W9vcwn1Om/sThs6fxC0kgUA49OI2dDC0TSv0o/ZRYNlUcOCFnQ+mrCMvoyFTS+LGUXLltW+2xw7vyyiB9sVcw1WKx1sj9p3ll5bMFp4gNzWV6OwySZDU1QiBp6Fyk8key95b9w=
+	t=1732044986; cv=none; b=RsC5T53Qwa2afz7O5X5bPrPMkPgkWSYu9iUmOomKX9FgINHS5rwPF1/nyNLva0F8EsfKXNvQSwiaUQaYUVxAh9VXFRLjn0bfNlPCTBrrxejZ6Qe1sTfekYD9QMSfl41hqf7iiTDEDCFjmwv9FuQ+rts2RiOKzy1Rx4WNduNTDjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732044876; c=relaxed/simple;
-	bh=ybYWFQ+nVQHzZds37gKALu6cm9L0YbObppd6u/lXX74=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=gfzlE0pYoqvUHsF05m0ofBc248/PxSV7/Oq92MoQbdcfOKsFTz9+RbZ1YCVlXsFpCa4ZejauHC0Fvb/Hf9IfRSU3GgKDvPfz6mus5LNDi49uJnT1uQYonccOaULy0y9lsfHI3aqIW7LvzGf2k8eBGb2rZ6GVV3eQ5FI6WKRBV44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LUF9Lsv/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E5A3C4CECF;
-	Tue, 19 Nov 2024 19:34:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732044876;
-	bh=ybYWFQ+nVQHzZds37gKALu6cm9L0YbObppd6u/lXX74=;
-	h=Date:From:To:Cc:Subject:From;
-	b=LUF9Lsv/J0duh5c3QvJ5O5wjIdWBpcJOo0//f7N/gJ4VrEKEbaYskmOxnx9lf/LTF
-	 C7UM/HXcHE3oTxwp8UXwUBqI5Gf9SIzaMrjDsmJjNpAlaKJf44OXtvw8zzPSUbw36B
-	 nxuOSvDkAoUzuSOKQAHu8zcN3kgnYgMZK2qRo8bxd699MS5fZ+R9pAt/WjUoDmCQuj
-	 Qrty5ZV0VEBrYbggPwZ2UAM3X4NYasnhmTr56BG1BSxXtL4oFyGDlp4VQ1IBdi5P2J
-	 n8XlMgZ7T5ETRV18wrOE+UU1opl/qZD1tDGv+HPS8eoSZnR4GH9/Np425cFr02iIsU
-	 qzp7lNUeZZQxg==
-Date: Tue, 19 Nov 2024 16:34:31 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@kernel.org>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: [PATCH 1/1] perf tests hwmon_pmu: Remove double evlist__delete()
-Message-ID: <ZzzoJNNcJJVnPCCe@x1>
+	s=arc-20240116; t=1732044986; c=relaxed/simple;
+	bh=Wim9yXigya11JzSJv1LJSiuLfLQF8F9N8fBEX0Njam0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=B7FwmH45tZMkHHlsfxrKIBK7cNcnRWKWrzq1aVv9qVXeA2xqYcHkWWy3U30RpZ38lat5ivijyzEZAknGiffmxoozsDahuGsliDWSMgfnZHLkvxsfeyWUuOSRkXj9N7ZFhmrJN0Ku4R+PmIYg4AEhGNKcMp4yotahTobLIBG2Tlo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DdXHSl8L; arc=none smtp.client-ip=209.85.219.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6d41176505fso33849306d6.2
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 11:36:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1732044984; x=1732649784; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0rBH3J51JmQt7kWjmFFHSB4td0hJaQgPAm0Yx+WNjx8=;
+        b=DdXHSl8LuUijNYK7qzPKoZvjP9q0QWfVjGRTszcESOzpFVHoy0qGqPa3cCmya+riu4
+         fcFmCZ3nf7ZgZJCFK9q5UZvkC9MCtRNFPsTEwjky8ytLGBQBEg2p865buM7h1pKIPLQX
+         cXPcu8OK+629bKTH6btr2T0V5ZGxMfa983w0eZwNPv9X6LiTYFczP18a8unOWE9UngHa
+         ixYNitvUu6JO72BSjjXw7eP9C7vy/UEsMOK+O3+emrort7DbW7X5t4Gsqn01cTMTVzIN
+         b2aTvXeT5BlJ1N6rCH9gQsmHw/u0PqwdHrF1VmPuMuqRWdjZA6J7xu0Um8d85Ke0vm50
+         x2Kg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732044984; x=1732649784;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0rBH3J51JmQt7kWjmFFHSB4td0hJaQgPAm0Yx+WNjx8=;
+        b=xO9+GYmDVlGQgNrlKryJJLq0n2sqPXlqsWFclqM96lLmkef6zRCTAaGS5fuWdtV7kv
+         IrzvdaQ5UqEWdKO+w3ofJplC2NLe+4fElE9QzEC0wX+zZNAZrgHNhuloCgycYTTBQOO9
+         bFPQO0a+ghf79SAD+/uQLosUdCaSkZcI5kxxOsfeknxTb+xrPL+1DH1VIVt8ZGJDcKg7
+         884v6m+upmdNW7zMbEwfuRO6RSlEcJeXmIWMBRoN1ma9ZE1sb2Ym/kKUUUOlan7S/IVx
+         2eGnrhs5h5StJ4PKy/mbrwyi7MjSqsUjPe+MDvBnN4Tq3KekBOgjFUKf9YNYWFdOtL7M
+         SnVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUMsG4NGvsxZHfBTOg8YclCmhbIhj/+DG8BFsdDXjKYlXbEGzFcmLnSJZD7fj3PNtW2WOpk65x4kTvwrM8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3ImTfBZC5GtGtdU2ds/hpt4YS3Z0xKJXrRz7Q4OH6/qDmpdLw
+	0KRtM8rHXfizFwNq1yWw15pE50ME1pBspPnksnXs7IyzSNVOWJ4Koervju4qQEkU6Nu9GHWRji0
+	FsVI0fEcQtUodRlp2kQ+Nw6wqaf+0SVGs5juaPha7uyizW8IsNg==
+X-Google-Smtp-Source: AGHT+IEPHfQ345gIVazfS+BM1S3fQuD8LMdzMQG/6NL1BywFYIUVmX6NNojvADb+a4swnafGfVK59ZDkwp15Z3Sszpg=
+X-Received: by 2002:a05:6214:2583:b0:6d3:7a47:2034 with SMTP id
+ 6a1803df08f44-6d4377b32b5mr2495396d6.3.1732044983607; Tue, 19 Nov 2024
+ 11:36:23 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20241116175922.3265872-1-pasha.tatashin@soleen.com>
+ <ZzuRSZc8HX9Zu0dE@google.com> <CA+CK2bAAigxUv=HGpxoV-PruN_AhisKW675SxuG_yVi+vNmfSQ@mail.gmail.com>
+ <2024111938-anointer-kooky-d4f9@gregkh> <CA+CK2bD88y4wmmvzMCC5Zkp4DX5ZrxL+XEOX2v4UhBxet6nwSA@mail.gmail.com>
+ <ZzzXqXGRlAwk-H2m@google.com> <CA+CK2bD4zcXVATVhcUHBsA7Adtmh9LzCStWRDQyo_DsXxTOahA@mail.gmail.com>
+In-Reply-To: <CA+CK2bD4zcXVATVhcUHBsA7Adtmh9LzCStWRDQyo_DsXxTOahA@mail.gmail.com>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Tue, 19 Nov 2024 11:35:47 -0800
+Message-ID: <CAJD7tkZDSZ4QjLhkWQ3RV_vEwzTfCMtFcWX_Fx8mj-q0Zg2cOw@mail.gmail.com>
+Subject: Re: [RFCv1 0/6] Page Detective
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: Roman Gushchin <roman.gushchin@linux.dev>, Greg KH <gregkh@linuxfoundation.org>, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-doc@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, akpm@linux-foundation.org, corbet@lwn.net, 
+	derek.kiernan@amd.com, dragan.cvetic@amd.com, arnd@arndb.de, 
+	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, tj@kernel.org, 
+	hannes@cmpxchg.org, mhocko@kernel.org, shakeel.butt@linux.dev, 
+	muchun.song@linux.dev, Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, 
+	vbabka@suse.cz, jannh@google.com, shuah@kernel.org, vegard.nossum@oracle.com, 
+	vattunuru@marvell.com, schalla@marvell.com, david@redhat.com, 
+	willy@infradead.org, osalvador@suse.de, usama.anjum@collabora.com, 
+	andrii@kernel.org, ryan.roberts@arm.com, peterx@redhat.com, oleg@redhat.com, 
+	tandersen@netflix.com, rientjes@google.com, gthelen@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-In the error path when failing to parse events the evlist is being
-deleted twice, keep the one after the out label.
+On Tue, Nov 19, 2024 at 11:30=E2=80=AFAM Pasha Tatashin
+<pasha.tatashin@soleen.com> wrote:
+>
+> On Tue, Nov 19, 2024 at 1:23=E2=80=AFPM Roman Gushchin <roman.gushchin@li=
+nux.dev> wrote:
+> >
+> > On Tue, Nov 19, 2024 at 10:08:36AM -0500, Pasha Tatashin wrote:
+> > > On Mon, Nov 18, 2024 at 8:09=E2=80=AFPM Greg KH <gregkh@linuxfoundati=
+on.org> wrote:
+> > > >
+> > > > On Mon, Nov 18, 2024 at 05:08:42PM -0500, Pasha Tatashin wrote:
+> > > > > Additionally, using crash/drgn is not feasible for us at this tim=
+e, it
+> > > > > requires keeping external tools on our hosts, also it requires
+> > > > > approval and a security review for each script before deployment =
+in
+> > > > > our fleet.
+> > > >
+> > > > So it's ok to add a totally insecure kernel feature to your fleet
+> > > > instead?  You might want to reconsider that policy decision :)
+> > >
+> > > Hi Greg,
+> > >
+> > > While some risk is inherent, we believe the potential for abuse here
+> > > is limited, especially given the existing  CAP_SYS_ADMIN requirement.
+> > > But, even with root access compromised, this tool presents a smaller
+> > > attack surface than alternatives like crash/drgn. It exposes less
+> > > sensitive information, unlike crash/drgn, which could potentially
+> > > allow reading all of kernel memory.
+> >
+> > The problem here is with using dmesg for output. No security-sensitive
+> > information should go there. Even exposing raw kernel pointers is not
+> > considered safe.
+>
+> I am OK in writing the output to a debugfs file in the next version,
+> the only concern I have is that implies that dump_page() would need to
+> be basically duplicated, as it now outputs everything via printk's.
 
-Fixes: 531ee0fd4836994f ("perf test: Add hwmon "PMU" test")
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Ian Rogers <irogers@google.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/tests/hwmon_pmu.c | 2 --
- 1 file changed, 2 deletions(-)
+Perhaps you can refactor the code in dump_page() to use a seq_buf,
+then have dump_page() printk that seq_buf using seq_buf_do_printk(),
+and have page detective output that seq_buf to the debugfs file?
 
-diff --git a/tools/perf/tests/hwmon_pmu.c b/tools/perf/tests/hwmon_pmu.c
-index 1e5f93aaaf5f9210..d8ed00d45dd7249e 100644
---- a/tools/perf/tests/hwmon_pmu.c
-+++ b/tools/perf/tests/hwmon_pmu.c
-@@ -155,8 +155,6 @@ static int do_test(size_t i, bool with_pmu, bool with_alias)
- 	parse_events_error__init(&err);
- 	ret = parse_events(evlist, str, &err);
- 	if (ret) {
--		evlist__delete(evlist);
--
- 		pr_debug("FAILED %s:%d failed to parse event '%s', err %d\n",
- 			 __FILE__, __LINE__, str, ret);
- 		parse_events_error__print(&err, str);
--- 
-2.47.0
-
-
------ End forwarded message -----
+We do something very similar with memory_stat_format(). We use the
+same function to generate the memcg stats in a seq_buf, then we use
+that seq_buf to output the stats to memory.stat as well as the OOM
+log.
 
