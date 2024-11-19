@@ -1,74 +1,50 @@
-Return-Path: <linux-kernel+bounces-414075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B8319D22B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 10:46:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDDF79D22BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 10:48:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 121E328342F
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 09:46:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A250C1F2188A
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 09:48:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A71A71C1F08;
-	Tue, 19 Nov 2024 09:46:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 684721C1AB3;
+	Tue, 19 Nov 2024 09:47:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="D3jEhbYT"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="PmVceOx/"
+Received: from forward500b.mail.yandex.net (forward500b.mail.yandex.net [178.154.239.144])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D0F714AD24
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 09:46:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A21C199EA3;
+	Tue, 19 Nov 2024 09:47:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732009573; cv=none; b=Crzsp7wLbwSN4U8qcGFdE33GcvdKoheBlhxGfR1kiUGNUA88d0tsAeWAgMoG627TJnYF7yybmNafGMpP7Z8tRh1//l5S4SAJr3vmzpZMGTkyjBqbImvEUZM11oRUMLfZkauPDacO4oh4i1ihMAcd6thD3i+V+WoeQ7DOdPvnw38=
+	t=1732009636; cv=none; b=EAf6FAvEiOCyn9WPq8+hGK63kU1Sd5h9IVgb7IG2nih09Lz8SX2a+z1/gG9ry0jCOubdOYyPMgoP4Zpg/fslVdOG0jQDZ1PSQ592LyDDNNfdLltoQcxYXhhfWfqC8AyWaVWKvjBo3yd0T0Ra/yE5qiuE6/s2q8CuCwha/UEP/AE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732009573; c=relaxed/simple;
-	bh=ve4mTfja6XZIEAPB66fNc2JLJByQxXnjYLnW16rs0uo=;
+	s=arc-20240116; t=1732009636; c=relaxed/simple;
+	bh=RA/1auJJGfEixGvdSgcliQSdUHQ7nyHvegV3fNo4swM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LN4PwhGXWMF1s/nFoEKaaCyl1Vh5uWytZV7gp4ENIyDWUEDHaA6oGbkVxLYU2VptCsENQm5Jmavv0Krp+e2JsUxdDlwcCc4IGTmaXVdB2pTfPdWRiyiFK1CEkZ3HDiqwnI8If2o8UZ71ACeXo/TcYnhZDmdr1rRdtb6ulGUhxYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=D3jEhbYT; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43152b79d25so34249875e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 01:46:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732009570; x=1732614370; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uW/Lrt7vQtMqvBoYmRgnoHpbirDah5r4yqywUagnRFg=;
-        b=D3jEhbYTRrh8F90tSFroNByt1iwlpr6C7frhjAL77UvKSozWW1bbEJPN8fV00CyxS9
-         oD7k9hf1Pp78AWdS0uhmO7X5E+uyJgKB+oAzpW5I4mKGPSpyQSS6ySQo0RBixmeTElci
-         KxdQJPPK0BrXk90ZVhT29TEbqZoHODxTLT1wL3HXJ5poxyFGHtjIEIqgq14wBR1/eyUT
-         W4+FwVSsLi8Am14lGMd/72+xNMFXdqQHjIKjH38lPuHsYraeiW3kgBSZ9UtjD4FPQQJS
-         fSE9aAKzxCTZr4G7k25PdU3kmi9sAMyILBksecHXFnH3aDchrqpRxNfqDeFk2zMTTy5R
-         YkUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732009570; x=1732614370;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uW/Lrt7vQtMqvBoYmRgnoHpbirDah5r4yqywUagnRFg=;
-        b=lnSVSU07yBkAxTVT5rZjQsrWXP9DxmVH3rRtENXvmXGYhP+OSRPjOG+i4OmLQEEHxp
-         9amLKul+pGf9//8IQB/8S/tG3Q8TYuRknbJaxvrP81qsSIWZRDHqrukqKt4gbZJE3m5h
-         uVqmfu3OI4csDWY6phV9wbPUxVttuCOizfbYXS01FazS4SAmYiSrxg9Lx6jBQprjzKAy
-         zte4xhU1NabD4F1Pxn+nNnxsaHogCUUC1FHWGuZAxLjFPS4bhAci8aC9OIxqu5oO/4CW
-         n3YY7XTuUx/kMJ/ohB3qekyTg+jdO90m9oJNx6bF69GNtdTFXxsGubf5iy8lMZfC8Io1
-         kBsg==
-X-Forwarded-Encrypted: i=1; AJvYcCWSmpJpahpa3vgcGHgY3NjDuBGP1d0nDISy9zG+fy287hxme+MsKghEcWm3mfX/o3wKMks3T/VzaCF1znA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/mcPTRbvjzERhcX5+ahwj0jHtO4x5tKQO9FSBO49SM4zObsaO
-	zcQOd84uu8gPO8dNMRvB558Ebe2DxhAK1BXATmIKqs5MuMGjSN1Mfgb7kqU0IhetRMG9AKesDcG
-	tBAw=
-X-Google-Smtp-Source: AGHT+IG7ogy4qzTkt9UfxSsrDtJHiZVKufG5KQETrDc6UaR8utEe0hQYbj3RdkOsqApJp3Nvq6UZSA==
-X-Received: by 2002:a05:600c:1d9e:b0:431:5ce4:bcf0 with SMTP id 5b1f17b1804b1-432df74d88bmr147004725e9.15.1732009569697;
-        Tue, 19 Nov 2024 01:46:09 -0800 (PST)
-Received: from [192.168.0.40] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432dab721d7sm190627805e9.9.2024.11.19.01.46.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 Nov 2024 01:46:09 -0800 (PST)
-Message-ID: <bad60452-41b3-42fb-acba-5b7226226d2d@linaro.org>
-Date: Tue, 19 Nov 2024 09:46:08 +0000
+	 In-Reply-To:Content-Type; b=gg0Qc4S18NmtXJeFINntBxUBqWNHigB0f8KnsDW9gGilbp//3vpkT0+02rgovCSU4nVUeZwN5mfeb3/2LczzMrRpsMS1OL3cJbKyAQ4rRnOjcWJWQndxSANmtFXy3A3NcO5ERkqTbvFZKELfznrfcX2c7o3T0bJrFne37tCONl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=PmVceOx/; arc=none smtp.client-ip=178.154.239.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
+Received: from mail-nwsmtp-smtp-production-main-45.sas.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-45.sas.yp-c.yandex.net [IPv6:2a02:6b8:c07:179a:0:640:3367:0])
+	by forward500b.mail.yandex.net (Yandex) with ESMTPS id 5C0D660EA9;
+	Tue, 19 Nov 2024 12:47:05 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-45.sas.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id 1lNdxsoOjeA0-tHAwjN3l;
+	Tue, 19 Nov 2024 12:47:04 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
+	t=1732009624; bh=RA/1auJJGfEixGvdSgcliQSdUHQ7nyHvegV3fNo4swM=;
+	h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
+	b=PmVceOx/7Zp7de8bOqZqbmmCYoD9o/LKYON2CXzDuKKqD89jFWtPPLBaXFTdqENy3
+	 ZS1bhpO9ttZM9JWhsSHpvSwbaEPa7P72RUT4zWUcx5Pdcsns665cp93Pnc3ZWVwzwo
+	 ooEycwEf6PlRAPx5zquTKUWwxEydpNb4KHSAqRmw=
+Authentication-Results: mail-nwsmtp-smtp-production-main-45.sas.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
+Message-ID: <4251c4f5-3523-474a-9ada-59ac462f33fd@yandex.ru>
+Date: Tue, 19 Nov 2024 12:47:01 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,32 +52,57 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] clk: qcom: Add support for multiple power-domains for
- a clock controller.
-To: Taniya Das <quic_tdas@quicinc.com>, Bjorn Andersson
- <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241118-b4-linux-next-24-11-18-clock-multiple-power-domains-v1-0-b7a2bd82ba37@linaro.org>
- <1898ad2e-a6ea-43ef-af1a-25229b4771db@quicinc.com>
+Subject: Re: [PATCH net-next v3] af_unix: pass pidfd flags via SCM_PIDFD cmsg
 Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <1898ad2e-a6ea-43ef-af1a-25229b4771db@quicinc.com>
+To: Kuniyuki Iwashima <kuniyu@amazon.com>
+Cc: almasrymina@google.com, asml.silence@gmail.com, axboe@kernel.dk,
+ brauner@kernel.org, cyphar@cyphar.com, davem@davemloft.net,
+ edumazet@google.com, gouhao@uniontech.com, horms@kernel.org,
+ kees@kernel.org, krisman@suse.de, kuba@kernel.org,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, mhal@rbox.co,
+ netdev@vger.kernel.org, oleg@redhat.com, pabeni@redhat.com,
+ quic_abchauha@quicinc.com, shuah@kernel.org, tandersen@netflix.com,
+ viro@zeniv.linux.org.uk, willemb@google.com
+References: <20241116101120.323174-1-stsp2@yandex.ru>
+ <20241118175452.54045-1-kuniyu@amazon.com>
+From: stsp <stsp2@yandex.ru>
+In-Reply-To: <20241118175452.54045-1-kuniyu@amazon.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 19/11/2024 06:08, Taniya Das wrote:
-> 
-> Bryan, as we were already in discussion with Bjorn to post the patches 
-> which take care of Multi GDSC and PLL requirements, I would request to 
-> kindly hold this series posting. I am in the final discussions with 
-> Bjorn to handle it gracefully to post the series.
+18.11.2024 20:54, Kuniyuki Iwashima пишет:
+> From: Stas Sergeev <stsp2@yandex.ru>
+> Date: Sat, 16 Nov 2024 13:11:20 +0300
+>> Currently SCM_PIDFD cmsg cannot be sent via unix socket
+>> (returns -EINVAL) and SO_PASSPIDFD doesn't support flags.
+>> The created pidfd always has flags set to 0.
+>>
+>> This patch implements SCM_PIDFD cmsg in AF_UNIX socket, which
+>> can be used to send flags to SO_PASSPIDFD-enabled recipient.
+>>
+>> Self-test is added for the propagation of PIDFD_NONBLOCK flag.
+>>
+>> This is mainly needed for the future extensions, like eg this one:
+>> https://lore.kernel.org/lkml/8288a08e-448b-43c2-82dc-59f87d0d9072@yandex.ru/T/#me1237e46deba8574b77834b7704e63559ffef9cb
+>> where it was suggested to try solving the supplementary groups
+>> problem with pidfd.
+>>
+>> Changes in v3: specify target tree in patch subject
+> It seems you missed other feedback, especially __scm_recv_common()
+> needs a small change.
 
-Is this not 'graceful' ?
+Yes, sorry. :( Too long quotes.
+And what's worse, I've just found this
+and many other lkml e-mails in spam.
+I was under deep impression that no
+one replies to me.
 
-Hmm. What specifically don't you like about this series ?
+Sigh. E-mail sucks. Or just me.
 
----
-bod
+> net-next is closed during the merge window for v6.13-rc1, so please
+> post v4 after Dec 2nd.
+> https://lore.kernel.org/netdev/20241118071654.695bb1a2@kernel.org/
+
+Ok, thank you!
+
 
