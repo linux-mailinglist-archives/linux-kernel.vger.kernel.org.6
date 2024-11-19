@@ -1,68 +1,89 @@
-Return-Path: <linux-kernel+bounces-414982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B628F9D300A
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 22:31:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A255E9D3011
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 22:32:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B495284043
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 21:31:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C828283A6D
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 21:32:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9E421D3586;
-	Tue, 19 Nov 2024 21:31:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79D231D359E;
+	Tue, 19 Nov 2024 21:32:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="fs6XKAXK"
-Received: from smtp.smtpout.orange.fr (smtp-28.smtpout.orange.fr [80.12.242.28])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OKjvQt9n"
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B10791D043F;
-	Tue, 19 Nov 2024 21:30:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 045FA199FDD;
+	Tue, 19 Nov 2024 21:32:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732051860; cv=none; b=t+nRNh1oJENsrSD5F8lvbWFzAJSyjg1+Ng/nWgMCh8aUVxikEi1wjUNixA8KdiUV7nYfRGhl6jrCkW24IKxi1Dslwgx13F7b+GQ4yV7iW5AkeVBdjFMpoieaAOV9D3zEjEKMh/Dkh+xD0QqH9fZQBYkSR5xhNXlw+x71XT66+8I=
+	t=1732051927; cv=none; b=VZvkAam9Faa+Gv1pO+F0N/dzAmHwegn9TbhUkODbMtfC052FEGEJHnNbaaHvktykx3lN4hZwi32MzisaGQaV7DX/jliu5bbKKc8tIij/QTV0cBlbpENb9m2nBRAYKl77bLrq7czBfewlYfORAz9pYFCocvY2UR0IdIALDgS6FsQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732051860; c=relaxed/simple;
-	bh=CLacKn45ZJzzKF/aDfg8hX19NVkE4WN0HsH0eXEdVjs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DCdCRw/P9EchELR3MA3oOFShGsCRvXPIrYl0LWn/ngpFmC28RNEZJkLgUeCGOXQOQkzZIBMnkYIXkFxljWqamHGq67+VpXw+VqaogP2hAxZ11bkYqHcdUdafjuv3dxA5ir5jvjWobc9g/qULomkgR7HaiKW4xygyfj+HrA62gb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=fs6XKAXK; arc=none smtp.client-ip=80.12.242.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from localhost.localdomain ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id DVo0tZBgMlMRCDVo0teyUl; Tue, 19 Nov 2024 22:30:49 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1732051849;
-	bh=EjYh1cknlZ7PMy6sRG187xTDVC5FFJcX/Odw6mzP5bM=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=fs6XKAXKEa7OiGdYVIxWxoX52NB9X9sFNwHavWtknoVS7Z1y0i9KjA7T5Hcz2N04G
-	 oGU7ylyi7JaqkPL4uNOf8Qk/bK7w/mBi0klb3GdO73sCvx76Qx4AGs7GAZjXMWs0N3
-	 uX/cFd2bZHVehren5fcaR5tkVEH+EmLU1QCfrLU9crfmdQO+ck55e3SvNxfM1ycuM3
-	 0dZbgx1nxMHEae/5hr54Un7Ta4Y1f49V21pB9poCOHlOuJMQ2pHfL21MvriwpNQM+w
-	 eWKSG3bJhYwZT1m1VrxKdg4OqVRgIQpGTtElsaT46/a3uXEqkcMPWrNN1N57pXeVyT
-	 QqRSxYCfY4y1g==
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 19 Nov 2024 22:30:49 +0100
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Chin-Ting Kuo <chin-ting_kuo@aspeedtech.com>,
-	=?UTF-8?q?C=C3=A9dric=20Le=20Goater?= <clg@kaod.org>,
-	Mark Brown <broonie@kernel.org>,
-	Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-aspeed@lists.ozlabs.org,
-	openbmc@lists.ozlabs.org,
-	linux-spi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] spi: aspeed: Fix an error handling path in aspeed_spi_[read|write]_user()
-Date: Tue, 19 Nov 2024 22:30:29 +0100
-Message-ID: <4052aa2f9a9ea342fa6af83fa991b55ce5d5819e.1732051814.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1732051927; c=relaxed/simple;
+	bh=XUiZ0LF9tg0EwVsjZyXw9hay09E3SlVmonzhEXGWNQI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SNo8Rz3MH72B2Y1R45UI/bj8Xyb/wzdre2WhiVqjbwKmWoyK+C78moJWxhg+YBuBWtL/n1KfQj+6+mVRsieE0pqmjQWO2fB3jlGkjv0RHatpA5PT5SlpfbCQsRGXFMvnKhYjGbxHERvdBzK3ldLXfDVqH/tqMZCpzXdnSIC/sWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OKjvQt9n; arc=none smtp.client-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-7edb6879196so1044899a12.3;
+        Tue, 19 Nov 2024 13:32:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732051925; x=1732656725; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=O3o7KNI2hGFv6gMwjG91XpYbsNxBQO475xkwrT8XXYM=;
+        b=OKjvQt9nV6BcAOU+DtxBjR5ytUPYZBxl3vzONlSjBm7utNrmPIgDWEovsg65/0YlJU
+         WUcmvKOFHx33LQCr+MnDzkLYcNOnpWGKuJrV5jD8/eoeNPT7TISsVSJMGYMi/d9lYjrY
+         Kd/zVg7N4Uw5S+0MaV8+qy8dwCcX5p3nCTZPxMatqV2UaK0YuLgERxafBRiJv6Jn5q+/
+         EROXwy/yopbrj3PWuD7yly3Bo+om1K6wLiiPvBd/79cRq9sGmFfGNDCk9unO+/hjkYZ+
+         t/LEn1G3SRGK2WioYTF1naKYaR4ToUi52W8m6NZUzqgQ4YmR4AVorF2AOoJLbgwDjPN0
+         t8pw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732051925; x=1732656725;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=O3o7KNI2hGFv6gMwjG91XpYbsNxBQO475xkwrT8XXYM=;
+        b=vecTE7Ed1qZz/NIozcKfogvpwvJh6ZS0LjXtwLfKrJOjLCFlnkGriBfFPhrtXj5dhx
+         Ch8JfBFcdDtCzs+qRHACVH+LkAXu+woUXb1NrvDdbncMuSU8aolQDdzpNkH0K4neY9+W
+         LjYySJ3kuGhD7xVcCYDDnzjcOV8WxpKVZsru9xmzR5kKn4r8EWRhSEdQjVQYtT/4FV6m
+         go+J+nnrlq/t695XBLM2jaOUGNbwYVKXZSCyFaMvoAjQhmyag6MetVgUcWOq2SFtQsTf
+         zVCoa9gqXcjp41FyY+24YHMNE97Od+yGdKxmwGWZTgcsFZol4UJDdygo4XLUlTLN+ykx
+         G9Yg==
+X-Forwarded-Encrypted: i=1; AJvYcCWePb0SywtJaeI/ngpGze8Ke4XqohbE+UYxXs/3KBJZMU7ceuUM0en56w8ZAVHs+KSGWPCSPm9U@vger.kernel.org, AJvYcCXrfUuHOV75zTLvjPNpSAgOLX9Gdqh+Um2G7Lr4+EVyM+z35x7riFkIb/7mcp2JNjJR+XQylNkXC1OViLA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyteV/kbB3Wj+K22cUD05Mp01IkmXAtB4OWCTrOvxmu5jrgE1SI
+	PmRoqywN2ICjMVMKBx3yNUjh7skmDAFuXqtDLgWYIbzq/UR1lUQ3
+X-Google-Smtp-Source: AGHT+IGjXTrCZrjFrmwL8uPXmyNLdwiSuGIuCddplYQq+V8h055S9uTuHLjnVk9EnmuINXG/Fgexng==
+X-Received: by 2002:a05:6a21:8ccc:b0:1d8:a3ab:720b with SMTP id adf61e73a8af0-1ddade0ad86mr926004637.9.1732051925108;
+        Tue, 19 Nov 2024 13:32:05 -0800 (PST)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7f8c1c1752csm8275765a12.4.2024.11.19.13.32.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Nov 2024 13:32:04 -0800 (PST)
+Sender: Guenter Roeck <groeck7@gmail.com>
+From: Guenter Roeck <linux@roeck-us.net>
+To: Lars Povlsen <lars.povlsen@microchip.com>
+Cc: Steen Hegelund <Steen.Hegelund@microchip.com>,
+	Daniel Machon <daniel.machon@microchip.com>,
+	UNGLinuxDriver@microchip.com,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	linux-arm-kernel@lists.infradead.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Guenter Roeck <linux@roeck-us.net>,
+	Steen Hegelund <steen.hegelund@microchip.com>
+Subject: [RESEND PATCH] net: microchip: vcap: Add typegroup table terminators in kunit tests
+Date: Tue, 19 Nov 2024 13:32:02 -0800
+Message-ID: <20241119213202.2884639-1-linux@roeck-us.net>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,63 +92,126 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-A aspeed_spi_start_user() is not balanced by a corresponding
-aspeed_spi_stop_user().
-Add the missing call.
+VCAP API unit tests fail randomly with errors such as
 
-Fixes: e3228ed92893 ("spi: spi-mem: Convert Aspeed SMC driver to spi-mem")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+   # vcap_api_iterator_init_test: EXPECTATION FAILED at drivers/net/ethernet/microchip/vcap/vcap_api_kunit.c:387
+   Expected 134 + 7 == iter.offset, but
+       134 + 7 == 141 (0x8d)
+       iter.offset == 17214 (0x433e)
+   # vcap_api_iterator_init_test: EXPECTATION FAILED at drivers/net/ethernet/microchip/vcap/vcap_api_kunit.c:388
+   Expected 5 == iter.reg_idx, but
+       iter.reg_idx == 702 (0x2be)
+   # vcap_api_iterator_init_test: EXPECTATION FAILED at drivers/net/ethernet/microchip/vcap/vcap_api_kunit.c:389
+   Expected 11 == iter.reg_bitpos, but
+       iter.reg_bitpos == 15 (0xf)
+   # vcap_api_iterator_init_test: pass:0 fail:1 skip:0 total:1
+
+Comments in the code state that "A typegroup table ends with an all-zero
+terminator". Add the missing terminators.
+
+Some of the typegroups did have a terminator of ".offset = 0, .width = 0,
+.value = 0,". Replace those terminators with "{ }" (no trailing ',') for
+consistency and to excplicitly state "this is a terminator".
+
+Fixes: 67d637516fa9 ("net: microchip: sparx5: Adding KUNIT test for the VCAP API")
+Cc: Steen Hegelund <steen.hegelund@microchip.com>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 ---
-Compile tested only.
+resend: forgot to copy netdev@.
 
+ .../ethernet/microchip/vcap/vcap_api_kunit.c    | 17 ++++++++++-------
+ 1 file changed, 10 insertions(+), 7 deletions(-)
 
-This patch is completely speculative, review with care!
-
-It is only based on naming where a _start() function if not followed by a
-_stop() in some paths but is in other paths.
----
- drivers/spi/spi-aspeed-smc.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/spi/spi-aspeed-smc.c b/drivers/spi/spi-aspeed-smc.c
-index 8eb843ddb25f..e9beae95dded 100644
---- a/drivers/spi/spi-aspeed-smc.c
-+++ b/drivers/spi/spi-aspeed-smc.c
-@@ -239,7 +239,7 @@ static ssize_t aspeed_spi_read_user(struct aspeed_spi_chip *chip,
+diff --git a/drivers/net/ethernet/microchip/vcap/vcap_api_kunit.c b/drivers/net/ethernet/microchip/vcap/vcap_api_kunit.c
+index 7251121ab196..16eb3de60eb6 100644
+--- a/drivers/net/ethernet/microchip/vcap/vcap_api_kunit.c
++++ b/drivers/net/ethernet/microchip/vcap/vcap_api_kunit.c
+@@ -366,12 +366,13 @@ static void vcap_api_iterator_init_test(struct kunit *test)
+ 	struct vcap_typegroup typegroups[] = {
+ 		{ .offset = 0, .width = 2, .value = 2, },
+ 		{ .offset = 156, .width = 1, .value = 0, },
+-		{ .offset = 0, .width = 0, .value = 0, },
++		{ }
+ 	};
+ 	struct vcap_typegroup typegroups2[] = {
+ 		{ .offset = 0, .width = 3, .value = 4, },
+ 		{ .offset = 49, .width = 2, .value = 0, },
+ 		{ .offset = 98, .width = 2, .value = 0, },
++		{ }
+ 	};
  
- 	ret = aspeed_spi_send_cmd_addr(chip, op->addr.nbytes, offset, op->cmd.opcode);
- 	if (ret < 0)
--		return ret;
-+		goto stop_user;
+ 	vcap_iter_init(&iter, 52, typegroups, 86);
+@@ -399,6 +400,7 @@ static void vcap_api_iterator_next_test(struct kunit *test)
+ 		{ .offset = 147, .width = 3, .value = 0, },
+ 		{ .offset = 196, .width = 2, .value = 0, },
+ 		{ .offset = 245, .width = 1, .value = 0, },
++		{ }
+ 	};
+ 	int idx;
  
- 	if (op->dummy.buswidth && op->dummy.nbytes) {
- 		for (i = 0; i < op->dummy.nbytes / op->dummy.buswidth; i++)
-@@ -249,8 +249,9 @@ static ssize_t aspeed_spi_read_user(struct aspeed_spi_chip *chip,
- 	aspeed_spi_set_io_mode(chip, io_mode);
+@@ -433,7 +435,7 @@ static void vcap_api_encode_typegroups_test(struct kunit *test)
+ 		{ .offset = 147, .width = 3, .value = 5, },
+ 		{ .offset = 196, .width = 2, .value = 2, },
+ 		{ .offset = 245, .width = 5, .value = 27, },
+-		{ .offset = 0, .width = 0, .value = 0, },
++		{ }
+ 	};
  
- 	aspeed_spi_read_from_ahb(buf, chip->ahb_base, len);
-+stop_user:
- 	aspeed_spi_stop_user(chip);
--	return 0;
-+	return ret;
- }
+ 	vcap_encode_typegroups(stream, 49, typegroups, false);
+@@ -463,6 +465,7 @@ static void vcap_api_encode_bit_test(struct kunit *test)
+ 		{ .offset = 147, .width = 3, .value = 5, },
+ 		{ .offset = 196, .width = 2, .value = 2, },
+ 		{ .offset = 245, .width = 1, .value = 0, },
++		{ }
+ 	};
  
- static ssize_t aspeed_spi_write_user(struct aspeed_spi_chip *chip,
-@@ -261,10 +262,11 @@ static ssize_t aspeed_spi_write_user(struct aspeed_spi_chip *chip,
- 	aspeed_spi_start_user(chip);
- 	ret = aspeed_spi_send_cmd_addr(chip, op->addr.nbytes, op->addr.val, op->cmd.opcode);
- 	if (ret < 0)
--		return ret;
-+		goto stop_user;
- 	aspeed_spi_write_to_ahb(chip->ahb_base, op->data.buf.out, op->data.nbytes);
-+stop_user:
- 	aspeed_spi_stop_user(chip);
--	return 0;
-+	return ret;
- }
+ 	vcap_iter_init(&iter, 49, typegroups, 44);
+@@ -489,7 +492,7 @@ static void vcap_api_encode_field_test(struct kunit *test)
+ 		{ .offset = 147, .width = 3, .value = 5, },
+ 		{ .offset = 196, .width = 2, .value = 2, },
+ 		{ .offset = 245, .width = 5, .value = 27, },
+-		{ .offset = 0, .width = 0, .value = 0, },
++		{ }
+ 	};
+ 	struct vcap_field rf = {
+ 		.type = VCAP_FIELD_U32,
+@@ -538,7 +541,7 @@ static void vcap_api_encode_short_field_test(struct kunit *test)
+ 		{ .offset = 0, .width = 3, .value = 7, },
+ 		{ .offset = 21, .width = 2, .value = 3, },
+ 		{ .offset = 42, .width = 1, .value = 1, },
+-		{ .offset = 0, .width = 0, .value = 0, },
++		{ }
+ 	};
+ 	struct vcap_field rf = {
+ 		.type = VCAP_FIELD_U32,
+@@ -608,7 +611,7 @@ static void vcap_api_encode_keyfield_test(struct kunit *test)
+ 	struct vcap_typegroup tgt[] = {
+ 		{ .offset = 0, .width = 2, .value = 2, },
+ 		{ .offset = 156, .width = 1, .value = 1, },
+-		{ .offset = 0, .width = 0, .value = 0, },
++		{ }
+ 	};
  
- /* support for 1-1-1, 1-1-2 or 1-1-4 */
+ 	vcap_test_api_init(&admin);
+@@ -671,7 +674,7 @@ static void vcap_api_encode_max_keyfield_test(struct kunit *test)
+ 	struct vcap_typegroup tgt[] = {
+ 		{ .offset = 0, .width = 2, .value = 2, },
+ 		{ .offset = 156, .width = 1, .value = 1, },
+-		{ .offset = 0, .width = 0, .value = 0, },
++		{ }
+ 	};
+ 	u32 keyres[] = {
+ 		0x928e8a84,
+@@ -732,7 +735,7 @@ static void vcap_api_encode_actionfield_test(struct kunit *test)
+ 		{ .offset = 0, .width = 2, .value = 2, },
+ 		{ .offset = 21, .width = 1, .value = 1, },
+ 		{ .offset = 42, .width = 1, .value = 0, },
+-		{ .offset = 0, .width = 0, .value = 0, },
++		{ }
+ 	};
+ 
+ 	vcap_encode_actionfield(&rule, &caf, &rf, tgt);
 -- 
-2.47.0
+2.45.2
 
 
