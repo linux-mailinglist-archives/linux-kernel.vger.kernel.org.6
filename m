@@ -1,74 +1,75 @@
-Return-Path: <linux-kernel+bounces-414338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC9089D26B2
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 14:17:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB88C9D267F
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 14:11:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 93A79B2BD66
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 13:10:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CB851F22C2E
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 13:11:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0DA11CCEDD;
-	Tue, 19 Nov 2024 13:10:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A311E1CDA24;
+	Tue, 19 Nov 2024 13:10:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uRW/wFl/"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OfWaAXN0"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6EF61CBE89
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 13:10:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79FA91CCB5F
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 13:10:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732021836; cv=none; b=JNj6Xwg0vwXQuB8NJLv1uHea5H45fJVpjjfJB7jEhUtFg6VVYhfwDdIw817vBc8WssLeDBrK+3ToSjdFq9yhzKA1aupO7rkP9BWmaNo4UCHTJHHXnAt9VBBprLCZpbgtQrPIO+FfUGgws2Spb+Gc0mxrY3IkDU4CTuOI9pg9AJg=
+	t=1732021838; cv=none; b=PNme9zMJpls7EfTZ9wKUQFVtTda1RZnvkf0yoxM/NgE/ISqn+K646SZ8LvbzgQq76iPKQcQ9BctdubdrmnS7w77GVuZt3oLW9RCzPb8TUkcKwR0SX68/wJvyngr25XFkWAfJx4lRf8HIBl5rkyUD9PaWWwOzSkR2Fsssx6Vxtb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732021836; c=relaxed/simple;
-	bh=4fXNyWptEUJ9NqiDYY4v5f2MA6FE8JIpt+fHVIuwt+U=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=FTBttSJJb/KMMlcPUY5Rtbo30vg5O+9G7sw8TYPgYH/Q9pxJ+X2/WvRNKYQvWMqB4vQlXGbepDX2TuvKetvFTqIUqQCc29GLrDSA2PzJiCmVu2zpHxxfp0SD6naIzumXc9EAAJRmT7BnPaqEwRqQJrT2vAiOHeEq1ABpT6K4zwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uRW/wFl/; arc=none smtp.client-ip=209.85.128.46
+	s=arc-20240116; t=1732021838; c=relaxed/simple;
+	bh=+Z/PdD2MYfcpiCWwU8ARGvFmCClzUqxWTTx33AL6Y8I=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=CjLpzW7rAAGLI7znH5bYjrr0cyycmWuIsvtvIOvRUzP2F/RIrdUq4SUnRPWzAeOIXryoKf3NscchN/pn9fQUcuudH/scb+DcnWEI46K8MF7sPiG/+oeM/kVQxHbJTRmK1Mq24ynjJp4ZTwlwBJnnPEXbhnYH0wOU+SpHrRw4Ijw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OfWaAXN0; arc=none smtp.client-ip=209.85.128.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4315baa51d8so38456855e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 05:10:34 -0800 (PST)
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43169902057so45586815e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 05:10:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732021833; x=1732626633; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=QCd1XDFaDcI0eu/5aCsZjulpUPFQcIcFClGyDjhAXE4=;
-        b=uRW/wFl/vKGPh88hCVHGj8Kc5Lbj/5byEinOJs5rYAPJNT4tezCpD+SuiMW+GdSRDJ
-         TJw5+bMxIHSM6m0J8wQrE6obeYYTwNtaiLnnW5xpN4JdzDq+IZGLjbnrRERy7J+cGNtw
-         AZJ8WNOVgC20p9u/qqqX5jB1RJF9smcyhqkR+NV/Sqxq4uQVz3wJQs3YyXzFzZicrtwU
-         DhSnDzftLph7Pg7jkTGQY3MyspN1thpcBMSZbtg+oBGe+lCFyUDAcqlrfE+8X2gLwHC3
-         3lNbxn6gJ4zkneyTArda2MGHlRa44tqy6y5x1rTa4UoIsJd/rynvldHMtxjp4zoZwgn6
-         NrAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732021833; x=1732626633;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1732021835; x=1732626635; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=QCd1XDFaDcI0eu/5aCsZjulpUPFQcIcFClGyDjhAXE4=;
-        b=iVtqlEGqA6467VLFlHoGKHrWk4LFz803VWFX6o7lT8n9Ip+4V4keqnHMlUXO7lRftu
-         sTHH3a3d72k9iy3pJ9btX+dW9EbljNF1vkcS6pOVEtFtNQ6cwwrL85gB1rl77cjkjgR3
-         xRylfNwknqBSHIBaK1YDMQQmWUoazds5sJNI5sy66/AhTcBMsez93xoHzRafN6JP6avI
-         O83N9Pp9fr+hZ2e0ANWTu80oNRwHqWMkEkXWYpTgaQaZXTlU0gxF7dl1j/EM20An6AVc
-         FuysWk9gc3aVi/pCB2joTmX23qJCd5AvpiLe/yWPUGFr6NBFw1xjgtUosniU2mNO4/ov
-         sGBw==
-X-Forwarded-Encrypted: i=1; AJvYcCXU65kKDy/VusYet9qOVYJLIvER0INblZ0HmSh3QRP86iOzFttFlke+Xqf7lxpwuJsw8P00zCI3k7Px05g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8pd4oduTBTapj4B4EFx/MaIr+QRFV8djD8fTSty9l/742VVwL
-	s2vL8vWnL5JhYlpJU9EKlr7FYZN1EvaYLOtYxLDUA+HXz16NwJJqqw8gZbHQTuc=
-X-Google-Smtp-Source: AGHT+IGusP/UzmZ0+YghK5T/t6qFJwR3QEG3Zd6a+CKh0Jg8Puhh2L5Y6iTO7QAmcU06sOzzeyBDEw==
-X-Received: by 2002:a05:600c:3584:b0:430:5887:c238 with SMTP id 5b1f17b1804b1-432df725532mr135846905e9.11.1732021833272;
-        Tue, 19 Nov 2024 05:10:33 -0800 (PST)
+        bh=vLg4Ldyb3QyH8qI2mLCFcOUNVAsIDeqLMDJbc+hKrrM=;
+        b=OfWaAXN0w8BpXd6aMfcE7DJ8fZ9gufPDHRZWgi9XnFGYpgdyH3Rz43E8Tz+y3UwZ2V
+         3q4RSftD6zBtUOzB3FL89XKmFQC8ntr61LmedQkAI6boWUqa5uiagJX7OJw+7bYTeW57
+         HItDlwKvrM1kP67z42KYM/HDJPTQBl+EkkLyrnBVL3J1t8v/9FBgXRxDlbU/YVo0gVsG
+         OdTY6/UXXxLVf9XnJvB6DdvJ97Y2FXeigKCF08IXhwlMcAdbF+aMXyyGzrR+s+vTDRMh
+         kEUNHjC3MbEJS2FI2UBIg/jqbZxPAi5TuTjLCObGAbkIX9XMpVoynoTu44kL4hUJDEse
+         RYIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732021835; x=1732626635;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vLg4Ldyb3QyH8qI2mLCFcOUNVAsIDeqLMDJbc+hKrrM=;
+        b=lAgt7oYAXO1v59o+JycZmW6RWkhGu+Q/2jWbr9Q/4hI319bYI6ANc2cE1IT3OWjnCJ
+         qgbK2nw3LdOOjM8ssSIza7MeazE3MsAIQ2nLhG8/L1gl55Tt2iq040E60twDracljYJ8
+         6Ev+TG4mw7XZvOjvhba5UlgueENDOnu8nO6qocMza0BDA6eq8wgcwLsEasdwm6PQfPwR
+         ZZ4PczZjfQdpbnDhEVdRVOQIjthvuvOC7ioFlAifUi6kr9/vEpfprnNFmy1m/fIGpvsP
+         Pwqhbra9eE5+jW4rsjSWaAQzsAQfDm1SJED3RouYVBhlkHSjZ/nO6d8oHjVr3Vedjbxo
+         ku9A==
+X-Forwarded-Encrypted: i=1; AJvYcCWB59noQeBxIezJrJna3C1J4gcLHlFOqDpMgAxjisOuEMPYleICWKncITm3l5f1Vkpsb5Nql0fL5ruFUSw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLvJj6StFtbwMMvzG3H84ljQ+0codzKVeLc5+HmHgEce0XQJnc
+	f/yQhTGKf42g/fGsuRef+RX04q8a/oSc/R8z0hHYYv8O1u23HlOdf8/WlVgMcEY=
+X-Google-Smtp-Source: AGHT+IGJzaFaJz3YJohGuDkgPzfL38B4e04J3jb4J8DFuGIWIjaFuEed7tFXmMa3NleNtFete+AYwg==
+X-Received: by 2002:a05:600c:c0d:b0:431:680e:95ff with SMTP id 5b1f17b1804b1-432df72b93cmr138509745e9.9.1732021834697;
+        Tue, 19 Nov 2024 05:10:34 -0800 (PST)
 Received: from [127.0.1.1] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432dab76dafsm192016185e9.10.2024.11.19.05.10.32
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432dab76dafsm192016185e9.10.2024.11.19.05.10.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Nov 2024 05:10:32 -0800 (PST)
+        Tue, 19 Nov 2024 05:10:34 -0800 (PST)
 From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Subject: [PATCH 0/6] Add dt-bindings and dtsi changes for CAMSS on x1e80100
- silicon
-Date: Tue, 19 Nov 2024 13:10:29 +0000
-Message-Id: <20241119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v1-0-54075d75f654@linaro.org>
+Date: Tue, 19 Nov 2024 13:10:30 +0000
+Subject: [PATCH 1/6] dt-bindings: i2c: qcom-cci: Document x1e80100
+ compatible
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,10 +78,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAEWOPGcC/x3NQQrCMBBG4auUWftDJg1t9CrSRWxGHdAomSqB0
- rtbXH6b91YyqSpGp26lKl81fZUdfOhovqdyE2jeTd75wMxHXAIeWj4NRdoCH8AMjsiLKRpLdOw
- c5vQ0Q/Rp6Md+yG70tAffVa7a/rPztG0/dNJJzHwAAAA=
-X-Change-ID: 20241119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-82a63736d072
+Message-Id: <20241119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v1-1-54075d75f654@linaro.org>
+References: <20241119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v1-0-54075d75f654@linaro.org>
+In-Reply-To: <20241119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v1-0-54075d75f654@linaro.org>
 To: Loic Poulain <loic.poulain@linaro.org>, Robert Foss <rfoss@kernel.org>, 
  Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -98,45 +98,33 @@ Cc: linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org,
  Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 X-Mailer: b4 0.15-dev-355e8
 
-This series adds dt-bindings and dtsi for CAMSS on x1e80100.
-
-The primary difference between x1e80100 and other platforms is a new VFE
-and CSID pair at version 680.
-
-Some minor driver churn will be required to support outside of the new VFE
-and CSID blocks but nothing too major.
-
-The CAMCC in this silicon requires two, not one power-domain requiring
-either this fix I've proposed here or something similar:
-
-https://lore.kernel.org/linux-arm-msm/bad60452-41b3-42fb-acba-5b7226226d2d@linaro.org/T/#t
-
-That doesn't gate adoption of the binding description though.
-
-A working tree in progress can be found here:
-https://git.codelinaro.org/bryan.odonoghue/kernel/-/tree/x1e80100-6.12-rc7+camss?ref_type=heads
-
 Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 ---
-Bryan O'Donoghue (6):
-      dt-bindings: i2c: qcom-cci: Document x1e80100 compatible
-      dt-bindings: media: Add qcom,x1e80100-camss binding
-      dt-bindings: clock: qcom: Add second power-domain to CAMCC
-      arm64: dts: qcom: x1e80100: Add CAMCC block definition
-      arm64: dts: qcom: x1e80100: Add CCI definitions
-      arm64: dts: qcom: x1e80100: Add CAMSS block definition
+ Documentation/devicetree/bindings/i2c/qcom,i2c-cci.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
- .../bindings/clock/qcom,sm8450-camcc.yaml          |   5 +-
- .../devicetree/bindings/i2c/qcom,i2c-cci.yaml      |   2 +
- .../bindings/media/qcom,x1e80100-camss.yaml        | 354 ++++++++++++++++++++
- arch/arm64/boot/dts/qcom/x1e80100.dtsi             | 359 +++++++++++++++++++++
- 4 files changed, 718 insertions(+), 2 deletions(-)
----
-base-commit: 744cf71b8bdfcdd77aaf58395e068b7457634b2c
-change-id: 20241119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-82a63736d072
+diff --git a/Documentation/devicetree/bindings/i2c/qcom,i2c-cci.yaml b/Documentation/devicetree/bindings/i2c/qcom,i2c-cci.yaml
+index ef26ba6eda28e95875853fe5043fe11deb5af088..89f852ca0d6b8a6b57b596eca0a3765efd058f39 100644
+--- a/Documentation/devicetree/bindings/i2c/qcom,i2c-cci.yaml
++++ b/Documentation/devicetree/bindings/i2c/qcom,i2c-cci.yaml
+@@ -34,6 +34,7 @@ properties:
+               - qcom,sm8450-cci
+               - qcom,sm8550-cci
+               - qcom,sm8650-cci
++              - qcom,x1e80100-cci
+           - const: qcom,msm8996-cci # CCI v2
+ 
+   "#address-cells":
+@@ -205,6 +206,7 @@ allOf:
+           contains:
+             enum:
+               - qcom,sc8280xp-cci
++              - qcom,x1e80100-cci
+     then:
+       properties:
+         clocks:
 
-Best regards,
 -- 
-Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+2.45.2
 
 
