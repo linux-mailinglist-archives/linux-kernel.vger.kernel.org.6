@@ -1,117 +1,94 @@
-Return-Path: <linux-kernel+bounces-415022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AC819D30B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 23:52:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E88B9D30B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 23:54:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD965283E43
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 22:52:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C13E31F22E87
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 22:54:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19AB71D4323;
-	Tue, 19 Nov 2024 22:52:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B6131D1F6F;
+	Tue, 19 Nov 2024 22:54:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dZ+1ar3a"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EpRhTYxa"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2A031C1F36
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 22:51:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 566501876
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 22:54:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732056720; cv=none; b=Ftytwi7+UELvr2e6iuMDTQaS7y79PAx3ZUbXRVxEGPDBZczlooumTjr8PMk6dkPpHGvF74iwNbu9GIYgICTuiz9m5OUyfXiSGoZ3ArUb3kidkDyRXsMatL2pX6FxB9WGvQp4U3yjsdBCXiAdbc430lyvwsHMi8UWndmtyfSqeQI=
+	t=1732056881; cv=none; b=bxXz8aQ04Td9yH4JNulGZ+pBWn/wfAZY+JSLm7ToFRap4V0T+DV9z5RdC/Kmai77YAT9AGOFUqmxhUxE7eI8HSxIORVqGO/toOQC2hYMU7TlUawB4QWqStvCmRtlmpZBsqk0ylyeizwxqqL+ynuInLkEwxOC6CcKQtXI/zx9IhI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732056720; c=relaxed/simple;
-	bh=n+FUegK41l52wy6PHil3h7VNOwWht9pyTJK05iUwYtY=;
+	s=arc-20240116; t=1732056881; c=relaxed/simple;
+	bh=WA9PsIHZiknqd97XKlVnzX/W5inwClolowdlh7Pqhgs=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=tDfK788pE8PLKL0jTFqS+YQAR84XCW0GDTRxVktJCQIK0qoBd4jeBGxriEHoaCjHMj65Htf1Xo2gLTiFlOdFL/Hwk8ftqvDVtoG3/EStc5w2fS77fsedXBCwnd8FscphctbWA+Ogord2IN2ruUjRHoRThB/kD+GfYQFeKWo+4b0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dZ+1ar3a; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version:Content-Type; b=uoGEws8hPOGPnu0+8985vRMV9LzzHkutFfwD0syjcHbPYUZuQWo8Yjfs6yD142ahIgmo3RRoogUwAjwwNgw0g9DIgq/c/5vofswsWNyQXYx2AL0/z3gkmM7zxWEQpITxd9dT1MZJgpYKKpU+B40ncqaYa704J4LY4csdFnps+so=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EpRhTYxa; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732056718;
+	s=mimecast20190719; t=1732056878;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=0acvZIc1v1FoWClAO41Ko95c122YYqzO2aYK11MWEDA=;
-	b=dZ+1ar3ax/dPsT9eweBPilgvGIHedNdHi9VEHwQtjIWdeGW+iDCHRfBRuTvBs4uhhLzQM2
-	f36l6dtJIpw+MzI7jBm1oyXVxRF4Gq2mI1RQLekXi7yvVtMhyKRESE9mErMpCATCUyCxOy
-	wGtGvpHMUMV+LgX50M1jC7laV6ukH5Q=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=X016mIeXHSvLreQ+nz8+yX6DqYMGq31RPOiVFPJKALg=;
+	b=EpRhTYxaumXSMX3nk2n48s2utmFVeG5dri0i1OLDLQiLtEqJqv36hQRki4D3Tqo8gWNsuS
+	WBf4PfwT8hQL8SN7gWZsuxY1pSwaJ3hecccF2aHxddjR1LE+JYt7426jBNSdSUhdb0hiMW
+	LY9xA5NxO+nDw8JV6SV2E/3s3glxA0k=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-7-OaAEmCdZPwyvSHK7yo_AHA-1; Tue, 19 Nov 2024 17:51:56 -0500
-X-MC-Unique: OaAEmCdZPwyvSHK7yo_AHA-1
-X-Mimecast-MFC-AGG-ID: OaAEmCdZPwyvSHK7yo_AHA
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-38231e6b4cbso3011754f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 14:51:56 -0800 (PST)
+ us-mta-630-spmgjUduMTCfCup-aIO87g-1; Tue, 19 Nov 2024 17:54:36 -0500
+X-MC-Unique: spmgjUduMTCfCup-aIO87g-1
+X-Mimecast-MFC-AGG-ID: spmgjUduMTCfCup-aIO87g
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-38242a78f3eso810101f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 14:54:36 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732056715; x=1732661515;
+        d=1e100.net; s=20230601; t=1732056875; x=1732661675;
         h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
          :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0acvZIc1v1FoWClAO41Ko95c122YYqzO2aYK11MWEDA=;
-        b=H/6dMmJWpyTBb9zI0ArWGBDKiv8vy/8FaMq9z/8xYY7z7kKPxMKqKsfnoVdDqHB8XC
-         CnaLQiAcOdwdQ8SVHRa3XQVJsLaJj7al5+TOGV6ylIsUckgF+yaQY0zRK+5s9JBvq6YR
-         kDMFe++aQa66x1Q4znPt5NYyRRS4wX770FZATKkrN+c6dEbCJCfKqdrW3JGEkywqWHXl
-         Lamh+hETGZGPMIWqge9niufPLpwYEsMww5AiPi7PUSkCntqTonuoGVId2oLx+XGVujTU
-         9eFfknSDW23qq1rC1/zPPlh7zpxZmS2o/f6XQzHY0IIEuxEr9PBOWZ7PIIOdd5zpOYcH
-         sxJA==
-X-Gm-Message-State: AOJu0YwXKTsimt70fsfGHjwZGcZirR7HI3m5RkPYu3wxQH5eWtlWpNBB
-	OVfIj/rUHlIuLe/Y28NpDOuZW/2J8rmiZqyHEG/IM5BbKHQrCZJE2yg5KmCYWeQmtIblDh2JVLM
-	+vu6VTrLxvuCogaL1TxL24e+kVkX8TqRfzzjbn2muJAxAQi8sTU5SlBioO7Xk1w==
-X-Received: by 2002:a05:600c:34c3:b0:42c:ba83:3f00 with SMTP id 5b1f17b1804b1-433489816d0mr4969615e9.1.1732056715552;
-        Tue, 19 Nov 2024 14:51:55 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHMYN+PGJWEPxaqNKkZYZ2TSeyMynnunVcMDwn9yZJBs1V5cl+I8e3VzKdyfOqsH7HbngJhGA==
-X-Received: by 2002:a05:600c:34c3:b0:42c:ba83:3f00 with SMTP id 5b1f17b1804b1-433489816d0mr4969005e9.1.1732056715138;
-        Tue, 19 Nov 2024 14:51:55 -0800 (PST)
+        bh=X016mIeXHSvLreQ+nz8+yX6DqYMGq31RPOiVFPJKALg=;
+        b=oOFSEfsL6TNhjeUV2zns2RqwiL+vns33ng1gPLNnd3bjEfZKFnxIRjZMuXqZP1H8iA
+         QJf3pRCrIS0JeiYQkhWhOCKN1HxJk3gezB1iXgnff3ijmozyS+egkAJeTQ8u8AccC/op
+         DucgjyLQRDA9+hLsglZmTVWI3Vg5rCDw5wy3dK4IGThYvyGsS/1tHQDx5mZp/gmW2AHB
+         6rCh3bwnqRLD9BIcD54oMVK+UQfju6uW6jUnfn0N2rMClhzy+EDrTy9sc/DO6i1L3ijE
+         FBwAxsMUPJ0EpE1GSV7AdTWJs44N7hG8klIvk3LIUzigQ7u98tVdToAkIEuF69Dg1uKb
+         RXIA==
+X-Forwarded-Encrypted: i=1; AJvYcCViarKtDVcaJPXYkA7yOQBn6GbTg9zsRriNqtK+slTBYimyNFBP7yqfdTrec8P2JlgNSowHeTCfOI34idg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0082NMaPc4kI2Ib/NtHSRNF82qbsqtCQxi1CWLoWZnwpjfW1e
+	2PjMPuHGX+O/wnnRQKaeI5qNHL+j+N5P/VYrkW5UdUOKTxjlyVwRoOxlUqQb74XzzkUdai/NcFI
+	wyHZDvDrNwnukEkfmaWSwCT23Ev+RlfkeLw9yDDjuIkHAWgs4GpuiapsCrvB0vA==
+X-Received: by 2002:a05:6000:2a5:b0:382:4bc5:e5f0 with SMTP id ffacd0b85a97d-38254b21993mr331196f8f.39.1732056875520;
+        Tue, 19 Nov 2024 14:54:35 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEfqjHPfOYxDSiHxvOPBzBoc3vOa1mKR/ONOMMkhecztmHulge2TgzPHRtnMd6A87BWQ+Tegg==
+X-Received: by 2002:a05:6000:2a5:b0:382:4bc5:e5f0 with SMTP id ffacd0b85a97d-38254b21993mr331175f8f.39.1732056875152;
+        Tue, 19 Nov 2024 14:54:35 -0800 (PST)
 Received: from vschneid-thinkpadt14sgen2i.remote.csb (213-44-141-166.abo.bbox.fr. [213.44.141.166])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432da27f4f8sm209297365e9.18.2024.11.19.14.51.52
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825490bfd6sm500148f8f.25.2024.11.19.14.54.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Nov 2024 14:51:54 -0800 (PST)
+        Tue, 19 Nov 2024 14:54:34 -0800 (PST)
 From: Valentin Schneider <vschneid@redhat.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- kvm@vger.kernel.org, linux-mm@kvack.org, bpf@vger.kernel.org,
- x86@kernel.org, rcu@vger.kernel.org, linux-kselftest@vger.kernel.org,
- Masami Hiramatsu <mhiramat@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- "H. Peter Anvin" <hpa@zytor.com>, Paolo Bonzini <pbonzini@redhat.com>,
- Wanpeng Li <wanpengli@tencent.com>, Vitaly Kuznetsov
- <vkuznets@redhat.com>, Andy Lutomirski <luto@kernel.org>, Peter Zijlstra
- <peterz@infradead.org>, Frederic Weisbecker <frederic@kernel.org>, "Paul
- E. McKenney" <paulmck@kernel.org>, Neeraj Upadhyay
- <quic_neeraju@quicinc.com>, Joel
- Fernandes <joel@joelfernandes.org>, Josh Triplett <josh@joshtriplett.org>,
- Boqun Feng <boqun.feng@gmail.com>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Lai Jiangshan <jiangshanlai@gmail.com>,
- Zqiang <qiang.zhang1211@gmail.com>, Andrew Morton
- <akpm@linux-foundation.org>, Uladzislau Rezki <urezki@gmail.com>,
- Christoph
- Hellwig <hch@infradead.org>, Lorenzo Stoakes <lstoakes@gmail.com>, Josh
- Poimboeuf <jpoimboe@kernel.org>, Jason Baron <jbaron@akamai.com>, Kees Cook
- <keescook@chromium.org>, Sami Tolvanen <samitolvanen@google.com>, Ard
- Biesheuvel <ardb@kernel.org>, Nicholas Piggin <npiggin@gmail.com>, Juerg
- Haefliger <juerg.haefliger@canonical.com>, Nicolas Saenz Julienne
- <nsaenz@kernel.org>, "Kirill A. Shutemov"
- <kirill.shutemov@linux.intel.com>, Nadav Amit <namit@vmware.com>, Dan
- Carpenter <error27@gmail.com>, Chuang Wang <nashuiliang@gmail.com>, Yang
- Jihong <yangjihong1@huawei.com>, Petr Mladek <pmladek@suse.com>, "Jason A.
- Donenfeld" <Jason@zx2c4.com>, Song Liu <song@kernel.org>, Julian Pidancet
- <julian.pidancet@oracle.com>, Tom Lendacky <thomas.lendacky@amd.com>,
- Dionna Glaze <dionnaglaze@google.com>, Thomas =?utf-8?Q?Wei=C3=9Fschuh?=
- <linux@weissschuh.net>, Juri Lelli <juri.lelli@redhat.com>, Marcelo
- Tosatti <mtosatti@redhat.com>, Yair Podemsky <ypodemsk@redhat.com>, Daniel
- Wagner <dwagner@suse.de>, Petr Tesarik <ptesarik@suse.com>
-Subject: Re: [RFC PATCH v3 00/15] context_tracking,x86: Defer some IPIs
- until a user->kernel transition
-In-Reply-To: <20241119114556.0949b562@gandalf.local.home>
-References: <20241119153502.41361-1-vschneid@redhat.com>
- <20241119114556.0949b562@gandalf.local.home>
-Date: Tue, 19 Nov 2024 23:51:52 +0100
-Message-ID: <xhsmh8qtej0qf.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+To: Steve Wahl <steve.wahl@hpe.com>
+Cc: Steve Wahl <steve.wahl@hpe.com>, Ingo Molnar <mingo@redhat.com>, Peter
+ Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann
+ <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, Ben
+ Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+ linux-kernel@vger.kernel.org, K Prateek Nayak <kprateek.nayak@amd.com>,
+ Vishal Chourasia <vishalc@linux.ibm.com>, samir <samir@linux.ibm.com>,
+ Russ Anderson <rja@hpe.com>, Dimitri Sivanich <sivanich@hpe.com>
+Subject: Re: [PATCH v2] sched/topology: improve topology_span_sane speed
+In-Reply-To: <Zzz9MXHaUwpq2h0q@swahl-home.5wahls.com>
+References: <20241031200431.182443-1-steve.wahl@hpe.com>
+ <xhsmh4j4cctsc.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+ <ZzTI6l-9Z0oCbrEH@swahl-home.5wahls.com>
+ <Zzz9MXHaUwpq2h0q@swahl-home.5wahls.com>
+Date: Tue, 19 Nov 2024 23:54:33 +0100
+Message-ID: <xhsmh5xoij0ly.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -120,28 +97,207 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain
 
-On 19/11/24 11:45, Steven Rostedt wrote:
-> On Tue, 19 Nov 2024 16:34:47 +0100
-> Valentin Schneider <vschneid@redhat.com> wrote:
+On 19/11/24 15:03, Steve Wahl wrote:
+> On Wed, Nov 13, 2024 at 09:42:34AM -0600, Steve Wahl wrote:
+>> On Tue, Nov 12, 2024 at 05:15:47PM +0100, Valentin Schneider wrote:
+>> > On 31/10/24 15:04, Steve Wahl wrote:
+>> > > Use a different approach to topology_span_sane(), that checks for the
+>> > > same constraint of no partial overlaps for any two CPU sets for
+>> > > non-NUMA topology levels, but does so in a way that is O(N) rather
+>> > > than O(N^2).
+>> > >
+>> > > Instead of comparing with all other masks to detect collisions, keep
+>> > > one mask that includes all CPUs seen so far and detect collisions with
+>> > > a single cpumask_intersects test.
+>> > >
+>> > > If the current mask has no collisions with previously seen masks, it
+>> > > should be a new mask, which can be uniquely identified ("id") by the
+>> > > lowest bit set in this mask.  Mark that we've seen a mask with this
+>> > > id, and add the CPUs in this mask to the list of those seen.
+>> > >
+>> > > If the current mask does collide with previously seen masks, it should
+>> > > be exactly equal to a mask seen before, identified once again by the
+>> > > lowest bit the current mask has set.  It's an error if we haven't seen
+>> > > a mask with that id, or if the current mask doesn't match the one we
+>> > > get by looking up that id.
+>> > >
+>> > > Move the topology_span_sane() check out of the existing topology level
+>> > > loop, let it do its own looping to match the needs of this algorithm.
+>> > >
+>> > > On a system with 1920 processors (16 sockets, 60 cores, 2 threads),
+>> > > the average time to take one processor offline is reduced from 2.18
+>> > > seconds to 1.01 seconds.  (Off-lining 959 of 1920 processors took
+>> > > 34m49.765s without this change, 16m10.038s with this change in place.)
+>> > >
+>> > > Signed-off-by: Steve Wahl <steve.wahl@hpe.com>
+>> > > ---
+>> > >
+>> > > Version 2: Adopted suggestion by K Prateek Nayak that removes an array and
+>> > > simplifies the code, and eliminates the erroneous use of
+>> > > num_possible_cpus() that Peter Zijlstra noted.
+>> > >
+>> > > Version 1 discussion:
+>> > >     https://lore.kernel.org/all/20241010155111.230674-1-steve.wahl@hpe.com/
+>> > >
+>> > >  kernel/sched/topology.c | 73 +++++++++++++++++++++++++++--------------
+>> > >  1 file changed, 48 insertions(+), 25 deletions(-)
+>> > >
+>> > > diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+>> > > index 9748a4c8d668..6a2a3e91d59e 100644
+>> > > --- a/kernel/sched/topology.c
+>> > > +++ b/kernel/sched/topology.c
+>> > > @@ -2356,35 +2356,58 @@ static struct sched_domain *build_sched_domain(struct sched_domain_topology_leve
+>> > >
+>> > >  /*
+>> > >   * Ensure topology masks are sane, i.e. there are no conflicts (overlaps) for
+>> > > - * any two given CPUs at this (non-NUMA) topology level.
+>> > > + * any two given CPUs on non-NUMA topology levels.
+>> > >   */
+>> > > -static bool topology_span_sane(struct sched_domain_topology_level *tl,
+>> > > -			      const struct cpumask *cpu_map, int cpu)
+>> > > +static bool topology_span_sane(const struct cpumask *cpu_map)
+>> > >  {
+>> > > -	int i = cpu + 1;
+>> > > +	struct sched_domain_topology_level *tl;
+>> > > +	struct cpumask *covered, *id_seen;
+>> > > +	int cpu;
+>> > >
+>> > > -	/* NUMA levels are allowed to overlap */
+>> > > -	if (tl->flags & SDTL_OVERLAP)
+>> > > -		return true;
+>> > > +	lockdep_assert_held(&sched_domains_mutex);
+>> > > +	covered = sched_domains_tmpmask;
+>> > > +	id_seen = sched_domains_tmpmask2;
+>> > > +
+>> > > +	for_each_sd_topology(tl) {
+>> > > +
+>> > > +		/* NUMA levels are allowed to overlap */
+>> > > +		if (tl->flags & SDTL_OVERLAP)
+>> > > +			continue;
+>> > > +
+>> > > +		cpumask_clear(covered);
+>> > > +		cpumask_clear(id_seen);
+>> > >
+>> > > -	/*
+>> > > -	 * Non-NUMA levels cannot partially overlap - they must be either
+>> > > -	 * completely equal or completely disjoint. Otherwise we can end up
+>> > > -	 * breaking the sched_group lists - i.e. a later get_group() pass
+>> > > -	 * breaks the linking done for an earlier span.
+>> > > -	 */
+>> > > -	for_each_cpu_from(i, cpu_map) {
+>> > >                  /*
+>> > > -		 * We should 'and' all those masks with 'cpu_map' to exactly
+>> > > -		 * match the topology we're about to build, but that can only
+>> > > -		 * remove CPUs, which only lessens our ability to detect
+>> > > -		 * overlaps
+>> > > +		 * Non-NUMA levels cannot partially overlap - they must be either
+>> > > +		 * completely equal or completely disjoint. Otherwise we can end up
+>> > > +		 * breaking the sched_group lists - i.e. a later get_group() pass
+>> > > +		 * breaks the linking done for an earlier span.
+>> > >                   */
+>> > > -		if (!cpumask_equal(tl->mask(cpu), tl->mask(i)) &&
+>> > > -		    cpumask_intersects(tl->mask(cpu), tl->mask(i)))
+>> > > -			return false;
+>> > > +		for_each_cpu(cpu, cpu_map) {
+>> > > +			const struct cpumask *tl_cpu_mask = tl->mask(cpu);
+>> > > +			int id;
+>> > > +
+>> > > +			/* lowest bit set in this mask is used as a unique id */
+>> > > +			id = cpumask_first(tl_cpu_mask);
+>> > > +
+>> > > +			/* if this mask doesn't collide with what we've already seen */
+>> > > +			if (!cpumask_intersects(tl_cpu_mask, covered)) {
+>> > > +				/* Really odd case when cpu != id, likely not sane */
+>> > > +				if ((cpu != id) && !cpumask_equal(tl_cpu_mask, tl->mask(id)))
+>> > > +					return false;
+>> > > +				if (cpumask_test_and_set_cpu(id, id_seen))
+>> > > +					return false;
+>> > > +				cpumask_or(covered, tl_cpu_mask, covered);
+>> > > +			} else if ((!cpumask_test_cpu(id, id_seen)) ||
+>> > > +				    !cpumask_equal(tl->mask(id), tl_cpu_mask)) {
+>> > > +				/*
+>> > > +				 * a collision with covered should have exactly matched
+>> > > +				 * a previously seen mask with the same id
+>> > > +				 */
+>> > > +				return false;
+>> > > +			}
+>> > > +		}
+>> >
+>> > Ok so you're speeding it up, but you still get a O(nr_cpu_ids) walk every
+>> > hotplug when the check itself only needs to be done at most once per
+>> > possible online CPU combination (~ 2^(nr_cpu_ids)). If all CPUs are kicked
+>> > to life at boot, then the check only needs to be done once. If you only
+>> > boot with a subset of present CPUs to speed things up, the check still
+>> > becomes irrelevant once you've kicked the rest to life.
+>> >
+>> > I would reiterate my suggestion to get to a state where the check can be
+>> > entirely short-circuited [1].
+>> >
+>> > [1]: http://lore.kernel.org/r/xhsmh8quc5ca4.mognet@vschneid-thinkpadt14sgen2i.remote.csb
+>>
+>> Bringing forward a bit of that conversation:
+>>
+>> > > I tried adding this, surprisingly I saw no effect on the time taken,
+>> > > perhaps even a small slowdown, when combined with my patch.  So at
+>> > > this point I don't intend to add it to v2 of the patch.
+>> > >
+>> >
+>> > Thanks for testing, I assume your cpu_possible_mask reports more CPUs than
+>> > you have physically plugged in...
+>>
+>> That assumption is wrong.  I started with all CPUs enabled.  Disabled
+>> and re-enabled cpus from there.  The timings I got were as I stated,
+>> no effect, perhaps a small slowdown.
+>>
+>> > I guess it would make sense to short-circuit the function when
+>> > cpu_map is a subset of what we've previously checked, and then
+>> > re-kick the testing once new CPU(s) are plugged in. Something like
+>> > the untested below?
+>> >
+>> > Optimisations notwithstanding, IMO we shouldn't be repeating checks if we
+>> > can avoid it.
+>>
+>> I will attempt to measure it once more.  I was surprised at my
+>> measured results, but that's why we take them, right?
+>>
+>> If I can't measure a difference, though, I am not sure it's
+>> appropriate to include the change with this patch, the point of which
+>> *is* optimization.
 >
->> Context
->> =======
->> 
->> We've observed within Red Hat that isolated, NOHZ_FULL CPUs running a
->> pure-userspace application get regularly interrupted by IPIs sent from
->> housekeeping CPUs. Those IPIs are caused by activity on the housekeeping CPUs
->> leading to various on_each_cpu() calls, e.g.:
+> I completed timing tests; test system has 1920 logical CPUS, 2 threads
+> per core, 60 cores per NUMA node, and the script offlined then onlined
+> both threads of half the cores in each node.  Four runs each were
+> timed.  Times in seconds.
 >
-> FYI,
+> Unpatched kernel:
+>       Offline		Online
+> min	3991.57		3967.22
+> max	4025.59		4028.66
+> avg	4013.79		3996.75
+> stddev	15.28		29.90
 >
-> Sending a patch series at the start of the merge window is likely going to
-> get ignored.
+> With my patch:
+>       Offline		Online
+> min	1987.97		2130.7
+> max	2032.25		2150.93
+> avg	2017.43		2140.18
+> stddev	20.12		10.25
 >
-> Care to resend after rc1 is released? Or at least ping about it.
+> With my patch + Valentin's extra short-circuit patch:
+> min	2019.58		2137.43
+> max	2056.89		2223.86
+> avg	2033.04		2171.91
+> stddev	16.83		37.73
+>
+> I'm at a loss as to why adding the short circuit slowed things down,
+> but it's in the noise.  If you want a new version of the patch
+> incorporating both changes after viewing these timings, I'm willing to
+> make that change.  Let me know how you feel.
 >
 
-Heh, I was so far down "stop rewriting changelogs for the Nth time, get it
-in a decent shape and send it out" that I forgot about this "small little
-detail". Thanks for the reminder.
+Huh, weird. Obviously your patch improves the situation and the
+short-circuit as proposed doesn't, so I'd say go forth with your patch and
+I'll poke around to figure out what's going on and submit a hopefully
+working short-circuit.
 
 
