@@ -1,215 +1,211 @@
-Return-Path: <linux-kernel+bounces-413950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F9D99D20E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 08:42:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B8879D20E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 08:42:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 310DB281E2C
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 07:42:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE4081F21DD6
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 07:42:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EEA9157469;
-	Tue, 19 Nov 2024 07:42:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9450215748F;
+	Tue, 19 Nov 2024 07:42:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Ok1AMbMR"
-Received: from smtp.smtpout.orange.fr (smtp-21.smtpout.orange.fr [80.12.242.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b="HmQI+mW2"
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2082.outbound.protection.outlook.com [40.107.20.82])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3488E1384BF;
-	Tue, 19 Nov 2024 07:42:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.21
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732002140; cv=none; b=aPe+oHKe+SgBs33BVAxX9BhKsFlfc+ajpgqAkMtUHTDzMG4o+kOkzMBhe2tvOGq1ltsyAAg1O3sQqKnUlEO+hOwoFcknUwUNklhlRD5MMMrhyYqc1LWIvB5/dueCLoDXbHR9TdFHciEZIzfyKC2gbooUN73pk5FbFugWqF3vngI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732002140; c=relaxed/simple;
-	bh=+ydaP6yJPY0HON6walO83Qt137C5Xlma2G74EAqDJzA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mvC4K1tXSCGdrLl44ZqgiBR6Rjn5bUG4rXoExwUi1td9ZNgBXM2EtOr1IUiniB/f0QQGQAk7aPfd3K/V4aXixw8YXsWRMvOIuL8P8BAbMky4UjN+8m4YsrxaWrh2IiRgzxMSZ7DOUZjgzOVBB4ipr9ubjlQH0LA7yGGKiIzSPzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Ok1AMbMR; arc=none smtp.client-ip=80.12.242.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [172.16.82.72] ([124.33.176.97])
-	by smtp.orange.fr with ESMTPA
-	id DIs2tCdnkNywhDIsAtawL3; Tue, 19 Nov 2024 08:42:08 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1732002129;
-	bh=TKjGKLPdqYcvxBVaeWCfhrHtv6lPv0GnVL9Gr+jS2EU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=Ok1AMbMRMuTGTJVoeYvMqfk2YhiChyQl2M/rNhAaxyzPE6XeLxUC8+A4dA4uQXmVF
-	 vIVeWA/hVbeKEawkPhmaGw/pbS2CY9rqffUU5087E8Qle+QPAdSUsxoVGBCVGiZQCo
-	 dCj1JPnx+gHmOTRlhDeMq8FV4kPB7K5jGgTiLYTj6BvZzEaAxFNx21GBYcwkeH66G/
-	 w9eFcaD1rdcqPdFU6Bf9TO0GentDPAsBzhGo2s2kc99bgApq49GmkG0ItO8bLaSCf7
-	 LK40sylxmPVFpyTpBa7j8p++nZeaRrnhyhwmPY8TnZ4DdL7FK3M86tCqeUqD2ndx5Q
-	 R4RQLimw8XWJQ==
-X-ME-Helo: [172.16.82.72]
-X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 19 Nov 2024 08:42:09 +0100
-X-ME-IP: 124.33.176.97
-Message-ID: <84998b1d-8b3e-4956-b7fd-323e4999dc7c@wanadoo.fr>
-Date: Tue, 19 Nov 2024 16:41:57 +0900
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3D7C146D59
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 07:42:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.82
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732002166; cv=fail; b=j57oOc3BdcZDYHeO2TGLBE/uOcEQ7Z7NvIvCJuHw7097TwxMKRsAjXtrzjn7tEFW9L2NM46iAorqXb7Nq/dGQKs2YUReHQ7AE2mwdyjcGfbD9brqiUXhJ8FAv/L4NJ+74zqlWsjXsnp2ZHB9HvzqVKo1viHrsJd2mL7Ik8AD7tA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732002166; c=relaxed/simple;
+	bh=uG/2brdsqYkUG0rANOZAu5ixl+4eZDKMHuiL7h6CwkI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=VPsiWb+9cIbI6YPGWG4Clk0MgeUYUaapyZ/m6miwVI5ekz4E98rM00pgoT+W9fcghPHHCfIAMzgiita7fqZbWFnRw5ml1rsm0nJZJmB5Z1qbmPWxmIYVc+LfXMpfg4ttw6LNvcvRIvkeIEhQm9VW3Z2mZA50xQb6eO0QJiB1nlE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com; spf=pass smtp.mailfrom=axis.com; dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b=HmQI+mW2; arc=fail smtp.client-ip=40.107.20.82
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=axis.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=B8POy62pUby1sz3yKF1vdQZ7sBMkisIrRF4y/08UGTFBdq8CPNU6xG/6WiBwG6ndp6akHJ6Jwq6XT5Sup4E5o13LoMNJdejhHu6wRHzZ+pAFVhEeVGUlSXqIwWVxggTfA5Ecfhyj2uoweyErfKfz+Ouj1OKM6IocPB8ebcv6hjRP9wwTMQuyRsJ1hKJ0EOI6SmRVHHmr1bPEV4jNz+o4PKaTZwDolN2rJ8CMO4GFE027yy/IMKuUhVXJgr+MyIVmxuCNfqutZT39NGAzUp/aZIpj9owsKZwD7WV5ECki8DGhUaOxQBBYMbcLKfYquZUFkn8eNHwE4yTalJ5nc8bScw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Bg2pMooZYIJFh0qVk5P30bCSVapPaOWC/bwtE4dpeLU=;
+ b=rkH1/3F+Ljhe2EE0Ls4oIDr8uun2YLpjTN1a3zS5GzdykzI4gIB774XttDkLYbsCJcFc8a8JZrb2e+LYaXojLNZb2xY3BO4m2s0b9k3DiinGFtgJ48G7OhOp05x6zwsJU9TFEPgomQ72WttWf3nxB3h2j/EFY+1pprwliZkeXf8IJ72QQycYgOdvWb3dx2+klzUoaK1Ld0H7COQxaaYQ6MY3wU+LUWEjoWgROw6L+Tvaq30Ocp1ecgdh/6fM0YSShqRXUnhArw5VW1G4l3jsQhjJzAH0ccK33EEnHHRvSZYXU6HCSOOlZ3gyqjpsszEbyWu6xXdEsN7jiKLxsXa34g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 195.60.68.100) smtp.rcpttodomain=bp.renesas.com smtp.mailfrom=axis.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=axis.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axis.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Bg2pMooZYIJFh0qVk5P30bCSVapPaOWC/bwtE4dpeLU=;
+ b=HmQI+mW2Xui/DEtyG1DeNlLwHvkx08YjOczH57WKiRO++yPcH1yqRa8brxEgC5DEAeH0auBHI0kdpPXcKKSfvTsMABseSwdUDX7xuB92MH5gzEhfL/4zP+COSKdFSxFjdBIMd2/xnO7gidMaKcxNtlr1QQLuzcJWMjPZgTqDAoA=
+Received: from DU2PR04CA0304.eurprd04.prod.outlook.com (2603:10a6:10:2b5::9)
+ by GVXPR02MB10666.eurprd02.prod.outlook.com (2603:10a6:150:151::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.22; Tue, 19 Nov
+ 2024 07:42:41 +0000
+Received: from DB5PEPF00014B94.eurprd02.prod.outlook.com
+ (2603:10a6:10:2b5:cafe::ee) by DU2PR04CA0304.outlook.office365.com
+ (2603:10a6:10:2b5::9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.23 via Frontend
+ Transport; Tue, 19 Nov 2024 07:42:41 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 195.60.68.100)
+ smtp.mailfrom=axis.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=axis.com;
+Received-SPF: Pass (protection.outlook.com: domain of axis.com designates
+ 195.60.68.100 as permitted sender) receiver=protection.outlook.com;
+ client-ip=195.60.68.100; helo=mail.axis.com; pr=C
+Received: from mail.axis.com (195.60.68.100) by
+ DB5PEPF00014B94.mail.protection.outlook.com (10.167.8.232) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8158.14 via Frontend Transport; Tue, 19 Nov 2024 07:42:40 +0000
+Received: from se-mail02w.axis.com (10.20.40.8) by se-mail02w.axis.com
+ (10.20.40.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 19 Nov
+ 2024 08:42:39 +0100
+Received: from se-intmail01x.se.axis.com (10.4.0.28) by se-mail02w.axis.com
+ (10.20.40.8) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Tue, 19 Nov 2024 08:42:39 +0100
+Received: from pc39391-2017.se.axis.com (pc39391-2017.se.axis.com [10.92.82.2])
+	by se-intmail01x.se.axis.com (Postfix) with ESMTP id BE4064F0;
+	Tue, 19 Nov 2024 08:42:39 +0100 (CET)
+Received: by pc39391-2017.se.axis.com (Postfix, from userid 10612)
+	id BB2994462505; Tue, 19 Nov 2024 08:42:39 +0100 (CET)
+From: Stefan Ekenberg <stefan.ekenberg@axis.com>
+Date: Tue, 19 Nov 2024 08:42:36 +0100
+Subject: [PATCH v2] drm/bridge: adv7533: Reset DSI receiver logic
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] can: can327: Clean up payload encoding in
- can327_handle_prompt()
-To: Max Staudt <max@enpas.org>, Dan Carpenter <dan.carpenter@linaro.org>,
- Marc Kleine-Budde <mkl@pengutronix.de>
-Cc: linux-can@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241119003815.767004-1-max@enpas.org>
-Content-Language: en-US
-From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-In-Reply-To: <20241119003815.767004-1-max@enpas.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20241119-adv7533-dsi-reset-v2-1-e12cce42e25a@axis.com>
+X-B4-Tracking: v=1; b=H4sIAGtBPGcC/22NQQ6CMBBFr0Jm7RimBURX3sOwgHaQWQikQxoM4
+ e5W4tLle8l/fwPlIKxwyzYIHEVlGhOYUwZuaMcno/jEYHJTEOU1tj5eSmvRq2Bg5QWLunZV33U
+ lFwbSbg7cy3o0H03iQXSZwvu4iPS1vxrZP7VISFg5yqsr27L39t6uomc3vaDZ9/0DexQ6jbEAA
+ AA=
+X-Change-ID: 20241108-adv7533-dsi-reset-488c6fbb5e42
+To: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
+	<neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent Pinchart
+	<Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, "Jernej
+ Skrabec" <jernej.skrabec@gmail.com>, Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>
+CC: <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+	<kernel@axis.com>, Biju Das <biju.das.jz@bp.renesas.com>, Stefan Ekenberg
+	<stefan.ekenberg@axis.com>
+X-Mailer: b4 0.14.2
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB5PEPF00014B94:EE_|GVXPR02MB10666:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7c18e039-03c6-49a0-c031-08dd086dbf37
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|1800799024|36860700013|82310400026|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Vk5YTUY5ZXU2MzY1eWxZckkxakFMcUphaERCTHFmNS9OSDFvL3JyNlROZjBp?=
+ =?utf-8?B?MUV3OFNZZTBCNlN0WXJsM3Izb05rL1dJV0Nla1NPcEk3QTBFYm44algxaWdW?=
+ =?utf-8?B?Yi95NUREQ3I1b3U0SHhmOEJEdGpVQ0RLVUhMbnN4QkpVblNZM2NoTzMxZ2Er?=
+ =?utf-8?B?bXN2c0tETTlyNzdKdDJsU1Q0L2VESVd4WWZrOU0wVmc3Z2ZOUmNpRDV0MVN5?=
+ =?utf-8?B?S042bHJHY1RhSy83QitkVVVQb0pzcU9SMXZ2ZWlOMXRobDBTeFU2QkRyQXF2?=
+ =?utf-8?B?dzN1Z0FUR0JVTHMyK3k3bTNTc1l4NTBIMmNybkZ3dnR3UUhBNi9qZVdJRERm?=
+ =?utf-8?B?YUZzNEwybHJlWml4YTZ1L251Vms0ZURvMUVRczZ6VlZ5a0tLalpRT24vZWJQ?=
+ =?utf-8?B?eHFBN2ttdmZoOUJ0dE9Lbklka1ZnUFBOYS8ySkpQOE4yVzlEU21RcGk3VDVZ?=
+ =?utf-8?B?MC9XbUdUQytvVDRHVDlORlQ1ekRuK3gzWlB2UU56WVp0U0xmU3c3VGdtWDhj?=
+ =?utf-8?B?algwZ1JHRWMzd3plN3VYSk5CQVRhMXJaU2w5dXZ5TTN3TWp1NkNrdDlCV3VI?=
+ =?utf-8?B?eWFRbk9GK211UTV6MVRYejA2ajd2NGxkalErSkpkRCthMFF0U3JKZEx4SGRn?=
+ =?utf-8?B?eElTc2g0SUxkZVVyenVlVXhSaDMxd0RyYml0YmtaYU50L0ovQVpzS2RHdHZG?=
+ =?utf-8?B?NGVvQ1MrRkNpOGJXaDNXZ01JNUUxQUc4OCsxdDJQUmNhVVBVNHRMSDVRb2E0?=
+ =?utf-8?B?VUgzM0k0TG9hcFJaVXYwSjZtMWxNYmFMc3BHT0RlbHo4ZzlIS21BT3BubVZE?=
+ =?utf-8?B?QzRRRjVBZ1RyQmdhaGpZTktXTkk5QlErUlBHT0VKbGF0WnJPa3B0YldtemNj?=
+ =?utf-8?B?SFVOVVBPSm1veTVFcWpjN3FwRXBkaS9sbStUK2k2a2RIV2VnWG51ZmZGSWhB?=
+ =?utf-8?B?N0tHSVZTVUZTRzhhVHB0Tm1LczNsK3ZsV1JGS3lhUXJ3Y1ZlRUtHYTBCUS8v?=
+ =?utf-8?B?aitabVdTUWc3djZlQzB2WFBSb0VERTgyd1NZY1prdGxIVlZVWEFpUEVZc29r?=
+ =?utf-8?B?Uy9MSGl1Y3RIS0t3S1d2Wjg4WmxReDl2V0ljeDFkZGhjZUE4elVITmhZejBG?=
+ =?utf-8?B?dkN6YkJQLytUVmlxTXNVWVpCeVlwVTU2dmNTdFB1Rk1wbm9TSkNNYjJnTENN?=
+ =?utf-8?B?WlQrcVhwdk5aY1l3YWdVelRCYVN2Q1RSY3F0T0swNitvTUlZc2pURi9tV3B6?=
+ =?utf-8?B?b3I5d011MUdPVGppaWxtRXd6eUZULzNPMVJVSCtra04yRlpEQjVjU1FPbzFN?=
+ =?utf-8?B?Y2VYY2ZyMTk2a3hiL1JPdXl0Ry9mckZiR0FZYTZ2dndxV2Q4WEx2ZkpsejRq?=
+ =?utf-8?B?cklGNEtvMlQ0ektmdXppZzdka3JCd2RWK3YxQ0Y5RFJVdzBmMmZQY3lnZHZx?=
+ =?utf-8?B?SHRHK1hMNC82VlVIcGZzVmNjb2hJT0M2aG1DUUFRYVowZlV2ODFvQm1QOExX?=
+ =?utf-8?B?NFlmTW10cE1nOWFHZXhEaDFubXo0WW1jODhrR3ZCbUNlZ25rbFRpemJ0ZHhN?=
+ =?utf-8?B?eVRTV3dOMkNGUGtGYm80Q1BFKy8vV3h4VnN0cStzTHpldEdtdVVNTndURDBU?=
+ =?utf-8?B?emRvd0ljbytIRDZzdFErY0hacHdYZGw4V1Y1TU9NQytiQ2JXV0puNDJSN3N0?=
+ =?utf-8?B?eDRMOXZoYXltSHdGYzJuNElHaGdISTJ5Nm9SVjBEUmVYb2ZqTlBJQ1o3elRn?=
+ =?utf-8?B?MXBXa0Z5RGV5MnJ4UUMzSWJ5cEorR2NrSUlQMmNkSmh5Z0g5eXd5ODdpVkdy?=
+ =?utf-8?B?c21lekhJYTNhVVJNMG5Oc2dtQTBXbDlTMVVIbWRzNHRkQklkNmVSN2FxRDFN?=
+ =?utf-8?B?QStGcndTc1hQam5VYmg1dWUybUN3dnRWdzhoZlBPcVp5ZnBPaU5VSlozc3Ux?=
+ =?utf-8?Q?HOvkDjOi9Ls=3D?=
+X-Forefront-Antispam-Report:
+	CIP:195.60.68.100;CTRY:SE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.axis.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(36860700013)(82310400026)(921020);DIR:OUT;SFP:1101;
+X-OriginatorOrg: axis.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Nov 2024 07:42:40.8412
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7c18e039-03c6-49a0-c031-08dd086dbf37
+X-MS-Exchange-CrossTenant-Id: 78703d3c-b907-432f-b066-88f7af9ca3af
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=78703d3c-b907-432f-b066-88f7af9ca3af;Ip=[195.60.68.100];Helo=[mail.axis.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DB5PEPF00014B94.eurprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR02MB10666
 
-On 19/11/2024 at 09:38, Max Staudt wrote:
-> The hex dump encoding of outgoing payloads used snprintf() with a
-> too large length of the target buffer. While the length was wrong, the
-> buffer size and its filling logic were fine (sprintf() would have been
-> sufficient), hence this is not security relevant.
-> 
-> Still, it's a good opportunity to simplify the code, and since no
-> length checking is required, let's implement it with bin2hex().
-> 
-> Since bin2hex() outputs lowercase letters, this changes the spoken
-> wire protocol with the ELM327 chip, resulting in a change in
-> can327_is_valid_rx_char() because the ELM327 is set to echo the
-> characters sent to it. The documentation says that this is fine, and
-> I have verified the change on actual hardware.
+Reset DSI receiver logic during power on. The need for this change was
+discovered when investigating issue with ADV7535. The symptom of the
+problem was that ADV7535 continuously outputs a black image. This
+happened for about 10% of the times that ADV7535 was powered on. The
+rest of the times the image was as expected.
 
-Nice that the device accepts the lower case hexadecimals. This results
-in a nice simplification.
+The solution in this patch (placement of reset and sleep time of 200ms)
+is implemented as outlined by the Analog Devices support team.
 
-> Finally, since the reporter's worry was that frame->len may be larger
-> than 8, resulting in a buffer overflow in can327_handle_prompt()'s
-> local_txbuf, a comment describes how the CAN stack prevents that. This
-> is also the reason why the size passed to snprintf() was not relevant
-> to preventing a buffer overflow, because there was no overflow possible
-> in the first place.
-> 
-> Fixes: 43da2f07622f ("can: can327: CAN/ldisc driver for ELM327 based OBD-II adapters")
-> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> Tested-by: Max Staudt <max@enpas.org>
-> Signed-off-by: Max Staudt <max@enpas.org>
+Tested-by: Biju Das <biju.das.jz@bp.renesas.com>
+Signed-off-by: Stefan Ekenberg <stefan.ekenberg@axis.com>
+---
+Changes in v2:
+- Add Tested-by tag
+- Link to v1: https://lore.kernel.org/r/20241113-adv7533-dsi-reset-v1-1-6c1069e35fd3@axis.com
+---
+ drivers/gpu/drm/bridge/adv7511/adv7533.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-Reviewed-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+diff --git a/drivers/gpu/drm/bridge/adv7511/adv7533.c b/drivers/gpu/drm/bridge/adv7511/adv7533.c
+index 4481489aaf5ebf164313c86cbf3447d2d7914ab9..93085c2b872ed98f4ee394236dc66c568c0e5ccf 100644
+--- a/drivers/gpu/drm/bridge/adv7511/adv7533.c
++++ b/drivers/gpu/drm/bridge/adv7511/adv7533.c
+@@ -67,6 +67,15 @@ void adv7533_dsi_power_on(struct adv7511 *adv)
+ {
+ 	struct mipi_dsi_device *dsi = adv->dsi;
+ 
++	/*
++	 * Reset DSI receiver block logic to avoid ADV7535 startup problem.
++	 * Without this reset it sometimes continuously fails to receive
++	 * incoming DSI packets and outputs black image.
++	 */
++	regmap_write(adv->regmap_cec, 0x26, 0x18);
++	msleep(200);
++	regmap_write(adv->regmap_cec, 0x26, 0x38);
++
+ 	if (adv->use_timing_gen)
+ 		adv7511_dsi_config_timing_gen(adv);
+ 
 
-I left comments on the comments. If you have time, it would be wonderful
-if your comment on start_xmit() could be moved to can_dev_dropped_skb()
-in a separate patch.
+---
+base-commit: 59b723cd2adbac2a34fc8e12c74ae26ae45bf230
+change-id: 20241108-adv7533-dsi-reset-488c6fbb5e42
 
-The code is good, so if such rework is not feasible, I am happy to take
-it as-is.
-
-> ---
->  drivers/net/can/can327.c | 46 ++++++++++++++++++++++++++++------------
->  1 file changed, 33 insertions(+), 13 deletions(-)
-> 
-> diff --git a/drivers/net/can/can327.c b/drivers/net/can/can327.c
-> index 24af63961030..3ae7b4eb6ca5 100644
-> --- a/drivers/net/can/can327.c
-> +++ b/drivers/net/can/can327.c
-> @@ -18,6 +18,7 @@
->  #include <linux/bitops.h>
->  #include <linux/ctype.h>
->  #include <linux/errno.h>
-> +#include <linux/hex.h>
->  #include <linux/kernel.h>
->  #include <linux/list.h>
->  #include <linux/lockdep.h>
-> @@ -622,17 +623,14 @@ static void can327_handle_prompt(struct can327 *elm)
->  			 */
->  			snprintf(local_txbuf, sizeof(local_txbuf), "ATRTR\r");
->  		} else {
-> -			/* Send a regular CAN data frame */
-> -			int i;
-> -
-> -			for (i = 0; i < frame->len; i++) {
-> -				snprintf(&local_txbuf[2 * i],
-> -					 sizeof(local_txbuf), "%02X",
-> -					 frame->data[i]);
-> -			}
-> -
-> -			snprintf(&local_txbuf[2 * i], sizeof(local_txbuf),
-> -				 "\r");
-> +			/* Send a regular CAN data frame.
-> +			 *
-> +			 * frame->len is guaranteed to be <= 8. Please refer
-> +			 * to the comment in can327_netdev_start_xmit().
-> +			 */
-
-Nitpick, could be less verbose, e.g.:
-
-  /* frame->len <= 8 enforced in can327_netdev_start_xmit() */
-
-> +			bin2hex(local_txbuf, frame->data, frame->len);
-> +			local_txbuf[2 * frame->len] = '\r';
-> +			local_txbuf[2 * frame->len + 1] = '\0';
->  		}
->  
->  		elm->drop_next_line = 1;
-> @@ -815,6 +813,26 @@ static netdev_tx_t can327_netdev_start_xmit(struct sk_buff *skb,
->  	struct can327 *elm = netdev_priv(dev);
->  	struct can_frame *frame = (struct can_frame *)skb->data;
->  
-> +	/* Why this driver can rely on frame->len <= 8:
-> +	 *
-> +	 * While can_dev_dropped_skb() sanity checks the skb to contain a
-> +	 * CAN 2.0, CAN FD, or other CAN frame type supported by the CAN
-> +	 * stack, it does not restrict these types of CAN frames.
-> +	 *
-> +	 * Instead, this driver is guaranteed to receive only classic CAN 2.0
-> +	 * frames, with frame->len <= 8, by a chain of checks around the CAN
-> +	 * device's MTU (as of v6.12):
-> +	 *
-> +	 *  - can_changelink() sets the CAN device's MTU to CAN_MTU since we
-> +	 *    don't advertise CAN_CTRLMODE_FD support in ctrlmode_supported.
-> +	 *  - can_send() then refuses to pass any skb that exceeds CAN_MTU.
-> +	 *  - Since CAN_MTU is the smallest currently (v6.12) supported CAN
-> +	 *    MTU, it is clear that we are dealing with an ETH_P_CAN frame.
-> +	 *  - All ETH_P_CAN (classic CAN 2.0) frames have frame->len <= 8,
-> +	 *    as enforced by a call to can_is_can_skb() in can_send().
-> +	 *  - Thus for all CAN frames reaching this function, frame->len <= 8.
-> +	 */
-
-Actually, none of this is really specific to your can327 driver.
-
-While this is a valuable piece of information, I would rather like to
-see this added as a kdoc comment on top of can_dev_dropped_skb(). That
-function already has a one line documentation, but maybe it deserves a
-longer paragraph?
-
-One of the key point is that the userland is able to bypass the CAN_RAW
-layer (or any other CAN layers) by sending AF_PACKET. In which case, the
-packet directly reaches the driver without any prior sanitization. So it
-is critical to highlight that drivers must call can_dev_dropped_skb() at
-the top of their start_xmit() function, typically to avoid buffer
-overflows because of an out of band frame->len.
-
->  	if (can_dev_dropped_skb(dev, skb))
->  		return NETDEV_TX_OK;
->  
-> @@ -871,8 +889,10 @@ static bool can327_is_valid_rx_char(u8 c)
->  		['H'] = true, true, true, true, true, true, true,
->  		['O'] = true, true, true, true, true, true, true,
->  		['V'] = true, true, true, true, true,
-> -		['a'] = true,
-> -		['b'] = true,
-> +		/* Note: c-f are needed only if outgoing CAN payloads are
-> +		 * sent as lowercase hex dumps instead of uppercase.
-> +		 */
-> +		['a'] = true, true, true, true, true, true,
->  		['v'] = true,
->  		[CAN327_DUMMY_CHAR] = true,
->  	};
-
-Yours sincerely,
-Vincent Mailhol
+Best regards,
+-- 
+Stefan Ekenberg <stefan.ekenberg@axis.com>
 
 
