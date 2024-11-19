@@ -1,151 +1,106 @@
-Return-Path: <linux-kernel+bounces-414670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B385D9D2C0E
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 18:05:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 286A99D2BDD
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 17:57:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F931B37BFA
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 16:56:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF17A2844E2
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 16:57:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E9DE1D27A9;
-	Tue, 19 Nov 2024 16:51:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B352E1D3562;
+	Tue, 19 Nov 2024 16:52:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cHNgDThv"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="d/eSyR6O"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3930213AA35;
-	Tue, 19 Nov 2024 16:51:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 882AF1D2F56;
+	Tue, 19 Nov 2024 16:52:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732035101; cv=none; b=LkdRYebdcubIzL0hbP+V/26c0yG885uA4zeg1b+8PeTvYfXDpJ2tbOj6gFqrSk6tDL2snLJWwSG26K/kz9gCOJU3IwGBL3pao/sVasy4vEF2t5fmeCELNlG1t50SZinHh3QAmgWE+DX9bLlseXilnL3GGz5AhN7ukbqTTP4LzBc=
+	t=1732035139; cv=none; b=IAbMunLz8uJpKC/GFsjsj6JbUHy5YdaMOsAhzNmzP1LNOys7LQrFFH5sqIvH2O8elMsd5knTQpSVEA2ZlDwek2+QyyJYnGC0S5Fbx7FNEAv1TA5ic4+ZbsuSON7woo0wS9yUpMdm6y4Exwu/m0kjp+c4Mb/VOAOwry454Wjgfco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732035101; c=relaxed/simple;
-	bh=PvNPz8sPtECmmp5qMJTLlVg78OWcbWQFWaExDeMtEYk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Bo7AahjaVSZmNOZce/93NxOGNRdvcWCTXrYQnSTjX31+BPQ7H7tJur+x9LKrSYTm/NBimPBFh6ChfsTmISbW9i/+JmG5v08DfJ0F7W0lRDnEXh06WPQOUADP34U1X5LWzTsV3IhqbhJOM6CfijBFCb6jCQRX2mZRi9cMnvyLGYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cHNgDThv; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2fb587d0436so31994181fa.2;
-        Tue, 19 Nov 2024 08:51:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732035097; x=1732639897; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4yUnEb7DXjpYKhiCFXU6Jx12oUcHSD5GXi+o7wNjyCA=;
-        b=cHNgDThvAtSlZrbwaf8I3RMqNQQ+UhxKJhWKp9I15ig+H3/oHiHGWJfwi7NWdAED33
-         bNOcs5yZugJeFydNlVkTEgD2BlDC2MBcc5eza7Wo3OpkdhKmZ4wJscBDGe2+0fRKEMAr
-         HlCo5qFh2kaTFFr50WbzXjbkkKU1ROfPRdnPjgpJgVbjFMrSKX2l4ItTClVqtI5tnk63
-         2Dig/1WUOZ4gWrTYbCrmv8Hp7EYKKVop1556b6pc5v/n7RuPp3sGkpOEXtWJCl6iTYds
-         u1rBvvHWQvxS19fDo2+Iym+P4FBvby4DS1TFXbI8Mox4mhQzpSlJjVvPlbxLJG63WN+A
-         0xFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732035097; x=1732639897;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4yUnEb7DXjpYKhiCFXU6Jx12oUcHSD5GXi+o7wNjyCA=;
-        b=Q+2qXDcTnv0fhs3MFCaUBs7R9GW2A4z2zp8muY0uoplJcMA0Tv5h/lbWWwjpo7iVNz
-         vzNP8V4giLMO4StOfXPwjjE8D7lkEsxnheK7fWnE1n8hx2sRb6sowcfwOq2Gur85vz2E
-         MHYdnPXxfMpXf5ES/HuNY4OxZBX95NuRhJZCHKj01c4I041iqKLX3WB1DkOwIkwDWW4m
-         b3JLKpb4uLBfu1ESoy0AfE4TNLz0dsq1RSiIc47/e9TUr4SQXdzjL6JB/pzDOy9pzp5V
-         kzJvPdhAv1AmjL3nu9nDwjits1DjfmTlF1inxOHnhb0DYjKh5aAg2qk1DEtLfmx9zXsY
-         5mbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV0Vb9Wher/YyKAF4Ao5zfr0AqMJmQMVpacZLbgh+xo6BH2ao96ic/ieo/8NlJdZfFYFL38AXkRNeSUh/QZLHw=@vger.kernel.org, AJvYcCVja1k9zcMFvwuhVtl2b2GpCmHRrfL/lkpmIGxKg1pqveAg7slOqUjp0PuTsjmj6GP2ejk7ZmFYYxD/m3g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMH7KcD7soloUhafcp0Bof18yT0UNMu0e8XfzCi5peCUk9WyMp
-	E4g8+OZEPPbgMdjwLo3c6+CmntiBTmBTqf9bZZBzbCb9rlw8ZeO6H3e3LjjiwfF9UcTTKJaWn0z
-	ENGOh9iDozOQ1uhxW14wSdBUPbcg=
-X-Google-Smtp-Source: AGHT+IFtUWrhx3gRLegLhlFL6/mGwxN+F5+Lg1sSArknlQ/kPb4qHmI+qafReDrfmP5xlJE8SXiUbB7X4VDU/PtZ4ss=
-X-Received: by 2002:a05:651c:905:b0:2ff:56a6:2992 with SMTP id
- 38308e7fff4ca-2ff60767c16mr82247691fa.37.1732035097234; Tue, 19 Nov 2024
- 08:51:37 -0800 (PST)
+	s=arc-20240116; t=1732035139; c=relaxed/simple;
+	bh=G0sGcIirrAQif+7K+ojYepQ7+x0l+SMBvQKWQ11nSuQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TUvWDAzcOczbuyeJRiva5oc6c2IHWMGj3PBnz9pFcxAVczVfYwZ62symKU4ZssWxC7suhXzXWsjgX0Ga6pzPCnddiGpfHevl7mlcxaruNr5IPYIUvt2Ez0R425DmUKDMl74cdbXDulTWZSpnJv100LZVevK3KQs2KzCUNJ70lFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=d/eSyR6O; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description;
+	bh=lmBjchKB9uAfbJVAGrRIHNf3bHKMKgL84Ei1RY/LBH4=; b=d/eSyR6OejkmnvtirxS5k9PHet
+	Y0o4/LvCcJgSTgNrIIipjyJIcQ3f6I9oDtEQWxtyUiGTJhweLzQDlx0aEoUcrQL2V/z2wFWxIqzVH
+	18KjOPKR3h8cPAC505puyoQmEOkd/p6ZyFP0QLf6j7GUPy5NNw+qBvacg4PnSci3mUdgD7jJWXNUp
+	3LpOdJ87lqBf1vZ9CzN9vto8x6Mp8M3cmjqpkpab68d9bUjegT7Uo67g8a4O8DuGqTjfcS35SqnFE
+	kW/rSbAYlz6pvuSDjNqx45WCm7L/Szw/RP4mc34vrPyFLtIoojXL2SGL2YovIhS4U9SPjzzsj8ceP
+	Z1U0OS8g==;
+Received: from [50.53.2.24] (helo=[192.168.254.17])
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tDRSQ-00000004Jbj-094Z;
+	Tue, 19 Nov 2024 16:52:07 +0000
+Message-ID: <d8b1fb69-ac58-47a5-a2df-26a88894a6ea@infradead.org>
+Date: Tue, 19 Nov 2024 08:51:57 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241118-rust-xarray-bindings-v9-0-3219cdb53685@gmail.com>
- <20241118-rust-xarray-bindings-v9-2-3219cdb53685@gmail.com>
- <Zzu9SzkDoq_1YQnJ@tardis.local> <CAJ-ks9mKArX37VzhcyymDoE-MsNxNcO8VvP4n3Xu1mdfOKiuag@mail.gmail.com>
- <CAH5fLggL7MTLVv2ym_tCCKH9hQtL=GpTwXjDUQzKQX9UdT7SkA@mail.gmail.com>
- <CAJ-ks9k4upcSfa2HXaMrtDJ37eTNc-ZiKZdcLuEYSnWHL5Bigw@mail.gmail.com> <CAH5fLggBZsarrRkZ1Mf5ND9-A6kCc65QRwhUW5X9nQxRJUOXrQ@mail.gmail.com>
-In-Reply-To: <CAH5fLggBZsarrRkZ1Mf5ND9-A6kCc65QRwhUW5X9nQxRJUOXrQ@mail.gmail.com>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Tue, 19 Nov 2024 11:51:01 -0500
-Message-ID: <CAJ-ks9=ZDRdh1UzBpV-ck2v5t4a3-81vD07Ndfmow4ABmQvJmQ@mail.gmail.com>
-Subject: Re: [PATCH v9 2/2] rust: xarray: Add an abstraction for XArray
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Danilo Krummrich <dakr@kernel.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, =?UTF-8?B?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>, 
-	Asahi Lina <lina@asahilina.net>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 01/15] lib: Add TLV parser
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>, zohar@linux.ibm.com,
+ dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, corbet@lwn.net,
+ mcgrof@kernel.org, petr.pavlu@suse.com, samitolvanen@google.com,
+ da.gomez@samsung.com, akpm@linux-foundation.org, paul@paul-moore.com,
+ jmorris@namei.org, serge@hallyn.com, shuah@kernel.org,
+ mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com
+Cc: linux-integrity@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+ linux-modules@vger.kernel.org, linux-security-module@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, wufan@linux.microsoft.com,
+ pbrobinson@gmail.com, zbyszek@in.waw.pl, hch@lst.de, mjg59@srcf.ucam.org,
+ pmatilai@redhat.com, jannh@google.com, dhowells@redhat.com,
+ jikos@kernel.org, mkoutny@suse.com, ppavlu@suse.com, petr.vorel@gmail.com,
+ mzerqung@0pointer.de, kgold@linux.ibm.com,
+ Roberto Sassu <roberto.sassu@huawei.com>
+References: <20241119104922.2772571-1-roberto.sassu@huaweicloud.com>
+ <20241119104922.2772571-2-roberto.sassu@huaweicloud.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20241119104922.2772571-2-roberto.sassu@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Nov 19, 2024 at 11:43=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> =
-wrote:
->
-> On Tue, Nov 19, 2024 at 5:40=E2=80=AFPM Tamir Duberstein <tamird@gmail.co=
-m> wrote:
-> >
-> > On Tue, Nov 19, 2024 at 11:28=E2=80=AFAM Alice Ryhl <aliceryhl@google.c=
-om> wrote:
-> > >
-> > > On Tue, Nov 19, 2024 at 5:24=E2=80=AFPM Tamir Duberstein <tamird@gmai=
-l.com> wrote:
-> > > >
-> > > > On Mon, Nov 18, 2024 at 5:18=E2=80=AFPM Boqun Feng <boqun.feng@gmai=
-l.com> wrote:
-> > > > >
-> > > > > On Mon, Nov 18, 2024 at 11:33:36AM -0500, Tamir Duberstein wrote:
-> > > > > [...]
-> > > > > > +
-> > > > > > +/// A lock guard.
-> > > > > > +///
-> > > > > > +/// The lock is unlocked when the guard goes out of scope.
-> > > > > > +#[must_use =3D "the lock unlocks immediately when the guard is=
- unused"]
-> > > > > > +pub struct Guard<'a, T: ForeignOwnable> {
-> > > > > > +    xa: &'a XArray<T>,
-> > > > > > +}
-> > > > >
-> > > > > `Guard` would be `Send` if `XArray<T>` is `Sync`, however, it's
-> > > > > incorrect since `Guard` represents an xa_lock() held, and that's =
-a
-> > > > > spin_lock, so cannot be dropped on another thread/context. `Guard=
-`
-> > > > > should probably be marked as `!Send`. Or am I missing something s=
-ubtle
-> > > > > here?
-> > > >
-> > > > I didn't know about this requirement, thanks for calling it out. I
-> > > > have added `_not_send: PhantomData<*mut ()>` in v10.
-> > >
-> > > You can use _nts: NotThreadSafe. The type in question has landed in
-> > > 6.13 and is available in Linus's tree since yesterday.
-> >
-> > TIL, thanks - though it looks like the field name is still `_not_send`.
-> >
-> > How do I set the base-commit/deps such that both
-> > https://github.com/torvalds/linux/commit/e7572e5deaf3bc36818f19ba35ac8e=
-0c454c8bac
-> > and https://github.com/Rust-for-Linux/linux/commit/d072acda4862f095ec90=
-56979b654cc06a22cc68
-> > are present, given that the former is in 6.13 and the latter in
-> > rust-next?
->
-> Either you merge them yourself or you wait for rust-next to get merged
-> into Linus's branch.
+Hi--
 
-Sure, I can merge them locally - but how do I properly send a patch
-that relies on both to the list?
+On 11/19/24 2:49 AM, Roberto Sassu wrote:
+> +/**
+> + * typedef callback - Callback after parsing TLV entry
+
+Same as my other naming comment -- too generic.
+Maybe tlv_callback...
+
+Thanks.
+
+> + * @callback_data: Opaque data to supply to the callback function
+> + * @field: Field identifier
+> + * @field_data: Field data
+> + * @field_len: Length of @field_data
+> + *
+> + * This callback is invoked after a TLV entry is parsed.
+> + *
+> + * Return: Zero on success, a negative value on error.
+> + */
+> +typedef int (*callback)(void *callback_data, __u16 field,
+> +			const __u8 *field_data, __u32 field_len);
+
+-- 
+~Randy
+
 
