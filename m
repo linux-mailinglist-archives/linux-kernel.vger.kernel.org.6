@@ -1,108 +1,173 @@
-Return-Path: <linux-kernel+bounces-413718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFD0D9D1DA5
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 02:52:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 017BC9D1DA7
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 02:55:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7921EB21351
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 01:52:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FE331F2226C
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 01:55:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78804132139;
-	Tue, 19 Nov 2024 01:52:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6ACD1304AB;
+	Tue, 19 Nov 2024 01:55:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="qokv2DXP"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LnKyEGhG"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 652942E3EB;
-	Tue, 19 Nov 2024 01:52:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAC204C79;
+	Tue, 19 Nov 2024 01:55:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731981150; cv=none; b=OZWrbYX8/6WMASRVU9LVSCbvQLN8mjFMos8JjaK0ge0rt0PzVoR0T8Eb7To0oJDlCTC1iij7t8pEeXlIWGaUvaE/DEO/Y+VvecXlC5n+yjnuq8XnpoPRYqpfi1Af1LkBO/7sJ0n1/HWzUF4tavw0rsNvvU9mMk2M9vHQoiR9jGI=
+	t=1731981335; cv=none; b=Ugd1ANzTWuElvw5lE4OkvlGd93bHnKkYnfVQUhhtqPN2WOjUXXOdCIGb1EOAlP6VHelvYvziDgy0o6M0dbHdHC2tbdjMGSbOJXgpvlFf5Y4k0UElo9r5ii4U5P4xSQ4PKA7/+sQ+7bdsEn1FbM/0lborCmgHs+Yq/2jgEcZ8K4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731981150; c=relaxed/simple;
-	bh=0ae1K5p4ElQdh94m5eUWpua2D8G6Ytdrfz3mhxapIE0=;
+	s=arc-20240116; t=1731981335; c=relaxed/simple;
+	bh=nbfoeYQK6EhKdq8qOgt2GKP/DAqXwmo30qkQQWl0lCY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ACHYkLTbtZgXDeEkZq2uy/s1UIR1sgnRafrTnQEpUjAqw7m29xsBmCrVfn4bkvNdfhPRG+nQA/36pLkm6OVJCyTNTRZm7mzsZEWwcW5GKUSMt7o3TOsn5xOfbeLNrtPK8O6C49DostgTLP0vcf/Uvhi0AtzYP3X6EQlo/pvGFjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=qokv2DXP; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
-	In-Reply-To:References; bh=SxM76o8BGy53AtlOJoitl7JV8kJz7mesTX75V2BZ4D4=; b=qo
-	kv2DXPF5NrFtTmXJuEOhpovQLZUIAGFuSld5TeLwIPl4mLkHcAF1mYH216IVlMWFOR4wCy9/us05n
-	wPB7GLUOqbaKO12CCPHEKGt2dCOpkA+ildcppazSaUoNRItAVq6uDUkenkPYF6Km+XGmoh7xYVLE4
-	Nwvweckmq3fDjYo=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tDDPX-00DjZv-5j; Tue, 19 Nov 2024 02:52:11 +0100
-Date: Tue, 19 Nov 2024 02:52:11 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Andrew Jeffery <andrew@codeconstruct.com.au>
-Cc: Jacky Chou <jacky_chou@aspeedtech.com>, andrew+netdev@lunn.ch,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, joel@jms.id.au, hkallweit1@gmail.com,
-	linux@armlinux.org.uk, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [net-next 3/3] net: mdio: aspeed: Add dummy read for fire control
-Message-ID: <b8986779-27eb-4b60-b180-24d84ca9a501@lunn.ch>
-References: <20241118104735.3741749-1-jacky_chou@aspeedtech.com>
- <20241118104735.3741749-4-jacky_chou@aspeedtech.com>
- <0d53f5fbb6b3f1eb01e601255f7e5ee3d1c45f93.camel@codeconstruct.com.au>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Cb4bDTi6jZjE86qZD2cmersGJWx3oTOnWSkdqKs/NxjpZ0uO0Fm+g5E4M+tVsyVeBPBO+u7N5XEBaqpKym2EH6T0pwGduLTPvCz5m0U9qS+88ic61mRkfnYwm+XdMMG5WdYE/VO59xBAeQWq8POoNKfu4eKLRUhBnAq2DskhW5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LnKyEGhG; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-20cdb889222so35277835ad.3;
+        Mon, 18 Nov 2024 17:55:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731981333; x=1732586133; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=QKCvxnGxwarB9jI0/ci1ckuEMFUz5SJJ7vO0XAscHy8=;
+        b=LnKyEGhGsRf5dUmowJMAFRp92ht8Zhsf18Dz2JwLdvZnIMWpHxF07iwcXpQgafBf9z
+         lwBi7w3COjv52DA+P/hMR6yPi1XqcqVsaPcgAgnVhcgHVnLlvjlTjMz0RLoAJ/7SNqS+
+         ub1wY2opx7TOMy7iVdK/pLgkd0qdc5+eXYEmsHBxz0D9EUouggcvYtESu/8exL54IsY/
+         yyT4sqF2E+22a8CZS8KBjnBodRuctSjVewh4+hOKLeUtrR+Yc9bJlc5rAAgi6PW1ahKc
+         8ZAYgD4uJSKCe7jY74kmTMZC+uR3DJetSkAoIhfozoYCpd8txKuZ870qQIjHndZXBlop
+         UCqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731981333; x=1732586133;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QKCvxnGxwarB9jI0/ci1ckuEMFUz5SJJ7vO0XAscHy8=;
+        b=ScJeDi0t8PR4UVyZcOlZjL8XKITDqjFMnlROUbKJ7cMcmD7KxO3kEEz9Pe2R1x7w1s
+         8TN9SL7+BvaBoJSDQz2Lwyws4DSaEgVyqjipcU4uDV6cKR3+3BIqTPlEWMEa25x+5WeP
+         PnPdxz/3pM3ncIB8FYb+CecfpDomZMlVWbyJNtsJAQx95G4BoiXnuzGdWaCdAPMkKn1T
+         FRig5h/ROtw9yZ7gJtGMuFtSaA/v8ko9a6lrBI76t8TQDJtomUZ0Bg0tsn3X+8y8acIb
+         f3LLkzPUU0DvFF68npSlFHlEddoRsYOa26FcHBVTuZv5AlMJCr8RmYu9llXup5EdRCvO
+         pwvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV2wl20h0ak/aExuiqqU8uS0CfaFDQzz8XLXAKXfnSMy5igmKzSq9YZsv4kC+SEmln4HKU4cmnbmPqIwpDAfnEg@vger.kernel.org, AJvYcCWCUVRmi+cR9FUQHiJAevRJnG2OLX+90w4sFsffCCRUM6916JyWM9k9o1QdGjj2RjxXU/DDU5Rrf221kTI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlTsOy8wOnekC6wYS7ZlW8t3TwFhtoRbOdrApSpUXqvePlvuTh
+	U/r1x3GUY/G9JA1iT9ETrKYG2LkuZSvwXZc6OpccX1E3KPQx4VU3
+X-Google-Smtp-Source: AGHT+IE1Jb+sOkpEBwtoyowba0RoDPBYa93N+5jz8i6bw/AkiPN6j307nff2peLT9avr89yPDuCPzA==
+X-Received: by 2002:a17:902:e750:b0:20b:8ef3:67a with SMTP id d9443c01a7336-211d0d6ee87mr169131815ad.7.1731981332823;
+        Mon, 18 Nov 2024 17:55:32 -0800 (PST)
+Received: from visitorckw-System-Product-Name ([140.113.216.168])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211d0ec8608sm63999285ad.96.2024.11.18.17.55.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Nov 2024 17:55:32 -0800 (PST)
+Date: Tue, 19 Nov 2024 09:55:29 +0800
+From: Kuan-Wei Chiu <visitorckw@gmail.com>
+To: Shuah Khan <skhan@linuxfoundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	shuah <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Brendan Higgins <brendan.higgins@linux.dev>,
+	David Gow <davidgow@google.com>
+Subject: Re: [GIT PULL] KUnit update for Linux 6.13-rc1
+Message-ID: <ZzvwEUIVs0M+/3Yu@visitorckw-System-Product-Name>
+References: <589ea100-ee1b-4a37-8f18-a25d86fdb082@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <0d53f5fbb6b3f1eb01e601255f7e5ee3d1c45f93.camel@codeconstruct.com.au>
+In-Reply-To: <589ea100-ee1b-4a37-8f18-a25d86fdb082@linuxfoundation.org>
 
-On Tue, Nov 19, 2024 at 09:35:39AM +1030, Andrew Jeffery wrote:
-> Hi Jacky,
-> 
-> On Mon, 2024-11-18 at 18:47 +0800, Jacky Chou wrote:
-> > Add a dummy read to ensure triggering mdio controller before starting
-> > polling the status of mdio controller.
-> > 
-> > Signed-off-by: Jacky Chou <jacky_chou@aspeedtech.com>
-> > ---
-> >  drivers/net/mdio/mdio-aspeed.c | 2 ++
-> >  1 file changed, 2 insertions(+)
-> > 
-> > diff --git a/drivers/net/mdio/mdio-aspeed.c b/drivers/net/mdio/mdio-
-> > aspeed.c
-> > index 4d5a115baf85..feae30bc3e78 100644
-> > --- a/drivers/net/mdio/mdio-aspeed.c
-> > +++ b/drivers/net/mdio/mdio-aspeed.c
-> > @@ -62,6 +62,8 @@ static int aspeed_mdio_op(struct mii_bus *bus, u8
-> > st, u8 op, u8 phyad, u8 regad,
-> >                 | FIELD_PREP(ASPEED_MDIO_DATA_MIIRDATA, data);
-> >  
-> >         iowrite32(ctrl, ctx->base + ASPEED_MDIO_CTRL);
-> > +       /* Add dummy read to ensure triggering mdio controller */
-> > +       (void)ioread32(ctx->base + ASPEED_MDIO_CTRL);
-> 
-> Why do this when the same register is immediately read by
-> readl_poll_timeout() below?
-> 
-> If there is a reason, I'd like some more explanation in the comment
-> you've added, discussing the details of the problem it's solving when
-> taking into account the readl_poll_timeout() call.
+Hi Shuah,
 
-Also, is this a fix? Should it have a Fixes: tag? If so, it should not
-be part of this series, assuming the older devices have the same
-issue.
+On Mon, Nov 18, 2024 at 12:19:50PM -0700, Shuah Khan wrote:
+> Hi Linus,
+> 
+> Please pull the following kunit update for Linux 6.13-rc1.
+> 
+> kunit update for Linux 6.13-rc1
+> 
+> -- fixes user-after-free (UAF) bug in kunit_init_suite()
+> 
+> -- adds option to kunit tool to print just the summary of test results
+> 
+> -- adds option to kunit tool to print just the failed test results
+> 
+> -- fixes kunit_zalloc_skb() to use user passed in gfp value instead of
+>    hardcoding GFP_KERNEL
+> 
+> -- fixes kunit_zalloc_skb() kernel doc to include allocation flags variable
+> 
+> diff is attached.
+> 
+> Tests passed on my kunit repo:
+> 
+> - Build make allmodconfig
+> 
+> ./tools/testing/kunit/kunit.py run
+> ./tools/testing/kunit/kunit.py run --alltests
+> 
+> ./tools/testing/kunit/kunit.py run --arch x86_64
+> ./tools/testing/kunit/kunit.py run --alltests --arch x86_64
+> 
+> thanks,
+> -- Shuah
+> 
+> ----------------------------------------------------------------
+> The following changes since commit 2d5404caa8c7bb5c4e0435f94b28834ae5456623:
+> 
+>   Linux 6.12-rc7 (2024-11-10 14:19:35 -0800)
+> 
+> are available in the Git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest tags/linux_kselftest-kunit-6.13-rc1
+> 
+> for you to fetch changes up to 67b6d342fb6d5abfbeb71e0f23141b9b96cf7bb1:
+> 
+>   kunit: tool: print failed tests only (2024-11-14 09:38:19 -0700)
+> 
+> ----------------------------------------------------------------
+> linux_kselftest-kunit-6.13-rc1
+> 
+> kunit update for Linux 6.13-rc1
+> 
+> -- fixes user-after-free (UAF) bug in kunit_init_suite()
+> 
+> -- adds option to kunit tool to print just the summary of test results
+> 
+> -- adds option to kunit tool to print just the failed test results
+> 
+> -- fixes kunit_zalloc_skb() to use user passed in gfp value instead of
+>    hardcoding GFP_KERNEL
+> 
+> -- fixes kunit_zalloc_skb() kernel doc to include allocation flags variable
+> 
+> ----------------------------------------------------------------
+> Dan Carpenter (2):
+>       kunit: skb: use "gfp" variable instead of hardcoding GFP_KERNEL
+>       kunit: skb: add gfp to kernel doc for kunit_zalloc_skb()
+> 
+> David Gow (1):
+>       kunit: tool: Only print the summary
+> 
+> Jinjie Ruan (1):
+>       kunit: string-stream: Fix a UAF bug in kunit_init_suite()
+>
+The patch [1] intended to address the UAF issue in kunit_init_suite()
+is not correct and does not actually fix the problem. A v2 patch [2]
+with the proper fix has been sent.
 
-	Andrew
+Regards,
+Kuan-Wei
+
+[1]: https://lore.kernel.org/lkml/20241024094303.1531810-1-ruanjinjie@huawei.com
+[2]: https://lore.kernel.org/linux-kselftest/20241112080314.407966-1-ruanjinjie@huawei.com
 
