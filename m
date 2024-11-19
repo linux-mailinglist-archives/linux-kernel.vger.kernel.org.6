@@ -1,123 +1,224 @@
-Return-Path: <linux-kernel+bounces-414468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41F0E9D287B
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 15:46:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C66C9D287D
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 15:46:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04BDE280169
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 14:46:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFF71284160
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 14:46:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09E731CEABA;
-	Tue, 19 Nov 2024 14:46:31 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AE5914658D
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 14:46:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27A781CF5EF;
+	Tue, 19 Nov 2024 14:46:40 +0000 (UTC)
+Received: from mail.parknet.co.jp (mail.parknet.co.jp [210.171.160.6])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A67291CC174;
+	Tue, 19 Nov 2024 14:46:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.171.160.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732027590; cv=none; b=pzrvRI+qnHU4UmX1oBaPwe7sG65IQA0iB/P6AFBG3PH4W7W7bqZYfNQDDbf4eQi+sOuFaN4K27tnd86Y+vxLwqqpD0FhEEP4Z7HDPYyDbJmSW67EWmrLDOUMsgYye0Cqf7f655sppvDfdOB9/oeeTLyRABmpj0k19umt0zt07qM=
+	t=1732027599; cv=none; b=Fal9I8LzKKL0rNruyX/x1/JohW5juBfiFLO9D9Sqefb3DdNKSLXkpP2RLXMZBGsrNSlMh4DnRqXQ5zpaWDamJTkYgv3MpVsPTzFSdK5Z+Do9GdzI6LaQfTvBnIRDiWDPiBFdmeqZDBe0x/CQcnIMC12UbfhU2kuv5fVLWoxCXC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732027590; c=relaxed/simple;
-	bh=xAE7/XY5/Mc2mV8Ci+AYKf4AWqFroPjXWvrO7AzaTp0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rRmrl7SLRBW0/p2VDyANmAU3CL5beeTNjX+/hiLvZ+vgjlqdSvT/5A4d0VN84EJ6dsScn/K0vlM/RUo8DX8sa5hBbnGxoXC6SiQTrstP+qkm6FI2KW2wIrxsWqxWVdwUam4F9I8do1powCEOEwIhze/6JaHdiENmP3zNmAowER8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 14446339;
-	Tue, 19 Nov 2024 06:46:56 -0800 (PST)
-Received: from [10.1.31.25] (e127648.arm.com [10.1.31.25])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4E4FD3F5A1;
-	Tue, 19 Nov 2024 06:46:22 -0800 (PST)
-Message-ID: <62a15cd6-db6a-4010-94db-e78aad9fc7ac@arm.com>
-Date: Tue, 19 Nov 2024 14:46:20 +0000
+	s=arc-20240116; t=1732027599; c=relaxed/simple;
+	bh=lRSgxDGGlWLJ/B/qkh7AVttXoTuu5ra6roLtOVhvZnk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ofw2KWF1sUG0bw1NgvgMPQk17b+xZRh7YkXrtspfxG4acl2T2bGoU1NClWi1VJNoyhDMj2GYGysKjthjpAOedXplwdaZrKMBZ7mQVeXz9gaUcpDCyCDAJL7C/wX95B/maCOQ43CizftInJI5YcHvr7al3++4HQC2Qog0gXSCc+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mail.parknet.co.jp; spf=pass smtp.mailfrom=parknet.co.jp; arc=none smtp.client-ip=210.171.160.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mail.parknet.co.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=parknet.co.jp
+Received: from ibmpc.myhome.or.jp (server.parknet.ne.jp [210.171.168.39])
+	by mail.parknet.co.jp (Postfix) with ESMTPSA id 679C12051589;
+	Tue, 19 Nov 2024 23:46:35 +0900 (JST)
+Received: from devron.myhome.or.jp (foobar@devron.myhome.or.jp [192.168.0.3])
+	by ibmpc.myhome.or.jp (8.18.1/8.18.1/Debian-6) with ESMTPS id 4AJEkYRt056398
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Tue, 19 Nov 2024 23:46:35 +0900
+Received: from devron.myhome.or.jp (foobar@localhost [127.0.0.1])
+	by devron.myhome.or.jp (8.18.1/8.18.1/Debian-6) with ESMTPS id 4AJEkYWs352030
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Tue, 19 Nov 2024 23:46:34 +0900
+Received: (from hirofumi@localhost)
+	by devron.myhome.or.jp (8.18.1/8.18.1/Submit) id 4AJEkXwk352026;
+	Tue, 19 Nov 2024 23:46:33 +0900
+From: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Ming Lei <ming.lei@redhat.com>, linux-block@vger.kernel.org,
+        syzbot
+ <syzbot+a5d8c609c02f508672cc@syzkaller.appspotmail.com>,
+        linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, sj1557.seo@samsung.com,
+        syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [exfat?] possible deadlock in fat_count_free_clusters
+In-Reply-To: <74141e63-d946-421a-be4e-4823944dd8c9@kernel.dk> (Jens Axboe's
+	message of "Tue, 19 Nov 2024 07:18:12 -0700")
+References: <67313d9e.050a0220.138bd5.0054.GAE@google.com>
+	<8734jxsyuu.fsf@mail.parknet.co.jp>
+	<CAFj5m9+FmQLLQkO7EUKnuuj+mpSUOY3EeUxSpXjJUvWtKfz26w@mail.gmail.com>
+	<74141e63-d946-421a-be4e-4823944dd8c9@kernel.dk>
+Date: Tue, 19 Nov 2024 23:46:33 +0900
+Message-ID: <87wmgz8enq.fsf@mail.parknet.co.jp>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 4/5] sched/fair: Use EAS also when overutilized
-To: Vincent Guittot <vincent.guittot@linaro.org>,
- Quentin Perret <qperret@google.com>
-Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
- dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
- mgorman@suse.de, vschneid@redhat.com, lukasz.luba@arm.com,
- rafael.j.wysocki@intel.com, linux-kernel@vger.kernel.org,
- qyousef@layalina.io, hongyan.xia2@arm.com
-References: <20240830130309.2141697-1-vincent.guittot@linaro.org>
- <20240830130309.2141697-5-vincent.guittot@linaro.org>
- <Zu2gHOv7mqArWXLZ@google.com>
- <CAKfTPtCvwPq+8pQcTZePiee9EXxKAQS=J57X2OavWFrQwkDt5A@mail.gmail.com>
- <ZvUlB8s-zIkDQji7@google.com>
- <CAKfTPtAzG7u0+e=8skMhnCETVxbDTOxT-zLaoqUXB-Zz5=4t+A@mail.gmail.com>
- <Zvw2O4JGBpMXwOZA@google.com>
- <CAKfTPtDOhNmL0Nn3g-agnL5HH5nhwXb3-sfzydEe4nvRKAq3HQ@mail.gmail.com>
-Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <CAKfTPtDOhNmL0Nn3g-agnL5HH5nhwXb3-sfzydEe4nvRKAq3HQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 10/3/24 07:27, Vincent Guittot wrote:
-> On Tue, 1 Oct 2024 at 19:51, Quentin Perret <qperret@google.com> wrote:
->>
->> On Tuesday 01 Oct 2024 at 18:20:03 (+0200), Vincent Guittot wrote:
->>> With commit 50181c0cff31 ("sched/pelt: Avoid underestimation of task
->>> utilization"), the util_est remains set the value before having to
->>> share the cpu with other tasks which means that the util_est remains
->>> correct even if its util_avg decrease because of sharing the cpu with
->>> other task. This has been done to cover the cases that you mention
->>> above whereboth util_avg and util_est where decreasing when tasks
->>> starts to  share  the CPU bandwidth with others
->>
->> I don't think I agree about the correctness of that util_est value at
->> all. The above patch only makes it arbitrarily out of date in the truly
->> overcommitted case. All the util-based heuristic we have in the
->> scheduler are based around the assumption that the close future will
->> look like the recent past, so using an arbitrarily old util-est is still
->> incorrect. I can understand how this may work OK in RT-app or other
-> 
-> This fixes a real use case on android device
-> 
->> use-cases with perfectly periodic tasks for their entire lifetime and
->> such, but this doesn't work at all in the general case.
->>
->>> And feec() will return -1 for that case because util_est remains high
->>
->> And again, checking that a task fits is broken to start with if we don't
->> know how big the task is. When we have reasons to believe that the util
->> values are no longer correct (and the absence of idle time is a very
->> good reason for that) we just need to give up on them. The fact that we
->> have to resort to using out-of-date data to sort of make that work is
->> just another proof that this is not a good idea in the general case.
-> 
-> That's where I disagree, this is not an out-of-date value, this is the
-> last correct one before sharing the cpu
-Just adding on this since we are discussing the correctness of util_est
-value on an OU CPU since
-commit 50181c0cff31 ("sched/pelt: Avoid underestimation of task utilization").
-I agree that this commit fixed the immediate false util_est drop after
-coscheduling two (or more) tasks, but that's a specific one.
-If one of two coscheduled tasks starts growing their util_est can't reflect
-that if their compute demand grows above CPU-capacity, that commit doesn't
-change the fact. There is no generally sensible way of estimating such a
-util_est anyway.
-Even worse if both coscheduled tasks grow which isn't uncommon, considering
-they might be related.
+Jens Axboe <axboe@kernel.dk> writes:
 
-So
-"this is the last correct one before sharing the cpu" is true,
-"This is not an out-of-date value" isn't true in the general case.
+> On 11/19/24 5:10 AM, Ming Lei wrote:
+>> On Tue, Nov 12, 2024 at 12:44=E2=80=AFAM OGAWA Hirofumi
+>> <hirofumi@mail.parknet.co.jp> wrote:
+>>>
+>>> Hi,
+>>>
+>>> syzbot <syzbot+a5d8c609c02f508672cc@syzkaller.appspotmail.com> writes:
+>>>
+>>>> syzbot found the following issue on:
+>>>>
+>>>> HEAD commit:    929beafbe7ac Add linux-next specific files for 20241108
+>>>> git tree:       linux-next
+>>>> console output: https://syzkaller.appspot.com/x/log.txt?x=3D1621bd8798=
+0000
+>>>> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D75175323f2=
+078363
+>>>> dashboard link: https://syzkaller.appspot.com/bug?extid=3Da5d8c609c02f=
+508672cc
+>>>> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for =
+Debian) 2.40
 
-I agree that the OU definition can evolve, basing that on idle time makes
-sense, but given the common period of 16ms (frame rate) we might delay
-setting OU by quite a lot for the cases it 'actually is true'.
+[...]
 
-Regards,
-Christian
+>>=20
+>> Looks fine,
+>>=20
+>> Reviewed-by: Ming Lei <ming.lei@redhat.com>
+>
+> The patch doesn't apply to the for-6.13/block tree, Ogawa can you send
+> an updated one please?
+
+Updated the patch for linux-block:for-6.13/block. Please apply.
+
+Thanks.
+
+
+From: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+Subject: [PATCH] loop: Fix ABBA locking race
+Date: Tue, 19 Nov 2024 23:42:23 +0900
+
+Current loop calls vfs_statfs() while holding the q->limits_lock. If
+FS takes some locking in vfs_statfs callback, this may lead to ABBA
+locking bug (at least, FAT fs has this issue actually).
+
+So this patch calls vfs_statfs() outside q->limits_locks instead,
+because looks like no reason to hold q->limits_locks while getting
+discord configs.
+
+Chain exists of:
+  &sbi->fat_lock --> &q->q_usage_counter(io)#17 --> &q->limits_lock
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&q->limits_lock);
+                               lock(&q->q_usage_counter(io)#17);
+                               lock(&q->limits_lock);
+  lock(&sbi->fat_lock);
+
+ *** DEADLOCK ***
+
+Reported-by: syzbot+a5d8c609c02f508672cc@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=3Da5d8c609c02f508672cc
+Reviewed-by: Ming Lei <ming.lei@redhat.com>
+Signed-off-by: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+---
+ drivers/block/loop.c |   30 +++++++++++++++---------------
+ 1 file changed, 15 insertions(+), 15 deletions(-)
+
+diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+index fe9bb4f..8f6761c 100644
+--- a/drivers/block/loop.c	2024-11-19 23:37:54.760751014 +0900
++++ b/drivers/block/loop.c	2024-11-19 23:38:55.645461107 +0900
+@@ -770,12 +770,11 @@ static void loop_sysfs_exit(struct loop_
+ 				   &loop_attribute_group);
+ }
+=20
+-static void loop_config_discard(struct loop_device *lo,
+-		struct queue_limits *lim)
++static void loop_get_discard_config(struct loop_device *lo,
++				    u32 *granularity, u32 *max_discard_sectors)
+ {
+ 	struct file *file =3D lo->lo_backing_file;
+ 	struct inode *inode =3D file->f_mapping->host;
+-	u32 granularity =3D 0, max_discard_sectors =3D 0;
+ 	struct kstatfs sbuf;
+=20
+ 	/*
+@@ -788,24 +787,17 @@ static void loop_config_discard(struct l
+ 	if (S_ISBLK(inode->i_mode)) {
+ 		struct block_device *bdev =3D I_BDEV(inode);
+=20
+-		max_discard_sectors =3D bdev_write_zeroes_sectors(bdev);
+-		granularity =3D bdev_discard_granularity(bdev);
++		*max_discard_sectors =3D bdev_write_zeroes_sectors(bdev);
++		*granularity =3D bdev_discard_granularity(bdev);
+=20
+ 	/*
+ 	 * We use punch hole to reclaim the free space used by the
+ 	 * image a.k.a. discard.
+ 	 */
+ 	} else if (file->f_op->fallocate && !vfs_statfs(&file->f_path, &sbuf)) {
+-		max_discard_sectors =3D UINT_MAX >> 9;
+-		granularity =3D sbuf.f_bsize;
++		*max_discard_sectors =3D UINT_MAX >> 9;
++		*granularity =3D sbuf.f_bsize;
+ 	}
+-
+-	lim->max_hw_discard_sectors =3D max_discard_sectors;
+-	lim->max_write_zeroes_sectors =3D max_discard_sectors;
+-	if (max_discard_sectors)
+-		lim->discard_granularity =3D granularity;
+-	else
+-		lim->discard_granularity =3D 0;
+ }
+=20
+ struct loop_worker {
+@@ -991,6 +983,7 @@ static int loop_reconfigure_limits(struc
+ 	struct inode *inode =3D file->f_mapping->host;
+ 	struct block_device *backing_bdev =3D NULL;
+ 	struct queue_limits lim;
++	u32 granularity =3D 0, max_discard_sectors =3D 0;
+=20
+ 	if (S_ISBLK(inode->i_mode))
+ 		backing_bdev =3D I_BDEV(inode);
+@@ -1000,6 +993,8 @@ static int loop_reconfigure_limits(struc
+ 	if (!bsize)
+ 		bsize =3D loop_default_blocksize(lo, backing_bdev);
+=20
++	loop_get_discard_config(lo, &granularity, &max_discard_sectors);
++
+ 	lim =3D queue_limits_start_update(lo->lo_queue);
+ 	lim.logical_block_size =3D bsize;
+ 	lim.physical_block_size =3D bsize;
+@@ -1009,7 +1004,12 @@ static int loop_reconfigure_limits(struc
+ 		lim.features |=3D BLK_FEAT_WRITE_CACHE;
+ 	if (backing_bdev && !bdev_nonrot(backing_bdev))
+ 		lim.features |=3D BLK_FEAT_ROTATIONAL;
+-	loop_config_discard(lo, &lim);
++	lim.max_hw_discard_sectors =3D max_discard_sectors;
++	lim.max_write_zeroes_sectors =3D max_discard_sectors;
++	if (max_discard_sectors)
++		lim.discard_granularity =3D granularity;
++	else
++		lim.discard_granularity =3D 0;
+ 	return queue_limits_commit_update(lo->lo_queue, &lim);
+ }
+=20
+_
+--=20
+OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
 
