@@ -1,191 +1,107 @@
-Return-Path: <linux-kernel+bounces-414010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D50B69D21C9
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 09:45:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61FB59D21CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 09:48:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A65AB22D7C
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 08:45:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F5D91F22715
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 08:48:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A41C019CC14;
-	Tue, 19 Nov 2024 08:45:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77B0F199EAF;
+	Tue, 19 Nov 2024 08:48:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="NZFt2fWu"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VaF/4kZg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE6C6153BFC
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 08:45:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D87E513C8F3
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 08:48:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732005927; cv=none; b=m55VaFTmYFUcxHxiSYFiUXxbmNuvquOxJ3KVDdtk3zr6EJP8OS2ROeUnFtIDpMKFzlG5xmH+M2DusXx88ANVIaHgpjxIUgCV2ZBVjfbO3UQ1PCSw/O7w6sf/vHVnYN9lUxfLN4fml7BfQQ3K8KNVpea3bCVoYIY3XVNVr8alVZI=
+	t=1732006123; cv=none; b=Mwe5mz5GoYJGlB7oDumrR2LQivAt8f7RO/495RzGXTNtn8Y8rg8+pxjd/P2/ybqGnOcUNMUKoZrVE04Ow4U0hzrY2Eu9ZhV9sj8iWVg2ZZW28b9PP3dT73wyV89b+GAaZ8sna+zIVKfvqzE0FPXmR7472ZAUFeTxKMrB1W6GQkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732005927; c=relaxed/simple;
-	bh=S+U+AjJRasPBDpiweR/FNZIR/50o66YkmWzkir4ZW2k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=A8dZ5SeKq3CWVB0r3Hau6NPfPOQS5AItmn3Lwj4S7zJje7E9CnW34t8OA3wuIOo5gcORzsYfCLlpn39HnolxLsxDxyEvjLO0seqyKC3R4OC3wOfjJQB1MTQ5CqSwYfSlHux1HkFLSgxyxStpZjjMhl+cANa2WgrdsEDePUhuoFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net; spf=pass smtp.mailfrom=openvpn.com; dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b=NZFt2fWu; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openvpn.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5cfd3a7e377so1699223a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 00:45:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=openvpn.net; s=google; t=1732005924; x=1732610724; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=8fuT97yI4Tuoujm6UUjQklceuyk/9Xj1w4bHDEeWvaU=;
-        b=NZFt2fWu8dOjBBBmYCqenDv3ennpH6FbIcESjm/hstKFJns5mBjpG1DO5JFh1FlLHB
-         dX3RYgUxDWzzrCE76ZQJUCXVcvWPssKbjP/Rz0cpH3w1SBzy5aNkcAPKkFV8RjTImcvU
-         rEBq5oX3J73S533c6A8gEIsy+vSeAxjGRzAxm3r/TzZrjRQEnCkr5s00WlFcGq3B8nMU
-         Wy30IYOdMFLKLO1wfgOulROSYXhUfxqc/ZVmPAY+pjmyt3NY45GoaHWp7P4wtzX+IBuk
-         GCNf4/abP9q9L9qxBVPMHm8sTTzFh8oSNR6QICf8eoyJGYUxGdOPpT23D8bpjEWH9tVq
-         5OUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732005924; x=1732610724;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8fuT97yI4Tuoujm6UUjQklceuyk/9Xj1w4bHDEeWvaU=;
-        b=BXxTpI7tjcNoFrQFiBDjNIFw0+7bwZXevwIMIEW6T3j1Qxw/uUHjl89cp3/bxSrmja
-         lxFxHngEqhcQTYj9b24TCmcyiq8eqOqTRIg8Ou8UjI5GmJCymGw7bvYZ8rR23FjbEh77
-         SJvlzvKBeEIIpoHDqGIXdM+dJ7S8s+KbvBgh/6Tsb8q3yN2lDAP00djfn7XIyfo0D456
-         FR+MsLYEqSaq0MWH/g/3rQ4pvb0ZHxqs6pGQVBm+2z0A17MajClK8661D9cHDasSXEh0
-         Rh+ti4kd+PGC4HLH5BeUf5T60Btd69faHYYhUWppLpljJA7JdLUDQUgLSJv9lk+R0v++
-         4KLg==
-X-Forwarded-Encrypted: i=1; AJvYcCV7QQ31OwZi3pwy/G7G6V5s/PF5BuStmSkDL39ulZ7rS5jrrSqoeO+ywHCAV98cfCHJ3nebpXhu6vrXHOk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPsaMD71Lo40+HpS2pwIawBo/D2p5TmHP/0UqAKMj+9TdtQo+I
-	OOelFpwPcd7SBJfZzjgUx4BCzCANUK82r3VWPgaqUhKpt3YcfkZKtVAcCR9DLtM=
-X-Google-Smtp-Source: AGHT+IGWgWvrU3iW9fpLyl65j2i8nKGQqJjCyR6GPI7QRQB3gyIMeqWk8joXLkagDKieL4IvEbilPA==
-X-Received: by 2002:a05:6402:2794:b0:5c9:6f20:4cf1 with SMTP id 4fb4d7f45d1cf-5cf8fd04bf8mr13901074a12.27.1732005924036;
-        Tue, 19 Nov 2024 00:45:24 -0800 (PST)
-Received: from ?IPV6:2001:67c:2fbc:1:a2be:8cd5:8845:cfce? ([2001:67c:2fbc:1:a2be:8cd5:8845:cfce])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cfaca26fdesm3336525a12.47.2024.11.19.00.45.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 Nov 2024 00:45:23 -0800 (PST)
-Message-ID: <855e6fee-5f0a-439d-a6c5-6829db4ecbfa@openvpn.net>
-Date: Tue, 19 Nov 2024 09:45:51 +0100
+	s=arc-20240116; t=1732006123; c=relaxed/simple;
+	bh=qUPrHNOjTXsM3m+4zxm7QsnWHRQlkHeGy4VZZ/bTTFE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IXEOrjGUmWE9M6KPMqyCDWehFDs6aarVriEhnvFsOOKaWK2i/n2fa/10JxXLlhSEQR0uDQl6V6GIOyan/ZLhL7Ly6DWJCvRyDXSmnziltq4VAhT5D06MkLBbm/rA6ZCKqZnKLCY+63U2VO17crZlHspc9dj70x7lTdeFWJi0O3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VaF/4kZg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85B8DC4CED7
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 08:48:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732006123;
+	bh=qUPrHNOjTXsM3m+4zxm7QsnWHRQlkHeGy4VZZ/bTTFE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=VaF/4kZgN/FfU114VRD5atuac2vdDd+wddmsyEaJFw2p2BrnTJFwzJlhhY9VkWPU4
+	 T34JLqYtmeG7IjyaSVK7MM1sj3YBxqY2pFXo5IJc/56P/mJqfj2RplXfXmaoYlu4hN
+	 rr5A8EtoYdLZevEGaK598CXBh4o293DR5NbQr/7TeGKmTfRneoo7y4Y35/u0M38P9b
+	 1faecKfq51cf+Q07VgZz2SiqVxoHGuMDxXk0K5nhnjUKQfyq4XvovRTgyvPSw04C9A
+	 s8MCY0eL57nYGF4nuUDUk56Bo2ywIpVZVxSjy1SEJDPNjLt9S3L8/I1GeN8eZKthIZ
+	 EOWz7AuA4QtKA==
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-aa1f73966a5so590715366b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 00:48:43 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVS2XgamKQwdAiaRR5Sl8YkgD3DNWZXpAtiLYy2QMrmUB8DRg/PaRQfpS7ywSIYqtmfilHQwiAvWhEJjzw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6RlvFDJHh1JcmcQpmT9LoKCDnt7OT5s8LQ4zU2180ELJ8YV3n
+	xzWKYwltbrW6YeTsQ30Kbx+4y8QEkjk60xJgmpZNK/QDIM/2qLwm+Gv+uSgyshAvvELGpBIdRsj
+	hDx5GtmFeWNObvl8r8pfMpvpG8iM=
+X-Google-Smtp-Source: AGHT+IHJTl7n33lF+4V/J0EXF3Wx80x+47kYwX2AtcgcYJT2dasDXhd1F7vRJ/Ki0BpnHWlNKlexsarzXrkxPshIuLk=
+X-Received: by 2002:a17:907:d01:b0:a9a:1115:486e with SMTP id
+ a640c23a62f3a-aa483525d0bmr1183625666b.45.1732006122054; Tue, 19 Nov 2024
+ 00:48:42 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v11 04/23] ovpn: add basic interface
- creation/destruction/management routines
-To: Sergey Ryazanov <ryazanov.s.a@gmail.com>
-Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>,
- Shuah Khan <shuah@kernel.org>, sd@queasysnail.net,
- Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-References: <20241029-b4-ovpn-v11-0-de4698c73a25@openvpn.net>
- <20241029-b4-ovpn-v11-4-de4698c73a25@openvpn.net>
- <4b6f2e30-5e94-475d-97ec-d59e59f0bf6b@gmail.com>
- <0f19828c-9808-427f-b620-fd3bc9f2e5db@openvpn.net>
- <709d415d-859d-4342-80b7-908c04b28621@gmail.com>
-Content-Language: en-US
-From: Antonio Quartulli <antonio@openvpn.net>
-Autocrypt: addr=antonio@openvpn.net; keydata=
- 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
-Organization: OpenVPN Inc.
-In-Reply-To: <709d415d-859d-4342-80b7-908c04b28621@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20241119065655.21123-1-yangtiezhu@loongson.cn>
+In-Reply-To: <20241119065655.21123-1-yangtiezhu@loongson.cn>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Tue, 19 Nov 2024 16:48:29 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H7MP-gsZ3bT4o9=VNvRSs95cxq=Y5VbTK4aV+c=wyOKJA@mail.gmail.com>
+Message-ID: <CAAhV-H7MP-gsZ3bT4o9=VNvRSs95cxq=Y5VbTK4aV+c=wyOKJA@mail.gmail.com>
+Subject: Re: [PATCH v3 00/10] Add jump table support for objtool on LoongArch
+To: Tiezhu Yang <yangtiezhu@loongson.cn>, Jinyang He <hejinyang@loongson.cn>
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>, loongarch@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 19/11/2024 04:08, Sergey Ryazanov wrote:
-> On 15.11.2024 16:03, Antonio Quartulli wrote:
->> On 10/11/2024 21:42, Sergey Ryazanov wrote:
->>> Missed the most essential note regarding this patch :)
->>>
->>> On 29.10.2024 12:47, Antonio Quartulli wrote:
->>>> +static int ovpn_net_open(struct net_device *dev)
->>>> +{
->>>> +    netif_tx_start_all_queues(dev);
->>>> +    return 0;
->>>> +}
->>>> +
->>>> +static int ovpn_net_stop(struct net_device *dev)
->>>> +{
->>>> +    netif_tx_stop_all_queues(dev);
->>>
->>> Here we stop a user generated traffic in downlink. Shall we take care 
->>> about other kinds of traffic: keepalive, uplink?
->>
->> Keepalive is "metadata" and should continue to flow, regardless of 
->> whether the user interface is brought down.
->>
->> Uplink traffic directed to *this* device should just be dropped at 
->> delivery time.
->>
->> Incoming traffic directed to other peers will continue to work.
-> 
-> How it's possible? AFAIU, the module uses the kernel IP routing 
-> subsystem. Putting the interface down will effectively block a client- 
-> to-client packet to reenter the interface.
+Hi, Jinyang,
 
-True.
-At least part of the traffic is stopped (traffic directed to the VPN IP 
-of a peer will still flow as it does not require a routing table lookup).
+If you have time please review this series, thank you.
 
-I circled this discussion through the other devs to see what perspective 
-they would bring and we also agree that if something is stopping, better 
-stop the entire infra.
+Huacai
 
-Also, if a user is fumbling with the link state, they are probably 
-trying to bring the VPN down.
-
-I will go that way and basically perform the same cleanup as if the 
-interface is being deleted.
-
-"the party is over"[cit.] :)
-
-Regards,
-
--- 
-Antonio Quartulli
-OpenVPN Inc.
-
+On Tue, Nov 19, 2024 at 2:57=E2=80=AFPM Tiezhu Yang <yangtiezhu@loongson.cn=
+> wrote:
+>
+> This series is based on 6.12-rc7, tested with the latest upstream
+> mainline Binutils, GCC and Clang, most of the patches are aim to
+> handle the special cases compiled with Clang on LoongArch.
+>
+> Tiezhu Yang (10):
+>   objtool: Handle various symbol types of rodata
+>   objtool: Handle special cases of dead end insn
+>   objtool: Handle different entry size of rodata
+>   objtool: Handle PC relative relocation type
+>   objtool: Handle unreachable entry of rodata
+>   objtool: Handle unsorted table offset of rodata
+>   objtool/LoongArch: Get each table size of rodata
+>   objtool/LoongArch: Add support for switch table
+>   objtool/LoongArch: Add support for goto table
+>   LoongArch: Enable jump table for objtool
+>
+>  arch/loongarch/Kconfig                 |   3 +
+>  arch/loongarch/Makefile                |   4 +
+>  tools/objtool/arch/loongarch/special.c | 156 ++++++++++++++++++++++++-
+>  tools/objtool/check.c                  |  68 ++++++++++-
+>  tools/objtool/include/objtool/check.h  |   1 +
+>  5 files changed, 226 insertions(+), 6 deletions(-)
+>
+> --
+> 2.42.0
+>
 
