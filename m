@@ -1,100 +1,174 @@
-Return-Path: <linux-kernel+bounces-414700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1E989D2C35
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 18:13:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1009C9D2CBF
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 18:35:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8858A2821AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 17:13:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C4F4EB2BEEB
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 17:13:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58E491D0F5D;
-	Tue, 19 Nov 2024 17:13:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58A211D0F56;
+	Tue, 19 Nov 2024 17:13:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T+Omqzkc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GVNjpaM7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 914FE25763;
-	Tue, 19 Nov 2024 17:13:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D2121D0438;
+	Tue, 19 Nov 2024 17:13:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732036398; cv=none; b=kOIgZjjDY1Fim1is78KEpVok1Xgao9YE6IAGOeIApa2oFWhbojZJL5PD33SLucnGvU8yGMc9q6iE9L50tUpjN6kqdzI1+0O05WKMSotioty2LGA+zY3PnRKzg96PNFu8P/CoTf5njF5fF3gKYtAnCKP3jEf5+Q5CK0hmE4Ayysw=
+	t=1732036423; cv=none; b=TAVaclVcGnCpJq7/OqAdN45DFECab75AUr4y+AOEMxMCD+jZDUL1Q5HNx7qBLQWuJYFbXbNXqA80cRx8HXf6OSYyYxZXlZP5KXYsxP5cWFWvps+rpGol4u18Tc52yivKFK0UigfReESaq3b8wzy8zga3zaKHva7h6K1bxNHMAeg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732036398; c=relaxed/simple;
-	bh=ggE7Kv8fbEJQDnLfRqnMQ5FSxw3wmUl+igo2b35kd5I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jwF9mqgmcXTp1rFvAQ8zqt7nBjwgi9C0Lg6Wt8qRA9QEkKwQNvqRUD19xYArMc8zMXtNp3f5Qun5SIHeewhv/wcdOip3hypRCn2k8PilxbM2ayH2kKxemkWguJbUj5TvcgopkZsrCaWjg4fx/7bdV8OR3PbFc1hA0OlemFWOt2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T+Omqzkc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03AA7C4CECF;
-	Tue, 19 Nov 2024 17:13:16 +0000 (UTC)
+	s=arc-20240116; t=1732036423; c=relaxed/simple;
+	bh=1oAj6JYNDJa3GWhLbj+143GK5p0QwScJoOz363V4lVU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VIm54zGtapo8GEzYBjlsv4kuXvwOmQrNZroNP+R1siXV2Gma3JWq+4Oji3mZi/JBOJPygukUIR9HqTndcsyVOOXY97q1MlToutl1frkSsqCOzV8Cxy5pdn7Xy6p+OdLiU2Ae2pjvsqA+AC7ZqAB+7HBxHLIj0FlFvAgOXO7vUTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GVNjpaM7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73C64C4CED7;
+	Tue, 19 Nov 2024 17:13:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732036397;
-	bh=ggE7Kv8fbEJQDnLfRqnMQ5FSxw3wmUl+igo2b35kd5I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=T+OmqzkcJCiucFF2UnxpJpQ/xcYpsSxBx4gI5KO1T1OwBMnQKhkkThRuwN3Gzvmqj
-	 m2XWQo+7i5YIpBsTfJm7yzOLc2LMILt6nQPlb2EofC2Tpadgp2zhxmIhF2o8r2pq2j
-	 M1GwJ5kyKMzq2r1XF/PWMw8tl0EkClBvImKVFdi8n15wS/4vO28MOcQ4Bu4le7ANTO
-	 guPpw0F7FRjkN2aKoUgUVmUwr78fyfEVQw07tnz0Dyw8WvIj5SVcwyM7Ps62uTfMSg
-	 RM1uSxB7CroCjSelz16lXVMkyCZSAkTVnVMqh9boSPRB7CpIjVt4FbURWJWiB3vYIk
-	 Xs9Zy6M2sD15w==
-Date: Tue, 19 Nov 2024 11:13:15 -0600
-From: Rob Herring <robh@kernel.org>
-To: Konrad Dybcio <konradybcio@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Wesley Cheng <quic_wcheng@quicinc.com>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH] dt-bindings: usb: qcom,dwc3: Make ss_phy_irq optional
- for X1E80100
-Message-ID: <20241119171315.GA1805024-robh@kernel.org>
-References: <20241116-topic-x1e_usb2_bindings-v1-1-dde2d63f428f@oss.qualcomm.com>
+	s=k20201202; t=1732036423;
+	bh=1oAj6JYNDJa3GWhLbj+143GK5p0QwScJoOz363V4lVU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=GVNjpaM7UIqXjoWH3ukR1LOYAzkx+xFrQf1VPUy+lm/EHCtYlzN6KUWpEfFCgk2ro
+	 N9C1lLQsFDkuMo/Zo5XMG6R4UzEVH/kULr8pMQLQriSQPwdLDx4fAsx6MVeIr4SzCY
+	 oDcvVjL849PUxK2o/gqcAYDb1PoXjjZCmhwVkMYyBmdhyvkj3Zip59mk8jfQSm0uti
+	 8QUzAwvFChWEsGMllxbdky4S/oehT6gAbUVtHTG9bQ+2QeE2WT+iNP2sOewriNMvAm
+	 sl1fc6SwyB3noagKtXvdYCFYLkzw1//FSSlptxkgbV75ScYjKv/QKZfhvgBXEa27Fc
+	 /iMMbkZqw/ClQ==
+Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-29680f21217so786905fac.1;
+        Tue, 19 Nov 2024 09:13:43 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUCB/A19B7SnoEye7PLoj6epmYM08C+IDo9ausVJABN1K9aNou2DIjxbpNirKa1BGGiDpR/X+eVNHFONZkg@vger.kernel.org, AJvYcCVCeciKcnN1UAfZgZ2THSfDnPvKnSGAy+ET435KOuqyr6RkHrWaDp3iEdhn/QYhH4Pbo3piv41hx9He@vger.kernel.org, AJvYcCWDRuucWr9a+gwMr45AgrfSh1itPtHZY9/zpZlxwyNADWHc7uUJhx476Z4eOqCaELhhc4R6zCUA/hI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/FwH/XPxAM9Thiu0W5/MhyKJCMFkX+i6bSDOs5rK7R4yBkzeW
+	UnHKusqNcn5lYCH1+2KkwBwkrzZe3NWdMW2d79GscdVS1ynaPHZ2KXCTnMPV3DIAPbpLdT72wza
+	RFSs1O6wLnJ5xaehY2bhs/d60Pfo=
+X-Google-Smtp-Source: AGHT+IHxvAFHjEK3r2BPEeFAjJMdHTLIuHKdoSpreVZimMd/tuX2SshSM6X/4zX1/ERuEvvAfuAOm27ubAvqhHgXm8Y=
+X-Received: by 2002:a05:6870:3929:b0:296:c2a6:cb27 with SMTP id
+ 586e51a60fabf-296c2a6f8acmr2234069fac.24.1732036422686; Tue, 19 Nov 2024
+ 09:13:42 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241116-topic-x1e_usb2_bindings-v1-1-dde2d63f428f@oss.qualcomm.com>
+References: <13636465.uLZWGnKmhe@rjwysocki.net> <2285569.iZASKD2KPV@rjwysocki.net>
+ <ZzyqMmzMaCHqE+9m@BLRRASHENOY1.amd.com>
+In-Reply-To: <ZzyqMmzMaCHqE+9m@BLRRASHENOY1.amd.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 19 Nov 2024 18:13:31 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0i48ph7Qa9ZRwJu6EEh_1Rs9xmsHw9KqdO6zH6RyJFrsg@mail.gmail.com>
+Message-ID: <CAJZ5v0i48ph7Qa9ZRwJu6EEh_1Rs9xmsHw9KqdO6zH6RyJFrsg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] cpuidle: Change :enter_dead() driver callback
+ return type to void
+To: "Gautham R. Shenoy" <gautham.shenoy@amd.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, LKML <linux-kernel@vger.kernel.org>, 
+	x86 Maintainers <x86@kernel.org>, Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>, 
+	Artem Bityutskiy <artem.bityutskiy@linux.intel.com>, 
+	Mario Limonciello <mario.limonciello@amd.com>, Linux ACPI <linux-acpi@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Nov 16, 2024 at 12:17:52PM +0100, Konrad Dybcio wrote:
-> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> 
-> X1 has multiple DWC3 hosts, including one that's USB2, which naturally
-> means it doesn't have a SuperSpeed interrupt. Make it optional to fix
-> warnings such as:
-> 
-> usb@a2f8800: interrupt-names: ['pwr_event', 'dp_hs_phy_irq', 'dm_hs_phy_irq'] is too short
+Hi Gautham,
 
-That's a good start, but what about all the other warnings for usb 
-interrupts?:
+On Tue, Nov 19, 2024 at 4:09=E2=80=AFPM Gautham R. Shenoy
+<gautham.shenoy@amd.com> wrote:
+>
+> Hello Rafael,
+>
+> On Fri, Nov 15, 2024 at 10:00:25PM +0100, Rafael J. Wysocki wrote:
+> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >
+> > After a previous change, cpuidle_play_dead(), which is the only caller
+> > of idle state :enter_dead() callbacks, ignores their return values, so
+> > they may as well be void.
+> >
+> > Suggested-by: Peter Zijlstra <peterz@infradead.org>
+> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>
+> > ---
+> >
+> > v1 -> v2: New patch
+> >
+> > Interestingly enough, the only user of :enter_dead() idle state callbac=
+ks
+> > in the current mainline turns out to be ACPI idle.
+>
+> For that matter, the only user of cpuidle_play_dead() is the
+> native_play_dead(). Was that always the case?
 
-     13  usb@f92f8800: 'interrupt-names' is a required property
-     11  usb@76f8800: interrupt-names: ['pwr_event', 'qusb2_phy', 'hs_phy_irq'] is too short
-     11  usb@6af8800: interrupts: [[0, 347, 4], [0, 243, 4]] is too short
-     11  usb@6af8800: interrupt-names:1: 'qusb2_phy' was expected
-     11  usb@6af8800: interrupt-names:0: 'pwr_event' was expected
-     11  usb@6af8800: interrupt-names: ['hs_phy_irq', 'ss_phy_irq'] is too short
-      9  usb@a2f8800: interrupt-names: ['pwr_event', 'dp_hs_phy_irq', 'dm_hs_phy_irq'] is too short
-      7  usb@c2f8800: interrupt-names: ['pwr_event', 'qusb2_phy', 'hs_phy_irq'] is too short
-      5  usb@8af8800: interrupts-extended: [[1, 0, 134, 4]] is too short
-      5  usb@8af8800: interrupt-names: ['pwr_event'] is too short
-      4  usb@8af8800: interrupts: [[0, 62, 4]] is too short
-      4  usb@8af8800: interrupt-names: ['hs_phy_irq'] is too short
+At least as long ago as of 4.20.
 
+> Some of the other architectures select the deepest available idle
+> state at boot time, and enter that state when a CPU is offlined.
 
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> ---
->  Documentation/devicetree/bindings/usb/qcom,dwc3.yaml | 2 ++
->  1 file changed, 2 insertions(+)
+That's fine as long as the state to use is already known at that time.
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+> In any case I am ok with this.
+>
+> Reviewed-by: Gautham R. Shenoy <gautham.shenoy@amd.com>
+> --
+> Thanks and Regards
+> gautham.
+> >
+> > ---
+> >  drivers/acpi/processor_idle.c |    7 ++-----
+> >  include/linux/cpuidle.h       |    2 +-
+> >  2 files changed, 3 insertions(+), 6 deletions(-)
+> >
+> > Index: linux-pm/include/linux/cpuidle.h
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > --- linux-pm.orig/include/linux/cpuidle.h
+> > +++ linux-pm/include/linux/cpuidle.h
+> > @@ -61,7 +61,7 @@ struct cpuidle_state {
+> >                       struct cpuidle_driver *drv,
+> >                       int index);
+> >
+> > -     int (*enter_dead) (struct cpuidle_device *dev, int index);
+> > +     void (*enter_dead) (struct cpuidle_device *dev, int index);
+> >
+> >       /*
+> >        * CPUs execute ->enter_s2idle with the local tick or entire time=
+keeping
+> > Index: linux-pm/drivers/acpi/processor_idle.c
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > --- linux-pm.orig/drivers/acpi/processor_idle.c
+> > +++ linux-pm/drivers/acpi/processor_idle.c
+> > @@ -578,7 +578,7 @@ static void __cpuidle acpi_idle_do_entry
+> >   * @dev: the target CPU
+> >   * @index: the index of suggested state
+> >   */
+> > -static int acpi_idle_play_dead(struct cpuidle_device *dev, int index)
+> > +static void acpi_idle_play_dead(struct cpuidle_device *dev, int index)
+> >  {
+> >       struct acpi_processor_cx *cx =3D per_cpu(acpi_cstate[index], dev-=
+>cpu);
+> >
+> > @@ -591,11 +591,8 @@ static int acpi_idle_play_dead(struct cp
+> >               else if (cx->entry_method =3D=3D ACPI_CSTATE_SYSTEMIO) {
+> >                       io_idle(cx->address);
+> >               } else
+> > -                     return -ENODEV;
+> > +                     return;
+> >       }
+> > -
+> > -     /* Never reached */
+> > -     return 0;
+> >  }
+> >
+> >  static __always_inline bool acpi_idle_fallback_to_c1(struct acpi_proce=
+ssor *pr)
+> >
+> >
+> >
+>
 
