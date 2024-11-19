@@ -1,103 +1,136 @@
-Return-Path: <linux-kernel+bounces-413920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 124169D2098
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 08:10:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B212F9D208F
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 08:05:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D364E282BAB
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 07:10:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B2CB1F225CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 07:05:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 753C8155743;
-	Tue, 19 Nov 2024 07:10:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C13301514DC;
+	Tue, 19 Nov 2024 07:05:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JMvZ9pOg"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=monstr-eu.20230601.gappssmtp.com header.i=@monstr-eu.20230601.gappssmtp.com header.b="BYN4gdSj"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A1771531C2
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 07:10:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C617C35280
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 07:05:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732000239; cv=none; b=oVKKavtO/J+gQSQikUTO1TwiV+WkAjafPiyVqxedsUL53x/icMzsr0aE/MpN0ERsSUKBQv/m3D/ih69PuSYCP4etMYLIy0HLE83nN/rCWZuI1on27o2ZCXsAMz+FVlIr8xM4SAP/VlP9tnZldhh7FcVPGZ+j6RQz91KWadoDZcg=
+	t=1731999951; cv=none; b=MZopUWIxlELC95WAJ+JEc1uTDUXZB4qSoT67SsPXk7JvfSPDq+FKdUKW0V7g8VOIGfCZtF3HFOs0r/8K0PJjtyqsJyehJYTaS5Jnntd483+aSi1vT+f84pVqst4ZEvyifXYaioMB2R+xhFVCEoSD4AAkW61gBkh0lf6WjCTAjkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732000239; c=relaxed/simple;
-	bh=BqpjFTDnJnBbRx9nVC/Obu6+AVn00e1MNg9RMCdqtyo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Wcdvs2ve6OO2BNiPvPFLawLiVL9zEQWfLlC7m9dilAm2gDmQ4VaSdcuiHe3V/ZzdOZeTkwzbwHuwO4W2W1vXlRW91TGWCFG74kHx2nEl4M+EwwU+M7KY18UgHKaDFFxT/hhoE8+++7HBH2ZEGqerNRrW1JBxxSw4r7fmJMCZRtQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JMvZ9pOg; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732000238; x=1763536238;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=BqpjFTDnJnBbRx9nVC/Obu6+AVn00e1MNg9RMCdqtyo=;
-  b=JMvZ9pOgerSwhuMXuyXqoWUmJ0WofDj6ARvus6PhxQrY47WKVEqNJYiH
-   ibW6Tu4wuxkCQZDBZ8OQvEkN9xLJqQHmF54LLvs2ZrhMXK2eCUeeX2/9e
-   DSUdzvcvWHyINByySsPBq5cadOSg+TushygH2AqDTHf7sJCClkbJsqQvi
-   K8nIooNHUaREbZAsWgraLF+LR6VxiKkzwhGfIhaAWNQQef4HdwmLoaqJ/
-   3486V8JWlTpw6n2rjXTDIlQYUSYb21lth0TwNeatYwzxrPpdsSzFLVX/0
-   7cD24tyczicuwxPQN10zHJh5K2Vk42LnuyYi9vmvSF1nRAQPFmzVbfpT1
-   Q==;
-X-CSE-ConnectionGUID: 3fwSodcLT6OUDAnbyuguPA==
-X-CSE-MsgGUID: yHt7OJrpQi+AVBtNYa/uvQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11260"; a="42500272"
-X-IronPort-AV: E=Sophos;i="6.12,165,1728975600"; 
-   d="scan'208";a="42500272"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2024 23:10:38 -0800
-X-CSE-ConnectionGUID: py2w9umARqWogdqol3xrRw==
-X-CSE-MsgGUID: cVaXzrD1TQi4NJzckwuviQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,165,1728975600"; 
-   d="scan'208";a="93924252"
-Received: from lkp-server02.sh.intel.com (HELO 2cc4542d09d4) ([10.239.97.151])
-  by fmviesa005.fm.intel.com with ESMTP; 18 Nov 2024 23:10:36 -0800
-Received: from kbuild by 2cc4542d09d4 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tDINe-00009q-0O;
-	Tue, 19 Nov 2024 07:10:34 +0000
-Date: Tue, 19 Nov 2024 14:59:51 +0800
-From: kernel test robot <lkp@intel.com>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Kees Cook <kees@kernel.org>
-Subject: ld.lld: error: unknown argument '-dp'
-Message-ID: <202411191708.N1a70IsG-lkp@intel.com>
+	s=arc-20240116; t=1731999951; c=relaxed/simple;
+	bh=iDb28fTOm8ISllSH8ERAKbns7Vi17u61TzjfPWH8Qjc=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=aQCZd5s7+/HNwUuEIFCAodEyXBeWo1pCYpMIRUOwj5OQ3PPSNH7XfvENNkQw2tFQiGdUtXdab/JJn48jLXNrFNyKGKtH/HmOyCnFhlzNQ/Kh3Dxh7h+8/d4A7LW/M8DfEmy4UK3ZJ8tvXCciO423vQIEg7C/VPFVq0ztNd/p8xA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=monstr.eu; spf=none smtp.mailfrom=monstr.eu; dkim=pass (2048-bit key) header.d=monstr-eu.20230601.gappssmtp.com header.i=@monstr-eu.20230601.gappssmtp.com header.b=BYN4gdSj; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=monstr.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=monstr.eu
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a9ec267b879so651390066b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 23:05:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=monstr-eu.20230601.gappssmtp.com; s=20230601; t=1731999945; x=1732604745; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0fZbcFDklvhw6+95htQNXSkNSG0FZlZGX3fcKVcp/lc=;
+        b=BYN4gdSjMwp594eaBiWuWXJjml7Diw3WcLFPPpmU231g1N5oqNOCZ1mv8Pi3rYK1qP
+         HHJnevFud7emDmpHIjtW85vm2G05lHwm2SBIZ1HS7JHmVAnKb4i69620pMvdxNm9Y7Wf
+         D6sNqyNEVX0o9pCeQVpvkkc4j6LKszqYjGpFBW6a+FqX1waQUYBULtEqxkebWvzURPHS
+         stzHyG0Xs8pbQ7cVZZIHQO2RDzo74Jfh+mJlRctZm/NpnHJ+LaNzDP5f/qhgh8ldwXZG
+         gU03pzaBrLj8YDOBwwEx9+TzbYcPGZPO2tK0LhifpcaRRYAfaiWkbAw7//EW1sASFW6P
+         vlZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731999945; x=1732604745;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=0fZbcFDklvhw6+95htQNXSkNSG0FZlZGX3fcKVcp/lc=;
+        b=DQ6b/tz1hVtGboklcIQQDW0KqposBTZwHFogsW4Ze4YiifUQoMuaDNrRyFf7fvsSNV
+         9qE5lT5vNkCrVgdSDht27GN1yeoC7MQbaSmI4mbnKnaBn2EsI3LP05WJ4Qq4XjWzdW7A
+         w+pczS277yggtbT1y/orDjeZil1rk4FcaTKl3KqsjlF07TaXV2t1oh9eZY5Obag6qrnp
+         +yBEzCpDFO5x033X/5j6NfrRmvj32eLUzS9Ptfg4sQOAjfsgi26LyqvOvR+WJFy4DEuh
+         O518ER5yDiqQN4P/lkMzl/btZ3xr+xdb8eNT9wHPqpTe+zmi8So5Uu66NlSbuN7VdLZg
+         yf4Q==
+X-Gm-Message-State: AOJu0YzvHboTo2edNtHckjE559UxgzsuwiTSQlfG8aWir4VBm24e4GXr
+	JAMj7fqbFIQQmZVU1NzDYyT2egSb2vcmAZXbGyuhX9iDVSwDm4+tEYzkSpEFMQ==
+X-Google-Smtp-Source: AGHT+IGkH8XhBZ1/AHVG0ycNZ8XrGi9Q1UGQ98Wzy7AJ/xKLDKFi40rimg9r8npeHCDkudyrhR3bew==
+X-Received: by 2002:a17:907:701:b0:aa1:e04f:e352 with SMTP id a640c23a62f3a-aa48341361fmr1504807666b.16.1731999944533;
+        Mon, 18 Nov 2024 23:05:44 -0800 (PST)
+Received: from [192.168.0.105] (nat-35.starnet.cz. [178.255.168.35])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20dffd7cbsm614589066b.117.2024.11.18.23.05.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 Nov 2024 23:05:44 -0800 (PST)
+Message-ID: <39293bc3-ad14-4196-8a25-a13d66982b2f@monstr.eu>
+Date: Tue, 19 Nov 2024 08:05:42 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+From: Michal Simek <monstr@monstr.eu>
+Subject: [GIT PULL] arch/microblaze patches for 6.13-rc1
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Nathan,
+Hi Linus,
 
-FYI, the error/warning still remains.
+please pull these 3 simple patches to your tree.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   9fb2cfa4635ab7b3d44e88104666e599cd163692
-commit: dd3a7ee91e0ce0b03d22e974a79e8247cc99959b hardening: Adjust dependencies in selection of MODVERSIONS
-date:   7 weeks ago
-config: um-allmodconfig (https://download.01.org/0day-ci/archive/20241119/202411191708.N1a70IsG-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 592c0fe55f6d9a811028b5f3507be91458ab2713)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241119/202411191708.N1a70IsG-lkp@intel.com/reproduce)
+Thanks,
+Michal
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411191708.N1a70IsG-lkp@intel.com/
 
-All errors (new ones prefixed by >>):
+The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758edc:
 
->> ld.lld: error: unknown argument '-dp'
+   Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
+
+are available in the Git repository at:
+
+   git://git.monstr.eu/linux-2.6-microblaze.git tags/microblaze-v6.13
+
+for you to fetch changes up to eb01f8f3c446ed81e3b2c44b7fbed8a5d6be9d3d:
+
+   microblaze: mb: Use str_yes_no() helper in show_cpuinfo() (2024-11-15 
+10:27:48 +0100)
+
+----------------------------------------------------------------
+Microblaze patches for 6.13-rc1
+
+- Export xmb_manager functions
+- Remove empty #ifndef __ASSEMBLY__ statement
+- Use str_yes_no() helper in show_cpuinfo()
+
+----------------------------------------------------------------
+Michal Simek (1):
+       microblaze: Export xmb_manager functions
+
+Thomas Huth (1):
+       microblaze: Remove empty #ifndef __ASSEMBLY__ statement
+
+Thorsten Blum (1):
+       microblaze: mb: Use str_yes_no() helper in show_cpuinfo()
+
+  arch/microblaze/include/uapi/asm/setup.h  |  3 ---
+  arch/microblaze/kernel/cpu/mb.c           | 10 +++++-----
+  arch/microblaze/kernel/microblaze_ksyms.c | 10 ++++++++++
+  3 files changed, 15 insertions(+), 8 deletions(-)
+
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Michal Simek, Ing. (M.Eng), OpenPGP -> KeyID: FE3D1F91
+w: www.monstr.eu p: +42-0-721842854
+Maintainer of Linux kernel - Xilinx Microblaze
+Maintainer of Linux kernel - Xilinx Zynq ARM and ZynqMP/Versal ARM64 SoCs
+U-Boot custodian - Xilinx Microblaze/Zynq/ZynqMP/Versal/Versal NET SoCs
+TF-A maintainer - Xilinx ZynqMP/Versal/Versal NET SoCs
+
 
