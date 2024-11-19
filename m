@@ -1,104 +1,101 @@
-Return-Path: <linux-kernel+bounces-414299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0937F9D260A
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 13:41:33 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FD969D2615
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 13:46:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42A05280FE0
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 12:41:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58D46B2B930
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 12:42:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89A4D1CBEBC;
-	Tue, 19 Nov 2024 12:41:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 280271CBEA8;
+	Tue, 19 Nov 2024 12:42:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="mdH2S+g9"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WJ9P3mSV"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2581A1C9EC2;
-	Tue, 19 Nov 2024 12:41:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 668891C9EC2;
+	Tue, 19 Nov 2024 12:42:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732020082; cv=none; b=pizBzkFlQsrMsYMuydfaap+G1khmOTDyKWGPLNKngB8Mvsj50Z7rYlwUL9Y0tHUQfG3sX02E8PpV7YED/NnFoWVPL2TKyoqH/MXCUHjMF8oYBjdj8fv6wF6rYKyRpHTY4o5o0BlMzw4HtS0Dv/jkXO1wgMeFzXjkj5JhVnhMuOU=
+	t=1732020138; cv=none; b=GgmYIMv3oibCgGQgJ0/rUSp1/6bJjFxf+6jXTd3jPtrDizWMGtfxiY7DbQoKu2jkMytDxpz8JXlC8NFBFzU8Nwyo8PJf/uQkEYOTDxUuD5UCCfgbqgZCo9x+pNCJidBXC1o1EWc1SSyhGVHBv8qe9+oUrgaVGekkcPcurxgeAwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732020082; c=relaxed/simple;
-	bh=cPzqU9OqmO7u8YLVierk+4DHkUIpDJShKogyzpU9sr8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=a9A1krqxG87yUnvCPtpsizo0EyS6ENjMTf8bX6taAeRdd3ykI0cCLlvUbqA83dpQxYTch9KxOn2wetHGsp24QdFiqVXqtRkVgG40UtgM2kDnRFo+iqB0EVmpIJMA6FNBPk1AfRL7W2ypTzTZEVdHgkHxGRPp3OtJUJAz2gAyd3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=mdH2S+g9; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1732020078;
-	bh=cPzqU9OqmO7u8YLVierk+4DHkUIpDJShKogyzpU9sr8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=mdH2S+g9iIIUkwu6OK9t+P634eEtcTQhCLBRCd7DJ99o+FskSqjtk4SX+Zs6Ut0OT
-	 67iPCFaxYUm+RX1DVCFGNhd1V3IAszwkm2jr68z06mTU7vYh5pVneieDjI5UpV9mZS
-	 SfHIOVpCGCjLkuzOA35zzLcqisX2oOdyg0KNXavPyuh+DCf96343SovzFzxEZRq336
-	 z8wZHzFYlMNi2L0tq99t0XAK8v0Nqo044pOxyvBzG+uDkh2OxalxW1bAkwJgGpFgbh
-	 jvgE7HOTRye0az+pgV3rCOtmvGQpRdZdoCT9vlA3VwQSGuUHr9Gk7zpBKpBfA4YbV2
-	 HEHme4PqsCZMg==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 6E90117E365E;
-	Tue, 19 Nov 2024 13:41:17 +0100 (CET)
-Message-ID: <0dc25339-8806-4a59-8350-75eea5e826ab@collabora.com>
-Date: Tue, 19 Nov 2024 13:41:16 +0100
+	s=arc-20240116; t=1732020138; c=relaxed/simple;
+	bh=wWKTqUQ5iv4RgeTY719W4FLY1/DymU8v/OW7Ir19xGw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UNDHsuKHvsnoVx1VrYMdAifyUrJedt+XT0UIte9f++1VsvRJ22BE5vER8FuszJnoY4kM09SYgFEfG6weh2KWQgvK7TePUcLP/Z93QXGc2oifSSNYf7zXhk+NF3NtN23GgH+D+cxojQcQLXiz4KhNv4VzpIiTufbOnJLgBNOIquE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=WJ9P3mSV; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=puRMvSLyawqJq23PQKWWRN4nNtfGHtUVP3j5guk5Wl0=; b=WJ9P3mSVDIDod+9iP7msOwyB43
+	BJ7nUNy1PJoa6f+pOuHABiyLJ1+0xqjFGxI7CAN9LhHDH6yd0Kor8VO6ZY2ad2x7Y8eSzlxFjdmm3
+	DLjFUKV4q4R06DHQqk4QAN7KnOyecxgiG98AGdEtm9XceS7GrfHQTqa8JUXYnaA9UDDXKeJ5/xtjD
+	f77FGUmAp9cVY4Xg3pkDN10Iz9YSIalisQ81yAaV/ptz8PbI8VpqTlXQwm7DDxY9vgvMg2HdxqtKW
+	2kqjiYA85dD5IUDrZ8rbMCuVSZBM8bMn81mVOcvM3fEyZeF1VD8g1xU8Nrp44QR0TVwXT/pkDhRFG
+	hol6rWqg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tDNYe-0000000COfP-3foN;
+	Tue, 19 Nov 2024 12:42:16 +0000
+Date: Tue, 19 Nov 2024 04:42:16 -0800
+From: Christoph Hellwig <hch@infradead.org>
+To: Benjamin Coddington <bcodding@redhat.com>
+Cc: Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>,
+	Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] nfs/blocklayout: Don't attempt unregister for
+ invalid block device
+Message-ID: <ZzyHqEDt8UXoAUyh@infradead.org>
+References: <cover.1731969260.git.bcodding@redhat.com>
+ <eeb62d9260f2e9b61ff5e186eec0048e51bc8758.1731969260.git.bcodding@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mailbox: Switch back to struct platform_driver::remove()
-To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
- Jassi Brar <jassisinghbrar@gmail.com>
-Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Matthias Brugger
- <matthias.bgg@gmail.com>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>, Chen-Yu Tsai
- <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>, Michal Simek <michal.simek@amd.com>,
- linux-kernel@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- linux-arm-msm@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org
-References: <6f0297ba884c670d604232c2861347940082c8e6.1732004078.git.u.kleine-koenig@baylibre.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <6f0297ba884c670d604232c2861347940082c8e6.1732004078.git.u.kleine-koenig@baylibre.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <eeb62d9260f2e9b61ff5e186eec0048e51bc8758.1731969260.git.bcodding@redhat.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Il 19/11/24 09:16, Uwe Kleine-König ha scritto:
-> After commit 0edb555a65d1 ("platform: Make platform_driver::remove()
-> return void") .remove() is (again) the right callback to implement for
-> platform drivers.
-> 
-> Convert all platform drivers below drivers/mailbox to use .remove(),
-> with the eventual goal to drop struct platform_driver::remove_new(). As
-> .remove() and .remove_new() have the same prototypes, conversion is done
-> by just changing the structure member name in the driver initializer.
-> 
-> Make a few indentions consistent while touching these struct
-> initializers.
-> 
-> Signed-off-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
+On Mon, Nov 18, 2024 at 05:40:40PM -0500, Benjamin Coddington wrote:
+> Since commit d869da91cccb, an unmount of a pNFS SCSI layout-enabled NFS
 
-MediaTek:
+Please also spell out the commit subject in the commit log body, similar
+to to the Fixes tag.
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> index 6252f4447945..7ae79814f4ff 100644
+> --- a/fs/nfs/blocklayout/dev.c
+> +++ b/fs/nfs/blocklayout/dev.c
+> @@ -16,13 +16,16 @@
+>  
+>  static void bl_unregister_scsi(struct pnfs_block_dev *dev)
+>  {
+> -	struct block_device *bdev = file_bdev(dev->bdev_file);
+> -	const struct pr_ops *ops = bdev->bd_disk->fops->pr_ops;
+> +	struct block_device *bdev;
+> +	const struct pr_ops *ops;
+>  	int status;
+>  
+>  	if (!test_and_clear_bit(PNFS_BDEV_REGISTERED, &dev->flags))
+>  		return;
+>  
+> +	bdev = file_bdev(dev->bdev_file);
+> +	ops = bdev->bd_disk->fops->pr_ops;
+> +
 
+Hmm.  Just moving the test_and_clear_bit to the caller would
+feel cleaner than this to me.
+
+But either way the change looks good:
+
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 
 
