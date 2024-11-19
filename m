@@ -1,154 +1,111 @@
-Return-Path: <linux-kernel+bounces-414080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBB3C9D22C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 10:48:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 744EA9D22C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 10:49:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5451DB23D3D
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 09:48:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B83A282A87
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 09:49:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 226311C1F31;
-	Tue, 19 Nov 2024 09:47:49 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D4A81B6D16;
+	Tue, 19 Nov 2024 09:49:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="YWBcs+Kg"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5480919ADBA
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 09:47:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D6BC154BF0
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 09:49:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732009668; cv=none; b=S+QDOSc86avH1eZiy0Xhm81Ayq48KYUqePaFT4i56QU2vXt7TDcyCwxLkEDvZUIiXcprwdvMaboLnRdcD/mJtrqhpPCSL1vohauqN2J9qhJQ+SFXjz0dfXyL8I/EY8mCmd8xXzjygUH0c9g5ITC6BK5TSxTmk2eMpac/nAX2YM8=
+	t=1732009774; cv=none; b=OvbPpo2z/ZJgovluF6jdrk+IzymxIndMlI6z9i+4QXk3hJEAdnT1tOWgSRCYpYM5LwPUy+BkvVaTEl1nKLIR1iTABvEiqBifhWnL7EIo5y4S3SQuFXMGLrGBWEbRS0sNPdCPJ5V1fjPE5QMLUCab7KPzbFbdJH4aw3enaRYz2is=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732009668; c=relaxed/simple;
-	bh=FYFdLlL+RVQliDOdKsJtfpoOez0lFeCjeub9FAGn/Iw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hqovJ2P3+ZsAaIxiZ8DPeVJT5u69Sy5SPdnb56aSbrB3+8EVJm1Dsauv0KOpxuP7/VNol2jGsqhX/AKBGv2SkvbMaTqiIfRhyu4VlipmqTKbGb7uKdIdr00HosWMHsqkpJdMHLXDBN0JkyTHJOyBqu5xjgJgB9IER1rEqlm2y8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1tDKpT-0005uf-6K; Tue, 19 Nov 2024 10:47:27 +0100
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1tDKpQ-001Xed-1N;
-	Tue, 19 Nov 2024 10:47:24 +0100
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1tDKpQ-003HSG-10;
-	Tue, 19 Nov 2024 10:47:24 +0100
-Date: Tue, 19 Nov 2024 10:47:24 +0100
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Choong Yong Liang <yong.liang.choong@linux.intel.com>
-Cc: "Russell King (Oracle)" <linux@armlinux.org.uk>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH net v2 1/2] net: phy: replace phydev->eee_enabled with
- eee_cfg.eee_enabled
-Message-ID: <ZzxerMEiUYUhdDIy@pengutronix.de>
-References: <20241115111151.183108-1-yong.liang.choong@linux.intel.com>
- <20241115111151.183108-2-yong.liang.choong@linux.intel.com>
- <ZzdOkE0lqpl6wx2d@shell.armlinux.org.uk>
- <c1bb831c-fd88-4b03-bda6-d8f4ec4a1681@linux.intel.com>
+	s=arc-20240116; t=1732009774; c=relaxed/simple;
+	bh=lgopZdd6v9xAoh9CPgG7G6P2Rctls1aMm/4WV1OQBlw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=QjywVWSpzeyG1+lw26Rm633U7/KWdX9uAsWbLJusqhPZaarDsrOQglh9dXEoQ24hFuJnJHVtSu552/15K10cVVC2asTlBmRJlNBTVjS7IYTI9XzfFtOxoLKqulYNXGRAL0rymQIFsePioN/6FgvhGRCCP1cIc7jpaulpHIhB5Lk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=YWBcs+Kg; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5cfba4e0231so421998a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 01:49:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ionos.com; s=google; t=1732009771; x=1732614571; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eP6utXSspykskYzsNkWUBuQWYEnMFsie+2NCl6mM1/Q=;
+        b=YWBcs+KgbMhR9KMQpV0aa4OmziYY/0GS+F532ii6y7hRkUH3HPSkwGs9qzRPgo4Rep
+         nE44Lh1cbSL0/0GuBGtlifyiLRisJlSJ4eJU7WhNLOCobq+d4euMtYMinoS8fiL1Pjfj
+         VPVWuvGeokhOqD/EAZfiXvevvOochHA2hOMHOq0N+BjQ0CaxJ1FWC/3LK/0R8+/D+ZpX
+         KiyyrxJHwISIynv+6jAHrBm6V3L6L7KglW7Mskf1V5QldN3pN9z/tILI5BPx3pXyIjo/
+         T2l/JvoeySpPLiF+EFumuGnAq4aYIsXtlH3xGLmkxsqPMg7m8DFdm1SCxzBHysS5R9Wo
+         N4vQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732009771; x=1732614571;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eP6utXSspykskYzsNkWUBuQWYEnMFsie+2NCl6mM1/Q=;
+        b=JsEp6vrk8IFcqHFfBa7EIY3o2c1c8SOqK4i/ryoorgNVrnhGFIapiKPLITzeuSnwAt
+         44LE7X7T4j3AwvWfizJKTBaXdZkKrHiD0OsfIhV7eyXXQ9LaLI3QBoWtJY3yWqC4z1Ki
+         FUaVvO7biN9X43QgdScQiZgZ9Hkmz60fY91qCYc3T292j2I04PhBuRE6/3rB0k+nC/Pl
+         fqwKTeNOvlJBnQ8aiwSABHwesOXxVG0dc+/cS55MCKweZPbrhXTBs6lWBT+7r+HEDWFD
+         IHPctpy1Mg2rD0fdu3+NG2Ncfd81JzNH76vCWvl0mqZW0YlUlVckVyxa7RiB7p+hJsNd
+         WScw==
+X-Gm-Message-State: AOJu0YwPnT5HLJJyshGceGbLPnv118AqwE/SdCkAWwijdgjJO1tLB5Da
+	96O5rNCh1EzGeNDSZqtXuLEkszZ6T6su/UPSODX0eIUzCjdJW+DPmhAjM+Pm/IM=
+X-Gm-Gg: ASbGncstHMZG7io4ZnFz52XFg9zyHDwybqRTzRSGG8gjDQNXe9QmX5cdN9/znTgXhxB
+	TSldQe5uD3e4qHWEKaFMv7n4eXDJZ9fEppJP1oKYSpEfGFrGUgFYF1UyYwFhAiKYuWB8Pp07fVM
+	9mza3pgyelf2zxXkkPPHamXFneszFhXKXqoK4cOmf9mfA45h7CmQyLtp8J7vJ/UyrBe7NtGapV4
+	9XZrXbJT+72Tt8xtw3M7DZN8U0UtwVpJuVXYz1hVNzHQPgLdB//iLpC34wF1YAImOSbwZiis1E=
+X-Google-Smtp-Source: AGHT+IFwGycoY5tmfGgoWai1RPCDaLKxzMqxyguqzfyyT8M1bLxtmfQi8zo5SFAqATNoMeg5yALTxw==
+X-Received: by 2002:a05:6402:50ce:b0:5cf:7aad:bed2 with SMTP id 4fb4d7f45d1cf-5cf8fc4210cmr5229935a12.4.1732009770647;
+        Tue, 19 Nov 2024 01:49:30 -0800 (PST)
+Received: from lb02065.fkb.profitbricks.net ([2001:9e8:141f:2700:f5a7:4035:a697:97ab])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cfaa333720sm3306563a12.61.2024.11.19.01.49.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Nov 2024 01:49:30 -0800 (PST)
+From: Jack Wang <jinpu.wang@ionos.com>
+To: yukuai1@huaweicloud.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-raid@vger.kernel.org,
+	song@kernel.org,
+	xni@redhat.com,
+	yangerkun@huawei.com,
+	yi.zhang@huawei.com,
+	yukuai3@huawei.com
+Subject: RE:  [PATCH md-6.13 4/5] md/raid5: implement pers->bitmap_sector() 
+Date: Tue, 19 Nov 2024 10:49:29 +0100
+Message-ID: <20241119094929.148060-1-jinpu.wang@ionos.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241118114157.355749-6-yukuai1@huaweicloud.com>
+References: <20241118114157.355749-6-yukuai1@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <c1bb831c-fd88-4b03-bda6-d8f4ec4a1681@linux.intel.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
 
-On Tue, Nov 19, 2024 at 05:06:33PM +0800, Choong Yong Liang wrote:
-> 
-> 
-> On 15/11/2024 9:37 pm, Russell King (Oracle) wrote:
-> > On Fri, Nov 15, 2024 at 07:11:50PM +0800, Choong Yong Liang wrote:
-> > > Not all PHYs have EEE enabled by default. For example, Marvell PHYs are
-> > > designed to have EEE hardware disabled during the initial state.
-> > > 
-> > > In the initial stage, phy_probe() sets phydev->eee_enabled to be disabled.
-> > > Then, the MAC calls phy_support_eee() to set eee_cfg.eee_enabled to be
-> > > enabled. However, when phy_start_aneg() is called,
-> > > genphy_c45_an_config_eee_aneg() still refers to phydev->eee_enabled.
-> > > This causes the 'ethtool --show-eee' command to show that EEE is enabled,
-> > > but in actuality, the driver side is disabled.
-> > > 
-> > > This patch will remove phydev->eee_enabled and replace it with
-> > > eee_cfg.eee_enabled. When performing genphy_c45_an_config_eee_aneg(),
-> > > it will follow the master configuration to have software and hardware
-> > > in sync.
-> > 
-> > Hmm. I'm not happy with how you're handling my patch. I would've liked
-> > some feedback on it (thanks for spotting that the set_eee case needed
-> > to pass the state to genphy_c45_an_config_eee_aneg()).
-> > 
-> > However, what's worse is, that the bulk of this patch is my work, yet
-> > you've effectively claimed complete authorship of it in the way you
-> > are submitting this patch. Moreover, you are violating the kernel
-> > submission rules, as the Signed-off-by does not include one for me
-> > (which I need to explicitly give.) I was waiting for the results of
-> > your testing before finalising the patch.
-> > 
-> > The patch needs to be authored by me, the first sign-off needs to be
-> > me, then optionally Co-developed-by for you, and then your sign-off.
-> > 
-> > See Documentation/process/submitting-patches.rst
-> > 
-> > Thanks.
-> > 
-> > pw-bot: cr
-> > 
-> 
-> Sorry for the late reply; I just got back from my sick leave. I wasn't aware
-> that you had already submitted a patch. I thought I should include it in my
-> patch series. However, I think I messed up the "Signed-off" part. Sorry
-> about that.
-> 
-> The testing part actually took quite some time to complete, and I was
-> already sick last Friday. I was only able to complete the patch series and
-> resubmit the patch, and I thought we could discuss the test results from the
-> patch series. The issue was initially found with EEE on GPY PHY working
-> together with ptp4l, and it did not meet the expected results. There are
-> many things that need to be tested, as it is not only Marvell PHY that has
-> the issue.
+Hi Kuai,
 
-Hm, the PTP issue with EEE is usually related to PHYs implementing the
-EEE without MAC/LPI support. This PHYs are buffering frames and changing
-the transmission time, so if the time stamp is made by MAC it will have
-different real transmission time. So far i know, Atheros and Realtek
-implement it, even if it is not always officially documented, it can be
-tested.
+Thanks for the patchset, as you mentioned both both hung problem regarding raid5
+bitmap, just want to get confirmation, will this patchset fix the hung or just a
+performance improvement/code cleanup?
 
-Regards,
-Oleksij
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+
+In patch4, as you removed the set/clear bit STRIPE_BITMAP_PENDING, I think you
+should also remove the test_bit line in stripe_can_batch, also the definition 
+enum in raif5.h and the few lines in comments in __add_stripe_bio, same for the
+line in break_stripe_batch_list.
+
+
+Regards!
+Jinpu Wang @ IONOS
+
 
