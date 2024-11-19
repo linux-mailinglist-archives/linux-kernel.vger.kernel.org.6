@@ -1,115 +1,114 @@
-Return-Path: <linux-kernel+bounces-414024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E1209D21FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 09:57:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3022F9D21FD
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 09:58:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33A24281EB9
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 08:57:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D21F61F22450
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 08:58:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAEE01ADFF9;
-	Tue, 19 Nov 2024 08:57:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="X/p7my+z"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 601D919C553;
+	Tue, 19 Nov 2024 08:58:34 +0000 (UTC)
+Received: from queue02a.mail.zen.net.uk (queue02a.mail.zen.net.uk [212.23.3.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84BA41798C;
-	Tue, 19 Nov 2024 08:57:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDCAD146D53;
+	Tue, 19 Nov 2024 08:58:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.23.3.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732006642; cv=none; b=qo9IdJVfbTYP08XZGoc+kChPCqpkKKZ8aJcMgY+RlKpohFNzA9c/MmU9FokmMbKAeoYMP/zlkywdAbG1ELspXtZ5BAg6g9uVCYvo2zukLlJcbkr6K8VVNAh2vtuVcrUknbdPch3L4cEPmoG220BdTqfFI+Nkt/VW5es3azU8H5E=
+	t=1732006714; cv=none; b=kwKCubmA6AuBvccb9qC/Or+N0VMMegWVvF2s7X04C9Pml+5tBAk+bBnILuIPjIPzHZE07ik+7HC3d0p+HmJn9OdXxmDI1+trVPDmiGmUxxKPAzX/dTp68UsxuHV47tqsVzKR9dtActBLhlup3REy7OkDlVdF0gnASVIx4D6Zvwg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732006642; c=relaxed/simple;
-	bh=01mOnY+a8qSh1SokfXxE9W5gK3wHTvzsLqt9Vk0HDG0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XTj6vDJ9zUomyExd9+UR5HLI/S3VrtwswBNVEBo4lMu3dp5RasKYCfaqQPqwIue30dinnWHuqM+CnMBCzeKgPSIAgdT1mK9xyITYpuT3kJRKSLMBTVoiPw3WcLFFqTCLGZVC6lAJ8aCqKs4dgXvAq7xf3X+oIDWmptjQHkM5d4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=X/p7my+z; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 07C5740012;
-	Tue, 19 Nov 2024 08:57:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1732006632;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qDLMX9bwiKUPXm5HqirAa1WgF18sn8QriLeZ4mKqO1s=;
-	b=X/p7my+zUThqfZtd/oVsk84v3RaXRAVl04osFZ0G8CSXu1bzLEaNt7ygD6XcYFErj8UJk7
-	dtxVD5UquR/Goz8gYhMmqqI0712YnCZoiKAfqt3OyFh+keXS+0d5JCz2Y+sqwiKuRTnvM5
-	vG5ZbEnyVJPQXYVtuUAmcr7IPuTjV71yHL1pRL8RU0Df9Z5kWdEgX+irCnyUlsfn76lzSQ
-	Exm6QG8MuTNTf1C09Qvm0PtW5mQWHOo9RUJzmvTUfgODq8vxtejUF5A65tKwg48wCf1tNj
-	qAyBhSA/DQsBJXhCqmV7j3DcZy7IFuOHW/Fj1Wg9EJfZHlq4Xwxc4ppgIeNEwQ==
-Message-ID: <20802d12-004a-4b04-9b7d-93dc8b9866df@bootlin.com>
-Date: Tue, 19 Nov 2024 09:57:09 +0100
+	s=arc-20240116; t=1732006714; c=relaxed/simple;
+	bh=3MJqZujfzQTnUBOQrzwOW7HNIkITbNo0p80ffTxP4rs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PWva82Tu+1rdhCAFszVdIR+7rXYxoYxSgmjSq4LOx/3Wa/U5BvZgXUM5Rjtlc46YD8z9z/VCEGNvMasnmlCLKPmkXK+/jhHlZzDhSK1ma/hckkIvMWakKpg/cpVz2kWvXEHqvIda9DhAXarGY68Bo1ANDEWvOI2iwwIhb1uC6yQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=starlabs.systems; spf=fail smtp.mailfrom=starlabs.systems; arc=none smtp.client-ip=212.23.3.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=starlabs.systems
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=starlabs.systems
+Received: from [212.23.1.3] (helo=smarthost01b.sbp.mail.zen.net.uk)
+	by queue02a.mail.zen.net.uk with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <sean@starlabs.systems>)
+	id 1tDK41-003kCX-Nq;
+	Tue, 19 Nov 2024 08:58:25 +0000
+Received: from [217.155.46.38] (helo=sean-Byte.localdomain)
+	by smarthost01b.sbp.mail.zen.net.uk with esmtp (Exim 4.95)
+	(envelope-from <sean@starlabs.systems>)
+	id 1tDK3t-000PBm-CV;
+	Tue, 19 Nov 2024 08:58:17 +0000
+From: Sean Rhodes <sean@starlabs.systems>
+To: linux-kernel@vger.kernel.org
+Cc: Sean Rhodes <sean@starlabs.systems>,
+	stable@vger.kernel.org,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [Patch v] drivers/card_reader/rtsx_usb: Restore interrupt based detection
+Date: Tue, 19 Nov 2024 08:58:15 +0000
+Message-ID: <20241119085815.11769-1-sean@starlabs.systems>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next v2 11/13] selftests/bpf: add network helpers to
- generate udp checksums
-To: Stanislav Fomichev <stfomichev@gmail.com>
-Cc: Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman
- <eddyz87@gmail.com>, Mykola Lysenko <mykolal@fb.com>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>,
- "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
- Jesper Dangaard Brouer <hawk@kernel.org>, ebpf@linuxfoundation.org,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Bastien Curutchet <bastien.curutchet@bootlin.com>, bpf@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org
-References: <20241114-flow_dissector-v2-0-ee4a3be3de65@bootlin.com>
- <20241114-flow_dissector-v2-11-ee4a3be3de65@bootlin.com>
- <ZzdunVLMaX1iy85i@mini-arch>
-From: =?UTF-8?Q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>
-Content-Language: en-US
-In-Reply-To: <ZzdunVLMaX1iy85i@mini-arch>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-GND-Sasl: alexis.lothore@bootlin.com
+X-Originating-smarthost01b-IP: [217.155.46.38]
+Feedback-ID: 217.155.46.38
 
-On 11/15/24 16:54, Stanislav Fomichev wrote:
-> On 11/14, Alexis Lothoré (eBPF Foundation) wrote:
->> +static inline __sum16 build_udp_v4_csum(const struct iphdr *iph, __u8 l4_proto,
->> +					__u16 l4_len, const void *l4_start,
->> +					int num_words)
->> +{
->> +	unsigned long pseudo_sum;
->> +	int num_u16 = sizeof(iph->saddr); /* halfwords: twice byte len */
->> +
->> +	pseudo_sum = add_csum_hword((void *)&iph->saddr, num_u16);
->> +	pseudo_sum += htons(l4_proto);
->> +	pseudo_sum += l4_len;
->> +	pseudo_sum += add_csum_hword(l4_start, num_words);
->> +	return csum_fold(pseudo_sum);
-> 
-> I was expecting to see a call to csum_tcpudp_magic here. And csum_ipv6_magic
-> down below. These build pseudo header csum, so no need to manually do it
-> again.
+This commit reintroduces interrupt-based card detection previously
+used in the rts5139 driver. This functionality was removed in commit
+00d8521dcd23 ("staging: remove rts5139 driver code").
 
-I initially tried to fit csum_tcpudp_magic here and did not manage to make a
-valid UDP checksum, but after more attempts, it looks like I had a
-misunderstanding this checksum computation. I am now able to used
-csum_tcpudp_magic in build_udp_v4_csum, it will be fixed in the next revision :)
+Reintroducing this mechanism fixes presence detection for certain card
+readers, which with the current driver, will taken approximately 20
+seconds to enter S3 as `mmc_rescan` has to be frozen.
 
-Thanks,
+Fixes: 00d8521dcd23 ("staging: remove rts5139 driver code")
+Cc: stable@vger.kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Sean Rhodes <sean@starlabs.systems>
+---
+ drivers/misc/cardreader/rtsx_usb.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-Alexis
-
+diff --git a/drivers/misc/cardreader/rtsx_usb.c b/drivers/misc/cardreader/rtsx_usb.c
+index f150d8769f19..285a748748d7 100644
+--- a/drivers/misc/cardreader/rtsx_usb.c
++++ b/drivers/misc/cardreader/rtsx_usb.c
+@@ -286,6 +286,7 @@ static int rtsx_usb_get_status_with_bulk(struct rtsx_ucr *ucr, u16 *status)
+ int rtsx_usb_get_card_status(struct rtsx_ucr *ucr, u16 *status)
+ {
+ 	int ret;
++	u8 interrupt_val = 0;
+ 	u16 *buf;
+ 
+ 	if (!status)
+@@ -308,6 +309,20 @@ int rtsx_usb_get_card_status(struct rtsx_ucr *ucr, u16 *status)
+ 		ret = rtsx_usb_get_status_with_bulk(ucr, status);
+ 	}
+ 
++	rtsx_usb_read_register(ucr, CARD_INT_PEND, &interrupt_val);
++	/* Cross check presence with interrupts */
++	if (*status & XD_CD)
++		if (!(interrupt_val & XD_INT))
++			*status &= ~XD_CD;
++
++	if (*status & SD_CD)
++		if (!(interrupt_val & SD_INT))
++			*status &= ~SD_CD;
++
++	if (*status & MS_CD)
++		if (!(interrupt_val & MS_INT))
++			*status &= ~MS_CD;
++
+ 	/* usb_control_msg may return positive when success */
+ 	if (ret < 0)
+ 		return ret;
 -- 
-Alexis Lothoré, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.45.2
+
 
