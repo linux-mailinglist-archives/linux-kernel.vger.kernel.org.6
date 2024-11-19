@@ -1,146 +1,123 @@
-Return-Path: <linux-kernel+bounces-414857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B79F9D2E56
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 19:49:32 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31BC29D2E62
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 19:53:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99B481F23048
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 18:49:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B46A3B2E3C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 18:51:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB03D1547C8;
-	Tue, 19 Nov 2024 18:49:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A4781D2715;
+	Tue, 19 Nov 2024 18:51:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QQ/ZAWiZ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="EvgMhu7T"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3851D14AD0E
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 18:49:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EF421547C8;
+	Tue, 19 Nov 2024 18:51:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732042164; cv=none; b=EcImPcW/92Hx8K7KDIDRpCimJCHO2iE7GAu/4Z+obMbGNjz9+3hW6K8hHbhDPBsI9fcgyx2Mnu0SBLfsMh5iaC0eKMxLKb5UzJcZfP+ZgU6OxvPHiN+4veA78IMQ3wr+I6PelU4oGmsVnNKcK0+7M4rMR4S35ZA+G0LBXZXnvU0=
+	t=1732042291; cv=none; b=deS2XUFwU8DyFTdhI6BdGkU0XbmcRPKCSqLvjTqkQsyxHsocKTHlg42+npbeIU2N0jUUMEGJ1wG3Xad5kB5Dpoe9reDaMjnKPwENgSkyXiwO6ydYezO/LmNTDDwqSdvhciaNgyXrC1epDdoJB3mk4QWfZX6T2UBErW43GwTeyiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732042164; c=relaxed/simple;
-	bh=HF9iKbm6STiAG7Hk1w/gTiGc+GNvOhes6d8Kj5OagQk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=A2Uyrk/v347pkp/oaiZC7SQ3ZYUwHfnQAQhrf9k16WF5R47c8DOa0ztesDnMTX+mL4A8PupPZ+lNrY97VzK4tLzgaCjVgffLiYhJj4mrIIwb4upHF52ox/mBaQv3i7mc4qKN0tuPU62mX29GT8wFQ87YZbdaUvibcTSZ85WtmMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QQ/ZAWiZ; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732042162; x=1763578162;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=HF9iKbm6STiAG7Hk1w/gTiGc+GNvOhes6d8Kj5OagQk=;
-  b=QQ/ZAWiZQuxZmTOiCoVAg2sQ/kfxP6CwaNUpp6ftCwpYDAA3QNQbTZzf
-   tn7gyHFV7M6GZGE2eF0EQ6ml1cLtOklfLENHUMrxz04BuCco/fPAr7iNf
-   UYxPZ7XRUTB9Xjx9oTxKDoEWmF/e+GhoTRFjG0f9nfLf19Gyn625DWpGH
-   QoHPRyqeo3YqdZ2aqGu/BdCyZLBMMCBS5AKakwf2lPmfswyieInamZL9O
-   7aU6pkTaHGZ6P0PgiA8TqRbG3SfT/II7lLyiUJwuL+BY6yA3OJRcrjQQx
-   X3fq4pEnYrygclcd0pmU6RaH6V5nC4L/bc2cEtijZCVP8pDROgZNackEk
-   g==;
-X-CSE-ConnectionGUID: qnBCQrMIST+1P5TwQArSyg==
-X-CSE-MsgGUID: 4hOOnc5HRXWBX15+pyjumQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11261"; a="49602275"
-X-IronPort-AV: E=Sophos;i="6.12,166,1728975600"; 
-   d="scan'208";a="49602275"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Nov 2024 10:49:21 -0800
-X-CSE-ConnectionGUID: wrDQtq+EQ32+WvvEQapk3w==
-X-CSE-MsgGUID: n0HjzgncRWWDOgsfoNtzWQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,166,1728975600"; 
-   d="scan'208";a="112948541"
-Received: from jairdeje-mobl1.amr.corp.intel.com (HELO [10.124.223.7]) ([10.124.223.7])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Nov 2024 10:49:21 -0800
-Message-ID: <8909243c-3e11-4ce1-a067-710402badbea@intel.com>
-Date: Tue, 19 Nov 2024 10:49:21 -0800
+	s=arc-20240116; t=1732042291; c=relaxed/simple;
+	bh=Izhsq75g18QbzihAstecc5RgQNcsQpWPvNlpSv5wY/Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TvjhgYgTKYnnJaYPNZukiKoy0G3SALgTI/KRTYlsVO9nNpWlZ16EzPRZNOOR8SF/5R2hgWKcDjnSoCrIad8XX9NhpZQWd0fuSTJ0wZPwwkkCZJLSl9ns2HI7P2k6dXSOuZkGEtpD0A5yLa3J8PHC9zvBS2cqHAlFXPS7sg04Q+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=EvgMhu7T; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=89rXTlyvwZf7wy1AENCo71hFPFgxU7iIh40Yvq9+ziw=; b=EvgMhu7TluBgBeWrE8nDe71+fU
+	A9TW71iacELiK7rlvJ+FONkzEyTxhuiOuOojwE55G0XCDYerbTnkDeLl21TLOOs+2Zv5qZrdn+wAK
+	S2LNeIqWba4oXI3yV/0S2u79Hv5T5bi8jccGMw09kFvwWR1domGUK5TDPKA+3wRRWKtn6GqbJlS+f
+	0vJTptsx3NpYYq/f1skl8VjkAZC5xpCI68xYV1zdM8Wkq9WZ4m59YG4Jh2/Ae88RhgFXOi9f2xEQ1
+	+iT6gbvy7MPbJUG16lAJlFSsgkL3qzyp/Z0Spi/lcuKDtoAGlwrPDbLeV7s0TcUOdQr85sqRgXOrI
+	YVUCngYQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tDTJr-00000004PU4-1HUc;
+	Tue, 19 Nov 2024 18:51:23 +0000
+Date: Tue, 19 Nov 2024 18:51:23 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Jann Horn <jannh@google.com>
+Cc: Pasha Tatashin <pasha.tatashin@soleen.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	cgroups@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	akpm@linux-foundation.org, corbet@lwn.net, derek.kiernan@amd.com,
+	dragan.cvetic@amd.com, arnd@arndb.de, gregkh@linuxfoundation.org,
+	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+	tj@kernel.org, hannes@cmpxchg.org, mhocko@kernel.org,
+	roman.gushchin@linux.dev, shakeel.butt@linux.dev,
+	muchun.song@linux.dev, Liam.Howlett@oracle.com, vbabka@suse.cz,
+	shuah@kernel.org, vegard.nossum@oracle.com, vattunuru@marvell.com,
+	schalla@marvell.com, david@redhat.com, osalvador@suse.de,
+	usama.anjum@collabora.com, andrii@kernel.org, ryan.roberts@arm.com,
+	peterx@redhat.com, oleg@redhat.com, tandersen@netflix.com,
+	rientjes@google.com, gthelen@google.com,
+	linux-hardening@vger.kernel.org,
+	Kernel Hardening <kernel-hardening@lists.openwall.com>
+Subject: Re: [RFCv1 0/6] Page Detective
+Message-ID: <ZzzeK8Fi_GlXPzjc@casper.infradead.org>
+References: <20241116175922.3265872-1-pasha.tatashin@soleen.com>
+ <a0372f7f-9a85-4d3e-ba20-b5911a8189e3@lucifer.local>
+ <CAG48ez2vG0tr=H8csGes7HN_5HPQAh4WZU8U1G945K1GKfABPg@mail.gmail.com>
+ <CA+CK2bB0w=i1z78AJbr2gZE9ybYki4Vz_s53=8URrxwyPvvB+A@mail.gmail.com>
+ <CAG48ez1KFFXzy5qcYVZLnUEztaZxDGY2+4GvwYq7Hb=Y=3FBxQ@mail.gmail.com>
+ <CA+CK2bCBwZFomepG-Pp6oiAwHQiKdsTLe3rYtE3hFSQ5spEDww@mail.gmail.com>
+ <CAG48ez0NzMbwnbvMO7KbUROZq5ne7fhiau49v7oyxwPrYL=P6Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC][PATCH] x86/cpu/bugs: Consider having old Intel microcode to
- be a vulnerability
-To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
- Dave Hansen <dave.hansen@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org, tglx@linutronix.de,
- bp@alien8.de
-References: <20241107170630.2A92B8D3@davehans-spike.ostc.intel.com>
- <20241119174546.5ehj6yjiqk3baxhh@desk>
-Content-Language: en-US
-From: Dave Hansen <dave.hansen@intel.com>
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
- oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
- 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
- ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
- VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
- iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
- c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
- pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
- ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
- QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABzUVEYXZpZCBDaHJp
- c3RvcGhlciBIYW5zZW4gKEludGVsIFdvcmsgQWRkcmVzcykgPGRhdmUuaGFuc2VuQGludGVs
- LmNvbT7CwXgEEwECACIFAlQ+9J0CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEGg1
- lTBwyZKwLZUP/0dnbhDc229u2u6WtK1s1cSd9WsflGXGagkR6liJ4um3XCfYWDHvIdkHYC1t
- MNcVHFBwmQkawxsYvgO8kXT3SaFZe4ISfB4K4CL2qp4JO+nJdlFUbZI7cz/Td9z8nHjMcWYF
- IQuTsWOLs/LBMTs+ANumibtw6UkiGVD3dfHJAOPNApjVr+M0P/lVmTeP8w0uVcd2syiaU5jB
- aht9CYATn+ytFGWZnBEEQFnqcibIaOrmoBLu2b3fKJEd8Jp7NHDSIdrvrMjYynmc6sZKUqH2
- I1qOevaa8jUg7wlLJAWGfIqnu85kkqrVOkbNbk4TPub7VOqA6qG5GCNEIv6ZY7HLYd/vAkVY
- E8Plzq/NwLAuOWxvGrOl7OPuwVeR4hBDfcrNb990MFPpjGgACzAZyjdmYoMu8j3/MAEW4P0z
- F5+EYJAOZ+z212y1pchNNauehORXgjrNKsZwxwKpPY9qb84E3O9KYpwfATsqOoQ6tTgr+1BR
- CCwP712H+E9U5HJ0iibN/CDZFVPL1bRerHziuwuQuvE0qWg0+0SChFe9oq0KAwEkVs6ZDMB2
- P16MieEEQ6StQRlvy2YBv80L1TMl3T90Bo1UUn6ARXEpcbFE0/aORH/jEXcRteb+vuik5UGY
- 5TsyLYdPur3TXm7XDBdmmyQVJjnJKYK9AQxj95KlXLVO38lczsFNBFRjzmoBEACyAxbvUEhd
- GDGNg0JhDdezyTdN8C9BFsdxyTLnSH31NRiyp1QtuxvcqGZjb2trDVuCbIzRrgMZLVgo3upr
- MIOx1CXEgmn23Zhh0EpdVHM8IKx9Z7V0r+rrpRWFE8/wQZngKYVi49PGoZj50ZEifEJ5qn/H
- Nsp2+Y+bTUjDdgWMATg9DiFMyv8fvoqgNsNyrrZTnSgoLzdxr89FGHZCoSoAK8gfgFHuO54B
- lI8QOfPDG9WDPJ66HCodjTlBEr/Cwq6GruxS5i2Y33YVqxvFvDa1tUtl+iJ2SWKS9kCai2DR
- 3BwVONJEYSDQaven/EHMlY1q8Vln3lGPsS11vSUK3QcNJjmrgYxH5KsVsf6PNRj9mp8Z1kIG
- qjRx08+nnyStWC0gZH6NrYyS9rpqH3j+hA2WcI7De51L4Rv9pFwzp161mvtc6eC/GxaiUGuH
- BNAVP0PY0fqvIC68p3rLIAW3f97uv4ce2RSQ7LbsPsimOeCo/5vgS6YQsj83E+AipPr09Caj
- 0hloj+hFoqiticNpmsxdWKoOsV0PftcQvBCCYuhKbZV9s5hjt9qn8CE86A5g5KqDf83Fxqm/
- vXKgHNFHE5zgXGZnrmaf6resQzbvJHO0Fb0CcIohzrpPaL3YepcLDoCCgElGMGQjdCcSQ+Ci
- FCRl0Bvyj1YZUql+ZkptgGjikQARAQABwsFfBBgBAgAJBQJUY85qAhsMAAoJEGg1lTBwyZKw
- l4IQAIKHs/9po4spZDFyfDjunimEhVHqlUt7ggR1Hsl/tkvTSze8pI1P6dGp2XW6AnH1iayn
- yRcoyT0ZJ+Zmm4xAH1zqKjWplzqdb/dO28qk0bPso8+1oPO8oDhLm1+tY+cOvufXkBTm+whm
- +AyNTjaCRt6aSMnA/QHVGSJ8grrTJCoACVNhnXg/R0g90g8iV8Q+IBZyDkG0tBThaDdw1B2l
- asInUTeb9EiVfL/Zjdg5VWiF9LL7iS+9hTeVdR09vThQ/DhVbCNxVk+DtyBHsjOKifrVsYep
- WpRGBIAu3bK8eXtyvrw1igWTNs2wazJ71+0z2jMzbclKAyRHKU9JdN6Hkkgr2nPb561yjcB8
- sIq1pFXKyO+nKy6SZYxOvHxCcjk2fkw6UmPU6/j/nQlj2lfOAgNVKuDLothIxzi8pndB8Jju
- KktE5HJqUUMXePkAYIxEQ0mMc8Po7tuXdejgPMwgP7x65xtfEqI0RuzbUioFltsp1jUaRwQZ
- MTsCeQDdjpgHsj+P2ZDeEKCbma4m6Ez/YWs4+zDm1X8uZDkZcfQlD9NldbKDJEXLIjYWo1PH
- hYepSffIWPyvBMBTW2W5FRjJ4vLRrJSUoEfJuPQ3vW9Y73foyo/qFoURHO48AinGPZ7PC7TF
- vUaNOTjKedrqHkaOcqB185ahG2had0xnFsDPlx5y
-In-Reply-To: <20241119174546.5ehj6yjiqk3baxhh@desk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAG48ez0NzMbwnbvMO7KbUROZq5ne7fhiau49v7oyxwPrYL=P6Q@mail.gmail.com>
 
-On 11/19/24 09:45, Pawan Gupta wrote:
-> Sorry for playing the devil's advocate. I am wondering who is the prime
-> beneficiary of this change?
+On Tue, Nov 19, 2024 at 01:52:00PM +0100, Jann Horn wrote:
+> > I will take reference, as we already do that for memcg purpose, but
+> > have not included dump_page().
+> 
+> Note that taking a reference on the page does not make all of
+> dump_page() fine; in particular, my understanding is that
+> folio_mapping() requires that the page is locked in order to return a
+> stable pointer, and some of the code in dump_mapping() would probably
+> also require some other locks - probably at least on the inode and
+> maybe also on the dentry, I think? Otherwise the inode's dentry list
+> can probably change concurrently, and the dentry's name pointer can
+> change too.
 
-At a very high level, it's for folks with new kernels and old microcode.
+First important thing is that we snapshot the page.  So while we may
+have a torn snapshot of the page, it can't change under us any more,
+so we don't have to worry about it being swizzled one way and then
+swizzled back.
 
-It's _very_ normal for someone to report a bug and for us upstream folks
-to ask them to reproduce on the latest mainline. The moment they do
-that, they get the latest microcode list. Folks don't randomly upgrade
-to a new kernel for fun in production. But it's hopefully a very normal
-activity for folks having problems and launching into debug.
+Second thing is that I think using folio_mapping() is actually wrong.
+We don't want the swap mapping if it's an anon page that's in the
+swapcache.  We'd be fine just doing mapping = folio->mapping (we'd need
+to add a check for movable, but I think that's fine).  Anyway, we know
+the folio isn't ksm or anon at the point that we call dump_mapping()
+because there's a chain of "else" statements.  So I think we're fine
+because we can't switch between anon & file while holding a refcount.
 
-In other words, "new kernel / old microcode" might be relatively rare,
-but it still gets used at a *very* critical choke point.
+Having a refcount on the folio will prevent the folio from being allocated
+to anything else again.  It will not protect the mapping from being torn
+down (the folio can be truncated from the mapping, then the mapping can
+be freed, and the memory reused).  As you say, the dentry can be renamed
+as well.
 
-I completely agree with your general sentiment that normal distro users
-will get the distro-kernel-provided microcode version list _and_
-distro-provided microcode files. This won't help them one bit unless the
-distro makes a silly mistake, doesn't do testing, or they somehow
-upgrade one package without the other.
+This patch series makes me nervous.  I'd rather see it done as a bpf
+script or drgn script, but if it is going to be done in C, I'd really
+like to see more auditing of the safety here.  It feels like the kind
+of hack that one deploys internally to debug a hard-to-hit condition,
+rather than the kind of code that we like to ship upstream.
 
