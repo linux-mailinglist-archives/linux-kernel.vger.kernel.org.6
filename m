@@ -1,226 +1,353 @@
-Return-Path: <linux-kernel+bounces-414006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DFCC9D21BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 09:41:37 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B31169D2189
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 09:26:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C846B232A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 08:41:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0241DB21FF3
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 08:26:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CF0A1C1F25;
-	Tue, 19 Nov 2024 08:40:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88AFF198A07;
+	Tue, 19 Nov 2024 08:26:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="ETwhfEtp"
-Received: from EUR03-AM7-obe.outbound.protection.outlook.com (mail-am7eur03on2062.outbound.protection.outlook.com [40.107.105.62])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gL4cNycA"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A38FD19C558;
-	Tue, 19 Nov 2024 08:40:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.105.62
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732005604; cv=fail; b=exM5dLl1xJOT9ONGaGTQUZQbJtFpAWj1CRg9SWVaYYXf5Cqhsasp2U53A+ham+K/VvK1zFU/sI9dwsiJkOzwKxaUkMrwFZrbxzhyb/xW5JBzb2TEYm06h10XvLPlIbnUevNW9MN+9Wa8Xmk/hTtspYT1NHzOrDJ8gn+Ru5ZfFCE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732005604; c=relaxed/simple;
-	bh=Kve0H5+o37kDdj12/XZbbiAVDS9NZyL01nZ2uyO52Hk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=dkiUGXkSpQcGA8+I49yRAARUwpQRYh6o1ioUSnRxOR9fAgUwNJ1Pgv4SohWyXlMJGkceAWWJ3COMHpnbBapRBb3K00QZJYnQxfbiDH99awnEqSUBTAR8YEtnQyRuUf3BRIKvlMkTWHFaUskS3aSda1/KkRQePM5dOIo4aDStVOY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=ETwhfEtp; arc=fail smtp.client-ip=40.107.105.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=iWC7WeXmswOUe6AVklTjcsN9J6UbCyzTZlTxzO6Fy4Xk3E1j0axeRowTZQWWTBwvrxJ3rE5y2k7l9BQAimcCeZ3lqXwzn5mmCwi3AHOpq1lnU1vqjBXKnM/8rj0X/iYpxGxC54Vnd2NaqcxN9zdY1lMLffQvl1oCcqMQYs8Aaf9RFmwuCGylgK3+YOsIEdQ0d7rpye14PO2WZLu6nN2joWGn1iuG5vfsGdmr7eiYXJkyYRIB+JsvYLzyYMaghJ9590p7plJ3gcbRQh5ILwth/ZZ+GQKQsv0tifpPQVwoTkw2COzEqPq/wJbQcjwfbX3mZ4EiIl+wO/L1BM2dL1hIUw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=uWi/3hfJJLhdUExR37GH35NJkVcvWklV8n+CoIbZYbE=;
- b=QPUjZjX8Mw4KTSvn1jtw6uFuV4EFHJuDnKnBfR8Naf2IjQ0rSh2WxAaT5RHS5XDFVeATWPtqWtYpTApBfHU/ZdOblcncoZ/hNRYRbD+JutkiqILR6XoCasgaBnN6fpFQoaxsvDJ2SZeAGBjPS9+rxVvqV4yaTD/pYrMS3ozTcZzCzDLqbjlE9n5N2h0XkbfDxvhZiSPmKjBUl7ZZtTvryu1DeHadgOTfSRqtkfFSRRPVF94dRAwsNBCPiOeFfwufSxeZSAWxO+ClAFxh4ckpufg711fqYFeyKPbYGp6/PrmfBvhQLsL46PhzOSgqDzFMS5sZDJqqnKwM4zhBlzEYvA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=uWi/3hfJJLhdUExR37GH35NJkVcvWklV8n+CoIbZYbE=;
- b=ETwhfEtp7o4GaARz8ur+o4maT2jTGkuZ754nzphPdTe+/ZYuNb7J5aoOa71VemrIr9K/140/yShVY0teM8lYRcKY3ci17H0zcuLSLgOmrMFUIRxN5dwdGxjff5k/cW77psAQbI8r7Q+d6d0pa9CASPOidOEEKjXwuaJHSmctT3jPuIb5Az2Uv7Ffa43DQDbaNrbu10/v92CVxY/ABpcRCt9WHyqJkf1KZh6D7dZxEWAGGINwer3O5And7unPQaE33nfdyFDbBQr87kCD73PI34To+5UH00AcNUmsxLwgvoKWd4Sw6chXn7HEKV5xmSYyLZljNy8VcZCyp6+teOn89g==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB8510.eurprd04.prod.outlook.com (2603:10a6:102:211::7)
- by VI2PR04MB10266.eurprd04.prod.outlook.com (2603:10a6:800:22b::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.23; Tue, 19 Nov
- 2024 08:39:59 +0000
-Received: from PAXPR04MB8510.eurprd04.prod.outlook.com
- ([fe80::a7c2:e2fa:8e04:40db]) by PAXPR04MB8510.eurprd04.prod.outlook.com
- ([fe80::a7c2:e2fa:8e04:40db%7]) with mapi id 15.20.8158.023; Tue, 19 Nov 2024
- 08:39:58 +0000
-From: Wei Fang <wei.fang@nxp.com>
-To: claudiu.manoil@nxp.com,
-	vladimir.oltean@nxp.com,
-	xiaoning.wang@nxp.com,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	frank.li@nxp.com
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev
-Subject: [PATCH v6 net-next 5/5] net: enetc: add UDP segmentation offload support
-Date: Tue, 19 Nov 2024 16:23:44 +0800
-Message-Id: <20241119082344.2022830-6-wei.fang@nxp.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241119082344.2022830-1-wei.fang@nxp.com>
-References: <20241119082344.2022830-1-wei.fang@nxp.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SI2P153CA0019.APCP153.PROD.OUTLOOK.COM
- (2603:1096:4:190::10) To PAXPR04MB8510.eurprd04.prod.outlook.com
- (2603:10a6:102:211::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E5EA1474CF
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 08:26:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732004793; cv=none; b=OoB3KR+tOkKzI1O91jyzzBvmAPdaZ//dcS6MbPOTVbSCd8KTiJc+uLG8B1WkE0yOcCNMQBCC94DGb6Sq+VPZOFAF8uMaZngt742f9bJY6M3NqRo5QPE+puxTKS5sMskXmsXpehincSVTWSLio4tkIuGKF9k1zV1HzuimMXlSPFw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732004793; c=relaxed/simple;
+	bh=6aCx4mgc9iPbOfw1H/QPk0i3xlqnorTIqLgXaFUDWBQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=byNS4C//oeYPDAhOEEwU76thWUD5ZswLvH0wnkDhtEXxa+kNp7NK0Tky6GD6dUnpkO2I0LbnZcAxyRgC2hcnbz0u/rcAG8mmfSWD5f02eLYVdNHJyWohS3rQ0kzzT5305Kfdf7aYM8A0ez9teZnVz6wrmv4ITTQgtb06vTYLKhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gL4cNycA; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-382435f561cso240996f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 00:26:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732004790; x=1732609590; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8F/f1JVuG1/4L3xoA/BuZmrA79fjSAEhXH9BA0nKX8E=;
+        b=gL4cNycAm9vOwVcoOv5WyFHTC296/i8afQEXu1AR9P6UxsZ76+v/gIf4PsvxpqV4e4
+         YYSIon6H5ENmHuDj9/05x+sw/EQOn3CtSygfC5PS3z40X1Qox15xwiHmoB4bU8b2aI1D
+         AtMO4IFatWBI3Wk9qIb+NN93KGW0MArDj1xEZmy0Q9e1nz1cq7TtEVVzcsFjKbT3R9VK
+         3sJ+AzXsxMVpC7yx/fa/WCTGxIf3SPmzIVvFYsPHO2uCDgzA5XPjCgvFW2LxKUWtSFzm
+         uVRgP0OWYEw6k7QXgfs4d2L5ix6uyQtUGoGYE9nu9eGavmu+wzraZ3RNElxtrJ/lau+U
+         l/VA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732004790; x=1732609590;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8F/f1JVuG1/4L3xoA/BuZmrA79fjSAEhXH9BA0nKX8E=;
+        b=Ly2qY7ngiNhHIM2X1O2eJLyDGx9L+fXLvGYgKKc8RkNoFxmRgPXB8+oVe0AgT3zd49
+         HDE1zdInW2kNOzvpo4gkMraCQhS00ZFSfmxB9XiTQl+CWAlVK4XEo+oFx/J/HllypUyP
+         Ud7cwzF8pJxqexk4IwbgcZ5UlF28pSSaJU9QlSIW2LtzrJEXnIy0arCn/FGfDacnasUa
+         6CFfez6xyH0cFJKwQBAa/BRi7UTQcGNC81YFaoQG+MWRCfDeVaZUG4rMvnrzL0/129yb
+         qRcMJK3pecHrSTE7z/6TKhjJ3hTd8K18gsKH3XTI9+H1DMlQWJFiyOtatwB9+K53hMAY
+         T5vA==
+X-Forwarded-Encrypted: i=1; AJvYcCWIfQdr4VHcyjRrIGYlmAc7yAx8bH3TUVU4Nhh83S97fr5Ho62Muqtr83BKnM3S/OpXAkMQkH6CECGJRaI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5X5aY0HJo6iCEZA+7wjz4nadBXztaRyWqmzRWONKXng24L0zc
+	BvRClEYYuysqwNK2Ek5U40E0mWtFQy34zqEgmjBKQoflYdnT54eWo1JJNYzVCJDNSUalYmCoZAd
+	Wkxde6/22CTOAVbAS8dpclQQrk1Q=
+X-Google-Smtp-Source: AGHT+IFzSjc9vFJGGEdMyChIRwyrY50Xv9jtOnG9bmyOyAJKGCmdRAeb3y9enjfoi3BCUpLNAGyZ5JiN0qnwiQtBD+8=
+X-Received: by 2002:a05:6000:400b:b0:382:4538:c0d with SMTP id
+ ffacd0b85a97d-38245380e2bmr2127655f8f.2.1732004789635; Tue, 19 Nov 2024
+ 00:26:29 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB8510:EE_|VI2PR04MB10266:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6539f024-7d6e-4dbd-cbd6-08dd0875c054
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|52116014|376014|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?9ndT0OOpIa9fYBnGjwqQd1eFvYYaVHCDhgxpopQrM3gw70ZH1BRBjniF8MpG?=
- =?us-ascii?Q?urzLb8+BSwB5psVltNChDew+0nmQjmDdURFwLH74QLQaKOIdpK3yaIuk09o5?=
- =?us-ascii?Q?PuD9J31RuDQUIWoNmvHvp6CN8zg+k4lhAEpekk/sFZdwwoVnIwnSk8G2Inuu?=
- =?us-ascii?Q?8upkymqF9vKSYqtpJaP0KctC5RIPVLSubjNnMhVIpdmNxeV3sS37+f/RfK4H?=
- =?us-ascii?Q?nqsH9zdsUoOCtA64fmsn9TofQWFzhr9/vpur7qRz3HMa5lZ2ll5+EzJFoRrl?=
- =?us-ascii?Q?ZTvv8v80p87Ht2Y3qfhsOPPoFWKhOcogWmVcKEoAk7+ImRUbaRYe+DzHyFSL?=
- =?us-ascii?Q?9S614Eoc7hpKKGOVOgrb0sueWNv6cLhvUyKuG9V7qnSBKQfPMQS3oSqJW500?=
- =?us-ascii?Q?aeMzZogtAmzK543TIcRTxIzzojBeWhAmEmgWRgpXXtcHtHSdxmvEnRwHYNVs?=
- =?us-ascii?Q?DMWLSrwGCEojCdK4px24sIMFn+N08nn3oJv9xkKQyP2q969jPm+RY7Mm3och?=
- =?us-ascii?Q?CMrGWgK+pj99m/WsXLewCuBptnoKXrdZgXjipiMjN8LmqUyoLLuTsseA6kK2?=
- =?us-ascii?Q?lboQMFpa4khJVL9W+5brItQXgLIH1Z7EF2AN3FvX8diJNGrxPjygkqO+fSxs?=
- =?us-ascii?Q?S9ElR0qZenwXu1aUmoVgovn2smryS1zozeqlgSfVtLI4fxPJiiyMezbL588b?=
- =?us-ascii?Q?rSw1vxwq+99enC4Qg1ryoCvq0ZtDbd+b/Ho7X9urfyB6jSeRfCHibnwG/jIv?=
- =?us-ascii?Q?feMDL4pVx/BUyStOfzhrcIGoRU/mMW39PtyK0MXTC0jnIdbXlmDNgmbUKJ/F?=
- =?us-ascii?Q?fuCkeoL5RC/AK3AbnUK45Hz/ElcmUKurmhW7RjrpQ9ZdS1rcnKr1APLcKaKI?=
- =?us-ascii?Q?5HylLoUy4Uby5U8XNOhKvTmTh7Ru13+ujkcWQGikmRvGdYfWgyJXOValL4A9?=
- =?us-ascii?Q?31Aw2Vt0BEzc8S2moGN6Tsc7p+m7XCVr7enZ/8S1qr2CC4JwOPMpB9kOr3pX?=
- =?us-ascii?Q?S3IGKRQZAXCrJsEp/q3r7RZ2gdcueC8T87hkF1BcMEnZYlH9Rkndi2AZdoJs?=
- =?us-ascii?Q?4mTqWbuz4O3OthE4KCTRw1t+vofL5tW0GDNBNvB7eg3VPlwXxundIAJcKyac?=
- =?us-ascii?Q?X5/oaq+M2oZJL4r6UEY4GA15uLKyh3g3Tmq7pKp0fizzLbGp/kAm+mrQfFgq?=
- =?us-ascii?Q?zAnZHHjohcGJcVGad3kOFWybhil0maGKlKta8gsLcoRJ5dMCHhfIjFich/kv?=
- =?us-ascii?Q?uE3tOcr4o9svmN0t1Yh8taHzcweoPQjZwdZxhYw8P8itvtebNx7B8ead8nRP?=
- =?us-ascii?Q?GFPb/reAhLmuI1sphSFVAma0QVggJiTzWpfiD3rlqClzDXtEwyPO1ML7W5G7?=
- =?us-ascii?Q?pxx4dyw=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8510.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(52116014)(376014)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?twsroAGYTMD85alJzc7pxILrmAq4XMdKFlS5dYlMrjTLnoQ+xoT+1rqsz9bK?=
- =?us-ascii?Q?0u7ikgjeuIwjrcif5m+CQjA1LGcJIlIjPlu5hnIcUQnd2W8Y+QjQHJ/6WVMm?=
- =?us-ascii?Q?FyFyjyVrFS4sInbLjcPl6nhdYL2JQdm5hwylgF99qLCK6wJRjlmG/6sciVUN?=
- =?us-ascii?Q?CQjPW8/EpE1YAs6i0zFQduVrpZjouDweY9s5k3sd3eoWT3uxd4H4jNqBbuMU?=
- =?us-ascii?Q?JcbP+RRH4aNBorTm1Xfqd3nBS3LtarB91r1hRT1VXXe1uhv5WAcRLYDcOb0j?=
- =?us-ascii?Q?rn7kTkP4oPJ5DrRt2cBVmdUT54scENHYT3OOFJiSwYPdHJfH9sbChh2gKlkS?=
- =?us-ascii?Q?bNQZDl4ISFXLiBAx8U6N46k3BMvVunSF+XBxrtGjih5y8a8ppi6hmY6gnW7R?=
- =?us-ascii?Q?Go4EWXLD4AXAiPKS8+Q4FimeXbfkkV4/FpVgYHMkrud5c53ckIFZ3yt7BKUS?=
- =?us-ascii?Q?3wFdpG8Fup8L16daG2+Ho7tIOSQYOoEHcswxM8gy5tQiruJNKNwY96ooKgXW?=
- =?us-ascii?Q?qbjx8xh+ubYvoJ6PBNbkrFz2SabWVOoP5/vi0PscOY7pgxgEDwYwSqp/BSvR?=
- =?us-ascii?Q?nBusn3qpq+cg2VB27W9WDJHY+wD7igJXatMr6Qs4PLbtqqriJTwBf1EMmRnm?=
- =?us-ascii?Q?7Jjy39/PnDHlqsGPTH5rBnu58V1z2wANw7YJYejFf7L89r4WZudHnlts4Ivr?=
- =?us-ascii?Q?NORqXTAUlRPJekcBvTOGrVgwjmfJQDW6nxPTwC0nna/eDqkF1Wi4brW8c9KW?=
- =?us-ascii?Q?V7vlMqe5WRg6pqvtScWvhOUWZSOwCSDylwjlknb2rtvoQnnLncpSk+Jx5ls/?=
- =?us-ascii?Q?N7RuLnliOYLzSEUpAazROVjWreja9DDX4/7bw4750zLzEy4PAYRlMtaiE/u+?=
- =?us-ascii?Q?8M0eexS08MDaVTQRbM+4nX3gRzfYQ1vG9Gz0FGdpe5D8ajvlAAbNnxxe7K8G?=
- =?us-ascii?Q?23MYWLFVR9ki+vsLJhPhNJZeZ/rnmOy5vr12hjCnxgrG7kxUxC8FjHLOizTB?=
- =?us-ascii?Q?p741fw2KCWppqQR8F+ESqTxRnXGKDwFTS0526R8URLY7wHCHBUh9ERumVXzS?=
- =?us-ascii?Q?gRMyLAhl7NtLhWVcmy7uFug8SSxlTJMrDi41A8acecb6A4/ZW4j/T59//KbO?=
- =?us-ascii?Q?8y/CShSbpwM/a2alnasfElxGHGjsNnGXG+9yB0QHUb9blOitT3kn4vuBJqU1?=
- =?us-ascii?Q?2ZMBwPASJepKUG3+vKPxsp/yr9CTyZwjsjZyFXj+anvcW1FJY9TbF5vnyVn2?=
- =?us-ascii?Q?gSDSxHMlf81UlfKftd2ZJqgy+2cpz2TS751FfU7v9WgzcihX9qYI2jbBl0AQ?=
- =?us-ascii?Q?H8xUXVhF4vbJMPN7PnNOK0nax8QdzzUqCLrtO8G+INsmxqECtvNiwLtM0sMH?=
- =?us-ascii?Q?yBFDiYWsZHt6wHNO4fxpS86xRU2wteP2nz4Sy5tsQi16e70tQWbXzEhZh4GI?=
- =?us-ascii?Q?j6qYLRFUu3+T0tSbAznxOxmg/wKZkyuPOomka4wUIMTJ+jp1SgCVSPCq1fvO?=
- =?us-ascii?Q?r+bzI+MhwP1ydZrIbQkfgSHMG0YblixcxUtSWWO7UP7IYi0LF8AQPOJhWwy5?=
- =?us-ascii?Q?8odcITPSzgzAyB4YQ9C/IfsPuTpuUa3pAdHqIzvf?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6539f024-7d6e-4dbd-cbd6-08dd0875c054
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8510.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Nov 2024 08:39:58.9282
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: zHL8V2r+qf8z3g0eoZ87+Ji9hoh/h4pMkNlPT7iytW4YW5kCMDtgDF/to2eUR3jR6oJE/mDdUoWRw5P+RwYxSg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI2PR04MB10266
+References: <20241112110627.1314632-1-xiuhong.wang@unisoc.com>
+ <fb436fdb-a4eb-49cc-a730-354611e88b21@kernel.org> <CAOsHCa1t+LeeAG2PDJ0BfYtoh_+CUmLjZcp1+dGZWR5PPfmFSQ@mail.gmail.com>
+ <5b0c17da-f1e1-490d-a560-3312bc8c3247@kernel.org>
+In-Reply-To: <5b0c17da-f1e1-490d-a560-3312bc8c3247@kernel.org>
+From: Zhiguo Niu <niuzhiguo84@gmail.com>
+Date: Tue, 19 Nov 2024 16:26:18 +0800
+Message-ID: <CAHJ8P3+dqhsNOy6-jvPaazSSOk7V9pEkQmamE48oLgGK1ORHfg@mail.gmail.com>
+Subject: Re: [PATCH] f2fs: Fix to avoid long time to shrink extent cache
+To: Chao Yu <chao@kernel.org>
+Cc: Xiuhong Wang <xiuhong.wang.cn@gmail.com>, Xiuhong Wang <xiuhong.wang@unisoc.com>, 
+	jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net, 
+	linux-kernel@vger.kernel.org, hao_hao.wang@unisoc.com, ke.wang@unisoc.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Set NETIF_F_GSO_UDP_L4 bit of hw_features and features because i.MX95
-enetc and LS1028A driver implements UDP segmentation.
-
-- i.MX95 ENETC supports UDP segmentation via LSO.
-- LS1028A ENETC supports UDP segmentation since the commit 3d5b459ba0e3
-("net: tso: add UDP segmentation support").
-
-Signed-off-by: Wei Fang <wei.fang@nxp.com>
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
----
-v2: rephrase the commit message
-v3: no changes
-v4: fix typo in commit message
-v5: no changes
-v6: no changes
----
- drivers/net/ethernet/freescale/enetc/enetc_pf_common.c | 6 ++++--
- drivers/net/ethernet/freescale/enetc/enetc_vf.c        | 6 ++++--
- 2 files changed, 8 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/net/ethernet/freescale/enetc/enetc_pf_common.c b/drivers/net/ethernet/freescale/enetc/enetc_pf_common.c
-index 82a67356abe4..76fc3c6fdec1 100644
---- a/drivers/net/ethernet/freescale/enetc/enetc_pf_common.c
-+++ b/drivers/net/ethernet/freescale/enetc/enetc_pf_common.c
-@@ -110,11 +110,13 @@ void enetc_pf_netdev_setup(struct enetc_si *si, struct net_device *ndev,
- 	ndev->hw_features = NETIF_F_SG | NETIF_F_RXCSUM |
- 			    NETIF_F_HW_VLAN_CTAG_TX | NETIF_F_HW_VLAN_CTAG_RX |
- 			    NETIF_F_HW_VLAN_CTAG_FILTER | NETIF_F_LOOPBACK |
--			    NETIF_F_HW_CSUM | NETIF_F_TSO | NETIF_F_TSO6;
-+			    NETIF_F_HW_CSUM | NETIF_F_TSO | NETIF_F_TSO6 |
-+			    NETIF_F_GSO_UDP_L4;
- 	ndev->features = NETIF_F_HIGHDMA | NETIF_F_SG | NETIF_F_RXCSUM |
- 			 NETIF_F_HW_VLAN_CTAG_TX |
- 			 NETIF_F_HW_VLAN_CTAG_RX |
--			 NETIF_F_HW_CSUM | NETIF_F_TSO | NETIF_F_TSO6;
-+			 NETIF_F_HW_CSUM | NETIF_F_TSO | NETIF_F_TSO6 |
-+			 NETIF_F_GSO_UDP_L4;
- 	ndev->vlan_features = NETIF_F_SG | NETIF_F_HW_CSUM |
- 			      NETIF_F_TSO | NETIF_F_TSO6;
- 
-diff --git a/drivers/net/ethernet/freescale/enetc/enetc_vf.c b/drivers/net/ethernet/freescale/enetc/enetc_vf.c
-index 052833acd220..ba71c04994c4 100644
---- a/drivers/net/ethernet/freescale/enetc/enetc_vf.c
-+++ b/drivers/net/ethernet/freescale/enetc/enetc_vf.c
-@@ -138,11 +138,13 @@ static void enetc_vf_netdev_setup(struct enetc_si *si, struct net_device *ndev,
- 	ndev->hw_features = NETIF_F_SG | NETIF_F_RXCSUM |
- 			    NETIF_F_HW_VLAN_CTAG_TX |
- 			    NETIF_F_HW_VLAN_CTAG_RX |
--			    NETIF_F_HW_CSUM | NETIF_F_TSO | NETIF_F_TSO6;
-+			    NETIF_F_HW_CSUM | NETIF_F_TSO | NETIF_F_TSO6 |
-+			    NETIF_F_GSO_UDP_L4;
- 	ndev->features = NETIF_F_HIGHDMA | NETIF_F_SG | NETIF_F_RXCSUM |
- 			 NETIF_F_HW_VLAN_CTAG_TX |
- 			 NETIF_F_HW_VLAN_CTAG_RX |
--			 NETIF_F_HW_CSUM | NETIF_F_TSO | NETIF_F_TSO6;
-+			 NETIF_F_HW_CSUM | NETIF_F_TSO | NETIF_F_TSO6 |
-+			 NETIF_F_GSO_UDP_L4;
- 	ndev->vlan_features = NETIF_F_SG | NETIF_F_HW_CSUM |
- 			      NETIF_F_TSO | NETIF_F_TSO6;
- 
--- 
-2.34.1
-
+Chao Yu <chao@kernel.org> =E4=BA=8E2024=E5=B9=B411=E6=9C=8819=E6=97=A5=E5=
+=91=A8=E4=BA=8C 15:50=E5=86=99=E9=81=93=EF=BC=9A
+>
+> On 2024/11/19 14:46, Xiuhong Wang wrote:
+> > Chao Yu <chao@kernel.org> =E4=BA=8E2024=E5=B9=B411=E6=9C=8819=E6=97=A5=
+=E5=91=A8=E4=BA=8C 14:05=E5=86=99=E9=81=93=EF=BC=9A
+> >>
+> >> On 2024/11/12 19:06, Xiuhong Wang wrote:
+> >>> We encountered a system hang problem based on the following
+> >>> experiment:
+> >>> There are 17 processes, 8 of which do 4k data read, write and
+> >>> compare tests, and 8 do 64k read, write and compare tests. Each
+> >>> thread writes a 256M file, and another thread writes a large file
+> >>> to 80% of the disk, and then keeps doing read operations, all of
+> >>> which are direct operations. This will cause the large file to be
+> >>> filled to 80% of the disk to be severely fragmented. On a 512GB
+> >>> device, this large file may generate a huge zombie extent tree.
+> >>>
+> >>> When system shutting down, the init process needs to wait for the
+> >>> writeback process, and the writeback process may encounter the
+> >>> situation where the READ_EXTENT_CACHE space is insufficient and
+> >>> needs to free the zombie extent tree. The extent tree has a large
+> >>> number of extent nodes, it will a long free time to free, which
+> >>> triggers system hang.
+> >>   > > The stack when the problem occurs is as follows:
+> >>> crash_arm64> bt 1
+> >>> PID: 1        TASK: ffffff80801a9200  CPU: 1    COMMAND: "init"
+> >>>    #0 [ffffffc00806b9a0] __switch_to at ffffffc00810711c
+> >>>    #1 [ffffffc00806ba00] __schedule at ffffffc0097c1c4c
+> >>>    #2 [ffffffc00806ba60] schedule at ffffffc0097c2308
+> >>>    #3 [ffffffc00806bab0] wb_wait_for_completion at ffffffc0086320d4
+> >>>    #4 [ffffffc00806bb20] writeback_inodes_sb at ffffffc00863719c
+> >>>    #5 [ffffffc00806bba0] sync_filesystem at ffffffc00863c98c
+> >>>    #6 [ffffffc00806bbc0] f2fs_quota_off_umount at ffffffc00886fc60
+> >>>    #7 [ffffffc00806bc20] f2fs_put_super at ffffffc0088715b4
+> >>>    #8 [ffffffc00806bc60] generic_shutdown_super at ffffffc0085cd61c
+> >>>    #9 [ffffffc00806bcd0] kill_f2fs_super at ffffffc00886b3dc
+> >>>
+> >>> crash_arm64> bt 14997
+> >>> PID: 14997    TASK: ffffff8119d82400  CPU: 3    COMMAND: "kworker/u16=
+:0"
+> >>>    #0 [ffffffc019f8b760] __detach_extent_node at ffffffc0088d5a58
+> >>>    #1 [ffffffc019f8b790] __release_extent_node at ffffffc0088d5970
+> >>>    #2 [ffffffc019f8b810] f2fs_shrink_extent_tree at ffffffc0088d5c7c
+> >>>    #3 [ffffffc019f8b8a0] f2fs_balance_fs_bg at ffffffc0088c109c
+> >>>    #4 [ffffffc019f8b910] f2fs_write_node_pages at ffffffc0088bd4d8
+> >>>    #5 [ffffffc019f8b990] do_writepages at ffffffc0084a0b5c
+> >>>    #6 [ffffffc019f8b9f0] __writeback_single_inode at ffffffc00862ee28
+> >>>    #7 [ffffffc019f8bb30] writeback_sb_inodes at ffffffc0086358c0
+> >>>    #8 [ffffffc019f8bc10] wb_writeback at ffffffc0086362dc
+> >>>    #9 [ffffffc019f8bcc0] wb_do_writeback at ffffffc008634910
+> >>>
+> >>> Process 14997 ran for too long and caused the system hang.
+> >>>
+> >>> At this time, there are still 1086911 extent nodes in this zombie
+> >>> extent tree that need to be cleaned up.
+> >>>
+> >>> crash_arm64_sprd_v8.0.3++> extent_tree.node_cnt ffffff80896cc500
+> >>>     node_cnt =3D {
+> >>>       counter =3D 1086911
+> >>>     },
+> >>>
+> >>> The root cause of this problem is that when the f2fs_balance_fs
+> >>> function is called in the write process, it will determine
+> >>> whether to call f2fs_balance_fs_bg, but it is difficult to
+> >>> meet the condition of excess_cached_nats. When the
+> >>> f2fs_shrink_extent_tree function is called to free during
+> >>> f2fs_write_node_pages, there are too many extent nodes on the
+> >>> extent tree, which causes a loop and causes a system hang.
+> >>>
+> >>> To solve this problem, when calling f2fs_balance_fs, check whether
+> >>> the extent cache is sufficient. If not, release the zombie extent
+> >>> tree.
+> >>>
+> >>> Signed-off-by: Xiuhong Wang <xiuhong.wang@unisoc.com>
+> >>> Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
+> >>> ---
+> >>> Test the problem with the temporary versions:
+> >>> patch did not reproduce the problem, the patch is as follows:
+> >>> @@ -415,7 +415,7 @@ void f2fs_balance_fs(struct f2fs_sb_info *sbi, bo=
+ol need)
+> >>>                   f2fs_stop_checkpoint(sbi, false, STOP_CP_REASON_FAU=
+LT_INJECT);
+> >>>
+> >>>           /* balance_fs_bg is able to be pending */
+> >>> -       if (need && excess_cached_nats(sbi))
+> >>> +       if (need)
+> >>>                   f2fs_balance_fs_bg(sbi, false);
+> >>>
+> >>> ---
+> >>>    fs/f2fs/segment.c | 4 +++-
+> >>>    1 file changed, 3 insertions(+), 1 deletion(-)
+> >>>
+> >>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> >>> index 1766254279d2..390bec177567 100644
+> >>> --- a/fs/f2fs/segment.c
+> >>> +++ b/fs/f2fs/segment.c
+> >>> @@ -415,7 +415,9 @@ void f2fs_balance_fs(struct f2fs_sb_info *sbi, bo=
+ol need)
+> >>>                f2fs_stop_checkpoint(sbi, false, STOP_CP_REASON_FAULT_=
+INJECT);
+> >>>
+> >>>        /* balance_fs_bg is able to be pending */
+> >>> -     if (need && excess_cached_nats(sbi))
+> >>> +     if (need && (excess_cached_nats(sbi) ||
+> >>> +                     !f2fs_available_free_memory(sbi, READ_EXTENT_CA=
+CHE) ||
+> >>> +                     !f2fs_available_free_memory(sbi, AGE_EXTENT_CAC=
+HE)))
+> >>
+> >> Hi,
+> >>
+> >> I doubt if there is no enough memory, we may still run into
+> >> f2fs_shrink_extent_tree() and suffer such long time delay.
+> >>
+> >> So, can we just let __free_extent_tree() break the loop once we have
+> >> released entries w/ target number? something like this:
+> >>
+> >> ---
+> >>    fs/f2fs/extent_cache.c | 15 ++++++++++-----
+> >>    1 file changed, 10 insertions(+), 5 deletions(-)
+> >>
+> >> diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
+> >> index 019c1f7b7fa5..38c71c1c4fb7 100644
+> >> --- a/fs/f2fs/extent_cache.c
+> >> +++ b/fs/f2fs/extent_cache.c
+> >> @@ -379,11 +379,12 @@ static struct extent_tree *__grab_extent_tree(st=
+ruct inode *inode,
+> >>    }
+> >>
+> >>    static unsigned int __free_extent_tree(struct f2fs_sb_info *sbi,
+> >> -                                       struct extent_tree *et)
+> >> +                               struct extent_tree *et, unsigned int n=
+r_shrink)
+> >>    {
+> >>          struct rb_node *node, *next;
+> >>          struct extent_node *en;
+> >>          unsigned int count =3D atomic_read(&et->node_cnt);
+> >> +       unsigned int i =3D 0;
+> >>
+> >>          node =3D rb_first_cached(&et->root);
+> >>          while (node) {
+> >> @@ -391,6 +392,9 @@ static unsigned int __free_extent_tree(struct f2fs=
+_sb_info *sbi,
+> >>                  en =3D rb_entry(node, struct extent_node, rb_node);
+> >>                  __release_extent_node(sbi, et, en);
+> >>                  node =3D next;
+> >> +
+> >> +               if (nr_shrink && ++i >=3D nr_shrink)
+> >> +                       break;
+> >>          }
+> >>
+> >>          return count - atomic_read(&et->node_cnt);
+> >> @@ -761,7 +765,7 @@ static void __update_extent_tree_range(struct inod=
+e *inode,
+> >>          }
+> >>
+> >>          if (is_inode_flag_set(inode, FI_NO_EXTENT))
+> >> -               __free_extent_tree(sbi, et);
+> >> +               __free_extent_tree(sbi, et, 0);
+> >>
+> >>          if (et->largest_updated) {
+> >>                  et->largest_updated =3D false;
+> >> @@ -942,7 +946,8 @@ static unsigned int __shrink_extent_tree(struct f2=
+fs_sb_info *sbi, int nr_shrink
+> >>          list_for_each_entry_safe(et, next, &eti->zombie_list, list) {
+> >>                  if (atomic_read(&et->node_cnt)) {
+> >>                          write_lock(&et->lock);
+> >> -                       node_cnt +=3D __free_extent_tree(sbi, et);
+> >> +                       node_cnt +=3D __free_extent_tree(sbi, et,
+> >> +                                       nr_shrink - node_cnt - tree_cn=
+t);
+> >>                          write_unlock(&et->lock);
+> >>                  }
+> >>                  f2fs_bug_on(sbi, atomic_read(&et->node_cnt));
+> >> @@ -1095,7 +1100,7 @@ static unsigned int __destroy_extent_node(struct=
+ inode *inode,
+> >>                  return 0;
+> >>
+> >>          write_lock(&et->lock);
+> >> -       node_cnt =3D __free_extent_tree(sbi, et);
+> >> +       node_cnt =3D __free_extent_tree(sbi, et, 0);
+> >>          write_unlock(&et->lock);
+> >>
+> >>          return node_cnt;
+> >> @@ -1117,7 +1122,7 @@ static void __drop_extent_tree(struct inode *ino=
+de, enum extent_type type)
+> >>                  return;
+> >>
+> >>          write_lock(&et->lock);
+> >> -       __free_extent_tree(sbi, et);
+> >> +       __free_extent_tree(sbi, et, 0);
+> >>          if (type =3D=3D EX_READ) {
+> >>                  set_inode_flag(inode, FI_NO_EXTENT);
+> >>                  if (et->largest.len) {
+> >> --
+> >> 2.40.1
+> >>
+> >> Thanks,
+> >>
+> >>>                f2fs_balance_fs_bg(sbi, false);
+> >>>
+> >>>        if (!f2fs_is_checkpoint_ready(sbi))
+> >>
+> >
+> >
+> > Hi chao,
+> >
+> > We have also considered this approach, but the problem still occurs
+> > after retesting.
+> > 1. The problem still occurs in the following call of the unmount data p=
+rocess.
+> > f2fs_put_super -> f2fs_leave_shrinker
+>
+> Yes, I guess we need to fix this path as well, however, your patch didn't
+> cover this path as well, am I missing something?
+Dear Chao,
+This patch version aim  to shrink extent cache as early as possible on
+the  "all write path"
+by "write action" -> f2fs_balance_fs -> f2fs_balance_fs_bg
+As the comment , the "excess_cached_nats" is difficult to achieve in
+this scenario, and
+trigger the issue in path f2fs_write_node_pages->f2fs_balance_fs_bg(is
+called directly here).
+At that time, there were already a lot of extent node cnt.
+Thanks!
+>
+> > 2. Writing back the inode in the normal write-back process will
+> > release the extent cache, and the problem still occurs. The stack is
+> > as follows:
+>
+> Ditto,
+>
+> Thanks,
+>
+> > [H 103098.974356] c2 [<ffffffc008aee8a4>] (rb_erase+0x204/0x334)
+> > [H 103098.974389] c2 [<ffffffc0088f8fd0>] (__release_extent_node+0xc8/0=
+x168)
+> > [H 103098.974425] c2 [<ffffffc0088fad74>]
+> > (f2fs_update_extent_tree_range+0x4a0/0x724)
+> > [H 103098.974459] c2 [<ffffffc0088fa8c0>] (f2fs_update_extent_cache+0x1=
+9c/0x1b0)
+> > [H 103098.974495] c2 [<ffffffc0088edc70>] (f2fs_outplace_write_data+0x7=
+4/0xf0)
+> > [H 103098.974525] c2 [<ffffffc0088ca834>] (f2fs_do_write_data_page+0x3e=
+4/0x6c8)
+> > [H 103098.974552] c2 [<ffffffc0088cb150>]
+> > (f2fs_write_single_data_page+0x478/0xab0)
+> > [H 103098.974574] c2 [<ffffffc0088d0bd0>] (f2fs_write_cache_pages+0x454=
+/0xaac)
+> > [H 103098.974596] c2 [<ffffffc0088d0698>] (__f2fs_write_data_pages+0x40=
+c/0x4f0)
+> > [H 103098.974617] c2 [<ffffffc0088cc860>] (f2fs_write_data_pages+0x30/0=
+x40)
+> > [H 103098.974645] c2 [<ffffffc0084c0e00>] (do_writepages+0x18c/0x3e8)
+> > [H 103098.974678] c2 [<ffffffc0086503cc>] (__writeback_single_inode+0x4=
+8/0x498)
+> > [H 103098.974720] c2 [<ffffffc0086562c8>] (writeback_sb_inodes+0x454/0x=
+9b0)
+> > [H 103098.974754] c2 [<ffffffc008655de8>] (__writeback_inodes_wb+0x198/=
+0x224)
+> > [H 103098.974788] c2 [<ffffffc008656d0c>] (wb_writeback+0x1c0/0x698)
+> > [H 103098.974819] c2 [<ffffffc008655614>] (wb_do_writeback+0x420/0x54c)
+> > [H 103098.974853] c2 [<ffffffc008654f50>] (wb_workfn+0xe4/0x388)
+>
 
