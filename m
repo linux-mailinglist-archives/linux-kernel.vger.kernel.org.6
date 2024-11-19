@@ -1,206 +1,118 @@
-Return-Path: <linux-kernel+bounces-413633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4AD59D1C87
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 01:31:12 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D3E59D1C9A
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 01:37:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F39A1F215B4
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 00:31:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 03A04B212FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 00:37:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC8BF13C3D5;
-	Tue, 19 Nov 2024 00:29:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF9981AAC4;
+	Tue, 19 Nov 2024 00:37:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="M1I4DaxS"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ytew/8Q2"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 468FE17C8D;
-	Tue, 19 Nov 2024 00:29:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98EB5AD4B
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 00:37:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731976169; cv=none; b=In1Yhnrl7rC1jlZzWsbPrTg4ldtyt+fD+ZvxJeialm7bu5YpOg0kJLE6jtxZdUexi7c+gPkq6iEA2AhS68DXsN9Zh9vWyrx1LxX8JZ9VtJXoBYhZYxo6KeVzzGvxPCHGCF5wcy8PAdM77GjtUUoorC2Y9C2aipKlCzbCW/odhx8=
+	t=1731976664; cv=none; b=Bcdqat5hX5GtudMtlNMkdwq0a8dCCDWJOnog/7RmtSe2ZJmf5ZPjFXb9Rbel/1JC3yYXJdxTRmUsWwg1ZZp+uvH2EVUXXuEp2WVgfIOSGgjktx6huLwfeXslOKk6ey6Wvu9IhCr5qU+9/DFSUdoXygsqbYdDw8+4mB6UHl1ikUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731976169; c=relaxed/simple;
-	bh=Z8DqmcWjt1zrD0CYXeSpSjfpqvmdRKZWzMK9PjvpSrM=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=CO4F0Rj4H+IUzaunb7uzUB+hXkEqh2DsW4wFFYvKMxyCQyppGD09QFe2IEE1NFTgeapfVRHyv80zUWKbd2cTNjAdyFMjM14PBzw37G6x/C6TcplfQILz6QeC7o3CV9sQSDPTwLKlrL/lh4eYOFyERRzD2B3jfXkyvM4KU/Xiz9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=M1I4DaxS; arc=none smtp.client-ip=212.227.15.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1731976096; x=1732580896; i=w_armin@gmx.de;
-	bh=5hVcqyFvTu5vatuyXRiaENgjDo70JIP3TxdDakNOEoY=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
-	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=M1I4DaxSnoCLq+cE/xr8pqVX7z8CJWeB8M1Lr5yZSm7/R1FS0vCWaGThSO8zFcoz
-	 GaMsive8zHBMQQtbFvs/BUs0eXEQ6UvWC/sLZoNOXntABtY8cCc5AZI3P1y6sNILs
-	 x5MeR6RQV0BGLU5xQx4/KnAZZBPQW73CLpf1y5PiszCBZj0MIrH2zboFcHQ0kSTLL
-	 93bqLzYfeD15BIoxos1shW+uxZpdP5z7Y150+LhPVb18gQD5BEhmrTzcr3Rr3n+t1
-	 ZcsftcDhrBSA5TRhImTR/zjovRQVZ/AC3EtHjiDcBEll6FJQkySjdYuvvaBuoDjuY
-	 X4kq6RS1Sreq6y0SYw==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.0.14] ([141.30.226.119]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MxlzI-1txi8f3jgM-00zraz; Tue, 19
- Nov 2024 01:28:16 +0100
-Message-ID: <6b7d2f80-0dde-4f07-b889-fa2cb99f5c88@gmx.de>
-Date: Tue, 19 Nov 2024 01:28:08 +0100
+	s=arc-20240116; t=1731976664; c=relaxed/simple;
+	bh=3N+bdJY7GZj3/EyWNT7JRQ0Hf204zkwFkIagTRqw4DQ=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=haNPPO9wfQBLqELo/dmvtRGmxb3yeW4hbpEcuQObPK123ZGeYd8L7zNLxu2Nc5dsDOGMVLisQZdqWqwl714bBbicI5kpJgVL4xVj/W6D4zke+TRQcO99tO9xRqMDoTgQQKE5KczsoWJyC24lZok+YOspLLd35zlijrDajC9p4Xc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ytew/8Q2; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1731976660;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type;
+	bh=iOzcg2tuyK5nhV5b0FwNpGbAHCWNZenn65xZEc+Od7k=;
+	b=Ytew/8Q2/s5Iq9p4J605lsLrxHZn5TZbNSerxGS8u7flblYvaLKSQmqMbt/Mxx5e4yKKsD
+	vatsABU2lvazEimMJl8S9cXCp4JXqI0dQxCDGKxJ2ptwf4V8Z6iblwe4FK6ZhbyyUNdm5F
+	60fAg3fJ0qxgUtUt6ySiOLC+t36WOo8=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-628-2RNXJpZVPlGPadZddkWY4g-1; Mon,
+ 18 Nov 2024 19:37:37 -0500
+X-MC-Unique: 2RNXJpZVPlGPadZddkWY4g-1
+X-Mimecast-MFC-AGG-ID: 2RNXJpZVPlGPadZddkWY4g
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 399ED19560BD;
+	Tue, 19 Nov 2024 00:37:35 +0000 (UTC)
+Received: from localhost (unknown [10.22.81.145])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 0C14B1956054;
+	Tue, 19 Nov 2024 00:37:33 +0000 (UTC)
+Date: Mon, 18 Nov 2024 21:37:32 -0300
+From: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
+To: LKML <linux-kernel@vger.kernel.org>,
+	linux-rt-users <linux-rt-users@vger.kernel.org>,
+	stable-rt <stable-rt@vger.kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Carsten Emde <C.Emde@osadl.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Daniel Wagner <daniel.wagner@suse.com>,
+	Tom Zanussi <tom.zanussi@linux.intel.com>,
+	Clark Williams <williams@redhat.com>,
+	Mark Gross <markgross@kernel.org>, Pavel Machek <pavel@denx.de>,
+	Jeff Brady <jeffreyjbrady@gmail.com>,
+	Luis Goncalves <lgoncalv@redhat.com>
+Subject: [ANNOUNCE] 5.10.226-rt118
+Message-ID: <ZzvdzOqtzPNXUq9a@uudg.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 11/22] ACPI: platform_profile: Add name attribute to
- class interface
-From: Armin Wolf <W_Armin@gmx.de>
-To: Mario Limonciello <mario.limonciello@amd.com>,
- Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>,
- Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
- Corentin Chary <corentin.chary@gmail.com>, "Luke D . Jones"
- <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>,
- Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
- Alexis Belmonte <alexbelm48@gmail.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>,
- open list <linux-kernel@vger.kernel.org>,
- "open list:ACPI" <linux-acpi@vger.kernel.org>,
- "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER"
- <platform-driver-x86@vger.kernel.org>,
- "open list:THINKPAD ACPI EXTRAS DRIVER"
- <ibm-acpi-devel@lists.sourceforge.net>,
- Mark Pearson <mpearson-lenovo@squebb.ca>,
- Matthew Schwartz <matthew.schwartz@linux.dev>
-References: <20241109044151.29804-1-mario.limonciello@amd.com>
- <20241109044151.29804-12-mario.limonciello@amd.com>
- <29899120-efec-4264-b6a8-0bca4fc1f332@gmx.de>
-Content-Language: en-US
-In-Reply-To: <29899120-efec-4264-b6a8-0bca4fc1f332@gmx.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:bSMGx/uh1q7vg+W2/okqjuLaAoxzMkFQA4fCWCTTEXdCq3uQYq5
- 4hcp/iGW1shsODj7zQga6ANI8rRrYgDYH7N/GKa14LI6/PzIcxe9X5GFgHc/Ze5UzJMKvgx
- pYYRDNP/NF+gljOQ5Hc0/M5cly70I6mod49AJjRZ6MEQlo5GiB7mV8pJvigN6w1+S+0EyvX
- 4RtbCRDd+SsikqtSTu55Q==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:anLUiQlL/Pg=;9BVvn4ZIFw1ZS8IzZF3GfZQok8R
- N6gwacx8GN6z3hVhPIwhUAy2M9cLQRqKZalSIz/NVD2aVlaJpl+uqJdf9okZXVdH427FptXxm
- ZzpXlEdBtWtFjro5PF8ymRsP0rZl5STKSojyQMG1eMkCS0KfSBII5SOmJzp+Gqfp+530oYNil
- JYkKQvzW9zN66SAdH3vcBPXisnUI9zCRcQTEpc6llgXAhBfWlXokoRTIIL4tbglIRXegkfCbn
- kI/O/CeXMLo09ybu26mVBUbEewqhtv/rJp9gsTiBb7Vw6GA4u+yawRWQ4eNgu0rXdC+lTh1qR
- Or8hd+ynwapM7N4gjj4tJjpjD8FDVV4LQsq7+sCbFjhK32DOYXo/pWZ4QhtopeEEc5zrVhTDW
- 5IxAc70BHE8boGDHpSc+UiY3D4gkRS+lF0UuPp5j6E1CDI2dQOZv6g4a2Ia6vKAbn8kppM/K1
- rHdZ+5tNCqEbn2fRgXn8fC3sEeyXiYEwKXoRXW4SglxbvfCUngP7ag4E43h5ULsG0kI79jEnp
- WW3//jyyDG1x4uqQEu2e3jjcaq5XS/v7ZmTw+XKuM2WZpIbVt8nGsveWNrXLkfL9p5vhcARyp
- rGrCc8O4Jnlqs9shJCTdocC07gye6h9E95l8aMs3yjWBW6XfdnlXbz9Yw5+6jGY9j8Co71oCa
- AASpTc5IWHg6/Xu7JRohn+A/VyxgB/gGHss/4yUqPLZJZ4NzGX2BvF8ZwhOrOvFKde2ejpm90
- eo4HtmF9tF0ilX37xJOXWdbUOAPHhUbvu6eVd1uOwJOJh3Qj/dpAebVwXghJXdzNUGfH6NnW/
- Itel1fvVSRzB2nGFfdD+rSbIKKYL/tcj0X11p6Qi/UaYssgxJIpaMLBc5Iaa5BSZ8kn8L+TXw
- 9xmzEjdxMhTFVhxxHqOzjRAAHeKBCwNlrtP65H1Ww8HxpzBOoccxQpdM9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-Am 18.11.24 um 20:43 schrieb Armin Wolf:
+Hello RT-list!
 
-> Am 09.11.24 um 05:41 schrieb Mario Limonciello:
->
->> The name attribute shows the name of the associated platform profile
->> handler.
->>
->> Tested-by: Mark Pearson <mpearson-lenovo@squebb.ca>
->> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
->> ---
->> =C2=A0 drivers/acpi/platform_profile.c | 27 +++++++++++++++++++++++++++
->> =C2=A0 1 file changed, 27 insertions(+)
->>
->> diff --git a/drivers/acpi/platform_profile.c
->> b/drivers/acpi/platform_profile.c
->> index ef6af2c655524..4e2eda18f7f5f 100644
->> --- a/drivers/acpi/platform_profile.c
->> +++ b/drivers/acpi/platform_profile.c
->> @@ -25,8 +25,35 @@ static_assert(ARRAY_SIZE(profile_names) =3D=3D
->> PLATFORM_PROFILE_LAST);
->>
->> =C2=A0 static DEFINE_IDA(platform_profile_ida);
->>
->> +/**
->> + * name_show - Show the name of the profile handler
->> + * @dev: The device
->> + * @attr: The attribute
->> + * @buf: The buffer to write to
->> + * Return: The number of bytes written
->> + */
->> +static ssize_t name_show(struct device *dev,
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 struct device_attribute *attr,
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 char *buf)
->> +{
->> +=C2=A0=C2=A0=C2=A0 struct platform_profile_handler *handler =3D dev_ge=
-t_drvdata(dev);
->> +
->> +=C2=A0=C2=A0=C2=A0 scoped_cond_guard(mutex_intr, return -ERESTARTSYS, =
-&profile_lock) {
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return sysfs_emit(buf, "%s\=
-n", handler->name);
->> +=C2=A0=C2=A0=C2=A0 }
->> +=C2=A0=C2=A0=C2=A0 return -ERESTARTSYS;
->
-> I still have a bad feeling about the locking inside the class
-> attributes...
->
-> Can we assume that no sysfs accesses occur after unregistering the
-> class device?
->
-> Even if this is not the case then the locking fails to protect the
-> platform_profile_handler here.
-> If the device is unregistered right after dev_get_drvdata() was
-> called, then we would sill operate
-> on possibly stale data once we take the profile_lock.
->
-> Does someone have any clue how sysfs attributes act during removal?
->
-I think i found the answer to my questions inside this patch series:
-https://lore.kernel.org/linux-kernel/1390951311-15325-1-git-send-email-tj@=
-kernel.org
+I'm pleased to announce the 5.10.226-rt118 stable release.
 
-It says that:
+This release is just an update to the new stable 5.10.226 version and no
+RT changes have been made.
 
-	kernfs / sysfs implement the "sever" semantic for userland accesses.
-	When a node is removed, no further userland operations are allowed and
-	the in-flight ones are drained before removal is finished.  This makes
-	policing post-mortem userland accesses trivial for its users.
+You can get this release via the git tree at:
 
-In this case taking the profile_lock when reading/writing class attributes=
- seems to be unnecessary.
-Please remove the unnecessary locking inside the class attributes.
+  git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git
 
-Thanks,
-Armin Wolf
+  branch: v5.10-rt
+  Head SHA1: c806384c036dee40c091cb27c6db50967146b4cf
 
-> Thanks,
-> Armin Wolf
->
->> +}
->> +
->> +static DEVICE_ATTR_RO(name);
->> +static struct attribute *profile_attrs[] =3D {
->> +=C2=A0=C2=A0=C2=A0 &dev_attr_name.attr,
->> +=C2=A0=C2=A0=C2=A0 NULL
->> +};
->> +ATTRIBUTE_GROUPS(profile);
->> +
->> =C2=A0 static const struct class platform_profile_class =3D {
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .name =3D "platform-profile",
->> +=C2=A0=C2=A0=C2=A0 .dev_groups =3D profile_groups,
->> =C2=A0 };
->>
->> =C2=A0 static ssize_t platform_profile_choices_show(struct device *dev,
->
+Or to build 5.10.226-rt118 directly, the following patches should be applied:
+
+  https://www.kernel.org/pub/linux/kernel/v5.x/linux-5.10.tar.xz
+
+  https://www.kernel.org/pub/linux/kernel/v5.x/patch-5.10.226.xz
+
+  https://www.kernel.org/pub/linux/kernel/projects/rt/5.10/older/patch-5.10.226-rt118.patch.xz
+
+Signing key fingerprint:
+
+  9354 0649 9972 8D31 D464  D140 F394 A423 F8E6 7C26
+
+All keys used for the above files and repositories can be found on the
+following git repository:
+
+   git://git.kernel.org/pub/scm/docs/kernel/pgpkeys.git
+
+Enjoy!
+Luis
+
 
