@@ -1,410 +1,257 @@
-Return-Path: <linux-kernel+bounces-414855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAAC09D2E4D
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 19:47:23 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9D2A9D2E94
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 20:10:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BC322835CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 18:47:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C9AEB2C5C7
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 18:48:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EE901D1F7B;
-	Tue, 19 Nov 2024 18:47:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="G8R6rIHK"
-Received: from smtp.smtpout.orange.fr (smtp-16.smtpout.orange.fr [80.12.242.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B9E415574E;
+	Tue, 19 Nov 2024 18:48:03 +0000 (UTC)
+Received: from leonov.paulk.fr (leonov.paulk.fr [185.233.101.22])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C18078528E;
-	Tue, 19 Nov 2024 18:47:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1269146590
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 18:47:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.233.101.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732042029; cv=none; b=ZX396lYOqkDzmy0TnKbKZ5vXTlBjteTOBkX2gmcuAjqS8GeaSeicn90yxjH43poSLjoIIA2pv/udbQLyM04G4FEKytMlZ0Olt0qrTZclSGpCXEKX4eijcK+04GewBnovT97dtITvt9OYWMDSk9neBI3GJgugL6Yt9hYCVYCRyqs=
+	t=1732042083; cv=none; b=cCUObphQ97OoS224iP7csp/Gchlg5QOOGC+IYKiyOo6hhp+MYdF/y1++WOP75pIK7a8ccnXQv3gDJxfT/2pxNMjBv10eWbtBtT9HdM+IArPBJ4g8VCmXQrzt20TnzEW1u9lnopRD0B1VqIe35KnysplNTynxgKD/V2utObi5NYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732042029; c=relaxed/simple;
-	bh=JaWytgbPiisX8pvxdqweWT07VNH9/o+4cgnjKLsBIxc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZAlTnP3dJDhjTmvVW9G8PyoBZi4CeBSbFRRiCo7NPrhEbAQS2O9aRGvRD3wPc2GJuCu3S63p9D7NEWNtRtCA+KN1P6QZNgJwA+3nXHzbnZDGZc5ZYxXp0RXIAEcm/skDjFl0DaKpw+2ZEzCit53+8VD/7kyEpsqulnPlMDxOr4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=G8R6rIHK; arc=none smtp.client-ip=80.12.242.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id DTFWt5CAGmK41DTFWt0cNu; Tue, 19 Nov 2024 19:46:57 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1732042017;
-	bh=UBYWGpjQPLsx4MqQVn9RTX35vK2sjzBZKj9YylR+AGg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=G8R6rIHKsbms6vIV7zgAO/inZ9vm1EVYuy2Z5rB/ETZDH5P5yO+qLWDlYU/Oq8t/7
-	 bJb5nMYG9PzrGTEey3AtYoPae7m161jXr9WiJKHPhGzBvdBpdZE7eOJXlsO3m0YFIU
-	 FbxiR7efvdVCKbH27twFI+0UrZ1wiCcYvqAq7plh/NpRsaNj4zZy8SH9/gYcUTdYUQ
-	 24GvLPk7HwBNRHF5ldMUli4HVKGbHDMWxvxysppZZ+MiCgUXUw6rpOv+RYt3C9QphJ
-	 rUSIzFy1lali9z0U3swn6NwN6XSfMZ1Np6c8X4R4KqGXDxPr0TF1OVOGvajvlj2wk/
-	 D/l6hOGSmSErA==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Tue, 19 Nov 2024 19:46:57 +0100
-X-ME-IP: 90.11.132.44
-Message-ID: <4e351cd7-cc34-4fb2-bce4-1612e46e285b@wanadoo.fr>
-Date: Tue, 19 Nov 2024 19:46:53 +0100
+	s=arc-20240116; t=1732042083; c=relaxed/simple;
+	bh=Irw4O2YBfJDRbHbUOD1Yfhf1NVRCcQ0AAlRSnc+onJU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TzDMqAb+T1APD87F1PjiE8dDEwYXrc9WoXpQYYrwhifXoutIlv58TvWqsTvIC/Q4e3fKCmBRpghZhxIniNQSgYqagXacf58dLp/B/07OGp94/bI6s+5WT0SvIP3PAn1A0zSzOVR5t1TliOVkK+qmIvJ0mQzjjkA5HQruDB01Wbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io; spf=pass smtp.mailfrom=sys-base.io; arc=none smtp.client-ip=185.233.101.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sys-base.io
+Received: from laika.paulk.fr (12.234.24.109.rev.sfr.net [109.24.234.12])
+	by leonov.paulk.fr (Postfix) with ESMTPS id 916C71F00053
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 18:47:49 +0000 (UTC)
+Received: by laika.paulk.fr (Postfix, from userid 65534)
+	id 85CFFA47105; Tue, 19 Nov 2024 18:47:48 +0000 (UTC)
+X-Spam-Level: 
+Received: from collins (unknown [192.168.1.1])
+	by laika.paulk.fr (Postfix) with ESMTPSA id 6B805A47105;
+	Tue, 19 Nov 2024 18:47:46 +0000 (UTC)
+Date: Tue, 19 Nov 2024 19:47:43 +0100
+From: Paul Kocialkowski <paulk@sys-base.io>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Paul Kocialkowski <contact@paulk.fr>
+Subject: Re: [PATCH] pinctrl: sunxi: Use minimal debouncing period as default
+Message-ID: <ZzzdT0wr0u1ApVgV@collins>
+References: <20241119140805.3345412-1-paulk@sys-base.io>
+ <20241119-prudent-jasmine-lizard-195cef@houat>
+ <ZzyoIABRArkGoZBn@collins>
+ <20241119-vivacious-optimistic-squirrel-a2f3c5@houat>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 15/15] clk: at91: sama7d65: add sama7d65 pmc driver
-To: Ryan.Wanner@microchip.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, nicolas.ferre@microchip.com,
- alexandre.belloni@bootlin.com, claudiu.beznea@tuxon.dev,
- mturquette@baylibre.com, sboyd@kernel.org, arnd@arndb.de
-Cc: dharma.b@microchip.com, mihai.sain@microchip.com,
- romain.sioen@microchip.com, varshini.rajendran@microchip.com,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-spi@vger.kernel.org, linux-serial@vger.kernel.org
-References: <cover.1732030972.git.Ryan.Wanner@microchip.com>
- <0b7af2a91d4d58cfd4909d338f1879e14f61f77f.1732030972.git.Ryan.Wanner@microchip.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <0b7af2a91d4d58cfd4909d338f1879e14f61f77f.1732030972.git.Ryan.Wanner@microchip.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="pOsvlEEZGM4sREmv"
+Content-Disposition: inline
+In-Reply-To: <20241119-vivacious-optimistic-squirrel-a2f3c5@houat>
 
-Le 19/11/2024 à 17:40, Ryan.Wanner@microchip.com a écrit :
-> From: Ryan Wanner <Ryan.Wanner@microchip.com>
-> 
-> Add clock support for SAMA7D65 SoC.
-> 
-> Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
-> ---
 
-Hi,
+--pOsvlEEZGM4sREmv
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> +enum pll_ids {
-> +	PLL_ID_CPU,
-> +	PLL_ID_SYS,
-> +	PLL_ID_DDR,
-> +	PLL_ID_GPU,
-> +	PLL_ID_BAUD,
-> +	PLL_ID_AUDIO,
-> +	PLL_ID_ETH,
-> +	PLL_ID_LVDS,
-> +	PLL_ID_USB,
-> +	PLL_ID_MAX,
+Le Tue 19 Nov 24, 16:43, Maxime Ripard a =C3=A9crit :
+> On Tue, Nov 19, 2024 at 04:00:48PM +0100, Paul Kocialkowski wrote:
+> > Hi Maxime,
+> >=20
+> > Le Tue 19 Nov 24, 15:43, Maxime Ripard a =C3=A9crit :
+> > > On Tue, Nov 19, 2024 at 03:08:05PM +0100, Paul Kocialkowski wrote:
+> > > > From: Paul Kocialkowski <contact@paulk.fr>
+> > > >=20
+> > > > The sunxi external interrupts (available from GPIO pins) come with a
+> > > > built-in debouncing mechanism that cannot be disabled. It can be
+> > > > configured to use either the low-frequency oscillator (32 KHz) or t=
+he
+> > > > high-frequency oscillator (24 MHz), with a pre-scaler.
+> > > >=20
+> > > > The pinctrl code supports an input-debounce device-tree property to=
+ set
+> > > > a specific debouncing period and choose which clock source is most
+> > > > relevant. However the property is specified in microseconds, which =
+is
+> > > > longer than the minimal period achievable from the high-frequency
+> > > > oscillator without a pre-scaler.
+> > >=20
+> > > That can be fixed by introducing a new property with a ns resolution.
+> >=20
+> > Sure but my point here is rather about what should be default behavior.
+> >=20
+> > The issue I had will remain unsolved by default even with a new propert=
+y,
+> > since people will still need to patch their device-tree to apply it.
+> >=20
+> > > > When the property is missing, the reset configuration is kept, which
+> > > > selects the low-frequency oscillator without pre-scaling. This seve=
+rely
+> > > > limits the possible interrupt periods that can be detected.
+> > > >=20
+> > > > Instead of keeping this default, use the minimal debouncing period =
+=66rom
+> > > > the high-frequency oscillator without a pre-scaler to allow the lar=
+gest
+> > > > possible range of interrupt periods.
+> > > >=20
+> > > > This issue was encountered with a peripheral that generates active-=
+low
+> > > > interrupts for 1 us. No interrupt was detected with the default set=
+up,
+> > > > while it is now correctly detected with this change.
+> > >=20
+> > > I don't think it's wise. If the debouncing is kept as is, the worst c=
+ase
+> > > scenario is the one you had: a device doesn't work, you change it,
+> > > everything works.
+> >=20
+> > I think this worst-case scenario is very bad and not what people will
+> > expect. In addition it is difficult to debug the issue without specific
+> > knowledge about the SoC.
+> >
+> > My use-case here was hooking up a sparkfun sensor board by the way,
+> > not some very advanced corner-case.
+>=20
+> Are you really arguing that a single sparkfun sensor not working is a
+> worse outcome than the system not booting?
 
-Maybe the last comma could be removed to show that nothing is expected 
-after it?
+No, what I'm saying is that this is a very common and basic use-case that
+most users will expect to work out-of-the-box.
 
-> +};
-> +
-> +/*
-> + * PLL component identifier
-> + * @PLL_COMPID_FRAC: Fractional PLL component identifier
-> + * @PLL_COMPID_DIV0: 1st PLL divider component identifier
-> + * @PLL_COMPID_DIV1: 2nd PLL divider component identifier
-> + */
-> +enum pll_component_id {
-> +	PLL_COMPID_FRAC,
-> +	PLL_COMPID_DIV0,
-> +	PLL_COMPID_DIV1,
-> +	PLL_COMPID_MAX,
+Also the possibility of interrupt storms happening is nothing new (and it c=
+an
+still happen with any non-external interrupt). It would typically result fr=
+om a
+hardware-related issue and there's no reason why it would happen on
+correctly-designed boards. If anything, it would allow spotting these isues
+more easily.
 
-Maybe the last comma could be removed to show that nothing is expected 
-after it?
+I think it comes down to whether we expect an interrupt controller to "just
+report interrupts" or whether it's reasonable that it applies extra policy
+to cover for unlikely (yet very problematic) situations. I think it's good
+that it supports that, but also that it should not enforce such a
+restrictive policy by default.
 
-> +};
-...
+> > > If we set it up as fast as it can however, then our risk becomes
+> > > thousands of spurious interrupts, which is much more detrimental to t=
+he
+> > > system.
+> >=20
+> > Keep in mind that this only concerns external GPIO-based interrupts,
+> > which have to be explicitely hooked to a device. If a device or circuit
+> > does generate such spurious interrupts, I think it makes sense that it
+> > would be reflected by default.
+>=20
+> I mean... debouncing is here for a reason. Any hardware button will
+> generate plenty of interrupts when you press it precisely because it
+> bounces.
 
-> +static void __init sama7d65_pmc_setup(struct device_node *np)
-> +{
-> +	const char *main_xtal_name = "main_xtal";
-> +	struct pmc_data *sama7d65_pmc;
-> +	const char *parent_names[11];
-> +	void **alloc_mem = NULL;
-> +	int alloc_mem_size = 0;
-> +	struct regmap *regmap;
-> +	struct clk_hw *hw, *main_rc_hw, *main_osc_hw, *main_xtal_hw;
-> +	struct clk_hw *td_slck_hw, *md_slck_hw;
-> +	static struct clk_parent_data parent_data;
-> +	struct clk_hw *parent_hws[10];
-> +	bool bypass;
-> +	int i, j;
-> +
-> +	td_slck_hw = __clk_get_hw(of_clk_get_by_name(np, "td_slck"));
-> +	md_slck_hw = __clk_get_hw(of_clk_get_by_name(np, "md_slck"));
-> +	main_xtal_hw = __clk_get_hw(of_clk_get_by_name(np, main_xtal_name));
-> +
-> +	if (!td_slck_hw || !md_slck_hw || !main_xtal_hw)
-> +		return;
-> +
-> +	regmap = device_node_to_regmap(np);
-> +	if (IS_ERR(regmap))
-> +		return;
-> +
-> +	sama7d65_pmc = pmc_data_allocate(PMC_INDEX_MAX,
-> +					 nck(sama7d65_systemck),
-> +					 nck(sama7d65_periphck),
-> +					 nck(sama7d65_gck), 8);
-> +	if (!sama7d65_pmc)
-> +		return;
-> +
-> +	alloc_mem = kmalloc(sizeof(void *) *
-> +			    (ARRAY_SIZE(sama7d65_mckx) + ARRAY_SIZE(sama7d65_gck)),
-> +			    GFP_KERNEL);
-> +	if (!alloc_mem)
-> +		goto err_free;
-> +
-> +	main_rc_hw = at91_clk_register_main_rc_osc(regmap, "main_rc_osc", 12000000,
-> +						   50000000);
-> +	if (IS_ERR(main_rc_hw))
-> +		goto err_free;
-> +
-> +	bypass = of_property_read_bool(np, "atmel,osc-bypass");
-> +
-> +	parent_data.name = main_xtal_name;
-> +	parent_data.fw_name = main_xtal_name;
-> +	main_osc_hw = at91_clk_register_main_osc(regmap, "main_osc", NULL,
-> +						 &parent_data, bypass);
-> +	if (IS_ERR(main_osc_hw))
-> +		goto err_free;
-> +
-> +	parent_hws[0] = main_rc_hw;
-> +	parent_hws[1] = main_osc_hw;
-> +	hw = at91_clk_register_sam9x5_main(regmap, "mainck", NULL, parent_hws, 2);
-> +	if (IS_ERR(hw))
-> +		goto err_free;
-> +
-> +	sama7d65_pmc->chws[PMC_MAIN] = hw;
-> +
-> +	for (i = 0; i < PLL_ID_MAX; i++) {
-> +		for (j = 0; j < PLL_COMPID_MAX; j++) {
-> +			struct clk_hw *parent_hw;
-> +
-> +			if (!sama7d65_plls[i][j].n)
-> +				continue;
-> +
-> +			switch (sama7d65_plls[i][j].t) {
-> +			case PLL_TYPE_FRAC:
-> +				switch (sama7d65_plls[i][j].p) {
-> +				case SAMA7D65_PLL_PARENT_MAINCK:
-> +					parent_hw = sama7d65_pmc->chws[PMC_MAIN];
-> +					break;
-> +				case SAMA7D65_PLL_PARENT_MAIN_XTAL:
-> +					parent_hw = main_xtal_hw;
-> +					break;
-> +				default:
-> +					/* Should not happen. */
-> +					parent_hw = NULL;
-> +					break;
-> +				}
-> +
-> +				hw = sam9x60_clk_register_frac_pll(regmap,
-> +					&pmc_pll_lock, sama7d65_plls[i][j].n,
-> +					NULL, parent_hw, i,
-> +					sama7d65_plls[i][j].c,
-> +					sama7d65_plls[i][j].l,
-> +					sama7d65_plls[i][j].f);
-> +				break;
-> +
-> +			case PLL_TYPE_DIV:
-> +				hw = sam9x60_clk_register_div_pll(regmap,
-> +					&pmc_pll_lock, sama7d65_plls[i][j].n,
-> +					NULL, sama7d65_plls[i][0].hw, i,
-> +					sama7d65_plls[i][j].c,
-> +					sama7d65_plls[i][j].l,
-> +					sama7d65_plls[i][j].f,
-> +					sama7d65_plls[i][j].safe_div);
-> +				break;
-> +
-> +			default:
-> +				continue;
-> +			}
-> +
-> +			if (IS_ERR(hw))
-> +				goto err_free;
-> +
-> +			sama7d65_plls[i][j].hw = hw;
-> +			if (sama7d65_plls[i][j].eid)
-> +				sama7d65_pmc->chws[sama7d65_plls[i][j].eid] = hw;
-> +		}
-> +	}
-> +
-> +	hw = at91_clk_register_master_div(regmap, "mck0", NULL,
-> +					  sama7d65_plls[PLL_ID_CPU][1].hw,
-> +					  &mck0_layout, &mck0_characteristics,
-> +					  &pmc_mck0_lock, CLK_GET_RATE_NOCACHE, 5);
-> +	if (IS_ERR(hw))
-> +		goto err_free;
-> +
-> +	sama7d65_pmc->chws[PMC_MCK] = hw;
-> +	sama7d65_mckx[PCK_PARENT_HW_MCK0].hw = hw;
-> +
-> +	parent_hws[0] = md_slck_hw;
-> +	parent_hws[1] = td_slck_hw;
-> +	parent_hws[2] = sama7d65_pmc->chws[PMC_MAIN];
-> +	for (i = PCK_PARENT_HW_MCK1; i < ARRAY_SIZE(sama7d65_mckx); i++) {
-> +		u8 num_parents = 3 + sama7d65_mckx[i].ep_count;
-> +		struct clk_hw *tmp_parent_hws[8];
-> +		u32 *mux_table;
-> +
-> +		mux_table = kmalloc_array(num_parents, sizeof(*mux_table),
-> +					  GFP_KERNEL);
-> +		if (!mux_table)
-> +			goto err_free;
-> +
-> +		PMC_INIT_TABLE(mux_table, 3);
-> +		PMC_FILL_TABLE(&mux_table[3], sama7d65_mckx[i].ep_mux_table,
-> +			       sama7d65_mckx[i].ep_count);
-> +		for (j = 0; j < sama7d65_mckx[i].ep_count; j++) {
-> +			u8 pll_id = sama7d65_mckx[i].ep[j].pll_id;
-> +			u8 pll_compid = sama7d65_mckx[i].ep[j].pll_compid;
-> +
-> +			tmp_parent_hws[j] = sama7d65_plls[pll_id][pll_compid].hw;
-> +		}
-> +		PMC_FILL_TABLE(&parent_hws[3], tmp_parent_hws,
-> +			       sama7d65_mckx[i].ep_count);
-> +
-> +		hw = at91_clk_sama7g5_register_master(regmap, sama7d65_mckx[i].n,
-> +						      num_parents, NULL, parent_hws,
-> +						      mux_table, &pmc_mckX_lock,
-> +						      sama7d65_mckx[i].id,
-> +						      sama7d65_mckx[i].c,
-> +						      sama7d65_mckx[i].ep_chg_id);
-> +		if (IS_ERR(hw))
+Well this is why we have both electronics to filter out these frequencies
+and code in related drivers to implement such debouncing.
 
-Missing kfree(mux_table);
-(or move "alloc_mem[alloc_mem_size++] = mux_table;" before this test to 
-have in done by the error handling path)
+I am not arguing that debouncing is not important, I am saying that it
+should not be that agressive on every interrupt line by default.
 
-> +			goto err_free;
-> +
-> +		alloc_mem[alloc_mem_size++] = mux_table;
-> +
-> +		sama7d65_mckx[i].hw = hw;
-> +		if (sama7d65_mckx[i].eid)
-> +			sama7d65_pmc->chws[sama7d65_mckx[i].eid] = hw;
-> +	}
-> +
-> +	parent_names[0] = "syspll_divpmcck";
-> +	parent_names[1] = "usbpll_divpmcck";
-> +	parent_names[2] = "main_osc";
-> +	hw = sam9x60_clk_register_usb(regmap, "usbck", parent_names, 3);
-> +	if (IS_ERR(hw))
-> +		goto err_free;
-> +
-> +	parent_hws[0] = md_slck_hw;
-> +	parent_hws[1] = td_slck_hw;
-> +	parent_hws[2] = sama7d65_pmc->chws[PMC_MAIN];
-> +	parent_hws[3] = sama7d65_plls[PLL_ID_SYS][PLL_COMPID_DIV0].hw;
-> +	parent_hws[4] = sama7d65_plls[PLL_ID_DDR][PLL_COMPID_DIV0].hw;
-> +	parent_hws[5] = sama7d65_plls[PLL_ID_GPU][PLL_COMPID_DIV0].hw;
-> +	parent_hws[6] = sama7d65_plls[PLL_ID_BAUD][PLL_COMPID_DIV0].hw;
-> +	parent_hws[7] = sama7d65_plls[PLL_ID_AUDIO][PLL_COMPID_DIV0].hw;
-> +	parent_hws[8] = sama7d65_plls[PLL_ID_ETH][PLL_COMPID_DIV0].hw;
-> +
-> +	for (i = 0; i < 8; i++) {
-> +		char name[6];
-> +
-> +		snprintf(name, sizeof(name), "prog%d", i);
-> +
-> +		hw = at91_clk_register_programmable(regmap, name, NULL, parent_hws,
-> +						    9, i,
-> +						    &programmable_layout,
-> +						    sama7d65_prog_mux_table);
-> +		if (IS_ERR(hw))
-> +			goto err_free;
-> +
-> +		sama7d65_pmc->pchws[i] = hw;
-> +	}
-> +
-> +	for (i = 0; i < ARRAY_SIZE(sama7d65_systemck); i++) {
-> +		hw = at91_clk_register_system(regmap, sama7d65_systemck[i].n,
-> +					      sama7d65_systemck[i].p, NULL,
-> +					      sama7d65_systemck[i].id, 0);
-> +		if (IS_ERR(hw))
-> +			goto err_free;
-> +
-> +		sama7d65_pmc->shws[sama7d65_systemck[i].id] = hw;
-> +	}
-> +
-> +	for (i = 0; i < ARRAY_SIZE(sama7d65_periphck); i++) {
-> +		hw = at91_clk_register_sam9x5_peripheral(regmap, &pmc_pcr_lock,
-> +							 &sama7d65_pcr_layout,
-> +							 sama7d65_periphck[i].n,
-> +							 NULL,
-> +							 sama7d65_mckx[sama7d65_periphck[i].p].hw,
-> +							 sama7d65_periphck[i].id,
-> +							 &sama7d65_periphck[i].r,
-> +							 sama7d65_periphck[i].chgp ? 0 :
-> +							 INT_MIN, 0);
-> +		if (IS_ERR(hw))
-> +			goto err_free;
-> +
-> +		sama7d65_pmc->phws[sama7d65_periphck[i].id] = hw;
-> +	}
-> +
-> +	parent_hws[0] = md_slck_hw;
-> +	parent_hws[1] = td_slck_hw;
-> +	parent_hws[2] = sama7d65_pmc->chws[PMC_MAIN];
-> +	parent_hws[3] = sama7d65_pmc->chws[PMC_MCK1];
-> +	for (i = 0; i < ARRAY_SIZE(sama7d65_gck); i++) {
-> +		u8 num_parents = 4 + sama7d65_gck[i].pp_count;
-> +		struct clk_hw *tmp_parent_hws[8];
-> +		u32 *mux_table;
-> +
-> +		mux_table = kmalloc_array(num_parents, sizeof(*mux_table),
-> +					  GFP_KERNEL);
-> +		if (!mux_table)
-> +			goto err_free;
-> +
-> +		PMC_INIT_TABLE(mux_table, 4);
-> +		PMC_FILL_TABLE(&mux_table[4], sama7d65_gck[i].pp_mux_table,
-> +			       sama7d65_gck[i].pp_count);
-> +		for (j = 0; j < sama7d65_gck[i].pp_count; j++) {
-> +			u8 pll_id = sama7d65_gck[i].pp[j].pll_id;
-> +			u8 pll_compid = sama7d65_gck[i].pp[j].pll_compid;
-> +
-> +			tmp_parent_hws[j] = sama7d65_plls[pll_id][pll_compid].hw;
-> +		}
-> +		PMC_FILL_TABLE(&parent_hws[4], tmp_parent_hws,
-> +			       sama7d65_gck[i].pp_count);
-> +
-> +		hw = at91_clk_register_generated(regmap, &pmc_pcr_lock,
-> +						 &sama7d65_pcr_layout,
-> +						 sama7d65_gck[i].n, NULL,
-> +						 parent_hws, mux_table,
-> +						 num_parents,
-> +						 sama7d65_gck[i].id,
-> +						 &sama7d65_gck[i].r,
-> +						 sama7d65_gck[i].pp_chg_id);
-> +		if (IS_ERR(hw))
-> +			goto err_free;
-> +
-> +		sama7d65_pmc->ghws[sama7d65_gck[i].id] = hw;
-> +		alloc_mem[alloc_mem_size++] = mux_table;
-> +	}
-> +
-> +	of_clk_add_hw_provider(np, of_clk_hw_pmc_get, sama7d65_pmc);
-> +	kfree(alloc_mem);
-> +
-> +	return;
-> +
-> +err_free:
-> +	if (alloc_mem) {
-> +		for (i = 0; i < alloc_mem_size; i++)
-> +			kfree(alloc_mem[i]);
-> +		kfree(alloc_mem);
-> +	}
-> +
-> +	kfree(sama7d65_pmc);
-> +}
-> +
-> +/* Some clks are used for a clocksource */
-> +CLK_OF_DECLARE(sama7d65_pmc, "microchip,sama7d65-pmc", sama7d65_pmc_setup);
+> > Also the notion of spurious interrupt is pretty vague. Having lots of
+> > interrupts happening may be the desired behavior in many cases.
+>=20
+> Which cases?
 
+Any kind of data sampling happening at high-speeds really.
+And this situation also concerns interrupts that are short even if not very
+frequent. That's a very large scope of use cases.
+
+> > In any case I don't think it makes sense for the platform code to impose
+> > what a reasonable period for interrupts is (especially with such a large
+> > period as default).
+>=20
+> So you don't think it makes sense for the platform code to impose a
+> reasonable period, so you want to impose a (more, obviously) reasonable
+> period?
+
+Yes absolutely. Anything that brings us closer to "you get what is really
+happening with the hardware". The sunxi controller doesn't allow disabling
+debouncing entirely, so the next best thing is to have it with the smallest
+period.
+
+> If anything, the status quo doesn't impose anything, it just rolls with
+> the hardware default. Yours would impose one though.
+
+The result is that it puts a strong limitation and breaks many use cases by
+default. I don't think we have to accept whatever register default was chos=
+en
+by hardware engineers as the most sensible default choice and pretend that =
+this
+is not a policy decision.
+
+> > Some drivers also have mechanisms to detect spurious interrupts based
+> > on their specific use case.
+> >=20
+> > > And that's without accounting the fact that devices might have relied=
+ on
+> > > that default for years
+> >=20
+> > They definitely shouldn't have. This feels much closer to a bug, and re=
+lying
+> > on a bug not being fixed is not a reasonable expectation.
+>=20
+> No, it's not a bug, really. It might be inconvenient to you, and that's
+> fine, but it's definitely not a bug.
+
+I agree it's not a bug, just a poor default choice that is neither document=
+ed
+nor explicitely announced. For all we know U-Boot could configure that to
+something completely different and that would break the assumption too.
+
+Cheers,
+
+Paul
+
+--=20
+Paul Kocialkowski,
+
+Independent contractor - sys-base - https://www.sys-base.io/
+Free software developer - https://www.paulk.fr/
+
+Specialist in multimedia, graphics and embedded hardware support with Linux.
+
+--pOsvlEEZGM4sREmv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEAbcMXZQMtj1fphLChP3B6o/ulQwFAmc83U8ACgkQhP3B6o/u
+lQy7bA//RV0AZdk6FyU8kSMY1+c4UIngeMhQ+vi5hu25q4aPypeHcV8ul/joLX4B
+UTuzBphN8goisYZfUBBdO7sn6IyGbNY4DjgYqWZ3VcHzo4gLCTpbwZch7vAoZqvI
+HrUR20a/QGh11BnN+9ZCuFUFBJ1m3X6XbKrR1/Zgm26/qpRN4tgRFYoB5T3jVGDk
+TGSXaKqrx2VqdntzPt3WyPXbosWGDkp5z1dhUgH6HCUPpybNSNt0blPmpcKOpgmi
+WP3k3rgTrXbR8p0EaenwRmnDcTQECx5Y6lHQc5/pCc72THWOUCmStNkKCB5SnqQy
+43jadYzR4v9YNpfE3s+u5iGk8xbtWNu6HxSF345Ibj1zjV8p1Gsh98a0Ha13WMvf
+ReHxfj+MaCL52nBDkFCgQ6BQaJIplnKkkgfddJwnejTgLaouAKPoBkxNjwRcBVUG
+k4QhVpo/SHlnSlSz7snR6EgGTc5U1QEHpb1MpM5JUVh2nVvSRY4Amr/LfEIOoevL
+Q8gmhbnR0qZvFVVyZsLn5BH++QWccU8TiQnQf4n+uPytK0Df+bsBgFae2vdyUipl
+ZbH6W6gHAm3SBiQ2k7MrIMkildK8Ej3klmuCxp9xCrzJLIhPEpbAIRfgUnFeiad7
+zZZjo3DTpfZqc/p+So4jhkSVTZtSJ0IQtaIUGWC/ujbwOmYDerc=
+=sruz
+-----END PGP SIGNATURE-----
+
+--pOsvlEEZGM4sREmv--
 
