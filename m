@@ -1,153 +1,201 @@
-Return-Path: <linux-kernel+bounces-414241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC6EB9D2520
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 12:46:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 20DA19D2527
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 12:49:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58D8BB243CB
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 11:46:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66557B2209C
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 11:49:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08A651CBE89;
-	Tue, 19 Nov 2024 11:46:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FhuqP7EP"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7ECF1CBE86;
+	Tue, 19 Nov 2024 11:49:17 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 163E81CB324
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 11:46:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F1291CACE7;
+	Tue, 19 Nov 2024 11:49:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732016767; cv=none; b=Mou/6AhbgzlLP7FRBkJFb0WHd4SsybDu8AlNC0YKaPoAK2Heezrc8IW6ZC3rqkH2ChQjGekK0mGLAPVNkORJakejCxtLnQJr8I3/HFmJUEMpE5OBPyppVh3Y4SbO8eKY82mf8MSEvW+fiz/yv6PD519VWNGJNOCY9+EpYJudcHM=
+	t=1732016957; cv=none; b=neD76Xtxj1+QiFp27OrRZ6/KcaoT0CFI7ByKn0YY9kQSkfJrSVOy35MNyobL9t8mfR6pxGLu1Sq0IzF0FjoOUfsy6ddhi2eKO3tKfDmhLXJMgN3sB93nf5cTF4MYsK1FK84h/eZ1vPKu5Q9NkbEgUVNzL0+rF70IZt7YgCpZVX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732016767; c=relaxed/simple;
-	bh=gKLHoCFkMAORHYx5wuI4s2ZofCwMpO14Clkah9l9+3U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aiHQu8S+8cGD5IGUSDmWbDCHCcjQUeZCO79uVce2vg90li3oMXHURHGSEOsolbmF4rklPyLhIZ0og/iIwyPNVr6CQtPEDajwMhq/ijpk0GqeDKXGD/8eghBH0ueesNoVZWD8Nv6QRD2GhZU1trdQCDwQ5IvO8YteAiIKIrMMlBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FhuqP7EP; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-431688d5127so6953535e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 03:46:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732016763; x=1732621563; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JKFNFU0TxSRVfbmDrokfeS6Zi7x7KpPj06RucnV2NPE=;
-        b=FhuqP7EPPESBm3wpXEDUX5SZuSsMvKtmcoLFBuW9Z1C6ubIwcqwzdgqR9jV5t4BfHb
-         ri5ckHrM91comSN4/COqCvygjk/p3EmZcYOCM7PK8kACWaC/OGx8IYsxE85JXlynpSm0
-         CsWkchA/yxu0UuZpFDf2xwbWMPkd2ptLrf6sEhYc7YnCObAccIdOY9l0bc61d52vo7k1
-         cRs8YOgOXeUGwCrpiWZD6rnywiDhMvcBafXEo9D5+k4UMBolPjvPpeQnE5nZdIi5VX/e
-         tQ6GhwuxN9wXS93VGvhoikhlzQYeJqsFeqr4bwx8RjY6N3eUoeKUkNFeGdmJENbEgBBB
-         Cwuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732016763; x=1732621563;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JKFNFU0TxSRVfbmDrokfeS6Zi7x7KpPj06RucnV2NPE=;
-        b=OJJYpcdJ64t9SQC137i2JYwg5J/X4ODDMy39krq0M9wa13rffnY2uZUyEMOKzTaP93
-         RyHzE8XoPdXAWUHiWsEncQYMjoTjcd/3OE8/iWElYnfeiXgQfneUS0b3Bfhh6OZS3yYa
-         qxB9iWecHh2DQlUh4HuN/f9MzgdPXkCCF/qqbk4kHuGg2SKwlmoaVqzc6UZ5QrG100zH
-         33NcYRSufleIA7mdR5Iq5dRKEj5AsMYKkpAoGWSpBvisKO1Fsp4OznHhtXuwsTtbXOBI
-         BfeZWNoE138mfmIwafPuhwECKFuwdKHG3M56Z8yls988qHKNV+4exhVktfSBLZUALxxk
-         aC+w==
-X-Forwarded-Encrypted: i=1; AJvYcCXcQr3gU0Qo/EBiQPO2Y/Wl2nCL4dG5LfDX/ddIhUPFaueVRTfEhc8aMLFfbwcFIdGTd//5dnjkfoUWC20=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyu1UMfC7yclwGKRLuFQdz6AZGF1AsQJvJMoD4RJwyFqOP9H/di
-	/6f70GsWk/rplA04OXm40zfpXke9hQlok9GU00Ul6oA+YtbsbmZLuoPUS9coYYaeV70kpoMDSfS
-	SFgnxFdKKbHIBTcwYtPu8Kl6OgWvpOV+bdN7o
-X-Google-Smtp-Source: AGHT+IGWejOR/TW8BG5tkq5cCrc9rUhPCdGE3X60q4JttnjZIq//FJLWmLVDtvwmRo/TQwBKnG0iQu0TvUX5ulQrW8I=
-X-Received: by 2002:a05:6000:1887:b0:382:44e0:c5e9 with SMTP id
- ffacd0b85a97d-38244e0ca0fmr6477944f8f.25.1732016763336; Tue, 19 Nov 2024
- 03:46:03 -0800 (PST)
+	s=arc-20240116; t=1732016957; c=relaxed/simple;
+	bh=jzt29YgPp8kxOmF91HtWePF+gDDTESXZcjT9iL/lpNQ=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=UKa9nh5yl3IfT/4rJFy9bnhdDnEy7ka9pIZvQ05OipLI3zUCtcbpCn54hOgopt2b9QIHIcrA1uRB0eFcDu2O/ehu3WtmGbjulrIXCD0/th3hUKAw7V3ba0DAtWiHRbCQ27RKW7XXdpew8nWMAGGw+YzzViNbf2c1N8UZupkm/YA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Xt2nw1gkHz4f3nKW;
+	Tue, 19 Nov 2024 19:48:52 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 98DC41A0359;
+	Tue, 19 Nov 2024 19:49:11 +0800 (CST)
+Received: from [10.174.176.73] (unknown [10.174.176.73])
+	by APP4 (Coremail) with SMTP id gCh0CgB3U4c1ezxn2nvsCA--.28243S3;
+	Tue, 19 Nov 2024 19:49:11 +0800 (CST)
+Subject: Re: md-raid 6.11.8 page fault oops
+To: Mikulas Patocka <mpatocka@redhat.com>, Song Liu <song@kernel.org>
+Cc: Genes Lists <lists@sapience.com>, dm-devel@lists.linux.dev,
+ Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>,
+ linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux@leemhuis.info, "yukuai (C)" <yukuai3@huawei.com>
+References: <0b579808e848171fc64e04f0629e24735d034d32.camel@sapience.com>
+ <CAPhsuW4kNYbcXERCQFqO-r8Q_rCLxrkQPt777cB_8TwyBfy8FA@mail.gmail.com>
+ <3441514c-c18e-4711-35be-1e8eda119677@redhat.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <76b12bf9-3eff-c9da-2c8b-2cc31fb937a4@huaweicloud.com>
+Date: Tue, 19 Nov 2024 19:49:09 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241119112408.779243-1-abdiel.janulgue@gmail.com> <20241119112408.779243-2-abdiel.janulgue@gmail.com>
-In-Reply-To: <20241119112408.779243-2-abdiel.janulgue@gmail.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Tue, 19 Nov 2024 12:45:51 +0100
-Message-ID: <CAH5fLgj_BW22yopAdOLpSQaK97eeUAQb4jfn=KgOqNgCJ4CsqQ@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] rust: page: use the page's reference count to
- decide when to free the allocation
-To: Abdiel Janulgue <abdiel.janulgue@gmail.com>
-Cc: rust-for-linux@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Valentin Obst <kernel@valentinobst.de>, 
-	open list <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	"open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>, airlied@redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <3441514c-c18e-4711-35be-1e8eda119677@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgB3U4c1ezxn2nvsCA--.28243S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxZFW5JF4kZry7AFW8ur1xZrb_yoWrKw45pr
+	15JF1vkr4vqryUJrWSqw1jvF1qqr4vyF1UJFn5Krn7JF1qgr1DAr4UGrWjkwnrXr4Uur13
+	Aas8X3yfKF4xJaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Ib4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
+	e2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4I
+	kC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWU
+	WwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr
+	0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWU
+	JVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJb
+	IYCTnIWIevJa73UjIFyTuYvjxUF1v3UUUUU
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Tue, Nov 19, 2024 at 12:24=E2=80=AFPM Abdiel Janulgue
-<abdiel.janulgue@gmail.com> wrote:
->
-> Ensure pages returned by the constructor are always reference counted.
-> This requires that we replace the page pointer wrapper with Opaque instea=
-d
-> of NonNull to make it possible to cast to a Page pointer from a raw struc=
-t
-> page pointer which is needed to create an ARef instance.
->
-> Signed-off-by: Abdiel Janulgue <abdiel.janulgue@gmail.com>
+Hi,
 
-> -/// A pointer to a page that owns the page allocation.
-> +/// A pointer to a reference-counted page.
->  ///
->  /// # Invariants
->  ///
-> -/// The pointer is valid, and has ownership over the page.
-> +/// The pointer is valid.
-> +#[repr(transparent)]
->  pub struct Page {
-> -    page: NonNull<bindings::page>,
-> +    page: Opaque<bindings::page>,
+在 2024/11/18 18:34, Mikulas Patocka 写道:
+> 
+> 
+> On Fri, 15 Nov 2024, Song Liu wrote:
+> 
+>> + dm folks
+>>
+>> It appears the crash happens in dm.c:clone_endio. Commit
+>> aaa53168cbcc486ca1927faac00bd99e81d4ff04 made some
+>> changes to clone_endio, but I haven't looked into it.
+>>
+>> Thanks,
+>> Song
+> 
+> Hi
+> 
+> That commit just adds a test for tio->ti being NULL, so I doubt that it
+> caused this error.
 
-With this change, Page is no longer a pointer, nor does it contain a
-pointer. The documentation should be updated to reflect this.
+The reported address is 0000000000000050, so it's ti is definitely not
+NULL, ti->type is just 8 offset. However, target_type->end_io is
+exactly 0x50, so the problem is due to ti->type is NULL.
 
->  // SAFETY: Pages have no logic that relies on them staying on a given th=
-read, so moving them across
-> @@ -71,19 +73,23 @@ impl Page {
->      /// let page =3D Page::alloc_page(GFP_KERNEL | __GFP_ZERO)?;
->      /// # Ok(()) }
->      /// ```
-> -    pub fn alloc_page(flags: Flags) -> Result<Self, AllocError> {
-> +    pub fn alloc_page(flags: Flags) -> Result<ARef<Self>, AllocError> {
->          // SAFETY: Depending on the value of `gfp_flags`, this call may =
-sleep. Other than that, it
->          // is always safe to call this method.
->          let page =3D unsafe { bindings::alloc_pages(flags.as_raw(), 0) }=
-;
-> -        let page =3D NonNull::new(page).ok_or(AllocError)?;
-> -        // INVARIANT: We just successfully allocated a page, so we now h=
-ave ownership of the newly
-> -        // allocated page. We transfer that ownership to the new `Page` =
-object.
-> -        Ok(Self { page })
-> +        if page.is_null() {
-> +            return Err(AllocError);
-> +        }
-> +        // CAST: Self` is a `repr(transparent)` wrapper around `bindings=
-::page`.
-> +        let ptr =3D page.cast::<Self>();
-> +        // INVARIANT: We just successfully allocated a page, ptr points =
-to the new `Page` object.
-> +        // SAFETY: According to invariant above ptr is valid.
-> +        Ok(unsafe { ARef::from_raw(NonNull::new_unchecked(ptr)) })
+Thanks,
+Kuai
 
-Why did you change the null check? You should be able to avoid
-changing anything but the last line.
+> 
+> Mikulas
+> 
+> 
+>> On Fri, Nov 15, 2024 at 4:12 AM Genes Lists <lists@sapience.com> wrote:
+>>>
+>>> md-raid crashed with kernel NULL pointer deref on stable 6.11.8.
+>>>
+>>> Happened with raid6 while rsync was writing (data was pulled over
+>>> network).
+>>>
+>>> This rsync happens twice every day without a problem. This was the
+>>> second run after booting 6.11.8, so will see if/when it happens again -
+>>> and if frequent enough to make a bisect possible.
+>>>
+>>> Nonetheless, reporting now in case it's helpful.
+>>>
+>>> Full dmesg attached but the interesting part is:
+>>>
+>>> [33827.216164] BUG: kernel NULL pointer dereference, address:
+>>> 0000000000000050
+>>> [33827.216183] #PF: supervisor read access in kernel mode
+>>> [33827.216193] #PF: error_code(0x0000) - not-present page
+>>> [33827.216203] PGD 0 P4D 0
+>>> [33827.216211] Oops: Oops: 0000 [#1] PREEMPT SMP PTI
+>>> [33827.216221] CPU: 4 UID: 0 PID: 793 Comm: md127_raid6 Not tainted
+>>> 6.11.8-stable-1 #21 1400000003000000474e5500ae13c727d476f9ab
+>>> [33827.216240] Hardware name: To Be Filled By O.E.M. To Be Filled By
+>>> O.E.M./Z370 Extreme4, BIOS P4.20 10/31/2019
+>>> [33827.216254] RIP: 0010:clone_endio+0x43/0x1f0 [dm_mod]
+>>> [33827.216279] Code: 4c 8b 77 e8 65 48 8b 1c 25 28 00 00 00 48 89 5c 24
+>>> 08 48 89 fb 88 44 24 07 4d 85 f6 0f 84 11 01 00 00 49 8b 56 08 4c 8b 6b
+>>> e0 <48> 8b 6a 50 4d 8b 65 38 3c 05 0f 84 0b 01 00 00 66 90 48 85 ed 74
+>>> [33827.216304] RSP: 0018:ffffb9610101bb40 EFLAGS: 00010282
+>>> [33827.216315] RAX: 0000000000000000 RBX: ffff9b15b8c5c598 RCX:
+>>> 000000000015000c
+>>> [33827.216326] RDX: 0000000000000000 RSI: ffffec17e1944200 RDI:
+>>> ffff9b15b8c5c598
+>>> [33827.216338] RBP: 0000000000000000 R08: ffff9b1825108c00 R09:
+>>> 000000000015000c
+>>> [33827.216349] R10: 000000000015000c R11: 00000000ffffffff R12:
+>>> ffff9b10da026000
+>>> [33827.216360] R13: ffff9b15b8c5c520 R14: ffff9b10ca024440 R15:
+>>> ffff9b1474cb33c0
+>>> [33827.216372] FS:  0000000000000000(0000) GS:ffff9b185ee00000(0000)
+>>> knlGS:0000000000000000
+>>> [33827.216385] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>>> [33827.216394] CR2: 0000000000000050 CR3: 00000001f4e22005 CR4:
+>>> 00000000003706f0
+>>> [33827.216406] DR0: 0000000000000000 DR1: 0000000000000000 DR2:
+>>> 0000000000000000
+>>> [33827.216417] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7:
+>>> 0000000000000400
+>>> [33827.216429] Call Trace:
+>>> [33827.216435]  <TASK>
+>>> [33827.216442]  ? __die_body.cold+0x19/0x27
+>>> [33827.216453]  ? page_fault_oops+0x15a/0x2d0
+>>> [33827.216465]  ? exc_page_fault+0x7e/0x180
+>>> [33827.216475]  ? asm_exc_page_fault+0x26/0x30
+>>> [33827.216486]  ? clone_endio+0x43/0x1f0 [dm_mod
+>>> 1400000003000000474e5500e90ca42f094c5280]
+>>> [33827.216510]  clone_endio+0x120/0x1f0 [dm_mod
+>>> 1400000003000000474e5500e90ca42f094c5280]
+>>> [33827.216533]  md_end_clone_io+0x42/0xa0 [md_mod
+>>> 1400000003000000474e55004ac7ec7b1ac1c22c]
+>>> [33827.216559]  handle_stripe_clean_event+0x1e6/0x430 [raid456
+>>> 1400000003000000474e550080acde909728c7a9]
+>>> [33827.216583]  handle_stripe+0x9a3/0x1c00 [raid456
+>>> 1400000003000000474e550080acde909728c7a9]
+>>> [33827.216606]  handle_active_stripes.isra.0+0x381/0x5b0 [raid456
+>>> 1400000003000000474e550080acde909728c7a9]
+>>> [33827.216625]  ? psi_task_switch+0xb7/0x200
+>>> [33827.216637]  raid5d+0x450/0x670 [raid456
+>>> 1400000003000000474e550080acde909728c7a9]
+>>> [33827.216655]  ? lock_timer_base+0x76/0xa0
+>>> [33827.216666]  md_thread+0xa2/0x190 [md_mod
+>>> 1400000003000000474e55004ac7ec7b1ac1c22c]
+>>> [33827.216689]  ? __pfx_autoremove_wake_function+0x10/0x10
+>>> [33827.216701]  ? __pfx_md_thread+0x10/0x10 [md_mod
+>>> 1400000003000000474e55004ac7ec7b1ac1c22c]
+>>> [33827.216723]  kthread+0xcf/0x100
+>>> [33827.216731]  ? __pfx_kthread+0x10/0x10
+>>> [33827.216740]  ret_from_fork+0x31/0x50
+>>> [33827.216749]  ? __pfx_kthread+0x10/0x10
+>>> [33827.216757]  ret_from_fork_asm+0x1a/0x30
+>>> [33827.216769]  </TASK>
+>>>
+>>> --
+>>> Gene
+>>>
 
-Alice
 
