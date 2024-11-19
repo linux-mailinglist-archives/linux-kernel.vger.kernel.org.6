@@ -1,130 +1,269 @@
-Return-Path: <linux-kernel+bounces-413880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 873289D2012
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 07:09:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD2319D2000
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 07:08:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2298F282936
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 06:09:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3273B1F22671
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 06:08:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 087FC156F5F;
-	Tue, 19 Nov 2024 06:09:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B0FD15383E;
+	Tue, 19 Nov 2024 06:08:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="m2GvM62c"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XJbzkRlD"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A9EB1509A0;
-	Tue, 19 Nov 2024 06:09:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0600FE571;
+	Tue, 19 Nov 2024 06:08:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731996556; cv=none; b=jbbDYPVDnjT4/xy7Z0bcOToCd+m7kJ0mVJDZ6uLQyRe+IZd1LJFdFAuyBFQfb8b9kKU8DwptkyHkYvmTl2mQecsxGwih3/ZU9XhCek6oHy+yG56R6l4dZqOonGP8zRAfCfgbI0zabAZmI5si3lflBWMWk/G8SkJofw/VhX/KeJQ=
+	t=1731996499; cv=none; b=LOaPL9c1agHd+BK54FzDp2SuPMdLn90RmYaXk1RIwk5/Qrh3k/rzkVto0uFcxRcLUf3yrohGeuqPPRhvX2MB/7sjj5MSZ4dvYdH6Z1r4gUzGL3gNfSEJ8pD30R0SEY9v3wY/t3gBMrMWLUwxxmWLQ5uCEjgJ27qCmd8POyirZWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731996556; c=relaxed/simple;
-	bh=pm3HocN3GvrmiHeru0cjRN7+Ow4+dMkboMMoX8Fzt98=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=K6S+m6I0mLiOosOE//qdgX1yuI6KO1d2C2MLmR/YddvkaBUnPsdVcZ0LGGj/edBDsEy9RxNP8a4NUNW3sN0t7ZBW4xI1G2WQCMrmAYjSSW6NgF34XImP/3rHnLhg2tJrVs23LY031aIjxfnzLptROuzK0Wac2dWSt6L5J+qITfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=m2GvM62c; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AIGGkWh031034;
-	Tue, 19 Nov 2024 06:09:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	N+R+67d+Td8YLt+It/qRvVLGiiIIepGNAKAvyA3viL0=; b=m2GvM62cCSpOLMA4
-	lky6d7XZ5eutTE1uJwfcSq6a9piBgr/8/KremAu9S4l5AyneLh2qoNkoBUD/cIaK
-	BQ+DlLS+/UdjkWzJGZnaNEFPsWZlntTkUQc67RICKu4BpudMcI8IQBx7dhQRzZ35
-	9vOjzecLtKobR0d+llh5BrGUfMQXGgy5QDmp/Q/d8DcoI6ILaSp/+CKTQYkZq8/6
-	F0cvDODY2CvfV1qikqK68LmfhAxkN2YCecoJYD6paqEn32nS6HsC07dIfUODYqdV
-	7YyLWslihlDCfsuEbJPFUfzSsLTNBe4mFicJppYCMCrpif+Q8w2CU66WshZVO2AW
-	cqcM6A==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4308y91khj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 19 Nov 2024 06:09:11 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AJ68UZq015070
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 19 Nov 2024 06:08:30 GMT
-Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 18 Nov 2024 22:08:23 -0800
-From: Varadarajan Narayanan <quic_varada@quicinc.com>
-To: <andersson@kernel.org>, <konradybcio@kernel.org>, <conor@kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC: Varadarajan Narayanan <quic_varada@quicinc.com>,
-        Konrad Dybcio
-	<konrad.dybcio@oss.qualcomm.com>
-Subject: [PATCH v3 3/3] arm64: dts: qcom: ipq5424: Add LLCC/system-cache-controller
-Date: Tue, 19 Nov 2024 11:37:54 +0530
-Message-ID: <20241119060754.3350320-4-quic_varada@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241119060754.3350320-1-quic_varada@quicinc.com>
-References: <20241119060754.3350320-1-quic_varada@quicinc.com>
+	s=arc-20240116; t=1731996499; c=relaxed/simple;
+	bh=LT1rseeMp9QvfkONqt2wj3dfHJHXvUu+it4RFz2iTeI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dtjotSRJ54xV4vc7MA9EYxOgqMkpiX2iQNRN7J6OnwmJ9pYkd/mIgtJyv9PPWPM6ZbUjaTn3RZKaYFNBYGug2uwUpK53hvequN8c38QhpjZfuzPUtSWuLYUoJmAJHJXg6+1H+UBTCslhDOFOVdvK5DAkGbUH0mTVSS+7Hm4Ul4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XJbzkRlD; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-20c693b68f5so38832335ad.1;
+        Mon, 18 Nov 2024 22:08:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731996497; x=1732601297; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hDJK36MwVQC+ba5/5TZMf9JMjpVxkr7gobbsTVB6WQU=;
+        b=XJbzkRlD1GYxiTPRU6Q8/5oTagSTUcd7BclKbSTgnZbD8dJnS2KufRJA21DagAoIh0
+         Ey33HZtDb6EYVvC2WAaNfkfLoZEIpCB5g7WqbjCvwQyL7iekMZojncaVuMfkB4LBY0S5
+         h4MRzxWnTg13I3OYLEIroDukZOxQwFUDnB5sF00CR/b0X6EG+8Z9N/9f0fPAsir0QpTD
+         tudnWhYxijdZwFRcGpKvWV+P6pgG01jYimZsKVSr8pQIV9dnu0pbVrHrQ0Jq3GKVJHFE
+         MP1BVeGD5PWpdfv3IAgRRtnFzFJmwaeDKEDm55jKu6l4h00N6kCnw7oW5LaeLqCrN8Q4
+         V7XA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731996497; x=1732601297;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hDJK36MwVQC+ba5/5TZMf9JMjpVxkr7gobbsTVB6WQU=;
+        b=rzZiYO8KjWeg5OYT3AyYgGYi1L9cscIsWq5W1Sm6Tv2yur3aFQ4ea7KYxC3MHb4+nH
+         TmGA8FpIHqixXMxBpARi1VraaRluENGO1kvYsLPQRoqQvI4mpA1n5RbW88y9a36wiW7v
+         tVo6cEzbDasG+ZHQbcV4HZqsGtehz7dIpr6TJfJejl48RZ6H/xgZZ4YeDq0opAjR4+q+
+         qY7eZwdOoe1VFDE/Cj93Ns/LvoZbBrK0JvPkumle9SebTifhlLv4+xTMDWk2eSmDOrbM
+         YEPznXB2oO9vahgYZSDdHnQ0ipy1IujaShfJ+GQ5SN8tafl6kSdSZmglrQSJDgJdieV3
+         Gufg==
+X-Forwarded-Encrypted: i=1; AJvYcCUaLYCrbfZqiQj2OO7VqdZwuUUhpnbas6a/T9Gg6+uyqYg/oKXTsRQ3aMBr7YEGvzex0SE=@vger.kernel.org, AJvYcCUeGk0lSgLYupoBWbasgW/a1TDWFNrFCA+PpU19Tutai8TNjp3xJ1RZrcHno8NXQm4uHKyIO4A5jf8h0PqVVmJhDnPs@vger.kernel.org, AJvYcCX/03sUAoRGLVpyjbKOM6tUQ1X7xqhyTBBhd1gvqEFxHYYJcuEROslcF4Pbpv3z40Vjki9+htGUp+/3A7fc@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLrq0edvVXJr9297BZsG6sE3YX1a0cYAVxJmoygqwptXoyBnoT
+	MtczNvxSgZU02GALXWQM8smfHx1m6rKtIiYdRGA5sEQwDFKSh0igVDs6o1b8+3iMVHYjKse9QLE
+	gOXigECH2x5tu+9i5PsuOQwnuess=
+X-Google-Smtp-Source: AGHT+IEfLOOFtwPaPn1KDWRTJwgEqoe4Tr7dolGCzxCllwVJJn4dLnUg34N4Lw+ntRkl1TaqYKWRPfytpQx0nPxRSTY=
+X-Received: by 2002:a17:90b:4e90:b0:2ea:8aac:6ab9 with SMTP id
+ 98e67ed59e1d1-2ea8aac6b9emr5898982a91.8.1731996497087; Mon, 18 Nov 2024
+ 22:08:17 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 4XJoA7ue6Moo996xvT-n7-tl-BRGM18V
-X-Proofpoint-ORIG-GUID: 4XJoA7ue6Moo996xvT-n7-tl-BRGM18V
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- mlxlogscore=647 malwarescore=0 mlxscore=0 phishscore=0 bulkscore=0
- adultscore=0 lowpriorityscore=0 impostorscore=0 spamscore=0 clxscore=1015
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411190044
+References: <20241105133405.2703607-1-jolsa@kernel.org> <20241105133405.2703607-10-jolsa@kernel.org>
+ <CAEf4BzaXvdXr4dyHrozWYyMHJor5GpaHnPF8=8qy0r_5Crb3wg@mail.gmail.com> <ZzkSXTjGxNGnpzZX@krava>
+In-Reply-To: <ZzkSXTjGxNGnpzZX@krava>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Mon, 18 Nov 2024 22:08:05 -0800
+Message-ID: <CAEf4BzaCj7Sx=-CfSW28ezpO-FRNT4oXhiyhSrLyTx7RaAz63g@mail.gmail.com>
+Subject: Re: [RFC bpf-next 09/11] selftests/bpf: Add usdt trigger bench
+To: Jiri Olsa <olsajiri@gmail.com>
+Cc: Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, Song Liu <songliubraving@fb.com>, 
+	Yonghong Song <yhs@fb.com>, John Fastabend <john.fastabend@gmail.com>, Hao Luo <haoluo@google.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Alan Maguire <alan.maguire@oracle.com>, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add a DT node for Last level cache (aka. system cache) controller
-which provides control over the last level cache present on
-IPQ5424 SoCs.
+On Sat, Nov 16, 2024 at 1:45=E2=80=AFPM Jiri Olsa <olsajiri@gmail.com> wrot=
+e:
+>
+> On Thu, Nov 14, 2024 at 03:40:53PM -0800, Andrii Nakryiko wrote:
+> > On Tue, Nov 5, 2024 at 5:35=E2=80=AFAM Jiri Olsa <jolsa@kernel.org> wro=
+te:
+> > >
+> > > Adding usdt trigger bench to meassure optimized usdt probes.
+> > >
+> > > Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> > > ---
+> > >  tools/testing/selftests/bpf/bench.c           |  2 +
+> > >  .../selftests/bpf/benchs/bench_trigger.c      | 45 +++++++++++++++++=
+++
+> > >  .../selftests/bpf/progs/trigger_bench.c       | 10 ++++-
+> > >  3 files changed, 56 insertions(+), 1 deletion(-)
+> > >
+> >
+> > Why not just adding uprobe-nop5 benchmark instead of going all the way
+> > into USDT? Seems simpler and will benchmark all the same stuff?
+>
+> ok, perhaps with your new usdt library and the possible nop/nop5 tricks w=
+e
+> might want to have specific usdt benchmarks.. but that's for later anyway
+>
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
----
-v3: Rebase to ToT
+meh, maybe, don't know if necessary *for benchmark*.
 
-v2: Add Reviewed-by
----
- arch/arm64/boot/dts/qcom/ipq5424.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
+But anyways, the USDT library is out, see [0], feel free to take a look and=
+ use
 
-diff --git a/arch/arm64/boot/dts/qcom/ipq5424.dtsi b/arch/arm64/boot/dts/qcom/ipq5424.dtsi
-index 5e219f900412..bdb73f8c09f9 100644
---- a/arch/arm64/boot/dts/qcom/ipq5424.dtsi
-+++ b/arch/arm64/boot/dts/qcom/ipq5424.dtsi
-@@ -145,6 +145,13 @@ soc@0 {
- 		#size-cells = <2>;
- 		ranges = <0 0 0 0 0x10 0>;
- 
-+		system-cache-controller@800000 {
-+			compatible = "qcom,ipq5424-llcc";
-+			reg = <0 0x00800000 0 0x200000>;
-+			reg-names = "llcc0_base";
-+			interrupts = <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>;
-+		};
-+
- 		tlmm: pinctrl@1000000 {
- 			compatible = "qcom,ipq5424-tlmm";
- 			reg = <0 0x01000000 0 0x300000>;
--- 
-2.34.1
+  [0] https://github.com/libbpf/usdt
 
+> jirka
+>
+> >
+> > > diff --git a/tools/testing/selftests/bpf/bench.c b/tools/testing/self=
+tests/bpf/bench.c
+> > > index 1bd403a5ef7b..dc5121e49623 100644
+> > > --- a/tools/testing/selftests/bpf/bench.c
+> > > +++ b/tools/testing/selftests/bpf/bench.c
+> > > @@ -526,6 +526,7 @@ extern const struct bench bench_trig_uprobe_multi=
+_push;
+> > >  extern const struct bench bench_trig_uretprobe_multi_push;
+> > >  extern const struct bench bench_trig_uprobe_multi_ret;
+> > >  extern const struct bench bench_trig_uretprobe_multi_ret;
+> > > +extern const struct bench bench_trig_usdt;
+> > >
+> > >  extern const struct bench bench_rb_libbpf;
+> > >  extern const struct bench bench_rb_custom;
+> > > @@ -586,6 +587,7 @@ static const struct bench *benchs[] =3D {
+> > >         &bench_trig_uretprobe_multi_push,
+> > >         &bench_trig_uprobe_multi_ret,
+> > >         &bench_trig_uretprobe_multi_ret,
+> > > +       &bench_trig_usdt,
+> > >         /* ringbuf/perfbuf benchmarks */
+> > >         &bench_rb_libbpf,
+> > >         &bench_rb_custom,
+> > > diff --git a/tools/testing/selftests/bpf/benchs/bench_trigger.c b/too=
+ls/testing/selftests/bpf/benchs/bench_trigger.c
+> > > index 32e9f194d449..bdee8b8362d0 100644
+> > > --- a/tools/testing/selftests/bpf/benchs/bench_trigger.c
+> > > +++ b/tools/testing/selftests/bpf/benchs/bench_trigger.c
+> > > @@ -8,6 +8,7 @@
+> > >  #include "bench.h"
+> > >  #include "trigger_bench.skel.h"
+> > >  #include "trace_helpers.h"
+> > > +#include "../sdt.h"
+> > >
+> > >  #define MAX_TRIG_BATCH_ITERS 1000
+> > >
+> > > @@ -333,6 +334,13 @@ static void *uprobe_producer_ret(void *input)
+> > >         return NULL;
+> > >  }
+> > >
+> > > +static void *uprobe_producer_usdt(void *input)
+> > > +{
+> > > +       while (true)
+> > > +               STAP_PROBE(trigger, usdt);
+> > > +       return NULL;
+> > > +}
+> > > +
+> > >  static void usetup(bool use_retprobe, bool use_multi, void *target_a=
+ddr)
+> > >  {
+> > >         size_t uprobe_offset;
+> > > @@ -383,6 +391,37 @@ static void usetup(bool use_retprobe, bool use_m=
+ulti, void *target_addr)
+> > >         }
+> > >  }
+> > >
+> > > +static void __usdt_setup(const char *provider, const char *name)
+> > > +{
+> > > +       struct bpf_link *link;
+> > > +       int err;
+> > > +
+> > > +       setup_libbpf();
+> > > +
+> > > +       ctx.skel =3D trigger_bench__open();
+> > > +       if (!ctx.skel) {
+> > > +               fprintf(stderr, "failed to open skeleton\n");
+> > > +               exit(1);
+> > > +       }
+> > > +
+> > > +       bpf_program__set_autoload(ctx.skel->progs.bench_trigger_usdt,=
+ true);
+> > > +
+> > > +       err =3D trigger_bench__load(ctx.skel);
+> > > +       if (err) {
+> > > +               fprintf(stderr, "failed to load skeleton\n");
+> > > +               exit(1);
+> > > +       }
+> > > +
+> > > +       link =3D bpf_program__attach_usdt(ctx.skel->progs.bench_trigg=
+er_usdt,
+> > > +                                       -1 /* all PIDs */, "/proc/sel=
+f/exe",
+> > > +                                       provider, name, NULL);
+> > > +       if (!link) {
+> > > +               fprintf(stderr, "failed to attach uprobe!\n");
+> > > +               exit(1);
+> > > +       }
+> > > +       ctx.skel->links.bench_trigger_usdt =3D link;
+> > > +}
+> > > +
+> > >  static void usermode_count_setup(void)
+> > >  {
+> > >         ctx.usermode_counters =3D true;
+> > > @@ -448,6 +487,11 @@ static void uretprobe_multi_ret_setup(void)
+> > >         usetup(true, true /* use_multi */, &uprobe_target_ret);
+> > >  }
+> > >
+> > > +static void usdt_setup(void)
+> > > +{
+> > > +       __usdt_setup("trigger", "usdt");
+> > > +}
+> > > +
+> > >  const struct bench bench_trig_syscall_count =3D {
+> > >         .name =3D "trig-syscall-count",
+> > >         .validate =3D trigger_validate,
+> > > @@ -506,3 +550,4 @@ BENCH_TRIG_USERMODE(uprobe_multi_ret, ret, "uprob=
+e-multi-ret");
+> > >  BENCH_TRIG_USERMODE(uretprobe_multi_nop, nop, "uretprobe-multi-nop")=
+;
+> > >  BENCH_TRIG_USERMODE(uretprobe_multi_push, push, "uretprobe-multi-pus=
+h");
+> > >  BENCH_TRIG_USERMODE(uretprobe_multi_ret, ret, "uretprobe-multi-ret")=
+;
+> > > +BENCH_TRIG_USERMODE(usdt, usdt, "usdt");
+> > > diff --git a/tools/testing/selftests/bpf/progs/trigger_bench.c b/tool=
+s/testing/selftests/bpf/progs/trigger_bench.c
+> > > index 044a6d78923e..7b7d4a71e7d4 100644
+> > > --- a/tools/testing/selftests/bpf/progs/trigger_bench.c
+> > > +++ b/tools/testing/selftests/bpf/progs/trigger_bench.c
+> > > @@ -1,8 +1,9 @@
+> > >  // SPDX-License-Identifier: GPL-2.0
+> > >  // Copyright (c) 2020 Facebook
+> > > -#include <linux/bpf.h>
+> > > +#include "vmlinux.h"
+> > >  #include <asm/unistd.h>
+> > >  #include <bpf/bpf_helpers.h>
+> > > +#include <bpf/usdt.bpf.h>
+> > >  #include <bpf/bpf_tracing.h>
+> > >  #include "bpf_misc.h"
+> > >
+> > > @@ -138,3 +139,10 @@ int bench_trigger_rawtp(void *ctx)
+> > >         inc_counter();
+> > >         return 0;
+> > >  }
+> > > +
+> > > +SEC("?usdt")
+> > > +int bench_trigger_usdt(struct pt_regs *ctx)
+> > > +{
+> > > +       inc_counter();
+> > > +       return 0;
+> > > +}
+> > > --
+> > > 2.47.0
+> > >
 
