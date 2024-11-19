@@ -1,599 +1,172 @@
-Return-Path: <linux-kernel+bounces-414576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD44A9D2A2E
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 16:52:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 41AE19D2A38
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 16:54:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AAC82813B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 15:52:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 030BB2816D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 15:54:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B12E3C463;
-	Tue, 19 Nov 2024 15:52:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ABF21D0174;
+	Tue, 19 Nov 2024 15:53:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="CN3w7l08"
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oeA1y6+1"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 969B31CF29E;
-	Tue, 19 Nov 2024 15:52:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 131051CF293
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 15:53:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732031563; cv=none; b=gtbB8X8EFfGY6lLv7mkGss9dbWxylARYaHU3DhWpoYfMLJGx4iS/YpuorW5TqtXAcPJhfmtY7Waa9ieA/crpF72T/OahmSJ3FxQ9YK+gun5IFRXHHU/tbXlmIL1F2JIsbCibW11tPDMfHUbKAta9/DCl6Mxi8FuZv3hXx/EUYK0=
+	t=1732031630; cv=none; b=jGQmreQiSPjZqGawbJzs5lTuglXJgl9j2mhieMe5ZA05ryrZcZzgChz8yrZoB5NNt54lgEpnWyfBaazlW8IZGWGo79PLQ6MsT8P3vot49iK9QgxDFgidS0mYFFD98c1FyOr95vyYVjtpWTCj/HZuYpsUJeZaNMaI5TMdkTYv1SE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732031563; c=relaxed/simple;
-	bh=4NzZOdGb0ur3CZWG4cjS33EvjJRPveAKoeNy2O3OiEI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=o65B8wuzmUZSpyun2zwB6EA1HuD3I3nbqVTRrSTeV9ZXzHoBKt90ZDJVBRJN2ZcVmbGdPYxKkbISWA+bl7MJi7GMdUvFJnd0PTtbU2KuajQm8/8roqvGWAmRyuInyoO/ZvwPPdzAoVWxtPblxJsQyNBHbY7ib8Gzrgw2/3FeMgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=CN3w7l08; arc=none smtp.client-ip=85.214.62.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from wsk (85-222-111-42.dynamic.chello.pl [85.222.111.42])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-	(No client certificate requested)
-	(Authenticated sender: lukma@denx.de)
-	by phobos.denx.de (Postfix) with ESMTPSA id 89D8388D9B;
-	Tue, 19 Nov 2024 16:52:37 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-	s=phobos-20191101; t=1732031558;
-	bh=zsNppn3YucN3DBw14lFNPOF9uTRowuRcJGN9lxVvyk8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=CN3w7l08fLldTUgMBYkKZ4hiKg62bFrkxOj69bRDcVU0NgLuGDAojMZIZlqboh2Jv
-	 0x4Pgi8Yp6zGsxAhk8VZ79HgujVCgnKw1zk1IYD8RqBGjyU5cQi9O0j1fzZMd5Rwi0
-	 JjEb+Tz+OPDF8A2nbHQh1QNn9C6rpamxK2xAPvOMBE0uON546W2FkcTH7JcLuIZfaI
-	 H+pdHdH/XTE2UGWg3QlFFK+pDPkmQVk+nJwWCwPGuf1URkefp/E2GWAaWe+mGL28a5
-	 7WCMCpsp0wictqk26dlNVzmM9rotG4+xDvUs3QPoyDWvF1OQNQLMuwytubvVXghwCr
-	 MgA/gOc3vHaeg==
-Date: Tue, 19 Nov 2024 16:52:36 +0100
-From: Lukasz Majewski <lukma@denx.de>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha
- Hauer <s.hauer@pengutronix.de>
-Cc: Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam
- <festevam@gmail.com>, devicetree@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Stefan
- Wahren <wahrenst@gmx.net>
-Subject: Re: [PATCH v11 3/3] ARM: dts: mxs: Add descriptions for imx287
- based btt3-[012] devices
-Message-ID: <20241119165236.69438f75@wsk>
-In-Reply-To: <20241107085705.490940-3-lukma@denx.de>
-References: <20241107085705.490940-1-lukma@denx.de>
-	<20241107085705.490940-3-lukma@denx.de>
-Organization: denx.de
-X-Mailer: Claws Mail 3.19.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1732031630; c=relaxed/simple;
+	bh=oZBz6My2fl2cEQ/H4m7spItLuifNL3YkZ0yddOy41YQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=INuzgWwdV6KYwcl7U+MMcZcwJs7mom4AbSV0/O2dFbnGtpfZR7i8Yw61cG4ETcjG1Conm03OnxZw3yvEVUo+iiw7qtM08zpBk7MDi5/miAv7Q+KRpQQgG0zh6m9+g7mU7qL9ZQWOGvkHfb7nAT38tgwjBedPuRUELwcbSHujrBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oeA1y6+1; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5cfc18d5259so9024a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 07:53:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1732031627; x=1732636427; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oZBz6My2fl2cEQ/H4m7spItLuifNL3YkZ0yddOy41YQ=;
+        b=oeA1y6+1eIa+KuXOu9qX7nu6h0bMz7NENQrNnJI47zwqpW6+yDIEi9QRdmjSgnaIlF
+         k/RYgwEKxtf6zHr6my7/5bGrZq3tgO7I+ucxLpTd8W5zSJn3Li/1SXONWmkZlkDCQ+kP
+         u6S6gbOFJLE3Yh2GTLsTZl5A06hCVjr5W5QMbMd0aYChC3jhaZuyHjCvmsgyZUx9uyUX
+         b3SE0BGt53TC5G9A2i25OLm5rBsDdSCt+5r7JV8s4+ApK57hz38jpa/6CBXvr1zyP4nS
+         uXNeMGxAn5LjJ+oaoSJ02f9gnaKTPk0kkRfForcsHfNuf2h/4jX9e/H1czJNFFLxMzBt
+         NrGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732031627; x=1732636427;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oZBz6My2fl2cEQ/H4m7spItLuifNL3YkZ0yddOy41YQ=;
+        b=M99pAj/iYni8SeCLncJXzXI5TgU8omLFpdwsploLswKFn8j2eWyrGaiR5bp5Z4sZeO
+         hfXEYjE+cYfn5UIH7ZVugVdqA14mpxP6HvnHyRiBlPtGBLtFlN+dB54lQsDcgAvqrNFU
+         MI/mGEgncDtQm8mo1u180sK4L0C8CEEt+HLQfFA8NtKCN9CmFst7xd9pxmMvm+jryUCv
+         HJyNFWDH7ozFtYFvz7CHL9WfyVZgMtcTcLX02g7N3aJeoz2eZkMperbN57zCkz39RWPU
+         xBtb7Gd9z9Z9gh3kGmV82hxW3ytYRsB9JZwXSZrRkrtq5oBMvZRkxoYrAN8Ch7SzJ9ai
+         oMew==
+X-Forwarded-Encrypted: i=1; AJvYcCW1GYH/iGXwxRFX/n/64HJXn/uy8IQWy1AWx0tIOvWmEs+Epd3uJ0Tv4anhv3IdYW0bWLk+AoMCtHWBgtk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEkVVx5KSF/3jlWzvDwtVYwi4pJUIB05s7C5Wv7xyOabB9Te5W
+	Q01WETzBbf1ny+paxxGFqIPkjgpNDAYYnnTBHXzcmul7VBkcrAUWstes5IZdMRsEPfouEjX9kAh
+	skD8RwNP4y1Ff6y+HCH/jcsuSR1z5er7nJfI8
+X-Gm-Gg: ASbGncvcpSt1s8mKPHIaxQgj2EQpJAyYvZFfVW7w6JSjL3b5medSaqrnRnQPqzFvtrO
+	1bS2wrUPyoQlkCUibldkWZV4OVEhnuLR8rSZaHdN5s+H3/9IZ/ry+SqvEcOk=
+X-Google-Smtp-Source: AGHT+IGNsuMEPDGgLQcJBGgUTcQNAXs25llr0/NFfx7zpUAdIJ2qG87STQ6ogH4Jn3C0zEhl2cmBRbcH53+WD7m9EI4=
+X-Received: by 2002:aa7:c251:0:b0:5cf:f20c:bdf0 with SMTP id
+ 4fb4d7f45d1cf-5cff20cbec4mr2276a12.4.1732031626961; Tue, 19 Nov 2024 07:53:46
+ -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/40inb2lnEtEeFDRdPJ5UPqd";
- protocol="application/pgp-signature"; micalg=pgp-sha512
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
-
---Sig_/40inb2lnEtEeFDRdPJ5UPqd
-Content-Type: text/plain; charset=US-ASCII
+References: <20241116175922.3265872-1-pasha.tatashin@soleen.com>
+ <a0372f7f-9a85-4d3e-ba20-b5911a8189e3@lucifer.local> <CAG48ez2vG0tr=H8csGes7HN_5HPQAh4WZU8U1G945K1GKfABPg@mail.gmail.com>
+ <CA+CK2bB0w=i1z78AJbr2gZE9ybYki4Vz_s53=8URrxwyPvvB+A@mail.gmail.com>
+ <CAG48ez1KFFXzy5qcYVZLnUEztaZxDGY2+4GvwYq7Hb=Y=3FBxQ@mail.gmail.com>
+ <CA+CK2bCBwZFomepG-Pp6oiAwHQiKdsTLe3rYtE3hFSQ5spEDww@mail.gmail.com>
+ <CAG48ez0NzMbwnbvMO7KbUROZq5ne7fhiau49v7oyxwPrYL=P6Q@mail.gmail.com> <CA+CK2bByXtm8sLyFzDDzm5xC6xb=DEutaRUeujGJdwf-kmK1gA@mail.gmail.com>
+In-Reply-To: <CA+CK2bByXtm8sLyFzDDzm5xC6xb=DEutaRUeujGJdwf-kmK1gA@mail.gmail.com>
+From: Jann Horn <jannh@google.com>
+Date: Tue, 19 Nov 2024 16:53:10 +0100
+Message-ID: <CAG48ez3zNWJY=3EcuS1n1cFyujUO7CXAYe7=H48Ja_WmdL_PYw@mail.gmail.com>
+Subject: Re: [RFCv1 0/6] Page Detective
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	cgroups@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	akpm@linux-foundation.org, corbet@lwn.net, derek.kiernan@amd.com, 
+	dragan.cvetic@amd.com, arnd@arndb.de, gregkh@linuxfoundation.org, 
+	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, tj@kernel.org, 
+	hannes@cmpxchg.org, mhocko@kernel.org, roman.gushchin@linux.dev, 
+	shakeel.butt@linux.dev, muchun.song@linux.dev, Liam.Howlett@oracle.com, 
+	vbabka@suse.cz, shuah@kernel.org, vegard.nossum@oracle.com, 
+	vattunuru@marvell.com, schalla@marvell.com, david@redhat.com, 
+	willy@infradead.org, osalvador@suse.de, usama.anjum@collabora.com, 
+	andrii@kernel.org, ryan.roberts@arm.com, peterx@redhat.com, oleg@redhat.com, 
+	tandersen@netflix.com, rientjes@google.com, gthelen@google.com, 
+	linux-hardening@vger.kernel.org, 
+	Kernel Hardening <kernel-hardening@lists.openwall.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Dear Community,
+On Tue, Nov 19, 2024 at 4:14=E2=80=AFPM Pasha Tatashin
+<pasha.tatashin@soleen.com> wrote:
+> On Tue, Nov 19, 2024 at 7:52=E2=80=AFAM Jann Horn <jannh@google.com> wrot=
+e:
+> > On Tue, Nov 19, 2024 at 2:30=E2=80=AFAM Pasha Tatashin
+> > <pasha.tatashin@soleen.com> wrote:
+> > > > Can you point me to where a refcounted reference to the page comes
+> > > > from when page_detective_metadata() calls dump_page_lvl()?
+> > >
+> > > I am sorry, I remembered incorrectly, we are getting reference right
+> > > after dump_page_lvl() in page_detective_memcg() -> folio_try_get(); I
+> > > will move the folio_try_get() to before dump_page_lvl().
+> > >
+> > > > > > So I think dump_page() in its current form is not something we =
+should
+> > > > > > expose to a userspace-reachable API.
+> > > > >
+> > > > > We use dump_page() all over WARN_ONs in MM code where pages might=
+ not
+> > > > > be locked, but this is a good point, that while even the existing
+> > > > > usage might be racy, providing a user-reachable API potentially m=
+akes
+> > > > > it worse. I will see if I could add some locking before dump_page=
+(),
+> > > > > or make a dump_page variant that does not do dump_mapping().
+> > > >
+> > > > To be clear, I am not that strongly opposed to racily reading data
+> > > > such that the data may not be internally consistent or such; but th=
+is
+> > > > is a case of racy use-after-free reads that might end up dumping
+> > > > entirely unrelated memory contents into dmesg. I think we should
+> > > > properly protect against that in an API that userspace can invoke.
+> > > > Otherwise, if we race, we might end up writing random memory conten=
+ts
+> > > > into dmesg; and if we are particularly unlucky, those random memory
+> > > > contents could be PII or authentication tokens or such.
+> > > >
+> > > > I'm not entirely sure what the right approach is here; I guess it
+> > > > makes sense that when the kernel internally detects corruption,
+> > > > dump_page doesn't take references on pages it accesses to avoid
+> > > > corrupting things further. If you are looking at a page based on a
+> > > > userspace request, I guess you could access the page with the
+> > > > necessary locking to access its properties under the normal locking
+> > > > rules?
+> > >
+> > > I will take reference, as we already do that for memcg purpose, but
+> > > have not included dump_page().
+> >
+> > Note that taking a reference on the page does not make all of
+> > dump_page() fine; in particular, my understanding is that
+> > folio_mapping() requires that the page is locked in order to return a
+> > stable pointer, and some of the code in dump_mapping() would probably
+> > also require some other locks - probably at least on the inode and
+> > maybe also on the dentry, I think? Otherwise the inode's dentry list
+> > can probably change concurrently, and the dentry's name pointer can
+> > change too.
+>
+> Agreed, once reference is taken, the page identity cannot change (i.e.
+> if it is a named page it will stay a named page), but dentry can be
+> renamed. I will look into what can be done to guarantee consistency in
+> the next version. There is also a fallback if locking cannot be
+> reliably resolved (i.e. for performance reasons) where we can make
+> dump_mapping() optionally disabled from dump_page_lvl() with a new
+> argument flag.
 
-> The btt3 device' HW revisions from 0 to 2 use imx287 SoC and are to
-> some extend similar to already upstreamed XEA devices, hence are
-> using common imx28-lwe.dtsi file.
->=20
-> New, imx28-btt3.dtsi has been added to embrace common DTS
-> properties for different HW revisions for this device.
->=20
-> As a result - changes introduced in imx28-btt3-[012].dts are
-> minimal.
->=20
-
-Are there any more comments / suggestions for this patch set?
-
-> Signed-off-by: Lukasz Majewski <lukma@denx.de>
->=20
-> ---
-> Changes for v2:
-> - Rename dts file from btt3-[012] to imx28-btt3-[012] to match current
->   linux kernel naming convention
-> - Remove 'wlf,wm8974' from compatible for codec@1a
->=20
-> Changes for v3:
-> - Keep alphabethical order for Makefile entries
->=20
-> Changes for v4:
-> - Change compatible for btt3 board (to 'lwn,imx28-btt3')
->=20
-> Changes for v5:
-> - Combine patch, which adds btt3-[012] with one adding board entry to
->   fsl.yaml
->=20
-> Changes for v6:
-> - Make the patch series for adding entry in fsl.yaml and btt3
->=20
-> Changes for v7:
-> - Use "panel" property as suggested by the community
-> - Use panel-timing to specify the display parameters
-> - Update subject line with correct tags
->=20
-> Changes for v8:
-> - Use GPIO_ACTIVE_HIGH instead of '0'
-> - Add the comment regarding mac address specification
-> - Remove superfluous comment
-> - Change wifi-en-pin node name
->=20
-> Changes for v9:
-> - Remove not used 'pm-ignore-notify'
-> - Add display names for 'panel-dpi' compatible to avoid Schema
-> warnings
->=20
-> Changes for v10:
-> - Drop new line with panel-timing definitions
-> - Add new lines with 'sound' node
-> - Change 'codec' to 'audio-codec'
-> - Change order of properties for saif1 node
->=20
-> Changes for v11:
-> - None
-> ---
->  arch/arm/boot/dts/nxp/mxs/Makefile         |   3 +
->  arch/arm/boot/dts/nxp/mxs/imx28-btt3-0.dts |  12 +
->  arch/arm/boot/dts/nxp/mxs/imx28-btt3-1.dts |   8 +
->  arch/arm/boot/dts/nxp/mxs/imx28-btt3-2.dts |  39 +++
->  arch/arm/boot/dts/nxp/mxs/imx28-btt3.dtsi  | 313
-> +++++++++++++++++++++ 5 files changed, 375 insertions(+)
->  create mode 100644 arch/arm/boot/dts/nxp/mxs/imx28-btt3-0.dts
->  create mode 100644 arch/arm/boot/dts/nxp/mxs/imx28-btt3-1.dts
->  create mode 100644 arch/arm/boot/dts/nxp/mxs/imx28-btt3-2.dts
->  create mode 100644 arch/arm/boot/dts/nxp/mxs/imx28-btt3.dtsi
->=20
-> diff --git a/arch/arm/boot/dts/nxp/mxs/Makefile
-> b/arch/arm/boot/dts/nxp/mxs/Makefile index a430d04f9c69..96dd31ea19ba
-> 100644 --- a/arch/arm/boot/dts/nxp/mxs/Makefile
-> +++ b/arch/arm/boot/dts/nxp/mxs/Makefile
-> @@ -8,6 +8,9 @@ dtb-$(CONFIG_ARCH_MXS) +=3D \
->  	imx28-apf28.dtb \
->  	imx28-apf28dev.dtb \
->  	imx28-apx4devkit.dtb \
-> +	imx28-btt3-0.dtb \
-> +	imx28-btt3-1.dtb \
-> +	imx28-btt3-2.dtb \
->  	imx28-cfa10036.dtb \
->  	imx28-cfa10037.dtb \
->  	imx28-cfa10049.dtb \
-> diff --git a/arch/arm/boot/dts/nxp/mxs/imx28-btt3-0.dts
-> b/arch/arm/boot/dts/nxp/mxs/imx28-btt3-0.dts new file mode 100644
-> index 000000000000..6ac46e4b21bb
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/nxp/mxs/imx28-btt3-0.dts
-> @@ -0,0 +1,12 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
-> +/*
-> + * Copyright 2024
-> + * Lukasz Majewski, DENX Software Engineering, lukma@denx.de
-> + */
-> +
-> +/dts-v1/;
-> +#include "imx28-btt3.dtsi"
-> +
-> +&hog_pins_rev {
-> +	fsl,pull-up =3D <MXS_PULL_ENABLE>;
-> +};
-> diff --git a/arch/arm/boot/dts/nxp/mxs/imx28-btt3-1.dts
-> b/arch/arm/boot/dts/nxp/mxs/imx28-btt3-1.dts new file mode 100644
-> index 000000000000..213fe931c58b
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/nxp/mxs/imx28-btt3-1.dts
-> @@ -0,0 +1,8 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
-> +/*
-> + * Copyright 2024
-> + * Lukasz Majewski, DENX Software Engineering, lukma@denx.de
-> + */
-> +
-> +/dts-v1/;
-> +#include "imx28-btt3.dtsi"
-> diff --git a/arch/arm/boot/dts/nxp/mxs/imx28-btt3-2.dts
-> b/arch/arm/boot/dts/nxp/mxs/imx28-btt3-2.dts new file mode 100644
-> index 000000000000..4bccd784d065
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/nxp/mxs/imx28-btt3-2.dts
-> @@ -0,0 +1,39 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
-> +/*
-> + * Copyright 2024
-> + * Lukasz Majewski, DENX Software Engineering, lukma@denx.de
-> + */
-> +
-> +/dts-v1/;
-> +#include "imx28-btt3.dtsi"
-> +
-> +/ {
-> +	panel {
-> +		compatible =3D "powertip,st7272", "panel-dpi";
-> +		power-supply =3D <&reg_3v3>;
-> +		width-mm =3D <70>;
-> +		height-mm =3D <52>;
-> +
-> +		panel-timing {
-> +			clock-frequency =3D <6500000>;
-> +			hactive =3D <320>;
-> +			vactive =3D <240>;
-> +			hfront-porch =3D <20>;
-> +			hback-porch =3D <68>;
-> +			hsync-len =3D <30>;
-> +			vfront-porch =3D <4>;
-> +			vback-porch =3D <14>;
-> +			vsync-len =3D <4>;
-> +			hsync-active =3D <0>;
-> +			vsync-active =3D <0>;
-> +			de-active =3D <1>;
-> +			pixelclk-active =3D <1>;
-> +		};
-> +
-> +		port {
-> +			panel_in: endpoint {
-> +				remote-endpoint =3D <&display_out>;
-> +			};
-> +		};
-> +	};
-> +};
-> diff --git a/arch/arm/boot/dts/nxp/mxs/imx28-btt3.dtsi
-> b/arch/arm/boot/dts/nxp/mxs/imx28-btt3.dtsi new file mode 100644
-> index 000000000000..2c52e67e5c14
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/nxp/mxs/imx28-btt3.dtsi
-> @@ -0,0 +1,313 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
-> +/*
-> + * Copyright 2024
-> + * Lukasz Majewski, DENX Software Engineering, lukma@denx.de
-> + */
-> +/dts-v1/;
-> +#include "imx28-lwe.dtsi"
-> +
-> +/ {
-> +	model =3D "BTT3";
-> +
-> +	compatible =3D "lwn,imx28-btt3", "fsl,imx28";
-> +
-> +	chosen {
-> +	       bootargs =3D "root=3D/dev/mmcblk0p2 rootfstype=3Dext4 ro
-> rootwait console=3DttyAMA0,115200 panic=3D1 quiet";
-> +	};
-> +
-> +	memory@40000000 {
-> +		reg =3D <0x40000000 0x10000000>;
-> +		device_type =3D "memory";
-> +	};
-> +
-> +	panel {
-> +		compatible =3D "powertip,hx8238a", "panel-dpi";
-> +		power-supply =3D <&reg_3v3>;
-> +		width-mm =3D <70>;
-> +		height-mm =3D <52>;
-> +
-> +		panel-timing {
-> +			clock-frequency =3D <6500000>;
-> +			hactive =3D <320>;
-> +			vactive =3D <240>;
-> +			hfront-porch =3D <20>;
-> +			hback-porch =3D <38>;
-> +			hsync-len =3D <30>;
-> +			vfront-porch =3D <4>;
-> +			vback-porch =3D <14>;
-> +			vsync-len =3D <4>;
-> +			hsync-active =3D <0>;
-> +			vsync-active =3D <0>;
-> +			de-active =3D <0>;
-> +			pixelclk-active =3D <1>;
-> +		};
-> +
-> +		port {
-> +			panel_in: endpoint {
-> +				remote-endpoint =3D <&display_out>;
-> +			};
-> +		};
-> +	};
-> +
-> +	poweroff {
-> +		compatible =3D "gpio-poweroff";
-> +		gpios =3D <&gpio0 24 GPIO_ACTIVE_HIGH>;
-> +	};
-> +
-> +	sound {
-> +		compatible =3D "simple-audio-card";
-> +		simple-audio-card,name =3D "BTTC Audio";
-> +		simple-audio-card,widgets =3D "Speaker", "BTTC
-> Speaker";
-> +		simple-audio-card,routing =3D "BTTC Speaker",
-> "SPKOUTN", "BTTC Speaker", "SPKOUTP"; +
-> +		simple-audio-card,dai-link@0 {
-> +			format =3D "left_j";
-> +			bitclock-master =3D <&dai0_master>;
-> +			frame-master =3D <&dai0_master>;
-> +			mclk-fs =3D <256>;
-> +
-> +			dai0_master: cpu {
-> +				sound-dai =3D <&saif0>;
-> +			};
-> +
-> +			codec {
-> +				sound-dai =3D <&wm89xx>;
-> +				clocks =3D <&saif0>;
-> +			};
-> +		};
-> +	};
-> +
-> +	wifi_pwrseq: sdio-pwrseq {
-> +		compatible =3D "mmc-pwrseq-simple";
-> +		pinctrl-names =3D "default";
-> +		pinctrl-0 =3D <&wifi_en_pin_bttc>;
-> +		reset-gpios =3D <&gpio0 27 GPIO_ACTIVE_LOW>;
-> +		/* W1-163 needs 60us for WL_EN to be low and */
-> +		/* 150ms after high before downloading FW is
-> possible */
-> +		post-power-on-delay-ms =3D <200>;
-> +		power-off-delay-us =3D <100>;
-> +	};
-> +};
-> +
-> +&auart0 {
-> +	pinctrl-names =3D "default";
-> +	pinctrl-0 =3D <&auart0_2pins_a>;
-> +	status =3D "okay";
-> +};
-> +
-> +&auart3 {
-> +	pinctrl-names =3D "default";
-> +	pinctrl-0 =3D <&auart3_pins_a>;
-> +	uart-has-rtscts;
-> +	status =3D "okay";
-> +};
-> +
-> +&i2c0 {
-> +	wm89xx: audio-codec@1a {
-> +		compatible =3D "wlf,wm8940";
-> +		reg =3D <0x1a>;
-> +		#sound-dai-cells =3D <0>;
-> +	};
-> +};
-> +
-> +&lcdif {
-> +	pinctrl-names =3D "default";
-> +	pinctrl-0 =3D <&lcdif_24bit_pins_a>, <&lcdif_sync_pins_bttc>,
-> +		    <&lcdif_reset_pins_bttc>;
-> +	status =3D "okay";
-> +
-> +	port {
-> +		display_out: endpoint {
-> +			remote-endpoint =3D <&panel_in>;
-> +		};
-> +	};
-> +};
-> +
-> +&mac0 {
-> +	clocks =3D <&clks 57>, <&clks 57>, <&clks 64>;
-> +	clock-names =3D "ipg", "ahb", "enet_out";
-> +	phy-handle =3D <&mac0_phy>;
-> +	phy-mode =3D "rmii";
-> +	phy-supply =3D <&reg_3v3>;
-> +	/*
-> +	 * This MAC address is adjusted during production.
-> +	 * Value specified below is used as a fallback during
-> recovery.
-> +	 */
-> +	local-mac-address =3D [ 00 11 B8 00 BF 8A ];
-> +	status =3D "okay";
-> +
-> +	mdio {
-> +		#address-cells =3D <1>;
-> +		#size-cells =3D <0>;
-> +
-> +		mac0_phy: ethernet-phy@0 {
-> +			/* LAN8720Ai - PHY ID */
-> +			compatible =3D
-> "ethernet-phy-id0007.c0f0","ethernet-phy-ieee802.3-c22";
-> +			reg =3D <0>;
-> +			smsc,disable-energy-detect;
-> +			max-speed =3D <100>;
-> +			reset-gpios =3D <&gpio4 12 GPIO_ACTIVE_LOW>;
-> +			reset-assert-us =3D <1000>;
-> +			reset-deassert-us =3D <1000>;
-> +		};
-> +	};
-> +};
-> +
-> +&pinctrl {
-> +	pinctrl-names =3D "default";
-> +	pinctrl-0 =3D <&hog_pins_a>, <&hog_pins_rev>;
-> +
-> +	hog_pins_a: hog@0 {
-> +		reg =3D <0>;
-> +		fsl,pinmux-ids =3D <
-> +			MX28_PAD_GPMI_RDY2__GPIO_0_22
-> +			MX28_PAD_GPMI_RDY3__GPIO_0_23
-> +			MX28_PAD_GPMI_RDN__GPIO_0_24
-> +			MX28_PAD_LCD_VSYNC__GPIO_1_28
-> +			MX28_PAD_SSP2_SS1__GPIO_2_20
-> +			MX28_PAD_SSP2_SS2__GPIO_2_21
-> +			MX28_PAD_AUART2_CTS__GPIO_3_10
-> +			MX28_PAD_AUART2_RTS__GPIO_3_11
-> +			MX28_PAD_GPMI_WRN__GPIO_0_25
-> +			MX28_PAD_ENET0_RXD2__GPIO_4_9
-> +			MX28_PAD_ENET0_TXD2__GPIO_4_11
-> +		>;
-> +		fsl,drive-strength =3D <MXS_DRIVE_4mA>;
-> +		fsl,voltage =3D <MXS_VOLTAGE_HIGH>;
-> +		fsl,pull-up =3D <MXS_PULL_DISABLE>;
-> +	};
-> +
-> +	hog_pins_rev: hog@1 {
-> +		reg =3D <1>;
-> +		fsl,pinmux-ids =3D <
-> +			MX28_PAD_ENET0_RXD3__GPIO_4_10
-> +			MX28_PAD_ENET0_TX_CLK__GPIO_4_5
-> +			MX28_PAD_ENET0_COL__GPIO_4_14
-> +			MX28_PAD_ENET0_CRS__GPIO_4_15
-> +		>;
-> +		fsl,drive-strength =3D <MXS_DRIVE_4mA>;
-> +		fsl,voltage =3D <MXS_VOLTAGE_HIGH>;
-> +		fsl,pull-up =3D <MXS_PULL_DISABLE>;
-> +	};
-> +
-> +	keypad_pins_bttc: keypad-bttc@0 {
-> +		reg =3D <0>;
-> +		fsl,pinmux-ids =3D <
-> +			MX28_PAD_GPMI_D00__GPIO_0_0
-> +			MX28_PAD_AUART0_CTS__GPIO_3_2
-> +			MX28_PAD_AUART0_RTS__GPIO_3_3
-> +			MX28_PAD_GPMI_D03__GPIO_0_3
-> +			MX28_PAD_GPMI_D04__GPIO_0_4
-> +			MX28_PAD_GPMI_D05__GPIO_0_5
-> +			MX28_PAD_GPMI_D06__GPIO_0_6
-> +			MX28_PAD_GPMI_D07__GPIO_0_7
-> +			MX28_PAD_GPMI_CE1N__GPIO_0_17
-> +			MX28_PAD_GPMI_CE2N__GPIO_0_18
-> +			MX28_PAD_GPMI_CE3N__GPIO_0_19
-> +			MX28_PAD_GPMI_RDY0__GPIO_0_20
-> +		>;
-> +		fsl,drive-strength =3D <MXS_DRIVE_4mA>;
-> +		fsl,voltage =3D <MXS_VOLTAGE_HIGH>;
-> +		fsl,pull-up =3D <MXS_PULL_DISABLE>;
-> +	};
-> +
-> +	lcdif_sync_pins_bttc: lcdif-bttc@0 {
-> +		reg =3D <0>;
-> +		fsl,pinmux-ids =3D <
-> +			MX28_PAD_LCD_DOTCLK__LCD_DOTCLK
-> +			MX28_PAD_LCD_ENABLE__LCD_ENABLE
-> +			MX28_PAD_LCD_HSYNC__LCD_HSYNC
-> +			MX28_PAD_LCD_RD_E__LCD_VSYNC
-> +		>;
-> +		fsl,drive-strength =3D <MXS_DRIVE_4mA>;
-> +		fsl,voltage =3D <MXS_VOLTAGE_HIGH>;
-> +		fsl,pull-up =3D <MXS_PULL_DISABLE>;
-> +	};
-> +
-> +	lcdif_reset_pins_bttc: lcdif-bttc@1 {
-> +		reg =3D <1>;
-> +		fsl,pinmux-ids =3D <
-> +			MX28_PAD_LCD_RESET__GPIO_3_30
-> +		>;
-> +		fsl,drive-strength =3D <MXS_DRIVE_4mA>;
-> +		fsl,voltage =3D <MXS_VOLTAGE_HIGH>;
-> +		fsl,pull-up =3D <MXS_PULL_ENABLE>;
-> +	};
-> +
-> +	ssp1_sdio_pins_a: ssp1-sdio@0 {
-> +		reg =3D <0>;
-> +		fsl,pinmux-ids =3D <
-> +			MX28_PAD_SSP1_DATA0__SSP1_D0
-> +			MX28_PAD_GPMI_D01__SSP1_D1
-> +			MX28_PAD_GPMI_D02__SSP1_D2
-> +			MX28_PAD_SSP1_DATA3__SSP1_D3
-> +			MX28_PAD_SSP1_CMD__SSP1_CMD
-> +			MX28_PAD_SSP1_SCK__SSP1_SCK
-> +		>;
-> +		fsl,drive-strength =3D <MXS_DRIVE_8mA>;
-> +		fsl,voltage =3D <MXS_VOLTAGE_HIGH>;
-> +		fsl,pull-up =3D <MXS_PULL_ENABLE>;
-> +	};
-> +
-> +	wifi_en_pin_bttc: wifi-en-pin@0 {
-> +		reg =3D <0>;
-> +		fsl,pinmux-ids =3D <
-> +			MX28_PAD_GPMI_CLE__GPIO_0_27
-> +		>;
-> +		fsl,drive-strength =3D <MXS_DRIVE_8mA>;
-> +		fsl,voltage =3D <MXS_VOLTAGE_HIGH>;
-> +		fsl,pull-up =3D <MXS_PULL_ENABLE>;
-> +	};
-> +};
-> +
-> +&pwm {
-> +	pinctrl-names =3D "default";
-> +	pinctrl-0 =3D <&pwm3_pins_a>;
-> +	status =3D "okay";
-> +};
-> +
-> +&reg_usb_5v {
-> +	gpio =3D <&gpio1 28 GPIO_ACTIVE_HIGH>;
-> +};
-> +
-> +&saif0 {
-> +	pinctrl-names =3D "default";
-> +	pinctrl-0 =3D <&saif0_pins_a>;
-> +	#sound-dai-cells =3D <0>;
-> +	assigned-clocks =3D <&clks 53>;
-> +	assigned-clock-rates =3D <12000000>;
-> +	status =3D "okay";
-> +};
-> +
-> +&saif1 {
-> +	pinctrl-names =3D "default";
-> +	pinctrl-0 =3D <&saif1_pins_a>;
-> +	#sound-dai-cells =3D <0>;
-> +	fsl,saif-master =3D <&saif0>;
-> +	status =3D "okay";
-> +};
-> +
-> +&ssp1 {
-> +	compatible =3D "fsl,imx28-mmc";
-> +	pinctrl-names =3D "default";
-> +	pinctrl-0 =3D <&ssp1_sdio_pins_a>;
-> +	bus-width =3D <4>;
-> +	no-1-8-v;       /* force 3.3V VIO */
-> +	non-removable;
-> +	vmmc-supply =3D <&reg_3v3>;
-> +	mmc-pwrseq =3D <&wifi_pwrseq>;
-> +	keep-power-in-suspend;
-> +	status =3D "okay";
-> +
-> +	wlan@1 {
-> +		reg =3D <1>;
-> +		compatible =3D "brcm,bcm4329-fmac";
-> +	};
-> +};
-> +
-> +&ssp2 {
-> +	compatible =3D "fsl,imx28-spi";
-> +	pinctrl-names =3D "default";
-> +	pinctrl-0 =3D <&spi2_pins_a>;
-> +	status =3D "okay";
-> +};
-
-
-
-
-Best regards,
-
-Lukasz Majewski
-
---
-
-DENX Software Engineering GmbH,      Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-Phone: (+49)-8142-66989-59 Fax: (+49)-8142-66989-80 Email: lukma@denx.de
-
---Sig_/40inb2lnEtEeFDRdPJ5UPqd
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCgAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAmc8tEQACgkQAR8vZIA0
-zr2+OAf+L+8lYughwT0hXx9UXA/+B682+71ZBRd/T/4zdAzEiNUi0c2ZMEE4IZPk
-CdbnkOj+7vbJDgbcjqVfMtxZrAFEtkrjY6HdBeYLI4m4IFUpqQ+aCUFIzFDGIYx/
-8/5ot3KH577UuP55tcxb8Gqu1lxtNm/T14o8n9tRMql8Wqm713qmji/4ma5dn4UG
-8nGZuoWnuC+d6vjELDK4nJ0BN1XJs4kUO3QqBB9eGBC4etX2dBeElJfS1ycYQgDr
-fh1c/pV5MFuVnYCLfTtbSkY69R+hXLIvOIwC8rfLb/DBylM6O3eqPXY5MPqWRpAk
-r9lkeeeTc+Mo8EM9V4xyE/ExUspTXw==
-=EKdD
------END PGP SIGNATURE-----
-
---Sig_/40inb2lnEtEeFDRdPJ5UPqd--
+Yeah, I think if you don't need the details that dump_mapping() shows,
+skipping that for user-requested dumps might be a reasonable option.
 
