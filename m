@@ -1,170 +1,195 @@
-Return-Path: <linux-kernel+bounces-413729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 833319D1DF2
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 03:05:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 028999D1DFE
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 03:15:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DAD26B20D77
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 02:05:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 90871B21651
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 02:15:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00B6412AAC6;
-	Tue, 19 Nov 2024 02:05:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9719413A865;
+	Tue, 19 Nov 2024 02:14:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="e/SEX1xh"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="G2dnsOJ1"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC9C628E3F
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 02:05:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF7093FF1;
+	Tue, 19 Nov 2024 02:14:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731981924; cv=none; b=JtesLK+dpqfLzGXtyyA4nC4IgWpG0Sx04Ud9kP3tEapK2XSqUKne7XhGxqNNAQZmFZap+n0H21WLDxXXVWjAARNhoyWzBsOPN8pngBT91OBdDdZF3NYcmqk6g+IvJOTB46z3faxxQ58wfsSpaE0ZF11/rIZFeO3ij2gRbgRTyYk=
+	t=1731982498; cv=none; b=SGJE+YswprrhgRatAvRNdatIDBTtpnkjfG08m+UAA+UsTwjAZ8Jx0xdYR/saBk6b5yr0v4XlXHEwIxAPEv1MYRum4caBw8wZo4yteychj+07m/4CHghWsYsPugx7LiIrShqMZAthmjfJQOw5SbcedEztmvyPKk8/gIJM0Cvvg/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731981924; c=relaxed/simple;
-	bh=4QB5ElzE9j4D9M0fHUHAvmmqFK+FzyCjqXxd2sd4in8=;
-	h=Date:Message-Id:Mime-Version:Subject:From:To:Cc:Content-Type; b=Y5chIvkJLD+/RD+8hc4iSFBtRCogu9yfK0xX+NgUPQVDaPICdhY1/hPeYAxpjTFRTo6/PxSPiD5FO/9bqnPo3/Ge5Mw6PB035bHIjSSn8ClCkbvz+4FIk0ArGsNaQOslQ31oycrfs6lYQnti6cU8ExSWAZCgaKPiIkV5US/MIsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--saravanak.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=e/SEX1xh; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--saravanak.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6ee426e3414so65093357b3.3
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 18:05:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731981922; x=1732586722; darn=vger.kernel.org;
-        h=cc:to:from:subject:mime-version:message-id:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=b6gLHV6vusPni+PQ8Izadtx5nSuli5BwZYfDCvAoOeM=;
-        b=e/SEX1xhEWM3eNdHTJAwjiILr5yWJOa/FS39TCX5QciCRNgfexVj6kkrwozFd/Gjqz
-         9MuLw3saWf5rn+BuLKoXCZWVNrqxH8QtxNWQj3E88Nh1wqPFcYCLkAd4rewmxw6iLJw3
-         80+BQZH+I7FC56VEi0it3gN7Xw/TZ/N5xVuBaZThW95VxIgXjb9n7J/XX/32D0Ur6VXS
-         tZ2ta2rfZRB/sWC1rMWXZh4Q2Pql1l/fgY6joO4D6VPqBIVCKNxUO0tZwNrSOuWAi8Ep
-         Sfo/9MF6h+OrGG0vzdEqn0ATQKonAfMueWxgQfIUhLYAVNYuFSR+1/GhIUY9oTkzGVlj
-         Kp4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731981922; x=1732586722;
-        h=cc:to:from:subject:mime-version:message-id:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=b6gLHV6vusPni+PQ8Izadtx5nSuli5BwZYfDCvAoOeM=;
-        b=bWEjxBAwFHxqfhwpqN0R8Fl4ES1Y1AsQwW+eWVUll+vWJgP4/2DRAjeIvCd5fAyyes
-         u92nWynnSBn5kk3AbjHXyZBe8v+f4pP+p3SucLhke+4K3gMduRMUw0MaL3McyXOQaMSY
-         MC4TawbPzQE6FhV+Z/vvctuf2zPYfEr0R42+sB4+yVeOSrJbdgOJkUU3NomT81p9tOtQ
-         S2IvLsfB/nUWNinZNwjRpU2q3+8oPDWxydoT7b7qKhFhpy2RqYHxb2DJa3CNzauPqpiW
-         i6AzesxmcWE9YhtgnvyVCSoq+FZ2TlZlgk5+r3/vj7azpYft8aZHsmB1fLcN959K28n7
-         ZffA==
-X-Forwarded-Encrypted: i=1; AJvYcCUAW7OO+p4T01Tu+z+Ag7+DZj174IwT7TgJtCbqHDrmP5vdBgPFp6DLqOihOn7AIfJrQnibif+tqFzV9YM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIWR6AgjAUoqnDPPRz/oVZ5w1Y8MN8evCxqXD0N5ltVfrZ2PgG
-	Y2PWnLZnfaLjN5Rzka7vPeHATHO9WZlUFwwfCISjaqtyK34+MKmn4Y8N8G4u1P8Qq4ymicxloBA
-	GcmT/ymnPXukrgA==
-X-Google-Smtp-Source: AGHT+IE+bPfkzUK73IBzFCd66eKNwWVRKFYblcIQrjih3BXRxNv23IR/qXTl7unR+SbMbXVjKQ/UK2FsOTTH9lE=
-X-Received: from saravanak.san.corp.google.com ([2620:15c:2d:3:296a:f9c4:979f:3466])
- (user=saravanak job=sendgmr) by 2002:a05:690c:8110:b0:6ee:3f5e:1c1b with SMTP
- id 00721157ae682-6ee558f3375mr451477b3.0.1731981921704; Mon, 18 Nov 2024
- 18:05:21 -0800 (PST)
-Date: Mon, 18 Nov 2024 18:05:15 -0800
-Message-Id: <20241119020519.832013-1-saravanak@google.com>
+	s=arc-20240116; t=1731982498; c=relaxed/simple;
+	bh=BedYYDpjc/af53IHCSEAPMTd8HnUhH3pfXCO6vleV4I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=sVLP0yDlBGY7uVXcoa/043dadXvDGBoMmdjWA7XUVEalBP2NoAZsafQggxw2oEt6aJOkJU1CqqQvZ3ppguz5G+vFaUiCF9epPS8yogLExtkzPd2PXYxHzDYaPkREPPYPrDDgsQycMw/lgRIOWJLg5r9fEuMCYCNWKXY+2L1o8ZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=G2dnsOJ1; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AIGGdvj026837;
+	Tue, 19 Nov 2024 02:14:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	BPcr82EtHYQQGwGC3z55Hjcvd38ESCNNpseVzITcESM=; b=G2dnsOJ1j+aR+zNv
+	LhSdQsvmYwyirUZjsTh8pxWSV9JlwzRVThK2Wa6QAz+Iv5YwIOGHII3ax/qDycAr
+	CvtQMCx+1ONmkzhK99fQWmnu8P8MjaXxv6K1BNuHDBe63+RZyXxMtDSJVzcuvCZ4
+	9acaaW2wNBHhpwwSFQl6jGA/7pr4dKvXyUDGFSLdrQturAgcc3NNH9T7K5nNGiQr
+	jw/9EHBUWI7bftZjvpZIx1UeecteT64QQ7bDnENGTHc4j5sosAcaikye4vspM9rq
+	SYLVxyK2HSKFGaBaVSvg3vhaGSWwksA4KWcLVCl2ikHUMD+6s45oqFHnHrQjrPkj
+	l3ofug==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4308y7s53g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 19 Nov 2024 02:14:20 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AJ2DJ28016969
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 19 Nov 2024 02:13:19 GMT
+Received: from [10.253.8.237] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 18 Nov
+ 2024 18:13:13 -0800
+Message-ID: <d382b377-e824-4728-8acd-784757dde210@quicinc.com>
+Date: Tue, 19 Nov 2024 10:13:11 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-Subject: [RFC PATCH v1] cpu/suspend: Do a partial hotplug during suspend
-From: Saravana Kannan <saravanak@google.com>
-To: Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <peterz@infradead.org>
-Cc: Saravana Kannan <saravanak@google.com>, kernel-team@android.com, 
-	linux-kernel@vger.kernel.org
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] Bluetooth: qca: Support downloading board ID specific
+ NVM for WCN6855
+To: Johan Hovold <johan@kernel.org>
+CC: Marcel Holtmann <marcel@holtmann.org>,
+        Luiz Augusto von Dentz
+	<luiz.dentz@gmail.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        "Steev
+ Klimaszewski" <steev@kali.org>,
+        Paul Menzel <pmenzel@molgen.mpg.de>, Zijun Hu
+	<zijun_hu@icloud.com>,
+        <linux-bluetooth@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Luiz Augusto von Dentz
+	<luiz.von.dentz@intel.com>,
+        Bjorn Andersson <bjorande@quicinc.com>,
+        "Aiqun Yu
+ (Maria)" <quic_aiquny@quicinc.com>,
+        Cheng Jiang <quic_chejiang@quicinc.com>,
+        Jens Glathe <jens.glathe@oldschoolsolutions.biz>,
+        <stable@vger.kernel.org>, Johan Hovold <johan+linaro@kernel.org>
+References: <20241116-x13s_wcn6855_fix-v2-1-c08c298d5fbf@quicinc.com>
+ <Zzs2b6y-DPY3v8ty@hovoldconsulting.com>
+Content-Language: en-US
+From: quic_zijuhu <quic_zijuhu@quicinc.com>
+In-Reply-To: <Zzs2b6y-DPY3v8ty@hovoldconsulting.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: a0D1d30FwmA5Gt0yuqebd2TdZpImMgqD
+X-Proofpoint-GUID: a0D1d30FwmA5Gt0yuqebd2TdZpImMgqD
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 spamscore=0
+ mlxlogscore=999 clxscore=1015 suspectscore=0 adultscore=0
+ priorityscore=1501 phishscore=0 impostorscore=0 bulkscore=0
+ lowpriorityscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2409260000 definitions=main-2411190017
 
-The hotplug state machine goes through 100+ states when transitioning
-from online to offline. And on the way back, it goes through these
-states in reverse.
+On 11/18/2024 8:43 PM, Johan Hovold wrote:
+> On Sat, Nov 16, 2024 at 07:49:23AM -0800, Zijun Hu wrote:
+>> For WCN6855, board ID specific NVM needs to be downloaded once board ID
+>> is available, but the default NVM is always downloaded currently, and
+>> the wrong NVM causes poor RF performance which effects user experience.
+>>
+>> Fix by downloading board ID specific NVM if board ID is available.
+>>
+>> Cc: Bjorn Andersson <bjorande@quicinc.com>
+>> Cc: Aiqun Yu (Maria) <quic_aiquny@quicinc.com>
+>> Cc: Cheng Jiang <quic_chejiang@quicinc.com>
+>> Cc: Johan Hovold <johan@kernel.org>
+>> Cc: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+>> Cc: Steev Klimaszewski <steev@kali.org>
+>> Cc: Paul Menzel <pmenzel@molgen.mpg.de>
+> 
+> Nit: These Cc tags should typically not be here in the commit message,
+> and should at least not be needed for people who git-send-email will
+> already include because of Tested-by and Reviewed-by tags.
+> 
+> If they help with your workflow then perhaps you can just put them below
+> the cut-off (---) line.
+> 
 
-When a CPU goes offline, some of the states that occur after a CPU is
-powered off are about freeing up various per-CPU resources like
-kmalloc caches, pages, network buffers, etc. All of these states make
-sense when a CPU is permanently hotplugged off.
+thank you for pointing out this and sharing good suggestions
+will follow these suggestions for further patches.
 
-However, when offlining a CPU during suspend, we just want to power
-down the CPUs to that the system can enter suspend. In this scenario,
-we could simply stop the hotplug state machine right after the CPU has
-been power off. During resume, we can simply resume the CPU to an
-online state from the state where we paused the offline.
+>> Fixes: 095327fede00 ("Bluetooth: hci_qca: Add support for QTI Bluetooth chip wcn6855")
+>> Cc: stable@vger.kernel.org # 6.4
+>> Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
+> 
+> When making non-trivial changes, like the addition of the fallback NVM
+> feature in v2, you should probably have dropped any previous Reviewed-by
+> tags.
+> 
 
-This save both time both during suspend and resume and it is
-proportional to the number of CPUs in the system. So, if systems with
-a large number of CPUs, we can expect this to have a huge amount of
-time saved.
+make sense. will notice these aspects for further patches.
 
-On a Pixel 6, averaging across 100+ suspend/resumes cycles, the total
-time to power off 7 of the 8 CPUs goes from 51 ms down to 24 ms.
-Similarly, the average time to power off each individual CPU (they are
-different) also goes down by 50%.
+> The fallback handling looks good to me though (and also works as
+> expected).
+> 
 
-The average time spent powering up CPUs goes down from 34 ms to 32 ms.
-Keep in mind that the time saved during resume is not easily
-quantified by looking at CPU onlining times. This is because the
-actual time savings comes later when per-CPU resources do not need to
-be reallocated and would speed up actions like allocations, etc that
-can pick up memory from per-CPU kmalloc caches, etc.
+so, is it okay to make this patch still keep tags given by you ?
 
-Signed-off-by: Saravana Kannan <saravanak@google.com>
----
+>> Tested-by: Johan Hovold <johan+linaro@kernel.org>
+>> Tested-by: Steev Klimaszewski <steev@kali.org>
+>> Tested-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+>> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+> 
+>> Changes in v2:
+>> - Correct subject and commit message
+>> - Temporarily add nvm fallback logic to speed up backport.
+>> — Add fix/stable tags as suggested by Luiz and Johan
+>> - Link to v1: https://lore.kernel.org/r/20241113-x13s_wcn6855_fix-v1-1-15af0aa2549c@quicinc.com
+>  
+>> +download_nvm:
+>>  	err = qca_download_firmware(hdev, &config, soc_type, rom_ver);
+>>  	if (err < 0) {
+>>  		bt_dev_err(hdev, "QCA Failed to download NVM (%d)", err);
+>> +		if (err == -ENOENT && boardid != 0 &&
+>> +		    soc_type == QCA_WCN6855) {
+>> +			boardid = 0;
+>> +			qca_get_hsp_nvm_name_generic(&config, ver,
+>> +						     rom_ver, boardid);
+>> +			bt_dev_warn(hdev, "QCA fallback to default NVM");
+>> +			goto download_nvm;
+>> +		}
+>>  		return err;
+> 
+> If you think it's ok for people to continue using the wrong (default)
+> NVM file for a while still until their distros ship the board-specific
+> ones, then this looks good to me and should ease the transition:
+> 
 
-Hi Thomas/Peter,
+yes. i think it is okay now.
 
-The hotplug state machine rewrite is great! Enables all kinds of
-optimizations for suspend/resume.
-
-About this patch, I'm not sure if the exact state the hotplug state is
-paused at (CPUHP_WORKQUEUE_PREP) will work for all arch/boards, but
-this is the general idea.
-
-If it works as is, great! At a glance, it looks like it should work
-though. None of the other stages between this and CPUHP_OFFLINE seem
-to be touching hardware.
-
-If CPUHP_WORKQUEUE_PREP doesn't work, then we can make it a config
-option to select the state or an arch call or something along those
-lines.
-
-What are your thoughts on this? How would you like me to proceed?
-
-Btw, ideally, I'd have liked to have paused at CPUHP_TMIGR_PREPARE,
-but the hrtimers unwinding seems to be broken if we fail/unwind before
-reaching "hrtimers:prepare". I'll send out a separate email on that.
-
-Thanks,
-Saravana
-
- kernel/cpu.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/cpu.c b/kernel/cpu.c
-index d293d52a3e00..ca21ac017471 100644
---- a/kernel/cpu.c
-+++ b/kernel/cpu.c
-@@ -1649,7 +1649,7 @@ static int _cpu_up(unsigned int cpu, int tasks_frozen, enum cpuhp_state target)
- 	if (st->state >= target)
- 		goto out;
- 
--	if (st->state == CPUHP_OFFLINE) {
-+	if (st->state < CPUHP_BP_KICK_AP) {
- 		/* Let it fail before we try to bring the cpu up */
- 		idle = idle_thread_get(cpu);
- 		if (IS_ERR(idle)) {
-@@ -1931,7 +1931,7 @@ int freeze_secondary_cpus(int primary)
- 		}
- 
- 		trace_suspend_resume(TPS("CPU_OFF"), cpu, true);
--		error = _cpu_down(cpu, 1, CPUHP_OFFLINE);
-+		error = _cpu_down(cpu, 1, CPUHP_WORKQUEUE_PREP);
- 		trace_suspend_resume(TPS("CPU_OFF"), cpu, false);
- 		if (!error)
- 			cpumask_set_cpu(cpu, frozen_cpus);
--- 
-2.47.0.338.g60cca15819-goog
+> [    6.125626] Bluetooth: hci0: QCA Downloading qca/hpnv21g.b8c
+> [    6.126730] bluetooth hci0: Direct firmware load for qca/hpnv21g.b8c failed with error -2
+> [    6.126826] Bluetooth: hci0: QCA Failed to request file: qca/hpnv21g.b8c (-2)
+> [    6.126894] Bluetooth: hci0: QCA Failed to download NVM (-2)
+> [    6.126951] Bluetooth: hci0: QCA fallback to default NVM
+> [    6.127003] Bluetooth: hci0: QCA Downloading qca/hpnv21g.bin
+> [    6.309322] Bluetooth: hci0: QCA setup on UART is completed
+> 
+> Johan
 
 
