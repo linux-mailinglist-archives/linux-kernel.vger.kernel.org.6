@@ -1,119 +1,155 @@
-Return-Path: <linux-kernel+bounces-414796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43D389D2D8A
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 19:06:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9DF79D2D8C
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 19:07:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E65F81F23CCF
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 18:06:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B7FA1F23F1B
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 18:07:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DE5F1D1F4B;
-	Tue, 19 Nov 2024 18:06:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F6581D1F56;
+	Tue, 19 Nov 2024 18:06:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lkePvW7x"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b="fNvZb8my"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 540DC1D1E64
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 18:06:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C0A81D278D;
+	Tue, 19 Nov 2024 18:06:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732039602; cv=none; b=EHXr+WAa9LKCxoftc2tMyeykhkWP0zDancQ7vPd6xMt2E+rPWm+WOS5qP9ZUv2kwZHyw2NfVMir5Vme+CH5k0yHZdO6WBn7uCktAR48CQV5YqlZEkXExHlGpbEzKaJ/kvS198CmHXJokm2cA+Yyirt1D1Q7itb/p/+Xv5yoZz1o=
+	t=1732039610; cv=none; b=VeazHYT81frrqEqhzXZRkx2gMRIOkQwyFC5doiESZ5aw7058Fgs3T0ojk+o6vaYdZLpqd9Zyo0D00ibpAPWaHXS2p/GsqQfg0S4Kxk+wlmzugZ6EIf/rgzEYjJBrB5twxeL7/hqgdWN/gkptMPCoDtL2ccVE1Cpz28kv1fNy4Hs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732039602; c=relaxed/simple;
-	bh=tO29qmXnQBiYVBJ8k86fc371KDYzbkkwm4QvEDUHdCw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ccywxg/DVMfmP7oLVvGl1Q92UTcDVB9dNnNZqqzRpuT/LgxqPmt5/EZPOYUV3J4tSFyUWrAiav7U01o6nfXxU/MulX8v1yhc9eYHOf+l8XdwpBKRKMaScxxSmHj974M1ZQrEO/jthLnCQbq8lGyODjVv2TfwE320xryrEKC6N5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lkePvW7x; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54664C4CECF;
-	Tue, 19 Nov 2024 18:06:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732039601;
-	bh=tO29qmXnQBiYVBJ8k86fc371KDYzbkkwm4QvEDUHdCw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lkePvW7xB6nW3N7qHX0WDaEErluJ0FIHbMjXEp2BLmeiZ7iz7X49qEx8DoYHKXeB3
-	 7AspRArmaFfzIbeHQcZwr6yHrcGiTqsri2Z0Bj//dZHusfpm6vvHumsS8Xpxn8DitB
-	 HiBQDsZAc85cPEj48NrsJ5w1/yEhXHMYb4AnNLk9ckNncpsn8teNRWVhn493t2LEtP
-	 G5AF7WCZq9sHmNBem0SipWhf1h2KNpXgTLhDM6vP6uRbDzTJdcSWNnGWkBBM9qsn6e
-	 IlMKT89zcJOvdAfhpkXpo4oGMVbPMt6uKIyir0ylmYQxsNB+hHu3IGpPmn2KVEMm4s
-	 wBSUHLaximUkA==
-Date: Tue, 19 Nov 2024 18:06:35 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, ardb@kernel.org,
-	catalin.marinas@arm.com, jpoimboe@kernel.org,
-	kaleshsingh@google.com, kristina.martsenko@arm.com,
-	linux-kernel@vger.kernel.org, madvenka@linux.microsoft.com,
-	maz@kernel.org, mbenes@suse.cz, mhiramat@kernel.org,
-	puranjay12@gmail.com, rostedt@goodmis.org, will@kernel.org
-Subject: Re: [PATCH] arm64: disable ARCH_CORRECT_STACKTRACE_ON_KRETPROBE tests
-Message-ID: <c5cd88f1-6390-4148-9595-07b3c09ab117@sirena.org.uk>
-References: <20241118120204.3961548-1-mark.rutland@arm.com>
+	s=arc-20240116; t=1732039610; c=relaxed/simple;
+	bh=QGqkVr+lQ9tBWFbPJo39TLz38/s3nP9pyzYhLxzIoEQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dgjBvt9+7n90MfYzVsXM7vm7SXG1+SoROn31yuoYsukKEH5lUP2MZ0ciQ3NyIK1O/MjdL8+Wku7qxHmCy5ImWj7C/wtoflrLGIOsXb4/jOTrbbTmBBEGfIwzfm7cTwqlKrCON7DbDDhZeaFPc62aP30SBjx94KOQUmoQYHT6rt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org; spf=none smtp.mailfrom=yoseli.org; dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b=fNvZb8my; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=yoseli.org
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 5C094E0002;
+	Tue, 19 Nov 2024 18:06:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yoseli.org; s=gm1;
+	t=1732039607;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pIePdDXuaFGMpm0Cb1pmK6uomOfslkb6cbYOV8b2Dv4=;
+	b=fNvZb8myioZG7rUSIxE1yUJ15beYNimdXxfwf9oj1NKy/gMq3U5aUs26+qxTLXECrRk1t9
+	9ylGjGHmPaDuyYunz5ZYdcxjY2syJrWJAWMZEwr5U9plw+qL8FCZCdTU6coa/AMZUX9NGZ
+	P0v2uxT81RvPimH7FSoXwqYv6pz1YpRDA7ncgq0fsRwH7zT55fXMENXgrl5c9buBx+DGzw
+	Nqd5e/ljMOEwPPoCiiJLD9ska4LU/Ph+/IiBsEFTvEakrlBJf9j6ntHYV1WvYRIxhg6lM1
+	f7e/siKGtF4QBX1NPXe2XBshnFx0/3eymyltAa6vgWKbw4ob/9GvY0CSDywj2Q==
+Message-ID: <e4456cb1-b1bc-453b-b3b5-3ee4f03995be@yoseli.org>
+Date: Tue, 19 Nov 2024 19:06:45 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="k2YslX4LOWBeSjJG"
-Content-Disposition: inline
-In-Reply-To: <20241118120204.3961548-1-mark.rutland@arm.com>
-X-Cookie: I have many CHARTS and DIAGRAMS..
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 0/2] Add basic tracing support for m68k
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, Geert Uytterhoeven
+ <geert@linux-m68k.org>, Greg Ungerer <gerg@linux-m68k.org>,
+ Tomas Glozar <tglozar@redhat.com>
+References: <20241021-add-m68k-tracing-support-v1-0-0883d704525b@yoseli.org>
+ <3a8f6faa-62c6-4d32-b544-3fb7c00730d7@yoseli.org>
+ <20241115102554.29232d34@gandalf.local.home>
+ <cbb67ee2-8b37-4a4d-b542-f89ddae90e94@yoseli.org>
+ <20241115145502.631c9a2c@gandalf.local.home>
+ <2c43288a-517d-4220-ad31-f84dda8c1805@yoseli.org>
+ <20241118152057.13042840@gandalf.local.home>
+ <22856ed6-b9d0-4206-b88d-4226534c8675@yoseli.org>
+ <20241119102631.76363f2a@gandalf.local.home>
+ <20241119112850.219834f5@gandalf.local.home>
+Content-Language: en-US
+From: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
+In-Reply-To: <20241119112850.219834f5@gandalf.local.home>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: jeanmichel.hautbois@yoseli.org
+
+Hi Steve,
+
+On 19/11/2024 17:28, Steven Rostedt wrote:
+> On Tue, 19 Nov 2024 10:26:31 -0500
+> Steven Rostedt <rostedt@goodmis.org> wrote:
+> 
+>> Can you do me a favor and send me privately a tarball of:
+>>
+>>   # cp -r /sys/kernel/tracing/events /tmp/events
+>>   # cd /tmp
+>>   # tar -cvjf events.tar.bz2 events
+>>
+>> You can't call tar on the /sys/kernel/tracing files as those are pseudo
+>> files with size of zero, and tar will just record empty files :-p
+> 
+> It crashes on parsing this:
+> 
+> name: mm_vmscan_write_folio
+> ID: 198
+> format:
+> 	field:unsigned short common_type;	offset:0;	size:2;	signed:0;
+> 	field:unsigned char common_flags;	offset:2;	size:1;	signed:0;
+> 	field:unsigned char common_preempt_count;	offset:3;	size:1;	signed:0;
+> 	field:int common_pid;	offset:4;	size:4;	signed:1;
+> 
+> 	field:unsigned long pfn;	offset:8;	size:4;	signed:0;
+> 	field:int reclaim_flags;	offset:12;	size:4;	signed:1;
+> 
+> print fmt: "page=%p pfn=0x%lx flags=%s", (mem_map + ((REC->pfn) - (m68k_memory[0].addr >> 13))), REC->pfn, (REC->reclaim_flags) ? __print_flags(REC->reclaim_flags, "|", {0x0001u, "RECLAIM_WB_ANON"}, {0x0002u, "RECLAIM_WB_FILE"}, {0x0010u, "RECLAIM_WB_MIXED"}, {0x0004u, "RECLAIM_WB_SYNC"}, {0x0008u, "RECLAIM_WB_ASYNC"} ) : "RECLAIM_WB_NONE"
+> 
+> 
+> It shouldn't crash, but it also found a bug in your code ;-)
+
+In my code is a really big assumption :-).
+
+> You reference two variables that are not part of the event:
+> 
+>   "mem_map" and "m68k_memory[0].addr"
+> 
+> Do these variables ever change? Because the TP_printk() part of the
+> TRACE_EVENT() macro is called a long time after the event is recorded. It
+> could be seconds, minutes, days or even months (and unlikely possibly
+> years) later.
+
+I am really not the best placed to answer.
+AFAIK, it sounds like those are never changing.
+
+> 
+> The event takes place and runs the TP_fast_assign() to record the event in
+> the ring buffer. Then some time later, when you read the "trace" file, the
+> TP_printk() portion gets run. If you wait months before reading that, it is
+> executed months later.
+> 
+> Now you have "mem_map" and "m68k_memory[0].addr" in that output that gets
+> run months after the fact. Are they constant throughout the boot?
+
+I don't know.
+
+> Now another issue is that user space has no idea what those values are. Now
+> user space can not print the values. Currently the code crashes because you
+> are the first one to reference a global value from a trace event print fmt.
+> That should probably be fixed to simply fail to parse the event and ignore
+> the print format logic (which defaults to just printing the raw fields).
+
+The patch you sent works...
+But, it fails a bit later:
+Dispatching timerlat u procs
+starting loop
+User-space timerlat pid 230 on cpu 0
+Segmentation fault
 
 
---k2YslX4LOWBeSjJG
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> 
+> -- Steve
+> 
 
-On Mon, Nov 18, 2024 at 12:02:04PM +0000, Mark Rutland wrote:
-
-> The test assumes that when a stacktrace straddles an exception boundary,
-> no necessary entries will be omitted and no extraneous entries will be
-> reported, and when unwinding from a kretprobed callee, the next entry in
-> the trace will be its immediate caller (whether kretprobed or not).
-
-> Recently the arm64 stacktrace code was changed to always report the LR
-> at an exception boundary, where we don't know whether the LR is live.
-> In the case of the kretprobe trampoline the LR is not live at the time
-> the stacktrace is performed, and so the entry in the trace for the LR is
-> extraneous. This can be seen if a call to show_stack() is added to
-> stacktrace_internal_return_handler():
-
-Oh, that's a bit annoying.  :/
-
-> +++ b/arch/arm64/Kconfig
-> @@ -14,7 +14,6 @@ config ARM64
->  	select ARCH_HAS_DEBUG_WX
->  	select ARCH_BINFMT_ELF_EXTRA_PHDRS
->  	select ARCH_BINFMT_ELF_STATE
-> -	select ARCH_CORRECT_STACKTRACE_ON_KRETPROBE
->  	select ARCH_ENABLE_HUGEPAGE_MIGRATION if HUGETLB_PAGE && MIGRATION
->  	select ARCH_ENABLE_MEMORY_HOTPLUG
->  	select ARCH_ENABLE_MEMORY_HOTREMOVE
-
-This config option is only used for enabling parts of the kprobes tests
-so it's not hurting anything at runtime AFAICT:
-
-Reviewed-by: Mark Brown <broonie@kernel.org>
-
---k2YslX4LOWBeSjJG
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmc806oACgkQJNaLcl1U
-h9ABKgf/R/7u3P8XFaSDhIfVLJlsf9aPjfGZE00dJ22IL5QHSjG6/EL4j3/zOavI
-B9waIUtfSwfMCeOYAzmEvr0lO7owU6ZV86Fc+xAwfA0oZVSa5P3PAwZu9PpF1dPY
-PJKWNMS5+09RjMZiqKW4/E/JaL1xaQeMiHDnOUSdv9zazoFifqD9EZbwes3q89lW
-EniQE3oD7BcoO0mXnLy6nSlJrw26hpbBzqQrXpdkMmUjErGsYZn/nCK6lC0ONJjJ
-wmwC84AOeTJr6l9XPAikDLdrUz0QQBffq3sEnk98FSflhgm0foj3VaxSmaGcdjXA
-xWCxzWIvczqUnGO4gsoD8hrq0wrllw==
-=lv33
------END PGP SIGNATURE-----
-
---k2YslX4LOWBeSjJG--
 
