@@ -1,92 +1,124 @@
-Return-Path: <linux-kernel+bounces-414336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C69819D26D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 14:28:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCA069D2668
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 14:08:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72267B313F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 13:09:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92C9E28152B
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 13:08:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 132E31CCB2A;
-	Tue, 19 Nov 2024 13:08:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="eO6YC1bE"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABF231CCB21;
+	Tue, 19 Nov 2024 13:08:22 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 250AC1CC146;
-	Tue, 19 Nov 2024 13:08:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 528B21CC146
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 13:08:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732021731; cv=none; b=rDX9DFm6247N2zoAQqeHYByNoNBQfDfsingZ5HXexQLk2owmSVRIfDfuAyP9mJY/cSg9lVG5HUF77eX5U2ZkBZ7Iw8NPbHJku98SMnWp5568I6zYtew0lQmYUOUe49lJ6i40FvB6BFeUDjEzyfIefJBv4CHPYVNLfOzUbEkxy1Y=
+	t=1732021702; cv=none; b=fAJ/mXO4AcI3xKD5SGU9zKxU8U2tpN6i3sjUy9tsMrw/EHiLq7RsIneIZKun5E7O0KIzakfzoNJ1NGjp/NFJKOmt45S1BRQlSiove3NISqOoGUYXns2t2ZE8PZnsEB0i9f8ak6DZw9VYQ78TXPQSE1Z4jrmWG6TIVuVUORHbxI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732021731; c=relaxed/simple;
-	bh=6ehAUbUUjhIZVJ35ogPwTJG3IGZ0UL6+89trtt/2OF8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ljLFLNwj87pBmAbF2k0+WyKLRUrtkw148Jr3+G6KI2qlu3/ypWBmyiJtjRbZdD/qnRpz0TlYrCnLI6Wp8LaAE4xNI/LprEFM7Ao866F+aKO/2tvC2FA37U2+mkY1klTyEz6JPYVDlGGJLq4zHVeo8DUAG1Xah9H8b3XIlBM8PqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=eO6YC1bE; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=EoVHqUDRj1frTyLskYC2wpn1o7+VmyrnJEN/QQ3kFvs=; b=eO6YC1bErm2jTXCH7RJ62vhqTS
-	PTPQmtHGC+UzYXskiamtZSN9E14lAxuGjhi2k3jMf3Xt6GWLEt2pcz07ndvVGa4L6IfLJxVTx4Llu
-	fQh/pA6/4jXvk22mUfbuHx42c6PKPLuOqx6/kRc9jxNb9O6wWtqfsDdwXPKw6WiNbTvS7/2Bgt0We
-	aG5KloXBFBdUfxyZ0yyDEcAzvMvAvffV1d7ykFbTIZ3F4E1RfpY8RGhXXYelrdQ2EDnjfbQw8k3Xg
-	oiAjUv3lK95R9ocbIz+Er97pFA6HiyIJM2SHmznfV/19CedWha67/qfY+pYz3wEzgElcHmHCNvWdN
-	v0myQlwQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tDNyK-0000000CSxP-1yiR;
-	Tue, 19 Nov 2024 13:08:48 +0000
-Date: Tue, 19 Nov 2024 05:08:48 -0800
-From: Christoph Hellwig <hch@infradead.org>
-To: Alexey Romanov <avromanov@salutedevices.com>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	"minchan@kernel.org" <minchan@kernel.org>,
-	"senozhatsky@chromium.org" <senozhatsky@chromium.org>,
-	"axboe@kernel.dk" <axboe@kernel.dk>,
-	"terrelln@fb.com" <terrelln@fb.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-	kernel <kernel@sberdevices.ru>
-Subject: Re: [PATCH v1 3/3] zram: introduce crypto-api backend
-Message-ID: <ZzyN4O2kE1LstLG5@infradead.org>
-References: <20241119122713.3294173-1-avromanov@salutedevices.com>
- <20241119122713.3294173-4-avromanov@salutedevices.com>
- <ZzyF7PAoII0E5Vf5@infradead.org>
- <20241119130438.3vkopcmnmmwgmxha@cab-wsm-0029881>
+	s=arc-20240116; t=1732021702; c=relaxed/simple;
+	bh=+DuU/CNyb2X1+4eDy2X1WRcvPDY3+SMoxf80Eglk4B4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DcZqQyBF6b/7qm6nHwflHB8CCi7EjSAh+udxeVl6HohzalvtBJl1MSMx20qwsk5IwlZcs3gKotddrhKf7zD+y/iFReYSWuY97b1XdveYp2lwXfoLZcSIhXg8k5ubb7C7WNJ6pC89dyNPZ5/imHUNWvazEVqOGzS3eXtpqfyvn+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B792CC4CECF;
+	Tue, 19 Nov 2024 13:08:20 +0000 (UTC)
+Date: Tue, 19 Nov 2024 08:08:53 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Dheeraj Reddy Jonnalagadda <dheeraj.linuxdev@gmail.com>,
+ mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+ linux-kernel@vger.kernel.org, dietmar.eggemann@arm.com, bsegall@google.com,
+ mgorman@suse.de, vschneid@redhat.com
+Subject: Re: [PATCH sched-next] sched/cputime: Fix unused value issue
+Message-ID: <20241119080853.58cbca4f@gandalf.local.home>
+In-Reply-To: <20241119083650.GD11903@noisy.programming.kicks-ass.net>
+References: <20241118111314.58481-1-dheeraj.linuxdev@gmail.com>
+	<20241118153047.7e90015f@gandalf.local.home>
+	<20241119083650.GD11903@noisy.programming.kicks-ass.net>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241119130438.3vkopcmnmmwgmxha@cab-wsm-0029881>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Nov 19, 2024 at 01:04:44PM +0000, Alexey Romanov wrote:
-> Should I create backend_*.c file for every compression algo driver?
+On Tue, 19 Nov 2024 09:36:50 +0100
+Peter Zijlstra <peterz@infradead.org> wrote:
 
-No.
+> > The above adds more branches than just having:
+> > 
+> > 	if (stime == 0)
+> > 		goto update;
+> > 
+> > 	if (utime == 0) {
+> > 		stime = rtime;
+> > 		goto update;
+> > 	}
+> > 
+> > (or's "||" are branches)
+> > 
+> > And the latter is much easier to read!
+> > 
+> > Just fix the issue. Don't try to be clever about it.  
+> 
+> There is nothing to fix. Yes there is an unused assignment, but the
+> compiler is free to elide it (and it does).
 
-> Okay, there aren't many of them now. But what will do, for example,
-> when there will be 250 such compression drivers?
-
-Why would there?
+This has nothing to do with the compiler optimizing it.
 
 > 
-> And also your approach doesn't allow working with loadable modules.
-> For example, we may have only binary module (without sources) from
-> vendor SDK that provieds a driver for data compression. 
+> Keep the code as is, it is simple and straight-forward.
 
-Well, maybe just piss off instead of sneaking in hooks for your
-illegal binary modules.
+I disagree from a stability and understandability point of view. Why is
+utime assigned? Here's the full context:
+
+	if (stime == 0) {
+		utime = rtime;  <<<---- Assigns utime
+		goto update;    <<<---- Jumps to "update"
+	}
+
+	if (utime == 0) {
+		stime = rtime;
+		goto update;
+	}
+
+	stime = mul_u64_u64_div_u64(stime, rtime, stime + utime);
+	/*
+	 * Because mul_u64_u64_div_u64() can approximate on some
+	 * achitectures; enforce the constraint that: a*b/(b+c) <= a.
+	 */
+	if (unlikely(stime > rtime))
+		stime = rtime;
+
+update:                           <<<---- Jumped here
+	/*
+	 * Make sure stime doesn't go backwards; this preserves monotonicity
+	 * for utime because rtime is monotonic.
+	 *
+	 *  utime_i+1 = rtime_i+1 - stime_i
+	 *            = rtime_i+1 - (rtime_i - utime_i)
+	 *            = (rtime_i+1 - rtime_i) + utime_i
+	 *            >= utime_i
+	 */
+	if (stime < prev->stime)
+		stime = prev->stime;
+	utime = rtime - stime;   <<<---- reassigns utime
+
+So the first assignment of "utime" is meaningless, or there's a bug here
+that utime incorrectly had its value overwritten. If the first assignment
+is meaningless, it leaves others still wondering if there is actually a bug
+here, because they are wondering "why was utime assigned?".
+
+-- Steve
+
 
 
