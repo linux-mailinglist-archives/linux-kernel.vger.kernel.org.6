@@ -1,123 +1,115 @@
-Return-Path: <linux-kernel+bounces-414608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18F899D2B01
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 17:33:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 021BA9D2AE8
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 17:28:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70BEDB2EEEB
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 16:29:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4E511F25B49
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 16:28:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4974B1CC161;
-	Tue, 19 Nov 2024 16:28:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zjcrhs8I"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5888A1D0BA7;
+	Tue, 19 Nov 2024 16:28:18 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05E471CFEDE
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 16:28:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F039E1D042D;
+	Tue, 19 Nov 2024 16:28:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732033731; cv=none; b=V1aJHe+tQl/35WNeqd5kQcCmM1DRzNy9r6ACQimGItAydkeGkf/grDm2DiPj1M06S3ppNdEaKJKfImHNHUQEn9CTYmIE9yQ360dhJ9D5HUAukXO5dj3oStsVdKaD9Da3CdYeZmChpkbzYLGSXzWco/tIHF3YhB3VZAC9EjVc4xg=
+	t=1732033698; cv=none; b=i6cZNu3ILc1I6I1B3JuqnJ0VaZ97zHruUoXum/KDWrvlKPKRfSY+0Ug+4/Rwq+b3kiqp8OCpoIkWzW0I7pYrPvlXKxajytmURlXxye+L68qJXXn2HqhV20qZppeotmdLIUhGuEdreRvd40zlJA/sjpuMfCpM1L/xOhUhJhWHue0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732033731; c=relaxed/simple;
-	bh=cWYXDPgO3GIzCLE7AXK/wXRdAjbM0VBPuYzEaBBzd94=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=O9rJdg25BjMe4V6gA+3sNRMx0rFEk41L5EimoUvlEeFbXNRlO+QG8KRVmaA9S+dRmQFf5M9FC3rTowM4oDfatl+EC0HddRj7kKgZ9trqknslP9isXnLuTT3yv23kJWRup2fBop/8DJYjvow6o6llQQ2T/OfgJvPtgRLGMVsSuw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zjcrhs8I; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3824aef833bso1488254f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 08:28:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732033728; x=1732638528; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mNIGL4TBmG79cNhapAW7na5a/ZXkm+77k3iLSneHF0E=;
-        b=zjcrhs8IfhpDAWsCgLa+NkTGoupEBdzdLRii/O9/QcH87I2g3nbpgH7suvcCLVL7hx
-         eI60DfeUALq8EUUWaQIc7lvaui38ozHmrfh2+qSZgqFtJK8JgOiDWO2/Up1MimdcK04a
-         QkMN2Hhgth9yXjawEsAlZLTQjfY8SBF4XLoOM9/NwJTCK/7v91UdPKjn7yngdfDVP/h8
-         s0BO5HaYxpSKVuYnYUTTaBg4b0efEVrtDRMa+DrVmAkI0cVhuSghS2wyeCJJpjPLros1
-         bybg8yK/4/iOggasYq4mm33w6MWSe/iQM82eoBXCPX6Vd+is0754W6bOlUaBxDPsqL3V
-         yDHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732033728; x=1732638528;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mNIGL4TBmG79cNhapAW7na5a/ZXkm+77k3iLSneHF0E=;
-        b=sGOQF84bhGXGIRSTKuN1RQ825FCVZtT1RQzPFKm6Gw/OpHsS8FChdoKhBQZijMOycc
-         SPTs5cF5hUfD3kG6GijHH1wweHqJP3y79/OQmINu6g8gy53fwd3lJz3C7SVoxazKE23S
-         ljDmLzQ7Js9rPkfsOanR5RZxiLEDKVM8HgaBUFbdYX061eHh+GOher7c47iUftz7jQ9A
-         qTASXXzFjS6BHo/IxDIzoFITMsBqgrfDc4j46FhnwxnbG7FzteIn0Mx78vnJA9FqLFE+
-         LnynVf6hQLY4wSAOm2V59aPoEGuoIINKPqW1y/bKdKJ0GRYN6bb+XMqb3p7aFqjji/pU
-         kDDA==
-X-Forwarded-Encrypted: i=1; AJvYcCVH08/Q7e7WI/vxGV8NyaSJ4wnXvvz+EPrtSYXhrE233o1jojvghwwTb0VX+FX7HwGasC2rd/uIuhY4eWE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2JkPc8dq/dySs4AQd3VXA1vj84HkHo+LacUbMUpyp3r6u4Qe2
-	WhoxarMaEJtTrgOaRa3eectnEcpBxAMCHyXOjOQ0jFMvJpnt1wmt5jFsb/x0d0xhE6nEUjZ+IYw
-	N5hM9Yg9H/25bElBotbe9RKLfwC61XZYtL0Df
-X-Google-Smtp-Source: AGHT+IGH4JSOEfD1HbHMvcsuZeTTnF7GVtu19F8wmLg4uCfMKhVnl5FetT5En4B6arRYXki6OdQNmsQobYCw5vHhAnc=
-X-Received: by 2002:a5d:5c0e:0:b0:382:4a4e:25bb with SMTP id
- ffacd0b85a97d-3824a4e2883mr6368707f8f.46.1732033728228; Tue, 19 Nov 2024
- 08:28:48 -0800 (PST)
+	s=arc-20240116; t=1732033698; c=relaxed/simple;
+	bh=7AiN7C9rSciZFzuI2C0MhdiS8jvBluuatf3HrOrbI8g=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZqQs8J8sG6v2DGQ0t1itNN1eA+Fo8+Vlg2gxZKPySs7s1DU1PW04ehgXwm8QFp/oPQP5O3H9GjElAw/vUdY6URQKdk+yGwYQiCfII7BnsZenfdnyNRuDkJjFuHeNF1vjZ5HCwvxnYTuwNWrm1nJKX2C7NT1l6f8MWyqh4zYAPcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E10D9C4CECF;
+	Tue, 19 Nov 2024 16:28:16 +0000 (UTC)
+Date: Tue, 19 Nov 2024 11:28:50 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
+Cc: linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, Geert Uytterhoeven
+ <geert@linux-m68k.org>, Greg Ungerer <gerg@linux-m68k.org>, Tomas Glozar
+ <tglozar@redhat.com>
+Subject: Re: [PATCH RFC 0/2] Add basic tracing support for m68k
+Message-ID: <20241119112850.219834f5@gandalf.local.home>
+In-Reply-To: <20241119102631.76363f2a@gandalf.local.home>
+References: <20241021-add-m68k-tracing-support-v1-0-0883d704525b@yoseli.org>
+	<3a8f6faa-62c6-4d32-b544-3fb7c00730d7@yoseli.org>
+	<20241115102554.29232d34@gandalf.local.home>
+	<cbb67ee2-8b37-4a4d-b542-f89ddae90e94@yoseli.org>
+	<20241115145502.631c9a2c@gandalf.local.home>
+	<2c43288a-517d-4220-ad31-f84dda8c1805@yoseli.org>
+	<20241118152057.13042840@gandalf.local.home>
+	<22856ed6-b9d0-4206-b88d-4226534c8675@yoseli.org>
+	<20241119102631.76363f2a@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241118-rust-xarray-bindings-v9-0-3219cdb53685@gmail.com>
- <20241118-rust-xarray-bindings-v9-2-3219cdb53685@gmail.com>
- <Zzu9SzkDoq_1YQnJ@tardis.local> <CAJ-ks9mKArX37VzhcyymDoE-MsNxNcO8VvP4n3Xu1mdfOKiuag@mail.gmail.com>
-In-Reply-To: <CAJ-ks9mKArX37VzhcyymDoE-MsNxNcO8VvP4n3Xu1mdfOKiuag@mail.gmail.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Tue, 19 Nov 2024 17:28:36 +0100
-Message-ID: <CAH5fLggL7MTLVv2ym_tCCKH9hQtL=GpTwXjDUQzKQX9UdT7SkA@mail.gmail.com>
-Subject: Re: [PATCH v9 2/2] rust: xarray: Add an abstraction for XArray
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Danilo Krummrich <dakr@kernel.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, =?UTF-8?B?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>, 
-	Asahi Lina <lina@asahilina.net>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Nov 19, 2024 at 5:24=E2=80=AFPM Tamir Duberstein <tamird@gmail.com>=
- wrote:
->
-> On Mon, Nov 18, 2024 at 5:18=E2=80=AFPM Boqun Feng <boqun.feng@gmail.com>=
- wrote:
-> >
-> > On Mon, Nov 18, 2024 at 11:33:36AM -0500, Tamir Duberstein wrote:
-> > [...]
-> > > +
-> > > +/// A lock guard.
-> > > +///
-> > > +/// The lock is unlocked when the guard goes out of scope.
-> > > +#[must_use =3D "the lock unlocks immediately when the guard is unuse=
-d"]
-> > > +pub struct Guard<'a, T: ForeignOwnable> {
-> > > +    xa: &'a XArray<T>,
-> > > +}
-> >
-> > `Guard` would be `Send` if `XArray<T>` is `Sync`, however, it's
-> > incorrect since `Guard` represents an xa_lock() held, and that's a
-> > spin_lock, so cannot be dropped on another thread/context. `Guard`
-> > should probably be marked as `!Send`. Or am I missing something subtle
-> > here?
->
-> I didn't know about this requirement, thanks for calling it out. I
-> have added `_not_send: PhantomData<*mut ()>` in v10.
+On Tue, 19 Nov 2024 10:26:31 -0500
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-You can use _nts: NotThreadSafe. The type in question has landed in
-6.13 and is available in Linus's tree since yesterday.
+> Can you do me a favor and send me privately a tarball of:
+> 
+>  # cp -r /sys/kernel/tracing/events /tmp/events
+>  # cd /tmp
+>  # tar -cvjf events.tar.bz2 events
+> 
+> You can't call tar on the /sys/kernel/tracing files as those are pseudo
+> files with size of zero, and tar will just record empty files :-p
 
-Alice
+It crashes on parsing this:
+
+name: mm_vmscan_write_folio
+ID: 198
+format:
+	field:unsigned short common_type;	offset:0;	size:2;	signed:0;
+	field:unsigned char common_flags;	offset:2;	size:1;	signed:0;
+	field:unsigned char common_preempt_count;	offset:3;	size:1;	signed:0;
+	field:int common_pid;	offset:4;	size:4;	signed:1;
+
+	field:unsigned long pfn;	offset:8;	size:4;	signed:0;
+	field:int reclaim_flags;	offset:12;	size:4;	signed:1;
+
+print fmt: "page=%p pfn=0x%lx flags=%s", (mem_map + ((REC->pfn) - (m68k_memory[0].addr >> 13))), REC->pfn, (REC->reclaim_flags) ? __print_flags(REC->reclaim_flags, "|", {0x0001u, "RECLAIM_WB_ANON"}, {0x0002u, "RECLAIM_WB_FILE"}, {0x0010u, "RECLAIM_WB_MIXED"}, {0x0004u, "RECLAIM_WB_SYNC"}, {0x0008u, "RECLAIM_WB_ASYNC"} ) : "RECLAIM_WB_NONE"
+
+
+It shouldn't crash, but it also found a bug in your code ;-)
+
+You reference two variables that are not part of the event:
+
+ "mem_map" and "m68k_memory[0].addr"
+
+Do these variables ever change? Because the TP_printk() part of the
+TRACE_EVENT() macro is called a long time after the event is recorded. It
+could be seconds, minutes, days or even months (and unlikely possibly
+years) later.
+
+The event takes place and runs the TP_fast_assign() to record the event in
+the ring buffer. Then some time later, when you read the "trace" file, the
+TP_printk() portion gets run. If you wait months before reading that, it is
+executed months later.
+
+Now you have "mem_map" and "m68k_memory[0].addr" in that output that gets
+run months after the fact. Are they constant throughout the boot?
+
+Now another issue is that user space has no idea what those values are. Now
+user space can not print the values. Currently the code crashes because you
+are the first one to reference a global value from a trace event print fmt.
+That should probably be fixed to simply fail to parse the event and ignore
+the print format logic (which defaults to just printing the raw fields).
+
+-- Steve
+
 
