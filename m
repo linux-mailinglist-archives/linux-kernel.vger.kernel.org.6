@@ -1,151 +1,155 @@
-Return-Path: <linux-kernel+bounces-414297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 323F89D2602
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 13:38:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F4259D2604
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 13:39:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC8C9284587
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 12:38:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2556828123E
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 12:39:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 150C41CBEA8;
-	Tue, 19 Nov 2024 12:37:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFA301CBEA9;
+	Tue, 19 Nov 2024 12:39:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="HLV69bqH"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kNW+ebQE"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 767D513B780;
-	Tue, 19 Nov 2024 12:37:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2E761CB30A;
+	Tue, 19 Nov 2024 12:39:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732019874; cv=none; b=eesP1P9F0FHrH8raYBGAPmJpF86H0Sr7MI9AfUdV+W7lmHGzAXm1cYBIlAhDxb5NxUM0b22XcILT7TZlrANoPQeCySJigG/eGy8WsJ5pD119VbfEHOrKp9oDgj5GHAk+oLijUq8VCmIccxrwmZq3Jz9okzpu2VY/Z3BC6sM/OX8=
+	t=1732019943; cv=none; b=oQPhS8Y47VlJsb3RwAbWaITBGets856i4hQXwmGM9AjB39Sax3n8Gr1aO4PT9uTpLtuHbN5oRxT7/dbzSTuxatyL2K0VWj1wQzLS9YmYHq1eIrkNnObTSNIDagcuOsPU62OnaLSwgpPQ5d0KUFM/CEKsNphgqXevqlq5rFlYL9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732019874; c=relaxed/simple;
-	bh=SLn98ioub+iMNwf/pV/eo5IlGgC5pW4cy3AFahRwgdM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YbXZzZ0mKopzz5qfcSosZp+0J8o8NQxMTi8k6pAvyrL0gX6b11euQO+ffezjGfEE+xDjyxQKE1pBTY+wxxBS5fQUVSkUsAYHDoa6XxYMPCh5A2h+pgMBzfcPb8lOF7/TPfHGWcplW/3t5kuIdgkNsn3jAar1H01RF83NYoxylW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=HLV69bqH; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 8D91840E0263;
-	Tue, 19 Nov 2024 12:37:49 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id EeAmpnxGTl59; Tue, 19 Nov 2024 12:37:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1732019864; bh=9msUNrWXEC3mX7pDT4bRGAge3h56G8tJeE9EQBQ1Y5U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HLV69bqHTjs9bY2eVTquOscV9cgfcrIVEM2MzDalEn89hAY4Pw/y/AizBd2/hO70O
-	 Vc/+rpyhRPIbYRCJxNEilPYLKGmdkR7iqT+mxumS280SHQdnktLkaNdCHu6ANvbwhO
-	 CaRmnVLR8aOlNFOkt9/X9u4tpRQ0MGd87TRi1DOJBOoYedaWoB6rZWU0/gO9Gdc78h
-	 kshaJuLwxbLvNxoeEqmy1MAYLm2CSJavoHxFlFINGk4PuywN/agTbCfE3bclwWJ5/z
-	 uaEJ9dcfeDX+rTli7C1CF8v8DboZGHdr2f/59KqR6PhbBJAtccnG7Hywb7+CR63oVw
-	 MKrYy2tcnspENaeRjnI8SqwM7ISzSAYwDTZfc1t5ue27X5NJrXfm67tLOHMxB+RJVu
-	 XMK9qx3PCAPRzb6dU7kxYbCQ/4hlWUgRRKpEF/mzwCAwarC7ktttLKKNuZp55jJ71P
-	 wt31ptsnCFQrwtovGvUiqUA+dZMEF0Ro6+hciHcX9VkhnXd6nq+8Y2qfaA+NT89Nbo
-	 dUheNOmBThnPQTcnhZ7KlVvvfiz8whMnXqDJE46iJysJoTPWp9rsss+lFM8lx3pWVy
-	 6gRFxSpZd5p/rxr1mx+YOXkEkbVg4zOO8PJ1daG76wNL3f+nvdYdZFkF9kdRqNVhaE
-	 2L6q71mhMpWwTUMO9S2HXmDs=
-Received: from zn.tnic (pd9530b86.dip0.t-ipconnect.de [217.83.11.134])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 04C5B40E0269;
-	Tue, 19 Nov 2024 12:36:58 +0000 (UTC)
-Date: Tue, 19 Nov 2024 13:36:57 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Shiju Jose <shiju.jose@huawei.com>
-Cc: "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-	"linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>,
-	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"tony.luck@intel.com" <tony.luck@intel.com>,
-	"rafael@kernel.org" <rafael@kernel.org>,
-	"lenb@kernel.org" <lenb@kernel.org>,
-	"mchehab@kernel.org" <mchehab@kernel.org>,
-	"dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-	"dave@stgolabs.net" <dave@stgolabs.net>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-	"sudeep.holla@arm.com" <sudeep.holla@arm.com>,
-	"jassisinghbrar@gmail.com" <jassisinghbrar@gmail.com>,
-	"dave.jiang@intel.com" <dave.jiang@intel.com>,
-	"alison.schofield@intel.com" <alison.schofield@intel.com>,
-	"vishal.l.verma@intel.com" <vishal.l.verma@intel.com>,
-	"ira.weiny@intel.com" <ira.weiny@intel.com>,
-	"david@redhat.com" <david@redhat.com>,
-	"Vilas.Sridharan@amd.com" <Vilas.Sridharan@amd.com>,
-	"leo.duran@amd.com" <leo.duran@amd.com>,
-	"Yazen.Ghannam@amd.com" <Yazen.Ghannam@amd.com>,
-	"rientjes@google.com" <rientjes@google.com>,
-	"jiaqiyan@google.com" <jiaqiyan@google.com>,
-	"Jon.Grimm@amd.com" <Jon.Grimm@amd.com>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"naoya.horiguchi@nec.com" <naoya.horiguchi@nec.com>,
-	"james.morse@arm.com" <james.morse@arm.com>,
-	"jthoughton@google.com" <jthoughton@google.com>,
-	"somasundaram.a@hpe.com" <somasundaram.a@hpe.com>,
-	"erdemaktas@google.com" <erdemaktas@google.com>,
-	"pgonda@google.com" <pgonda@google.com>,
-	"duenwen@google.com" <duenwen@google.com>,
-	"gthelen@google.com" <gthelen@google.com>,
-	"wschwartz@amperecomputing.com" <wschwartz@amperecomputing.com>,
-	"dferguson@amperecomputing.com" <dferguson@amperecomputing.com>,
-	"wbs@os.amperecomputing.com" <wbs@os.amperecomputing.com>,
-	"nifan.cxl@gmail.com" <nifan.cxl@gmail.com>,
-	tanxiaofei <tanxiaofei@huawei.com>,
-	"Zengtao (B)" <prime.zeng@hisilicon.com>,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	"kangkang.shen@futurewei.com" <kangkang.shen@futurewei.com>,
-	wanghuiqiang <wanghuiqiang@huawei.com>,
-	Linuxarm <linuxarm@huawei.com>
-Subject: Re: [PATCH v15 11/15] EDAC: Add memory repair control feature
-Message-ID: <20241119123657.GCZzyGaZIExvUHPLKL@fat_crate.local>
-References: <20241101091735.1465-1-shiju.jose@huawei.com>
- <20241101091735.1465-12-shiju.jose@huawei.com>
- <20241104061554.GOZyhmmo9melwI0c6q@fat_crate.local>
- <1ac30acc16ab42c98313c20c79988349@huawei.com>
- <20241111112819.GCZzHqUz1Sz-vcW09c@fat_crate.local>
- <7fd81b442ba3477787f5342e69adbb96@huawei.com>
- <20241114133249.GEZzX8ATNyc_Xw1L52@fat_crate.local>
- <fa5d6bdd08104cf1a09c4960a0f9bc46@huawei.com>
+	s=arc-20240116; t=1732019943; c=relaxed/simple;
+	bh=8iBqnQalMGmDNmE0r5Hr6zKEtbWAH9SA9qg6eJ54jYc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uC9Ha52NdS17lynbQySArPxQdWgmg3902aOumkeV8wNkLzPBGjJonuVVrvFsuVqndK3rZH7tLPSwDrPAI5nX6oIjVoyXZGWLryAYHu+ahgQ7uSNejNG6Vj3FyG5wVdkC30l6d2Y5qkFIBypl78dTVJnpBOFi9URdlQq6rcnEEUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kNW+ebQE; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2e9ff7a778cso3932826a91.1;
+        Tue, 19 Nov 2024 04:39:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732019941; x=1732624741; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JnZ4qxtYlpHZEhiV3OA1KhsP1iSPVNJtA1zzeqy70e4=;
+        b=kNW+ebQEfvoEAq07z3TbHMyi8tP+k1jUBCfmXCk2jvaYoWxTN2hUGJ4aU5fwXD/B0S
+         qeH4g35hdOR6vRL9LF4XNGEUhT96lQ3fKPf7GjmtzgOvFGUykScaSA25xoY4SZmWsGvs
+         3QSerAcvM4w8NvPu3eStDfJ1gGUqZ2oQJXHHie9KJcRHGPpEFDT+YuIhKy3K4FGoyjLa
+         hHCoBBx+0mGamCx7uy2jUev1Mhpr55yIUiZqEeCD4lC3tSUx2oyfD2K1boapcPC6f/dO
+         wo3mgLPP+Uul7sXFOdH/xG8fWk4E6oEJZsU9yFfSfR3Kn96K9EAl6B3x2619DQ2qxSZD
+         1IIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732019941; x=1732624741;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JnZ4qxtYlpHZEhiV3OA1KhsP1iSPVNJtA1zzeqy70e4=;
+        b=YprOMwTTfPMH+T9EhJ0Hjbm/2Zz/7YpGyRO4P5y3GKJTa3yDMGwjrZhipJ6FrIYa2f
+         LXk6Kvcc6xeaWZAVZvJ/okZb7jf/Vty60WY3Wm6ue/JHPScgAdlN+6b2UjM6OHAF+n5r
+         482CSCNm+2grrJHGrVYmsqTJfFe/Ra/91Qa19iQRkV9T2CzvkO3FHFJ0VFs7QNVBpFZt
+         aiEau63UJNmpR/XMOmyWQs7mtsS92LkbyJwVazhZVZeOApMWtpnCtI2+Es+pwYup0Gm9
+         Y2z/7nqLZLZl/82T56Ao5bFa+iEnYUib0l5qExSu6SE7i9c6zT9DsEhDvgH5W0ORQ6vC
+         BhDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUTK7OIsUE0WICs6k7YcEQef886EfIe2FVqMuz37/P53atPGiZABFAB45k6LETfJb8DBh021Ystf9qc9wHQ@vger.kernel.org, AJvYcCV2CLa9DYwSPHA8yxJTqWCsxHfBS2D8LBQGyGDMvwSFswdELMc5WT7EjJWEo93HGgAAxFsoj8EwgVsU@vger.kernel.org, AJvYcCXwTDVF1VZk4ve4NA021QOtX2hzPIT9ZSZwGxAu/D67XMY+iui7Aja0qmqiiolGG79nBGm1orAX@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGsnkZSQCm3svuv32m0xvK9iZy0okBoGE1qZrAL8LlxituINIe
+	RaRSuT3XprWhTasnW7ykP7bSgJ8LXvnHoq673ndKgsDvAJ9EI50z2T71MKJrjEbw068SMouW1QP
+	XqxhzS5JyAUKOTB64E6nIxRJ20/I=
+X-Google-Smtp-Source: AGHT+IFkq5BsdRSYuU1Pl5Sb0f6LIlJ/9TRKK19i3Xu4IVqUtYGvNnBs8ndn12i7Jz3NjGug4ZtDVTSyuye4d/foe40=
+X-Received: by 2002:a17:90b:4fce:b0:2ea:61c4:a443 with SMTP id
+ 98e67ed59e1d1-2eaaa73b935mr4703490a91.4.1732019941182; Tue, 19 Nov 2024
+ 04:39:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <fa5d6bdd08104cf1a09c4960a0f9bc46@huawei.com>
+References: <20241118222828.240530-1-max.kellermann@ionos.com>
+In-Reply-To: <20241118222828.240530-1-max.kellermann@ionos.com>
+From: Ilya Dryomov <idryomov@gmail.com>
+Date: Tue, 19 Nov 2024 13:38:49 +0100
+Message-ID: <CAOi1vP8Ni3s+NGoBt=uB0MF+kb5B-Ck3cBbOH=hSEho-Gruffw@mail.gmail.com>
+Subject: Re: [PATCH] fs/ceph/mds_client: give up on paths longer than PATH_MAX
+To: Max Kellermann <max.kellermann@ionos.com>, Patrick Donnelly <pdonnell@redhat.com>, 
+	Venky Shankar <vshankar@redhat.com>
+Cc: xiubli@redhat.com, ceph-devel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, dario@cure53.de, stable@vger.kernel.org, 
+	Jeff Layton <jlayton@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 15, 2024 at 12:21:16PM +0000, Shiju Jose wrote:
-> >Ok, and how is the user supposed to know what those mean?
-> 
-> Print in  string format?, may be as 'persist'/'volatile'? 
+On Mon, Nov 18, 2024 at 11:28=E2=80=AFPM Max Kellermann
+<max.kellermann@ionos.com> wrote:
+>
+> If the full path to be built by ceph_mdsc_build_path() happens to be
+> longer than PATH_MAX, then this function will enter an endless (retry)
+> loop, effectively blocking the whole task.  Most of the machine
+> becomes unusable, making this a very simple and effective DoS
+> vulnerability.
+>
+> I cannot imagine why this retry was ever implemented, but it seems
+> rather useless and harmful to me.  Let's remove it and fail with
+> ENAMETOOLONG instead.
 
-That sounds like an abuse of sysfs (Greg?) to me and even if it were possible,
-you need explanation what those strings mean.
+Hi Max,
 
-> I am  fine with adding the support for expose the ranges of these,
-> but makes more sense to do it when a driver surfaces that can do it.
+When this was put in place in 2009, I think the idea of a retry was
+copied from CIFS.  Jeff preserved the retry when he massaged this code
+to not warn in case a rename race is detected [1].  CIFS got rid of it
+only a couple of years ago [2][3].
 
-So how do you envision to do it otherwise? The user is supposed to guess the
-ranges?
+Adding Patrick and Venky as well, please chime in.
 
-That's not a good UI IMO.
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/comm=
+it/?id=3Df5946bcc5e79038f9f7cb66ec25bd3b2d39b2775
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/comm=
+it/?id=3Df6a9bc336b600e1266e6eebb0972d75d5b93aea9
+[3] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/comm=
+it/?id=3D991e72eb0e99764219865b9a3a07328695148e14
 
--- 
-Regards/Gruss,
-    Boris.
+Thanks,
 
-https://people.kernel.org/tglx/notes-about-netiquette
+                Ilya
+
+>
+> Cc: stable@vger.kernel.org
+> Reported-by: Dario Wei=C3=9Fer <dario@cure53.de>
+> Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
+> ---
+>  fs/ceph/mds_client.c | 9 ++++-----
+>  1 file changed, 4 insertions(+), 5 deletions(-)
+>
+> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> index c4a5fd94bbbb..4f6ac015edcd 100644
+> --- a/fs/ceph/mds_client.c
+> +++ b/fs/ceph/mds_client.c
+> @@ -2808,12 +2808,11 @@ char *ceph_mdsc_build_path(struct ceph_mds_client=
+ *mdsc, struct dentry *dentry,
+>
+>         if (pos < 0) {
+>                 /*
+> -                * A rename didn't occur, but somehow we didn't end up wh=
+ere
+> -                * we thought we would. Throw a warning and try again.
+> +                * The path is longer than PATH_MAX and this function
+> +                * cannot ever succeed.  Creating paths that long is
+> +                * possible with Ceph, but Linux cannot use them.
+>                  */
+> -               pr_warn_client(cl, "did not end path lookup where expecte=
+d (pos =3D %d)\n",
+> -                              pos);
+> -               goto retry;
+> +               return ERR_PTR(-ENAMETOOLONG);
+>         }
+>
+>         *pbase =3D base;
+> --
+> 2.45.2
+>
 
