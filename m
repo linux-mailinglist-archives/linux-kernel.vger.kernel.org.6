@@ -1,257 +1,135 @@
-Return-Path: <linux-kernel+bounces-414106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59A3F9D231E
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 11:11:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5659C9D2320
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 11:12:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 196B62812E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 10:11:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1749C28144C
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 10:12:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84DFE1C232B;
-	Tue, 19 Nov 2024 10:11:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B0B31C1F35;
+	Tue, 19 Nov 2024 10:12:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XO45J2ln"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="d6uo4YtP"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B9B71C1F21
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 10:11:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C09219D06E
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 10:12:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732011093; cv=none; b=B7EE5Zq07sQC7vODIjs77QE3LMEhFzzTSJXCbByb0KYzHhaab3KS2ivdeHYTyYM7aK6UEaqvV2Dw1XsgGBpIZ9/v6t9UERTB8Zwpof0yURxduJaUuloaBiZFnPQPmy0/wGCPP8/6wrmq0nG3G3JkAeOrfPH76NP/u5bMoQ5DLLM=
+	t=1732011144; cv=none; b=SODzpXO8nYspfo12cLft0Nbz3h7DyCf014e9yvQcGVj2k3eMh267scrJGqU5E2Q7wjSGBdKlsBNOruX7N5b+5Tg7+IV33Z5bgsaqY0yfiyMjT8QGIk+QeN5CGvu6VLruMtB1fg0YInhjVnOL4v/vNfnvUcBzY4m5u7T8I8g/EQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732011093; c=relaxed/simple;
-	bh=PlG7ajC4HIproRyok2uR0kaxQChqGXyTvCvbDgTqby8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dVue3tvrlT5ZUzkYZUBSn3ROzG4bbY3R8YvbN2mco2bCXD0FZdl3e8uixpWZjwGHgk7xSZCHl/4Lbm7V+Evzsj0xQ0nASDNrEKa1/eUj/7tP1LU5v0ah2D9bXtejtj4CS62VRn8VrCWK2NvUxPZBN8v4kiZQpvu2l583r25MQe4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XO45J2ln; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-71e5130832aso2257253b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 02:11:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732011090; x=1732615890; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=CnyTQoucjCJF6wmIwhYG5inOePLfmtO8FEJdC34/wtE=;
-        b=XO45J2ln9NbAgnYcH1F4P1ICNplmt/ih/3Ylv4rdxbfib6tMVaMDTmJTmpTodC4ms0
-         6nTMHUgUzzQcNnJEjOvKDj8jLt4pbR8NpmPRvKPyhfRJFLBsh9pnbxCgffOJ6IRpF6Ur
-         BVIGIJSWJ9NLGf1ierBxN/iFs+fRvj3wDfzVX2LvcveFUMftFzBNf8X1B0rtf2Q0bN5h
-         BXivYQJd1AB10Kra2zukpsclzW0L8rUQSRl4oyYlYqDi2kh9dB1UySWeG++KCSTlgmQW
-         gf3bE09B203NZjhQr9yCGNblRq8L3Dk0Q5LdHiCMg6QzHrY1rIlkhPStejsB18VzIA/i
-         8TYw==
+	s=arc-20240116; t=1732011144; c=relaxed/simple;
+	bh=RZKQppqR9ulv5+UY512XsPJDhRPR3ltZNrET/GxkkTI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Me3hTd2jIP3L4y2/9ip0nRpqJnmf+Ip5CSIH8hq52hofo0QgQzD4rONBW0kfKpxwSZKFHb5QRUdT1D8NsRr1s7fNjDGpO86vNSMPyC5PYTfJ6Ngpfa+9j58rBWt+6yNfg0yEUezla5+uNnz2A0ci8tDtR9DT3Q0HHxI5StzAvUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=d6uo4YtP; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732011142;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=W/ll/h4cIcHRULNe5533lZjrqgLdazs+/VxZDeHMmso=;
+	b=d6uo4YtP/v45WmKuufMYZ5zeYVmyMCvOE2ItXflnK6juVrKBonwnArmUU1jCLMWRcEKnOi
+	GpolrU4RVTvQ1IfdqeHbGDDJfAKyDkoEEwrwDrcPJOE39rCOX7nOIiGDB233vLy6jrKnuP
+	/FNLIJ04uUOSvgbEa323bftsILZ9Ai0=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-447-Mhm2z8xePbGn5N-NwCFI9Q-1; Tue, 19 Nov 2024 05:12:20 -0500
+X-MC-Unique: Mhm2z8xePbGn5N-NwCFI9Q-1
+X-Mimecast-MFC-AGG-ID: Mhm2z8xePbGn5N-NwCFI9Q
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3822ebe9321so2294186f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 02:12:20 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732011090; x=1732615890;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1732011139; x=1732615939;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CnyTQoucjCJF6wmIwhYG5inOePLfmtO8FEJdC34/wtE=;
-        b=QAMOzt1xeceUqmijd+K9voZcLuQO+ain/HLZFyAJr23+9q4WZRWccPM87EweEJ+LxJ
-         OVhgLI3KrUoCEezr452h40KxxcrnAIFmqWZTW1PAogqfDBh9sed+bF3wXx9tVZTJU0Re
-         XJdCEU7F2OEu/U2MHkm4XLRJZuFwDuLtVuBhSgP5F4eCvwvgkbnTYGsEd53RjBPOVLRB
-         7jDClovDsqVT3EU7C6ai02/sOenNz3M56KAE1xTR3O66cfeTceEOURgaDYFiMFDfjdxl
-         j+9FOxSTsyGuqv34bIz7C9RZDLsHQpKqY8IRsBQyGVIjU0BaiDZePE7167l1KBugNmpJ
-         WX2A==
-X-Forwarded-Encrypted: i=1; AJvYcCWCpKY8NEBaMSE3RdQKRyeM3x6mpkwNTuuU44Z22G6q9F/XeVsE+LxRvIqVYmNmCh9BhuIoxeUl3+L7nBc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcdM8W8idZNYYRo6krXj1cPKZ565PLWCxS5EL4c//uUf3rl8vN
-	W6IxW/uSrgfo2dbC0eMYknVbOGRvPV0iTcTO4/H2AZsW6coNCAuTzhj8BBoPcA==
-X-Google-Smtp-Source: AGHT+IESlkjEE6zH0kn+oCxIKUTmqhbcdMhskn/HWsahaCPc0PrMTVIaTfJQLiOkn57Z+JD1MOMz3Q==
-X-Received: by 2002:a05:6a00:9294:b0:71d:f15e:d026 with SMTP id d2e1a72fcca58-72476b7271emr20918708b3a.3.1732011090344;
-        Tue, 19 Nov 2024 02:11:30 -0800 (PST)
-Received: from thinkpad ([117.213.96.14])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72477120a13sm8051655b3a.60.2024.11.19.02.11.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Nov 2024 02:11:29 -0800 (PST)
-Date: Tue, 19 Nov 2024 15:41:21 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Richard Zhu <hongxing.zhu@nxp.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev
-Subject: Re: [PATCH v7 2/7] PCI: dwc: Using parent_bus_addr in of_range to
- eliminate cpu_addr_fixup()
-Message-ID: <20241119101121.t4kaaeuvj37scmxm@thinkpad>
-References: <20241029-pci_fixup_addr-v7-0-8310dc24fb7c@nxp.com>
- <20241029-pci_fixup_addr-v7-2-8310dc24fb7c@nxp.com>
- <20241115175148.tqzqiv53mccz52tq@thinkpad>
- <ZzeejnBC4KrJoHqm@lizhi-Precision-Tower-5810>
+        bh=W/ll/h4cIcHRULNe5533lZjrqgLdazs+/VxZDeHMmso=;
+        b=EdrCkyuJwHAr84rbpaqkqHQnCPd0v/97iC/KLHDEO655ceJ7AzuQiUqhEtz2JnpEgk
+         gpj2eeqdNGhdCkzvkjLSsLjYnBH3TcvpLHL9CVydrNd1eY0czdbfXtsNnv4sVNHKfSRE
+         B+4Mozmg/pEvfJ/RRrQVB53QEcND2+YXMWGQaTY2bUPFxii/WUl/fv7A3oPR93lNoK/J
+         fWTf7kiSPT3Vrb1UPyFrBKK3aislmAyJXvqpjAwOo88kgBCToRF8Af4u+uwdxV96WTwz
+         4e7ZSIXadH94gczQgNX39eQS7+WNMHyldTImTFDs/uvKvjU9vBcP4yweA7OYoc4GSbAR
+         e8yg==
+X-Forwarded-Encrypted: i=1; AJvYcCW1YdF18a0UF44QWP6AdA+hOAW4NEv2avyCjWXepXPAAk4PJZq5PYuW5PC6dc41otPMNKWDjfDJ/EHiVqo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yys8f9HgD4hR/6nbnai01snAn5ZE+sD3seaZfeMh/+6f0lp0RNZ
+	2HYQAI+ND/bOQK3HvYgHZWudfwW8aXuYeXb3inEI38ukKP72+8+w60PCbxFavfXyxjZH2OcK3Wx
+	KOD4zvgrqL9dLkGjJTscqRzU5vYkl/QY+KFOC45fvzw6f2wVHecCLaF+o4vWyGg==
+X-Received: by 2002:a5d:64c8:0:b0:382:2d59:b166 with SMTP id ffacd0b85a97d-3822d59b4c3mr9274027f8f.31.1732011139218;
+        Tue, 19 Nov 2024 02:12:19 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFsZiTehmq/TGAqmnasd9Ezz+OKagNClXCsAKRt9ii4MiUiLKopP3o2dTpIdkPJjOhag9LPew==
+X-Received: by 2002:a5d:64c8:0:b0:382:2d59:b166 with SMTP id ffacd0b85a97d-3822d59b4c3mr9274006f8f.31.1732011138858;
+        Tue, 19 Nov 2024 02:12:18 -0800 (PST)
+Received: from [192.168.1.14] (host-79-55-200-170.retail.telecomitalia.it. [79.55.200.170])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38246b7db13sm5907061f8f.91.2024.11.19.02.12.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 19 Nov 2024 02:12:18 -0800 (PST)
+Message-ID: <554d8684-7eec-4379-9a21-0b4a562358be@redhat.com>
+Date: Tue, 19 Nov 2024 11:12:16 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v4 3/3] selftests: nic_performance: Add selftest
+ for performance of NIC driver
+To: Mohan Prasad J <mohan.prasad@microchip.com>, netdev@vger.kernel.org,
+ davem@davemloft.net, kuba@kernel.org, andrew@lunn.ch
+Cc: edumazet@google.com, shuah@kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, horms@kernel.org, brett.creeley@amd.com,
+ rosenp@gmail.com, UNGLinuxDriver@microchip.com, willemb@google.com,
+ petrm@nvidia.com
+References: <20241114192545.1742514-1-mohan.prasad@microchip.com>
+ <20241114192545.1742514-4-mohan.prasad@microchip.com>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20241114192545.1742514-4-mohan.prasad@microchip.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZzeejnBC4KrJoHqm@lizhi-Precision-Tower-5810>
 
-On Fri, Nov 15, 2024 at 02:18:38PM -0500, Frank Li wrote:
+On 11/14/24 20:25, Mohan Prasad J wrote:
+> +#Setup:
+> +#Connect the DUT PC with NIC card to partner pc back via ethernet medium of your choice(RJ45, T1)
+> +#
+> +#        DUT PC                                              Partner PC
+> +#┌───────────────────────┐                         ┌──────────────────────────┐
+> +#│                       │                         │                          │
+> +#│                       │                         │                          │
+> +#│           ┌───────────┐                         │                          │
+> +#│           │DUT NIC    │         Eth             │                          │
+> +#│           │Interface ─┼─────────────────────────┼─    any eth Interface    │
+> +#│           └───────────┘                         │                          │
+> +#│                       │                         │                          │
+> +#│                       │                         │                          │
+> +#└───────────────────────┘                         └──────────────────────────┘
+> +#
+> +#Configurations:
+> +#To prevent interruptions, Add ethtool, ip to the sudoers list in remote PC and get the ssh key from remote.
+> +#Required minimum ethtool version is 6.10
+> +#Change the below configuration based on your hw needs.
+> +# """Default values"""
+> +#time_delay = 8 #time taken to wait for transitions to happen, in seconds.
+> +#test_duration = 10  #performance test duration for the throughput check, in seconds.
+> +#send_throughput_threshold = 80 #percentage of send throughput required to pass the check
+> +#receive_throughput_threshold = 50 #percentage of receive throughput required to pass the check
 
-[...]
+Very likely we will have to tune the thresholds and possibly make them
+dependent on the H/W and S/W setup (Kconf), but overall I think it makes
+sense as a first step.
 
-> > > +		if (pci->using_dtbus_info) {
-> > > +			index = of_property_match_string(np, "reg-names", "config");
-> > > +			if (index < 0)
-> > > +				return -EINVAL;
-> > > +			/*
-> > > +			 * Retrieve the parent bus address of PCI config space.
-> > > +			 * If the parent bus ranges in the device tree provide
-> > > +			 * the correct address conversion information, set
-> > > +			 * 'using_dtbus_info' to true, The 'cpu_addr_fixup()'
-> > > +			 * can be eliminated.
-> > > +			 */
-> >
-> > Nobody will switch to 'ranges' property if you mention it in comments. We
-> > usually add dev_warn_once() to print a warning for broken DT so that the users
-> > will try to fix it. You can use below diff (as a separate patch ofc):
-> >
-> > ```
-> > diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
-> > index 6d6cbc8b5b2c..d1e5395386fe 100644
-> > --- a/drivers/pci/controller/dwc/pcie-designware.c
-> > +++ b/drivers/pci/controller/dwc/pcie-designware.c
-> > @@ -844,6 +844,9 @@ void dw_pcie_iatu_detect(struct dw_pcie *pci)
-> >                  dw_pcie_cap_is(pci, IATU_UNROLL) ? "T" : "F",
-> >                  pci->num_ob_windows, pci->num_ib_windows,
-> >                  pci->region_align / SZ_1K, (pci->region_limit + 1) / SZ_1G);
-> > +
-> > +       if (pci->ops && pci->ops->cpu_addr_fixup)
-> > +               dev_warn_once(pci->dev, "Broken \"ranges\" property detected. Please fix DT!\n");
-> 
-> How about "Detect use old method "cpu_addr_fixup()", it should correct DT's
-> 'ranges' and remove cpu_addr_fixup()?
-> 
+Thanks,
 
-Hmm, yeah makes sense:
+Paolo
 
-	/*
-	 * If the parent 'ranges' property in DT correctly describes the address
-	 * translation, cpu_addr_fixup() callback is not needed.
-	 */
-	dev_warn_once(pci->dev, "cpu_addr_fixup() usage detected. Please fix DT!\n";
-
-But then the drivers need to be smart enough to detect the valid parent 'ranges'
-property and then only use the callback. Because, callback has to be present to
-support older DTs.
-
-> >  }
-> >
-> >  static u32 dw_pcie_readl_dma(struct dw_pcie *pci, u32 reg)
-> > ```
-> >
-> > > +			of_property_read_reg(np, index, &pp->cfg0_base, NULL);
-> >
-> > Can you explain what is going on here?
-> 
-> Because dwc use reg-name 'config' to get config space,
-> of_property_read_reg() will get untranslate address 'parent' bus address.
-> <0x8ff00000 0x80000> at example address.
-> 
-> cfg0_base is used to set outbound ATU.
-> 
-
-Ok, please add a comment like this:
-
-	/* Get the untranslated 'config' address */
-
-Same for other usage of of_property_read_reg().
-
-> >
-> > > +		}
-> > > +
-> > >  		pp->va_cfg0_base = devm_pci_remap_cfg_resource(dev, res);
-> > >  		if (IS_ERR(pp->va_cfg0_base))
-> > >  			return PTR_ERR(pp->va_cfg0_base);
-> > > @@ -462,6 +505,9 @@ int dw_pcie_host_init(struct dw_pcie_rp *pp)
-> > >  		pp->io_base = pci_pio_to_address(win->res->start);
-> > >  	}
-> > >
-> > > +	if (dw_pcie_get_untranslate_addr(pci, pp->io_bus_addr, &pp->io_base))
-> > > +		return -ENODEV;
-> >
-> > Use actual return value here and below.
-> >
-> > > +
-> > >  	/* Set default bus ops */
-> > >  	bridge->ops = &dw_pcie_ops;
-> > >  	bridge->child_ops = &dw_child_pcie_ops;
-> > > @@ -722,6 +768,8 @@ static int dw_pcie_iatu_setup(struct dw_pcie_rp *pp)
-> > >
-> > >  	i = 0;
-> > >  	resource_list_for_each_entry(entry, &pp->bridge->windows) {
-> > > +		resource_size_t parent_bus_addr;
-> > > +
-> > >  		if (resource_type(entry->res) != IORESOURCE_MEM)
-> > >  			continue;
-> > >
-> > > @@ -730,9 +778,14 @@ static int dw_pcie_iatu_setup(struct dw_pcie_rp *pp)
-> > >
-> > >  		atu.index = i;
-> > >  		atu.type = PCIE_ATU_TYPE_MEM;
-> > > -		atu.cpu_addr = entry->res->start;
-> > > +		parent_bus_addr = entry->res->start;
-> > >  		atu.pci_addr = entry->res->start - entry->offset;
-> > >
-> > > +		if (dw_pcie_get_untranslate_addr(pci, entry->res->start, &parent_bus_addr))
-> > > +			return -EINVAL;
-> > > +
-> > > +		atu.cpu_addr = parent_bus_addr;
-> > > +
-> > >  		/* Adjust iATU size if MSG TLP region was allocated before */
-> > >  		if (pp->msg_res && pp->msg_res->parent == entry->res)
-> > >  			atu.size = resource_size(entry->res) -
-> > > diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
-> > > index 347ab74ac35aa..f8067393ad35a 100644
-> > > --- a/drivers/pci/controller/dwc/pcie-designware.h
-> > > +++ b/drivers/pci/controller/dwc/pcie-designware.h
-> > > @@ -463,6 +463,14 @@ struct dw_pcie {
-> > >  	struct reset_control_bulk_data	core_rsts[DW_PCIE_NUM_CORE_RSTS];
-> > >  	struct gpio_desc		*pe_rst;
-> > >  	bool			suspended;
-> > > +	/*
-> > > +	 * Use device tree 'ranges' property of bus node instead using
-> > > +	 * cpu_addr_fixup(). Some old platform dts 'ranges' in bus node may not
-> > > +	 * reflect real hardware's behavior. In case break these platform back
-> > > +	 * compatibility, add below flags. Set it true if dts already correct
-> > > +	 * indicate bus fabric address convert.
-> >
-> > 	/*
-> > 	 * This flag indicates that the vendor driver uses devicetree 'ranges'
-> > 	 * property to allow iATU to use the Intermediate Address (IA) for
-> > 	 * outbound mapping. Using this flag also avoids the usage of
-> > 	 * 'cpu_addr_fixup' callback implementation in the driver.
-> > 	 */
-> >
-> > > +	 */
-> > > +	bool			using_dtbus_info;
-> >
-> > 'use_dt_ranges'?
-> 
-> It will be confused because pcie node alreadys use ranges, just parent bus
-> 's ranges is wrong.
-> 
-> 'use_dtbus_ranges' ?
-> 
-
-There is nothing called 'dtbus'. How about, "use_parent_dt_ranges"?
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
 
