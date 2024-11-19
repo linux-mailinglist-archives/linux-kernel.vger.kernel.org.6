@@ -1,82 +1,62 @@
-Return-Path: <linux-kernel+bounces-413702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14C1E9D1D63
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 02:34:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 601989D1D66
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 02:36:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 953FEB21478
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 01:34:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2560D282823
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 01:36:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23D9A12E1CD;
-	Tue, 19 Nov 2024 01:33:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C395012F399;
+	Tue, 19 Nov 2024 01:36:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Eem+nPyw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="zsrEApgB"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7218C38DF9;
-	Tue, 19 Nov 2024 01:33:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62E984087C;
+	Tue, 19 Nov 2024 01:36:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731980038; cv=none; b=UjquZQiiV64T58QXMWJGJTS8flu+cRA9OcqKTUT+LY+qKnBxzphP65hLCQQtCnXpXjzDOIukXt2TDM0t80K9D+JAtFwlPL5pdIknro2PScueeeo9V+Ftzn7LWwNC4qEFOahEEuYa/s7NsVfYEoYFsOl+8FXlVZPNKEsiSsE3NLw=
+	t=1731980163; cv=none; b=QmNMKhoUWTAfRNoDwjIDQUFV6rCLSwIpM8YvUdPYMpCUuXTu3h+eyI/gKteZyThadVcguuZbTspfeDFrfznvxTlu7+6FrgelsUQ/307481kTWNM7OlTQkbeqmyEUue4q0huA6zxxgxUSN7dasbUeU3kJLRaYFIS/j+WtWg8f80s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731980038; c=relaxed/simple;
-	bh=mNt8PlqqcC/OYquNFftD5zrdVAQF347e7lS7kQENIPk=;
+	s=arc-20240116; t=1731980163; c=relaxed/simple;
+	bh=6j+MFm7ekGRTDTif1KPYV8o2JJAR6CpXEcRYE5/KaWk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IGHvV8v6g24DHP08bajX7p/qWUMPjI4cvlo1a/+ZVGwyxk7RN3jJRgUBhfbByAxPAalBl+D5iDvE5J861U4HYMCYS4li7B4E2FKxdq4enkOXNX/npNwYzNbfKOlHbtcqGaUozdIi+G48AMcA3jA2h1Chf8QcAUYdKXg8zO0/nQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Eem+nPyw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BA7DC4CECC;
-	Tue, 19 Nov 2024 01:33:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731980038;
-	bh=mNt8PlqqcC/OYquNFftD5zrdVAQF347e7lS7kQENIPk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Eem+nPywW0S2PDt91tSJR5p0NMCU+bTT5JOtCmT14pE/aJodu5jgVPqbKYtMScBTO
-	 4a6oEr0BIwqu7ctxPRVl4gmjUfKuyKWzV3GIlqflmoxzJTtyF3khU+bFKzkBa4W7xn
-	 uS/0+gnOstSaoY32KS80dPq19n77mZfH4F+fTO9puHA/NZT0q9IKxwGIOM8SNaQ3fT
-	 aEUjEhlu2kI833TKd+EX80pn6Ajw7GdGwNBKwigJWaQB70jF4DZV7h+WkWYW1nrFLT
-	 VhV6Ro96JpzGjR2ogkz0k1QY4DP8MjriuHWtibLjHrgQXjIoet+kamk0xEN0GtrJS2
-	 CokaAdc0f2CMg==
-Date: Mon, 18 Nov 2024 17:33:56 -0800
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: Matthew Maurer <mmaurer@google.com>
-Cc: Lucas De Marchi <lucas.demarchi@intel.com>,
-	Lucas De Marchi <lucas.de.marchi@gmail.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Petr Pavlu <petr.pavlu@suse.com>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Daniel Gomez <da.gomez@samsung.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-	linux-modules@vger.kernel.org, linux-kbuild@vger.kernel.org,
-	rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v8 2/3] modpost: Produce extended MODVERSIONS information
-Message-ID: <ZzvrBDb9tRqaPxAa@bombadil.infradead.org>
-References: <20241030-extended-modversions-v8-2-93acdef62ce8@google.com>
- <ZyNr--iMz_6Fj4yq@bombadil.infradead.org>
- <CAGSQo00F07viDHQkwBS8_1-THxJHYwx9VkS=TXC5rz3i8zSZSw@mail.gmail.com>
- <ZyVDv0mTm3Bgh1BR@bombadil.infradead.org>
- <CAGSQo02uDZ5QoRMPOn=3Fa9g5d+VPfKW-vmSsS2H+pOdPYCBFw@mail.gmail.com>
- <ZyrRYUD0K1f7SwWg@bombadil.infradead.org>
- <CAGSQo03+1WjUVj-iQ6zdOST6z=p+=OqS2Xk_c4ZUdHOsxa7g2w@mail.gmail.com>
- <Zy1BVXgnT72Jt_HE@bombadil.infradead.org>
- <Zzu-wfGqbuAm24yg@bombadil.infradead.org>
- <CAGSQo033fha6tj7sU8se4kbNfYD_rm5sx6-hpF9s8SfcgWH3Tg@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Sy+8VmS5IJ5Ca++z2IbfBQ7FE/EfPdbxu5qAU9XRh4nPPHbrHpfmQtg9LBi37SjvyRxhODaEc/qGL90prJpGxbpjTaNg692BALDJj+7XLG3WcWnOA4ZR5HBj0E12Bdy7yEFjdAcyzIlOiB3U3QoY/lT3t+I3serAKarYGV5R310=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=zsrEApgB; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=vhqwq7tcm/27fuNPEhxvLaIj0zcTCyFQj9NCsNSuOng=; b=zsrEApgB1Yzs0IM2FGZIAy2rO9
+	0scyimONNmLRwI3Ofm3tscl5i2utIyG+0WI7BVLQvV+2Hi892nb5usgejZG/ADbJ0ByPdV2TjF0GE
+	hJlwOQZCWRSaRF/k+GwWqy3ogrdgaWhnM73XAAODxSH9C4knzD/gI2H9RFbw9SA8JlIQ=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tDD9g-00DjPP-NG; Tue, 19 Nov 2024 02:35:48 +0100
+Date: Tue, 19 Nov 2024 02:35:48 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Sean Anderson <sean.anderson@linux.dev>
+Cc: "Russell King (Oracle)" <linux@armlinux.org.uk>,
+	Suraj Gupta <suraj.gupta2@amd.com>, andrew+netdev@lunn.ch,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, michal.simek@amd.com,
+	radhey.shyam.pandey@amd.com, horms@kernel.org,
+	netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, git@amd.com, harini.katakam@amd.com
+Subject: Re: [PATCH net-next 2/2] net: axienet: Add support for AXI 2.5G MAC
+Message-ID: <9d26a588-d9ac-43c5-bedc-22cb1f0923dd@lunn.ch>
+References: <20241118081822.19383-1-suraj.gupta2@amd.com>
+ <20241118081822.19383-3-suraj.gupta2@amd.com>
+ <ZztjvkxbCiLER-PJ@shell.armlinux.org.uk>
+ <657764fd-68a1-4826-b832-3bda91a0c13b@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,20 +65,42 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAGSQo033fha6tj7sU8se4kbNfYD_rm5sx6-hpF9s8SfcgWH3Tg@mail.gmail.com>
+In-Reply-To: <657764fd-68a1-4826-b832-3bda91a0c13b@linux.dev>
 
-On Mon, Nov 18, 2024 at 04:09:34PM -0800, Matthew Maurer wrote:
-> > Thinking about this some more, if we're going down enabling a new
-> > option, it seems to beg the question if the old *two* ksymtab sections
-> > could just be folded into the a new one where the "gpl only" thing
-> > becomes just one "column" as you call it. Reasons I ask, it seems like
-> > we're duplicating symbol names on ksymtab and for modeversions. Could
-> > you review this a bit?
+On Mon, Nov 18, 2024 at 11:00:22AM -0500, Sean Anderson wrote:
+> On 11/18/24 10:56, Russell King (Oracle) wrote:
+> > On Mon, Nov 18, 2024 at 01:48:22PM +0530, Suraj Gupta wrote:
+> >> Add AXI 2.5G MAC support, which is an incremental speed upgrade
+> >> of AXI 1G MAC and supports 2.5G speed only. "max-speed" DT property
+> >> is used in driver to distinguish 1G and 2.5G MACs of AXI 1G/2.5G IP.
+> >> If max-speed property is missing, 1G is assumed to support backward
+> >> compatibility.
+> >> 
+> >> Co-developed-by: Harini Katakam <harini.katakam@amd.com>
+> >> Signed-off-by: Harini Katakam <harini.katakam@amd.com>
+> >> Signed-off-by: Suraj Gupta <suraj.gupta2@amd.com>
+> >> ---
+> > 
+> > ...
+> > 
+> >> -	lp->phylink_config.mac_capabilities = MAC_SYM_PAUSE | MAC_ASYM_PAUSE |
+> >> -		MAC_10FD | MAC_100FD | MAC_1000FD;
+> >> +	lp->phylink_config.mac_capabilities = MAC_SYM_PAUSE | MAC_ASYM_PAUSE;
+> >> +
+> >> +	/* Set MAC capabilities based on MAC type */
+> >> +	if (lp->max_speed == SPEED_1000)
+> >> +		lp->phylink_config.mac_capabilities |= MAC_10FD | MAC_100FD | MAC_1000FD;
+> >> +	else
+> >> +		lp->phylink_config.mac_capabilities |= MAC_2500FD;
+> > 
+> > The MAC can only operate at (10M, 100M, 1G) _or_ 2.5G ?
 > 
->  Short answer: We could do this, but I don't necessarily think it's a good idea.
+> It's a PCS limitation. It either does (1000Base-X and/or SGMII) OR
+> (2500Base-X). The MAC itself doesn't have this limitation AFAIK.
 
-Thanks for your review on this. I agree the complexities you outline
-don't yet justify the churn.
 
-  Luis
+And can the PCS change between these modes? It is pretty typical to
+use SGMII for 10/100/1G and then swap to 2500BaseX for 2.5G.
+
+	Andrew
 
