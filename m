@@ -1,247 +1,225 @@
-Return-Path: <linux-kernel+bounces-414695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AC8B9D2C1E
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 18:08:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F410E9D2C1C
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 18:08:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C5D5284EFD
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 17:08:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58B55284CBB
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 17:08:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61A271D0E14;
-	Tue, 19 Nov 2024 17:08:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Q/iM6dq7"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D403E1D0F41;
+	Tue, 19 Nov 2024 17:07:52 +0000 (UTC)
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 603B314AD1A
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 17:08:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6448714A639;
+	Tue, 19 Nov 2024 17:07:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732036104; cv=none; b=qPePEDjuabbERkuqLyTCJnhZfhlWRpCVNogM7ZcpRLp1AuR85Ifnpc+0U1l4r2t6proM8CktvWz0u6DyLXGphnWtHG87nj7qJB2Z5vcwudTYjHROkot5Dv6h8Ec40zH7jhF9LRM43V7lSjcsCnKAScQFej8yyEx0yMoKPUIlYhE=
+	t=1732036072; cv=none; b=llS9Pz2Qxa5Qi7kzfLj42cfhokELK1g4Cqmgqbv7czpxGvKnIyfY+/AwwDxVtoHOiJCMHWL3rceKc1SMTys3+oBs6OEQoFXMR4ZEMasriVdsD9qRYtzdGYLNEvN2avWvXXgH3lDaAGwwBnuwgJMT9vv0aTd9QPJJWlqTjLvH9Ic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732036104; c=relaxed/simple;
-	bh=tqM86SeTKQoiep417VbKhJAWs7U+fRIvoXBzK1BPrJI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TLZm1LqxDJ11SpHg+n5sLZbF53TYR4Os1ect117E66XrMfG4kPispsfOpDVu2geze1i1k6E7s6IIyN+Uu7xTH/bjv5va52hlhLREeCzG6EJ9woyMQVJ4ud3ZX92OfRvHTrE/15iOKF8vU3hY5HWqJ4fmZrzmiQ6CW5jnFKHcEm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Q/iM6dq7; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5cfb81a0af9so14853a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 09:08:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732036100; x=1732640900; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uCV9WHZTFYTHla+38liafRITO+eDswnLk5ctpG/DKf4=;
-        b=Q/iM6dq7v9G6JJNqHSTv7JBAnMdjNaAiZ8s7mtwitY85W9kIXjqGHTqkzWtpmQMnOd
-         38QQ7sNElCXJzFl/av4yJm3z9BfmXiF5j39SdkJw/TjniaoTjqnarQgCmmCsALKIORdC
-         oFPjZCv25SVR85lGVn4Sx283GMhJbBvQ7wTTYW8XziuXvhYMXVu0dknc0Y6DWgZXjHa4
-         mDX1YIVda2RQEgHD7vKMJBb9k0VB/cJN/ezcZ2VCxTlZrQG8b9cDaHP5rQBjGrSIkQkG
-         En3sbI1lt1wWtT1dOx+yY4pUlCDgvXfFFQ8fXCcOkq8BcgmomoL26QXaga5VT2tz6hl8
-         nQ1g==
+	s=arc-20240116; t=1732036072; c=relaxed/simple;
+	bh=/eMefCL6Nmke9tyGIDIOTzluMSRQ6dN1d/wEhqhLEHo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g9xL6eVv42ZTtbZJciTT9DkNJWKRoNhnO8dARyTneztRy1raefHEz43ImP6Req89f/83BqBGtTEw/LAo4JOMaTat/b4Xlsh5iL2q6hBz9Ijsur0PbVljkM/a/YnpWy5FjS97rayAYnj3WiPP0QReUVoTjSNQJUOzUfeWYyue6KA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5ced377447bso8170302a12.1;
+        Tue, 19 Nov 2024 09:07:50 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732036100; x=1732640900;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uCV9WHZTFYTHla+38liafRITO+eDswnLk5ctpG/DKf4=;
-        b=GSMTAyT0hSz7lLo1fspH0ts1Ve4Xk7+DvVXROaTFOp+wCL+jjP6r1BkMwk/hsRGTAW
-         4fiyJqV4NQivXOQxxZ0Lkvv5an0qu9p1Y24f72uifUMvZB0KvmCIBZ78F/Z84I4yIT2q
-         4p6q/JY5TgM2c09C0C2/+epiVGa3mG7Qyn/9shB+Qb8DGmcDO4hEIgMYfmroWu5wqDbc
-         8JxbO23DNTwFexvETsrdf+EqvT761OIZXpZrHP2kIkK6bxBLKzJbDidmU/lspvjvUi6i
-         cc4G1izAhUy7W87dif5n8skXc8f25pNYHD9eAGR9zkxD+Qij67Fw3Bgew1MZdpS11cTh
-         5MKw==
-X-Forwarded-Encrypted: i=1; AJvYcCVF8eG4FxcmRC8aKxhyXE5wubHbEdfPRE8QqgpMGhEjC+1QJX3STJ2FXMQEcnSDke3BXfGN7AexIqq6rp8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDD+FSVhRSE+FWY+fsM5dMffHzjeLM5FcxaF0eofk2sknZ8cY6
-	SjlCcPsI09pKa7uMklrC/Vq7sCTsLAJuqfjRMubVDeph4IOz4diyzQJfVtAZ7s7rGCSkh5iF8Fz
-	eZ0/L6kjGnwVYaZGE98WtjZHh+nuPhTh0MxaV
-X-Gm-Gg: ASbGncs7r0wkVw49ioE5Oq7NsAfixFC8p2L/AYtAhKYzMT+A1VMWJDQMHQ6bT0GRP2j
-	MDu9Je4wTpGv5BTVYYLJiDV7Sfoq5pkz78w1OgUnBUeDpGVZeCWoKH/sM4Pw=
-X-Google-Smtp-Source: AGHT+IF2NA4+N5BCrudBX2E2EdWGDzoY5N2xiN8KTBuW6FT8jxbNTi1fhsn3CWPCChG9Plc207DSpKkVbPrO1sPa7NU=
-X-Received: by 2002:a05:6402:50c6:b0:5cf:deaf:ac2 with SMTP id
- 4fb4d7f45d1cf-5cfdec1bb2cmr115336a12.2.1732036099141; Tue, 19 Nov 2024
- 09:08:19 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732036069; x=1732640869;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CO3DmDyk2Ke5HC3Rep1JIDjgJE+KxbTNcrUJlPMJpRU=;
+        b=OcBvouMUqjDnpm3May41R50Cq4do95jQnvlgig776CTUT7l1s9TB4mAl4VMD3DyT8F
+         i+ZHsnV8929lZGkQG3k3lvXD3IvPyO3qeCbZUJNee+Zl/9/MpKypKY2s7oVvdKLzFswh
+         pf9o8f4y1oCnmd44yq6U/eCLQzpj83FxwpOrAju59ya6JQ6iJqVU7rD4UPsqCCmENXJo
+         VwpQWvACeXW3NNfKYGcAN/yQvCmFZmflHNPjdbZHLsl+UbNewm+IK4X5rIr3vv03I7Tw
+         TJn0Av1tD1nnmYmzzIwhA44vaMOClNsvxV+VNkHdZ+lEVz/YYJJ00n20yjofJna35zji
+         DA8g==
+X-Forwarded-Encrypted: i=1; AJvYcCV5bZgL1lt/wU1l1MNlGuBlGWaJWwkkJWqHRbgOH5aKsY+zeAZud1K9UBcHJXnJOM/IzJ9gNM0+@vger.kernel.org, AJvYcCVi6jHOlDB7mOGNP0cOlh5wr6AygwGfIyG5E+lB+/tcyksR9ITrvddf6M8cXH0MhriQMUV4Z6UJGAY=@vger.kernel.org, AJvYcCWBETCUFHJzHM7Tuo20qEEhsqRIl01JvB4lVBVG2z5ib91EpmPiu0k6xmbGfonTT/SVSS5T40SH/vWx3cvs@vger.kernel.org, AJvYcCWef5tEbOY8FY2ZGx/yD3Wo+f7Iv3XkrPTrjppNTahQWQVvZBMzMmh5XUYcksu9ldywocP1x+3CAQpx4/VjIfQW@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQx/AyuJGpb4Q8dN1hTgcgUu0E+AcvZkkuG0grWG7IrcVzE0aD
+	6dy4ZPaSjc40CaGJETYuAQdIQOCcY5o7q0HUpLNChWp4cW0iRKa/
+X-Google-Smtp-Source: AGHT+IGrdjBEX3xCb7oVm3Do1Lo3MG9PQDXDyZjN11EqcOgR1O7iu5WnoajOMZ/Jh2txK9eYMNPVWQ==
+X-Received: by 2002:a17:907:3f8d:b0:a9e:b471:8006 with SMTP id a640c23a62f3a-aa483508ae4mr1527245266b.43.1732036068486;
+        Tue, 19 Nov 2024 09:07:48 -0800 (PST)
+Received: from gmail.com (fwdproxy-lla-007.fbsv.net. [2a03:2880:30ff:7::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20df52adasm668235966b.81.2024.11.19.09.07.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Nov 2024 09:07:48 -0800 (PST)
+Date: Tue, 19 Nov 2024 09:07:45 -0800
+From: Breno Leitao <leitao@debian.org>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Shuah Khan <shuah@kernel.org>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, max@kutsevol.com,
+	thepacketgeek@gmail.com, vlad.wing@gmail.com,
+	davej@codemonkey.org.uk
+Subject: Re: [PATCH net-next 2/4] netconsole: Add option to auto-populate CPU
+ number in userdata
+Message-ID: <20241119-talented-strong-grouse-1f02fd@leitao>
+References: <20241113-netcon_cpu-v1-0-d187bf7c0321@debian.org>
+ <20241113-netcon_cpu-v1-2-d187bf7c0321@debian.org>
+ <20241118183336.34e42b01@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241119112408.779243-1-abdiel.janulgue@gmail.com> <20241119112408.779243-3-abdiel.janulgue@gmail.com>
-In-Reply-To: <20241119112408.779243-3-abdiel.janulgue@gmail.com>
-From: Jann Horn <jannh@google.com>
-Date: Tue, 19 Nov 2024 18:07:43 +0100
-Message-ID: <CAG48ez3fjXG1Zi=V8yte9ZgSkDVeJiQV6xau7FHocTiTMw0d=w@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] rust: page: Extend support to existing struct page mappings
-To: Abdiel Janulgue <abdiel.janulgue@gmail.com>
-Cc: rust-for-linux@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	Valentin Obst <kernel@valentinobst.de>, open list <linux-kernel@vger.kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, 
-	"open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>, airlied@redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241118183336.34e42b01@kernel.org>
 
-Commenting as someone who understands kernel MM decently but only
-knows a tiny bit about Rust:
+Hello Jakub,
 
-On Tue, Nov 19, 2024 at 12:24=E2=80=AFPM Abdiel Janulgue
-<abdiel.janulgue@gmail.com> wrote:
-> Extend Page to support pages that are not allocated by the constructor,
-> for example, those returned by vmalloc_to_page() or virt_to_page().
-> Since we don't own those pages we shouldn't Drop them either. Hence we
-> take advantage of the switch to Opaque so we can cast to a Page pointer
-> from a struct page pointer and be able to retrieve the reference on an
-> existing struct page mapping. In this case no destructor will be called
-> since we are not instantiating a new Page instance.
->
-> The new page_slice_to_page wrapper ensures that it explicity accepts
-> only page-sized chunks.
->
-> Signed-off-by: Abdiel Janulgue <abdiel.janulgue@gmail.com>
-[...]
-> diff --git a/rust/kernel/page.rs b/rust/kernel/page.rs
-> index fdf7ee203597..d0a896f53afb 100644
-> --- a/rust/kernel/page.rs
-> +++ b/rust/kernel/page.rs
-> @@ -3,7 +3,7 @@
->  //! Kernel page allocation and management.
->
->  use crate::{
-> -    alloc::{AllocError, Flags},
-> +    alloc::{AllocError, Allocator, Flags, VVec, KVec, KVVec, Vec, flags:=
-:*},
->      bindings,
->      error::code::*,
->      error::Result,
-> @@ -87,6 +87,49 @@ pub fn alloc_page(flags: Flags) -> Result<ARef<Self>, =
-AllocError> {
->          Ok(unsafe { ARef::from_raw(NonNull::new_unchecked(ptr)) })
->      }
->
-> +    /// Create a page object from a buffer which is associated with an e=
-xisting C `struct page`.
-> +    ///
-> +    /// This function ensures it takes a page-sized buffer as represente=
-d by `PageSlice`.
-> +    ///
-> +    /// # Examples
-> +    ///
-> +    /// ```
-> +    /// use kernel::page::*;
-> +    ///
-> +    /// let somedata: [u8; PAGE_SIZE * 2] =3D [0; PAGE_SIZE * 2];
-> +    /// let buf: &[u8] =3D &somedata;
-> +    /// let pages: VVec<PageSlice> =3D buf.try_into()?;
-> +    /// let page =3D Page::page_slice_to_page(&pages[0])?;
-> +    /// # Ok::<(), Error>(())
-> +    /// ```
-> +    pub fn page_slice_to_page<'a>(page: &PageSlice) -> Result<&'a Self>
+On Mon, Nov 18, 2024 at 06:33:36PM -0800, Jakub Kicinski wrote:
+> Sorry for the late review, I think this will miss v6.13 :(
 
-Sorry, can you explain to me what the semantics of this are? Does this
-create a Page reference that is not lifetime-bound to the PageSlice?
+That is fine, there is no rush for this change.
 
-> +    {
-> +        let ptr: *const core::ffi::c_void =3D page.0.as_ptr() as _;
-> +        if ptr.is_null() {
-> +            return Err(EINVAL)
-> +        }
-> +        // SAFETY: We've checked that `ptr` is non-null, hence it's safe=
- to call this method.
-> +        let page =3D if unsafe { bindings::is_vmalloc_addr(ptr) } {
-> +            // SAFETY: We've checked that `ptr` is non-null and within t=
-he vmalloc range, hence
-> +            // it's safe to call this method.
-> +            unsafe { bindings::vmalloc_to_page(ptr) }
-> +        // SAFETY: We've checked that `ptr` is non-null, hence it's safe=
- to call this method.
-> +        } else if unsafe { bindings::virt_addr_valid(ptr) } {
-> +            // SAFETY: We've checked that `ptr` is non-null and a valid =
-virtual address, hence
-> +            // it's safe to call this method.
-> +            unsafe { bindings::virt_to_page(ptr) }
-> +        } else {
-> +            ptr::null_mut()
-> +        };
-> +        if page.is_null() {
-> +            return Err(EINVAL);
-> +        }
-> +        // CAST: `Self` is a `repr(transparent)` wrapper around `binding=
-s::page`.
-> +        // SAFETY: We just successfully retrieved an existing `bindings:=
-:page`, therefore
-> +        // dereferencing the page pointer is valid.
-> +        Ok(unsafe { &*page.cast() })
-> +    }
-> +
->      /// Returns a raw pointer to the page.
->      pub fn as_ptr(&self) -> *mut bindings::page {
->          self.page.get()
-> @@ -270,3 +313,55 @@ unsafe fn dec_ref(obj: ptr::NonNull<Self>) {
->          unsafe { bindings::put_page(obj.cast().as_ptr()) }
->      }
->  }
-> +
-> +/// A page-aligned, page-sized object.
-> +///
-> +/// This is used for convenience to convert a large buffer into an array=
- of page-sized chunks
-> +/// allocated with the kernel's allocators which can then be used in the
-> +/// `Page::page_slice_to_page` wrapper.
-> +///
-> +// FIXME: This should be `PAGE_SIZE`, but the compiler rejects everythin=
-g except a literal
-> +// integer argument for the `repr(align)` attribute.
-> +#[repr(align(4096))]
-> +pub struct PageSlice([u8; PAGE_SIZE]);
-> +
-> +fn to_vec_with_allocator<A: Allocator>(val: &[u8]) -> Result<Vec<PageSli=
-ce, A>, AllocError> {
-> +    let mut k =3D Vec::<PageSlice, A>::new();
-> +    let pages =3D page_align(val.len()) >> PAGE_SHIFT;
-> +    match k.reserve(pages, GFP_KERNEL) {
+> On Wed, 13 Nov 2024 07:10:53 -0800 Breno Leitao wrote:
+> >  /**
+> >   * struct netconsole_target - Represents a configured netconsole target.
+> >   * @list:	Links this target into the target_list.
+> > @@ -97,6 +105,7 @@ static struct console netconsole_ext;
+> >   * @userdata_group:	Links to the userdata configfs hierarchy
+> >   * @userdata_complete:	Cached, formatted string of append
+> >   * @userdata_length:	String length of userdata_complete
+> > + * @userdata_auto:	Kernel auto-populated bitwise fields in userdata.
+> >   * @enabled:	On / off knob to enable / disable target.
+> >   *		Visible from userspace (read-write).
+> >   *		We maintain a strict 1:1 correspondence between this and
+> > @@ -123,6 +132,7 @@ struct netconsole_target {
+> >  	struct config_group	userdata_group;
+> >  	char userdata_complete[MAX_USERDATA_ENTRY_LENGTH * MAX_USERDATA_ITEMS];
+> >  	size_t			userdata_length;
+> > +	enum userdata_auto	userdata_auto;
+> 
+> If you want to set multiple bits here type should probably be unsigned
+> long. Otherwise the enum will contain combination of its values, which
+> are in themselves not valid enum values ... if that makes sense.
 
-Do I understand correctly that this can be used to create a kmalloc
-allocation whose pages can then basically be passed to
-page_slice_to_page()?
+Yes, it does make sense. I had the feeling that something was off as
+well, but I was unclear if using something different than `enum
+userdata_auto` would be better. I will change to `unsigned long`
+> 
+> >  #endif
+> >  	bool			enabled;
+> >  	bool			extended;
+> 
+> > +	/* Check if CPU NR should be populated, and append it to the user
+> > +	 * dictionary.
+> > +	 */
+> > +	if (child_count < MAX_USERDATA_ITEMS && nt->userdata_auto & AUTO_CPU_NR)
+> > +		scnprintf(&nt->userdata_complete[complete_idx],
+> > +			  MAX_USERDATA_ENTRY_LENGTH, " cpu=%u\n",
+> > +			  raw_smp_processor_id());
+> 
+> I guess it may be tricky for backward compat, but shouldn't we return
+> an error rather than silently skip?
 
-FYI, the page refcount does not protect against UAF of slab
-allocations through new slab allocations of the same size. In other
-words: The slab allocator can internally recycle memory without going
-through the page allocator, and the slab allocator itself does not
-care about page refcounts.
+yes, this should be easy to do, in fact. Probably return -E2BIG to
+userspace when trying to update the entry. I thought about something as
+the following patch, and piggy-back into it.
 
-If the Page returned from calling page_slice_to_page() on the slab
-memory pages returned from to_vec_with_allocator() is purely usable as
-a borrow and there is no way to later grab a refcounted reference to
-it or pass it into a C function that assumes it can grab a reference
-to the page, I guess that works. But if I understand correctly what's
-going on here, and you can grab references to slab pages returned from
-page_slice_to_page(to_vec_with_allocator()), that'd be bad.
+   Author: Breno Leitao <leitao@debian.org>
+   Date:   Tue Nov 19 04:32:56 2024 -0800
+   
+       netconsole: Enforce userdata entry limit
+   
+       Currently, attempting to add more than MAX_USERDATA_ITEMS to the userdata
+       dictionary silently fails. This patch modifies the code to return -E2BIG
+       when the number of elements exceeds the preallocated limit, providing clear
+       feedback to userspace about the failure.
+   
+       Suggested-by: Jakub Kicinski <kuba@kernel.org>
+       Signed-off-by: Breno Leitao <leitao@debian.org>
+   
+   diff --git a/drivers/net/netconsole.c b/drivers/net/netconsole.c
+   index 4ea44a2f48f7b..41cff8c8e8f42 100644
+   --- a/drivers/net/netconsole.c
+   +++ b/drivers/net/netconsole.c
+   @@ -692,10 +692,11 @@ static ssize_t userdatum_value_show(struct config_item *item, char *buf)
+    	return sysfs_emit(buf, "%s\n", &(to_userdatum(item)->value[0]));
+    }
+   
+   -static void update_userdata(struct netconsole_target *nt)
+   +static int update_userdata(struct netconsole_target *nt)
+    {
+    	int complete_idx = 0, child_count = 0;
+    	struct list_head *entry;
+   +	int ret = 0;
+   
+    	/* Clear the current string in case the last userdatum was deleted */
+    	nt->userdata_length = 0;
+   @@ -705,8 +706,10 @@ static void update_userdata(struct netconsole_target *nt)
+    		struct userdatum *udm_item;
+    		struct config_item *item;
+   
+   -		if (child_count >= MAX_USERDATA_ITEMS)
+   +		if (child_count >= MAX_USERDATA_ITEMS) {
+   +			ret = -E2BIG;
+    			break;
+   +		}
+    		child_count++;
+   
+    		item = container_of(entry, struct config_item, ci_entry);
+   @@ -726,6 +729,7 @@ static void update_userdata(struct netconsole_target *nt)
+    	}
+    	nt->userdata_length = strnlen(nt->userdata_complete,
+    				      sizeof(nt->userdata_complete));
+   +	return ret;
+    }
+   
+    static ssize_t userdatum_value_store(struct config_item *item, const char *buf,
+   @@ -748,8 +752,9 @@ static ssize_t userdatum_value_store(struct config_item *item, const char *buf,
+   
+    	ud = to_userdata(item->ci_parent);
+    	nt = userdata_to_target(ud);
+   -	update_userdata(nt);
+   -	ret = count;
+   +	ret = update_userdata(nt);
+   +	if (!ret)
+   +		ret = count;
+    out_unlock:
+    	mutex_unlock(&dynamic_netconsole_mutex);
+    	return ret;
+   
 
-> +        Ok(()) =3D> {
-> +            // SAFETY: from above, the length should be equal to the vec=
-tor's capacity
-> +            unsafe { k.set_len(pages); }
-> +            // SAFETY: src buffer sized val.len() does not overlap with =
-dst buffer since
-> +            // the dst buffer's size is val.len() padded up to a multipl=
-e of PAGE_SIZE.
-> +            unsafe { ptr::copy_nonoverlapping(val.as_ptr(), k.as_mut_ptr=
-() as *mut u8,
-> +                                              val.len()) };
-> +            Ok(k)
-> +        },
-> +        Err(_) =3D> Err(AllocError),
-> +    }
-> +}
+> 
+> >  	nt->userdata_length = strnlen(nt->userdata_complete,
+> >  				      sizeof(nt->userdata_complete));
+> >  }
+> > @@ -757,7 +788,36 @@ static ssize_t userdatum_value_store(struct config_item *item, const char *buf,
+> >  	return ret;
+> >  }
+> >  
+> > +static ssize_t populate_cpu_nr_store(struct config_item *item, const char *buf,
+> > +				     size_t count)
+> > +{
+> > +	struct netconsole_target *nt = to_target(item->ci_parent);
+> > +	bool cpu_nr_enabled;
+> > +	ssize_t ret;
+> > +
+> > +	if (!nt)
+> > +		return -EINVAL;
+> 
+> Can this happen? Only if function gets called with a NULL @item
+> which would be pretty nutty.
+
+Probably not. It is just me being chicken here. I will remove it for the
+next version.
+
+Thanks for the review,
+--breno
 
