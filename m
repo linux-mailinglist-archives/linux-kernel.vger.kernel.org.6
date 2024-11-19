@@ -1,79 +1,84 @@
-Return-Path: <linux-kernel+bounces-413798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70C249D1EDC
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 04:35:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B7009D1EE2
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 04:37:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1AF9928235B
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 03:35:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 415862826A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 03:37:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AB311482E8;
-	Tue, 19 Nov 2024 03:35:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9E02149DF7;
+	Tue, 19 Nov 2024 03:37:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h/or/w+F"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UU+Nk87j"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B28BE2CAB;
-	Tue, 19 Nov 2024 03:35:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ADD9146A72;
+	Tue, 19 Nov 2024 03:37:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731987337; cv=none; b=BiZMhZBr4ITG1/tMrrN6sDIzeMs39vvb3c2nK6UYN8yU3bUmuFLQWcHhBV5QKCFSQhzWJJhlgWmBm1L2etWOIn0rrWAawcbZ/nw6YUAYBwoIe/sZ2FBFwZcYp+3FUpJ3uqo8v9nIgLUyq4CiFLVSEjgF5RxTT6J66rybUgI1K9o=
+	t=1731987444; cv=none; b=ee9qokTLxmGEzN78fJvEXm3qin1kqsv6H7qoRpz5m5/jhoH3/ikQUE6CtwGJfQ/TxF4O/tQ2wiwECe2YKWJObRrlvhb5sHigCvf4ADhOzSwy7oz9qBL7IqyoeDxBqMZk4KEOFxFM1EtC8rAklEH/LYu1m2GqoEzoNvLtg2OTdO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731987337; c=relaxed/simple;
-	bh=yMdgjpWa/uNZ3ldUiUE8ibXpM6RRA1oPWRCdLCYab9s=;
+	s=arc-20240116; t=1731987444; c=relaxed/simple;
+	bh=dCaQDrjjsMlbKMHjkTKCfmDN0bnh7bTyWM1/3ifufWk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gRexobmFsV0613EBY8UhBzg0P1+TjsGeM20w9LwAttE5n0JPf8vCsb0OyvxPRVxatVG452mz26mIwJractzk9wpoUlbieXKjNIF3bMbTPunOyUUr/rFwToxPx7G5HI0MmC+iZSFHU/L9GUNZE12CxhhNDFzaNyC7vI11MeTk+Us=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h/or/w+F; arc=none smtp.client-ip=209.85.214.177
+	 Content-Type:Content-Disposition:In-Reply-To; b=slkQuebX3RhBOjFx/mK0OYjBC6VhUjUle6URT95wDL7eM9LyCpl/tnq9pfxEFWHbpRhYskBOgWwkjGuXSUYzQm4UhtGdNZcvCX8qsqK6iV2MF+TQroF5WauTWhpSJOv4ihUkhYPlxDGxOi9+ogR9hydbx4o6UK/Z/mIJG8xgHtk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UU+Nk87j; arc=none smtp.client-ip=209.85.214.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-20cdbe608b3so48603155ad.1;
-        Mon, 18 Nov 2024 19:35:35 -0800 (PST)
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-20cdb889222so35854635ad.3;
+        Mon, 18 Nov 2024 19:37:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731987335; x=1732592135; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1731987442; x=1732592242; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CRdspri6WC09Szb6BqPAf0mcwTL7p9PzdKttkU4B4pQ=;
-        b=h/or/w+FkNctBbtYRF5KYD/nJ6CKFPwfc31lgMx6DhW4UOZK7qgcdobHM5HmwxHANx
-         QN5LzOH6VZXnHEB+4z+nNAi8F7fX7lt5xVNT/kmm8hr6DLGiOU+RZacwhVngVUSfktCn
-         pw7MH+R7rQKrSRZdzunUy3BWzn1WVpxsOXsz21SKGyzG/HvvXzdI10q1UWG2dDxYrlDK
-         fXhXgABsd9De5vUwJGReIKCES/9acXdnhek2Xvml+az72x/+pNhQdcGhDS6EKfy5nv1q
-         RLOHbrBG8uU8UqpbgpnbCAjFVcbE473qCy0Idxr+pAjFLTscl6xUruRYOmSaFxZQz4rI
-         3d3w==
+        bh=g2E2ZlpfPZCjUZubD0v6yvsYpnLBIbhUcb15gmeLAW8=;
+        b=UU+Nk87jOIoDUWWoaNEmXQjkm6ihSk2UAStUxQs/SfPwUdkRtX0D/9aSj0fBFdTYx1
+         SMm/6360hqsa6O59w51Fvxw4w3He2U7I0zOIpjKQATdcH7kuZ/ei2oYM4EVq92EvhEST
+         A/1jh3DzR2PLYFW0rt5GVYIca6+i4kD0iw7DrZ4HdRHyq1HzhBKyoMHlUD8Pfvll8z0F
+         l0G1J9TDAt+1+FhPLpZcYpsplGKTME1eU6XGuRH1jsrndcrr1cgpQ2kj7rBe1p8BV0CV
+         4sZiMo8qYd59OL2DDZgc4kSA97pnjsONl05QjmqCJXH8317Yc8TKaGga/IGgDCGnXU2z
+         IAZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731987335; x=1732592135;
+        d=1e100.net; s=20230601; t=1731987442; x=1732592242;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=CRdspri6WC09Szb6BqPAf0mcwTL7p9PzdKttkU4B4pQ=;
-        b=sT1/MSo3seAJhkxl0jtVemLTn2XILt4cudcq78m0SKbXDtDItviAPo8Kux3Y08QYpy
-         nxHPrVjbhqL/UJ/QsHnQ7sObGqhRC8ZHFg6Jn6FEj71cZrxYUp0TVZd8cFf5CTr42kw+
-         PJYWs4CW+PmYlgQ51H5I+umrICXmO62VRO9/ggjkV+UFaxdwWeICMAwCMRNO8EB+lcGL
-         39V27Mtx1VJQMm3hoYKY+jndhBKWuzI9zHDz7Y6oVn1z9B+vrHXlh0lQk49IgsLUdlTa
-         sEpl5uaDKTUwnZq+ovrNPoa5ov/tuQn/1fprxrOcsAmi5fQaU62azCh2tRDq/KWVwTDN
-         rZqw==
-X-Forwarded-Encrypted: i=1; AJvYcCVHksOWdFFwgS/qh+Wszcbby3l0iWB25GZs97sH3Ut0HMTGcQhLMq9Cr9cwsLJMcecvm0+zpaSgPbVexsk=@vger.kernel.org, AJvYcCVruL0GOuodFb4xRAv6LJptW3hZm1aI/VPfi5no/ZYbbk3ZgDclxy+glaq9/qAFxK8LOr+DmsSmQm70fTpA@vger.kernel.org, AJvYcCWoaJnQCntwExI0QKxT4eUVl+sXEFSwCdG9jzLj0Rvl/lMrFi412fNkokvJXWgvu0fafrVnNXJIKLn+CxHdBlw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yziytu4paCNt0/gTtI4Sc557ielSvddDWt2/IFG9I5jvs+liEWH
-	DzOE5GbbIkxKaMBXR141PNx3Ip4kGusaz4gacvwlwBxstvJ5BHcI
-X-Google-Smtp-Source: AGHT+IHLNfB8EgtJ05UOIBcVDWvknvO4vYdOOsW5Y7Gj4yEdEjOSf9b/6uebLnSewf2oqalNRmLVVQ==
-X-Received: by 2002:a17:903:2d2:b0:212:13e5:3ba1 with SMTP id d9443c01a7336-21213e54277mr112969095ad.36.1731987334807;
-        Mon, 18 Nov 2024 19:35:34 -0800 (PST)
-Received: from google.com ([2620:15c:9d:2:38b7:c100:6f21:312d])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-212027071bdsm37934415ad.283.2024.11.18.19.35.33
+        bh=g2E2ZlpfPZCjUZubD0v6yvsYpnLBIbhUcb15gmeLAW8=;
+        b=XZVqUuwQcAF2K2vH838/Wv8p2f/K5flOPrlkx0FI0Z2k44sfTDh2TE7GA7SnwlN+b7
+         Xcs97z1jxWXVuyq3b20IO4llxJ8kiIw6rvqkyKbGlj5g1fPgRrrz+gpIlUmqoKq6q/Qf
+         qSraN68Qg4zRa1GMHBp40jULQp4HQJbh0Fq+l9wsceY31r9OmJXIAOtkDSo8GaNYusD6
+         AM14qzxZxuMZI3scxzYpxbTYqc7ZcEQn5MrxgXm2gLJwPxkBUqmbepupJ71Bk4W8PSoT
+         W3sjsskndEEYOo6hLgS9MK0rukKekW/QXITQ/dXjs4UvyPxh+Xru3OG4wDkAOmUArnja
+         7MCw==
+X-Forwarded-Encrypted: i=1; AJvYcCUAeWFR/W9NX4jo6A3DP3NHX6XKNHjJpLAv8Em7zDs99PlO9xG51gkisPNMMJpB/B5a2wZMJOCyh1T6/e0Fp8jf@vger.kernel.org, AJvYcCVbVw1tQtbIEasAl+ZKLDXvHbKysalriK9TIGnq58sQTEht4FAUEOujTMl//yC16ODekObWSfCSRGp4ji8S@vger.kernel.org, AJvYcCW2y8jYGWpnHGlRp6vpt4ewAI0FGmJOV/Y7keaqwa4Z8eODzmGcMzsv3Qr84GSaqwjoZ08=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzR99GlFpORg+0qw1zayvcw9zwDuaeVo863olQJBnXhhNR5uzPA
+	UJ5PeGSi6ZRM0pkXK3oDR+ZmtVV5SD6U5xjL3/PlzhrrwD9evUDr
+X-Google-Smtp-Source: AGHT+IFjjMSAg8vXQGT6xt9qDee1RQiBoViFJfIqzIwsQD9MT3RmvB4st8SRTNmASPhdxDFOmy7QyA==
+X-Received: by 2002:a17:903:110c:b0:20b:9379:f1f7 with SMTP id d9443c01a7336-211d0ecb0a4mr221143125ad.40.1731987441660;
+        Mon, 18 Nov 2024 19:37:21 -0800 (PST)
+Received: from localhost ([2601:647:6881:9060:fd49:bc41:343a:fee5])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ea06ef69edsm9280679a91.1.2024.11.18.19.37.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Nov 2024 19:35:34 -0800 (PST)
-Date: Mon, 18 Nov 2024 19:35:31 -0800
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Yassine Oudjana <y.oudjana@protonmail.com>,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-input@vger.kernel.org
-Subject: Re: [PATCH] Input: cypress-sf - Constify struct i2c_device_id
-Message-ID: <ZzwHg2nCqUsxMwqg@google.com>
-References: <4bc3e3b4d10223d9df850fe4ba48f1cefd197082.1731689418.git.christophe.jaillet@wanadoo.fr>
+        Mon, 18 Nov 2024 19:37:21 -0800 (PST)
+Date: Mon, 18 Nov 2024 19:37:19 -0800
+From: Cong Wang <xiyou.wangcong@gmail.com>
+To: guanjing <guanjing@cmss.chinamobile.com>
+Cc: andrii@kernel.org, eddyz87@gmail.com, mykolal@fb.com, ast@kernel.org,
+	daniel@iogearbox.net, martin.lau@linux.dev, song@kernel.org,
+	yonghong.song@linux.dev, john.fastabend@gmail.com,
+	kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com,
+	jolsa@kernel.org, shuah@kernel.org, dxu@dxuuu.xyz,
+	antony.antony@secunet.com, cupertino.miranda@oracle.com,
+	asavkov@redhat.com, bpf@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] selftests/bpf: fix application of sizeof to pointer
+Message-ID: <ZzwH77QE/Ch9+evD@pop-os.localdomain>
+References: <20241117031838.161576-1-guanjing@cmss.chinamobile.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,29 +87,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <4bc3e3b4d10223d9df850fe4ba48f1cefd197082.1731689418.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20241117031838.161576-1-guanjing@cmss.chinamobile.com>
 
-On Fri, Nov 15, 2024 at 05:50:37PM +0100, Christophe JAILLET wrote:
-> 'struct i2c_device_id' is not modified in this driver.
+On Sun, Nov 17, 2024 at 11:18:38AM +0800, guanjing wrote:
+> sizeof when applied to a pointer typed expression gives the size of
+> the pointer.
 > 
-> Constifying this structure moves some data to a read-only section, so
-> increase overall security.
+> tools/testing/selftests/bpf/progs/test_tunnel_kern.c:678:41-47: ERROR: application of sizeof to pointer
 > 
-> On a x86_64, with allmodconfig:
-> Before:
-> ======
->    text	   data	    bss	    dec	    hex	filename
->    6438	    618	      0	   7056	   1b90	drivers/input/keyboard/cypress-sf.o
+> The proper fix in this particular case is to code sizeof(*gopt)
+> instead of sizeof(gopt).
 > 
-> After:
-> =====
->    text	   data	    bss	    dec	    hex	filename
->    6502	    554	      0	   7056	   1b90	drivers/input/keyboard/cypress-sf.o
+> This issue was detected with the help of Coccinelle.
 > 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Fixes: 5ddafcc377f9 ("selftests/bpf: Fix a few tests for GCC related warnings.")
+> Signed-off-by: guanjing <guanjing@cmss.chinamobile.com>
+> ---
+>  tools/testing/selftests/bpf/progs/test_tunnel_kern.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/testing/selftests/bpf/progs/test_tunnel_kern.c b/tools/testing/selftests/bpf/progs/test_tunnel_kern.c
+> index 32127f1cd687..3a437cdc5c15 100644
+> --- a/tools/testing/selftests/bpf/progs/test_tunnel_kern.c
+> +++ b/tools/testing/selftests/bpf/progs/test_tunnel_kern.c
+> @@ -675,7 +675,7 @@ int ip6geneve_set_tunnel(struct __sk_buff *skb)
+>  	gopt->length = 2; /* 4-byte multiple */
+>  	*(int *) &gopt->opt_data = bpf_htonl(0xfeedbeef);
+>  
+> -	ret = bpf_skb_set_tunnel_opt(skb, gopt, sizeof(gopt));
+> +	ret = bpf_skb_set_tunnel_opt(skb, gopt, sizeof(*gopt));
 
-Applied, thank you.
+Good catch!
 
--- 
-Dmitry
+I think sizeof(local_gopt) is better, to align with geneve_set_tunnel(),
+what do you think?
+
+Thanks.
 
