@@ -1,118 +1,132 @@
-Return-Path: <linux-kernel+bounces-414970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 808979D2FCF
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 21:57:03 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A30AB9D2FD1
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 21:57:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0190EB23EC1
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 20:57:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C3F8B24B65
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 20:57:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD7A81D2F76;
-	Tue, 19 Nov 2024 20:56:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B3E71D3573;
+	Tue, 19 Nov 2024 20:57:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="NJC2LlRQ"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="qdEVRNRv"
+Received: from out-184.mta1.migadu.com (out-184.mta1.migadu.com [95.215.58.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12D67149C7A
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 20:56:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BEAF197A88;
+	Tue, 19 Nov 2024 20:57:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732049815; cv=none; b=gvSesI74+7MyQU2hdCVxs3QnjFTfvz7vXW0DE9Gh5qBqHwdB6quHliNMl/GlZ/GyRU8F+RO46Dw1EoXry16fveXWmpqiJvJ+1XSvyIQyatag0AQi5FjFlD8DvfyHoTYq4S70wDgqG9rtFytA/808j4tg0kgzi/BpV3V1lamJIM0=
+	t=1732049859; cv=none; b=GZsJriktYyr/uAb32MCQp9+h/aFpLd+jogO4oF5nZsbSZsBS83swKadLPFWUP+9hWk6OcMpeDf1Rjk59g5DahArYtd0TSgqk/RuaL+GHEXmwGUOqgPtawAXctZ/mQaOzsP9won6tHIcZ0RXCf2NQQknamCWpfvy5yl4WdpsntDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732049815; c=relaxed/simple;
-	bh=KBsMzAAMMuSv92BNqXNCbBy1mDiClOsll4y9+9H2i7s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fQCFaAow9+Q4IlRKeSEVtJFz3GxHTJjEYBMf1Q38j88/aN6O+vDRtyOhU5tmBWJFgSSeN0uB7MfJj6sHkXwPB7S2BtagDI0HDPUsPc0q00wJmCNBholyyx6hnUKPcKyKF51xK6U/xcu/6GV4CwUX183sRz1h5MOqllCpo5sV8fY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=NJC2LlRQ; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a9ec86a67feso258596466b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 12:56:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1732049811; x=1732654611; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=j8Frib9EBxDTYycw+Xkri5/LSw6YM6TVLb/mIprSD6Y=;
-        b=NJC2LlRQ/fMe0g2Oqz9fgBG2xRLfZPR8dkl8Crm7oG1TXSDQfSpW6icADAFeygOOuo
-         d3pzFggelfjpgXwS2atovAtZG6wkie6HEB09wnW/yJ2J+fNQZXyyUj3fkusbKWa0UMey
-         Du9w5deabcEXc2NHMLYCR5qqLBeguhUMPoQLQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732049811; x=1732654611;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=j8Frib9EBxDTYycw+Xkri5/LSw6YM6TVLb/mIprSD6Y=;
-        b=hYPwULeX7yKpfxctUyYho1xDierOFRhZiicGrcdpd5zdeXw2qFBi02aaUTb4loUHQA
-         uvSsm1rRtDsMYDm2Y/FqcAxjh6vhXzoHsME0lV+OagfzcOzQ2KLeAlz7Bvfyt4qEeb8R
-         shP5MWSMkxTpMwM64CuyYLgKsKOVYiDz3HZrkWPEIZ+fe1KkmPSZ5g19vnkvYsJZBSh6
-         b8w64GgJ21UtxzRsf7AKC2WRgg0Rlg2EByN6b3rDxQ926SjpMRshtllACXr567HP0nyu
-         puXq7j9hywhLwB9BBlYuqYgpjc8Any28VG44ePDvFNL2WHlXIIUQOFrc3TH9fq2JaBy5
-         +jNQ==
-X-Gm-Message-State: AOJu0YyoPYiblBn2kmdtVYzVuQ9rsQzBB0s6PVjlEo2uPVD89ROoYQ/v
-	WCPK9q/mpSQ3zzRPG+aqF++To52EZED9um19SdH1zq+DvaDr1rjHAp4ltsNNSE3NaL9IK8vGcxY
-	Fzew=
-X-Google-Smtp-Source: AGHT+IFeYMjtDuy6IhnWPuMDa4QsqVsSfKxF+az8GadgOqvjfQLNnNHkxo9vyHrIN/EKXrQ8KiJ3TQ==
-X-Received: by 2002:a17:907:9726:b0:a9a:2afc:e4cc with SMTP id a640c23a62f3a-aa4dd749ef7mr26303066b.58.1732049811257;
-        Tue, 19 Nov 2024 12:56:51 -0800 (PST)
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com. [209.85.218.53])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20dffd78dsm687585566b.115.2024.11.19.12.56.49
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 Nov 2024 12:56:50 -0800 (PST)
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a9ec86a67feso258590166b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 12:56:49 -0800 (PST)
-X-Received: by 2002:a17:906:c107:b0:a99:fc9a:5363 with SMTP id
- a640c23a62f3a-aa4dd52ad02mr30138866b.9.1732049808805; Tue, 19 Nov 2024
- 12:56:48 -0800 (PST)
+	s=arc-20240116; t=1732049859; c=relaxed/simple;
+	bh=eu3fdGlakjQ+sjcp9GBTMZDSyKI4T+Y4TCKB2oSD/R8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nM7rByM7NrHLYPhMYebdwYlTo1aoUANQjPyX6LTNvSCUgaiEuDhbUhe8da+IzAf6pNwDe8REnnctSYEZ9t6aSIpwScNYqzohnqeOKPs5nKgSgmv1cgPsZXWdtQrZHjm1P0FZ49o1NR/vUCV5XV1Z3NHeNhvJFggz3l74zG79VlI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=qdEVRNRv; arc=none smtp.client-ip=95.215.58.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 19 Nov 2024 20:57:24 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1732049854;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ikYo5Qt2GJ/06mlBFEkzK0zdCcALXlrhVesJOzP8WU4=;
+	b=qdEVRNRv9idMTgDOAQ5Z/L2XYwEhLjKQGmW+uWLHP5ziZ0RiuL3Vqa4qe+OAFPmuaGFudb
+	lZASQb0wSRq/4frvukWqXPhGaNXBkFVkCp0eIk33Sb9I3Q4h8zAwu6lTWoVdJN95op0crD
+	n9atx3wtYFhsMc+4RIfipRwTUL/dJhY=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Roman Gushchin <roman.gushchin@linux.dev>
+To: Yosry Ahmed <yosryahmed@google.com>
+Cc: Pasha Tatashin <pasha.tatashin@soleen.com>,
+	Greg KH <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, linux-doc@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, cgroups@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, akpm@linux-foundation.org,
+	corbet@lwn.net, derek.kiernan@amd.com, dragan.cvetic@amd.com,
+	arnd@arndb.de, viro@zeniv.linux.org.uk, brauner@kernel.org,
+	jack@suse.cz, tj@kernel.org, hannes@cmpxchg.org, mhocko@kernel.org,
+	shakeel.butt@linux.dev, muchun.song@linux.dev,
+	Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, vbabka@suse.cz,
+	jannh@google.com, shuah@kernel.org, vegard.nossum@oracle.com,
+	vattunuru@marvell.com, schalla@marvell.com, david@redhat.com,
+	willy@infradead.org, osalvador@suse.de, usama.anjum@collabora.com,
+	andrii@kernel.org, ryan.roberts@arm.com, peterx@redhat.com,
+	oleg@redhat.com, tandersen@netflix.com, rientjes@google.com,
+	gthelen@google.com
+Subject: Re: [RFCv1 0/6] Page Detective
+Message-ID: <Zzz7tGqYM-0FCOe3@google.com>
+References: <20241116175922.3265872-1-pasha.tatashin@soleen.com>
+ <ZzuRSZc8HX9Zu0dE@google.com>
+ <CA+CK2bAAigxUv=HGpxoV-PruN_AhisKW675SxuG_yVi+vNmfSQ@mail.gmail.com>
+ <2024111938-anointer-kooky-d4f9@gregkh>
+ <CA+CK2bD88y4wmmvzMCC5Zkp4DX5ZrxL+XEOX2v4UhBxet6nwSA@mail.gmail.com>
+ <ZzzXqXGRlAwk-H2m@google.com>
+ <CA+CK2bD4zcXVATVhcUHBsA7Adtmh9LzCStWRDQyo_DsXxTOahA@mail.gmail.com>
+ <CAJD7tkZDSZ4QjLhkWQ3RV_vEwzTfCMtFcWX_Fx8mj-q0Zg2cOw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ZzsC7HOiJ8Mwk8D6@gmail.com>
-In-Reply-To: <ZzsC7HOiJ8Mwk8D6@gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 19 Nov 2024 12:56:31 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wi8C2yZF_y_T180-v+dSZAhps5QghS_2tKfn-+xAghYPQ@mail.gmail.com>
-Message-ID: <CAHk-=wi8C2yZF_y_T180-v+dSZAhps5QghS_2tKfn-+xAghYPQ@mail.gmail.com>
-Subject: Re: [GIT PULL] locking changes for v6.13
-To: Ingo Molnar <mingo@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Borislav Petkov <bp@alien8.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJD7tkZDSZ4QjLhkWQ3RV_vEwzTfCMtFcWX_Fx8mj-q0Zg2cOw@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, 18 Nov 2024 at 01:03, Ingo Molnar <mingo@kernel.org> wrote:
->
->  - <linux/cleanup.h>:
->     - Add if_not_cond_guard() conditional guard helper (David Lechner)
+On Tue, Nov 19, 2024 at 11:35:47AM -0800, Yosry Ahmed wrote:
+> On Tue, Nov 19, 2024 at 11:30 AM Pasha Tatashin
+> <pasha.tatashin@soleen.com> wrote:
+> >
+> > On Tue, Nov 19, 2024 at 1:23 PM Roman Gushchin <roman.gushchin@linux.dev> wrote:
+> > >
+> > > On Tue, Nov 19, 2024 at 10:08:36AM -0500, Pasha Tatashin wrote:
+> > > > On Mon, Nov 18, 2024 at 8:09 PM Greg KH <gregkh@linuxfoundation.org> wrote:
+> > > > >
+> > > > > On Mon, Nov 18, 2024 at 05:08:42PM -0500, Pasha Tatashin wrote:
+> > > > > > Additionally, using crash/drgn is not feasible for us at this time, it
+> > > > > > requires keeping external tools on our hosts, also it requires
+> > > > > > approval and a security review for each script before deployment in
+> > > > > > our fleet.
+> > > > >
+> > > > > So it's ok to add a totally insecure kernel feature to your fleet
+> > > > > instead?  You might want to reconsider that policy decision :)
+> > > >
+> > > > Hi Greg,
+> > > >
+> > > > While some risk is inherent, we believe the potential for abuse here
+> > > > is limited, especially given the existing  CAP_SYS_ADMIN requirement.
+> > > > But, even with root access compromised, this tool presents a smaller
+> > > > attack surface than alternatives like crash/drgn. It exposes less
+> > > > sensitive information, unlike crash/drgn, which could potentially
+> > > > allow reading all of kernel memory.
+> > >
+> > > The problem here is with using dmesg for output. No security-sensitive
+> > > information should go there. Even exposing raw kernel pointers is not
+> > > considered safe.
+> >
+> > I am OK in writing the output to a debugfs file in the next version,
+> > the only concern I have is that implies that dump_page() would need to
+> > be basically duplicated, as it now outputs everything via printk's.
+> 
+> Perhaps you can refactor the code in dump_page() to use a seq_buf,
+> then have dump_page() printk that seq_buf using seq_buf_do_printk(),
+> and have page detective output that seq_buf to the debugfs file?
+> 
+> We do something very similar with memory_stat_format(). We use the
+> same function to generate the memcg stats in a seq_buf, then we use
+> that seq_buf to output the stats to memory.stat as well as the OOM
+> log.
 
-I've pulled this, but I'm unhappy.
++1
 
-This macro generates actively wrong code if it happens to be inside an
-if-statement or a loop without a block.
-
-IOW, code like this:
-
-    for (iterate-over-something)
-        if_not_guard(a)
-            return -BUSY;
-
-looks like will build fine, but will generate completely incorrect code.
-
-Honestly, just switching the order of the BUILD_BUG_ON() and the
-CLASS() declaration looks like it would have fixed this (because then
-the '_id' won't be in scope of the subsequent if-statement any more),
-but I'm unhappy with how apparently nobody even bothered to think
-about such a fundamental issue with macros.
-
-Macros that expand to statements absolutely *ALWAYS* need to deal with
-"what if we're in a single-statement situation?"
-
-              Linus
+Thanks!
 
