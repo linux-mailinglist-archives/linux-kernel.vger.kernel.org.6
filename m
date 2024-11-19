@@ -1,151 +1,166 @@
-Return-Path: <linux-kernel+bounces-414041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C142C9D2247
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 10:15:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2874F9D224C
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 10:16:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 15469B22F05
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 09:15:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 967C5B23543
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 09:16:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7427919CC34;
-	Tue, 19 Nov 2024 09:15:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2475B1BFDEC;
+	Tue, 19 Nov 2024 09:15:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KjYsJbcF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NVZfePm6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE63A1A705C;
-	Tue, 19 Nov 2024 09:15:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 657061B4F10;
+	Tue, 19 Nov 2024 09:15:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732007747; cv=none; b=WP9+3V+8qIDMmS5okMZTziYzyXSe91JW0lFRgcnB1K2KX2lsE2DzdCBsBJxwxbGHuNDf4QTte1ueXvn6DyTUshuL4IaVewpAMDiLLclYDN+ZqLXuUYgYlVvAzeNew/9ofbsK6st8aWei5skCb0pFCJWk2Pt+QVPFcNWfyrKe/GU=
+	t=1732007753; cv=none; b=D5cou5cdOFEdi58z2gwqAOdCOGTeM5ZDWt7nmOGrK9o+xzZOdnOZcoX9GFm4zJAuLowJaf2YJ+cDm82mucjvxTczP7BUC80S2BfKoH/iWqGwcFAxl/t4kco/Vpl7Z9mgE3QKZLJnEt/b0OMA/2BBGZU4LHdVDavj4x7HYho3YWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732007747; c=relaxed/simple;
-	bh=oa+5Z+lKKCnT7yMebAYTxw8LIXAWKYOq1hVC+/GN+rg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ezoagymQ4QTJb+JcER6VkRz4mfSdrn3sJaImwMD/19KFj4e4KN1XJ2B0QMc5gbpcHp2i9pjt5hHcrXChcRNyvWgdgFIgTN5rU+fhoZ3Oe604fToYOfTp8xiW8YfbHt40+Sl6Ur+QvOgcCIAlHzPAA8JkbxequBAZ0s9rBGKbtVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KjYsJbcF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02C0AC4CECF;
-	Tue, 19 Nov 2024 09:15:46 +0000 (UTC)
+	s=arc-20240116; t=1732007753; c=relaxed/simple;
+	bh=tuy3z6nrkIiSd+VzYQkPLNUJwFvXm0qjY4DKrPb4wfk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YVoDoNN9Xn6/5eCGZPqWrTlDxyv0Skr+o8t/UviI2lLRo1zOAIudHBicU8sahlPTRVDnbMICeR/A4uw/NA4pXyk6ROC9MjKBNBKW3aoaT8RW6XbiZMkpCyDJdvSPt2bE70ce0FKn40pqcGvHlvPKmWJ5L2DKM6n7wzHZSh2X9mw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NVZfePm6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73AB7C4CED2;
+	Tue, 19 Nov 2024 09:15:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732007747;
-	bh=oa+5Z+lKKCnT7yMebAYTxw8LIXAWKYOq1hVC+/GN+rg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KjYsJbcFQTguOHpzEZCAiBNPjf3fEgjtDg6j8smxmzdxHjodF5phxaLOXf0eCGyNM
-	 U+B0NTL3MxcekUE60RiPjXafXWnBzGenN7x5b4swkPuEFsmShCli32v4Z/JFhmfK7U
-	 jswuY1Y1LHfa/HKbyvzTjgeQeuoutylE4I7KrBhgmgchkV83M/tluEhqfpi3SpPpQj
-	 mv5RRz1fVykGIZ2eKQxYS5KRR0IH74Kp1Na2UHYGUtExK9FR4J96w6Yt7iFAHmLYiQ
-	 fwSgG6U15djo9i+032g5TjH7c7cT/8QIwasDvoouuuSmyrY40Doy3PWlN/evVhA7dU
-	 PBiJz4xUTpC2A==
-Date: Tue, 19 Nov 2024 10:15:28 +0100
-From: Joel Granados <joel.granados@kernel.org>
-To: Yun Zhou <yun.zhou@windriver.com>
-Cc: mcgrof@kernel.org, kees@kernel.org, mhiramat@kernel.org, 
-	mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] kernel: add pid_max to pid_namespace
-Message-ID: <izvhvfnq6jwgl7uxccls4sckykw2wjx3utaecijcya5em53h6w@lupiu7ok5mrk>
-References: <20241105031024.3866383-1-yun.zhou@windriver.com>
+	s=k20201202; t=1732007752;
+	bh=tuy3z6nrkIiSd+VzYQkPLNUJwFvXm0qjY4DKrPb4wfk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=NVZfePm6adrgsb9+gR8vzgmAo+JYnPcLMQUWDw/EAs+JrnnjN/aOGNgVBENscDiRT
+	 8tvIzjbvqpFEp03Nt/mxQbY3mJ8caD+Dmlv0eapaohgagMcRY2EQjGgvYGkuu+i7gQ
+	 7zWbzxzuBtdL5CeZdlBYt78hic6yRMQiQoOESCBakVg+/eT+pJdl+5XFfU1bnKJcjE
+	 IjL/NJAaeQoG7ZqqqwypI9b8wWfJ6xtAqsXFyXalthQwS6V94x6siRzlSPEQ96irWs
+	 5y5QcVIcma++DSUlFClcTfC8kFAsyZqiqr2xknLyWnPQJLDprRHjy0TaPyTr7EgSo0
+	 jeFzGNie1+S5w==
+Message-ID: <1651f579-6f9b-4c98-b273-0d7de4e99478@kernel.org>
+Date: Tue, 19 Nov 2024 10:15:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241105031024.3866383-1-yun.zhou@windriver.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 01/17] dt-bindings: net: wireless: cc33xx: Add
+ ti,cc33xx.yaml
+To: "Nemanov, Michael" <michael.nemanov@ti.com>
+Cc: Kalle Valo <kvalo@kernel.org>, "David S . Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-wireless@vger.kernel.org,
+ netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Sabeeh Khan <sabeeh-khan@ti.com>
+References: <20241107125209.1736277-1-michael.nemanov@ti.com>
+ <20241107125209.1736277-2-michael.nemanov@ti.com>
+ <y4ffzjekeccqg2tv7d54ilwbz3nhm4jkcq3fyg5tmpbupsqirn@dq3kjtwkllds>
+ <2b0e95be-8192-416f-8655-631d6cecc336@ti.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <2b0e95be-8192-416f-8655-631d6cecc336@ti.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Nov 05, 2024 at 11:10:24AM +0800, Yun Zhou wrote:
-> It is necessary to have a different pid_max in different containers.
-> For example, multiple containers are running on a host, one of which
-> is Android, and its 32 bit bionic libc only accepts pid <= 65535. So
-> it requires the global pid_max <= 65535. This will cause configuration
-> conflicts with other containers and also limit the maximum number of
-> tasks for the entire system.
+On 12/11/2024 07:45, Nemanov, Michael wrote:
+> On 11/8/2024 2:02 PM, Krzysztof Kozlowski wrote:
+>> On Thu, Nov 07, 2024 at 02:51:53PM +0200, Michael Nemanov wrote:
+>>> Add device-tree bindings for the CC33xx family.
+>>>
+>>> Signed-off-by: Michael Nemanov <michael.nemanov@ti.com>
+>>> ---
+>>>   .../bindings/net/wireless/ti,cc33xx.yaml      | 59 +++++++++++++++++++
+>>>   1 file changed, 59 insertions(+)
+>>>   create mode 100644 Documentation/devicetree/bindings/net/wireless/ti,cc33xx.yaml
+>>>
+>>
+>> <form letter>
+>> This is a friendly reminder during the review process.
+>>
+>> It seems my or other reviewer's previous comments were not fully
+>> addressed. Maybe the feedback got lost between the quotes, maybe you
+>> just forgot to apply it. Please go back to the previous discussion and
+>> either implement all requested changes or keep discussing them.
+>>
+>> Thank you.
+>> </form letter>
+>>
+>> Best regards,
+>> Krzysztof
+>>
 > 
-> Signed-off-by: Yun Zhou <yun.zhou@windriver.com>
-> ---
->  - Remove sentinels from ctl_table arrays.
-> v1 - https://lore.kernel.org/all/20241030052933.1041408-1-yun.zhou@windriver.com/
-> ---
->  include/linux/pid_namespace.h     |  1 +
->  kernel/pid.c                      | 12 +++++------
->  kernel/pid_namespace.c            | 34 ++++++++++++++++++++++++++-----
->  kernel/sysctl.c                   |  9 --------
->  kernel/trace/pid_list.c           |  2 +-
->  kernel/trace/trace.h              |  2 --
->  kernel/trace/trace_sched_switch.c |  2 +-
->  7 files changed, 38 insertions(+), 24 deletions(-)
+> Are you referring to
+> 
+>> diff --git a/Documentation/devicetree/bindings/net/wireless/ti,cc33xx.yaml b/Documentation/devicetree/bindings/net/wireless/ti,cc33xx.yaml
+> 
+> ...
+> 
+>> +
+>> +properties:
+>> +  $nodename:
+>> +    pattern: "^wifi@2"
+> 
+> ?
+> 
+> If so, I replied here
+> https://lore.kernel.org/linux-wireless/8024aa1c-5bd1-40d8-b0c3-14b5fcd992e2@ti.com/#t
+> But if you don't think it's worthwhile I'll remove it.
 
-...
+I asked you to remove it. It's not correct, not needed, not beneficial
+at all. It is actually harmful because limits re-use. dtc already checks
+this.
 
-> diff --git a/kernel/pid_namespace.c b/kernel/pid_namespace.c
-> index d70ab49d5b4a..a5a8254825d5 100644
-> --- a/kernel/pid_namespace.c
-> +++ b/kernel/pid_namespace.c
-> @@ -111,6 +111,7 @@ static struct pid_namespace *create_pid_namespace(struct user_namespace *user_ns
->  	ns->user_ns = get_user_ns(user_ns);
->  	ns->ucounts = ucounts;
->  	ns->pid_allocated = PIDNS_ADDING;
-> +	ns->pid_max = parent_pid_ns->pid_max;
->  #if defined(CONFIG_SYSCTL) && defined(CONFIG_MEMFD_CREATE)
->  	ns->memfd_noexec_scope = pidns_memfd_noexec_scope(parent_pid_ns);
->  #endif
-> @@ -280,19 +281,44 @@ static int pid_ns_ctl_handler(const struct ctl_table *table, int write,
->  
->  	return ret;
->  }
-> +#endif	/* CONFIG_CHECKPOINT_RESTORE */
-> +
-> +static int pid_max_ns_ctl_handler(const struct ctl_table *table, int write,
-> +		void *buffer, size_t *lenp, loff_t *ppos)
-> +{
-> +	struct pid_namespace *pid_ns = task_active_pid_ns(current);
-> +	struct ctl_table tmp = *table;
-> +
-> +	if (write && !checkpoint_restore_ns_capable(pid_ns->user_ns))
-> +		return -EPERM;
-> +
-> +	tmp.data = &pid_ns->pid_max;
-> +	if (pid_ns->parent)
-> +		tmp.extra2 = &pid_ns->parent->pid_max;
-> +
-> +	return proc_dointvec_minmax(&tmp, write, buffer, lenp, ppos);
-> +}
->  
-> -extern int pid_max;
->  static struct ctl_table pid_ns_ctl_table[] = {
-> +#ifdef CONFIG_CHECKPOINT_RESTORE
->  	{
->  		.procname = "ns_last_pid",
->  		.maxlen = sizeof(int),
->  		.mode = 0666, /* permissions are checked in the handler */
->  		.proc_handler = pid_ns_ctl_handler,
->  		.extra1 = SYSCTL_ZERO,
-> -		.extra2 = &pid_max,
-> +		.extra2 = &init_pid_ns.pid_max,
->  	},
-> -};
->  #endif	/* CONFIG_CHECKPOINT_RESTORE */
-> +	{
-> +		.procname = "pid_max",
-> +		.maxlen = sizeof(int),
-> +		.mode = 0644,
-> +		.proc_handler = pid_max_ns_ctl_handler,
-> +		.extra1 = &pid_max_min,
-> +		.extra2 = &pid_max_max,
-> +	},
-> +};
+Best regards,
+Krzysztof
 
-I see here that the sysctls are without sentinel.
-Reviewed-by: Joel Granados <joel.granados@kernel.org>
-
-
--- 
-
-Joel Granados
 
