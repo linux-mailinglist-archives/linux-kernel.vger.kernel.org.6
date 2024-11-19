@@ -1,117 +1,112 @@
-Return-Path: <linux-kernel+bounces-414595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A367D9D2AC8
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 17:23:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 762919D2AB3
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 17:21:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B0F51B2559D
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 16:20:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24C571F20933
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 16:21:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 892AC1D0E1F;
-	Tue, 19 Nov 2024 16:20:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A683E1D0E2B;
+	Tue, 19 Nov 2024 16:20:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="GbEenRCu"
-Received: from smtp-fw-6002.amazon.com (smtp-fw-6002.amazon.com [52.95.49.90])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="VWmOj0dL"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDEE71D0967;
-	Tue, 19 Nov 2024 16:20:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.95.49.90
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D6E71D0DE6;
+	Tue, 19 Nov 2024 16:20:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732033204; cv=none; b=eGCOwACNg5uyjRUAdrhxKMGm0YyJlWzitVYV2z7YWy/5Nc7qQzNIg5ArLCVH1l+Z97tvwIbfYtz0FVfGhB9cZJ2jXkZ2v6GR4IgCd8Xy8JQXkKo4uXio8F5KQDkzkXqPOGgcMHGMjdrxzpi9TXSryPr+2NthcnctbonFr/6lP7I=
+	t=1732033245; cv=none; b=RbLFpMdgqw8sWVN6Sn4bnlhegzXLDsZgzSbFvcEYYnZAfkmhCprINpP4v2NMrVRuXhv9FNiffWbdTgleMyZGxjISd9p5ONe9uzy7pUoF10SJ1RuB+pZDreX9LN6r/4dDqU8RuGcOKYz1RAKPd2tiHvU4p+aSyDYH1moHID4t5N0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732033204; c=relaxed/simple;
-	bh=1ip0Amki48ZUc+FTWHVwEq2OzWoXBKQ0f1kyhG4JNmk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=uOlsHjw3RISayPA4txLu8wR8f05/M5xN0cOxzYwwkXFjHS+DdxDAz3DycQQ4kR1RrKpgu6hSFeP4Y2qJO04CUnjD0oWJKljaOwZ91unoR2TUxoTNRHjSXcl5jWs7ulI0jow26EmM21Wo6VArtspu+ayZgVmjm2bj1I7o5yYxYuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=GbEenRCu; arc=none smtp.client-ip=52.95.49.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1732033203; x=1763569203;
-  h=message-id:date:mime-version:reply-to:subject:to:cc:
-   references:from:in-reply-to:content-transfer-encoding;
-  bh=7owaQx9KVUDC/9VUYWCxSJ3gDhP5jQwK7SSWCjNNDGo=;
-  b=GbEenRCufXTIlOyODuGCyJTGqBYiROkAhtwkmsSah1+KOlXNUwJWjO3m
-   p5/ZSqOdf3TBAUEjFajWtN80SdZMAOxSxlFnl6b4yhaAUvMC6eHd2KJYU
-   t29m04E4depTVQGLu9kxWSFYUFCjk6tASkwPUjwv0lM0QKjJEUvN8Y3b/
-   8=;
-X-IronPort-AV: E=Sophos;i="6.12,166,1728950400"; 
-   d="scan'208";a="450253566"
-Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.124.125.6])
-  by smtp-border-fw-6002.iad6.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Nov 2024 16:19:59 +0000
-Received: from EX19MTAEUA001.ant.amazon.com [10.0.43.254:1239]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.34.163:2525] with esmtp (Farcaster)
- id b1ae407d-191f-4a89-b1d6-ae5ac8895921; Tue, 19 Nov 2024 16:19:58 +0000 (UTC)
-X-Farcaster-Flow-ID: b1ae407d-191f-4a89-b1d6-ae5ac8895921
-Received: from EX19D022EUC002.ant.amazon.com (10.252.51.137) by
- EX19MTAEUA001.ant.amazon.com (10.252.50.192) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Tue, 19 Nov 2024 16:19:57 +0000
-Received: from [192.168.2.250] (10.106.83.27) by EX19D022EUC002.ant.amazon.com
- (10.252.51.137) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34; Tue, 19 Nov 2024
- 16:19:56 +0000
-Message-ID: <159265fb-d2fb-4d93-b41a-59c25e2db0da@amazon.com>
-Date: Tue, 19 Nov 2024 16:19:47 +0000
+	s=arc-20240116; t=1732033245; c=relaxed/simple;
+	bh=/OeQ9IC9XtCJF9VlCTnneCePK0BnZfneZJ10PUHr+i0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LtJA9RMOlYdIw42d0tmr8Qkkh8i43l/IXyhwFqF/s3NIHBmxeyv8rlTqO+FlGba/kmC6ufW8qxsklM8BMpA9ioJemc1rAuVqvoHGEd/+warTyv4O3k9DfiAy5NkEyHjNyD8/ishj7tUxTIW3sAlINH1sjAKhNHBqArLiqFCil98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=VWmOj0dL; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
+	In-Reply-To:References; bh=LoQB2YBfTaN1K4JPLmVKXFvx1STyXVcKxEJnp1Odqwc=; b=VW
+	mOj0dL+lpeG5RitAljRuELwjwDLbv4gS6AsjzEBs8+/a6tUJ7GFM47qX8IF08gRwU9bvSlqN+A+D2
+	UwGE7BZXuGH5mOVsR5veHvOXhycyv8aPTip5Xy2dIl/JEMUPiDKYaE2KuHVT4MTjdbUHIXcsFue/W
+	85mTiOK6L6ZVuQ4=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tDQxu-00Dpby-DJ; Tue, 19 Nov 2024 17:20:34 +0100
+Date: Tue, 19 Nov 2024 17:20:34 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Krzysztof =?utf-8?Q?Ha=C5=82asa?= <khalasa@piap.pl>
+Cc: netdev <netdev@vger.kernel.org>, Oliver Neukum <oneukum@suse.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Jose Ignacio Tornos Martinez <jtornosm@redhat.com>,
+	Ming Lei <ming.lei@canonical.com>
+Subject: Re: [PATCH] usbnet_link_change() fails to call netif_carrier_on()
+Message-ID: <9baf4f17-bae6-4f5c-b9a1-92dc48fd7a8d@lunn.ch>
+References: <m34j43gwto.fsf@t19.piap.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: <kalyazin@amazon.com>
-Subject: Re: [RFC PATCH 0/6] KVM: x86: async PF user
-To: James Houghton <jthoughton@google.com>
-CC: <pbonzini@redhat.com>, <seanjc@google.com>, <corbet@lwn.net>,
-	<tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
-	<dave.hansen@linux.intel.com>, <hpa@zytor.com>, <rostedt@goodmis.org>,
-	<mhiramat@kernel.org>, <mathieu.desnoyers@efficios.com>,
-	<kvm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>,
-	<david@redhat.com>, <peterx@redhat.com>, <oleg@redhat.com>,
-	<vkuznets@redhat.com>, <gshan@redhat.com>, <graf@amazon.de>,
-	<jgowans@amazon.com>, <roypat@amazon.co.uk>, <derekmn@amazon.com>,
-	<nsaenz@amazon.es>, <xmarcalx@amazon.com>
-References: <20241118123948.4796-1-kalyazin@amazon.com>
- <CADrL8HXikDsda6CmG8E2KpNekp8xaQyd8wgZoskkR=p2LvkPQg@mail.gmail.com>
-Content-Language: en-US
-From: Nikita Kalyazin <kalyazin@amazon.com>
-Autocrypt: addr=kalyazin@amazon.com; keydata=
- xjMEY+ZIvRYJKwYBBAHaRw8BAQdA9FwYskD/5BFmiiTgktstviS9svHeszG2JfIkUqjxf+/N
- JU5pa2l0YSBLYWx5YXppbiA8a2FseWF6aW5AYW1hem9uLmNvbT7CjwQTFggANxYhBGhhGDEy
- BjLQwD9FsK+SyiCpmmTzBQJj5ki9BQkDwmcAAhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQr5LK
- IKmaZPOR1wD/UTcn4GbLC39QIwJuWXW0DeLoikxFBYkbhYyZ5CbtrtAA/2/rnR/zKZmyXqJ6
- ULlSE8eWA3ywAIOH8jIETF2fCaUCzjgEY+ZIvRIKKwYBBAGXVQEFAQEHQCqd7/nb2tb36vZt
- ubg1iBLCSDctMlKHsQTp7wCnEc4RAwEIB8J+BBgWCAAmFiEEaGEYMTIGMtDAP0Wwr5LKIKma
- ZPMFAmPmSL0FCQPCZwACGwwACgkQr5LKIKmaZPNCxAEAxwnrmyqSC63nf6hoCFCfJYQapghC
- abLV0+PWemntlwEA/RYx8qCWD6zOEn4eYhQAucEwtg6h1PBbeGK94khVMooF
-In-Reply-To: <CADrL8HXikDsda6CmG8E2KpNekp8xaQyd8wgZoskkR=p2LvkPQg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EX19D011EUB001.ant.amazon.com (10.252.51.7) To
- EX19D022EUC002.ant.amazon.com (10.252.51.137)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <m34j43gwto.fsf@t19.piap.pl>
 
-
-
-On 19/11/2024 01:26, James Houghton wrote:
->> Please note that this series is applied on top of the VM-exit-based
->> stage-2 fault handling RFC [2].
+On Tue, Nov 19, 2024 at 02:46:59PM +0100, Krzysztof Hałasa wrote:
+> Hi,
 > 
-> Thanks, Nikita! I'll post a new version of [2] very soon. The new
-> version contains the simplifications we talked about at LPC but is
-> conceptually the same (so this async PF series is motivated the same
-> way), and it shouldn't have many/any conflicts with the main bits of
-> this series.
-
-Great news, looking forward to seeing it!
-
+> ASIX AX88772B based USB 10/100 Ethernet adapter doesn't come
+> up ("carrier off"), despite the built-in 100BASE-FX PHY positive link
+> indication.
 > 
->> [2] https://lore.kernel.org/kvm/CADrL8HUHRMwUPhr7jLLBgD9YLFAnVHc=N-C=8er-x6GUtV97pQ@mail.gmail.com/T/
+> The problem appears to be in usbnet.c framework:
+> 
+> void usbnet_link_change(struct usbnet *dev, bool link, bool need_reset)
+> {
+> 	/* update link after link is reseted */
+> 	if (link && !need_reset)
+> 		netif_carrier_on(dev->net);
+> 	else
+> 		netif_carrier_off(dev->net);
+> 
+> 	if (need_reset && link)
+> 		usbnet_defer_kevent(dev, EVENT_LINK_RESET);
+> 	else
+> 		usbnet_defer_kevent(dev, EVENT_LINK_CHANGE);
+> }
 
+static int ax88772_phylink_setup(struct usbnet *dev)
+{
+        struct asix_common_private *priv = dev->driver_priv;
+        phy_interface_t phy_if_mode;
+        struct phylink *phylink;
+
+        priv->phylink_config.dev = &dev->net->dev;
+        priv->phylink_config.type = PHYLINK_NETDEV;
+        priv->phylink_config.mac_capabilities = MAC_SYM_PAUSE | MAC_ASYM_PAUSE |
+                MAC_10 | MAC_100;
+
+etc.
+
+This device is using phylink to manage the PHY. phylink will than
+manage the carrier. It assumes it is solely responsible for the
+carrier. So i think your fix is wrong. You probably should be removing
+all code in this driver which touches the carrier.
+
+	Andrew
 
