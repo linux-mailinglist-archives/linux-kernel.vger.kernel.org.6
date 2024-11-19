@@ -1,105 +1,98 @@
-Return-Path: <linux-kernel+bounces-413806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3503F9D1EFB
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 04:54:19 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDF4A9D1F07
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 05:00:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 282AFB20B17
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 03:54:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C68BB221FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 04:00:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 342051494C9;
-	Tue, 19 Nov 2024 03:54:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 397FE14A629;
+	Tue, 19 Nov 2024 04:00:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="fp4bjXgX"
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k3emyD3o"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E798D1863F;
-	Tue, 19 Nov 2024 03:54:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8620ED2FA;
+	Tue, 19 Nov 2024 04:00:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731988445; cv=none; b=Z+x8uidHGwnUyhYRHMSyoEdM44BU+l+E0+9I7VTP0d+lI5njSjbME8M4ZqdIQpnIEFyJ5kvYWLTM2BRHZe2EbErfAdHmx7zneWtwjTgGq+aKnhenN6+t+1uoqD5huS5AxGhRMgbViVqkBhN4oT55l9KG5duxYyGOJg9ex4xoW/0=
+	t=1731988820; cv=none; b=nRhikR7OUCCd15RJjMJo+aUDYOuocnaAEf2EXC2PrWAt1XozFN7o7yxUNixJhBfTpD7lVP0nSMYqZi9ry0huIdvWWUxff+nfljFfw96II5bH/BQ4u3rDvcehVazbUJoMOPGfXNF7ROI17w9O2ZoodVu8cjc1CuI14lYA6RzyeiM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731988445; c=relaxed/simple;
-	bh=jJG3L4gmdF2yJCH6WtyfpSNOswFK8CKuR0vc4IfhodQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P7+0Yv2eZyFaII3kovzGXac4XTe1mtd25Xo72tHTUGiefnDA2iC+C1MQWe6wQm+g48yIhfvaLGXJfIou6wISeqBRozigHEKeJ1WbeosJIrUPB51eTnAVLKF76F78xSnMtilIfdL0OUnXRblEJCSOXIKEqVAaG4nKzw4wG3cNRJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=fp4bjXgX; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=NOANPQBDcF3Z4dheQl98tZSiqC0YAS9KqHokuoZAeZM=; b=fp4bjXgXJNDG253v6A4DPhBYhb
-	JYy1rMbpp0VeN7NIorCJNJL5tlUiyCdkGojMAcL6ffKCCfzlWTr5yEr11d5y/0zYLgypzDt5GIcoh
-	mzSsmeOetX9UgQew7LRH/0QN93ZjqzZ7uPzG0F3buX8B8T6/YnrKzkMfQWOH35XwYTG21GvUtmJU+
-	X8Km8P1HOMf6LVhfWBb/X0BLNsoeHr9aDW4vWiBBH3KHb5/uzfegBcPEwNLUWZqHY6Ob8q/549H54
-	/+KGsux5SZYvRQoC3EEDkQ/FNUZbLz5edPbeMjlVfeJaU7a5V2h0mu0+INYle5jQ8fKTQk0SKRhOV
-	pGy8vb1w==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1tDFJF-000B78-12;
-	Tue, 19 Nov 2024 11:53:50 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Tue, 19 Nov 2024 11:53:49 +0800
-Date: Tue, 19 Nov 2024 11:53:49 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: patchwork-bot+netdevbpf@kernel.org
-Cc: Breno Leitao <leitao@debian.org>, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	horms@kernel.org, stephen@networkplumber.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	paulmck@kernel.org, Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH net 0/2] netpoll: Use RCU primitives for npinfo pointer
- access
-Message-ID: <ZzwLzfzjGgG28VYW@gondor.apana.org.au>
-References: <20241118-netpoll_rcu-v1-0-a1888dcb4a02@debian.org>
- <173198763100.93658.15150293129668090015.git-patchwork-notify@kernel.org>
+	s=arc-20240116; t=1731988820; c=relaxed/simple;
+	bh=cYneMGn3oJqW5FRh6O69nf0Ew12DjHQoIA3RWXGZzmo=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=GO3/dBcddij9Xc191QkkDOutjeIfqrmq+ZdjYGdnTUTpeL4jqVmz9RrCE4xRV0pm2xEi064dcFBXmoLr4zkUniRQekAJC6qd+nHPnzo2n5DKbh17u/9C/QYmE5SOkHmfmD/3MgEwRAtN09o8rH5aDMznHqiOp4QairE4Tjqwtx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k3emyD3o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C150C4CED1;
+	Tue, 19 Nov 2024 04:00:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731988818;
+	bh=cYneMGn3oJqW5FRh6O69nf0Ew12DjHQoIA3RWXGZzmo=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=k3emyD3onkzWrUPAavclZ64Y5ZJNaw9sS5HAOxoEA5MGrAax1HO5kquvJwTeiKj6L
+	 LC4WKFKD4Cs3FpDLfhN95SwLa9tcBhfCFo2nc0TKLJ3aUt6h1g/2X76mlTkchJjuHR
+	 8mPaHBHLI6OjKUpqxzNx9kZE1h8b9xG2NxzSbVaWDKpvXeoXzdZKVOrfGWNqNpsBmx
+	 2FyXFAjhM5qEtWJ7SzcDneP6jD2/qKp2jMwVuwr3mLyabwQzuwEO1Vrnxk8GAnpzZV
+	 4agD6hoR2u6yiPO47wWLR3p72eWlGdu93zNu+CBpIt1HegFc7cb1eX81YJf2ucIYMK
+	 zXxYs7+OffyRA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAE513809A80;
+	Tue, 19 Nov 2024 04:00:30 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <173198763100.93658.15150293129668090015.git-patchwork-notify@kernel.org>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH bpf v4 0/2] bpf: fix recursive lock and add test
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <173198882976.97799.1627971734543862873.git-patchwork-notify@kernel.org>
+Date: Tue, 19 Nov 2024 04:00:29 +0000
+References: <20241118030910.36230-1-mrpre@163.com>
+In-Reply-To: <20241118030910.36230-1-mrpre@163.com>
+To: Jiayuan Chen <mrpre@163.com>
+Cc: martin.lau@linux.dev, edumazet@google.com, jakub@cloudflare.com,
+ davem@davemloft.net, dsahern@kernel.org, kuba@kernel.org, pabeni@redhat.com,
+ netdev@vger.kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+ horms@kernel.org, daniel@iogearbox.net, mykolal@fb.com, ast@kernel.org,
+ kpsingh@kernel.org, jolsa@kernel.org, eddyz87@gmail.com, shuah@kernel.org,
+ sdf@fomichev.me, linux-kselftest@vger.kernel.org, haoluo@google.com,
+ song@kernel.org, john.fastabend@gmail.com, andrii@kernel.org, mhal@rbox.co,
+ yonghong.song@linux.dev
 
-On Tue, Nov 19, 2024 at 03:40:31AM +0000, patchwork-bot+netdevbpf@kernel.org wrote:
-> Hello:
-> 
-> This series was applied to netdev/net.git (main)
-> by Jakub Kicinski <kuba@kernel.org>:
-> 
-> On Mon, 18 Nov 2024 03:15:16 -0800 you wrote:
-> > The net_device->npinfo pointer is marked with __rcu, indicating it requires
-> > proper RCU access primitives:
-> > 
-> >   struct net_device {
-> > 	...
-> > 	struct netpoll_info __rcu *npinfo;
-> > 	...
-> >   };
-> > 
-> > [...]
-> 
-> Here is the summary with links:
->   - [net,1/2] netpoll: Use rcu_access_pointer() in __netpoll_setup
->     https://git.kernel.org/netdev/net/c/c69c5e10adb9
->   - [net,2/2] netpoll: Use rcu_access_pointer() in netpoll_poll_lock
->     https://git.kernel.org/netdev/net/c/a57d5a72f8de
+Hello:
 
-These are not bug fixes.  They should not be going through during
-a merge window, especially with such a short period of review.
+This series was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-Thanks,
+On Mon, 18 Nov 2024 11:09:08 +0800 you wrote:
+> 1. fix recursive lock when ebpf prog return SK_PASS.
+> 2. add selftest to reproduce recursive lock.
+> 
+> Note that the test code can reproduce the 'dead-lock' and if just
+> the selftest merged without first patch, the test case will
+> definitely fail, because the issue of deadlock is inevitable.
+> 
+> [...]
+
+Here is the summary with links:
+  - [bpf,v4,1/2] bpf: fix recursive lock when verdict program return SK_PASS
+    https://git.kernel.org/netdev/net/c/8ca2a1eeadf0
+  - [bpf,v4,2/2] selftests/bpf: Add some tests with sockmap SK_PASS
+    https://git.kernel.org/netdev/net/c/0c4d5cb9a1c3
+
+You are awesome, thank you!
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
