@@ -1,150 +1,141 @@
-Return-Path: <linux-kernel+bounces-414308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98ACC9D2627
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 13:53:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18E0F9D262D
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 13:53:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2BECB1F24608
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 12:53:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D335928486A
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 12:53:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F4CF1384BF;
-	Tue, 19 Nov 2024 12:52:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C65951CCB27;
+	Tue, 19 Nov 2024 12:53:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RvT4NPz5"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="otr+phbu"
+Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D17FB1CBE9B
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 12:52:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68EFA1C4A0C;
+	Tue, 19 Nov 2024 12:53:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.18.73.165
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732020761; cv=none; b=H5ndSmAvqGiFNvJUZXnocLgWIik9HoE1An3/jQDcjuJ0Zdyvg5K2ZaW1K5fx2p2KFZcC25vbQyfhO3if/mMFnsOzXgwVmdjVRvgEaygR/bbVeBY3Gch/hfpkpE+BvhHkdBbLEuOZolw03bTB5yJ9Z0UHK4rmmsq5QNXusVYVnik=
+	t=1732020811; cv=none; b=uRWjbRtY94ZM+6SkoVSxxzndy76mxAPtT7bKLoEdgWAaI+nsVV+OdHd1yMvejppRNdhi9LjO9dudRmeqL/ZBq52KTy+graalculIql9IGohLA9xxxpCOmQJj40xeXKuiUc4ATeO7qGeQ9qdUi0SNDz/gnOlURkswV93NvNFlg9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732020761; c=relaxed/simple;
-	bh=yRauzgQtwAabGE/huRKr8PjySPrqwLknQlRBGuzARcE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TPsaKfXCpLa96l/uIUhCiujnYm3n3ZYFQHb+gvjQ1V+gNl+hooC16JNeP94MEF6dwgznmHEJYJeyr3XTlq4TNisDtODycbARzUz0v/3OzAbSPBwkMQR3TfYQUR6FuxcU9qcQQzool9wWmkjw/9PeQdbb27dRC8h211vc2kkmozs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RvT4NPz5; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5cfc264b8b6so9578a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 04:52:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732020758; x=1732625558; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yRauzgQtwAabGE/huRKr8PjySPrqwLknQlRBGuzARcE=;
-        b=RvT4NPz5IIaqR7prkmVJ8Sgp5VpdKTUwU47DZs+UBZzbbib344Z2g4YntUaZg9giCP
-         rVb7hRmfuCXsw/y9rCsyQyTQGsLOqqcNmFDecylZsZnBGJipOpnnQvzj8fJ2JC8DqTEg
-         l+Vfo/7gRDqNTSAoqeT3nEbvV7rlHynmMFt94jqjTHeqUN4xueoE8wdzAarJ/jVCJ4Oe
-         klkyv/iIT0vaQKaNwKLFHLlW+Kwyx5McFHZm6uoJUieglyAgFdIhfJ89mEACBF9yWVHT
-         e4Vyyme71D9eG8SQUXTlyt3YshjSS0TxFvFMXr9rgFTdOrAoCSnXodsCkaCtfkhyHQ5w
-         eZDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732020758; x=1732625558;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yRauzgQtwAabGE/huRKr8PjySPrqwLknQlRBGuzARcE=;
-        b=G35smmnkt/CRSDO9shoq42hFcI19w6BQpx6bF6Hf/spdOb+QASNyDavtp6jU7diCqb
-         YYDaq1LRHJXqg2XHCPGVdstUy6BHlTBrKDqnLRtEwgsW2/HAT0Zxfx9+Hvv4rOxiL/Or
-         DEpUh4BdTu08TVg45FkrtY9oxxPrwRiRiUJcGUH1rdlsSnMox/1LR/4ChOvZ/6dUMG4x
-         vNfyD8SiV8+ZxCNl2yedo0cED2ZpuZk0U7WJ5XN69P2o0QR7gtJmFGsKGn684ZsyHkJT
-         LL++opu48t5oLlGk5ajV2aZPPUKSpFHalgY1slghFqp430xBdNIgLM0Zx0FS5RFQRpsK
-         RU1w==
-X-Forwarded-Encrypted: i=1; AJvYcCXbmN25ZVkUIEoFdF/ujefByJA0+APEtqf3XYM7KwzsXNVRp6vBOJNQ+Q3daVY1yiTytCH4qZnRRpBY6sg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVWUXMPocXcAuJv120EUbELJDeKcGZDMi/WmeuDNLS6UrAWoPo
-	wzAFE/WP9lm0XP2Zye6rZoJSX1Ga5uJveuZjr0SEs8LygFFyZ1h1l9yeiOGQUgqBKCdO2bMb/eG
-	2KPwXtHCb8vtC7lLyAYa8KpO7Ai9AsU7RUhqa
-X-Gm-Gg: ASbGncuTpwnEnHFEwfgEqzYPvbA9uMNhE64LQ4fM3o9NcYsBKRI9kPYQ36psiNAYZda
-	G872xG/0E1SkkKbF+8/ltmkhV0h52SL4d3HaWe9R7qCGZp51+VYiuTWKaasI=
-X-Google-Smtp-Source: AGHT+IHrO5qfRHSlmQCwNzrJObJ8F+5vL3isZu6sEndbtNy8+TOZx/SUWI/RHP6UiYngvZBnewRWzZBX4xLAvWC6WJw=
-X-Received: by 2002:a05:6402:1351:b0:5cf:bd9a:41ec with SMTP id
- 4fb4d7f45d1cf-5cfdec244d3mr70875a12.2.1732020757739; Tue, 19 Nov 2024
- 04:52:37 -0800 (PST)
+	s=arc-20240116; t=1732020811; c=relaxed/simple;
+	bh=5/iGMOq4lvLMFfOAEAyodIwI6eFL8Od3RLD9Y4lz2z4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Wm5rzHNUe185mZgteXbgoj1HKDc0N8RjlXoq0V+sCUXIDX4tzHSGyIJJgAveJvuLYIfD5iSqxkOYuDvwhwqIaI9mPWg3pGLQOdHU171lxYY7pFk4z+Fjo8rj3UjNsqbdVkLgdvNwVgLV9uk+M398XWD1p5O9ASO9pccopxw5QnI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=otr+phbu; arc=none smtp.client-ip=37.18.73.165
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
+Received: from p-infra-ksmg-sc-msk01.sberdevices.ru (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id BC352100005;
+	Tue, 19 Nov 2024 15:53:25 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru BC352100005
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
+	s=mail; t=1732020805;
+	bh=WLMqgYAx8jrAH0NGtJJdr/WAytRnlNbxc+XJ13Kxixw=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
+	b=otr+phbuxnZgxzhuPNw8Yn5zEK7ExbKETyvkv9/uME+p4txvy5tBOT97ScqSjaY5N
+	 FfYu1sAl/Owu8xbp2Ln7LwPgS34gHW6h4R0YxY7WP7Tq+T5rAzsX0mKEFwY9g15RVU
+	 T+F4xvMRDe3dZMdiXKldYTSbayR6tLmUawN8CzfMtwQNcvO0iXGAsbyVGjivme8BBl
+	 PaMjf8AwYUESGPfMKWiJFnBcsX73HUhO+WwB335Kh3oJJ2OsK8ETFe2ozkGOCx16dv
+	 9a523Lm5OGZO02h0pRZaZ/kuu+2XEm2FLZcM5C8vSc9fgeOXy7Fb1Mv75JwK76znZQ
+	 ZFpEye9NZRQag==
+Received: from smtp.sberdevices.ru (p-i-exch-sc-m01.sberdevices.ru [172.16.192.107])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.sberdevices.ru (Postfix) with ESMTPS;
+	Tue, 19 Nov 2024 15:53:25 +0300 (MSK)
+From: George Stark <gnstark@salutedevices.com>
+To: <ukleinek@kernel.org>, <neil.armstrong@linaro.org>,
+	<khilman@baylibre.com>, <jbrunet@baylibre.com>,
+	<martin.blumenstingl@googlemail.com>
+CC: <linux-pwm@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<kernel@salutedevices.com>, George Stark <gnstark@salutedevices.com>
+Subject: [PATCH v3 0/4] pwm: meson: Support constant and polarity bits
+Date: Tue, 19 Nov 2024 15:53:14 +0300
+Message-ID: <20241119125318.3492261-1-gnstark@salutedevices.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241116175922.3265872-1-pasha.tatashin@soleen.com>
- <a0372f7f-9a85-4d3e-ba20-b5911a8189e3@lucifer.local> <CAG48ez2vG0tr=H8csGes7HN_5HPQAh4WZU8U1G945K1GKfABPg@mail.gmail.com>
- <CA+CK2bB0w=i1z78AJbr2gZE9ybYki4Vz_s53=8URrxwyPvvB+A@mail.gmail.com>
- <CAG48ez1KFFXzy5qcYVZLnUEztaZxDGY2+4GvwYq7Hb=Y=3FBxQ@mail.gmail.com> <CA+CK2bCBwZFomepG-Pp6oiAwHQiKdsTLe3rYtE3hFSQ5spEDww@mail.gmail.com>
-In-Reply-To: <CA+CK2bCBwZFomepG-Pp6oiAwHQiKdsTLe3rYtE3hFSQ5spEDww@mail.gmail.com>
-From: Jann Horn <jannh@google.com>
-Date: Tue, 19 Nov 2024 13:52:00 +0100
-Message-ID: <CAG48ez0NzMbwnbvMO7KbUROZq5ne7fhiau49v7oyxwPrYL=P6Q@mail.gmail.com>
-Subject: Re: [RFCv1 0/6] Page Detective
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	cgroups@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	akpm@linux-foundation.org, corbet@lwn.net, derek.kiernan@amd.com, 
-	dragan.cvetic@amd.com, arnd@arndb.de, gregkh@linuxfoundation.org, 
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, tj@kernel.org, 
-	hannes@cmpxchg.org, mhocko@kernel.org, roman.gushchin@linux.dev, 
-	shakeel.butt@linux.dev, muchun.song@linux.dev, Liam.Howlett@oracle.com, 
-	vbabka@suse.cz, shuah@kernel.org, vegard.nossum@oracle.com, 
-	vattunuru@marvell.com, schalla@marvell.com, david@redhat.com, 
-	willy@infradead.org, osalvador@suse.de, usama.anjum@collabora.com, 
-	andrii@kernel.org, ryan.roberts@arm.com, peterx@redhat.com, oleg@redhat.com, 
-	tandersen@netflix.com, rientjes@google.com, gthelen@google.com, 
-	linux-hardening@vger.kernel.org, 
-	Kernel Hardening <kernel-hardening@lists.openwall.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: p-i-exch-a-m2.sberdevices.ru (172.24.196.120) To
+ p-i-exch-sc-m01.sberdevices.ru (172.16.192.107)
+X-KSMG-Rule-ID: 10
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 189267 [Nov 19 2024]
+X-KSMG-AntiSpam-Version: 6.1.1.7
+X-KSMG-AntiSpam-Envelope-From: gnstark@salutedevices.com
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 41 0.3.41 623e98d5198769c015c72f45fabbb9f77bdb702b, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;lore.kernel.org:7.1.1;smtp.sberdevices.ru:7.1.1,5.0.1;127.0.0.199:7.1.2;salutedevices.com:7.1.1, FromAlignment: s
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean, bases: 2024/11/19 09:12:00
+X-KSMG-LinksScanning: Clean, bases: 2024/11/19 09:12:00
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/11/19 08:41:00 #26886618
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-On Tue, Nov 19, 2024 at 2:30=E2=80=AFAM Pasha Tatashin
-<pasha.tatashin@soleen.com> wrote:
-> > Can you point me to where a refcounted reference to the page comes
-> > from when page_detective_metadata() calls dump_page_lvl()?
->
-> I am sorry, I remembered incorrectly, we are getting reference right
-> after dump_page_lvl() in page_detective_memcg() -> folio_try_get(); I
-> will move the folio_try_get() to before dump_page_lvl().
->
-> > > > So I think dump_page() in its current form is not something we shou=
-ld
-> > > > expose to a userspace-reachable API.
-> > >
-> > > We use dump_page() all over WARN_ONs in MM code where pages might not
-> > > be locked, but this is a good point, that while even the existing
-> > > usage might be racy, providing a user-reachable API potentially makes
-> > > it worse. I will see if I could add some locking before dump_page(),
-> > > or make a dump_page variant that does not do dump_mapping().
-> >
-> > To be clear, I am not that strongly opposed to racily reading data
-> > such that the data may not be internally consistent or such; but this
-> > is a case of racy use-after-free reads that might end up dumping
-> > entirely unrelated memory contents into dmesg. I think we should
-> > properly protect against that in an API that userspace can invoke.
-> > Otherwise, if we race, we might end up writing random memory contents
-> > into dmesg; and if we are particularly unlucky, those random memory
-> > contents could be PII or authentication tokens or such.
-> >
-> > I'm not entirely sure what the right approach is here; I guess it
-> > makes sense that when the kernel internally detects corruption,
-> > dump_page doesn't take references on pages it accesses to avoid
-> > corrupting things further. If you are looking at a page based on a
-> > userspace request, I guess you could access the page with the
-> > necessary locking to access its properties under the normal locking
-> > rules?
->
-> I will take reference, as we already do that for memcg purpose, but
-> have not included dump_page().
+This patch series add support for amlogic's newer PWM IPs hardware features:
+constant and polarity bits.
 
-Note that taking a reference on the page does not make all of
-dump_page() fine; in particular, my understanding is that
-folio_mapping() requires that the page is locked in order to return a
-stable pointer, and some of the code in dump_mapping() would probably
-also require some other locks - probably at least on the inode and
-maybe also on the dentry, I think? Otherwise the inode's dentry list
-can probably change concurrently, and the dentry's name pointer can
-change too.
+Using polarity bit for inverting output signal allows to identify inversion
+in .get_state() callback which can only rely on data read from registers.
+
+Using constant bit allows to have steady output level when duty cycle is zero or
+equal to period. Without this bit there will always be single-clock spikes on output.
+
+Those bits are supported in axg, g12 and newer SoC families like s4, a1 etc.
+Tested on g12, a1.
+
+Changes in v2:
+  pwm: meson: Support constant and polarity bits
+    - drop separate set_constant() and set_polarity() and move register writings
+      into enable() and disable()
+  pwm: meson: Simplify get_state() callback
+    - add new patch to make .get_state() callback consistent. Since I add new
+      fields to struct meson_pwm_channel either we should fill back all of them
+      from registers or not at all.
+  pwm: meson: Use separate device id data for axg and g12
+    - add splitting amlogic,meson8-pwm-v2 into amlogic,meson-axg-pwm-v2 and
+      amlogic,meson-g12-pwm-v2 with pwm_meson_axg_v2_data for both compatibles.
+    - update commit message
+    - add tag: Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+  pwm: meson: Enable constant and polarity features for g12, axg, s4
+    - add enabling const and polarity to pwm_meson_axg_v2_data
+    - add tag: Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+  link to v1: [1]
+
+Changes in v3:
+  pwm: meson: Simplify get_state() callback
+    - drop local variable channel
+  pwm: meson: Support constant and polarity bits
+    - drop meson_pwm_assign_bit() and implement bit assignment in-place
+  link to v2: [2]
+
+[1] https://lore.kernel.org/linux-arm-kernel/20241007193203.1753326-4-gnstark@salutedevices.com/T/
+[2] https://lore.kernel.org/linux-arm-kernel/l5xvdndysdvtil472it6ylthcfam5jp7lh3son45mezq7dh2yk@3yj557k2o5k5/T/
+
+George Stark (4):
+  pwm: meson: Simplify get_state() callback
+  pwm: meson: Support constant and polarity bits
+  pwm: meson: Use separate device id data for axg and g12
+  pwm: meson: Enable constant and polarity features for g12, axg, s4
+
+ drivers/pwm/pwm-meson.c | 105 ++++++++++++++++++++++++++++++++++------
+ 1 file changed, 91 insertions(+), 14 deletions(-)
+
+--
+2.25.1
+
 
