@@ -1,180 +1,144 @@
-Return-Path: <linux-kernel+bounces-413624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 625059D1C26
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 01:11:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 347D49D1C28
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 01:12:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1919D282734
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 00:11:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE41128175E
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 00:12:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDFE912B73;
-	Tue, 19 Nov 2024 00:11:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3B6C2CAB;
+	Tue, 19 Nov 2024 00:12:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yjepgakh"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="en+BIKAF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CB03C8FF;
-	Tue, 19 Nov 2024 00:11:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58D3A4C79;
+	Tue, 19 Nov 2024 00:12:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731975063; cv=none; b=s1V5Can8ASw0xOvpLRu6oVy5pXJF1S3NgO8jvmnwET347SB15NgZqkLEzEgr8FXfALYjF533w3JP3sCcWg3inZKU6us3yGCYCmAZ0PmVhdUzKmJQxfiY3cPp51sx9m7ni2VanZGEMTPUZkyo5M57WXcr2+hR5SkJN3AqMsfXbLE=
+	t=1731975165; cv=none; b=ahM3vK0NhHrdJuoVETtg2HmArRDaF/v96qYFiOy1LKCYXVOlGxtzgotlTVHkemBtwmQTg/xd3roVmPvtL/gAxYYLvWBLMf4uXf2nT1Xwig44/Sq4+YllwyWHW0ixZdJlJn1erMOjlHPAILkTifYLTNdBBZ1sbPabNcmpFhehILo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731975063; c=relaxed/simple;
-	bh=A0Ap+tCZPda+zWvq3LT3lAWaJyJgNMoZc7tW/G691sY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZcB3ExZftVJaHUnSHx+jmxXYcembklgZVVwpzl5qE3elWzi3apMHb6XvP3MQOFAu9NbPYWAnKEhTxbKAOPUMh0rKNnCYb5DyNRDtaivLEsFw1dDFJeOVKzKFwAW0qJhyoj+OQpay6vFZ8ybYITXUPZZ/hvN5V8hZka1dn9CLDsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yjepgakh; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-431548bd1b4so22345495e9.3;
-        Mon, 18 Nov 2024 16:11:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731975060; x=1732579860; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=A0Ap+tCZPda+zWvq3LT3lAWaJyJgNMoZc7tW/G691sY=;
-        b=Yjepgakh+KmMbwuwQYtXE3q7MMM98AcaavdVH1OBm/LcQqaRfl73El22AOrKhdnFgK
-         /bMD4s2G1XCkrB0BnpCSABJsv7MaFHpw93RXM3s3B5gJlYc3BOrCWKnhf9xsu/uQEMVV
-         jkEw7U4GpRd4DT0BBYXmKbLGgCdodKOE35tyfrFV9YWsIyfz487+9XszaBEwPXGtm6kk
-         WvF/JFOZrZxo0QD/OeIBygjpInnfevCP76pczExNZuxZxyXif4qBzVyx61ILmM5SIvvG
-         adGimucUx095tceOXBOtsK1NM7kTn8zKXywc9mwC8iXF/vlCFdUYx4nm5muaYuO7Pxa5
-         rxeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731975060; x=1732579860;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=A0Ap+tCZPda+zWvq3LT3lAWaJyJgNMoZc7tW/G691sY=;
-        b=RT6uTcYOC7qlKJw8R9KLLb0Q5waawQwPuD51fLoZGtPPN62O7/xLpalUFjgVtEFwFh
-         Tuhkc9FP4p2i7jq8vFiTYOA3Tddu9TAOWgcmzkAdbW7V7SpPxQYQKjkqYo+iJAvIoOwI
-         suXPSR26JqzjusciEo4EPOHxGIrxkn0j54LZV96er0RLbKkJqJ3StUjKTQYJYPljEWYb
-         Yiqqhjap56vj2Q09b9ZPvH/2VIaOUzJSCN8+z7mjSv5unfbEl3TxTHBCaGCwy44MdsGL
-         imcX1Q51Y7Cgwqzp7H7xMJj6gIM/9vKomMY46n/yrbb83zeAiAGEFvjYZgje3PMvkA4z
-         tEyA==
-X-Forwarded-Encrypted: i=1; AJvYcCUS01atyBuS25m80H6QcHoN6qNybWitp2NQdhierPJKDdqqqMjiJ4zbjHxHG3R8MM+GAxFk8OS2tf5uIim2@vger.kernel.org, AJvYcCV2H9I/Le02Q58EdE6ZRQHj34DevjvWwOuLJsd0AQG0YBPR7gRDWspA2vq93wsoB+KCRFen/5ffjwW4zDAWQCgziLzOQiDX@vger.kernel.org, AJvYcCVeMKhkc2DmFF+SkK82v0fRbYtNL4VKckzYILWt+it0mfCn4ztj5tYGsJifhzISMM/BqJM=@vger.kernel.org, AJvYcCWsIROZe5XHMCcqQd1KyAAhZKXJlkXqh1gs4VmJvHK+BJh2SGWqwWdhS27t7I2t0K2KtjTl+b6NeUdDgdMzyA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/Yigvyh+I3fVxQwopI8kfXFbGIWeRCbnoVsf9mYJjXnBeMjZt
-	Z/PbWyLkjRzoezw6WWya+iM2VR8nX5Ac/WCPIGdPVBHAJ6ZFGjbF0FlYpB1TZdt3pJnJnaM9wMD
-	PUW+seoQ23wNhrdb8UwqflLgbIQ8=
-X-Google-Smtp-Source: AGHT+IFbKcAGeX9oW64nBsmy9scvBQQTJAqWNC31VE6QpX+sDVYU8zY8RFHlGMnLhwshWBMEpIEUlBFKw7tTwUJwZzo=
-X-Received: by 2002:a05:6000:71d:b0:37d:45de:9dfb with SMTP id
- ffacd0b85a97d-38225acd2e4mr10716132f8f.46.1731975059636; Mon, 18 Nov 2024
- 16:10:59 -0800 (PST)
+	s=arc-20240116; t=1731975165; c=relaxed/simple;
+	bh=DGHPR51uRHUPukb2rIe3ofMbIuCZTjfafAGw9yjHnVU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gjmlmkLzXBg8Z/6gX8Kazj9dWZbTzH07rWv4j3I25q3letDFIfSdCGJhfVvpy5XNKT0BE5Nxmy6spNXSsBwQdSgdIC6K/Tl5X0upBgMUpYxSiRsXqoTJWAwCdSTYOrHiDVq2MprFTDtr3eLqG8nBuq0LUqcgmw1KxGkaJeFimKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=en+BIKAF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44E3FC4CECC;
+	Tue, 19 Nov 2024 00:12:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731975164;
+	bh=DGHPR51uRHUPukb2rIe3ofMbIuCZTjfafAGw9yjHnVU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=en+BIKAF8n7fR0snuOjMQUX4q4c/2kQqy1qCHU00WxCejJIG3MR+0K4GgpW3T0nuG
+	 AO6vYyglaok8B0PMRDvkdU91D+It4CNlf92R+naXukCGZS9njHKWrPcTISI1aUjYnX
+	 S4wJ9WEkoGfdvEJYJVyxfzPDfJfkPFc5fBZSv4kCsSkAIXsHwxeePvz7iMn11PM2Gb
+	 s4t6Ihkj9rtQTL2KgTLX9tpCpfGzBiHWpSdF3A1CRGZLKDiwxs1t3TK8vFbm4jmO0B
+	 2EzL118tY1ucdfQJaBoC+Yl1C2mnjpDRZLWtohEuIXints0HzCF7fg8IEkS9ByPsCw
+	 8OdEMvoCdQPgg==
+Date: Mon, 18 Nov 2024 16:12:43 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Dmitry Safonov <0x7f454c46@gmail.com>
+Cc: Dmitry Safonov via B4 Relay <devnull+0x7f454c46.gmail.com@kernel.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
+ <horms@kernel.org>, David Ahern <dsahern@kernel.org>, Ivan Delalande
+ <colona@arista.com>, Matthieu Baerts <matttbe@kernel.org>, Mat Martineau
+ <martineau@kernel.org>, Geliang Tang <geliang@kernel.org>, John Fastabend
+ <john.fastabend@gmail.com>, Davide Caratti <dcaratti@redhat.com>, Kuniyuki
+ Iwashima <kuniyu@amazon.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, mptcp@lists.linux.dev, Johannes Berg
+ <johannes@sipsolutions.net>
+Subject: Re: [PATCH net v2 0/5] Make TCP-MD5-diag slightly less broken
+Message-ID: <20241118161243.21dd9bc0@kernel.org>
+In-Reply-To: <CAJwJo6YdAEj1GscO-DQ2hAHeS3cvqU_xev3TKbpLSqf-EqiMiQ@mail.gmail.com>
+References: <20241113-tcp-md5-diag-prep-v2-0-00a2a7feb1fa@gmail.com>
+	<20241115160816.09df40eb@kernel.org>
+	<CAJwJo6ax-Ltpa2xY7J7VxjDkUq_5NJqYx_g+yNn9yfrNHfWeYA@mail.gmail.com>
+	<20241115175838.4dec771a@kernel.org>
+	<CAJwJo6YdAEj1GscO-DQ2hAHeS3cvqU_xev3TKbpLSqf-EqiMiQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241114084345.1564165-1-song@kernel.org> <20241114084345.1564165-8-song@kernel.org>
- <CAADnVQK6YyPUzQoPKkXptLHoHXJZ50A8vNPfpDAk8Jc3Z6+iRw@mail.gmail.com>
- <E5457BFD-F7B9-4077-9EAC-168DA5C271E4@fb.com> <CAADnVQJ1um9u4cBpAEw83CS8xZJN=iP8WXdG0Ops5oTP-_NDFg@mail.gmail.com>
- <DCE25AB7-E337-4E11-9D57-2880F822BF33@fb.com> <CAADnVQ+bRO+UakzouzR5OfmvJAcyOs7VqCJKiLsjnfW1xkPZOg@mail.gmail.com>
- <C7C15985-2560-4D52-ADF9-C7680AF10E90@fb.com> <CAADnVQK2mhS0RLN7fEpn=zuLMT0D=QFMuibLAvc42Td0eU=eaQ@mail.gmail.com>
- <968F7C58-691D-4636-AA91-D0EA999EE3FD@fb.com> <B3CE1128-B988-46FE-AC3B-C024C8C987CA@fb.com>
-In-Reply-To: <B3CE1128-B988-46FE-AC3B-C024C8C987CA@fb.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Mon, 18 Nov 2024 16:10:48 -0800
-Message-ID: <CAADnVQJtW=WBOmxXjfL2sWsHafHJjYh4NCWXT5Gnxk99AqBfBw@mail.gmail.com>
-Subject: Re: [RFC/PATCH v2 bpf-next fanotify 7/7] selftests/bpf: Add test for
- BPF based fanotify fastpath handler
-To: Song Liu <songliubraving@meta.com>
-Cc: Song Liu <song@kernel.org>, bpf <bpf@vger.kernel.org>, 
-	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	LSM List <linux-security-module@vger.kernel.org>, Kernel Team <kernel-team@meta.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, Eddy Z <eddyz87@gmail.com>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, KP Singh <kpsingh@kernel.org>, 
-	Matt Bobrowski <mattbobrowski@google.com>, Amir Goldstein <amir73il@gmail.com>, 
-	"repnop@google.com" <repnop@google.com>, Jeff Layton <jlayton@kernel.org>, 
-	Josef Bacik <josef@toxicpanda.com>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	"gnoack@google.com" <gnoack@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Nov 18, 2024 at 12:51=E2=80=AFPM Song Liu <songliubraving@meta.com>=
- wrote:
->
->
->
-> > On Nov 15, 2024, at 1:05=E2=80=AFPM, Song Liu <songliubraving@meta.com>=
- wrote:
->
-> [...]
+On Sat, 16 Nov 2024 03:52:47 +0000 Dmitry Safonov wrote:
+> On Sat, 16 Nov 2024 at 01:58, Jakub Kicinski <kuba@kernel.org> wrote:
+> > On Sat, 16 Nov 2024 00:48:17 +0000 Dmitry Safonov wrote:  
+> > > Yeah, I'm not sure. I thought of keeping it simple and just marking
+> > > the nlmsg "inconsistent". This is arguably a change of meaning for
+> > > NLM_F_DUMP_INTR because previously, it meant that the multi-message
+> > > dump became inconsistent between recvmsg() calls. And now, it is also
+> > > utilized in the "do" version if it raced with the socket setsockopts()
+> > > in another thread.  
 > >
-> >>
-> >> fsnotify_open_perm->fsnotify->send_to_group->fanotify_handle_event.
-> >>
-> >> is a pretty long path to call bpf prog and
-> >> preparing a giant 'struct fanotify_fastpath_event'
-> >> is not going to fast either.
-> >>
-> >> If we want to accelerate that with bpf it needs to be done
-> >> sooner with negligible overhead.
-> >
-> > Agreed. This is actually something I have been thinking
-> > since the beginning of this work: Shall it be fanotify-bpf
-> > or fsnotify-bpf. Given we have more materials, this is a
-> > good time to have broader discussions on this.
-> >
-> > @all, please chime in whether we should redo this as
-> > fsnotify-bpf. AFAICT:
-> >
-> > Pros of fanotify-bpf:
-> > - There is existing user space that we can leverage/reuse.
-> >
-> > Pros of fsnotify-bpf:
-> > - Faster fast path.
-> >
-> > Another major pros/cons did I miss?
->
-> Adding more thoughts on this: I think it makes more sense to
-> go with fanotify-bpf. This is because one of the benefits of
-> fsnotify/fanotify over LSM solutions is the built-in event
-> filtering of events. While this call chain is a bit long:
->
-> fsnotify_open_perm->fsnotify->send_to_group->fanotify_handle_event.
->
-> There are built-in filtering in fsnotify() and
-> send_to_group(), so logics in the call chain are useful.
+> > NLM_F_DUMP_INTR is an interesting idea, but exactly as you say NLM_F_DUMP_INTR
+> > was a workaround for consistency of the dump as a whole. Single message
+> > we can re-generate quite easily in the kernel, so forcing the user to
+> > handle INTR and retry seems unnecessarily cruel ;)  
+> 
+> Kind of agree. But then, it seems to be quite rare. Even on a
+> purposely created selftest it fires not each time (maybe I'm not
+> skilful enough). Yet somewhat sceptical about a re-try in the kernel:
+> the need for it is caused by another thread manipulating keys, so we
+> may need another re-try after the first re-try... So, then we would
+> have to introduce a limit on retries :D
 
-fsnotify_marks based filtering happens in fsnotify.
-No need to do more indirect calls to get to fanotify.
+Wouldn't be the first time ;)
+But I'd just retry once with a "very large" buffer.
 
-I would add the bpf struct_ops hook right before send_to_group
-or inside of it.
-Not sure whether fsnotify_group concept should be reused
-or avoided.
-Per inode mark/mask filter should stay.
+> Hmm, what do you think about a kind of middle-ground/compromise
+> solution: keeping this NLM_F_DUMP_INTR flag and logic, but making it
+> hardly ever/never happen by purposely allocating larger skb. I don't
+> want to set some value in stone as one day it might become not enough
+> for all different socket infos, but maybe just add 4kB more to the
+> initial allocation? So, for it to reproduce, another thread would have
+> to add 4kB/sizeof(tcp_diag_md5sig) = 4kB/100 ~= 40 MD5 keys on the
+> socket between this thread's skb allocation and filling of the info
+> array. I'd call it "attempting to be nice to a user, but not at their
+> busylooping expense".
 
-> struct fanotify_fastpath_event is indeed big. But I think
-> we need to pass these information to the fastpath handler
-> either way.
+The size of the retry buffer should be larger than any valid size.
+We can add a warning if calculated size >= 32kB.
+If we support an inf number of md5 keys we need to cap it.
 
-Disagree.
-That was the old way of hooking bpf bits in.
-uapi/bpf.h is full of such "context" structs.
-xpd_md, bpf_tcp_sock, etc.
-They pack fields into one struct only because
-old style bpf has one input argument: ctx.
-struct_ops doesn't have this limitation.
-Pass things like path/dentry/inode/whatever pointers directly.
-No need to pack into fanotify_fastpath_event.
+Eric is back later this week, perhaps we should wait for his advice.
 
-> Overall, I think current fastpath design makes sense,
-> though there are things we need to fix (as Amir and Alexei
-> pointed out). Please let me know comments and suggestions
-> on this.
+> > Right, the table based parsing doesn't work well with multi-attr,
+> > but other table formats aren't fundamentally better. Or at least
+> > I never came up with a good way of solving this. And the multi-attr
+> > at least doesn't suffer from the u16 problem.  
+> 
+> Yeah, also an array of structs that makes it impossible to extend such
+> an ABI with new members.
+> 
+> And with regards to u16, I was thinking of this diff for net-next, but
+> was not sure if it's worth it:
+> 
+> diff --git a/lib/nlattr.c b/lib/nlattr.c
+> index be9c576b6e2d..01c5a49ffa34 100644
+> --- a/lib/nlattr.c
+> +++ b/lib/nlattr.c
+> @@ -903,6 +903,9 @@ struct nlattr *__nla_reserve(struct sk_buff *skb,
+> int attrtype, int attrlen)
+>  {
+>   struct nlattr *nla;
+> 
+> + DEBUG_NET_WARN_ONCE(attrlen >= U16_MAX,
+> +     "requested nlattr::nla_len %d >= U16_MAX", attrlen);
+> +
+>   nla = skb_put(skb, nla_total_size(attrlen));
+>   nla->nla_type = attrtype;
+>   nla->nla_len = nla_attr_size(attrlen);
 
-On one side you're arguing that extra indirection for
-inode local storage due to inode->i_secruity is needed
-for performance,
-but on the other side you're not worried about the deep
-call stack of fsnotify->fanotify and argument packing
-which add way more overhead than i_security hop.
+I'm slightly worried that this can be triggered already from user
+space, but we can try DEBUG_NET_* and see. Here and in nla_nest_end().
 
