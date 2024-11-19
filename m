@@ -1,177 +1,391 @@
-Return-Path: <linux-kernel+bounces-414780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DF4D9D2D6C
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 19:01:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65CF99D2D56
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 18:59:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C526CB3BD76
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 17:57:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE4A21F24F08
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 17:59:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 253F91D3560;
-	Tue, 19 Nov 2024 17:56:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9CF71D7E21;
+	Tue, 19 Nov 2024 17:56:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Wq+cppgM"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2047.outbound.protection.outlook.com [40.107.223.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RT06i5g1"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 003241D26F5;
-	Tue, 19 Nov 2024 17:56:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732039009; cv=fail; b=jVE2Z1FtLOdhG7hKOHKdicn+eVUr1ZJF6a3addi2gXevQLzmWZ9X0gpkKO3oIyXI7I9u+pwobpzDQmSX5+cdqqT82FuguIQKdmZdm4ldMX8ckQeoOWT5jsb/ZrqMiwMs1fXZpJajuCXRc5oVRnVqpe+YAyqjhGAR9qO6IbjUldo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732039009; c=relaxed/simple;
-	bh=dYxhXSxXdHc4LEY91uduQVBbyEsXu9ke475u6AbUPpM=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=ajql6B3t2Z+O+ZjYsbwdIdqnE/W/swTv0BH+FftnkB+o5y3lSXLBFGjSi0ZKLOVXdDgP0bx0fivB2w1dLr6ZdSvlRITSiay6GMfbw6lcT2kb4WSIMVUS9XtlQlKK3T638Ii2VhmOS1bLJUTF5aDT7CJcsH/oDuPEk4BDOgJlKxI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Wq+cppgM; arc=fail smtp.client-ip=40.107.223.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=xivsA8Mc0p3lMRUUiBJS7PgfLjbNo+V/ZC+vJXIqadJIrILZP3zg8hR+jCQvSjZTNY2NqIFXHQ05/THnlL1DuiHJKyQ8mBneJ0PoO+OAPgqbIBmatL8FyeunAJckef6es47ocuj5BAPmAqPo/7PEG+1DstOIaOouI5wg3F5Ve3QDMVBJ9Ne9fc7oBkjWLtT4Eg7dZfU18SXF2EjrLFEZ6JTZEy6NcZBFNHuohPH3kw3ruPEFNtc3RnElwf6Aj2SIC5EtaEeVxT7Il8SDVDkt6GCLjU9Rj66f0LCmVOWrfNdKeLMwiMaNzMoRgBJE143v0DLnwxN3mJcTRA3mUvgxXw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dYxhXSxXdHc4LEY91uduQVBbyEsXu9ke475u6AbUPpM=;
- b=MfkWC+vQcFhMa32KV7wNXpYfdcEKV2XW/j5sCpCjXT2Oir6pUyUxo2zMJHTt+JIjwPTvH3UnGDKVAelRuPLJkLJeeTGP0XPL+xX/ooK5M23QaFA+xzGTR6gZbeAXIHW1bC4DnN2F+J3FtWtNcwNtOyv/xE/ykPsPGh+iOpFViz7pS3VwLoNL3mZ320Lz0p/r2pa0VXgxtaH8XI52Cfxw6kJTiFIF01ou/z8d6vpr1JluSVzw/GuP3e2NhehGNwsxzn73GO3afKddup5+FcrdnhFD06BwvVY+LKJnq1cx4oc0dXH/M9MYjBbK4xPu2I41W/yEReOgFfFCuznk5v6F4A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dYxhXSxXdHc4LEY91uduQVBbyEsXu9ke475u6AbUPpM=;
- b=Wq+cppgMqZfWyEUCku4QZdGePT1EBDNGYYWLPLsJAr6Zx+ugTXHxNq3wrJJqog/6+YQo+xsLzpUGbXYq6ir+Q3blg5N92T46o9QWZPu2GnNzRN0/UemypmGnRGm0pHXunpzIUKnRShrEpp4jaViVMb69xtgJ4wURccEGab7hzd3Q290UcsJNtVqC1hHXTlvU64ebahGunvvHgq+jZDZJ0Ga/89Gi5MxjQwER7efYXPUORhYndgjBKHFYDvUQLIxMP3taKpWcbLl9oq/4AFUjIC4KF9MtsG3NkEJvwSuzB7ZRakvTPrHmvIJRu0XQ+dwR2cDGY0SxKCSCSNgbizk4Ww==
-Received: from BN9PR12MB5196.namprd12.prod.outlook.com (2603:10b6:408:11d::17)
- by PH7PR12MB6696.namprd12.prod.outlook.com (2603:10b6:510:1b3::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.23; Tue, 19 Nov
- 2024 17:56:40 +0000
-Received: from BN9PR12MB5196.namprd12.prod.outlook.com
- ([fe80::6a:6f30:3c6c:43a8]) by BN9PR12MB5196.namprd12.prod.outlook.com
- ([fe80::6a:6f30:3c6c:43a8%6]) with mapi id 15.20.8158.017; Tue, 19 Nov 2024
- 17:56:40 +0000
-From: Chris Babroski <cbabroski@nvidia.com>
-To: Andi Shyti <andi.shyti@kernel.org>
-CC: Khalil Blaiech <kblaiech@nvidia.com>, Asmaa Mnebhi <asmaa@nvidia.com>,
-	David Thompson <davthompson@nvidia.com>, "linux-i2c@vger.kernel.org"
-	<linux-i2c@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1] i2c-mlxbf: Add repeated start condition support
-Thread-Topic: [PATCH v1] i2c-mlxbf: Add repeated start condition support
-Thread-Index: AQHbOfAkVdP6S2B8kUKAddOBk1HLqbK+nssAgABCmAo=
-Date: Tue, 19 Nov 2024 17:56:40 +0000
-Message-ID:
- <BN9PR12MB5196995C8060A427C8174E33C6202@BN9PR12MB5196.namprd12.prod.outlook.com>
-References: <20241118192833.346064-1-cbabroski@nvidia.com>
- <ji23yczfp75vtu7sp7pots66lr63mxbtkxea27lvc5id5tmfk3@pltlopcoz55c>
-In-Reply-To: <ji23yczfp75vtu7sp7pots66lr63mxbtkxea27lvc5id5tmfk3@pltlopcoz55c>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BN9PR12MB5196:EE_|PH7PR12MB6696:EE_
-x-ms-office365-filtering-correlation-id: 78580808-7146-4a20-f9cb-08dd08c3856b
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|376014|1800799024|366016|38070700018;
-x-microsoft-antispam-message-info:
- =?iso-8859-1?Q?AHgMNPxAxpjh5+r4dG5QmFDBMCFNv2Wbac6NfXnSYfwHOXac9LPYqLz2bj?=
- =?iso-8859-1?Q?R/KNQl0gq+fSZusm5uCYfeTTcH2hhCDBfgqOj1nVX8a7S1+1QrLA7mt7je?=
- =?iso-8859-1?Q?qqNOy1DnceD1hZIZz0LJxEMTfhCsyKiIpz6G5IVTWbwwXaJs445TLtVuMV?=
- =?iso-8859-1?Q?+gUg9aTasxGicC1TBJzFANeTQtO322Nj8ayGYVeQ0Td1U5C7tVHdAbEnsx?=
- =?iso-8859-1?Q?GzU0K+JcpAwx/cIaFAFtqefxHl/gjbL+pXNlEJj2CqTimL+ywMemlCUvoP?=
- =?iso-8859-1?Q?svDHXaEgFBMCSLnWnUnV3yR+PMbjMPWhomnTFdzI2L25lExv4u4CVrOWII?=
- =?iso-8859-1?Q?9V/LuWNF21kcOV0j6ukihCVqpARUSCgubTGJchoq0Hq6fRTFUWBm5Ad7lW?=
- =?iso-8859-1?Q?ZYHULm5ooGGl4IYPvzTKpT3Xs9IfIqdgLZTWdq6ClGFjvfTGKUhMlt84sW?=
- =?iso-8859-1?Q?viu7bv/UddtfiyctZDKfOPdOaGq0qzcCOi6a6xMgsuYIvSDr5ExVntI3GR?=
- =?iso-8859-1?Q?Mc3CXQAjArcwvKvg6uzSW80FVNFn8uySwVTGL6JvE9DEexZDo8ILLcdqjT?=
- =?iso-8859-1?Q?bWzfDnKriaQmI/mJZ0SD9kEObeYN4Z4gLd2Q6+ZBZM5tciyGkITlEe4Zgw?=
- =?iso-8859-1?Q?J2Hxv7SY5TpQn7NDBYhL+UkBOsBKDsQACDjnjJRhD2/S+l4bUFw1zq90Xc?=
- =?iso-8859-1?Q?2BvKh/Epk48cOd47iz7LadHFNONuKZx0T10LYyBwIDkdyVHVu1ts/PeoUN?=
- =?iso-8859-1?Q?WXPE4p/YC82w11olI1g+TR05yKJKylir8K/zqZc/c2Q31XrQ3uS8R++DGz?=
- =?iso-8859-1?Q?phAFXM3TkzTrou198xdsDepNQ3Tq2gJfA986OUUoIDs0kAVRMPpRO/g2/F?=
- =?iso-8859-1?Q?jwC7NjUz8jriQLBEQM/dj7s7FsYcsbzbQyEGJUa2+pBOLuQUDcDo0WuxCp?=
- =?iso-8859-1?Q?elgPa1MVz6pdFfsqPkoiQ5g5rfYald8Kj9l25wDcRd/Vi5E8qxebgkV7Io?=
- =?iso-8859-1?Q?zHXpLCQMJ3uk1FzxEEiCwCsly/3Z39tm7H7sxvqPH+eU1yrxRGYh7yQkT5?=
- =?iso-8859-1?Q?uhyX4/C2NA7ArmfiYeGGbkUbT4lyUJaO7RSfbz1ASEqRC5frhZ9m5uSzYR?=
- =?iso-8859-1?Q?0XAw9nlDkTpGh1akAsXwgujO31Dyqx61FtL4USalg3B0VKJ304JMB3mtwi?=
- =?iso-8859-1?Q?26Yo5+Kl4DZ5TCooggPEG508ORIzoKY0n2SHlhJpK3L/Jt+GjYyJpHaimX?=
- =?iso-8859-1?Q?sX/k6JGPwrGvHlzcNDdy/jGp98QwyXp3vcBLxtYa/qU3rrzv3Tv9Gj5u+e?=
- =?iso-8859-1?Q?920VoCPao7hs+qVRXaXjD8D5AUJP2s8ZcAiWYRzikgXofVy1cc2DjrQ6m4?=
- =?iso-8859-1?Q?lNj2PBXFsHt4+3yVP7o2Bli56Q5mspi9EUDlGgMPtJVCJOLkvDhsc=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR12MB5196.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-1?Q?yA6I19ktRwqbA3GDu57E7mxOBy1vOaZg8ctwPgraYhoim2y46V0CAgu+yL?=
- =?iso-8859-1?Q?XoOB4L0gaAdBbdne963OfKkIVMmtmCGfbsbZxiM56bANYwV8wntFTASw58?=
- =?iso-8859-1?Q?+iG01AoYHQ4r+C7bpY43fKD6T9TBum8jZEuo83aZIimdMxz2d1IRErhQQK?=
- =?iso-8859-1?Q?a1Y87H2MSuU6A7jwRcEzMYCodo41Ls0QHmUOnVjihqbCPvz0eYaBzvzX/L?=
- =?iso-8859-1?Q?v6kDbVsuN8aUcr6+0B5DDI0koe1L84NR+pb6zAjxMKBNKmJD2Qow8VjfJi?=
- =?iso-8859-1?Q?AUfXEqfJI98RBk8FpURI59stjJHoKMkb1V+8fYpIFbujg9JOqC67+RLZM6?=
- =?iso-8859-1?Q?4JmfWDiPyhazwMNxAXpC9XTrK+ZPWLgnZuHdzNBTMph78uv00DTJSEksue?=
- =?iso-8859-1?Q?/clK4qkCkT1RrV1VysZjbzrN8ygnWlDBi3h6w9E9TaElm694YQOaXdCyGh?=
- =?iso-8859-1?Q?OcKuoYOLO/GmibsACp8yDqWqaRu594/np9ve3GTT0v+HRbXC9h70UQmIt4?=
- =?iso-8859-1?Q?RF0hSXnOwoBYf+YfvKd/12W75x77LmOQnGe4RCWr8m0tQ5a/Pa7t98B5KR?=
- =?iso-8859-1?Q?Hfsc62d3AZ+0XdI2tOiamab92Mx8SrSkS3vN6xG1QyMjUR2Pfn2PtlXDP8?=
- =?iso-8859-1?Q?VomQIom+rrD/NL3vUmdyjRTzqHqmcp6cLK/oXTsQ83fXCURsVab6V6ywFt?=
- =?iso-8859-1?Q?WHR25IIj6MV5w9oaq6lXboFDFkA69mMSTSxhZ7aSL9HVlQ5+djBvJDaNhN?=
- =?iso-8859-1?Q?NOnce0gYmOtbKDqJ5BTDS6oLU+mA4cGHWpMMOli/euRrBhCxaUpw+pAJHA?=
- =?iso-8859-1?Q?tjauFs9MWnOL01YWkeQYB7wQhFKBoRVvzGVYP2kvGJcYedCCGw3Srb5ffL?=
- =?iso-8859-1?Q?G61hc3jydXCWbkF2aLKoTa4YiAM1++feTmWdHBWRj+clSX/m4gpMZfYcR5?=
- =?iso-8859-1?Q?QLAWDe+HiXTXTfSuTXkWeHR3lyZEBqZkSeXVTUyVwpBRcmJTM+sw/1L6tD?=
- =?iso-8859-1?Q?O25k2wle2A/P2aN3sQni+SiUb/2V/rmIEiTYcNpZIrjHUTtMQtRw1PN2uW?=
- =?iso-8859-1?Q?1Q5mKahlbbtiQ45CyGVatU0XOUKcJs0r2652j0w+ZF2K87vXyJhCPnKAIq?=
- =?iso-8859-1?Q?7V5MIaCa5HM7TJ8nnw6X02SUlrsbifXapAbOYm33OK23yqSgzjEUl0T/lM?=
- =?iso-8859-1?Q?tc20u3sfo5rV6Rx49skaOGisfbuh84Nv0lJ29/93bkWXvqTARUkVTLLPfq?=
- =?iso-8859-1?Q?CUl8SYMPahgtpkG7mMV+uyqm49bi44M4H7J05gmI5EJNYDowTC/Sp1u5qC?=
- =?iso-8859-1?Q?Y7EQ63buwaMf5tyoqyv0c9OMy976y3/yptzdI/eGE9NHtIU3GZtuA2vhjM?=
- =?iso-8859-1?Q?mHZAx7wC+OhUNLJpc+U6t4pl1OLJCLAqz3J0TTKEfOXXJeYutBGSwcxQ8n?=
- =?iso-8859-1?Q?6yHIuM2vO6vp3ECFy48BZgLgZjuhGTw4Ynp54r664NTRPzG5RJ3yuOP14/?=
- =?iso-8859-1?Q?ayySmyGfXWInIdhYa6KnmxYnqiIG7CfyVE7AafkkOUcQQzgg1MSqz+VbhK?=
- =?iso-8859-1?Q?d63g0CBhwm1sfuF3Zq47luvq0n6zNZyzqhvb+wckFldjcUzQeqm9bRXX00?=
- =?iso-8859-1?Q?Kk0fVQqU8guShAwzTM+fZSUav7kGX5eExS?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D60141D364C
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 17:56:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732039015; cv=none; b=utBXjMtBFLe6jGL/VzgNd7Fk/3+mcBO9ZJt8ccBbLrYKHFH+aMCwy7pkDaxD0DP/YYOk2BzxFUbYs6F3Qh5nNy6r4LAzslCYAVe6ICq2hR7y13gKzPfiiE/Hz1P6PWJaa87NubWB4XKFTqKzOkFzkThv1aIviz2A90DHkVSb6C8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732039015; c=relaxed/simple;
+	bh=HBRDsNw9Gt6y+bhLpW3yKrF6dqOXzdwZOiJPQuFbYDc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=uWqIxq8ggSSowUnHxGrJahtNJb0NPKX5KtO9bNb5POnnzFKxUK6rOnu6dd5CzONV360G7mHLVvO22KwQ9W+seHU5XXxlvq/WZj+mkDZO3cmSKwSPM1X8pw2PT6YOW8NdefLSoWng+eSw53Usr+aFo5SWKOfiufKSsyTqEMCVpM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RT06i5g1; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-381ee2e10dfso2125432f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 09:56:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732039011; x=1732643811; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mODA27TpHEFSjNHYuAShnzvbkOsJQWCOCgpBEnmiNV0=;
+        b=RT06i5g1tfhNIHtgYxBXHZENYinzqHw7t3YQJMeSfrdw4Klb/1czWsjdedFXLjw62l
+         rso889QLxCdwczviWVeRqpWt1+jv6LhNzaxYVyJ3mvWmnrp0vrAIN4wsa4I3l+N3RO7m
+         9w3Ig3XcVDvn15Ru8b95bJQz0q9tpeVFy1maAIjyMsixRjfgZ8MqdbZvfBd5JsgRisB2
+         KRTJ6mHMidRzl1Qh5dQFBPSxywUKEqWSsj3/o7Wz21SRdquB2ksXhsyK/Twy80NaPqg1
+         zo65Wfl/a1+9rNbfO81khGTQlaxHHhcNpI4rvj2Ic/lLJc4Fm6NkOGjA78kF6WfFAVXD
+         lV2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732039011; x=1732643811;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mODA27TpHEFSjNHYuAShnzvbkOsJQWCOCgpBEnmiNV0=;
+        b=q8BlexI2Fstp7nV2ymDsHFWkEsK5qQmgaIPg/Wbkn3CFYHfntZUgA6ICq/6p1ViKeH
+         ZEkNnXfdpM83kz76l4cCi6bt8fldx5AZWiR5ql8v90/QvGd4A90Q8xTsU0xH7rSEckTk
+         3oyW74p+aIAyv+GKS2Y8DgUQtNAIBvNQ8JS6xTtEnHvhmcwsO4PPcdrJ9Kd45LcO+A85
+         xnA9GOJcz4YfaF3QLweWL7kQgYN7GUNw9+CC0BtCvjS4vM8KUNEwFmFc7ayzwr2YTCua
+         DtrauBudOiLP7oLxzQakRdl0ocROx+EyDzRWSeUq8KGhBb+QESOA8C4EcMR1eBUr67Ic
+         B8Cg==
+X-Forwarded-Encrypted: i=1; AJvYcCVMNyToovmLB2iC3sXX32XzPnX88hLYBNCbjSwXn7W0ta53MruQ/x3RmUXygZkWSXXqpcbFspYXmEhogjo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqgVg8konlADe/5Ult2H+nrjJQEwCKbvC+G3LMTMj22LCv0+9o
+	VL7kxGYZjU9qp+CF4fJXZNO1tKrV/CpNeTKVlBpmKcmq+cPpSct+witb1qF0COqJ4tdfvhBxumA
+	U
+X-Google-Smtp-Source: AGHT+IEIh9guwWafoOVzdqcqMneTNzLlCikQcix1Okd/2UKoGGg8dRIr6nVL5DMBiKYUjsiH20i5VQ==
+X-Received: by 2002:a5d:6489:0:b0:382:4b5c:4199 with SMTP id ffacd0b85a97d-3824b5c443cmr4155056f8f.23.1732039011254;
+        Tue, 19 Nov 2024 09:56:51 -0800 (PST)
+Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432da27fe68sm208302275e9.24.2024.11.19.09.56.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Nov 2024 09:56:50 -0800 (PST)
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Date: Tue, 19 Nov 2024 18:56:40 +0100
+Subject: [PATCH v2 05/11] drm/msm: adreno: add plumbing to generate
+ bandwidth vote table for GMU
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BN9PR12MB5196.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 78580808-7146-4a20-f9cb-08dd08c3856b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Nov 2024 17:56:40.6390
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 1eYlT0qV7Qm0RsoYMx3Y9SzMXDWiX0G2uH9t4Eveoz1IHC1xP66BATMxs+hyvrKJ90p2Rv6DC389pTxaDKhsoA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6696
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241119-topic-sm8x50-gpu-bw-vote-v2-5-4deb87be2498@linaro.org>
+References: <20241119-topic-sm8x50-gpu-bw-vote-v2-0-4deb87be2498@linaro.org>
+In-Reply-To: <20241119-topic-sm8x50-gpu-bw-vote-v2-0-4deb87be2498@linaro.org>
+To: Akhil P Oommen <quic_akhilpo@quicinc.com>, 
+ Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, 
+ Stephen Boyd <sboyd@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
+ Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Connor Abbott <cwabbott0@gmail.com>, linux-pm@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+ devicetree@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=8513;
+ i=neil.armstrong@linaro.org; h=from:subject:message-id;
+ bh=HBRDsNw9Gt6y+bhLpW3yKrF6dqOXzdwZOiJPQuFbYDc=;
+ b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBnPNFZciGIWjU99nYrv3NSOQ4FRH3hxQiDaFs6246i
+ RlQfCXiJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZzzRWQAKCRB33NvayMhJ0XaXD/
+ 9sxJ6sLTAV3AQgvaxK3VtgOkK+SIdgj3aSi5wz27qL4RyV6y8qbCEQDyjmgugrb4QYpZjFjKGoMHgZ
+ YQuzel7XHdq1WQpRC08mWPYYIBqBbIBiRK6LxAJfxS+MpzMaXOv5eljv9M8OvC1eBO4fTpivZVdfBI
+ ckMBHf5ni7J/VHBtjiBMU9p8oTx6MjAlBAemWJ5+q0BJxRUrqsOcqNRxnZRR5gpBj6C9/4SpTMx2kd
+ NHxi14GAmYbOAxGEc8I1iN6v1tmuplGrOoohUd7ANZ2Dp1jYGB8/SKG5cvdTo6JoLZhsadzl/ySp6F
+ KrC0UVqEe+g2tle59g2P7UPPlVr+mHXvEROL8olESrRZuRkDRKoU/W01Aopj2nuaRBiAA0/U95TnZ0
+ SGxr8hJufYk7h4Z/IdRJwMk24t1126U9Vw5cQJRrJMWPqA+Y9XT+aVxCgBfPr/GpE3Q4YN/MKDRwTH
+ diwf21IVK9cJjkEY6Nu0Z4XcF0LL6cXiilJekN5OjXLdJ4iACvdu5OUAbkbW9rA+lSABkd904VlmbV
+ VNALPpQEHDOXe0sNN6Ih0aWXG0wtPCYSJQJbiabzo39J5LH+7sHwg3ATv2NlxcmNZgKF7GRufL9CPr
+ 3OgJ4F7mJPn/TG2j64jwiI7kN2QrkYKpPQFskVaySRgn9sSKHHecU1LLZ0cg==
+X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
+ fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
 
-Hi Andi,=0A=
-=0A=
-Apologies for any mistakes - it's my first time upstreaming.=0A=
-=0A=
-> Where did these reviews take place? How is it possible that this=0A=
-> patch, at its v1, already has two reviews?=0A=
-=0A=
-Asmaa and Khalil reviewed the code internally, but I will=0A=
-leave it to them to restate their reviews openly here instead.=0A=
-=0A=
-Moving forward we will exclude the Reviewed-by: tag=0A=
-for initial patch versions.=0A=
-=0A=
-Thanks,=0A=
-Chris=
+The Adreno GMU Management Unit (GMU) can also scale DDR Bandwidth along
+the Frequency and Power Domain level, but by default we leave the
+OPP core scale the interconnect ddr path.
+
+In order to calculate vote values used by the GPU Management
+Unit (GMU), we need to parse all the possible OPP Bandwidths and
+create a vote value to be sent to the appropriate Bus Control
+Modules (BCMs) declared in the GPU info struct.
+
+The vote array will then be used to dynamically generate the GMU
+bw_table sent during the GMU power-up.
+
+Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+---
+ drivers/gpu/drm/msm/adreno/a6xx_gmu.c | 153 ++++++++++++++++++++++++++++++++++
+ drivers/gpu/drm/msm/adreno/a6xx_gmu.h |  14 ++++
+ drivers/gpu/drm/msm/adreno/a6xx_gpu.h |   1 +
+ 3 files changed, 168 insertions(+)
+
+diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+index 14db7376c712d19446b38152e480bd5a1e0a5198..f6814d92a4edb29ba8a34a34aabb8b2324e9c6a4 100644
+--- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
++++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+@@ -9,6 +9,7 @@
+ #include <linux/pm_domain.h>
+ #include <linux/pm_opp.h>
+ #include <soc/qcom/cmd-db.h>
++#include <soc/qcom/tcs.h>
+ #include <drm/drm_gem.h>
+ 
+ #include "a6xx_gpu.h"
+@@ -1287,6 +1288,109 @@ static int a6xx_gmu_memory_probe(struct a6xx_gmu *gmu)
+ 	return 0;
+ }
+ 
++/**
++ * struct bcm_db - Auxiliary data pertaining to each Bus Clock Manager (BCM)
++ * @unit: divisor used to convert bytes/sec bw value to an RPMh msg
++ * @width: multiplier used to convert bytes/sec bw value to an RPMh msg
++ * @vcd: virtual clock domain that this bcm belongs to
++ * @reserved: reserved field
++ */
++struct bcm_db {
++	__le32 unit;
++	__le16 width;
++	u8 vcd;
++	u8 reserved;
++};
++
++static u64 bcm_div(u64 num, u32 base)
++{
++	/* Ensure that small votes aren't lost. */
++	if (num && num < base)
++		return 1;
++
++	do_div(num, base);
++
++	return num;
++}
++
++static int a6xx_gmu_rpmh_bw_votes_init(const struct a6xx_info *info,
++				       struct a6xx_gmu *gmu)
++{
++	const struct bcm_db *bcm_data[GMU_MAX_BCMS] = { 0 };
++	unsigned int bcm_index, bw_index;
++
++	/* Retrieve BCM data from cmd-db */
++	for (bcm_index = 0; bcm_index < GMU_MAX_BCMS; bcm_index++) {
++		size_t count;
++
++		/* Skip unconfigured BCM */
++		if (!info->bcm[bcm_index].name)
++			continue;
++
++		bcm_data[bcm_index] = cmd_db_read_aux_data(
++						info->bcm[bcm_index].name,
++						&count);
++		if (IS_ERR(bcm_data[bcm_index]))
++			return PTR_ERR(bcm_data[bcm_index]);
++
++		if (!count)
++			return -EINVAL;
++	}
++
++	/* Generate BCM votes values for each bandwidth & BCM */
++	for (bw_index = 0; bw_index < gmu->nr_gpu_bws; bw_index++) {
++		u32 *data = gmu->gpu_bw_votes[bw_index];
++		u32 bw = gmu->gpu_bw_table[bw_index];
++
++		/* Calculations loosely copied from bcm_aggregate() & tcs_cmd_gen() */
++		for (bcm_index = 0; bcm_index < GMU_MAX_BCMS; bcm_index++) {
++			bool commit = false;
++			u64 peak, vote;
++			u16 width;
++			u32 unit;
++
++			/* Skip unconfigured BCM */
++			if (!info->bcm[bcm_index].name || !bcm_data[bcm_index])
++				continue;
++
++			if (bcm_index == GMU_MAX_BCMS - 1 ||
++			    (bcm_data[bcm_index + 1] &&
++			     bcm_data[bcm_index]->vcd != bcm_data[bcm_index + 1]->vcd))
++				commit = true;
++
++			if (!bw) {
++				data[bcm_index] = BCM_TCS_CMD(commit, false, 0, 0);
++				continue;
++			}
++
++			if (info->bcm[bcm_index].fixed) {
++				u32 perfmode = 0;
++
++				if (bw >= info->bcm[bcm_index].perfmode_bw)
++					perfmode = info->bcm[bcm_index].perfmode;
++
++				data[bcm_index] = BCM_TCS_CMD(commit, true, 0, perfmode);
++				continue;
++			}
++
++			/* Multiply the bandwidth by the width of the connection */
++			width = le16_to_cpu(bcm_data[bcm_index]->width);
++			peak = bcm_div((u64)bw * width, info->bcm[bcm_index].buswidth);
++
++			/* Input bandwidth value is in KBps, scale the value to BCM unit */
++			unit = le32_to_cpu(bcm_data[bcm_index]->unit);
++			vote = bcm_div(peak * 1000ULL, unit);
++
++			if (vote > BCM_TCS_CMD_VOTE_MASK)
++				vote = BCM_TCS_CMD_VOTE_MASK;
++
++			data[bcm_index] = BCM_TCS_CMD(commit, true, vote, vote);
++		}
++	}
++
++	return 0;
++}
++
+ /* Return the 'arc-level' for the given frequency */
+ static unsigned int a6xx_gmu_get_arc_level(struct device *dev,
+ 					   unsigned long freq)
+@@ -1390,12 +1494,15 @@ static int a6xx_gmu_rpmh_arc_votes_init(struct device *dev, u32 *votes,
+  * The GMU votes with the RPMh for itself and on behalf of the GPU but we need
+  * to construct the list of votes on the CPU and send it over. Query the RPMh
+  * voltage levels and build the votes
++ * The GMU can also vote for DDR interconnects, use the OPP bandwidth entries
++ * and BCM parameters to build the votes.
+  */
+ 
+ static int a6xx_gmu_rpmh_votes_init(struct a6xx_gmu *gmu)
+ {
+ 	struct a6xx_gpu *a6xx_gpu = container_of(gmu, struct a6xx_gpu, gmu);
+ 	struct adreno_gpu *adreno_gpu = &a6xx_gpu->base;
++	const struct a6xx_info *info = adreno_gpu->info->a6xx;
+ 	struct msm_gpu *gpu = &adreno_gpu->base;
+ 	int ret;
+ 
+@@ -1407,6 +1514,10 @@ static int a6xx_gmu_rpmh_votes_init(struct a6xx_gmu *gmu)
+ 	ret |= a6xx_gmu_rpmh_arc_votes_init(gmu->dev, gmu->cx_arc_votes,
+ 		gmu->gmu_freqs, gmu->nr_gmu_freqs, "cx.lvl");
+ 
++	/* Build the interconnect votes */
++	if (adreno_gpu->info->features & ADRENO_FEAT_GMU_BW_VOTE)
++		ret |= a6xx_gmu_rpmh_bw_votes_init(info, gmu);
++
+ 	return ret;
+ }
+ 
+@@ -1442,6 +1553,38 @@ static int a6xx_gmu_build_freq_table(struct device *dev, unsigned long *freqs,
+ 	return index;
+ }
+ 
++static int a6xx_gmu_build_bw_table(struct device *dev, unsigned long *bandwidths,
++		u32 size)
++{
++	int count = dev_pm_opp_get_opp_count(dev);
++	struct dev_pm_opp *opp;
++	int i, index = 0;
++	unsigned int bandwidth = 1;
++
++	/*
++	 * The OPP table doesn't contain the "off" bandwidth level so we need to
++	 * add 1 to the table size to account for it
++	 */
++
++	if (WARN(count + 1 > size,
++		"The GMU bandwidth table is being truncated\n"))
++		count = size - 1;
++
++	/* Set the "off" bandwidth */
++	bandwidths[index++] = 0;
++
++	for (i = 0; i < count; i++) {
++		opp = dev_pm_opp_find_bw_ceil(dev, &bandwidth, 0);
++		if (IS_ERR(opp))
++			break;
++
++		dev_pm_opp_put(opp);
++		bandwidths[index++] = bandwidth++;
++	}
++
++	return index;
++}
++
+ static int a6xx_gmu_pwrlevels_probe(struct a6xx_gmu *gmu)
+ {
+ 	struct a6xx_gpu *a6xx_gpu = container_of(gmu, struct a6xx_gpu, gmu);
+@@ -1472,6 +1615,16 @@ static int a6xx_gmu_pwrlevels_probe(struct a6xx_gmu *gmu)
+ 
+ 	gmu->current_perf_index = gmu->nr_gpu_freqs - 1;
+ 
++	/*
++	 * The GMU also handles GPU Interconnect Votes so build a list
++	 * of DDR bandwidths from the GPU OPP table
++	 */
++	if (adreno_gpu->info->features & ADRENO_FEAT_GMU_BW_VOTE)
++		gmu->nr_gpu_bws = a6xx_gmu_build_bw_table(&gpu->pdev->dev,
++			gmu->gpu_bw_table, ARRAY_SIZE(gmu->gpu_bw_table));
++
++	gmu->current_perf_index = gmu->nr_gpu_freqs - 1;
++
+ 	/* Build the list of RPMh votes that we'll send to the GMU */
+ 	return a6xx_gmu_rpmh_votes_init(gmu);
+ }
+diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.h b/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
+index b4a79f88ccf45cfe651c86d2a9da39541c5772b3..03603eadc0f9ed866899c95e99f333a511ebc3c1 100644
+--- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
++++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
+@@ -19,6 +19,16 @@ struct a6xx_gmu_bo {
+ 	u64 iova;
+ };
+ 
++#define GMU_MAX_BCMS	3
++
++struct a6xx_bcm {
++	char *name;
++	unsigned int buswidth;
++	bool fixed;
++	unsigned int perfmode;
++	unsigned int perfmode_bw;
++};
++
+ /*
+  * These define the different GMU wake up options - these define how both the
+  * CPU and the GMU bring up the hardware
+@@ -82,6 +92,10 @@ struct a6xx_gmu {
+ 	unsigned long gpu_freqs[16];
+ 	u32 gx_arc_votes[16];
+ 
++	int nr_gpu_bws;
++	unsigned long gpu_bw_table[16];
++	u32 gpu_bw_votes[16][GMU_MAX_BCMS];
++
+ 	int nr_gmu_freqs;
+ 	unsigned long gmu_freqs[4];
+ 	u32 cx_arc_votes[4];
+diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.h b/drivers/gpu/drm/msm/adreno/a6xx_gpu.h
+index 4aceffb6aae89c781facc2a6e4a82b20b341b6cb..5b80919e595fa1ba0a3afcca55feb89e60870cb1 100644
+--- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.h
++++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.h
+@@ -44,6 +44,7 @@ struct a6xx_info {
+ 	u32 gmu_chipid;
+ 	u32 gmu_cgc_mode;
+ 	u32 prim_fifo_threshold;
++	const struct a6xx_bcm bcm[GMU_MAX_BCMS];
+ };
+ 
+ struct a6xx_gpu {
+
+-- 
+2.34.1
+
 
