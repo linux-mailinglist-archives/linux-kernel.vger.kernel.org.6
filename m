@@ -1,111 +1,135 @@
-Return-Path: <linux-kernel+bounces-414082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 744EA9D22C5
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 10:49:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DF4CD9D22C7
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 10:51:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B83A282A87
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 09:49:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A390A282815
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 09:51:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D4A81B6D16;
-	Tue, 19 Nov 2024 09:49:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A26E1B654E;
+	Tue, 19 Nov 2024 09:51:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="YWBcs+Kg"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="CoGMGeHw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D6BC154BF0
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 09:49:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB7DE14AD24;
+	Tue, 19 Nov 2024 09:51:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732009774; cv=none; b=OvbPpo2z/ZJgovluF6jdrk+IzymxIndMlI6z9i+4QXk3hJEAdnT1tOWgSRCYpYM5LwPUy+BkvVaTEl1nKLIR1iTABvEiqBifhWnL7EIo5y4S3SQuFXMGLrGBWEbRS0sNPdCPJ5V1fjPE5QMLUCab7KPzbFbdJH4aw3enaRYz2is=
+	t=1732009901; cv=none; b=qcUhQ/zM+p/mo0jMjFh8mdpZjAFg/difF7cX2aecT2FqQp2VqJb4P2JH48zHtBzV8hlypdH8U3ES/+kRIjR0sqsHgbWTqKtscUVdwjVbpA9qNPpN6oVzOrii766h2JRk8Cxfnd3kJpHiJTX+rw8rYG0LUN7TCb9ICO/p1hkir2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732009774; c=relaxed/simple;
-	bh=lgopZdd6v9xAoh9CPgG7G6P2Rctls1aMm/4WV1OQBlw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QjywVWSpzeyG1+lw26Rm633U7/KWdX9uAsWbLJusqhPZaarDsrOQglh9dXEoQ24hFuJnJHVtSu552/15K10cVVC2asTlBmRJlNBTVjS7IYTI9XzfFtOxoLKqulYNXGRAL0rymQIFsePioN/6FgvhGRCCP1cIc7jpaulpHIhB5Lk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=YWBcs+Kg; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5cfba4e0231so421998a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 01:49:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1732009771; x=1732614571; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eP6utXSspykskYzsNkWUBuQWYEnMFsie+2NCl6mM1/Q=;
-        b=YWBcs+KgbMhR9KMQpV0aa4OmziYY/0GS+F532ii6y7hRkUH3HPSkwGs9qzRPgo4Rep
-         nE44Lh1cbSL0/0GuBGtlifyiLRisJlSJ4eJU7WhNLOCobq+d4euMtYMinoS8fiL1Pjfj
-         VPVWuvGeokhOqD/EAZfiXvevvOochHA2hOMHOq0N+BjQ0CaxJ1FWC/3LK/0R8+/D+ZpX
-         KiyyrxJHwISIynv+6jAHrBm6V3L6L7KglW7Mskf1V5QldN3pN9z/tILI5BPx3pXyIjo/
-         T2l/JvoeySpPLiF+EFumuGnAq4aYIsXtlH3xGLmkxsqPMg7m8DFdm1SCxzBHysS5R9Wo
-         N4vQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732009771; x=1732614571;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eP6utXSspykskYzsNkWUBuQWYEnMFsie+2NCl6mM1/Q=;
-        b=JsEp6vrk8IFcqHFfBa7EIY3o2c1c8SOqK4i/ryoorgNVrnhGFIapiKPLITzeuSnwAt
-         44LE7X7T4j3AwvWfizJKTBaXdZkKrHiD0OsfIhV7eyXXQ9LaLI3QBoWtJY3yWqC4z1Ki
-         FUaVvO7biN9X43QgdScQiZgZ9Hkmz60fY91qCYc3T292j2I04PhBuRE6/3rB0k+nC/Pl
-         fqwKTeNOvlJBnQ8aiwSABHwesOXxVG0dc+/cS55MCKweZPbrhXTBs6lWBT+7r+HEDWFD
-         IHPctpy1Mg2rD0fdu3+NG2Ncfd81JzNH76vCWvl0mqZW0YlUlVckVyxa7RiB7p+hJsNd
-         WScw==
-X-Gm-Message-State: AOJu0YwPnT5HLJJyshGceGbLPnv118AqwE/SdCkAWwijdgjJO1tLB5Da
-	96O5rNCh1EzGeNDSZqtXuLEkszZ6T6su/UPSODX0eIUzCjdJW+DPmhAjM+Pm/IM=
-X-Gm-Gg: ASbGncstHMZG7io4ZnFz52XFg9zyHDwybqRTzRSGG8gjDQNXe9QmX5cdN9/znTgXhxB
-	TSldQe5uD3e4qHWEKaFMv7n4eXDJZ9fEppJP1oKYSpEfGFrGUgFYF1UyYwFhAiKYuWB8Pp07fVM
-	9mza3pgyelf2zxXkkPPHamXFneszFhXKXqoK4cOmf9mfA45h7CmQyLtp8J7vJ/UyrBe7NtGapV4
-	9XZrXbJT+72Tt8xtw3M7DZN8U0UtwVpJuVXYz1hVNzHQPgLdB//iLpC34wF1YAImOSbwZiis1E=
-X-Google-Smtp-Source: AGHT+IFwGycoY5tmfGgoWai1RPCDaLKxzMqxyguqzfyyT8M1bLxtmfQi8zo5SFAqATNoMeg5yALTxw==
-X-Received: by 2002:a05:6402:50ce:b0:5cf:7aad:bed2 with SMTP id 4fb4d7f45d1cf-5cf8fc4210cmr5229935a12.4.1732009770647;
-        Tue, 19 Nov 2024 01:49:30 -0800 (PST)
-Received: from lb02065.fkb.profitbricks.net ([2001:9e8:141f:2700:f5a7:4035:a697:97ab])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cfaa333720sm3306563a12.61.2024.11.19.01.49.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Nov 2024 01:49:30 -0800 (PST)
-From: Jack Wang <jinpu.wang@ionos.com>
-To: yukuai1@huaweicloud.com
-Cc: linux-kernel@vger.kernel.org,
-	linux-raid@vger.kernel.org,
-	song@kernel.org,
-	xni@redhat.com,
-	yangerkun@huawei.com,
-	yi.zhang@huawei.com,
-	yukuai3@huawei.com
-Subject: RE:  [PATCH md-6.13 4/5] md/raid5: implement pers->bitmap_sector() 
-Date: Tue, 19 Nov 2024 10:49:29 +0100
-Message-ID: <20241119094929.148060-1-jinpu.wang@ionos.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241118114157.355749-6-yukuai1@huaweicloud.com>
-References: <20241118114157.355749-6-yukuai1@huaweicloud.com>
+	s=arc-20240116; t=1732009901; c=relaxed/simple;
+	bh=9/3BDPNAhsyKcvB91n9a+b9ji+46sWZqifIksBsC69w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PaEuTIjKV2McksnY87c6CX7+742PAILIlK6h8bZF79RegQYhdpik1Cy/HxsILy3BeB7FsxQqjF1PBauBhYlknGR/Xy1P6MHsRKUT7DthrEJveiCuWZ6mskDWROeWc5icgfIMQD47nd6oFvIkDzY4KYnw2HMwAXDyCRJwTPnCtHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=CoGMGeHw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E3B1C4CECF;
+	Tue, 19 Nov 2024 09:51:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1732009901;
+	bh=9/3BDPNAhsyKcvB91n9a+b9ji+46sWZqifIksBsC69w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CoGMGeHwaeOsv114QewdXn3tskfPaTPPvsW8HM4aGw9RVAkr1d/zC1YxcoiqscjV0
+	 7yfHTKIcRyqVlR34pIObvbdt4Ta7RoZSrx/kzQG+3HbopqKr0JeFcNAzzJMxaY6/CK
+	 4DeI5m9lNMwz61GlYW2ktaKHe3Z5V4hPUKlkCbNI=
+Date: Tue, 19 Nov 2024 10:51:17 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Saravana Kannan <saravanak@google.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@ucw.cz>,
+	Len Brown <len.brown@intel.com>, Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Marek Vasut <marex@denx.de>, Bird@google.com,
+	Tim <Tim.Bird@sony.com>, kernel-team@android.com,
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 0/5] Optimize async device suspend/resume
+Message-ID: <2024111946-myth-graceful-7d70@gregkh>
+References: <20241114220921.2529905-1-saravanak@google.com>
+ <CAGETcx-NEjg5GwEMyz7C88ZhBrpFd55Md05Wez4kurvmdaWabQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGETcx-NEjg5GwEMyz7C88ZhBrpFd55Md05Wez4kurvmdaWabQ@mail.gmail.com>
 
-Hi Kuai,
+On Mon, Nov 18, 2024 at 08:04:26PM -0800, Saravana Kannan wrote:
+> On Thu, Nov 14, 2024 at 2:09 PM Saravana Kannan <saravanak@google.com> wrote:
+> >
+> > A lot of the details are in patch 4/5 and 5/5. The summary is that
+> > there's a lot of overhead and wasted work in how async device
+> > suspend/resume is handled today. I talked about this and otther
+> > suspend/resume issues at LPC 2024[1].
+> >
+> > You can remove a lot of the overhead by doing a breadth first queuing of
+> > async suspend/resumes. That's what this patch series does. I also
+> > noticed that during resume, because of EAS, we don't use the bigger CPUs
+> > as quickly. This was leading to a lot of scheduling latency and
+> > preemption of runnable threads and increasing the resume latency. So, we
+> > also disable EAS for that tiny period of resume where we know there'll
+> > be a lot of parallelism.
+> >
+> > On a Pixel 6, averaging over 100 suspend/resume cycles, this patch
+> > series yields significant improvements:
+> > +---------------------------+-----------+----------------+------------+-------+
+> > | Phase                     | Old full sync | Old full async | New full async |
+> > |                           |               |                | + EAS disabled |
+> > +---------------------------+-----------+----------------+------------+-------+
+> > | Total dpm_suspend*() time |        107 ms |          72 ms |          62 ms |
+> > +---------------------------+-----------+----------------+------------+-------+
+> > | Total dpm_resume*() time  |         75 ms |          90 ms |          61 ms |
+> > +---------------------------+-----------+----------------+------------+-------+
+> > | Sum                       |        182 ms |         162 ms |         123 ms |
+> > +---------------------------+-----------+----------------+------------+-------+
+> >
+> > There might be room for some more optimizations in the future, but I'm
+> > keep this patch series simple enough so that it's easier to review and
+> > check that it's not breaking anything. If this series lands and is
+> > stable and no bug reports for a few months, I can work on optimizing
+> > this a bit further.
+> >
+> > Thanks,
+> > Saravana
+> > P.S: Cc-ing some usual suspects you might be interested in testing this
+> > out.
+> >
+> > [1] - https://lpc.events/event/18/contributions/1845/
+> >
+> > Saravana Kannan (5):
+> >   PM: sleep: Fix runtime PM issue in dpm_resume()
+> >   PM: sleep: Remove unnecessary mutex lock when waiting on parent
+> >   PM: sleep: Add helper functions to loop through superior/subordinate
+> >     devs
+> >   PM: sleep: Do breadth first suspend/resume for async suspend/resume
+> >   PM: sleep: Spread out async kworker threads during dpm_resume*()
+> >     phases
+> >
+> >  drivers/base/power/main.c | 325 +++++++++++++++++++++++++++++---------
+> 
+> Hi Rafael/Greg,
+> 
+> I'm waiting for one of your reviews before I send out the next version.
 
-Thanks for the patchset, as you mentioned both both hung problem regarding raid5
-bitmap, just want to get confirmation, will this patchset fix the hung or just a
-performance improvement/code cleanup?
+Please feel free to send, it's the middle of the merge window now, and
+I'm busy with that for the next 2 weeks, so I can't do anything until
+after that.
 
+thanks,
 
-In patch4, as you removed the set/clear bit STRIPE_BITMAP_PENDING, I think you
-should also remove the test_bit line in stripe_can_batch, also the definition 
-enum in raif5.h and the few lines in comments in __add_stripe_bio, same for the
-line in break_stripe_batch_list.
-
-
-Regards!
-Jinpu Wang @ IONOS
-
+greg k-h
 
