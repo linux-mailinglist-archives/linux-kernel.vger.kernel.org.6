@@ -1,115 +1,180 @@
-Return-Path: <linux-kernel+bounces-414602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65DEF9D2AD1
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 17:24:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D68449D2ACC
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 17:24:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CA5C283A4B
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 16:24:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C44028372D
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 16:24:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E40571D0E27;
-	Tue, 19 Nov 2024 16:24:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A9941D0BBB;
+	Tue, 19 Nov 2024 16:23:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZdK/IrHm"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g6hmRTcs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0E0F1D0E28;
-	Tue, 19 Nov 2024 16:24:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E37B1CF7AE;
+	Tue, 19 Nov 2024 16:23:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732033465; cv=none; b=YExf25QW74SBkit3azy8/h27NGIcllOEYYkultBNDeRASXyjfsDshqaW8jUMb1R0xKMhZnT8Gezhk8+49pHga2zpujLIAGBvq5whD1JQ2wR1YZqJfVJY14rEsQiG+s0SWRzeHc65sRYMYimNjnHzwTcxD6H3gPANqqKEIOsQwqw=
+	t=1732033436; cv=none; b=S1H7hiPdAHzzINIyklW+sjjFwul2w/dHXqp9FKwM3JzIUBC6m//aSsf0zDSx6kHs5j8qliyxTTDuK/GPKFZJU31PsZqDTrMqCWhBALex2l5tlcrwnxJK2fsotsmtUtaJbtjks3qfPV/B+2Knjojfoogt/8bUDvJaiZYFsb29aQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732033465; c=relaxed/simple;
-	bh=loOXpF5Y232SZZdnxI41SkdXDzuLWWE5iEeYT2x9Z90=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=O2417yWY8XSQPevMP3710f3gUvmwM6nosef/uZk7HKxrB/bPou10EjxHUJzJmfDoDGnz2leflkm8w9GGVGukA93gBrUMrkO8OFnJVrz/V7gpD0zzXU8MQPEdg9EY0IhDde69zFtlaStNnZLu0QeS1PWLLwJ8WrW92XTzlMcJy1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZdK/IrHm; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2fb561f273eso55053391fa.2;
-        Tue, 19 Nov 2024 08:24:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732033462; x=1732638262; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=F0Rn78o+aVfOenb2VUkNF9b/q2fBCMoQpYU4wkrifyc=;
-        b=ZdK/IrHmPTX4hFe2hOEvA5WMJniZ901xU34ruXF3/2UoDc7zyW04CJY9Rh3t2nub2r
-         1c0CLzJnE6gjJgcEAaU5fmLMYQVIAJtPkpRkR/FujUVUkFK/jZvso2bbLF96Jxj8tnW5
-         alfKanYHC9rohAw3zTvzDS9lL1pUKBRW5h6GlPaONQBHCspVPmFTVpqrzL/UBfih/xO1
-         +QVdtADtQpEPvzp1RIuBP9qNB6aN2FsedGWQmlIKJZFRUOUXiJK3X73WjPxTjJHR68D0
-         /nVi5lH1lHO1bsrcdWpn4qsSb1o2u2vIIQ3LvFsQmFS3aufI9SDb5W7R+iGGMtkZvCMk
-         iyow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732033462; x=1732638262;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=F0Rn78o+aVfOenb2VUkNF9b/q2fBCMoQpYU4wkrifyc=;
-        b=HLkl0S8trh5ZNrygpEAYl1YfFTGGt3Sq8+6odD6ikw4gQXT1RvfbshA+tvguG9YuzA
-         OvBjx03gOlfOBjKKDEpsTFENMiWgW0A2eZtMcPEFIlS1OiLepD1DzYxd0Qml/YMSO+oa
-         gBPJareZh4xalrosw9iD2/emOb8bn36bWmDiRNiOMT9uWT/mV4NDSHH/bckYk85gqANr
-         I4dUmlZqNuHNO7LMy1Ham2HaA6MGUhDELyDcQrO7x+X2Tq0Q3L59uP9jA0JW2ybgs1nm
-         pGfyCpXDCl04/vEsHQgObtp3DOhiH0tDy0abV7bL6Wp0CglXDAtzoNVice63YCpjjkBm
-         jGxw==
-X-Forwarded-Encrypted: i=1; AJvYcCUlThsHtLRU90swtyrUqvBWNKuEEGVjUxkdW04kKpp2G9LcHlZErBXwEocc2DOOL5o4HeJ/8FbjgTHP8+8=@vger.kernel.org, AJvYcCW1AXEkTx/yX/sJ1LtXrx1OGlCTpn/xWOFq1CwKdG4HuYcBB4xoOC6mbgrQa+W1N6u1VBNDXcwFhc7t4JocGNw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJlcvc6stb8zdGGF+0V6Pnylnh95bwLSKtIdbxdFBKtbyErdjs
-	jQ5oK2lgxzirbsnTwdEstVIumC1mUBPCBBcWPVOWo/gDm4ltR4wHFfXfFX2bTXIl2IsESsD88Jy
-	H7Q22VpKo+Se+loyJiaLCsaft49M=
-X-Google-Smtp-Source: AGHT+IE8ZXvQ+lgNiDNkEq7bX9iBCWO22T30Y5+iMtJNYZU65OgxffLIrgm7+TslFy8ZwCpR5ifRXvUAI3Pcy87LZmQ=
-X-Received: by 2002:a05:651c:e08:b0:2ff:7a4f:e770 with SMTP id
- 38308e7fff4ca-2ff7a4febaamr28494071fa.31.1732033461415; Tue, 19 Nov 2024
- 08:24:21 -0800 (PST)
+	s=arc-20240116; t=1732033436; c=relaxed/simple;
+	bh=LSRdOwWVhxFzk1KBx29WAMi60HC/Qo9FvfMm4nhpA9E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Cc08nKc37h2inneglRG64dAy9nHu/PF9jIkHaAiXm6WDR8tIlBnT6b+FJjlqA5wAazAzdjcH+Me86suVZcU28KfT0GKCw9n3AoJsrjMm/Oolez4OHXl4tcCnD2UmoSybpAtRwVtT9WmuymfHSM7622p/Hs6iuz9JRV3ihg23gmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g6hmRTcs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1EF4C4CECF;
+	Tue, 19 Nov 2024 16:23:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732033436;
+	bh=LSRdOwWVhxFzk1KBx29WAMi60HC/Qo9FvfMm4nhpA9E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=g6hmRTcsFrfIB7D2y5/mfHljmWKST1y77Hb27hjUnK0eOp7MZaCumycTh8Pq7/he3
+	 wtmBk5pO8r79Mv5fNcMqxeZ0Hep+jjNQpNEjOHGvpc52JYPZvCm6eqcmGeKpiiVT76
+	 zjbIqXg+vB7AKZOX1XEPG6rrvR1cLqnJbcuEWNFYR5qfvG5mc7NgJYKFmUJBE3mGjK
+	 oJdE4daaBrrWceqAW2UHdgqow3ce09w5eAJYRI1lBMjBVBU1bo//zW1qrGh7BUltQQ
+	 de5ckQFQai0dicL73v+SUXnpaE1BItxVpaM6qVb54PxJ3g4K0DdT4/dokdh33HvTU4
+	 4cEXp2pkWkTXg==
+Date: Tue, 19 Nov 2024 10:23:54 -0600
+From: Rob Herring <robh@kernel.org>
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: geert+renesas@glider.be, magnus.damm@gmail.com, krzk+dt@kernel.org,
+	conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+	gregkh@linuxfoundation.org, jirislaby@kernel.org,
+	p.zabel@pengutronix.de, lethal@linux-sh.org, g.liakhovetski@gmx.de,
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: [PATCH v3 6/8] arm64: dts: renesas: rzg3s-smarc-switches: Add a
+ header to describe different switches
+Message-ID: <20241119162354.GA1761971-robh@kernel.org>
+References: <20241115134401.3893008-1-claudiu.beznea.uj@bp.renesas.com>
+ <20241115134401.3893008-7-claudiu.beznea.uj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241118-rust-xarray-bindings-v9-0-3219cdb53685@gmail.com>
- <20241118-rust-xarray-bindings-v9-2-3219cdb53685@gmail.com> <Zzu9SzkDoq_1YQnJ@tardis.local>
-In-Reply-To: <Zzu9SzkDoq_1YQnJ@tardis.local>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Tue, 19 Nov 2024 11:23:45 -0500
-Message-ID: <CAJ-ks9mKArX37VzhcyymDoE-MsNxNcO8VvP4n3Xu1mdfOKiuag@mail.gmail.com>
-Subject: Re: [PATCH v9 2/2] rust: xarray: Add an abstraction for XArray
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	=?UTF-8?B?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>, 
-	Asahi Lina <lina@asahilina.net>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241115134401.3893008-7-claudiu.beznea.uj@bp.renesas.com>
 
-On Mon, Nov 18, 2024 at 5:18=E2=80=AFPM Boqun Feng <boqun.feng@gmail.com> w=
-rote:
->
-> On Mon, Nov 18, 2024 at 11:33:36AM -0500, Tamir Duberstein wrote:
-> [...]
-> > +
-> > +/// A lock guard.
-> > +///
-> > +/// The lock is unlocked when the guard goes out of scope.
-> > +#[must_use =3D "the lock unlocks immediately when the guard is unused"=
-]
-> > +pub struct Guard<'a, T: ForeignOwnable> {
-> > +    xa: &'a XArray<T>,
-> > +}
->
-> `Guard` would be `Send` if `XArray<T>` is `Sync`, however, it's
-> incorrect since `Guard` represents an xa_lock() held, and that's a
-> spin_lock, so cannot be dropped on another thread/context. `Guard`
-> should probably be marked as `!Send`. Or am I missing something subtle
-> here?
+On Fri, Nov 15, 2024 at 03:43:59PM +0200, Claudiu wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> 
+> There are different switches available on both the RZ/G3S SMARC Module and
+> RZ SMARC Carrier II boards. These switches are used to route different SoC
+> signals to different parts available on board.
+> 
+> These switches are described in device trees through macros. These macros
+> are set accordingly such that the resulted compiled dtb to describe the
+> on-board switches states.
+> 
+> Based on the SW_CONFIG3 switch state (populated on the module board), the
+> SCIF3 SoC interface is routed or not to an U(S)ART pin header available on
+> the carrier board. As the SCIF3 is accessible through the carrier board,
+> the device tree enables it in the carrier DTS. To be able to cope with
+> these type of configurations, add a header file where all the on-board
+> switches can be described and shared accordingly between module and carrier
+> board.
+> 
+> Commit prepares the code to enable SCIF3 on the RZ/G3S carrier device
+> tree.
+> 
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> ---
+> 
+> Changes in v3:
+> - none
+> 
+> Changes in v2:
+> - none
+> 
+>  .../boot/dts/renesas/rzg3s-smarc-som.dtsi     | 20 +-----------
+>  .../boot/dts/renesas/rzg3s-smarc-switches.h   | 32 +++++++++++++++++++
+>  2 files changed, 33 insertions(+), 19 deletions(-)
+>  create mode 100644 arch/arm64/boot/dts/renesas/rzg3s-smarc-switches.h
+> 
+> diff --git a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi b/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
+> index 55c72c8a0735..5c88e130c89e 100644
+> --- a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
+> @@ -9,25 +9,7 @@
+>  #include <dt-bindings/gpio/gpio.h>
+>  #include <dt-bindings/pinctrl/rzg2l-pinctrl.h>
+>  
+> -/*
+> - * On-board switches' states:
+> - * @SW_OFF: switch's state is OFF
+> - * @SW_ON:  switch's state is ON
+> - */
+> -#define SW_OFF		0
+> -#define SW_ON		1
+> -
+> -/*
+> - * SW_CONFIG[x] switches' states:
+> - * @SW_CONFIG2:
+> - *	SW_OFF - SD0 is connected to eMMC
+> - *	SW_ON  - SD0 is connected to uSD0 card
+> - * @SW_CONFIG3:
+> - *	SW_OFF - SD2 is connected to SoC
+> - *	SW_ON  - SCIF1, SSI0, IRQ0, IRQ1 connected to SoC
+> - */
+> -#define SW_CONFIG2	SW_OFF
+> -#define SW_CONFIG3	SW_ON
+> +#include "rzg3s-smarc-switches.h"
+>  
+>  / {
+>  	compatible = "renesas,rzg3s-smarcm", "renesas,r9a08g045s33", "renesas,r9a08g045";
+> diff --git a/arch/arm64/boot/dts/renesas/rzg3s-smarc-switches.h b/arch/arm64/boot/dts/renesas/rzg3s-smarc-switches.h
+> new file mode 100644
+> index 000000000000..e2d9b953f627
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc-switches.h
+> @@ -0,0 +1,32 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
 
-I didn't know about this requirement, thanks for calling it out. I
-have added `_not_send: PhantomData<*mut ()>` in v10.
+Use the same license as the .dtsi file.
+
+> +/*
+> + * On-board switches for the Renesas RZ/G3S SMARC Module and RZ SMARC Carrier II
+> + * boards.
+> + *
+> + * Copyright (C) 2024 Renesas Electronics Corp.
+> + */
+> +
+> +#ifndef __RZG3S_SMARC_SWITCHES__
+> +#define __RZG3S_SMARC_SWITCHES__
+> +
+> +/*
+> + * On-board switches' states:
+> + * @SW_OFF: switch's state is OFF
+> + * @SW_ON:  switch's state is ON
+> + */
+> +#define SW_OFF		0
+> +#define SW_ON		1
+> +
+> +/*
+> + * SW_CONFIG[x] switches' states:
+> + * @SW_CONFIG2:
+> + *	SW_OFF - SD0 is connected to eMMC
+> + *	SW_ON  - SD0 is connected to uSD0 card
+> + * @SW_CONFIG3:
+> + *	SW_OFF - SD2 is connected to SoC
+> + *	SW_ON  - SCIF3, SSI3, IRQ0, IRQ1 connected to SoC
+> + */
+> +#define SW_CONFIG2	SW_OFF
+> +#define SW_CONFIG3	SW_ON
+> +
+> +#endif /* __RZG3S_SMARC_SWITCHES__ */
+> -- 
+> 2.39.2
+> 
 
