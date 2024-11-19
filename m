@@ -1,118 +1,122 @@
-Return-Path: <linux-kernel+bounces-414664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3D109D2C1B
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 18:08:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 321F39D2BCE
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 17:55:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B1DAB36EB1
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 16:54:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC3DA287F4B
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 16:55:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D30091D14FB;
-	Tue, 19 Nov 2024 16:48:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="gJuC4oUg"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A638F1D1E60;
+	Tue, 19 Nov 2024 16:49:12 +0000 (UTC)
+Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C72261D0B91;
-	Tue, 19 Nov 2024 16:48:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 849B01D1F50;
+	Tue, 19 Nov 2024 16:49:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732034935; cv=none; b=c0/LvLvN7r0p5J2fQeog4LdlItcIUR3C3q+THxTYVCzpBWMjHBTEQgHyUy/BQfNvEGNrHnsfdAMpdjIcci4SuPBJpwG/4XWXFBEyXTy06yf3frxcpbvseKzwGFIXefRBOuoH/ieM1haCfCVeTlfRMJXgpEx+EOoy1Yesw7eihGY=
+	t=1732034952; cv=none; b=qEHKR6Xf4fGy6frJzTdyxUJ+AYIcLRMMtBZKYcy1teVzs7GszMindg1eiSmGyKLwwC6scIt96hAD/vsgLxrKUEp/fRSF7BJcivLY2/CPqdkuHPgS0aaOiCYyq/8o3rrgKeZeK51UCWm+R0iXcAxeugyzAGZ7PiXWDKn6W3MrPg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732034935; c=relaxed/simple;
-	bh=06NyFvjw2Q40R+hhk2MKIcCrfow60pW8VAFXwQATsuo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OQx1Yhau28AzUPQb/j6QWqEwShZiqh7Xl50IVwBdYz21JV/LNTMGrbBvi9CTjH/iWbxmxk9d55XggRjG0Y1iDXnOKm/0CyBJTdiZQP2216TBGChlytJ/TJl4tnsqfMseuupPleeUoUesvdeOgVALXD4JigZ4rtuipkj4uGSm8pQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=gJuC4oUg; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=3fvujAh94U3kGDVymnc9jtTk3gFEdDGf2+Wqo/Pnpo4=; b=gJuC4oUgF5yfaJf1hVqxnO4d/l
-	nZwoni126YdD7HgeHlxvmxyw3d9qn8oLF6+lLaH8yFtFxQ3bgaydz3ByUBjOZZ7q3YMvIV1Wx4sAF
-	oEWKn3V19Wxmg2ukOUOqO8sBYsaX7CIPNsHoAK0oKCEGSb1hZB2jj4dWmbdIvbFEiGmBBBJfK7OpE
-	sinVcRn/ed+ur58P4MZhOaA3Z8X8cTstuwmTfMZHY9DXB+7ZSUN7EKaknxuyPlR3Q6jIWDWnrs2C/
-	XbI7MA4r4eoXjzkLYZgcHMeyoLajQph4dcBob6+CslmzxPyUL0Cat1OoFgxeF06+8dZMT34FL+pcV
-	tJEL/xjA==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:36672)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1tDROz-00042u-34;
-	Tue, 19 Nov 2024 16:48:34 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1tDROx-0006Dy-36;
-	Tue, 19 Nov 2024 16:48:32 +0000
-Date: Tue, 19 Nov 2024 16:48:31 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: jan.petrous@oss.nxp.com
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Emil Renner Berthing <kernel@esmil.dk>,
-	Minda Chen <minda.chen@starfivetech.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Iyappan Subramanian <iyappan@os.amperecomputing.com>,
-	Keyur Chudgar <keyur@os.amperecomputing.com>,
-	Quan Nguyen <quan@os.amperecomputing.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	imx@lists.linux.dev, devicetree@vger.kernel.org,
-	NXP S32 Linux Team <s32@nxp.com>
-Subject: Re: [PATCH v5 12/16] net: dwmac-sti: Use helper rgmii_clock
-Message-ID: <ZzzBXwZNpCTKvSTp@shell.armlinux.org.uk>
-References: <20241119-upstream_s32cc_gmac-v5-0-7dcc90fcffef@oss.nxp.com>
- <20241119-upstream_s32cc_gmac-v5-12-7dcc90fcffef@oss.nxp.com>
+	s=arc-20240116; t=1732034952; c=relaxed/simple;
+	bh=Vlo37xqLWz9uZ3CfExdRtRUyK6jGsIhcVtHBVJXH23U=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=i3w6zBWOG1AKWUHLaYMCF2P71+7736iOIbHYZQbLDaVwvkkwmc+SPriq7FunnLhvetksw/rbu52jH3tWZzpScGOHkC7TPGPvN+/Enm30hJ/y/R3EKxhi7pT2eLNLKrQoOZfBtNj6nYJWfPyldSdrrO3W9Gz6+fxllth9ez59CEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.29])
+	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4Xt8rx4Lmlz9v7JY;
+	Wed, 20 Nov 2024 00:21:53 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.47])
+	by mail.maildlp.com (Postfix) with ESMTP id 22592140418;
+	Wed, 20 Nov 2024 00:49:05 +0800 (CST)
+Received: from [127.0.0.1] (unknown [10.204.63.22])
+	by APP1 (Coremail) with SMTP id LxC2BwAHsyNtwTxnhjPrAQ--.2023S2;
+	Tue, 19 Nov 2024 17:49:04 +0100 (CET)
+Message-ID: <6308448307055a821a4d73dbbb373c2cde300cdf.camel@huaweicloud.com>
+Subject: Re: [PATCH v6 07/15] digest_cache: Allow registration of digest
+ list parsers
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: Randy Dunlap <rdunlap@infradead.org>, zohar@linux.ibm.com, 
+ dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, corbet@lwn.net, 
+ mcgrof@kernel.org, petr.pavlu@suse.com, samitolvanen@google.com, 
+ da.gomez@samsung.com, akpm@linux-foundation.org, paul@paul-moore.com, 
+ jmorris@namei.org, serge@hallyn.com, shuah@kernel.org,
+ mcoquelin.stm32@gmail.com,  alexandre.torgue@foss.st.com
+Cc: linux-integrity@vger.kernel.org, linux-doc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-api@vger.kernel.org, 
+ linux-modules@vger.kernel.org, linux-security-module@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, wufan@linux.microsoft.com,
+ pbrobinson@gmail.com,  zbyszek@in.waw.pl, hch@lst.de, mjg59@srcf.ucam.org,
+ pmatilai@redhat.com,  jannh@google.com, dhowells@redhat.com,
+ jikos@kernel.org, mkoutny@suse.com,  ppavlu@suse.com, petr.vorel@gmail.com,
+ mzerqung@0pointer.de, kgold@linux.ibm.com,  Roberto Sassu
+ <roberto.sassu@huawei.com>
+Date: Tue, 19 Nov 2024 17:48:41 +0100
+In-Reply-To: <c6a7b5eb-d2ec-45e5-8a9b-a91f9c0cec78@infradead.org>
+References: <20241119104922.2772571-1-roberto.sassu@huaweicloud.com>
+	 <20241119104922.2772571-8-roberto.sassu@huaweicloud.com>
+	 <c6a7b5eb-d2ec-45e5-8a9b-a91f9c0cec78@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241119-upstream_s32cc_gmac-v5-12-7dcc90fcffef@oss.nxp.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+X-CM-TRANSID:LxC2BwAHsyNtwTxnhjPrAQ--.2023S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrZrWDGF4DJw45AFyrJF4xWFg_yoWxKFbEvr
+	yIqrs7GFZ8JFsxCr1akrWSgFZYgry8XF1qyr4jqryDGa4kuwsrCrWfCr1SqF18Jw1xArn5
+	CF93Zrn0q34xujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbxxYFVCjjxCrM7AC8VAFwI0_Wr0E3s1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0cI8IcVCY1x02
+	67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aVCY1x0267
+	AKxVWxJr0_GcWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
+	j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7x
+	kEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kIc2xKxwCY1x0262kKe7AK
+	xVWrXVW3AwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
+	0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Wrv_Gr1U
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8
+	JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26F4UJVW0obIYCTnIWIevJa73UjIFyTuYvjxUVZ
+	2-UUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAMBGc79-IISQAAsS
 
-On Tue, Nov 19, 2024 at 04:00:18PM +0100, Jan Petrous via B4 Relay wrote:
-> From: "Jan Petrous (OSS)" <jan.petrous@oss.nxp.com>
-> 
-> Utilize a new helper function rgmii_clock().
-> 
-> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-> Signed-off-by: Jan Petrous (OSS) <jan.petrous@oss.nxp.com>
+On Tue, 2024-11-19 at 08:46 -0800, Randy Dunlap wrote:
+> Hi--
+>=20
+> On 11/19/24 2:49 AM, Roberto Sassu wrote:
+> > +/**
+> > + * struct parser - Structure to store a function pointer to parse dige=
+st list
+> > + * @list: Linked list
+> > + * @owner: Kernel module owning the parser
+> > + * @name: Parser name (must match the format in the digest list file n=
+ame)
+> > + * @func: Function pointer for parsing
+> > + *
+> > + * This structure stores a function pointer to parse a digest list.
+> > + */
+> > +struct parser {
+> > +	struct list_head list;
+> > +	struct module *owner;
+> > +	const char name[NAME_MAX + 1];
+> > +	parser_func func;
+> > +};
+>=20
+> I would make the struct name not so generic -- maybe digest_parser ...
 
-Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+Hi
 
-Thanks!
+sure, thanks for the suggestion!
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Roberto
+
 
