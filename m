@@ -1,119 +1,155 @@
-Return-Path: <linux-kernel+bounces-413734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CF359D1E06
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 03:18:14 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F0F79D1E0B
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 03:19:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C430A1F22672
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 02:18:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E01BBB2175B
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 02:19:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94D4614375D;
-	Tue, 19 Nov 2024 02:17:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 209091384BF;
+	Tue, 19 Nov 2024 02:18:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JpSyhPzU"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CeGKogOT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B39B013A868;
-	Tue, 19 Nov 2024 02:17:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77CFFC2C9;
+	Tue, 19 Nov 2024 02:18:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731982672; cv=none; b=LGEBeXzGrb86V0AsuUw/SWKsvk5Frv8qggPnjkvdKSQgEWob2BzObMfpmInxuzPpLzMU2o7+FhgDYtWWASz80GCs920rfVIFffJvy1FrHC4AZ+dWMH4k5qBNskQhEJGw+9m6TC1uxl4TFMuxYcBxjng2Ja/UYBpawWTBa3Z7tss=
+	t=1731982734; cv=none; b=S1SoyNXOErffL7TZOV1jhrlJ/MGzQUjXnxd5EsPnXNgCyoWYNQpbFmVyc1P+VGiBzW4q0S0TGFeKi8dwn5wW47WkaU4WNVhUq0VqccVmaTy59CaGF/xqzmTqmX1YoXzdczZIUWg5X6EZYWsvJeUfSm8tDOonyeEbax4z3VqTRDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731982672; c=relaxed/simple;
-	bh=7L6ua5/pSShMdfVFfn+0WaKr22hV7sw589mcoOtSbEM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=X7A3B7e84prpOwfnjhjxENHQHmfeptVMGUdRrNcWFHani7A9LRAXuIeQn0gRe8aZ4ritvQg075mJtZyAG+vdAUILmFYlGrWovHt25zLzunRw0z0wMCuMmqW7MF8a3quya7o56SYgz7NjNN2ta+I59PtEgRas4jbyQiRpb9GdH6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JpSyhPzU; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2ea456f1029so162502a91.2;
-        Mon, 18 Nov 2024 18:17:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731982670; x=1732587470; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QhTqy3e/Sj/U+p3Gc3V7kqvNZvj2Ji0rTvyB0P5gl2c=;
-        b=JpSyhPzU1BFVS+hC+ye21HDCWt6VY+wTT3F/FVLHvrUXoRPaKO/zqzOvJRfQD+mh+w
-         JOhMnRbi/WCPjRwVTu40yzaKClXwov4BDyYbjG6I0/UHIH7yi7S+vKNfHgnvLUhwzC/4
-         U0ceTmQTXelXehnA6LEkfXVMav0K/rr7cv8XUVlYhJcvw2ycw7o1M/IIs/FdN/Hac53/
-         VDZDbuz8jpcEc9ivhDp3trlzKg9I9RM1AKnz1x/V3RmPfxr9MHkpeAWqxn9WxoasY48t
-         FMaCXYZcceC5xwlp2mE9+fz5uhcUhVxYhfQMCFzgo377cBS3cYKlCHemIj/O5UCaCCCV
-         2rCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731982670; x=1732587470;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QhTqy3e/Sj/U+p3Gc3V7kqvNZvj2Ji0rTvyB0P5gl2c=;
-        b=lRpA7LX2MIRlyu3SyhuVoWPmutYaWI+ZxOE1KezlYDPl8nB8XbkF66pE5XqWEjBoDu
-         A6greFzvqPlvJS/vTCHlAYKuqzCIsoEBn/hpFK4Z2Z579ktjAqbwIaI0kZEPEEhtUcxv
-         GUu2AK5qH8BFCcI3n5YTKGHguiTLAzZy+PBb8UmAfTobtpvPR+MNxp+kxZgCtqsSfqtl
-         25GzI8+7tadhW76RXBJgXNmVNpNjFpRauFsVa6TjRnaQLVw/UlJjJjY8yqpDuVzVmZQD
-         spEafgLYofAp7EE+vVvM4DzI9lUcSN2epwL8X7+wR7QgfJ3f4QB2APKdM/dWiMyg2DNb
-         547A==
-X-Forwarded-Encrypted: i=1; AJvYcCWRfEibxDYUQCZB90xclLnZhTQNym0ID5HokUDa4Rb/l2HIDdvzwLm592AnlCzfBJUKEQ1Pyqype9SR4Dc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVhM3dtDN6GHiFMP1XmK+mWpHZjZLiIHwj99xaB8cd/xGLeJ60
-	2dMqwzo9AAhCrgthYlrwjh5GKNkWxPLKpNB0ghXyzWQ1/BWYE0ED
-X-Google-Smtp-Source: AGHT+IHfijkBqoan0rEFjO2OXxS5pt61GvLBYzkmcel+tYUWbNVEnbOYcpS83JH7mpm0kKLgzXZsFA==
-X-Received: by 2002:a17:90b:3b82:b0:2ea:8aac:6aab with SMTP id 98e67ed59e1d1-2ea8aac6be0mr2153020a91.1.1731982669918;
-        Mon, 18 Nov 2024 18:17:49 -0800 (PST)
-Received: from dev.. ([2402:e280:214c:86:d61a:bb21:5b09:2d6b])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ea024b82aasm8244129a91.33.2024.11.18.18.17.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Nov 2024 18:17:49 -0800 (PST)
-From: R Sundar <prosunofficial@gmail.com>
-To: Kees Cook <kees@kernel.org>,
-	Andy Shevchenko <andy@kernel.org>
-Cc: linux-hardening@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	R Sundar <prosunofficial@gmail.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>
-Subject: [PATCH v2 linux-next 2/2] lib/string_choices: Add str_locked_unlocked()/str_unlocked_locked() helper
-Date: Tue, 19 Nov 2024 07:47:19 +0530
-Message-Id: <20241119021719.7659-3-prosunofficial@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241119021719.7659-1-prosunofficial@gmail.com>
-References: <20241119021719.7659-1-prosunofficial@gmail.com>
+	s=arc-20240116; t=1731982734; c=relaxed/simple;
+	bh=v5VMew2qGtig/6ECVnvo9mQpQhRggvGkbsg6KajwpFs=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=OdWjC0Zu+bAvPYo3FwHFUpDL7uexEmRuhGHPIWRtE7dfWwckNpqtGVnwzo03DwYeCD3CzHZjEMoYEYTHSnXOUkltRYezM1W7mDyf7EzuN5wp1mA0UnP6h5snsHk1JWj15b4tAh3bpKU3CGipcZ1YV41Drc3WFtimwRhIktnhvxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CeGKogOT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78951C4CECC;
+	Tue, 19 Nov 2024 02:18:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731982734;
+	bh=v5VMew2qGtig/6ECVnvo9mQpQhRggvGkbsg6KajwpFs=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=CeGKogOTaUYoeWfg7QGvH0GBbkFufN7EfenGNl83dus5KO4aauIJAnNzRNILSZwKH
+	 Hzljl4Lu21lNjy6ujgJEbWrWJLDXlkK5B9CEvd6mYZOwBRybyUffCZn8gf6KQJL42C
+	 R+zKId5UlnzTFCZoNkl/c8LZa9tasYMpeaTlbtNflzj+j/JevflOIaf2Wzb5Kjvi15
+	 NltG6VXTLF98Szz1XefbYTmHe/HDiXTvmeuWcZQEDQrJ66XfYiXHl/ZYtGJhRGCdl3
+	 gEFoKtl7LcDyAyAtqIBioC7sO9SZxvw+Ds7s4Vg3TAlREJc0nGvq71tmMjHwNhkvHg
+	 JQJjYVqAGer1g==
+Message-ID: <2d26eeee-01f7-445b-a1d2-bc2de65b5599@kernel.org>
+Date: Tue, 19 Nov 2024 10:18:50 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Cc: Chao Yu <chao@kernel.org>, Daniel Rosenberg <drosen@google.com>,
+ stable@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [f2fs-dev] [PATCH] Revert "f2fs: remove unreachable lazytime
+ mount option parsing"
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Eric Sandeen <sandeen@redhat.com>
+References: <20241112010820.2788822-1-jaegeuk@kernel.org>
+ <ZzPLELITeOeBsYdi@google.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <ZzPLELITeOeBsYdi@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Add str_locked_unlocked()/str_unlocked_locked() helper to return
-"locked" or "unlocked" string literal.
+On 2024/11/13 5:39, Jaegeuk Kim via Linux-f2fs-devel wrote:
+> Hi Eric,
+> 
+> Could you please check this revert as it breaks the mount()?
+> It seems F2FS needs to implement new mount support.
 
-Suggested-by: Przemek Kitszel <przemyslaw.kitszel@intel.com>
-Signed-off-by: R Sundar <prosunofficial@gmail.com>
----
- include/linux/string_choices.h | 6 ++++++
- 1 file changed, 6 insertions(+)
+Hi all,
 
-diff --git a/include/linux/string_choices.h b/include/linux/string_choices.h
-index f3ba4f52ff26..a6bbf4e42c13 100644
---- a/include/linux/string_choices.h
-+++ b/include/linux/string_choices.h
-@@ -41,6 +41,12 @@ static inline const char *str_high_low(bool v)
- }
- #define str_low_high(v)		str_high_low(!(v))
- 
-+static inline const char *str_locked_unlocked(bool v)
-+{
-+	return v ? "locked" : "unlocked";
-+}
-+#define str_unlocked_locked(v)         str_locked_unlocked(!(v))
-+
- static inline const char *str_on_off(bool v)
- {
- 	return v ? "on" : "off";
--- 
-2.34.1
+Actually, if we want to enable lazytime option, we can use mount
+syscall as:
+
+mount("/dev/vdb", "/mnt/test", "f2fs", MS_LAZYTIME, NULL);
+
+or use shell script as:
+
+mount -t f2fs -o lazytime /dev/vdb /mnt/test
+
+IIUC, the reason why mount command can handle lazytime is, after
+8c7f073aaeaa ("libmount: add support for MS_LAZYTIME"), mount command
+supports to map "lazytime" to MS_LAZYTIME, and use MS_LAZYTIME in
+parameter @mountflags of mount(2).
+
+So, it looks we have alternative way to enable/disable lazytime feature
+after removing Opt_{no,}lazytime parsing in f2fs, do we really need this
+revert patch?
+
+Thanks,
+
+> 
+> Thanks,
+> 
+> On 11/12, Jaegeuk Kim wrote:
+>> This reverts commit 54f43a10fa257ad4af02a1d157fefef6ebcfa7dc.
+>>
+>> The above commit broke the lazytime mount, given
+>>
+>> mount("/dev/vdb", "/mnt/test", "f2fs", 0, "lazytime");
+>>
+>> CC: stable@vger.kernel.org # 6.11+
+>> Signed-off-by: Daniel Rosenberg <drosen@google.com>
+>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+>> ---
+>>   fs/f2fs/super.c | 10 ++++++++++
+>>   1 file changed, 10 insertions(+)
+>>
+>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+>> index 49519439b770..35c4394e4fc6 100644
+>> --- a/fs/f2fs/super.c
+>> +++ b/fs/f2fs/super.c
+>> @@ -150,6 +150,8 @@ enum {
+>>   	Opt_mode,
+>>   	Opt_fault_injection,
+>>   	Opt_fault_type,
+>> +	Opt_lazytime,
+>> +	Opt_nolazytime,
+>>   	Opt_quota,
+>>   	Opt_noquota,
+>>   	Opt_usrquota,
+>> @@ -226,6 +228,8 @@ static match_table_t f2fs_tokens = {
+>>   	{Opt_mode, "mode=%s"},
+>>   	{Opt_fault_injection, "fault_injection=%u"},
+>>   	{Opt_fault_type, "fault_type=%u"},
+>> +	{Opt_lazytime, "lazytime"},
+>> +	{Opt_nolazytime, "nolazytime"},
+>>   	{Opt_quota, "quota"},
+>>   	{Opt_noquota, "noquota"},
+>>   	{Opt_usrquota, "usrquota"},
+>> @@ -922,6 +926,12 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
+>>   			f2fs_info(sbi, "fault_type options not supported");
+>>   			break;
+>>   #endif
+>> +		case Opt_lazytime:
+>> +			sb->s_flags |= SB_LAZYTIME;
+>> +			break;
+>> +		case Opt_nolazytime:
+>> +			sb->s_flags &= ~SB_LAZYTIME;
+>> +			break;
+>>   #ifdef CONFIG_QUOTA
+>>   		case Opt_quota:
+>>   		case Opt_usrquota:
+>> -- 
+>> 2.47.0.277.g8800431eea-goog
+> 
+> 
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
 
