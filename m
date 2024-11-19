@@ -1,117 +1,119 @@
-Return-Path: <linux-kernel+bounces-414795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D36249D2DE4
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 19:26:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43D389D2D8A
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 19:06:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 246F6B28F3B
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 18:06:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E65F81F23CCF
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 18:06:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17F571D174F;
-	Tue, 19 Nov 2024 18:06:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DE5F1D1F4B;
+	Tue, 19 Nov 2024 18:06:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZQfs1Z/Q"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lkePvW7x"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C6C31D0F63
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 18:06:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 540DC1D1E64
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 18:06:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732039562; cv=none; b=Ikz9Cr66yzZorezew9vdHfAYA7d/XYhXlXqGG8LgHLlCUmzlBcQaeDgvDibYDQ8BbcsE62IHhcnVXOKYf+gNsOaMNJe9CoP3+8nS4H1Cyf6OrEcwRPf8xxLM8Bp5sLIEKvBapUuLlgMq9qSaaQ0hcXZYPTpQ828kvZEcqWLWG/U=
+	t=1732039602; cv=none; b=EHXr+WAa9LKCxoftc2tMyeykhkWP0zDancQ7vPd6xMt2E+rPWm+WOS5qP9ZUv2kwZHyw2NfVMir5Vme+CH5k0yHZdO6WBn7uCktAR48CQV5YqlZEkXExHlGpbEzKaJ/kvS198CmHXJokm2cA+Yyirt1D1Q7itb/p/+Xv5yoZz1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732039562; c=relaxed/simple;
-	bh=STE9JFqnlTAfZ/i/oOOtvS3HCy01Lw0yY8KiuXEVR/0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HfMmV36biYwWn25hboKpq7yGIgTOs7+w+0nVoO1svh7hXufeL8DU+xzzJKCnRlLBMxYqe0mSxaJOcE/9xAotrJK4p6Pzu4441cmsS8xs4v3BJL1U6QaoRrY7kHtxJfNDZtgE2/PFy8YDINVth0aFA33oTa/XMG973DCR+oy6ipw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZQfs1Z/Q; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20cb47387ceso12871535ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 10:06:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732039560; x=1732644360; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=y/FlE2aHc/QsNDaHWvtYvH2BMza0ovXyy81H1Sc5/I8=;
-        b=ZQfs1Z/Q9NBOGrFVvPOLfJ7E3+D7TMr+hEGOL8lhbusUVPzDVyTtrKCLcJEWrK3m9x
-         ditVTACC7qGMvmWtZp6pfmtXrcbHinobQ74BwqZqPxY5+XD9N06ETRTk1vVYPZqtlMxZ
-         Zfl2ryGBUJ6zt77wNomTaSBNTlsKdUDbQuiQ4nsN4xRjT9SzZkx9t1ttUilF0Bd8sFFX
-         l4dj8qg2gJhgYFVCaytZ4CDEpulQ/0DgkZ4UEPSMFrw3R8DVolIHpcHM8hdYGocR1Su6
-         zliwwY/R65ryZTXuKtHqRTufENLLIBYdsrvesrgnodSjY3YiJyat6GWEje+ixEeyUruy
-         HJFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732039560; x=1732644360;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=y/FlE2aHc/QsNDaHWvtYvH2BMza0ovXyy81H1Sc5/I8=;
-        b=AWi7Azsc2b5TF/kO8VhShm3+KerhkhXqoBZqzVJ7IRX3xA+OjfJWASwrgtG21Uh8zj
-         Fw+VWO1BVtTRyOQLUxcDwYDstbJKb2I1CEqz+drdaFgBryxtU1ZWZC0Q86aht/vUIbqR
-         3Z36F6WdTNA2nQMDXJYHBhfXYhBZ7dDiLnRSWveDv9UR2FGqNqps7Y1Sqa7ArqHbGT3a
-         z0CEkuFNctMs8JllHTdk6N6B5+7yDuOpCbShta2TbYyRAcMRtvBPKWJyLIS9z2Ts4eEp
-         RQiYlKjwin1/T+9QSSmkPlFK5wMbHqgglmTVQZ6oebi37GcrMvdNSIl/sq1Uv/3v42RB
-         0bXA==
-X-Forwarded-Encrypted: i=1; AJvYcCVXnE0UTNbD+QpsbLq+yUxfuJfzJTp4xc4A65t5sSYUPG3P/GQ0IMOL76jaRmX5BiO+OfhroVYkvpFWy6s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YynBWnueONTLHIttt2+mw+l3GpR3wA+Wm1P0aM9atc88qezDCeC
-	iHr+sJGztv/q5IlNriyWnx76QAKmalasZtNrN8nwrFhN00tmkgbt
-X-Google-Smtp-Source: AGHT+IHH/C1zxnC4To6VFinpcC5jGM+peR5xpjNtpRKinlMIx6rqfBFFr6fAl9OaD/7nDysyGRldTg==
-X-Received: by 2002:a17:902:6acc:b0:211:6b21:73d9 with SMTP id d9443c01a7336-211d0ebf447mr170610775ad.37.1732039560385;
-        Tue, 19 Nov 2024 10:06:00 -0800 (PST)
-Received: from localhost ([38.141.211.103])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21223e5e1d2sm38932615ad.163.2024.11.19.10.05.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Nov 2024 10:05:59 -0800 (PST)
-From: Ragavendra <ragavendra.bn@gmail.com>
-To: tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com,
-	hpa@zytor.com,
-	thomas.lendacky@amd.com,
-	ardb@kernel.org,
-	tzimmermann@suse.de,
-	bhelgaas@google.com
-Cc: x86@kernel.org,
-	linux-kernel@vger.kernel.org,
-	Ragavendra <ragavendra.bn@gmail.com>
-Subject: [PATCH] Updating es_em_ctxt fi to zero
-Date: Tue, 19 Nov 2024 10:05:18 -0800
-Message-ID: <20241119180517.196079-2-ragavendra.bn@gmail.com>
-X-Mailer: git-send-email 2.46.1
+	s=arc-20240116; t=1732039602; c=relaxed/simple;
+	bh=tO29qmXnQBiYVBJ8k86fc371KDYzbkkwm4QvEDUHdCw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ccywxg/DVMfmP7oLVvGl1Q92UTcDVB9dNnNZqqzRpuT/LgxqPmt5/EZPOYUV3J4tSFyUWrAiav7U01o6nfXxU/MulX8v1yhc9eYHOf+l8XdwpBKRKMaScxxSmHj974M1ZQrEO/jthLnCQbq8lGyODjVv2TfwE320xryrEKC6N5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lkePvW7x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54664C4CECF;
+	Tue, 19 Nov 2024 18:06:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732039601;
+	bh=tO29qmXnQBiYVBJ8k86fc371KDYzbkkwm4QvEDUHdCw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lkePvW7xB6nW3N7qHX0WDaEErluJ0FIHbMjXEp2BLmeiZ7iz7X49qEx8DoYHKXeB3
+	 7AspRArmaFfzIbeHQcZwr6yHrcGiTqsri2Z0Bj//dZHusfpm6vvHumsS8Xpxn8DitB
+	 HiBQDsZAc85cPEj48NrsJ5w1/yEhXHMYb4AnNLk9ckNncpsn8teNRWVhn493t2LEtP
+	 G5AF7WCZq9sHmNBem0SipWhf1h2KNpXgTLhDM6vP6uRbDzTJdcSWNnGWkBBM9qsn6e
+	 IlMKT89zcJOvdAfhpkXpo4oGMVbPMt6uKIyir0ylmYQxsNB+hHu3IGpPmn2KVEMm4s
+	 wBSUHLaximUkA==
+Date: Tue, 19 Nov 2024 18:06:35 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, ardb@kernel.org,
+	catalin.marinas@arm.com, jpoimboe@kernel.org,
+	kaleshsingh@google.com, kristina.martsenko@arm.com,
+	linux-kernel@vger.kernel.org, madvenka@linux.microsoft.com,
+	maz@kernel.org, mbenes@suse.cz, mhiramat@kernel.org,
+	puranjay12@gmail.com, rostedt@goodmis.org, will@kernel.org
+Subject: Re: [PATCH] arm64: disable ARCH_CORRECT_STACKTRACE_ON_KRETPROBE tests
+Message-ID: <c5cd88f1-6390-4148-9595-07b3c09ab117@sirena.org.uk>
+References: <20241118120204.3961548-1-mark.rutland@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="k2YslX4LOWBeSjJG"
+Content-Disposition: inline
+In-Reply-To: <20241118120204.3961548-1-mark.rutland@arm.com>
+X-Cookie: I have many CHARTS and DIAGRAMS..
 
-Updating es_em_ctxt to zero for the ctxt->fi variable in
-verify_exception_info when ES_EXCEPTION is returned.
 
-Fixes: 34ff65901735 x86/sev: Use kernel provided SVSM Calling Areas
-Signed-off-by: Ragavendra Nagraj <ragavendra.bn@gmail.com>
----
- arch/x86/coco/sev/shared.c | 2 ++
- 1 file changed, 2 insertions(+)
+--k2YslX4LOWBeSjJG
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/arch/x86/coco/sev/shared.c b/arch/x86/coco/sev/shared.c
-index 71de53194089..b8540d85e6f0 100644
---- a/arch/x86/coco/sev/shared.c
-+++ b/arch/x86/coco/sev/shared.c
-@@ -239,6 +239,8 @@ static enum es_result verify_exception_info(struct ghcb *ghcb, struct es_em_ctxt
- 		if ((info & SVM_EVTINJ_VALID) &&
- 		    ((v == X86_TRAP_GP) || (v == X86_TRAP_UD)) &&
- 		    ((info & SVM_EVTINJ_TYPE_MASK) == SVM_EVTINJ_TYPE_EXEPT)) {
-+			memset(&ctxt->fi, 0, sizeof(ctxt->fi));
-+
- 			ctxt->fi.vector = v;
- 
- 			if (info & SVM_EVTINJ_VALID_ERR)
--- 
-2.46.1
+On Mon, Nov 18, 2024 at 12:02:04PM +0000, Mark Rutland wrote:
 
+> The test assumes that when a stacktrace straddles an exception boundary,
+> no necessary entries will be omitted and no extraneous entries will be
+> reported, and when unwinding from a kretprobed callee, the next entry in
+> the trace will be its immediate caller (whether kretprobed or not).
+
+> Recently the arm64 stacktrace code was changed to always report the LR
+> at an exception boundary, where we don't know whether the LR is live.
+> In the case of the kretprobe trampoline the LR is not live at the time
+> the stacktrace is performed, and so the entry in the trace for the LR is
+> extraneous. This can be seen if a call to show_stack() is added to
+> stacktrace_internal_return_handler():
+
+Oh, that's a bit annoying.  :/
+
+> +++ b/arch/arm64/Kconfig
+> @@ -14,7 +14,6 @@ config ARM64
+>  	select ARCH_HAS_DEBUG_WX
+>  	select ARCH_BINFMT_ELF_EXTRA_PHDRS
+>  	select ARCH_BINFMT_ELF_STATE
+> -	select ARCH_CORRECT_STACKTRACE_ON_KRETPROBE
+>  	select ARCH_ENABLE_HUGEPAGE_MIGRATION if HUGETLB_PAGE && MIGRATION
+>  	select ARCH_ENABLE_MEMORY_HOTPLUG
+>  	select ARCH_ENABLE_MEMORY_HOTREMOVE
+
+This config option is only used for enabling parts of the kprobes tests
+so it's not hurting anything at runtime AFAICT:
+
+Reviewed-by: Mark Brown <broonie@kernel.org>
+
+--k2YslX4LOWBeSjJG
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmc806oACgkQJNaLcl1U
+h9ABKgf/R/7u3P8XFaSDhIfVLJlsf9aPjfGZE00dJ22IL5QHSjG6/EL4j3/zOavI
+B9waIUtfSwfMCeOYAzmEvr0lO7owU6ZV86Fc+xAwfA0oZVSa5P3PAwZu9PpF1dPY
+PJKWNMS5+09RjMZiqKW4/E/JaL1xaQeMiHDnOUSdv9zazoFifqD9EZbwes3q89lW
+EniQE3oD7BcoO0mXnLy6nSlJrw26hpbBzqQrXpdkMmUjErGsYZn/nCK6lC0ONJjJ
+wmwC84AOeTJr6l9XPAikDLdrUz0QQBffq3sEnk98FSflhgm0foj3VaxSmaGcdjXA
+xWCxzWIvczqUnGO4gsoD8hrq0wrllw==
+=lv33
+-----END PGP SIGNATURE-----
+
+--k2YslX4LOWBeSjJG--
 
