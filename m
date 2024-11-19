@@ -1,233 +1,181 @@
-Return-Path: <linux-kernel+bounces-414962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C69F89D2FC1
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 21:49:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEA5F9D2FC3
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 21:50:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B07FB286EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 20:49:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5EAAC1F23159
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 20:50:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35E581D2F76;
-	Tue, 19 Nov 2024 20:48:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D75411D2F55;
+	Tue, 19 Nov 2024 20:50:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="kIXZOoxz";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="18dOPRYo";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="kIXZOoxz";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="18dOPRYo"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JOPodTh3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FBCA1D12FE;
-	Tue, 19 Nov 2024 20:48:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 344E2149C7A;
+	Tue, 19 Nov 2024 20:50:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732049338; cv=none; b=pe51yFHHVCSnckEAQG48eji9swF85vubPsgmwNfYFrviGyY0wAisGg0K5ioB8FXa6rfzm+1zxy661hiL3fEA+BzKNx/cEapBaB73Gw1WDzy36VTANgcliOB2HbNg3p5F4vZ9ZDMf+5zv0rnOkr4HWDdc1FqktKQUSBZH2kzIMcw=
+	t=1732049424; cv=none; b=poaZ4WR6PId1X4Wm3rRtGvNoy/+43vBL4pm8JJymVAK2wcWm1BCYFw5txUxIWFLCSxuXt7URvLPmoUZkmY4fh3mZdoaJzIL0RrJXEAw4f3YsMJ8g/6sogTJE5MQeknGKEqJYgygwmr+9RdylVIC1wVaCNSt6b7FfMSvggY6CGcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732049338; c=relaxed/simple;
-	bh=gIw6ZvAwgn9OHrhXwJZ598dYTvnysBtFLmFA6JqK+1I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EsvdCvT0K5FvhvSHyP+yABmYmhUsxDuATf5jfQgCb1RJMa8IHVLoC/WQs2MDyeuKP76T2zb+M609augLvZhnByu649UMenYY2KtivmixYgcrtQSNtiCUYkhQoqikimo42U4Cid7BviJfSDyJ61ljD4V+6WRNSghHtl+8cuFo6nM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=kIXZOoxz; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=18dOPRYo; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=kIXZOoxz; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=18dOPRYo; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 7A41B21A01;
-	Tue, 19 Nov 2024 20:48:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1732049334; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=A/Bs+ZefnbNeOqmsS+J9RuwLygMWmMJvadh+ULF0z5E=;
-	b=kIXZOoxz/l4kk+EYr69jmq1nIamuxRlcWRAZGo7Fy7kvdAqvBkfhUbxTY/iyljtdvcNqgt
-	1HdeOcYxgnXRci67PL8rsQ4a41H/Zk6Vvbl2Nmg2N15PeiAVru13UevO1Nx44Hw/W44sE1
-	W7iygK+RscAYo1gMDlmmgAf/LWe34G4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1732049334;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=A/Bs+ZefnbNeOqmsS+J9RuwLygMWmMJvadh+ULF0z5E=;
-	b=18dOPRYoopFOEttynKZoLSuCSP2gMA8XGlpNKbjNaIb2MfoZ7c8xpzohQBjzg+WK/oz3kg
-	jLeuFiUhMtAuhnDw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=kIXZOoxz;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=18dOPRYo
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1732049334; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=A/Bs+ZefnbNeOqmsS+J9RuwLygMWmMJvadh+ULF0z5E=;
-	b=kIXZOoxz/l4kk+EYr69jmq1nIamuxRlcWRAZGo7Fy7kvdAqvBkfhUbxTY/iyljtdvcNqgt
-	1HdeOcYxgnXRci67PL8rsQ4a41H/Zk6Vvbl2Nmg2N15PeiAVru13UevO1Nx44Hw/W44sE1
-	W7iygK+RscAYo1gMDlmmgAf/LWe34G4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1732049334;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=A/Bs+ZefnbNeOqmsS+J9RuwLygMWmMJvadh+ULF0z5E=;
-	b=18dOPRYoopFOEttynKZoLSuCSP2gMA8XGlpNKbjNaIb2MfoZ7c8xpzohQBjzg+WK/oz3kg
-	jLeuFiUhMtAuhnDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 655761376E;
-	Tue, 19 Nov 2024 20:48:54 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id bylcGLb5PGdfAQAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Tue, 19 Nov 2024 20:48:54 +0000
-Message-ID: <c67696e1-242c-4bf2-bd3c-b08e68e729dd@suse.cz>
-Date: Tue, 19 Nov 2024 21:48:54 +0100
+	s=arc-20240116; t=1732049424; c=relaxed/simple;
+	bh=YC7FPxvqloNvgTHSRWA6CecG4gh3mAbn1f5UfQvl2QI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gVZ8spGFSzYsOOTuRLP5m+DUifb/xwkfi17NIv5TvEe3QZ1jv65PVa4z59jUPSLD/XhqTkOeAtt5ksiWwhhr/m3bWVKu//1Vmi8+ewcPhAdE/HSSVkhljPcxzXHf0cptsFXKCwRzxP+K8Gfa99hBX58CPi6C+C8S4W8pge7wEPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JOPodTh3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4A26C4CED6;
+	Tue, 19 Nov 2024 20:50:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732049423;
+	bh=YC7FPxvqloNvgTHSRWA6CecG4gh3mAbn1f5UfQvl2QI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=JOPodTh3d3nZTZW88H8EUnKZCV2D1lfVYRPJjzKNgMPR6cL46qoLPNMTDK3YiRi/Y
+	 /kj5ocjLqDc1MWQZmgpT84vFdCqxFeQ1d71X5f7RcpD+HHGoSKnxgHHvMbgP0fmUoi
+	 AYFkYEBj/i03JTIGLtQBDViJ2xIKmVtaUtZy00qb3g/7jCXYQm2An1F6+ONVm+r98F
+	 4hRATlZfQWpwIebpR7Q1tN/GGXUW+Osk4LVMY6vgUK9STcigh53txpECoAq1TtG2IN
+	 /97FMzkTBnVczvnjKbym2/U1Ve4+UcW35CgpnqZkt/tPFWSOoI9Iav8wBpJs+Vb8x/
+	 gyMqGHCuIwREg==
+Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-2689e7a941fso2652413fac.3;
+        Tue, 19 Nov 2024 12:50:23 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWrWQWHBOkdIHs4C43j/VZT1ZZQrzR4w5qE5Du4fJ+rzZ3x8F2brsdTyKp6aOyVPIEbjpvfHq18+so=@vger.kernel.org, AJvYcCXX1h282y0kLoWM5i3MCRmjvwH++luHK1E46xdk3E6iOq21XoDhu+LwPn+N9McY6cqo0/inJYebeEOucrk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzcjffZAlChCsskX9e0SEsa1p/Tb93p6zsHqcPxoTp+EyXy4s9z
+	l9esvX+/0icEAEijo7yebq2ZMTnkj3U1rfO+raD/zh/iTPhzdno2X5CHZlg2vfVAA1luW0QhRNP
+	G/umzr8f5oJOOjEmlZ4hBUlorDZQ=
+X-Google-Smtp-Source: AGHT+IFmnD6S0h2LuEneHulsEtTDMn80TvgwIqntritFzKRRXZeaSL02qoZLaLax4SwuN7mFBnrlFXGzeG/WU+H/rhQ=
+X-Received: by 2002:a05:6870:d148:b0:295:9cb2:71ea with SMTP id
+ 586e51a60fabf-296d9e465e8mr310368fac.39.1732049422990; Tue, 19 Nov 2024
+ 12:50:22 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.12.y v2] mm/mmap: fix __mmap_region() error handling in
- rare merge failure case
-Content-Language: en-US
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, stable@vger.kernel.org
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- Andrew Morton <akpm@linux-foundation.org>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Jann Horn <jannh@google.com>,
- syzbot+bc6bfc25a68b7a020ee1@syzkaller.appspotmail.com
-References: <20241119175945.2600945-1-Liam.Howlett@oracle.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <20241119175945.2600945-1-Liam.Howlett@oracle.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 7A41B21A01
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TAGGED_RCPT(0.00)[bc6bfc25a68b7a020ee1];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	RCVD_TLS_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.cz:dkim,suse.cz:mid];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -3.01
-X-Spam-Flag: NO
+References: <2e8771be-3a0d-43d4-8787-41bc69d5287d@linaro.org>
+In-Reply-To: <2e8771be-3a0d-43d4-8787-41bc69d5287d@linaro.org>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 19 Nov 2024 21:50:11 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0g0RaQSYmG6dk3nusBDLnuNHpE_+kXLe7fs-EKSGkUmWA@mail.gmail.com>
+Message-ID: <CAJZ5v0g0RaQSYmG6dk3nusBDLnuNHpE_+kXLe7fs-EKSGkUmWA@mail.gmail.com>
+Subject: Re: [GIT PULL] thermal drivers for v6.13-rc1
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	Colin Ian King <colin.i.king@gmail.com>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
+	=?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>, 
+	zhangjiao2 <zhangjiao2@cmss.chinamobile.com>, Rex Nie <rex.nie@jaguarmicro.com>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux PM mailing list <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/19/24 18:59, Liam R. Howlett wrote:
-> From: "Liam R. Howlett" <Liam.Howlett@Oracle.com>
-> 
-> The mmap_region() function tries to install a new vma, which requires a
-> pre-allocation for the maple tree write due to the complex locking
-> scenarios involved.
-> 
-> Recent efforts to simplify the error recovery required the relocation of
-> the preallocation of the maple tree nodes (via vma_iter_prealloc()
-> calling mas_preallocate()) higher in the function.
-> 
-> The relocation of the preallocation meant that, if there was a file
-> associated with the vma and the driver call (mmap_file()) modified the
-> vma flags, then a new merge of the new vma with existing vmas is
-> attempted.
-> 
-> During the attempt to merge the existing vma with the new vma, the vma
-> iterator is used - the same iterator that would be used for the next
-> write attempt to the tree.  In the event of needing a further allocation
-> and if the new allocations fails, the vma iterator (and contained maple
-> state) will cleaned up, including freeing all previous allocations and
-> will be reset internally.
-> 
-> Upon returning to the __mmap_region() function, the error is available
-> in the vma_merge_struct and can be used to detect the -ENOMEM status.
-> 
-> Hitting an -ENOMEM scenario after the driver callback leaves the system
-> in a state that undoing the mapping is worse than continuing by dipping
-> into the reserve.
-> 
-> A preallocation should be performed in the case of an -ENOMEM and the
-> allocations were lost during the failure scenario.  The __GFP_NOFAIL
-> flag is used in the allocation to ensure the allocation succeeds after
-> implicitly telling the driver that the mapping was happening.
-> 
-> The range is already set in the vma_iter_store() call below, so it is
-> not necessary and is dropped.
-> 
-> Reported-by: syzbot+bc6bfc25a68b7a020ee1@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/x/log.txt?x=17b0ace8580000
-> Fixes: 5de195060b2e2 ("mm: resolve faulty mmap_region() error path behaviour")
-> Signed-off-by: Liam R. Howlett <Liam.Howlett@Oracle.com>
-> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> Cc: Vlastimil Babka <vbabka@suse.cz>
-> Cc: Jann Horn <jannh@google.com>
-> Cc: <stable@vger.kernel.org>
+Hi Daniel,
 
-Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
+On Mon, Nov 18, 2024 at 12:11=E2=80=AFPM Daniel Lezcano
+<daniel.lezcano@linaro.org> wrote:
+>
+> Hi Rafael,
+>
+> please consider the following changes since commit
+> c285b11e289dbe8973735ab8dc84210bde417673:
+>
+>    Merge back thermal control material for 6.13 (2024-11-11 15:20:44 +010=
+0)
+>
+> are available in the Git repository at:
+>
+>
+> ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/thermal/linux.git
+> tags/thermal-v6.13-rc1
+>
+> for you to fetch changes up to d303e3dd8d4648f2a1bb19944d4fb1c4a5030354:
+>
+>    tools/thermal: Fix common realloc mistake (2024-11-15 14:29:03 +0100)
+>
+> ----------------------------------------------------------------
+> - Add the SAR2130P compatible in the DT bindings for the QCom Tsens
+>    driver (Dmitry Baryshkov)
+>
+> - Add the static annotation to the arrays describing the platform
+>    sensors on the LVTS Mediatek driver (Colin Ian King)
+>
+> - Switch back to the struct platform_driver::remove() from the
+>    previous callbacks prototype rework (Uwe Kleine-K=C3=B6nig)
+>
+> - Add the MSM8937 compatible in the DT bindings and its support in the
+>    QCom Tsens driver (Barnab=C3=A1s Cz=C3=A9m=C3=A1n)
+>
+> - Remove a pointless sign test on an unsigned value in
+>    k3_bgp_read_temp() function on the k3_j72xx_bandgap driver (Rex Nie)
+>
+> - Fix a pointer reference lost when the call to realloc() fails in the
+>    thermal library (Zhang Jiao)
+>
+> ----------------------------------------------------------------
+> Barnab=C3=A1s Cz=C3=A9m=C3=A1n (2):
+>        dt-bindings: thermal: tsens: Add MSM8937
+>        thermal/drivers/qcom/tsens-v1: Add support for MSM8937 tsens
+>
+> Colin Ian King (1):
+>        thermal/drivers/mediatek/lvts_thermal: Make read-only arrays
+> static const
+>
+> Dmitry Baryshkov (1):
+>        dt-bindings: thermal: qcom-tsens: Add SAR2130P compatible
+>
+> Rex Nie (1):
+>        thermal/drivers/k3_j72xx_bandgap: Simplify code in k3_bgp_read_tem=
+p()
+>
+> Uwe Kleine-K=C3=B6nig (1):
+>        thermal: Switch back to struct platform_driver::remove()
+>
+> zhang jiao (1):
+>        tools/thermal: Fix common realloc mistake
+>
+>   .../devicetree/bindings/thermal/qcom-tsens.yaml     |  2 ++
+>   drivers/thermal/amlogic_thermal.c                   |  2 +-
+>   drivers/thermal/armada_thermal.c                    |  2 +-
+>   drivers/thermal/broadcom/bcm2835_thermal.c          |  2 +-
+>   drivers/thermal/broadcom/ns-thermal.c               |  2 +-
+>   drivers/thermal/da9062-thermal.c                    |  6 +++---
+>   drivers/thermal/dove_thermal.c                      |  2 +-
+>   drivers/thermal/hisi_thermal.c                      |  4 ++--
+>   drivers/thermal/imx8mm_thermal.c                    |  2 +-
+>   drivers/thermal/imx_thermal.c                       |  2 +-
+>   .../thermal/intel/int340x_thermal/int3400_thermal.c |  2 +-
+>   .../thermal/intel/int340x_thermal/int3401_thermal.c |  2 +-
+>   .../thermal/intel/int340x_thermal/int3402_thermal.c |  2 +-
+>   .../thermal/intel/int340x_thermal/int3403_thermal.c |  2 +-
+>   .../thermal/intel/int340x_thermal/int3406_thermal.c |  2 +-
+>   drivers/thermal/k3_bandgap.c                        |  2 +-
+>   drivers/thermal/k3_j72xx_bandgap.c                  |  4 ++--
+>   drivers/thermal/kirkwood_thermal.c                  |  2 +-
+>   drivers/thermal/mediatek/lvts_thermal.c             |  6 +++---
+>   drivers/thermal/qcom/tsens-v1.c                     | 21
+> ++++++++++++++-------
+>   drivers/thermal/qcom/tsens.c                        |  5 ++++-
+>   drivers/thermal/qcom/tsens.h                        |  2 +-
+>   drivers/thermal/renesas/rcar_gen3_thermal.c         |  2 +-
+>   drivers/thermal/renesas/rcar_thermal.c              |  2 +-
+>   drivers/thermal/renesas/rzg2l_thermal.c             |  2 +-
+>   drivers/thermal/rockchip_thermal.c                  |  2 +-
+>   drivers/thermal/samsung/exynos_tmu.c                |  2 +-
+>   drivers/thermal/spear_thermal.c                     |  2 +-
+>   drivers/thermal/sprd_thermal.c                      |  2 +-
+>   drivers/thermal/st/st_thermal_memmap.c              |  2 +-
+>   drivers/thermal/st/stm_thermal.c                    |  2 +-
+>   drivers/thermal/tegra/soctherm.c                    |  2 +-
+>   drivers/thermal/tegra/tegra-bpmp-thermal.c          |  2 +-
+>   drivers/thermal/ti-soc-thermal/ti-bandgap.c         |  2 +-
+>   drivers/thermal/uniphier_thermal.c                  |  2 +-
+>   tools/thermal/thermometer/thermometer.c             |  7 ++++---
+>   36 files changed, 62 insertions(+), 49 deletions(-)
 
-
+Pulled and added to linux-pm.git/thermal and linux-pm.git/linux-next, thank=
+s!
 
