@@ -1,153 +1,209 @@
-Return-Path: <linux-kernel+bounces-414573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03CB69D2A63
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 17:02:45 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6A389D2A65
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 17:02:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 222AFB2B33B
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 15:51:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F38AFB2BDDA
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 15:51:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5E241CF7C7;
-	Tue, 19 Nov 2024 15:49:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A2821D0BA6;
+	Tue, 19 Nov 2024 15:50:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="nyQm/C7/"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Hgj8BNGO"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2BF519D07A;
-	Tue, 19 Nov 2024 15:49:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBF111CF2A6
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 15:50:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732031382; cv=none; b=fQvXBrrD8khxXxrguZpWRVpLR5LUwmxNB7kwbC0GB8ODj+7E5sJaM2U0Ss2fi5ZSFDiXtwR91UQMXZ49zk9Mq/i49rmnCUZluww1Q0FqJLb1fD24g1UxIscZOAFlq6ikahw4hoqbbCYyLPOxy7tv+PwHFRclduvwdQ81Eb61PZg=
+	t=1732031403; cv=none; b=Q/EfKje7LJvl9TyFtuekDsPVPkgj7jVip6ZIYD6DNCVcbXqoUn5ZmgsURgwEWBNnCtaaJnhgYXcOO4Px1DAgxZ/yqLACEwyBCVJvXDLDbKriVcm7fL4CWtHxqISU7psQxCPpFA1cYKKazyVZFB43/tURS8ZqV//zhzroTjg4Its=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732031382; c=relaxed/simple;
-	bh=d85uQ7gXeZyZFb61sgWMHoOGaZXFD6ol3m68Bfp/wSY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QLWz+tltEhRFTRQPCbunsjzLBFdz9WOdFz1fnenJfVWmcxDKyQMK29cEyAQshIIZlpGcV78dQnT9UG9KTRlrvgGLbNzNReUTA12jphB9kVmzlGG9ZYF8fepUtCQfkhp63QndRIjamZgdOizHVWsVOu7kCTopBeF/RzEuMaapQDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=nyQm/C7/; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=qnQRqocn/VRT/81Ql3s0QeMFooHZBkWosHmPORCjQhA=; b=nyQm/C7/PauPVNEBcpCuSxF7q4
-	aPVRUgpsV908uUmyAlEBhyWBM37HjkDLD6/0nPF98GBKVYheUF2PL1stCIJgYpoY7acJ1Do+0EEhr
-	sEGkrWgEj8fg249awdbsUtKlB/met1b4Pavt8UcTtdrx3VsaTu7jc4Yd8BGqtVKoE23RulUZPqfyR
-	CmibYEdiY4SfR/9pcTF/gNkmpDsalkxhC3TJXsDuMPzIUdBfvB8qch/DhFDk8ndTcJZldNI/jZifI
-	FojM7t7Ns944esyRn50m4fJVDg81mFr+dtx2ivmmQ+k40xCXudGkJ1rvpStA5Pl7g7rvQJJ5AsVgG
-	aHGm10QQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:40134)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1tDQTn-0003qf-20;
-	Tue, 19 Nov 2024 15:49:28 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1tDQTk-0006AN-2Y;
-	Tue, 19 Nov 2024 15:49:24 +0000
-Date: Tue, 19 Nov 2024 15:49:24 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Sean Anderson <sean.anderson@linux.dev>
-Cc: Andrew Lunn <andrew@lunn.ch>, Suraj Gupta <suraj.gupta2@amd.com>,
-	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, michal.simek@amd.com,
-	radhey.shyam.pandey@amd.com, horms@kernel.org,
-	netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, git@amd.com, harini.katakam@amd.com
-Subject: Re: [PATCH net-next 2/2] net: axienet: Add support for AXI 2.5G MAC
-Message-ID: <ZzyzhCVBgXtQ_Aop@shell.armlinux.org.uk>
-References: <20241118081822.19383-1-suraj.gupta2@amd.com>
- <20241118081822.19383-3-suraj.gupta2@amd.com>
- <ZztjvkxbCiLER-PJ@shell.armlinux.org.uk>
- <657764fd-68a1-4826-b832-3bda91a0c13b@linux.dev>
- <9d26a588-d9ac-43c5-bedc-22cb1f0923dd@lunn.ch>
- <72ded972-cd16-4124-84af-8d8ddad049f0@linux.dev>
+	s=arc-20240116; t=1732031403; c=relaxed/simple;
+	bh=47ygFDeYgVKpY8pR6AOA0KJLPNp9Ts4bGrlHmU5U/lA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Ma0eilRjacqSf/aAdcj5jjMDBrUYKrrNDpJtY160aDN920UkPjHr8gVknmfxYXjJR0B72ZBHzy2WiheTmN+kEDF/BfUwAn+9YQqF33Ayo0bFapnp3ST2hzkEYrXcf3r7dt3Nb6/yTeMNToKj2r6GBufrhTJYBcgjOeMTp9F0Yco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Hgj8BNGO; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732031400;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=j48pMYCI1mAgBjsBkzo4REwKeKZ158VhK38QDgL6Yds=;
+	b=Hgj8BNGOEV85AP4g4e7A/wLeEFFyrahm7YoF2IC7vJPoRP9LMyVc78GpKMAfDLt/7Ld8M7
+	ntKhKxikMzIuncPfhIxIJZlY+wpmQIv4zB6VFEtNeOj75zcMweu6PwBVPrC1HUcYkkH1gc
+	qNlZAJnGSipKwYfc6YSTRUD2UB0WUZM=
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
+ [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-428-YYAx5ebIMrKBpUfO3NWlyg-1; Tue, 19 Nov 2024 10:49:59 -0500
+X-MC-Unique: YYAx5ebIMrKBpUfO3NWlyg-1
+X-Mimecast-MFC-AGG-ID: YYAx5ebIMrKBpUfO3NWlyg
+Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-a9a1af73615so74472266b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 07:49:59 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732031398; x=1732636198;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=j48pMYCI1mAgBjsBkzo4REwKeKZ158VhK38QDgL6Yds=;
+        b=HjOH0TGs2UVaDfDLR5kpxyibL/uogK9qekRBRLfuND/iZHm6xDuJDCNJRZgK+RxSy8
+         4OvWlSBK+Mdee8oaFHcOFae55UFhsQ8K7RydraPKCkuA7BJNlD8/gvB0e3lwYIvq5Uyy
+         9d4C33EWL9udvQdPXxeNyIXHdujZYFjuMFprAbBUD/N7lK2O6GMCA9viHiqU14FNShwS
+         XUKl35MF+tkFIU2y0jT69GKakD/Jf8EF5xqPPb4pBmDx2qgGf2jRC929nKc2Ue9L0ob7
+         tcKO9TJY2OtJi14eKHO9ZGSvOgpPjpf1YinIskdYr4fXIiPeOUfkkfoRMcxAJB6ePbsJ
+         azbA==
+X-Forwarded-Encrypted: i=1; AJvYcCXBz3J58FQWhBKCBBoYbKLeR91mRwC5DqZe36Gf9IhaRY6LFig0qg8V3PPNyojQGfULO1Zx1fbg0aVcJs4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhwBqfqtWct8N1OCPgxDyOsy6dHEmFOlDCoEdJPmVuQ+BiEIwp
+	2cXkBukJqN5KQFd+/tgdT0XunTbXi5qi/+npb3r2y1+wimSdRVmYtdJLnZgN35nEmig7lBJJeGe
+	8h58dd+lI3HZv7Sdics7vzZ0LybBvr7TtdzBZVCvZnFXDi5WHtFig+2oQIifOXvXTrO03yA==
+X-Received: by 2002:a17:907:a4b:b0:a8d:6648:813f with SMTP id a640c23a62f3a-aa4833f6cc2mr1597488466b.3.1732031398004;
+        Tue, 19 Nov 2024 07:49:58 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHkY/oVtStM9buWZieA+FdS2d36EO4hAO6J0OH+roK8jLGYtod6akj9TI2LnWb9dg8cGqlkHg==
+X-Received: by 2002:a17:907:a4b:b0:a8d:6648:813f with SMTP id a640c23a62f3a-aa4833f6cc2mr1597485866b.3.1732031397662;
+        Tue, 19 Nov 2024 07:49:57 -0800 (PST)
+Received: from ?IPv6:2001:16b8:3d72:6400:a5d7:d54:865f:255e? ([2001:16b8:3d72:6400:a5d7:d54:865f:255e])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20df4fc07sm662314866b.44.2024.11.19.07.49.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Nov 2024 07:49:57 -0800 (PST)
+Message-ID: <0ba134e8a902da1b916469e760c36c3588f8bc71.camel@redhat.com>
+Subject: Re: [PATCH 2/2] drm/sched: Fix docu of drm_sched_entity_flush()
+From: Philipp Stanner <pstanner@redhat.com>
+To: Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, Luben
+ Tuikov <ltuikov89@gmail.com>, Matthew Brost <matthew.brost@intel.com>,
+ Danilo Krummrich <dakr@kernel.org>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>,  Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+ Simona Vetter <simona@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Date: Tue, 19 Nov 2024 16:49:56 +0100
+In-Reply-To: <919d1a3b-6757-4902-ac1a-b056c9fdad06@amd.com>
+References: <20241119134122.21950-2-pstanner@redhat.com>
+	 <20241119134122.21950-3-pstanner@redhat.com>
+	 <919d1a3b-6757-4902-ac1a-b056c9fdad06@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <72ded972-cd16-4124-84af-8d8ddad049f0@linux.dev>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Tue, Nov 19, 2024 at 10:26:52AM -0500, Sean Anderson wrote:
-> On 11/18/24 20:35, Andrew Lunn wrote:
-> > On Mon, Nov 18, 2024 at 11:00:22AM -0500, Sean Anderson wrote:
-> >> On 11/18/24 10:56, Russell King (Oracle) wrote:
-> >> > On Mon, Nov 18, 2024 at 01:48:22PM +0530, Suraj Gupta wrote:
-> >> >> Add AXI 2.5G MAC support, which is an incremental speed upgrade
-> >> >> of AXI 1G MAC and supports 2.5G speed only. "max-speed" DT property
-> >> >> is used in driver to distinguish 1G and 2.5G MACs of AXI 1G/2.5G IP.
-> >> >> If max-speed property is missing, 1G is assumed to support backward
-> >> >> compatibility.
-> >> >> 
-> >> >> Co-developed-by: Harini Katakam <harini.katakam@amd.com>
-> >> >> Signed-off-by: Harini Katakam <harini.katakam@amd.com>
-> >> >> Signed-off-by: Suraj Gupta <suraj.gupta2@amd.com>
-> >> >> ---
-> >> > 
-> >> > ...
-> >> > 
-> >> >> -	lp->phylink_config.mac_capabilities = MAC_SYM_PAUSE | MAC_ASYM_PAUSE |
-> >> >> -		MAC_10FD | MAC_100FD | MAC_1000FD;
-> >> >> +	lp->phylink_config.mac_capabilities = MAC_SYM_PAUSE | MAC_ASYM_PAUSE;
-> >> >> +
-> >> >> +	/* Set MAC capabilities based on MAC type */
-> >> >> +	if (lp->max_speed == SPEED_1000)
-> >> >> +		lp->phylink_config.mac_capabilities |= MAC_10FD | MAC_100FD | MAC_1000FD;
-> >> >> +	else
-> >> >> +		lp->phylink_config.mac_capabilities |= MAC_2500FD;
-> >> > 
-> >> > The MAC can only operate at (10M, 100M, 1G) _or_ 2.5G ?
-> >> 
-> >> It's a PCS limitation. It either does (1000Base-X and/or SGMII) OR
-> >> (2500Base-X). The MAC itself doesn't have this limitation AFAIK.
-> > 
-> > 
-> > And can the PCS change between these modes? It is pretty typical to
-> > use SGMII for 10/100/1G and then swap to 2500BaseX for 2.5G.
-> 
-> Not AFAIK. There's only a bit for switching between 1000Base-X and
-> SGMII. 2500Base-X is selected at synthesis time, and AIUI the serdes
-> settings are different.
+On Tue, 2024-11-19 at 15:27 +0100, Christian K=C3=B6nig wrote:
+> Am 19.11.24 um 14:41 schrieb Philipp Stanner:
+> > drm_sched_entity_flush()'s documentation states that an error is
+> > being
+> > returned when "the process was killed". That is not what the
+> > function
+> > actually does.
+> >=20
+> > Furthermore, it contains an inprecise statement about how the
+> > function
+> > is part of a convenience wrapper.
+> >=20
+> > Move that statement to drm_sched_entity_destroy().
+> >=20
+> > Correct drm_sched_entity_flush()'s documentation.
+> >=20
+> > Cc: Christian K=C3=B6nig <christian.koenig@amd.com>
+> > Signed-off-by: Philipp Stanner <pstanner@redhat.com>
+> > ---
+> > =C2=A0 drivers/gpu/drm/scheduler/sched_entity.c | 18 +++++++++---------
+> > =C2=A0 1 file changed, 9 insertions(+), 9 deletions(-)
+> >=20
+> > diff --git a/drivers/gpu/drm/scheduler/sched_entity.c
+> > b/drivers/gpu/drm/scheduler/sched_entity.c
+> > index 16b172aee453..7af7b448ad06 100644
+> > --- a/drivers/gpu/drm/scheduler/sched_entity.c
+> > +++ b/drivers/gpu/drm/scheduler/sched_entity.c
+> > @@ -270,15 +270,12 @@ static void drm_sched_entity_kill(struct
+> > drm_sched_entity *entity)
+> > =C2=A0=20
+> > =C2=A0 /**
+> > =C2=A0=C2=A0 * drm_sched_entity_flush - Flush a context entity
+> > - *
+> > =C2=A0=C2=A0 * @entity: scheduler entity
+> > - * @timeout: time to wait in for Q to become empty in jiffies.
+> > - *
+> > - * Splitting drm_sched_entity_fini() into two functions, The first
+> > one does the
+> > - * waiting, removes the entity from the runqueue and returns an
+> > error when the
+> > - * process was killed.
+> > + * @timeout: time to wait in jiffies
+> > =C2=A0=C2=A0 *
+> > =C2=A0=C2=A0 * Returns: 0 if the timeout ellapsed, the remaining time
+> > otherwise.
+> > +
+> > + * Waits at most @timeout jiffies for the entity's job queue to
+> > become empty.
+> > =C2=A0=C2=A0 */
+> > =C2=A0 long drm_sched_entity_flush(struct drm_sched_entity *entity, lon=
+g
+> > timeout)
+> > =C2=A0 {
+> > @@ -290,7 +287,7 @@ long drm_sched_entity_flush(struct
+> > drm_sched_entity *entity, long timeout)
+> > =C2=A0=C2=A0		return 0;
+> > =C2=A0=20
+> > =C2=A0=C2=A0	sched =3D entity->rq->sched;
+> > -	/**
+> > +	/*
+> > =C2=A0=C2=A0	 * The client will not queue more IBs during this fini,
+> > consume existing
+> > =C2=A0=C2=A0	 * queued IBs or discard them on SIGKILL
+>=20
+> That comment is actually not correct either.
+>=20
+> drm_sched_entity_flush() should be used from the file_operations-
+> >flush=20
+> function and that one can be used even without destroying the entity.
+>=20
+> So it is perfectly possible that more and more IBs are pumped into
+> the=20
+> entity while we wait for it to become idle.
 
-Okay. First it was a PCS limitation. Then it was a MAC limitation. Now
-it's a synthesis limitation.
+Which would just result in drm_sched_entity_flush() timing out and
+effectively not having done anything, right?
 
-I'm coming to the conclusion that those I'm communicating with don't
-actually know, and are just throwing random thoughts out there.
+I guess we could touch that topic again when writing some docu for
+scheduler teardown.
 
-Please do the research, and come back to me with a real and complete
-answer, not some hand-wavey "it's a limitation of X, no it's a
-limitation of Y, no it's a limitation of Z" which looks like no one
-really knows the correct answer.
+Would it be the best to just remove the comment, what do you think?
 
-Just because the PCS doesn't have a bit that selects 2500base-X is
-meaningless. 2500base-X is generally implemented by upclocking
-1000base-X by 2.5x. Marvell does this at their Serdes, there is
-no configuration at the MAC/PCS for 2.5G speeds.
+P.
 
-The same is true of 10GBASE-R vs 5GBASE-R in Marvell - 5GBASE-R is
-just the serdes clocking the MAC/PCS at half the rate that 10GBASE-R
-would run at.
+>=20
+> Regards,
+> Christian.
+>=20
+> > =C2=A0=C2=A0	 */
+> > @@ -359,8 +356,11 @@ EXPORT_SYMBOL(drm_sched_entity_fini);
+> > =C2=A0=C2=A0 * drm_sched_entity_destroy - Destroy a context entity
+> > =C2=A0=C2=A0 * @entity: scheduler entity
+> > =C2=A0=C2=A0 *
+> > - * Calls drm_sched_entity_flush() and drm_sched_entity_fini() as a
+> > - * convenience wrapper.
+> > + * Convenience wrapper for entity teardown.
+> > + *
+> > + * Teardown of entities is split into two functions. The first
+> > one,
+> > + * drm_sched_entity_flush(), waits for the entity to become empty.
+> > The second
+> > + * one, drm_sched_entity_fini(), does the actual cleanup of the
+> > entity object.
+> > =C2=A0=C2=A0 */
+> > =C2=A0 void drm_sched_entity_destroy(struct drm_sched_entity *entity)
+> > =C2=A0 {
+>=20
 
-I suspect this Xilinx hardware is just the same - clock the transmit
-path it at 62.5MHz, and you get 1G speeds. Clock it at 156.25MHz,
-and you get 2.5G speeds.
-
-Thanks.
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
