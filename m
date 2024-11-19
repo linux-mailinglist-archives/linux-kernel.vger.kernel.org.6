@@ -1,72 +1,75 @@
-Return-Path: <linux-kernel+bounces-414988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 060E89D3029
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 22:54:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E9F79D302F
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 22:57:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81FE81F23480
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 21:54:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 277AF1F233D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 21:57:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A37B11D3578;
-	Tue, 19 Nov 2024 21:54:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B42D21D2F5F;
+	Tue, 19 Nov 2024 21:57:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W0cnJTTL"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T5u3H59d"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F9E119340E;
-	Tue, 19 Nov 2024 21:54:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98FFE1482F3
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 21:57:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732053266; cv=none; b=FjUfNOXRy3u1Z3HjBrDTstsE+ZFoCrPMKsAjzrcdUTQEaRcFckj0kTiJqUG/rFRgkc7PCk2ZNIZjcc7U/e8OBdLnDCAqwXhHaHK3XbPdpx2z4HiXfUSxS8+Xiqjfklx7wkpl+XB3H9THb1e5sBTYEa5GqmRgpLnIJkNEI3MXyKw=
+	t=1732053463; cv=none; b=WLf4uAbtES4kK6LfIXHLWQG1Xg3CFJUfBx08SbrkhdozqiClW/X+AbXPWuTGdCQSR+8mnTMc0ZY54h2prCphTDioZZUvmCm+tJsh0RDSRUD2iYqQqaG25FL3sA2BvLa3FENPJFO3tx8feb7MLPlJy+wwOgQ0DllesZx2aUt1+w4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732053266; c=relaxed/simple;
-	bh=LR6RtMiCLf62/FPIbKk3ZuNT9EAYt1ABSfyQCNPw5eE=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=tojj0OkSk2PsnwP5oRikYLmM7TSA1/zuqi2n1nPuHM/bqpo6CS7+rPUWrhJluw71ooFHq1jZUKd1JRFmDerxOVJTdKaaLGu7ei0/yO7PTo1E4tFzHhmvFQd76rDBzzU7vFd7xv9I7fT1PzwPkZTYLxVustOWgQrqMT/NvCICIPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W0cnJTTL; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1732053463; c=relaxed/simple;
+	bh=rezHVCrzEMBfyz/hCPFv04FRT1g49m7qy9LMZhcGy2w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TlWtU/TdGY7wuuIQCJF+jlDvuaQNbVZvoggY1k7n56eeI7Pg21QJ3nIu7l4SODxRe+3E0ZBdEjJwMXzugUkUg0/mv45x6IjW0rcp9bdjk9PD4A7V9SSIMYGfBr4N8TnjOQ4u09bwwecCUmrz9CSMTJ7u33gGhRRoEDcXkEr1MCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T5u3H59d; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4315e9e9642so40999955e9.0;
-        Tue, 19 Nov 2024 13:54:23 -0800 (PST)
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2ea752c0555so1990494a91.3
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 13:57:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732053262; x=1732658062; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-language:cc:to:subject:from
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5rcpbtm7aUHGqx2bVM0iKGOigGKjaryXW48lA24pdOU=;
-        b=W0cnJTTLqXt+VvrCZpflweXY5Q2799pcMlaI0osmMIu5Y2DZodUC4sN5Vvb18uwIKU
-         q4UPZQtet6KEzqD/j9YUEi7vcVPUWdqQ1z6Bpszda4aAFhmRaw8EfOM1Lt1EbQAuaxXg
-         weInZtUWaQ3ojwJkkpislMS2gtS6NG77GTmVGNKP6Na0Vf9BoqBQmOCJ079MIOigR//c
-         dFa9AOP8fpXl+V+LW1ayUPNWlAd8bYZDHzkWC4qJssX5JC349rybyeecrB/3nBmK76mB
-         tu1c8wm4XQhhiFyL49vBdkTrI492iNUdZoOkXAEk4fo73kGm8yac6gIbL2LMJEyZ01xv
-         bL6w==
+        d=gmail.com; s=20230601; t=1732053461; x=1732658261; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=U4/kKkoWW419TQ9iQGRgliF5sesWQbwnUChSBHe7YQA=;
+        b=T5u3H59dISTnlvIm67DJ750JEhazIsdAhFGU7OWqRNxbZeqEygYiBAa+38nLxVMkUL
+         jzIQKThH1aWAJNN/IfJlJnjg1GarZeKNdmN0X+oZ50xlBe1gtoCb5F/Mqd9LEsNh3TDg
+         nDN7sf1ZUJ3BnUJNmLc/+g7dAskUd98E0I6WmHYrcXxlBfZ4lfI3C2TDTboLD0FmzHVa
+         jtH8reCPO1tD1Ff7hol5f6alDoPeBBfW6JWUeKnhQ3OkU/eoM9SyJjQicHQx500EpjO5
+         wpAEHYmwDPuJEQK+paTKSK4yrYExCsNyInM6pRpAWTEdbmPBTWWvngRmvOQtwvNv75RP
+         ovlg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732053262; x=1732658062;
-        h=content-transfer-encoding:content-language:cc:to:subject:from
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=5rcpbtm7aUHGqx2bVM0iKGOigGKjaryXW48lA24pdOU=;
-        b=maE1ugLy5qEl2xKrRScz+IoRG5TYCudrtQiYL6/VgmuRzEJGClVtbSr00qwgZt4Nlz
-         fHjVByZw8sLH/eIVYre0WxMMEs9KYFRF5YkuKzIT0H+0GWSpf1V0AbuwO27h6xa7uVdQ
-         id7bby9xYBTClO9e0k9qx3/YT4pMRdaT+DEWVES/hzlmFG4QHUqCZaJORprUnuOgq+4a
-         jdDcCEzuzjiUGVUlh5EIF+E/jcNInHdq9I1wknn5a/mX3Np+hlfLR/vKTej5jiXw9wVB
-         R2PBo/96jft0/d3KmF8U4KQ4eNFZrKzhXzwurBUPGeDmmQwstZfXiL0m1z96F3H20zZ5
-         0ruA==
-X-Forwarded-Encrypted: i=1; AJvYcCUEeyerPbVru4aN0O56P8c4/bYNioVKZ1cSUTzkkzCPknawH2FUJfXRixtQRSNN6TSrz92WsFginsIh9KI=@vger.kernel.org, AJvYcCXxP06EFfGVqnlm9MKfG0GDBR+S7OH/zNM2m96pC+cutIcifZoZSPLxY278ni0nMWbWYhu/0J0ud8dve+Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5Wg0OV1/iwrGZ0x2+hy9MefspKRa+ikWcfTz29Rri4fUrlpt/
-	j7U5iPkz8obZoO6pBFpTQFcjtncPKYWHO5BdaCDuOI4cXiqci81J
-X-Google-Smtp-Source: AGHT+IFTV0yGBotQfy7ZT3VUJcU92aUwm1o86+KKHyT7DbD8nR3qVC/44UXJ9MVt/dWXlmYpNUeAfg==
-X-Received: by 2002:a05:6000:178e:b0:382:3527:a162 with SMTP id ffacd0b85a97d-38254adeec5mr266447f8f.8.1732053262339;
-        Tue, 19 Nov 2024 13:54:22 -0800 (PST)
-Received: from ?IPV6:2a04:241e:501:580:1cd5:f4bd:17fc:6eff? ([2a04:241e:501:580:1cd5:f4bd:17fc:6eff])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cff454f78asm118209a12.81.2024.11.19.13.54.20
+        d=1e100.net; s=20230601; t=1732053461; x=1732658261;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=U4/kKkoWW419TQ9iQGRgliF5sesWQbwnUChSBHe7YQA=;
+        b=QLhcD5t2O5lz3wJzQwrRvqwqT34YP2/GtjF4TdDCYovVnpQHg8gzpW4wovrqVLnJy0
+         p6LY0oUL1D6QO/GOuil0LYKqE/VaymT/iL7RTiuhpfKofpXLONI9ixBtU5C9RggtQsOc
+         +9gTvUNlvKKedFTX/Sh3ml3nBaunf/b5OPHK9Z10tEG8P3ut6r46iM6Q3d/3DHFsNDvV
+         mOp6WgTQPie+XGAo6VQ0VJoWj0C9Piqoi2UE9iRNpnOoAjM3W4nsH1ZErX+tZQhPA6py
+         PBKLEsWRRR462rhjl+C9QK899ErlBH8/yQOIG7asglBaQ8eXRHDUY7r26AUlKaN+dxjm
+         Redg==
+X-Forwarded-Encrypted: i=1; AJvYcCVFMgwEwjHbmYM+FmL2pS+27OFTDNtsBf8aBOrkECMQXuXi4pgs17P+2Y+roRRF3Pn5iPFvF6Tpg+cOE3U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzcb5B6yrNR6GcrJfW0PMi/mlWeK6cIFHEDmoMZimvCvyhFKEBg
+	3tlI9qKy1+GLAyyD1cQviKc8c2CItxuT2epMz58hQY4iORLKtTMV
+X-Google-Smtp-Source: AGHT+IE7frJiiWlM7zborbmenKyNNB8oO9p8+b+t1BVuGU5Wsqo93L+MsC7ckN80alcGGdY0InT8jA==
+X-Received: by 2002:a17:90b:3147:b0:2ea:356f:51b4 with SMTP id 98e67ed59e1d1-2eaca703693mr378918a91.13.1732053460773;
+        Tue, 19 Nov 2024 13:57:40 -0800 (PST)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ea41550839sm6392202a91.17.2024.11.19.13.57.39
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 Nov 2024 13:54:20 -0800 (PST)
-Message-ID: <25d5b0d8-4efd-4630-9d33-7a9e3fa9dc2b@gmail.com>
-Date: Tue, 19 Nov 2024 23:54:19 +0200
+        Tue, 19 Nov 2024 13:57:40 -0800 (PST)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <0779827f-c51c-4407-8544-c87ca6d76500@roeck-us.net>
+Date: Tue, 19 Nov 2024 13:57:38 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,96 +77,121 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Leonard Crestez <cdleonard@gmail.com>
-Subject: [RFC] ALSA: usb-audio: Fix missing xrun report in lowlatency mode
-To: Takashi Iwai <tiwai@suse.com>, linux-sound@vger.kernel.org
-Cc: Jaroslav Kysela <perex@perex.cz>, linux-kernel@vger.kernel.org
+Subject: Re: regmap I3C support
+To: Frank Li <Frank.li@nxp.com>
+Cc: Mark Brown <broonie@kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <ZzSxKctLlLZexdF5@finisterre.sirena.org.uk>
+ <feda265f-f7ba-4017-a08d-b35916aafe96@roeck-us.net>
+ <ZzS6ph8KulEITt5C@finisterre.sirena.org.uk>
+ <88f34137-b215-4bee-b117-3ff00402ba6c@roeck-us.net>
+ <ZzXfmonkRB-KaBhi@finisterre.sirena.org.uk>
+ <85584c2e-2c45-4ec4-89a0-111fa5ad1080@roeck-us.net>
+ <ZzYyu4ptPtYT6vJC@finisterre.sirena.org.uk>
+ <f904ed54-da90-4746-8230-0ae5dd0ca276@roeck-us.net>
+ <49526254-546e-41e8-afb1-14aadeaa391b@sirena.org.uk>
+ <dd02b307-f8e9-4b5d-9a4d-d429c0dff051@roeck-us.net>
+ <ZzznQknCF7VVHyDK@lizhi-Precision-Tower-5810>
 Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <ZzznQknCF7VVHyDK@lizhi-Precision-Tower-5810>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 11/19/24 11:30, Frank Li wrote:
+> On Tue, Nov 19, 2024 at 10:41:05AM -0800, Guenter Roeck wrote:
+>> On 11/19/24 09:46, Mark Brown wrote:
+>>> On Fri, Nov 15, 2024 at 08:35:04PM -0800, Guenter Roeck wrote:
+>>>> On 11/14/24 09:26, Mark Brown wrote:
+>>>
+>>>>> Right, so the fact that I3C depends on I2C deals with a lot of the
+>>>>> problems that plague the I2C/SPI combination.  Ugh.  I guess the helper
+>>>>> should be OK and there's not much doing for I2C/SPI.
+>>>
+>>>> It looks like we can use
+>>>
+>>>>          if (IS_ENABLED(CONFIG_REGMAP_I3C)) {
+>>>>                  regmap = devm_regmap_init_i3c(i3cdev, &tmp108_regmap_config);
+>>>>                  if (IS_ERR(regmap))
+>>>>                          return dev_err_probe(dev, PTR_ERR(regmap),
+>>>>                                               "Failed to register i3c regmap\n");
+>>>> 		...
+>>>> 	}
+>>>
+>>>> even if a stub function is not available as long as there is an external
+>>>> declaration.
+>>>
+>>>> I don't really like it, but it turns out that this kind of code is already used
+>>>> elsewhere in the kernel. It looks like dead code elimination can now assumed
+>>>> to be available when building kernel code. We live and learn.
+>>>
+>>> Ah, that solves that problem then I guess?
+>>
+>>
+>> Yes. It actually goes a step further - the IS_ENABLED(CONFIG_REGMAP_I3C)) in the
+>> probe function isn't needed either because the entire i3c probe function is
+>> optimized away if CONFIG_I3C=n.
+>>
+>> I'll send a patch dropping the #ifdef in the tmp108 driver after the commit
+>> window closes.
+> 
+> Already tried this at v3
+> https://lore.kernel.org/imx/7bdd2db8-41c8-43d8-ae73-84a221d2d004@roeck-us.net/
+> 
 
-I’m investigating an issue where USB Audio does not properly send XRUN 
-notifications.
+Yes, I know. Sorry for that. We live and learn. I didn't think this works,
+but it does.
 
-The issue can be reproduced with aplay: enable xrun_debug, aplay -D 
-plughw:0 and CTRL-Z - no XRUN message is seen
+> but I am not sure if it is good on rely on the compiler. Maybe some option
+> like some debug option or -O0 cause problem.
+> 
 
-Disabling lowlatency_playback via modprobe parameter does make this 
-issue go away - XRUNs are reported correctly without any changes.
+Yes, I thought so too, but it turns out that the kernel doesn't build anymore
+with -O0 anyway, and other code already _does_ depend on dead code elimination.
 
+Guenter
 
-After a lot of tracing the following seems to be happening:
-
-- prepare_playback_urb find avail=48, meaning 48 bytes still to-be-played
-- snd_usb_endpoint_next_packet_size decides that 48 is too little and 
-returns -EAGAIN. Specifically -EAGAIN is returned from next_packet_size
-- The return value of prepare_playback_urb is propagated through 
-prepare_outbound_urb back to snd_usb_queue_pending_output_urbs
-- snd_usb_queue_pending_output_urbs receives -EAGAIN from 
-prepare_outbound_urb
-- since err is -EAGAIN the ctx is pushed back to the ready list and 
-transmission is aborted but notify_xrun is skipped
-- no more playback?
-
-It is possible to make XRUNs happen by caling notify_xrun even on 
--EAGAIN, diff looks like this:
-
-diff --git a/sound/usb/endpoint.c b/sound/usb/endpoint.c
-index 568099467dbb..da64ee0cf60a 100644
---- a/sound/usb/endpoint.c
-+++ b/sound/usb/endpoint.c
-@@ -495,10 +495,11 @@ int snd_usb_queue_pending_output_urbs(struct 
-snd_usb_endpoint *ep,
-                         break;
-                 if (err < 0) {
-                         /* push back to ready list again for -EAGAIN */
-                         if (err == -EAGAIN) {
-                                 push_back_to_ready_list(ep, ctx);
-+                               notify_xrun(ep);
-                                 break;
-                         }
-
-                         if (!in_stream_lock)
-                                 notify_xrun(ep);
-
-
-This mail was not formatted as proper patch because this seems very 
-likely incorrect, it undoes an explicit check. What would a correct 
-solution look like?
-
-There could be a scenario where -EAGAIN from prepare_outbound_urb can 
-happen without an actual XRUN, but I don’t understand the code enough.
-
-The fact that usb-audio halts playback with a non-zero amount of bytes 
-that can still be played prevents the XRUN checks inside 
-`snd_pcm_update_state` from triggering. This means that the driver 
-always takes responsibility for reporting xrun, correct?
-
-It seems dubious to me that unplayed bytes are kept around - shouldn’t 
-fragments either be played or dropped? Perhaps the last fragment should 
-just be padded with some silence and sent anyway, then core sound code 
-should report xrun anyway.
-
-USB Audio has many parameters. In my particular case:
-
-- lowlatency_playback = true
-- channels=2, rate=48000, format=S16_LE, period_bytes=960, periods=3, 
-implicit_fb=0
-- nurbs = 3
-
-This was originally found in a complex application which checks 
-snd_pcm_state regularly and does not find the SND_PCM_STATE_XRUN state 
-but audio gaps are seen in a physical line capture.
-
-This was seen in Linux 5.19.139 but also affects 6.6.y and latest 
-sound/master branch. There are very few relevant changes in this area 
-that are not already in stable branches.
-
-Hardware is a conexant audio codec, USB VID:PID 0572:1410.
-
---
-Regards,
-Leonard
 
