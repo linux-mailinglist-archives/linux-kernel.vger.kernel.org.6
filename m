@@ -1,97 +1,132 @@
-Return-Path: <linux-kernel+bounces-414925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29CE19D2F52
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 21:11:17 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71C609D2F54
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 21:11:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 36864B271C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 20:11:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BCA50B27BC2
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 20:11:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A83061D31BE;
-	Tue, 19 Nov 2024 20:10:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83D2C1D31B5;
+	Tue, 19 Nov 2024 20:11:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uuy7Jd+v"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="VPVzkLUf"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6AAE1CCEF7;
-	Tue, 19 Nov 2024 20:10:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FCCB153835;
+	Tue, 19 Nov 2024 20:11:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732047048; cv=none; b=V4sH6C4KvGl/fgkdQEqgygcXVm2K6Rxp8scVdmdFuUmM/NIzFjjy2pnMZkpPbwvZPYEMi+HVOXmOXx1NkeCzRjzuUh+Z1pAVaQKKeDpeu7Fx4bQ2oPHnL1dqA34cnu6DJGMs6QzhfVdhnqa7HPIkQxEp31RqMPQ5wb0uakdViqY=
+	t=1732047073; cv=none; b=YeN2pLtlAAavL8V3VzILjs3IxRC72caxJM3p+dVUzfVTI/BOPPEizHzch9M/+pe4Ec/vihwXG4jjaA73p2GFJ1XYQM0gWCjheYbRuPtPJOX1/G01K4S7rR7wGuRssQ5//Du5MFb+O/K8sBOgEPfNR3OCnxcO8foVd1IcQ0UKq68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732047048; c=relaxed/simple;
-	bh=80p4u8vFU8cU6neBJorNSyBCRfiu3wL8yP9UDvMnD7o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jmRwW36gFEyOsiJgLCrTbsXNXEVHZ0ZrCTKk4IXswSyuuXenXXGEX8mfZwFq54I/58dTG5AmiJH5AFXq5Cl6j7wpUkTR8m65W9w+3kJQGkwa/pdYi+oBENMeA0Qaf3+aLVSTybxoLSL0Uq/qvekU+OPQ9szAa5QSNnWFcfMM/84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uuy7Jd+v; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A46B3C4CECF;
-	Tue, 19 Nov 2024 20:10:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732047047;
-	bh=80p4u8vFU8cU6neBJorNSyBCRfiu3wL8yP9UDvMnD7o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uuy7Jd+vQldDusMOoTA5ujAWOpxoWC3hIgk+EQooQ3HcsDFe3FlK/vlHLCtuR1gHG
-	 RxMNB3Zs4G29GqTaSw1Eu00nUctmUvxyenM60QK6Wf2EYS3TtBHST03xkpvsgVeErI
-	 1Z9RW3pz9X+kne3+h/58p2y3GvUBCwci1GuoSRqqv/l7rzYZuuWU8KXiTSq2fx2vVL
-	 SVPTo0qNvFUEm9Yw0mIKFNYeKmtrySo6LIOzq+yQGUTF3J1YsmF86wmovCYL6kSWSO
-	 Q+eA626XtJrhx0WNtyPhf2+UaZugOLjORq8Rs7qXh27dilBbgGe16dGRh9zUEnpYGW
-	 /dZot0wypxOeA==
-Date: Tue, 19 Nov 2024 12:10:45 -0800
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Roberto Sassu <roberto.sassu@huaweicloud.com>, zohar@linux.ibm.com,
-	dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, corbet@lwn.net,
-	petr.pavlu@suse.com, samitolvanen@google.com, da.gomez@samsung.com,
-	akpm@linux-foundation.org, paul@paul-moore.com, jmorris@namei.org,
-	serge@hallyn.com, shuah@kernel.org, mcoquelin.stm32@gmail.com,
-	alexandre.torgue@foss.st.com, linux-integrity@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-api@vger.kernel.org, linux-modules@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, wufan@linux.microsoft.com,
-	pbrobinson@gmail.com, zbyszek@in.waw.pl, mjg59@srcf.ucam.org,
-	pmatilai@redhat.com, jannh@google.com, dhowells@redhat.com,
-	jikos@kernel.org, mkoutny@suse.com, ppavlu@suse.com,
-	petr.vorel@gmail.com, mzerqung@0pointer.de, kgold@linux.ibm.com,
-	Roberto Sassu <roberto.sassu@huawei.com>
-Subject: Re: [PATCH v6 02/15] module: Introduce ksys_finit_module()
-Message-ID: <ZzzwxdHbG9HynADT@bombadil.infradead.org>
-References: <20241119104922.2772571-1-roberto.sassu@huaweicloud.com>
- <20241119104922.2772571-3-roberto.sassu@huaweicloud.com>
- <20241119121402.GA28228@lst.de>
+	s=arc-20240116; t=1732047073; c=relaxed/simple;
+	bh=rSituOJrRNz6zH8xI0pVCVWA9bP2bhYuyASCgbKHarY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Xnbt+gaqep09GYHgpzVBHSmRF/sBk0lXyHrJVviTHIpR8R13PFULwMmSMXJEeZGOFE86jnQiR0GvsnVTuYw2t9/ivbfynKCVpJrubfHc3cykYYlrTOuk6u7kgmEWQKmpqwC4f+2F7JSk3qqqo9b3XSYIzl0ILyaSrkRbZPD1D8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=VPVzkLUf; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AJAYnfu007872;
+	Tue, 19 Nov 2024 20:11:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	sxPXjPDaTQBw3jBSkf+bpcp8+tu2oQqE7OEE9+eNkAM=; b=VPVzkLUfsd75mVuZ
+	Tx5wuPQJwbcmoxe2iepddlQ5Voan2tE5lplUULiX1pQKjUwXR1ceiZa0rL7g8DWd
+	Ah20LVZvg0d3VmE+BRZ1vSBBce5dhXUsl1petZ2G+WFfkPHyE0LADcsWpfs6YAXb
+	bdQeI8G32wCUVuBb4+UMgoY9nxTEJ3We/HYv2S+cH5E0MXFGsMCfs6gHgB7/EAa/
+	1NSEaGTZ/cAM9d+/9hgkA5debY7Zs8aSut44OmwwHj1XgEKGh1BQdvOF9kkrNW8m
+	IL7PqYb3oc7qZ+Od03yzgq9MgBmObTnnr99pmfv9/xw5DyDUgim4ijNkn7MbUDYl
+	kJDf6g==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4308y6usyn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 19 Nov 2024 20:11:11 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AJKBA6Z002838
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 19 Nov 2024 20:11:10 GMT
+Received: from [10.216.16.143] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 19 Nov
+ 2024 12:11:06 -0800
+Message-ID: <30fda0e2-f314-49b8-8c1c-bf4fac87050d@quicinc.com>
+Date: Wed, 20 Nov 2024 01:41:03 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241119121402.GA28228@lst.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: qcom: qcs9100: Update memory map for QCS9100
+ Ride and QCS9100 Ride Rev3
+To: Pratyush Brahma <quic_pbrahma@quicinc.com>,
+        Bjorn Andersson
+	<bjorn.andersson@example.com>,
+        Konrad Dybcio <konrad.dybcio@example.com>,
+        "Rob Herring" <rob.herring@example.com>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski@example.com>,
+        Conor Dooley <conor.dooley@example.com>
+CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <quic_tengfan@quicinc.com>,
+        <quic_shashim@quicinc.com>
+References: <20241119092501.31111-1-quic_pbrahma@quicinc.com>
+Content-Language: en-US
+From: Kuldeep Singh <quic_kuldsing@quicinc.com>
+In-Reply-To: <20241119092501.31111-1-quic_pbrahma@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: H2nW38eyBv7ErXnkdnqSClquZtx3rPWD
+X-Proofpoint-GUID: H2nW38eyBv7ErXnkdnqSClquZtx3rPWD
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 suspectscore=0
+ impostorscore=0 bulkscore=0 mlxscore=0 malwarescore=0 mlxlogscore=806
+ phishscore=0 spamscore=0 priorityscore=1501 lowpriorityscore=0
+ clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411190150
 
-On Tue, Nov 19, 2024 at 01:14:02PM +0100, Christoph Hellwig wrote:
-> On Tue, Nov 19, 2024 at 11:49:09AM +0100, Roberto Sassu wrote:
-> > From: Roberto Sassu <roberto.sassu@huawei.com>
-> > 
-> > Introduce ksys_finit_module() to let kernel components request a kernel
-> > module without requiring running modprobe.
+
+
+On 11/19/2024 2:55 PM, Pratyush Brahma wrote:
+> This patch series is based on Tengfei Fan's patches [1] which adds support
+> for QCS9100 Ride and QCS9100 Ride Rev3 boards.
 > 
-> That does sound more than sketchy, even more so because the commit log
-> completely fails to explain why you'd need to do that.
+> Some new carveouts (viz. gunyah_md and a few pil dtb carveouts) have been
+> introduced and the size and base addresses have been updated for
+> a few of existing carveouts compared to SA8775P. Also, tz_ffi_mem carveout
+> and its corresponding scm reference has been removed as it is not required
+> for these boards. Incorporate these changes in the updated memory map
+> for QCS9100 Ride and QCS9100 Rev3 boards.
+> 
+> [1] https://lore.kernel.org/all/20240911-add_qcs9100_support-v2-4-e43a71ceb017@quicinc.com/
+> 
+> Signed-off-by: Pratyush Brahma <quic_pbrahma@quicinc.com>
 
-I also don't think the commit log is correct, I don't see how the
-code is preventing calling modprobe, the indepotent check is intended
-to prevent duplicate module init calls which may allocate extra vmalloc
-space only to release it. You can test to see if your patch has any
-improvments by enabling MODULE_STATS and MODULE_DEBUG_AUTOLOAD_DUPS
-and check before / after results of /sys/kernel/debug/modules/stats  ,
-right now this patch and commit log is not telling me anything useful.
+The memory map for qcs9100-ride-r3 and qcs9100-ride is exactly same.
+A good churn you are first deleting(based on sa8775p) and then re-adding
+for qcs9100-ride*.
 
-  Luis
+I think it's better to move common qcs9100-ride* to a common file ex:
+qcs9100-ride.dtsi and keep specifics further to .dts files?
 
+This will ensure common entities are present at same place with no
+duplicates.
 
+--
+
+Regards
+Kuldeep
 
