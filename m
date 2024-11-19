@@ -1,130 +1,180 @@
-Return-Path: <linux-kernel+bounces-413648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCA9C9D1CD5
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 01:54:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2B329D1CE9
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 02:05:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D5151F22158
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 00:54:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84711282D6D
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 01:05:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BCE11DDEA;
-	Tue, 19 Nov 2024 00:54:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CEC02E822;
+	Tue, 19 Nov 2024 01:05:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kCWLYQk+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="msMHyPUU"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C914DDDAB;
-	Tue, 19 Nov 2024 00:54:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45E68A93D;
+	Tue, 19 Nov 2024 01:05:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731977687; cv=none; b=dFI1KgJcNMQ1UTISQAv5Mfg8D0KPA9HWv8DYO/jJQEJLaoichBT0RxfSswi/HUXHj8/OtFHanonTcFqYABhIfhTC7HGWyagg8W1P2Z4Ni84tBKMyIytDCAkIh420n0QjT93CD3gwYc0o/v72UZgNtlnM8mglwb+emWJFwbR52fY=
+	t=1731978339; cv=none; b=DFMQqONdnvNgwOYNUbYx9DgpNZVmHvXhTXDf2hc7L9Wx5fg+QtlXzTUnGiH2I8oN04CmWBdnmqjKyzzsWOA1QKO3pIxcC46cXpfTu6SX/nWacPj7JeUinuuhGGF2hHuHkZNBPKGpAa92jLYDfe7VhMCKZrwrGquLCL2xemu3qJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731977687; c=relaxed/simple;
-	bh=mCsUESeGqYyManR/66muUfpuIv8qL0U9c/qMPXLc8r0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=smbMXlDEJI7E7S4/EALnsAslFMaww0zGxnZOT7MtL0HwThC6Cskg5C9Hr4z3L/dWFnDg15cqLg39OGrnuVXmEsTrcfwmQxxLMvrtNJd+BivxZdyYMcJBg1y5kahOvrdIFeklDqFOZXfC8u2FjlU3/dzgpDVidcMyk0o6+OV3sdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kCWLYQk+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFA33C4CECF;
-	Tue, 19 Nov 2024 00:54:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731977687;
-	bh=mCsUESeGqYyManR/66muUfpuIv8qL0U9c/qMPXLc8r0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kCWLYQk+pUd10TssCLOvIpAG922iHwQ1fO5pTzwKmLEWiYIUKuzZPYSPbf14V7Wib
-	 cBD1aazSqYSqj4Cj2BQwLTfsUC2TPCnhe/G3VE/CfSNHVUrIONp6d1XPX72SoFkA78
-	 NMjycgRC3FuddN+Rk7Gdzsy95Yu9MD9oR+lCyFn24o4y13CvpDqBREDaUcmzqvx4kj
-	 oBoXl5ucqxDwcqK7Kx73lvdP6NERwI+pczWf2akS9YisRCn7nCUS5T9OhvVybP0Zy6
-	 xWqQ9hTzppfj12hgcp2chQuiC+lPPAtTJhP166z6pTOX/nSM0vZ4+8gt+hZqTlMI39
-	 TCMWMFZ/DzLKg==
-Date: Mon, 18 Nov 2024 16:54:45 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: Thomas Richter <tmricht@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	acme@kernel.org, james.clark@linaro.org, agordeev@linux.ibm.com,
-	gor@linux.ibm.com, sumanthk@linux.ibm.com, hca@linux.ibm.com,
-	Sven Schnelle <svens@linux.ibm.com>
-Subject: Re: [PATCH v2] perf/test: fix perf ftrace test on s390
-Message-ID: <Zzvh1XZzxXrUdhG-@google.com>
-References: <20241115065735.2753032-1-tmricht@linux.ibm.com>
+	s=arc-20240116; t=1731978339; c=relaxed/simple;
+	bh=dJfvBSfmbjhQ6llfWcJivt4BmuuxtAnrWORyR3RQ23E=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 MIME-Version:Date; b=Fu9jFD0zFVVTWdi/Q5C5zpjcuPfAZObCnHDz1lcLU9BU7x3g9+1/7w3HmaZk7uGeruIJdo+KpAxyuJ/5U41aZlkNydZwSJPLPNnZrpsfY1siuvlTB0zpL6FTEvM4V/ppyVLLv6U20lx7grPda1LdNCksXI5l6vRsKQTura9POVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=msMHyPUU; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AILwE0l023275;
+	Tue, 19 Nov 2024 01:05:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=tEZ5Pr
+	bHuWe3wqw/gvWY8LMX5+E2VHOII1rRZd2Op/k=; b=msMHyPUUnpTlkIROlBtp/h
+	qgNmxcBcdGILUR6lnQOme6HzAkg1X+AB7TxhHIJFb0KwUIWgsoO5SvdM6XMB6PyL
+	IyeDkccur9tZOgCBE3OmoZVugguJCHmUtBpmBTTF7kDYTOYmVzQKrkt6uQCWqnSd
+	KxrRHmYV7Mg+a7NE3ZmYDH/0jNjtpU7G4z1iHEiJVB4EABdbBCMvqk1lNoHSxKOe
+	RmyIJP8BDnUNUSckhXvi+7IL1TrWNy8Ee9v+l2gbKI9D9Hr44T+UQyxOKBCI8557
+	bXh0aJ0Bb8bDz3qKCLdkQwbjrDXAt/k0IUPkvfQfXOE49J0dao94vbP1T/1ILk/g
+	==
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42xhtjmdct-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 19 Nov 2024 01:05:21 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AJ0AqIL031179;
+	Tue, 19 Nov 2024 01:05:20 GMT
+Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 42y5qsbp0h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 19 Nov 2024 01:05:20 +0000
+Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
+	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4AJ15JfO46924380
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 19 Nov 2024 01:05:19 GMT
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id BD87D5805A;
+	Tue, 19 Nov 2024 01:05:19 +0000 (GMT)
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 067B558054;
+	Tue, 19 Nov 2024 01:05:19 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.30.225])
+	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 19 Nov 2024 01:05:18 +0000 (GMT)
+Message-ID: <539ec9eb95fbb5fd0a092ffb9b3c1adb1031de5c.camel@linux.ibm.com>
+Subject: Re: [PATCH v3] ima: Suspend PCR extends and log appends when
+ rebooting
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, roberto.sassu@huawei.com,
+        Stefan Berger
+	 <stefanb@linux.ibm.com>,
+        Tushar Sugandhi <tusharsu@linux.microsoft.com>
+In-Reply-To: <20241118145732.1258631-1-stefanb@linux.vnet.ibm.com>
+References: <20241118145732.1258631-1-stefanb@linux.vnet.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241115065735.2753032-1-tmricht@linux.ibm.com>
+Date: Mon, 18 Nov 2024 19:56:53 -0500
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: r-TXCmcYMB2Lyl_1TYvS70rbnX9LaQTh
+X-Proofpoint-GUID: r-TXCmcYMB2Lyl_1TYvS70rbnX9LaQTh
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
+ clxscore=1015 malwarescore=0 spamscore=0 bulkscore=0 priorityscore=1501
+ impostorscore=0 mlxscore=0 adultscore=0 suspectscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2411190003
 
-On Fri, Nov 15, 2024 at 07:57:35AM +0100, Thomas Richter wrote:
-> On s390 the perf test case ftrace sometimes fails as follows:
-> 
->   # ./perf test ftrace
->   79: perf ftrace tests    : FAILED!
->   #
-> 
-> The failure depends on the kernel .config file. Some configurarions
-> always work fine, some do not.  The ftrace profile test mostly fails,
-> because the ring buffer was not large enough, and some lines
-> (especially the interesting ones with nanosleep in it) where dropped.
-> 
-> To achieve success for all our tested kernel configurations, enlarge
-> the buffer to store the traces complete without wrapping.
-> The default buffer size is too small  for all kernel configurations.
-> Set the buffer size of /sys/kernel/tracing/buffer_size_kb to 16 MB
-> 
-> Output after:
->   # ./perf test ftrace
->   79: perf ftrace tests     : Ok
->   #
-> 
-> Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
-> Suggested-by: Sven Schnelle <svens@linux.ibm.com>
-> Reviewed-by: James Clark <james.clark@linaro.org>
+On Mon, 2024-11-18 at 09:57 -0500, Stefan Berger wrote:
+> From: Stefan Berger <stefanb@linux.ibm.com>
+>=20
+> To avoid the following types of error messages due to a failure by the TP=
+M
+> driver to use the TPM, suspend TPM PCR extensions and the appending of
+> entries to the IMA log once IMA's reboot notifier has been called. This
+> avoids trying to use the TPM after the TPM subsystem has been shut down.
+>=20
+> [111707.685315][    T1] ima: Error Communicating to TPM chip, result: -19
+> [111707.685960][    T1] ima: Error Communicating to TPM chip, result: -19
+>=20
+> Synchronization with the ima_extend_list_mutex to set
+> ima_measurements_suspended ensures that the TPM subsystem is not shut dow=
+n
+> when IMA holds the mutex while appending to the log and extending the PCR=
+.
+> The alternative of reading the system_state variable would not provide th=
+is
+> guarantee.
+>=20
+> This error could be observed on a ppc64 machine running SuSE Linux where
+> processes are still accessing files after devices have been shut down.
+>=20
+> Suspending the IMA log and PCR extensions shortly before reboot does not
+> seem to open a significant measurement gap since neither TPM quoting woul=
+d
+> work for attestation nor that new log entries could be written to anywher=
+e
+> after devices have been shut down. However, there's a time window between
+> the invocation of the reboot notifier and the shutdown of devices. This
+> includes all subsequently invoked reboot notifiers as well as
+> kernel_restart_prepare() where __usermodehelper_disable() waits for all
+> running_helpers to exit. During this time window IMA could now miss log
+> entries even though attestation would still work. The reboot of the syste=
+m
+> shortly after may make this small gap insignificant.
+>=20
+> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+
+Thank you for updating the patch description and the comment below.  The pa=
+tch
+is now queued in next-integrity-testing.
+
+Mimi
+
 > ---
->  tools/perf/tests/shell/ftrace.sh | 11 +++++++++++
->  1 file changed, 11 insertions(+)
-> 
-> diff --git a/tools/perf/tests/shell/ftrace.sh b/tools/perf/tests/shell/ftrace.sh
-> index a6ee740f0d7e..6161a8bdc251 100755
-> --- a/tools/perf/tests/shell/ftrace.sh
-> +++ b/tools/perf/tests/shell/ftrace.sh
-> @@ -14,6 +14,11 @@ output=$(mktemp /tmp/__perf_test.ftrace.XXXXXX)
->  
->  cleanup() {
->    rm -f "${output}"
-> +  if [ "$(uname -m)" = "s390x" ]
-> +  then
-> +	echo $ftrace_size > /sys/kernel/tracing/buffer_size_kb
-> +  fi
+
+[...]=20
+> 						       int pcr)
+> @@ -168,6 +175,18 @@ int ima_add_template_entry(struct ima_template_entry=
+ *entry, int violation,
+>  	int result =3D 0, tpmresult =3D 0;
+> =20
+>  	mutex_lock(&ima_extend_list_mutex);
 > +
->  
->    trap - EXIT TERM INT
->  }
-> @@ -80,6 +85,12 @@ test_ftrace_profile() {
->      echo "perf ftrace profile test  [Success]"
->  }
-
-Could you please use `perf ftrace profile -m 16M ...` instead?
-
-Thanks,
-Namhyung
-
->  
-> +if [ "$(uname -m)" = "s390x" ]
-> +then
-> +	ftrace_size=$(cat /sys/kernel/tracing/buffer_size_kb)
-> +	echo 16384 > /sys/kernel/tracing/buffer_size_kb
-> +fi
+> +	/*
+> +	 * Avoid appending to the measurement log when the TPM subsystem has
+> +	 * been shut down while preparing for system reboot.
+> +	 */
+> +	if (ima_measurements_suspended) {
+> +		audit_cause =3D "measurements_suspended";
+> +		audit_info =3D 0;
+> +		result =3D -ENODEV;
+> +		goto out;
+> +	}
 > +
->  test_ftrace_list
->  test_ftrace_trace
->  test_ftrace_latency
-> -- 
-> 2.47.0
-> 
+>  	if (!violation && !IS_ENABLED(CONFIG_IMA_DISABLE_HTABLE)) {
+>  		if (ima_lookup_digest_entry(digest, entry->pcr)) {
+>  			audit_cause =3D "hash_exists";
+> @@ -211,6 +230,31 @@ int ima_restore_measurement_entry(struct ima_templat=
+e_entry *entry)
+>  	return result;
+>  }
+
 
