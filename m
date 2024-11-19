@@ -1,158 +1,357 @@
-Return-Path: <linux-kernel+bounces-414625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFE579D2B51
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 17:43:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 784589D2B1D
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 17:38:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 539A0B31588
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 16:37:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B0C23B29E03
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 16:38:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAD2F1D0B91;
-	Tue, 19 Nov 2024 16:37:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B98B1CC179;
+	Tue, 19 Nov 2024 16:38:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QRdZc9Dz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="z0DWX3z+"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0118A1CC88B;
-	Tue, 19 Nov 2024 16:37:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D00F14AD3A
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 16:38:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732034253; cv=none; b=CeW9IH1Kfmty+M12K2hgQ2K2oE7w2evGWvUZsLm0fDYJxlYAQ4mPKbrL6Ny3FSnCJ40bRG8hzUA0I7yf2eMrU4rwMsNFZqC4Tv57H8aRYWh9LxLhv8NkcrJsNlJ0txmkrWgdpHuclzSTvEOXvnz/PRbkRJcP4+cp9l4m2kg3ZpI=
+	t=1732034292; cv=none; b=iThZCHfI2d/6sEtQGTmgKKYmbw+sN0N2hJjFm/U+yyjHP5B/6R66yWckFB3GWKmoJApXUxn2SCfEpxk+KVPZuEiPSOa5JopSgbv2uFyPP89Ivhsq58+MS6skErAp3hqzjdwlprsGqV6PZ3Ao4MSJGpsienBvuy8Vm5UnyAxSFpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732034253; c=relaxed/simple;
-	bh=sNdvLbL4aOxoLXjKy6ZHtsflibffPE5ejyEc/6CBqQM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sw1ka888kP4DhJSDX1sgmVO91EfRmFuufJvkezaSIzFIYzl80hfZ8zb6BFYEfX7zV1/9ICJnNDWkyRTIzMAnuCv86/HvU6d/EUm+UrgOMgp/A6jF1/FGfxjvtgJqwS+dTvZMt9pBn1FOL/7bSLdKZWQjlhtWLz0Dud9LcVO8vE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QRdZc9Dz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4F96C4CECF;
-	Tue, 19 Nov 2024 16:37:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732034252;
-	bh=sNdvLbL4aOxoLXjKy6ZHtsflibffPE5ejyEc/6CBqQM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QRdZc9Dzr2TU8yxwhV7GmeRRFrwpeJw7tyrGYfywrJdZPzKMD5ifZ/yBfEJOQBcc8
-	 VdOfu7KUthV+STeNtq65wmAEHjaDVOwjOGGTa36pX5LWnw0hH94lLyjByYFSOpApi/
-	 pW0rrsUQxs+fka+2IqWQg1ja7JBoEg1mYFziLiWFqLfiMGZwH015PAuqniiEj2oZbz
-	 596h8vJHbyiRDeWBHqo6HdLf9KTrvctu5gO9gtTcSdRjFwre5Vd+/uCA0E55mD9U6u
-	 Q1lxeyreOxHp5tav/WXd6WQAKKNz9eJvCbci6lGSLNyib43LglkIqsf50oeHPqWYRH
-	 J4Sn78PFubj+Q==
-Date: Tue, 19 Nov 2024 10:37:31 -0600
-From: Rob Herring <robh@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Mark Brown <broonie@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	David Jander <david@protonic.nl>,
-	Martin Sperl <kernel@martin.sperl.org>, linux-spi@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-iio@vger.kernel.org, linux-pwm@vger.kernel.org
-Subject: Re: [PATCH v5 04/16] spi: dt-bindings: add PWM SPI offload trigger
-Message-ID: <20241119163731.GA1769375-robh@kernel.org>
-References: <20241115-dlech-mainline-spi-engine-offload-2-v5-0-bea815bd5ea5@baylibre.com>
- <20241115-dlech-mainline-spi-engine-offload-2-v5-4-bea815bd5ea5@baylibre.com>
+	s=arc-20240116; t=1732034292; c=relaxed/simple;
+	bh=rqKRXPBVHuRNEsoJUicwfJMDexnqQyqd3mQeLh4CbpY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ls509JKOG2JM82XhCVrNUtZXjkf02IBlrEe7PL8JlSjJBUO8DY938i305ivWKy8rNBoZEexcayubNJ8Zngbcumjm8hZYhVKLLA8GsfzxTK30gdhSZTNUd0dPP96uIi1zA+3F/Tz+5kXK2KKB9lXSHEtlKJN1xXrsj3DXmOdjj0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=z0DWX3z+; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-720d01caa66so4117056b3a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 08:38:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1732034290; x=1732639090; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=tsi76Pj99/LFVNHPqhU6HGDCzJfL0N7wlXitIphx0zw=;
+        b=z0DWX3z+oasnN7/Y22+EtuE87aPx5/9NLfWxKj4RbUscJ/wYeXG3B6bzcvDgI3zYkr
+         dtCp7KelWtT7vgw9TvR3/71Rn8gnj66ifKyqB7TkvHApTB7hhxfz8T1FuDeZFWaxJRnq
+         C+HUU5QWAYqRGV5Pc2KRlASRjHYBAoldykUKN2enLuLwhHMRT2eOI8+P4aahj503tmVx
+         bQ5NOBD5PzguzoiGp1AL80VQtUkEIyJRQuTjAZs7wSnCqYkA0r0S4nVVJupBRryFpEq9
+         zR8rzxztdCSIpiF8xFcGyw3xnD6s5yoFdGJxuXJXQ7nVw9D+QFqxVypODj/1gKdRlmb1
+         NTJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732034290; x=1732639090;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tsi76Pj99/LFVNHPqhU6HGDCzJfL0N7wlXitIphx0zw=;
+        b=bLLUH//Z96ER3DdzX7loUkqD3hRDt3C6HuXqWqfo4Rkwh/2UOgX19r7GVkGtJHik4U
+         b78C2twzmfAb6/wl6N1cUV+hHoXOBhdRY4Tt5NmhNEi2aKr2jcGVew0ZvnQCJYh8JcLp
+         6jPTsOq9zrZpDrd2h5OONNq3zMVwJZIfOVZKjAwQG7/vD4YgyUXPN7lVTBy4JcGUntXU
+         xCK3xmIXRM4jdIiMAXtUlcfIUd91vxcSiJl25RzFohbApY+nMPZw8SzbUOn9PNG35nX3
+         nAyulenPNUbTOzQCu6ujsFGddFwbVv9yAkH+kYe9763f6evb7TxlHJa7eLGRf1qR4jC2
+         A0JA==
+X-Forwarded-Encrypted: i=1; AJvYcCW3O8Cvhrg16QKg20sYG5kZiYxBmI38A5JzQT1MugXc2Ki3xmyJb3x0oDih3dJLzFBG+wAwY5LykfQMts8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWGcRw6lZuM9wZsQDjaRjG6UwWrxeyJyM3YbScu0Zg2k4fQUsh
+	XV6++NC/Pqi4vWuJdX0SCzQxl2mP74WahExdW6m4QWtxSBWynlvTRg3nVMNzsRRT3SpE8Oh92cw
+	7XlG8J5E+AHnp1btQF7v/66JIfk25buL0hiA8
+X-Google-Smtp-Source: AGHT+IHQA7XqdVsvATXbGsRCW6vobj0rSX84VvhPHoBIjp4qi1gk3ZaGfQ5C7h7OzzD9KSSUyMm+r/Mcm1I7aPg7hZg=
+X-Received: by 2002:a05:6a00:1390:b0:724:592d:aa5f with SMTP id
+ d2e1a72fcca58-72476c4c25amr21755898b3a.19.1732034289334; Tue, 19 Nov 2024
+ 08:38:09 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241115-dlech-mainline-spi-engine-offload-2-v5-4-bea815bd5ea5@baylibre.com>
+References: <67275485.050a0220.3c8d68.0a37.GAE@google.com> <ee48b6e9-3f7a-49aa-ae5b-058b5ada2172@suse.cz>
+ <b9a674c1-860c-4448-aeb2-bf07a78c6fbf@suse.cz> <20241104114506.GC24862@noisy.programming.kicks-ass.net>
+ <CANpmjNPmQYJ7pv1N3cuU8cP18u7PP_uoZD8YxwZd4jtbof9nVQ@mail.gmail.com> <20241119155701.GYennzPF@linutronix.de>
+In-Reply-To: <20241119155701.GYennzPF@linutronix.de>
+From: Marco Elver <elver@google.com>
+Date: Tue, 19 Nov 2024 17:37:33 +0100
+Message-ID: <CANpmjNNEBpb8E=zQtD4mAM4VaqTVbabvMKuWpSd+prVrK=mmGw@mail.gmail.com>
+Subject: Re: [PATCH] kasan: Remove kasan_record_aux_stack_noalloc().
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Peter Zijlstra <peterz@infradead.org>, Vlastimil Babka <vbabka@suse.cz>, 
+	syzbot <syzbot+39f85d612b7c20d8db48@syzkaller.appspotmail.com>, 
+	Liam.Howlett@oracle.com, akpm@linux-foundation.org, jannh@google.com, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, lorenzo.stoakes@oracle.com, 
+	syzkaller-bugs@googlegroups.com, Andrey Konovalov <andreyknvl@gmail.com>, 
+	kasan-dev <kasan-dev@googlegroups.com>, Andrey Ryabinin <ryabinin.a.a@gmail.com>, 
+	Alexander Potapenko <glider@google.com>, Waiman Long <longman@redhat.com>, dvyukov@google.com, 
+	vincenzo.frascino@arm.com, paulmck@kernel.org, frederic@kernel.org, 
+	neeraj.upadhyay@kernel.org, joel@joelfernandes.org, josh@joshtriplett.org, 
+	boqun.feng@gmail.com, urezki@gmail.com, rostedt@goodmis.org, 
+	mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com, 
+	qiang.zhang1211@gmail.com, mingo@redhat.com, juri.lelli@redhat.com, 
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com, bsegall@google.com, 
+	mgorman@suse.de, vschneid@redhat.com, tj@kernel.org, cl@linux.com, 
+	penberg@kernel.org, rientjes@google.com, iamjoonsoo.kim@lge.com, 
+	Thomas Gleixner <tglx@linutronix.de>, roman.gushchin@linux.dev, 42.hyeyoo@gmail.com, 
+	rcu@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Nov 15, 2024 at 02:18:43PM -0600, David Lechner wrote:
-> Add a new binding for using a PWM signal as a trigger for SPI offloads.
-> 
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
+On Tue, 19 Nov 2024 at 16:57, Sebastian Andrzej Siewior
+<bigeasy@linutronix.de> wrote:
+>
+> From: Peter Zijlstra <peterz@infradead.org>
+
+The patch title is misleading - it might suggest the opposite of what
+it's doing. I think this might be clearer:
+
+"kasan: Make kasan_record_aux_stack_noalloc() the default behaviour"
+
+Which is also more or less what you say below.
+
+> kasan_record_aux_stack_noalloc() was introduced to record a stack trace
+> without allocating memory in the process. It has been added to callers
+> which were invoked while a raw_spinlock_t was held.
+> More and more callers were identified and changed over time. Is it a
+> good thing to have this while functions try their best to do a
+> locklessly setup? The only downside of having kasan_record_aux_stack()
+> not allocate any memory is that we end up without a stacktrace if
+> stackdepot runs out of memory and at the same stacktrace was not
+> recorded before. Marco Elver said in
+>         https://lore.kernel.org/all/20210913112609.2651084-1-elver@google.com/
+> that this is rare.
+>
+> Make the kasan_record_aux_stack_noalloc() behaviour default as
+> kasan_record_aux_stack().
+>
+> [bigeasy: Dressed the diff as patch. ]
+>
+> Reported-by: syzbot+39f85d612b7c20d8db48@syzkaller.appspotmail.com
+> Closes: https://lore.kernel.org/all/67275485.050a0220.3c8d68.0a37.GAE@google.com
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+
+Reviewed-by: Marco Elver <elver@google.com>
+
+As I wrote in https://lore.kernel.org/all/CANpmjNPmQYJ7pv1N3cuU8cP18u7PP_uoZD8YxwZd4jtbof9nVQ@mail.gmail.com/:
+
+> I'd be in favor, it simplifies things. And stack depot should be
+> able to replenish its pool sufficiently in the "non-aux" cases
+> i.e. regular allocations. Worst case we fail to record some
+> aux stacks, but I think that's only really bad if there's a bug
+> around one of these allocations. In general the probabilities
+> of this being a regression are extremely small [...]
+
+Good riddance.
+
+Thanks,
+-- Marco
+
 > ---
-> 
-> v5 changes:
-> * Add MAINTAINERS entry
-> 
-> v4 changes: new patch in v4
-> ---
->  .../devicetree/bindings/spi/trigger-pwm.yaml       | 39 ++++++++++++++++++++++
->  MAINTAINERS                                        |  1 +
->  2 files changed, 40 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/spi/trigger-pwm.yaml b/Documentation/devicetree/bindings/spi/trigger-pwm.yaml
-> new file mode 100644
-> index 000000000000..987638aa4732
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/spi/trigger-pwm.yaml
-> @@ -0,0 +1,39 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/spi/trigger-pwm.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Generic SPI offload trigger using PWM
-
-Not really anything specific to SPI offload here.
-
-I think this should be moved to 
-bindings/trigger-source/trigger-pwm.yaml.
-
-
-> +
-> +description: Remaps a PWM channel as a trigger source.
-> +
-> +maintainers:
-> +  - David Lechner <dlechner@baylibre.com>
-> +
-> +$ref: /schemas/spi/trigger-source.yaml#
-
-Including this doesn't really do anything. Will add more detail in its 
-patch.
-
-> +
-> +properties:
-> +  compatible:
-> +    const: trigger-pwm
-> +
-> +  '#trigger-source-cells':
-> +    const: 0
-> +
-> +  pwms:
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - '#trigger-source-cells'
-> +  - pwms
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    trigger {
-> +        compatible = "trigger-pwm";
-> +        #trigger-source-cells = <0>;
-> +        pwms = <&pwm 0 1000000 0>;
-> +    };
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 91a4a7eb6194..a43532a1edde 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -22021,6 +22021,7 @@ F:	include/linux/mtd/spi-nor.h
->  
->  SPI OFFLOAD
->  R:	David Lechner <dlechner@baylibre.com>
-> +F:	Documentation/devicetree/bindings/spi/trigger-pwm.yaml
->  F:	Documentation/devicetree/bindings/spi/trigger-source.yaml
->  F:	drivers/spi/spi-offload.c
->  F:	include/linux/spi/spi-offload.h
-> 
-> -- 
-> 2.43.0
-> 
+>
+> Didn't add a Fixes tag, didn't want to put
+>    7cb3007ce2da2 ("kasan: generic: introduce kasan_record_aux_stack_noalloc()")
+>
+> there.
+>
+>  include/linux/kasan.h     |  2 --
+>  include/linux/task_work.h |  3 ---
+>  kernel/irq_work.c         |  2 +-
+>  kernel/rcu/tiny.c         |  2 +-
+>  kernel/rcu/tree.c         |  4 ++--
+>  kernel/sched/core.c       |  2 +-
+>  kernel/task_work.c        | 14 +-------------
+>  kernel/workqueue.c        |  2 +-
+>  mm/kasan/generic.c        | 14 ++------------
+>  mm/slub.c                 |  2 +-
+>  10 files changed, 10 insertions(+), 37 deletions(-)
+>
+> diff --git a/include/linux/kasan.h b/include/linux/kasan.h
+> index 00a3bf7c0d8f0..1a623818e8b39 100644
+> --- a/include/linux/kasan.h
+> +++ b/include/linux/kasan.h
+> @@ -488,7 +488,6 @@ void kasan_cache_create(struct kmem_cache *cache, unsigned int *size,
+>  void kasan_cache_shrink(struct kmem_cache *cache);
+>  void kasan_cache_shutdown(struct kmem_cache *cache);
+>  void kasan_record_aux_stack(void *ptr);
+> -void kasan_record_aux_stack_noalloc(void *ptr);
+>
+>  #else /* CONFIG_KASAN_GENERIC */
+>
+> @@ -506,7 +505,6 @@ static inline void kasan_cache_create(struct kmem_cache *cache,
+>  static inline void kasan_cache_shrink(struct kmem_cache *cache) {}
+>  static inline void kasan_cache_shutdown(struct kmem_cache *cache) {}
+>  static inline void kasan_record_aux_stack(void *ptr) {}
+> -static inline void kasan_record_aux_stack_noalloc(void *ptr) {}
+>
+>  #endif /* CONFIG_KASAN_GENERIC */
+>
+> diff --git a/include/linux/task_work.h b/include/linux/task_work.h
+> index 2964171856e00..0646804860ff1 100644
+> --- a/include/linux/task_work.h
+> +++ b/include/linux/task_work.h
+> @@ -19,9 +19,6 @@ enum task_work_notify_mode {
+>         TWA_SIGNAL,
+>         TWA_SIGNAL_NO_IPI,
+>         TWA_NMI_CURRENT,
+> -
+> -       TWA_FLAGS = 0xff00,
+> -       TWAF_NO_ALLOC = 0x0100,
+>  };
+>
+>  static inline bool task_work_pending(struct task_struct *task)
+> diff --git a/kernel/irq_work.c b/kernel/irq_work.c
+> index 2f4fb336dda17..73f7e1fd4ab4d 100644
+> --- a/kernel/irq_work.c
+> +++ b/kernel/irq_work.c
+> @@ -147,7 +147,7 @@ bool irq_work_queue_on(struct irq_work *work, int cpu)
+>         if (!irq_work_claim(work))
+>                 return false;
+>
+> -       kasan_record_aux_stack_noalloc(work);
+> +       kasan_record_aux_stack(work);
+>
+>         preempt_disable();
+>         if (cpu != smp_processor_id()) {
+> diff --git a/kernel/rcu/tiny.c b/kernel/rcu/tiny.c
+> index b3b3ce34df631..4b3f319114650 100644
+> --- a/kernel/rcu/tiny.c
+> +++ b/kernel/rcu/tiny.c
+> @@ -250,7 +250,7 @@ EXPORT_SYMBOL_GPL(poll_state_synchronize_rcu);
+>  void kvfree_call_rcu(struct rcu_head *head, void *ptr)
+>  {
+>         if (head)
+> -               kasan_record_aux_stack_noalloc(ptr);
+> +               kasan_record_aux_stack(ptr);
+>
+>         __kvfree_call_rcu(head, ptr);
+>  }
+> diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+> index b1f883fcd9185..7eae9bd818a90 100644
+> --- a/kernel/rcu/tree.c
+> +++ b/kernel/rcu/tree.c
+> @@ -3083,7 +3083,7 @@ __call_rcu_common(struct rcu_head *head, rcu_callback_t func, bool lazy_in)
+>         }
+>         head->func = func;
+>         head->next = NULL;
+> -       kasan_record_aux_stack_noalloc(head);
+> +       kasan_record_aux_stack(head);
+>         local_irq_save(flags);
+>         rdp = this_cpu_ptr(&rcu_data);
+>         lazy = lazy_in && !rcu_async_should_hurry();
+> @@ -3807,7 +3807,7 @@ void kvfree_call_rcu(struct rcu_head *head, void *ptr)
+>                 return;
+>         }
+>
+> -       kasan_record_aux_stack_noalloc(ptr);
+> +       kasan_record_aux_stack(ptr);
+>         success = add_ptr_to_bulk_krc_lock(&krcp, &flags, ptr, !head);
+>         if (!success) {
+>                 run_page_cache_worker(krcp);
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index a1c353a62c568..3717360a940d2 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -10485,7 +10485,7 @@ void task_tick_mm_cid(struct rq *rq, struct task_struct *curr)
+>                 return;
+>
+>         /* No page allocation under rq lock */
+> -       task_work_add(curr, work, TWA_RESUME | TWAF_NO_ALLOC);
+> +       task_work_add(curr, work, TWA_RESUME);
+>  }
+>
+>  void sched_mm_cid_exit_signals(struct task_struct *t)
+> diff --git a/kernel/task_work.c b/kernel/task_work.c
+> index c969f1f26be58..d1efec571a4a4 100644
+> --- a/kernel/task_work.c
+> +++ b/kernel/task_work.c
+> @@ -55,26 +55,14 @@ int task_work_add(struct task_struct *task, struct callback_head *work,
+>                   enum task_work_notify_mode notify)
+>  {
+>         struct callback_head *head;
+> -       int flags = notify & TWA_FLAGS;
+>
+> -       notify &= ~TWA_FLAGS;
+>         if (notify == TWA_NMI_CURRENT) {
+>                 if (WARN_ON_ONCE(task != current))
+>                         return -EINVAL;
+>                 if (!IS_ENABLED(CONFIG_IRQ_WORK))
+>                         return -EINVAL;
+>         } else {
+> -               /*
+> -                * Record the work call stack in order to print it in KASAN
+> -                * reports.
+> -                *
+> -                * Note that stack allocation can fail if TWAF_NO_ALLOC flag
+> -                * is set and new page is needed to expand the stack buffer.
+> -                */
+> -               if (flags & TWAF_NO_ALLOC)
+> -                       kasan_record_aux_stack_noalloc(work);
+> -               else
+> -                       kasan_record_aux_stack(work);
+> +               kasan_record_aux_stack(work);
+>         }
+>
+>         head = READ_ONCE(task->task_works);
+> diff --git a/kernel/workqueue.c b/kernel/workqueue.c
+> index 9949ffad8df09..65b8314b2d538 100644
+> --- a/kernel/workqueue.c
+> +++ b/kernel/workqueue.c
+> @@ -2180,7 +2180,7 @@ static void insert_work(struct pool_workqueue *pwq, struct work_struct *work,
+>         debug_work_activate(work);
+>
+>         /* record the work call stack in order to print it in KASAN reports */
+> -       kasan_record_aux_stack_noalloc(work);
+> +       kasan_record_aux_stack(work);
+>
+>         /* we own @work, set data and link */
+>         set_work_pwq(work, pwq, extra_flags);
+> diff --git a/mm/kasan/generic.c b/mm/kasan/generic.c
+> index 6310a180278b6..b18b5944997f8 100644
+> --- a/mm/kasan/generic.c
+> +++ b/mm/kasan/generic.c
+> @@ -521,7 +521,7 @@ size_t kasan_metadata_size(struct kmem_cache *cache, bool in_object)
+>                         sizeof(struct kasan_free_meta) : 0);
+>  }
+>
+> -static void __kasan_record_aux_stack(void *addr, depot_flags_t depot_flags)
+> +void kasan_record_aux_stack(void *addr)
+>  {
+>         struct slab *slab = kasan_addr_to_slab(addr);
+>         struct kmem_cache *cache;
+> @@ -538,17 +538,7 @@ static void __kasan_record_aux_stack(void *addr, depot_flags_t depot_flags)
+>                 return;
+>
+>         alloc_meta->aux_stack[1] = alloc_meta->aux_stack[0];
+> -       alloc_meta->aux_stack[0] = kasan_save_stack(0, depot_flags);
+> -}
+> -
+> -void kasan_record_aux_stack(void *addr)
+> -{
+> -       return __kasan_record_aux_stack(addr, STACK_DEPOT_FLAG_CAN_ALLOC);
+> -}
+> -
+> -void kasan_record_aux_stack_noalloc(void *addr)
+> -{
+> -       return __kasan_record_aux_stack(addr, 0);
+> +       alloc_meta->aux_stack[0] = kasan_save_stack(0, 0);
+>  }
+>
+>  void kasan_save_alloc_info(struct kmem_cache *cache, void *object, gfp_t flags)
+> diff --git a/mm/slub.c b/mm/slub.c
+> index 5b832512044e3..b8c4bf3fe0d07 100644
+> --- a/mm/slub.c
+> +++ b/mm/slub.c
+> @@ -2300,7 +2300,7 @@ bool slab_free_hook(struct kmem_cache *s, void *x, bool init,
+>                          * We have to do this manually because the rcu_head is
+>                          * not located inside the object.
+>                          */
+> -                       kasan_record_aux_stack_noalloc(x);
+> +                       kasan_record_aux_stack(x);
+>
+>                         delayed_free->object = x;
+>                         call_rcu(&delayed_free->head, slab_free_after_rcu_debug);
+> --
+> 2.45.2
+>
 
