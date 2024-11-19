@@ -1,57 +1,62 @@
-Return-Path: <linux-kernel+bounces-414103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F7209D2312
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 11:10:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EAC59D2311
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 11:10:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 14F89B22CD6
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 10:10:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7F81DB22EE7
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 10:10:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3E031C2DC8;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A55411C2DB2;
 	Tue, 19 Nov 2024 10:09:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="OkP1ImM9"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Qjh2tP42"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8295E1C1F07
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 10:09:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732010987; cv=pass; b=lvOWcpE764ZUqpWNx7OofZAxoB7eLeVoU8+9DWg9HkFo1fTmJbWgy/sO8YpleG900nVXryFlu7ecbr1O6X+BU+PpFs6OWftIL3vEa0yPnUvwjiuWim7rkJj3wYtTtUkuI5qx67pmtKu9Mze3EQ4kYu3tavMWIQgPdQRr4z0OvCc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61E6A1C1F3A;
+	Tue, 19 Nov 2024 10:09:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732010987; cv=none; b=h1Rmi1fTI8WrfovGQOu1GRP3/H4KqdgcfPp/HJpdptGDfxAYwrnJ9re4l9Q7a1rvgip/ziWpcYp+HZ0l75uznKiMiWOBP/3XIR903/7QmkjKR5lNunIBMVJRPYSU8Wz8gQajBX3JLQWMdiZT1djRzkjnVn0kIPUI8UhxY5Ua/7k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1732010987; c=relaxed/simple;
-	bh=9QksSgcUmyeQxxmt6p3IDH6bZxplk5QL+pClopM0Shc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=BvitV0Uh0BGAKZltfI/76MR93y3hszxNhssG4xXbPzWVTzUkUMeFeGdHbHH0Hqmx2KPFR8NlzNwddNcSRav321yRE7qjQuf+jRGc4S9EZZcvUO9tHwf9JvmdpP2sgJ3ED8jkk2xq1+xROQ1WwVkDHRSlchwL9TwJxbptdpBo2Ao=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=OkP1ImM9; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1732010967; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=OWJm+P8PpGSWkuVnY+dKdmOJr9QNXvLPig7omSmwHOAf2Zo28rBFbqGJSIg3VM2ZGGfOXtK3+r48G3u+vfXOMqmfgaCVEkPbu1HVoSkm2KQGM9+gL/rsxszwOW5YzZYIru4gDxXAfjDIV8GyComVqCRaogwapY1QdoFEQWqKdoQ=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1732010967; h=Content-Type:Content-Transfer-Encoding:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To:Cc; 
-	bh=6vObRq2E+RGALjKawt1r5dY6l6TVau1KQSOylOW2doo=; 
-	b=WrCu9YOEuavHSUfdbGsj5jNaSqtEuCcmEa5ivP4DwTtt368Cy8oLRTyHrQbmlHzoVcRxDiduXGQhzEpv5XCTVMqOZ0Bt8h4L967OA6948OIddrgrnGSAztt5EvYNXvTpq2T3d2BToYd9mjwvtDwAx8ZrfZIVHuSS4GJJj7YHtpA=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
-	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1732010967;
-	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To:Cc;
-	bh=6vObRq2E+RGALjKawt1r5dY6l6TVau1KQSOylOW2doo=;
-	b=OkP1ImM9vxIcIwxt+xg/n12ilQgxh2T795cbyPYaFS7F/WLvsiaDtfOA6K2Z8/v8
-	ndFChntS9sFVWWvqVzFXHE5sIonmejkkKV2i+8ZHCYVjXdKCOoxvAzfCzA+njwRL7dS
-	bw16/xBSgWeS//rdFVqP+83TvWFCXQhCESnCS1dY=
-Received: by mx.zohomail.com with SMTPS id 1732010965656991.9554222257977;
-	Tue, 19 Nov 2024 02:09:25 -0800 (PST)
-Message-ID: <0c842e7b-5a49-404d-9647-311bfc37f003@collabora.com>
-Date: Tue, 19 Nov 2024 13:09:21 +0300
+	bh=qCM/BD2d2XRDO+xHm4vYlmulmyGGTG6JrTkNggCYSjI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=S4I7eW466qWURpUX1pPHyqggORsLY4ov5rnWufHLFT0aH1lyJV21+xiZQbv6moEd5S+r0t9VWJd2D0m25uHH88NtE6ie2ZLAEuQwKh3ULWUdXVKO6XvfoTHuiARFoIThAhu6SQvIdsM/aD1Cd1DHVeWSLoozxay4d92AXLJAT+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Qjh2tP42; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AJ82xHe027204;
+	Tue, 19 Nov 2024 10:09:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	9c34ss6wN9Ih/urztOFDrG4TB01mnTTGNmvdN4JQ800=; b=Qjh2tP42zbjK8Xi/
+	gBEMYaGToScFLIL3pC4IS+zVHgNQRF3nABAl/+DGc9vrmkJmj185QMpy4uNTeMDG
+	4BVMtnbAdcCtSpDibEqii7mMWsDcKponMDH+E1Y3sO6kMhCxV1W9dCVR2grfjWQM
+	blmT7wZVU1P63B52zGWWpTnM6hWN6cyKOdLxCMjGA0wnuiwa1wHEzvq3/0gvQAio
+	1xy/ThZeNJ9K5X+jlUMA2e1rqPXRA1+ESYXLRTj25+V5H2b05yIlTUNRpuSA2+cL
+	gR8rvQ0bjle+BnTau0myvdleDTsbOeH1zHn9mECHWB9tSwqfo9gY4he4zQjEuSrC
+	/6CJGg==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4308y7t7ab-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 19 Nov 2024 10:09:39 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AJA9cvc005240
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 19 Nov 2024 10:09:38 GMT
+Received: from [10.253.15.8] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 19 Nov
+ 2024 02:09:35 -0800
+Message-ID: <89a4f120-6cfd-416d-ab55-f0bdf069d9ce@quicinc.com>
+Date: Tue, 19 Nov 2024 18:09:32 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,46 +64,98 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 RESEND] drm/virtio: use generic dumb_map_offset
- implementation
-To: Peter Shkenev <mustela@erminea.space>, David Airlie <airlied@redhat.com>,
- Gerd Hoffmann <kraxel@redhat.com>,
- Gurchetan Singh <gurchetansingh@chromium.org>, Chia-I Wu
- <olvaffe@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org,
- virtualization@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20241107141133.13624-1-mustela@erminea.space>
+Subject: Re: [PATCH v2 2/2] arm64: dts: qcom: qcs615-ride: Enable ethernet
+ node
+To: Andrew Lunn <andrew@lunn.ch>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Richard Cochran
+	<richardcochran@gmail.com>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>
+References: <20241118-dts_qcs615-v2-0-e62b924a3cbd@quicinc.com>
+ <20241118-dts_qcs615-v2-2-e62b924a3cbd@quicinc.com>
+ <ececbbe1-07b3-4050-b3a4-3de9451ac7d7@lunn.ch>
 Content-Language: en-US
-From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
-In-Reply-To: <20241107141133.13624-1-mustela@erminea.space>
-Content-Type: text/plain; charset=UTF-8
+From: Yijie Yang <quic_yijiyang@quicinc.com>
+In-Reply-To: <ececbbe1-07b3-4050-b3a4-3de9451ac7d7@lunn.ch>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: UkIQBjkpsTakiHMRX2lZ8nhElW8FNiVO
+X-Proofpoint-GUID: UkIQBjkpsTakiHMRX2lZ8nhElW8FNiVO
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 spamscore=0
+ mlxlogscore=697 clxscore=1015 suspectscore=0 adultscore=0
+ priorityscore=1501 phishscore=0 impostorscore=0 bulkscore=0
+ lowpriorityscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2409260000 definitions=main-2411190071
 
-On 11/7/24 17:10, Peter Shkenev wrote:
-> Currently, virtio uses its own dumb_map_offset implementation,
-> virtio_gpu_mode_dumb_mmap. It works similarly to generic implementation,
-> drm_gem_dumb_map_offset, and using the generic implementation is
-> preferable (and making drivers to do so is a task stated on the DRM
-> subsystem's TODO list).
-> 
-> Thus, make driver use the generic implementation. This includes
-> VIRTGPU_MAP ioctl so it cannot be used to circumvent rules imposed by
-> drm_gem_dumb_map_offset (imported objects cannot be mapped).
-> 
-> Signed-off-by: Peter Shkenev <mustela@erminea.space>
-> ---
-> Changes in v2:
->   - Remove excessive include of drm_gem.h from virtgpu_ioctl.h
->   - Remove obsoleted virtio_gpu_mode_dumb_mmap prototype from
->     virtgpu_drv.h
-> 
 
-Applied to misc-next, thanks!
+
+On 2024-11-19 09:27, Andrew Lunn wrote:
+> On Mon, Nov 18, 2024 at 02:44:02PM +0800, Yijie Yang wrote:
+>> Enable the ethernet node, add the phy node and pinctrl for ethernet.
+>>
+>> Signed-off-by: Yijie Yang <quic_yijiyang@quicinc.com>
+>> ---
+>>   arch/arm64/boot/dts/qcom/qcs615-ride.dts | 106 +++++++++++++++++++++++++++++++
+>>   1 file changed, 106 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/qcs615-ride.dts b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
+>> index ee6cab3924a6d71f29934a8debba3a832882abdd..299be3aa17a0633d808f4b5d32aed946f07d5dfd 100644
+>> --- a/arch/arm64/boot/dts/qcom/qcs615-ride.dts
+>> +++ b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
+>> @@ -5,6 +5,7 @@
+>>   /dts-v1/;
+>>   
+>>   #include <dt-bindings/regulator/qcom,rpmh-regulator.h>
+>> +#include <dt-bindings/gpio/gpio.h>
+>>   #include "qcs615.dtsi"
+>>   / {
+>>   	model = "Qualcomm Technologies, Inc. QCS615 Ride";
+>> @@ -196,6 +197,60 @@ vreg_l17a: ldo17 {
+>>   	};
+>>   };
+>>   
+>> +&ethernet {
+>> +	status = "okay";
+>> +
+>> +	pinctrl-0 = <&ethernet_defaults>;
+>> +	pinctrl-names = "default";
+>> +
+>> +	phy-handle = <&rgmii_phy>;
+>> +	phy-mode = "rgmii";
+> 
+> That is unusual. Does the board have extra long clock lines?
+
+Do you mean to imply that using RGMII mode is unusual? While the EMAC 
+controller supports various modes, due to hardware design limitations, 
+only RGMII mode can be effectively implemented.
+
+> 
+>> +	max-speed = <1000>;
+> 
+> Why do you have this property? It is normally used to slow the MAC
+> down because of issues at higher speeds.
+
+According to the databoot, the EMAC in RGMII mode can support speeds of 
+up to 1Gbps.
+
+> 
+> 	Andrew
 
 -- 
-Best regards,
-Dmitry
+Best Regards,
+Yijie
 
 
