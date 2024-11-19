@@ -1,104 +1,178 @@
-Return-Path: <linux-kernel+bounces-413621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AD6D9D1C1C
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 01:08:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CDB389D1C20
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 01:10:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54BD12826BE
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 00:08:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EB7A28273A
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 00:09:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2AC52F5B;
-	Tue, 19 Nov 2024 00:08:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A96B3FD4;
+	Tue, 19 Nov 2024 00:09:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FafuMRs0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hWPkwO9I"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1348010F4;
-	Tue, 19 Nov 2024 00:08:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18F6310F4
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 00:09:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731974899; cv=none; b=pPAmjpwnoqhlKIvHolwP0+6KpIbmklwTKIqB4kzW+lUqAy5WdeoTF5RRFiB4DIqySZXLZ4P5P9flSbrhVxnwsGZzlH7s28MD5hPRbljgc9QgGdHItuInwsh4ahyAa2pBhJG34eP831opWdQb1hE8TliPyxjJoK0z7O5dDUvp0TQ=
+	t=1731974988; cv=none; b=CQRwJmQS9DXb++lU8dFPjj/orqow7HKEghvOM2j6fMoYuHKwbNQOThMNzcJlnvNgEuZPuji/PGPgXzgSapCAsrdqcs0qa23ZxHqIsJbsw1zLqL2MDohxKJ4dj7xd7S/sBioBCDIoWUM3qbPHELPKw2psZGUnrdN2BWFocNVO//Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731974899; c=relaxed/simple;
-	bh=eUuSfbYWvh7whiSfUWQGab3NxAv06TDKoryEboI+zpc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Isp8HHs0sHEhKjw6tvvvAIkO8/+NKTrMCQdcbzuvVH6nzM7Nv95TBRqRxZTGBqYJLWXnnyyISqQDoYXy7WqiPlY4Kjo6elVe7bXIsj3LFy0980tYmovkkn8QBzf2VvsiofNDmC5AcBM2sUIIDoxub2UzEugANDSlzzfi7drrF9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FafuMRs0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12C6CC4CECC;
-	Tue, 19 Nov 2024 00:08:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731974896;
-	bh=eUuSfbYWvh7whiSfUWQGab3NxAv06TDKoryEboI+zpc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FafuMRs0Z0+BP96xR9RGJj/8bR+CXl8jcI89TI/UPz1omwfpAUbDq7b2ViMzUBIpL
-	 +3/zS2+0+TK9HN+FBxMOpqtjXdZQzh3JAGuVmNj2Nl8aWRP6EbwD4lOXAnhic1n4v+
-	 moB6woiF4AQ5q1t5t7cepIA+H8nWWBHcgwqXWWhy9ofw4RwNiHkjDeDHUuFTG3UMjM
-	 S8xc9aw0qDYZEkkF6oSGUvIErguYTjJh1+6OCxssP7wj8z3g2JJQw0913+WeL13Y2I
-	 SqQCRPWmGWNufzmk13/JB6PcRX4e8UXfzSCZxxk84p1vXF9YLxLEFiuN6canlAXzch
-	 Yoiq+kn3wSBtg==
-Date: Mon, 18 Nov 2024 16:08:14 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: Hao Ge <hao.ge@linux.dev>
-Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	Hao Ge <gehao@kylinos.cn>
-Subject: Re: [PATCH v2] perf bpf-filter: Return -ENOMEM directly when pfi
- allocation fails
-Message-ID: <ZzvW7qjkVYWMSNP5@google.com>
-References: <ZzOJOEpyAc92462-@x1>
- <20241113030537.26732-1-hao.ge@linux.dev>
+	s=arc-20240116; t=1731974988; c=relaxed/simple;
+	bh=2joQyxA/A/Ix50bwDrphRLZe1ZN4vLdUciNkknx5Y1w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NZhrE4m1R284+nhWcEb9SZlqGl8njm1cXZELB4FkLn+u+RyWjuOTajMmAARDlAe2/NAyMXs4PyKFEOm4baOspJsiXaEApXc3eCq+pi+u2I/a8ndWE3P9EkrW3TZMM/TNCZZvQAeifliT69ol2ekHwKdLXB0wrGZblyxuVLlG+jE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hWPkwO9I; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5cfc264b8b6so4094a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 16:09:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1731974985; x=1732579785; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=2joQyxA/A/Ix50bwDrphRLZe1ZN4vLdUciNkknx5Y1w=;
+        b=hWPkwO9IKE0mcDw1guYidN9euwszrsIhtf2WghLE+tEDyvcK7DKzBMO3S1NVvjn9/E
+         drM88icJqpN39XLRsTkOuncXv+icSxP5fc3IDTd3TUNYlfdJwnJ69FDBXAn2UdUnXIPA
+         j5e4ta4N9s4fv+uVwngsQwG3xAVVsqPsbfD1ndYbxMtbO3+kHvj5tfBZ0r/X9WU6SBZP
+         MjRmep7ay09tA3lq/qME7f7CLU+c5RV/aVinc7lCAatlXoUp93m6Ze3NXTaLFIKRZ4gs
+         gQiH8inZ1YRGWt6bqj8kWgyahUNyJ0knUkOzUrkk1AplHgQ7ReW1YLvULF163tP6tvUo
+         gDEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731974985; x=1732579785;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2joQyxA/A/Ix50bwDrphRLZe1ZN4vLdUciNkknx5Y1w=;
+        b=BGX/rdtVd6bcnSwNQu7v9WaLu7M54jhdNs5wwOwKcWSnhF0/QbVHmMeJxVHx8iMlLo
+         fYou24dOXk2lI6+N4s2pMJahaM8SQZp8MMAo3kV5uT/c2cOx/xnS0q9wY0ctujOSiMXE
+         hnRShs5H8fWVi3TIUv3J/v5037mCocGrFn7qBrmpg/lMyHoY67B2DKmTUN9CHFIbrBIW
+         AECWjViIH598KBt27ouo7vHgprODWqxAycugFPr8do5hUdgziYF+kC6ngKg57BCqhVyc
+         bI4O9s31CB+aH+234aastFtZjSyxAFXxsRUj8bJnzVX9oWp9mgnQMq5KTZ8wqSHnXC1/
+         Ytlw==
+X-Forwarded-Encrypted: i=1; AJvYcCUxz3lyfebrr3ApXYbfOKPb0J20lOQurukjbpWUUp+E844H25qOUEsLEFjrzGU87Kx4lLVBF1d+yie1K/4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvILK2c5u7k09bBjme7A0Y3yOiwhxJR+PSYRxck5Yoa/s3dV2v
+	jKQe0zanwNG7zim7OySp5m/dhIfjVxRH9ClZWdnJKzH389h5JdbPgof7NUZFHw/+k8idrz09gHm
+	NRDNgVqkVjHbAIbd/1KFYBNNaO60A6riFs/do3rwt93lqNWZ7PkbmFMA=
+X-Gm-Gg: ASbGncuDueRm8Zn2ONCVRpZro+Q2twUSfWGT6QyH9ykNRAyt1vkQTEWYth95aiY9ZJm
+	jQEsx7Px+O+HL++zvDpadPYnSP6k+DUbnojaHDwX+OGCWRUKa42D0Tld8PlDl+Q==
+X-Google-Smtp-Source: AGHT+IGFkoWOhwex/vXz0phxng/cuRxB+IRiCctA7Y89o5ijfhkRJftBIN3eR6qiPieo/jVpc0lu+QpSWPIlthCtl3k=
+X-Received: by 2002:a05:6402:1351:b0:5cf:bd9a:41ec with SMTP id
+ 4fb4d7f45d1cf-5cfdec244d3mr31183a12.2.1731974985273; Mon, 18 Nov 2024
+ 16:09:45 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241113030537.26732-1-hao.ge@linux.dev>
+References: <20241030-extended-modversions-v8-0-93acdef62ce8@google.com>
+ <20241030-extended-modversions-v8-2-93acdef62ce8@google.com>
+ <ZyNr--iMz_6Fj4yq@bombadil.infradead.org> <CAGSQo00F07viDHQkwBS8_1-THxJHYwx9VkS=TXC5rz3i8zSZSw@mail.gmail.com>
+ <ZyVDv0mTm3Bgh1BR@bombadil.infradead.org> <CAGSQo02uDZ5QoRMPOn=3Fa9g5d+VPfKW-vmSsS2H+pOdPYCBFw@mail.gmail.com>
+ <ZyrRYUD0K1f7SwWg@bombadil.infradead.org> <CAGSQo03+1WjUVj-iQ6zdOST6z=p+=OqS2Xk_c4ZUdHOsxa7g2w@mail.gmail.com>
+ <Zy1BVXgnT72Jt_HE@bombadil.infradead.org> <Zzu-wfGqbuAm24yg@bombadil.infradead.org>
+In-Reply-To: <Zzu-wfGqbuAm24yg@bombadil.infradead.org>
+From: Matthew Maurer <mmaurer@google.com>
+Date: Mon, 18 Nov 2024 16:09:34 -0800
+Message-ID: <CAGSQo033fha6tj7sU8se4kbNfYD_rm5sx6-hpF9s8SfcgWH3Tg@mail.gmail.com>
+Subject: Re: [PATCH v8 2/3] modpost: Produce extended MODVERSIONS information
+To: Luis Chamberlain <mcgrof@kernel.org>
+Cc: Lucas De Marchi <lucas.demarchi@intel.com>, Lucas De Marchi <lucas.de.marchi@gmail.com>, 
+	Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Naveen N Rao <naveen@kernel.org>, 
+	Madhavan Srinivasan <maddy@linux.ibm.com>, Petr Pavlu <petr.pavlu@suse.com>, 
+	Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez <da.gomez@samsung.com>, 
+	Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, linuxppc-dev@lists.ozlabs.org, 
+	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Nov 13, 2024 at 11:05:37AM +0800, Hao Ge wrote:
-> From: Hao Ge <gehao@kylinos.cn>
-> 
-> Directly return -ENOMEM when pfi allocation fails,
-> instead of performing other operations on pfi.
-> 
-> Fixes: 0fe2b18ddc40 ("perf bpf-filter: Support multiple events properly")
-> Signed-off-by: Hao Ge <gehao@kylinos.cn>
+> Thinking about this some more, if we're going down enabling a new
+> option, it seems to beg the question if the old *two* ksymtab sections
+> could just be folded into the a new one where the "gpl only" thing
+> becomes just one "column" as you call it. Reasons I ask, it seems like
+> we're duplicating symbol names on ksymtab and for modeversions. Could
+> you review this a bit?
 
-Acked-by: Namhyung Kim <namhyung@kernel.org>
+ Short answer: We could do this, but I don't necessarily think it's a good idea.
 
-Thanks,
-Namhyung
+ksymtab and modversions aren't duplicating names even with this patch
+series - We have two different formats, one for importing symbols, and
+one for exporting them. `__ksymtab`, `__ksymtab_gpl`, and
+`__ksymtab_strings` are used to export symbols. `__versions` or the
+new `__version_ext_names` and `__version_ext_crcs` are used to import
+them. For this reason, in any given compilation unit, a string should
+only appear either in the ksymtab (providing it), or in versions
+(consuming it).
 
-> ---
-> v2: Replace -1 with -ENOMEM as per Arnaldo's reminder.
->     Update title and commit message due to code change
-> ---
->  tools/perf/util/bpf-filter.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/tools/perf/util/bpf-filter.c b/tools/perf/util/bpf-filter.c
-> index e87b6789eb9e..a4fdf6911ec1 100644
-> --- a/tools/perf/util/bpf-filter.c
-> +++ b/tools/perf/util/bpf-filter.c
-> @@ -375,7 +375,7 @@ static int create_idx_hash(struct evsel *evsel, struct perf_bpf_filter_entry *en
->  	pfi = zalloc(sizeof(*pfi));
->  	if (pfi == NULL) {
->  		pr_err("Cannot save pinned filter index\n");
-> -		goto err;
-> +		return -ENOMEM;
->  	}
->  
->  	pfi->evsel = evsel;
-> -- 
-> 2.25.1
-> 
+There also isn't as much immediate technical need for that kind of
+rework of the ksymtab format - ksymtab uses a string table for their
+names, so the "long name support" that extended modversions provides
+to modversions is already present in ksymtab.
+
+Combined, this means that there would be few technical benefits to
+this - the primary potential benefit I could see to something like
+this would be code complexity reduction, which is a bit of a matter of
+personal taste, and mine might not match others'.
+
+However, we could do some things similar to what's going on here:
+A. We could try to unify versions and ksymtab (this seems most viable,
+but the change in meaning of this data structure has me wary)
+B. We could make ksymtab use columnar storage for more things - it
+already does so for CRCs, we could theoretically make any or all of
+licensing, namespaces, or symbol values columnar.
+
+With the caveat that I am not convinced this restructuring is worth
+the churn, the way I would do A would be:
+
+1. Add a field to the `kernel_symbol` that indicates whether the
+symbol is import/export (or possibly re-use `value` with a 0 value
+after linker resolution to mean "import" instead of export).
+2. Generate `kernel_symbol` entries for imported symbols, not just
+exported ones.
+3. Read `kcrctab` for import symbols to figure out what the expected
+crc value is when importing, rather than using versions.
+4. Stop generating/reading any of `__versions`, `__version_ext_names`,
+`__versions_ext_crcs`, etc.
+
+There are two downsides I can see to this:
+1. You cannot make this backwards compatible with existing `kmod`.
+(This was the argument given against just enlarging MODVERSIONS symbol
+names.)
+2. It's hard to be certain that we know about all users of `ksymtab`
+in order to ensure they all know the new convention around imported vs
+exported symbols.
+
+I think that B would actually make things worse because symbols always
+today always have a value, a namespace, a name, and a license. The
+only thing that's optional is the CRC, and that's already columnar.
+Making the other ones columnar would hurt locality. We'd still need
+the strtab sections, or we'd end up with many copies of each
+namespace, where today that should get deduped down by the linker.
+Columns are good for things that are extensions, optional, or variable
+length.
+
+If there are other reasons *for* doing this that I'm not aware of,
+what I'd do would be:
+1. Use the name as the primary index, same as modversions.
+2. Split each other piece into its own column, with a joint iterator.
+3. Convert license into a column, with an enum value (currently only
+fully exported or GPL).
+4. Replace places in the coe where a `struct kernel_symbol *` is used
+today with an iterator over the joint columns.
+
+Again, to reiterate, I *do not* think that B is a good idea. A might
+be, but the improvement seems sufficiently marginal to me that I don't
+know if it's worth the churn.
 
