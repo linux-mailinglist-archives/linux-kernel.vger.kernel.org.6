@@ -1,129 +1,156 @@
-Return-Path: <linux-kernel+bounces-414202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 947DC9D24AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 12:18:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0079A9D24B1
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 12:19:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4EB0A1F21AE5
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 11:18:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1EB01F23052
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 11:19:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 537911C4A2F;
-	Tue, 19 Nov 2024 11:18:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D51E1C243A;
+	Tue, 19 Nov 2024 11:19:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IwTp4ote"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OueN2wXK"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C1331C1F2F
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 11:18:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43285198A37
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 11:19:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732015092; cv=none; b=Td/pprLHJvUcm1YlqUu7rxiMJCwzsbycPGlGoJNsB7NRgoJ4q6p0A+6PPPNVP+ZB2Vdiy9D8uXfJi6wrHavQ6WfDo7s7q/2Cl5EUS6lCs+/tsAOPQJSTAx4bgMjh0JC68cSAY7zqRA6JRxdcpqepyutH2urrxAxpPoK0Bl92K9c=
+	t=1732015169; cv=none; b=RKlVoFj9pKlUowYYAXhko+wo8r4LQzf0h+JIpTj5ghZlno8eDlSEws8NxkYXlTXUo6+8LAwxMQRSV7ZTFGePN7Lrn26jEn5nvN4VbvflanDSzZb3tFKDM1lGLL/ue4CeGTV6tKokxqGpyzHfXITgqSM52oRoLByRmgL2OJcM8QU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732015092; c=relaxed/simple;
-	bh=7KnqngzIweImov/bg+EQOYAdCfmPCJgVOCZnMrcp46Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UrzyuDd5AJQSKP7D0hwOzJ26jqyxpOId1b9HZgjmVX+hNJkgawbS9uJMyGCLON09AJxIJpP6oiNSqW0OVtINqG9MtO7QvFsW2ejlTjy99/3zb7r+UtYdJJBKSvn7djeS1CNc1xovBwT7XGh+SpJSC+TAO46jnzDYqmGq4KI93c4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IwTp4ote; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1732015169; c=relaxed/simple;
+	bh=FTk3to+APvZ2K4SiX8JXEK+u/kjewSu/nPStFnJMHcE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YZw97S4D0kkfUQIODHX4AfUPR74D1sZIB/MQQOeeIQJ4Lu/2zmmJDPW5Ezffg+qDLIH1EDC9SdV4MCSWX7vlCqiegy8+cv7xXClzSZE7DKAYOT9jqO62zncMaaEKEbUIEPL0wOVjdyEOQpGd+QjlUT91lTw/V5pF19/HimqPbAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OueN2wXK; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732015090;
+	s=mimecast20190719; t=1732015167;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WSBouoRatInqJbfUCy4gUiCHF5kDVST7sA6zTlqHn1A=;
-	b=IwTp4ote9IueFqjdrOqb80yFNlFWNE3R/MdBi+Baga4oH+PXOF22U5lC6FaMH2IY4DEowY
-	o7+3RiYKCOybspGmokhMBGYA0xQZDWKGaQ/Zle8JPF0vDv27PljrvIB/ruzFOrye4U623d
-	CCo0KKx2KmSpzXOg2PbchL0FHH+41Io=
-Received: from mail-yb1-f199.google.com (mail-yb1-f199.google.com
- [209.85.219.199]) by relay.mimecast.com with ESMTP with STARTTLS
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=/bbQUZ4g/AMfEyINJryBtDXPUexxWYGnnHWUD7zB68U=;
+	b=OueN2wXKTLFfmVZOcoesfeTfcbczOuK9yzTpEQCiHihvrPlYutaT8CS+CbUojrZaO+S9SJ
+	BLg79E27Of8vmthgPuFupk2uOjSCQ6dwxHx4vZru0pTp8MLO6NqOq7deKma4jH70e5cpGp
+	W7l7NqGyFOScilDX53yF6fq6DUwSFw8=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-386-opOU4YZ9M8GfJrOA6m-vYg-1; Tue, 19 Nov 2024 06:18:08 -0500
-X-MC-Unique: opOU4YZ9M8GfJrOA6m-vYg-1
-X-Mimecast-MFC-AGG-ID: opOU4YZ9M8GfJrOA6m-vYg
-Received: by mail-yb1-f199.google.com with SMTP id 3f1490d57ef6-e381f9e1395so4604218276.3
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 03:18:08 -0800 (PST)
+ us-mta-106-d5saa3f-P_u85Il7t7FtHQ-1; Tue, 19 Nov 2024 06:19:26 -0500
+X-MC-Unique: d5saa3f-P_u85Il7t7FtHQ-1
+X-Mimecast-MFC-AGG-ID: d5saa3f-P_u85Il7t7FtHQ
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-432d9b8503cso27823585e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 03:19:26 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732015088; x=1732619888;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WSBouoRatInqJbfUCy4gUiCHF5kDVST7sA6zTlqHn1A=;
-        b=WPK4HmaD/vKQyoex2OTwFD40xnEcC/On318QSq50hMTUXdaCbcBsmstpJIGrw5UyTb
-         btEYVMA4pN3F1UpiaRy+PtRqiYCB9649Hl++svy2+vKeFU8RVnlpnju9MB+bNFPzvScX
-         Etqtz1Li4tbGbvB+I2qU5jEt5wEnMMS/Q48o1jJbflPsgiVZYVI0xElrC/K6D9n/fXve
-         HOSGbvqJeerQeZcPUBFo+VVomcU8xfuDoW0NNmvAn5vUFlDuii6ae2c8JW0Cjbi3CrFb
-         8wdwv22DSyIHMBzwf5JkGB7TArvL8N1Uysmyhcv2GnxfqRTQDGBJ5LgUGqXNkwOqbNBK
-         9AWA==
-X-Forwarded-Encrypted: i=1; AJvYcCX6dTOt1/g8flu0hT48Frb+2NMMxVvxuNYG05b4XEj9NbupQc7qemytoIkDsA0znWt6X/mkjnNp2nhiNZg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBp2oiKND6AzranNebL76ie7bOGjK/cEWd7GYcsc6+AkIgkXZK
-	fcVPhi/X3hNmz0peqsp3a88AoQKHLdko8hbPiY5qN3h4AZF+Aubz5oG6enhxmp1WQSPXYu9YuTs
-	TD3Bln6zaMLJdWBKpQM3IoMkTTRhylRDiGWY1qvUDV23K7LZk6meNZJtXkmRdog==
-X-Received: by 2002:a05:6902:298a:b0:e30:cc00:b010 with SMTP id 3f1490d57ef6-e382614f9c8mr10200260276.25.1732015088319;
-        Tue, 19 Nov 2024 03:18:08 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IE96zkhRwyQeB2qy8231vJaIKfZPGcGVKna3QNScGbU8jvugvr7WKVQycq/NpiNX4wDg/wBiQ==
-X-Received: by 2002:a05:6902:298a:b0:e30:cc00:b010 with SMTP id 3f1490d57ef6-e382614f9c8mr10200247276.25.1732015088026;
-        Tue, 19 Nov 2024 03:18:08 -0800 (PST)
-Received: from [192.168.1.14] (host-79-55-200-170.retail.telecomitalia.it. [79.55.200.170])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-46392c44142sm9845691cf.85.2024.11.19.03.18.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 Nov 2024 03:18:07 -0800 (PST)
-Message-ID: <3cfc2e90-c9b4-425d-80f4-ddace9aff021@redhat.com>
-Date: Tue, 19 Nov 2024 12:18:00 +0100
+        d=1e100.net; s=20230601; t=1732015165; x=1732619965;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/bbQUZ4g/AMfEyINJryBtDXPUexxWYGnnHWUD7zB68U=;
+        b=qawenKkZCt9Nm221xyFPTnh655P/ItKbH8OaEURCeJ0aJdrDGQBtCDrnU59TU5p1EV
+         gRjTVq4HiOk1dvPWFgrUA5PUxkbH7P44JisEt/kXiqP400L0wJMcLhnPeGanBl/itKgH
+         3lziy9iaJM6R+lZGmk4Wk8lXzmnq2aBVRKXyRqFKHBxJPG3j6V007Q0xetT0rcColUcw
+         GokeZXWZbFaPYAQ7ShDB0o8IkMuMcbmo8Go+PXzk7lNSzUc9ZubljtZFT3OfGWgNQixF
+         Wa2JMvx9uRHiyS6Ba5fl6QD9S/xtRZx7uXqOjVbPwaQsM605dyL1o+RBtoR/IDvuQ627
+         23hA==
+X-Gm-Message-State: AOJu0YxbKAoI1lBBPgqmJQLA8tVuYapaix6zXd71bGozGXakdpllmcCq
+	g6DJe77thhPwoRKY+fzQs5u6RSXGkQn0CDFsw6OUH9nqjuF5qohH4O551yNUbzEgi7KgtYeZDCJ
+	sgCKW9IAeGHLWfP0KwYiuoWC30cDhU4o6zvCehBBJFwyKuh4REDufbdh5ge2euSAGnMk93sv+eS
+	hF41fDkeyAwsUquh1C8QBPeX4ftzFgNJqmZ/c1KL5jRJRa
+X-Received: by 2002:a05:600c:1e23:b0:431:7c25:8600 with SMTP id 5b1f17b1804b1-432f579dfa1mr21216565e9.2.1732015164690;
+        Tue, 19 Nov 2024 03:19:24 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGnO+P6Y3L3RleitGgCW2feaObroQXDR14baW5GwWQWlh1l+rapLy0YUc43rfD7/yjVZP99aw==
+X-Received: by 2002:a05:600c:1e23:b0:431:7c25:8600 with SMTP id 5b1f17b1804b1-432f579dfa1mr21216255e9.2.1732015164295;
+        Tue, 19 Nov 2024 03:19:24 -0800 (PST)
+Received: from localhost (62-151-111-63.jazzfree.ya.com. [62.151.111.63])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432da2982fasm196865525e9.36.2024.11.19.03.19.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Nov 2024 03:19:24 -0800 (PST)
+From: Javier Martinez Canillas <javierm@redhat.com>
+To: linux-kernel@vger.kernel.org
+Cc: Radu Rendec <rrendec@redhat.com>,
+	Zhipeng Wang <zhipeng.wang_1@nxp.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	javier@dowhile0.org,
+	Javier Martinez Canillas <javierm@redhat.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	linux-pm@vger.kernel.org
+Subject: [RFC PATCH] cpufreq: dt-platdev: Fix module autoloading
+Date: Tue, 19 Nov 2024 12:18:22 +0100
+Message-ID: <20241119111918.1732531-1-javierm@redhat.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] Add standalone ethernet MAC entries for qcs615
-To: Yijie Yang <quic_yijiyang@quicinc.com>, Vinod Koul <vkoul@kernel.org>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bhupesh Sharma <bhupesh.sharma@linaro.org>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Giuseppe Cavallaro <peppe.cavallaro@st.com>,
- Jose Abreu <joabreu@synopsys.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- netdev@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, quic_tingweiz@quicinc.com,
- quic_aiquny@quicinc.com, quic_tengfan@quicinc.com, quic_jiegan@quicinc.com,
- quic_jingyw@quicinc.com, quic_jsuraj@quicinc.com
-References: <20241118-schema-v1-0-11b7c1583c0c@quicinc.com>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20241118-schema-v1-0-11b7c1583c0c@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 11/18/24 07:16, Yijie Yang wrote:
-> Add separate EMAC entries for qcs615 since its core version is 2.3.1,
-> compared to sm8150's 2.1.2.
-> 
-> Signed-off-by: Yijie Yang <quic_yijiyang@quicinc.com>
-## Form letter - net-next-closed
+This driver can be built as a module since commit 3b062a086984 ("cpufreq:
+dt-platdev: Support building as module"), but unfortunately this caused
+a regression because the cputfreq-dt-platdev.ko module does not autoload.
 
-The merge window for v6.13 has begun and net-next is closed for new
-drivers, features, code refactoring and optimizations. We are currently
-accepting bug fixes only.
+Usually, this is solved by just using the MODULE_DEVICE_TABLE() macro to
+export all the device IDs as module aliases. But this driver is special
+due how matches with devices and decides what platform supports.
 
-Please repost when net-next reopens after Dec 2nd.
+There are two of_device_id lists, an allow list that are for CPU devices
+that always match and a deny list that's for devices that must not match.
 
-RFC patches sent for review only are welcome at any time.
+The driver registers a cpufreq-dt platform device for all the CPU device
+nodes that either are in the allow list or contain an operating-points-v2
+property and are not in the deny list.
 
-See:
-https://www.kernel.org/doc/html/next/process/maintainer-netdev.html#development-cycle
+For the former just add a MODULE_DEVICE_TABLE(), and for the latter add a
+module alias. That way the driver would always be autoloaded when needed.
 
+Reported-by: Radu Rendec <rrendec@redhat.com>
+Fixes: 3b062a086984 ("cpufreq: dt-platdev: Support building as module")
+Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
+---
+Posting as an RFC because I don't have a platform that uses this driver
+but I'll let Radu test since he reported by issue.
+
+ drivers/cpufreq/cpufreq-dt-platdev.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
+index 2a3e8bd317c9..7ae7c897c249 100644
+--- a/drivers/cpufreq/cpufreq-dt-platdev.c
++++ b/drivers/cpufreq/cpufreq-dt-platdev.c
+@@ -97,6 +97,7 @@ static const struct of_device_id allowlist[] __initconst = {
+ 
+ 	{ }
+ };
++MODULE_DEVICE_TABLE(of, allowlist);
+ 
+ /*
+  * Machines for which the cpufreq device is *not* created, mostly used for
+@@ -236,4 +237,16 @@ static int __init cpufreq_dt_platdev_init(void)
+ }
+ core_initcall(cpufreq_dt_platdev_init);
+ MODULE_DESCRIPTION("Generic DT based cpufreq platdev driver");
++/*
++ * The module alias is needed because the driver automatically registers a
++ * platform device for any CPU device node that has an operating-points-v2
++ * property and is not in the block list.
++ *
++ * For this reason the MODULE_DEVICE_TABLE() macro can only export aliases
++ * of the devices in the allow list, which means that the driver will not
++ * autoload for devices whose cpufreq-dt will be registered automatically.
++ *
++ * Adding an "of:N*T*Coperating-points-v2" alias is a workaround for this.
++ */
++MODULE_ALIAS("of:N*T*Coperating-points-v2");
+ MODULE_LICENSE("GPL");
+-- 
+2.47.0
 
 
