@@ -1,178 +1,188 @@
-Return-Path: <linux-kernel+bounces-413622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDB389D1C20
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 01:10:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FEA29D1C21
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 01:11:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EB7A28273A
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 00:09:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 012C3282617
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 00:11:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A96B3FD4;
-	Tue, 19 Nov 2024 00:09:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64745322B;
+	Tue, 19 Nov 2024 00:10:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hWPkwO9I"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eGh1Jpns"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18F6310F4
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 00:09:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E790310F4
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 00:10:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731974988; cv=none; b=CQRwJmQS9DXb++lU8dFPjj/orqow7HKEghvOM2j6fMoYuHKwbNQOThMNzcJlnvNgEuZPuji/PGPgXzgSapCAsrdqcs0qa23ZxHqIsJbsw1zLqL2MDohxKJ4dj7xd7S/sBioBCDIoWUM3qbPHELPKw2psZGUnrdN2BWFocNVO//Y=
+	t=1731975056; cv=none; b=K8z3B7/6YHtJzR52YNP5h4A9Dbwrbb/VBpkItlWZOaq99RLFKgJWJ+r9+uYQHoRnvVlJ5QXeYU0VYd+q86p4Mk2kIU/biqqrHqO7kd4Uj8gbayEZedd86cicokIUhsIZEKBnioV8Z0mbp2iQi7QM1zVPnem3x/ZVifl9iaLUkzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731974988; c=relaxed/simple;
-	bh=2joQyxA/A/Ix50bwDrphRLZe1ZN4vLdUciNkknx5Y1w=;
+	s=arc-20240116; t=1731975056; c=relaxed/simple;
+	bh=/YOZGgqJDcZihtUs5OKVeC2EjXTpTsHoe22/h/yFDq8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NZhrE4m1R284+nhWcEb9SZlqGl8njm1cXZELB4FkLn+u+RyWjuOTajMmAARDlAe2/NAyMXs4PyKFEOm4baOspJsiXaEApXc3eCq+pi+u2I/a8ndWE3P9EkrW3TZMM/TNCZZvQAeifliT69ol2ekHwKdLXB0wrGZblyxuVLlG+jE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hWPkwO9I; arc=none smtp.client-ip=209.85.208.42
+	 To:Cc:Content-Type; b=oqdKK8FgXSKpMElWfRuYBjh3b8QXw7sC/rqOEgcifM4y7OSBS0snHulFVPD3jZCXgpj0K6JcmUjFiiloWXnOKn33frgkUzWIkSw9/v8A5FFArJUIH/bbDe4fmVjofZfQcrI2Y8tbvsKBhXnahbhdtiFm4okPnjwMSwcokSKmTWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eGh1Jpns; arc=none smtp.client-ip=209.85.128.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5cfc264b8b6so4094a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 16:09:46 -0800 (PST)
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4315abed18aso22354285e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 16:10:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731974985; x=1732579785; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=2joQyxA/A/Ix50bwDrphRLZe1ZN4vLdUciNkknx5Y1w=;
-        b=hWPkwO9IKE0mcDw1guYidN9euwszrsIhtf2WghLE+tEDyvcK7DKzBMO3S1NVvjn9/E
-         drM88icJqpN39XLRsTkOuncXv+icSxP5fc3IDTd3TUNYlfdJwnJ69FDBXAn2UdUnXIPA
-         j5e4ta4N9s4fv+uVwngsQwG3xAVVsqPsbfD1ndYbxMtbO3+kHvj5tfBZ0r/X9WU6SBZP
-         MjRmep7ay09tA3lq/qME7f7CLU+c5RV/aVinc7lCAatlXoUp93m6Ze3NXTaLFIKRZ4gs
-         gQiH8inZ1YRGWt6bqj8kWgyahUNyJ0knUkOzUrkk1AplHgQ7ReW1YLvULF163tP6tvUo
-         gDEg==
+        d=google.com; s=20230601; t=1731975053; x=1732579853; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Eb+g06ME6NnsPxsqVhQ7KX0aLm3BCbxT0dAE0bAEBmM=;
+        b=eGh1Jpnsc0cbzecpWleR2Fx4tGG3v8KqQRWtIXrYqw+xte+yiEQuJqByySDlKrVU0B
+         FCpWehaRXjgWNj3QK4H11Wi2ryYysAzjf5K/0vwYuZpGXB2LgJqoJltARfYRU+t+7BXG
+         qSt/dh3iJLReHH0zs5oySD/UUYktHYfIsN1LXZ2Q/6C0pgQCelwXEH5IW0hdiFI56VKE
+         ytTmNKwkjB0sEcKgm6mJswhhMplOOT0GvCebh9eM1ruzzmAPJb1b1gf1tDJ2AGVMewxl
+         sXCo5XkPSK9VbSMdep+m6uaJsMK14l8murgmQmvG962jTNHPWXTInkv/qlwA/mup1qts
+         9rHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731974985; x=1732579785;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2joQyxA/A/Ix50bwDrphRLZe1ZN4vLdUciNkknx5Y1w=;
-        b=BGX/rdtVd6bcnSwNQu7v9WaLu7M54jhdNs5wwOwKcWSnhF0/QbVHmMeJxVHx8iMlLo
-         fYou24dOXk2lI6+N4s2pMJahaM8SQZp8MMAo3kV5uT/c2cOx/xnS0q9wY0ctujOSiMXE
-         hnRShs5H8fWVi3TIUv3J/v5037mCocGrFn7qBrmpg/lMyHoY67B2DKmTUN9CHFIbrBIW
-         AECWjViIH598KBt27ouo7vHgprODWqxAycugFPr8do5hUdgziYF+kC6ngKg57BCqhVyc
-         bI4O9s31CB+aH+234aastFtZjSyxAFXxsRUj8bJnzVX9oWp9mgnQMq5KTZ8wqSHnXC1/
-         Ytlw==
-X-Forwarded-Encrypted: i=1; AJvYcCUxz3lyfebrr3ApXYbfOKPb0J20lOQurukjbpWUUp+E844H25qOUEsLEFjrzGU87Kx4lLVBF1d+yie1K/4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvILK2c5u7k09bBjme7A0Y3yOiwhxJR+PSYRxck5Yoa/s3dV2v
-	jKQe0zanwNG7zim7OySp5m/dhIfjVxRH9ClZWdnJKzH389h5JdbPgof7NUZFHw/+k8idrz09gHm
-	NRDNgVqkVjHbAIbd/1KFYBNNaO60A6riFs/do3rwt93lqNWZ7PkbmFMA=
-X-Gm-Gg: ASbGncuDueRm8Zn2ONCVRpZro+Q2twUSfWGT6QyH9ykNRAyt1vkQTEWYth95aiY9ZJm
-	jQEsx7Px+O+HL++zvDpadPYnSP6k+DUbnojaHDwX+OGCWRUKa42D0Tld8PlDl+Q==
-X-Google-Smtp-Source: AGHT+IGFkoWOhwex/vXz0phxng/cuRxB+IRiCctA7Y89o5ijfhkRJftBIN3eR6qiPieo/jVpc0lu+QpSWPIlthCtl3k=
-X-Received: by 2002:a05:6402:1351:b0:5cf:bd9a:41ec with SMTP id
- 4fb4d7f45d1cf-5cfdec244d3mr31183a12.2.1731974985273; Mon, 18 Nov 2024
- 16:09:45 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731975053; x=1732579853;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Eb+g06ME6NnsPxsqVhQ7KX0aLm3BCbxT0dAE0bAEBmM=;
+        b=NxVKjLUB8oxQULbD0hP0XFseN9SdgM5+xFwvxAOAeUE54DK6G1s1vXJrfH3F456Ftu
+         YjuysB63zAP/kThvCQXq8uwR4gXjXC0OzC+XXqP7GFOLRDZEVx6k/cgJoj4qOlGY86SF
+         Fk3T6KdClfgpMzFhGZVBQw7gjziG6NJWXF+kN82lAIIWofP/Tvb4AT/CZQxfCFaPpvzz
+         G20ouap9L0JNM3571RgnwIzVjv6BpBzuV2s2TQrCNBt77yTm4O3UaI+MgRa3ZDprYCHT
+         AyroinK0opl/odvovZFTcJFpxhMw6heeKgq/IzGzrooqXgJPnSVcCQaBWSp+I/S9X7FU
+         PRag==
+X-Forwarded-Encrypted: i=1; AJvYcCUhtCwlGndpwKHvVKxdHGJ5SpU2oHVVDHWgH33MKfxF6dfXjc5HeTOwaqJgNz6VESlsRttHoxu7dxXrc0A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGx50godD65/nd/WOl2MYL17MVj2IB/bYWT4USN1c9UVKn8hvr
+	PtKQ4MtKPUdzouyyeFolJXjdzCze+3ERWfyB1T7Ak4K2wiEGPjnA8Od807pQe9Djmt4jy2J1NyM
+	MjJQvkKpRh3MI2aZohO58esYN88dIOI/ihW8+
+X-Google-Smtp-Source: AGHT+IHJrEauu2TZnNRCpiWqNaLGAkKCuMY11iqqb6uC53aKSjXLofanXihMuG4HLnUbNhVoLX9Z3YFzoq3LgU4C9F4=
+X-Received: by 2002:a05:600c:4f02:b0:432:7c08:d11e with SMTP id
+ 5b1f17b1804b1-432df71b1c7mr97321475e9.1.1731975053136; Mon, 18 Nov 2024
+ 16:10:53 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241030-extended-modversions-v8-0-93acdef62ce8@google.com>
- <20241030-extended-modversions-v8-2-93acdef62ce8@google.com>
- <ZyNr--iMz_6Fj4yq@bombadil.infradead.org> <CAGSQo00F07viDHQkwBS8_1-THxJHYwx9VkS=TXC5rz3i8zSZSw@mail.gmail.com>
- <ZyVDv0mTm3Bgh1BR@bombadil.infradead.org> <CAGSQo02uDZ5QoRMPOn=3Fa9g5d+VPfKW-vmSsS2H+pOdPYCBFw@mail.gmail.com>
- <ZyrRYUD0K1f7SwWg@bombadil.infradead.org> <CAGSQo03+1WjUVj-iQ6zdOST6z=p+=OqS2Xk_c4ZUdHOsxa7g2w@mail.gmail.com>
- <Zy1BVXgnT72Jt_HE@bombadil.infradead.org> <Zzu-wfGqbuAm24yg@bombadil.infradead.org>
-In-Reply-To: <Zzu-wfGqbuAm24yg@bombadil.infradead.org>
-From: Matthew Maurer <mmaurer@google.com>
-Date: Mon, 18 Nov 2024 16:09:34 -0800
-Message-ID: <CAGSQo033fha6tj7sU8se4kbNfYD_rm5sx6-hpF9s8SfcgWH3Tg@mail.gmail.com>
-Subject: Re: [PATCH v8 2/3] modpost: Produce extended MODVERSIONS information
-To: Luis Chamberlain <mcgrof@kernel.org>
-Cc: Lucas De Marchi <lucas.demarchi@intel.com>, Lucas De Marchi <lucas.de.marchi@gmail.com>, 
-	Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, Naveen N Rao <naveen@kernel.org>, 
-	Madhavan Srinivasan <maddy@linux.ibm.com>, Petr Pavlu <petr.pavlu@suse.com>, 
-	Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez <da.gomez@samsung.com>, 
-	Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, linuxppc-dev@lists.ozlabs.org, 
-	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org, rust-for-linux@vger.kernel.org
+References: <20241118043745.1857272-1-suleiman@google.com> <20241118143311.3ca94405@gandalf.local.home>
+In-Reply-To: <20241118143311.3ca94405@gandalf.local.home>
+From: Joel Fernandes <joelaf@google.com>
+Date: Tue, 19 Nov 2024 09:10:41 +0900
+Message-ID: <CAJWu+oqR=SMKHd1EqvRm3nvz7e1r4e7Rj76hJ8jhDQQkNVo0ig@mail.gmail.com>
+Subject: Re: [PATCH v3] sched: Don't try to catch up excess steal time.
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Suleiman Souhlal <suleiman@google.com>, Ingo Molnar <mingo@redhat.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
+	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>, Paolo Bonzini <pbonzini@redhat.com>, seanjc@google.com, 
+	Srikar Dronamraju <srikar@linux.ibm.com>, David Woodhouse <dwmw2@infradead.org>, vineethrp@google.com, 
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org, ssouhlal@freebsd.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> Thinking about this some more, if we're going down enabling a new
-> option, it seems to beg the question if the old *two* ksymtab sections
-> could just be folded into the a new one where the "gpl only" thing
-> becomes just one "column" as you call it. Reasons I ask, it seems like
-> we're duplicating symbol names on ksymtab and for modeversions. Could
-> you review this a bit?
+On Tue, Nov 19, 2024 at 4:32=E2=80=AFAM Steven Rostedt <rostedt@goodmis.org=
+> wrote:
+>
+> On Mon, 18 Nov 2024 13:37:45 +0900
+> Suleiman Souhlal <suleiman@google.com> wrote:
+>
+> > When steal time exceeds the measured delta when updating clock_task, we
+> > currently try to catch up the excess in future updates.
+> > However, this results in inaccurate run times for the future things usi=
+ng
+> > clock_task, in some situations, as they end up getting additional steal
+> > time that did not actually happen.
+> > This is because there is a window between reading the elapsed time in
+> > update_rq_clock() and sampling the steal time in update_rq_clock_task()=
+.
+> > If the VCPU gets preempted between those two points, any additional
+> > steal time is accounted to the outgoing task even though the calculated
+> > delta did not actually contain any of that "stolen" time.
+> > When this race happens, we can end up with steal time that exceeds the
+> > calculated delta, and the previous code would try to catch up that exce=
+ss
+> > steal time in future clock updates, which is given to the next,
+> > incoming task, even though it did not actually have any time stolen.
+> >
+> > This behavior is particularly bad when steal time can be very long,
+> > which we've seen when trying to extend steal time to contain the durati=
+on
+> > that the host was suspended [0]. When this happens, clock_task stays
+> > frozen, during which the running task stays running for the whole
+> > duration, since its run time doesn't increase.
+> > However the race can happen even under normal operation.
+> >
+> > Ideally we would read the elapsed cpu time and the steal time atomicall=
+y,
+> > to prevent this race from happening in the first place, but doing so
+> > is non-trivial.
+> >
+> > Since the time between those two points isn't otherwise accounted anywh=
+ere,
+> > neither to the outgoing task nor the incoming task (because the "end of
+> > outgoing task" and "start of incoming task" timestamps are the same),
+> > I would argue that the right thing to do is to simply drop any excess s=
+teal
+> > time, in order to prevent these issues.
+> >
+> > [0] https://lore.kernel.org/kvm/20240820043543.837914-1-suleiman@google=
+.com/
+> >
+> > Signed-off-by: Suleiman Souhlal <suleiman@google.com>
+> > ---
+> > v3:
+> > - Reword commit message.
+> > - Revert back to v1 code, since it's more understandable.
+> >
+> > v2: https://lore.kernel.org/lkml/20240911111522.1110074-1-suleiman@goog=
+le.com
+> > - Slightly changed to simply moving one line up instead of adding
+> >   new variable.
+> >
+> > v1: https://lore.kernel.org/lkml/20240806111157.1336532-1-suleiman@goog=
+le.com
+> > ---
+> >  kernel/sched/core.c | 6 ++++--
+> >  1 file changed, 4 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> > index a1c353a62c56..13f70316ef39 100644
+> > --- a/kernel/sched/core.c
+> > +++ b/kernel/sched/core.c
+> > @@ -766,13 +766,15 @@ static void update_rq_clock_task(struct rq *rq, s=
+64 delta)
+> >  #endif
+> >  #ifdef CONFIG_PARAVIRT_TIME_ACCOUNTING
+> >       if (static_key_false((&paravirt_steal_rq_enabled))) {
+> > -             steal =3D paravirt_steal_clock(cpu_of(rq));
+> > +             u64 prev_steal;
+> > +
+> > +             steal =3D prev_steal =3D paravirt_steal_clock(cpu_of(rq))=
+;
+> >               steal -=3D rq->prev_steal_time_rq;
+> >
+> >               if (unlikely(steal > delta))
+> >                       steal =3D delta;
+>
+> So is the problem just the above if statement? That is, delta is already
+> calculated, but if we get interrupted by the host before steal is
+> calculated and the time then becomes greater than delta, the time
+> difference between delta and steal gets pushed off to the next task, righ=
+t?
 
- Short answer: We could do this, but I don't necessarily think it's a good idea.
+Pretty much.. the steal being capped to delta means the rest of the
+steal is pushed off to the future. Instead he discards the remaining
+steal after this patch.
 
-ksymtab and modversions aren't duplicating names even with this patch
-series - We have two different formats, one for importing symbols, and
-one for exporting them. `__ksymtab`, `__ksymtab_gpl`, and
-`__ksymtab_strings` are used to export symbols. `__versions` or the
-new `__version_ext_names` and `__version_ext_crcs` are used to import
-them. For this reason, in any given compilation unit, a string should
-only appear either in the ksymtab (providing it), or in versions
-(consuming it).
+Thanks
 
-There also isn't as much immediate technical need for that kind of
-rework of the ksymtab format - ksymtab uses a string table for their
-names, so the "long name support" that extended modversions provides
-to modversions is already present in ksymtab.
 
-Combined, this means that there would be few technical benefits to
-this - the primary potential benefit I could see to something like
-this would be code complexity reduction, which is a bit of a matter of
-personal taste, and mine might not match others'.
-
-However, we could do some things similar to what's going on here:
-A. We could try to unify versions and ksymtab (this seems most viable,
-but the change in meaning of this data structure has me wary)
-B. We could make ksymtab use columnar storage for more things - it
-already does so for CRCs, we could theoretically make any or all of
-licensing, namespaces, or symbol values columnar.
-
-With the caveat that I am not convinced this restructuring is worth
-the churn, the way I would do A would be:
-
-1. Add a field to the `kernel_symbol` that indicates whether the
-symbol is import/export (or possibly re-use `value` with a 0 value
-after linker resolution to mean "import" instead of export).
-2. Generate `kernel_symbol` entries for imported symbols, not just
-exported ones.
-3. Read `kcrctab` for import symbols to figure out what the expected
-crc value is when importing, rather than using versions.
-4. Stop generating/reading any of `__versions`, `__version_ext_names`,
-`__versions_ext_crcs`, etc.
-
-There are two downsides I can see to this:
-1. You cannot make this backwards compatible with existing `kmod`.
-(This was the argument given against just enlarging MODVERSIONS symbol
-names.)
-2. It's hard to be certain that we know about all users of `ksymtab`
-in order to ensure they all know the new convention around imported vs
-exported symbols.
-
-I think that B would actually make things worse because symbols always
-today always have a value, a namespace, a name, and a license. The
-only thing that's optional is the CRC, and that's already columnar.
-Making the other ones columnar would hurt locality. We'd still need
-the strtab sections, or we'd end up with many copies of each
-namespace, where today that should get deduped down by the linker.
-Columns are good for things that are extensions, optional, or variable
-length.
-
-If there are other reasons *for* doing this that I'm not aware of,
-what I'd do would be:
-1. Use the name as the primary index, same as modversions.
-2. Split each other piece into its own column, with a joint iterator.
-3. Convert license into a column, with an enum value (currently only
-fully exported or GPL).
-4. Replace places in the coe where a `struct kernel_symbol *` is used
-today with an iterator over the joint columns.
-
-Again, to reiterate, I *do not* think that B is a good idea. A might
-be, but the improvement seems sufficiently marginal to me that I don't
-know if it's worth the churn.
+Joel
 
