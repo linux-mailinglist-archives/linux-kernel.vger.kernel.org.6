@@ -1,179 +1,243 @@
-Return-Path: <linux-kernel+bounces-413844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03FA89D1F88
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 06:21:15 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD1329D1F89
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 06:24:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8309D1F227B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 05:21:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C107B20C92
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 05:24:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8468814F125;
-	Tue, 19 Nov 2024 05:21:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ED3814A4E1;
+	Tue, 19 Nov 2024 05:24:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="biypWUzb"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	dkim=pass (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="fmElQZKu";
+	dkim=pass (1024-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="J6b/IQqL"
+Received: from mx2.ucr.edu (mx2.ucr.edu [138.23.62.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7949314D444
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 05:21:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C264B2563
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 05:24:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=138.23.62.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731993664; cv=none; b=XYzJ4gMbsNQYZqRK+U9R3wu7/ek61/rSnaV+6ru6k8F233OgqOwxjFf+nv7NvZ/HXHq2oFl+a/Hep3kL1BbckV7D0tOdzlv8lgMEFtSS/0+UY6wI32Ks34dTlq0hPmAVdt8XNpVqPDyEiR1qXiujJwBjZ6gKb3DdM0x5BVkM7nw=
+	t=1731993858; cv=none; b=QtiQOh8n3YfIq3WqsShqIR+msDSsmKMeiBz8pZHEqzqY3/yprxuImEVfhPeUjIn3XBcm8SPSM1oU76UQqJBeZPOmUnTCopH/QgGwUCE+Ja3Wp3kFF6L02f09R6Ov++Ed6DLKXguXvJ0kNS2ce13nHOucrLs/5GJ11nTxMSZbwk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731993664; c=relaxed/simple;
-	bh=Ji+iTZt8yS5bcCcFKQv/QCaznbv75lDHxwCDMwX1RYs=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=UmcKfjs13cF8aGP4QKc+S2HAbTlLEpP4xZfO+keJAUEec5loCq/IJaNZ7b/NHf5YvgnJpxKvAF/POUJtVBOuTYBvNsEvGJAyF9DsvfY01wBatzD51elhq4nBN11lnDG6pcFPCyciE61L6Ex60Q1ZoNFXSRy0DVYBYG5947tvYAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=biypWUzb; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20241119052052epoutp03d14d476c44912d2b131a9df1b68c38a1~JRwzumj3y1644316443epoutp03j
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 05:20:52 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20241119052052epoutp03d14d476c44912d2b131a9df1b68c38a1~JRwzumj3y1644316443epoutp03j
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1731993652;
-	bh=KE2OfziJXtIhFb0dcW+ujlXzI19PnDvP6zbuStWt3Zs=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=biypWUzbKRuRcnb6FZWiJ9vh33BUspLWb/6t0XyqabGQhhEuOAVt1EMDEn5WFXT83
-	 iMx7T4/X4hruWulhGXD982yuqrLu1XKcfY0SFxwR26fqH8426R0ZUbSUg7gJ93nmj/
-	 KHRz5m8ovaWF+4eEjGQBFKmZ3e7vqBz0iEgyQXso=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
-	20241119052052epcas5p29d012eba4b1bbcef1f285c7d08141052~JRwzebd1E2178921789epcas5p2S;
-	Tue, 19 Nov 2024 05:20:52 +0000 (GMT)
-Received: from epsmges5p1new.samsung.com (unknown [182.195.38.174]) by
-	epsnrtp3.localdomain (Postfix) with ESMTP id 4XstB02Wlhz4x9QB; Tue, 19 Nov
-	2024 05:20:40 +0000 (GMT)
-Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
-	epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	03.E1.11160.8202C376; Tue, 19 Nov 2024 14:20:40 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20241119052039epcas5p2f7015f4b9c9e11b86a54c3943bc48ee2~JRwn-r_eh2177721777epcas5p2t;
-	Tue, 19 Nov 2024 05:20:39 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20241119052039epsmtrp10824989f068cf5c82f9e975fe2ed019b~JRwn_1Lo_0501205012epsmtrp1d;
-	Tue, 19 Nov 2024 05:20:39 +0000 (GMT)
-X-AuditID: b6c32a49-c59fb70000012b98-e2-673c20283d46
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	65.E0.35203.7202C376; Tue, 19 Nov 2024 14:20:39 +0900 (KST)
-Received: from INBRO002756 (unknown [107.122.12.5]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20241119052038epsmtip18d5e6db199b71aa93b0ca16e5b7a15ad~JRwmaVJBo1540115401epsmtip1V;
-	Tue, 19 Nov 2024 05:20:38 +0000 (GMT)
-From: "Alim Akhtar" <alim.akhtar@samsung.com>
-To: "'Sowon Na'" <sowon.na@samsung.com>, <robh@kernel.org>,
-	<krzk@kernel.org>, <conor+dt@kernel.org>, <vkoul@kernel.org>,
-	<kishon@kernel.org>
-Cc: <krzk+dt@kernel.org>, <linux-kernel@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-samsung-soc@vger.kernel.org>,
-	"'Krzysztof Kozlowski'" <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20241118021009.2858849-2-sowon.na@samsung.com>
-Subject: RE: [PATCH v3 1/3] dt-bindings: phy: Add ExynosAutov920 UFS PHY
- bindings
-Date: Tue, 19 Nov 2024 10:50:36 +0530
-Message-ID: <000001db3a42$c5a79b70$50f6d250$@samsung.com>
+	s=arc-20240116; t=1731993858; c=relaxed/simple;
+	bh=RSIWF9dWhK5bG+0/7bgkNz1VCaANPiyJxvYDBREv8/w=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=tkjipS4aQ2kXxiYUPkSbgH9ftS3dvuUu+eAEezYEVc/oWrjR5aPEONxahXG5H4fa5EuMO9W3M7wAeytIU411avNkq8gZ5aJwayWEcUcS59cxww+xHq6mnDorEun7o3YAPdNXWOCzsV89NimUCIQqZg47890X3NdcrgW7vJqFkDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=email.ucr.edu; spf=pass smtp.mailfrom=ucr.edu; dkim=pass (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b=fmElQZKu; dkim=pass (1024-bit key) header.d=ucr.edu header.i=@ucr.edu header.b=J6b/IQqL; arc=none smtp.client-ip=138.23.62.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=email.ucr.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucr.edu
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=ucr.edu; i=@ucr.edu; q=dns/txt; s=selector3;
+  t=1731993855; x=1763529855;
+  h=dkim-signature:x-google-dkim-signature:
+   x-forwarded-encrypted:x-gm-message-state:
+   x-google-smtp-source:mime-version:from:date:message-id:
+   subject:to:content-type:x-cse-connectionguid:
+   x-cse-msgguid;
+  bh=RSIWF9dWhK5bG+0/7bgkNz1VCaANPiyJxvYDBREv8/w=;
+  b=fmElQZKuugesHelL0TLUETfrBRhMd507XG/sk9jD+7NnHRQksNuWSl7L
+   xKio9FMOQ8Y5CDNyo9LVWJnhUBD6xZQpB7pVCerEEF3I4/wGPpjCNXh7k
+   Q7waA+s/pSD0oXxtYL8gSLt6di5OtOWmiDPxccO8GPQ5W67owLiT4VE+3
+   GqnDrlaJDqJHEjZzReQt42yc97R4Nnk8MySkFeNmyaikfJN968CKEwIX1
+   +8bcN+aUFG5EsjpuG9QG0HmiObb6Ipj5maQHeX0bYd7Lf9bUOqThsM1FL
+   Q+MAWPCWSlcumQaR8aRMm2HMHC2ZnHPVz0AfkwPgkm9d5cJhBRam25mCz
+   A==;
+X-CSE-ConnectionGUID: ujvuPdZDSFKQyRuVWWCc4Q==
+X-CSE-MsgGUID: gl/v/8FGSXi2tS1TvrGNtQ==
+Received: from mail-io1-f69.google.com ([209.85.166.69])
+  by smtp2.ucr.edu with ESMTP/TLS/TLS_AES_256_GCM_SHA384; 18 Nov 2024 21:23:06 -0800
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-83abd63a132so430638339f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 21:23:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ucr.edu; s=rmail; t=1731993786; x=1732598586; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=z7RSfGOcNLlRwLMd+5dBsRSHhdnFAckzvVBCNqgl1Iw=;
+        b=J6b/IQqLRLI69xSV144+6lwxtW296PkD74R+5OUpbHDL+lmZB7rfc/2sUHBmtGGbwa
+         DxansFT+CgfCzITixHUEPH0IHTA0/jYeVW5teVBMlyy0broNgyNvsF3aL9BNLxIYNG1I
+         KhtnPMTZydG61c3BoHJuOW0esP8Cb7cZyBI0I=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731993786; x=1732598586;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=z7RSfGOcNLlRwLMd+5dBsRSHhdnFAckzvVBCNqgl1Iw=;
+        b=ITYlaZWY2XTJb13d/K4VoW3MRWVEK7TeattStKOFbxtytF429qij2A74nDH7lnBcn3
+         apK1Dl9yMQzh2YV0zqVNgZURVdJQNv2Vh8fMPb4aSQj77aGCiOHECYIx33fRW6slOPzD
+         1D2w9zfnvZfSjj4iwIt0kh1A/eQGDoe3re2eS3OytzT3fMqjOEXQuP7yFKiTQekLQWjt
+         vTJultPnuu2e1BjIoihU33uxj0XTrEv+r1OmwP4kroGTF9AxCHlh65W3xRL6SiAz7rnx
+         T7TgIXtTSLSiS5VaPA1kgPeIpfD90l87e7Pn4MN6999pAq0DJXgolmVq+MnlGpWztH7d
+         5AIg==
+X-Forwarded-Encrypted: i=1; AJvYcCVlbc6R8hahYC1Nl2PUZxyDU4RdTZ7O4O9LPsXZPcl9ArvxL0SKijlnCIy6cubwCkkcbMsH7kD9bkRrXFo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1rhxbzof00fIU22/G8+chhROoTBwXowAOsQ1z5CKk6SQ33+w8
+	gycLIdl9NgllhUGrkerWYOdTvLCMvhpAbYRub9aDOc4aKfq1FEZRm30VAUhpkd9X6Fj+Sv547PX
+	f6y6NBfhsvAGXGlU6AqVs1Ca4fAE3VO14wowp4Tjd5Sp4BF06dh+CMlqAdXPIK/Rl0iekz3Tbev
+	iAup/g4isl/N6Wh4xdThbRjE24+aIocrLC4iwA6A==
+X-Received: by 2002:a05:6602:611a:b0:82c:ec0f:a081 with SMTP id ca18e2360f4ac-83ea8abcdbemr206901339f.4.1731993786344;
+        Mon, 18 Nov 2024 21:23:06 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEr7JIuo+Q8xum+7MTkOOdjvwMuhzU3MUjpVITuW3scWIk+NPW/z5/EqehSYHebQuGWYDaVDYWhsNEwCsr03w8=
+X-Received: by 2002:a05:6602:611a:b0:82c:ec0f:a081 with SMTP id
+ ca18e2360f4ac-83ea8abcdbemr206899939f.4.1731993786028; Mon, 18 Nov 2024
+ 21:23:06 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQKN54LK9wdlweRKh/1XLNX4aAwNFgFS5b/OAqaWsZ2xOOodYA==
-Content-Language: en-us
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrFJsWRmVeSWpSXmKPExsWy7bCmuq6Ggk26wcMuQYs1e88xWcw/co7V
-	4mjrf2aLl7PusVmcP7+B3WLv663sFpd3zWGzmHF+H5PF/z072C1+/zzEZLHzzglmB26PTas6
-	2TzuXNvD5tG3ZRWjx+dNcgEsUdk2GamJKalFCql5yfkpmXnptkrewfHO8aZmBoa6hpYW5koK
-	eYm5qbZKLj4Bum6ZOUBXKSmUJeaUAoUCEouLlfTtbIryS0tSFTLyi0tslVILUnIKTAr0ihNz
-	i0vz0vXyUkusDA0MjEyBChOyM96eOc1esJGnYvfLWSwNjCe5uhg5OSQETCT2LFvB3MXIxSEk
-	sJtRYl/TQ2aQhJDAJ0aJ4+s1IBLfGCV+/25lhel4dOI5G0RiL6PEopunWCCcF4wS03qns4FU
-	sQnoSuxY3AZWJSIwkVFi+/O/TCAOs8BORomFc7uBHA4OTgEbiSPb/UEahAWCJRbM+A22m0VA
-	VeLBwr1gg3gFLCUaXt9khbAFJU7OfMICYjMLaEssW/iaGeIkBYmfT5eB1YgIOElsO7WdDaJG
-	XOLl0SPsIHslBFZySJzaOhOqwUVi4YeNUP8IS7w6voUdwpaSeNnfBmVnSxy/OIsNwq6Q6G79
-	CBW3l9j56CYLyP3MApoS63fpQ+zik+j9/QTsLQkBXomONiGIalWJ5ndXWSBsaYmJ3d1QWz0k
-	jt5YxzaBUXEWks9mIflsFpIPZiEsW8DIsopRMrWgODc9tdi0wDAvtRwe4cn5uZsYwYlWy3MH
-	490HH/QOMTJxMB5ilOBgVhLhrda1ThfiTUmsrEotyo8vKs1JLT7EaAoM7onMUqLJ+cBUn1cS
-	b2hiaWBiZmZmYmlsZqgkzvu6dW6KkEB6YklqdmpqQWoRTB8TB6dUAxPvuezWZ6/5z17TDVz6
-	QbBuof1NpvNTGOufrL6XdtVy6uTjhvMZnl/WFZhboa7vwHW5rnz/vqJ5TM8O+0e5WCT8U2fb
-	m357y66aWzxe0hNVvfJ3mJe/8q0xrhS7/bZmmZf4kwk5yZE6LQkxTJvPbDDb9GL+94iNq3Xy
-	w+2dZVbzKTAcO/o1U2VH61tDi3DlZwzKb5aYi9ezKngvcJuUcCpcwW2O09t3Ww9dXRTl4Jnv
-	YbO+JLEvUSl3W0LenhTzSFvjeOmozXzagkc0rDTDtmsdLtz+46ZqkdRXR1n/huw2za28l/Mn
-	+f4Xu7LBYnKdTHTbnlvTTC3e3rf+Pn3pGwO2hvtXZrEdEDmotvQEsxJLcUaioRZzUXEiAFDN
-	n4s9BAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprMIsWRmVeSWpSXmKPExsWy7bCSnK66gk26wd8DJhZr9p5jsph/5Byr
-	xdHW/8wWL2fdY7M4f34Du8Xe11vZLS7vmsNmMeP8PiaL/3t2sFv8/nmIyWLnnRPMDtwem1Z1
-	snncubaHzaNvyypGj8+b5AJYorhsUlJzMstSi/TtErgynnctZi/o4KmYvkezgXEeVxcjJ4eE
-	gInEoxPP2boYuTiEBHYzShxq/scKkZCWuL5xAjuELSyx8t9zdoiiZ4wS3es3ghWxCehK7Fjc
-	BtYtIjCdUWLfmh/MIA6zwF5GiV8nuqBagJzL018AORwcnAI2Eke2+4N0CwsESnRNOsAIYrMI
-	qEo8WLiXDcTmFbCUaHh9kxXCFpQ4OfMJC4jNLKAt8fTmUzh72cLXzBDnKUj8fLoMrF5EwEli
-	26ntbBA14hIvjx5hn8AoPAvJqFlIRs1CMmoWkpYFjCyrGCVTC4pz03OLDQsM81LL9YoTc4tL
-	89L1kvNzNzGC401Lcwfj9lUf9A4xMnEwHmKU4GBWEuGt1rVOF+JNSaysSi3Kjy8qzUktPsQo
-	zcGiJM4r/qI3RUggPbEkNTs1tSC1CCbLxMEp1cAkVTP301ET7bc3Jtlero79mrOE90kA+0aO
-	a5p/tG9eLCvS9E5gW+Xb1FqhvvKpkhQf56niJT9Nalf/WG6j8//OkQcTl+Y1688KsZNeulRQ
-	uPnxutPG8jOTT5oalM85lDvpynI7XoNVr+P14yY9+fnh2dwPubOn+dTaFnn23z33jcvQ9lRV
-	2dPPskn2b2z0O4vPxwXMi/By/PdyYU7uGRY99uuHrL7NeyqwsbP/VfjKN0ZHHfldDjL2rSt8
-	+F89zL55hcvkQBbWm79+H+pZ9daqadYPnnmFC09uUZhm4mVuvaw7suGE1fnJ+bwGloc56491
-	/uxd8eVnReTvyZKB35euqtnSe5dv6cYqd3vdHdovlFiKMxINtZiLihMBAUpZTyYDAAA=
-X-CMS-MailID: 20241119052039epcas5p2f7015f4b9c9e11b86a54c3943bc48ee2
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20241118021011epcas2p21593217ccf58afddad5ce36f510e7cb6
-References: <20241118021009.2858849-1-sowon.na@samsung.com>
-	<CGME20241118021011epcas2p21593217ccf58afddad5ce36f510e7cb6@epcas2p2.samsung.com>
-	<20241118021009.2858849-2-sowon.na@samsung.com>
+From: Juefei Pu <juefei.pu@email.ucr.edu>
+Date: Mon, 18 Nov 2024 21:22:54 -0800
+Message-ID: <CANikGpf8mkdZ+MVjLWoBEg0XZOBmwHVGaZVKX6eBSst+a2-Y8w@mail.gmail.com>
+Subject: BUG: KASAN: slab-use-after-free Read in gsm_dlci_config
+To: gregkh@linuxfoundation.org, jirislaby@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+Hello,
+We found the following issue using syzkaller on Linux v6.11.
+In function `gsm_dlci_config`, a use-after-free on object `dlci` has
+been detected.
+Since the reproducer takes around 10 seconds to trigger the bug, it
+might be a race condition one.
+The C reproducer is available
+at:https://gist.github.com/TomAPU/2ef61db5e741daa2b4b040fd874b9e92#file-gsmvuln-c
 
+==================================================================
+BUG: KASAN: slab-use-after-free in gsm_dlci_config+0x7b7/0x1020
+drivers/tty/n_gsm.c:2588
+Read of size 4 at addr ffff88803dab000c by task syz.0.361/12086
 
-> -----Original Message-----
-> From: Sowon Na <sowon.na=40samsung.com>
-> Sent: Monday, November 18, 2024 7:40 AM
-> To: robh=40kernel.org; krzk=40kernel.org; conor+dt=40kernel.org;
-> vkoul=40kernel.org; alim.akhtar=40samsung.com; kishon=40kernel.org
-> Cc: krzk+dt=40kernel.org; linux-kernel=40vger.kernel.org;
-> devicetree=40vger.kernel.org; linux-samsung-soc=40vger.kernel.org;
-> sowon.na=40samsung.com; Krzysztof Kozlowski
-> <krzysztof.kozlowski=40linaro.org>
-> Subject: =5BPATCH v3 1/3=5D dt-bindings: phy: Add ExynosAutov920 UFS PHY
-> bindings
->=20
-> Add samsung,exynosautov920-ufs-phy compatible for ExynosAuto v920 SoC.
->=20
-> Signed-off-by: Sowon Na <sowon.na=40samsung.com>
-> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski=40linaro.org>
-> ---
-I am not sure how we can help you, you are keep missing to collect all the =
-tags
-https://lkml.org/lkml/2024/11/7/617
+CPU: 0 PID: 12086 Comm: syz.0.361 Not tainted 6.10.0 #13
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x23d/0x360 lib/dump_stack.c:114
+ print_address_description+0x77/0x360 mm/kasan/report.c:377
+ print_report+0xfd/0x210 mm/kasan/report.c:488
+ kasan_report+0x13f/0x170 mm/kasan/report.c:601
+ gsm_dlci_config+0x7b7/0x1020 drivers/tty/n_gsm.c:2588
+ gsmld_ioctl+0xbbc/0x2540 drivers/tty/n_gsm.c:3880
+ tty_ioctl+0x98f/0xdb0 drivers/tty/tty_io.c:2812
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:907 [inline]
+ __se_sys_ioctl+0xfe/0x170 fs/ioctl.c:893
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0x7e/0x150 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x67/0x6f
+RIP: 0033:0x7f86c25809b9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48
+89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d
+01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f86c3429038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007f86c2745f80 RCX: 00007f86c25809b9
+RDX: 0000000020000200 RSI: 0000000040384708 RDI: 0000000000000003
+RBP: 00007f86c25f4f70 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f86c2745f80 R15: 00007ffd81f1d488
+ </TASK>
 
->  Documentation/devicetree/bindings/phy/samsung,ufs-phy.yaml =7C 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/phy/samsung,ufs-phy.yaml
-> b/Documentation/devicetree/bindings/phy/samsung,ufs-phy.yaml
-> index f402e31bf58d..d70ffeb6e824 100644
-> --- a/Documentation/devicetree/bindings/phy/samsung,ufs-phy.yaml
-> +++ b/Documentation/devicetree/bindings/phy/samsung,ufs-phy.yaml
-> =40=40 -18,6 +18,7 =40=40 properties:
->        - google,gs101-ufs-phy
->        - samsung,exynos7-ufs-phy
->        - samsung,exynosautov9-ufs-phy
-> +      - samsung,exynosautov920-ufs-phy
->        - tesla,fsd-ufs-phy
->=20
->    reg:
-> --
-> 2.45.2
+Allocated by task 12086:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3b/0x70 mm/kasan/common.c:68
+ poison_kmalloc_redzone mm/kasan/common.c:370 [inline]
+ __kasan_kmalloc+0x94/0xa0 mm/kasan/common.c:387
+ kasan_kmalloc include/linux/kasan.h:211 [inline]
+ kmalloc_trace_noprof+0x19e/0x2b0 mm/slub.c:4154
+ kmalloc_noprof include/linux/slab.h:660 [inline]
+ kzalloc_noprof include/linux/slab.h:778 [inline]
+ gsm_dlci_alloc+0x53/0x6c0 drivers/tty/n_gsm.c:2643
+ gsmld_ioctl+0xb99/0x2540 drivers/tty/n_gsm.c:3876
+ tty_ioctl+0x98f/0xdb0 drivers/tty/tty_io.c:2812
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:907 [inline]
+ __se_sys_ioctl+0xfe/0x170 fs/ioctl.c:893
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0x7e/0x150 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x67/0x6f
 
+Freed by task 12087:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3b/0x70 mm/kasan/common.c:68
+ kasan_save_free_info+0x3c/0x50 mm/kasan/generic.c:579
+ poison_slab_object+0xe0/0x140 mm/kasan/common.c:240
+ __kasan_slab_free+0x33/0x50 mm/kasan/common.c:256
+ kasan_slab_free include/linux/kasan.h:184 [inline]
+ slab_free_hook mm/slub.c:2196 [inline]
+ slab_free mm/slub.c:4438 [inline]
+ kfree+0x118/0x2a0 mm/slub.c:4559
+ dlci_put drivers/tty/n_gsm.c:2706 [inline]
+ gsm_dlci_release drivers/tty/n_gsm.c:2739 [inline]
+ gsm_cleanup_mux+0x5a2/0x930 drivers/tty/n_gsm.c:3156
+ gsm_config drivers/tty/n_gsm.c:3408 [inline]
+ gsmld_ioctl+0x13c4/0x2540 drivers/tty/n_gsm.c:3839
+ tty_ioctl+0x98f/0xdb0 drivers/tty/tty_io.c:2812
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:907 [inline]
+ __se_sys_ioctl+0xfe/0x170 fs/ioctl.c:893
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0x7e/0x150 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x67/0x6f
 
+The buggy address belongs to the object at ffff88803dab0000
+ which belongs to the cache kmalloc-2k of size 2048
+The buggy address is located 12 bytes inside of
+ freed 2048-byte region [ffff88803dab0000, ffff88803dab0800)
+
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x3dab0
+head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
+page_type: 0xffffefff(slab)
+raw: 00fff00000000040 ffff888013042000 dead000000000100 dead000000000122
+raw: 0000000000000000 0000000000080008 00000001ffffefff 0000000000000000
+head: 00fff00000000040 ffff888013042000 dead000000000100 dead000000000122
+head: 0000000000000000 0000000000080008 00000001ffffefff 0000000000000000
+head: 00fff00000000003 ffffea0000f6ac01 ffffffffffffffff 0000000000000000
+head: 0000000000000008 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 3, migratetype Unmovable, gfp_mask
+0xd2820(GFP_ATOMIC|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC),
+pid 8050, tgid 8050 (syz-executor), ts 139463488880, free_ts 0
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x1db/0x220 mm/page_alloc.c:1473
+ prep_new_page mm/page_alloc.c:1481 [inline]
+ get_page_from_freelist+0x7e5/0x860 mm/page_alloc.c:3425
+ __alloc_pages_noprof+0x25a/0x580 mm/page_alloc.c:4683
+ __alloc_pages_node_noprof include/linux/gfp.h:269 [inline]
+ alloc_pages_node_noprof include/linux/gfp.h:296 [inline]
+ alloc_slab_page+0x67/0x130 mm/slub.c:2265
+ allocate_slab+0x5c/0x240 mm/slub.c:2428
+ new_slab mm/slub.c:2481 [inline]
+ ___slab_alloc+0xc6b/0x10c0 mm/slub.c:3667
+ __slab_alloc+0x58/0xa0 mm/slub.c:3757
+ __slab_alloc_node mm/slub.c:3810 [inline]
+ slab_alloc_node mm/slub.c:3990 [inline]
+ __do_kmalloc_node mm/slub.c:4122 [inline]
+ kmalloc_node_track_caller_noprof+0x268/0x410 mm/slub.c:4143
+ kmalloc_reserve+0x10e/0x2a0 net/core/skbuff.c:597
+ __alloc_skb+0x1e8/0x430 net/core/skbuff.c:666
+ alloc_skb include/linux/skbuff.h:1308 [inline]
+ nlmsg_new include/net/netlink.h:1015 [inline]
+ inet6_ifinfo_notify+0x6e/0x110 net/ipv6/addrconf.c:6161
+ addrconf_notify+0xca7/0x1000 net/ipv6/addrconf.c:3762
+ notifier_call_chain kernel/notifier.c:93 [inline]
+ raw_notifier_call_chain+0xe0/0x180 kernel/notifier.c:461
+ __dev_notify_flags+0x201/0x400
+ dev_change_flags+0xe8/0x190 net/core/dev.c:8858
+ do_setlink+0xcc7/0x41e0 net/core/rtnetlink.c:2900
+page_owner free stack trace missing
+
+Memory state around the buggy address:
+ ffff88803daaff00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff88803daaff80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>ffff88803dab0000: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                      ^
+ ffff88803dab0080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff88803dab0100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
 
