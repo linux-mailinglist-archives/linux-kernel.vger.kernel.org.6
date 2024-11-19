@@ -1,165 +1,145 @@
-Return-Path: <linux-kernel+bounces-414677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19DB39D2BED
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 17:59:16 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68B229D2C11
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 18:05:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D44EE288AD6
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 16:59:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 47745B37103
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 16:59:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ECB91D07A7;
-	Tue, 19 Nov 2024 16:56:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA03143179;
+	Tue, 19 Nov 2024 16:57:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nTr9ceoR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="yaHwTalB"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D860E1CDA0E;
-	Tue, 19 Nov 2024 16:56:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F4D313AA35
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 16:57:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732035409; cv=none; b=Ic9c0J3DqCD19WovnXQ026BQJxotXnFPKqGEKyzRG2Xo5gCtTwY+zXK+VRIAeHee9U/9BgZPuaiEba0qBgTAUC59WuIE/laaWym1ug1MZRkAQr0KJgvZCaQUFzo8zxyIp58ltSK8ja/f3WMmsQXWGDO/NiduBtQWf57Xy3HmEOw=
+	t=1732035464; cv=none; b=LtS0O+Uyu2AF7frabm80s7Hvh46Tyk6j8m/pB3BudqfzhhXBWwj09q1KYjp1xHftO/4GsMGZ05bOr6a5c7DJZbdmU5CnQ1a5aJ63ZVTVgyibIkDbtr6kI8JU/agde/1lFFVFHH6AiEiyVdlP8uDek1wHu+kjk1vbtks6u9k8N90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732035409; c=relaxed/simple;
-	bh=isudyVi77+zwnwPMjfIQ8wkyDG+TjsAPlDa6nBHA3cY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HBOwJpsQCabWuz+Uy9vg1Zkm3kwKNHOMU1L8JoiwKMq9p9koYKf5qXWJNXsBNtLkv91TJyEt2/AQQMffv6WCBbzpZdWdf0jote4SwSkSEGH2QWyScgfAIZCwplTF9GctgRUuiBlB3OtkdroDenoFJo4q/Pn41fXsFdmlFwUa2js=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nTr9ceoR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 357A6C4CECF;
-	Tue, 19 Nov 2024 16:56:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732035408;
-	bh=isudyVi77+zwnwPMjfIQ8wkyDG+TjsAPlDa6nBHA3cY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nTr9ceoRAGjMZDaNnHya2rPgnEdk06WNbbTGAUXbzrKBN9oKtC3YP1k77snS319eh
-	 OynTKRxdj8wwco9xNZLz+9hS5GoioDX3eecv8stH/1tPohkuaLvD6CJBPHSdgw0Z5D
-	 zPVNXHcv0AtdQJt8OH4Tu60km35S7ZpTZOAuIWybFn9Y4tJdnJbT7/IgCRe2bYxpWC
-	 KUxlgEQ2S7q3wWRyhLCKN8NGLXpYwGAm3WYw8EVHcctGKkaVngRSvz2lRZBMrHIH9o
-	 hX8rOCY0UkGLTlm4f9Ykd09RTWgGz89/sWw6+q4Mr52GP05GfMwT6/hpulqQ7e56DJ
-	 owAhuBs/rC93Q==
-Date: Tue, 19 Nov 2024 10:56:46 -0600
-From: Rob Herring <robh@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Mark Brown <broonie@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	David Jander <david@protonic.nl>,
-	Martin Sperl <kernel@martin.sperl.org>, linux-spi@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-iio@vger.kernel.org, linux-pwm@vger.kernel.org
-Subject: Re: [PATCH v5 07/16] spi: dt-bindings: axi-spi-engine: add SPI
- offload properties
-Message-ID: <20241119165646.GA1798301-robh@kernel.org>
-References: <20241115-dlech-mainline-spi-engine-offload-2-v5-0-bea815bd5ea5@baylibre.com>
- <20241115-dlech-mainline-spi-engine-offload-2-v5-7-bea815bd5ea5@baylibre.com>
+	s=arc-20240116; t=1732035464; c=relaxed/simple;
+	bh=RAs/ODZf9lNtL7tDMWqAQIEDqlAB/GJFATQxac1YBmA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fm2Dn1N0NW60UrCSkx/FAW5yvdq7S+pyAkLzZjvuabrvWT5K1ig1MEm/nm0S8okBFEOhFcskFgi4Zxt2BT7/XLyOQC8opEoriyax0nfMz53X7cNPXozi8Tn64tpdDXotWbxBWuJREARWXO1CisgLbHrF0PxH310ufRj4ezjWQRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=yaHwTalB; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-212581a0b33so8526185ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 08:57:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1732035461; x=1732640261; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=zIM5C3U9SgKHG2ejtKJVceWgRiY5n+HYVGt81nCAm3w=;
+        b=yaHwTalB1xk7kcpnKQ5nS0i8r/wh/R/zD03EaSMDZsY1a7KQZivP86WppUayFSJ03Z
+         kVpAfEGJmG2JRGqh+g1IRv1og4cdWTXavZcwQ7N+1lnh3YEVMdnvUOz39uxOE8RSNcPo
+         kmnuiemkJ+2/lMm7+sGpEXmiTdyzFlmOR/8Mwv6SawI8D9Vee0Ltxwq0K15HxnNQUSyP
+         AtABpmhqV0NN71me1AM1Nj3MLVOKv60kVQynwu4P0F8S0jNVoD3fGxAf12kPTB1tgFNM
+         OOA6r3K8X3gyQP9jKXjiedjjc3DpS4ybvJ8ZWJm9+6Yy87tsWrpA4AMLlfkxMYy4otm4
+         Ug0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732035461; x=1732640261;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zIM5C3U9SgKHG2ejtKJVceWgRiY5n+HYVGt81nCAm3w=;
+        b=mU6rmDd8AdXV4ifNEPim6xK5NvTSFT7igwfdo/dHiML9RhlxKdl/hvJA3nx7P0Rn7I
+         ygZQi2Kn+HUqIT5rjGMlhE/JPPnWX/hwVdArief4ErsGiusnBe1wP55ebZgD8HrB4H/E
+         bBmkTApPFjExBs5bi4s0tc61cfywXXXc3htYmlUQIg7TjGp5VSezv7hKOhSdS5kumnoB
+         PaqRxT1BqmZXoQW1VGe64sOc+/bJTDaw4Zk869EzMZSOEsXZTQSoWjlA6FwngoJERm2p
+         UssedI/7HuZYs3UuxAT7zGt3ga/3d8LOwwE/XrFSEO2R0IBCfpPdTjbLsnKaCZzIaur0
+         SPxA==
+X-Gm-Message-State: AOJu0Yx6npD5gf/8HM/jWh11AnCiE9d8p7lNiqiUTk/QHUSbHqCYORSm
+	YKfvKyV9JUAqhshwC6z4YLeHPt2DY+BQvZQlANZ9e7+CRN2Wm4rPK5DTWpUq8w0=
+X-Google-Smtp-Source: AGHT+IG4kkUTi/c5CZ92Iiptcoo64JT2r4oVJmh+qSFIGjvkOyirSO0mJ0D9m90WudNodnVcPjFy/w==
+X-Received: by 2002:a17:903:946:b0:212:4cfa:ba78 with SMTP id d9443c01a7336-2124cfabbfbmr49230275ad.52.1732035460759;
+        Tue, 19 Nov 2024 08:57:40 -0800 (PST)
+Received: from ?IPV6:2a01:e0a:e17:9700:16d2:7456:6634:9626? ([2a01:e0a:e17:9700:16d2:7456:6634:9626])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211d0f346cbsm77340865ad.118.2024.11.19.08.57.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 19 Nov 2024 08:57:40 -0800 (PST)
+Message-ID: <ffcdbcbe-a5f6-48f4-a0a3-0d35c6c80050@rivosinc.com>
+Date: Tue, 19 Nov 2024 17:57:36 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241115-dlech-mainline-spi-engine-offload-2-v5-7-bea815bd5ea5@baylibre.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] riscv: fix memory leakage in
+ process_accumulated_relocations
+To: zhangkai@iscas.ac.cn, Walmsley <paul.walmsley@sifive.com>,
+ Dabbelt <palmer@dabbelt.com>, Ou <aou@eecs.berkeley.edu>,
+ linux-riscv@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+References: <35cab46a.6d145.19334919ed0.Coremail.zhangkai@iscas.ac.cn>
+Content-Language: en-US
+From: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
+In-Reply-To: <35cab46a.6d145.19334919ed0.Coremail.zhangkai@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, Nov 15, 2024 at 02:18:46PM -0600, David Lechner wrote:
-> The AXI SPI Engine has support for hardware offloading capabilities.
-> This includes a connection to a DMA controller for streaming RX data
-> and a trigger input for starting execution of the SPI message programmed
-> in the offload.
+
+
+On 16/11/2024 11:42, zhangkai@iscas.ac.cn wrote:
+> When module relocation is done, process_accumulated_relocations()
+> frees all dynamic allocated memory. rel_head_iter-&gt;rel_entry is
+> missed to free that kmemleak might report:
 > 
-> Each SPI Engine may have up to 1 offload. The spec actually says that
-> it could support up to 32, so we are using an index number in the
-> dma-names (e.g. offload0-rx) to allow for this possibility in the
-> future.
+> unreferenced object 0xffffffd880c5fc40 (size 16):
+>   comm "insmod", pid 1101, jiffies 4295045138
+>   hex dump (first 16 bytes):
+>     e0 c0 f5 87 d8 ff ff ff 60 c5 f5 87 d8 ff ff ff  ........`.......
+>   backtrace (crc d2ecb20c):
+>     [&lt;00000000b01655f6&gt;] kmalloc_trace_noprof+0x268/0x2f6
+>     [&lt;000000006dc0067a&gt;] add_relocation_to_accumulate.constprop.0+0xf2/0x1aa
+>     [&lt;00000000e1b29a36&gt;] apply_relocate_add+0x13c/0x36e
+>     [&lt;000000007543f1fb&gt;] load_module+0x5c6/0x83e
+>     [&lt;00000000abce12e8&gt;] init_module_from_file+0x74/0xaa
+>     [&lt;0000000049413e3d&gt;] idempotent_init_module+0x116/0x22e
+>     [&lt;00000000f9b98b85&gt;] __riscv_sys_finit_module+0x62/0xae
 > 
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
+> Signed-off-by: Kai Zhang <zhangkai@iscas.ac.cn>
 > ---
+>  arch/riscv/kernel/module.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> v5 changes:
-> * Also document offload0-tx DMA names since the hardware can support
->   that now.
-> * Limit the number of offloads to 1 for now since it would require
->   significant hardware changes to actually support more than that.
-> 
-> v4 changes:
-> * Dropped #spi-offload-cells property.
-> * Changed subject line.
-> 
-> v3 changes:
-> * Added #spi-offload-cells property.
-> * Added properties for triggers and RX data stream connected to DMA.
-> 
-> v2 changes:
-> * This is basically a new patch. It partially replaces "dt-bindings:
->   iio: offload: add binding for PWM/DMA triggered buffer".
-> * The controller no longer has an offloads object node and the
->   spi-offloads property is now a standard SPI peripheral property.
-> ---
->  .../bindings/spi/adi,axi-spi-engine.yaml           | 24 ++++++++++++++++++++++
->  1 file changed, 24 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/spi/adi,axi-spi-engine.yaml b/Documentation/devicetree/bindings/spi/adi,axi-spi-engine.yaml
-> index d48faa42d025..d703b47eb498 100644
-> --- a/Documentation/devicetree/bindings/spi/adi,axi-spi-engine.yaml
-> +++ b/Documentation/devicetree/bindings/spi/adi,axi-spi-engine.yaml
-> @@ -41,6 +41,26 @@ properties:
->        - const: s_axi_aclk
->        - const: spi_clk
->  
-> +  trigger-sources:
-> +    description:
-> +      An array of trigger source phandles for offload instances. The index in
-> +      the array corresponds to the offload instance number.
+> diff --git a/arch/riscv/kernel/module.c b/arch/riscv/kernel/module.c
+> index 1cd461f3d87..f8c3c4b47dc 100644
+> --- a/arch/riscv/kernel/module.c
+> +++ b/arch/riscv/kernel/module.c
+> @@ -643,6 +643,7 @@ process_accumulated_relocations(struct module *me,
+>                         }
+>                         reloc_handlers[curr_type].accumulate_handler(
+>                                 me, location, buffer);
+> +                       kfree(rel_head_iter-&gt;rel_entry);
 
-How can you have an index when you only allow 1 entry (other than 0 of 
-course)?
+Hey Kai,
 
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+Your patch output is messed up probably due to some encoding issue.
 
-With my other comments implemented, this should be dropped.
+But looknig at it and the module code, it seems like rel_entry does not
+need to be a pointer. It can be a plain "struct list_head rel_entry" and
+then simply pass the list_head pointer rather than allocating/freeing
+it. That remove an allocation as well as some memory leak.
 
-> +    maxItems: 1
-> +
-> +  dmas:
-> +    description:
-> +      DMA channels connected to the input or output stream interface of an
-> +      offload instance.
-> +    minItems: 1
-> +    maxItems: 2
-> +
-> +  dma-names:
-> +    items:
-> +      pattern: "^offload0-[tr]x$"
+BTW, for fixes, you should add a Fixes: tag with the original commit
+sha1 that introduced the bug.
 
-Do you expect an offload1 or something?
+Thanks,
 
-> +    minItems: 1
-> +    maxItems: 2
-> +
->  required:
->    - compatible
->    - reg
-> @@ -59,6 +79,10 @@ examples:
->          clocks = <&clkc 15>, <&clkc 15>;
->          clock-names = "s_axi_aclk", "spi_clk";
->  
-> +        trigger-sources = <&trigger_clock>;
-> +        dmas = <&dma 0>;
-> +        dma-names = "offload0-rx";
-> +
->          #address-cells = <1>;
->          #size-cells = <0>;
->  
-> 
-> -- 
-> 2.43.0
-> 
+Clément
+
+>                         kfree(rel_head_iter);
+>                 }
+>                 kfree(bucket_iter);
+
 
