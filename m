@@ -1,80 +1,82 @@
-Return-Path: <linux-kernel+bounces-413787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9E189D1EB4
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 04:11:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F224D9D1EB7
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 04:12:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F0A5280A16
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 03:11:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B70CA281526
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 03:12:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50DEA146000;
-	Tue, 19 Nov 2024 03:11:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nPOX5MWy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 697BA14600F;
+	Tue, 19 Nov 2024 03:12:47 +0000 (UTC)
+Received: from freeshell.de (freeshell.de [116.202.128.144])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC08013AA35;
-	Tue, 19 Nov 2024 03:11:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB07513C683;
+	Tue, 19 Nov 2024 03:12:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.202.128.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731985873; cv=none; b=jT1jxpn62EowRrCRPy/W5jO6abUm8CIHMJ0yFFdxfHV7PohXxSM9wlxFYO0NAS0JjpQd3Hqu6R6MuskwCOZS/BiHcAB3sCcsYpKFoZo0zGbmv2VTdc5ALusAzmq2MWJ4SWS/r+wRF9EyZJQoLgl32L2+RKMg0TzmYDEQIzA+N2M=
+	t=1731985967; cv=none; b=dMnVkxhjQDikylB3T1KpUx67mQacIFX2J7tKAeYVjBHDTJR/sxKmkYuphLtcmcOL/GQ5S5UNL2LYhLzA9KSPQkh4VTiPH5ASw8Kp6Gicl8jtVROebTUTa24eOA0awxZdsg0g3qoIgNGsmNJZ7MxA5vCLysGU/0KfXx+Kv7PKvuk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731985873; c=relaxed/simple;
-	bh=7jDb8H+Flc+eOAqehImd4mkdDmhj3tUyn3G6YFZI5ug=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pZa1iJVEwtpQbzl2PHRSsMB4v/32VL3aNA4LMrZqwOA9WafcKRRCC3gVv2J5JldoIK0/kxNZCL0mok14Mua3IQf/VwPqS3d2eNN9MxqRw8RFpm9jAmtiPEvjTi/kiCij5Sv33Y1wv0oA7rx5QmNNFvfqWjqtlY5VyupvQsdAUv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nPOX5MWy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C567CC4CECF;
-	Tue, 19 Nov 2024 03:11:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731985873;
-	bh=7jDb8H+Flc+eOAqehImd4mkdDmhj3tUyn3G6YFZI5ug=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=nPOX5MWyOL7zeYG3r5t3jPztJyfdKYFFbuzrATqkvX5TamfRaBRdIQJAwhFuYkDDE
-	 bFENqvzoG/8rdtVnNscgbEmULrKhsxVoLJNWLsIK5F7WV9EdSS0KUMXUJXjPygEpzQ
-	 DSjlfgdO6MBrMeSMrBz/x2dP66iTCsidwaYzSP0FipgB9EqJp9DFbQTtbnpOhL5oAP
-	 q5InglinySmjqhYrLspn/CAvSzZAGy8Y1ZV1D7+RHAwrPOECfKkbrwteYZaeS8Ckhv
-	 G1UhnM+yOOK3qOFiN5qe3xGpehhWFFBD63TiTnrkbonAjXhajecHy/qts7KBrEgxoR
-	 2pBmgnKybeYUg==
-Date: Mon, 18 Nov 2024 19:11:11 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Qingtao Cao <qingtao.cao.au@gmail.com>
-Cc: Qingtao Cao <qingtao.cao@digi.com>, Sebastian Hesselbarth
- <sebastian.hesselbarth@gmail.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v1 1/1] net: mv643xx_eth: disable IP tx
- checksum with jumbo frames for Armada 310
-Message-ID: <20241118191111.7286dc2c@kernel.org>
-In-Reply-To: <20241118004509.200828-1-qingtao.cao@digi.com>
-References: <20241118004509.200828-1-qingtao.cao@digi.com>
+	s=arc-20240116; t=1731985967; c=relaxed/simple;
+	bh=F3bX2MmGSRD1fwkR0Iwqr3u8WyJ5ds5TDKEKgocQafA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fx1N7I68/UJ3FpIaCFrg5xsJcN/3OTJRJluVmB73w+TMzrQalzltOkZA5076NNXwUr2y/+VjmsRQdAkniFlqJIiAsF9dM4m0LK7XVn4jL9d2dlJqn8vIbLUrXRANCKY4irW6RGw1/uvqSY69FviFt8pMBJolKQv7ZTeeBM0i9A4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freeshell.de; spf=pass smtp.mailfrom=freeshell.de; arc=none smtp.client-ip=116.202.128.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freeshell.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=freeshell.de
+Received: from hay.lan. (unknown [IPv6:2605:59c8:31de:bf00:6ecf:39ff:fe00:8375])
+	(Authenticated sender: e)
+	by freeshell.de (Postfix) with ESMTPSA id 007E1B226177;
+	Tue, 19 Nov 2024 04:12:37 +0100 (CET)
+From: E Shattow <e@freeshell.de>
+To: Henry Bell <dmoo_dv@protonmail.com>
+Cc: E Shattow <e@freeshell.de>,
+	Emil Renner Berthing <kernel@esmil.dk>,
+	Conor Dooley <conor@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	linux-riscv@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/1] riscv: dts: starfive: jh7110-pine64-star64: enable usb0 host function
+Date: Mon, 18 Nov 2024 19:12:18 -0800
+Message-ID: <20241119031232.50726-1-e@freeshell.de>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Mon, 18 Nov 2024 10:45:09 +1000 Qingtao Cao wrote:
-> The Ethernet controller found in Armada 310 doesn't support TCP/IP checksum
-> with frame sizes larger than its TX checksum offload limit
-> 
-> When the path MTU is larger than this limit, the skb_warn_bad_offload will
-> throw out a warning oops
-> 
-> Disable the TX checksum offload (NETIF_F_IP_CSUM) when the MTU is set to a
-> value larger than this limit, the NETIF_F_TSO will automatically be disabled
-> as a result and the IP stack will calculate jumbo frames' checksum instead.
+Enable host mode JH7110 on-chip USB for Pine64 Star64 by setting host mode
+and connect vbus pinctrl.
 
-I thought I suggested ndo_features_check, why are you using
-fix_features?
+This functionality depends on setting the USB over-current register to disable at bootloader phase, for example U-Boot:
+https://patchwork.ozlabs.org/project/uboot/patch/20241012031328.4268-6-minda.chen@starfivetech.com/
+
+If the over-current register is not prepared for us then the result is no
+change in functional outcome with this patch applied; there is an error
+visible to the user and this usb configuration fails (same as it is now).
+
+Changes since v1:
+ - Rebase on linux-next/master
+ - use tabs for code indent
+
+E Shattow (1):
+  riscv: dts: starfive: jh7110-pine64-star64: enable usb0 host function
+
+ .../boot/dts/starfive/jh7110-pine64-star64.dts | 18 +++++++++++++++++-
+ 1 file changed, 17 insertions(+), 1 deletion(-)
+
 -- 
-pw-bot: cr
+2.45.2
+
 
