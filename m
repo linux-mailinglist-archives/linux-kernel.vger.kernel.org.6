@@ -1,111 +1,125 @@
-Return-Path: <linux-kernel+bounces-414561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC3419D29FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 16:45:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B45BB9D2A01
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 16:46:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6646A1F21B0B
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 15:45:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A14928284E
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 15:46:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A33701D5142;
-	Tue, 19 Nov 2024 15:39:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 126EC1CFEBF;
+	Tue, 19 Nov 2024 15:41:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mA9jbpgk"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WNQFR1U4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2A711D4604
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 15:39:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6470B1D0786;
+	Tue, 19 Nov 2024 15:41:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732030792; cv=none; b=Wen+V4XEzGnNHgurLMLeszlOugJFq0n4xi2NbG4CnO4g4DqYXPhx7dqqgAx8CmK/8IX6NF1hck3xiC1OfFkadp8heCvPim93wNXnpJc4tn/0CUa1jGtzKk+eN5x0ZPN/SvtdFapt34KJHchO0LEFkk63s17CttWz4SLdlBZCUUA=
+	t=1732030879; cv=none; b=jiVJW5EJFWtVecRY9LizcT1Oh1PC4Mbu7JP3p6fxvyEK4tGy4BN3j+ZKgrIr4Flgjlj3hR95mF0PjxQhMMX70SWDWkTlfsbovTcdxxuf5I5Q+KaiTFeLwZNY4Ii281ITBXdrSf9sGoDR/WKlwSojiOTGYtlH4WM8L3yrHXn3MLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732030792; c=relaxed/simple;
-	bh=i8MuDTdkKi9dl0BKZ9AznMERrR3sQdWrUZZ+pbs7Xy0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ukt4QJ/Pwby2XYfFZt9t+7uL3NCB5AlouxQ9JrPo5XS65CFRth+696zO/yxeuGj6k6c5bymFGVKqt2DbL4l/jjyS/+yJYNZXipFu8hjB0xfqh1/He/I8EliOiX6knwdv4K4P4o8JiDMF5mWX3Sr1nKA+BKMSz3234DUQ6EMl3AI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mA9jbpgk; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2126408cf52so2481805ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 07:39:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732030790; x=1732635590; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7KzftO9zi2bxnpNJZHPjDGDIefT9OY4V7qnZzEYHPhk=;
-        b=mA9jbpgkmsDeXIDMusBA8RjvPuerERPC4HavuwZ7Nq/mJNV0jcx11x3LiHAIUi+Kws
-         a9+1imWBRktrgzJqUqIBhIZiWJzxfmr7XRtILATIdNaSwrCaOUHvi3IjvSA9pwHKWZbB
-         O5+HzOCRNOWDriE6+V22rT0AWI9lnOSYV0MGW2CBxdLUi/FAKWJKbNxIvAYxO3VsFIc4
-         0x+470jE2hVzwo0xMSH2auD7Hyo5qflsh5S3enz6PoLwHJAj+P5EjIR0kNSaPMBsFRdF
-         TqVw/OAcLBIqSfeSLBRG5D8jU8TKUrzH4MIJ5Lmg9I7k7sMEByKlGhhbt2LjIiwoJjxU
-         X8kQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732030790; x=1732635590;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7KzftO9zi2bxnpNJZHPjDGDIefT9OY4V7qnZzEYHPhk=;
-        b=ijVGJhOb0fjPEvn+XczFqTOdPA80/xa9G5Spv4Lnd0T8O3NtK2DpnrJs+Io4ihFp+l
-         oW4CY2UEBBfIJIgG966i/PL24mgs9BZAxrJxKxANYaclbFIbbilEFjckHQd86EuR0pGn
-         roslrOYeoL622oFAsriMpIZySppyQljLqDUVriPOTONOPRZHjVDI0zfBaRswdXe9ehz0
-         R6bEXtcczAz1EZhWfzxpjswDEr/qKQLc068nbfjfDMsHxjtwvIuTS0N6+t+Tf6lMmnAg
-         nDgTVKqeGS2kcYFsMaCHZG1sMinunjx3SdGq+VCSMb0CvhwEhYOzMM89/fDwW0xBU/Yn
-         iwvw==
-X-Forwarded-Encrypted: i=1; AJvYcCXbGgZAwPEo6Dkkr9oujAzEi4sh2D9Fe2LowQV2uZqV4MdxNt2mGkH0sH1Vx7fcRtAv6SvOricjamYanp4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywobkc6cfjNAol1kHn0aXA7/uuoSh4u5+qbtzyf9S5ZTloM1TGQ
-	I2HMHofjhE/cpKhTqsZSExVx7FWLNpHfk5OQFfjTHPKHW4iOL9hw
-X-Google-Smtp-Source: AGHT+IGVBPGQzY6hPrwtnFG1R1rj7oLhaWoxeEWonvMcUjG2rx218VxjPEKt3FCtBiTZe+sCPeCVyw==
-X-Received: by 2002:a17:902:d482:b0:20c:7eaf:8945 with SMTP id d9443c01a7336-211d0d8fff5mr230230695ad.28.1732030789888;
-        Tue, 19 Nov 2024 07:39:49 -0800 (PST)
-Received: from advait-kdeneon.. ([2405:201:1e:f1d5:7dd3:c95:4ddf:3d69])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-212389529b6sm30114595ad.236.2024.11.19.07.39.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Nov 2024 07:39:49 -0800 (PST)
-From: Advait Dhamorikar <advaitdhamorikar@gmail.com>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: linux-i3c@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Advait Dhamorikar <advaitdhamorikar@gmail.com>
-Subject: [PATCH-next] i3c: master: Fix potentially uninit variable
-Date: Tue, 19 Nov 2024 21:09:41 +0530
-Message-Id: <20241119153941.8307-1-advaitdhamorikar@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1732030879; c=relaxed/simple;
+	bh=LCJa+mqJlcqayphq5IXmD48HWyCdMQp5/f0kZG0ciBM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oH+ix49UZUlA0lnnu+zSylSfz9guEfpFtHiKgswH5QS2Qkp5n3YzWlmrmS8A3rbAUDMp9PD0O49oqqeYNOa2ndzA1KQjS3lDLUjPNXlcwYiccqHYgseVuxR3nPurZOdmcZtZ/e2XV1Pm/y+fW+g1cTdOXGl1IVunV67aashmdQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WNQFR1U4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B55EDC4CECF;
+	Tue, 19 Nov 2024 15:41:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732030878;
+	bh=LCJa+mqJlcqayphq5IXmD48HWyCdMQp5/f0kZG0ciBM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WNQFR1U4KMgjZ/wew/OFuKN7TkKaGv/hTOFLeKBkbWVumG17i0grqn1Pc1Vg0+EdT
+	 C0Yb0G5Epe/DohfB199hMCq5PcB7nG0BceGGyH5M9iQw5OtQangn6LiWrWixu1Tcgn
+	 YnSacQ3gewWmMJxZ/NMynVKt+BPQWSbB+/whdwXvZWZgHCHeTZkfehw9RciaZVHRZx
+	 tHkdEAfZXlZxUt6QJOiSztFYWZohOGftpU+9whc94FL1rY/sUywp2CSzpOGfeLI/sA
+	 rPDl3MTfd+1TRmDVM37S9mFgOepfgCsghb4MjRkn9xgmLS0FQ28yv8W9qrZVevts9a
+	 ewXo3WWrvJboQ==
+Date: Tue, 19 Nov 2024 09:41:17 -0600
+From: Rob Herring <robh@kernel.org>
+To: Samuel Holland <samuel.holland@sifive.com>
+Cc: Saravana Kannan <saravanak@google.com>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] of: property: fw_devlink: Do not use interrupt-parent
+ directly
+Message-ID: <20241119154117.GA1537069-robh@kernel.org>
+References: <20241114195652.3068725-1-samuel.holland@sifive.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241114195652.3068725-1-samuel.holland@sifive.com>
 
-devinfo is uninitialized if the condition is not satisfied,
-add an else condition to prevent unexpected behaviour.
+On Thu, Nov 14, 2024 at 11:56:49AM -0800, Samuel Holland wrote:
+> commit 7f00be96f125 ("of: property: Add device link support for
+> interrupt-parent, dmas and -gpio(s)") started adding device links for
+> the interrupt-parent property. Later, commit f265f06af194 ("of:
+> property: Fix fw_devlink handling of interrupts/interrupts-extended")
+> added full support for parsing the interrupts and interrupts-extended
+> properties, which includes looking up the node of the parent domain.
+> This made the handler for the interrupt-parent property redundant.
+> 
+> In fact, creating device links based solely on interrupt-parent is
+> problematic, because it can create spurious cycles. A node may have
+> this property without itself being an interrupt controller or consumer.
+> For example, this property is often present in the root node or a /soc
+> bus node to set the default interrupt parent for child nodes. However,
+> it is incorrect for the bus to depend on the interrupt controller, as
+> some of the bus's childre may not be interrupt consumers at all or may
 
-The variable will contain an arbitrary value left from earlier 
-computations in `i3c_device_uevent`.
+typo
 
-Signed-off-by: Advait Dhamorikar <advaitdhamorikar@gmail.com>
----
- drivers/i3c/master.c | 2 ++
- 1 file changed, 2 insertions(+)
+> have a different interrupt parent.
+> 
+> Resolving these spurious dependency cycles can cause an incorrect probe
+> order for interrupt controller drivers. This was observed on a RISC-V
+> system with both an APLIC and IMSIC under /soc, where interrupt-parent
+> in /soc points to the APLIC, and the APLIC msi-parent points to the
+> IMSIC. fw_devlink found three dependency cycles and attempted to probe
+> the APLIC before the IMSIC. After applying this patch, there were no
+> dependency cycles and the probe order was correct.
+> 
+> Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
 
-diff --git a/drivers/i3c/master.c b/drivers/i3c/master.c
-index 42310c9a00c2..7594d3793eb0 100644
---- a/drivers/i3c/master.c
-+++ b/drivers/i3c/master.c
-@@ -284,6 +284,8 @@ static int i3c_device_uevent(const struct device *dev, struct kobj_uevent_env *e
- 
- 	if (i3cdev->desc)
- 		devinfo = i3cdev->desc->info;
-+	else
-+		return -ENODEV;
- 	manuf = I3C_PID_MANUF_ID(devinfo.pid);
- 	part = I3C_PID_PART_ID(devinfo.pid);
- 	ext = I3C_PID_EXTRA_INFO(devinfo.pid);
--- 
-2.34.1
+I assume this should go to stable? It needs Fixes tags.
 
+Otherwise, the change makes sense to me.
+
+> ---
+> 
+>  drivers/of/property.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/drivers/of/property.c b/drivers/of/property.c
+> index 11b922fde7af..7bd8390f2fba 100644
+> --- a/drivers/of/property.c
+> +++ b/drivers/of/property.c
+> @@ -1213,7 +1213,6 @@ DEFINE_SIMPLE_PROP(iommus, "iommus", "#iommu-cells")
+>  DEFINE_SIMPLE_PROP(mboxes, "mboxes", "#mbox-cells")
+>  DEFINE_SIMPLE_PROP(io_channels, "io-channels", "#io-channel-cells")
+>  DEFINE_SIMPLE_PROP(io_backends, "io-backends", "#io-backend-cells")
+> -DEFINE_SIMPLE_PROP(interrupt_parent, "interrupt-parent", NULL)
+>  DEFINE_SIMPLE_PROP(dmas, "dmas", "#dma-cells")
+>  DEFINE_SIMPLE_PROP(power_domains, "power-domains", "#power-domain-cells")
+>  DEFINE_SIMPLE_PROP(hwlocks, "hwlocks", "#hwlock-cells")
+> @@ -1359,7 +1358,6 @@ static const struct supplier_bindings of_supplier_bindings[] = {
+>  	{ .parse_prop = parse_mboxes, },
+>  	{ .parse_prop = parse_io_channels, },
+>  	{ .parse_prop = parse_io_backends, },
+> -	{ .parse_prop = parse_interrupt_parent, },
+>  	{ .parse_prop = parse_dmas, .optional = true, },
+>  	{ .parse_prop = parse_power_domains, },
+>  	{ .parse_prop = parse_hwlocks, },
+> -- 
+> 2.45.1
+> 
 
