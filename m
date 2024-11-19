@@ -1,527 +1,206 @@
-Return-Path: <linux-kernel+bounces-413632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63D4B9D1C4E
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 01:26:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E4AD59D1C87
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 01:31:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E205F1F2235E
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 00:26:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F39A1F215B4
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 00:31:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83265171BB;
-	Tue, 19 Nov 2024 00:26:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC8BF13C3D5;
+	Tue, 19 Nov 2024 00:29:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XAITPclp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="M1I4DaxS"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 999F6DDAB;
-	Tue, 19 Nov 2024 00:26:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 468FE17C8D;
+	Tue, 19 Nov 2024 00:29:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731975963; cv=none; b=Vx9x+2icBhPqGAjlyGBmtu7PM5fyBQ4Y+0q0VShZEH7KATgf7VCYzudzYPxiNIgvnONunlytzv+5lw8FEAJ8GaNYrnDQSYFe3wEffnQXMRNIw+cZdMSQpz1PLSAJlG3TwMMuR95zu1v8cPV7EqvXbD4zejDX8v/bb1WKjppHp78=
+	t=1731976169; cv=none; b=In1Yhnrl7rC1jlZzWsbPrTg4ldtyt+fD+ZvxJeialm7bu5YpOg0kJLE6jtxZdUexi7c+gPkq6iEA2AhS68DXsN9Zh9vWyrx1LxX8JZ9VtJXoBYhZYxo6KeVzzGvxPCHGCF5wcy8PAdM77GjtUUoorC2Y9C2aipKlCzbCW/odhx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731975963; c=relaxed/simple;
-	bh=5Bim+cfyRoKmaKNJo28pShEmtGmhlbCVeW2C/1ESDOI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y1o8GKVQg3BVym4Cw5dm3J1ryrqW536C1kjlfa/EUDR5Pis2aPft1mkRf6nOjUBlvEtgexX5wOezMPeDgxpjtYaRxmTtm0mRN1q1cfmKoDj7CPQ5OlzllVA5DLtL0qXcTPZWXkFh+AfIFcIa5kJz1tltKtL1X4rWgV6egm/Km/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XAITPclp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EFCCC4CECC;
-	Tue, 19 Nov 2024 00:26:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731975963;
-	bh=5Bim+cfyRoKmaKNJo28pShEmtGmhlbCVeW2C/1ESDOI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XAITPclpbHyKjvjiWDXoPDbU7n5OUzuT0oGh5BuU004vao4zA3a64XNAdJkKqkPQW
-	 MQLLwzx7t3jIPAwK5oiHVq68HQcXM5Zjh3yZ/G+xWVH3USI187B7w7INfMU1S7T3Qo
-	 sk2uDrsAB0WUsllqLruD2z4N+Yc/MtTZWj3NfFsOmrSvoEezOm+0YaRnz96xq+4+CK
-	 2bUZM2RjMxXYirM561DeNuMvAwg7Fr4ZLiOfXxBrQ7BHoQUpzfGUiFE1g+S9nv2vQQ
-	 hOSqVWisbR0ZrgCez4FAStUTv3MRQpElyk/RKB3U6G14OEYP1HmJmEWgCMhZ7zIBNJ
-	 KltIR963pXbCA==
-Date: Mon, 18 Nov 2024 16:26:00 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	James Clark <james.clark@linaro.org>,
-	Howard Chu <howardchu95@gmail.com>,
-	Athira Jajeev <atrajeev@linux.vnet.ibm.com>,
-	Michael Petlan <mpetlan@redhat.com>,
-	Veronika Molnarova <vmolnaro@redhat.com>,
-	Dapeng Mi <dapeng1.mi@linux.intel.com>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	Ilya Leoshkevich <iii@linux.ibm.com>,
-	Colin Ian King <colin.i.king@gmail.com>,
-	Weilin Wang <weilin.wang@intel.com>,
-	Andi Kleen <ak@linux.intel.com>,
-	Josh Poimboeuf <jpoimboe@redhat.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v6 07/22] perf script: Move find_scripts to
- browser/scripts.c
-Message-ID: <ZzvbGK2uOTwuibZq@google.com>
-References: <20241109061809.811922-1-irogers@google.com>
- <20241109061809.811922-8-irogers@google.com>
+	s=arc-20240116; t=1731976169; c=relaxed/simple;
+	bh=Z8DqmcWjt1zrD0CYXeSpSjfpqvmdRKZWzMK9PjvpSrM=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=CO4F0Rj4H+IUzaunb7uzUB+hXkEqh2DsW4wFFYvKMxyCQyppGD09QFe2IEE1NFTgeapfVRHyv80zUWKbd2cTNjAdyFMjM14PBzw37G6x/C6TcplfQILz6QeC7o3CV9sQSDPTwLKlrL/lh4eYOFyERRzD2B3jfXkyvM4KU/Xiz9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=M1I4DaxS; arc=none smtp.client-ip=212.227.15.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1731976096; x=1732580896; i=w_armin@gmx.de;
+	bh=5hVcqyFvTu5vatuyXRiaENgjDo70JIP3TxdDakNOEoY=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
+	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=M1I4DaxSnoCLq+cE/xr8pqVX7z8CJWeB8M1Lr5yZSm7/R1FS0vCWaGThSO8zFcoz
+	 GaMsive8zHBMQQtbFvs/BUs0eXEQ6UvWC/sLZoNOXntABtY8cCc5AZI3P1y6sNILs
+	 x5MeR6RQV0BGLU5xQx4/KnAZZBPQW73CLpf1y5PiszCBZj0MIrH2zboFcHQ0kSTLL
+	 93bqLzYfeD15BIoxos1shW+uxZpdP5z7Y150+LhPVb18gQD5BEhmrTzcr3Rr3n+t1
+	 ZcsftcDhrBSA5TRhImTR/zjovRQVZ/AC3EtHjiDcBEll6FJQkySjdYuvvaBuoDjuY
+	 X4kq6RS1Sreq6y0SYw==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.0.14] ([141.30.226.119]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MxlzI-1txi8f3jgM-00zraz; Tue, 19
+ Nov 2024 01:28:16 +0100
+Message-ID: <6b7d2f80-0dde-4f07-b889-fa2cb99f5c88@gmx.de>
+Date: Tue, 19 Nov 2024 01:28:08 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241109061809.811922-8-irogers@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 11/22] ACPI: platform_profile: Add name attribute to
+ class interface
+From: Armin Wolf <W_Armin@gmx.de>
+To: Mario Limonciello <mario.limonciello@amd.com>,
+ Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>,
+ Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+ Corentin Chary <corentin.chary@gmail.com>, "Luke D . Jones"
+ <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>,
+ Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
+ Alexis Belmonte <alexbelm48@gmail.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+ Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>,
+ open list <linux-kernel@vger.kernel.org>,
+ "open list:ACPI" <linux-acpi@vger.kernel.org>,
+ "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER"
+ <platform-driver-x86@vger.kernel.org>,
+ "open list:THINKPAD ACPI EXTRAS DRIVER"
+ <ibm-acpi-devel@lists.sourceforge.net>,
+ Mark Pearson <mpearson-lenovo@squebb.ca>,
+ Matthew Schwartz <matthew.schwartz@linux.dev>
+References: <20241109044151.29804-1-mario.limonciello@amd.com>
+ <20241109044151.29804-12-mario.limonciello@amd.com>
+ <29899120-efec-4264-b6a8-0bca4fc1f332@gmx.de>
+Content-Language: en-US
+In-Reply-To: <29899120-efec-4264-b6a8-0bca4fc1f332@gmx.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:bSMGx/uh1q7vg+W2/okqjuLaAoxzMkFQA4fCWCTTEXdCq3uQYq5
+ 4hcp/iGW1shsODj7zQga6ANI8rRrYgDYH7N/GKa14LI6/PzIcxe9X5GFgHc/Ze5UzJMKvgx
+ pYYRDNP/NF+gljOQ5Hc0/M5cly70I6mod49AJjRZ6MEQlo5GiB7mV8pJvigN6w1+S+0EyvX
+ 4RtbCRDd+SsikqtSTu55Q==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:anLUiQlL/Pg=;9BVvn4ZIFw1ZS8IzZF3GfZQok8R
+ N6gwacx8GN6z3hVhPIwhUAy2M9cLQRqKZalSIz/NVD2aVlaJpl+uqJdf9okZXVdH427FptXxm
+ ZzpXlEdBtWtFjro5PF8ymRsP0rZl5STKSojyQMG1eMkCS0KfSBII5SOmJzp+Gqfp+530oYNil
+ JYkKQvzW9zN66SAdH3vcBPXisnUI9zCRcQTEpc6llgXAhBfWlXokoRTIIL4tbglIRXegkfCbn
+ kI/O/CeXMLo09ybu26mVBUbEewqhtv/rJp9gsTiBb7Vw6GA4u+yawRWQ4eNgu0rXdC+lTh1qR
+ Or8hd+ynwapM7N4gjj4tJjpjD8FDVV4LQsq7+sCbFjhK32DOYXo/pWZ4QhtopeEEc5zrVhTDW
+ 5IxAc70BHE8boGDHpSc+UiY3D4gkRS+lF0UuPp5j6E1CDI2dQOZv6g4a2Ia6vKAbn8kppM/K1
+ rHdZ+5tNCqEbn2fRgXn8fC3sEeyXiYEwKXoRXW4SglxbvfCUngP7ag4E43h5ULsG0kI79jEnp
+ WW3//jyyDG1x4uqQEu2e3jjcaq5XS/v7ZmTw+XKuM2WZpIbVt8nGsveWNrXLkfL9p5vhcARyp
+ rGrCc8O4Jnlqs9shJCTdocC07gye6h9E95l8aMs3yjWBW6XfdnlXbz9Yw5+6jGY9j8Co71oCa
+ AASpTc5IWHg6/Xu7JRohn+A/VyxgB/gGHss/4yUqPLZJZ4NzGX2BvF8ZwhOrOvFKde2ejpm90
+ eo4HtmF9tF0ilX37xJOXWdbUOAPHhUbvu6eVd1uOwJOJh3Qj/dpAebVwXghJXdzNUGfH6NnW/
+ Itel1fvVSRzB2nGFfdD+rSbIKKYL/tcj0X11p6Qi/UaYssgxJIpaMLBc5Iaa5BSZ8kn8L+TXw
+ 9xmzEjdxMhTFVhxxHqOzjRAAHeKBCwNlrtP65H1Ww8HxpzBOoccxQpdM9
 
-On Fri, Nov 08, 2024 at 10:17:54PM -0800, Ian Rogers wrote:
-> The only use of find_scripts is in browser/scripts.c but the
-> definition in builtin causes linking problems requiring a stub in
-> python.c. Move the function to allow the stub to be removed.
-> 
-> Signed-off-by: Ian Rogers <irogers@google.com>
+Am 18.11.24 um 20:43 schrieb Armin Wolf:
 
-Acked-by: Namhyung Kim <namhyung@kernel.org>
+> Am 09.11.24 um 05:41 schrieb Mario Limonciello:
+>
+>> The name attribute shows the name of the associated platform profile
+>> handler.
+>>
+>> Tested-by: Mark Pearson <mpearson-lenovo@squebb.ca>
+>> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+>> ---
+>> =C2=A0 drivers/acpi/platform_profile.c | 27 +++++++++++++++++++++++++++
+>> =C2=A0 1 file changed, 27 insertions(+)
+>>
+>> diff --git a/drivers/acpi/platform_profile.c
+>> b/drivers/acpi/platform_profile.c
+>> index ef6af2c655524..4e2eda18f7f5f 100644
+>> --- a/drivers/acpi/platform_profile.c
+>> +++ b/drivers/acpi/platform_profile.c
+>> @@ -25,8 +25,35 @@ static_assert(ARRAY_SIZE(profile_names) =3D=3D
+>> PLATFORM_PROFILE_LAST);
+>>
+>> =C2=A0 static DEFINE_IDA(platform_profile_ida);
+>>
+>> +/**
+>> + * name_show - Show the name of the profile handler
+>> + * @dev: The device
+>> + * @attr: The attribute
+>> + * @buf: The buffer to write to
+>> + * Return: The number of bytes written
+>> + */
+>> +static ssize_t name_show(struct device *dev,
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 struct device_attribute *attr,
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 char *buf)
+>> +{
+>> +=C2=A0=C2=A0=C2=A0 struct platform_profile_handler *handler =3D dev_ge=
+t_drvdata(dev);
+>> +
+>> +=C2=A0=C2=A0=C2=A0 scoped_cond_guard(mutex_intr, return -ERESTARTSYS, =
+&profile_lock) {
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return sysfs_emit(buf, "%s\=
+n", handler->name);
+>> +=C2=A0=C2=A0=C2=A0 }
+>> +=C2=A0=C2=A0=C2=A0 return -ERESTARTSYS;
+>
+> I still have a bad feeling about the locking inside the class
+> attributes...
+>
+> Can we assume that no sysfs accesses occur after unregistering the
+> class device?
+>
+> Even if this is not the case then the locking fails to protect the
+> platform_profile_handler here.
+> If the device is unregistered right after dev_get_drvdata() was
+> called, then we would sill operate
+> on possibly stale data once we take the profile_lock.
+>
+> Does someone have any clue how sysfs attributes act during removal?
+>
+I think i found the answer to my questions inside this patch series:
+https://lore.kernel.org/linux-kernel/1390951311-15325-1-git-send-email-tj@=
+kernel.org
+
+It says that:
+
+	kernfs / sysfs implement the "sever" semantic for userland accesses.
+	When a node is removed, no further userland operations are allowed and
+	the in-flight ones are drained before removal is finished.  This makes
+	policing post-mortem userland accesses trivial for its users.
+
+In this case taking the profile_lock when reading/writing class attributes=
+ seems to be unnecessary.
+Please remove the unnecessary locking inside the class attributes.
 
 Thanks,
-Namhyung
+Armin Wolf
 
-> ---
->  tools/perf/builtin-script.c      | 171 -----------------------------
->  tools/perf/builtin.h             |   6 --
->  tools/perf/ui/browsers/scripts.c | 177 ++++++++++++++++++++++++++++++-
->  tools/perf/util/python.c         |   6 --
->  4 files changed, 175 insertions(+), 185 deletions(-)
-> 
-> diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-> index e20d55b8a741..e9ec74056f71 100644
-> --- a/tools/perf/builtin-script.c
-> +++ b/tools/perf/builtin-script.c
-> @@ -3521,177 +3521,6 @@ static void free_dlarg(void)
->  	free(dlargv);
->  }
->  
-> -/*
-> - * Some scripts specify the required events in their "xxx-record" file,
-> - * this function will check if the events in perf.data match those
-> - * mentioned in the "xxx-record".
-> - *
-> - * Fixme: All existing "xxx-record" are all in good formats "-e event ",
-> - * which is covered well now. And new parsing code should be added to
-> - * cover the future complex formats like event groups etc.
-> - */
-> -static int check_ev_match(int dir_fd, const char *scriptname, struct perf_session *session)
-> -{
-> -	char line[BUFSIZ];
-> -	FILE *fp;
-> -
-> -	{
-> -		char filename[FILENAME_MAX + 5];
-> -		int fd;
-> -
-> -		scnprintf(filename, sizeof(filename), "bin/%s-record", scriptname);
-> -		fd = openat(dir_fd, filename, O_RDONLY);
-> -		if (fd == -1)
-> -			return -1;
-> -		fp = fdopen(fd, "r");
-> -		if (!fp)
-> -			return -1;
-> -	}
-> -
-> -	while (fgets(line, sizeof(line), fp)) {
-> -		char *p = skip_spaces(line);
-> -
-> -		if (*p == '#')
-> -			continue;
-> -
-> -		while (strlen(p)) {
-> -			int match, len;
-> -			struct evsel *pos;
-> -			char evname[128];
-> -
-> -			p = strstr(p, "-e");
-> -			if (!p)
-> -				break;
-> -
-> -			p += 2;
-> -			p = skip_spaces(p);
-> -			len = strcspn(p, " \t");
-> -			if (!len)
-> -				break;
-> -
-> -			snprintf(evname, len + 1, "%s", p);
-> -
-> -			match = 0;
-> -			evlist__for_each_entry(session->evlist, pos) {
-> -				if (evsel__name_is(pos, evname)) {
-> -					match = 1;
-> -					break;
-> -				}
-> -			}
-> -
-> -			if (!match) {
-> -				fclose(fp);
-> -				return -1;
-> -			}
-> -		}
-> -	}
-> -
-> -	fclose(fp);
-> -	return 0;
-> -}
-> -
-> -/*
-> - * Return -1 if none is found, otherwise the actual scripts number.
-> - *
-> - * Currently the only user of this function is the script browser, which
-> - * will list all statically runnable scripts, select one, execute it and
-> - * show the output in a perf browser.
-> - */
-> -int find_scripts(char **scripts_array, char **scripts_path_array, int num,
-> -		 int pathlen)
-> -{
-> -	struct dirent *script_dirent, *lang_dirent;
-> -	int scripts_dir_fd, lang_dir_fd;
-> -	DIR *scripts_dir, *lang_dir;
-> -	struct perf_session *session;
-> -	struct perf_data data = {
-> -		.path = input_name,
-> -		.mode = PERF_DATA_MODE_READ,
-> -	};
-> -	char *temp;
-> -	int i = 0;
-> -	const char *exec_path = get_argv_exec_path();
-> -
-> -	session = perf_session__new(&data, NULL);
-> -	if (IS_ERR(session))
-> -		return PTR_ERR(session);
-> -
-> -	{
-> -		char scripts_path[PATH_MAX];
-> -
-> -		snprintf(scripts_path, sizeof(scripts_path), "%s/scripts", exec_path);
-> -		scripts_dir_fd = open(scripts_path, O_DIRECTORY);
-> -		pr_err("Failed to open directory '%s'", scripts_path);
-> -		if (scripts_dir_fd == -1) {
-> -			perf_session__delete(session);
-> -			return -1;
-> -		}
-> -	}
-> -	scripts_dir = fdopendir(scripts_dir_fd);
-> -	if (!scripts_dir) {
-> -		close(scripts_dir_fd);
-> -		perf_session__delete(session);
-> -		return -1;
-> -	}
-> -
-> -	while ((lang_dirent = readdir(scripts_dir)) != NULL) {
-> -		if (lang_dirent->d_type != DT_DIR &&
-> -		    (lang_dirent->d_type == DT_UNKNOWN &&
-> -		     !is_directory_at(scripts_dir_fd, lang_dirent->d_name)))
-> -			continue;
-> -		if (!strcmp(lang_dirent->d_name, ".") || !strcmp(lang_dirent->d_name, ".."))
-> -			continue;
-> -
-> -#ifndef HAVE_LIBPERL_SUPPORT
-> -		if (strstr(lang_dirent->d_name, "perl"))
-> -			continue;
-> -#endif
-> -#ifndef HAVE_LIBPYTHON_SUPPORT
-> -		if (strstr(lang_dirent->d_name, "python"))
-> -			continue;
-> -#endif
-> -
-> -		lang_dir_fd = openat(scripts_dir_fd, lang_dirent->d_name, O_DIRECTORY);
-> -		if (lang_dir_fd == -1)
-> -			continue;
-> -		lang_dir = fdopendir(lang_dir_fd);
-> -		if (!lang_dir) {
-> -			close(lang_dir_fd);
-> -			continue;
-> -		}
-> -		while ((script_dirent = readdir(lang_dir)) != NULL) {
-> -			if (script_dirent->d_type == DT_DIR)
-> -				continue;
-> -			if (script_dirent->d_type == DT_UNKNOWN &&
-> -			    is_directory_at(lang_dir_fd, script_dirent->d_name))
-> -				continue;
-> -			/* Skip those real time scripts: xxxtop.p[yl] */
-> -			if (strstr(script_dirent->d_name, "top."))
-> -				continue;
-> -			if (i >= num)
-> -				break;
-> -			scnprintf(scripts_path_array[i], pathlen, "%s/scripts/%s/%s",
-> -				exec_path,
-> -				lang_dirent->d_name,
-> -				script_dirent->d_name);
-> -			temp = strchr(script_dirent->d_name, '.');
-> -			snprintf(scripts_array[i],
-> -				(temp - script_dirent->d_name) + 1,
-> -				"%s", script_dirent->d_name);
-> -
-> -			if (check_ev_match(lang_dir_fd, scripts_array[i], session))
-> -				continue;
-> -
-> -			i++;
-> -		}
-> -		closedir(lang_dir);
-> -	}
-> -
-> -	closedir(scripts_dir);
-> -	perf_session__delete(session);
-> -	return i;
-> -}
-> -
->  static char *get_script_path(const char *script_root, const char *suffix)
->  {
->  	struct dirent *script_dirent, *lang_dirent;
-> diff --git a/tools/perf/builtin.h b/tools/perf/builtin.h
-> index 94f4b3769bf7..a07e93c53848 100644
-> --- a/tools/perf/builtin.h
-> +++ b/tools/perf/builtin.h
-> @@ -2,10 +2,6 @@
->  #ifndef BUILTIN_H
->  #define BUILTIN_H
->  
-> -#include <stddef.h>
-> -#include <linux/compiler.h>
-> -#include <tools/config.h>
-> -
->  struct feature_status {
->  	const char *name;
->  	const char *macro;
-> @@ -56,6 +52,4 @@ int cmd_ftrace(int argc, const char **argv);
->  int cmd_daemon(int argc, const char **argv);
->  int cmd_kwork(int argc, const char **argv);
->  
-> -int find_scripts(char **scripts_array, char **scripts_path_array, int num,
-> -		 int pathlen);
->  #endif
-> diff --git a/tools/perf/ui/browsers/scripts.c b/tools/perf/ui/browsers/scripts.c
-> index e437d7889de6..2d04ece833aa 100644
-> --- a/tools/perf/ui/browsers/scripts.c
-> +++ b/tools/perf/ui/browsers/scripts.c
-> @@ -1,16 +1,18 @@
->  // SPDX-License-Identifier: GPL-2.0
-> -#include "../../builtin.h"
-> -#include "../../perf.h"
->  #include "../../util/util.h" // perf_exe()
->  #include "../util.h"
-> +#include "../../util/evlist.h"
->  #include "../../util/hist.h"
->  #include "../../util/debug.h"
-> +#include "../../util/session.h"
->  #include "../../util/symbol.h"
->  #include "../browser.h"
->  #include "../libslang.h"
->  #include "config.h"
-> +#include <linux/err.h>
->  #include <linux/string.h>
->  #include <linux/zalloc.h>
-> +#include <subcmd/exec-cmd.h>
->  #include <stdlib.h>
->  
->  #define SCRIPT_NAMELEN	128
-> @@ -77,6 +79,177 @@ static int scripts_config(const char *var, const char *value, void *data)
->  	return 0;
->  }
->  
-> +/*
-> + * Some scripts specify the required events in their "xxx-record" file,
-> + * this function will check if the events in perf.data match those
-> + * mentioned in the "xxx-record".
-> + *
-> + * Fixme: All existing "xxx-record" are all in good formats "-e event ",
-> + * which is covered well now. And new parsing code should be added to
-> + * cover the future complex formats like event groups etc.
-> + */
-> +static int check_ev_match(int dir_fd, const char *scriptname, struct perf_session *session)
-> +{
-> +	char line[BUFSIZ];
-> +	FILE *fp;
-> +
-> +	{
-> +		char filename[FILENAME_MAX + 5];
-> +		int fd;
-> +
-> +		scnprintf(filename, sizeof(filename), "bin/%s-record", scriptname);
-> +		fd = openat(dir_fd, filename, O_RDONLY);
-> +		if (fd == -1)
-> +			return -1;
-> +		fp = fdopen(fd, "r");
-> +		if (!fp)
-> +			return -1;
-> +	}
-> +
-> +	while (fgets(line, sizeof(line), fp)) {
-> +		char *p = skip_spaces(line);
-> +
-> +		if (*p == '#')
-> +			continue;
-> +
-> +		while (strlen(p)) {
-> +			int match, len;
-> +			struct evsel *pos;
-> +			char evname[128];
-> +
-> +			p = strstr(p, "-e");
-> +			if (!p)
-> +				break;
-> +
-> +			p += 2;
-> +			p = skip_spaces(p);
-> +			len = strcspn(p, " \t");
-> +			if (!len)
-> +				break;
-> +
-> +			snprintf(evname, len + 1, "%s", p);
-> +
-> +			match = 0;
-> +			evlist__for_each_entry(session->evlist, pos) {
-> +				if (evsel__name_is(pos, evname)) {
-> +					match = 1;
-> +					break;
-> +				}
-> +			}
-> +
-> +			if (!match) {
-> +				fclose(fp);
-> +				return -1;
-> +			}
-> +		}
-> +	}
-> +
-> +	fclose(fp);
-> +	return 0;
-> +}
-> +
-> +/*
-> + * Return -1 if none is found, otherwise the actual scripts number.
-> + *
-> + * Currently the only user of this function is the script browser, which
-> + * will list all statically runnable scripts, select one, execute it and
-> + * show the output in a perf browser.
-> + */
-> +static int find_scripts(char **scripts_array, char **scripts_path_array, int num,
-> +		 int pathlen)
-> +{
-> +	struct dirent *script_dirent, *lang_dirent;
-> +	int scripts_dir_fd, lang_dir_fd;
-> +	DIR *scripts_dir, *lang_dir;
-> +	struct perf_session *session;
-> +	struct perf_data data = {
-> +		.path = input_name,
-> +		.mode = PERF_DATA_MODE_READ,
-> +	};
-> +	char *temp;
-> +	int i = 0;
-> +	const char *exec_path = get_argv_exec_path();
-> +
-> +	session = perf_session__new(&data, NULL);
-> +	if (IS_ERR(session))
-> +		return PTR_ERR(session);
-> +
-> +	{
-> +		char scripts_path[PATH_MAX];
-> +
-> +		snprintf(scripts_path, sizeof(scripts_path), "%s/scripts", exec_path);
-> +		scripts_dir_fd = open(scripts_path, O_DIRECTORY);
-> +		pr_err("Failed to open directory '%s'", scripts_path);
-> +		if (scripts_dir_fd == -1) {
-> +			perf_session__delete(session);
-> +			return -1;
-> +		}
-> +	}
-> +	scripts_dir = fdopendir(scripts_dir_fd);
-> +	if (!scripts_dir) {
-> +		close(scripts_dir_fd);
-> +		perf_session__delete(session);
-> +		return -1;
-> +	}
-> +
-> +	while ((lang_dirent = readdir(scripts_dir)) != NULL) {
-> +		if (lang_dirent->d_type != DT_DIR &&
-> +		    (lang_dirent->d_type == DT_UNKNOWN &&
-> +		     !is_directory_at(scripts_dir_fd, lang_dirent->d_name)))
-> +			continue;
-> +		if (!strcmp(lang_dirent->d_name, ".") || !strcmp(lang_dirent->d_name, ".."))
-> +			continue;
-> +
-> +#ifndef HAVE_LIBPERL_SUPPORT
-> +		if (strstr(lang_dirent->d_name, "perl"))
-> +			continue;
-> +#endif
-> +#ifndef HAVE_LIBPYTHON_SUPPORT
-> +		if (strstr(lang_dirent->d_name, "python"))
-> +			continue;
-> +#endif
-> +
-> +		lang_dir_fd = openat(scripts_dir_fd, lang_dirent->d_name, O_DIRECTORY);
-> +		if (lang_dir_fd == -1)
-> +			continue;
-> +		lang_dir = fdopendir(lang_dir_fd);
-> +		if (!lang_dir) {
-> +			close(lang_dir_fd);
-> +			continue;
-> +		}
-> +		while ((script_dirent = readdir(lang_dir)) != NULL) {
-> +			if (script_dirent->d_type == DT_DIR)
-> +				continue;
-> +			if (script_dirent->d_type == DT_UNKNOWN &&
-> +			    is_directory_at(lang_dir_fd, script_dirent->d_name))
-> +				continue;
-> +			/* Skip those real time scripts: xxxtop.p[yl] */
-> +			if (strstr(script_dirent->d_name, "top."))
-> +				continue;
-> +			if (i >= num)
-> +				break;
-> +			scnprintf(scripts_path_array[i], pathlen, "%s/scripts/%s/%s",
-> +				exec_path,
-> +				lang_dirent->d_name,
-> +				script_dirent->d_name);
-> +			temp = strchr(script_dirent->d_name, '.');
-> +			snprintf(scripts_array[i],
-> +				(temp - script_dirent->d_name) + 1,
-> +				"%s", script_dirent->d_name);
-> +
-> +			if (check_ev_match(lang_dir_fd, scripts_array[i], session))
-> +				continue;
-> +
-> +			i++;
-> +		}
-> +		closedir(lang_dir);
-> +	}
-> +
-> +	closedir(scripts_dir);
-> +	perf_session__delete(session);
-> +	return i;
-> +}
-> +
->  /*
->   * When success, will copy the full path of the selected script
->   * into  the buffer pointed by script_name, and return 0.
-> diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
-> index 94902652e371..eb15f3b6c4f5 100644
-> --- a/tools/perf/util/python.c
-> +++ b/tools/perf/util/python.c
-> @@ -1307,12 +1307,6 @@ PyMODINIT_FUNC PyInit_perf(void)
->  /* The following are stubs to avoid dragging in builtin-* objects. */
->  /* TODO: move the code out of the builtin-* file into util. */
->  
-> -int find_scripts(char **scripts_array  __maybe_unused, char **scripts_path_array  __maybe_unused,
-> -		int num  __maybe_unused, int pathlen __maybe_unused)
-> -{
-> -	return -1;
-> -}
-> -
->  void perf_stat__set_no_csv_summary(int set __maybe_unused)
->  {
->  }
-> -- 
-> 2.47.0.277.g8800431eea-goog
-> 
+> Thanks,
+> Armin Wolf
+>
+>> +}
+>> +
+>> +static DEVICE_ATTR_RO(name);
+>> +static struct attribute *profile_attrs[] =3D {
+>> +=C2=A0=C2=A0=C2=A0 &dev_attr_name.attr,
+>> +=C2=A0=C2=A0=C2=A0 NULL
+>> +};
+>> +ATTRIBUTE_GROUPS(profile);
+>> +
+>> =C2=A0 static const struct class platform_profile_class =3D {
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .name =3D "platform-profile",
+>> +=C2=A0=C2=A0=C2=A0 .dev_groups =3D profile_groups,
+>> =C2=A0 };
+>>
+>> =C2=A0 static ssize_t platform_profile_choices_show(struct device *dev,
+>
 
