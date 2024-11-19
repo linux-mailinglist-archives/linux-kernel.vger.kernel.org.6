@@ -1,51 +1,62 @@
-Return-Path: <linux-kernel+bounces-414018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AECF9D21DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 09:51:43 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 152BB9D21E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 09:53:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B978AB213CB
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 08:51:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C0C8B23474
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 08:53:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD09019DF99;
-	Tue, 19 Nov 2024 08:51:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCF2F1B4F10;
+	Tue, 19 Nov 2024 08:52:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="AISlr6bO"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Q0/yxc5s"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89061146D53;
-	Tue, 19 Nov 2024 08:51:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76D991AA1E3;
+	Tue, 19 Nov 2024 08:52:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732006289; cv=none; b=VL6qk4oIw1+st6XmD87A0yFQFu65VOYl9UhK3DvR6ZKTuVMy19s1OsfoOEJmLiHW2gfdju3MNrUh9hWibkB3C0PtnsYYEDT9zLCswP4RyU+2AnydE2pbHe4dBbnWjCY8uQG62i52hYjFxKchVvcaVWPghu88fPZ5Y0m+PLItw90=
+	t=1732006378; cv=none; b=a309I1+TAXOMiIH4Zs00DLGTT3IsWs791NiuSdFN4ugqlOEjNwmwZI+BsXLu/tQ7u8G75Duyh/uWLulRWqdsa4UBXSyuc+U33gtyEpnm2nT6EYQqIS92zDvxSgTbIYvsQp8dMVsk7p53hB6ytNup4Y/C+fWX2q1km5bD/FGTB1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732006289; c=relaxed/simple;
-	bh=l0JlU4N1Mp/ygwpUsFE+wAmibFF+9Rk/z0z+Gm9myP4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=duXl7E2zgkCZr4sp3UQvD2ZM0u0/A4nGeNiAH0oWmJ6EvaDJ2w/NQiaTaao2JJ2GSksevtoudPDjfIZY1FZVi0xgwjExIi2Vy8Qx8A9WWCmnxu7r4zp1Ke5Ci0Drouau3LrCjlCnRP3ZcMXErEH7x4UzJcnf7fbdruwPkHuq3EU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=AISlr6bO; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id B828C2000F;
-	Tue, 19 Nov 2024 08:51:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1732006284;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IcqVflbFpKhSDailGV7ecVaIw/F8cjue8PM1p8I8xY4=;
-	b=AISlr6bOZ8FTntG92ihdfR9TQpkWXCazabdxizWZk4/tBFC0RGrNrHOle1+FjLPwAltAf6
-	wNJ9GP7xjnx8HlT5zcByGu3AgqAYW+U12eZlZrDMRRR/o6aRGu2o+6AT6anUoWlOErN7Is
-	2terff+zTLsszjNkInitggare/WqUrfWNposN4LI/7HyxNtlLCNYqd8OOAMEMwWDS+s7k0
-	ELCmdmbtr9z0Sm6PeuLMhKQvEdd8ri9a5Qf1On9bEWMHgWpSMh19IfJrXz9FY9gRPw1ds7
-	XFlKMSylXtwKHJcADXbgtCzlweFnVd4arcHFBVeleWrbfMkgh/zKjZze4sV8kA==
-Message-ID: <024d3079-a553-4525-90af-2aa82ad3ac85@bootlin.com>
-Date: Tue, 19 Nov 2024 09:51:22 +0100
+	s=arc-20240116; t=1732006378; c=relaxed/simple;
+	bh=f1YOiiMABFHOzZDVuOESLyzocQBXaZ2MX3CikrW+07Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=VtR6F0esKtUefDbwJ7lr0wVHegllMC1e+n4gHC6DqbGdobzY6+ManFyaFxVJiF8+6Kl36vlfvCjDP/sRWDE6hm7aGLYMV/bytn090gphjh11nkr2P6RaVTxHbKj8AikI4Pf4uy7WkTd25D+yPC/9HkKarIDWGgkJ/FZYN39la24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Q0/yxc5s; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AJ7XlkL030145;
+	Tue, 19 Nov 2024 08:52:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	ZBJ/c+hKm/UDgiMMFoDCX9YfhZzdwI2Bvc/bPb89la0=; b=Q0/yxc5sOwhEuUOr
+	sIOf8kilHqSBBcBgFu9QBPylKqKUOqtpAg/YfKRHAUUXsZanhlPrTC8gvHvj/yql
+	62Btry3C9Xjbg/EsKb+tHHyk0fJW6GsPKsqeK8QpEAiNiP9E9D2NQ/F4s1L43gHl
+	Q4p0HHGP0fORWeKdVJCN/QZI/zaJfZswQT8HNesx/SXQC4Q3zvmA5RAG6od44C0C
+	DUPIsEyDchHDj5o4GmfLs59pS9094ZOygB7bW/mzIWiRgvzpV+gsnHFXudv9qA/+
+	BNg2sBmfk/FWbHYQ0vKe52IAd6pivVwEL1KFC3C1sqQU6Wsfsu2gfiZLOs5BrdKt
+	lotMPg==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4308y6a00x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 19 Nov 2024 08:52:28 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AJ8qSF8010132
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 19 Nov 2024 08:52:28 GMT
+Received: from [10.239.155.136] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 19 Nov
+ 2024 00:52:23 -0800
+Message-ID: <eb9fd0fd-6701-478c-a697-9453d97d604e@quicinc.com>
+Date: Tue, 19 Nov 2024 16:52:21 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,53 +64,148 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next v2 10/13] selftests/bpf: rename pseudo headers
- checksum computation
-To: Stanislav Fomichev <stfomichev@gmail.com>
-Cc: Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman
- <eddyz87@gmail.com>, Mykola Lysenko <mykolal@fb.com>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>,
- "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
- Jesper Dangaard Brouer <hawk@kernel.org>, ebpf@linuxfoundation.org,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Bastien Curutchet <bastien.curutchet@bootlin.com>, bpf@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org
-References: <20241114-flow_dissector-v2-0-ee4a3be3de65@bootlin.com>
- <20241114-flow_dissector-v2-10-ee4a3be3de65@bootlin.com>
- <ZzdpxDYzwDDu5W6x@mini-arch>
+Subject: Re: [PATCH v2] scsi: ufs: core: Add ufshcd_send_bsg_uic_cmd() for UFS
+ BSG
+To: =?UTF-8?B?UGV0ZXIgV2FuZyAo546L5L+h5Y+LKQ==?= <peter.wang@mediatek.com>,
+        "quic_rampraka@quicinc.com" <quic_rampraka@quicinc.com>,
+        "quic_nguyenb@quicinc.com" <quic_nguyenb@quicinc.com>,
+        "quic_nitirawa@quicinc.com" <quic_nitirawa@quicinc.com>,
+        "beanhuo@micron.com"
+	<beanhuo@micron.com>,
+        "avri.altman@wdc.com" <avri.altman@wdc.com>,
+        "bvanassche@acm.org" <bvanassche@acm.org>,
+        "quic_asutoshd@quicinc.com"
+	<quic_asutoshd@quicinc.com>,
+        "martin.petersen@oracle.com"
+	<martin.petersen@oracle.com>,
+        "junwoo80.lee@samsung.com"
+	<junwoo80.lee@samsung.com>,
+        "mani@kernel.org" <mani@kernel.org>,
+        "quic_cang@quicinc.com" <quic_cang@quicinc.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dlemoal@kernel.org" <dlemoal@kernel.org>,
+        "ahalaney@redhat.com"
+	<ahalaney@redhat.com>,
+        "quic_mnaresh@quicinc.com" <quic_mnaresh@quicinc.com>,
+        "hare@suse.de" <hare@suse.de>,
+        "linux-scsi@vger.kernel.org"
+	<linux-scsi@vger.kernel.org>,
+        "alim.akhtar@samsung.com"
+	<alim.akhtar@samsung.com>,
+        "manivannan.sadhasivam@linaro.org"
+	<manivannan.sadhasivam@linaro.org>,
+        "James.Bottomley@HansenPartnership.com"
+	<James.Bottomley@HansenPartnership.com>
+References: <20241113111409.935032-1-quic_ziqichen@quicinc.com>
+ <d3461ef552047db3e18cf3d222163ee685e13d9f.camel@mediatek.com>
 Content-Language: en-US
-From: =?UTF-8?Q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>
-In-Reply-To: <ZzdpxDYzwDDu5W6x@mini-arch>
-Content-Type: text/plain; charset=UTF-8
+From: Ziqi Chen <quic_ziqichen@quicinc.com>
+In-Reply-To: <d3461ef552047db3e18cf3d222163ee685e13d9f.camel@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-GND-Sasl: alexis.lothore@bootlin.com
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: kkrOzmUT-fury1R0nEHOG36jkH1veegm
+X-Proofpoint-GUID: kkrOzmUT-fury1R0nEHOG36jkH1veegm
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ mlxlogscore=999 suspectscore=0 mlxscore=0 bulkscore=0 malwarescore=0
+ lowpriorityscore=0 spamscore=0 clxscore=1015 adultscore=0 phishscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411190063
 
-On 11/15/24 16:33, Stanislav Fomichev wrote:
-> On 11/14, Alexis Lothoré (eBPF Foundation) wrote:
->> network_helpers.h provides helpers to compute checksum for pseudo
->> headers but no helpers to compute the global checksums.
->>
->> Before adding those, rename the pseudo header checksum helper to clarify
->> their role.
+Hi Peter,
+
+Thank you for your comment. We also recognize that the H8 Enter/Exit has 
+the same issue. In fact, we have tried to add the H8 command before. 
+Unfortunately, the situation with Hibern8 is complex, there are a lot of 
+status checks, and some vendors have their own sequence that is 
+implemented in their vendor driver by Vops. Simply including the H8 
+command here would cause other issues since the vendor sequence for H8 
+enter/exit is required. If we add the full sequence here, the code will 
+be bloated. We haven’t come up with a good solution for the Hibern8 
+situation yet. However, whether we include the H8 command or not, the 
+above issue is present as well (directly call ufshcd_send_uic_cmd() via 
+BSG framework).
+Right now, we have tested the PA_PWRMODE case and confirmed that it 
+works, so we want to quickly resolve the PA_PWRMODE issue to unblock our 
+customers’ urgent cases first. As for the Hibern8 situation, we have 
+plan to fix it but we want to fix it afterward, in a separated change. 
+If you have any good suggestions, we can discuss separately.
+
+BRs,
+Ziqi
+
+On 11/19/2024 2:40 PM, Peter Wang (王信友) wrote:
+> On Wed, 2024-11-13 at 19:14 +0800, Ziqi Chen wrote:
 > 
-> Same here: let's keep the old names? They are matching the ones we
-> have on the kernel side so it's easy to find them. I do agree that
-> the naming is unfortunate :-( If you prefer, maybe clarify with
-> a doc?
-
-Yeah, I did not really get the meaning of "magic" here, but ok, let's keep the
-original name to keep it synced with the kernel functions. I'll replace the
-rename with some doc.
-
-
--- 
-Alexis Lothoré, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+>> diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
+>> index e338867bc96c..c01f4b0c1b4f 100644
+>> --- a/drivers/ufs/core/ufshcd.c
+>> +++ b/drivers/ufs/core/ufshcd.c
+>> @@ -4319,6 +4319,42 @@ static int ufshcd_uic_pwr_ctrl(struct ufs_hba
+>> *hba, struct uic_command *cmd)
+>>          return ret;
+>>   }
+>>
+>> +/**
+>> + * ufshcd_send_bsg_uic_cmd - Send UIC commands requested via BSG
+>> layer and retrieve the result
+>> + * @hba: per adapter instance
+>> + * @uic_cmd: UIC command
+>> + *
+>> + * Return: 0 only if success.
+>> + */
+>> +int ufshcd_send_bsg_uic_cmd(struct ufs_hba *hba, struct uic_command
+>> *uic_cmd)
+>> +{
+>> +       int ret;
+>> +
+>> +       if (hba->quirks & UFSHCD_QUIRK_BROKEN_UIC_CMD)
+>> +               return 0;
+>> +
+>> +       ufshcd_hold(hba);
+>> +
+>> +       if (uic_cmd->argument1 == UIC_ARG_MIB(PA_PWRMODE) &&
+>> +           uic_cmd->command == UIC_CMD_DME_SET) {
+>>
+> 
+> Hi Ziqi,
+> 
+> Should we also check if uic_cmd->command == UIC_CMD_DME_HIBER_ENTER
+> or UIC_CMD_DME_HIBER_EXIT?
+> 
+> Thanks
+> Peter
+> 
+> 
+> 
+>> +               ret = ufshcd_uic_pwr_ctrl(hba, uic_cmd);
+>> +               goto out;
+>> +       }
+>> +
+>> +       mutex_lock(&hba->uic_cmd_mutex);
+>> +       ufshcd_add_delay_before_dme_cmd(hba);
+>> +
+>> +       ret = __ufshcd_send_uic_cmd(hba, uic_cmd);
+>> +       if (!ret)
+>> +               ret = ufshcd_wait_for_uic_cmd(hba, uic_cmd);
+>> +
+>> +       mutex_unlock(&hba->uic_cmd_mutex);
+>> +
+>> +out:
+>> +       ufshcd_release(hba);
+>> +       return ret;
+>> +}
+>> +
+>>   /**
+>>    * ufshcd_uic_change_pwr_mode - Perform the UIC power mode chage
+>>    *                             using DME_SET primitives.
+>> --
+>> 2.34.1
+>>
 
