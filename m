@@ -1,147 +1,167 @@
-Return-Path: <linux-kernel+bounces-413819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36DDB9D1F2A
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 05:20:01 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A21AE9D1F2E
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 05:24:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC2811F226A2
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 04:20:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 147ADB22467
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 04:24:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE51914883F;
-	Tue, 19 Nov 2024 04:19:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NKB+kUQG"
-Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08B371465AC;
+	Tue, 19 Nov 2024 04:24:47 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 988A920E6;
-	Tue, 19 Nov 2024 04:19:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3326020E6;
+	Tue, 19 Nov 2024 04:24:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731989992; cv=none; b=uQLyAW+U27bWvLqPROJw6E/7SIPeuFRzkCBislGGQixjLKCa500xc1sF6qX0Y6IwbucG7VQ6LWXfmiNWthRJ9vQ+Oi6WE2LxRcATc5/GatzNdedaq02Ww5caChQUgg3LWXzaqacGG2ar/TnbEC/+NhT8F09R2Y8sBb71xNHOKWg=
+	t=1731990286; cv=none; b=HgchMRqc17k4ku0WzCtGfPOQ4t6Tekh1ERi++WduEOdFA381bfvpl0rno8jiR6uJb4BKmIez3GvFgAFz3drQ1eg7jMMdneln9E2ozALdoALFYtqP1jgwzz33G7HUS02j0ALWCwJpKEzttAeNanmhe7+HMblqwCFGRl9LJQkOxOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731989992; c=relaxed/simple;
-	bh=rSXFAETp2MZhQ8efkwaFIrsiLpbmjHZDvYQ9vnidYGQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bQjiecA1c5cUZNtlzGEKneXY4twWEjZs/w4uXzVozQyL3TXMr/+IGuf0hpugSxDXTr4SgQ/6HQhwug5zeKZD4e+n/UHZp2qfeIe/PunZrEcFVDtUCdaktstqnJ8MXmhrWTAmW38ofd0g10qfi1/uIoYihWXvMjkeF5veHwgJse8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NKB+kUQG; arc=none smtp.client-ip=209.85.219.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-6d40263adbaso31347326d6.0;
-        Mon, 18 Nov 2024 20:19:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731989989; x=1732594789; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=alftURXz0Tze06p7HOwS1rcqp+gUTcrhv5QU892di2M=;
-        b=NKB+kUQGUpBaCYrbRHApSQzyq6lIuqgB7rSNETqxUC0cc18tyE9a553Yfy3N/BAEV+
-         RG+VFqx0+KaCkqwUN4GGBmE5ZcSblsDm8k3PVEITq+Ygch0GxIF7wAQzW5yIOKzwDs4Q
-         WoHAJkiUwFYbYjcgAjiqvyKuwlipxNdFi1t8ZW37h0HeY5bTAJchGxR0HF8N1mOTQXUR
-         6QVbglvAeOQ6xid+wdzb7IFGpjHCjXuM+9CInETz40+WhwBXUc1Y1nH4pt/qm5v7bqs7
-         k6cuvUadoG0W95opUUcJJzRLX3ORms9GpI+I1vAxITobQngsj6fl1m9ayjhu4sHwfzP9
-         2Ahw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731989989; x=1732594789;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=alftURXz0Tze06p7HOwS1rcqp+gUTcrhv5QU892di2M=;
-        b=BFULajzx6EXTSREjhqscFj5nu/m7bR9ugp/hPtKrAiMMf24KHaoQNUScGNHaSYOW7G
-         rVSIGcxM0lAxhlHZj/IF/ybHKa3j2pyfEz5olRv5Oc0/+DfKREVRzL3d+KIGykyGzyXj
-         +6Nk0f6FWzaBfLqhiSIX4E4Xp+8FUTr98lJxDIRHZkehdkjEAFMQQ/DuFKfYz+LfzMiS
-         /dl8E1dMjJIG1ecRqWZctDHCtTQODqEvd0X3c7LDLrByGf4CKk0JlwmGLosqzx/wX4gv
-         7ZEXygjwqlFvt7BE/7qwIeE/v4pqHZSX8ZWEiFguoBfdDA6JlawyI8H7RKSSniGLE9M6
-         fWOw==
-X-Forwarded-Encrypted: i=1; AJvYcCVXMIlSSE+1FBeWd8MkFEoGEswFQbxbNIgD+JLZkdnP7kfMZ+r05cOj2YAbPacyLkAYF3ybBQ+cXEtr7aE=@vger.kernel.org, AJvYcCXt74fHRIrusy9BayUK8fXIcImOOw1G+lJwoNFnu4KisVYG8QQJVoG5ZRHoh/XFac+La6deUok//2lRfkYq@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4yz2VZG0OX90QiTQZ2AcOO6lz1gWazu2FKlwqH8gdPaN+oZ5H
-	FWBF1S4OA/slKOPmXDJc3oO2ae3GzLXOUhGY4EluUr3G9CAMvPvJ2VOkLJghHGn6dqjZt51KyBU
-	ogp+0W1Jp8R7WfpCiObCxRPa6z/0=
-X-Google-Smtp-Source: AGHT+IHa5tIBWx713nEoyMm1jHBmdBT5AfmYR6C8Wgz6RLJNGhdbT+yTvJXK2VgwALuApKg0iICbydCg/SVRWwF+Ibc=
-X-Received: by 2002:a05:6214:1c08:b0:6d4:10b0:c23c with SMTP id
- 6a1803df08f44-6d410b0c455mr158018776d6.9.1731989989291; Mon, 18 Nov 2024
- 20:19:49 -0800 (PST)
+	s=arc-20240116; t=1731990286; c=relaxed/simple;
+	bh=hQnbFB1vpAT3Rui8jZTOS905qzylSOBEZDSQknfnjBw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=tqUNDwC9e0K19xCZVK7e3HaC+vQVP95eojbOEWkEPqbGq+qqSXG/j2SSLMR9bXTDThu3wms4rb584OoH4AhiW24wSlUC4YpXRDkTRV9dI4NrbPC7PCSOfnQprGxUFTReU3M7pAB4GyQgAzQ5E+y2CsxwFta7NNjbrgsStlajsew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+From: Sam James <sam@gentoo.org>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Kostadin Shishmanov <kostadinshishmanov@protonmail.com>,
+  "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+  arnd@arndb.de,  linux-kbuild@vger.kernel.org
+Subject: Re: Build failure with GCC 15 (-std=gnu23)
+In-Reply-To: <20241119041550.GA573925@thelio-3990X> (Nathan Chancellor's
+	message of "Mon, 18 Nov 2024 21:15:50 -0700")
+Organization: Gentoo
+References: <4OAhbllK7x4QJGpZjkYjtBYNLd_2whHx9oFiuZcGwtVR4hIzvduultkgfAIRZI3vQpZylu7Gl929HaYFRGeMEalWCpeMzCIIhLxxRhq4U-Y=@protonmail.com>
+	<20241118205629.GA15698@thelio-3990X> <8734joj5gn.fsf@gentoo.org>
+	<20241119041550.GA573925@thelio-3990X>
+User-Agent: mu4e 1.12.7; emacs 31.0.50
+Date: Tue, 19 Nov 2024 04:24:41 +0000
+Message-ID: <87r077j1fa.fsf@gentoo.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAAsfc_omvbgaSpmxqPPD9Jf4P2H-fEU97ADfRzJ0jULxGJehwg@mail.gmail.com>
- <TYZPR02MB78424F31FF023102693D2DB2A65A2@TYZPR02MB7842.apcprd02.prod.outlook.com>
- <15077D4C-8DE9-4751-9492-51D972B3E4C3@suse.de> <CAAsfc_r_6mZ2HesDOQWU-0F2KXhz=EJ_nHeR4bLanXNnAiduTg@mail.gmail.com>
- <D5D1CBD5-0031-4285-BE12-910D6898B465@suse.de>
-In-Reply-To: <D5D1CBD5-0031-4285-BE12-910D6898B465@suse.de>
-From: liequan che <liequanche@gmail.com>
-Date: Tue, 19 Nov 2024 12:19:38 +0800
-Message-ID: <CAAsfc_oTmE2E8pMctiLSwMngVUbtJa4G=KAozzAfztMMc_RMOQ@mail.gmail.com>
-Subject: Re: [PATCH] bcache:fix oops in cache_set_flush
-To: Coly Li <colyli@suse.de>
-Cc: "mingzhe.zou@easystack.cn" <mingzhe.zou@easystack.cn>, Kent Overstreet <kent.overstreet@gmail.com>, 
-	linux-bcache <linux-bcache@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-Hi coly:
->>  The same operation was performed on three servers, replacing the 12T
->> disk with a 16T disk. Only one server triggered the bug. The on-site
+Nathan Chancellor <nathan@kernel.org> writes:
 
->What do you mean =E2=80=9Creplacing 12T disk with a 16T disk=E2=80=9D ?
+> On Tue, Nov 19, 2024 at 02:57:28AM +0000, Sam James wrote:
+>> Nathan Chancellor <nathan@kernel.org> writes:
+>>=20
+>> > Hi Kostadin,
+>> >
+>> > Just a quick FYI off the bat, you only directed this to LKML, which is
+>> > basically like sending it into the void because very few people actual=
+ly
+>> > read every message on LKML. I only caught it because I have a filter s=
+et
+>> > up for mentions of Clang and LLVM. I'd suggest adding at least the
+>> > Kbuild mailing list, which I have done now. I have also added Arnd
+>> > because I seem to recall him looking into how hard it would be to build
+>> > the kernel with C23.
+>>=20
+>> FWIW, scripts/get_maintainers.pl for stddef.h and types.h doesn't
+>> include kbuild -- maybe we should add that in.
+>
+> Yeah, it would be good to have someone own these files. Not sure it
+> makes sense for Kbuild to be it though, I merely suggested that since
+> the actual root cause of the error is more in Kbuild's realm.
 
-Use another 16T SATA disk to replace the 12T SATA disk.
-Plan to use the 16T hard disk and the original nvme disk to recreate bcache=
-.
+Yeah, I couldn't figure out who a better person would be either :|
 
->> No bcache data clearing operation was performed
+>
+>> I can reproduce it with `make defconfig` at
+>> 158f238aa69d91ad74e535c73f552bd4b025109c in Linus' tree with just `make
+>> V=3D1 -j$(nproc) -l$(nproc)` (i.e. no CFLAGS manipulation at all).
+>>=20
+>> ```
+>> # CC      drivers/firmware/efi/libstub/x86-5lvl.o
+>>   gcc -Wp,-MMD,drivers/firmware/efi/libstub/.x86-5lvl.o.d -nostdinc -I./=
+arch/x86/include -I./arch/x86/include/generated  -I./include -I./arch/x86/i=
+nclude/uapi -I./arch/x86/include/genera
+>> ted/uapi -I./include/uapi -I./include/generated/uapi -include ./include/=
+linux/compiler-version.h -include ./include/linux/kconfig.h -include ./incl=
+ude/linux/compiler_types.h -D__KERNEL__
+>>  -fmacro-prefix-map=3D./=3D -mcmodel=3Dsmall -m64 -D__KERNEL__ -fPIC -fn=
+o-strict-aliasing -mno-red-zone -mno-mmx -mno-sse -fshort-wchar -Wno-pointe=
+r-sign -Wno-address-of-packed-member -fno-asy
+>> nchronous-unwind-tables -Os -DDISABLE_BRANCH_PROFILING -include ./includ=
+e/linux/hidden.h -D__NO_FORTIFY -ffreestanding -fno-stack-protector -D__DIS=
+ABLE_EXPORTS    -DKBUILD_MODFILE=3D'"driv
+>> ers/firmware/efi/libstub/x86-5lvl"' -DKBUILD_BASENAME=3D'"x86_5lvl"' -DK=
+BUILD_MODNAME=3D'"x86_5lvl"' -D__KBUILD_MODNAME=3Dkmod_x86_5lvl -c -o drive=
+rs/firmware/efi/libstub/x86-5lvl.o drivers/fi
+>> rmware/efi/libstub/x86-5lvl.c
+>> In file included from ./include/uapi/linux/posix_types.h:5,
+>>                  from ./include/uapi/linux/types.h:14,
+>>                  from ./include/linux/types.h:6,
+>>                  from ./include/linux/kasan-checks.h:5,
+>>                  from ./include/asm-generic/rwonce.h:26,
+>>                  from ./arch/x86/include/generated/asm/rwonce.h:1,
+>>                  from ./include/linux/compiler.h:317,
+>>                  from ./include/linux/build_bug.h:5,
+>>                  from ./include/linux/init.h:5,
+>>                  from ./include/linux/efi.h:15,
+>>                  from drivers/firmware/efi/libstub/file.c:10:
+>> ./include/linux/stddef.h:11:9: error: expected identifier before =E2=80=
+=98false=E2=80=99
+>>    11 |         false   =3D 0,
+>>       |         ^~~~~
+>> ```
+>>=20
+>> -std=3Dgnu11 certainly isn't there.
+>
+> Ugh, this is because drivers/firmware/efi/libstub does not use
+> KBUILD_CFLAGS from the rest of the kernel when targeting x86:
+>
+> $ sed -n '9,21p' drivers/firmware/efi/libstub/Makefile
+> # non-x86 reuses KBUILD_CFLAGS, x86 does not
+> cflags-y                        :=3D $(KBUILD_CFLAGS)
+>
+> cflags-$(CONFIG_X86_32)         :=3D -march=3Di386
+> cflags-$(CONFIG_X86_64)         :=3D -mcmodel=3Dsmall
+> cflags-$(CONFIG_X86)            +=3D -m$(BITS) -D__KERNEL__ \
+>                                    -fPIC -fno-strict-aliasing -mno-red-zo=
+ne \
+>                                    -mno-mmx -mno-sse -fshort-wchar \
+>                                    -Wno-pointer-sign \
+>                                    $(call cc-disable-warning, address-of-=
+packed-member) \
+>                                    $(call cc-disable-warning, gnu) \
+>                                    -fno-asynchronous-unwind-tables \
+>                                    $(CLANG_FLAGS)
+>
+> This isn't the first time this peculiarity has bitten us :/ sticking
+> '-std=3Dgnu11' in there should resolve that issue.
+>
+> arch/x86/boot/compressed/Makefile might need the same treatment. It
+> might make sense to introduce something like 'CSTD_FLAG :=3D -std=3Dgnu11'
+> then use that in the various places within the kernel that need it so it
+> can be consistently updated in the future whenever needed. I see that
+> flag in Makefile, arch/arm64/kernel/vdso32/Makefile, and
+> arch/x86/Makefile.
 
->What is the =E2=80=9Cbcache data clearing operation=E2=80=9D here?
-Nothing was done. But I plan to erase the superblock after
-partitioning the nvme disk.
-I plan to discard the original nvme disk data by erasing the
-superblock and wipe-bcache options.
->> 3. Replace the 12T SATA disk with a 16T SATA disk
->> After shutting down, unplug the 12T hard disk and replace it with a
->> 16T hard disk.
+This is the conclusion I just reached, although I'm struggling to figure
+out a nice place to put it without sprinkling it all over the place. I'm
+inclined to wait until kbuild folks weigh in so I don't do a lot of
+(trivial, but tedious) work that needs changing.
 
->It seems you did something bcache doesn=E2=80=99t support. Replace the bac=
-king device...
-You are right. I may have done something that bcache does not support.
-But I hope that the wrong operation will not cause the system to panic.
-The consequence I can accept is that the bcache device creation fails.
-The bcache module can give me a chance to erase the superblock again,
-instead of entering the CD rescue mode to erase the superblock.
+As a hack, I've injected it into CLANG_FLAGS locally for now as it
+happens to appear in all the right places ;)
 
+>
+> Cheers,
+> Nathan
 
->> 7. Repartition again, triggering kernel panic again.
->> parted -s --align optimal /dev/nvme2n1 mkpart primary 2048s 1536GiB
->> The same operation was performed on the other two servers, and no
->> panic was triggered.
-
->I guess this is another undefine operation. I assume the cache device is s=
-till references somewhere. A reboot should follow the wipefs.
-Your guess is correct. In addition, after erasing the superblock
-information in CD rescue mode,
-I rebooted into the system where the original panic kernel was located.
-
->> The server with the problem was able to enter the system normally
->> after the root of the cache_set structure was determined to be empty.
->> I updated the description of the problem in the link below.
-
->No, if you clean up the partition, no cache device will exist. Cache regis=
-tration won=E2=80=99t treat it as a bcache device.
-
->OK, from the above description, I see you replace the backing device (and =
-I don=E2=80=99t know where the previous data was), then you extend the cach=
-e device size. They are all unsupported operations.
-The behavior here is a bit strange. After partitioning, I may have
-recreated the bcache device here,
-which triggered the bcache rigister operation. Then the kernel panicked aga=
-in.
->make-bcache -C /dev/nvme2n1p1 -B /dev/sda --writeback --force --wipe-bcach=
-e
-
-Thanks.
+thanks,
+sam
 
