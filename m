@@ -1,228 +1,207 @@
-Return-Path: <linux-kernel+bounces-413919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AF049D2097
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 08:10:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3EBB9D2093
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 08:08:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 806941F227F4
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 07:10:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2435DB225C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 07:08:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C758815383C;
-	Tue, 19 Nov 2024 07:10:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C52F15530B;
+	Tue, 19 Nov 2024 07:08:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FmmrC8cb"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="o1pMp34B"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7634135280;
-	Tue, 19 Nov 2024 07:10:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1552E35280;
+	Tue, 19 Nov 2024 07:08:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732000226; cv=none; b=lBTu75+5nbAel0k+eQDsgalbcpfqYLbVKolbAzUKLAwxv7o2deO7SrF+QMArX7yJ/mfPnkxzYK4wjk+YeJ9GLr+WjIzIo2SmWeefxyQMOUtBj6Su1I/qskcQnSkpuEpC4pKa4uWqDUOOOi8frU35B51EDWMHuUIcxRYbKLUvI5k=
+	t=1732000118; cv=none; b=KDOgod1CTYkg3sEDEyDkCZcX8kh5IABBE8aUCD4xAhPdZNVoRBkOMln+a3a1mVwS/AapN7RZWMD5X64CqL1L146ZsDyVBAkdGpu3xbEBVoVFEX6M2RXhLRH1o5ESaEV1oxNh6IbVwNkRLmt+qxTqah6xUVy+4+yDqVMAES+Nzgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732000226; c=relaxed/simple;
-	bh=iMS7LWVI7+ApG9inlSXXDKL1j2ZtYxqiNrZnJgc/Gew=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dUYlbMmvWNi1Cdo+6DxN2ScM+8uYWmueUeOTT4ernz33BXDDd1mUJo3Jvs8IBnDgdrG3Pu0fPB+Scx356hkrMWvlApMy8O/f2xOX4UYucVQ67PySaRbk77uZFe/l13NctHRClGpb4sGSdtHnLvB0RI4aSG3IpqtNlwkutlixoM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FmmrC8cb; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732000225; x=1763536225;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=iMS7LWVI7+ApG9inlSXXDKL1j2ZtYxqiNrZnJgc/Gew=;
-  b=FmmrC8cbBScZa45BSoHKwFRnKCYsHadDBTQ/TODzvEwjYTRZqufyIAtG
-   zvSICvSudt9BULbQwtOFiwg4EOURy4wj2bVrnCf3VkLBEaRtlcPotUH32
-   xtcOT1iulWqc26Yc/HDWzkucpbkc5wxymVnHGvYkbJlz0r+ZJB0t+PJ1o
-   ZuRgmMJuI21i6vJ2+wprqZeLME6E5Sg4Euno/i2rmAulxmGg38vgKjENz
-   zjL2a8m4/m33Fw2taC59ciZ3QVCHkiLiNNGzg1ttLVnKIm0qiJuK1jTq6
-   85c+PsADk73sGKscP6oPBFlz4pCoYVBBccMA8HJ2N7E01gkVIHoDVC47q
-   w==;
-X-CSE-ConnectionGUID: WYiymd5vSxq710KNafvNJw==
-X-CSE-MsgGUID: 1e+Kx/tBQlWAsG91bKPg9g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11260"; a="42500244"
-X-IronPort-AV: E=Sophos;i="6.12,165,1728975600"; 
-   d="scan'208";a="42500244"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2024 23:10:24 -0800
-X-CSE-ConnectionGUID: jmfIw0UrQoyHyp1a1EA78A==
-X-CSE-MsgGUID: r+n0Qu3nRQaoNNOq/X9aYw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,165,1728975600"; 
-   d="scan'208";a="93924236"
-Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
-  by fmviesa005.fm.intel.com with ESMTP; 18 Nov 2024 23:10:21 -0800
-Date: Tue, 19 Nov 2024 15:07:28 +0800
-From: Xu Yilun <yilun.xu@linux.intel.com>
-To: Yidong Zhang <yidong.zhang@amd.com>
-Cc: linux-kernel@vger.kernel.org, linux-fpga@vger.kernel.org,
-	mdf@kernel.org, hao.wu@intel.com, yilun.xu@intel.com,
-	lizhi.hou@amd.com, DMG Karthik <Karthik.DMG@amd.com>,
-	Nishad Saraf <nishads@amd.com>,
-	Prapul Krishnamurthy <prapulk@amd.com>
-Subject: Re: [PATCH V1 1/3] drivers/fpga/amd: Add new driver for AMD Versal
- PCIe card
-Message-ID: <Zzw5MOb6dUD6BLYh@yilunxu-OptiPlex-7050>
-References: <20241007220128.3023169-1-yidong.zhang@amd.com>
- <ZxH9Xjd0eU/7IDGC@yilunxu-OptiPlex-7050>
- <56421e2e-062c-407b-b731-0c1d585a1277@amd.com>
+	s=arc-20240116; t=1732000118; c=relaxed/simple;
+	bh=YUeg2pLg8nBjvJVWgTi5JOw9MyJhmwnYL/amWcwgThI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WtkBsubk2uomP5/HBt08Oj44loBPKpeScdry7lhTyGmHPd8TNL6F2lYd3qDOzU5ORuCigcAJBLSosgEZLNNO/bi80QYX5jWueGxjlINwNWuATwBOaW21O0+etvv4Y8TJNiOpEQ/7kWmdolqF4LmARZFf+wCuV56cosu+NgG7QF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=o1pMp34B; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AIGLhRs010987;
+	Tue, 19 Nov 2024 07:08:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=9UkVjL8dwwmVoDBwtVopDO
+	JGiyQj1gMcygbD3tzPWCM=; b=o1pMp34BqwBd2kqRZNTgmKV2+J1UQ4FkVT25RL
+	8N843iYzHFkRzBIREbbzDW4vFx9ItlX0px0zPurGQqlw0tdIcgh4BZarVXwytzyf
+	+kowR2bP32Z7GIBz4mCn3Mrmvjsfe/LqE4uZzA7v2jWh/lDdW4Q74lpXGD2Sk2us
+	6KAm7LFMYrbL5bD0tAra4Kv1iSVFMO1e/xPW91zXcwAwipIivgPtZRQYNsLtelFt
+	jy+U1JsgBwzMy0vjy+vp/6NltV8rzxx5pAA1yrfD89F9sXMp3urZw/5zphkFrL71
+	EZQTj9/judA9K4DbK1xUAt4xIIiY2qBJSsQxwi/FSjOeEJtA==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43091m9qh0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 19 Nov 2024 07:08:33 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AJ78W5t001681
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 19 Nov 2024 07:08:32 GMT
+Received: from hu-kbajaj-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 18 Nov 2024 23:08:28 -0800
+From: Komal Bajaj <quic_kbajaj@quicinc.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Melody Olvera
+	<quic_molvera@quicinc.com>
+CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Komal Bajaj <quic_kbajaj@quicinc.com>
+Subject: [PATCH v3] arm64: dts: qcom: qdu/qru1000-idp: Fix the voltage setting
+Date: Tue, 19 Nov 2024 12:38:11 +0530
+Message-ID: <20241119070812.16079-1-quic_kbajaj@quicinc.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <56421e2e-062c-407b-b731-0c1d585a1277@amd.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: DkCrgXr7RPG3D0spo5ETNK3Ks06fPrcu
+X-Proofpoint-GUID: DkCrgXr7RPG3D0spo5ETNK3Ks06fPrcu
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ impostorscore=0 spamscore=0 priorityscore=1501 phishscore=0 malwarescore=0
+ clxscore=1011 bulkscore=0 mlxlogscore=449 lowpriorityscore=0 adultscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411190052
 
-> > > +obj-$(CONFIG_AMD_VERSAL_MGMT)                        += amd-vmgmt.o
-> > 
-> > IMHO the naming vmgmt is hard to understand, any better idea?
-> 
-> The "v" stand for Versal. We would change to amd-vpci for Versal based pcie
+While adding the USB support, it was found that the configuration
+for regulator smps5 was incorrectly set. Upon cross verifying for
+all the regulators, found that smps4, smps6 and smps8 are also
+incorrectly configured. The patch corrects these configurations.
 
-"v" + "pci" is quite a misleading term, maybe just versal-pci?
+In particular -
+- smps4 is 1.574V min and 2.04V max
+- smps5 is 1.2V min and 1.4V max
+- smps6 is 0.382V min and 1.12V max
+- smps8 is fixed at 0.752V
 
-> devices.
-> 
->
+Fixes: d1f2cfe2f669 ("arm64: dts: qcom: Add base QDU1000/QRU1000 IDP DTs")
+Signed-off-by: Komal Bajaj <quic_kbajaj@quicinc.com>
+---
+Changes in v3 -
+* Minor nit pick in commit message
+* Link to v2: https://lore.kernel.org/all/20240524082236.24112-1-quic_kbajaj@quicinc.com/
 
-[...]
- 
-> > 
-> > > +{
-> > > +     struct comms_device *ccdev;
-> > > +
-> > > +     ccdev = devm_kzalloc(&vdev->pdev->dev, sizeof(*ccdev), GFP_KERNEL);
-> > > +     if (!ccdev)
-> > > +             return ERR_PTR(-ENOMEM);
-> > > +
-> > > +     ccdev->vdev = vdev;
-> > > +
-> > > +     ccdev->regmap = devm_regmap_init_mmio(&vdev->pdev->dev,
-> > > +                                           vdev->tbl + COMMS_PCI_BAR_OFF,
-> > > +                                           &comms_regmap_config);
-> > 
-> > I'm not sure why a regmap is needed. All register accessing is within
-> > the same module/file, and I assume a base+offset is enough to position
-> > the register addr.
-> 
-> I thought the regmap is preferred. We can use some common APIs like
-> regmap_bulk_*. The base+offset works too, then we will implement our own
-> bulk_* functions. Please let me know.
+Changes in v2-
+* Updated the commit message as suggested by Krzysztof
+* Link to v1: https://lore.kernel.org/linux-arm-msm/20240514131038.28036-1-quic_kbajaj@quicinc.com/
+---
+ arch/arm64/boot/dts/qcom/qdu1000-idp.dts | 16 ++++++++--------
+ arch/arm64/boot/dts/qcom/qru1000-idp.dts | 16 ++++++++--------
+ 2 files changed, 16 insertions(+), 16 deletions(-)
 
-I didn't see any regmap_bulk_*. AFAICS regmap is not needed here.
+diff --git a/arch/arm64/boot/dts/qcom/qdu1000-idp.dts b/arch/arm64/boot/dts/qcom/qdu1000-idp.dts
+index e65305f8136c..6e8f9007068b 100644
+--- a/arch/arm64/boot/dts/qcom/qdu1000-idp.dts
++++ b/arch/arm64/boot/dts/qcom/qdu1000-idp.dts
+@@ -96,20 +96,20 @@ vreg_s3a_1p05: smps3 {
 
-[...]
+ 		vreg_s4a_1p8: smps4 {
+ 			regulator-name = "vreg_s4a_1p8";
+-			regulator-min-microvolt = <1800000>;
+-			regulator-max-microvolt = <1800000>;
++			regulator-min-microvolt = <1574000>;
++			regulator-max-microvolt = <2040000>;
+ 		};
 
-> > > +     /* create fgpa bridge, region for the base shell */
-> > > +     fdev->bridge = fpga_bridge_register(dev, "AMD Versal FPGA Bridge",
-> > > +                                         &vmgmt_br_ops, fdev);
-> > 
-> > I didn't find the br_ops anywhere in this patchset. So how to gate the
-> > FPGA region when it is being reprogrammed? What is the physical link
-> > between the FPGA region and outside visitors?
-> 
-> The FPGA region gate operation is done in the FW running in this PCIe card.
-> The FW will "freeze" the gate before programing the PL. After downloading
-> the new hardware. The FW will then "free" the gate.
+ 		vreg_s5a_2p0: smps5 {
+ 			regulator-name = "vreg_s5a_2p0";
+-			regulator-min-microvolt = <1904000>;
+-			regulator-max-microvolt = <2000000>;
++			regulator-min-microvolt = <1200000>;
++			regulator-max-microvolt = <1400000>;
+ 		};
 
-So no OS operation is needed, then seems no need the fpga_bridge object.
+ 		vreg_s6a_0p9: smps6 {
+ 			regulator-name = "vreg_s6a_0p9";
+-			regulator-min-microvolt = <920000>;
+-			regulator-max-microvolt = <1128000>;
++			regulator-min-microvolt = <382000>;
++			regulator-max-microvolt = <1120000>;
+ 		};
 
-> 
-> No physical link between FPGA region and outside visitors, the FW handles
-> all requests.
-> 
-> > 
-> > > +     if (IS_ERR(fdev->bridge)) {
-> > > +             vmgmt_err(vdev, "Failed to register FPGA bridge, err %ld",
-> > > +                       PTR_ERR(fdev->bridge));
-> > > +             ret = PTR_ERR(fdev->bridge);
-> > > +             goto unregister_fpga_mgr;
-> > > +     }
-> > > +
-> > > +     region = (struct fpga_region_info) {
-> > > +             .compat_id = (struct fpga_compat_id *)&vdev->intf_uuid,
-> > > +             .get_bridges = vmgmt_get_bridges,
-> > > +             .mgr = fdev->mgr,
-> > > +             .priv = fdev,
-> > > +     };
-> > > +
-> > > +     fdev->region = fpga_region_register_full(dev, &region);
-> > 
-> > I assume the fpga region represents the user PF, is it? If you
-> > reprogram the FPGA region, how does the user PF driver aware the HW is
-> > changing?
-> 
-> The HW changing request is always requested from the user PF driver. The
+ 		vreg_s7a_1p2: smps7 {
+@@ -120,8 +120,8 @@ vreg_s7a_1p2: smps7 {
 
-I don't understand. In your patch the FPGA reprograming is triggered by
-an IOCTL, usually a userspace application calls it. But here says it is 
-triggered by the user PF *driver*, which IIUC is a kernel driver.
-Anything I missed?
+ 		vreg_s8a_1p3: smps8 {
+ 			regulator-name = "vreg_s8a_1p3";
+-			regulator-min-microvolt = <1352000>;
+-			regulator-max-microvolt = <1352000>;
++			regulator-min-microvolt = <752000>;
++			regulator-max-microvolt = <752000>;
+ 		};
 
-> user PF driver will make sure it is safe to change hardware. Then, the user
-> PF driver notify the mgmt PF driver by a unique identify of the HW bitstream
-> (PL Data).
-> 
-> The mgmt PF driver, the amd-vpci driver, will check the unique identify and
-> then find the same PL Data from its local storage which is previously
-> installed, and start downloading it.
+ 		vreg_l1a_0p91: ldo1 {
+diff --git a/arch/arm64/boot/dts/qcom/qru1000-idp.dts b/arch/arm64/boot/dts/qcom/qru1000-idp.dts
+index 1c781d9e24cf..8b0ddc187ca0 100644
+--- a/arch/arm64/boot/dts/qcom/qru1000-idp.dts
++++ b/arch/arm64/boot/dts/qcom/qru1000-idp.dts
+@@ -96,20 +96,20 @@ vreg_s3a_1p05: smps3 {
 
-Is the flow included in this patchset? Please elaborate more.
+ 		vreg_s4a_1p8: smps4 {
+ 			regulator-name = "vreg_s4a_1p8";
+-			regulator-min-microvolt = <1800000>;
+-			regulator-max-microvolt = <1800000>;
++			regulator-min-microvolt = <1574000>;
++			regulator-max-microvolt = <2040000>;
+ 		};
 
-[...]
+ 		vreg_s5a_2p0: smps5 {
+ 			regulator-name = "vreg_s5a_2p0";
+-			regulator-min-microvolt = <1904000>;
+-			regulator-max-microvolt = <2000000>;
++			regulator-min-microvolt = <1200000>;
++			regulator-max-microvolt = <1400000>;
+ 		};
 
-> > > +/**
-> > > + * VERSAL_MGMT_LOAD_XCLBIN_IOCTL - Download XCLBIN to the device
-> > > + *
-> > > + * This IOCTL is used to download XCLBIN down to the device.
-> > > + * Return: 0 on success, -errno on failure.
-> > > + */
-> > > +#define VERSAL_MGMT_LOAD_XCLBIN_IOCTL        _IOW(VERSAL_MGMT_MAGIC,         \
-> > > +                                          VERSAL_MGMT_BASE + 0, void *)
-> > 
-> > Many definitions are added in a batch but some are not used in this
-> > patch. Please reorganize the patches for easer review, even for first
-> > version.
-> > 
-> > Thanks,
-> > Yilun
-> 
-> Hi Yilun,
-> 
-> Thanks for taking your time, and yes for sure I will make each patch more
-> self-contained.
-> 
-> Here is my thoughts on upcoming patches structure:
-> 1st patch, adding driver probe and FPGA framework; the actual ops
+ 		vreg_s6a_0p9: smps6 {
+ 			regulator-name = "vreg_s6a_0p9";
+-			regulator-min-microvolt = <920000>;
+-			regulator-max-microvolt = <1128000>;
++			regulator-min-microvolt = <382000>;
++			regulator-max-microvolt = <1120000>;
+ 		};
 
-Just adding driver probe for 1st patch please.
+ 		vreg_s7a_1p2: smps7 {
+@@ -120,8 +120,8 @@ vreg_s7a_1p2: smps7 {
 
-Thanks,
-Yilun
+ 		vreg_s8a_1p3: smps8 {
+ 			regulator-name = "vreg_s8a_1p3";
+-			regulator-min-microvolt = <1352000>;
+-			regulator-max-microvolt = <1352000>;
++			regulator-min-microvolt = <752000>;
++			regulator-max-microvolt = <752000>;
+ 		};
 
-> of handling communication channel message and remote queue message
-> will present as no-op with comments.
-> 
-> 2nd patch, adding the communication channel services
-> 3rd patch, adding the remote queue services
-> 4th patch, adding the callers of using the remote queue services
-> 
-> Thanks,
-> David
-> 
-> > 
-> > > +
-> > > +#endif /* _UAPI_LINUX_VMGMT_H */
-> > > --
-> > > 2.34.1
-> > > 
-> > > 
+ 		vreg_l1a_0p91: ldo1 {
+--
+2.46.0
+
 
