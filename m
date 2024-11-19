@@ -1,115 +1,298 @@
-Return-Path: <linux-kernel+bounces-414582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 775849D2A57
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 17:00:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 468849D2A67
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 17:03:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 265181F2310A
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 16:00:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0091D1F216BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 16:03:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F03701D07A7;
-	Tue, 19 Nov 2024 16:00:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC4411CF7D6;
+	Tue, 19 Nov 2024 16:02:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="UEUnS4HY"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SabAcmey"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97C2F1CCB4E;
-	Tue, 19 Nov 2024 16:00:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70FFC3C463;
+	Tue, 19 Nov 2024 16:02:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732032019; cv=none; b=itgaBqT+T6PcUZEmGhVCVHhBP83tFHy2rcSR2ABK82WUGLdLB3H6hOFpf9X9Zu0ynCXeTY7npkvgtLOe+HISczOpxOgHYyRPdRFa9HE4adJwzLZz71N64w56CG2bNEVQdXe46wZykigl9t1SkJhKJouxJFGyLdVHUL+hnY4N7ek=
+	t=1732032176; cv=none; b=pG8XRPfK0g1R+c1UGpxi0dnPFY/El/8rszcFa0PJG6d7o1RiGbcbLxvO32P6Lo43KgUg583VQdBiWoOFPx3p+0ge6uIkN+5dIqcWiqqOIwW68SYXH/wVX2MvEr0psTuPmyE/c9j27SOOSsDX0sxNTx6sTakE4hu9wxanR1kNkMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732032019; c=relaxed/simple;
-	bh=Ol4pjF1rs0IdAv1vX85TbwzkYznXpOC2KWkPl4N/csY=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MtZi7VeR2/PkLWUAqZFseL2ORM4sS6Jo7dblp/EHizArj2r2vdt+0e77+YdI5TA6JkIIN6fnz46jku4KX0utg2Lm+z531s4dpl/4AUOD9WX0yka5qDC5aueGT+gGpTbaOGU4PgL9XPjR6HYtnsJ4Hk2VDQ+OsWX7bxN/IozxSEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=UEUnS4HY; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1732032018; x=1763568018;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=Ol4pjF1rs0IdAv1vX85TbwzkYznXpOC2KWkPl4N/csY=;
-  b=UEUnS4HYcXEqGMJU0uBtC03sGP1/EGjrJbA5iHYP3LHg8nDwPiPgnkBR
-   YQrU+mI4ev1/UpANtoKa1BO27pG5zIK1ldlKZu/h/DemsYlU5faLtFRuw
-   RVinVeiwtK/DN1FkWqHl+tQ2/r+6Hz6EYMN3PPCtQsDvp/v6fn+fYqkj7
-   qKeeQQzzcfJIlHNblg9N4LEgJjDhyacKwOlUFjmOiTIyQQBMKHdliaK8N
-   rOWxQWNb2rF6SYEValGoDVW0yk5upfBPcPs6rxtnCrTS0Lptqu3hqGtLP
-   AsljNTdTbXOdtX0vE4v7GnI7lvoR77KliKu/ewNVYrZp5n504ycmDM6jC
-   g==;
-X-CSE-ConnectionGUID: jx9uf5d4QJWO8ovvuPewRw==
-X-CSE-MsgGUID: zerSjUQ+SmaIvFgELvLcuQ==
-X-IronPort-AV: E=Sophos;i="6.12,166,1728975600"; 
-   d="scan'208";a="34515000"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 19 Nov 2024 09:00:11 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Tue, 19 Nov 2024 09:00:10 -0700
-Received: from ROB-ULT-M91496.microchip.com (10.10.85.11) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Tue, 19 Nov 2024 09:00:08 -0700
-From: <cristian.birsan@microchip.com>
-To: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-	<nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-	<claudiu.beznea@tuxon.dev>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, Cristian Birsan
-	<cristian.birsan@microchip.com>, Mihai Sain <mihai.sain@microchip.com>
-Subject: [PATCH 2/2] ARM: dts: microchip: sama5d27_wlsom1_ek: Add no-1-8-v property to sdmmc0 node
-Date: Tue, 19 Nov 2024 18:01:07 +0200
-Message-ID: <20241119160107.598411-3-cristian.birsan@microchip.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241119160107.598411-1-cristian.birsan@microchip.com>
-References: <20241119160107.598411-1-cristian.birsan@microchip.com>
+	s=arc-20240116; t=1732032176; c=relaxed/simple;
+	bh=PMYFSJUT1pi6Fr8Vig3d+ug0BvX9b/ClH1Umr5O9ihg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lTnUgL1uv1LvH2A1Cs+gawfUhAx2UPmO12pcj8b8BbGtcuxnSzTbZWWL3ERU21XxGEu6VfMbjq+W8heJs4FFdO7KyI8pPmawSxXVIg7Ui2cKozt1TZXU4FmNtOPKhjRVrKSopdYKmllchPeQ8YbFq9Rdw9MnJn8nthd+akzlPfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SabAcmey; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-20cbcd71012so37138055ad.3;
+        Tue, 19 Nov 2024 08:02:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732032174; x=1732636974; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=wsX4cBQyLupu/44wKL56m7/Ymw1x0fn7GLe6kacIQ28=;
+        b=SabAcmeyo5dGu5Q9hsHgkODbVn7u4RYYv5cfeHYHqewu5I/W0QvvciqVZcAtK9qw4b
+         O8AexJfMtldZKEKPflsjQcW0BZut9+5W60OssZDP8ANtbzlu9e5X4n/O3CNZ51khnAo3
+         23eLNd9dGFm220Jsnpvyp/4kwmXBGfUgM0avc/kMr9gvsg8o+d4RnLXLQIrPwYNJ0dJ+
+         w7XN9mKUrl1JLSDJziGnk5Xnf2in055usahquqHLh/Lj7QfnzULL77j2A5fcMCpXLSvt
+         Hbwu9kH7HXEC9Wm15JDmlQVA1+bm1uFlvdsiS6GdEm6Od6vQQ4FIMKSkpuKorRQAQVOt
+         eKng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732032174; x=1732636974;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wsX4cBQyLupu/44wKL56m7/Ymw1x0fn7GLe6kacIQ28=;
+        b=ebZfyoRE/S0UZrV/6ZUUYWRTAyD4gJnPN5UjqEnUCvb7mGZe1z7AB+PgeNa0vxwiwC
+         /rOKNeF8bPjCKC0LsZBhoLmnGSo2FtZbhzpnqyq7nvxcSaqRqBEzkXAryDXKs1TEUChj
+         s1eUHAbQGpa9/ftUd2TxwZxLRjZUtkhF50Qv6/ayVSAyIVnmFHrjv2I7gZ7xNqOxt+hm
+         yBXpus03L8Io/UjVtdgEp5fBueuUhJQRXfU7dCv6X3Q2nTUF5deVu9Pnx9XDt8uaSAoy
+         m5CmNeOToBDPpc4N6Kp4Hsg6XP2U6DB8DZw4pQhJlELua3OpMQ6J0el3gjsMn/UKqhGz
+         H77Q==
+X-Forwarded-Encrypted: i=1; AJvYcCX5ErWsz82yprM135OpXQfUmUTA4bMxT2ioHrA0VymrAyYELJNLl0xaDvEL0N43a0YHBBrrclk2t2N1rQA=@vger.kernel.org, AJvYcCXIday0s/seWsOmRnSgkFAoGym0qMzDivcS9dxpfzD4qZzB+wT38c9cQ9iR+fsETYi675xAkdh8NiVCaKUnbVet5EOxLA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCkreozhW5bu88PlIgf6mHvOZ4UwpyBoKxGb/pGgcOeT9wSWYl
+	YrmWxuJyOGFNr9JyiEv4RPCxsXuyz36ZXe9IrUvDDyKCDeZshih740Aao+p/
+X-Google-Smtp-Source: AGHT+IHLhf92WHo2Vyab0wPYnzl0RIw4tk4rJvVkSrTa6g+7PHtw1bZ1MVQlBD3U81FkFLVRMcnNpw==
+X-Received: by 2002:a17:903:944:b0:211:eb15:9b73 with SMTP id d9443c01a7336-211eb159ca2mr195260755ad.26.1732032173567;
+        Tue, 19 Nov 2024 08:02:53 -0800 (PST)
+Received: from alphacentauri (host95.181-12-202.telecom.net.ar. [181.12.202.95])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724771e8ad1sm8285757b3a.168.2024.11.19.08.02.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Nov 2024 08:02:53 -0800 (PST)
+Date: Tue, 19 Nov 2024 13:02:49 -0300
+From: Kurt Borja <kuurtb@gmail.com>
+To: Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
+Cc: Dell.Client.Kernel@dell.com, Hans de Goede <hdegoede@redhat.com>, 
+	LKML <linux-kernel@vger.kernel.org>, mario.limonciello@amd.com, platform-driver-x86@vger.kernel.org, 
+	w_armin@gmx.de
+Subject: Re: [PATCH 5/5] alienware-wmi: Improves sysfs groups creation
+Message-ID: <mfsvtwib6o4jom5jafqennrlzbok3fqfdxq2pwpcifu72div5w@cbocomkua2vy>
+References: <20241119043534.25683-1-kuurtb@gmail.com>
+ <6705ecb2-96df-60f0-0e06-90ed4d8554ab@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+In-Reply-To: <6705ecb2-96df-60f0-0e06-90ed4d8554ab@linux.intel.com>
 
-From: Cristian Birsan <cristian.birsan@microchip.com>
+On Tue, Nov 19, 2024 at 10:40:50AM +0200, Ilpo Järvinen wrote:
+> On Tue, 19 Nov 2024, Kurt Borja wrote:
+> 
+> > Devices with hdmi_mux, amplifier or deepslp quirks create a sysfs group
+> > for each available feature. To accomplish this, helper create/remove
+> > functions were called on module init, but they had the following
+> > problems:
+> > 
+> >  - Create helpers called remove helpers on failure, which in turn tried
+> >    to remove the sysfs group that failed to be created
+> >  - If group creation failed mid way, previous successfully created groups
+> >    were not cleaned up
+> >  - Module exit only removed hdmi_mux group
+> > 
+> > To improve this, drop all helpers in favor of two helpers that make use
+> > of sysfs_create_groups/sysfs_remove_groups to cleanly create/remove
+> > groups at module init/exit.
+> > 
+> > Signed-off-by: Kurt Borja <kuurtb@gmail.com>
+> > ---
+> > 
+> > I have a question. Do the created sysfs groups get removed when their
+> > kobj reference count goes to 0? I ask because I want to know if this is
+> > a bug fix.
+> > 
+> > ---
+> >  drivers/platform/x86/dell/alienware-wmi.c | 105 ++++++++--------------
+> >  1 file changed, 36 insertions(+), 69 deletions(-)
+> > 
+> > diff --git a/drivers/platform/x86/dell/alienware-wmi.c b/drivers/platform/x86/dell/alienware-wmi.c
+> > index 44f1f7b57d0a..e9ed2089cba0 100644
+> > --- a/drivers/platform/x86/dell/alienware-wmi.c
+> > +++ b/drivers/platform/x86/dell/alienware-wmi.c
+> > @@ -410,8 +410,10 @@ struct wmax_u32_args {
+> >  	u8 arg3;
+> >  };
+> >  
+> > +
+> >  static struct platform_device *platform_device;
+> >  static struct platform_zone *zone_data;
+> > +const struct attribute_group *wmax_groups[4];
+> >  static struct platform_profile_handler pp_handler;
+> >  static enum wmax_thermal_mode supported_thermal_profiles[PLATFORM_PROFILE_LAST];
+> >  
+> > @@ -810,22 +812,6 @@ static const struct attribute_group hdmi_attribute_group = {
+> >  	.attrs = hdmi_attrs,
+> >  };
+> >  
+> > -static void remove_hdmi(struct platform_device *dev)
+> > -{
+> > -	if (quirks->hdmi_mux > 0)
+> > -		sysfs_remove_group(&dev->dev.kobj, &hdmi_attribute_group);
+> > -}
+> > -
+> > -static int create_hdmi(struct platform_device *dev)
+> > -{
+> > -	int ret;
+> > -
+> > -	ret = sysfs_create_group(&dev->dev.kobj, &hdmi_attribute_group);
+> > -	if (ret)
+> > -		remove_hdmi(dev);
+> > -	return ret;
+> > -}
+> > -
+> >  /*
+> >   * Alienware GFX amplifier support
+> >   * - Currently supports reading cable status
+> > @@ -864,22 +850,6 @@ static const struct attribute_group amplifier_attribute_group = {
+> >  	.attrs = amplifier_attrs,
+> >  };
+> >  
+> > -static void remove_amplifier(struct platform_device *dev)
+> > -{
+> > -	if (quirks->amplifier > 0)
+> > -		sysfs_remove_group(&dev->dev.kobj, &amplifier_attribute_group);
+> > -}
+> > -
+> > -static int create_amplifier(struct platform_device *dev)
+> > -{
+> > -	int ret;
+> > -
+> > -	ret = sysfs_create_group(&dev->dev.kobj, &amplifier_attribute_group);
+> > -	if (ret)
+> > -		remove_amplifier(dev);
+> > -	return ret;
+> > -}
+> > -
+> >  /*
+> >   * Deep Sleep Control support
+> >   * - Modifies BIOS setting for deep sleep control allowing extra wakeup events
+> > @@ -942,22 +912,6 @@ static const struct attribute_group deepsleep_attribute_group = {
+> >  	.attrs = deepsleep_attrs,
+> >  };
+> >  
+> > -static void remove_deepsleep(struct platform_device *dev)
+> > -{
+> > -	if (quirks->deepslp > 0)
+> > -		sysfs_remove_group(&dev->dev.kobj, &deepsleep_attribute_group);
+> > -}
+> > -
+> > -static int create_deepsleep(struct platform_device *dev)
+> > -{
+> > -	int ret;
+> > -
+> > -	ret = sysfs_create_group(&dev->dev.kobj, &deepsleep_attribute_group);
+> > -	if (ret)
+> > -		remove_deepsleep(dev);
+> > -	return ret;
+> > -}
+> > -
+> >  /*
+> >   * Thermal Profile control
+> >   *  - Provides thermal profile control through the Platform Profile API
+> > @@ -1165,6 +1119,34 @@ static void remove_thermal_profile(void)
+> >  		platform_profile_remove();
+> >  }
+> >  
+> > +static int __init create_wmax_groups(struct platform_device *pdev)
+> > +{
+> > +	int no_groups = 0;
+> > +
+> > +	if (quirks->hdmi_mux) {
+> > +		wmax_groups[no_groups] = &hdmi_attribute_group;
+> > +		no_groups++;
+> > +	}
+> > +
+> > +	if (quirks->amplifier) {
+> > +		wmax_groups[no_groups] = &amplifier_attribute_group;
+> > +		no_groups++;
+> > +	}
+> > +
+> > +	if (quirks->deepslp) {
+> > +		wmax_groups[no_groups] = &deepsleep_attribute_group;
+> > +		no_groups++;
+> > +	}
+> > +
+> > +	return no_groups > 0 ? device_add_groups(&pdev->dev, wmax_groups) : 0;
+> 
+> Couldn't these use .dev_groups and .is_visible?
 
-Add no-1-8-v property to sdmmc0 node to keep VDDSDMMC power rail at 3.3V.
-This property will stop the LDO regulator from switching to 1.8V when the
-MMC core detects an UHS SD Card. VDDSDMMC power rail is used by all the
-SDMMC interface pins in GPIO mode (PA0 - PA13).
+You're right, I will use this instead!
 
-On this board, PA10 is used as GPIO to enable the power switch controlling
-USB Vbus for the USB Host. The change is needed to fix the PA10 voltage
-level to 3.3V instead of 1.8V.
-
-Fixes: 5d4c3cfb63fe ("ARM: dts: at91: sama5d27_wlsom1: add SAMA5D27 wlsom1 and wlsom1-ek")
-Suggested-by: Mihai Sain <mihai.sain@microchip.com>
-Signed-off-by: Cristian Birsan <cristian.birsan@microchip.com>
----
- arch/arm/boot/dts/microchip/at91-sama5d27_wlsom1_ek.dts | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm/boot/dts/microchip/at91-sama5d27_wlsom1_ek.dts b/arch/arm/boot/dts/microchip/at91-sama5d27_wlsom1_ek.dts
-index 15239834d886..35a933eec573 100644
---- a/arch/arm/boot/dts/microchip/at91-sama5d27_wlsom1_ek.dts
-+++ b/arch/arm/boot/dts/microchip/at91-sama5d27_wlsom1_ek.dts
-@@ -197,6 +197,7 @@ qspi1_flash: flash@0 {
- 
- &sdmmc0 {
- 	bus-width = <4>;
-+	no-1-8-v;
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_sdmmc0_default>;
- 	status = "okay";
--- 
-2.34.1
-
+> 
+> -- 
+>  i.
+> 
+> 
+> > +}
+> > +
+> > +static void __exit remove_wmax_groups(struct platform_device *pdev)
+> > +{
+> > +	if (!wmax_groups[0])
+> > +		device_remove_groups(&pdev->dev, wmax_groups);
+> > +}
+> > +
+> >  static int __init alienware_wmi_init(void)
+> >  {
+> >  	int ret;
+> > @@ -1203,23 +1185,9 @@ static int __init alienware_wmi_init(void)
+> >  		goto fail_platform_device1;
+> >  	}
+> >  
+> > -	if (quirks->hdmi_mux > 0) {
+> > -		ret = create_hdmi(platform_device);
+> > -		if (ret)
+> > -			goto fail_prep_hdmi;
+> > -	}
+> > -
+> > -	if (quirks->amplifier > 0) {
+> > -		ret = create_amplifier(platform_device);
+> > -		if (ret)
+> > -			goto fail_prep_amplifier;
+> > -	}
+> > -
+> > -	if (quirks->deepslp > 0) {
+> > -		ret = create_deepsleep(platform_device);
+> > -		if (ret)
+> > -			goto fail_prep_deepsleep;
+> > -	}
+> > +	ret = create_wmax_groups(platform_device);
+> > +	if (ret)
+> > +		goto fail_prep_groups;
+> >  
+> >  	if (quirks->thermal) {
+> >  		ret = create_thermal_profile();
+> > @@ -1236,9 +1204,8 @@ static int __init alienware_wmi_init(void)
+> >  fail_prep_zones:
+> >  	remove_thermal_profile();
+> >  fail_prep_thermal_profile:
+> > -fail_prep_deepsleep:
+> > -fail_prep_amplifier:
+> > -fail_prep_hdmi:
+> > +	remove_wmax_groups(platform_device);
+> > +fail_prep_groups:
+> >  	platform_device_unregister(platform_device);
+> >  fail_platform_device1:
+> >  	platform_driver_unregister(&platform_driver);
+> > @@ -1251,7 +1218,7 @@ module_init(alienware_wmi_init);
+> >  static void __exit alienware_wmi_exit(void)
+> >  {
+> >  	alienware_zone_exit(platform_device);
+> > -	remove_hdmi(platform_device);
+> > +	remove_wmax_groups(platform_device);
+> >  	remove_thermal_profile();
+> >  	platform_device_unregister(platform_device);
+> >  	platform_driver_unregister(&platform_driver);
+> > 
+> 
 
