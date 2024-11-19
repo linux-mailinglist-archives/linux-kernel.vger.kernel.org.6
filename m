@@ -1,302 +1,232 @@
-Return-Path: <linux-kernel+bounces-414981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A253E9D3007
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 22:30:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E1559D2FE5
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 22:09:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0A9028390E
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 21:30:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B70691F22763
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 21:09:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC2C21D043F;
-	Tue, 19 Nov 2024 21:30:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7EAC1D0786;
+	Tue, 19 Nov 2024 21:09:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b="pShvDzp+"
-Received: from mx0a-002e3701.pphosted.com (mx0a-002e3701.pphosted.com [148.163.147.86])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="MoY3USl6";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="j58d4Oq+"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B80431D1736
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 21:30:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.147.86
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732051819; cv=none; b=fN/VN/muRGR5vA2Q1dIiEOjCjO79rqEPIVl+ky7xbGX2I6PoP59icyGlo97rv/fs9pIpZQDBnbbMw2qha+X3sexYE8giXxawsaE++Kg/W12uYqMqDDut2cX/W3f3o184Q4En5+usdai/W9GXuaJkjU9/1HWJHxAV3RagQFOqTfA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732051819; c=relaxed/simple;
-	bh=CMOj+BYj+LmZhGJYq18cSkk/ylI5vQUz3lssRzF/GJ0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eddKd7oi8WgBeX7z2cPsMbobIwXCXlSGlK5bt+2XH0A+pGLdMBcGBseSKLX1vmXeLRGirRO3xdz0YeajLE9CPGvFT/W+0yzvvKfvyjRqMfUmzE0IhmDi6lpzz2rAcZW7ghrysYpQz4L7A29qjZsvzZYRgCf+SLS3WCURvG2nASw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com; spf=pass smtp.mailfrom=hpe.com; dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b=pShvDzp+; arc=none smtp.client-ip=148.163.147.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hpe.com
-Received: from pps.filterd (m0134421.ppops.net [127.0.0.1])
-	by mx0b-002e3701.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AJK1R65000930;
-	Tue, 19 Nov 2024 21:03:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hpe.com; h=cc
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECF551547FF
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 21:09:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732050556; cv=fail; b=dopmp2YkBsg1iqaBGAeY95f/nT8aOjuLLQk2ouH/eVXztMvsW47mlo6mTy4FPD72O28AXZWxkFbNrpveuyvJLUUNtzVxD1mX/lWbcGrbmvayH6Qa13iW6MaOCX4xwFmRd65S10nTFMDtw/XzUI8ZlRpagkUkA8cB5rT6ijXBnJU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732050556; c=relaxed/simple;
+	bh=aLw4uTnc+eitW0HOsC+1ygez+W+yn/HgupvfFP5RIIE=;
+	h=References:From:To:Cc:Subject:In-reply-to:Message-ID:Date:
+	 Content-Type:MIME-Version; b=IumLtHSNMYlqj2/Alg25XyCGXqWpCmjbYUACBYintz1EwNUs+Sb0OVtHYHHBnGIW3nTFprIvX4XM07JUxgsUUqCol/JWh7YUHgSTNEZMPxFS6NhJ5G+Fw6qN/lLoJaITDtOhCNbiaU3y0OL2+efBu+nwPJvfMVB/sUi4OOOF3PA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=MoY3USl6; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=j58d4Oq+; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AJIMd48006291;
+	Tue, 19 Nov 2024 21:08:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
 	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pps0720; bh=+L193XjdOlFFS1hxHj51N8V3pF
-	AxmcW70ySoIR99Lqs=; b=pShvDzp+QZx+AsGZBXdnqEI7vZW1hSchFXOpAJqm3+
-	cjh1J894mqhBNRchMWaOsfIkOqcIYfzgNMrnwCRxc5c2dL2jk7gyd/B9o6DC+E5w
-	e3Y9R3UPYpQkaMaeDByDfwi+o+nFt7Bt0Acso6LLeD9rJlUbblaFyTXBrlyZyUkH
-	jKytfUkJQjheJr+u9TdVKJEUMV9yi0HyLMFgax1c3ABWgPygzQG2nCGM7ugsbQlF
-	bf98OG+/O4AAg47kzGyyZuuVcdUHCf5GIqEGsW0ZbT0etouZMdTbnazo1I47Nt5l
-	h6cjPdZ9DL9su59lF2PI3NENmoA79YR7nMzmlX3nTDvw==
-Received: from p1lg14880.it.hpe.com ([16.230.97.201])
-	by mx0b-002e3701.pphosted.com (PPS) with ESMTPS id 4311bggdsf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 19 Nov 2024 21:03:50 +0000 (GMT)
-Received: from p1lg14886.dc01.its.hpecorp.net (unknown [10.119.18.237])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by p1lg14880.it.hpe.com (Postfix) with ESMTPS id 063FA800E9A;
-	Tue, 19 Nov 2024 21:03:50 +0000 (UTC)
-Received: from swahl-home.5wahls.com (unknown [16.231.227.39])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by p1lg14886.dc01.its.hpecorp.net (Postfix) with ESMTPS id 70FC28104BB;
-	Tue, 19 Nov 2024 21:03:47 +0000 (UTC)
-Date: Tue, 19 Nov 2024 15:03:45 -0600
-From: Steve Wahl <steve.wahl@hpe.com>
-To: Valentin Schneider <vschneid@redhat.com>
-Cc: Steve Wahl <steve.wahl@hpe.com>, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
-        Mel Gorman <mgorman@suse.de>, linux-kernel@vger.kernel.org,
-        K Prateek Nayak <kprateek.nayak@amd.com>,
-        Vishal Chourasia <vishalc@linux.ibm.com>, samir <samir@linux.ibm.com>,
-        Russ Anderson <rja@hpe.com>, Dimitri Sivanich <sivanich@hpe.com>
-Subject: Re: [PATCH v2] sched/topology: improve topology_span_sane speed
-Message-ID: <Zzz9MXHaUwpq2h0q@swahl-home.5wahls.com>
-References: <20241031200431.182443-1-steve.wahl@hpe.com>
- <xhsmh4j4cctsc.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <ZzTI6l-9Z0oCbrEH@swahl-home.5wahls.com>
+	:references:subject:to; s=corp-2023-11-20; bh=APhGSXrOmHtfxzBQns
+	fX2zmcVvvPNdNb43B7sOSVE1A=; b=MoY3USl6VIyrO/re+1L69SLpE1bjnknl37
+	nab8W1il8n173Bf0Qt+KJkfdJvy8DIkELoGFkXtMDrCh4CYhvN+qQa28JhoB+K23
+	yNxvZKcUC/vgWJ31owsIBOL+k6JRLho7PWeLQNiQu5hxE3tcD/1TKPxC5aW5ov23
+	9b+6ZGGtCm6s1udxOlg/bWWxLS07gxxal+OnR6s8ay/tzGK60JqGmcRQahqf1/kg
+	40NZdkse3ExDqVYUGf1d8OrBVoWngFKGstjWvfayiq2IjXvvpmRYrsnmjhkKK8Mw
+	+Z5MyCdCkuZcLhP6RPMex7nUcTzmlbl8xKf4rxWemb2BoY8xh53Q==
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 430xv4rjex-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 19 Nov 2024 21:08:36 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 4AJKAkkF024386;
+	Tue, 19 Nov 2024 21:08:35 GMT
+Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2041.outbound.protection.outlook.com [104.47.70.41])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 42xhu9hw2p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 19 Nov 2024 21:08:35 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=T+5CmQ+nMGbdS2yCZ8u5G3taqTyeq1FDV0i3TU/9CUTtE8d/BrtdtXUvhiAm6YtAmLipeH635ZtHp/E3k1QvgeBdPIm7/lR4dHlXR4rNOV1uG7hyNHaV797hdhZ9baRJdgRDzCOVtvuTWLaY3l3KThaWerXy7pr9kUu5XvFouXbNhYM2g6XFBNcKOFcngf4KgqSwhBJQbUGBXdYCFR2bmVtLs9kD5tTZAyOPcucRkLiZaxExpMFqliEG2VP1zH3OgIaVDgAATeiMAqqj8pVuRrO+mLZg189GGNTNkaNTYKxoNvMLplkUQcloA/+ePKTzbi+hWJ5qYB/GOmuY2i0xZQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=APhGSXrOmHtfxzBQnsfX2zmcVvvPNdNb43B7sOSVE1A=;
+ b=noHPFCAZ0GZN9wfYJWqmpdz1nu87Sn9l5q4rNMe98a+/TC/CcFVniikGNKv/G20JqkzJTOQoFCk8fkbK3VmGXxagHHauuzpMuML0nVf3ZZXJFjbDe/+gzgX7n3IQmZVk4665rE+rJ10hVUlv0vOZ/0pjeGvv0GWp066VtM3K5qInOl1xUS3heCOqRtNKfAc1I5Fp54CDAndFVONfEBfWCGGwr67XjDdFwpcocEDhu2jhtbNPyUD5/LrRwbe3S4ZsvnbIihrvVDM2T7Pal3QlSiV24UufQCL/d2goeNDelnafJdLTXd2K4LQzPk6rJXZx3dIi9KtWsmnDU83avYQl1g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=APhGSXrOmHtfxzBQnsfX2zmcVvvPNdNb43B7sOSVE1A=;
+ b=j58d4Oq+HXEHbeqbB/oC01izYnIhzf6pn/jywU+idVMnpE4Ojpwm6tY4DI/JPziQdSy5nZKextJh4Zig1EuAC0Dh6/d654mw2X4USURBbhWkq7W0NMKKO3BZVVpHQ16ji2aYnKKx/gWHBiUzl+bE62/nKgGfTINBkDsQjT2GIHw=
+Received: from CO6PR10MB5409.namprd10.prod.outlook.com (2603:10b6:5:357::14)
+ by CY5PR10MB6117.namprd10.prod.outlook.com (2603:10b6:930:37::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.22; Tue, 19 Nov
+ 2024 21:08:33 +0000
+Received: from CO6PR10MB5409.namprd10.prod.outlook.com
+ ([fe80::25a9:32c2:a7b0:de9e]) by CO6PR10MB5409.namprd10.prod.outlook.com
+ ([fe80::25a9:32c2:a7b0:de9e%5]) with mapi id 15.20.8158.013; Tue, 19 Nov 2024
+ 21:08:33 +0000
+References: <20241116192306.88217-1-sshegde@linux.ibm.com>
+ <20241116192306.88217-3-sshegde@linux.ibm.com>
+User-agent: mu4e 1.4.10; emacs 27.2
+From: Ankur Arora <ankur.a.arora@oracle.com>
+To: Shrikanth Hegde <sshegde@linux.ibm.com>
+Cc: mpe@ellerman.id.au, linuxppc-dev@lists.ozlabs.org, npiggin@gmail.com,
+        christophe.leroy@csgroup.eu, maddy@linux.ibm.com,
+        bigeasy@linutronix.de, ankur.a.arora@oracle.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] powerpc: Large user copy aware of full:rt:lazy
+ preemption
+In-reply-to: <20241116192306.88217-3-sshegde@linux.ibm.com>
+Message-ID: <874j43hqy8.fsf@oracle.com>
+Date: Tue, 19 Nov 2024 13:08:31 -0800
+Content-Type: text/plain
+X-ClientProxiedBy: MW3PR05CA0022.namprd05.prod.outlook.com
+ (2603:10b6:303:2b::27) To CO6PR10MB5409.namprd10.prod.outlook.com
+ (2603:10b6:5:357::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZzTI6l-9Z0oCbrEH@swahl-home.5wahls.com>
-X-Proofpoint-GUID: 1eeG7gpqCsMy6v3UzOuLDUWBW7beJavE
-X-Proofpoint-ORIG-GUID: 1eeG7gpqCsMy6v3UzOuLDUWBW7beJavE
-X-HPE-SCL: -1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO6PR10MB5409:EE_|CY5PR10MB6117:EE_
+X-MS-Office365-Filtering-Correlation-Id: 24156c23-9627-4363-3728-08dd08de537d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?3OFP8HukiniESlKWaGne/TwwvOe2ymYp85wfJxzg9luQSkA4yib7CQunwdXb?=
+ =?us-ascii?Q?aERRUHOe0gLoW488WWA5gVB0JnpjlgFBXFcAxrQS6WUZewzHnQtwxLjB7F7D?=
+ =?us-ascii?Q?1xZOVGUyJYA0T2a+e8bCRECv+/2ReCBTgL5HIM8wkfTeVmIecpmwMxFnR99v?=
+ =?us-ascii?Q?Q9xBnwEG6wmLphXqzkdRBTNMDqbJKpfKPcHNCgZRwGZR3Lpx5ausWXQOikMB?=
+ =?us-ascii?Q?erqdX7RWtl9t1SFAbB8lOP2VCNz9jknB2M93roqY7HwSzZNrtX0D3J9QOWEX?=
+ =?us-ascii?Q?u1sKLuPilMAUekEuISvSPdtKs60AJOIM9NcrrO1YGZ/sxp0+l07fmoGOxQA+?=
+ =?us-ascii?Q?G6IfQPvCj3xH3Av3P2ebsBQ0zSCAOekFrK//Qut2KKOHPEoRKdsqGiDBUwKl?=
+ =?us-ascii?Q?skHKIDV9ydvTPxEfA5BrW4uMeJR597rwYPtSegH6W9Uqdge7+Xlpuabc9fUs?=
+ =?us-ascii?Q?mF4wG3JGhQeoHBRyBvHoIuI74ODiPDT9PfAkZoY8ISm2KMiNDv8FpgXqeGyc?=
+ =?us-ascii?Q?ICFkirURWRSxgxeQoCchEli8yke09hhqVr4MMrbu+kdTVwzqKvlaIfL2WZF0?=
+ =?us-ascii?Q?98nSXRM8izVl4CAeQjrOh+nSoWRq+nEeIRIceRCSyKLpZGwADRoXTnWE6T+e?=
+ =?us-ascii?Q?qcUg07dz182puRUV4MIJK1m3VBrSYqjQFaTfsUASoSsd3MTCtTIychIqM0+f?=
+ =?us-ascii?Q?ZQFfkRMz6NCKrk1GhhP5uHEtwW9PLLJ5tz95o2k7SxkJb9egsGQ3EJTIA3Et?=
+ =?us-ascii?Q?Dp1WMLjDSX1xgME85dAsLMKxcUisf2xVopTvZ2agc0xwZPCVhdxZChey94jx?=
+ =?us-ascii?Q?HQgOHpoeNayYmTFWEmpExA3UWVTplL5T3PRsgMwOGZboUH3wXvHC3w5esZJm?=
+ =?us-ascii?Q?BVQcMjJCBhdl+TP/EOUxF8qfPr/uvD0Ndnjsd80THDzsTY953seXa6ptlkKH?=
+ =?us-ascii?Q?8DcfuB3DX7+xl6XmGfr+3LnzH8caRMi2bd5VoPHHfVubGP1G9qUebHfB6xAA?=
+ =?us-ascii?Q?MWCCR/ANT8XOs6bSf6djvzYL6gZ6GeuyWyW2G/QX5iuXcJEiwbrhzfGJCwnZ?=
+ =?us-ascii?Q?Pqup/vbbM5ZSPb0c0RHJ8AwogV63ITz9DpnwKYpBnpbqD3JeytOQN+eAjN29?=
+ =?us-ascii?Q?QQ4MTgFVWtwaKB+SEDSvJK73xf2WQ9CkkxPfiQG7FTjLuSSAwmgAWL5NkvkD?=
+ =?us-ascii?Q?u7/fls8DdhtvoI+qxK7KGAMuTQso2P0ulB2M/GYJ0r6z4coX0veS9RtU/Wrg?=
+ =?us-ascii?Q?7Bcgldyqu7CGzV5b4+gTr/1XOdZ29ovSVRPk6KiE7FNun6pX7NzfkMWQo8dW?=
+ =?us-ascii?Q?SB+zpc3ShK8HLt+OnliZk5Xy?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR10MB5409.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?87eZCnwalshMikaLJLErWrBLPqkDlX3aJXmzk7H6W1LHRhaHIC0rDV6ExQkH?=
+ =?us-ascii?Q?8Jex1UJwELB5EBaGBxF1THFJysqs9bEvgTBtnfwsiBpy9FyeQ6VKakbmhMyc?=
+ =?us-ascii?Q?sELamc2KYwKtRt+G1kfJSwkUiw2mjoGqRUzJ5AV1z5byOWAf0TjdlGSGYVCz?=
+ =?us-ascii?Q?9rlQs4F2ZDj3No6SzsSk7+9J7YPpQCDNUw4lJ3jtqTO7U2N/knlpEsPgRJ04?=
+ =?us-ascii?Q?TUSIUK5+205APxd4SJYJ8HGFaCrttn5CYUdmyIJ76JaJ+T73H8e5g+TT3aQ4?=
+ =?us-ascii?Q?0n/NAS54iHUQ+qhO1TMmpv63YguwdEi0qbE7AZwd6tHaVsacTrw7upgXLGG1?=
+ =?us-ascii?Q?FWyCtn147IYvsASZt5ivfHZFkgQh+36XInstPAsSE+4bceFqDkYH3Pip7cae?=
+ =?us-ascii?Q?R3Qd6y5vENWG0B8vn5DQAklAM7HhBD4EtS8jZ00yn1AEJDIQUp7CghVUIUau?=
+ =?us-ascii?Q?UFMHboISqalvnzmUTYYiEWPTW/bG8szrH4BtrtXcRS8mhsllBwHKWFBeiYDc?=
+ =?us-ascii?Q?vpaJMWeO0xy/evRmclzq2AJ/nDhQ8EEVkGUjamgH9pCOXPlX8nI0YPY32CoX?=
+ =?us-ascii?Q?2w0CwWWIdXwvVZNd3JtivO3hcEHWTuxRmI3eP4jPU1WCnmllRfsFNib31yX0?=
+ =?us-ascii?Q?2YV9/K8c3PDGugMNKpsj/gCF7oE8vjqvg8DtgfukZA727Kfqxa7beZhWxx9q?=
+ =?us-ascii?Q?vJFnSDlgIfa8gi31obK/vEuusTM/zM+Vi55wiURn3mGQMcAvE+mOnrxjkbqk?=
+ =?us-ascii?Q?DJ3YenoV3cZOYA5Dy6GGvHB8oonZbjO7rc2FwYyO394L3iEy4xLpsKnhuLsn?=
+ =?us-ascii?Q?egroesY4WE91n58I91wMXVaYKnEwOBY5NfszxS6+MGvc7S4REzuzaM2NdiTN?=
+ =?us-ascii?Q?DLGxFKo1KhO5Bjkvc46hCQtOD55HZvh00+8n9z4FBo+up/UjoVokgMx/wf2w?=
+ =?us-ascii?Q?G8aPgF12KQUSkOV9qKkjHrnaeb89SJC10VdIS42etkyZ0AWRNZswu/C1WLks?=
+ =?us-ascii?Q?eFYDpKgiQS6jW5U2d6e3OPNqeWF4mePLJBr1E35XVEor5QUJPu31nzfMVjwu?=
+ =?us-ascii?Q?Ltn6z955YaG6+sTRmK7g8cc+mzO/x8Hfn3i/1uHY4Q6jkXGcsg8yhExGFnsT?=
+ =?us-ascii?Q?NfHfAGGBxX5ZXGMJIn/I7qftjaMTAUlHTscL0TI+c4ds9al6MhZpDiChzEO3?=
+ =?us-ascii?Q?WMS1DU4+lLLkyOHNimwEcNetrONvJIsBX12HtWnBliaB0qZXjlStYdi0FR4n?=
+ =?us-ascii?Q?Y2yaT8PIF0FvuWuO3U2Sm6jiOk3HM/XrJYei5ZL7NfvWdE8hOl5Jd5+VvxfF?=
+ =?us-ascii?Q?IkOUELH5TA4EkU/gcu7QiNwDtuq6bQ//hqCQBkJIsJz5vEQA2vfDH2cdaUFG?=
+ =?us-ascii?Q?YTQHQiLeRLVrT1YRqVzRQBcjXSkZ8Dr2BYbJ49esXhoBZ5CpCdJj59cgtb8l?=
+ =?us-ascii?Q?9vU5yXHsy6vYcCiqMjRTcMdG/yLgX3cbv8c1DUuSfMhGfQfcJALhuBykXkv2?=
+ =?us-ascii?Q?+LP8W55tFG4buu2+DehFx6LyQhMRcqt6I3efXU8yay78xjQhW9sIGtt7N4BF?=
+ =?us-ascii?Q?uFgtu5F17ailRXu7E6PFY9G1nviL6Mla7mpd1Xzs?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	Iok8Yo6iZHaR9XaoaatrAMaezMHAKEcIqCiNQ/WkwK26ZbdBBcpqOWH9DSuFAxTzFRGKbmntxepcAQ5+PFr2T0t5uTtpFpszAelEeLXOmZRpRNoyjP6YAVfgPIQtV3STEzj8kbZYfevxUByJAamDisBmNFaZupfiFFJJp8qjEJ3s9IFQyrTeN6JAwLCqvlK5HXp7BxVuQcv+/gm5pLerelel+ccowZqmFZN/W5pQRvGJCr5rSmuGL6ZNquPSNz14jvOPY1EIlDCnZB4G2Dq/yH0itksWAICwVlHbG4fiOsgbBmwL8ZtncQlNw+HQ6ug0HjD70Fr8PKjF6AAB0YjL3Kp1Dhx2T+ZMj7PcPL9A1MzH6qLfg75k7V6xjBzvMVnKWdnGMvwStAgvvwxkPyLSE00Jw1Idv3dfu8dxjJ3PICeMxJi+/Z5X0d4s4zgL9w8btRjVblTflQDYpXRsAPuHDviCc2pv+PxuAxC9IDJgQ6kyP8JW3LchJEEWBK7zTqAkK/MI0M45HWSnXk62EX/MB8whjzJm37BFFF6m/tWLf162SATuv3pcctaXdjXumX3p+3zWdf/Kg0x6hxZtZBeDI76BQsZhp4yocwtXCeFx128=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 24156c23-9627-4363-3728-08dd08de537d
+X-MS-Exchange-CrossTenant-AuthSource: CO6PR10MB5409.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Nov 2024 21:08:33.4456
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: XCdskRo9uqEU/BWxbrXJaEFaC+t54sm4A2U1QaCFvQexKbi4cUDbzRfhioWaSzpEHIh8qTJ5YdwzlU9PjlUkPdp3U8AWQI4YIMntUWuvJ/E=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR10MB6117
 X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-05_03,2024-10-04_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
- clxscore=1015 mlxlogscore=999 impostorscore=0 spamscore=0
- lowpriorityscore=0 suspectscore=0 bulkscore=0 phishscore=0 adultscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411190153
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-11-19_12,2024-11-18_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 bulkscore=0 suspectscore=0
+ phishscore=0 spamscore=0 mlxscore=0 malwarescore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2409260000
+ definitions=main-2411190153
+X-Proofpoint-GUID: fK5D2f7N7D1SxdIPI-RUCCRn-3b5hUUu
+X-Proofpoint-ORIG-GUID: fK5D2f7N7D1SxdIPI-RUCCRn-3b5hUUu
 
-On Wed, Nov 13, 2024 at 09:42:34AM -0600, Steve Wahl wrote:
-> On Tue, Nov 12, 2024 at 05:15:47PM +0100, Valentin Schneider wrote:
-> > On 31/10/24 15:04, Steve Wahl wrote:
-> > > Use a different approach to topology_span_sane(), that checks for the
-> > > same constraint of no partial overlaps for any two CPU sets for
-> > > non-NUMA topology levels, but does so in a way that is O(N) rather
-> > > than O(N^2).
-> > >
-> > > Instead of comparing with all other masks to detect collisions, keep
-> > > one mask that includes all CPUs seen so far and detect collisions with
-> > > a single cpumask_intersects test.
-> > >
-> > > If the current mask has no collisions with previously seen masks, it
-> > > should be a new mask, which can be uniquely identified ("id") by the
-> > > lowest bit set in this mask.  Mark that we've seen a mask with this
-> > > id, and add the CPUs in this mask to the list of those seen.
-> > >
-> > > If the current mask does collide with previously seen masks, it should
-> > > be exactly equal to a mask seen before, identified once again by the
-> > > lowest bit the current mask has set.  It's an error if we haven't seen
-> > > a mask with that id, or if the current mask doesn't match the one we
-> > > get by looking up that id.
-> > >
-> > > Move the topology_span_sane() check out of the existing topology level
-> > > loop, let it do its own looping to match the needs of this algorithm.
-> > >
-> > > On a system with 1920 processors (16 sockets, 60 cores, 2 threads),
-> > > the average time to take one processor offline is reduced from 2.18
-> > > seconds to 1.01 seconds.  (Off-lining 959 of 1920 processors took
-> > > 34m49.765s without this change, 16m10.038s with this change in place.)
-> > >
-> > > Signed-off-by: Steve Wahl <steve.wahl@hpe.com>
-> > > ---
-> > >
-> > > Version 2: Adopted suggestion by K Prateek Nayak that removes an array and
-> > > simplifies the code, and eliminates the erroneous use of
-> > > num_possible_cpus() that Peter Zijlstra noted.
-> > >
-> > > Version 1 discussion:
-> > >     https://lore.kernel.org/all/20241010155111.230674-1-steve.wahl@hpe.com/
-> > >
-> > >  kernel/sched/topology.c | 73 +++++++++++++++++++++++++++--------------
-> > >  1 file changed, 48 insertions(+), 25 deletions(-)
-> > >
-> > > diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-> > > index 9748a4c8d668..6a2a3e91d59e 100644
-> > > --- a/kernel/sched/topology.c
-> > > +++ b/kernel/sched/topology.c
-> > > @@ -2356,35 +2356,58 @@ static struct sched_domain *build_sched_domain(struct sched_domain_topology_leve
-> > >  
-> > >  /*
-> > >   * Ensure topology masks are sane, i.e. there are no conflicts (overlaps) for
-> > > - * any two given CPUs at this (non-NUMA) topology level.
-> > > + * any two given CPUs on non-NUMA topology levels.
-> > >   */
-> > > -static bool topology_span_sane(struct sched_domain_topology_level *tl,
-> > > -			      const struct cpumask *cpu_map, int cpu)
-> > > +static bool topology_span_sane(const struct cpumask *cpu_map)
-> > >  {
-> > > -	int i = cpu + 1;
-> > > +	struct sched_domain_topology_level *tl;
-> > > +	struct cpumask *covered, *id_seen;
-> > > +	int cpu;
-> > >  
-> > > -	/* NUMA levels are allowed to overlap */
-> > > -	if (tl->flags & SDTL_OVERLAP)
-> > > -		return true;
-> > > +	lockdep_assert_held(&sched_domains_mutex);
-> > > +	covered = sched_domains_tmpmask;
-> > > +	id_seen = sched_domains_tmpmask2;
-> > > +
-> > > +	for_each_sd_topology(tl) {
-> > > +
-> > > +		/* NUMA levels are allowed to overlap */
-> > > +		if (tl->flags & SDTL_OVERLAP)
-> > > +			continue;
-> > > +
-> > > +		cpumask_clear(covered);
-> > > +		cpumask_clear(id_seen);
-> > >  
-> > > -	/*
-> > > -	 * Non-NUMA levels cannot partially overlap - they must be either
-> > > -	 * completely equal or completely disjoint. Otherwise we can end up
-> > > -	 * breaking the sched_group lists - i.e. a later get_group() pass
-> > > -	 * breaks the linking done for an earlier span.
-> > > -	 */
-> > > -	for_each_cpu_from(i, cpu_map) {
-> > >  		/*
-> > > -		 * We should 'and' all those masks with 'cpu_map' to exactly
-> > > -		 * match the topology we're about to build, but that can only
-> > > -		 * remove CPUs, which only lessens our ability to detect
-> > > -		 * overlaps
-> > > +		 * Non-NUMA levels cannot partially overlap - they must be either
-> > > +		 * completely equal or completely disjoint. Otherwise we can end up
-> > > +		 * breaking the sched_group lists - i.e. a later get_group() pass
-> > > +		 * breaks the linking done for an earlier span.
-> > >  		 */
-> > > -		if (!cpumask_equal(tl->mask(cpu), tl->mask(i)) &&
-> > > -		    cpumask_intersects(tl->mask(cpu), tl->mask(i)))
-> > > -			return false;
-> > > +		for_each_cpu(cpu, cpu_map) {
-> > > +			const struct cpumask *tl_cpu_mask = tl->mask(cpu);
-> > > +			int id;
-> > > +
-> > > +			/* lowest bit set in this mask is used as a unique id */
-> > > +			id = cpumask_first(tl_cpu_mask);
-> > > +
-> > > +			/* if this mask doesn't collide with what we've already seen */
-> > > +			if (!cpumask_intersects(tl_cpu_mask, covered)) {
-> > > +				/* Really odd case when cpu != id, likely not sane */
-> > > +				if ((cpu != id) && !cpumask_equal(tl_cpu_mask, tl->mask(id)))
-> > > +					return false;
-> > > +				if (cpumask_test_and_set_cpu(id, id_seen))
-> > > +					return false;
-> > > +				cpumask_or(covered, tl_cpu_mask, covered);
-> > > +			} else if ((!cpumask_test_cpu(id, id_seen)) ||
-> > > +				    !cpumask_equal(tl->mask(id), tl_cpu_mask)) {
-> > > +				/*
-> > > +				 * a collision with covered should have exactly matched
-> > > +				 * a previously seen mask with the same id
-> > > +				 */
-> > > +				return false;
-> > > +			}
-> > > +		}
-> > 
-> > Ok so you're speeding it up, but you still get a O(nr_cpu_ids) walk every
-> > hotplug when the check itself only needs to be done at most once per
-> > possible online CPU combination (~ 2^(nr_cpu_ids)). If all CPUs are kicked
-> > to life at boot, then the check only needs to be done once. If you only
-> > boot with a subset of present CPUs to speed things up, the check still
-> > becomes irrelevant once you've kicked the rest to life.
-> > 
-> > I would reiterate my suggestion to get to a state where the check can be
-> > entirely short-circuited [1].
-> > 
-> > [1]: http://lore.kernel.org/r/xhsmh8quc5ca4.mognet@vschneid-thinkpadt14sgen2i.remote.csb
-> 
-> Bringing forward a bit of that conversation:
-> 
-> > > I tried adding this, surprisingly I saw no effect on the time taken,
-> > > perhaps even a small slowdown, when combined with my patch.  So at
-> > > this point I don't intend to add it to v2 of the patch.
-> > >
-> > 
-> > Thanks for testing, I assume your cpu_possible_mask reports more CPUs than
-> > you have physically plugged in...
-> 
-> That assumption is wrong.  I started with all CPUs enabled.  Disabled
-> and re-enabled cpus from there.  The timings I got were as I stated,
-> no effect, perhaps a small slowdown.
-> 
-> > I guess it would make sense to short-circuit the function when
-> > cpu_map is a subset of what we've previously checked, and then
-> > re-kick the testing once new CPU(s) are plugged in. Something like
-> > the untested below?
-> > 
-> > Optimisations notwithstanding, IMO we shouldn't be repeating checks if we
-> > can avoid it.
-> 
-> I will attempt to measure it once more.  I was surprised at my
-> measured results, but that's why we take them, right?
-> 
-> If I can't measure a difference, though, I am not sure it's
-> appropriate to include the change with this patch, the point of which
-> *is* optimization.
 
-I completed timing tests; test system has 1920 logical CPUS, 2 threads
-per core, 60 cores per NUMA node, and the script offlined then onlined
-both threads of half the cores in each node.  Four runs each were
-timed.  Times in seconds.
+Shrikanth Hegde <sshegde@linux.ibm.com> writes:
 
-Unpatched kernel:
-	Offline		Online
-min	3991.57		3967.22
-max	4025.59		4028.66
-avg	4013.79		3996.75
-stddev	15.28		29.90
+> Large user copy_to/from (more than 16 bytes) uses vmx instructions to
+> speed things up. Once the copy is done, it makes sense to try schedule
+> as soon as possible for preemptible kernels. So do this for
+> preempt=full/lazy and rt kernel.
 
-With my patch:
-	Offline		Online
-min	1987.97		2130.7
-max	2032.25		2150.93
-avg	2017.43		2140.18
-stddev	20.12		10.25
+Note that this check will also fire for PREEMPT_DYNAMIC && preempt=none.
+So when power supports PREEMPT_DYNAMIC this will need to change
+to preempt_model_*() based checks.
 
-With my patch + Valentin's extra short-circuit patch:
-min	2019.58		2137.43
-max	2056.89		2223.86
-avg	2033.04		2171.91
-stddev	16.83		37.73
+> Not checking for lazy bit here, since it could lead to unnecessary
+> context switches.
 
-I'm at a loss as to why adding the short circuit slowed things down,
-but it's in the noise.  If you want a new version of the patch
-incorporating both changes after viewing these timings, I'm willing to
-make that change.  Let me know how you feel.
+Maybe:
+Not checking for lazy bit here, since we only want to schedule when
+a context switch is imminently required.
 
-Thanks for your time,
+> Suggested-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> Signed-off-by: Shrikanth Hegde <sshegde@linux.ibm.com>
+> ---
+>  arch/powerpc/lib/vmx-helper.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/powerpc/lib/vmx-helper.c b/arch/powerpc/lib/vmx-helper.c
+> index d491da8d1838..58ed6bd613a6 100644
+> --- a/arch/powerpc/lib/vmx-helper.c
+> +++ b/arch/powerpc/lib/vmx-helper.c
+> @@ -45,7 +45,7 @@ int exit_vmx_usercopy(void)
+>  	 * set and we are preemptible. The hack here is to schedule a
+>  	 * decrementer to fire here and reschedule for us if necessary.
+>  	 */
+> -	if (IS_ENABLED(CONFIG_PREEMPT) && need_resched())
+> +	if (IS_ENABLED(CONFIG_PREEMPTION) && need_resched())
+>  		set_dec(1);
+>  	return 0;
+>  }
 
---> Steve Wahl
 
--- 
-Steve Wahl, Hewlett Packard Enterprise
+--
+ankur
 
