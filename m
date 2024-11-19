@@ -1,185 +1,163 @@
-Return-Path: <linux-kernel+bounces-413862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71C7F9D1FC6
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 06:53:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A055E9D1FC8
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 06:54:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9516DB22025
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 05:53:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66F96282BC3
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 05:54:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DB4814F9ED;
-	Tue, 19 Nov 2024 05:53:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD5E3150980;
+	Tue, 19 Nov 2024 05:54:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Nxxy5Ca7"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lU1Yz6NL"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D3F9142E7C;
-	Tue, 19 Nov 2024 05:53:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3C56142E7C;
+	Tue, 19 Nov 2024 05:54:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731995616; cv=none; b=lr6fYcua3LOMzOYy0x3ZdDza5PQZENZtDSjGDDLOMC6Rzo5OzXoQr7bdbVCANDhhdDQ4tGc40HHmPsokMjIZwbTjgcOzemdQHJbXvza72wFBqRIL4csL1vJzElexGrUMu5DWh1W/LGXWLdzjCzWYOSgYtJu9ljH//gxZshdxixw=
+	t=1731995662; cv=none; b=O1cPXAEZEVg/7MepJ3Fp1ZL61kJob76Ykc5QvwCcnR0V4RDS38c0YZcso18sPAM0V2kiamJPiXDa4uA9tJgR6X1F/BBOcYmjmK+d4zDkBgF8G7euiVKe06H4PmhP6bhajNF2ZmsiZpk7XtY410MIPxRWMdOyiAeXFKh1E7jYzyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731995616; c=relaxed/simple;
-	bh=Zbgyk8pZ1Lora2aoDUmW5t1Jbx58jfY+ZpsD2tsbsHw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=EvaJg4CsdzhTlBXCVHr9SW45WtniRmm6rLLvipmNch/ut9/pwerKjgfygHUPStDJRkNExECiAU/6LiF+BjqrNL+aKd/R3lKkTkWWaf2dUkFaJYexrkFufwRBYEFP46VzwE09962ohaGQxDfpc0C8HWvtssTW/0wMKkiSJL+FTZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Nxxy5Ca7; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AIGGhxn028577;
-	Tue, 19 Nov 2024 05:53:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	anXaYGat0ZqPPjixzcCHBJBoPF9QSwCe5E/2T3SVI3g=; b=Nxxy5Ca7EsCukkCX
-	YaiidYD+ytqPQGY3sg5bJ4JoSQHxxtRLVUc4+IKT2rZVTyhURxB+HEvSEuQCZeJl
-	v1wwZfOc9gdk0GGbFgvdKPU412KoYohGMV/14tTSC1oUXah611pWceqYLfFCcEl2
-	jvhgvodLpDpQKD81U4nSvw8Hjh0F6QgZKDI6LCYl6BJKmn2tCYB8pRmCXmZy+GiS
-	E55totihCBULxiXZk+0lJxqV/aPCv6/aM20gcfOfU25eX2bPkZeFQTzx1TF7VUf8
-	yDH4aH6kK0k5iM093u6JNzpQPyH887Jsjoh85eyBkDPUPP+WR9B/CYIUA56WmKhD
-	vjy+eg==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4308y81hff-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 19 Nov 2024 05:53:30 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AJ5rTgl017558
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 19 Nov 2024 05:53:29 GMT
-Received: from [10.216.29.74] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 18 Nov
- 2024 21:53:28 -0800
-Message-ID: <a074905b-34c5-4cc3-a38f-a2c4bc281e5d@quicinc.com>
-Date: Tue, 19 Nov 2024 11:23:25 +0530
+	s=arc-20240116; t=1731995662; c=relaxed/simple;
+	bh=US1eIW7LeA+1KfPrGLNezD6Ss3WLd5RhZ/sxS2uSAyE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ljawcl05quOHnkzIT7gdmo7Hy7kje3CmzvidBYkHyRZUeEdc94DsKHy1KtRqTMecJZBCs/fybkzk4pMoB5EydC27qfeG54ThcjEAqX8sRKjtTLLfUHYKvDevmpnm+stBJXOpO1ouBXHexc4IgMhCi8/jjvkMEhFUaZTQRE4tZl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lU1Yz6NL; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2ea4d429e43so1682064a91.3;
+        Mon, 18 Nov 2024 21:54:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731995660; x=1732600460; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=sPR84UHCUvaOEvWy/NGk03Dr1sgtX6rUbFD2LbTCjgE=;
+        b=lU1Yz6NLpmsTbgYg7yhhCpTA3EPYdQIhp1RwLeCDUQfCMqO0K3bZVJsKRhZl5yRnzE
+         3lj8m+FwudWghoJ8PtuM6J6Icpk17dyjA59QchDDBbbtDQrQXxAkspNFl+TcVlRBiMKy
+         Hl4HSCmJNhXmxOt0NoYO/1dxObTsA9dm3au/MOCm+e+rmDiz93aIERu1CfTFKe4b8uh3
+         JkcEBRoCCNB6BPrsCDqnzFc8P0RGuSu/GGWCogYJ3w2cCyLB+3DOPmcIuqT7HLy4s2ts
+         XG5QboeYmTYenAnNNxtOs02+0QLfkNaRgkuFiz5CFDFRlJ9dcoOWwyGZGP6nxEXLvcME
+         ZgGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731995660; x=1732600460;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sPR84UHCUvaOEvWy/NGk03Dr1sgtX6rUbFD2LbTCjgE=;
+        b=VJNqFEMWagjheNGWgra1Bv3TSpK54kA5yajEsryx964JiokiFSxRFdrqNGE7bbsJJR
+         OvzCL8g8X9a3L6gIbilecuJzb7qitUP5ydm5azeolW+twlmyblObhM+KV+3MI1ZWJ0lI
+         xIl5eJbBQgyb5p7US+66Hg5Xb4r4cEmKl+BuhPRhTMnCyP+SPGeCh5+wzPE9kjdsG17C
+         bq83IhlFHCLKvZyEBklQBxHScT+CZjj4DyPenQnRGSUVXlKD2r/j5tXj7QCgauvG70F/
+         XRVZ3p2Qst7Og6eiSfLNhzlzVxrOSpq2In51c03AAAuQJX5vrOCwt/0vEBWG78UT3Rk1
+         m4uA==
+X-Forwarded-Encrypted: i=1; AJvYcCXVPksq+khRT3XG9/z7Ih6Bot+u7j9pMe7YmVVqbP1xy5xuJaNPf69T0f5kyWIQLoPFSgpnGf2ImnkE9F4=@vger.kernel.org, AJvYcCXw4y4vV1lv7QCMyZZB62rdVJjz7UNEaMVC7kcf1UAbdux/KIaKWXoZhqJTgQGa4PIOG+CR1ya/HYQ8mMg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPjQSFTwC2JCLHb7ECuRp4y13hHvPA/uN3byCH20xn4v5da+Xr
+	J4+GrTRappcTvDDmGYdGqwdtJhBMlfzJgjCFZozYKPTjUgPvhL5VeclLY2JN
+X-Google-Smtp-Source: AGHT+IGnv4VCMQafOLUTrIv29G+Q/+Mep91ihQQ7OEyN58NPfepR4RjFIymBqCb5CgP8lUvQpWrV2A==
+X-Received: by 2002:a17:90b:3b90:b0:2ea:4578:46c6 with SMTP id 98e67ed59e1d1-2ea457877d6mr12280134a91.30.1731995659578;
+        Mon, 18 Nov 2024 21:54:19 -0800 (PST)
+Received: from HOME-PC ([223.185.133.4])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ea81b0e2fasm2581653a91.52.2024.11.18.21.54.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Nov 2024 21:54:19 -0800 (PST)
+Date: Tue, 19 Nov 2024 11:24:15 +0530
+From: Dheeraj Reddy Jonnalagadda <dheeraj.linuxdev@gmail.com>
+To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+Cc: dafna@fastmail.com, laurent.pinchart@ideasonboard.com,
+	linux-media@vger.kernel.org, mchehab@kernel.org, heiko@sntech.de,
+	linux-rockchip@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 media-next] media: rkisp1: Fix unused value issue
+Message-ID: <ZzwoB4jt9LyTm0x7@HOME-PC>
+References: <20241118093721.55982-1-dheeraj.linuxdev@gmail.com>
+ <3obha26vg2agtmrxjft325ifiwyaftqchgpdgmm7aok7vt7e5c@jfknj6opiudo>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] wifi: cfg80211: fix WARN_ON during CAC cancelling
-To: Johannes Berg <johannes@sipsolutions.net>
-CC: <linux-wireless@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20241113-mlo_dfs_fix-v1-1-e4326736347b@quicinc.com>
- <d0eb18d4a302e4be5251106fbfa8f5e10dd36477.camel@sipsolutions.net>
- <383a616d-50c7-4538-9e94-fc8526405c94@quicinc.com>
- <6b59e7a5f90b85dfc9146fa2cbdfe56c0a307a3e.camel@sipsolutions.net>
- <f383c25d-fb76-4e3e-b900-7156f608bef0@quicinc.com>
- <c30bde94d07e4984c02e0e329df7032f95b00a4a.camel@sipsolutions.net>
-Content-Language: en-US
-From: Aditya Kumar Singh <quic_adisi@quicinc.com>
-In-Reply-To: <c30bde94d07e4984c02e0e329df7032f95b00a4a.camel@sipsolutions.net>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 1BWmbus--cZJ3pB-Ydga8lKjP0qwfRC5
-X-Proofpoint-GUID: 1BWmbus--cZJ3pB-Ydga8lKjP0qwfRC5
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 phishscore=0
- impostorscore=0 priorityscore=1501 lowpriorityscore=0 bulkscore=0
- mlxscore=0 spamscore=0 adultscore=0 suspectscore=0 malwarescore=0
- mlxlogscore=746 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411190043
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3obha26vg2agtmrxjft325ifiwyaftqchgpdgmm7aok7vt7e5c@jfknj6opiudo>
 
-On 11/15/24 13:44, Johannes Berg wrote:
-> On Wed, 2024-11-13 at 21:50 +0530, Aditya Kumar Singh wrote:
->>
->> Because link ID is cleared from the bitmap well before link stop is
->> called. As mentioned in commit message, this is the flow -
->>
->> nl80211_remove_link
->>     > cfg80211_remove_link                -> link ID gets updated here
->>       > ieee80211_del_intf_link
->>         > ieee80211_vif_set_links
->>           > ieee80211_vif_update_links
->>             > ieee80211_link_stop         -> this ultimately tries to stop
->> 					   CAC if it is ongoing.
->>
+On Mon, Nov 18, 2024 at 11:18:34AM +0100, Jacopo Mondi wrote:
+> Hi Dheeraj
 > 
-> OK, but why does it have to be that way? It's all under wiphy mutex, so
-> perhaps we could just clear it later?
+> On Mon, Nov 18, 2024 at 03:07:21PM +0530, Dheeraj Reddy Jonnalagadda wrote:
+> > This commit fixes an unused value issue detected by Coverity (CID
+> > 1519008). If ret is set to an error value in the switch statement, it is
+> > not handled before being overwritten later.
+> >
+> > Signed-off-by: Dheeraj Reddy Jonnalagadda <dheeraj.linuxdev@gmail.com>
 > 
-
-Yeah. I tried below diff, hwsim test cases shows no regression.
-
---- a/net/mac80211/cfg.c
-+++ b/net/mac80211/cfg.c
-@@ -5046,10 +5046,11 @@ static void ieee80211_del_intf_link(struct wiphy 
-*wiphy,
-                                     unsigned int link_id)
-  {
-         struct ieee80211_sub_if_data *sdata = 
-IEEE80211_WDEV_TO_SUB_IF(wdev);
-+       u16 new_links = wdev->valid_links & ~BIT(link_id);
-
-         lockdep_assert_wiphy(sdata->local->hw.wiphy);
-
--       ieee80211_vif_set_links(sdata, wdev->valid_links, 0);
-+       ieee80211_vif_set_links(sdata, new_links, 0);
-  }
-
-  static int
-diff --git a/net/wireless/util.c b/net/wireless/util.c
-index 040d62051eb9..65c8e47246b7 100644
---- a/net/wireless/util.c
-+++ b/net/wireless/util.c
-@@ -2843,10 +2843,9 @@ void cfg80211_remove_link(struct wireless_dev 
-*wdev, unsigned int link_id)
-                 break;
-         }
-
--       wdev->valid_links &= ~BIT(link_id);
--
-         rdev_del_intf_link(rdev, wdev, link_id);
-
-+       wdev->valid_links &= ~BIT(link_id);
-         eth_zero_addr(wdev->links[link_id].addr);
-  }
-
-So I will submit this as patch then?
-
-> There's necessarily going to be some temporary inconsistency here, I'm
-> not sure it matters too much if it isn't very visible?
+> Indeed there's something fishy here, however the issue is not very
+> much about ret being overritten but rather the error condition
 > 
-
-Any particular case you suspect and want me to test?
-
-> Alternatively, could do something like
+> 	fwnode_graph_for_each_endpoint(fwnode, ep) {
+> 		switch (reg) {
+> 		case 0:
+>         HERE   ---->   (!rkisp1_has_feature(rkisp1, MIPI_CSI2)) {
+> 				ret = -EINVAL;
+> 				break;
+> 			}
 > 
->    wdev->valid_links &= ~BIT(link_id);
->    wdev->removing_link = link_id;
->    ...
->    wdev->removing_link = -1;
+> 			break;
 > 
-> and accept the wdev->removing_link in these APIs like CAC?
+> 		case 1:
+> 			vep.bus_type = V4L2_MBUS_UNKNOWN;
+> 			break;
+> 		}
+>         }
+> 
+> breaks the inner switch and not the for loop.
+> 
+> I would
+> 1) Slight reword the commit message to make it about missing an error
+> condition
+> 2) Add a Fixes tag
+>    Fixes: 7d4f126fde89 ("media: rkisp1: Make the internal CSI-2 receiver optional")
+>    so that this is collected in the stable trees
+> 
+> > ---
+> >  drivers/media/platform/rockchip/rkisp1/rkisp1-dev.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> >
+> > diff --git a/drivers/media/platform/rockchip/rkisp1/rkisp1-dev.c b/drivers/media/platform/rockchip/rkisp1/rkisp1-dev.c
+> > index dd114ab77800..9ad5026ab10a 100644
+> > --- a/drivers/media/platform/rockchip/rkisp1/rkisp1-dev.c
+> > +++ b/drivers/media/platform/rockchip/rkisp1/rkisp1-dev.c
+> > @@ -228,6 +228,9 @@ static int rkisp1_subdev_notifier_register(struct rkisp1_device *rkisp1)
+> >  			break;
+> >  		}
+> >
+> > +		if (ret)
+> > +			break;
+> > +
+> 
+> The change is correct
+> Reviewed-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+> 
+> Thanks
+>   j
+> 
+> >  		/* Parse the endpoint and validate the bus type. */
+> >  		ret = v4l2_fwnode_endpoint_parse(ep, &vep);
+> >  		if (ret) {
+> > --
+> > 2.34.1
+> >
+> >
+Hi Jacopo,
 
-Umm.. will work for CAC stopping from user space. But if radar is 
-detected, in this flow (driver -> mac80211 -> cfg80211), valid_link 
-bitmap is still valid and hence valid_bitmap check works and there will 
-be no removing_links set.
+Thank you for your feedback. I agree with your suggestion and will update 
+the commit message to describe the missing error condition.
 
-So then may be both needs to be checked? Like either the link_id should 
-be present in valid_link or it should be the removing_link?
+-Dheeraj
 
-if (WARN_ON(wdev->removing_link != link_id &&
-	    wdev->valid_links && !(wdev->valid_links & BIT(link_id))))
-	return;
-
-I'm more inclining towards the first suggestion you gave - clearing the 
-bitmap later. What's your suggestion?
-
--- 
-Aditya
 
