@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-413769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADF139D1E60
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 03:40:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36FBA9D1E61
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 03:40:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6844B1F22838
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 02:40:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDA1128131A
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 02:40:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C1D91428F1;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C8BE142E7C;
 	Tue, 19 Nov 2024 02:40:17 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A566E13BC18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A562213B792
 	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 02:40:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731984016; cv=none; b=BEcNwN/mLVel7nmfVk8JgJHwqcfIZ3dsTuhDDAu/H85R/zd1N9vFGoooW8JMrf3SbBmxkEsIeSRL1Np1vLj9mT2PbADUeqQ93AB2euag+21NNF8yA+wQ2tnfUHTdRt8cS3RV3piIfTYjC/dd1V8BDVbQF8XSfsfRLQ8rINeAtGc=
+	t=1731984016; cv=none; b=nqle806MMuqODI6jkjcT7RXJLVq9Wo7F+LkL/4qCPDcV2bLNMgEz/srmga3SmifpmuxmuPv9bChvrAKREH6u8bfCR9XiKJ3fXyhdruRQCUmNBj6zSKRtOjfZ40iDqe/KH/Ha96iJkbKjbi+Km1Xy1UwzB0yN5b+PqRtdKcbaD2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1731984016; c=relaxed/simple;
-	bh=wToMScqW5paNkArGTLIBKNwqkWGwse6GzQYFQXlJFKU=;
+	bh=Nhl7lux8kkpCB6lgSQ6dViQBNDnO3wHpyDyLwFi/sHM=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=ZJcWfGwBqQOnsF9ltfwHhcHFjYnGnFlsUvDiC8eR236RXG/J8/TGaSRUMttrhzkI/iVth5fV1xqSi4eJlAzmH7ZU4d7vpqkoIojFSd8mKZq7DwsLGuIr6j5ekoHvgH+E1Lm6GiSKrX0Rm3KotfV2E1guTrawMxYF+nPSajyzV9g=
+	 Content-Type; b=kV7hPFFjwQEIx8YEnv6Lzzgf31v/2dolidoHpWg9G/wltHqlFPA4sSN1uCcCEH2pdnJhSwRf5xR1OZpxUI6O257hDs+JDWXBmp6C0AfJHuo9RyfZwHaKoz/4j0TlWtNS9O8OVjPYBocxeLm//FwxtUIoo+dS8jcHWI/6JRdXOog=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 478A1C4CED7;
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F00FC4CED9;
 	Tue, 19 Nov 2024 02:40:16 +0000 (UTC)
 Received: from rostedt by gandalf with local (Exim 4.98)
 	(envelope-from <rostedt@goodmis.org>)
-	id 1tDEAa-0000000ED3T-45jl;
-	Mon, 18 Nov 2024 21:40:48 -0500
-Message-ID: <20241119024048.825281010@goodmis.org>
+	id 1tDEAb-0000000ED3y-0cLQ;
+	Mon, 18 Nov 2024 21:40:49 -0500
+Message-ID: <20241119024048.996193419@goodmis.org>
 User-Agent: quilt/0.68
-Date: Mon, 18 Nov 2024 21:40:18 -0500
+Date: Mon, 18 Nov 2024 21:40:19 -0500
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org
 Cc: Masami Hiramatsu <mhiramat@kernel.org>,
  Mark Rutland <mark.rutland@arm.com>,
  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
  Andrew Morton <akpm@linux-foundation.org>,
- Jeff Xie <jeff.xie@linux.dev>
-Subject: [for-next][PATCH 2/3] ftrace: Get the true parent ip for function tracer
+ Tatsuya S <tatsuya.s2862@gmail.com>
+Subject: [for-next][PATCH 3/3] tracing: Fix function name for trampoline
 References: <20241119024016.371665360@goodmis.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -52,137 +52,158 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 
-From: Jeff Xie <jeff.xie@linux.dev>
+From: Tatsuya S <tatsuya.s2862@gmail.com>
 
-When using both function tracer and function graph simultaneously,
-it is found that function tracer sometimes captures a fake parent ip
-(return_to_handler) instead of the true parent ip.
+The issue that unrelated function name is shown on stack trace like
+following even though it should be trampoline code address is caused by
+the creation of trampoline code in the area where .init.text section
+of module was freed after module is loaded.
 
-This issue is easy to reproduce. Below are my reproduction steps:
+bash-1344    [002] .....    43.644608: <stack trace>
+=> (MODULE INIT FUNCTION)
+=> vfs_write
+=> ksys_write
+=> do_syscall_64
+=> entry_SYSCALL_64_after_hwframe
 
-jeff-labs:~/bin # ./trace-net.sh
+To resolve this, when function address of stack trace entry is in
+trampoline, output without looking up symbol name.
 
-jeff-labs:~/bin # cat /sys/kernel/debug/tracing/instances/foo/trace | grep return_to_handler
-    trace-net.sh-405     [001] ...2.    31.859501: avc_has_perm+0x4/0x190 <-return_to_handler+0x0/0x40
-    trace-net.sh-405     [001] ...2.    31.859503: simple_setattr+0x4/0x70 <-return_to_handler+0x0/0x40
-    trace-net.sh-405     [001] ...2.    31.859503: truncate_pagecache+0x4/0x60 <-return_to_handler+0x0/0x40
-    trace-net.sh-405     [001] ...2.    31.859505: unmap_mapping_range+0x4/0x140 <-return_to_handler+0x0/0x40
-    trace-net.sh-405     [001] ...3.    31.859508: _raw_spin_unlock+0x4/0x30 <-return_to_handler+0x0/0x40
-    [...]
-
-The following is my simple trace script:
-
-<snip>
-jeff-labs:~/bin # cat ./trace-net.sh
-TRACE_PATH="/sys/kernel/tracing"
-
-set_events() {
-        echo 1 > $1/events/net/enable
-        echo 1 > $1/events/tcp/enable
-        echo 1 > $1/events/sock/enable
-        echo 1 > $1/events/napi/enable
-        echo 1 > $1/events/fib/enable
-        echo 1 > $1/events/neigh/enable
-}
-
-set_events ${TRACE_PATH}
-echo 1 > ${TRACE_PATH}/options/sym-offset
-echo 1 > ${TRACE_PATH}/options/funcgraph-tail
-echo 1 > ${TRACE_PATH}/options/funcgraph-proc
-echo 1 > ${TRACE_PATH}/options/funcgraph-abstime
-
-echo 'tcp_orphan*' > ${TRACE_PATH}/set_ftrace_notrace
-echo function_graph > ${TRACE_PATH}/current_tracer
-
-INSTANCE_FOO=${TRACE_PATH}/instances/foo
-if [ ! -e $INSTANCE_FOO ]; then
-        mkdir ${INSTANCE_FOO}
-fi
-set_events ${INSTANCE_FOO}
-echo 1 > ${INSTANCE_FOO}/options/sym-offset
-echo 'tcp_orphan*' > ${INSTANCE_FOO}/set_ftrace_notrace
-echo function > ${INSTANCE_FOO}/current_tracer
-
-echo 1 > ${TRACE_PATH}/tracing_on
-echo 1 > ${INSTANCE_FOO}/tracing_on
-
-echo > ${TRACE_PATH}/trace
-echo > ${INSTANCE_FOO}/trace
-</snip>
-
-Link: https://lore.kernel.org/20241008033159.22459-1-jeff.xie@linux.dev
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Link: https://lore.kernel.org/20241021071454.34610-2-tatsuya.s2862@gmail.com
+Signed-off-by: Tatsuya S <tatsuya.s2862@gmail.com>
 Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-Signed-off-by: Jeff Xie <jeff.xie@linux.dev>
 Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
- kernel/trace/trace_functions.c | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+ kernel/trace/trace.c        | 33 +++++++++++++++++++++++++--------
+ kernel/trace/trace.h        |  7 +++++++
+ kernel/trace/trace_output.c |  4 ++++
+ 3 files changed, 36 insertions(+), 8 deletions(-)
 
-diff --git a/kernel/trace/trace_functions.c b/kernel/trace/trace_functions.c
-index 65fed0bbc5c2..74c353164ca1 100644
---- a/kernel/trace/trace_functions.c
-+++ b/kernel/trace/trace_functions.c
-@@ -176,6 +176,27 @@ static void function_trace_start(struct trace_array *tr)
- 	tracing_reset_online_cpus(&tr->array_buffer);
- }
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index a587fd7d7447..566d99f9f086 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -975,7 +975,8 @@ static inline void trace_access_lock_init(void)
+ #endif
  
-+#ifdef CONFIG_FUNCTION_GRAPH_TRACER
-+static __always_inline unsigned long
-+function_get_true_parent_ip(unsigned long parent_ip, struct ftrace_regs *fregs)
-+{
-+	unsigned long true_parent_ip;
-+	int idx = 0;
+ #ifdef CONFIG_STACKTRACE
+-static void __ftrace_trace_stack(struct trace_buffer *buffer,
++static void __ftrace_trace_stack(struct trace_array *tr,
++				 struct trace_buffer *buffer,
+ 				 unsigned int trace_ctx,
+ 				 int skip, struct pt_regs *regs);
+ static inline void ftrace_trace_stack(struct trace_array *tr,
+@@ -984,7 +985,8 @@ static inline void ftrace_trace_stack(struct trace_array *tr,
+ 				      int skip, struct pt_regs *regs);
+ 
+ #else
+-static inline void __ftrace_trace_stack(struct trace_buffer *buffer,
++static inline void __ftrace_trace_stack(struct trace_array *tr,
++					struct trace_buffer *buffer,
+ 					unsigned int trace_ctx,
+ 					int skip, struct pt_regs *regs)
+ {
+@@ -2912,7 +2914,8 @@ struct ftrace_stacks {
+ static DEFINE_PER_CPU(struct ftrace_stacks, ftrace_stacks);
+ static DEFINE_PER_CPU(int, ftrace_stack_reserve);
+ 
+-static void __ftrace_trace_stack(struct trace_buffer *buffer,
++static void __ftrace_trace_stack(struct trace_array *tr,
++				 struct trace_buffer *buffer,
+ 				 unsigned int trace_ctx,
+ 				 int skip, struct pt_regs *regs)
+ {
+@@ -2958,6 +2961,20 @@ static void __ftrace_trace_stack(struct trace_buffer *buffer,
+ 		nr_entries = stack_trace_save(fstack->calls, size, skip);
+ 	}
+ 
++#ifdef CONFIG_DYNAMIC_FTRACE
++	/* Mark entry of stack trace as trampoline code */
++	if (tr->ops && tr->ops->trampoline) {
++		unsigned long tramp_start = tr->ops->trampoline;
++		unsigned long tramp_end = tramp_start + tr->ops->trampoline_size;
++		unsigned long *calls = fstack->calls;
 +
-+	true_parent_ip = parent_ip;
-+	if (unlikely(parent_ip == (unsigned long)&return_to_handler) && fregs)
-+		true_parent_ip = ftrace_graph_ret_addr(current, &idx, parent_ip,
-+				(unsigned long *)ftrace_regs_get_stack_pointer(fregs));
-+	return true_parent_ip;
-+}
-+#else
-+static __always_inline unsigned long
-+function_get_true_parent_ip(unsigned long parent_ip, struct ftrace_regs *fregs)
-+{
-+	return parent_ip;
-+}
++		for (int i = 0; i < nr_entries; i++) {
++			if (calls[i] >= tramp_start && calls[i] < tramp_end)
++				calls[i] = FTRACE_TRAMPOLINE_MARKER;
++		}
++	}
 +#endif
 +
- static void
- function_trace_call(unsigned long ip, unsigned long parent_ip,
- 		    struct ftrace_ops *op, struct ftrace_regs *fregs)
-@@ -192,6 +213,8 @@ function_trace_call(unsigned long ip, unsigned long parent_ip,
- 	if (bit < 0)
+ 	event = __trace_buffer_lock_reserve(buffer, TRACE_STACK,
+ 				    struct_size(entry, caller, nr_entries),
+ 				    trace_ctx);
+@@ -2987,7 +3004,7 @@ static inline void ftrace_trace_stack(struct trace_array *tr,
+ 	if (!(tr->trace_flags & TRACE_ITER_STACKTRACE))
  		return;
  
-+	parent_ip = function_get_true_parent_ip(parent_ip, fregs);
+-	__ftrace_trace_stack(buffer, trace_ctx, skip, regs);
++	__ftrace_trace_stack(tr, buffer, trace_ctx, skip, regs);
+ }
+ 
+ void __trace_stack(struct trace_array *tr, unsigned int trace_ctx,
+@@ -2996,7 +3013,7 @@ void __trace_stack(struct trace_array *tr, unsigned int trace_ctx,
+ 	struct trace_buffer *buffer = tr->array_buffer.buffer;
+ 
+ 	if (rcu_is_watching()) {
+-		__ftrace_trace_stack(buffer, trace_ctx, skip, NULL);
++		__ftrace_trace_stack(tr, buffer, trace_ctx, skip, NULL);
+ 		return;
+ 	}
+ 
+@@ -3013,7 +3030,7 @@ void __trace_stack(struct trace_array *tr, unsigned int trace_ctx,
+ 		return;
+ 
+ 	ct_irq_enter_irqson();
+-	__ftrace_trace_stack(buffer, trace_ctx, skip, NULL);
++	__ftrace_trace_stack(tr, buffer, trace_ctx, skip, NULL);
+ 	ct_irq_exit_irqson();
+ }
+ 
+@@ -3030,8 +3047,8 @@ void trace_dump_stack(int skip)
+ 	/* Skip 1 to skip this function. */
+ 	skip++;
+ #endif
+-	__ftrace_trace_stack(printk_trace->array_buffer.buffer,
+-			     tracing_gen_ctx(), skip, NULL);
++	__ftrace_trace_stack(printk_trace, printk_trace->array_buffer.buffer,
++				tracing_gen_ctx(), skip, NULL);
+ }
+ EXPORT_SYMBOL_GPL(trace_dump_stack);
+ 
+diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
+index 638f452eec10..6e66b666c3e9 100644
+--- a/kernel/trace/trace.h
++++ b/kernel/trace/trace.h
+@@ -2172,4 +2172,11 @@ static inline int rv_init_interface(void)
+ }
+ #endif
+ 
++/*
++ * This is used only to distinguish
++ * function address from trampoline code.
++ * So this value has no meaning.
++ */
++#define FTRACE_TRAMPOLINE_MARKER  ((unsigned long) INT_MAX)
 +
- 	trace_ctx = tracing_gen_ctx();
+ #endif /* _LINUX_KERNEL_TRACE_H */
+diff --git a/kernel/trace/trace_output.c b/kernel/trace/trace_output.c
+index 2ee6613dce6d..e08aee34ef63 100644
+--- a/kernel/trace/trace_output.c
++++ b/kernel/trace/trace_output.c
+@@ -1245,6 +1245,10 @@ static enum print_line_t trace_stack_print(struct trace_iterator *iter,
+ 			break;
  
- 	data = this_cpu_ptr(tr->array_buffer.data);
-@@ -239,6 +262,7 @@ function_stack_trace_call(unsigned long ip, unsigned long parent_ip,
- 	 * recursive protection is performed.
- 	 */
- 	local_irq_save(flags);
-+	parent_ip = function_get_true_parent_ip(parent_ip, fregs);
- 	cpu = raw_smp_processor_id();
- 	data = per_cpu_ptr(tr->array_buffer.data, cpu);
- 	disabled = atomic_inc_return(&data->disabled);
-@@ -306,6 +330,7 @@ function_no_repeats_trace_call(unsigned long ip, unsigned long parent_ip,
- 	if (bit < 0)
- 		return;
- 
-+	parent_ip = function_get_true_parent_ip(parent_ip, fregs);
- 	data = this_cpu_ptr(tr->array_buffer.data);
- 	if (atomic_read(&data->disabled))
- 		goto out;
-@@ -352,6 +377,7 @@ function_stack_no_repeats_trace_call(unsigned long ip, unsigned long parent_ip,
- 	 * recursive protection is performed.
- 	 */
- 	local_irq_save(flags);
-+	parent_ip = function_get_true_parent_ip(parent_ip, fregs);
- 	cpu = raw_smp_processor_id();
- 	data = per_cpu_ptr(tr->array_buffer.data, cpu);
- 	disabled = atomic_inc_return(&data->disabled);
+ 		trace_seq_puts(s, " => ");
++		if ((*p) == FTRACE_TRAMPOLINE_MARKER) {
++			trace_seq_puts(s, "[FTRACE TRAMPOLINE]\n");
++			continue;
++		}
+ 		seq_print_ip_sym(s, (*p) + delta, flags);
+ 		trace_seq_putc(s, '\n');
+ 	}
 -- 
 2.45.2
 
