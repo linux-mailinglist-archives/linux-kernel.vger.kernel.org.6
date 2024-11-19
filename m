@@ -1,139 +1,133 @@
-Return-Path: <linux-kernel+bounces-414683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E71EE9D2BFC
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 18:01:27 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 162399D2C0F
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 18:05:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC17428A314
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 17:01:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D415BB3AB65
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 17:01:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D175E1D1F4B;
-	Tue, 19 Nov 2024 17:00:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7B8F1D0967;
+	Tue, 19 Nov 2024 17:00:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AnfjGVqt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ffZPaEJT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E00B1D1F56;
-	Tue, 19 Nov 2024 17:00:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F61014A615
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 17:00:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732035606; cv=none; b=cIdRGN10X3yEIrMWea+igoeM7G1Yibl568QL136CVrtHKa9nQb07osAERwAOmoqzCZzVzYceyGToAJ+VJXiUX0IcTTLx5bJ0s5VVQACeCKxVbRMyWFIX1OR13lKgz+w8n485/Q5y3kmLQiLXfzINVmZuhjsctUbTYQz+ZGSaJkk=
+	t=1732035634; cv=none; b=rQSudoLdqQYESzLfUZPOwzDkcetJtRhrv7JEGW/gH+ks5ssOpJSN0+zbwWEW6un5fR5hutKvKaCmdXh9/jn1P8iODWS19toblM+hASqgysA6lIQTs5zk+2gW2Lsg1mEyc7I6nTNlB/GVFyMVaG6o8OAd69LHopLq77C2efU+jXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732035606; c=relaxed/simple;
-	bh=nUKampE6m1Pc/cw92xoigRyF6ZA7CefrzrLuE5I65ic=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OFnTXR4CbrFVWY67nVBpiBWE2IHGOTxej/bOWYPOfxcfwRrN7q5x0kW3RPww8SfmiXADIi1Qkiq9pqyeqLFD+gnmKBP7DYERd2tVPcZocOH6a+n2jtHBSRvNt2yVYoxE6uJfT7bb7CVMcoq5ao0pIgxprhC181Z/6PNl4q6A5gI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AnfjGVqt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22E12C4CECF;
-	Tue, 19 Nov 2024 17:00:05 +0000 (UTC)
+	s=arc-20240116; t=1732035634; c=relaxed/simple;
+	bh=xLMAxpsmMUPYRrZACBojtpNoGfLxiJgsBVYKodQdXTc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=BlIMRFDQbWW3TKHcuJnmfdl5nIyQ8iepP6q3CrdNWk5Jq3RG6ck7dP7iBH1CJM7XKSUMHqqcTTUZVx6jso0o/7Sm0IyT4TqqKOiDSn8bOVYBZPtmJGXirlkpxHAzcgPgBzw1WNyikrcHiem2BVtQLtHTvs5yoCGf4NRnDan2TDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ffZPaEJT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9CCAC4CECF;
+	Tue, 19 Nov 2024 17:00:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732035606;
-	bh=nUKampE6m1Pc/cw92xoigRyF6ZA7CefrzrLuE5I65ic=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AnfjGVqtLUnglyQYOpMNi8Ywk63ZEZrg2wN8WMQs0ugvxrgnSrvCZQ1Y74cGlPBwC
-	 x766ZFEqnGrj4INHVto8hZyzHMxuIfDMDNoKmYDexAOb0NPXNbcDmFPw/KXhWuktlM
-	 uLGZKBxNg377UHGnP+SaHhrMW4XeqHz4Bg6blkIuB5RdVembYSq8Kuy+an09QbrOJI
-	 vbf9BDlJh8/SeXMv+1VIUc0gM2PxRoAEv8998SnMxu6uSw+Imk7ukEhvYHXDt4SXyh
-	 sVyJ/sFEpfF0VVvxCdU/mFtmpiHp/cAME5ZfEbAcQsjXW97poarU4JErHiiFiTfVER
-	 cW1EjER9GpbZQ==
-Date: Tue, 19 Nov 2024 09:00:03 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	James Clark <james.clark@linaro.org>,
-	Howard Chu <howardchu95@gmail.com>,
-	Athira Jajeev <atrajeev@linux.vnet.ibm.com>,
-	Michael Petlan <mpetlan@redhat.com>,
-	Veronika Molnarova <vmolnaro@redhat.com>,
-	Dapeng Mi <dapeng1.mi@linux.intel.com>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	Ilya Leoshkevich <iii@linux.ibm.com>,
-	Colin Ian King <colin.i.king@gmail.com>,
-	Weilin Wang <weilin.wang@intel.com>,
-	Andi Kleen <ak@linux.intel.com>,
-	Josh Poimboeuf <jpoimboe@redhat.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: Re: [PATCH v6 15/22] perf lock: Move common lock contention code to
- new file
-Message-ID: <ZzzEE_kAjmXnvwtj@google.com>
-References: <20241109061809.811922-1-irogers@google.com>
- <20241109061809.811922-16-irogers@google.com>
- <Zzvac4IeX9nDDitm@google.com>
- <CAP-5=fUPksNCJ-NqUbJMDpfS7kkmXGsCVhvALkts8HDv42NUyg@mail.gmail.com>
+	s=k20201202; t=1732035633;
+	bh=xLMAxpsmMUPYRrZACBojtpNoGfLxiJgsBVYKodQdXTc=;
+	h=Date:From:To:Cc:Subject:From;
+	b=ffZPaEJT40p4rjXhZLgOM9UFOhUw+CDI/zUNqJRp9W2gP0bJ4d9tVSZdFCC4JHG/s
+	 exTJ32ikAaL+o3Vi+fjCAclU9SLbMHJmJ974yy3xgSohjO2p3+kMyX8NsRQOTMc4Bh
+	 dmZuUesqy0wJXBj5nMgYD6bRFKme1/ouio8hzJ7Cj2gFssL7kRFD2x4QDukBDomuYr
+	 iobn6x9jp9kAHtPB1mpHpIwBtKUeo5rtNMp4AsaqUZlT/Z3RlMTXoj/c3acCAdq0es
+	 YA5ARdMm+p2JL9ZmxcVWNAbOvgZwUcgw8/FsVKxQDMxtfJxJs9CxEWHYD+SmrCeXtm
+	 DgnOGKYI9uigw==
+Date: Tue, 19 Nov 2024 09:00:31 -0800
+From: Kees Cook <kees@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	"Eric W. Biederman" <ebiederm@xmission.com>,
+	Kees Cook <kees@kernel.org>, Nir Lichtman <nir@lichtman.org>,
+	syzbot+03e1af5c332f7e0eb84b@syzkaller.appspotmail.com,
+	Tycho Andersen <tandersen@netflix.com>,
+	Vegard Nossum <vegard.nossum@oracle.com>,
+	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>
+Subject: [GIT PULL] execve updates for v6.13-rc1
+Message-ID: <202411190900.FE40FA5@keescook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fUPksNCJ-NqUbJMDpfS7kkmXGsCVhvALkts8HDv42NUyg@mail.gmail.com>
 
-On Mon, Nov 18, 2024 at 05:03:41PM -0800, Ian Rogers wrote:
-> On Mon, Nov 18, 2024 at 4:23 PM Namhyung Kim <namhyung@kernel.org> wrote:
-[SNIP]
-> > On Fri, Nov 08, 2024 at 10:18:02PM -0800, Ian Rogers wrote:
-> > > +#ifndef HAVE_BPF_SKEL
-> > > +int lock_contention_prepare(struct lock_contention *con __maybe_unused)
-> > > +{
-> > > +     return 0;
-> > > +}
-> > > +
-> > > +int lock_contention_start(void)
-> > > +{
-> > > +     return 0;
-> > > +}
-> > > +
-> > > +int lock_contention_stop(void)
-> > > +{
-> > > +     return 0;
-> > > +}
-> > > +
-> > > +int lock_contention_finish(struct lock_contention *con __maybe_unused)
-> > > +{
-> > > +     return 0;
-> > > +}
-> > > +
-> > > +int lock_contention_read(struct lock_contention *con __maybe_unused)
-> > > +{
-> > > +     return 0;
-> > > +}
-> > > +#endif  /* !HAVE_BPF_SKEL */
-> >
-> > I still think it's the convention to have them in a header file as
-> > static inline functions and reduce the #ifdef in the .c file.
-> 
-> Shouldn't minimizing ifdefs, and associated cognitive load, in header
-> files be the priority given they are #included many times while the .c
-> file is only compiled once?
-> Shouldn't a goal of the header file be to abstract away things like
-> HAVE_BPF_SKEL?
-> I'm not clear what the goal of having the functions in the header
-> files is, performance? The code isn't going to run anyway. I feel
-> lock_contention.h is smaller and easier to read like this but I also
-> don't care enough to fight. I did this change here as
-> lock_contention.h was being brought into python.c for the sake of
-> stubbing out functions that the header file was also subbing out for
-> !BPF_HAVE_SKEL. A single stub felt like progress.
+Hi Linus,
 
-I think it may have the empty functions in the binary if we keep the
-functions in the .c file whereas compilers would optimize away them if
-they are static inline functions.
+Please pull these execve updates for v6.13-rc1.
 
-Thanks,
-Namhyung
+Thanks!
 
+-Kees
+
+The following changes since commit 8cf0b93919e13d1e8d4466eb4080a4c4d9d66d7b:
+
+  Linux 6.12-rc2 (2024-10-06 15:32:27 -0700)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git tags/execve-v6.13-rc1
+
+for you to fetch changes up to 8c9870077aac4b141decfb42431415bb32d1fedf:
+
+  exec: remove legacy custom binfmt modules autoloading (2024-11-16 20:54:03 -0800)
+
+----------------------------------------------------------------
+execve updates for v6.13-rc1
+
+- binfmt: Fix comment typos (Christophe JAILLET)
+
+- exec: Use argv[0] for "comm" with AT_EMPTY_PATH (Tycho Andersen,
+  Dan Carpenter, Nir Lichtman)
+
+- exec: remove legacy custom binfmt modules autoloading (Nir Lichtman)
+
+- coredump: Do not lock when copying "comm"
+
+- MAINTAINERS: add auxvec.h and set myself as maintainer
+
+----------------------------------------------------------------
+Christophe JAILLET (1):
+      fs: binfmt: Fix a typo
+
+Dan Carpenter (1):
+      exec: Fix a NULL vs IS_ERR() test in bprm_add_fixup_comm()
+
+Kees Cook (4):
+      coredump: Do not lock during 'comm' reporting
+      MAINTAINERS: exec: Add auxvec.h UAPI
+      MAINTAINERS: exec: Mark Kees as maintainer
+      exec: NULL out bprm->argv0 when it is an ERR_PTR
+
+Nir Lichtman (1):
+      exec: remove legacy custom binfmt modules autoloading
+
+Tycho Andersen (2):
+      exec: fix up /proc/pid/comm in the execveat(AT_EMPTY_PATH) case
+      selftests/exec: add a test for execveat()'s comm
+
+nir@lichtman.org (1):
+      exec: move warning of null argv to be next to the relevant code
+
+ MAINTAINERS                             |  3 +-
+ fs/binfmt_misc.c                        |  2 +-
+ fs/exec.c                               | 62 ++++++++++++++++++--------
+ include/linux/binfmts.h                 |  1 +
+ include/linux/coredump.h                |  4 +-
+ tools/testing/selftests/exec/execveat.c | 77 +++++++++++++++++++++++++++++++--
+ 6 files changed, 123 insertions(+), 26 deletions(-)
+
+-- 
+Kees Cook
 
