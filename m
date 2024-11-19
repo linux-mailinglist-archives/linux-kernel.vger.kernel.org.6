@@ -1,103 +1,120 @@
-Return-Path: <linux-kernel+bounces-414510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 812279D2933
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 16:10:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C082F9D293E
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 16:12:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FB011F23812
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 15:10:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 782D51F238B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 15:12:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CADF81CCEDF;
-	Tue, 19 Nov 2024 15:06:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FC6C1D0169;
+	Tue, 19 Nov 2024 15:09:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HiI8NOr9"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="i0bFmwNS"
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EC3A1CFEA1
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 15:06:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1BC81CF5E9
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 15:09:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732028782; cv=none; b=IykCmeyVAEp9Ptl2/M2SmN0yxQ/B4CQY2eKwoUvRBq73yqh73zMAZ9FmzByy7K+9Q3Diercf6/EKoyRLvVoVmMXmfA1M0LvMFgucGQqZkKLJFaLlTQro/n8uTomgCRFyQnP5eOZsq5CUhfqPptUZgES+Lw6HPye06WLXvGI7SUA=
+	t=1732028956; cv=none; b=FgldQ/5auXk0zAgeVrrBjjuZ9SQJhtZ8JRPhbJwVOdIC/C4AjG4kIT+vin/Ch3o53wCfLT4m0ENRLUySgjmyPIJnyrTK+y7A9LrRgp4HnKOuyEBUoqneJQof4lKbZ1NdUq0FxtyqCXqBQHwwL9scokmfSSg+Vf8WTaI5saEl37Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732028782; c=relaxed/simple;
-	bh=FZLAf6JzU7UVrUrLeZZ5hNC61YfkfTM+rPG+dHCTTPA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GZVGijqvrqzysClZvNl3V6oqe0uTW9dLw4s/EdpBEnKko74t64WAC/9nqhvVqKqZGxDbqFhRwce1xZM+FMxEEczCVLti/do5jBav0oyTZMc35U2hyjYVLvLAuuVQyqfs7f/1K5MNpOXZGMLsPTkz5DjuZNsedJwQmRjRsHFTKAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HiI8NOr9; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732028779;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=B0coLw9579A3HuRnZcVDWYq6IWH/MGKBf0cfJQO4fi4=;
-	b=HiI8NOr9aHVO8S7a0zWz08zMjLQp7V4nrRCiuwOL8CusizQyNDUwEwJVA7ruW4d1qIOfHy
-	UgtWbUdJhpeSMUqh9J90g1Y2w6RmxIcuBXppG3Uhn+M1xCSncoiWprxaFNCAN92HJ3mRiF
-	0Vtq2uQMofi0Fy6VoOB7vFzAmETlPxw=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-261-QFVs5QGCNYO0CmyTVo9moQ-1; Tue,
- 19 Nov 2024 10:06:14 -0500
-X-MC-Unique: QFVs5QGCNYO0CmyTVo9moQ-1
-X-Mimecast-MFC-AGG-ID: QFVs5QGCNYO0CmyTVo9moQ
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EA17D19560AF;
-	Tue, 19 Nov 2024 15:06:12 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.173])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 4645B1956086;
-	Tue, 19 Nov 2024 15:06:10 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Tue, 19 Nov 2024 16:05:53 +0100 (CET)
-Date: Tue, 19 Nov 2024 16:05:51 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] get_task_exe_file: check PF_KTHREAD locklessly
-Message-ID: <20241119150550.GB2240@redhat.com>
-References: <20241119143526.704986-1-mjguzik@gmail.com>
+	s=arc-20240116; t=1732028956; c=relaxed/simple;
+	bh=term3+YtnkBCGLWYkrPNKsOYQOVa1JK6phDy6+5uneQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cnj11a307uD1diqPZsQgsXfjxXlBAS/bDuuQTcTKCUWnxyVNC2PSmGhiDzUkk+oO99j4ipb/7SSNo9VOREICa32UZJrEURlmBtoq6fbyLXstvxGem3d2oW75HDSVqAOobOT9SnM9kvA5WJBZCcJwiq66qBre2HhCr5s1IGS7sp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=i0bFmwNS; arc=none smtp.client-ip=209.85.160.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4609beb631aso26662141cf.2
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 07:09:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1732028954; x=1732633754; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ihpfPch2+vS1oLDpcfa8u6AKTSTYRMwvV9Is7Fw0VNM=;
+        b=i0bFmwNSYKDu56w+1KfoI9Wv/z7Q56Y3/FuWrIs4et2f725i3dexI5l4TgIuzEinev
+         wcmXM0FIuAANPqkGDtDBKNOCtQgXcInxDAbAExbksuY3PHsg/XhlwlOF0jrmmPtxgNGB
+         3ozG5M2Hh+5JZ4PRRxkzdhh9FBLO8fB6vuXD0EV5/gDmqsiLney6iD06PKghiruCZ2sT
+         beqNIkYtAmdgmNHe6NcyUlPGa6IWlOBZCjwkQ0570tvTHBe63gecz24InBzRz6jYbk6y
+         48IRg23n1UfQvNuvYBLDbq/cQt74DqFNBOeFO/LIUOdgbMUlQwrlNqLchCHK3kKt6aI+
+         wrLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732028954; x=1732633754;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ihpfPch2+vS1oLDpcfa8u6AKTSTYRMwvV9Is7Fw0VNM=;
+        b=aito+uDqYX6FvRoQhfVnJqqCDQG6Z5WBF53uI2dz2Uh2wCNSZzU70W8mF9phOA1tAL
+         Bqb8GfZ18WeG9Zk11B4Yz8aNzIM54E85oZ/p7hRvHlxNoLx/ImDmJiwnYgDj7Q+IPykK
+         P/fT0ZfSbh7+RSngVQW8VWl5rlrar9//oylleLgPAEofFvq0HYBufBZF5M2jDJ5silZG
+         ncUo86+N9kIhT2a5EruRfNUBrDM/VhbWMXGwyPl+Dcp9xdxTqqtBz8xX+uyPZNid5Gua
+         bhv04XD888V6GDdvziGS8rAgx4D/m5ebbC2h9ffUdgvs2toNZPKLuctr0AYVM0/Gp9qS
+         UPZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWCq0QlmFNWi5NlYuQtHF3T7Kd0wqAA7V1dioJK6N5axgDROITemt36TxniaOcSkoanLDrCABHbc7z/G/Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnClJuIkiWEBnQylMyJ+vFOU3E/jX0hkzqU7pRV0kFsesY0z5C
+	YVP6NWXhnn00vpO0JGPi3NXGa+ckNlOqa5FL0ZYEfm1QF5GUyiLU+F3ELRaBQ4SoyISScgmpQLz
+	lhBZhqxvY+rflOqfSboFT3fbUAzHZchMwxKtevg==
+X-Google-Smtp-Source: AGHT+IHRGpOUonbjsJFvyqtYHjjDkldWUt457Akk0CmInRHYKiSo8TSkt2aWu9nazV3c0hbsQ8hzQfAATih5DjFXh3E=
+X-Received: by 2002:ac8:7d4c:0:b0:463:990:4250 with SMTP id
+ d75a77b69052e-46363e93fbcmr224538141cf.38.1732028953763; Tue, 19 Nov 2024
+ 07:09:13 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241119143526.704986-1-mjguzik@gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+References: <20241116175922.3265872-1-pasha.tatashin@soleen.com>
+ <ZzuRSZc8HX9Zu0dE@google.com> <CA+CK2bAAigxUv=HGpxoV-PruN_AhisKW675SxuG_yVi+vNmfSQ@mail.gmail.com>
+ <2024111938-anointer-kooky-d4f9@gregkh>
+In-Reply-To: <2024111938-anointer-kooky-d4f9@gregkh>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Tue, 19 Nov 2024 10:08:36 -0500
+Message-ID: <CA+CK2bD88y4wmmvzMCC5Zkp4DX5ZrxL+XEOX2v4UhBxet6nwSA@mail.gmail.com>
+Subject: Re: [RFCv1 0/6] Page Detective
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Roman Gushchin <roman.gushchin@linux.dev>, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	cgroups@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	akpm@linux-foundation.org, corbet@lwn.net, derek.kiernan@amd.com, 
+	dragan.cvetic@amd.com, arnd@arndb.de, viro@zeniv.linux.org.uk, 
+	brauner@kernel.org, jack@suse.cz, tj@kernel.org, hannes@cmpxchg.org, 
+	mhocko@kernel.org, shakeel.butt@linux.dev, muchun.song@linux.dev, 
+	Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, vbabka@suse.cz, 
+	jannh@google.com, shuah@kernel.org, vegard.nossum@oracle.com, 
+	vattunuru@marvell.com, schalla@marvell.com, david@redhat.com, 
+	willy@infradead.org, osalvador@suse.de, usama.anjum@collabora.com, 
+	andrii@kernel.org, ryan.roberts@arm.com, peterx@redhat.com, oleg@redhat.com, 
+	tandersen@netflix.com, rientjes@google.com, gthelen@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/19, Mateusz Guzik wrote:
+On Mon, Nov 18, 2024 at 8:09=E2=80=AFPM Greg KH <gregkh@linuxfoundation.org=
+> wrote:
 >
-> --- a/kernel/fork.c
-> +++ b/kernel/fork.c
-> @@ -1500,12 +1500,13 @@ struct file *get_task_exe_file(struct task_struct *task)
->  	struct file *exe_file = NULL;
->  	struct mm_struct *mm;
->  
-> +	if (task->flags & PF_KTHREAD)
-> +		return NULL;
-> +
->  	task_lock(task);
->  	mm = task->mm;
-> -	if (mm) {
-> -		if (!(task->flags & PF_KTHREAD))
-> -			exe_file = get_mm_exe_file(mm);
-> -	}
-> +	if (mm)
-> +		exe_file = get_mm_exe_file(mm);
->  	task_unlock(task);
->  	return exe_file;
+> On Mon, Nov 18, 2024 at 05:08:42PM -0500, Pasha Tatashin wrote:
+> > Additionally, using crash/drgn is not feasible for us at this time, it
+> > requires keeping external tools on our hosts, also it requires
+> > approval and a security review for each script before deployment in
+> > our fleet.
+>
+> So it's ok to add a totally insecure kernel feature to your fleet
+> instead?  You might want to reconsider that policy decision :)
 
-Acked-by: Oleg Nesterov <oleg@redhat.com>
+Hi Greg,
 
+While some risk is inherent, we believe the potential for abuse here
+is limited, especially given the existing  CAP_SYS_ADMIN requirement.
+But, even with root access compromised, this tool presents a smaller
+attack surface than alternatives like crash/drgn. It exposes less
+sensitive information, unlike crash/drgn, which could potentially
+allow reading all of kernel memory.
+
+Pasha
 
