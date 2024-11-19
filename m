@@ -1,112 +1,79 @@
-Return-Path: <linux-kernel+bounces-414596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 762919D2AB3
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 17:21:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3FF39D2ABC
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 17:22:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24C571F20933
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 16:21:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88C461F24337
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 16:22:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A683E1D0E2B;
-	Tue, 19 Nov 2024 16:20:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC00A1D0967;
+	Tue, 19 Nov 2024 16:22:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="VWmOj0dL"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EzEtY2uq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D6E71D0DE6;
-	Tue, 19 Nov 2024 16:20:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2971713AA35;
+	Tue, 19 Nov 2024 16:22:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732033245; cv=none; b=RbLFpMdgqw8sWVN6Sn4bnlhegzXLDsZgzSbFvcEYYnZAfkmhCprINpP4v2NMrVRuXhv9FNiffWbdTgleMyZGxjISd9p5ONe9uzy7pUoF10SJ1RuB+pZDreX9LN6r/4dDqU8RuGcOKYz1RAKPd2tiHvU4p+aSyDYH1moHID4t5N0=
+	t=1732033340; cv=none; b=RXVJTPxZ0DIYvqVyLWGTmxTmUn1gb7/mwo+iP8QH5MYgOO8CvTztJE+2D3b8O0Q+Cv/P5JIL4ylr7rOQ+PCiQdpOOmhJc/g5oYfD3R+1dQ29sikWWBpQJTF/ZMzttl1kcsSWdmoLh7DL18RWh7ygpl/eQ7rLze4MyxRxDj9b+t0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732033245; c=relaxed/simple;
-	bh=/OeQ9IC9XtCJF9VlCTnneCePK0BnZfneZJ10PUHr+i0=;
+	s=arc-20240116; t=1732033340; c=relaxed/simple;
+	bh=L2c7hq/N5CpA+t9DJDAqqXyAdM4Y47pSKX7bd5KrWM8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LtJA9RMOlYdIw42d0tmr8Qkkh8i43l/IXyhwFqF/s3NIHBmxeyv8rlTqO+FlGba/kmC6ufW8qxsklM8BMpA9ioJemc1rAuVqvoHGEd/+warTyv4O3k9DfiAy5NkEyHjNyD8/ishj7tUxTIW3sAlINH1sjAKhNHBqArLiqFCil98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=VWmOj0dL; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
-	In-Reply-To:References; bh=LoQB2YBfTaN1K4JPLmVKXFvx1STyXVcKxEJnp1Odqwc=; b=VW
-	mOj0dL+lpeG5RitAljRuELwjwDLbv4gS6AsjzEBs8+/a6tUJ7GFM47qX8IF08gRwU9bvSlqN+A+D2
-	UwGE7BZXuGH5mOVsR5veHvOXhycyv8aPTip5Xy2dIl/JEMUPiDKYaE2KuHVT4MTjdbUHIXcsFue/W
-	85mTiOK6L6ZVuQ4=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tDQxu-00Dpby-DJ; Tue, 19 Nov 2024 17:20:34 +0100
-Date: Tue, 19 Nov 2024 17:20:34 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Krzysztof =?utf-8?Q?Ha=C5=82asa?= <khalasa@piap.pl>
-Cc: netdev <netdev@vger.kernel.org>, Oliver Neukum <oneukum@suse.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Jose Ignacio Tornos Martinez <jtornosm@redhat.com>,
-	Ming Lei <ming.lei@canonical.com>
-Subject: Re: [PATCH] usbnet_link_change() fails to call netif_carrier_on()
-Message-ID: <9baf4f17-bae6-4f5c-b9a1-92dc48fd7a8d@lunn.ch>
-References: <m34j43gwto.fsf@t19.piap.pl>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QMO3HIYn12H/jUAJtMUytk2TkTCAbXmHaOHTC01JtizFtSqIc51QCebGCI7ifM0Yu+iAGghGMcvl2JdDMws/4S0LEXi2PGMTjr6Yl2gH0u1Cg2grVpdR9vK8nBjbP4uDOCEXxk5iNpy+/rf/3G3hGGoxIeKWOR+U796q3Ho/y3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EzEtY2uq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87D11C4CECF;
+	Tue, 19 Nov 2024 16:22:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732033339;
+	bh=L2c7hq/N5CpA+t9DJDAqqXyAdM4Y47pSKX7bd5KrWM8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EzEtY2uqIFfFJDe4sDFnh1rDghd23ltbfRkRDG/2ADvBxI+5SkiSpMrr53BIQZIYq
+	 XR0/ZvO+MEbuhuKlRw1LZOpgx7wV/eLp7iX23DPP740ieHpz3KFBX8LBpKw+J/gIhu
+	 ooHq++9yKLSCingrIx0MwNqWzelfHTC3BzujwVBR9l5y1W6S5dEbT+xY1XlYAppmIQ
+	 ldpvp/W37Uh3R/AwfZY1H10T17zIZNu6qsq/ThSnbKvG9XOUoA13S8zuvZ95tP4oaN
+	 xN7NAQC2bE7zKDySc9GRhv5dQbtZaVBcWHby8Y9CEHlYkooRoyISQEPAL6Lgor3Zl9
+	 vv9RVCX9rFhVQ==
+Date: Tue, 19 Nov 2024 10:22:17 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: regulator: qcom-labibb-regulator: document
+ the pmi8950 labibb regulator
+Message-ID: <173203333699.1761782.8447977397526994554.robh@kernel.org>
+References: <20241115-topic-sdm450-upstream-lab-ibb-bindings-v1-1-1f4bff4583b0@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <m34j43gwto.fsf@t19.piap.pl>
+In-Reply-To: <20241115-topic-sdm450-upstream-lab-ibb-bindings-v1-1-1f4bff4583b0@linaro.org>
 
-On Tue, Nov 19, 2024 at 02:46:59PM +0100, Krzysztof Hałasa wrote:
-> Hi,
+
+On Fri, 15 Nov 2024 11:04:26 +0100, Neil Armstrong wrote:
+> Document the pmi8950 labibb regulator with the pmi8998 compatible
+> as fallback since they share the same hardware settings.
 > 
-> ASIX AX88772B based USB 10/100 Ethernet adapter doesn't come
-> up ("carrier off"), despite the built-in 100BASE-FX PHY positive link
-> indication.
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> ---
+>  .../devicetree/bindings/regulator/qcom-labibb-regulator.yaml       | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
 > 
-> The problem appears to be in usbnet.c framework:
-> 
-> void usbnet_link_change(struct usbnet *dev, bool link, bool need_reset)
-> {
-> 	/* update link after link is reseted */
-> 	if (link && !need_reset)
-> 		netif_carrier_on(dev->net);
-> 	else
-> 		netif_carrier_off(dev->net);
-> 
-> 	if (need_reset && link)
-> 		usbnet_defer_kevent(dev, EVENT_LINK_RESET);
-> 	else
-> 		usbnet_defer_kevent(dev, EVENT_LINK_CHANGE);
-> }
 
-static int ax88772_phylink_setup(struct usbnet *dev)
-{
-        struct asix_common_private *priv = dev->driver_priv;
-        phy_interface_t phy_if_mode;
-        struct phylink *phylink;
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
-        priv->phylink_config.dev = &dev->net->dev;
-        priv->phylink_config.type = PHYLINK_NETDEV;
-        priv->phylink_config.mac_capabilities = MAC_SYM_PAUSE | MAC_ASYM_PAUSE |
-                MAC_10 | MAC_100;
-
-etc.
-
-This device is using phylink to manage the PHY. phylink will than
-manage the carrier. It assumes it is solely responsible for the
-carrier. So i think your fix is wrong. You probably should be removing
-all code in this driver which touches the carrier.
-
-	Andrew
 
