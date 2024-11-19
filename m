@@ -1,163 +1,165 @@
-Return-Path: <linux-kernel+bounces-414730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC2019D2C92
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 18:28:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BDD89D2C93
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 18:28:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 581C91F22EC3
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 17:28:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C030280C8E
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 17:28:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D39F1D26EE;
-	Tue, 19 Nov 2024 17:22:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D91F01D1E72;
+	Tue, 19 Nov 2024 17:23:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="38KrU0Ow"
-Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eIuWoD5L"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EA9A1D174F
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 17:21:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D3D41D1E7C;
+	Tue, 19 Nov 2024 17:23:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732036919; cv=none; b=YFYJ6Ye+3To4h9Hmii8S13HvaUGEo45RHyn+5E5x9+NuTFxqNlkUzdeIXiywaNXvc2uIHyOSYLFJd3JCZf/o7NDH+CH7Q2c4kqXP/BvjYKpX/+OFMrlj0oezwin+4aBv9huXD6KRpkQIu2BXj7VHJl9tWu2aKbdVb3RYCYIWxKE=
+	t=1732036996; cv=none; b=eIOmgsXY80kTsl80+veNrRwdFhduPt5MjNs95tJNBDUt+Wv0jTtvbQMTY2bdn+dR7xQMtVH3TnebSmgYa+ezCgPs3qd/dsa8FoRROXi5XKe3QV04RQyzlqKKukLIwZbt7LDAlYjQY5ISwPsueIPf58dt9jqvMdr1AyNI4eeLl3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732036919; c=relaxed/simple;
-	bh=jUbGqhU4IcWQ47Upw7So1paU0kwKyS7PtxOQBEEQIyk=;
+	s=arc-20240116; t=1732036996; c=relaxed/simple;
+	bh=Qm0DmK2/otYLi9MxrhjrpcdK31lIw8QIKSWNGb9beUk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Gro7masmjgdxVuZERagYxiWxem/+zQgtWJ8oR2uSmLSR2McmGkS7amoYgvFYlWB6Y5Aa8MyEr+tPYzEHPxZtoW9RXSMqUVxv6T7aAIC4PYm/g/Rn6fOuwNJdJ5XiZrC8zT9XYnFdjWgGifwksf1/1TRwsW91KOBKgnZ4SOP0UAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=38KrU0Ow; arc=none smtp.client-ip=209.85.166.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-3a77ab3ebfaso187275ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 09:21:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732036917; x=1732641717; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ym27viqWCynFMgUePVJBvA+AKoLrFWIBj+HlgFOU3xo=;
-        b=38KrU0OwaX/fhOqt1WmUMG+wahmbdPQIAVarVbGjXiOWnvmAreKSxLRjUJpUEdpdbL
-         /ehK3GS3mcUhkE4JVtc3CRBVQBMvqfPiVyvlZ44Co7K5TTLMIEyx9PoSqqI7D0geYU2O
-         4C6YOfmx+qDzVN4DQ3yVOeO6oZJz1Z/U/U8+wnI1liBLGYt02JESdys+YCuGoB17PdhB
-         q/op25G5MbIqY/+bfg1xWkUVpRWl6zY8Cp48t+EmGiX8MO2a3euFSQO0zajxNLBEiDXQ
-         EsgLI+HDw+ihoWf5EhWY1d8UmZ18pHtV/wZ+3ObPC6lzOZRdo+dW3zdBQlBcqy7yNFaG
-         y+ag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732036917; x=1732641717;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ym27viqWCynFMgUePVJBvA+AKoLrFWIBj+HlgFOU3xo=;
-        b=FUbTK3xrDAT8EyQk+tjEztHMb8bTEMk5fez0BOs2UBrdg3bMZEdyHXUbLQg0kmQ5Kz
-         hAIXcj5Ls9r63TNCevvGOXafotVJVNR3UltOrJuARHlEapVdx64AyX66SQmaqUrWSnZD
-         CouHpK2u+RWKBrWYuUEKP015Dq72yr9SiAwNKa8p/+Sv240G30SYb2X5m+ehpZhpRrt7
-         ciLRFSCVhuyIPVjtfK+Squq+KWfsHQjaoHKOXHYzR9FtPQQOLSbj7WNCzVxPaKWZrcdK
-         3m+z9g1+5NsH0XxY0C9m2n6W7+4/hruAs3TBpnQ+fktCzIaPftktqOJcOfWBD2J5naVD
-         kHAw==
-X-Forwarded-Encrypted: i=1; AJvYcCUFW3Oq8yTnrOptjxu1FyNbN5d0J8We/LTUWcCyUndbzdYLek1hS/nvFZEdD16gsM7P+cN0597yLrh3hvs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1yDLNk8rrfmuJSF10qNqH6e83hWd9KezvNAJt5DjAbv5Ybhg3
-	FJJLAkh9zftcIAn0H+ia2gE/2/1YcwhHEJpgVA9XrSt4Ii7zykoRS71rsPS0+8asMx8FMfgjTsY
-	zn61nJYTsH8NgUuv7eg39DgV4iriGl1re3GJD
-X-Gm-Gg: ASbGncs+t8DnghqiAz+6ZDvoT+En/5oSJ0C2ZQRhtQNWtvXHzjfTFH/sgOfx9oJV2QY
-	MtUVBkCPvRHQYZOQV1dvUZ87jFQcmS35RpeYeZMPDGEX5B/kykh44fKNSJKMPl+M=
-X-Google-Smtp-Source: AGHT+IG2lc/1S4Yi4C7ZdwGmt5Z0NQfYIt7fA6X5TFQsCkCJnUS2Yow8s9UiCYpcKeIv40KVGhZCSa5tSAm9W85+oDU=
-X-Received: by 2002:a05:6e02:12cb:b0:3a7:4e30:4884 with SMTP id
- e9e14a558f8ab-3a779fb1222mr3180675ab.17.1732036917367; Tue, 19 Nov 2024
- 09:21:57 -0800 (PST)
+	 To:Cc:Content-Type; b=aquuTTd5bcDub+4zM64zPGb2wmQAmB3YCIKB8FohyfAxRaEjdaCpXBzR5X53oreOhwNAMTT3PB8RFCXhZI602SDrYYEvxkfz0t/7uCrUhOvHsxNHfp7K9fB3oOOQIsoW63h2RJgVMXqBTakHgLOfICunVa5qckYyfWb1hLr6lw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eIuWoD5L; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEBE9C4AF0B;
+	Tue, 19 Nov 2024 17:23:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732036995;
+	bh=Qm0DmK2/otYLi9MxrhjrpcdK31lIw8QIKSWNGb9beUk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=eIuWoD5L7136bJMwU7c5sZ33v+E6KqgnJeHXYy+zz966g/7JBa0hWu/GVAk6WAaWQ
+	 cCZQGLYxdgJ/GrPDX2UV4/QNHZB9PFQvtyYtmNtYlgqHk92h5Kuw08GcWDc69GkxSF
+	 L4FgyVxThiHR0IT+bT92eP3NfCUpxSnH23c+yVm7Zi9A//kMsaWPEr95tUx2m3KF33
+	 Bws1Gylv0t0gnmXeWZ//RSeJfdj64mBNspxmqa6lnW7x6hvM8TjqTAdMEZHgdVj2ik
+	 6NIyQi9RbCK6B+rW9cf01BvB/OB8QzMSqIIKRNRiQl3zvaGluYJT9vHoyklFez191J
+	 vz1kUc22qu1dg==
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-53da4fd084dso8991e87.0;
+        Tue, 19 Nov 2024 09:23:15 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXzY/OCFrsF/EPe5w6+RSZnT9qveocw8DoJUvnc4jQF3V04YHyWeseaC4YyY3VigCV6Cmp/DMJddvxQs5k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfSrtUBcHdKGGVRiNR6NavZyESAWTATlHTMDpJnVMDudbcYP4W
+	rL+5pixr7ouGIbCsOyDbwhqOcxxExVwXJz/FHVt5VtnGEdbjAdjOOYLfvFhJFELJiN2tufOU546
+	yMYhQOxcFkH5z0HQLavSF04wUY3o=
+X-Google-Smtp-Source: AGHT+IGA+YLkeMShimZMSDu/qFLnamzCmzyQPjXpN2lqr61+otjjHTJg4RVNE1aYBIZLqUKZpL2FbOhLSZWLZs0u1os=
+X-Received: by 2002:a05:6512:110e:b0:539:e88f:2396 with SMTP id
+ 2adb3069b0e04-53dc0d8722bmr46626e87.24.1732036994424; Tue, 19 Nov 2024
+ 09:23:14 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241109061809.811922-1-irogers@google.com> <20241109061809.811922-16-irogers@google.com>
- <Zzvac4IeX9nDDitm@google.com> <CAP-5=fUPksNCJ-NqUbJMDpfS7kkmXGsCVhvALkts8HDv42NUyg@mail.gmail.com>
- <ZzzEE_kAjmXnvwtj@google.com>
-In-Reply-To: <ZzzEE_kAjmXnvwtj@google.com>
-From: Ian Rogers <irogers@google.com>
-Date: Tue, 19 Nov 2024 09:21:46 -0800
-Message-ID: <CAP-5=fWiL0iBLue0fbCR3zgrCrX8j09ZSk5nkDr4pBsRGJUY0A@mail.gmail.com>
-Subject: Re: [PATCH v6 15/22] perf lock: Move common lock contention code to
- new file
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	James Clark <james.clark@linaro.org>, Howard Chu <howardchu95@gmail.com>, 
-	Athira Jajeev <atrajeev@linux.vnet.ibm.com>, Michael Petlan <mpetlan@redhat.com>, 
-	Veronika Molnarova <vmolnaro@redhat.com>, Dapeng Mi <dapeng1.mi@linux.intel.com>, 
-	Thomas Richter <tmricht@linux.ibm.com>, Ilya Leoshkevich <iii@linux.ibm.com>, 
-	Colin Ian King <colin.i.king@gmail.com>, Weilin Wang <weilin.wang@intel.com>, 
-	Andi Kleen <ak@linux.intel.com>, Josh Poimboeuf <jpoimboe@redhat.com>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, Arnaldo Carvalho de Melo <acme@redhat.com>
+References: <20241113234526.402738-1-masahiroy@kernel.org> <20241113234526.402738-3-masahiroy@kernel.org>
+ <20241119022730.GA2908286@thelio-3990X>
+In-Reply-To: <20241119022730.GA2908286@thelio-3990X>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Wed, 20 Nov 2024 02:22:37 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATpu5zYwx7kmaknsPGLXt8n8uCXyFpdi5vZeFZiBxYkGw@mail.gmail.com>
+Message-ID: <CAK7LNATpu5zYwx7kmaknsPGLXt8n8uCXyFpdi5vZeFZiBxYkGw@mail.gmail.com>
+Subject: Re: [PATCH 2/3] kbuild: enable objtool for *.mod.o and additional
+ kernel objects
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, Paul Menzel <pmenzel@molgen.mpg.de>, 
+	Borislav Petkov <bp@alien8.de>, Nikolay Borisov <nik.borisov@suse.com>, Marco Elver <elver@google.com>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, linux-kernel@vger.kernel.org
+Content-Type: multipart/mixed; boundary="000000000000cb0cb5062747496d"
+
+--000000000000cb0cb5062747496d
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 19, 2024 at 9:00=E2=80=AFAM Namhyung Kim <namhyung@kernel.org> =
-wrote:
->
-> On Mon, Nov 18, 2024 at 05:03:41PM -0800, Ian Rogers wrote:
-> > On Mon, Nov 18, 2024 at 4:23=E2=80=AFPM Namhyung Kim <namhyung@kernel.o=
+On Tue, Nov 19, 2024 at 11:27=E2=80=AFAM Nathan Chancellor <nathan@kernel.o=
 rg> wrote:
-> [SNIP]
-> > > On Fri, Nov 08, 2024 at 10:18:02PM -0800, Ian Rogers wrote:
-> > > > +#ifndef HAVE_BPF_SKEL
-> > > > +int lock_contention_prepare(struct lock_contention *con __maybe_un=
-used)
-> > > > +{
-> > > > +     return 0;
-> > > > +}
-> > > > +
-> > > > +int lock_contention_start(void)
-> > > > +{
-> > > > +     return 0;
-> > > > +}
-> > > > +
-> > > > +int lock_contention_stop(void)
-> > > > +{
-> > > > +     return 0;
-> > > > +}
-> > > > +
-> > > > +int lock_contention_finish(struct lock_contention *con __maybe_unu=
-sed)
-> > > > +{
-> > > > +     return 0;
-> > > > +}
-> > > > +
-> > > > +int lock_contention_read(struct lock_contention *con __maybe_unuse=
-d)
-> > > > +{
-> > > > +     return 0;
-> > > > +}
-> > > > +#endif  /* !HAVE_BPF_SKEL */
-> > >
-> > > I still think it's the convention to have them in a header file as
-> > > static inline functions and reduce the #ifdef in the .c file.
-> >
-> > Shouldn't minimizing ifdefs, and associated cognitive load, in header
-> > files be the priority given they are #included many times while the .c
-> > file is only compiled once?
-> > Shouldn't a goal of the header file be to abstract away things like
-> > HAVE_BPF_SKEL?
-> > I'm not clear what the goal of having the functions in the header
-> > files is, performance? The code isn't going to run anyway. I feel
-> > lock_contention.h is smaller and easier to read like this but I also
-> > don't care enough to fight. I did this change here as
-> > lock_contention.h was being brought into python.c for the sake of
-> > stubbing out functions that the header file was also subbing out for
-> > !BPF_HAVE_SKEL. A single stub felt like progress.
 >
-> I think it may have the empty functions in the binary if we keep the
-> functions in the .c file whereas compilers would optimize away them if
-> they are static inline functions.
+> Hi Masahiro,
+>
+> On Thu, Nov 14, 2024 at 08:45:22AM +0900, Masahiro Yamada wrote:
+> > Currently, objtool is disabled in scripts/Makefile.{modfinal,vmlinux}.
+> >
+> > This commit moves rule_cc_o_c and rule_as_o_S to scripts/Makefile.lib
+> > and set objtool-enabled to y there.
+> >
+> > With this change, *.mod.o, .module-common.o,  builtin-dtb.o, and
+> > vmlinux.export.o will now be covered by objtool.
+> >
+> > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+>
+> I am seeing some build failures when LTO is enabled with this change in
+> -next as commit d8d3f6c6690c ("kbuild: enable objtool for *.mod.o and
+> additional kernel objects").
+>
+>   $ printf 'CONFIG_LTO_%s\n' NONE=3Dn CLANG_THIN=3Dy >kernel/configs/thin=
+lto.config
+>
+>   $ make -skj"$(nproc)" ARCH=3Dx86_64 LLVM=3D1 mrproper {def,thinlto.}con=
+fig all
+>   ...
+>   .vmlinux.export.o: warning: objtool: gelf_getehdr: invalid `Elf' handle
+>   make[4]: *** [scripts/Makefile.vmlinux:13: .vmlinux.export.o] Error 1
+>   ...
+>
+> When LTO is enabled, these files are LLVM bitcode, not ELF, so objtool
+> can't process them:
+>
+>   $ file .vmlinux.export.o
+>   .vmlinux.export.o: LLVM IR bitcode
 
-The functions will be 1 or 2 bytes and can all be deduplicated, the
-linker can also garbage collect them. It is better to optimize code
-for readability rather than for wins like this.
+Good catch!
 
-Thanks,
-Ian
+I will squash the attached diff.
+
+Thank you.
+
+
+--
+Best Regards
+Masahiro Yamada
+
+--000000000000cb0cb5062747496d
+Content-Type: application/x-patch; name="0001-fixup.patch"
+Content-Disposition: attachment; filename="0001-fixup.patch"
+Content-Transfer-Encoding: base64
+Content-ID: <f_m3oq2dwa0>
+X-Attachment-Id: f_m3oq2dwa0
+
+RnJvbSA2Njc0NjQ4MTRjZGQ3Y2Q0ZjYyNjk5YmUyZjdlNTg3MTU1N2FmMWZlIE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBNYXNhaGlybyBZYW1hZGEgPG1hc2FoaXJveUBrZXJuZWwub3Jn
+PgpEYXRlOiBUdWUsIDE5IE5vdiAyMDI0IDE3OjI5OjQyICswOTAwClN1YmplY3Q6IFtQQVRDSF0g
+Zml4dXAKClNpZ25lZC1vZmYtYnk6IE1hc2FoaXJvIFlhbWFkYSA8bWFzYWhpcm95QGtlcm5lbC5v
+cmc+Ci0tLQogc2NyaXB0cy9NYWtlZmlsZS5idWlsZCB8IDYgKy0tLS0tCiBzY3JpcHRzL01ha2Vm
+aWxlLmxpYiAgIHwgOSArKysrKysrKy0KIDIgZmlsZXMgY2hhbmdlZCwgOSBpbnNlcnRpb25zKCsp
+LCA2IGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL3NjcmlwdHMvTWFrZWZpbGUuYnVpbGQgYi9z
+Y3JpcHRzL01ha2VmaWxlLmJ1aWxkCmluZGV4IDI1MzhhOTI1ZTA0Yy4uNDE2NDliOGE2NjMxIDEw
+MDY0NAotLS0gYS9zY3JpcHRzL01ha2VmaWxlLmJ1aWxkCisrKyBiL3NjcmlwdHMvTWFrZWZpbGUu
+YnVpbGQKQEAgLTEyOSwxMSArMTI5LDcgQEAgJChvYmopLyUubGw6ICQob2JqKS8lLmMgRk9SQ0UK
+IAogaXMtc2luZ2xlLW9iai1tID0gJChhbmQgJChwYXJ0LW9mLW1vZHVsZSksJChmaWx0ZXIgJEAs
+ICQob2JqLW0pKSx5KQogCi0jIFdoZW4gYSBtb2R1bGUgY29uc2lzdHMgb2YgYSBzaW5nbGUgb2Jq
+ZWN0LCB0aGVyZSBpcyBubyByZWFzb24gdG8ga2VlcCBMTFZNIElSLgotIyBNYWtlICQoTEQpIGNv
+dmVydCBMTFZNIElSIHRvIEVMRiBoZXJlLgotaWZkZWYgQ09ORklHX0xUT19DTEFORwotY21kX2xk
+X3NpbmdsZV9tID0gJChpZiAkKGlzLXNpbmdsZS1vYmotbSksIDsgJChMRCkgJChsZF9mbGFncykg
+LXIgLW8gJCh0bXAtdGFyZ2V0KSAkQDsgbXYgJCh0bXAtdGFyZ2V0KSAkQCkKLWVuZGlmCituZWVk
+LWxkLXNpbmdsZSA9ICQoaXMtc2luZ2xlLW9iai1tKQogCiBpZmRlZiBDT05GSUdfTU9EVkVSU0lP
+TlMKICMgV2hlbiBtb2R1bGUgdmVyc2lvbmluZyBpcyBlbmFibGVkIHRoZSBmb2xsb3dpbmcgc3Rl
+cHMgYXJlIGV4ZWN1dGVkOgpkaWZmIC0tZ2l0IGEvc2NyaXB0cy9NYWtlZmlsZS5saWIgYi9zY3Jp
+cHRzL01ha2VmaWxlLmxpYgppbmRleCBhZDZiOGRmYTU1MzAuLjdhYzY1NDE0Njk5YyAxMDA2NDQK
+LS0tIGEvc2NyaXB0cy9NYWtlZmlsZS5saWIKKysrIGIvc2NyaXB0cy9NYWtlZmlsZS5saWIKQEAg
+LTMwMywxMCArMzAzLDE3IEBAIGVuZGVmCiAjIFRoZXNlIGFyZSBzaGFyZWQgYnkgc29tZSBNYWtl
+ZmlsZS4qIGZpbGVzLgogCiBvYmp0b29sLWVuYWJsZWQgOj0geQorbmVlZC1sZC1zaW5nbGUgOj0g
+eQorCisjIFdoZW4gYSBtb2R1bGUgY29uc2lzdHMgb2YgYSBzaW5nbGUgb2JqZWN0LCB0aGVyZSBp
+cyBubyByZWFzb24gdG8ga2VlcCBMTFZNIElSLgorIyBNYWtlICQoTEQpIGNvdmVydCBMTFZNIElS
+IHRvIEVMRiBoZXJlLgoraWZkZWYgQ09ORklHX0xUT19DTEFORworY21kX2xkX3NpbmdsZSA9ICQo
+aWYgJChuZWVkLWxkLXNpbmdsZSksIDsgJChMRCkgJChsZF9mbGFncykgLXIgLW8gJCh0bXAtdGFy
+Z2V0KSAkQDsgbXYgJCh0bXAtdGFyZ2V0KSAkQCkKK2VuZGlmCiAKIHF1aWV0X2NtZF9jY19vX2Mg
+PSBDQyAkKHF1aWV0X21vZHRhZykgICRACiAgICAgICBjbWRfY2Nfb19jID0gJChDQykgJChjX2Zs
+YWdzKSAtYyAtbyAkQCAkPCBcCi0JCSQoY21kX2xkX3NpbmdsZV9tKSBcCisJCSQoY21kX2xkX3Np
+bmdsZSkgXAogCQkkKGNtZF9vYmp0b29sKQogCiBkZWZpbmUgcnVsZV9jY19vX2MKLS0gCjIuNDMu
+MAoK
+--000000000000cb0cb5062747496d--
 
