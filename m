@@ -1,106 +1,113 @@
-Return-Path: <linux-kernel+bounces-414192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEA5A9D248E
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 12:05:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F00B49D2493
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 12:08:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A88501F22AFD
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 11:05:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95913281B3B
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 11:08:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 161421C07D5;
-	Tue, 19 Nov 2024 11:04:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A8A41C462D;
+	Tue, 19 Nov 2024 11:08:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="el/LTpl8"
-Received: from forward502d.mail.yandex.net (forward502d.mail.yandex.net [178.154.239.210])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h8JkSagJ"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF44B1A9B24;
-	Tue, 19 Nov 2024 11:04:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.210
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F5C313AD03;
+	Tue, 19 Nov 2024 11:08:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732014295; cv=none; b=gV1FbCZd3+nHEw4V2LVO1CJkIuMWgFSsPHnkvi3VK02MojtlJif22NNaXOut3nb7DJnKyWRLWMDnwpBZ6SNo1oGVjKHiOFRAhrw9jjHQBjiRM3Wo1F4/IywKfiv0RXMatjV9zH9U6CD/VZV6cWmBRuLInGQoNSgGL3N/tagoEWY=
+	t=1732014492; cv=none; b=h6AbqCjDfioMM8oZ2MWLO+2+AUiEw/Zv0HEvioJpKX2QpVcfJjmNrLF/ppkA1BI5dPc2q0SktsSaU8bMRK8jC4G2rkJdbKdNgyX9FuD8TztncmdHRhasoY3G7KqrwYa6hy4sgYG2LpKKuHdzJtm7VDlaG8G7gucQEkUWIKgeGSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732014295; c=relaxed/simple;
-	bh=/SYL9YbS6GATrA0PjR2LaEJi7M8ZYPBqjDcB5/e5lWA=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=P3tMYqS9Z5KUywQxiM02Qkjvn5Yb7YnUgVTJ9t5ybillYR/50A7KO0jfu3mmVTooaZWwpp4J1+GvIeqBrc41SjMrusl4oNBlHuKGgfixgqDkL37qE8mmWm2Otg77iJKlAHdYsv33oCymKemuLQyLonAo5CznVmAQM5ue+9943Kg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=el/LTpl8; arc=none smtp.client-ip=178.154.239.210
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
-Received: from mail-nwsmtp-smtp-production-main-95.klg.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-95.klg.yp-c.yandex.net [IPv6:2a02:6b8:c42:874b:0:640:bc97:0])
-	by forward502d.mail.yandex.net (Yandex) with ESMTPS id B8F48611D7;
-	Tue, 19 Nov 2024 14:04:44 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-95.klg.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id f4PlBZmOjuQ0-1kWMGczu;
-	Tue, 19 Nov 2024 14:04:43 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
-	t=1732014283; bh=PlfJvw3vZ0B7dANA7HsxSHEs+NvmIVeH1x4Q/ETIw7U=;
-	h=In-Reply-To:Cc:Date:References:To:Subject:From:Message-ID;
-	b=el/LTpl8wCPFL0hrUZ3zY/XZ6fFV6uX+PX7JM080sImHuiOFQ79BD7EuvIN24KheS
-	 SvWskZgwfOLIatlCQvOxwZIaxSoY4ixUjbZv7W8rzkHlqF7kPMHNUgoESF9fUjeCcF
-	 n09RfKn8xAVSG6thQpo23Y1/aQ9u8bcsB0UXk3sA=
-Authentication-Results: mail-nwsmtp-smtp-production-main-95.klg.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
-Message-ID: <67638eaf-3d94-450a-8280-df4f7dc66ce7@yandex.ru>
-Date: Tue, 19 Nov 2024 14:04:41 +0300
+	s=arc-20240116; t=1732014492; c=relaxed/simple;
+	bh=NnQqv284DeZx0yJ115xajPnypfjklVXqLNlqJ8G0eio=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dThXeLQ/71T9QPmulSLyJ3IjnvszniQOvAbux/Ei82zzLzMmb1YQHD5imnJmCQ0Q0uszsCpamLWRIRsZzg+b/d7UHMQhTEDKGwXSlBdp5FvYre+wqKOqE3SjDgWvHdJM34fFdZbSJ2yJMWfDZdAhvWpXibwW6ba4KXCU7oyb4+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h8JkSagJ; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-720b2d8bcd3so636434b3a.2;
+        Tue, 19 Nov 2024 03:08:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732014490; x=1732619290; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=VBVbvGteYAbnOd6dtVKtRw9lJSMVBqcwKMWI6ANtGUI=;
+        b=h8JkSagJhF9FLV+XMy1vlFhYKPpazQeQmTmHvVKphkJMJgFBftAPZI0PKFQ01yXpGx
+         ALiMgqj/8K4zpYBegeRxa3ti3eJaKZKPymtGZZGrztRD/7t+sQm2DWcg5FHF1RULDb8n
+         U7Nk6DYEh7UUq0jo9hkDsy5Nukm7iiw5dRWgejZqMSDGyn1i/iwHKVyBBEjpNLzLCd+Y
+         /hpEYZfYQx8MD6pYFv26DANIab1YhMGkLXykwBOu8O+A4AetkTCNiPUx71h4ja6LgsMR
+         /TgkUOs8p2eOic74h6lROkWbWu7vIvz8c8jnotuMW/4YjZcyuAzMJ0nNilULl88DYCiR
+         05DA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732014490; x=1732619290;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VBVbvGteYAbnOd6dtVKtRw9lJSMVBqcwKMWI6ANtGUI=;
+        b=i4rJ1YZZ2oJO9ZYzSy7y5M+xxBtvQWK4TLzP511kvnPYhC3G1w8q2xT0W9q2KMQJqF
+         0TZiihAPOpEpYMX/sfXALZWWLE4zsAyb65EPfcSv2UK66tvFc+mTRLYUx6FqTrKSRyAq
+         aeWiiDJKI+av9/EGQ7XXrQ6IkQMNsbcslF0gJtfzUzFfO70eRRygeyuOTxVGZrGEqvzw
+         3GPRoW8J9uR/I9RJ6O3AwQphdo9uHvg2R0whpDpOS9DfbD3VtqdLc4nCbQx1kPaO7cvL
+         trS5D2xLKaSQeccOvtxXdudLiE270veofMFZpPR24UI7gYUbH4wVxatPFjHV84U73o7H
+         yVTg==
+X-Forwarded-Encrypted: i=1; AJvYcCVicYA0Ud6QX2U2ZoNGGJkGA+MjnCYtT56TI4k6RK4+KHnNXAWPHpGrmLVzb+wr5054aye/vEUtX3IO+Gvy@vger.kernel.org, AJvYcCWDn0KHWLiTTHm+SbZWR1gJi6PsdCf2cxpCVcksyr0IWKJ6PoGNYI0R91BM6ZEswBY427xptXU18HyMLw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQfvObCrfOF2sC9DiZuFhxKBWGUG89PFPEGIWG+AxumSLa0PlO
+	vxjmJq07FAC9p7AEkjiR2a49eHrYZ9q615atwovSyftQatB5Vjk/
+X-Google-Smtp-Source: AGHT+IEY+qqclgk1sLsNIJveQWZE8CQMYxA+YREdsjVGQcVOzRKskM/zZ7sjX4trkzry0gwmO4ugEA==
+X-Received: by 2002:a05:6a00:21cd:b0:71e:cf8:d6fa with SMTP id d2e1a72fcca58-72476bbaa1bmr19100917b3a.15.1732014490344;
+        Tue, 19 Nov 2024 03:08:10 -0800 (PST)
+Received: from pikaa.domain.name ([163.53.179.60])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72477120a1esm8108617b3a.68.2024.11.19.03.08.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Nov 2024 03:08:09 -0800 (PST)
+From: ajeetsinghchahar2@gmail.com
+To: 
+Cc: Ajit Singh <ajeetsinghchahar2@gmail.com>,
+	Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+	linux-input@vger.kernel.org (open list:HID CORE LAYER),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] hid-core: Indentation fix
+Date: Tue, 19 Nov 2024 16:37:59 +0530
+Message-ID: <20241119110801.9735-1-ajeetsinghchahar2@gmail.com>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: stsp <stsp2@yandex.ru>
-Subject: Re: [PATCH v2] net/unix: pass pidfd flags via SCM_PIDFD cmsg
-To: Kuniyuki Iwashima <kuniyu@amazon.com>
-Cc: almasrymina@google.com, asml.silence@gmail.com, axboe@kernel.dk,
- brauner@kernel.org, cyphar@cyphar.com, davem@davemloft.net,
- edumazet@google.com, gouhao@uniontech.com, horms@kernel.org,
- kees@kernel.org, krisman@suse.de, kuba@kernel.org,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, mhal@rbox.co,
- netdev@vger.kernel.org, oleg@redhat.com, pabeni@redhat.com,
- quic_abchauha@quicinc.com, shuah@kernel.org, tandersen@netflix.com,
- viro@zeniv.linux.org.uk, willemb@google.com
-References: <20241114091909.3552288-1-stsp2@yandex.ru>
- <20241116011038.94912-1-kuniyu@amazon.com>
-Content-Language: en-US
-In-Reply-To: <20241116011038.94912-1-kuniyu@amazon.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-16.11.2024 04:10, Kuniyuki Iwashima пишет:
-> Now this allows sending pidfd without SO_PASSPIDFD, so you need to
-> add a validation for "if (!msg->msg_control)" in __scm_recv_common().
-Will do, thanks.
-Btw don't we need MSG_CTRUNC in
-such case even if "msg_control"exists?
-Or the established practice is to just drop cmsg silently?
-I mean, something like the below:
+From: Ajit Singh <ajeetsinghchahar2@gmail.com>
 
---- a/include/net/scm.h
-+++ b/include/net/scm.h
-@@ -176,12 +176,19 @@ static inline bool __scm_recv_common(struct socket 
-*sock, struct msghdr *msg,
-         if (!msg->msg_control) {
-                 if (test_bit(SOCK_PASSCRED, &sock->flags) ||
-                     test_bit(SOCK_PASSPIDFD, &sock->flags) ||
--                   scm->fp || scm_has_secdata(sock))
-+                   scm->fp || scm_has_secdata(sock) ||
-+                   scm->pidfd_flags)
-                         msg->msg_flags |= MSG_CTRUNC;
-                 scm_destroy(scm);
-                 return false;
-         }
+Signed-off-by: Ajit Singh <ajeetsinghchahar2@gmail.com>
+---
+ drivers/hid/hid-core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-+       if (!test_bit(SOCK_PASSPIDFD, &sock->flags) && scm->pidfd_flags) {
-+               msg->msg_flags |= MSG_CTRUNC;
-+               scm_destroy(scm);
-+               return false;
-+       }
-+
-         if (test_bit(SOCK_PASSCRED, &sock->flags)) {
-                 struct user_namespace *current_ns = current_user_ns();
-                 struct ucred ucreds = {
+diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
+index 582fd234eec7..b90159b621e4 100644
+--- a/drivers/hid/hid-core.c
++++ b/drivers/hid/hid-core.c
+@@ -2844,10 +2844,10 @@ int hid_add_device(struct hid_device *hdev)
+ 	/*
+ 	 * Check for the mandatory transport channel.
+ 	 */
+-	 if (!hdev->ll_driver->raw_request) {
++	if (!hdev->ll_driver->raw_request) {
+ 		hid_err(hdev, "transport driver missing .raw_request()\n");
+ 		return -EINVAL;
+-	 }
++	}
+ 
+ 	/*
+ 	 * Read the device report descriptor once and use as template
+-- 
+2.45.0
+
 
