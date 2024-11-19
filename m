@@ -1,73 +1,53 @@
-Return-Path: <linux-kernel+bounces-414986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4F6D9D3019
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 22:41:00 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 344B89D302E
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 22:56:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F43D1F232C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 21:41:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72BC0B20CCA
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 21:56:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D22EC1547FF;
-	Tue, 19 Nov 2024 21:40:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 211691D3578;
+	Tue, 19 Nov 2024 21:56:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="K1qSdKMS"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="Wu1Uld26"
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6419413E03E
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 21:40:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 754A51D0B9E;
+	Tue, 19 Nov 2024 21:56:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732052451; cv=none; b=SVtjTxUB32QqF1v9EFhfFJn4MnkDCyuHQ+ZnPtnqdvG6tMdwuMwAqDxq06G4trdJ1X4Dg2AfUY3fiPTxsZR1WdbcxviCHQMnSNaHvffg8XBXWLef+hym3r17/dnqqRre5DVz/Y80GC6Z1z4OGyu5ijFmudh/Z2+ThcV29IXL2bI=
+	t=1732053401; cv=none; b=gW7/GjLBC0aj0vV1NZxpsChsOJEdBxgyK/jYB1Lx2a3090lDTCJaMXJmS1d2tebBYmgmEvT2HJja6SCee9MqyUfwecHileabCwooXQmm9m6VkfQFZV4+3GLdzK5+S4tMtGFyIFIezv1nfT+IL7Kfhz1fOkDjC0P7S6hgwYTNYEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732052451; c=relaxed/simple;
-	bh=HE3n513xHhZThcE6jVMoZF6XwhCQEWW5VGxysIXxWto=;
+	s=arc-20240116; t=1732053401; c=relaxed/simple;
+	bh=eT54uuZM/nbKGW2p+dwXTqaPTVNBV3Nq3lV/KEE8ZXc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aBykJUDc/Re5d6smfDZiz1abFKo03Ux8XvAzO7bsOQqJmun3wPMIxiH1A11cVA9kBNcOfjDM+H5pk8aHBuu8ReHd6xEoPktZt+v6LNyzAq4ZNJIa6deVJfo0bjq0Shy89eGZWWblAI/9GxYZ4nWIDm/6DosOsBU7mYZQdHguFmc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=K1qSdKMS; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3823f1ed492so116183f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 13:40:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732052448; x=1732657248; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lkxeQUfNljLvLRiRZhalC+n4lyNit8qK2o0nRa/RK2k=;
-        b=K1qSdKMSFk3EJ+/mZ8UxMxt7TvsHiFvKVN5P+h1MNR2YD8wt8k0pcRSXQv/dfx57Km
-         Au7ku0/giiqrvxDnldqLQvSpKT7TCcyMnLMPXr8BwAq4Vt+btFg5Kv7ebShQNgaGb1My
-         7XaJgv3xAQLKAFi9/TzP6aUSALygr5ka8lByTcOV0qURAQ90gVu8aOG6x72tNWrOnrEz
-         3/CBq6TvDLjd2E42V8eyxqDwaOYEPg8i3GKUg/PfdH8OXY60EpKU7Om1KviLT1DA342B
-         xFpRzdkzvC1yPZYXtOjdZNegamh8rEUfzvEpE7qZiPBfAdu6ckYHi0rOJv4O0QGWLHpx
-         iPpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732052448; x=1732657248;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lkxeQUfNljLvLRiRZhalC+n4lyNit8qK2o0nRa/RK2k=;
-        b=wtPigTbFy9bCZ67H0nK0JFV/zeqqqWZRgF/KtfsqqC7aEH28FUKFtbb3A4DVuMSE/2
-         OLU6h+sxfpAuQve23OPaXbsiQNOiRUPFbGfB1tUXHsN5jWkmyxt8YILToLM3B/JPqApb
-         WCmW1xoJeYnuN070UoEBoi5hkRKZw39r3MZ3YjI34gds64r1A3jIFx1Z4XBRIg+csD+g
-         KnKBZThshTocugGS/SBjbV96MbqJndl6Mg21Sf5Ikz3uOz2lgzq9DHKBjt3eotzBbJwZ
-         UJRydUKMAgYDNoCNnpiMoY4kPV5AmXI8TleJLUc4IUh9yEeHGs1qaEx0mErN3rif2+3d
-         YC9g==
-X-Forwarded-Encrypted: i=1; AJvYcCU9spi25OFNtL33cujVZquFInf6d6wpzYIHOXseJleFmE1CDgzkh2zITufrAogbgHQPdLhx0napagmnR0c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxfgCUD3R8IFH8V/dCTHA1eRlqDVJd7rM9vmn/cjAiVKqvng4L5
-	zdklTTyeey7rlERtOXBHwZ34fjP89lb1gkVDwCD9lHOaNrLaCt82wF5pFWqJ6M8=
-X-Google-Smtp-Source: AGHT+IG6bv5/VShXyjrdqEjy+T/UO+kLOX7JIB5cP3VCGPfmzISuivqKLJjNxAIIX4ocGdqh24oTtw==
-X-Received: by 2002:a5d:5f91:0:b0:37d:47eb:b586 with SMTP id ffacd0b85a97d-3824cb30e45mr4340383f8f.4.1732052447252;
-        Tue, 19 Nov 2024 13:40:47 -0800 (PST)
-Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-382549055f2sm366236f8f.16.2024.11.19.13.40.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 Nov 2024 13:40:46 -0800 (PST)
-Message-ID: <cfca677b-bc74-49bb-a031-6f52629edd2b@linaro.org>
-Date: Tue, 19 Nov 2024 22:40:45 +0100
+	 In-Reply-To:Content-Type; b=PcHjwgXWDCuXMptM+AH607ckfbNBWDH/zPUfg5WYM3fiJvrt6Fzojk6VA2iwhpjh0iBDso2w3bQDMv7BXL7/NmnJvo9CbV6perXAe6oJqIgNBmXgdh5zb/vodXqlW7fdO78syrzh2wH2NjR9KvH/gSGJHLz4yCyMLyDN1S5CiBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=Wu1Uld26; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+	(No client certificate requested)
+	(Authenticated sender: marex@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id D5335895BF;
+	Tue, 19 Nov 2024 22:56:34 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1732053397;
+	bh=atOqhpShv6nVPXJfhzq/Bh3Ko/bhRYVXc8Rnk2+8Rt4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Wu1Uld26U2/CKmnv3kHtE9x+XTdgM4pNc+e4mnZ4unWp2//I7x6JrgANcYps0EEtl
+	 yAUFXaNJqAfv48rOn49RHiC4FGgVzx8omnErPAEJh0p2hDH+30Ta1CKLbIz5LoJatl
+	 sCO9n0TN+/e8ufwdlQU9dOTsLBeI/TZg+piBf5WSjwlGmoplTC/YIioJmcISIj8CHR
+	 bk2mM9tWOJTsd5py0tloVaK8qHVzTSg1W6Ij9zQ7jX1uR453RQxI6OWOTJe9d3GT0j
+	 XxSNqPaGBDt8/n2qk7OjNGvOGwfPo+HxvTAvie9a7nBF417HYvg7GzC4qFCbe8YWE5
+	 xtEa69egQQGGg==
+Message-ID: <83be0a27-6b6c-4ba6-b9dc-f914a10abace@denx.de>
+Date: Tue, 19 Nov 2024 22:42:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,88 +55,185 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v14] thermal/drivers/mediatek/auxadc_thermal: expose all
- thermal sensors
-To: Hsin-Te Yuan <yuanhsinte@chromium.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
- Lukasz Luba <lukasz.luba@arm.com>, Matthias Brugger
- <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- James Lo <james.lo@mediatek.com>, Michael Kao <michael.kao@mediatek.com>,
- Hsin-Yi Wang <hsinyi@chromium.org>, Ben Tseng <ben.tseng@mediatek.com>
-References: <20241025-auxadc_thermal-v14-1-96ab5b60c02e@chromium.org>
- <5dd2d2a3-6eff-45fb-8af8-593945235dd3@linaro.org>
- <CAHc4DNKSsrdSjqunhk+oyWw_+oKY9BgzPcqag5QrmLJqjVsE1Q@mail.gmail.com>
+Subject: Re: [PATCH v7 2/7] Revert "clk: imx: clk-imx8mp: Allow media_disp
+ pixel clock reconfigure parent rate"
+To: Ying Liu <victor.liu@nxp.com>, "imx@lists.linux.dev"
+ <imx@lists.linux.dev>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+Cc: "shawnguo@kernel.org" <shawnguo@kernel.org>,
+ "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+ "kernel@pengutronix.de" <kernel@pengutronix.de>,
+ "festevam@gmail.com" <festevam@gmail.com>, "robh@kernel.org"
+ <robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+ "will@kernel.org" <will@kernel.org>,
+ "abelvesa@kernel.org" <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+ "mturquette@baylibre.com" <mturquette@baylibre.com>,
+ "sboyd@kernel.org" <sboyd@kernel.org>,
+ "andrzej.hajda@intel.com" <andrzej.hajda@intel.com>,
+ "neil.armstrong@linaro.org" <neil.armstrong@linaro.org>,
+ "rfoss@kernel.org" <rfoss@kernel.org>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ "jonas@kwiboo.se" <jonas@kwiboo.se>,
+ "jernej.skrabec@gmail.com" <jernej.skrabec@gmail.com>,
+ "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
+ "mripard@kernel.org" <mripard@kernel.org>,
+ "tzimmermann@suse.de" <tzimmermann@suse.de>,
+ "airlied@gmail.com" <airlied@gmail.com>, "simona@ffwll.ch"
+ <simona@ffwll.ch>, "quic_bjorande@quicinc.com" <quic_bjorande@quicinc.com>,
+ "geert+renesas@glider.be" <geert+renesas@glider.be>,
+ "dmitry.baryshkov@linaro.org" <dmitry.baryshkov@linaro.org>,
+ "arnd@arndb.de" <arnd@arndb.de>,
+ "nfraprado@collabora.com" <nfraprado@collabora.com>,
+ Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Miquel Raynal <miquel.raynal@bootlin.com>
+References: <20241114065759.3341908-1-victor.liu@nxp.com>
+ <20241114065759.3341908-3-victor.liu@nxp.com>
+ <df6ebdde-65f8-4aad-93c7-b1df695bd2ef@denx.de>
+ <AM7PR04MB7046546A882A8D48E135D84698272@AM7PR04MB7046.eurprd04.prod.outlook.com>
+ <8a4fd234-4c7b-4a04-990d-3222aaa5172d@denx.de>
+ <AM7PR04MB7046E282FD702ACE5E288F8998202@AM7PR04MB7046.eurprd04.prod.outlook.com>
 Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <CAHc4DNKSsrdSjqunhk+oyWw_+oKY9BgzPcqag5QrmLJqjVsE1Q@mail.gmail.com>
+From: Marek Vasut <marex@denx.de>
+In-Reply-To: <AM7PR04MB7046E282FD702ACE5E288F8998202@AM7PR04MB7046.eurprd04.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-On 19/11/2024 08:38, Hsin-Te Yuan wrote:
-> On Fri, Nov 15, 2024 at 12:48 AM Daniel Lezcano
-> <daniel.lezcano@linaro.org> wrote:
->>
->>
->> Hi,
->>
->> On 25/10/2024 14:05, Hsin-Te Yuan wrote:
->>> From: James Lo <james.lo@mediatek.com>
->>>
->>> Previously, the driver only supported reading the temperature from all
->>> sensors and returning the maximum value. This update adds another
->>> get_temp ops to support reading the temperature from each sensor
->>> separately.
->>>
->>> Especially, some thermal zones registered by this patch are needed by
->>> MT8183 since those thermal zones are necessary for mtk-svs driver.
->>
->> The DT for the mt8183 describes the sensor id = 0 as the CPU. On this,
->> there is a cooling device with trip points.
->>
->> The driver registers the id=0 as an aggregator for the sensors which
->> overloads the CPU thermal zone above.
->>
->> Why do you need to aggregate all the sensors to retrieve the max value ?
->>
->> They are all contributing differently to the heat and they should be
->> tied with their proper cooling device.
->>
->> I don't think the thermal configuration is correct and I suggest to fix
->> this aggregator by removing it.
->>
->>
->>
->   As far as I know the thermal design of Mediatek's board is based on
-> the highest temperature of the whole board. Also, removing the
-> aggregator will break all the boards using this driver.
+On 11/19/24 9:18 AM, Ying Liu wrote:
 
-AFAICT, it is not a thermal design but a thermal configuration.
+[...]
 
-What is the rational of using power numbers related to the CPU but 
-aggregate all temperatures as an input to the governor ?
+>> The TC9595 can drive an DP output, for that the clock which have to be
+>> set on the LCDIF cannot be predicted, as that information comes from the
+>> monitor EDID/DPCD. That is why the LCDIF has to be able to configure the
+>> Video PLL1 clock to accurate clock frequency.
+>>
+>> For the LVDS LDB, the use case is the other way around -- the pixel
+>> clock which should be generated by LCDIF and fed to LDB are known from
+>> the panel type listed in DT, but they should still be accurate.
+> 
+> Thanks for the information.  I think the key question is whether the
+> alternative solution(*) you mentioned below stands or not, in other words,
+> whether LCDIF1/LCDIF2/LDB drivers know that they are sharing a PLL
+> or not.
 
-And for example, the mt8173 has 4 banks and 4 sensors per banks, so 16 
-sensors. And they are all grouped together under the thermal zone 
-"cpu-thermal" with the cpu cooling device.
+I'll continue at the end ...
 
-So if the GPU is getting hot, we cool down the CPU ?
+>>> You still may assign an accurate PLL rate in DT.
+>>> This patch only makes the PLL rate be unchangeable dynamically in
+>>> runtime.  That means the existing imx8m-dhcom-som.dtsi would use
+>>> IMX8MP_VIDEO_PLL1_OUT(running at 1.0395GHz) as the parent clock
+>>> of IMX8MP_CLK_MEDIA_DISP1_PIX (for LCDIF1/DSI), since it includes
+>>> imx8mp.dsti.  I assume it should be able to support typical video modes
+>>> like 1080p60 video mode with 148.5MHz pixel clock at least with 1.0395GHz
+>>> PLL rate.
+>>
+>> This will break multiple DP monitors I tested so far I'm afraid. And I
+>> spent a LOT of time wrestling with the TC9595 bridge to make sure it
+>> actually does work well.
+> 
+> If the DP monitors support typical video modes like 1080p60 with
+> 148.5MHz pixel clock rate, I assume these typical video modes work
+> still ok with this patch at least.  Please help confirm this, since if the
+> alternative solution(*) doesn't stand, we would know those video
+> modes still work ok with my solution(fixed PLL rate).
 
+They do not work with the fixed PLL setting.
 
-> By the way, I heard that baylibre is working on multi-sensor
-> aggregation support, which can be the alternative solution for the
-> aggregator in this driver, but that should be another story and is
-> unrelated to this patch.
+>>> Granted that less video modes read from DP monitor would
+>>> be supported without dynamically changeable PLL rates, this is something
+>>> we have to accept because some i.MX8MP platforms(like i.MX8MP EVK)
+>>> have to share IMX8MP_VIDEO_PLL1_OUT between LVDS and MIPI DSI
+>>> display pipelines.
+>>
+>> What I need is the use of two full PLL1443x (like Video PLL and Audio
+>> PLL1/2) , one for each display output, and those PLLs have to be fully
+>> configurable to produce accurate pixel clock for each connected panel.
+>> Otherwise I cannot make proper use of the video output capabilities of
+>> the MX8MP SoC.
+> 
+> Yeah, I understand your requirements.  However, it still depends on
+> whether the alternative solution(*) stands or not.
 
-Right.
+I'll continue at the end ...
 
+>>> The missing part is that we need to do mode validation
+>>> for the MIPI DSI display pipeline either in samsung-dsim.c or lcdif_kms.c
+>>> to filter unsupported video mode out.  Is this missing mode validation
+>>> the cause of your failure case?
+>>
+>> I do want to support the various modes, I do not want to filter them
+>> out. They can be supported, the only "problem" is the shared Video PLL
+>> which is not really an actual problem in my case, because I do not use
+>> shared Video PLL, I use two separate PLLs.
+>>
+>> I think what is needed is for the LCDIF1/LCDIF2/LDB to figure out
+>> whether they share the Video PLL at all (you already suggested the clock
+>> subsystem can provide that information), and then if:
+> 
+> But, how to let LCDIF1/LCDIF2/LDB drivers to figure out that?
+> 
+> I didn't suggest that the clock subsystem can provide that information.
 
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+... by end I mean here.
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+One really nasty way I can think of is -- use find_node_by_compatible(), 
+look up all the relevant DT nodes, parse their clock properties, and 
+check whether they all point to the Video PLL or not.
+
+Maybe the clock subsystem has a better way, like list "neighbor" 
+consumers of some specific parent clock or something like that.
+
+[...]
+
+>> Can something like (*) above be implemented instead, so both Shared and
+>> separate PLLs would be supported ? That should solve both of our use
+>> cases, right ?
+> 
+> I don't see any clear way to implement something like(*).
+> 
+> Take the 3 i.MX8MP LCDIFs as one graphic card driven by one imx-lcdif
+> DRM instance?  Would it be too intrusive?
+
+Yes, and I think unnecessary, one can simply traverse and parse the DT 
+to determine the clock assignment?
+
+> Use clk_get_parent() to determine if the pixel clocks of LCDIF1&2 are
+> sharing PLL(note clk_get_parent() implementation contains a TODO:
+> Create a per-user clk.)?
+
+Maybe not necessary for this case.
+
+> How to do mode validation for the shared PLL case(note mode_valid()
+> callback is supposed to look at nothing more than passed-in mode)?
+> Use clk_set_rate_range() to fix the PLL rate(min == max)?
+
+This is a good question -- we can use fixed frequency set in DT for the 
+PLL in case it is shared, and set whatever optimal frequency if the PLL 
+is not shared. That would be a good first step I think (**).
+
+The next step would be to find a way to negotiate acceptable PLL 
+frequency between LCDIF1/LCDIF2/LDB in case the PLL is shared, but I do 
+agree this is non-trivial, hence next step.
+
+>>> I hope that we can agree on this solution first before spreading
+>>> discussions across different threads and eventually the NAK can be
+>>> taken back.
+>>
+>> I cannot really agree on a solution which breaks one of my use cases,
+>> but maybe there is an alternative how to support both options, see (*)
+>> above ?
+> 
+> I tend to say there is no any alternative solution to satisfy both
+> separate PLLs and shared PLL use cases, or even if there is one, it won't
+> be easy to implement.  If you know one, please shout it out.
+Maybe (*) with first step (**) would be doable ?
 
