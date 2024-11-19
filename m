@@ -1,147 +1,109 @@
-Return-Path: <linux-kernel+bounces-414044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F0DC9D2254
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 10:17:25 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AC7E9D228C
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 10:35:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20D4428108F
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 09:17:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E18BB2143B
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 09:35:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D900613FD83;
-	Tue, 19 Nov 2024 09:17:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BE7B19ABAB;
+	Tue, 19 Nov 2024 09:34:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tDDYHoth"
-Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D13ED146A73
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 09:17:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.53
+	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="Vi4vpRaa"
+Received: from m16.mail.126.com (m16.mail.126.com [117.135.210.9])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D526193062
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 09:34:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732007833; cv=none; b=Rdc7qG94LLbeb5r/Ai45AA6ZI3Cxvb9SOu4yKBiWiVNOtykFYsBCR2WRTttafKdkTCLMI5AvBNhW1fMQ/0OD0fjX2zyf667kFEhnLxuVsBrSVmC3L/EIhctIKgtxKw3IyKTwwsE1YBovnYFyR8rH98XFawiai1/xoj3ZcB4KDaU=
+	t=1732008898; cv=none; b=lUxOqGIpFwsyDCOFNeSSngfL8SEzxNJLDLrlEes5e5GPlODq6LPj91u/9SyhUEjhJrNEZD519XPQ1PXriqQWR3wzBgf9bGgnx4B7SxRHqNs2Sl3XDmeCDWUw3C8DhBxiTkuSZo86wct6kBKCJrP9Pf0h2oLVr9ah2IlZ2XYtWBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732007833; c=relaxed/simple;
-	bh=g810kb0XgvzxYZQtrMTm+l/lpKzxxUTGIDTHgLMIkq4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TmgdQanX2cRZn1d4dexr+OPfkB5+kiRHPqXVRSKE/RxVWwENb3YsqHknP4GIbCdgGanjjaggiuzAp8dcZU347/Pum3Wi87vrzWFo6WqEFUxfP2gibwG+lAjn5YuC/AHUM7fH9CGd4argXrgXBrHHAcWf5sahJxqn/zPr6uyUOWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tDDYHoth; arc=none smtp.client-ip=209.85.210.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-7180e07185bso313334a34.3
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 01:17:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732007831; x=1732612631; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=mh9tKfQZDVb7Srbzricoyx+VzVp7BjyJVZmRNXjCsTY=;
-        b=tDDYHothy5Z8/MjQH9Uv+r7JVAFrKy+UcW1UzNJVH4LkuEjXwkswPEAwOqq0J4mGPr
-         xv8z1M4e+t/f1wEgLeW1FxNwrKFv/umbGPvkjvEm6DBD2mTUldApLSaUFuSUXN4kuAWH
-         Gw+kAnHWHhYd86+MVJGfFRjDxsavf8pMq1cO8Q2pwS2OdtBcRdEyWsNK025zOzDAIfG0
-         vjIyiZEXpv/youE5cTlbAKkyU7yEiYbDkCsHVd0nPMpSamHdjR6chHHicy+BM4wl5mWo
-         ZfpLIf4+2ahMBg+6iFmPOZItFS399UAoXqUxvd8JZzzHigus22NAWo7TRRXZlxF3BU3Y
-         EN0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732007831; x=1732612631;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mh9tKfQZDVb7Srbzricoyx+VzVp7BjyJVZmRNXjCsTY=;
-        b=NkwN4PVQhcfdj61pEHBPVfiaN6i6AFrGGr6zIrYMMs+083spLs3Aiz0iuo3JM4RZ/l
-         lUz++/1dRpg2XkPas3wgYO9lOTEVfAROH080MxoJo4mC77TDzNgHm6zIQv3CABVtkchw
-         ByxF65kyYrLrM3tvK3sJkrmziR1efVALkOc5F8+KZbtsza8BMYB97dZeDTBVig4u7+7J
-         h1aQiWG+twx7N4M0LLcEiAoUgS0RHu0SxMxrt/+FVxsyvY+fPv+OO+XDNcum5Fa+aHWw
-         3CAKRq7nFojkCqQD0YQW6REuEKSjFS/lEpd7M267mtrVddmW66eZuLCtCoxdguG2ZZGO
-         HQBA==
-X-Forwarded-Encrypted: i=1; AJvYcCWg1h94Gkbx8BZuEPvS6eelsilGD66pcD5HbOaId9T6GrOZ1r2iEzIm8EqcyXYksopxsFtEoyKdO5/N0D0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9QmUhpnWOCJIOZFpHhjfp6P8El5tZnby+aNUHUjRyXDN1Gs7s
-	5YbHfiJOoW3/NX4AH4gOteiLxpJIOR4RX0GDATNyRCalBG7VCJBLHFegw7GXhw==
-X-Google-Smtp-Source: AGHT+IF6oNS7zAaqiMj3qBtazoexGSI49TeW8s00tlEKm6P+2kEMfwF3rimz60UqsKAumxJWheQLUg==
-X-Received: by 2002:a05:6830:2a8f:b0:718:a3e:29b7 with SMTP id 46e09a7af769-71a779213bamr15070132a34.7.1732007830619;
-        Tue, 19 Nov 2024 01:17:10 -0800 (PST)
-Received: from thinkpad ([117.213.96.14])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7f8c1dade0esm7241941a12.66.2024.11.19.01.17.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Nov 2024 01:17:10 -0800 (PST)
-Date: Tue, 19 Nov 2024 14:46:59 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Richard Zhu <hongxing.zhu@nxp.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	imx@lists.linux.dev, alyssa@rosenzweig.io, bpf@vger.kernel.org,
-	broonie@kernel.org, jgg@ziepe.ca, joro@8bytes.org,
-	lgirdwood@gmail.com, maz@kernel.org, p.zabel@pengutronix.de,
-	robin.murphy@arm.com, will@kernel.org
-Subject: Re: [PATCH v5 2/2] PCI: imx6: Add IOMMU and ITS MSI support for
- i.MX95
-Message-ID: <20241119091659.rmdufvdi6jkynvfe@thinkpad>
-References: <20241104-imx95_lut-v5-0-feb972f3f13b@nxp.com>
- <20241104-imx95_lut-v5-2-feb972f3f13b@nxp.com>
- <20241113174841.olnyu5l6rbmr3tqh@thinkpad>
- <ZzTrdUX0NUsHQLvd@lizhi-Precision-Tower-5810>
+	s=arc-20240116; t=1732008898; c=relaxed/simple;
+	bh=VddMon7KGsoAO+8uNG9DoNYGSEVrl+SvzfCAy5RVITw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IpeNo4qmo6jg3SFugagAL1Gsrrh57RFtqbXnD/if4SGeNv4MRddv+QzHQhBupegFIhOJLslDD6aS9qaCP1BlX8AiBmQbuHSWhrl1tMAEYoO0Ug3tm3OFgJ+ROBFR9S/52br9UwZTH2EHsv2GrFDk3kxqLG0l0tnZ5Z2Hnx/dnSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=Vi4vpRaa; arc=none smtp.client-ip=117.135.210.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=cHi0m
+	zq8NWBijK4Ly2A3LsdTUocLcPH7MQG+4r3jEMc=; b=Vi4vpRaaf4XVCEaiT8G3q
+	c+9vEy4y6/bIx1Uu0s4MpP107I4Txb1mnqNfiCDS+FLQnEBVOM1TFnP9h7aJPRMz
+	R95IEJa8DPos7pV8qP5tfP6M0ajHU1TAgqGwRfWPsaGHUQA+TofPozLFbrQrhXjM
+	fhyQ2GCZ2U681WIhmUQgM0=
+Received: from localhost.localdomain (unknown [122.225.16.198])
+	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wD337AFWDxnC2qhCA--.13478S2;
+	Tue, 19 Nov 2024 17:19:13 +0800 (CST)
+From: JuenKit Yip <hunterteaegg@126.com>
+To: jdelvare@suse.com,
+	linux@roeck-us.net
+Cc: linux-hwmom@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	JuenKit Yip <hunterteaegg@126.com>
+Subject: [PATCH 1/2] hwmon: (sht3x) add devicetree support
+Date: Tue, 19 Nov 2024 04:18:42 -0500
+Message-Id: <20241119091842.74315-1-hunterteaegg@126.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZzTrdUX0NUsHQLvd@lizhi-Precision-Tower-5810>
+X-CM-TRANSID:_____wD337AFWDxnC2qhCA--.13478S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7uFy8Xw1rurW5Ar17CF4kWFg_yoW8Gw48p3
+	Wrur9aqF15WF4fX39Iqay09Fy5Cwn3A3yIkr9rGas09FWDJ34jqa1ftFyDA3Z8Zry5Xr12
+	gFykt34fGF48AFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0p_iSHQUUUUU=
+X-CM-SenderInfo: xkxq3v5uwhtvljj6ij2wof0z/1tbiWRmc7Gc8SIm3tQABsp
 
-On Wed, Nov 13, 2024 at 01:09:57PM -0500, Frank Li wrote:
+add "compatible" property for supporting devicetree
 
-[...]
+Signed-off-by: JuenKit Yip <hunterteaegg@126.com>
+---
+ drivers/hwmon/sht3x.c | 18 +++++++++++++++++-
+ 1 file changed, 17 insertions(+), 1 deletion(-)
 
-> > > +	for (i = 0; i < IMX95_MAX_LUT; i++) {
-> > > +		regmap_write(imx_pcie->iomuxc_gpr, IMX95_PE0_LUT_ACSCTRL, IMX95_PEO_LUT_RWA | i);
-> > > +		regmap_read(imx_pcie->iomuxc_gpr, IMX95_PE0_LUT_DATA1, &data1);
-> > > +
-> > > +		if (!(data1 & IMX95_PE0_LUT_VLD)) {
-> > > +			if (free < 0)
-> > > +				free = i;
-> >
-> > So you don't increment 'free' once it becomes >=0? Why can't you use the loop
-> > iterator 'i' itself instead of 'free'?
-> 
-> It is used to find first free slot. This loop check if there are duplicated
-> entry. If no duplicated rid entry, then use first free slot.
-> 
-
-Ah, so you have combined both in one loop. A comment on top would've been
-helpful to understand the logic.
-
-[...]
-
-> > > +	if (!err_i)
-> > > +		return imx_pcie_add_lut(imx_pcie, rid, sid_i);
-> > > +	else if (!err_m)
-> > > +		/* Hardware auto add 2 bit controller id ahead of stream ID */
-> >
-> > What is this comment for? I don't find it relevant here.
-> 
-> The comment for why need mask 2bits before config lut. for example, dts
-> set stream id is 0xC4, but lut only need 0x4.
-> 
-
-Ok. It was not super clear. Could you please reword it as below?
-
-"LUT only needs the lower 6 bits of the SID as it will prepend the 2 bit
-controller ID by default."
-
-- Mani
-
+diff --git a/drivers/hwmon/sht3x.c b/drivers/hwmon/sht3x.c
+index 650b0bcc2359..2ac1537b3e3e 100644
+--- a/drivers/hwmon/sht3x.c
++++ b/drivers/hwmon/sht3x.c
+@@ -954,6 +954,19 @@ static int sht3x_probe(struct i2c_client *client)
+ 	return PTR_ERR_OR_ZERO(hwmon_dev);
+ }
+ 
++/* devicetree ID table */
++static const struct of_device_id sht3x_of_match[] = {
++	{ .compatible = "sensirion,sht30", .data = (void *)sht3x },
++	{ .compatible = "sensirion,sht31", .data = (void *)sht3x },
++	{ .compatible = "sensirion,sht35", .data = (void *)sht3x },
++	{ .compatible = "sensirion,sts30", .data = (void *)sts3x },
++	{ .compatible = "sensirion,sts31", .data = (void *)sts3x },
++	{ .compatible = "sensirion,sts35", .data = (void *)sts3x },
++	{},
++};
++
++MODULE_DEVICE_TABLE(of, sht3x_of_match);
++
+ /* device ID table */
+ static const struct i2c_device_id sht3x_ids[] = {
+ 	{"sht3x", sht3x},
+@@ -964,7 +977,10 @@ static const struct i2c_device_id sht3x_ids[] = {
+ MODULE_DEVICE_TABLE(i2c, sht3x_ids);
+ 
+ static struct i2c_driver sht3x_i2c_driver = {
+-	.driver.name = "sht3x",
++	.driver = {
++		.name = "sht3x",
++		.of_match_table = sht3x_of_match,
++	},
+ 	.probe       = sht3x_probe,
+ 	.id_table    = sht3x_ids,
+ };
 -- 
-மணிவண்ணன் சதாசிவம்
+2.39.5
+
 
