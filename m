@@ -1,112 +1,109 @@
-Return-Path: <linux-kernel+bounces-414950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29F299D2F99
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 21:38:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E52B9D2F97
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 21:37:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1EDBEB284AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 20:37:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF4FE2830A3
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 20:37:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 886BC1D3562;
-	Tue, 19 Nov 2024 20:37:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A07471D47DC;
+	Tue, 19 Nov 2024 20:37:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="P57nhXr3"
-Received: from smtp.smtpout.orange.fr (smtp-19.smtpout.orange.fr [80.12.242.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CiaSzuu/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BA2B1D2796;
-	Tue, 19 Nov 2024 20:36:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEDE51D415B;
+	Tue, 19 Nov 2024 20:37:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732048620; cv=none; b=SJX4z74d7X04yINoCJVdnw5BO6VsLQdkhLBvIUSvBvTThfEN+9ShYsBqT3yA5LtYMJRbGIO3dxfjx6lXSZKzIqXTfCYxayfD+H6QYlkkPkYDF0JsZAP73LuXbdZZpdQvpip0xhEOiQQyFuQca/DvqGE6gGsnrltqN0UH9Erq6zw=
+	t=1732048623; cv=none; b=OpzTR6lNTEhMZTYofjoAppRd0GLRkqcFv2Z6tVyep3h1ulHSDGN3je5062zUrsF7O+NMtFIof2cBA+Gc9XlyAGhnQ9oXIf/xu4IqciJI74XCaIlES9Ez7AJIbMRtX0/nKGYKgkpL8dKOggzYjnUffDIXYDqe+4c4pbMF767RV5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732048620; c=relaxed/simple;
-	bh=E7H4D9XjCwSSdzBU3c/DR11h3IehoLN6uHcPSFcznUs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CqyuqHsjridBd53ciBPLpuDNnFN721CBVHTSr9C0BRF6nxAMn85Eozg3UhNo3VvXoy5fa2PwYXP2FBlmy5ZTCsKGBaPGWrJ7/x1DPL+Ada95n43NAx7zqszsouo0TinyXFRwusgYWPRYwO9wvMIvf1YwFizG4VBLWowRskHhMHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=P57nhXr3; arc=none smtp.client-ip=80.12.242.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from localhost.localdomain ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id DUxytSUZHgiuVDUxyt3ul2; Tue, 19 Nov 2024 21:36:55 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1732048615;
-	bh=ZhEWScZ9cqnOnTV9yj0gNXc3fVhx21n0ePBE8U68IHM=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=P57nhXr38pLvajtcxUwpyqtxVAZnB3p7P873TOjBwuUwX2eTr9aw0DTGzJulbMwms
-	 B6RqDI5XSi8xi+YjRLToHCFNSusSJ3RooJBgwq1RInVrUuNMHriQ66D5yuJIMTAN07
-	 MIlTtWSqUA48jR1Rak662jtiUSWbGDWp1jsAM7ZwjkZkH/jj78KeBv3l2+1RBHobx5
-	 z7O1tT6WOIZJ4q94OdrRbuomYk2ceHa55IOK0lKC3UfnZ9iKdBotJV5NRVB9HJjXf9
-	 ooLVsD4qqPhS+/LJnj8t1JJfVl7Uuawy0kpdIL6nwyB0qMC70RqhY/4aqljtCkiZPi
-	 ukkbxXnUm+mLg==
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 19 Nov 2024 21:36:55 +0100
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Alex Deucher <alexander.deucher@amd.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	Xinhui Pan <Xinhui.Pan@amd.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Le Ma <Le.Ma@amd.com>,
-	Andrey Grodzovsky <andrey.grodzovsky@amd.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org
-Subject: [PATCH] drm/amdgpu: Fix an error handling path in amdgpu_device_xgmi_reset_func()
-Date: Tue, 19 Nov 2024 21:36:43 +0100
-Message-ID: <59760ee9c40003b50eac7fd08f20a6c3e3acf5d0.1732048587.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1732048623; c=relaxed/simple;
+	bh=5ZtJ47OwVXBSoFV+aJ4Xr6HwqQoievLKVIyNMZI/poc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=W12hG/a0LywdSNUOWrbZqkBHJjiQF/XuHX+aZ6TQFBsi9hV08G4jux7+rkSA2aM432QReV6Fvld0pE+MzUYLw3PAUJ2PGe7M2garSR3/DTJKFFDDSQge9ZuLEC4p03d/bVNoyxLKra0vKY2CRRnbsW7rp0eHgo/Th7Dvomt+4OI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CiaSzuu/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id C62ADC4CED0;
+	Tue, 19 Nov 2024 20:37:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732048622;
+	bh=5ZtJ47OwVXBSoFV+aJ4Xr6HwqQoievLKVIyNMZI/poc=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=CiaSzuu/fm24QmtXA5MBu4UjvyaGi85oPhg90u/upQ/9nlpJyehwuSUQyS+2tJd43
+	 T7ZtyBrNOchDQsegE4rCFts0N8UmydAdPdOiac3JrFkVzkdfLPwUa6rvstNZ952jhu
+	 a6xkvfExipqrzcrl9c/hWaowQU6PKGfsBoIv2nl+kjgi9vlehDMhuoU7z+nuZA4z/X
+	 +XLlSiMf989mrQZqaXqvPFvetT0FCVk5OHqC6vtXVSwUGKEiuQKiaPunKaHhyePaCV
+	 HYB+HTPTU4tsRhcPF/6FTupC89dJWFTc+YVl7o4Njp0hWm+R8zxxxv3tSJWD6qV9aZ
+	 APrvmOZZ8U9Xw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA250D6C29A;
+	Tue, 19 Nov 2024 20:37:02 +0000 (UTC)
+From: Mikael Gonella-Bolduc via B4 Relay <devnull+mgonellabolduc.dimonoff.com@kernel.org>
+Subject: [PATCH 0/2] Add support for Avago/Broadcom APDS9160
+Date: Tue, 19 Nov 2024 15:36:55 -0500
+Message-Id: <20241119-apds9160-driver-v1-0-fa00675b4ea4@dimonoff.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOf2PGcC/x3MQQqAIBBA0avIrBMaK6muEi1Ex5qNxQgRiHdPW
+ r7F/wUyCVOGVRUQejjzlRqwU+BPlw7SHJrB9GZExEW7O+QFba+D8EOiZ+vjRLMNNEzQqlso8vs
+ ft73WD10JX6xhAAAA
+X-Change-ID: 20241119-apds9160-driver-86cf5e86de35
+To: Jonathan Cameron <jic23@kernel.org>, 
+ Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+ Nick Desaulniers <ndesaulniers@google.com>, 
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>
+Cc: Mikael Gonella-Bolduc <m.gonella.bolduc@gmail.com>, 
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
+ Mikael Gonella-Bolduc <mgonellabolduc@dimonoff.com>, 
+ Hugo Villeneuve <hvilleneuve@dimonoff.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1732048621; l=926;
+ i=mgonellabolduc@dimonoff.com; s=20241119; h=from:subject:message-id;
+ bh=5ZtJ47OwVXBSoFV+aJ4Xr6HwqQoievLKVIyNMZI/poc=;
+ b=+ma2BrFzBD30dJSA+R6419ctgdetUJPQudiqX55DnAVS9N7flyeN+0wL/u1JvSjUCbi8q+pqj
+ 6PrWSEvetk0C9U/p4dynYYXUO38MIYK7wBAMY8+O/QG3h/CX6/bITkh
+X-Developer-Key: i=mgonellabolduc@dimonoff.com; a=ed25519;
+ pk=p4tvPfGPfXRyChsgHc6s7HwB6YBl2JqqcP3BXtoDitE=
+X-Endpoint-Received: by B4 Relay for mgonellabolduc@dimonoff.com/20241119
+ with auth_id=279
+X-Original-From: Mikael Gonella-Bolduc <mgonellabolduc@dimonoff.com>
+Reply-To: mgonellabolduc@dimonoff.com
 
-In case of error after a amdgpu_gfx_rlc_enter_safe_mode() call, it is not
-balanced by a corresponding amdgpu_gfx_rlc_exit_safe_mode() call.
+APDS9160 is an ALS and proximity sensor.
+https://www.broadcom.com/products/optical-sensors/integrated-ambient-light-and-proximity-sensors/apds-9160-003
 
-Add the missing call.
-
-Fixes: c6a6e2db9945 ("drm/amdgpu: Redo XGMI reset synchronization.")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Mikael Gonella-Bolduc <mgonellabolduc@dimonoff.com>
 ---
-Compile tested only.
+Mikael Gonella-Bolduc (2):
+      dt-bindings: iio: light: Add APDS9160 binding
+      iio: light: Add APDS9160 ALS & Proximity sensor driver
 
-This patch is completely speculative, review with care!
-
-It is only based on naming where an _enter() function if not followed by an
-_exit() in some paths but is in other paths.
+ .../bindings/iio/light/avago,apds9160.yaml         |   50 +
+ MAINTAINERS                                        |    7 +
+ drivers/iio/light/Kconfig                          |   13 +
+ drivers/iio/light/Makefile                         |    1 +
+ drivers/iio/light/apds9160.c                       | 1420 ++++++++++++++++++++
+ 5 files changed, 1491 insertions(+)
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_device.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+base-commit: adc218676eef25575469234709c2d87185ca223a
+change-id: 20241119-apds9160-driver-86cf5e86de35
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-index 0171d240fcb0..facb35249da0 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-@@ -3933,11 +3933,11 @@ static void amdgpu_device_xgmi_reset_func(struct work_struct *__work)
- 
- 		task_barrier_enter(&hive->tb);
- 		adev->asic_reset_res = amdgpu_device_baco_enter(adev_to_drm(adev));
-+		task_barrier_exit(&hive->tb);
- 
- 		if (adev->asic_reset_res)
- 			goto fail;
- 
--		task_barrier_exit(&hive->tb);
- 		adev->asic_reset_res = amdgpu_device_baco_exit(adev_to_drm(adev));
- 
- 		if (adev->asic_reset_res)
+Best regards,
 -- 
-2.47.0
+Mikael Gonella-Bolduc <mgonellabolduc@dimonoff.com>
+
 
 
