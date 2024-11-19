@@ -1,73 +1,39 @@
-Return-Path: <linux-kernel+bounces-414467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9E639D2874
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 15:45:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41F0E9D287B
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 15:46:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32D4AB28F30
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 14:44:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04BDE280169
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 14:46:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7989C1CF2B3;
-	Tue, 19 Nov 2024 14:44:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SZaAM3Nq"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CE681B6D08
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 14:44:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09E731CEABA;
+	Tue, 19 Nov 2024 14:46:31 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AE5914658D
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 14:46:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732027461; cv=none; b=UD71OM8qZ/3cEAIqONwgAnEw26dHFRM5Z5Yui0LdXTGnhCxQcKJWcwNiNeOoPtrNvigXrJPgxWFiDWrnKEWR616n+BX42fj3KXDTaZK/u3i/xh9Sary7CSkgM6xfVRA09n7XuhzUmLd1+5oB1es4zvl2FQsU1r5uu5Jk7TDyxBY=
+	t=1732027590; cv=none; b=pzrvRI+qnHU4UmX1oBaPwe7sG65IQA0iB/P6AFBG3PH4W7W7bqZYfNQDDbf4eQi+sOuFaN4K27tnd86Y+vxLwqqpD0FhEEP4Z7HDPYyDbJmSW67EWmrLDOUMsgYye0Cqf7f655sppvDfdOB9/oeeTLyRABmpj0k19umt0zt07qM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732027461; c=relaxed/simple;
-	bh=Z4LGSf629Wag4Es5bBLjMPV4iOjbQzkT1BnLPQ/FZUo=;
+	s=arc-20240116; t=1732027590; c=relaxed/simple;
+	bh=xAE7/XY5/Mc2mV8Ci+AYKf4AWqFroPjXWvrO7AzaTp0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gAFJA7CKB9kZ8uGC569BOAd+qhumK/LdXB8uqnQhksGf+RRyXgmZ/Sq6VLOueHBsVPIuPOuODFfTUKxyVgLoxsr6URlHKRmSqNrhi3QrXB1lcSnLe/wRUSt/YOpeQzVFLUAi9+k6nofwYvCP4ODRBp30INAb8vPHpns33Og2eZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SZaAM3Nq; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2ff4ef967cfso2751381fa.0
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 06:44:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732027458; x=1732632258; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=gdKTcxf8+PBBnCZ+z/VAG2rAofPVpU5jnjnHijQXe1o=;
-        b=SZaAM3NqIL5LjmSB+CYviVPLTLrzCzwmlmdZra3KRYPnPq7163CGdHYzFSzJ8t8yOx
-         Zlp2HmKkEjFqyllxvX0hOmJMCcihvynUicvFoq8qnJO+xzl4c0nqaspPvEkFOcFwApq3
-         ndC/RDUmNsNa2rIigiG/SLT2sBjM4mDugD05Jy0K9+yPTn3z0qfyHm8m88PUg9QK9YD+
-         BTMaHplDcp80PVDdnsZteK0Ps0NjMpcyW9CNb3dAqJysiB0xshPxqhAzKO7msyPwVNOi
-         pMuS0J8PR4gxS867w8CpKt7JBprArfuHBbkozaZTQVo9JsjXeosW8rnHmrhK6Xu/E+e+
-         bOUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732027458; x=1732632258;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gdKTcxf8+PBBnCZ+z/VAG2rAofPVpU5jnjnHijQXe1o=;
-        b=wl+kHx8/kpOnZBET+xMb/aNWriWs//WASVVgaPAOnERvS74gblnTzhLgiLMmW+S2Jf
-         lYJsKyPa/CBTJQncMWMTJHxIkOcHsnBU6l5u0pOKGOZe0bESL238+rwMDFx8ovaRE9qw
-         Xdtshk1+9z6aybfSim5GklnDh8b3sZV6c4uLO6Up4OC1figmcRSyMilXpaK6mlbMvemh
-         5a0WRAc59Fdx1SvxMX3/E5wufnYc615TWG6iwygeH8eyqFvUHxD1/Q6Ab0gg7ufuvipn
-         JSm+2LdLjt2dgNMBRkQKROkoTTFFzsFzBeFhDEgy9uBfMZW8nK8nLKsgjigPIsxKYg8C
-         Qv8w==
-X-Forwarded-Encrypted: i=1; AJvYcCUfNJ5ehOYGOLLp4G/klLy+EHaiptLZeGKqoefm2hSuovqG7zQ5A/UgAL5jfIOyCIdsmy4cH9kde+HZoD4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4aYtAeHrmnkbpNoZl/8uGhhL04WswAZI8NfaY4aE8XIqK0gMO
-	hSlxnysQDqwVEt5cxLwncR1xMjJL5jxULCLBkqu61rDv2Rbj1vo18sB6LSReyOE=
-X-Google-Smtp-Source: AGHT+IEyxAWEb74MLDdYjB8Nmzr8VfQbZUazteRGzuIpJqXb5yi1TUpviHqV5uveKCDz7zCMTMouEg==
-X-Received: by 2002:a05:651c:158f:b0:2fb:51e0:953 with SMTP id 38308e7fff4ca-2ff6075c377mr18085541fa.12.1732027458328;
-        Tue, 19 Nov 2024 06:44:18 -0800 (PST)
-Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ff699671c7sm12182001fa.52.2024.11.19.06.44.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 Nov 2024 06:44:18 -0800 (PST)
-Message-ID: <b91972e9-5cae-4a8c-b672-5b8d96d442d5@linaro.org>
-Date: Tue, 19 Nov 2024 16:44:15 +0200
+	 In-Reply-To:Content-Type; b=rRmrl7SLRBW0/p2VDyANmAU3CL5beeTNjX+/hiLvZ+vgjlqdSvT/5A4d0VN84EJ6dsScn/K0vlM/RUo8DX8sa5hBbnGxoXC6SiQTrstP+qkm6FI2KW2wIrxsWqxWVdwUam4F9I8do1powCEOEwIhze/6JaHdiENmP3zNmAowER8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 14446339;
+	Tue, 19 Nov 2024 06:46:56 -0800 (PST)
+Received: from [10.1.31.25] (e127648.arm.com [10.1.31.25])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4E4FD3F5A1;
+	Tue, 19 Nov 2024 06:46:22 -0800 (PST)
+Message-ID: <62a15cd6-db6a-4010-94db-e78aad9fc7ac@arm.com>
+Date: Tue, 19 Nov 2024 14:46:20 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,102 +41,83 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/6] arm64: dts: qcom: x1e80100: Add CAMSS block
- definition
+Subject: Re: [RFC PATCH 4/5] sched/fair: Use EAS also when overutilized
+To: Vincent Guittot <vincent.guittot@linaro.org>,
+ Quentin Perret <qperret@google.com>
+Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
+ dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+ mgorman@suse.de, vschneid@redhat.com, lukasz.luba@arm.com,
+ rafael.j.wysocki@intel.com, linux-kernel@vger.kernel.org,
+ qyousef@layalina.io, hongyan.xia2@arm.com
+References: <20240830130309.2141697-1-vincent.guittot@linaro.org>
+ <20240830130309.2141697-5-vincent.guittot@linaro.org>
+ <Zu2gHOv7mqArWXLZ@google.com>
+ <CAKfTPtCvwPq+8pQcTZePiee9EXxKAQS=J57X2OavWFrQwkDt5A@mail.gmail.com>
+ <ZvUlB8s-zIkDQji7@google.com>
+ <CAKfTPtAzG7u0+e=8skMhnCETVxbDTOxT-zLaoqUXB-Zz5=4t+A@mail.gmail.com>
+ <Zvw2O4JGBpMXwOZA@google.com>
+ <CAKfTPtDOhNmL0Nn3g-agnL5HH5nhwXb3-sfzydEe4nvRKAq3HQ@mail.gmail.com>
 Content-Language: en-US
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Loic Poulain <loic.poulain@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Todor Tomov <todor.too@gmail.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Jagadeesh Kona <quic_jkona@quicinc.com>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20241119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v1-0-54075d75f654@linaro.org>
- <20241119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v1-6-54075d75f654@linaro.org>
-From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-In-Reply-To: <20241119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v1-6-54075d75f654@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Christian Loehle <christian.loehle@arm.com>
+In-Reply-To: <CAKfTPtDOhNmL0Nn3g-agnL5HH5nhwXb3-sfzydEe4nvRKAq3HQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Hi Bryan,
-
-On 11/19/24 15:10, Bryan O'Donoghue wrote:
-> Add dtsi to describe the xe180100 CAMSS block
+On 10/3/24 07:27, Vincent Guittot wrote:
+> On Tue, 1 Oct 2024 at 19:51, Quentin Perret <qperret@google.com> wrote:
+>>
+>> On Tuesday 01 Oct 2024 at 18:20:03 (+0200), Vincent Guittot wrote:
+>>> With commit 50181c0cff31 ("sched/pelt: Avoid underestimation of task
+>>> utilization"), the util_est remains set the value before having to
+>>> share the cpu with other tasks which means that the util_est remains
+>>> correct even if its util_avg decrease because of sharing the cpu with
+>>> other task. This has been done to cover the cases that you mention
+>>> above whereboth util_avg and util_est where decreasing when tasks
+>>> starts to  share  the CPU bandwidth with others
+>>
+>> I don't think I agree about the correctness of that util_est value at
+>> all. The above patch only makes it arbitrarily out of date in the truly
+>> overcommitted case. All the util-based heuristic we have in the
+>> scheduler are based around the assumption that the close future will
+>> look like the recent past, so using an arbitrarily old util-est is still
+>> incorrect. I can understand how this may work OK in RT-app or other
 > 
-> 4 x CSIPHY
-> 2 x CSID
-> 2 x CSID Lite
-> 2 x IFE
-> 2 x IFE Lite
+> This fixes a real use case on android device
 > 
-> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> ---
->   arch/arm64/boot/dts/qcom/x1e80100.dtsi | 180 +++++++++++++++++++++++++++++++++
->   1 file changed, 180 insertions(+)
+>> use-cases with perfectly periodic tasks for their entire lifetime and
+>> such, but this doesn't work at all in the general case.
+>>
+>>> And feec() will return -1 for that case because util_est remains high
+>>
+>> And again, checking that a task fits is broken to start with if we don't
+>> know how big the task is. When we have reasons to believe that the util
+>> values are no longer correct (and the absence of idle time is a very
+>> good reason for that) we just need to give up on them. The fact that we
+>> have to resort to using out-of-date data to sort of make that work is
+>> just another proof that this is not a good idea in the general case.
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> index c19754fdc7e0fa4f674ce19f813db77fe2615cf3..f23352493cb270c0fdc3c42add032286601db1e9 100644
-> --- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> @@ -4730,6 +4730,186 @@ cci1_i2c1: i2c-bus@1 {
->   			};
->   		};
->   
-> +		camss: camss@ac62000 {
-> +			compatible = "qcom,x1e80100-camss";
-> +
-> +			reg = <0 0x0acb7000 0 0x2000>,
-> +			      <0 0x0acb9000 0 0x2000>,
-> +			      <0 0x0acbb000 0 0x2000>,
-> +			      <0 0x0acb6000 0 0x1000>,
-> +			      <0 0x0ace4000 0 0x1000>,
-> +			      <0 0x0ace6000 0 0x1000>,
-> +			      <0 0x0ace8000 0 0x1000>,
-> +			      <0 0x0acec000 0 0x4000>,
-> +			      <0 0x0acc7000 0 0x2000>,
-> +			      <0 0x0accb000 0 0x2000>,
-> +			      <0 0x0ac62000 0 0x2a00>,
-> +			      <0 0x0ac71000 0 0x2a00>;
-> +
-> +			reg-names = "csid0",
-> +				    "csid1",
-> +				    "csid2",
-> +				    "csid_wrapper",
-> +				    "csiphy0",
-> +				    "csiphy1",
-> +				    "csiphy2",
-> +				    "csiphy4",
-> +				    "vfe_lite0",
-> +				    "vfe_lite1",
-> +				    "vfe0",
-> +				    "vfe1";
-> +
-> +			interrupts = <GIC_SPI 464 IRQ_TYPE_LEVEL_HIGH>,
+> That's where I disagree, this is not an out-of-date value, this is the
+> last correct one before sharing the cpu
+Just adding on this since we are discussing the correctness of util_est
+value on an OU CPU since
+commit 50181c0cff31 ("sched/pelt: Avoid underestimation of task utilization").
+I agree that this commit fixed the immediate false util_est drop after
+coscheduling two (or more) tasks, but that's a specific one.
+If one of two coscheduled tasks starts growing their util_est can't reflect
+that if their compute demand grows above CPU-capacity, that commit doesn't
+change the fact. There is no generally sensible way of estimating such a
+util_est anyway.
+Even worse if both coscheduled tasks grow which isn't uncommon, considering
+they might be related.
 
-I've forgot to mention that you need to correct the interrupt type
-to rising edge, that's been disucssed.
+So
+"this is the last correct one before sharing the cpu" is true,
+"This is not an out-of-date value" isn't true in the general case.
 
-> +				     <GIC_SPI 466 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 431 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 468 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 359 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 477 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 478 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 479 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 465 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 467 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 469 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 360 IRQ_TYPE_LEVEL_HIGH>;
-> +
+I agree that the OU definition can evolve, basing that on idle time makes
+sense, but given the common period of 16ms (frame rate) we might delay
+setting OU by quite a lot for the cases it 'actually is true'.
 
---
-Best wishes,
-Vladimir
+Regards,
+Christian
 
