@@ -1,143 +1,165 @@
-Return-Path: <linux-kernel+bounces-414902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CF0D9D2F0B
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 20:48:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 00B2A9D2F17
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 20:50:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17E0FB2B7D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 19:47:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA10FB25B7B
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 19:48:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88E841CEACE;
-	Tue, 19 Nov 2024 19:46:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2D901D14FA;
+	Tue, 19 Nov 2024 19:48:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Em2Sn64J"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=finest.io header.i=parker@finest.io header.b="zPOMX9BA"
+Received: from mout.perfora.net (mout.perfora.net [74.208.4.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58B321D1305
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 19:46:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86F98198E63;
+	Tue, 19 Nov 2024 19:48:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.208.4.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732045586; cv=none; b=jG19PX7KTA5ZuTuVoxpuYhsj3yc6Mr+xYihWiPm9fGRIn0VvfPdoeFnVl717AoN7coX9FC2Xt5iOUgGUYKRESLd1IxQ9r1y1mkKMFYN6lGM4a2mN5AJbFEBkoxwt+UueC4HH23ogeCUBjU7DiqpE6p2f1xYRKfnNOhiiQ2bqvMg=
+	t=1732045703; cv=none; b=WlXvJQf8xTC9MwztLNraEbocRQK/ytfeKO1FyLf82YHzbuhAKqP8f1L7QQ8CJUHc2IP7m63W39xow45bAAwYQOAetQFILx15uvzwifitL7immoJwidsoMTifD26cXlPM31NhpoP73dLIzF9M8Hjsg/p8p4OiaAFNHoBaMmGEzrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732045586; c=relaxed/simple;
-	bh=1thykLAzLP0g/paubbG6Z2qKaaHJWSChf1kVxcmULbg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m/cSKNxw8sqVRl/njWIsGKrSe6bYgkJTPyBJMe9SGyGHw8EjqCQU8N5QZE9jV8KWt114R6i014aLMoqchhQlcQa8CeijBP+Olv0BARpQZ0j8YiTIIYtGjwXnEvysyGevfVrQqpQ6C9QT0Upp4rBgU6snvixRt2oEAyvxIM/CyTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Em2Sn64J; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-212581a0b33so10419615ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 11:46:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732045584; x=1732650384; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=y+F7dYpCTXns14jzrM0GSqYlBRnuGW2O5+9hYw6msCU=;
-        b=Em2Sn64J83Fe+qo58q3aABqdliz5HKYIrIsPaCgyV3Q2KFraalQGShZ+e8KZ5gpDpd
-         qm5zG5Zy/89GgO/L6J+VGCbE5GpxSZ8bcRAE+WLRQ5AV6XmNMyPQUaF3wjiebfoqHr0z
-         HsTIKuPWV0pZkZqUbyIfMVNfPCmBCg4nJRv9cUhQ4cdqPhOIAT6wMge8N4OBxOQHwH6q
-         5zdOdXP6hRsZku4y/2OwKY/Z6/1Yqh9jDwT9cCQrT7NF2UmuSrX/kcOlsOlHAWhYRP2I
-         /rlvHjqUGE2BNxsAAsDnEdUwkxIYZVdERB8kxOfYnAe2RY+GeoAYb/WPKfiNoK/Ghevr
-         1TSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732045584; x=1732650384;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=y+F7dYpCTXns14jzrM0GSqYlBRnuGW2O5+9hYw6msCU=;
-        b=eIvX46mVhFtLHFY4bNQuJKKCO+SktFTvqiM3yhOuiSA0ktueriFI2evCswluaj3HbN
-         kFGvlU3adS8b90VwLMvUe9dgfgwnENLSmo2wwhNhiIuijXop/xIMtBt+RxYIDAc16vF5
-         nXKkUcJS6OenO14Rw57qt38WsgZUWeuqW2V0SEv0KZIF3elDg+imGdk+njFWDtV31DvG
-         HZOCayawC6sdH0DAdUhuWAO9bcf+dc75Ka9HmLLzmR0WYDpA//10pDoBBV+ASlVx42+t
-         C9Jqu0Ts33NYL1IZ73eOAAgyQXZAjzdzaaQ8z1Iiq6D17mRMTQt31fkKbJ1rG/aTnwMg
-         4mLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWmH7pXAWawnYD2niwt+ujspxLaDqpCwaDnFVxoa+xU0rcsuHEaE6+J5jnCh68aHPWcxgrplte+2gXSu1Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFDQmrohtg1RSVA4A1HQQYjFkye9mmxNIAg7y5CmqTQ+pAyEfk
-	4h3/2fIdVpPv21YmxlHXsr7jhiuyhl4bsFUqyp5EdtGjeaAJNgMK
-X-Google-Smtp-Source: AGHT+IHi0AKilDOA4tpmO+IhzPoqmOdlLdyGpRxqj+kqXmspGv/3fYdswwBMd5HzdzBX6Wn32jn22A==
-X-Received: by 2002:a17:902:f682:b0:20b:5351:f690 with SMTP id d9443c01a7336-2126a3a4926mr845595ad.16.1732045584482;
-        Tue, 19 Nov 2024 11:46:24 -0800 (PST)
-Received: from desktop ([38.141.211.103])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211f6b25339sm60211405ad.240.2024.11.19.11.46.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Nov 2024 11:46:24 -0800 (PST)
-Date: Tue, 19 Nov 2024 11:46:20 -0800
-From: "Ragavendra B.N." <ragavendra.bn@gmail.com>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-	dave.hansen@linux.intel.com, hpa@zytor.com, thomas.lendacky@amd.com,
-	ardb@kernel.org, tzimmermann@suse.de, bhelgaas@google.com,
-	x86@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Updating es_em_ctxt fi to zero
-Message-ID: <ZzzrDB_1CyNfL0zo@desktop>
-References: <20241119180517.196079-2-ragavendra.bn@gmail.com>
- <20241119192602.GA2272685@bhelgaas>
+	s=arc-20240116; t=1732045703; c=relaxed/simple;
+	bh=9rOtIf9+5qH5JGQj1SyccUusRCObJFcvjrbKXLl02PU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rImawOe3mtkfQsSaXSMERl258ZhgoGd/1Dxdo3+bkdR7tCfvtRiWMf9t9Be70d1L9XBTis0n2qk6yohd9H4dcilUxw3JpapMlcioMBLcAwhpmA1JIftLmoB+7qfoYFjl4p8tsm3vb8Xazx0HcailKjUfJLRY9qRmym5A6yoT6mA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=finest.io; spf=pass smtp.mailfrom=finest.io; dkim=pass (2048-bit key) header.d=finest.io header.i=parker@finest.io header.b=zPOMX9BA; arc=none smtp.client-ip=74.208.4.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=finest.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=finest.io
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=finest.io;
+	s=s1-ionos; t=1732045652; x=1732650452; i=parker@finest.io;
+	bh=psRyF88Lgs3hRSIlO7wrFe0tOotT7zyqin9CJPdcNE4=;
+	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:In-Reply-To:
+	 References:MIME-Version:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=zPOMX9BAZd8AS/wZR7mhpcqxF14qxHW90ALGb8ayWPTS+e4qc81jXbmECGzo79zg
+	 +JfzIH6KsljVW5VeXYaskddQ1xOn1myr3o7zMXP6lon/l62vIe5O7COHLNixq9oVr
+	 e+9ebK/nZPDJOPgBQBFR3T2sjBB45FZhgLHRo2EZm7iI0+5euJc7bsSVJBFg6cubv
+	 nL59nc6KOMs2hbZ//kWtBDkJF3aoBslkGOFCX+aIGMry/P2ro6xVtg1VUPPclnRnT
+	 yuRrfWgRjgq7LpigRZVidECyM1Bs/xQ7BXWGDGQV/UlEv6CE5UnPywNvthTPw23Wh
+	 E5qdSmRouICUNH1J6A==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from SWDEV2.connecttech.local ([98.159.241.229]) by
+ mrelay.perfora.net (mreueus003 [74.208.5.2]) with ESMTPSA (Nemesis) id
+ 0MUpdy-1tEUmm1ruW-00Uouj; Tue, 19 Nov 2024 20:47:32 +0100
+Date: Tue, 19 Nov 2024 14:47:29 -0500
+From: Parker Newman <parker@finest.io>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Paolo Abeni <pabeni@redhat.com>, Alexandre Torgue
+ <alexandre.torgue@foss.st.com>, Jose Abreu <joabreu@synopsys.com>, Andrew
+ Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Maxime
+ Coquelin <mcoquelin.stm32@gmail.com>, Thierry Reding
+ <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>,
+ netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Parker Newman <pnewman@connecttech.com>
+Subject: Re: [PATCH v1 1/1] net: stmmac: dwmac-tegra: Read iommu stream id
+ from device tree
+Message-ID: <20241119144729.72e048a5.parker@finest.io>
+In-Reply-To: <f00bccd3-62d5-46a9-b448-051894267c7a@lunn.ch>
+References: <cover.1731685185.git.pnewman@connecttech.com>
+	<f2a14edb5761d372ec939ccbea4fb8dfd1fdab91.1731685185.git.pnewman@connecttech.com>
+	<ed2ec1c2-65c7-4768-99f1-987e5fa39a54@redhat.com>
+	<20241115135940.5f898781.parker@finest.io>
+	<bb52bdc1-df2e-493d-a58f-df3143715150@lunn.ch>
+	<20241118084400.35f4697a.parker@finest.io>
+	<984a8471-7e49-4549-9d8a-48e1a29950f6@lunn.ch>
+	<20241119131336.371af397.parker@finest.io>
+	<f00bccd3-62d5-46a9-b448-051894267c7a@lunn.ch>
+Organization: Connect Tech Inc.
+X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241119192602.GA2272685@bhelgaas>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:Nxu9rCdnIdW3P3qv7y+GUlOIPEyiicHtMkFAMxXbfvmXszGgWhq
+ gytl6783/qhiYLAevL+5SRNu1dIjK8X5lDnRB5bmAt5lUmQ8G5PUYRElqKIxTnncpv8lskl
+ FY1iHU9NHFl+nmPHbXA+tUrcMj1jNYH7GHtd+fQpalFRF1WKk5isUyPVv/GkblnDpTpe0j+
+ ySk7+CTMlKlcg9c9UylKA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:IeTAM+Wzek0=;+TNVcZ5NOiYCiXgQHseq8IgxQmL
+ KvE5z0B4ZyftUxgXFHiU/EYakeRN04yXl9IUYPk2UeEH1AV7tFa2piWIFRWtH12w9eB/mcu2G
+ JZg7GKMM8YGFiqc5yfiVGzeM4CFFyeAAqxDYWbn9WoQjNe1C8eMaiw0XajULmJZDe4uX7Njnm
+ /KN8VbIJtx1LhD9pkcyJyqHgBmlltSw6WxL6LmQcmhHaBXXSqjqZLqYpUPbUzkoonOpS+F12m
+ Ryh+0fqnG6vae3EC0SmcfFhpBW++7bYP65crB3MfGHGP77favBbt0+Bphslji26RTjm9y3JoU
+ RiY8fBnxXDa6RwKy1/5sXozMg29yXACBK3NrKoRv4Lni5lrORgllTzUmz52e/1eXclKYE/RsD
+ bKZXwmFSJZpKwfqMr+NFhEihBI4vRuZRKMhwWcLnX1SQ1v5+4x1dtgWxPKI9M1uMF06MyNqq2
+ W6hQYuepFsvgfk1vFx5R28US59P2ZdJND38etpcOj5E1OznyMK/WcnTEDtCvzpeDVkVgZfj4y
+ O1EBrfifSgZ+502mc21SyPdbljqlUjrishtaFvP83VTm/8JpPBCrPdZM7CK2OP6p3D6VVWyxG
+ uMjCuvQMgIsu8rPoIFjEOPEew7/8dbmHEglfBOtxZDHhnFQ/Jv+r6MsGMVu1Krv50jK1PAVay
+ K00UWgJtI4/O7O7LJeygh5dfEtGaFL9a2kilgvQs+ejuPADFX76WChAGmDgVeLtvOy6TbNpQy
+ lXpgxC2mcOZd0/TBjHvRHDu5pWdS5xUQmhDWR3FoKUyXQXF7rn8rpg/6jVFwTuwB8cC3yi4tS
+ ziVHN/ZisJoo2SVXdEcKOj30zDgmqFlSwL6QFOIA8chB9ZCJgMPH3wOyTvJ6y9deJ2
 
-On Tue, Nov 19, 2024 at 01:26:02PM -0600, Bjorn Helgaas wrote:
-> On Tue, Nov 19, 2024 at 10:05:18AM -0800, Ragavendra wrote:
-> > Updating es_em_ctxt to zero for the ctxt->fi variable in
-> > verify_exception_info when ES_EXCEPTION is returned.
-> 
-> This commit log basically says in English what the code does in C.  If
-> you can include the *reason* why this is important, it will be more
-> helpful.  For example, maybe somebody consumes other parts of ctxt.fi
-> (a struct es_fault_info), and without this patch, they use junk that
-> causes an oops or some other bad thing.
-> 
-> If the 34ff65901735 Fixes: tag is correct, I suppose the problem
-> happens because ctxt is allocated on the stack and contains junk, and
-> then svsm_perform_ghcb_protocol() passes it on to
-> vc_forward_exception(), which does use fields of ctxt->fi other than
-> .vector, which will be junk without this patch.
-> 
-> Hints and samples for commit logs:
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/maintainer-tip.rst?id=v6.11#n134
-> 
-> Based on "git log --oneline arch/x86/coco/sev", I would expect the
-> subject line to have an "x86/sev: " prefix, e.g.,
-> 
->   x86/sev: Clear es_em_ctxt.fi to ...
-> 
-> > Fixes: 34ff65901735 x86/sev: Use kernel provided SVSM Calling Areas
-> > Signed-off-by: Ragavendra Nagraj <ragavendra.bn@gmail.com>
-> > ---
-> >  arch/x86/coco/sev/shared.c | 2 ++
-> >  1 file changed, 2 insertions(+)
-> > 
-> > diff --git a/arch/x86/coco/sev/shared.c b/arch/x86/coco/sev/shared.c
-> > index 71de53194089..b8540d85e6f0 100644
-> > --- a/arch/x86/coco/sev/shared.c
-> > +++ b/arch/x86/coco/sev/shared.c
-> > @@ -239,6 +239,8 @@ static enum es_result verify_exception_info(struct ghcb *ghcb, struct es_em_ctxt
-> >  		if ((info & SVM_EVTINJ_VALID) &&
-> >  		    ((v == X86_TRAP_GP) || (v == X86_TRAP_UD)) &&
-> >  		    ((info & SVM_EVTINJ_TYPE_MASK) == SVM_EVTINJ_TYPE_EXEPT)) {
-> > +			memset(&ctxt->fi, 0, sizeof(ctxt->fi));
-> > +
-> >  			ctxt->fi.vector = v;
-> >  
-> >  			if (info & SVM_EVTINJ_VALID_ERR)
-> > -- 
-> > 2.46.1
-> > 
+On Tue, 19 Nov 2024 20:18:00 +0100
+Andrew Lunn <andrew@lunn.ch> wrote:
 
-Yes Bjorn, I completely agree with the need to update the reason, I will update the commit log and send the newer version accordingly.
+> > I think there is some confusion here. I will try to summarize:
+> > - Ihe iommu is supported by the Tegra SOC.
+> > - The way the mgbe driver is written the iommu DT property is REQUIRED=
+.
+>
+> If it is required, please also include a patch to
+> nvidia,tegra234-mgbe.yaml and make iommus required.
+>
 
+I will add this when I submit a v2 of the patch.
 
---
-Thanks & regards,
-Ragavendra N
+> > - "iommus" is a SOC DT property and is defined in tegra234.dtsi.
+> > - The mgbe device tree nodes in tegra234.dtsi DO have the iommus prope=
+rty.
+> > - There are no device tree changes required to to make this patch work=
+.
+> > - This patch works fine with existing device trees.
+> >
+> > I will add the fallback however in case there is changes made to the i=
+ommu
+> > subsystem in the future.
+>
+> I would suggest you make iommus a required property and run the tests
+> over the existing .dts files.
+>
+> I looked at the history of tegra234.dtsi. The ethernet nodes were
+> added in:
+>
+> 610cdf3186bc604961bf04851e300deefd318038
+> Author: Thierry Reding <treding@nvidia.com>
+> Date:   Thu Jul 7 09:48:15 2022 +0200
+>
+>     arm64: tegra: Add MGBE nodes on Tegra234
+>
+> and the iommus property is present. So the requires is safe.
+>
+> Please expand the commit message. It is clear from all the questions
+> and backwards and forwards, it does not provide enough details.
+>
+
+I will add more details when I submit V2.
+
+> I just have one open issue. The code has been like this for over 2
+> years. Why has it only now started crashing?
+>
+
+It is rare for Nvidia Jetson users to use the mainline kernel. Nvidia
+provides a custom kernel package with many out of tree drivers including a
+driver for the mgbe controllers.
+
+Also, while the Orin AGX SOC (tegra234) has 4 instances of the mgbe contro=
+ller,
+the Nvidia Orin AGX devkit only uses mgbe0. Connect Tech has carrier board=
+s
+that use 2 or more of the mgbe controllers which is why we found the bug.
+
+Thanks,
+Parker
 
