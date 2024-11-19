@@ -1,130 +1,175 @@
-Return-Path: <linux-kernel+bounces-414502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DB759D2918
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 16:06:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3EE09D28C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 16:01:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 127B3283C25
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 15:06:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62FCB1F21C1E
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 15:01:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5222D1D4166;
-	Tue, 19 Nov 2024 15:01:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VKGrz6wi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B4A11CEAAD;
+	Tue, 19 Nov 2024 15:01:03 +0000 (UTC)
+Received: from leonov.paulk.fr (leonov.paulk.fr [185.233.101.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A84A11D0E24;
-	Tue, 19 Nov 2024 15:01:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C21DC1CCB25
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 15:01:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.233.101.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732028465; cv=none; b=mewPxSQGKgCZwDClJXbbgmnZIpXBxKc+WlOn1/nPzai9KyUvQIe+If0zuVFlsd6VyeKYKZvkarrLPhDJrbjgDm4l+k6FTJ4l5M1dRN7yO5i6NITzkFHMNl0ZeV2IgdTgMRdoDkElwfEGR/HeBnV41Acf96t7cAqbXp3Ajj9YpAA=
+	t=1732028462; cv=none; b=V+GInyYoUG045jRaKvqN2Dmul6sCea4byP1Q2wB3xSbDcKGJVY13PUAybQblvnAOb4WkDYGtMnU7mYOLiFar5IzP/lBIstCKklMU1zohdhqzQXGvIsGqyyTUa8Whd8g9lPGiwzxhGMdT5vAERSRQPcYMxe0B0gOEAjSJZ5zkzzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732028465; c=relaxed/simple;
-	bh=OHxB9rBJfD9alhtYQwEZOwU5JQFBquZocPkNzhxXMqo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=qe6SbzYGiEmtkMj5ZzRUgQGDiXiJvN7eAnqOLlC7XTnbXG11Nb57cJ6GK4qzCxQxCUJgTiYm78TlgYoYxJyDHwF2vqv7sES0cbVYPC7q6Wjc8dYRNx7F/IBOhteW+Vip5somHFgLFqSgZbWaVOo9sXoAASXbxqK8FDDKTWEyxzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VKGrz6wi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 712E1C4AF09;
-	Tue, 19 Nov 2024 15:01:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732028465;
-	bh=OHxB9rBJfD9alhtYQwEZOwU5JQFBquZocPkNzhxXMqo=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=VKGrz6wipn/LFmH8fMXXJyLXayMB+Im0igBI4lrMWMm7pR1cBZbT80UjZuAv/xa2u
-	 ile6rQTSgvXm4ZZhfiYpcmcUmPtvSZUabEMkz5HmmVmaknYqcs8ICsX9CoDOHZmakj
-	 VFvcmsxIRIRqfheLUNWRDWfFMWFoEDociWQzyWmirCQI16asY8ZkMLkj3GUUaAz9hy
-	 PePdUFHT8kuvOxazr6Cs7SP9Cwk/J+5lSwzJUFQte76Zn7miBAfPXUlifQJJCeS+Pq
-	 VsiV9ufJJmcK9BxrEpSMqBQq1JGXeACKMo5GHYRmVR4ncvF38kZWP942lT5gusUurO
-	 ABtPQ6wQ+tuiw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64FDAD44167;
-	Tue, 19 Nov 2024 15:01:05 +0000 (UTC)
-From: Jan Petrous via B4 Relay <devnull+jan.petrous.oss.nxp.com@kernel.org>
-Date: Tue, 19 Nov 2024 16:00:22 +0100
-Subject: [PATCH v5 16/16] net: stmmac: platform: Fix PTP clock rate reading
+	s=arc-20240116; t=1732028462; c=relaxed/simple;
+	bh=Ro4AT1dy3+fn9DWFhz4fu0FRRDOujrJK2DSxFWLtzgE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FMGNc8O6A9yyBCdH+DJTedvKUyAge8VwHIgJRCgV7Q4jv8pMWmC/1wci0T6eI2h5Qh6l28NxzHrGHUoeYl92STVs7j9xDz3PmI6tJWRu+kcuLUKOvNweLzKE5dGobJIfKFlT3fpTFoXjjckhcQydxnKi0Jk8wmjo8ThJoySwEOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io; spf=pass smtp.mailfrom=sys-base.io; arc=none smtp.client-ip=185.233.101.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sys-base.io
+Received: from laika.paulk.fr (12.234.24.109.rev.sfr.net [109.24.234.12])
+	by leonov.paulk.fr (Postfix) with ESMTPS id 6FF871F00051
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 15:00:54 +0000 (UTC)
+Received: by laika.paulk.fr (Postfix, from userid 65534)
+	id E3172A4702C; Tue, 19 Nov 2024 15:00:52 +0000 (UTC)
+X-Spam-Level: 
+Received: from collins (unknown [192.168.1.1])
+	by laika.paulk.fr (Postfix) with ESMTPSA id 5D5C7A46FDB;
+	Tue, 19 Nov 2024 15:00:51 +0000 (UTC)
+Date: Tue, 19 Nov 2024 16:00:48 +0100
+From: Paul Kocialkowski <paulk@sys-base.io>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Paul Kocialkowski <contact@paulk.fr>
+Subject: Re: [PATCH] pinctrl: sunxi: Use minimal debouncing period as default
+Message-ID: <ZzyoIABRArkGoZBn@collins>
+References: <20241119140805.3345412-1-paulk@sys-base.io>
+ <20241119-prudent-jasmine-lizard-195cef@houat>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241119-upstream_s32cc_gmac-v5-16-7dcc90fcffef@oss.nxp.com>
-References: <20241119-upstream_s32cc_gmac-v5-0-7dcc90fcffef@oss.nxp.com>
-In-Reply-To: <20241119-upstream_s32cc_gmac-v5-0-7dcc90fcffef@oss.nxp.com>
-To: Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- Jose Abreu <joabreu@synopsys.com>, "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Vinod Koul <vkoul@kernel.org>, 
- Richard Cochran <richardcochran@gmail.com>, Andrew Lunn <andrew@lunn.ch>, 
- Heiner Kallweit <hkallweit1@gmail.com>, 
- Russell King <linux@armlinux.org.uk>, Shawn Guo <shawnguo@kernel.org>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, Emil Renner Berthing <kernel@esmil.dk>, 
- Minda Chen <minda.chen@starfivetech.com>, 
- Nicolas Ferre <nicolas.ferre@microchip.com>, 
- Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
- Iyappan Subramanian <iyappan@os.amperecomputing.com>, 
- Keyur Chudgar <keyur@os.amperecomputing.com>, 
- Quan Nguyen <quan@os.amperecomputing.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Giuseppe Cavallaro <peppe.cavallaro@st.com>
-Cc: linux-stm32@st-md-mailman.stormreply.com, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- netdev@vger.kernel.org, linux-arm-msm@vger.kernel.org, imx@lists.linux.dev, 
- devicetree@vger.kernel.org, NXP S32 Linux Team <s32@nxp.com>, 
- "Jan Petrous (OSS)" <jan.petrous@oss.nxp.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1732028461; l=1264;
- i=jan.petrous@oss.nxp.com; s=20240922; h=from:subject:message-id;
- bh=SPtatx8x0ZkbtjnD8HA6OeWFeo+DZZ7ciHEBKeYJXkM=;
- b=2UaIZd/gCwdI5kIGbU8BJj5qpiNrj2FL1GF/utf3Q9uRD7+lnoiRcKDO9pbhMhMM611X5TL1E
- toRgEv2X5geDhoQ+eHY+2G/4K1Vn3mTfArX/V9Hwli6Rqyvby60GyYU
-X-Developer-Key: i=jan.petrous@oss.nxp.com; a=ed25519;
- pk=Ke3wwK7rb2Me9UQRf6vR8AsfJZfhTyoDaxkUCqmSWYY=
-X-Endpoint-Received: by B4 Relay for jan.petrous@oss.nxp.com/20240922 with
- auth_id=217
-X-Original-From: "Jan Petrous (OSS)" <jan.petrous@oss.nxp.com>
-Reply-To: jan.petrous@oss.nxp.com
-
-From: "Jan Petrous (OSS)" <jan.petrous@oss.nxp.com>
-
-The stmmac driver supports many vendors SoCs using Synopsys-licensed
-Ethernet controller IP. Most of these vendors reuse the stmmac_platform
-codebase, which has a potential PTP clock initialization issue.
-The PTP clock rate reading might require ungating what is not provided.
-
-Fix the PTP clock initialization by enabling it immediately.
-
-Signed-off-by: Jan Petrous (OSS) <jan.petrous@oss.nxp.com>
----
- drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-index b1e4df1a86a0..db3e8ef4fc3a 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-@@ -632,7 +632,7 @@ stmmac_probe_config_dt(struct platform_device *pdev, u8 *mac)
- 	clk_prepare_enable(plat->pclk);
- 
- 	/* Fall-back to main clock in case of no PTP ref is passed */
--	plat->clk_ptp_ref = devm_clk_get(&pdev->dev, "ptp_ref");
-+	plat->clk_ptp_ref = devm_clk_get_enabled(&pdev->dev, "ptp_ref");
- 	if (IS_ERR(plat->clk_ptp_ref)) {
- 		plat->clk_ptp_rate = clk_get_rate(plat->stmmac_clk);
- 		plat->clk_ptp_ref = NULL;
-
--- 
-2.47.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="nRr05HQbsjo+d+pA"
+Content-Disposition: inline
+In-Reply-To: <20241119-prudent-jasmine-lizard-195cef@houat>
 
 
+--nRr05HQbsjo+d+pA
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Maxime,
+
+Le Tue 19 Nov 24, 15:43, Maxime Ripard a =C3=A9crit :
+> On Tue, Nov 19, 2024 at 03:08:05PM +0100, Paul Kocialkowski wrote:
+> > From: Paul Kocialkowski <contact@paulk.fr>
+> >=20
+> > The sunxi external interrupts (available from GPIO pins) come with a
+> > built-in debouncing mechanism that cannot be disabled. It can be
+> > configured to use either the low-frequency oscillator (32 KHz) or the
+> > high-frequency oscillator (24 MHz), with a pre-scaler.
+> >=20
+> > The pinctrl code supports an input-debounce device-tree property to set
+> > a specific debouncing period and choose which clock source is most
+> > relevant. However the property is specified in microseconds, which is
+> > longer than the minimal period achievable from the high-frequency
+> > oscillator without a pre-scaler.
+>=20
+> That can be fixed by introducing a new property with a ns resolution.
+
+Sure but my point here is rather about what should be default behavior.
+
+The issue I had will remain unsolved by default even with a new property,
+since people will still need to patch their device-tree to apply it.
+
+> > When the property is missing, the reset configuration is kept, which
+> > selects the low-frequency oscillator without pre-scaling. This severely
+> > limits the possible interrupt periods that can be detected.
+> >=20
+> > Instead of keeping this default, use the minimal debouncing period from
+> > the high-frequency oscillator without a pre-scaler to allow the largest
+> > possible range of interrupt periods.
+> >=20
+> > This issue was encountered with a peripheral that generates active-low
+> > interrupts for 1 us. No interrupt was detected with the default setup,
+> > while it is now correctly detected with this change.
+>=20
+> I don't think it's wise. If the debouncing is kept as is, the worst case
+> scenario is the one you had: a device doesn't work, you change it,
+> everything works.
+
+I think this worst-case scenario is very bad and not what people will
+expect. In addition it is difficult to debug the issue without specific
+knowledge about the SoC.
+
+My use-case here was hooking up a sparkfun sensor board by the way,
+not some very advanced corner-case.
+
+> If we set it up as fast as it can however, then our risk becomes
+> thousands of spurious interrupts, which is much more detrimental to the
+> system.
+
+Keep in mind that this only concerns external GPIO-based interrupts,
+which have to be explicitely hooked to a device. If a device or circuit
+does generate such spurious interrupts, I think it makes sense that it
+would be reflected by default.
+
+Also the notion of spurious interrupt is pretty vague. Having lots of
+interrupts happening may be the desired behavior in many cases.
+
+In any case I don't think it makes sense for the platform code to impose
+what a reasonable period for interrupts is (especially with such a large
+period as default). Some drivers also have mechanisms to detect spurious
+interrupts based on their specific use case.
+
+> And that's without accounting the fact that devices might have relied on
+> that default for years
+
+They definitely shouldn't have. This feels much closer to a bug, and relying
+on a bug not being fixed is not a reasonable expectation.
+
+Cheers,
+
+Paul
+
+--=20
+Paul Kocialkowski,
+
+Independent contractor - sys-base - https://www.sys-base.io/
+Free software developer - https://www.paulk.fr/
+
+Specialist in multimedia, graphics and embedded hardware support with Linux.
+
+--nRr05HQbsjo+d+pA
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEAbcMXZQMtj1fphLChP3B6o/ulQwFAmc8qCAACgkQhP3B6o/u
+lQyNqA//fhpdAVQqvylMo3Gk1qRhGxC1NmnJ/zDVaQLE/LckTaAdUDZ/pjbZrZW2
+QKEsyYqTPGMtFLPcVOSEcgQqSFN66NF8VlgD87+nve80O9cLhK+aaTqs82+Llnvu
+4TITELiMmX42AIBSyG4mRJwl65hC00gKLO8FjL27yFUpeOTcH9xwBlBugQCYuFkO
+Z9kx+j8VOvEyHpPbAHKm8nxxFXO+Xvx08kTgId2+geSFA+xFRq7P+m3Ae+ua3MoU
+2CmrZpoE0A0rGZgWhP0N/l20EiiBn2OSZYPpDZhtItHhkRbN5vZDsp6VXjtTUAVO
+QRoG1yj+Kpto2TDc1qq6ZhoDug4nQNhjo9JTHUoGsLckxmfAoqbWNYxEYEAEPcd8
+6K5HliuDSPlWdRh189E8QwP/GYXBB0MBm0fJIXS52K1KH5m2nCMSu2i1BFBld6U0
+yM2kPU2CTrty+GFdA/QTwbA4IdOxLJMpO7qT0SNlsBDEno8Ce1vOxUbtduMLtz8/
+wnKVgdOF2VCnhh8BALSWB8tNcLgsktgmzLHqc4Q86QKaSQkxd2oMX0HlQyDBTnox
+cdvAPrO4Mj62BNvlxrmFFzwl9wtnuy33qhylxrDo/ZVnfQBUCQGjp+L0+oXYRM5C
+rM7L73RZeCVAS10PxqpsBx6pSlwng2TGJ8m/OEmMWdTYFeKF0fc=
+=s7ew
+-----END PGP SIGNATURE-----
+
+--nRr05HQbsjo+d+pA--
 
