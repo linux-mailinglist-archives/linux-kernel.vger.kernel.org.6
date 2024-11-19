@@ -1,173 +1,140 @@
-Return-Path: <linux-kernel+bounces-414324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65B989D264B
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 14:01:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FB039D2664
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 14:07:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3A211F214EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 13:01:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6458A2836AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 13:06:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFF901C2454;
-	Tue, 19 Nov 2024 13:01:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 904CC1CCB5E;
+	Tue, 19 Nov 2024 13:06:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="tBFXghsO"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
+	dkim=pass (1024-bit key) header.d=turris.com header.i=@turris.com header.b="RExPBm/R"
+Received: from mail.nic.cz (mail.nic.cz [217.31.204.67])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9411F26AD3;
-	Tue, 19 Nov 2024 13:01:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE3771CCB2C;
+	Tue, 19 Nov 2024 13:06:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.31.204.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732021308; cv=none; b=QNGNTxa1LFuRhTbMa3uIlq+2Svxh9pocYpCs1ilHXhNFgfPiCnGOk5TyUmLq48NjLlXGkJG6yMu2tbrwGHj6gglU83QsD73R4wh82w7ZEd73ZZhqid0BDYZB/NmuEWk4zsG47MQ60JT9K3df1Kenp0thy6Dta0+Rj7JEDRaisMM=
+	t=1732021597; cv=none; b=rWt6sgA8LzxO6ULfdODCjHhTXDz79TjUn2utd0/4iHiuDrsntyEprKjTXzJsryaGzq7RjGVhCdBBZHPEk6kqQ4qo2FRkwlh+mQfHczvEuSK0R8i9w6VFJhGwW8TmLnAy15nxGfXeYiz5/M9AIpzyMhNNWxZl4VE5JiDECXXYeYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732021308; c=relaxed/simple;
-	bh=vs7geAAh3IgaGjhfidahLn31KbuXOzFaEbksLVAseC8=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=NSOD7YyeNGG6YzLChSw77dHGWpdgJnIZZBRUWDU6F8yUuHacS02kSX6x042FDPB6rSXnSlQIDPCLi7nrQofvsPOIEsVevasTM7AhcUiVmZdt0J+n1uCea0GiQwaDxrOBkL1m2V3F9V3aSPT7T+/JHNlamswNYjL4133pY17fSX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=tBFXghsO; arc=none smtp.client-ip=212.227.15.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1732021218; x=1732626018; i=w_armin@gmx.de;
-	bh=vs7geAAh3IgaGjhfidahLn31KbuXOzFaEbksLVAseC8=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
-	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=tBFXghsOBKwr3FO3Zu1hZuqEWldBDCqBplyfIlhlt2zQVimNoiDeWccqwW/UM7aw
-	 K8dwzG/J/htFoGHdsRQWb/itcZwVg9u7JIYWU+QADRBWBnBLlC+ZC07JmBrtM+ZT7
-	 HYVP5qNMi3SurMJOSmGW7VVgxxwhsFLKJHSL0PlEXmBrMy9Im9UnO2F6ogiuIEQA7
-	 NFEXq6tUJHs6VxR++j4KZDx3ZUjp9KSyBAECRbuUJ6CeGkV+Yb3k7tVC6mPtJaqvY
-	 8EKrHrOKlN0Mipy+Jo/gaImYl23FLRE/bNxP7lreFw0H6QDZGbjws8Q/q6r/bJC4F
-	 KlyoYAgjM1vWAEHymA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [172.16.87.225] ([141.76.181.126]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MA7GS-1t2xRI1buE-005Vzl; Tue, 19
- Nov 2024 14:00:18 +0100
-Message-ID: <3331c9f8-0590-4d3d-b9ae-7bdc22473d7a@gmx.de>
-Date: Tue, 19 Nov 2024 14:00:11 +0100
+	s=arc-20240116; t=1732021597; c=relaxed/simple;
+	bh=JtWIzyY/2ym9dryXGJVbXWARmJW5m80KEY9YH8YDy4A=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=rEsDByjtjB9KaejNupKypbbC0bTWPsokSIxs7bX25jMsYrk0DQAEOL31bfbZBKapyk6cIG9bCtwZYqXDvCzSQX8IyUlJrFcWFMoHejAgyNJ3tNVraE5cFsl9HqHD+xQWKAumo7irulg7OMyLMReFbBGqdFpbq57IE9MQtOncBIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=turris.com; spf=pass smtp.mailfrom=turris.com; dkim=pass (1024-bit key) header.d=turris.com header.i=@turris.com header.b=RExPBm/R; arc=none smtp.client-ip=217.31.204.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=turris.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=turris.com
+Received: from localhost (unknown [IPv6:2001:1488:fffe:6:1e96:d231:26b0:9350])
+	by mail.nic.cz (Postfix) with ESMTPSA id 4AFEA1C12EA;
+	Tue, 19 Nov 2024 14:00:19 +0100 (CET)
+Authentication-Results: mail.nic.cz;
+	auth=pass smtp.auth=michal.hrusecky@nic.cz smtp.mailfrom=michal.hrusecky@turris.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=turris.com;
+	s=default; t=1732021219;
+	bh=JtWIzyY/2ym9dryXGJVbXWARmJW5m80KEY9YH8YDy4A=;
+	h=Date:From:To:Cc:Subject:From:Reply-To:Subject:To:Cc;
+	b=RExPBm/R+/c+FYSRhBVHrHg7HFgQcd+dIWAeflNaflwSNpYCrHDAGsMnp3Bo/ejzH
+	 YLmjvNmSQ9+jomw3+dlcKI26AC8L6/53sJOxzpOiW0T9H2tqgC7o3bZx5QkpZXEHV6
+	 qIDWP9eUwLiSgOYUnfzAZ8qB4qzcgYW7/v+R2TiM=
+Date: Tue, 19 Nov 2024 14:00:18 +0100
+From: Michal Hrusecky <michal.hrusecky@turris.com>
+To: Johan Hovold <johan@kernel.org>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] USB: serial: option: add MeiG Smart SLM770A
+Message-ID: <6uel66cvf2cn2jenpoc43usee3pwnmtaerqnpfl7tnoa6s5mff@5xxrpbabupah>
+X-Operating-System: Linux
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 18/22] ACPI: platform_profile: Check all profile
- handler to calculate next
-From: Armin Wolf <W_Armin@gmx.de>
-To: Mario Limonciello <mario.limonciello@amd.com>,
- Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>,
- Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
- Corentin Chary <corentin.chary@gmail.com>, "Luke D . Jones"
- <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>,
- Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
- Alexis Belmonte <alexbelm48@gmail.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>,
- open list <linux-kernel@vger.kernel.org>,
- "open list:ACPI" <linux-acpi@vger.kernel.org>,
- "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER"
- <platform-driver-x86@vger.kernel.org>,
- "open list:THINKPAD ACPI EXTRAS DRIVER"
- <ibm-acpi-devel@lists.sourceforge.net>,
- Mark Pearson <mpearson-lenovo@squebb.ca>,
- Matthew Schwartz <matthew.schwartz@linux.dev>
-References: <20241109044151.29804-1-mario.limonciello@amd.com>
- <20241109044151.29804-19-mario.limonciello@amd.com>
- <5c961eaa-9a3b-48cb-a0dc-f704dbb267ab@gmx.de>
-Content-Language: en-US
-In-Reply-To: <5c961eaa-9a3b-48cb-a0dc-f704dbb267ab@gmx.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
-X-Provags-ID: V03:K1:fbsBGDLc0FOzSPdO6OnojaVkO5MvsDr6/JGhGldEg58Q1FGNhrl
- Ivjj6VXPSxYctIIcsCylv0F+GErICXCyan9vFfXhr8XX44ksRH9BRpRt7zOfLJXqLGzhKNY
- LF+CVsxqxvU8C7s5k+YsB+2ssaoJiuj2knEt98oSRLSKHwWWwijz30L3nh+reSMHLR4m/AW
- BST+4JNHg+yLXkyTfWicQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Xbzu5487ub4=;NnEQSykyd391YdQIpT4MPSJ5ILv
- edgyN5lGm5TX+ak1DoKWR7WHpEhvFEKI++osqvCxFClgCPLBQI/3uRiTQzy6iqKXBZJfjsLCQ
- YnfXDbq1OpqFCZApKSfT/dDsK9gEt6wyw/EJt3wxWa/k2TEQ7CIzK5Ac3YJJVl4jOAlv00grC
- GILtkiti4mndp40K1Amnm6Wy5sqnnsGtnxrq5RBYzanokLRUONJLBgPCtJ2/YPQnPHuMyrzM3
- 2MYy61JGx0o1yP2q3Peogr6g4dm0abntL7Cuh7fJEtVQu0FMihQ+4M6rEk/6kVx/ki4t+yT5k
- RnH/p1xcY82SSCeK+JZD1HlxsJEOHRzDBsoY97UVahaN/yivPhHeJNY3m6Xl0aUkFWYq3bLhL
- wSrZ50sdB44tFha1URLwoxBL4cm9+DjGXZR/9Au0dUq6iGIWw3QnOadzUlybnIPSqLMVyyqDA
- eT1l36462UQK6xj8/RJex7ulXLdIV/9gnQ4YdGx0+4yNgHTU085DzAYRM6pcmYTNbbI96SWsJ
- 36dSk+wRS4rZI7/yGjPIRVnM8AmuH37mCuNUFT6LaqlZbqRRKfjRpCYH+e15RQgUMC7b4Aksu
- MoG8FnB6AqCKTrT1nBhj5Umfqv6tzfqqVXInpvy9YmDk+rc9iCkih+Ydy06WlDmA4hBt6xoG2
- nlZFIIiTf386b5ktEN4+0uCzYmdb1UJZNeIENIUh/Pngq9IgfHsObt1GsuOlLU4RBm/YSUsvg
- 2ewY7QkDQSfMSryJ9NIYVjBpVwnuUrwTZO+sSuW4sOJYYrHr4M3uppJ6/w5L1VK5xh1FYvFPh
- A55gyUmSKPN+YMeNOf92AzeeB+vn3QqmeY9arrR2rqvEA8HXTk9Grw/uHNOCAFaaHZIaA8jmV
- 9EeWaoeOuko1fZMY+gDuOGMcEwreV5AyKTYcwdQbCcjGPfHjUtk7ozajB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Rspamd-Action: no action
+X-Rspamd-Pre-Result: action=no action;
+	module=multimap;
+	Matched map: WHITELISTED_IP
+X-Rspamd-Server: mail
+X-Spamd-Bar: /
+X-Rspamd-Queue-Id: 4AFEA1C12EA
+X-Spamd-Result: default: False [-0.10 / 16.00];
+	MIME_GOOD(-0.10)[text/plain];
+	WHITELISTED_IP(0.00)[2001:1488:fffe:6:1e96:d231:26b0:9350];
+	MIME_TRACE(0.00)[0:+];
+	ASN(0.00)[asn:25192, ipnet:2001:1488::/32, country:CZ];
+	FROM_EQ_ENVFROM(0.00)[];
+	ARC_NA(0.00)[];
+	FROM_HAS_DN(0.00)[]
 
-QW0gMTguMTEuMjQgdW0gMjA6NTMgc2NocmllYiBBcm1pbiBXb2xmOg0KDQo+IEFtIDA5LjExLjI0
-IHVtIDA1OjQxIHNjaHJpZWIgTWFyaW8gTGltb25jaWVsbG86DQo+DQo+PiBBcyBtdWx0aXBsZSBw
-bGF0Zm9ybSBwcm9maWxlIGhhbmRsZXJzIG1pZ2h0IG5vdCBhbGwgc3VwcG9ydCB0aGUgc2FtZQ0K
-Pj4gcHJvZmlsZSwgY3ljbGluZyB0byB0aGUgbmV4dCBwcm9maWxlIGNvdWxkIGhhdmUgYSBkaWZm
-ZXJlbnQgcmVzdWx0DQo+PiBkZXBlbmRpbmcgb24gd2hhdCBoYW5kbGVyIGFyZSByZWdpc3RlcmVk
-Lg0KPj4NCj4+IENoZWNrIHdoYXQgaXMgYWN0aXZlIGFuZCBzdXBwb3J0ZWQgYnkgYWxsIGhhbmRs
-ZXJzIHRvIGRlY2lkZSB3aGF0DQo+PiB0byBkby4NCj4NCj4gUmV2aWV3ZWQtYnk6IEFybWluIFdv
-bGYgPFdfQXJtaW5AZ214LmRlPg0KPg0KPj4gVGVzdGVkLWJ5OiBNYXJrIFBlYXJzb24gPG1wZWFy
-c29uLWxlbm92b0BzcXVlYmIuY2E+DQo+PiBTaWduZWQtb2ZmLWJ5OiBNYXJpbyBMaW1vbmNpZWxs
-byA8bWFyaW8ubGltb25jaWVsbG9AYW1kLmNvbT4NCj4+IC0tLQ0KPj4gdjY6DQo+PiDCoCAqIEhh
-bmRsZSBjYXNlcyBvZiBpbmNvbnNpc3RlbnQgcHJvZmlsZXMgb3IgYWxsIHByb2ZpbGUgaGFuZGxl
-cnMNCj4+IMKgwqDCoCBzdXBwb3J0aW5nIGN1c3RvbS4NCj4+IHY1Og0KPj4gwqAgKiBBZGp1c3Qg
-bXV0ZXggdXNlDQo+PiAtLS0NCj4+IMKgIGRyaXZlcnMvYWNwaS9wbGF0Zm9ybV9wcm9maWxlLmMg
-fCAzMCArKysrKysrKysrKysrKysrKysrKystLS0tLS0tLS0NCj4+IMKgIDEgZmlsZSBjaGFuZ2Vk
-LCAyMSBpbnNlcnRpb25zKCspLCA5IGRlbGV0aW9ucygtKQ0KPj4NCj4+IGRpZmYgLS1naXQgYS9k
-cml2ZXJzL2FjcGkvcGxhdGZvcm1fcHJvZmlsZS5jIA0KPj4gYi9kcml2ZXJzL2FjcGkvcGxhdGZv
-cm1fcHJvZmlsZS5jDQo+PiBpbmRleCAyNjc2ZjRhMTM2ODllLi5jNTc0NDgzYmU0ZmQxIDEwMDY0
-NA0KPj4gLS0tIGEvZHJpdmVycy9hY3BpL3BsYXRmb3JtX3Byb2ZpbGUuYw0KPj4gKysrIGIvZHJp
-dmVycy9hY3BpL3BsYXRmb3JtX3Byb2ZpbGUuYw0KPj4gQEAgLTQyMywyOCArNDIzLDQwIEBAIEVY
-UE9SVF9TWU1CT0xfR1BMKHBsYXRmb3JtX3Byb2ZpbGVfbm90aWZ5KTsNCj4+DQo+PiDCoCBpbnQg
-cGxhdGZvcm1fcHJvZmlsZV9jeWNsZSh2b2lkKQ0KPj4gwqAgew0KPj4gLcKgwqDCoCBlbnVtIHBs
-YXRmb3JtX3Byb2ZpbGVfb3B0aW9uIHByb2ZpbGU7DQo+PiAtwqDCoMKgIGVudW0gcGxhdGZvcm1f
-cHJvZmlsZV9vcHRpb24gbmV4dDsNCj4+ICvCoMKgwqAgZW51bSBwbGF0Zm9ybV9wcm9maWxlX29w
-dGlvbiBuZXh0ID0gUExBVEZPUk1fUFJPRklMRV9MQVNUOw0KPj4gK8KgwqDCoCBlbnVtIHBsYXRm
-b3JtX3Byb2ZpbGVfb3B0aW9uIHByb2ZpbGUgPSBQTEFURk9STV9QUk9GSUxFX0xBU1Q7DQo+PiAr
-wqDCoMKgIHVuc2lnbmVkIGxvbmcgY2hvaWNlc1tCSVRTX1RPX0xPTkdTKFBMQVRGT1JNX1BST0ZJ
-TEVfTEFTVCldOw0KPj4gwqDCoMKgwqDCoCBpbnQgZXJyOw0KPj4NCj4+IMKgwqDCoMKgwqAgaWYg
-KCFjbGFzc19pc19yZWdpc3RlcmVkKCZwbGF0Zm9ybV9wcm9maWxlX2NsYXNzKSkNCj4+IMKgwqDC
-oMKgwqDCoMKgwqDCoCByZXR1cm4gLUVOT0RFVjsNCj4+DQo+PiArwqDCoMKgIHNldF9iaXQoUExB
-VEZPUk1fUFJPRklMRV9MQVNULCBjaG9pY2VzKTsNCj4+IMKgwqDCoMKgwqAgc2NvcGVkX2NvbmRf
-Z3VhcmQobXV0ZXhfaW50ciwgcmV0dXJuIC1FUkVTVEFSVFNZUywgDQo+PiAmcHJvZmlsZV9sb2Nr
-KSB7DQo+PiAtwqDCoMKgwqDCoMKgwqAgaWYgKCFjdXJfcHJvZmlsZSkNCj4+IC3CoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgIHJldHVybiAtRU5PREVWOw0KPj4gK8KgwqDCoMKgwqDCoMKgIGVyciA9IGNs
-YXNzX2Zvcl9lYWNoX2RldmljZSgmcGxhdGZvcm1fcHJvZmlsZV9jbGFzcywgTlVMTCwNCj4+ICvC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgICZwcm9maWxlLCBf
-YWdncmVnYXRlX3Byb2ZpbGVzKTsNCj4+ICvCoMKgwqDCoMKgwqDCoCBpZiAoZXJyKQ0KPj4gK8Kg
-wqDCoMKgwqDCoMKgwqDCoMKgwqAgcmV0dXJuIGVycjsNCj4+DQo+PiAtwqDCoMKgwqDCoMKgwqAg
-ZXJyID0gY3VyX3Byb2ZpbGUtPnByb2ZpbGVfZ2V0KGN1cl9wcm9maWxlLCAmcHJvZmlsZSk7DQo+
-PiArwqDCoMKgwqDCoMKgwqAgaWYgKHByb2ZpbGUgPT0gUExBVEZPUk1fUFJPRklMRV9DVVNUT00g
-fHwNCj4+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHByb2ZpbGUgPT0gUExBVEZPUk1fUFJPRklM
-RV9MQVNUKQ0KPj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqAgcmV0dXJuIC1FSU5WQUw7DQo+PiAr
-DQo+PiArwqDCoMKgwqDCoMKgwqAgZXJyID0gY2xhc3NfZm9yX2VhY2hfZGV2aWNlKCZwbGF0Zm9y
-bV9wcm9maWxlX2NsYXNzLCBOVUxMLA0KPj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqAgY2hvaWNlcywgX2FnZ3JlZ2F0ZV9jaG9pY2VzKTsNCj4+IMKgwqDC
-oMKgwqDCoMKgwqDCoCBpZiAoZXJyKQ0KPj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgcmV0
-dXJuIGVycjsNCj4+DQo+PiAtwqDCoMKgwqDCoMKgwqAgbmV4dCA9IGZpbmRfbmV4dF9iaXRfd3Jh
-cChjdXJfcHJvZmlsZS0+Y2hvaWNlcywgDQo+PiBQTEFURk9STV9QUk9GSUxFX0xBU1QsDQo+PiAr
-wqDCoMKgwqDCoMKgwqAgLyogbmV2ZXIgaXRlcmF0ZSBpbnRvIGEgY3VzdG9tIGlmIGFsbCBkcml2
-ZXJzIHN1cHBvcnRlZCBpdCAqLw0KPj4gK8KgwqDCoMKgwqDCoMKgIGNsZWFyX2JpdChQTEFURk9S
-TV9QUk9GSUxFX0NVU1RPTSwgY2hvaWNlcyk7DQo+PiArDQo+PiArwqDCoMKgwqDCoMKgwqAgbmV4
-dCA9IGZpbmRfbmV4dF9iaXRfd3JhcChjaG9pY2VzLA0KPj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBQTEFURk9STV9QUk9GSUxFX0xBU1QsDQo+PiDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHByb2ZpbGUgKyAxKTsNCj4+
-DQo+PiAtwqDCoMKgwqDCoMKgwqAgaWYgKFdBUk5fT04obmV4dCA9PSBQTEFURk9STV9QUk9GSUxF
-X0xBU1QpKQ0KPj4gLcKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgcmV0dXJuIC1FSU5WQUw7DQo+PiAr
-wqDCoMKgwqDCoMKgwqAgZXJyID0gY2xhc3NfZm9yX2VhY2hfZGV2aWNlKCZwbGF0Zm9ybV9wcm9m
-aWxlX2NsYXNzLCBOVUxMLCANCj4+ICZuZXh0LA0KPj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgX3N0b3JlX2NsYXNzX3Byb2ZpbGUpOw0KDQpJIGp1c3Qg
-bm90aWNlZCB0aGF0IHRoZSBjbGFzcyBkZXZpY2UgaXMgbm90IG5vdGlmaWVkIGhlcmUuIFBsZWFz
-ZSB1c2UgX3N0b3JlX2FuZF9ub3RpZnkoKSBpbnN0ZWQgb2YgX3N0b3JlX2NsYXNzX3Byb2ZpbGUo
-KQ0KaGVyZS4NCg0KVGhhbmtzLA0KQXJtaW4gV29sZg0KDQo+Pg0KPj4gLcKgwqDCoMKgwqDCoMKg
-IGVyciA9IGN1cl9wcm9maWxlLT5wcm9maWxlX3NldChjdXJfcHJvZmlsZSwgbmV4dCk7DQo+PiDC
-oMKgwqDCoMKgwqDCoMKgwqAgaWYgKGVycikNCj4+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-IHJldHVybiBlcnI7DQo+PiDCoMKgwqDCoMKgIH0NCj4NCg==
+Update the USB serial option driver to support MeiG Smart SLM770A.
+
+ID 2dee:4d57 Marvell Mobile Composite Device Bus
+
+T:  Bus=02 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#=  2 Spd=480  MxCh= 0
+D:  Ver= 2.00 Cls=ef(misc ) Sub=02 Prot=01 MxPS=64 #Cfgs=  1
+P:  Vendor=2dee ProdID=4d57 Rev= 1.00
+S:  Manufacturer=Marvell
+S:  Product=Mobile Composite Device Bus
+C:* #Ifs= 6 Cfg#= 1 Atr=c0 MxPwr=500mA
+A:  FirstIf#= 0 IfCount= 2 Cls=e0(wlcon) Sub=01 Prot=03
+I:* If#= 0 Alt= 0 #EPs= 1 Cls=e0(wlcon) Sub=01 Prot=03 Driver=rndis_host
+E:  Ad=87(I) Atr=03(Int.) MxPS=  64 Ivl=4096ms
+I:* If#= 1 Alt= 0 #EPs= 2 Cls=0a(data ) Sub=00 Prot=00 Driver=rndis_host
+E:  Ad=83(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=0c(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 2 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+E:  Ad=82(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=0b(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 3 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+E:  Ad=88(I) Atr=03(Int.) MxPS=  64 Ivl=4096ms
+E:  Ad=81(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=0a(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 4 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+E:  Ad=89(I) Atr=03(Int.) MxPS=  64 Ivl=4096ms
+E:  Ad=86(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=0f(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 5 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+E:  Ad=85(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=0e(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+
+Tested successfully connecting to the Internet via rndis interface after
+dialing via AT commands on If#=3 or If#=4.
+Not sure of the purpose of the other serial interfaces.
+
+Signed-off-by: Michal Hrusecky <michal.hrusecky@turris.com>
+---
+ drivers/usb/serial/option.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/usb/serial/option.c b/drivers/usb/serial/option.c
+index 4f18f189f309..31b3d007750c 100644
+--- a/drivers/usb/serial/option.c
++++ b/drivers/usb/serial/option.c
+@@ -624,6 +624,8 @@ static void option_instat_callback(struct urb *urb);
+ #define MEIGSMART_PRODUCT_SRM825L		0x4d22
+ /* MeiG Smart SLM320 based on UNISOC UIS8910 */
+ #define MEIGSMART_PRODUCT_SLM320		0x4d41
++/* MeiG Smart SLM770A based on ASR1803 */
++#define MEIGSMART_PRODUCT_SLM770A		0x4d57
+ 
+ /* Device flags */
+ 
+@@ -2376,6 +2378,7 @@ static const struct usb_device_id option_ids[] = {
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(UNISOC_VENDOR_ID, TOZED_PRODUCT_LT70C, 0xff, 0, 0) },
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(UNISOC_VENDOR_ID, LUAT_PRODUCT_AIR720U, 0xff, 0, 0) },
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(MEIGSMART_VENDOR_ID, MEIGSMART_PRODUCT_SLM320, 0xff, 0, 0) },
++	{ USB_DEVICE_AND_INTERFACE_INFO(MEIGSMART_VENDOR_ID, MEIGSMART_PRODUCT_SLM770A, 0xff, 0, 0) },
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(MEIGSMART_VENDOR_ID, MEIGSMART_PRODUCT_SRM825L, 0xff, 0xff, 0x30) },
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(MEIGSMART_VENDOR_ID, MEIGSMART_PRODUCT_SRM825L, 0xff, 0xff, 0x40) },
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(MEIGSMART_VENDOR_ID, MEIGSMART_PRODUCT_SRM825L, 0xff, 0xff, 0x60) },
+-- 
+2.47.0
+
 
