@@ -1,167 +1,184 @@
-Return-Path: <linux-kernel+bounces-415006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3A9D9D3072
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 23:25:50 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFE039D3074
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 23:27:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C6091F220A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 22:25:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51CD6B22365
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 22:27:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9ED91D26FE;
-	Tue, 19 Nov 2024 22:25:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A760E1D1F63;
+	Tue, 19 Nov 2024 22:27:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ua+b4vnB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="xAWGuzad"
+Received: from mail-oa1-f42.google.com (mail-oa1-f42.google.com [209.85.160.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31FF51C1741;
-	Tue, 19 Nov 2024 22:25:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91E9D1C1F00
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 22:27:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732055142; cv=none; b=FZ10TKJVa9NLVBdulsLP/4TpppTCLv7XCvjOAo8LFuWNZ1TZXVXqVXodlGseoIOxRyLkJzLguy3mDxAvr+BeBqQUDl5rMYc4bLfAsCrePh9MBD4WMwzaBhnioIpU00/xYpYpzf0X1M1YK+oMPr8lNgF1opmKv083r+CaUH/dIJA=
+	t=1732055267; cv=none; b=ME5ubdOMHyj3XYNUzsLcuujwoG4Nc36z6gxmsxDyX8tU3/MUHDkZmYGnDCUW/bWLcKi13cQBlIG4AeOOPDxGb4qH0byNLPtk2nBgWm1lOkjruYirZ3ozDqwFBXhXU397DTqLnYSdvgXLt101qPvaLSE/cm/yr3T0oGQZO2HT18E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732055142; c=relaxed/simple;
-	bh=GwmZWQf0EKA5yMqqR2Doj7yJmnSw6NoJj8hw2zIWZkM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lHb2NVUnqC2PFKlP3tMg/2oJV7yQEjT1GALhsG8EwWjoog+wYI00cwORirAXTO2Hww9HLb3bXKBp9IQWfd7+9ccaq4+sz32I3QXCTpCbgf+TfBp1YKiYmtMC8ElggJgPYHLr3WfD+jj3M2tLHrJWHobuUulX0hJW/5S1XBk+icY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ua+b4vnB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2C3FC4CECF;
-	Tue, 19 Nov 2024 22:25:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732055141;
-	bh=GwmZWQf0EKA5yMqqR2Doj7yJmnSw6NoJj8hw2zIWZkM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ua+b4vnBVOQ6rjIkKahdcOMBBQnrvNv44eh0rm8tQApLDs1AfRPfOz4jIjLA+0DjA
-	 wa/COT5zm9CdTQK3lOYW2Ccpqn0ilofgU2qTRQhbwoPEQyxn0mp1CGhzbbECaxCW3+
-	 ydE4+x/DScZ+uSSZqEM67+z1haNo/t9fD2s2mSILauQ4sf5maS7bYroiWCn+gSWMVk
-	 Cvv5SMXE2BUYKJTOC67ruvKHUF8/5oMl0Nkr1Pj2mOTINMoAc1GJAlPTtiGpMu/fUt
-	 ei4kl1ePs0OJxO9giKMf6ocPNk+/yx8pRBYj8ZHbnXbmesWofK9/HBkcte1ySji2iP
-	 HoLhjddDE4N1g==
-Date: Tue, 19 Nov 2024 23:25:38 +0100
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Tyrone Ting <warp5tw@gmail.com>
-Cc: avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com, 
-	venture@google.com, yuenn@google.com, benjaminfair@google.com, 
-	andriy.shevchenko@linux.intel.com, wsa@kernel.org, rand.sec96@gmail.com, 
-	wsa+renesas@sang-engineering.com, tali.perry@nuvoton.com, Avi.Fishman@nuvoton.com, 
-	tomer.maimon@nuvoton.com, KWLIU@nuvoton.com, JJLIU0@nuvoton.com, kfting@nuvoton.com, 
-	openbmc@lists.ozlabs.org, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 3/4] i2c: npcm: use i2c frequency table
-Message-ID: <bad4bd66cuiva4foudw4iv3aqr4475coo3fll357bh4k5xxqpv@n4iqvh5odsjc>
-References: <20241021062732.5592-1-kfting@nuvoton.com>
- <20241021062732.5592-4-kfting@nuvoton.com>
- <fh43vyo4oviet35jmihew5yew5ez3nyaqgsyntqtd7x7s5mdrv@ezpal3a4banw>
- <CACD3sJbzgnq1bKJXS59TA8MJE3o0N_bz_a9PTJdy5C0FdD8wRw@mail.gmail.com>
+	s=arc-20240116; t=1732055267; c=relaxed/simple;
+	bh=l1VapS+6cDBwhVLUp4pFoZ4oP3LXwA7JyHycTEwxoqk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=beP3f4Y7qTo1KLxttZpQ2W6QgeC5rpLJerllAMe2L+//v2osHe3jO2dxwT6FJYoNyiGWMh0Fb+hCeuYqzprRD7FCqaZ8+Gnf6J2+McBSJJ7gj+RZwW2V2Fg9KyCzk3AXBoYmlsCKf2SktJkoBSo4GY2Rw5KhskRM2SrhOvhlIB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=xAWGuzad; arc=none smtp.client-ip=209.85.160.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-29645a83b1bso2610546fac.1
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 14:27:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1732055262; x=1732660062; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=i+ggx9jSBeVfhen+T0ysJRXhaUXF4spm8ezXLXsU6cs=;
+        b=xAWGuzad+izVnjGJ50fhsuVvZhMfBZruP3arW4En2DPIzwyWolzAOByQqnxV/IPmUd
+         DcmDmy5nc0inCMzWrlfCEyOcGz4jgIMNh+Y/SwZuA5mb4u74l3G49TeVPa6n5gmXItid
+         mxTXmYB0BUXEza3ACWUjR/AqKm+306ZFvOlbUZTwjknB0y0hFZ/A/FzF/fs09doCrMVV
+         9ZvTwOarQLahR47WI55Ifo487kPm+BZFDbV9B4j9vClAOurw5lRNmVq07dxHvWZhahPZ
+         AS6fdx/3sBFXykAsJnZI+DUelPPN1kh1bSr/kvMGYwC7RHbZVFFYPTLm/VXGyxikZVM9
+         68/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732055262; x=1732660062;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=i+ggx9jSBeVfhen+T0ysJRXhaUXF4spm8ezXLXsU6cs=;
+        b=KXh8BCh8m1qI3RfVKHgpkC/cjhn9AT5fW9iINbRkpdj2Q9fIaP0daXNmL4/1PPPqJ/
+         TQltB/QOCGPgyznkKvv6++VmBd6Uno9YOaP2UjLrIfhDP7aYHq2jukoqo+WCeP3K/phG
+         c67UbG6M/+eVJSytLJFeOL1hIOMUafHEWUbXRAJsd9F10X3hmuK2wvtSSSMjfAohw5w7
+         lXXJB7gh7sJvy+7Bh7nU1rRySrohNKa5aez0QphcdRCXCBnKBh5HOLbvfGd6tMyQoPEl
+         i+RXMxRcjrVreFm1lwyzcGRMlXmBUQjK2xGS03jpfQI0N+VgM92XLviJ4O2N1sxahO6h
+         7iaA==
+X-Forwarded-Encrypted: i=1; AJvYcCWq7ZFckeuHiyLnkA+7hHRPYU75Ka+5sLOB+KOfQP1jUKkOjXRhkLqR5pMlwWMir8AvTC2u02fCgl3skbE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzwf8E39o4NzjkZu/8EYx2uf90/Yoj2i5pVlBamxkfiElcvI2Ed
+	MlM7yo9DlYih2lzp/qpbUynQosMgdrs5lFQZ6pdhgH5/1t+6SanGMxl5YcvDmJQ=
+X-Google-Smtp-Source: AGHT+IHefAXVlq3Wb6oCaO5/Tgf08AylbdJ3Vgv64UAycljKQuekq8d4vH9pmdb2TNfsjp3Xne1MHA==
+X-Received: by 2002:a05:6870:a408:b0:296:5928:7a42 with SMTP id 586e51a60fabf-296d9bff362mr567505fac.22.1732055262529;
+        Tue, 19 Nov 2024 14:27:42 -0800 (PST)
+Received: from [127.0.1.1] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-71a78212891sm3613139a34.59.2024.11.19.14.27.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Nov 2024 14:27:41 -0800 (PST)
+From: David Lechner <dlechner@baylibre.com>
+Date: Tue, 19 Nov 2024 16:27:40 -0600
+Subject: [PATCH v3] Input: mpr121: Use
+ devm_regulator_get_enable_read_voltage()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACD3sJbzgnq1bKJXS59TA8MJE3o0N_bz_a9PTJdy5C0FdD8wRw@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241119-input-mpr121-regulator-get-enable-read-voltage-v3-1-1d8ee5c22f6c@baylibre.com>
+X-B4-Tracking: v=1; b=H4sIANsQPWcC/x2NQQrDIBBFrxJm3YFqpJBepXQxaUYzYFVGEwIhd
+ 690+T68/06orMIVnsMJyrtUyanDeBvgs1IKjLJ0Bnu3zhgzoaSyNfwWNdagctgitawYuCEnmiP
+ 3kRbcc2zUbTc6Sw/ys/MW+mlR9nL8g6/3df0AZZbGtIAAAAA=
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+ David Lechner <dlechner@baylibre.com>
+X-Mailer: b4 0.14.1
 
-Hi Tyrone,
+We can reduce boilerplate code by using
+devm_regulator_get_enable_read_voltage().
 
-...
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: David Lechner <dlechner@baylibre.com>
+---
+This is left over from [1] and never got picked up, so resubmitting.
 
-> > > -     /* 100KHz and below: */
-> > > -     if (bus_freq_hz <= I2C_MAX_STANDARD_MODE_FREQ) {
-> > > -             sclfrq = src_clk_khz / (bus_freq_khz * 4);
-> > > -
-> > > -             if (sclfrq < SCLFRQ_MIN || sclfrq > SCLFRQ_MAX)
-> > > -                     return -EDOM;
-> > > -
-> > > -             if (src_clk_khz >= 40000)
-> > > -                     hldt = 17;
-> > > -             else if (src_clk_khz >= 12500)
-> > > -                     hldt = 15;
-> > > -             else
-> > > -                     hldt = 7;
-> > > -     }
-> > > -
-> > > -     /* 400KHz: */
-> > > -     else if (bus_freq_hz <= I2C_MAX_FAST_MODE_FREQ) {
-> > > -             sclfrq = 0;
-> > > +     switch (bus_freq_hz) {
-> > > +     case I2C_MAX_STANDARD_MODE_FREQ:
-> > > +             smb_timing = smb_timing_100khz;
-> > > +             table_size = ARRAY_SIZE(smb_timing_100khz);
-> > > +             break;
-> > > +     case I2C_MAX_FAST_MODE_FREQ:
-> > > +             smb_timing = smb_timing_400khz;
-> > > +             table_size = ARRAY_SIZE(smb_timing_400khz);
-> > >               fast_mode = I2CCTL3_400K_MODE;
-> > > -
-> > > -             if (src_clk_khz < 7500)
-> > > -                     /* 400KHZ cannot be supported for core clock < 7.5MHz */
-> > > -                     return -EDOM;
-> > > -
-> > > -             else if (src_clk_khz >= 50000) {
-> > > -                     k1 = 80;
-> > > -                     k2 = 48;
-> > > -                     hldt = 12;
-> > > -                     dbnct = 7;
-> > > -             }
-> > > -
-> > > -             /* Master or Slave with frequency > 25MHz */
-> > > -             else if (src_clk_khz > 25000) {
-> > > -                     hldt = clk_coef(src_clk_khz, 300) + 7;
-> > > -                     k1 = clk_coef(src_clk_khz, 1600);
-> > > -                     k2 = clk_coef(src_clk_khz, 900);
-> > > -             }
-> > > -     }
-> > > -
-> > > -     /* 1MHz: */
-> > > -     else if (bus_freq_hz <= I2C_MAX_FAST_MODE_PLUS_FREQ) {
-> > > -             sclfrq = 0;
-> > > +             break;
-> > > +     case I2C_MAX_FAST_MODE_PLUS_FREQ:
-> > > +             smb_timing = smb_timing_1000khz;
-> > > +             table_size = ARRAY_SIZE(smb_timing_1000khz);
-> > >               fast_mode = I2CCTL3_400K_MODE;
-> > > -
-> > > -             /* 1MHZ cannot be supported for core clock < 24 MHz */
-> > > -             if (src_clk_khz < 24000)
-> > > -                     return -EDOM;
-> > > -
-> > > -             k1 = clk_coef(src_clk_khz, 620);
-> > > -             k2 = clk_coef(src_clk_khz, 380);
-> > > -
-> > > -             /* Core clk > 40 MHz */
-> > > -             if (src_clk_khz > 40000) {
-> > > -                     /*
-> > > -                      * Set HLDT:
-> > > -                      * SDA hold time:  (HLDT-7) * T(CLK) >= 120
-> > > -                      * HLDT = 120/T(CLK) + 7 = 120 * FREQ(CLK) + 7
-> > > -                      */
-> > > -                     hldt = clk_coef(src_clk_khz, 120) + 7;
-> > > -             } else {
-> > > -                     hldt = 7;
-> > > -                     dbnct = 2;
-> > > -             }
-> > > +             break;
-> > > +     default:
-> > > +             return -EINVAL;
-> >
-> > There is here a slight change of behaiour which is not mentioned
-> > in the commit log. Before the user could set a bus_freq_hz which
-> > had to be <= I2C_MAX_..._MODE_FREQ, while now it has to be
-> > precisely that.
-> >
-> > Do we want to check what the user has set in the DTS?
-> 
-> The driver checks the bus frequency the user sets in the DTS.
+v3: changes picked up Dmitry's Ack and rebased on linux-next.
 
-yes, but before it was checking the value within a range, while
-now it's checking the exact value.
+[1]: https://lore.kernel.org/all/20240429-regulator-get-enable-get-votlage-v2-7-b1f11ab766c1@baylibre.com/
+---
+ drivers/input/keyboard/mpr121_touchkey.c | 45 +++-----------------------------
+ 1 file changed, 3 insertions(+), 42 deletions(-)
 
-The difference is that now if you don't set the exact value you
-get EINVAL, not before.
+diff --git a/drivers/input/keyboard/mpr121_touchkey.c b/drivers/input/keyboard/mpr121_touchkey.c
+index 21827d2497fa..bd1a944ded46 100644
+--- a/drivers/input/keyboard/mpr121_touchkey.c
++++ b/drivers/input/keyboard/mpr121_touchkey.c
+@@ -82,42 +82,6 @@ static const struct mpr121_init_register init_reg_table[] = {
+ 	{ AUTO_CONFIG_CTRL_ADDR, 0x0b },
+ };
+ 
+-static void mpr121_vdd_supply_disable(void *data)
+-{
+-	struct regulator *vdd_supply = data;
+-
+-	regulator_disable(vdd_supply);
+-}
+-
+-static struct regulator *mpr121_vdd_supply_init(struct device *dev)
+-{
+-	struct regulator *vdd_supply;
+-	int err;
+-
+-	vdd_supply = devm_regulator_get(dev, "vdd");
+-	if (IS_ERR(vdd_supply)) {
+-		dev_err(dev, "failed to get vdd regulator: %ld\n",
+-			PTR_ERR(vdd_supply));
+-		return vdd_supply;
+-	}
+-
+-	err = regulator_enable(vdd_supply);
+-	if (err) {
+-		dev_err(dev, "failed to enable vdd regulator: %d\n", err);
+-		return ERR_PTR(err);
+-	}
+-
+-	err = devm_add_action_or_reset(dev, mpr121_vdd_supply_disable,
+-				       vdd_supply);
+-	if (err) {
+-		dev_err(dev, "failed to add disable regulator action: %d\n",
+-			err);
+-		return ERR_PTR(err);
+-	}
+-
+-	return vdd_supply;
+-}
+-
+ static void mpr_touchkey_report(struct input_dev *dev)
+ {
+ 	struct mpr121_touchkey *mpr121 = input_get_drvdata(dev);
+@@ -233,7 +197,6 @@ static int mpr121_phys_init(struct mpr121_touchkey *mpr121,
+ static int mpr_touchkey_probe(struct i2c_client *client)
+ {
+ 	struct device *dev = &client->dev;
+-	struct regulator *vdd_supply;
+ 	int vdd_uv;
+ 	struct mpr121_touchkey *mpr121;
+ 	struct input_dev *input_dev;
+@@ -241,11 +204,9 @@ static int mpr_touchkey_probe(struct i2c_client *client)
+ 	int error;
+ 	int i;
+ 
+-	vdd_supply = mpr121_vdd_supply_init(dev);
+-	if (IS_ERR(vdd_supply))
+-		return PTR_ERR(vdd_supply);
+-
+-	vdd_uv = regulator_get_voltage(vdd_supply);
++	vdd_uv = devm_regulator_get_enable_read_voltage(dev, "vdd");
++	if (vdd_uv < 0)
++		return dev_err_probe(dev, vdd_uv, "failed to get vdd voltage\n");
+ 
+ 	mpr121 = devm_kzalloc(dev, sizeof(*mpr121), GFP_KERNEL);
+ 	if (!mpr121)
 
-Andi
+---
+base-commit: 414c97c966b69e4a6ea7b32970fa166b2f9b9ef0
+change-id: 20241119-input-mpr121-regulator-get-enable-read-voltage-4342a6afb4f2
+
+Best regards,
+-- 
+David Lechner <dlechner@baylibre.com>
+
 
