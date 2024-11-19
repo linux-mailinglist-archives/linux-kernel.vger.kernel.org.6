@@ -1,96 +1,184 @@
-Return-Path: <linux-kernel+bounces-414748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1B0C9D2CC7
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 18:37:20 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BF189D2D9E
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 19:11:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67BF4282183
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 17:37:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B2C9BB2CFB4
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 17:38:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15F3E1CF7C7;
-	Tue, 19 Nov 2024 17:37:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 856C21D1744;
+	Tue, 19 Nov 2024 17:38:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="UQtUNul6"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="RVSfWD9y"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09CAB1D0F79;
-	Tue, 19 Nov 2024 17:37:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4017B1D0DE2;
+	Tue, 19 Nov 2024 17:38:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732037831; cv=none; b=uBFarg6xVA7G0oW4jdWMtsksj6P7/XoId1toI4bIlwnuOgZB2z9/j1aI8VYLZUwgy5Cc+KCHOC3atz7b7taVQvWJzHZ8jfeJCVptgpt9KvvTqB13DwIlAh5+IME11AeDEsswVRW+SyL7F9EyX8vJpHiYYqiYgR+jqpzmckjwUQQ=
+	t=1732037902; cv=none; b=X3Qtcd/ioDEM6U1R9T1ogHzPdtL0TuOq72d+cF8B6VBTy7cRCS3C68yTPUXl5ZF9W5hlxvepcKQOvUjEsNmwbN4nfb3llikeTbBINbByjGRCArSwjfYBH8nTh4zhmvY48iNOGDjagNJcgeHZOCt+Xw///yuUjIsH6LHaqMGLFF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732037831; c=relaxed/simple;
-	bh=HtPAf28dsfHHDGWo7Boz7Y15Y7dn0tgp/x1gbifoOgw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hN84sIFVue+cSWrqgiu3uZWQY72FFBapODyBSYfkR+qI5j7ey8MbNy/UsUltGY70c3ykNkmH7Otp7kqpefv57/d4KzjPApoGW57nN6XWFdY7/sfAuqL6m4nHXw02pqax2l0GfAvDjFmHUMXmPaDaEyWdTfPIuxSgP741iKpaXjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=UQtUNul6; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=fwyRJIcjvMYWUfC0fV4a9N59ppnlFSHGcp1YD7DqRKA=; b=UQtUNul6T8dGBRrT7qW0+k4gUa
-	is9XediJAqDoOIcvG/Rg0V9vkHdPte5rrxX+L6yTfIuQdG11ksaX+7mMZEmghWxLC7oy1QsB6ly2F
-	y+jfRhnJ6yIa0OOqdVUMKLoxVS94wulmsdTUyu4qlS/K5TN2kgtki6JDDjEYPJf/NZ43zHKSEl2WR
-	ArCs+Iay1dd6pAHhbvxvMeBc495D/hoFuc5avXpQFgvQTW4l2GZrMqd/HQ1raqWCg8fVJXoOM64dS
-	LDThf9Tf//519jZMlYOwH9DqmuDaiPjQTVM81GyjOiJf6Z3wZrbg58Hxcz0/kcUaDRyiUgCeeLuUX
-	BB8bxYRQ==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tDS9u-00000004Lwj-31MQ;
-	Tue, 19 Nov 2024 17:37:04 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id A44333006AB; Tue, 19 Nov 2024 18:37:02 +0100 (CET)
-Date: Tue, 19 Nov 2024 18:37:02 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Christian Loehle <christian.loehle@arm.com>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Linux PM <linux-pm@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Lukasz Luba <lukasz.luba@arm.com>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	Len Brown <len.brown@intel.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Morten Rasmussen <morten.rasmussen@arm.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-Subject: Re: [RFC][PATCH v0.1 5/6] sched/topology: Allow .setpolicy() cpufreq
- drivers to enable EAS
-Message-ID: <20241119173702.GA27509@noisy.programming.kicks-ass.net>
-References: <3607404.iIbC2pHGDl@rjwysocki.net>
- <1889415.atdPhlSkOF@rjwysocki.net>
- <64a63f1c-088d-43dc-85c3-cecf8b59764f@arm.com>
- <CAJZ5v0hrj0jQ9mi20XRK3bTfaMDgUS3HyGnk=2x0UfF26jN1pQ@mail.gmail.com>
+	s=arc-20240116; t=1732037902; c=relaxed/simple;
+	bh=+nq/+tRwoSFNW+EoK2pWSX8cxt4Pd0wqeFV9b8P+NlE=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fsP2TyWWB7mXMJAJcjQ8sMwMZjbUpCpvXAPOZSJwEOzJu2eB8rYldBAn7A/Yc2DFl+QlgBezlKIPELWQD4ddNHoyNo/ls2wZ8i7aU4bUC5teMhmNASrHjEBQJRHoKBEJoUO3DvtBrsxdl+Xhd4nYrtR+Gn1F7xw3uHlpUaFATIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=RVSfWD9y; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AJ7Svar005048;
+	Tue, 19 Nov 2024 17:38:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=xUcf9sPZL9BJYbnUB8VEmGpr
+	rh86lGq6QHbgREjvU+w=; b=RVSfWD9yIf1mq80rJzI1y8gndFU+RSbP8N0N1x2N
+	TTc+0ZlC/KCPqWwAr18M5LT2QAcH5zbXgGzdK/HF1CqI06Dgva9jAiY0EJ0SamdS
+	jz8pvbdjqmXY4CPvOGSTuK5obOnhvU6d+YlphCK9Of4/9o2EBPQHrRfO7uYgopLK
+	PMNb296exqIMpkegZwnyM58rfV3za09GK0ocoyIm6zET9k1cTiaJpr1p7khuPblH
+	ze9BKT3OEGemUpWmB10oVDfk8exnYJ/KctiiL4Ng16Om5oct+7Q/idL6zOjcX9+9
+	2SYQaKG6agowlSZEsDgIMkyrp/gateo4JeSX27JqS8M+ng==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4308y8kbc7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 19 Nov 2024 17:38:17 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AJHcGWF031643
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 19 Nov 2024 17:38:16 GMT
+Received: from hu-wasimn-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 19 Nov 2024 09:38:10 -0800
+Date: Tue, 19 Nov 2024 23:08:06 +0530
+From: Wasim Nazir <quic_wasimn@quicinc.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel@quicinc.com>
+Subject: Re: [PATCH v2 5/5] arm64: dts: qcom: Add support for QCS9075 Ride &
+ Ride-r3
+Message-ID: <ZzzM/iXyZOzGDu/U@hu-wasimn-hyd.qualcomm.com>
+References: <20241115225152.3264396-1-quic_wasimn@quicinc.com>
+ <20241115225152.3264396-6-quic_wasimn@quicinc.com>
+ <wfc6nkkm53tkruixgidhyqkcddcay4cxby5uq7lhh6gut6u7su@ok3lqh6fcxge>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <CAJZ5v0hrj0jQ9mi20XRK3bTfaMDgUS3HyGnk=2x0UfF26jN1pQ@mail.gmail.com>
+In-Reply-To: <wfc6nkkm53tkruixgidhyqkcddcay4cxby5uq7lhh6gut6u7su@ok3lqh6fcxge>
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: n3cjdqejTwCqTqvSshMqg5lOVkJ-8O69
+X-Proofpoint-GUID: n3cjdqejTwCqTqvSshMqg5lOVkJ-8O69
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ mlxlogscore=977 lowpriorityscore=0 clxscore=1015 malwarescore=0
+ adultscore=0 impostorscore=0 mlxscore=0 spamscore=0 phishscore=0
+ suspectscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411190131
 
-On Mon, Nov 11, 2024 at 02:54:43PM +0100, Rafael J. Wysocki wrote:
-
-> Or what about ondemand?  Is it alway completely broken with EAS?
-
-I thought that thing was mostly considered broken anyway :-)
-
-> > For plain (non-intel_pstate) powersave and performance we could replace
-> > sugov_effective_cpu_perf()
-> > that determines the OPP of the perf-domain by the OPP they will be
-> > choosing, but for the rest?
+On Sat, Nov 16, 2024 at 01:54:23AM +0200, Dmitry Baryshkov wrote:
+> On Sat, Nov 16, 2024 at 04:21:52AM +0530, Wasim Nazir wrote:
+> > Add device tree support for QCS9075 Ride & Ride-r3 boards.
+> > QCS9075 Ride & Ride-r3 are similar to QCS9100 Ride and Ride-r3
+> > boards but without safety monitoring feature of SAfety-IsLand
+> > subsystem.
 > 
-> I generally think that depending on schedutil for EAS is a mistake.
+> Why do we need another set of DTS files? Should we expect more changes
+> to these DTS files?
 
-Well, the thinking was that we wanted to move to a single governor, and
-not proliferate things.
+Ride/r3 based on qcs9075 and qcs9100 are 4 different boards with different
+SoCs, so different file is used to represent all the 4 boards.
 
+> 
+> > 
+> > Difference between ride and ride-r3 is the ethernet phy.
+> > Ride uses 1G ethernet phy while ride-r3 uses 2.5G ethernet phy.
+> > 
+> > Signed-off-by: Wasim Nazir <quic_wasimn@quicinc.com>
+> > ---
+> >  arch/arm64/boot/dts/qcom/Makefile            |  2 ++
+> >  arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dts | 12 ++++++++++++
+> >  arch/arm64/boot/dts/qcom/qcs9075-ride.dts    | 12 ++++++++++++
+> >  3 files changed, 26 insertions(+)
+> >  create mode 100644 arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dts
+> >  create mode 100644 arch/arm64/boot/dts/qcom/qcs9075-ride.dts
+> > 
+> > diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
+> > index 5d9847119f2e..91c811aca2ca 100644
+> > --- a/arch/arm64/boot/dts/qcom/Makefile
+> > +++ b/arch/arm64/boot/dts/qcom/Makefile
+> > @@ -116,6 +116,8 @@ dtb-$(CONFIG_ARCH_QCOM)	+= qcs404-evb-4000.dtb
+> >  dtb-$(CONFIG_ARCH_QCOM)	+= qcs6490-rb3gen2.dtb
+> >  dtb-$(CONFIG_ARCH_QCOM)	+= qcs8550-aim300-aiot.dtb
+> >  dtb-$(CONFIG_ARCH_QCOM)	+= qcs9075-rb8.dtb
+> > +dtb-$(CONFIG_ARCH_QCOM)	+= qcs9075-ride.dtb
+> > +dtb-$(CONFIG_ARCH_QCOM)	+= qcs9075-ride-r3.dtb
+> >  dtb-$(CONFIG_ARCH_QCOM)	+= qcs9100-ride.dtb
+> >  dtb-$(CONFIG_ARCH_QCOM)	+= qcs9100-ride-r3.dtb
+> >  dtb-$(CONFIG_ARCH_QCOM)	+= qdu1000-idp.dtb
+> > diff --git a/arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dts b/arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dts
+> > new file mode 100644
+> > index 000000000000..a04c8d1fa258
+> > --- /dev/null
+> > +++ b/arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dts
+> > @@ -0,0 +1,12 @@
+> > +// SPDX-License-Identifier: BSD-3-Clause
+> > +/*
+> > + * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
+> > + */
+> > +/dts-v1/;
+> > +
+> > +#include "sa8775p-ride-r3.dts"
+> > +
+> > +/ {
+> > +	model = "Qualcomm Technologies, Inc. QCS9075 Ride Rev3";
+> > +	compatible = "qcom,qcs9075-ride-r3", "qcom,qcs9075", "qcom,sa8775p";
+> > +};
+> > diff --git a/arch/arm64/boot/dts/qcom/qcs9075-ride.dts b/arch/arm64/boot/dts/qcom/qcs9075-ride.dts
+> > new file mode 100644
+> > index 000000000000..9ffab74fb1a8
+> > --- /dev/null
+> > +++ b/arch/arm64/boot/dts/qcom/qcs9075-ride.dts
+> > @@ -0,0 +1,12 @@
+> > +// SPDX-License-Identifier: BSD-3-Clause
+> > +/*
+> > + * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
+> > + */
+> > +/dts-v1/;
+> > +
+> > +#include "sa8775p-ride.dts"
+> > +
+> > +/ {
+> > +	model = "Qualcomm Technologies, Inc. QCS9075 Ride";
+> > +	compatible = "qcom,qcs9075-ride", "qcom,qcs9075", "qcom,sa8775p";
+> > +};
+> > --
+> > 2.47.0
+> > 
+> 
+> -- 
+> With best wishes
+> Dmitry
+
+Thanks & Regards,
+Wasim
 
