@@ -1,165 +1,144 @@
-Return-Path: <linux-kernel+bounces-414731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BDD89D2C93
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 18:28:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4E4E9D2C97
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 18:28:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C030280C8E
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 17:28:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9ECDE1F231D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 17:28:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D91F01D1E72;
-	Tue, 19 Nov 2024 17:23:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 695071D2B25;
+	Tue, 19 Nov 2024 17:24:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eIuWoD5L"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MjDpy/Na"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D3D41D1E7C;
-	Tue, 19 Nov 2024 17:23:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B3EF1CBEAD;
+	Tue, 19 Nov 2024 17:24:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732036996; cv=none; b=eIOmgsXY80kTsl80+veNrRwdFhduPt5MjNs95tJNBDUt+Wv0jTtvbQMTY2bdn+dR7xQMtVH3TnebSmgYa+ezCgPs3qd/dsa8FoRROXi5XKe3QV04RQyzlqKKukLIwZbt7LDAlYjQY5ISwPsueIPf58dt9jqvMdr1AyNI4eeLl3Q=
+	t=1732037050; cv=none; b=o1YhrfthKXty28xCrI/qNvSlwoYc3x4RS7ohnHT9A0kNnkYL/dGNxfF3VQFTCYPMCpgpkz3mvzoMYNQojNibz1K27Po2hyG1Vao0BuEfauo9oz99CnvG5JEejQTbXNk3+0D+P8oLnoo9k/oUDLvQvk5qczDsHbeS/X9pyDKg1c8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732036996; c=relaxed/simple;
-	bh=Qm0DmK2/otYLi9MxrhjrpcdK31lIw8QIKSWNGb9beUk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aquuTTd5bcDub+4zM64zPGb2wmQAmB3YCIKB8FohyfAxRaEjdaCpXBzR5X53oreOhwNAMTT3PB8RFCXhZI602SDrYYEvxkfz0t/7uCrUhOvHsxNHfp7K9fB3oOOQIsoW63h2RJgVMXqBTakHgLOfICunVa5qckYyfWb1hLr6lw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eIuWoD5L; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEBE9C4AF0B;
-	Tue, 19 Nov 2024 17:23:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732036995;
-	bh=Qm0DmK2/otYLi9MxrhjrpcdK31lIw8QIKSWNGb9beUk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=eIuWoD5L7136bJMwU7c5sZ33v+E6KqgnJeHXYy+zz966g/7JBa0hWu/GVAk6WAaWQ
-	 cCZQGLYxdgJ/GrPDX2UV4/QNHZB9PFQvtyYtmNtYlgqHk92h5Kuw08GcWDc69GkxSF
-	 L4FgyVxThiHR0IT+bT92eP3NfCUpxSnH23c+yVm7Zi9A//kMsaWPEr95tUx2m3KF33
-	 Bws1Gylv0t0gnmXeWZ//RSeJfdj64mBNspxmqa6lnW7x6hvM8TjqTAdMEZHgdVj2ik
-	 6NIyQi9RbCK6B+rW9cf01BvB/OB8QzMSqIIKRNRiQl3zvaGluYJT9vHoyklFez191J
-	 vz1kUc22qu1dg==
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-53da4fd084dso8991e87.0;
-        Tue, 19 Nov 2024 09:23:15 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXzY/OCFrsF/EPe5w6+RSZnT9qveocw8DoJUvnc4jQF3V04YHyWeseaC4YyY3VigCV6Cmp/DMJddvxQs5k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxfSrtUBcHdKGGVRiNR6NavZyESAWTATlHTMDpJnVMDudbcYP4W
-	rL+5pixr7ouGIbCsOyDbwhqOcxxExVwXJz/FHVt5VtnGEdbjAdjOOYLfvFhJFELJiN2tufOU546
-	yMYhQOxcFkH5z0HQLavSF04wUY3o=
-X-Google-Smtp-Source: AGHT+IGA+YLkeMShimZMSDu/qFLnamzCmzyQPjXpN2lqr61+otjjHTJg4RVNE1aYBIZLqUKZpL2FbOhLSZWLZs0u1os=
-X-Received: by 2002:a05:6512:110e:b0:539:e88f:2396 with SMTP id
- 2adb3069b0e04-53dc0d8722bmr46626e87.24.1732036994424; Tue, 19 Nov 2024
- 09:23:14 -0800 (PST)
+	s=arc-20240116; t=1732037050; c=relaxed/simple;
+	bh=cMil2pur+KBm9u09/bMWkblEQziartoZ5kizC/Nlqhc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Q41egsj0x10lZzWW7ZhdDVN//DffCaXO+lm6GgOr7prbisjOf9FevG621bEBYMwt0RT0aH2eyjoQN3IKZq9A3kVDgPeqNzAr9wPHZhjrp4BZ0/G47qIqJCkvIgb39T8aSvNyTC7iINkV9mwmSeZk+ppOQZBDSH15AORL1hyL470=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MjDpy/Na; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7ee11ff7210so2916706a12.1;
+        Tue, 19 Nov 2024 09:24:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732037049; x=1732641849; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=a994QgEYvKCbl+4fSKENhp+gY0CvPXweZu4rmnsb44g=;
+        b=MjDpy/NaIHccs/khiCvHgZ0qV8Eg6nUGgMEQ4Z2x5aMChoJTA91Nk97WBIoaNLsZWn
+         nVIxnGBXmlypLaB9eqbMYWOzU7QSatu8jLB9ur8Lt4uPb+npQmavR9WscZTqOT71Ks/X
+         zuyc5zyJo5CL210XQ9HWNUzgpPws2MjQo2LihY6IPaqoms5wI+zz8OtnWvJWpXSAzIWE
+         10FNA45ybyWPf4wzBLfQRj7tLmVCOyfU0XtYrTIqigFZL3KsDY1OUrZaphS4PvQxhKgY
+         BFFOVnCp5Oy/b/LAdZs1U1OWgX2IE9Tx0zljuIBZY1PcpBWO4I1yHG7ovI8LBxif9+Ma
+         j4kg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732037049; x=1732641849;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=a994QgEYvKCbl+4fSKENhp+gY0CvPXweZu4rmnsb44g=;
+        b=cmeWBW6e4u4MQOIqBry15kazXHLVGIwfaKbkJX1CTTYlHIZ0svDUvfF4DLdoLRZvc2
+         UQAhamLXvJeyrsgeX/0c59TfRraTYjGh+E075fiXblRkCD2TxF1mnPsvwOcTLOXwU41L
+         Vml4+2hqJG5YHf+lexbY//p3qy9hCKZ8L/dN+l8clmF18HE/C9sFArGTDFdHH6xePCfF
+         f9oxyz5UTW7FLVUjAc6iQ7MfkvnWI7z76K3TkiZhNVK35Eabl23HT2BZic/fVnwf5UFH
+         QtDgsqKDzVoa6C3743kmoguJIp8VqTIzXrKOQ/o8zeOUjlyQfEqbsLukTkeB5I0YorO7
+         UMVg==
+X-Forwarded-Encrypted: i=1; AJvYcCVfF/QP0REzaygurm8Eg89MiH8Fp7PaaQOesmyeWoGmRXaTsurOu1IiqJKRH7TQF4a08oYiMQXpk47kBA8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZr9ZSQtM9eJkj4y9HLJbUSPLfgVV6IXatCO6PiGqNLcKyA+vb
+	T//y/vsapQRVaa9z05uLiKjVFlPIYebAtoQIhD+6AE5hkRuufZIR
+X-Google-Smtp-Source: AGHT+IHlb3j1ZVwzLqPyzvCoxRdYjejFShVvJSV6YVQTRMuPiZToHT3qfLJQGihC9TdFI4m/K0Ljaw==
+X-Received: by 2002:a05:6a20:72a3:b0:1db:eead:c588 with SMTP id adf61e73a8af0-1dc90bb7adcmr28658664637.29.1732037048665;
+        Tue, 19 Nov 2024 09:24:08 -0800 (PST)
+Received: from carrot.. (i118-19-249-239.s41.a014.ap.plala.or.jp. [118.19.249.239])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7f8c1c176a5sm7942720a12.3.2024.11.19.09.24.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Nov 2024 09:24:07 -0800 (PST)
+From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-nilfs@vger.kernel.org,
+	syzbot <syzbot+96d5d14c47d97015c624@syzkaller.appspotmail.com>,
+	syzkaller-bugs@googlegroups.com,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] nilfs2: fix potential out-of-bounds memory access in nilfs_find_entry()
+Date: Wed, 20 Nov 2024 02:23:37 +0900
+Message-ID: <20241119172403.9292-1-konishi.ryusuke@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <6732e1d8.050a0220.138bd5.00d3.GAE@google.com>
+References: <6732e1d8.050a0220.138bd5.00d3.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241113234526.402738-1-masahiroy@kernel.org> <20241113234526.402738-3-masahiroy@kernel.org>
- <20241119022730.GA2908286@thelio-3990X>
-In-Reply-To: <20241119022730.GA2908286@thelio-3990X>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Wed, 20 Nov 2024 02:22:37 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATpu5zYwx7kmaknsPGLXt8n8uCXyFpdi5vZeFZiBxYkGw@mail.gmail.com>
-Message-ID: <CAK7LNATpu5zYwx7kmaknsPGLXt8n8uCXyFpdi5vZeFZiBxYkGw@mail.gmail.com>
-Subject: Re: [PATCH 2/3] kbuild: enable objtool for *.mod.o and additional
- kernel objects
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, Paul Menzel <pmenzel@molgen.mpg.de>, 
-	Borislav Petkov <bp@alien8.de>, Nikolay Borisov <nik.borisov@suse.com>, Marco Elver <elver@google.com>, 
-	Josh Poimboeuf <jpoimboe@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, linux-kernel@vger.kernel.org
-Content-Type: multipart/mixed; boundary="000000000000cb0cb5062747496d"
+Content-Transfer-Encoding: 8bit
 
---000000000000cb0cb5062747496d
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Syzbot reported that when searching for records in a directory where
+the inode's i_size is corrupted and has a large value, memory access
+outside the folio/page range may occur, or a use-after-free bug may be
+detected if KASAN is enabled.
 
-On Tue, Nov 19, 2024 at 11:27=E2=80=AFAM Nathan Chancellor <nathan@kernel.o=
-rg> wrote:
->
-> Hi Masahiro,
->
-> On Thu, Nov 14, 2024 at 08:45:22AM +0900, Masahiro Yamada wrote:
-> > Currently, objtool is disabled in scripts/Makefile.{modfinal,vmlinux}.
-> >
-> > This commit moves rule_cc_o_c and rule_as_o_S to scripts/Makefile.lib
-> > and set objtool-enabled to y there.
-> >
-> > With this change, *.mod.o, .module-common.o,  builtin-dtb.o, and
-> > vmlinux.export.o will now be covered by objtool.
-> >
-> > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
->
-> I am seeing some build failures when LTO is enabled with this change in
-> -next as commit d8d3f6c6690c ("kbuild: enable objtool for *.mod.o and
-> additional kernel objects").
->
->   $ printf 'CONFIG_LTO_%s\n' NONE=3Dn CLANG_THIN=3Dy >kernel/configs/thin=
-lto.config
->
->   $ make -skj"$(nproc)" ARCH=3Dx86_64 LLVM=3D1 mrproper {def,thinlto.}con=
-fig all
->   ...
->   .vmlinux.export.o: warning: objtool: gelf_getehdr: invalid `Elf' handle
->   make[4]: *** [scripts/Makefile.vmlinux:13: .vmlinux.export.o] Error 1
->   ...
->
-> When LTO is enabled, these files are LLVM bitcode, not ELF, so objtool
-> can't process them:
->
->   $ file .vmlinux.export.o
->   .vmlinux.export.o: LLVM IR bitcode
+This is because nilfs_last_byte(), which is called by
+nilfs_find_entry() and others to calculate the number of valid bytes of
+directory data in a page from i_size and the page index, loses the
+upper 32 bits of the 64-bit size information due to an inappropriate
+type of local variable to which the i_size value is assigned.
 
-Good catch!
+This caused a large byte offset value due to underflow in the end
+address calculation in the calling nilfs_find_entry(), resulting in
+memory access that exceeds the folio/page size.
 
-I will squash the attached diff.
+Fix this issue by changing the type of the local variable causing the
+bit loss from "unsigned int" to "u64".  The return value of
+nilfs_last_byte() is also of type "unsigned int", but it is truncated
+so as not to exceed PAGE_SIZE and no bit loss occurs, so no change is
+required.
 
-Thank you.
+Signed-off-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+Reported-by: syzbot+96d5d14c47d97015c624@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=96d5d14c47d97015c624
+Tested-by: syzbot+96d5d14c47d97015c624@syzkaller.appspotmail.com
+Fixes: 2ba466d74ed7 ("nilfs2: directory entry operations")
+Cc: stable@vger.kernel.org
+---
+Andrew, please apply this as a bug fix.
 
+This fixes a potential out-of-page memory access bug recently
+reported by syzbot.
 
---
-Best Regards
-Masahiro Yamada
+Thanks,
+Ryusuke Konishi
 
---000000000000cb0cb5062747496d
-Content-Type: application/x-patch; name="0001-fixup.patch"
-Content-Disposition: attachment; filename="0001-fixup.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_m3oq2dwa0>
-X-Attachment-Id: f_m3oq2dwa0
+ fs/nilfs2/dir.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-RnJvbSA2Njc0NjQ4MTRjZGQ3Y2Q0ZjYyNjk5YmUyZjdlNTg3MTU1N2FmMWZlIE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBNYXNhaGlybyBZYW1hZGEgPG1hc2FoaXJveUBrZXJuZWwub3Jn
-PgpEYXRlOiBUdWUsIDE5IE5vdiAyMDI0IDE3OjI5OjQyICswOTAwClN1YmplY3Q6IFtQQVRDSF0g
-Zml4dXAKClNpZ25lZC1vZmYtYnk6IE1hc2FoaXJvIFlhbWFkYSA8bWFzYWhpcm95QGtlcm5lbC5v
-cmc+Ci0tLQogc2NyaXB0cy9NYWtlZmlsZS5idWlsZCB8IDYgKy0tLS0tCiBzY3JpcHRzL01ha2Vm
-aWxlLmxpYiAgIHwgOSArKysrKysrKy0KIDIgZmlsZXMgY2hhbmdlZCwgOSBpbnNlcnRpb25zKCsp
-LCA2IGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL3NjcmlwdHMvTWFrZWZpbGUuYnVpbGQgYi9z
-Y3JpcHRzL01ha2VmaWxlLmJ1aWxkCmluZGV4IDI1MzhhOTI1ZTA0Yy4uNDE2NDliOGE2NjMxIDEw
-MDY0NAotLS0gYS9zY3JpcHRzL01ha2VmaWxlLmJ1aWxkCisrKyBiL3NjcmlwdHMvTWFrZWZpbGUu
-YnVpbGQKQEAgLTEyOSwxMSArMTI5LDcgQEAgJChvYmopLyUubGw6ICQob2JqKS8lLmMgRk9SQ0UK
-IAogaXMtc2luZ2xlLW9iai1tID0gJChhbmQgJChwYXJ0LW9mLW1vZHVsZSksJChmaWx0ZXIgJEAs
-ICQob2JqLW0pKSx5KQogCi0jIFdoZW4gYSBtb2R1bGUgY29uc2lzdHMgb2YgYSBzaW5nbGUgb2Jq
-ZWN0LCB0aGVyZSBpcyBubyByZWFzb24gdG8ga2VlcCBMTFZNIElSLgotIyBNYWtlICQoTEQpIGNv
-dmVydCBMTFZNIElSIHRvIEVMRiBoZXJlLgotaWZkZWYgQ09ORklHX0xUT19DTEFORwotY21kX2xk
-X3NpbmdsZV9tID0gJChpZiAkKGlzLXNpbmdsZS1vYmotbSksIDsgJChMRCkgJChsZF9mbGFncykg
-LXIgLW8gJCh0bXAtdGFyZ2V0KSAkQDsgbXYgJCh0bXAtdGFyZ2V0KSAkQCkKLWVuZGlmCituZWVk
-LWxkLXNpbmdsZSA9ICQoaXMtc2luZ2xlLW9iai1tKQogCiBpZmRlZiBDT05GSUdfTU9EVkVSU0lP
-TlMKICMgV2hlbiBtb2R1bGUgdmVyc2lvbmluZyBpcyBlbmFibGVkIHRoZSBmb2xsb3dpbmcgc3Rl
-cHMgYXJlIGV4ZWN1dGVkOgpkaWZmIC0tZ2l0IGEvc2NyaXB0cy9NYWtlZmlsZS5saWIgYi9zY3Jp
-cHRzL01ha2VmaWxlLmxpYgppbmRleCBhZDZiOGRmYTU1MzAuLjdhYzY1NDE0Njk5YyAxMDA2NDQK
-LS0tIGEvc2NyaXB0cy9NYWtlZmlsZS5saWIKKysrIGIvc2NyaXB0cy9NYWtlZmlsZS5saWIKQEAg
-LTMwMywxMCArMzAzLDE3IEBAIGVuZGVmCiAjIFRoZXNlIGFyZSBzaGFyZWQgYnkgc29tZSBNYWtl
-ZmlsZS4qIGZpbGVzLgogCiBvYmp0b29sLWVuYWJsZWQgOj0geQorbmVlZC1sZC1zaW5nbGUgOj0g
-eQorCisjIFdoZW4gYSBtb2R1bGUgY29uc2lzdHMgb2YgYSBzaW5nbGUgb2JqZWN0LCB0aGVyZSBp
-cyBubyByZWFzb24gdG8ga2VlcCBMTFZNIElSLgorIyBNYWtlICQoTEQpIGNvdmVydCBMTFZNIElS
-IHRvIEVMRiBoZXJlLgoraWZkZWYgQ09ORklHX0xUT19DTEFORworY21kX2xkX3NpbmdsZSA9ICQo
-aWYgJChuZWVkLWxkLXNpbmdsZSksIDsgJChMRCkgJChsZF9mbGFncykgLXIgLW8gJCh0bXAtdGFy
-Z2V0KSAkQDsgbXYgJCh0bXAtdGFyZ2V0KSAkQCkKK2VuZGlmCiAKIHF1aWV0X2NtZF9jY19vX2Mg
-PSBDQyAkKHF1aWV0X21vZHRhZykgICRACiAgICAgICBjbWRfY2Nfb19jID0gJChDQykgJChjX2Zs
-YWdzKSAtYyAtbyAkQCAkPCBcCi0JCSQoY21kX2xkX3NpbmdsZV9tKSBcCisJCSQoY21kX2xkX3Np
-bmdsZSkgXAogCQkkKGNtZF9vYmp0b29sKQogCiBkZWZpbmUgcnVsZV9jY19vX2MKLS0gCjIuNDMu
-MAoK
---000000000000cb0cb5062747496d--
+diff --git a/fs/nilfs2/dir.c b/fs/nilfs2/dir.c
+index a8602729586a..f61c58fbf117 100644
+--- a/fs/nilfs2/dir.c
++++ b/fs/nilfs2/dir.c
+@@ -70,7 +70,7 @@ static inline unsigned int nilfs_chunk_size(struct inode *inode)
+  */
+ static unsigned int nilfs_last_byte(struct inode *inode, unsigned long page_nr)
+ {
+-	unsigned int last_byte = inode->i_size;
++	u64 last_byte = inode->i_size;
+ 
+ 	last_byte -= page_nr << PAGE_SHIFT;
+ 	if (last_byte > PAGE_SIZE)
+-- 
+2.43.0
+
 
