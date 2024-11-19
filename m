@@ -1,120 +1,73 @@
-Return-Path: <linux-kernel+bounces-414345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F23F9D26A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 14:14:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14AAA9D26A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 14:14:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA30B28197C
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 13:14:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B81B11F2306A
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 13:14:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A7FF1CCB49;
-	Tue, 19 Nov 2024 13:12:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E477D1CCECB;
+	Tue, 19 Nov 2024 13:14:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ps+uVD/+"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="WlC2q2oB"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76ACF1CBEBB;
-	Tue, 19 Nov 2024 13:12:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C9681CC8BC;
+	Tue, 19 Nov 2024 13:14:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732021950; cv=none; b=GryFb532R4u+kooziEvft6eYvXCFNPkISIkw1p4Gz5boDRKmvCkpb6eprwtqUxydqRJlHTuFeBKs60iNH8jX70mlO/PlgPDnWSs/R+aOFmCORwmSR8MDDU2VjV6/IE3Sb0/2+2aj4nzWbHwbSJCfu7n98mjkk2SIOymXoQro5Lo=
+	t=1732022043; cv=none; b=k8ecys5YNZ3TsRiy9vMYcFZF81+fnqXU+/12nVpS3NSFGQH6mfdF8NgTsS3Yusb62ObJ1eFgHhwePGeTVH7xGpWq/lco14QxIc50ZTWVPWxRm3u/beEtIl93B0JzwVQdDEdujfY2lnTDpvc6mwz+4huPXy8CXcouiRa4Ncd4TVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732021950; c=relaxed/simple;
-	bh=26iJ7jE78hzbeXxIg5NyK0lcpo0yHtsHxP/H6F/2BwM=;
+	s=arc-20240116; t=1732022043; c=relaxed/simple;
+	bh=HA7ilmPcjKXQ0kKkEkIgzTrUPmgJwaXhrXTUlJ2gqW4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JOJ2ErYPih28hTvj7F4XgrrSjXJvxQMXR+0fldSOpxH+KgRaM/D6l+8xmIcu6POZ5D4GKQ4ujI9/NC8fXuUhRb1oZ21Vs+Tyn0AUTdWT20msWhjGMB9If62yaZf15If4xbilrujAVQSj5Jf0yvd1fMinMSgdtxhaHkN7nO638xI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ps+uVD/+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D1ABC4CECF;
-	Tue, 19 Nov 2024 13:12:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732021950;
-	bh=26iJ7jE78hzbeXxIg5NyK0lcpo0yHtsHxP/H6F/2BwM=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=Jpq9qWYN0dUt2YwbieKlxvnWTYPo3CZbL5Hhu8188qoFlEoMjRFcFuU2k3Pin67FbEbOnZKRCgh/dzsNVc8XSBiYszSbcgnyYgBduA51g91nuehA1yCs4iVJ5ykJb3TnuLHgjJxhzJRSmeC7wKfATDEdG6Im84X5F7etQJ0c9BQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=WlC2q2oB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C159FC4CECF;
+	Tue, 19 Nov 2024 13:14:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1732022042;
+	bh=HA7ilmPcjKXQ0kKkEkIgzTrUPmgJwaXhrXTUlJ2gqW4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ps+uVD/+GOPfygU1hJYy3tD5S1APowDUjJqo/p9zABIUSdwNLCQjTTIbt80W1xxHS
-	 2JaHdZH52qD+52q6E2z9JaNb92w5T1CoZ2MViCXNXbiSBcL9+lUTYXqIp24KngQzGp
-	 aGvwNKBhupQe3ZXGYiLHDN8gFR9DVCDHiSy0Xgh621wSUUugE1KZIo8kJNarVH96Mr
-	 gPUcQxd45bO03tgAg0beRVlRxt4XvGk+axS0JHr2frC1fOit0h2fR/PMJA4SM8etj3
-	 49wTJ3LdgnCVv4D2hYjO+Lf9NWujujk71OKyBU6U7Oj0e1g+wuJM8YMIM5LR/TTFVX
-	 KSXe9iRo8DvCg==
-Date: Tue, 19 Nov 2024 14:12:26 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Chester Lin <chester62515@gmail.com>, Matthias Brugger <mbrugger@suse.com>, 
-	Ghennadi Procopciuc <Ghennadi.Procopciuc@nxp.com>, Larisa Grigore <larisa.grigore@nxp.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Lee Jones <lee@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Dong Aisheng <aisheng.dong@nxp.com>, Jacky Bai <ping.bai@nxp.com>, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, NXP S32 Linux Team <s32@nxp.com>, 
-	Christophe Lizzi <clizzi@redhat.com>, Alberto Ruiz <aruizrui@redhat.com>, 
-	Enric Balletbo <eballetb@redhat.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	imx@lists.linux.dev
-Subject: Re: [PATCH v6 1/7] dt-bindings: mfd: add support for the NXP SIUL2
- module
-Message-ID: <gqzwfe6wucn57plnte3g7c5xiri45mnatieviewgchkpeh562t@gha4sfrutjuh>
-References: <20241113101124.1279648-1-andrei.stefanescu@oss.nxp.com>
- <20241113101124.1279648-2-andrei.stefanescu@oss.nxp.com>
- <18e7a32c-a8de-4e5a-80aa-248b2090e346@kernel.org>
- <72b3b5e7-739f-4f03-ac40-a9cbd37972b8@oss.nxp.com>
+	b=WlC2q2oBCe8mKGYPT3zopR6SO4CbrekXkscT7ykrG4JHICOAbUPcGgHGGrenWgZP/
+	 z7dfRh1gRNsFDz0zSNISGILANxkxMBs9VLr4gwjznK06I3p1vLsP9By4cw2fNIHN6B
+	 JjKatj4dlRjRPuNIVoG89HcBxAnfcA3vZjwbolSg=
+Date: Tue, 19 Nov 2024 14:13:38 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: git@atemu.net
+Cc: Luca Stefani <luca.stefani.ge1@gmail.com>, Chris Mason <clm@fb.com>,
+	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 2/2] btrfs: Don't block system suspend during fstrim
+Message-ID: <2024111923-capsize-resonant-eed6@gregkh>
+References: <20240917203346.9670-1-luca.stefani.ge1@gmail.com>
+ <20240917203346.9670-3-luca.stefani.ge1@gmail.com>
+ <SICOALIt6xFGz_7VCBwGpUxENKZz_3Em604Vvgvh8Pi79wpvimQFBQNkDxa1kE5lwfkOU0ZSYRaiIugTDLAfM1j3HMUgM25s1rgpmmRQ9TI=@atemu.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <72b3b5e7-739f-4f03-ac40-a9cbd37972b8@oss.nxp.com>
+In-Reply-To: <SICOALIt6xFGz_7VCBwGpUxENKZz_3Em604Vvgvh8Pi79wpvimQFBQNkDxa1kE5lwfkOU0ZSYRaiIugTDLAfM1j3HMUgM25s1rgpmmRQ9TI=@atemu.net>
 
-On Tue, Nov 19, 2024 at 11:44:23AM +0200, Andrei Stefanescu wrote:
-> Hi Krzysztof,
+On Tue, Nov 19, 2024 at 07:54:58AM +0000, git@atemu.net wrote:
+> Hi,
 > 
-> Thank you for your review!
+> forgive my ignorance of the kernel patch workflow but it appears this second patch was only ported to 6.11? Only the first patch here was ported to LTS kernels (i.e. f00545e8386e228aac739588b40a6f200e0f0ffc).
 > 
-> On 19/11/2024 11:21, Krzysztof Kozlowski wrote:
-> > On 13/11/2024 11:10, Andrei Stefanescu wrote:
-> >> +
-> >> +properties:
-> >> +  compatible:
-> >> +    enum:
-> >> +      - nxp,s32g2-siul2
-> >> +      - nxp,s32g3-siul2
-> > 
-> > Not much improved. See other NXP bindings how they do this.
-> > 
-> 
-> Do you mean to have the "nxp,s32g3-siul2" compatible fall back to the g2 one?
+> I just hit the bug this fixes on 6.6.59 (I need to update, I know) but also checked Greg's v6.6.62 tree and it's not in there either.
 
-Yes, compatibility between devices means fallback.
+What is the git commit id in LInus's tree you are referring to here?
 
-> 
-> >> +
-> >> +  gpio-reserved-ranges:
-> >> +    maxItems: 2
-> > 
-> > That's odd to always require two reserved ranges. Does this mean all
-> > devices have exactly the same reserved GPIOs? Then the driver should not
-> > export them.
-> 
-> Yes, the driver exports GPIOs from two hardware modules because they are
-> tightly coupled. I export two gpio-ranges, each one corresponding to a
-> hardware module. If I were to export more gpio-ranges, thus avoiding
-> gpio-reserved-ranges, it would be hard to know to which hardware module
-> a gpio-range belongs. I would like to keep the current implementation
-> regarding this problem. Would that be ok?
+thanks,
 
-I don't understand why this is needed then. If you always export same
-set of GPIOs, why do you export something which is unusable/reserved?
-
-Best regards,
-Krzysztof
-
+greg k-h
 
