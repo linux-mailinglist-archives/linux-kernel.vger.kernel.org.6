@@ -1,126 +1,124 @@
-Return-Path: <linux-kernel+bounces-414347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA8AA9D26B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 14:17:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D70FC9D26BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 14:21:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 439111F232B4
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 13:17:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85AC91F2328C
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 13:21:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 242671CCB21;
-	Tue, 19 Nov 2024 13:17:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41A211CCB42;
+	Tue, 19 Nov 2024 13:21:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="cXu1GDTw";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="jpx0bHhF"
-Received: from fout-b5-smtp.messagingengine.com (fout-b5-smtp.messagingengine.com [202.12.124.148])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="r30K5B7Q"
+Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E25212B93;
-	Tue, 19 Nov 2024 13:17:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F173E1514FB;
+	Tue, 19 Nov 2024 13:21:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732022242; cv=none; b=C0qtDQLK86Tp4AIkePRlFbWToff0TIaaI2ZevCByecP1aneabj7ZX1VCfXx6hmEUpXwUkjkyps3eV7GRI/fvB/wAqAGXZf/3yCt/SRCy4ypiD4DYER5MN3qsvDEV6CZ+TlHCGrIRjqZ3C4jidXWR4iKJO9XH8/QADdT5liL588I=
+	t=1732022477; cv=none; b=qALgWK9F9EEKoWQoVtms4ODuzge+BA/LGPOSylqljEjLYi6Jv/Dd+J8h02hq8RtRmbF5jMOY4WjKQjq5GE3Kr5IS2DH5VmdMv/31Umzx7TVA7OS/R49GcwJew8oQK2cK1DcaRVvmpl3JIsBQwxEGX1XDYpEge7iHJofU8oXIpDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732022242; c=relaxed/simple;
-	bh=E454GamzLTfhki+MnpQ9dGwuoIX5586ObjUZk2BVNYc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iH8QBPprhRkCtXFrlDhflZxHOzAiGbANjTF7MkOCz7S6SM9USFz1/izfPIcBK9AagTTtq/0GKg8UQ4LZ/AIEG7ZKk1odBsurEeGgZ3Z/1QondX3pjUngV5rVR/UrSR+SXgAlBJLIdF9XJIIZBUbun0H33ZOtU8h1MdkBQR7PX5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=cXu1GDTw; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=jpx0bHhF; arc=none smtp.client-ip=202.12.124.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
-Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
-	by mailfout.stl.internal (Postfix) with ESMTP id 5ACFA1140181;
-	Tue, 19 Nov 2024 08:17:18 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-04.internal (MEProxy); Tue, 19 Nov 2024 08:17:19 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm3; t=1732022238; x=1732108638; bh=E454GamzLT
-	fhki+MnpQ9dGwuoIX5586ObjUZk2BVNYc=; b=cXu1GDTwBYQNdXaRC8VjNWGyoZ
-	IWmQzP01Fn+NgL4PrH8drFK1CtkSDKo6dwR3zhTMMIs0ku+2ZKgF9uQWgKnvO5jY
-	dhmK95Idl0VV2asENa+pmfpDhS8N/j7tTAE0T/EyhVW2i138poElbKJh6C4wa1dI
-	LssGpEr7mtKP66FYfnZfPgiokJ9qGYlqoth8XN6T1AGAI5RIkWz0W5gbrCR9DHl/
-	CEaxWSR0+i+cA6b88YrQ3rA5POvZkQLBu87hXl1QLUQVL8Xb+INeo9N0ENMZgLTT
-	DYTI/EzoAqS52xnZW3RBGcG96esmn7vqnROB9SiKqXjOM9gnPXTNMmZeLgtA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1732022238; x=1732108638; bh=E454GamzLTfhki+MnpQ9dGwuoIX5586ObjU
-	Zk2BVNYc=; b=jpx0bHhFM1T5a3AnGzxIde7wYgQ6igmYU6GkE2MmFc2oysqrSGY
-	HEp1c99PfWYCEyQPZ1KFbkgKCw1kUjloYW4fIfV0bb6/poplC2z8GotQ2H9OJMqz
-	ammcTD+22Rl/E3Z8gVSJyAh2qfTeeUia8OG3k8t9rhW6j68a0o//UjdY4hS2NmXU
-	wzWkVWt//qvvNiWqtc10BzFXKRdDVQl8oE0fdKyfkzXdq1vo/BYrkfqpVwXN4sBl
-	A0CQ549oSqU1kh19Iao28I//VIYyztL9BKqLoqIPraaudIc04L5bVuOSs64Uiz+p
-	E9hUFcRzybfv/tPJ4uwCAFaYPSJKZQLe1qw==
-X-ME-Sender: <xms:3Y88ZyMhQ86W4f4La3I2kCQ7t9cdOWBeqwDarrZYzqv1EZG2E67f7w>
-    <xme:3Y88Zw-qlFCzMtFEWklWVlXzShntukBubTD1vMV0BmFO3WopMl8X-03Y51gJuutB1
-    kcKDTpG1HZP6g>
-X-ME-Received: <xmr:3Y88Z5Q6Sp8yP6lT0mL7msWE5CuTEQfZVQ2JZX-ebO_ddUu_U2LTyUOtRMM>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrfedvgdeglecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecu
-    hfhrohhmpefirhgvghcumffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucggtffrrg
-    htthgvrhhnpeehgedvvedvleejuefgtdduudfhkeeltdeihfevjeekjeeuhfdtueefhffg
-    heekteenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    hgrhgvgheskhhrohgrhhdrtghomhdpnhgspghrtghpthhtohepfeegpdhmohguvgepshhm
-    thhpohhuthdprhgtphhtthhopehlohhrvghniihordhsthhorghkvghssehorhgrtghlvg
-    drtghomhdprhgtphhtthhopehsthgrsghlvgesvhhgvghrrdhkvghrnhgvlhdrohhrghdp
-    rhgtphhtthhopegrkhhpmheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhgpdhrtg
-    hpthhtoheplhhirghmrdhhohiflhgvthhtsehorhgrtghlvgdrtghomhdprhgtphhtthho
-    pehvsggrsghkrgesshhushgvrdgtiidprhgtphhtthhopehjrghnnhhhsehgohhoghhlvg
-    drtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgv
-    lhdrohhrghdprhgtphhtthhopehlihhnuhigqdhmmheskhhvrggtkhdrohhrghdprhgtph
-    htthhopehtohhrvhgrlhgusheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhg
-X-ME-Proxy: <xmx:3Y88ZytVjyBhOtrnmttKdtUz5sISkaZ8NMxouxf_XSu733R7qo8UOw>
-    <xmx:3Y88Z6epc61dqT7E27bO3k-Z6pR9ygSF3UentuxjzPUdUmbpzSZg1w>
-    <xmx:3Y88Z23ihX0hWKPbZ-tfD2vgedubkq3J0SxppSz0kUSm01MPSWesfA>
-    <xmx:3Y88Z-_niHDle7LLYaNWkWfet3H_5a_5bVNte9Q3S5PHPuUiPIU4ZA>
-    <xmx:3o88Z4-fJHhj5shHA7mAVWNVFJkPuTvn_eVVq_9n14fcv5cp1d4m-DUG>
-Feedback-ID: i787e41f1:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 19 Nov 2024 08:17:16 -0500 (EST)
-Date: Tue, 19 Nov 2024 14:16:52 +0100
-From: Greg KH <greg@kroah.com>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: stable@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Xu <peterx@redhat.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Mark Brown <broonie@kernel.org>,
-	"David S . Miller" <davem@davemloft.net>,
-	Andreas Larsson <andreas@gaisler.com>,
-	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
-	Helge Deller <deller@gmx.de>
-Subject: Re: [PATCH 6.6.y 0/5] fix error handling in mmap_region() and
- refactor (hotfixes)
-Message-ID: <2024111932-fondue-preorder-0c6f@gregkh>
-References: <cover.1731672733.git.lorenzo.stoakes@oracle.com>
+	s=arc-20240116; t=1732022477; c=relaxed/simple;
+	bh=DWLhylf76f1GXIwwv4PC0rHW85ZamEL2nO9LSc8rYmc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YVnWqMWb9MFNabayAjmpqOte7E1a72KI7+Vn+eCfFMlpVQEXBWokuTt9XUstjEfuRupPxBKef58j+txXcWhPB93GYX31O/SnhB83dhRBoTuu5fnlfoez5d//gFn+Ptiaw4UxLxrpdli7l61Xfq41zxAXyx/jm2icobLk6Ixw6LM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=r30K5B7Q; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AJD45DY028148;
+	Tue, 19 Nov 2024 14:21:00 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=hIUID8xieOV5SK3rECKHKQ
+	CWffQtbOG8ZqTfYVraUjY=; b=r30K5B7QBbqWKOJ75bQublHGRF6DvENG6pUKWT
+	y7tP8+/s4f4Tl6a060p3Yw5tUQ6feEY7peIk5fGiTU43u0e6p35cH362MAUwTeSX
+	nUdxmu0B6ys+zt//xq1XokqgU+MS604NZx7ZUWk7nVnvHNXzovAdmmvGU9iSgYEo
+	CUlKPLWhEiVJn2ylEZ/Mg3vu98kxqvTdMGhfhB5l6ajaw24oLlJpzxbGxSLcjGCQ
+	+GGlJ2SVt9MHMnqWcdWSVrL+lF/WmLEbQ5Lt/EEn9UXQUdr0p+gALDOGF3cRpzeY
+	3kFrBBw4Cu99jAa9FD/lffQSVe4QHBwJaF4a4JyKGt/BnTVg==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 42y77n9x7b-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 19 Nov 2024 14:21:00 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id D7E8C40047;
+	Tue, 19 Nov 2024 14:20:08 +0100 (CET)
+Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 3E873270D6C;
+	Tue, 19 Nov 2024 14:19:43 +0100 (CET)
+Received: from localhost (10.48.86.243) by SHFDAG1NODE3.st.com (10.75.129.71)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Tue, 19 Nov
+ 2024 14:19:42 +0100
+From: Patrick Delaunay <patrick.delaunay@foss.st.com>
+To: Alexandre TORGUE <alexandre.torgue@foss.st.com>,
+        Ulf Hansson
+	<ulf.hansson@linaro.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Daniel
+ Lezcano <daniel.lezcano@linaro.org>
+CC: Patrick Delaunay <patrick.delaunay@foss.st.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>
+Subject: [PATCH] cpuidle: psci: Activate GENPD_FLAG_ACTIVE_WAKEUP with OSI
+Date: Tue, 19 Nov 2024 14:18:34 +0100
+Message-ID: <20241119141827.1.I6129b16ec6b558efc1707861db87e55bf7022f62@changeid>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1731672733.git.lorenzo.stoakes@oracle.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE3.st.com
+ (10.75.129.71)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-On Fri, Nov 15, 2024 at 12:41:53PM +0000, Lorenzo Stoakes wrote:
-> Critical fixes for mmap_region(), backported to 6.6.y.
+Set GENPD_FLAG_ACTIVE_WAKEUP flag for domain psci cpuidle when OSI
+is activated, then when a device is set as the wake-up source using
+device_set_wakeup_path, the PSCI power domain could be retained to allow
+so that the associated device can wake up the system.
 
-Did I miss the 6.11.y and 6.1.y versions of this series somewhere?
+With this flag, for S2IDLE system-wide suspend, the wake-up path is
+managed in each device driver and is tested in the power framework:
+a PSCI domain is only turned off when GENPD_FLAG_ACTIVE_WAKEUP is enabled
+and the associated device is not in the wake-up path, so PSCI CPUIdle
+selects the lowest level in the PSCI topology according to the wake-up
+path.
 
-thanks,
+This patch is a preliminary step to support PSCI OSI on the STM32MP25
+platform with the D1 domain (power-domain-cluster) for the A35 cortex
+cluster and for the associated peripherals including EXTI1 which manages
+the wake-up interrupts for domain D1.
 
-greg k-h
+Signed-off-by: Patrick Delaunay <patrick.delaunay@foss.st.com>
+---
+
+ drivers/cpuidle/cpuidle-psci-domain.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/cpuidle/cpuidle-psci-domain.c b/drivers/cpuidle/cpuidle-psci-domain.c
+index 146f97068022..5fb5228f6bf1 100644
+--- a/drivers/cpuidle/cpuidle-psci-domain.c
++++ b/drivers/cpuidle/cpuidle-psci-domain.c
+@@ -72,6 +72,7 @@ static int psci_pd_init(struct device_node *np, bool use_osi)
+ 	 */
+ 	if (use_osi) {
+ 		pd->power_off = psci_pd_power_off;
++		pd->flags |= GENPD_FLAG_ACTIVE_WAKEUP;
+ 		if (IS_ENABLED(CONFIG_PREEMPT_RT))
+ 			pd->flags |= GENPD_FLAG_RPM_ALWAYS_ON;
+ 	} else {
+-- 
+2.25.1
+
 
