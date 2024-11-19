@@ -1,138 +1,239 @@
-Return-Path: <linux-kernel+bounces-414358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40CB59D2706
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 14:35:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 61D539D271B
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 14:38:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2542BB28998
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 13:31:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A81B1B2DE5F
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 13:32:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 851DB1CEAAB;
-	Tue, 19 Nov 2024 13:30:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0736B1CCB59;
+	Tue, 19 Nov 2024 13:31:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="imSx+Khd"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=permerror (0-bit key) header.d=sapience.com header.i=@sapience.com header.b="c/QTlNr2";
+	dkim=pass (2048-bit key) header.d=sapience.com header.i=@sapience.com header.b="Okf1+Zi0"
+Received: from s1.sapience.com (s1.sapience.com [72.84.236.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2123E1CC170;
-	Tue, 19 Nov 2024 13:30:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732023013; cv=none; b=gp0Hm/pwKUOmUv8U8WByemsR+XGoEDwLtl/nqK6qyS/iUxgovRnusQcBLILMEsziPll/2CAtkV31iGeckPfHRiX9BwVZNcuG5gp+SRoKN2XkvRIl6Kt4zudGk/Pb+hsavEbn2Lgoc6HNL3wsPveeVT7juQeXbWC1xSr7ln7ie/E=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732023013; c=relaxed/simple;
-	bh=b+L9qbqGVR11JrLNz1yjtill0U5wtaM7q9wIn2S8mnw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DmLM50KKnwhaGcLvzd5kTj2hReXRB4bRVgklwwdRIJfzlENEjdXDcoRw8wIlAipq23kCTeg0388oukedHrSrJSFvxzksZBrLFjQqPYzMJ/NAPztLR9BK2ug6L9rEG6x+plSkwVesNW9g8ABZjso42SfP+oMoUItbfoh68s8ro+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=imSx+Khd; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Transfer-Encoding:MIME-Version:References:
-	In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=m/2ZD36wJW8eluwjHkCBxTv9qiyzz866KACmcI1qvBI=; b=imSx+KhdtyMNcGkm3iyHvcyggu
-	EMyEs4Jr8bF2o8lQtJU7npMjZB1euyc8RWkEbplSBlaQrgOQ+7XvxmyvwE2RU1/+k6UkRWsA4PHC7
-	kisi8cYA1WCEP88uiw2mGPLs4SGCNN2FLbmWLoNfH7RrYPTGQ3p+bcWyvPLTsXVlgE6S7g9H+2C1d
-	K9Yo8/Uh1RG1lu4K41gYl6yM8/PpOB4+jmpYrz411M7+utDHh0/yfwSlgM5H+2slnpAlBTJEJ8jh4
-	Nx0sf5FRfWEO7DEWXN/VaLttUVw+bQdfJXHAX9FrkedFrxdhbLK6HydZIGmtPGGRlF0TcYeupOdOO
-	IT56mhew==;
-Received: from i53875a30.versanet.de ([83.135.90.48] helo=localhost.localdomain)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1tDOIp-0006z1-Gn; Tue, 19 Nov 2024 14:29:59 +0100
-From: Heiko Stuebner <heiko@sntech.de>
-To: srinivas.kandagatla@linaro.org
-Cc: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	heiko@sntech.de,
-	detlev.casanova@collabora.com,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	sebastian.reichel@collabora.com
-Subject: [PATCH 5/5] arm64: dts: rockchip: add rk3576 otp node
-Date: Tue, 19 Nov 2024 14:29:16 +0100
-Message-ID: <20241119132916.1057797-6-heiko@sntech.de>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241119132916.1057797-1-heiko@sntech.de>
-References: <20241119132916.1057797-1-heiko@sntech.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 189104778E;
+	Tue, 19 Nov 2024 13:31:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=72.84.236.66
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732023072; cv=fail; b=qp0H2agpmC78jhWMtdlG8xzEoBKcm3E4BucNcD9DpDHwLWOgQIJx1nI/ba7pG3Dj98EHzP8L+VIBgpigEjOnYHmuiHf1BfcTDtNnEPcZyJTA/NpO3YH1LzHEm2sc8PS2BqTVuIeAnqJ+Q5l0zJG2uxHGSe5WFykuFI2pWvS2UNw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732023072; c=relaxed/simple;
+	bh=vbObzj+bjxeFRKyo/6Ql4FmVCIkj4Ih3phDM45GSptc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=IyBXj+noGW2zdO8VVfBIOKYIM/rBV0ZZdUqrxs1qFb26VlttpepNhlfFCk4zVQVQc2iKRdHh/q4Eth8llGkGGWuYe7wxfLUhalNfR0xrtOVs3K0Drbel5/RlHJFFfU92XyG39LTxC8dcOeFO7h/MUpFhHMHCdl9UQYf2GjptQgo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sapience.com; spf=pass smtp.mailfrom=sapience.com; dkim=permerror (0-bit key) header.d=sapience.com header.i=@sapience.com header.b=c/QTlNr2; dkim=pass (2048-bit key) header.d=sapience.com header.i=@sapience.com header.b=Okf1+Zi0; arc=fail smtp.client-ip=72.84.236.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sapience.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sapience.com
+Authentication-Results: dkim-srvy7; dkim=pass (Good ed25519-sha256 
+   signature) header.d=sapience.com header.i=@sapience.com 
+   header.a=ed25519-sha256; dkim=pass (Good 2048 bit rsa-sha256 signature) 
+   header.d=sapience.com header.i=@sapience.com header.a=rsa-sha256
+Received: from srv8.sapience.com (srv8.sapience.com [x.x.x.x])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (secp384r1) server-digest SHA384)
+	(No client certificate requested)
+	by s1.sapience.com (Postfix) with ESMTPS id 61F69480AB5;
+	Tue, 19 Nov 2024 08:31:03 -0500 (EST)
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=sapience.com;
+ i=@sapience.com; q=dns/txt; s=dk-ed25519-220413; t=1732023063;
+ h=message-id : subject : from : to : cc : date : in-reply-to :
+ references : content-type : mime-version : from;
+ bh=iVhrAsPP1o0K6VYLQh1gnoBRVgdV6zhgZ6ruKhOzY0U=;
+ b=c/QTlNr2Sb3WDD8OkTuyawvi8I6uFEnQ8b3bHvIkq2C2LE6msFd0PxYeZulYmfuKUwcEe
+ zcKpgR5BphaSEZcBA==
+ARC-Seal: i=1; a=rsa-sha256; d=sapience.com; s=arc6-rsa-220412; t=1732023063;
+	cv=none; b=gxGqRzAhw/scAQ/wBKmJVSV4GFnh2rGJM9nRWWpN/iVsZvyg+mFjWiEwHxnnCXOnlY9RRxESeUmTwjobgfgZDju1nk/6C82el/JFhLnEDXiI17b5B/3AbWkL0FzVQ8c5p7l15o6Mnl+WdbMZjf7frw9Ydt5xr6El4UgqseYPJ/BIfVRQDB+V1Y5Ij8Pi8OHucsF8iOZJI6wmowenUEclVDfp7UTHBLoLFNCQ5j8f/sCbEG1vl96mUdY4NdVumkbwciRzFnG+QRq91a+Lw0a+dzFieq1VnNPaYki/ACpKJ4ld2sS26AlV+tNw0O6viTyH6Pejymgtnz3aM1oCM5ltUw==
+ARC-Message-Signature: i=1; a=rsa-sha256; d=sapience.com; s=arc6-rsa-220412;
+	t=1732023063; c=relaxed/simple;
+	bh=vbObzj+bjxeFRKyo/6Ql4FmVCIkj4Ih3phDM45GSptc=;
+	h=DKIM-Signature:DKIM-Signature:Message-ID:Subject:From:To:Cc:Date:
+	 In-Reply-To:References:Autocrypt:Content-Type:User-Agent:
+	 MIME-Version; b=a4DR51nlNPm6FZD0UR+goL994bIVzObwjhGF417eDaIXn6id3oOBwq/cFK5jLOP1SMR/43cC5ldPcGAoxZktHiCXu0TXUrx+GLCxWQah+E/WznmiAYX50mtv6KBbCKbdQZG6bsOjRBZz/Q8rT0Oi0215rrk0wvIrAhxetxCbfAB1TJ8LwecEDKAR/BJPnH1FbcjOOG3cXj9R9qO4YkCsmKflUeFXci48LIBSoO1ZdBrZbbblsQyEjZi8qLlef4LCeAOhmdDXVr6YtAyN5slHmx1739JWqtPNLF1g3KhIKZPURDUWPdyEj6P6rzPZlF5+sMq2KOk5XuuCKaMvO7ys8w==
+ARC-Authentication-Results: i=1; arc-srv8.sapience.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sapience.com;
+ i=@sapience.com; q=dns/txt; s=dk-rsa-220413; t=1732023063;
+ h=message-id : subject : from : to : cc : date : in-reply-to :
+ references : content-type : mime-version : from;
+ bh=iVhrAsPP1o0K6VYLQh1gnoBRVgdV6zhgZ6ruKhOzY0U=;
+ b=Okf1+Zi07YJet2Zh9pkSnPdEy4lQR0DYT1c2l9wHQRNkVmIAj5EoH/wY1anHeT5HsMXb3
+ s5JtPJZKZL7Lq96+XZp6Y0uzMTL8FKoz2xTHozmM5MetHdhdB9YrhT1SU5jdscLan7N5YgB
+ v74MTGYcQKdsFVXjaze6sO6pDTBtEIwPMqmUQYz0Y9xAVSBR0s8bps0NEHrXAH7AA0hfveC
+ fk6Tc1hclHh4l5e2+Kq4Bf9kusv+9axZ1Uq3v+9z/WuiX5gw7GgAZMCkd2ccgLnj2c0eW+J
+ Z8f1OyS3jayiTmpJ3kG/JguIjpt2EsUXMBJOvz06Wj/x6tst1alkgWmyp7yA==
+Received: from lap7.sapience.com (lap7w.sapience.com [x.x.x.x])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature ECDSA (secp384r1) server-digest SHA384)
+	(No client certificate requested)
+	by srv8.sapience.com (Postfix) with ESMTPS id 28D67280047;
+	Tue, 19 Nov 2024 08:31:03 -0500 (EST)
+Message-ID: <ef8bd4f9308dbf941076b2f7bd8a81590a09aa5e.camel@sapience.com>
+Subject: Re: md-raid  6.11.8 page fault oops
+From: Genes Lists <lists@sapience.com>
+To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+Cc: song@kernel.org, yukuai3@huawei.com, linux-raid@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, 
+	linux@leemhuis.info
+Date: Tue, 19 Nov 2024 08:31:02 -0500
+In-Reply-To: <Zzx34Mm5K42GWyKj@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+References: <0b579808e848171fc64e04f0629e24735d034d32.camel@sapience.com>
+	 <34333c67f5490cda041bc0cbe4336b94271d5b49.camel@sapience.com>
+	 <Zzx34Mm5K42GWyKj@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+Autocrypt: addr=lists@sapience.com; prefer-encrypt=mutual;
+ keydata=mDMEXSY9GRYJKwYBBAHaRw8BAQdAwzFfmp+m0ldl2vgmbtPC/XN7/k5vscpADq3BmRy5R
+ 7y0LU1haWwgTGlzdHMgKEwwIDIwMTkwNzEwKSA8bGlzdHNAc2FwaWVuY2UuY29tPoiWBBMWCAA+Ah
+ sBBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAFiEE5YMoUxcbEgQOvOMKc+dlCv6PxQAFAmPJfooFCRl
+ vRHEACgkQc+dlCv6PxQAc/wEA/Dbmg91DOGXll0OW1GKaZQGQDl7fHibMOKRGC6X/emoA+wQR5FIz
+ BnV/PrXbao8LS/h0tSkeXgPsYxrzvfZInIAC
+Content-Type: multipart/signed; micalg="pgp-sha384";
+	protocol="application/pgp-signature"; boundary="=-22X8WIaCT3AexQthvRmq"
+User-Agent: Evolution 3.54.1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-This adds the otp node to the rk3576 soc devicetree including the
-individual fields we know about.
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
- arch/arm64/boot/dts/rockchip/rk3576.dtsi | 39 ++++++++++++++++++++++++
- 1 file changed, 39 insertions(+)
+--=-22X8WIaCT3AexQthvRmq
+Content-Type: multipart/alternative; boundary="=-oKegJe8IFJzT9ta3Wa56"
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3576.dtsi b/arch/arm64/boot/dts/rockchip/rk3576.dtsi
-index 436232ffe4d1..c70c9dcfad82 100644
---- a/arch/arm64/boot/dts/rockchip/rk3576.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3576.dtsi
-@@ -1149,6 +1149,45 @@ sdhci: mmc@2a330000 {
- 			status = "disabled";
- 		};
- 
-+		otp: otp@2a580000 {
-+			compatible = "rockchip,rk3576-otp";
-+			reg = <0x0 0x2a580000 0x0 0x400>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			clocks = <&cru CLK_OTPC_NS>, <&cru PCLK_OTPC_NS>,
-+				 <&cru CLK_OTP_PHY_G>;
-+			clock-names = "otp", "apb_pclk", "phy";
-+			resets = <&cru SRST_OTPC_NS>, <&cru SRST_P_OTPC_NS>;
-+			reset-names = "otp", "apb";
-+
-+			/* Data cells */
-+			cpu_code: cpu-code@2 {
-+				reg = <0x02 0x2>;
-+			};
-+			otp_cpu_version: cpu-version@5 {
-+				reg = <0x05 0x1>;
-+				bits = <3 3>;
-+			};
-+			otp_id: id@a {
-+				reg = <0x0a 0x10>;
-+			};
-+			cpub_leakage: cpub-leakage@1e {
-+				reg = <0x1e 0x1>;
-+			};
-+			cpul_leakage: cpul-leakage@1f {
-+				reg = <0x1f 0x1>;
-+			};
-+			npu_leakage: npu-leakage@20 {
-+				reg = <0x20 0x1>;
-+			};
-+			gpu_leakage: gpu-leakage@21 {
-+				reg = <0x21 0x1>;
-+			};
-+			log_leakage: log-leakage@22 {
-+				reg = <0x22 0x1>;
-+			};
-+		};
-+
- 		gic: interrupt-controller@2a701000 {
- 			compatible = "arm,gic-400";
- 			reg = <0x0 0x2a701000 0 0x10000>,
--- 
-2.45.2
+--=-oKegJe8IFJzT9ta3Wa56
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
 
+T24gVHVlLCAyMDI0LTExLTE5IGF0IDE3OjA0ICswNTMwLCBPamFzd2luIE11am9vIHdyb3RlOgo+
+ID4gCi4uLgoKPiA+IMKgKGdkYikgbGlzdCAqKHJiX2ZpcnN0KzB4MTMpCj4gPiDCoCAweGZmZmZm
+ZmZmODFkZTFhZjMgaXMgaW4gcmJfZmlyc3QgKGxpYi9yYnRyZWUuYzo0NzMpLgo+ID4gwqAgNDY4
+wqDCoMKgwqDCoMKgIHN0cnVjdCByYl9ub2RlwqAgKm47Cj4gPiDCoCA0NjkKPiA+IMKgIDQ3MMKg
+wqDCoMKgwqDCoCBuID0gcm9vdC0+cmJfbm9kZTsKPiA+IMKgIDQ3McKgwqDCoMKgwqDCoCBpZiAo
+IW4pCj4gPiDCoCA0NzLCoMKgwqDCoMKgwqDCoMKgwqDCoCByZXR1cm4gTlVMTDsKPiA+IMKgIDQ3
+M8KgwqDCoMKgwqDCoCB3aGlsZSAobi0+cmJfbGVmdCkKPiAKPiBOb3cgdGhpcyBsb29rcyBzdHJh
+bmdlLCB3ZSBhbHJlYWR5IG1ha2Ugc3VyZSBuIGlzIG5vdCBOVUxMIGFuZCB0aGVuCj4gc29tZWhv
+dyB0aGlzIGxpbmUgZW5kcyB1cCBpbgo+IAo+IMKgQlVHOiB1bmFibGUgdG8gaGFuZGxlIHBhZ2Ug
+ZmF1bHQgZm9yIGFkZHJlc3M6IDAwMDAwMDAwMDAyMDAwMTAKPiAKPiBOb3csIGRlY29kaW5nIHRo
+ZSBjb2RlIHdpdGggYW4geDg2IHZtbGludXgsIEkgc2VlIHRoZSBmYXVsaW5nIG9wY29kZQo+IGZh
+dWx0aW5nOgo+IAo+IENvZGUgc3RhcnRpbmcgd2l0aCB0aGUgZmF1bHRpbmcgaW5zdHJ1Y3Rpb24K
+PiA9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09Cj4gwqDCoCAwOsKg
+wqAgMGYgMWYgODAgMDAgMDAgMDAgMDDCoMKgwqAgbm9wbMKgwqAgMHgwKCVyYXgpCj4gwqDCoCA3
+OsKgwqAgOTDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgbm9wCj4g
+wqDCoCA4OsKgwqAgOTDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAg
+bm9wCj4gwqDCoCA5OsKgwqAgOTDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqAgbm9wCj4gwqDCoCBhOsKgwqAgOTDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqAgbm9wCj4gwqDCoCBiOsKgwqAgOTDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqAgbm9wCj4gwqDCoCBjOsKgwqAgOTDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgbm9wCj4gwqDCoCBkOsKgwqAgOTDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgbm9wCj4gwqDCoCBlOsKgwqAgOTDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgbm9wCj4gwqDCoCBmOsKgwqAgOTDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgbm9wCj4gCj4gTm93IFJB
+WCBpcyAweDIwMDAwMCBidXQgSSBkb24ndCB0aGluayB0aGUgbm9wbCBpbnN0cnVjdGlvbiBzaG91
+bGQKPiBoYXZlIHJlc3VsdGVkCj4gaW4gYSBtZW0gYWNjZXNzIEFGQSBteSBsaW1pdGVkIHVuZGVy
+c3RhbmRpbmcgb2YgeDg2IElTQSBnb2VzLgo+IAo+IEkgYWxzbyBkb24ndCBzZWUgbm9wbCBpbiBt
+eSB2bWxpbnV4IGluIHJiX2ZpcnN0LCBteSBiaW5hcnkgYmVpbmcKPiBjb21waWxlZCB3aXRoCj4g
+Z2NjIDguNS4gQXJlIHlvdSBieSBjaGFuY2UgdXNpbmcgY2xhbmcgb3IgaGlnaGVyIHZlcnNpb24g
+b3IgaGlnaGVyCj4gb3B0aW1pemF0aW9uIGluIGdjYy4KPiAKPiBSZWdhcmRzLAo+IG9qYXN3aW4K
+CkkgYW0gdXNpbmcgQXJjaCB0b29sY2hhaW4gd2l0aMKgCgrCoCDCoGdjYyAxNC4yLjErcjEzNCtn
+YWI4ODRmZmZlM2ZjLTEKCkkgZG8gbm90IHNldCBDRkxBR1NfS0VSTkVMIMKgc28gY29tcGlsZSBv
+cHRpb25zIGFyZSB0aGUgZGVmYXVsdC4KCnRoYW5rcwoKZ2VuZQoKCg==
+
+
+--=-oKegJe8IFJzT9ta3Wa56
+Content-Type: text/html; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+
+<html><head><style>pre,code,address {
+  margin: 0px;
+}
+h1,h2,h3,h4,h5,h6 {
+  margin-top: 0.2em;
+  margin-bottom: 0.2em;
+}
+ol,ul {
+  margin-top: 0em;
+  margin-bottom: 0em;
+}
+blockquote {
+  margin-top: 0em;
+  margin-bottom: 0em;
+}
+</style></head><body><div>On Tue, 2024-11-19 at 17:04 +0530, Ojaswin Mujoo =
+wrote:</div><blockquote type=3D"cite" style=3D"margin:0 0 0 .8ex; border-le=
+ft:2px #729fcf solid;padding-left:1ex"><blockquote type=3D"cite" style=3D"m=
+argin:0 0 0 .8ex; border-left:2px #729fcf solid;padding-left:1ex"><div><br>=
+</div></blockquote></blockquote><div>...</div><div><br></div><blockquote ty=
+pe=3D"cite" style=3D"margin:0 0 0 .8ex; border-left:2px #729fcf solid;paddi=
+ng-left:1ex"><blockquote type=3D"cite" style=3D"margin:0 0 0 .8ex; border-l=
+eft:2px #729fcf solid;padding-left:1ex"><div>&nbsp;(gdb) list *(rb_first+0x=
+13)<br></div><div>&nbsp; 0xffffffff81de1af3 is in rb_first (lib/rbtree.c:47=
+3).<br></div><div>&nbsp; 468&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; struct rb_=
+node&nbsp; *n;<br></div><div>&nbsp; 469<br></div><div>&nbsp; 470&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp; n =3D root-&gt;rb_node;<br></div><div>&nbsp; 471&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (!n)<br></div><div>&nbsp; 472&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return NULL;<br></div=
+><div>&nbsp; 473&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; while (n-&gt;rb_left)<=
+br></div></blockquote><div><br></div><div>Now this looks strange, we alread=
+y make sure n is not NULL and then<br></div><div>somehow this line ends up =
+in<br></div><div><br></div><div>&nbsp;BUG: unable to handle page fault for =
+address: 0000000000200010<br></div><div><br></div><div>Now, decoding the co=
+de with an x86 vmlinux, I see the fauling opcode<br></div><div>faulting:<br=
+></div><div><br></div><div>Code starting with the faulting instruction<br><=
+/div><div>=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D<br></div=
+><div>&nbsp;&nbsp; 0:&nbsp;&nbsp; 0f 1f 80 00 00 00 00&nbsp;&nbsp;&nbsp; no=
+pl&nbsp;&nbsp; 0x0(%rax)<br></div><div>&nbsp;&nbsp; 7:&nbsp;&nbsp; 90&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; nop<br></div><div>&nbsp;&nbsp=
+; 8:&nbsp;&nbsp; 90&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; nop<=
+br></div><div>&nbsp;&nbsp; 9:&nbsp;&nbsp; 90&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp; nop<br></div><div>&nbsp;&nbsp; a:&nbsp;&nbsp; 90&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; nop<br></div><div>&nbsp;&nbsp=
+; b:&nbsp;&nbsp; 90&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; nop<=
+br></div><div>&nbsp;&nbsp; c:&nbsp;&nbsp; 90&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp; nop<br></div><div>&nbsp;&nbsp; d:&nbsp;&nbsp; 90&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; nop<br></div><div>&nbsp;&nbsp=
+; e:&nbsp;&nbsp; 90&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; nop<=
+br></div><div>&nbsp;&nbsp; f:&nbsp;&nbsp; 90&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&=
+nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs=
+p;&nbsp;&nbsp;&nbsp; nop<br></div><div><br></div><div>Now RAX is 0x200000 b=
+ut I don't think the nopl instruction should have resulted<br></div><div>in=
+ a mem access AFA my limited understanding of x86 ISA goes.<br></div><div><=
+br></div><div>I also don't see nopl in my vmlinux in rb_first, my binary be=
+ing compiled with<br></div><div>gcc 8.5. Are you by chance using clang or h=
+igher version or higher optimization in gcc.<br></div><div><br></div><div>R=
+egards,<br></div><div>ojaswin<br></div></blockquote><div><br></div><div>I a=
+m using Arch toolchain with&nbsp;</div><div><br></div><div>&nbsp; &nbsp;gcc=
+ 14.2.1+r134+gab884fffe3fc-1</div><div><br></div><div>I do not set CFLAGS_K=
+ERNEL &nbsp;so compile options are the default.</div><div><br></div><div>th=
+anks</div><div><br></div><div>gene</div><div><br></div><div><br></div></bod=
+y></html>
+
+--=-oKegJe8IFJzT9ta3Wa56--
+
+--=-22X8WIaCT3AexQthvRmq
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYJAB0WIQRByXNdQO2KDRJ2iXo5BdB0L6Ze2wUCZzyTFgAKCRA5BdB0L6Ze
+22lRAPwIC9zcnlniEgLBIaY96wS2abxAw3LVHrvMTZeE70sU1AEAuwHvsIc6U8aD
+Dt6m7nOvlaaTo3bZxtibX0pJgy/XNwc=
+=+ALZ
+-----END PGP SIGNATURE-----
+
+--=-22X8WIaCT3AexQthvRmq--
 
