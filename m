@@ -1,93 +1,77 @@
-Return-Path: <linux-kernel+bounces-413773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 898D29D1E71
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 03:51:04 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 529DC9D1E79
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 03:53:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23C55B2359A
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 02:51:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C2638B23237
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 02:53:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 277981482E8;
-	Tue, 19 Nov 2024 02:50:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB01113DB9F;
+	Tue, 19 Nov 2024 02:53:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Emp8av/E"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n7BrPrSv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76DEB145A09;
-	Tue, 19 Nov 2024 02:50:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53CAC28E3F;
+	Tue, 19 Nov 2024 02:53:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731984634; cv=none; b=i5jB3QVloMCPz7EPWkustI9uuoFNoYC8VbjGj7vGj/yA0N0Vwn/j3CBG9Uedc4F7o/LQqM3a+1RG+KC4n0MrE0rZURT69LouvfcY+TJopiyF/I9ViUu4YZgVAUJ60srz2Lf+kqessCpQ9jSUwBAskKlLiLdgDDXsv3wCWkiJ0DA=
+	t=1731984805; cv=none; b=SpUUSelsiOVun0qOZjt1Bh83lJshTX6YjR5WDdqdlA3s9xcTYnjEGlCSpFWrXlVbWlZUmcu3SMUr7XMhSfFC8Ae+nCz/SeF7Fhm7e7ZVF7Uc62OOjEmZ9nt+u4CA2GCJHsgq3h1Nb4aISOHFJuluqegqFV1ksMbvaMDiodI6ptQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731984634; c=relaxed/simple;
-	bh=M3fYILgUzXtiT5uDZ8DGwwy3CEaH6jcV/j5fu0aDaeA=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=pvQawvm/8tXfkt/DJ99vzVyiOBLBn1quLYTaATpH9PthUhOaTpV8Q7o+KPJjVUoFaEFF4X0u0SgPKO2Xg8WEaENT71k/b7BcYehwnrtjwmjktI5s06gSBrh2nZomZSeMHgWgR/gi/0ZNAc3vNkuB1R3iniFswUFPzC2eEKc3qfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Emp8av/E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46449C4CED9;
-	Tue, 19 Nov 2024 02:50:34 +0000 (UTC)
+	s=arc-20240116; t=1731984805; c=relaxed/simple;
+	bh=gGlaLvbL+cKmnyYjm9c9go3bMbiw5DRVQTLOgYF/X+o=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kyWAICkS1PE/HpHSfw0lOf6qt6bOiqjPACJFSlOx84HV7GMFwFcbel+/750Tn4w0aX06eKFxO04Ln1u4/o1vNoUqrvBumem7B8Th0HCvmNTAvPCbJdUGdmx/82lqQBCQnNp1QBBLEO9LwW4VIoB24zd3jPVWo6horg25DnIR7xA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n7BrPrSv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51F8AC4CECC;
+	Tue, 19 Nov 2024 02:53:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731984634;
-	bh=M3fYILgUzXtiT5uDZ8DGwwy3CEaH6jcV/j5fu0aDaeA=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=Emp8av/EWyHDx9FV9kgfUZtQsP9ubjNv7OvgAGv54wGxzXif+x7WEwWGQnqR/RKZc
-	 j2Ninuo53DFxg6CJN1QLNMIvu/gfjPGHE6bl4B4J4K0gBpcuyQ5ikKqNetKfl1Aa55
-	 EKY7UkwlUYPZHl/SG1JvM1rkA7x0OmCKMEmSIKzKb1WVvp3Qh0wI/hShKoIYRoTmCW
-	 D3Eb912EEfj+o5ucZXLZXo0iH6rkm31F1rbFr8/STwnFT7lCoYOpU4sMLPG6/ls0Xm
-	 0+YUOzs67Ms2CzzYAxNrBP7HFOWT44SyYmpap/36+RYudRU5FKKAtoiViXIW0JIzB9
-	 DrOwp4H2XpFSg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAEA93809A80;
-	Tue, 19 Nov 2024 02:50:46 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1731984804;
+	bh=gGlaLvbL+cKmnyYjm9c9go3bMbiw5DRVQTLOgYF/X+o=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=n7BrPrSvxjS72Xbow16WyqqJuBHw07MvK/xOKAz62renU/tP/WQ9lvdgU+Xtk8o84
+	 XywbGBBGDbh7CL49lprAE3fcRm6iZSwnJw7eQyU3ef3eCdnK3e2mm6qadBQPLdUezT
+	 j/WjHBaTT4zEsmMHscKP5Tx5598hw3HSy4rOBVIafS2jwi+zLpIcPzn9FpDKyAIi3n
+	 fpCnziNlgfjYW8RqMerc1RaIWuvtSFkJuyY9UFU008VQheIkw/3yV424hFXeNsxguM
+	 o6iEuWG1202uY3P6oXCHNv1ALp/irJS9hge0KRiB1nKAlQcCYUbeCfQUr/y5q+WxPe
+	 VjEhhpezQkA+g==
+Date: Mon, 18 Nov 2024 18:53:23 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Caleb Sander <csander@purestorage.com>
+Cc: syzbot <syzbot+21ba4d5adff0b6a7cfc6@syzkaller.appspotmail.com>,
+ andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com,
+ parav@nvidia.com, saeedm@nvidia.com, syzkaller-bugs@googlegroups.com,
+ tariqt@nvidia.com
+Subject: Re: [syzbot] [net?] general protection fault in dev_prep_valid_name
+Message-ID: <20241118185323.37969bcd@kernel.org>
+In-Reply-To: <CADUfDZqBUvm5vUgRHXKjvo=Kk4Ze8xU5tn-wG6J0wmUE6TTREA@mail.gmail.com>
+References: <67383db1.050a0220.85a0.000e.GAE@google.com>
+	<CADUfDZqBUvm5vUgRHXKjvo=Kk4Ze8xU5tn-wG6J0wmUE6TTREA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] dt-bindings: net: renesas,ether: Drop undocumented
- "micrel,led-mode"
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <173198464577.82509.11524804173445644255.git-patchwork-notify@kernel.org>
-Date: Tue, 19 Nov 2024 02:50:45 +0000
-References: <20241113225742.1784723-2-robh@kernel.org>
-In-Reply-To: <20241113225742.1784723-2-robh@kernel.org>
-To: Rob Herring <robh@kernel.org>
-Cc: s.shtylyov@omp.ru, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, krzk+dt@kernel.org, conor+dt@kernel.org,
- geert+renesas@glider.be, magnus.damm@gmail.com, sergei.shtylyov@gmail.com,
- netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello:
+On Mon, 18 Nov 2024 18:19:23 -0800 Caleb Sander wrote:
+> Hmm, it seems very unlikely that "mlx5/core: Schedule EQ comp tasklet
+> only if necessary" could have caused this issue. The commit only
+> touches the mlx5 driver. Does the test machine have ConnectX NICs? The
+> commit itself simply moves where tasklet_schedule() is called for the
+> mlx5_cq_tasklet_cb() tasklet, making it so the tasklet will only be
+> scheduled to process userspace RDMA completions.
+> Is it possible that the failure is not consistently reproducible and
+> the bisection is landing on the wrong commit?
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Wed, 13 Nov 2024 16:57:42 -0600 you wrote:
-> "micrel,led-mode" is not yet documented by a schema. It's irrelevant to
-> the example, so just drop it.
-> 
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
->  Documentation/devicetree/bindings/net/renesas,ether.yaml | 1 -
->  1 file changed, 1 deletion(-)
-
-Here is the summary with links:
-  - [net-next] dt-bindings: net: renesas,ether: Drop undocumented "micrel,led-mode"
-    https://git.kernel.org/netdev/net-next/c/5bf99baefb3e
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Yes, most likely bad bisection, I looked at the syzbot docs but I don't
+see the command for invalidating the bisection results.
 
