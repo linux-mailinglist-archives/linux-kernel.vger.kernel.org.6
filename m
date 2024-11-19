@@ -1,101 +1,129 @@
-Return-Path: <linux-kernel+bounces-414201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7DDA9D24A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 12:17:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 947DC9D24AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 12:18:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 721B21F219A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 11:17:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4EB0A1F21AE5
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 11:18:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B36A71C07F9;
-	Tue, 19 Nov 2024 11:17:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 537911C4A2F;
+	Tue, 19 Nov 2024 11:18:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="BB00A0Jj"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IwTp4ote"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B1D81459F6
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 11:17:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C1331C1F2F
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 11:18:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732015069; cv=none; b=GoY7JEfXtrn26LEBoaMyDIEI1OHej/tYeh8FM1Tk/EDt74DKT3LgmhzrpzK0rrXdiYE5rkwn/Pr0TdSmm9aHnwTATE7gcVkr7wyW8Il4rwy7zkpRibyMCu3Eem3AVpenR2E0Un27NGsmCAB2ZOOf7GgY6qIf/5aLfkz4+gCFo1I=
+	t=1732015092; cv=none; b=Td/pprLHJvUcm1YlqUu7rxiMJCwzsbycPGlGoJNsB7NRgoJ4q6p0A+6PPPNVP+ZB2Vdiy9D8uXfJi6wrHavQ6WfDo7s7q/2Cl5EUS6lCs+/tsAOPQJSTAx4bgMjh0JC68cSAY7zqRA6JRxdcpqepyutH2urrxAxpPoK0Bl92K9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732015069; c=relaxed/simple;
-	bh=ReCJNVW+VP6ESUiWczUJS3Vmbti7NVrQ67wMlSiW1Ys=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YkqU0uRvlmMf2Ri28KUEFrj+BkLNRGw/bvn5Zn+aMC1stwfa67bR5oB5jfsBrfW67a5KHp/2tUaKU/mJy+HPFHBVs7D8Ihk5clVsz11uKvT6ZtVDUASLRXzBzyrZHYcqqj/BLJCtrBPZiePtBDA5KdHiB73IFf23LiP4JWSHqlA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=BB00A0Jj; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 6C4C440E0269;
-	Tue, 19 Nov 2024 11:17:43 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id MliB_GPxp5Jz; Tue, 19 Nov 2024 11:17:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1732015058; bh=WXRJU0gMVsKPKdu1MVjEwd7DZEg12zO/OqiOm3Fk6Uk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BB00A0Jjh+tmogpklpAGOYTX3sgVKXKz1TSHmBdn59TYCMwkDRmJAHij1x0Xo8MaQ
-	 FGLcQXqfUS/FLUTS77AjbvDZZNt1OtXRgvICqccBPe77JRTi/uWs1V9bEhn1eche5J
-	 ENHHfrsExowVYGQ/4XlNUk7MeqrKHFptzWxmD8yDdUu/ahLGqMA/fevx2xiTkoAAWJ
-	 LcQOU3wqSwwwTFIgCGYcRlg9BXOh9Q5OlGXP+Sq5gvln1c+Y6K0GSYgCzubjrQKtpn
-	 c/cdenqQZc3lR8unasg0fMrlHesKaO7tllj6nSJe9zki31Nk1wo+UDvY6yOfCaXl+e
-	 E20l+E0YfmIJ7akj9QR1gw6c0uUKFfaJqdKxdRs2qXcvQTBGSF2GXDjJYBX7r5AaRY
-	 tACWxEzo3qUB8Rvhht8SCJFtdqvUPHXBzQus1s0R3fjzhKhHmGeQpeFJHA4U8g9nX+
-	 8FXJQoeRgbBiULTpv8XPPcp/Eb6/baNqU5z9dN++flXSLa8AMVCSWVWaimwlq9ODBH
-	 cJQqw7a6wNRiO05dFQRjL1ssgEZRrtYrCRk+FWl/yw6RW055eNet9ahh4wfvZCW7Y2
-	 nZNwm+UMLsJaSAUa4MbLY+1t6jW9sPDakzVKKm+Lez7APEzOi7oivZO5usUxCt7B9Q
-	 Cc9SjLezyURj93DNchsaHdf4=
-Received: from zn.tnic (pd9530b86.dip0.t-ipconnect.de [217.83.11.134])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id AB16740E0261;
-	Tue, 19 Nov 2024 11:17:34 +0000 (UTC)
-Date: Tue, 19 Nov 2024 12:17:28 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Thomas De Schampheleire <thomas.de_schampheleire@nokia.com>
-Cc: Andrew Cooper <andrew.cooper3@citrix.com>, linux-kernel@vger.kernel.org,
-	x86@kernel.org
-Subject: Re: x86/amd late microcode thread loading slows down boot
-Message-ID: <20241119111728.GAZzxzyHj8U99cEHQ8@fat_crate.local>
-References: <ZyulbYuvrkshfsd2@antipodes>
- <6449aa6c-43b1-40eb-ab54-48803481d11b@citrix.com>
- <20241107153036.GCZyzdHEwm9-LPQOzY@fat_crate.local>
- <Zy0p5DT0SOWsCDn7@antipodes>
- <20241114095639.GDZzXJV1EDJlMqv24c@fat_crate.local>
- <3f6a84bd-af4a-4ffa-8205-25b2c9084893@citrix.com>
- <20241115205114.GCZze0QtUKbeXdFEHe@fat_crate.local>
- <ZztZsCgX45rrMOVD@antipodes>
- <20241118152859.GDZztdOyjUvVe17Ua5@fat_crate.local>
- <ZzxsciUu2EL5y13W@antipodes>
+	s=arc-20240116; t=1732015092; c=relaxed/simple;
+	bh=7KnqngzIweImov/bg+EQOYAdCfmPCJgVOCZnMrcp46Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UrzyuDd5AJQSKP7D0hwOzJ26jqyxpOId1b9HZgjmVX+hNJkgawbS9uJMyGCLON09AJxIJpP6oiNSqW0OVtINqG9MtO7QvFsW2ejlTjy99/3zb7r+UtYdJJBKSvn7djeS1CNc1xovBwT7XGh+SpJSC+TAO46jnzDYqmGq4KI93c4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IwTp4ote; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732015090;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WSBouoRatInqJbfUCy4gUiCHF5kDVST7sA6zTlqHn1A=;
+	b=IwTp4ote9IueFqjdrOqb80yFNlFWNE3R/MdBi+Baga4oH+PXOF22U5lC6FaMH2IY4DEowY
+	o7+3RiYKCOybspGmokhMBGYA0xQZDWKGaQ/Zle8JPF0vDv27PljrvIB/ruzFOrye4U623d
+	CCo0KKx2KmSpzXOg2PbchL0FHH+41Io=
+Received: from mail-yb1-f199.google.com (mail-yb1-f199.google.com
+ [209.85.219.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-386-opOU4YZ9M8GfJrOA6m-vYg-1; Tue, 19 Nov 2024 06:18:08 -0500
+X-MC-Unique: opOU4YZ9M8GfJrOA6m-vYg-1
+X-Mimecast-MFC-AGG-ID: opOU4YZ9M8GfJrOA6m-vYg
+Received: by mail-yb1-f199.google.com with SMTP id 3f1490d57ef6-e381f9e1395so4604218276.3
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 03:18:08 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732015088; x=1732619888;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WSBouoRatInqJbfUCy4gUiCHF5kDVST7sA6zTlqHn1A=;
+        b=WPK4HmaD/vKQyoex2OTwFD40xnEcC/On318QSq50hMTUXdaCbcBsmstpJIGrw5UyTb
+         btEYVMA4pN3F1UpiaRy+PtRqiYCB9649Hl++svy2+vKeFU8RVnlpnju9MB+bNFPzvScX
+         Etqtz1Li4tbGbvB+I2qU5jEt5wEnMMS/Q48o1jJbflPsgiVZYVI0xElrC/K6D9n/fXve
+         HOSGbvqJeerQeZcPUBFo+VVomcU8xfuDoW0NNmvAn5vUFlDuii6ae2c8JW0Cjbi3CrFb
+         8wdwv22DSyIHMBzwf5JkGB7TArvL8N1Uysmyhcv2GnxfqRTQDGBJ5LgUGqXNkwOqbNBK
+         9AWA==
+X-Forwarded-Encrypted: i=1; AJvYcCX6dTOt1/g8flu0hT48Frb+2NMMxVvxuNYG05b4XEj9NbupQc7qemytoIkDsA0znWt6X/mkjnNp2nhiNZg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBp2oiKND6AzranNebL76ie7bOGjK/cEWd7GYcsc6+AkIgkXZK
+	fcVPhi/X3hNmz0peqsp3a88AoQKHLdko8hbPiY5qN3h4AZF+Aubz5oG6enhxmp1WQSPXYu9YuTs
+	TD3Bln6zaMLJdWBKpQM3IoMkTTRhylRDiGWY1qvUDV23K7LZk6meNZJtXkmRdog==
+X-Received: by 2002:a05:6902:298a:b0:e30:cc00:b010 with SMTP id 3f1490d57ef6-e382614f9c8mr10200260276.25.1732015088319;
+        Tue, 19 Nov 2024 03:18:08 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IE96zkhRwyQeB2qy8231vJaIKfZPGcGVKna3QNScGbU8jvugvr7WKVQycq/NpiNX4wDg/wBiQ==
+X-Received: by 2002:a05:6902:298a:b0:e30:cc00:b010 with SMTP id 3f1490d57ef6-e382614f9c8mr10200247276.25.1732015088026;
+        Tue, 19 Nov 2024 03:18:08 -0800 (PST)
+Received: from [192.168.1.14] (host-79-55-200-170.retail.telecomitalia.it. [79.55.200.170])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-46392c44142sm9845691cf.85.2024.11.19.03.18.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 19 Nov 2024 03:18:07 -0800 (PST)
+Message-ID: <3cfc2e90-c9b4-425d-80f4-ddace9aff021@redhat.com>
+Date: Tue, 19 Nov 2024 12:18:00 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ZzxsciUu2EL5y13W@antipodes>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/3] Add standalone ethernet MAC entries for qcs615
+To: Yijie Yang <quic_yijiyang@quicinc.com>, Vinod Koul <vkoul@kernel.org>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Bhupesh Sharma <bhupesh.sharma@linaro.org>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+ Jose Abreu <joabreu@synopsys.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ netdev@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, quic_tingweiz@quicinc.com,
+ quic_aiquny@quicinc.com, quic_tengfan@quicinc.com, quic_jiegan@quicinc.com,
+ quic_jingyw@quicinc.com, quic_jsuraj@quicinc.com
+References: <20241118-schema-v1-0-11b7c1583c0c@quicinc.com>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20241118-schema-v1-0-11b7c1583c0c@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Nov 19, 2024 at 11:46:10AM +0100, Thomas De Schampheleire wrote:
-> Note that neither 6.11.x nor 6.6.x already have the global bsp_cpuid_1_eax which
-> your patch currently relies on.
+On 11/18/24 07:16, Yijie Yang wrote:
+> Add separate EMAC entries for qcs615 since its core version is 2.3.1,
+> compared to sm8150's 2.1.2.
+> 
+> Signed-off-by: Yijie Yang <quic_yijiyang@quicinc.com>
+## Form letter - net-next-closed
 
-That's fine - stable folks usually know what to pick up. If not, I'll provide
-backports.
+The merge window for v6.13 has begun and net-next is closed for new
+drivers, features, code refactoring and optimizations. We are currently
+accepting bug fixes only.
 
--- 
-Regards/Gruss,
-    Boris.
+Please repost when net-next reopens after Dec 2nd.
 
-https://people.kernel.org/tglx/notes-about-netiquette
+RFC patches sent for review only are welcome at any time.
+
+See:
+https://www.kernel.org/doc/html/next/process/maintainer-netdev.html#development-cycle
+
+
 
