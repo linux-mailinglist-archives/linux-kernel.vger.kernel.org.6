@@ -1,167 +1,167 @@
-Return-Path: <linux-kernel+bounces-413820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A21AE9D1F2E
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 05:24:56 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 741ED9D1F33
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 05:26:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 147ADB22467
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 04:24:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9CD0FB23481
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 04:26:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08B371465AC;
-	Tue, 19 Nov 2024 04:24:47 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C1581531D2;
+	Tue, 19 Nov 2024 04:25:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="Q5Jq4elT"
+Received: from mail-pj1-f97.google.com (mail-pj1-f97.google.com [209.85.216.97])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3326020E6;
-	Tue, 19 Nov 2024 04:24:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC6A114883F
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 04:25:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.97
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731990286; cv=none; b=HgchMRqc17k4ku0WzCtGfPOQ4t6Tekh1ERi++WduEOdFA381bfvpl0rno8jiR6uJb4BKmIez3GvFgAFz3drQ1eg7jMMdneln9E2ozALdoALFYtqP1jgwzz33G7HUS02j0ALWCwJpKEzttAeNanmhe7+HMblqwCFGRl9LJQkOxOQ=
+	t=1731990332; cv=none; b=i0HNAoB1bIGkChv0JXqTPVJwMN2l8CcPXmLHV5mtUhsAvkJTYEnSHa5nbNwtX1HJSK8kGaP9/Ar8wvQd+efhTK9EQP2m6YclFewiTIpU3Vui73XpOSick1/rMlfHzi3qtZoHkQEZmGe9G5l5qbdvHwn/mHpH5KWKxcazfdyW06Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731990286; c=relaxed/simple;
-	bh=hQnbFB1vpAT3Rui8jZTOS905qzylSOBEZDSQknfnjBw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=tqUNDwC9e0K19xCZVK7e3HaC+vQVP95eojbOEWkEPqbGq+qqSXG/j2SSLMR9bXTDThu3wms4rb584OoH4AhiW24wSlUC4YpXRDkTRV9dI4NrbPC7PCSOfnQprGxUFTReU3M7pAB4GyQgAzQ5E+y2CsxwFta7NNjbrgsStlajsew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-From: Sam James <sam@gentoo.org>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Kostadin Shishmanov <kostadinshishmanov@protonmail.com>,
-  "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-  arnd@arndb.de,  linux-kbuild@vger.kernel.org
-Subject: Re: Build failure with GCC 15 (-std=gnu23)
-In-Reply-To: <20241119041550.GA573925@thelio-3990X> (Nathan Chancellor's
-	message of "Mon, 18 Nov 2024 21:15:50 -0700")
-Organization: Gentoo
-References: <4OAhbllK7x4QJGpZjkYjtBYNLd_2whHx9oFiuZcGwtVR4hIzvduultkgfAIRZI3vQpZylu7Gl929HaYFRGeMEalWCpeMzCIIhLxxRhq4U-Y=@protonmail.com>
-	<20241118205629.GA15698@thelio-3990X> <8734joj5gn.fsf@gentoo.org>
-	<20241119041550.GA573925@thelio-3990X>
-User-Agent: mu4e 1.12.7; emacs 31.0.50
-Date: Tue, 19 Nov 2024 04:24:41 +0000
-Message-ID: <87r077j1fa.fsf@gentoo.org>
+	s=arc-20240116; t=1731990332; c=relaxed/simple;
+	bh=FJjmKpzIYgDfujopHIkhYFFfJzGJtokItrd50odKjeY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dXhpnYzRcQ+DAPHWBmQUVaGn1kLWuJVc9NIA7OA4+HR7Ja7PfmJtdyeg8JFpXqCo68CnoZQ8mdRTHIJUphfVOa+awvzBpBBQ0B5EfTXIXtM4ZcP9Z9l2osu51oI3DQzPQNoBpbLhPKCVBepSPqSJmhJbECVl9LrF2VrCweaU8cw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=Q5Jq4elT; arc=none smtp.client-ip=209.85.216.97
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pj1-f97.google.com with SMTP id 98e67ed59e1d1-2ea5252f0a9so166030a91.3
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 20:25:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google2022; t=1731990329; x=1732595129; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3trMWXYzttAOtdIjV6M2XhTs2gOppEYx/zOfIC7UPJ8=;
+        b=Q5Jq4elTQE6NzvJyxp4Sq8QsKzEiMNFEQQKtkB63iVO6mL9yNFkHtWr8OIp1xyEb2s
+         /RXz76Svba3ki0msM31M69yd9mKp0Jr9o3/gapIjq4fo1ebnRyWTO5ovjYubx69Sm+fU
+         vwk0pCdsdCfxdnbvy3Pqph/gtqn46+IvXYsyvc7Kg69e52IaV5e85SLLAiANnoBtQ/4w
+         vHRcDhQGGRbdp6h7FReuPHTX9BTs4MNeHm1Jmy9lhQoXi5wFqxel/yoBV1W9XvzxXRg0
+         xMJasQiIvyhFoXFeEgmCE8m9uo7VpgMDy9AVyR5h1VGNJamcI5ixq8bFoXYyrImPH3wv
+         2hJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731990329; x=1732595129;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3trMWXYzttAOtdIjV6M2XhTs2gOppEYx/zOfIC7UPJ8=;
+        b=s3t7/ZSzQZv9JLGLqh66TzUScZFmJfJb1e40LcPlUGCgSyy1Ubv6hnDrU/IM7COGbq
+         KCPdV5iPE1YaWiCAlo3MSGbPyvwpOthnhUXmajB3nJaApXRuAw2Wm2rjHHRkS2EoLqjz
+         Fi5zQMOJuOoAcHQxF2sraqMDHRhvCo74Qvnt6CLW0b2maiDtXc7NoM0fsCCqNe3dhQs0
+         ET2ct1u8BpstYXScBMmRCTI6RuQXqhmKBB0JWSjWjxqmQg2nKLREkeQ0SydAJGSQxvYr
+         umVMtkRvxkiqWJ0T85wtWan/x1n4wPF1HY+s/CSLkdvgUhUH1HR6zaEov0eSFvdMB39f
+         Gubw==
+X-Forwarded-Encrypted: i=1; AJvYcCUOHI2F+CqJVMEbiiBwr5gX2+enqib1fcZtS1D9D/XUsUbDk+oOnyWPcZkhXGhCsKsN/aKw6iT+WGK663A=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5sjmYZCOMMui5UPoxLVDPELe6C121EFhjI35+KHWNJkR2BobA
+	QbD0IbMIFBO7XfLJk7ESWt2g12ltCILLsT1KzwsxY7vDoQUPP/w/yjyhJSO0pAc2l0nnV7c+roT
+	2wEBBjUvOc3sl73WFxF0UEI3D73nsZEpR
+X-Google-Smtp-Source: AGHT+IHFMNTIlbDoao3VsyR+BDuAcr6gQNxb8Qkp+B5fNRjOApOSdGc0DlUXNezS6aHNNkxf6Vvr6JXjh9oK
+X-Received: by 2002:a17:902:d510:b0:20c:8ffa:7dd with SMTP id d9443c01a7336-211d0ec3017mr84205205ad.11.1731990329213;
+        Mon, 18 Nov 2024 20:25:29 -0800 (PST)
+Received: from c7-smtp-2023.dev.purestorage.com ([208.88.159.129])
+        by smtp-relay.gmail.com with ESMTPS id d9443c01a7336-212536a5ab7sm212365ad.108.2024.11.18.20.25.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Nov 2024 20:25:29 -0800 (PST)
+X-Relaying-Domain: purestorage.com
+Received: from dev-csander.dev.purestorage.com (dev-csander.dev.purestorage.com [10.7.70.37])
+	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id BCD93340748;
+	Mon, 18 Nov 2024 21:25:28 -0700 (MST)
+Received: by dev-csander.dev.purestorage.com (Postfix, from userid 1557716354)
+	id B3195E428AF; Mon, 18 Nov 2024 21:24:58 -0700 (MST)
+From: Caleb Sander Mateos <csander@purestorage.com>
+To: Saeed Mahameed <saeedm@nvidia.com>,
+	Leon Romanovsky <leon@kernel.org>,
+	Tariq Toukan <tariqt@nvidia.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: Caleb Sander Mateos <csander@purestorage.com>,
+	netdev@vger.kernel.org,
+	linux-rdma@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] mlx5/core: remove mlx5_core_cq.tasklet_ctx.priv field
+Date: Mon, 18 Nov 2024 21:24:44 -0700
+Message-ID: <20241119042448.2473694-1-csander@purestorage.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Nathan Chancellor <nathan@kernel.org> writes:
+The priv field in mlx5_core_cq's tasklet_ctx struct points to the
+mlx5_eq_tasklet tasklet_ctx field of the CQ's mlx5_eq_comp. mlx5_core_cq
+already stores a pointer to the EQ. Use this eq pointer to get a pointer
+to the tasklet_ctx with no additional pointer dereferences and no void *
+casts. Remove the now unused priv field.
 
-> On Tue, Nov 19, 2024 at 02:57:28AM +0000, Sam James wrote:
->> Nathan Chancellor <nathan@kernel.org> writes:
->>=20
->> > Hi Kostadin,
->> >
->> > Just a quick FYI off the bat, you only directed this to LKML, which is
->> > basically like sending it into the void because very few people actual=
-ly
->> > read every message on LKML. I only caught it because I have a filter s=
-et
->> > up for mentions of Clang and LLVM. I'd suggest adding at least the
->> > Kbuild mailing list, which I have done now. I have also added Arnd
->> > because I seem to recall him looking into how hard it would be to build
->> > the kernel with C23.
->>=20
->> FWIW, scripts/get_maintainers.pl for stddef.h and types.h doesn't
->> include kbuild -- maybe we should add that in.
->
-> Yeah, it would be good to have someone own these files. Not sure it
-> makes sense for Kbuild to be it though, I merely suggested that since
-> the actual root cause of the error is more in Kbuild's realm.
+Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
+---
+ drivers/net/ethernet/mellanox/mlx5/core/cq.c | 5 ++---
+ include/linux/mlx5/cq.h                      | 1 -
+ 2 files changed, 2 insertions(+), 4 deletions(-)
 
-Yeah, I couldn't figure out who a better person would be either :|
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/cq.c b/drivers/net/ethernet/mellanox/mlx5/core/cq.c
+index 1fd403713baf..dc5a291f0993 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/cq.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/cq.c
+@@ -68,11 +68,11 @@ void mlx5_cq_tasklet_cb(struct tasklet_struct *t)
+ 
+ static void mlx5_add_cq_to_tasklet(struct mlx5_core_cq *cq,
+ 				   struct mlx5_eqe *eqe)
+ {
+ 	unsigned long flags;
+-	struct mlx5_eq_tasklet *tasklet_ctx = cq->tasklet_ctx.priv;
++	struct mlx5_eq_tasklet *tasklet_ctx = &cq->eq->tasklet_ctx;
+ 	bool schedule_tasklet = false;
+ 
+ 	spin_lock_irqsave(&tasklet_ctx->lock, flags);
+ 	/* When migrating CQs between EQs will be implemented, please note
+ 	 * that you need to sync this point. It is possible that
+@@ -117,18 +117,17 @@ int mlx5_create_cq(struct mlx5_core_dev *dev, struct mlx5_core_cq *cq,
+ 		return err;
+ 
+ 	cq->cqn = MLX5_GET(create_cq_out, out, cqn);
+ 	cq->cons_index = 0;
+ 	cq->arm_sn     = 0;
++	/* assuming CQ will be deleted before the EQ */
+ 	cq->eq         = eq;
+ 	cq->uid = MLX5_GET(create_cq_in, in, uid);
+ 	refcount_set(&cq->refcount, 1);
+ 	init_completion(&cq->free);
+ 	if (!cq->comp)
+ 		cq->comp = mlx5_add_cq_to_tasklet;
+-	/* assuming CQ will be deleted before the EQ */
+-	cq->tasklet_ctx.priv = &eq->tasklet_ctx;
+ 	INIT_LIST_HEAD(&cq->tasklet_ctx.list);
+ 
+ 	/* Add to comp EQ CQ tree to recv comp events */
+ 	err = mlx5_eq_add_cq(&eq->core, cq);
+ 	if (err)
+diff --git a/include/linux/mlx5/cq.h b/include/linux/mlx5/cq.h
+index 991526039ccb..cd034ea0ee34 100644
+--- a/include/linux/mlx5/cq.h
++++ b/include/linux/mlx5/cq.h
+@@ -53,11 +53,10 @@ struct mlx5_core_cq {
+ 	struct mlx5_rsc_debug	*dbg;
+ 	int			pid;
+ 	struct {
+ 		struct list_head list;
+ 		void (*comp)(struct mlx5_core_cq *cq, struct mlx5_eqe *eqe);
+-		void		*priv;
+ 	} tasklet_ctx;
+ 	int			reset_notify_added;
+ 	struct list_head	reset_notify;
+ 	struct mlx5_eq_comp	*eq;
+ 	u16 uid;
+-- 
+2.45.2
 
->
->> I can reproduce it with `make defconfig` at
->> 158f238aa69d91ad74e535c73f552bd4b025109c in Linus' tree with just `make
->> V=3D1 -j$(nproc) -l$(nproc)` (i.e. no CFLAGS manipulation at all).
->>=20
->> ```
->> # CC      drivers/firmware/efi/libstub/x86-5lvl.o
->>   gcc -Wp,-MMD,drivers/firmware/efi/libstub/.x86-5lvl.o.d -nostdinc -I./=
-arch/x86/include -I./arch/x86/include/generated  -I./include -I./arch/x86/i=
-nclude/uapi -I./arch/x86/include/genera
->> ted/uapi -I./include/uapi -I./include/generated/uapi -include ./include/=
-linux/compiler-version.h -include ./include/linux/kconfig.h -include ./incl=
-ude/linux/compiler_types.h -D__KERNEL__
->>  -fmacro-prefix-map=3D./=3D -mcmodel=3Dsmall -m64 -D__KERNEL__ -fPIC -fn=
-o-strict-aliasing -mno-red-zone -mno-mmx -mno-sse -fshort-wchar -Wno-pointe=
-r-sign -Wno-address-of-packed-member -fno-asy
->> nchronous-unwind-tables -Os -DDISABLE_BRANCH_PROFILING -include ./includ=
-e/linux/hidden.h -D__NO_FORTIFY -ffreestanding -fno-stack-protector -D__DIS=
-ABLE_EXPORTS    -DKBUILD_MODFILE=3D'"driv
->> ers/firmware/efi/libstub/x86-5lvl"' -DKBUILD_BASENAME=3D'"x86_5lvl"' -DK=
-BUILD_MODNAME=3D'"x86_5lvl"' -D__KBUILD_MODNAME=3Dkmod_x86_5lvl -c -o drive=
-rs/firmware/efi/libstub/x86-5lvl.o drivers/fi
->> rmware/efi/libstub/x86-5lvl.c
->> In file included from ./include/uapi/linux/posix_types.h:5,
->>                  from ./include/uapi/linux/types.h:14,
->>                  from ./include/linux/types.h:6,
->>                  from ./include/linux/kasan-checks.h:5,
->>                  from ./include/asm-generic/rwonce.h:26,
->>                  from ./arch/x86/include/generated/asm/rwonce.h:1,
->>                  from ./include/linux/compiler.h:317,
->>                  from ./include/linux/build_bug.h:5,
->>                  from ./include/linux/init.h:5,
->>                  from ./include/linux/efi.h:15,
->>                  from drivers/firmware/efi/libstub/file.c:10:
->> ./include/linux/stddef.h:11:9: error: expected identifier before =E2=80=
-=98false=E2=80=99
->>    11 |         false   =3D 0,
->>       |         ^~~~~
->> ```
->>=20
->> -std=3Dgnu11 certainly isn't there.
->
-> Ugh, this is because drivers/firmware/efi/libstub does not use
-> KBUILD_CFLAGS from the rest of the kernel when targeting x86:
->
-> $ sed -n '9,21p' drivers/firmware/efi/libstub/Makefile
-> # non-x86 reuses KBUILD_CFLAGS, x86 does not
-> cflags-y                        :=3D $(KBUILD_CFLAGS)
->
-> cflags-$(CONFIG_X86_32)         :=3D -march=3Di386
-> cflags-$(CONFIG_X86_64)         :=3D -mcmodel=3Dsmall
-> cflags-$(CONFIG_X86)            +=3D -m$(BITS) -D__KERNEL__ \
->                                    -fPIC -fno-strict-aliasing -mno-red-zo=
-ne \
->                                    -mno-mmx -mno-sse -fshort-wchar \
->                                    -Wno-pointer-sign \
->                                    $(call cc-disable-warning, address-of-=
-packed-member) \
->                                    $(call cc-disable-warning, gnu) \
->                                    -fno-asynchronous-unwind-tables \
->                                    $(CLANG_FLAGS)
->
-> This isn't the first time this peculiarity has bitten us :/ sticking
-> '-std=3Dgnu11' in there should resolve that issue.
->
-> arch/x86/boot/compressed/Makefile might need the same treatment. It
-> might make sense to introduce something like 'CSTD_FLAG :=3D -std=3Dgnu11'
-> then use that in the various places within the kernel that need it so it
-> can be consistently updated in the future whenever needed. I see that
-> flag in Makefile, arch/arm64/kernel/vdso32/Makefile, and
-> arch/x86/Makefile.
-
-This is the conclusion I just reached, although I'm struggling to figure
-out a nice place to put it without sprinkling it all over the place. I'm
-inclined to wait until kbuild folks weigh in so I don't do a lot of
-(trivial, but tedious) work that needs changing.
-
-As a hack, I've injected it into CLANG_FLAGS locally for now as it
-happens to appear in all the right places ;)
-
->
-> Cheers,
-> Nathan
-
-thanks,
-sam
 
