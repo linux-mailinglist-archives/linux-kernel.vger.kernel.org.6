@@ -1,232 +1,345 @@
-Return-Path: <linux-kernel+bounces-414976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E1559D2FE5
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 22:09:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E5349D2FE9
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 22:12:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B70691F22763
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 21:09:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F2E91F23616
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 21:12:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7EAC1D0786;
-	Tue, 19 Nov 2024 21:09:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEF151D1F63;
+	Tue, 19 Nov 2024 21:12:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="MoY3USl6";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="j58d4Oq+"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="g6Nzy8m7"
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2050.outbound.protection.outlook.com [40.107.212.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECF551547FF
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 21:09:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 191CC1547FF;
+	Tue, 19 Nov 2024 21:12:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.50
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732050556; cv=fail; b=dopmp2YkBsg1iqaBGAeY95f/nT8aOjuLLQk2ouH/eVXztMvsW47mlo6mTy4FPD72O28AXZWxkFbNrpveuyvJLUUNtzVxD1mX/lWbcGrbmvayH6Qa13iW6MaOCX4xwFmRd65S10nTFMDtw/XzUI8ZlRpagkUkA8cB5rT6ijXBnJU=
+	t=1732050763; cv=fail; b=NM0SN2N34iB02mcWV3+OhNrk9cEy9CjeMZIA2aLSmO0pBRVAYZg30liOcmIeSb/CReN/GAUAebcXwAd5Km5M3yBNTCOzyeze95z2bLS+PwM11OrSccbeRSVpS++bBv6PuCzu5rZmle2uio/A53lfhVV6ZfIBUFAVgX9VEZfNMmw=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732050556; c=relaxed/simple;
-	bh=aLw4uTnc+eitW0HOsC+1ygez+W+yn/HgupvfFP5RIIE=;
-	h=References:From:To:Cc:Subject:In-reply-to:Message-ID:Date:
-	 Content-Type:MIME-Version; b=IumLtHSNMYlqj2/Alg25XyCGXqWpCmjbYUACBYintz1EwNUs+Sb0OVtHYHHBnGIW3nTFprIvX4XM07JUxgsUUqCol/JWh7YUHgSTNEZMPxFS6NhJ5G+Fw6qN/lLoJaITDtOhCNbiaU3y0OL2+efBu+nwPJvfMVB/sUi4OOOF3PA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=MoY3USl6; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=j58d4Oq+; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AJIMd48006291;
-	Tue, 19 Nov 2024 21:08:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2023-11-20; bh=APhGSXrOmHtfxzBQns
-	fX2zmcVvvPNdNb43B7sOSVE1A=; b=MoY3USl6VIyrO/re+1L69SLpE1bjnknl37
-	nab8W1il8n173Bf0Qt+KJkfdJvy8DIkELoGFkXtMDrCh4CYhvN+qQa28JhoB+K23
-	yNxvZKcUC/vgWJ31owsIBOL+k6JRLho7PWeLQNiQu5hxE3tcD/1TKPxC5aW5ov23
-	9b+6ZGGtCm6s1udxOlg/bWWxLS07gxxal+OnR6s8ay/tzGK60JqGmcRQahqf1/kg
-	40NZdkse3ExDqVYUGf1d8OrBVoWngFKGstjWvfayiq2IjXvvpmRYrsnmjhkKK8Mw
-	+Z5MyCdCkuZcLhP6RPMex7nUcTzmlbl8xKf4rxWemb2BoY8xh53Q==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 430xv4rjex-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 19 Nov 2024 21:08:36 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 4AJKAkkF024386;
-	Tue, 19 Nov 2024 21:08:35 GMT
-Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2041.outbound.protection.outlook.com [104.47.70.41])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 42xhu9hw2p-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 19 Nov 2024 21:08:35 +0000
+	s=arc-20240116; t=1732050763; c=relaxed/simple;
+	bh=Fm4po6/YHVduCuUrYoAPVuSasv1zyCrtEVmXzM9HFWU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hgQJKFW/DUk7yGwmkoMUqgPnka7q35VVEbDsdzQH6gQXPoFRDS2pYbw0X3HiCaxZxaaxWquAZOTTqzIa0XXIxhwtWzQ52ZQtiRLFfowEsX+Wnk4jxeY61p6AaLJ5sph/Bq8XZOAFA0f4c1D6/AcZZ/xA8jViC5wjMf2dcplsUhg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=g6Nzy8m7; arc=fail smtp.client-ip=40.107.212.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=T+5CmQ+nMGbdS2yCZ8u5G3taqTyeq1FDV0i3TU/9CUTtE8d/BrtdtXUvhiAm6YtAmLipeH635ZtHp/E3k1QvgeBdPIm7/lR4dHlXR4rNOV1uG7hyNHaV797hdhZ9baRJdgRDzCOVtvuTWLaY3l3KThaWerXy7pr9kUu5XvFouXbNhYM2g6XFBNcKOFcngf4KgqSwhBJQbUGBXdYCFR2bmVtLs9kD5tTZAyOPcucRkLiZaxExpMFqliEG2VP1zH3OgIaVDgAATeiMAqqj8pVuRrO+mLZg189GGNTNkaNTYKxoNvMLplkUQcloA/+ePKTzbi+hWJ5qYB/GOmuY2i0xZQ==
+ b=u+6UcOX+cjIxQIP1+6zc7E4jrnxQYsP4sol0Hp9Spr+Flf37kZU+SCNJCRDYlrnoP8wTJmmwESYy/egSC/fapib9SH4J5ssdLCHRVPjmwqX+39fq250vvT0+44N7ljPmXcbBVYB0MN2wdBDjENyqhQfc7ySylLHtN+W49hFfkkW4YsrpclrRiPQqEwk1bVBgPNQc3TOZ1acr+wHJc2hBrwVV8m26WU3T4OePIqi9BKxFJJY2aueiAG8rBi8tKwSAsLvsRy7Deh06Cumi8LXx/uCUzfiAdGKkedz1l8IseBwreHNAH26mpdYosijxLGEmNcscZMFDqSb7r34n8DBqNg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=APhGSXrOmHtfxzBQnsfX2zmcVvvPNdNb43B7sOSVE1A=;
- b=noHPFCAZ0GZN9wfYJWqmpdz1nu87Sn9l5q4rNMe98a+/TC/CcFVniikGNKv/G20JqkzJTOQoFCk8fkbK3VmGXxagHHauuzpMuML0nVf3ZZXJFjbDe/+gzgX7n3IQmZVk4665rE+rJ10hVUlv0vOZ/0pjeGvv0GWp066VtM3K5qInOl1xUS3heCOqRtNKfAc1I5Fp54CDAndFVONfEBfWCGGwr67XjDdFwpcocEDhu2jhtbNPyUD5/LrRwbe3S4ZsvnbIihrvVDM2T7Pal3QlSiV24UufQCL/d2goeNDelnafJdLTXd2K4LQzPk6rJXZx3dIi9KtWsmnDU83avYQl1g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ bh=AihccpOYefC7UoTP8kZsnFoaczzI36/QowcQVyBkwJ8=;
+ b=Y3D6Aud1wjJu87BgzZZfozE3SxTU7bel/JFm6Gpu6+MXPTCKhlJQO410q5DewQN17KCQuNONh0JFSWkpPrTY6C6ivVF0GR1Yvbnr9N/JoibG7c2URT7RdyqBLNRK1wkODoO6WE8hE+lUH2KPedNblx0zNJE4t/G7UdIBy3X4YdZ/n5AKrRMkqiugj6PBG92N3z5M9CiS0MPHsyAjhwCBe9PoqqhNG9NHNQdu2MkJRhWDX2OnJnS/yWmsUxiZZJmEjAKRMqmWSF2KuzCuosQ2N2JmYpebiZIz3ook+kU61hexHisD3OeSo18t7fvSnYZ9QzmTOdBWug9R1fLvhemd/A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=APhGSXrOmHtfxzBQnsfX2zmcVvvPNdNb43B7sOSVE1A=;
- b=j58d4Oq+HXEHbeqbB/oC01izYnIhzf6pn/jywU+idVMnpE4Ojpwm6tY4DI/JPziQdSy5nZKextJh4Zig1EuAC0Dh6/d654mw2X4USURBbhWkq7W0NMKKO3BZVVpHQ16ji2aYnKKx/gWHBiUzl+bE62/nKgGfTINBkDsQjT2GIHw=
-Received: from CO6PR10MB5409.namprd10.prod.outlook.com (2603:10b6:5:357::14)
- by CY5PR10MB6117.namprd10.prod.outlook.com (2603:10b6:930:37::12) with
+ bh=AihccpOYefC7UoTP8kZsnFoaczzI36/QowcQVyBkwJ8=;
+ b=g6Nzy8m7Alw7G0bI905whh7QEUmJEutPwcj05bCUgslQxy0FFXuJFRvkLIP08lcBvKSsxfTa98W9Eg5NB+TWO+kxxm8kfWThKb/a+/vzlPXcKPpLYbib9VFHeXVf09oOo1ivGwpOTQryX1Gmv2Mbt7V7P+KvHklqksh/NdHqfbKX58llZPn6vRqLquJRvQcMUAnw56ljuJmd+k5qwB/T2vlmo/0btQNRr4LBsbWMUSteYC+D6S+93MEVvP8LiKSQy+H05bJTK/BzF3foZ2PklaBh3iNmsiHwdCZ4jODuwijJij5rR59/orEiRo8jT2sS4FIEpVzr4yqu0CXdnZEEdA==
+Received: from BN9PR03CA0315.namprd03.prod.outlook.com (2603:10b6:408:112::20)
+ by CH3PR12MB7572.namprd12.prod.outlook.com (2603:10b6:610:144::17) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.22; Tue, 19 Nov
- 2024 21:08:33 +0000
-Received: from CO6PR10MB5409.namprd10.prod.outlook.com
- ([fe80::25a9:32c2:a7b0:de9e]) by CO6PR10MB5409.namprd10.prod.outlook.com
- ([fe80::25a9:32c2:a7b0:de9e%5]) with mapi id 15.20.8158.013; Tue, 19 Nov 2024
- 21:08:33 +0000
-References: <20241116192306.88217-1-sshegde@linux.ibm.com>
- <20241116192306.88217-3-sshegde@linux.ibm.com>
-User-agent: mu4e 1.4.10; emacs 27.2
-From: Ankur Arora <ankur.a.arora@oracle.com>
-To: Shrikanth Hegde <sshegde@linux.ibm.com>
-Cc: mpe@ellerman.id.au, linuxppc-dev@lists.ozlabs.org, npiggin@gmail.com,
-        christophe.leroy@csgroup.eu, maddy@linux.ibm.com,
-        bigeasy@linutronix.de, ankur.a.arora@oracle.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] powerpc: Large user copy aware of full:rt:lazy
- preemption
-In-reply-to: <20241116192306.88217-3-sshegde@linux.ibm.com>
-Message-ID: <874j43hqy8.fsf@oracle.com>
-Date: Tue, 19 Nov 2024 13:08:31 -0800
-Content-Type: text/plain
-X-ClientProxiedBy: MW3PR05CA0022.namprd05.prod.outlook.com
- (2603:10b6:303:2b::27) To CO6PR10MB5409.namprd10.prod.outlook.com
- (2603:10b6:5:357::14)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.23; Tue, 19 Nov
+ 2024 21:12:38 +0000
+Received: from BL02EPF0002992B.namprd02.prod.outlook.com
+ (2603:10b6:408:112:cafe::dd) by BN9PR03CA0315.outlook.office365.com
+ (2603:10b6:408:112::20) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.24 via Frontend
+ Transport; Tue, 19 Nov 2024 21:12:38 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ BL02EPF0002992B.mail.protection.outlook.com (10.167.249.56) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8158.14 via Frontend Transport; Tue, 19 Nov 2024 21:12:38 +0000
+Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 19 Nov
+ 2024 13:12:22 -0800
+Received: from drhqmail202.nvidia.com (10.126.190.181) by
+ drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Tue, 19 Nov 2024 13:12:21 -0800
+Received: from vdi.nvidia.com (10.127.8.9) by mail.nvidia.com (10.126.190.181)
+ with Microsoft SMTP Server id 15.2.1544.4 via Frontend Transport; Tue, 19 Nov
+ 2024 13:12:21 -0800
+From: Chris Babroski <cbabroski@nvidia.com>
+To: <andi.shyti@kernel.org>, <kblaiech@nvidia.com>, <asmaa@nvidia.com>
+CC: <davthompson@nvidia.com>, <linux-i2c@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <cbabroski@nvidia.com>
+Subject: [PATCH v2] i2c-mlxbf: Add repeated start condition support
+Date: Tue, 19 Nov 2024 21:12:15 +0000
+Message-ID: <20241119211215.352797-1-cbabroski@nvidia.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO6PR10MB5409:EE_|CY5PR10MB6117:EE_
-X-MS-Office365-Filtering-Correlation-Id: 24156c23-9627-4363-3728-08dd08de537d
+X-MS-TrafficTypeDiagnostic: BL02EPF0002992B:EE_|CH3PR12MB7572:EE_
+X-MS-Office365-Filtering-Correlation-Id: 308e04c2-7557-4919-1a69-08dd08dee595
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016|7053199007;
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|82310400026|36860700013;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?3OFP8HukiniESlKWaGne/TwwvOe2ymYp85wfJxzg9luQSkA4yib7CQunwdXb?=
- =?us-ascii?Q?aERRUHOe0gLoW488WWA5gVB0JnpjlgFBXFcAxrQS6WUZewzHnQtwxLjB7F7D?=
- =?us-ascii?Q?1xZOVGUyJYA0T2a+e8bCRECv+/2ReCBTgL5HIM8wkfTeVmIecpmwMxFnR99v?=
- =?us-ascii?Q?Q9xBnwEG6wmLphXqzkdRBTNMDqbJKpfKPcHNCgZRwGZR3Lpx5ausWXQOikMB?=
- =?us-ascii?Q?erqdX7RWtl9t1SFAbB8lOP2VCNz9jknB2M93roqY7HwSzZNrtX0D3J9QOWEX?=
- =?us-ascii?Q?u1sKLuPilMAUekEuISvSPdtKs60AJOIM9NcrrO1YGZ/sxp0+l07fmoGOxQA+?=
- =?us-ascii?Q?G6IfQPvCj3xH3Av3P2ebsBQ0zSCAOekFrK//Qut2KKOHPEoRKdsqGiDBUwKl?=
- =?us-ascii?Q?skHKIDV9ydvTPxEfA5BrW4uMeJR597rwYPtSegH6W9Uqdge7+Xlpuabc9fUs?=
- =?us-ascii?Q?mF4wG3JGhQeoHBRyBvHoIuI74ODiPDT9PfAkZoY8ISm2KMiNDv8FpgXqeGyc?=
- =?us-ascii?Q?ICFkirURWRSxgxeQoCchEli8yke09hhqVr4MMrbu+kdTVwzqKvlaIfL2WZF0?=
- =?us-ascii?Q?98nSXRM8izVl4CAeQjrOh+nSoWRq+nEeIRIceRCSyKLpZGwADRoXTnWE6T+e?=
- =?us-ascii?Q?qcUg07dz182puRUV4MIJK1m3VBrSYqjQFaTfsUASoSsd3MTCtTIychIqM0+f?=
- =?us-ascii?Q?ZQFfkRMz6NCKrk1GhhP5uHEtwW9PLLJ5tz95o2k7SxkJb9egsGQ3EJTIA3Et?=
- =?us-ascii?Q?Dp1WMLjDSX1xgME85dAsLMKxcUisf2xVopTvZ2agc0xwZPCVhdxZChey94jx?=
- =?us-ascii?Q?HQgOHpoeNayYmTFWEmpExA3UWVTplL5T3PRsgMwOGZboUH3wXvHC3w5esZJm?=
- =?us-ascii?Q?BVQcMjJCBhdl+TP/EOUxF8qfPr/uvD0Ndnjsd80THDzsTY953seXa6ptlkKH?=
- =?us-ascii?Q?8DcfuB3DX7+xl6XmGfr+3LnzH8caRMi2bd5VoPHHfVubGP1G9qUebHfB6xAA?=
- =?us-ascii?Q?MWCCR/ANT8XOs6bSf6djvzYL6gZ6GeuyWyW2G/QX5iuXcJEiwbrhzfGJCwnZ?=
- =?us-ascii?Q?Pqup/vbbM5ZSPb0c0RHJ8AwogV63ITz9DpnwKYpBnpbqD3JeytOQN+eAjN29?=
- =?us-ascii?Q?QQ4MTgFVWtwaKB+SEDSvJK73xf2WQ9CkkxPfiQG7FTjLuSSAwmgAWL5NkvkD?=
- =?us-ascii?Q?u7/fls8DdhtvoI+qxK7KGAMuTQso2P0ulB2M/GYJ0r6z4coX0veS9RtU/Wrg?=
- =?us-ascii?Q?7Bcgldyqu7CGzV5b4+gTr/1XOdZ29ovSVRPk6KiE7FNun6pX7NzfkMWQo8dW?=
- =?us-ascii?Q?SB+zpc3ShK8HLt+OnliZk5Xy?=
+	=?us-ascii?Q?OEXxa06Z5sDF7mMi+0k8/Z9909FsrQhBHua05U2mnmqJvqmZqxRYN9gHQs94?=
+ =?us-ascii?Q?itPoWGK+Zl9NV5uxf8pEbX6jLlFIqAZQpjKK+zDhbsT6vmbsxw9102reB8Nr?=
+ =?us-ascii?Q?186VekJ7ToKWsq8p3GRTcBQ5Xr6WNEaReCB2ewNyXKZlOaDAACsF9dcZ5je3?=
+ =?us-ascii?Q?oU0Vsv1qg+/CoWQm/Kt8pYiXVpLuqyB6p9JpgswU6Fz/Y70QMUwjBK6p3y8w?=
+ =?us-ascii?Q?fSJUMxvY8c3PDSJPx9lRm/xx5Ky35HUW4sBTRLqL1lKBYXF6YD58c8E1lMdU?=
+ =?us-ascii?Q?UAo/F8za1UHzeVuypjtNUMRHm4d+0+CLFM76vmF+0m9ATVo9GKi61yo4xBqk?=
+ =?us-ascii?Q?5XoMJmpvL4Hb4BwUjB4oyVA1XcnYB/vtwkVd7SSCZywiQYTxenTxjWQgYFLj?=
+ =?us-ascii?Q?mjmp3stLqMpqb9rNy+oK50xRN77AS+ElrEpals9jaHy6mEjmzEGpnw2NW2od?=
+ =?us-ascii?Q?Y1BwK4Wa081VjXf+MppPcdBpvXFqIbw71t8yHvHJXDUvCcufIWoka0WR+2S7?=
+ =?us-ascii?Q?P5G0W7VxF26fB13rniCcWhtDvf5fCNDHyIOWMJDKCL01wISyEMJXPCTrY2kf?=
+ =?us-ascii?Q?g4M5vQQLFvcWLHajV9F1FiSuyBEsEDE0OuNmO0WBEiMCdtl8GCdOpxkpv1er?=
+ =?us-ascii?Q?8iZ5ajbsDvvwsaTN7+Jzkp7J3aESzzi5vf8S35MHpUtu7SLBx/yTKyHLZnN0?=
+ =?us-ascii?Q?XXe/LzFLETkXOAY7Kc1K2tvuv6R7tVTjC/i2FjB1WHuWDiZHzFYs0/PNcg0F?=
+ =?us-ascii?Q?G2rNi5pNqBPyNw6AOp2AiltmPDSOgdbO6ivtdEwbnL1aVbFbtpMoBFnyZ578?=
+ =?us-ascii?Q?msg/2O+/1ZvtoxUgEuobcb/ANO2LUiNkqsQRoE5QZbZU6ptH1O8/l8joI9/n?=
+ =?us-ascii?Q?TmvmMGxBIYXEAyrfFZfL+g/p343bNAgZJOWe7AB8VOJspj0GdzVcbVLrS0S3?=
+ =?us-ascii?Q?AfZIuAbLVCslmjJ4ZU2ZmbEMlE6Lu7GVHXuCOzeigqgfAKCD1buAcuQCbuaJ?=
+ =?us-ascii?Q?xv/MZna3jhkLBXByneedjX32odceBvtX4IFWAol+AlksNfnHgYLI+iuOSVlS?=
+ =?us-ascii?Q?AS00vC+Vs5tsXaMRZ1tPmAiByIcCVvzDZ3cD59EAUXq/QFGeHlSxyBaLNoLT?=
+ =?us-ascii?Q?kH9YfQz1LjnLr60FF97VnBeF/8/C0kIcwmjIsULFgu+Lms+hixQ/rktI0/xc?=
+ =?us-ascii?Q?lhuTym2jjo/FP9Yjkgp4IHsuGjRQ6Ook1gjkcfGJbl3+roGeMUwITVK+Bjls?=
+ =?us-ascii?Q?lDWy5PP3ybYNKP560a673R/jlo7P6JiLRWVr7mRep/3BpYYxkvfnJrX+Ze92?=
+ =?us-ascii?Q?2Pt3K0cvbBKCMxx83WXQVJ7e5WpIUJ3sLDEgn6dCzj2EMaBfGDrDo5U9V4Mp?=
+ =?us-ascii?Q?GRnrvA/bK1VnvkIso89CEf6/mre427hcscYD0C7KBtyF/2eUBQ=3D=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR10MB5409.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?87eZCnwalshMikaLJLErWrBLPqkDlX3aJXmzk7H6W1LHRhaHIC0rDV6ExQkH?=
- =?us-ascii?Q?8Jex1UJwELB5EBaGBxF1THFJysqs9bEvgTBtnfwsiBpy9FyeQ6VKakbmhMyc?=
- =?us-ascii?Q?sELamc2KYwKtRt+G1kfJSwkUiw2mjoGqRUzJ5AV1z5byOWAf0TjdlGSGYVCz?=
- =?us-ascii?Q?9rlQs4F2ZDj3No6SzsSk7+9J7YPpQCDNUw4lJ3jtqTO7U2N/knlpEsPgRJ04?=
- =?us-ascii?Q?TUSIUK5+205APxd4SJYJ8HGFaCrttn5CYUdmyIJ76JaJ+T73H8e5g+TT3aQ4?=
- =?us-ascii?Q?0n/NAS54iHUQ+qhO1TMmpv63YguwdEi0qbE7AZwd6tHaVsacTrw7upgXLGG1?=
- =?us-ascii?Q?FWyCtn147IYvsASZt5ivfHZFkgQh+36XInstPAsSE+4bceFqDkYH3Pip7cae?=
- =?us-ascii?Q?R3Qd6y5vENWG0B8vn5DQAklAM7HhBD4EtS8jZ00yn1AEJDIQUp7CghVUIUau?=
- =?us-ascii?Q?UFMHboISqalvnzmUTYYiEWPTW/bG8szrH4BtrtXcRS8mhsllBwHKWFBeiYDc?=
- =?us-ascii?Q?vpaJMWeO0xy/evRmclzq2AJ/nDhQ8EEVkGUjamgH9pCOXPlX8nI0YPY32CoX?=
- =?us-ascii?Q?2w0CwWWIdXwvVZNd3JtivO3hcEHWTuxRmI3eP4jPU1WCnmllRfsFNib31yX0?=
- =?us-ascii?Q?2YV9/K8c3PDGugMNKpsj/gCF7oE8vjqvg8DtgfukZA727Kfqxa7beZhWxx9q?=
- =?us-ascii?Q?vJFnSDlgIfa8gi31obK/vEuusTM/zM+Vi55wiURn3mGQMcAvE+mOnrxjkbqk?=
- =?us-ascii?Q?DJ3YenoV3cZOYA5Dy6GGvHB8oonZbjO7rc2FwYyO394L3iEy4xLpsKnhuLsn?=
- =?us-ascii?Q?egroesY4WE91n58I91wMXVaYKnEwOBY5NfszxS6+MGvc7S4REzuzaM2NdiTN?=
- =?us-ascii?Q?DLGxFKo1KhO5Bjkvc46hCQtOD55HZvh00+8n9z4FBo+up/UjoVokgMx/wf2w?=
- =?us-ascii?Q?G8aPgF12KQUSkOV9qKkjHrnaeb89SJC10VdIS42etkyZ0AWRNZswu/C1WLks?=
- =?us-ascii?Q?eFYDpKgiQS6jW5U2d6e3OPNqeWF4mePLJBr1E35XVEor5QUJPu31nzfMVjwu?=
- =?us-ascii?Q?Ltn6z955YaG6+sTRmK7g8cc+mzO/x8Hfn3i/1uHY4Q6jkXGcsg8yhExGFnsT?=
- =?us-ascii?Q?NfHfAGGBxX5ZXGMJIn/I7qftjaMTAUlHTscL0TI+c4ds9al6MhZpDiChzEO3?=
- =?us-ascii?Q?WMS1DU4+lLLkyOHNimwEcNetrONvJIsBX12HtWnBliaB0qZXjlStYdi0FR4n?=
- =?us-ascii?Q?Y2yaT8PIF0FvuWuO3U2Sm6jiOk3HM/XrJYei5ZL7NfvWdE8hOl5Jd5+VvxfF?=
- =?us-ascii?Q?IkOUELH5TA4EkU/gcu7QiNwDtuq6bQ//hqCQBkJIsJz5vEQA2vfDH2cdaUFG?=
- =?us-ascii?Q?YTQHQiLeRLVrT1YRqVzRQBcjXSkZ8Dr2BYbJ49esXhoBZ5CpCdJj59cgtb8l?=
- =?us-ascii?Q?9vU5yXHsy6vYcCiqMjRTcMdG/yLgX3cbv8c1DUuSfMhGfQfcJALhuBykXkv2?=
- =?us-ascii?Q?+LP8W55tFG4buu2+DehFx6LyQhMRcqt6I3efXU8yay78xjQhW9sIGtt7N4BF?=
- =?us-ascii?Q?uFgtu5F17ailRXu7E6PFY9G1nviL6Mla7mpd1Xzs?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	Iok8Yo6iZHaR9XaoaatrAMaezMHAKEcIqCiNQ/WkwK26ZbdBBcpqOWH9DSuFAxTzFRGKbmntxepcAQ5+PFr2T0t5uTtpFpszAelEeLXOmZRpRNoyjP6YAVfgPIQtV3STEzj8kbZYfevxUByJAamDisBmNFaZupfiFFJJp8qjEJ3s9IFQyrTeN6JAwLCqvlK5HXp7BxVuQcv+/gm5pLerelel+ccowZqmFZN/W5pQRvGJCr5rSmuGL6ZNquPSNz14jvOPY1EIlDCnZB4G2Dq/yH0itksWAICwVlHbG4fiOsgbBmwL8ZtncQlNw+HQ6ug0HjD70Fr8PKjF6AAB0YjL3Kp1Dhx2T+ZMj7PcPL9A1MzH6qLfg75k7V6xjBzvMVnKWdnGMvwStAgvvwxkPyLSE00Jw1Idv3dfu8dxjJ3PICeMxJi+/Z5X0d4s4zgL9w8btRjVblTflQDYpXRsAPuHDviCc2pv+PxuAxC9IDJgQ6kyP8JW3LchJEEWBK7zTqAkK/MI0M45HWSnXk62EX/MB8whjzJm37BFFF6m/tWLf162SATuv3pcctaXdjXumX3p+3zWdf/Kg0x6hxZtZBeDI76BQsZhp4yocwtXCeFx128=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 24156c23-9627-4363-3728-08dd08de537d
-X-MS-Exchange-CrossTenant-AuthSource: CO6PR10MB5409.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Nov 2024 21:08:33.4456
+	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(376014)(82310400026)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Nov 2024 21:12:38.2119
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: XCdskRo9uqEU/BWxbrXJaEFaC+t54sm4A2U1QaCFvQexKbi4cUDbzRfhioWaSzpEHIh8qTJ5YdwzlU9PjlUkPdp3U8AWQI4YIMntUWuvJ/E=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR10MB6117
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-11-19_12,2024-11-18_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 bulkscore=0 suspectscore=0
- phishscore=0 spamscore=0 mlxscore=0 malwarescore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2409260000
- definitions=main-2411190153
-X-Proofpoint-GUID: fK5D2f7N7D1SxdIPI-RUCCRn-3b5hUUu
-X-Proofpoint-ORIG-GUID: fK5D2f7N7D1SxdIPI-RUCCRn-3b5hUUu
+X-MS-Exchange-CrossTenant-Network-Message-Id: 308e04c2-7557-4919-1a69-08dd08dee595
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL02EPF0002992B.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB7572
 
+Add support for SMBus repeated start conditions to the Mellanox I2C
+driver. This support is specifically enabled for the
+I2C_FUNC_SMBUS_WRITE_I2C_BLOCK implementation which is required for
+communication with various I2C devices on Bluefield 3.
 
-Shrikanth Hegde <sshegde@linux.ibm.com> writes:
+The I2C bus timing configuration values have also been updated based on
+latest HW testing results and found to be necessary to support repeated
+start transactions.
 
-> Large user copy_to/from (more than 16 bytes) uses vmx instructions to
-> speed things up. Once the copy is done, it makes sense to try schedule
-> as soon as possible for preemptible kernels. So do this for
-> preempt=full/lazy and rt kernel.
+Signed-off-by: Chris Babroski <cbabroski@nvidia.com>
+---
+ V1 -> V2: Removed default "Reviewed-by:" tags
 
-Note that this check will also fire for PREEMPT_DYNAMIC && preempt=none.
-So when power supports PREEMPT_DYNAMIC this will need to change
-to preempt_model_*() based checks.
+ drivers/i2c/busses/i2c-mlxbf.c | 69 +++++++++++++++++++++-------------
+ 1 file changed, 42 insertions(+), 27 deletions(-)
 
-> Not checking for lazy bit here, since it could lead to unnecessary
-> context switches.
+diff --git a/drivers/i2c/busses/i2c-mlxbf.c b/drivers/i2c/busses/i2c-mlxbf.c
+index b3a73921ab69..8926dafa0270 100644
+--- a/drivers/i2c/busses/i2c-mlxbf.c
++++ b/drivers/i2c/busses/i2c-mlxbf.c
+@@ -196,6 +196,7 @@
+ 
+ #define MLXBF_I2C_MASK_8    GENMASK(7, 0)
+ #define MLXBF_I2C_MASK_16   GENMASK(15, 0)
++#define MLXBF_I2C_MASK_32   GENMASK(31, 0)
+ 
+ #define MLXBF_I2C_MST_ADDR_OFFSET         0x200
+ 
+@@ -221,8 +222,7 @@
+ #define MLXBF_I2C_MASTER_STOP_BIT         BIT(3)  /* Control stop. */
+ 
+ #define MLXBF_I2C_MASTER_ENABLE \
+-	(MLXBF_I2C_MASTER_LOCK_BIT | MLXBF_I2C_MASTER_BUSY_BIT | \
+-	 MLXBF_I2C_MASTER_START_BIT | MLXBF_I2C_MASTER_STOP_BIT)
++	(MLXBF_I2C_MASTER_LOCK_BIT | MLXBF_I2C_MASTER_BUSY_BIT | MLXBF_I2C_MASTER_START_BIT)
+ 
+ #define MLXBF_I2C_MASTER_ENABLE_WRITE \
+ 	(MLXBF_I2C_MASTER_ENABLE | MLXBF_I2C_MASTER_CTL_WRITE_BIT)
+@@ -336,6 +336,7 @@ enum {
+ 	MLXBF_I2C_F_SMBUS_BLOCK = BIT(5),
+ 	MLXBF_I2C_F_SMBUS_PEC = BIT(6),
+ 	MLXBF_I2C_F_SMBUS_PROCESS_CALL = BIT(7),
++	MLXBF_I2C_F_WRITE_WITHOUT_STOP = BIT(8),
+ };
+ 
+ /* Mellanox BlueField chip type. */
+@@ -694,16 +695,19 @@ static void mlxbf_i2c_smbus_read_data(struct mlxbf_i2c_priv *priv,
+ }
+ 
+ static int mlxbf_i2c_smbus_enable(struct mlxbf_i2c_priv *priv, u8 slave,
+-				  u8 len, u8 block_en, u8 pec_en, bool read)
++				  u8 len, u8 block_en, u8 pec_en, bool read, bool no_stop)
+ {
+-	u32 command;
++	u32 command = 0;
+ 
+ 	/* Set Master GW control word. */
++	if (!no_stop)
++		command |= MLXBF_I2C_MASTER_STOP_BIT;
++
+ 	if (read) {
+-		command = MLXBF_I2C_MASTER_ENABLE_READ;
++		command |= MLXBF_I2C_MASTER_ENABLE_READ;
+ 		command |= rol32(len, MLXBF_I2C_MASTER_READ_SHIFT);
+ 	} else {
+-		command = MLXBF_I2C_MASTER_ENABLE_WRITE;
++		command |= MLXBF_I2C_MASTER_ENABLE_WRITE;
+ 		command |= rol32(len, MLXBF_I2C_MASTER_WRITE_SHIFT);
+ 	}
+ 	command |= rol32(slave, MLXBF_I2C_MASTER_SLV_ADDR_SHIFT);
+@@ -738,9 +742,11 @@ mlxbf_i2c_smbus_start_transaction(struct mlxbf_i2c_priv *priv,
+ 	u8 op_idx, data_idx, data_len, write_len, read_len;
+ 	struct mlxbf_i2c_smbus_operation *operation;
+ 	u8 read_en, write_en, block_en, pec_en;
+-	u8 slave, flags, addr;
++	bool write_wo_stop = false;
++	u8 slave, addr;
+ 	u8 *read_buf;
+ 	int ret = 0;
++	u32 flags;
+ 
+ 	if (request->operation_cnt > MLXBF_I2C_SMBUS_MAX_OP_CNT)
+ 		return -EINVAL;
+@@ -799,7 +805,16 @@ mlxbf_i2c_smbus_start_transaction(struct mlxbf_i2c_priv *priv,
+ 			memcpy(data_desc + data_idx,
+ 			       operation->buffer, operation->length);
+ 			data_idx += operation->length;
++
++			/*
++			 * The stop condition can be skipped when writing on the bus
++			 * to implement a repeated start condition on the next read
++			 * as required for several SMBus and I2C operations.
++			 */
++			if (flags & MLXBF_I2C_F_WRITE_WITHOUT_STOP)
++				write_wo_stop = true;
+ 		}
++
+ 		/*
+ 		 * We assume that read operations are performed only once per
+ 		 * SMBus transaction. *TBD* protect this statement so it won't
+@@ -825,7 +840,7 @@ mlxbf_i2c_smbus_start_transaction(struct mlxbf_i2c_priv *priv,
+ 
+ 	if (write_en) {
+ 		ret = mlxbf_i2c_smbus_enable(priv, slave, write_len, block_en,
+-					 pec_en, 0);
++					 pec_en, 0, write_wo_stop);
+ 		if (ret)
+ 			goto out_unlock;
+ 	}
+@@ -835,7 +850,7 @@ mlxbf_i2c_smbus_start_transaction(struct mlxbf_i2c_priv *priv,
+ 		mlxbf_i2c_smbus_write_data(priv, (const u8 *)&addr, 1,
+ 					   MLXBF_I2C_MASTER_DATA_DESC_ADDR, true);
+ 		ret = mlxbf_i2c_smbus_enable(priv, slave, read_len, block_en,
+-					 pec_en, 1);
++					 pec_en, 1, false);
+ 		if (!ret) {
+ 			/* Get Master GW data descriptor. */
+ 			mlxbf_i2c_smbus_read_data(priv, data_desc, read_len + 1,
+@@ -940,6 +955,9 @@ mlxbf_i2c_smbus_i2c_block_func(struct mlxbf_i2c_smbus_request *request,
+ 	request->operation[0].flags |= pec_check ? MLXBF_I2C_F_SMBUS_PEC : 0;
+ 	request->operation[0].buffer = command;
+ 
++	if (read)
++		request->operation[0].flags |= MLXBF_I2C_F_WRITE_WITHOUT_STOP;
++
+ 	/*
+ 	 * As specified in the standard, the max number of bytes to read/write
+ 	 * per block operation is 32 bytes. In Golan code, the controller can
+@@ -1174,7 +1192,8 @@ static void mlxbf_i2c_set_timings(struct mlxbf_i2c_priv *priv,
+ 				     MLXBF_I2C_MASK_16, MLXBF_I2C_SHIFT_16);
+ 	writel(timer, priv->timer->io + MLXBF_I2C_SMBUS_THIGH_MAX_TBUF);
+ 
+-	timer = timings->timeout;
++	timer = mlxbf_i2c_set_timer(priv, timings->timeout, false,
++				    MLXBF_I2C_MASK_32, MLXBF_I2C_SHIFT_0);
+ 	writel(timer, priv->timer->io + MLXBF_I2C_SMBUS_SCL_LOW_TIMEOUT);
+ }
+ 
+@@ -1184,11 +1203,7 @@ enum mlxbf_i2c_timings_config {
+ 	MLXBF_I2C_TIMING_CONFIG_1000KHZ,
+ };
+ 
+-/*
+- * Note that the mlxbf_i2c_timings->timeout value is not related to the
+- * bus frequency, it is impacted by the time it takes the driver to
+- * complete data transmission before transaction abort.
+- */
++/* Timing values are in nanoseconds */
+ static const struct mlxbf_i2c_timings mlxbf_i2c_timings[] = {
+ 	[MLXBF_I2C_TIMING_CONFIG_100KHZ] = {
+ 		.scl_high = 4810,
+@@ -1203,8 +1218,8 @@ static const struct mlxbf_i2c_timings mlxbf_i2c_timings[] = {
+ 		.scl_fall = 50,
+ 		.hold_data = 300,
+ 		.buf = 20000,
+-		.thigh_max = 5000,
+-		.timeout = 106500
++		.thigh_max = 50000,
++		.timeout = 35000000
+ 	},
+ 	[MLXBF_I2C_TIMING_CONFIG_400KHZ] = {
+ 		.scl_high = 1011,
+@@ -1219,24 +1234,24 @@ static const struct mlxbf_i2c_timings mlxbf_i2c_timings[] = {
+ 		.scl_fall = 50,
+ 		.hold_data = 300,
+ 		.buf = 20000,
+-		.thigh_max = 5000,
+-		.timeout = 106500
++		.thigh_max = 50000,
++		.timeout = 35000000
+ 	},
+ 	[MLXBF_I2C_TIMING_CONFIG_1000KHZ] = {
+-		.scl_high = 600,
+-		.scl_low = 1300,
++		.scl_high = 383,
++		.scl_low = 460,
+ 		.hold_start = 600,
+-		.setup_start = 600,
+-		.setup_stop = 600,
+-		.setup_data = 100,
++		.setup_start = 260,
++		.setup_stop = 260,
++		.setup_data = 50,
+ 		.sda_rise = 50,
+ 		.sda_fall = 50,
+ 		.scl_rise = 50,
+ 		.scl_fall = 50,
+ 		.hold_data = 300,
+-		.buf = 20000,
+-		.thigh_max = 5000,
+-		.timeout = 106500
++		.buf = 500,
++		.thigh_max = 50000,
++		.timeout = 35000000
+ 	}
+ };
+ 
 
-Maybe:
-Not checking for lazy bit here, since we only want to schedule when
-a context switch is imminently required.
+base-commit: 0a9b9d17f3a781dea03baca01c835deaa07f7cc3
+-- 
+2.47.0
 
-> Suggested-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> Signed-off-by: Shrikanth Hegde <sshegde@linux.ibm.com>
-> ---
->  arch/powerpc/lib/vmx-helper.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/powerpc/lib/vmx-helper.c b/arch/powerpc/lib/vmx-helper.c
-> index d491da8d1838..58ed6bd613a6 100644
-> --- a/arch/powerpc/lib/vmx-helper.c
-> +++ b/arch/powerpc/lib/vmx-helper.c
-> @@ -45,7 +45,7 @@ int exit_vmx_usercopy(void)
->  	 * set and we are preemptible. The hack here is to schedule a
->  	 * decrementer to fire here and reschedule for us if necessary.
->  	 */
-> -	if (IS_ENABLED(CONFIG_PREEMPT) && need_resched())
-> +	if (IS_ENABLED(CONFIG_PREEMPTION) && need_resched())
->  		set_dec(1);
->  	return 0;
->  }
-
-
---
-ankur
 
