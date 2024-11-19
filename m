@@ -1,289 +1,210 @@
-Return-Path: <linux-kernel+bounces-414438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40D5F9D27FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 15:22:08 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74B3E9D2828
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 15:28:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE09E1F23516
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 14:22:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 433D5B287C8
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 14:23:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACC5A1CDFA4;
-	Tue, 19 Nov 2024 14:21:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 737041CC17F;
+	Tue, 19 Nov 2024 14:23:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PSxI+7Mj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="D6+mwsue"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2044.outbound.protection.outlook.com [40.107.237.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9A772AE74;
-	Tue, 19 Nov 2024 14:21:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732026110; cv=none; b=LvsduHVWhJWpDCLPlv7RgAyBzK8EmXbXGsZBw98d5V2+LEAXRdPyn/0NLWaYTseyX/2q9h8EESFyXFKcAeQPi+coaJlerv95iswOt6OXTGS7hrxRPYD+OLTOQ91jqV9Jj0UiRsO3Cg76nRY/bHsRE3mMIcNhPJ6XVxxItC2TyzU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732026110; c=relaxed/simple;
-	bh=CnlQO+MPs9b+dxGUIAEng6ROnP7aZxTEAiJRbL6Kay4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=h9G5zeeKLvviQWvGp6BOZvVLIL0aXLWT6h0/Lk89qIVEEGuHKV6KDc8Bxx4vIiFO6vdIfS877fwGISPl2qVYAQ2Plh2CQVX3uu2gWpgfXS3G3bYWJKg+7YsTs28hePq5Yk4s3hB4P6VAXLle8hZKCfQQd824JGAwYHKzNPnJCDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PSxI+7Mj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67F56C4CECF;
-	Tue, 19 Nov 2024 14:21:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732026110;
-	bh=CnlQO+MPs9b+dxGUIAEng6ROnP7aZxTEAiJRbL6Kay4=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=PSxI+7MjokKkdOCGZErDhh0Iz9oBeFMiwSpjVZqIW49zW2Ec7uFRDuTdgBacNGo7q
-	 c0tK2UB1zY+2f+SAlPFxPo6B4blKwITaq03hLG6DD5tsFh/1sfMC4sR925JZZZZfB+
-	 IEF0yrMc9aOGJzAKFdU01L5mrjWvd+dYCUMoTTOjnH+bR5a3xRs5UgKdOQoYFtAzWT
-	 ksQwM/gfZWz2OMYLuIBoHUMj7AxQxqNsQkjXhKdZbABsjoAD9x80gt2UnRfKB8zCHA
-	 F5obNgydJSxmu2z2wzI4YAkKLaCEc5bYtRXPiTL+Ho/pFZ9ySrcIkU7jfNcMJNrEc4
-	 OZNkD00c7R+2g==
-Message-ID: <8ae11e3e0d9339e6c60556fcd2734a37da3b4a11.camel@kernel.org>
-Subject: Re: [PATCH bpf-next 2/4] bpf: Make bpf inode storage available to
- tracing program
-From: Jeff Layton <jlayton@kernel.org>
-To: Song Liu <songliubraving@meta.com>, Jan Kara <jack@suse.cz>
-Cc: Christian Brauner <brauner@kernel.org>, Song Liu <song@kernel.org>, 
- "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-security-module@vger.kernel.org"
- <linux-security-module@vger.kernel.org>, Kernel Team
- <kernel-team@meta.com>,  "andrii@kernel.org" <andrii@kernel.org>,
- "eddyz87@gmail.com" <eddyz87@gmail.com>, "ast@kernel.org" <ast@kernel.org>,
- "daniel@iogearbox.net" <daniel@iogearbox.net>,  "martin.lau@linux.dev"
- <martin.lau@linux.dev>, "viro@zeniv.linux.org.uk"
- <viro@zeniv.linux.org.uk>,  "kpsingh@kernel.org" <kpsingh@kernel.org>,
- "mattbobrowski@google.com" <mattbobrowski@google.com>, 
- "amir73il@gmail.com" <amir73il@gmail.com>, "repnop@google.com"
- <repnop@google.com>, Josef Bacik <josef@toxicpanda.com>, "mic@digikod.net"
- <mic@digikod.net>,  "gnoack@google.com" <gnoack@google.com>
-Date: Tue, 19 Nov 2024 09:21:47 -0500
-In-Reply-To: <E79EFA17-A911-40E8-8A51-CB5438FD2020@fb.com>
-References: <20241112082600.298035-1-song@kernel.org>
-	 <20241112082600.298035-3-song@kernel.org>
-	 <20241113-sensation-morgen-852f49484fd8@brauner>
-	 <86C65B85-8167-4D04-BFF5-40FD4F3407A4@fb.com>
-	 <20241115111914.qhrwe4mek6quthko@quack3>
-	 <E79EFA17-A911-40E8-8A51-CB5438FD2020@fb.com>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B6871991D2
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 14:23:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.44
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732026206; cv=fail; b=jxtVkUQ0wc9G78ddj56Etq3ygRYb8b6N5WRrlosCtxMsza0EG1qhnPKfsMk1nkVojy6FKueW8RVArXbtUax1neTGOOWfx/fkOM8Oq1Gmx1un365WNxh0IE9Am1duTx1+FOrLjRuhrzPl5ZP+wmC9QQf0AcOeBTmXHzz2geT4Ka0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732026206; c=relaxed/simple;
+	bh=aZ2fAvipz/L38h0CmUwJ+0IpWYpKAWqcxiMD41dS75k=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=nAlEaBTFUN4+F/a2De350GtXWfzFf5lHkBqb0vWJxurHBk1FBSg8ZPZXEPCC1fT/INn9bkunOw/uk6HYGm7o84634TLvdR732jFYTMdNoFJB/d8UQLHQEat+t19+v7WyADsCiURZtOkrKo9e7Y3kKPTGrhP8diVJ3h6syskv114=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=D6+mwsue; arc=fail smtp.client-ip=40.107.237.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=IVqkK1TWho0RvPS4yMj469WEQ40y7qn3EdU/dvi3RBnNPQ8suBjjAbreAaQZL4Z1xANcycr5dJoUZPGUgWyLaopEflWV5uW9j1rBhXEqsKYSHTZnjGpjCAwZY+7s5W1+jKiPmorPPOQAhY2RP+lUtuRuFTceBNcwzRsnt0psxhjOq/rZhqAuwTzmFvjqvWw7UQlwUFM+epLst/lTDLpCOl4QdXLZbr6pu+yxFUVaRwJWgL0TbRMfR6gcCHclliV/SxAnrOT+bCKMYH6/iBVnkOZQN2fEhj+9T9uCVlADG7u6mij4xRYBzN0xNMPV0gfiPZ8sJ96plVSnPiCLjgn37Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6X/+YPCeU7yWwSdCWmnJ5y6MxFN80dN7JExru/pV7ow=;
+ b=Zh4QQTH3hmODCkX6XIfP+GpQsxgGVCycjoa68IZ+zgxe3ATOvl7/GqKdbNYl68qikVGIjZbaWaN683hG9Sr0xGz5Ens9ekUK5ABjf4aIpJMhUiQhrhVRHh+ndoFWLLv6d6o6m1qX4qYs6OVCTyOcgrTiY+Foa4DQw3bvVNwH83dWnjhzT3HiA94wl3lyU1zm5lL+2F98lQGsKvqG8SEPTKBkF+A+7D7fkpRJInFlJZIbYdJcJxgXtMrcNsuA669WTPT7SDWsjLkYBJ3F7F30wdVU3wqIzsGvfV2+AB61TqUvYZjTdZpagheAwxQ24dcnoz7KbQ9MrZQWLo5FXi10ng==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6X/+YPCeU7yWwSdCWmnJ5y6MxFN80dN7JExru/pV7ow=;
+ b=D6+mwsuea6G7n/GQ8PxkZSQwV26+TTwxHwxd2G1DItrCv6LSS3MFRu9F/D3MzVYK03hNOq95mUIleGVQDJZUCvghkZKDYgiTJW/D6wkD3XhejniORubCjySjNm4gaW3g2L+J9VnS9ewAIkAEQxUGkNp+h7p2x6DGF7k1BMF3r5w=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM4PR12MB5070.namprd12.prod.outlook.com (2603:10b6:5:389::22)
+ by CYXPR12MB9340.namprd12.prod.outlook.com (2603:10b6:930:e4::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.23; Tue, 19 Nov
+ 2024 14:23:20 +0000
+Received: from DM4PR12MB5070.namprd12.prod.outlook.com
+ ([fe80::20a9:919e:fd6b:5a6e]) by DM4PR12MB5070.namprd12.prod.outlook.com
+ ([fe80::20a9:919e:fd6b:5a6e%5]) with mapi id 15.20.8158.023; Tue, 19 Nov 2024
+ 14:23:16 +0000
+Message-ID: <fc2202de-595b-f561-dc59-08f32c56ff73@amd.com>
+Date: Tue, 19 Nov 2024 08:23:14 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v2] x86/sev: Initialize ctxt variable and zero fi
+Content-Language: en-US
+To: Ragavendra <ragavendra.bn@gmail.com>, tglx@linutronix.de,
+ mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
+ ardb@kernel.org, tzimmermann@suse.de, bhelgaas@google.com
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org
+References: <20241118225828.123945-2-ragavendra.bn@gmail.com>
+From: Tom Lendacky <thomas.lendacky@amd.com>
+In-Reply-To: <20241118225828.123945-2-ragavendra.bn@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SN1PR12CA0047.namprd12.prod.outlook.com
+ (2603:10b6:802:20::18) To DM4PR12MB5070.namprd12.prod.outlook.com
+ (2603:10b6:5:389::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB5070:EE_|CYXPR12MB9340:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4839e7a1-6e62-42f0-2e0a-08dd08a5b57d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?bVpPZjJkQUhFdGlYbnFsZVBySWFMaDJhK05aWi82Q2NiYWorV1NLYXVDUTJl?=
+ =?utf-8?B?Q0FZaEh2UjI0SkRoYjFIdDJaSUk2eXE0VDVPUElnYncvMkR3c1h0TVNES1NJ?=
+ =?utf-8?B?TjhxQlNSNytFeTQ5emI4a2JpUDQ0STdzUFR4cGt0YWEzc0pySW0xR0o0Y0dX?=
+ =?utf-8?B?UWdCeDNIcWNLOXNZWU41S0MvMHI4YStKQW5US2hLTm81ejZVWmIzOVovVjls?=
+ =?utf-8?B?R3lvYXFNMStBWVpDVG1CSWVEeUpZSDBncXpSQ2JlNzVkb0VENDlrbHMyWFdY?=
+ =?utf-8?B?bXJ0MHFxeUQwd3VtcXF3ZHFTcEJreVlQNytEQVZ1bks3Zm5ZTkdpQmpPcGZa?=
+ =?utf-8?B?YWZiVmNHb29UWHNVTjF5M08xL0F6c3JSQ0JWOFZvVUhDcFVxdloySzhqeU5r?=
+ =?utf-8?B?V0JqRUVtSit4YVNqOG9lSTJydXUxRGRHbzZBNzQ3YzA1MUlQc05YYUgrWVll?=
+ =?utf-8?B?RmZJVWJpTkM4SkpRYXU5TG5LL2J0SGwvU0hOOUs2M1Z0WlcvNTIyS0VDc0gx?=
+ =?utf-8?B?dCtHZnJHeEptLzBmWVdXL2lScS9TcHFGMjYxR2J2eG9oQ3gzendVZ3U2dmxD?=
+ =?utf-8?B?a0NJWXY1VDBZZXdLTkVTcE9VbXBSd2dXY3c1YklEUnZBVyt0MzcyOWtLbDNs?=
+ =?utf-8?B?T3FjSHZvQTdkK3c1Q3ZhUHg0VkJtWldPWDh5eG9GVVR0aFNxdzhUTzExd3hV?=
+ =?utf-8?B?b0wrVW9tMEoxdjJqTEo5UzVnRDhaTG9meFN6NXc1S1hDRmN1RHZ5c0NMNkVy?=
+ =?utf-8?B?UDI5RXFUVWNhWkxKS1JSR0h5cU1OdUY2Y2Q2RjNUWSs2c25zYnAvR2psR0pq?=
+ =?utf-8?B?NDk1KzZqNGVzTTVwMEFDNXlzaUtzMS9MaXhvM3I4MUZQa2MzVlNobmFuVGZC?=
+ =?utf-8?B?Y1RKa2pPUXliaXlvbEN4SnNGNEkzOXdITEpaZHZSZHlOelJCTFpsUk1FOHBU?=
+ =?utf-8?B?Q0lZeWQ4WnBxMG9OUXBMTGpSTW5ja2x3VlliWWNjdWRQYzV5WHNMTnNNU0p4?=
+ =?utf-8?B?Q2hGaXN3eVdHWDdwSUFCK0lMdHJWVDNaNFlmdXd1VlhEczd3cjFldjZzVU9v?=
+ =?utf-8?B?WGdsamFIK3hYUWc1Vy9sbUhYSkhQS2ZzNXJ0UWo1VklhbTVGMGNWTUdFUjBm?=
+ =?utf-8?B?VzN6RjVQVmk2clZwTlNpcGszVVBwZFFObEVxeW1rcXlhZm0yWnk5WmR6ZE1y?=
+ =?utf-8?B?SnpiaENDSUNTRVVTeGN3elhqdVI3Vm9HdlowZ1YwWTBXV2ZtTzF0c2YrYUpP?=
+ =?utf-8?B?TG1STVB1SE9nR0NzaGRUK1B3SzVsNXFxcDJ0dEFSV01wMDJrVWJKOHJWcHBl?=
+ =?utf-8?B?amlrenBxeTYyWWt3aGZqUlN4eFFFR25TVVZ3cEFVOEo1S0crUUhWNjdVbGxw?=
+ =?utf-8?B?c1ZVOEc3enRLUE1xK0hReVN4UUphS1BVRzkxNGxqMG5RV0ZPUG1WTUc5ZE1M?=
+ =?utf-8?B?bkxBZWI3TUpIZEFEUWdEaENURjgxbkc4VmUvTk9QWHFzTFYrek5RT1hMR2NC?=
+ =?utf-8?B?UDV4UlVRUXFCWFZRMnJkNElrTUNNcnB6dE1DRnJacHd0QVRRNzVrZ2VJeUhM?=
+ =?utf-8?B?aHh2TTB6bmNETUlERisrRU12Z2VvS0Zhd0d3M1BVTW14U1o3Q0IrQXdDQlVG?=
+ =?utf-8?B?OU0wTWpNcVh0WElkQlEvS3FPZ0ttRmxaYldYN3Zvdkh6QmlyUWJsZS9WMGlB?=
+ =?utf-8?B?aGtlcTdFWStibHdoL2JiZlRIWVJrM1N3NVdhc1JGZTFpcGpiMUgxWU00N0NH?=
+ =?utf-8?Q?fkpflhWC7PkFamhCg3rDF2tA4Ipz5TUJHMP0FWF?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5070.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?VVlpMGJydFBWZlR4MnVRcGh1SXFrV0t0M3FLRytxYmVuaUlNOERCaTkzWGhr?=
+ =?utf-8?B?SnRaM296UFQyZUtjQW1qc1F4ZllQSDV1U2tEZlgwN2wyWEVyZ1B5eXh0V0ZL?=
+ =?utf-8?B?a1lyREE5UlFvWXZYaDJYQW8wZGN3WnFGTHF1dk1pT3Q2eS9lV3RkYnhObHVB?=
+ =?utf-8?B?S0NTTU1nbmdhQ2lvQ1hsL1liMnpSUXJVOFdHNHlkckxtVE85U2FGL1dKTE43?=
+ =?utf-8?B?Vnd0R01FWCtiQitETFBrV3FYRVBIUWZ5OWtra2ttNWYzNXVjTGxJNW1mR01n?=
+ =?utf-8?B?bkhwSytmNEQyQmFxV2Zma2JRdTJmUk9FeGpQY2xJUEdsdU9jMi9rT1h5bE5U?=
+ =?utf-8?B?Uys3ZkRVM1JBdWs4R3ZiUXBaS1ZHTWxSME96ODV3UHJKM2ZLUUNDaEtvRllo?=
+ =?utf-8?B?TjkrRnhwZm9IajU5ZFluREwxeHNQaVBPRjlob0piMVFLMWM3aE43RGwwS25H?=
+ =?utf-8?B?NDJVQXROZUUyWmc3MUtJRGorc0Rka3JsT1hKNkUwL3U4RDZ5WFNFT0RtS2Jy?=
+ =?utf-8?B?c1BBR005b1YvM1dwYjRnTXN0OTRBYVNGblYwWDdTVWVnbGdHTzYzbk5kVVM1?=
+ =?utf-8?B?T2R3WHErUSt6dWRRMWY3NXV2OG1HeGRCMWlrZzkzZzJPUHlkRE94ZThZeklz?=
+ =?utf-8?B?dGUrSlFpcHpYU1ZkM0U1dG5RR2x6QTlmaWt5RFZvRGZneG5ybXQyTW5wbjds?=
+ =?utf-8?B?a3JySC9lUDZjaHZ0T1Ezb1hxNkJESjNxaDFYakozakNtNlJJcm9aTC9kUjls?=
+ =?utf-8?B?UVlCMVM4dmRQazVmMmJXQURZYUZjd0I2S3pBTEliZk9SWXBGMkdaQ3drQ25r?=
+ =?utf-8?B?OEY3c2w3aWx6Yk1STjNJNDVENC9VNXhWSms3dVZxQnFzaDVGU3lwV3JVZHFy?=
+ =?utf-8?B?MCt3RUdhMTRSdFNIbUJocGEvdGtOMnFoZkE2cUp1SVFxalZSZEx6SXNHN2d1?=
+ =?utf-8?B?algxWHc0WjJoVUhHS1ZpQjM1VHJ1N3k5MmZ1dE03Wm5TQjA4Q3E4SHBXWGRt?=
+ =?utf-8?B?Y2hmVUNNS0FyWnVBWjAxR0hROHRGRjhOSzB2Y3pmVEFlSkZxeFRQcVhZQ21v?=
+ =?utf-8?B?a1FBTVV4OXVpcGZyc0VVMFE2WVREaTA2L3ZFM3E0Z0Y2Q2NPSXExTUlVMnJ4?=
+ =?utf-8?B?NHFKTytRS3hzV3dtTnZJbUsxdnBQZ1hmTmZVeWZwWTliM29RZEFwMjE3Mmpn?=
+ =?utf-8?B?SWhwQVJWdE1Ua1E3bnFuOUQvZFNVTDdDTVl1cGpUeUVFYVhhZGlvRDhNaG1P?=
+ =?utf-8?B?NHNPc0FpWDVuRzlkbjJYWFdzWW9lUzROSGRub2tLVEZMbTlFUFAwZzhuWXlU?=
+ =?utf-8?B?Ti83RGp0eWRaNGhZcXUvaFFPNEsyTE5yWDNoNUJSUGZ0T3ZCc0xySDlGSStQ?=
+ =?utf-8?B?OXlvQ1QxZ3B6ZFRCaENCRnNrTExxRW4wVkZaM0pYL1QzK0RrK3RDemp3dDc1?=
+ =?utf-8?B?Y2plZERKRDY3Z1N1UVNyL1pqOHFLT0VlWTFrWFAyZjU4SmFtTHYwREwrZ1lK?=
+ =?utf-8?B?bGpObFhUTnA0Q3ZVNkxOSS92dytReDNremhjcUJ0YnlYdmpHWktMYXFmS2s5?=
+ =?utf-8?B?WlpsUTFJdHFTVGpodzdFZDNjUEZVM0pNN2FxcDJGTkdSMkV5QVFJWkY0WjFy?=
+ =?utf-8?B?YjFQYU1FMUNEVGp4RVBFZHB5VHp2RVI2K3hKbC9xODlXY25nNDFBY1BDTkFF?=
+ =?utf-8?B?Ni9Lb2NJWGRmWlpMVlhCTlhDZ0NQb2VkMUd1RkJnOTFRelQ0QjMxTU9kSU41?=
+ =?utf-8?B?L3ZLT2MrRDlnOFM5ZnpQUWx5dWoxditncnhSekhDMVFZY3dMYVVRQnlWeXlW?=
+ =?utf-8?B?a29tU0lIWlNxelRWOU5Ybk9NTUd6QUlzTHpMNFNpVzR3Zy9WcDNsT2MvSUVk?=
+ =?utf-8?B?WjdzWnQvT2czSk1QVFpJa1VTWlZLL1U1R1k3aWQ5TzhtRDJrYXJsVHhVY3Vv?=
+ =?utf-8?B?N2lON3QzNW5BMkZ6RTA4bHM0RXh4Qk1FVlFmZjN3cTlhRFRPTm5VSVU5ekZG?=
+ =?utf-8?B?N2RSaExqbFpSbCtGTVA4MnJvVjJSUlRXUUtyamRLbnp2djFRMmNocVN4dXU5?=
+ =?utf-8?B?YmlpbGx6Y0loT29JYWIzWWFWV0FnaUhSSHN3dFNTbDZwaEZsSFQyODRNRE52?=
+ =?utf-8?Q?jl+MGA+oTEc+JIkY/W8lM8Gya?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4839e7a1-6e62-42f0-2e0a-08dd08a5b57d
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5070.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Nov 2024 14:23:16.5755
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: dy4pvus85JrixqBNAOkVxfwM/kBiSIcrQj++BPGztE7eRnXOA2s5bRCsSIg/Ei+HDNd2XEv9jKNuVDxt/cYUFw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYXPR12MB9340
 
-On Fri, 2024-11-15 at 17:35 +0000, Song Liu wrote:
-> Hi Jan,=20
->=20
-> > On Nov 15, 2024, at 3:19=E2=80=AFAM, Jan Kara <jack@suse.cz> wrote:
->=20
-> [...]
->=20
-> > > AFAICT, we need to modify how lsm blob are managed with=20
-> > > CONFIG_BPF_SYSCALL=3Dy && CONFIG_BPF_LSM=3Dn case. The solution, even
-> > > if it gets accepted, doesn't really save any memory. Instead of=20
-> > > growing struct inode by 8 bytes, the solution will allocate 8
-> > > more bytes to inode->i_security. So the total memory consumption
-> > > is the same, but the memory is more fragmented.
-> >=20
-> > I guess you've found a better solution for this based on James' suggest=
-ion.
-> >=20
-> > > Therefore, I think we should really step back and consider adding
-> > > the i_bpf_storage to struct inode. While this does increase the
-> > > size of struct inode by 8 bytes, it may end up with less overall
-> > > memory consumption for the system. This is why.=20
-> > >=20
-> > > When the user cannot use inode local storage, the alternative is=20
-> > > to use hash maps (use inode pointer as key). AFAICT, all hash maps=
-=20
-> > > comes with non-trivial overhead, in memory consumption, in access=20
-> > > latency, and in extra code to manage the memory. OTOH, inode local=
-=20
-> > > storage doesn't have these issue, and is usually much more efficient:=
-=20
-> > > - memory is only allocated for inodes with actual data,=20
-> > > - O(1) latency,=20
-> > > - per inode data is freed automatically when the inode is evicted.=
-=20
-> > > Please refer to [1] where Amir mentioned all the work needed to=20
-> > > properly manage a hash map, and I explained why we don't need to=20
-> > > worry about these with inode local storage.
-> >=20
-> > Well, but here you are speaking of a situation where bpf inode storage
-> > space gets actually used for most inodes. Then I agree i_bpf_storage is=
- the
-> > most economic solution. But I'd also expect that for vast majority of
-> > systems the bpf inode storage isn't used at all and if it does get used=
-, it
-> > is used only for a small fraction of inodes. So we are weighting 8 byte=
-s
-> > per inode for all those users that don't need it against more significa=
-nt
-> > memory savings for users that actually do need per inode bpf storage. A
-> > factor in this is that a lot of people are running some distribution ke=
-rnel
-> > which generally enables most config options that are at least somewhat
-> > useful. So hiding the cost behind CONFIG_FOO doesn't really help such
-> > people.
->=20
-> Agreed that an extra pointer will be used if there is no actual users
-> of it. However, in longer term, "most users do not use bpf inode
-> storage" may not be true. As kernel engineers, we may not always notice=
-=20
-> when user space is using some BPF features. For example, systemd has
-> a BPF LSM program "restrict_filesystems" [1]. It is enabled if the=20
-> user have lsm=3Dbpf in kernel args. I personally noticed it as a=20
-> surprise when we enabled lsm=3Dbpf.=20
->=20
-> > I'm personally not *so* hung up about a pointer in struct inode but I c=
-an
-> > see why Christian is and I agree adding a pointer there isn't a win for
-> > everybody.
->=20
-> I can also understand Christian's motivation. However, I am a bit
-> frustrated because similar approach (adding a pointer to the struct)=20
-> worked fine for other popular data structures: task_struct, sock,=20
-> cgroup.=20
->=20
+On 11/18/24 16:58, Ragavendra wrote:
+> Updating the ctxt value to {} in the svsm_perform_ghcb_protocol as
+> it was not initialized. Updating memory to zero for the ctxt->fi
+> variable in verify_exception_info when ES_EXCEPTION is returned.
+> 
+> Fixes: 34ff65901735 x86/sev: Use kernel provided SVSM Calling Areas
+> Signed-off-by: Ragavendra Nagraj <ragavendra.bn@gmail.com>
+> ---
+>  arch/x86/coco/sev/shared.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/coco/sev/shared.c b/arch/x86/coco/sev/shared.c
+> index 71de53194089..5e0f6fbf4dd2 100644
+> --- a/arch/x86/coco/sev/shared.c
+> +++ b/arch/x86/coco/sev/shared.c
+> @@ -239,6 +239,8 @@ static enum es_result verify_exception_info(struct ghcb *ghcb, struct es_em_ctxt
+>  		if ((info & SVM_EVTINJ_VALID) &&
+>  		    ((v == X86_TRAP_GP) || (v == X86_TRAP_UD)) &&
+>  		    ((info & SVM_EVTINJ_TYPE_MASK) == SVM_EVTINJ_TYPE_EXEPT)) {
+> +			memset(&ctxt->fi, 0, sizeof(ctxt->fi));
+> +
+>  			ctxt->fi.vector = v;
+>  
+>  			if (info & SVM_EVTINJ_VALID_ERR)
+> @@ -335,7 +337,7 @@ static int svsm_perform_msr_protocol(struct svsm_call *call)
+>  
+>  static int svsm_perform_ghcb_protocol(struct ghcb *ghcb, struct svsm_call *call)
+>  {
+> -	struct es_em_ctxt ctxt;
+> +	struct es_em_ctxt ctxt = {};
 
-There are (usually) a lot more inodes on a host than all of those other
-structs combined. Worse, struct inode is often embedded in other
-structs, and adding fields can cause alignment problems there.
+This isn't necessary if you are doing the memset.
 
+Thanks,
+Tom
 
-> > Longer term, I think it may be beneficial to come up with a way to atta=
-ch
-> > private info to the inode in a way that doesn't cost us one pointer per
-> > funcionality that may possibly attach info to the inode. We already hav=
-e
-> > i_crypt_info, i_verity_info, i_flctx, i_security, etc. It's always a to=
-ugh
-> > call where the space overhead for everybody is worth the runtime &
-> > complexity overhead for users using the functionality...
->=20
-> It does seem to be the right long term solution, and I am willing to=20
-> work on it. However, I would really appreciate some positive feedback
-> on the idea, so that I have better confidence my weeks of work has a=20
-> better chance to worth it.=20
->=20
-> Thanks,
-> Song
->=20
-> [1] https://github.com/systemd/systemd/blob/main/src/core/bpf/restrict_fs=
-/restrict-fs.bpf.c
-
-fsnotify is somewhat similar to file locking in that few inodes on the
-machine actually utilize these fields.
-
-For file locking, we allocate and populate the inode->i_flctx field on
-an as-needed basis. The kernel then hangs on to that struct until the
-inode is freed. We could do something similar here. We have this now:
-
-#ifdef CONFIG_FSNOTIFY
-        __u32                   i_fsnotify_mask; /* all events this inode c=
-ares about */
-        /* 32-bit hole reserved for expanding i_fsnotify_mask */
-        struct fsnotify_mark_connector __rcu    *i_fsnotify_marks;
-#endif
-
-What if you were to turn these fields into a pointer to a new struct:
-
-	struct fsnotify_inode_context {
-		struct fsnotify_mark_connector __rcu	*i_fsnotify_marks;
-		struct bpf_local_storage __rcu		*i_bpf_storage;
-		__u32                   		i_fsnotify_mask; /* all events this inode cares=
- about */
-	};
-
-Then whenever you have to populate any of these fields, you just
-allocate one of these structs and set the inode up to point to it.
-They're tiny too, so don't bother freeing it until the inode is
-deallocated.
-
-It'd mean rejiggering a fair bit of fsnotify code, but it would give
-the fsnotify code an easier way to expand per-inode info in the future.
-It would also slightly shrink struct inode too.
---=20
-Jeff Layton <jlayton@kernel.org>
+>  	u8 pending = 0;
+>  
+>  	vc_ghcb_invalidate(ghcb);
 
