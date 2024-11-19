@@ -1,87 +1,118 @@
-Return-Path: <linux-kernel+bounces-414384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C7DF9D2737
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 14:45:58 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98FC69D2765
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 14:54:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CAB51F2358C
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 13:45:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 78547B2EE7B
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 13:46:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E5811CC8A8;
-	Tue, 19 Nov 2024 13:45:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D8EB1CCEC6;
+	Tue, 19 Nov 2024 13:46:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qnEK9TZe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="mvPt7nOJ"
+Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBF8C42C0B;
-	Tue, 19 Nov 2024 13:45:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 194E71CB32A
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 13:46:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732023950; cv=none; b=faot9o1onoZCwtctenLwjztrvTw7cCWZ3uc4jqihSFoVAwcuZNN1KErX6JXaaSpnFTjZPKCYeiZtrM/0jQqpFQ+yJxk2YLqqsw1vD8ChxFNvvIUZ6Y7N8NO8AnBRdoOUc9ZGEvnv/sZBP3pcCrWUnwUYvcf1/TVFbauMxkaj2Tw=
+	t=1732023969; cv=none; b=a26Vxl9rcp7Gn1qjce6rI7EGVk2PEKS2mHxE5T65OKX8i+0O6PnL+JhBOEDyYe0sgquzrJonGKT9F+739Iup8VY6qFthLFwhO613zgvv+T4D3bDTrcqyyj0pdh48PTsolKNLKKM3FLLLD81r8VK9MuHfTJCesoJJjYp4ls3dLz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732023950; c=relaxed/simple;
-	bh=FR5f/MDG3TjaTOrNjslgx9uw+OuWqMLRgQGRclO3OgU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nsokZIkcFSEOasHgxlzH0gBJB+IcGx/vYyptqmhtDZ7SpUs+jaiaOR4Mdy7N9v/UkZ5UeF0teg/ujuQVK+iL80zm/R28BzVmzDbLlwxZwvYSWivz0KoY1rKm5eAkr8abRTYAcHwYXCAuJ9fiLqoldibd5S0i3PTKjsaMM0tD4/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qnEK9TZe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30C11C4CECF;
-	Tue, 19 Nov 2024 13:45:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732023949;
-	bh=FR5f/MDG3TjaTOrNjslgx9uw+OuWqMLRgQGRclO3OgU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qnEK9TZe8OFj5uqDNZCncFFMGIcd9wtM7Fldb7pmobrOiDSzZWcRNEIOaE8fWG0Qo
-	 CDEfhCdTI89cyIPFRyACuoja95XNOurXmwa93ehCZk4MAnj3e/2AiajgbaK9QR9DZS
-	 AIU3UCjDjTdtR4DmYKfY2pNPv2nvgNP6hBJXfpyktNHpLz116mYJ273mSz6axk4ovP
-	 RpdSTqmHf/LL2Eg0Wfn7xbR3ACsiFpckMkIpIOGIHizQ1ROvlHNHr3ACGKCsL+k9p2
-	 3IHcUsvHGu/8zVB0jUjvZ9NbVJldz1RKrrtVtAisFFPDylKQSYh9aKNIQR6M7cyp6L
-	 FBRkgsOiiMWmw==
-Date: Tue, 19 Nov 2024 14:45:46 +0100
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Chris Babroski <cbabroski@nvidia.com>
-Cc: kblaiech@nvidia.com, asmaa@nvidia.com, davthompson@nvidia.com, 
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] i2c-mlxbf: Add repeated start condition support
-Message-ID: <ji23yczfp75vtu7sp7pots66lr63mxbtkxea27lvc5id5tmfk3@pltlopcoz55c>
-References: <20241118192833.346064-1-cbabroski@nvidia.com>
+	s=arc-20240116; t=1732023969; c=relaxed/simple;
+	bh=ZCTkqrkfjT0tCxtMd7n0BWeKeUKQr3zuUDfYHPwEMFM=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=MvnQ0Ij02+UYvNgXnydMUzzvTM/JDnUzi+5F36zonW83pwwECtSO2Ubrk6Iw7dl2jLhLmtZVfkvS7OOn3kIlfrshyQE/qtv8dh3qDd2rqi1oGgSWBguZhmqNtf9VCamWGzpq8flE5Xsvwa39ufVBTZfVK+iqq/sNM1DiUIg8dqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=mvPt7nOJ; arc=none smtp.client-ip=91.218.175.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241118192833.346064-1-cbabroski@nvidia.com>
+Mime-Version: 1.0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
+	t=1732023962;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TgHwPslSk2PRB/eadtEYqufFZbDdiWqg5iGoDx9N5MM=;
+	b=mvPt7nOJuK3tOZcE4Bh2ETmJE+u3r9PIbXv2ZOOtdFtnCHgF1fXJGMedBs/rdegph8oNS7
+	qajfOuU28XVbYTVDoR3zvtqvORg+vLN/A7k3IJdo60Uapz5BM3aFwP1eM0byxfsr7hMw+I
+	LkrB9h+q14nLcv7qsdMCWadW5YOpqLe8T27HMggN5+Nrh4HaUMDL8YP5ju/RXDtBLHD/gx
+	ZqDSBBovznuJWLtwi/A0egtShz4lTdIXGgIqrmH/ycppiOtecpsuqy+IVB56vpFUPRXyZX
+	+KpzxQE45YzQKj4KNgB9A8e2muSN02xkN2griSTwhvYy23k/3G2wEZn6TrnXLw==
+Content-Type: multipart/signed;
+ boundary=79d65ceca52770ce73e14ecdf58ae1ec71b511c9b7ca1d91c45705b1ce2e;
+ micalg=pgp-sha256; protocol="application/pgp-signature"
+Date: Tue, 19 Nov 2024 14:45:53 +0100
+Message-Id: <D5Q78ZOX5SE0.2SCB8FEGY7EFA@cknow.org>
+Cc: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+ <detlev.casanova@collabora.com>, <devicetree@vger.kernel.org>,
+ <linux-arm-kernel@lists.infradead.org>,
+ <linux-rockchip@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+ <linux-clk@vger.kernel.org>, <sebastian.reichel@collabora.com>
+Subject: Re: [PATCH 1/5] clk: rockchip: rk3576: define clk_otp_phy_g
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Diederik de Haas" <didi.debian@cknow.org>
+To: "Heiko Stuebner" <heiko@sntech.de>, <srinivas.kandagatla@linaro.org>
+References: <20241119132916.1057797-1-heiko@sntech.de>
+ <20241119132916.1057797-2-heiko@sntech.de>
+In-Reply-To: <20241119132916.1057797-2-heiko@sntech.de>
+X-Migadu-Flow: FLOW_OUT
 
-Hi Chris,
+--79d65ceca52770ce73e14ecdf58ae1ec71b511c9b7ca1d91c45705b1ce2e
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-On Mon, Nov 18, 2024 at 07:28:33PM +0000, Chris Babroski wrote:
-> Add support for SMBus repeated start conditions to the Mellanox I2C
-> driver. This support is specifically enabled for the
-> I2C_FUNC_SMBUS_WRITE_I2C_BLOCK implementation which is required for
-> communication with various I2C devices on Bluefield 3.
-> 
-> The I2C bus timing configuration values have also been updated based on
-> latest HW testing results and found to be necessary to support repeated
-> start transactions.
-> 
-> Signed-off-by: Chris Babroski <cbabroski@nvidia.com>
-> Reviewed-by: Asmaa Mnebhi <asmaa@nvidia.com>
-> Reviewed-by: Khalil Blaiech <kblaiech@nvidia.com>
+On Tue Nov 19, 2024 at 2:29 PM CET, Heiko Stuebner wrote:
+> The phy clock of the OTP block is also present, but was not defined
+> so far. Though its clk-id already existed, so just define its location.
+>
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> ---
+>  drivers/clk/rockchip/clk-rk3576.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/drivers/clk/rockchip/clk-rk3576.c b/drivers/clk/rockchip/clk=
+-rk3576.c
+> index 595e010341f7..029939a98416 100644
+> --- a/drivers/clk/rockchip/clk-rk3576.c
+> +++ b/drivers/clk/rockchip/clk-rk3576.c
+> @@ -541,6 +541,8 @@ static struct rockchip_clk_branch rk3576_clk_branches=
+[] __initdata =3D {
+>  			RK3576_CLKGATE_CON(5), 14, GFLAGS),
+>  	GATE(CLK_OTPC_AUTO_RD_G, "clk_otpc_auto_rd_g", "xin24m", 0,
+>  			RK3576_CLKGATE_CON(5), 15, GFLAGS),
+> +	GATE(CLK_OTP_PHY_G, "clk_otp_phy_g", "xin24m", 0,
+> +			RK3588_CLKGATE_CON(6), 0, GFLAGS),
 
-Where did these reviews take place? How is it possible that this
-patch, at its v1, already has two reviews?
+RK3588?=20
 
-Please ensure everything happens openly on the mailing list. I
-will need to ask Asmaa and Khalil to restate their Reviewed-by
-tags here, as they carry very little weight when included by
-default in a v1 patch.
+Cheers,
+  Diederik
 
-Thanks,
-Andi
+>  	COMPOSITE(CLK_MIPI_CAMERAOUT_M0, "clk_mipi_cameraout_m0", mux_24m_spll_=
+gpll_cpll_p, 0,
+>  			RK3576_CLKSEL_CON(38), 8, 2, MFLAGS, 0, 8, DFLAGS,
+>  			RK3576_CLKGATE_CON(6), 3, GFLAGS),
+
+
+--79d65ceca52770ce73e14ecdf58ae1ec71b511c9b7ca1d91c45705b1ce2e
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCZzyWlAAKCRDXblvOeH7b
+bgO3AQCaEVGABu4FsN0146ULiB2lKOrKXkI8R3DKOrAFLEGfMwD/TJpSfxGr5g9P
+Ytl5DRMSV+Y12kJDJHBNFt8sVM5NpAo=
+=Z0zZ
+-----END PGP SIGNATURE-----
+
+--79d65ceca52770ce73e14ecdf58ae1ec71b511c9b7ca1d91c45705b1ce2e--
 
