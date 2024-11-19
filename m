@@ -1,139 +1,95 @@
-Return-Path: <linux-kernel+bounces-414430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDFF79D27EC
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 15:17:52 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 812D79D27FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 15:23:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D1D64B253A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 14:15:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 24CEBB2EE99
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 14:16:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64B341D094B;
-	Tue, 19 Nov 2024 14:13:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4620D1CCEC2;
+	Tue, 19 Nov 2024 14:15:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YUjDjvkM"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="H2f0AXcf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9B5C1D07AA;
-	Tue, 19 Nov 2024 14:13:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 774711CCB23;
+	Tue, 19 Nov 2024 14:15:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732025611; cv=none; b=IKKTKVX6yn5M+JX7lmCpbXbTZN+9eIzVkD5cCb0a4Z1UmRELkMBPHPFlfyCADO/wCJcmmWgfAH+cvqsiEztXCUGC9Fri3i3dZXi7i7gqwoWLpK5RRlCHtDH7lQwtULMUBG13RIT3N4SUtVbydOBNbWvyhS54u+3Yz2WsFVo4oss=
+	t=1732025716; cv=none; b=kO9py50+t/p30+FG708LwCKSL+pwtW6jzdm3HyCqM1EPRhtSe02aWqADPztjciUsQ01jL9Bt/j28MG0mf8NF4bGdqyOtH5fuEyVveWDzitQ5ULhJqpglIz50PR8GTfos2Ijq5MrcW3CsgHV4G8H9wqrXQi801mBKzewTnotL9tA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732025611; c=relaxed/simple;
-	bh=AtZl+/+YOABDoSFUZKaIkFRXJgK0Lll61JEq77vP4QY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=qanq/GvT4Ww9Or0qr884NqVFbOI/6ZtncKXtQ8MhQFjk4TYSBF1ECXb67i5uAC7N5xPevqu13Pj/y2Rtfusfh4kmvvx9oflgtKGkR5fGYsFpmnWAItMnJjJcrBlJdAyevoBBctuNLIg34ZqV7ig4ikOdT1juTlXcsIAgUawye1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YUjDjvkM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 368A3C4CED7;
-	Tue, 19 Nov 2024 14:13:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732025611;
-	bh=AtZl+/+YOABDoSFUZKaIkFRXJgK0Lll61JEq77vP4QY=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=YUjDjvkMuEE77VTkHuBjMxsKwkppVAnlr1wB8/N+px2oa9694xTZVXc8y2cmYNMNh
-	 oYlyPLqVmzJNB2OzMbpAGMuKC0/qE7ZfCpUfX6XXX0Bd+8tJUZmiMyYVSq6ZJyiOoC
-	 EWQGpSkLNrd30fDYJp8FudGP2mAEPGo+x4h67Sc2PIS5s8cRDh8hD9dCJJsHnj7TLo
-	 hvbUhshwxcUD14Is1fXJ5/Mdtv6WzHNIsBLoIlIIYLd2qxSLPgggu0Vs55Wp38nk1F
-	 RnrJ4iNyqaaO8xf1JKaKwF/spRJptIoc32z0S+nLPu4kuih5J8LoBX7RAw9aAZkJIa
-	 SMa6TQJMff7kQ==
-Message-ID: <419a5d2c-7d00-41c7-b787-c824b13dcce3@kernel.org>
-Date: Tue, 19 Nov 2024 15:13:26 +0100
+	s=arc-20240116; t=1732025716; c=relaxed/simple;
+	bh=Q+RHmcNHjNmW4oV/4STiDLZbbvONXbLU+a9emUh0paE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bmsxgHJgxdX0dSgkXTFIr/cN2m/oY+JGSLg8a75nDJSq+sTjHagN0Oq96OISS0uJqmdP/nRm3lySql10Iq1yFYBGdsD3ChjHCxTtZVIdn0q9M6xJ0HJMZN/xnz6N9+xgmamHfaMa6vl2eVDJjDo/UwbvO1eLiSSWN/k92jvJKVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=H2f0AXcf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8934C4CECF;
+	Tue, 19 Nov 2024 14:15:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1732025716;
+	bh=Q+RHmcNHjNmW4oV/4STiDLZbbvONXbLU+a9emUh0paE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=H2f0AXcfzYj8VqayMjV8ZMiuTONB3JBlDMJZQOs0FX2m/toSoxaxoRl1Ls/5KgFXK
+	 dEeL+mwPr61X711GRet0tcQLrMbQcbz0PftNqIDJk0qYUXco/WQspC7tZJkMNBUbyL
+	 z/3aa2WC2i8QeQWMtM0iqGJe1abpco4zr48eU5jI=
+Date: Tue, 19 Nov 2024 15:14:52 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: stable@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Xu <peterx@redhat.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Mark Brown <broonie@kernel.org>,
+	"David S . Miller" <davem@davemloft.net>,
+	Andreas Larsson <andreas@gaisler.com>,
+	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
+	Helge Deller <deller@gmx.de>
+Subject: Re: [PATCH 6.6.y 0/5] fix error handling in mmap_region() and
+ refactor (hotfixes)
+Message-ID: <2024111921-snuff-onlooker-f95a@gregkh>
+References: <cover.1731672733.git.lorenzo.stoakes@oracle.com>
+ <2024111932-fondue-preorder-0c6f@gregkh>
+ <7189585f-d6a8-4335-a78c-547ce468fe0b@lucifer.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] hwmon: (sht3x) add devicetree support
-To: JuenKit Yip <hunterteaegg@126.com>, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, jdelvare@suse.com, linux@roeck-us.net,
- peteryin.openbmc@gmail.com, noahwang.wang@outlook.com, festevam@gmail.com,
- marex@denx.de, lukas@wunner.de, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org
-References: <20241119140725.75297-1-hunterteaegg@126.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241119140725.75297-1-hunterteaegg@126.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7189585f-d6a8-4335-a78c-547ce468fe0b@lucifer.local>
 
-On 19/11/2024 15:07, JuenKit Yip wrote:
-> add "compatible" property for supporting devicetree
+On Tue, Nov 19, 2024 at 01:24:33PM +0000, Lorenzo Stoakes wrote:
+> On Tue, Nov 19, 2024 at 02:16:52PM +0100, Greg KH wrote:
+> > On Fri, Nov 15, 2024 at 12:41:53PM +0000, Lorenzo Stoakes wrote:
+> > > Critical fixes for mmap_region(), backported to 6.6.y.
+> >
+> > Did I miss the 6.11.y and 6.1.y versions of this series somewhere?
+> >
+> > thanks,
+> >
+> > greg k-h
 > 
-> Signed-off-by: JuenKit Yip <hunterteaegg@126.com>
-> ---
->  drivers/hwmon/sht3x.c | 18 +++++++++++++++++-
->  1 file changed, 17 insertions(+), 1 deletion(-)
+> 5.10.y - https://lore.kernel.org/linux-mm/cover.1731670097.git.lorenzo.stoakes@oracle.com/
+> 5.15.y - https://lore.kernel.org/linux-mm/cover.1731667436.git.lorenzo.stoakes@oracle.com/
+>  6.1.y - https://lore.kernel.org/linux-mm/cover.1731946386.git.lorenzo.stoakes@oracle.com/
+>  6.6.y - https://lore.kernel.org/linux-mm/cover.1731672733.git.lorenzo.stoakes@oracle.com/
 > 
-> diff --git a/drivers/hwmon/sht3x.c b/drivers/hwmon/sht3x.c
-> index 650b0bcc2359..2ac1537b3e3e 100644
-> --- a/drivers/hwmon/sht3x.c
-> +++ b/drivers/hwmon/sht3x.c
-> @@ -954,6 +954,19 @@ static int sht3x_probe(struct i2c_client *client)
->  	return PTR_ERR_OR_ZERO(hwmon_dev);
->  }
->  
-> +/* devicetree ID table */
-> +static const struct of_device_id sht3x_of_match[] = {
-> +	{ .compatible = "sensirion,sht30", .data = (void *)sht3x },
-This does not match your binding at all. Also all SHT/STS devices are
-compatible, so express it in the binding with a fallback.
+> I didn't backport to 6.11.y as we are about to move to 6.12, but I can if
+> you need that.
 
-Anyway, you cannot just send half of patch afterwards without resolving
-previous comments. If this is v2, mark it as v2. If this is a resend,
-mark it as RESEND.
+True, 6.11.y is only going to be around for another few weeks, just
+wanted to make sure I hadn't missed this.  I'll go queue all of these up
+now, thanks for the backports!
 
-See other examples on mailing lists (lore.kernel.org) and read
-submitting patches document.
-
-Best regards,
-Krzysztof
+greg k-h
 
