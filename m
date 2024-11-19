@@ -1,436 +1,245 @@
-Return-Path: <linux-kernel+bounces-413642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DD1A9D1CAD
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 01:41:20 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 088419D1CB3
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 01:42:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18E171F22327
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 00:41:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 60DDFB21FDC
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 00:42:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93C6D6F2F2;
-	Tue, 19 Nov 2024 00:39:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5DFD3BBE5;
+	Tue, 19 Nov 2024 00:40:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="s/nUZ0t2"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2072.outbound.protection.outlook.com [40.107.220.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dTBQBxgK"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB62112F375;
-	Tue, 19 Nov 2024 00:39:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.72
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731976779; cv=fail; b=kKQpk511kPQnwI3oicP9OhcAdc0cvZUDXLi7buybdF66kQM1ryilQqj/xpcrdba5Nk0WyohBns5uVmheejk6ILXsdZpEA56FQDXKt2ysa6ARmCC46EKICUF8UPn6HyzHJQJ/FMzkzPe7r1UnfTt2TK3/Khx8dN3swLonSIJHJ/c=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731976779; c=relaxed/simple;
-	bh=s1dTVHODGYZHn4DWYL4w6ARvDv58hIcasPs2LJRX848=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=b3TdgG/p/a28Epxp0O9/x7RVGcXeUd+Q3FLRSOftVtNR1+q7b6w2Z71/KZV9KPw/ZPZKfOGYjCzqCL7JAIP6uNbQ2lG5UdKGxZXv9qrEQmpd3tU9EJLfyOY6a0nt2ZyrXXpV27FoHn3G3QfEITHkyxbnwN/uOaETlq8+XKrr9yA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=s/nUZ0t2; arc=fail smtp.client-ip=40.107.220.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=MYlTSjjPa53W9sjZQbbF9zXIpqj4z6U+V75x8ZDS4iwsA3SmVCKw10tg9hP4lAOW6fs5QzZS75DYUeEFgJW/aRvBfmRqofYLHawXhQPXVtERxu5WZHTX3RSlyxgfvZVH/H1vG7kbPT6LV4chI1rd/dFhK6KEvyjqW27iVo9rweovIIleoj6gk/Rurk1vzfa5kQmN4YNkE8C3H3ADq4A0ndBsSJFZpq8bklkX1OHjY88AY/NvpthU/teblW8fMDyi2ajytq+Pnr77ET+Pps7BtdWkQGpJWX2Q8dDze+KgdXoQVHWyhgBzmdzxTP49tmdYD6PLCZEFTik+hTX+PEOiPQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=uXo3T/9XOSb8PMo6JY0TO7NVnXhFQUcqrbXmC+2RFeg=;
- b=glXrmyxEC7YgTNyj7bClQ7NO84+xhQdXFFKXR7aAysbz1aSoph1vjK3UI1vZv5Fg5hqC8EUkePuPASg6vOBJEtoDV8ykJllKJCd2wNhQWKc2CQKEPqH0AV47GINiEE2zfxKFCmxWBJ441DXMmYVcLZnFCnu/wca69U4Ik8xIwk/ULQnlgKHoSiU9YBF+VmDNaESnNOtp4MAG1On/CqOUbKO9iWxemJXLDe3wpHTtLhhPuclK8tYb3XVZ3DbpCVG/vcj4+/t5odszkW3I2yxMnOkT1Gr8hhSSTD9KYn4y6Jap7Y+lunlVN6+65U/Y0pMXV2oCcaOt4vE7S1xvUD/SLw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.12) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=uXo3T/9XOSb8PMo6JY0TO7NVnXhFQUcqrbXmC+2RFeg=;
- b=s/nUZ0t2uRlQZbDq3WUA5h1CPsMv90jkpG5Z8ymg+f2kfiuezzyctYNd4sgO7zinXaW5L/YOxwooFMweXqJwnQaWz2UYseZUTbyi+XbGFyn/2oyaHUiIuo8jn6BG07VbPVWWCHhCHo+qtfoaKUCEJWI7CTXLQTTlCKl7caA5Hjc=
-Received: from DM6PR10CA0001.namprd10.prod.outlook.com (2603:10b6:5:60::14) by
- SJ0PR12MB6784.namprd12.prod.outlook.com (2603:10b6:a03:44f::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.24; Tue, 19 Nov
- 2024 00:39:34 +0000
-Received: from DS1PEPF0001709B.namprd05.prod.outlook.com
- (2603:10b6:5:60:cafe::a2) by DM6PR10CA0001.outlook.office365.com
- (2603:10b6:5:60::14) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.23 via Frontend
- Transport; Tue, 19 Nov 2024 00:39:34 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.12)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.12 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.12; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.12) by
- DS1PEPF0001709B.mail.protection.outlook.com (10.167.18.105) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8158.14 via Frontend Transport; Tue, 19 Nov 2024 00:39:34 +0000
-Received: from ethanolx50f7host.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 18 Nov
- 2024 18:39:28 -0600
-From: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
-To: <linux-efi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-cxl@vger.kernel.org>
-CC: Ard Biesheuvel <ardb@kernel.org>, Alison Schofield
-	<alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, "Ira
- Weiny" <ira.weiny@intel.com>, Dan Williams <dan.j.williams@intel.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>, Yazen Ghannam
-	<yazen.ghannam@amd.com>, Terry Bowman <terry.bowman@amd.com>, "Smita
- Koralahalli" <Smita.KoralahalliChannabasappa@amd.com>
-Subject: [PATCH v3 7/7] acpi/ghes, cxl/pci: Process CXL CPER Protocol Errors
-Date: Tue, 19 Nov 2024 00:39:15 +0000
-Message-ID: <20241119003915.174386-8-Smita.KoralahalliChannabasappa@amd.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20241119003915.174386-1-Smita.KoralahalliChannabasappa@amd.com>
-References: <20241119003915.174386-1-Smita.KoralahalliChannabasappa@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A85E28DD0
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 00:39:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731976802; cv=none; b=pkC450hyGh3O3XMP6WkAx2kxqKhZhCHNGKxN++hrhxiN6RNO2unPAX3qgGWdZ8ql8F+NjbKMu2Hksu7t00hvlJ3eBz8NEusNmhzlsXEU97ucuNIrDroFRFBJ4oydlDbI4uhpejpvylHg/ne1s1uwG3whp6SMEKEbHWYwuvJTV+M=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731976802; c=relaxed/simple;
+	bh=YzMNvJAMgAye6FGH0t0zMVzWqRVdNrG+1sIZy8+p89A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PRF57oWcXw02sglGF9yhCNoYqc57LZrWIxi1y46euSZ6dGC/P/MgHu7EI3OrSijj15ogrl7QpMuict/4OsfbVDx1hamjp8HHFSOnlLBgWk4njLQ7mwBryJFYa3wahM/69jCeK4w/iYoORAjHCiX/56Efxo00A+k+A4s1GwQUr8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dTBQBxgK; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5cfc264b8b6so4263a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 16:39:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1731976797; x=1732581597; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YzMNvJAMgAye6FGH0t0zMVzWqRVdNrG+1sIZy8+p89A=;
+        b=dTBQBxgKsBAZa/t6YBs62+MeMILN92Ktw2GxP4wsG6pwcy2I3XUjJCUvPcwQ5uEDoH
+         M76UgWhZDEloosLxerYCmxmHTaLBBV1h8CPtJQ5IF2ZAZC3m0sJM4RuUi3E15oyuMLhP
+         Y702b0F9Nk5HwYTsEjl1aKjNAIZ0GE9Wz7+KHzJPJ066KMeoPyK4ueFfDki79jdhOxyr
+         FELRF8w8+hIoTSCgw0dMQjL1kFYmmtgleaWvY501gAtxeOhPjTLpXU3Wu3gzkAflH68f
+         I6fF8c4m4mv081v8+S3QldhkjtuDfK40tkUzWJLKxAIrFSjSFwS5/M4RSYEDyQMORbFQ
+         Cq4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731976797; x=1732581597;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YzMNvJAMgAye6FGH0t0zMVzWqRVdNrG+1sIZy8+p89A=;
+        b=ZzJd4bxK7tbW9yf1R/Cs5mO2XTLykXY1aTL5knb9nIVMB8sZiCIeGRxpYABdMnO6pe
+         s/t8MFg3NHmVfqZgy8fT3wGFFV69/otDRSk8iDuE/uvSUcQKJgZSpLktSJr+mS/bJ288
+         qeXF8TxK6rK0CzsTY4Zagp+cFSrOISLqh2p4fh281yOfLlLBO5uZmUMcnaO6pZZK5dy5
+         X2mJtNwEMZ+l//dJ6ZEIfveP7NiZ9Wuri2bddy8z3MngA+bL9z8vdxFx87eCraPz32wq
+         YGFbY1ZpR2gdZwxn9XVbMtSlS4hNwZptUM8rDZZ8Yzv0t+ZN23wDyCok3SQV5HACK8yY
+         e53w==
+X-Forwarded-Encrypted: i=1; AJvYcCWbgIe6T+gMlpab3/g8mTM7ycawJTZrPSXSrjYebmy19EyhJLIgXz8W9Y4D62+8F3FIaOIjsqVB08AnK5s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwA4iugIJOpio2VheW9MllmDfgyEv0QPuzTaVKEVxTHfhkmLW3c
+	lWsoqoN5mzkPdtmyHvtHilh5WIvfDvkvAqbrjvqgsCykmlgyFIv4ZmXzydTt2qPUvY+0K5ACIjK
+	QbHJH+TKvj5mclIbyN2DDNVnu94Uerp5RaGi6
+X-Gm-Gg: ASbGncsiiXGUQBBprgqbjlIoeQPWQpwQw1jCjNcg822aZlFgMiYFP9iHNqH7s/GydVf
+	wAOXhbJdNq0ZguwRMy+XzigXyotrI32V9nTja6QWsFt8ZlqKaqCIwLMU2TG/h
+X-Google-Smtp-Source: AGHT+IEqFrrGyfsezRMsp/X151aTE55F7rPkKrYZLMq7HZJ1MQF2NOGKpWL8huBQFIpX81LUzRGmY7/k9ZOF+cLi7qc=
+X-Received: by 2002:a05:6402:1351:b0:5cf:bd9a:41ec with SMTP id
+ 4fb4d7f45d1cf-5cfdec244d3mr32883a12.2.1731976796952; Mon, 18 Nov 2024
+ 16:39:56 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS1PEPF0001709B:EE_|SJ0PR12MB6784:EE_
-X-MS-Office365-Filtering-Correlation-Id: 447822bd-3f13-40ef-e5e2-08dd0832a389
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700013|376014|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?rUUIu/6lVVTnS8utfx6mpo7o67f7DiU8gt1rx64KBZVSrUbTDqjp0I+/NqVD?=
- =?us-ascii?Q?+c9xF6UFJg9NjwoG218tSrRDB2VeYD924SOAB+vmOuZPlDKtszbNEa66zFIv?=
- =?us-ascii?Q?EFD3Lz/9njJNJkRtxxZyX7Q9BFT99QoB5ROkJ8zvd9dvckPoFLaE8Wq5YkdP?=
- =?us-ascii?Q?L2QOQ+b4e9d+3y+QGuCNXRXrYd/qMSk+BKu4SHI9ue+SAAy2loo6TLzble9I?=
- =?us-ascii?Q?nryDyNdOWCyWJ2/VDnVCUjRDWn/xTw65KZuMbkRM33655zIDz+iXhB9Ihf2R?=
- =?us-ascii?Q?TgYVkViXh2oJnjaSLUZgZnH3YUDvaHk65kqLF7/1i5SoFr63dsqS8ZuW6bKr?=
- =?us-ascii?Q?ft6virdKhgmzGICWzUV3OsxwJqn7pPXDTYukyj0ZvZlzalK2OPtkguyvVDF4?=
- =?us-ascii?Q?ggx3vUdov6QDxZDG4dyWc7cwUozVVSDD6mVDRAA4NUqpBb+sUfphM3aOmPNV?=
- =?us-ascii?Q?cfHDPlXA3NPiznOWkkGweHDFelWMRdY9zZmL8v4f5iqkMYG0vyTiljtduKn8?=
- =?us-ascii?Q?p4FLWlIHat/ER88kKBM2G7HLYxsIv2ZRmfEUNRHNWBqun7fh345hp3Jtvxls?=
- =?us-ascii?Q?pQYon6eGPG7ezUp8mlnAeqtmL9AeE6MppkWlOG7lGIenyE2EvOGo5VBVj3mN?=
- =?us-ascii?Q?qjlsAFZ44etMX4coIVh+tkiq3k9q3ek3bLkTzm7JYVRTCz+q2HlYtBL/DrFR?=
- =?us-ascii?Q?KNz6K6LtZm/cPAgX4FnSCB0m91qEXnVyeOEkwxD4rHGTXGXcw0HR/eE2RjDY?=
- =?us-ascii?Q?Nqe2tIO7LT7CVhltrv71b7fmnDoS7k/zXxZfo/yLwWhQflHL0iYDyt2D6Qxz?=
- =?us-ascii?Q?CAr/R52/XrqeqBVHH0MxmXp+vg5snbAKfuL7npdpbUwNrmL8pnpU3V91vnIN?=
- =?us-ascii?Q?JzUxs1q0UCozON2lTBdrbMyU3mHfCfQ7jODldhS2YXYSiZXcVqG8+ec5wDVB?=
- =?us-ascii?Q?8fujZskNYAHLb7+vw//JCE/9NWowxXj9jBPGa12Z4TnmYttuwTdLijCFXZnO?=
- =?us-ascii?Q?ykVx/UiAyXSZUgbJly5gqc/DRCyPsSL3EtjKjZnEWFE+Re8JtXCi9PONa/by?=
- =?us-ascii?Q?1A1K1UtNc59zAgJLZHrh5GtQhcqWKQYxFDruGZcG3hBfVmo92xHpw5dootkR?=
- =?us-ascii?Q?dYTaXxHPb4NSlel5A0XkOsFFBd/P3OoSNt6VzJP2CxHcKAloEsKW7EpgVabo?=
- =?us-ascii?Q?ehjUgvsXsyiWR3fN0ETuqs6mnaqVt3WZmy0ecfI3iuZQylP+Q8PKd67qIhmH?=
- =?us-ascii?Q?w8glx68A8qpBHNL9qEa7lYDfiV4Z9MZRmQuBfdSxEuNjj1vglTcOIKD1SfJP?=
- =?us-ascii?Q?RlyOaA7w9I89ob69SdrTzNEgYyOdBZPMwAF+qL3yPehLQdMfJgg8cm7CaP3m?=
- =?us-ascii?Q?ErLmi+w/S8DhfUwxJO4hEi4UUaSzW/7Pjbb49ysd4c0Zzcu0sQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.12;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:atlvpn-bp.amd.com;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(376014)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Nov 2024 00:39:34.0651
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 447822bd-3f13-40ef-e5e2-08dd0832a389
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.12];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DS1PEPF0001709B.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB6784
+References: <20241116175922.3265872-1-pasha.tatashin@soleen.com>
+ <a0372f7f-9a85-4d3e-ba20-b5911a8189e3@lucifer.local> <CAG48ez2vG0tr=H8csGes7HN_5HPQAh4WZU8U1G945K1GKfABPg@mail.gmail.com>
+ <CA+CK2bB0w=i1z78AJbr2gZE9ybYki4Vz_s53=8URrxwyPvvB+A@mail.gmail.com>
+In-Reply-To: <CA+CK2bB0w=i1z78AJbr2gZE9ybYki4Vz_s53=8URrxwyPvvB+A@mail.gmail.com>
+From: Jann Horn <jannh@google.com>
+Date: Tue, 19 Nov 2024 01:39:19 +0100
+Message-ID: <CAG48ez1KFFXzy5qcYVZLnUEztaZxDGY2+4GvwYq7Hb=Y=3FBxQ@mail.gmail.com>
+Subject: Re: [RFCv1 0/6] Page Detective
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	cgroups@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	akpm@linux-foundation.org, corbet@lwn.net, derek.kiernan@amd.com, 
+	dragan.cvetic@amd.com, arnd@arndb.de, gregkh@linuxfoundation.org, 
+	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, tj@kernel.org, 
+	hannes@cmpxchg.org, mhocko@kernel.org, roman.gushchin@linux.dev, 
+	shakeel.butt@linux.dev, muchun.song@linux.dev, Liam.Howlett@oracle.com, 
+	vbabka@suse.cz, shuah@kernel.org, vegard.nossum@oracle.com, 
+	vattunuru@marvell.com, schalla@marvell.com, david@redhat.com, 
+	willy@infradead.org, osalvador@suse.de, usama.anjum@collabora.com, 
+	andrii@kernel.org, ryan.roberts@arm.com, peterx@redhat.com, oleg@redhat.com, 
+	tandersen@netflix.com, rientjes@google.com, gthelen@google.com, 
+	linux-hardening@vger.kernel.org, 
+	Kernel Hardening <kernel-hardening@lists.openwall.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-When PCIe AER is in FW-First, OS should process CXL Protocol errors from
-CPER records. Introduce support for handling and logging CXL Protocol
-errors.
+On Mon, Nov 18, 2024 at 11:24=E2=80=AFPM Pasha Tatashin
+<pasha.tatashin@soleen.com> wrote:
+> On Mon, Nov 18, 2024 at 7:54=E2=80=AFAM Jann Horn <jannh@google.com> wrot=
+e:
+> >
+> > On Mon, Nov 18, 2024 at 12:17=E2=80=AFPM Lorenzo Stoakes
+> > <lorenzo.stoakes@oracle.com> wrote:
+> > > On Sat, Nov 16, 2024 at 05:59:16PM +0000, Pasha Tatashin wrote:
+> > > > It operates through the Linux debugfs interface, with two files: "v=
+irt"
+> > > > and "phys".
+> > > >
+> > > > The "virt" file takes a virtual address and PID and outputs informa=
+tion
+> > > > about the corresponding page.
+> > > >
+> > > > The "phys" file takes a physical address and outputs information ab=
+out
+> > > > that page.
+> > > >
+> > > > The output is presented via kernel log messages (can be accessed wi=
+th
+> > > > dmesg), and includes information such as the page's reference count=
+,
+> > > > mapping, flags, and memory cgroup. It also shows whether the page i=
+s
+> > > > mapped in the kernel page table, and if so, how many times.
+> > >
+> > > I mean, even though I'm not a huge fan of kernel pointer hashing etc.=
+ this
+> > > is obviously leaking as much information as you might want about kern=
+el
+> > > internal state to the point of maybe making the whole kernel pointer
+> > > hashing thing moot.
+> > >
+> > > I know this requires CAP_SYS_ADMIN, but there are things that also re=
+quire
+> > > that which _still_ obscure kernel pointers.
+> > >
+> > > And you're outputting it all to dmesg.
+> > >
+> > > So yeah, a security person (Jann?) would be better placed to comment =
+on
+> > > this than me, but are we sure we want to do this when not in a
+> > > CONFIG_DEBUG_VM* kernel?
+> >
+> > I guess there are two parts to this - what root is allowed to do, and
+> > what information we're fine with exposing to dmesg.
+> >
+> > If the lockdown LSM is not set to LOCKDOWN_CONFIDENTIALITY_MAX, the
+> > kernel allows root to read kernel memory through some interfaces - in
+> > particular, BPF allows reading arbitrary kernel memory, and perf
+> > allows reading at least some stuff (like kernel register states). With
+> > lockdown in the most restrictive mode, the kernel tries to prevent
+> > root from reading arbitrary kernel memory, but we don't really change
+> > how much information goes into dmesg. (And I imagine you could
+> > probably still get kernel pointers out of BPF somehow even in the most
+> > restrictive lockdown mode, but that's probably not relevant.)
+> >
+> > The main issue with dmesg is that some systems make its contents
+> > available to code that is not running with root privileges; and I
+> > think it is also sometimes stored persistently in unencrypted form
+> > (like in EFI pstore) even when everything else on the system is
+> > encrypted.
+> > So on one hand, we definitely shouldn't print the contents of random
+> > chunks of memory into dmesg without a good reason; on the other hand,
+> > for example we do already print kernel register state on WARN() (which
+> > often includes kernel pointers and could theoretically include more
+> > sensitive data too).
+> >
+> > So I think showing page metadata to root when requested is probably
+> > okay as a tradeoff? And dumping that data into dmesg is maybe not
+> > great, but acceptable as long as only root can actually trigger this?
+> >
+> > I don't really have a strong opinion on this...
+> >
+> >
+> > To me, a bigger issue is that dump_page() looks like it might be racy,
+> > which is maybe not terrible in debugging code that only runs when
+> > something has already gone wrong, but bad if it is in code that root
+> > can trigger on demand?
+>
+> Hi Jann, thank you for reviewing this proposal.
+>
+> Presumably, the interface should be used only when something has gone
+> wrong but has not been noticed by the kernel. That something is
+> usually checksums failures that are outside of the kernel: i.e. during
+> live migration, snapshotting, filesystem journaling, etc. We already
+> have interfaces that provide data from the live kernel that could be
+> racy, i.e. crash utility.
 
-The defined trace events cxl_aer_uncorrectable_error and
-cxl_aer_correctable_error trace native CXL AER endpoint errors, while
-cxl_cper_trace_corr_prot_err and cxl_cper_trace_uncorr_prot_err
-trace native CXL AER port errors. Reuse both sets to trace FW-First
-protocol errors.
+Ah, yes, I'm drawing a distinction here between "something has gone
+wrong internally in the kernel and the kernel does some kinda-broken
+best-effort self-diagnostics" and "userspace thinks something is
+broken and asks the kernel".
 
-Since the CXL code is required to be called from process context and
-GHES is in interrupt context, use workqueues for processing.
+> > __dump_page() copies the given page with
+> > memcpy(), which I don't think guarantees enough atomicity with
+> > concurrent updates of page->mapping or such, so dump_mapping() could
+> > probably run on a bogus pointer. Even without torn pointers, I think
+> > there could be a UAF if the page's mapping is destroyed while we're
+> > going through dump_page(), since the page might not be locked. And in
+> > dump_mapping(), the strncpy_from_kernel_nofault() also doesn't guard
+> > against concurrent renaming of the dentry, which I think again would
+> > probably result in UAF.
+>
+> Since we are holding a reference on the page at the time of
+> dump_page(), the identity of the page should not really change, but
+> dentry can be renamed.
 
-Similar to CXL CPER event handling, use kfifo to handle errors as it
-simplifies queue processing by providing lock free fifo operations.
+Can you point me to where a refcounted reference to the page comes
+from when page_detective_metadata() calls dump_page_lvl()?
 
-Add the ability for the CXL sub-system to register a workqueue to
-process CXL CPER protocol errors.
+> > So I think dump_page() in its current form is not something we should
+> > expose to a userspace-reachable API.
+>
+> We use dump_page() all over WARN_ONs in MM code where pages might not
+> be locked, but this is a good point, that while even the existing
+> usage might be racy, providing a user-reachable API potentially makes
+> it worse. I will see if I could add some locking before dump_page(),
+> or make a dump_page variant that does not do dump_mapping().
 
-Signed-off-by: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
----
- drivers/acpi/apei/ghes.c | 41 ++++++++++++++++++++++++++++++
- drivers/cxl/core/pci.c   | 50 ++++++++++++++++++++++++++++++++++++
- drivers/cxl/cxlpci.h     |  6 +++++
- drivers/cxl/pci.c        | 55 ++++++++++++++++++++++++++++++++++++++++
- include/cxl/event.h      | 15 +++++++++++
- 5 files changed, 167 insertions(+)
+To be clear, I am not that strongly opposed to racily reading data
+such that the data may not be internally consistent or such; but this
+is a case of racy use-after-free reads that might end up dumping
+entirely unrelated memory contents into dmesg. I think we should
+properly protect against that in an API that userspace can invoke.
+Otherwise, if we race, we might end up writing random memory contents
+into dmesg; and if we are particularly unlucky, those random memory
+contents could be PII or authentication tokens or such.
 
-diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
-index 6cd9d5375d7c..32062b6a9985 100644
---- a/drivers/acpi/apei/ghes.c
-+++ b/drivers/acpi/apei/ghes.c
-@@ -676,6 +676,15 @@ static void ghes_defer_non_standard_event(struct acpi_hest_generic_data *gdata,
- 	schedule_work(&entry->work);
- }
- 
-+/* Room for 8 entries */
-+#define CXL_CPER_PROT_ERR_FIFO_DEPTH 8
-+static DEFINE_KFIFO(cxl_cper_prot_err_fifo, struct cxl_cper_prot_err_work_data,
-+		    CXL_CPER_PROT_ERR_FIFO_DEPTH);
-+
-+/* Synchronize schedule_work() with cxl_cper_prot_err_work changes */
-+static DEFINE_SPINLOCK(cxl_cper_prot_err_work_lock);
-+struct work_struct *cxl_cper_prot_err_work;
-+
- static void cxl_cper_post_prot_err(struct cxl_cper_sec_prot_err *prot_err,
- 				   int severity)
- {
-@@ -701,6 +710,11 @@ static void cxl_cper_post_prot_err(struct cxl_cper_sec_prot_err *prot_err,
- 	if (!(prot_err->valid_bits & PROT_ERR_VALID_SERIAL_NUMBER))
- 		pr_warn(FW_WARN "CXL CPER no device serial number\n");
- 
-+	guard(spinlock_irqsave)(&cxl_cper_prot_err_work_lock);
-+
-+	if (!cxl_cper_prot_err_work)
-+		return;
-+
- 	switch (prot_err->agent_type) {
- 	case RCD:
- 	case DEVICE:
-@@ -722,6 +736,13 @@ static void cxl_cper_post_prot_err(struct cxl_cper_sec_prot_err *prot_err,
- 				   prot_err->agent_type);
- 		return;
- 	}
-+
-+	if (!kfifo_put(&cxl_cper_prot_err_fifo, wd)) {
-+		pr_err_ratelimited("CXL CPER kfifo overflow\n");
-+		return;
-+	}
-+
-+	schedule_work(cxl_cper_prot_err_work);
- }
- 
- /* Room for 8 entries for each of the 4 event log queues */
-@@ -809,6 +830,26 @@ int cxl_cper_kfifo_get(struct cxl_cper_work_data *wd)
- }
- EXPORT_SYMBOL_NS_GPL(cxl_cper_kfifo_get, CXL);
- 
-+int cxl_cper_register_prot_err_work(struct work_struct *work)
-+{
-+	return cxl_cper_register_work(&cxl_cper_prot_err_work,
-+				      &cxl_cper_prot_err_work_lock, work);
-+}
-+EXPORT_SYMBOL_NS_GPL(cxl_cper_register_prot_err_work, CXL);
-+
-+int cxl_cper_unregister_prot_err_work(struct work_struct *work)
-+{
-+	return cxl_cper_unregister_work(&cxl_cper_prot_err_work,
-+					&cxl_cper_prot_err_work_lock, work);
-+}
-+EXPORT_SYMBOL_NS_GPL(cxl_cper_unregister_prot_err_work, CXL);
-+
-+int cxl_cper_prot_err_kfifo_get(struct cxl_cper_prot_err_work_data *wd)
-+{
-+	return kfifo_get(&cxl_cper_prot_err_fifo, wd);
-+}
-+EXPORT_SYMBOL_NS_GPL(cxl_cper_prot_err_kfifo_get, CXL);
-+
- static bool ghes_do_proc(struct ghes *ghes,
- 			 const struct acpi_hest_generic_status *estatus)
- {
-diff --git a/drivers/cxl/core/pci.c b/drivers/cxl/core/pci.c
-index 4ede038a7148..c992b34c290b 100644
---- a/drivers/cxl/core/pci.c
-+++ b/drivers/cxl/core/pci.c
-@@ -650,6 +650,56 @@ void read_cdat_data(struct cxl_port *port)
- }
- EXPORT_SYMBOL_NS_GPL(read_cdat_data, CXL);
- 
-+void cxl_cper_trace_corr_prot_err(struct pci_dev *pdev, bool flag,
-+				  struct cxl_ras_capability_regs ras_cap)
-+{
-+	struct cxl_dev_state *cxlds;
-+	u32 status;
-+
-+	status = ras_cap.cor_status & ~ras_cap.cor_mask;
-+
-+	if (!flag) {
-+		trace_cxl_port_aer_correctable_error(&pdev->dev, status);
-+		return;
-+	}
-+
-+	cxlds = pci_get_drvdata(pdev);
-+	if (!cxlds)
-+		return;
-+
-+	trace_cxl_aer_correctable_error(cxlds->cxlmd, status);
-+}
-+EXPORT_SYMBOL_NS_GPL(cxl_cper_trace_corr_prot_err, CXL);
-+
-+void cxl_cper_trace_uncorr_prot_err(struct pci_dev *pdev, bool flag,
-+				    struct cxl_ras_capability_regs ras_cap)
-+{
-+	struct cxl_dev_state *cxlds;
-+	u32 status, fe;
-+
-+	status = ras_cap.uncor_status & ~ras_cap.uncor_mask;
-+
-+	if (hweight32(status) > 1)
-+		fe = BIT(FIELD_GET(CXL_RAS_CAP_CONTROL_FE_MASK,
-+				   ras_cap.cap_control));
-+	else
-+		fe = status;
-+
-+	if (!flag) {
-+		trace_cxl_port_aer_uncorrectable_error(&pdev->dev, status, fe,
-+						       ras_cap.header_log);
-+		return;
-+	}
-+
-+	cxlds = pci_get_drvdata(pdev);
-+	if (!cxlds)
-+		return;
-+
-+	trace_cxl_aer_uncorrectable_error(cxlds->cxlmd, status, fe,
-+					  ras_cap.header_log);
-+}
-+EXPORT_SYMBOL_NS_GPL(cxl_cper_trace_uncorr_prot_err, CXL);
-+
- static void __cxl_handle_cor_ras(struct device *dev,
- 				 void __iomem *ras_base)
- {
-diff --git a/drivers/cxl/cxlpci.h b/drivers/cxl/cxlpci.h
-index 4da07727ab9c..5e4aa8681937 100644
---- a/drivers/cxl/cxlpci.h
-+++ b/drivers/cxl/cxlpci.h
-@@ -129,4 +129,10 @@ void read_cdat_data(struct cxl_port *port);
- void cxl_cor_error_detected(struct pci_dev *pdev);
- pci_ers_result_t cxl_error_detected(struct pci_dev *pdev,
- 				    pci_channel_state_t state);
-+
-+struct cxl_ras_capability_regs;
-+void cxl_cper_trace_corr_prot_err(struct pci_dev *pdev, bool flag,
-+				  struct cxl_ras_capability_regs ras_cap);
-+void cxl_cper_trace_uncorr_prot_err(struct pci_dev *pdev, bool flag,
-+				    struct cxl_ras_capability_regs ras_cap);
- #endif /* __CXL_PCI_H__ */
-diff --git a/drivers/cxl/pci.c b/drivers/cxl/pci.c
-index 88a14d7baa65..e261abe60e90 100644
---- a/drivers/cxl/pci.c
-+++ b/drivers/cxl/pci.c
-@@ -1067,6 +1067,53 @@ static void cxl_cper_work_fn(struct work_struct *work)
- }
- static DECLARE_WORK(cxl_cper_work, cxl_cper_work_fn);
- 
-+static void cxl_cper_handle_prot_err(struct cxl_cper_prot_err_work_data *data)
-+{
-+	unsigned int devfn = PCI_DEVFN(data->prot_err.agent_addr.device,
-+				       data->prot_err.agent_addr.function);
-+	struct pci_dev *pdev __free(pci_dev_put) =
-+		pci_get_domain_bus_and_slot(
-+			data->prot_err.agent_addr.segment,
-+			data->prot_err.agent_addr.bus,
-+			devfn
-+		);
-+	int port_type;
-+
-+	if (!pdev)
-+		return;
-+
-+	guard(device)(&pdev->dev);
-+	if (pdev->driver != &cxl_pci_driver)
-+		return;
-+
-+	port_type = pci_pcie_type(pdev);
-+	if (port_type == PCI_EXP_TYPE_ROOT_PORT ||
-+	    port_type == PCI_EXP_TYPE_DOWNSTREAM ||
-+	    port_type == PCI_EXP_TYPE_UPSTREAM) {
-+		if (data->severity == AER_CORRECTABLE)
-+			cxl_cper_trace_corr_prot_err(pdev, false, data->ras_cap);
-+		else
-+			cxl_cper_trace_uncorr_prot_err(pdev, false, data->ras_cap);
-+
-+		return;
-+	}
-+
-+	if (data->severity == AER_CORRECTABLE)
-+		cxl_cper_trace_corr_prot_err(pdev, true, data->ras_cap);
-+	else
-+		cxl_cper_trace_uncorr_prot_err(pdev, true, data->ras_cap);
-+
-+}
-+
-+static void cxl_cper_prot_err_work_fn(struct work_struct *work)
-+{
-+	struct cxl_cper_prot_err_work_data wd;
-+
-+	while (cxl_cper_prot_err_kfifo_get(&wd))
-+		cxl_cper_handle_prot_err(&wd);
-+}
-+static DECLARE_WORK(cxl_cper_prot_err_work, cxl_cper_prot_err_work_fn);
-+
- static int __init cxl_pci_driver_init(void)
- {
- 	int rc;
-@@ -1079,13 +1126,21 @@ static int __init cxl_pci_driver_init(void)
- 	if (rc)
- 		pci_unregister_driver(&cxl_pci_driver);
- 
-+	rc = cxl_cper_register_prot_err_work(&cxl_cper_prot_err_work);
-+	if (rc) {
-+		cxl_cper_unregister_event_work(&cxl_cper_work);
-+		pci_unregister_driver(&cxl_pci_driver);
-+	}
-+
- 	return rc;
- }
- 
- static void __exit cxl_pci_driver_exit(void)
- {
- 	cxl_cper_unregister_event_work(&cxl_cper_work);
-+	cxl_cper_unregister_prot_err_work(&cxl_cper_prot_err_work);
- 	cancel_work_sync(&cxl_cper_work);
-+	cancel_work_sync(&cxl_cper_prot_err_work);
- 	pci_unregister_driver(&cxl_pci_driver);
- }
- 
-diff --git a/include/cxl/event.h b/include/cxl/event.h
-index c9a38ebaf207..5f83c3bfc813 100644
---- a/include/cxl/event.h
-+++ b/include/cxl/event.h
-@@ -242,6 +242,9 @@ struct cxl_cper_prot_err_work_data {
- int cxl_cper_register_event_work(struct work_struct *work);
- int cxl_cper_unregister_event_work(struct work_struct *work);
- int cxl_cper_kfifo_get(struct cxl_cper_work_data *wd);
-+int cxl_cper_register_prot_err_work(struct work_struct *work);
-+int cxl_cper_unregister_prot_err_work(struct work_struct *work);
-+int cxl_cper_prot_err_kfifo_get(struct cxl_cper_prot_err_work_data *wd);
- #else
- static inline int cxl_cper_register_event_work(struct work_struct *work)
- {
-@@ -256,6 +259,18 @@ static inline int cxl_cper_kfifo_get(struct cxl_cper_work_data *wd)
- {
- 	return 0;
- }
-+static inline int cxl_cper_register_prot_err_work(struct work_struct *work)
-+{
-+	return 0;
-+}
-+static inline int cxl_cper_unregister_prot_err_work(struct work_struct *work)
-+{
-+	return 0;
-+}
-+static inline int cxl_cper_prot_err_kfifo_get(struct cxl_cper_prot_err_work_data *wd)
-+{
-+	return 0;
-+}
- #endif
- 
- #endif /* _LINUX_CXL_EVENT_H */
--- 
-2.17.1
+I'm not entirely sure what the right approach is here; I guess it
+makes sense that when the kernel internally detects corruption,
+dump_page doesn't take references on pages it accesses to avoid
+corrupting things further. If you are looking at a page based on a
+userspace request, I guess you could access the page with the
+necessary locking to access its properties under the normal locking
+rules?
 
+(If anyone else has opinions either way on this line I'm trying to
+draw between kernel-internal debug paths and userspace-triggerable
+debugging, feel free to share; I hope my mental model makes sense but
+I could imagine other folks having a different model of this?)
 
