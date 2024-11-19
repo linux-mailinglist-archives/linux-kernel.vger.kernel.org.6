@@ -1,128 +1,159 @@
-Return-Path: <linux-kernel+bounces-414647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B683A9D2C72
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 18:23:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBA509D2B86
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 17:47:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7F75BB34372
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 16:47:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A2091F21B7B
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 16:47:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 094E31DA31F;
-	Tue, 19 Nov 2024 16:41:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="aaZC67T0"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9196E1D221A;
-	Tue, 19 Nov 2024 16:41:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C7301D8A14;
+	Tue, 19 Nov 2024 16:41:33 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE8D51D89E5
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 16:41:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732034500; cv=none; b=Dc1l27ktaBPMkjgfjtgLz69hSWUB1wsgNUtz2tHxhHI6OfFj8FPnbchdmfRcbYlabQcmWxDmGGDrshMM7dS1Na8xydL0xNFGxc+b6pzK0y/F+SwuxdcxEqyajRRqFJjTnmC28yA4E5vQEENCy+pI6csuSBeiGtn5xviZi5jrZI4=
+	t=1732034493; cv=none; b=EWSzzdbxE/b97x74QwNfCJ31/ja51zDU1XFmK4O/NWBI4i0VcWMJzH57qzi4J4hE36CHrA0nAbi166cbz277GhbheC2heVEylDexb1BFknYFbu757/2t6d6UYD1RfblOqA+mlRQtcMmuKvU/65YWkR2GGjhy52l6JMDL545848c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732034500; c=relaxed/simple;
-	bh=xBQNvDFZdqOuwdW3nqhA8Co5ztcdwYsGzLXjIGCuuD0=;
+	s=arc-20240116; t=1732034493; c=relaxed/simple;
+	bh=pQ0QfkVirz8NWdVBD99P4R5RATrKDOkYGfi8YZcD5PA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CqVFQMYzItpk+8q+0okaXV8UlABi6yK12XBGZd/NktJBGI5o/PdYT+duvGxRkrKCyV7w8cmcNOPnEEjC4W3f9HycAIk2QxKNLmN0r/MyST83/MYxiaTu0xSa3tajIJC8KjWL+ufzSEo8EmHR4voC5CPH0EtvAdGqx/eg4Ua/iDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=aaZC67T0; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=820A+uqPjk3jrH0mLxNnwDGBvwyz/yvubtHzlTrrbZw=; b=aaZC67T0sa+lZ43UDQKQKt69/z
-	8VkYUpereUrC5gOPyh0zBSP9ETlYVP+htDja+DcuPS4RT7gA1EJSnBJhizZcl/1aLQmI/LGRbCxOQ
-	vhZae9c3UWVvdIbCoFfEZ9JJLdb4QzDaK+ytPFLqhzJepmYuPcaZ0lEuet60q91Nuf9qHuTKTdVvN
-	IdqJWQQF9UHu0xMyiOqifaWCvNe+SRGGPAIRirK6ysKtsGUKuKTZizNicVvQKkmMnC6z5RAcYFGJ1
-	ZShLf5w3Ie95GCUvWiZC3TO62GUXwgXhj3znzaQqJqpLqXAkP8cGa50N7aJv9GIOs1DuvdzMvr6Yw
-	gSsmJ+rQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:50346)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1tDRHw-0003wv-31;
-	Tue, 19 Nov 2024 16:41:17 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1tDRHv-0006Cs-07;
-	Tue, 19 Nov 2024 16:41:15 +0000
+	 Content-Type:Content-Disposition:In-Reply-To; b=dy4ZvG8p2t9Q3Oas8trCcam+Zu0MPDoybv0tla6tS186nEFe3r5AwaDAAkpIWOyje22j5pSMnaZxaBTMEbKR93jMA4CRouJI0PrCHl+vvSyT7LNvnF69H/yjzpaYe/7+UGWJGblvdod+qn/FdjbJTI0OKZRlghwc/z+UnRpNuH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A59621007
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 08:41:59 -0800 (PST)
+Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 669A03F85E
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 08:41:29 -0800 (PST)
 Date: Tue, 19 Nov 2024 16:41:14 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: jan.petrous@oss.nxp.com
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Emil Renner Berthing <kernel@esmil.dk>,
-	Minda Chen <minda.chen@starfivetech.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Iyappan Subramanian <iyappan@os.amperecomputing.com>,
-	Keyur Chudgar <keyur@os.amperecomputing.com>,
-	Quan Nguyen <quan@os.amperecomputing.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	imx@lists.linux.dev, devicetree@vger.kernel.org,
-	NXP S32 Linux Team <s32@nxp.com>
-Subject: Re: [PATCH v5 04/16] net: phy: Add helper for mapping RGMII link
- speed to clock rate
-Message-ID: <Zzy_qh13euS1aTYr@shell.armlinux.org.uk>
-References: <20241119-upstream_s32cc_gmac-v5-0-7dcc90fcffef@oss.nxp.com>
- <20241119-upstream_s32cc_gmac-v5-4-7dcc90fcffef@oss.nxp.com>
+From: Liviu Dudau <liviu.dudau@arm.com>
+To: Boris Brezillon <boris.brezillon@collabora.com>
+Cc: Karunika Choo <karunika.choo@arm.com>, nd@arm.com,
+	Steven Price <steven.price@arm.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] drm/panthor: Simplify FW fast reset path
+Message-ID: <Zzy_qhXTZZrPwhHk@e110455-lin.cambridge.arm.com>
+References: <20241119135030.3352939-1-karunika.choo@arm.com>
+ <20241119152525.6579b438@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241119-upstream_s32cc_gmac-v5-4-7dcc90fcffef@oss.nxp.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241119152525.6579b438@collabora.com>
 
-On Tue, Nov 19, 2024 at 04:00:10PM +0100, Jan Petrous via B4 Relay wrote:
-> From: "Jan Petrous (OSS)" <jan.petrous@oss.nxp.com>
+On Tue, Nov 19, 2024 at 03:25:25PM +0100, Boris Brezillon wrote:
+> On Tue, 19 Nov 2024 13:50:29 +0000
+> Karunika Choo <karunika.choo@arm.com> wrote:
 > 
-> The RGMII interface supports three data rates: 10/100 Mbps
-> and 1 Gbps. These speeds correspond to clock frequencies
-> of 2.5/25 MHz and 125 MHz, respectively.
+> > Stop checking the FW halt_status as MCU_STATUS should be sufficient.
+> > This should make the check for successful FW halt and subsequently
+> > setting fast_reset to true more robust.
+> > 
+> > We should also clear GLB_REQ.GLB_HALT bit only on post-reset prior
+> > to starting the FW and only if we're doing a fast reset, because
+> > the slow reset will re-initialize all FW sections, including the
+> > global interface.
+> > 
+> > Signed-off-by: Karunika Choo <karunika.choo@arm.com>
 > 
-> Many Ethernet drivers, including glues in stmmac, follow
-> a similar pattern of converting RGMII speed to clock frequency.
+> Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
 > 
-> To simplify code, define the helper rgmii_clock(speed)
-> to convert connection speed to clock frequency.
-> 
-> Suggested-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
-> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-> Signed-off-by: Jan Petrous (OSS) <jan.petrous@oss.nxp.com>
+> and I think you forgot to add Liviu's R-b
 
-Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+I've fixed the commit and pushed it without compile testing it because I did
+it for the patch before it. Obviously it doesn't compile because glb_iface is
+not defined :(
 
-Thanks!
+Adding a new patch, can you guys R-b this?
+
+diff --git a/drivers/gpu/drm/panthor/panthor_fw.c b/drivers/gpu/drm/panthor/panthor_fw.c
+index 4bc52b1b1a286..c807b6ce71bd4 100644
+--- a/drivers/gpu/drm/panthor/panthor_fw.c
++++ b/drivers/gpu/drm/panthor/panthor_fw.c
+@@ -1133,6 +1133,7 @@ int panthor_fw_post_reset(struct panthor_device *ptdev)
+                 * This is not needed on a slow reset because FW sections are
+                 * re-initialized.
+                 */
++               struct panthor_fw_global_iface *glb_iface = panthor_fw_get_glb_iface(ptdev);
+                panthor_fw_update_reqs(glb_iface, req, 0, GLB_HALT);
+ 
+                ret = panthor_fw_start(ptdev);
+
+
+Best regards,
+Liviu
+
+> 
+> > ---
+> > v2:
+> > - clarify comments and commit message with regards to when to clear the
+> >   GLB_HALT flag.
+> > 
+> >  drivers/gpu/drm/panthor/panthor_fw.c | 15 ++++++++-------
+> >  1 file changed, 8 insertions(+), 7 deletions(-)
+> > 
+> > diff --git a/drivers/gpu/drm/panthor/panthor_fw.c b/drivers/gpu/drm/panthor/panthor_fw.c
+> > index ecca5565ce41..4bc52b1b1a28 100644
+> > --- a/drivers/gpu/drm/panthor/panthor_fw.c
+> > +++ b/drivers/gpu/drm/panthor/panthor_fw.c
+> > @@ -1098,17 +1098,11 @@ void panthor_fw_pre_reset(struct panthor_device *ptdev, bool on_hang)
+> >  		panthor_fw_update_reqs(glb_iface, req, GLB_HALT, GLB_HALT);
+> >  		gpu_write(ptdev, CSF_DOORBELL(CSF_GLB_DOORBELL_ID), 1);
+> >  		if (!readl_poll_timeout(ptdev->iomem + MCU_STATUS, status,
+> > -					status == MCU_STATUS_HALT, 10, 100000) &&
+> > -		    glb_iface->output->halt_status == PANTHOR_FW_HALT_OK) {
+> > +					status == MCU_STATUS_HALT, 10, 100000)) {
+> >  			ptdev->fw->fast_reset = true;
+> >  		} else {
+> >  			drm_warn(&ptdev->base, "Failed to cleanly suspend MCU");
+> >  		}
+> > -
+> > -		/* The FW detects 0 -> 1 transitions. Make sure we reset
+> > -		 * the HALT bit before the FW is rebooted.
+> > -		 */
+> > -		panthor_fw_update_reqs(glb_iface, req, 0, GLB_HALT);
+> >  	}
+> >  
+> >  	panthor_job_irq_suspend(&ptdev->fw->irq);
+> > @@ -1134,6 +1128,13 @@ int panthor_fw_post_reset(struct panthor_device *ptdev)
+> >  	 * the FW sections. If it fails, go for a full reset.
+> >  	 */
+> >  	if (ptdev->fw->fast_reset) {
+> > +		/* The FW detects 0 -> 1 transitions. Make sure we reset
+> > +		 * the HALT bit before the FW is rebooted.
+> > +		 * This is not needed on a slow reset because FW sections are
+> > +		 * re-initialized.
+> > +		 */
+> > +		panthor_fw_update_reqs(glb_iface, req, 0, GLB_HALT);
+> > +
+> >  		ret = panthor_fw_start(ptdev);
+> >  		if (!ret)
+> >  			goto out;
+> 
 
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+====================
+| I would like to |
+| fix the world,  |
+| but they're not |
+| giving me the   |
+ \ source code!  /
+  ---------------
+    ¯\_(ツ)_/¯
 
