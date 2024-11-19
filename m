@@ -1,533 +1,301 @@
-Return-Path: <linux-kernel+bounces-413842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A6549D1F80
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 06:08:33 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDE7E9D1F82
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 06:14:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7D2A282113
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 05:08:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D1DDB21901
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 05:14:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A630014D2A3;
-	Tue, 19 Nov 2024 05:08:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB33914B945;
+	Tue, 19 Nov 2024 05:14:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UJtQpkd2"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="h6l87kow"
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5A4C1876;
-	Tue, 19 Nov 2024 05:08:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 235A114884D
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 05:14:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731992901; cv=none; b=orP20qc7SgsfMMKIY7PQ076aL9VRNLImLgfB92WopkjgtdGcCwULhdsm3LEhkpvoCaIWow7rTOb9BKYhUQ5NFb57ftqF7EC8kieTeaab3DYl5w9kjxyvZYaPA54qpye8WhcpZaM5jxKN/OBg/H3vWVAbaoF6FMuM2PfysDwJUn8=
+	t=1731993269; cv=none; b=kRZs+hlt0q5ZfRixPfDFvqKJk83cP1yRNq4bKh5Pt/JO07R8NFQXUkFPIwbJfHkuvFi1+kfbZYZw51CAzldys5mcqnUwAu/T4prJAwBcdr46YAPR5uS0hI+aV8MSQgorx9fcbgJTGR8BZl2wuyrfK/rHhkKXTwUH64cah6gXOEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731992901; c=relaxed/simple;
-	bh=0CLom0X+r1RBgypyhZYzjWHqFqi0iNPbVv/nq2HdHeY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Lq46Q965ThPMbQ5QbOi4+RJkjqcJpG6s5fsy79lP98C+9uqCwAf7Op4mmffFSGulTB4ZynoG+jWx0bEBC4yc9mhDrUWKn2/B52dkM97ZMYLah8QP/f+aLwQKAJ1MgqOsCLyzAKj0VpeItcwYMxMsz8JsZHaQlA6Ud1IDdeAg8ps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UJtQpkd2; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-20cf3e36a76so39835275ad.0;
-        Mon, 18 Nov 2024 21:08:19 -0800 (PST)
+	s=arc-20240116; t=1731993269; c=relaxed/simple;
+	bh=LRU4lHVKsw5EXDd026wmmul5OEuoKzE3ufSYS0sIDlo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RF948voAmJTXYibNzL7KByOoOXB51X2oui3bbiBFjISngF88uPrFqBzL8CJ1eZaBU60h/n+XA2bg2ZfwN6xuPhjo5UwxQ7i3/p8zLg++RcRTo+GCTDnvYt5OuW7wcjrDJWw50VaRPJRF3pk2kuW0q5dgofgJ+bPqrTUSKOB0HUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=h6l87kow; arc=none smtp.client-ip=209.85.219.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6d408e38561so23255936d6.2
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 21:14:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731992898; x=1732597698; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=an9pNR31FpYEJtA9zD9/WNwKImshVqckOAhfa4r4Id4=;
-        b=UJtQpkd2uz39HjJanPmEl+b3mPkoXEFM56X/8BXaVMNakShAh7ClESxEe4zGOqcJhd
-         C7ejHb3GNVmiFONyTM3OdJhjUI85mu6vKNZDyKJyIBWBsoNcYBYUlyLhh7fgnn4fVxgV
-         gZvf8WsLoRiZSOPK8l3tUgoMN9iPuXmzHi2YCvvCd95HIF6u5g8CYb/mtS8jVBGTHbgX
-         5y4KpIuaDSAzg0ocfz8JiQ1HsUuZsz3TjL/Qw7eMnzZ7U6Tz9IC1s5q0oDavPj+tA8Hk
-         DoTZiVSlw/RZ+p+y/UWuzUYj8qKeOzm9zUwxm3jZjHmny8YNLGcsCp2JAB9ANPVZBIE/
-         yVtQ==
+        d=google.com; s=20230601; t=1731993267; x=1732598067; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=wmICkt94iICrNblhUh/PVrAsEmi5QDfyr/wYzaA2uVY=;
+        b=h6l87kowuKnFea27Q9VYihhDO+5TC6vJSu8BfKrjhaGggCl42sPUKK99IRySLJbP2c
+         myYtJZFbDgyXnT1DDWmxEahSWZ0RECRWefSvTndYdeCyHFa6e6+cBmYH1ZezeOaHElc2
+         payQ0XJOBb+4rnjMfEOMZhUdS6fCEDHkoYu0FUQ302E0ZLqp30cRPMZaV9VCKGqNl5o3
+         ERXuF24tEhyzNmrn6XNRLo3IeFDlqMYboafZarUrP7VB09BBJFlNQmUlXGudosTcb8yC
+         xB0ejwx1jMhT3R1yLXlh50JTrMJDkXbFYbqyLyLQrJBGysF+1AEah+mmC2CLtuMRXu5Q
+         5eog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731992898; x=1732597698;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=an9pNR31FpYEJtA9zD9/WNwKImshVqckOAhfa4r4Id4=;
-        b=oTwmpAo+lT84+To6FJOt9f+dlovnbZyEnH5OigKX2h9z8KOE0au773XhIqY0NpwFUp
-         zZHBC7V4N3FF3x//xXfEmlZIaIV5tya3o0n3ylgjAv4AVDSAGUG8G73A3Bi4eBEYs7tF
-         KiCpOMGMd9GJNoN++1xAcwrDtinghv4IfO0Gd+u08vD2IZlOQZxfKqeEd+gasrtJ8bYT
-         BwBE3C57AIWCaSTC8wR5my9gMml9vTg8xcjqp28ONEw7w6DrsvcgoNT7SNZP3qTX9LjK
-         5FJhmNpSdL/HvJdwqDtqxUUk1n5fmstSj8T9ZROsjIR5pHHkLPZdJ+QJ8uIXeuKWMadw
-         omsA==
-X-Forwarded-Encrypted: i=1; AJvYcCULySqL696cTt8yCvaZ+IYwpGVmKdNcs5FrOLje+aIz/8DUip+GZqB/fG+zVY7KHsOH9PPeDVMqPmbM@vger.kernel.org, AJvYcCWSfRmbfRrWF02czxnHM2g93XEuDWJD4QhCpBLQMj1qQBfbmMpv9Zf12RAbXUWgbTOECLt72khT4PkJWAo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFl+YR808Jkz2EWDzIqolX/yelmOXzEMfkSXc9TatxAWIoLD37
-	9ERT1EpCa7ugOK80ei6GkP+spPCrXjApKftp/ZCg0EhQ7RX2TIXj5WLUgOEW
-X-Google-Smtp-Source: AGHT+IHQBPMBGt3wJ/o3WLJKco459LQ2Pb4WL3UhuVfSmJpe6QP63atQmGgMWY2GsgOUGJKZ6efDEw==
-X-Received: by 2002:a17:902:d2c6:b0:20c:ea04:a186 with SMTP id d9443c01a7336-211d0ee7365mr232544995ad.48.1731992898374;
-        Mon, 18 Nov 2024 21:08:18 -0800 (PST)
-Received: from [172.19.1.43] (60-250-196-139.hinet-ip.hinet.net. [60.250.196.139])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211d0f44503sm66492125ad.170.2024.11.18.21.08.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Nov 2024 21:08:17 -0800 (PST)
-Message-ID: <5a190797-f1a4-4d3d-b063-3326d18de285@gmail.com>
-Date: Tue, 19 Nov 2024 13:08:14 +0800
+        d=1e100.net; s=20230601; t=1731993267; x=1732598067;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wmICkt94iICrNblhUh/PVrAsEmi5QDfyr/wYzaA2uVY=;
+        b=pPQXqoLCFCfo8oaLZdWuNyV/F3TwVv46WGY6HLMlksKubjRIlRA5mnP7OJ4BZsRue9
+         QaJfpmTBMdC9azWA23RpvAbSAXSZ3hzPZmCbP17j6MVPPp8x5PeX8iDIyA9Sd7mXJPlu
+         IQV6bAMEz5+ybOg5YkHmHsMVbj3YE16opVEc8Aix36ApNej5OahWRqlOKafgQLUxj1kz
+         cCeIlyongo7sitUcqo0yqB1nfPLvwhFYF2dJgChuoTdbP73NH5yI+qkJRMCphtWit3GC
+         RNU9A7+DTldRGTqDsnp7d3QnUI78S/ndUNBHOv0EPGKuOjZu+eCq6YaUAaAR1C5afSyS
+         wguQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWkjQJ2hCkXF5NOE8Job+129CzxJ0IjUjDcM4JeeCh7kjnRiNk5s5a6ko2jCTBd+kPPTfcpzAtqV5PppQI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yym5QPUxHIsnmbZ74zS3DQgUPi6WrEaqtxQ8o1rOaa9p/Ptn378
+	olcIkU1BeSVvqff1XLSTQiQhLEF7kcK4NaiGAhv8kwuwy2FF/vRztZzc1NmnH5jgOStekMwkjlG
+	Ecrf1uBQDBp5S1UpovWf6gCFgmel1YhqMOXMt
+X-Google-Smtp-Source: AGHT+IE+6zmabTkUVxjupNGMD8atZSi49MFB7DdHbwcxrMBM8HlZd+6W/riTkUKyLKmMLHdb9mzxBigok3KK3cWqQzQ=
+X-Received: by 2002:a05:6214:246d:b0:6d4:211c:dff0 with SMTP id
+ 6a1803df08f44-6d4211ce8edmr93696006d6.29.1731993266893; Mon, 18 Nov 2024
+ 21:14:26 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] input: keypad: add new keypad driver for MA35D1
-To: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-input@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- sudeep.holla@arm.com, arnd@arndb.de, peng.fan@nxp.com, conor+dt@kernel.org,
- krzk+dt@kernel.org, robh@kernel.org, dmitry.torokhov@gmail.com
-References: <20241119025954.4161-1-mjchen0829@gmail.com>
- <20241119025954.4161-3-mjchen0829@gmail.com>
-Content-Language: en-US
-From: Ming-Jen Chen <mjchen0829@gmail.com>
-In-Reply-To: <20241119025954.4161-3-mjchen0829@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20241112080314.407966-1-ruanjinjie@huawei.com>
+In-Reply-To: <20241112080314.407966-1-ruanjinjie@huawei.com>
+From: David Gow <davidgow@google.com>
+Date: Tue, 19 Nov 2024 13:14:14 +0800
+Message-ID: <CABVgOSkt-rsoMWH_iavAh1-q=B6F-7rSK+dv_f3i+eR+GyX52Q@mail.gmail.com>
+Subject: Re: [PATCH v2] kunit: string-stream: Fix a UAF bug in kunit_init_suite()
+To: Jinjie Ruan <ruanjinjie@huawei.com>
+Cc: visitorckw@gmail.com, brendan.higgins@linux.dev, rmoar@google.com, 
+	skhan@linuxfoundation.org, rf@opensource.cirrus.com, 
+	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
+	linux-kernel@vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="0000000000007403e706273d1bc4"
 
+--0000000000007403e706273d1bc4
+Content-Type: text/plain; charset="UTF-8"
 
-Hi,
-
-I apologize for the oversight in my previous patch where I forgot to 
-include v3 in the subject line.
-
-The content of the patch remains the same, only the version label has 
-been correct.
-
-
-On 2024/11/19 上午 10:59, Ming-Jen Chen wrote:
-> Adds a new keypad driver for the MA35D1 platform.
-> The driver supports key scanning and interrupt handling.
+On Tue, 12 Nov 2024 at 16:03, 'Jinjie Ruan' via KUnit Development
+<kunit-dev@googlegroups.com> wrote:
 >
-> Signed-off-by: Ming-Jen Chen <mjchen0829@gmail.com>
+> In kunit_debugfs_create_suite(), if alloc_string_stream() fails in the
+> kunit_suite_for_each_test_case() loop, the "suite->log = stream"
+> has assigned before, and the error path only free the suite->log's stream
+> memory but not set it to NULL, so the later string_stream_clear() of
+> suite->log in kunit_init_suite() will cause below UAF bug.
+>
+> Set stream pointer to NULL after free to fix it.
+>
+>         Unable to handle kernel paging request at virtual address 006440150000030d
+>         Mem abort info:
+>           ESR = 0x0000000096000004
+>           EC = 0x25: DABT (current EL), IL = 32 bits
+>           SET = 0, FnV = 0
+>           EA = 0, S1PTW = 0
+>           FSC = 0x04: level 0 translation fault
+>         Data abort info:
+>           ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
+>           CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+>           GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+>         [006440150000030d] address between user and kernel address ranges
+>         Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
+>         Dumping ftrace buffer:
+>            (ftrace buffer empty)
+>         Modules linked in: iio_test_gts industrialio_gts_helper cfg80211 rfkill ipv6 [last unloaded: iio_test_gts]
+>         CPU: 5 UID: 0 PID: 6253 Comm: modprobe Tainted: G    B   W        N 6.12.0-rc4+ #458
+>         Tainted: [B]=BAD_PAGE, [W]=WARN, [N]=TEST
+>         Hardware name: linux,dummy-virt (DT)
+>         pstate: 40000005 (nZcv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+>         pc : string_stream_clear+0x54/0x1ac
+>         lr : string_stream_clear+0x1a8/0x1ac
+>         sp : ffffffc080b47410
+>         x29: ffffffc080b47410 x28: 006440550000030d x27: ffffff80c96b5e98
+>         x26: ffffff80c96b5e80 x25: ffffffe461b3f6c0 x24: 0000000000000003
+>         x23: ffffff80c96b5e88 x22: 1ffffff019cdf4fc x21: dfffffc000000000
+>         x20: ffffff80ce6fa7e0 x19: 032202a80000186d x18: 0000000000001840
+>         x17: 0000000000000000 x16: 0000000000000000 x15: ffffffe45c355cb4
+>         x14: ffffffe45c35589c x13: ffffffe45c03da78 x12: ffffffb810168e75
+>         x11: 1ffffff810168e74 x10: ffffffb810168e74 x9 : dfffffc000000000
+>         x8 : 0000000000000004 x7 : 0000000000000003 x6 : 0000000000000001
+>         x5 : ffffffc080b473a0 x4 : 0000000000000000 x3 : 0000000000000000
+>         x2 : 0000000000000001 x1 : ffffffe462fbf620 x0 : dfffffc000000000
+>         Call trace:
+>          string_stream_clear+0x54/0x1ac
+>          __kunit_test_suites_init+0x108/0x1d8
+>          kunit_exec_run_tests+0xb8/0x100
+>          kunit_module_notify+0x400/0x55c
+>          notifier_call_chain+0xfc/0x3b4
+>          blocking_notifier_call_chain+0x68/0x9c
+>          do_init_module+0x24c/0x5c8
+>          load_module+0x4acc/0x4e90
+>          init_module_from_file+0xd4/0x128
+>          idempotent_init_module+0x2d4/0x57c
+>          __arm64_sys_finit_module+0xac/0x100
+>          invoke_syscall+0x6c/0x258
+>          el0_svc_common.constprop.0+0x160/0x22c
+>          do_el0_svc+0x44/0x5c
+>          el0_svc+0x48/0xb8
+>          el0t_64_sync_handler+0x13c/0x158
+>          el0t_64_sync+0x190/0x194
+>         Code: f9400753 d2dff800 f2fbffe0 d343fe7c (38e06b80)
+>         ---[ end trace 0000000000000000 ]---
+>         Kernel panic - not syncing: Oops: Fatal exception
+>
+> Cc: stable@vger.kernel.org
+> Fixes: a3fdf784780c ("kunit: string-stream: Decouple string_stream from kunit")
+> Suggested-by: Kuan-Wei Chiu <visitorckw@gmail.com>
+> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
 > ---
->   drivers/input/keyboard/Kconfig         |  10 +
->   drivers/input/keyboard/Makefile        |   1 +
->   drivers/input/keyboard/ma35d1_keypad.c | 386 +++++++++++++++++++++++++
->   3 files changed, 397 insertions(+)
->   create mode 100644 drivers/input/keyboard/ma35d1_keypad.c
+> v2:
+> - Correct the fix way.
+> - Add Suggested-by.
+> ---
+
+Sorry, I missed this version.
+It looks good to me.
+
+Reviewed-by: David Gow <davidgow@google.com>
+
+Cheers,
+-- David
+
+>  lib/kunit/debugfs.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
 >
-> diff --git a/drivers/input/keyboard/Kconfig b/drivers/input/keyboard/Kconfig
-> index 721ab69e84ac..d7c0d0f4a88d 100644
-> --- a/drivers/input/keyboard/Kconfig
-> +++ b/drivers/input/keyboard/Kconfig
-> @@ -797,4 +797,14 @@ config KEYBOARD_CYPRESS_SF
->   	  To compile this driver as a module, choose M here: the
->   	  module will be called cypress-sf.
->   
-> +config KEYBOARD_MA35D1
-> +	tristate "Nuvoton MA35D1 keypad driver"
-> +	depends on ARCH_MA35 || COMPILE_TEST
-> +	select INPUT_MATRIXKMAP
-> +	help
-> +	  Say Y here if you want to use Nuvoton MA35D1 keypad.
-> +
-> +	  To compile this driver as a module, choose M here: the
-> +	  module will be called ma35d1-keypad.
-> +
->   endif
-> diff --git a/drivers/input/keyboard/Makefile b/drivers/input/keyboard/Makefile
-> index 1e0721c30709..9b858cdd1b6b 100644
-> --- a/drivers/input/keyboard/Makefile
-> +++ b/drivers/input/keyboard/Makefile
-> @@ -70,3 +70,4 @@ obj-$(CONFIG_KEYBOARD_TEGRA)		+= tegra-kbc.o
->   obj-$(CONFIG_KEYBOARD_TM2_TOUCHKEY)	+= tm2-touchkey.o
->   obj-$(CONFIG_KEYBOARD_TWL4030)		+= twl4030_keypad.o
->   obj-$(CONFIG_KEYBOARD_XTKBD)		+= xtkbd.o
-> +obj-$(CONFIG_KEYBOARD_MA35D1)		+= ma35d1_keypad.o
-> diff --git a/drivers/input/keyboard/ma35d1_keypad.c b/drivers/input/keyboard/ma35d1_keypad.c
-> new file mode 100644
-> index 000000000000..8410f7dd2e56
-> --- /dev/null
-> +++ b/drivers/input/keyboard/ma35d1_keypad.c
-> @@ -0,0 +1,386 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + *  MA35D1 keypad driver
-> + *  Copyright (C) 2024 Nuvoton Technology Corp.
-> + */
-> +
-> +#include <linux/bitfield.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/input.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/input/matrix_keypad.h>
-> +#include <linux/clk.h>
-> +#include <linux/of.h>
-> +#include <linux/bitops.h>
-> +#include <linux/pm_wakeirq.h>
-> +
-> +/* Keypad Interface Registers */
-> +#define KPI_CONF		0x00
-> +#define KPI_3KCONF		0x04
-> +#define KPI_STATUS		0x08
-> +#define KPI_RSTC		0x0C
-> +#define KPI_KEST		0x10
-> +#define KPI_KPE0		0x18
-> +#define KPI_KPE1		0x1C
-> +#define KPI_KRE0		0x20
-> +#define KPI_KRE1		0x24
-> +#define KPI_PRESCALDIV		0x28
-> +
-> +/* KPI_CONF - Keypad Configuration Register */
-> +#define KROW			GENMASK(30, 28) /* Keypad Matrix ROW number */
-> +#define KCOL			GENMASK(26, 24) /* Keypad Matrix COL Number */
-> +#define DB_CLKSEL		GENMASK(19, 16) /* De-bounce sampling cycle selection */
-> +#define PRESCALE		GENMASK(15, 8)  /* Row Scan Cycle Pre-scale Value */
-> +#define WAKEUP			BIT(5) /* Lower Power Wakeup Enable */
-> +#define INTEN			BIT(3) /* Key Interrupt Enable Control */
-> +#define RKINTEN			BIT(2) /* Release Key Interrupt Enable */
-> +#define PKINTEN			BIT(1) /* Press Key Interrupt Enable Control */
-> +#define ENKP			BIT(0) /* Keypad Scan Enable */
-> +
-> +/* KPI_STATUS - Keypad Status Register */
-> +#define PKEY_INT		BIT(4) /* Press key interrupt */
-> +#define RKEY_INT		BIT(3) /* Release key interrupt */
-> +#define KEY_INT			BIT(2) /* Key Interrupt */
-> +#define RST_3KEY		BIT(1) /* 3-Keys Reset Flag */
-> +#define PDWAKE			BIT(0) /* Power Down Wakeup Flag */
-> +
-> +#define KEY_EVENT_BITS		64
-> +
-> +#define NUM_SETTINGS		12
-> +#define PRE_SCALE_MAX		256
-> +#define PRE_SCALE_DIV_MAX	256
-> +
-> +static const unsigned int debounce_values[NUM_SETTINGS] = {
-> +	0, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192
-> +};
-> +
-> +static const unsigned int debounce_register[NUM_SETTINGS] = {
-> +	0x0, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8, 0x9, 0xA, 0xB, 0xC, 0xD
-> +};
-> +
-> +struct ma35d1_keypad {
-> +	struct clk *clk;
-> +	struct input_dev *input_dev;
-> +	void __iomem *mmio_base;
-> +	int irq;
-> +	u32 kpi_row;
-> +	u32 kpi_col;
-> +	u32 debounce_val;
-> +	u32 pre_scale;
-> +	u32 pre_scale_div;
-> +};
-> +
-> +static void ma35d1_keypad_scan_matrix(struct ma35d1_keypad *keypad, unsigned int status)
-> +{
-> +	struct input_dev *input_dev = keypad->input_dev;
-> +	u32 row_shift = get_count_order(keypad->kpi_col);
-> +	u32 *keymap = input_dev->keycode;
-> +	u32 code, key, index;
-> +	u32 key_event[4];
-> +	u64 pressed_keys = 0, released_keys = 0;
-> +
-> +	/* Read key event status */
-> +	key_event[0] = readl(keypad->mmio_base + KPI_KPE0);
-> +	key_event[1] = readl(keypad->mmio_base + KPI_KPE1);
-> +	key_event[2] = readl(keypad->mmio_base + KPI_KRE0);
-> +	key_event[3] = readl(keypad->mmio_base + KPI_KRE1);
-> +
-> +	/* Clear key event status */
-> +	writel(key_event[0], (keypad->mmio_base + KPI_KPE0));
-> +	writel(key_event[1], (keypad->mmio_base + KPI_KPE1));
-> +	writel(key_event[2], (keypad->mmio_base + KPI_KRE0));
-> +	writel(key_event[3], (keypad->mmio_base + KPI_KRE1));
-> +
-> +	pressed_keys  = key_event[0] | ((u64)key_event[1] << 32);
-> +	released_keys = key_event[2] | ((u64)key_event[3] << 32);
-> +
-> +	/* Process pressed keys */
-> +	for_each_set_bit(index, (const unsigned long *)&pressed_keys, KEY_EVENT_BITS) {
-> +		code = MATRIX_SCAN_CODE(index / 8, (index % 8), row_shift);
-> +		key = keymap[code];
-> +
-> +		input_event(input_dev, EV_MSC, MSC_SCAN, code);
-> +		input_report_key(input_dev, key, 1);
-> +	}
-> +
-> +	/* Process released keys */
-> +	for_each_set_bit(index, (const unsigned long *)&released_keys, KEY_EVENT_BITS) {
-> +		code = MATRIX_SCAN_CODE(index / 8, (index % 8), row_shift);
-> +		key = keymap[code];
-> +
-> +		input_event(input_dev, EV_MSC, MSC_SCAN, code);
-> +		input_report_key(input_dev, key, 0);
-> +	}
-> +
-> +	input_sync(input_dev);
-> +}
-> +
-> +static irqreturn_t ma35d1_keypad_interrupt(int irq, void *dev_id)
-> +{
-> +	struct ma35d1_keypad *keypad = dev_id;
-> +	unsigned int  kstatus;
-> +
-> +	kstatus = readl(keypad->mmio_base + KPI_STATUS);
-> +
-> +	if (kstatus & (PKEY_INT | RKEY_INT)) {
-> +		ma35d1_keypad_scan_matrix(keypad, kstatus);
-> +	} else {
-> +		if (kstatus & PDWAKE)
-> +			writel(PDWAKE, (keypad->mmio_base + KPI_STATUS));
-> +	}
-> +
-> +	return IRQ_HANDLED;
-> +}
-> +
-> +static int ma35d1_keypad_open(struct input_dev *dev)
-> +{
-> +	struct ma35d1_keypad *keypad = input_get_drvdata(dev);
-> +	u32 val, config;
-> +
-> +	val = RKINTEN | PKINTEN | INTEN | ENKP;
-> +	val |= FIELD_PREP(KCOL, (keypad->kpi_col - 1)) | FIELD_PREP(KROW, (keypad->kpi_row - 1));
-> +
-> +	config = FIELD_PREP(PRESCALE, (keypad->pre_scale - 1)) |
-> +		 FIELD_PREP(DB_CLKSEL, keypad->debounce_val);
-> +
-> +	val |= config;
-> +
-> +	writel(val, keypad->mmio_base + KPI_CONF);
-> +	writel((keypad->pre_scale_div - 1), keypad->mmio_base + KPI_PRESCALDIV);
-> +
-> +	return 0;
-> +}
-> +
-> +static void ma35d1_keypad_close(struct input_dev *dev)
-> +{
-> +	struct ma35d1_keypad *keypad = input_get_drvdata(dev);
-> +	u32 val;
-> +
-> +	val = readl(keypad->mmio_base + KPI_KPE0) & ~ENKP;
-> +	writel(val, keypad->mmio_base + KPI_CONF);
-> +}
-> +
-> +static int ma35d1_parse_dt(struct ma35d1_keypad *keypad, u32 debounce_ms, u32 scan_interval)
-> +{
-> +	u32 clk_rate = clk_get_rate(keypad->clk);
-> +	u32 min_diff = debounce_values[NUM_SETTINGS];
-> +	u32 i, clk_cycles, diff, p, d;
-> +	u32 best_diff = 0xffff;
-> +
-> +	/* Calculate debounce cycles */
-> +	clk_cycles = clk_rate * debounce_ms / 1000;
-> +
-> +	keypad->debounce_val = debounce_register[NUM_SETTINGS];
-> +
-> +	for (i = 0; i < NUM_SETTINGS; i++) {
-> +		diff = abs((s32)(clk_cycles - debounce_values[i]));
-> +		if (diff < min_diff) {
-> +			min_diff = diff;
-> +			keypad->debounce_val = debounce_register[i];
-> +		}
-> +	}
-> +
-> +	/* Find scan time setting */
-> +	clk_cycles = clk_rate * scan_interval / 1000;
-> +	clk_cycles = clk_cycles / keypad->kpi_row;
-> +
-> +	if (clk_cycles == 0) {
-> +		keypad->pre_scale = 1;
-> +		keypad->pre_scale_div = 1;
-> +	} else if (clk_cycles >= PRE_SCALE_MAX * PRE_SCALE_DIV_MAX) {
-> +		keypad->pre_scale = PRE_SCALE_MAX;
-> +		keypad->pre_scale_div = PRE_SCALE_DIV_MAX;
-> +	} else {
-> +		for (p = 1; p <= PRE_SCALE_MAX; p++) {
-> +			d = (clk_cycles + (p / 2)) / p;
-> +
-> +			if (d > 0 && d <= PRE_SCALE_DIV_MAX) {
-> +				diff = abs((s32)(p * d) - clk_cycles);
-> +
-> +				if (diff < best_diff) {
-> +					best_diff = diff;
-> +					keypad->pre_scale = p;
-> +					keypad->pre_scale_div = d;
-> +
-> +					if (diff == 0)
-> +						break;
-> +				}
-> +			}
-> +		}
-> +	}
-> +
-> +	/*
-> +	 * Hardware Limitation:
-> +	 * Due to the hardware design, the keypad debounce time must not exceed
-> +	 * half of the row scan time.
-> +	 *
-> +	 * The row scan time is determined by the formula:
-> +	 *     Row Scan Time = pre_scale * pre_scale_div
-> +	 *
-> +	 * Therefore, the debounce time must satisfy the following condition:
-> +	 *     Debounce Time < (Row Scan Time / 2)
-> +	 *
-> +	 * For example:
-> +	 * If pre_scale = 64, pre_scale_div = 32,
-> +	 * then Row Scan Time = 64 * 32 = 2048 keypad clock.
-> +	 * Hence, the maximum allowable debounce time is 1024 keypad clock.
-> +	 */
-> +
-> +	if (keypad->debounce_val >= (keypad->pre_scale * keypad->pre_scale_div) / 2)
-> +		return -EINVAL;
-> +
-> +	return 0;
-> +}
-> +
-> +static int ma35d1_keypad_probe(struct platform_device *pdev)
-> +{
-> +	struct ma35d1_keypad *keypad;
-> +	struct input_dev *input_dev;
-> +	struct resource *res;
-> +	u32 debounce, scan_interval;
-> +	int error = 0;
-> +
-> +	keypad = devm_kzalloc(&pdev->dev, sizeof(*keypad), GFP_KERNEL);
-> +	if (!keypad)
-> +		return -ENOMEM;
-> +
-> +	input_dev = devm_input_allocate_device(&pdev->dev);
-> +	if (!input_dev)
-> +		return -ENOMEM;
-> +
-> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	if (!res)
-> +		return -ENODEV;
-> +
-> +	keypad->mmio_base = devm_ioremap_resource(&pdev->dev, res);
-> +	if (IS_ERR(keypad->mmio_base))
-> +		return dev_err_probe(&pdev->dev, PTR_ERR(keypad->mmio_base),
-> +					"failed to remap I/O memor\n");
-> +
-> +	keypad->irq = platform_get_irq(pdev, 0);
-> +	if (keypad->irq < 0) {
-> +		dev_err(&pdev->dev, "failed to get IRQ\n");
-> +		return keypad->irq;
-> +	}
-> +
-> +	keypad->clk = devm_clk_get_enabled(&pdev->dev, NULL);
-> +	if (IS_ERR(keypad->clk))
-> +		return dev_err_probe(&pdev->dev, PTR_ERR(keypad->clk), "failed to get core clk\n");
-> +
-> +	error = matrix_keypad_parse_properties(&pdev->dev, &keypad->kpi_row, &keypad->kpi_col);
-> +	if (error) {
-> +		dev_err(&pdev->dev, "failed to parse keypad params\n");
-> +		return error;
-> +	}
-> +
-> +	error = matrix_keypad_build_keymap(NULL, NULL, keypad->kpi_row, keypad->kpi_col,
-> +					   NULL, input_dev);
-> +	if (error) {
-> +		dev_err(&pdev->dev, "failed to build keymap\n");
-> +		return error;
-> +	}
-> +
-> +	keypad->input_dev = input_dev;
-> +	input_dev->name = pdev->name;
-> +	input_dev->id.bustype = BUS_HOST;
-> +	input_dev->open = ma35d1_keypad_open;
-> +	input_dev->close = ma35d1_keypad_close;
-> +	input_dev->dev.parent = &pdev->dev;
-> +
-> +	error = device_property_read_u32(&pdev->dev, "debounce-delay-ms", &debounce);
-> +	if (error) {
-> +		dev_err(&pdev->dev, "failed to acquire 'debounce-delay-ms'\n");
-> +		return error;
-> +	}
-> +
-> +	error = device_property_read_u32(&pdev->dev, "scan-interval-ms", &scan_interval);
-> +	if (error) {
-> +		dev_err(&pdev->dev, "failed to acquire 'scan-interval'\n");
-> +		return error;
-> +	}
-> +
-> +	error = ma35d1_parse_dt(keypad, debounce, scan_interval);
-> +	if (error) {
-> +		dev_err(&pdev->dev, "keypad dt params error\n");
-> +		return error;
-> +	}
-> +
-> +	__set_bit(EV_REP, input_dev->evbit);
-> +	input_set_drvdata(input_dev, keypad);
-> +	input_set_capability(input_dev, EV_MSC, MSC_SCAN);
-> +
-> +	error = devm_request_irq(&pdev->dev, keypad->irq, ma35d1_keypad_interrupt,
-> +				 IRQF_NO_SUSPEND, pdev->name, keypad);
-> +	if (error) {
-> +		dev_err(&pdev->dev, "failed to request IRQ\n");
-> +		return error;
-> +	}
-> +
-> +	platform_set_drvdata(pdev, keypad);
-> +	device_init_wakeup(&pdev->dev, 1);
-> +
-> +	error = dev_pm_set_wake_irq(&pdev->dev, keypad->irq);
-> +	if (error) {
-> +		dev_err(&pdev->dev, "failed to enable irq wake\n");
-> +		return error;
-> +	}
-> +
-> +	error = input_register_device(input_dev);
-> +	if (error) {
-> +		dev_err(&pdev->dev, "failed to register input device\n");
-> +		return error;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static void ma35d1_keypad_remove(struct platform_device *pdev)
-> +{
-> +	struct ma35d1_keypad *keypad = platform_get_drvdata(pdev);
-> +
-> +	input_unregister_device(keypad->input_dev);
-> +}
-> +
-> +static int ma35d1_keypad_suspend(struct device *dev)
-> +{
-> +	struct ma35d1_keypad *keypad = dev_get_drvdata(dev);
-> +
-> +	if (device_may_wakeup(dev))
-> +		writel(readl(keypad->mmio_base + KPI_CONF) | WAKEUP, keypad->mmio_base + KPI_CONF);
-> +
-> +	return 0;
-> +}
-> +
-> +static int ma35d1_keypad_resume(struct device *dev)
-> +{
-> +	struct ma35d1_keypad *keypad = dev_get_drvdata(dev);
-> +
-> +	if (device_may_wakeup(dev))
-> +		writel(readl(keypad->mmio_base + KPI_CONF) & ~(WAKEUP),
-> +		       keypad->mmio_base + KPI_CONF);
-> +
-> +	return 0;
-> +}
-> +
-> +static DEFINE_SIMPLE_DEV_PM_OPS(ma35d1_pm_ops, ma35d1_keypad_suspend, ma35d1_keypad_resume);
-> +
-> +static const struct of_device_id ma35d1_kpi_of_match[] = {
-> +	{ .compatible = "nuvoton,ma35d1-kpi"},
-> +	{},
-> +};
-> +MODULE_DEVICE_TABLE(of, ma35d1_kpi_of_match);
-> +
-> +static struct platform_driver ma35d1_keypad_driver = {
-> +	.probe		= ma35d1_keypad_probe,
-> +	.remove		= ma35d1_keypad_remove,
-> +	.driver		= {
-> +		.name	= "ma35d1-kpi",
-> +		.pm	= pm_sleep_ptr(&ma35d1_pm_ops),
-> +		.of_match_table = ma35d1_kpi_of_match,
-> +	},
-> +};
-> +module_platform_driver(ma35d1_keypad_driver);
-> +
-> +MODULE_AUTHOR("Ming-Jen Chen");
-> +MODULE_DESCRIPTION("MA35D1 Keypad Driver");
-> +MODULE_LICENSE("GPL");
+> diff --git a/lib/kunit/debugfs.c b/lib/kunit/debugfs.c
+> index d548750a325a..b25d214b93e1 100644
+> --- a/lib/kunit/debugfs.c
+> +++ b/lib/kunit/debugfs.c
+> @@ -212,8 +212,11 @@ void kunit_debugfs_create_suite(struct kunit_suite *suite)
+>
+>  err:
+>         string_stream_destroy(suite->log);
+> -       kunit_suite_for_each_test_case(suite, test_case)
+> +       suite->log = NULL;
+> +       kunit_suite_for_each_test_case(suite, test_case) {
+>                 string_stream_destroy(test_case->log);
+> +               test_case->log = NULL;
+> +       }
+>  }
+>
+>  void kunit_debugfs_destroy_suite(struct kunit_suite *suite)
+> --
+> 2.34.1
+>
+> --
+> You received this message because you are subscribed to the Google Groups "KUnit Development" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to kunit-dev+unsubscribe@googlegroups.com.
+> To view this discussion visit https://groups.google.com/d/msgid/kunit-dev/20241112080314.407966-1-ruanjinjie%40huawei.com.
+
+--0000000000007403e706273d1bc4
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+MIIUqgYJKoZIhvcNAQcCoIIUmzCCFJcCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
+ghIEMIIGkTCCBHmgAwIBAgIQfofDAVIq0iZG5Ok+mZCT2TANBgkqhkiG9w0BAQwFADBMMSAwHgYD
+VQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSNjETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UE
+AxMKR2xvYmFsU2lnbjAeFw0yMzA0MTkwMzUzNDdaFw0zMjA0MTkwMDAwMDBaMFQxCzAJBgNVBAYT
+AkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSowKAYDVQQDEyFHbG9iYWxTaWduIEF0bGFz
+IFI2IFNNSU1FIENBIDIwMjMwggIiMA0GCSqGSIb3DQEBAQUAA4ICDwAwggIKAoICAQDYydcdmKyg
+4IBqVjT4XMf6SR2Ix+1ChW2efX6LpapgGIl63csmTdJQw8EcbwU9C691spkltzTASK2Ayi4aeosB
+mk63SPrdVjJNNTkSbTowej3xVVGnYwAjZ6/qcrIgRUNtd/mbtG7j9W80JoP6o2Szu6/mdjb/yxRM
+KaCDlloE9vID2jSNB5qOGkKKvN0x6I5e/B1Y6tidYDHemkW4Qv9mfE3xtDAoe5ygUvKA4KHQTOIy
+VQEFpd/ZAu1yvrEeA/egkcmdJs6o47sxfo9p/fGNsLm/TOOZg5aj5RHJbZlc0zQ3yZt1wh+NEe3x
+ewU5ZoFnETCjjTKz16eJ5RE21EmnCtLb3kU1s+t/L0RUU3XUAzMeBVYBEsEmNnbo1UiiuwUZBWiJ
+vMBxd9LeIodDzz3ULIN5Q84oYBOeWGI2ILvplRe9Fx/WBjHhl9rJgAXs2h9dAMVeEYIYkvW+9mpt
+BIU9cXUiO0bky1lumSRRg11fOgRzIJQsphStaOq5OPTb3pBiNpwWvYpvv5kCG2X58GfdR8SWA+fm
+OLXHcb5lRljrS4rT9MROG/QkZgNtoFLBo/r7qANrtlyAwPx5zPsQSwG9r8SFdgMTHnA2eWCZPOmN
+1Tt4xU4v9mQIHNqQBuNJLjlxvalUOdTRgw21OJAFt6Ncx5j/20Qw9FECnP+B3EPVmQIDAQABo4IB
+ZTCCAWEwDgYDVR0PAQH/BAQDAgGGMDMGA1UdJQQsMCoGCCsGAQUFBwMCBggrBgEFBQcDBAYJKwYB
+BAGCNxUGBgkrBgEEAYI3FQUwEgYDVR0TAQH/BAgwBgEB/wIBADAdBgNVHQ4EFgQUM7q+o9Q5TSoZ
+18hmkmiB/cHGycYwHwYDVR0jBBgwFoAUrmwFo5MT4qLn4tcc1sfwf8hnU6AwewYIKwYBBQUHAQEE
+bzBtMC4GCCsGAQUFBzABhiJodHRwOi8vb2NzcDIuZ2xvYmFsc2lnbi5jb20vcm9vdHI2MDsGCCsG
+AQUFBzAChi9odHRwOi8vc2VjdXJlLmdsb2JhbHNpZ24uY29tL2NhY2VydC9yb290LXI2LmNydDA2
+BgNVHR8ELzAtMCugKaAnhiVodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL3Jvb3QtcjYuY3JsMBEG
+A1UdIAQKMAgwBgYEVR0gADANBgkqhkiG9w0BAQwFAAOCAgEAVc4mpSLg9A6QpSq1JNO6tURZ4rBI
+MkwhqdLrEsKs8z40RyxMURo+B2ZljZmFLcEVxyNt7zwpZ2IDfk4URESmfDTiy95jf856Hcwzdxfy
+jdwx0k7n4/0WK9ElybN4J95sgeGRcqd4pji6171bREVt0UlHrIRkftIMFK1bzU0dgpgLMu+ykJSE
+0Bog41D9T6Swl2RTuKYYO4UAl9nSjWN6CVP8rZQotJv8Kl2llpe83n6ULzNfe2QT67IB5sJdsrNk
+jIxSwaWjOUNddWvCk/b5qsVUROOuctPyYnAFTU5KY5qhyuiFTvvVlOMArFkStNlVKIufop5EQh6p
+jqDGT6rp4ANDoEWbHKd4mwrMtvrh51/8UzaJrLzj3GjdkJ/sPWkDbn+AIt6lrO8hbYSD8L7RQDqK
+C28FheVr4ynpkrWkT7Rl6npWhyumaCbjR+8bo9gs7rto9SPDhWhgPSR9R1//WF3mdHt8SKERhvtd
+NFkE3zf36V9Vnu0EO1ay2n5imrOfLkOVF3vtAjleJnesM/R7v5tMS0tWoIr39KaQNURwI//WVuR+
+zjqIQVx5s7Ta1GgEL56z0C5GJoNE1LvGXnQDyvDO6QeJVThFNgwkossyvmMAaPOJYnYCrYXiXXle
+A6TpL63Gu8foNftUO0T83JbV/e6J8iCOnGZwZDrubOtYn1QwggWDMIIDa6ADAgECAg5F5rsDgzPD
+hWVI5v9FUTANBgkqhkiG9w0BAQwFADBMMSAwHgYDVQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBS
+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
+erg7AgMBAAGjggHgMIIB3DAeBgNVHREEFzAVgRNkYXZpZGdvd0Bnb29nbGUuY29tMA4GA1UdDwEB
+/wQEAwIFoDAdBgNVHSUEFjAUBggrBgEFBQcDBAYIKwYBBQUHAwIwHQYDVR0OBBYEFKFQnbTpSq0q
+cOYnlrbegXJIIvA6MFgGA1UdIARRME8wCQYHZ4EMAQUBAjBCBgorBgEEAaAyCgMDMDQwMgYIKwYB
+BQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2JhbHNpZ24uY29tL3JlcG9zaXRvcnkvMAwGA1UdEwEB/wQC
+MAAwgZoGCCsGAQUFBwEBBIGNMIGKMD4GCCsGAQUFBzABhjJodHRwOi8vb2NzcC5nbG9iYWxzaWdu
+LmNvbS9jYS9nc2F0bGFzcjZzbWltZWNhMjAyMzBIBggrBgEFBQcwAoY8aHR0cDovL3NlY3VyZS5n
+bG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NhdGxhc3I2c21pbWVjYTIwMjMuY3J0MB8GA1UdIwQYMBaA
+FDO6vqPUOU0qGdfIZpJogf3BxsnGMEYGA1UdHwQ/MD0wO6A5oDeGNWh0dHA6Ly9jcmwuZ2xvYmFs
+c2lnbi5jb20vY2EvZ3NhdGxhc3I2c21pbWVjYTIwMjMuY3JsMA0GCSqGSIb3DQEBCwUAA4ICAQBR
+nRJBmUP+IpudtmSQ/R55Sv0qv8TO9zHTlIdsIf2Gc/zeCi0SamUQkFWb01d7Q+20kcpxNzwV6M7y
+hDRk5uuVFvtVxOrmbhflCo0uBpD9vz/symtfJYZLNyvSDi1PIVrwGNpyRrD0W6VQJxzzsBTwsO+S
+XWN3+x70+QDf7+zovW7KF0/y8QYD6PIN7Y9LRUXct0HKhatkHmO3w6MSJatnqSvsjffIwpNecUMo
+h10c6Etz17b7tbGdxdxLw8njN+UnfoFp3v4irrafB6jkArRfsR5TscZUUKej0ihl7mXEKUBmClkP
+ndcbXHFxS6WTkpjvl7Jjja8DdWJSJmdEWUnFjnQnDrqLqvYjeVMS/8IBF57eyT6yEPrMzA+Zd+f5
+hnM7HuBSGvVHv+c/rlHVp0S364DBGXj11obl7nKgL9D59QwC5/kNJ1whoKwsATUSepanzALdOTn3
+BavXUVE38e4c90il44T1bphqtLfmHZ1T5ZwxjtjzNMKy0Mb9j/jcFxfibCISYbnk661FBe38bhYj
+0DhqINx2fw0bwhpfFGADOZDe5DVhI7AIW/kEMHuIgAJ/HPgyn1+tldOPWiFLQbTNNBnfGv9sDPz0
+hWV2vSAXq35i+JS06BCkbGfE5ci6zFy4pt8fmqMGKFH/t3ELCTYo116lqUTDcVC8DAWN8E55aDGC
+AmowggJmAgEBMGgwVDELMAkGA1UEBhMCQkUxGTAXBgNVBAoTEEdsb2JhbFNpZ24gbnYtc2ExKjAo
+BgNVBAMTIUdsb2JhbFNpZ24gQXRsYXMgUjYgU01JTUUgQ0EgMjAyMwIQAZ6Vqszmp/3gGFW0sCFu
+eDANBglghkgBZQMEAgEFAKCB1DAvBgkqhkiG9w0BCQQxIgQg04+gqR/wPhrwobxUh1949KrLge2u
+Hq7ObtOR9Hw61G4wGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMjQx
+MTE5MDUxNDI3WjBpBgkqhkiG9w0BCQ8xXDBaMAsGCWCGSAFlAwQBKjALBglghkgBZQMEARYwCwYJ
+YIZIAWUDBAECMAoGCCqGSIb3DQMHMAsGCSqGSIb3DQEBCjALBgkqhkiG9w0BAQcwCwYJYIZIAWUD
+BAIBMA0GCSqGSIb3DQEBAQUABIIBAK1PW6YA24NI4DvIiFl/dK+HqWx3inXS/S5m0kGdg6TG5EE/
+i0JgRXIBNqkzBiClc/GKpkM8ilEu1SvBe3ajk47RkIR9ts+IDRMTQYO6ebe/Km+DK7S6LDu4wqsy
+3D6FfnyPfwZa8Mw+akZ4AWuAtSYD9CXgyMZSeeMYD1Qk/7zu6GLy8l9XhrKkv8LXOkYjpvqX71NN
+fGP4p0VTTxcpN6urc/wZfNLgScFZI5i29MTtbUuxhmbY7DiBoESGgh3M02QWgGpjZIEQzsFQKy7W
+z9Kd1EK5rg9hLQm6XdCboUgts1FXSESCMyrh0b3rlceConEGqT5c/0zQaOnPxHGShLk=
+--0000000000007403e706273d1bc4--
 
