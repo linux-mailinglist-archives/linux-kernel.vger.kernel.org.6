@@ -1,60 +1,52 @@
-Return-Path: <linux-kernel+bounces-413626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A06F9D1C2A
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 01:16:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A18E79D1C2C
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 01:17:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D120628261E
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 00:16:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 501D41F2232A
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 00:17:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83F37C149;
-	Tue, 19 Nov 2024 00:16:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="piJSSwXX"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A47F1A270;
+	Tue, 19 Nov 2024 00:17:44 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF84F139B;
-	Tue, 19 Nov 2024 00:16:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEBC81798C;
+	Tue, 19 Nov 2024 00:17:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731975377; cv=none; b=OjXGjow3sLPjCNflQOOokTH53RikF8SkqoR7+TFJxlrzJMM7LBFZH9fBAX7RB/1N33Y9ZTeOX1V5RtNmfGFBLlB9psf0KUUsGH+l3VOEiwPDH+iAhU7VNNhodCFYZ/UajY7rj6nqb0owkVGYj829MW5hjMwt2KVENxm7HoORSsw=
+	t=1731975463; cv=none; b=KyX13I5H7KRIZbxFlqQBfNGYlt0z4lLnG7o6LbvDpQ2yLkze85U+ZY0O9Ai5/3jf6ac4VMnidlqTC/g1FWE23MAMYoRyAf35qZ8xRWeb756RTP63EyUvOznNc3+IE2ddqs7JTY5Y0WHLt/FewvWELtD6h0Bdk6cw9eboMAC+8Ds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731975377; c=relaxed/simple;
-	bh=GpbCz0pM76XAP0NgB3a7AtBnjYiKPsaLoNI2+DeXrjc=;
+	s=arc-20240116; t=1731975463; c=relaxed/simple;
+	bh=6HTj8ySQcTLZ6Mfq0r9+KjeFhw4vyi/iOb/axvI0vVI=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TyidnscKtdXRA/9d6i2gt4UnekUJENaoODAb5sPV++Wm1qPuzEHNpBzVvsGY4hRKmoizjbyKXAbI0lUESwmEAeDsIneN/2MgAyTL4pS8qjYZTnmhfy6y+9L6GOs5ownJXopnvN37ZtmbFJrwYUfd5d1Azh1d20f2PHaJ67d/z/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=piJSSwXX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06775C4CECC;
-	Tue, 19 Nov 2024 00:16:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731975376;
-	bh=GpbCz0pM76XAP0NgB3a7AtBnjYiKPsaLoNI2+DeXrjc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=piJSSwXXgGzU8amrPFgXkOYdVxTC4szUmSQY9Uut/NH33BiCqiQX+TY+Pn9wpfdkk
-	 ZrRU6anAY4f4+8iaejeyly9k3wh4nSE7nqqtFEyjxm5qE9Z2Mg7CFKpPhbt2a0KtYR
-	 K3oAaiELHUhS/1kTTcOwkBPUtfbhkMGDWzMAkr6Kl31gT0cV008FffGF3Rm5yfZTWV
-	 /7fah4Sc9BNykEfAg8e1Hn9xEufjR84TgbFKO8IvSo+WMWlnYQOXQes5U3BoBGxRG5
-	 h1jNKaGtb4yQaLonrVRNB8sFrUiM0oIZdmTP/0J1omQvN/tivUEt8OFwLa/lD3ScGg
-	 RzLKceu+ZBN9w==
-Date: Mon, 18 Nov 2024 16:16:15 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Brian Johannesmeyer <bjohannesmeyer@gmail.com>
-Cc: Ronak Doshi <ronak.doshi@broadcom.com>, Broadcom internal kernel review
- list <bcm-kernel-feedback-list@broadcom.com>, Andrew Lunn
- <andrew+netdev@lunn.ch>, "David S . Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Andy King
- <acking@vmware.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- Raphael Isemann <teemperor@gmail.com>
-Subject: Re: [PATCH 0/2] vmxnet3: Fix inconsistent DMA accesses
-Message-ID: <20241118161615.2d0f101b@kernel.org>
-In-Reply-To: <CAOZ5it3cgGB6D8jsFp2oRCY5DpO5hoomsi-OvP+55R2cfwkGgA@mail.gmail.com>
-References: <20241113200001.3567479-1-bjohannesmeyer@gmail.com>
-	<20241114193855.058f337f@kernel.org>
-	<CAOZ5it3cgGB6D8jsFp2oRCY5DpO5hoomsi-OvP+55R2cfwkGgA@mail.gmail.com>
+	 MIME-Version:Content-Type; b=rzDy0uwRP1bfhUCr2zc6cS8hET28+wyL0ZvsxM/iOIMdHfMkuvRZheefaBwbvZfZVMrIBvc5L3XrD5BMrzm/zXPhThmCv836Cf12xah2h2sd+kJaFIommExGqB3K9GiN3sdrAEcfQxowU/3+0DfARHjWrh9ktNTg/94XL+v1zXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A8E0C4CECF;
+	Tue, 19 Nov 2024 00:17:41 +0000 (UTC)
+Date: Mon, 18 Nov 2024 19:18:13 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Joel Fernandes <joelaf@google.com>
+Cc: Suleiman Souhlal <suleiman@google.com>, Ingo Molnar <mingo@redhat.com>,
+ Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann
+ <dietmar.eggemann@arm.com>, Ben Segall <bsegall@google.com>, Mel Gorman
+ <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, Paolo Bonzini
+ <pbonzini@redhat.com>, seanjc@google.com, Srikar Dronamraju
+ <srikar@linux.ibm.com>, David Woodhouse <dwmw2@infradead.org>,
+ vineethrp@google.com, linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+ ssouhlal@freebsd.org
+Subject: Re: [PATCH v3] sched: Don't try to catch up excess steal time.
+Message-ID: <20241118191813.145031fc@gandalf.local.home>
+In-Reply-To: <CAJWu+oqR=SMKHd1EqvRm3nvz7e1r4e7Rj76hJ8jhDQQkNVo0ig@mail.gmail.com>
+References: <20241118043745.1857272-1-suleiman@google.com>
+	<20241118143311.3ca94405@gandalf.local.home>
+	<CAJWu+oqR=SMKHd1EqvRm3nvz7e1r4e7Rj76hJ8jhDQQkNVo0ig@mail.gmail.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,20 +56,34 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Mon, 18 Nov 2024 08:31:35 -0700 Brian Johannesmeyer wrote:
-> > But committing patch 1 just
-> > to completely revert it in patch 2 seems a little odd.  
+On Tue, 19 Nov 2024 09:10:41 +0900
+Joel Fernandes <joelaf@google.com> wrote:
+
+> > > +++ b/kernel/sched/core.c
+> > > @@ -766,13 +766,15 @@ static void update_rq_clock_task(struct rq *rq, s64 delta)
+> > >  #endif
+> > >  #ifdef CONFIG_PARAVIRT_TIME_ACCOUNTING
+> > >       if (static_key_false((&paravirt_steal_rq_enabled))) {
+> > > -             steal = paravirt_steal_clock(cpu_of(rq));
+> > > +             u64 prev_steal;
+> > > +
+> > > +             steal = prev_steal = paravirt_steal_clock(cpu_of(rq));
+> > >               steal -= rq->prev_steal_time_rq;
+> > >
+> > >               if (unlikely(steal > delta))
+> > >                       steal = delta;  
+> >
+> > So is the problem just the above if statement? That is, delta is already
+> > calculated, but if we get interrupted by the host before steal is
+> > calculated and the time then becomes greater than delta, the time
+> > difference between delta and steal gets pushed off to the next task, right?  
 > 
-> Indeed, this was a poor choice on my part. I suppose the correct way
-> to do this would be to submit them separately (as opposed to as a
-> series)? I.e.: (i) one patch to start adding the synchronization
-> operations (in case `adapter` should indeed be in a DMA region), and
-> (ii) a second patch to remove `adapter` from a DMA region? Based on
-> the feedback, I can submit a V2 patch for either (i) or (ii).
+> Pretty much.. the steal being capped to delta means the rest of the
+> steal is pushed off to the future. Instead he discards the remaining
+> steal after this patch.
 
-What is the purpose of the first patch? Is it sufficient to make 
-the device work correctly?
+Thanks for confirming. I just wanted to make sure I understand as the
+initial change log went into a lot of detail where I sorta got lost ;-)
 
-If yes, why do we need patch 2.
-If no, why do we have patch 1, instead of a revert / patch 2...
+-- Steve
 
