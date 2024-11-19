@@ -1,133 +1,86 @@
-Return-Path: <linux-kernel+bounces-414771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C56819D2D0C
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 18:53:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0287A9D2D12
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 18:53:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7356F1F22D96
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 17:53:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCE65282B63
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 17:53:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EF791D27B4;
-	Tue, 19 Nov 2024 17:52:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E6491D2200;
+	Tue, 19 Nov 2024 17:53:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LguMHeEu"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dgq5vDPY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19C551D07BB;
-	Tue, 19 Nov 2024 17:52:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1EC91D1E6C;
+	Tue, 19 Nov 2024 17:53:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732038760; cv=none; b=XyUnoB9PYKwwxGtO4tbSC/DfSxF2GAvkVK2VMvATN5LX+BxZ/LgiL0pY2NmWMtzKSWgHp8hjZHq432a4Mf+UhtRx3iCyDJULf4jFsxej+jBFxPm9iEUUu+KZmF5gBSV80nL6HPU0eIj1D7/LsjUcZn98OUEc0lXibhWG/IvwSuM=
+	t=1732038809; cv=none; b=V+FoyqNhsJQX+//pHpyRT+ULrW+tn5Yh4uvzTqxRsNwCVQ7AROAA9jBLlhK+IUspN0zPAsqGdUIaR9PdtZ9OsEEF5upQXkIGrVtN6veSEJpoJTg8i96Mpr8lXf9OIR4izFW+Kh13o+8S/p4b420zeiS/FPutL3oeO9ytaVTjr6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732038760; c=relaxed/simple;
-	bh=3v8Kxm0aJIEv7WMZjJ/vtu1dfG1rAFuLoHlG8l+Hw0Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=iG+qb5s3wcgykwjGcDrhdx4sK69YAvvzRIYiDTivxoNzcLkTvEYPmbi88W592NwgQaX2MFkaj7gAYrfpWWnDvphhhDMQHB//PxU7WqGfXfsLHZUSmFm69JxGPAGhix0IiZqlFz/uBxDZOuCvfGxdO7/Dk91S/N/mIqdA4MFfnPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LguMHeEu; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-431ac30d379so11194195e9.1;
-        Tue, 19 Nov 2024 09:52:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732038757; x=1732643557; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7x1Cvl6uYAhIlsTQJAM2lxLGZwm8G52/uSj6u7+hOrc=;
-        b=LguMHeEujdocfsUrB9uGYLB30n5bg/v9WIxBmImhB9AERenBaQazbgan2/jdMEkrue
-         Ta9EIufQAdctn7DuPhGe2dVAW55RioN9WJUw06OoPulDw/bH/P9F89y/aPlivpROCM+c
-         hKGmIzVVBazKL2fkqnE6gF/rlnG8GzYxQzl3i1TA6orZigPzHpDdIb8yZF5GZmVhtqNW
-         Ipjb/+/fign96e9ca5OPKZ6b4pAS7c5ZzZA8p74nBdtrTPPxyfOsl1lBYBsuuMkfIaxh
-         MrMCzyx0gQ8KyoZgo+iH+mxKxyvCTsj8H4HQbI3Ub7H09Vmqg6F5mows+cw0j0tJKY0K
-         BgTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732038757; x=1732643557;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7x1Cvl6uYAhIlsTQJAM2lxLGZwm8G52/uSj6u7+hOrc=;
-        b=CBieDyCf9NjZuPLrAS+UNpSYpct2t971LLwtem3cuAtmyQ99vVsTAPArMoJozSohoj
-         vND2tTNZvqtmTItqsKIpfVcMnfBKSxpoNbkFC3BTTDQk2qHUPSlyonTfdLnNdWp/6Zwt
-         akMJ3R7W28XdXLvrixZEBX7C1FItua89cH9wthyQRuYXK1EV64N5GUqJqoBho8+fOUd5
-         fgrIW+L6/EMNsmKmCHLgmw1gOngYvjYcpoPg6Oe+dFOgswX87+WHt6v0qYvydjS83LSP
-         gSc9EMeRmsoHDW5I5+As7LyhGILXE5VwpAnltDMkEijqsVkZ0qHG1TajGhNcofI/5H4C
-         PLcg==
-X-Forwarded-Encrypted: i=1; AJvYcCWBZXtzRHXnkPolgtwuOA/V0mhVRjTKRitkhvXKvt4DImX3BbwTTJV7410LRsE714VoZOH/E86ywkzPKOE=@vger.kernel.org, AJvYcCX/zbI3+meBGt5aWslX0k7jtLZO9L5CooIctj7ClmbxfqsiJeaQ21Ek6XROE5YEUFoLSAPr/VrX@vger.kernel.org
-X-Gm-Message-State: AOJu0YyqF8tqfw+6+rfbDV8Kj1OuknuyVJHpv8iT0D2PVFT4cY9dBsdU
-	Yb0nL0XEBiGclSfSv8N1Lqt05VuveslE5QLST5jmLmvmc7tWgxXm
-X-Google-Smtp-Source: AGHT+IEOJXELUvf9uYs3VOaj0xHe17Bk5fUMwLEL8rW80ii9z2sn1isp4uanHAx6agWwYDfN5sdXuw==
-X-Received: by 2002:a05:600c:1c98:b0:431:5a0e:fa2e with SMTP id 5b1f17b1804b1-432df78a858mr126641465e9.21.1732038757144;
-        Tue, 19 Nov 2024 09:52:37 -0800 (PST)
-Received: from localhost ([194.120.133.65])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432da27fcb4sm208414245e9.23.2024.11.19.09.52.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Nov 2024 09:52:36 -0800 (PST)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Sunil Goutham <sgoutham@marvell.com>,
-	Linu Cherian <lcherian@marvell.com>,
-	Geetha sowjanya <gakula@marvell.com>,
-	Jerin Jacob <jerinj@marvell.com>,
-	hariprasad <hkelam@marvell.com>,
-	Subbaraya Sundeep <sbhatta@marvell.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] octeontx2-pf: remove redundant assignment to variable target
-Date: Tue, 19 Nov 2024 17:52:36 +0000
-Message-Id: <20241119175236.2433366-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1732038809; c=relaxed/simple;
+	bh=xHBKbFoZ07Ku7Y6Que2kbEg3CxhDB6sSiE/pmczIBCE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AhkJu1iUobtCULRYlk7EibPmYBXwUq2eEajGQyfv6UJ2ayQ67rW9ScuX0gemgif7v0MbXsSveDS1Z9lEDNpv5lZQPYPwTd/wPB2iW5AwD5bZ5XaL3ajSGtM04vLZjyDhoUgg2OArx/2jtclRTptnDigvWdFNf4uPs6cQ5rhh39c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dgq5vDPY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A786C4CECF;
+	Tue, 19 Nov 2024 17:53:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732038807;
+	bh=xHBKbFoZ07Ku7Y6Que2kbEg3CxhDB6sSiE/pmczIBCE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dgq5vDPYfQEAp9QcRlppUahsKWsHleIu2nooD2vWUTECini7qwskFf71OtQlAgHob
+	 VgwbxcfTrGcj6SaEE0IA3KEVSJVN8o4buBI87cUyTlsrNa829jFX3FU+5LZ4z9dhQq
+	 q6cDXdYeeLPq+875LdXusF+1Tdk/dUSpHerioqelqy+4g0QhpIBJX399a7cdJLXkZD
+	 6pgVXWvXdZzIwmUu3NbsF9WYzW1YemgHn9pcK3UbbCT0WEWvTXNFg7dC+guUY8i+xq
+	 PXnxAuCla2s+P3m8m0/Vmg800NCXq6a16c5ZNJy6umQgOI/GxDr2MKprgwfgns6Q7i
+	 /E/BHKcA5Fe2A==
+Date: Tue, 19 Nov 2024 17:53:25 +0000
+From: Eric Biggers <ebiggers@kernel.org>
+To: Zhihang Shao <zhihang.shao.iscas@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, x86@kernel.org,
+	Ard Biesheuvel <ardb@kernel.org>
+Subject: Re: [PATCH 00/11] Wire up CRC-T10DIF library functions to
+ arch-optimized code
+Message-ID: <20241119175325.GB3833976@google.com>
+References: <20241117002244.105200-1-ebiggers@kernel.org>
+ <860a6acc-2c39-4eb1-8113-a3753f6531fc@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <860a6acc-2c39-4eb1-8113-a3753f6531fc@gmail.com>
 
-The variable target is being assigned a value that is never read, it
-is being re-assigned a new value in both paths of a following if
-statement. The assignment is redundant and can be removed.
+Hi Zhihang,
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_fs.c | 1 -
- 1 file changed, 1 deletion(-)
+On Tue, Nov 19, 2024 at 06:05:58PM +0800, Zhihang Shao wrote:
+> 
+> I still want to submit an optimization patchabout CRC-T10DIFfor RISC-V.
+> 
+> I don't know if it would be more appropriate for me to rewrite a patch after
+> your patch is officially applied.
+> 
+> What do you think?
 
-diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_fs.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_fs.c
-index da69e454662a..ceaf5ca5c036 100644
---- a/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_fs.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc_fs.c
-@@ -1451,21 +1451,20 @@ int rvu_mbox_handler_npc_install_flow(struct rvu *rvu,
- 	 * rvu_pfvf for the target PF/VF needs to be retrieved
- 	 * hence modify pcifunc accordingly.
- 	 */
- 
- 	/* AF installing for a PF/VF */
- 	if (!req->hdr.pcifunc)
- 		target = req->vf;
- 
- 	/* PF installing for its VF */
- 	if (!from_vf && req->vf && !from_rep_dev) {
--		target = (req->hdr.pcifunc & ~RVU_PFVF_FUNC_MASK) | req->vf;
- 		pf_set_vfs_mac = req->default_rule &&
- 				(req->features & BIT_ULL(NPC_DMAC));
- 	}
- 
- 	/* Representor device installing for a representee */
- 	if (from_rep_dev && req->vf)
- 		target = req->vf;
- 	else
- 		/* msg received from PF/VF */
- 		target = req->hdr.pcifunc;
--- 
-2.39.5
+Please go ahead and rebase your patch on top of this patchset, i.e. on top of
+the git branch I gave at the beginning of the cover letter.  You'll need to move
+your code into arch/riscv/lib/ and drop the shash stuff.  You can test it using
+the new KUnit test I added (CONFIG_CRC_KUNIT_TEST=y).
 
+After that I'll be glad to apply your patch when I apply this patchset for 6.14.
+
+Thanks!
+
+- Eric
 
