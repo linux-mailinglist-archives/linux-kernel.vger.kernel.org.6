@@ -1,174 +1,87 @@
-Return-Path: <linux-kernel+bounces-414701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1009C9D2CBF
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 18:35:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E53F9D2C3A
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 18:14:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C4F4EB2BEEB
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 17:13:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20B5F284056
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 17:14:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58A211D0F56;
-	Tue, 19 Nov 2024 17:13:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B23611D0F5F;
+	Tue, 19 Nov 2024 17:14:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GVNjpaM7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Abev9CKP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D2121D0438;
-	Tue, 19 Nov 2024 17:13:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 120951CF5C7;
+	Tue, 19 Nov 2024 17:14:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732036423; cv=none; b=TAVaclVcGnCpJq7/OqAdN45DFECab75AUr4y+AOEMxMCD+jZDUL1Q5HNx7qBLQWuJYFbXbNXqA80cRx8HXf6OSYyYxZXlZP5KXYsxP5cWFWvps+rpGol4u18Tc52yivKFK0UigfReESaq3b8wzy8zga3zaKHva7h6K1bxNHMAeg=
+	t=1732036452; cv=none; b=ZgDepKs9V61ICv+4ABRdHe+4qPLHf9ugv/++ObcoC0lvQji7PyWTEsCH90xVevM2HkoluYQvfmI4FKXkjyBCoJvCxl8KDHCVAnDPOBE3Txnt37ofRCwL0KG+oq/L4YCXWOGUCsum/LA3IPmo17SLAyHeI4Jm0IHR0rAiw5Eg4is=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732036423; c=relaxed/simple;
-	bh=1oAj6JYNDJa3GWhLbj+143GK5p0QwScJoOz363V4lVU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VIm54zGtapo8GEzYBjlsv4kuXvwOmQrNZroNP+R1siXV2Gma3JWq+4Oji3mZi/JBOJPygukUIR9HqTndcsyVOOXY97q1MlToutl1frkSsqCOzV8Cxy5pdn7Xy6p+OdLiU2Ae2pjvsqA+AC7ZqAB+7HBxHLIj0FlFvAgOXO7vUTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GVNjpaM7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73C64C4CED7;
-	Tue, 19 Nov 2024 17:13:43 +0000 (UTC)
+	s=arc-20240116; t=1732036452; c=relaxed/simple;
+	bh=SpYWF5BuNymVlgtPmYea7bJ82YUuZDD1naojG4vo4W0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X1X0WUUOC7ks4pWZSqFF48noWJ8wPUGNhrHjyPT70yjzgjCT/mTXre7a9+Ll55m8fA2gxq15ssI+2dVj43pRxhMd/LVlWArRwYGCMd+TwUUoKRLDiLgyGDPrh4t5SaXQUDuGjwacLSZrJUf5z5Atxv+u/ArtQxRgGZ7OOWYfrTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Abev9CKP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55946C4CECF;
+	Tue, 19 Nov 2024 17:14:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732036423;
-	bh=1oAj6JYNDJa3GWhLbj+143GK5p0QwScJoOz363V4lVU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=GVNjpaM7UIqXjoWH3ukR1LOYAzkx+xFrQf1VPUy+lm/EHCtYlzN6KUWpEfFCgk2ro
-	 N9C1lLQsFDkuMo/Zo5XMG6R4UzEVH/kULr8pMQLQriSQPwdLDx4fAsx6MVeIr4SzCY
-	 oDcvVjL849PUxK2o/gqcAYDb1PoXjjZCmhwVkMYyBmdhyvkj3Zip59mk8jfQSm0uti
-	 8QUzAwvFChWEsGMllxbdky4S/oehT6gAbUVtHTG9bQ+2QeE2WT+iNP2sOewriNMvAm
-	 sl1fc6SwyB3noagKtXvdYCFYLkzw1//FSSlptxkgbV75ScYjKv/QKZfhvgBXEa27Fc
-	 /iMMbkZqw/ClQ==
-Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-29680f21217so786905fac.1;
-        Tue, 19 Nov 2024 09:13:43 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUCB/A19B7SnoEye7PLoj6epmYM08C+IDo9ausVJABN1K9aNou2DIjxbpNirKa1BGGiDpR/X+eVNHFONZkg@vger.kernel.org, AJvYcCVCeciKcnN1UAfZgZ2THSfDnPvKnSGAy+ET435KOuqyr6RkHrWaDp3iEdhn/QYhH4Pbo3piv41hx9He@vger.kernel.org, AJvYcCWDRuucWr9a+gwMr45AgrfSh1itPtHZY9/zpZlxwyNADWHc7uUJhx476Z4eOqCaELhhc4R6zCUA/hI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/FwH/XPxAM9Thiu0W5/MhyKJCMFkX+i6bSDOs5rK7R4yBkzeW
-	UnHKusqNcn5lYCH1+2KkwBwkrzZe3NWdMW2d79GscdVS1ynaPHZ2KXCTnMPV3DIAPbpLdT72wza
-	RFSs1O6wLnJ5xaehY2bhs/d60Pfo=
-X-Google-Smtp-Source: AGHT+IHxvAFHjEK3r2BPEeFAjJMdHTLIuHKdoSpreVZimMd/tuX2SshSM6X/4zX1/ERuEvvAfuAOm27ubAvqhHgXm8Y=
-X-Received: by 2002:a05:6870:3929:b0:296:c2a6:cb27 with SMTP id
- 586e51a60fabf-296c2a6f8acmr2234069fac.24.1732036422686; Tue, 19 Nov 2024
- 09:13:42 -0800 (PST)
+	s=k20201202; t=1732036451;
+	bh=SpYWF5BuNymVlgtPmYea7bJ82YUuZDD1naojG4vo4W0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Abev9CKPq6SLcS249mjBIdGpgW96Y2N9Jc6+YkuTkSC40mRIE+6vjDo3Xszgi9QWG
+	 wnv5Z3i5pGBc39/I0viYN9Yvj3xfFq4wxblnKlm4RmTpAxqjrrlwA0qQfTfaONSzE6
+	 VKRdMCBnJNbOCURTF7fwVL79Z1Tk+sAbzf1KzSGHIp5hWFLUB7BvdxcYF1V34mHsVc
+	 6uBCbtkvffaHBm03ZAf1aY+QHJ7eGYs7VxdCWW/N4pBrIG7VZDspc7KSxeAIVITNll
+	 1S/xkSrhBYfp7A0d/iSbIJo+F/MJKaBkm6tQQy4MZlmaz6OHuN3fRAY1YrLsM/YPqw
+	 Fdmq5j2mULoKw==
+Date: Tue, 19 Nov 2024 11:14:09 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Konrad Dybcio <konradybcio@kernel.org>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-arm-msm@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH] dt-bindings: remoteproc: Consolidate SC8180X and SM8150
+ PAS files
+Message-ID: <173203644923.1838066.16484557197129964234.robh@kernel.org>
+References: <20241116-topic-sc8180x_rproc_bindings-v1-1-ae5d3f7ab261@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <13636465.uLZWGnKmhe@rjwysocki.net> <2285569.iZASKD2KPV@rjwysocki.net>
- <ZzyqMmzMaCHqE+9m@BLRRASHENOY1.amd.com>
-In-Reply-To: <ZzyqMmzMaCHqE+9m@BLRRASHENOY1.amd.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 19 Nov 2024 18:13:31 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0i48ph7Qa9ZRwJu6EEh_1Rs9xmsHw9KqdO6zH6RyJFrsg@mail.gmail.com>
-Message-ID: <CAJZ5v0i48ph7Qa9ZRwJu6EEh_1Rs9xmsHw9KqdO6zH6RyJFrsg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] cpuidle: Change :enter_dead() driver callback
- return type to void
-To: "Gautham R. Shenoy" <gautham.shenoy@amd.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, LKML <linux-kernel@vger.kernel.org>, 
-	x86 Maintainers <x86@kernel.org>, Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>, 
-	Artem Bityutskiy <artem.bityutskiy@linux.intel.com>, 
-	Mario Limonciello <mario.limonciello@amd.com>, Linux ACPI <linux-acpi@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241116-topic-sc8180x_rproc_bindings-v1-1-ae5d3f7ab261@oss.qualcomm.com>
 
-Hi Gautham,
 
-On Tue, Nov 19, 2024 at 4:09=E2=80=AFPM Gautham R. Shenoy
-<gautham.shenoy@amd.com> wrote:
->
-> Hello Rafael,
->
-> On Fri, Nov 15, 2024 at 10:00:25PM +0100, Rafael J. Wysocki wrote:
-> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >
-> > After a previous change, cpuidle_play_dead(), which is the only caller
-> > of idle state :enter_dead() callbacks, ignores their return values, so
-> > they may as well be void.
-> >
-> > Suggested-by: Peter Zijlstra <peterz@infradead.org>
-> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->
-> > ---
-> >
-> > v1 -> v2: New patch
-> >
-> > Interestingly enough, the only user of :enter_dead() idle state callbac=
-ks
-> > in the current mainline turns out to be ACPI idle.
->
-> For that matter, the only user of cpuidle_play_dead() is the
-> native_play_dead(). Was that always the case?
+On Sat, 16 Nov 2024 12:40:04 +0100, Konrad Dybcio wrote:
+> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> 
+> SC8180X PAS bindings are plain wrong, resulting in false-positive
+> dt checker errors. SC8180X's remoteprocs happen to be identical to
+> SM8150's from the kernel point of view, so reuse that binding instead.
+> 
+> Fixes: 4865ed136045 ("dt-bindings: remoteproc: qcom: pas: Add SC8180X adsp, cdsp and mpss")
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> ---
+>  .../bindings/remoteproc/qcom,sc8180x-pas.yaml      | 96 ----------------------
+>  .../bindings/remoteproc/qcom,sm8150-pas.yaml       |  7 ++
+>  2 files changed, 7 insertions(+), 96 deletions(-)
+> 
 
-At least as long ago as of 4.20.
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
-> Some of the other architectures select the deepest available idle
-> state at boot time, and enter that state when a CPU is offlined.
-
-That's fine as long as the state to use is already known at that time.
-
-> In any case I am ok with this.
->
-> Reviewed-by: Gautham R. Shenoy <gautham.shenoy@amd.com>
-> --
-> Thanks and Regards
-> gautham.
-> >
-> > ---
-> >  drivers/acpi/processor_idle.c |    7 ++-----
-> >  include/linux/cpuidle.h       |    2 +-
-> >  2 files changed, 3 insertions(+), 6 deletions(-)
-> >
-> > Index: linux-pm/include/linux/cpuidle.h
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > --- linux-pm.orig/include/linux/cpuidle.h
-> > +++ linux-pm/include/linux/cpuidle.h
-> > @@ -61,7 +61,7 @@ struct cpuidle_state {
-> >                       struct cpuidle_driver *drv,
-> >                       int index);
-> >
-> > -     int (*enter_dead) (struct cpuidle_device *dev, int index);
-> > +     void (*enter_dead) (struct cpuidle_device *dev, int index);
-> >
-> >       /*
-> >        * CPUs execute ->enter_s2idle with the local tick or entire time=
-keeping
-> > Index: linux-pm/drivers/acpi/processor_idle.c
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > --- linux-pm.orig/drivers/acpi/processor_idle.c
-> > +++ linux-pm/drivers/acpi/processor_idle.c
-> > @@ -578,7 +578,7 @@ static void __cpuidle acpi_idle_do_entry
-> >   * @dev: the target CPU
-> >   * @index: the index of suggested state
-> >   */
-> > -static int acpi_idle_play_dead(struct cpuidle_device *dev, int index)
-> > +static void acpi_idle_play_dead(struct cpuidle_device *dev, int index)
-> >  {
-> >       struct acpi_processor_cx *cx =3D per_cpu(acpi_cstate[index], dev-=
->cpu);
-> >
-> > @@ -591,11 +591,8 @@ static int acpi_idle_play_dead(struct cp
-> >               else if (cx->entry_method =3D=3D ACPI_CSTATE_SYSTEMIO) {
-> >                       io_idle(cx->address);
-> >               } else
-> > -                     return -ENODEV;
-> > +                     return;
-> >       }
-> > -
-> > -     /* Never reached */
-> > -     return 0;
-> >  }
-> >
-> >  static __always_inline bool acpi_idle_fallback_to_c1(struct acpi_proce=
-ssor *pr)
-> >
-> >
-> >
->
 
