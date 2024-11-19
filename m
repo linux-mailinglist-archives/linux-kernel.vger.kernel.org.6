@@ -1,355 +1,117 @@
-Return-Path: <linux-kernel+bounces-414794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDA909D2D7A
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 19:03:11 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D36249D2DE4
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 19:26:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 815EA1F265C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 18:03:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 246F6B28F3B
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 18:06:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B85161D4173;
-	Tue, 19 Nov 2024 18:01:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17F571D174F;
+	Tue, 19 Nov 2024 18:06:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mDxLJvKl"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZQfs1Z/Q"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C1AF1D221A
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 18:01:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C6C31D0F63
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 18:06:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732039297; cv=none; b=gSMw5NDowsPygCShYlmLf30l//J7WGIdmVRzxpahrJc2KQkoTkpMBQ0jrwkbHjPWRtMTDhLpA5wnPpl7CaChYk68OPGe4UdKkFdJLwIo/MtNH68okR3W2rhZ9ZaiAsqIPnK0Xa3i/lGh/DukZolX6lp9tPl0Tbc+FFhGaIrrFVA=
+	t=1732039562; cv=none; b=Ikz9Cr66yzZorezew9vdHfAYA7d/XYhXlXqGG8LgHLlCUmzlBcQaeDgvDibYDQ8BbcsE62IHhcnVXOKYf+gNsOaMNJe9CoP3+8nS4H1Cyf6OrEcwRPf8xxLM8Bp5sLIEKvBapUuLlgMq9qSaaQ0hcXZYPTpQ828kvZEcqWLWG/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732039297; c=relaxed/simple;
-	bh=FRCD0mklqsM8YzYKgxccyE8kvTxTAZqJyW2FOK9fwEU=;
-	h=Date:Message-Id:Mime-Version:Subject:From:To:Cc:Content-Type; b=Ia6EObg4Ew5s0pzbx2yUtgsZV8s9LlMbhXKzIUS/1tcGOqMlfd7VPsVRC0JY2xAjqCU88dagpsc8/j3SvZ6YfBfbodabkhmtNQIMzReQ6wxhfii1Hz+EOZKRvZzdJdU+W6Ahnh+GvQomdr6qjFW7E4hCccxr4yOETKgae42IA/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mDxLJvKl; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6ee57ae1133so52941927b3.0
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 10:01:35 -0800 (PST)
+	s=arc-20240116; t=1732039562; c=relaxed/simple;
+	bh=STE9JFqnlTAfZ/i/oOOtvS3HCy01Lw0yY8KiuXEVR/0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HfMmV36biYwWn25hboKpq7yGIgTOs7+w+0nVoO1svh7hXufeL8DU+xzzJKCnRlLBMxYqe0mSxaJOcE/9xAotrJK4p6Pzu4441cmsS8xs4v3BJL1U6QaoRrY7kHtxJfNDZtgE2/PFy8YDINVth0aFA33oTa/XMG973DCR+oy6ipw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZQfs1Z/Q; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20cb47387ceso12871535ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 10:06:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732039294; x=1732644094; darn=vger.kernel.org;
-        h=cc:to:from:subject:mime-version:message-id:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=TQFCW5HyokM6GPCpSGZP+kz1l/ptP37eeUF9xzXvHb0=;
-        b=mDxLJvKlRVvGJrydo4xi2l7efx1WLQdpGZ1g3a9gpZHD6ESGF7Mb6bMDIb9ljZETgH
-         4zO57Jlu/+w0CO5A/0J0mPA9+Luqm4Tv1C6LMM59x/0/awq6vjwIBWX3LACuaVwBeA+B
-         r7SLcAeLib39Ag4zy+qWsaFaJC/UEEVqZ8dlYd91AUEZ5hifpZwJ9v7sYJ1bCJar78y/
-         pFzbt8aALg4bRD4omusDd6Zg/fDgi77+fih32Nn5V9+Z/ZltomI9r6uHOFoqVtWJwOmv
-         sP4nbbAiBZ6kkIQKl6DwxLyKMxGMyo8bD6TEi8CafxP0va39wRSyyCjxVbMrV9RppiFX
-         mqFg==
+        d=gmail.com; s=20230601; t=1732039560; x=1732644360; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=y/FlE2aHc/QsNDaHWvtYvH2BMza0ovXyy81H1Sc5/I8=;
+        b=ZQfs1Z/Q9NBOGrFVvPOLfJ7E3+D7TMr+hEGOL8lhbusUVPzDVyTtrKCLcJEWrK3m9x
+         ditVTACC7qGMvmWtZp6pfmtXrcbHinobQ74BwqZqPxY5+XD9N06ETRTk1vVYPZqtlMxZ
+         Zfl2ryGBUJ6zt77wNomTaSBNTlsKdUDbQuiQ4nsN4xRjT9SzZkx9t1ttUilF0Bd8sFFX
+         l4dj8qg2gJhgYFVCaytZ4CDEpulQ/0DgkZ4UEPSMFrw3R8DVolIHpcHM8hdYGocR1Su6
+         zliwwY/R65ryZTXuKtHqRTufENLLIBYdsrvesrgnodSjY3YiJyat6GWEje+ixEeyUruy
+         HJFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732039294; x=1732644094;
-        h=cc:to:from:subject:mime-version:message-id:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=TQFCW5HyokM6GPCpSGZP+kz1l/ptP37eeUF9xzXvHb0=;
-        b=mGhXZUchrgMOuGtyFVfSJf9u+HpVI7bnpAm1YCwbfEtV5rUoKECWqu1LXs3gbLTpSD
-         EF8byKga8CCy9HroEvHFlPKYod/sVB8GKJkLK3fkhMwk/hkil+g4KsG+s0h/Wm8xXWY4
-         LSCBfYEd3t3X1SbPuk4DayA0y/B4j1L7o+T5XcSf6bmo0ZBuUe8tYsuqIMTpT07f4oxA
-         iUtc1R6V754cln3sXY0uLD3AJeivacQLDxSEhbpOFOp+kMaLFugCmB3NY5bw2rj76YjN
-         NLxgUDf+GCNXlgpssuIIaBMZR/jv+sswu7nY8EecjocqL8F8HzM6pUqlNGdW4OvmjMGV
-         zorA==
-X-Forwarded-Encrypted: i=1; AJvYcCVsKpRguKkp05EWGwu6c03i9ZbT1MM2TAXZkHXAm6IPVINoNU95CGEs2LI+PSXl3aI7VCXO8nM5mlN/6Zk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YymP2QFqHp29JS4dSaU4hrghZ/31SpmFirlHB6mQRJrvJsiJLZ2
-	RY3SyFi6lzXFhSVoV/PXMHnwD3aRY7kEeYPEkMVRQQ1eos93nm2bz5NDdI5q7g05ZKKHaEjw4QO
-	aoY/alw==
-X-Google-Smtp-Source: AGHT+IEaamOMz7Fi+3YLgkkmVXxvJJt7gmHsMBKdyAI1rOlv3UWwoAKvdNTU/6CyNZsrYp71LWCKSZKKZmJq
-X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:89d:ee73:740b:dfb3])
- (user=irogers job=sendgmr) by 2002:a05:690c:8c1b:b0:6e3:1702:b3e6 with SMTP
- id 00721157ae682-6ee55c8cf88mr588147b3.4.1732039294050; Tue, 19 Nov 2024
- 10:01:34 -0800 (PST)
-Date: Tue, 19 Nov 2024 10:01:30 -0800
-Message-Id: <20241119180130.19160-1-irogers@google.com>
+        d=1e100.net; s=20230601; t=1732039560; x=1732644360;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=y/FlE2aHc/QsNDaHWvtYvH2BMza0ovXyy81H1Sc5/I8=;
+        b=AWi7Azsc2b5TF/kO8VhShm3+KerhkhXqoBZqzVJ7IRX3xA+OjfJWASwrgtG21Uh8zj
+         Fw+VWO1BVtTRyOQLUxcDwYDstbJKb2I1CEqz+drdaFgBryxtU1ZWZC0Q86aht/vUIbqR
+         3Z36F6WdTNA2nQMDXJYHBhfXYhBZ7dDiLnRSWveDv9UR2FGqNqps7Y1Sqa7ArqHbGT3a
+         z0CEkuFNctMs8JllHTdk6N6B5+7yDuOpCbShta2TbYyRAcMRtvBPKWJyLIS9z2Ts4eEp
+         RQiYlKjwin1/T+9QSSmkPlFK5wMbHqgglmTVQZ6oebi37GcrMvdNSIl/sq1Uv/3v42RB
+         0bXA==
+X-Forwarded-Encrypted: i=1; AJvYcCVXnE0UTNbD+QpsbLq+yUxfuJfzJTp4xc4A65t5sSYUPG3P/GQ0IMOL76jaRmX5BiO+OfhroVYkvpFWy6s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YynBWnueONTLHIttt2+mw+l3GpR3wA+Wm1P0aM9atc88qezDCeC
+	iHr+sJGztv/q5IlNriyWnx76QAKmalasZtNrN8nwrFhN00tmkgbt
+X-Google-Smtp-Source: AGHT+IHH/C1zxnC4To6VFinpcC5jGM+peR5xpjNtpRKinlMIx6rqfBFFr6fAl9OaD/7nDysyGRldTg==
+X-Received: by 2002:a17:902:6acc:b0:211:6b21:73d9 with SMTP id d9443c01a7336-211d0ebf447mr170610775ad.37.1732039560385;
+        Tue, 19 Nov 2024 10:06:00 -0800 (PST)
+Received: from localhost ([38.141.211.103])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21223e5e1d2sm38932615ad.163.2024.11.19.10.05.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Nov 2024 10:05:59 -0800 (PST)
+From: Ragavendra <ragavendra.bn@gmail.com>
+To: tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	hpa@zytor.com,
+	thomas.lendacky@amd.com,
+	ardb@kernel.org,
+	tzimmermann@suse.de,
+	bhelgaas@google.com
+Cc: x86@kernel.org,
+	linux-kernel@vger.kernel.org,
+	Ragavendra <ragavendra.bn@gmail.com>
+Subject: [PATCH] Updating es_em_ctxt fi to zero
+Date: Tue, 19 Nov 2024 10:05:18 -0800
+Message-ID: <20241119180517.196079-2-ragavendra.bn@gmail.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.47.0.371.ga323438b13-goog
-Subject: [PATCH v1] perf script python: Improve physical mem type resolution
-From: Ian Rogers <irogers@google.com>
-To: Kan Liang <kan.liang@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Previously system RAM and persistent memory were hard code matched,
-change so that the label of the memory region is just read from
-/proc/iomem. This avoids frequent N/A samples.
+Updating es_em_ctxt to zero for the ctxt->fi variable in
+verify_exception_info when ES_EXCEPTION is returned.
 
-Change the /proc/iomem reading, event processing and output so that
-nested entries appear and their counts count toward their parent. As
-labels may be repeated, include the memory ranges in the output to
-make it clear why, for example, "System RAM" appears twice.
-
-Before:
-```
-Event: mem_inst_retired.all_loads:P
-Memory type                                    count  percentage
-----------------------------------------  ----------  ----------
-System RAM                                      9460        96.5%
-N/A                                              998         3.5%
-```
-
-After:
-```
-Event: mem_inst_retired.all_loads:P
-Memory type                                    count  percentage
-----------------------------------------  ----------  ----------
-100000000-105f7fffff : System RAM              36741        96.5
-  841400000-8416599ff : Kernel data               89         0.2
-  840800000-8412a6fff : Kernel rodata             60         0.2
-  841ebe000-8423fffff : Kernel bss                34         0.1
-0-fff : Reserved                                1345         3.5
-100000-89dd9fff : System RAM                       2         0.0
-```
-
-Before:
-```
-Event: mem_inst_retired.any:P
-Memory type                                    count  percentage
-----------------------------------------  -----------  -----------
-System RAM                                      9460        90.5%
-N/A                                              998         9.5%
-```
-
-After:
-```
-Event: mem_inst_retired.any:P
-Memory type                                    count  percentage
-----------------------------------------  ----------  ----------
-100000000-105f7fffff : System RAM               9460        90.5
-  841400000-8416599ff : Kernel data               45         0.4
-  840800000-8412a6fff : Kernel rodata             19         0.2
-  841ebe000-8423fffff : Kernel bss                12         0.1
-0-fff : Reserved                                 998         9.5
-```
-
-The code has been updated to python 3 with type hints and resolving
-issues reported by mypy and pylint. Tabs are swapped to spaces as
-preferred in PEP8, because most lines of code were modified (of this
-small file) and this makes pylint significantly less noisy.
-
-Signed-off-by: Ian Rogers <irogers@google.com>
+Fixes: 34ff65901735 x86/sev: Use kernel provided SVSM Calling Areas
+Signed-off-by: Ragavendra Nagraj <ragavendra.bn@gmail.com>
 ---
- tools/perf/scripts/python/mem-phys-addr.py | 177 ++++++++++++---------
- 1 file changed, 102 insertions(+), 75 deletions(-)
+ arch/x86/coco/sev/shared.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/tools/perf/scripts/python/mem-phys-addr.py b/tools/perf/scripts/python/mem-phys-addr.py
-index 1f332e72b9b0..5e237a5a5f1b 100644
---- a/tools/perf/scripts/python/mem-phys-addr.py
-+++ b/tools/perf/scripts/python/mem-phys-addr.py
-@@ -3,98 +3,125 @@
- #
- # Copyright (c) 2018, Intel Corporation.
- 
--from __future__ import division
--from __future__ import print_function
--
- import os
- import sys
--import struct
- import re
- import bisect
- import collections
-+from dataclasses import dataclass
-+from typing import (Dict, Optional)
- 
- sys.path.append(os.environ['PERF_EXEC_PATH'] + \
--	'/scripts/python/Perf-Trace-Util/lib/Perf/Trace')
-+    '/scripts/python/Perf-Trace-Util/lib/Perf/Trace')
+diff --git a/arch/x86/coco/sev/shared.c b/arch/x86/coco/sev/shared.c
+index 71de53194089..b8540d85e6f0 100644
+--- a/arch/x86/coco/sev/shared.c
++++ b/arch/x86/coco/sev/shared.c
+@@ -239,6 +239,8 @@ static enum es_result verify_exception_info(struct ghcb *ghcb, struct es_em_ctxt
+ 		if ((info & SVM_EVTINJ_VALID) &&
+ 		    ((v == X86_TRAP_GP) || (v == X86_TRAP_UD)) &&
+ 		    ((info & SVM_EVTINJ_TYPE_MASK) == SVM_EVTINJ_TYPE_EXEPT)) {
++			memset(&ctxt->fi, 0, sizeof(ctxt->fi));
 +
-+@dataclass(frozen=True)
-+class IomemEntry:
-+    """Read from a line in /proc/iomem"""
-+    begin: int
-+    end: int
-+    indent: int
-+    label: str
+ 			ctxt->fi.vector = v;
  
--#physical address ranges for System RAM
--system_ram = []
--#physical address ranges for Persistent Memory
--pmem = []
--#file object for proc iomem
--f = None
--#Count for each type of memory
--load_mem_type_cnt = collections.Counter()
--#perf event name
--event_name = None
-+# Physical memory layout from /proc/iomem. Key is the indent and then
-+# a list of ranges.
-+iomem: Dict[int, list[IomemEntry]] = collections.defaultdict(list)
-+# Child nodes from the iomem parent.
-+children: Dict[IomemEntry, set[IomemEntry]] = collections.defaultdict(set)
-+# Maximum indent seen before an entry in the iomem file.
-+max_indent: int = 0
-+# Count for each range of memory.
-+load_mem_type_cnt: Dict[IomemEntry, int] = collections.Counter()
-+# Perf event name set from the first sample in the data.
-+event_name: Optional[str] = None
- 
- def parse_iomem():
--	global f
--	f = open('/proc/iomem', 'r')
--	for i, j in enumerate(f):
--		m = re.split('-|:',j,2)
--		if m[2].strip() == 'System RAM':
--			system_ram.append(int(m[0], 16))
--			system_ram.append(int(m[1], 16))
--		if m[2].strip() == 'Persistent Memory':
--			pmem.append(int(m[0], 16))
--			pmem.append(int(m[1], 16))
-+    """Populate iomem from /proc/iomem file"""
-+    global iomem
-+    global max_indent
-+    global children
-+    with open('/proc/iomem', 'r', encoding='ascii') as f:
-+        for line in f:
-+            indent = 0
-+            while line[indent] == ' ':
-+                indent += 1
-+            if indent > max_indent:
-+                max_indent = indent
-+            m = re.split('-|:', line, 2)
-+            begin = int(m[0], 16)
-+            end = int(m[1], 16)
-+            label = m[2].strip()
-+            entry = IomemEntry(begin, end, indent, label)
-+            # Before adding entry, search for a parent node using its begin.
-+            if indent > 0:
-+                parent = find_memory_type(begin)
-+                assert parent, f"Given indent expected a parent for {label}"
-+                children[parent].add(entry)
-+            iomem[indent].append(entry)
- 
--def print_memory_type():
--	print("Event: %s" % (event_name))
--	print("%-40s  %10s  %10s\n" % ("Memory type", "count", "percentage"), end='')
--	print("%-40s  %10s  %10s\n" % ("----------------------------------------",
--					"-----------", "-----------"),
--					end='');
--	total = sum(load_mem_type_cnt.values())
--	for mem_type, count in sorted(load_mem_type_cnt.most_common(), \
--					key = lambda kv: (kv[1], kv[0]), reverse = True):
--		print("%-40s  %10d  %10.1f%%\n" %
--			(mem_type, count, 100 * count / total),
--			end='')
-+def find_memory_type(phys_addr) -> Optional[IomemEntry]:
-+    """Search iomem for the range containing phys_addr with the maximum indent"""
-+    for i in range(max_indent, -1, -1):
-+        if i not in iomem:
-+            continue
-+        position = bisect.bisect_right(iomem[i], phys_addr,
-+                                       key=lambda entry: entry.begin)
-+        if position is None:
-+            continue
-+        iomem_entry = iomem[i][position-1]
-+        if  iomem_entry.begin <= phys_addr <= iomem_entry.end:
-+            return iomem_entry
-+    print(f"Didn't find {phys_addr}")
-+    return None
- 
--def trace_begin():
--	parse_iomem()
-+def print_memory_type():
-+    print(f"Event: {event_name}")
-+    print(f"{'Memory type':<40}  {'count':>10}  {'percentage':>10}")
-+    print(f"{'-' * 40:<40}  {'-' * 10:>10}  {'-' * 10:>10}")
-+    total = sum(load_mem_type_cnt.values())
-+    # Add count from children into the parent.
-+    for i in range(max_indent, -1, -1):
-+        if i not in iomem:
-+            continue
-+        for entry in iomem[i]:
-+            global children
-+            for child in children[entry]:
-+                if load_mem_type_cnt[child] > 0:
-+                    load_mem_type_cnt[entry] += load_mem_type_cnt[child]
- 
--def trace_end():
--	print_memory_type()
--	f.close()
-+    def print_entries(entries):
-+        """Print counts from parents down to their children"""
-+        global children
-+        for entry in sorted(entries,
-+                            key = lambda entry: load_mem_type_cnt[entry],
-+                            reverse = True):
-+            count = load_mem_type_cnt[entry]
-+            if count > 0:
-+                mem_type = ' ' * entry.indent + f"{entry.begin:x}-{entry.end:x} : {entry.label}"
-+                percent = 100 * count / total
-+                print(f"{mem_type:<40}  {count:>10}  {percent:>10.1f}")
-+                print_entries(children[entry])
- 
--def is_system_ram(phys_addr):
--	#/proc/iomem is sorted
--	position = bisect.bisect(system_ram, phys_addr)
--	if position % 2 == 0:
--		return False
--	return True
-+    print_entries(iomem[0])
- 
--def is_persistent_mem(phys_addr):
--	position = bisect.bisect(pmem, phys_addr)
--	if position % 2 == 0:
--		return False
--	return True
-+def trace_begin():
-+    parse_iomem()
- 
--def find_memory_type(phys_addr):
--	if phys_addr == 0:
--		return "N/A"
--	if is_system_ram(phys_addr):
--		return "System RAM"
-+def trace_end():
-+    print_memory_type()
- 
--	if is_persistent_mem(phys_addr):
--		return "Persistent Memory"
-+def process_event(param_dict):
-+    if "sample" not in param_dict:
-+        return
- 
--	#slow path, search all
--	f.seek(0, 0)
--	for j in f:
--		m = re.split('-|:',j,2)
--		if int(m[0], 16) <= phys_addr <= int(m[1], 16):
--			return m[2]
--	return "N/A"
-+    sample = param_dict["sample"]
-+    if "phys_addr" not in sample:
-+        return
- 
--def process_event(param_dict):
--	name       = param_dict["ev_name"]
--	sample     = param_dict["sample"]
--	phys_addr  = sample["phys_addr"]
-+    phys_addr  = sample["phys_addr"]
-+    entry = find_memory_type(phys_addr)
-+    if entry:
-+        load_mem_type_cnt[entry] += 1
- 
--	global event_name
--	if event_name == None:
--		event_name = name
--	load_mem_type_cnt[find_memory_type(phys_addr)] += 1
-+    global event_name
-+    if event_name is None:
-+        event_name  = param_dict["ev_name"]
+ 			if (info & SVM_EVTINJ_VALID_ERR)
 -- 
-2.47.0.338.g60cca15819-goog
+2.46.1
 
 
