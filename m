@@ -1,619 +1,669 @@
-Return-Path: <linux-kernel+bounces-413651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BD409D1CE4
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 02:04:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E7849D1CE5
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 02:04:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 155B81F2214E
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 01:04:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30338282D6D
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 01:04:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82F4738FA6;
-	Tue, 19 Nov 2024 01:03:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C425143179;
+	Tue, 19 Nov 2024 01:03:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="V59mTlbn";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="y7HMcZ/b"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="q4RIUE2J"
+Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8139A93D;
-	Tue, 19 Nov 2024 01:03:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731978233; cv=fail; b=aHWI442eF1hMv7N13d5LEb7BLSfdOeYNi8cqbBcHOefhxj8ePHS7Lcrg3XKRVuZlbI7RwJqOetz9m5Vn0FbZF7MXOgscjn05iaD3fVwYqx7oQ6bzjcDY3ptq5FotY+FDNnq4UOK8Gmoha5AHa/Pdiisxa8IB46yRA+b1DHysuwg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731978233; c=relaxed/simple;
-	bh=WpDuYoRIrMZWZnHYZ8uLku2D0teBMlRM4qK/rb1qoKc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=jP4A9epV8C2Yin0B4HNcraRDXpp8T/GChSyl/z3M0CBgQaGONqHcx9/jSEwh+/rhBWd7ti2OdYgfKTp8YDE0HEKRlFm3JRhm0hrmv8s5RJF61uzGgR55+uAfUlq38FPhB1fVyqfuwdmvJhpHc6HxV83WiHdLX7Lz48nFUxaAytQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=V59mTlbn; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=y7HMcZ/b; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AINMqa9012644;
-	Tue, 19 Nov 2024 01:03:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2023-11-20; bh=K3FaWucJWRP6AWPmJa
-	Sb50bZpCVgpX70/B3/FXxeNsE=; b=V59mTlbn9H7XJZgiWvR6NPR0qIVuSvWlS3
-	xbRoJs4EPJDNkQ9TrxT3TnAxshftulzFethA7Cdoqw+YLwjXT9Dvrp1BqzKb2yTA
-	93uR2i4evwywwPCJnzvz2o+Iqs3RmT3gS9j6gYRw25hB73vbN0tfxdQbw3L+sNA5
-	GwDfscsOlry8s292ry59NQukZK+1ohNHiGd3Sbx7SKXfFeatvBFB/Q7/ingwrTKw
-	oWAdtbx10nWLS8jU71juR6zWKjRAicGPpfEd3Zdh2lQ19YJGCvc4wYWGNOTzNxdY
-	FecmGzKXNkRtIyKd4mkBGXo25TPr6H2eQbkYkU7arUKiLWZWa2uA==
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 42xhyybyfg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 19 Nov 2024 01:03:38 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 4AINj6BI036497;
-	Tue, 19 Nov 2024 01:03:37 GMT
-Received: from nam11-co1-obe.outbound.protection.outlook.com (mail-co1nam11lp2168.outbound.protection.outlook.com [104.47.56.168])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 42xhu7vr78-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 19 Nov 2024 01:03:36 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=WJcj/QngtMHIS+7z8lUtmTVCMKikoz/1yAzOL09VPa0nDe39QKOr4oIXNOIr/W3q81pjcUdK9/mSv1YWncHo62XULaadc5JvmCpRtUmiazwGsA7qmCnutpiDHb4aecwV+7yR84yoG1xriHV86t/UqecMBWTkSZYR85GeCPAcwTHYlavHGiOTgsgKQ4jZ/IDF7JQWEGhqZ1YNeBrDIHEqqnoyfca3n8+jjlOSMHrYx7Ve614P65uKkDs3rCx27Gi6xva+/3uXG8ucqRqjuXLOVYIPFO1SIoFP6Y8WeFtqK2rF3pCOOs1DoadCbM/lSXYK+Q8mRVxh0c5S307efJ8dmA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=K3FaWucJWRP6AWPmJaSb50bZpCVgpX70/B3/FXxeNsE=;
- b=UtqdP5pbklm+R0P90w6qwWQQLjVPfOX6Bml+vPhs/5ZzMz5FxdVIfWin8FPD1n7vfSWf85GCHG9GJIuYssR2iXGJJlychFrQxxDntv43ILI7sKhT/2MB3jDwAjNCRXdM4z+MS3PNHtyMDodyOC+FiBP++ON30yPljA1URp3uH4v70voaFyfSFVzjttiBkiV3Egjn7JXccgAt2j/nAZ0tRrdFcxtdYvP7aXTGg+MWFlXRfnCytGj393zBn6ix0NaU96ocf3NPnfjb5BAYtHPkkpJBxqlV7K3OeUTdUV2h/u7vHavy1eTZ5U9XZJuHn6Ix+XmrpoGxI/bkf+wQ15z9mg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B1AD381AF
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 01:03:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731978235; cv=none; b=tlosj/xvyX34YIRvV43HkwSW3btZpafBnZ2vuAdbyJGbcAykptxMGaFlCk9E3hBQH2BpZSy190P99bymnMn/jS0QDcYPwj4m3LQ8rUqFbZVhtuyvhoMyvLU7FyWnYtNUcSX+m1a0+T2Uj02xF8gBf8N0y4ctwDDgfCbsSzB1Ubo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731978235; c=relaxed/simple;
+	bh=ILMThtuJukZMbaHpdp2HyhvT1aUGhnLphDv3QOandVA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aniD2T+KrcfGXi3tKjnOG4TNMAopE1O8aDcDZu08kxonxgyAn38aUof19aqez7Z/VZZauUQkTqC6iV7r470yLEc5rR7Ij7aFhKs3Tbr7COZipC57QyKRw0BJpfEJ33OapYjxTeXlbYh7581UiyAqXIBS98/BMijQIZkJAxD1Ous=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=q4RIUE2J; arc=none smtp.client-ip=209.85.166.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-3a4e4776f79so53355ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 17:03:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=K3FaWucJWRP6AWPmJaSb50bZpCVgpX70/B3/FXxeNsE=;
- b=y7HMcZ/bA1fRZwHBUcD+Cq3gLKLgyF8APTYAD/+cOSQdBJPP0FLFrXsz7YhBSxnNrpeKDuRgGolIP7kidlDtY3jjn73nxBTjHD65cfbnwZMncQxhp8uwOh4za4S4OHuhvjgbIGFeTa3JeU2qdYdbbTrXoG2JAZ1fRV2OikG5Jug=
-Received: from BN0PR10MB5128.namprd10.prod.outlook.com (2603:10b6:408:117::24)
- by DM4PR10MB5917.namprd10.prod.outlook.com (2603:10b6:8:b1::5) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8158.22; Tue, 19 Nov 2024 01:03:28 +0000
-Received: from BN0PR10MB5128.namprd10.prod.outlook.com
- ([fe80::743a:3154:40da:cf90]) by BN0PR10MB5128.namprd10.prod.outlook.com
- ([fe80::743a:3154:40da:cf90%4]) with mapi id 15.20.8158.023; Tue, 19 Nov 2024
- 01:03:27 +0000
-Date: Mon, 18 Nov 2024 20:03:24 -0500
-From: Chuck Lever <chuck.lever@oracle.com>
-To: NeilBrown <neilb@suse.de>
-Cc: Jeff Layton <jlayton@kernel.org>, Olga Kornievskaia <okorniev@redhat.com>,
-        Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
-        Jonathan Corbet <corbet@lwn.net>, Trond Myklebust <trondmy@kernel.org>,
-        Anna Schumaker <anna@kernel.org>, Thomas Haynes <loghyr@gmail.com>,
-        linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org
-Subject: Re: [PATCH 5/6] nfsd: add support for delegated timestamps
-Message-ID: <Zzvj3BdZg2sxB+SF@tissot.1015granger.net>
-References: <20241014-delstid-v1-0-7ce8a2f4dd24@kernel.org>
- <20241014-delstid-v1-5-7ce8a2f4dd24@kernel.org>
- <173197809388.1734440.12511559535515038071@noble.neil.brown.name>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <173197809388.1734440.12511559535515038071@noble.neil.brown.name>
-X-ClientProxiedBy: CH5PR04CA0010.namprd04.prod.outlook.com
- (2603:10b6:610:1f4::18) To BN0PR10MB5128.namprd10.prod.outlook.com
- (2603:10b6:408:117::24)
+        d=google.com; s=20230601; t=1731978233; x=1732583033; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DA9rDlvHIHi7yGi+kw0V+50bIO2WwY8J/y9wwmA7KNU=;
+        b=q4RIUE2Jp1mB9t8eA+fth5pm5P6tcPVp7phbcf28y8xACmB+kQjBhnM4L3GyfeRlao
+         Rf1WQQtxB+43LmbRqzmH8dgPnA4zAoH9d64/07laykkXL0Wk9BE9Ru35Hyl4fs+wOX2H
+         fq+grkYYvZssrheY8/EylEJSx1TutbqhDRX2vtbW9I90QA3jO/raWYb/vGYpKh9aklw7
+         /A51jx+m+kodr76PCtIcaGVJ7Kcya8Ttqhb/L1It5V8M9XUCf9to8EoITDwFTedkW9YR
+         DDZ+XDWLukLtIoarareXDyuy4N/iPgO361MkhBQx5YhccuETN6g1Qedh/on4AwncMAuw
+         cTRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731978233; x=1732583033;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DA9rDlvHIHi7yGi+kw0V+50bIO2WwY8J/y9wwmA7KNU=;
+        b=K/OS+SiwunY5qk7Xz4r6qGU7p760dHcN2PqFEF1BxTqLpsSGgu/hvXO1nWHlg1E6ti
+         IBQOQp3joEcxu/fjTjSaiNBEbaFMo97JhuT887DrofUJRjGaCQfW9rhQfpz6AqhDXn8c
+         2YDJInU/KIVXNiYYgGfmoUjIyQasSb7OWbL37zwluP7x8ZnjeLhVNbfV2QZWvbkJaP5s
+         hM+HlY/wuYzBCSeMPw2vXGkjNSCOu9oZUxjRA/6st2ov57ginX04mhy84GDlQXR+stiW
+         sXkl72kcMOWDbuOTE19N53lQ9rejyglyS4poQlT1jT4NvpmOXrjb07fT1CwqTR6FKuML
+         5u/g==
+X-Forwarded-Encrypted: i=1; AJvYcCWLoOL0kO41NhIPDQ/pgu3wFdFtslFlfLCOkDtSJYvE1Ssf6PRXDo5nmutwqHTyLpztHp0wpGg0czOTSJU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwvznCMbM+sub4rIOjtF075vE9OQeqTnd5rML8l75ZMDMXFLw+E
+	9+FDt7K56J5SCrMpMkHIu9ySGGRyifEag7TAk/kagAEfCIucTarPnYf/fqJ7ZtBGrJZtVmVdvRd
+	7wnyPTRodvH4UWVSMxxjhQti9zLy5YemjspJH
+X-Gm-Gg: ASbGncvUuPcUuU4bsyka6W2VbcA/d+7+7eCmSZPuY59+JtKXCoObSGAFT9RpuYWToiL
+	avAiAUgcyEZ9LdKi0IWcR2Ldo0aU0YGA0
+X-Google-Smtp-Source: AGHT+IFgN4C+Z0C2toxDvFv9l6ONOveg3k1sk0+6Cq8mMlVdyGi7gFZRaVJCNiNIkLHnuEogl3hm9crAjYYzEh6qLO8=
+X-Received: by 2002:a05:6e02:1a65:b0:3a3:632e:efed with SMTP id
+ e9e14a558f8ab-3a7782b2212mr1568695ab.26.1731978232378; Mon, 18 Nov 2024
+ 17:03:52 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN0PR10MB5128:EE_|DM4PR10MB5917:EE_
-X-MS-Office365-Filtering-Correlation-Id: ce1c93e1-8c58-4295-0bdf-08dd0835f9c7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?frLweFLbwZ2q0AX9Zw6C50uo+r/aDGL2O1di7oWxu43j2Z2VOihs+IGDlOJT?=
- =?us-ascii?Q?DrZw01g00ygF8FrDJbXI2O51LjdTGSb8mNKXiNbiTAODshTXvjyUiLbg25TI?=
- =?us-ascii?Q?jwoCrsi6BupVvcpvptn8JvBybHt5oV8GIPL1TkoMSbK4jiLBo1bqKVsZPODU?=
- =?us-ascii?Q?V1J4HYhaKyBydNElDlT/5m9Q1Mm4ZZe5Kv6V4KGKhAAJEaRKb57auhMHG6M2?=
- =?us-ascii?Q?hjOtVDKQH2M5Xt8OnRVmMpknoVG0eIrm06aCfJHxPUq3lwaGcEcgVQj9nNfR?=
- =?us-ascii?Q?BMeARWkaBdQDUMG+l+C5HieufdfO/fw48XjKw7RHHwiTaB+vRJ3MyzphUaeA?=
- =?us-ascii?Q?iqKolJ/E9xwpJsCZCFDHVkVUU8G6rCCvRiaDYvoZ1soNHEhQtE5ZnYMhdLzi?=
- =?us-ascii?Q?n+JnxnmtLln6xNtftwEp/otQXAKlye8QqWhLVnONm6MaunuzO6Vm4CRINQoi?=
- =?us-ascii?Q?/+kRDGuuo0+ljjspgIuDddGp+YAdFx7LRYJ4z/zZ/DlOezL57XTb56SEP/0B?=
- =?us-ascii?Q?OjEu919BQijhQL1srJMeG2Vqi0iztjHDf4iMzIgQ1AEhC7vohFSjsNZSUNvT?=
- =?us-ascii?Q?2FiWjf/sF/72tPS1h390dg/wUhXKLb7DkGRud924JsSNDokofqGwbAeLSgMm?=
- =?us-ascii?Q?brBLwfVaFu2UPAUZV2UW824+PhBR08q+mJkUherqvYpwXXAG1XUX2arzkRLp?=
- =?us-ascii?Q?cPDWoCiccKXzoeaf54oW1nLniqmfM2cL3urffP8gsv/htvOwOjdSK1CSv64t?=
- =?us-ascii?Q?ieab3M4WKKieA1Xugb/A5EK+467f+WVML7wmdjCYkcEwheOBDcfytShiFNA0?=
- =?us-ascii?Q?iQQ1MAiGnL14QAe8+fPmGngjOo2RPJYzIv9ZRZ5TyrrNZBL/ql1BAqG4lLtG?=
- =?us-ascii?Q?pkWr9BpxJQ951lLb3xyEuwzv+9h/WjzaErHXMbgz4nwjs44LQUBUgOec7lpn?=
- =?us-ascii?Q?t+P+Drx2yRHGorfBKJ2WgFEkuSjL2+Tk22MPnQ6au7iweuZRSEWSJ7Q7iw3h?=
- =?us-ascii?Q?8nJXgZvwFYt7p2GHa8a3MaJ5pUxCGix18AKHwoyEIWcohpeODeH8QFwidD7/?=
- =?us-ascii?Q?IZnvSxhkZdLTcA9YauzeUEVrK4oI/a8NpOBkdn0yoo4fCLNfTS6MU8OYgj8/?=
- =?us-ascii?Q?kNld3Cj56xty8lJq2LVS2yCgBKqxLGL62iLIZayzUKUeWzv+F2bOlbS1kJAi?=
- =?us-ascii?Q?l1h0xmk9RAoYcYeQ/yV62MWKY8Oo1HUzgPPG84jFtlUoRLjSgz2S0NEYI50O?=
- =?us-ascii?Q?VVv+w7BIagOMsq80xp/ZTpVHsEkQ+N5qk25zhR8Fp2q7ZtdxJSDzHyQHMvJk?=
- =?us-ascii?Q?t4s=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN0PR10MB5128.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Qi+RCTkvFD9ThXDrVXezdkh2tho+3xQpejHegIgUXTDEkcG3F6a1ae0R3rsl?=
- =?us-ascii?Q?bqfQYcO7giy6BTj+Azl2a2rhm67fvwo9p6BUniQPta6s/CIm70JBcrpu6Rw7?=
- =?us-ascii?Q?YTUNpb7UZhoY1MqswkGP6d7NC5gtDWML66PGslZ3i1Z1Rmk/mdKpKI2QWvI+?=
- =?us-ascii?Q?hDA1xV4vjKUmts23/zhvKP2imNUcls6MOWq+ivpsTod1PWjPAIrNu6SE3UTj?=
- =?us-ascii?Q?5/MEtIrIPb3lhwYdTSS5d8mXPdQUaDVWZWxAI6rTQ7PVf7VTeBtwFjovSfrx?=
- =?us-ascii?Q?+QTBDz5C55OLDxH/Gqptl5r5yyXY1SfmB6EaPkrRAhjf86DuMzy9mduCniML?=
- =?us-ascii?Q?nfaNLeD64pCKJZyo69xL3kK5g9X8wEDCnavzS/mv9QDqbrI5Nr38Zb5YwZaT?=
- =?us-ascii?Q?K3SUmP8myC36CIpnalwCfqxy0L6v+Q07t4TQFcTYQxCRXEVZ5Kre6xCi7KC9?=
- =?us-ascii?Q?HNn0F+RKjIEArVweKI4ptQavdL8OVHzpMJIaGgbp7gE1TQQ8gNC83Zm/B7ig?=
- =?us-ascii?Q?hemYQZhsLmKliOmThxJLej8U9iwcQye5k2d11Hc77ZCzd0c3R7KFS+E8akvn?=
- =?us-ascii?Q?v1LVJB04TFLc7GV8sco4knaOA9rKVRiotUI9v37nJiwOQMwNBfRx29QlztLg?=
- =?us-ascii?Q?x3eTyIt1/R6pD+c0tKzuUGfFR+w9izMb7LUW4WhbeZngfWrYt+styGAS6YRO?=
- =?us-ascii?Q?7u64pbXWoMJQRdbxxPZttyfkkThA9JqpwFPYRkWtC+b2knSY230DHQ93i7pz?=
- =?us-ascii?Q?mX+eAWPG9ORdjAWEtIQdbRoLcF6cDt1nbrRGNwE17HkvGTqjD6HUvRyoU4HF?=
- =?us-ascii?Q?U6NfPDr6PIYzE4Iic/JtMQfHCAvWnOZsip7nSRg8B/7B/Z+KBEPfza9SOPd2?=
- =?us-ascii?Q?GHJUFSg4UH+ZzmGn0Eb7eECMxsl3RQsgqgL5QAZ5WLDboPrhITtOc1HYN21x?=
- =?us-ascii?Q?89m105ctpqH+L+yAnxnXx9Cwl5cjo8J8jd7I3t8gSK5I/yPjS5O7sp5ddlAQ?=
- =?us-ascii?Q?ml7JDJcBYvJNrV1fvhJzDDCYeYzE+XFKFtHZNDZXIhLlaabrCxZ/OUmUlvAs?=
- =?us-ascii?Q?bv/plpXEQbcBpahNUm3ybWxQv5jtww+e9wPTL9Ysu3xG64gkHIJfgMGbz0BX?=
- =?us-ascii?Q?mI3sTm9E3ew5FFmIvDklfuVGUfXDCs+5PhFxO42KMp5sinG/vNICHAV3arcp?=
- =?us-ascii?Q?iqjSha8tau0XbF79dZtgXXmKk52aE3NJTt7KPxRaq96I8oF40kaOJyTEQV4A?=
- =?us-ascii?Q?9t6QT6UjrujBkDLg0+L7MwtYI/IiQG39zA4SZ+h1ABd2njAZ0m5jdebZfPeY?=
- =?us-ascii?Q?u4qK7WIqgy+zL4QamJdE+Abs08uH4RzCieinvEQ7nHO0eUH9kLqec6Hi+VlM?=
- =?us-ascii?Q?lAZjS2xBcd1YrdvYFj/OEsUmjvvJOXTzeTF6UUqk4F2VdRsonIaShOYcshFQ?=
- =?us-ascii?Q?NvxL8bukSyXl58CDuoDRLuWt8DxFBE8ZPKjDN9vZ0zssw62jJLV/cS1lHemY?=
- =?us-ascii?Q?DO8kkxyCV8Q3I7Z9++MoGWEzGsOpVD9pFo8ItYZZ+IEioKc5AUdPR6KKuL7c?=
- =?us-ascii?Q?gDbSKgryD2F3Qv4Q35IojUAzEdP6xTBXbEBJGQCg?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	ioI8J32lXiAeUdxBr/WHPCWnl0XmzLjhJfPBbVrLXQGEE/pxItZuCtWFKiiJOTCyw1GVjXmXrJVsUmPzlDpgGCTpK1DHuervDh8ZR9EbDLWPCo9k4uO+pUJUaGpiC3dnmuSYtPdZt0RXUVQCr1hPQs4Hq1pFJ/uCSSjFoaUp2RfJpbc2Rr2SpaF/mgbXf9KtZgSj8rFm9m/nWLoP7SjjxOImhP+PR/NmAHtVKGl+vSOVzi5TRlPEtDP4d80xdGRfJRZxkIcD+AGObVIX5ARMpV5VQ2ra/oOIrw8CYQS/r9YqLhETSxU/msfTVFSI8O9jaI3BbRIUIse/l2OGwS2XIgG+Lmj6OnzggA3ipthkCQaZ8ZNgKWEyCya1KMcbZG4i1rtrv6bXu2jTolL8egrds2OcsSz+yt2X1SYfKjOi7NqvstPQ++X1yxeonND2C/tGgHELI/g0Fo8P3rDn8W0IFVF3s11Nu6yPDpqGihoW2R0gKotNmdm9mC62g7dOLCXzcBsKhUg/O1539zmkktxbwX7T8bdUMQzPX8tzXcW3csum2P4FUDGYdqWzWGehYiypbIlkqyhaGDurJQ+dH91S0LfUeGcLxBjR+qHg+bS/ohQ=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ce1c93e1-8c58-4295-0bdf-08dd0835f9c7
-X-MS-Exchange-CrossTenant-AuthSource: BN0PR10MB5128.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Nov 2024 01:03:27.4803
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: clUzqcSMglXvz/fk+6u6AF2Jjhtq5+EjBF4bE/H6IH7V1JaQYkTX5xFGERs/E6ZW3xE4Nvo/c6X/1w6UmnFCdQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR10MB5917
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-11-18_17,2024-11-18_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 adultscore=0 mlxlogscore=999
- phishscore=0 spamscore=0 suspectscore=0 malwarescore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2409260000
- definitions=main-2411190008
-X-Proofpoint-ORIG-GUID: CPKtfgfl5TuyVdPPBd1j2BGNp1ONyr3f
-X-Proofpoint-GUID: CPKtfgfl5TuyVdPPBd1j2BGNp1ONyr3f
+References: <20241109061809.811922-1-irogers@google.com> <20241109061809.811922-16-irogers@google.com>
+ <Zzvac4IeX9nDDitm@google.com>
+In-Reply-To: <Zzvac4IeX9nDDitm@google.com>
+From: Ian Rogers <irogers@google.com>
+Date: Mon, 18 Nov 2024 17:03:41 -0800
+Message-ID: <CAP-5=fUPksNCJ-NqUbJMDpfS7kkmXGsCVhvALkts8HDv42NUyg@mail.gmail.com>
+Subject: Re: [PATCH v6 15/22] perf lock: Move common lock contention code to
+ new file
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	James Clark <james.clark@linaro.org>, Howard Chu <howardchu95@gmail.com>, 
+	Athira Jajeev <atrajeev@linux.vnet.ibm.com>, Michael Petlan <mpetlan@redhat.com>, 
+	Veronika Molnarova <vmolnaro@redhat.com>, Dapeng Mi <dapeng1.mi@linux.intel.com>, 
+	Thomas Richter <tmricht@linux.ibm.com>, Ilya Leoshkevich <iii@linux.ibm.com>, 
+	Colin Ian King <colin.i.king@gmail.com>, Weilin Wang <weilin.wang@intel.com>, 
+	Andi Kleen <ak@linux.intel.com>, Josh Poimboeuf <jpoimboe@redhat.com>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, Arnaldo Carvalho de Melo <acme@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 19, 2024 at 12:01:33PM +1100, NeilBrown wrote:
-> On Tue, 15 Oct 2024, Jeff Layton wrote:
-> > Add support for the delegated timestamps on write delegations. This
-> > allows the server to proxy timestamps from the delegation holder to
-> > other clients that are doing GETATTRs vs. the same inode.
-> > 
-> > When OPEN4_SHARE_ACCESS_WANT_DELEG_TIMESTAMPS bit is set in the OPEN
-> > call, set the dl_type to the *_ATTRS_DELEG flavor of delegation.
-> > 
-> > Add timespec64 fields to nfs4_cb_fattr and decode the timestamps into
-> > those. Vet those timestamps according to the delstid spec and update
-> > the inode attrs if necessary.
-> > 
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
+On Mon, Nov 18, 2024 at 4:23=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
+wrote:
+>
+> On Fri, Nov 08, 2024 at 10:18:02PM -0800, Ian Rogers wrote:
+> > Avoid references from util code to builtin-lock that require python
+> > stubs. Move the functions and related variables to
+> > util/lock-contention.c. Add max_stack_depth parameter to
+> > match_callstack_filter to avoid sharing a global variable.
+> >
+> > Signed-off-by: Ian Rogers <irogers@google.com>
+> > Acked-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 > > ---
-> >  fs/nfsd/nfs4callback.c | 42 +++++++++++++++++++--
-> >  fs/nfsd/nfs4state.c    | 99 +++++++++++++++++++++++++++++++++++++++++++-------
-> >  fs/nfsd/nfs4xdr.c      | 13 ++++++-
-> >  fs/nfsd/nfsd.h         |  2 +
-> >  fs/nfsd/state.h        |  2 +
-> >  fs/nfsd/xdr4cb.h       | 10 +++--
-> >  include/linux/time64.h |  5 +++
-> >  7 files changed, 151 insertions(+), 22 deletions(-)
-> > 
-> > diff --git a/fs/nfsd/nfs4callback.c b/fs/nfsd/nfs4callback.c
-> > index 776838bb83e6b707a4df76326cdc68f32daf1755..08245596289a960eb8b2e78df276544e7d3f4ff8 100644
-> > --- a/fs/nfsd/nfs4callback.c
-> > +++ b/fs/nfsd/nfs4callback.c
-> > @@ -42,6 +42,7 @@
-> >  #include "trace.h"
-> >  #include "xdr4cb.h"
-> >  #include "xdr4.h"
-> > +#include "nfs4xdr_gen.h"
-> >  
-> >  #define NFSDDBG_FACILITY                NFSDDBG_PROC
-> >  
-> > @@ -93,12 +94,35 @@ static int decode_cb_fattr4(struct xdr_stream *xdr, uint32_t *bitmap,
+> >  tools/perf/builtin-lock.c             | 137 +--------------------
+> >  tools/perf/util/Build                 |   1 +
+> >  tools/perf/util/bpf_lock_contention.c |   2 +-
+> >  tools/perf/util/lock-contention.c     | 170 ++++++++++++++++++++++++++
+> >  tools/perf/util/lock-contention.h     |  37 ++----
+> >  tools/perf/util/python.c              |  17 ---
+> >  6 files changed, 185 insertions(+), 179 deletions(-)
+> >  create mode 100644 tools/perf/util/lock-contention.c
+> >
+> > diff --git a/tools/perf/builtin-lock.c b/tools/perf/builtin-lock.c
+> > index 062e2b56a2ab..f66948b1fbed 100644
+> > --- a/tools/perf/builtin-lock.c
+> > +++ b/tools/perf/builtin-lock.c
+> > @@ -46,15 +46,6 @@
+> >  static struct perf_session *session;
+> >  static struct target target;
+> >
+> > -/* based on kernel/lockdep.c */
+> > -#define LOCKHASH_BITS                12
+> > -#define LOCKHASH_SIZE                (1UL << LOCKHASH_BITS)
+> > -
+> > -static struct hlist_head *lockhash_table;
+> > -
+> > -#define __lockhashfn(key)    hash_long((unsigned long)key, LOCKHASH_BI=
+TS)
+> > -#define lockhashentry(key)   (lockhash_table + __lockhashfn((key)))
+> > -
+> >  static struct rb_root                thread_stats;
+> >
+> >  static bool combine_locks;
+> > @@ -67,24 +58,13 @@ static unsigned long bpf_map_entries =3D MAX_ENTRIE=
+S;
+> >  static int max_stack_depth =3D CONTENTION_STACK_DEPTH;
+> >  static int stack_skip =3D CONTENTION_STACK_SKIP;
+> >  static int print_nr_entries =3D INT_MAX / 2;
+> > -static LIST_HEAD(callstack_filters);
+> >  static const char *output_name =3D NULL;
+> >  static FILE *lock_output;
+> >
+> > -struct callstack_filter {
+> > -     struct list_head list;
+> > -     char name[];
+> > -};
+> > -
+> >  static struct lock_filter filters;
+> >
+> >  static enum lock_aggr_mode aggr_mode =3D LOCK_AGGR_ADDR;
+> >
+> > -static bool needs_callstack(void)
+> > -{
+> > -     return !list_empty(&callstack_filters);
+> > -}
+> > -
+> >  static struct thread_stat *thread_stat_find(u32 tid)
 > >  {
-> >  	fattr->ncf_cb_change = 0;
-> >  	fattr->ncf_cb_fsize = 0;
-> > +	fattr->ncf_cb_atime.tv_sec = 0;
-> > +	fattr->ncf_cb_atime.tv_nsec = 0;
-> > +	fattr->ncf_cb_mtime.tv_sec = 0;
-> > +	fattr->ncf_cb_mtime.tv_nsec = 0;
-> > +
-> >  	if (bitmap[0] & FATTR4_WORD0_CHANGE)
-> >  		if (xdr_stream_decode_u64(xdr, &fattr->ncf_cb_change) < 0)
-> >  			return -NFSERR_BAD_XDR;
-> >  	if (bitmap[0] & FATTR4_WORD0_SIZE)
-> >  		if (xdr_stream_decode_u64(xdr, &fattr->ncf_cb_fsize) < 0)
-> >  			return -NFSERR_BAD_XDR;
-> > +	if (bitmap[2] & FATTR4_WORD2_TIME_DELEG_ACCESS) {
-> > +		fattr4_time_deleg_access access;
-> > +
-> > +		if (!xdrgen_decode_fattr4_time_deleg_access(xdr, &access))
-> > +			return -NFSERR_BAD_XDR;
-> > +		fattr->ncf_cb_atime.tv_sec = access.seconds;
-> > +		fattr->ncf_cb_atime.tv_nsec = access.nseconds;
-> > +
-> > +	}
-> > +	if (bitmap[2] & FATTR4_WORD2_TIME_DELEG_MODIFY) {
-> > +		fattr4_time_deleg_modify modify;
-> > +
-> > +		if (!xdrgen_decode_fattr4_time_deleg_modify(xdr, &modify))
-> > +			return -NFSERR_BAD_XDR;
-> > +		fattr->ncf_cb_mtime.tv_sec = modify.seconds;
-> > +		fattr->ncf_cb_mtime.tv_nsec = modify.nseconds;
-> > +
-> > +	}
-> >  	return 0;
+> >       struct rb_node *node;
+> > @@ -477,93 +457,6 @@ static struct lock_stat *pop_from_result(void)
+> >       return container_of(node, struct lock_stat, rb);
 > >  }
-> >  
-> > @@ -364,15 +388,21 @@ encode_cb_getattr4args(struct xdr_stream *xdr, struct nfs4_cb_compound_hdr *hdr,
-> >  	struct nfs4_delegation *dp = container_of(fattr, struct nfs4_delegation, dl_cb_fattr);
-> >  	struct knfsd_fh *fh = &dp->dl_stid.sc_file->fi_fhandle;
-> >  	struct nfs4_cb_fattr *ncf = &dp->dl_cb_fattr;
-> > -	u32 bmap[1];
-> > +	u32 bmap_size = 1;
-> > +	u32 bmap[3];
-> >  
-> >  	bmap[0] = FATTR4_WORD0_SIZE;
-> >  	if (!ncf->ncf_file_modified)
-> >  		bmap[0] |= FATTR4_WORD0_CHANGE;
-> >  
-> > +	if (deleg_attrs_deleg(dp->dl_type)) {
-> > +		bmap[1] = 0;
-> > +		bmap[2] = FATTR4_WORD2_TIME_DELEG_ACCESS | FATTR4_WORD2_TIME_DELEG_MODIFY;
-> > +		bmap_size = 3;
-> > +	}
-> >  	encode_nfs_cb_opnum4(xdr, OP_CB_GETATTR);
-> >  	encode_nfs_fh4(xdr, fh);
-> > -	encode_bitmap4(xdr, bmap, ARRAY_SIZE(bmap));
-> > +	encode_bitmap4(xdr, bmap, bmap_size);
-> >  	hdr->nops++;
+> >
+> > -struct lock_stat *lock_stat_find(u64 addr)
+> > -{
+> > -     struct hlist_head *entry =3D lockhashentry(addr);
+> > -     struct lock_stat *ret;
+> > -
+> > -     hlist_for_each_entry(ret, entry, hash_entry) {
+> > -             if (ret->addr =3D=3D addr)
+> > -                     return ret;
+> > -     }
+> > -     return NULL;
+> > -}
+> > -
+> > -struct lock_stat *lock_stat_findnew(u64 addr, const char *name, int fl=
+ags)
+> > -{
+> > -     struct hlist_head *entry =3D lockhashentry(addr);
+> > -     struct lock_stat *ret, *new;
+> > -
+> > -     hlist_for_each_entry(ret, entry, hash_entry) {
+> > -             if (ret->addr =3D=3D addr)
+> > -                     return ret;
+> > -     }
+> > -
+> > -     new =3D zalloc(sizeof(struct lock_stat));
+> > -     if (!new)
+> > -             goto alloc_failed;
+> > -
+> > -     new->addr =3D addr;
+> > -     new->name =3D strdup(name);
+> > -     if (!new->name) {
+> > -             free(new);
+> > -             goto alloc_failed;
+> > -     }
+> > -
+> > -     new->flags =3D flags;
+> > -     new->wait_time_min =3D ULLONG_MAX;
+> > -
+> > -     hlist_add_head(&new->hash_entry, entry);
+> > -     return new;
+> > -
+> > -alloc_failed:
+> > -     pr_err("memory allocation failed\n");
+> > -     return NULL;
+> > -}
+> > -
+> > -bool match_callstack_filter(struct machine *machine, u64 *callstack)
+> > -{
+> > -     struct map *kmap;
+> > -     struct symbol *sym;
+> > -     u64 ip;
+> > -     const char *arch =3D perf_env__arch(machine->env);
+> > -
+> > -     if (list_empty(&callstack_filters))
+> > -             return true;
+> > -
+> > -     for (int i =3D 0; i < max_stack_depth; i++) {
+> > -             struct callstack_filter *filter;
+> > -
+> > -             /*
+> > -              * In powerpc, the callchain saved by kernel always inclu=
+des
+> > -              * first three entries as the NIP (next instruction point=
+er),
+> > -              * LR (link register), and the contents of LR save area i=
+n the
+> > -              * second stack frame. In certain scenarios its possible =
+to have
+> > -              * invalid kernel instruction addresses in either LR or t=
+he second
+> > -              * stack frame's LR. In that case, kernel will store that=
+ address as
+> > -              * zero.
+> > -              *
+> > -              * The below check will continue to look into callstack,
+> > -              * incase first or second callstack index entry has 0
+> > -              * address for powerpc.
+> > -              */
+> > -             if (!callstack || (!callstack[i] && (strcmp(arch, "powerp=
+c") ||
+> > -                                             (i !=3D 1 && i !=3D 2))))
+> > -                     break;
+> > -
+> > -             ip =3D callstack[i];
+> > -             sym =3D machine__find_kernel_symbol(machine, ip, &kmap);
+> > -             if (sym =3D=3D NULL)
+> > -                     continue;
+> > -
+> > -             list_for_each_entry(filter, &callstack_filters, list) {
+> > -                     if (strstr(sym->name, filter->name))
+> > -                             return true;
+> > -             }
+> > -     }
+> > -     return false;
+> > -}
+> > -
+> >  struct trace_lock_handler {
+> >       /* it's used on CONFIG_LOCKDEP */
+> >       int (*acquire_event)(struct evsel *evsel,
+> > @@ -1165,7 +1058,7 @@ static int report_lock_contention_begin_event(str=
+uct evsel *evsel,
+> >               if (callstack =3D=3D NULL)
+> >                       return -ENOMEM;
+> >
+> > -             if (!match_callstack_filter(machine, callstack)) {
+> > +             if (!match_callstack_filter(machine, callstack, max_stack=
+_depth)) {
+> >                       free(callstack);
+> >                       return 0;
+> >               }
+> > @@ -2449,34 +2342,6 @@ static int parse_lock_addr(const struct option *=
+opt __maybe_unused, const char *
+> >       return ret;
 > >  }
-> >  
-> > @@ -597,7 +627,7 @@ static int nfs4_xdr_dec_cb_getattr(struct rpc_rqst *rqstp,
-> >  	struct nfs4_cb_compound_hdr hdr;
-> >  	int status;
-> >  	u32 bitmap[3] = {0};
-> > -	u32 attrlen;
-> > +	u32 attrlen, maxlen;
-> >  	struct nfs4_cb_fattr *ncf =
-> >  		container_of(cb, struct nfs4_cb_fattr, ncf_getattr);
-> >  
-> > @@ -616,7 +646,11 @@ static int nfs4_xdr_dec_cb_getattr(struct rpc_rqst *rqstp,
-> >  		return -NFSERR_BAD_XDR;
-> >  	if (xdr_stream_decode_u32(xdr, &attrlen) < 0)
-> >  		return -NFSERR_BAD_XDR;
-> > -	if (attrlen > (sizeof(ncf->ncf_cb_change) + sizeof(ncf->ncf_cb_fsize)))
-> > +	maxlen = sizeof(ncf->ncf_cb_change) + sizeof(ncf->ncf_cb_fsize);
-> > +	if (bitmap[2] != 0)
-> > +		maxlen += (sizeof(ncf->ncf_cb_mtime.tv_sec) +
-> > +			   sizeof(ncf->ncf_cb_mtime.tv_nsec)) * 2;
-> > +	if (attrlen > maxlen)
-> >  		return -NFSERR_BAD_XDR;
-> >  	status = decode_cb_fattr4(xdr, bitmap, ncf);
-> >  	return status;
-> > diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
-> > index 62f9aeb159d0f2ab4d293bf5c0c56ad7b86eb9d6..2c8d2bb5261ad189c6dfb1c4050c23d8cf061325 100644
-> > --- a/fs/nfsd/nfs4state.c
-> > +++ b/fs/nfsd/nfs4state.c
-> > @@ -5803,13 +5803,14 @@ static struct nfs4_delegation *
-> >  nfs4_set_delegation(struct nfsd4_open *open, struct nfs4_ol_stateid *stp,
-> >  		    struct svc_fh *parent)
+> >
+> > -static int parse_call_stack(const struct option *opt __maybe_unused, c=
+onst char *str,
+> > -                        int unset __maybe_unused)
+> > -{
+> > -     char *s, *tmp, *tok;
+> > -     int ret =3D 0;
+> > -
+> > -     s =3D strdup(str);
+> > -     if (s =3D=3D NULL)
+> > -             return -1;
+> > -
+> > -     for (tok =3D strtok_r(s, ", ", &tmp); tok; tok =3D strtok_r(NULL,=
+ ", ", &tmp)) {
+> > -             struct callstack_filter *entry;
+> > -
+> > -             entry =3D malloc(sizeof(*entry) + strlen(tok) + 1);
+> > -             if (entry =3D=3D NULL) {
+> > -                     pr_err("Memory allocation failure\n");
+> > -                     free(s);
+> > -                     return -1;
+> > -             }
+> > -
+> > -             strcpy(entry->name, tok);
+> > -             list_add_tail(&entry->list, &callstack_filters);
+> > -     }
+> > -
+> > -     free(s);
+> > -     return ret;
+> > -}
+> > -
+> >  static int parse_output(const struct option *opt __maybe_unused, const=
+ char *str,
+> >                       int unset __maybe_unused)
 > >  {
-> > -	int status = 0;
-> > +	bool deleg_ts = open->op_deleg_want & OPEN4_SHARE_ACCESS_WANT_DELEG_TIMESTAMPS;
-> >  	struct nfs4_client *clp = stp->st_stid.sc_client;
-> >  	struct nfs4_file *fp = stp->st_stid.sc_file;
-> >  	struct nfs4_clnt_odstate *odstate = stp->st_clnt_odstate;
-> >  	struct nfs4_delegation *dp;
-> >  	struct nfsd_file *nf = NULL;
-> >  	struct file_lease *fl;
-> > +	int status = 0;
-> >  	u32 dl_type;
-> >  
-> >  	/*
-> > @@ -5834,7 +5835,7 @@ nfs4_set_delegation(struct nfsd4_open *open, struct nfs4_ol_stateid *stp,
-> >  	 */
-> >  	if ((open->op_share_access & NFS4_SHARE_ACCESS_BOTH) == NFS4_SHARE_ACCESS_BOTH) {
-> >  		nf = find_rw_file(fp);
-> > -		dl_type = OPEN_DELEGATE_WRITE;
-> > +		dl_type = deleg_ts ? OPEN_DELEGATE_WRITE_ATTRS_DELEG : OPEN_DELEGATE_WRITE;
-> >  	}
-> >  
-> >  	/*
-> > @@ -5843,7 +5844,7 @@ nfs4_set_delegation(struct nfsd4_open *open, struct nfs4_ol_stateid *stp,
-> >  	 */
-> >  	if (!nf && (open->op_share_access & NFS4_SHARE_ACCESS_READ)) {
-> >  		nf = find_readable_file(fp);
-> > -		dl_type = OPEN_DELEGATE_READ;
-> > +		dl_type = deleg_ts ? OPEN_DELEGATE_READ_ATTRS_DELEG : OPEN_DELEGATE_READ;
-> >  	}
-> >  
-> >  	if (!nf)
-> > @@ -6001,13 +6002,14 @@ static void
-> >  nfs4_open_delegation(struct nfsd4_open *open, struct nfs4_ol_stateid *stp,
-> >  		     struct svc_fh *currentfh)
-> >  {
-> > -	struct nfs4_delegation *dp;
-> > +	bool deleg_ts = open->op_deleg_want & OPEN4_SHARE_ACCESS_WANT_DELEG_TIMESTAMPS;
-> >  	struct nfs4_openowner *oo = openowner(stp->st_stateowner);
-> >  	struct nfs4_client *clp = stp->st_stid.sc_client;
-> >  	struct svc_fh *parent = NULL;
-> > -	int cb_up;
-> > -	int status = 0;
-> > +	struct nfs4_delegation *dp;
-> >  	struct kstat stat;
-> > +	int status = 0;
-> > +	int cb_up;
-> >  
-> >  	cb_up = nfsd4_cb_channel_good(oo->oo_owner.so_client);
-> >  	open->op_recall = false;
-> > @@ -6048,12 +6050,14 @@ nfs4_open_delegation(struct nfsd4_open *open, struct nfs4_ol_stateid *stp,
-> >  			destroy_delegation(dp);
-> >  			goto out_no_deleg;
-> >  		}
-> > -		open->op_delegate_type = OPEN_DELEGATE_WRITE;
-> > +		open->op_delegate_type = deleg_ts ? OPEN_DELEGATE_WRITE_ATTRS_DELEG :
-> > +						    OPEN_DELEGATE_WRITE;
-> >  		dp->dl_cb_fattr.ncf_cur_fsize = stat.size;
-> >  		dp->dl_cb_fattr.ncf_initial_cinfo = nfsd4_change_attribute(&stat);
-> >  		trace_nfsd_deleg_write(&dp->dl_stid.sc_stateid);
-> >  	} else {
-> > -		open->op_delegate_type = OPEN_DELEGATE_READ;
-> > +		open->op_delegate_type = deleg_ts ? OPEN_DELEGATE_READ_ATTRS_DELEG :
-> > +						    OPEN_DELEGATE_READ;
-> >  		trace_nfsd_deleg_read(&dp->dl_stid.sc_stateid);
-> >  	}
-> >  	nfs4_put_stid(&dp->dl_stid);
-> > @@ -8887,6 +8891,78 @@ nfsd4_get_writestateid(struct nfsd4_compound_state *cstate,
-> >  	get_stateid(cstate, &u->write.wr_stateid);
-> >  }
-> >  
-> > +/**
-> > + * set_cb_time - vet and set the timespec for a cb_getattr update
-> > + * @cb: timestamp from the CB_GETATTR response
-> > + * @orig: original timestamp in the inode
-> > + * @now: current time
-> > + *
-> > + * Given a timestamp in a CB_GETATTR response, check it against the
-> > + * current timestamp in the inode and the current time. Returns true
-> > + * if the inode's timestamp needs to be updated, and false otherwise.
-> > + * @cb may also be changed if the timestamp needs to be clamped.
-> > + */
-> > +static bool set_cb_time(struct timespec64 *cb, const struct timespec64 *orig,
-> > +			const struct timespec64 *now)
+> > diff --git a/tools/perf/util/Build b/tools/perf/util/Build
+> > index 340544a6f5ec..3c6cd8d81d88 100644
+> > --- a/tools/perf/util/Build
+> > +++ b/tools/perf/util/Build
+> > @@ -121,6 +121,7 @@ perf-util-y +=3D topdown.o
+> >  perf-util-y +=3D iostat.o
+> >  perf-util-y +=3D stream.o
+> >  perf-util-y +=3D kvm-stat.o
+> > +perf-util-y +=3D lock-contention.o
+> >  perf-util-$(CONFIG_AUXTRACE) +=3D auxtrace.o
+> >  perf-util-y +=3D intel-pt-decoder/
+> >  perf-util-$(CONFIG_AUXTRACE) +=3D intel-pt.o
+> > diff --git a/tools/perf/util/bpf_lock_contention.c b/tools/perf/util/bp=
+f_lock_contention.c
+> > index 41a1ad087895..37e17c56f106 100644
+> > --- a/tools/perf/util/bpf_lock_contention.c
+> > +++ b/tools/perf/util/bpf_lock_contention.c
+> > @@ -458,7 +458,7 @@ int lock_contention_read(struct lock_contention *co=
+n)
+> >               if (con->save_callstack) {
+> >                       bpf_map_lookup_elem(stack, &key.stack_id, stack_t=
+race);
+> >
+> > -                     if (!match_callstack_filter(machine, stack_trace)=
+) {
+> > +                     if (!match_callstack_filter(machine, stack_trace,=
+ con->max_stack)) {
+> >                               con->nr_filtered +=3D data.count;
+> >                               goto next;
+> >                       }
+> > diff --git a/tools/perf/util/lock-contention.c b/tools/perf/util/lock-c=
+ontention.c
+> > new file mode 100644
+> > index 000000000000..841bb18b1f06
+> > --- /dev/null
+> > +++ b/tools/perf/util/lock-contention.c
+> > @@ -0,0 +1,170 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +#include "debug.h"
+> > +#include "env.h"
+> > +#include "lock-contention.h"
+> > +#include "machine.h"
+> > +#include "symbol.h"
+> > +
+> > +#include <limits.h>
+> > +#include <string.h>
+> > +
+> > +#include <linux/hash.h>
+> > +#include <linux/zalloc.h>
+> > +
+> > +#define __lockhashfn(key)    hash_long((unsigned long)key, LOCKHASH_BI=
+TS)
+> > +#define lockhashentry(key)   (lockhash_table + __lockhashfn((key)))
+> > +
+> > +struct callstack_filter {
+> > +     struct list_head list;
+> > +     char name[];
+> > +};
+> > +
+> > +static LIST_HEAD(callstack_filters);
+> > +struct hlist_head *lockhash_table;
+> > +
+> > +int parse_call_stack(const struct option *opt __maybe_unused, const ch=
+ar *str,
+> > +                  int unset __maybe_unused)
 > > +{
+> > +     char *s, *tmp, *tok;
+> > +     int ret =3D 0;
 > > +
-> > +	/*
-> > +	 * "When the time presented is before the original time, then the
-> > +	 *  update is ignored." Also no need to update if there is no change.
-> > +	 */
-> > +	if (timespec64_compare(cb, orig) <= 0)
-> > +		return false;
+> > +     s =3D strdup(str);
+> > +     if (s =3D=3D NULL)
+> > +             return -1;
 > > +
-> > +	/*
-> > +	 * "When the time presented is in the future, the server can either
-> > +	 *  clamp the new time to the current time, or it may
-> > +	 *  return NFS4ERR_DELAY to the client, allowing it to retry."
-> > +	 */
-> > +	if (timespec64_compare(cb, now) > 0) {
-> > +		/* clamp it */
-> > +		*cb = *now;
-> > +	}
+> > +     for (tok =3D strtok_r(s, ", ", &tmp); tok; tok =3D strtok_r(NULL,=
+ ", ", &tmp)) {
+> > +             struct callstack_filter *entry;
 > > +
-> > +	return true;
+> > +             entry =3D malloc(sizeof(*entry) + strlen(tok) + 1);
+> > +             if (entry =3D=3D NULL) {
+> > +                     pr_err("Memory allocation failure\n");
+> > +                     free(s);
+> > +                     return -1;
+> > +             }
+> > +
+> > +             strcpy(entry->name, tok);
+> > +             list_add_tail(&entry->list, &callstack_filters);
+> > +     }
+> > +
+> > +     free(s);
+> > +     return ret;
 > > +}
 > > +
-> > +static int cb_getattr_update_times(struct dentry *dentry, struct nfs4_delegation *dp)
+> > +bool needs_callstack(void)
 > > +{
-> > +	struct inode *inode = d_inode(dentry);
-> > +	struct timespec64 now = current_time(inode);
-> > +	struct nfs4_cb_fattr *ncf = &dp->dl_cb_fattr;
-> > +	struct iattr attrs = { };
-> > +	int ret;
-> > +
-> > +	if (deleg_attrs_deleg(dp->dl_type)) {
-> > +		struct timespec64 atime = inode_get_atime(inode);
-> > +		struct timespec64 mtime = inode_get_mtime(inode);
-> > +
-> > +		attrs.ia_atime = ncf->ncf_cb_atime;
-> > +		attrs.ia_mtime = ncf->ncf_cb_mtime;
-> > +
-> > +		if (set_cb_time(&attrs.ia_atime, &atime, &now))
-> > +			attrs.ia_valid |= ATTR_ATIME | ATTR_ATIME_SET;
-> > +
-> > +		if (set_cb_time(&attrs.ia_mtime, &mtime, &now)) {
-> > +			attrs.ia_valid |= ATTR_CTIME | ATTR_MTIME | ATTR_MTIME_SET;
-> > +			attrs.ia_ctime = attrs.ia_mtime;
-> > +		}
-> > +	} else {
-> > +		attrs.ia_valid |= ATTR_MTIME | ATTR_CTIME;
-> > +		attrs.ia_mtime = attrs.ia_ctime = now;
-> > +	}
-> > +
-> > +	if (!attrs.ia_valid)
-> > +		return 0;
-> > +
-> > +	attrs.ia_valid |= ATTR_DELEG;
-> > +	inode_lock(inode);
-> > +	ret = notify_change(&nop_mnt_idmap, dentry, &attrs, NULL);
-> > +	inode_unlock(inode);
-> > +	return ret;
+> > +     return !list_empty(&callstack_filters);
 > > +}
 > > +
-> >  /**
-> >   * nfsd4_deleg_getattr_conflict - Recall if GETATTR causes conflict
-> >   * @rqstp: RPC transaction context
-> > @@ -8913,7 +8989,6 @@ nfsd4_deleg_getattr_conflict(struct svc_rqst *rqstp, struct dentry *dentry,
-> >  	struct file_lock_context *ctx;
-> >  	struct nfs4_delegation *dp = NULL;
-> >  	struct file_lease *fl;
-> > -	struct iattr attrs;
-> >  	struct nfs4_cb_fattr *ncf;
-> >  	struct inode *inode = d_inode(dentry);
-> >  
-> > @@ -8975,11 +9050,7 @@ nfsd4_deleg_getattr_conflict(struct svc_rqst *rqstp, struct dentry *dentry,
-> >  		 * not update the file's metadata with the client's
-> >  		 * modified size
-> >  		 */
-> > -		attrs.ia_mtime = attrs.ia_ctime = current_time(inode);
-> > -		attrs.ia_valid = ATTR_MTIME | ATTR_CTIME | ATTR_DELEG;
-> > -		inode_lock(inode);
-> > -		err = notify_change(&nop_mnt_idmap, dentry, &attrs, NULL);
-> > -		inode_unlock(inode);
-> > +		err = cb_getattr_update_times(dentry, dp);
-> >  		if (err) {
-> >  			status = nfserrno(err);
-> >  			goto out_status;
-> > diff --git a/fs/nfsd/nfs4xdr.c b/fs/nfsd/nfs4xdr.c
-> > index 1c9d9349e4447c0078c7de0d533cf6278941679d..0e9f59f6be015bfa37893973f38fec880ff4c0b1 100644
-> > --- a/fs/nfsd/nfs4xdr.c
-> > +++ b/fs/nfsd/nfs4xdr.c
-> > @@ -3409,6 +3409,7 @@ static __be32 nfsd4_encode_fattr4_xattr_support(struct xdr_stream *xdr,
-> >  #define NFSD_OA_SHARE_ACCESS_WANT	(BIT(OPEN_ARGS_SHARE_ACCESS_WANT_ANY_DELEG)		| \
-> >  					 BIT(OPEN_ARGS_SHARE_ACCESS_WANT_NO_DELEG)		| \
-> >  					 BIT(OPEN_ARGS_SHARE_ACCESS_WANT_CANCEL)		| \
-> > +					 BIT(OPEN_ARGS_SHARE_ACCESS_WANT_DELEG_TIMESTAMPS)	| \
-> >  					 BIT(OPEN_ARGS_SHARE_ACCESS_WANT_OPEN_XOR_DELEGATION))
-> >  
-> >  #define NFSD_OA_OPEN_CLAIM	(BIT(OPEN_ARGS_OPEN_CLAIM_NULL)		| \
-> > @@ -3602,7 +3603,11 @@ nfsd4_encode_fattr4(struct svc_rqst *rqstp, struct xdr_stream *xdr,
-> >  		if (status)
-> >  			goto out;
-> >  	}
-> > -	if (attrmask[0] & (FATTR4_WORD0_CHANGE | FATTR4_WORD0_SIZE)) {
-> > +	if ((attrmask[0] & (FATTR4_WORD0_CHANGE |
-> > +			    FATTR4_WORD0_SIZE)) ||
-> > +	    (attrmask[1] & (FATTR4_WORD1_TIME_ACCESS |
-> > +			    FATTR4_WORD1_TIME_MODIFY |
-> > +			    FATTR4_WORD1_TIME_METADATA))) {
-> >  		status = nfsd4_deleg_getattr_conflict(rqstp, dentry, &dp);
-> >  		if (status)
-> >  			goto out;
-> > @@ -3617,8 +3622,14 @@ nfsd4_encode_fattr4(struct svc_rqst *rqstp, struct xdr_stream *xdr,
-> >  		if (ncf->ncf_file_modified) {
-> >  			++ncf->ncf_initial_cinfo;
-> >  			args.stat.size = ncf->ncf_cur_fsize;
-> > +			if (!timespec64_is_epoch(&ncf->ncf_cb_mtime))
-> > +				args.stat.mtime = ncf->ncf_cb_mtime;
-> >  		}
-> >  		args.change_attr = ncf->ncf_initial_cinfo;
+> > +struct lock_stat *lock_stat_find(u64 addr)
+> > +{
+> > +     struct hlist_head *entry =3D lockhashentry(addr);
+> > +     struct lock_stat *ret;
 > > +
-> > +		if (!timespec64_is_epoch(&ncf->ncf_cb_atime))
-> > +			args.stat.atime = ncf->ncf_cb_atime;
+> > +     hlist_for_each_entry(ret, entry, hash_entry) {
+> > +             if (ret->addr =3D=3D addr)
+> > +                     return ret;
+> > +     }
+> > +     return NULL;
+> > +}
 > > +
-> >  		nfs4_put_stid(&dp->dl_stid);
-> >  	} else {
-> >  		args.change_attr = nfsd4_change_attribute(&args.stat);
-> > diff --git a/fs/nfsd/nfsd.h b/fs/nfsd/nfsd.h
-> > index 1955c8e9c4c793728fa75dd136cadc735245483f..004415651295891b3440f52a4c986e3a668a48cb 100644
-> > --- a/fs/nfsd/nfsd.h
-> > +++ b/fs/nfsd/nfsd.h
-> > @@ -459,6 +459,8 @@ enum {
-> >  	FATTR4_WORD2_MODE_UMASK | \
-> >  	NFSD4_2_SECURITY_ATTRS | \
-> >  	FATTR4_WORD2_XATTR_SUPPORT | \
-> > +	FATTR4_WORD2_TIME_DELEG_ACCESS | \
-> > +	FATTR4_WORD2_TIME_DELEG_MODIFY | \
-> 
-> This breaks 4.2 mounts for me (in latest nfsd-nexT).  OPEN fails.
+> > +struct lock_stat *lock_stat_findnew(u64 addr, const char *name, int fl=
+ags)
+> > +{
+> > +     struct hlist_head *entry =3D lockhashentry(addr);
+> > +     struct lock_stat *ret, *new;
+> > +
+> > +     hlist_for_each_entry(ret, entry, hash_entry) {
+> > +             if (ret->addr =3D=3D addr)
+> > +                     return ret;
+> > +     }
+> > +
+> > +     new =3D zalloc(sizeof(struct lock_stat));
+> > +     if (!new)
+> > +             goto alloc_failed;
+> > +
+> > +     new->addr =3D addr;
+> > +     new->name =3D strdup(name);
+> > +     if (!new->name) {
+> > +             free(new);
+> > +             goto alloc_failed;
+> > +     }
+> > +
+> > +     new->flags =3D flags;
+> > +     new->wait_time_min =3D ULLONG_MAX;
+> > +
+> > +     hlist_add_head(&new->hash_entry, entry);
+> > +     return new;
+> > +
+> > +alloc_failed:
+> > +     pr_err("memory allocation failed\n");
+> > +     return NULL;
+> > +}
+> > +
+> > +bool match_callstack_filter(struct machine *machine, u64 *callstack, i=
+nt max_stack_depth)
+> > +{
+> > +     struct map *kmap;
+> > +     struct symbol *sym;
+> > +     u64 ip;
+> > +     const char *arch =3D perf_env__arch(machine->env);
+> > +
+> > +     if (list_empty(&callstack_filters))
+> > +             return true;
+> > +
+> > +     for (int i =3D 0; i < max_stack_depth; i++) {
+> > +             struct callstack_filter *filter;
+> > +
+> > +             /*
+> > +              * In powerpc, the callchain saved by kernel always inclu=
+des
+> > +              * first three entries as the NIP (next instruction point=
+er),
+> > +              * LR (link register), and the contents of LR save area i=
+n the
+> > +              * second stack frame. In certain scenarios its possible =
+to have
+> > +              * invalid kernel instruction addresses in either LR or t=
+he second
+> > +              * stack frame's LR. In that case, kernel will store that=
+ address as
+> > +              * zero.
+> > +              *
+> > +              * The below check will continue to look into callstack,
+> > +              * incase first or second callstack index entry has 0
+> > +              * address for powerpc.
+> > +              */
+> > +             if (!callstack || (!callstack[i] && (strcmp(arch, "powerp=
+c") ||
+> > +                                             (i !=3D 1 && i !=3D 2))))
+> > +                     break;
+> > +
+> > +             ip =3D callstack[i];
+> > +             sym =3D machine__find_kernel_symbol(machine, ip, &kmap);
+> > +             if (sym =3D=3D NULL)
+> > +                     continue;
+> > +
+> > +             list_for_each_entry(filter, &callstack_filters, list) {
+> > +                     if (strstr(sym->name, filter->name))
+> > +                             return true;
+> > +             }
+> > +     }
+> > +     return false;
+> > +}
+> > +
+> > +#ifndef HAVE_BPF_SKEL
+> > +int lock_contention_prepare(struct lock_contention *con __maybe_unused=
+)
+> > +{
+> > +     return 0;
+> > +}
+> > +
+> > +int lock_contention_start(void)
+> > +{
+> > +     return 0;
+> > +}
+> > +
+> > +int lock_contention_stop(void)
+> > +{
+> > +     return 0;
+> > +}
+> > +
+> > +int lock_contention_finish(struct lock_contention *con __maybe_unused)
+> > +{
+> > +     return 0;
+> > +}
+> > +
+> > +int lock_contention_read(struct lock_contention *con __maybe_unused)
+> > +{
+> > +     return 0;
+> > +}
+> > +#endif  /* !HAVE_BPF_SKEL */
+>
+> I still think it's the convention to have them in a header file as
+> static inline functions and reduce the #ifdef in the .c file.
 
-Yep, we're on it.
+Shouldn't minimizing ifdefs, and associated cognitive load, in header
+files be the priority given they are #included many times while the .c
+file is only compiled once?
+Shouldn't a goal of the header file be to abstract away things like
+HAVE_BPF_SKEL?
+I'm not clear what the goal of having the functions in the header
+files is, performance? The code isn't going to run anyway. I feel
+lock_contention.h is smaller and easier to read like this but I also
+don't care enough to fight. I did this change here as
+lock_contention.h was being brought into python.c for the sake of
+stubbing out functions that the header file was also subbing out for
+!BPF_HAVE_SKEL. A single stub felt like progress.
 
+Thanks,
+Ian
 
-> By setting these bits we tell the client that we support timestamp
-> delegation, but you haven't updated nfsd4_decode_share_access() to
-> understand NFS4_SHARE_WANT_DELEG_TIMESTAMPS in the 'share' flags for an
-> OPEN request.  So the server responds with BADXDR to OPEN requests now.
-> 
-> Mounting with v4.1 still works.
-> 
-> NeilBrown
-> 
-> 
-> >  	FATTR4_WORD2_OPEN_ARGUMENTS)
-> >  
-> >  extern const u32 nfsd_suppattrs[3][3];
-> > diff --git a/fs/nfsd/state.h b/fs/nfsd/state.h
-> > index 9d0e844515aa6ea0ec62f2b538ecc2c6a5e34652..6351e6eca7cc63ccf82a3a081cef39042d52f4e9 100644
-> > --- a/fs/nfsd/state.h
-> > +++ b/fs/nfsd/state.h
-> > @@ -142,6 +142,8 @@ struct nfs4_cb_fattr {
-> >  	/* from CB_GETATTR reply */
-> >  	u64 ncf_cb_change;
-> >  	u64 ncf_cb_fsize;
-> > +	struct timespec64 ncf_cb_mtime;
-> > +	struct timespec64 ncf_cb_atime;
-> >  
-> >  	unsigned long ncf_cb_flags;
-> >  	bool ncf_file_modified;
-> > diff --git a/fs/nfsd/xdr4cb.h b/fs/nfsd/xdr4cb.h
-> > index e8b00309c449fe2667f7d48cda88ec0cff924f93..f1a315cd31b74f73f1d52702ae7b5c93d51ddf82 100644
-> > --- a/fs/nfsd/xdr4cb.h
-> > +++ b/fs/nfsd/xdr4cb.h
-> > @@ -59,16 +59,20 @@
-> >   * 1: CB_GETATTR opcode (32-bit)
-> >   * N: file_handle
-> >   * 1: number of entry in attribute array (32-bit)
-> > - * 1: entry 0 in attribute array (32-bit)
-> > + * 3: entry 0-2 in attribute array (32-bit * 3)
+> > diff --git a/tools/perf/util/lock-contention.h b/tools/perf/util/lock-c=
+ontention.h
+> > index 1a7248ff3889..bfa5c7db0a5d 100644
+> > --- a/tools/perf/util/lock-contention.h
+> > +++ b/tools/perf/util/lock-contention.h
+> > @@ -67,10 +67,11 @@ struct lock_stat {
 > >   */
-> >  #define NFS4_enc_cb_getattr_sz		(cb_compound_enc_hdr_sz +       \
-> >  					cb_sequence_enc_sz +            \
-> > -					1 + enc_nfs4_fh_sz + 1 + 1)
-> > +					1 + enc_nfs4_fh_sz + 1 + 3)
+> >  #define MAX_LOCK_DEPTH 48
+> >
+> > -struct lock_stat *lock_stat_find(u64 addr);
+> > -struct lock_stat *lock_stat_findnew(u64 addr, const char *name, int fl=
+ags);
+> > +/* based on kernel/lockdep.c */
+> > +#define LOCKHASH_BITS                12
+> > +#define LOCKHASH_SIZE                (1UL << LOCKHASH_BITS)
+> >
+> > -bool match_callstack_filter(struct machine *machine, u64 *callstack);
+> > +extern struct hlist_head *lockhash_table;
+> >
 > >  /*
-> >   * 4: fattr_bitmap_maxsz
-> >   * 1: attribute array len
-> >   * 2: change attr (64-bit)
-> >   * 2: size (64-bit)
-> > + * 2: atime.seconds (64-bit)
-> > + * 1: atime.nanoseconds (32-bit)
-> > + * 2: mtime.seconds (64-bit)
-> > + * 1: mtime.nanoseconds (32-bit)
-> >   */
-> >  #define NFS4_dec_cb_getattr_sz		(cb_compound_dec_hdr_sz  +      \
-> > -			cb_sequence_dec_sz + 4 + 1 + 2 + 2 + op_dec_sz)
-> > +			cb_sequence_dec_sz + 4 + 1 + 2 + 2 + 2 + 1 + 2 + 1 + op_dec_sz)
-> > diff --git a/include/linux/time64.h b/include/linux/time64.h
-> > index f1bcea8c124a361b6c1e3c98ef915840c22a8413..9934331c7b86b7fb981c7aec0494ac2f5e72977e 100644
-> > --- a/include/linux/time64.h
-> > +++ b/include/linux/time64.h
-> > @@ -49,6 +49,11 @@ static inline int timespec64_equal(const struct timespec64 *a,
-> >  	return (a->tv_sec == b->tv_sec) && (a->tv_nsec == b->tv_nsec);
-> >  }
-> >  
-> > +static inline bool timespec64_is_epoch(const struct timespec64 *ts)
-> > +{
-> > +	return ts->tv_sec == 0 && ts->tv_nsec == 0;
-> > +}
+> >   * struct lock_seq_stat:
+> > @@ -148,7 +149,14 @@ struct lock_contention {
+> >       bool save_callstack;
+> >  };
+> >
+> > -#ifdef HAVE_BPF_SKEL
+> > +struct option;
+> > +int parse_call_stack(const struct option *opt, const char *str, int un=
+set);
+> > +bool needs_callstack(void);
 > > +
-> >  /*
-> >   * lhs < rhs:  return <0
-> >   * lhs == rhs: return 0
-> > 
-> > -- 
-> > 2.47.0
-> > 
-> > 
-> > 
-> 
-
--- 
-Chuck Lever
+> > +struct lock_stat *lock_stat_find(u64 addr);
+> > +struct lock_stat *lock_stat_findnew(u64 addr, const char *name, int fl=
+ags);
+> > +
+> > +bool match_callstack_filter(struct machine *machine, u64 *callstack, i=
+nt max_stack_depth);
+> >
+> >  int lock_contention_prepare(struct lock_contention *con);
+> >  int lock_contention_start(void);
+> > @@ -156,25 +164,4 @@ int lock_contention_stop(void);
+> >  int lock_contention_read(struct lock_contention *con);
+> >  int lock_contention_finish(struct lock_contention *con);
+> >
+> > -#else  /* !HAVE_BPF_SKEL */
+> > -
+> > -static inline int lock_contention_prepare(struct lock_contention *con =
+__maybe_unused)
+> > -{
+> > -     return 0;
+> > -}
+> > -
+> > -static inline int lock_contention_start(void) { return 0; }
+> > -static inline int lock_contention_stop(void) { return 0; }
+> > -static inline int lock_contention_finish(struct lock_contention *con _=
+_maybe_unused)
+> > -{
+> > -     return 0;
+> > -}
+> > -
+> > -static inline int lock_contention_read(struct lock_contention *con __m=
+aybe_unused)
+> > -{
+> > -     return 0;
+> > -}
+> > -
+> > -#endif  /* HAVE_BPF_SKEL */
+> > -
+> >  #endif  /* PERF_LOCK_CONTENTION_H */
+> > diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
+> > index 35d84a96dbec..91fd444615cd 100644
+> > --- a/tools/perf/util/python.c
+> > +++ b/tools/perf/util/python.c
+> > @@ -18,7 +18,6 @@
+> >  #include "mmap.h"
+> >  #include "util/kwork.h"
+> >  #include "util/sample.h"
+> > -#include "util/lock-contention.h"
+> >  #include <internal/lib.h>
+> >  #include "../builtin.h"
+> >
+> > @@ -1311,22 +1310,6 @@ struct kwork_work *perf_kwork_add_work(struct pe=
+rf_kwork *kwork __maybe_unused,
+> >       return NULL;
+> >  }
+> >
+> > -bool match_callstack_filter(struct machine *machine __maybe_unused, u6=
+4 *callstack __maybe_unused)
+> > -{
+> > -     return false;
+> > -}
+> > -
+> > -struct lock_stat *lock_stat_find(u64 addr __maybe_unused)
+> > -{
+> > -     return NULL;
+> > -}
+> > -
+> > -struct lock_stat *lock_stat_findnew(u64 addr __maybe_unused, const cha=
+r *name __maybe_unused,
+> > -                             int flags __maybe_unused)
+> > -{
+> > -     return NULL;
+> > -}
+> > -
+> >  int cmd_inject(int argc __maybe_unused, const char *argv[] __maybe_unu=
+sed)
+> >  {
+> >       return -1;
+> > --
+> > 2.47.0.277.g8800431eea-goog
+> >
 
