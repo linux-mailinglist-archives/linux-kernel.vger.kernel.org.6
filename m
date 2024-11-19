@@ -1,347 +1,118 @@
-Return-Path: <linux-kernel+bounces-413932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8DE89D20AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 08:23:13 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C9439D20A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 08:21:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 249D028119A
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 07:23:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B48A8B22613
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 07:21:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FBE5197A7A;
-	Tue, 19 Nov 2024 07:21:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF9A2154C17;
+	Tue, 19 Nov 2024 07:21:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="f9VeORgj"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ko/N0OuS"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6AF01B85D3
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 07:21:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4C32147C71
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 07:20:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732000893; cv=none; b=mUDp+/Gpmb2gMGalyHvkayLUT5Jl1PbJP6a4vM1jxqYjiAj0iEPtHiTa1NvQEtW6ZMOTbAe5QU4KV0fWtVbrkZqOvqZZMOrhf6+SGJpLtHYLq1ANRkf8bYXS7h6XlYsPpfk2T+W7rZxCN58b5m7HuBCqasv9kVW0gyRcaYPeDQs=
+	t=1732000860; cv=none; b=apTTqJ9lnrZ+Lny0polS7Y9AuWmUp9pQt98nUw5aGbfx2ynYW5ktxYhCpvmgyU2w6KCM+lSlms4xA8EjTPBVYO38uizfjAaI9JKfx3Dy0LJK4xn6KH+Ocd9bLtmJTA2Buhq+osMxsNkPWghA0MD42cQZPPoQJQJ5/7wE+zqC5gE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732000893; c=relaxed/simple;
-	bh=4+bjv2d9eUx5fmy192m4VvtxaJyxp5nAXbZwhB5c9og=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ETCjkt6kPCkSyxiGSYvmuWu7Xp8iEIR7k2Pzd5DRyqQkIUxULnYGw8BiuH9kSdITTlwZ7cTZDXcyEWD4ggKTPn2ec/J7iy0Cokm+98K9gFAzUb7iJN0Q4u0y40d6MUiwzjkZ3TMbEyxysvCaqovkOupT9Ctx5snB1iLXNcQ3Uks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=f9VeORgj; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-20cf6eea3c0so5683055ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 23:21:31 -0800 (PST)
+	s=arc-20240116; t=1732000860; c=relaxed/simple;
+	bh=2ZRr8lALMYsUscyG4KsvCTt+Xlf5CiXCpJlgFF+C5aA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OHTTNZTr62g1AhtUM/6Lrg9K7f2jlwLmMK7E0zdtPEGNollM6ICde728gI9IBSabLruvEzWFyeQPcLBIpH5oIcR/rnbMdDmWOebAS0/pYcyAplryOFfbGaikMJumAVWUPVIhPIDzSEBq39LhxYAwMPWMHaUQwP+S0Kwi+PWEpU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ko/N0OuS; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-21200c749bfso23347535ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 23:20:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1732000891; x=1732605691; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YPgvnxddRnh+JN7AYAi4qB46AptriyxUI0Yn0oo8khA=;
-        b=f9VeORgj+mNiV09v7JLZ2CvvpAVePcLIg2Ue6mAt0tw3b73+zH3AJRXqx0tzFt0Cwq
-         QwBIIzFxIYtnw4/+UJI76KfYsdcp3ckLkevie6RKhbG+I9ilXoPP2h+5pv8YZq/AE4x/
-         GId8PwoJy7X04G9xt9mC54RlHMAyhkBlB/kqY=
+        d=linaro.org; s=google; t=1732000857; x=1732605657; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=AM2DbdcBJnN3qKXVDRxCLMGFBcFG1GzjS2MYPCy6reQ=;
+        b=Ko/N0OuSSDrjM/AJ0WeY121ZI7sk44BpsZ4Eu8rPqBTPuovgiaz7q2uMazLtpNv3rN
+         dri6+F7xyoEXHem/di33aM4+5q5iF4peFM5i7YzkQuxdk78B4VD5TOGgyi+p7J6rrLph
+         5aKKiGV+nacwsfVlpAje2HLdJhez0YNCSa5jcssi8d7Fch1GsfmcqfGjeS6vnjcekVUx
+         SC/7mebL0QSYCXDLNOp2xUQEpWKwDuONWbhic4mLJutbnOmPlGX7yqkhxaD8cqhjJJNF
+         oqKW59/r9WfCMb0LqKny/vXjZ8HAPPBwws1DOp5sfbKXzC+r+zUTi0YnTA+d93dPA/Vx
+         F63g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732000891; x=1732605691;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YPgvnxddRnh+JN7AYAi4qB46AptriyxUI0Yn0oo8khA=;
-        b=r3OHLAr1Q4NGDhIO17kYZGrDhrlN1/sWHPAetBeXa8OSvu8bSP8BKTi0bSKMpEHfU9
-         nY4p0sM8doxXOKooLq0NRUyRsFcjMIP+3iKzY2mLTb50KrxNvDcZprQp6FOITU3NE0/6
-         Llpl6k01Fz8AYUuR9Ng6WnfrKTBmrf3cYBjNQM8eERChjnQFG5G8AWk7GIdifdMjrM7v
-         8F6bMH+2kx7FVJ+/Vd1+yEG7L3Z1cyS3pha89fM1M/YznGEqA6F8gATezLTFoDId23GA
-         VaeJ88sBW/Y+MeTrCtKtRlGSC8S8Ond0isdwjRAQL/CAUskA27Bj3IqXW9JU+p4PZSa9
-         oPXw==
-X-Gm-Message-State: AOJu0YwD5qViSXdpQndl99kBEsbGGCQfABpMAtOSS0swe39DlOc5FiCp
-	1Q/ZiKffYugpsxmreJSh+/sGL3qtlkwk/WU+2LXHeLIU2k3Dj+HRO9BYLETMyQ==
-X-Google-Smtp-Source: AGHT+IG8enfxTdRo52pIptt7VuVfSVvJ5XWKTVi2HXnhOJ/BW+vLMlDZHkQDlv/qY3ZoJmRcAhpZeA==
-X-Received: by 2002:a17:903:2452:b0:20b:8776:4902 with SMTP id d9443c01a7336-211d0ebf325mr231639695ad.38.1732000890802;
-        Mon, 18 Nov 2024 23:21:30 -0800 (PST)
-Received: from localhost ([2401:fa00:8f:203:5534:f54c:1465:9438])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-211d0f34f3bsm68221295ad.137.2024.11.18.23.21.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Nov 2024 23:21:30 -0800 (PST)
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Minchan Kim <minchan@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: [PATCHv1 8/8] zram: introduce multi-handle entries
-Date: Tue, 19 Nov 2024 16:20:46 +0900
-Message-ID: <20241119072057.3440039-9-senozhatsky@chromium.org>
-X-Mailer: git-send-email 2.47.0.371.ga323438b13-goog
-In-Reply-To: <20241119072057.3440039-1-senozhatsky@chromium.org>
-References: <20241119072057.3440039-1-senozhatsky@chromium.org>
+        d=1e100.net; s=20230601; t=1732000857; x=1732605657;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AM2DbdcBJnN3qKXVDRxCLMGFBcFG1GzjS2MYPCy6reQ=;
+        b=lgahP3cnd7wd6SPLVDJCx3D88R2QUDkED+7LGu6HiGekVdLM9ZTYCt1ML9bqD34rqF
+         Bt/AygIb5lTnZ53ERWy5txKu9HPgABIlNVIjl4F+0gTw/JrhZbWKq5CHopRMHyFBisfZ
+         i2Zm+alJ2IcVWCSkn2tMg/pvGLeXdvec30NuhEVhfAlXeWdvAcX++dhFYa3Vu8ESERKN
+         cTENMgZXMpH8wiiftLJro7yc77DQAdZkxHB2I9yhK+ZRRAojY94j/Hfc61kDK/Iq5soN
+         ihGUs6MvOfzVYRsH28ske7RYn407PQAKQcC82XaFLqyHRf7yLJsAIIzbDRV8MKvHSgTL
+         aDcw==
+X-Forwarded-Encrypted: i=1; AJvYcCWnkthPdJBJPnSs+qlTzJzBCHoURxWLV54dTEK4I4Eo0BwEc+X7QXS++TlOJlSS0l1jnqyR7LUXM7Ug1XM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEF9Qu3zNwbP5+94f442D6YMj/rHpfP7MCuJmiVGAYzXEoHJiL
+	3+WCcN8cj/8bZBagxJkGrnjUtmkKjuiogm+EOL3/2bu3C1JRYpiuEB6rQIn7VrVgk+qJuaAj8KM
+	u
+X-Google-Smtp-Source: AGHT+IGR+vAfGVcJemjaVnegG111dXVq7+O24f0BoUFqcpMOC+i8E0jKMN2vIPgmwiDuA+Iuxo17GQ==
+X-Received: by 2002:a17:903:2308:b0:20c:c086:4998 with SMTP id d9443c01a7336-211d0edca49mr192758285ad.55.1732000857612;
+        Mon, 18 Nov 2024 23:20:57 -0800 (PST)
+Received: from localhost ([122.172.86.146])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211d0f348e4sm66491205ad.125.2024.11.18.23.20.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Nov 2024 23:20:57 -0800 (PST)
+Date: Tue, 19 Nov 2024 12:50:54 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org, Lorenzo Bianconi <lorenzo@kernel.org>,
+	upstream@airoha.com
+Subject: Re: [PATCH v2] cpufreq: airoha: Add EN7581 Cpufreq SMC driver
+Message-ID: <20241119072054.64hi347qmv7ng3un@vireshk-i7>
+References: <20241017190809.16942-1-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241017190809.16942-1-ansuelsmth@gmail.com>
 
-zsmalloc size-classes store more than one compressed object per
-physical page, therefore internal fragmentation is expected and
-quite common. Internal fragmentation is completely normal, once
-the system gets low on memory zsmalloc attempts to defragment
-its pool and release empty zspage-s. However, even this does not
-guarantee 100% usage-ratio of pool memory due to the nature of
-allocators.
+On 17-10-24, 21:07, Christian Marangi wrote:
+> Add simple Cpufreq driver for Airoha EN7581 SoC that control CPU
+> frequency scaling with SMC APIs.
+> 
+> All CPU share the same frequency and can't be controlled independently.
+> Current shared CPU frequency is returned by the related SMC command.
+> 
+> Add SoC compatible to cpufreq-dt-plat block list as a dedicated cpufreq
+> driver is needed with OPP v2 nodes declared in DTS.
+> 
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> ---
+> Changes v2:
+> - Fix kernel bot error with missing slab.h and bitfield.h header
+> - Limit COMPILE_TEST to ARM64 due to smcc 1.2
 
-ZRAM_HUGE objects, on the other hand, do not share physical pages
-with another objects, because each such object is stored raw
-(uncompressed) and occupies a whole physical page.
+Hi,
 
-We, in fact, can get advantage of zsmalloc's internal fragmentation.
-Instead of allocating a physical page for each huge object it is
-possible to split such objects into smaller objects and store them
-in regular size-classes, possibly using allocated but unused zspages'
-space. Given that huge objects are stored raw, both write and read of
-such objects require only memcpy() and don't need any extra temporary
-storage / buffers.
+Sorry for delay at my side to review this driver.
 
-Split ZRAM_HUGE objects into two 2048 objects are store those
-parts in regular size-classes.  This now allocates and tracks
-two zsmalloc handles for such entries.
+Now that I looked at it, I don't see a lot of special stuff happening in the
+driver. There are many other platforms with similar situation. What we have done
+for all them, which rely on OPPs coming from DT, is to add a clk for the CPUs
+and do all this magically smcc stuff from clk_get_rate() and clk_set_rate().
+Once that is done, you should be able to reuse the cpufreq-dt driver as is.
 
-Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
----
- drivers/block/zram/zram_drv.c | 120 ++++++++++++++++++++++++++--------
- drivers/block/zram/zram_drv.h |  15 ++++-
- 2 files changed, 106 insertions(+), 29 deletions(-)
+So a CPU clk is the only missing thing in your case I guess.
 
-diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
-index 2b20afcfbb94..7e29e204fccf 100644
---- a/drivers/block/zram/zram_drv.c
-+++ b/drivers/block/zram/zram_drv.c
-@@ -37,6 +37,17 @@
- 
- #include "zram_drv.h"
- 
-+/*
-+ * This determines sizes of the ZRAM_HUGE object split.  Currently we perform
-+ * a 2-way split.  One part is stored in 2048 size-class and the other one is
-+ * stored in the size-class above 2048.
-+ *
-+ * To store an object in a target size-class we need to sub zsmalloc
-+ * handle size (which is added to every object by zsmalloc internally).
-+ */
-+#define ZRAM_MHANDLE_HEAD_LEN	((PAGE_SIZE) / 2 - ZS_HANDLE_SIZE)
-+#define ZRAM_MHANDLE_TAIL_LEN	((PAGE_SIZE) - ZRAM_MHANDLE_HEAD_LEN)
-+
- static DEFINE_IDR(zram_index_idr);
- /* idr index must be protected */
- static DEFINE_MUTEX(zram_index_mutex);
-@@ -93,6 +104,18 @@ static void zram_set_handle(struct zram *zram, u32 index, unsigned long handle)
- 	zram->table[index].handle = handle;
- }
- 
-+static struct zram_multi_handle *zram_get_multi_handle(struct zram *zram,
-+						       u32 index)
-+{
-+	return zram->table[index].mhandle;
-+}
-+
-+static void zram_set_multi_handle(struct zram *zram, u32 index,
-+				  struct zram_multi_handle *mhandle)
-+{
-+	zram->table[index].mhandle = mhandle;
-+}
-+
- /* flag operations require table entry bit_spin_lock() being held */
- static bool zram_test_flag(struct zram *zram, u32 index,
- 			enum zram_pageflags flag)
-@@ -1479,8 +1502,6 @@ static bool zram_meta_alloc(struct zram *zram, u64 disksize)
-  */
- static void zram_free_page(struct zram *zram, size_t index)
- {
--	unsigned long handle;
--
- #ifdef CONFIG_ZRAM_TRACK_ENTRY_ACTIME
- 	zram->table[index].ac_time = 0;
- #endif
-@@ -1490,11 +1511,6 @@ static void zram_free_page(struct zram *zram, size_t index)
- 	zram_clear_flag(zram, index, ZRAM_PP_SLOT);
- 	zram_set_priority(zram, index, 0);
- 
--	if (zram_test_flag(zram, index, ZRAM_HUGE)) {
--		zram_clear_flag(zram, index, ZRAM_HUGE);
--		atomic64_dec(&zram->stats.huge_pages);
--	}
--
- 	if (zram_test_flag(zram, index, ZRAM_WB)) {
- 		zram_clear_flag(zram, index, ZRAM_WB);
- 		free_block_bdev(zram, zram_get_handle(zram, index));
-@@ -1511,11 +1527,26 @@ static void zram_free_page(struct zram *zram, size_t index)
- 		goto out;
- 	}
- 
--	handle = zram_get_handle(zram, index);
--	if (!handle)
--		return;
-+	if (zram_test_flag(zram, index, ZRAM_HUGE)) {
-+		struct zram_multi_handle *handle;
-+
-+		handle = zram_get_multi_handle(zram, index);
-+		if (!handle)
-+			return;
- 
--	zs_free(zram->mem_pool, handle);
-+		zs_free(zram->mem_pool, handle->head);
-+		zs_free(zram->mem_pool, handle->tail);
-+		kfree(handle);
-+
-+		zram_clear_flag(zram, index, ZRAM_HUGE);
-+		atomic64_dec(&zram->stats.huge_pages);
-+	} else {
-+		unsigned long handle = zram_get_handle(zram, index);
-+
-+		if (!handle)
-+			return;
-+		zs_free(zram->mem_pool, handle);
-+	}
- 
- 	atomic64_sub(zram_get_obj_size(zram, index),
- 		     &zram->stats.compr_data_size);
-@@ -1528,16 +1559,21 @@ static void zram_free_page(struct zram *zram, size_t index)
- static int read_incompressible_page(struct zram *zram, struct page *page,
- 				    u32 index)
- {
--	unsigned long handle;
-+	struct zram_multi_handle *handle;
- 	void *src, *dst;
- 
--	handle = zram_get_handle(zram, index);
--	src = zs_map_object(zram->mem_pool, handle, ZS_MM_RO);
-+	handle = zram_get_multi_handle(zram, index);
- 	dst = kmap_local_page(page);
--	copy_page(dst, src);
--	kunmap_local(dst);
--	zs_unmap_object(zram->mem_pool, handle);
- 
-+	src = zs_map_object(zram->mem_pool, handle->head, ZS_MM_RO);
-+	memcpy(dst, src, ZRAM_MHANDLE_HEAD_LEN);
-+	zs_unmap_object(zram->mem_pool, handle->head);
-+
-+	src = zs_map_object(zram->mem_pool, handle->tail, ZS_MM_RO);
-+	memcpy(dst + ZRAM_MHANDLE_HEAD_LEN, src, ZRAM_MHANDLE_TAIL_LEN);
-+	zs_unmap_object(zram->mem_pool, handle->tail);
-+
-+	kunmap_local(dst);
- 	return 0;
- }
- 
-@@ -1662,34 +1698,54 @@ static int zram_write_same_filled_page(struct zram *zram, unsigned long fill,
- static int zram_write_incompressible_page(struct zram *zram, struct page *page,
- 					  u32 index)
- {
--	unsigned long handle;
-+	struct zram_multi_handle *handle;
- 	void *src, *dst;
-+	int ret;
- 
- 	/*
- 	 * This function is called from preemptible context so we don't need
- 	 * to do optimistic and fallback to pessimistic handle allocation,
- 	 * like we do for compressible pages.
- 	 */
--	handle = zs_malloc(zram->mem_pool, PAGE_SIZE,
--			   GFP_NOIO | __GFP_HIGHMEM | __GFP_MOVABLE);
--	if (IS_ERR_VALUE(handle))
--		return PTR_ERR((void *)handle);
-+	handle = kzalloc(sizeof(*handle), GFP_KERNEL);
-+	if (!handle)
-+		return -ENOMEM;
-+
-+	handle->head = zs_malloc(zram->mem_pool, ZRAM_MHANDLE_HEAD_LEN,
-+				 GFP_NOIO | __GFP_HIGHMEM | __GFP_MOVABLE);
-+	if (IS_ERR_VALUE(handle->head)) {
-+		ret = PTR_ERR((void *)handle->head);
-+		goto error;
-+	}
-+
-+	handle->tail = zs_malloc(zram->mem_pool, ZRAM_MHANDLE_TAIL_LEN,
-+				 GFP_NOIO | __GFP_HIGHMEM | __GFP_MOVABLE);
-+	if (IS_ERR_VALUE(handle->tail)) {
-+		ret = PTR_ERR((void *)handle->tail);
-+		goto error;
-+	}
- 
- 	if (!zram_can_store_page(zram)) {
- 		zcomp_stream_put(zram->comps[ZRAM_PRIMARY_COMP]);
--		zs_free(zram->mem_pool, handle);
--		return -ENOMEM;
-+		ret = -ENOMEM;
-+		goto error;
- 	}
- 
--	dst = zs_map_object(zram->mem_pool, handle, ZS_MM_WO);
- 	src = kmap_local_page(page);
--	memcpy(dst, src, PAGE_SIZE);
-+
-+	dst = zs_map_object(zram->mem_pool, handle->head, ZS_MM_WO);
-+	memcpy(dst, src, ZRAM_MHANDLE_HEAD_LEN);
-+	zs_unmap_object(zram->mem_pool, handle->head);
-+
-+	dst = zs_map_object(zram->mem_pool, handle->tail, ZS_MM_WO);
-+	memcpy(dst, src + ZRAM_MHANDLE_HEAD_LEN, ZRAM_MHANDLE_TAIL_LEN);
-+	zs_unmap_object(zram->mem_pool, handle->tail);
-+
- 	kunmap_local(src);
--	zs_unmap_object(zram->mem_pool, handle);
- 
- 	zram_slot_lock(zram, index);
- 	zram_set_flag(zram, index, ZRAM_HUGE);
--	zram_set_handle(zram, index, handle);
-+	zram_set_multi_handle(zram, index, handle);
- 	zram_set_obj_size(zram, index, PAGE_SIZE);
- 	zram_slot_unlock(zram, index);
- 
-@@ -1699,6 +1755,14 @@ static int zram_write_incompressible_page(struct zram *zram, struct page *page,
- 	atomic64_inc(&zram->stats.pages_stored);
- 
- 	return 0;
-+
-+error:
-+	if (!IS_ERR_VALUE(handle->head))
-+		zs_free(zram->mem_pool, handle->head);
-+	if (!IS_ERR_VALUE(handle->tail))
-+		zs_free(zram->mem_pool, handle->tail);
-+	kfree(handle);
-+	return ret;
- }
- 
- static int zram_write_page(struct zram *zram, struct page *page, u32 index)
-diff --git a/drivers/block/zram/zram_drv.h b/drivers/block/zram/zram_drv.h
-index db78d7c01b9a..7bc7792c2fef 100644
---- a/drivers/block/zram/zram_drv.h
-+++ b/drivers/block/zram/zram_drv.h
-@@ -60,9 +60,22 @@ enum zram_pageflags {
- 
- /*-- Data structures */
- 
-+/*
-+ * Unlike regular zram table entries, ZRAM_HUGE entries are stored in zsmalloc
-+ * as smaller objects in multiple locations (size-classes).  This keeps tracks
-+ * of those locations.
-+ */
-+struct zram_multi_handle {
-+	unsigned long head;
-+	unsigned long tail;
-+};
-+
- /* Allocated for each disk page */
- struct zram_table_entry {
--	unsigned long handle;
-+	union {
-+		unsigned long handle;
-+		struct zram_multi_handle *mhandle;
-+	};
- 	unsigned int flags;
- 	spinlock_t lock;
- #ifdef CONFIG_ZRAM_TRACK_ENTRY_ACTIME
 -- 
-2.47.0.371.ga323438b13-goog
-
+viresh
 
