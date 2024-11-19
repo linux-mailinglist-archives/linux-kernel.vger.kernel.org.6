@@ -1,139 +1,195 @@
-Return-Path: <linux-kernel+bounces-414373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 333C29D271F
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 14:38:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3EC19D274D
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 14:51:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED502282780
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 13:38:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5057284D1F
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 13:51:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C6E31CCECD;
-	Tue, 19 Nov 2024 13:38:26 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E40A717E0;
+	Tue, 19 Nov 2024 13:51:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LyfJGjIv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A47254673
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 13:38:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BF1C1CCED8;
+	Tue, 19 Nov 2024 13:51:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732023506; cv=none; b=HR9o0oTmO7HxD+LukbW/cCrTYYx9dA6zl6IXQyr1yDT8Rc7bZvDN4JkVfA3SzH8PN/6oMeJAriQNY6gcTMN18WwTkSZCr2JSJgeypMRY3flXi2XkPE9rlxmrWlWwpU684ewfL7aPSgUvbk2BP1NXffuFF2VrNPwnEZhg5byECQU=
+	t=1732024275; cv=none; b=ldSLJnf0oUfKG6awv1438hkKHIIfgpYdD7pKkdwARV/bgp/o0SmPVJVYDLzY9q3wtsuObUUa56PFB7WioGc/WCM3iPe0xYOTQJbvJYvjqfQQWSk7s3ctpzqy6jjEEJywY5HmfqGaqRRm13U4lxz2zg2bVROuzp743jXRiJhoHx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732023506; c=relaxed/simple;
-	bh=xrvTIgBxANM8GpRtftt955m9io5k9G98Ceq1ygmadG8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=svQY5KhTCsaoPOHwQsktA0lFjR18jHsEejatFeAijyZARqfqpBS0gOePQWlMw6Z8HaYZ73wxgQLGwzZA7THu9da7e9/MZ3rXDwuuJ8uy44oYPyg69aNXZov8MYezJQp4XDbuVv0WmaQMWASjpWIB3rAV03pYhYbyBsp/tzI4+fg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Xt59z4z6VzqSP1;
-	Tue, 19 Nov 2024 21:36:23 +0800 (CST)
-Received: from kwepemf100008.china.huawei.com (unknown [7.202.181.222])
-	by mail.maildlp.com (Postfix) with ESMTPS id 3040818010F;
-	Tue, 19 Nov 2024 21:38:15 +0800 (CST)
-Received: from huawei.com (10.175.103.91) by kwepemf100008.china.huawei.com
- (7.202.181.222) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 19 Nov
- 2024 21:38:14 +0800
-From: Zeng Heng <zengheng4@huawei.com>
-To: <james.morse@arm.com>, <Dave.Martin@arm.com>
-CC: <linux-kernel@vger.kernel.org>, <jonathan.cameron@huawei.com>,
-	<xiexiuqi@huawei.com>, <linux-arm-kernel@lists.infradead.org>
-Subject: [RFC PATCH mpam mpam/snapshot/v6.12-rc1 v2 2/6] arm_mpam: Create reqPARTIDs resource bitmap
-Date: Tue, 19 Nov 2024 21:51:00 +0800
-Message-ID: <20241119135104.595630-3-zengheng4@huawei.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241119135104.595630-1-zengheng4@huawei.com>
-References: <20241119135104.595630-1-zengheng4@huawei.com>
+	s=arc-20240116; t=1732024275; c=relaxed/simple;
+	bh=8QwOJl5WHjGaRTgE0rhL9lEjUcRF9+/nMUyV9CahWu4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YKZlLQBees715H27X75l0RwvF6TOUHXPfj/ptcrjkpYzQaGebVPYs9H8flo1G4X70vYXPMDulK7ONzl9UmkGSMjyeftwr1vlE2cRfZaH5lqVlkzCYOYZh/VjIGR5ny5vY1uzsJPe7QHk0mOiqtMLifYIeTE7GgvyisOqNQsaRD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LyfJGjIv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C506EC4CED0;
+	Tue, 19 Nov 2024 13:51:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732024274;
+	bh=8QwOJl5WHjGaRTgE0rhL9lEjUcRF9+/nMUyV9CahWu4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=LyfJGjIv/JYQVgEV31q9fQ4P0HnyzlCopF49Xzucqtw0EZWe29uUY3EV9T4bmHuJH
+	 0Fsp7fVcTSSjGQoNfuniES8i3RrbNE/apklZ08YYDcADFJ1TG1ja+bypqk4ip3QPNJ
+	 PChML/nGDtwSmRf0v2YLv4L4O+gFdEe2mUQDnougAsLNwC8NobqghOeMzZ3Fd3rK8D
+	 HlJld93J9H/J1+SfUeRf1H2hcvLYLY/ly3qHFLYyfeN1OLlhhWauL9iKDcToCQBlEv
+	 eRjMB0/SkXzf/xn8qT39FIkCWCf6pWIemCyIzPeW/1FIX3cIwnS1Ph8QLs0111srWb
+	 l9e1nWTXVvMKw==
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-7edb6879196so648360a12.3;
+        Tue, 19 Nov 2024 05:51:14 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVDlKoJ3StdHHD9TQcqRcTc6/dz4PvyyXVX5cB6yOr3O8PjM5fjQIwQ/jMfwiyM1NSEzuGjkLyyhQZQDeQ=@vger.kernel.org, AJvYcCWQfEPOzsKMkyYZuwWf/Gd+g20HWa8q0jwIf3bjBRjhfF/cX1i9ESxy/0Ms8J4lW8ox4dJnp8WTxM8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGZQpRZbODAt9Xu5lJ+SxPZZqCGTWQLmrb8fMB0iA91JxKYmj8
+	1Xa3xq8XdXUkYyIdzQG0JhN8bHHdc350eLL60a0h3wvOdil5fsPb18tb1TqF9qj051bwnCL2qyl
+	u2eh7JZYgZj8GjneUCW4ka9GZRN8=
+X-Google-Smtp-Source: AGHT+IHUMtYxBvfLYQItKbePQ/umS4Ht1ykT0e7FqIyLa2HT/3A/UOJsKW51yQEGE2SNdY2TpLy4hlZZYrtL+TDRNPc=
+X-Received: by 2002:a05:6a20:7fa6:b0:1db:ecb5:221f with SMTP id
+ adf61e73a8af0-1dc90afc47amr24006837637.4.1732024274323; Tue, 19 Nov 2024
+ 05:51:14 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemf100008.china.huawei.com (7.202.181.222)
+References: <3607404.iIbC2pHGDl@rjwysocki.net> <2017201.usQuhbGJ8B@rjwysocki.net>
+ <173507d9-ec20-431d-a444-0531fd346c03@arm.com>
+In-Reply-To: <173507d9-ec20-431d-a444-0531fd346c03@arm.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 19 Nov 2024 14:51:00 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0iv05RxVQ4n3+RPOGp3PyFzWgz60+hEP4rd8cAU0aGiqw@mail.gmail.com>
+Message-ID: <CAJZ5v0iv05RxVQ4n3+RPOGp3PyFzWgz60+hEP4rd8cAU0aGiqw@mail.gmail.com>
+Subject: Re: [RFC][PATCH v0.1 3/6] PM: EM: Add special case to em_dev_register_perf_domain()
+To: Hongyan Xia <hongyan.xia2@arm.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>, 
+	Peter Zijlstra <peterz@infradead.org>, 
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Len Brown <len.brown@intel.com>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Morten Rasmussen <morten.rasmussen@arm.com>, 
+	Vincent Guittot <vincent.guittot@linaro.org>, 
+	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The driver checks whether mpam_partid_max and mpam_intpartid_max are equal
-as a basis for supporting reqPARTID. If this feature is supported, use a
-bitmap to represent whether the target reqPARTID is available or not.
-Create the bitmap during monitor initialization, and the destructor is
-called during the monitor exit process.
+On Mon, Nov 18, 2024 at 4:25=E2=80=AFPM Hongyan Xia <hongyan.xia2@arm.com> =
+wrote:
+>
+> On 08/11/2024 16:38, Rafael J. Wysocki wrote:
+> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >
+> > Allow em_dev_register_perf_domain() to register a cost-only stub
+> > perf domain with one-element states table if the .active_power()
+> > callback is not provided.
+> >
+> > Subsequently, this will be used by the intel_pstate driver to register
+> > stub perf domains for CPUs on hybrid systems.
+> >
+> > No intentional functional impact.
+> >
+> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > ---
+> >   kernel/power/energy_model.c |   26 +++++++++++++++++++++++---
+> >   1 file changed, 23 insertions(+), 3 deletions(-)
+> >
+> > Index: linux-pm/kernel/power/energy_model.c
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > --- linux-pm.orig/kernel/power/energy_model.c
+> > +++ linux-pm/kernel/power/energy_model.c
+> > @@ -426,9 +426,11 @@ static int em_create_pd(struct device *d
+> >       if (!em_table)
+> >               goto free_pd;
+> >
+> > -     ret =3D em_create_perf_table(dev, pd, em_table->state, cb, flags)=
+;
+> > -     if (ret)
+> > -             goto free_pd_table;
+> > +     if (cb->active_power) {
+> > +             ret =3D em_create_perf_table(dev, pd, em_table->state, cb=
+, flags);
+> > +             if (ret)
+> > +                     goto free_pd_table;
+> > +     }
+> >
+> >       ret =3D em_compute_costs(dev, em_table->state, cb, nr_states, fla=
+gs);
+> >       if (ret)
+> > @@ -561,11 +563,20 @@ int em_dev_register_perf_domain(struct d
+> >   {
+> >       unsigned long cap, prev_cap =3D 0;
+> >       unsigned long flags =3D 0;
+> > +     bool stub_pd =3D false;
+> >       int cpu, ret;
+> >
+> >       if (!dev || !nr_states || !cb)
+> >               return -EINVAL;
+> >
+> > +     if (!cb->active_power) {
+> > +             if (!cb->get_cost || nr_states > 1 || microwatts)
+> > +                     return -EINVAL;
+> > +
+> > +             /* Special case: a stub perf domain. */
+> > +             stub_pd =3D true;
+> > +     }
+> > +
+>
+> I wonder if the only purpose of stub_pd is to just skip the capacity
+> check below, which doesn't look very nice.
 
-It is noted that the reqpartid_free_map reserves the first reqPARTID under
-each intPARTID (which is equal to the corresponding intPARTID itself). By
-default, assigns it to the corresponding control group for use in
-monitoring.
+It is.
 
-Signed-off-by: Zeng Heng <zengheng4@huawei.com>
----
- drivers/platform/arm64/mpam/mpam_resctrl.c | 33 ++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+I guess I could just skip it if nr_states =3D=3D 1 because that case means
+the same cost for all frequency values.
 
-diff --git a/drivers/platform/arm64/mpam/mpam_resctrl.c b/drivers/platform/arm64/mpam/mpam_resctrl.c
-index ac3d228befcf..dfd4125875d7 100644
---- a/drivers/platform/arm64/mpam/mpam_resctrl.c
-+++ b/drivers/platform/arm64/mpam/mpam_resctrl.c
-@@ -1005,6 +1005,33 @@ static void mpam_resctrl_monitor_init(struct mpam_class *class,
- 	return;
- }
- 
-+static unsigned long *reqpartid_free_map;
-+static int reqpartid_free_map_len;
-+
-+static int reqpartid_create(void)
-+{
-+	u32 reqpartid_num = get_num_reqpartid();
-+	int i;
-+
-+	reqpartid_free_map = bitmap_alloc(reqpartid_num, GFP_KERNEL);
-+	if (!reqpartid_free_map)
-+		return -ENOMEM;
-+
-+	bitmap_fill(reqpartid_free_map, reqpartid_num);
-+
-+	/* Reserved for the internal partIDs mapping */
-+	for (i = 0; i < resctrl_arch_get_num_closid(NULL); i++)
-+		__clear_bit(i, reqpartid_free_map);
-+
-+	reqpartid_free_map_len = reqpartid_num;
-+	return 0;
-+}
-+
-+static void reqpartid_destroy(void)
-+{
-+	bitmap_free(reqpartid_free_map);
-+}
-+
- int mpam_resctrl_setup(void)
- {
- 	int err = 0;
-@@ -1052,6 +1079,10 @@ int mpam_resctrl_setup(void)
- 
- 	cpus_read_unlock();
- 
-+	err = reqpartid_create();
-+	if (err)
-+		return err;
-+
- 	if (!err && !exposed_alloc_capable && !exposed_mon_capable)
- 		err = -EOPNOTSUPP;
- 
-@@ -1080,6 +1111,8 @@ static void mpam_resctrl_exit(void)
- 
- 	WRITE_ONCE(resctrl_enabled, false);
- 	resctrl_exit();
-+
-+	reqpartid_destroy();
- }
- 
- 
--- 
-2.25.1
+>
+> I may be echoing Dietmar's comments here. What's the problem of just
+> having 3 domains?
 
+The energy-efficiency of a CPU is not strictly related to its capacity.
+
+It's about the cases when there are some special CPUs that can
+turbo-up higher, but there's no other difference between them and the
+other CPUs in the domain.
+
+> Or, could you just specify the same capacities so that the same-capacity
+> check won't fail, but just to use hardware load or CPU pressure to model
+> the slight difference in real capacities? This way you'd re-use a lot of
+> existing infrastructure.
+
+That would have been confusing though, so thanks, but no thanks.
+
+> >       /*
+> >        * Use a mutex to serialize the registration of performance domai=
+ns and
+> >        * let the driver-defined callback functions sleep.
+> > @@ -590,6 +601,15 @@ int em_dev_register_perf_domain(struct d
+> >                               ret =3D -EEXIST;
+> >                               goto unlock;
+> >                       }
+> > +
+> > +                     /*
+> > +                      * The capacity need not be the same for all CPUs=
+ in a
+> > +                      * stub perf domain, so long as the average cost =
+of
+> > +                      * running on each of them is approximately the s=
+ame.
+> > +                      */
+> > +                     if (stub_pd)
+> > +                             continue;
+> > +
+> >                       /*
+> >                        * All CPUs of a domain must have the same
+> >                        * micro-architecture since they all share the sa=
+me
+> >
+> >
+> >
+>
+>
 
