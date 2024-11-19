@@ -1,217 +1,192 @@
-Return-Path: <linux-kernel+bounces-413858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FA859D1FB0
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 06:46:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFFA29D1FA8
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 06:44:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC6A01F21AEB
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 05:46:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 718F7282BFC
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 05:44:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F0FB146596;
-	Tue, 19 Nov 2024 05:46:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97AFF14D70B;
+	Tue, 19 Nov 2024 05:44:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="pV45TzxH"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2087.outbound.protection.outlook.com [40.107.220.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aho+kv7R"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB87C142E7C
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 05:46:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.87
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731995169; cv=fail; b=aRZ0woRrAma4BDjlw1c6qLozSmPkMpSF0t5Inh8u4sS19GKQ9wafhKROmLzIzkeu0OOrCbH00ToL0MEo2xzFc2zahSeFTdsPHXmQhWg8qsOiXUhF25t95YUVi7/WEV9Z02RRAdjE4cDzjgz8fRrtdLm+huzGIFofHZlHxtUi+9M=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731995169; c=relaxed/simple;
-	bh=+ZoSNuKGOS6XN/mIyhHo6fbq8jMula5qsReok3p7RjI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ey0tDGnqoFXme4Op+0NyCpMP1hDuDEPW8yl5cHvTNDE5GM/LHtFhkIhjHsnOQXFw6tgPAKIOXj7OSvuVnKlN38qjUwnWCoVFxwjY2fKU+Qnh2707NZeI4KQYWOVKEgsuAcVpDcsMphUq/SDp2hpYp6PyXzXXecj9pw3Lc0ecKgI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=pV45TzxH; arc=fail smtp.client-ip=40.107.220.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=gdtXU8J/vrOT1hoBZi0NL/qCy92XUMijVcuLRrtolqfzn3iM/8UJDi3p8YW+w6ulC5L8/mzTK+CXrgQaci5kHVOIl8wepjlgdVBB7sV9ic8BQzLXcPUJifr3tKlRw/UQu7DwBV+rx0jwF1ec2o/K7f6pLLqHkjBgqba2QKYWkVJYjG9qMP7j7Vo4CPUJ3t9ZZ4evlpRZwv511GfGFceTu21HUTs3Em2ZRaoFmzVmuvLgeD6AUfvXCBrEkAndLb83JRh8tcUjK+EVsgMtsE1s24wHU+BxOB/RutE/zF2kjNilqA5eERYkmsdyr/F1uHTDegkp1EKsYY3cxuiTSF7A2g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wX9FQvjzKlDgiiet3apd6ajpe+k9G1eYy7N4Swy2W9Y=;
- b=gfW4R7Bbb9xl9lDgf3esxlCtFW2Du9j8CTsfhyeoXCqGGDm5DIy5Ah+4/DlnMQCSOKIprcfwHzrOSMHXX7KIPjiuVT/4UGN2AO01z8LA+loWnQlQc9KGg/CgX3i1aSPrEZwTyNcoLP/X9sQMFgKDRC/seHAACEAujnR5asEo+QviVLoQwt6IPmiBLXUrxqedEph8AyZg0vIMHnm2HBDmN7ItPZQyo4GitqRsEypdFR4Sjm5hx3qM9c2oKwjr6sYFELnSgs1tGxLuXdTaxWEJiZX8sc5JBkxRgGz+9j9ilQR5LwfO1VIxjiqn/uzE7Hy2YW/1wwdANk+4ZLeSWEfd+g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.12) smtp.rcpttodomain=redhat.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wX9FQvjzKlDgiiet3apd6ajpe+k9G1eYy7N4Swy2W9Y=;
- b=pV45TzxHhV0F2WmmSVKbtG/r53VgZQHJFCxBh6jm9dFdPjabaDbu6Y95QLF2ygAAuZRwVf6jOIwDssaNItbDH0oc3wNZLxV2DUP0jgbRts1RPvJChAt//HEh2Tjlb145s4EbInIPXcwCJA+a51RsFdE8Y5/1iRGi8m8CPNFD0hc=
-Received: from PH8PR05CA0011.namprd05.prod.outlook.com (2603:10b6:510:2cc::28)
- by SA1PR12MB5658.namprd12.prod.outlook.com (2603:10b6:806:235::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.19; Tue, 19 Nov
- 2024 05:46:05 +0000
-Received: from SA2PEPF000015C9.namprd03.prod.outlook.com
- (2603:10b6:510:2cc:cafe::87) by PH8PR05CA0011.outlook.office365.com
- (2603:10b6:510:2cc::28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.22 via Frontend
- Transport; Tue, 19 Nov 2024 05:46:04 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.12)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.12 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.12; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.12) by
- SA2PEPF000015C9.mail.protection.outlook.com (10.167.241.199) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8158.14 via Frontend Transport; Tue, 19 Nov 2024 05:46:04 +0000
-Received: from BLRKPRNAYAK.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 18 Nov
- 2024 23:45:57 -0600
-From: K Prateek Nayak <kprateek.nayak@amd.com>
-To: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot
-	<vincent.guittot@linaro.org>, Sebastian Andrzej Siewior
-	<bigeasy@linutronix.de>, Clark Williams <clrkwllms@kernel.org>, "Steven
- Rostedt" <rostedt@goodmis.org>, <linux-kernel@vger.kernel.org>,
-	<linux-rt-devel@lists.linux.dev>
-CC: Dietmar Eggemann <dietmar.eggemann@arm.com>, Ben Segall
-	<bsegall@google.com>, Mel Gorman <mgorman@suse.de>, Valentin Schneider
-	<vschneid@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Tejun Heo
-	<tj@kernel.org>, NeilBrown <neilb@suse.de>, Jens Axboe <axboe@kernel.dk>,
-	Frederic Weisbecker <frederic@kernel.org>, Zqiang
-	<qiang.zhang1211@gmail.com>, Caleb Sander Mateos <csander@purestorage.com>,
-	"Gautham R . Shenoy" <gautham.shenoy@amd.com>, Chen Yu <yu.c.chen@intel.com>,
-	Julia Lawall <Julia.Lawall@inria.fr>, K Prateek Nayak
-	<kprateek.nayak@amd.com>
-Subject: [PATCH v5 4/4] sched/core: Prevent wakeup of ksoftirqd during idle load balance
-Date: Tue, 19 Nov 2024 05:44:32 +0000
-Message-ID: <20241119054432.6405-5-kprateek.nayak@amd.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241119054432.6405-1-kprateek.nayak@amd.com>
-References: <20241119054432.6405-1-kprateek.nayak@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F8BA2563;
+	Tue, 19 Nov 2024 05:44:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731995083; cv=none; b=T4OSWRSBIbzHpy+lpRZ01jdy0E3MmuBkjXnGg88+5+m08Vi9NfwPZkzXOwz7NdDwUj4nHoapevYkOt68o+Qcgwpx5XvqEOpSG8+x+CA1kifbdpG56hEJI++fYHIZjqr91dSxXp3Al4LBrRfTT4r/If3KpAtz0MYYiaT67cRIAkY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731995083; c=relaxed/simple;
+	bh=WOIpDyTBFer6NRdvEdnfKceDSEcFOLTveWh00ai72E4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jBnmxX0JL14crt+BTJX4vsUPhL5FU1fTfcUO/tub3yNQm4WmyHwu9VmkH2agCIew55xPPHxuolBI4k+pAmHSjhVhZjg9v73UlAzjlKwl86yjvT75cODVyO/1SAsIscyyXHHwXM6HkLh8PifN29LTqB63v+L2TYZPqim0LaQk28s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aho+kv7R; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-20c9978a221so4803455ad.1;
+        Mon, 18 Nov 2024 21:44:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731995081; x=1732599881; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=S31o8lGUzpvnXYeIe9E0q96l4NFr1QYtgA045hjQDUg=;
+        b=aho+kv7RcuKmaIpAtZrJE/4t/bB6kkWF91WTU8qGt5WBOAw4dhH2Ycv1RwdBXerXrR
+         fCztIVg97KKKPZZifEbDB0awIhCW3oZrVcSSUP5gliWevmldR9GXgYe3+f4GK3JG0lVC
+         YB40HkMjqlMDrgDJxdJRP6hJLI1zB+HYJ3ZHf039nL2+bgA1tX1RqA7UvqYLWuvrnabs
+         rs8lS442h543otPrLjvSXaGHKAYjfDtu9sV/fo0G5b++wf0R8faGEKhOMvxDS8xCPlTc
+         0x3AAxLoQqnXOict373PFX0/JYQkxr1Pw8ZVHSTQEaZYL6k9XFrR3JYWJoSusLWYVvAh
+         +s+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731995081; x=1732599881;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=S31o8lGUzpvnXYeIe9E0q96l4NFr1QYtgA045hjQDUg=;
+        b=Q8/S3ISf7lQua515QCvmuNQ9fxBRrDbhiYyvGkIMhvAKS+ECWw8m3mSBIAu4CwtW1K
+         FmYD0wdTnMRZFwi9TD8injrAnIWXMMVRLAizWIea8WbTvy8Pva+RkzZ2hS0oo5oJ+8VM
+         rLhM8iLOzgLPmfWrJm5/w1GmpTgtvk/ROW3jHpBcnuBaEOzXTYIALQHhBoYv/2n+zyxQ
+         HwIyXNuquF5Fv0gq8IOsqEZmL6bfmUtNBdX8nuxA9zMgQ3BC1cq0G2KvfiQ/UOfWuI0l
+         LyC+yMsoHG7YfWLz8an21KVLlX4zzaeuM7i8HpFxRROUuj9ReDf2MskcfxbGC+l3MMOZ
+         weEw==
+X-Forwarded-Encrypted: i=1; AJvYcCVQRMi/KOjy4OMGNCNe6zCgM/pb9XCTRLv622/ZN1o+zRoagBk/7I9pik0aEwX9TQ9HjTD1IFdcvp0oDAxLWVmX@vger.kernel.org, AJvYcCVfJKtmaKeTKS0iVXp0XsnAWPPEYMx1+gT0zfrKASo6vNC6sxCieZFubegRpyn5QKMGPV3YTF4BJUf0z+Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOn7tScojTmOpWpZuJgrthxbLBecYiw4t/nqM7LjnRU8TN0Exb
+	NpCIK6L2dkILFoHyxYHNsdgrhWkOfrGGCnbKs7yQC7UGLlD1M0NE
+X-Google-Smtp-Source: AGHT+IHQek7r5Gt5WDLPMJII/24+21dEy/S/cq7SVa28dbdCeBPjRQtwgXKcgwbXWYXRU7S94MXmfg==
+X-Received: by 2002:a17:902:ec84:b0:212:514:b31f with SMTP id d9443c01a7336-2120514b620mr106282375ad.18.1731995080664;
+        Mon, 18 Nov 2024 21:44:40 -0800 (PST)
+Received: from visitorckw-System-Product-Name ([140.113.216.168])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211d0f344cfsm64399785ad.120.2024.11.18.21.44.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Nov 2024 21:44:40 -0800 (PST)
+Date: Tue, 19 Nov 2024 13:44:36 +0800
+From: Kuan-Wei Chiu <visitorckw@gmail.com>
+To: Jinjie Ruan <ruanjinjie@huawei.com>
+Cc: brendan.higgins@linux.dev, davidgow@google.com, rmoar@google.com,
+	skhan@linuxfoundation.org, rf@opensource.cirrus.com,
+	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] kunit: string-stream: Fix a UAF bug in
+ kunit_init_suite()
+Message-ID: <ZzwlxMbDH64S6geV@visitorckw-System-Product-Name>
+References: <20241112080314.407966-1-ruanjinjie@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA2PEPF000015C9:EE_|SA1PR12MB5658:EE_
-X-MS-Office365-Filtering-Correlation-Id: aa1417b6-1690-46d4-c8c1-08dd085d7524
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|82310400026|7416014|1800799024|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?EzcJULrDLWtHj0YpIu1EpP0tyGXPK/Owtnxa5oQrXn1MX5w+I3rEl4tYRw1s?=
- =?us-ascii?Q?6dU5eu9Ef3TF8Idp3vONWd8HQAV5UmKhehHx1/hcDZCSPGrHlJ0KNvNNStNr?=
- =?us-ascii?Q?0g7U3B2ygOQZ+INnLFLNlyUxyRHk5AC5d2CGZPCsLQftX/61aczsdhXMAo34?=
- =?us-ascii?Q?23fUiEg2YQg3bV/JHBi+1SwV4dm3y8h5yKeWEdiQ3+Q/h/te7n9NasXLmiAz?=
- =?us-ascii?Q?tBhgid7kGfDDYYKB2sSM31obbIJo2zduePyVtYt5EoSYU9QactDq6DipEQ4W?=
- =?us-ascii?Q?yrClR1aa+nD0NJXk6IDDmb+tZfxK3b+9YItLZ5csdXUPEYLRO3Jk5USiAqB3?=
- =?us-ascii?Q?PrPIWXgipeC7NYSv8NUlNXi9QbPDpzhi+aPKmM2BnIsjZeiRoWqJUZjas/Tt?=
- =?us-ascii?Q?b9CcnrinF9gDRneTYmL+9b+zNPMpTouX+xkOFWXXcgIQmNrgWaDluTtRUWK4?=
- =?us-ascii?Q?24puEMc7XX4HoDnizgOENvzuPvl6EKL6yR9BZl5qcMLIk0rNKRzAX6Y+JT9q?=
- =?us-ascii?Q?Z1Y4b7XIpqkJXgmMYFWkp5/NMYDijNDIRod2UkgYNWoJdJfI8kLbvUOfInFV?=
- =?us-ascii?Q?KCk59S4QD8y8IMHNj+j1ixVZQBlESC4zhnlqry9gxlfnz65vU9D1drNbDnER?=
- =?us-ascii?Q?yMbkxvO7dHd/8DZuAAHuCpZ2lAVkH8eQdM4HP4kRdcEKfB5EKWS/yerMR1KI?=
- =?us-ascii?Q?BzlWPptPj5rb97Pw1enSrMVO/Ggn9QZClErbE3gKJtBJ94tst3Qtfu1VBHgY?=
- =?us-ascii?Q?x600JTA65AMViVqhrnopfz0/z2x1wSVMkaKhAvyDwAgIgrIpxYJtJMbhfGE6?=
- =?us-ascii?Q?fwzFuzn5u8Qjzc019sEGKftzQVJx6PUJvEOCpx3RYYNDwCmMR3j+0QgCayuJ?=
- =?us-ascii?Q?uPJ2mysLxhNeeM1Nr7RB9l2UycidvpU8nB3EH48qYPE4TxLKPX0KtumCmP89?=
- =?us-ascii?Q?ClllJsGfvUQnVdfHJsDAWAEM+9Z2Qp53c4xBRQZFb8/oOFrPb/CCak8t1MVY?=
- =?us-ascii?Q?WlPpW5ypj9E2xlZvxRalXKXklVU5RULWc35bDY1n6dJT6afDPoABRnx7/tjX?=
- =?us-ascii?Q?ZXwzHtZAzOtYYpxtxCW+eKYdN2azdtos16Va1ZuYUaHqjdjq8D1KyJIF8Yz9?=
- =?us-ascii?Q?6R7DWRpKAJwTt1bd3xAlK55VsMUkhpmsNB9zEO/pB+CLtHwrE4ZxgGynGr/p?=
- =?us-ascii?Q?3gjdGqlW+tkIKp+LmQ3vBFRDzGjT6BF6UgnheaR5YFl9JF6rA2/c0V/gOk91?=
- =?us-ascii?Q?E6GAwCLES3oq4EtfIgRRYomxUsHT/ez363KOKnTXsfO3ZU3E8tTo/UPEz0e3?=
- =?us-ascii?Q?0R7swCIQrAU4bcWdLet4L9l1UHoZTBb7r6p3DRvCJvuem4yoEyW7oBUUxWBm?=
- =?us-ascii?Q?P61RN+LG38bxmQE9teVJkYml+tvyMbOjSUing7g0/keJMj9LAg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.12;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:atlvpn-bp.amd.com;CAT:NONE;SFS:(13230040)(376014)(82310400026)(7416014)(1800799024)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Nov 2024 05:46:04.5866
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: aa1417b6-1690-46d4-c8c1-08dd085d7524
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.12];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SA2PEPF000015C9.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB5658
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241112080314.407966-1-ruanjinjie@huawei.com>
 
-Scheduler raises a SCHED_SOFTIRQ to trigger a load balancing event on
-from the IPI handler on the idle CPU. If the SMP function is invoked
-from an idle CPU via flush_smp_call_function_queue() then the HARD-IRQ
-flag is not set and raise_softirq_irqoff() needlessly wakes ksoftirqd
-because soft interrupts are handled before ksoftirqd get on the CPU.
+On Tue, Nov 12, 2024 at 04:03:14PM +0800, Jinjie Ruan wrote:
+> In kunit_debugfs_create_suite(), if alloc_string_stream() fails in the
+> kunit_suite_for_each_test_case() loop, the "suite->log = stream"
+> has assigned before, and the error path only free the suite->log's stream
+> memory but not set it to NULL, so the later string_stream_clear() of
+> suite->log in kunit_init_suite() will cause below UAF bug.
+> 
+> Set stream pointer to NULL after free to fix it.
 
-Adding a trace_printk() in nohz_csd_func() at the spot of raising
-SCHED_SOFTIRQ and enabling trace events for sched_switch, sched_wakeup,
-and softirq_entry (for SCHED_SOFTIRQ vector alone) helps observing the
-current behavior:
+I just noticed that since v2, we no longer set the stream pointer to
+NULL but instead set suite->log to NULL. This description needs a
+slight adjustment.
 
-       <idle>-0   [000] dN.1.:  nohz_csd_func: Raising SCHED_SOFTIRQ from nohz_csd_func
-       <idle>-0   [000] dN.4.:  sched_wakeup: comm=ksoftirqd/0 pid=16 prio=120 target_cpu=000
-       <idle>-0   [000] .Ns1.:  softirq_entry: vec=7 [action=SCHED]
-       <idle>-0   [000] .Ns1.:  softirq_exit: vec=7  [action=SCHED]
-       <idle>-0   [000] d..2.:  sched_switch: prev_comm=swapper/0 prev_pid=0 prev_prio=120 prev_state=R ==> next_comm=ksoftirqd/0 next_pid=16 next_prio=120
-  ksoftirqd/0-16  [000] d..2.:  sched_switch: prev_comm=ksoftirqd/0 prev_pid=16 prev_prio=120 prev_state=S ==> next_comm=swapper/0 next_pid=0 next_prio=120
-       ...
+Regards,
+Kuan-Wei
 
-Use __raise_softirq_irqoff() to raise the softirq. The SMP function call
-is always invoked on the requested CPU in an interrupt handler. It is
-guaranteed that soft interrupts are handled at the end.
-
-Following are the observations with the changes when enabling the same
-set of events:
-
-       <idle>-0       [000] dN.1.: nohz_csd_func: Raising SCHED_SOFTIRQ for nohz_idle_balance
-       <idle>-0       [000] dN.1.: softirq_raise: vec=7 [action=SCHED]
-       <idle>-0       [000] .Ns1.: softirq_entry: vec=7 [action=SCHED]
-
-No unnecessary ksoftirqd wakeups are seen from idle task's context to
-service the softirq.
-
-Fixes: b2a02fc43a1f ("smp: Optimize send_call_function_single_ipi()")
-Reported-by: Julia Lawall <julia.lawall@inria.fr>
-Closes: https://lore.kernel.org/lkml/fcf823f-195e-6c9a-eac3-25f870cb35ac@inria.fr/ [1]
-Suggested-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Reviewed-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Signed-off-by: K Prateek Nayak <kprateek.nayak@amd.com>
----
-v4..v5:
-
-- Reworded the commit message as per the sugestion and dropped the
-  comment above __raise_softirq_irqoff() (Sebastian)
-
-- Collected the Reviewed-by from Sebastian.
----
- kernel/sched/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 424c652a9ddc..e45f922e5829 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -1239,7 +1239,7 @@ static void nohz_csd_func(void *info)
- 	rq->idle_balance = idle_cpu(cpu);
- 	if (rq->idle_balance) {
- 		rq->nohz_idle_balance = flags;
--		raise_softirq_irqoff(SCHED_SOFTIRQ);
-+		__raise_softirq_irqoff(SCHED_SOFTIRQ);
- 	}
- }
- 
--- 
-2.34.1
-
+> 	Unable to handle kernel paging request at virtual address 006440150000030d
+> 	Mem abort info:
+> 	  ESR = 0x0000000096000004
+> 	  EC = 0x25: DABT (current EL), IL = 32 bits
+> 	  SET = 0, FnV = 0
+> 	  EA = 0, S1PTW = 0
+> 	  FSC = 0x04: level 0 translation fault
+> 	Data abort info:
+> 	  ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
+> 	  CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+> 	  GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+> 	[006440150000030d] address between user and kernel address ranges
+> 	Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
+> 	Dumping ftrace buffer:
+> 	   (ftrace buffer empty)
+> 	Modules linked in: iio_test_gts industrialio_gts_helper cfg80211 rfkill ipv6 [last unloaded: iio_test_gts]
+> 	CPU: 5 UID: 0 PID: 6253 Comm: modprobe Tainted: G    B   W        N 6.12.0-rc4+ #458
+> 	Tainted: [B]=BAD_PAGE, [W]=WARN, [N]=TEST
+> 	Hardware name: linux,dummy-virt (DT)
+> 	pstate: 40000005 (nZcv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> 	pc : string_stream_clear+0x54/0x1ac
+> 	lr : string_stream_clear+0x1a8/0x1ac
+> 	sp : ffffffc080b47410
+> 	x29: ffffffc080b47410 x28: 006440550000030d x27: ffffff80c96b5e98
+> 	x26: ffffff80c96b5e80 x25: ffffffe461b3f6c0 x24: 0000000000000003
+> 	x23: ffffff80c96b5e88 x22: 1ffffff019cdf4fc x21: dfffffc000000000
+> 	x20: ffffff80ce6fa7e0 x19: 032202a80000186d x18: 0000000000001840
+> 	x17: 0000000000000000 x16: 0000000000000000 x15: ffffffe45c355cb4
+> 	x14: ffffffe45c35589c x13: ffffffe45c03da78 x12: ffffffb810168e75
+> 	x11: 1ffffff810168e74 x10: ffffffb810168e74 x9 : dfffffc000000000
+> 	x8 : 0000000000000004 x7 : 0000000000000003 x6 : 0000000000000001
+> 	x5 : ffffffc080b473a0 x4 : 0000000000000000 x3 : 0000000000000000
+> 	x2 : 0000000000000001 x1 : ffffffe462fbf620 x0 : dfffffc000000000
+> 	Call trace:
+> 	 string_stream_clear+0x54/0x1ac
+> 	 __kunit_test_suites_init+0x108/0x1d8
+> 	 kunit_exec_run_tests+0xb8/0x100
+> 	 kunit_module_notify+0x400/0x55c
+> 	 notifier_call_chain+0xfc/0x3b4
+> 	 blocking_notifier_call_chain+0x68/0x9c
+> 	 do_init_module+0x24c/0x5c8
+> 	 load_module+0x4acc/0x4e90
+> 	 init_module_from_file+0xd4/0x128
+> 	 idempotent_init_module+0x2d4/0x57c
+> 	 __arm64_sys_finit_module+0xac/0x100
+> 	 invoke_syscall+0x6c/0x258
+> 	 el0_svc_common.constprop.0+0x160/0x22c
+> 	 do_el0_svc+0x44/0x5c
+> 	 el0_svc+0x48/0xb8
+> 	 el0t_64_sync_handler+0x13c/0x158
+> 	 el0t_64_sync+0x190/0x194
+> 	Code: f9400753 d2dff800 f2fbffe0 d343fe7c (38e06b80)
+> 	---[ end trace 0000000000000000 ]---
+> 	Kernel panic - not syncing: Oops: Fatal exception
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: a3fdf784780c ("kunit: string-stream: Decouple string_stream from kunit")
+> Suggested-by: Kuan-Wei Chiu <visitorckw@gmail.com>
+> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+> ---
+> v2:
+> - Correct the fix way.
+> - Add Suggested-by.
+> ---
+>  lib/kunit/debugfs.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/lib/kunit/debugfs.c b/lib/kunit/debugfs.c
+> index d548750a325a..b25d214b93e1 100644
+> --- a/lib/kunit/debugfs.c
+> +++ b/lib/kunit/debugfs.c
+> @@ -212,8 +212,11 @@ void kunit_debugfs_create_suite(struct kunit_suite *suite)
+>  
+>  err:
+>  	string_stream_destroy(suite->log);
+> -	kunit_suite_for_each_test_case(suite, test_case)
+> +	suite->log = NULL;
+> +	kunit_suite_for_each_test_case(suite, test_case) {
+>  		string_stream_destroy(test_case->log);
+> +		test_case->log = NULL;
+> +	}
+>  }
+>  
+>  void kunit_debugfs_destroy_suite(struct kunit_suite *suite)
+> -- 
+> 2.34.1
+> 
 
