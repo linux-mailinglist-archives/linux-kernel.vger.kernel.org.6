@@ -1,280 +1,159 @@
-Return-Path: <linux-kernel+bounces-413995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC5499D219B
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 09:30:36 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 130839D219F
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 09:34:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6260F1F218F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 08:30:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E3E7B21BF6
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 08:34:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75B4319B59C;
-	Tue, 19 Nov 2024 08:30:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B50F172767;
+	Tue, 19 Nov 2024 08:34:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GGTtAHDG"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="KLOqCNQF"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4AB2198A25
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 08:30:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADE2F1531DB
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 08:34:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732005005; cv=none; b=pukXz8wJHUwLMHlkn6sFv0cApnx1J7AWF5eMQ05UFO2N8Jxfh9COEnq0rv5XDjf9Lc+/knPK4Ey1U0PBdb3QmQ01Pwj43uosKntIjNRaISvL6fUa7xZcKopyJ70fTP0FmD2fSpzJUp6XNWpCs1by8P5N6v7EbY086wqkuhzb540=
+	t=1732005252; cv=none; b=GWDC+vW36EIrtYlf6xDERVSVVhyXIcD1PQasCENm1MZprQCfC5Yie3uO+Mip99lSjH0eqHC9Gc1uQusM4hIiEB9ovb1PIG2x4HvjH1s4ymh5fKX4W0voT7jFOP4+dNMBJKMOfQZ+HsYfDBb6OdhjoKsBaf5n2PXcAv7x73iL/Fc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732005005; c=relaxed/simple;
-	bh=+xKCrPwQVHWM0r18FvOpIwNqva/kAUIiweoFAE7ZwzI=;
+	s=arc-20240116; t=1732005252; c=relaxed/simple;
+	bh=3opWfJRX/SunMCyqGokAYKMWv3I7yP82kpJNjhWRXlw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PFyOdBogJiQTzrbvexKDqyEulnv4BuiCwj4lMB7AITRtodYoqsv5uo+INpQwetpVewAe84zlqG0ggp2LXjEvCj912xRhOJQzlr5XI2wQQMWt2dvyaPReqnCi7aNM67THvwuKKjY9D+ENgbPXxfVEpGwa4tpx3OksFmAN/OwoBqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GGTtAHDG; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732005002;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xTLxAWYQ1JNcTU0UUWCX6oUrShuLfa8MUCD9ctjzgKA=;
-	b=GGTtAHDGoa4//IKKyRRDqxZ1KbJ6UnluMRm/sPuc0S2gq1cwPRT8PWChHW8MXxwuwIVE9l
-	yx6g8cO+ZxtBHMrkM+CxoE52UtPTTOXZEKJH8F2nzK53tRlWXMdQ5FrTGc+jr1xZv4zirc
-	D1SB5sifdJKJsPLOdOUeJq8fxSF4APs=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-16-aDXOoWW1NjC-UlSWoTWu5Q-1; Tue, 19 Nov 2024 03:30:01 -0500
-X-MC-Unique: aDXOoWW1NjC-UlSWoTWu5Q-1
-X-Mimecast-MFC-AGG-ID: aDXOoWW1NjC-UlSWoTWu5Q
-Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-a9ad6d781acso48752866b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 00:30:01 -0800 (PST)
+	 Content-Type:Content-Disposition:In-Reply-To; b=FfUWkupu823pCOxNdyg5URqdlkPg6m8zz/NxtJr7qxM1ZWPGHodtmhIWXNkp2KPXMbHHvjWqUYD5eh1v/ATjz219unXKiQv8fgFf3QUlFo29uQ7XtClhVnjjzi3Ckjjbiwf3+htRFwJTOKuVErZ8hMHRuXyTpnpcKk6GbfkOXDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=KLOqCNQF; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4315baa51d8so35794295e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 00:34:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1732005249; x=1732610049; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=WUKCfmUuN+EAwvifVE4+S5ixV+7dGLlwu1X93E3/9sk=;
+        b=KLOqCNQFgHYrwQAkTbfissl7LWvafkRraXxqhqrNrJ0uZfRN2yuAcuxvJ80RnDw+Si
+         c+HTVYHi2R8z1R6SI3OYarGtfMVsRN5kEIdxXa6cKCVg9oxPXZIkU/tD6KwGP/pIg0pK
+         y3ACZRRTRCUWLkX91Ol0mwbdiEZunemc9VGkCmU9WuluETd1IXfUNrTok/IJqyH1dw4+
+         m5NtwYqVFEZT7qHLHGDPJzEPL7qh8aR35v5LDKJgqYE06KFxJSybwHcXHEnm0xeVFM4B
+         YI5gSGvBQGVMRh5YNiKGRAVhd9h+v/VF1QPWOnQSsmhY8ZFyNrlQ/tKhNiJSV8qceidB
+         /3aA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732005000; x=1732609800;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xTLxAWYQ1JNcTU0UUWCX6oUrShuLfa8MUCD9ctjzgKA=;
-        b=tqAI9yOPbL42/K8+9Gqy92X1vxFXV4+NdNOnQ2b+FFA+3pa8C4VBC3m2XYMhSEtM4Z
-         3yYOgTRDkjnr/G0DULESwXxTlEEmPDNxSL+r1ZkyAjdvRVkuKeImBgDodtGmrzvBodUj
-         H7U9UYVYLTtuJBv1YJ0oy4+xXUJBUKu4o97iF85qwxNUKBZ2i7cC85Yly2ha9ZY6He3H
-         04B3dxZyIqJMzpEyOIoEDzs96DqOJEUVQ8h6p2g9tpLFu35/erDwO4ygabkDeDL/FwGg
-         rLGnrpZ2NCEnWpvg1l0jSQsGg3X53KKKxu9fD4+pUWNf80SP5QFSDqZ3Aw9l3gImovqf
-         4OZg==
-X-Forwarded-Encrypted: i=1; AJvYcCUr5X1+QfjPugGw/f6yU4CWtW4xYCRw8LdSLAl+B4x0u3OKUCaWKhj8Q5KlTovXHdSOseCsDrqRVX/75Uc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPu8MPcByPeRDbeHynpPMkfzqpjzf9bKRFH6nLb7ArQhYAXbsP
-	NQJdR2zsaYtfnwYfmsZSPglToMOC/rDvbn8ZjXcRy12KDKyhq6ux3HCWliv/cY4bBp90uvGJhI+
-	Z7VfovzKMpS0ITMrgtUZuaL4r4eCkuqgPeNiAXPPxVxM8KwPGFQ7EkN9ri5kV3g==
-X-Received: by 2002:a17:907:d19:b0:a9e:b5d0:4ab7 with SMTP id a640c23a62f3a-aa483556727mr1382682466b.52.1732005000134;
-        Tue, 19 Nov 2024 00:30:00 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFxd7z957UsxaATiVx0EDfbn0BFQH51aHLzQfor6HWy4iT3aPDneL8plKb/5vnwG3RSEd0qgw==
-X-Received: by 2002:a17:907:d19:b0:a9e:b5d0:4ab7 with SMTP id a640c23a62f3a-aa483556727mr1382676566b.52.1732004999357;
-        Tue, 19 Nov 2024 00:29:59 -0800 (PST)
-Received: from sgarzare-redhat (host-79-46-200-129.retail.telecomitalia.it. [79.46.200.129])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20df4e7bfsm624064866b.42.2024.11.19.00.29.58
+        d=1e100.net; s=20230601; t=1732005249; x=1732610049;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WUKCfmUuN+EAwvifVE4+S5ixV+7dGLlwu1X93E3/9sk=;
+        b=Ges5O5AIX1bV1rvEa6WRXdJogejjvSKX+kftrY0jR20PubMwwFkoEsBQeGRBaYY2QJ
+         qdN57Pn2FszTVp7iKfA3/spcbploi4mfuSqcrWJurzwetyIR7fSj/LK8BX4r1yzzlwde
+         +DyT5SqVTzCoHtGqbWAMARgu4cdxKLEo0nWWk1k6oM785vAaCK6tgIGAAEBZ6zPuFgdy
+         XYhFBLI6LANaLIJ5mD/kAvXMA70Kmpg1BG4kaJgafxJDFJlMowBqT/yYVZm3FZmuli4q
+         oGkExTs+P9rcJbfPBK0Hiq++Rxz1Dgr8uDF8Y801BMkyPPuhyGq9j3B0fbcag/eJ4biK
+         j0FQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVecDgT3p6s4CbVasGrHNI6N1MMvftmhmfNqj+8rjHuDNZD1hPGDaPBTf4Z9iaqdRr27Rs11vc9jUExJFI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yywd150OzzP2H4o+Dfux5S8wjbhpB3IGqoHjpffYsouJIAs84DK
+	K7Jsq680csrdFFVt+g9FItbWiSciG7wmYJdw0SGoFjGkCD7vXLAp7Qoq1CjrxB0=
+X-Google-Smtp-Source: AGHT+IEAnwtSIUCCmIKtfAGTWZVAyBrISGeUmzRcmTVWpwEqzShG1TbLIR2fD2YtzQG7+ymt31CdSA==
+X-Received: by 2002:a05:600c:3b0a:b0:431:52b7:a499 with SMTP id 5b1f17b1804b1-432df78b065mr119059215e9.20.1732005248941;
+        Tue, 19 Nov 2024 00:34:08 -0800 (PST)
+Received: from localhost (cst2-173-13.cust.vodafone.cz. [31.30.173.13])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432da24459bsm192837965e9.6.2024.11.19.00.34.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Nov 2024 00:29:58 -0800 (PST)
-Date: Tue, 19 Nov 2024 09:29:53 +0100
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: Alexander Graf <graf@amazon.com>, 
-	Stefan Hajnoczi <stefanha@redhat.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	virtualization@lists.linux.dev, kvm@vger.kernel.org, Asias He <asias@redhat.com>, 
-	"Michael S. Tsirkin" <mst@redhat.com>, Paolo Abeni <pabeni@redhat.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>, 
-	"David S. Miller" <davem@davemloft.net>
-Subject: Re: [PATCH] vsock/virtio: Remove queued_replies pushback logic
-Message-ID: <efsbknrsmen47tlay7cjrbo5qvmu4bcrmi2lvploi6qq5wpwet@wuu5mfgc3a34>
-References: <20241115103016.86461-1-graf@amazon.com>
- <yjhfe5bsnfpqbnibxl2urrnuowzitxnrbodlihz4y5csig7e7p@drgxxxxgokfo>
- <dca2f6ff-b586-461d-936d-e0b9edbe7642@amazon.com>
- <CAGxU2F6eJA+vpYVbE0HNW794pF6wLL+o=92NYMQVvmFWnpNPaA@mail.gmail.com>
+        Tue, 19 Nov 2024 00:34:08 -0800 (PST)
+Date: Tue, 19 Nov 2024 09:34:07 +0100
+From: Andrew Jones <ajones@ventanamicro.com>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+	Stephen Rothwell <sfr@canb.auug.org.au>, Quan Zhou <zhouquan@iscas.ac.cn>, 
+	Anup Patel <anup@brainfault.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, 
+	Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
+	Adrian Hunter <adrian.hunter@intel.com>, "Liang, Kan" <kan.liang@linux.intel.com>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Colton Lewis <coltonlewis@google.com>, 
+	Oliver Upton <oliver.upton@linux.dev>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	linux-renesas-soc@vger.kernel.org, Prabhakar <prabhakar.csengg@gmail.com>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Chris Paterson <Chris.Paterson2@renesas.com>
+Subject: Re: [PATCH v2] riscv: perf: Drop defining
+ `perf_instruction_pointer()` and `perf_misc_flags()`
+Message-ID: <20241119-8542ffd5c08526b665895722@orel>
+References: <20241116160506.5324-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <ZzxDvLKGz1ouWzgX@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGxU2F6eJA+vpYVbE0HNW794pF6wLL+o=92NYMQVvmFWnpNPaA@mail.gmail.com>
+In-Reply-To: <ZzxDvLKGz1ouWzgX@gmail.com>
 
-On Mon, Nov 18, 2024 at 03:07:43PM +0100, Stefano Garzarella wrote:
->On Fri, Nov 15, 2024 at 4:49 PM Alexander Graf <graf@amazon.com> wrote:
->>
->> Hi Stefano,
->>
->> On 15.11.24 12:59, Stefano Garzarella wrote:
->> >
->> > On Fri, Nov 15, 2024 at 10:30:16AM +0000, Alexander Graf wrote:
->> >> Ever since the introduction of the virtio vsock driver, it included
->> >> pushback logic that blocks it from taking any new RX packets until the
->> >> TX queue backlog becomes shallower than the virtqueue size.
->> >>
->> >> This logic works fine when you connect a user space application on the
->> >> hypervisor with a virtio-vsock target, because the guest will stop
->> >> receiving data until the host pulled all outstanding data from the VM.
->> >
->> > So, why not skipping this only when talking with a sibling VM?
->>
->>
->> I don't think there is a way to know, is there?
->>
->
->I thought about looking into the header and check the dst_cid.
->If it's > VMADDR_CID_HOST, we are talking with a sibling VM.
->
->>
->> >
->> >>
->> >> With Nitro Enclaves however, we connect 2 VMs directly via vsock:
->> >>
->> >>  Parent      Enclave
->> >>
->> >>    RX -------- TX
->> >>    TX -------- RX
->> >>
->> >> This means we now have 2 virtio-vsock backends that both have the
->> >> pushback
->> >> logic. If the parent's TX queue runs full at the same time as the
->> >> Enclave's, both virtio-vsock drivers fall into the pushback path and
->> >> no longer accept RX traffic. However, that RX traffic is TX traffic on
->> >> the other side which blocks that driver from making any forward
->> >> progress. We're not in a deadlock.
->> >>
->> >> To resolve this, let's remove that pushback logic altogether and rely on
->> >> higher levels (like credits) to ensure we do not consume unbounded
->> >> memory.
->> >
->> > I spoke quickly with Stefan who has been following the development from
->> > the beginning and actually pointed out that there might be problems
->> > with the control packets, since credits only covers data packets, so
->> > it doesn't seem like a good idea remove this mechanism completely.
->>
->>
->> Can you help me understand which situations the current mechanism really
->> helps with, so we can look at alternatives?
->
->Good question!
->I didn't participate in the initial development, so what I'm telling
->you is my understanding.
->@Stefan feel free to correct me!
->
->The driver uses a single workqueue (virtio_vsock_workqueue) where it
->queues several workers. The ones we are interested in are:
->1. the one to handle avail buffers in the TX virtqueue (send_pkt_work)
->2. the one for used buffers in the RX virtqueue (rx_work)
->
->Assuming that the same kthread executes the different workers, it
->seems to be more about making sure that the RX worker (i.e. rx_work)
->does not consume all the execution time, leaving no room for TX
->(send_pkt_work). Especially when there are a lot of messages queued in
->the TX queue that are considered as response for the host. (The
->threshold seems to be the size of the virtqueue).
->
->That said, perhaps just adopting a technique like the one in vhost
->(byte_weight in vhost_dev_init(), vhost_exceeds_weight(), etc.) where
->after a certain number of packets/bytes handled, the worker terminates
->its work and reschedules, could give us the same guarantees, in a
->simpler way.
+On Tue, Nov 19, 2024 at 08:52:28AM +0100, Ingo Molnar wrote:
+> 
+> * Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
+> 
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > 
+> > With commit 2c47e7a74f44 ("perf/core: Correct perf sampling with guest
+> > VMs"), the perf core now handles the functionality previously requiring
+> > arch-specific definitions of `perf_instruction_pointer()` and
+> > `perf_misc_flags()`. As these definitions are no longer necessary for
+> > RISC-V, this patch removes their implementation and declarations.
+> > 
+> > This change also fixes the following build issue on RISC-V:
+> > 
+> >     ./include/linux/perf_event.h:1679:84: error: macro "perf_misc_flags" passed 2 arguments, but takes just 1
+> >     ./include/linux/perf_event.h:1679:22: error: 'perf_misc_flags' redeclared as different kind of symbol
+> >     ./include/linux/perf_event.h:1680:22: error: conflicting types for 'perf_instruction_pointer'; have 'long unsigned int(struct perf_event *, struct pt_regs *)'
+> > 
+> > The above errors arise from conflicts between the core definitions in
+> > `linux/perf_event.h` and the RISC-V-specific definitions in
+> > `arch/riscv/include/asm/perf_event.h`. Removing the RISC-V-specific
+> > definitions resolves these issues and aligns the architecture with the
+> > updated perf core.
+> > 
+> > Fixes: 2c47e7a74f44 ("perf/core: Correct perf sampling with guest VMs")
+> 
+> Yeah, so the Fixes tag is wrong - this is not a build bug
+> with that commit, and your patch does not even apply to
+> the perf events tree.
+> 
+> This is a semantic merge conflict that arises in linux-next - the
+> riscv version of perf_instruction_pointer() function doesn't even
+> exist in the perf tree...
+> 
+> AFAICS the problem is that the riscv tree applied this commit:
+> 
+>   5bb5ccb3e8d8 ("riscv: perf: add guest vs host distinction")
+> 
+> While the perf tree solved this in a more generic fashion:
+> 
+>   2c47e7a74f44 perf/core: Correct perf sampling with guest VMs
+>   baff01f3d75f perf/x86: Refactor misc flag assignments
+>   3e807cf07d96 perf/powerpc: Use perf_arch_instruction_pointer()
+>   04782e63917d perf/core: Hoist perf_instruction_pointer() and perf_misc_flags()
+>   e33ed362cf9e perf/arm: Drop unused functions
+> 
+> So I believe, assuming the perf version works fine on riscv
+> (I haven't tested it), that the solution is to revert
+> 5bb5ccb3e8d8 either in the riscv tree, or upon merging it.
 
-Thinking more about, perhaps now I understand better why it was
-introduced, and it should be related to the above.
+Hi Ingo,
 
-In practice, "replies" are almost always queued in the intermediate
-queue (send_pkt_queue) directly by the RX worker (rx_work) during its
-execution. These are direct responses handled by
-virtio_transport_recv_pkt() to requests coming from the other peer (the
-host usually or sibling VM in your case). This happens for example
-calling virtio_transport_reset_no_sock() if a socket is not found, or
-sending back VIRTIO_VSOCK_OP_RESPONSE packet to ack a request of a
-connection coming with a VIRTIO_VSOCK_OP_REQUEST packet.
-
-Because of this, if the number of these "replies" exceeds an arbitrary
-threshold, the RX worker decides to de-schedule itself, to give space to
-the TX worker (send_pkt_work) to move those "replies" from the
-intermediate queue into the TX virtqueue, at which point the TX worker
-will reschedule the RX worker to continue the job. So more than avoiding
-deadlock, it seems to be a mechanism to avoid starvation.
-
-Note that this is not necessary in vhost-vsock (which uses the same
-functions as this driver, e.g. virtio_transport_recv_pkt), because both
-workers already use vhost_exceeds_weight() to avoid this problem as
-well.
-
-At this point I think that doing something similar to vhost here as well
-would allow us not only to avoid the problem that `queued_replies`
-should avoid, but also that the RX worker monopolizes the workqueue
-during data transfer.
+This patch isn't a complete revert of 5bb5ccb3e8d8. The early returns in
+perf_callchain_user() and perf_callchain_kernel() should remain and the
+CONFIG_PERF_EVENTS #ifdef in arch/riscv/include/asm/perf_event.h should
+remain as well.
 
 Thanks,
-Stefano
-
->
->>
->>
->> >
->> >>
->> >> Fixes: 0ea9e1d3a9e3 ("VSOCK: Introduce virtio_transport.ko")
->> >
->> > I'm not sure we should add this Fixes tag, this seems very risky
->> > backporting on stable branches IMHO.
->>
->>
->> Which situations do you believe it will genuinely break anything in?
->
->The situation for which it was introduced (which I don't know
->precisely because I wasn't following vsock yet).
->Removing it completely without being sure that what it was developed
->for is okay is risky to me.
->
->Support for sibling VMs has only recently been introduced, so I'd be
->happier making these changes just for that kind of communication.
->
->That said, the idea of doing like vhost might solve all our problems,
->so in that case maybe it might be okay.
->
->> As
->> it stands today, if you run upstream parent and enclave and hammer them
->> with vsock traffic, you get into a deadlock. Even without the flow
->> control, you will never hit a deadlock. But you may get a brown-out like
->> situation while Linux is flushing its buffers.
->>
->> Ideally we want to have actual flow control to mitigate the problem
->> altogether. But I'm not quite sure how and where. Just blocking all
->> receiving traffic causes problems.
->>
->>
->> > If we cannot find a better mechanism to replace this with something
->> > that works both guest <-> host and guest <-> guest, I would prefer
->> > to do this just for guest <-> guest communication.
->> > Because removing this completely seems too risky for me, at least
->> > without a proof that control packets are fine.
->>
->>
->> So your concern is that control packets would not receive pushback, so
->> we would allow unbounded traffic to get queued up?
->
->Right, most of `reply` are control packets (reset and response IIUC)
->that are not part of the credit mechanism, so I think this confirms
->what Stefan was telling me.
->
->> Can you suggest
->> options to help with that?
->
->Maybe mimic vhost approach should help, or something similar.
->
->That said, did you really encounter a real problem or is it more of a
->patch to avoid future problems.
->
->Because it would be nice to have a test that emphasizes this problem
->that we can use to check that everything is okay if we adopt something
->different. The same goes for the problem that this mechanism wants to
->avoid, I'll try to see if I have time to write a test so we can use
->it.
->
->
->Thanks,
->Stefano
-
+drew
 
