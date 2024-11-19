@@ -1,175 +1,100 @@
-Return-Path: <linux-kernel+bounces-414485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3EE09D28C9
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 16:01:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FF219D2927
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 16:08:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62FCB1F21C1E
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 15:01:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 650B5280EEE
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 15:08:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B4A11CEAAD;
-	Tue, 19 Nov 2024 15:01:03 +0000 (UTC)
-Received: from leonov.paulk.fr (leonov.paulk.fr [185.233.101.22])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0B711CF2B3;
+	Tue, 19 Nov 2024 15:01:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=laura.nao@collabora.com header.b="WPDuP0GI"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C21DC1CCB25
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 15:01:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.233.101.22
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732028462; cv=none; b=V+GInyYoUG045jRaKvqN2Dmul6sCea4byP1Q2wB3xSbDcKGJVY13PUAybQblvnAOb4WkDYGtMnU7mYOLiFar5IzP/lBIstCKklMU1zohdhqzQXGvIsGqyyTUa8Whd8g9lPGiwzxhGMdT5vAERSRQPcYMxe0B0gOEAjSJZ5zkzzc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732028462; c=relaxed/simple;
-	bh=Ro4AT1dy3+fn9DWFhz4fu0FRRDOujrJK2DSxFWLtzgE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FMGNc8O6A9yyBCdH+DJTedvKUyAge8VwHIgJRCgV7Q4jv8pMWmC/1wci0T6eI2h5Qh6l28NxzHrGHUoeYl92STVs7j9xDz3PmI6tJWRu+kcuLUKOvNweLzKE5dGobJIfKFlT3fpTFoXjjckhcQydxnKi0Jk8wmjo8ThJoySwEOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io; spf=pass smtp.mailfrom=sys-base.io; arc=none smtp.client-ip=185.233.101.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sys-base.io
-Received: from laika.paulk.fr (12.234.24.109.rev.sfr.net [109.24.234.12])
-	by leonov.paulk.fr (Postfix) with ESMTPS id 6FF871F00051
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 15:00:54 +0000 (UTC)
-Received: by laika.paulk.fr (Postfix, from userid 65534)
-	id E3172A4702C; Tue, 19 Nov 2024 15:00:52 +0000 (UTC)
-X-Spam-Level: 
-Received: from collins (unknown [192.168.1.1])
-	by laika.paulk.fr (Postfix) with ESMTPSA id 5D5C7A46FDB;
-	Tue, 19 Nov 2024 15:00:51 +0000 (UTC)
-Date: Tue, 19 Nov 2024 16:00:48 +0100
-From: Paul Kocialkowski <paulk@sys-base.io>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 619CA1CC89A;
+	Tue, 19 Nov 2024 15:01:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732028494; cv=pass; b=KSxfD9M/sNxlNp1L3Hd0CMXu5Q0KMrlUqsX3GyyJvKNiq/n6IgOx4BnLj93a/d6Zl3u9XmuwyVfkr3ThuvPgSrZV1qkg2JQZgnXClY1bEbBGTtwNv/ThQ2a8ONziSxB0KBJb/yjXFpfczFW9yyeF7y2vvi0/JGGDZ3iof0EainA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732028494; c=relaxed/simple;
+	bh=WXFyOVmmvQEMtWRex0vVrA8e0PDnuJmVvBlF6A8VvOo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JDvmuB17kTYVuHrUuYHdDfws4Y4fikn9kfoFWjB91+ZxdXejdf4NkXrcH3jR4z9KgLkgw+03q7xDJBfOq61Owutoy7LB7/vslHpA7/KMdZZOiPW3Z9nYt/kfmp0n07vag8welPqGnhDiLjdSyakPfS94Z8lN3L34otNAMig4K3Q=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=laura.nao@collabora.com header.b=WPDuP0GI; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1732028484; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=JXb8WoLR/N1Ey4oHo0Kdw9BkQ9hzwm9+8gnh8fJFs12z4eykgVrEyi3IettRQlHi7UjgM2+PDGlis5XU40HAjh+4+6rTbnqx3GTH0LFnuXNRtVV9eiUDov4/+CKupalOSMCxBXK0HpMw+fIzGB278heyYqcyZDqIXKYysccS0ms=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1732028484; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=kmU2GWdHHNbhdrlM2w2sQFuUhCX+M1v7E1rs7QrVS1A=; 
+	b=R7mtBobyCD2ko8Xr2goRbNZC+CZ7MG6DQYzny9yGW/4kGI7PEpy8Dq1NxdKL7ThPry8SNlKVzZD0nkboyg177HZVLZ+sD2FScaXV3Sp0u3Ij2kRATTn+JaPt5orIa9Wu+fBTYzN8anRlse/6RS8Li2nufCyIRSZ9z4LrKreWdLI=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=laura.nao@collabora.com;
+	dmarc=pass header.from=<laura.nao@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1732028484;
+	s=zohomail; d=collabora.com; i=laura.nao@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Transfer-Encoding:Reply-To;
+	bh=kmU2GWdHHNbhdrlM2w2sQFuUhCX+M1v7E1rs7QrVS1A=;
+	b=WPDuP0GIsFXuImZWyaYFSuaGRrXbi/8FxiptCaAz0EVL+dsmd4Wtn4Mo/D0vJQ/H
+	5hIKUtpw9i6GbcCTFgwOwdo95PaTodvFfKRMc9X5B7dwL9xwUHr4SksECe9+wauMgWE
+	FprbjstpyM1IAeTHlPXpHY91/p7ZTFMqtK1cS6LU=
+Received: by mx.zohomail.com with SMTPS id 1732028482121716.6932825937525;
+	Tue, 19 Nov 2024 07:01:22 -0800 (PST)
+From: Laura Nao <laura.nao@collabora.com>
+To: shuah@kernel.org
+Cc: laura.nao@collabora.com,
+	kernel@collabora.com,
 	linux-kernel@vger.kernel.org,
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Paul Kocialkowski <contact@paulk.fr>
-Subject: Re: [PATCH] pinctrl: sunxi: Use minimal debouncing period as default
-Message-ID: <ZzyoIABRArkGoZBn@collins>
-References: <20241119140805.3345412-1-paulk@sys-base.io>
- <20241119-prudent-jasmine-lizard-195cef@houat>
+	linux-kselftest@vger.kernel.org
+Subject: [PATCH v2 0/2] Modify the watchdog selftest for execution in non-interactive environments
+Date: Tue, 19 Nov 2024 16:01:25 +0100
+Message-Id: <20241119150127.152830-1-laura.nao@collabora.com>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="nRr05HQbsjo+d+pA"
-Content-Disposition: inline
-In-Reply-To: <20241119-prudent-jasmine-lizard-195cef@houat>
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
+This series is a follow-up to v1[1], aimed at making the watchdog selftest
+more suitable for CI environments. Currently, in non-interactive setups,
+the watchdog kselftest can only run with oneshot parameters, preventing the
+testing of the WDIOC_KEEPALIVE ioctl since the ping loop is only
+interrupted by SIGINT.
 
---nRr05HQbsjo+d+pA
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The first patch adds a new -c option to limit the number of watchdog pings,
+allowing the test to be optionally finite. The second patch updates the
+test output to conform to KTAP.
 
-Hi Maxime,
+The default behavior remains unchanged: without the -c option, the
+keep_alive() loop continues indefinitely until interrupted by SIGINT.
 
-Le Tue 19 Nov 24, 15:43, Maxime Ripard a =C3=A9crit :
-> On Tue, Nov 19, 2024 at 03:08:05PM +0100, Paul Kocialkowski wrote:
-> > From: Paul Kocialkowski <contact@paulk.fr>
-> >=20
-> > The sunxi external interrupts (available from GPIO pins) come with a
-> > built-in debouncing mechanism that cannot be disabled. It can be
-> > configured to use either the low-frequency oscillator (32 KHz) or the
-> > high-frequency oscillator (24 MHz), with a pre-scaler.
-> >=20
-> > The pinctrl code supports an input-debounce device-tree property to set
-> > a specific debouncing period and choose which clock source is most
-> > relevant. However the property is specified in microseconds, which is
-> > longer than the minimal period achievable from the high-frequency
-> > oscillator without a pre-scaler.
->=20
-> That can be fixed by introducing a new property with a ns resolution.
+[1] https://lore.kernel.org/all/20240506111359.224579-1-laura.nao@collabora.com/
 
-Sure but my point here is rather about what should be default behavior.
+Changes in v2:
+- The keep_alive() loop remains infinite by default
+- Introduced keep_alive_res variable to track the WDIOC_KEEPALIVE ioctl return code for user reporting
 
-The issue I had will remain unsolved by default even with a new property,
-since people will still need to patch their device-tree to apply it.
+Laura Nao (2):
+  selftests/watchdog: add -c option to limit the ping loop
+  selftests/watchdog: convert the test output to KTAP format
 
-> > When the property is missing, the reset configuration is kept, which
-> > selects the low-frequency oscillator without pre-scaling. This severely
-> > limits the possible interrupt periods that can be detected.
-> >=20
-> > Instead of keeping this default, use the minimal debouncing period from
-> > the high-frequency oscillator without a pre-scaler to allow the largest
-> > possible range of interrupt periods.
-> >=20
-> > This issue was encountered with a peripheral that generates active-low
-> > interrupts for 1 us. No interrupt was detected with the default setup,
-> > while it is now correctly detected with this change.
->=20
-> I don't think it's wise. If the debouncing is kept as is, the worst case
-> scenario is the one you had: a device doesn't work, you change it,
-> everything works.
+ .../selftests/watchdog/watchdog-test.c        | 169 +++++++++++-------
+ 1 file changed, 103 insertions(+), 66 deletions(-)
 
-I think this worst-case scenario is very bad and not what people will
-expect. In addition it is difficult to debug the issue without specific
-knowledge about the SoC.
+-- 
+2.30.2
 
-My use-case here was hooking up a sparkfun sensor board by the way,
-not some very advanced corner-case.
-
-> If we set it up as fast as it can however, then our risk becomes
-> thousands of spurious interrupts, which is much more detrimental to the
-> system.
-
-Keep in mind that this only concerns external GPIO-based interrupts,
-which have to be explicitely hooked to a device. If a device or circuit
-does generate such spurious interrupts, I think it makes sense that it
-would be reflected by default.
-
-Also the notion of spurious interrupt is pretty vague. Having lots of
-interrupts happening may be the desired behavior in many cases.
-
-In any case I don't think it makes sense for the platform code to impose
-what a reasonable period for interrupts is (especially with such a large
-period as default). Some drivers also have mechanisms to detect spurious
-interrupts based on their specific use case.
-
-> And that's without accounting the fact that devices might have relied on
-> that default for years
-
-They definitely shouldn't have. This feels much closer to a bug, and relying
-on a bug not being fixed is not a reasonable expectation.
-
-Cheers,
-
-Paul
-
---=20
-Paul Kocialkowski,
-
-Independent contractor - sys-base - https://www.sys-base.io/
-Free software developer - https://www.paulk.fr/
-
-Specialist in multimedia, graphics and embedded hardware support with Linux.
-
---nRr05HQbsjo+d+pA
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEAbcMXZQMtj1fphLChP3B6o/ulQwFAmc8qCAACgkQhP3B6o/u
-lQyNqA//fhpdAVQqvylMo3Gk1qRhGxC1NmnJ/zDVaQLE/LckTaAdUDZ/pjbZrZW2
-QKEsyYqTPGMtFLPcVOSEcgQqSFN66NF8VlgD87+nve80O9cLhK+aaTqs82+Llnvu
-4TITELiMmX42AIBSyG4mRJwl65hC00gKLO8FjL27yFUpeOTcH9xwBlBugQCYuFkO
-Z9kx+j8VOvEyHpPbAHKm8nxxFXO+Xvx08kTgId2+geSFA+xFRq7P+m3Ae+ua3MoU
-2CmrZpoE0A0rGZgWhP0N/l20EiiBn2OSZYPpDZhtItHhkRbN5vZDsp6VXjtTUAVO
-QRoG1yj+Kpto2TDc1qq6ZhoDug4nQNhjo9JTHUoGsLckxmfAoqbWNYxEYEAEPcd8
-6K5HliuDSPlWdRh189E8QwP/GYXBB0MBm0fJIXS52K1KH5m2nCMSu2i1BFBld6U0
-yM2kPU2CTrty+GFdA/QTwbA4IdOxLJMpO7qT0SNlsBDEno8Ce1vOxUbtduMLtz8/
-wnKVgdOF2VCnhh8BALSWB8tNcLgsktgmzLHqc4Q86QKaSQkxd2oMX0HlQyDBTnox
-cdvAPrO4Mj62BNvlxrmFFzwl9wtnuy33qhylxrDo/ZVnfQBUCQGjp+L0+oXYRM5C
-rM7L73RZeCVAS10PxqpsBx6pSlwng2TGJ8m/OEmMWdTYFeKF0fc=
-=s7ew
------END PGP SIGNATURE-----
-
---nRr05HQbsjo+d+pA--
 
