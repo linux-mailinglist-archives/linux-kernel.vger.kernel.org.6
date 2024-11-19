@@ -1,334 +1,229 @@
-Return-Path: <linux-kernel+bounces-413965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EBAD9D211F
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 09:01:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCFB89D2125
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 09:02:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98FBF1F2119B
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 08:01:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8278A280633
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 08:02:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 635111974FE;
-	Tue, 19 Nov 2024 08:01:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 735FF198A1A;
+	Tue, 19 Nov 2024 08:01:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="FFz5h779"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="XJBBRbjm"
+Received: from EUR03-DBA-obe.outbound.protection.outlook.com (mail-dbaeur03on2066.outbound.protection.outlook.com [40.107.104.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C56F3136345;
-	Tue, 19 Nov 2024 08:01:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732003284; cv=none; b=DBZVdDs+UQJL0/K7dJtaWtkh/D6JSmu+E4s+Fup5g6S+Aho6PZOFHjIFQmJnuuXdnn0zVDxNfG7GQW2pDPTLzjrrel1u+tNTHdjtvqjbf0N4n2NmdzeS6xs/FNf3GHPLhY4GWOX2558mSC31DbHX8T3ZUIb4g32W3FqU7nQGLhY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732003284; c=relaxed/simple;
-	bh=Hi+z2o6j/wuWKRNgqhDMjQIXwLZahPiJONd31wDIljc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=NPzNRce5lxEcNv80OPZGbDXeHhmTMGpuq2kyVjQJ4iZEcu+4BlEWSWvqZLvmtmNzIr0Xz2K5EsKPDpvq6Igcq0ZBzzZ1+OlmiBa3oJylQkU07KBSL8r8vWqa1/Tt5ZzkZNzJnmfnuf61A2PfXceaVf8aRwdWZ4F3BTg+DAJErNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=FFz5h779; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AJ7Xlb6010734;
-	Tue, 19 Nov 2024 08:00:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	0TgR5bIUZVt3DM/CqTENzDHuXiMoOEcVymkRF2ByHdQ=; b=FFz5h779OSZQkkg5
-	YHNmx95cZKLAVXT9q/PkaskQ9akthF80IQNoFssl01ByJQjt9j6k6U8POFPCWQ0Q
-	XzCbEQsSlCoYS6FvuEL8+TMgmaC63KxvNF85NHiYDEseSVF2otiaMIoHb9Dj9P9R
-	3Dw9UjEmu6/X0RQ34QHGDbzv/7B3LEayYSDoAd7O05GNTfB2ffU5cCFn+cIUpMGh
-	jR5Sh6Fo1fKNYoVQLv92IT8Y9SyxWE4DGBElbgVhM3C+0GSpo1lcZ6KPa10nv6sC
-	3OE6PcUqV9mbLRwoQwggJhCuYW5mXWxnq/H+UA5fZeIWqmBizg6/vI/ibX6Ww5bm
-	qs0Yeg==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43091m9u8x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 19 Nov 2024 08:00:56 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AJ80sLJ027813
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 19 Nov 2024 08:00:54 GMT
-Received: from [10.110.70.207] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 19 Nov
- 2024 00:00:46 -0800
-Message-ID: <e1ab8bf0-f3ea-496f-bc83-6496e60adcdb@quicinc.com>
-Date: Tue, 19 Nov 2024 13:30:42 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EC81150981;
+	Tue, 19 Nov 2024 08:01:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.104.66
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732003315; cv=fail; b=J8DBBYT02aPBpzKLI+h6OokVPEZJHdc6Go97tu+OSdWd3TkCH/SgyAUpVrfXiLNwBpQq16DX7aFfslwxWri9U/sNR9Pbk1u7Cf+Tjtp6UWjUG7b73aEALY68lO3MUS8fLGHzyx4KQFCKrJex3GsUjSEBhikGu6wRW9dhp/9yI1Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732003315; c=relaxed/simple;
+	bh=SFDyybxIqqvRnwZU45YdLb9OZgXYwxYALZpRrAceDoE=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=U2c9F71x/HEo1DQE2xHvkzGT/QKE+BKeLdG5mvJx9bjCbfzy4aktLfdKUGtQYQfu5FYK3SMN9ZYe6jGpmxFo6j4Yhdvjp7Xm5RQDujipb5k0jhrJkZbOmaEhdZyutzpDwUwO41FmDhnhWBfgJn3XBdmNY0MFf1qF2KCyxT15/fw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=XJBBRbjm; arc=fail smtp.client-ip=40.107.104.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=UF31cIbe3nGhVymPTTc8JKzJwQqy5foLLz/LTr6CZNEzQowvzLbIU6Od/LpLtPT9zw3YXmOeWYlLfqc0rVnHN0LrKFWyLvoPG+Ntu+Ltw8Z3qk5N0tpiVe36wtF+KLolHQBTrpzSf9Yevkt80OpdlNovHpq3KAhJ9hD53XtbZwStrRdjfQLexHi/Y8IlqN5ekJ5DcTgBHAc4lly/c/HFDSX5WO+Bm4UeM2MHngk7bvsoYP49gLRfjA7IcM7qeNVyrd8c+KBp8tFuCw6EjbKcpMSIHRBQhBsKEARgSI4IvZhedpBOYwAW6NPFNYdlIpBq1vdgd8sxPw98SlCXOeCwXw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=C9HIggWtGQPHvstCMbhGiWEhFkSX9Pets+CTyqjJVDs=;
+ b=wSHyxz6+tsL8qQc26aQ/mZvlxjtsnbHlJhzfaBBX7SnvW980BOh3SlunPfwKJGYFfCZ35oCLs9l7mtR97fQegYl63Enweey204FDqk1v9CBnTEdD7EuTqPFvmILd3iQYwOF2HDIfdfMRKRtDD22itC9Sr34Iu6DQDtzcmbk8wSj8JXU/FPweshwHFxx1x2reGAFlGUj1/BZpP8Hh4rrq4971PmBvYMF1QKDHgiMSlo11QC0ffhOH1A55AMslTSonT4djbNp6GfRUou6bo0CuobM10T0X+pGVZH/hPa13wLPqId/PkKSIpzxjeiBotmQZna3t0SVjFf/baXFIWlBmeQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=C9HIggWtGQPHvstCMbhGiWEhFkSX9Pets+CTyqjJVDs=;
+ b=XJBBRbjmeSZSG0K1EZs0bHUlU8AKPK03CVwk0YwE7gtjqlVU2be8Pn2h1LdQ15pNeoDxwlqGlND7Dj9C08CgWS9rWYkVi8acFaTk3Z3kiP8zgir0Z0h5i1crPSLUwgcevUCeC29TXTLWOuDJ734iF+oSz6XXPS+1N3o2TOqn0VwlAuKOkq67gXuphPtYu/pWLXBcQ3602+VVsrWWODc7dS5JQN/adkfODnNrD6dCfBoG4+/OPdFBWZiin3PE+yUS88f0Z5+Ht/yWHwJQu5qRhvpbb2AtfBOCJo8+fk4OlRr1ypGMs6ha4akPdiW1q6tqCrXjyPGth7NbY+fQzMdgvw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from DU0PR04MB9251.eurprd04.prod.outlook.com (2603:10a6:10:352::15)
+ by AS4PR04MB9363.eurprd04.prod.outlook.com (2603:10a6:20b:4e8::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.22; Tue, 19 Nov
+ 2024 08:01:48 +0000
+Received: from DU0PR04MB9251.eurprd04.prod.outlook.com
+ ([fe80::708f:69ee:15df:6ebd]) by DU0PR04MB9251.eurprd04.prod.outlook.com
+ ([fe80::708f:69ee:15df:6ebd%6]) with mapi id 15.20.8158.021; Tue, 19 Nov 2024
+ 08:01:48 +0000
+From: Ciprian Costea <ciprianmarian.costea@oss.nxp.com>
+To: Marc Kleine-Budde <mkl@pengutronix.de>,
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: linux-can@vger.kernel.org,
+	netdev@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev,
+	NXP Linux Team <s32@nxp.com>,
+	Christophe Lizzi <clizzi@redhat.com>,
+	Alberto Ruiz <aruizrui@redhat.com>,
+	Enric Balletbo <eballetb@redhat.com>,
+	Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
+Subject: [PATCH v3 0/3] add FlexCAN support for S32G2/S32G3 SoCs
+Date: Tue, 19 Nov 2024 10:01:41 +0200
+Message-ID: <20241119080144.4173712-1-ciprianmarian.costea@oss.nxp.com>
+X-Mailer: git-send-email 2.45.2
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: AS4P192CA0042.EURP192.PROD.OUTLOOK.COM
+ (2603:10a6:20b:658::21) To DU0PR04MB9251.eurprd04.prod.outlook.com
+ (2603:10a6:10:352::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/5] thermal: qcom: Add support for MBG Temp monitor
-To: Jonathan Cameron <jic23@kernel.org>
-CC: Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano
-	<daniel.lezcano@linaro.org>,
-        Zhang Rui <rui.zhang@intel.com>, Lukasz Luba
-	<lukasz.luba@arm.com>,
-        Amit Kucheria <amitk@kernel.org>,
-        Thara Gopinath
-	<thara.gopinath@gmail.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        "Konrad
- Dybcio" <konrad.dybcio@linaro.org>,
-        Kamal Wadhwa <quic_kamalw@quicinc.com>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Jishnu Prakash
-	<quic_jprakash@quicinc.com>,
-        <linux-kernel@vger.kernel.org>, <linux-iio@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>, Ajit Pandey
-	<quic_ajipan@quicinc.com>,
-        Imran Shaik <quic_imrashai@quicinc.com>,
-        "Jagadeesh Kona" <quic_jkona@quicinc.com>
-References: <20240712-mbg-tm-support-v1-0-7d78bec920ca@quicinc.com>
- <20240712-mbg-tm-support-v1-3-7d78bec920ca@quicinc.com>
- <20240713125945.2acac680@jic23-huawei>
-Content-Language: en-US
-From: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-In-Reply-To: <20240713125945.2acac680@jic23-huawei>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: GhmvNMB6rR9jG--Pjr8AaZaCyXCImM1u
-X-Proofpoint-GUID: GhmvNMB6rR9jG--Pjr8AaZaCyXCImM1u
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- impostorscore=0 spamscore=0 priorityscore=1501 phishscore=0 malwarescore=0
- clxscore=1015 bulkscore=0 mlxlogscore=999 lowpriorityscore=0 adultscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411190055
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DU0PR04MB9251:EE_|AS4PR04MB9363:EE_
+X-MS-Office365-Filtering-Correlation-Id: 50dd3102-2540-41a7-036e-08dd08706aee
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|7416014|376014|366016|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?dFEySjhNa0ZjbGJhK3ZIVER1WDhEOFJjZ3E3cmxGRXYvcFMwKzl6c3QvU1Q0?=
+ =?utf-8?B?bjFrd2U0bVNUNTk3eEU1YzQrUkpFaEM4bFhsZm1OUW1oWk9ja0lTcVpOcFdS?=
+ =?utf-8?B?aEh3N0paMWd5Ti9tdDdTSnVZdnd4RjF1aXFDQnVJMWxqNFowWGNwckV1VkN6?=
+ =?utf-8?B?VTZER1l5SU5IT1hUUU8rM3M5T3RnMU1haGRQNGkrdDNnbGYyQmRiNkJvZktC?=
+ =?utf-8?B?OXFnVWJaaVloNmhuZVpXOFFwZFE0aDAyMlE5d2dLUGJSa1FwREFlOWJadWRz?=
+ =?utf-8?B?bjMzc3lNQTZmaHZTRFVNZkVHTWFzZ2FCdG0rL0xZNDRETW9pakFDYW95Q1Y2?=
+ =?utf-8?B?UHlndGE2MmhUaU1SNTcvNHEyOHVFbDJmeXZkNHVlazhTSGZselM3b3ZCREhh?=
+ =?utf-8?B?OWVZSE9rTHZZYTVTb0VKN2dkY3dibFN6UE1FK0kvWGhvNGlnOHdjRGlVZjRm?=
+ =?utf-8?B?ZUV0Z01sOU5ZUTY1NmZXMExMMHUra0s5Z2FqSWt6UFRZK3E5dU44azhSRkZu?=
+ =?utf-8?B?WlROQ1paMnI4U2FIMUxQVzZadHA4djBEbEwwMFN5eXJuVmpUUXBjcFVIV2Q5?=
+ =?utf-8?B?anFaY0Vqak1pRE1PdlFXOTJ1RUtmTHV3VGxuUi9jZ2MwL2hVcXZUQTVEcXdw?=
+ =?utf-8?B?TXVZMEpwRStxQ1pLWjQ0M1BER2p5TEdEZ3RSZnJlL055eVVhSmlsYmp1S0tH?=
+ =?utf-8?B?MzB2M1c0ZjhxakREeUVBdiswVWNLLzlBNWZzOWVGUGVlRzA4K3JFaXRPa0RC?=
+ =?utf-8?B?Y01sNmhxK2pubmpOazIyY0puNWs2NDYrVGpWWWpCaHdFL3o2VGZhekF1MHNt?=
+ =?utf-8?B?eExzYlU4Ynpod2VMeForeHIrbVQ3NzBEcFRWcUhlVXFweWU4MEh1T3ZlUjNp?=
+ =?utf-8?B?VmNBR3RCS0dxakhyRGg2WHp1QmtWSklhL1UvaU43TWhDZUg3V01pSWlvV0dF?=
+ =?utf-8?B?R1Q2UzNLN3YzS2Y2VjVlVXQzYVRNWWJvanZwSUxlKzVuVktHbFlhRHpJTzMz?=
+ =?utf-8?B?WmdubXVqK3dnK1JVU1NqVStQMlc0NXdVTVNRYmtkbjlwQ0x3WFd1S2RxTFlz?=
+ =?utf-8?B?c2JhQ2ZXekRJRUxvV0NVZWdYYTVQOHk4K25tQkIzU2xKVG5RQ3hERUd2YTMv?=
+ =?utf-8?B?MU5UOWUza3lGVFhkQ1grMWdpV3liMlc5U2NQcTM2dHVkdi94RnJTUkd6STVF?=
+ =?utf-8?B?N1I2eEwwTHJrL2tWdzN5NkI0ajZTc1ZpU1hxRHhFZzNWbEM2NmhBaUpUZGwr?=
+ =?utf-8?B?anZ6YlI0WXo3aXBqcXo5Z2R1a0FHbit1d2lHL0p2RmdqcENSZFlobXJrNHgz?=
+ =?utf-8?B?NXgyak0zcTgrMkQ1QzJSN3pzVGVzQW1kQUNKaG9MS1hmcFNPRWIvZERtYzZE?=
+ =?utf-8?B?NmhnSHNoSnlEanpKRnJWaU5LcDBPOWlUQldKWVcyVVA2STA0cFhGU3c0MVRy?=
+ =?utf-8?B?VWJ3dzgrRVJqQjZpZnZYRWxzTTVLZ2ZQSzN6N1ZicTIzL2lrMVpnOUZmOWRy?=
+ =?utf-8?B?dVVPMCtLWmN6UVJwbmp4Z1I2Vi9GbjRDUEFxVHNxb3BuWDJSMXB5REd1cmxj?=
+ =?utf-8?B?V1phYkxEQlpIdmVRU2pIcElBTG01VUlmYzVGbnZuWDVsU0hId2pFR25WZ25K?=
+ =?utf-8?B?TlZ5VTBXUVd3Tm1EUEpJMjZDemU5WFNTWFVZZlFLanZwZ3QwL3A1N3pQTStu?=
+ =?utf-8?B?NVplNmNBczAwVzB5K3VPNGN6STNHWjZENTJ4WXk3UjZTamJVL2M0ZE5GRlFi?=
+ =?utf-8?B?TEdGbWRSZkRrTkEwWDJ4V21JUXJ3SFduSVVRR2RZN0tGQ2VKNXAzaCsvc2I0?=
+ =?utf-8?Q?2eNYJt/RHhPFAvT+lxZGv+WaR+kTWn/VVPa3A=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9251.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Qkc4K0Ntc0FXc0N5eVNjVlIrbERxbXNPbVpFZllSYlVrOXc5S3lCTElkZmNU?=
+ =?utf-8?B?YTBxWnFCL2dteTlDcUh5dlc2SkNhYmpHWms3SXBMZjZCemRTTDlIZFdyYXdh?=
+ =?utf-8?B?dTVkRTVQRGo5Zm0xYnJEcTBMYklVdXNHKzVwWWZiUkg2Z2twaW5mMEg5Wmlj?=
+ =?utf-8?B?QU9LSkUwNFFUZHJCZDI1Z2MvbFpCbW4wVWJvdmVPZjMzV1dZSFNlb2FWV01x?=
+ =?utf-8?B?d2YrWVZ4ZFRKZFhmMWRJYVhoaThQczlxQklwbDhzelZzRjVUTk9ydXU3ZFda?=
+ =?utf-8?B?ZUwvbnFEc2JwYStsc3FwZWx2Z09MemNmL0k1WjR2cGp3Tm0vOFpjSGY0ejIy?=
+ =?utf-8?B?MjBOQjRIcklVaFZmQWtUYTV3M1Z4anZWdUxycTdRNkZLd3E5S0JMNnNNVFZS?=
+ =?utf-8?B?ZWdTcUdHTktpM3pQU0xxL2p1Zm5mR1UvQUhvMitBMFlYb3JBRURuQUVQNDBZ?=
+ =?utf-8?B?RGUwTmpGNWVvbHNoVlF1UkNLR3BQd1ZPYjhtQmtJczR5M3ZNcGNrU2w0dmlT?=
+ =?utf-8?B?Y3lTbkVDMjdzMnNZUzY3YkcwektlWU1DZW1XY08zVUgrWnJSSlMwK284NGZj?=
+ =?utf-8?B?elRxQ0huT3dESHg0YS81WFh3STRDRkYrQ0FyTjR1b1RGMGxxeHlPMUdEcUps?=
+ =?utf-8?B?SzNqVlFycHZWdkF1WFNiK3lIdTFMdUdla3E3K1NxVkVJUDN1Yk5NbmI2aWV2?=
+ =?utf-8?B?UjJ3TmlZOUh3VHFTdzd5UmlXY3VnQitGZnRNbmJ5SmRlaWlvbytkNHB4UHE3?=
+ =?utf-8?B?VzR0VFpjUU5Hd3crZUJIUkQ2bEMyRGZmWG84RW8wTnJzYnRsNkMzbHF4elFF?=
+ =?utf-8?B?cXpqRlJaaHpSRFRGd1RGMHJHWStFWUV6OWMxSnFHZGN0ZjRudklNYVBpVW85?=
+ =?utf-8?B?L2xxbFJqT2ZIeEw1SU5td1dsRmIrMUhVT3ZoL0p0OFl0UVF5OG45bE9xeTMz?=
+ =?utf-8?B?T2NxbTVLdURvNzBpYm5ROXBRelBwaTlnWkhmZzNJMWQvSVIxS2tZTytMekZ1?=
+ =?utf-8?B?bXVONzZLMFFBVlF0eTlkK1psSHB2Mk1RYnZUSlhMUW41a2gzanJXbkl6L0Iz?=
+ =?utf-8?B?eTB3MzB2N2tZVWQ4UDgrZmtLanF3QnNydlBQMzRYeWRmby9DQUZKZENsTEdK?=
+ =?utf-8?B?bkw3MGNqcTU3bDhTWTJ6bDN3MExFM1FLNnd1dTRCTVJQaW53ZXhmS0RGR0Fw?=
+ =?utf-8?B?ZnRYWlVqNmJOTXJSaUhYMnN5MlhaSmtUMTltbDhpSldnQXhwbFdSRlJWY1U2?=
+ =?utf-8?B?dEF5b0pxUU9LVk9HR3liVGpHc1NaTk51RlRUQ1gyY3NuTjNhcVVxZCttZG1N?=
+ =?utf-8?B?SXpGblNSQW51U29WUnkrLzBtWWRpT0JySmpIKzdydXFNUDBURWg1QVlJMkFn?=
+ =?utf-8?B?M0RieTBXd2dvcCtRNG9ZV3VONXlqV0FNUXhrbit4NmFzSmpVU3J6emluUUJL?=
+ =?utf-8?B?V0xpQkdSbTUxaGZpYWpFdytWelZlQ0lLbnFFdTM1bVFWN1FJVlRFazBxenFV?=
+ =?utf-8?B?elZ6djUxUnQ0dWdjcmlQZk9PbE84TzkwdDhxak8xQ2poZnFmYzdTUzJ2R21x?=
+ =?utf-8?B?VnV2N1c1ZS9Kbm5ycG9pMWN3VHV1Z0k2N1ZzdWVsOUx4cHd2ZmkyN0tOOUdy?=
+ =?utf-8?B?eTc5UFo2c1VlcDl0ZmF0U1pMU1RRSDYra0M1SVFXQXlHUjZ3Sk5ZQTR5cTV2?=
+ =?utf-8?B?cjJmMXVEWld6aHd1MERuaERBL2lSZ3FvQlFJUUppNTVlNWVzcG83VUVVOEZi?=
+ =?utf-8?B?cVhOWXBrUExtMmtZb2dPNUlBWlJEVDltTllXcFNOQStWUjAybUxKSWJCMWw4?=
+ =?utf-8?B?b05tclU5OUkyM2V1Um9zVnhOVmxqMU1XN2dIdXV6SkRCZjB1ODkyOUlTSnZ3?=
+ =?utf-8?B?Ky8vRTB5OWdRMW5YZFBVcFJtRmRSMjNCTG9jM3g5TGRMV1dBOHBKSGU4ZGQw?=
+ =?utf-8?B?TWhzQWZWbjJJSkM1c1dNOUNLV3NtdGtEZGphZ1pIb2hXU0F1Q1Z2Uy9DbXQ0?=
+ =?utf-8?B?K3BZOWd5YnhjanFsT0MvQUxCSEVONDJBek10a1hwdzc5TUc4Vnh5Qjg0Y0VW?=
+ =?utf-8?B?VnVQU0U1YmVtb2o3YUNOclZzbm15dUFCTHdCaUFXUlA3MkhIVGtGQ1hPY1VK?=
+ =?utf-8?B?NjBObjF0b2p6dElQQ2p2VmF4WTlReUowcEFFaUEvbXFMY3piZUlFK2YzYUhB?=
+ =?utf-8?B?SVE9PQ==?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 50dd3102-2540-41a7-036e-08dd08706aee
+X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9251.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Nov 2024 08:01:48.2247
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: TT/o6j2Ly7iFrVG0wisO7pKlti5CNBP7p3EWtquXoP6cWcVZWdJ9bxfzNDwXQSKT9YAlQ5BDuFT3mX6N+oSqfMc6KgdHUiXAVLAne0yIeTc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS4PR04MB9363
 
+From: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
 
-On 7/13/2024 5:29 PM, Jonathan Cameron wrote:
-> On Fri, 12 Jul 2024 18:13:30 +0530
-> Satya Priya Kakitapalli <quic_skakitap@quicinc.com> wrote:
->
->> Add driver for the MBG thermal monitoring device. It monitors
->> the die temperature, and when there is a level 1 upper threshold
->> violation, it receives an interrupt over spmi. The driver reads
->> the fault status register and notifies thermal accordingly.
->>
->> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-> Hi Satya,
->
-> Some comments inline.
+S32G2 and S32G3 SoCs share the FlexCAN module with i.MX SoCs, with some
+hardware integration particularities.
 
+Main difference covered by this patchset relates to interrupt management.
+On S32G2/S32G3 SoC, there are separate interrupts for state change, bus
+errors, MBs 0-7 and MBs 8-127 respectively.
 
-Thanks for review, I'll address the comments in my V2 patches.
+The intent of this patchset is to be upstream'ed on the official Linux
+repo [0].
 
+Since S32G2/S32G3 SoCs share the FlexCAN controller with I.MX platforms,
+we find value in an allignment on Linux Factory tree [1]. Hence, we are
+looking forward to integrate any feedback which you have based on your
+expertise on this proposed patchset, before finally submitting upstream
+for review.
 
->
-> Jonathan
->
->> diff --git a/drivers/thermal/qcom/qcom-spmi-mbg-tm.c b/drivers/thermal/qcom/qcom-spmi-mbg-tm.c
->> new file mode 100644
->> index 000000000000..70964ea5a48d
->> --- /dev/null
->> +++ b/drivers/thermal/qcom/qcom-spmi-mbg-tm.c
->> @@ -0,0 +1,269 @@
->> +// SPDX-License-Identifier: GPL-2.0-only
->> +//Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
->> +
->> +#include <linux/interrupt.h>
->> +#include <linux/irq.h>
->> +#include <linux/module.h>
->> +#include <linux/of.h>
->> +#include <linux/of_device.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/regmap.h>
->> +#include <linux/thermal.h>
->> +#include <linux/iio/consumer.h>
->> +
->> +#include "../thermal_core.h"
->> +
->> +#define MBG_TEMP_MON_MM_MON2_FAULT_STATUS	0x50
->> +
->> +#define MON_FAULT_STATUS_MASK			GENMASK(7, 6)
->> +#define MON_FAULT_STATUS_SHIFT			6
-> Use FIELD_GET() and FIELD_PREP() then no need to have shift defined.
->
->> +#define MON2_LVL1_ERR				0x1
->> +
->> +#define MON2_LVL1_UP_THRESH			0x59
->> +
->> +#define MBG_TEMP_MON_MM_MON2_MISC_CFG		0x5f
->> +#define UP_THRESH_EN				BIT(1)
->> +
->> +#define STEP_MV					8
->> +#define MBG_DEFAULT_TEMP_MV			600
->> +#define MBG_TEMP_CONSTANT			1000
->> +#define MIN_TRIP_TEMP				25000
->> +#define MAX_SUPPORTED_TEMP			160000
-> these are all device specific but don't sound it. I'd prefix them with MBG_TEMP
->
->
->> +
->> +static int mbg_tm_set_trip_temp(struct thermal_zone_device *tz, int low_temp,
->> +						int temp)
->> +{
->> +	struct mbg_tm_chip *chip = thermal_zone_device_priv(tz);
->> +	int ret = 0, vtemp = 0;
->> +
->> +	mutex_lock(&chip->lock);
-> 	guard(mutex)(&chip->lock);
->
->
-> As then you don't need to carefully unlock as it will be done at exit of scope.
->
->> +
->> +	/* The HW has a limitation that the trip set must be above 25C */
->> +	if (temp > MIN_TRIP_TEMP && temp < INT_MAX) {
-> 		int vtemp;
->
-> reduce the scope and it becomes clear no need to init.
->
->> +		mbg_tm_reg_update(chip, MBG_TEMP_MON_MM_MON2_MISC_CFG,
->> +					 UP_THRESH_EN, UP_THRESH_EN);
->> +		vtemp = temp_to_vtemp(temp);
->> +		ret = mbg_tm_write(chip, MON2_LVL1_UP_THRESH, vtemp);
->> +		if (ret < 0) {
->> +			mutex_unlock(&chip->lock);
->> +			return ret;
->> +		}
->> +	} else {
->> +		dev_dbg(chip->dev, "Setting %d failed, set trip between 25C and INT_MAX\n", temp);
->> +		mbg_tm_reg_update(chip, MBG_TEMP_MON_MM_MON2_MISC_CFG,
->> +					UP_THRESH_EN, 0);
->> +	}
->> +
->> +	mutex_unlock(&chip->lock);
->> +
->> +	/*
->> +	 * Configure the last_temp one degree higher, to ensure the
->> +	 * violated temp is returned to thermal framework when it reads
->> +	 * temperature for the first time after the violation happens.
->> +	 * This is needed to account for the inaccuracy in the conversion
->> +	 * formula used which leads to the thermal framework setting back
->> +	 * the same thresholds in case the temperature it reads does not
->> +	 * show violation.
->> +	 */
->> +	chip->last_temp = temp + MBG_TEMP_CONSTANT;
->> +
->> +	return ret;
->> +}
->> +
->> +static const struct thermal_zone_device_ops mbg_tm_ops = {
->> +	.get_temp = mbg_tm_get_temp,
->> +	.set_trips = mbg_tm_set_trip_temp,
->> +};
->> +
->> +static irqreturn_t mbg_tm_isr(int irq, void *data)
->> +{
->> +	struct mbg_tm_chip *chip = data;
->> +	int ret;
->> +	int val = 0;
->> +
->> +	mutex_lock(&chip->lock);
->> +
->> +	ret = mbg_tm_read(chip, MBG_TEMP_MON_MM_MON2_FAULT_STATUS, &val);
->> +
->> +	mutex_unlock(&chip->lock);
-> 	scoped_guard(mutex, &chip->lock) {
-> 		ret = mbg...
-> 		if (ret < 0)
-> 			return IRQ_HANDLED;
-> 	}
-> avoids need to unlock before return and to me at least gives slightly more
-> readable code.
->
->> +
->> +	if (ret < 0)
->> +		return IRQ_HANDLED;
->> +
->> +	val &= MON_FAULT_STATUS_MASK;
->> +	if ((val >> MON_FAULT_STATUS_SHIFT) & MON2_LVL1_ERR) {
-> as above use FIELD_GET() with the mask - it is more readable and
-> does the mask and shift in one call.
->
->
->
->> +		chip->last_temp_set = true;
->> +		thermal_zone_device_update(chip->tz_dev,
->> +					THERMAL_TRIP_VIOLATED);
-> I think the above is 80 chars on one line so no need to wrap.
->
->> +		dev_dbg(chip->dev, "Notifying Thermal, fault status=%d\n", val);
->> +	} else {
->> +		dev_dbg(chip->dev, "Lvl 1 upper threshold not violated, ignoring interrupt\n");
->> +	}
->> +
->> +	return IRQ_HANDLED;
->> +}
->> +
->> +static int mbg_tm_probe(struct platform_device *pdev)
->> +{
->> +	struct mbg_tm_chip *chip;
->> +	struct device_node *node = pdev->dev.of_node;
->> +	u32 res;
->> +	int ret = 0;
-> It's always set, so don't intiialize here.
->
->> +
->> +	chip = devm_kzalloc(&pdev->dev, sizeof(*chip), GFP_KERNEL);
->> +	if (!chip)
->> +		return -ENOMEM;
->> +
->> +	chip->dev = &pdev->dev;
->> +
->> +	mutex_init(&chip->lock);
->> +
->> +	chip->map = dev_get_regmap(pdev->dev.parent, NULL);
->> +	if (!chip->map)
->> +		return -ENXIO;
->> +
->> +	ret = of_property_read_u32(node, "reg", &res);
-> I'm not sure on thermal subsystem opinion on this but I'd use
-> the property.h generic firmware property reading stuff rather than of
-> specific.
-> device_property_read_u32()
->
->> +	if (ret < 0)
->> +		return ret;
->> +
->> +	chip->base = res;
->> +
->> +	chip->irq = platform_get_irq(pdev, 0);
->> +	if (chip->irq < 0)
->> +		return chip->irq;
->> +
->> +	chip->adc = devm_iio_channel_get(&pdev->dev, "thermal");
->> +	if (IS_ERR(chip->adc))
->> +		return PTR_ERR(chip->adc);
->> +
->> +	chip->tz_dev = devm_thermal_of_zone_register(&pdev->dev,
->> +				 0, chip, &mbg_tm_ops);
->> +	if (IS_ERR(chip->tz_dev)) {
->> +		dev_err(&pdev->dev, "failed to register sensor\n");
->> +		return PTR_ERR(chip->tz_dev);
-> 		return dev_err_probe(...)
->
->> +	}
->> +
->> +	ret = devm_request_threaded_irq(&pdev->dev, chip->irq, NULL,
->> +			mbg_tm_isr, IRQF_ONESHOT, node->name, chip);
->> +
->> +	return ret;
-> 	return devm_request...
->
->> +}
+[0] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/
+[1] https://bitbucket.sw.nxp.com/projects/LFAC/repos/linux-nxp/browse
+
+Changes in V3:
+- Refactored FlexCan binding documentation changes
+- Rephrased/Clarified some commit messages
+
+Changes in V2:
+- Fixed several issues in FlexCan binding documentation
+
+Ciprian Marian Costea (3):
+  dt-bindings: can: fsl,flexcan: add S32G2/S32G3 SoC support
+  can: flexcan: add NXP S32G2/S32G3 SoC support
+  can: flexcan: handle S32G2/S32G3 separate interrupt lines
+
+ .../bindings/net/can/fsl,flexcan.yaml         | 25 +++++++++++++--
+ drivers/net/can/flexcan/flexcan-core.c        | 31 +++++++++++++++++++
+ drivers/net/can/flexcan/flexcan.h             |  3 ++
+ 3 files changed, 56 insertions(+), 3 deletions(-)
+
+-- 
+2.45.2
+
 
