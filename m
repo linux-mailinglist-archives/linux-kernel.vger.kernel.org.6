@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-414327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FF149D2654
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 14:04:19 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 751C29D266C
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 14:10:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 055781F21C08
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 13:03:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 35A6EB2E989
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 13:04:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6327C1CC880;
-	Tue, 19 Nov 2024 13:03:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23CA61CC8BF;
+	Tue, 19 Nov 2024 13:04:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OqemSTaK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dDKpcU5C"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B976A1C2454;
-	Tue, 19 Nov 2024 13:03:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 778D01CC15C;
+	Tue, 19 Nov 2024 13:04:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732021417; cv=none; b=bMRy5qGY5C/pm4zW4JZgZYoOwE3QCw67Eo8eE87+xErB8+nl4RG7WtO7AQfmQngg9B/ROuqXox461rSntsJCEtkclqQ2YUmQ3kBWeYkv9XWKXKaE6mKhSJvqxm59yx9XMG2ntG4awlVJJp1LjgTpmA4LyXcqZmhaHLwv8fBxPfs=
+	t=1732021445; cv=none; b=DmCbu4/s9arXqB5jHrRXkz++tH7Ipn7/Tg460R3bpGErGnPIJPutmgaU3Fk+B2/h1l98PfbKmCKf+kahtrFOltv1t2wkQCTVrWRyjbImnPGq7vtxkQPkx+HWW5i83MGwz5qSytg1OBmtxSkZV/8aFSnQgwAgyNSW1/zRlDMFuRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732021417; c=relaxed/simple;
-	bh=HTszvGrwpjyTL9+iGA7mvd53ntCBLk0NpCko+gGtv5A=;
+	s=arc-20240116; t=1732021445; c=relaxed/simple;
+	bh=bfScoq1gnxWUeK0M4zoTkRe0Pzy1yvfZwjXSt62mLjM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WJnoK7Y7Gallc8uZLQMAt1okM13X5b/ugG9npkNkIdI6zF4ZTUXrdcyCZr6uoI8T5HLt4iDuXIMeST5MlJyyN5Ai+ij/5nMMXwUk0d/oD9SrgW7LmvQsj1pjCWOkEQmUpVpX9L1xfxZo3f4HjwyUzkWfPKNd6MyykYth1gsXiTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OqemSTaK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2E3DC4CECF;
-	Tue, 19 Nov 2024 13:03:33 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=i5fTHRz6temGHTXpZ7n4EGM1gOdbBOmb0tb5KLT1hYGaX6ZIAmbtu1BnITu7uEgiA7gpuWcxybgWghdQxRhsha72jHfr3J/4HI55o94tgLbTaPoHgTqdwjrMwvaahIquWJDhOQqfi38NY6HpbE7Gu53nvIzPJiuRLdoyGLniGUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dDKpcU5C; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BE3BC4CECF;
+	Tue, 19 Nov 2024 13:04:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732021417;
-	bh=HTszvGrwpjyTL9+iGA7mvd53ntCBLk0NpCko+gGtv5A=;
+	s=k20201202; t=1732021445;
+	bh=bfScoq1gnxWUeK0M4zoTkRe0Pzy1yvfZwjXSt62mLjM=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=OqemSTaKvU+OxUIRWX0YQ/BtHkSlekw7NC/BJ0idtZUD3vYCZXcElWCImGjuhFT5F
-	 rHZPZHXa/G/PxGI/Fa56ZrHlNjCVbSxRy6JhWqUuD7U+F65ggp8MQAX/QIVhewNXzV
-	 Zb32j46zVNcANK+ymspAm1eXWJrpspZyNXzWbU2GM1els3OKzuYtHaMXtUKKL/PVAH
-	 M22vG2TC8QPkPgWQKMp0iHkzfnVJUzrIUCeO/waocuAFKFlgf3x0vzoY9EXCfIYm3W
-	 +7j6R280UqPOeD3AGdxc84nXnMV+wInkqQNDChoCbE80nzm1279OwoBCTCRfE34duI
-	 zygqO+nf1EdjQ==
-Message-ID: <8b4508fe-01d9-49c5-817e-49955db0dadc@kernel.org>
-Date: Tue, 19 Nov 2024 14:03:31 +0100
+	b=dDKpcU5CG4EZS/3XNkQGhOr7KLp77qoQGUJszrNnQ4HJnahviXTGCAKydO2Ocrz3Y
+	 E3aFPTcepoDnmwn07QDL/IxzFuYrN34zOPNuV95mB8rL2eLjp9+/I7bh/xAn3pE8QV
+	 7e50bFsfS9XK2JCiZyauzuosDaQJiOdMeFQnot3Gp06emDoIcTf140JnAGeutfMzEM
+	 8IAdCPCRi7OaFsO9hQsaPZx/gH/NZ06j6aP1Rhd9rAPTeDup+HkQ/mWGqUQwI9ilgu
+	 OHytfokSg2OsgXTGgYhISkW47eeAmB2HFOXiQFjuBQZeKpQ6y79jFsgtP2uomKZQ1f
+	 iAXMVcRoPGy1A==
+Message-ID: <78dc8893-bd5e-42eb-b21f-b790e029b55a@kernel.org>
+Date: Tue, 19 Nov 2024 14:03:59 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,7 +49,7 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 5/6] arm64: defconfig: Enable Blaize BLZP1600 platform
+Subject: Re: [PATCH v5 3/6] arm64: Add Blaize BLZP1600 SoC family
 To: Niko Pasaloukos <nikolaos.pasaloukos@blaize.com>,
  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
  Conor Dooley <conor+dt@kernel.org>, James Cowgill
@@ -63,7 +63,7 @@ Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
  <linux-arm-kernel@lists.infradead.org>,
  "soc@lists.linux.dev" <soc@lists.linux.dev>
 References: <20241115-blaize-blzp1600_init_board_support-v5-0-c09094e63dc5@blaize.com>
- <20241115-blaize-blzp1600_init_board_support-v5-5-c09094e63dc5@blaize.com>
+ <20241115-blaize-blzp1600_init_board_support-v5-3-c09094e63dc5@blaize.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -109,16 +109,20 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20241115-blaize-blzp1600_init_board_support-v5-5-c09094e63dc5@blaize.com>
+In-Reply-To: <20241115-blaize-blzp1600_init_board_support-v5-3-c09094e63dc5@blaize.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 15/11/2024 15:58, Niko Pasaloukos wrote:
-> Enable ARCH_BLAIZE to support the BLZP1600 SoC and the CB2
+> Add ARCH_BLAIZE SoC family to the arm64 architecture to
+> support the BLZP1600 System-On-Module and the Carrier-Board-2
 > development board.
 > 
+> Reviewed-by: Matt Redfearn <matt.redfearn@blaize.com>
 > Signed-off-by: Nikolaos Pasaloukos <nikolaos.pasaloukos@blaize.com>
+
 Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
 
 Best regards,
 Krzysztof
