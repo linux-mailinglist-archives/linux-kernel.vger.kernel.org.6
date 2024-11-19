@@ -1,157 +1,272 @@
-Return-Path: <linux-kernel+bounces-414799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 455AA9D2E53
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 19:49:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A4A59D2E03
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 19:35:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 22624B33BE7
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 18:08:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 73F6CB3019F
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 18:11:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 990381D1732;
-	Tue, 19 Nov 2024 18:08:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7D3C1D2796;
+	Tue, 19 Nov 2024 18:10:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BVY+usYB"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="KFARJUTl"
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2064.outbound.protection.outlook.com [40.107.22.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BAC01CF7BE
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 18:08:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732039724; cv=none; b=n7cSmSZBrPRYzFWG/auDxmCOqsRtXGFNeJi6BOpPqaodwWG02MkmpvEZvDbpa2eakIezHo8dUNwYSaSG4/LhGUvhG8AeXb8nQyVtpqjjjdr7iRF+6Xa8pWFm8jAiFHLJjAD0sz1kZC2SF+4DGzIwkMJH6i+C3+4YsSUmYfQ/KzA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732039724; c=relaxed/simple;
-	bh=ABCVQQ/oubRD0q8KjH9PhUAToxqy6BsbP0MmBtjFUbY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fNWJ+w8E6fHYmZ5ycNS2vMruO8DFesTFDlfRJjTtqwrlc5AB84eaZ/GOwwgRwLQ96XZRjvVBL1mQdKSkbnFjBn2tIiEyxM8h1/u1+fZ4Tz4QtrnSU8Hmq5L5YHfVfnK296yOpUJtEUBnM4ZWmMxHOXl2TAWHod0gToN1pg5nc/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BVY+usYB; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7ea9739647bso996552a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 10:08:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732039722; x=1732644522; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=aq+kH256cOwYf9vQX57gUKcS5dMPP1ZyocTxDkI1PUM=;
-        b=BVY+usYBYfV+D7tC4rqQtmv9C3PRjMOw7w02AustTewq4V5uBHiRz+9LMpdgh5AYPU
-         CHiO149RaMUGtLagvjPX1qlWd3XC9/RaqvLybIJo+7rOvXmm6SOW+GphqS6QLa/j2Kg9
-         4rM1HoWhB8xBSBN48Led/RQ6jcffEn1X74SlHmsqdPrRs2+FKt/JRF1De6/ML5So5RkL
-         r/z0o153xDaVzv3FQ0MtV/jydN0HaygVJvTRC/0gqeElALUeNsyAPlDLFkA7x0l5FNdB
-         a0SLoG+HG0DzAFNj+1xe2xjekdSkATMFlCOc5FvybckY4J/Nh3mcDLGjAeRCjtvqgf/l
-         5B2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732039722; x=1732644522;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aq+kH256cOwYf9vQX57gUKcS5dMPP1ZyocTxDkI1PUM=;
-        b=WsfCJRl1hYqHRDb5IhUJOsXOpfO8uoJ9AbAWy1DzXU1DAHE6b6qVDaoDLqf+WDi0bQ
-         dSNCMl6l8Nkr/p53Uo+9W6s3d5QcHissPNmtZtqDGpdlnFJrOF9OgDSqZ6VUANqlzlt9
-         Q81cnWSmcwzclHNXOAMNy6cKT8wQk2shSXficuJWp+lt3lCqjRdY06tcbi2s1lLgXUtG
-         f8K3sPJ6oynJZ0yVYri+RAkKMdl066Yd9uuie8DhM08aqXaYodujRcntXT+v4f7b8SXA
-         9QclHYXTirLiomBokIzewqwYeMXVpVCxALu/ygvHoR0oHlfFoO/5fFRY8m0dT79/n1UV
-         VuPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVl/k5fkv+Ft/6UhhaowilaBe4C0NWwpxJ+fYyrXnj1z8tKUlmxeXPvf5biaVGUsArKFpvQiZ8r6u3JXjY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6hO6zKvD/aPcYEiwE1fVCXfedvT6zWCb1QA4mj7ozl9CLO0VU
-	Ouva34JpR5sNNs6uDZtzylu+tuR01cmgygEfJjkOfldLrB+SYkz3
-X-Google-Smtp-Source: AGHT+IEkLvWOcPjmfsCl1hGu1TlJjDw6x3uellzWs0wF2J/LubQIEQbPxe8nnkvtO3qT151rN2c+Og==
-X-Received: by 2002:a17:90b:2d83:b0:2ea:9ccb:d1fe with SMTP id 98e67ed59e1d1-2ea9ccbd2f4mr7322925a91.0.1732039721852;
-        Tue, 19 Nov 2024 10:08:41 -0800 (PST)
-Received: from desktop ([38.141.211.103])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ea2d9bef78sm6907061a91.27.2024.11.19.10.08.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Nov 2024 10:08:41 -0800 (PST)
-Date: Tue, 19 Nov 2024 10:08:38 -0800
-From: "Ragavendra B.N." <ragavendra.bn@gmail.com>
-To: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-	dave.hansen@linux.intel.com, hpa@zytor.com, ardb@kernel.org,
-	tzimmermann@suse.de, bhelgaas@google.com, x86@kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] x86/sev: Initialize ctxt variable and zero fi
-Message-ID: <ZzzUJpF5wNk0dEOe@desktop>
-References: <20241118225828.123945-2-ragavendra.bn@gmail.com>
- <fc2202de-595b-f561-dc59-08f32c56ff73@amd.com>
- <ZzzMeHFyWTVT0-cI@desktop>
- <c5292bcf-4e9b-289d-c6f4-c587a879e07e@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FA931D1F79;
+	Tue, 19 Nov 2024 18:09:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.64
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732039800; cv=fail; b=cu8khN0zmFNwvdlSUHoGXzHytLxQeRG4EPTz69nIzxULFrtH/6Hzgr0k+RPl61hSg9ol7e01ECO/Rdonw5VfA2rC56PEwwRdAP6+bTAn9MI1nRqStU0ZmVLDe3PEgz+KLYAbc9nXN0rDOjJ4oqmijpnlt3MqluTEfqVa6Q41BI8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732039800; c=relaxed/simple;
+	bh=aZrGyK8j20DoyICIBq55xS5QUdvpcvmXC71UnQ4JICs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=EDSBfXWs2IOamqxT3PfhkjdKgFtB9yN3dlFh869ujlTVc+ROyC42qof7EO/BwAfqDm0o9af0aX5PzdQWEkONWI5/+Y2pzjRyv8Tmdj/U1GXYFX7B3ho3RmRJSVawrbcxXu5vX3FkF8kkb4njgMrh1XM8Jc/m+2RNwKZP8UMOg7o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=KFARJUTl; arc=fail smtp.client-ip=40.107.22.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=xOR7QqoAZY2ONrgo0BDT7tbvgMRexatNp/X4Skm9kI2F2CKM5YjbXCh93nRZ0ZuRvQY8/yy3gtV0sAx/KvGeJ4LWavOJUudPTrpRTcy4YInWXEWEVZWSg8PTAwYFXiz/nJ+/yl1mPX/IcfK+TSkG42kcy3I63BQYypiieF7VGRHDmyBA9CYEHNSv1VNrymmFOExndd+Wt+/k+oc3tNzNlEk+8Y2l4roYxLGOkiOt6pLyWfZbGWVQ7KAjX7XH89pDaJXdW8Q7D3WnD53gEZpSVuifYdpibek2k74VUsImJJj3B5zGTtJbc3YdMq25bqZ9mOFiqTb1qK7+tJrtaTqIDw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=XYCanwXhKoDJbqsSW77qjjOrnTmnfTSPpBgyRJUOFGw=;
+ b=HuPLex2CPKe78reQe16R28ifOBs1O6eISEH8X9inn3arPZa7fzBLZfHYiYAa4OLbPnclQ6Kzw20k6yv6QgLesFHpW80KrfK1TZ8iTR1kGQGlaA0h1q2OSBtFAIdTPKEcJEwALGkpdwI61K2zEBC93D5dj3Bjh6MC6f66+OExoGMUKexuzg/YiqbCgsYJ/A7xtCu5jtG61gFayPTD9XZMoobvWldV2Xr+g24GvJ3MbVvg2eJTyRqdr1j85mefsrE4fREBaj2MUeVSH1csDIGgoFsTIeDG9q0B8/73dueGM8tiVyhfPFqhzvIwrEpgvmU3f8owaH0V22Eophk7KjIIIA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XYCanwXhKoDJbqsSW77qjjOrnTmnfTSPpBgyRJUOFGw=;
+ b=KFARJUTl6fP/vqOyZDNB/TkJK/E61sLb311TgjOboSB+gXKclC9Wvq2y/QjooHVlHTcSz9ptevL4DwVj46D8Pwx0Q9oMFm6C3dZT8cDdXFu6J2edCT0t9kxw/be6fQaalDOxlr9rKa2YNn4DBUQHDudvrMb5nrHPVqieJQ1Cj7NJky//jDT5J/igtZoLd07UumOci92i0gXDps/QVytFLT3XSvV8WhVdZGR+f4/ECX6kdpeysCcNVvcCloXiR8zHwKanj8uWIp7aOrxTtFaIa1egc1mCnCvW4k9KuZveN8UqBZvrZgBmpF1peO0Dm1WeRtSdZTfT6vBI20LmiwujXg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by AM8PR04MB7873.eurprd04.prod.outlook.com (2603:10a6:20b:247::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.24; Tue, 19 Nov
+ 2024 18:09:55 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%4]) with mapi id 15.20.8158.021; Tue, 19 Nov 2024
+ 18:09:55 +0000
+Date: Tue, 19 Nov 2024 13:09:47 -0500
+From: Frank Li <Frank.li@nxp.com>
+To: Richard Zhu <hongxing.zhu@nxp.com>
+Cc: jingoohan1@gmail.com, bhelgaas@google.com, lpieralisi@kernel.org,
+	kw@linux.com, manivannan.sadhasivam@linaro.org, robh@kernel.org,
+	imx@lists.linux.dev, kernel@pengutronix.de,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] PCI: dwc: Clean up some unnecessary codes in
+ dw_pcie_suspend_noirq()
+Message-ID: <ZzzUa8Zs3qJiVPam@lizhi-Precision-Tower-5810>
+References: <20241118054447.2470345-1-hongxing.zhu@nxp.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241118054447.2470345-1-hongxing.zhu@nxp.com>
+X-ClientProxiedBy: BYAPR07CA0104.namprd07.prod.outlook.com
+ (2603:10b6:a03:12b::45) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c5292bcf-4e9b-289d-c6f4-c587a879e07e@amd.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AM8PR04MB7873:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6b9b905e-22cd-49b6-cb8e-08dd08c55ed1
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|52116014|1800799024|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?OpVVhFYdikT24VRJ4N+Yq6gEGjFlp4UN7y9NQndU3+JXjXyXvxGxfmyLXy3p?=
+ =?us-ascii?Q?VnCn2Ue2FDWruC9vvxEd7ooMaY6j0rrxZgyMmDDwQgWzFUbaj8wQWcyOvSbJ?=
+ =?us-ascii?Q?on7w6SQBcauk/XQsnyMJf6ksvStJwWU2haLhWcxDBRXZgvLJuf1lRsKPfNtY?=
+ =?us-ascii?Q?uNwJ7lysQ6v2Ldi6vC61uG0Ic1Mu6HFhkwKVnDF0tCqdK3Qi35RmmJQbgzJO?=
+ =?us-ascii?Q?EI1Tb3gWfx34PhYr5bO0fwcpyWzZSv/nJwm4qJFOzdtj0Nf27cvYv9zj3H3E?=
+ =?us-ascii?Q?DOeL+hi1G2di1MArhsMVDwa0xBzcjqUQrfh8JUgCEtCd0cMrZIklUdQMkSRS?=
+ =?us-ascii?Q?Kf9z1lqbBhkrPYmm0oSGv/h5ZU3aDpvXxoKziwDriKjpKPshMuoSHVVfdF0J?=
+ =?us-ascii?Q?wueXxLcF2HU4ZETraAidToRDcslcQbpE0CIVuBzL2ECxHWuhEhW9tymU0rTC?=
+ =?us-ascii?Q?o+8O2wCKfaKHuXUFoYZYRpeYuHWfblRjtBXdJ/z+fR4wt5xnzu1VRdlN8Fhb?=
+ =?us-ascii?Q?4u3JEc9PVL8Q5zHc9LTVcD6u3GSGd5E9Ax7mqk5p3a6dr4NEHqUv5zX7ffFa?=
+ =?us-ascii?Q?fhTEhVmfGuBxC58vThZxnyAupXx2O90BG8lYOFdimUgfF+pXqXro5HFikcjH?=
+ =?us-ascii?Q?GvxM/qS3NpI0ToP4t0ygchXx7JyY1Pkt2jeAWeURT9EzS8AtdDohmJpQ3dPq?=
+ =?us-ascii?Q?CBtSl0vuBNtVMMmla7qHCtazICus2vmdOD29GNho8NaN7+PZGX5EiuFFmazm?=
+ =?us-ascii?Q?dLx9XYSZ6GUSMemv6PpHyECXtv2/c20VxjO4rhtomvmtUUSoDOFlllQdmdeu?=
+ =?us-ascii?Q?enJEijtecDCsOHKVfd7aJ7uwT1kyXOHIpIbX2as6T+vG3RIawCBttlPGcC7C?=
+ =?us-ascii?Q?J06mp/SZ0h9U1Be/5q0drEV7fwDoXoCAlidMSdQaE+BIvNGjCCF9fKyXAynX?=
+ =?us-ascii?Q?Uigh6oIvC+ED+mdopLzomh51lSLrP99R46H/qkh3KojGNUbhEhk8bDxyJ7kx?=
+ =?us-ascii?Q?lLsV46qI3Bc6mOUeoR40nDC3Lrz+L+U4c3Pr7Xn2q35t7Ct3DqcTrl1l52l9?=
+ =?us-ascii?Q?Dqfq8YtReir3RQE0zHzCHEfb5aJrjNMshwk1o7KCw2+JdC2pSE5lSD+NGU4f?=
+ =?us-ascii?Q?5Evr8/MF757s2SmGn2FFMzAbf9pTfJw4Hb09X0go2l8Q8cyDGL6ArL5VHHgt?=
+ =?us-ascii?Q?aXsn6siHv43HJPv8K4IziQhFsfXQHxyvNCu/hnOV8x+hBenXmWI2noFH4gNv?=
+ =?us-ascii?Q?oxR96XZj9sU0ovL7tAxhK80c0s/zzg0JIwdBWXItZt9JBFHB4pPLi7wR8sN9?=
+ =?us-ascii?Q?Z6+rzcZKXe/Dpt1JZLrdPItKDV1mPhHTBkBIomYHSpNSfOCnrH+vXTfLGLpQ?=
+ =?us-ascii?Q?R2O7DZs=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(52116014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?JSFYPIHInK1POhd0MRPw4axd2u1qXkvatoLCkvOjKlouyE0skkJMYWzTPtbU?=
+ =?us-ascii?Q?nLHXejssLUw6FpDf5E/zaOvj3iLzCuWUs3enYsNp/RMNdnrCVSUZ8UBqpvnj?=
+ =?us-ascii?Q?jX7uI6JtTLweihQa++EwFuofoGxUwvC6fRT/l1Txo8FU1nyiNNjCKSNZIQSy?=
+ =?us-ascii?Q?cTxI7KVKQBcAzNrFN8pKQfjID41bfABBhG6GubrKQ2s4MJB7KsCMKzaQ8i8L?=
+ =?us-ascii?Q?+1dPoQVlV79fW89gA+Ilv38ZHPBzjFbb/n2+HjfAGdwkO07xHK2JnrMceZsV?=
+ =?us-ascii?Q?typvgJPA/q+uQck39Y2I2NiyZ5Q1d5DpYLr0mRUhWx3WiJ4Xl7WgNuyIwGek?=
+ =?us-ascii?Q?S0EUrTxre9ukbCFhSPLbC5kTMtDF129+kcyGRduOhitKQhkagyNfpkumEH8s?=
+ =?us-ascii?Q?33oZuYKLpkBeniP1USCNztgQdYSni7sa6gJffHSLVYpErEaK/lu0VGK2TNjo?=
+ =?us-ascii?Q?4hQQWK5XOYe4rrsf0YtQq6AEE/gc9T7QoC1z8DghoyIiNDxWKeoeJwWQBr7W?=
+ =?us-ascii?Q?Kzhqs2NxgnFK6f+k0GZTTlQK+cHXXYp1a9Z664L6DY14A0mn29WPH0h6CR/G?=
+ =?us-ascii?Q?9bikO+H6ktTJ4d3xpsNKwYVwJsBemeifPvNI1rNUeJpsaCNZzXplp9HOPbu/?=
+ =?us-ascii?Q?4qNEA6ojxS0Odh7sqOlSjcIpKkP80/g0b4CA/AteaQZMfyaiMs6+n9XztKuj?=
+ =?us-ascii?Q?frmsfypKrTv81u5K0yP47sZLBtR9KNer9lv8bPWbg6kRikOoSaL7r3E1Anoo?=
+ =?us-ascii?Q?mBzGXBLx63a54G8Qj9IkaV4BNmbNgHwTevDM+nCYWUSmAbwWYs2AkwYNqNYR?=
+ =?us-ascii?Q?JYw6O+4uGy7RWoNlLBXVms/3NNrprpWKLuWA89k3lWEOAJseP8xKFW6WDumn?=
+ =?us-ascii?Q?z+nm95H3IX7Q5RYBrJTJibdJury14kZ9DI9tadUGl+ZtY7P0FG0uIgGtCdKv?=
+ =?us-ascii?Q?fGZedlPSQ5FBLiki4K9lQUQIM8IwAcjznRfeJnSHA+S8LvN2ymCyW+IkkBhi?=
+ =?us-ascii?Q?NbzBrDmJs5x8ZkBoEty7RX6WYORqLGcmK40UlH4BpFZnNwSYVtF1N5PXqjz8?=
+ =?us-ascii?Q?/OSYDboWDRVCrVrEJYk1s+DAgXEY8SX9uT2FCOU6jjlOKjb7J1oxY5dl21XQ?=
+ =?us-ascii?Q?5XVyF8ljA+rFgqw6QqcG4JFT4myADco6RSfgF9jyAuvVmmjRoEezpofw/Bt3?=
+ =?us-ascii?Q?ES8vjIYkmNWCD4ckNDxMCEYuly9i1i0YyxmeacwSWGP3EHxFYEoO5eTyYOvE?=
+ =?us-ascii?Q?TNd0FwBa9iMBsLYKKLUdppArb34mhexYEyDoRfIb/35IiAsku5oRgiXIYJU8?=
+ =?us-ascii?Q?E8f7dVwZXRej6YrRCUO5WXNZPdWQcJhnUT6L4AK1HrifD2oIbe/y/QjzPSr2?=
+ =?us-ascii?Q?63lyx927K78n76634PWOLUvblR4gJs0tAdlLjzUJTRUp5jaPVOHIB2lWiNZU?=
+ =?us-ascii?Q?kO/nKR/CGL2Wl9lXkjKsVniwdrTjUtEyKXG2SeChQBVtUh8a/qyT92mp1TtH?=
+ =?us-ascii?Q?v0hiFWHW541A5tBEN5b7n40P+o/oBymTtFYcUW3tkQqvN/ouzkAW/V8baopv?=
+ =?us-ascii?Q?kOMaehlUhlqT5fpk+OjVIty3mbHD0EdRZBJrc9m+?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6b9b905e-22cd-49b6-cb8e-08dd08c55ed1
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Nov 2024 18:09:55.2224
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: E2kgKdEFZ+mhJ3BjlG9I25C1/9gGPDticdI6Efy0al9xMFuIAOGcbsxEDoWRtkTa41Gzd9mVncoxBpDkoZnLyA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM8PR04MB7873
 
-On Tue, Nov 19, 2024 at 11:51:27AM -0600, Tom Lendacky wrote:
-> On 11/19/24 11:35, Ragavendra B.N. wrote:
-> > On Tue, Nov 19, 2024 at 08:23:14AM -0600, Tom Lendacky wrote:
-> >> On 11/18/24 16:58, Ragavendra wrote:
-> >>> Updating the ctxt value to {} in the svsm_perform_ghcb_protocol as
-> >>> it was not initialized. Updating memory to zero for the ctxt->fi
-> >>> variable in verify_exception_info when ES_EXCEPTION is returned.
-> >>>
-> >>> Fixes: 34ff65901735 x86/sev: Use kernel provided SVSM Calling Areas
-> >>> Signed-off-by: Ragavendra Nagraj <ragavendra.bn@gmail.com>
-> >>> ---
-> >>>  arch/x86/coco/sev/shared.c | 4 +++-
-> >>>  1 file changed, 3 insertions(+), 1 deletion(-)
-> >>>
-> >>> diff --git a/arch/x86/coco/sev/shared.c b/arch/x86/coco/sev/shared.c
-> >>> index 71de53194089..5e0f6fbf4dd2 100644
-> >>> --- a/arch/x86/coco/sev/shared.c
-> >>> +++ b/arch/x86/coco/sev/shared.c
-> >>> @@ -239,6 +239,8 @@ static enum es_result verify_exception_info(struct ghcb *ghcb, struct es_em_ctxt
-> >>>  		if ((info & SVM_EVTINJ_VALID) &&
-> >>>  		    ((v == X86_TRAP_GP) || (v == X86_TRAP_UD)) &&
-> >>>  		    ((info & SVM_EVTINJ_TYPE_MASK) == SVM_EVTINJ_TYPE_EXEPT)) {
-> >>> +			memset(&ctxt->fi, 0, sizeof(ctxt->fi));
-> >>> +
-> >>>  			ctxt->fi.vector = v;
-> >>>  
-> >>>  			if (info & SVM_EVTINJ_VALID_ERR)
-> >>> @@ -335,7 +337,7 @@ static int svsm_perform_msr_protocol(struct svsm_call *call)
-> >>>  
-> >>>  static int svsm_perform_ghcb_protocol(struct ghcb *ghcb, struct svsm_call *call)
-> >>>  {
-> >>> -	struct es_em_ctxt ctxt;
-> >>> +	struct es_em_ctxt ctxt = {};
-> >>
-> >> This isn't necessary if you are doing the memset.
-> >>
-> >> Thanks,
-> >> Tom
-> >>
-> >>>  	u8 pending = 0;
-> >>>  
-> >>>  	vc_ghcb_invalidate(ghcb);
-> > 
-> > I can go ahead and undo that, I fear that Coverity can catch it. If no harm I can leave it.
-> 
-> Well, can you remove the line and run Coverity and see if it still
-> thinks there's an issue?
-> 
-> If it sees an issue, then it could be that Coverity can't follow the
-> flow completely in this case. Doing the memset is enough, as far as I
-> can see.
-> 
-> Thanks,
-> Tom
-> 
-> > 
-> > 
-> > --
-> > Thanks & regards,
-> > Ragavendra N
+On Mon, Nov 18, 2024 at 01:44:47PM +0800, Richard Zhu wrote:
+> Before sending PME_TURN_OFF, don't test the LTSSM state. Since it's safe
+> to send PME_TURN_OFF message regardless of whether the link is up or
+> down. So, there would be no need to test the LTSSM state before sending
+> PME_TURN_OFF message.
+>
+> Only print the message when ltssm_stat is not in DETECT and POLL.
+> In the other words, there isn't an error message when no endpoint is
+> connected at all.
+>
+> Also, when the endpoint is connected and PME_TURN_OFF is sent, do not return
+> error if the link doesn't enter L2. Just print a warning and continue with the
+> suspend as the link will be recovered in dw_pcie_resume_noirq().
+>
+> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
+> ---
+> v3 changes:
+> - Refine the commit message refer to Manivannan's comments.
+> - Regarding Frank's comments, avoid 10ms wait when no link up.
+> v2 changes:
+> - Don't remove L2 poll check.
+> - Add one 1us delay after L2 entry.
+> - No error return when L2 entry is timeout
+> - Don't print message when no link up.
+> ---
+>  .../pci/controller/dwc/pcie-designware-host.c | 40 ++++++++++---------
+>  drivers/pci/controller/dwc/pcie-designware.h  |  1 +
+>  2 files changed, 23 insertions(+), 18 deletions(-)
+>
+> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
+> index 24e89b66b772..68fbc16199e8 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+> @@ -927,24 +927,28 @@ int dw_pcie_suspend_noirq(struct dw_pcie *pci)
+>  	if (dw_pcie_readw_dbi(pci, offset + PCI_EXP_LNKCTL) & PCI_EXP_LNKCTL_ASPM_L1)
+>  		return 0;
+>
+> -	/* Only send out PME_TURN_OFF when PCIE link is up */
+> -	if (dw_pcie_get_ltssm(pci) > DW_PCIE_LTSSM_DETECT_ACT) {
+> -		if (pci->pp.ops->pme_turn_off)
+> -			pci->pp.ops->pme_turn_off(&pci->pp);
+> -		else
+> -			ret = dw_pcie_pme_turn_off(pci);
+> -
+> -		if (ret)
+> -			return ret;
+> +	if (pci->pp.ops->pme_turn_off)
+> +		pci->pp.ops->pme_turn_off(&pci->pp);
+> +	else
+> +		ret = dw_pcie_pme_turn_off(pci);
+> +	if (ret)
+> +		return ret;
+>
+> -		ret = read_poll_timeout(dw_pcie_get_ltssm, val, val == DW_PCIE_LTSSM_L2_IDLE,
+> -					PCIE_PME_TO_L2_TIMEOUT_US/10,
+> -					PCIE_PME_TO_L2_TIMEOUT_US, false, pci);
+> -		if (ret) {
+> -			dev_err(pci->dev, "Timeout waiting for L2 entry! LTSSM: 0x%x\n", val);
+> -			return ret;
+> -		}
+> -	}
+> +	ret = read_poll_timeout(dw_pcie_get_ltssm, val,
+> +				val == DW_PCIE_LTSSM_L2_IDLE ||
+> +				val <= DW_PCIE_LTSSM_DETECT_WAIT,
+> +				PCIE_PME_TO_L2_TIMEOUT_US/10,
+> +				PCIE_PME_TO_L2_TIMEOUT_US, false, pci);
+> +	if (ret && (val > DW_PCIE_LTSSM_DETECT_WAIT))
 
-Sure Tom, I have updated the change and sent the new patch. Please let me know if everything looks fine,
+if true of (val <= DW_PCIE_LTSSM_DETECT_WAIT), which means not device
+attached, 'ret' should be 0.
 
+when ret is not 0, means, link up and not in L2 idle status. So check
+'(val > DW_PCIE_LTSSM_DETECT_WAIT)' is redundant.
 
-Regards,
-Ragavendra N
+NOT(val == DW_PCIE_LTSSM_L2_IDLE || val <= DW_PCIE_LTSSM_DETECT_WAIT)
+equal
+(val != DW_PCIE_LTSSM_L2_IDLE) && (val > DW_PCIE_LTSSM_DETECT_WAIT)
+
+Frank
+
+> +		/* Only dump message when ltssm_stat isn't in DETECT and POLL */
+> +		dev_warn(pci->dev, "Timeout waiting for L2 entry! LTSSM: 0x%x\n", val);
+> +	else
+> +		/*
+> +		 * Refer to r6.0, sec 5.3.3.2.1, software should wait at least
+> +		 * 100ns after L2/L3 Ready before turning off refclock and
+> +		 * main power. It's harmless too when no endpoint connected.
+> +		 */
+> +		udelay(1);
+>
+>  	dw_pcie_stop_link(pci);
+>  	if (pci->pp.ops->deinit)
+> @@ -952,7 +956,7 @@ int dw_pcie_suspend_noirq(struct dw_pcie *pci)
+>
+>  	pci->suspended = true;
+>
+> -	return ret;
+> +	return 0;
+>  }
+>  EXPORT_SYMBOL_GPL(dw_pcie_suspend_noirq);
+>
+> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
+> index 347ab74ac35a..bf036e66717e 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware.h
+> +++ b/drivers/pci/controller/dwc/pcie-designware.h
+> @@ -330,6 +330,7 @@ enum dw_pcie_ltssm {
+>  	/* Need to align with PCIE_PORT_DEBUG0 bits 0:5 */
+>  	DW_PCIE_LTSSM_DETECT_QUIET = 0x0,
+>  	DW_PCIE_LTSSM_DETECT_ACT = 0x1,
+> +	DW_PCIE_LTSSM_DETECT_WAIT = 0x6,
+>  	DW_PCIE_LTSSM_L0 = 0x11,
+>  	DW_PCIE_LTSSM_L2_IDLE = 0x15,
+>
+> --
+> 2.37.1
+>
 
