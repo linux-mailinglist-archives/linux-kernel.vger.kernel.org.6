@@ -1,458 +1,218 @@
-Return-Path: <linux-kernel+bounces-414505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CE439D292E
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 16:09:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C18E9D2930
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 16:09:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 95DD61F23BF2
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 15:09:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D957F1F242AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 15:09:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80D261D043D;
-	Tue, 19 Nov 2024 15:01:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DADED1D0488;
+	Tue, 19 Nov 2024 15:03:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=laura.nao@collabora.com header.b="WsgRFdCH"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="gbQGxuqu"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 782841CFED1;
-	Tue, 19 Nov 2024 15:01:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732028502; cv=pass; b=kPiIBC9Cw0hQKCn4PQX8OG3VeX5zbHPfc+3sQTUoxxnbbLAvlge4QcLhPbM0qB4F8kKu2/5u7c2aY0/B/pbxtB36c7A8d/SUgMjbCUS+1IPh04C/TWBGjTeQ9Ih5xc92RHYiVCazIiH57OFy0n7VFE1hvOJuofQZs5absX0/Rv0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732028502; c=relaxed/simple;
-	bh=QHV3dXjSa3fv2LS5uDGfGq538fPdl5Py0UKH4lCMAIo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=HAmFMh3zXGSYoY59jzE+tFss61jCVlGOptoRQmyLvEZOEM80yukh6Eha9mzBu4Q/RtgnFF18BZj879D2QyPzAeZDyoMDym3/ApTGvv0wr4Rd35zABD55pd7GsCk+J1V84F1Nz0nhEWdfIyBmtYdvYUmn5MAMbqoIH+5S52w5R30=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=laura.nao@collabora.com header.b=WsgRFdCH; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1732028488; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=didqN8AazB1vSgdlfnYiY3E+kQfWPqHl0tydQsNH/xj0lU22PEKvP+fGt5S/xMJuRkrWK8i0K50+IC4PbVTU4iTzJf5g+fTzqNMmbfOtv/+Jqw/gHFVR7jHEb6i++nyGP8Pj8IW/m2n+31fkIbumwQtprc6RPZBepoLdVMKx3vs=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1732028488; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=057phoMJJrnzspv8LQ2k62XW69eK5B9pBPoY+XGK15s=; 
-	b=NULzD6M1tSxiIPcYRtwr9UU+R4VOMyJkoR67fD1qpbHAMYfT9x+bRyDjZ0y4hpd3ztWktaI0w00OSQLuboL7gxXjddBBQotH4T743hcd/prq2NGijyhZeEepCv5+xBMBF34NRTXx4f9biPdzEhbHqOrBoGEhFG6j0ZJuTcQi/RM=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=laura.nao@collabora.com;
-	dmarc=pass header.from=<laura.nao@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1732028488;
-	s=zohomail; d=collabora.com; i=laura.nao@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-Id:Message-Id:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Reply-To;
-	bh=057phoMJJrnzspv8LQ2k62XW69eK5B9pBPoY+XGK15s=;
-	b=WsgRFdCHKA8kfveBYMigNvojjP7cTIQdiFaig0v53aW13v+lRJV10X6F34PnGddc
-	YFo1UUEUkv1dxjXj2So6tXoJ2O4TB/7zKW3s/dy695myYRBUiq+W7ixBjDrfAvCPDYb
-	1Uo1rMppbfnkmams6abLYKSOfnfutBaXpvfGWr9c=
-Received: by mx.zohomail.com with SMTPS id 1732028487061923.0385676586997;
-	Tue, 19 Nov 2024 07:01:27 -0800 (PST)
-From: Laura Nao <laura.nao@collabora.com>
-To: shuah@kernel.org
-Cc: laura.nao@collabora.com,
-	kernel@collabora.com,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: [PATCH v2 2/2] selftests/watchdog: convert the test output to KTAP format
-Date: Tue, 19 Nov 2024 16:01:27 +0100
-Message-Id: <20241119150127.152830-3-laura.nao@collabora.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20241119150127.152830-1-laura.nao@collabora.com>
-References: <20241119150127.152830-1-laura.nao@collabora.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F7901CFED1
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 15:03:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732028593; cv=none; b=CA35cF/p37edYDfgDxXTdMFmBF4aNW4UqMHZxkwcO41fHvFVK06A1/odhAxGTMDrexVc/4UZ4yI12af6utfsq9d20dBh/QZqTZB0At1l63cRBv4q3JUcLMUwgGBkVAI4EUJalUXWL3HNfwTLj0s4LSwu1TiBXUwN0NWGKaw2gUw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732028593; c=relaxed/simple;
+	bh=XvwcDJBml62yKn4itDkBswOJHcySD6NBqEbnj9WBXCA=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=Vl3fvQR2rVpQkTuH2SiThJRusg6uUY1eYzCwDuxbYmswCBbNd7OJV9F58JDJlkVQ0JAYcTneWb2OxO93TNe2ADYIwBvkFcBtgcl8gNwSwmS950SvHwWwkn2Xvhjpxjlixj+esGiifomASZpa8YP9pJzW3yPvlN34tl4iar8MPdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=gbQGxuqu; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-431481433bdso39682815e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 07:03:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1732028588; x=1732633388; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dwuBbcUvdsJsNlAmA8kNK2a4zz8OYZ18Ka20Jiz0Pm0=;
+        b=gbQGxuqut63p5EeX/513O7hfgsouqJ700G1npYlaGa8kCNNc2PQD7C8Qs041O69/5U
+         oifX2tKDSRexCLw0igiXs0HoAImGlCAE/+mW2Ex8yJCyePnvEjsPXj9792PZrLUSgwc1
+         CXupiK/hknPEsxHk8WZhhjXdVhc8K1M9wfKIRPpNXfZNAAtokcFUqnu77j14TOHqBVPk
+         J6aRR85M4E1gnMJVZg4CThbUHcz+5W8tzJC6Qhlhn11DpXkkRdBp9jxwGDPDPMhpR137
+         1nDGWRKkstFnQseJiBPuQDgNhOo75g1TohqK2KIXh9KdQGfPanhPga6lHRzwzopU1Aq9
+         SLmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732028588; x=1732633388;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dwuBbcUvdsJsNlAmA8kNK2a4zz8OYZ18Ka20Jiz0Pm0=;
+        b=Cqii5Jg+asutVRFLoGEAvsEjnYUKB1s+Lw0HEtHc2BwZU0MV6wPV4SOtt4ecrxZQG0
+         CYcitYEG7p8+V6YWfI+Uuy9G6ZtF6w5l5ykPUCv95bxQfEtWSYHppaXhuunhCZT/iliC
+         BruWY/zWyxNvsHPjVHNsR2TXQdyEAL0g9H/I1XxvdHUd0/wL+T7jrcZaxKThjHj0Dax9
+         Htn3vyi4N2vHJTe0l87sPstltMAUpQKVU9pO6nlnmuFcHw6Ny6mQSgTaA2dfVGefy3TE
+         PBOhAkbrFt76/nuR4PD6Dw0uSUygVAbl4WVFDcq4iFVGGMeLVQRjEK5zfcDRwiYe4RPn
+         Lv9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWtKUuSaSvwDJilRA4uf4c1OEQ7euCqNtTZCgvJqPB1RIQhrhm5Uv67nh+A3N/FxCd/sW/bLeYuDCZcLhM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw495PWNACwvLzuopUCkwzS5AQCwV0T6c9l8SAu6Wq+OxNsEvuo
+	vAYtl6p9dWXnvzoUBK0wwD0pyUFu7T9vhKdGQzRbghKrbnFPh2vZTz1VOf5CNuM=
+X-Google-Smtp-Source: AGHT+IFvFX7MJ8Tu28i9oH50avvlnQXkr7wiV44jnwVsLQSm9Sm8I2ZZy94Fp/+zJ+w9zxPk7qMCZA==
+X-Received: by 2002:a05:6000:178d:b0:382:5137:30eb with SMTP id ffacd0b85a97d-382513734fdmr780854f8f.8.1732028585939;
+        Tue, 19 Nov 2024 07:03:05 -0800 (PST)
+Received: from [127.0.0.1] (78-80-61-208.customers.tmcz.cz. [78.80.61.208])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432da28bc11sm197286915e9.31.2024.11.19.07.03.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 19 Nov 2024 07:03:05 -0800 (PST)
+Date: Tue, 19 Nov 2024 16:03:05 +0100
+From: Andrew Jones <ajones@ventanamicro.com>
+To: Jason Gunthorpe <jgg@ziepe.ca>
+CC: iommu@lists.linux.dev, kvm-riscv@lists.infradead.org, kvm@vger.kernel.org,
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+ tjeznach@rivosinc.com, zong.li@sifive.com, joro@8bytes.org, will@kernel.org,
+ robin.murphy@arm.com, anup@brainfault.org, atishp@atishpatra.org,
+ tglx@linutronix.de, alex.williamson@redhat.com, paul.walmsley@sifive.com,
+ palmer@dabbelt.com, aou@eecs.berkeley.edu
+Subject: =?US-ASCII?Q?Re=3A_=5BRFC_PATCH_08/15=5D_iommu/riscv=3A_A?=
+ =?US-ASCII?Q?dd_IRQ_domain_for_interrupt_remapping?=
+In-Reply-To: <20241119140047.GC559636@ziepe.ca>
+References: <20241114161845.502027-17-ajones@ventanamicro.com> <20241114161845.502027-25-ajones@ventanamicro.com> <20241118184336.GB559636@ziepe.ca> <20241119-62ff49fc1eedba051838dba2@orel> <20241119140047.GC559636@ziepe.ca>
+Message-ID: <DE13E1DF-7C68-461D-ADCD-8141B1ACEA5E@ventanamicro.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Conform the test output to the KTAP format standard. The number of tests
-executed is determined by the script arguments, and options such as
--c, -f, -h, -i, and -p do not impact the total test count.
+On November 19, 2024 3:00:47 PM GMT+01:00, Jason Gunthorpe <jgg@ziepe=2Eca>=
+ wrote:
+>On Tue, Nov 19, 2024 at 08:49:37AM +0100, Andrew Jones wrote:
+>> On Mon, Nov 18, 2024 at 02:43:36PM -0400, Jason Gunthorpe wrote:
+>> > On Thu, Nov 14, 2024 at 05:18:53PM +0100, Andrew Jones wrote:
+>> > > @@ -1276,10 +1279,30 @@ static int riscv_iommu_attach_paging_domain=
+(struct iommu_domain *iommu_domain,
+>> > >  	struct riscv_iommu_device *iommu =3D dev_to_iommu(dev);
+>> > >  	struct riscv_iommu_info *info =3D dev_iommu_priv_get(dev);
+>> > >  	struct riscv_iommu_dc dc =3D {0};
+>> > > +	int ret;
+>> > > =20
+>> > >  	if (!riscv_iommu_pt_supported(iommu, domain->pgd_mode))
+>> > >  		return -ENODEV;
+>> > > =20
+>> > > +	if (riscv_iommu_bond_link(domain, dev))
+>> > > +		return -ENOMEM;
+>> > > +
+>> > > +	if (iommu_domain->type =3D=3D IOMMU_DOMAIN_UNMANAGED) {
+>> >=20
+>> > Drivers should not be making tests like this=2E
+>> >=20
+>> > > +		domain->gscid =3D ida_alloc_range(&riscv_iommu_gscids, 1,
+>> > > +						RISCV_IOMMU_MAX_GSCID, GFP_KERNEL);
+>> > > +		if (domain->gscid < 0) {
+>> > > +			riscv_iommu_bond_unlink(domain, dev);
+>> > > +			return -ENOMEM;
+>> > > +		}
+>> > > +
+>> > > +		ret =3D riscv_iommu_irq_domain_create(domain, dev);
+>> > > +		if (ret) {
+>> > > +			riscv_iommu_bond_unlink(domain, dev);
+>> > > +			ida_free(&riscv_iommu_gscids, domain->gscid);
+>> > > +			return ret;
+>> > > +		}
+>> > > +	}
+>> >=20
+>> > What are you trying to do? Make something behave different for VFIO?
+>> > That isn't OK, we are trying to remove all the hacky VFIO special
+>> > cases in drivers=2E
+>> >=20
+>> > What is the HW issue here? It is very very strange (and probably not
+>> > going to work right) that the irq domains change when domain
+>> > attachment changes=2E
+>> >=20
+>> > The IRQ setup should really be fixed before any device drivers probe
+>> > onto the device=2E
+>>=20
+>> I can't disagree with the statement that this looks hacky, but consider=
+ing
+>> a VFIO domain needs to use the g-stage for its single-stage translation
+>> and a paging domain for the host would use s-stage, then it seems we ne=
+ed
+>> to identify the VFIO domains for their special treatment=2E
+>
+>This is the wrong thinking entirely=2E There is no such thing as a "VFIO
+>domain"=2E
+>
+>Default VFIO created domains should act excatly the same as a DMA API
+>domain=2E
+>
+>If you want your system to have irq remapping, then it should be on by
+>default and DMA API gets remapping too=2E There would need to be a very
+>strong reason not to do that in order to make something special for
+>riscv=2E If so you'd need to add some kind of flag to select it=2E
+>
+>Until you reach nested translation there is no "need" for VFIO to use
+>any particular stage=2E The design is that default VFIO uses the same
+>stage as the DMA API because it is doing the same basic default
+>translation function=2E
 
-Signed-off-by: Laura Nao <laura.nao@collabora.com>
----
- .../selftests/watchdog/watchdog-test.c        | 158 ++++++++++--------
- 1 file changed, 92 insertions(+), 66 deletions(-)
+The RISC-V IOMMU needs to use g-stage for device assignment, if we also wa=
+nt to enable irqbypass, because the IOMMU is specified to only look at the =
+MSI table when g-stage is in use=2E This is actually another reason the irq=
+ domain only makes sense for device assignment=2E
 
-diff --git a/tools/testing/selftests/watchdog/watchdog-test.c b/tools/testing/selftests/watchdog/watchdog-test.c
-index 58c25015d5e7..4781736070e3 100644
---- a/tools/testing/selftests/watchdog/watchdog-test.c
-+++ b/tools/testing/selftests/watchdog/watchdog-test.c
-@@ -22,12 +22,15 @@
- #include <sys/ioctl.h>
- #include <linux/types.h>
- #include <linux/watchdog.h>
-+#include "../kselftest.h"
- 
- #define DEFAULT_PING_RATE	1
- 
- int fd;
-+int keep_alive_res;
- const char v = 'V';
- static const char sopts[] = "bdehp:c:st:Tn:NLf:i";
-+static const char topts[] = "bdeLn:Nst:T";
- static const struct option lopts[] = {
- 	{"bootstatus",          no_argument, NULL, 'b'},
- 	{"disable",             no_argument, NULL, 'd'},
-@@ -51,7 +54,7 @@ static const struct option lopts[] = {
-  * the PC Watchdog card to reset its internal timer so it doesn't trigger
-  * a computer reset.
-  */
--static void keep_alive(void)
-+static int keep_alive(void)
- {
- 	int dummy;
- 	int ret;
-@@ -59,6 +62,8 @@ static void keep_alive(void)
- 	ret = ioctl(fd, WDIOC_KEEPALIVE, &dummy);
- 	if (!ret)
- 		printf(".");
-+
-+	return ret;
- }
- 
- /*
-@@ -72,35 +77,36 @@ static void term(int sig)
- 
- 	close(fd);
- 	if (ret < 0)
--		printf("\nStopping watchdog ticks failed (%d)...\n", errno);
-+		ksft_print_msg("\nStopping watchdog ticks failed (%d)...\n", errno);
- 	else
--		printf("\nStopping watchdog ticks...\n");
--	exit(0);
-+		ksft_print_msg("\nStopping watchdog ticks...\n");
-+	ksft_test_result(!keep_alive_res, "WDIOC_KEEPALIVE\n");
-+	ksft_finished();
- }
- 
- static void usage(char *progname)
- {
--	printf("Usage: %s [options]\n", progname);
--	printf(" -f, --file\t\tOpen watchdog device file\n");
--	printf("\t\t\tDefault is /dev/watchdog\n");
--	printf(" -i, --info\t\tShow watchdog_info\n");
--	printf(" -s, --status\t\tGet status & supported features\n");
--	printf(" -b, --bootstatus\tGet last boot status (Watchdog/POR)\n");
--	printf(" -d, --disable\t\tTurn off the watchdog timer\n");
--	printf(" -e, --enable\t\tTurn on the watchdog timer\n");
--	printf(" -h, --help\t\tPrint the help message\n");
--	printf(" -p, --pingrate=P\tSet ping rate to P seconds (default %d)\n",
-+	ksft_print_msg("Usage: %s [options]\n", progname);
-+	ksft_print_msg(" -f, --file\t\tOpen watchdog device file\n");
-+	ksft_print_msg("\t\t\tDefault is /dev/watchdog\n");
-+	ksft_print_msg(" -i, --info\t\tShow watchdog_info\n");
-+	ksft_print_msg(" -s, --status\t\tGet status & supported features\n");
-+	ksft_print_msg(" -b, --bootstatus\tGet last boot status (Watchdog/POR)\n");
-+	ksft_print_msg(" -d, --disable\t\tTurn off the watchdog timer\n");
-+	ksft_print_msg(" -e, --enable\t\tTurn on the watchdog timer\n");
-+	ksft_print_msg(" -h, --help\t\tPrint the help message\n");
-+	ksft_print_msg(" -p, --pingrate=P\tSet ping rate to P seconds (default %d)\n",
- 	       DEFAULT_PING_RATE);
--	printf(" -c, --pingcount=C\tLimit the number of pings to C (default infinite)\n");
--	printf(" -t, --timeout=T\tSet timeout to T seconds\n");
--	printf(" -T, --gettimeout\tGet the timeout\n");
--	printf(" -n, --pretimeout=T\tSet the pretimeout to T seconds\n");
--	printf(" -N, --getpretimeout\tGet the pretimeout\n");
--	printf(" -L, --gettimeleft\tGet the time left until timer expires\n");
--	printf("\n");
--	printf("Parameters are parsed left-to-right in real-time.\n");
--	printf("Example: %s -d -t 10 -p 5 -e\n", progname);
--	printf("Example: %s -t 12 -T -n 7 -N\n", progname);
-+	ksft_print_msg(" -c, --pingcount=C\tSet number of pings to C (default infinite)\n");
-+	ksft_print_msg(" -t, --timeout=T\tSet timeout to T seconds\n");
-+	ksft_print_msg(" -T, --gettimeout\tGet the timeout\n");
-+	ksft_print_msg(" -n, --pretimeout=T\tSet the pretimeout to T seconds\n");
-+	ksft_print_msg(" -N, --getpretimeout\tGet the pretimeout\n");
-+	ksft_print_msg(" -L, --gettimeleft\tGet the time left until timer expires\n");
-+	ksft_print_msg("\n");
-+	ksft_print_msg("Parameters are parsed left-to-right in real-time.\n");
-+	ksft_print_msg("Example: %s -d -t 10 -p 5 -e\n", progname);
-+	ksft_print_msg("Example: %s -t 12 -T -n 7 -N\n", progname);
- }
- 
- struct wdiof_status {
-@@ -126,13 +132,13 @@ static void print_status(int flags)
- 	int wdiof = 0;
- 
- 	if (flags == WDIOS_UNKNOWN) {
--		printf("Unknown status error from WDIOC_GETSTATUS\n");
-+		ksft_print_msg("Unknown status error from WDIOC_GETSTATUS\n");
- 		return;
- 	}
- 
- 	for (wdiof = 0; wdiof < WDIOF_NUM_STATUS; wdiof++) {
- 		if (flags & wdiof_status[wdiof].flag)
--			printf("Support/Status: %s\n",
-+			ksft_print_msg("Support/Status: %s\n",
- 				wdiof_status[wdiof].status_str);
- 	}
- }
-@@ -154,18 +160,18 @@ static void print_boot_status(int flags)
- 	int wdiof = 0;
- 
- 	if (flags == WDIOF_UNKNOWN) {
--		printf("Unknown flag error from WDIOC_GETBOOTSTATUS\n");
-+		ksft_print_msg("Unknown flag error from WDIOC_GETBOOTSTATUS\n");
- 		return;
- 	}
- 
- 	if (flags == 0) {
--		printf("Last boot is caused by: Power-On-Reset\n");
-+		ksft_print_msg("Last boot is caused by: Power-On-Reset\n");
- 		return;
- 	}
- 
- 	for (wdiof = 0; wdiof < WDIOF_NUM_BOOTSTATUS; wdiof++) {
- 		if (flags & wdiof_bootstatus[wdiof].flag)
--			printf("Last boot is caused by: %s\n",
-+			ksft_print_msg("Last boot is caused by: %s\n",
- 				wdiof_bootstatus[wdiof].status_str);
- 	}
- }
-@@ -181,25 +187,28 @@ int main(int argc, char *argv[])
- 	char *file = "/dev/watchdog";
- 	struct watchdog_info info;
- 	int temperature;
-+	/* run WDIOC_KEEPALIVE test by default */
-+	int test_num = 1;
- 
- 	setbuf(stdout, NULL);
- 
- 	while ((c = getopt_long(argc, argv, sopts, lopts, NULL)) != -1) {
- 		if (c == 'f')
- 			file = optarg;
-+
-+		if (strchr(topts, c))
-+			test_num++;
- 	}
- 
- 	fd = open(file, O_WRONLY);
- 
- 	if (fd == -1) {
- 		if (errno == ENOENT)
--			printf("Watchdog device (%s) not found.\n", file);
-+			ksft_exit_skip("Watchdog device (%s) not found.\n", file);
- 		else if (errno == EACCES)
--			printf("Run watchdog as root.\n");
-+			ksft_exit_skip("Run watchdog as root.\n");
- 		else
--			printf("Watchdog device open failed %s\n",
--				strerror(errno));
--		exit(-1);
-+			ksft_exit_skip("Watchdog device open failed %s\n", strerror(errno));
- 	}
- 
- 	/*
-@@ -207,13 +216,15 @@ int main(int argc, char *argv[])
- 	 */
- 	ret = ioctl(fd, WDIOC_GETSUPPORT, &info);
- 	if (ret) {
--		printf("WDIOC_GETSUPPORT error '%s'\n", strerror(errno));
- 		close(fd);
--		exit(ret);
-+		ksft_exit_skip("WDIOC_GETSUPPORT error '%s'\n", strerror(errno));
- 	}
- 
- 	optind = 0;
- 
-+	ksft_print_header();
-+	ksft_set_plan(test_num);
-+
- 	while ((c = getopt_long(argc, argv, sopts, lopts, NULL)) != -1) {
- 		switch (c) {
- 		case 'b':
-@@ -223,39 +234,42 @@ int main(int argc, char *argv[])
- 			if (!ret)
- 				print_boot_status(flags);
- 			else
--				printf("WDIOC_GETBOOTSTATUS error '%s'\n", strerror(errno));
-+				ksft_perror("WDIOC_GETBOOTSTATUS error");
-+			ksft_test_result(!ret, "WDIOC_GETBOOTSTATUS\n");
- 			break;
- 		case 'd':
- 			flags = WDIOS_DISABLECARD;
- 			ret = ioctl(fd, WDIOC_SETOPTIONS, &flags);
- 			if (!ret)
--				printf("Watchdog card disabled.\n");
-+				ksft_print_msg("Watchdog card disabled.\n");
- 			else {
--				printf("WDIOS_DISABLECARD error '%s'\n", strerror(errno));
-+				ksft_perror("WDIOS_DISABLECARD error");
- 				oneshot = 1;
- 			}
-+			ksft_test_result(!ret, "WDIOC_SETOPTIONS_WDIOS_DISABLECARD\n");
- 			break;
- 		case 'e':
- 			flags = WDIOS_ENABLECARD;
- 			ret = ioctl(fd, WDIOC_SETOPTIONS, &flags);
- 			if (!ret)
--				printf("Watchdog card enabled.\n");
-+				ksft_print_msg("Watchdog card enabled.\n");
- 			else {
--				printf("WDIOS_ENABLECARD error '%s'\n", strerror(errno));
-+				ksft_perror("WDIOS_ENABLECARD error");
- 				oneshot = 1;
- 			}
-+			ksft_test_result(!ret, "WDIOC_SETOPTIONS_WDIOS_ENABLECARD\n");
- 			break;
- 		case 'p':
- 			ping_rate = strtoul(optarg, NULL, 0);
- 			if (!ping_rate)
- 				ping_rate = DEFAULT_PING_RATE;
--			printf("Watchdog ping rate set to %u seconds.\n", ping_rate);
-+			ksft_print_msg("Watchdog ping rate set to %u seconds.\n", ping_rate);
- 			break;
- 		case 'c':
- 			ping_count = strtoul(optarg, NULL, 0);
- 			if (!ping_count)
- 				oneshot = 1;
--			printf("Number of pings set to %u.\n", ping_count);
-+			ksft_print_msg("Number of pings set to %u.\n", ping_count);
- 			break;
- 		case 's':
- 			flags = 0;
-@@ -264,57 +278,62 @@ int main(int argc, char *argv[])
- 			if (!ret)
- 				print_status(flags);
- 			else
--				printf("WDIOC_GETSTATUS error '%s'\n", strerror(errno));
-+				ksft_perror("WDIOC_GETSTATUS error");
-+			ksft_test_result(!ret, "WDIOC_GETSTATUS\n");
- 			ret = ioctl(fd, WDIOC_GETTEMP, &temperature);
- 			if (ret)
--				printf("WDIOC_GETTEMP: '%s'\n", strerror(errno));
-+				ksft_perror("WDIOC_GETTEMP");
- 			else
--				printf("Temperature %d\n", temperature);
--
-+				ksft_print_msg("Temperature %d\n", temperature);
- 			break;
- 		case 't':
- 			flags = strtoul(optarg, NULL, 0);
- 			ret = ioctl(fd, WDIOC_SETTIMEOUT, &flags);
- 			if (!ret)
--				printf("Watchdog timeout set to %u seconds.\n", flags);
-+				ksft_print_msg("Watchdog timeout set to %u seconds.\n", flags);
- 			else {
--				printf("WDIOC_SETTIMEOUT error '%s'\n", strerror(errno));
-+				ksft_perror("WDIOC_SETTIMEOUT error");
- 				oneshot = 1;
- 			}
-+			ksft_test_result(!ret, "WDIOC_SETTIMEOUT\n");
- 			break;
- 		case 'T':
- 			oneshot = 1;
- 			ret = ioctl(fd, WDIOC_GETTIMEOUT, &flags);
- 			if (!ret)
--				printf("WDIOC_GETTIMEOUT returns %u seconds.\n", flags);
-+				ksft_print_msg("WDIOC_GETTIMEOUT returns %u seconds.\n", flags);
- 			else
--				printf("WDIOC_GETTIMEOUT error '%s'\n", strerror(errno));
-+				ksft_perror("WDIOC_GETTIMEOUT error");
-+			ksft_test_result(!ret, "WDIOC_GETTIMEOUT\n");
- 			break;
- 		case 'n':
- 			flags = strtoul(optarg, NULL, 0);
- 			ret = ioctl(fd, WDIOC_SETPRETIMEOUT, &flags);
- 			if (!ret)
--				printf("Watchdog pretimeout set to %u seconds.\n", flags);
-+				ksft_print_msg("Watchdog pretimeout set to %u seconds.\n", flags);
- 			else {
--				printf("WDIOC_SETPRETIMEOUT error '%s'\n", strerror(errno));
-+				ksft_perror("WDIOC_SETPRETIMEOUT error");
- 				oneshot = 1;
- 			}
-+			ksft_test_result(!ret, "WDIOC_SETPRETIMEOUT\n");
- 			break;
- 		case 'N':
- 			oneshot = 1;
- 			ret = ioctl(fd, WDIOC_GETPRETIMEOUT, &flags);
- 			if (!ret)
--				printf("WDIOC_GETPRETIMEOUT returns %u seconds.\n", flags);
-+				ksft_print_msg("WDIOC_GETPRETIMEOUT returns %u seconds.\n", flags);
- 			else
--				printf("WDIOC_GETPRETIMEOUT error '%s'\n", strerror(errno));
-+				ksft_perror("WDIOC_GETPRETIMEOUT error");
-+			ksft_test_result(!ret, "WDIOC_GETPRETIMEOUT\n");
- 			break;
- 		case 'L':
- 			oneshot = 1;
- 			ret = ioctl(fd, WDIOC_GETTIMELEFT, &flags);
- 			if (!ret)
--				printf("WDIOC_GETTIMELEFT returns %u seconds.\n", flags);
-+				ksft_print_msg("WDIOC_GETTIMELEFT returns %u seconds.\n", flags);
- 			else
--				printf("WDIOC_GETTIMELEFT error '%s'\n", strerror(errno));
-+				ksft_perror("WDIOC_GETTIMELEFT error");
-+			ksft_test_result(!ret, "WDIOC_GETTIMELEFT\n");
- 			break;
- 		case 'f':
- 			/* Handled above */
-@@ -325,32 +344,39 @@ int main(int argc, char *argv[])
- 			 * validation. So we just show it here.
- 			 */
- 			oneshot = 1;
--			printf("watchdog_info:\n");
--			printf(" identity:\t\t%s\n", info.identity);
--			printf(" firmware_version:\t%u\n",
--			       info.firmware_version);
-+			ksft_print_msg("watchdog_info:\n");
-+			ksft_print_msg(" identity:\t\t%s\n", info.identity);
-+			ksft_print_msg(" firmware_version:\t%u\n", info.firmware_version);
- 			print_status(info.options);
- 			break;
- 
- 		default:
- 			usage(argv[0]);
-+			ksft_test_result_skip("WDIOC_KEEPALIVE\n");
- 			goto end;
- 		}
- 	}
- 
--	if (oneshot)
-+	if (oneshot) {
-+		ksft_test_result_skip("WDIOC_KEEPALIVE\n");
- 		goto end;
-+	}
- 
--	printf("Watchdog Ticking Away!\n");
-+	ksft_print_msg("Watchdog Ticking Away!\n");
-+	ksft_print_msg("");
- 
- 	signal(SIGINT, term);
- 
- 	while (ping_count != 0) {
--		keep_alive();
-+		if (keep_alive())
-+			keep_alive_res = -1;
-+
- 		sleep(ping_rate);
- 		if (ping_count > 0)
- 			ping_count--;
- 	}
-+	printf("\n");
-+	ksft_test_result(!keep_alive_res, "WDIOC_KEEPALIVE\n");
- end:
- 	/*
- 	 * Send specific magic character 'V' just in case Magic Close is
-@@ -358,7 +384,7 @@ int main(int argc, char *argv[])
- 	 */
- 	ret = write(fd, &v, 1);
- 	if (ret < 0)
--		printf("Stopping watchdog ticks failed (%d)...\n", errno);
-+		ksft_print_msg("Stopping watchdog ticks failed (%d)...\n", errno);
- 	close(fd);
--	return 0;
-+	ksft_finished();
- }
--- 
-2.30.2
+>
+>Nested translation has a control to select the stage, and you can
+>then force the g-stage for VFIO users at that point=2E
 
+We could force riscv device assignment to always be nested, and when not p=
+roviding an iommu to the guest, it will still be single-stage, but g-stage,=
+ but I don't think that's currently possible with VFIO, is it?
+
+>
+>Regardless, you must not use UNMANAGED as some indication of VFIO,
+>that is not what it means, that is not what it is for=2E
+>
+>> Is there an example of converting VFIO special casing in other
+>> drivers to something cleaner that you can point me at?
+>
+>Nobody has had an issue where they want interrupt remapping on/off
+>depending on VFIO=2E I think that is inherently wrong=2E
+>
+>> The IRQ domain will only be useful for device assignment, as that's whe=
+n
+>> an MSI translation will be needed=2E I can't think of any problems that
+>> could arise from only creating the IRQ domain when probing assigned
+>> devices, but I could certainly be missing something=2E Do you have some
+>> potential problems in mind?
+>
+>I'm not an expert in the interrupt subsystem, but my understanding was
+>we expect the interrupt domains/etc to be static once a device driver
+>is probed=2E Changing things during iommu domain attach is after drivers
+>are probed=2E I don't really expect it to work correctly in all corner
+>cases=2E
+
+With VFIO the iommu domain attach comes after an unbind/bind, so the new d=
+river is probed=2E I think that's a safe time=2E However, if there could be=
+ cases where the attach does not follow an unbind/bind, then I agree that w=
+ouldn't be safe=2E I'll consider always creating an IRQ domain, even if it =
+won't provide any additional functionality unless the device is assigned=2E
+
+>
+>VFIO is allowed to change the translation as it operates and we expect
+>that interrupts are not disturbed=2E
+>
+
+The IRQ domain stays the same during operation, the only changes are the m=
+appings from what the guest believes are its s-mode interrupt files to the =
+hypervisor selected guest interrupt files, and these changes are made possi=
+ble by the IRQ domain's vcpu-affinity support=2E
+
+Thanks,
+drew
 
