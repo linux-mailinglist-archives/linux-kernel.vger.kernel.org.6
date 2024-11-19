@@ -1,213 +1,153 @@
-Return-Path: <linux-kernel+bounces-414242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 297EA9D2522
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 12:46:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EC6EB9D2520
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 12:46:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F63FB253C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 11:46:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58D8BB243CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 11:46:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18B881CBEB5;
-	Tue, 19 Nov 2024 11:46:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08A651CBE89;
+	Tue, 19 Nov 2024 11:46:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kcRXVPVG"
-Received: from mail-pl1-f196.google.com (mail-pl1-f196.google.com [209.85.214.196])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FhuqP7EP"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F01271CB324;
-	Tue, 19 Nov 2024 11:46:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 163E81CB324
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 11:46:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732016773; cv=none; b=hiJ/v+uGmPP4Xv0ULRpXOJe4rfe3YJ2kpLbs4dcTY4IHBqlYU8ViI5CQcznkvoG0P1MGcdv9rYwBpAA04KhILbo8NZyQkNVDgly4N+SduGSpLAAwBjgM/H3+CNbGfUx1AnaaIyiHnBQAlGScNrdX4BAfRNPaLEeDrdAQO8mPnXc=
+	t=1732016767; cv=none; b=Mou/6AhbgzlLP7FRBkJFb0WHd4SsybDu8AlNC0YKaPoAK2Heezrc8IW6ZC3rqkH2ChQjGekK0mGLAPVNkORJakejCxtLnQJr8I3/HFmJUEMpE5OBPyppVh3Y4SbO8eKY82mf8MSEvW+fiz/yv6PD519VWNGJNOCY9+EpYJudcHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732016773; c=relaxed/simple;
-	bh=xSvfXtCkpoaaDDBmlXnf7jS6faDw70aHrocw1POJ3zA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=BbRMNZkeUyT0pBa5phpF3KT5uOcakkIygnxi5WujIc2267mJi/KaP+hSbf3cO/40bYioIrYXBvEt9w25QnfTOuOAAmBGgcazJLnR9yeNnxtEZ5iqsCylBbyE3LnNiok9FpijbGjr5wXLwUwv1vjrBR2IJxn25MJiqxiMGUGshRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kcRXVPVG; arc=none smtp.client-ip=209.85.214.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f196.google.com with SMTP id d9443c01a7336-20cdbe608b3so52107665ad.1;
-        Tue, 19 Nov 2024 03:46:11 -0800 (PST)
+	s=arc-20240116; t=1732016767; c=relaxed/simple;
+	bh=gKLHoCFkMAORHYx5wuI4s2ZofCwMpO14Clkah9l9+3U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aiHQu8S+8cGD5IGUSDmWbDCHCcjQUeZCO79uVce2vg90li3oMXHURHGSEOsolbmF4rklPyLhIZ0og/iIwyPNVr6CQtPEDajwMhq/ijpk0GqeDKXGD/8eghBH0ueesNoVZWD8Nv6QRD2GhZU1trdQCDwQ5IvO8YteAiIKIrMMlBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FhuqP7EP; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-431688d5127so6953535e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 03:46:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732016771; x=1732621571; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1732016763; x=1732621563; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=H4STO0iPgmcM5FLfwGndSr+i7SPybq2xxxE85AAR0y4=;
-        b=kcRXVPVGBJcke21dYLPKHeDvC4tcZNJ3n4D0g4imTGiXy6KyvLQzUSbLBr2fUDkQ8D
-         YGyhaqKFEQYdWggrzMTGWwDvvCbnpjD7pkGTbbYknWJKiXtv3+ugOCkFt/mN4PW5bAY9
-         iXpW50LAp0eI6EmL80iPcEe598sRlWJfpE57tFklaK86OKSImpnvdYhtbn5vsbbeA0ZL
-         UuzN5/7TtY1MAleueWf61MUCwEL3ataJh2t2TdvZdl+tP5bmuIFX5ka+n5Aj2rl9BB3c
-         XnGtJfITOIOhn57ChLJE+DuL7JSE4WfTnJjrK9B6quWjRXi+NMHtNKWyiPRd55Uke876
-         jhbw==
+        bh=JKFNFU0TxSRVfbmDrokfeS6Zi7x7KpPj06RucnV2NPE=;
+        b=FhuqP7EPPESBm3wpXEDUX5SZuSsMvKtmcoLFBuW9Z1C6ubIwcqwzdgqR9jV5t4BfHb
+         ri5ckHrM91comSN4/COqCvygjk/p3EmZcYOCM7PK8kACWaC/OGx8IYsxE85JXlynpSm0
+         CsWkchA/yxu0UuZpFDf2xwbWMPkd2ptLrf6sEhYc7YnCObAccIdOY9l0bc61d52vo7k1
+         cRs8YOgOXeUGwCrpiWZD6rnywiDhMvcBafXEo9D5+k4UMBolPjvPpeQnE5nZdIi5VX/e
+         tQ6GhwuxN9wXS93VGvhoikhlzQYeJqsFeqr4bwx8RjY6N3eUoeKUkNFeGdmJENbEgBBB
+         Cwuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732016771; x=1732621571;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1732016763; x=1732621563;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=H4STO0iPgmcM5FLfwGndSr+i7SPybq2xxxE85AAR0y4=;
-        b=xARH3RIGiZWDaQpPn/Brv16XMP0AFB4dQ1dGiR7wUUyH9SH2PF64c2DpSLXCRKNMIf
-         zuoYTsxvOq0oZjdx87xbOgI9qxtUFIkGRFb8iUgRnW0i446kLMrE6RXTpEP97ChsqmmL
-         owhKp0bPtSykCgzjkoCJHQvPxUOMeYbklZnEp7YzRlD+uTYS6kt3Na8lq8G2jie4/skA
-         2Zv4Z12i7tDFTp2UBSWXRLlKw+6Kjh03D5V/BO6mu0g3gIhBz6BMEJr28+Fd7mKq7+vt
-         3sUmTT1MC9JzcDGM7UBXwlclOBVz8Y63AjvPWt2BeEJzsxeXVISZJTxljGwj6Uwj7gfG
-         pgAA==
-X-Forwarded-Encrypted: i=1; AJvYcCWU/y1++c/Wd1+20Y17r/VeJmlLUhLf38txAnln7TLjYURBXd/mMQ1r6ns/fqDTIW5kp6gcd7tTzR5kk1k5@vger.kernel.org, AJvYcCXsiHYyV0aXQUpPV+GCFHxzp+28PsWpiEjwSLWC+xYLklhuRX6m81R+g3StZcMTWw1aIEqk8rZQG2x+ihkN@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgpcWt/kD9IJmwm4fZPBhFwa6ogHaXTJil1J0DzVowkRAbwPRV
-	ZQJJbPUZlZLj2BPLAgBao6RVUdvxhr9JiS2p/oOA5wGLqjVz6QHb
-X-Google-Smtp-Source: AGHT+IF0AWadxz0cWwHYidBQa9AYa+e5jib+lfeOkhLDfGyXzY8wZsXdzJNfC5G6279qRUp9jyrQKg==
-X-Received: by 2002:a17:902:e748:b0:211:ff13:8652 with SMTP id d9443c01a7336-211ff138fd5mr153530625ad.28.1732016771107;
-        Tue, 19 Nov 2024 03:46:11 -0800 (PST)
-Received: from localhost.localdomain ([43.154.34.99])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2124ce8040asm13547225ad.134.2024.11.19.03.46.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Nov 2024 03:46:10 -0800 (PST)
-From: Jim Zhao <jimzhao.ai@gmail.com>
-To: jimzhao.ai@gmail.com
-Cc: jack@suse.cz,
-	akpm@linux-foundation.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	willy@infradead.org
-Subject: [PATCH v2] mm/page-writeback: raise wb_thresh to prevent write blocking with strictlimit
-Date: Tue, 19 Nov 2024 19:44:42 +0800
-Message-Id: <20241119114444.3925495-1-jimzhao.ai@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241113100735.4jafa56p4td66z7a@quack3>
-References: <20241113100735.4jafa56p4td66z7a@quack3>
+        bh=JKFNFU0TxSRVfbmDrokfeS6Zi7x7KpPj06RucnV2NPE=;
+        b=OJJYpcdJ64t9SQC137i2JYwg5J/X4ODDMy39krq0M9wa13rffnY2uZUyEMOKzTaP93
+         RyHzE8XoPdXAWUHiWsEncQYMjoTjcd/3OE8/iWElYnfeiXgQfneUS0b3Bfhh6OZS3yYa
+         qxB9iWecHh2DQlUh4HuN/f9MzgdPXkCCF/qqbk4kHuGg2SKwlmoaVqzc6UZ5QrG100zH
+         33NcYRSufleIA7mdR5Iq5dRKEj5AsMYKkpAoGWSpBvisKO1Fsp4OznHhtXuwsTtbXOBI
+         BfeZWNoE138mfmIwafPuhwECKFuwdKHG3M56Z8yls988qHKNV+4exhVktfSBLZUALxxk
+         aC+w==
+X-Forwarded-Encrypted: i=1; AJvYcCXcQr3gU0Qo/EBiQPO2Y/Wl2nCL4dG5LfDX/ddIhUPFaueVRTfEhc8aMLFfbwcFIdGTd//5dnjkfoUWC20=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyu1UMfC7yclwGKRLuFQdz6AZGF1AsQJvJMoD4RJwyFqOP9H/di
+	/6f70GsWk/rplA04OXm40zfpXke9hQlok9GU00Ul6oA+YtbsbmZLuoPUS9coYYaeV70kpoMDSfS
+	SFgnxFdKKbHIBTcwYtPu8Kl6OgWvpOV+bdN7o
+X-Google-Smtp-Source: AGHT+IGWejOR/TW8BG5tkq5cCrc9rUhPCdGE3X60q4JttnjZIq//FJLWmLVDtvwmRo/TQwBKnG0iQu0TvUX5ulQrW8I=
+X-Received: by 2002:a05:6000:1887:b0:382:44e0:c5e9 with SMTP id
+ ffacd0b85a97d-38244e0ca0fmr6477944f8f.25.1732016763336; Tue, 19 Nov 2024
+ 03:46:03 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241119112408.779243-1-abdiel.janulgue@gmail.com> <20241119112408.779243-2-abdiel.janulgue@gmail.com>
+In-Reply-To: <20241119112408.779243-2-abdiel.janulgue@gmail.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Tue, 19 Nov 2024 12:45:51 +0100
+Message-ID: <CAH5fLgj_BW22yopAdOLpSQaK97eeUAQb4jfn=KgOqNgCJ4CsqQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] rust: page: use the page's reference count to
+ decide when to free the allocation
+To: Abdiel Janulgue <abdiel.janulgue@gmail.com>
+Cc: rust-for-linux@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Valentin Obst <kernel@valentinobst.de>, 
+	open list <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	"open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>, airlied@redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-With the strictlimit flag, wb_thresh acts as a hard limit in
-balance_dirty_pages() and wb_position_ratio().  When device write
-operations are inactive, wb_thresh can drop to 0, causing writes to be
-blocked.  The issue occasionally occurs in fuse fs, particularly with
-network backends, the write thread is blocked frequently during a period.
-To address it, this patch raises the minimum wb_thresh to a controllable
-level, similar to the non-strictlimit case.
+On Tue, Nov 19, 2024 at 12:24=E2=80=AFPM Abdiel Janulgue
+<abdiel.janulgue@gmail.com> wrote:
+>
+> Ensure pages returned by the constructor are always reference counted.
+> This requires that we replace the page pointer wrapper with Opaque instea=
+d
+> of NonNull to make it possible to cast to a Page pointer from a raw struc=
+t
+> page pointer which is needed to create an ARef instance.
+>
+> Signed-off-by: Abdiel Janulgue <abdiel.janulgue@gmail.com>
 
-Signed-off-by: Jim Zhao <jimzhao.ai@gmail.com>
----
-Changes in v2:
-1. Consolidate all wb_thresh bumping logic in __wb_calc_thresh for consistency;
-2. Replace the limit variable with thresh for calculating the bump value,
-as __wb_calc_thresh is also used to calculate the background threshold;
-3. Add domain_dirty_avail in wb_calc_thresh to get dtc->dirty.
----
- mm/page-writeback.c | 48 ++++++++++++++++++++++-----------------------
- 1 file changed, 23 insertions(+), 25 deletions(-)
+> -/// A pointer to a page that owns the page allocation.
+> +/// A pointer to a reference-counted page.
+>  ///
+>  /// # Invariants
+>  ///
+> -/// The pointer is valid, and has ownership over the page.
+> +/// The pointer is valid.
+> +#[repr(transparent)]
+>  pub struct Page {
+> -    page: NonNull<bindings::page>,
+> +    page: Opaque<bindings::page>,
 
-diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-index e5a9eb795f99..8b13bcb42de3 100644
---- a/mm/page-writeback.c
-+++ b/mm/page-writeback.c
-@@ -917,7 +917,9 @@ static unsigned long __wb_calc_thresh(struct dirty_throttle_control *dtc,
- 				      unsigned long thresh)
- {
- 	struct wb_domain *dom = dtc_dom(dtc);
-+	struct bdi_writeback *wb = dtc->wb;
- 	u64 wb_thresh;
-+	u64 wb_max_thresh;
- 	unsigned long numerator, denominator;
- 	unsigned long wb_min_ratio, wb_max_ratio;
- 
-@@ -931,11 +933,27 @@ static unsigned long __wb_calc_thresh(struct dirty_throttle_control *dtc,
- 	wb_thresh *= numerator;
- 	wb_thresh = div64_ul(wb_thresh, denominator);
- 
--	wb_min_max_ratio(dtc->wb, &wb_min_ratio, &wb_max_ratio);
-+	wb_min_max_ratio(wb, &wb_min_ratio, &wb_max_ratio);
- 
- 	wb_thresh += (thresh * wb_min_ratio) / (100 * BDI_RATIO_SCALE);
--	if (wb_thresh > (thresh * wb_max_ratio) / (100 * BDI_RATIO_SCALE))
--		wb_thresh = thresh * wb_max_ratio / (100 * BDI_RATIO_SCALE);
-+
-+	/*
-+	 * It's very possible that wb_thresh is close to 0 not because the
-+	 * device is slow, but that it has remained inactive for long time.
-+	 * Honour such devices a reasonable good (hopefully IO efficient)
-+	 * threshold, so that the occasional writes won't be blocked and active
-+	 * writes can rampup the threshold quickly.
-+	 */
-+	if (thresh > dtc->dirty) {
-+		if (unlikely(wb->bdi->capabilities & BDI_CAP_STRICTLIMIT))
-+			wb_thresh = max(wb_thresh, (thresh - dtc->dirty) / 100);
-+		else
-+			wb_thresh = max(wb_thresh, (thresh - dtc->dirty) / 8);
-+	}
-+
-+	wb_max_thresh = thresh * wb_max_ratio / (100 * BDI_RATIO_SCALE);
-+	if (wb_thresh > wb_max_thresh)
-+		wb_thresh = wb_max_thresh;
- 
- 	return wb_thresh;
- }
-@@ -944,6 +962,7 @@ unsigned long wb_calc_thresh(struct bdi_writeback *wb, unsigned long thresh)
- {
- 	struct dirty_throttle_control gdtc = { GDTC_INIT(wb) };
- 
-+	domain_dirty_avail(&gdtc, true);
- 	return __wb_calc_thresh(&gdtc, thresh);
- }
- 
-@@ -1120,12 +1139,6 @@ static void wb_position_ratio(struct dirty_throttle_control *dtc)
- 	if (unlikely(wb->bdi->capabilities & BDI_CAP_STRICTLIMIT)) {
- 		long long wb_pos_ratio;
- 
--		if (dtc->wb_dirty < 8) {
--			dtc->pos_ratio = min_t(long long, pos_ratio * 2,
--					   2 << RATELIMIT_CALC_SHIFT);
--			return;
--		}
--
- 		if (dtc->wb_dirty >= wb_thresh)
- 			return;
- 
-@@ -1196,14 +1209,6 @@ static void wb_position_ratio(struct dirty_throttle_control *dtc)
- 	 */
- 	if (unlikely(wb_thresh > dtc->thresh))
- 		wb_thresh = dtc->thresh;
--	/*
--	 * It's very possible that wb_thresh is close to 0 not because the
--	 * device is slow, but that it has remained inactive for long time.
--	 * Honour such devices a reasonable good (hopefully IO efficient)
--	 * threshold, so that the occasional writes won't be blocked and active
--	 * writes can rampup the threshold quickly.
--	 */
--	wb_thresh = max(wb_thresh, (limit - dtc->dirty) / 8);
- 	/*
- 	 * scale global setpoint to wb's:
- 	 *	wb_setpoint = setpoint * wb_thresh / thresh
-@@ -1459,17 +1464,10 @@ static void wb_update_dirty_ratelimit(struct dirty_throttle_control *dtc,
- 	 * balanced_dirty_ratelimit = task_ratelimit * write_bw / dirty_rate).
- 	 * Hence, to calculate "step" properly, we have to use wb_dirty as
- 	 * "dirty" and wb_setpoint as "setpoint".
--	 *
--	 * We rampup dirty_ratelimit forcibly if wb_dirty is low because
--	 * it's possible that wb_thresh is close to zero due to inactivity
--	 * of backing device.
- 	 */
- 	if (unlikely(wb->bdi->capabilities & BDI_CAP_STRICTLIMIT)) {
- 		dirty = dtc->wb_dirty;
--		if (dtc->wb_dirty < 8)
--			setpoint = dtc->wb_dirty + 1;
--		else
--			setpoint = (dtc->wb_thresh + dtc->wb_bg_thresh) / 2;
-+		setpoint = (dtc->wb_thresh + dtc->wb_bg_thresh) / 2;
- 	}
- 
- 	if (dirty < setpoint) {
--- 
-2.20.1
+With this change, Page is no longer a pointer, nor does it contain a
+pointer. The documentation should be updated to reflect this.
 
+>  // SAFETY: Pages have no logic that relies on them staying on a given th=
+read, so moving them across
+> @@ -71,19 +73,23 @@ impl Page {
+>      /// let page =3D Page::alloc_page(GFP_KERNEL | __GFP_ZERO)?;
+>      /// # Ok(()) }
+>      /// ```
+> -    pub fn alloc_page(flags: Flags) -> Result<Self, AllocError> {
+> +    pub fn alloc_page(flags: Flags) -> Result<ARef<Self>, AllocError> {
+>          // SAFETY: Depending on the value of `gfp_flags`, this call may =
+sleep. Other than that, it
+>          // is always safe to call this method.
+>          let page =3D unsafe { bindings::alloc_pages(flags.as_raw(), 0) }=
+;
+> -        let page =3D NonNull::new(page).ok_or(AllocError)?;
+> -        // INVARIANT: We just successfully allocated a page, so we now h=
+ave ownership of the newly
+> -        // allocated page. We transfer that ownership to the new `Page` =
+object.
+> -        Ok(Self { page })
+> +        if page.is_null() {
+> +            return Err(AllocError);
+> +        }
+> +        // CAST: Self` is a `repr(transparent)` wrapper around `bindings=
+::page`.
+> +        let ptr =3D page.cast::<Self>();
+> +        // INVARIANT: We just successfully allocated a page, ptr points =
+to the new `Page` object.
+> +        // SAFETY: According to invariant above ptr is valid.
+> +        Ok(unsafe { ARef::from_raw(NonNull::new_unchecked(ptr)) })
+
+Why did you change the null check? You should be able to avoid
+changing anything but the last line.
+
+Alice
 
