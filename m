@@ -1,159 +1,182 @@
-Return-Path: <linux-kernel+bounces-414307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44DA59D2625
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 13:52:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6E479D266A
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 14:09:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A40A285991
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 12:52:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DCA0CB2D0D9
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 12:51:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D80961CCB5B;
-	Tue, 19 Nov 2024 12:51:42 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2E691CC8AD;
+	Tue, 19 Nov 2024 12:51:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="V3a3QIqc"
+Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F324A1CC88C
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 12:51:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DB551CC150;
+	Tue, 19 Nov 2024 12:51:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.18.73.165
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732020702; cv=none; b=eM6u6CBoAB/U3oIwT3cA0s2K3Tj9bcslUJolAfAGBqwrE1QagDaDELsevQM/Oq8+B+s+5GcE8ijFe1C9W5HEvkbW6wNTKcLoDD2gVoERmek9t2sHXKkp0Vyk24CtyeKXlN64fzQKzQPIVBAMpBKFAFKiHWwdwX4Wx290hnXfLTQ=
+	t=1732020699; cv=none; b=pIObqm6C897AgFxVhNn5f4Ydg05yCuBTkYLwLQsLSHqN3Ikp8IQdNN0gjiqMgPMumfoIVg9RJy/AJLiBuBlqMtlEUw3IOTGswigBGZhLOVfaQZd4HtLvfZxeCml/BoIpw0cW06CPAcANNlKvQYfqBHwAgj4Arz6FWUNQ9Njg9b0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732020702; c=relaxed/simple;
-	bh=8+kO+hmaFU9f3uoEfpMUg23Td4M9jDSb8ePHUvCGZKk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Wp4p4+G2nCyqGPD/Q06o4joolHmRFlk4wUlwUsUz9KcpRSPhJjJYeijnP1gVtopgCWouGD4rxruginx9wnWq1e+uVoy7DcXSEwy22xNKKudpSmfOKnXrtTid6dyMlpoMHXEga/L9AiCLMS2dAQ6XZnjvO2x0Wvnk2otY/5DD0No=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1tDNhc-0003uq-NH; Tue, 19 Nov 2024 13:51:32 +0100
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1tDNhc-001ZKn-0G;
-	Tue, 19 Nov 2024 13:51:32 +0100
-Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1tDNhb-003KVN-38;
-	Tue, 19 Nov 2024 13:51:31 +0100
-Date: Tue, 19 Nov 2024 13:51:31 +0100
-From: Marco Felsch <m.felsch@pengutronix.de>
-To: Sherry Sun <sherry.sun@nxp.com>
-Cc: Bough Chen <haibo.chen@nxp.com>,
-	POPESCU Catalin <catalin.popescu@leica-geosystems.com>,
-	Amitkumar Karwar <amitkumar.karwar@nxp.com>,
-	Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>,
-	"marcel@holtmann.org" <marcel@holtmann.org>,
-	"luiz.dentz@gmail.com" <luiz.dentz@gmail.com>,
-	"robh@kernel.org" <robh@kernel.org>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-	"linux-bluetooth@vger.kernel.org" <linux-bluetooth@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	GEO-CHHER-bsp-development <bsp-development.geo@leica-geosystems.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Shenwei Wang <shenwei.wang@nxp.com>, Jun Li <jun.li@nxp.com>
-Subject: Re: [PATCH 1/2] dt-bindings: net: bluetooth: nxp: add support for
- supply and reset
-Message-ID: <20241119125131.pb5lkeryldsl7htq@pengutronix.de>
-References: <DB9PR04MB8429CF700571FE42C997FB9C924D2@DB9PR04MB8429.eurprd04.prod.outlook.com>
- <1b8864e5-0ec7-49c4-932a-89cfbaeacc9f@leica-geosystems.com>
- <DB9PR04MB842929186683C1DF13DCBD92924A2@DB9PR04MB8429.eurprd04.prod.outlook.com>
- <20241028090028.x6rzopvpcdvgouqv@pengutronix.de>
- <DB9PR04MB842960A18BB8570B04A64BEA924A2@DB9PR04MB8429.eurprd04.prod.outlook.com>
- <20241028115150.fgvqaem36lwxwvjh@pengutronix.de>
- <DB9PR04MB8429B10FA73E5333685103FB924A2@DB9PR04MB8429.eurprd04.prod.outlook.com>
- <20241028150048.qnqjxntns6quy7py@pengutronix.de>
- <20241118221759.wvrkvxeh4iop6jtt@pengutronix.de>
- <DB9PR04MB84299E3E1776C60F5D1F0FF792202@DB9PR04MB8429.eurprd04.prod.outlook.com>
+	s=arc-20240116; t=1732020699; c=relaxed/simple;
+	bh=GuXTE2rLvrhvhbljrbM9nOqOwVkBoc7a9KbSflU9Nrg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=IN1FN6V7pHNoO1EeS5pLagOSekDwZ5ojgox3KUQ30RRMvi856F6kTcJGHvqbhzZAkvoRGcwfWjxcqYvn/Pnn9fyv930g8kwtjggtJ8PUj4A4OOzQjhvgrdAx6Y2fxC3lm4I1Jxc+4Yw8DkrQ7YVZhTSU6qpdfmhioieQVyz13AY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=V3a3QIqc; arc=none smtp.client-ip=37.18.73.165
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
+Received: from p-infra-ksmg-sc-msk01.sberdevices.ru (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id 754AF10000A;
+	Tue, 19 Nov 2024 15:51:35 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 754AF10000A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
+	s=mail; t=1732020695;
+	bh=Ii7nhdIGuTiZ2Cjp6gNaEeAPJj6qad8DWD7J3M9rl2U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:From;
+	b=V3a3QIqc1iepwiiqH1aWfprboJYKy+tnR6chs74FjkRi9un1lzCESgB2sigYqsgfJ
+	 W74e9xhXtC17Po3WC5U7pu2oWMcB3pOftWJxDnFwBh/t/4/5Dwm34DRHuRtIZJjZBl
+	 4HChdB9wOoMRWyYOgAmiOD76xPXdtxX5YpTGO0t4eyauoHqkhpsxgZg/sB4i6ElURn
+	 i+hOPRKiHjVIpvRq8tQHijglvNu3uzltqa1zfUSiyrv1gSBMBz1xihOSnZDRF3JqBQ
+	 dt3YccXGJ+XJrvZOE0E+IxLUt01Z4H34BenH3wd+QuMGSlP6I8hYPCNjxADh1NYGq4
+	 XgKUi+NpIqMQQ==
+Received: from smtp.sberdevices.ru (p-i-exch-sc-m01.sberdevices.ru [172.16.192.107])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.sberdevices.ru (Postfix) with ESMTPS;
+	Tue, 19 Nov 2024 15:51:35 +0300 (MSK)
+Message-ID: <ed5cdef1-aaa7-4ff3-a427-87eae4c90f18@salutedevices.com>
+Date: Tue, 19 Nov 2024 15:51:34 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DB9PR04MB84299E3E1776C60F5D1F0FF792202@DB9PR04MB8429.eurprd04.prod.outlook.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/4] pwm: meson: Support constant and polarity bits
+To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+CC: <neil.armstrong@linaro.org>, <khilman@baylibre.com>,
+	<jbrunet@baylibre.com>, <martin.blumenstingl@googlemail.com>,
+	<linux-pwm@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<kernel@salutedevices.com>
+References: <20241016152553.2321992-1-gnstark@salutedevices.com>
+ <20241016152553.2321992-3-gnstark@salutedevices.com>
+ <w3igi2jmva6mfa7anlieyp3iiwfzhsvi3t37wwcqqtzdy42fqn@btmdsfsmpw7r>
+ <f08513c8-56d6-4551-8ac6-84641c134552@salutedevices.com>
+ <l5xvdndysdvtil472it6ylthcfam5jp7lh3son45mezq7dh2yk@3yj557k2o5k5>
+Content-Language: en-US
+From: George Stark <gnstark@salutedevices.com>
+In-Reply-To: <l5xvdndysdvtil472it6ylthcfam5jp7lh3son45mezq7dh2yk@3yj557k2o5k5>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: p-i-exch-a-m1.sberdevices.ru (172.24.196.116) To
+ p-i-exch-sc-m01.sberdevices.ru (172.16.192.107)
+X-KSMG-Rule-ID: 10
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 189267 [Nov 19 2024]
+X-KSMG-AntiSpam-Version: 6.1.1.7
+X-KSMG-AntiSpam-Envelope-From: gnstark@salutedevices.com
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 41 0.3.41 623e98d5198769c015c72f45fabbb9f77bdb702b, {Tracking_from_domain_doesnt_match_to}, 127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;salutedevices.com:7.1.1;smtp.sberdevices.ru:5.0.1,7.1.1, FromAlignment: s
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean
+X-KSMG-LinksScanning: Clean
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/11/19 08:41:00 #26886618
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-On 24-11-19, Sherry Sun wrote:
+Hello Uwe
+
+On 11/7/24 11:41, Uwe Kleine-König wrote:
+> On Wed, Nov 06, 2024 at 04:54:41PM +0300, George Stark wrote:
+>> On 11/4/24 12:32, Uwe Kleine-König wrote:
+>>>> @@ -68,6 +72,8 @@ static struct meson_pwm_channel_data {
+>>>>    	u8		clk_div_shift;
+>>>>    	u8		clk_en_shift;
+>>>>    	u32		pwm_en_mask;
+>>>> +	u32		const_en_mask;
+>>>> +	u32		inv_en_mask;
+>>>>    } meson_pwm_per_channel_data[MESON_NUM_PWMS] = {
+>>>>    	{
+>>>>    		.reg_offset	= REG_PWM_A,
+>>>> @@ -75,6 +81,8 @@ static struct meson_pwm_channel_data {
+>>>>    		.clk_div_shift	= MISC_A_CLK_DIV_SHIFT,
+>>>>    		.clk_en_shift	= MISC_A_CLK_EN_SHIFT,
+>>>>    		.pwm_en_mask	= MISC_A_EN,
+>>>> +		.const_en_mask	= MISC_A_CONSTANT_EN,
+>>>> +		.inv_en_mask	= MISC_A_INVERT_EN,
+>>>>    	},
+>>>>    	{
+>>>>    		.reg_offset	= REG_PWM_B,
+>>>> @@ -82,6 +90,8 @@ static struct meson_pwm_channel_data {
+>>>>    		.clk_div_shift	= MISC_B_CLK_DIV_SHIFT,
+>>>>    		.clk_en_shift	= MISC_B_CLK_EN_SHIFT,
+>>>>    		.pwm_en_mask	= MISC_B_EN,
+>>>> +		.const_en_mask	= MISC_B_CONSTANT_EN,
+>>>> +		.inv_en_mask	= MISC_B_INVERT_EN,
+>>>>    	}
+>>>>    };
+
+...
+
+>>> Personally I'd prefer:
+>>>
+>>> 	value &= ~MESON_PWM_REG_MISC_CONST_EN(pwm->hwpwm);
+>>> 	if (meson->data->has_constant && channel->constant)
+>>> 		value |= MESON_PWM_REG_MISC_CONST_EN(pwm->hwpwm);
+>>>
+>>> even though your variant only mentions the mask once. While it has this
+>>> repetition, it's clear what happens without having to know what
+>>> meson_pwm_assign_bit() does. Maybe that's subjective?
+>>
+>> Actually I also don't like meson_pwm_assign_bit() too match and I'm
+>> surprised there's no something like this in the kernel already.
+>> I again objdumped versions meson_pwm_assign_bit() vs double mask repetition.
+>> Unconditional bit clearing takes only a single instruction:
+>>
+>> // value &= ~channel_data->const_en_mask;
+>> 9ac:	0a250040 	bic	w0, w2, w5
+>>
+>> So in the current series I could drop meson_pwm_assign_bit() and use:
+>>
+>> value &= ~channel_data->const_en_mask;
+>> if (meson->data->has_constant && channel->constant)
+>> 	value |= channel_data->const_en_mask;
+>>
+>> If it's decided now or later to drop meson_pwm_channel_data then
+>> w\o meson_pwm_assign_bit() future patch will be line-to-line change.
+>>
+>> What you think?
 > 
-> > -----Original Message-----
-> > From: Marco Felsch <m.felsch@pengutronix.de>
-> > 
-> > Hi,
-> > 
-> > gentle ping on this discussion since I'm still convinced that this the correct
-> > approach to add the reset mechanism and handle the power.
+> Sounds sensible.
+
+While changing the patch to drop meson_pwm_assign_bit() one thing
+concerned me on the approach:
+
+value &= ~channel_data->const_en_mask;
+if (meson->data->has_constant && channel->constant)
+	value |= channel_data->const_en_mask;
+
+that we reset bit in the value var even if that bit is not supported on
+the current SoC. I checked several datasheets for old SoCs and those 
+bits are marked as unused (not even reserved) and I've never seen those
+bits set. Still I'd offer to use precise condition for changing those 
+bit. I'll send v3 let's discuss it again if you think I bother too much.
+
 > 
-> Hi Marco,
-> 
-> Sorry for the late reply. After internal discussion, we still have
-> some confusion regarding this new feature.
-> This patch do improve the independent handling of wifi/BT, but with
-> the controlling granularity segmentation, many different wifi/BT use
-> cases need to be considered.
+> Best regards
+> Uwe
 
-Sure!
-
-> For the case -- WLAN (SDIO) not used + BT (UART) used:
->
-> The ideal behavior of BT should be reset and the standalone BT FW
-> should be re-downloaded when unloading and re-loading the BT driver.
-
-To make it clear, I assumed that it's clear that independent
-(sub-)device handling require independent firmware (fw) files, which can
-be the case. NXP already supplies independent FW files for bt and wifi.
-We just need to ensure that the drivers are using these.
-
-That said the bt driver already checks if the fw has to be downloaded.
-
-> However, due to the regulator control and PDn reset control are bound
-> to the SDIO bus instead of the WLAN device, the SDIO bus may be ready
-> after kernel boot up.
-
-Right, but this is a separate discussion not belonging to these driver
-changes. Also it's the common chicken-egg issue. You need to power the
-bus and release the device-reset before you can check which device is
-connected and to check if there would be a proper driver.
-
-> Although the WLAN is not used(WLAN driver is not loaded and WLAN FW is
-> not downloaded), the corresponding regulator count and PDn reset count
-> are both incremented by 1 through MMC pwrseq. Then with the BT driver
-> remove & re-probe, the PDn reset cannot truly reset the BT chip due to
-> the count been +1 by MMC pwrseq.  So the BT will not reset and BT FW
-> won't be re-downloaded when re-loading the BT driver, right?
-
-You're aware that the btnxpuart.c driver already has the support for an
-independent software based reset? Not sure what this sw-reset does, due
-to the lack of missing documentation, but this is the only option to
-over-come your above mentioned use-case.
-
-I have to ask, is this really a use-case for someone? Either your device
-supports both: WLAN and BT or only one of WLAN/BT. If it would be only
-BT or WLAN you just don't need the specify the other one within your
-devicetree.
-
-Furthermore, this patchset does not break any current use-case you/NXP
-has. You still can use the combined fw version and still can use the not
-so user friendly user-space dependency of: "wlan driver _must_ be
-loaded" before the "bt driver _can_ be loaded" by just not using the
-split power handling. For use-space which wants to use the split version
-because there is no such dependecy.
-
-Regards,
-  Marco
+-- 
+Best regards
+George
 
