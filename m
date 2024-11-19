@@ -1,355 +1,250 @@
-Return-Path: <linux-kernel+bounces-414599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E41A9D2AC2
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 17:23:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE1779D2AD0
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 17:24:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B94EF2838C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 16:23:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 371481F251F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 16:24:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D084A1D04A6;
-	Tue, 19 Nov 2024 16:23:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DACED1D0B9C;
+	Tue, 19 Nov 2024 16:24:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TUT4XGjl"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=BLAIZE.COM header.i=@BLAIZE.COM header.b="YY02I0mb"
+Received: from mx08-0063e101.pphosted.com (mx08-0063e101.pphosted.com [185.183.31.155])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 165C91CBE9C
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 16:23:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732033383; cv=none; b=C+cBfuEuLoO0zLLUpgKVFlYD92TzvPT741epprXrJSfy2iXNrdCk0d+APil9EgHkK36iSc+a+Gy/52WtZ8k1onrOBXanyCEQzjQc6eUSV/bQ3r6xYgRU3TOd8ZXkWxbiFFWUtHIi+Ux7DUQASVGdNaNq+YRkVJ6ZpLfsNqnliAY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732033383; c=relaxed/simple;
-	bh=e2K1GP8scyOUCNjsQqVWYxLjHy+GL9YI82KyrRkXV9g=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Qkicy1szzz/nZzaoRYVzxSIGpsM9Djod7epgmchDLV//ea1y1hZm+g2z2ZdtqjzfxcGTT8tViHjLgAic/PNKgy4X2IPWOF7Pl6CWxfZi4XTld/MDJfygtu45PvX7mvyIOyhcgrJlDTDnHojxjwNA+Oynnc4wYXjkN/F2VdoMWP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TUT4XGjl; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732033381;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=suWdsjJ5WnUgZV8pnJXIYBOLHIoG3Gy/626N1DpjAyk=;
-	b=TUT4XGjlK127KVQVnPyE50pxxOkSP53NrIHL/jb39vATleIxhA5ZntHC63C7WZxCGI1YgI
-	6OSMjjYkjQ4671RFp+/5fJ7lR1I9fzPlha0Vg1zasynXYCWkmllPmj0N9pgy6E20saCJzx
-	5RLqhV8yZ1u0/I2QK5pOqMc09n+9tJ4=
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com
- [209.85.166.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-586-69A7o6hfOf69LKduMG3mbA-1; Tue, 19 Nov 2024 11:22:59 -0500
-X-MC-Unique: 69A7o6hfOf69LKduMG3mbA-1
-X-Mimecast-MFC-AGG-ID: 69A7o6hfOf69LKduMG3mbA
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a77085a3d7so15513445ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 08:22:59 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732033379; x=1732638179;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=suWdsjJ5WnUgZV8pnJXIYBOLHIoG3Gy/626N1DpjAyk=;
-        b=WPq3hOmqB0b/0rsvl7a0pb60JfTTVwuNGV3zfv0pZecfbblJlmrL9S9Bp3YIc3xX2O
-         JYJTZa3MERMKe4UE3y8Bw8M5QT7hzN5Tu342p0JIfgU0ndO2RsQuPNz13B3isYdDpeEt
-         giTDL7Vsa/o4o6uO0xqpIxD5bcKM8xxS+wHJDO9oUQkGZw8MrL97nhW7/CLxIe/zBciP
-         6OwlzLmuXTJWSzvOmk/Wrn0/3nTsb/yNQQHDUwFMlIrP4HHFbWQGAsBH1YEvAjndKGyd
-         O4+ysWdm4sHXXx47afRdZ8Jau0RJvyN74VxVVbAahPz/qNGy4HAB0JI8A7jEosN2AU0D
-         XYBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXfbk4wQ6YvzZl1eKp63k3S/8M4wr9Hdvki3ZGwfHz7i/QhxTce1Bp48jYIjjRdqSK0XPUp/x4lmwWMBP0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywzh34eQ22NIvvyo2iSLBUut6NKjaiaku8h0QsB5ufe43HDMbnn
-	bv9ONwhBk7IsEMttr1jERgtDjoBLWSN2rfnE1IPqHLXlDE+JmQpuAg1Nzu6XHkMl2ZHnkOsNcpJ
-	ZTKRP7Z4iEfQOf/Z3bP6yOtXZd7VZlzIJB5Y+Mq2tvcuc3tMFT7/x346KZkmVVQ==
-X-Received: by 2002:a05:6e02:1526:b0:3a7:645f:6152 with SMTP id e9e14a558f8ab-3a77744e30cmr33621635ab.8.1732033379131;
-        Tue, 19 Nov 2024 08:22:59 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHiseTfVZI8CsQcS8/9Er7MhjJVsr44kaPa/nmeikEF5kUEcerPDk12H3KMCedgJZbYdTUn7w==
-X-Received: by 2002:a05:6e02:1526:b0:3a7:645f:6152 with SMTP id e9e14a558f8ab-3a77744e30cmr33621435ab.8.1732033378760;
-        Tue, 19 Nov 2024 08:22:58 -0800 (PST)
-Received: from ?IPV6:2601:188:ca00:a00:f844:fad5:7984:7bd7? ([2601:188:ca00:a00:f844:fad5:7984:7bd7])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a77ffe8df6sm1870915ab.72.2024.11.19.08.22.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 Nov 2024 08:22:58 -0800 (PST)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <95194abd-1ec6-4db3-9f83-4d482b2fac50@redhat.com>
-Date: Tue, 19 Nov 2024 11:22:54 -0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3454618A950;
+	Tue, 19 Nov 2024 16:24:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=185.183.31.155
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732033454; cv=fail; b=LxuSuBmqyO8amtMeKfqQvmHvytogSSOKflO87A4sV0y6Jb3yzMNUkRH/N9eE+61hyrXkRTuaULgTiP8HtcaW6CrHA+GC6Pn5GpSMjMQEKoJ9+nk+6YnH5drC0kKxInzvmMFjsfVoJAC5z3Eam59QUOW2B7nxDC+q0XU0ayJpOF8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732033454; c=relaxed/simple;
+	bh=TL4ASsdIJSmzNHx/EC6uUpoSCdvYvYeoJNgvzfCeWco=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=X6Hd/PV0S+tqe6bc9LoQfsnjxmlDnKCqlaEiEkD9nEBSoua7QCW1Urlh12kbtW2fcSrRFRMiH3OgPrE2nn6BdpyHni951//c3aCuGVlCPJHx8ip8+xbb+ThDoC1EN/spveknWt+lzwgH64VO7vgF3hklUo26pYHOJiuf9dlTZEU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=blaize.com; spf=pass smtp.mailfrom=blaize.com; dkim=pass (1024-bit key) header.d=BLAIZE.COM header.i=@BLAIZE.COM header.b=YY02I0mb; arc=fail smtp.client-ip=185.183.31.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=blaize.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=blaize.com
+Received: from pps.filterd (m0247494.ppops.net [127.0.0.1])
+	by mx08-0063e101.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AJFmDdb002806;
+	Tue, 19 Nov 2024 16:23:55 GMT
+Received: from ma0pr01cu012.outbound.protection.outlook.com (mail-southindiaazlp17011024.outbound.protection.outlook.com [40.93.131.24])
+	by mx08-0063e101.pphosted.com (PPS) with ESMTPS id 42xhkxhbn6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 19 Nov 2024 16:23:54 +0000 (GMT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=qqd/jJBsjht/wDNLOB0fddSfqSPQVkVtKVmQn9zCt/LW04rFxcqT71cauEQu9mnwdvTVy/qS/SEU1ddpPoNoDVLLd/s2KTN39U6FhEtbiq3/5/oMslDo3V76WYj99FBcDVbQP3aWLYQ8Qi46XG8brQoQB7qZT4BES/OMMpgcM0BmhcrYnr7YNyWLEi2K2f6TywPZEv9qUMeuD/vcC7vKqLLeQCBpQyFgrzeTfqH5uvPEymE6SqC6kDIl6JIljrrmoJ5A/ardLPAwYU4DTvk9N4Yn4zLrr7YJblqHd+Y9OHlfJ6Y1En33xv00E0g5VOhox6UVmJADOsQ22DoIIpUMhQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=TL4ASsdIJSmzNHx/EC6uUpoSCdvYvYeoJNgvzfCeWco=;
+ b=eODHbs/pmzL9bb4f2GgkUCAUT2VOrO1zLuDPFgUKnqMi4B08EvbAdn+8ThlxaGtwEhiqhh4iBwglspURiFV8FDQiyF9H+QpQ9Hr3wwkdjnrQ8v0JjCI5hjMWc4HdduBDGX7o6YfcVFmV+tHX3Ivledw8ZSzl0AxcmYsS/YBJjBq4HojaDhLNL9hFGVqA7GAvIbtyA9On1OI7lgNqr85o5iJLAWj5KPmifG/4g9GJ7DL6Kv8JmRbh9GdzrR+n6n0/zDpVRY0QjrwJuFusI0m1HVsIIIDJxldIMpA7RDCZ8GUmlz4yfhfJy2bnol0UYLQoydhjSNEW+NfNziif/AbsXw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=blaize.com; dmarc=pass action=none header.from=blaize.com;
+ dkim=pass header.d=blaize.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=BLAIZE.COM;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=TL4ASsdIJSmzNHx/EC6uUpoSCdvYvYeoJNgvzfCeWco=;
+ b=YY02I0mbOuSSitqleH0U0IHlx9Y2aeRvx8MGyPAjw7/kXvpXYIrgcdhZ6RFaZQjCOub3eyUjntBtMAS8anh9cHkpk6dn9q3IL4XQBwBNCiqdb0SoOV7oKRrDxi5ONkcuZYZ4Kjn9+f3Ne6EzLdRthbDIuR3sHnadI4L3W3G0oK4=
+Received: from MA0PR01MB10184.INDPRD01.PROD.OUTLOOK.COM (2603:1096:a01:12a::5)
+ by PN3PR01MB6292.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:83::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.24; Tue, 19 Nov
+ 2024 16:23:48 +0000
+Received: from MA0PR01MB10184.INDPRD01.PROD.OUTLOOK.COM
+ ([fe80::309a:12cf:74a4:5655]) by MA0PR01MB10184.INDPRD01.PROD.OUTLOOK.COM
+ ([fe80::309a:12cf:74a4:5655%3]) with mapi id 15.20.8158.023; Tue, 19 Nov 2024
+ 16:23:48 +0000
+Message-ID: <807848dc-f299-4eb7-af7a-9f7575ff82b8@blaize.com>
+Date: Tue, 19 Nov 2024 16:23:42 +0000
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 1/6] dt-bindings: Add Blaize vendor prefix
+To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        James Cowgill <james.cowgill@blaize.com>,
+        Matt Redfearn <matthew.redfearn@blaize.com>,
+        Neil Jones <neil.jones@blaize.com>,
+        Catalin Marinas
+ <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Olof Johansson <olof@lixom.net>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+        "soc@lists.linux.dev" <soc@lists.linux.dev>
+References: <20241115-blaize-blzp1600_init_board_support-v5-0-c09094e63dc5@blaize.com>
+ <20241115-blaize-blzp1600_init_board_support-v5-1-c09094e63dc5@blaize.com>
+ <c1885e24-8051-4c91-9870-18eb4218a2ff@kernel.org>
+ <bc471aeb-e9fd-4aa9-9bcc-a59d3c2e47b8@blaize.com>
+ <c866d4e8-77ee-48ca-b6a8-5f56896b072e@kernel.org>
+ <09170fdb-018a-401e-a186-ccd0f5e993d8@blaize.com>
+ <38c2c941-42e1-4d7c-aaa2-3c11dcea4e05@kernel.org>
+Content-Language: en-US
+From: Nikolaos Pasaloukos <nikolaos.pasaloukos@blaize.com>
+In-Reply-To: <38c2c941-42e1-4d7c-aaa2-3c11dcea4e05@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO2P265CA0121.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:9f::13) To MA0PR01MB10184.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a01:12a::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] kasan: Remove kasan_record_aux_stack_noalloc().
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Marco Elver <elver@google.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>,
- syzbot <syzbot+39f85d612b7c20d8db48@syzkaller.appspotmail.com>,
- Liam.Howlett@oracle.com, akpm@linux-foundation.org, jannh@google.com,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- lorenzo.stoakes@oracle.com, syzkaller-bugs@googlegroups.com,
- Andrey Konovalov <andreyknvl@gmail.com>,
- kasan-dev <kasan-dev@googlegroups.com>,
- Andrey Ryabinin <ryabinin.a.a@gmail.com>,
- Alexander Potapenko <glider@google.com>, dvyukov@google.com,
- vincenzo.frascino@arm.com, paulmck@kernel.org, frederic@kernel.org,
- neeraj.upadhyay@kernel.org, joel@joelfernandes.org, josh@joshtriplett.org,
- boqun.feng@gmail.com, urezki@gmail.com, rostedt@goodmis.org,
- mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
- qiang.zhang1211@gmail.com, mingo@redhat.com, juri.lelli@redhat.com,
- vincent.guittot@linaro.org, dietmar.eggemann@arm.com, bsegall@google.com,
- mgorman@suse.de, vschneid@redhat.com, tj@kernel.org, cl@linux.com,
- penberg@kernel.org, rientjes@google.com, iamjoonsoo.kim@lge.com,
- Thomas Gleixner <tglx@linutronix.de>, roman.gushchin@linux.dev,
- 42.hyeyoo@gmail.com, rcu@vger.kernel.org
-References: <67275485.050a0220.3c8d68.0a37.GAE@google.com>
- <ee48b6e9-3f7a-49aa-ae5b-058b5ada2172@suse.cz>
- <b9a674c1-860c-4448-aeb2-bf07a78c6fbf@suse.cz>
- <20241104114506.GC24862@noisy.programming.kicks-ass.net>
- <CANpmjNPmQYJ7pv1N3cuU8cP18u7PP_uoZD8YxwZd4jtbof9nVQ@mail.gmail.com>
- <20241119155701.GYennzPF@linutronix.de>
-Content-Language: en-US
-In-Reply-To: <20241119155701.GYennzPF@linutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MA0PR01MB10184:EE_|PN3PR01MB6292:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1f3e3c58-3137-488e-2b93-08dd08b68bac
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|1800799024|366016|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?d3JsaFNQbW5IWldDWTBNRUZldk1OTFh0MnIrUEU0S2xBZWNaSnlIb2ZSUzkr?=
+ =?utf-8?B?citKb0NITTFCYnFQa1NWeEFJS2JtNEE1VU4zcFhhZEVaZWhGaVd2NjllZDcw?=
+ =?utf-8?B?ZmZpM3ROaXRoVFRqd1pYSFpLeGdFTTlORTNWdlN6QXcrTmdyKzhCTEEwYitV?=
+ =?utf-8?B?c3BmNDhYMVNCUFlxZFVXOWlPMnNUTDVTVXNmTkJzZmJnWGRUZUdVeGcxSTBj?=
+ =?utf-8?B?UDExWGVkeCtMRUtFcWRhc3Bkb1R2VWkweGdIdWUxRHUwS1ozenFyT3JmYXAr?=
+ =?utf-8?B?aE1jU0lFRDByS2JUajU3ZHlBYWtGam1DS1dmTmswOGdQKzlYMURWREF3d0Za?=
+ =?utf-8?B?bGJDQk1xSmErZmMrSk9qbGl6b011RzN3dWlhWGVPczFLQVp3cFM2T1hLZ0Zn?=
+ =?utf-8?B?MHVoWVNVU3RnTFNtQ2E4OWEwTy9GNklXcnhPUGtyZlJ3Y2FQM1hEU29oVFc4?=
+ =?utf-8?B?dFkyQ0o0QVV6OEJjcGE5WEY4WEhPaDRMZndSVTJxb2Y1WWNISVFIa0JrejJl?=
+ =?utf-8?B?RjVnZmtPNnFYeVk3MFROOWE2VnAvODFSbjdhS0d4Uis1UnNHYjJOQWxDcloy?=
+ =?utf-8?B?TUFhQ29GQlVZaHJsQXE3R3E4SjBIcUYzblZZRE5NY3pLTmxEWVFyV2FNYmpG?=
+ =?utf-8?B?bWxNZ2RNek1yc2NhdjV5WmZXZWI1d1g3WHovRFNXdk5wcW5HZXlnNVU1Y0Z2?=
+ =?utf-8?B?T2VtQ01nU1UxUXRpVWJiNnFSbkhGUktqSndBZituSUUrd0lHRDFxcUFieXoz?=
+ =?utf-8?B?ZnZvQUVLTWJEWWZGVWtqTDJlWU9yd1VkdGpmVndUbjk1dk40ejdwNkl6WXpx?=
+ =?utf-8?B?b0M5VmErd2hUcnBIeWRCN0VMMjlnOG9Id25zczlWWjJnRVMzMmwxM3NlN255?=
+ =?utf-8?B?dlR6TTM4L09ZQ0xPZnRPY25WMWdvY3hUT3dZQ2VydVNyRDFKWDhwYlJ3a1Zp?=
+ =?utf-8?B?ekQwR0VsOE9TaTM4NndkWFlKVExzQjZXT0FoV1RJYnJXVEZMUkluK1dXMUla?=
+ =?utf-8?B?eld3TTFNaTJtZWNDS1NlUkVoejVuZzBZN3l1UjhhYkdGSXZiRmNDMnpDaDB1?=
+ =?utf-8?B?eldLRUorZjhvNndUT05sb2FqRjdQMHNJa254MDJ3MDBDUFZOMEx2VVJjaHlD?=
+ =?utf-8?B?c1pTMytxc290V1BoeHorRmx4M2ZwQ3RMZmVtSG9HR3lqZDdSVmxSMUJXQ1cy?=
+ =?utf-8?B?SEo5SmY1ZzREL0UrMmd0RUpPL2NOb0VHUFoyNGFMMlRBYTU3SmFNaVN0dC9z?=
+ =?utf-8?B?b3d6d2VNcDlkbXJLVi9tZ05GdVk1ZFRRNVprS1NNRXUwTDdmcVZlZFJGdW9k?=
+ =?utf-8?B?aFJaUDFGWG1EYjc4VUQwa1VCMGdRL1Fkd1J0T2YxUjlJRGJ1T1hMYTZLbzFR?=
+ =?utf-8?B?ck1PQ0JuTDJqdWFoYmVPUkNldk9sNGN2Y2xnMjhWV21QNnNYSGl2bjhkbk5h?=
+ =?utf-8?B?enNiVU1XRzlCRW14QXpReE1obVI2eTlRYkJkTnJQVjN5ekhyUnRteGZWc0lp?=
+ =?utf-8?B?L2Y4WTVoTmljME1GMmtraWZzV1dwV2JkWGtHOTkvZTZTdFR4N3dTUE4zcGlw?=
+ =?utf-8?B?QnVRalNRV0N4aXpzaTdYbFJ0eVdSYnhjbGlHRW4xdmREaE9DOFB0N0dJTkJa?=
+ =?utf-8?B?UzR2aFBOK3l6Tm40RnB3RmZrYnhGOVE4M25rUTFjSlRzS0YvZ1hOWlRxNEN0?=
+ =?utf-8?B?aHFlenZNU0tlQjlNTG44LytJNU50QlEzMEFIcFVXVEswaTEwcGFVb0VWSzE4?=
+ =?utf-8?B?L3NBMDJaVklqSER0RG40QTlEczRiZjljK0o4SEZNN2NSeVhxQUpKQnlnaDlD?=
+ =?utf-8?Q?pa42k0dVGeXDKXBSI8IhKXcggIkXQmj5rhZyI=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MA0PR01MB10184.INDPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(921020);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?UEhvMmd4bktMYklBejdmZW10dDd0aExuK1JXa0E4ZUFZcU5MTGI5endZV2d4?=
+ =?utf-8?B?NldPbWtvNGd4clRzOXVFbjQ4RjFLSW95UHlvSWltOHQ1N2tHWmx1dXBsWG53?=
+ =?utf-8?B?V3ptMGNkaVRCSXc1S1hLRWMrVmgrUDBCQUl1U0oyOU9UbDhOOS9ia1c4WlIx?=
+ =?utf-8?B?a1ZQQkJiQzhsYXJ1cGdZZk9ubk42OHhtNENsUGh3cjRCSGgvV1d2M3hYdS81?=
+ =?utf-8?B?ejdySVlDUHZ2TG1lcVkyVEJ3eVR6dzBmTEpnT1RDaGVSUE1FSkppQm5Ecjhj?=
+ =?utf-8?B?YlVxM0g0eWxvdWF6WEhwdFlyOEtQcXFMdHdDUmpUMG13TTJYY3hhL05HbU80?=
+ =?utf-8?B?WVBTd042ektLM3JvS3lHSUVxTlZQTDJZTC9NZGRSNmtkeGthcXdhV2dnZWw0?=
+ =?utf-8?B?VXJva3lHb2dtb1BjMzNpQzBlRXYwakJkMWZjMC9COE5Fc3dQRUNpZldtb0RF?=
+ =?utf-8?B?cG03cWZJZm5VczJoSXhLVlNrQk5SM3lXUnBUOVFOWEZWWXcvRTdTZUdMWHdZ?=
+ =?utf-8?B?bUNxb3VlSmRXbHdrMzFQcm0zVzE4RFJDQkpuaXBFMFd5V2NWVU9Dak1JQzdC?=
+ =?utf-8?B?bWNmaEJWNDRsRkVOR3F2TTFMKy9MYnRlWkxjOFVHcjloWkFFOWVkcVJjWldG?=
+ =?utf-8?B?NFBYK3cvMFRwU0hrU2FZdlJTM2lvbkc3eC93WGtINU1pSEVZN1NleWhpS0sx?=
+ =?utf-8?B?OEtTeEtySzhFNUZSM0RXT2JYeTR0VFF2RGZ5QmU0bXRldHhaTlB0ZnJucyt0?=
+ =?utf-8?B?VGRuTEpBRGdKTFB1cExKWTMxbi9pNHNXS2ZvdDZYQnZuNm1lNTJudHB2V2Ir?=
+ =?utf-8?B?OXcrNE9STzkzWVNJc0VNNHZPVm9rNms0Z1Y4UGVaaUVrVks0eTVWTSt2dmtj?=
+ =?utf-8?B?UGtYNEQ2WlR0MkFXSU1SU3ovbEpwYUZTakNsNTF5ZDVqdUpzLzRpREJQRjlo?=
+ =?utf-8?B?ZEpGQWRTaFVvTUdoQjV2c0plNzBuaCtqN1FlMHZycC9iMFN6L1g1WTBNUW1W?=
+ =?utf-8?B?YVJHUysyNjZjZmpGVFJrL1pwQWZWckl1L0pLSWM0RktRemJQMEgvVG9EY3hH?=
+ =?utf-8?B?eWcrRnVTV1pZZVBqOGdMVlppQlFySUJtaWZ1QTk3aGZLTWFUSjA2bVlUY256?=
+ =?utf-8?B?N0pnVmhsYms3RkllVWdoNTdEcG4zYU9ia1BXZ0hTTmZqSGo4ZEJ3a3JkWlFp?=
+ =?utf-8?B?RmZURkNORDNEY3EwQ2ZUdUNtbVowWSsrNWp3cE9QdC9PbDRVTHFRWmtQWTFC?=
+ =?utf-8?B?TEJkdWZRbERUcHhnellsdXhoOENLT3RxL09PTVhzZWYzUnUyRU1Fd2ZOVXNu?=
+ =?utf-8?B?amZSZVJoNTJkS2k0VkZ4UFoxckZMYzdqdkw1eUpUN0hCajd1T3BnZ1FrNEk4?=
+ =?utf-8?B?b0VXTitycW1HZFJIQVQ2bm5PT2dCVzluZHFLODFhTFF6NHhFcC9LU3hJdGhu?=
+ =?utf-8?B?OEJoM3ZOby9wNUZKc2c5REZ3elVxMGtjdlpqZkJDVDd2RmxPMmpWa24yRVVJ?=
+ =?utf-8?B?MkwyV1FmN2xGb0tsSEhPZXFVUDRWWFYzMmN4VHlkQlF5L2J2NHRuOHJOR0xC?=
+ =?utf-8?B?S0JCMTA3SjVhL0xpMWZrN2pJbU02WmJ1ZWYzK2FubXN0T2pRVVlWUDFVNGZL?=
+ =?utf-8?B?T1dBVCtNVXdYb3BJREpQdGtocnRzRWRaZW9KQ3A5SE9BTEV3amNiYm9ZNWNv?=
+ =?utf-8?B?Qm5Hc2Nob0R3WGQ4WlYzZjlKR1pDa3VxdllLVjlmdmFzYjl0WTJES0kzaWQv?=
+ =?utf-8?B?cEhkTEFlaEZqK1NLUWNrNVg3S1UxQytJR01BZVJpcmdhUnA4YkxGN0xRbXJD?=
+ =?utf-8?B?Y3hKQnB1a1F0QkM4NzY2V3ArNVZXQ3NjUzNYZWJLdlJRR2RuM0xrcys0cUdw?=
+ =?utf-8?B?bDJMamdQZC9oRVNlWWg1TEFXa2lLZzY3Wk1ZZGRPRWh6a24zeFlVR3N6eWl1?=
+ =?utf-8?B?Z0JkYnhzTnFKWUEyUFNrM1o5MERJWm5sWVRMcXB4bW9kMjRoLzVnYTRPbmNs?=
+ =?utf-8?B?UWlKNTZaN2ZQZWsrcGlsK0hGQzloQ284WmJLUkFZWUY1NEd6eEcySHdCelRY?=
+ =?utf-8?B?U1Z5MUc0eXVOdW1ydGRIQjFQK2pFVU93OVhLS3hlRnlsN2ZMWDdjdWE2bGpI?=
+ =?utf-8?B?NVdxSVdZRWxBSnZMblN6R1hRTkI0ZGJUejg3N2c4WlJlK05ybFJuSE9QK01j?=
+ =?utf-8?Q?url/P9xiI5OhFjicJjJ3N4U=3D?=
+X-OriginatorOrg: blaize.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1f3e3c58-3137-488e-2b93-08dd08b68bac
+X-MS-Exchange-CrossTenant-AuthSource: MA0PR01MB10184.INDPRD01.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Nov 2024 16:23:48.0376
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 9d1c3c89-8615-4064-88a7-bb1a8537c779
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Xj10aIZiWVvG90gupK8A5Dn4oSX50Khrs1ND6+jqgG4Tmajob2dDovjKh/+qgtd8sP+FjWEH+WIyad7mclzrG8GAwKjJJJW2lVjEXuuR7yY=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN3PR01MB6292
+X-Authority-Analysis: v=2.4 cv=EPtU0EZC c=1 sm=1 tr=0 ts=673cbb9b cx=c_pps a=yS01Tg43EjyficN/GFY56g==:117 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=VlfZXiiP6vEA:10 a=4MthsM0t3ikA:10
+ a=-5LYVjoNHPMA:10 a=VwQbUJbxAAAA:8 a=3HDBlxybAAAA:8 a=SrsycIMJAAAA:8 a=3AJrCuAVmkvt_Fz8LK4A:9 a=QEXdDO2ut3YA:10 a=TucxLVmUXSYA:10 a=laEoCiVfU_Unz3mSdgXN:22 a=zapPnUM7SFj2ezx6rUw-:22
+X-Proofpoint-ORIG-GUID: WcjMaicwJRPZJoal8uXetvwP1ZGsfNoC
+X-Proofpoint-GUID: WcjMaicwJRPZJoal8uXetvwP1ZGsfNoC
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-11-19_08,2024-11-18_01,2024-09-30_01
+X-Proofpoint-Spam-Reason: orgsafe
 
-On 11/19/24 10:57 AM, Sebastian Andrzej Siewior wrote:
-> From: Peter Zijlstra <peterz@infradead.org>
+On 19/11/2024 15:52, Krzysztof Kozlowski wrote:
+> On 19/11/2024 16:23, Nikolaos Pasaloukos wrote:
+>> Hi Krzysztof,
+>>
+>> That's a very tricky error to pick it up. `checkpatch` on my end doesn't produce
+>> an error. The header file on my patches starts as:
+>> 'From: Nikolaos Pasaloukos <nikolaos.pasaloukos@blaize.com>'
+>> I had set the mail account as Forname: Nikolaos, Surname: Pasaloukos and
+>> preferred name as Niko. It is an Outlook365 issue I think.
+>>
+>> That said, when I was trying to send my patches, the mail server was converting
+>> my name 'Nikolaos Pasaloukos' to the preferred name 'Niko Pasaloukos'.
+> Usually it is not a problem to commit patches with one name and send
+> with other - git send-email will properly add two From headers like:
+> https://urldefense.com/v3/__https://lore.kernel.org/all/20241119154245.442961-4-pablo@netfilter.org/__;!!FddXBOku!jmi9Ec3WZ4N6TfC0XlHzSmeISVpB19XDD-TfRyCDgkc6WpnZnjDJMz4bZWeoOY8X6YaL9GnapF-AIw-Cjyer$
 >
-> kasan_record_aux_stack_noalloc() was introduced to record a stack trace
-> without allocating memory in the process. It has been added to callers
-> which were invoked while a raw_spinlock_t was held.
-> More and more callers were identified and changed over time. Is it a
-> good thing to have this while functions try their best to do a
-> locklessly setup? The only downside of having kasan_record_aux_stack()
-> not allocate any memory is that we end up without a stacktrace if
-> stackdepot runs out of memory and at the same stacktrace was not
-> recorded before. Marco Elver said in
-> 	https://lore.kernel.org/all/20210913112609.2651084-1-elver@google.com/
-> that this is rare.
+> If your git history has correct From matching SoB, then indeed
+> checkpatch on your end will not complain.
 >
-> Make the kasan_record_aux_stack_noalloc() behaviour default as
-> kasan_record_aux_stack().
+> If that is the case, it means your SMTP server *rewrites* the From
+> header. Not nice... but what to expect from Microsoft? They learnt open
+> source just recently and before open source was communism for them...
 >
-> [bigeasy: Dressed the diff as patch. ]
->
-> Reported-by: syzbot+39f85d612b7c20d8db48@syzkaller.appspotmail.com
-> Closes: https://lore.kernel.org/all/67275485.050a0220.3c8d68.0a37.GAE@google.com
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> ---
->
-> Didn't add a Fixes tag, didn't want to put
->     7cb3007ce2da2 ("kasan: generic: introduce kasan_record_aux_stack_noalloc()")
->
-> there.
+> You can change your local name to match whatever Microsoft wants to set
+> or you can use b4 relay to send the patches.
 
-Right now task_work_add() is the only caller of 
-kasan_record_aux_stack(). So it essentially make all its callers use the 
-noalloc version of kasan_record_aux_stack().
+I'll add your Reviewed-by on the patches and I will send again v5 patches
+using the b4 relay endpoint instead of my SMTP server.
 
-Acked-by: Waiman Long <longman@redhat.com>
-
->   include/linux/kasan.h     |  2 --
->   include/linux/task_work.h |  3 ---
->   kernel/irq_work.c         |  2 +-
->   kernel/rcu/tiny.c         |  2 +-
->   kernel/rcu/tree.c         |  4 ++--
->   kernel/sched/core.c       |  2 +-
->   kernel/task_work.c        | 14 +-------------
->   kernel/workqueue.c        |  2 +-
->   mm/kasan/generic.c        | 14 ++------------
->   mm/slub.c                 |  2 +-
->   10 files changed, 10 insertions(+), 37 deletions(-)
 >
-> diff --git a/include/linux/kasan.h b/include/linux/kasan.h
-> index 00a3bf7c0d8f0..1a623818e8b39 100644
-> --- a/include/linux/kasan.h
-> +++ b/include/linux/kasan.h
-> @@ -488,7 +488,6 @@ void kasan_cache_create(struct kmem_cache *cache, unsigned int *size,
->   void kasan_cache_shrink(struct kmem_cache *cache);
->   void kasan_cache_shutdown(struct kmem_cache *cache);
->   void kasan_record_aux_stack(void *ptr);
-> -void kasan_record_aux_stack_noalloc(void *ptr);
->   
->   #else /* CONFIG_KASAN_GENERIC */
->   
-> @@ -506,7 +505,6 @@ static inline void kasan_cache_create(struct kmem_cache *cache,
->   static inline void kasan_cache_shrink(struct kmem_cache *cache) {}
->   static inline void kasan_cache_shutdown(struct kmem_cache *cache) {}
->   static inline void kasan_record_aux_stack(void *ptr) {}
-> -static inline void kasan_record_aux_stack_noalloc(void *ptr) {}
->   
->   #endif /* CONFIG_KASAN_GENERIC */
->   
-> diff --git a/include/linux/task_work.h b/include/linux/task_work.h
-> index 2964171856e00..0646804860ff1 100644
-> --- a/include/linux/task_work.h
-> +++ b/include/linux/task_work.h
-> @@ -19,9 +19,6 @@ enum task_work_notify_mode {
->   	TWA_SIGNAL,
->   	TWA_SIGNAL_NO_IPI,
->   	TWA_NMI_CURRENT,
-> -
-> -	TWA_FLAGS = 0xff00,
-> -	TWAF_NO_ALLOC = 0x0100,
->   };
->   
->   static inline bool task_work_pending(struct task_struct *task)
-> diff --git a/kernel/irq_work.c b/kernel/irq_work.c
-> index 2f4fb336dda17..73f7e1fd4ab4d 100644
-> --- a/kernel/irq_work.c
-> +++ b/kernel/irq_work.c
-> @@ -147,7 +147,7 @@ bool irq_work_queue_on(struct irq_work *work, int cpu)
->   	if (!irq_work_claim(work))
->   		return false;
->   
-> -	kasan_record_aux_stack_noalloc(work);
-> +	kasan_record_aux_stack(work);
->   
->   	preempt_disable();
->   	if (cpu != smp_processor_id()) {
-> diff --git a/kernel/rcu/tiny.c b/kernel/rcu/tiny.c
-> index b3b3ce34df631..4b3f319114650 100644
-> --- a/kernel/rcu/tiny.c
-> +++ b/kernel/rcu/tiny.c
-> @@ -250,7 +250,7 @@ EXPORT_SYMBOL_GPL(poll_state_synchronize_rcu);
->   void kvfree_call_rcu(struct rcu_head *head, void *ptr)
->   {
->   	if (head)
-> -		kasan_record_aux_stack_noalloc(ptr);
-> +		kasan_record_aux_stack(ptr);
->   
->   	__kvfree_call_rcu(head, ptr);
->   }
-> diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-> index b1f883fcd9185..7eae9bd818a90 100644
-> --- a/kernel/rcu/tree.c
-> +++ b/kernel/rcu/tree.c
-> @@ -3083,7 +3083,7 @@ __call_rcu_common(struct rcu_head *head, rcu_callback_t func, bool lazy_in)
->   	}
->   	head->func = func;
->   	head->next = NULL;
-> -	kasan_record_aux_stack_noalloc(head);
-> +	kasan_record_aux_stack(head);
->   	local_irq_save(flags);
->   	rdp = this_cpu_ptr(&rcu_data);
->   	lazy = lazy_in && !rcu_async_should_hurry();
-> @@ -3807,7 +3807,7 @@ void kvfree_call_rcu(struct rcu_head *head, void *ptr)
->   		return;
->   	}
->   
-> -	kasan_record_aux_stack_noalloc(ptr);
-> +	kasan_record_aux_stack(ptr);
->   	success = add_ptr_to_bulk_krc_lock(&krcp, &flags, ptr, !head);
->   	if (!success) {
->   		run_page_cache_worker(krcp);
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index a1c353a62c568..3717360a940d2 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -10485,7 +10485,7 @@ void task_tick_mm_cid(struct rq *rq, struct task_struct *curr)
->   		return;
->   
->   	/* No page allocation under rq lock */
-> -	task_work_add(curr, work, TWA_RESUME | TWAF_NO_ALLOC);
-> +	task_work_add(curr, work, TWA_RESUME);
->   }
->   
->   void sched_mm_cid_exit_signals(struct task_struct *t)
-> diff --git a/kernel/task_work.c b/kernel/task_work.c
-> index c969f1f26be58..d1efec571a4a4 100644
-> --- a/kernel/task_work.c
-> +++ b/kernel/task_work.c
-> @@ -55,26 +55,14 @@ int task_work_add(struct task_struct *task, struct callback_head *work,
->   		  enum task_work_notify_mode notify)
->   {
->   	struct callback_head *head;
-> -	int flags = notify & TWA_FLAGS;
->   
-> -	notify &= ~TWA_FLAGS;
->   	if (notify == TWA_NMI_CURRENT) {
->   		if (WARN_ON_ONCE(task != current))
->   			return -EINVAL;
->   		if (!IS_ENABLED(CONFIG_IRQ_WORK))
->   			return -EINVAL;
->   	} else {
-> -		/*
-> -		 * Record the work call stack in order to print it in KASAN
-> -		 * reports.
-> -		 *
-> -		 * Note that stack allocation can fail if TWAF_NO_ALLOC flag
-> -		 * is set and new page is needed to expand the stack buffer.
-> -		 */
-> -		if (flags & TWAF_NO_ALLOC)
-> -			kasan_record_aux_stack_noalloc(work);
-> -		else
-> -			kasan_record_aux_stack(work);
-> +		kasan_record_aux_stack(work);
->   	}
->   
->   	head = READ_ONCE(task->task_works);
-> diff --git a/kernel/workqueue.c b/kernel/workqueue.c
-> index 9949ffad8df09..65b8314b2d538 100644
-> --- a/kernel/workqueue.c
-> +++ b/kernel/workqueue.c
-> @@ -2180,7 +2180,7 @@ static void insert_work(struct pool_workqueue *pwq, struct work_struct *work,
->   	debug_work_activate(work);
->   
->   	/* record the work call stack in order to print it in KASAN reports */
-> -	kasan_record_aux_stack_noalloc(work);
-> +	kasan_record_aux_stack(work);
->   
->   	/* we own @work, set data and link */
->   	set_work_pwq(work, pwq, extra_flags);
-> diff --git a/mm/kasan/generic.c b/mm/kasan/generic.c
-> index 6310a180278b6..b18b5944997f8 100644
-> --- a/mm/kasan/generic.c
-> +++ b/mm/kasan/generic.c
-> @@ -521,7 +521,7 @@ size_t kasan_metadata_size(struct kmem_cache *cache, bool in_object)
->   			sizeof(struct kasan_free_meta) : 0);
->   }
->   
-> -static void __kasan_record_aux_stack(void *addr, depot_flags_t depot_flags)
-> +void kasan_record_aux_stack(void *addr)
->   {
->   	struct slab *slab = kasan_addr_to_slab(addr);
->   	struct kmem_cache *cache;
-> @@ -538,17 +538,7 @@ static void __kasan_record_aux_stack(void *addr, depot_flags_t depot_flags)
->   		return;
->   
->   	alloc_meta->aux_stack[1] = alloc_meta->aux_stack[0];
-> -	alloc_meta->aux_stack[0] = kasan_save_stack(0, depot_flags);
-> -}
-> -
-> -void kasan_record_aux_stack(void *addr)
-> -{
-> -	return __kasan_record_aux_stack(addr, STACK_DEPOT_FLAG_CAN_ALLOC);
-> -}
-> -
-> -void kasan_record_aux_stack_noalloc(void *addr)
-> -{
-> -	return __kasan_record_aux_stack(addr, 0);
-> +	alloc_meta->aux_stack[0] = kasan_save_stack(0, 0);
->   }
->   
->   void kasan_save_alloc_info(struct kmem_cache *cache, void *object, gfp_t flags)
-> diff --git a/mm/slub.c b/mm/slub.c
-> index 5b832512044e3..b8c4bf3fe0d07 100644
-> --- a/mm/slub.c
-> +++ b/mm/slub.c
-> @@ -2300,7 +2300,7 @@ bool slab_free_hook(struct kmem_cache *s, void *x, bool init,
->   			 * We have to do this manually because the rcu_head is
->   			 * not located inside the object.
->   			 */
-> -			kasan_record_aux_stack_noalloc(x);
-> +			kasan_record_aux_stack(x);
->   
->   			delayed_free->object = x;
->   			call_rcu(&delayed_free->head, slab_free_after_rcu_debug);
+> https://urldefense.com/v3/__https://b4.docs.kernel.org/en/latest/contributor/send.html__;!!FddXBOku!jmi9Ec3WZ4N6TfC0XlHzSmeISVpB19XDD-TfRyCDgkc6WpnZnjDJMz4bZWeoOY8X6YaL9GnapF-AI5htzUil$
+>
+>> Do I need to resend v5 again after this is fixed, having applied all the
+>> additional Reviewed-by? What would be my next step here?
+> Yes, please resend a v5 with tags applied and fixed problem with From/SoB.
+>
+>
+> Best regards,
+> Krzysztof
+
+Thank you for helping me out.
+
+Best regards,
+Nikolaos Pasaloukos
 
 
