@@ -1,97 +1,257 @@
-Return-Path: <linux-kernel+bounces-414105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D35F9D231A
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 11:11:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 59A3F9D231E
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 11:11:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DDC8281D0A
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 10:11:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 196B62812E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 10:11:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A462B1C1F08;
-	Tue, 19 Nov 2024 10:11:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84DFE1C232B;
+	Tue, 19 Nov 2024 10:11:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="Amx68NIj"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XO45J2ln"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFF7B198A35
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 10:11:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732011073; cv=pass; b=d+JGvGFSOpDLgLZLg1UmEMA7RikQsiMnshoLZlwgDEMxRWGqIGE0gJcii1xvGnI4Wndg1OpVaTe4cqnCh9yBH907W3eaHWjfeucyvTg7r+ZhyqF0y4lqo/76ho2rs4jsR7dCt0y255/Z7KPepYJ+60zrf9jL3eN1nO6BBmr9Jv0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732011073; c=relaxed/simple;
-	bh=iRrHJP1t10pZaXYtY7KirOgTjxwFtjN1FVfxN2uHumI=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=IFbcOK20b2SjcoUldXT04A1/8nZzKkNvoAgv5vAshSGIe1Ms82UpgpIvOBv8Nsg4XeXHc5QhUHdcKsVqs7csEbzcPrvRoVGC8fQ9iIDE5NfeG7LgHQBv/J1SMn9Oryf1BB3QBKZkhXqJCFpmvwsukxBl3nfmXT54uOA8NHZFb+Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=Amx68NIj; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1732011058; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=Xjs2fNE2nDGWUloIZLZLpeaaIolIQ7blIJqNCpxcZu7Vm3eSxedZ6w3akJaowhJt96S3iRiT/362irc/uFGkBzwNcLapyx/y8EuAnpPl4P2zhY+VfHWLmG98xHzWlK+JuVDS1SI5JKPcbGoTI1a0mSy8MZYzSt3tpnM0TPW+ykI=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1732011058; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=mjTMeSU3sTCJGKoxM7F867Kujv49vH3h9PnodMzQGU8=; 
-	b=WV5Mo5Hj/dQQ7Xur3DItHiqOxUklzvgkKabC28YDQh+1+7pyU+E/TEdDcoKDkKnsM4wOD96Z2RdX2LlXtzAbOZ6KEW6mxuNTPxgITpqY8EBULc6WFEMGaYNlYBfZ40ZoDIvf5d4wYUx270JBWKfaAgW5QOHS2inVBHUSXscFRtw=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
-	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1732011058;
-	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:From:From:To:To:Cc:Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=mjTMeSU3sTCJGKoxM7F867Kujv49vH3h9PnodMzQGU8=;
-	b=Amx68NIjFS7NTPccBsrF26kQLrkCHfikwwEm2NWy638tAVu1rOaHVSyCnewcIPZf
-	mc32FvJ/m9eVe3KryuT4EGBsWqY1A2WluJVX71vM/OffmC4bkToFA/TtiC7ubnvREsd
-	tkNGZW+gFbJh8qr7aLg7b9M5wv6nlY+xpbSG7y/k=
-Received: by mx.zohomail.com with SMTPS id 1732011056423310.76166899225984;
-	Tue, 19 Nov 2024 02:10:56 -0800 (PST)
-Message-ID: <3f8c0fe3-6273-457b-a935-b93a3de5f695@collabora.com>
-Date: Tue, 19 Nov 2024 13:10:52 +0300
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B9B71C1F21
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 10:11:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732011093; cv=none; b=B7EE5Zq07sQC7vODIjs77QE3LMEhFzzTSJXCbByb0KYzHhaab3KS2ivdeHYTyYM7aK6UEaqvV2Dw1XsgGBpIZ9/v6t9UERTB8Zwpof0yURxduJaUuloaBiZFnPQPmy0/wGCPP8/6wrmq0nG3G3JkAeOrfPH76NP/u5bMoQ5DLLM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732011093; c=relaxed/simple;
+	bh=PlG7ajC4HIproRyok2uR0kaxQChqGXyTvCvbDgTqby8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dVue3tvrlT5ZUzkYZUBSn3ROzG4bbY3R8YvbN2mco2bCXD0FZdl3e8uixpWZjwGHgk7xSZCHl/4Lbm7V+Evzsj0xQ0nASDNrEKa1/eUj/7tP1LU5v0ah2D9bXtejtj4CS62VRn8VrCWK2NvUxPZBN8v4kiZQpvu2l583r25MQe4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XO45J2ln; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-71e5130832aso2257253b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 02:11:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732011090; x=1732615890; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=CnyTQoucjCJF6wmIwhYG5inOePLfmtO8FEJdC34/wtE=;
+        b=XO45J2ln9NbAgnYcH1F4P1ICNplmt/ih/3Ylv4rdxbfib6tMVaMDTmJTmpTodC4ms0
+         6nTMHUgUzzQcNnJEjOvKDj8jLt4pbR8NpmPRvKPyhfRJFLBsh9pnbxCgffOJ6IRpF6Ur
+         BVIGIJSWJ9NLGf1ierBxN/iFs+fRvj3wDfzVX2LvcveFUMftFzBNf8X1B0rtf2Q0bN5h
+         BXivYQJd1AB10Kra2zukpsclzW0L8rUQSRl4oyYlYqDi2kh9dB1UySWeG++KCSTlgmQW
+         gf3bE09B203NZjhQr9yCGNblRq8L3Dk0Q5LdHiCMg6QzHrY1rIlkhPStejsB18VzIA/i
+         8TYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732011090; x=1732615890;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CnyTQoucjCJF6wmIwhYG5inOePLfmtO8FEJdC34/wtE=;
+        b=QAMOzt1xeceUqmijd+K9voZcLuQO+ain/HLZFyAJr23+9q4WZRWccPM87EweEJ+LxJ
+         OVhgLI3KrUoCEezr452h40KxxcrnAIFmqWZTW1PAogqfDBh9sed+bF3wXx9tVZTJU0Re
+         XJdCEU7F2OEu/U2MHkm4XLRJZuFwDuLtVuBhSgP5F4eCvwvgkbnTYGsEd53RjBPOVLRB
+         7jDClovDsqVT3EU7C6ai02/sOenNz3M56KAE1xTR3O66cfeTceEOURgaDYFiMFDfjdxl
+         j+9FOxSTsyGuqv34bIz7C9RZDLsHQpKqY8IRsBQyGVIjU0BaiDZePE7167l1KBugNmpJ
+         WX2A==
+X-Forwarded-Encrypted: i=1; AJvYcCWCpKY8NEBaMSE3RdQKRyeM3x6mpkwNTuuU44Z22G6q9F/XeVsE+LxRvIqVYmNmCh9BhuIoxeUl3+L7nBc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzcdM8W8idZNYYRo6krXj1cPKZ565PLWCxS5EL4c//uUf3rl8vN
+	W6IxW/uSrgfo2dbC0eMYknVbOGRvPV0iTcTO4/H2AZsW6coNCAuTzhj8BBoPcA==
+X-Google-Smtp-Source: AGHT+IESlkjEE6zH0kn+oCxIKUTmqhbcdMhskn/HWsahaCPc0PrMTVIaTfJQLiOkn57Z+JD1MOMz3Q==
+X-Received: by 2002:a05:6a00:9294:b0:71d:f15e:d026 with SMTP id d2e1a72fcca58-72476b7271emr20918708b3a.3.1732011090344;
+        Tue, 19 Nov 2024 02:11:30 -0800 (PST)
+Received: from thinkpad ([117.213.96.14])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72477120a13sm8051655b3a.60.2024.11.19.02.11.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Nov 2024 02:11:29 -0800 (PST)
+Date: Tue, 19 Nov 2024 15:41:21 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Richard Zhu <hongxing.zhu@nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev
+Subject: Re: [PATCH v7 2/7] PCI: dwc: Using parent_bus_addr in of_range to
+ eliminate cpu_addr_fixup()
+Message-ID: <20241119101121.t4kaaeuvj37scmxm@thinkpad>
+References: <20241029-pci_fixup_addr-v7-0-8310dc24fb7c@nxp.com>
+ <20241029-pci_fixup_addr-v7-2-8310dc24fb7c@nxp.com>
+ <20241115175148.tqzqiv53mccz52tq@thinkpad>
+ <ZzeejnBC4KrJoHqm@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] drm/virtio: Use drm_gem_plane_helper_prepare_fb()
-From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
-To: David Airlie <airlied@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>,
- Gurchetan Singh <gurchetansingh@chromium.org>, Chia-I Wu
- <olvaffe@gmail.com>, Rob Clark <robdclark@gmail.com>,
- Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>,
- Kim Dongwon <dongwon.kim@intel.com>,
- Kasireddy Vivek <vivek.kasireddy@intel.com>
-Cc: dri-devel@lists.freedesktop.org,
- virtualization@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
- kernel@collabora.com
-References: <20241020230803.247419-1-dmitry.osipenko@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20241020230803.247419-1-dmitry.osipenko@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZzeejnBC4KrJoHqm@lizhi-Precision-Tower-5810>
 
-On 10/21/24 02:08, Dmitry Osipenko wrote:
-> From: Dongwon Kim <dongwon.kim@intel.com>
-> 
-> Use drm_gem_plane_helper_prepare_fb() helper for explicit framebuffer
-> synchronization. We need to wait for explicit fences in a case of
-> Venus and native contexts when guest user space uses explicit fencing.
-> 
-> Signed-off-by: Dongwon Kim <dongwon.kim@intel.com>
-> [dmitry.osipenko@collabora.com>: Edit commit message]
-> Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+On Fri, Nov 15, 2024 at 02:18:38PM -0500, Frank Li wrote:
 
-Applied patchset to misc-next
+[...]
+
+> > > +		if (pci->using_dtbus_info) {
+> > > +			index = of_property_match_string(np, "reg-names", "config");
+> > > +			if (index < 0)
+> > > +				return -EINVAL;
+> > > +			/*
+> > > +			 * Retrieve the parent bus address of PCI config space.
+> > > +			 * If the parent bus ranges in the device tree provide
+> > > +			 * the correct address conversion information, set
+> > > +			 * 'using_dtbus_info' to true, The 'cpu_addr_fixup()'
+> > > +			 * can be eliminated.
+> > > +			 */
+> >
+> > Nobody will switch to 'ranges' property if you mention it in comments. We
+> > usually add dev_warn_once() to print a warning for broken DT so that the users
+> > will try to fix it. You can use below diff (as a separate patch ofc):
+> >
+> > ```
+> > diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
+> > index 6d6cbc8b5b2c..d1e5395386fe 100644
+> > --- a/drivers/pci/controller/dwc/pcie-designware.c
+> > +++ b/drivers/pci/controller/dwc/pcie-designware.c
+> > @@ -844,6 +844,9 @@ void dw_pcie_iatu_detect(struct dw_pcie *pci)
+> >                  dw_pcie_cap_is(pci, IATU_UNROLL) ? "T" : "F",
+> >                  pci->num_ob_windows, pci->num_ib_windows,
+> >                  pci->region_align / SZ_1K, (pci->region_limit + 1) / SZ_1G);
+> > +
+> > +       if (pci->ops && pci->ops->cpu_addr_fixup)
+> > +               dev_warn_once(pci->dev, "Broken \"ranges\" property detected. Please fix DT!\n");
+> 
+> How about "Detect use old method "cpu_addr_fixup()", it should correct DT's
+> 'ranges' and remove cpu_addr_fixup()?
+> 
+
+Hmm, yeah makes sense:
+
+	/*
+	 * If the parent 'ranges' property in DT correctly describes the address
+	 * translation, cpu_addr_fixup() callback is not needed.
+	 */
+	dev_warn_once(pci->dev, "cpu_addr_fixup() usage detected. Please fix DT!\n";
+
+But then the drivers need to be smart enough to detect the valid parent 'ranges'
+property and then only use the callback. Because, callback has to be present to
+support older DTs.
+
+> >  }
+> >
+> >  static u32 dw_pcie_readl_dma(struct dw_pcie *pci, u32 reg)
+> > ```
+> >
+> > > +			of_property_read_reg(np, index, &pp->cfg0_base, NULL);
+> >
+> > Can you explain what is going on here?
+> 
+> Because dwc use reg-name 'config' to get config space,
+> of_property_read_reg() will get untranslate address 'parent' bus address.
+> <0x8ff00000 0x80000> at example address.
+> 
+> cfg0_base is used to set outbound ATU.
+> 
+
+Ok, please add a comment like this:
+
+	/* Get the untranslated 'config' address */
+
+Same for other usage of of_property_read_reg().
+
+> >
+> > > +		}
+> > > +
+> > >  		pp->va_cfg0_base = devm_pci_remap_cfg_resource(dev, res);
+> > >  		if (IS_ERR(pp->va_cfg0_base))
+> > >  			return PTR_ERR(pp->va_cfg0_base);
+> > > @@ -462,6 +505,9 @@ int dw_pcie_host_init(struct dw_pcie_rp *pp)
+> > >  		pp->io_base = pci_pio_to_address(win->res->start);
+> > >  	}
+> > >
+> > > +	if (dw_pcie_get_untranslate_addr(pci, pp->io_bus_addr, &pp->io_base))
+> > > +		return -ENODEV;
+> >
+> > Use actual return value here and below.
+> >
+> > > +
+> > >  	/* Set default bus ops */
+> > >  	bridge->ops = &dw_pcie_ops;
+> > >  	bridge->child_ops = &dw_child_pcie_ops;
+> > > @@ -722,6 +768,8 @@ static int dw_pcie_iatu_setup(struct dw_pcie_rp *pp)
+> > >
+> > >  	i = 0;
+> > >  	resource_list_for_each_entry(entry, &pp->bridge->windows) {
+> > > +		resource_size_t parent_bus_addr;
+> > > +
+> > >  		if (resource_type(entry->res) != IORESOURCE_MEM)
+> > >  			continue;
+> > >
+> > > @@ -730,9 +778,14 @@ static int dw_pcie_iatu_setup(struct dw_pcie_rp *pp)
+> > >
+> > >  		atu.index = i;
+> > >  		atu.type = PCIE_ATU_TYPE_MEM;
+> > > -		atu.cpu_addr = entry->res->start;
+> > > +		parent_bus_addr = entry->res->start;
+> > >  		atu.pci_addr = entry->res->start - entry->offset;
+> > >
+> > > +		if (dw_pcie_get_untranslate_addr(pci, entry->res->start, &parent_bus_addr))
+> > > +			return -EINVAL;
+> > > +
+> > > +		atu.cpu_addr = parent_bus_addr;
+> > > +
+> > >  		/* Adjust iATU size if MSG TLP region was allocated before */
+> > >  		if (pp->msg_res && pp->msg_res->parent == entry->res)
+> > >  			atu.size = resource_size(entry->res) -
+> > > diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
+> > > index 347ab74ac35aa..f8067393ad35a 100644
+> > > --- a/drivers/pci/controller/dwc/pcie-designware.h
+> > > +++ b/drivers/pci/controller/dwc/pcie-designware.h
+> > > @@ -463,6 +463,14 @@ struct dw_pcie {
+> > >  	struct reset_control_bulk_data	core_rsts[DW_PCIE_NUM_CORE_RSTS];
+> > >  	struct gpio_desc		*pe_rst;
+> > >  	bool			suspended;
+> > > +	/*
+> > > +	 * Use device tree 'ranges' property of bus node instead using
+> > > +	 * cpu_addr_fixup(). Some old platform dts 'ranges' in bus node may not
+> > > +	 * reflect real hardware's behavior. In case break these platform back
+> > > +	 * compatibility, add below flags. Set it true if dts already correct
+> > > +	 * indicate bus fabric address convert.
+> >
+> > 	/*
+> > 	 * This flag indicates that the vendor driver uses devicetree 'ranges'
+> > 	 * property to allow iATU to use the Intermediate Address (IA) for
+> > 	 * outbound mapping. Using this flag also avoids the usage of
+> > 	 * 'cpu_addr_fixup' callback implementation in the driver.
+> > 	 */
+> >
+> > > +	 */
+> > > +	bool			using_dtbus_info;
+> >
+> > 'use_dt_ranges'?
+> 
+> It will be confused because pcie node alreadys use ranges, just parent bus
+> 's ranges is wrong.
+> 
+> 'use_dtbus_ranges' ?
+> 
+
+There is nothing called 'dtbus'. How about, "use_parent_dt_ranges"?
+
+- Mani
 
 -- 
-Best regards,
-Dmitry
-
+மணிவண்ணன் சதாசிவம்
 
