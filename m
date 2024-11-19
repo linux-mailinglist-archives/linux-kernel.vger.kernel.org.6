@@ -1,264 +1,200 @@
-Return-Path: <linux-kernel+bounces-414851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4BE19D2E30
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 19:44:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2EDD9D2E2A
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 19:44:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB6D6B2ACC6
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 18:44:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D0651F23649
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 18:44:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E9361D0E22;
-	Tue, 19 Nov 2024 18:44:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C44571D0E22;
+	Tue, 19 Nov 2024 18:44:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="JDxsZznj"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="un+QSUpg"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 020DC152E0C;
-	Tue, 19 Nov 2024 18:44:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F951152E0C
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 18:44:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732041844; cv=none; b=AXHKQNfhmbGhoBjjmLWekzrAFeB7jC531tCULqSZdNvG03OPtCK+jyPE7hwBQDfdbwxsdp2cEFAAUUJLY4QQCsMWhu4KNbTpvxgr9Zy3b7OGON4U3YSGTtKYxeRqGdfdz6s9eAyUjJjQ8qvNyoJF5FaZ0cI4Dk5j/zTiTxEb/us=
+	t=1732041863; cv=none; b=niAra3geQxR6hrN+ZBvdI0AjpfzXFT/AFhwskg7vUsmNicZtgBuY7AlkS3fdobSIR49UrACZ0zFt3F48Z8MSbxwb50wEQol/dZAi2KZjFDhqU68vRcvH5W9dOWR84kn5jXLizLjXWQ/F84WDEAs5uh9tnRAyM3gp49wEY6uikY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732041844; c=relaxed/simple;
-	bh=UOdJMQ+LGhTYohKe5odocG9b3zlWkVJNxtoF1fyqtMA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=fDpp5DjJYjJNqb5DmU9NcQAGjJtZP9sTXKijtzXyheqN7PTRmwFyGeoe5rf79C/YSz8rBRotmCprw3xlFHM5cH2kvRaWU6U3jK5g7BmDf3Ud4BWSN5LocSL2AXwDwLZBeMoafc9EpZ+uti867Hc00SEZkVJgu4axB6sdo5I6PYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=JDxsZznj; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 4AJIhgR53940163
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 19 Nov 2024 12:43:42 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1732041822;
-	bh=UuK3p+uvjZvx0HNezvGzX9HUjU835mI4PLZS0cKZ5GI=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=JDxsZznjAeiVuc3iO528f+gil5Dwm/iVAHoV0AYU+B/MEtqtiSp1NB+5TcnCfwi59
-	 OOD/qT2xs46tshVVkx57znNNQPdLNgbZ/ftRwwKJr5NlRuXnEXF5svsvnpmAG0EW1W
-	 9mukOz6QBaZ9SC8gk86caBKojEu6A4vB5Y5gYYPg=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4AJIhgVr059033
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 19 Nov 2024 12:43:42 -0600
-Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 19
- Nov 2024 12:43:42 -0600
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 19 Nov 2024 12:43:41 -0600
-Received: from [10.249.42.149] ([10.249.42.149])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4AJIhe7m084569;
-	Tue, 19 Nov 2024 12:43:41 -0600
-Message-ID: <2cbfe287-d05f-4c7a-9512-deb9b84050f9@ti.com>
-Date: Tue, 19 Nov 2024 12:43:40 -0600
+	s=arc-20240116; t=1732041863; c=relaxed/simple;
+	bh=IarxwQtxc2hQvhVZR9jrJYlPoreFUzzBh5T+o0qvzW4=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=HOYp1TEUIjTIBCDFnRTVHpWM7rFU6m/7zNpqtoWnuSo1rHPorQhTIn0Ofh2cgsZRv6ZqhVLe88nNEWW7NdkGjr+qWVAKCH7BovbhphZqA7d/PLDBiHscb7AAIGG3ShqViVusiuxrNhFQGyGL4vf8khTJPQbbWPt2phiaMKdOsSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=un+QSUpg; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-43151e4ef43so30665835e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 10:44:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1732041860; x=1732646660; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=7raj8+o6anDV7XgBulw7mIVhDmj5A5pDYJQm9ULQW+c=;
+        b=un+QSUpg42VXc4TZWgqnpaucAG4GAYyZmI9+nEjFsDJ8w4w6xW5iX0KZlvQk2gpZFJ
+         zoFf2Q1oXoOmW+7cwFIWD3Apud3zkJ9VvdI9BO0fDhC/MW1VH2WMIbPcRkCqGEJDSs6b
+         za4e4CruTPW1eya1q4TWbPqciff179JjtwGXRjpNwaw26B6wKh2qTMLbeivIOX0Ob3W4
+         kbwbinpH+xMSVURRhXa1+lxEfMKIT6PhwX0SXTG5rFsKElAyVs+PTmW33/P4lbtbIMUr
+         NplLbN0asZit9dTXzucALCCbI6yriRtG/KEZCt9I3izfcRM+9R8OJ6QJ8Y3opHGjeDCZ
+         UOiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732041860; x=1732646660;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=7raj8+o6anDV7XgBulw7mIVhDmj5A5pDYJQm9ULQW+c=;
+        b=NWVFOgLGzxOB7Rp14M2zt3b5wrd77BxTHWx/TQ1LqPUjc7Q6SkNpeweU3cvuttG4i2
+         7c7Fl4I3mzWdXtNAAm01i2pE9P/UDJ/ymDJ3F7uN1EX+kRiv5G6NvDnwMi8CQoP1jhzB
+         KH8IRrnJcGXwsqxIN0csrg4ww4VAv2nGfZKebOxUTdAGv3jYWwnePDoPmV5bx755fU/O
+         OGQobVqxw0GJ2PC7FNppln7scBTzglyW6qt5hBzSe1XFT3e2ra6921YGkctjo7J7lslG
+         mVQmKAvtQS48S2RkbX0Tql74CRlc+HFQC6bUM3T1taqmg+KIM9n6XUD/sRWNXdw/zP4b
+         /PvA==
+X-Forwarded-Encrypted: i=1; AJvYcCUbmkt6/6Rzj8xog6Vjtjea5+NAIF4dfFmCPvQERSFrl0x+qz1VF6qhpo8wnN+TQCX4NgC4pbuH8aALjZY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQVbIVKA9m0wdczrklcjF6sY2Cdwpyf1oEfDScd1atsWAvVa3H
+	zuV0TDU8qi2O3/fY8g3q8DIVq2pm1hQCW2ULtanzLw8cSxvCHuaaLFlkKoBnZhJG5OsEDZPzdPc
+	qpITPRtj6Hw==
+X-Google-Smtp-Source: AGHT+IH94Dq73gso4wswesMB24HRWw+5UPZSgOZVt0jGzxu94xZy2urcKvwiOPmGIeQpgnuHERE64duvSUhRqA==
+X-Received: from beeg.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:f74])
+ (user=jackmanb job=sendgmr) by 2002:a05:600c:18a3:b0:431:4760:d09a with SMTP
+ id 5b1f17b1804b1-4334f02a519mr25e9.5.1732041860403; Tue, 19 Nov 2024 10:44:20
+ -0800 (PST)
+Date: Tue, 19 Nov 2024 18:43:57 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 19/21] drm/imagination: Add
- device_memory_force_cpu_cached override
-To: Matt Coster <matt.coster@imgtec.com>,
-        Frank Binns
-	<frank.binns@imgtec.com>,
-        David Airlie <airlied@gmail.com>, Simona Vetter
-	<simona@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Vignesh
- Raghavendra <vigneshr@ti.com>,
-        Tero Kristo <kristo@kernel.org>
-CC: <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        Randolph Sapp <rs@ti.com>, Darren Etheridge <detheridge@ti.com>
-References: <20241118-sets-bxs-4-64-patch-v1-v2-0-3fd45d9fb0cf@imgtec.com>
- <20241118-sets-bxs-4-64-patch-v1-v2-19-3fd45d9fb0cf@imgtec.com>
-Content-Language: en-US
-From: Andrew Davis <afd@ti.com>
-In-Reply-To: <20241118-sets-bxs-4-64-patch-v1-v2-19-3fd45d9fb0cf@imgtec.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIAGzcPGcC/x3MQQqAIBBA0avIrBtQc5FdJVqYjTYbC8UIwrsnL
+ d/i/xcKZaYCs3gh082Fz9ShBgH+cCkS8t4NWmqjlLIYzuwJ/VVxqxGtcXJym9SjDdCbK1Pg5/8 ta2sfvbXID18AAAA=
+X-Change-Id: 20241119-force-cpu-bug-94a08ab0239f
+X-Mailer: b4 0.15-dev
+Message-ID: <20241119-force-cpu-bug-v1-1-2aa31c6c1ccf@google.com>
+Subject: [PATCH] x86/bugs: Add force_cpu_bug= cmdline param
+From: Brendan Jackman <jackmanb@google.com>
+To: Jonathan Corbet <corbet@lwn.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Brendan Jackman <jackmanb@google.com>
+Content-Type: text/plain; charset="utf-8"
 
-On 11/18/24 7:02 AM, Matt Coster wrote:
-> The TI k3-j721s2 platform has a bug relating to cache snooping on the AXI
+Sometimes it can be very useful to run CPU vulnerability mitigations on
+systems where they aren't known to mitigate any real-world
+vulnerabilities. This can be handy for mundane reasons like "I wanna
+debug this on the machine that quickly", but also for research reasons:
+while some mitigations are focussed on individual vulns and uarches,
+others are fairly general, and it's strategically useful to have an idea
+how they'd perform on systems where we don't currently need them.
 
-Well we don't really know it is the bug on our side until we root cause it..
+As evidence for this being useful, a flag specifically for Retbleed was
+added in commit 5c9a92dec323 ("x86/bugs: Add retbleed=force").
 
-Anyway, why do need such a complex work around here? GEM buffer objects
-only need to be coherent, cached or uncached is not a concern for userspace.
-For a device marked dma-coherent, both uncached and cached memory is coherent.
+It's a bit unfortunate that we have to do this by bug instead of by
+mitigation. However, we don't have clear identifiers for the mitigations
+that we do, so I don't think it's practical to do better here than "you
+can pretend you're on a vulnerable CPU - now go and read the docs for
+the per-vuln cmdline params to figure out how to run the mitigation you
+want".
 
-So, you could skip remapping these buffers as writecombine always when the
-device is marked dma-coherent. Nothing J721s2 specific to that, and you
-could drop all this PVR_HAS_OVERRIDE stuff here and in the previous patch.
+Being an early_param() means we get to do this before identify_cpu() and
+cpu_select_mitigations(). But it's possible there's still other types of
+bugs that get setup earlier and might miss this override...
 
-Andrew
+I've only tested this by booting a QEMU guest and checking /proc/cpuinfo.
 
-> ACE-Lite interface. Disabling cache snooping altogether would also resolve
-> the issue, but is considered more of a performance hit.
-> 
-> Given the platform is dma-coherent, forcing all device-accessible memory
-> allocations through the CPU cache is the preferred solution.
-> 
-> Implement this workaround so that it can later be enabled for the TI
-> k3-j721s2 platform.
-> 
-> Signed-off-by: Matt Coster <matt.coster@imgtec.com>
-> ---
-> Changes in v2:
-> - None
-> - Link to v1: https://lore.kernel.org/r/20241105-sets-bxs-4-64-patch-v1-v1-19-4ed30e865892@imgtec.com
-> ---
->   drivers/gpu/drm/imagination/pvr_device.c | 11 ++++++++++-
->   drivers/gpu/drm/imagination/pvr_device.h | 11 +++++++++++
->   drivers/gpu/drm/imagination/pvr_drv.c    |  2 +-
->   drivers/gpu/drm/imagination/pvr_gem.c    |  3 +++
->   drivers/gpu/drm/imagination/pvr_gem.h    |  7 +++++--
->   drivers/gpu/drm/imagination/pvr_mmu.c    |  7 ++++++-
->   6 files changed, 36 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/imagination/pvr_device.c b/drivers/gpu/drm/imagination/pvr_device.c
-> index 2ce46b9a8ab7609faebeeb4e7820751b00047806..ffc177c383c1be16061eff0290c347918b0991f7 100644
-> --- a/drivers/gpu/drm/imagination/pvr_device.c
-> +++ b/drivers/gpu/drm/imagination/pvr_device.c
-> @@ -24,6 +24,7 @@
->   #include <linux/gfp.h>
->   #include <linux/interrupt.h>
->   #include <linux/platform_device.h>
-> +#include <linux/property.h>
->   #include <linux/pm_runtime.h>
->   #include <linux/slab.h>
->   #include <linux/stddef.h>
-> @@ -635,6 +636,7 @@ bool
->   pvr_device_overrides_validate(struct pvr_device *pvr_dev,
->   			      const struct pvr_device_overrides *overrides)
->   {
-> +	struct drm_device *drm_dev = from_pvr_device(pvr_dev);
->   	bool ret = true;
->   
->   	/*
-> @@ -643,7 +645,14 @@ pvr_device_overrides_validate(struct pvr_device *pvr_dev,
->   	 *
->   	 * Note that this function may be called early during device initialization
->   	 * so it should not be assumed that @pvr_dev is ready for normal use yet.
-> -	 */
-> +	*/
-> +
-> +	if (overrides->device_memory_force_cpu_cached &&
-> +	    device_get_dma_attr(drm_dev->dev) != DEV_DMA_COHERENT) {
-> +		drm_err(drm_dev,
-> +			"Specifying device_memory_force_cpu_cached override without dma-coherent attribute is unsupported.");
-> +		ret = false;
-> +	}
->   
->   	return ret;
->   }
-> diff --git a/drivers/gpu/drm/imagination/pvr_device.h b/drivers/gpu/drm/imagination/pvr_device.h
-> index ad0a02a37154099542247dfc62f411c10f4e41f4..7ae14899db24f4c747e8cf4d61d252eb403713f4 100644
-> --- a/drivers/gpu/drm/imagination/pvr_device.h
-> +++ b/drivers/gpu/drm/imagination/pvr_device.h
-> @@ -60,8 +60,19 @@ struct pvr_fw_version {
->   /**
->    * struct pvr_device_overrides - Hardware-level overrides loaded from
->    * MODULE_DEVICE_TABLE() or similar.
-> + *
-> + * @device_memory_force_cpu_cached: By default, all device memory buffer objects
-> + * are mapped write-combined on the CPU (see %PVR_BO_CPU_CACHED) including MMU
-> + * page table backing pages which do not use the regular device memory objects.
-> + * This override forces all CPU mappings to be mapped cached instead. Since this
-> + * could require additional cache maintenance operations to be performed,
-> + * pvr_device_overrides_validate() ensures that the dma-coherent attribute is
-> + * set when this override is specified. Required on some TI platforms where a
-> + * bug causes device-to-cpu cache snooping to behave incorrectly when
-> + * interacting with cpu-uncached memory.
->    */
->   struct pvr_device_overrides {
-> +	bool device_memory_force_cpu_cached;
->   };
->   
->   /**
-> diff --git a/drivers/gpu/drm/imagination/pvr_drv.c b/drivers/gpu/drm/imagination/pvr_drv.c
-> index b56ee2cda9b54c4388a6eef38b0ff81acdb05874..e074cfb0d2055b5387dbb142ca972108977f9854 100644
-> --- a/drivers/gpu/drm/imagination/pvr_drv.c
-> +++ b/drivers/gpu/drm/imagination/pvr_drv.c
-> @@ -1490,7 +1490,7 @@ static void pvr_remove(struct platform_device *plat_dev)
->   	pvr_power_domains_fini(pvr_dev);
->   }
->   
-> -static const struct pvr_device_overrides pvr_device_overrides_default = {};
-> +static const struct pvr_device_overrides pvr_device_overrides_default = { 0 };
->   
->   /*
->    * Always specify &pvr_device_overrides_default instead of %NULL for &struct of_device_id->data so
-> diff --git a/drivers/gpu/drm/imagination/pvr_gem.c b/drivers/gpu/drm/imagination/pvr_gem.c
-> index 6a8c81fe8c1e85c2130a4fe90fce35b6a2be35aa..c67c30518f89af3de2e617a9b65e5cd78870fa2c 100644
-> --- a/drivers/gpu/drm/imagination/pvr_gem.c
-> +++ b/drivers/gpu/drm/imagination/pvr_gem.c
-> @@ -345,6 +345,9 @@ pvr_gem_object_create(struct pvr_device *pvr_dev, size_t size, u64 flags)
->   	if (size == 0 || !pvr_gem_object_flags_validate(flags))
->   		return ERR_PTR(-EINVAL);
->   
-> +	if (PVR_HAS_OVERRIDE(pvr_dev, device_memory_force_cpu_cached))
-> +		flags |= PVR_BO_CPU_CACHED;
-> +
->   	shmem_obj = drm_gem_shmem_create(from_pvr_device(pvr_dev), size);
->   	if (IS_ERR(shmem_obj))
->   		return ERR_CAST(shmem_obj);
-> diff --git a/drivers/gpu/drm/imagination/pvr_gem.h b/drivers/gpu/drm/imagination/pvr_gem.h
-> index e0e5ea509a2e88a437b8d241ea13c7bab2220f56..9b3cbcbe48dfbbc8be211a8a409699a43452e178 100644
-> --- a/drivers/gpu/drm/imagination/pvr_gem.h
-> +++ b/drivers/gpu/drm/imagination/pvr_gem.h
-> @@ -44,8 +44,11 @@ struct pvr_file;
->    * Bits not defined anywhere are "undefined".
->    *
->    * CPU mapping options
-> - *    :PVR_BO_CPU_CACHED: By default, all GEM objects are mapped write-combined on the CPU. Set this
-> - *       flag to override this behaviour and map the object cached.
-> + *    :PVR_BO_CPU_CACHED: By default, all GEM objects are mapped write-combined on the CPU. Set
-> + *       this flag to override this behaviour and map the object cached. If
-> + *       &struct pvr_device_overrides->device_memory_force_cpu_cached is specified, all allocations
-> + *       will be mapped as if this flag was set. This does not require any additional consideration
-> + *       at allocation time since the override is only valid if the dma-coherent attribute is set.
->    *
->    * Firmware options
->    *    :PVR_BO_FW_NO_CLEAR_ON_RESET: By default, all FW objects are cleared and reinitialised on hard
-> diff --git a/drivers/gpu/drm/imagination/pvr_mmu.c b/drivers/gpu/drm/imagination/pvr_mmu.c
-> index 4fe70610ed94cf707e631f8148af081a94f97327..7c7deb29b735308eaed26900f2f54a838382c255 100644
-> --- a/drivers/gpu/drm/imagination/pvr_mmu.c
-> +++ b/drivers/gpu/drm/imagination/pvr_mmu.c
-> @@ -259,6 +259,7 @@ pvr_mmu_backing_page_init(struct pvr_mmu_backing_page *page,
->   	struct device *dev = from_pvr_device(pvr_dev)->dev;
->   
->   	struct page *raw_page;
-> +	pgprot_t prot;
->   	int err;
->   
->   	dma_addr_t dma_addr;
-> @@ -268,7 +269,11 @@ pvr_mmu_backing_page_init(struct pvr_mmu_backing_page *page,
->   	if (!raw_page)
->   		return -ENOMEM;
->   
-> -	host_ptr = vmap(&raw_page, 1, VM_MAP, pgprot_writecombine(PAGE_KERNEL));
-> +	prot = PAGE_KERNEL;
-> +	if (!PVR_HAS_OVERRIDE(pvr_dev, device_memory_force_cpu_cached))
-> +		prot = pgprot_writecombine(prot);
-> +
-> +	host_ptr = vmap(&raw_page, 1, VM_MAP, prot);
->   	if (!host_ptr) {
->   		err = -ENOMEM;
->   		goto err_free_page;
-> 
+Signed-off-by: Brendan Jackman <jackmanb@google.com>
+---
+ Documentation/admin-guide/kernel-parameters.txt |  6 ++++
+ arch/x86/kernel/cpu/common.c                    | 40 +++++++++++++++++++++++++
+ 2 files changed, 46 insertions(+)
+
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index d401577b5a6ace87d250d9b1cc200691c6a0ed4e..260267a6d555076735fda09d171c918e6412b6e1 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -1559,6 +1559,12 @@
+ 	floppy=		[HW]
+ 			See Documentation/admin-guide/blockdev/floppy.rst.
+ 
++	force_cpu_bug=	[X86,EARLY]
++			Force the kernel to assume the CPU is affected by the
++			given bug, regardless of its built-in information about
++			individual models.  Comma-separated list of the names of
++			vulnerabilities that would appear in /proc/cpuinfo.
++
+ 	forcepae	[X86-32]
+ 			Forcefully enable Physical Address Extension (PAE).
+ 			Many Pentium M systems disable PAE but may have a
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index f43bb974fc66d7b21ad52c64da22694ccc274187..b86b0200a5bf0de692f07d4ffef50ba7c360975d 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -1318,6 +1318,10 @@ static bool __init vulnerable_to_rfds(u64 x86_arch_cap_msr)
+ 	return cpu_matches(cpu_vuln_blacklist, RFDS);
+ }
+ 
++/*
++ * This sets up what we _really_ think the CPU has. The user might override this
++ * later via force_cpu_bug.
++ */
+ static void __init cpu_set_bug_bits(struct cpuinfo_x86 *c)
+ {
+ 	u64 x86_arch_cap_msr = x86_read_arch_cap_msr();
+@@ -1462,6 +1466,42 @@ static void __init cpu_set_bug_bits(struct cpuinfo_x86 *c)
+ 	setup_force_cpu_bug(X86_BUG_L1TF);
+ }
+ 
++static int __init force_cpu_bug_parse_cmdline(char *str)
++{
++	if (!str)
++		return -EINVAL;
++
++	while (str) {
++		char *next = strchr(str, ',');
++		int i;
++
++		if (next) {
++			*next = 0;
++			next++;
++		}
++
++		/*
++		 * Linear search because there aren't many bugs (well, at least
++		 * not for the definition of "many" that is relevant here...).
++		 *
++		 * Some configs have no gaps so we could stop at the first NULL,
++		 * but it isn't worth the ifdeffery.
++		 */
++		for (i = 0; i < ARRAY_SIZE(x86_bug_flags); i++) {
++			if (x86_bug_flags[i] && !strcmp(str, x86_bug_flags[i])) {
++				setup_force_cpu_bug(X86_BUG(i));
++				goto found;
++			}
++		}
++		pr_err("Ignoring unknown force_cpu_bug= option (%s).", str);
++found:
++		str = next;
++	}
++
++	return 0;
++}
++early_param("force_cpu_bug", force_cpu_bug_parse_cmdline);
++
+ /*
+  * The NOPL instruction is supposed to exist on all CPUs of family >= 6;
+  * unfortunately, that's not true in practice because of early VIA
+
+---
+base-commit: adc218676eef25575469234709c2d87185ca223a
+change-id: 20241119-force-cpu-bug-94a08ab0239f
+
+Best regards,
+-- 
+Brendan Jackman <jackmanb@google.com>
+
 
