@@ -1,152 +1,292 @@
-Return-Path: <linux-kernel+bounces-413956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7383D9D20F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 08:49:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC6CA9D20F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 08:50:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B55A1F214A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 07:49:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CB52282626
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 07:50:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 054A0195980;
-	Tue, 19 Nov 2024 07:49:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FC5515530B;
+	Tue, 19 Nov 2024 07:50:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="XwBDjrTu"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vLLw8dhY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21EB11482F3
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 07:49:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 397A46E2BE
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 07:50:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732002582; cv=none; b=CjiSAGVpN89OYkIEzMxlnWmNtFWDaSzLUZHEYpQn05Ci3W1uj4nWj1/ng7hL+lILpV65KIrV5zvfkBkjSaIUr7XpVINZ1Sb6AMpmkQ7arxeZ049modjGoJ4cReBPpsIhfwyTuVnU8jbg1azmtMJ3xWhJCMTOfLu9f0r99GM0yl0=
+	t=1732002640; cv=none; b=AeanE3vfIuEMRkCvPE0xoy8hwG/CZBohom4yf+zDSTUefBA4KVxJ+/k6JnTKjkaGlpVhSwzrf0mRn9j2DkKBb2/3xgZUbCbe/tN7HdBLXsyHDjDhDwtRtuUEit4lys5j0Fugop55L8gsD0lG8Yb8zsj24+olJNvY2sOM+107mSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732002582; c=relaxed/simple;
-	bh=IaOmPR/iyXz/gE2tIqhYLRtRkctqg6/SvtDytNmpBsg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ha6PWRlBdM6AOB122Y0KHSUDF3yMQbXhUtg0Hqkp3NxAQ8ZwIw5PWo/YvjVHUxK3mIYwOL2xaDHadnyCZEEC8vWnQ7Bvfivt6N3dPNhsywa12I6+a9k3/fy0jczpD6CU85GOpQk0n/gHO95J+Z1bPHiUEfIkDq2vckdK4ZqojJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=XwBDjrTu; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3824a089b2cso415738f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 23:49:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1732002578; x=1732607378; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=NYBbT7qYRsGmfiJkt6bNI0oAoiQc6F6a4Czuh6tR0Qw=;
-        b=XwBDjrTussjY6RHezcIuHZKjMrm1R4KQ5RX+9HR0eIlkiHxE+eGunbjL06TCC8o6gJ
-         RnytoW+3hI1JQwhexKoxBs7IoJz8OqvapJSCnVup1Yfy9yu35HJqmKTpD308spM6SY5u
-         EY4vkiUDqvaU7glgLVssResUMqE9UP7JwmVFWqiHwJ8hFTQRjmBz06r6yiDObfoToBSc
-         A9S13BtLM/bGrLrvN9xNjWRF92nNWNEcm9RS8mieB7fm41GNVVNq8FRNuQJ+eoU/w652
-         ZhIuHvm4+ZbG7KlGVMIgIB85i9iRgtN4w90k/u8rmCYRyw8xWVZzk4OIPHIDTkhr4Y9o
-         87HQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732002578; x=1732607378;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NYBbT7qYRsGmfiJkt6bNI0oAoiQc6F6a4Czuh6tR0Qw=;
-        b=gq/yU7aDR5T3oVI7aZlvrc83uwbpX1+QR/KxnG43NCUFo9afIvLoO7qpXSfj6+M9D1
-         xRLXa/8YgH+v9DESdvJfdXN+KsiV6oymsv0DGR78Ye8TyTXnp3wr7N86qx0XshXKstRU
-         RWCdqKKiYSgFS/zV2xGtZ9MahKOOaEYvgmpOQzWhkgUefydkR07buO/tQPmsSz4BCiez
-         bTZmZxXknA4eMJ6rZ6L0f6ari7ZYhXp8+gpVI0nufM9u8qj43A7n/Iz3g3eK6M3ujo8M
-         l7jFuKw9AKbrx38xsSL5G1KkHLjKBoc3dO+sBX9U0JTdt4HYjinH8f217aHHsPX/rV6j
-         9DUA==
-X-Forwarded-Encrypted: i=1; AJvYcCWpFT9W5leJt82cgHNVaMKUJaUjUJ3cACDaA1xuYQoGUL85WghCSG5wLC1f0FSXNzUYkNjSgVRLZyQ5850=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDbEG9zskNlHMEtwcq24tmQCc5zOphqSTocY0aOh9CYnoGGtSA
-	rJn+Wrh5WjZVTVax1xeTNTze7bcdXb3wXHZJfMnPXD1x+uJ7MG/mL/7dwwvF5yE=
-X-Google-Smtp-Source: AGHT+IFe5ZmtjhLXYqttDHgdk3C4AFgFbxG7y2tLe4XO1qVtRECgKa8Bx3LhB6YxSZPNMfHR5Z6PNw==
-X-Received: by 2002:a05:6000:2d01:b0:382:5030:7b94 with SMTP id ffacd0b85a97d-38250307d48mr353908f8f.13.1732002578369;
-        Mon, 18 Nov 2024 23:49:38 -0800 (PST)
-Received: from localhost (cst2-173-13.cust.vodafone.cz. [31.30.173.13])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-382462dbb5esm5733966f8f.52.2024.11.18.23.49.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Nov 2024 23:49:37 -0800 (PST)
-Date: Tue, 19 Nov 2024 08:49:37 +0100
-From: Andrew Jones <ajones@ventanamicro.com>
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: iommu@lists.linux.dev, kvm-riscv@lists.infradead.org, 
-	kvm@vger.kernel.org, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	tjeznach@rivosinc.com, zong.li@sifive.com, joro@8bytes.org, will@kernel.org, 
-	robin.murphy@arm.com, anup@brainfault.org, atishp@atishpatra.org, tglx@linutronix.de, 
-	alex.williamson@redhat.com, paul.walmsley@sifive.com, palmer@dabbelt.com, 
-	aou@eecs.berkeley.edu
-Subject: Re: [RFC PATCH 08/15] iommu/riscv: Add IRQ domain for interrupt
- remapping
-Message-ID: <20241119-62ff49fc1eedba051838dba2@orel>
-References: <20241114161845.502027-17-ajones@ventanamicro.com>
- <20241114161845.502027-25-ajones@ventanamicro.com>
- <20241118184336.GB559636@ziepe.ca>
+	s=arc-20240116; t=1732002640; c=relaxed/simple;
+	bh=gbF36eMx9sfuMRVW+aFk+4froAkv7fnorpos7XgT+ds=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=MXgwnzGiGKHD7tor25td4pNP+jjY3ICb3zG8y8hCUh786XHL/jpTCsghjN+alrXTDZYmwI7HMEnHrScPMklmb7yX+hbM1bybyZMbiny5eK3jWiigal1ZvtfmYO3xQJpK64R8k/7cZnE9vuEpmhptugJAClyLgupocE6s28XF7jk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vLLw8dhY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3365C4CECF;
+	Tue, 19 Nov 2024 07:50:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732002639;
+	bh=gbF36eMx9sfuMRVW+aFk+4froAkv7fnorpos7XgT+ds=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=vLLw8dhY+Vk58xmDLpY9ZI3iIdLqh8G26R4HqkBHQLu2etn15x2J/+XaKYJToEjSD
+	 9NC6rQObOopwcSbPlxAnSWGPZMkUNA+90ij9ryXP23ERkL/H/dy0sNTL8YW5TFUEI/
+	 ZB4l8fW6IlSMKV+n8NbPjqSFaPfuPY5YerUlUpw+P4jYk4XgITl9XsKucgEfFnGFBr
+	 ool+wGiDm+Hx5qlMLJIe8YGceXAfIwImyYrsTcpi/RKJlr7kt/ocOyDHq+Lj+1+egZ
+	 ZjK8yuvZQIRGnNqmopKTCAvoPhk+APSwPeDzfRehCdq7y/D2/Hct+JjPNUDQ7Gk7cm
+	 MK5D2D2tqh16A==
+Message-ID: <5b0c17da-f1e1-490d-a560-3312bc8c3247@kernel.org>
+Date: Tue, 19 Nov 2024 15:50:35 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241118184336.GB559636@ziepe.ca>
+User-Agent: Mozilla Thunderbird
+Cc: Chao Yu <chao@kernel.org>, Xiuhong Wang <xiuhong.wang@unisoc.com>,
+ jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-kernel@vger.kernel.org, niuzhiguo84@gmail.com,
+ hao_hao.wang@unisoc.com, ke.wang@unisoc.com
+Subject: Re: [PATCH] f2fs: Fix to avoid long time to shrink extent cache
+To: Xiuhong Wang <xiuhong.wang.cn@gmail.com>
+References: <20241112110627.1314632-1-xiuhong.wang@unisoc.com>
+ <fb436fdb-a4eb-49cc-a730-354611e88b21@kernel.org>
+ <CAOsHCa1t+LeeAG2PDJ0BfYtoh_+CUmLjZcp1+dGZWR5PPfmFSQ@mail.gmail.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <CAOsHCa1t+LeeAG2PDJ0BfYtoh_+CUmLjZcp1+dGZWR5PPfmFSQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Nov 18, 2024 at 02:43:36PM -0400, Jason Gunthorpe wrote:
-> On Thu, Nov 14, 2024 at 05:18:53PM +0100, Andrew Jones wrote:
-> > @@ -1276,10 +1279,30 @@ static int riscv_iommu_attach_paging_domain(struct iommu_domain *iommu_domain,
-> >  	struct riscv_iommu_device *iommu = dev_to_iommu(dev);
-> >  	struct riscv_iommu_info *info = dev_iommu_priv_get(dev);
-> >  	struct riscv_iommu_dc dc = {0};
-> > +	int ret;
-> >  
-> >  	if (!riscv_iommu_pt_supported(iommu, domain->pgd_mode))
-> >  		return -ENODEV;
-> >  
-> > +	if (riscv_iommu_bond_link(domain, dev))
-> > +		return -ENOMEM;
-> > +
-> > +	if (iommu_domain->type == IOMMU_DOMAIN_UNMANAGED) {
+On 2024/11/19 14:46, Xiuhong Wang wrote:
+> Chao Yu <chao@kernel.org> 于2024年11月19日周二 14:05写道：
+>>
+>> On 2024/11/12 19:06, Xiuhong Wang wrote:
+>>> We encountered a system hang problem based on the following
+>>> experiment:
+>>> There are 17 processes, 8 of which do 4k data read, write and
+>>> compare tests, and 8 do 64k read, write and compare tests. Each
+>>> thread writes a 256M file, and another thread writes a large file
+>>> to 80% of the disk, and then keeps doing read operations, all of
+>>> which are direct operations. This will cause the large file to be
+>>> filled to 80% of the disk to be severely fragmented. On a 512GB
+>>> device, this large file may generate a huge zombie extent tree.
+>>>
+>>> When system shutting down, the init process needs to wait for the
+>>> writeback process, and the writeback process may encounter the
+>>> situation where the READ_EXTENT_CACHE space is insufficient and
+>>> needs to free the zombie extent tree. The extent tree has a large
+>>> number of extent nodes, it will a long free time to free, which
+>>> triggers system hang.
+>>   > > The stack when the problem occurs is as follows:
+>>> crash_arm64> bt 1
+>>> PID: 1        TASK: ffffff80801a9200  CPU: 1    COMMAND: "init"
+>>>    #0 [ffffffc00806b9a0] __switch_to at ffffffc00810711c
+>>>    #1 [ffffffc00806ba00] __schedule at ffffffc0097c1c4c
+>>>    #2 [ffffffc00806ba60] schedule at ffffffc0097c2308
+>>>    #3 [ffffffc00806bab0] wb_wait_for_completion at ffffffc0086320d4
+>>>    #4 [ffffffc00806bb20] writeback_inodes_sb at ffffffc00863719c
+>>>    #5 [ffffffc00806bba0] sync_filesystem at ffffffc00863c98c
+>>>    #6 [ffffffc00806bbc0] f2fs_quota_off_umount at ffffffc00886fc60
+>>>    #7 [ffffffc00806bc20] f2fs_put_super at ffffffc0088715b4
+>>>    #8 [ffffffc00806bc60] generic_shutdown_super at ffffffc0085cd61c
+>>>    #9 [ffffffc00806bcd0] kill_f2fs_super at ffffffc00886b3dc
+>>>
+>>> crash_arm64> bt 14997
+>>> PID: 14997    TASK: ffffff8119d82400  CPU: 3    COMMAND: "kworker/u16:0"
+>>>    #0 [ffffffc019f8b760] __detach_extent_node at ffffffc0088d5a58
+>>>    #1 [ffffffc019f8b790] __release_extent_node at ffffffc0088d5970
+>>>    #2 [ffffffc019f8b810] f2fs_shrink_extent_tree at ffffffc0088d5c7c
+>>>    #3 [ffffffc019f8b8a0] f2fs_balance_fs_bg at ffffffc0088c109c
+>>>    #4 [ffffffc019f8b910] f2fs_write_node_pages at ffffffc0088bd4d8
+>>>    #5 [ffffffc019f8b990] do_writepages at ffffffc0084a0b5c
+>>>    #6 [ffffffc019f8b9f0] __writeback_single_inode at ffffffc00862ee28
+>>>    #7 [ffffffc019f8bb30] writeback_sb_inodes at ffffffc0086358c0
+>>>    #8 [ffffffc019f8bc10] wb_writeback at ffffffc0086362dc
+>>>    #9 [ffffffc019f8bcc0] wb_do_writeback at ffffffc008634910
+>>>
+>>> Process 14997 ran for too long and caused the system hang.
+>>>
+>>> At this time, there are still 1086911 extent nodes in this zombie
+>>> extent tree that need to be cleaned up.
+>>>
+>>> crash_arm64_sprd_v8.0.3++> extent_tree.node_cnt ffffff80896cc500
+>>>     node_cnt = {
+>>>       counter = 1086911
+>>>     },
+>>>
+>>> The root cause of this problem is that when the f2fs_balance_fs
+>>> function is called in the write process, it will determine
+>>> whether to call f2fs_balance_fs_bg, but it is difficult to
+>>> meet the condition of excess_cached_nats. When the
+>>> f2fs_shrink_extent_tree function is called to free during
+>>> f2fs_write_node_pages, there are too many extent nodes on the
+>>> extent tree, which causes a loop and causes a system hang.
+>>>
+>>> To solve this problem, when calling f2fs_balance_fs, check whether
+>>> the extent cache is sufficient. If not, release the zombie extent
+>>> tree.
+>>>
+>>> Signed-off-by: Xiuhong Wang <xiuhong.wang@unisoc.com>
+>>> Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
+>>> ---
+>>> Test the problem with the temporary versions:
+>>> patch did not reproduce the problem, the patch is as follows:
+>>> @@ -415,7 +415,7 @@ void f2fs_balance_fs(struct f2fs_sb_info *sbi, bool need)
+>>>                   f2fs_stop_checkpoint(sbi, false, STOP_CP_REASON_FAULT_INJECT);
+>>>
+>>>           /* balance_fs_bg is able to be pending */
+>>> -       if (need && excess_cached_nats(sbi))
+>>> +       if (need)
+>>>                   f2fs_balance_fs_bg(sbi, false);
+>>>
+>>> ---
+>>>    fs/f2fs/segment.c | 4 +++-
+>>>    1 file changed, 3 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+>>> index 1766254279d2..390bec177567 100644
+>>> --- a/fs/f2fs/segment.c
+>>> +++ b/fs/f2fs/segment.c
+>>> @@ -415,7 +415,9 @@ void f2fs_balance_fs(struct f2fs_sb_info *sbi, bool need)
+>>>                f2fs_stop_checkpoint(sbi, false, STOP_CP_REASON_FAULT_INJECT);
+>>>
+>>>        /* balance_fs_bg is able to be pending */
+>>> -     if (need && excess_cached_nats(sbi))
+>>> +     if (need && (excess_cached_nats(sbi) ||
+>>> +                     !f2fs_available_free_memory(sbi, READ_EXTENT_CACHE) ||
+>>> +                     !f2fs_available_free_memory(sbi, AGE_EXTENT_CACHE)))
+>>
+>> Hi,
+>>
+>> I doubt if there is no enough memory, we may still run into
+>> f2fs_shrink_extent_tree() and suffer such long time delay.
+>>
+>> So, can we just let __free_extent_tree() break the loop once we have
+>> released entries w/ target number? something like this:
+>>
+>> ---
+>>    fs/f2fs/extent_cache.c | 15 ++++++++++-----
+>>    1 file changed, 10 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
+>> index 019c1f7b7fa5..38c71c1c4fb7 100644
+>> --- a/fs/f2fs/extent_cache.c
+>> +++ b/fs/f2fs/extent_cache.c
+>> @@ -379,11 +379,12 @@ static struct extent_tree *__grab_extent_tree(struct inode *inode,
+>>    }
+>>
+>>    static unsigned int __free_extent_tree(struct f2fs_sb_info *sbi,
+>> -                                       struct extent_tree *et)
+>> +                               struct extent_tree *et, unsigned int nr_shrink)
+>>    {
+>>          struct rb_node *node, *next;
+>>          struct extent_node *en;
+>>          unsigned int count = atomic_read(&et->node_cnt);
+>> +       unsigned int i = 0;
+>>
+>>          node = rb_first_cached(&et->root);
+>>          while (node) {
+>> @@ -391,6 +392,9 @@ static unsigned int __free_extent_tree(struct f2fs_sb_info *sbi,
+>>                  en = rb_entry(node, struct extent_node, rb_node);
+>>                  __release_extent_node(sbi, et, en);
+>>                  node = next;
+>> +
+>> +               if (nr_shrink && ++i >= nr_shrink)
+>> +                       break;
+>>          }
+>>
+>>          return count - atomic_read(&et->node_cnt);
+>> @@ -761,7 +765,7 @@ static void __update_extent_tree_range(struct inode *inode,
+>>          }
+>>
+>>          if (is_inode_flag_set(inode, FI_NO_EXTENT))
+>> -               __free_extent_tree(sbi, et);
+>> +               __free_extent_tree(sbi, et, 0);
+>>
+>>          if (et->largest_updated) {
+>>                  et->largest_updated = false;
+>> @@ -942,7 +946,8 @@ static unsigned int __shrink_extent_tree(struct f2fs_sb_info *sbi, int nr_shrink
+>>          list_for_each_entry_safe(et, next, &eti->zombie_list, list) {
+>>                  if (atomic_read(&et->node_cnt)) {
+>>                          write_lock(&et->lock);
+>> -                       node_cnt += __free_extent_tree(sbi, et);
+>> +                       node_cnt += __free_extent_tree(sbi, et,
+>> +                                       nr_shrink - node_cnt - tree_cnt);
+>>                          write_unlock(&et->lock);
+>>                  }
+>>                  f2fs_bug_on(sbi, atomic_read(&et->node_cnt));
+>> @@ -1095,7 +1100,7 @@ static unsigned int __destroy_extent_node(struct inode *inode,
+>>                  return 0;
+>>
+>>          write_lock(&et->lock);
+>> -       node_cnt = __free_extent_tree(sbi, et);
+>> +       node_cnt = __free_extent_tree(sbi, et, 0);
+>>          write_unlock(&et->lock);
+>>
+>>          return node_cnt;
+>> @@ -1117,7 +1122,7 @@ static void __drop_extent_tree(struct inode *inode, enum extent_type type)
+>>                  return;
+>>
+>>          write_lock(&et->lock);
+>> -       __free_extent_tree(sbi, et);
+>> +       __free_extent_tree(sbi, et, 0);
+>>          if (type == EX_READ) {
+>>                  set_inode_flag(inode, FI_NO_EXTENT);
+>>                  if (et->largest.len) {
+>> --
+>> 2.40.1
+>>
+>> Thanks,
+>>
+>>>                f2fs_balance_fs_bg(sbi, false);
+>>>
+>>>        if (!f2fs_is_checkpoint_ready(sbi))
+>>
 > 
-> Drivers should not be making tests like this.
 > 
-> > +		domain->gscid = ida_alloc_range(&riscv_iommu_gscids, 1,
-> > +						RISCV_IOMMU_MAX_GSCID, GFP_KERNEL);
-> > +		if (domain->gscid < 0) {
-> > +			riscv_iommu_bond_unlink(domain, dev);
-> > +			return -ENOMEM;
-> > +		}
-> > +
-> > +		ret = riscv_iommu_irq_domain_create(domain, dev);
-> > +		if (ret) {
-> > +			riscv_iommu_bond_unlink(domain, dev);
-> > +			ida_free(&riscv_iommu_gscids, domain->gscid);
-> > +			return ret;
-> > +		}
-> > +	}
+> Hi chao,
 > 
-> What are you trying to do? Make something behave different for VFIO?
-> That isn't OK, we are trying to remove all the hacky VFIO special
-> cases in drivers.
-> 
-> What is the HW issue here? It is very very strange (and probably not
-> going to work right) that the irq domains change when domain
-> attachment changes.
-> 
-> The IRQ setup should really be fixed before any device drivers probe
-> onto the device.
+> We have also considered this approach, but the problem still occurs
+> after retesting.
+> 1. The problem still occurs in the following call of the unmount data process.
+> f2fs_put_super -> f2fs_leave_shrinker
 
-I can't disagree with the statement that this looks hacky, but considering
-a VFIO domain needs to use the g-stage for its single-stage translation
-and a paging domain for the host would use s-stage, then it seems we need
-to identify the VFIO domains for their special treatment. Is there an
-example of converting VFIO special casing in other drivers to something
-cleaner that you can point me at?
+Yes, I guess we need to fix this path as well, however, your patch didn't
+cover this path as well, am I missing something?
 
-The IRQ domain will only be useful for device assignment, as that's when
-an MSI translation will be needed. I can't think of any problems that
-could arise from only creating the IRQ domain when probing assigned
-devices, but I could certainly be missing something. Do you have some
-potential problems in mind?
+> 2. Writing back the inode in the normal write-back process will
+> release the extent cache, and the problem still occurs. The stack is
+> as follows:
+
+Ditto,
 
 Thanks,
-drew
+
+> [H 103098.974356] c2 [<ffffffc008aee8a4>] (rb_erase+0x204/0x334)
+> [H 103098.974389] c2 [<ffffffc0088f8fd0>] (__release_extent_node+0xc8/0x168)
+> [H 103098.974425] c2 [<ffffffc0088fad74>]
+> (f2fs_update_extent_tree_range+0x4a0/0x724)
+> [H 103098.974459] c2 [<ffffffc0088fa8c0>] (f2fs_update_extent_cache+0x19c/0x1b0)
+> [H 103098.974495] c2 [<ffffffc0088edc70>] (f2fs_outplace_write_data+0x74/0xf0)
+> [H 103098.974525] c2 [<ffffffc0088ca834>] (f2fs_do_write_data_page+0x3e4/0x6c8)
+> [H 103098.974552] c2 [<ffffffc0088cb150>]
+> (f2fs_write_single_data_page+0x478/0xab0)
+> [H 103098.974574] c2 [<ffffffc0088d0bd0>] (f2fs_write_cache_pages+0x454/0xaac)
+> [H 103098.974596] c2 [<ffffffc0088d0698>] (__f2fs_write_data_pages+0x40c/0x4f0)
+> [H 103098.974617] c2 [<ffffffc0088cc860>] (f2fs_write_data_pages+0x30/0x40)
+> [H 103098.974645] c2 [<ffffffc0084c0e00>] (do_writepages+0x18c/0x3e8)
+> [H 103098.974678] c2 [<ffffffc0086503cc>] (__writeback_single_inode+0x48/0x498)
+> [H 103098.974720] c2 [<ffffffc0086562c8>] (writeback_sb_inodes+0x454/0x9b0)
+> [H 103098.974754] c2 [<ffffffc008655de8>] (__writeback_inodes_wb+0x198/0x224)
+> [H 103098.974788] c2 [<ffffffc008656d0c>] (wb_writeback+0x1c0/0x698)
+> [H 103098.974819] c2 [<ffffffc008655614>] (wb_do_writeback+0x420/0x54c)
+> [H 103098.974853] c2 [<ffffffc008654f50>] (wb_workfn+0xe4/0x388)
+
 
