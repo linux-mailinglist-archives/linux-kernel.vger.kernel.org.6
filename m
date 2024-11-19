@@ -1,80 +1,82 @@
-Return-Path: <linux-kernel+bounces-413923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C9439D20A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 08:21:11 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 117E09D20B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 08:23:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B48A8B22613
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 07:21:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F7B0B22A06
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 07:23:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF9A2154C17;
-	Tue, 19 Nov 2024 07:21:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 151C4157E82;
+	Tue, 19 Nov 2024 07:22:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ko/N0OuS"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YwOO4Dwq"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4C32147C71
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 07:20:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F0EF8F64;
+	Tue, 19 Nov 2024 07:22:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732000860; cv=none; b=apTTqJ9lnrZ+Lny0polS7Y9AuWmUp9pQt98nUw5aGbfx2ynYW5ktxYhCpvmgyU2w6KCM+lSlms4xA8EjTPBVYO38uizfjAaI9JKfx3Dy0LJK4xn6KH+Ocd9bLtmJTA2Buhq+osMxsNkPWghA0MD42cQZPPoQJQJ5/7wE+zqC5gE=
+	t=1732000951; cv=none; b=lUDMMnrq4DrRK9+RmgTeHHmRyljlyTZT4kczRQMBfEZuGBlYlFQJU2dmjRi8FJD0epjAfOdRVXOD2uVUdEY7JW9lvC9fDt2kduVA4eYp+mZ9GvO2+N+IjhJCZqbk8lmBWShYsLUcG1TDmjmKPaPA7kTa71pK0Dr59i6f98Ljc4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732000860; c=relaxed/simple;
-	bh=2ZRr8lALMYsUscyG4KsvCTt+Xlf5CiXCpJlgFF+C5aA=;
+	s=arc-20240116; t=1732000951; c=relaxed/simple;
+	bh=jYlYgZzrV8+PMmnVm6Kn+6PH4Ajo+OUPHV/oleWSmSY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OHTTNZTr62g1AhtUM/6Lrg9K7f2jlwLmMK7E0zdtPEGNollM6ICde728gI9IBSabLruvEzWFyeQPcLBIpH5oIcR/rnbMdDmWOebAS0/pYcyAplryOFfbGaikMJumAVWUPVIhPIDzSEBq39LhxYAwMPWMHaUQwP+S0Kwi+PWEpU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ko/N0OuS; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-21200c749bfso23347535ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 23:20:58 -0800 (PST)
+	 Content-Type:Content-Disposition:In-Reply-To; b=jnn0YDJENHUUutuVQsPNsM5kHP6rkdd6a66S/kO9Hbcld7BICX6Iam2xOUw6e3lZM5uG2Qv0Mg9TkoNVbDMtZ+emmOIiwT0tH33X1Y0H14DzxtDMWlspNShTKHJrzb2q/X6q+58PDFeLY3CtohbAK9Peq6MnLFvjSPDvVlf82r4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YwOO4Dwq; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-7ed9c16f687so3244973a12.0;
+        Mon, 18 Nov 2024 23:22:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732000857; x=1732605657; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1732000949; x=1732605749; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=AM2DbdcBJnN3qKXVDRxCLMGFBcFG1GzjS2MYPCy6reQ=;
-        b=Ko/N0OuSSDrjM/AJ0WeY121ZI7sk44BpsZ4Eu8rPqBTPuovgiaz7q2uMazLtpNv3rN
-         dri6+F7xyoEXHem/di33aM4+5q5iF4peFM5i7YzkQuxdk78B4VD5TOGgyi+p7J6rrLph
-         5aKKiGV+nacwsfVlpAje2HLdJhez0YNCSa5jcssi8d7Fch1GsfmcqfGjeS6vnjcekVUx
-         SC/7mebL0QSYCXDLNOp2xUQEpWKwDuONWbhic4mLJutbnOmPlGX7yqkhxaD8cqhjJJNF
-         oqKW59/r9WfCMb0LqKny/vXjZ8HAPPBwws1DOp5sfbKXzC+r+zUTi0YnTA+d93dPA/Vx
-         F63g==
+        bh=R2hYIOgm2Uff4u1jweT3m4e9LzzXMUoAloHgshXGR88=;
+        b=YwOO4Dwqg0SA2JWmX/uqbvUYao4GW3lz8HFniW3Mc6vUxtaS+ogDE74jKJKUEn5nda
+         RONpVQMLWkeq7fep4cBDG/4IgVkiH88meL0aZ8M5thciMFMe3H0ddBUpZT/7yZvULoBI
+         1H8rz0SHF5Vta+pKyHaYjyO/b28CY0SZ5yleiwhTeCBmVAfB77kfAVUVqToQb+hNO3YP
+         nS+dResOAo6fgOCzAZ55MtdNZMtSr8rhnShCaDZYlzzgXDOOcrlBqNR5s+BLC5E3JFio
+         1oLf66waINGNLKGMmSLsefcBLztQ320YpIJL517OxOGAL1zhQPWmtf+J6DpzWjsxFYKN
+         VZdQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732000857; x=1732605657;
+        d=1e100.net; s=20230601; t=1732000949; x=1732605749;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=AM2DbdcBJnN3qKXVDRxCLMGFBcFG1GzjS2MYPCy6reQ=;
-        b=lgahP3cnd7wd6SPLVDJCx3D88R2QUDkED+7LGu6HiGekVdLM9ZTYCt1ML9bqD34rqF
-         Bt/AygIb5lTnZ53ERWy5txKu9HPgABIlNVIjl4F+0gTw/JrhZbWKq5CHopRMHyFBisfZ
-         i2Zm+alJ2IcVWCSkn2tMg/pvGLeXdvec30NuhEVhfAlXeWdvAcX++dhFYa3Vu8ESERKN
-         cTENMgZXMpH8wiiftLJro7yc77DQAdZkxHB2I9yhK+ZRRAojY94j/Hfc61kDK/Iq5soN
-         ihGUs6MvOfzVYRsH28ske7RYn407PQAKQcC82XaFLqyHRf7yLJsAIIzbDRV8MKvHSgTL
-         aDcw==
-X-Forwarded-Encrypted: i=1; AJvYcCWnkthPdJBJPnSs+qlTzJzBCHoURxWLV54dTEK4I4Eo0BwEc+X7QXS++TlOJlSS0l1jnqyR7LUXM7Ug1XM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEF9Qu3zNwbP5+94f442D6YMj/rHpfP7MCuJmiVGAYzXEoHJiL
-	3+WCcN8cj/8bZBagxJkGrnjUtmkKjuiogm+EOL3/2bu3C1JRYpiuEB6rQIn7VrVgk+qJuaAj8KM
-	u
-X-Google-Smtp-Source: AGHT+IGR+vAfGVcJemjaVnegG111dXVq7+O24f0BoUFqcpMOC+i8E0jKMN2vIPgmwiDuA+Iuxo17GQ==
-X-Received: by 2002:a17:903:2308:b0:20c:c086:4998 with SMTP id d9443c01a7336-211d0edca49mr192758285ad.55.1732000857612;
-        Mon, 18 Nov 2024 23:20:57 -0800 (PST)
-Received: from localhost ([122.172.86.146])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-211d0f348e4sm66491205ad.125.2024.11.18.23.20.56
+        bh=R2hYIOgm2Uff4u1jweT3m4e9LzzXMUoAloHgshXGR88=;
+        b=K66lQym8RkvkoPTZTno7PKYTpnijow6Dr3SyBVOP4fIUb+h+mXsjwEYOy1DKiGmu6Y
+         mEu0SWxifv10RSEKgbe0T9dN7aWyH+A6yakS6/HTovZR8+DXB1mZyw2kQEV3nbECIJjW
+         Pk/QS5y/NAfBpOMRIvsZdqf3PkE4NyzD1djE6Mv35SuoscLB0aHD6ZMZVjgmv956WZi1
+         Yq/berQDY7NNG7mBISCVDJNghs5tVrsQ4oZJTS1jN61Ib9iSRDS6mAWHt72qoXOJkXQM
+         yRpMwd25nVwnnLm2f8LdHfasZ7LNoWRT2euP1TSbxRsjozJ/dei1w0CUuoByj5ZeU6ax
+         GltQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXIxp3w/8EBgC2TZCcFg3OwXh+cXVa8+jDCcomP/z3AMDlfCXD1XwfYYyUtEKFDlRchq8+jHadjl9MXl6E=@vger.kernel.org, AJvYcCXzQBAUshSS6MAKQ69eFZ33CCBticgKTaq+WdE3XmD1FP+l4bA5mrMIMQ/W8IYAdkp1hgUYu5+3/2Od3Zuo7z57@vger.kernel.org
+X-Gm-Message-State: AOJu0YzAu9ETkA/5iphe3Xt+eheBz3+NQ8u2mxqCeSs9BF5fSYAnKhT6
+	tsLmaakdpb6Z2KmNj3Kqu7Nu+QpajRqLSbFSlZDI9Ng0IiW7m9Yd4e5Z9Rd/Sg4=
+X-Google-Smtp-Source: AGHT+IHpjvOJ/TXR1vPPwp8b3+0f5TCsPpSfNMW9tcKmYwoCx3JQ4QjniS/QesuBZjjSmzoHklC+3A==
+X-Received: by 2002:a05:6a20:918b:b0:1dc:c19a:3a08 with SMTP id adf61e73a8af0-1dcc19a3e8emr2133510637.17.1732000949359;
+        Mon, 18 Nov 2024 23:22:29 -0800 (PST)
+Received: from fedora ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ea28300b26sm6257086a91.16.2024.11.18.23.22.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Nov 2024 23:20:57 -0800 (PST)
-Date: Tue, 19 Nov 2024 12:50:54 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org, Lorenzo Bianconi <lorenzo@kernel.org>,
-	upstream@airoha.com
-Subject: Re: [PATCH v2] cpufreq: airoha: Add EN7581 Cpufreq SMC driver
-Message-ID: <20241119072054.64hi347qmv7ng3un@vireshk-i7>
-References: <20241017190809.16942-1-ansuelsmth@gmail.com>
+        Mon, 18 Nov 2024 23:22:28 -0800 (PST)
+Date: Tue, 19 Nov 2024 07:22:21 +0000
+From: Hangbin Liu <liuhangbin@gmail.com>
+To: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc: netdev@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Florian Westphal <fw@strlen.de>, Phil Sutter <phil@nwl.cc>,
+	wireguard@lists.zx2c4.com, linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv2 net-next] selftests: wireguards: use nft by default
+Message-ID: <Zzw8rb202R6FWVHs@fedora>
+References: <20241111041902.25814-1-liuhangbin@gmail.com>
+ <ZzpNXM17NX3nVzMl@zx2c4.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,36 +85,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241017190809.16942-1-ansuelsmth@gmail.com>
+In-Reply-To: <ZzpNXM17NX3nVzMl@zx2c4.com>
 
-On 17-10-24, 21:07, Christian Marangi wrote:
-> Add simple Cpufreq driver for Airoha EN7581 SoC that control CPU
-> frequency scaling with SMC APIs.
-> 
-> All CPU share the same frequency and can't be controlled independently.
-> Current shared CPU frequency is returned by the related SMC command.
-> 
-> Add SoC compatible to cpufreq-dt-plat block list as a dedicated cpufreq
-> driver is needed with OPP v2 nodes declared in DTS.
-> 
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> ---
-> Changes v2:
-> - Fix kernel bot error with missing slab.h and bitfield.h header
-> - Limit COMPILE_TEST to ARM64 due to smcc 1.2
+On Sun, Nov 17, 2024 at 09:09:00PM +0100, Jason A. Donenfeld wrote:
+> On Mon, Nov 11, 2024 at 04:19:02AM +0000, Hangbin Liu wrote:
+> > Use nft by default if it's supported, as nft is the replacement for iptables,
+> > which is used by default in some releases. Additionally, iptables is dropped
+> > in some releases.
+>  
+> Rather than having this optionality, I'd rather just do everything in
+> one way or the other. So if you're adamant that we need to use nft, just
+> convert the whole thing. And then subsequently, make sure that the qemu
+> test harness supports it. That should probably be a series.
 
-Hi,
+Hmm, try build nft but got error
 
-Sorry for delay at my side to review this driver.
+# make -C tools/testing/selftests/wireguard/qemu/
+make: Entering directory '/home/net/tools/testing/selftests/wireguard/qemu'
+Building for x86_64-linux-musl using x86_64-redhat-linux
+cd /home/net/tools/testing/selftests/wireguard/qemu/build/x86_64/nftables-1.0.9 && ./configure --prefix=/ --build=x86_64-redhat-linux --host=x86_64-linux-musl --enable-static --disable-shared
+checking for a BSD-compatible install... /usr/bin/install -c
+checking whether build environment is sane... yes
+...
+checking for pkg-config... /usr/bin/pkg-config
+configure: WARNING: using cross tools not prefixed with host triplet
+checking pkg-config is at least version 0.9.0... yes
+checking for libmnl >= 1.0.4... yes
+checking for libnftnl >= 1.2.6... yes
+checking for __gmpz_init in -lgmp... no
+configure: error: No suitable version of libgmp found
 
-Now that I looked at it, I don't see a lot of special stuff happening in the
-driver. There are many other platforms with similar situation. What we have done
-for all them, which rely on OPPs coming from DT, is to add a clk for the CPUs
-and do all this magically smcc stuff from clk_get_rate() and clk_set_rate().
-Once that is done, you should be able to reuse the cpufreq-dt driver as is.
+But I can config it manually like: ./configure --prefix=/ --build=x86_64-redhat-linux --host=x86_64-linux-musl --enable-static
+--disable-shared correctly
 
-So a CPU clk is the only missing thing in your case I guess.
+Do you have any idea?
 
--- 
-viresh
+Thanks
+Hangbin
 
