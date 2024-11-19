@@ -1,62 +1,61 @@
-Return-Path: <linux-kernel+bounces-414806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8F229D2E59
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 19:50:25 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 264419D2E63
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 19:54:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DFC08B3A350
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 18:10:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 36C31B37ED2
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 18:10:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04F0A1D5ADC;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 985671D63D2;
 	Tue, 19 Nov 2024 18:08:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="Oob14V6y"
+	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="kiFJMUjs"
 Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB58B1D2F74;
-	Tue, 19 Nov 2024 18:08:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A210F1D3586;
+	Tue, 19 Nov 2024 18:08:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732039738; cv=none; b=mTYfGkJ3xo9qmwhi0llouxYcOQWolKVj89psiuGt7XFCH4VDjASXtAfgpFR5jiSeJpDYX0W+TX4WbwCCUolj+deOffNUg4CMZSiWS/F5DnteqCcEGBJgTW9WVEBeYkRWzgHkIyXwmpg+KcWmuLFhFI6JQzZiw1Z7zwYXM9Be8uY=
+	t=1732039738; cv=none; b=VZk1gSwlBN3IjuKYTaLGzQ4dFH+WVwCMMH6/Le5yYlB9/zA8t14j0VcG/yhmxpMOy/iAGA7nlgf+riPRZXsEfbqpfVimYoUWS8rjCcB/RcT7Vve4piV/xhwkmykGIbBu0ESbHkfWblqn2Zz3JMEOmaXVeS9z9V7jERrz4/vJoTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1732039738; c=relaxed/simple;
-	bh=WBkC4x3oH+HjpkoWuprZ3+yelzSdxKIMIhjE3Q1t37s=;
+	bh=FRxou4ogBasR2CbqYSAi7TTdRHL6MFzbg3a6NsqD/kA=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dUYk4bW2hKHHkqW2ABmrEGK9e+p97ih5lvmuFhp13u6GGKxzUkoNOf7qu24/riALpX2kYKcRuo/2d/Yp6lHEvDZqe6gPwqKBjC6MI5lBye6ImeX5T8dCGHVP0tBvbmbGh4nNPYrDP/om+LUpOzbDlb14/P7Ak1XPs5PHmNwj8kg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=Oob14V6y; arc=none smtp.client-ip=193.68.50.107
+	 MIME-Version:Content-Type; b=P97sZ6qBoTmeRZAun1VjIheI0TXwH1yp5giYe0kPIfDBMD2EXZox9i7HetjZGe4fz/kkWa7ebIHugTdTB4pDy3zRsZuUTO6eBANDJqNh3U3NUtd99d3vMT4sfQCFm2lVL43TDn++1qVSd88ablxwD46p+X+5BRi93lexW6AwGaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=kiFJMUjs; arc=none smtp.client-ip=193.68.50.107
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
 Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 201BBA086F;
-	Tue, 19 Nov 2024 19:08:46 +0100 (CET)
+	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 0E3EEA09FA;
+	Tue, 19 Nov 2024 19:08:47 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
 	:cc:content-transfer-encoding:content-type:content-type:date
 	:from:from:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=mail; bh=g4/9K9HMLuruP/s9d86N
-	LzQjUpmhboWBYp4iW27/LDY=; b=Oob14V6yZVpXg9Q+F4PZ+Vu49tH635mhzce0
-	W1c7vrjHsjDNdPpg6gfpDajmKCRvjjtWlj5Tcg2Ri2n2gbUbQT7OqRBYuvyXZ00h
-	cGa3xQnswHrZv3DSq5Z2xn3JzPmRA2uZ4/0gDFRryPsaf4CfZzWzkSi7I5OFzEk8
-	p7LG6dMuKN+z9gF1ZhgKLU5+Bb2zNmssqjnUawJ8lXfFiBJ8qkX3cNrM2B2CKBtm
-	L4HIO46hkWlSi1Ar+DecDp0X71ICI0HC0HXD1zfkfoEwlH3CJ3saSjsc6kcPic8A
-	MViqINXLoTXTi36Lnu0EumeNodbI1c39xGJedyPmOlfr0bVOboA3YZX3a3LhDctS
-	n2JBOWdi4V3HrMnrWFPDwnlAxTIP131BGKKOkr5Oj239BPCcNS0ZXdXJpycJYgA1
-	1eem6Yd0bZpCAEwA6Kxt7xAf9TnkO1Sqsj0yyJVF9biv5OyOmLMKepVb1ixinn2L
-	HRYi6VQgqmF+XKlPX/B8V7bg2N2tX5O1/WfRraTv+h46LhUJTy5fI71WRiKR7cDQ
-	Mxrpda6Bc9WuBTHj28vppBQh/E5S4ZZNDEWgSVk5f30SmkfZh39x2fGDrLM1DgB7
-	6lAl4iC0lIninpJDfrVgSbBKlxw+1KO80FjkirG2PqctMUfbwCfaZw20POI8Znsv
-	ZTA+ZTU=
+	:reply-to:subject:subject:to:to; s=mail; bh=sDyqACO40CQYV6Wt5JDK
+	GnAAVIir2WsWp+4/gPHIazg=; b=kiFJMUjs6FHicofeKn5EA32DoZcOUTW4XQ1T
+	ga6uEw3H9t3dy4LhD/98tJ6gxxCxxLDzwW0srqscK2pFNyohu27hXrIwnMH22g3i
+	nnnfRSbkZIdWZTPZo5+L+Jp0qyCHQJR4M8sdJEv5V0PKm24jDd2IOKmSH2q8TWF6
+	UuVSGtkoM/v2L7xVT35tcUiOg9rHYzQdKr80edLVFor0RHLfMwfCKhXt+uWI/ji1
+	L+rMetLI/bPwYqJhkGDUNOdQ+8+XybM5vxYRzMiALbS+KxUEYPKaPKQfAVDunuUT
+	bvdQbqVaqnTETAio7/y9UShbuyuFPnErs2hWArXADgfSDCj3JhNdCMhuBpQBREoo
+	tNe2wuc7SsD01JU67y+616Af+KbqnfVanT+OLGd1HDstteWAHQpLtOCHQd2+CT8f
+	p8RBfcIIX+tXr3sNdDZ/meyqaMUIbjrZJLmk7xQ4bPqmjosQCFobI7wFYtWTGdir
+	gze9133jdK70QBzN3l5RWGmPKeIAJ8wdfsBRYetdWQVq0iDN66IwBnZlRvuUHExl
+	YsHsTWMNGP3SwqbM2fAw4E4oLq2Yg8g2O/BdERenHTYar//dxm3zwOqczb1jKZoj
+	GxNPdRCv+uGZUKdeA9xMfAqg+XJYADAKw2VxazdVgip6zV2LMZwyyRmG3kSUoZe4
+	IZI/YMs=
 From: =?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>
-To: Rob Herring <robh@kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: =?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Subject: [PATCH v5 7/8] dt-bindings: trivial-devices: Add Injoinic IP5306
-Date: Tue, 19 Nov 2024 19:07:39 +0100
-Message-ID: <20241119180741.2237692-7-csokas.bence@prolan.hu>
+To: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: =?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>, "Samuel
+ Holland" <samuel@sholland.org>, Sebastian Reichel <sre@kernel.org>
+Subject: [PATCH v5 8/8] power: ip5xxx_power: Add support for IP5306
+Date: Tue, 19 Nov 2024 19:07:40 +0100
+Message-ID: <20241119180741.2237692-8-csokas.bence@prolan.hu>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20241119180741.2237692-1-csokas.bence@prolan.hu>
 References: <20241119180741.2237692-1-csokas.bence@prolan.hu>
@@ -68,37 +67,80 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1732039725;VERSION=7980;MC=1249036192;ID=46212;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
+X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1732039726;VERSION=7980;MC=583164542;ID=46213;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
 X-ESET-Antispam: OK
 X-EsetResult: clean, is OK
 X-EsetId: 37303A29ACD9485560766B
 
-It is to be handled with the rest of the IP51xx/52xx family.
+Add ip5xxx_regfield_config for IP5306
 
-Acked-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Csókás, Bence <csokas.bence@prolan.hu>
 ---
+ drivers/power/supply/ip5xxx_power.c | 44 +++++++++++++++++++++++++++++
+ 1 file changed, 44 insertions(+)
 
-Notes:
-    Changes in v5:
-    * collected Rob's ACK
-
- Documentation/devicetree/bindings/trivial-devices.yaml | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/trivial-devices.yaml b/Documentation/devicetree/bindings/trivial-devices.yaml
-index 9bf0fb17a05e..1538f1ce3238 100644
---- a/Documentation/devicetree/bindings/trivial-devices.yaml
-+++ b/Documentation/devicetree/bindings/trivial-devices.yaml
-@@ -147,6 +147,8 @@ properties:
-           - injoinic,ip5207
-             # Injoinic IP5209 2.4A Power Bank IC with I2C
-           - injoinic,ip5209
-+            # Injoinic IP5306 2.1A Power Bank IC with I2C option
-+          - injoinic,ip5306
-             # Inspur Power System power supply unit version 1
-           - inspur,ipsps1
-             # Intersil ISL29028 Ambient Light and Proximity Sensor
+diff --git a/drivers/power/supply/ip5xxx_power.c b/drivers/power/supply/ip5xxx_power.c
+index 46b84fb696d7..46f8eb7100c1 100644
+--- a/drivers/power/supply/ip5xxx_power.c
++++ b/drivers/power/supply/ip5xxx_power.c
+@@ -729,6 +729,49 @@ static struct ip5xxx_regfield_config ip51xx_fields = {
+ 	.boost_undervolt_uv_per_bit = 100000,
+ };
+ 
++static struct ip5xxx_regfield_config ip5306_fields = {
++	.charger_enable = REG_FIELD(0x00, 4, 4),
++	.charger_const_volt_sel = REG_FIELD(0x22, 0, 1),
++	.charger_const_curr_sel = REG_FIELD(0x24, 0, 4),
++	.charger_status = REG_FIELD_UNSUPPORTED, // other bits...
++	.charger_chg_end = REG_FIELD(0x71, 3, 3),
++	.charger_timeout = REG_FIELD_UNSUPPORTED,
++	.charger_vin_overvolt = REG_FIELD_UNSUPPORTED,
++	.boost_enable = REG_FIELD(0x00, 5, 5),
++	.boost_llshdn_enable = REG_FIELD_UNSUPPORTED,
++	.boost_llshdn_i_limit = REG_FIELD_UNSUPPORTED,
++	.boost_load_powerup_en = REG_FIELD(0x00, 2, 2),
++	.boost_vin_pullout_en = REG_FIELD(0x01, 2, 2),
++	.boost_undervolt_limit = REG_FIELD(0x21, 2, 4),
++	.boost_light_load_status = REG_FIELD(0x72, 2, 2),
++	.battery_ntc_dis = REG_FIELD_UNSUPPORTED,
++	.battery_type = REG_FIELD(0x22, 2, 3),
++	.battery_vset_en = REG_FIELD_UNSUPPORTED,
++	.battery_adc_volt_low = REG_FIELD_UNSUPPORTED,
++	.battery_adc_volt_high = REG_FIELD_UNSUPPORTED,
++	.battery_adc_curr_low = REG_FIELD_UNSUPPORTED,
++	.battery_adc_curr_high = REG_FIELD_UNSUPPORTED,
++	.battery_adc_ovolt_low = REG_FIELD_UNSUPPORTED,
++	.battery_adc_ovolt_high = REG_FIELD_UNSUPPORTED,
++	.btn_shdn_enable = REG_FIELD(0x00, 0, 0),
++	.btn_wled_mode = REG_FIELD(0x01, 6, 6),
++	.btn_shdn_mode = REG_FIELD(0x01, 7, 7),
++	.btn_long_press_time = REG_FIELD(0x02, 4, 4), // +1s
++	.btn_pressed = REG_FIELD_UNSUPPORTED,
++	// TODO double press
++	.btn_long_pressed = REG_FIELD(0x77, 1, 1),
++	.btn_short_pressed = REG_FIELD(0x77, 0, 0),
++	.wled_enable = REG_FIELD_UNSUPPORTED,
++	.wled_detect_en = REG_FIELD_UNSUPPORTED,
++	.wled_present = REG_FIELD_UNSUPPORTED,
++
++	.vbat_max = 4400000,
++	.boost_undervolt_setpoint = 4450000,
++	.boost_undervolt_uv_per_bit = 50000,
++	.const_curr_setpoint = 50000,
++	.chg_end_inverted = 1,
++};
++
+ #define ip5xxx_setup_reg(_field, _reg) \
+ 			do { \
+ 				if (likely(cfg->_field.lsb <= cfg->_field.msb)) { \
+@@ -824,6 +867,7 @@ static const struct of_device_id ip5xxx_power_of_match[] = {
+ 	{ .compatible = "injoinic,ip5109", .data = &ip51xx_fields },
+ 	{ .compatible = "injoinic,ip5207", .data = &ip51xx_fields },
+ 	{ .compatible = "injoinic,ip5209", .data = &ip51xx_fields },
++	{ .compatible = "injoinic,ip5306", .data = &ip5306_fields },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, ip5xxx_power_of_match);
 -- 
 2.34.1
 
