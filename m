@@ -1,70 +1,70 @@
-Return-Path: <linux-kernel+bounces-413921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13E459D209A
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 08:11:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF69F9D209D
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 08:15:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96162B2296F
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 07:11:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B9D71F224FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 07:15:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9918192B83;
-	Tue, 19 Nov 2024 07:10:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 404CD15535A;
+	Tue, 19 Nov 2024 07:15:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R6OJmIk7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3cVL8lf0";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="fbjdjWM/"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C46D154C17;
-	Tue, 19 Nov 2024 07:10:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 091A0146D6E;
+	Tue, 19 Nov 2024 07:15:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732000246; cv=none; b=Y7x5rHu+WI4zsci8ZT2cJgq1lnIf1K2zYSz1105R2WYOFxJDmvsdgREXSYbiZ01Fn6O4IZPxWXNmGH397Uf9EcZ2caf83leirw2veHnOn93lb8VK0OGkATdrTG4NLvkFJpKu1YjmKgmalGpTgERHBU2wDq1nzNyoS+jLeO4cqTo=
+	t=1732000522; cv=none; b=r2iwo3NlS6wd4ptNyryYpDb1TGTsBHNj0R/kJhP7JMB4hK0XkMBNF5X6hQBMwZtP5VMXw16IJqmmpgrD2Uzm0N25Jo+ELq+d3a8Cr2BoLT3Bnpv2tWFFU4LVYptlgkAVUz6UR0cOuOpzCu3Lx8b0osw0fkXCykrE+t5FUikZ/VU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732000246; c=relaxed/simple;
-	bh=shWx6Jcnj1KegI/uJvVbQm45B4OLMQ5bxRUZIgx+ohM=;
+	s=arc-20240116; t=1732000522; c=relaxed/simple;
+	bh=qtreDBVWSkdnxccPSuy9Gw9HnBBOXHY4d5ADbOivAdE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ECESZXyb91AclX3h/EgIJHY1KAeVebJkitnXlu5Eakht6SySQYwWUYH/DOIegmLLQG0H2wmppWgoTRYS+cbDlUkjvlJMpe6FFzeL2xjTdY2maOq6rmiHGac1v9Ubz/sDZJstpsIPAQsWJSWvQHHyv3JFnMoHPSwJxkLAoa9wUH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R6OJmIk7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4C7BC4CECF;
-	Tue, 19 Nov 2024 07:10:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732000245;
-	bh=shWx6Jcnj1KegI/uJvVbQm45B4OLMQ5bxRUZIgx+ohM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=R6OJmIk7PIW+zmrq0G5sC5/mbeSlj8LW234oLQBUtfta87oICCg1hvZL/pnG8Kd+V
-	 xwUBDmKlgPRKpnNT2iT6dtBAP/xTY1lV+jRao0ZEzs6Ol4b9xzVE4jz9hYcvRLmZcZ
-	 Xld35W+z8Ov5tHMrGj0xa9PcU/sIyNB2efaI9DM6kMCNMmwBPW+fImbAxRayFPn5ll
-	 kWxXSbHbsBz8qmfUTHp+trnfadLzWyRbHaAyabcT7Qqo8HblFLxnc+i/rGVjXp49DS
-	 ZSpw+vOPVqqJu2rl1Bq/bNBiP1IKgTSL/jO6p7QtDhvK3UiezQV9+xYP2QdmoVwy0a
-	 ePl5Wuzmf1/GA==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1tDINd-000000004L2-2Ya0;
-	Tue, 19 Nov 2024 08:10:33 +0100
-Date: Tue, 19 Nov 2024 08:10:33 +0100
-From: Johan Hovold <johan@kernel.org>
-To: quic_zijuhu <quic_zijuhu@quicinc.com>
-Cc: Marcel Holtmann <marcel@holtmann.org>,
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Steev Klimaszewski <steev@kali.org>,
-	Paul Menzel <pmenzel@molgen.mpg.de>, Zijun Hu <zijun_hu@icloud.com>,
-	linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Luiz Augusto von Dentz <luiz.von.dentz@intel.com>,
-	Bjorn Andersson <bjorande@quicinc.com>,
-	"Aiqun Yu (Maria)" <quic_aiquny@quicinc.com>,
-	Cheng Jiang <quic_chejiang@quicinc.com>,
-	Jens Glathe <jens.glathe@oldschoolsolutions.biz>,
-	stable@vger.kernel.org, Johan Hovold <johan+linaro@kernel.org>
-Subject: Re: [PATCH v2] Bluetooth: qca: Support downloading board ID specific
- NVM for WCN6855
-Message-ID: <Zzw56VwjTmlJ7mpW@hovoldconsulting.com>
-References: <20241116-x13s_wcn6855_fix-v2-1-c08c298d5fbf@quicinc.com>
- <Zzs2b6y-DPY3v8ty@hovoldconsulting.com>
- <d382b377-e824-4728-8acd-784757dde210@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=E05ADa4wCTxLSd2U74F6RXRyLnd7zUIw3cpSNCmSYH8cMGx1RPWwcP43A0VWwZQYjxNMw9jPvHtR68+h8qFhKei6JRc2x9f1E6prwfY1VxLGuHD2If08gNFjE43qcQjqcumYM63f4tWkas/q7ianhfb+bHIQOBQqliv5/8wFxPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3cVL8lf0; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=fbjdjWM/; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 19 Nov 2024 08:15:10 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1732000512;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fYHxGu57Vd/67w2lE6iMGTcHGQWrzFlObyNHWuPMT1k=;
+	b=3cVL8lf0Gb/HWJXsnjzFswzLt0MXmK8lKTNk9B1V6rvcJzSfEH0dIAcQDVWOb/QV8D+n4N
+	m2tr85+9HY+P6/ldmAvE0kL4WeImVJfRxmdgR3TlpxfwEy0BNb4Sra7pqoZ/JA0nnFSrUG
+	fJQBSiIAHYNinfY3VZJUu1tnfBSiZaKAMFo2+JXjk3OFVFvv6uh3S08VU8fKEFo7SF9Pso
+	jDHRSExl7S5om4W8x+H5JWcyREh0XXZi8+aT1P57YPp/LOdAaWmf2edApTYzZDXkrXycEa
+	O5XK8VT1P9wqL2H5XnlvMCG4r+tnuLoYaNCEOyzfVCcUF/9ZLMfL1Om1H44dTQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1732000512;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fYHxGu57Vd/67w2lE6iMGTcHGQWrzFlObyNHWuPMT1k=;
+	b=fbjdjWM/UYcRFULLa6J86gF2bgO/IHXOCZ7BVYjO3x41u7LqH+rG9jZZt7xRzKioJfCTOf
+	xkNWFejviIZuH4Cw==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+	Krishna Reddy <vdumpa@nvidia.com>, Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+	Steven Rostedt <rostedt@goodmis.org>,
+	linux-rt-devel@lists.linux.dev
+Subject: Re: [PATCH] iommu/tegra241-cmdqv: do not call smp_processor_id in
+ preemptible context
+Message-ID: <20241119071510.-6OKEw2q@linutronix.de>
+References: <ZzvZkMKhwmJESpdM@uudg.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,55 +73,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d382b377-e824-4728-8acd-784757dde210@quicinc.com>
+In-Reply-To: <ZzvZkMKhwmJESpdM@uudg.org>
 
-On Tue, Nov 19, 2024 at 10:13:11AM +0800, quic_zijuhu wrote:
-> On 11/18/2024 8:43 PM, Johan Hovold wrote:
-> > On Sat, Nov 16, 2024 at 07:49:23AM -0800, Zijun Hu wrote:
-> >> For WCN6855, board ID specific NVM needs to be downloaded once board ID
-> >> is available, but the default NVM is always downloaded currently, and
-> >> the wrong NVM causes poor RF performance which effects user experience.
-> >>
-> >> Fix by downloading board ID specific NVM if board ID is available.
+On 2024-11-18 21:19:28 [-0300], Luis Claudio R. Goncalves wrote:
+> With PREEMPT_RT enabled some of the calls to tegra241_cmdqv_get_cmdq()
+> during boot will happen in preemptible context. As this function calls
+> smp_processor_id(), these calls will trigger a "BUG: using smp_processor_id()
+> in preemptible" backtrace if DEBUG_PREEMPT is enabled.
 
-> >> Fixes: 095327fede00 ("Bluetooth: hci_qca: Add support for QTI Bluetooth chip wcn6855")
-> >> Cc: stable@vger.kernel.org # 6.4
-> >> Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
-> > 
-> > When making non-trivial changes, like the addition of the fallback NVM
-> > feature in v2, you should probably have dropped any previous Reviewed-by
-> > tags.
+If this is only on PREEMPT_RT, where is the disabled preemption coming
+from on !PREEMPT_RT?
+
+> As tegra241_cmdqv_get_cmdq() only calls smp_processor_id() to use the
+> CPU number as a factor to balance out traffic on cmdq usage, it is safe
+> to use raw_smp_processor_id() here.
 > 
-> make sense. will notice these aspects for further patches.
-> 
-> > The fallback handling looks good to me though (and also works as
-> > expected).
-> 
-> so, is it okay to make this patch still keep tags given by you ?
+> Signed-off-by: Luis Claudio R. Goncalves <lgoncalv@redhat.com>
 
-Yes, it's fine to keep my Reviewed-by and Tested-by tags.
-
-> >> Tested-by: Johan Hovold <johan+linaro@kernel.org>
-> >> Tested-by: Steev Klimaszewski <steev@kali.org>
-> >> Tested-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
-> >> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
-> > 
-> >> Changes in v2:
-> >> - Correct subject and commit message
-> >> - Temporarily add nvm fallback logic to speed up backport.
-> >> — Add fix/stable tags as suggested by Luiz and Johan
-> >> - Link to v1: https://lore.kernel.org/r/20241113-x13s_wcn6855_fix-v1-1-15af0aa2549c@quicinc.com
-
-> > If you think it's ok for people to continue using the wrong (default)
-> > NVM file for a while still until their distros ship the board-specific
-> > ones, then this looks good to me and should ease the transition:
-> 
-> yes. i think it is okay now.
-
-Then I think this patch is ready to be merged.
-
-Thanks again for your help with this.
-
-Johan
+Sebastian
 
