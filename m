@@ -1,158 +1,143 @@
-Return-Path: <linux-kernel+bounces-413884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48AD39D2020
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 07:13:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AB609D2021
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 07:13:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F69728266E
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 06:13:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F7A9281A88
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 06:13:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9302153BD7;
-	Tue, 19 Nov 2024 06:12:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDB72154BE2;
+	Tue, 19 Nov 2024 06:13:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="VETdE85y"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EoKq42x7"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E0BE150981;
-	Tue, 19 Nov 2024 06:12:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 038E61527B4;
+	Tue, 19 Nov 2024 06:13:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731996778; cv=none; b=NH8MCyFlf++A2y4/MuSsSmErmjPmAGaj6JploNRa3hMm+kuk90CvIX3NOvbdTTKqVNaWwzia214/HQvC1JaVVlDwsw6Os2p8WJTtlJ5UyIe6OVUibk8VuJZsTd1lPg9L2XPDw7BLVQi5fSgtLuP7+8jDGXMd8V0yENQY0z8VU5g=
+	t=1731996798; cv=none; b=hmKzGCEF79ndysnlvRFA4ydLNE41yF96W/yQxs4DORN2jTnPajbuE0H43+N+rC6w6VcWTzG7x7fHWvk8HCg5UDdiJpeGtvp3DX5RdyQDDpWRKNSHYkHha646eopR8bRV662v1D5LKKgOobsB/YdTimOYA+g8qKf4EEtzHbGfZP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731996778; c=relaxed/simple;
-	bh=U9sbgYHr68hIsWqzRN6WaDTAbChhR302vBJX4i47JGs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=tmrZP39s897qQQw1M6s2jYKdrw1HFpsxffHOZMoIzDNyhGH2RBMlRdqjminf6iPd9eSSbjLbYhDYAAc7X5SJCoCwFH7UZS9D5m7fzLI3tQVB2JxoM2+Q7AlftC30tMQqi9k/GR1kqadEKTjYzdb/4zCZoMBNeRymOkg974gNAyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=VETdE85y; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4AJ6CYq3099191;
-	Tue, 19 Nov 2024 00:12:34 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1731996754;
-	bh=lDdewSiWiOvlIgmH8VJPYwm2861hl32xSAybYxLGNBU=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=VETdE85ygXVLJILwxsd+hUBR6n0U4zvlSFT8qSpS91Y6cbyl6Pn51b8qjzHF/9BnT
-	 jBcHvTZfdtBpasALEpEIbPhuxbrx8PLiFeMVzgVNimInaZq2ZL7fUnoC5y+fibUPlC
-	 VuS79+GSbkkvhNRxbfJZCUP2wsJ0mHg8Ek9qoBUg=
-Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4AJ6CYaM004366
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 19 Nov 2024 00:12:34 -0600
-Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 19
- Nov 2024 00:12:34 -0600
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 19 Nov 2024 00:12:34 -0600
-Received: from [172.24.227.94] (uda0132425.dhcp.ti.com [172.24.227.94])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4AJ6CUJd101713;
-	Tue, 19 Nov 2024 00:12:31 -0600
-Message-ID: <d738bb00-e295-4d74-8ba2-efd82b6df2ea@ti.com>
-Date: Tue, 19 Nov 2024 11:42:30 +0530
+	s=arc-20240116; t=1731996798; c=relaxed/simple;
+	bh=8M/lEnIq/jKzK/KW/cJtvu6eWiKsSVTv67NZcriLZGU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=c1caK5ERM6O06mWd0IrdpDhPvsS5VJvV6DdLEQko3aFyFBvpRrcrB+X6QaES9c3ePb+m76WvZG6G/JAHhyYHEfweFBqkUEf4y2yytBNgeOk5mH34PjftWP35EabYhJAvp8ggih2mftJS48KfnZnEo1B+0oM02e04x57CnxGmYbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EoKq42x7; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2e9e377aeadso3070556a91.1;
+        Mon, 18 Nov 2024 22:13:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731996796; x=1732601596; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8M/lEnIq/jKzK/KW/cJtvu6eWiKsSVTv67NZcriLZGU=;
+        b=EoKq42x7ssOeyayisRPzSxEYFf/NFZIH9hrYWUwppEHP9J5ByCzdyPV7NmjNC5jayE
+         JILjhXSkLAZhqpardL0YkDKRJpInWP2a65DounnOP/+R42ieXXEDqJCBbUxZJpQ9EfpX
+         +G1sRShHCD84el2BvdkfaO4qseEJ0jM9zUP8gla81Ylfl35FHOr+kWjS7tYiYsIGRWX0
+         1+782df8U6oXkifZeaw+B8n5WANN3sxVSuV0c+JzFxUBCxtSbzIjjmWctime3K/yHYEy
+         Z6xx5VL842UC8elTbRQ8fx+S+bV6tSEb//WpjqL6skqaTOAxoRCZc5C662C0pqi71qTA
+         4m2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731996796; x=1732601596;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8M/lEnIq/jKzK/KW/cJtvu6eWiKsSVTv67NZcriLZGU=;
+        b=dRgmsIq//ycwJP6X4IJFTIMCI3DToG1f7+aU2yFm4CR3ic/4zJg6PWO12wrdsRA3TA
+         zuTVaFG2vge2x6D7JGhXpxjPreIckLrVF9a62g022Rl8FkzOp/nBp7yafeQeN5NjESSn
+         KaJq/s/iOjseIqkLHA93vB79s/ZyXWj2uTha+uNxnaviQDCj6MFbkOQ1m3Ac9qqwR6NL
+         aiSBOsAIUERrqOcCZb9TyyBXH+LOJRSRPqO3JlPsSdGy3IK8lESZlUN8nYJdU0GUi0hY
+         l+q82dMAbpQjnPEJg4Uq6eJfS25MCNrnx53A5nID8ZlusfBIyRjlWARc8y0ycLHSg9t8
+         Ebkg==
+X-Forwarded-Encrypted: i=1; AJvYcCWV0u1Hf0AuXBY6stq8ObTA26/658kN5Dvds6PA5X3BUV3wRfyYV1+zApLcFDwu4oN2EnocCde5OWa3RvxD@vger.kernel.org, AJvYcCXCFKXKYJfDgTqeUmh8WkmeidRTkQlSbOptVl7pog8wXmBNopq/v/IrzcY6fPFmRevU8bg=@vger.kernel.org, AJvYcCXLCgpZdZZRdJgve9FCzjffIKcT2blOixefsO6xCLmANL/KB7DFmc95mqfkGEhL2nxteHdewy00Xw8Yxe2ga4I9KHNy@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0Fzr1cwj9EqbR9yGeScIonDneDTKsajXC8RQGtWjQohVIP4Ks
+	TsAWRViftfXsGu5iJtMMb/X+fyOSL7d/0PsMbrCu2Hi0hd1hTZji1coNSTZxQT0Ulsu38Az344X
+	XBwValRSEnZpqotl9e4VYZtiWmjk=
+X-Google-Smtp-Source: AGHT+IHkjWub5fzfQ1YUHv7B9CkKDJ2ytxkic4ZvhJNruosAltuxflg+vAYVQt9lu58Pj5U/zyvkWRWlTb0lQKUEzMA=
+X-Received: by 2002:a17:90b:380a:b0:2ea:5fed:4a37 with SMTP id
+ 98e67ed59e1d1-2ea5fed4bd9mr8011565a91.21.1731996796320; Mon, 18 Nov 2024
+ 22:13:16 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] dt-bindings: soc: ti: pruss: Add clocks for ICSSG
-To: Roger Quadros <rogerq@kernel.org>, MD Danish Anwar <danishanwar@ti.com>,
-        <conor+dt@kernel.org>, <krzk+dt@kernel.org>, <robh@kernel.org>,
-        <ssantosh@kernel.org>, <nm@ti.com>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <s-anna@ti.com>, <kristo@kernel.org>,
-        <srk@ti.com>
-References: <20241113110955.3876045-1-danishanwar@ti.com>
- <20241113110955.3876045-2-danishanwar@ti.com>
- <adcc5aa5-0f51-4c69-b684-a1e0844c5e3f@kernel.org>
- <6e11c85a-5883-4a28-b5bd-98da28f20425@kernel.org>
-From: Vignesh Raghavendra <vigneshr@ti.com>
-Content-Language: en-US
-In-Reply-To: <6e11c85a-5883-4a28-b5bd-98da28f20425@kernel.org>
+References: <20241105133405.2703607-1-jolsa@kernel.org> <20241117114946.GD27667@noisy.programming.kicks-ass.net>
+ <ZzsRfhGSYXVK0mst@J2N7QTR9R3>
+In-Reply-To: <ZzsRfhGSYXVK0mst@J2N7QTR9R3>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Mon, 18 Nov 2024 22:13:04 -0800
+Message-ID: <CAEf4BzbXYrZLF+WGBvkSmKDCvVLuos-Ywx1xKqksdaYKySB-OQ@mail.gmail.com>
+Subject: Re: [RFC 00/11] uprobes: Add support to optimize usdt probes on x86_64
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Jiri Olsa <jolsa@kernel.org>, 
+	Oleg Nesterov <oleg@redhat.com>, Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, 
+	Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, 
+	John Fastabend <john.fastabend@gmail.com>, Hao Luo <haoluo@google.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Alan Maguire <alan.maguire@oracle.com>, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, Will Deacon <will@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Nov 18, 2024 at 2:06=E2=80=AFAM Mark Rutland <mark.rutland@arm.com>=
+ wrote:
+>
+> On Sun, Nov 17, 2024 at 12:49:46PM +0100, Peter Zijlstra wrote:
+> > On Tue, Nov 05, 2024 at 02:33:54PM +0100, Jiri Olsa wrote:
+> > > hi,
+> > > this patchset adds support to optimize usdt probes on top of 5-byte
+> > > nop instruction.
+> > >
+> > > The generic approach (optimize all uprobes) is hard due to emulating
+> > > possible multiple original instructions and its related issues. The
+> > > usdt case, which stores 5-byte nop seems much easier, so starting
+> > > with that.
+> > >
+> > > The basic idea is to replace breakpoint exception with syscall which
+> > > is faster on x86_64. For more details please see changelog of patch 7=
+.
+> >
+> > So this is really about the fact that syscalls are faster than traps on
+> > x86_64? Is there something similar on ARM64, or are they roughly the
+> > same speed there?
+>
+> From the hardware side I would expect those to be the same speed.
+>
+> From the software side, there might be a difference, but in theory we
+> should be able to make the non-syscall case faster because we don't have
+> syscall tracing there.
+>
+> > That is, I don't think this scheme will work for the various RISC
+> > architectures, given their very limited immediate range turns a typical
+> > call into a multi-instruction trainwreck real quick.
+> >
+> > Now, that isn't a problem if their exceptions and syscalls are of equal
+> > speed.
+>
+> Yep, on arm64 we definitely can't patch in branches reliably; using BRK
+> (as we do today) is the only reliable option, and it *shouldn't* be
+> slower than a syscall.
+>
+> Looking around, we have a different latent issue with uprobes on arm64
+> in that only certain instructions can be modified while being
+> concurrently executed (in addition to the atomictiy of updating the
 
+What does this mean for the application in practical terms? Will it
+crash? Or will there be some corruption? Just curious how this can
+manifest.
 
-On 18/11/24 19:22, Roger Quadros wrote:
-> 
-> 
-> On 18/11/2024 15:33, Roger Quadros wrote:
->> Hi,
->>
->> On 13/11/2024 13:09, MD Danish Anwar wrote:
->>> The ICSSG module has 7 clocks for each instance.
->>>
->>> These clocks are ICSSG0_CORE_CLK, ICSSG0_IEP_CLK, ICSSG0_ICLK,
->>> ICSSG0_UART_CLK, RGMII_MHZ_250_CLK, RGMII_MHZ_50_CLK and RGMII_MHZ_5_CLK
->>> These clocks are described in AM64x TRM Section 6.4.3 Table 6-398.
->>>
->>> Add these clocks to the dt binding of ICSSG.
->>>
->>> Link: https://www.ti.com/lit/pdf/spruim2 (AM64x TRM)
->>> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
->>> ---
->>>  Documentation/devicetree/bindings/soc/ti/ti,pruss.yaml | 10 ++++++++++
->>>  1 file changed, 10 insertions(+)
->>>
->>> diff --git a/Documentation/devicetree/bindings/soc/ti/ti,pruss.yaml b/Documentation/devicetree/bindings/soc/ti/ti,pruss.yaml
->>> index 3cb1471cc6b6..927b3200e29e 100644
->>> --- a/Documentation/devicetree/bindings/soc/ti/ti,pruss.yaml
->>> +++ b/Documentation/devicetree/bindings/soc/ti/ti,pruss.yaml
->>> @@ -92,6 +92,16 @@ properties:
->>>      description: |
->>>        This property is as per sci-pm-domain.txt.
->>>  
->>> +  clocks:
->>> +    items:
->>> +      - description: ICSSG_CORE Clock
->>> +      - description: ICSSG_IEP Clock
->>> +      - description: ICSSG_RGMII_MHZ_250 Clock
->>> +      - description: ICSSG_RGMII_MHZ_50 Clock
->>> +      - description: ICSSG_RGMII_MHZ_5 Clock
->>> +      - description: ICSSG_UART Clock
->>> +      - description: ICSSG_ICLK Clock
->>> +
->>
->> There are actually many more clocks [1]
->> What is the purpose of adding all these clocks in the DT if driver doesn't
->> use them?
->>
-
-DT should completely describe the HW and not based on what Linux driver
-needs. So its valid to describe all clock inputs to a module
-irrespective of what driver does with it.
-
->> Only CORE and IEP clocks parent can be configured via clock muxes.
->> Those are already defined in the icssg?_cfg nodes.
-> 
-> Actually those clock muxes are internal to ICSSG.
-> We still need to be able to set clock parents of CORE and IEP clock.
-> 
-> So pruss block needs at most 2 clocks like you had in v2 of this patch?
-> 
->>
->> [1] - https://software-dl.ti.com/tisci/esd/22_01_02/5_soc_doc/am64x/clocks.html
->>
->>>  patternProperties:
->>>  
->>>    memories@[a-f0-9]+$:
->>
-> 
-
--- 
-Regards
-Vignesh
-https://ti.com/opensource
-
+> bytes in memory), and for everything else we need to stop-the-world. We
+> handle that for kprobes but it looks like we don't have any
+> infrastructure to handle that for uprobes.
+>
+> Mark.
 
