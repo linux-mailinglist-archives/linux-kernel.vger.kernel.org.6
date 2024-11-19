@@ -1,311 +1,580 @@
-Return-Path: <linux-kernel+bounces-413816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44FED9D1F21
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 05:13:39 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A00A9D1F27
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 05:17:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C5BA28287A
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 04:13:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C7BFB225C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 04:17:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D636414A60C;
-	Tue, 19 Nov 2024 04:13:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3588114883F;
+	Tue, 19 Nov 2024 04:17:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="AbOyi1ex"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2087.outbound.protection.outlook.com [40.107.244.87])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="H4rmwVXg"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15F4F1459FD;
-	Tue, 19 Nov 2024 04:13:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.87
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731989608; cv=fail; b=YDHbDs6jCuAzH7Smr0YdzPtJYcIai6zMBZf/TKiA/OGMswynNqsbfpd8UbrhnqyaB+5NZjMRf/TXhiRnYnGU1y10r2NsY9dwKDrEP2zMZJUfhwh6VwS7Qtc7zW6hJBxj4XYyBTHeArneh1kH0d9Q/myZeLHYrecpfrzff6JK9NI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731989608; c=relaxed/simple;
-	bh=ULJMVG5m7NRPCxcf06aUC9FjbJhctfPNRzi2A49v0KY=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=ZIw9ee9psVkb13OxMmM58DYFmo148rUSaqM5RetT4pjmAN6jLzW0rArzgpad2Yfr/0y+5XXm1mlo1oznf0nxGhLKXzdW5r3l5NHJksarLfOmvuSS069tDV9v7vUaAyrnOwaI0xjBCAiC3Wp5/NzAQhAwhvFAFf8WZVPHHg2kPcc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=AbOyi1ex; arc=fail smtp.client-ip=40.107.244.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=nlF2gEFrV4KlmyIitmUzlaFh7e08C4eddo6HLK+xW92Tk++8bjnB/oNPz0JStFOAXJXL8NveNTgkx+RpaDqwEreeTQZ4pYPx+LEqkea0qDeJHJLHHUohUOGx1wUkUYUNt3vV2XNPd5/xZcRv+Tdbkug2Fy7ifkmHn9mg6Lca3Qt82hKgXgV1nG/P4T3MA1Xa7Sj9nUFCSadAej7AVLWNPGIDpSd143y+EpO7gy/CHAowWvAQ6KN+3O07ubWPpYeack8Qsjv9neh1g/7JrRWe/jgkpH9NbDOzkPqtE3S6QatlibztULfeOAa4OzmtgAZCf/dnQuFEbLK5qkjHnYlgUQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qD4BE6S5JQdsuovGwlyBHkPulveEf/BWRHtaVlMgyfA=;
- b=KEbuSygoqaZIBwR7B3UcwzE1bOuDz0tsK8GAcmSehudnBsUZdHVcw7ocnuw/8ZQiJPbjjyQtxwsprUcZg9lX+lcB+4UPOyFNTwak9I9GNlNMjjHj7LiOPDmKNAzCclw1VAJGCHUYywCBN7+Fnl+LNGu6Am0T/YfBGSQcVqojm7r/vi6eVU4XxQEOgGOZ0qSf5uh9da+LPAxM6bMmUeWmjmU3tnrDoQnvPnYXVilwqpELJ+L671dpEGpJg73ZcXhtyhjyFmxybhbYWlEtSltBgCfCI8Ok/X3OiWA1AZSuMWYop6M14XnYqoWh8kpKCDaJn64zBJE0cWn4Hn38KDqaDQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qD4BE6S5JQdsuovGwlyBHkPulveEf/BWRHtaVlMgyfA=;
- b=AbOyi1exT8so4on8fmkvw6Z0q/ermi519hrV1hFG+9N0IbyNVAEKDz3LXiOWACMxixkt1uqsY38buHtd1zliQQ+Kvln0KKUu5qG/HninwSqNchBuRBk9fMIBW6HGEkWAxFd08Wv3j49oW4HyvvS7xo69ceTo8zYpqNedH8uZFPc=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
- by IA0PR12MB8862.namprd12.prod.outlook.com (2603:10b6:208:48e::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.24; Tue, 19 Nov
- 2024 04:13:24 +0000
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca%4]) with mapi id 15.20.8158.019; Tue, 19 Nov 2024
- 04:13:24 +0000
-Message-ID: <b6a4e31f-610a-42f0-8e3e-970d3610384b@amd.com>
-Date: Mon, 18 Nov 2024 22:13:21 -0600
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 00/22] Add support for binding ACPI platform profile to
- multiple drivers
-To: Armin Wolf <W_Armin@gmx.de>, Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>,
- Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
- Corentin Chary <corentin.chary@gmail.com>, "Luke D . Jones"
- <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>,
- Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
- Alexis Belmonte <alexbelm48@gmail.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>,
- open list <linux-kernel@vger.kernel.org>,
- "open list:ACPI" <linux-acpi@vger.kernel.org>,
- "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER"
- <platform-driver-x86@vger.kernel.org>,
- "open list:THINKPAD ACPI EXTRAS DRIVER"
- <ibm-acpi-devel@lists.sourceforge.net>,
- Mark Pearson <mpearson-lenovo@squebb.ca>,
- Matthew Schwartz <matthew.schwartz@linux.dev>
-References: <20241109044151.29804-1-mario.limonciello@amd.com>
- <7d06c91a-bf89-4880-b640-1fce38d51036@gmx.de>
- <c05d3199-03e3-4e60-a1a1-19e36150f3e3@gmx.de>
-Content-Language: en-US
-From: Mario Limonciello <mario.limonciello@amd.com>
-In-Reply-To: <c05d3199-03e3-4e60-a1a1-19e36150f3e3@gmx.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SA0PR11CA0031.namprd11.prod.outlook.com
- (2603:10b6:806:d0::6) To MN0PR12MB6101.namprd12.prod.outlook.com
- (2603:10b6:208:3cb::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A5EB20E6;
+	Tue, 19 Nov 2024 04:17:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1731989856; cv=none; b=Pfuzfae0899UDWnvZKdnfG7ZP5qPDDtKQJsRj3bvQ6KgxdvM1DgU+H8A9hkeSSArDUTm9rrlkbRBgruusRShm8qMuNkAkonPMDdbjImYJ9BAyEagrDu01Gtw0RvS1CZcdxdk59DjHFgHuKyCRFxCqj1+4jeHae++FkSYhPOK0Ak=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1731989856; c=relaxed/simple;
+	bh=FWdkW510l0RsBPZbuKOTZJFipSox6oLSZFzGXKWpPSc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r7oCZQZnMGn+MXEx1tYZKde9Xf8Y3OI38zipe/sQQ46OXSpf1n7T6pUaUfPhIKJgTA4tbJlSz88PJfsNNckc7A6PEkTuc9ZEYlwrK7Fk/mFqiRa4qlNT/Znjj01zCyrK/0KwH/bCWUpd1L4CmjJL5UVbd/pO7pxixA7OeG7nFHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=H4rmwVXg; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731989854; x=1763525854;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=FWdkW510l0RsBPZbuKOTZJFipSox6oLSZFzGXKWpPSc=;
+  b=H4rmwVXgVQ3OZQomuRQ83x/I88OFdw1xlnm7btOPp0pAHms8CkMIhE7f
+   1ASTxt+rxqNFGqJPxF2J6XQ0IP+L0zKNC/Linn7RtYRrRQsQmtaV22d73
+   PFCqPi9cDl7WJz6RxDDqGKUa9JQV9myo0UgE95oMsqsR+Qs84XfRYxzYV
+   8/MCbbilQMiEwc3BNAokBS8zl+b6mHIPzKL3T3sGM/E8ZKUO2q/toA00V
+   ASRY1nqW327Ql05zyO7HPZQVZHocs7+ETFSkLX7VtViyJNCEug83ohWap
+   JyQGc9503r4BR3Lm5g/iIq/oY+yYy7mNggxhb6sfsnlwOmXqgnh2JtC2t
+   Q==;
+X-CSE-ConnectionGUID: lY0r7xBRTBGvsIFhMka7aQ==
+X-CSE-MsgGUID: sPF91OEwRtWRrbdvE/4n6A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11260"; a="43042305"
+X-IronPort-AV: E=Sophos;i="6.12,165,1728975600"; 
+   d="scan'208";a="43042305"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2024 20:17:33 -0800
+X-CSE-ConnectionGUID: 76MbDn9nT22KcyM3iua/Lw==
+X-CSE-MsgGUID: xvKOkE9kQ6yGEjKZjgEB4g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,165,1728975600"; 
+   d="scan'208";a="93502782"
+Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
+  by fmviesa003.fm.intel.com with ESMTP; 18 Nov 2024 20:17:30 -0800
+Date: Tue, 19 Nov 2024 12:14:37 +0800
+From: Xu Yilun <yilun.xu@linux.intel.com>
+To: Nava kishore Manne <nava.kishore.manne@amd.com>
+Cc: git@amd.com, mdf@kernel.org, hao.wu@intel.com, yilun.xu@intel.com,
+	trix@redhat.com, robh@kernel.org, saravanak@google.com,
+	linux-kernel@vger.kernel.org, linux-fpga@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [RFC v2 1/1] fpga-region: Add generic IOCTL interface for
+ runtime FPGA programming
+Message-ID: <ZzwQrYeWVF6cRtgA@yilunxu-OptiPlex-7050>
+References: <20241029091734.3288005-1-nava.kishore.manne@amd.com>
+ <20241029091734.3288005-2-nava.kishore.manne@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|IA0PR12MB8862:EE_
-X-MS-Office365-Filtering-Correlation-Id: bbf19c7e-c0a8-41fa-1266-08dd085082f4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?MjdPdDkxZlZtRE5IckQwQVI4VjZyMEJWZ09DTkd3ZEVtdkU5N2tZSG5aSWRq?=
- =?utf-8?B?bHVuUUtNWnhJY3IrMTJsNW9MR2MvYW83UmFrejZreDdUVlFZYm13OXNITFIv?=
- =?utf-8?B?LzZha29nbGZWeUJyZDNvRkJyVW9hMEc4cjh1Q2FCWmtySDIwMFdOM3ZQQWsz?=
- =?utf-8?B?clp4NXRqeEJqVkFBVkI5bHBiV0VEMWlYK0hCMXJzOVVYYlh4Nk9tN1FzeFRD?=
- =?utf-8?B?LzBwVmxFUlZxNHVib2pjOXlyQlNFRWRUUWVuS1FibnNZQmVNQXEycmVBeDgw?=
- =?utf-8?B?Vmh6QW5UTzNMN0J4VXUrQVNzbHRDUnZoV21zWEIwWnVwZytodThmU0xoUlpK?=
- =?utf-8?B?SEt0Rjh5VTBCTG5Gamw4YlhQWWx1NGV2WERqV013ZVBzVU5DOXFoSFVWSTNK?=
- =?utf-8?B?Vkdxa1k0YmNzaDE1KzJGaHdjU2JBaEFwM1pSaE9ONURmZjNQK1Z1ME02Y2dl?=
- =?utf-8?B?NnFYdkdOQ3hDV1d6cWJLY281QkZjcnIxQ051S3VwNWNxVlRsYmF6a1Qzcy9I?=
- =?utf-8?B?UTkwcGxCV0w1QzhBYzNGblBpTVhEM1JtelZKUTNMK1JVbGlMdi9wbk44OUVv?=
- =?utf-8?B?QnNJNlZiZGRsdThRV1VEZVRNaVNlU2JiQ2hiWlBrcnlXbUhnQVRCeDBETVVO?=
- =?utf-8?B?TVpObkMxZFNOUUNQY1hEbWJHTjVaZFpYZ2thMkVGQ29qWkVyMTZlaGlWcHRX?=
- =?utf-8?B?Z1FBeHhmSlJnK0tjWFFhOWZCRXFySG1VVUxjbXlaRFVrTjI5UzBnYXo1Zk8w?=
- =?utf-8?B?ZUYrL3BrQlRWSm0xSmhSNjA0eC9RUnNhOUhEWGZGRFhvRzFWS1ExazNNaDdF?=
- =?utf-8?B?eXY5MmlxdllCakFNN2QzSXY1QWZ4ZTdxT2JEMks5dU9TQjBzNk1JRUdtalIr?=
- =?utf-8?B?czZmQzBoMVRCRGExK2RNVytoU0hhSEtnZEVOSVVZcFFuaCtyQklaWDNpRnlV?=
- =?utf-8?B?UXB6NHdaTFRJMVlmSEMzajBVK3p3SGlsejV3Tkc1VVZkTHgzSzhDaldBck10?=
- =?utf-8?B?RHM0Q3AzQnhYcE1lQ3ErQitLbTlxdmExb2pWY21iRW9TdGhNNW1oRUU0bFNa?=
- =?utf-8?B?eWRhN1BFKzF5dXpKK0lMUmF6NnJKYUhvRzdqQ29hN011RkJtR1R2L1ZobzhS?=
- =?utf-8?B?SExMZVJJdy91ZS9tb2lEVlo0Uk1yQ0p5eThOeS9oMklFWWQxdytYMjZZVUZh?=
- =?utf-8?B?eURFM1g0aEcwTU1velhwR3ZaU29RQkdJMVlOcmh3aVdLaE9pN3gwdk5hR2ov?=
- =?utf-8?B?ckZHSlVUQzA2RFl2WWdHWFg1blRsMGEwMThnMXJZVk11MWFabjFyTmJXZ1lo?=
- =?utf-8?B?azN6TUFNbWdkV2RlblNLUlBLOWl5SXBQVDdLZUhyRGMvM2dBSThudnVHYndG?=
- =?utf-8?B?YTF1ZUtZQklZMGZWWU1hZ1phbXdpMjBCc0t2ZkxXREdlamEzTEtqbEpIQXVS?=
- =?utf-8?B?bGpYVHVwQTVuamZyVHc1NkkrRUpVY0FSMUgrWWMrR0t3ZTFjS1Z2TVBPSUJh?=
- =?utf-8?B?d2N1cUtNeTREN2dhLzMyNjZ3UzRXNGltWnRITmxacnR1L2JXeVRHNWlsZDBW?=
- =?utf-8?B?cThVMlUvdUVSRGg3VW0xbm5BRXh6dlRJVEM5blh1U3Z1Ny9JY2NONHdYR1ov?=
- =?utf-8?B?eUY5cnpJckpsZ2dtQzhyQXJ6S3lsOG9OMlNzNVlWYVBIOWVoaHBSUTdDM0lk?=
- =?utf-8?B?R3ZCb2RpaDY3L1AxQWhoajRYS1BFUEpHeVBVVUY0b1VZOHRmSkdya2FLMzFp?=
- =?utf-8?Q?gWI6itN2BHN+gf5b5WwpMDaDzzUrU/I36O+2T+Q?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?aFZyaURRclRhdUo0aDhDTXVCTmtacFZ6dUR5Z1RtamxkaXMvZTVpZE1kS3Nn?=
- =?utf-8?B?b1RJSkEvYmRBQUorS0Rha3c3eXgrYnIxRVZjK3ZHNzd5UUIxaHB4RmNVazZi?=
- =?utf-8?B?UHBWWVRoaUlrWWtrYlZQZFJMNzRybUJZNm9sUUMrR3hnMStUanBMZlJjeHpP?=
- =?utf-8?B?dVo2QzI0ajY1M2lWelBvZ0IxVHlFbEpwNzZiOVlJSmMrMHM3RDN1VzYxWmlq?=
- =?utf-8?B?bjI3ZlJUYUEvKzg3czJDYVJqMXdyL0FkT25Bekt5SmV1ckVOT014eUx0a1hw?=
- =?utf-8?B?bkd0T3I2UEltVDhYSGNtdW5qSFBncUpkUGxuc0s1eEx4MWIwNm9DeWlkR21N?=
- =?utf-8?B?eFh1MGtEMmU0YUErMUg5eVhlSEVQTDdKZ0YrcWZneXZCYjJQd29hRVNlamRI?=
- =?utf-8?B?U1lTWktsK1JQaVR6NjhtVkhhWHRtY2JMeUI3RVJkR1Q1UFlhenpTUTNiK0xL?=
- =?utf-8?B?RWNpM2kzVStGRTRaWis4TmVxUTdDSkUzQkZQTEE2MlJpbzNTQk1CL3VVSzNY?=
- =?utf-8?B?Uys4NHpPaFY4NHRnUmxCR0NzZEZudHVYbjdBZkU0RW1BUnkzVU5mZFdoMGVw?=
- =?utf-8?B?dmtzcUh4UUxidTVwUFdzZmVmS2E2QXhKVk5lVW01aVJrOEFJbGRwU2ZUVjZh?=
- =?utf-8?B?a21obWVGcDR3N2p0T3I0d0tldExnclBHSkNUek9Za3E3dGUxUi9vZXZqSm45?=
- =?utf-8?B?RXBWZUdiNWk4QjhSK21TNFhGQTJQcFMzcnZ6M1MxbWNSVjY2NTR3OGJBeGJ0?=
- =?utf-8?B?anNEbmxKbDZqWEFPblB4UlI5NUJMeWd1TFdhd2gwQ0UrZlByeWZneEE5TWdN?=
- =?utf-8?B?TVRTbXRxUFJWc3lySzRrWmxtOUlWMU9zNXM1Q1FSZGhnRlh5NDhxRkl6bE5u?=
- =?utf-8?B?OWNCV3Q5MDh0SHVXcFpOVW9DVW93SkpYN3MyQmFLQ0VTbjhSOTBtSVNoL2Fw?=
- =?utf-8?B?TkNmMTNkd2ZGQlFOUzhRUTk3dEpFai9zcnhCU1Q0SXpQZ1V5WmFvYnhTWFpU?=
- =?utf-8?B?MU12SWIvYWYwaUhJcytaUEEzTUdjd0hFRElYai9tN1hDV0c4VHRiTll5Mzli?=
- =?utf-8?B?VGpWcWRNbHAvZnVHQUFhQ2pHYVRwalY5aEpIRlFYRWNmSlUycXU4ZGdvcjZM?=
- =?utf-8?B?SWVCV0laNDRoOXYxbHNaRHdwNG9ka0txc0VicTJVajJqTWhrcG5Fc0J1TFJH?=
- =?utf-8?B?c3d3WlZrRncrV2RHN21WYzBLNWRiL2Z1alg0cHU5MjBibXZ4K0xFbWdyOUJG?=
- =?utf-8?B?L2hnWlVnM3JUNjVMZjZnSkkwQmFoWXliYTUvMWhNMnNGUm8zSElMd09vMHd3?=
- =?utf-8?B?ZExnVmtnY0k0YThtT0NJZEd2NjN2ZHZlelFxNVFQNERrTTJrSWJnVFhydllP?=
- =?utf-8?B?RTRmLzdkNG9zbWw3UngyaG9WeFpsT0ZXQTJoOFZVNXBpK0paWjEvY0N4QjNj?=
- =?utf-8?B?ZHhybXRqblZrRFIzZjczY1RFT2RpUFpSU0twOUI1SHFUZXlheEdjWjlnRVpm?=
- =?utf-8?B?cjZNTTdzNWlyK0tGS3d1NjdmQ21KS3p3bWVTaGcza29zUzVldHQ4NytVblh6?=
- =?utf-8?B?b3QyTTBhbCtWY2JhNXlqVHE4Y0YzWFZvd2tqNjQ1TFFWdk9pb1lrbDJjNFVY?=
- =?utf-8?B?UU1ucG0zV1JCTDdxbmxtU1hEdkNBN3pKT2pmK3AwQ1drTG9pdUFoQlVZc21x?=
- =?utf-8?B?dUtJRzhrTEgyL2U2eVFvV1Vzc0xqTm1mbFIzRk1pUFRtYnc1TEhlTmhwTXlG?=
- =?utf-8?B?WUlGQVNiUGRJNUdEZzdYbGdvc0FNQW82YjRXSnpxa2ZpdC9kUForTjlIY3Vp?=
- =?utf-8?B?K2dzbG1sRGl2bjlybW91RVJvY2pBdEplT2xUOFg4WVVlZm1wTFNPSm5kcUZi?=
- =?utf-8?B?NXZKdmx4QVhnUEFEVmhQKzZqMU02dnkyVUdKNzYwT20xYjFWUDhnaWRZN2dy?=
- =?utf-8?B?QW9SK3dXVHVZQ3pIckFWbUVOTWlrcE5lVEVBTE10MWNFRThkSGV3cGFJNlNN?=
- =?utf-8?B?VHB6Z3g5RDc1TzVFaldiVnc5MTBHY0I0Yk9sektHWDNtZ2IrU1owSTRMVmVF?=
- =?utf-8?B?THV6SDBQYUdCb3Uydys2d0pkbGJxMEo1UzZDUVoyK2J5RTBYZE80cnFkdDBE?=
- =?utf-8?Q?3kdxL/miOs7VR/FBwt4W5KaIY?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bbf19c7e-c0a8-41fa-1266-08dd085082f4
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Nov 2024 04:13:24.5236
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: nXEZblpGtX+kMPeCOPcReLY8OENcAoC/spaPXcWTTMgbTmH+Qr7+tH0aiaBtxyMpWbTsssGM/t3lEXjOOW51Bg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8862
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241029091734.3288005-2-nava.kishore.manne@amd.com>
 
-On 11/18/2024 15:05, Armin Wolf wrote:
-> Am 14.11.24 um 22:57 schrieb Armin Wolf:
+On Tue, Oct 29, 2024 at 02:47:34PM +0530, Nava kishore Manne wrote:
+> Introduces an IOCTL interface within the fpga-region subsystem,
+> providing a generic and standardized mechanism for configuring (or)
+> reprogramming FPGAs during runtime. The newly added interface supports
+> both OF (Open Firmware) and non-OF devices, leveraging vendor-specific
+> callbacks (e.g., configuration + enumeration, removal, and status) to
+> accommodate a wide range of device specific configurations.
 > 
->> Am 09.11.24 um 05:41 schrieb Mario Limonciello:
->>
->>> Currently there are a number of ASUS products on the market that
->>> happen to
->>> have ACPI objects for amd-pmf to bind to as well as an ACPI platform
->>> profile provided by asus-wmi.
->>>
->>> The ACPI platform profile support created by amd-pmf on these ASUS
->>> products is "Function 9" which is specifically for "BIOS or EC
->>> notification" of power slider position. This feature is actively used
->>> by some designs such as Framework 13 and Framework 16.
->>>
->>> On these ASUS designs we keep on quirking more and more of them to turn
->>> off this notification so that asus-wmi can bind.
->>>
->>> This however isn't how Windows works.  "Multiple" things are notified
->>> for
->>> the power slider position. This series adjusts Linux to behave
->>> similarly.
->>>
->>> Multiple drivers can now register an ACPI platform profile and will
->>> react
->>> to set requests.
->>>
->>> To avoid chaos, only positions that are common to both drivers are
->>> accepted when the legacy /sys/firmware/acpi/platform_profile interface
->>> is used.
->>>
->>> This series also adds a new concept of a "custom" profile.  This allows
->>> userspace to discover that there are multiple driver handlers that are
->>> configured differently.
->>>
->>> This series also allows dropping all of the PMF quirks from amd-pmf.
->>
->> Sorry for taking a bit long to respond, i am currently quite busy. I
->> will try to review this series
->> in the coming days.
->>
->> Thanks,
->> Armin Wolf
->>
-> So far the patch series looks quite good, but a single issue remains: 
-> the locking around the class attributes.
-> Maybe someone with some knowledge about sysfs can help us here.
+> The IOCTL interface ensures compatibility with both OF and non-OF
+> devices, allowing for seamless FPGA reprogramming across diverse
+> platforms.
 > 
-> Also can you please rebase the patch series onto the current for-net 
-> branch? This would solve a merge conflict
-> inside the asus-wmi driver.
+> Vendor-specific callbacks are integrated into the interface, enabling
+> custom FPGA configuration + enumeration, removal, and status reporting
+> mechanisms, ensuring flexibility for vendor implementations.
+> 
+> This solution enhances FPGA runtime management, supporting various device
+> types and vendors, while ensuring compatibility with the current FPGA
+> configuration flow.
+> 
+> Signed-off-by: Nava kishore Manne <nava.kishore.manne@amd.com>
+> ---
+> Changes for v2:
+>  - As discussed with Yilun, the implementation has been modified to utilize a
+>  callback approach, enabling seamless handling of both OF and non-OF devices.
+> 
+>  - As suggested by Yilun in the POC code, we have moved away from using  void *args
+>  as a parameter for ICOTL inputs to obtain the required user inputs. Instead, we are
+>  utilizing the fpga_region_config_info structure to gather user inputs. Currently,
+>  this structure is implemented to support only OF devices, but we intend to extend
+>  it by incorporating new members to accommodate non-OF devices in the future.
+> 
+>  drivers/fpga/fpga-region.c       | 110 +++++++++++++++++++++++++++++++
+>  drivers/fpga/of-fpga-region.c    |  91 ++++++++++++++++++++++++-
+>  include/linux/fpga/fpga-region.h |  32 +++++++++
+>  include/uapi/linux/fpga-region.h |  51 ++++++++++++++
+>  4 files changed, 283 insertions(+), 1 deletion(-)
+>  create mode 100644 include/uapi/linux/fpga-region.h
+> 
+> diff --git a/drivers/fpga/fpga-region.c b/drivers/fpga/fpga-region.c
+> index 753cd142503e..c6bea3c99a69 100644
+> --- a/drivers/fpga/fpga-region.c
+> +++ b/drivers/fpga/fpga-region.c
+> @@ -8,6 +8,7 @@
+>  #include <linux/fpga/fpga-bridge.h>
+>  #include <linux/fpga/fpga-mgr.h>
+>  #include <linux/fpga/fpga-region.h>
+> +#include <linux/fpga-region.h>
+>  #include <linux/idr.h>
+>  #include <linux/kernel.h>
+>  #include <linux/list.h>
+> @@ -180,6 +181,67 @@ static struct attribute *fpga_region_attrs[] = {
+>  };
+>  ATTRIBUTE_GROUPS(fpga_region);
+>  
+> +static int fpga_region_device_open(struct inode *inode, struct file *file)
+> +{
+> +	struct miscdevice *miscdev = file->private_data;
+> +	struct fpga_region *region = container_of(miscdev, struct fpga_region, miscdev);
+> +
+> +	file->private_data = region;
+> +
+> +	return 0;
+> +}
+> +
+> +static int fpga_region_device_release(struct inode *inode, struct file *file)
+> +{
+> +	return 0;
+> +}
+> +
+> +static long fpga_region_device_ioctl(struct file *file, unsigned int cmd,
+> +				     unsigned long arg)
+> +{
+> +	int err;
+> +	void __user *argp = (void __user *)arg;
+> +	struct fpga_region_config_info config_info;
+> +	struct fpga_region *region =  (struct fpga_region *)(file->private_data);
+> +
+> +	switch (cmd) {
+> +	case FPGA_REGION_IOCTL_LOAD:
+> +		if (copy_from_user(&config_info, argp, sizeof(struct fpga_region_config_info)))
+> +			return -EFAULT;
+> +
+> +		err = region->region_ops->region_config_enumeration(region, &config_info);
+> +
+> +		break;
+> +	case FPGA_REGION_IOCTL_REMOVE:
+> +		if (copy_from_user(&config_info, argp, sizeof(struct fpga_region_config_info)))
+> +			return -EFAULT;
+> +
+> +		err = region->region_ops->region_remove(region, &config_info);
+> +
+> +		break;
+> +	case FPGA_REGION_IOCTL_STATUS:
+> +		unsigned int status;
+> +
+> +		status = region->region_ops->region_status(region);
+> +
+> +		if (copy_to_user((void __user *)arg, &status, sizeof(status)))
+> +			err = -EFAULT;
+> +		break;
+> +	default:
+> +		err = -ENOTTY;
+> +	}
+> +
+> +	return err;
+> +}
+> +
+> +static const struct file_operations fpga_region_fops = {
+> +	.owner		= THIS_MODULE,
+> +	.open		= fpga_region_device_open,
+> +	.release	= fpga_region_device_release,
+> +	.unlocked_ioctl	= fpga_region_device_ioctl,
+> +	.compat_ioctl	= fpga_region_device_ioctl,
+> +};
+> +
+>  /**
+>   * __fpga_region_register_full - create and register an FPGA Region device
+>   * @parent: device parent
+> @@ -229,8 +291,21 @@ __fpga_region_register_full(struct device *parent, const struct fpga_region_info
+>  	if (ret)
+>  		goto err_remove;
+>  
+> +	if (info->region_ops) {
+> +		region->region_ops = info->region_ops;
+> +		region->miscdev.minor = MISC_DYNAMIC_MINOR;
+> +		region->miscdev.name = kobject_name(&region->dev.kobj);
+> +		region->miscdev.fops = &fpga_region_fops;
+> +		ret = misc_register(&region->miscdev);
+> +		if (ret) {
+> +			pr_err("fpga-region: failed to register misc device.\n");
+> +			goto err_remove;
+> +		}
+> +	}
+> +
+>  	ret = device_register(&region->dev);
+>  	if (ret) {
+> +		misc_deregister(&region->miscdev);
+>  		put_device(&region->dev);
+>  		return ERR_PTR(ret);
+>  	}
+> @@ -272,6 +347,40 @@ __fpga_region_register(struct device *parent, struct fpga_manager *mgr,
+>  }
+>  EXPORT_SYMBOL_GPL(__fpga_region_register);
+>  
+> +/**
+> + * __fpga_region_register_with_ops - create and register an FPGA Region device
+> + * with user interface call-backs.
+> + * @parent: device parent
+> + * @mgr: manager that programs this region
+> + * @region_ops: ops for low level FPGA region for device enumeration/removal
+> + * @priv: of-fpga-region private data
+> + * @get_bridges: optional function to get bridges to a list
+> + * @owner: module containing the get_bridges function
+> + *
+> + * This simple version of the register function should be sufficient for most users.
+> + * The fpga_region_register_full() function is available for users that need to
+> + * pass additional, optional parameters.
+> + *
+> + * Return: struct fpga_region or ERR_PTR()
+> + */
+> +struct fpga_region *
+> +__fpga_region_register_with_ops(struct device *parent, struct fpga_manager *mgr,
+> +				const struct fpga_region_ops *region_ops,
+> +				void *priv,
+> +				int (*get_bridges)(struct fpga_region *),
+> +				struct module *owner)
+> +{
+> +	struct fpga_region_info info = { 0 };
+> +
+> +	info.mgr = mgr;
+> +	info.priv = priv;
+> +	info.get_bridges = get_bridges;
+> +	info.region_ops = region_ops;
+> +
+> +	return __fpga_region_register_full(parent, &info, owner);
+> +}
+> +EXPORT_SYMBOL_GPL(__fpga_region_register_with_ops);
+> +
+>  /**
+>   * fpga_region_unregister - unregister an FPGA region
+>   * @region: FPGA region
+> @@ -280,6 +389,7 @@ EXPORT_SYMBOL_GPL(__fpga_region_register);
+>   */
+>  void fpga_region_unregister(struct fpga_region *region)
+>  {
+> +	misc_deregister(&region->miscdev);
+>  	device_unregister(&region->dev);
+>  }
+>  EXPORT_SYMBOL_GPL(fpga_region_unregister);
+> diff --git a/drivers/fpga/of-fpga-region.c b/drivers/fpga/of-fpga-region.c
+> index 8526a5a86f0c..63fe56e0466f 100644
+> --- a/drivers/fpga/of-fpga-region.c
+> +++ b/drivers/fpga/of-fpga-region.c
+> @@ -8,6 +8,8 @@
+>  #include <linux/fpga/fpga-bridge.h>
+>  #include <linux/fpga/fpga-mgr.h>
+>  #include <linux/fpga/fpga-region.h>
+> +#include <linux/firmware.h>
+> +#include <linux/fpga-region.h>
+>  #include <linux/idr.h>
+>  #include <linux/kernel.h>
+>  #include <linux/list.h>
+> @@ -18,6 +20,20 @@
+>  #include <linux/slab.h>
+>  #include <linux/spinlock.h>
+>  
+> +/**
+> + * struct of_fpga_region_priv - Private data structure
+> + * image.
+> + * @dev:	Device data structure
+> + * @fw:		firmware of coeff table.
+> + * @path:	path of FPGA overlay image firmware file.
+> + * @ovcs_id:	overlay changeset id.
+> + */
+> +struct of_fpga_region_priv {
+> +	struct device *dev;
+> +	const struct firmware *fw;
+> +	int ovcs_id;
+> +};
+> +
+>  static const struct of_device_id fpga_region_of_match[] = {
+>  	{ .compatible = "fpga-region", },
+>  	{},
+> @@ -394,20 +410,93 @@ static struct notifier_block fpga_region_of_nb = {
+>  	.notifier_call = of_fpga_region_notify,
+>  };
+>  
+> +static int of_fpga_region_status(struct fpga_region *region)
+> +{
+> +	struct of_fpga_region_priv *ovcs = region->priv;
+> +
+> +	if (ovcs->ovcs_id)
+> +		return FPGA_REGION_HAS_PL;
 
-Yeah; I've done this locally.  I was going to wait until 6.13-rc1 to 
-send it out, but I guess if we don't have any other merge conflicts 
-coming in this code I'll send it after we are in agreement on the 
-locking and I do some more testing.
+Could you help specify what is PL?
 
-> 
-> Thanks,
-> Armin WOlf
-> 
->>> ---
->>> v6:
->>>   * Add patch dev patch but don't make mandatory
->>>   * See other patches changelogs for individualized changes
->>>
->>> Mario Limonciello (22):
->>>    ACPI: platform-profile: Add a name member to handlers
->>>    platform/x86/dell: dell-pc: Create platform device
->>>    ACPI: platform_profile: Add device pointer into platform profile
->>>      handler
->>>    ACPI: platform_profile: Add platform handler argument to
->>>      platform_profile_remove()
->>>    ACPI: platform_profile: Pass the profile handler into
->>>      platform_profile_notify()
->>>    ACPI: platform_profile: Move sanity check out of the mutex
->>>    ACPI: platform_profile: Move matching string for new profile out of
->>>      mutex
->>>    ACPI: platform_profile: Use guard(mutex) for register/unregister
->>>    ACPI: platform_profile: Use `scoped_cond_guard`
->>>    ACPI: platform_profile: Create class for ACPI platform profile
->>>    ACPI: platform_profile: Add name attribute to class interface
->>>    ACPI: platform_profile: Add choices attribute for class interface
->>>    ACPI: platform_profile: Add profile attribute for class interface
->>>    ACPI: platform_profile: Notify change events on register and
->>>      unregister
->>>    ACPI: platform_profile: Only show profiles common for all handlers
->>>    ACPI: platform_profile: Add concept of a "custom" profile
->>>    ACPI: platform_profile: Make sure all profile handlers agree on
->>>      profile
->>>    ACPI: platform_profile: Check all profile handler to calculate next
->>>    ACPI: platform_profile: Notify class device from
->>>      platform_profile_notify()
->>>    ACPI: platform_profile: Allow multiple handlers
->>>    platform/x86/amd: pmf: Drop all quirks
->>>    Documentation: Add documentation about class interface for platform
->>>      profiles
->>>
->>>   .../ABI/testing/sysfs-platform_profile        |   5 +
->>>   .../userspace-api/sysfs-platform_profile.rst  |  28 +
->>>   drivers/acpi/platform_profile.c               | 537 ++++++++++++++----
->>>   .../surface/surface_platform_profile.c        |   8 +-
->>>   drivers/platform/x86/acer-wmi.c               |  12 +-
->>>   drivers/platform/x86/amd/pmf/Makefile         |   2 +-
->>>   drivers/platform/x86/amd/pmf/core.c           |   1 -
->>>   drivers/platform/x86/amd/pmf/pmf-quirks.c     |  66 ---
->>>   drivers/platform/x86/amd/pmf/pmf.h            |   3 -
->>>   drivers/platform/x86/amd/pmf/sps.c            |   4 +-
->>>   drivers/platform/x86/asus-wmi.c               |  10 +-
->>>   drivers/platform/x86/dell/alienware-wmi.c     |   8 +-
->>>   drivers/platform/x86/dell/dell-pc.c           |  36 +-
->>>   drivers/platform/x86/hp/hp-wmi.c              |   8 +-
->>>   drivers/platform/x86/ideapad-laptop.c         |   6 +-
->>>   .../platform/x86/inspur_platform_profile.c    |   7 +-
->>>   drivers/platform/x86/thinkpad_acpi.c          |  16 +-
->>>   include/linux/platform_profile.h              |   9 +-
->>>   18 files changed, 553 insertions(+), 213 deletions(-)
->>>   delete mode 100644 drivers/platform/x86/amd/pmf/pmf-quirks.c
->>>
->>>
->>> base-commit: d68cb6023356af3bd3193983ad4ec03954a0b3e2
->>
+> +
+> +	return FPGA_REGION_EMPTY;
+> +}
+> +
+> +static int of_fpga_region_config_enumeration(struct fpga_region *region,
+> +					     struct fpga_region_config_info *config_info)
+> +{
+> +	struct of_fpga_region_priv *ovcs = region->priv;
+> +	int err;
+> +
+> +	/* if it's set do not allow changes */
+> +	if (ovcs->ovcs_id)
+> +		return -EPERM;
+> +
+> +	err = request_firmware(&ovcs->fw, config_info->firmware_name, NULL);
+> +	if (err != 0)
+> +		goto out_err;
+> +
+> +	err = of_overlay_fdt_apply((void *)ovcs->fw->data, ovcs->fw->size,
+> +				   &ovcs->ovcs_id, NULL);
+> +	if (err < 0) {
+> +		pr_err("%s: Failed to create overlay (err=%d)\n",
+> +		       __func__, err);
+> +		release_firmware(ovcs->fw);
+> +		goto out_err;
+> +	}
+> +
+> +	return 0;
+> +
+> +out_err:
+> +	ovcs->ovcs_id = 0;
+> +	ovcs->fw = NULL;
+> +
+> +	return err;
+> +}
+> +
+> +static int of_fpga_region_config_remove(struct fpga_region *region,
+> +					struct fpga_region_config_info *config_info)
+> +{
+> +	struct of_fpga_region_priv *ovcs = region->priv;
+> +
+> +	if (!ovcs->ovcs_id)
+> +		return -EPERM;
+> +
+> +	of_overlay_remove(&ovcs->ovcs_id);
+> +	release_firmware(ovcs->fw);
+> +
+> +	ovcs->ovcs_id = 0;
+> +	ovcs->fw = NULL;
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct fpga_region_ops region_ops = {
+> +	.region_status = of_fpga_region_status,
+> +	.region_config_enumeration = of_fpga_region_config_enumeration,
+> +	.region_remove = of_fpga_region_config_remove,
+> +};
+> +
+>  static int of_fpga_region_probe(struct platform_device *pdev)
+>  {
+>  	struct device *dev = &pdev->dev;
+>  	struct device_node *np = dev->of_node;
+> +	struct of_fpga_region_priv *priv;
+>  	struct fpga_region *region;
+>  	struct fpga_manager *mgr;
+>  	int ret;
+>  
+> +	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+> +	if (!priv)
+> +		return -ENOMEM;
+> +
+> +	priv->dev = dev;
+> +
+>  	/* Find the FPGA mgr specified by region or parent region. */
+>  	mgr = of_fpga_region_get_mgr(np);
+>  	if (IS_ERR(mgr))
+>  		return -EPROBE_DEFER;
+>  
+> -	region = fpga_region_register(dev, mgr, of_fpga_region_get_bridges);
+> +	region = fpga_region_register_with_ops(dev, mgr, &region_ops, priv,
+> +					       of_fpga_region_get_bridges);
+>  	if (IS_ERR(region)) {
+>  		ret = PTR_ERR(region);
+>  		goto eprobe_mgr_put;
+> diff --git a/include/linux/fpga/fpga-region.h b/include/linux/fpga/fpga-region.h
+> index 5fbc05fe70a6..3a3ba6dbb5e1 100644
+> --- a/include/linux/fpga/fpga-region.h
+> +++ b/include/linux/fpga/fpga-region.h
+> @@ -6,15 +6,35 @@
+>  #include <linux/device.h>
+>  #include <linux/fpga/fpga-mgr.h>
+>  #include <linux/fpga/fpga-bridge.h>
+> +#include <linux/fpga-region.h>
+> +#include <linux/miscdevice.h>
+>  
+>  struct fpga_region;
+>  
+> +/**
+> + * struct fpga_region_ops - ops for low level FPGA region ops for device
+> + * enumeration/removal
+> + * @region_status: returns the FPGA region status
+> + * @region_config_enumeration: Configure and enumerate the FPGA region.
+> + * @region_remove: Remove all devices within the FPGA region
+> + * (which are added as part of the enumeration).
+> + */
+> +struct fpga_region_ops {
+> +	int (*region_status)(struct fpga_region *region);
+> +	int (*region_config_enumeration)(struct fpga_region *region,
+> +					 struct fpga_region_config_info *config_info);
 
+My current concern is still about this combined API, it just offloads
+all work to low level, but we have some common flows. That's why we
+introduce a common FPGA reprograming API.
+
+I didn't see issue about the vendor specific pre configuration. They
+are generally needed to initialize the struct fpga_image_info, which
+is a common structure for fpga_region_program_fpga().
+
+For port IDs(AFU) inputs for DFL, I think it could also be changed
+(Don't have to be implemented in this patchset). Previously DFL
+provides an uAPI for the whole device, so it needs a port_id input to
+position which fpga_region within the device for programming. But now,
+we are introducing a per fpga_region programming interface, IIUC port_id
+should not be needed anymore.
+
+The combined API is truly simple for leveraging the existing
+of-fpga-region overlay apply mechanism. But IMHO that flow doesn't fit
+our new uAPI well. That flow is to adapt the generic configfs overlay
+interface, which comes to a dead end as you mentioned.
+
+My gut feeling for the generic programing flow should be:
+
+ 1. Program the image to HW.
+ 2. Enumerate the programmed image (apply the DT overlay)
+
+Why we have to:
+
+ 1. Start enumeration.
+ 2. On pre enumeration, programe the image.
+ 3. Real enumeration.
+
+Thanks,
+Yilun
+
+> +	int (*region_remove)(struct fpga_region *region,
+> +			     struct fpga_region_config_info *config_info);
+> +};
+> +
+>  /**
+>   * struct fpga_region_info - collection of parameters an FPGA Region
+>   * @mgr: fpga region manager
+>   * @compat_id: FPGA region id for compatibility check.
+>   * @priv: fpga region private data
+>   * @get_bridges: optional function to get bridges to a list
+> + * @fpga_region_ops: ops for low level FPGA region ops for device
+> + * enumeration/removal
+>   *
+>   * fpga_region_info contains parameters for the register_full function.
+>   * These are separated into an info structure because they some are optional
+> @@ -26,6 +46,7 @@ struct fpga_region_info {
+>  	struct fpga_compat_id *compat_id;
+>  	void *priv;
+>  	int (*get_bridges)(struct fpga_region *region);
+> +	const struct fpga_region_ops *region_ops;
+>  };
+>  
+>  /**
+> @@ -39,6 +60,8 @@ struct fpga_region_info {
+>   * @ops_owner: module containing the get_bridges function
+>   * @priv: private data
+>   * @get_bridges: optional function to get bridges to a list
+> + * @fpga_region_ops: ops for low level FPGA region ops for device
+> + * enumeration/removal
+>   */
+>  struct fpga_region {
+>  	struct device dev;
+> @@ -50,6 +73,8 @@ struct fpga_region {
+>  	struct module *ops_owner;
+>  	void *priv;
+>  	int (*get_bridges)(struct fpga_region *region);
+> +	const struct fpga_region_ops *region_ops;
+> +	struct miscdevice miscdev;
+>  };
+>  
+>  #define to_fpga_region(d) container_of(d, struct fpga_region, dev)
+> @@ -71,6 +96,13 @@ __fpga_region_register_full(struct device *parent, const struct fpga_region_info
+>  struct fpga_region *
+>  __fpga_region_register(struct device *parent, struct fpga_manager *mgr,
+>  		       int (*get_bridges)(struct fpga_region *), struct module *owner);
+> +#define fpga_region_register_with_ops(parent, mgr, region_ops, priv, get_bridges) \
+> +	__fpga_region_register_with_ops(parent, mgr, region_ops, priv, get_bridges, THIS_MODULE)
+> +struct fpga_region *
+> +__fpga_region_register_with_ops(struct device *parent, struct fpga_manager *mgr,
+> +				const struct fpga_region_ops *region_ops, void *priv,
+> +				int (*get_bridges)(struct fpga_region *),
+> +				struct module *owner);
+>  void fpga_region_unregister(struct fpga_region *region);
+>  
+>  #endif /* _FPGA_REGION_H */
+> diff --git a/include/uapi/linux/fpga-region.h b/include/uapi/linux/fpga-region.h
+> new file mode 100644
+> index 000000000000..88ade83daf61
+> --- /dev/null
+> +++ b/include/uapi/linux/fpga-region.h
+> @@ -0,0 +1,51 @@
+> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+> +/*
+> + * Header File for FPGA Region User API
+> + *
+> + * Copyright (C) 2024 Advanced Micro Devices, Inc.
+> + *
+> + * Author: Manne, Nava kishore <nava.kishore.manne@amd.com>
+> + */
+> +
+> +#ifndef _UAPI_LINUX_FPGA_REGION_H
+> +#define _UAPI_LINUX_FPGA_REGION_H
+> +
+> +#include <linux/ioctl.h>
+> +#include <linux/limits.h>
+> +#include <linux/types.h>
+> +
+> +/* IOCTLs for fpga region file descriptor */
+> +#define FPGA_REGION_MAGIC_NUMBER	'f'
+> +#define FPGA_REGION_BASE		0
+> +
+> +/**
+> + * FPGA_REGION_IOCTL_LOAD - _IOW(FPGA_REGION_MAGIC, 0,
+> + *                               struct fpga_region_config_info)
+> + *
+> + * FPGA_REGION_IOCTL_REMOVE - _IOW(FPGA_REGION_MAGIC, 1,
+> + *                                 struct fpga_region_config_info)
+> + *
+> + * Driver does Configuration/Reconfiguration based on Region ID and
+> + * Buffer (Image) provided by caller.
+> + * Return: 0 on success, -errno on failure.
+> + */
+> +struct fpga_region_config_info {	/* Input */
+> +	char firmware_name[NAME_MAX];   /* Firmware file name */
+> +};
+> +
+> +/*
+> + * FPGA Region Control IOCTLs.
+> + */
+> +#define FPGA_REGION_MAGIC	'f'
+> +#define FPGA_IOW(num, dtype)	_IOW(FPGA_REGION_MAGIC, num, dtype)
+> +#define FPGA_IOR(num, dtype)	_IOR(FPGA_REGION_MAGIC, num, dtype)
+> +
+> +#define FPGA_REGION_IOCTL_LOAD		FPGA_IOW(0, __u32)
+> +#define FPGA_REGION_IOCTL_REMOVE        FPGA_IOW(1, __u32)
+> +#define FPGA_REGION_IOCTL_STATUS        FPGA_IOR(2, __u32)
+> +
+> +/* Region status possibilities returned by FPGA_REGION_IOCTL_STATUS ioctl */
+> +#define FPGA_REGION_HAS_PL	0	/* if the region has PL logic */
+> +#define FPGA_REGION_EMPTY	1	/* If the region is empty */
+> +
+> +#endif /* _UAPI_LINUX_FPGA_REGION_H */
+> -- 
+> 2.34.1
+> 
+> 
 
