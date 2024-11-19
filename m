@@ -1,251 +1,123 @@
-Return-Path: <linux-kernel+bounces-414447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BDD39D2830
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 15:30:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C69129D2827
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 15:28:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E24C2B27B63
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 14:28:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 814021F216C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 14:28:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 590D11CDA3A;
-	Tue, 19 Nov 2024 14:28:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9EEB1CDA3E;
+	Tue, 19 Nov 2024 14:28:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="HN9Lmpyk"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2087.outbound.protection.outlook.com [40.107.94.87])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WvK0bjB6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB8AC1CC8B7
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 14:28:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.87
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732026484; cv=fail; b=jN5KbiTwMi/QigtekfFCUgHw+63gVUS6blScH9EylmVOFHvS7q6nDjPO3k/deklXxYR9U1+avldgquW01pFIOaPqhM1uxLD83bBL/Cssebx9U66zIqtj1JnT5lyb54hYf61N6Dn5XEvrvdMvsV0uLTnfGBC+3NyJHCEqK8J7VU0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732026484; c=relaxed/simple;
-	bh=0k9nNwN7YdRGBb604ZxVJ0B8na6Sj1/LoZKJXdNG5hM=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=AEClleUMB4/R7nkyEDRtYTB1aZ+39kawatNIGl6eWIDYPDVHFndibP1OD+Uu53tGGaJOOL0NbnkFtVSEn2RllIJ5EiFWuPsPQ9d79QIl5qn5/Qu4OjzqwGSenI7z4Y1juzfDvtPAWxdN+7FDwRcgc7h5FP82vjw8JO7eZCtUzq8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=HN9Lmpyk; arc=fail smtp.client-ip=40.107.94.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=LhvNXfAutLpBF3wov+arglBYKJMnWnusWVZsyPaXrq97VwNkrvoll2dKOFTXPsF8Jk7OoS5CES2E5WKU8/uCDBeFtIp/nTj2KRLkZuwKMvTfWTRZOL5/8EzzAw3Boeyfe8/HJS235jlrtawF0cxuNqUhW1Zn44b315khcSHw8vW1ploAHIkLr+coU2u4YzKEcgfnxx6Ak6Y/PGZZVXgKpR6GfttqNj1J88W8PiNru9yhKoUGmIWVAtu7w9F5z3HMdQK/e+1/P+imHm3yQaQCEt8BnteE3lEaYBMdq4mD9ZbwIQEBNayy6W3/ECd+PTecGvOdKNg1GiQtqLKNAp/Sew==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Opp0lwGleE96Nk4a8kMCubwWfTjZ17TZ46rwdwlEbkM=;
- b=vlseosnqpBhjLYtLmUOajrVOjerB0gNjMjlZVCfWg+0fwc8LaBCtEujT7/FyRHL7oOGrsfVUFeI/31JAcX7doqhT2h19DwwDd2xhWi3ur0c6oBIYFEtiGMsHYtF4xCVr7cB2vkrYy/525bMzX4bVMEgIPtzTCH95D5Hq2EpdnSRGMHpywyEPIcu2vQM1pgJwajZ6YKkbVICP8Ehv5Zn/cAzWgrY/Pj/P5x21c+0QeYfvqBdLTmSSpPGc1waZGzfXpWh+s9J6bI7lNMzsSW7WQeUS6Qf/t2NyQNaCn6P0/EH+ok7n3d2es0fplU9fUcPjj1m6itY0cIMOfWR+IH4zSQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Opp0lwGleE96Nk4a8kMCubwWfTjZ17TZ46rwdwlEbkM=;
- b=HN9Lmpykj9gGXjFXpLLiYTCME+/Y3xAaoy+nb5Kd/tWBhCvCLoe5n07oFu+Tu98cdWuiuwbkBhpQDM4NCOWwrBisTB3FHl10W3nImo0CXbL1yl/5jGtHDMGMSP+QgbhypgvJ80DFVgC54FHU768qQn45SkCDhl9DwWxtj+KGiOk=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
- by MN2PR12MB4288.namprd12.prod.outlook.com (2603:10b6:208:1d2::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.23; Tue, 19 Nov
- 2024 14:27:59 +0000
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5%5]) with mapi id 15.20.8158.019; Tue, 19 Nov 2024
- 14:27:59 +0000
-Message-ID: <919d1a3b-6757-4902-ac1a-b056c9fdad06@amd.com>
-Date: Tue, 19 Nov 2024 15:27:52 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] drm/sched: Fix docu of drm_sched_entity_flush()
-To: Philipp Stanner <pstanner@redhat.com>, Luben Tuikov
- <ltuikov89@gmail.com>, Matthew Brost <matthew.brost@intel.com>,
- Danilo Krummrich <dakr@kernel.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20241119134122.21950-2-pstanner@redhat.com>
- <20241119134122.21950-3-pstanner@redhat.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-In-Reply-To: <20241119134122.21950-3-pstanner@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: FR3P281CA0059.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:4b::21) To PH7PR12MB5685.namprd12.prod.outlook.com
- (2603:10b6:510:13c::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A2D01CCB37;
+	Tue, 19 Nov 2024 14:28:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732026508; cv=none; b=RYmmQzuNU1HoQpmK/s2WKTG6t7a8Gy5wmRBKi3v/S5cFTsNNBKBJfbsFR3OjSmF2qjl4MD3kxB7XYfTQA6m8bKlu6fozPKjTsfhh43DAIJfjp5kgZMdUDW4Hq5VsmeuD7X+5eX3q+fawCA7d+JanM4b2PDHnCdvVZzOqpRP2/LM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732026508; c=relaxed/simple;
+	bh=EljHuHfepTQAteLPcZoK7BrK4kfGbFZ2F4h2gkEyS7o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=j9QoeduX9FUaN9+T4pkfGXUN+t+ZDbsyx9m4OWG/XewDe7yZ4B7mp9nVcaiBJZeZd2+VVbtEwxuIC1CmERY0qcmgVcXWvDAkqFGZuhIdNVbZa6U9oXZqkW9C6b82bvU0eu8s8pwpCtpo1h6ERTF3p6IpNjrH4Rt5J1qt3+ZAhz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WvK0bjB6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEDB5C4CED0;
+	Tue, 19 Nov 2024 14:28:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732026507;
+	bh=EljHuHfepTQAteLPcZoK7BrK4kfGbFZ2F4h2gkEyS7o=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=WvK0bjB6g7uboBcKH/cHQ1VCGWOyzXLQTLcvjc6HrjQaHi6KIX/5geHJs9tp8Zrfq
+	 ymPwUwee5Gm92nbKHsVYTNHA2eNajFYLWGuMDKdaJHV0F0Kkg79Unf0KU4CJdDq2Vh
+	 vxIkSBTkBjurDVGNFbpucfrzfhHnVRD42I7rnq2qs0K4kRLs/8nN49Hi24R9MHPWud
+	 9NC5heIDo+S5Y4XEbxXCpslUyCdy3KZwqTy2Sb4dzMmivebsq3SZwK9JQ/Fn/e/kP2
+	 ULgS2VjxaDYaJqNxee58GpUUepjYcz3ZT19SR6hn2UzEWz5MGRUwSfd4R4pPO7dxW4
+	 V9uamA0Varm/w==
+Message-ID: <25f72478-62c0-47c1-b2c0-3baf8627cc32@kernel.org>
+Date: Tue, 19 Nov 2024 15:28:23 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|MN2PR12MB4288:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8d39e722-38d6-47d9-14d8-08dd08a65dd9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?YUhPVkFWeGhXdW5MQThrN21UbnVmZXBEdTJXWWNxSjQ5ZnU1d0dYbXdlUlVl?=
- =?utf-8?B?YnFMWHFQZXlXdDR4RFBYT0lPWlhqZ1dlbUYwSGdOQkNTWnQ5dEhzbzJNbWR4?=
- =?utf-8?B?UzBQcE9HTFdta0djMHNBSEdRUTMzSngxUG1Kd1BMNmZrTXZvZGRyblhuckFV?=
- =?utf-8?B?TUNCZ1Q5a2Q2YzBpazUwbnRHOGFoOWVIaEVxZGxmbUFHV0lPa2Ura1k1NU1U?=
- =?utf-8?B?UlI2NGIwUTZiS0xIS051SXF2VDR6ejJhbTd5NHgxSUZpQ2o4bHNzUmg1WFBm?=
- =?utf-8?B?cFp2N0JobnNkWEthYmhZcWZ5NHhHcWlEQ1ZyVklMM2xtb1UzV1Y4N3B5bXh3?=
- =?utf-8?B?bUZYUElNeFVjVDRsRUVDVk1KZndQK09wbXdwUzNDdG5haVpjbG1WNzQyZmlm?=
- =?utf-8?B?aktGdTE4S0xtSm9xbUkwaWpmb1ViNTRyaUdNTGpQSGx3Q1lIN2ZSUmY4R3pG?=
- =?utf-8?B?ZngvVzFVOWIxQ1IraDJQcmdWVDh4NndWT0NHOGtNRDZUVlBsSHNOOU5XY25n?=
- =?utf-8?B?UHI1aHdrNkdKVmlxSlMvQmlyZFZhMExaZWc1UGVuMnVGU0Q1enpMZ1JmZk1C?=
- =?utf-8?B?YUUvOTZrWjhnaTI4YWdTOHFjTitrLzE0SUlPMzNrbW0vOG11Qytva2xEcUxQ?=
- =?utf-8?B?NHZvVS9pQlhJeHNqNVBXcDZuakR6QitabnRubGRnZVQwZ3VjQkI2Vy9JSDJG?=
- =?utf-8?B?WUU1OWRyUHY3a2FpdFcwYkt5a0Q4c3FoaXpWRCtRQVpGZG5UWi95TkxZR2Vm?=
- =?utf-8?B?WW9JcmR1dlJKYnBBRk5VZTBTdFZ0RFdvRmxEeHp4Rm9iZ2dLU1lkeWhqLzF6?=
- =?utf-8?B?UWw3K3RUZmhxYnJGQzZrdzJ4UFIwOVFPK0dJNGxWb21CTlUxdVIzanVYUGlH?=
- =?utf-8?B?dnNPRjBlaWw0dXoyQ3AwT3BCdEt4ZDMrRXRhUXN0UGwwZ0Izd052T3lnNHI3?=
- =?utf-8?B?cnExekRJTU1OaWE5eHlKOTlNL01KY25ZQk9yVTBHdXVHOUhKOXZQajZQcFhP?=
- =?utf-8?B?bXV0K3pMajBqQkoxeDNScit1VWhGRHVxUXhMK2VxdzJGN1V5ZERVTzhoY0Fs?=
- =?utf-8?B?L3Rhb3orSitmdEJhcGdqdzE3TWc0THBIbUxSZDVxdzZkeE5ya1RwQ1M4cVFV?=
- =?utf-8?B?V3J0aFI2VE1jZUFrVnpOcFJ0OEZwcE0yMytzNHRMTS9VR0hPYUVtbU9TdjY4?=
- =?utf-8?B?RXJBR29xNlBob20yK1J1WHg4SWlsOVVONUp6RlVRODYwVHdTOU1mRjNYbkIv?=
- =?utf-8?B?WDFrZ0JqdEVndzM1TlZFTnlPRHcydlVSekJTVU5ONC8zaVROVUZqdVBKcGpj?=
- =?utf-8?B?K3FIekNLUHJTeG5iTkhRS0UvZXZBNC9zWEozeHhPRWVTdWdJYmt0S3Q2QnRT?=
- =?utf-8?B?SnZNOEdUMHlGVnNKZU5vTUNrSllLRGJSSmZWU0s1SEhLdDZwOU1RcFpOU2pI?=
- =?utf-8?B?aCtaTmU0QnQxdHpHL1hEM2ltMzNrbjhGQ2NYQm9Pek92UWhucjZVNlB1TnZT?=
- =?utf-8?B?V21WcnF3NzkzMTl3OWhNakFRa0Z3V3Q5bGU2b2pTZXdhSHZ1NWNNdlhieUJk?=
- =?utf-8?B?VEM1V2hVekk2YnJRUHVsSFpDVDdOMy9tMUlyMk8vNGwzdjROMGU4dFhUY1Bu?=
- =?utf-8?B?ekFFY29VenlSN2Q3OStpUWRmUi9VWUFmeVNjQmZBV2xyaCtJUWVwVWwydDBp?=
- =?utf-8?B?dUlxSmZzdUlnS3VyaUl1eFRTTnpoM0daNWF6ZHBlQW1EYkl1YXpHOUtYM0FP?=
- =?utf-8?Q?iUBEbM0xnFphHI7/0eBOd/yLumcbDnk/S9hI4QZ?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Ky9Pbm9pODFmMWpJTXl0UXpubm1iWStLUjVhTk4yUGtPZ1VOZklHYUJZWHlZ?=
- =?utf-8?B?QXZ1SWlWODdVL0trNWNOVHVxbG8rMFgvU01nRnRvdHUzVHhsOTFiT1lFWXRN?=
- =?utf-8?B?aEoycU03MjFaTys0MnF2c1lpZWt0cFh6aUF3VHhPRFdmdWc1YjJ4eTFiaXRG?=
- =?utf-8?B?NElKQ25ZT1RFckpGeVpqQXBCL25tSDZvZ0tDdEViTmRIbG12NnVwWFdJSVBJ?=
- =?utf-8?B?UWFqWXNhdXRqVmRtTDYrRXAxN1RXZldkNkN0a205ZUpmK1d1UUl1N2tkYzFP?=
- =?utf-8?B?NEQ2MUQwZjhPeU1WUE5ZdkZ3aTd6K3Rrd3RVL080MElhOVQxaFZzYmpYK2dK?=
- =?utf-8?B?Q2dYQ0pObVI1UG15RHJZeXVsWmFHQW9SbDN1YVBMRmZSbHF5K0Q0S0FpWjQ3?=
- =?utf-8?B?TXEvcWN1c2tjaGp5Q2xkMnBYNGJVRlVwV3B0TENrR3RXODBpRWtGZHNmaHMr?=
- =?utf-8?B?WGFsSm1iU3dhemlmWXZRbUhwQ1NGOEtVZkNRTEFKYm1WTThqL0wxK2FTenll?=
- =?utf-8?B?ekQzdEU1a2JLVEpLUWtlclU5NTV4M05zZW54R3ptNzVBZXpLSjU4OUFWODdF?=
- =?utf-8?B?WjJKUVRFZ1ErWWpjb2V2d1FXZUVwbGVqdWVZKzZrelRNTFNsOWtPN2RVTEpN?=
- =?utf-8?B?Szd5UmdqU2tET2ZoamE2VEF4YXpxeTcrTHpXVExZenI0SVRrTGRmL29mT1lI?=
- =?utf-8?B?bkJyc09LTEVyUHFITTFTUThhb3dQS0tTNGZWSU5hRlFGVE80TmYrVWxJbEZZ?=
- =?utf-8?B?d1lLRnFYbUpGYmpOVGxNZ0k0M1FXN3FIUkwzS01hTXU2cE90Wi9PejBHTjBp?=
- =?utf-8?B?ZzU3K1FDWlZSNjdtajVjTUR6c0Zmc3dtcXNTaFRIaWg1TEdmV01TWFlENWNk?=
- =?utf-8?B?ZXM5YmQ0VjJtT3BCZHdFc1lCS2c4NVduaWl6eHZOV2NqNmZKam9UWm1SWU5r?=
- =?utf-8?B?aWxyZ0FjMEEwYW1ocXNoTEVUcG9xRi9zMktSTmlIRzV6dVZOR3p2NElVeG0w?=
- =?utf-8?B?SGo5WHJCazdvQTdsNmRsdGt6b1BYeEpRVHRQa3N1T29xUXg0Wkd0MENMMFNO?=
- =?utf-8?B?azg0TXc5S0NsMzdXWVBhNzh5blc0UUhiR3BQazJIS0h2MEFqcjFvS29LclFT?=
- =?utf-8?B?Z0NxV1VOaktDQzJZMnhFUDdpcXhVTTFndmVPaTVMc3RzWENyL3gxeWJPNGdI?=
- =?utf-8?B?eFo5d29Mc3dUUzY1by9CR2ZsRHQ1NzY1ZUZYL0FsUUkyaENmcHF6YW9mNzk5?=
- =?utf-8?B?WmZiMGJoSy8zZ24rVlFzcVZZcDB6L1lKVElTY2dSTUg5SXBEczFPTzJiNnYv?=
- =?utf-8?B?akVzTzRlTjRCUHNmUk51eEIyRFlKdU1mZWx6a25VT2RzQWJOZDYrVkpQOUFF?=
- =?utf-8?B?azVjNlhSQ3NIMkNPekRrVjBHbDZlTU92VlpTY0l0aXo4YUxLVUJ1andqK0xl?=
- =?utf-8?B?T3VsbFVMMS91Q09MMWdScWZxNy85RlcxdzRFa0Jmb1VCc2xQdU9LMXJhR0Vt?=
- =?utf-8?B?a0psKzZ3SFNsVGpWbCsrek4vQUhXWGFBN1lkNWJ1QXgxUk80OXpRbFg5NDNw?=
- =?utf-8?B?VVphMXV1RVNKYUdaSEtiaGczc0tpcUtwSFlxaWtGUUp2VGIySllKMy9IYnox?=
- =?utf-8?B?UThyRXk0UHNhT1ZScmpONDNaeXkwVWxNMFpYTjZXWG1xSFlNaVdwQWhkY2lC?=
- =?utf-8?B?bTBBQVhOWlcza3ZiNjJSWUVGR3FGM1hMSUtEY3Z6Ty8xTVU5M0ZBUlA5QitN?=
- =?utf-8?B?NUExNCtqcm5qN0M3TDlPaXJIM3pXTnJSTTlITnZsNWhkdVg4azg0RkZXRGZJ?=
- =?utf-8?B?WWhKbGxNOWNPdDhXTWc0QVJTNU1QUmwvMTBWZ0tCa21iTk56NE5GSEt5RTJB?=
- =?utf-8?B?emZYNDdCMEhzN0dyNThGRlBOeVlMRXBqZDQ3WGN1bmpaUytkbytmcHR0ekxi?=
- =?utf-8?B?Ni9KbStLSlhCVE5oVHA4VGJ4RXVYenJWbGdZYXN3UU1iQXNoRVZORlZwWDUw?=
- =?utf-8?B?ZXF6T2RPVDJLbEphTHhwaDE1Njd2QTRYTjZ0NWVVQ2JlSWI3bmRhNm1QZmxa?=
- =?utf-8?B?bXB3bU5TZ2FITE0rN2V2YWxWM1RscVM1cXNwNk44RnA2VTBseEZ3S0h6b2dN?=
- =?utf-8?Q?tgWoYmi0nq3M2EXgrtMiCOA0O?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8d39e722-38d6-47d9-14d8-08dd08a65dd9
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Nov 2024 14:27:58.9787
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 3HfXKYshOxz/IQjT90AoMB7QdETbENkrhF6DCHZ/jxxdOm3vmwV+HvMBVhyDouxZ
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4288
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] dt-bindings: trivial-devices: add sensirion,sht3x
+To: JuenKit Yip <hunterteaegg@126.com>, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, jdelvare@suse.com, linux@roeck-us.net,
+ peteryin.openbmc@gmail.com, noahwang.wang@outlook.com, festevam@gmail.com,
+ marex@denx.de, lukas@wunner.de, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org
+References: <20241119140725.75297-1-hunterteaegg@126.com>
+ <20241119140725.75297-2-hunterteaegg@126.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241119140725.75297-2-hunterteaegg@126.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Am 19.11.24 um 14:41 schrieb Philipp Stanner:
-> drm_sched_entity_flush()'s documentation states that an error is being
-> returned when "the process was killed". That is not what the function
-> actually does.
->
-> Furthermore, it contains an inprecise statement about how the function
-> is part of a convenience wrapper.
->
-> Move that statement to drm_sched_entity_destroy().
->
-> Correct drm_sched_entity_flush()'s documentation.
->
-> Cc: Christian König <christian.koenig@amd.com>
-> Signed-off-by: Philipp Stanner <pstanner@redhat.com>
+On 19/11/2024 15:07, JuenKit Yip wrote:
+> add sensirion,sht3x as trivial device for devicetree support
+> 
+> Signed-off-by: JuenKit Yip <hunterteaegg@126.com>
 > ---
->   drivers/gpu/drm/scheduler/sched_entity.c | 18 +++++++++---------
->   1 file changed, 9 insertions(+), 9 deletions(-)
->
-> diff --git a/drivers/gpu/drm/scheduler/sched_entity.c b/drivers/gpu/drm/scheduler/sched_entity.c
-> index 16b172aee453..7af7b448ad06 100644
-> --- a/drivers/gpu/drm/scheduler/sched_entity.c
-> +++ b/drivers/gpu/drm/scheduler/sched_entity.c
-> @@ -270,15 +270,12 @@ static void drm_sched_entity_kill(struct drm_sched_entity *entity)
->   
->   /**
->    * drm_sched_entity_flush - Flush a context entity
-> - *
->    * @entity: scheduler entity
-> - * @timeout: time to wait in for Q to become empty in jiffies.
-> - *
-> - * Splitting drm_sched_entity_fini() into two functions, The first one does the
-> - * waiting, removes the entity from the runqueue and returns an error when the
-> - * process was killed.
-> + * @timeout: time to wait in jiffies
->    *
->    * Returns: 0 if the timeout ellapsed, the remaining time otherwise.
-> +
-> + * Waits at most @timeout jiffies for the entity's job queue to become empty.
->    */
->   long drm_sched_entity_flush(struct drm_sched_entity *entity, long timeout)
->   {
-> @@ -290,7 +287,7 @@ long drm_sched_entity_flush(struct drm_sched_entity *entity, long timeout)
->   		return 0;
->   
->   	sched = entity->rq->sched;
-> -	/**
-> +	/*
->   	 * The client will not queue more IBs during this fini, consume existing
->   	 * queued IBs or discard them on SIGKILL
+>  Documentation/devicetree/bindings/trivial-devices.yaml | 2 ++
+I see now you sent the same binding to proper addresses. This is
+therefore a RESEND and please mark it appropriately in the future. git
+format-patch -2 --subject-prefix="PATCH RESEND"
 
-That comment is actually not correct either.
+or similar command for b4.
 
-drm_sched_entity_flush() should be used from the file_operations->flush 
-function and that one can be used even without destroying the entity.
-
-So it is perfectly possible that more and more IBs are pumped into the 
-entity while we wait for it to become idle.
-
-Regards,
-Christian.
-
->   	 */
-> @@ -359,8 +356,11 @@ EXPORT_SYMBOL(drm_sched_entity_fini);
->    * drm_sched_entity_destroy - Destroy a context entity
->    * @entity: scheduler entity
->    *
-> - * Calls drm_sched_entity_flush() and drm_sched_entity_fini() as a
-> - * convenience wrapper.
-> + * Convenience wrapper for entity teardown.
-> + *
-> + * Teardown of entities is split into two functions. The first one,
-> + * drm_sched_entity_flush(), waits for the entity to become empty. The second
-> + * one, drm_sched_entity_fini(), does the actual cleanup of the entity object.
->    */
->   void drm_sched_entity_destroy(struct drm_sched_entity *entity)
->   {
-
+Best regards,
+Krzysztof
 
