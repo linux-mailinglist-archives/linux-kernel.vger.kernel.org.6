@@ -1,77 +1,154 @@
-Return-Path: <linux-kernel+bounces-413774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 529DC9D1E79
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 03:53:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 988A89D1E7D
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 03:57:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C2638B23237
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 02:53:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 456AD1F228C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 02:57:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB01113DB9F;
-	Tue, 19 Nov 2024 02:53:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n7BrPrSv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD44813DB9F;
+	Tue, 19 Nov 2024 02:57:34 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53CAC28E3F;
-	Tue, 19 Nov 2024 02:53:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E824E33F7;
+	Tue, 19 Nov 2024 02:57:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731984805; cv=none; b=SpUUSelsiOVun0qOZjt1Bh83lJshTX6YjR5WDdqdlA3s9xcTYnjEGlCSpFWrXlVbWlZUmcu3SMUr7XMhSfFC8Ae+nCz/SeF7Fhm7e7ZVF7Uc62OOjEmZ9nt+u4CA2GCJHsgq3h1Nb4aISOHFJuluqegqFV1ksMbvaMDiodI6ptQ=
+	t=1731985054; cv=none; b=uBTOfrWVcsFrAasWWA5gyRylW8GQKS2Oy26fWA2tW545KMx4sXzNRbuJ7b5fIwpq8ckLJxBbmOpT0LAR32tDgur465doANEOOrOe6LMc8Wt1laBJcJq6UgIejru7IU1nPGLM0bihrVwyV054nqTXkJUalCs4c+Y1PPjs39VQ8C0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731984805; c=relaxed/simple;
-	bh=gGlaLvbL+cKmnyYjm9c9go3bMbiw5DRVQTLOgYF/X+o=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kyWAICkS1PE/HpHSfw0lOf6qt6bOiqjPACJFSlOx84HV7GMFwFcbel+/750Tn4w0aX06eKFxO04Ln1u4/o1vNoUqrvBumem7B8Th0HCvmNTAvPCbJdUGdmx/82lqQBCQnNp1QBBLEO9LwW4VIoB24zd3jPVWo6horg25DnIR7xA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n7BrPrSv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51F8AC4CECC;
-	Tue, 19 Nov 2024 02:53:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731984804;
-	bh=gGlaLvbL+cKmnyYjm9c9go3bMbiw5DRVQTLOgYF/X+o=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=n7BrPrSvxjS72Xbow16WyqqJuBHw07MvK/xOKAz62renU/tP/WQ9lvdgU+Xtk8o84
-	 XywbGBBGDbh7CL49lprAE3fcRm6iZSwnJw7eQyU3ef3eCdnK3e2mm6qadBQPLdUezT
-	 j/WjHBaTT4zEsmMHscKP5Tx5598hw3HSy4rOBVIafS2jwi+zLpIcPzn9FpDKyAIi3n
-	 fpCnziNlgfjYW8RqMerc1RaIWuvtSFkJuyY9UFU008VQheIkw/3yV424hFXeNsxguM
-	 o6iEuWG1202uY3P6oXCHNv1ALp/irJS9hge0KRiB1nKAlQcCYUbeCfQUr/y5q+WxPe
-	 VjEhhpezQkA+g==
-Date: Mon, 18 Nov 2024 18:53:23 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Caleb Sander <csander@purestorage.com>
-Cc: syzbot <syzbot+21ba4d5adff0b6a7cfc6@syzkaller.appspotmail.com>,
- andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com,
- parav@nvidia.com, saeedm@nvidia.com, syzkaller-bugs@googlegroups.com,
- tariqt@nvidia.com
-Subject: Re: [syzbot] [net?] general protection fault in dev_prep_valid_name
-Message-ID: <20241118185323.37969bcd@kernel.org>
-In-Reply-To: <CADUfDZqBUvm5vUgRHXKjvo=Kk4Ze8xU5tn-wG6J0wmUE6TTREA@mail.gmail.com>
-References: <67383db1.050a0220.85a0.000e.GAE@google.com>
-	<CADUfDZqBUvm5vUgRHXKjvo=Kk4Ze8xU5tn-wG6J0wmUE6TTREA@mail.gmail.com>
+	s=arc-20240116; t=1731985054; c=relaxed/simple;
+	bh=w413NECTxsl+Nl96fgAQtg24zMjfl0KSYCzrvUomWL4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Vbu+HGgTNiEezxsG25hKT3wrqPcvxDuk55fDIsxVE6h1EtowTrzKUeGZjR8QyCVAYklZGcYxx3aDgYJtOBxJbnQ/nlNqkab09nJNp7UKCLNdeo47orBLbGidR0OD8th4nO1qsJi8BDru48Z953XeIU3894716zCWqJ9WZ4YJBIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+From: Sam James <sam@gentoo.org>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Kostadin Shishmanov <kostadinshishmanov@protonmail.com>,
+  "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+  arnd@arndb.de,  linux-kbuild@vger.kernel.org
+Subject: Re: Build failure with GCC 15 (-std=gnu23)
+In-Reply-To: <20241118205629.GA15698@thelio-3990X> (Nathan Chancellor's
+	message of "Mon, 18 Nov 2024 13:56:29 -0700")
+Organization: Gentoo
+References: <4OAhbllK7x4QJGpZjkYjtBYNLd_2whHx9oFiuZcGwtVR4hIzvduultkgfAIRZI3vQpZylu7Gl929HaYFRGeMEalWCpeMzCIIhLxxRhq4U-Y=@protonmail.com>
+	<20241118205629.GA15698@thelio-3990X>
+User-Agent: mu4e 1.12.7; emacs 31.0.50
+Date: Tue, 19 Nov 2024 02:57:28 +0000
+Message-ID: <8734joj5gn.fsf@gentoo.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 18 Nov 2024 18:19:23 -0800 Caleb Sander wrote:
-> Hmm, it seems very unlikely that "mlx5/core: Schedule EQ comp tasklet
-> only if necessary" could have caused this issue. The commit only
-> touches the mlx5 driver. Does the test machine have ConnectX NICs? The
-> commit itself simply moves where tasklet_schedule() is called for the
-> mlx5_cq_tasklet_cb() tasklet, making it so the tasklet will only be
-> scheduled to process userspace RDMA completions.
-> Is it possible that the failure is not consistently reproducible and
-> the bisection is landing on the wrong commit?
+Nathan Chancellor <nathan@kernel.org> writes:
 
-Yes, most likely bad bisection, I looked at the syzbot docs but I don't
-see the command for invalidating the bisection results.
+> Hi Kostadin,
+>
+> Just a quick FYI off the bat, you only directed this to LKML, which is
+> basically like sending it into the void because very few people actually
+> read every message on LKML. I only caught it because I have a filter set
+> up for mentions of Clang and LLVM. I'd suggest adding at least the
+> Kbuild mailing list, which I have done now. I have also added Arnd
+> because I seem to recall him looking into how hard it would be to build
+> the kernel with C23.
+
+FWIW, scripts/get_maintainers.pl for stddef.h and types.h doesn't
+include kbuild -- maybe we should add that in.
+
+>
+> On Mon, Nov 18, 2024 at 02:26:49PM +0000, Kostadin Shishmanov wrote:
+>> Whenever I try to build the kernel with upcoming GCC 15 which defaults t=
+o -std=3Dgnu23 I get a build failure:
+>>=20
+>> ```
+>> In file included from ./include/uapi/linux/posix_types.h:5,
+>>                  from ./include/uapi/linux/types.h:14,
+>>                  from ./include/linux/types.h:6,
+>>                  from ./include/uapi/linux/mei_uuid.h:12,
+>>                  from ./include/uapi/linux/mei.h:10,
+>>                  from ./include/linux/mod_devicetable.h:12,
+>>                  from scripts/mod/devicetable-offsets.c:3:
+>> ./include/linux/stddef.h:11:9: error: expected identifier before =E2=80=
+=98false=E2=80=99
+>>    11 |         false   =3D 0,
+>> ./include/linux/types.h:35:33: error: two or more data types in declarat=
+ion specifiers
+>>    35 | typedef _Bool                   bool;
+>> ./include/linux/types.h:35:1: warning: useless type name in empty declar=
+ation
+>>    35 | typedef _Bool                   bool;
+>> ```
+>>=20
+>> This can be reproduced on older GCC versions with KCFLAGS=3D"-std=3Dgnu2=
+3"
+>
+> The kernel builds explicitly with '-std=3Dgnu11' (see Makefile), so I
+> would not expect the default switch on the GCC side to matter. That
+> signals to me that we are not actually using that flag everywhere
+> then?
+
+Right, that's the conclusion I reached when discussing it with Kostadin.
+
+> Building with V=3D1, I can see '-std=3Dgnu11' in the compiler command for
+> scripts/mod/devicetable-offsets.s, which is generated from
+> scripts/mod/devicetable-offsets.c, so it seems like something else is
+> going on here?
+
+I can reproduce it with `make defconfig` at
+158f238aa69d91ad74e535c73f552bd4b025109c in Linus' tree with just `make
+V=3D1 -j$(nproc) -l$(nproc)` (i.e. no CFLAGS manipulation at all).
+
+```
+# CC      drivers/firmware/efi/libstub/x86-5lvl.o
+  gcc -Wp,-MMD,drivers/firmware/efi/libstub/.x86-5lvl.o.d -nostdinc -I./arc=
+h/x86/include -I./arch/x86/include/generated  -I./include -I./arch/x86/incl=
+ude/uapi -I./arch/x86/include/genera
+ted/uapi -I./include/uapi -I./include/generated/uapi -include ./include/lin=
+ux/compiler-version.h -include ./include/linux/kconfig.h -include ./include=
+/linux/compiler_types.h -D__KERNEL__
+ -fmacro-prefix-map=3D./=3D -mcmodel=3Dsmall -m64 -D__KERNEL__ -fPIC -fno-s=
+trict-aliasing -mno-red-zone -mno-mmx -mno-sse -fshort-wchar -Wno-pointer-s=
+ign -Wno-address-of-packed-member -fno-asy
+nchronous-unwind-tables -Os -DDISABLE_BRANCH_PROFILING -include ./include/l=
+inux/hidden.h -D__NO_FORTIFY -ffreestanding -fno-stack-protector -D__DISABL=
+E_EXPORTS    -DKBUILD_MODFILE=3D'"driv
+ers/firmware/efi/libstub/x86-5lvl"' -DKBUILD_BASENAME=3D'"x86_5lvl"' -DKBUI=
+LD_MODNAME=3D'"x86_5lvl"' -D__KBUILD_MODNAME=3Dkmod_x86_5lvl -c -o drivers/=
+firmware/efi/libstub/x86-5lvl.o drivers/fi
+rmware/efi/libstub/x86-5lvl.c
+In file included from ./include/uapi/linux/posix_types.h:5,
+                 from ./include/uapi/linux/types.h:14,
+                 from ./include/linux/types.h:6,
+                 from ./include/linux/kasan-checks.h:5,
+                 from ./include/asm-generic/rwonce.h:26,
+                 from ./arch/x86/include/generated/asm/rwonce.h:1,
+                 from ./include/linux/compiler.h:317,
+                 from ./include/linux/build_bug.h:5,
+                 from ./include/linux/init.h:5,
+                 from ./include/linux/efi.h:15,
+                 from drivers/firmware/efi/libstub/file.c:10:
+./include/linux/stddef.h:11:9: error: expected identifier before =E2=80=98f=
+alse=E2=80=99
+   11 |         false   =3D 0,
+      |         ^~~~~
+```
+
+-std=3Dgnu11 certainly isn't there.
+
+>
+> [...]
+
+thanks,
+sam
 
