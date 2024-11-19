@@ -1,184 +1,154 @@
-Return-Path: <linux-kernel+bounces-414749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BF189D2D9E
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 19:11:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DE169D2CEC
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 18:48:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B2C9BB2CFB4
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 17:38:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C47C0B3634F
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 17:38:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 856C21D1744;
-	Tue, 19 Nov 2024 17:38:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 527C41D150D;
+	Tue, 19 Nov 2024 17:38:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="RVSfWD9y"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MlF6T3re"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4017B1D0DE2;
-	Tue, 19 Nov 2024 17:38:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A13181D0F5C;
+	Tue, 19 Nov 2024 17:38:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732037902; cv=none; b=X3Qtcd/ioDEM6U1R9T1ogHzPdtL0TuOq72d+cF8B6VBTy7cRCS3C68yTPUXl5ZF9W5hlxvepcKQOvUjEsNmwbN4nfb3llikeTbBINbByjGRCArSwjfYBH8nTh4zhmvY48iNOGDjagNJcgeHZOCt+Xw///yuUjIsH6LHaqMGLFF8=
+	t=1732037923; cv=none; b=RiwOaA2DlYaLnUU97XWpuViP3ryrazDX3sftqJZvUtJuq3zQ54+h8+Az/y5xl1bvzvtYvZHO6sE90XnQjzjb25x0byERsQ1CEENUSOOfB3IjOh81++ejoSAlzF/Uqo8QlZ8tXSl0KMwWXY7D0StHoyn2FVwbyBC0DZ6gxkIEvHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732037902; c=relaxed/simple;
-	bh=+nq/+tRwoSFNW+EoK2pWSX8cxt4Pd0wqeFV9b8P+NlE=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fsP2TyWWB7mXMJAJcjQ8sMwMZjbUpCpvXAPOZSJwEOzJu2eB8rYldBAn7A/Yc2DFl+QlgBezlKIPELWQD4ddNHoyNo/ls2wZ8i7aU4bUC5teMhmNASrHjEBQJRHoKBEJoUO3DvtBrsxdl+Xhd4nYrtR+Gn1F7xw3uHlpUaFATIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=RVSfWD9y; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AJ7Svar005048;
-	Tue, 19 Nov 2024 17:38:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=xUcf9sPZL9BJYbnUB8VEmGpr
-	rh86lGq6QHbgREjvU+w=; b=RVSfWD9yIf1mq80rJzI1y8gndFU+RSbP8N0N1x2N
-	TTc+0ZlC/KCPqWwAr18M5LT2QAcH5zbXgGzdK/HF1CqI06Dgva9jAiY0EJ0SamdS
-	jz8pvbdjqmXY4CPvOGSTuK5obOnhvU6d+YlphCK9Of4/9o2EBPQHrRfO7uYgopLK
-	PMNb296exqIMpkegZwnyM58rfV3za09GK0ocoyIm6zET9k1cTiaJpr1p7khuPblH
-	ze9BKT3OEGemUpWmB10oVDfk8exnYJ/KctiiL4Ng16Om5oct+7Q/idL6zOjcX9+9
-	2SYQaKG6agowlSZEsDgIMkyrp/gateo4JeSX27JqS8M+ng==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4308y8kbc7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 19 Nov 2024 17:38:17 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AJHcGWF031643
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 19 Nov 2024 17:38:16 GMT
-Received: from hu-wasimn-hyd.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 19 Nov 2024 09:38:10 -0800
-Date: Tue, 19 Nov 2024 23:08:06 +0530
-From: Wasim Nazir <quic_wasimn@quicinc.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel@quicinc.com>
-Subject: Re: [PATCH v2 5/5] arm64: dts: qcom: Add support for QCS9075 Ride &
- Ride-r3
-Message-ID: <ZzzM/iXyZOzGDu/U@hu-wasimn-hyd.qualcomm.com>
-References: <20241115225152.3264396-1-quic_wasimn@quicinc.com>
- <20241115225152.3264396-6-quic_wasimn@quicinc.com>
- <wfc6nkkm53tkruixgidhyqkcddcay4cxby5uq7lhh6gut6u7su@ok3lqh6fcxge>
+	s=arc-20240116; t=1732037923; c=relaxed/simple;
+	bh=8FvQe7CmDiiqtCg1COmi0pytCuaxj4XI0WYiZ+k1y8w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ld+Xtt6QWJhiFL1fG3Jrp76Bb2FqLlacxdYjyZ8LD5V9HX8t4S0RT6e3DwZb9guMuidXRNyDbIz+DDCc5PHolX2Z7U87moaCltvDShlYNSd3PSx76iGeY4koy2zfBDJ+JSA0dADaCFy8gxheaebcy5snY6KYFYW4sQyTnIhRB+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MlF6T3re; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29607C4CECF;
+	Tue, 19 Nov 2024 17:38:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732037923;
+	bh=8FvQe7CmDiiqtCg1COmi0pytCuaxj4XI0WYiZ+k1y8w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MlF6T3re1MNzu3fiZVN7RnFS3JFfCG1wcknEQhoPhmW/RBMu2WLFxbSRdVIHsoQ3F
+	 WW5JNHxs4Z2lXUogrm4q5vICLusABYIgMJnX4tsv4kPge4QfAdFE7/9zWWNYg4Z4lm
+	 GiJ18o9rQ2iYPmGpvjqvGtvTAd4iffBHmukfhrA5kStpThiZR0Ab7p/VVMfMzjth5H
+	 IxD2ocbOMAqeQm+IrQoVzgkPv/pZ7ANl8uOVsYtUbam1V3NTXdn6MLdFjWoFJSbiOU
+	 BxR01NPKlNmwiFItoUjOEdybxHxOD+V2I5JawxIzW85EtuU3nvHoyg2+er+Vc5m7ab
+	 Jy3uGs0Df//Jg==
+Date: Tue, 19 Nov 2024 09:38:40 -0800
+From: Kees Cook <kees@kernel.org>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Naresh Kamboju <naresh.kamboju@linaro.org>,
+	clang-built-linux <llvm@lists.linux.dev>,
+	kunit-dev@googlegroups.com,
+	open list <linux-kernel@vger.kernel.org>,
+	David Gow <davidgow@google.com>, Arnd Bergmann <arnd@arndb.de>,
+	Anders Roxell <anders.roxell@linaro.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Brendan Higgins <brendan.higgins@linux.dev>,
+	Rae Moar <rmoar@google.com>
+Subject: Re: DEFINE_FLEX_test: EXPECTATION FAILED at
+ lib/overflow_kunit.c:1200:
+Message-ID: <202411190932.DB9B746B8@keescook>
+References: <CA+G9fYs0mh8ex1wWYTW_o+BstwCAZ6rgQJZbGRkSH4WoQNTJdw@mail.gmail.com>
+ <20241119150516.GB2196859@thelio-3990X>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <wfc6nkkm53tkruixgidhyqkcddcay4cxby5uq7lhh6gut6u7su@ok3lqh6fcxge>
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: n3cjdqejTwCqTqvSshMqg5lOVkJ-8O69
-X-Proofpoint-GUID: n3cjdqejTwCqTqvSshMqg5lOVkJ-8O69
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- mlxlogscore=977 lowpriorityscore=0 clxscore=1015 malwarescore=0
- adultscore=0 impostorscore=0 mlxscore=0 spamscore=0 phishscore=0
- suspectscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411190131
+In-Reply-To: <20241119150516.GB2196859@thelio-3990X>
 
-On Sat, Nov 16, 2024 at 01:54:23AM +0200, Dmitry Baryshkov wrote:
-> On Sat, Nov 16, 2024 at 04:21:52AM +0530, Wasim Nazir wrote:
-> > Add device tree support for QCS9075 Ride & Ride-r3 boards.
-> > QCS9075 Ride & Ride-r3 are similar to QCS9100 Ride and Ride-r3
-> > boards but without safety monitoring feature of SAfety-IsLand
-> > subsystem.
+On Tue, Nov 19, 2024 at 08:05:16AM -0700, Nathan Chancellor wrote:
+> Hi Naresh,
 > 
-> Why do we need another set of DTS files? Should we expect more changes
-> to these DTS files?
+> + Kees (it does not look like you own lib/overflow_kunit.c, should that
+> be updated?)
 
-Ride/r3 based on qcs9075 and qcs9100 are 4 different boards with different
-SoCs, so different file is used to represent all the 4 boards.
+Yeah, though I thought the selftest tree was moving a bunch of these
+into a subdirectory? Maybe that didn't happen for v6.12?
 
+> On Tue, Nov 19, 2024 at 04:17:41PM +0530, Naresh Kamboju wrote:
+> > The overflow_DEFINE_FLEX_test KUnit test case. This test consistently
+> > passes when built with GCC-13 but fails when using Clang-19 or
+> > Clang-nightly.
+> > 
+> > Test Case: overflow_DEFINE_FLEX_test
+> > Compilers: Passing: GCC-13
+> >            Failing: Clang-19, Clang-nightly
+> > Observed Behavior: The test failure is reproducible with Clang builds,
+> >                    while GCC builds produce consistent success.
+> > 
+> > This inconsistency suggests a potential issue either in the Clang toolchain
+> > or in the test implementation that is exposed by Clang's compilation behavior.
+> > 
+> > Test log:
+> > ----------
+> > <6>[   92.471692]     # castable_to_type_test: 103 castable_to_type()
+> > tests finished
+> > <6>[   92.474933]     ok 21 castable_to_type_test
+> > <3>[   92.476715]     # DEFINE_FLEX_test: EXPECTATION FAILED at
+> > lib/overflow_kunit.c:1200
+> > <3>[   92.476715]     Expected
+> > __builtin_dynamic_object_size(two_but_zero, 0) == expected_raw_size,
+> > but
+> > <3>[   92.476715]         __builtin_dynamic_object_size(two_but_zero,
+> > 0) == 12 (0xc)
+> > <3>[   92.476715]         expected_raw_size == 8 (0x8)
+> > <6>[   92.480178]     not ok 22 DEFINE_FLEX_test
+> > <6>[   92.483020] # overflow: pass:21 fail:1 skip:0 total:22
 > 
-> > 
-> > Difference between ride and ride-r3 is the ethernet phy.
-> > Ride uses 1G ethernet phy while ride-r3 uses 2.5G ethernet phy.
-> > 
-> > Signed-off-by: Wasim Nazir <quic_wasimn@quicinc.com>
-> > ---
-> >  arch/arm64/boot/dts/qcom/Makefile            |  2 ++
-> >  arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dts | 12 ++++++++++++
-> >  arch/arm64/boot/dts/qcom/qcs9075-ride.dts    | 12 ++++++++++++
-> >  3 files changed, 26 insertions(+)
-> >  create mode 100644 arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dts
-> >  create mode 100644 arch/arm64/boot/dts/qcom/qcs9075-ride.dts
-> > 
-> > diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
-> > index 5d9847119f2e..91c811aca2ca 100644
-> > --- a/arch/arm64/boot/dts/qcom/Makefile
-> > +++ b/arch/arm64/boot/dts/qcom/Makefile
-> > @@ -116,6 +116,8 @@ dtb-$(CONFIG_ARCH_QCOM)	+= qcs404-evb-4000.dtb
-> >  dtb-$(CONFIG_ARCH_QCOM)	+= qcs6490-rb3gen2.dtb
-> >  dtb-$(CONFIG_ARCH_QCOM)	+= qcs8550-aim300-aiot.dtb
-> >  dtb-$(CONFIG_ARCH_QCOM)	+= qcs9075-rb8.dtb
-> > +dtb-$(CONFIG_ARCH_QCOM)	+= qcs9075-ride.dtb
-> > +dtb-$(CONFIG_ARCH_QCOM)	+= qcs9075-ride-r3.dtb
-> >  dtb-$(CONFIG_ARCH_QCOM)	+= qcs9100-ride.dtb
-> >  dtb-$(CONFIG_ARCH_QCOM)	+= qcs9100-ride-r3.dtb
-> >  dtb-$(CONFIG_ARCH_QCOM)	+= qdu1000-idp.dtb
-> > diff --git a/arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dts b/arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dts
-> > new file mode 100644
-> > index 000000000000..a04c8d1fa258
-> > --- /dev/null
-> > +++ b/arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dts
-> > @@ -0,0 +1,12 @@
-> > +// SPDX-License-Identifier: BSD-3-Clause
-> > +/*
-> > + * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
-> > + */
-> > +/dts-v1/;
-> > +
-> > +#include "sa8775p-ride-r3.dts"
-> > +
-> > +/ {
-> > +	model = "Qualcomm Technologies, Inc. QCS9075 Ride Rev3";
-> > +	compatible = "qcom,qcs9075-ride-r3", "qcom,qcs9075", "qcom,sa8775p";
-> > +};
-> > diff --git a/arch/arm64/boot/dts/qcom/qcs9075-ride.dts b/arch/arm64/boot/dts/qcom/qcs9075-ride.dts
-> > new file mode 100644
-> > index 000000000000..9ffab74fb1a8
-> > --- /dev/null
-> > +++ b/arch/arm64/boot/dts/qcom/qcs9075-ride.dts
-> > @@ -0,0 +1,12 @@
-> > +// SPDX-License-Identifier: BSD-3-Clause
-> > +/*
-> > + * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
-> > + */
-> > +/dts-v1/;
-> > +
-> > +#include "sa8775p-ride.dts"
-> > +
-> > +/ {
-> > +	model = "Qualcomm Technologies, Inc. QCS9075 Ride";
-> > +	compatible = "qcom,qcs9075-ride", "qcom,qcs9075", "qcom,sa8775p";
-> > +};
-> > --
-> > 2.47.0
-> > 
+> I can reproduce this with Clang 19.1.3 on 6.12, so it does not appear to
+> be a recent problem.
 > 
-> -- 
-> With best wishes
-> Dmitry
+>   $ printf 'CONFIG_%s=y\n' KUNIT OVERFLOW_KUNIT_TEST >kernel/configs/overflow_kunit.config
+> 
+>   $ make -skj"$(nproc)" ARCH=arm64 LLVM=1 mrproper {def,hardening.,overflow_kunit.}config Image.gz
+> 
+>   $ boot-qemu.py ...
+>   [    0.000000] Linux version 6.12.0 (nathan@thelio-3990X) (ClangBuiltLinux clang version 19.1.3 (https://github.com/llvm/llvm-project.git ab51eccf88f5321e7c60591c5546b254b6afab99), ClangBuiltLinux LLD 19.1.3 (https://github.com/llvm/llvm-project.git ab51eccf88f5321e7c60591c5546b254b6afab99)) #1 SMP PREEMPT Tue Nov 19 07:28:39 MST 2024
+>   ...
+>   [    4.184764]     # DEFINE_FLEX_test: EXPECTATION FAILED at lib/overflow_kunit.c:1200
+>   [    4.184764]     Expected __builtin_dynamic_object_size(two_but_zero, 0) == expected_raw_size, but
+>   [    4.184764]         __builtin_dynamic_object_size(two_but_zero, 0) == 12 (0xc)
+>   [    4.184764]         expected_raw_size == 8 (0x8)
+>   [    4.190023]     not ok 22 DEFINE_FLEX_test
+>   [    4.206181] # overflow: pass:21 fail:1 skip:0 total:22
+>   [    4.208635] # Totals: pass:21 fail:1 skip:0 total:22
+>   [    4.212218] not ok 1 overflow
+>   ...
+> 
+> I do not really understand how __builtin_dynamic_object_size() can
+> return 12 for two_but_zero with __counted_by() because DEFINE_RAW_FLEX()
+> does not initialize the counter so it should be zero... Kees? I guess
+> maybe something changed on the LLVM side, I will see if I can bisect
+> later (all the boxes are tied up with other compilations at the moment).
 
-Thanks & Regards,
-Wasim
+Hmm. I assume this is related to recent bdos vs counted_by changes in
+Clang 19.1.2 (or .3?) But I'm going to have to track down which is
+causing it.
+
+The test is supposed to check this...
+
+if counted_by is supported, DEFINE_RAW_FLEX will init counted_by to 0,
+so the object is expected to be seen as sizeof(int) + sizeof(u32) (8).
+
+if counted_by is NOT supported, then bdos will return the on-stack size
+of the object (8 + sizeof(s16) * 2) == 12.
+
+If LLVM switch to "max of counted_by or bos", then returning 12 would
+make sense again.
+
+I will check behaviors and compare it to GCC 15...
+
+-- 
+Kees Cook
 
