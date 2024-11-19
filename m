@@ -1,221 +1,139 @@
-Return-Path: <linux-kernel+bounces-414419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34FB99D27B4
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 15:12:48 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDFF79D27EC
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 15:17:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00A31283FED
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 14:12:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D1D64B253A8
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 14:15:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A11021CDA35;
-	Tue, 19 Nov 2024 14:12:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64B341D094B;
+	Tue, 19 Nov 2024 14:13:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iFAUn4uK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YUjDjvkM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED6A3E57D;
-	Tue, 19 Nov 2024 14:12:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9B5C1D07AA;
+	Tue, 19 Nov 2024 14:13:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732025559; cv=none; b=lU9cdmMQUSrZzxK0TcDiGcwvRJMqGd6Ao4mBk3cBTA3eF6mtfd8Q08nroN7JPCO4pzxXnPzkngOwPncJsw4PkTP3XuCaSsfPSluzMS58ozuOAZ8uamja+Yy8DmfnivYGEF9ZQm7SsiKeB8p3YYhY7qXOj6nd67IeFif1U+/LeV8=
+	t=1732025611; cv=none; b=IKKTKVX6yn5M+JX7lmCpbXbTZN+9eIzVkD5cCb0a4Z1UmRELkMBPHPFlfyCADO/wCJcmmWgfAH+cvqsiEztXCUGC9Fri3i3dZXi7i7gqwoWLpK5RRlCHtDH7lQwtULMUBG13RIT3N4SUtVbydOBNbWvyhS54u+3Yz2WsFVo4oss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732025559; c=relaxed/simple;
-	bh=rXCnaTBFJsUj4p87piDnz1IdGPw72XgEh5Shigy8KTo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LVlie10RLnCYA/LfNHTRU/YySyAHwZ6UdF2d0uxT1f1VTyjkE5vLJqaylH0q2pd7HP6y+LnMctdDGbQsjpddUePIUZDy9Zs1d7ZHsLicYE0kOiTOOdKAm9yDaIESZGAF199GUYW+a/iYwz8TOPCbizqzA81SOaOTK/3A310T8EU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iFAUn4uK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50A0EC4CECF;
-	Tue, 19 Nov 2024 14:12:38 +0000 (UTC)
+	s=arc-20240116; t=1732025611; c=relaxed/simple;
+	bh=AtZl+/+YOABDoSFUZKaIkFRXJgK0Lll61JEq77vP4QY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=qanq/GvT4Ww9Or0qr884NqVFbOI/6ZtncKXtQ8MhQFjk4TYSBF1ECXb67i5uAC7N5xPevqu13Pj/y2Rtfusfh4kmvvx9oflgtKGkR5fGYsFpmnWAItMnJjJcrBlJdAyevoBBctuNLIg34ZqV7ig4ikOdT1juTlXcsIAgUawye1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YUjDjvkM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 368A3C4CED7;
+	Tue, 19 Nov 2024 14:13:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732025558;
-	bh=rXCnaTBFJsUj4p87piDnz1IdGPw72XgEh5Shigy8KTo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iFAUn4uKil31Xr8W5g4SPX+hS+fvldjhduKvdrXkoXHhE13OEyUSgmb1974VH/i72
-	 Cak01s9lh62m8cdiZEWbgWbcQhBFAI04GKllE4IdS2TSY8E1Kf7Ctl9QUShvWOpo/g
-	 Tvlkz4XpybiTRcRrRLONPsXXPjGid6TrlxDf4P4XuyYtBeybdR2RRkzZhtsJwheWzF
-	 2bkwMd3VG7NWSQIenWnM994CPxLsyuVQagiqkciL/JkGRHTP9WoaYtcycaMy0tx4C3
-	 unkerhhRZfAnJQGjRxD0rixUNCSCZTFky67Ommv+0TE6kJMXC3QlW2ZrSY+jrDflUE
-	 3JdIaIV6sExww==
-Date: Tue, 19 Nov 2024 08:12:36 -0600
-From: Rob Herring <robh@kernel.org>
-To: Valentina Fernandez <valentina.fernandezalanis@microchip.com>
-Cc: paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
-	ycliang@andestech.com, prabhakar.mahadev-lad.rj@bp.renesas.com,
-	peterlin@andestech.com, samuel.holland@sifive.com,
-	conor.dooley@microchip.com, alexghiti@rivosinc.com,
-	ruanjinjie@huawei.com, takakura@valinux.co.jp, conor+dt@kernel.org,
-	jassisinghbrar@gmail.com, krzk+dt@kernel.org,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 3/4] dt-bindings: mailbox: add binding for Microchip
- IPC mailbox controller
-Message-ID: <20241119141236.GA1099946-robh@kernel.org>
-References: <20241105183513.1358736-1-valentina.fernandezalanis@microchip.com>
- <20241105183513.1358736-4-valentina.fernandezalanis@microchip.com>
+	s=k20201202; t=1732025611;
+	bh=AtZl+/+YOABDoSFUZKaIkFRXJgK0Lll61JEq77vP4QY=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=YUjDjvkMuEE77VTkHuBjMxsKwkppVAnlr1wB8/N+px2oa9694xTZVXc8y2cmYNMNh
+	 oYlyPLqVmzJNB2OzMbpAGMuKC0/qE7ZfCpUfX6XXX0Bd+8tJUZmiMyYVSq6ZJyiOoC
+	 EWQGpSkLNrd30fDYJp8FudGP2mAEPGo+x4h67Sc2PIS5s8cRDh8hD9dCJJsHnj7TLo
+	 hvbUhshwxcUD14Is1fXJ5/Mdtv6WzHNIsBLoIlIIYLd2qxSLPgggu0Vs55Wp38nk1F
+	 RnrJ4iNyqaaO8xf1JKaKwF/spRJptIoc32z0S+nLPu4kuih5J8LoBX7RAw9aAZkJIa
+	 SMa6TQJMff7kQ==
+Message-ID: <419a5d2c-7d00-41c7-b787-c824b13dcce3@kernel.org>
+Date: Tue, 19 Nov 2024 15:13:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241105183513.1358736-4-valentina.fernandezalanis@microchip.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] hwmon: (sht3x) add devicetree support
+To: JuenKit Yip <hunterteaegg@126.com>, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, jdelvare@suse.com, linux@roeck-us.net,
+ peteryin.openbmc@gmail.com, noahwang.wang@outlook.com, festevam@gmail.com,
+ marex@denx.de, lukas@wunner.de, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org
+References: <20241119140725.75297-1-hunterteaegg@126.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241119140725.75297-1-hunterteaegg@126.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Nov 05, 2024 at 06:35:12PM +0000, Valentina Fernandez wrote:
-> Add a dt-binding for the Microchip Inter-Processor Communication (IPC)
-> mailbox controller.
+On 19/11/2024 15:07, JuenKit Yip wrote:
+> add "compatible" property for supporting devicetree
 > 
-> Signed-off-by: Valentina Fernandez <valentina.fernandezalanis@microchip.com>
+> Signed-off-by: JuenKit Yip <hunterteaegg@126.com>
 > ---
->  .../bindings/mailbox/microchip,sbi-ipc.yaml   | 117 ++++++++++++++++++
->  1 file changed, 117 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mailbox/microchip,sbi-ipc.yaml
+>  drivers/hwmon/sht3x.c | 18 +++++++++++++++++-
+>  1 file changed, 17 insertions(+), 1 deletion(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/mailbox/microchip,sbi-ipc.yaml b/Documentation/devicetree/bindings/mailbox/microchip,sbi-ipc.yaml
-> new file mode 100644
-> index 000000000000..9e67c09e4bea
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mailbox/microchip,sbi-ipc.yaml
-> @@ -0,0 +1,117 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/mailbox/microchip,sbi-ipc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Microchip Inter-processor communication (IPC) mailbox controller
-> +
-> +maintainers:
-> +  - Valentina Fernandez <valentina.fernandezalanis@microchip.com>
-> +
-> +description:
-> +  The Microchip Inter-processor Communication (IPC) facilitates
-> +  message passing between processors using an interrupt signaling
-> +  mechanism.
-> +
-> +properties:
-> +  compatible:
-> +    oneOf:
-> +      - description:
-> +          Intended for use by software running in supervisor privileged
-> +          mode (s-mode). This SBI interface is compatible with the Mi-V
-> +          Inter-hart Communication (IHC) IP.
-> +        items:
-> +          - const: microchip,sbi-ipc
-> +
-> +      - description:
-> +          SoC-specific compatible, intended for use by the SBI
-> +          implementation in machine mode (m-mode).
-> +        items:
-> +          - const: microchip,miv-ihc-rtl-v2
+> diff --git a/drivers/hwmon/sht3x.c b/drivers/hwmon/sht3x.c
+> index 650b0bcc2359..2ac1537b3e3e 100644
+> --- a/drivers/hwmon/sht3x.c
+> +++ b/drivers/hwmon/sht3x.c
+> @@ -954,6 +954,19 @@ static int sht3x_probe(struct i2c_client *client)
+>  	return PTR_ERR_OR_ZERO(hwmon_dev);
+>  }
+>  
+> +/* devicetree ID table */
+> +static const struct of_device_id sht3x_of_match[] = {
+> +	{ .compatible = "sensirion,sht30", .data = (void *)sht3x },
+This does not match your binding at all. Also all SHT/STS devices are
+compatible, so express it in the binding with a fallback.
 
-Usually SoC specific compatibles don't have version numbers. And all 
-hardware in an SoC is RTL at some point. So microchip,miv-ihc should be 
-sufficient if 'miv' is an SoC.
+Anyway, you cannot just send half of patch afterwards without resolving
+previous comments. If this is v2, mark it as v2. If this is a resend,
+mark it as RESEND.
 
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    minItems: 1
-> +    maxItems: 5
-> +
-> +  interrupt-names:
-> +    minItems: 1
-> +    maxItems: 5
-> +    items:
-> +      pattern: "^hart-[0-5]+$"
-> +
-> +  "#mbox-cells":
-> +    description: >
-> +      For the SBI "device", the cell represents the global "logical" channel IDs.
-> +      The meaning of channel IDs are platform firmware dependent.
-> +
-> +      For the SoC-specific compatible string, the cell represents the physical
-> +      channel and does not vary based on the platform firmware.
-> +    const: 1
-> +
-> +  microchip,ihc-chan-disabled-mask:
-> +    description: >
-> +      Represents the enable/disable state of the bi-directional IHC
-> +      channels within the MIV-IHC IP configuration.
-> +
-> +      The mask is a 16-bit value, but only the first 15 bits are utilized.
-> +      Each of the bits corresponds to one of the 15 IHC channels.
+See other examples on mailing lists (lore.kernel.org) and read
+submitting patches document.
 
-That can be expressed as a constraint:
-
-maximum: 0x7fff
-
-Then you can drop this paragraph.
-
-> +
-> +      A bit set to '1' indicates that the corresponding channel is disabled,
-> +      and any read or write operations to that channel will return zero.
-> +
-> +      A bit set to '0' indicates that the corresponding channel is enabled
-> +      and will be accessible through its dedicated address range registers.
-> +
-> +      The remaining bit of the 16-bit mask is reserved and should be ignored.
-
-And drop this one.
-
-> +
-> +      The actual enable/disable state of each channel is determined by the
-> +      IP block’s configuration.
-> +    $ref: /schemas/types.yaml#/definitions/uint16
-> +    default: 0
-> +
-> +required:
-> +  - compatible
-> +  - interrupts
-> +  - interrupt-names
-> +  - "#mbox-cells"
-> +
-> +additionalProperties: false
-> +
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: microchip,sbi-ipc
-> +    then:
-> +      properties:
-> +        reg: false
-> +        microchip,ihc-chan-disabled-mask: false
-> +    else:
-> +      required:
-> +        - reg
-> +        - microchip,ihc-chan-disabled-mask
-> +
-> +examples:
-> +  - |
-> +    mailbox {
-> +      compatible = "microchip,sbi-ipc";
-> +      interrupt-parent = <&plic>;
-> +      interrupts = <180>, <179>, <178>;
-> +      interrupt-names = "hart-1", "hart-2", "hart-3";
-> +      #mbox-cells = <1>;
-> +    };
-> +  - |
-> +    mailbox@50000000 {
-> +      compatible = "microchip,miv-ihc-rtl-v2";
-> +      microchip,ihc-chan-disabled-mask = /bits/ 16 <0>;
-> +      reg = <0x50000000 0x1C000>;
-> +      interrupt-parent = <&plic>;
-> +      interrupts = <180>, <179>, <178>;
-> +      interrupt-names = "hart-1", "hart-2", "hart-3";
-> +      #mbox-cells = <1>;
-> +    };
-> -- 
-> 2.34.1
-> 
+Best regards,
+Krzysztof
 
