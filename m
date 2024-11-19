@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-413957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC6CA9D20F7
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 08:50:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1701E9D20FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 08:51:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CB52282626
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 07:50:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D01B02823B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 07:51:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FC5515530B;
-	Tue, 19 Nov 2024 07:50:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B83E198A01;
+	Tue, 19 Nov 2024 07:50:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vLLw8dhY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tn+xRTUA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 397A46E2BE
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 07:50:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E91926E2BE;
+	Tue, 19 Nov 2024 07:50:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732002640; cv=none; b=AeanE3vfIuEMRkCvPE0xoy8hwG/CZBohom4yf+zDSTUefBA4KVxJ+/k6JnTKjkaGlpVhSwzrf0mRn9j2DkKBb2/3xgZUbCbe/tN7HdBLXsyHDjDhDwtRtuUEit4lys5j0Fugop55L8gsD0lG8Yb8zsj24+olJNvY2sOM+107mSc=
+	t=1732002645; cv=none; b=rlZJpRMMyPT5V8eUcTTbRHRTwKURS/XJUpSnv1HJBifiP3gy0erAE1V+dlHXL2a1HdoTq+x55A9CQkQwTZe8wShyzmwK/cGri8k4/aPKT0uxdQKF7n9tOY6GPrS1I4/pdWW10ej0xGBszyKP2ibzLBPqLl9L25XeE0WFUxThgjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732002640; c=relaxed/simple;
-	bh=gbF36eMx9sfuMRVW+aFk+4froAkv7fnorpos7XgT+ds=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=MXgwnzGiGKHD7tor25td4pNP+jjY3ICb3zG8y8hCUh786XHL/jpTCsghjN+alrXTDZYmwI7HMEnHrScPMklmb7yX+hbM1bybyZMbiny5eK3jWiigal1ZvtfmYO3xQJpK64R8k/7cZnE9vuEpmhptugJAClyLgupocE6s28XF7jk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vLLw8dhY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3365C4CECF;
-	Tue, 19 Nov 2024 07:50:37 +0000 (UTC)
+	s=arc-20240116; t=1732002645; c=relaxed/simple;
+	bh=O40Vaqde/Al2ROtl8voyLDMNlGefus7LGsE/B7MtOJ0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NtaZftLqjvCe0egGMnzMqqxSGRmtJh3iJcVra0pRUk/kRTZNkcSD7U+0pD1r/6Jtdc9i5eMgsiBV8R1t+LhWEakSM9h9NadqsVeGgb6+ciuzouqccJNiiEnBjX4lMn+2W6EZzaQxM0XBTyHoAweyRG35sI6khlxqspx2lG/b6Ew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tn+xRTUA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BE4DC4CECF;
+	Tue, 19 Nov 2024 07:50:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732002639;
-	bh=gbF36eMx9sfuMRVW+aFk+4froAkv7fnorpos7XgT+ds=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=vLLw8dhY+Vk58xmDLpY9ZI3iIdLqh8G26R4HqkBHQLu2etn15x2J/+XaKYJToEjSD
-	 9NC6rQObOopwcSbPlxAnSWGPZMkUNA+90ij9ryXP23ERkL/H/dy0sNTL8YW5TFUEI/
-	 ZB4l8fW6IlSMKV+n8NbPjqSFaPfuPY5YerUlUpw+P4jYk4XgITl9XsKucgEfFnGFBr
-	 ool+wGiDm+Hx5qlMLJIe8YGceXAfIwImyYrsTcpi/RKJlr7kt/ocOyDHq+Lj+1+egZ
-	 ZjK8yuvZQIRGnNqmopKTCAvoPhk+APSwPeDzfRehCdq7y/D2/Hct+JjPNUDQ7Gk7cm
-	 MK5D2D2tqh16A==
-Message-ID: <5b0c17da-f1e1-490d-a560-3312bc8c3247@kernel.org>
-Date: Tue, 19 Nov 2024 15:50:35 +0800
+	s=k20201202; t=1732002644;
+	bh=O40Vaqde/Al2ROtl8voyLDMNlGefus7LGsE/B7MtOJ0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Tn+xRTUAK9wP2C9qyUr/m+/Z8ihDtRgbyfh59RFf5ND2/NfOuHcPxJ6jdBew1FJqS
+	 zGdtJyxpBCO9yMLR5MQCpg8bFxrweM5Pw6WA4VAZJYl2ZmAQBGOhOlGM+gpsnlaoyH
+	 WiqcZSGtDkpSZkkmgOjgebTOS4QfSm507Aiuj9gPdSnvr/Kwc8JD79NJqIaB6uyAPK
+	 kZzbiE6Qw8HGjyw00YEZ0ENYc1OX40cf2N2HfbRHIcXxnhowibEPR6z8+tczQ4YQ13
+	 G+pmS6FIz7bfoj7J+sGemd0APCbylgTwO6tzuLB55Ydxnd35HXyYxZbOQy8TOM/Dqf
+	 q0/zjR22wSgEQ==
+Message-ID: <80771196-0233-4c64-bf8f-f7a1ca0693c6@kernel.org>
+Date: Tue, 19 Nov 2024 08:50:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,244 +49,94 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Cc: Chao Yu <chao@kernel.org>, Xiuhong Wang <xiuhong.wang@unisoc.com>,
- jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-kernel@vger.kernel.org, niuzhiguo84@gmail.com,
- hao_hao.wang@unisoc.com, ke.wang@unisoc.com
-Subject: Re: [PATCH] f2fs: Fix to avoid long time to shrink extent cache
-To: Xiuhong Wang <xiuhong.wang.cn@gmail.com>
-References: <20241112110627.1314632-1-xiuhong.wang@unisoc.com>
- <fb436fdb-a4eb-49cc-a730-354611e88b21@kernel.org>
- <CAOsHCa1t+LeeAG2PDJ0BfYtoh_+CUmLjZcp1+dGZWR5PPfmFSQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] dt-bindings: phy: Add ExynosAutov920 UFS PHY
+ bindings
+To: Sowon Na <sowon.na@samsung.com>, robh@kernel.org, conor+dt@kernel.org,
+ vkoul@kernel.org, alim.akhtar@samsung.com, kishon@kernel.org
+Cc: krzk+dt@kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+References: <20241118021009.2858849-1-sowon.na@samsung.com>
+ <CGME20241118021011epcas2p21593217ccf58afddad5ce36f510e7cb6@epcas2p2.samsung.com>
+ <20241118021009.2858849-2-sowon.na@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <CAOsHCa1t+LeeAG2PDJ0BfYtoh_+CUmLjZcp1+dGZWR5PPfmFSQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241118021009.2858849-2-sowon.na@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 2024/11/19 14:46, Xiuhong Wang wrote:
-> Chao Yu <chao@kernel.org> 于2024年11月19日周二 14:05写道：
->>
->> On 2024/11/12 19:06, Xiuhong Wang wrote:
->>> We encountered a system hang problem based on the following
->>> experiment:
->>> There are 17 processes, 8 of which do 4k data read, write and
->>> compare tests, and 8 do 64k read, write and compare tests. Each
->>> thread writes a 256M file, and another thread writes a large file
->>> to 80% of the disk, and then keeps doing read operations, all of
->>> which are direct operations. This will cause the large file to be
->>> filled to 80% of the disk to be severely fragmented. On a 512GB
->>> device, this large file may generate a huge zombie extent tree.
->>>
->>> When system shutting down, the init process needs to wait for the
->>> writeback process, and the writeback process may encounter the
->>> situation where the READ_EXTENT_CACHE space is insufficient and
->>> needs to free the zombie extent tree. The extent tree has a large
->>> number of extent nodes, it will a long free time to free, which
->>> triggers system hang.
->>   > > The stack when the problem occurs is as follows:
->>> crash_arm64> bt 1
->>> PID: 1        TASK: ffffff80801a9200  CPU: 1    COMMAND: "init"
->>>    #0 [ffffffc00806b9a0] __switch_to at ffffffc00810711c
->>>    #1 [ffffffc00806ba00] __schedule at ffffffc0097c1c4c
->>>    #2 [ffffffc00806ba60] schedule at ffffffc0097c2308
->>>    #3 [ffffffc00806bab0] wb_wait_for_completion at ffffffc0086320d4
->>>    #4 [ffffffc00806bb20] writeback_inodes_sb at ffffffc00863719c
->>>    #5 [ffffffc00806bba0] sync_filesystem at ffffffc00863c98c
->>>    #6 [ffffffc00806bbc0] f2fs_quota_off_umount at ffffffc00886fc60
->>>    #7 [ffffffc00806bc20] f2fs_put_super at ffffffc0088715b4
->>>    #8 [ffffffc00806bc60] generic_shutdown_super at ffffffc0085cd61c
->>>    #9 [ffffffc00806bcd0] kill_f2fs_super at ffffffc00886b3dc
->>>
->>> crash_arm64> bt 14997
->>> PID: 14997    TASK: ffffff8119d82400  CPU: 3    COMMAND: "kworker/u16:0"
->>>    #0 [ffffffc019f8b760] __detach_extent_node at ffffffc0088d5a58
->>>    #1 [ffffffc019f8b790] __release_extent_node at ffffffc0088d5970
->>>    #2 [ffffffc019f8b810] f2fs_shrink_extent_tree at ffffffc0088d5c7c
->>>    #3 [ffffffc019f8b8a0] f2fs_balance_fs_bg at ffffffc0088c109c
->>>    #4 [ffffffc019f8b910] f2fs_write_node_pages at ffffffc0088bd4d8
->>>    #5 [ffffffc019f8b990] do_writepages at ffffffc0084a0b5c
->>>    #6 [ffffffc019f8b9f0] __writeback_single_inode at ffffffc00862ee28
->>>    #7 [ffffffc019f8bb30] writeback_sb_inodes at ffffffc0086358c0
->>>    #8 [ffffffc019f8bc10] wb_writeback at ffffffc0086362dc
->>>    #9 [ffffffc019f8bcc0] wb_do_writeback at ffffffc008634910
->>>
->>> Process 14997 ran for too long and caused the system hang.
->>>
->>> At this time, there are still 1086911 extent nodes in this zombie
->>> extent tree that need to be cleaned up.
->>>
->>> crash_arm64_sprd_v8.0.3++> extent_tree.node_cnt ffffff80896cc500
->>>     node_cnt = {
->>>       counter = 1086911
->>>     },
->>>
->>> The root cause of this problem is that when the f2fs_balance_fs
->>> function is called in the write process, it will determine
->>> whether to call f2fs_balance_fs_bg, but it is difficult to
->>> meet the condition of excess_cached_nats. When the
->>> f2fs_shrink_extent_tree function is called to free during
->>> f2fs_write_node_pages, there are too many extent nodes on the
->>> extent tree, which causes a loop and causes a system hang.
->>>
->>> To solve this problem, when calling f2fs_balance_fs, check whether
->>> the extent cache is sufficient. If not, release the zombie extent
->>> tree.
->>>
->>> Signed-off-by: Xiuhong Wang <xiuhong.wang@unisoc.com>
->>> Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
->>> ---
->>> Test the problem with the temporary versions:
->>> patch did not reproduce the problem, the patch is as follows:
->>> @@ -415,7 +415,7 @@ void f2fs_balance_fs(struct f2fs_sb_info *sbi, bool need)
->>>                   f2fs_stop_checkpoint(sbi, false, STOP_CP_REASON_FAULT_INJECT);
->>>
->>>           /* balance_fs_bg is able to be pending */
->>> -       if (need && excess_cached_nats(sbi))
->>> +       if (need)
->>>                   f2fs_balance_fs_bg(sbi, false);
->>>
->>> ---
->>>    fs/f2fs/segment.c | 4 +++-
->>>    1 file changed, 3 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->>> index 1766254279d2..390bec177567 100644
->>> --- a/fs/f2fs/segment.c
->>> +++ b/fs/f2fs/segment.c
->>> @@ -415,7 +415,9 @@ void f2fs_balance_fs(struct f2fs_sb_info *sbi, bool need)
->>>                f2fs_stop_checkpoint(sbi, false, STOP_CP_REASON_FAULT_INJECT);
->>>
->>>        /* balance_fs_bg is able to be pending */
->>> -     if (need && excess_cached_nats(sbi))
->>> +     if (need && (excess_cached_nats(sbi) ||
->>> +                     !f2fs_available_free_memory(sbi, READ_EXTENT_CACHE) ||
->>> +                     !f2fs_available_free_memory(sbi, AGE_EXTENT_CACHE)))
->>
->> Hi,
->>
->> I doubt if there is no enough memory, we may still run into
->> f2fs_shrink_extent_tree() and suffer such long time delay.
->>
->> So, can we just let __free_extent_tree() break the loop once we have
->> released entries w/ target number? something like this:
->>
->> ---
->>    fs/f2fs/extent_cache.c | 15 ++++++++++-----
->>    1 file changed, 10 insertions(+), 5 deletions(-)
->>
->> diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
->> index 019c1f7b7fa5..38c71c1c4fb7 100644
->> --- a/fs/f2fs/extent_cache.c
->> +++ b/fs/f2fs/extent_cache.c
->> @@ -379,11 +379,12 @@ static struct extent_tree *__grab_extent_tree(struct inode *inode,
->>    }
->>
->>    static unsigned int __free_extent_tree(struct f2fs_sb_info *sbi,
->> -                                       struct extent_tree *et)
->> +                               struct extent_tree *et, unsigned int nr_shrink)
->>    {
->>          struct rb_node *node, *next;
->>          struct extent_node *en;
->>          unsigned int count = atomic_read(&et->node_cnt);
->> +       unsigned int i = 0;
->>
->>          node = rb_first_cached(&et->root);
->>          while (node) {
->> @@ -391,6 +392,9 @@ static unsigned int __free_extent_tree(struct f2fs_sb_info *sbi,
->>                  en = rb_entry(node, struct extent_node, rb_node);
->>                  __release_extent_node(sbi, et, en);
->>                  node = next;
->> +
->> +               if (nr_shrink && ++i >= nr_shrink)
->> +                       break;
->>          }
->>
->>          return count - atomic_read(&et->node_cnt);
->> @@ -761,7 +765,7 @@ static void __update_extent_tree_range(struct inode *inode,
->>          }
->>
->>          if (is_inode_flag_set(inode, FI_NO_EXTENT))
->> -               __free_extent_tree(sbi, et);
->> +               __free_extent_tree(sbi, et, 0);
->>
->>          if (et->largest_updated) {
->>                  et->largest_updated = false;
->> @@ -942,7 +946,8 @@ static unsigned int __shrink_extent_tree(struct f2fs_sb_info *sbi, int nr_shrink
->>          list_for_each_entry_safe(et, next, &eti->zombie_list, list) {
->>                  if (atomic_read(&et->node_cnt)) {
->>                          write_lock(&et->lock);
->> -                       node_cnt += __free_extent_tree(sbi, et);
->> +                       node_cnt += __free_extent_tree(sbi, et,
->> +                                       nr_shrink - node_cnt - tree_cnt);
->>                          write_unlock(&et->lock);
->>                  }
->>                  f2fs_bug_on(sbi, atomic_read(&et->node_cnt));
->> @@ -1095,7 +1100,7 @@ static unsigned int __destroy_extent_node(struct inode *inode,
->>                  return 0;
->>
->>          write_lock(&et->lock);
->> -       node_cnt = __free_extent_tree(sbi, et);
->> +       node_cnt = __free_extent_tree(sbi, et, 0);
->>          write_unlock(&et->lock);
->>
->>          return node_cnt;
->> @@ -1117,7 +1122,7 @@ static void __drop_extent_tree(struct inode *inode, enum extent_type type)
->>                  return;
->>
->>          write_lock(&et->lock);
->> -       __free_extent_tree(sbi, et);
->> +       __free_extent_tree(sbi, et, 0);
->>          if (type == EX_READ) {
->>                  set_inode_flag(inode, FI_NO_EXTENT);
->>                  if (et->largest.len) {
->> --
->> 2.40.1
->>
->> Thanks,
->>
->>>                f2fs_balance_fs_bg(sbi, false);
->>>
->>>        if (!f2fs_is_checkpoint_ready(sbi))
->>
+On 18/11/2024 03:10, Sowon Na wrote:
+> Add samsung,exynosautov920-ufs-phy compatible for ExynosAuto v920 SoC.
 > 
-> 
-> Hi chao,
-> 
-> We have also considered this approach, but the problem still occurs
-> after retesting.
-> 1. The problem still occurs in the following call of the unmount data process.
-> f2fs_put_super -> f2fs_leave_shrinker
+> Signed-off-by: Sowon Na <sowon.na@samsung.com>
+> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
 
-Yes, I guess we need to fix this path as well, however, your patch didn't
-cover this path as well, am I missing something?
+Read carefully guides before posting new versions. You already got one
+such reminder, how many are needed?
 
-> 2. Writing back the inode in the normal write-back process will
-> release the extent cache, and the problem still occurs. The stack is
-> as follows:
+<form letter>
+This is a friendly reminder during the review process.
 
-Ditto,
+It looks like you received a tag and forgot to add it.
 
-Thanks,
+If you do not know the process, here is a short explanation:
+Please add Acked-by/Reviewed-by/Tested-by tags when posting new
+versions, under or above your Signed-off-by tag. Tag is "received", when
+provided in a message replied to you on the mailing list. Tools like b4
+can help here. However, there's no need to repost patches *only* to add
+the tags. The upstream maintainer will do that for tags received on the
+version they apply.
 
-> [H 103098.974356] c2 [<ffffffc008aee8a4>] (rb_erase+0x204/0x334)
-> [H 103098.974389] c2 [<ffffffc0088f8fd0>] (__release_extent_node+0xc8/0x168)
-> [H 103098.974425] c2 [<ffffffc0088fad74>]
-> (f2fs_update_extent_tree_range+0x4a0/0x724)
-> [H 103098.974459] c2 [<ffffffc0088fa8c0>] (f2fs_update_extent_cache+0x19c/0x1b0)
-> [H 103098.974495] c2 [<ffffffc0088edc70>] (f2fs_outplace_write_data+0x74/0xf0)
-> [H 103098.974525] c2 [<ffffffc0088ca834>] (f2fs_do_write_data_page+0x3e4/0x6c8)
-> [H 103098.974552] c2 [<ffffffc0088cb150>]
-> (f2fs_write_single_data_page+0x478/0xab0)
-> [H 103098.974574] c2 [<ffffffc0088d0bd0>] (f2fs_write_cache_pages+0x454/0xaac)
-> [H 103098.974596] c2 [<ffffffc0088d0698>] (__f2fs_write_data_pages+0x40c/0x4f0)
-> [H 103098.974617] c2 [<ffffffc0088cc860>] (f2fs_write_data_pages+0x30/0x40)
-> [H 103098.974645] c2 [<ffffffc0084c0e00>] (do_writepages+0x18c/0x3e8)
-> [H 103098.974678] c2 [<ffffffc0086503cc>] (__writeback_single_inode+0x48/0x498)
-> [H 103098.974720] c2 [<ffffffc0086562c8>] (writeback_sb_inodes+0x454/0x9b0)
-> [H 103098.974754] c2 [<ffffffc008655de8>] (__writeback_inodes_wb+0x198/0x224)
-> [H 103098.974788] c2 [<ffffffc008656d0c>] (wb_writeback+0x1c0/0x698)
-> [H 103098.974819] c2 [<ffffffc008655614>] (wb_do_writeback+0x420/0x54c)
-> [H 103098.974853] c2 [<ffffffc008654f50>] (wb_workfn+0xe4/0x388)
+https://elixir.bootlin.com/linux/v6.5-rc3/source/Documentation/process/submitting-patches.rst#L577
+
+If a tag was not added on purpose, please state why and what changed.
+</form letter>
+
+Best regards,
+Krzysztof
 
 
