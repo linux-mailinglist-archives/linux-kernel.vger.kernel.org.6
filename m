@@ -1,64 +1,95 @@
-Return-Path: <linux-kernel+bounces-414679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B0FE9D2BF1
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 17:59:55 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6051D9D2C00
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 18:02:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6111F289245
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 16:59:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 43C4EB3A147
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 17:00:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F4A01D0B9B;
-	Tue, 19 Nov 2024 16:58:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C56EF1D1731;
+	Tue, 19 Nov 2024 16:59:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KifdsZm5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="eZ9bfCpx"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62F861CCB4E;
-	Tue, 19 Nov 2024 16:58:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4594E1D0F49;
+	Tue, 19 Nov 2024 16:59:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732035495; cv=none; b=W3l0l3UJeyDJNig2AVtlWbD5UBjz2CUnYDhPGyUDHQW2s45EUY0f8MeeDx4OZF09n7f8a55TVYjMCISsG238nggAg4NHr0LHfanDjCkyKr0ICwYqg19AtChCsGXhQX4hGkoPHtyRprzGA+BOF470V2eCfn7RHTJZfF/xuHH/Bds=
+	t=1732035546; cv=none; b=c38j7mvIV38rQRctf/ZS9PGMBlV+xKZA3XrPPTQLBCNDWkHBw6R+0NUM5sPdqYkZqxEODzQFm9Lw5cWYbQXGorI8mJR5CexqRzOOIivfjGwyIp77zORiu48sa3H35zHRIDdqbdBPa43aQ9tbblHjXcUILWM40wN4SF80VGRhT98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732035495; c=relaxed/simple;
-	bh=z11CsHgeatOeQbBfb9g6txoshHC37gyk3mW02xh8UOw=;
+	s=arc-20240116; t=1732035546; c=relaxed/simple;
+	bh=V7GwxDNtO+0vjzdrlhHixsMdYo76ZUj0MPyVDNiQwhU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PfptlYEO+H4h7FHOdXf4W/B7FLXJFFOknpDgjVdAX2vLTcp7vfUwWIwPLpbluUd153SbRgWVHaQDfA3t6ubzxWfTcRDz05XQV+VIJpze0xlpM6g01vTROKbz7MU9GVztLrVd/QPfAS0xCK8lYZK/fdLxcXkScM/mZe8fYzfE2v8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KifdsZm5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AD6BC4CECF;
-	Tue, 19 Nov 2024 16:58:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732035494;
-	bh=z11CsHgeatOeQbBfb9g6txoshHC37gyk3mW02xh8UOw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KifdsZm5RJh53lt8/I0uKRX8lonGHO8RAHshhzUGEzpnYJXU+Qomrz4RUurTleRdV
-	 z8gCTPK0vIwV5D1J0UxTl5lNqULo9LiQpc7o7LmZ2HrxZ6meQB+/YyuA/Qd2yjU10a
-	 pijqYMlMNceZ0W+YW+6s69kKXkdGjOpEtFH2sjLK6UfM4HFowcvnLozbkx2ZcM1sM4
-	 04pr4tndUEUYuf4sAC1UEuJT1BZ1jPTZqletnjbI+R1OoQS1FNiLgRqWtpxht/5Z4V
-	 TiFQcJqvGImQo6aw0KBeXyY+TOwHJ+b+deQsVA5CAoUPybsduDsIaCtmgPLLQdkBRX
-	 DN+Iz3lfjdobQ==
-Date: Tue, 19 Nov 2024 10:58:12 -0600
-From: Rob Herring <robh@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Mark Brown <broonie@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=jZa8hCkv0lk23guvDyzw4AX8MLiZp1ZEBJQsGSOCXfR6u3dQyPYPaY0kJuOsOt+RskWT0Z6xQBFn4td8DJO2UurVbPjGZRr4I5eHFlHB6+fr2aFSQik/5gjEBIrTcRBYDvFhFNO/9QUrlGClmMb6kmPopM/DRS4eB5RaDweT7OU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=eZ9bfCpx; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=MRgKfDm6SLZPUOjZWm7E2J355C+3AiPl4vo6Sh5h9Y0=; b=eZ9bfCpxoOoSCMceJkHkHIVdUY
+	s648Z3CAxIhZUFTln/z86bH7JDS/jFFFFmXHYVol376Xe16OfvivyB+sUNmyeGkQgrJzx+JfgSSbB
+	4eTXxtFT7yTD+b8pGlcB2Y3rRPwcr5E0PbPxeqG4tLrVDzw0r2N+A8dBnk7Ge4fhwG5So+cqpbjVt
+	sr3A0y68ZNkLmo1avLJ0WYYb4h9qcGqm+L5XRICbhGgtAc4WSeKFFimWwnMmfUXLAYo0jcU8uvqqY
+	B/dwGXfehr1KxR9XzelgfX2kG1AL2dhnIdL8L9UAjeRGXWPecsLakAler2kYTeOBkrPMYFzyFkPR9
+	YhUvOnyA==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:57438)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1tDRYl-00044z-03;
+	Tue, 19 Nov 2024 16:58:39 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1tDRYh-0006ED-1Q;
+	Tue, 19 Nov 2024 16:58:35 +0000
+Date: Tue, 19 Nov 2024 16:58:35 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: jan.petrous@oss.nxp.com
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Emil Renner Berthing <kernel@esmil.dk>,
+	Minda Chen <minda.chen@starfivetech.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Iyappan Subramanian <iyappan@os.amperecomputing.com>,
+	Keyur Chudgar <keyur@os.amperecomputing.com>,
+	Quan Nguyen <quan@os.amperecomputing.com>,
+	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	David Jander <david@protonic.nl>,
-	Martin Sperl <kernel@martin.sperl.org>, linux-spi@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-iio@vger.kernel.org, linux-pwm@vger.kernel.org
-Subject: Re: [PATCH v5 14/16] dt-bindings: iio: adc: adi,ad4695: add SPI
- offload properties
-Message-ID: <20241119165812.GA1801845-robh@kernel.org>
-References: <20241115-dlech-mainline-spi-engine-offload-2-v5-0-bea815bd5ea5@baylibre.com>
- <20241115-dlech-mainline-spi-engine-offload-2-v5-14-bea815bd5ea5@baylibre.com>
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	imx@lists.linux.dev, devicetree@vger.kernel.org,
+	NXP S32 Linux Team <s32@nxp.com>
+Subject: Re: [PATCH v5 14/16] net: stmmac: dwmac-s32: add basic NXP S32G/S32R
+ glue driver
+Message-ID: <ZzzDu0tcyixAZ8l1@shell.armlinux.org.uk>
+References: <20241119-upstream_s32cc_gmac-v5-0-7dcc90fcffef@oss.nxp.com>
+ <20241119-upstream_s32cc_gmac-v5-14-7dcc90fcffef@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,106 +98,141 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241115-dlech-mainline-spi-engine-offload-2-v5-14-bea815bd5ea5@baylibre.com>
+In-Reply-To: <20241119-upstream_s32cc_gmac-v5-14-7dcc90fcffef@oss.nxp.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Fri, Nov 15, 2024 at 02:18:53PM -0600, David Lechner wrote:
-> Add a pwms property to the adi,ad4695 binding to specify an optional PWM
-> output connected to the CNV pin on the ADC.
+On Tue, Nov 19, 2024 at 04:00:20PM +0100, Jan Petrous via B4 Relay wrote:
+> From: "Jan Petrous (OSS)" <jan.petrous@oss.nxp.com>
 > 
-> Also add #trigger-source-cells property to allow the BUSY output to be
-> used as a SPI offload trigger source to indicate when a sample is ready
-> to be read.
+> NXP S32G2xx/S32G3xx and S32R45 are automotive grade SoCs
+> that integrate one or two Synopsys DWMAC 5.10/5.20 IPs.
 > 
-> Macros are added to adi,ad4695.h for the cell values to help with
-> readability since they are arbitrary values.
+> The basic driver supports only RGMII interface.
 > 
-> The $ref for spi-peripheral-props.yaml is moved to keep similar $refs
-> grouped together.
-> 
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
+> Signed-off-by: Jan Petrous (OSS) <jan.petrous@oss.nxp.com>
+
+One thing that stands out to me in this is the duplication of the PHY
+interface mode. I would much prefer if we didn't end up with multiple
+copies, but instead made use of the one already in plat_stmmacenet_data
+maybe by storing a its pointer in struct s32_priv_data?
+
 > ---
+>  drivers/net/ethernet/stmicro/stmmac/Kconfig     |  12 ++
+>  drivers/net/ethernet/stmicro/stmmac/Makefile    |   1 +
+>  drivers/net/ethernet/stmicro/stmmac/dwmac-s32.c | 204 ++++++++++++++++++++++++
+>  3 files changed, 217 insertions(+)
 > 
-> v5 changes:
-> * Added macros for cell values
-> 
-> v4 changes: new patch in v4
-> ---
->  .../devicetree/bindings/iio/adc/adi,ad4695.yaml          | 16 ++++++++++++++--
->  include/dt-bindings/iio/adc/adi,ad4695.h                 |  7 +++++++
->  2 files changed, 21 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad4695.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad4695.yaml
-> index 7d2229dee444..c0d4e4ff62a4 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/adi,ad4695.yaml
-> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad4695.yaml
-> @@ -18,8 +18,6 @@ description: |
->    * https://www.analog.com/en/products/ad4697.html
->    * https://www.analog.com/en/products/ad4698.html
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/Kconfig b/drivers/net/ethernet/stmicro/stmmac/Kconfig
+> index 05cc07b8f48c..a6579377bedb 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/Kconfig
+> +++ b/drivers/net/ethernet/stmicro/stmmac/Kconfig
+> @@ -154,6 +154,18 @@ config DWMAC_RZN1
+>  	  the stmmac device driver. This support can make use of a custom MII
+>  	  converter PCS device.
 >  
-> -$ref: /schemas/spi/spi-peripheral-props.yaml#
-> -
->  properties:
->    compatible:
->      enum:
-> @@ -84,6 +82,9 @@ properties:
->      description: The Reset Input (RESET). Should be configured GPIO_ACTIVE_LOW.
->      maxItems: 1
->  
-> +  pwms:
-> +    description: PWM signal connected to the CNV pin.
+> +config DWMAC_S32
+> +	tristate "NXP S32G/S32R GMAC support"
+> +	default ARCH_S32
+> +	depends on OF && (ARCH_S32 || COMPILE_TEST)
+> +	help
+> +	  Support for ethernet controller on NXP S32CC SOCs.
+> +
+> +	  This selects NXP SoC glue layer support for the stmmac
+> +	  device driver. This driver is used for the S32CC series
+> +	  SOCs GMAC ethernet controller, ie. S32G2xx, S32G3xx and
+> +	  S32R45.
+> +
+>  config DWMAC_SOCFPGA
+>  	tristate "SOCFPGA dwmac support"
+>  	default ARCH_INTEL_SOCFPGA
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/Makefile b/drivers/net/ethernet/stmicro/stmmac/Makefile
+> index c2f0e91f6bf8..1e87e2652c82 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/Makefile
+> +++ b/drivers/net/ethernet/stmicro/stmmac/Makefile
+> @@ -22,6 +22,7 @@ obj-$(CONFIG_DWMAC_MESON)	+= dwmac-meson.o dwmac-meson8b.o
+>  obj-$(CONFIG_DWMAC_QCOM_ETHQOS)	+= dwmac-qcom-ethqos.o
+>  obj-$(CONFIG_DWMAC_ROCKCHIP)	+= dwmac-rk.o
+>  obj-$(CONFIG_DWMAC_RZN1)	+= dwmac-rzn1.o
+> +obj-$(CONFIG_DWMAC_S32)		+= dwmac-s32.o
+>  obj-$(CONFIG_DWMAC_SOCFPGA)	+= dwmac-altr-socfpga.o
+>  obj-$(CONFIG_DWMAC_STARFIVE)	+= dwmac-starfive.o
+>  obj-$(CONFIG_DWMAC_STI)		+= dwmac-sti.o
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-s32.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-s32.c
+> new file mode 100644
+> index 000000000000..9af7cd093100
+> --- /dev/null
+> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-s32.c
+> @@ -0,0 +1,204 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * NXP S32G/R GMAC glue layer
+> + *
+> + * Copyright 2019-2024 NXP
+> + *
+> + */
+> +
+> +#include <linux/clk.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/device.h>
+> +#include <linux/ethtool.h>
+> +#include <linux/io.h>
+> +#include <linux/module.h>
+> +#include <linux/of_mdio.h>
+> +#include <linux/of_address.h>
+> +#include <linux/phy.h>
+> +#include <linux/phylink.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/stmmac.h>
+> +
+> +#include "stmmac_platform.h"
+> +
+> +#define GMAC_TX_RATE_125M	125000000	/* 125MHz */
+> +
+> +/* SoC PHY interface control register */
+> +#define PHY_INTF_SEL_MII	0x00
+> +#define PHY_INTF_SEL_SGMII	0x01
+> +#define PHY_INTF_SEL_RGMII	0x02
+> +#define PHY_INTF_SEL_RMII	0x08
+> +
+> +struct s32_priv_data {
+> +	void __iomem *ioaddr;
+> +	void __iomem *ctrl_sts;
+> +	struct device *dev;
+> +	phy_interface_t intf_mode;
+> +	struct clk *tx_clk;
+> +	struct clk *rx_clk;
+> +};
+> +
+> +static int s32_gmac_write_phy_intf_select(struct s32_priv_data *gmac)
+> +{
+> +	u32 intf_sel;
+> +
+> +	switch (gmac->intf_mode) {
+> +	case PHY_INTERFACE_MODE_RGMII:
+> +	case PHY_INTERFACE_MODE_RGMII_ID:
+> +	case PHY_INTERFACE_MODE_RGMII_TXID:
+> +	case PHY_INTERFACE_MODE_RGMII_RXID:
+> +		intf_sel = PHY_INTF_SEL_RGMII;
+> +		break;
+> +	default:
+> +		dev_err(gmac->dev, "Unsupported PHY interface: %s\n",
+> +			phy_modes(gmac->intf_mode));
+> +		return -EINVAL;
+> +	}
 
-maxItems: 1
+This can be simplfied to:
 
-> +
->    interrupts:
->      minItems: 1
->      items:
-> @@ -106,6 +107,15 @@ properties:
->        The first cell is the GPn number: 0 to 3.
->        The second cell takes standard GPIO flags.
->  
-> +  '#trigger-source-cells':
-> +    description: |
-> +      First cell indicates the output signal: 0 = BUSY, 1 = ALERT.
-> +      Second cell indicates which GPn pin is used: 0, 2 or 3.
-> +
-> +      For convenience, macros for these values are available in
-> +      dt-bindings/iio/adc/adi,ad4695.h.
-> +    const: 2
-> +
->    "#address-cells":
->      const: 1
->  
-> @@ -166,6 +176,8 @@ required:
->    - vio-supply
->  
->  allOf:
-> +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
-> +  - $ref: /schemas/spi/trigger-source.yaml#
+	if (!phy_interface_mode_is_rgmii(...)) {
+		dev_err(gmac->dev, "Unsupported PHY interface: %s\n",
+			phy_modes(...));
+		return -EINVAL;
+	}
 
-This can be dropped.
+Also, would it not be better to validate this in s32_dwmac_probe()?
 
->    - oneOf:
->        - required:
->            - ldo-in-supply
-> diff --git a/include/dt-bindings/iio/adc/adi,ad4695.h b/include/dt-bindings/iio/adc/adi,ad4695.h
-> index 9fbef542bf67..fea4525d2710 100644
-> --- a/include/dt-bindings/iio/adc/adi,ad4695.h
-> +++ b/include/dt-bindings/iio/adc/adi,ad4695.h
-> @@ -6,4 +6,11 @@
->  #define AD4695_COMMON_MODE_REFGND	0xFF
->  #define AD4695_COMMON_MODE_COM		0xFE
->  
-> +#define AD4695_TRIGGER_EVENT_BUSY	0
-> +#define AD4695_TRIGGER_EVENT_ALERT	1
-> +
-> +#define AD4695_TRIGGER_PIN_GP0		0
-> +#define AD4695_TRIGGER_PIN_GP2		2
-> +#define AD4695_TRIGGER_PIN_GP3		3
-> +
->  #endif /* _DT_BINDINGS_ADI_AD4695_H */
-> 
-> -- 
-> 2.43.0
-> 
+Thanks.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
