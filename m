@@ -1,72 +1,69 @@
-Return-Path: <linux-kernel+bounces-413803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 019229D1EF1
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 04:45:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A72359D1EF3
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 04:46:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5F83282D71
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 03:45:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 552721F2260A
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 03:46:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E547114A09E;
-	Tue, 19 Nov 2024 03:45:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F763146A71;
+	Tue, 19 Nov 2024 03:46:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z8aWcsya"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BhV9Za8c"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4992C145323;
-	Tue, 19 Nov 2024 03:45:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6162A1863F;
+	Tue, 19 Nov 2024 03:46:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731987913; cv=none; b=rCvByBbaAWTFWg26ptSPT+cqqFfDHstvcjY/NEtaIFgFyIX2mbxZBfISdxLkFwFkPP+8M+AI1AcIzcv+OKzxIsO4/+AEf/R82zTeqVrY2YC6rt7peGgniMVyEYqAfz+VSqOzPwlbvL1KrKkyIVm8xqcngU+mHPBxniBn1LL1gug=
+	t=1731988003; cv=none; b=dNext894CsTBFGN5VfQXSjJq88e2eLHLpvuXZRyqQleZQWrmM0p64JSbyfMgP9fgDE7k0CgJTp+Dz3qW782z+sK6VMuZqMlomGsGIVsM2TCpxcJBuwPzx6hqxbq+8mCpRHLaw4Btl13LaQA25ig/CN1IkcuGkadwmOjOTZE/KUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731987913; c=relaxed/simple;
-	bh=epo/FYAMDYLSt91Jul3hPLkqf7hc8VIzQZIw1LsmfAA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hI0m4v04iPJvCLxoEYUZH46pgUriepOukxYd4y6JYOP+qM6dJGCC0ver0mfQVQB4Dbg/4dh2ExLc6Li1b2ItNWaTNJ9/st+ZQ6wXvUfk0oPajgfvpjgzFZkO9ePjbxKg0lKQK8VApq5eamNn3Y9NE4eEHtcrpEn4TUEwIzdE9gI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z8aWcsya; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6475AC4CECF;
-	Tue, 19 Nov 2024 03:45:12 +0000 (UTC)
+	s=arc-20240116; t=1731988003; c=relaxed/simple;
+	bh=cLg56LdjG00AtMTGY+3z7xIAHqbtHAcB02s1qF9G0eY=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=CtN+W/DDD7DP3bdBGwB2dBWzxTbWiqYH6fFHuTzrhbKWCLVi4TSs7WL98izveTdsmFXbEReLpE7BswjzMvm3Wq5rC0MWDnIeNZ944rNglFRe0NRWPk/5C2MLfcXs7Tfo6KzNv5KRQLNZ+C2vnWXpDVSwS8SHPg0NdkiXeW9GKCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BhV9Za8c; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D04A8C4CECF;
+	Tue, 19 Nov 2024 03:46:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731987912;
-	bh=epo/FYAMDYLSt91Jul3hPLkqf7hc8VIzQZIw1LsmfAA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Z8aWcsyaZp0U9zZO+miuX+W+MFggnG2Jz1XSKZ7Ix8MsBlcJS42rXGyJIdlNc/bTx
-	 G1RYy1oUK/mpKdBT45vdFWJ5Exk53uySEB55+ADKFyWDf0Kcr8/Gsliyd5QKAq+17N
-	 F6pg0fgtlaMWgpW9GzrwSkijPN/sOpAFy570EPkMZshAcxGZHTz1kLjHLH0VE8DYp6
-	 yNKkhvxcLVwVjGHQ7wRcqAOf0JbwzkzqfoZR79UYAlym67kpXKtx94prQQF/3V2YH+
-	 cRQlW9uM7vad6jUtUR/viPtr5A+lpRijYJevE9fxORWe3toR4bFvROeizEsZRSdxcX
-	 kabA7/iIdAWiA==
-Date: Mon, 18 Nov 2024 19:45:11 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Rosen Penev <rosenp@gmail.com>
-Cc: netdev@vger.kernel.org, Andrew Lunn <andrew+netdev@lunn.ch>, "David S.
- Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
- Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org (open list)
-Subject: Re: [PATCH net-next 0/5] net: fsl_pq_mdio: use devm
-Message-ID: <20241118194511.338d8422@kernel.org>
-In-Reply-To: <20241115204149.6887-1-rosenp@gmail.com>
-References: <20241115204149.6887-1-rosenp@gmail.com>
+	s=k20201202; t=1731988002;
+	bh=cLg56LdjG00AtMTGY+3z7xIAHqbtHAcB02s1qF9G0eY=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=BhV9Za8cmwBje8VvseR7p6vgKJZULF+9gXVR009GGw6YkYUwFEjqFAePo7UyPPlCX
+	 bXhnTUj9u/F26RcbdyeWq2W2Jz4L3S9oJRP/sabKlSh/7bTRvI0aGvMlNgQTog7pSK
+	 33/vT7qpii+g9TGwJXkUCFRY7sqwacxR2WgQr7kfrEP5503xbhmciyJZ4+oZXPnuAP
+	 yRlDNpO7TP21iVFHgTndzfZTZ7Osn83BkbNBWmfby6reie1Eux4Kv0jrR0dD/NQnnM
+	 7y2030xHsESGFiuQPm7g72YA6yLoNjqF0BDsmIl6IvylybgDMrmgSEa2sNyFIYLep/
+	 FH7ISDqpv6qeA==
+Message-ID: <0c757a374f63ab6d47b9abd95261d348.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <2c7789dd-9583-4daa-918a-1bf14635f62e@lechnology.com>
+References: <CA+G9fYs+gwu67Y0Tm2FHfNuUA5eLxT2FAWkfKvYrEbXJUXXiiA@mail.gmail.com> <2c7789dd-9583-4daa-918a-1bf14635f62e@lechnology.com>
+Subject: Re: drivers/clk/davinci/psc.c:281:10: error: incompatible integer to pointer conversion returning 'int' from a function with result type 'struct davinci_lpsc_clk *' [-Wint-conversion]
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: hanchunchao@inspur.com, Michael Turquette <mturquette@baylibre.com>, Arnd Bergmann <arnd@arndb.de>, Dan Carpenter <dan.carpenter@linaro.org>, Anders Roxell <anders.roxell@linaro.org>
+To: David Lechner <david@lechnology.com>, Linux Regressions <regressions@lists.linux.dev>, Naresh Kamboju <naresh.kamboju@linaro.org>, clang-built-linux <llvm@lists.linux.dev>, linux-clk <linux-clk@vger.kernel.org>, lkft-triage@lists.linaro.org, open list <linux-kernel@vger.kernel.org>
+Date: Mon, 18 Nov 2024 19:46:40 -0800
+User-Agent: alot/0.12.dev1+gaa8c22fdeedb
 
-On Fri, 15 Nov 2024 12:41:44 -0800 Rosen Penev wrote:
-> Various devm conversions to simplify probe and remove the remove
-> function.
-> 
-> Tested on WatchGuard T10, where devm_platform_get_and_ioremap_resource
-> was failing. Added a note why.
+Quoting David Lechner (2024-11-18 06:28:21)
+>=20
+> This is caused by [1]. I looked at it again and the patch is wrong.
+> Can you drop it from your tree or should we send another patch to
+> fix the bad patch?
+>=20
 
-Hi Rosen, we're wrapping up our 6.13 material. We don't have enough
-time to review everything that's already posted so I'll mark all our
-outstanding patches as deferred. Please resend in 2 weeks.
+I can drop it from the tree.
 
