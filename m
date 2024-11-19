@@ -1,136 +1,97 @@
-Return-Path: <linux-kernel+bounces-413905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AB259D2078
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 07:54:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBE6F9D207E
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 07:57:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 251441F226CB
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 06:54:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B18DE2825EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 06:57:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB9EB14D6F6;
-	Tue, 19 Nov 2024 06:54:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="g2gNzhwE"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CA51146A60
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 06:54:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 962F814F9E7;
+	Tue, 19 Nov 2024 06:57:02 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49AA414D6F6
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 06:56:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731999244; cv=none; b=PzYDe2STniUqTf6bvzXEqZOPuj5ltunKXgTvU6zbXWhOm+/04VJQL4gGXGlHaGzt+lOgQj7bxhGND2gWzbEQldz0opO7Z7frvrLO4q8PqlYnBpIcCxzF5oTZuWGPsTiPB5bOqZkGSDNNUdCAwRE3mmd7ejJjoy6ItexYpVRHKzY=
+	t=1731999422; cv=none; b=F1ut/4OSmYQztDnEYHrlw5XktXmWMLGnLVcOGmKzpCZ0bAEeAFYdr2DjHZkFUmE7hM5HPgHt3AEJ2tJwQ5H7h8HQaSNXWWyoCxxioWGNztpHfHp2Br2/bYF8u6wmd2hBdUGQPCPV+u19ZztYcW7DWwSO6mklzgWwC1GNQ+N2MwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731999244; c=relaxed/simple;
-	bh=Je2NIDFQgc4fqKAf0CTt2K4VOqjbiErRQuOoHhPr1yE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pBLvBirE2cU6Lb9cjXve/+17At/tvMnA39g746OF8M9ikrEk22HAR/D4wfKRz81DjtqquyJX5xICWmf8Noo/PNTA1rUrPB33+BBn5Pk9Wah9you1U09TX5GkDXc8+JaMQqaqgU3G5gFyjk0pM5f4qPdLVE3iHSYN16JBVD0OC68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=g2gNzhwE; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-71e681bc315so3546287b3a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 22:54:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1731999241; x=1732604041; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=d0MK2ZZbNRTSnFf6mDYAT1AUItf075doEb65NCpj4NE=;
-        b=g2gNzhwEo2/xpj7mIcHbSPrJ/VJZkeGbN7+cQj+HZ+EjhBYeZlB0y0L6OlanDYJ4ei
-         xBUYzHcW6JupTsdG7IbDeu2TN5Gqcscd0E2YzR4/2C+9JcmGUzdyeCpG3njFBCWJ2Uwh
-         Smv4nJ70x+1T6RIl3Q7jlzkIwiALMfjXSzn0FExjglDxGwsFGxHje3M6VJ1T/uIVmqAy
-         qGNC+AvFdJpl02G7EBrHCi2+Dk2zlGi7uKGMAZ43Kjc31NpJhR8dXtDt+p30t2a1CalL
-         J1JPqWGKBqhdg3PPngTV1TZhIevgO6v0ZhPao8R4Ik07sk+CnjBKxMnfOS9eDR0V2Jon
-         fNsg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731999241; x=1732604041;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=d0MK2ZZbNRTSnFf6mDYAT1AUItf075doEb65NCpj4NE=;
-        b=iqHrBBacss3QsZwucNBQqig41qyv1yA1apN0/UkJ1gYoRYUe5npm1RfV/ZYK4davlN
-         PxropZwmu3KU5bETVKhRdAZ7S8kmlEkjAQEHHDyVD2VpCjZ9ap7pnm67c+nLdIfwsSXr
-         2KtdOkMwSq38Uz7e7GiIPMxyYP3U/ccOSppAX2KoKN1XDMxsu/7sABHKqOkPHcqmLdcH
-         0FmXKkMd2IFm2Sq62EGAxs04ig9EQ61nYcwnG5zFZtsiPHkYGfdso6hMqPZ7VYx0Xc9N
-         GvHzXtCPytRgavD9TerD/teP0iYmswg3fxaFvbkgL/IXtUM45UVW7l11eaJ/pkFdGB9G
-         Z7EQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXBATRPoCApCvGV0QSTbZOHc5zcB7cGaNlBUYteYh1bhDHTzqFUOn2A0wM5afgtYPSs7BP3MAKkbCz502Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjLo3GK0FIfNfCzXvp8Psj26UB0x2F0dQ+FOasP3jWc4RvZKlv
-	55HgVsNBCR8et8dldleo4OZW1lHQZS70EuiFSSrilaQGisj/PRfYAvGFwGQrFzg=
-X-Google-Smtp-Source: AGHT+IHfZRlZ8R2nO4xU50Ru5p5Gp0v1FYpibD2q1Y3+p7G14fuKNvzXcu2cpcp/DsRLb1th9cZOGw==
-X-Received: by 2002:a05:6a00:3285:b0:724:6abf:b63e with SMTP id d2e1a72fcca58-724af8eaad2mr4231511b3a.5.1731999241414;
-        Mon, 18 Nov 2024 22:54:01 -0800 (PST)
-Received: from [10.84.149.95] ([203.208.167.151])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fb9bb066easm336579a12.45.2024.11.18.22.53.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Nov 2024 22:54:00 -0800 (PST)
-Message-ID: <21195425-53d9-4007-a020-8106f94158dc@bytedance.com>
-Date: Tue, 19 Nov 2024 14:53:52 +0800
+	s=arc-20240116; t=1731999422; c=relaxed/simple;
+	bh=ebRZMPmXGKiaPpS5pNKT/Qy1wqQ6Awo19ORuU2KqlLI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uk2tzEBwgdckgpIZvyx0RoVwgmbWWHshGOJErTKDntKbNrT4DRZm333GEZXFw62LNTSUiOR0t+ZX76uwTLmEx5kPcvxH/5PH0pN0QTSh5JmiA/NPh2zgw9ZDhRnlsgR9Ka4070Pnifb+tzd7OD2LzO4ZUfC3q2/Y7TRR/yQ8MsM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [113.200.148.30])
+	by gateway (Coremail) with SMTP id _____8BxPOK6NjxnUDZCAA--.64243S3;
+	Tue, 19 Nov 2024 14:56:58 +0800 (CST)
+Received: from linux.localdomain (unknown [113.200.148.30])
+	by front1 (Coremail) with SMTP id qMiowMCxDuG4NjxnB_5cAA--.5437S2;
+	Tue, 19 Nov 2024 14:56:57 +0800 (CST)
+From: Tiezhu Yang <yangtiezhu@loongson.cn>
+To: Huacai Chen <chenhuacai@kernel.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>
+Cc: loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 00/10] Add jump table support for objtool on LoongArch
+Date: Tue, 19 Nov 2024 14:56:45 +0800
+Message-ID: <20241119065655.21123-1-yangtiezhu@loongson.cn>
+X-Mailer: git-send-email 2.42.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] docs/mm: add more warnings around page table access
-Content-Language: en-US
-To: Jann Horn <jannh@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Jonathan Corbet <corbet@lwn.net>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, Alice Ryhl <aliceryhl@google.com>,
- Boqun Feng <boqun.feng@gmail.com>, Matthew Wilcox <willy@infradead.org>,
- Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
- Hillf Danton <hdanton@sina.com>, Qi Zheng <zhengqi.arch@bytedance.com>,
- SeongJae Park <sj@kernel.org>, Bagas Sanjaya <bagasdotme@gmail.com>,
- linux-mm@kvack.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- Matteo Rizzo <matteorizzo@google.com>
-References: <20241118-vma-docs-addition1-onv3-v2-1-c9d5395b72ee@google.com>
-From: Qi Zheng <zhengqi.arch@bytedance.com>
-In-Reply-To: <20241118-vma-docs-addition1-onv3-v2-1-c9d5395b72ee@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowMCxDuG4NjxnB_5cAA--.5437S2
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBj9xXoW7Xr48uFWUWF1rWF4ftr45XFc_yoWDXrg_ur
+	yxWF95Gr1rW3W5tayxtF95uFyjkFsYqr45JFykXr129r15Jr15WF42vr1DZrs5KrZ8ZFs8
+	tF4vyryxCwnFgosvyTuYvTs0mTUanT9S1TB71UUUUUJqnTZGkaVYY2UrUUUUj1kv1TuYvT
+	s0mT0YCTnIWjqI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUI
+	cSsGvfJTRUUUb3AYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20x
+	vaj40_Wr0E3s1l1IIY67AEw4v_Jrv_JF1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
+	w2x7M28EF7xvwVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
+	W8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
+	6r4UJVWxJr1ln4kS14v26r1Y6r17M2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12
+	xvs2x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1q
+	6rW5McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64
+	vIr41l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_
+	Jrv_JF1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1V
+	AY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_JFI_Gr1lIxAI
+	cVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42
+	IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIev
+	Ja73UjIFyTuYvjxU4AhLUUUUU
 
+This series is based on 6.12-rc7, tested with the latest upstream
+mainline Binutils, GCC and Clang, most of the patches are aim to
+handle the special cases compiled with Clang on LoongArch.
 
+Tiezhu Yang (10):
+  objtool: Handle various symbol types of rodata
+  objtool: Handle special cases of dead end insn
+  objtool: Handle different entry size of rodata
+  objtool: Handle PC relative relocation type
+  objtool: Handle unreachable entry of rodata
+  objtool: Handle unsorted table offset of rodata
+  objtool/LoongArch: Get each table size of rodata
+  objtool/LoongArch: Add support for switch table
+  objtool/LoongArch: Add support for goto table
+  LoongArch: Enable jump table for objtool
 
-On 2024/11/19 00:47, Jann Horn wrote:
-> Make it clearer that holding the mmap lock in read mode is not enough
-> to traverse page tables, and that just having a stable VMA is not enough
-> to read PTEs.
-> 
-> Suggested-by: Matteo Rizzo <matteorizzo@google.com>
-> Suggested-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> Signed-off-by: Jann Horn <jannh@google.com>
+ arch/loongarch/Kconfig                 |   3 +
+ arch/loongarch/Makefile                |   4 +
+ tools/objtool/arch/loongarch/special.c | 156 ++++++++++++++++++++++++-
+ tools/objtool/check.c                  |  68 ++++++++++-
+ tools/objtool/include/objtool/check.h  |   1 +
+ 5 files changed, 226 insertions(+), 6 deletions(-)
 
-Acked-by: Qi Zheng <zhengqi.arch@bytedance.com>
+-- 
+2.42.0
 
-> +
-> +* On 32-bit architectures, they may be in high memory (meaning they need to be
-> +  mapped into kernel memory to be accessible).
-> +* When empty, they can be unlinked and RCU-freed while holding an mmap lock or
-> +  rmap lock for reading in combination with the PTE and PMD page table locks.
-> +  In particular, this happens in :c:func:`!retract_page_tables` when handling
-> +  :c:macro:`!MADV_COLLAPSE`.
-> +  So accessing PTE-level page tables requires at least holding an RCU read lock;
-> +  but that only suffices for readers that can tolerate racing with concurrent
-> +  page table updates such that an empty PTE is observed (in a page table that
-> +  has actually already been detached and marked for RCU freeing) while another
-> +  new page table has been installed in the same location and filled with
-> +  entries. Writers normally need to take the PTE lock and revalidate that the
-> +  PMD entry still refers to the same PTE-level page table.
-> +
-
-In practice, this also happens in the retract_page_tables(). Maybe can
-add a note about this after my patch[1] is merged. ;)
-
-[1]. 
-https://lore.kernel.org/lkml/e5b321ffc3ebfcc46e53830e917ad246f7d2825f.1731566457.git.zhengqi.arch@bytedance.com/
-
-Thanks!
-
-> 
 
