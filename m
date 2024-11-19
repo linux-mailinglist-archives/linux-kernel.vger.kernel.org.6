@@ -1,96 +1,96 @@
-Return-Path: <linux-kernel+bounces-414819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FE129D2DC9
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 19:20:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A79A39D2DD5
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 19:23:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5687F28254F
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 18:20:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D76E283BE0
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 18:23:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8FD01D1F44;
-	Tue, 19 Nov 2024 18:20:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 236E61D2B14;
+	Tue, 19 Nov 2024 18:23:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GVokfRuf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KOGV6P9R"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19C0D1CDFCA;
-	Tue, 19 Nov 2024 18:20:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E39AF1CFEAE;
+	Tue, 19 Nov 2024 18:22:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732040444; cv=none; b=tAcxx/4Bo24mqvQqpf22wyYj1Ny9RpywIq9AVBjBXhCYdmAgFCJE8oSIIJLE0sq7XjNr7W2eGpYcMZMGqaJFCpaMF0dkpznn3YWH+2OGOVEDGhSFXGVdztFDCsYqjOCNOr+t9JZ82wn8AeDkX93CYso7uQIl5V2ZsZjvSE4fgV8=
+	t=1732040579; cv=none; b=q0NagAOhTk+guXtwiRd/9aQhmmmySEy0eo6LWOVEISaXtQSLS0xfyl9A6kMU2+6uzhZho/e5/TPGHGlOdHIkDTbPIBcbRtKReRj5FwfbLnxk1BVr77jwnK6jT/hLuHCXLzvie48n/0LmslQ71rybVFxIJIfyLCbj8GzKZc/lVGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732040444; c=relaxed/simple;
-	bh=c+7h9hMMGMohgWVCuK5JjLU4dDG65LxAL3SOLXCksaU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q09OVuia36u7d3XlHYo8qvGq+WHdxuLqhc9X30D3g4Xo33AASm2PNckOxwlZpne8bO0Wzqww4VmhSAe0PxhbPUWJ8aZK5dYLSKiO6XO6C7yjjCAtP6STAJDxdXHATh95PsIazZzRrL1pf5V0VUTgqUs1ROWYLfbIH76QEhBFnIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GVokfRuf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BE00C4CECF;
-	Tue, 19 Nov 2024 18:20:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732040443;
-	bh=c+7h9hMMGMohgWVCuK5JjLU4dDG65LxAL3SOLXCksaU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GVokfRufVjDiWMFrIV55YKvPnfOCikKXfcvMiewwhF33add4VLpqtW2Vw73JsSO6U
-	 lG0gVdZtQPV2hEd++iZVLkGGH2ybiE8tTGlQLa3B0Cf5PXekrVqWM4e3HI3D0ISO8k
-	 B5dNVHpg6C5CKEDtmFmKP19CRhwsCx4U4f63Q75/WUejr+WA5MrtUjxzotiK3IYDuR
-	 EsaZGNjbNghgBAncGOvTEbS7vB0UtIRAN+LJ952CDPNaoLPxDsdEVgpPnyIs02NbL2
-	 yZjidGgpE7dl5XTFe9VPst0RAyKogAIP3Xwp9Z00HQmes+vrFF2X6CyJRuxfTWgL7x
-	 iBu44xmlHpqFw==
-Date: Tue, 19 Nov 2024 12:20:41 -0600
-From: Rob Herring <robh@kernel.org>
-To: Jacky Chou <jacky_chou@aspeedtech.com>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, krzk+dt@kernel.org,
-	conor+dt@kernel.org, joel@jms.id.au, andrew@codeconstruct.com.au,
-	hkallweit1@gmail.com, linux@armlinux.org.uk, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [net-next 2/3] net: mdio: aspeed: Add support for AST2700
-Message-ID: <20241119182041.GB1962443-robh@kernel.org>
-References: <20241118104735.3741749-1-jacky_chou@aspeedtech.com>
- <20241118104735.3741749-3-jacky_chou@aspeedtech.com>
+	s=arc-20240116; t=1732040579; c=relaxed/simple;
+	bh=QpdUyGphCcO8i+isa5wrCAK52iaWLosqqXCg2gSyioo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GvjOeqq5XnhZKgmcjcz8+5IhNhtX2LziDD069wX47eF0hbZMTz/+0e5ky+1LNdvllE86/OncmLothemB1Bxvkx81Gm3mUbizWOVXa0qQWsMcp/LTNdIvmeukJYGx31THjdijfDzLo2sXgqT/e33Dk8BPpEO3dDouIh+Vczr8cpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KOGV6P9R; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-53da4fd084dso70004e87.0;
+        Tue, 19 Nov 2024 10:22:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732040576; x=1732645376; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=QpdUyGphCcO8i+isa5wrCAK52iaWLosqqXCg2gSyioo=;
+        b=KOGV6P9R7XyRxschIhc+x2a6BCo4l1OufO7NIacG8/wA7RFRLc4lX2sXu/ctVQ2rz7
+         bDBJqdJ2yL/0QIffCcr6EfdzDr+IoM67ugLH+nTNWQKqf8bhzNOF6Ls4ircZlxTeuHK+
+         1/M+fO/IHLxWhuaxkOyMNDQmDO1/uBzccMKNwPUMXI6/GxAEzsQ1N1zx9asSupyZ11iz
+         +IJmfUel0k7ENh7LR0skLTU1/IGPxNxTnplu7mk04ILiYQZ7EkKfl3D0ySqr0ge1AUkQ
+         ftQVKC/+4x+j6Bp1rJdYNA2524jEuAxGXZL8plPo+UkujefGIfbj1jI8kT2u33TqPZUa
+         +GNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732040576; x=1732645376;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QpdUyGphCcO8i+isa5wrCAK52iaWLosqqXCg2gSyioo=;
+        b=ngjvGzhbplasVD94UjwsdUs81pErPUrjBBnC6voNSpNNNZBCMkS9qm1Mo9kLhhcOg4
+         SW2Rtka0uWBCiVTt3zVAn9Km5i9f1nqV7Olvgfyl4L6GlLU3g1Sy9rrFAycVz2XzheBa
+         D73yhEJylasQXWluTwOrdbSytU4WBOYk+UZZ7EfA/3BgNywfsgmUVzttA0wMArS9mZa8
+         RNIdQSjPKaw+YBRHmcdte/lKNLv/uSpjl4VYqQytik9Zfweaqo1zu9ivYIoeBJ/xFsXf
+         SzrpmNWFooeqLKLwMYjNEmSnK8B025js8ddzUpATUwUxz+9Ck400Xu808uybX75+JgJz
+         HXuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU5tDpSP+JNcMdRXgNl8HqNbdUopN3bducCgwFg0+J4CefzZNCMPTLj6x0O+UphP/d2qrvP97vi2G7o2GcG5os=@vger.kernel.org, AJvYcCV8i++pmHrnrSjzvLtbV6LgPmpSe3nTBcG8W/gjREEFQsaB1d1a6eD+27r3h0b7piSmp41ZpW6rTONgmTY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHQPpHCdrDBTZ4dwJrdC+91gdDiIcQ+vUIXsFajg7ZMhKjW9gy
+	KCs6DHsCshycnx/na/9tJHE78rF1DobYe8FJpv+R5MwSX5eJrrUnt+rwfpFMqZjYgegY3S6U8Rz
+	75AlaFL+9gom+tCA7yQkpaD9Gq3I=
+X-Google-Smtp-Source: AGHT+IG+nPww2yCL2O9p4MBIvUXFufmFRKRXHSyUOsvlZB198PhWRnlRi9MoAamjhgY2xiEjdlKFU7NfuPzY+3AOMng=
+X-Received: by 2002:a2e:be2b:0:b0:2ff:5b2c:3cc9 with SMTP id
+ 38308e7fff4ca-2ff8db8645emr134531fa.9.1732040575704; Tue, 19 Nov 2024
+ 10:22:55 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241118104735.3741749-3-jacky_chou@aspeedtech.com>
+References: <20241118-rust-xarray-bindings-v9-0-3219cdb53685@gmail.com>
+ <20241118-rust-xarray-bindings-v9-2-3219cdb53685@gmail.com>
+ <Zzu9SzkDoq_1YQnJ@tardis.local> <CAJ-ks9mKArX37VzhcyymDoE-MsNxNcO8VvP4n3Xu1mdfOKiuag@mail.gmail.com>
+ <CAH5fLggL7MTLVv2ym_tCCKH9hQtL=GpTwXjDUQzKQX9UdT7SkA@mail.gmail.com>
+ <CAJ-ks9k4upcSfa2HXaMrtDJ37eTNc-ZiKZdcLuEYSnWHL5Bigw@mail.gmail.com>
+ <CAH5fLggBZsarrRkZ1Mf5ND9-A6kCc65QRwhUW5X9nQxRJUOXrQ@mail.gmail.com>
+ <CAJ-ks9=ZDRdh1UzBpV-ck2v5t4a3-81vD07Ndfmow4ABmQvJmQ@mail.gmail.com> <CANiq72=MeVViwfFGaj7MFev0ZOodVo2dJqOeHiPodHjN-xh9TA@mail.gmail.com>
+In-Reply-To: <CANiq72=MeVViwfFGaj7MFev0ZOodVo2dJqOeHiPodHjN-xh9TA@mail.gmail.com>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Tue, 19 Nov 2024 13:22:19 -0500
+Message-ID: <CAJ-ks9kgaVGow2o1S+YAUpYF6pVFReEb2mf+OFMvULt2pykH7g@mail.gmail.com>
+Subject: Re: [PATCH v9 2/2] rust: xarray: Add an abstraction for XArray
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Alice Ryhl <aliceryhl@google.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, =?UTF-8?B?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>, 
+	Asahi Lina <lina@asahilina.net>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Nov 18, 2024 at 06:47:34PM +0800, Jacky Chou wrote:
-> The Aspeed 7th generation SoC features three Aspeed MDIO.
-> The design of AST2700 MDIO controller is the same as AST2600.
-> Therefore, just add AST2700 compatible here.
-
-If they are "the same", you don't need to add the compatible here. You 
-still need to add it to the binding, but make ast2600 a fallback 
-compatible.
-
-> 
-> Signed-off-by: Jacky Chou <jacky_chou@aspeedtech.com>
-> ---
->  drivers/net/mdio/mdio-aspeed.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/net/mdio/mdio-aspeed.c b/drivers/net/mdio/mdio-aspeed.c
-> index e55be6dc9ae7..4d5a115baf85 100644
-> --- a/drivers/net/mdio/mdio-aspeed.c
-> +++ b/drivers/net/mdio/mdio-aspeed.c
-> @@ -188,6 +188,7 @@ static void aspeed_mdio_remove(struct platform_device *pdev)
->  
->  static const struct of_device_id aspeed_mdio_of_match[] = {
->  	{ .compatible = "aspeed,ast2600-mdio", },
-> +	{ .compatible = "aspeed,ast2700-mdio", },
->  	{ },
->  };
->  MODULE_DEVICE_TABLE(of, aspeed_mdio_of_match);
-> -- 
-> 2.25.1
-> 
+Looks like there are merge conflicts between v6.13 and rust-next.
+What's the usual process for resolution?
 
