@@ -1,228 +1,80 @@
-Return-Path: <linux-kernel+bounces-414875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C8989D2E95
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 20:10:49 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36D489D2EB7
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 20:20:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A56DD1F238FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 19:10:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C5373B304E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 19:11:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D2501D1506;
-	Tue, 19 Nov 2024 19:10:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1241D1D0426;
+	Tue, 19 Nov 2024 19:10:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mPE3L15p"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="i9vMN8Lv"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACACF1552FD;
-	Tue, 19 Nov 2024 19:10:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 299431CBA1A
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 19:10:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732043442; cv=none; b=CEsY3YqPXmpsc6D0tlaq/Zp6vlHC1D+FH+ye4lN2t5rFumvl1EcJhK7PcOX3mIZQ3/jz9FZKtF3ti1Mfq+zsz/dP3wRdSirpmAbE4XKY5CjiK1qekUv/m2GNzFHOaKJVJzTh/yS+fxT4j93IEnEoRuh0hbYAA/oDBro+uYj1CuY=
+	t=1732043454; cv=none; b=XFQ3Reao2k2M+Do/DrwsRcbIvuP5wTBy0I7Wa6wZbEdu00GuB7j8B495nxZTm1QSt3MzVzRhOW6C6vAwU0yCRXDT3sS6PZgGybW3RCw9lyB2wcPW7sTJXUbupfFqSKuDoE+eZHiTUpVIdF8o9n2iueiFdnAQYAVv07dh3VSaqlI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732043442; c=relaxed/simple;
-	bh=L852CfSBTw2Tt+4Km1UApC1908+krgPugwOMx41FLag=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=qM8hAJEtKFMHkhv5h9YzmKegZNIuttz9vB+A9unvwvk3NNA/9KEfB3OFcVlmicYduUQ3ou1LYSR9Ol47n4orHFjs+uWYxp0O3Xns1Bs9cTfaFuh5dKE3Ps6+qx2uXDnwI9uCGrB/Ljj/fmWrv0RhTq+Q9zWrmvrLdsmM1CRrkWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mPE3L15p; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AJIJl32006450;
-	Tue, 19 Nov 2024 19:10:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	qvJZJYlr4ofMU2eWu9kCWSUe/IBq5FvnROZrVKBAaMg=; b=mPE3L15psAH4iI5Z
-	jtVUrPRizNiY412xmrPLZuMDsvfr/phRVqnzI8kwrlKrxy91m4LgsDeMPVv6h9Me
-	9OEq6BGA4zzZ+hDBntsN3wIv+jBdC1ijmqKc8auW0yBAFcDDEYkitmtYr5XH/SBR
-	frzyxX/v7Xrz9IVLq92O95CymMRSVZ4tQQHVUE685dwf8KW28kFwK0tYqa5yRGk4
-	flZabYzEbrNCYxwFOTL3DvkuRE3HK9tPxnG4uQkR4KlVdD0P4KjJPL4rMN/C0fBQ
-	Jvo/2dXCaQot2/VkYwd7T+rAD7WRAO9dh6qDUiE7P5wd+ZLIoe1MIHXRQCiN+kKf
-	yNmlMA==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4308y8knrb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 19 Nov 2024 19:10:19 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AJJAIlp009303
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 19 Nov 2024 19:10:18 GMT
-Received: from [10.216.1.253] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 19 Nov
- 2024 11:10:13 -0800
-Message-ID: <1d3dcd91-d246-4db3-9717-9edfe405f431@quicinc.com>
-Date: Wed, 20 Nov 2024 00:40:10 +0530
+	s=arc-20240116; t=1732043454; c=relaxed/simple;
+	bh=G6qGdxyzfXX33Pecg24ErTmb30i9GSMGGH474x4iLJE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Puloj2zxrj7EFW6Fl9V19dbEroNkPYoidrSHo8Eu3ZT0oNq+r4xVRsTyXBx1vk5Y2d/igeSqJiSK9GYIoyqQPmOqTbNNmG8cv0UA2yEDPu3CLMnsUa08T3BsD38GGeZ13Cl6Kj903YTYkW/UKQTsDjvKskHa2rWHSRFx5YY+XbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=i9vMN8Lv; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Adnyhvvt0aiRqQsOwzy3kVOOtWBzm811D3yr47i1vXs=; b=i9vMN8LvTVibzb3H4z4EwlCVbZ
+	ik/WKAflZiwoOFEHPh2pQa50nIzbKIsGjM1q2dNpaK8WGNfKclqxtfIXIP9t4FThnlQTUQaJyA9r0
+	w/MhhrMlEV7kRF8W8A9T5e92DKJAZRxpfqTuAMW2TZtADRnRauG3OZ+HtiCEBtFrg1DGoeDeg7uf8
+	0tk5T+q0IO4apTqrk21TFNiXANpTINSioGZE+Jxqz/V+TVgHAZ+i+ylnTTTmgNNA4zyWjOvRoJ4u8
+	9ddlcS4V+Zd1pLH3c74u+0xd4t7ZfkJLPW6NTZVfhE8LEoUl40DWI2JYSJEH3uth3kA4Y4knfhLQ0
+	EnMBfsBw==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tDTcf-00000004QXn-2Jrp;
+	Tue, 19 Nov 2024 19:10:49 +0000
+Date: Tue, 19 Nov 2024 19:10:49 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Carlos Llamas <cmllamas@google.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	linux-kernel@vger.kernel.org, kernel-team@android.com,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>
+Subject: Re: [PATCH v4 4/9] binder: remove struct binder_lru_page
+Message-ID: <ZzziucEm3np6e7a0@casper.infradead.org>
+References: <20241119183250.3497547-1-cmllamas@google.com>
+ <20241119183250.3497547-5-cmllamas@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] iommu/arm-smmu: Defer probe of clients after smmu
- device bound
-To: Robin Murphy <robin.murphy@arm.com>, Will Deacon <will@kernel.org>
-CC: <catalin.marinas@arm.com>, <kernel-team@android.com>, <joro@8bytes.org>,
-        <jgg@ziepe.ca>, <jsnitsel@redhat.com>, <robdclark@chromium.org>,
-        <quic_c_gdjako@quicinc.com>, <dmitry.baryshkov@linaro.org>,
-        <linux-arm-kernel@lists.infradead.org>, <iommu@lists.linux.dev>,
-        <linux-kernel@vger.kernel.org>, <quic_charante@quicinc.com>,
-        <stable@vger.kernel.org>, Prakash Gupta <quic_guptap@quicinc.com>
-References: <20241004090428.2035-1-quic_pbrahma@quicinc.com>
- <173021496151.4097715.14758035881649445798.b4-ty@kernel.org>
- <0952ca36-c5d9-462a-ab7b-b97154c56919@arm.com>
-Content-Language: en-US
-From: Pratyush Brahma <quic_pbrahma@quicinc.com>
-In-Reply-To: <0952ca36-c5d9-462a-ab7b-b97154c56919@arm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 1n5i_xALx5GpD_AaKbafE5KeFkL-Ada7
-X-Proofpoint-GUID: 1n5i_xALx5GpD_AaKbafE5KeFkL-Ada7
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- mlxlogscore=999 lowpriorityscore=0 clxscore=1011 malwarescore=0
- adultscore=0 impostorscore=0 mlxscore=0 spamscore=0 phishscore=0
- suspectscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411190143
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241119183250.3497547-5-cmllamas@google.com>
 
+On Tue, Nov 19, 2024 at 06:32:37PM +0000, Carlos Llamas wrote:
+> Remove the redundant struct binder_lru_page concept. Instead, let's use
+> available struct page->lru and page->private members directly to achieve
+> the same functionality.
 
-On 11/7/2024 8:31 PM, Robin Murphy wrote:
-> On 29/10/2024 4:15 pm, Will Deacon wrote:
->> On Fri, 04 Oct 2024 14:34:28 +0530, Pratyush Brahma wrote:
->>> Null pointer dereference occurs due to a race between smmu
->>> driver probe and client driver probe, when of_dma_configure()
->>> for client is called after the iommu_device_register() for smmu driver
->>> probe has executed but before the driver_bound() for smmu driver
->>> has been called.
->>>
->>> Following is how the race occurs:
->>>
->>> [...]
->>
->> Applied to will (for-joerg/arm-smmu/updates), thanks!
->>
->> [1/1] iommu/arm-smmu: Defer probe of clients after smmu device bound
->>        https://git.kernel.org/will/c/229e6ee43d2a
->
-> I've finally got to the point of proving to myself that this isn't the
-> right fix, since once we do get __iommu_probe_device() working properly
-> in the correct order, iommu_device_register() then runs into the same
-> condition itself. Diff below should make this issue go away - I'll write
-> up proper patches once I've tested it a little more.
->
-> Thanks,
-> Robin.
->
-> ----->8-----
-> diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c 
-> b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-> index 737c5b882355..b7dcb1494aa4 100644
-> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-> @@ -3171,8 +3171,8 @@ static struct platform_driver arm_smmu_driver;
->  static
->  struct arm_smmu_device *arm_smmu_get_by_fwnode(struct fwnode_handle 
-> *fwnode)
->  {
-> -    struct device *dev = 
-> driver_find_device_by_fwnode(&arm_smmu_driver.driver,
-> -                              fwnode);
-> +    struct device *dev = 
-> bus_find_device_by_fwnode(&platform_bus_type, fwnode);
-> +      put_device(dev);
->      return dev ? dev_get_drvdata(dev) : NULL;
->  }
-> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu.c 
-> b/drivers/iommu/arm/arm-smmu/arm-smmu.c
-> index 8321962b3714..aba315aa6848 100644
-> --- a/drivers/iommu/arm/arm-smmu/arm-smmu.c
-> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu.c
-> @@ -1411,8 +1411,8 @@ static bool arm_smmu_capable(struct device *dev, 
-> enum iommu_cap cap)
->  static
->  struct arm_smmu_device *arm_smmu_get_by_fwnode(struct fwnode_handle 
-> *fwnode)
->  {
-> -    struct device *dev = 
-> driver_find_device_by_fwnode(&arm_smmu_driver.driver,
-> -                              fwnode);
-> +    struct device *dev = 
-> bus_find_device_by_fwnode(&platform_bus_type, fwnode);
-I think it would still follow this path:
-
-bus_find_device_by_fwnode() -> bus_find_device() -> next_device()
-
-next_device() would always return null until the driver is bound to the 
-device which
-happens much later in really_probe() after the iommu_device_register() 
-would be called
-even as per this patch. That way the race would still occur, wouldn't it?
-Can you please help me understand what I may be missing here?
-Are you saying that these additional patches are required along with the 
-fix I've
-posted?
-> +
->      put_device(dev);
->      return dev ? dev_get_drvdata(dev) : NULL;
->  }
-> @@ -2232,21 +2232,6 @@ static int arm_smmu_device_probe(struct 
-> platform_device *pdev)
->                      i, irq);
->      }
->
-> -    err = iommu_device_sysfs_add(&smmu->iommu, smmu->dev, NULL,
-> -                     "smmu.%pa", &smmu->ioaddr);
-> -    if (err) {
-> -        dev_err(dev, "Failed to register iommu in sysfs\n");
-> -        return err;
-> -    }
-> -
-> -    err = iommu_device_register(&smmu->iommu, &arm_smmu_ops,
-> -                    using_legacy_binding ? NULL : dev);
-> -    if (err) {
-> -        dev_err(dev, "Failed to register iommu\n");
-> -        iommu_device_sysfs_remove(&smmu->iommu);
-> -        return err;
-> -    }
-> -
->      platform_set_drvdata(pdev, smmu);
->
->      /* Check for RMRs and install bypass SMRs if any */
-> @@ -2255,6 +2240,18 @@ static int arm_smmu_device_probe(struct 
-> platform_device *pdev)
->      arm_smmu_device_reset(smmu);
->      arm_smmu_test_smr_masks(smmu);
->
-> +    err = iommu_device_sysfs_add(&smmu->iommu, smmu->dev, NULL,
-> +                     "smmu.%pa", &smmu->ioaddr);
-> +    if (err)
-> +        return dev_err_probe(dev, err, "Failed to register iommu in 
-> sysfs\n");
-> +
-> +    err = iommu_device_register(&smmu->iommu, &arm_smmu_ops,
-> +                    using_legacy_binding ? NULL : dev);
-> +    if (err) {
-> +        iommu_device_sysfs_remove(&smmu->iommu);
-> +        return dev_err_probe(dev, err, "Failed to register iommu\n");
-> +    }
-> +
->      /*
->       * We want to avoid touching dev->power.lock in fastpaths unless
->       * it's really going to do something useful - pm_runtime_enabled()
-
--- 
-Thanks and Regards
-Pratyush Brahma
-
+I'm not entirely happy to see this.  I expect to start a patch series in
+the next six months which will remove users of page->lru.  page->private
+is OK for now.  The goal is to shrink struct page to 8 bytes, but I
+accept that 16 bytes may be the best we can do.
 
