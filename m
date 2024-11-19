@@ -1,145 +1,91 @@
-Return-Path: <linux-kernel+bounces-414187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B42BA9D2479
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 12:04:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A88F9D2486
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 12:05:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17E4FB21A4E
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 11:04:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 196AA1F23708
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 11:05:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C28CD1C57AD;
-	Tue, 19 Nov 2024 11:03:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E35DA1C876B;
+	Tue, 19 Nov 2024 11:03:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.fricke@collabora.com header.b="ZoqYUmXk"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="PxttJcsg"
+Received: from forward500a.mail.yandex.net (forward500a.mail.yandex.net [178.154.239.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9604014AD1A;
-	Tue, 19 Nov 2024 11:03:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732014185; cv=pass; b=XekOq5+rEI5bGZQ0C7Ej6aO4ryn3EsLVenbUItkAvkX2z8MC0dBo5VZLjw5FBY/dI7qni87UrIFlm5Q5xreWJlsXqBfh/+3T4f8JgOK+VTdaAU5XraFPasE6ruq04QbRDQ+TRRN9vHW/UGpUEBxHF5OlJVTQpQJGN4HkjrmgJ6g=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732014185; c=relaxed/simple;
-	bh=r8iOTpTsKvq1RFPuZ8XO2AP+FEfEYHV4WSecmxZ2HZA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F/D3lYlVlfoYkwL++tmLaj4AT2aGHQ8tnt/uJJZvBMMyY+XrULlloyhewvw/MAm0snShvry7WQzFGSBQQ5J6q3fMRfc1y61njhS2lhCe4/JNv2K9s6+xXXcxUoLTdCxu5ZmFnOGtJSIHSC9WPNJxuGn9mwYArPoyzvNYa1Zz8/4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.fricke@collabora.com header.b=ZoqYUmXk; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1732014158; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=JpbNWO2S0DYM4KQM5jhFKm9aDqOnS1/bBXm2Rma7kdxv6xaAj81D5igv4QsIvgM6pi36V7N25hZDk4sYYDE9qThsehQOnc57LyBK9d9Le/ZUnw0ee1efWhqblpn05yUHWMPYOw5Be8qZhhjmmsiyNPwUm1ux3C20X/+zq12FQs8=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1732014158; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=B4EERbWf+tNb39pmHBN5FMOodac7gvgp3/YRQaVUVFw=; 
-	b=ZikEhzYsqIsF4/9NRHE4nF2LsYZDPPNTDr+NEAzyLpw1xm5233/Qbp8dPS0aSfg7d7yq2b3m7Uo5KSdX/SFQreHAMpqVYJ+jTiZ/4IlXNPESuhpYr8SyiIpsq48YTHqNZldWKjZF7LsM2Y+LtK6LGKCih6cc/89sTFAsIwupVvk=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=sebastian.fricke@collabora.com;
-	dmarc=pass header.from=<sebastian.fricke@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1732014158;
-	s=zohomail; d=collabora.com; i=sebastian.fricke@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
-	bh=B4EERbWf+tNb39pmHBN5FMOodac7gvgp3/YRQaVUVFw=;
-	b=ZoqYUmXkfrdvq11oc3VWeR2fUxq1YlBQ7ErRVQwhMvyIECXA4dfCqJfCP67XcQ9l
-	MUrikgJgMgjuFyUy7U9uYXzr0ij4yfG2LQOayMNtko8crZsOFCCTUZKlccjQ1czXiQt
-	LVPuFNdNLpCI2O9IO/V02MeDCX2sHoTSZmgBzgqY=
-Received: by mx.zohomail.com with SMTPS id 1732014156496249.50679082277054;
-	Tue, 19 Nov 2024 03:02:36 -0800 (PST)
-Date: Tue, 19 Nov 2024 12:02:26 +0100
-From: Sebastian Fricke <sebastian.fricke@collabora.com>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Arnd Bergmann <arnd@kernel.org>, Tiffany Lin <tiffany.lin@mediatek.com>,
-	Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
-	Yunfei Dong <yunfei.dong@mediatek.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, llvm@lists.linux.dev
-Subject: Re: [PATCH] media: mediatek: vcodec: mark
- vdec_vp9_slice_map_counts_eob_coef noinline
-Message-ID: <20241119110226.dbd54clp46klvjl5@basti-XPS-13-9310>
-References: <20241018151448.3694052-1-arnd@kernel.org>
- <20241118200641.GA768549@thelio-3990X>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ED911C68B2;
+	Tue, 19 Nov 2024 11:03:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.80
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732014210; cv=none; b=XfkMAzEI1ny77/KbpnxzdTLJzkR7MhJtgge+c87SL5qgH97jqVMMB+zgiRrlNxDRaRAI9TMC/Jh+2n0lOb9ZTDAEUmXtQaEtrM7bHwOGmODnx1z8lWgiy9L24fUzDXZXpr8oGQAiMTHJ0HwUq7gLEBIedkhmxiR43UmZPYs4s2s=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732014210; c=relaxed/simple;
+	bh=aJ5K2q9mqNSqTCgXLexrzoLohS/CKe1+e+l1a0CAFX8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VV3woKmIqqg5wYmMnatnRu6YeMJPdEaFOwU1pkjhBoN6Vkp0S817FtdiuTACCh/Q8tX40PGqRpjOvDFJK3bzeTnMaQvwHWkAxbvwdTHcI3TKd0JOW6qmcZWToMkrTTMlf5/LhJM1hjuANnbVJSuB9ZEd9fb5yCga/khPTvXjoNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=PxttJcsg; arc=none smtp.client-ip=178.154.239.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
+Received: from mail-nwsmtp-smtp-production-main-81.vla.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-81.vla.yp-c.yandex.net [IPv6:2a02:6b8:c15:339a:0:640:a002:0])
+	by forward500a.mail.yandex.net (Yandex) with ESMTPS id D8A89613BF;
+	Tue, 19 Nov 2024 14:03:19 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-81.vla.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id H3PcixrOpa60-LLeEi36o;
+	Tue, 19 Nov 2024 14:03:18 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
+	t=1732014198; bh=exOOjxGX9sMW0VLoYv1+HLZua1oxjjGv4JrDpnhbuc4=;
+	h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
+	b=PxttJcsgethQmC8dPISISo6PA4S6ClNmXZMlR4V9AkQnJy0xpeSOcoWS7IUL34zXY
+	 Zmw2tPi/zaar7cQ36yHJHiSHDtvxpzNSugDSCS2NGIM8u48eow3UE0Fsf3qLBYq1Tg
+	 2ee37Y9Y4XcmkyekWEvxWYMooXBP6ZGJ/ezj7VZs=
+Authentication-Results: mail-nwsmtp-smtp-production-main-81.vla.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
+Message-ID: <f7fd4a35-3c04-4eb0-a58d-18ed8d7210b9@yandex.ru>
+Date: Tue, 19 Nov 2024 14:03:16 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20241118200641.GA768549@thelio-3990X>
-X-ZohoMailClient: External
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] net/unix: pass pidfd flags via SCM_PIDFD cmsg
+Content-Language: en-US
+To: Kuniyuki Iwashima <kuniyu@amazon.com>
+Cc: almasrymina@google.com, asml.silence@gmail.com, axboe@kernel.dk,
+ brauner@kernel.org, cyphar@cyphar.com, davem@davemloft.net,
+ edumazet@google.com, gouhao@uniontech.com, horms@kernel.org,
+ kees@kernel.org, krisman@suse.de, kuba@kernel.org,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, mhal@rbox.co,
+ netdev@vger.kernel.org, oleg@redhat.com, pabeni@redhat.com,
+ quic_abchauha@quicinc.com, shuah@kernel.org, tandersen@netflix.com,
+ viro@zeniv.linux.org.uk, willemb@google.com
+References: <20241114091909.3552288-1-stsp2@yandex.ru>
+ <20241116011038.94912-1-kuniyu@amazon.com>
+From: stsp <stsp2@yandex.ru>
+In-Reply-To: <20241116011038.94912-1-kuniyu@amazon.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hey Nathan,
-
-On 18.11.2024 13:06, Nathan Chancellor wrote:
->On Fri, Oct 18, 2024 at 03:14:42PM +0000, Arnd Bergmann wrote:
->> From: Arnd Bergmann <arnd@arndb.de>
->>
->> With KASAN enabled, clang fails to optimize the inline version of
->> vdec_vp9_slice_map_counts_eob_coef() properly, leading to kilobytes
->> of temporary values spilled to the stack:
->>
->> drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_vp9_req_lat_if.c:1526:12: error: stack frame size (2160) exceeds limit (2048) in 'vdec_vp9_slice_update_prob' [-Werror,-Wframe-larger-than]
->>
->> This seems to affect all versions of clang including the latest (clang-20),
->> but the degree of stack overhead is different per release.
->>
->> Marking the function as noinline_for_stack is harmless here and avoids
->> the problem completely.
->>
->> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
->
->Unfortunately, I have seen no moment on my upstream report and this
->warning is breaking allmodconfig builds because of -Werror. Can this be
->applied as a workaround for now (preferrably with a Cc: stable on it)?
->
->Reviewed-by: Nathan Chancellor <nathan@kernel.org>
-
-I'll handle it asap, it will be part of 6.13
-
-Regards,
-Sebastian
-
->
->> ---
->> I have not come to a conclusion on how exactly clang fails to do this
->> right, but can provide the .config and/or preprocessed source files
->> and command line if we think this should be fixed in clang.
->> ---
->>  .../mediatek/vcodec/decoder/vdec/vdec_vp9_req_lat_if.c         | 3 ++-
->>  1 file changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_vp9_req_lat_if.c b/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_vp9_req_lat_if.c
->> index eea709d93820..47c302745c1d 100644
->> --- a/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_vp9_req_lat_if.c
->> +++ b/drivers/media/platform/mediatek/vcodec/decoder/vdec/vdec_vp9_req_lat_if.c
->> @@ -1188,7 +1188,8 @@ static int vdec_vp9_slice_setup_lat(struct vdec_vp9_slice_instance *instance,
->>  	return ret;
->>  }
->>
->> -static
->> +/* clang stack usage explodes if this is inlined */
->> +static noinline_for_stack
->>  void vdec_vp9_slice_map_counts_eob_coef(unsigned int i, unsigned int j, unsigned int k,
->>  					struct vdec_vp9_slice_frame_counts *counts,
->>  					struct v4l2_vp9_frame_symbol_counts *counts_helper)
->> --
->> 2.39.5
->>
->
+16.11.2024 04:10, Kuniyuki Iwashima пишет:
+> Now this allows sending pidfd without SO_PASSPIDFD, so you need to
+> add a validation for "if (!msg->msg_control)" in __scm_recv_common().
+Will do, thanks.
+Btw don't we need MSG_CTRUNC in
+such case even if "msg_control"exists? Or the established practice is to 
+just drop cmsg silently? I mean, something like the below: --- 
+a/include/net/scm.h +++ b/include/net/scm.h @@ -176,12 +176,19 @@ static 
+inline bool __scm_recv_common(struct socket *sock, struct msghdr *msg, 
+if (!msg->msg_control) { if (test_bit(SOCK_PASSCRED, &sock->flags) || 
+test_bit(SOCK_PASSPIDFD, &sock->flags) || - scm->fp || 
+scm_has_secdata(sock)) + scm->fp || scm_has_secdata(sock) || + 
+scm->pidfd_flags) msg->msg_flags |= MSG_CTRUNC; scm_destroy(scm); return 
+false; } + if (!test_bit(SOCK_PASSPIDFD, &sock->flags) && 
+scm->pidfd_flags) { + msg->msg_flags |= MSG_CTRUNC; + scm_destroy(scm); 
++ return false; + } + if (test_bit(SOCK_PASSCRED, &sock->flags)) { 
+struct user_namespace *current_ns = current_user_ns(); struct ucred 
+ucreds = {
 
