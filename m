@@ -1,112 +1,149 @@
-Return-Path: <linux-kernel+bounces-414973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF4B29D2FD6
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 21:58:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E33049D2FDA
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 22:03:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A53F528431E
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 20:58:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D507281CCD
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 21:03:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 634971D31B8;
-	Tue, 19 Nov 2024 20:58:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F408D1AAE33;
+	Tue, 19 Nov 2024 21:02:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="l9xt6i1Y"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GY8Q5gBn"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4297A19C54E
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 20:58:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC2271547FF
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 21:02:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732049926; cv=none; b=UXaI9czjDoF70kavoWAf3d6huBxKw4iJcuXYc0POCO3K3aoAfTmcrqhBEBTwGVTf2/7q7F7fz6hW5hE5oXgVjFpAaXwxRbof3dBHbWuRTqWb6+qb6YRjxVtJdHW8H3zA/bWZO4d0OvJH5qfq1Kfn6y8YRJdmU2tE0oR8PTI4cMI=
+	t=1732050178; cv=none; b=TgJk4FWX5WPDNGPxN7CPApV0IO+sWL5Rs9vYx9nBTw/JRUQMTH25/B5jhq7mXtGTGdWMDhLpzVdxr4vcFvhECQHdjEanSMDVeLocl+uRk+OlXZasieZ4hqkbHKruseK0IE8AEl/ZmemsxP4sJlceTk8FMEGunzGCHOaYBqkkewo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732049926; c=relaxed/simple;
-	bh=8WEdVpyGErxs99Yh1r9MEMQl5LIFDjaIDidlxrekh0s=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=T40oIyfM33Ozvv/lzKJaClsCcN20AtiYXQSJkXY28+tgXGHpYfiGosHeAN2Mf3ZaEg5QxAWwM3VOsUz5u4kR9juIDpd0aMDm6l+/nf3QhzKIWf6NJxmfqFxH3nwcJN94paq/xD2J09g+kvieYm+32wiYqfwLZ1lZMOx9wYuBTw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--rananta.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=l9xt6i1Y; arc=none smtp.client-ip=209.85.219.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--rananta.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e389bce2713so4054151276.2
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 12:58:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732049924; x=1732654724; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=r6S4rOH3+OQSdJMr5U+1w/fQ9eAelD/5+HuDvTmNypE=;
-        b=l9xt6i1YuApNUB+9iRAFkk7IVe7G35NBDB2dwpPST1RF8TF+kQi62HDn550kYaGVa6
-         VklbDet7iwzBtASf2YjvEL23sGE8VBuMd7GB4uX+Vi4NKR46bMpKACy7erbjCHZERhXj
-         GF1WtnURGMpWbzhyQxXGYwL16384acnbOxD07CyYY/oRaT9FO12Wns48waGCoBZBLSqh
-         IBiqIZY73BN3W20+5bMYHxoukYYi2O+WOFECfGr/wxWGY8p9qQfI3+rYw2UI38lqRboc
-         ZtKF20ImsnimunplMJEPi+ayzEW7jjT4hiN+uwT9fu4mYYUxDDRLt452IjgPgQUxY3w5
-         Xqvw==
+	s=arc-20240116; t=1732050178; c=relaxed/simple;
+	bh=sZjtNk7l7C9pzENMMAEf8CF1Tf7grENzHNXiyy+KnmU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ET+5vqhabbgOSQPov61OC+P3Iz70FnxW4kssY7pzl7mclmGHF7b1sNPlADYFNMZVeeSJg5W9sur8uuPpBdAk+ncPv7ayghlWfxi0+fyaq9sdjre7B0qDfEvHaSRRuZ8zaszbNL8dHbm+v8Y1A7dEWo56It6nCVBBNIZ2mmsYq48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GY8Q5gBn; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732050174;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=t3TBOVGPHnMk/PpScx+zP3qwXBcwdGmVH4QE3u2wmIw=;
+	b=GY8Q5gBnNYts1H4noJ4MLuPViivfcOM+LLLnIcgzlwN+senJsNiXf1zC+Sw7aWIct6zsLg
+	kUaREryrGv6hqpIw8A8nPs6vy8yEj7I7trRRFSJWCAx7NPqaB1sIqzauK4fi6YldgResgf
+	0j0Hc+RjaaUDENaoKzBcZjfWe+K8Gy8=
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com
+ [209.85.166.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-140--kt2B4q7MAyu41FxbU0Uyw-1; Tue, 19 Nov 2024 16:02:53 -0500
+X-MC-Unique: -kt2B4q7MAyu41FxbU0Uyw-1
+X-Mimecast-MFC-AGG-ID: -kt2B4q7MAyu41FxbU0Uyw
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a7191aa79cso52387225ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 13:02:53 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732049924; x=1732654724;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=r6S4rOH3+OQSdJMr5U+1w/fQ9eAelD/5+HuDvTmNypE=;
-        b=lOdToMOQsCPjWe5YKIcX6MTRYm2ftAyPso0irhNz+ZjFlCDzLaOejhQ3TXXEbjY+IV
-         TkCNFzTKkBADvfadG1Hik2uPiOVQeG0t2LaJvzXnpcZndUbPHK0JkZOlILEfWxAQ0HMQ
-         IhTNsakSDj+m/k723G9RgYVqlKos6XLrFmPhKI5LAWcdku1bUiqwqDW2WJV3+3qnPB4/
-         z21Bffd1zt5NwTc6j7RQBrqOQwGzH/h0bEIjQy/SRxWxsR8XJ6OEKmRIYNsnpXb4efNC
-         ESGNRDjZ1Eu6EkZ7js6xK4NiFGaqzHrvnqI7uZJyM25TIHbDShmGzQ6OXozV8AKE7gm8
-         HvxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUvY4kMAXPZyXIWdnYaG+Oncjn8Wlb88DD5NpsISWjUgAbdZwPXbF1uerJIOa+j0wB26UpgeIWqS0P4sMI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPNmACuffQZjnT6p4wiMQLPj8lTDSe1uBoKVkjjRmPB9dCv70s
-	6e4YVZFiWckMxM+y9Uk28r2I85lp1oDPkh8wYilnQrSHLfP/tqi5iVUabon/xt3PCcaSACOwa8y
-	8EQlBLw==
-X-Google-Smtp-Source: AGHT+IHpK5pQqyJ2pkrSLDCOOUklWO2InSnJR1eVoVoMwnsqp16+77q4Yb5PQps1c7yCQOY0bhbxQaG15qmS
-X-Received: from rananta-linux.c.googlers.com ([fda3:e722:ac3:cc00:11b:3898:ac11:fac1])
- (user=rananta job=sendgmr) by 2002:a25:2d0b:0:b0:e38:c40b:a0a9 with SMTP id
- 3f1490d57ef6-e38cb60bac3mr38276.5.1732049924316; Tue, 19 Nov 2024 12:58:44
- -0800 (PST)
-Date: Tue, 19 Nov 2024 20:58:41 +0000
+        d=1e100.net; s=20230601; t=1732050173; x=1732654973;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=t3TBOVGPHnMk/PpScx+zP3qwXBcwdGmVH4QE3u2wmIw=;
+        b=aFOknD++zYGRXXXMzkichJrp7aO0VWs06jOL75McYV/zpt2E9PansMLD6grPhFv4sX
+         jso9i5nvmxZeu7WCw5Z3ThZuBmqCZsYteGRVvnatV2OAi6nve1EO14ltaoh6pDvx/qxa
+         U4Z9mX/TCkiVd0/QUNgP6mZ3fZGd83+CWY+Qdh3Lka4+QpgoVgnVBZ4LrE3KQmcGR+ed
+         VcF3QawaaV9zq1pseWYIXpm/A3MFWjgXViGlaZu/rTV8Ybecl1b/jYSguW2TnzMfLbwc
+         6dfzngMVLO2DHLAfKcJLuxlJRHZInXXXlk80FRQ23nL5hdn3wk2M3/NDRvXxUvtuAPHu
+         aQcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXH+EduGJt4xekiMoE2NktmUuHqur+fcHeMN2jJnhspSdflTnpfM68NU5hX+T2ctELz5lTRyhz2m3HM4+M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxlij6nwCux6z4aBA3sPMSHCxb0xoETGVD0oXQIZ7wYJclq5Hea
+	n7hEq3zFYy9zUUK0Dz4dV3c9XPIv2SGgj5rwBEBL3ht1PfSXuTaL764V9QMpxme1Uzn2DZS5TpS
+	tf15JBRfF/JV8ff3CFDIyCkFmxXDxyHGQLTxzuy4sthr4EvlXbrG58iX4m0uNBA==
+X-Received: by 2002:a05:6e02:2163:b0:3a7:7dc9:a4b0 with SMTP id e9e14a558f8ab-3a786457e63mr2505465ab.9.1732050172824;
+        Tue, 19 Nov 2024 13:02:52 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHNZhFi4Xzwng9eavnh81Qgmhou8NXC0G0kcJ/atGWwSCqLsA1Fb8DTEeCVsTBJAqR40j3BvA==
+X-Received: by 2002:a05:6e02:2163:b0:3a7:7dc9:a4b0 with SMTP id e9e14a558f8ab-3a786457e63mr2505235ab.9.1732050172398;
+        Tue, 19 Nov 2024 13:02:52 -0800 (PST)
+Received: from jkangas-thinkpadp1gen3.rmtuswa.csb ([2601:1c2:4301:5e20:98fe:4ecb:4f14:576b])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4e0756b0e35sm2987964173.108.2024.11.19.13.02.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Nov 2024 13:02:51 -0800 (PST)
+From: Jared Kangas <jkangas@redhat.com>
+To: ryabinin.a.a@gmail.com
+Cc: glider@google.com,
+	andreyknvl@gmail.com,
+	dvyukov@google.com,
+	vincenzo.frascino@arm.com,
+	akpm@linux-foundation.org,
+	kasan-dev@googlegroups.com,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Jared Kangas <jkangas@redhat.com>
+Subject: [PATCH] kasan: make report_lock a raw spinlock
+Date: Tue, 19 Nov 2024 13:02:34 -0800
+Message-ID: <20241119210234.1602529-1-jkangas@redhat.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-Message-ID: <20241119205841.268247-1-rananta@google.com>
-Subject: [PATCH] KVM: arm64: Ignore PMCNTENSET_EL0 while checking for overflow status
-From: Raghavendra Rao Ananta <rananta@google.com>
-To: Oliver Upton <oliver.upton@linux.dev>, Marc Zyngier <maz@kernel.org>
-Cc: Raghavendra Rao Anata <rananta@google.com>, linux-arm-kernel@lists.infradead.org, 
-	kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-kvm_pmu_overflow_status() currently checks if the PMCs are enabled for
-evaluating the PMU overflow condition. However, ARM ARM D13.1.1 states
-that a global enable control (PMCR.E), PMOVSSET<n>, and PMINTENSET<n>
-are sufficent to consider that the overflow condition is met. Hence,
-ignore the check for PMCNTENSET<n>.
+If PREEMPT_RT is enabled, report_lock is a sleeping spinlock and must
+not be locked when IRQs are disabled. However, KASAN reports may be
+triggered in such contexts. For example:
 
-The bug was discovered while running the SBSA PMU test, which only sets
-PMCR.E, PMOVSSET<0>, PMINTENSET<0>, and expects an overflow interrupt.
+        char *s = kzalloc(1, GFP_KERNEL);
+        kfree(s);
+        local_irq_disable();
+        char c = *s;  /* KASAN report here leads to spin_lock() */
+        local_irq_enable();
 
-Signed-off-by: Raghavendra Rao Ananta <rananta@google.com>
+Make report_spinlock a raw spinlock to prevent rescheduling when
+PREEMPT_RT is enabled.
+
+Signed-off-by: Jared Kangas <jkangas@redhat.com>
 ---
- arch/arm64/kvm/pmu-emul.c | 1 -
- 1 file changed, 1 deletion(-)
+ mm/kasan/report.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm64/kvm/pmu-emul.c b/arch/arm64/kvm/pmu-emul.c
-index ac36c438b8c1..3940fe893783 100644
---- a/arch/arm64/kvm/pmu-emul.c
-+++ b/arch/arm64/kvm/pmu-emul.c
-@@ -342,7 +342,6 @@ static u64 kvm_pmu_overflow_status(struct kvm_vcpu *vcpu)
+diff --git a/mm/kasan/report.c b/mm/kasan/report.c
+index b48c768acc84..c7c0083203cb 100644
+--- a/mm/kasan/report.c
++++ b/mm/kasan/report.c
+@@ -200,7 +200,7 @@ static inline void fail_non_kasan_kunit_test(void) { }
  
- 	if ((kvm_vcpu_read_pmcr(vcpu) & ARMV8_PMU_PMCR_E)) {
- 		reg = __vcpu_sys_reg(vcpu, PMOVSSET_EL0);
--		reg &= __vcpu_sys_reg(vcpu, PMCNTENSET_EL0);
- 		reg &= __vcpu_sys_reg(vcpu, PMINTENSET_EL1);
- 	}
+ #endif /* CONFIG_KUNIT */
  
-
-base-commit: adc218676eef25575469234709c2d87185ca223a
+-static DEFINE_SPINLOCK(report_lock);
++static DEFINE_RAW_SPINLOCK(report_lock);
+ 
+ static void start_report(unsigned long *flags, bool sync)
+ {
+@@ -211,7 +211,7 @@ static void start_report(unsigned long *flags, bool sync)
+ 	lockdep_off();
+ 	/* Make sure we don't end up in loop. */
+ 	report_suppress_start();
+-	spin_lock_irqsave(&report_lock, *flags);
++	raw_spin_lock_irqsave(&report_lock, *flags);
+ 	pr_err("==================================================================\n");
+ }
+ 
+@@ -221,7 +221,7 @@ static void end_report(unsigned long *flags, const void *addr, bool is_write)
+ 		trace_error_report_end(ERROR_DETECTOR_KASAN,
+ 				       (unsigned long)addr);
+ 	pr_err("==================================================================\n");
+-	spin_unlock_irqrestore(&report_lock, *flags);
++	raw_spin_unlock_irqrestore(&report_lock, *flags);
+ 	if (!test_bit(KASAN_BIT_MULTI_SHOT, &kasan_flags))
+ 		check_panic_on_warn("KASAN");
+ 	switch (kasan_arg_fault) {
 -- 
-2.47.0.338.g60cca15819-goog
+2.47.0
 
 
