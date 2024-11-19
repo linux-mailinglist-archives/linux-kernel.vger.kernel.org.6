@@ -1,84 +1,80 @@
-Return-Path: <linux-kernel+bounces-413992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 767C59D2192
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 09:29:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD3539D2194
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 09:29:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 303481F22AE3
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 08:29:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BD1B1F22A13
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 08:29:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A041199EB2;
-	Tue, 19 Nov 2024 08:28:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB997158870;
+	Tue, 19 Nov 2024 08:29:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="mAPh4DbE"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Da4alwdR"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 490481474CF
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 08:28:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 612A3157472
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 08:29:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732004931; cv=none; b=bDvJ/pZV+tL4LonZlsFLzCVRzuADpHDoBkVqSYY3ldp9b7ehDJs9z/9MAIjdE4/Y/2JfoaYUjXPUQ+ZPWJbzWmsFH+N5HKPdyWijXWV05VI3fkG0aDSvsE4TJDDOXqcAPMCiZKfLCMd5RzvYt+NjUbYA1/SdhALOIcXIyWc2oO8=
+	t=1732004960; cv=none; b=EAJTce5yE4MhaEH1fTa61a7A0vwzDvm0G+viV0FAa+9TZGe89q7ZTiepfa3rx5iV6yEXMRMoANbNPUdoPNoiYwm5zrZSHraOg55rbl2lLZkq4C+RlqVIohA6w3zZPvCDSHVKblzDwZ2SIX1DiNNELpfxgUarT46ep9cfevyBnaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732004931; c=relaxed/simple;
-	bh=0AqPpf7RNAcBW72RiT+BB+KFARadjaWyA6dvMRHwBFU=;
+	s=arc-20240116; t=1732004960; c=relaxed/simple;
+	bh=bJDNNakkOymO9UdeCGUCR1wRhNYK1cwKNsqVhZJe8ug=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XB/JvnAqFbARBLgehf88BppUVJ827OgKJlElBXuB3nmPJmS0PHoDm73ywWaSMgSqONlXaEED5ajMG7JdTAaadwdqutRNu3rDF0WRvXNx7K9dPE0jnZgOVxPACm+TO7kSmQYphLziGo3KxHc9x2N7DE5eK6SyswxKT6rJLPpeydk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=mAPh4DbE; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43169902057so42942035e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 00:28:49 -0800 (PST)
+	 Content-Type:Content-Disposition:In-Reply-To; b=uFTlmHEzWccJ6ofG8LSqxtqCyfbU+upbHCkOGkpPTpWHdqMYlrxd4P6VV09aC1B96zNrs3ybNi+W8/jy4QAr7slFRAYD+yIhHv4ys5p0e+9c2Lt1F+L+youWQ9W6A/xjihFEHpTxnTAxYSGpFWBUadq4MW/jssrgWv5FPLQFETE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Da4alwdR; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-aa4d257eb68so28817466b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 00:29:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1732004928; x=1732609728; darn=vger.kernel.org;
+        d=suse.com; s=google; t=1732004957; x=1732609757; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=cyUY32m7VUxlCTDLVt1b+JPHfOUSRIx7q0KXl7IQeQ4=;
-        b=mAPh4DbEDhiPH/ULRN+b/B01R39LhE09vR8+KZ80PTqokXeXTWdpdG4loHIqlVzaM/
-         vB6qPVsn9KARf4qP4ZfCFR6QZfTT85A3AHyInBAHnNdoAXj2ufCsBFxGpX7Vli/0br8j
-         XBM4QTzIBejxOD59snFhChulzCDZ/0D30WjZp2DMW1LGg1KpoHv/4KDwOsU1yFCEtHDm
-         nrCZAPH+WQ3xpAGKdBZGnSwaH0sPm4dabtSSC3ztOI9zIsuQwQ7kywhNgRYYNVVArfxE
-         +v/i3zYUitVtPlaQDgCtqvzT8ek/omKgazxfujHPySioRmOqVfcOQi70CzJXbIVHUKYs
-         CLIw==
+        bh=5jH4xv+sR4Al/gOR3OXvEI7SwC+hrXa/pJ8uLUM/+9U=;
+        b=Da4alwdRhs/cq/tWnxPCOytcmmskj3O0QqbjaxrERQXO3Qr2a7i39eBXgjtAZal4nc
+         QlQYoN/qXf56pzLSuRU2+I6p0jJFXmreqlKW+JoObSC8LCQwNQLSPo9EleGg8uyUzf7+
+         HZXgWbCPHUTvUM0dLcGCzCySGhanDg6mI/ifZtfaLbiYTyIvRDQyaNnxIHvsFh4ILD//
+         JhAPbiEwb1WXm2h4ln5YtFmFfUFE+ZGgIlftdiFeIRvx9TQNoHAgujc4VM2Ltn0JpqrY
+         3amjLNy9H5ZyBGusfosPiKoxaR+0rJSCbC57aQGJkMNxSD12w4vb5x20NcXy9IfUxlT1
+         HIEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732004928; x=1732609728;
+        d=1e100.net; s=20230601; t=1732004957; x=1732609757;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=cyUY32m7VUxlCTDLVt1b+JPHfOUSRIx7q0KXl7IQeQ4=;
-        b=C0tT3JzM6k7ZK6G/VaBas75iDO6UDd0+/WXXU1Mh1WW9NllX+od9Zldqn/D2Wd3Nqd
-         50+WTKXRVgsP9+iaH4TW9sNxlrq8UJjvSVhw/rQkd2WH5d+745/Ot/K8l0FL+OBC81wJ
-         reCBU19guSiMqz/2nSiEt1sQYDgOoXRBQErCcSbVx11FyXdYYfR2pV3UQv4w5VSo0AvT
-         ePQ4NPeghlL/UKKWUq3ZnpQDmIzPhWEV2TplWdvLQHrlnxwfs5XCYtw2V6qM9Amkq+1+
-         PcmqOOmbW96+gg7GhbifiVnk2JXiUeI88vcW16dD9gmaZdp3oUtinmQXgrixaF98xLiJ
-         DWRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWqYlA1y2nUdJe9TuAyf/TTZGtGaIQ7zB96xHbaosiA/pd5kTBe4BWwoxiyUKPigchHF78cn8b7qpeFaa8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxq+WXPmO0HL0oOeWDmCVDu8/U//8E7+GfKfeX049w7uuKbV1yE
-	sNltDJmMV0/QqE6IE1QwvwqQ7X21KXX/dN3/RNVuJvixnK7huf2Z9aM1JH9TBaQ=
-X-Google-Smtp-Source: AGHT+IHpZMhXyydhQ7Idy4ENb5ObblYkccalbUBLPzNSlCP+c5FRHdBQ5a3DSr77U7024nHK4LI/fg==
-X-Received: by 2002:a05:6000:2904:b0:382:4aa0:e728 with SMTP id ffacd0b85a97d-3824aa0e803mr4138031f8f.1.1732004928543;
-        Tue, 19 Nov 2024 00:28:48 -0800 (PST)
-Received: from localhost (cst2-173-13.cust.vodafone.cz. [31.30.173.13])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432dac21a15sm183138595e9.38.2024.11.19.00.28.47
+        bh=5jH4xv+sR4Al/gOR3OXvEI7SwC+hrXa/pJ8uLUM/+9U=;
+        b=cgwBrUXDo8EC1nbE+L+z4OtntWjuthA0MlWyGOdYAPqBEanJpQiHzqIXBa/vgzo6cn
+         EgFhG2RCAUd0tsDU+bNAZHxF3nzl5e1zfAhTaUAg2yZs8pVnwDS6YWrtSU99MWcoNAJQ
+         M8L1Fq1R6PgmiiPd5anl2THWsiauoqM8HgCxOZqQF52I/WtZvPO4BTL3j1GNcQdZzggq
+         y2iqrlCoLrUOLBArOpNPIQpKe+DRD7lfABjG1UcaNjU4M7OZwdqnBS3EANdBcMt3wI1q
+         yvO/gegjeSyNJpNpT3aoKdrqkYWYDKxORYwU2IT05Cb/NNPjEWJEVtr753fyTQkuthbA
+         bBlw==
+X-Forwarded-Encrypted: i=1; AJvYcCUSkZQKD+I6Hu6Nn4FDrGU91ovzSsSjyL5NCi94Mu89kCDtZOgCQhHlJ3GTKZWUHFTvnsw78IbCNd0nZ7o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8br5hfLyJhTRRsWTShOG01+Vzq9YTeD8TtM8yG64lmGY6PoGY
+	Mk59gwtpT7L+8mIDq42rFvLCuTPbMfDXRvPF3Ra1dxFXcUfPWVhGjWO/TvVSj6k=
+X-Google-Smtp-Source: AGHT+IEaZYns8YIqU8fVZizD6+A1wmyvYG60rg1tB1S9LYpkKleiNedOiGTxf1SR/nyQ4V3LKUmHkA==
+X-Received: by 2002:a17:907:7f0e:b0:aa2:be2:f1d1 with SMTP id a640c23a62f3a-aa4c7e17d55mr213141166b.10.1732004956734;
+        Tue, 19 Nov 2024 00:29:16 -0800 (PST)
+Received: from localhost (109-81-88-120.rct.o2.cz. [109.81.88.120])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20e046afdsm622185266b.163.2024.11.19.00.29.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Nov 2024 00:28:48 -0800 (PST)
-Date: Tue, 19 Nov 2024 09:28:46 +0100
-From: Andrew Jones <ajones@ventanamicro.com>
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: iommu@lists.linux.dev, kvm-riscv@lists.infradead.org, 
-	kvm@vger.kernel.org, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	tjeznach@rivosinc.com, zong.li@sifive.com, joro@8bytes.org, will@kernel.org, 
-	anup@brainfault.org, atishp@atishpatra.org, tglx@linutronix.de, 
-	alex.williamson@redhat.com, paul.walmsley@sifive.com, palmer@dabbelt.com, 
-	aou@eecs.berkeley.edu
-Subject: Re: [RFC PATCH 04/15] iommu/riscv: report iommu capabilities
-Message-ID: <20241119-76c9ff71b8834ef886b3ca86@orel>
-References: <20241114161845.502027-17-ajones@ventanamicro.com>
- <20241114161845.502027-21-ajones@ventanamicro.com>
- <ddd40bc3-7f2a-43c2-8918-a10c63bd05ba@arm.com>
+        Tue, 19 Nov 2024 00:29:16 -0800 (PST)
+Date: Tue, 19 Nov 2024 09:29:15 +0100
+From: Michal Hocko <mhocko@suse.com>
+To: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+Cc: Linux Memory Management List <linux-mm@kvack.org>,
+	lkml <linux-kernel@vger.kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: Question about vmalloc(GFP_NOFS)
+Message-ID: <ZzxMW-AzPY7C27_L@tiehlicka>
+References: <112f93f3-455a-4b89-94c9-d12844d972ef@virtuozzo.com>
+ <377a6aef-46a7-4492-a44f-b2a46869a9d0@virtuozzo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,73 +83,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ddd40bc3-7f2a-43c2-8918-a10c63bd05ba@arm.com>
+In-Reply-To: <377a6aef-46a7-4492-a44f-b2a46869a9d0@virtuozzo.com>
 
-On Fri, Nov 15, 2024 at 03:20:36PM +0000, Robin Murphy wrote:
-> On 14/11/2024 4:18 pm, Andrew Jones wrote:
-> > From: Tomasz Jeznach <tjeznach@rivosinc.com>
-> > 
-> > Report RISC-V IOMMU capabilities required by VFIO subsystem
-> > to enable PCIe device assignment.
+On Tue 19-11-24 15:24:03, Pavel Tikhomirov wrote:
+[...]
+> In commit 451769ebb7e79 ("mm/vmalloc: alloc GFP_NO{FS,IO} for vmalloc") we
+> add implicit memalloc_noXX_save/memalloc_noXX_restore at this code path:
 > 
-> IOMMU_CAP_DEFERRED_FLUSH has nothing at all to do with VFIO. As far as I can
-> tell from what's queued, riscv_iommu_unmap_pages() isn't really implementing
-> the full optimisation to get the most out of it either.
-
-Thanks, Robin. I'll drop this cap for the next version.
-
+>   +->kvmalloc
+>     +-> ...
+>       +-> __kvmalloc_node_noprof
+>         +-> __vmalloc_node_range_noprof
+>           +-> __vmalloc_area_node
 > 
-> I guess IOMMU_CAP_CACHE_COHERENCY falls out of the assumption of a coherent
-> IOMMU and lack of PBMT support making everything implicitly IOMMU_CACHE all
-> the time whether you want it or not, but clarifying that might be nice
-> (especially since there's some chance that something will eventually come
-> along to break it...)
+> So kvmalloc should be safe now with GFP_NOIO.
 
-Yes, riscv selects ARCH_DMA_DEFAULT_COHERENT and the riscv IOMMU hardware
-descriptions don't provide any way to say otherwise. I can put a comment
-above the IOMMU_CAP_CACHE_COHERENCY case which states "The RISC-V IOMMU is
-always DMA cache coherent", or did you have something else in mind?
+Correct.
 
-Thanks,
-drew
+> Should we correct the documentation?
 
-> 
-> Thanks,
-> Robin.
-> 
-> > Signed-off-by: Tomasz Jeznach <tjeznach@rivosinc.com>
-> > Signed-off-by: Andrew Jones <ajones@ventanamicro.com>
-> > ---
-> >   drivers/iommu/riscv/iommu.c | 12 ++++++++++++
-> >   1 file changed, 12 insertions(+)
-> > 
-> > diff --git a/drivers/iommu/riscv/iommu.c b/drivers/iommu/riscv/iommu.c
-> > index 8a05def774bd..3fe4ceba8dd3 100644
-> > --- a/drivers/iommu/riscv/iommu.c
-> > +++ b/drivers/iommu/riscv/iommu.c
-> > @@ -1462,6 +1462,17 @@ static struct iommu_group *riscv_iommu_device_group(struct device *dev)
-> >   	return generic_device_group(dev);
-> >   }
-> > +static bool riscv_iommu_capable(struct device *dev, enum iommu_cap cap)
-> > +{
-> > +	switch (cap) {
-> > +	case IOMMU_CAP_CACHE_COHERENCY:
-> > +	case IOMMU_CAP_DEFERRED_FLUSH:
-> > +		return true;
-> > +	default:
-> > +		return false;
-> > +	}
-> > +}
-> > +
-> >   static int riscv_iommu_of_xlate(struct device *dev, const struct of_phandle_args *args)
-> >   {
-> >   	return iommu_fwspec_add_ids(dev, args->args, 1);
-> > @@ -1526,6 +1537,7 @@ static void riscv_iommu_release_device(struct device *dev)
-> >   static const struct iommu_ops riscv_iommu_ops = {
-> >   	.pgsize_bitmap = SZ_4K,
-> >   	.of_xlate = riscv_iommu_of_xlate,
-> > +	.capable = riscv_iommu_capable,
-> >   	.identity_domain = &riscv_iommu_identity_domain,
-> >   	.blocked_domain = &riscv_iommu_blocking_domain,
-> >   	.release_domain = &riscv_iommu_blocking_domain,
+Yes, please. I think it would be useful to explicitly name the above
+commit because pre 5.17 kernels or those who haven't backported it are
+still in same position and that could get dangerous if they try to
+backport [k]vmalloc GFP_NOFS patches. Thanks!
+
+-- 
+Michal Hocko
+SUSE Labs
 
