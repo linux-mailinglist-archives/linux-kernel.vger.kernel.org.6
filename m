@@ -1,243 +1,147 @@
-Return-Path: <linux-kernel+bounces-413948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A3399D20DF
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 08:40:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F36589D20E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 08:41:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A677281F65
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 07:40:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF71128244C
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 07:41:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79185156661;
-	Tue, 19 Nov 2024 07:40:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47CDE19882B;
+	Tue, 19 Nov 2024 07:40:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b="hJVkJePI"
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2060.outbound.protection.outlook.com [40.107.22.60])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o1dK3y78"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EE991482F3
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 07:40:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.60
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732002037; cv=fail; b=ktHITcbCb5kGhSURSgZeHfhkkAkiuXQDeykziCbWOFmgiV2ScjOuW9TJPSWw5jGIvRwbKdkzDCvI2shT4UcMKlVYsBJO6zRVr4o4kbYyJAzrrS8GuVmaf3EF5EQkDHKBfJ24+xmeJpU35X2KNheKQ7V+z2xu/hixRvPRTErpkQ0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732002037; c=relaxed/simple;
-	bh=YuYeuKET8loUAa1fpI46q383VfiY+R5sdVjDcbBGfBg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=FC9/eiDJjsWNCAM4Urntk1cT1Nd8qa1s0XTHUm7IvChz+YgS01IrM98sjOOhxwk2h0sNb6ye1tF7J3vYE21mPP1QgzqnlpCo6XUCWkCkfdBDpKJZY711Cj9AXshvpDl4JvmVpHTk9+Ta5QBR7tPpXCfxrv9d5KHYvufqZWaZ3OQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com; spf=pass smtp.mailfrom=axis.com; dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b=hJVkJePI; arc=fail smtp.client-ip=40.107.22.60
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=axis.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YT9vES0bJnWBdcOfK+uvvNBFYVDFF6n06Os2jd7wtwvUSV2/HCv4FTCMPHHuibnOJB2uB8TFffmEnL7vyACGvPgtLkj9SYsZfBDjQWjMHqgm0AHpe1fMEoLMNUhCE5Z7EWTgrfOX4TY7cCtMds4PqDcTCJPd5bsE1YBURwpSO+rik/hr1EC2TYGZHwBsPxxm5G2OsYGkoHSHW2knnL9RxZulVNe9NSbzJVK9lqkmK4Yj1tFd2yFJavPDMKcAL9tnAd0+/JcJFvcPor0y5yvYA86iaLwpMzjETSbCjdx5Jg9CAcSOEQJ+Vdk+JV2HTBcCKJAxoeJZ8WiNtCAa/zD7Xw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=oJmB8fg/OjYnIRr/FDUQr2RcQ0nrrTgSYbPBkPsf328=;
- b=Pl+d+O7fXNudYWsd5Q3dg3lubJkthXL+bn+oBnSrKVKEzzqw696QCJbXt0fZWishuW1S+pm/yip8N/o/5JvF7yoUakdeSN84iM4weszIkgRMslFtJGpsQQlYYzMAeeCsoOZ46lidah1wfbffhCtxQTVE8H7ybcVDQl92p4aVDWVMWukE6rCuMMfj2dHI5QLs3pVdZ2LXqKmkn5YA3pvD+TE0nYAts8yKtkeKVo2Im/NaNnTT+MwdPkIxUx3t3gZorS9mLRruZFpJ6lYATNfiLIBQUqR0Ld1Ns1rCz/HFr7n044fTzFSXIJ3KVbhZ51raL0wBWi0sC7DeaGaA279UtA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 195.60.68.100) smtp.rcpttodomain=bp.renesas.com smtp.mailfrom=axis.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=axis.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axis.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=oJmB8fg/OjYnIRr/FDUQr2RcQ0nrrTgSYbPBkPsf328=;
- b=hJVkJePITEJNIyXEjh/XLOJSn/uYmShbMalsORYHc/sugQoXp5RS6aIFegm+8uOtmUzG8zYir1CXh9ByfdD1mYv9CimlVbzqrFzES9LJehHfBx34b6CBjM4g0BCW4jbnPUY618YVJgUvEJlZFKCzzWMreOUmOBHdRGfmA4YjMlE=
-Received: from AS9PR06CA0207.eurprd06.prod.outlook.com (2603:10a6:20b:45d::34)
- by PAWPR02MB9054.eurprd02.prod.outlook.com (2603:10a6:102:337::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.14; Tue, 19 Nov
- 2024 07:40:31 +0000
-Received: from AMS0EPF00000190.eurprd05.prod.outlook.com
- (2603:10a6:20b:45d:cafe::c2) by AS9PR06CA0207.outlook.office365.com
- (2603:10a6:20b:45d::34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.23 via Frontend
- Transport; Tue, 19 Nov 2024 07:40:31 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 195.60.68.100)
- smtp.mailfrom=axis.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=axis.com;
-Received-SPF: Pass (protection.outlook.com: domain of axis.com designates
- 195.60.68.100 as permitted sender) receiver=protection.outlook.com;
- client-ip=195.60.68.100; helo=mail.axis.com; pr=C
-Received: from mail.axis.com (195.60.68.100) by
- AMS0EPF00000190.mail.protection.outlook.com (10.167.16.213) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8158.14 via Frontend Transport; Tue, 19 Nov 2024 07:40:30 +0000
-Received: from se-mail02w.axis.com (10.20.40.8) by se-mail02w.axis.com
- (10.20.40.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 19 Nov
- 2024 08:40:30 +0100
-Received: from se-intmail02x.se.axis.com (10.4.0.28) by se-mail02w.axis.com
- (10.20.40.8) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Tue, 19 Nov 2024 08:40:30 +0100
-Received: from pc39391-2017.se.axis.com (pc39391-2017.se.axis.com [10.92.82.2])
-	by se-intmail02x.se.axis.com (Postfix) with ESMTP id 063B5881;
-	Tue, 19 Nov 2024 08:40:30 +0100 (CET)
-Received: by pc39391-2017.se.axis.com (Postfix, from userid 10612)
-	id 003AE4462505; Tue, 19 Nov 2024 08:40:29 +0100 (CET)
-From: Stefan Ekenberg <stefan.ekenberg@axis.com>
-Date: Tue, 19 Nov 2024 08:40:29 +0100
-Subject: [PATCH v4] drm/bridge: adv7511_audio: Update Audio InfoFrame
- properly
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 910E91482F3;
+	Tue, 19 Nov 2024 07:40:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732002051; cv=none; b=gGm7TEmf+c0VyMjNoEa6VNT9pvV00paZg4AR8OKpTRAThYZBrlzDZPjgQApVv42IiraKl8hsUJC2HvUBI3aCJlGYxUsRgM2LyeQg3xtGE8z8T/4K/T1GUKT6D/36Sbh2HtKRBlk2LVkmfF+Q12Q1Kg6VqdQA7YT8hetKNKUTvxw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732002051; c=relaxed/simple;
+	bh=kgkPNYxGxqHFjWOcGvWsb/pjlSuJLCGIWHdWG9UrqR0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Kc+WWHIdWhB6Kd14gBZheymjVzDlTKbooDG/2egkfxCosweyBPP1zhW/088wXnQ7eRXP2OwY/THK7/dRTC6OVyrihzr45UUbSZF9ARjTD4mwyjWVfJeKWTX9nY3MJLsf2hPkGQSxfiSQB5sc+yZgR6c7cZiqYSL9g2sehFSmhN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o1dK3y78; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AC6CC4CECF;
+	Tue, 19 Nov 2024 07:40:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732002051;
+	bh=kgkPNYxGxqHFjWOcGvWsb/pjlSuJLCGIWHdWG9UrqR0=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=o1dK3y781Lf3gJcAaXWMpVBuRzQh1Bv1mydHDaKsufSvoCsoXDG4HyWvAGj6fiqMt
+	 vZGbq6fDIyMI297eAssyETvb2jDWQ6MMmnS5R67+joQwKRdgZVZrV7uJIhGfEUDjX2
+	 Ym3T6h2s2lbs60cQqo1lw2Noi47IIYvN2IbYVhmrhooMRpawWIzTdCmKt3rFw0MnDE
+	 81LtEX8a4sWNajxQ0MV5os1sihSW7shmKb+LBKlJjhL+KIExOAKtbSAUl8gBuUa/qj
+	 GWriVPndWsUBqjBXBqB4TB37FwnSLRndeaXPANwxkp2dNQQH/1syzw3mLJr3gVX//i
+	 U/n4VyXzI9Rdw==
+Message-ID: <10d4050b-47c8-4ba1-9c47-7fd12187186f@kernel.org>
+Date: Tue, 19 Nov 2024 08:40:44 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [net-next v2 1/7] dt-bindings: net: ftgmac100: support for
+ AST2700
+To: Jacky Chou <jacky_chou@aspeedtech.com>, andrew+netdev@lunn.ch,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ p.zabel@pengutronix.de, netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241118060207.141048-1-jacky_chou@aspeedtech.com>
+ <20241118060207.141048-2-jacky_chou@aspeedtech.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241118060207.141048-2-jacky_chou@aspeedtech.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-ID: <20241119-adv7511-audio-info-frame-v4-1-4ae68e76c89c@axis.com>
-X-B4-Tracking: v=1; b=H4sIAOxAPGcC/33PSw6CMBCA4auQrq1h+gDqynsYF4W2MgupabXBE
- O5uIS6IiSz/SeabzESiDWgjORUTCTZhRD/kEIeCdL0ebpaiyU1YyQRA2VBtUi0BqH4Z9BQH56k
- L+m6pFBUIY0TrZE3y+iNYh+NKX665e4xPH97rpQTL9IsC/48moECFannVtEpJLc96xHjs/J0sZ
- mJbR+44LDudFrXi1nGt4MfhW2fnycSzw8EaoxSHRlYbZ57nD8CIjXtPAQAA
-X-Change-ID: 20241108-adv7511-audio-info-frame-54614dd4bf57
-To: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
-	<neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent Pinchart
-	<Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, "Jernej
- Skrabec" <jernej.skrabec@gmail.com>, Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>
-CC: <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-	<kernel@axis.com>, Biju Das <biju.das.jz@bp.renesas.com>, Stefan Ekenberg
-	<stefan.ekenberg@axis.com>
-X-Mailer: b4 0.14.2
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AMS0EPF00000190:EE_|PAWPR02MB9054:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1f5950d8-dc67-41ab-e8b0-08dd086d71ad
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|1800799024|82310400026|36860700013|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?a01IdkpvYTBsWW50R1dabzg3M0NmVTN1M2s3c29EbG9JOHpZRnFBU1pydnVH?=
- =?utf-8?B?QkFySU5xV2U5UEYwNEl1bU9YZTBrOXBFYmRaVmIzWmNPNlFBNjllNnFTRGli?=
- =?utf-8?B?NkExcTlJT2s0SGlRMnRwQkxUdzNGQTRiWjMxcm9DaU0zWE9YOHl3Mm9GWWJk?=
- =?utf-8?B?NW0rcWRCQXFwenYrWFJ0bWdHWXFoMzc3bnNFTmtwTXNqY1Z0RHl5NWJ4RW1V?=
- =?utf-8?B?Mm5JclEwYUF2S1JGSjBQb2JGS1BaeHdYRzhWUnFFOXZSTG9CdG4wNU1nak5a?=
- =?utf-8?B?OTZySUFyMTB5WWdteTFlbnB5N3lBaVF5d2FFUHVLOThHSzFCaWM5Y0RaODV4?=
- =?utf-8?B?Q3Urc0xKNlBqdFN6Q2owRFZKV09XYktsTEtLWFBMdFdMNXFWK2pxbVMwdStv?=
- =?utf-8?B?Q00rRVBGZzRqU29pWEx6SXc1M29CK2R5ZkorZ0RrT25sSEhKUmw5UWo1MTIr?=
- =?utf-8?B?QmVyckhnbGE4UlV0aTVGS1VmeTVkbFhjT3VmUFM4UWpTaEFhSWw1Ym5GQzA2?=
- =?utf-8?B?T2QybmYzQ0R6bjhCZnV1ME5wTzZqSWV0VG5EZlV6SGNhR2V2UDFUTm5kdmFu?=
- =?utf-8?B?cldVeHNWMVJFdnRTZHVPKzc4VGRWYldtRmZFMmtucGFERWNPNXpDekdQN0J4?=
- =?utf-8?B?VTFaMGZIczZKOEhvVk9hVGlpbVRZdzRHVlVMTGJ0T3VlK3RMOHBVZTB4cnR4?=
- =?utf-8?B?eVA1emhJMTBPMHZzZmZMV1R3VkFBQ1JxcmI3K3lrTzVHNldNVnJUYWw5YkU1?=
- =?utf-8?B?Sjd4VytSWDRIeXUvZFhXamJRVHRiQ2x0eTdWcXFmd0dXQjZFMzdydmRtbzI0?=
- =?utf-8?B?aFVNSjFSbFNRbkYvTEIvR0pTVFltOHhjd2ZNVTFsdlB0MG9JOFl4elY5c3lL?=
- =?utf-8?B?ZGRNM3RDY1hDUHdsT2ZDNXNjUkNWQkIvVHVBUmZEMlpQSHNIV2lmMXh2VEVR?=
- =?utf-8?B?V2ZnMHdFTUxsSHc0UHNvK29IdjdFTncxNnA0a0M3Z0REYStVTS9rRWp2OUt5?=
- =?utf-8?B?eVIxbmZKS3RuNEhjL1Y4cS9BQWJoTk91cFB0VFEzbjZRMDM4SHNZNGlvZEFt?=
- =?utf-8?B?cVNzL29YYXhHbnBOdUFmOEkrTDhSVTVRMXdIbUxkK0dpQURkaElBWVh4bWZ6?=
- =?utf-8?B?ZFlQZ1c2V1lKTngvcjg5TFUza2NudUxJUzkvc1ZxaWhveU9OTVAxNHYxaUxr?=
- =?utf-8?B?TkxQZTRGalBqTjJ4Vjl3MjVscHdjS1BsSkltTkNya1FkbXhFc2JFVTJXT3cv?=
- =?utf-8?B?eG5xSWRtRHJoTjFrNVZ2aU8wdUlSdkw3NjRrM1FqRFdYaU56S0VIQ2NVLzlJ?=
- =?utf-8?B?TXY2R2drTVIxdm1oMExJRDkwRmdKTXdCUGl0bjVrNXM1TnIyTXdXaWV3QTVl?=
- =?utf-8?B?MDBYWENkODcwNy9KQXorUndyMDA1b0Z3ejRPVUJTNEU2SVBVUG1rYmQzdHQ5?=
- =?utf-8?B?Skdkbi9LZiswb0hFR3VkVXZxZ2xNaitMNzdDRFZQOVZTT1NnR1piNlpWekpG?=
- =?utf-8?B?Z2w3MmxHSkxRUFdDNHVIa1VEdm9ONG1yWXFFSWhScVV6eFlsZGYydllmYlNs?=
- =?utf-8?B?TndOYS9CajFrbFFTWWRRbWUxY2xOenVFYlFxRnR6blc3eVFweDYraHdzcm1q?=
- =?utf-8?B?WnRyRkZ3TmZ6aEF2Sy9tSmRhSFJmdWVJNzU2WHBwQkVscWRaYlp2Ym54aGlS?=
- =?utf-8?B?bXZaNS9IbmZ4cDlXLzh5L1VPTFFZUU9iaEIycEc2R1JKWTF1bjhzbUd4MGpa?=
- =?utf-8?B?UlNINjdzU0JjTHlkQ1Vyb2hMaVZJNkdyTUl2QXBOcVV2MDhBZDhBMW5zRE16?=
- =?utf-8?B?RDI2Zi8ySHhRaFVjbDV2WmwrSllIdVNqMU05T3JNMzYxMlBENXBKRTRqcnpp?=
- =?utf-8?B?dkkvQU15aE5EL2JuNVQxamRlUG1OWnROdlp3QkV1SHJkMSs3d2FmSjVGdVVL?=
- =?utf-8?Q?rcFFJDRQYDU=3D?=
-X-Forefront-Antispam-Report:
-	CIP:195.60.68.100;CTRY:SE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.axis.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(82310400026)(36860700013)(921020);DIR:OUT;SFP:1101;
-X-OriginatorOrg: axis.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Nov 2024 07:40:30.7689
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1f5950d8-dc67-41ab-e8b0-08dd086d71ad
-X-MS-Exchange-CrossTenant-Id: 78703d3c-b907-432f-b066-88f7af9ca3af
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=78703d3c-b907-432f-b066-88f7af9ca3af;Ip=[195.60.68.100];Helo=[mail.axis.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	AMS0EPF00000190.eurprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAWPR02MB9054
 
-AUDIO_UPDATE bit (Bit 5 of MAIN register 0x4A) needs to be set to 1
-while updating Audio InfoFrame information and then set to 0 when done.
-Otherwise partially updated Audio InfoFrames could be sent out. Two
-cases where this rule were not followed are fixed:
- - In adv7511_hdmi_hw_params() make sure AUDIO_UPDATE bit is updated
-   before/after setting ADV7511_REG_AUDIO_INFOFRAME.
- - In audio_startup() use the correct register for clearing
-   AUDIO_UPDATE bit.
+On 18/11/2024 07:02, Jacky Chou wrote:
+> The AST2700 is the 7th generation SoC from Aspeed.
+> Add compatible support for AST2700 in yaml.
+> 
+> Signed-off-by: Jacky Chou <jacky_chou@aspeedtech.com>
 
-The problem with corrupted audio infoframes were discovered by letting
-a HDMI logic analyser check the output of ADV7535.
+Please use standard email subjects, so with the PATCH keyword in the
+title. `git format-patch -vX` helps here to create proper versioned
+patches. Another useful tool is b4. Skipping the PATCH keyword makes
+filtering of emails more difficult thus making the review process less
+convenient.
 
-Note that this patchs replaces writing REG_GC(1) with
-REG_INFOFRAME_UPDATE. Bit 5 of REG_GC(1) is positioned within field
-GC_PP[3:0] and that field doesn't control audio infoframe and is read-
-only. My conclusion therefore was that the author if this code meant to
-clear bit 5 of REG_INFOFRAME_UPDATE from the very beginning.
+For net next it is PATCH net-next
 
-Tested-by: Biju Das <biju.das.jz@bp.renesas.com>
-Fixes: 53c515befe28 ("drm/bridge: adv7511: Add Audio support")
-Signed-off-by: Stefan Ekenberg <stefan.ekenberg@axis.com>
----
-Changes in v4:
-- Add Tested-by tag
-- Link to v3: https://lore.kernel.org/r/20241118-adv7511-audio-info-frame-v3-1-31edd9931856@axis.com
+<form letter>
+This is a friendly reminder during the review process.
 
-Changes in v3:
-- Extend commit message and explain replacement of REG_GC(1)
-- Link to v2: https://lore.kernel.org/r/20241115-adv7511-audio-info-frame-v2-1-ca4793ef3a91@axis.com
+It looks like you received a tag and forgot to add it.
 
-Changes in v2:
-- Add Fixes tag
-- Link to v1: https://lore.kernel.org/r/20241113-adv7511-audio-info-frame-v1-1-49b368b995a5@axis.com
----
- drivers/gpu/drm/bridge/adv7511/adv7511_audio.c | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+If you do not know the process, here is a short explanation:
+Please add Acked-by/Reviewed-by/Tested-by tags when posting new
+versions, under or above your Signed-off-by tag. Tag is "received", when
+provided in a message replied to you on the mailing list. Tools like b4
+can help here. However, there's no need to repost patches *only* to add
+the tags. The upstream maintainer will do that for tags received on the
+version they apply.
 
-diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511_audio.c b/drivers/gpu/drm/bridge/adv7511/adv7511_audio.c
-index 61f4a38e7d2bf6905683cbc9e762b28ecc999d05..8f786592143b6c81e5a434768b51508d5e5f3c73 100644
---- a/drivers/gpu/drm/bridge/adv7511/adv7511_audio.c
-+++ b/drivers/gpu/drm/bridge/adv7511/adv7511_audio.c
-@@ -153,7 +153,16 @@ static int adv7511_hdmi_hw_params(struct device *dev, void *data,
- 			   ADV7511_AUDIO_CFG3_LEN_MASK, len);
- 	regmap_update_bits(adv7511->regmap, ADV7511_REG_I2C_FREQ_ID_CFG,
- 			   ADV7511_I2C_FREQ_ID_CFG_RATE_MASK, rate << 4);
--	regmap_write(adv7511->regmap, 0x73, 0x1);
-+
-+	/* send current Audio infoframe values while updating */
-+	regmap_update_bits(adv7511->regmap, ADV7511_REG_INFOFRAME_UPDATE,
-+			   BIT(5), BIT(5));
-+
-+	regmap_write(adv7511->regmap, ADV7511_REG_AUDIO_INFOFRAME(0), 0x1);
-+
-+	/* use Audio infoframe updated info */
-+	regmap_update_bits(adv7511->regmap, ADV7511_REG_INFOFRAME_UPDATE,
-+			   BIT(5), 0);
- 
- 	return 0;
- }
-@@ -184,8 +193,9 @@ static int audio_startup(struct device *dev, void *data)
- 	regmap_update_bits(adv7511->regmap, ADV7511_REG_GC(0),
- 				BIT(7) | BIT(6), BIT(7));
- 	/* use Audio infoframe updated info */
--	regmap_update_bits(adv7511->regmap, ADV7511_REG_GC(1),
-+	regmap_update_bits(adv7511->regmap, ADV7511_REG_INFOFRAME_UPDATE,
- 				BIT(5), 0);
-+
- 	/* enable SPDIF receiver */
- 	if (adv7511->audio_source == ADV7511_AUDIO_SOURCE_SPDIF)
- 		regmap_update_bits(adv7511->regmap, ADV7511_REG_AUDIO_CONFIG,
+https://elixir.bootlin.com/linux/v6.5-rc3/source/Documentation/process/submitting-patches.rst#L577
 
----
-base-commit: 59b723cd2adbac2a34fc8e12c74ae26ae45bf230
-change-id: 20241108-adv7511-audio-info-frame-54614dd4bf57
+If a tag was not added on purpose, please state why and what changed.
+</form letter>
+
+I am not going to do the work twice.
 
 Best regards,
--- 
-Stefan Ekenberg <stefan.ekenberg@axis.com>
+Krzysztof
 
 
