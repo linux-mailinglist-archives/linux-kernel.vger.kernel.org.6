@@ -1,136 +1,168 @@
-Return-Path: <linux-kernel+bounces-413687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 360E49D1D2B
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 02:23:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6451C9D1D32
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 02:23:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6FBBB241FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 01:23:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EFE4FB23646
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 01:23:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBB1019B5B1;
-	Tue, 19 Nov 2024 01:18:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 554FD61FDF;
+	Tue, 19 Nov 2024 01:22:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cgrJ7bWm"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FWlu8oH6"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF80F19C54C
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 01:18:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCF6318E25;
+	Tue, 19 Nov 2024 01:22:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731979122; cv=none; b=b+ccHwwhTUAmRPdRTvviby4qd+HejL6H/q9IJKgD2BmuKZVCxLg3xBJxo9i4Eu7LZ4kJ0eRa9d8rfQOipjwGlD+2zxGQLjUuGBy2jDfB0EPcxiaz7DThM5HLHOfcGGj7db5bB9sanGBoee/Qy7DsdYvT+yaZMdzMcuTVUwkwrhE=
+	t=1731979330; cv=none; b=Wv5ejjXGggDTIcEccqBV7o0aq2j+8wgNikiq3ETxVob+tdVRDTPjWOICMl7fESN6OCWFoaT337AzwQFauLTrk7STDDljpPbDHdXAhxC0c85Rkic285OujJa7PBXXHrs4WyPt7Up/4gyA5Pe4QYIa6aAzIFPgSYCtkADHqjJAVMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731979122; c=relaxed/simple;
-	bh=TibGVYLS+w6eFScQZIl1dSIHMEHWsRVbxEMEGktnWmY=;
-	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Cc:Content-Type; b=B2beiH3N2pBEMefrYKe0mzgcr3+1CcAsGMtm+d54ZPpmx5Bf4IEwVC/WHU9urloRAcp0lpUa4AwO9j5KMMyNIZACfWjSWoJbsDLm9/fORUqkg5zgpLrjIwD17nGGSMvhlqgQVE4vH2xXqEg2ulv3S38rzZNy3qn/h/zWNO8HFY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cgrJ7bWm; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6ee7856bcf2so40617617b3.1
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 17:18:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731979120; x=1732583920; darn=vger.kernel.org;
-        h=cc:to:from:subject:references:mime-version:message-id:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=dG2rHpz+DZmFY69Ow240psf3XNCS4leK+RB0Jo+u5VI=;
-        b=cgrJ7bWmasn1xpBTNITg2kNikmVVoqHm+sq/tvibdKnR4Yg6u0H4k0W8jbudlnfp8E
-         2DWn7Q5xSBrDegYAlg14QzxyaNY17XOXfGk7RxM9RceFlecc+8q89RbZYgXDTX8FVUKu
-         Glub2Qy+rE1j/KLdJp+ZZvi5eD/+twvHxop61B5wl+25eS1R4CTBUpoA+AOSzOrIy12h
-         9BSRA56MTWsXqmqmvnrNzIrUspLkznWpsK7YR5571q0PdK3nh21cpW0Jbo3aBRJ1wAcA
-         rqFx62jRJV+v1dkgaH/DWXEKyHCaP6SzS5qW7dh4eWnvXhEJNK8DinPW75cOJCz+sZS2
-         2XEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731979120; x=1732583920;
-        h=cc:to:from:subject:references:mime-version:message-id:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dG2rHpz+DZmFY69Ow240psf3XNCS4leK+RB0Jo+u5VI=;
-        b=JbZNCEtvR783Q48YbSNkVqUMledTbctGXh7tdMIGRc/PvI8jlrklYdwlk47RSV3AYY
-         Dm0PFFbuGWzUN/E8K6j8p5SG+dovHSM0dD0NFX2HG0jaMTALfU43AZAwicPJA4+Xs1ur
-         O9+QO/yX9YdB32XgJPCZhDdeu5Dp2FWR7Ouv8UPjibnZpgXl7aCg0E8RM5NhsOyD/MhD
-         FS6AnVAxWALt6kjBdIAO8ip6Nk4+wspH3UXUP9I1ND/PMwFXCJIGyPvcHTwUEYDM5vr9
-         InkoLNypbpWe3+8lB5nZL+u2JMHcX0zUqpzoD7zU9Y7OimMEvQfWugMN8Y6PruZRDfS2
-         DrNA==
-X-Forwarded-Encrypted: i=1; AJvYcCXHpg9oPGOBlk3G7T4ujQdCracvl/mqIZ2tlg5q2q3IG48rFB/r77SUSb2QayPjhZZZSdv77OBWcIhoryA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzO+9j1rpuDTF7R1yirbv4Zr/+oTlUhesmPG64KIQPXnNHg3LKC
-	zhbAhKMsA7mqD6LGT5HK1Z/YomYNw4POtsNVddBk9te3NfWzN/ocpem3Rwodwt1+74HLdAJani3
-	UwJrqag==
-X-Google-Smtp-Source: AGHT+IH0fWK9l/ObxBt82Gee4SbsKlCa/RgYCuQgUP9WU5mzStOrp3fYvTUu8INRKh0lKzORqbt9AzCVDCVj
-X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:22a4:ded5:5c37:fcc7])
- (user=irogers job=sendgmr) by 2002:a05:690c:8bc1:b0:6ee:5091:4254 with SMTP
- id 00721157ae682-6ee55cf1b83mr945287b3.6.1731979119740; Mon, 18 Nov 2024
- 17:18:39 -0800 (PST)
-Date: Mon, 18 Nov 2024 17:16:44 -0800
-In-Reply-To: <20241119011644.971342-1-irogers@google.com>
-Message-Id: <20241119011644.971342-23-irogers@google.com>
+	s=arc-20240116; t=1731979330; c=relaxed/simple;
+	bh=j/UXodRjiGEdeWbjsTbY6zpGiVX/1d5jHK7zp4eOHWw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RzjUC7JSQJ1ghdYdzcmdoqNZk2NRMzTHMo4hyG4ksvMAKCgFgBJeFHVYEhGbdwNPf7VhS/DCoIFbGpWEPqs5kNgmKnkSI5/FPRhiOa4sV10MeosCXdHTzb3bUk97UwH7ibuMZ9wPzMW+BydOmrSpaMk2vDXw8UMe9NPiG79Blsc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FWlu8oH6; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1731979329; x=1763515329;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=j/UXodRjiGEdeWbjsTbY6zpGiVX/1d5jHK7zp4eOHWw=;
+  b=FWlu8oH6oH4ZvIdD29AAG+I35cQS+XARFz1yyzIUKR9K/YgXKwIfY0u3
+   nKajyxQWNv0MngQiuLTHqotl1VH8ljMjLj3h1kuMWa+AJWwSYhAGSGDA4
+   /dqDQaUGi42yWU5BA0JJX4Mte1ZOilVBt5WCmx5a1IFIXrYvPUHcHO4n6
+   knlR7fy69W8t7NU03NubFR9lMNUZohaAyL7cLf8lxQIoVc+vbULr7/EYc
+   EkmUJ9GekO92qGhYFhN8FLGgSJp0J2k1ujKInt4SjgyPyVPFliNyNP4lC
+   I/turgco//eHRJ+ZKV7cFHO9vXmqpU8MuohPZAkDXoiReOOJ16/BJ+1Me
+   A==;
+X-CSE-ConnectionGUID: KaHxjnlYTE6T68Zp++0EjA==
+X-CSE-MsgGUID: Y953zC9oQrqgd4GdcgwgZA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11260"; a="32110011"
+X-IronPort-AV: E=Sophos;i="6.12,165,1728975600"; 
+   d="scan'208";a="32110011"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Nov 2024 17:22:08 -0800
+X-CSE-ConnectionGUID: nNRQ9EeGR/uAQia51Ct7PQ==
+X-CSE-MsgGUID: M52M3w5WQ4KY6krbalh1LQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="94452959"
+Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
+  by orviesa003.jf.intel.com with ESMTP; 18 Nov 2024 17:22:05 -0800
+Date: Tue, 19 Nov 2024 09:19:12 +0800
+From: Xu Yilun <yilun.xu@linux.intel.com>
+To: "Colberg, Peter" <peter.colberg@intel.com>
+Cc: "Xu, Yilun" <yilun.xu@intel.com>,
+	"linux-fpga@vger.kernel.org" <linux-fpga@vger.kernel.org>,
+	"mdf@kernel.org" <mdf@kernel.org>, "Wu, Hao" <hao.wu@intel.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"russ.weight@linux.dev" <russ.weight@linux.dev>,
+	"Pagani, Marco" <marpagan@redhat.com>,
+	"trix@redhat.com" <trix@redhat.com>,
+	"basheer.ahmed.muddebihal@linux.intel.com" <basheer.ahmed.muddebihal@linux.intel.com>,
+	"matthew.gerlach@linux.intel.com" <matthew.gerlach@linux.intel.com>
+Subject: Re: [PATCH v4 15/19] fpga: dfl: convert is_feature_dev_detected() to
+ use FIU type
+Message-ID: <ZzvnkPzZ7FBPgonr@yilunxu-OptiPlex-7050>
+References: <20241025223714.394533-1-peter.colberg@intel.com>
+ <20241025223714.394533-16-peter.colberg@intel.com>
+ <ZztQAsDCyRqGm6UW@yilunxu-OptiPlex-7050>
+ <bad311610de9738e88982fabc46c04b15cdc3650.camel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241119011644.971342-1-irogers@google.com>
-X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-Subject: [PATCH v7 22/22] perf python: Correctly throw IndexError
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@linaro.org>, 
-	Howard Chu <howardchu95@gmail.com>, Athira Jajeev <atrajeev@linux.vnet.ibm.com>, 
-	Michael Petlan <mpetlan@redhat.com>, Veronika Molnarova <vmolnaro@redhat.com>, 
-	Dapeng Mi <dapeng1.mi@linux.intel.com>, Thomas Richter <tmricht@linux.ibm.com>, 
-	Ilya Leoshkevich <iii@linux.ibm.com>, Colin Ian King <colin.i.king@gmail.com>, 
-	Weilin Wang <weilin.wang@intel.com>, Andi Kleen <ak@linux.intel.com>, 
-	Josh Poimboeuf <jpoimboe@redhat.com>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bad311610de9738e88982fabc46c04b15cdc3650.camel@intel.com>
 
-Correctly throw IndexError for out-of-bound accesses to evlist:
-```
-Python 3.11.9 (main, Jun 19 2024, 00:38:48) [GCC 13.2.0] on linux
-Type "help", "copyright", "credits" or "license" for more information.
->>> import sys
->>> sys.path.insert(0, '/tmp/perf/python')
->>> import perf
->>> x=perf.parse_events('cycles')
->>> print(x)
-evlist([cycles])
->>> x[2]
-Traceback (most recent call last):
-  File "<stdin>", line 1, in <module>
-IndexError: Index out of range
-```
+On Mon, Nov 18, 2024 at 11:00:28PM +0000, Colberg, Peter wrote:
+> On Mon, 2024-11-18 at 22:32 +0800, Xu Yilun wrote:
+> > On Fri, Oct 25, 2024 at 06:37:10PM -0400, Peter Colberg wrote:
+> > > Use binfo->type instead of binfo->feature_dev to decide whether a
+> > > feature device was detected during feature parsing. A subsequent
+> > > commit will delay the allocation of the feature platform device
+> > > to feature_dev_register() and remove binfo->feature_dev.
+> > > 
+> > > This commit does not introduce any functional changes.
+> > > 
+> > > Signed-off-by: Peter Colberg <peter.colberg@intel.com>
+> > > Reviewed-by: Matthew Gerlach <matthew.gerlach@linux.intel.com>
+> > > Reviewed-by: Basheer Ahmed Muddebihal <basheer.ahmed.muddebihal@linux.intel.com>
+> > > ---
+> > > Changes since v3:
+> > > - New patch extracted from last patch of v3 series.
+> > > ---
+> > >  drivers/fpga/dfl.c | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > 
+> > > diff --git a/drivers/fpga/dfl.c b/drivers/fpga/dfl.c
+> > > index 758673b0290a..a9ec37278b2d 100644
+> > > --- a/drivers/fpga/dfl.c
+> > > +++ b/drivers/fpga/dfl.c
+> > > @@ -1248,7 +1248,7 @@ static int parse_feature_port_afu(struct build_feature_devs_info *binfo,
+> > >  return create_feature_instance(binfo, ofst, size, FEATURE_ID_AFU);
+> > >  }
+> > >  
+> > > -#define is_feature_dev_detected(binfo) (!!(binfo)->feature_dev)
+> > > +#define is_feature_dev_detected(binfo) ((binfo)->type != DFL_ID_MAX)
+> > 
+> > I still doesn't get why put the change here. How it resolves my concern
+> > compared to v3?
+> 
+> Could you elaborate on your concern? I moved this change into a
+> separate commit so that it is not lost in other changes, but I don't
 
-Signed-off-by: Ian Rogers <irogers@google.com>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/util/python.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+I did't mean this change had to be separated, I doubt it impacts the
+functionality when it was applied. After the series were all applied the
+issue may be fixed but people review patches one by one.
 
-diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
-index 893aa4185c03..b4bc57859f73 100644
---- a/tools/perf/util/python.c
-+++ b/tools/perf/util/python.c
-@@ -1071,8 +1071,10 @@ static PyObject *pyrf_evlist__item(PyObject *obj, Py_ssize_t i)
- 	struct pyrf_evlist *pevlist = (void *)obj;
- 	struct evsel *pos;
- 
--	if (i >= pevlist->evlist.core.nr_entries)
-+	if (i >= pevlist->evlist.core.nr_entries) {
-+		PyErr_SetString(PyExc_IndexError, "Index out of range");
- 		return NULL;
-+	}
- 
- 	evlist__for_each_entry(&pevlist->evlist, pos) {
- 		if (i-- == 0)
--- 
-2.47.0.338.g60cca15819-goog
+> see how the two definitions would not be functionally equivalent. Would
+> it help to extend the commit description along the following lines?
+> 
+>    1. Before this series, binfo->feature_dev was initialized to NULL by
+>       devm_kzalloc() in dfl_fpga_feature_devs_enumerate(). After this
+>       series, binfo->type is initialized to DFL_ID_MAX in
+>       dfl_fpga_feature_devs_enumerate().
+>    2. Before this series, binfo->feature_dev was set to a non-NULL
+>       pointer in build_info_create_dev(), which in turn was called from
 
+So at the point of *this patch* is applied, binfo->feature_dev & binfo->type
+don't initialize at the same time, there is some gap the caller of
+is_feature_dev_detected() would get a different result, e.g.
+when build_info_create_dev() fails, binfo->type holds valid DFL_ID but
+binfo->feature_dev is NULL.
+
+>       parse_feature_fiu(). After this series, binfo->type is set to a
+>       non-DFL_ID_MAX value, as returned by dfh_id_to_type(), in
+>       parse_feature_fiu().
+>    3. Before this series, binfo->feature_dev was reset to NULL at the
+>       end of build_info_commit_dev(). After this series, binfo->type is
+>       reset to DFL_ID_MAX at the end of build_info_commit_dev().
+> 
+> Thanks,
+> Peter
+> 
+> > 
+> > Thanks,
+> > Yilun
+> > 
+> > >  
+> > >  static int parse_feature_afu(struct build_feature_devs_info *binfo,
+> > >  resource_size_t ofst)
+> > > -- 
+> > > 2.47.0
+> > > 
+> > > 
+> 
 
