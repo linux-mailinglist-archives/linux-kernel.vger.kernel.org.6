@@ -1,150 +1,129 @@
-Return-Path: <linux-kernel+bounces-414214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECAA29D24CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 12:26:53 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 943B39D24CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 12:27:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A1CAB25F79
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 11:26:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3EBCDB26A39
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 11:27:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A17031C6F47;
-	Tue, 19 Nov 2024 11:26:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52A371C4A36;
+	Tue, 19 Nov 2024 11:27:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="dD5In/S0"
-Received: from smtp.smtpout.orange.fr (smtp-21.smtpout.orange.fr [80.12.242.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="l86g1tmP";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="5J0GVVGM"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 730A0198A37;
-	Tue, 19 Nov 2024 11:26:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93221198A37;
+	Tue, 19 Nov 2024 11:27:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732015600; cv=none; b=Tkcw9N2q5AnbXHm3thpNOaLjFUFGca6ywVPOIWVjzFQZoWlL26H+nqlOkiF/ageX/PH5KUX6Slz17Uu4aIuAOiRZ4SxYrPMStiqQunfPJ9W1ZD0NvU1KPqmpf5EBVnGAt7YfgA2MzYJcJV8VphVj1kDMqBH2SEm1V6j534TSxrc=
+	t=1732015660; cv=none; b=aOw1GwZpDd82jvH21Cf3V7jOtoJs5FSNL5sn/FpHesB+fEUMJTV2LKJHFeOV+NDZBje6U+KeZgnQtYjPhPMv7irOxAVzhx1eLu+w9tqWn0WF6Lerb5RFjKiGmLkWRnHDjXKLhNEyH5A5OdVKzf6lnQVhVzbAMyIcF/N5Q3mdAWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732015600; c=relaxed/simple;
-	bh=jikjswAKs7ol2d86wYoGsx6UY//r1CS50Ko2Q/uD/Io=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XTj0YeWDFr+26Su8EJFlLEAPGtd1YmyitqijGRAxKqW6gpRfKv6F0I8It1fNZPk+XSoTWQTCXROMG2HztKeaxCh+kqVUTKyzsLkePRSnM6ahQL/LLOHkjHvfEGHL/Yhg/txCRSY1oqgzkCug2sBLYCpf/aHjemsoU0FbyH6okoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=dD5In/S0; arc=none smtp.client-ip=80.12.242.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [172.16.82.72] ([124.33.176.97])
-	by smtp.orange.fr with ESMTPA
-	id DMNHtEHNmNywhDMNIthG2G; Tue, 19 Nov 2024 12:26:35 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1732015595;
-	bh=d9GXcffo0UAX9pD8MRFRvCySp0v93Es0xkObTh1140o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=dD5In/S04frbfPzHzkSlfngFTsOTi/1BdloRL546rlbqNKsazcYCgHaFYx2xGnCWK
-	 DkRKSXvHVziTyYsylfNvmgM7XUBAn7TiJ9XUNGojfc96r7k/jQOueoXvGUUnOD290K
-	 P37KMcSaylJNiEgzRZIsDtxkD18NkhW62HlNEoJeJbXVpfde5GhyhV4ONTlrWX1a+O
-	 aY2Cj1KwuxtgfMyzd+KT5YreEiVwLtKZnwJnFTcCYgtverp+jT0hUn+ApIWLA+t/Zx
-	 bxOZBYw4aGn8VIEvQEpCD04GtgTWpOLPcev/awAWKQxe1ynVQ4ryGZNxu8nRNrw0Zj
-	 +scF5J1bswNBw==
-X-ME-Helo: [172.16.82.72]
-X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 19 Nov 2024 12:26:35 +0100
-X-ME-IP: 124.33.176.97
-Message-ID: <f84991f7-66c6-4366-9953-b230761b6b7a@wanadoo.fr>
-Date: Tue, 19 Nov 2024 20:26:26 +0900
+	s=arc-20240116; t=1732015660; c=relaxed/simple;
+	bh=M1MinBHQmUvyCiXRYGaRDXN+nNstRnOy9tmqksjv9zM=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=oN69IizkCnNks4tot+DzLHe3MCfIVGDyD97dfE61QSElQoz1dR4QYkMWKsK6478q7SU22zbkswJLDPKJaFacNjOTIAjqRlYIw7wHAFKG9XAvsWOPyqlEiP7LS25ef/i8C9F9+QZY0J7cEjniJ1iDG1Ga6ceP6HOshTtI9G2pNTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=l86g1tmP; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=5J0GVVGM; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 19 Nov 2024 11:27:34 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1732015655;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fyM4OcXuPCtQxR65pXPHCIeW3mbMpc4/xmvpm0jK0Vo=;
+	b=l86g1tmP/1R5fs8JtQ1De5bsf1JBCWZJmmullmb1maMH27Ku1rorly2SW2VbxpQ3R3g2Bd
+	pa4ZnL6w3FvJvwysbMDKcI1403pInStvRCRMTfxPrXc8AqekERKZxfbe5k/1nVVn5Zhd7C
+	7iVULmfXk9ESLuIOgeKwQ6/SfjLMqBvd6w8/ELCyAj6m2CUqDSMeEqKBJkRNOWumwnq2Y/
+	fG+fX4Qn6ahrx/dHYsepiBfl2/Vs84Z4pc4f18rC8zhzKa8LqFcekRiwTdmWT+8tDohevZ
+	8wWaD4qPhlaL6U9utVJtDp28N5Rhb0fw8X0vW/AsYyVkdUJaSALR8W29ylpKbA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1732015655;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fyM4OcXuPCtQxR65pXPHCIeW3mbMpc4/xmvpm0jK0Vo=;
+	b=5J0GVVGMsnIfeCTYgr4ZWBLu0ZBr/dkAVYyy8xpD6tN1fg4yOao0fAEG/fgpEUd9supVbk
+	+My52qVYZNblCGDg==
+From: "tip-bot2 for Rik van Riel" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: x86/mm] x86/mm/tlb: Add tracepoint for TLB flush IPI to stale CPU
+Cc: Dave Hansen <dave.hansen@intel.com>, Rik van Riel <riel@surriel.com>,
+ Ingo Molnar <mingo@kernel.org>, x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20241114152723.1294686-3-riel@surriel.com>
+References: <20241114152723.1294686-3-riel@surriel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] can: flexcan: handle S32G2/S32G3 separate interrupt
- lines
-To: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>,
- Marc Kleine-Budde <mkl@pengutronix.de>, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S . Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-can@vger.kernel.org, netdev@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- imx@lists.linux.dev, NXP Linux Team <s32@nxp.com>,
- Christophe Lizzi <clizzi@redhat.com>, Alberto Ruiz <aruizrui@redhat.com>,
- Enric Balletbo <eballetb@redhat.com>
-References: <20241119081053.4175940-1-ciprianmarian.costea@oss.nxp.com>
- <20241119081053.4175940-4-ciprianmarian.costea@oss.nxp.com>
- <57915ed9-e57e-4ca3-bc31-6405893c937e@wanadoo.fr>
- <bfa5200d-6e56-417d-ac3b-52390398dba2@oss.nxp.com>
-Content-Language: en-US
-From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-In-Reply-To: <bfa5200d-6e56-417d-ac3b-52390398dba2@oss.nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Message-ID: <173201565457.412.10419972628825414246.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On 19/11/2024 at 19:01, Ciprian Marian Costea wrote:
-> On 11/19/2024 11:26 AM, Vincent Mailhol wrote:
->> On 19/11/2024 at 17:10, Ciprian Costea wrote:
+The following commit has been merged into the x86/mm branch of tip:
 
-(...)
+Commit-ID:     2815a56e4b7252a836969f5674ee356ea1ce482c
+Gitweb:        https://git.kernel.org/tip/2815a56e4b7252a836969f5674ee356ea1ce482c
+Author:        Rik van Riel <riel@surriel.com>
+AuthorDate:    Thu, 14 Nov 2024 10:26:17 -05:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Tue, 19 Nov 2024 12:02:46 +01:00
 
->>>   +    if (priv->devtype_data.quirks & FLEXCAN_QUIRK_SECONDARY_MB_IRQ) {
->>> +        err = request_irq(priv->irq_secondary_mb,
->>> +                  flexcan_irq, IRQF_SHARED, dev->name, dev);
->>> +        if (err)
->>> +            goto out_free_irq_err;
->>> +    }
->>
->> Is the logic here correct?
->>
->>    request_irq(priv->irq_err, flexcan_irq, IRQF_SHARED, dev->name, dev);
->>
->> is called only if the device has the FLEXCAN_QUIRK_NR_IRQ_3 quirk.
->>
->> So, if the device has the FLEXCAN_QUIRK_SECONDARY_MB_IRQ but not the
->> FLEXCAN_QUIRK_NR_IRQ_3, you may end up trying to free an irq which was
->> not initialized.
->>
->> Did you confirm if it is safe to call free_irq() on an uninitialized irq?
->>
->> (and I can see that currently there is no such device with
->> FLEXCAN_QUIRK_SECONDARY_MB_IRQ but without FLEXCAN_QUIRK_NR_IRQ_3, but
->> who knows if such device will be introduced in the future?)
->>
-> 
-> Hello Vincent,
-> 
-> Thanks for your review. Indeed this seems to be an incorrect logic since
-> I do not want to create any dependency between 'FLEXCAN_QUIRK_NR_IRQ_3'
-> and 'FLEXCAN_QUIRK_SECONDARY_MB_IRQ'.
-> 
-> I will change the impacted section to:
->     if (err) {
->         if (priv->devtype_data.quirks & FLEXCAN_QUIRK_NR_IRQ_3)
->             goto out_free_irq_err;
->         else
->             goto out_free_irq;
->     }
+x86/mm/tlb: Add tracepoint for TLB flush IPI to stale CPU
 
-This is better. Alternatively, you could move the check into the label:
+Add a tracepoint when we send a TLB flush IPI to a CPU that used
+to be in the mm_cpumask, but isn't any more.
 
-  out_free_irq_err:
-  	if (priv->devtype_data.quirks & FLEXCAN_QUIRK_NR_IRQ_3)
-  		free_irq(priv->irq_err, dev);
+Suggested-by: Dave Hansen <dave.hansen@intel.com>
+Signed-off-by: Rik van Riel <riel@surriel.com>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Link: https://lore.kernel.org/r/20241114152723.1294686-3-riel@surriel.com
+---
+ arch/x86/mm/tlb.c        | 1 +
+ include/linux/mm_types.h | 1 +
+ 2 files changed, 2 insertions(+)
 
-But this is not a strong preference, I let you pick the one which you
-prefer.
-
->>>       flexcan_chip_interrupts_enable(dev);
->>>         netif_start_queue(dev);
->>>         return 0;
->>>   + out_free_irq_err:
->>> +    free_irq(priv->irq_err, dev);
->>>    out_free_irq_boff:
->>>       free_irq(priv->irq_boff, dev);
->>>    out_free_irq:
-
-(...)
-
-
-Yours sincerely,
-Vincent Mailhol
-
+diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
+index cc4e57a..1aac4fa 100644
+--- a/arch/x86/mm/tlb.c
++++ b/arch/x86/mm/tlb.c
+@@ -760,6 +760,7 @@ static void flush_tlb_func(void *info)
+ 		/* Can only happen on remote CPUs */
+ 		if (f->mm && f->mm != loaded_mm) {
+ 			cpumask_clear_cpu(raw_smp_processor_id(), mm_cpumask(f->mm));
++			trace_tlb_flush(TLB_REMOTE_WRONG_CPU, 0);
+ 			return;
+ 		}
+ 	}
+diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+index 6e3bdf8..6b6f054 100644
+--- a/include/linux/mm_types.h
++++ b/include/linux/mm_types.h
+@@ -1335,6 +1335,7 @@ enum tlb_flush_reason {
+ 	TLB_LOCAL_SHOOTDOWN,
+ 	TLB_LOCAL_MM_SHOOTDOWN,
+ 	TLB_REMOTE_SEND_IPI,
++	TLB_REMOTE_WRONG_CPU,
+ 	NR_TLB_FLUSH_REASONS,
+ };
+ 
 
