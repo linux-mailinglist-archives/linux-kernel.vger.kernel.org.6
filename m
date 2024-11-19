@@ -1,120 +1,208 @@
-Return-Path: <linux-kernel+bounces-413940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A59259D20C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 08:27:18 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D04DB9D20D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 08:34:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0B6B280988
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 07:27:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 68E1BB21034
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 07:34:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54A0915853A;
-	Tue, 19 Nov 2024 07:27:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mQT9ynyw"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 792F41EA90;
-	Tue, 19 Nov 2024 07:27:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC6A119067C;
+	Tue, 19 Nov 2024 07:33:57 +0000 (UTC)
+Received: from mail.parknet.co.jp (mail.parknet.co.jp [210.171.160.6])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B7EB1482E7;
+	Tue, 19 Nov 2024 07:33:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.171.160.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732001227; cv=none; b=VbLux0oFP2ac9+1UvEii7PdUoNUJ10OEI+Pb62MCBy/6Wo38EH2AhabwghZFTTVgFBCvaUz2FQRM9vXYqzHFobvfT5yaPvKGRvRrAk1uj/WwpJdOiuhjhyPDLUS+GlljI3rH0IHhySvGcDFQ+HzmMDt0QukUKZP0oVHBASVrfrw=
+	t=1732001637; cv=none; b=MqYynjYpwlH8xpgVH5n9HrQUdrRfttJtaDAChAef5AswSWLUnanPbpN9y2l0OO4GmcVOoKqC12E8L6W3sN2qQV9KNCpee2tvom+xLt05zSVojb3XDWUsjG/2IjMR2iuo0pLU35HdLNUTv/0Vb2epB/+FlhGO7fmB+O60dH5CYrs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732001227; c=relaxed/simple;
-	bh=87WqM/RToAWHBabVrXOKARdciBADfQ6jEzm+5XDygEk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jgR932HFCqWIAmbY34Pxu8yPc+3PDcv8XRgc/LmTXugNtIBpAr0Ap3EveWkpOJR3VvsLmD1g1kea1R/OgnaGl+72YNPnliy0aIZyJ1Pd/XlagUhb+76WNnLX/w/cuvLJNziTLWzzF/Z8q9Vs52eMOuepvlspnAHmp7NZI/LbwEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mQT9ynyw; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2ea1c455d0eso2722281a91.2;
-        Mon, 18 Nov 2024 23:27:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732001226; x=1732606026; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=xNSzNCYfMVVqwmNC/dkjD9KuK0iM34sxaAeB6M/XILU=;
-        b=mQT9ynywlaoc7Uf0RBVbswM7Gz7Q/qonPwyBrzup+RFh3zF/+VbT0tBGfvNah4780R
-         DCJLLJeJsEKf5TPeOXvp9skoH51eugcw8pC0QwaJg288y/dPNvrqAYPxk2xXGA1Q87Ze
-         ATcm4BdduGz/7/q2iKcEGbaBLZtzCa20Nnp+oYdqa1zXuFde5ku41MLUgGnbDbJDSQ9X
-         nI78lJGGWSbAq1Epo7T3/mSLjqqQ6HlqRMVZ3zH59Y1dMqFa3L1yL09YMydOeyueqHSj
-         rpNAVbZgV+gsUS4goq3+R+74K+W5wQHafZJPWoIlR6h56yXiR39zEjpBOc6Hf1L0yGsL
-         vwDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732001226; x=1732606026;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xNSzNCYfMVVqwmNC/dkjD9KuK0iM34sxaAeB6M/XILU=;
-        b=Kf37/X3GtCNp4mdd+0gwg7OTLxQqZ7r8actRIkzdypE/bEG9W8NPiN7CCapcqS1alh
-         aCI/7tNBmG8xw1oicRFI50iqYBZq840a7QoB4OIM7hBzEOs8RJKSkwv3JMVB0oijNwDh
-         hSc0aNmPpz0C9sQPxb+k8mSs0UlVJbYaisFBt0MMxZbsqKmraKfijRd6fxctc/Og/ywV
-         5gV1j7zmT7z1sMmMcxOvu4FrTDpz3ko+xADOWRFFFMKysKk6/fenWN6bSUC97u9mhRCW
-         ePwWbv54z62Y6HiF++6rMOG/wkVfIjBw3TSQ4pHBlWXVZkNN0179VvvI21V4Uy3wSpmj
-         ke1g==
-X-Forwarded-Encrypted: i=1; AJvYcCWuYaDLGn7PyA5VhRWY9VjIw9QT5jytHLZqH9qEORNwA4bay5MQBak7JoxPwDW6wMdjmpEaG6j0ZJiBrHs=@vger.kernel.org, AJvYcCXgyXj0Pp5WsGqKghoFigReKzMfLbmDiHTzA/7Rrp2/ifFH6PWlLwvzDyHSNkI+djmlfnnT/cbm5EDlEs4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMsRtgdUGzasATXyaDZ0fjYvBh5juy61+SZz5J3BcOt9Rrn5DS
-	oCGATpfMFEXCkyBpYJ2w0+MXS3rLSqEYGrvUhQfZH1tSQ7nBDoeQ
-X-Google-Smtp-Source: AGHT+IEA/iTsZZHtlCuUDTuhDZRJe4+zgwhrGD2wA/t1BYs6ZH3429oBnqwQmKCFm9ZWFlUypW/zRw==
-X-Received: by 2002:a17:90b:390e:b0:2ea:4578:46d8 with SMTP id 98e67ed59e1d1-2ea4578787dmr12919293a91.9.1732001225619;
-        Mon, 18 Nov 2024 23:27:05 -0800 (PST)
-Received: from HOME-PC ([223.185.133.4])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ea8f04c67fsm2423849a91.43.2024.11.18.23.27.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Nov 2024 23:27:05 -0800 (PST)
-From: Dheeraj Reddy Jonnalagadda <dheeraj.linuxdev@gmail.com>
-To: dafna@fastmail.com,
-	laurent.pinchart@ideasonboard.com,
-	linux-media@vger.kernel.org
-Cc: mchehab@kernel.org,
-	heiko@sntech.de,
-	linux-rockchip@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Dheeraj Reddy Jonnalagadda <dheeraj.linuxdev@gmail.com>
-Subject: [PATCH v4 media-next] media: rkisp1: Fix unused value issue
-Date: Tue, 19 Nov 2024 12:56:53 +0530
-Message-Id: <20241119072653.72260-1-dheeraj.linuxdev@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1732001637; c=relaxed/simple;
+	bh=C07DGh76ZAQSfyYMy8dgyW7f/7AWcTO46Ds6XvbbYhw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=QuIdSvHVRX4L43Cchjk/cYnELDYlZqDF9mMF+sJPTcpqbG5vf+nmUccMNSlo/22XITS13mJ+t/ID8RD3qEDiKcbgw1z1OIpcsCbLZr+fgJmBOiMr71MZ4SeTr2gHA69arTMOskGPPvOoVMNQf/8vKuOetoYjT3oJL0ETj2quWqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mail.parknet.co.jp; spf=pass smtp.mailfrom=parknet.co.jp; arc=none smtp.client-ip=210.171.160.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mail.parknet.co.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=parknet.co.jp
+Received: from ibmpc.myhome.or.jp (server.parknet.ne.jp [210.171.168.39])
+	by mail.parknet.co.jp (Postfix) with ESMTPSA id A87E62051589;
+	Tue, 19 Nov 2024 16:27:40 +0900 (JST)
+Received: from devron.myhome.or.jp (foobar@devron.myhome.or.jp [192.168.0.3])
+	by ibmpc.myhome.or.jp (8.18.1/8.18.1/Debian-6) with ESMTPS id 4AJ7Rdj4047655
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Tue, 19 Nov 2024 16:27:40 +0900
+Received: from devron.myhome.or.jp (foobar@localhost [127.0.0.1])
+	by devron.myhome.or.jp (8.18.1/8.18.1/Debian-6) with ESMTPS id 4AJ7RdUL293067
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Tue, 19 Nov 2024 16:27:39 +0900
+Received: (from hirofumi@localhost)
+	by devron.myhome.or.jp (8.18.1/8.18.1/Submit) id 4AJ7RbCD293063;
+	Tue, 19 Nov 2024 16:27:37 +0900
+From: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-block@vger.kernel.org,
+        syzbot
+ <syzbot+a5d8c609c02f508672cc@syzkaller.appspotmail.com>,
+        linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, sj1557.seo@samsung.com,
+        syzkaller-bugs@googlegroups.com
+Subject: [PATCH] loop: Fix ABBA locking race (Re: [syzbot] [exfat?] possible
+ deadlock in fat_count_free_clusters)
+In-Reply-To: <8734jxsyuu.fsf@mail.parknet.co.jp> (OGAWA Hirofumi's message of
+	"Mon, 11 Nov 2024 22:07:21 +0900")
+References: <67313d9e.050a0220.138bd5.0054.GAE@google.com>
+	<8734jxsyuu.fsf@mail.parknet.co.jp>
+Date: Tue, 19 Nov 2024 16:27:37 +0900
+Message-ID: <871pz7adjq.fsf_-_@mail.parknet.co.jp>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-This commit fixes an unused value issue detected by Coverity (CID
-1519008). The error condition for the invalid MIPI CSI-2 is not
-properly handled as the break statement would only exit the switch block
-and not the entire loop. Fixed this by returning the error immediately
-after the switch block.
+OGAWA Hirofumi <hirofumi@mail.parknet.co.jp> writes:
 
-'Fixes: 8d4f126fde89 ("media: rkisp1: Make the internal CSI-2 receiver
-optional")'
+ping?
 
-Signed-off-by: Dheeraj Reddy Jonnalagadda <dheeraj.linuxdev@gmail.com>
----
- drivers/media/platform/rockchip/rkisp1/rkisp1-dev.c | 3 +++
- 1 file changed, 3 insertions(+)
+> Hi,
+>
+> syzbot <syzbot+a5d8c609c02f508672cc@syzkaller.appspotmail.com> writes:
+>
+>> syzbot found the following issue on:
+>>
+>> HEAD commit:    929beafbe7ac Add linux-next specific files for 20241108
+>> git tree:       linux-next
+>> console output: https://syzkaller.appspot.com/x/log.txt?x=1621bd87980000
+>> kernel config:  https://syzkaller.appspot.com/x/.config?x=75175323f2078363
+>> dashboard link: https://syzkaller.appspot.com/bug?extid=a5d8c609c02f508672cc
+>> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+>
+> This patch is to fix the above race. Please check this.
+>
+> Thanks
+>
+>
+> From: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+> Subject: [PATCH] loop: Fix ABBA locking race
+> Date: Mon, 11 Nov 2024 21:53:36 +0900
+>
+> Current loop calls vfs_statfs() while holding the q->limits_lock. If
+> FS takes some locking in vfs_statfs callback, this may lead to ABBA
+> locking bug (at least, FAT fs has this issue actually).
+>
+> So this patch calls vfs_statfs() outside q->limits_locks instead,
+> because looks like there is no reason to hold q->limits_locks while
+> getting discard configs.
+>
+> Chain exists of:
+>   &sbi->fat_lock --> &q->q_usage_counter(io)#17 --> &q->limits_lock
+>
+>  Possible unsafe locking scenario:
+>
+>        CPU0                    CPU1
+>        ----                    ----
+>   lock(&q->limits_lock);
+>                                lock(&q->q_usage_counter(io)#17);
+>                                lock(&q->limits_lock);
+>   lock(&sbi->fat_lock);
+>
+>  *** DEADLOCK ***
+>
+> Reported-by: syzbot+a5d8c609c02f508672cc@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=a5d8c609c02f508672cc
+> Signed-off-by: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+> ---
+>  drivers/block/loop.c |   31 ++++++++++++++++---------------
+>  1 file changed, 16 insertions(+), 15 deletions(-)
+>
+> diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+> index 78a7bb2..5f3ce51 100644
+> --- a/drivers/block/loop.c	2024-09-16 13:45:20.253220178 +0900
+> +++ b/drivers/block/loop.c	2024-11-11 21:51:00.910135443 +0900
+> @@ -770,12 +770,11 @@ static void loop_sysfs_exit(struct loop_
+>  				   &loop_attribute_group);
+>  }
+>  
+> -static void loop_config_discard(struct loop_device *lo,
+> -		struct queue_limits *lim)
+> +static void loop_get_discard_config(struct loop_device *lo,
+> +				    u32 *granularity, u32 *max_discard_sectors)
+>  {
+>  	struct file *file = lo->lo_backing_file;
+>  	struct inode *inode = file->f_mapping->host;
+> -	u32 granularity = 0, max_discard_sectors = 0;
+>  	struct kstatfs sbuf;
+>  
+>  	/*
+> @@ -788,8 +787,9 @@ static void loop_config_discard(struct l
+>  	if (S_ISBLK(inode->i_mode)) {
+>  		struct request_queue *backingq = bdev_get_queue(I_BDEV(inode));
+>  
+> -		max_discard_sectors = backingq->limits.max_write_zeroes_sectors;
+> -		granularity = bdev_discard_granularity(I_BDEV(inode)) ?:
+> +		*max_discard_sectors =
+> +			backingq->limits.max_write_zeroes_sectors;
+> +		*granularity = bdev_discard_granularity(I_BDEV(inode)) ?:
+>  			queue_physical_block_size(backingq);
+>  
+>  	/*
+> @@ -797,16 +797,9 @@ static void loop_config_discard(struct l
+>  	 * image a.k.a. discard.
+>  	 */
+>  	} else if (file->f_op->fallocate && !vfs_statfs(&file->f_path, &sbuf)) {
+> -		max_discard_sectors = UINT_MAX >> 9;
+> -		granularity = sbuf.f_bsize;
+> +		*max_discard_sectors = UINT_MAX >> 9;
+> +		*granularity = sbuf.f_bsize;
+>  	}
+> -
+> -	lim->max_hw_discard_sectors = max_discard_sectors;
+> -	lim->max_write_zeroes_sectors = max_discard_sectors;
+> -	if (max_discard_sectors)
+> -		lim->discard_granularity = granularity;
+> -	else
+> -		lim->discard_granularity = 0;
+>  }
+>  
+>  struct loop_worker {
+> @@ -992,6 +985,7 @@ static int loop_reconfigure_limits(struc
+>  	struct inode *inode = file->f_mapping->host;
+>  	struct block_device *backing_bdev = NULL;
+>  	struct queue_limits lim;
+> +	u32 granularity = 0, max_discard_sectors = 0;
+>  
+>  	if (S_ISBLK(inode->i_mode))
+>  		backing_bdev = I_BDEV(inode);
+> @@ -1001,6 +995,8 @@ static int loop_reconfigure_limits(struc
+>  	if (!bsize)
+>  		bsize = loop_default_blocksize(lo, backing_bdev);
+>  
+> +	loop_get_discard_config(lo, &granularity, &max_discard_sectors);
+> +
+>  	lim = queue_limits_start_update(lo->lo_queue);
+>  	lim.logical_block_size = bsize;
+>  	lim.physical_block_size = bsize;
+> @@ -1010,7 +1006,12 @@ static int loop_reconfigure_limits(struc
+>  		lim.features |= BLK_FEAT_WRITE_CACHE;
+>  	if (backing_bdev && !bdev_nonrot(backing_bdev))
+>  		lim.features |= BLK_FEAT_ROTATIONAL;
+> -	loop_config_discard(lo, &lim);
+> +	lim.max_hw_discard_sectors = max_discard_sectors;
+> +	lim.max_write_zeroes_sectors = max_discard_sectors;
+> +	if (max_discard_sectors)
+> +		lim.discard_granularity = granularity;
+> +	else
+> +		lim.discard_granularity = 0;
+>  	return queue_limits_commit_update(lo->lo_queue, &lim);
+>  }
+>  
+> _
 
-diff --git a/drivers/media/platform/rockchip/rkisp1/rkisp1-dev.c b/drivers/media/platform/rockchip/rkisp1/rkisp1-dev.c
-index dd114ab77800..9ad5026ab10a 100644
---- a/drivers/media/platform/rockchip/rkisp1/rkisp1-dev.c
-+++ b/drivers/media/platform/rockchip/rkisp1/rkisp1-dev.c
-@@ -228,6 +228,9 @@ static int rkisp1_subdev_notifier_register(struct rkisp1_device *rkisp1)
- 			break;
- 		}
- 
-+		if (ret)
-+			break;
-+
- 		/* Parse the endpoint and validate the bus type. */
- 		ret = v4l2_fwnode_endpoint_parse(ep, &vep);
- 		if (ret) {
 -- 
-2.34.1
-
+OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
 
