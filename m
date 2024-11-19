@@ -1,169 +1,118 @@
-Return-Path: <linux-kernel+bounces-414969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9E2D9D2FCE
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 21:56:06 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 808979D2FCF
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 21:57:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43E57280E9E
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 20:56:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0190EB23EC1
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 20:57:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5EEA1D47DC;
-	Tue, 19 Nov 2024 20:55:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD7A81D2F76;
+	Tue, 19 Nov 2024 20:56:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iRtHHb7c"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="NJC2LlRQ"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 694931D31B6;
-	Tue, 19 Nov 2024 20:55:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12D67149C7A
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 20:56:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732049738; cv=none; b=FKhnNtBtE6/gLjq+8DNKGdrx9YNWBsj2ou4Y8K75zc7p/bkptzmbXoxM2Ag0MMwRhXw5dcH9d6Plt0Ez2n8qstZIypHOYSwV2It3iujBGnCCa9e/Bkj8PAjmOIIUQh+ACgl8m/IoQ8cb33iW9HeAyiuyH/mFGIQPj64UkInQvvw=
+	t=1732049815; cv=none; b=gvSesI74+7MyQU2hdCVxs3QnjFTfvz7vXW0DE9Gh5qBqHwdB6quHliNMl/GlZ/GyRU8F+RO46Dw1EoXry16fveXWmpqiJvJ+1XSvyIQyatag0AQi5FjFlD8DvfyHoTYq4S70wDgqG9rtFytA/808j4tg0kgzi/BpV3V1lamJIM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732049738; c=relaxed/simple;
-	bh=NyxDE1HpO53lA9v5ZI7fUWEjH9OfXxnTiRdiQDicHss=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Zf0mXyP2oXgmTomq9EpoIaAUm50ieFV2pNuY0G/KjDucCcuqmMZMXgTSHvscWomp5Rl+/7dJLPHBWHXzztd03ZKqQEGq51lxPtRkHfR8wPGAybMjpgvJjVr2pYad4rTZ5ToiwjoE2W5UqsKqOudEIzEYCSXMpf+2ZET1HKayQYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iRtHHb7c; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a9ec267b879so790131866b.2;
-        Tue, 19 Nov 2024 12:55:36 -0800 (PST)
+	s=arc-20240116; t=1732049815; c=relaxed/simple;
+	bh=KBsMzAAMMuSv92BNqXNCbBy1mDiClOsll4y9+9H2i7s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fQCFaAow9+Q4IlRKeSEVtJFz3GxHTJjEYBMf1Q38j88/aN6O+vDRtyOhU5tmBWJFgSSeN0uB7MfJj6sHkXwPB7S2BtagDI0HDPUsPc0q00wJmCNBholyyx6hnUKPcKyKF51xK6U/xcu/6GV4CwUX183sRz1h5MOqllCpo5sV8fY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=NJC2LlRQ; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a9ec86a67feso258596466b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 12:56:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732049734; x=1732654534; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZbuVcaxj8JodWMRgXnQSRz0XnZKwpGSc0YmAvvgqPOo=;
-        b=iRtHHb7cuemKSXupOjS215bZpDOXPnwKl3ymuAiQyCcjzLeOO2qWhYxqozap8Gzsok
-         0FOQ8uf2u6LVswAHGaKiUWWMt9YcdZOZtiugSOJa3doUUUrtZcuu3DRlGjwmO6TIXK3V
-         pq9h5Qy5Zc1qWKpz/o/8H6Dmg84Ca4OCm3mi4ai5g6S/mCH3yLO1rLnRxe0ZS4DUl76p
-         4sE2mDVrdTX1KyIWHrpeehi4R6PYuXiguObfhUxJCGY5mtYCRsbCZOQupt/DcCt9Y/Ne
-         Bj2WvPR6dIxBnMh26oGwvmd9DaRdeHNqBDZ4/umwFSLWR9hKStSoLwdp/ZhMNmbkYrPq
-         /lKw==
+        d=linux-foundation.org; s=google; t=1732049811; x=1732654611; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=j8Frib9EBxDTYycw+Xkri5/LSw6YM6TVLb/mIprSD6Y=;
+        b=NJC2LlRQ/fMe0g2Oqz9fgBG2xRLfZPR8dkl8Crm7oG1TXSDQfSpW6icADAFeygOOuo
+         d3pzFggelfjpgXwS2atovAtZG6wkie6HEB09wnW/yJ2J+fNQZXyyUj3fkusbKWa0UMey
+         Du9w5deabcEXc2NHMLYCR5qqLBeguhUMPoQLQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732049734; x=1732654534;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZbuVcaxj8JodWMRgXnQSRz0XnZKwpGSc0YmAvvgqPOo=;
-        b=uWyL53sDa8X17E+roD+iKm+6TR/oJ/ZK1JwVQO3+Ig85YMINXGLbN8c7YPJdhsS57p
-         RC7Xyrc7NBO1nCMAQfHOkylNHC9ATv3ORPecdGSOikqqd6zZckHuoMzDasktYLs6T6zZ
-         YDz00u35uOdWutPJ6ffXylr/7Yy4FNYFzpl0VMfbGSfh+sh2WBJWwBiwsQ0cJSO+6JVI
-         oHJ10KBbS+ivAcpTa03G5bd4BrqB9k0oWmIddgYx+tYf/3Kijw6lvkB2vfHEkr6i6y9D
-         BKluxxio3t1SkIgo9jNLbSF7NE88hgSL8RqsR7q1dpOgpErxwWxv6EKW7WfzSGtDMcCj
-         3rHw==
-X-Forwarded-Encrypted: i=1; AJvYcCWz64rgNXN7zVwG2DzhBuU7oELAoGc2KQOvr2Z+V2sfKHbfixvhlwrkJcFRw39agvVnlTnMvM5LaTkWQVZoqdg=@vger.kernel.org, AJvYcCXlffyNEPvo4ZLL1yX9WjxX7DjmM1u9r1cjM6iwtOHwWooNXGC9EGxMNr1JIwZEhaF3GZItOYsVWRUy9CUQ@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxwJ85QqP5Ktt0uNGYVo614ReM9DhYwT+Oe3N4OHuVA6EsckoR
-	J3lTPFdMcOBD5JI5S4OsklYPQwDAUJTkX9ekmXKg5sfXa0mF+J7i
-X-Google-Smtp-Source: AGHT+IHgTN9tdFjMSKVLOD9Fb39fDLgUkoJ3LRgFT1/To2hszKOZjZVwYj26pYowqN58Ud0woVF63Q==
-X-Received: by 2002:a17:907:9726:b0:a9e:b281:a55d with SMTP id a640c23a62f3a-aa4dd7518dbmr29120966b.56.1732049734460;
-        Tue, 19 Nov 2024 12:55:34 -0800 (PST)
-Received: from rex.hwlab.vusec.net (lab-4.lab.cs.vu.nl. [192.33.36.4])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20dfffc00sm694709266b.101.2024.11.19.12.55.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Nov 2024 12:55:34 -0800 (PST)
-From: Brian Johannesmeyer <bjohannesmeyer@gmail.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Cc: Brian Johannesmeyer <bjohannesmeyer@gmail.com>,
-	Raphael Isemann <teemperor@gmail.com>,
-	Cristiano Giuffrida <giuffrida@cs.vu.nl>,
-	Herbert Bos <h.j.bos@vu.nl>,
-	Greg KH <gregkh@linuxfoundation.org>
-Subject: [RFC v2 2/2] dmapool: Use pool_find_block() in pool_block_err()
-Date: Tue, 19 Nov 2024 21:55:29 +0100
-Message-Id: <20241119205529.3871048-3-bjohannesmeyer@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241119205529.3871048-1-bjohannesmeyer@gmail.com>
-References: <20241119205529.3871048-1-bjohannesmeyer@gmail.com>
+        d=1e100.net; s=20230601; t=1732049811; x=1732654611;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=j8Frib9EBxDTYycw+Xkri5/LSw6YM6TVLb/mIprSD6Y=;
+        b=hYPwULeX7yKpfxctUyYho1xDierOFRhZiicGrcdpd5zdeXw2qFBi02aaUTb4loUHQA
+         uvSsm1rRtDsMYDm2Y/FqcAxjh6vhXzoHsME0lV+OagfzcOzQ2KLeAlz7Bvfyt4qEeb8R
+         shP5MWSMkxTpMwM64CuyYLgKsKOVYiDz3HZrkWPEIZ+fe1KkmPSZ5g19vnkvYsJZBSh6
+         b8w64GgJ21UtxzRsf7AKC2WRgg0Rlg2EByN6b3rDxQ926SjpMRshtllACXr567HP0nyu
+         puXq7j9hywhLwB9BBlYuqYgpjc8Any28VG44ePDvFNL2WHlXIIUQOFrc3TH9fq2JaBy5
+         +jNQ==
+X-Gm-Message-State: AOJu0YyoPYiblBn2kmdtVYzVuQ9rsQzBB0s6PVjlEo2uPVD89ROoYQ/v
+	WCPK9q/mpSQ3zzRPG+aqF++To52EZED9um19SdH1zq+DvaDr1rjHAp4ltsNNSE3NaL9IK8vGcxY
+	Fzew=
+X-Google-Smtp-Source: AGHT+IFeYMjtDuy6IhnWPuMDa4QsqVsSfKxF+az8GadgOqvjfQLNnNHkxo9vyHrIN/EKXrQ8KiJ3TQ==
+X-Received: by 2002:a17:907:9726:b0:a9a:2afc:e4cc with SMTP id a640c23a62f3a-aa4dd749ef7mr26303066b.58.1732049811257;
+        Tue, 19 Nov 2024 12:56:51 -0800 (PST)
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com. [209.85.218.53])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20dffd78dsm687585566b.115.2024.11.19.12.56.49
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 19 Nov 2024 12:56:50 -0800 (PST)
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a9ec86a67feso258590166b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 12:56:49 -0800 (PST)
+X-Received: by 2002:a17:906:c107:b0:a99:fc9a:5363 with SMTP id
+ a640c23a62f3a-aa4dd52ad02mr30138866b.9.1732049808805; Tue, 19 Nov 2024
+ 12:56:48 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <ZzsC7HOiJ8Mwk8D6@gmail.com>
+In-Reply-To: <ZzsC7HOiJ8Mwk8D6@gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 19 Nov 2024 12:56:31 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wi8C2yZF_y_T180-v+dSZAhps5QghS_2tKfn-+xAghYPQ@mail.gmail.com>
+Message-ID: <CAHk-=wi8C2yZF_y_T180-v+dSZAhps5QghS_2tKfn-+xAghYPQ@mail.gmail.com>
+Subject: Re: [GIT PULL] locking changes for v6.13
+To: Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Borislav Petkov <bp@alien8.de>
+Content-Type: text/plain; charset="UTF-8"
 
-In the previous patch, the `pool_find_block()` function was added to
-translate a virtual address into the corresponding `struct dma_block`. The
-existing `pool_find_page()` function performs a similar role by translating
-a DMA address into the `struct dma_page` containing it.
+On Mon, 18 Nov 2024 at 01:03, Ingo Molnar <mingo@kernel.org> wrote:
+>
+>  - <linux/cleanup.h>:
+>     - Add if_not_cond_guard() conditional guard helper (David Lechner)
 
-To reduce redundant code and improve consistency, remove the
-`pool_find_page()` function and update `pool_block_err()` to use
-`pool_find_block()` instead. Doing so eliminates duplicate functionality
-and consolidates the block lookup process.
+I've pulled this, but I'm unhappy.
 
-Co-developed-by: Raphael Isemann <teemperor@gmail.com>
-Signed-off-by: Raphael Isemann <teemperor@gmail.com>
-Signed-off-by: Brian Johannesmeyer <bjohannesmeyer@gmail.com>
----
- mm/dmapool.c | 38 ++++++++++++--------------------------
- 1 file changed, 12 insertions(+), 26 deletions(-)
+This macro generates actively wrong code if it happens to be inside an
+if-statement or a loop without a block.
 
-diff --git a/mm/dmapool.c b/mm/dmapool.c
-index 25005a9fc201..267fe13347bd 100644
---- a/mm/dmapool.c
-+++ b/mm/dmapool.c
-@@ -141,39 +141,25 @@ static void pool_check_block(struct dma_pool *pool, struct dma_block *block,
- 		memset(block->vaddr, POOL_POISON_ALLOCATED, pool->size);
- }
- 
--static struct dma_page *pool_find_page(struct dma_pool *pool, dma_addr_t dma)
--{
--	struct dma_page *page;
--
--	list_for_each_entry(page, &pool->page_list, page_list) {
--		if (dma < page->dma)
--			continue;
--		if ((dma - page->dma) < pool->allocation)
--			return page;
--	}
--	return NULL;
--}
--
- static bool pool_block_err(struct dma_pool *pool, void *vaddr, dma_addr_t dma)
- {
--	struct dma_block *block = pool->next_block;
--	struct dma_page *page;
-+	struct dma_block *block = pool_find_block(pool, vaddr);
- 
--	page = pool_find_page(pool, dma);
--	if (!page) {
--		dev_err(pool->dev, "%s %s, %p/%pad (bad dma)\n",
--			__func__, pool->name, vaddr, &dma);
-+	if (!block) {
-+		dev_err(pool->dev, "%s %s, invalid block %p\n",
-+			__func__, pool->name, vaddr);
- 		return true;
- 	}
- 
--	while (block) {
--		if (block->vaddr != vaddr) {
--			block = block->next_block;
--			continue;
-+	struct dma_block *iter = pool->next_block;
-+
-+	while (iter) {
-+		if (iter == block) {
-+			dev_err(pool->dev, "%s %s, dma %pad already free\n",
-+				__func__, pool->name, &dma);
-+			return true;
- 		}
--		dev_err(pool->dev, "%s %s, dma %pad already free\n",
--			__func__, pool->name, &dma);
--		return true;
-+		iter = iter->next_block;
- 	}
- 
- 	memset(vaddr, POOL_POISON_FREED, pool->size);
--- 
-2.34.1
+IOW, code like this:
 
+    for (iterate-over-something)
+        if_not_guard(a)
+            return -BUSY;
+
+looks like will build fine, but will generate completely incorrect code.
+
+Honestly, just switching the order of the BUILD_BUG_ON() and the
+CLASS() declaration looks like it would have fixed this (because then
+the '_id' won't be in scope of the subsequent if-statement any more),
+but I'm unhappy with how apparently nobody even bothered to think
+about such a fundamental issue with macros.
+
+Macros that expand to statements absolutely *ALWAYS* need to deal with
+"what if we're in a single-statement situation?"
+
+              Linus
 
