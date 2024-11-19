@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-414326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DE889D264F
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 14:03:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FF149D2654
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 14:04:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5FA31F212BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 13:03:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 055781F21C08
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 13:03:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF8FE1CC8A6;
-	Tue, 19 Nov 2024 13:02:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6327C1CC880;
+	Tue, 19 Nov 2024 13:03:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DEnCgRTY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OqemSTaK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 240B31C2454;
-	Tue, 19 Nov 2024 13:02:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B976A1C2454;
+	Tue, 19 Nov 2024 13:03:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732021378; cv=none; b=T/r7Bf91I+79yg+lXenuKt/tPIo25LOGXBqusOBo7276ITAJGCG/4MhTfZTBvO4n5zqBMo7oxeMGXscsjb/39tMInzshJKhyzaar3xDgp2zlew+vSyOZD0abRno8xJaUT5OLcdwrGJ5D1MyyDdZ55zW9bgFo8/yU6auiKs1g9wA=
+	t=1732021417; cv=none; b=bMRy5qGY5C/pm4zW4JZgZYoOwE3QCw67Eo8eE87+xErB8+nl4RG7WtO7AQfmQngg9B/ROuqXox461rSntsJCEtkclqQ2YUmQ3kBWeYkv9XWKXKaE6mKhSJvqxm59yx9XMG2ntG4awlVJJp1LjgTpmA4LyXcqZmhaHLwv8fBxPfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732021378; c=relaxed/simple;
-	bh=Oko1rEt3dtzKKBgHam+sRiRzrDAc/6gM3AC+HQ1fjNM=;
+	s=arc-20240116; t=1732021417; c=relaxed/simple;
+	bh=HTszvGrwpjyTL9+iGA7mvd53ntCBLk0NpCko+gGtv5A=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=udxkgPDOyPTf6YrumNS6jUtYy51NMFxK4BUy2cfHbCQTKcR0XI2qFc0hji3Xw3K9jAnuVayC3zJrfX7QlL3oviOyOY7VJCC6XRh0tZNc4FGRByuITT+d3ZuWqcATkqEvZ/I8k47oIyDz2Z0D74b1HxtrItKaRPvKtqISiU7RVFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DEnCgRTY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A4EDC4CECF;
-	Tue, 19 Nov 2024 13:02:53 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=WJnoK7Y7Gallc8uZLQMAt1okM13X5b/ugG9npkNkIdI6zF4ZTUXrdcyCZr6uoI8T5HLt4iDuXIMeST5MlJyyN5Ai+ij/5nMMXwUk0d/oD9SrgW7LmvQsj1pjCWOkEQmUpVpX9L1xfxZo3f4HjwyUzkWfPKNd6MyykYth1gsXiTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OqemSTaK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2E3DC4CECF;
+	Tue, 19 Nov 2024 13:03:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732021377;
-	bh=Oko1rEt3dtzKKBgHam+sRiRzrDAc/6gM3AC+HQ1fjNM=;
+	s=k20201202; t=1732021417;
+	bh=HTszvGrwpjyTL9+iGA7mvd53ntCBLk0NpCko+gGtv5A=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=DEnCgRTYjsdcrkIArl78Yqj81YJLF81Jx4xMGgMF4MiuVY8OYH3Szab1eCnIbu3zv
-	 3qEzMxSiQax10wi/IUnOoiwgevA7eJh6Xj8ir5qbFgLM+eSTHza/g8KYbemxVLLKLC
-	 E/IhenTGo04xl1au93Q3gRGZ2MZRgWWKGHn1ompy06ZseOFfCsp8BhmdtLoXl2cQUS
-	 Atfth+AmOO8dhS+bsnqPs0VjPEsoj12Agz00zhhhyU76S1cYLxivArOUCTHlvG5C0U
-	 vtU/b5HALKb5gtoZqLCBXIjuvWJ3dHyvGkHpr0r9xNpGvqqckEShuspqT685jRF5E2
-	 bZM6jXNjURsFQ==
-Message-ID: <4483a757-db62-4489-aac0-7a33d44a4cba@kernel.org>
-Date: Tue, 19 Nov 2024 14:02:51 +0100
+	b=OqemSTaKvU+OxUIRWX0YQ/BtHkSlekw7NC/BJ0idtZUD3vYCZXcElWCImGjuhFT5F
+	 rHZPZHXa/G/PxGI/Fa56ZrHlNjCVbSxRy6JhWqUuD7U+F65ggp8MQAX/QIVhewNXzV
+	 Zb32j46zVNcANK+ymspAm1eXWJrpspZyNXzWbU2GM1els3OKzuYtHaMXtUKKL/PVAH
+	 M22vG2TC8QPkPgWQKMp0iHkzfnVJUzrIUCeO/waocuAFKFlgf3x0vzoY9EXCfIYm3W
+	 +7j6R280UqPOeD3AGdxc84nXnMV+wInkqQNDChoCbE80nzm1279OwoBCTCRfE34duI
+	 zygqO+nf1EdjQ==
+Message-ID: <8b4508fe-01d9-49c5-817e-49955db0dadc@kernel.org>
+Date: Tue, 19 Nov 2024 14:03:31 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,7 +49,7 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 4/6] arm64: Add initial support for Blaize BLZP1600 CB2
+Subject: Re: [PATCH v5 5/6] arm64: defconfig: Enable Blaize BLZP1600 platform
 To: Niko Pasaloukos <nikolaos.pasaloukos@blaize.com>,
  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
  Conor Dooley <conor+dt@kernel.org>, James Cowgill
@@ -63,7 +63,7 @@ Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
  <linux-arm-kernel@lists.infradead.org>,
  "soc@lists.linux.dev" <soc@lists.linux.dev>
 References: <20241115-blaize-blzp1600_init_board_support-v5-0-c09094e63dc5@blaize.com>
- <20241115-blaize-blzp1600_init_board_support-v5-4-c09094e63dc5@blaize.com>
+ <20241115-blaize-blzp1600_init_board_support-v5-5-c09094e63dc5@blaize.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -109,40 +109,15 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20241115-blaize-blzp1600_init_board_support-v5-4-c09094e63dc5@blaize.com>
+In-Reply-To: <20241115-blaize-blzp1600_init_board_support-v5-5-c09094e63dc5@blaize.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 15/11/2024 15:58, Niko Pasaloukos wrote:
-> Add support for the Blaize CB2 development board based on
-> the BLZP1600 SoC. This consists of a Carrier-Board-2 and a
-> System-on-Module.
+> Enable ARCH_BLAIZE to support the BLZP1600 SoC and the CB2
+> development board.
 > 
-> Both BLZP1600 SoM and CB2 are available as products.
-> CB2 (Pathfinder) has multiple peripherals like UART, I2C,
-> SPI, GPIO, CSI (camera), DSI (display), USB-3.0 and Ethernet.
-> 
-> Enable support for the Cryptocell, UART and I2C which are
-> already fully supported by the drivers.
-> 
-> The blaize-blzp1600.dtsi is the common part for the SoC,
-> blaize-blzp1600-som.dtsi is the common part for the SoM and
-> blaize-blzp1600-cb2.dts is the board specific file.
-> 
-> Co-developed-by: James Cowgill <james.cowgill@blaize.com>
-> Signed-off-by: James Cowgill <james.cowgill@blaize.com>
-> Co-developed-by: Matt Redfearn <matt.redfearn@blaize.com>
-> Signed-off-by: Matt Redfearn <matt.redfearn@blaize.com>
-> Co-developed-by: Neil Jones <neil.jones@blaize.com>
-> Signed-off-by: Neil Jones <neil.jones@blaize.com>
 > Signed-off-by: Nikolaos Pasaloukos <nikolaos.pasaloukos@blaize.com>
-
-Subject prefix should be:
-arm64: dts:
-or
-
-arm64: dts: blaize:
-
 Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
