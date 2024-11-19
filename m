@@ -1,83 +1,139 @@
-Return-Path: <linux-kernel+bounces-414682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D1879D2C8A
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 18:27:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E71EE9D2BFC
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 18:01:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A7EBAB3A4F7
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 17:01:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC17428A314
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 17:01:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5A181D174C;
-	Tue, 19 Nov 2024 16:59:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D175E1D1F4B;
+	Tue, 19 Nov 2024 17:00:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pc67rj0v"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AnfjGVqt"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C3661CEAA6;
-	Tue, 19 Nov 2024 16:59:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E00B1D1F56;
+	Tue, 19 Nov 2024 17:00:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732035563; cv=none; b=YBnSTt1Es1HxunQlVmQDFen0ENKQXFb3zQFB7Q63stw3M0BuC1nlbDmFySiJD2Gt1bLNJMF1YGzDeqWR8E28lLgCjhO6Cd0coVVVC8k0tOydvPsR1dPMhBMt7/9An5c3x9aYgvszNQI/H8aQ9eE08L/F4kESicBfqO1rszWJ9Vg=
+	t=1732035606; cv=none; b=cIdRGN10X3yEIrMWea+igoeM7G1Yibl568QL136CVrtHKa9nQb07osAERwAOmoqzCZzVzYceyGToAJ+VJXiUX0IcTTLx5bJ0s5VVQACeCKxVbRMyWFIX1OR13lKgz+w8n485/Q5y3kmLQiLXfzINVmZuhjsctUbTYQz+ZGSaJkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732035563; c=relaxed/simple;
-	bh=ZrZ7oXhDqYlbr9ayO+VZap9onESv9xBNkLB9RG6TA+I=;
+	s=arc-20240116; t=1732035606; c=relaxed/simple;
+	bh=nUKampE6m1Pc/cw92xoigRyF6ZA7CefrzrLuE5I65ic=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bO5nPmrmM7PyFQP3nTsDK5Edr9x5weNDmReN0pHhqUaE03HrZqhPB1PG5H7WSZxx2H9bFTEHVu+ELCkRUedzKrlY4f+OQEOU3LSjwcFmJnm2XWXic3HanIQU1hbKXgEHsQ22x8ji8xxigJAwqjsFEmmSC8OER8h/OHAKTP4UUtc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pc67rj0v; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 947DAC4CECF;
-	Tue, 19 Nov 2024 16:59:22 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=OFnTXR4CbrFVWY67nVBpiBWE2IHGOTxej/bOWYPOfxcfwRrN7q5x0kW3RPww8SfmiXADIi1Qkiq9pqyeqLFD+gnmKBP7DYERd2tVPcZocOH6a+n2jtHBSRvNt2yVYoxE6uJfT7bb7CVMcoq5ao0pIgxprhC181Z/6PNl4q6A5gI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AnfjGVqt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22E12C4CECF;
+	Tue, 19 Nov 2024 17:00:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732035562;
-	bh=ZrZ7oXhDqYlbr9ayO+VZap9onESv9xBNkLB9RG6TA+I=;
+	s=k20201202; t=1732035606;
+	bh=nUKampE6m1Pc/cw92xoigRyF6ZA7CefrzrLuE5I65ic=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pc67rj0vZ6EiqMKOPOqDWXRJvqsgxa1E0CNs2ldTqYvQ59aoconRIwz790MOGBHNB
-	 4aMzCXz3G9UinnG0afclfsIznGQdKib1JZw1u/t72vagyfA3u9OWHExlsj4tXC7AyB
-	 BEpM0i7H8hXbQJuMprnnzQJhXrIXpDnAENHj/EHP19o1qjxQ6JCalLVGU8FnVYn/B3
-	 HSKLaQFQkFpeEvF0HDerRwsYV8C+XGov3ynf0hsuwaQyVe9WdxPX4tu36JWQNWePsD
-	 Z8Uvget7YfXmjmC8kb2ATtPp0YofVVtEixx9KtMGAW6quPVndVo1WupWcE51mp5k36
-	 8I7lzrANSc/kA==
-Date: Tue, 19 Nov 2024 10:59:21 -0600
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: linux-kernel@vger.kernel.org, Han Xu <han.xu@nxp.com>,
-	Jonathan Cameron <jic23@kernel.org>, imx@lists.linux.dev,
-	Sean Nyekjaer <sean@geanix.com>, Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>
-Subject: Re: [PATCH v2 2/4] dt-bindings: iio: accel: fxls8962af: add
- compatible string 'nxp,fxls8974cf'
-Message-ID: <173203556027.1804813.15784012336062429559.robh@kernel.org>
-References: <20241115-fxls-v2-0-95f3df9228ed@nxp.com>
- <20241115-fxls-v2-2-95f3df9228ed@nxp.com>
+	b=AnfjGVqtLUnglyQYOpMNi8Ywk63ZEZrg2wN8WMQs0ugvxrgnSrvCZQ1Y74cGlPBwC
+	 x766ZFEqnGrj4INHVto8hZyzHMxuIfDMDNoKmYDexAOb0NPXNbcDmFPw/KXhWuktlM
+	 uLGZKBxNg377UHGnP+SaHhrMW4XeqHz4Bg6blkIuB5RdVembYSq8Kuy+an09QbrOJI
+	 vbf9BDlJh8/SeXMv+1VIUc0gM2PxRoAEv8998SnMxu6uSw+Imk7ukEhvYHXDt4SXyh
+	 sVyJ/sFEpfF0VVvxCdU/mFtmpiHp/cAME5ZfEbAcQsjXW97poarU4JErHiiFiTfVER
+	 cW1EjER9GpbZQ==
+Date: Tue, 19 Nov 2024 09:00:03 -0800
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	James Clark <james.clark@linaro.org>,
+	Howard Chu <howardchu95@gmail.com>,
+	Athira Jajeev <atrajeev@linux.vnet.ibm.com>,
+	Michael Petlan <mpetlan@redhat.com>,
+	Veronika Molnarova <vmolnaro@redhat.com>,
+	Dapeng Mi <dapeng1.mi@linux.intel.com>,
+	Thomas Richter <tmricht@linux.ibm.com>,
+	Ilya Leoshkevich <iii@linux.ibm.com>,
+	Colin Ian King <colin.i.king@gmail.com>,
+	Weilin Wang <weilin.wang@intel.com>,
+	Andi Kleen <ak@linux.intel.com>,
+	Josh Poimboeuf <jpoimboe@redhat.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: Re: [PATCH v6 15/22] perf lock: Move common lock contention code to
+ new file
+Message-ID: <ZzzEE_kAjmXnvwtj@google.com>
+References: <20241109061809.811922-1-irogers@google.com>
+ <20241109061809.811922-16-irogers@google.com>
+ <Zzvac4IeX9nDDitm@google.com>
+ <CAP-5=fUPksNCJ-NqUbJMDpfS7kkmXGsCVhvALkts8HDv42NUyg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241115-fxls-v2-2-95f3df9228ed@nxp.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP-5=fUPksNCJ-NqUbJMDpfS7kkmXGsCVhvALkts8HDv42NUyg@mail.gmail.com>
 
+On Mon, Nov 18, 2024 at 05:03:41PM -0800, Ian Rogers wrote:
+> On Mon, Nov 18, 2024 at 4:23 PM Namhyung Kim <namhyung@kernel.org> wrote:
+[SNIP]
+> > On Fri, Nov 08, 2024 at 10:18:02PM -0800, Ian Rogers wrote:
+> > > +#ifndef HAVE_BPF_SKEL
+> > > +int lock_contention_prepare(struct lock_contention *con __maybe_unused)
+> > > +{
+> > > +     return 0;
+> > > +}
+> > > +
+> > > +int lock_contention_start(void)
+> > > +{
+> > > +     return 0;
+> > > +}
+> > > +
+> > > +int lock_contention_stop(void)
+> > > +{
+> > > +     return 0;
+> > > +}
+> > > +
+> > > +int lock_contention_finish(struct lock_contention *con __maybe_unused)
+> > > +{
+> > > +     return 0;
+> > > +}
+> > > +
+> > > +int lock_contention_read(struct lock_contention *con __maybe_unused)
+> > > +{
+> > > +     return 0;
+> > > +}
+> > > +#endif  /* !HAVE_BPF_SKEL */
+> >
+> > I still think it's the convention to have them in a header file as
+> > static inline functions and reduce the #ifdef in the .c file.
+> 
+> Shouldn't minimizing ifdefs, and associated cognitive load, in header
+> files be the priority given they are #included many times while the .c
+> file is only compiled once?
+> Shouldn't a goal of the header file be to abstract away things like
+> HAVE_BPF_SKEL?
+> I'm not clear what the goal of having the functions in the header
+> files is, performance? The code isn't going to run anyway. I feel
+> lock_contention.h is smaller and easier to read like this but I also
+> don't care enough to fight. I did this change here as
+> lock_contention.h was being brought into python.c for the sake of
+> stubbing out functions that the header file was also subbing out for
+> !BPF_HAVE_SKEL. A single stub felt like progress.
 
-On Fri, 15 Nov 2024 15:23:58 -0500, Frank Li wrote:
-> From: Han Xu <han.xu@nxp.com>
-> 
-> Add 'nxp,fxls8974cf' compatible for the FXLS8974CF sensor, falling back to
-> 'nxp,fxls8962af' as the only difference is the ID.
-> 
-> Signed-off-by: Han Xu <han.xu@nxp.com>
-> Reviewed-by: Sean Nyekjaer <sean@geanix.com>
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
->  Documentation/devicetree/bindings/iio/accel/nxp,fxls8962af.yaml | 2 ++
->  1 file changed, 2 insertions(+)
-> 
+I think it may have the empty functions in the binary if we keep the
+functions in the .c file whereas compilers would optimize away them if
+they are static inline functions.
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Thanks,
+Namhyung
 
 
