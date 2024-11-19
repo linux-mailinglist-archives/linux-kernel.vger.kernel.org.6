@@ -1,214 +1,136 @@
-Return-Path: <linux-kernel+bounces-414612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 959BC9D2AFA
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 17:32:09 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BFC59D2B44
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 17:42:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2BE1C1F2152E
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 16:32:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DBCA8B2D4C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 16:36:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D697A1CDFD7;
-	Tue, 19 Nov 2024 16:31:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA1B91D0E33;
+	Tue, 19 Nov 2024 16:35:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="d29n+Lnm"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="UDpri3sO"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89E3C14A614
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 16:31:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF31E3C463;
+	Tue, 19 Nov 2024 16:35:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732033917; cv=none; b=lFk4Z+3oGXP7TVTt5AyXOJALvM2x7Yqhd0PPLLdNBbvSwXO5L9oKwgJJviLRAN34vHM7VbtnVt1rRE3c/5n+HvIz87LmpMtYCOYVSt/ih7tPWJM6FbfgYfySWKwaHza93FLaQ19E5yHuQkrq5pcTtAY+Ag0H8LSBapduHg7rTNg=
+	t=1732034151; cv=none; b=tpw+Rva8I08h/tSWqd7R59HlSyinzxah9h5e/Na0tOzFpWowuUr2HXFqIOngG90MvmxMXfW/h+Md5+aWD1AxhDgGV1FJ0zSTbuZj/yNP4hnnTLrzxE+Ra3TTdtMfKouA9dcyyKAsKpyGfm/QB1O4v9XhreL2HAS223bcMDCG/Sw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732033917; c=relaxed/simple;
-	bh=/+KIZlir/AnJpExwPXIEIPbcozS9Gi2NCRWK4aXJKT4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nOU92zS535TRXCKzvgLkA0U9fqLIn07RHb8UWVwsyV85Zd/H0hgoxCfVLUPpCqYEsi6GNYGfg0NiNNsdnTvXEXF0UiS2QP8bMzO2AnogJLbRJTmSpWITPIHuFifY4KAYlMv5rA/+Z6vXjVgcOxW4pLl3hf6RsLDifuNXMrGC10Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=d29n+Lnm; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732033914;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=e4dCxhQZDTt8wGPxtF6WYxnwiQV48dQX5+FXs4e8cKA=;
-	b=d29n+LnmjymQRtE2EfuH/UnUuqq2HZn2oRLnML1NBh8LdaeEjXN5aEtjGZVPVix7Hrk8N2
-	sNmkTzKAsAadZxueFWBJqoqh4ubLUR+k4RKnAE+Ty9P9xb+b3IrI99TsMYpNSDhRa4B1KQ
-	dHTIJm3r7RkhawWHtNTkpfV2zS38ezc=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-301-c6i0nNc1OSy4_D4kqv8OaA-1; Tue, 19 Nov 2024 11:31:51 -0500
-X-MC-Unique: c6i0nNc1OSy4_D4kqv8OaA-1
-X-Mimecast-MFC-AGG-ID: c6i0nNc1OSy4_D4kqv8OaA
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4327bd6bd60so7584365e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 08:31:50 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732033910; x=1732638710;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=e4dCxhQZDTt8wGPxtF6WYxnwiQV48dQX5+FXs4e8cKA=;
-        b=DqQQ3CGQ1zCBGkoq/nzczO9i7L+Db3hcHIRtQTuXFTzRhCO/51a04GBaNurWLJ0gK3
-         MsnmfziXuejTyEE1zLOvsjcVa4AM8kYLLgdnPWQHwU6iYYVg++BlvyhCOHYBeIs1EMhJ
-         7dcf+84Ii8vWWiQMVN01OO9MLVo1Y5GjLfeSgMSKzYBgcQK9M1Hct0UAiJmVjy8If/Ut
-         KNul7iUDFU7sL3o2rdUKwtKJJ1Sx5JEqTmQJhBKrjE9HPAuT5FqBjCoT1x30pL2v+2ML
-         p+GWoKQWq3FYpeMKyX5WpDJ+dvFvNj4XG+e7Kiz1YGgZd+sNqBo8QBXBARuMJoi96kVJ
-         31Ug==
-X-Forwarded-Encrypted: i=1; AJvYcCUJYBiMDUZx5PYBrsZpLYj1dUfJW1eA6Imxa22fR2DIVQiwueRL3I+Bey6iZOHTl1nBCLVSj0BuzuOa1Qw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YznK/dQEsXIGcmVcZbQ69U6I+Xols1k8k6V5k/5IDTLBN5fjdAi
-	EiIYAOy1o1cmA84B991rLjghkF1IUclNzybMQoGsMi4W3afUW0jmYZN82sxH+S3jS9H/jAa7ZTs
-	IhNkj1PpMn3hifAdp1/oc8B64tQFtb2jLUoKiIBbUXgfeVgXKeXvpDgBQ/TCRug==
-X-Received: by 2002:a05:600c:4689:b0:431:9397:9ac9 with SMTP id 5b1f17b1804b1-432df746a1bmr161067455e9.15.1732033909911;
-        Tue, 19 Nov 2024 08:31:49 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IErpzacwp6dN+wqTws22X4QW9Iph5hUAIuGfo+dG2cBty7Ga4OeHfMlUguP0eeZQmelKwD3cQ==
-X-Received: by 2002:a05:600c:4689:b0:431:9397:9ac9 with SMTP id 5b1f17b1804b1-432df746a1bmr161067275e9.15.1732033909566;
-        Tue, 19 Nov 2024 08:31:49 -0800 (PST)
-Received: from ?IPV6:2003:cb:c74b:d000:3a9:de5c:9ae6:ccb3? (p200300cbc74bd00003a9de5c9ae6ccb3.dip0.t-ipconnect.de. [2003:cb:c74b:d000:3a9:de5c:9ae6:ccb3])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432dab7220asm196514045e9.6.2024.11.19.08.31.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 Nov 2024 08:31:48 -0800 (PST)
-Message-ID: <1a77f16b-d637-40b4-bf47-a8236729a0ca@redhat.com>
-Date: Tue, 19 Nov 2024 17:31:46 +0100
+	s=arc-20240116; t=1732034151; c=relaxed/simple;
+	bh=9hSWkMBgt870APoM/D9k2739I5SbHqE6+jg1F2AR9Ic=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dxYxVVcIPALJJdGsz1U5bGv7fz69B/Vvjbez4NM0hKkn5ysR+554W3mP0tHK+LAN8UJk64a46/++gNXomvxHiSQm7s813ybmifjBy5RwGITlB8Lu04ZVf6aXgIqGw+x4nWZa+jEP6YxcCj6ZtFwvb0c/TKh60xImO3bfxaA1QSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=UDpri3sO; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=7xA18VRo4Z9qnPm8nwpcEgS9wya8T5K5bzL5hA5cbhM=; b=UDpri3sOSy3XL6wD8vMGYXaz9I
+	uFkGv8c9C6OrzOEX558YbBxIbG+wA4fNnowVtBRXPEuPzOcrh4R9JMyG9L9UchS7B+6YMQwt7noRM
+	H60MpWZ5rmYhviuS4QRy77SDsnlrL48PfRUCkQfdx9UUhTL1oT2iBUzUIsRngk5vEPSjjbJ9ddKPK
+	OvOhrs8UebepQWu0TtBJ3WdDMyJQfKN96yO24HMTwwZxP5Y5T4oBwlJ6ypqA1MFPRvbcIZiVmazIU
+	SSXnHOk/rYkKCQci9B9IyJjirgrkpZ1euHCXp2ifT92GA7W6fgwNtbQn8JgWE1J0DPdL1Zu1NpU5r
+	F6icPQPg==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:45606)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1tDRCH-0003vE-1T;
+	Tue, 19 Nov 2024 16:35:25 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1tDRCD-0006Bj-2N;
+	Tue, 19 Nov 2024 16:35:21 +0000
+Date: Tue, 19 Nov 2024 16:35:21 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: jan.petrous@oss.nxp.com
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Emil Renner Berthing <kernel@esmil.dk>,
+	Minda Chen <minda.chen@starfivetech.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Iyappan Subramanian <iyappan@os.amperecomputing.com>,
+	Keyur Chudgar <keyur@os.amperecomputing.com>,
+	Quan Nguyen <quan@os.amperecomputing.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	imx@lists.linux.dev, devicetree@vger.kernel.org,
+	NXP S32 Linux Team <s32@nxp.com>,
+	Jacob Keller <jacob.e.keller@intel.com>
+Subject: Re: [PATCH v5 02/16] net: driver: stmmac: Extend CSR calc support
+Message-ID: <Zzy-SYu3AgwaHeOD@shell.armlinux.org.uk>
+References: <20241119-upstream_s32cc_gmac-v5-0-7dcc90fcffef@oss.nxp.com>
+ <20241119-upstream_s32cc_gmac-v5-2-7dcc90fcffef@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH mm-unstable v2 1/3] mm/contig_alloc: support __GFP_COMP
-To: Zi Yan <ziy@nvidia.com>
-Cc: Yu Zhao <yuzhao@google.com>, Andrew Morton <akpm@linux-foundation.org>,
- Muchun Song <muchun.song@linux.dev>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <20240814035451.773331-1-yuzhao@google.com>
- <20240814035451.773331-2-yuzhao@google.com>
- <402ff3e5-4fca-4452-97ba-5b1ec4a6eeb1@redhat.com>
- <00721702-78FF-4690-8EAA-31C367FA9FC0@nvidia.com>
-Content-Language: en-US
-From: David Hildenbrand <david@redhat.com>
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <00721702-78FF-4690-8EAA-31C367FA9FC0@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241119-upstream_s32cc_gmac-v5-2-7dcc90fcffef@oss.nxp.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On 19.11.24 17:12, Zi Yan wrote:
-> On 19 Nov 2024, at 10:29, David Hildenbrand wrote:
+On Tue, Nov 19, 2024 at 04:00:08PM +0100, Jan Petrous via B4 Relay wrote:
+> From: "Jan Petrous (OSS)" <jan.petrous@oss.nxp.com>
 > 
->>> +/* Split a multi-block free page into its individual pageblocks. */
->>> +static void split_large_buddy(struct zone *zone, struct page *page,
->>> +			      unsigned long pfn, int order, fpi_t fpi)
->>> +{
->>> +	unsigned long end = pfn + (1 << order);
->>> +
->>> +	VM_WARN_ON_ONCE(!IS_ALIGNED(pfn, 1 << order));
->>> +	/* Caller removed page from freelist, buddy info cleared! */
->>> +	VM_WARN_ON_ONCE(PageBuddy(page));
->>> +
->>> +	if (order > pageblock_order)
->>> +		order = pageblock_order;
->>> +
->>> +	while (pfn != end) {
->>> +		int mt = get_pfnblock_migratetype(page, pfn);
->>> +
->>> +		__free_one_page(page, pfn, zone, order, mt, fpi);
->>> +		pfn += 1 << order;
->>> +		page = pfn_to_page(pfn);
->>> +	}
->>> +}
->>
->> Hi,
->>
->> stumbling over this while digging through the code ....
->>
->>> +
->>>    static void free_one_page(struct zone *zone, struct page *page,
->>>    			  unsigned long pfn, unsigned int order,
->>>    			  fpi_t fpi_flags)
->>>    {
->>>    	unsigned long flags;
->>> -	int migratetype;
->>>     	spin_lock_irqsave(&zone->lock, flags);
->>> -	migratetype = get_pfnblock_migratetype(page, pfn);
->>> -	__free_one_page(page, pfn, zone, order, migratetype, fpi_flags);
->>
->> This change is rather undesired:
->>
->> via __free_pages_core()->__free_pages_ok() we can easily end up here with order=MAX_PAGE_ORDER.
+> Add support for CSR clock range up to 800 MHz.
 > 
-> Do you have a concrete example? PMD THP on x86_64 is pageblock_order.
-> We do not have PMD level mTHP yet. Any other possible source?
-> 
->>
->> What your new code will do is split this perfectly reasonable MAX_PAGE_ORDER chunk via split_large_buddy() into pageblock-sized chunks, and let the buddy merging logic undo our unnecessary splitting.
->>
->> Is there a way to avoid this and just process the whole MAX_PAGE_ORDER chunk like we used to?
-> 
-> Probably split_large_buddy() can check the migratetypes of the to-be-freed
-> page, if order > pageblock_order. If all migratetypes are the same, the page
-> can be freed at MAX_PAGE_ORDER, otherwise pageblock_order.
+> Signed-off-by: Jan Petrous (OSS) <jan.petrous@oss.nxp.com>
+> Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
 
-Thinking about this: why do we care about the migratetype?
+These look fine.
 
-We only have to fallback to pageblocks if any pageblock is 
-"MIGRATE_ISOLATE" (and maybe MIGRATE_CMA), but not all. Otherwise, we 
-can just ignore the migratetype (or rather overwrite it)
+Doing the calculations:
+
+100M / 42 = 2.38MHz
+150M / 62 = 2.42MHz
+35M / 16 = 2.19MHz
+60M / 26 = 2.31MHz
+250M / 102 = 2.45MHz
+300M / 124 = 2.42MHz
+500M / 204 = 2.45MHz
+800M / 324 = 2.47MHz
+
+Since the target MDC clock frequency is 2.5MHz, these all look
+reasonable to what is in the comment for the new clock selection
+values.
+
+Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+
+Thanks!
 
 -- 
-Cheers,
-
-David / dhildenb
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
