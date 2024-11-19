@@ -1,125 +1,114 @@
-Return-Path: <linux-kernel+bounces-414177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 135D69D2453
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 11:57:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D4479D2455
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 11:58:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86A1CB268FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 10:57:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95554B23B86
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 10:58:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23BA91C9B7A;
-	Tue, 19 Nov 2024 10:56:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TP8UbEcU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F185A1C4608;
+	Tue, 19 Nov 2024 10:58:43 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D9BB1C4A0B
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 10:56:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E77C853363;
+	Tue, 19 Nov 2024 10:58:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732013763; cv=none; b=AJjBcLcxwepPtnlqGuQkoHk8ujqbDOgdYFtENYcNGrceHjxKCWEjP6v1YB+JsrUrVN75zYIX3Kk/DS9a9y6WQn45o5I0J8v7cbyMieEHGV8rhxcGABOaJeDXp/J54xkuhhgCRiwt5mlVLTItQCPzI7MlfiC9K1nHb3aQC70NdeM=
+	t=1732013923; cv=none; b=W8xv4H056Ybnq391hoqIw69BVIxsLyCPaWl0oRO7vkAtyANV2CxkqQRzIEKE9xl+aPzTKZB+yzbvGIZoDt8rjboO8wGSnvu3oEU6x8QsnFHC97SKnylqnLcSKMOcvsh3wq68PRLS7g4Db2A3kFtOLWAfmC7W+jX6O58qcLSJEDg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732013763; c=relaxed/simple;
-	bh=sZhya7dJN7fSueqddx3nsemrQDCDXWzo7Or9nNMJmsk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AyE2wmwiGi0cHgqi0Mn4m0/2I943qYzMBFUy1aEhomaddzNv9LVIbJEMmNAUVv0masxG0Azam/8Z3doHe9xo2wRW9MEAzJ8EQscPJ66wChp4v6O3PhksS7pyzV5mBfoCf/ilwP03WqPHTeQM0ZNtmpEXxij9AqiC5gJS6FIuFuA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TP8UbEcU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AABBCC4CECF;
-	Tue, 19 Nov 2024 10:56:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732013763;
-	bh=sZhya7dJN7fSueqddx3nsemrQDCDXWzo7Or9nNMJmsk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TP8UbEcUBG+vykgtUUQ7PzP/cI6pTlMw3cP184PK9EPIakpQdwPAImh38p3rtPdFu
-	 UL6EuO+tGVqKpU0nRbEF87Zd6dxJJ7V8CM5AULPmjIa19id7rrEosvy5b9F4FW+stI
-	 waLBi9iwDi7AiWUFuYj7oBc3mcjsNF1ozziUpwsbBkg4CiqHq/8uDPQOk5EfFFCwnn
-	 FR2xYJpfJ05UYBrKbwXnwhEBkEj4vDWSmCk+txUbJl7frNN/hkuHl15bUvPIEz99Al
-	 W94ifwt5N+JSK6UoqOxLmE52VlBirBUSL3y2fJRmRH9GMW+KEX//DOGCRs6C9lIpvu
-	 XiPHTowFMsLcw==
-Date: Tue, 19 Nov 2024 11:55:59 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Baoquan He <bhe@redhat.com>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>, linux-kernel@vger.kernel.org,
-	bp@alien8.de, x86@kernel.org
-Subject: Re: [PATCH v2 1/2] x86/ioremap: introduce helper to implement
- xxx_is_setup_data()
-Message-ID: <Zzxuv3FFmCxmTtS-@gmail.com>
-References: <20241118010819.46602-1-bhe@redhat.com>
- <20241118010819.46602-2-bhe@redhat.com>
- <7cc5e26c-42fc-a700-ae19-608920cafe44@amd.com>
- <ZzwA53x3KYQgDbeQ@MiWiFi-R3L-srv>
+	s=arc-20240116; t=1732013923; c=relaxed/simple;
+	bh=FUSqZDJHoRw+PHiln9GR281TCUN6GqZJPbMR0e7jqYg=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=BU+tVqxnOeTX1DdIctc5BsCbiGK44csbAere7Kur1iEDKNLxBZmZmEXrFfny6/zCKCZOJEhsaT2JbofvFbyOPjmYISEC0un79z89Vfer0Lj1Vpf8GH/KQj1RS84Xu7wlSfiotRXvMxCSgBW7mHozQAZcqz6AQ8uvH+pyyVafe4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Xt1gb4L5xz4f3jcn;
+	Tue, 19 Nov 2024 18:58:19 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 189061A07B6;
+	Tue, 19 Nov 2024 18:58:38 +0800 (CST)
+Received: from [10.174.176.73] (unknown [10.174.176.73])
+	by APP4 (Coremail) with SMTP id gCh0CgCnzoJcbzxn8RXpCA--.16515S3;
+	Tue, 19 Nov 2024 18:58:37 +0800 (CST)
+Subject: Re: [PATCH md-6.13 4/5] md/raid5: implement pers->bitmap_sector()
+To: Jack Wang <jinpu.wang@ionos.com>, yukuai1@huaweicloud.com
+Cc: linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org,
+ song@kernel.org, xni@redhat.com, yangerkun@huawei.com, yi.zhang@huawei.com,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20241118114157.355749-6-yukuai1@huaweicloud.com>
+ <20241119094929.148060-1-jinpu.wang@ionos.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <adf796b9-2443-d29a-f4ac-fb9b8a657f93@huaweicloud.com>
+Date: Tue, 19 Nov 2024 18:58:36 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZzwA53x3KYQgDbeQ@MiWiFi-R3L-srv>
+In-Reply-To: <20241119094929.148060-1-jinpu.wang@ionos.com>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCnzoJcbzxn8RXpCA--.16515S3
+X-Coremail-Antispam: 1UD129KBjvdXoWrKw4Utw4DXFW7Zw1xJF1xuFg_yoW3GwcEga
+	s8ZFyDKw17JF1qyFsY9r43ta1fCa1fJryDJFy0qa12g345WFs8GFWku34Iq3y5uw4rurn5
+	Ar93C34akw129jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbVxFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr1j
+	6rxdM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
+	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
+	jxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr
+	1lF7xvr2IY64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7Mxk0xIA0c2IEe2xFo4CEbIxv
+	r21lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr
+	0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY
+	17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcV
+	C0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY
+	6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa
+	73UjIFyTuYvjfUonmRUUUUU
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
+Hi,
 
-* Baoquan He <bhe@redhat.com> wrote:
-
-> On 11/18/24 at 09:19am, Tom Lendacky wrote:
-> > On 11/17/24 19:08, Baoquan He wrote:
-> > > Functions memremap_is_setup_data() and early_memremap_is_setup_data()
-> > > share completely the same process and handling, except of the
-> > > different memremap/unmap invocations.
-> > > 
-> > > So add helper __memremap_is_setup_data() to extract the common part,
-> > > parameter 'early' is used to decide what kind of memremap/unmap
-> > > APIs are called. This simplifies codes a lot by removing the duplicated
-> > > codes, and also removes the similar code comment above them.
-> > > 
-> > > And '__ref' is added to __memremap_is_setup_data() to suppress below
-> > > section mismatch warning:
-> > > 
-> > > ARNING: modpost: vmlinux: section mismatch in reference: __memremap_is_setup_data+0x5f (section: .text) ->
-> > > early_memunmap (section: .init.text)
-> > > 
-> > > Signed-off-by: Baoquan He <bhe@redhat.com>
-> > > ---
-> > >  arch/x86/mm/ioremap.c | 108 +++++++++++++++---------------------------
-> > >  1 file changed, 38 insertions(+), 70 deletions(-)
-> > > 
-> > > diff --git a/arch/x86/mm/ioremap.c b/arch/x86/mm/ioremap.c
-> > > index 8d29163568a7..68d78e2b1203 100644
-> > > --- a/arch/x86/mm/ioremap.c
-> > > +++ b/arch/x86/mm/ioremap.c
-> > > @@ -628,12 +628,13 @@ static bool memremap_is_efi_data(resource_size_t phys_addr,
-> > >  	return false;
-> > >  }
-> > >  
-> > > +#define SD_SIZE sizeof(struct setup_data)
-> > 
-> > Nit, I still think you should use "sizeof(*data)" in the code instead of
-> > creating a #define.
+ÔÚ 2024/11/19 17:49, Jack Wang Ð´µÀ:
+> Hi Kuai,
 > 
-> Thanks for reviewing, Tom.
+> Thanks for the patchset, as you mentioned both both hung problem regarding raid5
+> bitmap, just want to get confirmation, will this patchset fix the hung or just a
+> performance improvement/code cleanup?
+
+I'm hoping both. :)
+
+After review, I'll CC related folks and see if they can comfirm this
+will fix the hang problem.
 > 
-> Boris suggested this. Both is fine to me. If there is indeed a tiny
-> preference, I would choose SD_SIZE. It's going a bit far, but not too
-> far.
+> 
+> In patch4, as you removed the set/clear bit STRIPE_BITMAP_PENDING, I think you
+> should also remove the test_bit line in stripe_can_batch, also the definition
+> enum in raif5.h and the few lines in comments in __add_stripe_bio, same for the
+> line in break_stripe_batch_list.
 
-Yeah, I'd prefer Boris's SD_SIZE suggestion too: while *normally* we'd 
-use the 'sizeof(*data)' pattern, this particular size repeats a number 
-of times and not all contexts are obvious - so abstracting it out into 
-a trivial define looks like the proper cleanup.
-
-Maybe such material changes should be done in a separate patch though:
-
-   x86/ioremap: Introduce helper to implement xxx_is_setup_data()
-   x86/ioremap: Clean up size calculations in xxx_is_setup_data()
-
-... or so, where the first patch is a trivial refactoring that keeps 
-the existing patterns - which would make the series easier to review.
+Yes, and I assume you mean patch 5.
 
 Thanks,
+Kuai
 
-	Ingo
+> 
+> 
+> Regards!
+> Jinpu Wang @ IONOS
+> 
+> 
+> .
+> 
+
 
