@@ -1,200 +1,205 @@
-Return-Path: <linux-kernel+bounces-414852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2EDD9D2E2A
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 19:44:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 758D09D2E3C
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 19:45:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D0651F23649
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 18:44:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 379C6283A07
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 18:45:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C44571D0E22;
-	Tue, 19 Nov 2024 18:44:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E744B146590;
+	Tue, 19 Nov 2024 18:45:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="un+QSUpg"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="crWNbWEJ"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F951152E0C
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 18:44:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D332141987
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 18:45:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732041863; cv=none; b=niAra3geQxR6hrN+ZBvdI0AjpfzXFT/AFhwskg7vUsmNicZtgBuY7AlkS3fdobSIR49UrACZ0zFt3F48Z8MSbxwb50wEQol/dZAi2KZjFDhqU68vRcvH5W9dOWR84kn5jXLizLjXWQ/F84WDEAs5uh9tnRAyM3gp49wEY6uikY4=
+	t=1732041935; cv=none; b=fnC5npTT2jBeFSNyklpqBKXc3uvCN9BGP3yCyiNOXWQjpNw3ohYL9KjlLmHbhoxFCTfB94+v9V0shLPOWm6veribo9L9d3iWcsj5XdSaNsGxPJZA/X6R+LJiZjtMK4elijm+ElqVMRVddYMKzRHP/YRRbLj2C35FsG+G61pQUTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732041863; c=relaxed/simple;
-	bh=IarxwQtxc2hQvhVZR9jrJYlPoreFUzzBh5T+o0qvzW4=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=HOYp1TEUIjTIBCDFnRTVHpWM7rFU6m/7zNpqtoWnuSo1rHPorQhTIn0Ofh2cgsZRv6ZqhVLe88nNEWW7NdkGjr+qWVAKCH7BovbhphZqA7d/PLDBiHscb7AAIGG3ShqViVusiuxrNhFQGyGL4vf8khTJPQbbWPt2phiaMKdOsSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=un+QSUpg; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-43151e4ef43so30665835e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 10:44:21 -0800 (PST)
+	s=arc-20240116; t=1732041935; c=relaxed/simple;
+	bh=asFoX3ccsoRwXNxFa/3VfHc8pUiFKaoK2MAeDszEGhM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SV6qG9PkviuClWBYe05VG55Z3cKj392gOAufTLnRgHqhcGNxisyu/0+h7GGJV43sY/1mkK2iPf+dbSYoYVav+d44/ycsY1OO0gFsDg7BRBcyo7kT6G33jhttG0K/MCEWeakscgC69GnXLvTfE812krSmZwCvjPWwB6VpPwmASw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=crWNbWEJ; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4315b957ae8so3497335e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 10:45:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732041860; x=1732646660; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=7raj8+o6anDV7XgBulw7mIVhDmj5A5pDYJQm9ULQW+c=;
-        b=un+QSUpg42VXc4TZWgqnpaucAG4GAYyZmI9+nEjFsDJ8w4w6xW5iX0KZlvQk2gpZFJ
-         zoFf2Q1oXoOmW+7cwFIWD3Apud3zkJ9VvdI9BO0fDhC/MW1VH2WMIbPcRkCqGEJDSs6b
-         za4e4CruTPW1eya1q4TWbPqciff179JjtwGXRjpNwaw26B6wKh2qTMLbeivIOX0Ob3W4
-         kbwbinpH+xMSVURRhXa1+lxEfMKIT6PhwX0SXTG5rFsKElAyVs+PTmW33/P4lbtbIMUr
-         NplLbN0asZit9dTXzucALCCbI6yriRtG/KEZCt9I3izfcRM+9R8OJ6QJ8Y3opHGjeDCZ
-         UOiQ==
+        d=linaro.org; s=google; t=1732041930; x=1732646730; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=kjLNN0dLMBygdXzOcYy9iar3A4IPmxazRXBVg4HbYVE=;
+        b=crWNbWEJiCk9pCW2QcFUJTrnZxrvu92Zz5HBU/fI0iXIzzT7bj8VPH/Wwesutogwby
+         +4RY2gvxPXsgJHcSp/m/kZnwXKgauIMDHQzSxUoHsX6j2movNVTiV27l0qNyClbatDJn
+         /aijq9kMTbpy/bb3SoI1Zav6/mwV9vqnpe2/TrDXAyBUnzIpUcRvtomzp7xhYQuOTy8k
+         pUDTBavJzU1gomrfelaOjvEL4qW4JPJxfWVHMNxqG4qu8tjo+igM7S+nzng0V/vuIeNr
+         EwAmsu3kEKDbd0Q8r4pAuWZlM15d1z7bVzrqqy7Ug6hkdDd9yV4Phk0CPcDf9tKOUjNX
+         X4mg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732041860; x=1732646660;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7raj8+o6anDV7XgBulw7mIVhDmj5A5pDYJQm9ULQW+c=;
-        b=NWVFOgLGzxOB7Rp14M2zt3b5wrd77BxTHWx/TQ1LqPUjc7Q6SkNpeweU3cvuttG4i2
-         7c7Fl4I3mzWdXtNAAm01i2pE9P/UDJ/ymDJ3F7uN1EX+kRiv5G6NvDnwMi8CQoP1jhzB
-         KH8IRrnJcGXwsqxIN0csrg4ww4VAv2nGfZKebOxUTdAGv3jYWwnePDoPmV5bx755fU/O
-         OGQobVqxw0GJ2PC7FNppln7scBTzglyW6qt5hBzSe1XFT3e2ra6921YGkctjo7J7lslG
-         mVQmKAvtQS48S2RkbX0Tql74CRlc+HFQC6bUM3T1taqmg+KIM9n6XUD/sRWNXdw/zP4b
-         /PvA==
-X-Forwarded-Encrypted: i=1; AJvYcCUbmkt6/6Rzj8xog6Vjtjea5+NAIF4dfFmCPvQERSFrl0x+qz1VF6qhpo8wnN+TQCX4NgC4pbuH8aALjZY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQVbIVKA9m0wdczrklcjF6sY2Cdwpyf1oEfDScd1atsWAvVa3H
-	zuV0TDU8qi2O3/fY8g3q8DIVq2pm1hQCW2ULtanzLw8cSxvCHuaaLFlkKoBnZhJG5OsEDZPzdPc
-	qpITPRtj6Hw==
-X-Google-Smtp-Source: AGHT+IH94Dq73gso4wswesMB24HRWw+5UPZSgOZVt0jGzxu94xZy2urcKvwiOPmGIeQpgnuHERE64duvSUhRqA==
-X-Received: from beeg.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:f74])
- (user=jackmanb job=sendgmr) by 2002:a05:600c:18a3:b0:431:4760:d09a with SMTP
- id 5b1f17b1804b1-4334f02a519mr25e9.5.1732041860403; Tue, 19 Nov 2024 10:44:20
- -0800 (PST)
-Date: Tue, 19 Nov 2024 18:43:57 +0000
+        d=1e100.net; s=20230601; t=1732041930; x=1732646730;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kjLNN0dLMBygdXzOcYy9iar3A4IPmxazRXBVg4HbYVE=;
+        b=YwYboJOoDSz3RJupz44IlrAVIkuhXonAGu3dAHZKRyEMfrG5j1ECeUATaMje51rK4A
+         DsJYxNzf4Yhut+cRrWr5oxOC5UTMXxvqIpwpL6YJzvjlBPLyuI8eQwTz6luLhBjFBEVb
+         YltphrJL9FQ7SWzmZCcRLhgYR6QLKsg+KBvvFefG9EDdX4J+QjnjDM4ANujp88x4aqAX
+         kM1hzTnWDR7Iw2MXt1dsH11iX9E9J+jeHOqHry0qT5k9nO6ckoXuvHVIl6EL3KoUN4WH
+         en4o+JaiObHe8VFoJjWWytSGzeops5qgkSCvDuGsKVUIzNLkMqFqIqszG6H32gJQxE+6
+         Y7yw==
+X-Forwarded-Encrypted: i=1; AJvYcCVvvILKiLwEpve+zeDv+klMx4vnA75Y/igsXWH0KmVyOTTnvO5r2KQ6MF376ZAWTKfuESeG4KGBYTfDLKU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzk1HgY95VT21fX4IzNUUqBK7oQeu+/nM8QOiiJ6VbgDGamdRD/
+	39Sqw7SkzOUDhnFXwwKvTfDjeEf2ug7Q11iToVZ6NF+BPZg//o6QRAvS51V5FtI=
+X-Gm-Gg: ASbGnctS5R+qEM4dkHvdzq0VH0rsRgk7hIhAP9AWqRPmDe3O/Lr5mV7OGlp4jOh+SPz
+	dbQ8zUawFIHN5u/52Ie4Wd+lzINg7QxUb4ehds9094vnJWj8iQqx9YO+9JKSv7s2gHE8ZIQ8spA
+	GSsc6TN0x9uhj2JrLuiKBY1NuseOAa1422bt4xbHCNbWUamn2LDAG+N/+OWTHeA2NEFyuNUtMAu
+	54s8EseHGCDn133/k9vkBoB9rG6d9HEQU/kq5BCmMr3lGPW+tIKo0sVhcfHj5H2ztQjVQ==
+X-Google-Smtp-Source: AGHT+IGOAIwAnDD8aAJQUYf4tbO6AXY39LZ9oVJ6TLerkWheSyXDTYeehoQjHC++cfBWbBWtF0hWGA==
+X-Received: by 2002:a05:600c:3c92:b0:430:52ec:1e2a with SMTP id 5b1f17b1804b1-4334f025a9emr55585e9.7.1732041930588;
+        Tue, 19 Nov 2024 10:45:30 -0800 (PST)
+Received: from [192.168.1.20] ([178.197.211.167])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432da2800absm204826515e9.25.2024.11.19.10.45.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 19 Nov 2024 10:45:30 -0800 (PST)
+Message-ID: <290bab51-26c7-4e78-8b21-ebba0cc196d2@linaro.org>
+Date: Tue, 19 Nov 2024 19:45:27 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-B4-Tracking: v=1; b=H4sIAGzcPGcC/x3MQQqAIBBA0avIrBtQc5FdJVqYjTYbC8UIwrsnL
- d/i/xcKZaYCs3gh082Fz9ShBgH+cCkS8t4NWmqjlLIYzuwJ/VVxqxGtcXJym9SjDdCbK1Pg5/8 ta2sfvbXID18AAAA=
-X-Change-Id: 20241119-force-cpu-bug-94a08ab0239f
-X-Mailer: b4 0.15-dev
-Message-ID: <20241119-force-cpu-bug-v1-1-2aa31c6c1ccf@google.com>
-Subject: [PATCH] x86/bugs: Add force_cpu_bug= cmdline param
-From: Brendan Jackman <jackmanb@google.com>
-To: Jonathan Corbet <corbet@lwn.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Brendan Jackman <jackmanb@google.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/6] firmware: qcom: scm: Fix missing read barrier in
+ qcom_scm_get_tzmem_pool()
+To: Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Mukesh Ojha
+ <quic_mojha@quicinc.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Stephan Gerhold <stephan.gerhold@linaro.org>,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+ Kuldeep Singh <quic_kuldsing@quicinc.com>,
+ Elliot Berman <quic_eberman@quicinc.com>,
+ Andrew Halaney <ahalaney@redhat.com>,
+ Avaneesh Kumar Dwivedi <quic_akdwived@quicinc.com>,
+ Andy Gross <andy.gross@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20241119-qcom-scm-missing-barriers-and-all-sort-of-srap-v1-0-7056127007a7@linaro.org>
+ <20241119-qcom-scm-missing-barriers-and-all-sort-of-srap-v1-2-7056127007a7@linaro.org>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20241119-qcom-scm-missing-barriers-and-all-sort-of-srap-v1-2-7056127007a7@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Sometimes it can be very useful to run CPU vulnerability mitigations on
-systems where they aren't known to mitigate any real-world
-vulnerabilities. This can be handy for mundane reasons like "I wanna
-debug this on the machine that quickly", but also for research reasons:
-while some mitigations are focussed on individual vulns and uarches,
-others are fairly general, and it's strategically useful to have an idea
-how they'd perform on systems where we don't currently need them.
+On 19/11/2024 19:33, Krzysztof Kozlowski wrote:
+> Commit 2e4955167ec5 ("firmware: qcom: scm: Fix __scm and waitq
+> completion variable initialization") introduced a write barrier in probe
+> function to store global '__scm' variable.  We all known barriers are
+> paired (see memory-barriers.txt: "Note that write barriers should
+> normally be paired with read or address-dependency barriers"), therefore
+> accessing it from concurrent contexts requires read barrier.  Previous
+> commit added such barrier in qcom_scm_is_available(), so let's use that
+> directly.
+> 
+> Lack of this read barrier can result in fetching stale '__scm' variable
+> value, NULL, and dereferencing it.
+> 
+> Fixes: ca61d6836e6f ("firmware: qcom: scm: fix a NULL-pointer dereference")
+> Fixes: 449d0d84bcd8 ("firmware: qcom: scm: smc: switch to using the SCM allocator")
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  drivers/firmware/qcom/qcom_scm.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
+> index 246d672e8f7f0e2a326a03a5af40cd434a665e67..5d91b8e22844608f35432f1ba9c08d477d4ff762 100644
+> --- a/drivers/firmware/qcom/qcom_scm.c
+> +++ b/drivers/firmware/qcom/qcom_scm.c
+> @@ -217,7 +217,10 @@ static DEFINE_SPINLOCK(scm_query_lock);
+>  
+>  struct qcom_tzmem_pool *qcom_scm_get_tzmem_pool(void)
+>  {
+> -	return __scm ? __scm->mempool : NULL;
+> +	if (!qcom_scm_is_available())
+> +		return NULL;
+> +
+> +	return __scm->mempool;
 
-As evidence for this being useful, a flag specifically for Retbleed was
-added in commit 5c9a92dec323 ("x86/bugs: Add retbleed=force").
+I mentioned in commit msg that previous commit adds barrier in
+qcom_scm_get_tzmem_pool(), so to be clear:
+This depends on previous commit, because that barrier in
+qcom_scm_is_available() solves the control dependency here, assuming the
+minimal guarantee #1 ("On any given CPU, dependent memory accesses will
+be issued in order, with respect to itself.")
 
-It's a bit unfortunate that we have to do this by bug instead of by
-mitigation. However, we don't have clear identifiers for the mitigations
-that we do, so I don't think it's practical to do better here than "you
-can pretend you're on a vulnerable CPU - now go and read the docs for
-the per-vuln cmdline params to figure out how to run the mitigation you
-want".
+If this is inlined by compiler it will be:
 
-Being an early_param() means we get to do this before identify_cpu() and
-cpu_select_mitigations(). But it's possible there's still other types of
-bugs that get setup earlier and might miss this override...
+scm = READ_ONCE(__scm);
+barrier()
+if (scm)
+	return scm->mempool;
+else
+	return NULL;
 
-I've only tested this by booting a QEMU guest and checking /proc/cpuinfo.
-
-Signed-off-by: Brendan Jackman <jackmanb@google.com>
----
- Documentation/admin-guide/kernel-parameters.txt |  6 ++++
- arch/x86/kernel/cpu/common.c                    | 40 +++++++++++++++++++++++++
- 2 files changed, 46 insertions(+)
-
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index d401577b5a6ace87d250d9b1cc200691c6a0ed4e..260267a6d555076735fda09d171c918e6412b6e1 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -1559,6 +1559,12 @@
- 	floppy=		[HW]
- 			See Documentation/admin-guide/blockdev/floppy.rst.
- 
-+	force_cpu_bug=	[X86,EARLY]
-+			Force the kernel to assume the CPU is affected by the
-+			given bug, regardless of its built-in information about
-+			individual models.  Comma-separated list of the names of
-+			vulnerabilities that would appear in /proc/cpuinfo.
-+
- 	forcepae	[X86-32]
- 			Forcefully enable Physical Address Extension (PAE).
- 			Many Pentium M systems disable PAE but may have a
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index f43bb974fc66d7b21ad52c64da22694ccc274187..b86b0200a5bf0de692f07d4ffef50ba7c360975d 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -1318,6 +1318,10 @@ static bool __init vulnerable_to_rfds(u64 x86_arch_cap_msr)
- 	return cpu_matches(cpu_vuln_blacklist, RFDS);
- }
- 
-+/*
-+ * This sets up what we _really_ think the CPU has. The user might override this
-+ * later via force_cpu_bug.
-+ */
- static void __init cpu_set_bug_bits(struct cpuinfo_x86 *c)
- {
- 	u64 x86_arch_cap_msr = x86_read_arch_cap_msr();
-@@ -1462,6 +1466,42 @@ static void __init cpu_set_bug_bits(struct cpuinfo_x86 *c)
- 	setup_force_cpu_bug(X86_BUG_L1TF);
- }
- 
-+static int __init force_cpu_bug_parse_cmdline(char *str)
-+{
-+	if (!str)
-+		return -EINVAL;
-+
-+	while (str) {
-+		char *next = strchr(str, ',');
-+		int i;
-+
-+		if (next) {
-+			*next = 0;
-+			next++;
-+		}
-+
-+		/*
-+		 * Linear search because there aren't many bugs (well, at least
-+		 * not for the definition of "many" that is relevant here...).
-+		 *
-+		 * Some configs have no gaps so we could stop at the first NULL,
-+		 * but it isn't worth the ifdeffery.
-+		 */
-+		for (i = 0; i < ARRAY_SIZE(x86_bug_flags); i++) {
-+			if (x86_bug_flags[i] && !strcmp(str, x86_bug_flags[i])) {
-+				setup_force_cpu_bug(X86_BUG(i));
-+				goto found;
-+			}
-+		}
-+		pr_err("Ignoring unknown force_cpu_bug= option (%s).", str);
-+found:
-+		str = next;
-+	}
-+
-+	return 0;
-+}
-+early_param("force_cpu_bug", force_cpu_bug_parse_cmdline);
-+
- /*
-  * The NOPL instruction is supposed to exist on all CPUs of family >= 6;
-  * unfortunately, that's not true in practice because of early VIA
-
----
-base-commit: adc218676eef25575469234709c2d87185ca223a
-change-id: 20241119-force-cpu-bug-94a08ab0239f
+Which should be even safer than standard guarantee above (according to
+my understanding).
 
 Best regards,
--- 
-Brendan Jackman <jackmanb@google.com>
-
+Krzysztof
 
