@@ -1,109 +1,150 @@
-Return-Path: <linux-kernel+bounces-414033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D3129D2221
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 10:06:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E6669D2225
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 10:06:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2BA54B220C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 09:06:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32A731F23FE6
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 09:06:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB7D519DF77;
-	Tue, 19 Nov 2024 09:05:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C70819DF9E;
+	Tue, 19 Nov 2024 09:06:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="KGx2XdLK"
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PqFZP3J9"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75B761474CF
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 09:05:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01C6F12CDAE;
+	Tue, 19 Nov 2024 09:06:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732007153; cv=none; b=gZPs00QAIjF92tx9WjdOAF0xAl0Coa8cYTedbUKYVvpfxs8fRiRXMAsh+rOawJkTZYdd9oU0PHXoj+v5nhj2Az2Um14WeZHXrjqAkH+bQcVhEsYq4ZBrgxZ1Zd+2vPa94JfTgxY3LlZt40LFvcPwySS2xhxYzzuvAzw/LwQJ1J0=
+	t=1732007201; cv=none; b=VJV1872FJiLNe8ay4dJj4LlRLTiMuvDRCTPQ4Ap+uxJZGTiAbaPlTtPs4g+GDJ10Q5kB+9aH18CToc1KjS+8bRP79YGdCnItHaEsPhdYzirJxmUNiGeYu5vDwMgAF+haFbDjIfrGZ3X+9U1r3NOKuaewu/gaX/fxXz+5iD32pBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732007153; c=relaxed/simple;
-	bh=N2alj4BmRrIOvTic6YYotKnQgR6KFlCIUzkiE42YH+A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aCl9j0T7ge86IaexwtxF29edbTwUIcI31AGV7/gJ0hvaM8D/QaviV7hI9Mn80wc//7oDt9TJ4JXlogtK5/XocPJfVE+kIYlWUyeQ6+gX2sw9D52hKoAYxoAzQs5EYcL86r0iFcATKyxjeE8N+O+d1p1pOyQRo6WFZtYBBQ36WGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=KGx2XdLK; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4609c9b39d0so25252431cf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 01:05:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1732007149; x=1732611949; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=+TcJ6YrE5I28mqgFyB+jLz4liPKaJparkuuvli/dXqk=;
-        b=KGx2XdLKviDXUVQA5WQot2vt4Jy6M09CdydVulgETgAzdtCbTSLQFpYLOYNHABH6uS
-         j37b5v5OULKzRGMOX5iGdAXoqRkStZIziy0Nd9w4lqgM7Z1KfiQs55TGaHK01Sg5MFT0
-         39PVjtr14US5XUFwwzRetxXi/g6BGQS/i5Cbg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732007149; x=1732611949;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+TcJ6YrE5I28mqgFyB+jLz4liPKaJparkuuvli/dXqk=;
-        b=T2sy9B1lh7jzD2Xqu7G1N0jt2LX4vAHZOoBKHHQAeB3anj6HOf2+5iXzt/JtlfHP8H
-         gzEFoguckebivM7RpRD2vp3R/aHzG3hYJqPgi3S5a4aSukJ2wbipkUJXCAl1z093Qxp+
-         Nl/xBp+0EcIRzZiSXXhjDWVEDkBilavMqbvQD84MY9mIZSgeR/7okmBv97zBxkOgXuPk
-         yqGq/GBjA8p6l8ooHKTqmevtGecZuaPXFPZviAmu38QIUU0a6vYzhVNGSHalEky4+j0D
-         /vuSZHogODALuk2yt3GkGsViiRl1KTFOlqmEIA/99iEisk+yGyzHIoRloziscnwH5+xF
-         zocQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUvCvf1Ns3LEZ7Mhal4Xa79rYX9kHiV7f5fh7QdR57Tm87hkdTgPOqYABqZoprMK+WkrF7Bld3EZMfHA9k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIZ044tcy71JVoU8VsUaZgBQoaQHK62HmOeCV6V/dHEYkwxjS3
-	d96k3LDQ2fnRjcXhDM1S0l1E0L0OZjnGxNo9SlXoch1aGuNJiuqGRNg2KW6rbcShqAgTx1NqtXA
-	hCh2NTGujvopIpy3rBjcKFIFIhi0zR1bHxl3hCg==
-X-Google-Smtp-Source: AGHT+IEMAq5emnll1nkE8jbEYFWUcdvqCUSQWuUzb10IHw9jaCmEC5N3mlyGo0TdfGO92TzodaMEy2DH3K9iD6UPON8=
-X-Received: by 2002:ac8:5206:0:b0:463:4b88:caa7 with SMTP id
- d75a77b69052e-463773c8f21mr112410241cf.54.1732007149263; Tue, 19 Nov 2024
- 01:05:49 -0800 (PST)
+	s=arc-20240116; t=1732007201; c=relaxed/simple;
+	bh=HtjEr6MyQAiTzXqILd1meE2GmGtMVF3rg86A6w3dlq4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=celBKSwspmyhnDu669PUmMjQlm1pYq9qIFPVgQde+Fp96ctjQeBVwuX8D/iYZcUJWWaGSPIqGToOUlx5PwxUTR26YxNB9SsMzYJqu5GvFDfuNK/5JK54OHT0nmmQjTjxuZ62OsK+3zSaXem6oIwkfZOAyEP0Beiac1c0Nrw+2a4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PqFZP3J9; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732007200; x=1763543200;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=HtjEr6MyQAiTzXqILd1meE2GmGtMVF3rg86A6w3dlq4=;
+  b=PqFZP3J9s/1aoYNP4DglFf9JQGx6QGRSCKGUrXbQL7e2SF1todx4MyjB
+   15snAYVIKjrylBAeFPu3lSpzvSEFMOLAlP59VUd4kpD/5G1bHbAEqrqQr
+   ZIXdaMohJTLU3FsII2kidyEKczbTRvG94tnUQcbFtTXnxsAS5a7Krhcq9
+   hYq2buEM03o4PrRbsx81PnJ/fBtF+qvvsqP0aUMVx5WbKpMhl15xyIXNe
+   OtNI8TfRogQClKVze5HeHN9OMC/yfefjFXN3ljaGWACi/6Nxvz+Fwj795
+   h012i0BJuYVtMzm0QME8ySgcRCsTnyIBtavYjUzV6q2VgjgoGPZSH6kqr
+   g==;
+X-CSE-ConnectionGUID: ObkncoqLQG2EihhT+blugg==
+X-CSE-MsgGUID: qMs+8ouDT0eNEuenTXYg5Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11260"; a="19605052"
+X-IronPort-AV: E=Sophos;i="6.12,165,1728975600"; 
+   d="scan'208";a="19605052"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Nov 2024 01:06:39 -0800
+X-CSE-ConnectionGUID: zsvHZ+PwTi68k0a9K6UDpA==
+X-CSE-MsgGUID: 4tKkEW0eSyiBbNpB7+8d9g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,165,1728975600"; 
+   d="scan'208";a="89905283"
+Received: from choongyo-mobl.gar.corp.intel.com (HELO [10.247.75.104]) ([10.247.75.104])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Nov 2024 01:06:36 -0800
+Message-ID: <c1bb831c-fd88-4b03-bda6-d8f4ec4a1681@linux.intel.com>
+Date: Tue, 19 Nov 2024 17:06:33 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241118141703.28510-1-kovalev@altlinux.org> <CAOQ4uxjxXHX4j=4PbUFrgDoDYEZ1jkjD1EAFNxf1at44t--gHg@mail.gmail.com>
-In-Reply-To: <CAOQ4uxjxXHX4j=4PbUFrgDoDYEZ1jkjD1EAFNxf1at44t--gHg@mail.gmail.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Tue, 19 Nov 2024 10:05:37 +0100
-Message-ID: <CAJfpegvx-oS9XGuwpJx=Xe28_jzWx5eRo1y900_ZzWY+=gGzUg@mail.gmail.com>
-Subject: Re: [PATCH] ovl: Add check for missing lookup operation on inode
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Vasiliy Kovalev <kovalev@altlinux.org>, linux-unionfs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net v2 1/2] net: phy: replace phydev->eee_enabled with
+ eee_cfg.eee_enabled
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+ "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Jose Abreu <joabreu@synopsys.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Oleksij Rempel <o.rempel@pengutronix.de>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org
+References: <20241115111151.183108-1-yong.liang.choong@linux.intel.com>
+ <20241115111151.183108-2-yong.liang.choong@linux.intel.com>
+ <ZzdOkE0lqpl6wx2d@shell.armlinux.org.uk>
+Content-Language: en-US
+From: Choong Yong Liang <yong.liang.choong@linux.intel.com>
+In-Reply-To: <ZzdOkE0lqpl6wx2d@shell.armlinux.org.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, 18 Nov 2024 at 19:54, Amir Goldstein <amir73il@gmail.com> wrote:
 
-> Can you analyse what went wrong with the reproducer?
-> How did we get to a state where lowerstack of parent
-> has a dentry which is !d_can_lookup?
 
-Theoretically we could still get a an S_ISDIR inode, because
-ovl_get_inode() doesn't look at the is_dir value that lookup found.
-I.e. lookup thinks it found a non-dir, but iget will create a dir
-because of the backing inode's type.
+On 15/11/2024 9:37 pm, Russell King (Oracle) wrote:
+> On Fri, Nov 15, 2024 at 07:11:50PM +0800, Choong Yong Liang wrote:
+>> Not all PHYs have EEE enabled by default. For example, Marvell PHYs are
+>> designed to have EEE hardware disabled during the initial state.
+>>
+>> In the initial stage, phy_probe() sets phydev->eee_enabled to be disabled.
+>> Then, the MAC calls phy_support_eee() to set eee_cfg.eee_enabled to be
+>> enabled. However, when phy_start_aneg() is called,
+>> genphy_c45_an_config_eee_aneg() still refers to phydev->eee_enabled.
+>> This causes the 'ethtool --show-eee' command to show that EEE is enabled,
+>> but in actuality, the driver side is disabled.
+>>
+>> This patch will remove phydev->eee_enabled and replace it with
+>> eee_cfg.eee_enabled. When performing genphy_c45_an_config_eee_aneg(),
+>> it will follow the master configuration to have software and hardware
+>> in sync.
+> 
+> Hmm. I'm not happy with how you're handling my patch. I would've liked
+> some feedback on it (thanks for spotting that the set_eee case needed
+> to pass the state to genphy_c45_an_config_eee_aneg()).
+> 
+> However, what's worse is, that the bulk of this patch is my work, yet
+> you've effectively claimed complete authorship of it in the way you
+> are submitting this patch. Moreover, you are violating the kernel
+> submission rules, as the Signed-off-by does not include one for me
+> (which I need to explicitly give.) I was waiting for the results of
+> your testing before finalising the patch.
+> 
+> The patch needs to be authored by me, the first sign-off needs to be
+> me, then optionally Co-developed-by for you, and then your sign-off.
+> 
+> See Documentation/process/submitting-patches.rst
+> 
+> Thanks.
+> 
+> pw-bot: cr
+> 
 
-AFAICS this can only happen if i_op->lookup is not set on S_ISDIR for
-the backing inode, which shouldn't happen on normal filesystems.
-Reproducer seems to use bfs, which *should* be normal, and bfs_iget
-certainly doesn't do anything weird in that case, so I still don't
-understand what is happening.
+Sorry for the late reply; I just got back from my sick leave. I wasn't 
+aware that you had already submitted a patch. I thought I should include it 
+in my patch series. However, I think I messed up the "Signed-off" part. 
+Sorry about that.
 
-In any case something like the following should filter out such weirdness:
+The testing part actually took quite some time to complete, and I was 
+already sick last Friday. I was only able to complete the patch series and 
+resubmit the patch, and I thought we could discuss the test results from 
+the patch series. The issue was initially found with EEE on GPY PHY working 
+together with ptp4l, and it did not meet the expected results. There are 
+many things that need to be tested, as it is not only Marvell PHY that has 
+the issue.
 
- bool ovl_dentry_weird(struct dentry *dentry)
- {
-+       if (!d_can_lookup(dentry) && !d_is_file(dentry) &&
-!d_is_symlink(dentry))
-+               return true;
-+
-        return dentry->d_flags & (DCACHE_NEED_AUTOMOUNT |
+With your patch, most of the issues were resolved based on the testing. 
+However, the set_eee was using the old value of eee_enabled and was not 
+able to turn EEE on or off. I think Heiner's patch already solved that part.
 
-Thanks,
-Miklos
+With all the solutions provided, I think the only patch left that I need to 
+submit is the one calling 'phy_support_eee()' from stmmac.
 
