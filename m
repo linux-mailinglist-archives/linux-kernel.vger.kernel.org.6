@@ -1,129 +1,138 @@
-Return-Path: <linux-kernel+bounces-414057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C3EF9D227E
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 10:28:20 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDA379D2280
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 10:28:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 345461F229AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 09:28:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7BA0BB214C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 09:28:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 826001BD4E1;
-	Tue, 19 Nov 2024 09:28:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 070C71BD9D2;
+	Tue, 19 Nov 2024 09:28:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Czr6kP3k"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FkfVkhdB"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C58AD146A73;
-	Tue, 19 Nov 2024 09:28:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AB5819ABAB
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 09:28:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732008487; cv=none; b=uF7MBiLmr2hQM5sx8t5seljSc0REDtdDOfAhgaJOrusyvTX94XMilGEX5E/F66IQ5RKjSi8EJpH9kJYo+cxtulvSi0IvahQoIl1+qLTiGzg01XsVTStN02ACfEyGpESMWrGvgDS5dGc+cQIS5r8gd/QqZQPbeFtHjD24zEUhXks=
+	t=1732008515; cv=none; b=d8RymI0g00hCqzEzY5zU5PVDVNY4OFh6hzWYZykU5ss2yI+dc45cLd+j94NIowdOfI2YIJX9iU42TlIFgEo+fbvExLZDVFnrfI+aBnri63vrK9Z6cTYzTWkMckzWOXKahO4RnHHB05sdGLyLeaLg/61jYNLmdlxbjsJdYjQt6PA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732008487; c=relaxed/simple;
-	bh=l6hYH+I/d3+UJSlXa8HB0USEK3x/u7b1hmfa+gelN5c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uH5+8tiPjq+aT5FESD41EL3Hr1MNVB5RKbkOxYvYwL7/tq8e+wduc71DCq18RedxwwufC5HAFz972JUK05gL1JBIuCwxaiD2NWXYjosRm3HDEeZDGfOL56pbmZzsO6QeI8RHJQ27hTgTQWFFEVchBePL25uTesRCBLwo/UoEanM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Czr6kP3k; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 7AC911BF210;
-	Tue, 19 Nov 2024 09:28:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1732008483;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OJFJAzaHJtAyyv/3A38xMOz0wya1baJ7i0fcR4cZHE4=;
-	b=Czr6kP3kyFhvkCye2LC+mi2d7NSViteSWrHph0CH1VvIWXvZ/yKKRSUK2xKWW33oCbAbsd
-	cdPa9iqHQ/+F8FGddQkwZoAweMTvqNRZlVJGXxfMiT2l1Wd3ApVJ5vjjUqFSmgq/RqyI+l
-	Ask/QVWKzxDLCP4uQfEyOe9NvX2G4KA2OtdUx9lCBOyms6dAHUr8ji3XcVCbmlgmRFbCVN
-	NuYRBrf7oB9p9T8WHGdZkClVRSWhRM0XV+whP05wnAeI+E5rUMt9f621lJC8WG5vqPD1YM
-	SyexSHszd1nK5Ti58uplcnlnpJn+5URDVkOWwo1gI1xYcNkV1TwtEpZ/JG0E6Q==
-Message-ID: <ffc76427-8268-4d48-ae5a-430b1129f6b0@bootlin.com>
-Date: Tue, 19 Nov 2024 10:28:01 +0100
+	s=arc-20240116; t=1732008515; c=relaxed/simple;
+	bh=W/MteMkxnRJM1ZM2dbHiUsRpi88LONOpZYcXXtk6S74=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eS0vUF1jAblL8IZzJe3ZTkyMd1EYoe5dd9cluFiyMRQ1rdJ3PXx0h/rsY3adRKlG5nd9anQtM1Bd19C1XAzEaxEg8VQx4Kit5cLmm8PfrtWbWUH3MhprEQRMg0eSWNIXNfI7ckBLmSCWwSad5hTB0OzXRJiB1cF7LCNwCyZh1po=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=FkfVkhdB; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=xmhQGNQwoFjshvMHLQfCQtF5vQCpHpOZX2p5j81zU9g=; b=FkfVkhdBMHOP6b5bmGz4KPRwEO
+	SMeO2mc/2Lhl/hymGpB5Zaf/WadgIc3MS3NWRHK62ap8XK+cGpFtOkxX/0CsEPQnLxKXqhT0DN4d2
+	CbJajLTG/CoB1GPa57DqcgjmSO/jz1JPsL09/SzGSl4QLgm3rWgideyEgqaQY6jPqZ+4meBrh9YzY
+	6KdT4yD8akuTg7V7l/7m8FpIhc7ShdEheQ9REDRLbSbXUv5zaHQI94Sfr12BdwetuCgq4tMtihqvb
+	V/JetUv3vHiE8+icRnSRYSlnHqQZrZ2MdOzfBmg9OoitFFw1g1wodtW6MERT4Ut/qicy1TeDyoUEr
+	koWUv8+Q==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tDKX7-00000003v02-2P7E;
+	Tue, 19 Nov 2024 09:28:31 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id B1C1D3006AB; Tue, 19 Nov 2024 10:28:29 +0100 (CET)
+Date: Tue, 19 Nov 2024 10:28:29 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Saravana Kannan <saravanak@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, kernel-team@android.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v1] cpu/suspend: Do a partial hotplug during suspend
+Message-ID: <20241119092829.GF11903@noisy.programming.kicks-ass.net>
+References: <20241119020519.832013-1-saravanak@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next v2 12/13] selftests/bpf: migrate bpf flow
- dissectors tests to test_progs
-To: Stanislav Fomichev <stfomichev@gmail.com>
-Cc: Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman
- <eddyz87@gmail.com>, Mykola Lysenko <mykolal@fb.com>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>,
- "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
- Jesper Dangaard Brouer <hawk@kernel.org>, ebpf@linuxfoundation.org,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Bastien Curutchet <bastien.curutchet@bootlin.com>, bpf@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org
-References: <20241114-flow_dissector-v2-0-ee4a3be3de65@bootlin.com>
- <20241114-flow_dissector-v2-12-ee4a3be3de65@bootlin.com>
- <ZzdyswzsKSYwkY__@mini-arch>
-From: =?UTF-8?Q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>
-Content-Language: en-US
-In-Reply-To: <ZzdyswzsKSYwkY__@mini-arch>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: alexis.lothore@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241119020519.832013-1-saravanak@google.com>
 
-On 11/15/24 17:11, Stanislav Fomichev wrote:
-> On 11/14, Alexis Lothoré (eBPF Foundation) wrote:
->> +		if (!ASSERT_GE(err, 0, "do_rx"))
->> +			break;
+On Mon, Nov 18, 2024 at 06:05:15PM -0800, Saravana Kannan wrote:
+> The hotplug state machine goes through 100+ states when transitioning
+> from online to offline. And on the way back, it goes through these
+> states in reverse.
 > 
-> You seem to be already doing similar ASSERT_GE inside the do_rx, maybe
-> drop one?
-
-True, I'll drop the inner ASSERTS to align with do_tx.
-
-[...]
-
->> +static void port_range_shutdown(void)
->> +{
->> +	remove_filter();
->> +}
+> When a CPU goes offline, some of the states that occur after a CPU is
+> powered off are about freeing up various per-CPU resources like
+> kmalloc caches, pages, network buffers, etc. All of these states make
+> sense when a CPU is permanently hotplugged off.
 > 
-> nit: Maybe use remove_filter directly as .test_teardown? These extra
-> wrappers are not adding anything (imho).
-
-Yeah, I initially added port_range_shutdown to make init and shutdown functions
-"symmetrical", but in the end that's purely cosmetic. I'll use directly
-remove_filter.
-
-[...]
-
->> +		test = (struct test_configuration *)&tests_input[i];
+> However, when offlining a CPU during suspend, we just want to power
+> down the CPUs to that the system can enter suspend. In this scenario,
+> we could simply stop the hotplug state machine right after the CPU has
+> been power off. During resume, we can simply resume the CPU to an
+> online state from the state where we paused the offline.
 > 
-> nit: What's the purpose of the cast? Is it to de-constify? Can we
-> change run_test arguments to accept const struct test_configuration
-> ptr instead?
+> This save both time both during suspend and resume and it is
+> proportional to the number of CPUs in the system. So, if systems with
+> a large number of CPUs, we can expect this to have a huge amount of
+> time saved.
+> 
+> On a Pixel 6, averaging across 100+ suspend/resumes cycles, the total
+> time to power off 7 of the 8 CPUs goes from 51 ms down to 24 ms.
+> Similarly, the average time to power off each individual CPU (they are
+> different) also goes down by 50%.
+> 
+> The average time spent powering up CPUs goes down from 34 ms to 32 ms.
+> Keep in mind that the time saved during resume is not easily
+> quantified by looking at CPU onlining times. This is because the
+> actual time savings comes later when per-CPU resources do not need to
+> be reallocated and would speed up actions like allocations, etc that
+> can pick up memory from per-CPU kmalloc caches, etc.
+> 
+> Signed-off-by: Saravana Kannan <saravanak@google.com>
+> ---
+> 
+> Hi Thomas/Peter,
+> 
+> The hotplug state machine rewrite is great! Enables all kinds of
+> optimizations for suspend/resume.
+> 
+> About this patch, I'm not sure if the exact state the hotplug state is
+> paused at (CPUHP_WORKQUEUE_PREP) will work for all arch/boards, but
+> this is the general idea.
+> 
+> If it works as is, great! At a glance, it looks like it should work
+> though. None of the other stages between this and CPUHP_OFFLINE seem
+> to be touching hardware.
+> 
+> If CPUHP_WORKQUEUE_PREP doesn't work, then we can make it a config
+> option to select the state or an arch call or something along those
+> lines.
+> 
+> What are your thoughts on this? How would you like me to proceed?
 
-Yes, that's an omission on my side. I initially thought about making the test
-runner function rewrite some fields in the test configuration, but I finally did
-not need to do this. I'll drop the cast and propagate the const
+Well, if we push this one step further, why do we need hotplug at all?
+Can't we just keep them up and idle?
 
-Thanks again for the review ! I'll prepare the next revision with all your
-comments addressed.
+That is, if we look at suspend_enter(), you'll note that
+PM_SUSPEND_TO_IDLE happens before the whole disable_secondary_cpus()
+thing.
 
-Alexis
+So million-dollar question, can this pixel thing do suspend to idle?
 
 
--- 
-Alexis Lothoré, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Traditionally hybernate is the whole save-to-disk and power machine off
+thing, and then there was suspend (to RAM) which was some dodgy as heck
+BIOS thing (on x86) which required all non-boot CPUs to be 'dead'.
+
+But does your (aaargh64) platform actually require us to take out the
+non-boot CPUs, or is this just histerical raisins?
 
