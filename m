@@ -1,137 +1,101 @@
-Return-Path: <linux-kernel+bounces-413960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5360E9D2102
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 08:52:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DCF6D9D2107
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 08:55:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D8A31F20FD7
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 07:52:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B7B41F21B05
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 07:55:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 715FE157469;
-	Tue, 19 Nov 2024 07:52:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0468415530B;
+	Tue, 19 Nov 2024 07:55:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rqZ6dX5g"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=atemu.net header.i=@atemu.net header.b="uNb/7yRL"
+Received: from mail-4317.proton.ch (mail-4317.proton.ch [185.70.43.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CADC66E2BE;
-	Tue, 19 Nov 2024 07:52:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 271606E2BE
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 07:55:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732002757; cv=none; b=fGkECWCvx1uQlhH5IvYqDqPe9w0nj4pkvuBskLbkHosgIDGfelwqhOqXiKiwWoY3SNhk+ADkTTngJN+iYNCQ1VJS0XEKvzuaRcZ6J16tOIvaqskilOLoaztrUuuq/VIym8YKBretKrNzR11vZ4/dLfWS9YfHGDhWdARwVuHaJUw=
+	t=1732002909; cv=none; b=R0wQYl1g9DrPJicyQUe6E/FQWUxYRBxmv6HMxY4GZGtlkfBmUvOcVqpimTQ2vb5uu2LiUScVT7Wle5Skkv6ElHhsTop6JA/STazhRBl2Y+k0Bh/5RivNlcvrgSE36G9ZIAUGxHIeD8qSGO9AeslDRF7L/JnO2E9YPw8SlFJAu70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732002757; c=relaxed/simple;
-	bh=vlZ6V0V0suamT+C0dm+LdFJZxlVSNDnx0CqzO+SIykI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ozj2XgiBCGxLQORBfimjr9cqyTsx/DYBHD81g0xQjbHAhjQN526jUE20y36e9XGQVyQpZyB2/lRrlKFJ84VBWpuSVgho2IdK4bE/gpmVKDNo4Z+v4eblUGsLqEh2yyAX+yRTDfIaPW4RKPt+v5onzmTKa3/s0fD56Krl46UtOM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rqZ6dX5g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54108C4CECF;
-	Tue, 19 Nov 2024 07:52:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732002757;
-	bh=vlZ6V0V0suamT+C0dm+LdFJZxlVSNDnx0CqzO+SIykI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rqZ6dX5gFPX/Q9wBUHBCxPwNDF8hBrC7yohbLFN694Y8yOp0J16HR4DvqRdPsJmTO
-	 Tt9hQaBPUaC60HRBogF3C2ZF+mZLocCIKI01joVKoGJcAH0QYQUDI8EV8kKoVzIrEB
-	 DDuSR9i3ZVPw2ec1cpBGu746sT83Q95DHm8vq1bBY7x3yDeja74ifyK8SwZ1+WXwUk
-	 cAuqABOaawUEn6y65UT9GmAEpoYqW7iZ7O3LLRcQB1cBhAxONb7hLOV3Q/tvU2VIZ/
-	 viFPEbtxbVIH3nq/0Gl5BiPd5BRomosE5KlDWWHlrvd/avZEucK327ZS9NoK+Avrh9
-	 djOEH0D1gLM0g==
-Date: Tue, 19 Nov 2024 08:52:28 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
-	Quan Zhou <zhouquan@iscas.ac.cn>,
-	Andrew Jones <ajones@ventanamicro.com>,
-	Anup Patel <anup@brainfault.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Colton Lewis <coltonlewis@google.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org, linux-renesas-soc@vger.kernel.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Chris Paterson <Chris.Paterson2@renesas.com>,
-	Andrew Jones <ajones@ventanamicro.com>
-Subject: Re: [PATCH v2] riscv: perf: Drop defining
- `perf_instruction_pointer()` and `perf_misc_flags()`
-Message-ID: <ZzxDvLKGz1ouWzgX@gmail.com>
-References: <20241116160506.5324-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	s=arc-20240116; t=1732002909; c=relaxed/simple;
+	bh=kWVeBiVXwayvPrhjxPRTL9ZXv/hyXh5MX10g57FU4m8=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=C0uylh88NMkRgecXx8BYOplJwTL+qhi1ZTNIiL9pPAdeU05IGag4gIuuhK9T0JIgxQJO6lLU3UU1/n0tmyUKMPI1bfzLbQgXyWplS4r79FFfOxwTPxTxb1k4ix5JUc/UxQe3cPay2S3cg0JzsWuyUWHCUYMaC4jQNn5gee+uyk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=atemu.net; spf=pass smtp.mailfrom=atemu.net; dkim=pass (2048-bit key) header.d=atemu.net header.i=@atemu.net header.b=uNb/7yRL; arc=none smtp.client-ip=185.70.43.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=atemu.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=atemu.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=atemu.net;
+	s=protonmail; t=1732002902; x=1732262102;
+	bh=kWVeBiVXwayvPrhjxPRTL9ZXv/hyXh5MX10g57FU4m8=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=uNb/7yRLBrRQGeAx0QXEYUEsbxFml0NrVmTNdEI66tLNRydIm/b58U3D6HNV9FNeC
+	 CJG2SoVmR8sTP7z0iTtZiQn8zr/pXIgzgCgVDZnazT4mrUIIqaQ6YhUK2sVHWtCr45
+	 WsM7mx0L8EtimhFc5dwoWSS1hOMMUgBR3RHbGPG/OsnNCSEDw9wKOQpm5kyJYKfvYo
+	 rAtz4Fn/C6RNblpE6nPNJg9lYD5Mp63lGvbVeDSrkZ+JGZlYANsS8I1x0MSnng+AdW
+	 NaZxI0p8+gyikZWtHbk/NqD0196W3OmbQxl1KvB0cv+Drt9i4o3/0rVgWZyFp8FG+u
+	 6OVNRwzdReSoA==
+Date: Tue, 19 Nov 2024 07:54:58 +0000
+To: Luca Stefani <luca.stefani.ge1@gmail.com>
+From: git@atemu.net
+Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH v6 2/2] btrfs: Don't block system suspend during fstrim
+Message-ID: <SICOALIt6xFGz_7VCBwGpUxENKZz_3Em604Vvgvh8Pi79wpvimQFBQNkDxa1kE5lwfkOU0ZSYRaiIugTDLAfM1j3HMUgM25s1rgpmmRQ9TI=@atemu.net>
+In-Reply-To: <20240917203346.9670-3-luca.stefani.ge1@gmail.com>
+References: <20240917203346.9670-1-luca.stefani.ge1@gmail.com> <20240917203346.9670-3-luca.stefani.ge1@gmail.com>
+Feedback-ID: 115536826:user:proton
+X-Pm-Message-ID: 83f096bfceef981217715656edaa16007a8c928d
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241116160506.5324-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: multipart/signed; protocol="application/pgp-signature"; micalg=pgp-sha512; boundary="------e53d6de09d4dc89fe932b4f735c155aa0d5c2320e0d5c0382c23e6bfb0c4902d"; charset=utf-8
 
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------e53d6de09d4dc89fe932b4f735c155aa0d5c2320e0d5c0382c23e6bfb0c4902d
+Content-Type: multipart/mixed;boundary=---------------------7367a1cbdde9f3d1ab7931db9731db0d
 
-* Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
+-----------------------7367a1cbdde9f3d1ab7931db9731db0d
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;charset=utf-8
 
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> 
-> With commit 2c47e7a74f44 ("perf/core: Correct perf sampling with guest
-> VMs"), the perf core now handles the functionality previously requiring
-> arch-specific definitions of `perf_instruction_pointer()` and
-> `perf_misc_flags()`. As these definitions are no longer necessary for
-> RISC-V, this patch removes their implementation and declarations.
-> 
-> This change also fixes the following build issue on RISC-V:
-> 
->     ./include/linux/perf_event.h:1679:84: error: macro "perf_misc_flags" passed 2 arguments, but takes just 1
->     ./include/linux/perf_event.h:1679:22: error: 'perf_misc_flags' redeclared as different kind of symbol
->     ./include/linux/perf_event.h:1680:22: error: conflicting types for 'perf_instruction_pointer'; have 'long unsigned int(struct perf_event *, struct pt_regs *)'
-> 
-> The above errors arise from conflicts between the core definitions in
-> `linux/perf_event.h` and the RISC-V-specific definitions in
-> `arch/riscv/include/asm/perf_event.h`. Removing the RISC-V-specific
-> definitions resolves these issues and aligns the architecture with the
-> updated perf core.
-> 
-> Fixes: 2c47e7a74f44 ("perf/core: Correct perf sampling with guest VMs")
+Hi,
 
-Yeah, so the Fixes tag is wrong - this is not a build bug
-with that commit, and your patch does not even apply to
-the perf events tree.
+forgive my ignorance of the kernel patch workflow but it appears this seco=
+nd patch was only ported to 6.11? Only the first patch here was ported to =
+LTS kernels (i.e. f00545e8386e228aac739588b40a6f200e0f0ffc).
 
-This is a semantic merge conflict that arises in linux-next - the
-riscv version of perf_instruction_pointer() function doesn't even
-exist in the perf tree...
-
-AFAICS the problem is that the riscv tree applied this commit:
-
-  5bb5ccb3e8d8 ("riscv: perf: add guest vs host distinction")
-
-While the perf tree solved this in a more generic fashion:
-
-  2c47e7a74f44 perf/core: Correct perf sampling with guest VMs
-  baff01f3d75f perf/x86: Refactor misc flag assignments
-  3e807cf07d96 perf/powerpc: Use perf_arch_instruction_pointer()
-  04782e63917d perf/core: Hoist perf_instruction_pointer() and perf_misc_flags()
-  e33ed362cf9e perf/arm: Drop unused functions
-
-So I believe, assuming the perf version works fine on riscv
-(I haven't tested it), that the solution is to revert
-5bb5ccb3e8d8 either in the riscv tree, or upon merging it.
+I just hit the bug this fixes on 6.6.59 (I need to update, I know) but als=
+o checked Greg's v6.6.62 tree and it's not in there either.
 
 Thanks,
+Atemu
+-----------------------7367a1cbdde9f3d1ab7931db9731db0d--
 
-	Ingo
+--------e53d6de09d4dc89fe932b4f735c155aa0d5c2320e0d5c0382c23e6bfb0c4902d
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: ProtonMail
+
+wnQEARYKACcFgmc8RDkJkC0PmHbu18WeFiEEtYzCY6YbbjouhlYsLQ+Ydu7X
+xZ4AAFhzAPdoPsNNsBa+T/T26HxkvnFWSU1LjCeVFda3YVMC08rrAQCknfqG
+imeccyu4DQF4RhoTwNYuz8310ijuwmRRvEgiAA==
+=xCai
+-----END PGP SIGNATURE-----
+
+
+--------e53d6de09d4dc89fe932b4f735c155aa0d5c2320e0d5c0382c23e6bfb0c4902d--
+
 
