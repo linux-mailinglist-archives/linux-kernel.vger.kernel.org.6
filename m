@@ -1,115 +1,148 @@
-Return-Path: <linux-kernel+bounces-413882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C97A9D2019
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 07:10:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E19359D201E
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 07:12:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2227B28244C
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 06:10:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FF531F21AA9
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 06:12:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95DCE1547EF;
-	Tue, 19 Nov 2024 06:10:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC3F5153BD7;
+	Tue, 19 Nov 2024 06:12:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MuC8Sprn"
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Huz0hV8w"
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFF41150981;
-	Tue, 19 Nov 2024 06:10:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D465D150981;
+	Tue, 19 Nov 2024 06:12:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731996614; cv=none; b=WPGz0oV+vuZ19qa+/61c8qbXnt4KIeNtqpCtUZ1s+GpgjQ9+L+wXmHr4057y179S0soDlrVsRF2h9/qvuKNixo+B+nDUePddVb2iy9FPMtF7MHqGVQVaL0o9TgX7aECn3Gjn4l10V3E9HSvEzmHeHEcfcdYvnXzaSppzB6WqPec=
+	t=1731996738; cv=none; b=Q6thAsBv5IVz6AEmV6zkZfVh5nhCkWp+o6g+xX052Kdh1oLgfOD2+F2BD1wJ+eDhV2zADvtqWcuOj7jP/Mys7HC118cacpFIxO/SYS7FtICQURv9U7Mi9YszZq9JUCoDxRByN2c643OHCY1iVRGLCsNhoGOBvGGcbtoiJEsgCB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731996614; c=relaxed/simple;
-	bh=Q8B73amCq3EBfQhnX1ggj0T2U/dV2aXVnN31EkRgx3E=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bk3GIcE08J0fOowebGuQkHv6pAGXGHHGs+8S4mUu9gnxRVLhi9f2Pn155vduceLnyJJpLzmDaXDpBqYnq/AnxsxY+CRGdaXenbWMFaCTSPfECFb7LROjCfcPhMnBVGBrGNbXBDTAFVdKxxhvDQ9MBIqXcF66drHcKEw50HfkIzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MuC8Sprn; arc=none smtp.client-ip=205.220.168.131
+	s=arc-20240116; t=1731996738; c=relaxed/simple;
+	bh=WU71AvLVwpj+83UBdTdsQIQ5kLcwJwB3U1bCNR2uns0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Yq0u/teYnAJNmHcbOo9nsCRtuWYgJMbkr6Y/849MDDD0T4+qXhwlvTLq54UZ5MA2IUT/MxYBorwtFUYmzlKw+alOkgiLGWOoeKrPE74KAbfZElesmeb5Our+krMs3gDAmR9t6eQ8CQWjOnC4UEJ/7OpdjLFHB1Un2KhxKAIHwY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Huz0hV8w; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AIGGooA028914;
-	Tue, 19 Nov 2024 06:10:10 GMT
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AIGHJx2028646;
+	Tue, 19 Nov 2024 06:11:49 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=z1M0G550cA/4sts8HMnkoI3J
-	ppShxWkWdoplaxpd3ZQ=; b=MuC8SprnuuKP+sPF2LzyY2c/Q14uUl94qQkv61+b
-	ZrSZ29zHNpWANtTZa0Vm0P3PDAHigmilIV2Puk97gGc/iW6Z3OT7a5cyzhTeRzMp
-	dCwnOcuHivn3ZoxrBC8g8LHuPIRKYOlcPWq2mVW6FEA+b0annvbAnFp2mVjcNyjN
-	qipnfve5Q+um7cEjcIY/l+xlF/YHO2iNhPch/xAsSB37hucSnFl9A9TpMudwLOJV
-	I2A9v7XrSZRAlbGnYJL416uW9V+v5A/UOcNmIaP9WzNkW2kxm4MtWGmkJRW6maPv
-	U6a6kFLwvg5p0THSxENUCJOzcE4TJ+6s2pRYioVMHKarJg==
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	xvYVmZOoIIjRRxYgM7b2v+AV5vLL9ebGAIWkoSYIx9c=; b=Huz0hV8wcQSO2lKM
+	urToKNwrYOKRJpbKbc+aFfw3iwdrSZAW4F0NiqG3gZBOR02AYPR+T2qY+75uvM4e
+	o6gEmEvDpCN2QvDXv2lqiEP6KlSyfjIUm128slAK0tjBtUJNL0Ou47bz/hnd1+5S
+	uOWEo9n8z3X/20qyAYNEUNPEQgVp1Xs8nmvCRDyvcTnTdu2EfKsOUBqXDqitIdVf
+	u50GTvoXgET/rnktSu4LpCREfXKeq5jGQCEB/VD4FTsLa+thOg6zZo+V1FOdGI+H
+	imFKWpq7bnMSBwmCa3JAwPH6oORN4KRsg+/gFcJIyTNSBv6IWU7lCJ88nGhdA7W1
+	SUdAzA==
 Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4308y81jxm-1
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4308y6skyh-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 19 Nov 2024 06:10:10 +0000 (GMT)
+	Tue, 19 Nov 2024 06:11:48 +0000 (GMT)
 Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AJ6A9Dv013993
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AJ6Bm24018051
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 19 Nov 2024 06:10:09 GMT
-Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 18 Nov 2024 22:10:06 -0800
-Date: Tue, 19 Nov 2024 11:40:02 +0530
-From: Varadarajan Narayanan <quic_varada@quicinc.com>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-CC: <andersson@kernel.org>, <konradybcio@kernel.org>, <conor@kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 2/3] soc: qcom: llcc: Update configuration data for
- IPQ5424
-Message-ID: <ZzwruvCxwnvTQF8q@hu-varada-blr.qualcomm.com>
-References: <20241105102210.510025-1-quic_varada@quicinc.com>
- <20241105102210.510025-3-quic_varada@quicinc.com>
- <cd31a99f-569f-45ba-8f57-777f71541f82@oss.qualcomm.com>
+	Tue, 19 Nov 2024 06:11:48 GMT
+Received: from [10.239.155.136] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 18 Nov
+ 2024 22:11:43 -0800
+Message-ID: <7d269ee6-0b85-4f9f-93fb-08bd07b6195c@quicinc.com>
+Date: Tue, 19 Nov 2024 14:11:13 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <cd31a99f-569f-45ba-8f57-777f71541f82@oss.qualcomm.com>
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] scsi: ufs: core: Add ufshcd_send_bsg_uic_cmd() for UFS
+ BSG
+To: Avri Altman <Avri.Altman@wdc.com>,
+        "quic_asutoshd@quicinc.com"
+	<quic_asutoshd@quicinc.com>,
+        "quic_cang@quicinc.com" <quic_cang@quicinc.com>,
+        "bvanassche@acm.org" <bvanassche@acm.org>,
+        "mani@kernel.org"
+	<mani@kernel.org>,
+        "beanhuo@micron.com" <beanhuo@micron.com>,
+        "junwoo80.lee@samsung.com" <junwoo80.lee@samsung.com>,
+        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+        "quic_nguyenb@quicinc.com" <quic_nguyenb@quicinc.com>,
+        "quic_nitirawa@quicinc.com" <quic_nitirawa@quicinc.com>,
+        "quic_rampraka@quicinc.com" <quic_rampraka@quicinc.com>
+CC: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        Alim Akhtar
+	<alim.akhtar@samsung.com>,
+        "James E.J. Bottomley"
+	<James.Bottomley@HansenPartnership.com>,
+        Damien Le Moal <dlemoal@kernel.org>, Hannes Reinecke <hare@suse.de>,
+        Peter Wang <peter.wang@mediatek.com>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Andrew Halaney
+	<ahalaney@redhat.com>,
+        Maramaina Naresh <quic_mnaresh@quicinc.com>,
+        open list
+	<linux-kernel@vger.kernel.org>
+References: <20241113111409.935032-1-quic_ziqichen@quicinc.com>
+ <DM6PR04MB65753A23120240123B090585FC202@DM6PR04MB6575.namprd04.prod.outlook.com>
+Content-Language: en-US
+From: Ziqi Chen <quic_ziqichen@quicinc.com>
+In-Reply-To: <DM6PR04MB65753A23120240123B090585FC202@DM6PR04MB6575.namprd04.prod.outlook.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
  nasanex01b.na.qualcomm.com (10.46.141.250)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: krBFHplTfM-8w87MAzpXwKFxH8PW0Q3r
-X-Proofpoint-GUID: krBFHplTfM-8w87MAzpXwKFxH8PW0Q3r
+X-Proofpoint-ORIG-GUID: sUD-njPsl_ZBwtf_gwT0OZCuO-4MfY2B
+X-Proofpoint-GUID: sUD-njPsl_ZBwtf_gwT0OZCuO-4MfY2B
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
  definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 phishscore=0
- impostorscore=0 priorityscore=1501 lowpriorityscore=0 bulkscore=0
- mlxscore=0 spamscore=0 adultscore=0 suspectscore=0 malwarescore=0
- mlxlogscore=753 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 suspectscore=0
+ impostorscore=0 bulkscore=0 mlxscore=0 malwarescore=0 mlxlogscore=659
+ phishscore=0 spamscore=0 priorityscore=1501 lowpriorityscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.19.0-2409260000 definitions=main-2411190045
 
-On Fri, Nov 15, 2024 at 09:08:50PM +0100, Konrad Dybcio wrote:
-> On 5.11.2024 11:22 AM, Varadarajan Narayanan wrote:
-> > The 'broadcast' register space is present only in chipsets that
-> > have multiple instances of LLCC IP. Since IPQ5424 has only one
-> > instance, both the LLCC and LLCC_BROADCAST points to the same
-> > register space.
-> >
-> > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> > ---
-> > v2: Use 'true/false' instead of '1/0' for boolean variables.
-> >     Add 'no_broadcast_register' to qcom_llcc_config structure
-> >     to identify SoC without LLCC_BROADCAST register space instead
-> >     of using 'num_banks'.
-> > ---
-> This looks good now. Please rebase on next as there have been
-> some changes to the driver in meantime.
 
-Have posted v3, please take a look.
 
-Thanks
-Varada
+On 11/19/2024 2:02 PM, Avri Altman wrote:
+>> User layer applications can send UIC GET/SET commands via the BSG
+>> framework, and if the user layer application sends a UIC SET command to the
+>> PA_PWRMODE attribute, a power mode change shall be initiated in UniPro
+>> and two interrupts shall be triggered if the power mode is successfully
+>> changed, i.e., UIC Command Completion interrupt and UIC Power Mode
+>> interrupt.
+>>
+>> The current UFS BSG code calls ufshcd_send_uic_cmd() directly, with which
+>> the second interrupt, i.e., UIC Power Mode interrupt, shall be treated as
+>> unhandled interrupt. In addition, after the UIC command is completed, user
+>> layer application has to poll UniPro and/or M-PHY state machine to confirm
+>> the power mode change is finished.
+>>
+>> Add a new wrapper function ufshcd_send_bsg_uic_cmd() and call it from
+>> ufs_bsg_request() so that if a UIC SET command is targeting the
+>> PA_PWRMODE attribute it can be redirected to ufshcd_uic_pwr_ctrl().
+>>
+> 
+> Fixes tag?
+Thank Avri， will update new version to add Fixes tag.
+
+>> Signed-off-by: Can Guo <quic_cang@quicinc.com>
+>> Signed-off-by: Ziqi Chen <quic_ziqichen@quicinc.com>
+> With that fixed:
+> Reviewed-by: Avri Altman <avri.altman@wdc.com>
+> 
+>> ---
+>> V1 -> V2: Rebased on Linux 6.13
 
