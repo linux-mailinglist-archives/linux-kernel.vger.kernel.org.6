@@ -1,180 +1,117 @@
-Return-Path: <linux-kernel+bounces-414519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 487709D2955
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 16:14:52 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59AE49D298F
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 16:26:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D13841F228C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 15:14:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A9D9DB30EFB
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 15:14:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D6CD1D0B95;
-	Tue, 19 Nov 2024 15:13:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6DC91D079E;
+	Tue, 19 Nov 2024 15:12:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="FaCH43yW"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PaF7dWVh"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7B2D1D0950;
-	Tue, 19 Nov 2024 15:13:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A24E11CFED1
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 15:12:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732029186; cv=none; b=nZZMd8UkSwmBLEs4S9DxjB5KjVzbZl11/eaYiFDEsMkvJudZfCKNYsUdaP64Mp51jJWCHcG/S1QWd2+/YFoxnJb4JKibD3BsRQ/YyKlc9IDeRxBnf0L3asRkL+w5Kd6wTQTseSU7gcARsLD84m1JVts4UCQcBxnMvrCkQjok43g=
+	t=1732029177; cv=none; b=N21c8eLmVC7KPqYw025mU5mGDI8hegVojdyyGT4DAR+HAqtchHLcZBOVFj6rq3h0f2XL4ZFV7J3iYo71PKSq4Kscl341JwqUxyxr7WRrRy5FS16K/IBj2yzjTWI/aD+/2WqVKxpJ3ynEJDxHtkHdtLw5PW66Na1s8KDOtd6X+aY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732029186; c=relaxed/simple;
-	bh=tiLrsshJNzrJ9KW7m2vRVm9HcPFidQhW9xkZNsRaWak=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cDwe3q0BWnHQUCOZ/aXbGRUY3+RXyTgeSkjuOoOZA7LTewZ139GfFWq8AEnchdI6l+EJbwJNDDd+PkK4kNa3zkRUH21uHkTO4sOejcqjArNAcnX40ZKrXTvgEF3PKY0F6kmbUlFtnoJnLKZtH2S6m3792bhVChS+EgcZKfmZggM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=FaCH43yW; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=poVgrhfUM+w7fZDkJyIhYRLNyzyYxc9sRedM9mebQyU=; b=FaCH43yWjab6ndkadF8fIiRFz1
-	zMdvViicV8uSf7OH8YbZP+N1mNCX82vf0lppr2RYLCo+zGlJRe9mjnx7EauAwuLxkvViXEtLXAc4O
-	KkB4cuGmG8IsldKM5SiReNHK4rSCGBTHO28XXGAgxRwODxdSiCyZAJnZNvFJl7VMrOUL4AFrpdx42
-	c0fq5Ci8Dw68TJu9WhKbcOY1ZRlQOA8Y75/uH2XK37+85pfdLzwPcY6gp4iwn6jBeboeJGMysgED3
-	HdC8gy7uUGoKhwf0ZC8faNEteVT0RLwxJPM111Ubu7jBNSrD8Mqs9yP3qwKRJK8hAWKAJEXs050an
-	VGtPADUQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:42520)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1tDPuJ-0003n3-2E;
-	Tue, 19 Nov 2024 15:12:48 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1tDPuH-00069E-0j;
-	Tue, 19 Nov 2024 15:12:45 +0000
-Date: Tue, 19 Nov 2024 15:12:45 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: "Gupta, Suraj" <Suraj.Gupta2@amd.com>
-Cc: Sean Anderson <sean.anderson@linux.dev>,
-	"andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	"edumazet@google.com" <edumazet@google.com>,
-	"kuba@kernel.org" <kuba@kernel.org>,
-	"pabeni@redhat.com" <pabeni@redhat.com>,
-	"Simek, Michal" <michal.simek@amd.com>,
-	"Pandey, Radhey Shyam" <radhey.shyam.pandey@amd.com>,
-	"horms@kernel.org" <horms@kernel.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"git (AMD-Xilinx)" <git@amd.com>,
-	"Katakam, Harini" <harini.katakam@amd.com>
-Subject: Re: [PATCH net-next 2/2] net: axienet: Add support for AXI 2.5G MAC
-Message-ID: <Zzyq7eLyALyXnvuS@shell.armlinux.org.uk>
-References: <20241118081822.19383-1-suraj.gupta2@amd.com>
- <20241118081822.19383-3-suraj.gupta2@amd.com>
- <ZztjvkxbCiLER-PJ@shell.armlinux.org.uk>
- <657764fd-68a1-4826-b832-3bda91a0c13b@linux.dev>
- <Zztml-Te38P3M7cM@shell.armlinux.org.uk>
- <BL3PR12MB65716077E66F2141CC618DD9C9202@BL3PR12MB6571.namprd12.prod.outlook.com>
- <ZzyQQV4qM_fTrpMf@shell.armlinux.org.uk>
+	s=arc-20240116; t=1732029177; c=relaxed/simple;
+	bh=mrd+ef5omKk4kmj9QBZVm/PCvmTVB8GvlJMDSSFnMTo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OclVpqtR/Cv0lfoa96c9F6h05J88hVjjIyUcbWDSjE7U/F4Gn0jDNPy+aEnSneUrqdyTcY0bhJySMZaQ9GiA71/v6huK+IVN/BVTvPdSAyOgHQSnhTV/EpyS8dI+3s7fgcMB2TbJYOvO/INf8xg8HKwaYtzXmrhOyINUh+FrWN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PaF7dWVh; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-aa1f73966a5so659586566b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 07:12:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732029174; x=1732633974; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1njkv7AEQYLprfmPF/SUU/CkkayzBBsZYgpz9cUBCwU=;
+        b=PaF7dWVhRUDFt0DBKnN8OIYMtbFvQsDtEp1Kh0WGPRITJKksB6PsoYctE9OxF5IqEw
+         6olRM22/oXj+GCo7ANZNieMX2jvLKs2COEo91TbI0GTx82RjgUd39etotXPZi6KnD3Wa
+         I4rA9tili4UprJnKZsC9L/CKPFuGhMVVZJAZ3MB+Q6D5Uc/s63uqncYM4nt2WzRMyjDU
+         CF9wqiG95KMrKe1z215sVh+DC/WXg6rB5G2KyaPy8klkv3QFGCTATmu/FsVAY7pqnHV6
+         +OHEiKKWOeZIPJ/ERY/H04rEfTBESRmGROEX0AmjY1DHq67XjCz4DxO5XoSNwWfCqJHD
+         gPrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732029174; x=1732633974;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1njkv7AEQYLprfmPF/SUU/CkkayzBBsZYgpz9cUBCwU=;
+        b=B+lPs3krZglmATBl93CYYhjJdloYvbdANFzFW9HBUUYQW0t9+eQJMK8XV4K1EyrZl3
+         klweQ/paUiApVzaxc2ybMSTrDN/oMB2y+ELa1uPmRHiYUVwi3bQKH8Cul1mXEHIF9ZrK
+         GwA2H9XDmn8XeXbYZsHXGKvAKu3Vu9Ll3srPwRbLM1VsTnIKPz0czYIvOeMpeXK4sawV
+         Ut27N6QxHqvLxrq4PMxqF7/ddQ95zq0Ep5TvSdmNksV4E4Sq2uvk1Lmt9BPNggZjsegy
+         Io3MDCep3fgNbRp6rxale7Vr5toH7lkT5y5FiDFOKbEZflavc3+SKkboMbY6o3AgO4VD
+         /pNA==
+X-Forwarded-Encrypted: i=1; AJvYcCVl2HPyPGkXYdl+N+TYnW9Y99uDAhP2cKniOXhRMtXj935am3J1AEA84xuzoryzvLQOPDAtX1LdS1tkWCc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyyQNzE6FO7Njdcw3wc11xZ9IxIXTXXLJGQfT+c2htenEX2hdfs
+	R9IFqk6ry3WQ/5p5U/3SEiRwfnw/vLayXR7ngVET3h1CqZHk7TA9ZIuJg9G+mqQ=
+X-Google-Smtp-Source: AGHT+IHpPhEpx8FCZtw2jo+T5uqwAc8vudJk7VsZfwZwUsidD+p95qcWn6QPKWI6Rv/z0jxfWiKNDg==
+X-Received: by 2002:a17:907:a0e:b0:a9a:3da9:6a02 with SMTP id a640c23a62f3a-aa483553f62mr1583241066b.60.1732029174122;
+        Tue, 19 Nov 2024 07:12:54 -0800 (PST)
+Received: from [192.168.0.40] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20df779afsm658092866b.85.2024.11.19.07.12.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 19 Nov 2024 07:12:53 -0800 (PST)
+Message-ID: <6b7bcf86-9bc4-4608-9f2e-b14c17e558d8@linaro.org>
+Date: Tue, 19 Nov 2024 15:12:52 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZzyQQV4qM_fTrpMf@shell.armlinux.org.uk>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/6] dt-bindings: clock: qcom: Add second power-domain to
+ CAMCC
+To: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+ Loic Poulain <loic.poulain@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Todor Tomov <todor.too@gmail.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Jagadeesh Kona <quic_jkona@quicinc.com>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20241119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v1-0-54075d75f654@linaro.org>
+ <20241119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v1-3-54075d75f654@linaro.org>
+ <91592bff-4042-49c4-b884-8113d0759a3c@linaro.org>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <91592bff-4042-49c4-b884-8113d0759a3c@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Nov 19, 2024 at 01:18:57PM +0000, Russell King (Oracle) wrote:
-> On Tue, Nov 19, 2024 at 10:28:48AM +0000, Gupta, Suraj wrote:
-> > > -----Original Message-----
-> > > From: Russell King <linux@armlinux.org.uk>
-> > > 
-> > > On Mon, Nov 18, 2024 at 11:00:22AM -0500, Sean Anderson wrote:
-> > > > On 11/18/24 10:56, Russell King (Oracle) wrote:
-> > > > > On Mon, Nov 18, 2024 at 01:48:22PM +0530, Suraj Gupta wrote:
-> > > > >> Add AXI 2.5G MAC support, which is an incremental speed upgrade of
-> > > > >> AXI 1G MAC and supports 2.5G speed only. "max-speed" DT property is
-> > > > >> used in driver to distinguish 1G and 2.5G MACs of AXI 1G/2.5G IP.
-> > > > >> If max-speed property is missing, 1G is assumed to support backward
-> > > > >> compatibility.
-> > > > >>
-> > > > >> Co-developed-by: Harini Katakam <harini.katakam@amd.com>
-> > > > >> Signed-off-by: Harini Katakam <harini.katakam@amd.com>
-> > > > >> Signed-off-by: Suraj Gupta <suraj.gupta2@amd.com>
-> > > > >> ---
-> > > > >
-> > > > > ...
-> > > > >
-> > > > >> -  lp->phylink_config.mac_capabilities = MAC_SYM_PAUSE |
-> > > MAC_ASYM_PAUSE |
-> > > > >> -          MAC_10FD | MAC_100FD | MAC_1000FD;
-> > > > >> +  lp->phylink_config.mac_capabilities = MAC_SYM_PAUSE |
-> > > > >> + MAC_ASYM_PAUSE;
-> > > > >> +
-> > > > >> +  /* Set MAC capabilities based on MAC type */  if (lp->max_speed
-> > > > >> + == SPEED_1000)
-> > > > >> +          lp->phylink_config.mac_capabilities |= MAC_10FD |
-> > > > >> + MAC_100FD | MAC_1000FD;  else
-> > > > >> +          lp->phylink_config.mac_capabilities |= MAC_2500FD;
-> > > > >
-> > > > > The MAC can only operate at (10M, 100M, 1G) _or_ 2.5G ?
-> > > >
-> > > > It's a PCS limitation. It either does (1000Base-X and/or SGMII) OR
-> > > > (2500Base-X). The MAC itself doesn't have this limitation AFAIK.
-> > > 
-> > > That means the patch is definitely wrong, and the proposed DT change is also
-> > > wrong.
-> > > 
-> > > If it's a limitation of the PCS, that limitation should be applied via the PCS's
-> > > .pcs_validate() method, not at the MAC level.
-> > > 
-> > As mentioned in IP PG (https://docs.amd.com/r/en-US/pg051-tri-mode-eth-mac/Ethernet-Overview#:~:text=Typical%20Ethernet%20Architecture-,MAC,-For%2010/100), it's limitation in MAC also.
+On 19/11/2024 14:47, Vladimir Zapolskiy wrote:
+>> +    maxItems: 2
+>>       description:
+>> -      A phandle and PM domain specifier for the MMCX power domain.
+>> +      A phandle and PM domain specifier for the MMCX or MCX power 
+>> domains.
 > 
-> I'm not reading it as a limitation of the MAC.
-> 
-> The limitation stated there is that internal mode (GMII) is only
-> supported for 2.5Gbps speeds. At 2.5Gbps speeds, the clock rate is
-> increased from 125MHz to 312.5MHz (which makes it non-compliant
-> with 802.3-2008, because that version doesn't define 2.5Gbps speeds.)
-> 
-> So long as the clock rate and interface can be safely switched, I
-> don't see any reason to restrict the MAC itself to be either
-> 10/100/1G _or_ 2.5G.
-> 
-> Note that 2.5G will only become available if it is supported by one
-> of the supported interface modes (e.g. 2500base-X). If the supported
-> interface modes do not include a mode that supports >1G, then 2.5G
-> won't be available even if MAC_2500FD is set in mac_capabilities.
+> It's a list of two phandles, not a one or another one. Can you please
 
-Reading further, PG047 which is the PCS, suggests that it can operate
-at 10, 100, 1G, and 2.5G.
+Its two for x1e80100 or one for sm8450.
 
-Moreover, what I read there is that where a PCS core supports 2.5G, it
-can operate at 10, 100, 1G or 2.5G depending on the clock. Note 2 in
-"Transceiver ports".
+I'll find a way to express this more clearly.
 
-However, it doesn't support TBI at 2.5Gbps mode, only the 2500BASE-X
-PMA/PMD.
-
-Also states "The core operates at 125 MHz for the 1 Gbps data rate
-(1.25Gbps line rate) and 312.5 MHz at 2.5 Gbps data rates (3.125 Gbps
-line rate) in modes having device transceivers." These differences in
-clocking are typical for systems that support 1G and 2.5G.
-
-So, I'm still wondering what the limitation is. If the MAC transmit
-clock can only run at 125MHz, or only at 312.5MHz, depending on the
-design, then yes, it would be appropriate to limit the MAC to 1G
-(and below) or 2.5G speeds.
-
-However, if there's designs that allow the transmit clock to be
-configured at run time, then the system supports both speeds.
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+---
+bod
 
