@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-413953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 657B29D20EC
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 08:43:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CCF19D20ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 08:44:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E96EBB227A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 07:43:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9434A1F21D98
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 07:44:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A9C4198A25;
-	Tue, 19 Nov 2024 07:43:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAA11156880;
+	Tue, 19 Nov 2024 07:44:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hDz8vjsD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CJdqdXAo"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66CE4194A60;
-	Tue, 19 Nov 2024 07:43:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F5E31384BF
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 07:44:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732002186; cv=none; b=SzJW9cvdURGcwVD6bfkK6hN6/Qt+dtkNXo416KlVCGXsboGUliPCB2V6I60ItMj70NTyKUwJFHS4rWdarPTP0KiUBb8k/aTgqCbj4BivMATTpN22XfdzSE0+PDRjlqcN6HE9aqJ6ZwyeD0bgXNYzt7VJTPbndjJM10DDFAlCxN8=
+	t=1732002255; cv=none; b=uJ1gk1HGg5cFY4xSx6AQ6TkKk8xzTe+N6c23h4KvkGGlGov01eM8PzOk+Q0UoFgc4JE7obGu1/WuIXXy+jTmGGaI1X619q5R9C1ma4wWZNzw6lLBa2KUFTxGzNDK1q6HiHu2sI+e6QtHrm+k+BcY+Hlo0o59nhsU8/QFWOfc5TA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732002186; c=relaxed/simple;
-	bh=qyR70PrnNAPmnXsc8jR8pMBcyHivgFHXaVTaSMBOvDk=;
+	s=arc-20240116; t=1732002255; c=relaxed/simple;
+	bh=v8N+kz6yYdbZidaXEDqQQGhjspz/yc20SBoi/yujG0k=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=f9zSI0S0Ve4FyPFvfUnRXwVobm3yo3TEL1PJTT6ZNSpAyBAY/DtTPEvzJgzXOpT3xr53RgQnorvw/onv6CPya+BpdsLsZqfIX6QXqwpo5f31xqaOCy+0NJ5ucVDW5MIstuy1HjFLM+YGh48TCvJXqQpQKvPYUWGmpJQE4aY4gus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hDz8vjsD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0617BC4CED1;
-	Tue, 19 Nov 2024 07:43:00 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=VnWHyIaOnKpZnE/ftuVZTf4OklrL0DpnSwcMW34h8uG73sL7GdaWP68EkxHIbApygijtNTk6MY4j/n4Bu+NfE++Z9ecek2WONL4yfiiDD5LXkQALj+dqG0Vo4iu9okhE4Q2kBsSToM05tGQlGDMs/lzVnK9QHUOEYLYpoeomlcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CJdqdXAo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C7C3C4CED2;
+	Tue, 19 Nov 2024 07:44:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732002185;
-	bh=qyR70PrnNAPmnXsc8jR8pMBcyHivgFHXaVTaSMBOvDk=;
+	s=k20201202; t=1732002254;
+	bh=v8N+kz6yYdbZidaXEDqQQGhjspz/yc20SBoi/yujG0k=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=hDz8vjsDSvMrXWE1VceX9bVYWMgYAUhM22+/0ZsvEtDYhUwplRjd3D2ahxi4r8UOZ
-	 EECueSJkWaYuuwl/RQrxKFHgNaZeT9eCDNnWoIQ8IFHc3IglpRMY6Vr/1Mp5WGb3X+
-	 V7dWYTGCll5AJH0ujL4/o1hVLQyLbj9HxqyE2vvI4Plh2q0yj11gbo+rP271nEqps9
-	 2Hp695wba6QqFnYa2fUwWGdVo2wntvuIkY8+IOUmdbg+L+zugYcse0JRgpaBzuH1g0
-	 eWW3FxisEDhX6L97n/H2MFbe3UsrHhgDTmSa4fVThi2QXDm/cSB7HwENpNky5DRYHq
-	 fsiKhJ7BaVL8Q==
-Message-ID: <f5694621-2abb-4637-9826-97e7bde88b72@kernel.org>
-Date: Tue, 19 Nov 2024 08:42:59 +0100
+	b=CJdqdXAo4SYDC/IEFFVp0ktZM/I3023Jmyg35+D626lblDWv6b7Mb3hyowp1Vdips
+	 35Pw7P7jotprO2AF7fi8LQ3Sgtu6Las8v+0h+RD2bH7YYpSznXDb3jwIpLiyjlu4vT
+	 z+7UamnBjYtghppj2xTWfpje9w2YPA/Ugmtf5A9SQaveFGwyFrv6yNh6K1mpkC8wOl
+	 cFTIFxDue1mtZdF98xa6n3A/vb5VtACEQ+vV6Uh3lrzm5sQs22O+R/ZpZFVD2k1/GS
+	 KgRQQcrxMr6hEt+/1V+ajeXG44BpLMp9szhDWosV7mHPXuYuc/2uw7sVkFPHyfLBNN
+	 WWJxkq7DHDPgQ==
+Message-ID: <df431962-e8b6-4e77-aff8-1a547edcdf85@kernel.org>
+Date: Tue, 19 Nov 2024 08:44:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,16 +49,13 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 1/2] dt-bindings: net: xlnx,axi-ethernet: Add
- bindings for AXI 2.5G MAC
-To: Suraj Gupta <suraj.gupta2@amd.com>, andrew+netdev@lunn.ch,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, michal.simek@amd.com, sean.anderson@linux.dev,
- radhey.shyam.pandey@amd.com, horms@kernel.org
-Cc: netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, git@amd.com, harini.katakam@amd.com
-References: <20241118081822.19383-1-suraj.gupta2@amd.com>
- <20241118081822.19383-2-suraj.gupta2@amd.com>
+Subject: Re: [PATCH V4 RESEND 2/3] dt-bindings: rtc: Add support for ATCRTC100
+ RTC
+To: CL Wang <cl634@andestech.com>, alexandre.belloni@bootlin.com,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: linux-kernel@vger.kernel.org, tim609@andestech.com
+References: <20241114140023.3534980-1-cl634@andestech.com>
+ <20241114140023.3534980-3-cl634@andestech.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -104,25 +101,21 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20241118081822.19383-2-suraj.gupta2@amd.com>
+In-Reply-To: <20241114140023.3534980-3-cl634@andestech.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 18/11/2024 09:18, Suraj Gupta wrote:
-> AXI 1G/2.5G Ethernet subsystem supports 1G and 2.5G speeds. "max-speed"
-> property is used to distinguish 1G and 2.5G MACs of AXI 1G/2.5G IP.
-> max-speed is made a required property, and it breaks DT ABI but driver
-> implementation ensures backward compatibility and assumes 1G when this
-> property is absent.
-> Modify existing bindings description for 2.5G MAC.
+On 14/11/2024 15:00, CL Wang wrote:
+> Document Device Tree bindings for the Andes ATCRTC100 Real-Time Clock.
 > 
-> Signed-off-by: Suraj Gupta <suraj.gupta2@amd.com>
+> Signed-off-by: CL Wang <cl634@andestech.com>
+> ---
 
-Please start using b4. This thread is a mess.
+Never tested.
 
-Do not attach (thread) your patchsets to some other threads (unrelated
-or older versions). This buries them deep in the mailbox and might
-interfere with applying entire sets.
+You keep ignoring feedback - do not respond, do not address, do not fix.
+
+NAK.
 
 <form letter>
 Please use scripts/get_maintainers.pl to get a list of necessary people
