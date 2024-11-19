@@ -1,118 +1,162 @@
-Return-Path: <linux-kernel+bounces-413634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D3E59D1C9A
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 01:37:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AC719D1C9D
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 01:39:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 03A04B212FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 00:37:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF08A1F223FC
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 00:39:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF9981AAC4;
-	Tue, 19 Nov 2024 00:37:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ytew/8Q2"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27B2D17557;
+	Tue, 19 Nov 2024 00:39:03 +0000 (UTC)
+Received: from mail.enpas.org (zhong.enpas.org [46.38.239.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98EB5AD4B
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 00:37:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF3F9AD4B;
+	Tue, 19 Nov 2024 00:38:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.38.239.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731976664; cv=none; b=Bcdqat5hX5GtudMtlNMkdwq0a8dCCDWJOnog/7RmtSe2ZJmf5ZPjFXb9Rbel/1JC3yYXJdxTRmUsWwg1ZZp+uvH2EVUXXuEp2WVgfIOSGgjktx6huLwfeXslOKk6ey6Wvu9IhCr5qU+9/DFSUdoXygsqbYdDw8+4mB6UHl1ikUM=
+	t=1731976742; cv=none; b=h/XjzG9VvE3gT8kCbJVV0z2GJufIq7j5dutac1H1PxC1WTwHqaW1fQ0SCHja4/XC8e7U0ZPYsxJ1zZRGh0UEsbLCRi/DjK4/rUq1720MpWCZ7GmU2wK+/cDaXEOzJokMvR0bqocEc59ppl0wbdqTl3RLSBVoTQ9tj6m8r/6Ji0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731976664; c=relaxed/simple;
-	bh=3N+bdJY7GZj3/EyWNT7JRQ0Hf204zkwFkIagTRqw4DQ=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=haNPPO9wfQBLqELo/dmvtRGmxb3yeW4hbpEcuQObPK123ZGeYd8L7zNLxu2Nc5dsDOGMVLisQZdqWqwl714bBbicI5kpJgVL4xVj/W6D4zke+TRQcO99tO9xRqMDoTgQQKE5KczsoWJyC24lZok+YOspLLd35zlijrDajC9p4Xc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ytew/8Q2; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731976660;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type;
-	bh=iOzcg2tuyK5nhV5b0FwNpGbAHCWNZenn65xZEc+Od7k=;
-	b=Ytew/8Q2/s5Iq9p4J605lsLrxHZn5TZbNSerxGS8u7flblYvaLKSQmqMbt/Mxx5e4yKKsD
-	vatsABU2lvazEimMJl8S9cXCp4JXqI0dQxCDGKxJ2ptwf4V8Z6iblwe4FK6ZhbyyUNdm5F
-	60fAg3fJ0qxgUtUt6ySiOLC+t36WOo8=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-628-2RNXJpZVPlGPadZddkWY4g-1; Mon,
- 18 Nov 2024 19:37:37 -0500
-X-MC-Unique: 2RNXJpZVPlGPadZddkWY4g-1
-X-Mimecast-MFC-AGG-ID: 2RNXJpZVPlGPadZddkWY4g
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 399ED19560BD;
-	Tue, 19 Nov 2024 00:37:35 +0000 (UTC)
-Received: from localhost (unknown [10.22.81.145])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 0C14B1956054;
-	Tue, 19 Nov 2024 00:37:33 +0000 (UTC)
-Date: Mon, 18 Nov 2024 21:37:32 -0300
-From: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
-To: LKML <linux-kernel@vger.kernel.org>,
-	linux-rt-users <linux-rt-users@vger.kernel.org>,
-	stable-rt <stable-rt@vger.kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Carsten Emde <C.Emde@osadl.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Daniel Wagner <daniel.wagner@suse.com>,
-	Tom Zanussi <tom.zanussi@linux.intel.com>,
-	Clark Williams <williams@redhat.com>,
-	Mark Gross <markgross@kernel.org>, Pavel Machek <pavel@denx.de>,
-	Jeff Brady <jeffreyjbrady@gmail.com>,
-	Luis Goncalves <lgoncalv@redhat.com>
-Subject: [ANNOUNCE] 5.10.226-rt118
-Message-ID: <ZzvdzOqtzPNXUq9a@uudg.org>
+	s=arc-20240116; t=1731976742; c=relaxed/simple;
+	bh=9rXs6EnLwloRAJ6hLDa1fajPXTLWepX+HpgcmcXUAVk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gvo47LLrtR5oMnEiWllmoL3Pq9hewLdrRQMmQgpgHxWjy9CLrPrQXNhLlFsjEw59sz11k4R310AO8M1teAMHW7as1SBoHpYfhIOvrK33RmS3rx1AUKlO2vPvfg3FrcalFRkpjEUZiWFFBE2l6dpT66lZwIpr/81S2I1oxDeV9z0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enpas.org; spf=pass smtp.mailfrom=enpas.org; arc=none smtp.client-ip=46.38.239.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enpas.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=enpas.org
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+	by mail.enpas.org (Postfix) with ESMTPSA id AC30D102EBC;
+	Tue, 19 Nov 2024 00:38:48 +0000 (UTC)
+From: Max Staudt <max@enpas.org>
+To: Dan Carpenter <dan.carpenter@linaro.org>,
+	Marc Kleine-Budde <mkl@pengutronix.de>,
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Cc: linux-can@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	max@enpas.org
+Subject: [PATCH v1] can: can327: Clean up payload encoding in can327_handle_prompt()
+Date: Tue, 19 Nov 2024 09:38:15 +0900
+Message-Id: <20241119003815.767004-1-max@enpas.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Content-Transfer-Encoding: 8bit
 
-Hello RT-list!
+The hex dump encoding of outgoing payloads used snprintf() with a
+too large length of the target buffer. While the length was wrong, the
+buffer size and its filling logic were fine (sprintf() would have been
+sufficient), hence this is not security relevant.
 
-I'm pleased to announce the 5.10.226-rt118 stable release.
+Still, it's a good opportunity to simplify the code, and since no
+length checking is required, let's implement it with bin2hex().
 
-This release is just an update to the new stable 5.10.226 version and no
-RT changes have been made.
+Since bin2hex() outputs lowercase letters, this changes the spoken
+wire protocol with the ELM327 chip, resulting in a change in
+can327_is_valid_rx_char() because the ELM327 is set to echo the
+characters sent to it. The documentation says that this is fine, and
+I have verified the change on actual hardware.
 
-You can get this release via the git tree at:
+Finally, since the reporter's worry was that frame->len may be larger
+than 8, resulting in a buffer overflow in can327_handle_prompt()'s
+local_txbuf, a comment describes how the CAN stack prevents that. This
+is also the reason why the size passed to snprintf() was not relevant
+to preventing a buffer overflow, because there was no overflow possible
+in the first place.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git
+Fixes: 43da2f07622f ("can: can327: CAN/ldisc driver for ELM327 based OBD-II adapters")
+Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+Tested-by: Max Staudt <max@enpas.org>
+Signed-off-by: Max Staudt <max@enpas.org>
+---
+ drivers/net/can/can327.c | 46 ++++++++++++++++++++++++++++------------
+ 1 file changed, 33 insertions(+), 13 deletions(-)
 
-  branch: v5.10-rt
-  Head SHA1: c806384c036dee40c091cb27c6db50967146b4cf
-
-Or to build 5.10.226-rt118 directly, the following patches should be applied:
-
-  https://www.kernel.org/pub/linux/kernel/v5.x/linux-5.10.tar.xz
-
-  https://www.kernel.org/pub/linux/kernel/v5.x/patch-5.10.226.xz
-
-  https://www.kernel.org/pub/linux/kernel/projects/rt/5.10/older/patch-5.10.226-rt118.patch.xz
-
-Signing key fingerprint:
-
-  9354 0649 9972 8D31 D464  D140 F394 A423 F8E6 7C26
-
-All keys used for the above files and repositories can be found on the
-following git repository:
-
-   git://git.kernel.org/pub/scm/docs/kernel/pgpkeys.git
-
-Enjoy!
-Luis
+diff --git a/drivers/net/can/can327.c b/drivers/net/can/can327.c
+index 24af63961030..3ae7b4eb6ca5 100644
+--- a/drivers/net/can/can327.c
++++ b/drivers/net/can/can327.c
+@@ -18,6 +18,7 @@
+ #include <linux/bitops.h>
+ #include <linux/ctype.h>
+ #include <linux/errno.h>
++#include <linux/hex.h>
+ #include <linux/kernel.h>
+ #include <linux/list.h>
+ #include <linux/lockdep.h>
+@@ -622,17 +623,14 @@ static void can327_handle_prompt(struct can327 *elm)
+ 			 */
+ 			snprintf(local_txbuf, sizeof(local_txbuf), "ATRTR\r");
+ 		} else {
+-			/* Send a regular CAN data frame */
+-			int i;
+-
+-			for (i = 0; i < frame->len; i++) {
+-				snprintf(&local_txbuf[2 * i],
+-					 sizeof(local_txbuf), "%02X",
+-					 frame->data[i]);
+-			}
+-
+-			snprintf(&local_txbuf[2 * i], sizeof(local_txbuf),
+-				 "\r");
++			/* Send a regular CAN data frame.
++			 *
++			 * frame->len is guaranteed to be <= 8. Please refer
++			 * to the comment in can327_netdev_start_xmit().
++			 */
++			bin2hex(local_txbuf, frame->data, frame->len);
++			local_txbuf[2 * frame->len] = '\r';
++			local_txbuf[2 * frame->len + 1] = '\0';
+ 		}
+ 
+ 		elm->drop_next_line = 1;
+@@ -815,6 +813,26 @@ static netdev_tx_t can327_netdev_start_xmit(struct sk_buff *skb,
+ 	struct can327 *elm = netdev_priv(dev);
+ 	struct can_frame *frame = (struct can_frame *)skb->data;
+ 
++	/* Why this driver can rely on frame->len <= 8:
++	 *
++	 * While can_dev_dropped_skb() sanity checks the skb to contain a
++	 * CAN 2.0, CAN FD, or other CAN frame type supported by the CAN
++	 * stack, it does not restrict these types of CAN frames.
++	 *
++	 * Instead, this driver is guaranteed to receive only classic CAN 2.0
++	 * frames, with frame->len <= 8, by a chain of checks around the CAN
++	 * device's MTU (as of v6.12):
++	 *
++	 *  - can_changelink() sets the CAN device's MTU to CAN_MTU since we
++	 *    don't advertise CAN_CTRLMODE_FD support in ctrlmode_supported.
++	 *  - can_send() then refuses to pass any skb that exceeds CAN_MTU.
++	 *  - Since CAN_MTU is the smallest currently (v6.12) supported CAN
++	 *    MTU, it is clear that we are dealing with an ETH_P_CAN frame.
++	 *  - All ETH_P_CAN (classic CAN 2.0) frames have frame->len <= 8,
++	 *    as enforced by a call to can_is_can_skb() in can_send().
++	 *  - Thus for all CAN frames reaching this function, frame->len <= 8.
++	 */
++
+ 	if (can_dev_dropped_skb(dev, skb))
+ 		return NETDEV_TX_OK;
+ 
+@@ -871,8 +889,10 @@ static bool can327_is_valid_rx_char(u8 c)
+ 		['H'] = true, true, true, true, true, true, true,
+ 		['O'] = true, true, true, true, true, true, true,
+ 		['V'] = true, true, true, true, true,
+-		['a'] = true,
+-		['b'] = true,
++		/* Note: c-f are needed only if outgoing CAN payloads are
++		 * sent as lowercase hex dumps instead of uppercase.
++		 */
++		['a'] = true, true, true, true, true, true,
+ 		['v'] = true,
+ 		[CAN327_DUMMY_CHAR] = true,
+ 	};
+-- 
+2.39.5
 
 
