@@ -1,81 +1,67 @@
-Return-Path: <linux-kernel+bounces-414980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8F3C9D3003
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 22:25:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B628F9D300A
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 22:31:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63D98283887
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 21:25:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B495284043
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 21:31:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56E021D2B1C;
-	Tue, 19 Nov 2024 21:24:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9E421D3586;
+	Tue, 19 Nov 2024 21:31:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mj2bh3nI"
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="fs6XKAXK"
+Received: from smtp.smtpout.orange.fr (smtp-28.smtpout.orange.fr [80.12.242.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 444B91A9B2A;
-	Tue, 19 Nov 2024 21:24:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B10791D043F;
+	Tue, 19 Nov 2024 21:30:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732051497; cv=none; b=bZ955hnSuQ3smBoa2HoQz4lp75bPQAly9KwBXB4iQFamT+HMwF4pAG0DLr74lKU6IkZCRO4uY107idWaQirv0E5wE2zxQJAVWagYhLjzImrzDvxUkv6Ng8UDUV7Cn6f8cwnUPMTHK+wzgMhYNAlPsjTTU9gFoLWce9ZG5E/uV7k=
+	t=1732051860; cv=none; b=t+nRNh1oJENsrSD5F8lvbWFzAJSyjg1+Ng/nWgMCh8aUVxikEi1wjUNixA8KdiUV7nYfRGhl6jrCkW24IKxi1Dslwgx13F7b+GQ4yV7iW5AkeVBdjFMpoieaAOV9D3zEjEKMh/Dkh+xD0QqH9fZQBYkSR5xhNXlw+x71XT66+8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732051497; c=relaxed/simple;
-	bh=dXGgkWe+4BMLaI3Lm2v0N49ZjSE/JrvGn7fMjcWirKg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IUgS6otbNi4lbqvK8dVo+NDtu1Ax+Cdb13SR5hmtrIwjkFFl6OkgzMprSe2iyRevyrIp3z33tUruddMPfL4HabTR65s3CzxeAEliD0Z6TArIqObS4yfqum77HDLtSMBJIHo596Hv9Ug+yp0QNtD0X3ZDbreWhoP1dkFes/de+T4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mj2bh3nI; arc=none smtp.client-ip=209.85.128.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6eb0bdf3cacso2426757b3.0;
-        Tue, 19 Nov 2024 13:24:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732051495; x=1732656295; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=XrBnHWzui5ajJG2pMcHOyK8xqGhF66gzfKEXVnIlLcU=;
-        b=mj2bh3nIzSzqDmzAUmXynGhLyBAszahNrg/NBSkrW5RF++EwtFXwDvIMKICbpUHkXz
-         fxO+QZExE2wL8zU4pvcwp/CcuIMlMgZpJrt6lkYTC/9M5/EaIkqocJq5GCy+CLE37E53
-         F8MncnLualWFCRfhxEZXCzG2anOJEI/A/3az8YPf3WypMgBVeHeUTwyG4BivuJU10NiX
-         N3Wol/p1o3EKYIupOK7/DNF/ylTDRtPjYwUwmaV0GxFuarGMKKT3gzZXQtNw775fBwYQ
-         xmNEAQgDkgie+5KZ4qGOj/HIKHFogMguJ/q8mqfAt6w7/JtRpZ9lJCOe6G3mU9Vjl4zJ
-         E3VA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732051495; x=1732656295;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XrBnHWzui5ajJG2pMcHOyK8xqGhF66gzfKEXVnIlLcU=;
-        b=KCkJgYs7SDoK/CqnZkUoNuuEpPdyOILH+5zEH1GV+Ps9XE/cTEEE9Hv88LfiuuUjsc
-         L9t4muQotNo/0iGmjKOlzI4VeTRoodbVUoKlXxRO7YLlpSWXe4kEfiSt5K3AmFrNSLSl
-         500rExSeFmfrWgV5EY6Og31Q84wogW08tov3KZXLGFBhW9dYbapvC+Lhg7yOL4W43SmD
-         yUr/62fTzaIV9sotYPDWGkEEITTAluyHNaV0tUvkCl1cPTpyXuPKdJn/BBh2rSZpBpDi
-         ghyloasH6Z+DlZfkEbQxR16E6FG/kPniITi3KcXsWp6k4VdjijpAWzF0gimbrMx8fF8E
-         kUGw==
-X-Forwarded-Encrypted: i=1; AJvYcCU8qZnB9mnxC0FtWg7UhdcvSwAOO2CPoaDtwJ7zLbyPZq+H/NN4Nv+QbqxB3M72atruJyQ9ZXAk8dut@vger.kernel.org, AJvYcCUz43QeV5BxvyTLP36nyDGjsg1InkC96ZSWOsUaGlSVVNCfQvjWDKDMmWPNWP0PG1UoUdBvdDx2kLgpoOY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPmssgaRHAB6I2m45lQoY2duk4NOUHRV7SfofTQ8ZMeXlIzGnR
-	HJGzqq4xdz+EEIY4AbbkVFUH0G0xBDmYvKHaBhyJ6sd2EP1S1o2G9++3/CQfXeo=
-X-Google-Smtp-Source: AGHT+IGeJRlXNincJupegpSkUYSTkphGlAH1mccKLE44MBrYRH4PL/iHiTJSxCDFVAyvQoNf41gBng==
-X-Received: by 2002:a05:690c:23c3:b0:6e2:1c94:41f8 with SMTP id 00721157ae682-6eebc318939mr5931167b3.10.1732051494968;
-        Tue, 19 Nov 2024 13:24:54 -0800 (PST)
-Received: from x13.. ([157.23.249.72])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6ee7137ede8sm19092257b3.122.2024.11.19.13.24.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Nov 2024 13:24:54 -0800 (PST)
-From: Luis Felipe Hernandez <luis.hernandez093@gmail.com>
-To: Thinh.Nguyen@synopsys.com,
-	gregkh@linuxfoundation.org,
-	rbm@suse.com
-Cc: Luis Felipe Hernandez <luis.hernandez093@gmail.com>,
-	skhan@linuxfoundation.org,
-	linux-usb@vger.kernel.org,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3] usb: dwc3: remove unused sg struct member
-Date: Tue, 19 Nov 2024 16:24:51 -0500
-Message-ID: <20241119212452.269255-1-luis.hernandez093@gmail.com>
+	s=arc-20240116; t=1732051860; c=relaxed/simple;
+	bh=CLacKn45ZJzzKF/aDfg8hX19NVkE4WN0HsH0eXEdVjs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DCdCRw/P9EchELR3MA3oOFShGsCRvXPIrYl0LWn/ngpFmC28RNEZJkLgUeCGOXQOQkzZIBMnkYIXkFxljWqamHGq67+VpXw+VqaogP2hAxZ11bkYqHcdUdafjuv3dxA5ir5jvjWobc9g/qULomkgR7HaiKW4xygyfj+HrA62gb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=fs6XKAXK; arc=none smtp.client-ip=80.12.242.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from localhost.localdomain ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id DVo0tZBgMlMRCDVo0teyUl; Tue, 19 Nov 2024 22:30:49 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1732051849;
+	bh=EjYh1cknlZ7PMy6sRG187xTDVC5FFJcX/Odw6mzP5bM=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=fs6XKAXKEa7OiGdYVIxWxoX52NB9X9sFNwHavWtknoVS7Z1y0i9KjA7T5Hcz2N04G
+	 oGU7ylyi7JaqkPL4uNOf8Qk/bK7w/mBi0klb3GdO73sCvx76Qx4AGs7GAZjXMWs0N3
+	 uX/cFd2bZHVehren5fcaR5tkVEH+EmLU1QCfrLU9crfmdQO+ck55e3SvNxfM1ycuM3
+	 0dZbgx1nxMHEae/5hr54Un7Ta4Y1f49V21pB9poCOHlOuJMQ2pHfL21MvriwpNQM+w
+	 eWKSG3bJhYwZT1m1VrxKdg4OqVRgIQpGTtElsaT46/a3uXEqkcMPWrNN1N57pXeVyT
+	 QqRSxYCfY4y1g==
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Tue, 19 Nov 2024 22:30:49 +0100
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Chin-Ting Kuo <chin-ting_kuo@aspeedtech.com>,
+	=?UTF-8?q?C=C3=A9dric=20Le=20Goater?= <clg@kaod.org>,
+	Mark Brown <broonie@kernel.org>,
+	Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-aspeed@lists.ozlabs.org,
+	openbmc@lists.ozlabs.org,
+	linux-spi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] spi: aspeed: Fix an error handling path in aspeed_spi_[read|write]_user()
+Date: Tue, 19 Nov 2024 22:30:29 +0100
+Message-ID: <4052aa2f9a9ea342fa6af83fa991b55ce5d5819e.1732051814.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -85,48 +71,62 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The sg member of the dwc3_request struct is no longer used and should be
-removed. This patch drops the unused member, cleaning up the struct.
+A aspeed_spi_start_user() is not balanced by a corresponding
+aspeed_spi_stop_user().
+Add the missing call.
 
-Previously, this patch addressed a documentation warning caused by the
-missing description for the sg member. However, upon review,
-it was determined that the member itself is deprecated and can be removed
-entirely.
-
-This change improves code clarity and avoids maintaining unnecessary members
-in the structure.
-
-Signed-off-by: Luis Felipe Hernandez <luis.hernandez093@gmail.com>
-Reported-by: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-Reviewed-by: Ricardo Marliere <rbm@suse.com>
+Fixes: e3228ed92893 ("spi: spi-mem: Convert Aspeed SMC driver to spi-mem")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
-v2: remove unused sg struct member as per review[1]
-v3: 
-  - Add reported-by tag as per review [2]
-  - Carry over reviewed-by tag from v2 [3]
-  - Update commit subject to reflect maintainers
-  - Update commit message to reflect actual change gathered from 
-    Thinh Nguyen's feedback
+Compile tested only.
 
-[1] https://lore.kernel.org/all/20241119020807.cn7ugxnhbkqwrr2b@synopsys.com/
-[2] https://lore.kernel.org/all/2024111922-pantyhose-panorama-6f16@gregkh/
-[3] https://lore.kernel.org/all/5l65sdskdzbehxamff5ax4ptiqhaxh7ewi4umtpp6ynen45nj6@nebuxjg4c4rx/
+
+This patch is completely speculative, review with care!
+
+It is only based on naming where a _start() function if not followed by a
+_stop() in some paths but is in other paths.
 ---
- drivers/usb/dwc3/core.h | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/spi/spi-aspeed-smc.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/usb/dwc3/core.h b/drivers/usb/dwc3/core.h
-index ee73789326bc..3be069c4520e 100644
---- a/drivers/usb/dwc3/core.h
-+++ b/drivers/usb/dwc3/core.h
-@@ -956,7 +956,6 @@ struct dwc3_request {
- 	struct usb_request	request;
- 	struct list_head	list;
- 	struct dwc3_ep		*dep;
--	struct scatterlist	*sg;
- 	struct scatterlist	*start_sg;
+diff --git a/drivers/spi/spi-aspeed-smc.c b/drivers/spi/spi-aspeed-smc.c
+index 8eb843ddb25f..e9beae95dded 100644
+--- a/drivers/spi/spi-aspeed-smc.c
++++ b/drivers/spi/spi-aspeed-smc.c
+@@ -239,7 +239,7 @@ static ssize_t aspeed_spi_read_user(struct aspeed_spi_chip *chip,
  
- 	unsigned int		num_pending_sgs;
+ 	ret = aspeed_spi_send_cmd_addr(chip, op->addr.nbytes, offset, op->cmd.opcode);
+ 	if (ret < 0)
+-		return ret;
++		goto stop_user;
+ 
+ 	if (op->dummy.buswidth && op->dummy.nbytes) {
+ 		for (i = 0; i < op->dummy.nbytes / op->dummy.buswidth; i++)
+@@ -249,8 +249,9 @@ static ssize_t aspeed_spi_read_user(struct aspeed_spi_chip *chip,
+ 	aspeed_spi_set_io_mode(chip, io_mode);
+ 
+ 	aspeed_spi_read_from_ahb(buf, chip->ahb_base, len);
++stop_user:
+ 	aspeed_spi_stop_user(chip);
+-	return 0;
++	return ret;
+ }
+ 
+ static ssize_t aspeed_spi_write_user(struct aspeed_spi_chip *chip,
+@@ -261,10 +262,11 @@ static ssize_t aspeed_spi_write_user(struct aspeed_spi_chip *chip,
+ 	aspeed_spi_start_user(chip);
+ 	ret = aspeed_spi_send_cmd_addr(chip, op->addr.nbytes, op->addr.val, op->cmd.opcode);
+ 	if (ret < 0)
+-		return ret;
++		goto stop_user;
+ 	aspeed_spi_write_to_ahb(chip->ahb_base, op->data.buf.out, op->data.nbytes);
++stop_user:
+ 	aspeed_spi_stop_user(chip);
+-	return 0;
++	return ret;
+ }
+ 
+ /* support for 1-1-1, 1-1-2 or 1-1-4 */
 -- 
 2.47.0
 
