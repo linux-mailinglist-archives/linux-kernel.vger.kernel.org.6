@@ -1,96 +1,162 @@
-Return-Path: <linux-kernel+bounces-414046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 599D89D225C
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 10:21:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E2ABC9D2269
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 10:23:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DED49B20F04
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 09:21:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7BF6FB232E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 09:23:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF97D19C54F;
-	Tue, 19 Nov 2024 09:21:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D9191C0DD3;
+	Tue, 19 Nov 2024 09:22:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="c76MvF2g"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="nYatqqQk"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5A5913FD83
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 09:21:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E2241C07D7;
+	Tue, 19 Nov 2024 09:22:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732008066; cv=none; b=bImtNacAul3tRtFpgKd1d523xDKwdG2iGow5j7qiCs+yeLYlG7b0uEPH7bW3JHQ9qc8KTiStAXmxOKGGgjJENzmB1Ayn9R2YtwIue66NJyIDocFjha10wU2zcRHmC29NCqUd4a5Cvb6Ow3PXtTgXjT3b3lKhsrNrq2S92Nl5ofw=
+	t=1732008147; cv=none; b=U6NYa2+k8eIAMo1F1PFgdTUnVNXxrV3FzRntjFT1JgXThBExKpciDcfyeqkXKxUgRdVvtSClM8/qR1OaIwe9gH/K34bC5OtcmHPr8d3PT8SHgfEKYCJp4QV+QgkihJvXW2QrdQBrg/WKNj4kFk3cXVGSjTLjKlhRi8ZVNBeJSw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732008066; c=relaxed/simple;
-	bh=CzgZPQkB6V+q59YG1e8JnaleyQ8d5xZWpjBkzQl5m1U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qK2B6FHtWUuFn32rOBPqLP1+vP6IYxibsRSHrNFumjQvbioSFkDdsY5ISAG7oVycrV14TeKv9sg+aVmMfkBQdCXADwLTAcox1oc/58yJ7v0PPORuEKd4yImyTcBV+Q/CCtgAZIHIDy7ze+R2wPL6amV6EXs7tdCZF2dKkx0m0lM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=c76MvF2g; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-71e79f73aaeso569286b3a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 01:21:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1732008064; x=1732612864; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HNjfiBdLKPlGRw2iGcWxAqDoQ+YX9jcbPGBmsbo8owg=;
-        b=c76MvF2gKRAMHfgKC5W4KuU6fQU/sXK4fk98vCPkzBW8qyW+9U8Kbl2zOwr2mko8bv
-         wOPBm1jBzO8kUSEZcGaQ9GUlJYVgGH7FmXmPYcmg1jb3bfGQGyvKKgeljTJjGPwgJB+l
-         d3PmJMpbCBqoO1aF+UioHTPzFKCau9ng/e44U=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732008064; x=1732612864;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HNjfiBdLKPlGRw2iGcWxAqDoQ+YX9jcbPGBmsbo8owg=;
-        b=R+/+vZCbzfKShDJJ04amTDv3B8vAv/zR5kRfHmsrYC3l4YrCidYAVON3LMD/81S9F6
-         dlnUyHzVjdAAuDX4pHcARns2p0TM6ICivLvFKtsiNXmR6dJCSz4wCkDmKK3Eu+HoQ+Kn
-         3rIRviCmwD6WozhWSiUrlCDsnqLni8no8xkZ5uv1FZrb1VGEcxuULDRVfO06RhcTiGsD
-         48W7E7dK8Nj4ZsqBBgeKg2H5VofodfCOHPdFXtwOuTMwJux4aeV59BsFWxHZqqegE99I
-         +rHIS+CzkSA6pEqCfMAqUNy+nnnvDTE/N91yPiBVS8LsTW1Kp9OOyp986shfV5p+YiCY
-         kYdw==
-X-Forwarded-Encrypted: i=1; AJvYcCXkEECOfx1oaJLhrtrOtIPE+33VeyFTB/OrxzDX2bmwFd0WHd/LJ2aa6SK0B1YC0T32yOQ/us7VvOuYM/I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxArsVciybykpHOml2bZbDiDOoSPUIjqmn2/RKJxkD549jLpEXC
-	bbK9cfjjE6MH/Y8w3jeEc2iJFAkXLLEVZlM5eg6LnOUAR8ZiVRBbJgq6TJOH2/X3SDXkYFjor+E
-	=
-X-Google-Smtp-Source: AGHT+IGluIr3+H3FE5AnVN8K7Vdc1zZ7vQIg4AV14EH7qMyFXvnEmozz6o7awjN6RK51MPWRD5GHVA==
-X-Received: by 2002:a05:6a00:1790:b0:724:590d:e320 with SMTP id d2e1a72fcca58-72476b96351mr17810526b3a.7.1732008064029;
-        Tue, 19 Nov 2024 01:21:04 -0800 (PST)
-Received: from google.com ([2401:fa00:8f:203:5534:f54c:1465:9438])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724771e1324sm7575559b3a.133.2024.11.19.01.21.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Nov 2024 01:21:03 -0800 (PST)
-Date: Tue, 19 Nov 2024 18:20:59 +0900
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Sergey Senozhatsky <senozhatsky@chromium.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Minchan Kim <minchan@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv1 0/8] zram: introduce multi-handle entries
-Message-ID: <20241119092059.GC2668855@google.com>
-References: <20241119072057.3440039-1-senozhatsky@chromium.org>
+	s=arc-20240116; t=1732008147; c=relaxed/simple;
+	bh=W0kylkLy4P3MU5Xwb1kcvgvN2vy0PWZo5uTSAP8A9xo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=DSi8VyLpG4pZmSI5QuqGg2qi/ChWAqugdYFY5BTOWxFQdS1xkXQK1oCSiPoZyef/UBZlXufyCszfWxO1p7eCVHOmY6O8pEZXlcxhr0iA4+hJmcg9RB2+7Q3Rb7iFb0TLrC7HLbYelF5RUT8g3QajP5SKAvNaNG9lFipvwCD6tyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=nYatqqQk; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AJ7h2X0031218;
+	Tue, 19 Nov 2024 09:22:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	8frZC1PrgVzVzBzyMrewfX5KrEeP0IsVOp9VgM6LpQg=; b=nYatqqQkWeU1n6kV
+	xnTRGCCxgT+EEYri1y7D0HsEgVyyx0nVLoUMPtmizUdY/nstFWGo2cIfFebi6eNZ
+	uUTF24pH/IGiqqTJg8E5zq0j7WG4dZz1iGiy3+6hF+LUNHgBfLGGfWU7nd87C7Gz
+	axYicpHIzPQOfeRE41IFuP9rdkdkk9/BevbuqewpKwSVBDOV4nYXCZ5j/2NYG5Mf
+	Z2xB6ZSdF50LIIFv/ZLPZlu+NHHFZSEgPixQt8vZoEAjsGmwklbuHwB0wVOMwGXQ
+	PxoLVov2KHgWcCOwoRR0/FL5ezqkrRUyURoanNnXqezdOfRyi3Z4/sWPzTOYoRvi
+	LnBSNA==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4308y9223g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 19 Nov 2024 09:22:23 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AJ9Ltqb029249
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 19 Nov 2024 09:21:55 GMT
+Received: from [10.239.133.118] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 19 Nov
+ 2024 01:21:52 -0800
+Message-ID: <cc57833c-13ca-48ae-a6d9-c7fdc545743f@quicinc.com>
+Date: Tue, 19 Nov 2024 17:21:49 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241119072057.3440039-1-senozhatsky@chromium.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] arm64: dts: qcom: Enable Primary USB controller on
+ QCS615 Ride
+To: Krishna Kurapati <quic_kriskura@quicinc.com>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Rob Herring <robh@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <quic_ppratap@quicinc.com>,
+        <quic_jackp@quicinc.com>
+References: <20241119052854.995691-1-quic_kriskura@quicinc.com>
+ <20241119052854.995691-3-quic_kriskura@quicinc.com>
+Content-Language: en-US
+From: Song Xue <quic_songxue@quicinc.com>
+In-Reply-To: <20241119052854.995691-3-quic_kriskura@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: EMgZiG0_qsKh0zFk_r-PedGpzpxFFP1T
+X-Proofpoint-ORIG-GUID: EMgZiG0_qsKh0zFk_r-PedGpzpxFFP1T
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ mlxlogscore=917 malwarescore=0 mlxscore=0 phishscore=0 bulkscore=0
+ adultscore=0 lowpriorityscore=0 impostorscore=0 spamscore=0 clxscore=1015
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411190067
 
-On (24/11/19 16:20), Sergey Senozhatsky wrote:
-> 	ZRAM_HUGE objects are incompressible and each takes a whole
-> physical page on the zsmalloc side.  zsmalloc pool, naturally, has
-> some internal memory fragmentation (within size-classes), so what
-> we can do for ZRAM_HUGE objects is to split them into several
-> smaller objects (2 at this point) and store those parts individually
-> in regular size-classes (hence multi-handle entries). This, basically,
-> lets us to use already allocated (but unused) zspages memory for
-> ZRAM_HUGE objects, instead of unconditional allocation of 0-order
-> page for each ZRAM_HUGE object.
 
-Forgot to mention, this is still just "RFC".
+
+On 11/19/2024 1:28 PM, Krishna Kurapati wrote:
+> Enable primary USB controller on QCS615 Ride platform. The primary USB
+> controller is made "peripheral", as this is intended to be connected to
+> a host for debugging use cases.
+> 
+> For using the controller in host mode, changing the dr_mode and adding
+> appropriate pinctrl nodes to provide vbus would be sufficient.
+> 
+> Signed-off-by: Krishna Kurapati <quic_kriskura@quicinc.com>
+> ---
+>   arch/arm64/boot/dts/qcom/qcs615-ride.dts | 23 +++++++++++++++++++++++
+>   1 file changed, 23 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/qcs615-ride.dts b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
+> index ee6cab3924a6..b647c87b030b 100644
+> --- a/arch/arm64/boot/dts/qcom/qcs615-ride.dts
+> +++ b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
+> @@ -214,6 +214,29 @@ &uart0 {
+>   	status = "okay";
+>   };
+>   
+> +&usb_1_hsphy {
+> +	vdd-supply = <&vreg_l5a>;
+> +	vdda-pll-supply = <&vreg_l2a>;
+> +	vdda-phy-dpdm-supply = <&vreg_l13a>;
+> +
+> +	status = "okay";
+> +};
+> +
+ From schematic, we need use the "vreg_l12a" for vdda-pll-supply.
+
+ From bindings, we also can see need 1.8V(VREG_L12A_1P8) not 
+2.9V(VREG_L2A_2P96):
+
+62vdda-pll-supply:
+63     description:
+64       Phandle to 1.8V regulator supply to PHY refclk pll block.
+
+> +&usb_qmpphy {
+> +	vdda-phy-supply = <&vreg_l5a>;
+> +	vdda-pll-supply = <&vreg_l12a>;
+> +
+> +	status = "okay";
+> +};
+> +
+> +&usb_1 {
+> +	status = "okay";
+> +};
+> +
+> +&usb_1_dwc3 {
+> +	dr_mode = "peripheral";
+> +};
+> +
+>   &watchdog {
+>   	clocks = <&sleep_clk>;
+>   };
+Thanks,
+Song
 
