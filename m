@@ -1,323 +1,95 @@
-Return-Path: <linux-kernel+bounces-414318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3076C9D26B5
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 14:18:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFEF99D2638
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 13:56:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F5FBB30213
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 12:56:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85D42284789
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 12:56:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1E371CDA3D;
-	Tue, 19 Nov 2024 12:54:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99AF81CCEDE;
+	Tue, 19 Nov 2024 12:54:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="wMSZ+HFh"
-Received: from mx0b-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NXCAbvdv"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 254101CCEFC;
-	Tue, 19 Nov 2024 12:54:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61BC41CCB4D;
+	Tue, 19 Nov 2024 12:54:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732020892; cv=none; b=PLEgl9sAJykhA545tvLK3S7XYah09ufIjcEnpGsw9+ISNhKiHSYt0hfeR4h0ozIuzH/TcPbLIT3CCUeHH7pU6IQScRT1FHfaM0jCLMHoiklGP7msmplp9yIxBWhiFqhUFR0h6Hk2ZiqwJLiIyRoYaipLXa65tmkM6yFCK2geK90=
+	t=1732020880; cv=none; b=VLUv3BoQLhiZR91MFb30V31hBCUGzX/XubmoC7ho+HH9Q2Tb7C5K5Ltik5ee0p2GEU8MMMET5VcarhFg/Fa2dSONyV3GrqsXOkf1jFRhoDi0sQJIUrzgHPEOrCGgs0II1HIoPSHetSBQ219aWFW8mGbY2bRwXI9ZPEuuC5GFIMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732020892; c=relaxed/simple;
-	bh=0NtJLeywE+5TIOBJlVnnpu8TszEYpxScCqZ+saKDLZE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uUgQ87amUvYR4F8jgXvB+teN2U/+f4MB7w0s//wCsusVJHmNsx23L1gwXDxJahurhUVM9+BI3a5gRN2x7GaY6q0yIjaEdjO27TqhrWJjKPtLnXkXjkhdopqoqhdDjxadCn1tAofXME4LUt1rizwSr2Cc2Zmv3b8V8deJtR5DTsk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=wMSZ+HFh; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0375855.ppops.net [127.0.0.1])
-	by mx0b-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AJB18gM009127;
-	Tue, 19 Nov 2024 07:54:37 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=DKIM; bh=ATPUJ
-	Fb2+7Q0aIr6pLA77tNE670dlGb9JHs4u0ZKanc=; b=wMSZ+HFhSKXq/HXwU70or
-	oV15qa1xgp8Xc3lmR1aTGXAS/5k04h+rGszct8kEuprsbLGDwMXhti793XhxJldw
-	IlTpJhEBZ+t+sszo10LnS8Z5kl8nOZRTlNZSQzCY86ngfOWoAz/2MXIXcFbxpxfH
-	dfwIEag2Bn++A8nafjv6riTwD5M51+nrZq1r0I/fRfdqyErWxr2c0Ma6CE5dCnRh
-	nqfJw98xT+1fScbYRZX+iDWOCJkfxSCvzvcVy3jLfrg5fzrJhu23VhC/9ry8Wk0w
-	WS95VtKa+HtGelkVq5lZuSM/legG4YvIhdEOljzu4rCnL7QU4P92A0U6fSlTq0LV
-	g==
-Received: from nwd2mta4.analog.com ([137.71.173.58])
-	by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 430seageje-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 19 Nov 2024 07:54:37 -0500 (EST)
-Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
-	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 4AJCsaTb005026
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 19 Nov 2024 07:54:36 -0500
-Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by ASHBMBX9.ad.analog.com
- (10.64.17.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.14; Tue, 19 Nov
- 2024 07:54:36 -0500
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server id 15.2.986.14 via Frontend
- Transport; Tue, 19 Nov 2024 07:54:35 -0500
-Received: from work.ad.analog.com (HYB-hERzalRezfV.ad.analog.com [10.65.205.9])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 4AJCsOOD007325;
-	Tue, 19 Nov 2024 07:54:27 -0500
-From: Marcelo Schmitt <marcelo.schmitt@analog.com>
-To: <lars@metafoo.de>, <Michael.Hennerich@analog.com>,
-        <marcelo.schmitt@analog.com>, <jic23@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <marcelo.schmitt1@gmail.com>
-CC: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v3 3/4] iio: adc: ad4000: Use device specific timing for SPI transfers
-Date: Tue, 19 Nov 2024 09:54:22 -0300
-Message-ID: <f32ecef8c07a6ca13369b556f78d05c7e9983118.1732020224.git.marcelo.schmitt@analog.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <cover.1732020224.git.marcelo.schmitt@analog.com>
-References: <cover.1732020224.git.marcelo.schmitt@analog.com>
+	s=arc-20240116; t=1732020880; c=relaxed/simple;
+	bh=PeZmomn7GKlCTisY4AlendLscdky4s/5oljArNTFvgQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EH3R/6wXrWxuELNwtCUD6iT84gVo6gcmZiENw30EJZECbLXxMNkOLP1Y6ojvi10hjazCXp2PHgnt38zqCi7GKOz7mDAvT2eJm5yiO3LnwF/PEL5d2szVLuUpMNEaW/W6UMDqK2v/DwIJNrrolrQvhuO/LuEEsxd5usScuNsZPg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=NXCAbvdv; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=tAha+/Bcbs2mitGR4LOAeKfmhmbAlpxVnBjj1GeqvOs=; b=NXCAbvdve1L8j3pglFQ/c9n7Aa
+	C61BbL/NfFGceDuC7D6hmQ9cc83aGt7gFRol25KyIgXYLSEyeVmL6CwY6PXAxErvifhakZidkWS1S
+	u7+PX6TGHligbI59m7aYGl7i5pVNe/34dRLniaUgjLSc3Z+VWqyIC97eSqELWkOznr8hkix5d16ej
+	kfW1+BFnDItI7vgRI91Z6Y4OXqGhi7YlGOsVf8HEv5kVzk1RQz6kLPYkAPSOjh7ArsEJxavovsaUH
+	v1MlfAiIzDjm6RjQ+BkIPhYCoV7Q+twpJxx24fy04V1eirEFCIMk06NoeH/HhRoh4ARbVA3xH5LCg
+	9/V5u1sg==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tDNkW-000000045GX-0G8Q;
+	Tue, 19 Nov 2024 12:54:33 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 7D3D23006AB; Tue, 19 Nov 2024 13:54:32 +0100 (CET)
+Date: Tue, 19 Nov 2024 13:54:32 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: linux-kernel@vger.kernel.org
+Cc: linux-tip-commits@vger.kernel.org, Rik van Riel <riel@surriel.com>,
+	Ingo Molnar <mingo@kernel.org>, Dave Hansen <dave.hansen@intel.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Mel Gorman <mgorman@suse.de>, x86@kernel.org
+Subject: Re: [tip: x86/mm] x86/mm/tlb: Update mm_cpumask lazily
+Message-ID: <20241119125432.GF2328@noisy.programming.kicks-ass.net>
+References: <20241114152723.1294686-2-riel@surriel.com>
+ <173201565541.412.15037901822386376271.tip-bot2@tip-bot2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Proofpoint-GUID: w1bXRaGFWh2B7bHw8PBN3V4vWyK9IA3a
-X-Proofpoint-ORIG-GUID: w1bXRaGFWh2B7bHw8PBN3V4vWyK9IA3a
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
- priorityscore=1501 suspectscore=0 spamscore=0 impostorscore=0
- malwarescore=0 adultscore=0 mlxlogscore=999 clxscore=1015 phishscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411190095
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <173201565541.412.15037901822386376271.tip-bot2@tip-bot2>
 
-The SPI transfers for AD4020, AD4021, and AD4022 have slightly different
-timing specifications. Use device specific timing constraints to set SPI
-transfer parameters. While tweaking time constraints, remove time related
-defines including unused AD4000_TQUIET1_NS.
+On Tue, Nov 19, 2024 at 11:27:35AM -0000, tip-bot2 for Rik van Riel wrote:
+> diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
+> index d17518c..8b66a55 100644
+> --- a/arch/x86/kernel/alternative.c
+> +++ b/arch/x86/kernel/alternative.c
+> @@ -1825,11 +1825,18 @@ static inline temp_mm_state_t use_temporary_mm(struct mm_struct *mm)
+>  	return temp_state;
+>  }
+>  
+> +__ro_after_init struct mm_struct *poking_mm;
+> +__ro_after_init unsigned long poking_addr;
+> +
+>  static inline void unuse_temporary_mm(temp_mm_state_t prev_state)
+>  {
+>  	lockdep_assert_irqs_disabled();
+> +
+>  	switch_mm_irqs_off(NULL, prev_state.mm, current);
+>  
+> +	/* Clear the cpumask, to indicate no TLB flushing is needed anywhere */
+> +	cpumask_clear_cpu(raw_smp_processor_id(), mm_cpumask(poking_mm));
 
-Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
----
- drivers/iio/adc/ad4000.c | 51 +++++++++++++++++++++++++++++++++-------
- 1 file changed, 42 insertions(+), 9 deletions(-)
+Oh bugger, this is really unfortunate.
 
-diff --git a/drivers/iio/adc/ad4000.c b/drivers/iio/adc/ad4000.c
-index 21731c4d31ee..c700d51b5637 100644
---- a/drivers/iio/adc/ad4000.c
-+++ b/drivers/iio/adc/ad4000.c
-@@ -35,10 +35,6 @@
- 
- #define AD4000_SCALE_OPTIONS		2
- 
--#define AD4000_TQUIET1_NS		190
--#define AD4000_TQUIET2_NS		60
--#define AD4000_TCONV_NS			320
--
- #define __AD4000_DIFF_CHANNEL(_sign, _real_bits, _storage_bits, _reg_access)	\
- {										\
- 	.type = IIO_VOLTAGE,							\
-@@ -122,10 +118,31 @@ static const int ad4000_gains[] = {
- 	454, 909, 1000, 1900,
- };
- 
-+struct ad4000_time_spec {
-+	int t_conv_ns;
-+	int t_quiet2_ns;
-+};
-+
-+/*
-+ * Same timing specifications for all of AD4000, AD4001, ..., AD4008, AD4010,
-+ * ADAQ4001, and ADAQ4003.
-+ */
-+static const struct ad4000_time_spec ad4000_t_spec = {
-+	.t_conv_ns = 320,
-+	.t_quiet2_ns = 60,
-+};
-+
-+/* AD4020, AD4021, AD4022 */
-+static const struct ad4000_time_spec ad4020_t_spec = {
-+	.t_conv_ns = 350,
-+	.t_quiet2_ns = 60,
-+};
-+
- struct ad4000_chip_info {
- 	const char *dev_name;
- 	struct iio_chan_spec chan_spec[2];
- 	struct iio_chan_spec reg_access_chan_spec[2];
-+	const struct ad4000_time_spec *time_spec;
- 	bool has_hardware_gain;
- };
- 
-@@ -133,90 +150,105 @@ static const struct ad4000_chip_info ad4000_chip_info = {
- 	.dev_name = "ad4000",
- 	.chan_spec = AD4000_PSEUDO_DIFF_CHANNELS('u', 16, 0),
- 	.reg_access_chan_spec = AD4000_PSEUDO_DIFF_CHANNELS('u', 16, 1),
-+	.time_spec = &ad4000_t_spec,
- };
- 
- static const struct ad4000_chip_info ad4001_chip_info = {
- 	.dev_name = "ad4001",
- 	.chan_spec = AD4000_DIFF_CHANNELS('s', 16, 0),
- 	.reg_access_chan_spec = AD4000_DIFF_CHANNELS('s', 16, 1),
-+	.time_spec = &ad4000_t_spec,
- };
- 
- static const struct ad4000_chip_info ad4002_chip_info = {
- 	.dev_name = "ad4002",
- 	.chan_spec = AD4000_PSEUDO_DIFF_CHANNELS('u', 18, 0),
- 	.reg_access_chan_spec = AD4000_PSEUDO_DIFF_CHANNELS('u', 18, 1),
-+	.time_spec = &ad4000_t_spec,
- };
- 
- static const struct ad4000_chip_info ad4003_chip_info = {
- 	.dev_name = "ad4003",
- 	.chan_spec = AD4000_DIFF_CHANNELS('s', 18, 0),
- 	.reg_access_chan_spec = AD4000_DIFF_CHANNELS('s', 18, 1),
-+	.time_spec = &ad4000_t_spec,
- };
- 
- static const struct ad4000_chip_info ad4004_chip_info = {
- 	.dev_name = "ad4004",
- 	.chan_spec = AD4000_PSEUDO_DIFF_CHANNELS('u', 16, 0),
- 	.reg_access_chan_spec = AD4000_PSEUDO_DIFF_CHANNELS('u', 16, 1),
-+	.time_spec = &ad4000_t_spec,
- };
- 
- static const struct ad4000_chip_info ad4005_chip_info = {
- 	.dev_name = "ad4005",
- 	.chan_spec = AD4000_DIFF_CHANNELS('s', 16, 0),
- 	.reg_access_chan_spec = AD4000_DIFF_CHANNELS('s', 16, 1),
-+	.time_spec = &ad4000_t_spec,
- };
- 
- static const struct ad4000_chip_info ad4006_chip_info = {
- 	.dev_name = "ad4006",
- 	.chan_spec = AD4000_PSEUDO_DIFF_CHANNELS('u', 18, 0),
- 	.reg_access_chan_spec = AD4000_PSEUDO_DIFF_CHANNELS('u', 18, 1),
-+	.time_spec = &ad4000_t_spec,
- };
- 
- static const struct ad4000_chip_info ad4007_chip_info = {
- 	.dev_name = "ad4007",
- 	.chan_spec = AD4000_DIFF_CHANNELS('s', 18, 0),
- 	.reg_access_chan_spec = AD4000_DIFF_CHANNELS('s', 18, 1),
-+	.time_spec = &ad4000_t_spec,
- };
- 
- static const struct ad4000_chip_info ad4008_chip_info = {
- 	.dev_name = "ad4008",
- 	.chan_spec = AD4000_PSEUDO_DIFF_CHANNELS('u', 16, 0),
- 	.reg_access_chan_spec = AD4000_PSEUDO_DIFF_CHANNELS('u', 16, 1),
-+	.time_spec = &ad4000_t_spec,
- };
- 
- static const struct ad4000_chip_info ad4010_chip_info = {
- 	.dev_name = "ad4010",
- 	.chan_spec = AD4000_PSEUDO_DIFF_CHANNELS('u', 18, 0),
- 	.reg_access_chan_spec = AD4000_PSEUDO_DIFF_CHANNELS('u', 18, 1),
-+	.time_spec = &ad4000_t_spec,
- };
- 
- static const struct ad4000_chip_info ad4011_chip_info = {
- 	.dev_name = "ad4011",
- 	.chan_spec = AD4000_DIFF_CHANNELS('s', 18, 0),
- 	.reg_access_chan_spec = AD4000_DIFF_CHANNELS('s', 18, 1),
-+	.time_spec = &ad4000_t_spec,
- };
- 
- static const struct ad4000_chip_info ad4020_chip_info = {
- 	.dev_name = "ad4020",
- 	.chan_spec = AD4000_DIFF_CHANNELS('s', 20, 0),
- 	.reg_access_chan_spec = AD4000_DIFF_CHANNELS('s', 20, 1),
-+	.time_spec = &ad4020_t_spec,
- };
- 
- static const struct ad4000_chip_info ad4021_chip_info = {
- 	.dev_name = "ad4021",
- 	.chan_spec = AD4000_DIFF_CHANNELS('s', 20, 0),
- 	.reg_access_chan_spec = AD4000_DIFF_CHANNELS('s', 20, 1),
-+	.time_spec = &ad4020_t_spec,
- };
- 
- static const struct ad4000_chip_info ad4022_chip_info = {
- 	.dev_name = "ad4022",
- 	.chan_spec = AD4000_DIFF_CHANNELS('s', 20, 0),
- 	.reg_access_chan_spec = AD4000_DIFF_CHANNELS('s', 20, 1),
-+	.time_spec = &ad4020_t_spec,
- };
- 
- static const struct ad4000_chip_info adaq4001_chip_info = {
- 	.dev_name = "adaq4001",
- 	.chan_spec = AD4000_DIFF_CHANNELS('s', 16, 0),
- 	.reg_access_chan_spec = AD4000_DIFF_CHANNELS('s', 16, 1),
-+	.time_spec = &ad4000_t_spec,
- 	.has_hardware_gain = true,
- };
- 
-@@ -224,6 +256,7 @@ static const struct ad4000_chip_info adaq4003_chip_info = {
- 	.dev_name = "adaq4003",
- 	.chan_spec = AD4000_DIFF_CHANNELS('s', 18, 0),
- 	.reg_access_chan_spec = AD4000_DIFF_CHANNELS('s', 18, 1),
-+	.time_spec = &ad4000_t_spec,
- 	.has_hardware_gain = true,
- };
- 
-@@ -238,6 +271,7 @@ struct ad4000_state {
- 	bool span_comp;
- 	u16 gain_milli;
- 	int scale_tbl[AD4000_SCALE_OPTIONS][2];
-+	const struct ad4000_time_spec *time_spec;
- 
- 	/*
- 	 * DMA (thus cache coherency maintenance) requires the transfer buffers
-@@ -502,16 +536,15 @@ static const struct iio_info ad4000_info = {
- static int ad4000_prepare_3wire_mode_message(struct ad4000_state *st,
- 					     const struct iio_chan_spec *chan)
- {
--	unsigned int cnv_pulse_time = AD4000_TCONV_NS;
- 	struct spi_transfer *xfers = st->xfers;
- 
- 	xfers[0].cs_change = 1;
--	xfers[0].cs_change_delay.value = cnv_pulse_time;
-+	xfers[0].cs_change_delay.value = st->time_spec->t_conv_ns;
- 	xfers[0].cs_change_delay.unit = SPI_DELAY_UNIT_NSECS;
- 
- 	xfers[1].rx_buf = &st->scan.data;
- 	xfers[1].len = BITS_TO_BYTES(chan->scan_type.storagebits);
--	xfers[1].delay.value = AD4000_TQUIET2_NS;
-+	xfers[1].delay.value = st->time_spec->t_quiet2_ns;
- 	xfers[1].delay.unit = SPI_DELAY_UNIT_NSECS;
- 
- 	spi_message_init_with_transfers(&st->msg, st->xfers, 2);
-@@ -529,7 +562,6 @@ static int ad4000_prepare_3wire_mode_message(struct ad4000_state *st,
- static int ad4000_prepare_4wire_mode_message(struct ad4000_state *st,
- 					     const struct iio_chan_spec *chan)
- {
--	unsigned int cnv_to_sdi_time = AD4000_TCONV_NS;
- 	struct spi_transfer *xfers = st->xfers;
- 
- 	/*
-@@ -537,7 +569,7 @@ static int ad4000_prepare_4wire_mode_message(struct ad4000_state *st,
- 	 * going low.
- 	 */
- 	xfers[0].cs_off = 1;
--	xfers[0].delay.value = cnv_to_sdi_time;
-+	xfers[0].delay.value = st->time_spec->t_conv_ns;
- 	xfers[0].delay.unit = SPI_DELAY_UNIT_NSECS;
- 
- 	xfers[1].rx_buf = &st->scan.data;
-@@ -576,6 +608,7 @@ static int ad4000_probe(struct spi_device *spi)
- 
- 	st = iio_priv(indio_dev);
- 	st->spi = spi;
-+	st->time_spec = chip->time_spec;
- 
- 	ret = devm_regulator_bulk_get_enable(dev, ARRAY_SIZE(ad4000_power_supplies),
- 					     ad4000_power_supplies);
--- 
-2.45.2
+Let me try and fix this.
 
 
