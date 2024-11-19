@@ -1,157 +1,599 @@
-Return-Path: <linux-kernel+bounces-414575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D694D9D2A54
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 16:59:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD44A9D2A2E
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 16:52:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5624AB2C5C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 15:52:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AAC82813B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 15:52:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 053FB1CF5C7;
-	Tue, 19 Nov 2024 15:52:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B12E3C463;
+	Tue, 19 Nov 2024 15:52:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VoGi3W86"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="CN3w7l08"
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DBA03C463;
-	Tue, 19 Nov 2024 15:52:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 969B31CF29E;
+	Tue, 19 Nov 2024 15:52:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732031542; cv=none; b=oyf26JNE1/ASnwkLXpiT2AMZ3T440JZQfaG19u68J9EOPzDPwHe54a1QgSvwmxo6VQzWzWqzeAoVdNRnlH54uyEyG/fc1CGXopzAWCRDinB3uf0e3arnx/JmxFkh5VxcPduG+s9XGkZUZLt9cfOIjhSGYtCDIwdP8HBzmatCWXY=
+	t=1732031563; cv=none; b=gtbB8X8EFfGY6lLv7mkGss9dbWxylARYaHU3DhWpoYfMLJGx4iS/YpuorW5TqtXAcPJhfmtY7Waa9ieA/crpF72T/OahmSJ3FxQ9YK+gun5IFRXHHU/tbXlmIL1F2JIsbCibW11tPDMfHUbKAta9/DCl6Mxi8FuZv3hXx/EUYK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732031542; c=relaxed/simple;
-	bh=o3gR352LlahW4bYiGh6jq+M0jHwfyE3mWNihgjlkCUE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=C1UWS/n5ASZOUgwNzv3X6anPP4Qub2dUlT+zKYP4gLdkMS50bZnVbBpCFJoDC1prkJqaNfqwW5kYjI8aqXfhMmKDs8geHfdm5MMqdBomdqv30MYIAi55rjEuXCNnzkLoEulUXCdwLmOOgiBC7riojTmxqg+rxa/lx7zHBpj7DYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VoGi3W86; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 970C2C4CECF;
-	Tue, 19 Nov 2024 15:52:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732031542;
-	bh=o3gR352LlahW4bYiGh6jq+M0jHwfyE3mWNihgjlkCUE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=VoGi3W86V+BMkH0orN9SkrRWfbsYPYKG/tSszh+qlid2zkITVa5CjS/EAW4cm1Sns
-	 ceAZXjMs8YXNtMFAsN3010zvGc/ft4755EO5ULbjJRJ+6ps+AChjULBn2nZ0mbNObo
-	 f0CMWiuslHEpxx87lRQIgmOjfVqKBQikWUiOfPV516zXihuyEJ5/LLTF9linKGzj8x
-	 FQwRxfxvYlWi+G6+IvtuuLMdtwQLqyDSQiL9bNQb5WVLpgO9hh8YrYQ50nxkuTR2g6
-	 5d68SaiyRkzGOOqXymwyWlHCK0FxkbqdbtQftiY68gh+mMaskLzFcsFhEyNOT9KKyP
-	 trq35+XPAB4/g==
-Message-ID: <38c2c941-42e1-4d7c-aaa2-3c11dcea4e05@kernel.org>
-Date: Tue, 19 Nov 2024 16:52:15 +0100
+	s=arc-20240116; t=1732031563; c=relaxed/simple;
+	bh=4NzZOdGb0ur3CZWG4cjS33EvjJRPveAKoeNy2O3OiEI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=o65B8wuzmUZSpyun2zwB6EA1HuD3I3nbqVTRrSTeV9ZXzHoBKt90ZDJVBRJN2ZcVmbGdPYxKkbISWA+bl7MJi7GMdUvFJnd0PTtbU2KuajQm8/8roqvGWAmRyuInyoO/ZvwPPdzAoVWxtPblxJsQyNBHbY7ib8Gzrgw2/3FeMgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=CN3w7l08; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from wsk (85-222-111-42.dynamic.chello.pl [85.222.111.42])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	(Authenticated sender: lukma@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id 89D8388D9B;
+	Tue, 19 Nov 2024 16:52:37 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1732031558;
+	bh=zsNppn3YucN3DBw14lFNPOF9uTRowuRcJGN9lxVvyk8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=CN3w7l08fLldTUgMBYkKZ4hiKg62bFrkxOj69bRDcVU0NgLuGDAojMZIZlqboh2Jv
+	 0x4Pgi8Yp6zGsxAhk8VZ79HgujVCgnKw1zk1IYD8RqBGjyU5cQi9O0j1fzZMd5Rwi0
+	 JjEb+Tz+OPDF8A2nbHQh1QNn9C6rpamxK2xAPvOMBE0uON546W2FkcTH7JcLuIZfaI
+	 H+pdHdH/XTE2UGWg3QlFFK+pDPkmQVk+nJwWCwPGuf1URkefp/E2GWAaWe+mGL28a5
+	 7WCMCpsp0wictqk26dlNVzmM9rotG4+xDvUs3QPoyDWvF1OQNQLMuwytubvVXghwCr
+	 MgA/gOc3vHaeg==
+Date: Tue, 19 Nov 2024 16:52:36 +0100
+From: Lukasz Majewski <lukma@denx.de>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha
+ Hauer <s.hauer@pengutronix.de>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam
+ <festevam@gmail.com>, devicetree@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Stefan
+ Wahren <wahrenst@gmx.net>
+Subject: Re: [PATCH v11 3/3] ARM: dts: mxs: Add descriptions for imx287
+ based btt3-[012] devices
+Message-ID: <20241119165236.69438f75@wsk>
+In-Reply-To: <20241107085705.490940-3-lukma@denx.de>
+References: <20241107085705.490940-1-lukma@denx.de>
+	<20241107085705.490940-3-lukma@denx.de>
+Organization: denx.de
+X-Mailer: Claws Mail 3.19.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/6] dt-bindings: Add Blaize vendor prefix
-To: Nikolaos Pasaloukos <nikolaos.pasaloukos@blaize.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, James Cowgill
- <james.cowgill@blaize.com>, Matt Redfearn <matthew.redfearn@blaize.com>,
- Neil Jones <neil.jones@blaize.com>, Catalin Marinas
- <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "soc@lists.linux.dev" <soc@lists.linux.dev>
-References: <20241115-blaize-blzp1600_init_board_support-v5-0-c09094e63dc5@blaize.com>
- <20241115-blaize-blzp1600_init_board_support-v5-1-c09094e63dc5@blaize.com>
- <c1885e24-8051-4c91-9870-18eb4218a2ff@kernel.org>
- <bc471aeb-e9fd-4aa9-9bcc-a59d3c2e47b8@blaize.com>
- <c866d4e8-77ee-48ca-b6a8-5f56896b072e@kernel.org>
- <09170fdb-018a-401e-a186-ccd0f5e993d8@blaize.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <09170fdb-018a-401e-a186-ccd0f5e993d8@blaize.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="Sig_/40inb2lnEtEeFDRdPJ5UPqd";
+ protocol="application/pgp-signature"; micalg=pgp-sha512
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-On 19/11/2024 16:23, Nikolaos Pasaloukos wrote:
-> Hi Krzysztof,
-> 
-> That's a very tricky error to pick it up. `checkpatch` on my end doesn't produce
-> an error. The header file on my patches starts as:
-> 'From: Nikolaos Pasaloukos <nikolaos.pasaloukos@blaize.com>'
-> I had set the mail account as Forname: Nikolaos, Surname: Pasaloukos and
-> preferred name as Niko. It is an Outlook365 issue I think.
-> 
-> That said, when I was trying to send my patches, the mail server was converting
-> my name 'Nikolaos Pasaloukos' to the preferred name 'Niko Pasaloukos'.
+--Sig_/40inb2lnEtEeFDRdPJ5UPqd
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Usually it is not a problem to commit patches with one name and send
-with other - git send-email will properly add two From headers like:
-https://lore.kernel.org/all/20241119154245.442961-4-pablo@netfilter.org/
+Dear Community,
 
-If your git history has correct From matching SoB, then indeed
-checkpatch on your end will not complain.
+> The btt3 device' HW revisions from 0 to 2 use imx287 SoC and are to
+> some extend similar to already upstreamed XEA devices, hence are
+> using common imx28-lwe.dtsi file.
+>=20
+> New, imx28-btt3.dtsi has been added to embrace common DTS
+> properties for different HW revisions for this device.
+>=20
+> As a result - changes introduced in imx28-btt3-[012].dts are
+> minimal.
+>=20
 
-If that is the case, it means your SMTP server *rewrites* the From
-header. Not nice... but what to expect from Microsoft? They learnt open
-source just recently and before open source was communism for them...
+Are there any more comments / suggestions for this patch set?
 
-You can change your local name to match whatever Microsoft wants to set
-or you can use b4 relay to send the patches.
+> Signed-off-by: Lukasz Majewski <lukma@denx.de>
+>=20
+> ---
+> Changes for v2:
+> - Rename dts file from btt3-[012] to imx28-btt3-[012] to match current
+>   linux kernel naming convention
+> - Remove 'wlf,wm8974' from compatible for codec@1a
+>=20
+> Changes for v3:
+> - Keep alphabethical order for Makefile entries
+>=20
+> Changes for v4:
+> - Change compatible for btt3 board (to 'lwn,imx28-btt3')
+>=20
+> Changes for v5:
+> - Combine patch, which adds btt3-[012] with one adding board entry to
+>   fsl.yaml
+>=20
+> Changes for v6:
+> - Make the patch series for adding entry in fsl.yaml and btt3
+>=20
+> Changes for v7:
+> - Use "panel" property as suggested by the community
+> - Use panel-timing to specify the display parameters
+> - Update subject line with correct tags
+>=20
+> Changes for v8:
+> - Use GPIO_ACTIVE_HIGH instead of '0'
+> - Add the comment regarding mac address specification
+> - Remove superfluous comment
+> - Change wifi-en-pin node name
+>=20
+> Changes for v9:
+> - Remove not used 'pm-ignore-notify'
+> - Add display names for 'panel-dpi' compatible to avoid Schema
+> warnings
+>=20
+> Changes for v10:
+> - Drop new line with panel-timing definitions
+> - Add new lines with 'sound' node
+> - Change 'codec' to 'audio-codec'
+> - Change order of properties for saif1 node
+>=20
+> Changes for v11:
+> - None
+> ---
+>  arch/arm/boot/dts/nxp/mxs/Makefile         |   3 +
+>  arch/arm/boot/dts/nxp/mxs/imx28-btt3-0.dts |  12 +
+>  arch/arm/boot/dts/nxp/mxs/imx28-btt3-1.dts |   8 +
+>  arch/arm/boot/dts/nxp/mxs/imx28-btt3-2.dts |  39 +++
+>  arch/arm/boot/dts/nxp/mxs/imx28-btt3.dtsi  | 313
+> +++++++++++++++++++++ 5 files changed, 375 insertions(+)
+>  create mode 100644 arch/arm/boot/dts/nxp/mxs/imx28-btt3-0.dts
+>  create mode 100644 arch/arm/boot/dts/nxp/mxs/imx28-btt3-1.dts
+>  create mode 100644 arch/arm/boot/dts/nxp/mxs/imx28-btt3-2.dts
+>  create mode 100644 arch/arm/boot/dts/nxp/mxs/imx28-btt3.dtsi
+>=20
+> diff --git a/arch/arm/boot/dts/nxp/mxs/Makefile
+> b/arch/arm/boot/dts/nxp/mxs/Makefile index a430d04f9c69..96dd31ea19ba
+> 100644 --- a/arch/arm/boot/dts/nxp/mxs/Makefile
+> +++ b/arch/arm/boot/dts/nxp/mxs/Makefile
+> @@ -8,6 +8,9 @@ dtb-$(CONFIG_ARCH_MXS) +=3D \
+>  	imx28-apf28.dtb \
+>  	imx28-apf28dev.dtb \
+>  	imx28-apx4devkit.dtb \
+> +	imx28-btt3-0.dtb \
+> +	imx28-btt3-1.dtb \
+> +	imx28-btt3-2.dtb \
+>  	imx28-cfa10036.dtb \
+>  	imx28-cfa10037.dtb \
+>  	imx28-cfa10049.dtb \
+> diff --git a/arch/arm/boot/dts/nxp/mxs/imx28-btt3-0.dts
+> b/arch/arm/boot/dts/nxp/mxs/imx28-btt3-0.dts new file mode 100644
+> index 000000000000..6ac46e4b21bb
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/nxp/mxs/imx28-btt3-0.dts
+> @@ -0,0 +1,12 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
+> +/*
+> + * Copyright 2024
+> + * Lukasz Majewski, DENX Software Engineering, lukma@denx.de
+> + */
+> +
+> +/dts-v1/;
+> +#include "imx28-btt3.dtsi"
+> +
+> +&hog_pins_rev {
+> +	fsl,pull-up =3D <MXS_PULL_ENABLE>;
+> +};
+> diff --git a/arch/arm/boot/dts/nxp/mxs/imx28-btt3-1.dts
+> b/arch/arm/boot/dts/nxp/mxs/imx28-btt3-1.dts new file mode 100644
+> index 000000000000..213fe931c58b
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/nxp/mxs/imx28-btt3-1.dts
+> @@ -0,0 +1,8 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
+> +/*
+> + * Copyright 2024
+> + * Lukasz Majewski, DENX Software Engineering, lukma@denx.de
+> + */
+> +
+> +/dts-v1/;
+> +#include "imx28-btt3.dtsi"
+> diff --git a/arch/arm/boot/dts/nxp/mxs/imx28-btt3-2.dts
+> b/arch/arm/boot/dts/nxp/mxs/imx28-btt3-2.dts new file mode 100644
+> index 000000000000..4bccd784d065
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/nxp/mxs/imx28-btt3-2.dts
+> @@ -0,0 +1,39 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
+> +/*
+> + * Copyright 2024
+> + * Lukasz Majewski, DENX Software Engineering, lukma@denx.de
+> + */
+> +
+> +/dts-v1/;
+> +#include "imx28-btt3.dtsi"
+> +
+> +/ {
+> +	panel {
+> +		compatible =3D "powertip,st7272", "panel-dpi";
+> +		power-supply =3D <&reg_3v3>;
+> +		width-mm =3D <70>;
+> +		height-mm =3D <52>;
+> +
+> +		panel-timing {
+> +			clock-frequency =3D <6500000>;
+> +			hactive =3D <320>;
+> +			vactive =3D <240>;
+> +			hfront-porch =3D <20>;
+> +			hback-porch =3D <68>;
+> +			hsync-len =3D <30>;
+> +			vfront-porch =3D <4>;
+> +			vback-porch =3D <14>;
+> +			vsync-len =3D <4>;
+> +			hsync-active =3D <0>;
+> +			vsync-active =3D <0>;
+> +			de-active =3D <1>;
+> +			pixelclk-active =3D <1>;
+> +		};
+> +
+> +		port {
+> +			panel_in: endpoint {
+> +				remote-endpoint =3D <&display_out>;
+> +			};
+> +		};
+> +	};
+> +};
+> diff --git a/arch/arm/boot/dts/nxp/mxs/imx28-btt3.dtsi
+> b/arch/arm/boot/dts/nxp/mxs/imx28-btt3.dtsi new file mode 100644
+> index 000000000000..2c52e67e5c14
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/nxp/mxs/imx28-btt3.dtsi
+> @@ -0,0 +1,313 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
+> +/*
+> + * Copyright 2024
+> + * Lukasz Majewski, DENX Software Engineering, lukma@denx.de
+> + */
+> +/dts-v1/;
+> +#include "imx28-lwe.dtsi"
+> +
+> +/ {
+> +	model =3D "BTT3";
+> +
+> +	compatible =3D "lwn,imx28-btt3", "fsl,imx28";
+> +
+> +	chosen {
+> +	       bootargs =3D "root=3D/dev/mmcblk0p2 rootfstype=3Dext4 ro
+> rootwait console=3DttyAMA0,115200 panic=3D1 quiet";
+> +	};
+> +
+> +	memory@40000000 {
+> +		reg =3D <0x40000000 0x10000000>;
+> +		device_type =3D "memory";
+> +	};
+> +
+> +	panel {
+> +		compatible =3D "powertip,hx8238a", "panel-dpi";
+> +		power-supply =3D <&reg_3v3>;
+> +		width-mm =3D <70>;
+> +		height-mm =3D <52>;
+> +
+> +		panel-timing {
+> +			clock-frequency =3D <6500000>;
+> +			hactive =3D <320>;
+> +			vactive =3D <240>;
+> +			hfront-porch =3D <20>;
+> +			hback-porch =3D <38>;
+> +			hsync-len =3D <30>;
+> +			vfront-porch =3D <4>;
+> +			vback-porch =3D <14>;
+> +			vsync-len =3D <4>;
+> +			hsync-active =3D <0>;
+> +			vsync-active =3D <0>;
+> +			de-active =3D <0>;
+> +			pixelclk-active =3D <1>;
+> +		};
+> +
+> +		port {
+> +			panel_in: endpoint {
+> +				remote-endpoint =3D <&display_out>;
+> +			};
+> +		};
+> +	};
+> +
+> +	poweroff {
+> +		compatible =3D "gpio-poweroff";
+> +		gpios =3D <&gpio0 24 GPIO_ACTIVE_HIGH>;
+> +	};
+> +
+> +	sound {
+> +		compatible =3D "simple-audio-card";
+> +		simple-audio-card,name =3D "BTTC Audio";
+> +		simple-audio-card,widgets =3D "Speaker", "BTTC
+> Speaker";
+> +		simple-audio-card,routing =3D "BTTC Speaker",
+> "SPKOUTN", "BTTC Speaker", "SPKOUTP"; +
+> +		simple-audio-card,dai-link@0 {
+> +			format =3D "left_j";
+> +			bitclock-master =3D <&dai0_master>;
+> +			frame-master =3D <&dai0_master>;
+> +			mclk-fs =3D <256>;
+> +
+> +			dai0_master: cpu {
+> +				sound-dai =3D <&saif0>;
+> +			};
+> +
+> +			codec {
+> +				sound-dai =3D <&wm89xx>;
+> +				clocks =3D <&saif0>;
+> +			};
+> +		};
+> +	};
+> +
+> +	wifi_pwrseq: sdio-pwrseq {
+> +		compatible =3D "mmc-pwrseq-simple";
+> +		pinctrl-names =3D "default";
+> +		pinctrl-0 =3D <&wifi_en_pin_bttc>;
+> +		reset-gpios =3D <&gpio0 27 GPIO_ACTIVE_LOW>;
+> +		/* W1-163 needs 60us for WL_EN to be low and */
+> +		/* 150ms after high before downloading FW is
+> possible */
+> +		post-power-on-delay-ms =3D <200>;
+> +		power-off-delay-us =3D <100>;
+> +	};
+> +};
+> +
+> +&auart0 {
+> +	pinctrl-names =3D "default";
+> +	pinctrl-0 =3D <&auart0_2pins_a>;
+> +	status =3D "okay";
+> +};
+> +
+> +&auart3 {
+> +	pinctrl-names =3D "default";
+> +	pinctrl-0 =3D <&auart3_pins_a>;
+> +	uart-has-rtscts;
+> +	status =3D "okay";
+> +};
+> +
+> +&i2c0 {
+> +	wm89xx: audio-codec@1a {
+> +		compatible =3D "wlf,wm8940";
+> +		reg =3D <0x1a>;
+> +		#sound-dai-cells =3D <0>;
+> +	};
+> +};
+> +
+> +&lcdif {
+> +	pinctrl-names =3D "default";
+> +	pinctrl-0 =3D <&lcdif_24bit_pins_a>, <&lcdif_sync_pins_bttc>,
+> +		    <&lcdif_reset_pins_bttc>;
+> +	status =3D "okay";
+> +
+> +	port {
+> +		display_out: endpoint {
+> +			remote-endpoint =3D <&panel_in>;
+> +		};
+> +	};
+> +};
+> +
+> +&mac0 {
+> +	clocks =3D <&clks 57>, <&clks 57>, <&clks 64>;
+> +	clock-names =3D "ipg", "ahb", "enet_out";
+> +	phy-handle =3D <&mac0_phy>;
+> +	phy-mode =3D "rmii";
+> +	phy-supply =3D <&reg_3v3>;
+> +	/*
+> +	 * This MAC address is adjusted during production.
+> +	 * Value specified below is used as a fallback during
+> recovery.
+> +	 */
+> +	local-mac-address =3D [ 00 11 B8 00 BF 8A ];
+> +	status =3D "okay";
+> +
+> +	mdio {
+> +		#address-cells =3D <1>;
+> +		#size-cells =3D <0>;
+> +
+> +		mac0_phy: ethernet-phy@0 {
+> +			/* LAN8720Ai - PHY ID */
+> +			compatible =3D
+> "ethernet-phy-id0007.c0f0","ethernet-phy-ieee802.3-c22";
+> +			reg =3D <0>;
+> +			smsc,disable-energy-detect;
+> +			max-speed =3D <100>;
+> +			reset-gpios =3D <&gpio4 12 GPIO_ACTIVE_LOW>;
+> +			reset-assert-us =3D <1000>;
+> +			reset-deassert-us =3D <1000>;
+> +		};
+> +	};
+> +};
+> +
+> +&pinctrl {
+> +	pinctrl-names =3D "default";
+> +	pinctrl-0 =3D <&hog_pins_a>, <&hog_pins_rev>;
+> +
+> +	hog_pins_a: hog@0 {
+> +		reg =3D <0>;
+> +		fsl,pinmux-ids =3D <
+> +			MX28_PAD_GPMI_RDY2__GPIO_0_22
+> +			MX28_PAD_GPMI_RDY3__GPIO_0_23
+> +			MX28_PAD_GPMI_RDN__GPIO_0_24
+> +			MX28_PAD_LCD_VSYNC__GPIO_1_28
+> +			MX28_PAD_SSP2_SS1__GPIO_2_20
+> +			MX28_PAD_SSP2_SS2__GPIO_2_21
+> +			MX28_PAD_AUART2_CTS__GPIO_3_10
+> +			MX28_PAD_AUART2_RTS__GPIO_3_11
+> +			MX28_PAD_GPMI_WRN__GPIO_0_25
+> +			MX28_PAD_ENET0_RXD2__GPIO_4_9
+> +			MX28_PAD_ENET0_TXD2__GPIO_4_11
+> +		>;
+> +		fsl,drive-strength =3D <MXS_DRIVE_4mA>;
+> +		fsl,voltage =3D <MXS_VOLTAGE_HIGH>;
+> +		fsl,pull-up =3D <MXS_PULL_DISABLE>;
+> +	};
+> +
+> +	hog_pins_rev: hog@1 {
+> +		reg =3D <1>;
+> +		fsl,pinmux-ids =3D <
+> +			MX28_PAD_ENET0_RXD3__GPIO_4_10
+> +			MX28_PAD_ENET0_TX_CLK__GPIO_4_5
+> +			MX28_PAD_ENET0_COL__GPIO_4_14
+> +			MX28_PAD_ENET0_CRS__GPIO_4_15
+> +		>;
+> +		fsl,drive-strength =3D <MXS_DRIVE_4mA>;
+> +		fsl,voltage =3D <MXS_VOLTAGE_HIGH>;
+> +		fsl,pull-up =3D <MXS_PULL_DISABLE>;
+> +	};
+> +
+> +	keypad_pins_bttc: keypad-bttc@0 {
+> +		reg =3D <0>;
+> +		fsl,pinmux-ids =3D <
+> +			MX28_PAD_GPMI_D00__GPIO_0_0
+> +			MX28_PAD_AUART0_CTS__GPIO_3_2
+> +			MX28_PAD_AUART0_RTS__GPIO_3_3
+> +			MX28_PAD_GPMI_D03__GPIO_0_3
+> +			MX28_PAD_GPMI_D04__GPIO_0_4
+> +			MX28_PAD_GPMI_D05__GPIO_0_5
+> +			MX28_PAD_GPMI_D06__GPIO_0_6
+> +			MX28_PAD_GPMI_D07__GPIO_0_7
+> +			MX28_PAD_GPMI_CE1N__GPIO_0_17
+> +			MX28_PAD_GPMI_CE2N__GPIO_0_18
+> +			MX28_PAD_GPMI_CE3N__GPIO_0_19
+> +			MX28_PAD_GPMI_RDY0__GPIO_0_20
+> +		>;
+> +		fsl,drive-strength =3D <MXS_DRIVE_4mA>;
+> +		fsl,voltage =3D <MXS_VOLTAGE_HIGH>;
+> +		fsl,pull-up =3D <MXS_PULL_DISABLE>;
+> +	};
+> +
+> +	lcdif_sync_pins_bttc: lcdif-bttc@0 {
+> +		reg =3D <0>;
+> +		fsl,pinmux-ids =3D <
+> +			MX28_PAD_LCD_DOTCLK__LCD_DOTCLK
+> +			MX28_PAD_LCD_ENABLE__LCD_ENABLE
+> +			MX28_PAD_LCD_HSYNC__LCD_HSYNC
+> +			MX28_PAD_LCD_RD_E__LCD_VSYNC
+> +		>;
+> +		fsl,drive-strength =3D <MXS_DRIVE_4mA>;
+> +		fsl,voltage =3D <MXS_VOLTAGE_HIGH>;
+> +		fsl,pull-up =3D <MXS_PULL_DISABLE>;
+> +	};
+> +
+> +	lcdif_reset_pins_bttc: lcdif-bttc@1 {
+> +		reg =3D <1>;
+> +		fsl,pinmux-ids =3D <
+> +			MX28_PAD_LCD_RESET__GPIO_3_30
+> +		>;
+> +		fsl,drive-strength =3D <MXS_DRIVE_4mA>;
+> +		fsl,voltage =3D <MXS_VOLTAGE_HIGH>;
+> +		fsl,pull-up =3D <MXS_PULL_ENABLE>;
+> +	};
+> +
+> +	ssp1_sdio_pins_a: ssp1-sdio@0 {
+> +		reg =3D <0>;
+> +		fsl,pinmux-ids =3D <
+> +			MX28_PAD_SSP1_DATA0__SSP1_D0
+> +			MX28_PAD_GPMI_D01__SSP1_D1
+> +			MX28_PAD_GPMI_D02__SSP1_D2
+> +			MX28_PAD_SSP1_DATA3__SSP1_D3
+> +			MX28_PAD_SSP1_CMD__SSP1_CMD
+> +			MX28_PAD_SSP1_SCK__SSP1_SCK
+> +		>;
+> +		fsl,drive-strength =3D <MXS_DRIVE_8mA>;
+> +		fsl,voltage =3D <MXS_VOLTAGE_HIGH>;
+> +		fsl,pull-up =3D <MXS_PULL_ENABLE>;
+> +	};
+> +
+> +	wifi_en_pin_bttc: wifi-en-pin@0 {
+> +		reg =3D <0>;
+> +		fsl,pinmux-ids =3D <
+> +			MX28_PAD_GPMI_CLE__GPIO_0_27
+> +		>;
+> +		fsl,drive-strength =3D <MXS_DRIVE_8mA>;
+> +		fsl,voltage =3D <MXS_VOLTAGE_HIGH>;
+> +		fsl,pull-up =3D <MXS_PULL_ENABLE>;
+> +	};
+> +};
+> +
+> +&pwm {
+> +	pinctrl-names =3D "default";
+> +	pinctrl-0 =3D <&pwm3_pins_a>;
+> +	status =3D "okay";
+> +};
+> +
+> +&reg_usb_5v {
+> +	gpio =3D <&gpio1 28 GPIO_ACTIVE_HIGH>;
+> +};
+> +
+> +&saif0 {
+> +	pinctrl-names =3D "default";
+> +	pinctrl-0 =3D <&saif0_pins_a>;
+> +	#sound-dai-cells =3D <0>;
+> +	assigned-clocks =3D <&clks 53>;
+> +	assigned-clock-rates =3D <12000000>;
+> +	status =3D "okay";
+> +};
+> +
+> +&saif1 {
+> +	pinctrl-names =3D "default";
+> +	pinctrl-0 =3D <&saif1_pins_a>;
+> +	#sound-dai-cells =3D <0>;
+> +	fsl,saif-master =3D <&saif0>;
+> +	status =3D "okay";
+> +};
+> +
+> +&ssp1 {
+> +	compatible =3D "fsl,imx28-mmc";
+> +	pinctrl-names =3D "default";
+> +	pinctrl-0 =3D <&ssp1_sdio_pins_a>;
+> +	bus-width =3D <4>;
+> +	no-1-8-v;       /* force 3.3V VIO */
+> +	non-removable;
+> +	vmmc-supply =3D <&reg_3v3>;
+> +	mmc-pwrseq =3D <&wifi_pwrseq>;
+> +	keep-power-in-suspend;
+> +	status =3D "okay";
+> +
+> +	wlan@1 {
+> +		reg =3D <1>;
+> +		compatible =3D "brcm,bcm4329-fmac";
+> +	};
+> +};
+> +
+> +&ssp2 {
+> +	compatible =3D "fsl,imx28-spi";
+> +	pinctrl-names =3D "default";
+> +	pinctrl-0 =3D <&spi2_pins_a>;
+> +	status =3D "okay";
+> +};
 
-https://b4.docs.kernel.org/en/latest/contributor/send.html
 
-> 
-> Do I need to resend v5 again after this is fixed, having applied all the
-> additional Reviewed-by? What would be my next step here?
-
-Yes, please resend a v5 with tags applied and fixed problem with From/SoB.
 
 
 Best regards,
-Krzysztof
+
+Lukasz Majewski
+
+--
+
+DENX Software Engineering GmbH,      Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+Phone: (+49)-8142-66989-59 Fax: (+49)-8142-66989-80 Email: lukma@denx.de
+
+--Sig_/40inb2lnEtEeFDRdPJ5UPqd
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCgAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAmc8tEQACgkQAR8vZIA0
+zr2+OAf+L+8lYughwT0hXx9UXA/+B682+71ZBRd/T/4zdAzEiNUi0c2ZMEE4IZPk
+CdbnkOj+7vbJDgbcjqVfMtxZrAFEtkrjY6HdBeYLI4m4IFUpqQ+aCUFIzFDGIYx/
+8/5ot3KH577UuP55tcxb8Gqu1lxtNm/T14o8n9tRMql8Wqm713qmji/4ma5dn4UG
+8nGZuoWnuC+d6vjELDK4nJ0BN1XJs4kUO3QqBB9eGBC4etX2dBeElJfS1ycYQgDr
+fh1c/pV5MFuVnYCLfTtbSkY69R+hXLIvOIwC8rfLb/DBylM6O3eqPXY5MPqWRpAk
+r9lkeeeTc+Mo8EM9V4xyE/ExUspTXw==
+=EKdD
+-----END PGP SIGNATURE-----
+
+--Sig_/40inb2lnEtEeFDRdPJ5UPqd--
 
