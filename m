@@ -1,202 +1,154 @@
-Return-Path: <linux-kernel+bounces-414520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F27149D295A
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 16:15:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 47A1F9D295C
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 16:15:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 860092834F7
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 15:15:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 077F0283D8A
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 15:15:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1DFC22067;
-	Tue, 19 Nov 2024 15:14:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12BD21D0BB1;
+	Tue, 19 Nov 2024 15:14:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ymX2kNy3"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="StNHHwob"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0BEE1CCB37
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 15:14:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3CB61CFEB8;
+	Tue, 19 Nov 2024 15:14:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732029252; cv=none; b=H6lbWh6Hh4dQr4N/7NdVKuTxjBW+T1Fb+lqHVIrbBS9JCxHe8QzHraZNr10FYxoxpaMqku7JLMWZ+9iJT6PWxcLEz9WxuAYsXoWoVj9ZPXpPx21kq15qFlv/uE4X2Odr+6QTTfawXQf/BhMQgr3sPGQiIaYbtiCHLwnX7sZFsSw=
+	t=1732029256; cv=none; b=sT55zNb23II//KWJUH7DL3MOgyQ66OmvXN7sa6scM0a+7SLQhLcTEfgZlW3LWISR4wad7i2ySmsVTLKZ7G2/mMA2XT5QWY38KFeq1IF1YfYHNv843dCmwkLIn2J/36bKh68KNIVpiRIzu9mKHKy3cYmqwP252N1rXSIJ4ChLm/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732029252; c=relaxed/simple;
-	bh=JB07XI8CadfPuQn3HSCNnBK7RTpzzgM8OCQI+wDxnCs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MqXtCnOyU8dpMzIv/kGZuBqxBH2oOyrebSMwRiNOl/Uz9gd73VgQRotEAxcM+zU4rYh6kxcYGoTd8niqNyhN5AZE/o+zR/6n7Jm5f8zvh+b6G9L2LgquLecyyV4DKEM8M4rqvloYDOJkNHeUjOjUBmIjCEqVXuNyUwcqoY6+znM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ymX2kNy3; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-71e953f4e7cso2186922b3a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 07:14:10 -0800 (PST)
+	s=arc-20240116; t=1732029256; c=relaxed/simple;
+	bh=wsIsc65wsl1a3A8TlAEYhRoPXjHLrOqSQcfQqgioS6I=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k9qY76VCxNfoIfiqCmmpJp33U18X60rGSZykdQgEdm0wXfxsCBfJmnD/HBOIMMUXUWvvo3BciAANAJKJwbV+cvMq7xkrZOB1tvOSudYsgwdcBhoF9G/Pbi5RVsDJKNitgloOayCiLbKfSBxke2ZPF0bbdRdMXG9x2Ly5/hMSY8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=StNHHwob; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-382411ea5eeso1637661f8f.0;
+        Tue, 19 Nov 2024 07:14:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732029250; x=1732634050; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mbP2zECf3I/U1yfK8rubw5LsFQnbznjdfPmmJXFu4GY=;
-        b=ymX2kNy3ek1/WYQt2FDf73yjtqdjZrXbDd0nYZdZB5WGbhBMYvqypLcioOVCXttu8j
-         Im6BSlQ0Y3JLRoDP1w78irNZA7824V8o/64iZlyQDABnerTW35QOeMB36dptZ2/FoSQM
-         J//H3oCFRWKsKkU7zUrJ3+UU6ae7HnTqHAsCT3fhSMhWkb2/1qkAtHewppXy/Ht8QRZ1
-         yV/3Lf+Sbz+Par0czpdUA4B2Q8xqg18K0nhln1vMu5YMuATt647ni/cl3oRCVzZxd/q6
-         flyiL6AksGRInAFkp6jN+cu5NFhc6+aofnSr/qbNBY97CmQ/M/AZTXlJ8pjJrcHPHiBj
-         iV9Q==
+        d=gmail.com; s=20230601; t=1732029252; x=1732634052; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=q+CAblMGwqdRkJ74YKnBF6CZP3Rv4TdMRaOiPdoI1R0=;
+        b=StNHHwobxumCf4f7km22iGnuOXPLBv6mLYjVWNz8hADg6fSqGE6TT54OU2FlFJmeYh
+         aBUZqtOyAjRFO58tfU29MZZN+HKo7+QN70JHInIkL1v377EtqxSRkHslhmGvOw+jdeQv
+         Tj6eZbVeCZad1FjEx8ivuc1v93vufr9KRhOM0rkf1YmGn4PzyipCh1Rtest1fvOCTM/E
+         x0v/AkVKMbgJsTJInXcZeAyPxAr3XiiuA6MnXYAnGkkN9vK8UdjwHbMQWFs/olfZ5DxI
+         NHnbYI5fqNaLntSeJoirZkRVa5IcePqiO+MESyXERan/syGDO07tTn65FknTWSi1Q91M
+         M3KA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732029250; x=1732634050;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mbP2zECf3I/U1yfK8rubw5LsFQnbznjdfPmmJXFu4GY=;
-        b=udUIwxf8nvrplnHSDs/wIfS2adOTafXcf3shaoPHZNqN1s7mSm8MvLp9wZEW0fSNrM
-         4DRNQtjo0XFfU4rDcnViZRfzpmTmxxKqMzMYan9czl6nx2ZBn8eXE3717mdIht4fZv5Q
-         XVutytmMSH8JPjbTV7GOsHSEiz7s7YvNQXc/c8XpwGU3Yqf2X41p7tjXtDNk/m7JeyBY
-         L/9AiYmukVNyhmQWMbt6MrXGukSp1Y+qwgI5ef3DEQq+HJxpMdta28a71IctBUl1zv1P
-         rrkZ2tDnYVOz1sZGtPilpCpAZaC7jT3TThtojEjhzdX00LhbWknaW8dsoe3yqWDv+B8y
-         fzkw==
-X-Forwarded-Encrypted: i=1; AJvYcCVPkNsuj3uqOFsmYZQqDrMAkzWipmh/YoT4u763i2+lsOGSCHuMkGA2x8W14HqIARr1H8pRRVKI+rdyu3Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YybCoVVSBvjDQ92bAzGHJDCm7WvIUe7Nj181lyigxTFUlNX3vlO
-	I1j8HdwDvIYKmeidBgm/SoOxZ0yAyzEs+fpEFyPVa981uE2UHgiOKmZVA5wDzSpQawQyghacpYw
-	qZJqAvQMkeY97Jo/2IGVNjimmuitz/UF6PUtG/w==
-X-Google-Smtp-Source: AGHT+IFO77at1wdVNatwNKHEVVVGw9oCwK3U5IquzPKe7W0kg+1R9bkbd9FczHC4EPqdnAvTKnbJGxRaMogY/3e7nho=
-X-Received: by 2002:a17:90a:d2cc:b0:2ea:4578:46cd with SMTP id
- 98e67ed59e1d1-2ea457877c7mr11495717a91.21.1732029250033; Tue, 19 Nov 2024
- 07:14:10 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732029252; x=1732634052;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=q+CAblMGwqdRkJ74YKnBF6CZP3Rv4TdMRaOiPdoI1R0=;
+        b=GBWzPJaRdnt0KIv8lENeQT8R7des+vc3hbMdOkoP8ikQngOndaoNZdnKbN6WWpyx36
+         UzGG5sDELXQgxulwxz7wNi7FwoRLVSvBZwUYeeOp39EROumw1bRSQVnLcblvZruJLhDz
+         i4s1hGCusll0TNgInrOQJMGOLMTI6CmGq2dWkqhOtjf+I3ggvjovM9ERGx6pxhzTOpGj
+         AMPtf5nhQgz/lDj3HlaHLJwzOum+wpMZtk+bLOCuBzLYg+ZLLfO6cD4zbeyAI7odSaW3
+         SaLDo9MhzoPj8ZLc7JtCyx3Cheqn+5XrE1gZHPsgEGkm1UZ37Sd5KF7RwRETbrfkayL4
+         +pUA==
+X-Forwarded-Encrypted: i=1; AJvYcCVPEuEZxE7VwKor6u0eAHmWSMTz6y4lJ8+dM1cZ/HaiaJ0M3Yyzhb7564s3YdAV0ATd04R7FyAAE0zj14EX0M820r6j@vger.kernel.org, AJvYcCW/c5K2Hzm9kfLtwGQk67iR6MmjlUpvCGadW7M48Q3atwODK/tFTMODOZNthlMR+FFj91A=@vger.kernel.org, AJvYcCWhIFo6MZMxU+Sx4P4+/rDiOOEIgOdZKwH1S5SJ1GEZCAZa8pM1/mpvwMjyO5joK7eSBu+6xQn1IJwSAs7R@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEfqsgEIC6fdh4QiRptl1RFp9aAiaQ67JEWhTUi19FcrYI1ibD
+	ataDEdmHCIVmq5H1xlAfWKbXiwTpjeG9Itg5Qp2bD3RxT0aRPLNe
+X-Google-Smtp-Source: AGHT+IGN9CrVaw83GmI4uu44gxeD6Jr0F2TRG+eGuFN6z0OiwShzW2xa+Z3B0OxykD0FrwIYu0+r4Q==
+X-Received: by 2002:adf:e185:0:b0:382:3754:38e7 with SMTP id ffacd0b85a97d-3824cd3196bmr3154851f8f.23.1732029251795;
+        Tue, 19 Nov 2024 07:14:11 -0800 (PST)
+Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3821ae161d8sm16412168f8f.78.2024.11.19.07.14.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Nov 2024 07:14:11 -0800 (PST)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Tue, 19 Nov 2024 16:14:09 +0100
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Jiri Olsa <olsajiri@gmail.com>, Oleg Nesterov <oleg@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+	Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Alan Maguire <alan.maguire@oracle.com>,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [RFC perf/core 05/11] uprobes: Add mapping for optimized uprobe
+ trampolines
+Message-ID: <ZzyrQWLrPYzUqLGq@krava>
+References: <20241105133405.2703607-1-jolsa@kernel.org>
+ <20241105133405.2703607-6-jolsa@kernel.org>
+ <CAEf4BzYycU7_8uNgi9XrnnPSAvP7iyWwNA7cHu0aLTcAUxsBFA@mail.gmail.com>
+ <ZzkSOhQIMg_lzwiT@krava>
+ <CAEf4BzYBRtK-U_SLY-qYDGf2pc4YzBOeKgyjFbzv-EHXrdNANg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <3607404.iIbC2pHGDl@rjwysocki.net> <1889415.atdPhlSkOF@rjwysocki.net>
- <64a63f1c-088d-43dc-85c3-cecf8b59764f@arm.com> <CAJZ5v0hrj0jQ9mi20XRK3bTfaMDgUS3HyGnk=2x0UfF26jN1pQ@mail.gmail.com>
-In-Reply-To: <CAJZ5v0hrj0jQ9mi20XRK3bTfaMDgUS3HyGnk=2x0UfF26jN1pQ@mail.gmail.com>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Tue, 19 Nov 2024 16:13:59 +0100
-Message-ID: <CAKfTPtCfsCwL=GO3oimvfN6ar7rCZ46euY7AjZBjy+p-HNmJEA@mail.gmail.com>
-Subject: Re: [RFC][PATCH v0.1 5/6] sched/topology: Allow .setpolicy() cpufreq
- drivers to enable EAS
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Christian Loehle <christian.loehle@arm.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, 
-	Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Lukasz Luba <lukasz.luba@arm.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Len Brown <len.brown@intel.com>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Morten Rasmussen <morten.rasmussen@arm.com>, 
-	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEf4BzYBRtK-U_SLY-qYDGf2pc4YzBOeKgyjFbzv-EHXrdNANg@mail.gmail.com>
 
-On Mon, 11 Nov 2024 at 14:54, Rafael J. Wysocki <rafael@kernel.org> wrote:
->
-> On Mon, Nov 11, 2024 at 12:54=E2=80=AFPM Christian Loehle
-> <christian.loehle@arm.com> wrote:
+On Mon, Nov 18, 2024 at 10:05:41PM -0800, Andrii Nakryiko wrote:
+> On Sat, Nov 16, 2024 at 1:44 PM Jiri Olsa <olsajiri@gmail.com> wrote:
 > >
-> > On 11/8/24 16:41, Rafael J. Wysocki wrote:
-> > > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > On Thu, Nov 14, 2024 at 03:44:14PM -0800, Andrii Nakryiko wrote:
+> > > On Tue, Nov 5, 2024 at 5:35 AM Jiri Olsa <jolsa@kernel.org> wrote:
+> > > >
+> > > > Adding interface to add special mapping for user space page that will be
+> > > > used as place holder for uprobe trampoline in following changes.
+> > > >
+> > > > The get_tramp_area(vaddr) function either finds 'callable' page or create
+> > > > new one.  The 'callable' means it's reachable by call instruction (from
+> > > > vaddr argument) and is decided by each arch via new arch_uprobe_is_callable
+> > > > function.
+> > > >
+> > > > The put_tramp_area function either drops refcount or destroys the special
+> > > > mapping and all the maps are clean up when the process goes down.
+> > > >
+> > > > Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> > > > ---
+> > > >  include/linux/uprobes.h |  12 ++++
+> > > >  kernel/events/uprobes.c | 141 ++++++++++++++++++++++++++++++++++++++++
+> > > >  kernel/fork.c           |   2 +
+> > > >  3 files changed, 155 insertions(+)
+> > > >
+> > > > diff --git a/include/linux/uprobes.h b/include/linux/uprobes.h
+> > > > index be306028ed59..222d8e82cee2 100644
+> > > > --- a/include/linux/uprobes.h
+> > > > +++ b/include/linux/uprobes.h
+> > > > @@ -172,6 +172,15 @@ struct xol_area;
+> > > >
+> > > >  struct uprobes_state {
+> > > >         struct xol_area         *xol_area;
+> > > > +       struct hlist_head       tramp_head;
+> > > > +       struct mutex            tramp_mutex;
+> > > > +};
+> > > > +
+> > > > +struct tramp_area {
+> > > > +       unsigned long           vaddr;
+> > > > +       struct page             *page;
+> > > > +       struct hlist_node       node;
+> > > > +       refcount_t              ref;
 > > >
-> > > Some cpufreq drivers, like intel_pstate, have built-in governors that
-> > > are used instead of regular cpufreq governors, schedutil in particula=
-r,
-> > > but they can work with EAS just fine, so allow EAS to be used with
-> > > those drivers.
-> > >
-> > > Also update the debug message printed when the cpufreq governor in
-> > > use is not schedutil and the related comment, to better match the
-> > > code after the change.
-> > >
-> > > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > > ---
-> > >
-> > > I'm not sure how much value there is in refusing to enable EAS withou=
-t
-> > > schedutil in general.  For instance, if there are no crossover points
-> > > between the cost curves for different perf domains, EAS may as well b=
-e
-> > > used with the performance and powersave governors AFAICS.
+> > > nit: any reason we are unnecessarily trying to save 4 bytes on
+> > > refcount (and we don't actually, due to padding)
 > >
-> > Agreed, but having no cross-over points or no DVFS at all should be the
-> > only instances, right?
->
-> Not really.  This is the most obvious case, but there are other less
-> obvious ones.
->
-> Say there are two cross-over points: The  "performance" and
-> "powersave" governors should still be fine with EAS in that case.
->
-> Or what if somebody has a governor in user space that generally
-> behaves like schedutil?
->
-> Or what about ondemand?  Is it alway completely broken with EAS?
+> > hum, I'm not sure what you mean.. what's the alternative?
+> 
+> atomic64_t ?
 
-The only requirement from EAS is to know which OPP and its cost will
-be selected by cpufreq gov for an utilization level of the CPU.
-sched_util provides it with sugov_effective_cpu_perf(). Any other gov
-that can provide such estimate of the OPP and associated cost should
-be ok
+hum, just because we have extra 4 bytes padding? we use refcount_t
+on other places so seems like better fit to me
 
-powersave and perf should be pretty obvious not so sure for ondemand
-
->
-> > For plain (non-intel_pstate) powersave and performance we could replace
-> > sugov_effective_cpu_perf()
-> > that determines the OPP of the perf-domain by the OPP they will be
-> > choosing, but for the rest?
->
-> I generally think that depending on schedutil for EAS is a mistake.
->
-> I would just print a warning that results may be suboptimal or
-> generally not as expected if the cpufreq governor is not schedutil
-> instead of preventing EAS from running at all.
->
-> > Also there is the entire uclamp thing, not sure what the best
-> > solution is there.
-> > Will intel_pstate just always ignore it? Might be better then to
-> > depend on !intel_pstate?
->
-> Well, it can be made dependent on policy->policy =3D=3D
-> CPUFREQ_POLICY_POWERSAVE if gov is NULL or similar, but honestly why
-> bother?
->
-> > > ---
-> > >  kernel/sched/topology.c |    6 +++---
-> > >  1 file changed, 3 insertions(+), 3 deletions(-)
-> > >
-> > > Index: linux-pm/kernel/sched/topology.c
-> > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > --- linux-pm.orig/kernel/sched/topology.c
-> > > +++ linux-pm/kernel/sched/topology.c
-> > > @@ -251,7 +251,7 @@ static bool sched_is_eas_possible(const
-> > >               return false;
-> > >       }
-> > >
-> > > -     /* Do not attempt EAS if schedutil is not being used. */
-> > > +     /* Do not attempt EAS with a cpufreq governor other than schedu=
-til. */
-> > >       for_each_cpu(i, cpu_mask) {
-> > >               policy =3D cpufreq_cpu_get(i);
-> > >               if (!policy) {
-> > > @@ -263,9 +263,9 @@ static bool sched_is_eas_possible(const
-> > >               }
-> > >               gov =3D policy->governor;
-> > >               cpufreq_cpu_put(policy);
-> > > -             if (gov !=3D &schedutil_gov) {
-> > > +             if (gov && gov !=3D &schedutil_gov) {
-> > >                       if (sched_debug()) {
-> > > -                             pr_info("rd %*pbl: Checking EAS, schedu=
-til is mandatory\n",
-> > > +                             pr_info("rd %*pbl: Checking EAS, cpufre=
-q governor is not schedutil\n",
-> > >                                       cpumask_pr_args(cpu_mask));
-> > >                       }
-> > >                       return false;
-> > >
-> > >
-> > >
-> > >
-> >
-> >
+jirka
 
