@@ -1,112 +1,104 @@
-Return-Path: <linux-kernel+bounces-414859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFF3A9D2E85
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 20:06:24 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2F2D9D2E84
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 20:06:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2A6FBB2C6B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 18:55:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6B15B29161
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 18:57:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 140A41D0F68;
-	Tue, 19 Nov 2024 18:55:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E7651D0B9E;
+	Tue, 19 Nov 2024 18:57:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dr8Sq2g4"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="K8NFVWA6"
+Received: from mout.web.de (mout.web.de [212.227.15.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CC4D40BE0;
-	Tue, 19 Nov 2024 18:55:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56FC040BE0
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 18:57:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732042543; cv=none; b=TFXOvR80WlvNTAICUHrMbnbuGblE51kYRxT+3YCWZYgvbsDe5EH4lnZ39O/RzO5f08fySfRFA0D+C31M7AtLybsmGsCwDRnAZvMbtMtDz5rmKKN0jn+1OAzSzhdmRnleLGdzPUvNED6nzvotrAKowjiO7mIY/zNM8QFEWu/9Muo=
+	t=1732042640; cv=none; b=IDNrcgSCCaKh3ZWc4422fZ+WtwdR/nvXoPbJRnrI8d94nBSEA846li41zRfM7lOhoW+gbjZHfaebhW8ahzhB29S6Fc3Z64zH3mRjF173Qa3I2oW7gPayTpvnUhFjpHNh8owa/ETQsvHfHEzqQNndxdr1QzlR0UtxNJ1ACPUIXX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732042543; c=relaxed/simple;
-	bh=egRJ37m21tAWJ3fTxQb6pUKLR9jZKUZpLBaPCH7yYFY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lXeg3Wb0nx6bSwjs6ZlJJjHoi6c+Aq/D07Ce89AdXcDgpIUzJ95zeQL8sJYwcMcZ0PTRKTvxkCtvC0/SVkSrv5YcmMstlJPaQQ84mwinGTrqfwkkprAnPJkVAF6DPbZY48wjl7saJdQPA21O7ZzJtITe5JaGF2ioZiOjvZK1YCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dr8Sq2g4; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2fb5fa911aaso52164841fa.2;
-        Tue, 19 Nov 2024 10:55:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732042540; x=1732647340; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=egRJ37m21tAWJ3fTxQb6pUKLR9jZKUZpLBaPCH7yYFY=;
-        b=dr8Sq2g4hZHrX3dIn974sKUrCboh5SsItZAfTSjdDY8TXOYtnIijr9KKlKFf/99TmC
-         X2AKfbuj80ZL2t2XNbmtgXaK0Zkgx55cpSQS9aE+HJ8mR/x5As0KZZCN95GFIrRt6hKD
-         32qpJKf2wT0HgvNnv+pTwBwZWS6a+DoNczxum//9YIpycf2EExG3T5z31geXniQlXzNY
-         DSA9/reXOuEUZtLQnkVPIo0U4Kglo6+why02SmjP7LTfb318bgLmUI9g6i3IcAqpPGdP
-         8VRHNjDE3mvMutyuOUskGzwxLWcaeDmX6gap/mdcAHVj4KLCgfPyyRE+aJ6dxXwpQT24
-         uuDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732042540; x=1732647340;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=egRJ37m21tAWJ3fTxQb6pUKLR9jZKUZpLBaPCH7yYFY=;
-        b=DyfQE1RoMHdyux5q0BLFZ7HuLsgc/MxkD6Qm9kUpVD/0BY6qBZhZlliQqr7jbZgJ9b
-         pvKBKR4QkbUKtOZ3fvyvMW6u7etS+OBF/paftq2Ktkr8CAdmBeoOPjyMIqbxhk/20p3V
-         A37OWkUW8/6Uhq0+Jpss9H612FpucIjZErUQMKTMP9eCXOY+fJeS0azyBdQ6cHx7y0JU
-         W15Pe8zzYFK2w7Z5RkJE3F2VugfOe3Qu6Lq0FJuKHGFWCPyWLoHUG5v1Y5S0nPxz7FsF
-         s7sLZABOQmNCWGlH2ReyTAMYomUEt7UexDZ9AddGZkAPW0+eY1CZvjyuvHF0kO0KS/RM
-         XHuA==
-X-Forwarded-Encrypted: i=1; AJvYcCUaVSkHlWz6E4mkkkO46BAQ4BWFhOIjeBPN3JnkpNO5N5qF1Lq4Z9hvA3auA1F8QbZF8mZsOolE+up/zy0=@vger.kernel.org, AJvYcCX1DnF/a+UxBwOx4vteYEk/26ij84+YoOzCJe+uP6DU8CUvBpbl5+b9Kcj7BWBo29eAr+0QIHZvVT1mzP4eVG8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxuxitS9Vnzg0oVOw2wD+A9NH9w6KLZAx2gFFNeDa0CICZHWNZo
-	wUMwX0M2T5MGKG0HsPwuxOkSiWM5nakZKw7P55S1nHtLHuIYLxPQjxVPnsOXsipFDjMKRU+zIn2
-	Gz6BHbrUqOJLP0Iu7Q6ZLDeo3kRc=
-X-Google-Smtp-Source: AGHT+IEtBZreR1yGzfr3krCkB56BOKyQAGiX/N8Wh2wU10A5R7PwOl6GeoSujRddyoMc7X9OpYLpGzQK7wEvI7XVz0M=
-X-Received: by 2002:a05:651c:504:b0:2fb:3df8:6a8c with SMTP id
- 38308e7fff4ca-2ff8dba1635mr1165601fa.23.1732042539975; Tue, 19 Nov 2024
- 10:55:39 -0800 (PST)
+	s=arc-20240116; t=1732042640; c=relaxed/simple;
+	bh=Nbm2T7xHbb4DbCWUnZbZw7BxVMybyEThr3brvE9IOr4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pUYmvp9d4MzGqvItPrXyI6y/BgFoK7WA3KY9aispwYUq5NdRHLjZnURKjapWedqhUhHluHBCvdi67fcWUee3veEB3rtpSdMg6Vo6B8KFAqH8G//YlWfWJ/Yi+iL7c3BQLCbKSZFzLCKMYr91yR8fFKCZjZeYao7MikgI1cBbwa0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=K8NFVWA6; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1732042610; x=1732647410; i=markus.elfring@web.de;
+	bh=Nbm2T7xHbb4DbCWUnZbZw7BxVMybyEThr3brvE9IOr4=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=K8NFVWA6dvt4Z9w0KnGFf1lMVhIZypKix17p2JAOT975xqcMeDKq6Me0u4D39EW+
+	 QDLVWK32qLLd7WwEkOBC4g46HkY2+0SGAiwFhbCfox63narplsPum6n2GKhnYVS9a
+	 ObhbM8qV8F5pdrbbW+//qR9u33U6Q+9Fx7Q7JijhqRQG8H3X47AdfDJChexVkQ6HE
+	 2wfAFdEZkHFixBVb2TI/XdOwE6unb+hcYKk3LIkDitJFu2wI2xNRptrsZTq8I1jzv
+	 8vWhNQx0xHFIw4islKyQWoXpgw0rof39pmSslSkDq/c/r1kP36Cc8+Gvevavuqy7+
+	 MaBSxdnAi0LIKl59yQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.88.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MBSB9-1t2DWg3zHr-00ARLF; Tue, 19
+ Nov 2024 19:56:49 +0100
+Message-ID: <133d5ad1-2eb8-40ac-925b-97ab39be0d5e@web.de>
+Date: Tue, 19 Nov 2024 19:56:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241118-rust-xarray-bindings-v9-0-3219cdb53685@gmail.com>
- <20241118-rust-xarray-bindings-v9-2-3219cdb53685@gmail.com>
- <Zzu9SzkDoq_1YQnJ@tardis.local> <CAJ-ks9mKArX37VzhcyymDoE-MsNxNcO8VvP4n3Xu1mdfOKiuag@mail.gmail.com>
- <CAH5fLggL7MTLVv2ym_tCCKH9hQtL=GpTwXjDUQzKQX9UdT7SkA@mail.gmail.com>
- <CAJ-ks9k4upcSfa2HXaMrtDJ37eTNc-ZiKZdcLuEYSnWHL5Bigw@mail.gmail.com>
- <CAH5fLggBZsarrRkZ1Mf5ND9-A6kCc65QRwhUW5X9nQxRJUOXrQ@mail.gmail.com>
- <CAJ-ks9=ZDRdh1UzBpV-ck2v5t4a3-81vD07Ndfmow4ABmQvJmQ@mail.gmail.com>
- <CANiq72=MeVViwfFGaj7MFev0ZOodVo2dJqOeHiPodHjN-xh9TA@mail.gmail.com>
- <CAJ-ks9kgaVGow2o1S+YAUpYF6pVFReEb2mf+OFMvULt2pykH7g@mail.gmail.com> <CANiq72mGzd-Y7b2DVczagfpNR7Uky6iNx+8dUU4g27e3O+GJjg@mail.gmail.com>
-In-Reply-To: <CANiq72mGzd-Y7b2DVczagfpNR7Uky6iNx+8dUU4g27e3O+GJjg@mail.gmail.com>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Tue, 19 Nov 2024 13:55:03 -0500
-Message-ID: <CAJ-ks9=3SbKPROmAQxpfq8-R5xi1jWcjoP_3nt7rNUA9v_oS3A@mail.gmail.com>
-Subject: Re: [PATCH v9 2/2] rust: xarray: Add an abstraction for XArray
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Alice Ryhl <aliceryhl@google.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, =?UTF-8?B?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>, 
-	Asahi Lina <lina@asahilina.net>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: x86/sev: Fix dereference NULL return value
+To: Shresth Prasad <shresthprasad7@gmail.com>, x86@kernel.org
+Cc: Borislav Petkov <bp@alien8.de>, Dave Hansen
+ <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
+ Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
+ LKML <linux-kernel@vger.kernel.org>
+References: <20241119-fix-dereference-null-x86-sev-v1-1-82d59085e264@gmail.com>
+ <9dd3d046-6949-4e42-ab5a-af505f9b3981@web.de>
+ <CAE8VWiJ62xT9shaEmUTOPF1OAztaWsr57m-wY9jyMJt5WFke5g@mail.gmail.com>
+ <ea06c201-5a99-4875-b2d1-3bc4a35e2d5a@web.de>
+ <CAE8VWiJqTB+PB1cFv2Sj8YbRWxgcrua3ZjyeWGF-7uqrsE95iw@mail.gmail.com>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <CAE8VWiJqTB+PB1cFv2Sj8YbRWxgcrua3ZjyeWGF-7uqrsE95iw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:ZKbOS6BWcYxclddu9YPNMWi8Q7oEQUO1+M7d1gvi8eJGkIV5eVp
+ bNWYOHd/Rn1/LA6T00YsFpQgl9wzkyfv4tZXJQjdvKNNUUieDq/5osQsM2WNbl5xR+9fadX
+ ON7mZjOpJEdV86vMhQGv6Syjhy+owwLBPVy7ZFv5QHzQ3FiznJoWNRD/27as916lSLkLae8
+ JAv4YswX6/u3P/orpEyqQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:xG7gMTt4eHw=;kypkDx8dvtFPjUclxlGulBzmptm
+ XT047XnFwkrS+GRUgFA+a1ILzzzt8vxVxGNT9mW66m3A+v+JpX/hZ0dfuXP7Sc5wWUrP60KyW
+ uVE/77QG2govqv79zi74LiaKMCtbZvSYh1hrxNxFD/OgARXdtJ//4x5BvupPxKSjiEI5SABlL
+ cCfK5Th9C2vR5sk0eLjiFZ6GgGX9NBCPIRM0M+3yepTzomCPs8XX7RkiRuBRJLM1oeZ5dAqKf
+ Ht6fSsH0UTzf8l4dUO3T8Mp1FNE3c83SjnUmFUIeyVBsno+Xka/zp49PC1XFL3FAfPNQ1REui
+ pWUd+FnccEEsVB1Em8IdDrP7psnPhD5kBSpdHxK+zY5/HIdUlVx51Z0U5G55tCndiot3g44hO
+ UDA752uHrTl0LArAvthEuOCkOV/mIG+wylkgNfK5kdmWUCB3h6RSt070dXtUmlVlFuPokpPtX
+ hjvd/emy8zKdtmR37UDOd2Q6MIOLCk+jw/YzmcAayml3dizGQfUZJX64mBZ+RkyCLzarxjjPL
+ VzDAFT4dgk2E5/OnRe1YeYlnWZjuaPmO5838EAjzPGlqHWg80sTb2lK/XrT7r39jatFRxJZok
+ aQck6EQsiw1KulVWlnZw8z/9JCLOqY8Gn6UD7IJsU82zRkEvTIzmkdXYv3t/jVk5CPSgZbukE
+ +KDez3jE0v8FZeaW+0owKBEteJIAmyH+cx8iiRFBfWazkSQdop1ivYMUEtKzIuAQd4odmoT0g
+ tNBl+k4poLRwdgumMWycGhL2CKFV77o3NA7Dlpmy+JzqbGY3pE/+mNGv8Cnkp1QthxkAhCE7d
+ 6GNkNEWVgFv9JXrU5o6Qq98HX7b74r7+CgUW/RMtFtJNCYwhD24oiyRQ9KDsdeI4D+SlkKnv3
+ +10bKB9I5qbQVImGMOLHKM2UyUIi/dH9ofWXPUB6BR+cKqP2alXY8dMDn
 
-On Tue, Nov 19, 2024 at 1:40=E2=80=AFPM Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
->
-> On Tue, Nov 19, 2024 at 7:22=E2=80=AFPM Tamir Duberstein <tamird@gmail.co=
-m> wrote:
-> >
-> > Looks like there are merge conflicts between v6.13 and rust-next.
-> > What's the usual process for resolution?
->
-> You can take a look, for instance, at how it was done in linux-next.
->
-> (Nit: mainline is not yet v6.13)
+> Using git blame I see that snp_kexec_finish() was first introduced in
+> 3074152e56c9b
+> and has stayed that way since. Should I just use that hash?
+Probably, yes.
+Would you insist to use only 12 characters from such an identifier?
 
-I guess I can just set base-commit to linux-next.
+Regards,
+Markus
 
