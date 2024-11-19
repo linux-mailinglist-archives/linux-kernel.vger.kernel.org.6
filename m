@@ -1,111 +1,207 @@
-Return-Path: <linux-kernel+bounces-414984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 661BF9D3013
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 22:35:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A7009D3015
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 22:38:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8248EB228A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 21:35:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 046641F230E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 21:38:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCABF1D3584;
-	Tue, 19 Nov 2024 21:35:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 819CA1D3584;
+	Tue, 19 Nov 2024 21:38:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="vrzZRZs0"
-Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="riOe9kTP"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0BCF195F28
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 21:35:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 631331D0E07
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 21:38:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732052131; cv=none; b=NnU50cR3HR6aLtpOypyWBHOO3205o+8bDZJVS6Acy/6NwhDtUiYisF415ZZsFElOwPtmI0PCfHTbNAw8rxwkcISmRNnEwz5hS/l9WtAf5fjE2X4L7rNtjgomWow+Yo+VZgEWra04XOq/ZHxXc/S8GtIZKu9hfoZJub9g1CFyJG4=
+	t=1732052296; cv=none; b=ai7QQqLCuL6dBjS53WC/OUOnsnodzomH//6Bu6fjTMdfmln+d0k8Trm83E8U65uMvCSvhIslyGg8dunsWx0cVn05Oibz7k4APppKqYNjjWihs2IevFDlUmU7HuBd5GXRV33qwOXV+l03zZBUhRVuUVTOI/VmaP2zyLTIyogVHvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732052131; c=relaxed/simple;
-	bh=iTE59sMKehdeOyAF9A2SZ+XvVSs3LcZxIciJ4n0Ptt8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I72f67X4X9F67nw5ObPYg+/WIwcivzCI+oiO1/J+kksnl5p2BDk1NeFha/WBkWZwMRVrLob3/nJVkoZw1Wrwk1hMOq4J8mLfn1kI/MS3JQr5IP4H6n8HKuob5R9REZUNHY1573SS1v/Wsngic5Hmt7HDbI0LRrXZIWDHw8pW3rA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=vrzZRZs0; arc=none smtp.client-ip=95.215.58.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 19 Nov 2024 13:35:10 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1732052122;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=msslIht/iC0IbFIqTr4umsTJ8qtKXXVBD4kyKHKb3yA=;
-	b=vrzZRZs09+uGcg4Qbq52l5KbuKrQjgo/QIvW6pK2oZ8B4GL5xmD1sRQ/qG1Cv2xe9NcDla
-	25S7ZBxSpPEjkOuYVqpiV6m5xlvT3aF4zbfPG/YJYSX2t4lwMo25q5MBzrQiNasVE5FXIC
-	eyc4/0kq/uTazmKRbIA5nxZpM55GWDg=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Oliver Upton <oliver.upton@linux.dev>
-To: Raghavendra Rao Ananta <rananta@google.com>
-Cc: Marc Zyngier <maz@kernel.org>, linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org
-Subject: Re: [PATCH] KVM: arm64: Ignore PMCNTENSET_EL0 while checking for
- overflow status
-Message-ID: <Zz0EjiFMTiHWeq8h@linux.dev>
-References: <20241119205841.268247-1-rananta@google.com>
+	s=arc-20240116; t=1732052296; c=relaxed/simple;
+	bh=Zd2QB6z5/nO/5q32zOMmJULah0pVbTKjUr9QlGKD+V4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qCNEw212/5jqy4cxSDMpzhgvgvOoVj8cz21tNFai1JWEMUWrtturruIw3E00BlSefPMHsoF6yDj5juoGjMrNkSgmSZD8+Ansci2oIPIsHYrzPqvMKSDr3hAHP4SU7dMPtH4TDaWle/AdhnuJDK/0PuWIeD0EyVDiDu+YI6f52FM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=riOe9kTP; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5cfc264b8b6so16970a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 13:38:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1732052293; x=1732657093; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KHaLTJLv2qMAaXUVhzeSonG7VLA1CIIMmtCZ7ax6TDw=;
+        b=riOe9kTPt2Z4CGEcbASPouoXwaiHTuSrqylopYOwFm2ooik3fCWEN5wQ7CFc4BpHi1
+         Z09pMsnCRkkEtbwCNA309i5p3KGGGAAPvse4M5K6q8EC8W1Prq6kyI12w0J/ruevidYC
+         lJTWrfCwgZu/Vo8WjsutqlgwruYRy3MFheM1PCrWzoAHiBcsG//++wjvnf/U4QRdPMTr
+         1RjAlbdldv64NIOOrSdf1eOu3jMnYQQSbdWPIVo1x95LEWAeIiel/z8cIBaPrXtY66wz
+         iaKmmmsINe2jLKDJGhpqkTbFfkGe5EHL5MHcMmwNBbD6x7xNSXJbWMbJEA6qS1Ml6uet
+         CneQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732052293; x=1732657093;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KHaLTJLv2qMAaXUVhzeSonG7VLA1CIIMmtCZ7ax6TDw=;
+        b=AoXNkTIMmpYcVx35gP2j2Xbx9IDWky4dKT74DhZG4RtFzXVLPjIXjxqKH9XZgeylE6
+         KHnLzzA2578/qSQutZ+BTB11eFkOiI2iBnZJE0BpskoPf/aH+zhweFTK+Wftejk9c5RS
+         l+bIjwRijh6Aiybnww0+OswbjBq99agy6wb/8YUXDZihLSWizshK+nSWlDaI57mjDezn
+         Q91FhfczuJt7NHpxlXlHCO1Xvckync6JGZjoSzm6/qlXzXyClYm0bPKRtbCLa28stT4q
+         o/kznZVCE6ELgcB/jj0XsDVFPXwODcrCMfLHc9PD9Z2o+Gkv0Y+pp1DH8Wcmjlkzo55X
+         JilQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWEzX1GeYQ4Y06AyPkwbl9iSJgIzBPB85Yqq5v7xj3la52C52CotLUBK8vn+2xUtN2we9xLnecF6VX1U58=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzie3W4Rf8lUo5l3MwPcJsqA+vn3X95sRtHNX+eV7UypWdATe2O
+	f+TC67VEAEEhL+zLXvuQPa2ZU2SwGdx7mpmOVfqn8+PuQDClx4vZ4b1AiugBGKgGhghOHY0emS0
+	2XjXC11ObOa9sfW5tCQp//EGiqd1OdZPnBpe5
+X-Gm-Gg: ASbGncvsm1FQSbcPCX2glXUoO2BSl181VHlcJv2gQvoeAnVjDWe+qWTgDuOBldCNU+f
+	O96b/NYKEnwkGRVpUDwlF1C1AQ1RgVCJoq/HfWfjl2zcSUsHtnKoxEHPluozHew==
+X-Google-Smtp-Source: AGHT+IEu1TvsuhTaj4Y+Akxvvr6wi40qDULQBNFY0mTnIT/+3AaCJ0gDLLAcrNpIwNcwmpaw1b+off/DTHI6qwyqUP8=
+X-Received: by 2002:a05:6402:b3a:b0:5cf:f20c:bdf0 with SMTP id
+ 4fb4d7f45d1cf-5cff4314190mr20664a12.4.1732052292462; Tue, 19 Nov 2024
+ 13:38:12 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241119205841.268247-1-rananta@google.com>
-X-Migadu-Flow: FLOW_OUT
+References: <20241030170106.1501763-21-samitolvanen@google.com>
+ <20241030170106.1501763-22-samitolvanen@google.com> <CAK7LNAShVzrE6uhXxZ7HepKhmOJYsZeigq6w19jRN3OH-T_Jyg@mail.gmail.com>
+ <CABCJKueVjP8V-=3Ehi4QvQzg1FZh2unyVMDzSJ_vJ_E5EE+gLg@mail.gmail.com>
+ <CAK7LNARVK1ZpGXZVTAynuo7CDjgB4uT5bQzcGiWseZfaEu7Tvw@mail.gmail.com>
+ <CABCJKufVpx4dsr7A44qA0ydwTEx+3Qy_OMx9Ch6OKa4nzvRj2g@mail.gmail.com> <20241119204829.GA1926309@frogsfrogsfrogs>
+In-Reply-To: <20241119204829.GA1926309@frogsfrogsfrogs>
+From: Sami Tolvanen <samitolvanen@google.com>
+Date: Tue, 19 Nov 2024 13:37:35 -0800
+Message-ID: <CABCJKue+n2V5vua2=Hwc1SXBdkmdLBD7ac8imt5HO1bsy7s9dw@mail.gmail.com>
+Subject: Re: [PATCH v5 01/19] scripts: move genksyms crc32 implementation to a
+ common include
+To: "Darrick J. Wong" <djwong@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Miguel Ojeda <ojeda@kernel.org>, Matthew Maurer <mmaurer@google.com>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	Petr Pavlu <petr.pavlu@suse.com>, Daniel Gomez <da.gomez@samsung.com>, Neal Gompa <neal@gompa.dev>, 
+	Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>, Miroslav Benes <mbenes@suse.cz>, 
+	Asahi Linux <asahi@lists.linux.dev>, Sedat Dilek <sedat.dilek@gmail.com>, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-modules@vger.kernel.org, rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Raghu,
+Hi Darrick,
 
-Thanks for finding this!
+On Tue, Nov 19, 2024 at 12:48=E2=80=AFPM Darrick J. Wong <djwong@kernel.org=
+> wrote:
+>
+> On Mon, Nov 18, 2024 at 09:58:09PM +0000, Sami Tolvanen wrote:
+> > Hi,
+> >
+> > On Sat, Nov 16, 2024 at 9:09=E2=80=AFAM Masahiro Yamada <masahiroy@kern=
+el.org> wrote:
+> > >
+> > > On Thu, Nov 14, 2024 at 2:54=E2=80=AFAM Sami Tolvanen <samitolvanen@g=
+oogle.com> wrote:
+> > > >
+> > > > Hi,
+> > > >
+> > > > On Mon, Nov 11, 2024 at 8:06=E2=80=AFPM Masahiro Yamada <masahiroy@=
+kernel.org> wrote:
+> > > > >
+> > > > > On Thu, Oct 31, 2024 at 2:01=E2=80=AFAM Sami Tolvanen <samitolvan=
+en@google.com> wrote:
+> > > > > >
+> > > > > > To avoid duplication between host programs, move the crc32 code=
+ to a
+> > > > > > shared header file.
+> > > > >
+> > > > >
+> > > > > Only the motivation to use this long table is to keep compatibili=
+ty
+> > > > > between genksyms and gendwarfksyms.
+> > > > > I do not think this should be exposed to other programs.
+> > > > >
+> > > > >
+> > > > > If you avoid the code duplication, you can do
+> > > > >
+> > > > > // scripts/gendwarfksyms/crc.c
+> > > > > #include "../genksyms/crc.c"
+> > > >
+> > > > Sure, that sounds reasonable. I'll change this in the next version.
+> > >
+> > >
+> > > BTW, is it necessary to share the same crc function
+> > > between genksyms and gendwarfksyms?
+> > >
+> > > If CONFIG_GENKSYMS and CONFIG_GENDWARFKSYMS
+> > > were able to produce the same CRC, it would be a good motivation
+> > > to share the same function.
+> > > However, as far as I tested, gendwarfksyms generates different CRC va=
+lues.
+>
+> crc32() is operating on different data, right?  CONFIG_GENDWARFKSYMS
+> computes a crc of the DWARF data, whereas CONFIG_GENKSYMS computes a crc
+> of a magic string from ... the source code, right?  Hence the crcs will
+> never match?
 
-On Tue, Nov 19, 2024 at 08:58:41PM +0000, Raghavendra Rao Ananta wrote:
-> kvm_pmu_overflow_status() currently checks if the PMCs are enabled for
-> evaluating the PMU overflow condition. However, ARM ARM D13.1.1 states
-> that a global enable control (PMCR.E), PMOVSSET<n>, and PMINTENSET<n>
-> are sufficent to consider that the overflow condition is met. Hence,
-> ignore the check for PMCNTENSET<n>.
+Correct, they will never match.
 
-It's more than sufficient, evaluating E, PMOVSSET<n>, and PMINTENSET<n>
-is the *only* correct implementation of the architecture.
+> > > > > > Suggested-by: Petr Pavlu <petr.pavlu@suse.com>
+> > > > > > Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
+> > > > > > Acked-by: Neal Gompa <neal@gompa.dev>
+> > > > >
+> > > > > Does this Ack add any value?
+> > > > >
+> > > > > Acked-by is meaningful only when it is given by someone who
+> > > > > maintains the relevant area or has established a reputation.
+> > > > >
+> > > > > $ git grep "Neal Gompa"
+> > > > > $ git shortlog -n -s | grep "Neal Gompa"
+> > > > >      2 Neal Gompa
+> > > > >
+> > > > > His Ack feels more like "I like it" rather than a qualified endor=
+sement.
+> > > >
+> > > > Like Neal explained, an Ack from a potential user of this feature
+> > > > seemed relevant, but if you don't think it's meaningful, I can
+> > > > certainly drop it.
+> > >
+> > > Tested-by is more suitable if he wants to leave something.
+> >
+> > Ack. Neal, I'll drop the acks from v6, but if you end up testing that
+> > series, please feel free to add your Tested-by.
+>
+> Just my 2 cents, but it seems rude to me to *remove* an Ack from an
+> existing patchset on the grounds that person doesn't appear often in the
+> kernel log.  "We won't hire you for this entry level job because you
+> don't have experience" etc.
+>
+> Also, wouldn't Neal be one of the people shepherding this change into
+> distro kernels?  He seems to show up somewhat frequently in the Fedora
+> and SUSE ecosystems.
+>
+> Is the problem here that you all think "Acked-by" isn't appropriate from
+> someone who isn't a subsystem maintainer, but the kernel doesn't seem to
+> have a tag for "downstream consumer of this change says they're willing
+> to put their name on the line for this"?
 
-Also, ARM ARM section numbering is subject to change between revisions,
-so it's always best to use a fully-qualified citation, like 'DDI0487K
-D13.1.1'.
+I certainly appreciate Neal's input, but I don't have a strong opinion
+about which tag is appropriate. The documentation seems to suggest
+that Acked-by is _often_ used by maintainers and focuses on that use
+case, but doesn't explicitly rule out other folks acking patches
+either:
 
-So I may rewrite this as:
+https://docs.kernel.org/process/submitting-patches.html#when-to-use-acked-b=
+y-cc-and-co-developed-by
 
-  DDI0487K D13.1.1 describes the PMU overflow condition, which evaluates
-  to true if any counter's global enable (PMCR_EL0.E), overflow flag
-  (PMOVSSET_EL0[n]), and interrupt enable (PMINTENSET_EL1[n]) are all 1.
-  Of note, this does not require a counter to be enabled (i.e.
-  PMCNTENSET_EL0[n] = 1) to generate an overflow.
+Perhaps Greg, or someone else with more experience with the nuances of
+acking, can clarify the policy in this situation?
 
-  Align kvm_pmu_overflow_status() with the reality of the architecture
-  and stop using PMCNTENSET_EL0 as part of the overflow condition.
-
-We've got yet another bug lurking here as of 6.13, since the hypervisor
-range of counters isn't observing the correct global enable
-(MDCR_EL2.HPME).
-
-Let me fiddle with this and send out a combined set of fixes.
-
-> The bug was discovered while running the SBSA PMU test, which only sets
-> PMCR.E, PMOVSSET<0>, PMINTENSET<0>, and expects an overflow interrupt.
-> 
-
-We should be sending this to stable too.
-
-Cc: stable@vger.kernel.org
-Fixes: 76d883c4e640 ("arm64: KVM: Add access handler for PMOVSSET and PMOVSCLR register")
-
--- 
-Thanks,
-Oliver
+Sami
 
