@@ -1,131 +1,223 @@
-Return-Path: <linux-kernel+bounces-414414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B628B9D2795
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 15:04:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 026729D2798
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 15:05:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 668EE1F239B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 14:04:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B79DF28390A
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 14:05:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2715C1CCEE4;
-	Tue, 19 Nov 2024 14:04:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A576D1798C;
+	Tue, 19 Nov 2024 14:04:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i0Bnor51"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="YHIFpR9+"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2075.outbound.protection.outlook.com [40.107.243.75])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F8CB1798C;
-	Tue, 19 Nov 2024 14:04:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732025051; cv=none; b=YBHTgQbHLeC2ZeGK0kHgI6dwHbrJ80fHJpgmmCYFqu8s31wOwVvGCXRDHXPLUgvfAu0korT6GNxlS8qsEfjGg+eiN4KZLMySnKZOlYne0ZQ7IW4jKtdhBpS8AhvrhqkiHQbE78IMD4BZ3mKVFlyePEq5pak92oO+5/Hnzfq4rSk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732025051; c=relaxed/simple;
-	bh=Pmwy0jA7PsPKZQWJtbUwBsQN+Sxfpeu4kZ56bbkjML0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LsQXk7up+dU9oqN3KhQaQBjqlTEAryQG7Y3J/anFQmDCc8gdyQdFqFQXZHbweg/5E32Ksqd9h6NEDjgVoxH/ZpZMX7nAnAXEvLwqM1hUiP98xAIP9vA9ilVRTAtghiFAhbby5CZes1ylLv+3FvpQArvIIUqlb1T85cgK6qMA46c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i0Bnor51; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBC12C4CECF;
-	Tue, 19 Nov 2024 14:04:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732025051;
-	bh=Pmwy0jA7PsPKZQWJtbUwBsQN+Sxfpeu4kZ56bbkjML0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=i0Bnor514j21mV9m7EGCI0pbS7npTIyS6XbLVutVQTtBuNttpptK5zKQ62MUDFQ0M
-	 nZzoTC4zDsfMu2TzqZEtORVlEnBHN4/EMDj+2GEtyK3rZ+Fladtti44fYg1ziHvmfr
-	 uwBKOomy10R2PMTpHTNeTpLPnRz1iSOlGg8Y+AhWI4hSht7qCvTAxK+7LZghyZvWAH
-	 KL5W3hejxpB1Ztc6+ggt/U+Bs6lq6eut2phndQ2HT/N9FasEvZQTYTGgtbWriOQecL
-	 OvRdgz4L2yS5NbxY/Iu/ocEKbOjMInToOTvQu93tWXJruGdNpK2XmwCZaG3whuzGfe
-	 nKPQ1RrfKaDUg==
-Date: Tue, 19 Nov 2024 08:04:09 -0600
-From: Rob Herring <robh@kernel.org>
-To: Vasileios Amoiridis <vassilisamir@gmail.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Jonathan Cameron <jic23@kernel.org>, lars@metafoo.de,
-	krzk+dt@kernel.org, conor+dt@kernel.org,
-	andriy.shevchenko@linux.intel.com, anshulusr@gmail.com,
-	gustavograzs@gmail.com, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 5/7] dt-bindings: iio: bosch,bme680: Add supply
- properties
-Message-ID: <20241119140409.GA1093349-robh@kernel.org>
-References: <20241102131311.36210-1-vassilisamir@gmail.com>
- <20241102131311.36210-6-vassilisamir@gmail.com>
- <20241102153315.2175fd5b@jic23-huawei>
- <6sucdv4k5jdovqgtaemeer4cnluvnl3xgyn57mo3elgwdmojrx@phu4gowaqtuv>
- <20241104161033.GA228709-robh@kernel.org>
- <ZzJRkCJcbCFSMcat@vamoirid-laptop>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A2901CC166;
+	Tue, 19 Nov 2024 14:04:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.75
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732025092; cv=fail; b=aTMsOtRfyJQSksuaY4yR8hPymnsE8DfR+pR26Rl8AvInls5MOJiB7URETT2avs9v0/e2Ec7YUWzm1IVzxJrulJk0pttiHbTEOeIc1/JENdnnitZreCF1HWgV3rVjWurQN1209WXj75n72WCKJowzKzKCypLIuGprzhPPknpCGDE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732025092; c=relaxed/simple;
+	bh=CrE+A8E53QIPhiE4hVdmxRNMqg6iIhdcBDfDtXTPncY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=Sj3BmLLuOEicV84wCjv29CXWBNAaH/7uK7Z69ERAwLTNBe3NxhFORFvOb+qeyBvgd6aReTcz3OHDYpume8LUWFLStRdVoa0MpA29ul8pGP3CXyklxxDSF6xVVZUkNPJ9Ar07+Tl0+b5RnU9VNVGPa8JWxbAbbyvQUD02PuulJsE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=YHIFpR9+; arc=fail smtp.client-ip=40.107.243.75
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=hdDR0XJgNTDoSbQagxptyyyu8PREDcb0s1HKWXK7G2BkvMbTx8f7tnW5nr8YugvvFHXdTjkcoKbRZ4sVo8PNDR9AiuNg/xBVpNAsYfsV/WCWWeeUzPjojqYTb5A5qmkGnQIgSA2YFrOIt3mcr3gjYgpj1YI26QRl5QuopXKkz9wdwGr6sR8uCBXpySQzV15S0+CH29ZJ2Zn34MlfLJJd/hAqjH4Da03UrGkcZi0nA1rI3bE0gGRe8wcyJOIFrn1lFv+VKbGeAWudJz3OdmMAnjV24D85lXAODhwVDWi4XYKjlhFQ6aFwlrqs6tlaUnyLpQI2cn0sZlJTwqDGhUkz4w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=eD3ZZuyNwKfDzEHtDGVS1eYfT0KP8gUhILt8GJIGe28=;
+ b=sOHwcfXBUuAAWDWUrE3d0dDdqvFe2kB+x4zS8KC0VqJCj4BlxVZnpNiPBHlDrZimt2fJCHE4hpbZa6URa3VtAuEVTZKhEGrzTKLxakfVfrCnbkLWxMQm5MdiITxUmdPjGj2EPeSsAAPj2Xg/ul2rfm1aqM+3mmaBE+DX2pHTwNGCZT3bAArTDYQ9IV67L3kcV7gRryI/2djnH7zEvzhSbRqS5/ON4X5F++JBOsbgQpnrGurNMFIiK/2pi2X02QtKuwxGXpEKfohuG96TU9jaNrACJfgnZ4aQrMgwQ0rR73Y7ySdvWZ7tNNdqHQeaekK4cxv1fa0Kw/jN7zhixk5QKQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=eD3ZZuyNwKfDzEHtDGVS1eYfT0KP8gUhILt8GJIGe28=;
+ b=YHIFpR9+A3JEMKPpu1uvfzswhEFowWbi9+wrsHqxmgqFvjHIjFMmgV1fgb96PQ0xjTR5PbIOWz1f9Gax34NfBSi/FG6n0aDIGGHtS/MBrAb7WKtV2Pf7b61UqZ2wttuC1dUn9K3lYtJDSVBLekajpwoAzxsuJo/oUr2wjtji4wg=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DS7PR12MB8252.namprd12.prod.outlook.com (2603:10b6:8:ee::7) by
+ CH3PR12MB9431.namprd12.prod.outlook.com (2603:10b6:610:1c1::7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8158.23; Tue, 19 Nov 2024 14:04:48 +0000
+Received: from DS7PR12MB8252.namprd12.prod.outlook.com
+ ([fe80::2d0c:4206:cb3c:96b7]) by DS7PR12MB8252.namprd12.prod.outlook.com
+ ([fe80::2d0c:4206:cb3c:96b7%6]) with mapi id 15.20.8158.019; Tue, 19 Nov 2024
+ 14:04:48 +0000
+Date: Tue, 19 Nov 2024 19:34:40 +0530
+From: "Gautham R. Shenoy" <gautham.shenoy@amd.com>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Linux PM <linux-pm@vger.kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	x86 Maintainers <x86@kernel.org>,
+	Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>,
+	Artem Bityutskiy <artem.bityutskiy@linux.intel.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Linux ACPI <linux-acpi@vger.kernel.org>
+Subject: Re: [PATCH v2 1/2] cpuidle: Do not return from cpuidle_play_dead()
+ on callback failures
+Message-ID: <Zzya+PIRDlKrd9Ed@BLRRASHENOY1.amd.com>
+References: <13636465.uLZWGnKmhe@rjwysocki.net>
+ <3318440.aeNJFYEL58@rjwysocki.net>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3318440.aeNJFYEL58@rjwysocki.net>
+X-ClientProxiedBy: PN2PR01CA0248.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:21a::19) To DS7PR12MB8252.namprd12.prod.outlook.com
+ (2603:10b6:8:ee::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZzJRkCJcbCFSMcat@vamoirid-laptop>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB8252:EE_|CH3PR12MB9431:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0480a08c-26df-4427-014d-08dd08a320e9
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?lbcH+DZsZsVsYeE5I+HuijbCewtKM0KcKMz3K6x5LaHFJM1bRg05ay02Wzqw?=
+ =?us-ascii?Q?l53M0sjjeIAj8DSYnRJiUZntbJ+xwl82lWazKnAFaLa1Cr1xXJHX2mmCq+0+?=
+ =?us-ascii?Q?r50m6fePk+tXPb6grGLanK8EUz8+YuIlJoPvpZoiaYKOJKYcyS97QzssLwM3?=
+ =?us-ascii?Q?piXOiELCk+TUnlfjaw2wyqRXxd5Bnryz/DU9wBDfZDH3s04t9unrUhvofzaL?=
+ =?us-ascii?Q?UV6ETPYw7d1Rub6NP62DuY6WrWTgPiTjEN64X01EOQYr06nAnkCPIUsZBrbV?=
+ =?us-ascii?Q?gi+r41ud0cwPLrU94dYcxkGpsIfKMpgeDpvAUDcEEJ74PXSbjJc49U8pdma7?=
+ =?us-ascii?Q?PeeM/vnlwFMcI4AFtgq6AmynqQs7V3PdDLzmH3iQgGnmRVQ9Fzw+l/LtDHnl?=
+ =?us-ascii?Q?ZV9rO5FD56fFhPJNDbCDepnYXBbnION7hr9nvQgHRoH3j6dqqo7G7xgL/DYp?=
+ =?us-ascii?Q?rSS1kYPJc2gwPCzsdq+aE7kuJRY03wxNlt4ZyIFz/PA9nw62BXz62e9MLl03?=
+ =?us-ascii?Q?dK8+U8BZlE4pNapBobgcASMNLwLzq+FsPUamnVdzY6sQoDddBGdem9yfGEyb?=
+ =?us-ascii?Q?UXRCswYX6LQN2Q9InoXUEivO4peOi2lqbZ33/wI5hBqhCxyKJzRAasx+9cDi?=
+ =?us-ascii?Q?Om6MGXB4K8f4RcqhmQYHXZmHg+jVNSLUTDzv4igGmSCr4hId7e2ndXartBNl?=
+ =?us-ascii?Q?btVZp4dK736/5vHHbk2+dmTi8tegipuCCOn3oW62q1XWnDEn2V6TWk/g6nhs?=
+ =?us-ascii?Q?9j4O5dLmRJTAw3UkQjrCxGgoe9egrsD8g/V0Q18Juq73+WoIGSU63NtmpERK?=
+ =?us-ascii?Q?khnZ8w8a03iSTVQS9b0ZMD2plS4mLnmCRrk94dMK+eVlDKY/5Ut0UmzQMipz?=
+ =?us-ascii?Q?/kyO0DXcah9/oQftk60u+Q097WZB9A87dD6NyiBag7VLHeU+dMctxs6XdazJ?=
+ =?us-ascii?Q?/1uaKKQYNV18VaihTGF8ip4iSE6jbMZFoQSJh+uEngyLHaKLfRQ+BZMhdy0Z?=
+ =?us-ascii?Q?Ihh34lG9WPq5BisQBZPp54i6M375BCGAPVrqxcA6y0modRIbnAnOSmzkM+wH?=
+ =?us-ascii?Q?GX3kiQEGxIyT9VM99sptXX60F72fQQPCBeoMzdbmKI6Bgp+UoNg8pAjWUUyi?=
+ =?us-ascii?Q?J/S4aBSBdQvr4k7RtXYVWbbjvSNgq1wEoLMO8Rtj/3TpaMQEqCERUnZf1kHe?=
+ =?us-ascii?Q?8vxXY0uzwAmQRAwCAnsQo+QSvFvlD+E15EenTivQIVQl0UGIJtmuPXB2yiwu?=
+ =?us-ascii?Q?CJiINuc+NuYm8BB+stCi?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB8252.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?3Nx2/a3yPlN8o5u475UbuWpF680LvwUNRr+lDd9gqz2cifYe2JzsRpP6YTCW?=
+ =?us-ascii?Q?ZStPEfsI23Udyg8+uFCIWLwWefrrmEPf9hiKeQ5I/6D/NkkqW15AVQ7wEem4?=
+ =?us-ascii?Q?rPn18kVedV3yB37BCZSffBNjykNqXU+TD3G5smBqrOHky64tWCnbUY8h09QH?=
+ =?us-ascii?Q?3yLyNdFYnd4mc6ap0BhopycPcMBHWmYmx93yMqp/PU8t/oetTYJj5WM6ruaU?=
+ =?us-ascii?Q?tYiKKbn8Vcdu/t3duN6GlwcQIqUCf1Mi1Eu35u8s3AtH2YP0hk9h5p0+mk8k?=
+ =?us-ascii?Q?NwRhgeVRSZcAgg08QT9qQPBYlf2WrtH8RU0u6/1aT/xvP60wGX8wyDJJmXAF?=
+ =?us-ascii?Q?a2GTdc13OxXWhYciddrullfcUUhHx0PdMmGzneeS6ByYCPPL0j+6b5LU1LuB?=
+ =?us-ascii?Q?exAMz5Bl0YMtDtWFE5iImxf95jejiX/duXIPodhN7Eou1LNjz3JIuZrkNQ5J?=
+ =?us-ascii?Q?Q7J3po3ZtjZt9slDSSjuYgBXyvg+wUxsiwOyUCHqZQzeeSHjOhhBxBV1aHhB?=
+ =?us-ascii?Q?v/4AVi0NLRhKjNaBfWQodSpwLvjJZz1LqH3AncopCvzk1ZvRF81ywqLhUa+c?=
+ =?us-ascii?Q?aKwQGZiJNHV1zuZJo0xz91Dpg9htSJ0yNN/I5T7541pVaVYXdrLxMXkuyeMl?=
+ =?us-ascii?Q?UZxvz6euVvljjy2yCRHRG7mxmdM8z+GVhYmmsSzuEcbL4pWn42z/GL6cP8AH?=
+ =?us-ascii?Q?bhnqzhGTARQwewrS5AHQdokkS/yPhK/7tFVBptBfntymLHbRGQPj5t3unqWg?=
+ =?us-ascii?Q?zr2nmm63ruioi3YafzPd3wCVESGV1AbRrmdmdQFzvOH1TUtzQJsXvlNs+4CU?=
+ =?us-ascii?Q?fBzbAR8jaPu04IgweFGTIFe7lyH1iEod35II6RFX1XF12n89j/gKU7p4PI4Q?=
+ =?us-ascii?Q?NQt7DesiNKvarH/PqFtlUCmFegcM0gA71xViVutZJrzRsztWpzf4V5H61d5I?=
+ =?us-ascii?Q?PEN0PYcuqecHmzhL89QjxvJC1vR+qqL9x8Ll93QiLo5ZUvKjemZE8Wxk0STu?=
+ =?us-ascii?Q?UwKPbiElkvvYX8uD3z2JpGrLMVgTL4hvjwca/YKXekte29n0IjeDM2TRBPWN?=
+ =?us-ascii?Q?EMI81BuFRbKd/I1syx8YMG4HCYSekPh6J/UnSf9kWFdOZNtKosPW5dU6ndQN?=
+ =?us-ascii?Q?f+5N9qGCq7bptfj0f5mJ6l1eN4hn50Ct/qwmE4ZIpPQjzRqjUm9PROLwZnQy?=
+ =?us-ascii?Q?bG8Lw1EipphDpaOWip/o3mLSynQkQBdeOT6zn7ZRdW/vTcfYN80NcERQhdOm?=
+ =?us-ascii?Q?5+WsYtC4qQbPv0UyKQDqaeuhw5jNkN58JGOqdOcQVQ3YgjmF6ikDg4iD1x39?=
+ =?us-ascii?Q?7WTPxqCjhFsFrZsqFUiApZWgOa058X7gCIwDuFSr/r2i/+pvsE+5wzfUUShx?=
+ =?us-ascii?Q?bln4Ua6wY43E4uEC3j4m9ywNUrkdDesQI5B9APyXgTSBW1+S9pfFOuyLyMV4?=
+ =?us-ascii?Q?zQAb8I8A/NsSFLwYETK2fLfetbUkCMmmba9iWhqE3ekl/YndqmbJYwCNaSJj?=
+ =?us-ascii?Q?lJdhAXL1aYgYPcxPRPLzLI3Yp/mFzVCdyRF6r2uwCqTklmK77sMPBjL1xnDv?=
+ =?us-ascii?Q?8w6YGlQrUY0pRG7ma5e1ZuBHU6/IfjVUpA5DypXG?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0480a08c-26df-4427-014d-08dd08a320e9
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB8252.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Nov 2024 14:04:48.6926
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: LvV/t+Wxd+6YOMrsHXQSIUe8hxA0CLd6QSWrfncF1ruJLPr6p8Y6ph14ikWpb9pkCJqLuMckeE8d+MDtzug6fw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9431
 
-On Mon, Nov 11, 2024 at 07:48:48PM +0100, Vasileios Amoiridis wrote:
-> On Mon, Nov 04, 2024 at 10:10:33AM -0600, Rob Herring wrote:
-> > On Sun, Nov 03, 2024 at 10:46:46AM +0100, Krzysztof Kozlowski wrote:
-> > > On Sat, Nov 02, 2024 at 03:33:15PM +0000, Jonathan Cameron wrote:
-> > > > On Sat,  2 Nov 2024 14:13:09 +0100
-> > > > Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
-> > > > 
-> > > > > Extend dt-binding for BME680 gas sensor device. The device incorporates
-> > > > > as well temperature, pressure and relative humidity sensors.
-> > > > This description should make it clear it is moving from trivial-devices.yaml
-> > > > 
-> > > > dt-bindings: iio: bosch,bme680: Move from trivial-bindings and add missing supplies.
-> > > > 
-> > > > Then say a little more on why you are moving it.
-> > > > 
-> > > > > 
-> > > > > Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
-> > > > 
-> > > > There was an open question on the previous version about
-> > > > setting the supplies as required (which I see you've removed).
-> > > > My understanding previously was that it is fine to make that change
-> > > > in a binding if it reflects supplies that are required to be enabled
-> > > > for the device to function at all.  If there were previously missing
-> > > > that's a binding bug we should fix.
-> > > > 
-> > > > I'd like a clarification from the DT binding maintainers on that.
-> > > > Obviously doesn't work for other users of dt bindings but in
-> > > > Linux this would be fine as they were already on for any board
-> > > > that worked and the regulator framework will through us a fake
-> > > > regulator for cases like this.
-> > > > 
-> > > > https://lore.kernel.org/all/20241022182451.00007ac0@Huawei.com/
-> > > > 
-> > > > Jonathan
-> > > 
-> > > That was Rob's objection so I will leave it to him, but putting my two
-> > > cents in for Linux it is not an ABI break because missing regulator
-> > > supplies are substituted with dummy ones. Unless something changed...
-> > 
-> > Shrug. I don't think we're entirely consistent on this. If we're saying 
-> > supplies are always required, then every device in trivial-devices.yaml 
-> > is wrong. Since Linux handles them missing, you can also argue that 
-> > supplies are never required.
-> > 
-> > I'd prefer not to special case regulators as an exception I have to 
-> > remember. I have some rudimentary ABI checking I'm working on that 
-> > checks for things like new required properties. Though it wouldn't catch 
-> > this particular change given it moves the schema.
-> > 
-> > Rob
+Hello Rafael,
+
+On Fri, Nov 15, 2024 at 09:58:31PM +0100, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 > 
-> Hi Jonathan,
+> If the :enter_dead() idle state callback fails for a certain state,
+> there may be still a shallower state for which it will work.
 > 
-> According to Rob's answer, do you think that we can move on with the
-> last 3 patches as they are or do you want some changes?
+> Because the only caller of cpuidle_play_dead(), native_play_dead(),
+> falls back to hlt_play_dead() if it returns an error, it should
+> better try all of the idle states for which :enter_dead() is present
+> before failing, so change it accordingly.
+> 
+> Also notice that the :enter_dead() state callback is not expected
+> to return on success (the CPU should be "dead" then), so make
+> cpuidle_play_dead() ignore its return value.
+> 
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
+> Tested-by: Mario Limonciello <mario.limonciello@amd.com> # 6.12-rc7
 
-Please update the commit message as Jonathan requested and resend 
-(though you might as well wait til the end of the merge window now).
+Thanks for fixing this.
 
-Rob
+Reviewed-by: Gautham R. Shenoy <gautham.shenoy@amd.com>
+
+--
+Thanks and Regards
+gautham.
+> ---
+> 
+> v1 -> v2:
+>    * Make cpuidle_play_dead() never return 0.
+>    * Add tags from Mario (I have added them because the change of the patch
+>      should not make a practical difference, but if you want them to be
+>      dropped, please let me know).
+> 
+> ---
+>  drivers/cpuidle/cpuidle.c |   10 +++++++---
+>  1 file changed, 7 insertions(+), 3 deletions(-)
+> 
+> Index: linux-pm/drivers/cpuidle/cpuidle.c
+> ===================================================================
+> --- linux-pm.orig/drivers/cpuidle/cpuidle.c
+> +++ linux-pm/drivers/cpuidle/cpuidle.c
+> @@ -69,11 +69,15 @@ int cpuidle_play_dead(void)
+>  	if (!drv)
+>  		return -ENODEV;
+>  
+> -	/* Find lowest-power state that supports long-term idle */
+> -	for (i = drv->state_count - 1; i >= 0; i--)
+> +	for (i = drv->state_count - 1; i >= 0; i--) {
+>  		if (drv->states[i].enter_dead)
+> -			return drv->states[i].enter_dead(dev, i);
+> +			drv->states[i].enter_dead(dev, i);
+> +	}
+>  
+> +	/*
+> +	 * If :enter_dead() is successful, it will never return, so reaching
+> +	 * here means that all of them failed above or were not present.
+> +	 */
+>  	return -ENODEV;
+>  }
+>  
+> 
+> 
+> 
 
