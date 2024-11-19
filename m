@@ -1,213 +1,163 @@
-Return-Path: <linux-kernel+bounces-414706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06D909D2C55
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 18:20:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC2019D2C92
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 18:28:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0D93285561
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 17:20:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 581C91F22EC3
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 17:28:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC8701D174E;
-	Tue, 19 Nov 2024 17:20:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D39F1D26EE;
+	Tue, 19 Nov 2024 17:22:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B6dZnWlq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="38KrU0Ow"
+Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C6131D0967;
-	Tue, 19 Nov 2024 17:20:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EA9A1D174F
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 17:21:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732036820; cv=none; b=oLpCtAv02j+dDNBfU+l7x9NhFMEWCEZC0l4Ei+tuHZ2Y0WkPP8TZmZqJuvw+a4Fy4GgCrhTsMW1WJBor/3MVqy5BWRGjzkIM8B9nU3A7H1QHDKOWl5pqrqQ4+1y3W8lC92H2pd3bn0ixTTNzs1QbH96Pes/DRZyaT50irisbKDw=
+	t=1732036919; cv=none; b=YFYJ6Ye+3To4h9Hmii8S13HvaUGEo45RHyn+5E5x9+NuTFxqNlkUzdeIXiywaNXvc2uIHyOSYLFJd3JCZf/o7NDH+CH7Q2c4kqXP/BvjYKpX/+OFMrlj0oezwin+4aBv9huXD6KRpkQIu2BXj7VHJl9tWu2aKbdVb3RYCYIWxKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732036820; c=relaxed/simple;
-	bh=tbrEXDYbwQhM6MgTNh9IIYN9AdPjyC/qDEZNeQd0RCs=;
+	s=arc-20240116; t=1732036919; c=relaxed/simple;
+	bh=jUbGqhU4IcWQ47Upw7So1paU0kwKyS7PtxOQBEEQIyk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UKC/hreBcGtbNQ/cvdpMi4Zl7Ayijffh4f6hDGzaQqr+crmC8jyM6tyPzu3GS6fTnzi4QvMjjwCWBClI83UijrmJHogrsz/oh0XeoB84DcPysdwoQHi3w6xEUuUElsE1Dof/vBTQgYjnp1YvA8YcPuG8WvvPf6UuKuC+CnvbuVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B6dZnWlq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61988C4CED0;
-	Tue, 19 Nov 2024 17:20:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732036819;
-	bh=tbrEXDYbwQhM6MgTNh9IIYN9AdPjyC/qDEZNeQd0RCs=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=B6dZnWlqL/1RbA4iszoqT/ogp6O7Jjp9hT1XNYJ3B5E4X3GldRoWiqqgOR87xlJMa
-	 IPbD64x8WKwQZTX0V/yKbn+tXZKNDkrQJLulkE861N6LZ0RBuuWDka1Jc01SB9zd40
-	 fwWc+qg/w1iJ9lRWaqPoNCS5j73VMVyBkQAHGzheZcnPRimsjxddIkvEi/9eWl4Ue4
-	 jKr/tuXSAX/KJry0Y+LnxyKdiTpyHVDfK91QLxuGrRUT9UF1zGK5JupgOF+MjXf903
-	 2Fr+Q1sbsFnYTcwJU+hiY3mrruInNFnZXV9PECHAL2B9XkNBGWGnGDqf2hRmWckmRx
-	 4c1zysTBSWGfw==
-Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-2958ddf99a7so928945fac.2;
-        Tue, 19 Nov 2024 09:20:19 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUA3ts1/64vmiglTzq1NLjb9gy3KWTtsoH0XcZv5COixVIXjM/wJVssejKolcOS4LdRfdQ/7pEZOAkDBA0=@vger.kernel.org, AJvYcCUfuqM5IMxNhFg27WIE3Cpz0INoU41UBTgswPutD/wxGp+z+6Fa0Ag/TT0jmB3JS0IwVJA/yhVQo4Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YymTO2Q5SDh/6sR/brHBWR671D5o3oXZ3/BnmXU/OEoWsTqUpjE
-	HzMAJdpvT1is/RlXu2kBz3+5Cnh8OlZjb436J8TPCSXJ5dEIKnFvFoA2YfPDkuQPoJSg9Gdwzc0
-	MhbIph1xaIkRrK5zHNmwdTYbPBHg=
-X-Google-Smtp-Source: AGHT+IFFemPFTNUwAUEpHn8m/WNBRPkDw4Ph9nBIbUekWCUAmHuwBdv3mBp3Gw9/wgZhLNacgMx4lH78ZN1Pk2dtB40=
-X-Received: by 2002:a05:6871:3312:b0:270:50f7:50c1 with SMTP id
- 586e51a60fabf-2962dc9d9e1mr14113811fac.1.1732036818607; Tue, 19 Nov 2024
- 09:20:18 -0800 (PST)
+	 To:Cc:Content-Type; b=Gro7masmjgdxVuZERagYxiWxem/+zQgtWJ8oR2uSmLSR2McmGkS7amoYgvFYlWB6Y5Aa8MyEr+tPYzEHPxZtoW9RXSMqUVxv6T7aAIC4PYm/g/Rn6fOuwNJdJ5XiZrC8zT9XYnFdjWgGifwksf1/1TRwsW91KOBKgnZ4SOP0UAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=38KrU0Ow; arc=none smtp.client-ip=209.85.166.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-3a77ab3ebfaso187275ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 09:21:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1732036917; x=1732641717; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ym27viqWCynFMgUePVJBvA+AKoLrFWIBj+HlgFOU3xo=;
+        b=38KrU0OwaX/fhOqt1WmUMG+wahmbdPQIAVarVbGjXiOWnvmAreKSxLRjUJpUEdpdbL
+         /ehK3GS3mcUhkE4JVtc3CRBVQBMvqfPiVyvlZ44Co7K5TTLMIEyx9PoSqqI7D0geYU2O
+         4C6YOfmx+qDzVN4DQ3yVOeO6oZJz1Z/U/U8+wnI1liBLGYt02JESdys+YCuGoB17PdhB
+         q/op25G5MbIqY/+bfg1xWkUVpRWl6zY8Cp48t+EmGiX8MO2a3euFSQO0zajxNLBEiDXQ
+         EsgLI+HDw+ihoWf5EhWY1d8UmZ18pHtV/wZ+3ObPC6lzOZRdo+dW3zdBQlBcqy7yNFaG
+         y+ag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732036917; x=1732641717;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ym27viqWCynFMgUePVJBvA+AKoLrFWIBj+HlgFOU3xo=;
+        b=FUbTK3xrDAT8EyQk+tjEztHMb8bTEMk5fez0BOs2UBrdg3bMZEdyHXUbLQg0kmQ5Kz
+         hAIXcj5Ls9r63TNCevvGOXafotVJVNR3UltOrJuARHlEapVdx64AyX66SQmaqUrWSnZD
+         CouHpK2u+RWKBrWYuUEKP015Dq72yr9SiAwNKa8p/+Sv240G30SYb2X5m+ehpZhpRrt7
+         ciLRFSCVhuyIPVjtfK+Squq+KWfsHQjaoHKOXHYzR9FtPQQOLSbj7WNCzVxPaKWZrcdK
+         3m+z9g1+5NsH0XxY0C9m2n6W7+4/hruAs3TBpnQ+fktCzIaPftktqOJcOfWBD2J5naVD
+         kHAw==
+X-Forwarded-Encrypted: i=1; AJvYcCUFW3Oq8yTnrOptjxu1FyNbN5d0J8We/LTUWcCyUndbzdYLek1hS/nvFZEdD16gsM7P+cN0597yLrh3hvs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1yDLNk8rrfmuJSF10qNqH6e83hWd9KezvNAJt5DjAbv5Ybhg3
+	FJJLAkh9zftcIAn0H+ia2gE/2/1YcwhHEJpgVA9XrSt4Ii7zykoRS71rsPS0+8asMx8FMfgjTsY
+	zn61nJYTsH8NgUuv7eg39DgV4iriGl1re3GJD
+X-Gm-Gg: ASbGncs+t8DnghqiAz+6ZDvoT+En/5oSJ0C2ZQRhtQNWtvXHzjfTFH/sgOfx9oJV2QY
+	MtUVBkCPvRHQYZOQV1dvUZ87jFQcmS35RpeYeZMPDGEX5B/kykh44fKNSJKMPl+M=
+X-Google-Smtp-Source: AGHT+IG2lc/1S4Yi4C7ZdwGmt5Z0NQfYIt7fA6X5TFQsCkCJnUS2Yow8s9UiCYpcKeIv40KVGhZCSa5tSAm9W85+oDU=
+X-Received: by 2002:a05:6e02:12cb:b0:3a7:4e30:4884 with SMTP id
+ e9e14a558f8ab-3a779fb1222mr3180675ab.17.1732036917367; Tue, 19 Nov 2024
+ 09:21:57 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <3607404.iIbC2pHGDl@rjwysocki.net> <115421572.nniJfEyVGO@rjwysocki.net>
- <2b0953b5-4978-446a-b686-5b8d1541a265@arm.com>
-In-Reply-To: <2b0953b5-4978-446a-b686-5b8d1541a265@arm.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 19 Nov 2024 18:20:07 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0hH424_4N1TZVVgKCegUsAisjdAXr7KekafJteSSLEnHA@mail.gmail.com>
-Message-ID: <CAJZ5v0hH424_4N1TZVVgKCegUsAisjdAXr7KekafJteSSLEnHA@mail.gmail.com>
-Subject: Re: [RFC][PATCH v0.1 6/6] cpufreq: intel_pstate: Add basic EAS
- support on hybrid platforms
-To: Pierre Gondois <pierre.gondois@arm.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>, 
-	Peter Zijlstra <peterz@infradead.org>, 
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Len Brown <len.brown@intel.com>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Morten Rasmussen <morten.rasmussen@arm.com>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, 
-	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>, 
-	Christian Loehle <Christian.Loehle@arm.com>
+References: <20241109061809.811922-1-irogers@google.com> <20241109061809.811922-16-irogers@google.com>
+ <Zzvac4IeX9nDDitm@google.com> <CAP-5=fUPksNCJ-NqUbJMDpfS7kkmXGsCVhvALkts8HDv42NUyg@mail.gmail.com>
+ <ZzzEE_kAjmXnvwtj@google.com>
+In-Reply-To: <ZzzEE_kAjmXnvwtj@google.com>
+From: Ian Rogers <irogers@google.com>
+Date: Tue, 19 Nov 2024 09:21:46 -0800
+Message-ID: <CAP-5=fWiL0iBLue0fbCR3zgrCrX8j09ZSk5nkDr4pBsRGJUY0A@mail.gmail.com>
+Subject: Re: [PATCH v6 15/22] perf lock: Move common lock contention code to
+ new file
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	James Clark <james.clark@linaro.org>, Howard Chu <howardchu95@gmail.com>, 
+	Athira Jajeev <atrajeev@linux.vnet.ibm.com>, Michael Petlan <mpetlan@redhat.com>, 
+	Veronika Molnarova <vmolnaro@redhat.com>, Dapeng Mi <dapeng1.mi@linux.intel.com>, 
+	Thomas Richter <tmricht@linux.ibm.com>, Ilya Leoshkevich <iii@linux.ibm.com>, 
+	Colin Ian King <colin.i.king@gmail.com>, Weilin Wang <weilin.wang@intel.com>, 
+	Andi Kleen <ak@linux.intel.com>, Josh Poimboeuf <jpoimboe@redhat.com>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, Arnaldo Carvalho de Melo <acme@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 18, 2024 at 5:34=E2=80=AFPM Pierre Gondois <pierre.gondois@arm.=
-com> wrote:
+On Tue, Nov 19, 2024 at 9:00=E2=80=AFAM Namhyung Kim <namhyung@kernel.org> =
+wrote:
 >
+> On Mon, Nov 18, 2024 at 05:03:41PM -0800, Ian Rogers wrote:
+> > On Mon, Nov 18, 2024 at 4:23=E2=80=AFPM Namhyung Kim <namhyung@kernel.o=
+rg> wrote:
+> [SNIP]
+> > > On Fri, Nov 08, 2024 at 10:18:02PM -0800, Ian Rogers wrote:
+> > > > +#ifndef HAVE_BPF_SKEL
+> > > > +int lock_contention_prepare(struct lock_contention *con __maybe_un=
+used)
+> > > > +{
+> > > > +     return 0;
+> > > > +}
+> > > > +
+> > > > +int lock_contention_start(void)
+> > > > +{
+> > > > +     return 0;
+> > > > +}
+> > > > +
+> > > > +int lock_contention_stop(void)
+> > > > +{
+> > > > +     return 0;
+> > > > +}
+> > > > +
+> > > > +int lock_contention_finish(struct lock_contention *con __maybe_unu=
+sed)
+> > > > +{
+> > > > +     return 0;
+> > > > +}
+> > > > +
+> > > > +int lock_contention_read(struct lock_contention *con __maybe_unuse=
+d)
+> > > > +{
+> > > > +     return 0;
+> > > > +}
+> > > > +#endif  /* !HAVE_BPF_SKEL */
+> > >
+> > > I still think it's the convention to have them in a header file as
+> > > static inline functions and reduce the #ifdef in the .c file.
+> >
+> > Shouldn't minimizing ifdefs, and associated cognitive load, in header
+> > files be the priority given they are #included many times while the .c
+> > file is only compiled once?
+> > Shouldn't a goal of the header file be to abstract away things like
+> > HAVE_BPF_SKEL?
+> > I'm not clear what the goal of having the functions in the header
+> > files is, performance? The code isn't going to run anyway. I feel
+> > lock_contention.h is smaller and easier to read like this but I also
+> > don't care enough to fight. I did this change here as
+> > lock_contention.h was being brought into python.c for the sake of
+> > stubbing out functions that the header file was also subbing out for
+> > !BPF_HAVE_SKEL. A single stub felt like progress.
 >
->
-> On 11/8/24 17:46, Rafael J. Wysocki wrote:
-> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >
-> > Modify intel_pstate to register stub EM perf domains for CPUs on
-> > hybrid platforms via em_dev_register_perf_domain() and to use
-> > em_dev_expand_perf_domain() introduced previously for adding new
-> > CPUs to existing EM perf domains when those CPUs become online for
-> > the first time after driver initialization.
-> >
-> > This change is targeting platforms (for example, Lunar Lake) where
-> > "small" CPUs (E-cores) are always more energy-efficient than the "big"
-> > or "performance" CPUs (P-cores) when run at the same HWP performance
-> > level, so it is sufficient to tell the EAS that E-cores are always
-> > preferred (so long as there is enough spare capacity on one of them
-> > to run the given task).
-> >
-> > Accordingly, the perf domains are registered per CPU type (that is,
-> > all P-cores belong to one perf domain and all E-cores belong to another
-> > perf domain) and they are registered only if asymmetric CPU capacity is
-> > enabled.  Each perf domain has a one-element states table and that
-> > element only contains the relative cost value (the other fields in
-> > it are not initialized, so they are all equal to zero), and the cost
-> > value for the E-core perf domain is lower.
-> >
-> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > ---
-> >   drivers/cpufreq/intel_pstate.c |  110 +++++++++++++++++++++++++++++++=
-+++++++---
-> >   1 file changed, 104 insertions(+), 6 deletions(-)
-> >
-> > Index: linux-pm/drivers/cpufreq/intel_pstate.c
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > --- linux-pm.orig/drivers/cpufreq/intel_pstate.c
-> > +++ linux-pm/drivers/cpufreq/intel_pstate.c
-> > @@ -8,6 +8,7 @@
-> >
-> >   #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-> >
-> > +#include <linux/energy_model.h>
-> >   #include <linux/kernel.h>
-> >   #include <linux/kernel_stat.h>
-> >   #include <linux/module.h>
-> > @@ -938,6 +939,12 @@ static struct freq_attr *hwp_cpufreq_att
-> >       NULL,
-> >   };
-> >
-> > +enum hybrid_cpu_type {
-> > +     HYBRID_PCORE =3D 0,
-> > +     HYBRID_ECORE,
-> > +     HYBRID_NR_TYPES
-> > +};
-> > +
-> >   static struct cpudata *hybrid_max_perf_cpu __read_mostly;
-> >   /*
-> >    * Protects hybrid_max_perf_cpu, the capacity_perf fields in struct c=
-pudata,
-> > @@ -945,6 +952,86 @@ static struct cpudata *hybrid_max_perf_c
-> >    */
-> >   static DEFINE_MUTEX(hybrid_capacity_lock);
-> >
-> > +#ifdef CONFIG_ENERGY_MODEL
-> > +struct hybrid_em_perf_domain {
-> > +     cpumask_t cpumask;
-> > +     struct device *dev;
-> > +     struct em_data_callback cb;
-> > +};
-> > +
-> > +static int hybrid_pcore_cost(struct device *dev, unsigned long freq,
-> > +                          unsigned long *cost)
-> > +{
-> > +     /*
-> > +      * The number used here needs to be higher than the analogous
-> > +      * one in hybrid_ecore_cost() below.  The units and the actual
-> > +      * values don't matter.
-> > +      */
-> > +     *cost =3D 2;
-> > +     return 0;
-> > +}
-> > +
-> > +static int hybrid_ecore_cost(struct device *dev, unsigned long freq,
-> > +                          unsigned long *cost)
-> > +{
-> > +     *cost =3D 1;
-> > +     return 0;
-> > +}
->
-> The artificial EM was introduced for CPPC based platforms since these pla=
-tforms
-> only provide an 'efficiency class' entry to describe the relative efficie=
-ncy
-> of CPUs. The case seems similar to yours.
+> I think it may have the empty functions in the binary if we keep the
+> functions in the .c file whereas compilers would optimize away them if
+> they are static inline functions.
 
-It is, but I don't particularly like the CPPC driver's approach to this.
+The functions will be 1 or 2 bytes and can all be deduplicated, the
+linker can also garbage collect them. It is better to optimize code
+for readability rather than for wins like this.
 
-> 'Fake' OPPs were created to have an incentive for EAS to balance the load=
- on
-> the CPUs in one perf. domain. Indeed, in feec(), during the energy
-> computation of a pd, if the cost is independent from the max_util value,
-> then one CPU in the pd could end up having a high util, and another CPU a
-> NULL util.
-
-Isn't this a consequence of disabling load balancing by EAS?
-
-> For CPPC platforms, this was problematic as a lower OPP could have been
-> selected for the same load, so energy was lost for no reason.
->
-> In your case it seems that the OPP selection is done independently on eac=
-h
-> CPU. However I assume it is still more energy efficient to have 2 CPUs
-> loaded at 50% than one CPU loaded at 100% and an idle CPU.
-
-Maybe.
-
-It really depends on the cost of the idle state etc.
-
-> Also as Dietmar suggested, maybe it would make sense to have some
-> way to prefer an CPU with a "energy saving" HFI configuration than
-> a similar CPU with a "performance" HFI configuration.
-
-As it happens, E-cores have higher energy-efficiency scores in HFI AFAICS.
-
-> Also, out of curiosity, do you have energy numbers to share ?
-
-Not yet, but there will be some going forward.
-
-Thanks!
+Thanks,
+Ian
 
