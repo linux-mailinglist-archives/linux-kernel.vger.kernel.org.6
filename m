@@ -1,50 +1,80 @@
-Return-Path: <linux-kernel+bounces-414072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C00A09D22A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 10:45:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8D2D9D228B
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 10:34:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82FCF283427
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 09:45:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 664F21F21A4A
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 09:34:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B14E01C1ABC;
-	Tue, 19 Nov 2024 09:45:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C260E19C553;
+	Tue, 19 Nov 2024 09:34:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="XBpBH2Up"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NaNAnIwu"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCBEA1C07C2;
-	Tue, 19 Nov 2024 09:45:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8248139566;
+	Tue, 19 Nov 2024 09:34:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732009507; cv=none; b=qB1jP5f6umsDlkvXyBEaW6LwElXuUBrHEyolZFmnf72jgtl0jtT4NxCkWQd88L9fEgiVKbEq6B3j+YgmAm+hYw7XNDNjimoziVwZN2/VVDb5/zdT+B1JbX3zq1PgmzR3SXIOwl2w27Z3L9TMLi1PJgeaZ6h3pa+fair9H0p4TG4=
+	t=1732008868; cv=none; b=dNXwsSWvkE1bTlGnlt/d6k5dnsfq2Yet/OoEDgLYW/aC7fW0WTCTNVbvcqVILlVv85Q4Lr1T0IoB1+XJa89avsC22hMQWHpKYCftZnMOgvGB9ThNi1QsCTBRJZZvdJDh6v8lJrRUsv9OsmnIR2j5JC2zRA7TJiR0pbGCkyCwDGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732009507; c=relaxed/simple;
-	bh=gdJ4SG6Z6DmoaBcbOqpOl0mtJKOHDhBL82DMvMF1PjA=;
+	s=arc-20240116; t=1732008868; c=relaxed/simple;
+	bh=cUPHrgIk3h/1fGaI12CR5fxcQ3Jb1XerDEZi03yMIb0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kFtzBNnR1NGkq0M+HMN6yy9dh8/wThtFWmvddUufN9cEkqynFLovabBZoZoMTO+4ek4MoWfAS/+N7cTLuFG9chl5uhmEVqSDEBGZZK3r/onC8xr3rWxo8XJug50DjYDSIuLk9+FzHdMRhzj3+vMvSfV7GrGp5t1hN09M8RxsJGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=XBpBH2Up; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A059C4CECF;
-	Tue, 19 Nov 2024 09:45:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1732009506;
-	bh=gdJ4SG6Z6DmoaBcbOqpOl0mtJKOHDhBL82DMvMF1PjA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XBpBH2Upo7HOxmVRl3+OFinc8pHgw1ngdTjTZy0CG0iiJIOrXXuGRk45FT1XMS3tZ
-	 U5j/Fq974NnK3IprCDJgSghmyrEkFMUFMH57rFVBVSM8ALoW4HqMPhkG0nzCaos+CQ
-	 IMPFlMY3fK0RbdpJYE7s4Hx4gQJlGps1NqN0Usvg=
-Date: Tue, 19 Nov 2024 10:30:30 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Juefei Pu <juefei.pu@email.ucr.edu>
-Cc: jirislaby@kernel.org, linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org
-Subject: Re: BUG: KASAN: slab-use-after-free Read in gsm_dlci_config
-Message-ID: <2024111921-launch-countdown-a813@gregkh>
-References: <CANikGpf8mkdZ+MVjLWoBEg0XZOBmwHVGaZVKX6eBSst+a2-Y8w@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=V6IBz2a5zCGrZXNQXgtfxXkRB3HQQahWJdAzNwxCMMOelliE6pj+xxrrjexAGisFYhrHiqpxQjO5VEjts+zBn/Vq0lyw+832ie/zO2i5+W5xhd937Z22Uf5DTE75tYlV0FntuZQBpNcnnf3ctMtog5dUM55Qj2MywDeKfbxQRoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NaNAnIwu; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-212348d391cso16128315ad.2;
+        Tue, 19 Nov 2024 01:34:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732008866; x=1732613666; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=pPExtlge3msjkZF91Z4CEG8tmqsBNvouLTtNJroiSf4=;
+        b=NaNAnIwuhkzoYV26fqDwxJPcRUbtv0HYy/fH3/g0MBNr1fEm44RxC9LVtq6zVVmrJY
+         DsSqtgZDB0mlb7NG7sRWLY5VU5j9EIc3CPWM745umXkcWLtn0bJG+eaEl+I4yumWcPZb
+         +XwXRjXWN38BP4dl+VUT0dwk0nevCEStnXDZeFkUp+2dDjxT6zK0arGbt4/ltjBHCyTl
+         +K0MVp15wmFymGtYu+TMLEH32BU9QQAEpLyL2/BiKMTpwU+tjkLo69SBSC5L0a++ymWG
+         37kGNY86MCKzkzz8Zji7ldi3NEk0RBv1BfepJx2ZpUO6FTxOxCKSpX4u7uLc4UBh3dNL
+         3IVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732008866; x=1732613666;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pPExtlge3msjkZF91Z4CEG8tmqsBNvouLTtNJroiSf4=;
+        b=R2+wT7u7NOMr4GfAZ64ZyqLL7FiHotXF3JEw+xkdGMv1+jwZNd6SM7s/u1K3htaqQ1
+         bAuq2vS8x8ifWwNpZiQtJjvUq1ihUvO5lxrI1ImTV2bQpwH8UewfkbdirEucVc+BarzT
+         mZsoCbDZjv8YT4J1ZOZjtH54UBTULmv1AKmwBd6+dT9k0lRC7g0l5WgnNkghYV3I7Jkw
+         DfpTdc7bj++iT4UhpALAxPyZ4pUtnM/rEbUd/qyIJRKRb24n+qzKRS3qsvfzvf4DRAMf
+         1qovM6SOJPCOWbj03dEc5FyKUge2LJ0uLONpatNnQXnkxP0DnTk+va3SF3NNqwjpuIBk
+         Tyqw==
+X-Forwarded-Encrypted: i=1; AJvYcCWDGIsavCdwHNjHT/dLGjzqziZFYcOYbALrz/+T/wW19pJvIM3oUPAyZ2ZJ/126UZ57jQ/ijrA+XtugIK8=@vger.kernel.org, AJvYcCXB70lnXq9d7l7/nUkneFrQaY0Ol4Q9BtvG5dunrx40m6e4haA7G+UbYIVe6tfGozkJuutFcHNZGE9dG0g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzfb6og3PAShtl5vcq9yYuw3vZ3OuR3+mOLz2iz7lEbqxmopJ6Z
+	Bc6Ed9fVR7oylyiLGudZhMvaJqt+i1RbcsNuwrrBhv7bYU/kdSefFsWFdqva
+X-Google-Smtp-Source: AGHT+IGk0ioib0jianP/JWeRLCWZdzMBOeRSZzyDXcvD2UaEgV8gbzUU0BUTO/h3v2TJ3Zgql38YQA==
+X-Received: by 2002:a17:903:186:b0:211:e66d:7450 with SMTP id d9443c01a7336-211e66d78d8mr206006795ad.32.1732008865846;
+        Tue, 19 Nov 2024 01:34:25 -0800 (PST)
+Received: from HOME-PC ([223.185.132.211])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-212134ab989sm38763335ad.17.2024.11.19.01.34.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Nov 2024 01:34:25 -0800 (PST)
+Date: Tue, 19 Nov 2024 15:04:22 +0530
+From: Dheeraj Reddy Jonnalagadda <dheeraj.linuxdev@gmail.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: dafna@fastmail.com, linux-media@vger.kernel.org, mchehab@kernel.org,
+	heiko@sntech.de, linux-rockchip@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 media-next] media: rkisp1: Fix unused value issue
+Message-ID: <Zzxbnkq86EKEWwFf@HOME-PC>
+References: <20241119072653.72260-1-dheeraj.linuxdev@gmail.com>
+ <20241119075944.GA31681@pendragon.ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,25 +83,72 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CANikGpf8mkdZ+MVjLWoBEg0XZOBmwHVGaZVKX6eBSst+a2-Y8w@mail.gmail.com>
+In-Reply-To: <20241119075944.GA31681@pendragon.ideasonboard.com>
 
-On Mon, Nov 18, 2024 at 09:22:54PM -0800, Juefei Pu wrote:
-> Hello,
-> We found the following issue using syzkaller on Linux v6.11.
-> In function `gsm_dlci_config`, a use-after-free on object `dlci` has
-> been detected.
-> Since the reproducer takes around 10 seconds to trigger the bug, it
-> might be a race condition one.
+On Tue, Nov 19, 2024 at 09:59:44AM +0200, Laurent Pinchart wrote:
+> Hi Dheeraj,
+> 
+> Thank you for the patch.
+> 
+> On Tue, Nov 19, 2024 at 12:56:53PM +0530, Dheeraj Reddy Jonnalagadda wrote:
+> > This commit fixes an unused value issue detected by Coverity (CID
+> > 1519008). The error condition for the invalid MIPI CSI-2 is not
+> > properly handled as the break statement would only exit the switch block
+> > and not the entire loop. Fixed this by returning the error immediately
+> > after the switch block.
+> 
+> The patch doesn't "return immediately". You can write "Fix this by
+> breaking from the look immediately after the switch block when an error
+> occurs." or something similar.
+> 
+> > 
+> > 'Fixes: 8d4f126fde89 ("media: rkisp1: Make the internal CSI-2 receiver
+> > optional")'
+> 
+> The Fixes tag should be formatted on a single line, without outer
+> quotes, and without a blank line between it and the Signed-off-by line:
+> 
+> Fixes: 8d4f126fde89 ("media: rkisp1: Make the internal CSI-2 receiver optional")
+> 
+> > Signed-off-by: Dheeraj Reddy Jonnalagadda <dheeraj.linuxdev@gmail.com>
+> 
+> I can update the commit message when applying the patch, there's no need
+> to submit a v5, unless if you want to. Please let me know if I should
+> take this version and update the commit message, or if you will send a
+> v5.
+> 
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> 
+> > ---
+> >  drivers/media/platform/rockchip/rkisp1/rkisp1-dev.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> > 
+> > diff --git a/drivers/media/platform/rockchip/rkisp1/rkisp1-dev.c b/drivers/media/platform/rockchip/rkisp1/rkisp1-dev.c
+> > index dd114ab77800..9ad5026ab10a 100644
+> > --- a/drivers/media/platform/rockchip/rkisp1/rkisp1-dev.c
+> > +++ b/drivers/media/platform/rockchip/rkisp1/rkisp1-dev.c
+> > @@ -228,6 +228,9 @@ static int rkisp1_subdev_notifier_register(struct rkisp1_device *rkisp1)
+> >  			break;
+> >  		}
+> >  
+> > +		if (ret)
+> > +			break;
+> > +
+> >  		/* Parse the endpoint and validate the bus type. */
+> >  		ret = v4l2_fwnode_endpoint_parse(ep, &vep);
+> >  		if (ret) {
+> 
+> -- 
+> Regards,
+> 
+> Laurent Pinchart
+Hi Laurent,
 
-There are so many race conditions and other known-broken things in this
-driver, please see the mailing list archives for the details.  It's well
-documented that no one should be using this code unless you have the
-hardware and know how to lock down your system for it.
+Please go ahead and take this version and apply the patch with the updated 
+commit message.
 
-That being said, patches are gladly accepted to resolve these issues,
-please send them as you have a working reproducer!
+Thank you and Jacopo for your valuable comments. As a new contributor, 
+your feedback is extremely helpful.
 
-thanks,
-
-greg k-h
+-Dheeraj
 
