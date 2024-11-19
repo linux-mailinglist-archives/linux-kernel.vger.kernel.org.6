@@ -1,47 +1,54 @@
-Return-Path: <linux-kernel+bounces-413949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F36589D20E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 08:41:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F9D99D20E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 08:42:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF71128244C
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 07:41:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 310DB281E2C
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 07:42:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47CDE19882B;
-	Tue, 19 Nov 2024 07:40:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EEA9157469;
+	Tue, 19 Nov 2024 07:42:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o1dK3y78"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Ok1AMbMR"
+Received: from smtp.smtpout.orange.fr (smtp-21.smtpout.orange.fr [80.12.242.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 910E91482F3;
-	Tue, 19 Nov 2024 07:40:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3488E1384BF;
+	Tue, 19 Nov 2024 07:42:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732002051; cv=none; b=gGm7TEmf+c0VyMjNoEa6VNT9pvV00paZg4AR8OKpTRAThYZBrlzDZPjgQApVv42IiraKl8hsUJC2HvUBI3aCJlGYxUsRgM2LyeQg3xtGE8z8T/4K/T1GUKT6D/36Sbh2HtKRBlk2LVkmfF+Q12Q1Kg6VqdQA7YT8hetKNKUTvxw=
+	t=1732002140; cv=none; b=aPe+oHKe+SgBs33BVAxX9BhKsFlfc+ajpgqAkMtUHTDzMG4o+kOkzMBhe2tvOGq1ltsyAAg1O3sQqKnUlEO+hOwoFcknUwUNklhlRD5MMMrhyYqc1LWIvB5/dueCLoDXbHR9TdFHciEZIzfyKC2gbooUN73pk5FbFugWqF3vngI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732002051; c=relaxed/simple;
-	bh=kgkPNYxGxqHFjWOcGvWsb/pjlSuJLCGIWHdWG9UrqR0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Kc+WWHIdWhB6Kd14gBZheymjVzDlTKbooDG/2egkfxCosweyBPP1zhW/088wXnQ7eRXP2OwY/THK7/dRTC6OVyrihzr45UUbSZF9ARjTD4mwyjWVfJeKWTX9nY3MJLsf2hPkGQSxfiSQB5sc+yZgR6c7cZiqYSL9g2sehFSmhN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o1dK3y78; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AC6CC4CECF;
-	Tue, 19 Nov 2024 07:40:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732002051;
-	bh=kgkPNYxGxqHFjWOcGvWsb/pjlSuJLCGIWHdWG9UrqR0=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=o1dK3y781Lf3gJcAaXWMpVBuRzQh1Bv1mydHDaKsufSvoCsoXDG4HyWvAGj6fiqMt
-	 vZGbq6fDIyMI297eAssyETvb2jDWQ6MMmnS5R67+joQwKRdgZVZrV7uJIhGfEUDjX2
-	 Ym3T6h2s2lbs60cQqo1lw2Noi47IIYvN2IbYVhmrhooMRpawWIzTdCmKt3rFw0MnDE
-	 81LtEX8a4sWNajxQ0MV5os1sihSW7shmKb+LBKlJjhL+KIExOAKtbSAUl8gBuUa/qj
-	 GWriVPndWsUBqjBXBqB4TB37FwnSLRndeaXPANwxkp2dNQQH/1syzw3mLJr3gVX//i
-	 U/n4VyXzI9Rdw==
-Message-ID: <10d4050b-47c8-4ba1-9c47-7fd12187186f@kernel.org>
-Date: Tue, 19 Nov 2024 08:40:44 +0100
+	s=arc-20240116; t=1732002140; c=relaxed/simple;
+	bh=+ydaP6yJPY0HON6walO83Qt137C5Xlma2G74EAqDJzA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mvC4K1tXSCGdrLl44ZqgiBR6Rjn5bUG4rXoExwUi1td9ZNgBXM2EtOr1IUiniB/f0QQGQAk7aPfd3K/V4aXixw8YXsWRMvOIuL8P8BAbMky4UjN+8m4YsrxaWrh2IiRgzxMSZ7DOUZjgzOVBB4ipr9ubjlQH0LA7yGGKiIzSPzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Ok1AMbMR; arc=none smtp.client-ip=80.12.242.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [172.16.82.72] ([124.33.176.97])
+	by smtp.orange.fr with ESMTPA
+	id DIs2tCdnkNywhDIsAtawL3; Tue, 19 Nov 2024 08:42:08 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1732002129;
+	bh=TKjGKLPdqYcvxBVaeWCfhrHtv6lPv0GnVL9Gr+jS2EU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=Ok1AMbMRMuTGTJVoeYvMqfk2YhiChyQl2M/rNhAaxyzPE6XeLxUC8+A4dA4uQXmVF
+	 vIVeWA/hVbeKEawkPhmaGw/pbS2CY9rqffUU5087E8Qle+QPAdSUsxoVGBCVGiZQCo
+	 dCj1JPnx+gHmOTRlhDeMq8FV4kPB7K5jGgTiLYTj6BvZzEaAxFNx21GBYcwkeH66G/
+	 w9eFcaD1rdcqPdFU6Bf9TO0GentDPAsBzhGo2s2kc99bgApq49GmkG0ItO8bLaSCf7
+	 LK40sylxmPVFpyTpBa7j8p++nZeaRrnhyhwmPY8TnZ4DdL7FK3M86tCqeUqD2ndx5Q
+	 R4RQLimw8XWJQ==
+X-ME-Helo: [172.16.82.72]
+X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
+X-ME-Date: Tue, 19 Nov 2024 08:42:09 +0100
+X-ME-IP: 124.33.176.97
+Message-ID: <84998b1d-8b3e-4956-b7fd-323e4999dc7c@wanadoo.fr>
+Date: Tue, 19 Nov 2024 16:41:57 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,99 +56,160 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [net-next v2 1/7] dt-bindings: net: ftgmac100: support for
- AST2700
-To: Jacky Chou <jacky_chou@aspeedtech.com>, andrew+netdev@lunn.ch,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- p.zabel@pengutronix.de, netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241118060207.141048-1-jacky_chou@aspeedtech.com>
- <20241118060207.141048-2-jacky_chou@aspeedtech.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v1] can: can327: Clean up payload encoding in
+ can327_handle_prompt()
+To: Max Staudt <max@enpas.org>, Dan Carpenter <dan.carpenter@linaro.org>,
+ Marc Kleine-Budde <mkl@pengutronix.de>
+Cc: linux-can@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241119003815.767004-1-max@enpas.org>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241118060207.141048-2-jacky_chou@aspeedtech.com>
+From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+In-Reply-To: <20241119003815.767004-1-max@enpas.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 18/11/2024 07:02, Jacky Chou wrote:
-> The AST2700 is the 7th generation SoC from Aspeed.
-> Add compatible support for AST2700 in yaml.
+On 19/11/2024 at 09:38, Max Staudt wrote:
+> The hex dump encoding of outgoing payloads used snprintf() with a
+> too large length of the target buffer. While the length was wrong, the
+> buffer size and its filling logic were fine (sprintf() would have been
+> sufficient), hence this is not security relevant.
 > 
-> Signed-off-by: Jacky Chou <jacky_chou@aspeedtech.com>
+> Still, it's a good opportunity to simplify the code, and since no
+> length checking is required, let's implement it with bin2hex().
+> 
+> Since bin2hex() outputs lowercase letters, this changes the spoken
+> wire protocol with the ELM327 chip, resulting in a change in
+> can327_is_valid_rx_char() because the ELM327 is set to echo the
+> characters sent to it. The documentation says that this is fine, and
+> I have verified the change on actual hardware.
 
-Please use standard email subjects, so with the PATCH keyword in the
-title. `git format-patch -vX` helps here to create proper versioned
-patches. Another useful tool is b4. Skipping the PATCH keyword makes
-filtering of emails more difficult thus making the review process less
-convenient.
+Nice that the device accepts the lower case hexadecimals. This results
+in a nice simplification.
 
-For net next it is PATCH net-next
+> Finally, since the reporter's worry was that frame->len may be larger
+> than 8, resulting in a buffer overflow in can327_handle_prompt()'s
+> local_txbuf, a comment describes how the CAN stack prevents that. This
+> is also the reason why the size passed to snprintf() was not relevant
+> to preventing a buffer overflow, because there was no overflow possible
+> in the first place.
+> 
+> Fixes: 43da2f07622f ("can: can327: CAN/ldisc driver for ELM327 based OBD-II adapters")
+> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Tested-by: Max Staudt <max@enpas.org>
+> Signed-off-by: Max Staudt <max@enpas.org>
 
-<form letter>
-This is a friendly reminder during the review process.
+Reviewed-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
 
-It looks like you received a tag and forgot to add it.
+I left comments on the comments. If you have time, it would be wonderful
+if your comment on start_xmit() could be moved to can_dev_dropped_skb()
+in a separate patch.
 
-If you do not know the process, here is a short explanation:
-Please add Acked-by/Reviewed-by/Tested-by tags when posting new
-versions, under or above your Signed-off-by tag. Tag is "received", when
-provided in a message replied to you on the mailing list. Tools like b4
-can help here. However, there's no need to repost patches *only* to add
-the tags. The upstream maintainer will do that for tags received on the
-version they apply.
+The code is good, so if such rework is not feasible, I am happy to take
+it as-is.
 
-https://elixir.bootlin.com/linux/v6.5-rc3/source/Documentation/process/submitting-patches.rst#L577
+> ---
+>  drivers/net/can/can327.c | 46 ++++++++++++++++++++++++++++------------
+>  1 file changed, 33 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/net/can/can327.c b/drivers/net/can/can327.c
+> index 24af63961030..3ae7b4eb6ca5 100644
+> --- a/drivers/net/can/can327.c
+> +++ b/drivers/net/can/can327.c
+> @@ -18,6 +18,7 @@
+>  #include <linux/bitops.h>
+>  #include <linux/ctype.h>
+>  #include <linux/errno.h>
+> +#include <linux/hex.h>
+>  #include <linux/kernel.h>
+>  #include <linux/list.h>
+>  #include <linux/lockdep.h>
+> @@ -622,17 +623,14 @@ static void can327_handle_prompt(struct can327 *elm)
+>  			 */
+>  			snprintf(local_txbuf, sizeof(local_txbuf), "ATRTR\r");
+>  		} else {
+> -			/* Send a regular CAN data frame */
+> -			int i;
+> -
+> -			for (i = 0; i < frame->len; i++) {
+> -				snprintf(&local_txbuf[2 * i],
+> -					 sizeof(local_txbuf), "%02X",
+> -					 frame->data[i]);
+> -			}
+> -
+> -			snprintf(&local_txbuf[2 * i], sizeof(local_txbuf),
+> -				 "\r");
+> +			/* Send a regular CAN data frame.
+> +			 *
+> +			 * frame->len is guaranteed to be <= 8. Please refer
+> +			 * to the comment in can327_netdev_start_xmit().
+> +			 */
 
-If a tag was not added on purpose, please state why and what changed.
-</form letter>
+Nitpick, could be less verbose, e.g.:
 
-I am not going to do the work twice.
+  /* frame->len <= 8 enforced in can327_netdev_start_xmit() */
 
-Best regards,
-Krzysztof
+> +			bin2hex(local_txbuf, frame->data, frame->len);
+> +			local_txbuf[2 * frame->len] = '\r';
+> +			local_txbuf[2 * frame->len + 1] = '\0';
+>  		}
+>  
+>  		elm->drop_next_line = 1;
+> @@ -815,6 +813,26 @@ static netdev_tx_t can327_netdev_start_xmit(struct sk_buff *skb,
+>  	struct can327 *elm = netdev_priv(dev);
+>  	struct can_frame *frame = (struct can_frame *)skb->data;
+>  
+> +	/* Why this driver can rely on frame->len <= 8:
+> +	 *
+> +	 * While can_dev_dropped_skb() sanity checks the skb to contain a
+> +	 * CAN 2.0, CAN FD, or other CAN frame type supported by the CAN
+> +	 * stack, it does not restrict these types of CAN frames.
+> +	 *
+> +	 * Instead, this driver is guaranteed to receive only classic CAN 2.0
+> +	 * frames, with frame->len <= 8, by a chain of checks around the CAN
+> +	 * device's MTU (as of v6.12):
+> +	 *
+> +	 *  - can_changelink() sets the CAN device's MTU to CAN_MTU since we
+> +	 *    don't advertise CAN_CTRLMODE_FD support in ctrlmode_supported.
+> +	 *  - can_send() then refuses to pass any skb that exceeds CAN_MTU.
+> +	 *  - Since CAN_MTU is the smallest currently (v6.12) supported CAN
+> +	 *    MTU, it is clear that we are dealing with an ETH_P_CAN frame.
+> +	 *  - All ETH_P_CAN (classic CAN 2.0) frames have frame->len <= 8,
+> +	 *    as enforced by a call to can_is_can_skb() in can_send().
+> +	 *  - Thus for all CAN frames reaching this function, frame->len <= 8.
+> +	 */
+
+Actually, none of this is really specific to your can327 driver.
+
+While this is a valuable piece of information, I would rather like to
+see this added as a kdoc comment on top of can_dev_dropped_skb(). That
+function already has a one line documentation, but maybe it deserves a
+longer paragraph?
+
+One of the key point is that the userland is able to bypass the CAN_RAW
+layer (or any other CAN layers) by sending AF_PACKET. In which case, the
+packet directly reaches the driver without any prior sanitization. So it
+is critical to highlight that drivers must call can_dev_dropped_skb() at
+the top of their start_xmit() function, typically to avoid buffer
+overflows because of an out of band frame->len.
+
+>  	if (can_dev_dropped_skb(dev, skb))
+>  		return NETDEV_TX_OK;
+>  
+> @@ -871,8 +889,10 @@ static bool can327_is_valid_rx_char(u8 c)
+>  		['H'] = true, true, true, true, true, true, true,
+>  		['O'] = true, true, true, true, true, true, true,
+>  		['V'] = true, true, true, true, true,
+> -		['a'] = true,
+> -		['b'] = true,
+> +		/* Note: c-f are needed only if outgoing CAN payloads are
+> +		 * sent as lowercase hex dumps instead of uppercase.
+> +		 */
+> +		['a'] = true, true, true, true, true, true,
+>  		['v'] = true,
+>  		[CAN327_DUMMY_CHAR] = true,
+>  	};
+
+Yours sincerely,
+Vincent Mailhol
 
 
