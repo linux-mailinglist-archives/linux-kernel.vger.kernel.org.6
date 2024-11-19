@@ -1,184 +1,111 @@
-Return-Path: <linux-kernel+bounces-414549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DB6E9D29CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 16:38:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC3419D29FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 16:45:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E53228028F
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 15:38:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6646A1F21B0B
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 15:45:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C793A1CEAA6;
-	Tue, 19 Nov 2024 15:36:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A33701D5142;
+	Tue, 19 Nov 2024 15:39:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="AavyAmE4"
-Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mA9jbpgk"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 312241D04A6
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 15:36:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2A711D4604
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 15:39:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732030618; cv=none; b=pR/X5IqpC9r894gKYEYHaD/zRGvpCpoZLXsReO8v6VJGnNYjDxY5fgfrqAI9Gh4hzFmSY1RPM6/Px7yg8KCPjH8VJjOAzvl9ixNiJcON1uipAUKaA9Y2WuM7EhOT44htakMFoin7gRnR0McT8t3ZD5mt82ak//k2guPnjr6eumg=
+	t=1732030792; cv=none; b=Wen+V4XEzGnNHgurLMLeszlOugJFq0n4xi2NbG4CnO4g4DqYXPhx7dqqgAx8CmK/8IX6NF1hck3xiC1OfFkadp8heCvPim93wNXnpJc4tn/0CUa1jGtzKk+eN5x0ZPN/SvtdFapt34KJHchO0LEFkk63s17CttWz4SLdlBZCUUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732030618; c=relaxed/simple;
-	bh=K9vebJQz2YUwsc3MlNv4Uh8s8GbHzdib/lumO19eM5o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KcUVdS40wjeSdIS7TAVU/z3MFQy7fOKKZH2aAWm3bBT1Z+LniZ+Bxs42FxRUT30vXsvUse614ZoxszrJPuoE0XX1Fs+gdPNQaFZSLlRQzICrRaEp5f1JuCH2UUTN0Xn0EkHXtUCqeMt3DT0kDWNk9nCfMn5tAE5/fZM8Fe03zc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=AavyAmE4; arc=none smtp.client-ip=209.85.166.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-3a77bd62fdeso2474075ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 07:36:55 -0800 (PST)
+	s=arc-20240116; t=1732030792; c=relaxed/simple;
+	bh=i8MuDTdkKi9dl0BKZ9AznMERrR3sQdWrUZZ+pbs7Xy0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ukt4QJ/Pwby2XYfFZt9t+7uL3NCB5AlouxQ9JrPo5XS65CFRth+696zO/yxeuGj6k6c5bymFGVKqt2DbL4l/jjyS/+yJYNZXipFu8hjB0xfqh1/He/I8EliOiX6knwdv4K4P4o8JiDMF5mWX3Sr1nKA+BKMSz3234DUQ6EMl3AI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mA9jbpgk; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2126408cf52so2481805ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 07:39:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1732030615; x=1732635415; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=bASOjfd+3IMg9ai8XUpmf9zDNUW1MPcgjDnaB/+DdHA=;
-        b=AavyAmE4tgv+i5AcWrFHyumZt4DCiZqX+3Mop7ANTmhH6ZsOImCHqWLzeLTfhA/y+t
-         V+9bkI09bCFLT7jWZwzQwm8zmeHBoSL+ksKiSurWk5HKInHVYRma1juazyIa/4RXVgmw
-         D//A/EM2vGJvoH4RsKz2oogqRdB72Uj3cJOOE=
+        d=gmail.com; s=20230601; t=1732030790; x=1732635590; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7KzftO9zi2bxnpNJZHPjDGDIefT9OY4V7qnZzEYHPhk=;
+        b=mA9jbpgkmsDeXIDMusBA8RjvPuerERPC4HavuwZ7Nq/mJNV0jcx11x3LiHAIUi+Kws
+         a9+1imWBRktrgzJqUqIBhIZiWJzxfmr7XRtILATIdNaSwrCaOUHvi3IjvSA9pwHKWZbB
+         O5+HzOCRNOWDriE6+V22rT0AWI9lnOSYV0MGW2CBxdLUi/FAKWJKbNxIvAYxO3VsFIc4
+         0x+470jE2hVzwo0xMSH2auD7Hyo5qflsh5S3enz6PoLwHJAj+P5EjIR0kNSaPMBsFRdF
+         TqVw/OAcLBIqSfeSLBRG5D8jU8TKUrzH4MIJ5Lmg9I7k7sMEByKlGhhbt2LjIiwoJjxU
+         X8kQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732030615; x=1732635415;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bASOjfd+3IMg9ai8XUpmf9zDNUW1MPcgjDnaB/+DdHA=;
-        b=oG1xxXTqCktW2CB86SoHi1UB/t7PieTGuqwtooiaARpFRX9JUkAzflPUOq0mVXdrlC
-         gdYyT1SK/6HTFsZKY9juqD2lDqPeK5cJ4B04pOFCT/rN5RFJdLeEyxaZ1JVxgbEnz1fF
-         z6g3/bAf98B3S+rGENMjGSr1P/phjQKko3BD41t1bGAVj7AktzLTeBhAkdjJFkm/d69H
-         pQg1suQ7SUIxcBx9Jaen5913oSU7K/ez/TyfDTGqUNkSynfdzxL3IyTZraLTM4VwARMZ
-         1+LWzvkn5qz4vIwfEkGQyThkgZBRZfhn9V3yIb3ozcApuHgyySrv4mfYqZQJBIIZTqkO
-         nmhw==
-X-Forwarded-Encrypted: i=1; AJvYcCUmHUAzQZ31QJMrYZ9kCaRllG6pLBHsjRDaODmac+ivtwENPXgP98lEUj+pODfHeHXcgttwUs0oIu0ML3I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8/nt7vYQcE//PfwBUuqsPYqe6Nr3FMvR9rsQJzhyYSwLY8Ymh
-	dQXQfwJEKsQcvjlkWzU4WPi8iFSN4qKv6O+PY7jlyPrLuiTXaF6rG/lucEq4/087TEDCIR2dzf0
-	6
-X-Google-Smtp-Source: AGHT+IHAN7wQzV37tcwUMlZ8r82+eSQ1ur4oGMRmuNc7Oy1d4b50PR5o1Q2myqNlp07Q9SDtCB6ivA==
-X-Received: by 2002:a05:6e02:1a44:b0:3a7:44d9:c7dd with SMTP id e9e14a558f8ab-3a74800e6admr197277675ab.6.1732030615241;
-        Tue, 19 Nov 2024 07:36:55 -0800 (PST)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a74807d6cdsm26165835ab.19.2024.11.19.07.36.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 Nov 2024 07:36:54 -0800 (PST)
-Message-ID: <ce995a53-7fbd-43a3-be4d-70fc57b07212@linuxfoundation.org>
-Date: Tue, 19 Nov 2024 08:36:53 -0700
+        d=1e100.net; s=20230601; t=1732030790; x=1732635590;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7KzftO9zi2bxnpNJZHPjDGDIefT9OY4V7qnZzEYHPhk=;
+        b=ijVGJhOb0fjPEvn+XczFqTOdPA80/xa9G5Spv4Lnd0T8O3NtK2DpnrJs+Io4ihFp+l
+         oW4CY2UEBBfIJIgG966i/PL24mgs9BZAxrJxKxANYaclbFIbbilEFjckHQd86EuR0pGn
+         roslrOYeoL622oFAsriMpIZySppyQljLqDUVriPOTONOPRZHjVDI0zfBaRswdXe9ehz0
+         R6bEXtcczAz1EZhWfzxpjswDEr/qKQLc068nbfjfDMsHxjtwvIuTS0N6+t+Tf6lMmnAg
+         nDgTVKqeGS2kcYFsMaCHZG1sMinunjx3SdGq+VCSMb0CvhwEhYOzMM89/fDwW0xBU/Yn
+         iwvw==
+X-Forwarded-Encrypted: i=1; AJvYcCXbGgZAwPEo6Dkkr9oujAzEi4sh2D9Fe2LowQV2uZqV4MdxNt2mGkH0sH1Vx7fcRtAv6SvOricjamYanp4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywobkc6cfjNAol1kHn0aXA7/uuoSh4u5+qbtzyf9S5ZTloM1TGQ
+	I2HMHofjhE/cpKhTqsZSExVx7FWLNpHfk5OQFfjTHPKHW4iOL9hw
+X-Google-Smtp-Source: AGHT+IGVBPGQzY6hPrwtnFG1R1rj7oLhaWoxeEWonvMcUjG2rx218VxjPEKt3FCtBiTZe+sCPeCVyw==
+X-Received: by 2002:a17:902:d482:b0:20c:7eaf:8945 with SMTP id d9443c01a7336-211d0d8fff5mr230230695ad.28.1732030789888;
+        Tue, 19 Nov 2024 07:39:49 -0800 (PST)
+Received: from advait-kdeneon.. ([2405:201:1e:f1d5:7dd3:c95:4ddf:3d69])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-212389529b6sm30114595ad.236.2024.11.19.07.39.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Nov 2024 07:39:49 -0800 (PST)
+From: Advait Dhamorikar <advaitdhamorikar@gmail.com>
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: linux-i3c@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Advait Dhamorikar <advaitdhamorikar@gmail.com>
+Subject: [PATCH-next] i3c: master: Fix potentially uninit variable
+Date: Tue, 19 Nov 2024 21:09:41 +0530
+Message-Id: <20241119153941.8307-1-advaitdhamorikar@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [GIT PULL] KUnit update for Linux 6.13-rc1
-To: Kuan-Wei Chiu <visitorckw@gmail.com>, David Gow <davidgow@google.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, shuah <shuah@kernel.org>,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
- Brendan Higgins <brendan.higgins@linux.dev>,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <589ea100-ee1b-4a37-8f18-a25d86fdb082@linuxfoundation.org>
- <ZzvwEUIVs0M+/3Yu@visitorckw-System-Product-Name>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <ZzvwEUIVs0M+/3Yu@visitorckw-System-Product-Name>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 11/18/24 18:55, Kuan-Wei Chiu wrote:
-> Hi Shuah,
-> 
-> On Mon, Nov 18, 2024 at 12:19:50PM -0700, Shuah Khan wrote:
->> Hi Linus,
->>
->> Please pull the following kunit update for Linux 6.13-rc1.
->>
->> kunit update for Linux 6.13-rc1
->>
->> -- fixes user-after-free (UAF) bug in kunit_init_suite()
->>
->> -- adds option to kunit tool to print just the summary of test results
->>
->> -- adds option to kunit tool to print just the failed test results
->>
->> -- fixes kunit_zalloc_skb() to use user passed in gfp value instead of
->>     hardcoding GFP_KERNEL
->>
->> -- fixes kunit_zalloc_skb() kernel doc to include allocation flags variable
->>
->> diff is attached.
->>
->> Tests passed on my kunit repo:
->>
->> - Build make allmodconfig
->>
->> ./tools/testing/kunit/kunit.py run
->> ./tools/testing/kunit/kunit.py run --alltests
->>
->> ./tools/testing/kunit/kunit.py run --arch x86_64
->> ./tools/testing/kunit/kunit.py run --alltests --arch x86_64
->>
->> thanks,
->> -- Shuah
->>
->> ----------------------------------------------------------------
->> The following changes since commit 2d5404caa8c7bb5c4e0435f94b28834ae5456623:
->>
->>    Linux 6.12-rc7 (2024-11-10 14:19:35 -0800)
->>
->> are available in the Git repository at:
->>
->>    git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest tags/linux_kselftest-kunit-6.13-rc1
->>
->> for you to fetch changes up to 67b6d342fb6d5abfbeb71e0f23141b9b96cf7bb1:
->>
->>    kunit: tool: print failed tests only (2024-11-14 09:38:19 -0700)
->>
->> ----------------------------------------------------------------
->> linux_kselftest-kunit-6.13-rc1
->>
->> kunit update for Linux 6.13-rc1
->>
->> -- fixes user-after-free (UAF) bug in kunit_init_suite()
->>
->> -- adds option to kunit tool to print just the summary of test results
->>
->> -- adds option to kunit tool to print just the failed test results
->>
->> -- fixes kunit_zalloc_skb() to use user passed in gfp value instead of
->>     hardcoding GFP_KERNEL
->>
->> -- fixes kunit_zalloc_skb() kernel doc to include allocation flags variable
->>
->> ----------------------------------------------------------------
->> Dan Carpenter (2):
->>        kunit: skb: use "gfp" variable instead of hardcoding GFP_KERNEL
->>        kunit: skb: add gfp to kernel doc for kunit_zalloc_skb()
->>
->> David Gow (1):
->>        kunit: tool: Only print the summary
->>
->> Jinjie Ruan (1):
->>        kunit: string-stream: Fix a UAF bug in kunit_init_suite()
->>
-> The patch [1] intended to address the UAF issue in kunit_init_suite()
-> is not correct and does not actually fix the problem. A v2 patch [2]
-> with the proper fix has been sent.
-> 
+devinfo is uninitialized if the condition is not satisfied,
+add an else condition to prevent unexpected behaviour.
 
-Hmm. I picked this up because David reviewed it and added his
-Reviewed-by. I would like David's feedback on which patch we
-should be taking.
+The variable will contain an arbitrary value left from earlier 
+computations in `i3c_device_uevent`.
 
-> 
-> [1]: https://lore.kernel.org/lkml/20241024094303.1531810-1-ruanjinjie@huawei.com
-> [2]: https://lore.kernel.org/linux-kselftest/20241112080314.407966-1-ruanjinjie@huawei.com
+Signed-off-by: Advait Dhamorikar <advaitdhamorikar@gmail.com>
+---
+ drivers/i3c/master.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-David, Can you take you let me know. I don't mind redoing the PR
-for Linus. I just have to know which patch to take.
+diff --git a/drivers/i3c/master.c b/drivers/i3c/master.c
+index 42310c9a00c2..7594d3793eb0 100644
+--- a/drivers/i3c/master.c
++++ b/drivers/i3c/master.c
+@@ -284,6 +284,8 @@ static int i3c_device_uevent(const struct device *dev, struct kobj_uevent_env *e
+ 
+ 	if (i3cdev->desc)
+ 		devinfo = i3cdev->desc->info;
++	else
++		return -ENODEV;
+ 	manuf = I3C_PID_MANUF_ID(devinfo.pid);
+ 	part = I3C_PID_PART_ID(devinfo.pid);
+ 	ext = I3C_PID_EXTRA_INFO(devinfo.pid);
+-- 
+2.34.1
 
-thanks,
--- Shuah
 
