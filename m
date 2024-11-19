@@ -1,134 +1,110 @@
-Return-Path: <linux-kernel+bounces-414915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B31549D2F33
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 21:00:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 444249D2F35
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 21:01:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66566B2DEDB
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 19:55:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E7EEB26E20
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 19:56:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC6ED1D1F43;
-	Tue, 19 Nov 2024 19:55:49 +0000 (UTC)
-Received: from weierstrass.telenet-ops.be (weierstrass.telenet-ops.be [195.130.137.81])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F43B1D1E73;
+	Tue, 19 Nov 2024 19:56:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="K5LEO+o0"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C0241D1305
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 19:55:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7EE11448DC
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 19:56:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732046149; cv=none; b=lPDjBbAWRbSDFxWq5mGBBlK2JOMFboc5GH8XKfUCXtXWCO2hKY/zaOif136XZjZGj+HzjPsb8OnUGtrVQvpd8VwPAUWE+TS8I1ZcDZSNq+LBS6Fl5rDM+f0Wiohhmrw0s664etSinhPyTTOzWZPF76AV1YtVITIeztlbObjD4lE=
+	t=1732046195; cv=none; b=nJSTpLHNO9N3oAsdMxIZPTDzCsEVALeeIPJqi1kj7NdlhiIk2Wqz8WWCKSto8Rk8r9rIlw/x6S88nvMbmIAkuA8d5DTe8Cq9QN/gPDBE/Cg5OmM1uoNWbz9UNgPMXbYZEOSTRLCtZTVgzoqNQhG7C7y1uVZW6UB3H9WCtGLAhDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732046149; c=relaxed/simple;
-	bh=NG2rRXBIaMtEGXf5JAB9c42rp4PnYusJq1F6K1WGV6Q=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=opRlSiNJJ7ys7dnuyGaEn69UM6LMqkrcJMniIPaNsE1aI6jYOTboLzGSLSEQskg9I0CMkwP6hLpFKDpFlqG5owtcSBrswyIQp8ArhICY0hGBitXI1YU+Q2HFj5ZAWRLPEvuEHSF7EecUxUVzkPOjCLLYcXaXLKGE20ElF3KjFHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
-	by weierstrass.telenet-ops.be (Postfix) with ESMTPS id 4XtFbZ6y4kz4x6qK
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 20:55:38 +0100 (CET)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:90:c2fd:9e4:224c])
-	by xavier.telenet-ops.be with cmsmtp
-	id ejvW2D0073aMPyX01jvW9F; Tue, 19 Nov 2024 20:55:30 +0100
-Received: from geert (helo=localhost)
-	by ramsan.of.borg with local-esmtp (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1tDUJu-007Z2L-5s;
-	Tue, 19 Nov 2024 20:55:30 +0100
-Date: Tue, 19 Nov 2024 20:55:30 +0100 (CET)
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: David Wang <00107082@163.com>
-cc: tglx@linutronix.de, linux-kernel@vger.kernel.org, 
-    linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 01/13] kernel/irq/proc: use seq_put_decimal_ull_width()
- for decimal values
-In-Reply-To: <20241108160717.9547-1-00107082@163.com>
-Message-ID: <4ce18851-6e9f-bbe-8319-cc5e69fb45c@linux-m68k.org>
-References: <20241108160717.9547-1-00107082@163.com>
+	s=arc-20240116; t=1732046195; c=relaxed/simple;
+	bh=WV4aXjS1tFvbzHRe922R9c7CNUVWe3tB8n+6VPKQTPk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rNRk3/shk+v/h7knMeO3wdec+nFkcOXVK6wG0RoKZJ5xEeXx8U1IgkFyec3LjPb+OuXu6Yb6xLcGeQTK3stBNr6JycpMrrqPSRbBf62JfnPTfGpVSznxQ1Cldz0AkN0lI497o0Z5orybteRtAnkiyLWup6FRxyh4PSXefpFkJrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=K5LEO+o0; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id E164140E0263;
+	Tue, 19 Nov 2024 19:56:28 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id q9uQ9R7wxGZj; Tue, 19 Nov 2024 19:56:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1732046183; bh=7Ss/uRJqFFLeKE4J8iNR8V5NJfP3ylMww2/cWbWfHdk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=K5LEO+o0PCcCpxe51YOTX0U0Fl9SC/qL0IGfIV0Anmr75oruYebD1Q0sA8qCuBtbp
+	 uevwLerWSaNvVH51pEZQTL/ImHuEeD05TeP5ts0otA23Ye0RiAN0gNcK/fvJ/p2q9j
+	 9wH5K+55RpnUdXq7iM5Ws4anKRpvDuIh0U7vHqlkOnpFgPjGMO4+6fB7jQZIueBHnW
+	 NvMqVEFkrZIwap/um3TAnZyUYVSeIOLCn8bY502jxpqL4alq0PZjasbFsSWCfH/PNy
+	 FbtC1mZ5WSgcTbnoFj6Ht0xhBNdzuWFAinDAlHHOf0D0jmrtIt8eYLeVoV061BMahj
+	 /8moFyfNxVrg4IB5Bj3lAYTMcLXTjqpgcKye31XNSQAwpT6Xbqn0nFPF01YdVsjpWN
+	 8PTkJdT2ys2wEo44B7/tNFvfRPkLhCBwUawRU8bW98G4yDOspJ8FROs+Umj63nKdia
+	 7Cy4kRB5O+fFAg9sn2z0casPZQP3eaWiTX69BBWlZNCTJuSxUjg1tFo6qrPDO/tEzG
+	 0ldYN3nFnoWAtsevXZf3hwNGp33SrZFQqfxmIZZZyOKSCSsvSUVagYz8yWD5C2NsuN
+	 NiMAxXHvwKPlapaubsbLfxTczGqPtmWyPurG7+ZpYHdCiGbilMT0vyX47B5B0bfNXT
+	 XLacTOAXotT2kA41yKJ9UmiQ=
+Received: from zn.tnic (pd9530b86.dip0.t-ipconnect.de [217.83.11.134])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 3D01940E015F;
+	Tue, 19 Nov 2024 19:56:11 +0000 (UTC)
+Date: Tue, 19 Nov 2024 20:56:04 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: "Ragavendra B.N." <ragavendra.bn@gmail.com>
+Cc: Bjorn Helgaas <helgaas@kernel.org>, tglx@linutronix.de,
+	mingo@redhat.com, dave.hansen@linux.intel.com, hpa@zytor.com,
+	thomas.lendacky@amd.com, ardb@kernel.org, tzimmermann@suse.de,
+	bhelgaas@google.com, x86@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Updating es_em_ctxt fi to zero
+Message-ID: <20241119195604.GDZzztVDfxIWf-5F74@fat_crate.local>
+References: <20241119180517.196079-2-ragavendra.bn@gmail.com>
+ <20241119192602.GA2272685@bhelgaas>
+ <ZzzrDB_1CyNfL0zo@desktop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZzzrDB_1CyNfL0zo@desktop>
 
- 	Hi David,
+On Tue, Nov 19, 2024 at 11:46:20AM -0800, Ragavendra B.N. wrote:
+> Yes Bjorn, I completely agree with the need to update the reason, I will
+> update the commit log and send the newer version accordingly.
 
-On Sat, 9 Nov 2024, David Wang wrote:
-> seq_printf() is costy, on a system with m interrupts and n CPUs, there
-> would be m*n decimal values yield via seq_printf() when reading
-> /proc/interrupts, the cost parsing format strings grows with number of
-> CPU. Profiling on a x86 8-core system indicates seq_printf() takes ~47%
-> samples of show_interrupts(), and replace seq_printf() with
-> seq_put_decimal_ull_width() could have near 30% performance gain.
->
-> The improvement has pratical significance, considering many monitoring
-> tools would read /proc/interrupts periodically.
->
-> Signed-off-by: David Wang <00107082@163.com>
+I think you should take the time, read that handbook Bjorn pointed you to and
+then read 
 
-Thanks for your patch, which is now commit f9ed1f7c2e26fcd1
-("genirq/proc: Use seq_put_decimal_ull_width() for decimal values")
-in irqchip/irq/core.
+https://kernel.org/doc/html/latest/process/development-process.html
 
-This removes a space after the last CPU column, causing the values in
-this column to be concatenated to the values in the next column.
+and especially
 
-E.g. on Koelsch (R-Car M-W), the output changes from:
+https://kernel.org/doc/html/latest/process/submitting-patches.html
 
- 	       CPU0       CPU1
-      27:       1871       2017 GIC-0  27 Level     arch_timer
-      29:        646          0 GIC-0 205 Level     e60b0000.i2c
-      30:          0          0 GIC-0 174 Level     ffca0000.timer
-      31:          0          0 GIC-0  36 Level     e6050000.gpio
-      32:          0          0 GIC-0  37 Level     e6051000.gpio
-      [...]
+before you submit more patches.
 
-to
+Make sure you know how patches are done before you send more. Wasting
+maintainers' time with things which are already documented at large is not
+nice.
 
- 	       CPU0       CPU1
-      27:       1966       1900GIC-0  27 Level     arch_timer
-      29:        580          0GIC-0 205 Level     e60b0000.i2c
-      30:          0          0GIC-0 174 Level     ffca0000.timer
-      31:          0          0GIC-0  36 Level     e6050000.gpio
-      32:          0          0GIC-0  37 Level     e6051000.gpio
-      [...]
+Thx.
 
-making the output hard to read, and probably breaking scripts that parse
-its contents.
+-- 
+Regards/Gruss,
+    Boris.
 
-Reverting the commit fixes the issue for me.
-
-> --- a/kernel/irq/proc.c
-> +++ b/kernel/irq/proc.c
-> @@ -494,9 +494,11 @@ int show_interrupts(struct seq_file *p, void *v)
-> 	if (!desc->action || irq_desc_is_chained(desc) || !desc->kstat_irqs)
-> 		goto outsparse;
->
-> -	seq_printf(p, "%*d: ", prec, i);
-> +	seq_printf(p, "%*d:", prec, i);
-> 	for_each_online_cpu(j)
-> -		seq_printf(p, "%10u ", desc->kstat_irqs ? per_cpu(desc->kstat_irqs->cnt, j) : 0);
-> +		seq_put_decimal_ull_width(p, " ",
-> +					  desc->kstat_irqs ? per_cpu(desc->kstat_irqs->cnt, j) : 0,
-> +					  10);
->
-> 	raw_spin_lock_irqsave(&desc->lock, flags);
-> 	if (desc->irq_data.chip) {
-
-Gr{oetje,eeting}s,
-
- 						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
- 							    -- Linus Torvalds
+https://people.kernel.org/tglx/notes-about-netiquette
 
