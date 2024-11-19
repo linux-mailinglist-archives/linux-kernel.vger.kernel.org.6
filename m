@@ -1,245 +1,280 @@
-Return-Path: <linux-kernel+bounces-413994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5E509D2198
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 09:30:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC5499D219B
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 09:30:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 44DA5B22BBF
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 08:30:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6260F1F218F9
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 08:30:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE58F19AD87;
-	Tue, 19 Nov 2024 08:30:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75B4319B59C;
+	Tue, 19 Nov 2024 08:30:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="jHT91KKN";
-	dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b="Aqvcj3z7"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GGTtAHDG"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E01C017E0;
-	Tue, 19 Nov 2024 08:29:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=60.244.123.138
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732005000; cv=fail; b=RhP2MTRn2pW8A7H7YFJP0hSHNQ9sR4e1J863u+9pzprOpPLdOjw+COn1uGzcwVaJICM94ik0DCWD5brNvFFduXuhQeJy/WNFjgaw7331pw6AnZkZwM33aGlkik7PuBS9BWkkS7uN6Ezd9/50BhUdjiGTfuvjt2fz4vhR1ESyC7g=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732005000; c=relaxed/simple;
-	bh=c+RSeVyl/VnEE0gaA4eNPQcCpxjnOdOrT3JiSL+jejI=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=VEb6TDddJTTGoJ++6f7oJ5CF5ErS62h2SWxLmwcX3djscWBLylAdI+Wn/EYkO4dO1gJyBtt0rbFWUtXcEDfXdtJ5bLwh/oe6TxtZYQliNo0jWo+hytIAZez/a5H23MBxq+acUMkgYyYHeULTJVMRFG6a2FC8FJ30YrXWjCVpEj8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=jHT91KKN; dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b=Aqvcj3z7; arc=fail smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 72975fd6a65011ef99858b75a2457dd9-20241119
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=MIME-Version:Content-Transfer-Encoding:Content-ID:Content-Type:In-Reply-To:References:Message-ID:Date:Subject:CC:To:From; bh=c+RSeVyl/VnEE0gaA4eNPQcCpxjnOdOrT3JiSL+jejI=;
-	b=jHT91KKN7PO5PQ79TgGtfHmx02Q1/c5IKEsaFXCaGnYqRuwVrzj8uCNaq21G8/7kkssEenYP7KShda6x0ME7elpeF0pwn2TDYrJ5Dj586L2ZCKqd19ax5X3oxebbi2trkg2hrSBWQC1zHDSrbXFIjZqYMqETECbl9BleLmZdkZg=;
-X-CID-CACHE: Type:Local,Time:202411191623+08,HitQuantity:1
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.44,REQID:a65f87d5-352c-4501-8ad7-ea5466e05fcb,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:464815b,CLOUDID:1208e05c-f18b-4d56-b49c-93279ee09144,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0,EDM
-	:-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0
-	,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 72975fd6a65011ef99858b75a2457dd9-20241119
-Received: from mtkmbs13n2.mediatek.inc [(172.21.101.108)] by mailgw01.mediatek.com
-	(envelope-from <ck.hu@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1840360993; Tue, 19 Nov 2024 16:29:52 +0800
-Received: from mtkmbs10n1.mediatek.inc (172.21.101.34) by
- mtkmbs11n2.mediatek.inc (172.21.101.187) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Tue, 19 Nov 2024 16:29:50 +0800
-Received: from APC01-SG2-obe.outbound.protection.outlook.com (172.21.101.237)
- by mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Tue, 19 Nov 2024 16:29:50 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QFKfRRd6CPSMFFYc7Q404IhBlHk2OlQMApiHVNc1CoFSaAEZKl00fGsSZpfcNPKj1CAZfFtTiRpOJAFq8/TdFzz02C+I4qFToubraYBQw6N3gZmLcxkkwZpp1rqgBA17OdGAbT4zuLYAQn41mA+parx3SBNVHofFHHBNSPJN/uKJhmQHKMzp4vYJuhz3DFMBjW1qZj2PGqq7v66kYG6hNBU69YldZkwswtJdVSy4wTnu/Tm1//4gdOZMoej8L4HS1py4rZ/+rlv8himRtv/XBB75DNEAO3GjITNZ11kNMG9VfGpbcZpS4Kukt/8iIHBfYRmE0vxG9aA2Aa3c9+Hviw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=c+RSeVyl/VnEE0gaA4eNPQcCpxjnOdOrT3JiSL+jejI=;
- b=IWZMAPuXGAObkx9Abg9WoydK8fD5jUMGBimn8eEs25bXlD4Pppch5S3ZOT8Tt17NLh4ogARJCArdKtMVIMQ92s/dWgeUrcwWiyiAJBZ3N63XWYyx3fZtdCW3SK3iR/+5/5TT1hnu5g164cjJMeMO4iOcxpsFylX539y6zX8UYae2DbfCua9fqqmcTtTpH59QSaf0UZck5nUy2eV0XWrVBJaak/XDZoxeFRZQfIcPMGs92mrzuSSahsI8KvXwMAVVWXgctxdDk1puM/9x3WUPoWgN92gzBx+Rif54UVCAnZBkBY2/1bulhJR4jwmwiiHO/EtDh+wA22rElraDiaH7Xw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=mediatek.com; dmarc=pass action=none header.from=mediatek.com;
- dkim=pass header.d=mediatek.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mediateko365.onmicrosoft.com; s=selector2-mediateko365-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=c+RSeVyl/VnEE0gaA4eNPQcCpxjnOdOrT3JiSL+jejI=;
- b=Aqvcj3z7cYWaeL3kEOwTyzU12qEfK76z1kJCMY9oMOZBvL4ZgD3Tqiv+HoHbTYud9Eop04aO+MjWtdVD2I3GLLEl3bV3ps/tmWb2M3oy0geIaDhBxm+9dRel/h7udT0Qac9HRi+YU/futcS4mYrHcMn5CjS0p2ugwYFgx/mx+JU=
-Received: from TYZPR03MB6624.apcprd03.prod.outlook.com (2603:1096:400:1f4::13)
- by SI2PR03MB6688.apcprd03.prod.outlook.com (2603:1096:4:1eb::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.20; Tue, 19 Nov
- 2024 08:29:48 +0000
-Received: from TYZPR03MB6624.apcprd03.prod.outlook.com
- ([fe80::9ce6:1e85:c4a7:2a54]) by TYZPR03MB6624.apcprd03.prod.outlook.com
- ([fe80::9ce6:1e85:c4a7:2a54%7]) with mapi id 15.20.8158.017; Tue, 19 Nov 2024
- 08:29:48 +0000
-From: =?utf-8?B?Q0sgSHUgKOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>
-To: "sumit.semwal@linaro.org" <sumit.semwal@linaro.org>,
-	"christian.koenig@amd.com" <christian.koenig@amd.com>, "mchehab@kernel.org"
-	<mchehab@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"robh@kernel.org" <robh@kernel.org>, "matthias.bgg@gmail.com"
-	<matthias.bgg@gmail.com>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	=?utf-8?B?U2h1LWhzaWFuZyBZYW5nICjmpYroiJLnv5Qp?=
-	<Shu-hsiang.Yang@mediatek.com>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
-	"yunkec@chromium.org" <yunkec@chromium.org>, "linaro-mm-sig@lists.linaro.org"
-	<linaro-mm-sig@lists.linaro.org>, "linux-media@vger.kernel.org"
-	<linux-media@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, =?utf-8?B?WWF5YSBDaGFuZyAo5by16ZuF5riFKQ==?=
-	<Yaya.Chang@mediatek.com>, Project_Global_Chrome_Upstream_Group
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	=?utf-8?B?VGVkZHkgQ2hlbiAo6Zmz5Lm+5YWDKQ==?= <Teddy.Chen@mediatek.com>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "hidenorik@chromium.org"
-	<hidenorik@chromium.org>, =?utf-8?B?U2h1bi1ZaSBXYW5nICjnjovpoIblhIQp?=
-	<Shun-Yi.Wang@mediatek.com>
-Subject: Re: [PATCH v1 06/10] media: platform: mediatek: add isp_7x utility
-Thread-Topic: [PATCH v1 06/10] media: platform: mediatek: add isp_7x utility
-Thread-Index: AQHbGj2JaAd/ufwz/0W0Edv5eKs5YbK+heeA
-Date: Tue, 19 Nov 2024 08:29:47 +0000
-Message-ID: <cda227f98dfa4262882d2866b9bca47007076f03.camel@mediatek.com>
-References: <20241009111551.27052-1-Shu-hsiang.Yang@mediatek.com>
-	 <20241009111551.27052-7-Shu-hsiang.Yang@mediatek.com>
-In-Reply-To: <20241009111551.27052-7-Shu-hsiang.Yang@mediatek.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=mediatek.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TYZPR03MB6624:EE_|SI2PR03MB6688:EE_
-x-ms-office365-filtering-correlation-id: 011eb7fc-ebfd-4472-b4e3-08dd0874544c
-x-ld-processed: a7687ede-7a6b-4ef6-bace-642f677fbe31,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024|38070700018;
-x-microsoft-antispam-message-info: =?utf-8?B?eVp4VkE1alVOWVdJUkpFenJtc0JRelZNUGtFVGJQcWFjQWhSUlhSZ2NMS3dB?=
- =?utf-8?B?ZTJ3azlHQmk5dXFSZW42L1JjTWY5VTllTUVIVndMREt4R2NZeFpzNkx4SW9K?=
- =?utf-8?B?MFRJYlFvTVM3bHM3a3dUSHlvNFNkdnBOK1FBYlRCMFVva1E0TncranBldWhx?=
- =?utf-8?B?ejhNdXFZN3dFWVlwbnQrNnd6eXpzekZtZTdHNkptWWJsRlI2VXBSQ0RsaWJN?=
- =?utf-8?B?cU1tMHZrRFBpaE1ydHlZYWRtYVRMQWJzS1pMbk1kdDZ3MkR6QUxXa050OUVI?=
- =?utf-8?B?RkxtRERKbllQU1F1U0p5bWpJbHRFNkpBQ0dYTU5DbThYYXl3V2lMd3dRNGFM?=
- =?utf-8?B?Y2s0dHJWTkF2cWtNcEJIUmpCa2dyWW9WS3ZyVXdBK2JUdXEyM3hOVER1L05z?=
- =?utf-8?B?c3UwYjhHSExaRk9yN2srVEFJS0w2MzFEbm5JbkY2SHpycC9uWXZoYnpqMUlP?=
- =?utf-8?B?eXpFQ0NDYWVVTFZXZ3NWVHVUdWxCc3hwM1d1N0lhUTJncWY4NkIxZnpFWHRv?=
- =?utf-8?B?K0c0MzdiT3BabG5kSU5tYXhkYmlXbXRHRkpIR05GK1U3TFdwY3pKUnVoeVlv?=
- =?utf-8?B?M1NnWlZCMm5Lckk3SWY2bzFldnJQRzZPbldWTFZpN0FZRTVpT2dQdVd1RWZZ?=
- =?utf-8?B?RWxtVHRPMnRvMzFaZkxuNWJJZEplYWNtYlcwVkpHYzNsRk1KekpLQnZpWXBu?=
- =?utf-8?B?R3k2WDJYaDM0MGwycXk0a2RpVWprbW8xaUFYcmtQVFppR2JhRnZlVUtpay9M?=
- =?utf-8?B?YjJwUlZKazZEVkVoZENWYWg1eWU4RjJFcGZ3dVJ2NVhoVFhkaERybUduMjJ3?=
- =?utf-8?B?d3YxYlN6WlJ6V0RxcHZwcGZoSDg2bXMvUmJad241WklFS2xlNUMxUWxYSTBv?=
- =?utf-8?B?aTdzYnI0c1dmcnZHdVJobGF2TDdKL0dNbjgwOUF1WmlQQWxlYVkwcUFySEp6?=
- =?utf-8?B?bXpNWW1nK25GZUI5Nkk0M1lSdkhhTXlDcCtnTGJtMmZkdG01VE5zalNvU0ZH?=
- =?utf-8?B?enYrbjI3dFJiNnVXQmF4UHJaRnBIR2FxQndxQ3M1SFZnZnVOLzZTTEhhMFNs?=
- =?utf-8?B?cFNBSXFoTXdleTVONE1rcHYzWXpob0g0YlNqY1B2N1MxMjBSZXpzMS9hQjN1?=
- =?utf-8?B?Yklxd2xQandWOUZxa1RDODNsZHpUaVA1NUNvZEhuWHBtRWxPZHZ2NkRrRVZR?=
- =?utf-8?B?b0s5NlQxc3RiOUExeC9GU0pWM2dKNlB6ZHlxdFZsbCtuT3l6b2x2THJUOSsy?=
- =?utf-8?B?R0pRcHp0OXZVUFV6L2UwSnB1dUJLZ0FKbWt5Y3dxTzEyM0xFVDdzMXRmWGVE?=
- =?utf-8?B?b3NjOW9BYlhWdGM0eWZDRW8xN3BnS2FNOStUVGJGai9iUzhyNk1sbFJrV1p6?=
- =?utf-8?B?R0xPWmp4cFNVSW5LdDNOdjZlSFNKMzYwVGg0UnJkN21IU2NTbHhYdjNpRDc1?=
- =?utf-8?B?dkozbmxpN28rWGJOSHAxSmF3WWtEMDRTbmwyUW1WNTF4QjFEaVhMOXdpM09t?=
- =?utf-8?B?YXg4VFI1eDJBd1FIK0NMUnVhY3l3eGRMY1ViUzNPVUxGeThCQnI2MHFmZE40?=
- =?utf-8?B?S1Bic1FvME5Uc1IwdHN5SjdtOHJYcnIzZmY1VTUwSVUwQytLWjdVK21EZ29H?=
- =?utf-8?B?K3kwYTlxWTROUUorVUVnM3ZTZHFTNGhNcWlTL3hXVWd4bjZmWmZOSm8vRzRG?=
- =?utf-8?B?V2djY3U5RlFVN2pmOFp2QkNUTFprNWxhNHVET0wzSTVNam4zZnltV3hQUnMv?=
- =?utf-8?B?MTBTazFJeWw0cWsvRlMweENscGhQc0pBVHhTSVcrOWpKVnA1ZjdQUTFYVHpk?=
- =?utf-8?Q?O7SHSd1amoaPpmjT13sD0nodLgNMtyPj5rYRc=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR03MB6624.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?bjBielBDVWZWWXV0SGdqa1ZTMDkxam5RdmhoN3RjN0hsSDNZNWh6WXMxYS84?=
- =?utf-8?B?Sml3YUZvbkZ6Z0hwcXUrbjRudTVBamIvNVp0Qm5lWld1dUZldC9ERnhscGN3?=
- =?utf-8?B?MHZYMUJPdGdOeE5lakdVVUpLTkplajRQUXlCVzhUQzJoZEFBUmNCRzBZMndQ?=
- =?utf-8?B?V1BrUDNwY2lGMWNjMjQ3MVc0aFJ4YTQ3Wm9PbWtWTisyQ1I5bXhpN3ZUZjNv?=
- =?utf-8?B?Z3ViMExlK3FlQW9SaVd6WUZBNjZKYmxDWS8rTkFpdVBFUWFicDhXZFd3SWlz?=
- =?utf-8?B?NThVMTJlTHlQcThVK09mZDlxM0dMc3BIa0JtcHZsVmJZWERIZGxqSTQvYXQr?=
- =?utf-8?B?LzVEaEhiMHpPYzhaRG9pUzlSKzlQbkFYKzY3VUl6Y2lueG5Udjk3S2l4dVZ1?=
- =?utf-8?B?UGpHSjlwN2d0WmorN251OVNDQnN3NDFzSzFzeEorR1A0c3ZxcTBnWWVVbmdO?=
- =?utf-8?B?ZlRjQ0V2bGRmdXN6a1piay9yRjArZGxuS3llVkpaVzNvOWozSWowVWNpK01E?=
- =?utf-8?B?RnRjZFNVb3VPcDY3TFV1MDhNajB6QXNYcXJWakF4VWtpUmo3YUNETTJHZzdG?=
- =?utf-8?B?ZXpWQk5LOVAwQ0xlVnRWMXorVUt1aFJldjlHT3JtaE1YOGJhdFFuS0ZjeGFH?=
- =?utf-8?B?anVWWW5DK3EyWHRRd1R0eWI4M3o0NUJHYXRQcXlza2xYNzhjY0E3ckRmU2hl?=
- =?utf-8?B?b1JYczhQZHVZRTlEaGtVTGt0N29ycW1iSGFGaWNLU3pCUWdGdzI2Nlc1QTN3?=
- =?utf-8?B?YW9FRGtvRXU1Nkcyck1Od1pTUHNRWEJTbkp2cnNsMXEzTXU2SGVUdUtJTi9j?=
- =?utf-8?B?MkFwUGNpWEsrTXBTZWkyUmUzN2M1eTQvOGs0QnlON2RnSHdEMlhaNER4eTdZ?=
- =?utf-8?B?YlpxdmY4WmhCVkVLRWZVbEtoMDdWZVA3am1XTEplVmZKUlNXNUpROHZFYllk?=
- =?utf-8?B?UXdSVlNDcUtUNnJQU0wyZHhWN1IrdUdFRE1DMmJhMlZRL2x1S1g1M2l5QmNT?=
- =?utf-8?B?TEpuVXhNQkJWYjArWUZibFgzRlY1b2VtNTlUb1hMYllhZldJbldEWFhua1U2?=
- =?utf-8?B?S1NmSFBBUmphTXhOakhIU3dUVHFSaEpsd3ZSMTlERTZiU2JSSnFPWW83L0pE?=
- =?utf-8?B?VEN6VXhETUwvY2lJTFY5ZUlFZ2FtQi9rdXp2SjVSSlROMHRsT3RSK0NPa0pE?=
- =?utf-8?B?TnQ1Tkk3R0tHL3BBaW5mYmpQeVlVdHZlcFYyODFQeGdYTG9QRE1YL3RUS05n?=
- =?utf-8?B?L2FYdGx0d2RLbHNkQlF3ZXFpbjA1OXZ0RHk3MnZHaFczNkxDVjg4Z1gzTnhS?=
- =?utf-8?B?UmlHMEFZazN4RmxTaExyajA4TEJmUEt0QnZVOUpGL2RLbzk4WTdsMFpxczFn?=
- =?utf-8?B?V0hNQlpOWDdRYXFwdlRza0h3ZytxcE1YRnNWb3BXcHpMMGUyeGVaQXM5Y3c1?=
- =?utf-8?B?VVNWcWJwZzlidGtOS0UveDNOaHk2bE1pVFdrT3UzWE04RzhXSldUeUhnY2tP?=
- =?utf-8?B?ZS9VM1RHdWJ1U0gzY1RlVUJhcVNuK29qa3I2Wm9ka2Z2NFEzTVJGUnFVeGhO?=
- =?utf-8?B?VWozRUxyQXh6YStlU1JvQzNqWjd1STJHd2hPNGdrNEdHeFVKWVk5TVFEY21P?=
- =?utf-8?B?bk85Tms5VEUwaTJ2YTdpKzYzbUtIemMxaFVSUU9uR094cVFLanE2ZXgydFh2?=
- =?utf-8?B?UGNXb1R2WlZOS0NhVWtva1lTYStWRWxQMjBNSW9ZaU1UUWxhSnRWSW1ZS1lJ?=
- =?utf-8?B?MXFDcGZEVHdRTVgzem5mZy9MMlp4T3NvcUxoSjNNZHU5Q1h1bnB3OWhoYWtv?=
- =?utf-8?B?WDRIazdERWlkclJENnNNYWVYNHN1RVVXWWlnVnZFSDVZS2w5enZSNWlKVGNK?=
- =?utf-8?B?QkdDUVoraXNoMWZyRzdWY0dEckY1cE12K2xnL0c2Q3lPdnVjeGo5eEt3cFFm?=
- =?utf-8?B?N2RiSHVaS29Rd0FBTUFFNXlyM2FiTlBFakRVMUZZL3dXM2JOWTBwMFpBUmFo?=
- =?utf-8?B?SEh6WHk3UE9GOU44ZHViVlk0QjU0NWcwT2Jhc0M4RGhJZ1AvRG9jRjdxeTJy?=
- =?utf-8?B?QUJ4VHhzc1NGVzF2UU9TNGdmSE5QM1gvbVRwU2tBVElIaE1rQzg3WGVIWWJr?=
- =?utf-8?Q?jvXEpVqVc2sw1o9+djjwd/KDj?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <F8510625881EE64A94DF37D8202E259B@apcprd03.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4AB2198A25
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 08:30:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732005005; cv=none; b=pukXz8wJHUwLMHlkn6sFv0cApnx1J7AWF5eMQ05UFO2N8Jxfh9COEnq0rv5XDjf9Lc+/knPK4Ey1U0PBdb3QmQ01Pwj43uosKntIjNRaISvL6fUa7xZcKopyJ70fTP0FmD2fSpzJUp6XNWpCs1by8P5N6v7EbY086wqkuhzb540=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732005005; c=relaxed/simple;
+	bh=+xKCrPwQVHWM0r18FvOpIwNqva/kAUIiweoFAE7ZwzI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PFyOdBogJiQTzrbvexKDqyEulnv4BuiCwj4lMB7AITRtodYoqsv5uo+INpQwetpVewAe84zlqG0ggp2LXjEvCj912xRhOJQzlr5XI2wQQMWt2dvyaPReqnCi7aNM67THvwuKKjY9D+ENgbPXxfVEpGwa4tpx3OksFmAN/OwoBqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GGTtAHDG; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732005002;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xTLxAWYQ1JNcTU0UUWCX6oUrShuLfa8MUCD9ctjzgKA=;
+	b=GGTtAHDGoa4//IKKyRRDqxZ1KbJ6UnluMRm/sPuc0S2gq1cwPRT8PWChHW8MXxwuwIVE9l
+	yx6g8cO+ZxtBHMrkM+CxoE52UtPTTOXZEKJH8F2nzK53tRlWXMdQ5FrTGc+jr1xZv4zirc
+	D1SB5sifdJKJsPLOdOUeJq8fxSF4APs=
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
+ [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-16-aDXOoWW1NjC-UlSWoTWu5Q-1; Tue, 19 Nov 2024 03:30:01 -0500
+X-MC-Unique: aDXOoWW1NjC-UlSWoTWu5Q-1
+X-Mimecast-MFC-AGG-ID: aDXOoWW1NjC-UlSWoTWu5Q
+Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-a9ad6d781acso48752866b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 00:30:01 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732005000; x=1732609800;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xTLxAWYQ1JNcTU0UUWCX6oUrShuLfa8MUCD9ctjzgKA=;
+        b=tqAI9yOPbL42/K8+9Gqy92X1vxFXV4+NdNOnQ2b+FFA+3pa8C4VBC3m2XYMhSEtM4Z
+         3yYOgTRDkjnr/G0DULESwXxTlEEmPDNxSL+r1ZkyAjdvRVkuKeImBgDodtGmrzvBodUj
+         H7U9UYVYLTtuJBv1YJ0oy4+xXUJBUKu4o97iF85qwxNUKBZ2i7cC85Yly2ha9ZY6He3H
+         04B3dxZyIqJMzpEyOIoEDzs96DqOJEUVQ8h6p2g9tpLFu35/erDwO4ygabkDeDL/FwGg
+         rLGnrpZ2NCEnWpvg1l0jSQsGg3X53KKKxu9fD4+pUWNf80SP5QFSDqZ3Aw9l3gImovqf
+         4OZg==
+X-Forwarded-Encrypted: i=1; AJvYcCUr5X1+QfjPugGw/f6yU4CWtW4xYCRw8LdSLAl+B4x0u3OKUCaWKhj8Q5KlTovXHdSOseCsDrqRVX/75Uc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPu8MPcByPeRDbeHynpPMkfzqpjzf9bKRFH6nLb7ArQhYAXbsP
+	NQJdR2zsaYtfnwYfmsZSPglToMOC/rDvbn8ZjXcRy12KDKyhq6ux3HCWliv/cY4bBp90uvGJhI+
+	Z7VfovzKMpS0ITMrgtUZuaL4r4eCkuqgPeNiAXPPxVxM8KwPGFQ7EkN9ri5kV3g==
+X-Received: by 2002:a17:907:d19:b0:a9e:b5d0:4ab7 with SMTP id a640c23a62f3a-aa483556727mr1382682466b.52.1732005000134;
+        Tue, 19 Nov 2024 00:30:00 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFxd7z957UsxaATiVx0EDfbn0BFQH51aHLzQfor6HWy4iT3aPDneL8plKb/5vnwG3RSEd0qgw==
+X-Received: by 2002:a17:907:d19:b0:a9e:b5d0:4ab7 with SMTP id a640c23a62f3a-aa483556727mr1382676566b.52.1732004999357;
+        Tue, 19 Nov 2024 00:29:59 -0800 (PST)
+Received: from sgarzare-redhat (host-79-46-200-129.retail.telecomitalia.it. [79.46.200.129])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20df4e7bfsm624064866b.42.2024.11.19.00.29.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Nov 2024 00:29:58 -0800 (PST)
+Date: Tue, 19 Nov 2024 09:29:53 +0100
+From: Stefano Garzarella <sgarzare@redhat.com>
+To: Alexander Graf <graf@amazon.com>, 
+	Stefan Hajnoczi <stefanha@redhat.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	virtualization@lists.linux.dev, kvm@vger.kernel.org, Asias He <asias@redhat.com>, 
+	"Michael S. Tsirkin" <mst@redhat.com>, Paolo Abeni <pabeni@redhat.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>, 
+	"David S. Miller" <davem@davemloft.net>
+Subject: Re: [PATCH] vsock/virtio: Remove queued_replies pushback logic
+Message-ID: <efsbknrsmen47tlay7cjrbo5qvmu4bcrmi2lvploi6qq5wpwet@wuu5mfgc3a34>
+References: <20241115103016.86461-1-graf@amazon.com>
+ <yjhfe5bsnfpqbnibxl2urrnuowzitxnrbodlihz4y5csig7e7p@drgxxxxgokfo>
+ <dca2f6ff-b586-461d-936d-e0b9edbe7642@amazon.com>
+ <CAGxU2F6eJA+vpYVbE0HNW794pF6wLL+o=92NYMQVvmFWnpNPaA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYZPR03MB6624.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 011eb7fc-ebfd-4472-b4e3-08dd0874544c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Nov 2024 08:29:47.9506
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a7687ede-7a6b-4ef6-bace-642f677fbe31
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: CFwCLBULUbcYyM8M4DpldoKL+96IcYdJfJ4phtpKV2qsB/0MitxRU+mYHKAD4PnS4GiFzC6vQhYwh/NGVlrZIA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SI2PR03MB6688
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGxU2F6eJA+vpYVbE0HNW794pF6wLL+o=92NYMQVvmFWnpNPaA@mail.gmail.com>
 
-SGksIFNodS1oc2lhbmc6DQoNCk9uIFdlZCwgMjAyNC0xMC0wOSBhdCAxOToxNSArMDgwMCwgU2h1
-LWhzaWFuZyBZYW5nIHdyb3RlOg0KPiBJbnRyb2R1Y2VzIHV0aWxpdHkgZmlsZXMgZm9yIHRoZSBN
-ZWRpYVRlayBJU1A3LnggY2Ftc3lzIGRyaXZlci4gVGhlc2UNCj4gdXRpbGl0aWVzIHByb3ZpZGUg
-ZXNzZW50aWFsIHBsYXRmb3JtIGRlZmluaXRpb25zLCBkZWJ1Z2dpbmcgdG9vbHMsIGFuZA0KPiBt
-YW5hZ2VtZW50IGZ1bmN0aW9ucyB0byBzdXBwb3J0IElTUCBvcGVyYXRpb25zIGFuZCBTQ1AgY29t
-bXVuaWNhdGlvbi4NCj4gS2V5IGZ1bmN0aW9uYWxpdGllcyBpbmNsdWRlOg0KPiAxLkhhcmR3YXJl
-IHBpcGVsaW5lIGFuZCByZWdpc3RlciBkZWZpbml0aW9ucyBmb3IgbWFuYWdpbmcgaW1hZ2UNCj4g
-cHJvY2Vzc2luZyBtb2R1bGVzLg0KPiAyLkRNQSBkZWJ1Z2dpbmcgdXRpbGl0aWVzIGFuZCBidWZm
-ZXIgbWFuYWdlbWVudCBmdW5jdGlvbnMuDQo+IDMuRGVmaW5pdGlvbnMgb2Ygc3VwcG9ydGVkIGlt
-YWdlIGZvcm1hdHMgZm9yIHByb3BlciBkYXRhIGhhbmRsaW5nLg0KPiA0LklQSSBhbmQgU0NQIGNv
-bW11bmljYXRpb24gc3RydWN0dXJlcyBmb3IgbW9kdWxlIHN0YXRlIG1hbmFnZW1lbnQgYW5kDQo+
-IGNvbmZpZ3VyaW5nIElTUC4NCj4gNS5NZXRhZGF0YSBwYXJhbWV0ZXJzIGZvciBjb25maWd1cmlu
-ZyBpbWFnZSBwcm9jZXNzaW5nLg0KPiANCj4gU2lnbmVkLW9mZi1ieTogU2h1LWhzaWFuZyBZYW5n
-IDxTaHUtaHNpYW5nLllhbmdAbWVkaWF0ZWsuY29tPg0KPiAtLS0NCg0KW3NuaXBdDQoNCj4gKy8q
-IEZvciBMQklUX01PREUgRzIgKi8NCj4gK2VudW0gbXRrY2FtX2lwaV9zd19mZWF0dXJlX2NvbnRy
-b2wgew0KPiArCU1US0NBTV9JUElfU1dfRkVBVFVSRV9OT1JNQUwJCT0gMCwNCj4gKwkvKiBOb3Jt
-YWwgKi8NCj4gK307DQo+ICsNCg0KW3NuaXBdDQoNCj4gK3N0cnVjdCBtdGtjYW1faXBpX2NvbmZp
-Z19wYXJhbSB7DQo+ICsJdTgJZmxhZ3M7DQo+ICsJc3RydWN0IG10a2NhbV9pcGlfaW5wdXRfcGFy
-YW0JaW5wdXQ7DQo+ICsJdTgJbl9tYXBzOw0KPiArCS8qIG1heGltdW0gIyBvZiBwaXBlcyBwZXIg
-c3RyZWFtICovDQo+ICsJc3RydWN0IG10a2NhbV9pcGlfaHdfbWFwcGluZyBtYXBzWzZdOw0KPiAr
-CS8qIHN1Yl9yYXRpbzo4LCB2YWxpZCBudW1iZXI6IDggKi8NCj4gKwl1MTYJdmFsaWRfbnVtYmVy
-c1tNVEtDQU1fSVBJX0ZCQ1hfTEFTVF07DQo+ICsJdTgJc3dfZmVhdHVyZTsNCg0KT25seSBvbmUg
-c3dfZmVhdHVyZSAoTVRLQ0FNX0lQSV9TV19GRUFUVVJFX05PUk1BTCkuIFNvIGl0J3Mgbm90IG5l
-Y2Vzc2FyeSB0byBwYXNzIHRoaXMgaW5mb3JtYXRpb24gdG8gc2NwLg0KRHJvcCB0aGlzIGFuZCBN
-VEtDQU1fSVBJX1NXX0ZFQVRVUkVfTk9STUFMLg0KDQpSZWdhcmRzLA0KQ0sNCg0KPiArfSBfX3Bh
-Y2tlZDsNCj4gKw0KDQo=
+On Mon, Nov 18, 2024 at 03:07:43PM +0100, Stefano Garzarella wrote:
+>On Fri, Nov 15, 2024 at 4:49 PM Alexander Graf <graf@amazon.com> wrote:
+>>
+>> Hi Stefano,
+>>
+>> On 15.11.24 12:59, Stefano Garzarella wrote:
+>> >
+>> > On Fri, Nov 15, 2024 at 10:30:16AM +0000, Alexander Graf wrote:
+>> >> Ever since the introduction of the virtio vsock driver, it included
+>> >> pushback logic that blocks it from taking any new RX packets until the
+>> >> TX queue backlog becomes shallower than the virtqueue size.
+>> >>
+>> >> This logic works fine when you connect a user space application on the
+>> >> hypervisor with a virtio-vsock target, because the guest will stop
+>> >> receiving data until the host pulled all outstanding data from the VM.
+>> >
+>> > So, why not skipping this only when talking with a sibling VM?
+>>
+>>
+>> I don't think there is a way to know, is there?
+>>
+>
+>I thought about looking into the header and check the dst_cid.
+>If it's > VMADDR_CID_HOST, we are talking with a sibling VM.
+>
+>>
+>> >
+>> >>
+>> >> With Nitro Enclaves however, we connect 2 VMs directly via vsock:
+>> >>
+>> >>  Parent      Enclave
+>> >>
+>> >>    RX -------- TX
+>> >>    TX -------- RX
+>> >>
+>> >> This means we now have 2 virtio-vsock backends that both have the
+>> >> pushback
+>> >> logic. If the parent's TX queue runs full at the same time as the
+>> >> Enclave's, both virtio-vsock drivers fall into the pushback path and
+>> >> no longer accept RX traffic. However, that RX traffic is TX traffic on
+>> >> the other side which blocks that driver from making any forward
+>> >> progress. We're not in a deadlock.
+>> >>
+>> >> To resolve this, let's remove that pushback logic altogether and rely on
+>> >> higher levels (like credits) to ensure we do not consume unbounded
+>> >> memory.
+>> >
+>> > I spoke quickly with Stefan who has been following the development from
+>> > the beginning and actually pointed out that there might be problems
+>> > with the control packets, since credits only covers data packets, so
+>> > it doesn't seem like a good idea remove this mechanism completely.
+>>
+>>
+>> Can you help me understand which situations the current mechanism really
+>> helps with, so we can look at alternatives?
+>
+>Good question!
+>I didn't participate in the initial development, so what I'm telling
+>you is my understanding.
+>@Stefan feel free to correct me!
+>
+>The driver uses a single workqueue (virtio_vsock_workqueue) where it
+>queues several workers. The ones we are interested in are:
+>1. the one to handle avail buffers in the TX virtqueue (send_pkt_work)
+>2. the one for used buffers in the RX virtqueue (rx_work)
+>
+>Assuming that the same kthread executes the different workers, it
+>seems to be more about making sure that the RX worker (i.e. rx_work)
+>does not consume all the execution time, leaving no room for TX
+>(send_pkt_work). Especially when there are a lot of messages queued in
+>the TX queue that are considered as response for the host. (The
+>threshold seems to be the size of the virtqueue).
+>
+>That said, perhaps just adopting a technique like the one in vhost
+>(byte_weight in vhost_dev_init(), vhost_exceeds_weight(), etc.) where
+>after a certain number of packets/bytes handled, the worker terminates
+>its work and reschedules, could give us the same guarantees, in a
+>simpler way.
+
+Thinking more about, perhaps now I understand better why it was
+introduced, and it should be related to the above.
+
+In practice, "replies" are almost always queued in the intermediate
+queue (send_pkt_queue) directly by the RX worker (rx_work) during its
+execution. These are direct responses handled by
+virtio_transport_recv_pkt() to requests coming from the other peer (the
+host usually or sibling VM in your case). This happens for example
+calling virtio_transport_reset_no_sock() if a socket is not found, or
+sending back VIRTIO_VSOCK_OP_RESPONSE packet to ack a request of a
+connection coming with a VIRTIO_VSOCK_OP_REQUEST packet.
+
+Because of this, if the number of these "replies" exceeds an arbitrary
+threshold, the RX worker decides to de-schedule itself, to give space to
+the TX worker (send_pkt_work) to move those "replies" from the
+intermediate queue into the TX virtqueue, at which point the TX worker
+will reschedule the RX worker to continue the job. So more than avoiding
+deadlock, it seems to be a mechanism to avoid starvation.
+
+Note that this is not necessary in vhost-vsock (which uses the same
+functions as this driver, e.g. virtio_transport_recv_pkt), because both
+workers already use vhost_exceeds_weight() to avoid this problem as
+well.
+
+At this point I think that doing something similar to vhost here as well
+would allow us not only to avoid the problem that `queued_replies`
+should avoid, but also that the RX worker monopolizes the workqueue
+during data transfer.
+
+Thanks,
+Stefano
+
+>
+>>
+>>
+>> >
+>> >>
+>> >> Fixes: 0ea9e1d3a9e3 ("VSOCK: Introduce virtio_transport.ko")
+>> >
+>> > I'm not sure we should add this Fixes tag, this seems very risky
+>> > backporting on stable branches IMHO.
+>>
+>>
+>> Which situations do you believe it will genuinely break anything in?
+>
+>The situation for which it was introduced (which I don't know
+>precisely because I wasn't following vsock yet).
+>Removing it completely without being sure that what it was developed
+>for is okay is risky to me.
+>
+>Support for sibling VMs has only recently been introduced, so I'd be
+>happier making these changes just for that kind of communication.
+>
+>That said, the idea of doing like vhost might solve all our problems,
+>so in that case maybe it might be okay.
+>
+>> As
+>> it stands today, if you run upstream parent and enclave and hammer them
+>> with vsock traffic, you get into a deadlock. Even without the flow
+>> control, you will never hit a deadlock. But you may get a brown-out like
+>> situation while Linux is flushing its buffers.
+>>
+>> Ideally we want to have actual flow control to mitigate the problem
+>> altogether. But I'm not quite sure how and where. Just blocking all
+>> receiving traffic causes problems.
+>>
+>>
+>> > If we cannot find a better mechanism to replace this with something
+>> > that works both guest <-> host and guest <-> guest, I would prefer
+>> > to do this just for guest <-> guest communication.
+>> > Because removing this completely seems too risky for me, at least
+>> > without a proof that control packets are fine.
+>>
+>>
+>> So your concern is that control packets would not receive pushback, so
+>> we would allow unbounded traffic to get queued up?
+>
+>Right, most of `reply` are control packets (reset and response IIUC)
+>that are not part of the credit mechanism, so I think this confirms
+>what Stefan was telling me.
+>
+>> Can you suggest
+>> options to help with that?
+>
+>Maybe mimic vhost approach should help, or something similar.
+>
+>That said, did you really encounter a real problem or is it more of a
+>patch to avoid future problems.
+>
+>Because it would be nice to have a test that emphasizes this problem
+>that we can use to check that everything is okay if we adopt something
+>different. The same goes for the problem that this mechanism wants to
+>avoid, I'll try to see if I have time to write a test so we can use
+>it.
+>
+>
+>Thanks,
+>Stefano
+
 
