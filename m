@@ -1,116 +1,220 @@
-Return-Path: <linux-kernel+bounces-414809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF8C59D2D9F
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 19:11:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96E319D2DB7
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 19:15:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7517E283998
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 18:11:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5754E2840E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 18:15:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E11F1D2B21;
-	Tue, 19 Nov 2024 18:10:03 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CB021D2F78;
+	Tue, 19 Nov 2024 18:15:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="L+vT/u5k"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E680B1D27B4;
-	Tue, 19 Nov 2024 18:10:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CCBF1D1F4B;
+	Tue, 19 Nov 2024 18:15:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732039803; cv=none; b=b6IfSLyNrxIldvbb9TrwsX4pbfNRNzzvrUZmCPz54diSqCgJ+g5kwJL7HHvCHEP0/FUL4AHSBx+2n257wEDp5Rk/8KBQpjdOIRHddC/72seL2B8pd/CCwDgqqoiZ143E0hkReAI9DHCOa8s4W9SrZFTyuLqGuS6m5R6Key0vkxw=
+	t=1732040103; cv=none; b=VVLgdOduNUb8szn66GUjoUnuSuq9vEPHi0U+S/Kk5M52bMoRhYwzCokqT8dxC9kxtCTN9/yjuUmVQJjZZV2C8JRVWMqMvpmU3XcAUFay7y2SNg0kV5LpGOaBtc19u+WJzDu6FYKBxEORKtiEPuKCCCSKbouKkK9ZkDas5Xmj8wM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732039803; c=relaxed/simple;
-	bh=cLTJ+4S41DbHMXwLJNlzcTSQqcxHabmps6W8J8gSRSI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YfEf9X7NSlJRqbIF5et88Gu1P4gRzB4fpEdW6V1XF3twa9KEXXahWE8owsPmAGtI+VZK8GiA3VEeJlR/+d9Zfnn6R+LPSBv0W6Bl0azgz/PyT4BcvEP7v3IBNCsALumDdeE0kCn19axEaGgM0QwaDyxTWI+2qhxdQspvJc6VRUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 923DDC4CECF;
-	Tue, 19 Nov 2024 18:10:01 +0000 (UTC)
-Date: Tue, 19 Nov 2024 13:10:35 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
-Cc: linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, Geert Uytterhoeven
- <geert@linux-m68k.org>, Greg Ungerer <gerg@linux-m68k.org>, Tomas Glozar
- <tglozar@redhat.com>
-Subject: Re: [PATCH RFC 0/2] Add basic tracing support for m68k
-Message-ID: <20241119131035.3c42a533@gandalf.local.home>
-In-Reply-To: <e4456cb1-b1bc-453b-b3b5-3ee4f03995be@yoseli.org>
-References: <20241021-add-m68k-tracing-support-v1-0-0883d704525b@yoseli.org>
-	<3a8f6faa-62c6-4d32-b544-3fb7c00730d7@yoseli.org>
-	<20241115102554.29232d34@gandalf.local.home>
-	<cbb67ee2-8b37-4a4d-b542-f89ddae90e94@yoseli.org>
-	<20241115145502.631c9a2c@gandalf.local.home>
-	<2c43288a-517d-4220-ad31-f84dda8c1805@yoseli.org>
-	<20241118152057.13042840@gandalf.local.home>
-	<22856ed6-b9d0-4206-b88d-4226534c8675@yoseli.org>
-	<20241119102631.76363f2a@gandalf.local.home>
-	<20241119112850.219834f5@gandalf.local.home>
-	<e4456cb1-b1bc-453b-b3b5-3ee4f03995be@yoseli.org>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1732040103; c=relaxed/simple;
+	bh=KVWbhakS9kVIMYwuIhXJm8aHwjOCsMHknrYydQtzk2U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=hoSuV9hoy3RJYEq8NKofCeL5VtRmwhjAwAnCjncuOTJk3jJHNOJuPuP/PWZi/I7CBOoBBQau1VZTf0tPWS5uGN4YeTkO4oRCbEMcMKkSBwopOrOHhR2KVAYyQMrF99W9weOvwd5aOriDAQK2yLmIIBQ685hkNilZcuNYINWiDxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=L+vT/u5k; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AJGMaPP032500;
+	Tue, 19 Nov 2024 19:14:38 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	U5WAuWYpPyf6x8hsSizrHjQGWA6SpwYTf0LqyhF0bQg=; b=L+vT/u5ko/LfoxQO
+	Hv0gs33R0cqdctuSkF3hOC1J5R6S3xX4jKCAwrHiZvrTxKdusx2+nI+042A9B7Jj
+	djACs834r+T+VjR8xhovwoJKq4t1PTeMyZkqM6cldKRgiTDt3JzG8Hz2SI2Gkd4z
+	tEnf1M1FmjJUTuVawpUwfNo7tz24J432RApl95bWBIxd0qdEaxWEpQDwvgitwe8l
+	aS0G0Gwt7DkBngRNr8EDjuJwylsxECmlJqf08yisUtqwSJl2namTrcncTwQpN+ot
+	NUkGUlJwqR44z87LRRGS4mkmQBTrX18NsvWIDoSaeKK4d/NqkwmY7/xZDhfDF78w
+	tB30pA==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 42y5u3ud1b-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 19 Nov 2024 19:14:37 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id B84A440048;
+	Tue, 19 Nov 2024 19:13:26 +0100 (CET)
+Received: from Webmail-eu.st.com (eqndag1node6.st.com [10.75.129.135])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id AC9ED29ADCD;
+	Tue, 19 Nov 2024 19:10:59 +0100 (CET)
+Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE6.st.com
+ (10.75.129.135) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Tue, 19 Nov
+ 2024 19:10:59 +0100
+Received: from [10.48.86.121] (10.48.86.121) by SAFDAG1NODE1.st.com
+ (10.75.90.17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Tue, 19 Nov
+ 2024 19:10:58 +0100
+Message-ID: <0d9075cd-68c2-49ec-9b9c-4315aa8c8517@foss.st.com>
+Date: Tue, 19 Nov 2024 19:10:58 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v13 4/7] remoteproc: Introduce release_fw optional
+ operation
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Jens Wiklander
+	<jens.wiklander@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <op-tee@lists.trustedfirmware.org>, <devicetree@vger.kernel.org>
+References: <20241104133515.256497-1-arnaud.pouliquen@foss.st.com>
+ <20241104133515.256497-5-arnaud.pouliquen@foss.st.com>
+ <Zzt+7NBdNjyzWZIb@p14s>
+Content-Language: en-US
+From: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Organization: STMicroelectronics
+In-Reply-To: <Zzt+7NBdNjyzWZIb@p14s>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SAFDAG1NODE1.st.com
+ (10.75.90.17)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-On Tue, 19 Nov 2024 19:06:45 +0100
-Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org> wrote:
-> > 
-> > It shouldn't crash, but it also found a bug in your code ;-)  
-> 
-> In my code is a really big assumption :-).
+Hello Mathieu,
 
-Well, not your personally, but I meant "your" as in m68k code.
+On 11/18/24 18:52, Mathieu Poirier wrote:
+> On Mon, Nov 04, 2024 at 02:35:12PM +0100, Arnaud Pouliquen wrote:
+>> This patch updates the rproc_ops struct to include an optional
+>> release_fw function.
+>>
+>> The release_fw ops is responsible for releasing the remote processor
+>> firmware image. The ops is called in the following cases:
+>>
+>>  - An error occurs in rproc_start() between the loading of the segments and
+>>       the start of the remote processor.
+>>  - after stopping the remote processor.
+>>
+>> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+>> ---
+>> Updates from version V11:
+>> - fix typo in @release_fw comment
+>> ---
+>>  drivers/remoteproc/remoteproc_core.c | 5 +++++
+>>  include/linux/remoteproc.h           | 3 +++
+>>  2 files changed, 8 insertions(+)
+>>
+>> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+>> index 7694817f25d4..46863e1ca307 100644
+>> --- a/drivers/remoteproc/remoteproc_core.c
+>> +++ b/drivers/remoteproc/remoteproc_core.c
+>> @@ -1258,6 +1258,9 @@ static int rproc_alloc_registered_carveouts(struct rproc *rproc)
+>>  
+>>  static void rproc_release_fw(struct rproc *rproc)
+>>  {
+>> +	if (rproc->ops->release_fw)
+>> +		rproc->ops->release_fw(rproc);
+>> +
+>>  	/* Free the copy of the resource table */
+>>  	kfree(rproc->cached_table);
+>>  	rproc->cached_table = NULL;
+>> @@ -1377,6 +1380,8 @@ static int rproc_start(struct rproc *rproc, const struct firmware *fw)
+>>  unprepare_subdevices:
+>>  	rproc_unprepare_subdevices(rproc);
+>>  reset_table_ptr:
+>> +	if (rproc->ops->release_fw)
+>> +		rproc->ops->release_fw(rproc);
+>>  	rproc->table_ptr = rproc->cached_table;
+> 
+> I suggest the following:
+> 
+> 1) Create two new functions, i.e rproc_load_fw() and rproc_release_fw().  The
+> only thing those would do is call rproc->ops->load_fw() and
+> rproc->ops->release_fw(), if they are present.  When a TEE interface is
+> available, ->load_fw() and ->release_fw() become rproc_tee_load_fw() and
+> rproc_tee_release_fw().
+
+
+I'm wondering if it should be ->preload_fw() instead of ->load_fw() ops, as the
+->load() op already exists.
 
 > 
-> > You reference two variables that are not part of the event:
-> > 
-> >   "mem_map" and "m68k_memory[0].addr"
-> > 
-> > Do these variables ever change? Because the TP_printk() part of the
-> > TRACE_EVENT() macro is called a long time after the event is recorded. It
-> > could be seconds, minutes, days or even months (and unlikely possibly
-> > years) later.  
+> 2) Call rproc_load_fw() in rproc_boot(), just before rproc_fw_boot().  If the
+> call to rproc_fw_boot() fails, call rproc_release_fw().
 > 
-> I am really not the best placed to answer.
-> AFAIK, it sounds like those are never changing.
+> 3) The same logic applies to rproc_boot_recovery(), i.e call rproc_load_fw()
+> before rproc_start() and call rproc_release_fw() if rproc_start() fails.
 
-That would mean they are OK and will not corrupt the trace, but it will be
-meaningless for tools like perf and trace-cmd.
+
+I implemented this and I'm currently testing it.
+Thise second part requires a few adjustments to work. The ->load() ops needs to
+becomes optional to not be called if the "->preload_fw()" is used.
+
+For that, I propose to return 0 in rproc_load_segments if rproc->ops->load is
+NULL and compensate by checking that at least "->preload_fw()" or ->load() is
+non-null in rproc_alloc_ops.
+
+Thanks,
+Arnaud
+
 
 > 
-> > 
-> > The event takes place and runs the TP_fast_assign() to record the event in
-> > the ring buffer. Then some time later, when you read the "trace" file, the
-> > TP_printk() portion gets run. If you wait months before reading that, it is
-> > executed months later.
-> > 
-> > Now you have "mem_map" and "m68k_memory[0].addr" in that output that gets
-> > run months after the fact. Are they constant throughout the boot?  
+> 4) Take rproc_tee_load_fw() out of rproc_tee_parse_fw().  It will now be called
+> in rproc_load_fw().
 > 
-> I don't know.
+> 5) As stated above function rproc_release_fw() now calls rproc_tee_release_fw().
+> The former is already called in rproc_shutdown() so we are good in that front.
 > 
-> > Now another issue is that user space has no idea what those values are. Now
-> > user space can not print the values. Currently the code crashes because you
-> > are the first one to reference a global value from a trace event print fmt.
-> > That should probably be fixed to simply fail to parse the event and ignore
-> > the print format logic (which defaults to just printing the raw fields).  
-> 
-> The patch you sent works...
-> But, it fails a bit later:
-> Dispatching timerlat u procs
-> starting loop
-> User-space timerlat pid 230 on cpu 0
-> Segmentation fault
-> 
+> With the above the cached_table management within the core remains the same and
+> we can get rid of patch 3.7.
 
-More printk? ;-)
-
--- Steve
+> 
+> Thanks,
+> Mathieu
+> 
+>>  
+>>  	return ret;
+>> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+>> index 2e0ddcb2d792..08e0187a84d9 100644
+>> --- a/include/linux/remoteproc.h
+>> +++ b/include/linux/remoteproc.h
+>> @@ -381,6 +381,8 @@ enum rsc_handling_status {
+>>   * @panic:	optional callback to react to system panic, core will delay
+>>   *		panic at least the returned number of milliseconds
+>>   * @coredump:	  collect firmware dump after the subsystem is shutdown
+>> + * @release_fw:	optional function to release the firmware image from ROM memories.
+>> + *		This function is called after stopping the remote processor or in case of an error
+>>   */
+>>  struct rproc_ops {
+>>  	int (*prepare)(struct rproc *rproc);
+>> @@ -403,6 +405,7 @@ struct rproc_ops {
+>>  	u64 (*get_boot_addr)(struct rproc *rproc, const struct firmware *fw);
+>>  	unsigned long (*panic)(struct rproc *rproc);
+>>  	void (*coredump)(struct rproc *rproc);
+>> +	void (*release_fw)(struct rproc *rproc);
+>>  };
+>>  
+>>  /**
+>> -- 
+>> 2.25.1
+>>
 
