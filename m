@@ -1,115 +1,90 @@
-Return-Path: <linux-kernel+bounces-414606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 021BA9D2AE8
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 17:28:25 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7851D9D2B0E
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 17:36:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4E511F25B49
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 16:28:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58AECB23C6A
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 16:29:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5888A1D0BA7;
-	Tue, 19 Nov 2024 16:28:18 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E84A1D0E39;
+	Tue, 19 Nov 2024 16:28:57 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F039E1D042D;
-	Tue, 19 Nov 2024 16:28:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D9841CFEDE
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 16:28:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732033698; cv=none; b=i6cZNu3ILc1I6I1B3JuqnJ0VaZ97zHruUoXum/KDWrvlKPKRfSY+0Ug+4/Rwq+b3kiqp8OCpoIkWzW0I7pYrPvlXKxajytmURlXxye+L68qJXXn2HqhV20qZppeotmdLIUhGuEdreRvd40zlJA/sjpuMfCpM1L/xOhUhJhWHue0=
+	t=1732033736; cv=none; b=gE58p0rV7P/6eb0eMUa4zkcGiERCQUJ+gKP+vtT4ZFd6YlAMzjFRYcD1G+kVQtAPJHU/ptmga9ADwgKtFX3rZhIc94YaE4afGtX45b84DVUOfjSGPgaBvxnmWfb6ebHsaZUgpQ9hJK0qEfCKhsjpn8uQz7D6PQom1ueUzILE5CM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732033698; c=relaxed/simple;
-	bh=7AiN7C9rSciZFzuI2C0MhdiS8jvBluuatf3HrOrbI8g=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZqQs8J8sG6v2DGQ0t1itNN1eA+Fo8+Vlg2gxZKPySs7s1DU1PW04ehgXwm8QFp/oPQP5O3H9GjElAw/vUdY6URQKdk+yGwYQiCfII7BnsZenfdnyNRuDkJjFuHeNF1vjZ5HCwvxnYTuwNWrm1nJKX2C7NT1l6f8MWyqh4zYAPcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E10D9C4CECF;
-	Tue, 19 Nov 2024 16:28:16 +0000 (UTC)
-Date: Tue, 19 Nov 2024 11:28:50 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
-Cc: linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, Geert Uytterhoeven
- <geert@linux-m68k.org>, Greg Ungerer <gerg@linux-m68k.org>, Tomas Glozar
- <tglozar@redhat.com>
-Subject: Re: [PATCH RFC 0/2] Add basic tracing support for m68k
-Message-ID: <20241119112850.219834f5@gandalf.local.home>
-In-Reply-To: <20241119102631.76363f2a@gandalf.local.home>
-References: <20241021-add-m68k-tracing-support-v1-0-0883d704525b@yoseli.org>
-	<3a8f6faa-62c6-4d32-b544-3fb7c00730d7@yoseli.org>
-	<20241115102554.29232d34@gandalf.local.home>
-	<cbb67ee2-8b37-4a4d-b542-f89ddae90e94@yoseli.org>
-	<20241115145502.631c9a2c@gandalf.local.home>
-	<2c43288a-517d-4220-ad31-f84dda8c1805@yoseli.org>
-	<20241118152057.13042840@gandalf.local.home>
-	<22856ed6-b9d0-4206-b88d-4226534c8675@yoseli.org>
-	<20241119102631.76363f2a@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1732033736; c=relaxed/simple;
+	bh=YRA7uRncoZGUK0aOzTQuzNC5MzjVDrgq1TlqxKc3f8k=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=ohIMyppWDa8K4ddd588FT6Co9VoA51o/EOL/ZRbI0QYp29H/iOno0nhPEaEwjcemAX3Fcehx3WgwSipsl2D2Ysz6iWFE9jeK3xo7JRYeR5Ni7bwFFcX9Dk9hgDCUIZjq851jeJSBuns8gjXgS/qzbc8k4l5dUpGNDtZQtlh5r1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-83e5dc9f6a4so525120039f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 08:28:54 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732033734; x=1732638534;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=iQnFOgoa4RQ3iLDxZmxINp35w8cWZfEqP8tLdwZ0lJI=;
+        b=c0/HPvzl6DmcbhqHBLxYgjvYPs9fhjmswaOM1zXt2hKFou1QKV0CsiP88yHduGk0P3
+         xPSdeIbJ1uJpzmGBDaBtxtdTz8Xj307H+EQomT4QvRxWKqwSnEIAHHHlfyIfdT/WXTBU
+         n+IbBu4gYhufbUnrXzYdj7deWAXJrM9YeN0EgJfD48TeXSmuW1NH0fSIkpa7f1I2E4tR
+         tqxgFgQBI2eS4XNyPRuR1jDTxFocINxqPUO0vzMF4jgE3ImZGZ1GFBb8d9hSu9AUBAYG
+         ieC7uKvFne5fGv6lHBlK0H9KbhUBvJ3LTxvpjcF0tj4Xg+acMWpx6FFBTkZO531GKPQM
+         bt+w==
+X-Gm-Message-State: AOJu0YwbCTFAPL9R4kWR8u8/OEUKWzXQG08PG3wnz2wk2m8TPytC0K8K
+	KHbvVIVTnoTuNZ/9KCnkJyAYsgqVv+cWh/TUXeGiMgMViJbZxXocxTTCALBOwFDaQ1zY6LBym77
+	X7epf5nP1f2kF/NYom6J9jki+yCY3M3Yk/szuXKRpWeNR2bzPRh8nE7o=
+X-Google-Smtp-Source: AGHT+IHoPDwaljr53TtxviYG458TcY0RkGk4OBfYW6jdZO7/qlXFuXnE2KU1s8ySPBA0J2M2QYXIN47qSeBHXsQQw5J1Lq2sLB1n
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:156f:b0:3a1:a2b4:6665 with SMTP id
+ e9e14a558f8ab-3a7774a41c5mr31974285ab.12.1732033734368; Tue, 19 Nov 2024
+ 08:28:54 -0800 (PST)
+Date: Tue, 19 Nov 2024 08:28:54 -0800
+In-Reply-To: <000000000000e2ff53061fc9dfcf@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <673cbcc6.050a0220.87769.0079.GAE@google.com>
+Subject: Re: [syzbot] Re: KASAN: use-after-free Read in ocfs2_search_dirblock()
+From: syzbot <syzbot+b9704899e166798d57c9@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 19 Nov 2024 10:26:31 -0500
-Steven Rostedt <rostedt@goodmis.org> wrote:
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-> Can you do me a favor and send me privately a tarball of:
-> 
->  # cp -r /sys/kernel/tracing/events /tmp/events
->  # cd /tmp
->  # tar -cvjf events.tar.bz2 events
-> 
-> You can't call tar on the /sys/kernel/tracing files as those are pseudo
-> files with size of zero, and tar will just record empty files :-p
+***
 
-It crashes on parsing this:
+Subject: Re: KASAN: use-after-free Read in ocfs2_search_dirblock()
+Author: dmantipov@yandex.ru
 
-name: mm_vmscan_write_folio
-ID: 198
-format:
-	field:unsigned short common_type;	offset:0;	size:2;	signed:0;
-	field:unsigned char common_flags;	offset:2;	size:1;	signed:0;
-	field:unsigned char common_preempt_count;	offset:3;	size:1;	signed:0;
-	field:int common_pid;	offset:4;	size:4;	signed:1;
+#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 158f238aa69d91ad74e535c73f552bd4b025109c
 
-	field:unsigned long pfn;	offset:8;	size:4;	signed:0;
-	field:int reclaim_flags;	offset:12;	size:4;	signed:1;
-
-print fmt: "page=%p pfn=0x%lx flags=%s", (mem_map + ((REC->pfn) - (m68k_memory[0].addr >> 13))), REC->pfn, (REC->reclaim_flags) ? __print_flags(REC->reclaim_flags, "|", {0x0001u, "RECLAIM_WB_ANON"}, {0x0002u, "RECLAIM_WB_FILE"}, {0x0010u, "RECLAIM_WB_MIXED"}, {0x0004u, "RECLAIM_WB_SYNC"}, {0x0008u, "RECLAIM_WB_ASYNC"} ) : "RECLAIM_WB_NONE"
-
-
-It shouldn't crash, but it also found a bug in your code ;-)
-
-You reference two variables that are not part of the event:
-
- "mem_map" and "m68k_memory[0].addr"
-
-Do these variables ever change? Because the TP_printk() part of the
-TRACE_EVENT() macro is called a long time after the event is recorded. It
-could be seconds, minutes, days or even months (and unlikely possibly
-years) later.
-
-The event takes place and runs the TP_fast_assign() to record the event in
-the ring buffer. Then some time later, when you read the "trace" file, the
-TP_printk() portion gets run. If you wait months before reading that, it is
-executed months later.
-
-Now you have "mem_map" and "m68k_memory[0].addr" in that output that gets
-run months after the fact. Are they constant throughout the boot?
-
-Now another issue is that user space has no idea what those values are. Now
-user space can not print the values. Currently the code crashes because you
-are the first one to reference a global value from a trace event print fmt.
-That should probably be fixed to simply fail to parse the event and ignore
-the print format logic (which defaults to just printing the raw fields).
-
--- Steve
-
+diff --git a/fs/ocfs2/dir.c b/fs/ocfs2/dir.c
+index 213206ebdd58..7a8040a47e82 100644
+--- a/fs/ocfs2/dir.c
++++ b/fs/ocfs2/dir.c
+@@ -378,7 +378,7 @@ static inline int ocfs2_search_dirblock(struct buffer_head *bh,
+ 
+ 		/* prevent looping on a bad block */
+ 		de_len = le16_to_cpu(de->rec_len);
+-		if (de_len <= 0) {
++		if (de_len <= 0 || de_len > sizeof(*de)) {
+ 			ret = -1;
+ 			goto bail;
+ 		}
 
