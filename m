@@ -1,245 +1,91 @@
-Return-Path: <linux-kernel+bounces-413644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 088419D1CB3
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 01:42:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E4C659D1CC5
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 01:49:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 60DDFB21FDC
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 00:42:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C2FCB20B37
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 00:49:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5DFD3BBE5;
-	Tue, 19 Nov 2024 00:40:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dTBQBxgK"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2555F25632;
+	Tue, 19 Nov 2024 00:49:06 +0000 (UTC)
+Received: from mail.enpas.org (zhong.enpas.org [46.38.239.100])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A85E28DD0
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 00:39:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 282FF1F941;
+	Tue, 19 Nov 2024 00:49:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.38.239.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731976802; cv=none; b=pkC450hyGh3O3XMP6WkAx2kxqKhZhCHNGKxN++hrhxiN6RNO2unPAX3qgGWdZ8ql8F+NjbKMu2Hksu7t00hvlJ3eBz8NEusNmhzlsXEU97ucuNIrDroFRFBJ4oydlDbI4uhpejpvylHg/ne1s1uwG3whp6SMEKEbHWYwuvJTV+M=
+	t=1731977345; cv=none; b=ni/rPqlY2sEw7PodNlQRM+oDf44FU0FCYs+zIG1Ij3NdGi7nfDbDQHDywsbh6kmMRvQORSXdliGQp2mK4ikBHiuIPl6VAynjEWDo7QMY0q5sZssKmH0ryzjOx8ELT8ixsehlwtsaU6EDThES1zjvxyGkubVps/PR14Hl40zMl7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731976802; c=relaxed/simple;
-	bh=YzMNvJAMgAye6FGH0t0zMVzWqRVdNrG+1sIZy8+p89A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PRF57oWcXw02sglGF9yhCNoYqc57LZrWIxi1y46euSZ6dGC/P/MgHu7EI3OrSijj15ogrl7QpMuict/4OsfbVDx1hamjp8HHFSOnlLBgWk4njLQ7mwBryJFYa3wahM/69jCeK4w/iYoORAjHCiX/56Efxo00A+k+A4s1GwQUr8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dTBQBxgK; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5cfc264b8b6so4263a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Nov 2024 16:39:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731976797; x=1732581597; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YzMNvJAMgAye6FGH0t0zMVzWqRVdNrG+1sIZy8+p89A=;
-        b=dTBQBxgKsBAZa/t6YBs62+MeMILN92Ktw2GxP4wsG6pwcy2I3XUjJCUvPcwQ5uEDoH
-         M76UgWhZDEloosLxerYCmxmHTaLBBV1h8CPtJQ5IF2ZAZC3m0sJM4RuUi3E15oyuMLhP
-         Y702b0F9Nk5HwYTsEjl1aKjNAIZ0GE9Wz7+KHzJPJ066KMeoPyK4ueFfDki79jdhOxyr
-         FELRF8w8+hIoTSCgw0dMQjL1kFYmmtgleaWvY501gAtxeOhPjTLpXU3Wu3gzkAflH68f
-         I6fF8c4m4mv081v8+S3QldhkjtuDfK40tkUzWJLKxAIrFSjSFwS5/M4RSYEDyQMORbFQ
-         Cq4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731976797; x=1732581597;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YzMNvJAMgAye6FGH0t0zMVzWqRVdNrG+1sIZy8+p89A=;
-        b=ZzJd4bxK7tbW9yf1R/Cs5mO2XTLykXY1aTL5knb9nIVMB8sZiCIeGRxpYABdMnO6pe
-         s/t8MFg3NHmVfqZgy8fT3wGFFV69/otDRSk8iDuE/uvSUcQKJgZSpLktSJr+mS/bJ288
-         qeXF8TxK6rK0CzsTY4Zagp+cFSrOISLqh2p4fh281yOfLlLBO5uZmUMcnaO6pZZK5dy5
-         X2mJtNwEMZ+l//dJ6ZEIfveP7NiZ9Wuri2bddy8z3MngA+bL9z8vdxFx87eCraPz32wq
-         YGFbY1ZpR2gdZwxn9XVbMtSlS4hNwZptUM8rDZZ8Yzv0t+ZN23wDyCok3SQV5HACK8yY
-         e53w==
-X-Forwarded-Encrypted: i=1; AJvYcCWbgIe6T+gMlpab3/g8mTM7ycawJTZrPSXSrjYebmy19EyhJLIgXz8W9Y4D62+8F3FIaOIjsqVB08AnK5s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwA4iugIJOpio2VheW9MllmDfgyEv0QPuzTaVKEVxTHfhkmLW3c
-	lWsoqoN5mzkPdtmyHvtHilh5WIvfDvkvAqbrjvqgsCykmlgyFIv4ZmXzydTt2qPUvY+0K5ACIjK
-	QbHJH+TKvj5mclIbyN2DDNVnu94Uerp5RaGi6
-X-Gm-Gg: ASbGncsiiXGUQBBprgqbjlIoeQPWQpwQw1jCjNcg822aZlFgMiYFP9iHNqH7s/GydVf
-	wAOXhbJdNq0ZguwRMy+XzigXyotrI32V9nTja6QWsFt8ZlqKaqCIwLMU2TG/h
-X-Google-Smtp-Source: AGHT+IEqFrrGyfsezRMsp/X151aTE55F7rPkKrYZLMq7HZJ1MQF2NOGKpWL8huBQFIpX81LUzRGmY7/k9ZOF+cLi7qc=
-X-Received: by 2002:a05:6402:1351:b0:5cf:bd9a:41ec with SMTP id
- 4fb4d7f45d1cf-5cfdec244d3mr32883a12.2.1731976796952; Mon, 18 Nov 2024
- 16:39:56 -0800 (PST)
+	s=arc-20240116; t=1731977345; c=relaxed/simple;
+	bh=J+WPrwsuAWpNkX7H54JmUhwKRSLKv+/L5TWT0yg4wEI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YxU654aRtnEWnOfcs0iSILvBFPSVPJ6qtc+6Mbfqb3SZfeSkuEUaB75j3pYROyW60Vnga5Q5Q0REwkllJgw0kQ29l+ekQH/aCnb93drBsV+76yuu+HlA0Wl3Ua8dJhjaJcmag8u1wW+L/YiKCr+KHFCQySq3nMJ74dfuV7p5nXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enpas.org; spf=pass smtp.mailfrom=enpas.org; arc=none smtp.client-ip=46.38.239.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enpas.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=enpas.org
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+	by mail.enpas.org (Postfix) with ESMTPSA id 890EB102ECB;
+	Tue, 19 Nov 2024 00:48:56 +0000 (UTC)
+Message-ID: <8c358157-d28d-4c42-b983-4191061edd70@enpas.org>
+Date: Tue, 19 Nov 2024 09:48:53 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241116175922.3265872-1-pasha.tatashin@soleen.com>
- <a0372f7f-9a85-4d3e-ba20-b5911a8189e3@lucifer.local> <CAG48ez2vG0tr=H8csGes7HN_5HPQAh4WZU8U1G945K1GKfABPg@mail.gmail.com>
- <CA+CK2bB0w=i1z78AJbr2gZE9ybYki4Vz_s53=8URrxwyPvvB+A@mail.gmail.com>
-In-Reply-To: <CA+CK2bB0w=i1z78AJbr2gZE9ybYki4Vz_s53=8URrxwyPvvB+A@mail.gmail.com>
-From: Jann Horn <jannh@google.com>
-Date: Tue, 19 Nov 2024 01:39:19 +0100
-Message-ID: <CAG48ez1KFFXzy5qcYVZLnUEztaZxDGY2+4GvwYq7Hb=Y=3FBxQ@mail.gmail.com>
-Subject: Re: [RFCv1 0/6] Page Detective
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	cgroups@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	akpm@linux-foundation.org, corbet@lwn.net, derek.kiernan@amd.com, 
-	dragan.cvetic@amd.com, arnd@arndb.de, gregkh@linuxfoundation.org, 
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, tj@kernel.org, 
-	hannes@cmpxchg.org, mhocko@kernel.org, roman.gushchin@linux.dev, 
-	shakeel.butt@linux.dev, muchun.song@linux.dev, Liam.Howlett@oracle.com, 
-	vbabka@suse.cz, shuah@kernel.org, vegard.nossum@oracle.com, 
-	vattunuru@marvell.com, schalla@marvell.com, david@redhat.com, 
-	willy@infradead.org, osalvador@suse.de, usama.anjum@collabora.com, 
-	andrii@kernel.org, ryan.roberts@arm.com, peterx@redhat.com, oleg@redhat.com, 
-	tandersen@netflix.com, rientjes@google.com, gthelen@google.com, 
-	linux-hardening@vger.kernel.org, 
-	Kernel Hardening <kernel-hardening@lists.openwall.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net] can: can327: fix snprintf() limit in
+ can327_handle_prompt()
+Content-Language: en-US
+To: Dan Carpenter <dan.carpenter@linaro.org>,
+ Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Cc: Marc Kleine-Budde <mkl@pengutronix.de>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ linux-can@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <c896ba5d-7147-4978-9e25-86cfd88ff9dc@stanley.mountain>
+ <6db4d783-6db2-4b86-887c-3c95d6763774@wanadoo.fr>
+ <4ff913b9-93b3-4636-b0f6-6e874f813d2f@stanley.mountain>
+ <9d6837c1-6fd1-4cc6-8315-c1ede8f20add@wanadoo.fr>
+ <20241114-olive-petrel-of-culture-5ae519-mkl@pengutronix.de>
+ <7841268c-c8dc-4db9-b2dd-c2c5fc366022@wanadoo.fr>
+ <0c4ebaf0-a6c5-4852-939b-e7ac135f6f32@stanley.mountain>
+ <7d4b176b-6b44-450b-ab2d-847e5199d1b9@wanadoo.fr>
+ <e5572514-83d7-4b7e-b4f0-5318c6722250@stanley.mountain>
+From: Max Staudt <max@enpas.org>
+In-Reply-To: <e5572514-83d7-4b7e-b4f0-5318c6722250@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Nov 18, 2024 at 11:24=E2=80=AFPM Pasha Tatashin
-<pasha.tatashin@soleen.com> wrote:
-> On Mon, Nov 18, 2024 at 7:54=E2=80=AFAM Jann Horn <jannh@google.com> wrot=
-e:
-> >
-> > On Mon, Nov 18, 2024 at 12:17=E2=80=AFPM Lorenzo Stoakes
-> > <lorenzo.stoakes@oracle.com> wrote:
-> > > On Sat, Nov 16, 2024 at 05:59:16PM +0000, Pasha Tatashin wrote:
-> > > > It operates through the Linux debugfs interface, with two files: "v=
-irt"
-> > > > and "phys".
-> > > >
-> > > > The "virt" file takes a virtual address and PID and outputs informa=
-tion
-> > > > about the corresponding page.
-> > > >
-> > > > The "phys" file takes a physical address and outputs information ab=
-out
-> > > > that page.
-> > > >
-> > > > The output is presented via kernel log messages (can be accessed wi=
-th
-> > > > dmesg), and includes information such as the page's reference count=
-,
-> > > > mapping, flags, and memory cgroup. It also shows whether the page i=
-s
-> > > > mapped in the kernel page table, and if so, how many times.
-> > >
-> > > I mean, even though I'm not a huge fan of kernel pointer hashing etc.=
- this
-> > > is obviously leaking as much information as you might want about kern=
-el
-> > > internal state to the point of maybe making the whole kernel pointer
-> > > hashing thing moot.
-> > >
-> > > I know this requires CAP_SYS_ADMIN, but there are things that also re=
-quire
-> > > that which _still_ obscure kernel pointers.
-> > >
-> > > And you're outputting it all to dmesg.
-> > >
-> > > So yeah, a security person (Jann?) would be better placed to comment =
-on
-> > > this than me, but are we sure we want to do this when not in a
-> > > CONFIG_DEBUG_VM* kernel?
-> >
-> > I guess there are two parts to this - what root is allowed to do, and
-> > what information we're fine with exposing to dmesg.
-> >
-> > If the lockdown LSM is not set to LOCKDOWN_CONFIDENTIALITY_MAX, the
-> > kernel allows root to read kernel memory through some interfaces - in
-> > particular, BPF allows reading arbitrary kernel memory, and perf
-> > allows reading at least some stuff (like kernel register states). With
-> > lockdown in the most restrictive mode, the kernel tries to prevent
-> > root from reading arbitrary kernel memory, but we don't really change
-> > how much information goes into dmesg. (And I imagine you could
-> > probably still get kernel pointers out of BPF somehow even in the most
-> > restrictive lockdown mode, but that's probably not relevant.)
-> >
-> > The main issue with dmesg is that some systems make its contents
-> > available to code that is not running with root privileges; and I
-> > think it is also sometimes stored persistently in unencrypted form
-> > (like in EFI pstore) even when everything else on the system is
-> > encrypted.
-> > So on one hand, we definitely shouldn't print the contents of random
-> > chunks of memory into dmesg without a good reason; on the other hand,
-> > for example we do already print kernel register state on WARN() (which
-> > often includes kernel pointers and could theoretically include more
-> > sensitive data too).
-> >
-> > So I think showing page metadata to root when requested is probably
-> > okay as a tradeoff? And dumping that data into dmesg is maybe not
-> > great, but acceptable as long as only root can actually trigger this?
-> >
-> > I don't really have a strong opinion on this...
-> >
-> >
-> > To me, a bigger issue is that dump_page() looks like it might be racy,
-> > which is maybe not terrible in debugging code that only runs when
-> > something has already gone wrong, but bad if it is in code that root
-> > can trigger on demand?
->
-> Hi Jann, thank you for reviewing this proposal.
->
-> Presumably, the interface should be used only when something has gone
-> wrong but has not been noticed by the kernel. That something is
-> usually checksums failures that are outside of the kernel: i.e. during
-> live migration, snapshotting, filesystem journaling, etc. We already
-> have interfaces that provide data from the live kernel that could be
-> racy, i.e. crash utility.
+Hi all,
 
-Ah, yes, I'm drawing a distinction here between "something has gone
-wrong internally in the kernel and the kernel does some kinda-broken
-best-effort self-diagnostics" and "userspace thinks something is
-broken and asks the kernel".
+As promised, here is a patch cleaning up can327's payload "encoding" 
+(the hex dump part), plus a comment explaining why Dan's finding turned 
+out not to be security relevant. It's as Vincent already explained, plus 
+additional background information:
 
-> > __dump_page() copies the given page with
-> > memcpy(), which I don't think guarantees enough atomicity with
-> > concurrent updates of page->mapping or such, so dump_mapping() could
-> > probably run on a bogus pointer. Even without torn pointers, I think
-> > there could be a UAF if the page's mapping is destroyed while we're
-> > going through dump_page(), since the page might not be locked. And in
-> > dump_mapping(), the strncpy_from_kernel_nofault() also doesn't guard
-> > against concurrent renaming of the dentry, which I think again would
-> > probably result in UAF.
->
-> Since we are holding a reference on the page at the time of
-> dump_page(), the identity of the page should not really change, but
-> dentry can be renamed.
+  
+https://lore.kernel.org/linux-can/20241119003815.767004-1-max@enpas.org/T/
 
-Can you point me to where a refcounted reference to the page comes
-from when page_detective_metadata() calls dump_page_lvl()?
+I've taken the liberty of not CC'ing the network maintainers on that 
+patch, hence this email with a pointer to it for anyone interested. In 
+the end, while it looked worrying at first, it ended up being just a 
+minor cleanup.
 
-> > So I think dump_page() in its current form is not something we should
-> > expose to a userspace-reachable API.
->
-> We use dump_page() all over WARN_ONs in MM code where pages might not
-> be locked, but this is a good point, that while even the existing
-> usage might be racy, providing a user-reachable API potentially makes
-> it worse. I will see if I could add some locking before dump_page(),
-> or make a dump_page variant that does not do dump_mapping().
 
-To be clear, I am not that strongly opposed to racily reading data
-such that the data may not be internally consistent or such; but this
-is a case of racy use-after-free reads that might end up dumping
-entirely unrelated memory contents into dmesg. I think we should
-properly protect against that in an API that userspace can invoke.
-Otherwise, if we race, we might end up writing random memory contents
-into dmesg; and if we are particularly unlucky, those random memory
-contents could be PII or authentication tokens or such.
+Thanks Dan for pointing out that ugly piece of code. I'd really like to 
+one day find the time to do some further cleanup, and especially further 
+commenting in order to reduce the bus factor, but oh well...
 
-I'm not entirely sure what the right approach is here; I guess it
-makes sense that when the kernel internally detects corruption,
-dump_page doesn't take references on pages it accesses to avoid
-corrupting things further. If you are looking at a page based on a
-userspace request, I guess you could access the page with the
-necessary locking to access its properties under the normal locking
-rules?
 
-(If anyone else has opinions either way on this line I'm trying to
-draw between kernel-internal debug paths and userspace-triggerable
-debugging, feel free to share; I hope my mental model makes sense but
-I could imagine other folks having a different model of this?)
+Max
+
 
