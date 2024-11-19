@@ -1,110 +1,136 @@
-Return-Path: <linux-kernel+bounces-414618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4E6E9D2B02
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 17:33:52 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 093459D2AF5
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 17:31:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6158E1F2387C
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 16:33:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B64FB28A60
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 16:27:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 179A31D1F67;
-	Tue, 19 Nov 2024 16:32:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 521591D095E;
+	Tue, 19 Nov 2024 16:26:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="g63RtYFx"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lgHcIVZa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D8F614A614
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 16:32:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAEA713C83D;
+	Tue, 19 Nov 2024 16:26:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732033928; cv=none; b=GYBDQQHg6cYZ5/NjeUI2hGclbP/qbEOC92u4obH1sQnAR92920OHODJZ9J+lXcxtgyyFrqakMBTZpL8GzWYwUegyougS8DArk3ZHJcf/+78sJlgt1u4eTo0oBxjbZcm/HAxSBHGhIAe/82c4+0nwTVUMu0S6vTNqxnCZEWkGHc4=
+	t=1732033618; cv=none; b=cFVi+RIIxw3E4zO0MWtBhXPcZ1zDg9EW24EmOLu9cD1lrb0thF1vS/3MndLVBnXfSgGLH2l+6ZOrRkHnmZlcA+FeO/3BCDmDfZ2RlKUHBViz/fcYZbs3LQZ+51boc13nnycQNadNUhY79SGM/56zCy6TP1PeCpkfYQpIlR+lQdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732033928; c=relaxed/simple;
-	bh=mBPldd3yUicxrETCRUqOLGqOQNV9i/fAUwpKaw1SsI0=;
-	h=Message-Id:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=T5BOwKIo4SaOqd5xCzxn36zz5VI5xtVYEnLhkGIr4LQjiIET4qKvhaHtw2vTcCzAobhnPZtIbKlvfGyc+BDzpLiZMzRdwKCrlkrI7B8yq5Wo3S9HLFAhGUqQDajCGAasqP0kkEevyoujGmItS3+DivMygQyCbeaMQztktMXeT80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=g63RtYFx; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=Content-Type:MIME-Version:References:
-	Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
-	Content-ID:Content-Description:In-Reply-To;
-	bh=bkFLe1usrwLIzhTY/+ijYnFXLDpAk9FZvP9TcIkqIHg=; b=g63RtYFxb944hivfZKh41nEC2y
-	DgGWs/i0ec7s/51lPeONyDj2FryFVYYSmlq4R70Kt65MNS5RYNzalrFG6hDfXAxvj/hfjmEbH4R/4
-	LTI4HTMz8nmsM5HSkJPy1qKA/IyXLg5iK9EqPkbZ9+NfomSoqAL5KpqPl228F578B0YjGOfU/4AQg
-	5z11iRUuNQjwXsAPynmlshm630pFL2gNadFywh0XM8tL7rU+Gdnuyvp7R/zGOtpdDx3OFTP6xHBYx
-	bOdSlSlfqEmQnWZcN3qs32FNhMMaccFmDa0sLsq6UpOKQChBT6uwa+jdANXDhTmJI4YVI5XO5KcvA
-	Vx06WNQw==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tDR92-00000000MTV-1Mfw;
-	Tue, 19 Nov 2024 16:32:04 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 0)
-	id F28533021DA; Tue, 19 Nov 2024 17:32:02 +0100 (CET)
-Message-Id: <20241119163035.985203915@infradead.org>
-User-Agent: quilt/0.65
-Date: Tue, 19 Nov 2024 17:25:34 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: x86@kernel.org, "To:riel"@surriel.com
-Cc: linux-kernel@vger.kernel.org,
- peterz@infradead.org,
- Andy Lutomirski <luto@kernel.org>
-Subject: [PATCH 7/7] x86/mm: Opt in to IRQs-off activate_mm()
-References: <20241119162527.952745944@infradead.org>
+	s=arc-20240116; t=1732033618; c=relaxed/simple;
+	bh=BJFb++Wv4jpkxzjz5gOnPMkEVkdQlWAy/S3Oj4+CTJs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Mq/dik+7pqfmwp1DPYKhty8LMs/HqHwakL//eCMAwz5pPc1GPwVEiDw+PvbJ13EU3WuYKFcgv1mmZg3+SY2sht8ymviaorbRONhpnMzzaXg4P2srpAfeQ8XWv/Q+1UAXYuaEX6j20dzmUDEK+Q9bufbWdXikO0eYOhx8g6IJBwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lgHcIVZa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12740C4CECF;
+	Tue, 19 Nov 2024 16:26:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732033618;
+	bh=BJFb++Wv4jpkxzjz5gOnPMkEVkdQlWAy/S3Oj4+CTJs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lgHcIVZaK4+5dia4R+xTqMgRfsAHWPMm2Ehe0N1hgtlD6fcCakENZ6IPlgg4IMwmp
+	 1WuDxTVFr+/TFSueTt3bbhdKNVHKxcKgELHXD4nZVaR5dQgrHxbRDMHpjZoIywyKO2
+	 3c+51VtBpmKr50RDJfgl3rt1yIjhTN5XbNoHvkdfWQIi4eck0Ur4W0oZe59fKvWv7y
+	 HdKA8XJitk78VrfPF+TedVfW6QE5fn+zIJE4fm/Fc6ClRjCgNeaoVzYRPVCsjkUk80
+	 6AyF1ugXv6gx8GUavFCr0W5FOu9Bk4kpXaOHP8T7/K0yBCXhmWHecU8XF1AvXX1hr8
+	 cPuiJIy4+4MLw==
+Date: Tue, 19 Nov 2024 10:26:56 -0600
+From: Rob Herring <robh@kernel.org>
+To: Gregory CLEMENT <gregory.clement@bootlin.com>
+Cc: Aleksandar Rikalo <arikalo@gmail.com>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
+	=?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>,
+	Tawfik Bayouk <tawfik.bayouk@mobileye.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	linux-mips@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/5] dt-bindings: mips: Document mti,mips-cm
+Message-ID: <20241119162656.GA1764849-robh@kernel.org>
+References: <20241115-cluster-hci-broken-v1-0-00636800611d@bootlin.com>
+ <20241115-cluster-hci-broken-v1-1-00636800611d@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241115-cluster-hci-broken-v1-1-00636800611d@bootlin.com>
 
-From: Andy Lutomirski <luto@kernel.org>
+On Fri, Nov 15, 2024 at 04:29:54PM +0100, Gregory CLEMENT wrote:
+> From: Jiaxun Yang <jiaxun.yang@flygoat.com>
+> 
+> Add devicetree binding documentation for MIPS Coherence Manager.
+> 
+> gc: reg is no more mandatory
 
-We gain nothing by having the core code enable IRQs right before calling
-activate_mm() only for us to turn them right back off again in switch_mm().
+The h/w either has registers or it doesn't. Can't be both ways.
 
-This will save a few cycles, so execve() should be blazingly fast with this
-patch applied!
+> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+> Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+> ---
+>  .../devicetree/bindings/mips/mti,mips-cm.yaml      | 37 ++++++++++++++++++++++
+>  1 file changed, 37 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/mips/mti,mips-cm.yaml b/Documentation/devicetree/bindings/mips/mti,mips-cm.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..03a5ba5624a429c428ee2afca73b3e29127e02f9
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mips/mti,mips-cm.yaml
+> @@ -0,0 +1,37 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/mips/mti,mips-cm.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: MIPS Coherence Manager
+> +
+> +description: |
 
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lkml.kernel.org/r/69c7d711f240cfec23e6024e940d31af2990db36.1641659630.git.luto@kernel.org
----
- arch/x86/Kconfig                   |    1 +
- arch/x86/include/asm/mmu_context.h |    2 +-
- 2 files changed, 2 insertions(+), 1 deletion(-)
+Don't need '|' if no formatting to preserve.
 
-Index: linux-2.6/arch/x86/Kconfig
-===================================================================
---- linux-2.6.orig/arch/x86/Kconfig
-+++ linux-2.6/arch/x86/Kconfig
-@@ -133,6 +133,7 @@ config X86
- 	select ARCH_WANT_OPTIMIZE_HUGETLB_VMEMMAP	if X86_64
- 	select ARCH_WANTS_THP_SWAP		if X86_64
- 	select ARCH_HAS_PARANOID_L1D_FLUSH
-+	select ARCH_WANT_IRQS_OFF_ACTIVATE_MM
- 	select BUILDTIME_TABLE_SORT
- 	select CLKEVT_I8253
- 	select CLOCKSOURCE_VALIDATE_LAST_CYCLE
-Index: linux-2.6/arch/x86/include/asm/mmu_context.h
-===================================================================
---- linux-2.6.orig/arch/x86/include/asm/mmu_context.h
-+++ linux-2.6/arch/x86/include/asm/mmu_context.h
-@@ -175,7 +175,7 @@ extern void switch_mm_irqs_off(struct mm
- #define activate_mm(prev, next)			\
- do {						\
- 	paravirt_enter_mmap(next);		\
--	switch_mm((prev), (next), NULL);	\
-+	switch_mm_irqs_off((prev), (next), NULL);	\
- } while (0);
- 
- #ifdef CONFIG_X86_32
-
-
+> +  Defines a location of the MIPS Coherence Manager registers.
+> +
+> +maintainers:
+> +  - Jiaxun Yang <jiaxun.yang@flygoat.com>
+> +
+> +properties:
+> +  compatible:
+> +    const: mti,mips-cm
+> +
+> +  reg:
+> +    description:
+> +      Base address and size of an unoccupied region in system's MMIO address
+> +      space, which will be used to map the MIPS CM global control registers
+> +      block. It is conventionally decided by the system integrator.
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    coherency-manager@1fbf8000 {
+> +      compatible = "mti,mips-cm";
+> +      reg = <0x1bde8000 0x8000>;
+> +    };
+> +...
+> 
+> -- 
+> 2.45.2
+> 
 
