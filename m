@@ -1,100 +1,138 @@
-Return-Path: <linux-kernel+bounces-414443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 418059D2824
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 15:28:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8B959D2811
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 15:25:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 65451B2DE82
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 14:25:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9749B1F24265
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 14:25:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 411961CDFC9;
-	Tue, 19 Nov 2024 14:25:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 882061CCEF5;
+	Tue, 19 Nov 2024 14:25:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m8qr3mDF"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="BI1rR6UE"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C9401CCB59;
-	Tue, 19 Nov 2024 14:25:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB06514658D
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 14:25:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732026304; cv=none; b=Yp8QyhZxVPyrE588v5CuHz3ckUo9fJJLTiComQTBSCG43rUz8l+ugYS1uSL9/v+AhHzLDyHRjPoisSN1b3EhNSmwScTSWbLNHsQseSEYAmhPfynfkl+FMs/IrkUK1jD9QXoo6Q/Fv5ssHJ+IlG/23c7mB82lRNozocCvV5EcrFM=
+	t=1732026333; cv=none; b=k11zeNNHLVnY9+UtupKVDcPA0Znc2jUVcQV446U7FZ9VZCHtln9tbORyNVIhca1SA/I+a+9KkgSg4VYveCediBFnykEx9R68hbVX6XRIkIm6yMkFtSGKraq3uF7d90GXJq0Z6Qc52BisRJnTnoXL5TsW2bQI9WlLX+a0xXUgZq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732026304; c=relaxed/simple;
-	bh=f9+ZXpPOPig3xx8es3Ad+e/idZjq8WPG824uifMLItg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nzF3W4IIjb3k1eO29nRGUE8CpXpQ1r8XQfb+yx/fYFXUJr++kigvoQk6hTnu37yOerpbF4MR42XDlD7B9N3oKgmYxRv7/Ry8m2zYn2tecFzsW7fCgq4Nr0sP9clAabfhYuNpD3H2/uCsNgTjQqzBRN2eOM2WKhpb+fbZdBkjfdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m8qr3mDF; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2ff64e5d31bso10628331fa.0;
-        Tue, 19 Nov 2024 06:25:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732026301; x=1732631101; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=f9+ZXpPOPig3xx8es3Ad+e/idZjq8WPG824uifMLItg=;
-        b=m8qr3mDFWZvr9q+xpkmP9fl26CXvleVS8EQeCNMg+95u0vy2DT/fVKigO0C7f4U2Xj
-         uC2poptA/4eaKFfUpLh07u4EiiTZjtkVSjFTCEIdUf82ZHmXnt7cyQnhi3YXbLrFn0kk
-         b9sX3kT4vlmZ80dJH3UZGSl9VL3orI78Q2dOG34ArQ23R3yjxQyYlfu3MWPCr712zE00
-         91uR2gqDHm2vv4rQMvgOtTIUTBwkzDa1MvUM0p7aTmQeFkA+hOj+TBxLeMoFM0SohOxu
-         hQGJxptnlfunSgR9Hpcz1Y/3tOahgw9/G3pNDFlHyJNWP52sNJWn6QtnxlVYlw0in+rS
-         DwpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732026301; x=1732631101;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=f9+ZXpPOPig3xx8es3Ad+e/idZjq8WPG824uifMLItg=;
-        b=asj+o4WyiQKZ4mhdCZXjoMOElFctw4349c1KkXcJkUrXkG61BU9IJAppS/YgW635Bx
-         cbUkMUOoFoY4Kxr1LZ4gO1xDA7gQAFghE4zY1sC6/OEPK2N2iyOdb7ZRIBpiKYkF9vFQ
-         l3baw19XHmZiScM6sW9b+nkG/EpiJ86hxhVRaW+9iv5FROS6V3MBpt6Z1/aMrGMzpg38
-         YpSdec3Z8OASUkah4sbeze8fjQyqVVqquQ4zvaxlwIy4W+KDb1MutyUQVfULnwRQvTEU
-         mCq7FfomX+7GZ7eH2bIpVs1WJQVLc/6NauUmbvjlLK3WO+pbksS9uBR9Wgwpd1i4VUmv
-         FiBA==
-X-Forwarded-Encrypted: i=1; AJvYcCUa0wR9OOTnSRkiq5tzB0P7REjyxY5/MHg3NCpgUfKthnu/IMfbC4e7wsPQ/mmBzyM1IZmomB0Viqw+ELs=@vger.kernel.org, AJvYcCWcv9Tk+tZpEcwxNQRMawdhuTsbkQYaAcnf8TOGzHYFlvLvnckb60tU+SS97nyEMIjpnnzIej76ShMANPlLTHg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdNBq23ju4EqjeyQcdeY/XzpjI+iBX0QcewaGXvCkZQi+IfhRd
-	AYAzk8BmM73LJChLpNMYbQtwehJNUSPKWW9/uWvzsOS6s/8+0UT3Y+TUbjAVpu4c956ph6Y6ktZ
-	HO1mD2V93c57Jv4zrsVJaBAZOpdg=
-X-Google-Smtp-Source: AGHT+IGDQuZvYxpeBWOu0zWh0kgnWDlKHJRMUgF7I3RbprVTCPL0DLTqlOu8A9d7MCZlQoLSdVAaq3cVsJv5vAu1cfw=
-X-Received: by 2002:a2e:bd0a:0:b0:2f9:cc40:6afe with SMTP id
- 38308e7fff4ca-2ff6090e9c2mr77071141fa.14.1732026301218; Tue, 19 Nov 2024
- 06:25:01 -0800 (PST)
+	s=arc-20240116; t=1732026333; c=relaxed/simple;
+	bh=faK1wOPEMLtbvFH81uS6UZRz8bVRI065aqq+c3yNj20=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Oi+9//mjqfjgbQKmWh1RMdpOU7nGXyz9zBtKROQAgY9QzQ/LyLBZ/94CABak6NinURsFpILlNZUTcTD3zsrPq7JX6SI+tYMEofvWZ9Hh0ESbFwp4cw7B2HaLSkpxTGqU1IX7mQBDt36ucTDNq9ewjtPOpW0sbGHnDbl1BpJM6Kw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=BI1rR6UE; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1732026330;
+	bh=faK1wOPEMLtbvFH81uS6UZRz8bVRI065aqq+c3yNj20=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=BI1rR6UE8VDSPWVwM/oVINfzLu0uAo3iAHbmC+Tb+6qF74JI470cHeuM1EvB6es6g
+	 NnkJptto2Db6LwHeenpTHKeRCtRQJXOjIxAKCd0fEqRZYWHzl3tKfHBE9w7Z8B4TS4
+	 eXRlQApxY3MDB6SyVwvd7clfkzkAZjOVswoBDzLzCoRk0ZwwvilPHy++6sv9+W2EDr
+	 +T0uakXyHXERzHEZECJzMCwYbKuGOwolaJpaEB0Nx2CE5eC7L+JC18hOUjUlvJ66++
+	 xZhRfSEnDuWubV26Cv8Zb0blPT5Yfd+WA4NLa79c4Fhi6fkxuJ52/VJeEaD24lTSIA
+	 lC6czZ2XkOCrg==
+Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id B3F7417E36C5;
+	Tue, 19 Nov 2024 15:25:29 +0100 (CET)
+Date: Tue, 19 Nov 2024 15:25:25 +0100
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: Karunika Choo <karunika.choo@arm.com>
+Cc: nd@arm.com, Steven Price <steven.price@arm.com>, Liviu Dudau
+ <liviu.dudau@arm.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] drm/panthor: Simplify FW fast reset path
+Message-ID: <20241119152525.6579b438@collabora.com>
+In-Reply-To: <20241119135030.3352939-1-karunika.choo@arm.com>
+References: <20241119135030.3352939-1-karunika.choo@arm.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241118-rust-xarray-bindings-v9-0-3219cdb53685@gmail.com>
- <CANiq72=13uaXS+mptTiQZ7OLpyO_=r7-06cXEujFqtej=150YQ@mail.gmail.com>
- <CAJ-ks9nqcrOhOSuw+fN9+871W4YEs_rwRJehm=mnAx+M_v8Pqw@mail.gmail.com>
- <b4c1e64b-daef-4181-a3fb-98b4ab3a9c1e@igalia.com> <962f49a8-0d0c-4a1d-836f-e12c0f621917@asahilina.net>
- <CAJ-ks9mVHLC5EpiEp5t1=vNfDqPnn3bmYMgPRYr=K6DvRn0GgA@mail.gmail.com>
-In-Reply-To: <CAJ-ks9mVHLC5EpiEp5t1=vNfDqPnn3bmYMgPRYr=K6DvRn0GgA@mail.gmail.com>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Tue, 19 Nov 2024 09:24:25 -0500
-Message-ID: <CAJ-ks9nd_sMQ5KwOLMtbRwa=eA1snC8Ne=OR_oDf9974MUs8pA@mail.gmail.com>
-Subject: Re: [PATCH v9 0/2] rust: xarray: Add a minimal abstraction for XArray
-To: Asahi Lina <lina@asahilina.net>
-Cc: =?UTF-8?B?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>, 
-	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Danilo Krummrich <dakr@kernel.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Nov 19, 2024 at 9:21=E2=80=AFAM Tamir Duberstein <tamird@gmail.com>=
- wrote:
-> Ah yes - will add in v2.
+On Tue, 19 Nov 2024 13:50:29 +0000
+Karunika Choo <karunika.choo@arm.com> wrote:
 
-Err, I meant v10.
+> Stop checking the FW halt_status as MCU_STATUS should be sufficient.
+> This should make the check for successful FW halt and subsequently
+> setting fast_reset to true more robust.
+> 
+> We should also clear GLB_REQ.GLB_HALT bit only on post-reset prior
+> to starting the FW and only if we're doing a fast reset, because
+> the slow reset will re-initialize all FW sections, including the
+> global interface.
+> 
+> Signed-off-by: Karunika Choo <karunika.choo@arm.com>
+
+Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
+
+and I think you forgot to add Liviu's R-b
+
+> ---
+> v2:
+> - clarify comments and commit message with regards to when to clear the
+>   GLB_HALT flag.
+> 
+>  drivers/gpu/drm/panthor/panthor_fw.c | 15 ++++++++-------
+>  1 file changed, 8 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/panthor/panthor_fw.c b/drivers/gpu/drm/panthor/panthor_fw.c
+> index ecca5565ce41..4bc52b1b1a28 100644
+> --- a/drivers/gpu/drm/panthor/panthor_fw.c
+> +++ b/drivers/gpu/drm/panthor/panthor_fw.c
+> @@ -1098,17 +1098,11 @@ void panthor_fw_pre_reset(struct panthor_device *ptdev, bool on_hang)
+>  		panthor_fw_update_reqs(glb_iface, req, GLB_HALT, GLB_HALT);
+>  		gpu_write(ptdev, CSF_DOORBELL(CSF_GLB_DOORBELL_ID), 1);
+>  		if (!readl_poll_timeout(ptdev->iomem + MCU_STATUS, status,
+> -					status == MCU_STATUS_HALT, 10, 100000) &&
+> -		    glb_iface->output->halt_status == PANTHOR_FW_HALT_OK) {
+> +					status == MCU_STATUS_HALT, 10, 100000)) {
+>  			ptdev->fw->fast_reset = true;
+>  		} else {
+>  			drm_warn(&ptdev->base, "Failed to cleanly suspend MCU");
+>  		}
+> -
+> -		/* The FW detects 0 -> 1 transitions. Make sure we reset
+> -		 * the HALT bit before the FW is rebooted.
+> -		 */
+> -		panthor_fw_update_reqs(glb_iface, req, 0, GLB_HALT);
+>  	}
+>  
+>  	panthor_job_irq_suspend(&ptdev->fw->irq);
+> @@ -1134,6 +1128,13 @@ int panthor_fw_post_reset(struct panthor_device *ptdev)
+>  	 * the FW sections. If it fails, go for a full reset.
+>  	 */
+>  	if (ptdev->fw->fast_reset) {
+> +		/* The FW detects 0 -> 1 transitions. Make sure we reset
+> +		 * the HALT bit before the FW is rebooted.
+> +		 * This is not needed on a slow reset because FW sections are
+> +		 * re-initialized.
+> +		 */
+> +		panthor_fw_update_reqs(glb_iface, req, 0, GLB_HALT);
+> +
+>  		ret = panthor_fw_start(ptdev);
+>  		if (!ret)
+>  			goto out;
+
 
