@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-413805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D2BB9D1EF8
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 04:48:55 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3503F9D1EFB
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 04:54:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A8C7281A86
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 03:48:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 282AFB20B17
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 03:54:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AE8B148850;
-	Tue, 19 Nov 2024 03:48:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 342051494C9;
+	Tue, 19 Nov 2024 03:54:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="sL1hcJ4W"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="fp4bjXgX"
 Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59FF81863F;
-	Tue, 19 Nov 2024 03:48:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E798D1863F;
+	Tue, 19 Nov 2024 03:54:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731988125; cv=none; b=BnPLuIaPGtlpsqHRRxUde4qFRpRK7Vh+tzUcBYbAjyGHPlqupg3+7AUraNm3qZzMSNYCsManNKjCuYRAJvtrBC37jWhR+lMDYs8yhnrzFv2RtrECYUvBKFbOJTqExJsyYMRbVrb6f5XdXYS5NvfMbH58025VQ7KZmNawtBL9zno=
+	t=1731988445; cv=none; b=Z+x8uidHGwnUyhYRHMSyoEdM44BU+l+E0+9I7VTP0d+lI5njSjbME8M4ZqdIQpnIEFyJ5kvYWLTM2BRHZe2EbErfAdHmx7zneWtwjTgGq+aKnhenN6+t+1uoqD5huS5AxGhRMgbViVqkBhN4oT55l9KG5duxYyGOJg9ex4xoW/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731988125; c=relaxed/simple;
-	bh=VpnRR6K+8elVIoxOFS16GECY/oQnwsJ7JYVzPhYaucY=;
+	s=arc-20240116; t=1731988445; c=relaxed/simple;
+	bh=jJG3L4gmdF2yJCH6WtyfpSNOswFK8CKuR0vc4IfhodQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IgI5WEaZCxq0JsKRWfNeAgTdy2bn5Y9csyLqWUAkw7mHdgtrfR+yxraWCuF9PkXDDoqLSYFNlOoyuwm+bOI03pO9Zt2QXEPTE0iR8EbrK9eGAerKboEmI0L7tAn7GSDeJJvEwV6UlLOzhCD7p4mMyQiZuI07Y54gEjtgyRqeX2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=sL1hcJ4W; arc=none smtp.client-ip=144.6.53.87
+	 Content-Type:Content-Disposition:In-Reply-To; b=P7+0Yv2eZyFaII3kovzGXac4XTe1mtd25Xo72tHTUGiefnDA2iC+C1MQWe6wQm+g48yIhfvaLGXJfIou6wISeqBRozigHEKeJ1WbeosJIrUPB51eTnAVLKF76F78xSnMtilIfdL0OUnXRblEJCSOXIKEqVAaG4nKzw4wG3cNRJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=fp4bjXgX; arc=none smtp.client-ip=144.6.53.87
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
@@ -36,32 +36,30 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
 	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
 	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
 	List-Post:List-Owner:List-Archive;
-	bh=MA5utSwEz7H1vxVCeqgTcx1aZwAdO3vxz9WA1oQuuDo=; b=sL1hcJ4WPqJTiz3m3wx/GPmd5I
-	W8nestadOZKntFCRt0Dwr8cMQv1w+joWj9096WaT2FfzGw6FxsP9BtU3FJ4X5vQ9Ue+WFuLevW2sB
-	1hYUZbXllabHgTYq0SN9T6KzFF+1Irzi/94uN6tMyaiB96+kOPbTaIrah/UQGdWP2Mz+r+5lOir6g
-	cpS578+3pH43s62L8bUqfcsG6vub9A2CXFlsFz1EKi3DjxxRlg41snYhoQhn3GvNQC99bzCvwhi5P
-	haX6UPkCpD4I/yNnIPX1zAQ3p5qgy+9VuOtSJ0LlGHFjXMs/Rf9QjonXu9Uf66+zCLLuJBh63y+vA
-	M6RtJXsQ==;
+	bh=NOANPQBDcF3Z4dheQl98tZSiqC0YAS9KqHokuoZAeZM=; b=fp4bjXgXJNDG253v6A4DPhBYhb
+	JYy1rMbpp0VeN7NIorCJNJL5tlUiyCdkGojMAcL6ffKCCfzlWTr5yEr11d5y/0zYLgypzDt5GIcoh
+	mzSsmeOetX9UgQew7LRH/0QN93ZjqzZ7uPzG0F3buX8B8T6/YnrKzkMfQWOH35XwYTG21GvUtmJU+
+	X8Km8P1HOMf6LVhfWBb/X0BLNsoeHr9aDW4vWiBBH3KHb5/uzfegBcPEwNLUWZqHY6Ob8q/549H54
+	/+KGsux5SZYvRQoC3EEDkQ/FNUZbLz5edPbeMjlVfeJaU7a5V2h0mu0+INYle5jQ8fKTQk0SKRhOV
+	pGy8vb1w==;
 Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
 	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1tDFE2-000B2k-1Q;
-	Tue, 19 Nov 2024 11:48:27 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Tue, 19 Nov 2024 11:48:26 +0800
-Date: Tue, 19 Nov 2024 11:48:26 +0800
+	id 1tDFJF-000B78-12;
+	Tue, 19 Nov 2024 11:53:50 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Tue, 19 Nov 2024 11:53:49 +0800
+Date: Tue, 19 Nov 2024 11:53:49 +0800
 From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Breno Leitao <leitao@debian.org>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Stephen Hemminger <stephen@networkplumber.org>,
+To: patchwork-bot+netdevbpf@kernel.org
+Cc: Breno Leitao <leitao@debian.org>, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	horms@kernel.org, stephen@networkplumber.org,
 	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	paulmck@kernel.org
-Subject: Re: [PATCH net 2/2] netpoll: Use rcu_access_pointer() in
- netpoll_poll_lock
-Message-ID: <ZzwKipL-4Lo9L4zV@gondor.apana.org.au>
+	paulmck@kernel.org, Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH net 0/2] netpoll: Use RCU primitives for npinfo pointer
+ access
+Message-ID: <ZzwLzfzjGgG28VYW@gondor.apana.org.au>
 References: <20241118-netpoll_rcu-v1-0-a1888dcb4a02@debian.org>
- <20241118-netpoll_rcu-v1-2-a1888dcb4a02@debian.org>
+ <173198763100.93658.15150293129668090015.git-patchwork-notify@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,26 +68,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241118-netpoll_rcu-v1-2-a1888dcb4a02@debian.org>
+In-Reply-To: <173198763100.93658.15150293129668090015.git-patchwork-notify@kernel.org>
 
-On Mon, Nov 18, 2024 at 03:15:18AM -0800, Breno Leitao wrote:
->
-> diff --git a/include/linux/netpoll.h b/include/linux/netpoll.h
-> index cd4e28db0cbd77572a579aff2067b5864d1a904a..959a4daacea1f2f76536e309d198bc14407942a4 100644
-> --- a/include/linux/netpoll.h
-> +++ b/include/linux/netpoll.h
-> @@ -72,7 +72,7 @@ static inline void *netpoll_poll_lock(struct napi_struct *napi)
->  {
->  	struct net_device *dev = napi->dev;
->  
-> -	if (dev && dev->npinfo) {
-> +	if (dev && rcu_access_pointer(dev->npinfo)) {
+On Tue, Nov 19, 2024 at 03:40:31AM +0000, patchwork-bot+netdevbpf@kernel.org wrote:
+> Hello:
+> 
+> This series was applied to netdev/net.git (main)
+> by Jakub Kicinski <kuba@kernel.org>:
+> 
+> On Mon, 18 Nov 2024 03:15:16 -0800 you wrote:
+> > The net_device->npinfo pointer is marked with __rcu, indicating it requires
+> > proper RCU access primitives:
+> > 
+> >   struct net_device {
+> > 	...
+> > 	struct netpoll_info __rcu *npinfo;
+> > 	...
+> >   };
+> > 
+> > [...]
+> 
+> Here is the summary with links:
+>   - [net,1/2] netpoll: Use rcu_access_pointer() in __netpoll_setup
+>     https://git.kernel.org/netdev/net/c/c69c5e10adb9
+>   - [net,2/2] netpoll: Use rcu_access_pointer() in netpoll_poll_lock
+>     https://git.kernel.org/netdev/net/c/a57d5a72f8de
 
-This function is only ever called in a BH context and as such
-the correct primitive would be rcu_dereference.  Indeed calling
-this outside of BH/RCU context would be silly.
+These are not bug fixes.  They should not be going through during
+a merge window, especially with such a short period of review.
 
-Cheers,
+Thanks,
 -- 
 Email: Herbert Xu <herbert@gondor.apana.org.au>
 Home Page: http://gondor.apana.org.au/~herbert/
