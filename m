@@ -1,67 +1,65 @@
-Return-Path: <linux-kernel+bounces-414444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8B959D2811
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 15:25:40 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A1A89D2822
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 15:28:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9749B1F24265
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 14:25:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4779B2C1FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 14:26:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 882061CCEF5;
-	Tue, 19 Nov 2024 14:25:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6666E1CEE94;
+	Tue, 19 Nov 2024 14:25:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="BI1rR6UE"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tooqZ7lK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB06514658D
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 14:25:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7D131CBE8D;
+	Tue, 19 Nov 2024 14:25:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732026333; cv=none; b=k11zeNNHLVnY9+UtupKVDcPA0Znc2jUVcQV446U7FZ9VZCHtln9tbORyNVIhca1SA/I+a+9KkgSg4VYveCediBFnykEx9R68hbVX6XRIkIm6yMkFtSGKraq3uF7d90GXJq0Z6Qc52BisRJnTnoXL5TsW2bQI9WlLX+a0xXUgZq8=
+	t=1732026345; cv=none; b=DHJZzd1hHKfH89NndXA7QPmkjZCsZHGOj7ETSuUVAUxA46vv/J0t/cSBwzzOtkDvhEI0JHnsQTxt+pKv02xVOgNv1RKeS2U5enn+RP/Bn+65bKCmSsXA2fjQvF79flCiRq1snNMwqE3Lw+PJMnQBST5eIVAgEhEjr6nyU5p4bm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732026333; c=relaxed/simple;
-	bh=faK1wOPEMLtbvFH81uS6UZRz8bVRI065aqq+c3yNj20=;
+	s=arc-20240116; t=1732026345; c=relaxed/simple;
+	bh=mjmuQ5REEGrJNiwfId8qSYDdZ9xIZ6W//wGJVaY2Mh0=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Oi+9//mjqfjgbQKmWh1RMdpOU7nGXyz9zBtKROQAgY9QzQ/LyLBZ/94CABak6NinURsFpILlNZUTcTD3zsrPq7JX6SI+tYMEofvWZ9Hh0ESbFwp4cw7B2HaLSkpxTGqU1IX7mQBDt36ucTDNq9ewjtPOpW0sbGHnDbl1BpJM6Kw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=BI1rR6UE; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1732026330;
-	bh=faK1wOPEMLtbvFH81uS6UZRz8bVRI065aqq+c3yNj20=;
+	 MIME-Version:Content-Type; b=CxvLqB4xlwAW0Kkiu5SqYBMI831hwe9CY3Xl8FpBOQ/7Byi/2nwCVhxTh4YC4r/f93cbH3NDEKWoNb96AEOcTCvPZ+mF6LP1tsXP+8fsJYsusxoRMPxC1vmfJB4nvNGktEz2G8e2N0nmGLZ3jlB82tsLuCDB7JbIfoLowvTmaoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tooqZ7lK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD441C4CED0;
+	Tue, 19 Nov 2024 14:25:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732026345;
+	bh=mjmuQ5REEGrJNiwfId8qSYDdZ9xIZ6W//wGJVaY2Mh0=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=BI1rR6UE8VDSPWVwM/oVINfzLu0uAo3iAHbmC+Tb+6qF74JI470cHeuM1EvB6es6g
-	 NnkJptto2Db6LwHeenpTHKeRCtRQJXOjIxAKCd0fEqRZYWHzl3tKfHBE9w7Z8B4TS4
-	 eXRlQApxY3MDB6SyVwvd7clfkzkAZjOVswoBDzLzCoRk0ZwwvilPHy++6sv9+W2EDr
-	 +T0uakXyHXERzHEZECJzMCwYbKuGOwolaJpaEB0Nx2CE5eC7L+JC18hOUjUlvJ66++
-	 xZhRfSEnDuWubV26Cv8Zb0blPT5Yfd+WA4NLa79c4Fhi6fkxuJ52/VJeEaD24lTSIA
-	 lC6czZ2XkOCrg==
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id B3F7417E36C5;
-	Tue, 19 Nov 2024 15:25:29 +0100 (CET)
-Date: Tue, 19 Nov 2024 15:25:25 +0100
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: Karunika Choo <karunika.choo@arm.com>
-Cc: nd@arm.com, Steven Price <steven.price@arm.com>, Liviu Dudau
- <liviu.dudau@arm.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] drm/panthor: Simplify FW fast reset path
-Message-ID: <20241119152525.6579b438@collabora.com>
-In-Reply-To: <20241119135030.3352939-1-karunika.choo@arm.com>
-References: <20241119135030.3352939-1-karunika.choo@arm.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	b=tooqZ7lKmc3u22VG1T3RT+aV21g+7MzJh0jOrENS5symZUeqUx9x3GboDdxWoxeUD
+	 4iA2AWldYyxFuQGOIItG+us8hp1y+iOCdsYdZpkQy/34fMyMLj81ZcgVYpSD76nYVA
+	 8SnCl9CjS0uzSU0GKEpgZy6CK2Oi9BhNRuR/bkeiad5ITWUcVBOjBAbIApwNGYje7S
+	 BLbe/TUqzKVs+4LWjHDHidP4zUKK3UZzD4QKUB6+GePIrbpHSUdsDbZchazYjKKCKG
+	 FSYTAAHjrjtZbbnij1FtlSoRf2Fna0xBpe1eMshNvjbbMFlHGWrQI2j18DK/4i7zHQ
+	 PhUiEMIHkZGyg==
+Date: Tue, 19 Nov 2024 06:25:43 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Alexander Lobakin <aleksander.lobakin@intel.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Toke
+ =?UTF-8?B?SMO4aWxhbmQtSsO4cmdlbnNlbg==?= <toke@redhat.com>, "Alexei
+ Starovoitov" <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ "John Fastabend" <john.fastabend@gmail.com>, Andrii Nakryiko
+ <andrii@kernel.org>, Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
+ Stanislav Fomichev <sdf@fomichev.me>, Magnus Karlsson
+ <magnus.karlsson@intel.com>, <nex.sw.ncis.osdt.itp.upstreaming@intel.com>,
+ <bpf@vger.kernel.org>, <netdev@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next v5 00/19] xdp: a fistful of generic changes
+ (+libeth_xdp)
+Message-ID: <20241119062543.242dc6a9@kernel.org>
+In-Reply-To: <63df7a6a-bb4a-410d-9060-be47c9d9a157@intel.com>
+References: <20241113152442.4000468-1-aleksander.lobakin@intel.com>
+	<20241115184301.16396cfe@kernel.org>
+	<63df7a6a-bb4a-410d-9060-be47c9d9a157@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,68 +69,16 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Tue, 19 Nov 2024 13:50:29 +0000
-Karunika Choo <karunika.choo@arm.com> wrote:
-
-> Stop checking the FW halt_status as MCU_STATUS should be sufficient.
-> This should make the check for successful FW halt and subsequently
-> setting fast_reset to true more robust.
+On Tue, 19 Nov 2024 13:06:56 +0100 Alexander Lobakin wrote:
+> > This clearly could be multiple series, please don't go over the limit.  
 > 
-> We should also clear GLB_REQ.GLB_HALT bit only on post-reset prior
-> to starting the FW and only if we're doing a fast reset, because
-> the slow reset will re-initialize all FW sections, including the
-> global interface.
-> 
-> Signed-off-by: Karunika Choo <karunika.choo@arm.com>
+> Sorta.
+> I think I'll split it into two: changing the current logic + adding new
+> functions and libeth_xdp. Maybe I could merge the second one with the
+> Chapter IV, will see.
 
-Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
-
-and I think you forgot to add Liviu's R-b
-
-> ---
-> v2:
-> - clarify comments and commit message with regards to when to clear the
->   GLB_HALT flag.
-> 
->  drivers/gpu/drm/panthor/panthor_fw.c | 15 ++++++++-------
->  1 file changed, 8 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/panthor/panthor_fw.c b/drivers/gpu/drm/panthor/panthor_fw.c
-> index ecca5565ce41..4bc52b1b1a28 100644
-> --- a/drivers/gpu/drm/panthor/panthor_fw.c
-> +++ b/drivers/gpu/drm/panthor/panthor_fw.c
-> @@ -1098,17 +1098,11 @@ void panthor_fw_pre_reset(struct panthor_device *ptdev, bool on_hang)
->  		panthor_fw_update_reqs(glb_iface, req, GLB_HALT, GLB_HALT);
->  		gpu_write(ptdev, CSF_DOORBELL(CSF_GLB_DOORBELL_ID), 1);
->  		if (!readl_poll_timeout(ptdev->iomem + MCU_STATUS, status,
-> -					status == MCU_STATUS_HALT, 10, 100000) &&
-> -		    glb_iface->output->halt_status == PANTHOR_FW_HALT_OK) {
-> +					status == MCU_STATUS_HALT, 10, 100000)) {
->  			ptdev->fw->fast_reset = true;
->  		} else {
->  			drm_warn(&ptdev->base, "Failed to cleanly suspend MCU");
->  		}
-> -
-> -		/* The FW detects 0 -> 1 transitions. Make sure we reset
-> -		 * the HALT bit before the FW is rebooted.
-> -		 */
-> -		panthor_fw_update_reqs(glb_iface, req, 0, GLB_HALT);
->  	}
->  
->  	panthor_job_irq_suspend(&ptdev->fw->irq);
-> @@ -1134,6 +1128,13 @@ int panthor_fw_post_reset(struct panthor_device *ptdev)
->  	 * the FW sections. If it fails, go for a full reset.
->  	 */
->  	if (ptdev->fw->fast_reset) {
-> +		/* The FW detects 0 -> 1 transitions. Make sure we reset
-> +		 * the HALT bit before the FW is rebooted.
-> +		 * This is not needed on a slow reset because FW sections are
-> +		 * re-initialized.
-> +		 */
-> +		panthor_fw_update_reqs(glb_iface, req, 0, GLB_HALT);
-> +
->  		ret = panthor_fw_start(ptdev);
->  		if (!ret)
->  			goto out;
-
+FWIW I was tempted to cherry-pick patches 2, 4, 5, 6, and 7, since they
+look uncontroversial and stand on their own. But wasn't 100% sure I'm
+not missing a dependency. Then I thought - why take the risk, let me
+complain instead :) Easier to make progress with smaller series..
 
