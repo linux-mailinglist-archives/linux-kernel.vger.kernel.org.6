@@ -1,150 +1,228 @@
-Return-Path: <linux-kernel+bounces-414034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E6669D2225
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 10:06:51 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 729619D2226
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 10:07:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32A731F23FE6
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 09:06:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 01950B22117
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 09:07:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C70819DF9E;
-	Tue, 19 Nov 2024 09:06:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F020519ABC3;
+	Tue, 19 Nov 2024 09:06:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PqFZP3J9"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="eLJBNVQj"
+Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazon11010001.outbound.protection.outlook.com [52.101.229.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01C6F12CDAE;
-	Tue, 19 Nov 2024 09:06:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732007201; cv=none; b=VJV1872FJiLNe8ay4dJj4LlRLTiMuvDRCTPQ4Ap+uxJZGTiAbaPlTtPs4g+GDJ10Q5kB+9aH18CToc1KjS+8bRP79YGdCnItHaEsPhdYzirJxmUNiGeYu5vDwMgAF+haFbDjIfrGZ3X+9U1r3NOKuaewu/gaX/fxXz+5iD32pBU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732007201; c=relaxed/simple;
-	bh=HtjEr6MyQAiTzXqILd1meE2GmGtMVF3rg86A6w3dlq4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=celBKSwspmyhnDu669PUmMjQlm1pYq9qIFPVgQde+Fp96ctjQeBVwuX8D/iYZcUJWWaGSPIqGToOUlx5PwxUTR26YxNB9SsMzYJqu5GvFDfuNK/5JK54OHT0nmmQjTjxuZ62OsK+3zSaXem6oIwkfZOAyEP0Beiac1c0Nrw+2a4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PqFZP3J9; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732007200; x=1763543200;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=HtjEr6MyQAiTzXqILd1meE2GmGtMVF3rg86A6w3dlq4=;
-  b=PqFZP3J9s/1aoYNP4DglFf9JQGx6QGRSCKGUrXbQL7e2SF1todx4MyjB
-   15snAYVIKjrylBAeFPu3lSpzvSEFMOLAlP59VUd4kpD/5G1bHbAEqrqQr
-   ZIXdaMohJTLU3FsII2kidyEKczbTRvG94tnUQcbFtTXnxsAS5a7Krhcq9
-   hYq2buEM03o4PrRbsx81PnJ/fBtF+qvvsqP0aUMVx5WbKpMhl15xyIXNe
-   OtNI8TfRogQClKVze5HeHN9OMC/yfefjFXN3ljaGWACi/6Nxvz+Fwj795
-   h012i0BJuYVtMzm0QME8ySgcRCsTnyIBtavYjUzV6q2VgjgoGPZSH6kqr
-   g==;
-X-CSE-ConnectionGUID: ObkncoqLQG2EihhT+blugg==
-X-CSE-MsgGUID: qMs+8ouDT0eNEuenTXYg5Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11260"; a="19605052"
-X-IronPort-AV: E=Sophos;i="6.12,165,1728975600"; 
-   d="scan'208";a="19605052"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Nov 2024 01:06:39 -0800
-X-CSE-ConnectionGUID: zsvHZ+PwTi68k0a9K6UDpA==
-X-CSE-MsgGUID: 4tKkEW0eSyiBbNpB7+8d9g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,165,1728975600"; 
-   d="scan'208";a="89905283"
-Received: from choongyo-mobl.gar.corp.intel.com (HELO [10.247.75.104]) ([10.247.75.104])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Nov 2024 01:06:36 -0800
-Message-ID: <c1bb831c-fd88-4b03-bda6-d8f4ec4a1681@linux.intel.com>
-Date: Tue, 19 Nov 2024 17:06:33 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8818C12CDAE
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 09:06:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.229.1
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732007211; cv=fail; b=mjVKfJ4YtZhswuM1p30gG+/HdT7uMlM6CpmPMq74o5Dexow7H+b+pRQZHdZAqnnaYMUxFUfCrF1OlmyY/q3XnJP9P66mjDN1ljRy9+L9N2VtCC6qpsJ03yrKPr9tPubLcEc6JPfcl3nVpyQOvjjoEDic9+q7+h4l5DpRNc4hnwQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732007211; c=relaxed/simple;
+	bh=RBymhdNJ+1IgA0oJKa4Su/287z3BXMfFh87V4Jn7XLc=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=FO/W5Qh0o2+SJEjDlv4moLiMVLfTrg/8WUaMKi/nRyynEoCsjhZDc/6R9eReRRM8Ww4Jugj45xohH0T3No55pmh+VuXKp0hk+1ijO6OlcjJ8fS5mecH3jnus++nDb1Yz4juv1Hed1qMDWRVHd3GxkNaDJ+JQda/SbcjU5OygYME=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=eLJBNVQj; arc=fail smtp.client-ip=52.101.229.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=JTuMkfq980V18l6o9D84HryRWYNiKj/4E3cXdl5NvfoRBFCutIJ2vpLS8lMVipj7jDmTm3spK2NUurwb4QEmoiwudOPRl5tXHtupSu56YTFmQGZx+k4jpuxOtF65/9UYw4mLZOWyOvbdlj26uJLTfVaM/KdQL5V7606PIrf5ppuvwoUgOtTZbQ3KxS5OO0nT7KR0qUYp0Z0snBoKPSy0M8GK6eTBL56nRyBUc+6R7sgomgcwQwyAAFQnRUZPtSdi3EtoHQRNr5x7vhmbYsAO6FJ8zCPMTeveBWuGWv0aijHaql110rGwFx8gP48vdlcBKCL7zCxzFuPjq6+kB8miYw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=x+U3WciYrj4IJbGCwLw5xlTqJAWCi+TfQy1sG+Bgb/s=;
+ b=UqG1Dtm8hB6goR8gOQ4bBuUlq6F7HoZtZ+OnUJVIbFjOWlVz+E+otMPHvNI8W0PWp7lJJZiFB9ZswGwRuPeaVqPdkUdF1onE83v4LZfhY0Kxf9iYKgRVdfVIRctJ4p9Ennhjj2GSFyB/mgnhCwXj/f7CULU/0Jkpwo+3eiiG0noA60ikK6LF2yiERhFSdpKfCyymzp/44ZPkDY7Tc1AuEF1/JkGs5F1JeCApSxSKEt4czqmBESyBOUQtGJSAyQNPQcDQlbcdo1S9/zAnaYqm3AnOIeC2HcibrN+TbfTuohV2Xo1U7DrJI00S6sXqLfh0jPzY4k3rr9g6i4o+DqUCHA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=x+U3WciYrj4IJbGCwLw5xlTqJAWCi+TfQy1sG+Bgb/s=;
+ b=eLJBNVQjXtIeVGal5LIV7ibY+fUOfedqnuCMad0Yv8UYmblBXIuvMZsQfUyjJlugdqw+uBlhxwjAERJ6x5aM2xMSNhjBQePFTw9lOOB72JU4s8q0S5PlX1cdQC+Cqts6Qhtd7WWW0hH+cAGMDNQyLksBXCHrRGcER+NeJbtmInc=
+Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
+ by TYYPR01MB6825.jpnprd01.prod.outlook.com (2603:1096:400:d0::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.24; Tue, 19 Nov
+ 2024 09:06:40 +0000
+Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
+ ([fe80::86ef:ca98:234d:60e1]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
+ ([fe80::86ef:ca98:234d:60e1%3]) with mapi id 15.20.8158.019; Tue, 19 Nov 2024
+ 09:06:40 +0000
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: Claudiu.Beznea <claudiu.beznea@tuxon.dev>, "p.zabel@pengutronix.de"
+	<p.zabel@pengutronix.de>, "broonie@kernel.org" <broonie@kernel.org>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"jbrunet@baylibre.com" <jbrunet@baylibre.com>, Claudiu.Beznea
+	<claudiu.beznea@tuxon.dev>, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: RE: [PATCH] reset: rzg2l-usbphy-ctrl: Assign proper of node to the
+ allocated device
+Thread-Topic: [PATCH] reset: rzg2l-usbphy-ctrl: Assign proper of node to the
+ allocated device
+Thread-Index: AQHbOmEO4WpuDveF/0m6fUTtmlqMerK+T67g
+Date: Tue, 19 Nov 2024 09:06:40 +0000
+Message-ID:
+ <TY3PR01MB113469C850289353DD9C28F7C86202@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+References: <20241119085554.1035881-1-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20241119085554.1035881-1-claudiu.beznea.uj@bp.renesas.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|TYYPR01MB6825:EE_
+x-ms-office365-filtering-correlation-id: b2cf58ab-74d3-485b-d57e-08dd08797b0f
+x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|1800799024|366016|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?Dj7lDY2LKC0QFRxwmTVQjosWDKLvEXdGlYweRgbb+6ODEbAIWdEsUDTKZRfS?=
+ =?us-ascii?Q?oOfFFT5b7rwddt/5pR1thWTH11h0LH8IvlrT7OIQKR9xb4OESkYdwAtu7WBx?=
+ =?us-ascii?Q?CT4LpBqI+oJBP4K+yPPNjA64yG9iPBnv4mB5xpOhcIC2rMaEE9viYFn+MEAn?=
+ =?us-ascii?Q?O2BNNjLHxqNTsOUk3q0370fW8sq2IF48XvBNmpqD41gZO0XhMgnVc+iFJV8s?=
+ =?us-ascii?Q?csfDcJaV/SIdBaJYc9aC7E8b0ImzSeNqSDCGCi2fu1C+lTGgGbW5KYzeORHb?=
+ =?us-ascii?Q?XyEEhmvXIPJAmKRA4Oa1YSsF+BFvQN6eop41itoFcERXXIFXKpHP03MXvUBn?=
+ =?us-ascii?Q?AAjxnoK4jSZccWiQl+Mg3906F9OlG5r3fdWbOiIa0ksh6A+o/C3HpgiYPqmr?=
+ =?us-ascii?Q?iLDM2Uf5QvS7C9Vh7fxwv403EEyzWKVIzGIrQrHMmUU4LUptvxaVaEEltDC9?=
+ =?us-ascii?Q?//6APMaqFGiqXA3mL8JiqzemqfKndDrP2glKBYl6D7W1I4N5di2gLM1tIeHu?=
+ =?us-ascii?Q?YlpXwK2k0han0xmVH8fV5wzdmFhD+/iKLu9sNT8s7wZumiMp7z044TCNPKTn?=
+ =?us-ascii?Q?HmdCPqOBACxzUpor3bcYoiDtNng+UPbqsc+sg64//b2PIZA9guf3TcsZCaOM?=
+ =?us-ascii?Q?shFAtozu3BesJiGP0qTXXa8g0aDDxsuEeUsXqXF+q5CaGXQsjBBpYGc4k1dF?=
+ =?us-ascii?Q?S2neBMnPusI4d8XqsueXSEV6WJ0JqeWnH0vM0YC0sdMRy5AS5x0J9U9PuXx7?=
+ =?us-ascii?Q?WnElxeylUgoLg0vxriXXrPVVpOmQ+RjVrsJjRKIQmLu09+2k0bqRGrm1PYNe?=
+ =?us-ascii?Q?E149xjx92TEzMwyxQGML+KOpoDNWzSic8rpGQy47AymBOqMX2xfD7DKKwt7p?=
+ =?us-ascii?Q?vUS5OTlujZ8KqyTn+B3kFlYE9dphztcScMMc5LsGb9DfVuqciOAaEKxj6Eai?=
+ =?us-ascii?Q?NhlkuOdfTKGifMTnD73QCiEVjoIAHUDBzFYCmefh9Xcz94Kri/ppAzH/7573?=
+ =?us-ascii?Q?s1OOg/Nb0ZgzpwQT91TXSy6tqLS+RcU7nwwXpYnUsAgJzQ60CBEAvK0uytHV?=
+ =?us-ascii?Q?oEcmkZeynu2fFs5Hp3PhAOVdIbt7aAS8ATD/5bGeX/9vQ/pXqzjNy2RKMv2V?=
+ =?us-ascii?Q?GxRIXABWQm+vHk1TwpE8Tb7I+YRsdATyXhIQW06vnY2+giVmwBa0nfCILT6X?=
+ =?us-ascii?Q?O28BM1CrvHsKf5DEijzCbVSkyjzj088AENF3bx1HRDaRNP3wQIRyOdsCV3jB?=
+ =?us-ascii?Q?gl/8ZA2AatBFTpQDIEYrhfHbYSHKGOR9zVkgyZe7KtuCdcn4skqHDxvoIPek?=
+ =?us-ascii?Q?x2/qma1CaZAdf5rX2hFI2vQHmdsSvepsYOGog0VodZn/IFeGTzq+tIHdK6LM?=
+ =?us-ascii?Q?j2eGAl0=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?lbnsxQzA2oSFpoW29cocer+kQhBrudaGSAOh3ryA6rQHZ8ljggIyTR0fViuh?=
+ =?us-ascii?Q?zjCAughlyZy8aRnlFI9U5B2d/d5dpQODevhiL1AGeGwecs5Ez53zBYkb7sqs?=
+ =?us-ascii?Q?yBFQrI+HlEluu3yuzgjFLX6N85AOCE1o5qC6zGPKtqBHQB/HAa7MXhtRJqO/?=
+ =?us-ascii?Q?89GrqE/3gn6s/Rg4XP5ioQVVuFMJ6lbfvuxR41tk84u4D2yMMJv6uWvB09Er?=
+ =?us-ascii?Q?ZDyaDnWM9GqYeI+Um+VpPsttgERMpahb3fkGx9wkSUPz1gCWTSV0tR6oTazM?=
+ =?us-ascii?Q?Gs+yT8hFiT7luK71DTU24TIkt+R2IIsprVHNW8LCpZ7OFErlfrHBX5/m0DLK?=
+ =?us-ascii?Q?95VXg8VH+mFQ3BGobBU2ZoNax3GYQHBCNX7xPrwW9pbQ0IG7QOQX36tDte2e?=
+ =?us-ascii?Q?lX+swqxrKiZd9m8p2M5iX6FtBdmOP54CzYWRmI24l0V5v3TRNnc5rivNiN8R?=
+ =?us-ascii?Q?ADBzKSJZhS1AFJz/w/WO/rNdTP5ceH9PT3hdoeBdYtnHR6iGvtDXs8qXAQbY?=
+ =?us-ascii?Q?elJduMf3rGgwZQwm2n6XpLjxO4aDcADrNFGYJgmk4i/CO4EgiwpjtSkebF5Q?=
+ =?us-ascii?Q?TGAJBD5RF1pYG3god3GqDydL42CVzbEzEq2UHuzWq/WLNO5s820MnNsamvib?=
+ =?us-ascii?Q?QpeDtJc1KRRbhKa1qxLVnCjZ3fzV9jjD0sBVQJd9vEqGcoDxl2/FFOiNTm1O?=
+ =?us-ascii?Q?QtegPH3XY+fpHD847RQwZsvgd7QN7UB0NwyYsUmE8uEXf/2mE4Ufdesc7yCR?=
+ =?us-ascii?Q?8vX0+uk+dxoH56680Vcc/enSbPGWacfvj9N7tHg2wZwtdgVqVaAf+IsWunz2?=
+ =?us-ascii?Q?+zra+8ZOntdtV2MrExfmJeiN58YvIflLRbEVMr5pEuM0xr0SMqr1J6TYMwOA?=
+ =?us-ascii?Q?jpo64T+5eWEGEP830gIKVeA+CY6Bh2O3vFDnJCzlF4eX3O2ICEOLreHF0wj+?=
+ =?us-ascii?Q?9txr5Ohl3oY2AfR5Egvel9GaAXjrrlFB3mC/Lwd5wnUmYGRkL7OgQ6fNAmk6?=
+ =?us-ascii?Q?W7qiER0blBG4iHJmSfrsBWWp4FlABXHyTXO1jFlG8mnal7NAPckxEb70hdEZ?=
+ =?us-ascii?Q?pG5kF3vsTdeU1KmnAJFJQfDtE+fbNKS3YADvUfC+zlcxqIh53YkVLqzE6pjG?=
+ =?us-ascii?Q?941TAV4GbzswdUqZ8bfWTnFz/PFuJj11Gqy9I4fxIlMrjs4JTxnA+zCp1os6?=
+ =?us-ascii?Q?yv7qPQjLEzjfkQCOCzdeU2u56mPtl39tVFfBnqDUPfd+KLYJM2BeL3ikZWER?=
+ =?us-ascii?Q?W2c0bpacOMvapHUO2d/se149L58joYViGITX9vx3p/fxGaymjnJM94mc9m+b?=
+ =?us-ascii?Q?bbS7wgb8QXNvr0g3EmIa7xWAeruXH4bnsERoi6vzdWtIiKK51VPo5SJlfnSa?=
+ =?us-ascii?Q?LBb/h9KBWuxvYDQusKOZ+L+N7TzfALTK1/cmTdQQxno/Zi/AzaIVOH6kaL7G?=
+ =?us-ascii?Q?UdfPi9KY4Cx3NwKtV4SyiKBdNaw3Y1Qni0H4aduqeXLjIG7y1F4BPQPOwQSZ?=
+ =?us-ascii?Q?mK0KW1dEXbCYMXe8Jyv/xIETYsMcGmPgtQvZ5r+GXzdxK6pNg0ohEjb1DmpC?=
+ =?us-ascii?Q?8LogO7eCwOAHs+XMLxxll6iI45QjzSZyoFXLskr2C21ETmVu4B7F/jQTiNP8?=
+ =?us-ascii?Q?9A=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net v2 1/2] net: phy: replace phydev->eee_enabled with
- eee_cfg.eee_enabled
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
- "David S . Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Jose Abreu <joabreu@synopsys.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Oleksij Rempel <o.rempel@pengutronix.de>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org
-References: <20241115111151.183108-1-yong.liang.choong@linux.intel.com>
- <20241115111151.183108-2-yong.liang.choong@linux.intel.com>
- <ZzdOkE0lqpl6wx2d@shell.armlinux.org.uk>
-Content-Language: en-US
-From: Choong Yong Liang <yong.liang.choong@linux.intel.com>
-In-Reply-To: <ZzdOkE0lqpl6wx2d@shell.armlinux.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b2cf58ab-74d3-485b-d57e-08dd08797b0f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Nov 2024 09:06:40.5035
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: fdnFdUKEJCfIoHuYyRWQR1ohVGX4pJH3OqyZYfRSlAAWClubUtpAW75KQ6LS4WcDMb7VOj1M3I05Ron+oOQIqAGYvaK1lhIguthUhoeaNJg=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYYPR01MB6825
 
+Hi Claudiu,
 
+Thanks for the patch.
 
-On 15/11/2024 9:37 pm, Russell King (Oracle) wrote:
-> On Fri, Nov 15, 2024 at 07:11:50PM +0800, Choong Yong Liang wrote:
->> Not all PHYs have EEE enabled by default. For example, Marvell PHYs are
->> designed to have EEE hardware disabled during the initial state.
->>
->> In the initial stage, phy_probe() sets phydev->eee_enabled to be disabled.
->> Then, the MAC calls phy_support_eee() to set eee_cfg.eee_enabled to be
->> enabled. However, when phy_start_aneg() is called,
->> genphy_c45_an_config_eee_aneg() still refers to phydev->eee_enabled.
->> This causes the 'ethtool --show-eee' command to show that EEE is enabled,
->> but in actuality, the driver side is disabled.
->>
->> This patch will remove phydev->eee_enabled and replace it with
->> eee_cfg.eee_enabled. When performing genphy_c45_an_config_eee_aneg(),
->> it will follow the master configuration to have software and hardware
->> in sync.
-> 
-> Hmm. I'm not happy with how you're handling my patch. I would've liked
-> some feedback on it (thanks for spotting that the set_eee case needed
-> to pass the state to genphy_c45_an_config_eee_aneg()).
-> 
-> However, what's worse is, that the bulk of this patch is my work, yet
-> you've effectively claimed complete authorship of it in the way you
-> are submitting this patch. Moreover, you are violating the kernel
-> submission rules, as the Signed-off-by does not include one for me
-> (which I need to explicitly give.) I was waiting for the results of
-> your testing before finalising the patch.
-> 
-> The patch needs to be authored by me, the first sign-off needs to be
-> me, then optionally Co-developed-by for you, and then your sign-off.
-> 
-> See Documentation/process/submitting-patches.rst
-> 
-> Thanks.
-> 
-> pw-bot: cr
-> 
+> -----Original Message-----
+> From: Claudiu <claudiu.beznea@tuxon.dev>
+> Sent: 19 November 2024 08:56
+> Subject: [PATCH] reset: rzg2l-usbphy-ctrl: Assign proper of node to the a=
+llocated device
+>=20
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>=20
+> The platform device named "rzg2l-usb-vbus-regulator", allocated by the rz=
+g2l-usbphy-ctrl driver, is
+> used to instantiate a regulator driver.
+> This regulator driver is associated with a device tree (DT) node, which i=
+s a child of the rzg2l-
+> usbphy-ctrl DT node. The regulator's DT node allows consumer nodes to ref=
+erence the regulator and
+> configure the regulator as needed.
+>=20
+> Starting with commit cd7a38c40b23 ("regulator: core: do not silently igno=
+re provided init_data") the
+> struct regulator_dev::dev::of_node is no longer populated using of_node_g=
+et(config->of_node) if the
+> regulator does not provide init_data. Since the rzg2l-usb-vbus-regulator =
+does not provide init_data,
+> this behaviour causes the of_find_regulator_by_node() function to fails, =
+resulting in errors when
+> attempting to request the regulator.
+>=20
+> To fix this issue, call device_set_of_node_from_dev() for the "rzg2l-usb-=
+vbus-regulator" platform
+> device.
+>=20
+> Fixes: 84fbd6198766 ("regulator: Add Renesas RZ/G2L USB VBUS regulator dr=
+iver")
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Sorry for the late reply; I just got back from my sick leave. I wasn't 
-aware that you had already submitted a patch. I thought I should include it 
-in my patch series. However, I think I messed up the "Signed-off" part. 
-Sorry about that.
+Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
 
-The testing part actually took quite some time to complete, and I was 
-already sick last Friday. I was only able to complete the patch series and 
-resubmit the patch, and I thought we could discuss the test results from 
-the patch series. The issue was initially found with EEE on GPY PHY working 
-together with ptp4l, and it did not meet the expected results. There are 
-many things that need to be tested, as it is not only Marvell PHY that has 
-the issue.
+Cheers,
+Biju
 
-With your patch, most of the issues were resolved based on the testing. 
-However, the set_eee was using the old value of eee_enabled and was not 
-able to turn EEE on or off. I think Heiner's patch already solved that part.
+> ---
+>  drivers/reset/reset-rzg2l-usbphy-ctrl.c | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/drivers/reset/reset-rzg2l-usbphy-ctrl.c b/drivers/reset/rese=
+t-rzg2l-usbphy-ctrl.c
+> index 1cd157f4f03b..4e2ac1f0060c 100644
+> --- a/drivers/reset/reset-rzg2l-usbphy-ctrl.c
+> +++ b/drivers/reset/reset-rzg2l-usbphy-ctrl.c
+> @@ -176,6 +176,7 @@ static int rzg2l_usbphy_ctrl_probe(struct platform_de=
+vice *pdev)
+>  	vdev->dev.parent =3D dev;
+>  	priv->vdev =3D vdev;
+>=20
+> +	device_set_of_node_from_dev(&vdev->dev, dev);
+>  	error =3D platform_device_add(vdev);
+>  	if (error)
+>  		goto err_device_put;
+> --
+> 2.39.2
 
-With all the solutions provided, I think the only patch left that I need to 
-submit is the one calling 'phy_support_eee()' from stmmac.
 
