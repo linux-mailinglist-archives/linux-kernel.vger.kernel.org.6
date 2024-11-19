@@ -1,122 +1,87 @@
-Return-Path: <linux-kernel+bounces-414666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 321F39D2BCE
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 17:55:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F8C29D2BC9
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 17:54:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC3DA287F4B
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 16:55:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 290CB1F26ACC
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 16:54:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A638F1D1E60;
-	Tue, 19 Nov 2024 16:49:12 +0000 (UTC)
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A31651D1E62;
+	Tue, 19 Nov 2024 16:49:04 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 849B01D1F50;
-	Tue, 19 Nov 2024 16:49:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5BF014F115
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 16:49:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732034952; cv=none; b=qEHKR6Xf4fGy6frJzTdyxUJ+AYIcLRMMtBZKYcy1teVzs7GszMindg1eiSmGyKLwwC6scIt96hAD/vsgLxrKUEp/fRSF7BJcivLY2/CPqdkuHPgS0aaOiCYyq/8o3rrgKeZeK51UCWm+R0iXcAxeugyzAGZ7PiXWDKn6W3MrPg8=
+	t=1732034944; cv=none; b=aOoKewd9ELWVqruFn3cgtAR1lLxIFmAZlikq22ZOZqcUhM7jm7Fyo6DgXNOeqIlukJBOwObX3wtcUzsrr+ptxY3Iu+7IupVWqoZ24QP6bDLM21gLwxhWTTQuHzpjng6sAvA+zkH4BpY12vYe8GWQzVhSm22DjDHk1KNfos0Zh94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732034952; c=relaxed/simple;
-	bh=Vlo37xqLWz9uZ3CfExdRtRUyK6jGsIhcVtHBVJXH23U=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=i3w6zBWOG1AKWUHLaYMCF2P71+7736iOIbHYZQbLDaVwvkkwmc+SPriq7FunnLhvetksw/rbu52jH3tWZzpScGOHkC7TPGPvN+/Enm30hJ/y/R3EKxhi7pT2eLNLKrQoOZfBtNj6nYJWfPyldSdrrO3W9Gz6+fxllth9ez59CEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.29])
-	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4Xt8rx4Lmlz9v7JY;
-	Wed, 20 Nov 2024 00:21:53 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id 22592140418;
-	Wed, 20 Nov 2024 00:49:05 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwAHsyNtwTxnhjPrAQ--.2023S2;
-	Tue, 19 Nov 2024 17:49:04 +0100 (CET)
-Message-ID: <6308448307055a821a4d73dbbb373c2cde300cdf.camel@huaweicloud.com>
-Subject: Re: [PATCH v6 07/15] digest_cache: Allow registration of digest
- list parsers
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Randy Dunlap <rdunlap@infradead.org>, zohar@linux.ibm.com, 
- dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, corbet@lwn.net, 
- mcgrof@kernel.org, petr.pavlu@suse.com, samitolvanen@google.com, 
- da.gomez@samsung.com, akpm@linux-foundation.org, paul@paul-moore.com, 
- jmorris@namei.org, serge@hallyn.com, shuah@kernel.org,
- mcoquelin.stm32@gmail.com,  alexandre.torgue@foss.st.com
-Cc: linux-integrity@vger.kernel.org, linux-doc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-api@vger.kernel.org, 
- linux-modules@vger.kernel.org, linux-security-module@vger.kernel.org, 
- linux-kselftest@vger.kernel.org, wufan@linux.microsoft.com,
- pbrobinson@gmail.com,  zbyszek@in.waw.pl, hch@lst.de, mjg59@srcf.ucam.org,
- pmatilai@redhat.com,  jannh@google.com, dhowells@redhat.com,
- jikos@kernel.org, mkoutny@suse.com,  ppavlu@suse.com, petr.vorel@gmail.com,
- mzerqung@0pointer.de, kgold@linux.ibm.com,  Roberto Sassu
- <roberto.sassu@huawei.com>
-Date: Tue, 19 Nov 2024 17:48:41 +0100
-In-Reply-To: <c6a7b5eb-d2ec-45e5-8a9b-a91f9c0cec78@infradead.org>
-References: <20241119104922.2772571-1-roberto.sassu@huaweicloud.com>
-	 <20241119104922.2772571-8-roberto.sassu@huaweicloud.com>
-	 <c6a7b5eb-d2ec-45e5-8a9b-a91f9c0cec78@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1732034944; c=relaxed/simple;
+	bh=ZzJxhzqSatvzvwvHRxNXBc+h3hrR4NovvDTZxrOxenE=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=RRCY5gM8i+YU+xNZg/m2WKovlLhbIOJ8uOScEvfB/2qoBjfZr9NPDoY/l6xGfetTWmPVKDsHXc2kaAd/dNUirBXDR3p4FNi6uOlwFtlCrAAxUKeYTrVt1GwpXuzd50eRvywUNq1ix4JWmqsxjssRZYndBvlylPwKYOvmFq/bw6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a743d76ed9so44026825ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 08:49:02 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732034942; x=1732639742;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8JoLo6u2Y5rWO/3CkaBVmN1IPa/NZhbTXeOXIyBSUrw=;
+        b=PqlbOWCtXYTuKYzWWn/SkALSFc+bEtFqhd+Ci3PIsDT/e2gNEUsWsklTFRKp3Gavzx
+         JuQl9XzLOaCdVq89G5LMrDMEkzPqNKwEypSQvJRY49RcvCrTOMygNpcq/+fD0j+OfhjG
+         kEH9Hdly0VM4pJ02Xp6YRY9MZQFVCuzjZLDv8QNvdmOax5G6WVDyxQ8qkmsVqtUthnjO
+         m2hvehU4UtEoeygqJWkcMYgXuvVzbeXQ6bNocONNppMJV8QdXSmULnjdN7Cosh8/Tx5m
+         upev/h/qjBbz59fzRwYxxwvJpafS2PXSdGaz8QSb5ZfUgTdY4BSExAqpTaP20cCIXCLC
+         M81w==
+X-Forwarded-Encrypted: i=1; AJvYcCWPr+hCO/F3dYaZX62DY5UlFpgHVOsspnRL3xgA3ViPosPvE0b8EkFFsklB++YSBDwBebcNl4L66zg7wRk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkRoxtiZdyXkGb8JPu18Tvek9S/06jfY4y4N4lWPiXAv038YGj
+	5W0YGJW03ruwGFlrcS+03cZWrmXg59K7JigHbPvQROr7fbbvkj6gsmmvOQlV/msklkyzZ9cQUm9
+	wA2J9MVwHSG3hbHft20xngKqf5KbhDION/WR/d5B3kthZ9JqXQoGBOo4=
+X-Google-Smtp-Source: AGHT+IG0PC/cisTwJJ6z0KRX9i9VDgSjrvTRooyXCnrYWmXg3ZAAWCWim+JAj7afVp5NLjsmaXAj3G12mprdtk5r2+zB0betT0Av
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:LxC2BwAHsyNtwTxnhjPrAQ--.2023S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrZrWDGF4DJw45AFyrJF4xWFg_yoWxKFbEvr
-	yIqrs7GFZ8JFsxCr1akrWSgFZYgry8XF1qyr4jqryDGa4kuwsrCrWfCr1SqF18Jw1xArn5
-	CF93Zrn0q34xujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbxxYFVCjjxCrM7AC8VAFwI0_Wr0E3s1l1xkIjI8I6I8E6xAIw20E
-	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
-	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0cI8IcVCY1x02
-	67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aVCY1x0267
-	AKxVWxJr0_GcWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
-	j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7x
-	kEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kIc2xKxwCY1x0262kKe7AK
-	xVWrXVW3AwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
-	0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Wrv_Gr1U
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8
-	JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26F4UJVW0obIYCTnIWIevJa73UjIFyTuYvjxUVZ
-	2-UUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAMBGc79-IISQAAsS
+X-Received: by 2002:a05:6e02:20e6:b0:3a7:319c:9351 with SMTP id
+ e9e14a558f8ab-3a77745b352mr52377165ab.9.1732034941966; Tue, 19 Nov 2024
+ 08:49:01 -0800 (PST)
+Date: Tue, 19 Nov 2024 08:49:01 -0800
+In-Reply-To: <20241119162852.SnMnB%dmantipov@yandex.ru>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <673cc17d.050a0220.87769.007a.GAE@google.com>
+Subject: Re: [syzbot] [ocfs2?] KASAN: use-after-free Read in ocfs2_search_dirblock
+From: syzbot <syzbot+b9704899e166798d57c9@syzkaller.appspotmail.com>
+To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 2024-11-19 at 08:46 -0800, Randy Dunlap wrote:
-> Hi--
->=20
-> On 11/19/24 2:49 AM, Roberto Sassu wrote:
-> > +/**
-> > + * struct parser - Structure to store a function pointer to parse dige=
-st list
-> > + * @list: Linked list
-> > + * @owner: Kernel module owning the parser
-> > + * @name: Parser name (must match the format in the digest list file n=
-ame)
-> > + * @func: Function pointer for parsing
-> > + *
-> > + * This structure stores a function pointer to parse a digest list.
-> > + */
-> > +struct parser {
-> > +	struct list_head list;
-> > +	struct module *owner;
-> > +	const char name[NAME_MAX + 1];
-> > +	parser_func func;
-> > +};
->=20
-> I would make the struct name not so generic -- maybe digest_parser ...
+Hello,
 
-Hi
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-sure, thanks for the suggestion!
+Reported-by: syzbot+b9704899e166798d57c9@syzkaller.appspotmail.com
+Tested-by: syzbot+b9704899e166798d57c9@syzkaller.appspotmail.com
 
-Roberto
+Tested on:
 
+commit:         158f238a Merge tag 'for-linus-6.13-rc1-tag' of git://g..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=17120b78580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=bf11fa3fbde217ff
+dashboard link: https://syzkaller.appspot.com/bug?extid=b9704899e166798d57c9
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=174b0ae8580000
+
+Note: testing is done by a robot and is best-effort only.
 
