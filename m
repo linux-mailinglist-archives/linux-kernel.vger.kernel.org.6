@@ -1,175 +1,221 @@
-Return-Path: <linux-kernel+bounces-414450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A7AE9D282B
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 15:29:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34FB99D27B4
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 15:12:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8F561F2229D
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 14:29:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00A31283FED
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 14:12:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E41E1CEAC0;
-	Tue, 19 Nov 2024 14:29:51 +0000 (UTC)
-Received: from leonov.paulk.fr (leonov.paulk.fr [185.233.101.22])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A11021CDA35;
+	Tue, 19 Nov 2024 14:12:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iFAUn4uK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33B7E1CCB37
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 14:29:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.233.101.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED6A3E57D;
+	Tue, 19 Nov 2024 14:12:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732026591; cv=none; b=kNyxc1h4+e7+BSbLN5VOaxTqcXYu5W3OPd7DQxlZJwHn7vRhcBKYHXEHilUj3fb6SJQY0Tnxkp7T3tfHTyJ2Zp88BrKmX0XHHa8DHcGKIJOF01buRARahGBPQeFOOmJeSVpH9vG6VmZeu1FYL8h5yvTWW1aMZgYEEnP3ZENdU1I=
+	t=1732025559; cv=none; b=lU9cdmMQUSrZzxK0TcDiGcwvRJMqGd6Ao4mBk3cBTA3eF6mtfd8Q08nroN7JPCO4pzxXnPzkngOwPncJsw4PkTP3XuCaSsfPSluzMS58ozuOAZ8uamja+Yy8DmfnivYGEF9ZQm7SsiKeB8p3YYhY7qXOj6nd67IeFif1U+/LeV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732026591; c=relaxed/simple;
-	bh=Xc33Op179Wdt4ld76d8fpmfb6NVFfpXurSoopZYeMQQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZrcTBgzfQw+01vh5lAtHC7ye9CISrBPlzadvt891vTE552IE6zI/h+Ad0rwGspCaTCnQfvdm+/qcKFTpgncgEFyPxcErAdbjgwcTqucwRK452DBoltmMaj8GYaVxi0wDnp0kkfxGSQlhxc8S1vKrUweXEYoGjh69k13iSj62Dhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io; spf=pass smtp.mailfrom=sys-base.io; arc=none smtp.client-ip=185.233.101.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sys-base.io
-Received: from laika.paulk.fr (12.234.24.109.rev.sfr.net [109.24.234.12])
-	by leonov.paulk.fr (Postfix) with ESMTPS id B5DA41F00053
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 14:20:00 +0000 (UTC)
-Received: by laika.paulk.fr (Postfix, from userid 65534)
-	id C89E1A4700C; Tue, 19 Nov 2024 14:08:12 +0000 (UTC)
-X-Spam-Level: *
-Received: from localhost.localdomain (unknown [192.168.1.64])
-	by laika.paulk.fr (Postfix) with ESMTP id 78E00A47001;
-	Tue, 19 Nov 2024 14:08:06 +0000 (UTC)
-From: Paul Kocialkowski <paulk@sys-base.io>
-To: linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Cc: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Maxime Ripard <mripard@kernel.org>,
-	Paul Kocialkowski <contact@paulk.fr>
-Subject: [PATCH] pinctrl: sunxi: Use minimal debouncing period as default
-Date: Tue, 19 Nov 2024 15:08:05 +0100
-Message-ID: <20241119140805.3345412-1-paulk@sys-base.io>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1732025559; c=relaxed/simple;
+	bh=rXCnaTBFJsUj4p87piDnz1IdGPw72XgEh5Shigy8KTo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LVlie10RLnCYA/LfNHTRU/YySyAHwZ6UdF2d0uxT1f1VTyjkE5vLJqaylH0q2pd7HP6y+LnMctdDGbQsjpddUePIUZDy9Zs1d7ZHsLicYE0kOiTOOdKAm9yDaIESZGAF199GUYW+a/iYwz8TOPCbizqzA81SOaOTK/3A310T8EU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iFAUn4uK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50A0EC4CECF;
+	Tue, 19 Nov 2024 14:12:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732025558;
+	bh=rXCnaTBFJsUj4p87piDnz1IdGPw72XgEh5Shigy8KTo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iFAUn4uKil31Xr8W5g4SPX+hS+fvldjhduKvdrXkoXHhE13OEyUSgmb1974VH/i72
+	 Cak01s9lh62m8cdiZEWbgWbcQhBFAI04GKllE4IdS2TSY8E1Kf7Ctl9QUShvWOpo/g
+	 Tvlkz4XpybiTRcRrRLONPsXXPjGid6TrlxDf4P4XuyYtBeybdR2RRkzZhtsJwheWzF
+	 2bkwMd3VG7NWSQIenWnM994CPxLsyuVQagiqkciL/JkGRHTP9WoaYtcycaMy0tx4C3
+	 unkerhhRZfAnJQGjRxD0rixUNCSCZTFky67Ommv+0TE6kJMXC3QlW2ZrSY+jrDflUE
+	 3JdIaIV6sExww==
+Date: Tue, 19 Nov 2024 08:12:36 -0600
+From: Rob Herring <robh@kernel.org>
+To: Valentina Fernandez <valentina.fernandezalanis@microchip.com>
+Cc: paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
+	ycliang@andestech.com, prabhakar.mahadev-lad.rj@bp.renesas.com,
+	peterlin@andestech.com, samuel.holland@sifive.com,
+	conor.dooley@microchip.com, alexghiti@rivosinc.com,
+	ruanjinjie@huawei.com, takakura@valinux.co.jp, conor+dt@kernel.org,
+	jassisinghbrar@gmail.com, krzk+dt@kernel.org,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 3/4] dt-bindings: mailbox: add binding for Microchip
+ IPC mailbox controller
+Message-ID: <20241119141236.GA1099946-robh@kernel.org>
+References: <20241105183513.1358736-1-valentina.fernandezalanis@microchip.com>
+ <20241105183513.1358736-4-valentina.fernandezalanis@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241105183513.1358736-4-valentina.fernandezalanis@microchip.com>
 
-From: Paul Kocialkowski <contact@paulk.fr>
+On Tue, Nov 05, 2024 at 06:35:12PM +0000, Valentina Fernandez wrote:
+> Add a dt-binding for the Microchip Inter-Processor Communication (IPC)
+> mailbox controller.
+> 
+> Signed-off-by: Valentina Fernandez <valentina.fernandezalanis@microchip.com>
+> ---
+>  .../bindings/mailbox/microchip,sbi-ipc.yaml   | 117 ++++++++++++++++++
+>  1 file changed, 117 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mailbox/microchip,sbi-ipc.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/mailbox/microchip,sbi-ipc.yaml b/Documentation/devicetree/bindings/mailbox/microchip,sbi-ipc.yaml
+> new file mode 100644
+> index 000000000000..9e67c09e4bea
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mailbox/microchip,sbi-ipc.yaml
+> @@ -0,0 +1,117 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/mailbox/microchip,sbi-ipc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Microchip Inter-processor communication (IPC) mailbox controller
+> +
+> +maintainers:
+> +  - Valentina Fernandez <valentina.fernandezalanis@microchip.com>
+> +
+> +description:
+> +  The Microchip Inter-processor Communication (IPC) facilitates
+> +  message passing between processors using an interrupt signaling
+> +  mechanism.
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - description:
+> +          Intended for use by software running in supervisor privileged
+> +          mode (s-mode). This SBI interface is compatible with the Mi-V
+> +          Inter-hart Communication (IHC) IP.
+> +        items:
+> +          - const: microchip,sbi-ipc
+> +
+> +      - description:
+> +          SoC-specific compatible, intended for use by the SBI
+> +          implementation in machine mode (m-mode).
+> +        items:
+> +          - const: microchip,miv-ihc-rtl-v2
 
-The sunxi external interrupts (available from GPIO pins) come with a
-built-in debouncing mechanism that cannot be disabled. It can be
-configured to use either the low-frequency oscillator (32 KHz) or the
-high-frequency oscillator (24 MHz), with a pre-scaler.
+Usually SoC specific compatibles don't have version numbers. And all 
+hardware in an SoC is RTL at some point. So microchip,miv-ihc should be 
+sufficient if 'miv' is an SoC.
 
-The pinctrl code supports an input-debounce device-tree property to set
-a specific debouncing period and choose which clock source is most
-relevant. However the property is specified in microseconds, which is
-longer than the minimal period achievable from the high-frequency
-oscillator without a pre-scaler.
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    minItems: 1
+> +    maxItems: 5
+> +
+> +  interrupt-names:
+> +    minItems: 1
+> +    maxItems: 5
+> +    items:
+> +      pattern: "^hart-[0-5]+$"
+> +
+> +  "#mbox-cells":
+> +    description: >
+> +      For the SBI "device", the cell represents the global "logical" channel IDs.
+> +      The meaning of channel IDs are platform firmware dependent.
+> +
+> +      For the SoC-specific compatible string, the cell represents the physical
+> +      channel and does not vary based on the platform firmware.
+> +    const: 1
+> +
+> +  microchip,ihc-chan-disabled-mask:
+> +    description: >
+> +      Represents the enable/disable state of the bi-directional IHC
+> +      channels within the MIV-IHC IP configuration.
+> +
+> +      The mask is a 16-bit value, but only the first 15 bits are utilized.
+> +      Each of the bits corresponds to one of the 15 IHC channels.
 
-When the property is missing, the reset configuration is kept, which
-selects the low-frequency oscillator without pre-scaling. This severely
-limits the possible interrupt periods that can be detected.
+That can be expressed as a constraint:
 
-Instead of keeping this default, use the minimal debouncing period from
-the high-frequency oscillator without a pre-scaler to allow the largest
-possible range of interrupt periods.
+maximum: 0x7fff
 
-This issue was encountered with a peripheral that generates active-low
-interrupts for 1 us. No interrupt was detected with the default setup,
-while it is now correctly detected with this change.
+Then you can drop this paragraph.
 
-Signed-off-by: Paul Kocialkowski <contact@paulk.fr>
----
- drivers/pinctrl/sunxi/pinctrl-sunxi.c | 49 ++++++++++++++++-----------
- 1 file changed, 29 insertions(+), 20 deletions(-)
+> +
+> +      A bit set to '1' indicates that the corresponding channel is disabled,
+> +      and any read or write operations to that channel will return zero.
+> +
+> +      A bit set to '0' indicates that the corresponding channel is enabled
+> +      and will be accessible through its dedicated address range registers.
+> +
+> +      The remaining bit of the 16-bit mask is reserved and should be ignored.
 
-diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-index 73bcf806af0e..06c650d97645 100644
---- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-+++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
-@@ -1416,6 +1416,7 @@ static int sunxi_pinctrl_setup_debounce(struct sunxi_pinctrl *pctl,
- 	unsigned int hosc_diff, losc_diff;
- 	unsigned int hosc_div, losc_div;
- 	struct clk *hosc, *losc;
-+	bool debounce_minimal = false;
- 	u8 div, src;
- 	int i, ret;
- 
-@@ -1423,9 +1424,9 @@ static int sunxi_pinctrl_setup_debounce(struct sunxi_pinctrl *pctl,
- 	if (of_clk_get_parent_count(node) != 3)
- 		return 0;
- 
--	/* If we don't have any setup, bail out */
-+	/* If we don't have any setup, use minimal debouncing. */
- 	if (!of_property_present(node, "input-debounce"))
--		return 0;
-+		debounce_minimal = true;
- 
- 	losc = devm_clk_get(pctl->dev, "losc");
- 	if (IS_ERR(losc))
-@@ -1439,29 +1440,37 @@ static int sunxi_pinctrl_setup_debounce(struct sunxi_pinctrl *pctl,
- 		unsigned long debounce_freq;
- 		u32 debounce;
- 
--		ret = of_property_read_u32_index(node, "input-debounce",
--						 i, &debounce);
--		if (ret)
--			return ret;
-+		if (!debounce_minimal) {
-+			ret = of_property_read_u32_index(node, "input-debounce",
-+							 i, &debounce);
-+			if (ret)
-+				return ret;
- 
--		if (!debounce)
--			continue;
-+			if (!debounce)
-+				continue;
- 
--		debounce_freq = DIV_ROUND_CLOSEST(USEC_PER_SEC, debounce);
--		losc_div = sunxi_pinctrl_get_debounce_div(losc,
--							  debounce_freq,
--							  &losc_diff);
-+			debounce_freq = DIV_ROUND_CLOSEST(USEC_PER_SEC,
-+							  debounce);
- 
--		hosc_div = sunxi_pinctrl_get_debounce_div(hosc,
--							  debounce_freq,
--							  &hosc_diff);
-+			losc_div = sunxi_pinctrl_get_debounce_div(losc,
-+								  debounce_freq,
-+								  &losc_diff);
- 
--		if (hosc_diff < losc_diff) {
--			div = hosc_div;
--			src = 1;
-+			hosc_div = sunxi_pinctrl_get_debounce_div(hosc,
-+								  debounce_freq,
-+								  &hosc_diff);
-+
-+			if (hosc_diff < losc_diff) {
-+				div = hosc_div;
-+				src = 1;
-+			} else {
-+				div = losc_div;
-+				src = 0;
-+			}
- 		} else {
--			div = losc_div;
--			src = 0;
-+			/* Achieve minimal debouncing using undivided hosc. */
-+			div = 0;
-+			src = 1;
- 		}
- 
- 		writel(src | div << 4,
--- 
-2.47.0
+And drop this one.
 
+> +
+> +      The actual enable/disable state of each channel is determined by the
+> +      IP block’s configuration.
+> +    $ref: /schemas/types.yaml#/definitions/uint16
+> +    default: 0
+> +
+> +required:
+> +  - compatible
+> +  - interrupts
+> +  - interrupt-names
+> +  - "#mbox-cells"
+> +
+> +additionalProperties: false
+> +
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: microchip,sbi-ipc
+> +    then:
+> +      properties:
+> +        reg: false
+> +        microchip,ihc-chan-disabled-mask: false
+> +    else:
+> +      required:
+> +        - reg
+> +        - microchip,ihc-chan-disabled-mask
+> +
+> +examples:
+> +  - |
+> +    mailbox {
+> +      compatible = "microchip,sbi-ipc";
+> +      interrupt-parent = <&plic>;
+> +      interrupts = <180>, <179>, <178>;
+> +      interrupt-names = "hart-1", "hart-2", "hart-3";
+> +      #mbox-cells = <1>;
+> +    };
+> +  - |
+> +    mailbox@50000000 {
+> +      compatible = "microchip,miv-ihc-rtl-v2";
+> +      microchip,ihc-chan-disabled-mask = /bits/ 16 <0>;
+> +      reg = <0x50000000 0x1C000>;
+> +      interrupt-parent = <&plic>;
+> +      interrupts = <180>, <179>, <178>;
+> +      interrupt-names = "hart-1", "hart-2", "hart-3";
+> +      #mbox-cells = <1>;
+> +    };
+> -- 
+> 2.34.1
+> 
 
