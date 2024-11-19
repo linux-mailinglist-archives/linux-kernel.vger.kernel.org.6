@@ -1,298 +1,258 @@
-Return-Path: <linux-kernel+bounces-414585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 468849D2A67
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 17:03:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DB579D2A70
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 17:05:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0091D1F216BE
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 16:03:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1BCC2828B1
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 16:05:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC4411CF7D6;
-	Tue, 19 Nov 2024 16:02:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 104FE1D07B9;
+	Tue, 19 Nov 2024 16:05:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SabAcmey"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="pccSQ3Pe"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2047.outbound.protection.outlook.com [40.107.244.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70FFC3C463;
-	Tue, 19 Nov 2024 16:02:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732032176; cv=none; b=pG8XRPfK0g1R+c1UGpxi0dnPFY/El/8rszcFa0PJG6d7o1RiGbcbLxvO32P6Lo43KgUg583VQdBiWoOFPx3p+0ge6uIkN+5dIqcWiqqOIwW68SYXH/wVX2MvEr0psTuPmyE/c9j27SOOSsDX0sxNTx6sTakE4hu9wxanR1kNkMc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732032176; c=relaxed/simple;
-	bh=PMYFSJUT1pi6Fr8Vig3d+ug0BvX9b/ClH1Umr5O9ihg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lTnUgL1uv1LvH2A1Cs+gawfUhAx2UPmO12pcj8b8BbGtcuxnSzTbZWWL3ERU21XxGEu6VfMbjq+W8heJs4FFdO7KyI8pPmawSxXVIg7Ui2cKozt1TZXU4FmNtOPKhjRVrKSopdYKmllchPeQ8YbFq9Rdw9MnJn8nthd+akzlPfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SabAcmey; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-20cbcd71012so37138055ad.3;
-        Tue, 19 Nov 2024 08:02:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732032174; x=1732636974; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=wsX4cBQyLupu/44wKL56m7/Ymw1x0fn7GLe6kacIQ28=;
-        b=SabAcmeyo5dGu5Q9hsHgkODbVn7u4RYYv5cfeHYHqewu5I/W0QvvciqVZcAtK9qw4b
-         O8AexJfMtldZKEKPflsjQcW0BZut9+5W60OssZDP8ANtbzlu9e5X4n/O3CNZ51khnAo3
-         23eLNd9dGFm220Jsnpvyp/4kwmXBGfUgM0avc/kMr9gvsg8o+d4RnLXLQIrPwYNJ0dJ+
-         w7XN9mKUrl1JLSDJziGnk5Xnf2in055usahquqHLh/Lj7QfnzULL77j2A5fcMCpXLSvt
-         Hbwu9kH7HXEC9Wm15JDmlQVA1+bm1uFlvdsiS6GdEm6Od6vQQ4FIMKSkpuKorRQAQVOt
-         eKng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732032174; x=1732636974;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wsX4cBQyLupu/44wKL56m7/Ymw1x0fn7GLe6kacIQ28=;
-        b=ebZfyoRE/S0UZrV/6ZUUYWRTAyD4gJnPN5UjqEnUCvb7mGZe1z7AB+PgeNa0vxwiwC
-         /rOKNeF8bPjCKC0LsZBhoLmnGSo2FtZbhzpnqyq7nvxcSaqRqBEzkXAryDXKs1TEUChj
-         s1eUHAbQGpa9/ftUd2TxwZxLRjZUtkhF50Qv6/ayVSAyIVnmFHrjv2I7gZ7xNqOxt+hm
-         yBXpus03L8Io/UjVtdgEp5fBueuUhJQRXfU7dCv6X3Q2nTUF5deVu9Pnx9XDt8uaSAoy
-         m5CmNeOToBDPpc4N6Kp4Hsg6XP2U6DB8DZw4pQhJlELua3OpMQ6J0el3gjsMn/UKqhGz
-         H77Q==
-X-Forwarded-Encrypted: i=1; AJvYcCX5ErWsz82yprM135OpXQfUmUTA4bMxT2ioHrA0VymrAyYELJNLl0xaDvEL0N43a0YHBBrrclk2t2N1rQA=@vger.kernel.org, AJvYcCXIday0s/seWsOmRnSgkFAoGym0qMzDivcS9dxpfzD4qZzB+wT38c9cQ9iR+fsETYi675xAkdh8NiVCaKUnbVet5EOxLA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCkreozhW5bu88PlIgf6mHvOZ4UwpyBoKxGb/pGgcOeT9wSWYl
-	YrmWxuJyOGFNr9JyiEv4RPCxsXuyz36ZXe9IrUvDDyKCDeZshih740Aao+p/
-X-Google-Smtp-Source: AGHT+IHLhf92WHo2Vyab0wPYnzl0RIw4tk4rJvVkSrTa6g+7PHtw1bZ1MVQlBD3U81FkFLVRMcnNpw==
-X-Received: by 2002:a17:903:944:b0:211:eb15:9b73 with SMTP id d9443c01a7336-211eb159ca2mr195260755ad.26.1732032173567;
-        Tue, 19 Nov 2024 08:02:53 -0800 (PST)
-Received: from alphacentauri (host95.181-12-202.telecom.net.ar. [181.12.202.95])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724771e8ad1sm8285757b3a.168.2024.11.19.08.02.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Nov 2024 08:02:53 -0800 (PST)
-Date: Tue, 19 Nov 2024 13:02:49 -0300
-From: Kurt Borja <kuurtb@gmail.com>
-To: Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
-Cc: Dell.Client.Kernel@dell.com, Hans de Goede <hdegoede@redhat.com>, 
-	LKML <linux-kernel@vger.kernel.org>, mario.limonciello@amd.com, platform-driver-x86@vger.kernel.org, 
-	w_armin@gmx.de
-Subject: Re: [PATCH 5/5] alienware-wmi: Improves sysfs groups creation
-Message-ID: <mfsvtwib6o4jom5jafqennrlzbok3fqfdxq2pwpcifu72div5w@cbocomkua2vy>
-References: <20241119043534.25683-1-kuurtb@gmail.com>
- <6705ecb2-96df-60f0-0e06-90ed4d8554ab@linux.intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9921A1CCECE;
+	Tue, 19 Nov 2024 16:05:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.47
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732032334; cv=fail; b=Ds1xxhzYjvotjRAPWEKSufbu8uDdBRhC+YPkG88G9Q9oTeE9bQmWKPjeb9gb40riT1PNi/SbyOlfdfv36z3UX4AZEC2yJjNCqQY9Q9ixeiGcprY70hlnBeFUkLfJh493FQ39RjYnpQRpzVQd+Ujgq/coTu0zcr9Qcljv73bPO9I=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732032334; c=relaxed/simple;
+	bh=FJnUEL7OLg/h5ebXoUjC8rT3jQNudzS2MJyFS4xOico=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=JKGIzdMl3BtiNjjsAp1crhK23NKcbENA5swfH+ZazkTqFy/uap1HMqzva3f6a4r0JH8y22FxmSd3qj/1+PPZMZg8/C6ZlHXsis/p8hDevDT7kE73aV0+iIYDpy85VI26e1nhgPurH9x+7T//vwHttKE//h0Ynly6EWTybnWxizE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=pccSQ3Pe; arc=fail smtp.client-ip=40.107.244.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=aQZhc7OsmmvS9RNXhttr9C2GNUvUg8CYuwf9s3/VR5weZEZxIvDJjVAp1bLUw8ys1nq01y6aorfuPw/9dye8YHfAtykyN7u+RpoD8TrMQhqnojMJ5hO6pF4+x2+TgTHvxZuQkibevXqoDkpBhqqc7nxE8zmbEkyV37/qkPhwCZo6ZgGCHzUiKiZMq2G4QuG4OBYuIIWnUg2l77+eX+pNzX5uLPZn8Llzjw0uGbfTaM5eYVVzcskVFXwToqDEOFtD8OGIAiP6yZlsMTrN/0s0N5xlKx5TUGbTAiUgnoF7QPhTkuVNiG/rdGWYMLqd9sNOQRZ7ZMMIfA0hD4RFJq9Wwg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Rt4cPE9280a8xQWznox6syCVkGEoQrq48hVSanTFcJQ=;
+ b=Ze6V3GuS+qe3/6sy+jro9BnINFNUY2fag8JXwHJ3kP36dHRCPJ9kEzX1zfYoZbQtYvl87houaeV+gzl8KXWUQIo209ouqktw7dl3N9sFEjVc0yxiCHjpUIUgL06DkYcYI4oB6/XKjZ1YaoincX0Rq9gz6KP9VBQYmyzu93ytwhK5hNzxwMhapZGWxU3SYX5GpAEjcKdmnHXOYo8yL9m/ZD8iZQ1yMJxEVTR37+VAxMMpdP7+swRACbiT7EQvZGcn4ishY5KNinwINOupgQYzxK5mZEFxrQJ103AznmghLG0/XOWsp1PGxzc76ynS8mncxp9furyY/kC0mU2lkjceuQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Rt4cPE9280a8xQWznox6syCVkGEoQrq48hVSanTFcJQ=;
+ b=pccSQ3PevSN4ZNTEx1yJFQPLKzBbg8n1NZnPLfkOiP2JkXa+9d54EhjfCL0kE+k5KCh11D2R818RmGkwW0Vl+LUmrfrAiO0o4LWHx6S9aWrHHdv60f+AWJrgm5EzWaJioKeBl0vNQ82MTu5t3ScsPoq+0iUO0UIJl7yuY/jS27I=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
+ by DS7PR12MB5813.namprd12.prod.outlook.com (2603:10b6:8:75::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.23; Tue, 19 Nov
+ 2024 16:05:29 +0000
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca%4]) with mapi id 15.20.8158.019; Tue, 19 Nov 2024
+ 16:05:29 +0000
+Message-ID: <6efcfc19-bdf7-4c31-9a18-275dce6b750d@amd.com>
+Date: Tue, 19 Nov 2024 10:05:20 -0600
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] cpuidle: Change :enter_dead() driver callback
+ return type to void
+To: "Gautham R. Shenoy" <gautham.shenoy@amd.com>,
+ "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Linux PM <linux-pm@vger.kernel.org>, Peter Zijlstra
+ <peterz@infradead.org>, LKML <linux-kernel@vger.kernel.org>,
+ x86 Maintainers <x86@kernel.org>,
+ Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>,
+ Artem Bityutskiy <artem.bityutskiy@linux.intel.com>,
+ Linux ACPI <linux-acpi@vger.kernel.org>
+References: <13636465.uLZWGnKmhe@rjwysocki.net>
+ <2285569.iZASKD2KPV@rjwysocki.net> <ZzyqMmzMaCHqE+9m@BLRRASHENOY1.amd.com>
+Content-Language: en-US
+From: Mario Limonciello <mario.limonciello@amd.com>
+In-Reply-To: <ZzyqMmzMaCHqE+9m@BLRRASHENOY1.amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SA1PR03CA0018.namprd03.prod.outlook.com
+ (2603:10b6:806:2d3::29) To SJ1PR12MB6098.namprd12.prod.outlook.com
+ (2603:10b6:a03:45f::11)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <6705ecb2-96df-60f0-0e06-90ed4d8554ab@linux.intel.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|DS7PR12MB5813:EE_
+X-MS-Office365-Filtering-Correlation-Id: 32852570-8559-4968-1d0e-08dd08b3fbe5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?SVVKbkxYNWJaUGRDdDNHNndjZFhhSVhyZytwTHptZHJYVzg3VS9BWW8wZEY4?=
+ =?utf-8?B?RlUvRlYrT20vUjdTU3NaUzhVZ2FabW9UZEJCcFI5UHdMbzh5MzVYaGNoemVx?=
+ =?utf-8?B?eE91ZVVxWEJpUEY0UDBuT2pLZS8xWjJxdDcrbjBUQW1vblcwdmNISkZZbVlq?=
+ =?utf-8?B?andtaEVZNFdZc29VcGk2bmRSbGQ0QXFVdkhaK2xiem9OSmx4aTBUSGZDTDk0?=
+ =?utf-8?B?YzY3K3MwMlZhVXFNZHZKOE1xSDRETTZpTGRSTS9lSUJLcTcwQW9XZFBrdzJK?=
+ =?utf-8?B?VnljblR5Z3phRnd1ZzJCbHRDRUdxOTdXRjlYNC8xZzZpNmlmUy9Ya0tlTmZ0?=
+ =?utf-8?B?YzViWVpGMCtiME1pc21HY2dtdXVaYWlURGttTnNNOHk4alBpdDF5SDB0dnhC?=
+ =?utf-8?B?M0ZPL2NwVU8wQ29GL3E5Sm5qd3gyajFVMjlqWldlVWNTOWEwNmRNNTg2a2ZF?=
+ =?utf-8?B?Q3Z1M21Bd3N6YStTMTRScGdtSU5WcU8yRlFSSmttRTdETXd6Q3ZwaEg3WDYv?=
+ =?utf-8?B?R3A4OU1sOVRuaVJhQmRGNzY0eE56K1c3L1E2Z1FEbWppV1lwN0ZnVUtTaEdo?=
+ =?utf-8?B?c0YrTmY5bmx5aENTR2lvUW84RmhYQkxUYzg2YUx6VHBUR1JEUkxLOFU0RlBV?=
+ =?utf-8?B?d3E4M1ZhamNVaU12K2FhSGs5b25oWFFIY0NDNkt2a0Nnc0p1Wjk5RHdNb3NF?=
+ =?utf-8?B?ZGZ0UXhHSCtVa3dQS28xOVVlRDVwa3U1Q1czQ05ReWIwR3hxK3UxNUdseGc4?=
+ =?utf-8?B?Rk5MaHdMWDkxaUlCTllHUlBkbk5RazlVNU1MTExPT0JKTTUraFRFMVNaTGIr?=
+ =?utf-8?B?MXlrRnpZMWVFUmhQeWMxMnF1ZlBzVWNhYi9iU3M0UGs3bGtaQ1VsQ1hOY2Jr?=
+ =?utf-8?B?QjNXUTdjSTFicFFkTDBpbWlnUWUxWndTeGkzblQxTUVoM3NJaENSYlo5NDcr?=
+ =?utf-8?B?MTc3N2todk5jdHI1MWFMdDg4N3VmQUQ1OHgxems0MmJZd3Z4cWxjT24yWTBz?=
+ =?utf-8?B?L1J3SDN3ZXo4T3Vvam1xazhHQ2d2QzZpRHlBblBYYjRtWFJTa2o4VnlXaGEz?=
+ =?utf-8?B?dll6c0M0eFJnWlRQRENvL0FRYTBOdE9LMWF2WkRsY3F2VHh3VlVBMjFDT1pJ?=
+ =?utf-8?B?N0xoMS9Ud2lWMzFzSXo4MEZrRGRNOTNHZFpxU1VWMExpT2krV3NXdjRqdE1L?=
+ =?utf-8?B?QW5GQkVVVkN6THhrUDMySmd5WFhMY1g1dWRzN3VpRW10WEFCNWdkZGZlZlBO?=
+ =?utf-8?B?VGczQlRtcGsxTHc5MWx2QnE1YzFlQzBCeGo3QlpJdTZjU2YxTGtNNmN5dVNR?=
+ =?utf-8?B?bzljam9RYndkRFpDT29MckRSVS9JeHg5YVRyZzc4UEtlQU1BcXFIMlpaNmV3?=
+ =?utf-8?B?VEFvSjBOcXJGL1ltUXRFWGRlbEdERFVNaXFDdHRmM2JHYkErcTdoVnJhZGZ3?=
+ =?utf-8?B?a0xja2J1QWZJempteVpIZmpsZkZYM21KNHBtR0lpWkZsaUNyZnVUczdCaExh?=
+ =?utf-8?B?REJIS3VCc0ppaDkwbGhpdVIrMU5TTzBocEl1czBsdExjTzB4NGtlZlZsN1ZL?=
+ =?utf-8?B?OVpsNFl2Z1cxVWlBaFRuTEJIRGoxM1cxL2d2ZXJ0cmcvZkFGWS9idTlCV0tD?=
+ =?utf-8?B?SDdDWWhSZFhOZWlFNnNpNWtwSDl3R0VSYzhDNFdlZ2RlVUdENnJGaThrYjM2?=
+ =?utf-8?Q?NdKAxvQqpt1pv1EZaY1o?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?SFBqN0FPZ0N2SkpZdHJEV2lNTkR3ZUljVFpMaDBod3BrR0k0TWFmU25GVk5x?=
+ =?utf-8?B?SmhmMHBZSDdWQXJDS0l3TE5DbjdEMFFDMUVMMjYwMTM3blNKbGlHVGpBRkli?=
+ =?utf-8?B?cjU4a1RLRGZlYkgxL2RwRis4MWt3ZjRRakdKWDBnZ1EzSTVCTTlKcGxiZVZj?=
+ =?utf-8?B?cHI0U2g4TXVTV3h5SzlUZm0zc0tKRTYxMlpjT1dVYTlTK1BUVHJiWWVycSsr?=
+ =?utf-8?B?VXY0Y0lDRkZXdnVnVmtGYzV6dFB1aVNnaGFUQkNiR3Y4Z3gwdUJjc1NoWGp1?=
+ =?utf-8?B?bXN1eEx3OEM5Unp2emt5ZFRTT3lpRnB4N2E5V2tVZzlCeVJ3Z0xIbVBBMWR2?=
+ =?utf-8?B?RjZaVHZybFIzWnN0NXk2U0dLMkpjNWJmRVRzbUQwWjkvUzJrQ1JIZnU2UDZZ?=
+ =?utf-8?B?R3ZvRGlVMG9IWENIQ3gzM1U0RWVHNnd3L0Fmbmc0ekV2WG1Xa3RHb1h4VEov?=
+ =?utf-8?B?NkNjS0RXczFpYlV6ZHVUcFUzS1cxOUI4dThFMndKMVJTelBSamp6WmhKVHJq?=
+ =?utf-8?B?cytuUFZlQ0lNZVNaRlJHYWFJUEE2S2R0VGszei9wcXBoSVpDRnlldHNjQ25m?=
+ =?utf-8?B?K3ZFS2M3V2pkdVI4L01KWExjdmhYNDhWcVE5aUdQYVVsYXZSRE91NjVxdGUy?=
+ =?utf-8?B?Q1NlWVlYUjlPRUZxR2Q2KzYxRHJoc0RmQ05UTlBUcHk0K3BRbGRsOHMwOTZI?=
+ =?utf-8?B?WFJTdWZkVnJ5YmF3emhKYlhGUXhBVG1VMXJPZk9yYWk1OXg1RWJpSUZ3S0lK?=
+ =?utf-8?B?eTQwYTRSckt5cngwTGQyN1NuUFJQVnhmVUVPSUhIS2pwY3ZyTEV6WkxJcVRB?=
+ =?utf-8?B?cHRRRDBOQzhzQW1TcXVSZGdGRW5xbnUzVVQvRnVhdTdibHcyOWgvWGtKUmtt?=
+ =?utf-8?B?cHZWWmVZcXU4YXQzSUVjQ3NXZnpydmZkT29WQi8vYWpISFBMTEZuTVhLSzNr?=
+ =?utf-8?B?UEhmVzkzNlNBSERadWhvSit2cTE3aklLU1hFbVM5Q2hSZjI0UzNLQjdnempy?=
+ =?utf-8?B?Q0RlMWxSeTRHbFVBWG1MSjBTWUtmbk5pcHNvbXhFQ2FpNndEOCs1ZzZVVDl4?=
+ =?utf-8?B?em5mSTRzNnFSWnlvMnpOVkhqZGtqcGVGZi9rTUVlcTFxTXFpdWNYaUhwOWZx?=
+ =?utf-8?B?aEY0Yk5aSS9rWlREbXFkaUVLNG8yL3Bnc1dTa1JyTmpXTFNGYTJNRWhydzAz?=
+ =?utf-8?B?TVQySW1PanlnR3pndUVDcmg4d3NiS3laWXVzcitwdzVlK0NoZWJOcDFJaHNY?=
+ =?utf-8?B?Z0hmRzZ0dStRUmJFVW05YVZWcUEzN3kvNVdESDYzVUJGeGhYSm4yZllRQlFv?=
+ =?utf-8?B?ZWFyRVdKTEVIbFFldS8xYmhQeTE0disvRklYTTdGLytOZEF3VnJoZWVFeEUr?=
+ =?utf-8?B?Sm04L1NVam8zUEZEQWptb2xvaU5NN2d3V3AxRE5KZ3pjZWtDMGNHL092bVNZ?=
+ =?utf-8?B?azM1czNleEZQdTZLNUpiRVRJWGdoR3NTU2xiSWQvSTV6c0JzeGhwU3o0YzEx?=
+ =?utf-8?B?cWlqTW5BU0FuUHFwTUE4S1lFTnRtWHFWbFgvYzlwSnVBMUJsL1V3OHNjUEdM?=
+ =?utf-8?B?RGgvRVZnQ2ZLMEtScGVqczJpNTFWMEF6S0VsQkxOWWtITW1KbkMySlpaUWZh?=
+ =?utf-8?B?UlZlMjZ6ZEN2dm9SZzRubWh2cEFtTVFFMSs2YXBsMFIxSzFKV1QwVDN4ZWhN?=
+ =?utf-8?B?MkRQWitMZXEwV1VQKzhyTTFRV1RqS2k4YzBWamF2allrUXBuamVqazhseVN2?=
+ =?utf-8?B?SEJ2cEkyaC9SSi8yQVJyRFQxaFdaU3Axa09rYTVkVmU2K29mZjhOck5INjlF?=
+ =?utf-8?B?OFExZEd4c2JEWVE4cHJHeExaNUtYN0lUKytaaXZKeGsxczdFYnVNQndRNUli?=
+ =?utf-8?B?cXJPT3dQZFIwM21wVU9GckRrMW5zUXVOdTB6ekIyNEU2ZkRJbkZjS2V2WmFz?=
+ =?utf-8?B?NC84ZkIrYSs4d3FmR21ZZUNMYUIvQnk1V0tzZVRmU2pXcXNNSWJCaTNxWnZ4?=
+ =?utf-8?B?RldrZUxhU0tFZXR2d0ZEZVllSUNxYUpzT0U4TGpZSCtUQTJReVovczZranBR?=
+ =?utf-8?B?VlBqMWYvS1JHd1NaR1gvQys4ZDZEWWFvdjd5Ykl5WHArS2pJYlR2c2hhODNH?=
+ =?utf-8?Q?8yNMXQJLJIkKE75NzNVZ7fbTR?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 32852570-8559-4968-1d0e-08dd08b3fbe5
+X-MS-Exchange-CrossTenant-AuthSource: SJ1PR12MB6098.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Nov 2024 16:05:29.0559
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 64mj4XAdmXV/KYOniVIpKjKqTz9XJAV/8Ecwzm/GRazuhd2TH0s/7azCLH3QJ0Cme980gOlfRvnGmk1o00q3GA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB5813
 
-On Tue, Nov 19, 2024 at 10:40:50AM +0200, Ilpo Järvinen wrote:
-> On Tue, 19 Nov 2024, Kurt Borja wrote:
+On 11/19/2024 09:09, Gautham R. Shenoy wrote:
+> Hello Rafael,
 > 
-> > Devices with hdmi_mux, amplifier or deepslp quirks create a sysfs group
-> > for each available feature. To accomplish this, helper create/remove
-> > functions were called on module init, but they had the following
-> > problems:
-> > 
-> >  - Create helpers called remove helpers on failure, which in turn tried
-> >    to remove the sysfs group that failed to be created
-> >  - If group creation failed mid way, previous successfully created groups
-> >    were not cleaned up
-> >  - Module exit only removed hdmi_mux group
-> > 
-> > To improve this, drop all helpers in favor of two helpers that make use
-> > of sysfs_create_groups/sysfs_remove_groups to cleanly create/remove
-> > groups at module init/exit.
-> > 
-> > Signed-off-by: Kurt Borja <kuurtb@gmail.com>
-> > ---
-> > 
-> > I have a question. Do the created sysfs groups get removed when their
-> > kobj reference count goes to 0? I ask because I want to know if this is
-> > a bug fix.
-> > 
-> > ---
-> >  drivers/platform/x86/dell/alienware-wmi.c | 105 ++++++++--------------
-> >  1 file changed, 36 insertions(+), 69 deletions(-)
-> > 
-> > diff --git a/drivers/platform/x86/dell/alienware-wmi.c b/drivers/platform/x86/dell/alienware-wmi.c
-> > index 44f1f7b57d0a..e9ed2089cba0 100644
-> > --- a/drivers/platform/x86/dell/alienware-wmi.c
-> > +++ b/drivers/platform/x86/dell/alienware-wmi.c
-> > @@ -410,8 +410,10 @@ struct wmax_u32_args {
-> >  	u8 arg3;
-> >  };
-> >  
-> > +
-> >  static struct platform_device *platform_device;
-> >  static struct platform_zone *zone_data;
-> > +const struct attribute_group *wmax_groups[4];
-> >  static struct platform_profile_handler pp_handler;
-> >  static enum wmax_thermal_mode supported_thermal_profiles[PLATFORM_PROFILE_LAST];
-> >  
-> > @@ -810,22 +812,6 @@ static const struct attribute_group hdmi_attribute_group = {
-> >  	.attrs = hdmi_attrs,
-> >  };
-> >  
-> > -static void remove_hdmi(struct platform_device *dev)
-> > -{
-> > -	if (quirks->hdmi_mux > 0)
-> > -		sysfs_remove_group(&dev->dev.kobj, &hdmi_attribute_group);
-> > -}
-> > -
-> > -static int create_hdmi(struct platform_device *dev)
-> > -{
-> > -	int ret;
-> > -
-> > -	ret = sysfs_create_group(&dev->dev.kobj, &hdmi_attribute_group);
-> > -	if (ret)
-> > -		remove_hdmi(dev);
-> > -	return ret;
-> > -}
-> > -
-> >  /*
-> >   * Alienware GFX amplifier support
-> >   * - Currently supports reading cable status
-> > @@ -864,22 +850,6 @@ static const struct attribute_group amplifier_attribute_group = {
-> >  	.attrs = amplifier_attrs,
-> >  };
-> >  
-> > -static void remove_amplifier(struct platform_device *dev)
-> > -{
-> > -	if (quirks->amplifier > 0)
-> > -		sysfs_remove_group(&dev->dev.kobj, &amplifier_attribute_group);
-> > -}
-> > -
-> > -static int create_amplifier(struct platform_device *dev)
-> > -{
-> > -	int ret;
-> > -
-> > -	ret = sysfs_create_group(&dev->dev.kobj, &amplifier_attribute_group);
-> > -	if (ret)
-> > -		remove_amplifier(dev);
-> > -	return ret;
-> > -}
-> > -
-> >  /*
-> >   * Deep Sleep Control support
-> >   * - Modifies BIOS setting for deep sleep control allowing extra wakeup events
-> > @@ -942,22 +912,6 @@ static const struct attribute_group deepsleep_attribute_group = {
-> >  	.attrs = deepsleep_attrs,
-> >  };
-> >  
-> > -static void remove_deepsleep(struct platform_device *dev)
-> > -{
-> > -	if (quirks->deepslp > 0)
-> > -		sysfs_remove_group(&dev->dev.kobj, &deepsleep_attribute_group);
-> > -}
-> > -
-> > -static int create_deepsleep(struct platform_device *dev)
-> > -{
-> > -	int ret;
-> > -
-> > -	ret = sysfs_create_group(&dev->dev.kobj, &deepsleep_attribute_group);
-> > -	if (ret)
-> > -		remove_deepsleep(dev);
-> > -	return ret;
-> > -}
-> > -
-> >  /*
-> >   * Thermal Profile control
-> >   *  - Provides thermal profile control through the Platform Profile API
-> > @@ -1165,6 +1119,34 @@ static void remove_thermal_profile(void)
-> >  		platform_profile_remove();
-> >  }
-> >  
-> > +static int __init create_wmax_groups(struct platform_device *pdev)
-> > +{
-> > +	int no_groups = 0;
-> > +
-> > +	if (quirks->hdmi_mux) {
-> > +		wmax_groups[no_groups] = &hdmi_attribute_group;
-> > +		no_groups++;
-> > +	}
-> > +
-> > +	if (quirks->amplifier) {
-> > +		wmax_groups[no_groups] = &amplifier_attribute_group;
-> > +		no_groups++;
-> > +	}
-> > +
-> > +	if (quirks->deepslp) {
-> > +		wmax_groups[no_groups] = &deepsleep_attribute_group;
-> > +		no_groups++;
-> > +	}
-> > +
-> > +	return no_groups > 0 ? device_add_groups(&pdev->dev, wmax_groups) : 0;
+> On Fri, Nov 15, 2024 at 10:00:25PM +0100, Rafael J. Wysocki wrote:
+>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>>
+>> After a previous change, cpuidle_play_dead(), which is the only caller
+>> of idle state :enter_dead() callbacks, ignores their return values, so
+>> they may as well be void.
+>>
+>> Suggested-by: Peter Zijlstra <peterz@infradead.org>
+>> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 > 
-> Couldn't these use .dev_groups and .is_visible?
+>> ---
+>>
+>> v1 -> v2: New patch
+>>
+>> Interestingly enough, the only user of :enter_dead() idle state callbacks
+>> in the current mainline turns out to be ACPI idle.
+> 
+> For that matter, the only user of cpuidle_play_dead() is the
+> native_play_dead(). Was that always the case?
+> 
+> Some of the other architectures select the deepest available idle
+> state at boot time, and enter that state when a CPU is offlined.
+> 
+> In any case I am ok with this.
+> 
+> Reviewed-by: Gautham R. Shenoy <gautham.shenoy@amd.com>
+Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
 
-You're right, I will use this instead!
+> --
+> Thanks and Regards
+> gautham.
+>>
+>> ---
+>>   drivers/acpi/processor_idle.c |    7 ++-----
+>>   include/linux/cpuidle.h       |    2 +-
+>>   2 files changed, 3 insertions(+), 6 deletions(-)
+>>
+>> Index: linux-pm/include/linux/cpuidle.h
+>> ===================================================================
+>> --- linux-pm.orig/include/linux/cpuidle.h
+>> +++ linux-pm/include/linux/cpuidle.h
+>> @@ -61,7 +61,7 @@ struct cpuidle_state {
+>>   			struct cpuidle_driver *drv,
+>>   			int index);
+>>   
+>> -	int (*enter_dead) (struct cpuidle_device *dev, int index);
+>> +	void (*enter_dead) (struct cpuidle_device *dev, int index);
+>>   
+>>   	/*
+>>   	 * CPUs execute ->enter_s2idle with the local tick or entire timekeeping
+>> Index: linux-pm/drivers/acpi/processor_idle.c
+>> ===================================================================
+>> --- linux-pm.orig/drivers/acpi/processor_idle.c
+>> +++ linux-pm/drivers/acpi/processor_idle.c
+>> @@ -578,7 +578,7 @@ static void __cpuidle acpi_idle_do_entry
+>>    * @dev: the target CPU
+>>    * @index: the index of suggested state
+>>    */
+>> -static int acpi_idle_play_dead(struct cpuidle_device *dev, int index)
+>> +static void acpi_idle_play_dead(struct cpuidle_device *dev, int index)
+>>   {
+>>   	struct acpi_processor_cx *cx = per_cpu(acpi_cstate[index], dev->cpu);
+>>   
+>> @@ -591,11 +591,8 @@ static int acpi_idle_play_dead(struct cp
+>>   		else if (cx->entry_method == ACPI_CSTATE_SYSTEMIO) {
+>>   			io_idle(cx->address);
+>>   		} else
+>> -			return -ENODEV;
+>> +			return;
+>>   	}
+>> -
+>> -	/* Never reached */
+>> -	return 0;
+>>   }
+>>   
+>>   static __always_inline bool acpi_idle_fallback_to_c1(struct acpi_processor *pr)
+>>
+>>
+>>
 
-> 
-> -- 
->  i.
-> 
-> 
-> > +}
-> > +
-> > +static void __exit remove_wmax_groups(struct platform_device *pdev)
-> > +{
-> > +	if (!wmax_groups[0])
-> > +		device_remove_groups(&pdev->dev, wmax_groups);
-> > +}
-> > +
-> >  static int __init alienware_wmi_init(void)
-> >  {
-> >  	int ret;
-> > @@ -1203,23 +1185,9 @@ static int __init alienware_wmi_init(void)
-> >  		goto fail_platform_device1;
-> >  	}
-> >  
-> > -	if (quirks->hdmi_mux > 0) {
-> > -		ret = create_hdmi(platform_device);
-> > -		if (ret)
-> > -			goto fail_prep_hdmi;
-> > -	}
-> > -
-> > -	if (quirks->amplifier > 0) {
-> > -		ret = create_amplifier(platform_device);
-> > -		if (ret)
-> > -			goto fail_prep_amplifier;
-> > -	}
-> > -
-> > -	if (quirks->deepslp > 0) {
-> > -		ret = create_deepsleep(platform_device);
-> > -		if (ret)
-> > -			goto fail_prep_deepsleep;
-> > -	}
-> > +	ret = create_wmax_groups(platform_device);
-> > +	if (ret)
-> > +		goto fail_prep_groups;
-> >  
-> >  	if (quirks->thermal) {
-> >  		ret = create_thermal_profile();
-> > @@ -1236,9 +1204,8 @@ static int __init alienware_wmi_init(void)
-> >  fail_prep_zones:
-> >  	remove_thermal_profile();
-> >  fail_prep_thermal_profile:
-> > -fail_prep_deepsleep:
-> > -fail_prep_amplifier:
-> > -fail_prep_hdmi:
-> > +	remove_wmax_groups(platform_device);
-> > +fail_prep_groups:
-> >  	platform_device_unregister(platform_device);
-> >  fail_platform_device1:
-> >  	platform_driver_unregister(&platform_driver);
-> > @@ -1251,7 +1218,7 @@ module_init(alienware_wmi_init);
-> >  static void __exit alienware_wmi_exit(void)
-> >  {
-> >  	alienware_zone_exit(platform_device);
-> > -	remove_hdmi(platform_device);
-> > +	remove_wmax_groups(platform_device);
-> >  	remove_thermal_profile();
-> >  	platform_device_unregister(platform_device);
-> >  	platform_driver_unregister(&platform_driver);
-> > 
-> 
 
