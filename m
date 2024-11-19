@@ -1,96 +1,94 @@
-Return-Path: <linux-kernel+bounces-414278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 929AD9D25AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 13:23:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68CB89D25A9
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 13:23:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59B26287215
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 12:23:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19FF61F24CB5
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 12:23:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 507F51CCEDF;
-	Tue, 19 Nov 2024 12:20:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5EDD1CCB3E;
+	Tue, 19 Nov 2024 12:20:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="UadMDcH3"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ac4OhrJj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 001411CC178;
-	Tue, 19 Nov 2024 12:20:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4113E1CC174;
+	Tue, 19 Nov 2024 12:20:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732018832; cv=none; b=uz+LIJO6ae8kLgI5NCzvxBBKVDITY7yokoavhu3cZV9I6joKYt7T12hzntdF4jsVqu0DwAKmYNNPPwti9BWWpAQGzTXQL+tl+5OM/ia6ap+stgTWFmyJYlT9W5XdjERY05ZRFjxJU9ycMKRC8gj2nhD/LArPmf1wvCHJaFF+CX4=
+	t=1732018818; cv=none; b=nrMZaie3JOQn+Mk/pqYEh/cI4+f0tEuXg2IgVS+F4hWJnoyFzHeUu4x1oBDWF4rebizNwHu0JZrkKvwGLdZayHEj2WmNf1S9vFaD1Gb52EavS9ignAHgl1VB9VA+yxCvXK/lPAC7RSZcJ1swmYL9HWQ2mcmK6ceYn9nTJztKWyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732018832; c=relaxed/simple;
-	bh=XyTqHUhZY4N6x5MdjjtRva1G3ecyBo4smINi26keHfM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CpJl5p5bKtsrEYTKcZQ3X4l5qIa2Yi2+vRpA6Fkup6cMAqw5cIS+pU8iHqSd9k64eUevsSiMYp4KN/Pc6OIiYOg7kPGQOA+H+ENgjiOtMF9X7yRX8ASjZyEWAynLQpDltVJQRPd5bQvyjlW/4cmnmc2EnVyOxo0NSOOjWxm/edY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=UadMDcH3; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=mAgmsyibCrflk0YoFAdZcVk08twsC/j0F67GQbMmSV4=; b=UadMDcH3UVFf5+XskhpAoWJY/n
-	HSxZoirZ4f7rpKxNUBEmRJ+nYpAnT+xPFlKLIzMYQMBDe2cuJLULnpLevqhK5W0feixmyZl/kbnJ8
-	IoUoM5wnuWqakS3RBGyxy4Jr7RjOD4nNrO31BlNWEEaeomB8wwP2nIrvpvU/19Uvebx+7I5IGRSYZ
-	ABQX/NrQJCWA9sLjrBE94Vqm6lfKmG51kSdMNO5DHwdvwuP3v39WM24EByv6SpXnAmfIbqRUGF6c7
-	7lVUQXAUAUxIiPS23RI4J7gqPxyIn1r0SexpaPghQO9HKFl/44ubKvwDGzkzEJt77HApe/UVKduav
-	5r2pPdGw==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tDNDR-000000043de-31gy;
-	Tue, 19 Nov 2024 12:20:23 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id BECAC3006AB; Tue, 19 Nov 2024 13:20:21 +0100 (CET)
-Date: Tue, 19 Nov 2024 13:20:21 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
-Cc: mingo@redhat.com, rui.zhang@intel.com, irogers@google.com,
-	kan.liang@linux.intel.com, tglx@linutronix.de, bp@alien8.dei,
-	gautham.shenoy@amd.com, kprateek.nayak@amd.com,
-	ravi.bangoria@amd.com, x86@kernel.org,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 00/10] Add RAPL core energy counter support for AMD
- CPUs
-Message-ID: <20241119122021.GE2328@noisy.programming.kicks-ass.net>
-References: <20241115060805.447565-1-Dhananjay.Ugwekar@amd.com>
+	s=arc-20240116; t=1732018818; c=relaxed/simple;
+	bh=d4a1yeP4aywDL2DBdHc7SqVauFiOd2g07gX5lYzWhK0=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=EiQ14RaeWJceQ+Wy1AekLw2gtReIYzgwP5iHDImRMM/ut+5qfyVsf9iVanasiWTX12+cFgUXefqoaLheFqLdF3lzeYPz1QZEUlJ0TIvUGXzjPI/3ma0OVLy2RCXgUoR6JgKWOjuGhsvgl4r0x48//sHJWLMMWFXxAlf99Z7onlU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ac4OhrJj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B351BC4CECF;
+	Tue, 19 Nov 2024 12:20:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732018816;
+	bh=d4a1yeP4aywDL2DBdHc7SqVauFiOd2g07gX5lYzWhK0=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=Ac4OhrJjmePGR95qdOTbEyPHy7aEzJsah5gUpHGiBTSPqDfGmi3fTgpfgA/Y6Pbfr
+	 LycVjNatPaSZ61PQqakJTsqk6tThFV+nKP1lc01e6s21ZpePGa+WCQk6B+TCVRAnL4
+	 k55riJIUjq1/OIZarYWVHDDCv6EDKjqhjvIb3BKqJ+X13WG+cXSKpnmqr005cNa7WR
+	 IZTRskYAg1MqYHKEw85zsc0PRsnEhlXfXza8zNRFouYbWUwrI99zP0TxmNJLYfFGpV
+	 1Aa9ZSqA4u7KRfhS+kh0vXJDIQFbt+kznyJEIXVKb0/e3J3BwmWyX9RChOE3YXj2hM
+	 g0dzxaWo7KuNQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70E5C3809A80;
+	Tue, 19 Nov 2024 12:20:29 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241115060805.447565-1-Dhananjay.Ugwekar@amd.com>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next v2] mm: page_frag: fix a compile error when kernel is
+ not compiled
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <173201882826.521115.7946425601495099550.git-patchwork-notify@kernel.org>
+Date: Tue, 19 Nov 2024 12:20:28 +0000
+References: <20241119033012.257525-1-linyunsheng@huawei.com>
+In-Reply-To: <20241119033012.257525-1-linyunsheng@huawei.com>
+To: Yunsheng Lin <linyunsheng@huawei.com>
+Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com,
+ netdev@vger.kernel.org, akpm@linux-foundation.org, alexanderduyck@fb.com,
+ linux-mm@kvack.org, broonie@kernel.org, shuah@kernel.org,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Nov 15, 2024 at 06:07:56AM +0000, Dhananjay Ugwekar wrote:
-> 
-> Dhananjay Ugwekar (9):
->   perf/x86/rapl: Remove the unused get_rapl_pmu_cpumask() function
->   perf/x86/rapl: Remove the cpu_to_rapl_pmu() function
->   perf/x86/rapl: Rename rapl_pmu variables
->   perf/x86/rapl: Make rapl_model struct global
->   perf/x86/rapl: Add arguments to the init and cleanup functions
->   perf/x86/rapl: Modify the generic variable names to *_pkg*
->   perf/x86/rapl: Remove the global variable rapl_msrs
->   perf/x86/rapl: Move the cntr_mask to rapl_pmus struct
->   perf/x86/rapl: Add core energy counter support for AMD CPUs
-> 
-> K Prateek Nayak (1):
->   x86/topology: Introduce topology_logical_core_id()
-> 
->  Documentation/arch/x86/topology.rst   |   4 +
->  arch/x86/events/rapl.c                | 414 ++++++++++++++++----------
->  arch/x86/include/asm/processor.h      |   1 +
->  arch/x86/include/asm/topology.h       |   1 +
->  arch/x86/kernel/cpu/debugfs.c         |   1 +
->  arch/x86/kernel/cpu/topology_common.c |   1 +
->  6 files changed, 272 insertions(+), 150 deletions(-)
+Hello:
 
-Thanks, I'll stick them in a tree post -rc1.
+This patch was applied to netdev/net-next.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
+
+On Tue, 19 Nov 2024 11:30:11 +0800 you wrote:
+> page_frag test module is an out of tree module, but built
+> using KDIR as the main kernel tree, the mm test suite is
+> just getting skipped if newly added page_frag test module
+> fails to compile due to kernel not yet compiled.
+> 
+> Fix the above problem by ensuring both kernel is built first
+> and a newer kernel which has page_frag_cache.h is used.
+> 
+> [...]
+
+Here is the summary with links:
+  - [net-next,v2] mm: page_frag: fix a compile error when kernel is not compiled
+    https://git.kernel.org/netdev/net-next/c/96ed62ea0298
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
