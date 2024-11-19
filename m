@@ -1,152 +1,131 @@
-Return-Path: <linux-kernel+bounces-414206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B77C9D24B5
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 12:21:56 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8BA29D24B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 12:22:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50CD8283531
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 11:21:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E2098B24B1A
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 11:22:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C422D1C68BE;
-	Tue, 19 Nov 2024 11:21:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE5EF1C3F0E;
+	Tue, 19 Nov 2024 11:22:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NhYSuQqs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="ob7uqVwp"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30F091C4A18
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 11:21:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13FE41C242C;
+	Tue, 19 Nov 2024 11:22:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732015300; cv=none; b=jg4TT2PB8yla6PgN5JGkNniWSbAXsklJ6UfSse3JwITj4w7BAOTxphqUfgG/vSqQYCeuzmGzgt9dp5/Ukg6ZbCTtRicEWXczZGTRTLwZpKevOCDhOfRayIGpMr+1iBNuAtKd52OzTJSqErZT7kLO/xdWszUXfsTt65ZGlAIvQdM=
+	t=1732015343; cv=none; b=ApRlhupiy8Iex+JjYZucAss5tmn2lb5JuGaOSVQXDrlzhyuVAwZRP1mZDJA/Vrrfo3noxJG8Tz7ZamubqVZxQ5rYIgj/ETgPtjoUW7HoM+7bcWuxfN4NBf7SW5YzTHeFiRH1FMSXEgCwWZRm1IGNkcrjBl0hvtETMwVVKOYxfcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732015300; c=relaxed/simple;
-	bh=+gTimwg+pDYm36w0G+MzGiFoZmx6xYCclJH9gmKwKdY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QB6kK9ZwZVGeMypDKRmS/JjSkNDyUPPyAwOmo/gtYog6ZKCYJE8gt4cciSUXM0304ihaFknxDAx2ZKE31DYBiUlpB5HFqTgNf2YzCowj1kMHh2Zt5QfHOCr3zSCFYOnkbwwYtPUV9yrtU0AxDBHtenFqmN/mGeg/SevxqglST/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NhYSuQqs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65BD6C4CED2;
-	Tue, 19 Nov 2024 11:21:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732015299;
-	bh=+gTimwg+pDYm36w0G+MzGiFoZmx6xYCclJH9gmKwKdY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=NhYSuQqsfMi5wRpgeA9oeouvX1sb7/EH8kXVI7DGyZcGe8mWwzsSI724Bx22PmAYh
-	 /pqaQUstMyE4BYbUA6bYvNV8YtfpqSVa78zGfVRBQR63I3hTEldgTcUor5fIchUs4j
-	 eHIzsIS0qygWHn3vG+FgYhZl49WtPdOU4uTRW0nDVaciWI245/4FEZLje8TbwVTQyQ
-	 ervlSaqx+9pai8B3vKqXkpyrA5J6e9UWMmwBRcs6BKYUumEnzi7YdjSfKy2W6cFbpJ
-	 Er9OIsVAVXQikKWKN0sXNFKSbSWevnXWU0yzt62gyMo1MvTs9rulhLWtO8dTQ/FXVX
-	 nCJojlxTtKl+Q==
-From: Borislav Petkov <bp@kernel.org>
-To: X86 ML <x86@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Thomas De Schampheleire <thomas.de_schampheleire@nokia.com>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	"Borislav Petkov (AMD)" <bp@alien8.de>,
-	stable@kernel.org
-Subject: [PATCH 2/2] x86/microcode/AMD: Flush patch buffer mapping after application
-Date: Tue, 19 Nov 2024 12:21:33 +0100
-Message-ID: <20241119112133.20552-2-bp@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241119112133.20552-1-bp@kernel.org>
-References: <ZyulbYuvrkshfsd2@antipodes>
- <20241119112133.20552-1-bp@kernel.org>
+	s=arc-20240116; t=1732015343; c=relaxed/simple;
+	bh=xwiBdxZwubWz7bqqNS+a9hP63RXvgwe+4qMxsd4awho=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VZS+AXQVIOlja6w0ZDkydbW5DVo8GfXRTILhf08dztYEB4G6XvOEsh51WDDQzTZai5mFA66hPmoRwDGm/vLIQM5i+iFhmZ83zvO5ejgizrrZtSg8QvDLR9EGMe7BbMnvVz9FJn8yC6Nnf40+Lfcqu6a/B0E3nqoyC4q2Ty6ho6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=ob7uqVwp; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from francesco-nb (31-10-206-125.static.upc.ch [31.10.206.125])
+	by mail11.truemail.it (Postfix) with ESMTPA id 9F36C1FCB5;
+	Tue, 19 Nov 2024 12:22:06 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1732015330;
+	bh=mvNs9jTFC+vvsWUY8Alhqtf1e8UARS1YpFbeMu7TsYc=; h=From:To:Subject;
+	b=ob7uqVwpl3w5QJgm2XonVBAtDi8g/P7wzlNRRlWJe8OQ8+X6mHMaq7p/C66JfdhAa
+	 oXkD76CvIqGPdLHHhQ2FTzZRTntGF8iojjTcD56jMl7MgkSTN5FtBwOId1dNQl/I/x
+	 Du8Ap2xftzojyF5N22CeDJRycbdWd/pqyJuGUZgMk/2lRCBkr7bPF5pHHzYSTuD1XX
+	 7uIlg0rJPJQSLHZcRux9IbbQnkARE/87HTtNmECe7Eljq+Ctb0t4f+R2wVFvL+YhCI
+	 X0DYb7ajtYeIw3TFa4UHJ76fXt/QAiuuvxRmRu+sgkTROyvjsMznSywwRonOVXe+vg
+	 7MdqR+3Mcon6Q==
+Date: Tue, 19 Nov 2024 12:22:01 +0100
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Shengjiu Wang <shengjiu.wang@gmail.com>
+Cc: Francesco Dolcini <francesco@dolcini.it>,
+	Shengjiu Wang <shengjiu.wang@nxp.com>, Frank Li <frank.li@nxp.com>,
+	abelvesa@kernel.org, peng.fan@nxp.com, mturquette@baylibre.com,
+	sboyd@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
+	kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, regressions@lists.linux.dev,
+	Adam Ford <aford173@gmail.com>,
+	Alexander Stein <alexander.stein@ew.tq-group.com>,
+	Mark Brown <broonie@kernel.org>, ulf.hansson@linaro.org
+Subject: Re: clk_imx8mp_audiomix_runtime_resume Kernel panic regression on
+ v6.12
+Message-ID: <20241119112201.GA17768@francesco-nb>
+References: <20241007132555.GA53279@francesco-nb>
+ <20241112075958.GA8092@francesco-nb>
+ <20241112092054.GA18139@francesco-nb>
+ <CAA+D8AO3a5WsZ4=V-9CDifDZYjJjwQmQQDDQM7ZKgZ6_-CNDPA@mail.gmail.com>
+ <Zzde9xS0zGJhcoUb@gaggiata.pivistrello.it>
+ <CAA+D8AMx14hp51aH7Y=Sgu+X+_KxQ8zdJdrQHFY84nKtQsKKrw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAA+D8AMx14hp51aH7Y=Sgu+X+_KxQ8zdJdrQHFY84nKtQsKKrw@mail.gmail.com>
 
-From: "Borislav Petkov (AMD)" <bp@alien8.de>
+Hello Shengjiu,
 
-Due to specific requirements while applying microcode patches on Zen1
-and 2, the patch buffer mapping needs to be flushed from the TLB after
-application. Do so.
+On Tue, Nov 19, 2024 at 05:35:36PM +0800, Shengjiu Wang wrote:
+> On Fri, Nov 15, 2024 at 10:47 PM Francesco Dolcini <francesco@dolcini.it> wrote:
+> >
+> > On Fri, Nov 15, 2024 at 11:13:58AM +0800, Shengjiu Wang wrote:
+> > > On Tue, Nov 12, 2024 at 5:20 PM Francesco Dolcini <francesco@dolcini.it> wrote:
+> > > >
+> > > > On Tue, Nov 12, 2024 at 08:59:58AM +0100, Francesco Dolcini wrote:
+> > > > > On Mon, Oct 07, 2024 at 03:25:55PM +0200, Francesco Dolcini wrote:
+> > > > > > it seems that an old regression is back on v6.12, reproduced on -rc2
+> > > > > > (not sure about rc1).
+> > > > > >
+> > > > > > The original report is from https://lore.kernel.org/all/20240424164725.GA18760@francesco-nb/
+> > > > > > and it was fixed with https://lore.kernel.org/all/1715396125-3724-1-git-send-email-shengjiu.wang@nxp.com/.
+> > > > > >
+> > > > > > Is it now back?
+> > > > >
+> > > > > I was able to reproduce this issue once more, this time with 6.11.7.
+> > > > > As I wrote in another email the issue is not systematic as it used to
+> > > > > be.
+> > > > >
+> > > > > Any idea?
+> > > >
+> > > > Frank, Shengjiu, could it be that the udelay(5) in imx_pgc_power_up() is
+> > > > too short and therefore we have such non-systematic failures?
+> > > >
+> > >
+> > > Francesco,  it seems hard to reproduce it on my i.MX8MP-EVK board.
+> > >
+> > > If it is easy to reproduce on your side, you can try to enlarge the delay
+> > > time to see if there is any improvement.
+> >
+> > It's hard also for me to reproduce, we just have a relatively extensive
+> > test farm and 2 times it happened while doing unrelated tests. I was hoping we
+> > could have some idea on what's going on, I'll see if I can put together some
+> > kind of stress test, being able to reproduce it more systematically would
+> > certainly help.
+> >
+> 
+> With my test,  the issue reproduced with delay 5us/6us. but hard reproduced
+> with 7us.
+> I think we may need to use a delay of 10us for safety.
 
-If not, unncesessary and unnatural delays happen in the boot process.
+Great that you were able to narrow this down and confirm the issue.
+I wonder if you would have any information on what is the actual delay
+that the HW would need, instead of guessing numbers. If not, well, let's
+go with 15usec, or 10usec, your call in the end.
 
-Reported-by: Thomas De Schampheleire <thomas.de_schampheleire@nokia.com>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Tested-by: Thomas De Schampheleire <thomas.de_schampheleire@nokia.com>
-Cc: <stable@kernel.org>
-Link: https://lore.kernel.org/r/ZyulbYuvrkshfsd2@antipodes
----
- arch/x86/kernel/cpu/microcode/amd.c | 25 ++++++++++++++++++++-----
- 1 file changed, 20 insertions(+), 5 deletions(-)
+Will you send a patch?
 
-diff --git a/arch/x86/kernel/cpu/microcode/amd.c b/arch/x86/kernel/cpu/microcode/amd.c
-index 31a73715d755..fb5d0c67fbab 100644
---- a/arch/x86/kernel/cpu/microcode/amd.c
-+++ b/arch/x86/kernel/cpu/microcode/amd.c
-@@ -34,6 +34,7 @@
- #include <asm/setup.h>
- #include <asm/cpu.h>
- #include <asm/msr.h>
-+#include <asm/tlb.h>
- 
- #include "internal.h"
- 
-@@ -483,11 +484,25 @@ static void scan_containers(u8 *ucode, size_t size, struct cont_desc *desc)
- 	}
- }
- 
--static int __apply_microcode_amd(struct microcode_amd *mc)
-+static int __apply_microcode_amd(struct microcode_amd *mc, unsigned int psize)
- {
-+	unsigned long p_addr = (unsigned long)&mc->hdr.data_code;
- 	u32 rev, dummy;
- 
--	native_wrmsrl(MSR_AMD64_PATCH_LOADER, (u64)(long)&mc->hdr.data_code);
-+	native_wrmsrl(MSR_AMD64_PATCH_LOADER, p_addr);
-+
-+	if (x86_family(bsp_cpuid_1_eax) == 0x17) {
-+		unsigned long p_addr_end = p_addr + psize - 1;
-+
-+		invlpg(p_addr);
-+
-+		/*
-+		 * Flush next page too if patch image is crossing a page
-+		 * boundary.
-+		 */
-+		if (p_addr >> PAGE_SHIFT != p_addr_end >> PAGE_SHIFT)
-+			invlpg(p_addr_end);
-+	}
- 
- 	/* verify patch application was successful */
- 	native_rdmsr(MSR_AMD64_PATCH_LEVEL, rev, dummy);
-@@ -529,7 +544,7 @@ static bool early_apply_microcode(u32 old_rev, void *ucode, size_t size)
- 	if (old_rev > mc->hdr.patch_id)
- 		return ret;
- 
--	return !__apply_microcode_amd(mc);
-+	return !__apply_microcode_amd(mc, desc.psize);
- }
- 
- static bool get_builtin_microcode(struct cpio_data *cp)
-@@ -745,7 +760,7 @@ void reload_ucode_amd(unsigned int cpu)
- 	rdmsr(MSR_AMD64_PATCH_LEVEL, rev, dummy);
- 
- 	if (rev < mc->hdr.patch_id) {
--		if (!__apply_microcode_amd(mc))
-+		if (!__apply_microcode_amd(mc, p->size))
- 			pr_info_once("reload revision: 0x%08x\n", mc->hdr.patch_id);
- 	}
- }
-@@ -798,7 +813,7 @@ static enum ucode_state apply_microcode_amd(int cpu)
- 		goto out;
- 	}
- 
--	if (__apply_microcode_amd(mc_amd)) {
-+	if (__apply_microcode_amd(mc_amd, p->size)) {
- 		pr_err("CPU%d: update failed for patch_level=0x%08x\n",
- 			cpu, mc_amd->hdr.patch_id);
- 		return UCODE_ERROR;
--- 
-2.43.0
+Francesco
 
 
