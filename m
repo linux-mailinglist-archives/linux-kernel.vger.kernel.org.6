@@ -1,63 +1,94 @@
-Return-Path: <linux-kernel+bounces-414653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D2ED9D2BA2
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 17:50:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42F539D2BAA
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 17:50:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCFA71F25658
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 16:50:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D827A2847C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 16:50:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC83A1D2F50;
-	Tue, 19 Nov 2024 16:44:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 686F81D3564;
+	Tue, 19 Nov 2024 16:45:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WtfkJnbO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="Zmv3nVP0"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D26814A639;
-	Tue, 19 Nov 2024 16:44:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 377FE1D0DC9;
+	Tue, 19 Nov 2024 16:45:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732034672; cv=none; b=ijN0SswG6T3cjou3FFETbmhYtENY9JysCfoNi84GVXUmLp3F8SYVBS5gab/id0BLVUk9SxyN2NyhLDSco4zBTQ8oBi3aRs7/XoCcwAB3Wh9CQohLy0OesaBI2rLJ8yE3fjwkeDvljkBA9qotTPw6SG8saNwzm0lduKQ/54B4CVY=
+	t=1732034710; cv=none; b=h5GA6vTya2WgIZa3plrOQegvBiOoB97vknXxPnHb1wTdoIvruoJRnduHPOn5+QOUxOL+IV+ZG6KRjFMnCn0Ndtn9jcHxhiLMAh+CtejDLvjOGILjeYGAgOfO682w6genU93pRAGhW9E1GPV4LP8+XK5xVIrhResl/TLvBIvWrGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732034672; c=relaxed/simple;
-	bh=vh/rQMmWsW0eC5ZiMITfWaU9DUli0B1GXm34M8YFvSM=;
+	s=arc-20240116; t=1732034710; c=relaxed/simple;
+	bh=AJfFEyuQcq4/CZ7kGNx0cJgrsYNRuUzjicDVcmG2onE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=efdyZcxjkBV/Zzg0awzIoTq5AmCJ5ppfTvIV/FFyy2ioBG5KUBeH1t+N4t1Wk9rjftcQPTDbFEScG4qXYAoQLck1pO/afTNjZMSOXoU72cZdSe8I2QBrJ01j8hXz9FPnCfPscmCswwD8iqPenFrDQ+0w0kB8kkKRZ6qsUY6dOmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WtfkJnbO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8208FC4CECF;
-	Tue, 19 Nov 2024 16:44:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732034671;
-	bh=vh/rQMmWsW0eC5ZiMITfWaU9DUli0B1GXm34M8YFvSM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WtfkJnbOJCF/JI0XQtHtwo9j8x5uWWgD4w2/haWwAqzx44sXThCn8lzUK3iFQjIsY
-	 eos7cAcYbkafsZSpzs9tqKPuSfRZgNJ+glswzwAbOsZhN3JCrSMga5g9DJV998OwX7
-	 jh/gJBbCi085yOlTeYZu7FlHSMLAOOn2jx2WAJZSEQ4xmujJPUoFtb0n5tPmdqqWil
-	 sKTb+kDH70tNSg0etWKTnjPbX9JVgrkbVbm25tXdRru5o4Kp+roDG2GlEWxWneEanJ
-	 LGruxQKB1hExKjMcMgiqkbMhq9VYwUrhleSsffVGe3XaeOkXfn4eHv8K+jdXx6WrHU
-	 cYK1UWusjJQGQ==
-Date: Tue, 19 Nov 2024 10:44:29 -0600
-From: Rob Herring <robh@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Mark Brown <broonie@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=Hzv1VDGrDcPhJgL3j6UpA+PgNVNIL8VdhAP4nPH2cuf3Dw15vsb1oxZdvn9mSQ2D+q4Zwei3WMTUxPYD2Xkeh9+kk2UVmgGdvADVTSHMWCKSjovz9y/FDMrV66mdIekXAP03BGvu4tiSQdMqCb1ZVlVheNY1Gv/GDTxzSE+j5TA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=Zmv3nVP0; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=UYp2EhsrOy+fm7DQ5XYuyvMYHISzNVIRGVyJH9Vl8BI=; b=Zmv3nVP0B0d3Sm1BxqXb2DIPt4
+	alK7Wh8STHt1wmp0zhZjw7IdsZInbIzrFuprq3YjeSq88L1RFEP4SDHCDzLLiijbBCdjRCB4VaKE1
+	DOL61uLfQMok5ZGT6CXliwmaGQVNTzdH0CczIK2Dv4dHwr5XLTddCO9YmPXJbHSMLvrP/mZpe0Ulj
+	R6vfVR2G7c2L/9Ti+RR9GcXe3TaLDgFxfDY7b7uGzFy4TAsEtiRWA3zSjG94vlwwpb+43buH7X4af
+	3EYFu2p7OqtT9XWyMMb4tYEGCrRQQ0Q6JP614+QFmpPcEP4LPgoGZARKCeo/69Hji0aJH278xGN4V
+	dT2XJiZg==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:37470)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1tDRLK-0003zE-2T;
+	Tue, 19 Nov 2024 16:44:47 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1tDRLI-0006DJ-0E;
+	Tue, 19 Nov 2024 16:44:44 +0000
+Date: Tue, 19 Nov 2024 16:44:43 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: jan.petrous@oss.nxp.com
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Emil Renner Berthing <kernel@esmil.dk>,
+	Minda Chen <minda.chen@starfivetech.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Iyappan Subramanian <iyappan@os.amperecomputing.com>,
+	Keyur Chudgar <keyur@os.amperecomputing.com>,
+	Quan Nguyen <quan@os.amperecomputing.com>,
+	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	David Jander <david@protonic.nl>,
-	Martin Sperl <kernel@martin.sperl.org>, linux-spi@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-iio@vger.kernel.org, linux-pwm@vger.kernel.org
-Subject: Re: [PATCH v5 03/16] spi: dt-bindings: add trigger-source.yaml
-Message-ID: <20241119164429.GB1769375-robh@kernel.org>
-References: <20241115-dlech-mainline-spi-engine-offload-2-v5-0-bea815bd5ea5@baylibre.com>
- <20241115-dlech-mainline-spi-engine-offload-2-v5-3-bea815bd5ea5@baylibre.com>
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	imx@lists.linux.dev, devicetree@vger.kernel.org,
+	NXP S32 Linux Team <s32@nxp.com>
+Subject: Re: [PATCH v5 07/16] net: dwmac-intel-plat: Use helper rgmii_clock
+Message-ID: <ZzzAe8s2UgPYHnkv@shell.armlinux.org.uk>
+References: <20241119-upstream_s32cc_gmac-v5-0-7dcc90fcffef@oss.nxp.com>
+ <20241119-upstream_s32cc_gmac-v5-7-7dcc90fcffef@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,76 +97,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241115-dlech-mainline-spi-engine-offload-2-v5-3-bea815bd5ea5@baylibre.com>
+In-Reply-To: <20241119-upstream_s32cc_gmac-v5-7-7dcc90fcffef@oss.nxp.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Fri, Nov 15, 2024 at 02:18:42PM -0600, David Lechner wrote:
-> Add a new binding for SPI offload trigger sources.
-> 
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
-> ---
-> 
-> v5 changes:
-> * Add MAINTAINERS entry.
-> 
-> v4 changes: new patch in v4.
-> 
-> FWIW, this is essentially identical to the leds trigger-source binding.
-> ---
->  .../devicetree/bindings/spi/trigger-source.yaml    | 28 ++++++++++++++++++++++
->  MAINTAINERS                                        |  1 +
->  2 files changed, 29 insertions(+)
+On Tue, Nov 19, 2024 at 04:00:13PM +0100, Jan Petrous via B4 Relay wrote:
+> @@ -31,27 +31,15 @@ struct intel_dwmac_data {
+>  static void kmb_eth_fix_mac_speed(void *priv, unsigned int speed, unsigned int mode)
+>  {
+>  	struct intel_dwmac *dwmac = priv;
+> -	unsigned long rate;
+> +	long rate;
+>  	int ret;
 
-This should go into dtschema instead and not be just for SPI.
+So the following becomes:
 
-> 
-> diff --git a/Documentation/devicetree/bindings/spi/trigger-source.yaml b/Documentation/devicetree/bindings/spi/trigger-source.yaml
-> new file mode 100644
-> index 000000000000..d64367726af2
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/spi/trigger-source.yaml
-> @@ -0,0 +1,28 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/spi/trigger-source.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Trigger source providers for SPI offloads
-> +
-> +maintainers:
-> +  - David Lechner <dlechner@baylibre.com>
-> +
-> +description:
-> +  Each trigger source provider should be represented by a device tree node. It
-> +  may be e.g. a SPI peripheral chip or a clock source.
+>  
+>  	rate = clk_get_rate(dwmac->tx_clk);
+>  
+> +	rate = rgmii_clock(speed);
+> +	if (rate < 0) {
+>  		dev_err(dwmac->dev, "Invalid speed\n");
+> +		return;
+>  	}
 
-select: true
+Now that I've removed the deleted lines, we can see that the
+clk_get_rate() call there is now redundant. Please remove in
+this change.
 
-So the schema is always applied.
+Thanks.
 
-> +
-> +properties:
-> +  '#trigger-source-cells':
-> +    description:
-> +      Number of cells in a source trigger. Typically 0 for nodes of simple
-> +      trigger sources. For nodes with more than one output signal, the first
-> +      cell be used to specify which output signal to use. If the same signal is
-> +      available on more than one pin, the second cell can be used to specify
-> +      which pin to use.
-> +    enum: [ 0, 1, 2 ]
-
-Not sure it's worth defining how many cells here since the specific 
-providers have to define the exact number of cells and their use.
-
-Add "trigger-sources" here with it's type. See other simple 
-provider/consumer schemas which have both properties in one schema.
-
-Then when you use trigger-sources in a specific binding, you just need 
-to define the entries like clocks, interrupts, resets, etc.
-
-
-And eventually any types defined in the kernel can be dropped, but that 
-should wait a bit since older dtschema won't have them.
-
-Rob
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
