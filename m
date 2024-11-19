@@ -1,307 +1,173 @@
-Return-Path: <linux-kernel+bounces-414472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 872D89D2894
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 15:48:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DB2409D2899
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 15:48:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 453E2281164
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 14:48:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C454280F62
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 14:48:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E3B41CEABA;
-	Tue, 19 Nov 2024 14:48:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6A3612B93;
+	Tue, 19 Nov 2024 14:48:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IJf3eQfx"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ao3TtGDl"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BF4F12B93
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 14:47:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DF541C2DB2;
+	Tue, 19 Nov 2024 14:48:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732027689; cv=none; b=JnDGrlgNpoUDEw4JfgzqDuZBgJJqj82Y8ZK4YZ2NCpOXbtvdOz8yakVqkBXQYxLCWnKYjFxq0sdEvINsQjn7tpVwx4oNHA5nhZ2uDhCL/gD4UV8OZrO1F5yYABDF5V5w9hXGiwL4q5m9WfQGn+1fqwK4SymkXdTwryAccIyKavo=
+	t=1732027718; cv=none; b=LSPEkV7R286gAZB0CDZMWw2f7ayfpg723QD4tZVAepr00cn6lE5sPhP1co0uq5s5qMLi9LoXBu2u8ytJQJX7libLuXqJ8j/+VLXcQIGIV7Mn744DBm6x8DkFlQ2bGOi+pM0Q8yNhgC1GWBpTErDWiOX1805DbuudNM1k6W416qU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732027689; c=relaxed/simple;
-	bh=hxmbRKcZW9+vyzhu60weueC2XV8iW62bzt97quXzouk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RsSxzKouVI8hXW06FGO1NvRaNNh1oYAM5ANVYxagYmi8tuE50Z/wDON5M2HBrX07yO4i0iPyMcI+3sps57N/ZOXUjrBBoC0BjX93xWwVPxSLds70+D7HICfbqlqUiz4L5sj+AwL9MQTjfEDfKXJGYusLAVYQhre4O2FqWlxrnck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IJf3eQfx; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1732027718; c=relaxed/simple;
+	bh=QwXazWoy598N3VgFKCHfM0hYK8XWUSqsa/+EeMwukxs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Va33DQ4vc5pLQjoR4jTlRrgYbT1tzi6yPx2uix5Gm1MygXmqMSBYi/6x7ftE271zavaly5HNLY2bLBEVr2jmZzCmjsDjMJHXT47jsQU+9OgbV5IBbEhpX97TufZV1bRapEDz2JKwqts0yMfqtFwid9F6lioPj8imQLCg4p5xTxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ao3TtGDl; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-431616c23b5so32039405e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 06:47:57 -0800 (PST)
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20cbcd71012so35978395ad.3;
+        Tue, 19 Nov 2024 06:48:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732027676; x=1732632476; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=OVmUxUYJmV44wChQxtw+zT7Cwu0xbqPJgTEA0MJPBPo=;
-        b=IJf3eQfxIG+5dUnwsmR2o6ORazXXX+rNLLkT7GHKxPwPSiDIKLAKHQsFA6W6F64OEA
-         JpaDqvlpm74BUQ516Q8TkVsjR9W+N7ub4+Gp6mhVczdn/7EfZZ5mtJYMlASeaz02q0+n
-         +sV0XRla5VjkQmG20B1QgPBYsSaP7GmpUjtJmr8W8QTwTOo2sdfNfyPiaycEJbFx66gl
-         oCzGRepQ8rIsQSmDW//ju7qfdILc/6mrfYTtUH+Y6a+nz7eNBB9KEgNeXioWu6MI4UCW
-         1ZBmqHnYrMROIsFJJZGEcHIywIS1Mwxj8rOERKw3wbavNVXZaTQdIgg/j6nDDIMhn4Rp
-         Ib3w==
+        d=gmail.com; s=20230601; t=1732027716; x=1732632516; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=DaMH2QP1l4aE76EMFi2/9XAhs9mTPBcV8Y2KJeK/Ks8=;
+        b=Ao3TtGDldlshGu8bsLWvUIlOo+yRnduMhwC9zTaVbMgOX1WB59h7dlzVypVCyGEHvl
+         3O5oYncY4Xvc1iIlHgMNKDer3sksfngstJHXHa63vGH7bPAxS+7OXZkHnpEIpJMKAEnl
+         oAAa6TAnj1l7TfKErhSBYanJ0V3kJqTHXhzV1VlpKACnObCcJMAYW3zMmWW9yVcgYkYz
+         0Xhsw30h5ROi6w2KnEtckBee4vtJU7yRZZvshGfBfsWnmBgzin/ZbSYC7iUAggHI31wn
+         ctAr2+/iIUVw6gALTtdVx1udpFbJ1KUY20buuDli5T/emB8qs298fw165Nemey/k/24y
+         laAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732027676; x=1732632476;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OVmUxUYJmV44wChQxtw+zT7Cwu0xbqPJgTEA0MJPBPo=;
-        b=eIeWkrohauD3tmdgyq46jV+mCRD3d6YgY48p/7ZNRQLhZwdgYPLESVVtAfaN1cbK/f
-         zNeP9TLu7eqdxfKUXWbQh1SBjN75WHtY4qG8r7FFe0MNzRI7XCCGTEw+76NojFFX8q1U
-         tsNqQvieayryCiFn/oem09cYx3pFkZw2F1dKaSvi7AKTWdwyGG+p2jCy+OOFSb9FyrkK
-         7eELGNziKd4QDSVYcPa8APXp9jRuZErYRtQHjguL7RcifziMKjNE3Purl53BwvtyiU6I
-         BcsA2Y4bkAMHROR0GIJOC9NAFtrNd3bsVHQqr0WniaY+y89qzKTjtnDKNL5+RpOcna/T
-         CuDg==
-X-Forwarded-Encrypted: i=1; AJvYcCU3P8OXoWOJgb3yA5X4XK9kn0oa6gGPVzCNRUxIh94BWei/7HJsCBAxu3bUfhRaI9Y19dFs0flhOOSIPO0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw++ifIsTA+v9i63QdpTkqpMRIc3BKiA2JKQd45rnYD2ApQ/jQ7
-	Z3FKOljPF1lma2p1kEBLQV8G8OSa41XMt7hufn7ZutmTmGVAhpo8
-X-Google-Smtp-Source: AGHT+IHRptvkPqOKGkK57Nt/XY4SPugXh/Simnf5AZ16RRIKELa3mjxbsfptKEXDbr6SdD7BfAPuyQ==
-X-Received: by 2002:a05:600c:1911:b0:431:57cf:f13d with SMTP id 5b1f17b1804b1-432f57a96f9mr30990015e9.3.1732027675572;
-        Tue, 19 Nov 2024 06:47:55 -0800 (PST)
-Received: from fedora ([213.94.25.69])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-432da265f28sm200962755e9.17.2024.11.19.06.47.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Nov 2024 06:47:55 -0800 (PST)
-Date: Tue, 19 Nov 2024 15:47:53 +0100
-From: =?iso-8859-1?Q?Jos=E9_Exp=F3sito?= <jose.exposito89@gmail.com>
-To: Louis Chauvet <louis.chauvet@bootlin.com>
-Cc: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
-	=?iso-8859-1?Q?Ma=EDra?= Canal <mairacanal@riseup.net>,
-	Haneen Mohammed <hamohammed.sa@gmail.com>,
-	Melissa Wen <melissa.srw@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Simona Vetter <simona.vetter@ffwll.ch>,
-	thomas.petazzoni@bootlin.com, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] drm/vkms: Remove index parameter from init_vkms_output
-Message-ID: <ZzylGZrZ_h66Vnyx@fedora>
-References: <20241119-vkms-remove-index-v3-1-976321a3f801@bootlin.com>
- <ZzyZKew8oqAZACfL@louis-chauvet-laptop>
+        d=1e100.net; s=20230601; t=1732027716; x=1732632516;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DaMH2QP1l4aE76EMFi2/9XAhs9mTPBcV8Y2KJeK/Ks8=;
+        b=f+FOEbF09f60q08uX7KrDuL1btDS5obxHLVTjG0dv6HxS9CnyV0h85qi4q932XGO7v
+         Wcmc2/Myg87Qb4TVHAJ+EfWXEBG0x/wG/lOuwgbSK+afU32oSCpAyfuEHtATQ8ThLmPW
+         O60adKkoeH3Ic4Os10TxDWouCqOJ16a3c+u/nP5cGN0mQaMYFQ5Plku0W8fmdkQGEEH9
+         9ol3LZjRAsT/eurr0NOAfBaiJtaRkdbpfXWy5UBvLwDrGUgIe3Wjd49YPaAX/QUObGDY
+         rV+uqNM3GVALiJj+ycbxk9dj4Pc2uEsBGUr4i8WSW96n8omj/JbMGGhMXYb5hT8k864A
+         EpgA==
+X-Forwarded-Encrypted: i=1; AJvYcCUAetQ8fmSqW2P6ymflC3nMi6kXK8C9KZDmDTIxTK59xZN6TIRKj0V51ElOAe9WG2jhVh61gf87u72u@vger.kernel.org, AJvYcCWF3JvCISolEY3j7GwRW8LMnBHULO1ARhEUrnWqzMN7MNKDO7ZpfLWIdPmjAgkEq+hMkIBJKjvGh5f165vF@vger.kernel.org, AJvYcCWZlynApk32oNRWYI019w+yiPUHWWDqo50f5Gk9sx3MrHttM4RqvLQYCL9p8zxFtm4kfhbMp8o9ZMtzz3E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwD1j+UaoqfByxa7QuLzg1ufNS6gsQ71Gxbn1EM77CAxHudx1n5
+	0Z7mL+CokCjfLnLEBYYisDrkOH/7nqDrxVD7jIanQOrVtnYysAv2
+X-Google-Smtp-Source: AGHT+IF+WyabdPwFDmryetYzkUSnDDB5CNGZqmS8ChYI0ehtLBd6JmjIELBZ9myTtNIxiiXCTsuIoQ==
+X-Received: by 2002:a17:903:189:b0:20c:968e:4dcd with SMTP id d9443c01a7336-211d0d6f249mr170849345ad.7.1732027715530;
+        Tue, 19 Nov 2024 06:48:35 -0800 (PST)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2125bec05acsm9834175ad.32.2024.11.19.06.48.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 19 Nov 2024 06:48:34 -0800 (PST)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <4856f639-5b44-47cc-a257-47a30ad3fb5c@roeck-us.net>
+Date: Tue, 19 Nov 2024 06:48:31 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZzyZKew8oqAZACfL@louis-chauvet-laptop>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] hwmon: (sht3x) add devicetree support
+To: JuenKit Yip <hunterteaegg@126.com>, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, jdelvare@suse.com, peteryin.openbmc@gmail.com,
+ noahwang.wang@outlook.com, festevam@gmail.com, marex@denx.de,
+ lukas@wunner.de, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-hwmon@vger.kernel.org
+References: <20241119140725.75297-1-hunterteaegg@126.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <20241119140725.75297-1-hunterteaegg@126.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Nov 19, 2024 at 02:56:57PM +0100, Louis Chauvet wrote:
-> On 19/11/24 - 14:34, Louis Chauvet wrote:
-> > VKMS currently supports only one CRTC, so it make no sense to have this
-> > index configurable. To avoid issues, replace this hardcoded index by
-> > drm_crtc_mask when applicable.
-> > 
-> > There is no need to manually set a crtc mask on primary and cursor plane
-> > as it is automatically set by drmm_crtc_alloc_with_planes.
-> > 
-> > In addition, this will remove the use of an uninitialized structure in
-> > vkms_add_overlay_plane. This currently works by chance because two things:
-> > - vkms_plane_init always set a possible_crtcs value, so the problematic
-> >   branch is never used;
-> > - drm_crtc_mask on an kzalloc'd drm_crtc returns BIT(0), and the VKMS CRTC
-> >   always have this id.
-> > 
-> > Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+On 11/19/24 06:07, JuenKit Yip wrote:
+> add "compatible" property for supporting devicetree
 > 
-> Hi Maíra, José,
+> Signed-off-by: JuenKit Yip <hunterteaegg@126.com>
+> ---
+>   drivers/hwmon/sht3x.c | 18 +++++++++++++++++-
+>   1 file changed, 17 insertions(+), 1 deletion(-)
 > 
-> You told me "LGTM" for the v2, but without leaving a Acked/Reviewed-by, 
-> should I add them? Or maybe you prefer to formally send them now?
+> diff --git a/drivers/hwmon/sht3x.c b/drivers/hwmon/sht3x.c
+> index 650b0bcc2359..2ac1537b3e3e 100644
+> --- a/drivers/hwmon/sht3x.c
+> +++ b/drivers/hwmon/sht3x.c
+> @@ -954,6 +954,19 @@ static int sht3x_probe(struct i2c_client *client)
+>   	return PTR_ERR_OR_ZERO(hwmon_dev);
+>   }
+>   
+> +/* devicetree ID table */
+> +static const struct of_device_id sht3x_of_match[] = {
+> +	{ .compatible = "sensirion,sht30", .data = (void *)sht3x },
+> +	{ .compatible = "sensirion,sht31", .data = (void *)sht3x },
+> +	{ .compatible = "sensirion,sht35", .data = (void *)sht3x },
+> +	{ .compatible = "sensirion,sts30", .data = (void *)sts3x },
+> +	{ .compatible = "sensirion,sts31", .data = (void *)sts3x },
+> +	{ .compatible = "sensirion,sts35", .data = (void *)sts3x },
 
-Yes, feel free to add:
-Reviewed-by: José Expósito <jose.exposito89@gmail.com>
+This either needs to be "sensirion,sht3x" and "sensirion,sts3x",
+and the matching entries need to be documented in the bindings document,
+or each individual entry needs to be listed in the bindings document.
+Also, this patch should be patch 2/2, and it needs to pass checkpatch
+without warning.
 
-Thanks for rebasing the patch and fixing the conflict!
+> +	{},
 
-Jose
- 
-> Thanks,
-> Louis Chauvet
-> 
-> > ---
-> > Changes in v3:
-> > - Rebased on drm-misc-next
-> > - Link to v2: https://lore.kernel.org/r/20241010-vkms-remove-index-v2-1-6b8d6cfd5a15@bootlin.com
-> > 
-> > Changes in v2:
-> > - Applied comments from José
-> > - Link to v1: https://lore.kernel.org/r/20240906-vkms-remove-index-v1-1-3cfedd8ccb2f@bootlin.com
-> > ---
-> >  drivers/gpu/drm/vkms/vkms_drv.c    |  2 +-
-> >  drivers/gpu/drm/vkms/vkms_drv.h    |  8 ++-----
-> >  drivers/gpu/drm/vkms/vkms_output.c | 49 +++++++++++++-------------------------
-> >  drivers/gpu/drm/vkms/vkms_plane.c  |  4 ++--
-> >  4 files changed, 21 insertions(+), 42 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/vkms/vkms_drv.c b/drivers/gpu/drm/vkms/vkms_drv.c
-> > index bab13943d8e0085bed85092d7bc8727d834768a9..e4ae69d9ef871c9ce436ad0bd8c6551d8fe7f55c 100644
-> > --- a/drivers/gpu/drm/vkms/vkms_drv.c
-> > +++ b/drivers/gpu/drm/vkms/vkms_drv.c
-> > @@ -174,7 +174,7 @@ static int vkms_modeset_init(struct vkms_device *vkmsdev)
-> >  	dev->mode_config.preferred_depth = 0;
-> >  	dev->mode_config.helper_private = &vkms_mode_config_helpers;
-> >  
-> > -	return vkms_output_init(vkmsdev, 0);
-> > +	return vkms_output_init(vkmsdev);
-> >  }
-> >  
-> >  static int vkms_create(struct vkms_config *config)
-> > diff --git a/drivers/gpu/drm/vkms/vkms_drv.h b/drivers/gpu/drm/vkms/vkms_drv.h
-> > index 672fe191e239c03e7358d43eb19215361417a781..036101ee4ea1cb0a335cd2ea78a8ca9da87fbe93 100644
-> > --- a/drivers/gpu/drm/vkms/vkms_drv.h
-> > +++ b/drivers/gpu/drm/vkms/vkms_drv.h
-> > @@ -212,21 +212,17 @@ int vkms_crtc_init(struct drm_device *dev, struct drm_crtc *crtc,
-> >   * vkms_output_init() - Initialize all sub-components needed for a VKMS device.
-> >   *
-> >   * @vkmsdev: VKMS device to initialize
-> > - * @index: CRTC which can be attached to the planes. The caller must ensure that
-> > - *	   @index is positive and less or equals to 31.
-> >   */
-> > -int vkms_output_init(struct vkms_device *vkmsdev, int index);
-> > +int vkms_output_init(struct vkms_device *vkmsdev);
-> >  
-> >  /**
-> >   * vkms_plane_init() - Initialize a plane
-> >   *
-> >   * @vkmsdev: VKMS device containing the plane
-> >   * @type: type of plane to initialize
-> > - * @index: CRTC which can be attached to the plane. The caller must ensure that
-> > - *	   @index is positive and less or equals to 31.
-> >   */
-> >  struct vkms_plane *vkms_plane_init(struct vkms_device *vkmsdev,
-> > -				   enum drm_plane_type type, int index);
-> > +				   enum drm_plane_type type);
-> >  
-> >  /* CRC Support */
-> >  const char *const *vkms_get_crc_sources(struct drm_crtc *crtc,
-> > diff --git a/drivers/gpu/drm/vkms/vkms_output.c b/drivers/gpu/drm/vkms/vkms_output.c
-> > index 25a99fde126c7402941954015287ab0887484139..8f4bd5aef087b459d37d0cbbf90fe0145090917a 100644
-> > --- a/drivers/gpu/drm/vkms/vkms_output.c
-> > +++ b/drivers/gpu/drm/vkms/vkms_output.c
-> > @@ -32,29 +32,14 @@ static const struct drm_connector_helper_funcs vkms_conn_helper_funcs = {
-> >  	.get_modes    = vkms_conn_get_modes,
-> >  };
-> >  
-> > -static int vkms_add_overlay_plane(struct vkms_device *vkmsdev, int index,
-> > -				  struct drm_crtc *crtc)
-> > -{
-> > -	struct vkms_plane *overlay;
-> > -
-> > -	overlay = vkms_plane_init(vkmsdev, DRM_PLANE_TYPE_OVERLAY, index);
-> > -	if (IS_ERR(overlay))
-> > -		return PTR_ERR(overlay);
-> > -
-> > -	if (!overlay->base.possible_crtcs)
-> > -		overlay->base.possible_crtcs = drm_crtc_mask(crtc);
-> > -
-> > -	return 0;
-> > -}
-> > -
-> > -int vkms_output_init(struct vkms_device *vkmsdev, int index)
-> > +int vkms_output_init(struct vkms_device *vkmsdev)
-> >  {
-> >  	struct vkms_output *output = &vkmsdev->output;
-> >  	struct drm_device *dev = &vkmsdev->drm;
-> >  	struct drm_connector *connector = &output->connector;
-> >  	struct drm_encoder *encoder = &output->encoder;
-> >  	struct drm_crtc *crtc = &output->crtc;
-> > -	struct vkms_plane *primary, *cursor = NULL;
-> > +	struct vkms_plane *primary, *overlay, *cursor = NULL;
-> >  	int ret;
-> >  	int writeback;
-> >  	unsigned int n;
-> > @@ -65,29 +50,31 @@ int vkms_output_init(struct vkms_device *vkmsdev, int index)
-> >  	 * The overlay and cursor planes are not mandatory, but can be used to perform complex
-> >  	 * composition.
-> >  	 */
-> > -	primary = vkms_plane_init(vkmsdev, DRM_PLANE_TYPE_PRIMARY, index);
-> > +	primary = vkms_plane_init(vkmsdev, DRM_PLANE_TYPE_PRIMARY);
-> >  	if (IS_ERR(primary))
-> >  		return PTR_ERR(primary);
-> >  
-> > -	if (vkmsdev->config->overlay) {
-> > -		for (n = 0; n < NUM_OVERLAY_PLANES; n++) {
-> > -			ret = vkms_add_overlay_plane(vkmsdev, index, crtc);
-> > -			if (ret)
-> > -				return ret;
-> > -		}
-> > -	}
-> > -
-> >  	if (vkmsdev->config->cursor) {
-> > -		cursor = vkms_plane_init(vkmsdev, DRM_PLANE_TYPE_CURSOR, index);
-> > +		cursor = vkms_plane_init(vkmsdev, DRM_PLANE_TYPE_CURSOR);
-> >  		if (IS_ERR(cursor))
-> >  			return PTR_ERR(cursor);
-> >  	}
-> >  
-> > -	/* [1]: Allocation of a CRTC, its index will be BIT(0) = 1 */
-> >  	ret = vkms_crtc_init(dev, crtc, &primary->base, &cursor->base);
-> >  	if (ret)
-> >  		return ret;
-> >  
-> > +	if (vkmsdev->config->overlay) {
-> > +		for (n = 0; n < NUM_OVERLAY_PLANES; n++) {
-> > +			overlay = vkms_plane_init(vkmsdev, DRM_PLANE_TYPE_OVERLAY);
-> > +			if (IS_ERR(overlay)) {
-> > +				DRM_DEV_ERROR(dev->dev, "Failed to init vkms plane\n");
-> > +				return PTR_ERR(overlay);
-> > +			}
-> > +			overlay->base.possible_crtcs = drm_crtc_mask(crtc);
-> > +		}
-> > +	}
-> > +
-> >  	ret = drm_connector_init(dev, connector, &vkms_connector_funcs,
-> >  				 DRM_MODE_CONNECTOR_VIRTUAL);
-> >  	if (ret) {
-> > @@ -103,11 +90,7 @@ int vkms_output_init(struct vkms_device *vkmsdev, int index)
-> >  		DRM_ERROR("Failed to init encoder\n");
-> >  		goto err_encoder;
-> >  	}
-> > -	/*
-> > -	 * This is a hardcoded value to select crtc for the encoder.
-> > -	 * BIT(0) here designate the first registered CRTC, the one allocated in [1]
-> > -	 */
-> > -	encoder->possible_crtcs = BIT(0);
-> > +	encoder->possible_crtcs = drm_crtc_mask(crtc);
-> >  
-> >  	ret = drm_connector_attach_encoder(connector, encoder);
-> >  	if (ret) {
-> > diff --git a/drivers/gpu/drm/vkms/vkms_plane.c b/drivers/gpu/drm/vkms/vkms_plane.c
-> > index e5c625ab8e3e06cb95f468c59bc3b06ef85eab6f..ad137c9a75f5e9ee3bb62e7bb2c5e3684a6ecbb6 100644
-> > --- a/drivers/gpu/drm/vkms/vkms_plane.c
-> > +++ b/drivers/gpu/drm/vkms/vkms_plane.c
-> > @@ -198,12 +198,12 @@ static const struct drm_plane_helper_funcs vkms_plane_helper_funcs = {
-> >  };
-> >  
-> >  struct vkms_plane *vkms_plane_init(struct vkms_device *vkmsdev,
-> > -				   enum drm_plane_type type, int index)
-> > +				   enum drm_plane_type type)
-> >  {
-> >  	struct drm_device *dev = &vkmsdev->drm;
-> >  	struct vkms_plane *plane;
-> >  
-> > -	plane = drmm_universal_plane_alloc(dev, struct vkms_plane, base, 1 << index,
-> > +	plane = drmm_universal_plane_alloc(dev, struct vkms_plane, base, 0,
-> >  					   &vkms_plane_funcs,
-> >  					   vkms_formats, ARRAY_SIZE(vkms_formats),
-> >  					   NULL, type, NULL);
-> > 
-> > ---
-> > base-commit: 7d2faa8dbb7055a115fe0cd6068d7090094a573d
-> > change-id: 20240906-vkms-remove-index-3a6e04c38e02
-> > 
-> > Best regards,
-> > -- 
-> > Louis Chauvet <louis.chauvet@bootlin.com>
-> > 
+Unnecessary ",".
+
+Guenter
+
 
