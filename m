@@ -1,90 +1,59 @@
-Return-Path: <linux-kernel+bounces-414507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 094C59D2952
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 16:14:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CE9C9D2932
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 16:10:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87E6CB31473
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 15:10:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 628102816A8
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 15:10:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA4F41D0BB2;
-	Tue, 19 Nov 2024 15:04:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 138D71D0E06;
+	Tue, 19 Nov 2024 15:05:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ag9212lF"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="twdttrHe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED33F1CCB35
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 15:04:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 644191D0B9C;
+	Tue, 19 Nov 2024 15:05:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732028642; cv=none; b=AGJYvUE4t4a74jyW/+F5cRfDy2PlFylX4BHvOf33ZvY4vyyZPB9BPE6qBOj0DH2vpkfGzM+kawLuWYhK4tmVwPqvAl59154UZM6rn2YRE81Pr6BcyuSO4Q9iz3RSk/iGnUq/fCLEowY0LfAiF46LZQm1WIsEIubL840I8FOiv1w=
+	t=1732028719; cv=none; b=rxVqlo6Rigp1+XW6U1rEk3HH7rxia29SpricJiVAxIe09SvflO/mrio0mg5bhl2Sdg+jHY6arYHqm9eGDxGfO39WN6g4G5KWKsnKantZ/FDGl0MvdraC5qa4cs+v3BfDhMohSAovEfmpMbA4AFHaOkYcMm2JSjUgp0DnIK8vxcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732028642; c=relaxed/simple;
-	bh=i1alU7lHmbgG3VGy49BKd148rHLHMO5hGOs7fa4M1pA=;
+	s=arc-20240116; t=1732028719; c=relaxed/simple;
+	bh=dwJMy7gU6p+EgePP78qE28lNzONbp71uHZRwxTX4wzI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HM29lNyb07Oj0iSqVnPsGLhTBmfrPGgyMnRjudlDhpopKEeW539lgJ+IE0NyGtKN38xZH5KP/crTrrVOkfo81WLmLMB0JQJ5/JLPyq97293YdjqZxVXimst/iECGih4/CJHX3wuVFvUYBSw4OYQVuRAeXepmP1qFhnzpIuJz1iI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ag9212lF; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732028641; x=1763564641;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=i1alU7lHmbgG3VGy49BKd148rHLHMO5hGOs7fa4M1pA=;
-  b=Ag9212lFgs8DuUs68ecBc79gYKz4YthUfRTCpJx+aRJYFr8XsYZ7ZwA4
-   zVeu8FYvTvWG9uMz/co9dBVqcc0KkKGHuJI+cufcgisSw54Hbt71GPCkK
-   nHvfzwjFTJINxhoWEkb6rpmKGIPbdQ5dwiFZ2Xg4YS/P27uv17kJvMK8L
-   z3OCQOmNily/X4DQH0gtgJGz7s4P16hH5F7JYqyJXhOtTR9moIT0jtaQD
-   CH1y5N5hxFYbNoNnjXfThioXRhj8IEUwWaiidB/rZJN/w2C4yySa/xled
-   mKcZiI4dutVSJZDqwWxjmiqEeRmSb9xmlz/iKRoAQBtNH98EVtJtQ7MSo
-   g==;
-X-CSE-ConnectionGUID: Az3DNS49QqqmL8t/NYlL5A==
-X-CSE-MsgGUID: 8maD8HMBQ2CUEjQXYL1DdA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11261"; a="57441953"
-X-IronPort-AV: E=Sophos;i="6.12,166,1728975600"; 
-   d="scan'208";a="57441953"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Nov 2024 07:03:46 -0800
-X-CSE-ConnectionGUID: gwm4oApOTomy+SUCr+5lkQ==
-X-CSE-MsgGUID: +nolhN74RUKYkj6dVyJbLQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,166,1728975600"; 
-   d="scan'208";a="127109017"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Nov 2024 07:03:43 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tDPlV-0000000GOOp-09Js;
-	Tue, 19 Nov 2024 17:03:41 +0200
-Date: Tue, 19 Nov 2024 17:03:40 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: "Daniel Walker (danielwa)" <danielwa@cisco.com>
-Cc: Hans de Goede <hdegoede@redhat.com>,
-	Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
-	Ilpo =?utf-8?Q?J=EF=BF=BDrvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Klara Modin <klarasmodin@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Danil Rybakov <danilrybakov249@gmail.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"xe-linux-external(mailer list)" <xe-linux-external@cisco.com>
-Subject: Re: platform/x86: p2sb: Allow p2sb_bar() calls during PCI device
- probe
-Message-ID: <ZzyozPi86r4iEFPQ@smile.fi.intel.com>
-References: <Zzs1rw1YcoEEeW7+@goliath>
- <ZztABO3TyJBekZRs@smile.fi.intel.com>
- <ZztCB5hN2NBnPgiR@goliath>
- <ZztF7FKaBwZKs5dk@smile.fi.intel.com>
- <ZztQwLpoZDZzbi6O@goliath>
- <ZztjcntEj5Eo0Rw9@smile.fi.intel.com>
- <df1fa47f-7efb-4b0c-8ef6-100b12ab1523@redhat.com>
- <Zzt2JNchK9A0pSlZ@goliath>
- <ZzxdXa-IsfHv2IFc@smile.fi.intel.com>
- <Zzyk5r22AS/Feg7z@goliath>
+	 Content-Type:Content-Disposition:In-Reply-To; b=DaFjGmy+eCj41DVFPNx6JYrfSm7KC/7rG91Jn+IVSFNBbtnCsFwvr9Pu2aeZ73PcqYo/zbtim1FxCW0wD1Tj5NGjWWzvtSQAnM4NOw3FR6UW4bnFn7k716LC7jGVjmkg2eACH87udFVXJrcf6u+sX4z9wAxvSbX4oEC1hpjG45U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=twdttrHe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D69BC4CED0;
+	Tue, 19 Nov 2024 15:05:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732028719;
+	bh=dwJMy7gU6p+EgePP78qE28lNzONbp71uHZRwxTX4wzI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=twdttrHemy+5Iklw3JpaYLpwyRLu6KZ2klJJkPGu7C4Fd/5n2bBHc1mx6/3ZfKVYu
+	 r6sfPAN6ytBtya/ZQ5NaIDMdMuI1dEQznq6oDXsqR5wBkSJBmauijv/Y8HveTfiCxZ
+	 2KdjixLUagU3bNYaCP+V/PyHPMK3LTATFciaKfp2zKnju4rJMAXOIAiRLeyFO9UkLD
+	 atTuSrBQii9UfCnJVfNG5XSF8D6lLVJKdfQyE/7pFP4LMSK0V4+U84rYfMQIxx1+JR
+	 hay7v6sPIYtc7ZFMmkeIrWE2qWUfdPgGFedLwBgeKkEFPaw3dYmZeku4CiitXyAO62
+	 Ik2IoMb1+OW4Q==
+Date: Tue, 19 Nov 2024 08:05:16 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Naresh Kamboju <naresh.kamboju@linaro.org>, kees@kernel.org
+Cc: clang-built-linux <llvm@lists.linux.dev>, kunit-dev@googlegroups.com,
+	open list <linux-kernel@vger.kernel.org>,
+	David Gow <davidgow@google.com>, Arnd Bergmann <arnd@arndb.de>,
+	Anders Roxell <anders.roxell@linaro.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Brendan Higgins <brendan.higgins@linux.dev>,
+	Rae Moar <rmoar@google.com>
+Subject: Re: DEFINE_FLEX_test: EXPECTATION FAILED at
+ lib/overflow_kunit.c:1200:
+Message-ID: <20241119150516.GB2196859@thelio-3990X>
+References: <CA+G9fYs0mh8ex1wWYTW_o+BstwCAZ6rgQJZbGRkSH4WoQNTJdw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,114 +62,69 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zzyk5r22AS/Feg7z@goliath>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <CA+G9fYs0mh8ex1wWYTW_o+BstwCAZ6rgQJZbGRkSH4WoQNTJdw@mail.gmail.com>
 
-On Tue, Nov 19, 2024 at 02:47:02PM +0000, Daniel Walker (danielwa) wrote:
-> On Tue, Nov 19, 2024 at 11:41:49AM +0200, Andy Shevchenko wrote:
-> > On Mon, Nov 18, 2024 at 05:15:17PM +0000, Daniel Walker (danielwa) wrote:
-> > > On Mon, Nov 18, 2024 at 05:00:52PM +0100, Hans de Goede wrote:
-> > > > On 18-Nov-24 4:55 PM, Andy Shevchenko wrote:
-> > > > > On Mon, Nov 18, 2024 at 02:35:44PM +0000, Daniel Walker (danielwa) wrote:
-> > > > >> On Mon, Nov 18, 2024 at 03:49:32PM +0200, Andy Shevchenko wrote:
-> > > > >>> On Mon, Nov 18, 2024 at 01:32:55PM +0000, Daniel Walker (danielwa) wrote:
-> > > > >>>> On Mon, Nov 18, 2024 at 03:24:20PM +0200, Andy Shevchenko wrote:
-> > > > >>>>> On Mon, Nov 18, 2024 at 12:40:16PM +0000, Daniel Walker (danielwa) wrote:
+Hi Naresh,
 
-...
++ Kees (it does not look like you own lib/overflow_kunit.c, should that
+be updated?)
 
-> > > > >>>>> Are you referring to LPC GPIO?
-> > > > >>>>  
-> > > > >>>>  I don't know the hardware well enough to say for certain. It's whatever device 8086:19dd is.
-> > > > >>>
-> > > > >>> This is device which represents p2sb. It's not a GPIO device you are talking
-> > > > >>> about for sure. You can send privately more detailed info in case this is shouldn't
-> > > > >>> be on public to me to understand what would be the best approach to fix your issue.
-> > > > >>
-> > > > >> Here's a comment,
-> > > > >>
-> > > > >> /* INTEL Denverton GPIO registers are accessible using SBREG_BAR(bar 0) as base */
-> > > > >>
-> > > > >> We have gpio wired to an FPGA and I believe the gpio line is used to reset the
-> > > > >> fpga.
-> > > > >>
-> > > > >> So the pci resources attached to 8086:19dd can be used to access gpio of some
-> > > > >> type. 
-> > > > >>
-> > > > >> I'm not a pci expert but on the 19bb device bar 0 we use the below offset to manipulate
-> > > > >> the gpio,
-> > > > >>
-> > > > >> #define INTEL_GPIO_REG_RESET_OFFSET          0xC50578
-> > > > >>
-> > > > >> The comments suggest this is gpio 6. I would seems your reaction would be that
-> > > > >> there is no gpio on the 19dd device. Maybe our driver is access gpio thru p2sb
-> > > > >> or something like that.
-> > > > >>
-> > > > >> Does the offset above make sense to you in the context of the p2sb ?
-> > > > > 
-> > > > > Yes, everything makes sense. Please, enable lpc_ich driver and forget about
-> > > > > talking to the p2sb memory mapped IO.
-> > > > > 
-> > > > > /* Offset data for Denverton GPIO controllers */
-> > > > > static const resource_size_t dnv_gpio_offsets[DNV_GPIO_NR_RESOURCES] = {
-> > > > > 	[DNV_GPIO_NORTH] = 0xc20000,
-> > > > > 	[DNV_GPIO_SOUTH] = 0xc50000,
-> > > > > };
-> > > > > 
-> > > > > So, you are using a pin from the Community "South" of the on-die Denverton GPIO.
-> > > > > 
-> > > > > In EDS this called GPIO_6, while in the driver it's pin 88, i.e. SMB3_IE0_DATA.
-> > > > > 
-> > > > > You will need to
-> > > > > - enable lpc_ich driver (CONFIG_LPC_ICH)
-> > > > > - enable Intel Denverton pin control driver (CONFIG_PINCTRL_DENVERTON)
-> > > > > - replace your custom approach to:
-> > > > >   - GPIO lookup table
-> > > > >   - proper GPIO APIs, as gpiod_get() or alike
-> > > > > 
-> > > > > See how it was done in the current kernel code:
-> > > > > 
-> > > > > 8241b55f1ded ("drm/i915/dsi: Replace poking of VLV GPIOs behind the driver's back")
-> > > > > a6c80bec3c93 ("leds: simatic-ipc-leds-gpio: Add GPIO version of Siemens driver")
-> > > > > 
-> > > > > Hans, there will be no need to fix anything if they implement correct access
-> > > > > to the GPIO, i.e. via driver and board code with GPIO lookup tables.
-> > > > 
-> > > > Agreed, still I'm not sure how I feel about us hiding the previously unhidden P2SB.
-> > > > 
-> > > > OTOH I guess it may have only been unhidden in the BIOS to make the hack they
-> > > > are using possible in the first place.
-> > > 
-> > > From a flexibility POV I would suggest if you can not hide it if it's not already
-> > > hidden by the BIOS that would be better since some company may have a good
-> > > reason to make a custom driver or to export the pci device to userspace thru
-> > > UIO.
-> > 
-> > The previous emails used wrong terminology, the hidden device is left hidden, and
-> > all the opposite: unhidden is not touched in this sense.
-> > 
-> > The problem there that for the initially unhidden devices we call pci_stop_...
-> > which seems incorrect and needs to be fixed, indeed.
-> > 
-> > > The current situation is you can't make a custom driver if p2sb is enable
-> > > with this additional patch even if you unhide the device inside the BIOS.
-> > 
-> > Yeah, but I do not consider that is anyhow related to upstream.
+On Tue, Nov 19, 2024 at 04:17:41PM +0530, Naresh Kamboju wrote:
+> The overflow_DEFINE_FLEX_test KUnit test case. This test consistently
+> passes when built with GCC-13 but fails when using Clang-19 or
+> Clang-nightly.
 > 
-> Not true. Have you used the UIO system ? You can make a custom userspace driver
-> for a pci device with zero kernel changes. We have a custom LKM , but we could
-> easily have done it with UIO. With the PCI device completely gone, there is no
-> way to use UIO to make a userspace driver.
+> Test Case: overflow_DEFINE_FLEX_test
+> Compilers: Passing: GCC-13
+>            Failing: Clang-19, Clang-nightly
+> Observed Behavior: The test failure is reproducible with Clang builds,
+>                    while GCC builds produce consistent success.
+> 
+> This inconsistency suggests a potential issue either in the Clang toolchain
+> or in the test implementation that is exposed by Clang's compilation behavior.
+> 
+> Test log:
+> ----------
+> <6>[   92.471692]     # castable_to_type_test: 103 castable_to_type()
+> tests finished
+> <6>[   92.474933]     ok 21 castable_to_type_test
+> <3>[   92.476715]     # DEFINE_FLEX_test: EXPECTATION FAILED at
+> lib/overflow_kunit.c:1200
+> <3>[   92.476715]     Expected
+> __builtin_dynamic_object_size(two_but_zero, 0) == expected_raw_size,
+> but
+> <3>[   92.476715]         __builtin_dynamic_object_size(two_but_zero,
+> 0) == 12 (0xc)
+> <3>[   92.476715]         expected_raw_size == 8 (0x8)
+> <6>[   92.480178]     not ok 22 DEFINE_FLEX_test
+> <6>[   92.483020] # overflow: pass:21 fail:1 skip:0 total:22
 
-Is that what you are using with p2sb, or is it just a general remark?
-Because if it's the former, it's already double slippery slope.
-If you are talking in general, yes, that might be a case. And note,
-I am not against fixing p2sb case here, however it sounds like people
-want to seek for a problem...
+I can reproduce this with Clang 19.1.3 on 6.12, so it does not appear to
+be a recent problem.
 
--- 
-With Best Regards,
-Andy Shevchenko
+  $ printf 'CONFIG_%s=y\n' KUNIT OVERFLOW_KUNIT_TEST >kernel/configs/overflow_kunit.config
 
+  $ make -skj"$(nproc)" ARCH=arm64 LLVM=1 mrproper {def,hardening.,overflow_kunit.}config Image.gz
 
+  $ boot-qemu.py ...
+  [    0.000000] Linux version 6.12.0 (nathan@thelio-3990X) (ClangBuiltLinux clang version 19.1.3 (https://github.com/llvm/llvm-project.git ab51eccf88f5321e7c60591c5546b254b6afab99), ClangBuiltLinux LLD 19.1.3 (https://github.com/llvm/llvm-project.git ab51eccf88f5321e7c60591c5546b254b6afab99)) #1 SMP PREEMPT Tue Nov 19 07:28:39 MST 2024
+  ...
+  [    4.184764]     # DEFINE_FLEX_test: EXPECTATION FAILED at lib/overflow_kunit.c:1200
+  [    4.184764]     Expected __builtin_dynamic_object_size(two_but_zero, 0) == expected_raw_size, but
+  [    4.184764]         __builtin_dynamic_object_size(two_but_zero, 0) == 12 (0xc)
+  [    4.184764]         expected_raw_size == 8 (0x8)
+  [    4.190023]     not ok 22 DEFINE_FLEX_test
+  [    4.206181] # overflow: pass:21 fail:1 skip:0 total:22
+  [    4.208635] # Totals: pass:21 fail:1 skip:0 total:22
+  [    4.212218] not ok 1 overflow
+  ...
+
+I do not really understand how __builtin_dynamic_object_size() can
+return 12 for two_but_zero with __counted_by() because DEFINE_RAW_FLEX()
+does not initialize the counter so it should be zero... Kees? I guess
+maybe something changed on the LLVM side, I will see if I can bisect
+later (all the boxes are tied up with other compilations at the moment).
+
+Cheers,
+Nathan
 
