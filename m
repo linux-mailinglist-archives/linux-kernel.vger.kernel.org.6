@@ -1,191 +1,302 @@
-Return-Path: <linux-kernel+bounces-413982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-413983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB5DE9D2168
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 09:15:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B8E609D216F
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 09:17:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D576281E85
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 08:15:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7376A2829C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 08:17:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 003D1198A07;
-	Tue, 19 Nov 2024 08:15:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CF321990DE;
+	Tue, 19 Nov 2024 08:17:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="Ro01NaRU"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="hBsfJ3fk"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 425BC1B808
-	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 08:15:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC87B15AAB6
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 08:17:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732004147; cv=none; b=ra5tYbJ0jBuq+WmBIbSlgCuqa2/gydyGJWtFHN78JjKjh8+dKj4thHw7KpFA5q7MAkInbiwV5ujdllhLjXXaUXVF0SO15ofDw04asfsFEMcRctVceszb+a20NWpvoY2q6MxM9XZYGpsvJaH1B6pUFn6wkdz6HnZoFCIaWfWlg6M=
+	t=1732004235; cv=none; b=qp8i4Y9FM6Tp/BPEqpnUfn0mnnlrKvag7BSoZoK6+Yf9/faV27FFuid2hhtor12W+f0ZQFc0Urll1YunGW83GT1dUMAtY/C2GVpmwD5D2sUf5aRc7EaagSEg2U8We6i7HhyhLgtfCj1dxjGx0XkVxZRz3RsXR7XiZyYq1+jZmxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732004147; c=relaxed/simple;
-	bh=nh3qg+dpw6wJugS2b0ETXcerIj6+agTQV21HgtF5r0Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EvBoJnxjk+A3TwJq02bG8YmNe7OrgvQxDKazb13cLbP/7ThSgLchETP/O52odI48+LgcH/s9uI5IkBl1+Xtvrd9sh/G3Tq5XFNo6cNYYhwzMS2kITQc9bwjdcrpls/yrsBf0esSMBbND2p38L88uqWRWh9SFLlkZWyz6DgZYGWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net; spf=pass smtp.mailfrom=openvpn.com; dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b=Ro01NaRU; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openvpn.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-aa4b439c5e8so327237366b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 00:15:44 -0800 (PST)
+	s=arc-20240116; t=1732004235; c=relaxed/simple;
+	bh=BnCPo5Jv3ffjYxxYM7XQApvz+ShJZ5fwcjW9lNQ732I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=i5kpnJCfXprPg5R1GsWrLt6rvQ3YtnHQv2/qWKYxQkGiDTQpuhRLBVyPebXFXsGyfOr+vRl67K0zIgyUz2XASzF76vKBtNYqtlKzR335veEeR4GAhU4FTtLYlqpFaZ49ZbzFRdUU/v+OODV0TYKCqVqsVnC9T4YejZWoGM0r4D0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=hBsfJ3fk; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-382411ea5eeso1318011f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 00:17:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=openvpn.net; s=google; t=1732004143; x=1732608943; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=Dlb3+qv9gg1JV6Cl4CDNWBpSyFp7lVILgVs8ILCA4eA=;
-        b=Ro01NaRUbn91xcHQ78cM0iBrNZ9ea/UBCjrf/vNfO5qLF5Yl28iYAkw9kb0Awln3xx
-         XpdRLEza4+gqgeqP1sK1LmBVYgRlzuFE3Jh+/X1A4Yncdoem4g414dGjJRwQrKV1mIpR
-         zzl5iPlVUhzIkNDMI6aD+d4kc1qMTJQgkvU2qKmFEWXvQ/OAczitTJb02Hvi0JibgyyD
-         pRQRHHqLpyjRx6Upd8p2q6OCQA/Xw5juFo/Err7XvQP0ykbeTYiD3KcfkYAjha3BF8Di
-         MVmpVgPmQpUMyxtN+5ucZoYiPJEtr6F45dk/+CK6QFrIQ2A7oLUM2EHXZ2ay2H0OG7LA
-         R5lQ==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1732004230; x=1732609030; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rfRPeJv9b+5MklHMVSrCiVgH+hmaDNicfWnfjxpRi08=;
+        b=hBsfJ3fkcRev0UBJAESJpGI1GExIH+pLIpoftUVNorahap0tUiY+OifB5+VwG9/xAM
+         DMhZ6NiqkvcnBeyffDttRmd+r5hdwYTqzpkdjoOMZeKqXdC0Dae1OY016yF4k44scINM
+         Ax48Tv710mM90gIYebKuUxnhZbWhDGX0+IHRuKuTnc/ACIcqrQ9a0Pjd/kJxrPoYCcnf
+         j2t4c2c7a0feRi8XQbn5FAe2Sm7awxcnvC3G5vnbFVLB8fqzG6Je9YK64+hgL49WvK/a
+         gzxIU3BFA8mZWfuc+sdHDobwC0TKayZQbVzJ32RNVwCs1xo7r863ui8d4m04QJLji86l
+         WuQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732004143; x=1732608943;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Dlb3+qv9gg1JV6Cl4CDNWBpSyFp7lVILgVs8ILCA4eA=;
-        b=WL+9I2KYNJPCtRoXy8Gjv25vCiSqJiG4uX2BBMqQxLH+6AO8GiO76Vo+SGepphIfLW
-         65uvN99UpSmSsY+FOAWWXEbCNq038VBYoMiEC4JaxS/bhoOIxwrALO08YileT8VJEjht
-         8aXgfb6FicI6qEESixoHNewpneoqTlb7BSzczhwqdBNX+d91Htmloe/DJQtKaY44WCuZ
-         ZK7Hj0Uf2ZHqcudgOrw+RsfN+IDeC+bGXVQNSUMdBPyXygfzrss2Vi8Vfe93DI5DE8yu
-         ERpWIJYCh+o28n8DJncOkGYpXjtZyxA24gPoHfAIY09vGJCRNk7kJ9eWUTHGVL5ac5mh
-         b4Zw==
-X-Forwarded-Encrypted: i=1; AJvYcCVEXS4AiaZTJH3kEc8ieP4Cs0NezYB4NT+QLCRwKt/d8yLY8Z1Y2Y81Wpkxf1o/laATD8VjsBPskKbcSOQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyqsZeLhTW1Mc8uG3CWtzlwZZTignHvL4kmKaUd3kdBfxll0tRw
-	tAUHpa1JERUiNStFO1ecbQwF0dCI2WnsyQ4JrWkSKIRtTycIVmrbH9N9Y/zFm88=
-X-Google-Smtp-Source: AGHT+IH1oPLqiWB9nvjMfiow2lsNMatAoaYTZq+VpYZVjDfmiH/yzZPdZ9PNMrDF2+D834C4i02E5A==
-X-Received: by 2002:a17:906:6a20:b0:a9e:c267:78c5 with SMTP id a640c23a62f3a-aa483553e28mr1404043466b.55.1732004143604;
-        Tue, 19 Nov 2024 00:15:43 -0800 (PST)
-Received: from ?IPV6:2001:67c:2fbc:1:a2be:8cd5:8845:cfce? ([2001:67c:2fbc:1:a2be:8cd5:8845:cfce])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20dffaa0fsm628382066b.106.2024.11.19.00.15.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 Nov 2024 00:15:43 -0800 (PST)
-Message-ID: <22d63b13-2c20-4ee7-9783-7b061bd6d942@openvpn.net>
-Date: Tue, 19 Nov 2024 09:16:11 +0100
+        d=1e100.net; s=20230601; t=1732004230; x=1732609030;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rfRPeJv9b+5MklHMVSrCiVgH+hmaDNicfWnfjxpRi08=;
+        b=KMryl/eXMYqGBlYsxVRtq0L6oZfgDYLjswEX96E721NyLksB/h/SfS3AJnaQd2780E
+         3lVdxyXLAkfr4xd16+txpSuCThyo8cfm0yKhtUt0/FH0ROo8xgdJkjMfyIEu3yQiup4b
+         Fbx5nrk+1FR9RcRWuyFC1I19OxEbjugkhN8ayJlL+7Z4oAbl0KKlI/KETO1vP/8EEC5X
+         gy5VxqYCbJdfVvra1+pku8lgbeLT9BOLN1ZsZDfs+im/CArSQsKzFbP5AKjDUFcv35g/
+         cxu7vkL+1EWtFEygCREst00PQa3P2C88xoV/t/dEXtffakfO7JdzfSGvKzS1EIzUaAni
+         NwkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU1hZ8HgA0Ekm2/2bveb+1lsf5io1UR6s5fzNn3HxcZ5ugpwy8aN78btCzlH/6tah1xibjOwqVVLMdxKv4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4izHtTFcO8kLMfdAA/a63PmReS4b2iW4RGiBKSEvOmTO9MRa/
+	XtOir4hd4ZknBQOONGm6lKOhtu4V9wq1WozZKSySD/yFKvp0zPlyfUQ8xJZFMzI=
+X-Google-Smtp-Source: AGHT+IE8UC5xo/EXauIpi30O/6QpEs3dvAFOyd1qOQ9SCqrRP4JGzhvWxQ0rNGF/bwnRQGTw1YZ6JQ==
+X-Received: by 2002:a5d:6d82:0:b0:382:484d:45da with SMTP id ffacd0b85a97d-3824cb30e81mr1673211f8f.6.1732004228585;
+        Tue, 19 Nov 2024 00:17:08 -0800 (PST)
+Received: from localhost ([2a02:8071:b783:6940:9b70:ed4b:d274:54e5])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38244220183sm6495288f8f.99.2024.11.19.00.17.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Nov 2024 00:17:08 -0800 (PST)
+From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Jassi Brar <jassisinghbrar@gmail.com>
+Cc: Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Michal Simek <michal.simek@amd.com>,
+	linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-sunxi@lists.linux.dev,
+	linux-tegra@vger.kernel.org
+Subject: [PATCH] mailbox: Switch back to struct platform_driver::remove()
+Date: Tue, 19 Nov 2024 09:16:51 +0100
+Message-ID:  <6f0297ba884c670d604232c2861347940082c8e6.1732004078.git.u.kleine-koenig@baylibre.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v11 03/23] ovpn: add basic netlink support
-To: Sergey Ryazanov <ryazanov.s.a@gmail.com>
-Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>,
- Shuah Khan <shuah@kernel.org>, sd@queasysnail.net,
- Andrew Lunn <andrew@lunn.ch>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-References: <20241029-b4-ovpn-v11-0-de4698c73a25@openvpn.net>
- <20241029-b4-ovpn-v11-3-de4698c73a25@openvpn.net>
- <21c0887b-1c7d-424d-a723-2a8d212cbde1@gmail.com>
- <dc63a3cb-7ace-4aca-9b67-f3c50297b2d2@openvpn.net>
- <b624293b-5143-4602-bf50-f4a14ff83d3a@gmail.com>
-Content-Language: en-US
-From: Antonio Quartulli <antonio@openvpn.net>
-Autocrypt: addr=antonio@openvpn.net; keydata=
- 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
-Organization: OpenVPN Inc.
-In-Reply-To: <b624293b-5143-4602-bf50-f4a14ff83d3a@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=7380; i=u.kleine-koenig@baylibre.com; h=from:subject:message-id; bh=BnCPo5Jv3ffjYxxYM7XQApvz+ShJZ5fwcjW9lNQ732I=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBnPEl0l82yWH4cD9PUDIPfKIE/RnbW2FKHwIBNo NRXP1KykqyJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZzxJdAAKCRCPgPtYfRL+ ToaTCACO97vvz1RQ3OfeVhaCoF9jIByuwurbxrlo/e4TXGjXh2MD85LTlsW7X/pdlEpXrP7LStP rubeC1o9FEsFEJDpzNVhMoNb2mBLHniaqeivaaIITO1C7iOgf/7l6bUdNF6szQsgsyIOa7eK+h4 6Evgz1M3LBYLhtZcwyCg8pysblUX/f+7Bpgdzo1ijgQjhinFHE0K8ep6xD7n3F0gZTUEt/9QWEa fgoFuQD5sY05UOOOvRjFNRAkpP+8qV6HYJ8eSFoFVoVvAsSuYcnfHR1oaeC82Zdgm4c4nHE4sye cAgefJza5W4P8GCaVvE9A7L2tHfGs7DQoQm1AUVXBMxOcDDU
+X-Developer-Key: i=u.kleine-koenig@baylibre.com; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
 Content-Transfer-Encoding: 8bit
 
+After commit 0edb555a65d1 ("platform: Make platform_driver::remove()
+return void") .remove() is (again) the right callback to implement for
+platform drivers.
 
+Convert all platform drivers below drivers/mailbox to use .remove(),
+with the eventual goal to drop struct platform_driver::remove_new(). As
+.remove() and .remove_new() have the same prototypes, conversion is done
+by just changing the structure member name in the driver initializer.
 
-On 19/11/2024 03:23, Sergey Ryazanov wrote:
-> On 15.11.2024 12:19, Antonio Quartulli wrote:
->> On 09/11/2024 00:31, Sergey Ryazanov wrote:
->>> On 29.10.2024 12:47, Antonio Quartulli wrote:
->>>> +/**
->>>> + * struct ovpn_struct - per ovpn interface state
->>>> + * @dev: the actual netdev representing the tunnel
->>>> + * @dev_tracker: reference tracker for associated dev
->>>> + */
->>>> +struct ovpn_struct {
->>>
->>> There is no standard convention how to entitle such structures, so 
->>> the question is basically of out-of-curiosity class. For me, having a 
->>> sturcuture with name 'struct' is like having no name. Did you 
->>> consider to use such names as ovpn_dev or ovpn_iface? Meaning, using 
->>> a name that gives a clue regarding the scope of the content.
->>
->> Yes, I wanted to switch to ovpn_priv, but  did not care much for the 
->> time being :)
->>
->> I can still do it now in v12.
-> 
-> This topic caused me the biggest doubts. I don't want to ask to rename 
-> everything on the final lap. Just want to share an outside perspective 
-> on the structure name. And let you decide is it worth or not.
-> 
-> And if you ask me, ovpn_priv does not give a clue either. The module is 
-> too complex for a vague structure name, even after your great work on 
-> clearing its design.
+Make a few indentions consistent while touching these struct
+initializers.
 
-Well, the word "priv" to me resembles the "netdev_priv()" call, so it's 
-kinda easier to grasp what this is about.
-In batman-adv we used the same suffix and it was well received.
-Also, if you grep for "_priv " in drivers/net you will see that this is 
-a common pattern.
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
+---
+Hello,
 
-Since I already had in mind to change this struct name, I moved on and 
-renamed it to ovpn_priv throughput the patchset (git rebase --exec is my 
-friend ;)).
+I did a single patch for all of drivers/mailbox. While I usually prefer
+to do one logical change per patch, this seems to be overengineering
+here as the individual changes are really trivial and shouldn't be much
+in the way for stable backports. But I'll happily split the patch if you
+prefer it split.
 
-Thanks
+This is based on today's next, if conflicts arise when you apply it at
+some later time and don't want to resolve them, feel free to just drop
+the changes to the conflicting files. I'll notice and followup at a
+later time then. Or ask me for a fixed resend.
 
-Regards,
+Best regards
+Uwe
 
-> 
-> -- 
-> Sergey
+ drivers/mailbox/bcm-flexrm-mailbox.c    | 2 +-
+ drivers/mailbox/bcm-pdc-mailbox.c       | 2 +-
+ drivers/mailbox/imx-mailbox.c           | 2 +-
+ drivers/mailbox/mailbox-test.c          | 4 ++--
+ drivers/mailbox/mtk-cmdq-mailbox.c      | 2 +-
+ drivers/mailbox/qcom-apcs-ipc-mailbox.c | 2 +-
+ drivers/mailbox/qcom-ipcc.c             | 2 +-
+ drivers/mailbox/stm32-ipcc.c            | 2 +-
+ drivers/mailbox/sun6i-msgbox.c          | 4 ++--
+ drivers/mailbox/tegra-hsp.c             | 2 +-
+ drivers/mailbox/zynqmp-ipi-mailbox.c    | 2 +-
+ 11 files changed, 13 insertions(+), 13 deletions(-)
 
+diff --git a/drivers/mailbox/bcm-flexrm-mailbox.c b/drivers/mailbox/bcm-flexrm-mailbox.c
+index b1abc2a0c971..41f79e51d9e5 100644
+--- a/drivers/mailbox/bcm-flexrm-mailbox.c
++++ b/drivers/mailbox/bcm-flexrm-mailbox.c
+@@ -1675,7 +1675,7 @@ static struct platform_driver flexrm_mbox_driver = {
+ 		.of_match_table = flexrm_mbox_of_match,
+ 	},
+ 	.probe		= flexrm_mbox_probe,
+-	.remove_new	= flexrm_mbox_remove,
++	.remove		= flexrm_mbox_remove,
+ };
+ module_platform_driver(flexrm_mbox_driver);
+ 
+diff --git a/drivers/mailbox/bcm-pdc-mailbox.c b/drivers/mailbox/bcm-pdc-mailbox.c
+index a873672a9082..406bc41cba60 100644
+--- a/drivers/mailbox/bcm-pdc-mailbox.c
++++ b/drivers/mailbox/bcm-pdc-mailbox.c
+@@ -1618,7 +1618,7 @@ static void pdc_remove(struct platform_device *pdev)
+ 
+ static struct platform_driver pdc_mbox_driver = {
+ 	.probe = pdc_probe,
+-	.remove_new = pdc_remove,
++	.remove = pdc_remove,
+ 	.driver = {
+ 		   .name = "brcm-iproc-pdc-mbox",
+ 		   .of_match_table = pdc_mbox_of_match,
+diff --git a/drivers/mailbox/imx-mailbox.c b/drivers/mailbox/imx-mailbox.c
+index f815dab3be50..9889e4d0d9da 100644
+--- a/drivers/mailbox/imx-mailbox.c
++++ b/drivers/mailbox/imx-mailbox.c
+@@ -1120,7 +1120,7 @@ static const struct dev_pm_ops imx_mu_pm_ops = {
+ 
+ static struct platform_driver imx_mu_driver = {
+ 	.probe		= imx_mu_probe,
+-	.remove_new	= imx_mu_remove,
++	.remove		= imx_mu_remove,
+ 	.driver = {
+ 		.name	= "imx_mu",
+ 		.of_match_table = imx_mu_dt_ids,
+diff --git a/drivers/mailbox/mailbox-test.c b/drivers/mailbox/mailbox-test.c
+index 3386b4e72551..c9dd8c42c0cd 100644
+--- a/drivers/mailbox/mailbox-test.c
++++ b/drivers/mailbox/mailbox-test.c
+@@ -441,8 +441,8 @@ static struct platform_driver mbox_test_driver = {
+ 		.name = "mailbox_test",
+ 		.of_match_table = mbox_test_match,
+ 	},
+-	.probe  = mbox_test_probe,
+-	.remove_new = mbox_test_remove,
++	.probe = mbox_test_probe,
++	.remove = mbox_test_remove,
+ };
+ module_platform_driver(mbox_test_driver);
+ 
+diff --git a/drivers/mailbox/mtk-cmdq-mailbox.c b/drivers/mailbox/mtk-cmdq-mailbox.c
+index 4bff73532085..bac5b8eaa665 100644
+--- a/drivers/mailbox/mtk-cmdq-mailbox.c
++++ b/drivers/mailbox/mtk-cmdq-mailbox.c
+@@ -796,7 +796,7 @@ MODULE_DEVICE_TABLE(of, cmdq_of_ids);
+ 
+ static struct platform_driver cmdq_drv = {
+ 	.probe = cmdq_probe,
+-	.remove_new = cmdq_remove,
++	.remove = cmdq_remove,
+ 	.driver = {
+ 		.name = "mtk_cmdq",
+ 		.pm = &cmdq_pm_ops,
+diff --git a/drivers/mailbox/qcom-apcs-ipc-mailbox.c b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
+index 7d91e7c016ba..f0d1fc0fb9ff 100644
+--- a/drivers/mailbox/qcom-apcs-ipc-mailbox.c
++++ b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
+@@ -167,7 +167,7 @@ MODULE_DEVICE_TABLE(of, qcom_apcs_ipc_of_match);
+ 
+ static struct platform_driver qcom_apcs_ipc_driver = {
+ 	.probe = qcom_apcs_ipc_probe,
+-	.remove_new = qcom_apcs_ipc_remove,
++	.remove = qcom_apcs_ipc_remove,
+ 	.driver = {
+ 		.name = "qcom_apcs_ipc",
+ 		.of_match_table = qcom_apcs_ipc_of_match,
+diff --git a/drivers/mailbox/qcom-ipcc.c b/drivers/mailbox/qcom-ipcc.c
+index d537cc9c4d4b..14c7907c6632 100644
+--- a/drivers/mailbox/qcom-ipcc.c
++++ b/drivers/mailbox/qcom-ipcc.c
+@@ -346,7 +346,7 @@ static const struct dev_pm_ops qcom_ipcc_dev_pm_ops = {
+ 
+ static struct platform_driver qcom_ipcc_driver = {
+ 	.probe = qcom_ipcc_probe,
+-	.remove_new = qcom_ipcc_remove,
++	.remove = qcom_ipcc_remove,
+ 	.driver = {
+ 		.name = "qcom-ipcc",
+ 		.of_match_table = qcom_ipcc_of_match,
+diff --git a/drivers/mailbox/stm32-ipcc.c b/drivers/mailbox/stm32-ipcc.c
+index 1442f275782b..4f63f1a14ca6 100644
+--- a/drivers/mailbox/stm32-ipcc.c
++++ b/drivers/mailbox/stm32-ipcc.c
+@@ -379,7 +379,7 @@ static struct platform_driver stm32_ipcc_driver = {
+ 		.of_match_table = stm32_ipcc_of_match,
+ 	},
+ 	.probe		= stm32_ipcc_probe,
+-	.remove_new	= stm32_ipcc_remove,
++	.remove		= stm32_ipcc_remove,
+ };
+ 
+ module_platform_driver(stm32_ipcc_driver);
+diff --git a/drivers/mailbox/sun6i-msgbox.c b/drivers/mailbox/sun6i-msgbox.c
+index 3dcc54dc83b2..6ba6920f4645 100644
+--- a/drivers/mailbox/sun6i-msgbox.c
++++ b/drivers/mailbox/sun6i-msgbox.c
+@@ -307,8 +307,8 @@ static struct platform_driver sun6i_msgbox_driver = {
+ 		.name = "sun6i-msgbox",
+ 		.of_match_table = sun6i_msgbox_of_match,
+ 	},
+-	.probe  = sun6i_msgbox_probe,
+-	.remove_new = sun6i_msgbox_remove,
++	.probe = sun6i_msgbox_probe,
++	.remove = sun6i_msgbox_remove,
+ };
+ module_platform_driver(sun6i_msgbox_driver);
+ 
+diff --git a/drivers/mailbox/tegra-hsp.c b/drivers/mailbox/tegra-hsp.c
+index 19ef56cbcfd3..8d5e2d7dc03b 100644
+--- a/drivers/mailbox/tegra-hsp.c
++++ b/drivers/mailbox/tegra-hsp.c
+@@ -951,7 +951,7 @@ static struct platform_driver tegra_hsp_driver = {
+ 		.pm = &tegra_hsp_pm_ops,
+ 	},
+ 	.probe = tegra_hsp_probe,
+-	.remove_new = tegra_hsp_remove,
++	.remove = tegra_hsp_remove,
+ };
+ 
+ static int __init tegra_hsp_init(void)
+diff --git a/drivers/mailbox/zynqmp-ipi-mailbox.c b/drivers/mailbox/zynqmp-ipi-mailbox.c
+index 521d08b9ab47..91365acd334d 100644
+--- a/drivers/mailbox/zynqmp-ipi-mailbox.c
++++ b/drivers/mailbox/zynqmp-ipi-mailbox.c
+@@ -1015,7 +1015,7 @@ MODULE_DEVICE_TABLE(of, zynqmp_ipi_of_match);
+ 
+ static struct platform_driver zynqmp_ipi_driver = {
+ 	.probe = zynqmp_ipi_probe,
+-	.remove_new = zynqmp_ipi_remove,
++	.remove = zynqmp_ipi_remove,
+ 	.driver = {
+ 		   .name = "zynqmp-ipi",
+ 		   .of_match_table = of_match_ptr(zynqmp_ipi_of_match),
+
+base-commit: 414c97c966b69e4a6ea7b32970fa166b2f9b9ef0
 -- 
-Antonio Quartulli
-OpenVPN Inc.
+2.45.2
 
 
