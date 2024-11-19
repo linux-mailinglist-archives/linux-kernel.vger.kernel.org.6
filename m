@@ -1,119 +1,187 @@
-Return-Path: <linux-kernel+bounces-414565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A5E29D2A09
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 16:47:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07E3E9D2A0C
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 16:48:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 351791F23605
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 15:47:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBE9B282317
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 15:47:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C68151D0F63;
-	Tue, 19 Nov 2024 15:43:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 391E31D131F;
+	Tue, 19 Nov 2024 15:43:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c5n2aaAu"
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XnjbVoaa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C65851CEAA6;
-	Tue, 19 Nov 2024 15:43:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8441C1CC161;
+	Tue, 19 Nov 2024 15:43:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732030998; cv=none; b=n5wDsL9j2RqR7gcJCLXuujGlb/qoNWRsOZc1Lo5QYASEIONHXSPM6TY93OLuOtwXwO3/FarXJo0lmCavo4Ip5tRO6dsQ1ZlJtDZ6l8VXQPl13FvoUTBjfHA+pVpZsVjmDGHcC1zDX6QQNsYP3YU2f6IEiem9QfH+l15poJC/RgA=
+	t=1732031032; cv=none; b=uZseiwTTCRmbCF5NHEXSsnThYwMO7Gi5VPPCnOwRBAYw/JpxYtCaXB/ElW4e3eJABYc/VPKIxX70PUTdhPbk29sTR9HIrAYjpW88QZapTZwteiWiik77dpJ4F5o+C6Xn23dMTM+QCX5QU/0aNIUpU1eRxEqhIrVPQzrAPN9YmfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732030998; c=relaxed/simple;
-	bh=FkL5bkKtAiHvQTF29E9UZy7IZKVw5GcwQnU8LPk+eyg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CkdXFDvu9+eaRyfDSOnbZ98GGHIBknGqoI4ND67AryqctnA+GpUa9ekuGilVnnboBFgaZ0c7jFZXh9YM2MhGacsUab1skt/zi+6muLwxOBpVM9ps6QUhR+wUzem25Jxrwd3lOrFLdAwbF2mNAhTVc5Ndi71UclQE8b+V0jZoJHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c5n2aaAu; arc=none smtp.client-ip=209.85.219.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e388ff24cfeso2294695276.1;
-        Tue, 19 Nov 2024 07:43:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732030996; x=1732635796; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=wEGUj1o7pb0AzUqV7Fkn4ZlKTwE9iZsUWbsWf714dAg=;
-        b=c5n2aaAuIFAbAD0IbdT8hM5ghMXI3FkP/+TwOVhc1PHfk0+dU/jPsjECYbIbH6DDzl
-         aHdzxbgPiO5ljEYgZ/4q2hvi99HBqW4B85gAK/pGYtNdHI13dWEJUPgtGNGo2PTAGI8G
-         cMGtQJ8jGvOXB/W8qYujiGui5ZmF340HnlJNq7amn3pEeL75jqpCKJ9FMSzYKzK3SJqc
-         0jCA3hmOnKb7O2btxr3ezGOp+ScV+6aKojqFifQIOQX1DeAaQZH/+8Irhd/FOPUpljJe
-         xTgtj92Iefc9bbPOXIhYJtYclW5XFaOmuMjKOGKtlr+9PVgX5Gnnn8LnhqFWtTNeuYoN
-         iZ7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732030996; x=1732635796;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wEGUj1o7pb0AzUqV7Fkn4ZlKTwE9iZsUWbsWf714dAg=;
-        b=B4F8NNaE9PdD8nfFwIXMuinxahPeJoK6yVbIHvL/Jw0XzUQwvKotYS1I7i3QPHt7GY
-         3Eo4aaEMEaByHq0yDxK5ReRbXePl4FvcSHnNw0ZfArNPjxfxPhNJkGJaLkplQgM6yWUk
-         9MuYdxO2nKNIHB+lg7ZwoVEawQRajbG5yadLJSAWRnOt7o7//hmKCeP4jA3SHmStgMzM
-         OetfJgO3QfXtf/O2bpcZCJaTRujP2OTr0PUfS62zCDrytSSIdl0HfHgXNVZ03h4MlbPp
-         wuZoxtrf3yr8pAmfk3iE0H2CM7CqC17dLAJ1Hujk/ZKZyvKIkGSP0MeuQgJ4smW95371
-         1Yxw==
-X-Forwarded-Encrypted: i=1; AJvYcCX04UovC6/FLE+QfvjTGUBH2lyAj9lxpj+dMb2fFboe9OYbP29vr7vNz76lXLX6YKzBSow2ZdErwdxo3Go=@vger.kernel.org, AJvYcCX4SDpmHljLj9TTDikTiNZa/HyQiResWSLtnwOmuqIB9HEs26V0qY459/oNrWfmUUn6KFf7Y12J58OI@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyj8fuBqMcBrgx0PAZoKOv9lubB5trBGC5LTKkNT9pa9oOupZKc
-	jzHvNMaIZrsyiA0NAcxqfZ4waeTeJw2jwlrxz9K6mdLsdpQI6E7Y
-X-Google-Smtp-Source: AGHT+IEdUneL+IdFdTDxewMisaVAR0l3eDRbxXY6aYZEdvtBXu14ad10c2xaIszw9JSsl0K5XvOwiQ==
-X-Received: by 2002:a05:6902:1022:b0:e38:8a7e:6a6 with SMTP id 3f1490d57ef6-e388a7e16c5mr7387684276.11.1732030995702;
-        Tue, 19 Nov 2024 07:43:15 -0800 (PST)
-Received: from x13.. ([157.23.249.72])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e387e763c98sm2530152276.28.2024.11.19.07.43.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Nov 2024 07:43:15 -0800 (PST)
-From: Luis Felipe Hernandez <luis.hernandez093@gmail.com>
-To: Thinh.Nguyen@synopsys.com,
-	gregkh@linuxfoundation.org
-Cc: Luis Felipe Hernandez <luis.hernandez093@gmail.com>,
-	skhan@linuxfoundation.org,
-	ricardo@marliere.net,
-	linux-usb@vger.kernel.org,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] Documentation: usb: dwc3: remove deprecated member
-Date: Tue, 19 Nov 2024 10:43:07 -0500
-Message-ID: <20241119154309.98747-1-luis.hernandez093@gmail.com>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1732031032; c=relaxed/simple;
+	bh=CECoxezUYafx0d26HXgDwD1dl9DFkiisNtmVFn2OYyI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VqXWBs/9bgUePancUrM3o0WGjulZoOYb/CKJdTK6ZxCbw7PHfLWTff+3BXMveh0L4M2dcuat8xtCfF1O8Ptcfjqsl1xAhlVQ4CCHsktIgK5gElMelYBf/d8u1c0QJOnFZ1I28Cn3plGyaiofpM/gjxjgRS0s3Sw25isKO//yWo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XnjbVoaa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90B58C4CECF;
+	Tue, 19 Nov 2024 15:43:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732031032;
+	bh=CECoxezUYafx0d26HXgDwD1dl9DFkiisNtmVFn2OYyI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XnjbVoaawrVemEyB9fOP4Psg6A6NszoeHZLrAoptoUkIfNXmORulvI4A9US32oRjm
+	 dYS9gco728411BliZWaAgswKvPhqvpook0Zapyz5pu2drbnxNI7f73bgSbccZph7cD
+	 w11pN00D428g+SCnG4P0pNS8Q/hvPEkgd9RJHVhR3TW2MQafLvCndi1daU/YavsIZO
+	 olXxj7OsYsr9bTaFpG0fzj7OuOmQSKwSIdLg4BPF1sYsHqBOjV9E5vq+RoWB2FrkjE
+	 x4fn/aCHExEUOZojfxyRziZ/LVucAOhxmXYazUs7/2PL8wzVfFZf5yDtZgjj/0oQvO
+	 f74O4+S4CHVvQ==
+Date: Tue, 19 Nov 2024 16:43:49 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: Paul Kocialkowski <paulk@sys-base.io>
+Cc: linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
+	Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Samuel Holland <samuel@sholland.org>, Linus Walleij <linus.walleij@linaro.org>, 
+	Paul Kocialkowski <contact@paulk.fr>
+Subject: Re: [PATCH] pinctrl: sunxi: Use minimal debouncing period as default
+Message-ID: <20241119-vivacious-optimistic-squirrel-a2f3c5@houat>
+References: <20241119140805.3345412-1-paulk@sys-base.io>
+ <20241119-prudent-jasmine-lizard-195cef@houat>
+ <ZzyoIABRArkGoZBn@collins>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="l2xikqg7suvl7kdm"
+Content-Disposition: inline
+In-Reply-To: <ZzyoIABRArkGoZBn@collins>
 
-This patch updates the documentation for the dwc3_request struct,
-removing the sg (scatter list pointer) member.
 
-- Remove 'sg' in the doc block for dwc3_request
+--l2xikqg7suvl7kdm
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] pinctrl: sunxi: Use minimal debouncing period as default
+MIME-Version: 1.0
 
-This change resolves a documentation warning related to the missing
-description for this field.
+On Tue, Nov 19, 2024 at 04:00:48PM +0100, Paul Kocialkowski wrote:
+> Hi Maxime,
+>=20
+> Le Tue 19 Nov 24, 15:43, Maxime Ripard a =E9crit :
+> > On Tue, Nov 19, 2024 at 03:08:05PM +0100, Paul Kocialkowski wrote:
+> > > From: Paul Kocialkowski <contact@paulk.fr>
+> > >=20
+> > > The sunxi external interrupts (available from GPIO pins) come with a
+> > > built-in debouncing mechanism that cannot be disabled. It can be
+> > > configured to use either the low-frequency oscillator (32 KHz) or the
+> > > high-frequency oscillator (24 MHz), with a pre-scaler.
+> > >=20
+> > > The pinctrl code supports an input-debounce device-tree property to s=
+et
+> > > a specific debouncing period and choose which clock source is most
+> > > relevant. However the property is specified in microseconds, which is
+> > > longer than the minimal period achievable from the high-frequency
+> > > oscillator without a pre-scaler.
+> >=20
+> > That can be fixed by introducing a new property with a ns resolution.
+>=20
+> Sure but my point here is rather about what should be default behavior.
+>=20
+> The issue I had will remain unsolved by default even with a new property,
+> since people will still need to patch their device-tree to apply it.
+>=20
+> > > When the property is missing, the reset configuration is kept, which
+> > > selects the low-frequency oscillator without pre-scaling. This severe=
+ly
+> > > limits the possible interrupt periods that can be detected.
+> > >=20
+> > > Instead of keeping this default, use the minimal debouncing period fr=
+om
+> > > the high-frequency oscillator without a pre-scaler to allow the large=
+st
+> > > possible range of interrupt periods.
+> > >=20
+> > > This issue was encountered with a peripheral that generates active-low
+> > > interrupts for 1 us. No interrupt was detected with the default setup,
+> > > while it is now correctly detected with this change.
+> >=20
+> > I don't think it's wise. If the debouncing is kept as is, the worst case
+> > scenario is the one you had: a device doesn't work, you change it,
+> > everything works.
+>=20
+> I think this worst-case scenario is very bad and not what people will
+> expect. In addition it is difficult to debug the issue without specific
+> knowledge about the SoC.
+>
+> My use-case here was hooking up a sparkfun sensor board by the way,
+> not some very advanced corner-case.
 
-Signed-off-by: Luis Felipe Hernandez <luis.hernandez093@gmail.com>
----
-v1->v2: remove unused sg struct member as per review[1]
-[1] https://lore.kernel.org/linux-usb/20241119020807.cn7ugxnhbkqwrr2b@synopsys.com/#t
----
- drivers/usb/dwc3/core.h | 1 -
- 1 file changed, 1 deletion(-)
+Are you really arguing that a single sparkfun sensor not working is a
+worse outcome than the system not booting?
 
-diff --git a/drivers/usb/dwc3/core.h b/drivers/usb/dwc3/core.h
-index ee73789326bc..3be069c4520e 100644
---- a/drivers/usb/dwc3/core.h
-+++ b/drivers/usb/dwc3/core.h
-@@ -956,7 +956,6 @@ struct dwc3_request {
- 	struct usb_request	request;
- 	struct list_head	list;
- 	struct dwc3_ep		*dep;
--	struct scatterlist	*sg;
- 	struct scatterlist	*start_sg;
- 
- 	unsigned int		num_pending_sgs;
--- 
-2.47.0
+> > If we set it up as fast as it can however, then our risk becomes
+> > thousands of spurious interrupts, which is much more detrimental to the
+> > system.
+>=20
+> Keep in mind that this only concerns external GPIO-based interrupts,
+> which have to be explicitely hooked to a device. If a device or circuit
+> does generate such spurious interrupts, I think it makes sense that it
+> would be reflected by default.
 
+I mean... debouncing is here for a reason. Any hardware button will
+generate plenty of interrupts when you press it precisely because it
+bounces.
+
+> Also the notion of spurious interrupt is pretty vague. Having lots of
+> interrupts happening may be the desired behavior in many cases.
+
+Which cases?
+
+> In any case I don't think it makes sense for the platform code to impose
+> what a reasonable period for interrupts is (especially with such a large
+> period as default).
+
+So you don't think it makes sense for the platform code to impose a
+reasonable period, so you want to impose a (more, obviously) reasonable
+period?
+
+If anything, the status quo doesn't impose anything, it just rolls with
+the hardware default. Yours would impose one though.
+
+> Some drivers also have mechanisms to detect spurious interrupts based
+> on their specific use case.
+>=20
+> > And that's without accounting the fact that devices might have relied on
+> > that default for years
+>=20
+> They definitely shouldn't have. This feels much closer to a bug, and rely=
+ing
+> on a bug not being fixed is not a reasonable expectation.
+
+No, it's not a bug, really. It might be inconvenient to you, and that's
+fine, but it's definitely not a bug.
+
+Maxime
+
+--l2xikqg7suvl7kdm
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZzyyNAAKCRAnX84Zoj2+
+dmqPAYCz3OlaegQIjO8q5Z1cDBAWz7oPwfWFGo/q0gFfV22l/VsEDJ0mPduztKMZ
+LA/MqcYBgNoS/NtqeAuvUfzbpwVfY3mU2cnb2T+WgMNeI6ZX1krA1GRWcKXbB75e
+NaJriFIirA==
+=C1nd
+-----END PGP SIGNATURE-----
+
+--l2xikqg7suvl7kdm--
 
