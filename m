@@ -1,136 +1,112 @@
-Return-Path: <linux-kernel+bounces-414622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BFC59D2B44
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 17:42:25 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B66C39D2B56
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 17:43:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DBCA8B2D4C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 16:36:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA63AB27EF8
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 16:35:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA1B91D0E33;
-	Tue, 19 Nov 2024 16:35:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 634051CC8A0;
+	Tue, 19 Nov 2024 16:35:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="UDpri3sO"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GW4QlL7o"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF31E3C463;
-	Tue, 19 Nov 2024 16:35:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76E1DE57D
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 16:35:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732034151; cv=none; b=tpw+Rva8I08h/tSWqd7R59HlSyinzxah9h5e/Na0tOzFpWowuUr2HXFqIOngG90MvmxMXfW/h+Md5+aWD1AxhDgGV1FJ0zSTbuZj/yNP4hnnTLrzxE+Ra3TTdtMfKouA9dcyyKAsKpyGfm/QB1O4v9XhreL2HAS223bcMDCG/Sw=
+	t=1732034149; cv=none; b=QzqslGf3pDNKFbTTRt4HdhZJ8GSx4bwRoyd31nbSzWJYPwKqVaGr9FHQVIwSTMqr04D4gA0c6UbdeV8KsW6m+l+1UHFSkeU2jPs5HhbfRv7MhjrMC8x1KZKWE31UevZBr82S0gsmK/BXahkfG1YysRm61bAdOpu/RBtWqQy5jtA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732034151; c=relaxed/simple;
-	bh=9hSWkMBgt870APoM/D9k2739I5SbHqE6+jg1F2AR9Ic=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dxYxVVcIPALJJdGsz1U5bGv7fz69B/Vvjbez4NM0hKkn5ysR+554W3mP0tHK+LAN8UJk64a46/++gNXomvxHiSQm7s813ybmifjBy5RwGITlB8Lu04ZVf6aXgIqGw+x4nWZa+jEP6YxcCj6ZtFwvb0c/TKh60xImO3bfxaA1QSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=UDpri3sO; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=7xA18VRo4Z9qnPm8nwpcEgS9wya8T5K5bzL5hA5cbhM=; b=UDpri3sOSy3XL6wD8vMGYXaz9I
-	uFkGv8c9C6OrzOEX558YbBxIbG+wA4fNnowVtBRXPEuPzOcrh4R9JMyG9L9UchS7B+6YMQwt7noRM
-	H60MpWZ5rmYhviuS4QRy77SDsnlrL48PfRUCkQfdx9UUhTL1oT2iBUzUIsRngk5vEPSjjbJ9ddKPK
-	OvOhrs8UebepQWu0TtBJ3WdDMyJQfKN96yO24HMTwwZxP5Y5T4oBwlJ6ypqA1MFPRvbcIZiVmazIU
-	SSXnHOk/rYkKCQci9B9IyJjirgrkpZ1euHCXp2ifT92GA7W6fgwNtbQn8JgWE1J0DPdL1Zu1NpU5r
-	F6icPQPg==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:45606)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1tDRCH-0003vE-1T;
-	Tue, 19 Nov 2024 16:35:25 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1tDRCD-0006Bj-2N;
-	Tue, 19 Nov 2024 16:35:21 +0000
-Date: Tue, 19 Nov 2024 16:35:21 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: jan.petrous@oss.nxp.com
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Emil Renner Berthing <kernel@esmil.dk>,
-	Minda Chen <minda.chen@starfivetech.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Iyappan Subramanian <iyappan@os.amperecomputing.com>,
-	Keyur Chudgar <keyur@os.amperecomputing.com>,
-	Quan Nguyen <quan@os.amperecomputing.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	imx@lists.linux.dev, devicetree@vger.kernel.org,
-	NXP S32 Linux Team <s32@nxp.com>,
-	Jacob Keller <jacob.e.keller@intel.com>
-Subject: Re: [PATCH v5 02/16] net: driver: stmmac: Extend CSR calc support
-Message-ID: <Zzy-SYu3AgwaHeOD@shell.armlinux.org.uk>
-References: <20241119-upstream_s32cc_gmac-v5-0-7dcc90fcffef@oss.nxp.com>
- <20241119-upstream_s32cc_gmac-v5-2-7dcc90fcffef@oss.nxp.com>
+	s=arc-20240116; t=1732034149; c=relaxed/simple;
+	bh=EGGdEQPe+aUfqVGOU65LKu9rxpQoOawFlcoNSgIh1ZA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VI+8vS1MHVD+HRgYDZhZ4Ldq57mAV/r8uW2M+lO0AnSG4qw1MXjDSH94UKpjYEZfR4hz5YoKwVUQHsBtOKvh0dlPtSVY9v3f0B8t+u5pv22185HxZ12xWZ1G/5As+JudMHIWpYoL/hCP4rjC1AfN3WsQGn/nGDmu07/WxsoSreo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GW4QlL7o; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-720d5ada03cso4103518b3a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 08:35:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732034148; x=1732638948; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1AW51nF2d4Vra84SoBwduSRXmtopJSBkFMLYztV8dgU=;
+        b=GW4QlL7owZpt+pVgvFK7BjJbWejEMy+gW8Kym05YNXeqekdCIB62esdN79vRdA2I74
+         eveZBKLKzwaihbKQxY2xAzTS0UEXKi/Ho/AF4oBTolJcn2haTIH9LBDJtqVgheZNUWXY
+         LZHz/AX9dviEX3bfjv/zBBROUKUHP85pCa6e9kzg8nLxfl2nNaucsBkan+/+vkHzehzX
+         iczXO3afSCq85xAkD405DEBawmEqNxtWTeqkMwedrZ9OStNWW3aINKXm9nxlOKy1adhd
+         kA7P/dJ77dmAMEm3fl/rFiIuPgDipMHD2zICDSTgVLPdmQHBTrA0NnSStENPgyOQFj0B
+         q+xw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732034148; x=1732638948;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1AW51nF2d4Vra84SoBwduSRXmtopJSBkFMLYztV8dgU=;
+        b=VPqG/w57aJJPRdagNwjEVXw5lk5O7zAcqOcLsPDQYplpqz9MlcNI1dOK2e5KiEqUPG
+         KfYVID8/IPOhiYrBsd9b4b5cMSSiA0xXEkylHSkeIWkdF0/S6pVlBidiXT+qmOo9ZxRa
+         D4Zo3aiMTYHE3KcNRpRJ5puOEngwwAKHipsVbpKkwF5/YrPKhooRO7CcXOpj5knF7Oyg
+         p3zW6SaIDhANjMOk7s8SJqCLkvsZ5TQwwzZVUEoCOmB8R7SfOiOeujWOiBaN3m6dV+BG
+         cLRlop2IL7gdYvF1zx/ERzgLRxKkY27vOUlz+wtiOnIiQlymRXR5or0t4x4GIjUME3ni
+         eBXw==
+X-Forwarded-Encrypted: i=1; AJvYcCU3Jraq34gYaTZ04xoJEPz6mGM2T0bbp4bLxaE4M3+jUpf2CKZFFujsmdft85o2QWvmZaV86Inwbr9rOGg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwA5rs8SgfP7Y2a3cwaIQLvemvdrHBoWtaiSyOTtkfkxM4Ox6Z+
+	B9PQOqaCAIhzdOUQUZCsvhtu2Mab/i/CAPluI7J8/pyig5BIBWlYxJFZKb+Tk1Knlp4pBhhw74B
+	AZ6O7izEVyQ1+tfVcqZ4Gebg/Nj0=
+X-Google-Smtp-Source: AGHT+IFFRlfsL/PdTDxz6p2u32S29AC79MVUnMyJQSmdkoisaP0t5aq5QfVaQBTFcz5UeKmnsGoNFRPwes/MpuP6DDw=
+X-Received: by 2002:a05:6a00:a1c:b0:71e:680d:5e94 with SMTP id
+ d2e1a72fcca58-72476cc96d3mr22863920b3a.19.1732034147566; Tue, 19 Nov 2024
+ 08:35:47 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241119-upstream_s32cc_gmac-v5-2-7dcc90fcffef@oss.nxp.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+References: <20241119-fix-dereference-null-x86-sev-v1-1-82d59085e264@gmail.com>
+ <9dd3d046-6949-4e42-ab5a-af505f9b3981@web.de>
+In-Reply-To: <9dd3d046-6949-4e42-ab5a-af505f9b3981@web.de>
+From: Shresth Prasad <shresthprasad7@gmail.com>
+Date: Tue, 19 Nov 2024 22:05:35 +0530
+Message-ID: <CAE8VWiJ62xT9shaEmUTOPF1OAztaWsr57m-wY9jyMJt5WFke5g@mail.gmail.com>
+Subject: Re: [PATCH] x86/sev: Fix dereference NULL return value
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: x86@kernel.org, Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	"H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 19, 2024 at 04:00:08PM +0100, Jan Petrous via B4 Relay wrote:
-> From: "Jan Petrous (OSS)" <jan.petrous@oss.nxp.com>
-> 
-> Add support for CSR clock range up to 800 MHz.
-> 
-> Signed-off-by: Jan Petrous (OSS) <jan.petrous@oss.nxp.com>
-> Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
+On Tue, Nov 19, 2024 at 5:33=E2=80=AFPM Markus Elfring <Markus.Elfring@web.=
+de> wrote:
+>
+> > Skip to the next CPU if `pte` is assigned NULL by `lookup_address`
+>
+>                           a null pointer was returned by a lookup_address=
+() call.
+>
+>
+> * How do you think about to add any tags (like =E2=80=9CFixes=E2=80=9D an=
+d =E2=80=9CCc=E2=80=9D) accordingly?
 
-These look fine.
+For the Fixes tag, I'm not sure which commit hash I should put. Should I us=
+e
+the commit where the function was introduced?
 
-Doing the calculations:
+>
+> * Would a summary phrase like =E2=80=9CPrevent null pointer dereference i=
+n snp_kexec_finish()=E2=80=9D
+>   be a bit nicer?
 
-100M / 42 = 2.38MHz
-150M / 62 = 2.42MHz
-35M / 16 = 2.19MHz
-60M / 26 = 2.31MHz
-250M / 102 = 2.45MHz
-300M / 124 = 2.42MHz
-500M / 204 = 2.45MHz
-800M / 324 = 2.47MHz
+You're right, I'll change the phrasing. Thank you for the feedback.
 
-Since the target MDC clock frequency is 2.5MHz, these all look
-reasonable to what is in the comment for the new clock selection
-values.
-
-Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
-
-Thanks!
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Best Regards,
+Shresth
 
