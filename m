@@ -1,126 +1,97 @@
-Return-Path: <linux-kernel+bounces-414000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40A679D21B2
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 09:38:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13B019D21C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 09:41:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE9C41F22C47
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 08:38:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE0D628520B
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 08:41:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32568198A1A;
-	Tue, 19 Nov 2024 08:38:33 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 575851C233E;
+	Tue, 19 Nov 2024 08:40:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tDI/3x8I"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73D08158D96;
-	Tue, 19 Nov 2024 08:38:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9668150981;
+	Tue, 19 Nov 2024 08:40:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732005512; cv=none; b=ulejSL8LBm9cvTprUjZILGnBDCmUzdOqnDOnwx3EtKKmKJz3n0lq+V7Zryl8R5E0sjhbRunU8ZJ5I6nILoFgDZaCKbYBO3SJpbamNtjXTPaabeXtsuOj6DdrB4ePNdHHFL90/jEjh5a/a2KaLGJ9ehpSWoHHRK7NqbRlPwwOHFM=
+	t=1732005612; cv=none; b=lJ92yx8zD4gCutVIoZLsIcfq1WB5ef49meesX37JeVsE3nfCYyvPeRyy12Y/pZvuU908ZfshzqZ2YCT4e3JYcUQPU0b7j0uhsZzZhjkp2HhzmvQoAsO2yx8yi/oTmawC0jSTmZC2MaCbCy6/CnBep1wgwIEkRvGFeIXFopcwlaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732005512; c=relaxed/simple;
-	bh=8MOZvwOA2k/at8HFZualT9WLA3LcWXeKk9wIaUaDI/E=;
-	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=oeOxC6usWSjjAtzRSPX7iAgYAvNBpB1Go6ao1WLPgfy+lSdNbe8HqpDXQBHxtapVu2HGZ2w0lpEZNKsL3Wiz9bOkX2S7r99dpAgpkOw8n/BKKR5aL5b8iGoWiByM+j562oba6GYfMIs0LlvdluwrXlnBvFI0RsSLERT0voLFH/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4XsyWB1sppz1V4kG;
-	Tue, 19 Nov 2024 16:35:50 +0800 (CST)
-Received: from dggemv703-chm.china.huawei.com (unknown [10.3.19.46])
-	by mail.maildlp.com (Postfix) with ESMTPS id 1D104180105;
-	Tue, 19 Nov 2024 16:38:27 +0800 (CST)
-Received: from kwepemn500013.china.huawei.com (7.202.194.154) by
- dggemv703-chm.china.huawei.com (10.3.19.46) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 19 Nov 2024 16:38:26 +0800
-Received: from dggpeml100007.china.huawei.com (7.185.36.28) by
- kwepemn500013.china.huawei.com (7.202.194.154) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 19 Nov 2024 16:38:26 +0800
-Received: from dggpeml100007.china.huawei.com ([7.185.36.28]) by
- dggpeml100007.china.huawei.com ([7.185.36.28]) with mapi id 15.01.2507.039;
- Tue, 19 Nov 2024 16:38:26 +0800
-From: mengkanglai <mengkanglai2@huawei.com>
-To: Kuniyuki Iwashima <kuniyu@amazon.com>
-CC: "davem@davemloft.net" <davem@davemloft.net>, "dsahern@kernel.org"
-	<dsahern@kernel.org>, "edumazet@google.com" <edumazet@google.com>, "Fengtao
- (fengtao, Euler)" <fengtao40@huawei.com>, "kuba@kernel.org"
-	<kuba@kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org"
-	<netdev@vger.kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>, "Yanan
- (Euler)" <yanan@huawei.com>
-Subject: =?gb2312?B?UkU6tPC4tDoga2VybmVsIHRjcCBzb2NrZXRzIHN0dWNrIGluIEZJTl9XQUlU?=
- =?gb2312?Q?1_after_call_tcp=5Fclose?=
-Thread-Topic: =?gb2312?B?tPC4tDoga2VybmVsIHRjcCBzb2NrZXRzIHN0dWNrIGluIEZJTl9XQUlUMSBh?=
- =?gb2312?Q?fter_call_tcp=5Fclose?=
-Thread-Index: Ads6WLnMxTxT5H3UTJOsoe68wa8MAw==
-Date: Tue, 19 Nov 2024 08:38:26 +0000
-Message-ID: <d46151818b694dc79b488061817d3d73@huawei.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1732005612; c=relaxed/simple;
+	bh=gF7L+r3CCFtvRK2brDDsawKaeTTN8ZWDKky0vRy9u3s=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=jrxtca992WBDfMUbmqNug3+HfLSm5DbVkoGRTeNMlVzT55sxiZdQkTNQU4B/k7DY3ASm2lHy5E/THRGh8gKMSrb0n1fUu6LcAyTG9MQLHgW3kZREMIkyGUyc3k1ByNsKGkl4GomeoKzgqE5NR0jO6hurjENvrkNOIZ4nhBBZtdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tDI/3x8I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D4E6C4CECF;
+	Tue, 19 Nov 2024 08:40:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732005612;
+	bh=gF7L+r3CCFtvRK2brDDsawKaeTTN8ZWDKky0vRy9u3s=;
+	h=Date:From:To:Cc:Subject:From;
+	b=tDI/3x8I9TAMXPs6oO+GmPjl3YnZCuOmsTTV7+TIvOnL/gFD9rlNHo1fNOqx8+mBP
+	 6RhVl9NnJJeSooRBdNwmwoQBHRlwP74rSiCsoqDbhdKef2JOXI4Do3W1YmVG0pQFtn
+	 pMgJVhaIDqCgwIVTGiALSj/PtK71E7zYM3AEviuCkWESdtt2AJx0L6f1zFOZ8G2OWO
+	 PCO8fit437WSUaIIddjD4U/Z7Vj3iGu6slsfp891w+mpFKVJBLHu8m209BSVWsd/8g
+	 FwNI3iE7R3sxkYMXCfI5PsySQNoh/FnJPZQ9SgIwnMPDZh5rZzwvHScjmcGEv+7hJ2
+	 uHSnzkmV5SK+g==
+Date: Tue, 19 Nov 2024 09:40:08 +0100
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andrew Morton
+ <akpm@linux-foundation.org>, Linux Media Mailing List
+ <linux-media@vger.kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL for v6.13-rc1] media fixes
+Message-ID: <20241119094008.06a199f2@foz.lan>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-PiAtLS0tLdPKvP7Urbz+LS0tLS0NCj4gt6K8/sjLOiBLdW5peXVraSBJd2FzaGltYSA8a3VuaXl1
-QGFtYXpvbi5jb20+IA0KPiC3osvNyrG85DogMjAyNMTqMTHUwjE0yNUgMjo1Ng0KPiDK1bz+yMs6
-IG1lbmdrYW5nbGFpIDxtZW5na2FuZ2xhaTJAaHVhd2VpLmNvbT4NCj4gs63LzTogZGF2ZW1AZGF2
-ZW1sb2Z0Lm5ldDsgZHNhaGVybkBrZXJuZWwub3JnOyBlZHVtYXpldEBnb29nbGUuY29tOyBGZW5n
-dGFvIChmZW5ndGFvLCBFdWxlcikgPGZlbmd0YW80MEBodWF3ZWkuY29tPjsga3ViYUBrZXJuZWwu
-b3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyBuZXRkZXZAdmdlci5rZXJuZWwub3Jn
-OyBwYWJlbmlAcmVkaGF0LmNvbTsgWWFuYW4gKEV1bGVyKSA8eWFuYW5AaHVhd2VpLmNvbT47IGt1
-bml5dUBhbWF6b24uY29tDQo+INb3zOI6IFJlOiBrZXJuZWwgdGNwIHNvY2tldHMgc3R1Y2sgaW4g
-RklOX1dBSVQxIGFmdGVyIGNhbGwgdGNwX2Nsb3NlDQo+IA0KPiBGcm9tOiBtZW5na2FuZ2xhaSA8
-bWVuZ2thbmdsYWkyQGh1YXdlaS5jb20+DQo+IERhdGU6IFdlZCwgMTMgTm92IDIwMjQgMTI6NDA6
-MzQgKzAwMDANCj4gPiBIZWxsbywgRXJpYzoNCj4gPiBDb21taXQgMTUxYzljNzI0ZDA1ICh0Y3A6
-IHByb3Blcmx5IHRlcm1pbmF0ZSB0aW1lcnMgZm9yIGtlcm5lbCANCj4gPiBzb2NrZXRzKSBpbnRy
-b2R1Y2UgaW5ldF9jc2tfY2xlYXJfeG1pdF90aW1lcnNfc3luYyBpbiB0Y3BfY2xvc2UuDQo+ID4g
-Rm9yIGtlcm5lbCBzb2NrZXRzIGl0IGRvZXMgbm90IGhvbGQgc2stPnNrX25ldF9yZWZjbnQsIGlm
-IHRoaXMgaXMgDQo+ID4ga2VybmVsIHRjcCBzb2NrZXQgaXQgd2lsbCBjYWxsIHRjcF9zZW5kX2Zp
-biBpbiBfX3RjcF9jbG9zZSB0byBzZW5kIEZJTiANCj4gPiBwYWNrZXQgdG8gcmVtb3RlcyBzZXJ2
-ZXIsDQo+IA0KPiBKdXN0IGN1cmlvdXMgd2hpY2ggc3Vic3lzdGVtIHRoZSBrZXJuZWwgc29ja2V0
-IGlzIGNyZWF0ZWQgYnkuDQo+IA0KPiBSZWNlbnRseSwgQ0lGUyBhbmQgc3VucnBjIGFyZSAoYmVp
-bmcpIGNvbnZlcnRlZCB0byBob2xkIG5ldCByZWZjbnQuDQo+IA0KPiBDSUZTOiBodHRwczovL2dp
-dC5rZXJuZWwub3JnL3B1Yi9zY20vbGludXgva2VybmVsL2dpdC90b3J2YWxkcy9saW51eC5naXQv
-Y29tbWl0Lz9pZD1lZjcxMzRjN2ZjNDhlMTQ0MWIzOThlNTVhODYyMjMyODY4YTZmMGE3DQo+IHN1
-bnJwYzogaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvbmV0ZGV2LzIwMjQxMTEyMTM1NDM0LjgwMzg5
-MC0xLWxpdWppYW41NkBodWF3ZWkuY29tLw0KPiANCj4gSSByZW1lbWJlciBSRFMncyBsaXN0ZW5l
-ciBkb2VzIG5vdCBob2xkIHJlZmNudCBidXQgb3RoZXIgY2xpZW50IHNvY2tldHMgKFNNQywgUkRT
-LCBNUFRDUCwgQ0lGUywgc3VucnBjKSBkby4NCj4gDQo+IEkgdGhpbmsgYWxsIFRDUCBrZXJuZWwg
-c29ja2V0cyBzaG91bGQgaG9sZCBuZXRucyByZWZjbnQgZXhjZXB0IGZvciBvbmUgY3JlYXRlZCBh
-dCBwZXJuZXRfb3BlcmF0aW9ucy5pbml0KCkgaG9vayBsaWtlIFJEUy4NCj4gDQo+ID4gaWYgdGhp
-cyBmaW4gcGFja2V0IGxvc3QgZHVlIHRvIG5ldHdvcmsgZmF1bHRzLCB0Y3Agc2hvdWxkIHJldHJh
-bnNtaXQgDQo+ID4gdGhpcyBmaW4gcGFja2V0LCBidXQgdGNwX3RpbWVyIHN0b3BwZWQgYnkgaW5l
-dF9jc2tfY2xlYXJfeG1pdF90aW1lcnNfc3luYy4NCj4gPiB0Y3Agc29ja2V0cyBzdGF0ZSB3aWxs
-IHN0dWNrIGluIEZJTl9XQUlUMSBhbmQgbmV2ZXIgZ28gYXdheS4gSSB0aGluayANCj4gPiBpdCdz
-IG5vdCByaWdodC4NCg0KDQpJIGZvdW5kIHRoaXMgcHJvYmxlbSB3aGVuIHRlc3RpbmcgbmZzLiBz
-dW5ycGM6IGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL25ldGRldi8yMDI0MTExMjEzNTQzNC44MDM4
-OTAtMS1saXVqaWFuNTZAaHVhd2VpLmNvbS8gd2lsbCBzb2x2ZSB0aGlzIHByb2JsZW0uIA0KSSBh
-Z3JlZSB3aXRoIHRoYXQgYWxsIFRDUCBrZXJuZWwgc29ja2V0cyBzaG91bGQgaG9sZCBuZXRucyBy
-ZWZjbnQuDQpIb3dldmVyLCBmb3Iga2VybmVsIHRjcCBzb2NrZXRzIGNyZWF0ZWQgYnkgb3RoZXIg
-a2VybmVsIG1vZHVsZXMgdGhyb3VnaCBzb2NrX2NyZWF0ZV9rZXJuIG9yIHNrX2FsbG9jKGtlcm49
-MCksIGl0IG1lYW5zIHRoYXQgdGhleSBtdXN0IG5vdyBob2xkIHNrX25ldF9yZWZjbmYsIG90aGVy
-d2lzZSBmaW4gd2lsbCBvbmx5IGJlIHNlbnQgb25jZSBhbmQgd2lsbCBub3QgYmUgcmV0cmFuc21p
-dHRlZCB3aGVuIHRoZSBzb2NrZXQgaXMgcmVsZWFzZWQuQnV0IG90aGVyIHVzZSB0Y3AgbW9kdWxl
-cyBtYXkgbm90IGJlIGF3YXJlIG9mIGhvbGQgc2tfbmV0X3JlZmNudC4gc2hvdWxkIHdlIGFkZCBh
-IGNoZWNrIGluIHRjcF9jbG9zZaO/DQoNCi0tLQ0KZGlmZiAtLWdpdCBhL25ldC9pcHY0L3RjcC5j
-IGIvbmV0L2lwdjQvdGNwLmMNCmluZGV4IGZiOTIwMzY5Yy4uNmI5MjAyNmE0IDEwMDY0NA0KLS0t
-IGEvbmV0L2lwdjQvdGNwLmMNCisrKyBiL25ldC9pcHY0L3RjcC5jDQpAQCAtMjgwNCw3ICsyODA0
-LDcgQEAgdm9pZCB0Y3BfY2xvc2Uoc3RydWN0IHNvY2sgKnNrLCBsb25nIHRpbWVvdXQpDQogICAg
-ICAgIGxvY2tfc29jayhzayk7DQogICAgICAgIF9fdGNwX2Nsb3NlKHNrLCB0aW1lb3V0KTsNCiAg
-ICAgICAgcmVsZWFzZV9zb2NrKHNrKTsNCi0gICAgICAgaWYgKCFzay0+c2tfbmV0X3JlZmNudCkN
-CisgICAgICAgaWYgKHNrLT5uZXQgIT0gJmluaXRfbmV0ICYmICFzay0+c2tfbmV0X3JlZmNudCkN
-CiAgICAgICAgICAgICAgICBpbmV0X2Nza19jbGVhcl94bWl0X3RpbWVyc19zeW5jKHNrKTsNCiAg
-ICAgICAgc29ja19wdXQoc2spOw0KIH0NCg==
+Hi Linus,
+
+Please pull from:
+  git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-media tags/media/v6.13-2
+
+
+For a fix at the UVC driver:
+	- uvcvideo: Skip parsing frames of type UVC_VS_UNDEFINED in uvc_parse_format
+
+Regards,
+Mauro
+
+---
+
+The following changes since commit 702a47ce6dde72f6e247b3c3c00a0fc521f9b1c6:
+
+  media: videobuf2-core: copy vb planes unconditionally (2024-11-07 12:55:46 +0100)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-media tags/media/v6.13-2
+
+for you to fetch changes up to ecf2b43018da9579842c774b7f35dbe11b5c38dd:
+
+  media: uvcvideo: Skip parsing frames of type UVC_VS_UNDEFINED in uvc_parse_format (2024-11-09 13:17:42 +0100)
+
+----------------------------------------------------------------
+media updates for v6.13-rc1
+
+----------------------------------------------------------------
+Benoit Sevens (1):
+      media: uvcvideo: Skip parsing frames of type UVC_VS_UNDEFINED in uvc_parse_format
+
+ drivers/media/usb/uvc/uvc_driver.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
 
