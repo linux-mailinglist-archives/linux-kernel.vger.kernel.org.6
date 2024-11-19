@@ -1,155 +1,96 @@
-Return-Path: <linux-kernel+bounces-414049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-414046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 850EB9D2262
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 10:22:11 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 599D89D225C
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 10:21:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 094E01F2290A
-	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 09:22:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DED49B20F04
+	for <lists+linux-kernel@lfdr.de>; Tue, 19 Nov 2024 09:21:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29A301BD9F0;
-	Tue, 19 Nov 2024 09:21:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF97D19C54F;
+	Tue, 19 Nov 2024 09:21:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="a3WAMvMo"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="c76MvF2g"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5431146A73;
-	Tue, 19 Nov 2024 09:21:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5A5913FD83
+	for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 09:21:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732008112; cv=none; b=Pe3GIUtYuuznzD0oTsqsU7iHfOQSCnlXNV/PyWbjrNqnC6Adhq3roDJ9pJF+Whsq0cBbq4Gzt8vvl774GUErEHbICKy2iarD5a4xAE8d5kyrDSQwtlDrp9zNHed+XQu2Px1UOu57ollCsLJ319CuI/ULxRwf+BmVZ1tDFHNF9NI=
+	t=1732008066; cv=none; b=bImtNacAul3tRtFpgKd1d523xDKwdG2iGow5j7qiCs+yeLYlG7b0uEPH7bW3JHQ9qc8KTiStAXmxOKGGgjJENzmB1Ayn9R2YtwIue66NJyIDocFjha10wU2zcRHmC29NCqUd4a5Cvb6Ow3PXtTgXjT3b3lKhsrNrq2S92Nl5ofw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732008112; c=relaxed/simple;
-	bh=/6dYCIbOpuB4rP8Dj5usJF6JZAo7w/c9Vw5z1UE4D2M=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QDAvAFQ8ql6/SB+HuDRP9mWFYo/LA08Uwvb0t0ju03qxxO8ExeXP1KwvnfK5J1r+sM6QCKLlKGaZGA4uABpXPovXPO+rwB84hIGH2vWztBCKRi9BoUToTD8QNTEkuk3ILbnerwKKL7Jgrq5Jn2iRnW/YcNQkvHTJppqTDXWatrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=a3WAMvMo; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AJ7F06h026876;
-	Tue, 19 Nov 2024 09:21:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	5n4LdU3TE41g83n0rbVywtQ6WAVdeoT/X+RIaV9maaQ=; b=a3WAMvMoUEsIYF1P
-	u3D19XQX/cxY8RbGQXXCksnppz5JsJvV9uk9zoA8/azt8IStCbojT9zO5boBxCtc
-	JWLtU5SwTKE+4PLkcqzrwTPjHuA7+Lg39rwIG8Y0vVrbMIZbrK8I5hBtGg3Nat47
-	n8RWqk/+vfU476PkInnFWZpn66njgc3/OSEcpnu2YkZST7fNOeLDfxlTzSscOwL5
-	12bReI5rA6XbUojo5jIFQm0TR9zsNDYjlZ7toTSdOY+G3m8i9gu3bzz83O1oyqyC
-	T2zRHZ1OVeQuKDLu85zJobr2bzhs3qBv7NqYpL07YFQnPVZZQOrfMYVQ+w/5Htcg
-	j3GmPg==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4308y7t2vp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 19 Nov 2024 09:21:43 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AJ9LTaX028936
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 19 Nov 2024 09:21:29 GMT
-Received: from hu-mdalam-blr.qualcomm.com (10.80.80.8) by
- nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 19 Nov 2024 01:21:25 -0800
-From: Md Sadre Alam <quic_mdalam@quicinc.com>
-To: <manivannan.sadhasivam@linaro.org>, <miquel.raynal@bootlin.com>,
-        <richard@nod.at>, <vigneshr@ti.com>, <linux-mtd@lists.infradead.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <quic_srichara@quicinc.com>, <quic_nainmeht@quicinc.com>,
-        <quic_laksd@quicinc.com>, <quic_varada@quicinc.com>
-Subject: [PATCH 2/2] mtd: rawnand: qcom: Fix onfi param page read
-Date: Tue, 19 Nov 2024 14:50:58 +0530
-Message-ID: <20241119092058.480363-3-quic_mdalam@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241119092058.480363-1-quic_mdalam@quicinc.com>
-References: <20241119092058.480363-1-quic_mdalam@quicinc.com>
+	s=arc-20240116; t=1732008066; c=relaxed/simple;
+	bh=CzgZPQkB6V+q59YG1e8JnaleyQ8d5xZWpjBkzQl5m1U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qK2B6FHtWUuFn32rOBPqLP1+vP6IYxibsRSHrNFumjQvbioSFkDdsY5ISAG7oVycrV14TeKv9sg+aVmMfkBQdCXADwLTAcox1oc/58yJ7v0PPORuEKd4yImyTcBV+Q/CCtgAZIHIDy7ze+R2wPL6amV6EXs7tdCZF2dKkx0m0lM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=c76MvF2g; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-71e79f73aaeso569286b3a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 01:21:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1732008064; x=1732612864; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=HNjfiBdLKPlGRw2iGcWxAqDoQ+YX9jcbPGBmsbo8owg=;
+        b=c76MvF2gKRAMHfgKC5W4KuU6fQU/sXK4fk98vCPkzBW8qyW+9U8Kbl2zOwr2mko8bv
+         wOPBm1jBzO8kUSEZcGaQ9GUlJYVgGH7FmXmPYcmg1jb3bfGQGyvKKgeljTJjGPwgJB+l
+         d3PmJMpbCBqoO1aF+UioHTPzFKCau9ng/e44U=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732008064; x=1732612864;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HNjfiBdLKPlGRw2iGcWxAqDoQ+YX9jcbPGBmsbo8owg=;
+        b=R+/+vZCbzfKShDJJ04amTDv3B8vAv/zR5kRfHmsrYC3l4YrCidYAVON3LMD/81S9F6
+         dlnUyHzVjdAAuDX4pHcARns2p0TM6ICivLvFKtsiNXmR6dJCSz4wCkDmKK3Eu+HoQ+Kn
+         3rIRviCmwD6WozhWSiUrlCDsnqLni8no8xkZ5uv1FZrb1VGEcxuULDRVfO06RhcTiGsD
+         48W7E7dK8Nj4ZsqBBgeKg2H5VofodfCOHPdFXtwOuTMwJux4aeV59BsFWxHZqqegE99I
+         +rHIS+CzkSA6pEqCfMAqUNy+nnnvDTE/N91yPiBVS8LsTW1Kp9OOyp986shfV5p+YiCY
+         kYdw==
+X-Forwarded-Encrypted: i=1; AJvYcCXkEECOfx1oaJLhrtrOtIPE+33VeyFTB/OrxzDX2bmwFd0WHd/LJ2aa6SK0B1YC0T32yOQ/us7VvOuYM/I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxArsVciybykpHOml2bZbDiDOoSPUIjqmn2/RKJxkD549jLpEXC
+	bbK9cfjjE6MH/Y8w3jeEc2iJFAkXLLEVZlM5eg6LnOUAR8ZiVRBbJgq6TJOH2/X3SDXkYFjor+E
+	=
+X-Google-Smtp-Source: AGHT+IGluIr3+H3FE5AnVN8K7Vdc1zZ7vQIg4AV14EH7qMyFXvnEmozz6o7awjN6RK51MPWRD5GHVA==
+X-Received: by 2002:a05:6a00:1790:b0:724:590d:e320 with SMTP id d2e1a72fcca58-72476b96351mr17810526b3a.7.1732008064029;
+        Tue, 19 Nov 2024 01:21:04 -0800 (PST)
+Received: from google.com ([2401:fa00:8f:203:5534:f54c:1465:9438])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-724771e1324sm7575559b3a.133.2024.11.19.01.21.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Nov 2024 01:21:03 -0800 (PST)
+Date: Tue, 19 Nov 2024 18:20:59 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Sergey Senozhatsky <senozhatsky@chromium.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Minchan Kim <minchan@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv1 0/8] zram: introduce multi-handle entries
+Message-ID: <20241119092059.GC2668855@google.com>
+References: <20241119072057.3440039-1-senozhatsky@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 2XijrQ2wGzC3PcOGEb6lF0m9fvjjayQS
-X-Proofpoint-GUID: 2XijrQ2wGzC3PcOGEb6lF0m9fvjjayQS
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 spamscore=0
- mlxlogscore=999 clxscore=1015 suspectscore=0 adultscore=0
- priorityscore=1501 phishscore=0 impostorscore=0 bulkscore=0
- lowpriorityscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2409260000 definitions=main-2411190067
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241119072057.3440039-1-senozhatsky@chromium.org>
 
-For QPIC V2 onwards there is a separate register to read
-last code word "QPIC_NAND_READ_LOCATION_LAST_CW_n".
+On (24/11/19 16:20), Sergey Senozhatsky wrote:
+> 	ZRAM_HUGE objects are incompressible and each takes a whole
+> physical page on the zsmalloc side.  zsmalloc pool, naturally, has
+> some internal memory fragmentation (within size-classes), so what
+> we can do for ZRAM_HUGE objects is to split them into several
+> smaller objects (2 at this point) and store those parts individually
+> in regular size-classes (hence multi-handle entries). This, basically,
+> lets us to use already allocated (but unused) zspages memory for
+> ZRAM_HUGE objects, instead of unconditional allocation of 0-order
+> page for each ZRAM_HUGE object.
 
-qcom_param_page_type_exec() is used to read only one code word
-If we will configure number of code words to 1 in QPIC_NAND_DEV0_CFG0
-register then QPIC controller thinks its reading the last code word,
-since we are having separate register to read the last code word,
-we have to configure "QPIC_NAND_READ_LOCATION_LAST_CW_n" register
-to fetch data from QPIC buffer to system memory.
-
-Also there is minimum size to fetch the data from device to QPIC buffer
-is 512-bytes. If size is less than 512-bytes the data will not be
-protected by ECC as per QPIC standard. So while reading onfi parameter
-page from NAND device setting nandc->buf_count = 512.
-
-Fixes: 89550beb098e ("mtd: rawnand: qcom: Implement exec_op()")
-Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
----
- drivers/mtd/nand/raw/qcom_nandc.c | 14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/mtd/nand/raw/qcom_nandc.c b/drivers/mtd/nand/raw/qcom_nandc.c
-index 34ee8555fb8a..6487f2126833 100644
---- a/drivers/mtd/nand/raw/qcom_nandc.c
-+++ b/drivers/mtd/nand/raw/qcom_nandc.c
-@@ -2859,7 +2859,12 @@ static int qcom_param_page_type_exec(struct nand_chip *chip,  const struct nand_
- 	const struct nand_op_instr *instr = NULL;
- 	unsigned int op_id = 0;
- 	unsigned int len = 0;
--	int ret;
-+	int ret, reg_base;
-+
-+	reg_base = NAND_READ_LOCATION_0;
-+
-+	if (nandc->props->qpic_v2)
-+		reg_base = NAND_READ_LOCATION_LAST_CW_0;
- 
- 	ret = qcom_parse_instructions(chip, subop, &q_op);
- 	if (ret)
-@@ -2911,14 +2916,17 @@ static int qcom_param_page_type_exec(struct nand_chip *chip,  const struct nand_
- 	op_id = q_op.data_instr_idx;
- 	len = nand_subop_get_data_len(subop, op_id);
- 
--	nandc_set_read_loc(chip, 0, 0, 0, len, 1);
-+	if (nandc->props->qpic_v2)
-+		nandc_set_read_loc_last(chip, reg_base, 0, len, 1);
-+	else
-+		nandc_set_read_loc_first(chip, reg_base, 0, len, 1);
- 
- 	if (!nandc->props->qpic_v2) {
- 		write_reg_dma(nandc, NAND_DEV_CMD_VLD, 1, 0);
- 		write_reg_dma(nandc, NAND_DEV_CMD1, 1, NAND_BAM_NEXT_SGL);
- 	}
- 
--	nandc->buf_count = len;
-+	nandc->buf_count = 512;
- 	memset(nandc->data_buffer, 0xff, nandc->buf_count);
- 
- 	config_nand_single_cw_page_read(chip, false, 0);
--- 
-2.34.1
-
+Forgot to mention, this is still just "RFC".
 
