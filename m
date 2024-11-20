@@ -1,205 +1,139 @@
-Return-Path: <linux-kernel+bounces-415880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D68B9D3DB8
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:38:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 681599D3D82
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:26:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52D18B2F9BA
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 14:25:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BCC62820D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 14:26:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EE191AAE13;
-	Wed, 20 Nov 2024 14:25:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC1B21AB6CD;
+	Wed, 20 Nov 2024 14:25:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="D8wUmjZ7"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QSQbyIR4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E28A2746D;
-	Wed, 20 Nov 2024 14:25:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F6DA2746D;
+	Wed, 20 Nov 2024 14:25:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732112746; cv=none; b=kF+N0BruoCkpK3HgvdNqeHTCEfjOdnc3pAXooAIZcYxZekRsxvRVHD29f6JgN63xAdtTNlvBlG9HkDe+C9eyzEy30/BJBdMl9c/vTKHM+v2wAyXIGOjPCgz7SLVAkYFDCp4j0j8sjMP2dlHLz9OaJ6pCrqfhAxKpvqR2uwsOa+Q=
+	t=1732112751; cv=none; b=r3p+6Qez00NxslsFRDPV0eWK88kKDrrCI25LL5FM76+z5CL6Hks9MaxuPaVLgVzGZZ4a619L4kEGWdoaC486VrcnQorW1bISrF7u0OpUsBJweoF8nDzmNjLbuidr2F9zbuPCXajvoxs7BV5zjgSa5Jxdf7TB/RlFYSNTzEzzMlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732112746; c=relaxed/simple;
-	bh=KvjyYEigGAIEzNiagxO3KwdHG5J+fB7bQo5wDhPsuow=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=jxYg7KEQqCsFVFpuZlNbWW3FoJTYM5rZUY6OKhJd3eS6P/W69WL5TknzkaAVYvCeU9ULKeZfyMpRtqU5evtA+mpA+D5MLmQl7RHKE8TS+ggdvcC3EzUmVfRpVKH53oOlQQj2VfJNi7oPU1TZFyykYE+KoHf6tziXq8FGKeH4LC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=D8wUmjZ7; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1732112742;
-	bh=KvjyYEigGAIEzNiagxO3KwdHG5J+fB7bQo5wDhPsuow=;
-	h=Subject:From:To:Date:In-Reply-To:References:From;
-	b=D8wUmjZ773YcWqtqoIdCnL8G3IgaI23r8gG0+swCd2x2iZnoLK/WlpWSVGF5lohqm
-	 X6rgiHmLh5amj44p62PlpxdOxN50lgFChNYhm4+R4mW1lWRAkLnvwIRsYrNviE3mJm
-	 mQuV/BXTfbsnXxLz1B3NwTLQ7o+afmpqAZ13XA9QA/avQPLObf4DtiKjl7xXP3o0pY
-	 hBvSGUhCFaSJIdjxQqMO2i3Lt4bdkGxPxP9bfRrVA1+VgCFKfNJ5tI5pdvHeeiZHx0
-	 z9C9p99iL4NZDqK4ICtTWBz/k0YRbuMOVyyIHbK8vFHHil5oSnnRtHGkxpnCd63cGG
-	 qe6qZNXXnwfzQ==
-Received: from nicolas-tpx395.localdomain (unknown [IPv6:2606:6d00:15:862e::580])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: nicolas)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 3653417E36B9;
-	Wed, 20 Nov 2024 15:25:41 +0100 (CET)
-Message-ID: <c9f19faacccd47b8a72fc4a29a0f75b30bce1aa1.camel@collabora.com>
-Subject: Re: [PATCH v2 2/3] media: verisilicon: add WebP decoding support
-From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-To: Hugues Fruchet <hugues.fruchet@foss.st.com>, Mauro Carvalho Chehab	
- <mchehab@kernel.org>, Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, 
- Philipp Zabel <p.zabel@pengutronix.de>, Hans Verkuil
- <hverkuil-cisco@xs4all.nl>, Fritz Koenig	 <frkoenig@chromium.org>,
- Sebastian Fricke <sebastian.fricke@collabora.com>,  Daniel Almeida
- <daniel.almeida@collabora.com>, Andrzej Pietrasiewicz
- <andrzej.p@collabora.com>, Benjamin Gaignard
- <benjamin.gaignard@collabora.com>, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	linux-stm32@st-md-mailman.stormreply.com
-Date: Wed, 20 Nov 2024 09:25:39 -0500
-In-Reply-To: <20241120110105.244413-3-hugues.fruchet@foss.st.com>
-References: <20241120110105.244413-1-hugues.fruchet@foss.st.com>
-	 <20241120110105.244413-3-hugues.fruchet@foss.st.com>
-Organization: Collabora
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.54.1 (3.54.1-1.fc41) 
+	s=arc-20240116; t=1732112751; c=relaxed/simple;
+	bh=xOxfYFsF2N26nuxuY+OVvTpysL3ZcmMhuSwu/BO3DWk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=APFymU3G+bEgcGos4C/2oAetOkj50A3L4408LXXMOF3FFvI4Ic4Tl0Ku8SI8RVA7sNmv5c8pTuZeaAL83wuZvRj97j3i2WjWbUXofvw86aGCi1m8+nM8YQqd8K5spVMCCI8MW/k8/6XzthnY2qRT7Dnb2sguuQm4mkawd7Hj+7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QSQbyIR4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9767FC4CED1;
+	Wed, 20 Nov 2024 14:25:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732112750;
+	bh=xOxfYFsF2N26nuxuY+OVvTpysL3ZcmMhuSwu/BO3DWk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=QSQbyIR4EXHX3jOAVCH8RAUCCOPTYFc6JfBvBJyRMxviJr4Pex2lpJN1NMFaBHV1T
+	 kGcI8Opv0Cz6egJ720FvrqLiVtwGLAol9IbW8jQ+nSZSkWmxJb6lvxyJiubSPlTIR7
+	 0zzba+7aB3926/BcaNvvn5ivifny2i5bxTJRaPaQdLbpdHco9JSjop576Z48I7szGy
+	 T4jaNmxqH1obdDm51/XEaZe6ZXevNFl/C/v3dYU43THs+ah3jukIq91Hh3r/e+CZ8k
+	 ceBjRF2e4WNIVhBrZqqy1pOkgvP+F5N+AmW8H2x8UFSDNf+BEqbVeNT9PcZ8KdYJ2F
+	 ASgawMGA2hryg==
+Message-ID: <afffd5e3-19e9-49a6-8854-039be1128922@kernel.org>
+Date: Wed, 20 Nov 2024 15:25:45 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: sprd: Remove unused and undocumented
+ "constant_charge_voltage_max_microvolt" property
+To: Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Stanislav Jakubek <stano.jakubek@gmail.com>, robh@kernel.org
+Cc: conor+dt@kernel.org, devicetree@vger.kernel.org, krzk+dt@kernel.org,
+ linux-kernel@vger.kernel.org, orsonzhai@gmail.com, zhang.lyra@gmail.com
+References: <Zz3SnIiW_iu10rrs@standask-GA-A55M-S2HP>
+ <a31e5b41-d495-4b5e-996d-1cb0a1f6929f@linux.alibaba.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <a31e5b41-d495-4b5e-996d-1cb0a1f6929f@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Le mercredi 20 novembre 2024 à 12:01 +0100, Hugues Fruchet a écrit :
-> Add WebP picture decoding support to VP8 stateless decoder.
+On 20/11/2024 13:27, Baolin Wang wrote:
 > 
-> Signed-off-by: Hugues Fruchet <hugues.fruchet@foss.st.com>
-> ---
->  .../media/platform/verisilicon/hantro_g1_regs.h |  1 +
->  .../platform/verisilicon/hantro_g1_vp8_dec.c    | 14 ++++++++++++++
->  .../media/platform/verisilicon/hantro_v4l2.c    |  2 ++
->  .../platform/verisilicon/stm32mp25_vpu_hw.c     | 17 +++++++++++++++--
->  4 files changed, 32 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/media/platform/verisilicon/hantro_g1_regs.h b/drivers/media/platform/verisilicon/hantro_g1_regs.h
-> index c623b3b0be18..e7d4db788e57 100644
-> --- a/drivers/media/platform/verisilicon/hantro_g1_regs.h
-> +++ b/drivers/media/platform/verisilicon/hantro_g1_regs.h
-> @@ -232,6 +232,7 @@
->  #define     G1_REG_DEC_CTRL7_DCT7_START_BIT(x)		(((x) & 0x3f) << 0)
->  #define G1_REG_ADDR_STR					0x030
->  #define G1_REG_ADDR_DST					0x034
-> +#define G1_REG_ADDR_DST_CHROMA				0x038
->  #define G1_REG_ADDR_REF(i)				(0x038 + ((i) * 0x4))
->  #define     G1_REG_ADDR_REF_FIELD_E			BIT(1)
->  #define     G1_REG_ADDR_REF_TOPC_E			BIT(0)
-> diff --git a/drivers/media/platform/verisilicon/hantro_g1_vp8_dec.c b/drivers/media/platform/verisilicon/hantro_g1_vp8_dec.c
-> index 851eb67f19f5..c83ee6f5edc8 100644
-> --- a/drivers/media/platform/verisilicon/hantro_g1_vp8_dec.c
-> +++ b/drivers/media/platform/verisilicon/hantro_g1_vp8_dec.c
-> @@ -307,6 +307,12 @@ static void cfg_parts(struct hantro_ctx *ctx,
->  			   G1_REG_DEC_CTRL3_STREAM_LEN(dct_part_total_len),
->  			   G1_REG_DEC_CTRL3);
->  
-> +	if (ctx->vpu_src_fmt->fourcc == V4L2_PIX_FMT_WEBP_FRAME)
-> +		vdpu_write_relaxed(vpu,
-> +				   G1_REG_DEC_CTRL3_STREAM_LEN_EXT
-> +					(dct_part_total_len >> 24),
-> +				   G1_REG_DEC_CTRL3);
-> +
->  	/* DCT partitions base address */
->  	for (i = 0; i < hdr->num_dct_parts; i++) {
->  		u32 byte_offset = dct_part_offset + dct_size_part_size + count;
-> @@ -427,6 +433,12 @@ static void cfg_buffers(struct hantro_ctx *ctx,
->  
->  	dst_dma = hantro_get_dec_buf_addr(ctx, &vb2_dst->vb2_buf);
->  	vdpu_write_relaxed(vpu, dst_dma, G1_REG_ADDR_DST);
-> +
-> +	if (ctx->vpu_src_fmt->fourcc == V4L2_PIX_FMT_WEBP_FRAME)
-> +		vdpu_write_relaxed(vpu, dst_dma +
-> +				   ctx->dst_fmt.plane_fmt[0].bytesperline *
-> +				   ctx->dst_fmt.height,
-> +				   G1_REG_ADDR_DST_CHROMA);
->  }
->  
->  int hantro_g1_vp8_dec_run(struct hantro_ctx *ctx)
-> @@ -471,6 +483,8 @@ int hantro_g1_vp8_dec_run(struct hantro_ctx *ctx)
->  		reg |= G1_REG_DEC_CTRL0_SKIP_MODE;
->  	if (hdr->lf.level == 0)
->  		reg |= G1_REG_DEC_CTRL0_FILTERING_DIS;
-> +	if (ctx->vpu_src_fmt->fourcc == V4L2_PIX_FMT_WEBP_FRAME)
-> +		reg |= G1_REG_DEC_CTRL0_WEBP_E;
->  	vdpu_write_relaxed(vpu, reg, G1_REG_DEC_CTRL0);
->  
->  	/* Frame dimensions */
-> diff --git a/drivers/media/platform/verisilicon/hantro_v4l2.c b/drivers/media/platform/verisilicon/hantro_v4l2.c
-> index 2513adfbd825..7075b2ba1ec2 100644
-> --- a/drivers/media/platform/verisilicon/hantro_v4l2.c
-> +++ b/drivers/media/platform/verisilicon/hantro_v4l2.c
-> @@ -470,6 +470,7 @@ hantro_update_requires_request(struct hantro_ctx *ctx, u32 fourcc)
->  		break;
->  	case V4L2_PIX_FMT_MPEG2_SLICE:
->  	case V4L2_PIX_FMT_VP8_FRAME:
-> +	case V4L2_PIX_FMT_WEBP_FRAME:
->  	case V4L2_PIX_FMT_H264_SLICE:
->  	case V4L2_PIX_FMT_HEVC_SLICE:
->  	case V4L2_PIX_FMT_VP9_FRAME:
-> @@ -492,6 +493,7 @@ hantro_update_requires_hold_capture_buf(struct hantro_ctx *ctx, u32 fourcc)
->  	case V4L2_PIX_FMT_JPEG:
->  	case V4L2_PIX_FMT_MPEG2_SLICE:
->  	case V4L2_PIX_FMT_VP8_FRAME:
-> +	case V4L2_PIX_FMT_WEBP_FRAME:
->  	case V4L2_PIX_FMT_HEVC_SLICE:
->  	case V4L2_PIX_FMT_VP9_FRAME:
->  		vq->subsystem_flags &= ~(VB2_V4L2_FL_SUPPORTS_M2M_HOLD_CAPTURE_BUF);
-> diff --git a/drivers/media/platform/verisilicon/stm32mp25_vpu_hw.c b/drivers/media/platform/verisilicon/stm32mp25_vpu_hw.c
-> index 833821120b20..48d6912c3bab 100644
-> --- a/drivers/media/platform/verisilicon/stm32mp25_vpu_hw.c
-> +++ b/drivers/media/platform/verisilicon/stm32mp25_vpu_hw.c
-> @@ -22,10 +22,10 @@ static const struct hantro_fmt stm32mp25_vdec_fmts[] = {
->  		.codec_mode = HANTRO_MODE_NONE,
->  		.frmsize = {
->  			.min_width = FMT_MIN_WIDTH,
-> -			.max_width = FMT_FHD_WIDTH,
-> +			.max_width = FMT_4K_WIDTH,
->  			.step_width = MB_DIM,
->  			.min_height = FMT_MIN_HEIGHT,
-> -			.max_height = FMT_FHD_HEIGHT,
-> +			.max_height = FMT_4K_HEIGHT,
+> On 2024/11/20 20:14, Stanislav Jakubek wrote:
+>> Hi Rob,
+>>
+>> constant-charge-voltage-max-microvolt is a valid property, which I assume
+>> was the original intention here. I've already submitted a patch changing this
+>> to the documented property:
+>>
+>> https://lore.kernel.org/lkml/aa557091d9494fdaa3eda75803f9ea97014c8832.1730918663.git.stano.jakubek@gmail.com/
+>>
+>> Baolin also reviewed that patch... make of that what you will.
+> 
+> Ah, yes. Sorry I forgot your patch. Thanks for reminding.
 
-I'm a little surprised of this change, since this is modifying VP8_FRAME, while
-we should instead introduce WEBP_FRAME.
+No one picked them up... I kept Stanislav's patches in my incoming/inbox
+folder for quite long time, because I pick up some random fixes here and
+there, but then forgot them and did not apply for v6.13-rc1. So they
+missed v6.13-rc1.
 
->  			.step_height = MB_DIM,
->  		},
->  	},
-> @@ -68,6 +68,19 @@ static const struct hantro_fmt stm32mp25_venc_fmts[] = {
->  		.codec_mode = HANTRO_MODE_NONE,
->  		.enc_fmt = ROCKCHIP_VPU_ENC_FMT_YUV420SP,
->  	},
-> +	{
-> +		.fourcc = V4L2_PIX_FMT_WEBP_FRAME,
-> +		.codec_mode = HANTRO_MODE_VP8_DEC,
-> +		.max_depth = 2,
-> +		.frmsize = {
-> +			.min_width = FMT_MIN_WIDTH,
-> +			.max_width = FMT_4K_WIDTH,
-> +			.step_width = MB_DIM,
-> +			.min_height = FMT_MIN_HEIGHT,
-> +			.max_height = FMT_4K_HEIGHT,
-> +			.step_height = MB_DIM,
-> +		},
-> +	},
+I am not the maintainer of that platform, so I don't care about it
+really, but I care about contributors work not being lost/ignored.
 
-This is venc_fmt (encoder), this shouldn't be there.
+What is the plan with these and all other Spreadtrum patches? Are they
+going to be applied by you or other Spreadtrum maintainers? Do you need
+any help from us? Or maybe some clarifications of the process?
 
->  	{
->  		.fourcc = V4L2_PIX_FMT_YUYV,
->  		.codec_mode = HANTRO_MODE_NONE,
-
+Best regards,
+Krzysztof
 
