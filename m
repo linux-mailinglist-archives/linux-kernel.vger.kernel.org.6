@@ -1,148 +1,207 @@
-Return-Path: <linux-kernel+bounces-415984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA3F89D3EDE
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:19:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 631089D3EBD
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:15:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ED04EB38F3D
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:15:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0A321F24958
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:14:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2E1C1CB323;
-	Wed, 20 Nov 2024 15:07:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B84991B5ED2;
+	Wed, 20 Nov 2024 15:07:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GUcPtb5r"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="M+FUHra/"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AAC91CB31A;
-	Wed, 20 Nov 2024 15:07:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 535131A9B3B
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 15:07:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732115260; cv=none; b=DSIa2jaNYu9YFmRvO323kHwr3+VnHT+OaG8p3oLw3C6IyzOEDK/3Lnzclk/uZ99Af+wV9r7Y5cCkdSoxmKrKpLT7Xls/g6pt0uEhRt2yPzoQZc1oKsw/Pmni40yScfKCMqQWkGYMfSF7dq0SeU/P5wx6lRh5M+XPfT6i7iKh5DE=
+	t=1732115242; cv=none; b=H8AGgljvw46g6lvTqRWUbvKZeLiy/T20qLfYUMCqufmg9ot4NtfAoPVqtAQfkEO+KlQFPxTX4pSi/V05IIu3DH56P9bAPsA38rp38fXsAeSQEwHNNC3yCuBvNKW4etnEDBVOos+LiI7xkyxyy9TvxG1tUM8/iPsjEfA9FyqdCks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732115260; c=relaxed/simple;
-	bh=mFSbYXPV+v2cwEB3jjz+Ldk/O/kX3CN9PCSnFH0JjLc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jnqhc6TO1GX4D3VRVDDNpY2dVRFjoaSwFZ5oZwRfrJ4pPjmNYH+n3BzriWiTkBwkgCB4399QpXgD2YSqiD9L/L9DG24X48KOLGpvnLfVlZpGCnYhiqzIfGU3IUx9hzfz4GngfZ291dR1DFLNuGx5g9qaMdh+bH81DdBF548Q9zI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GUcPtb5r; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a9ed49edd41so416336666b.0;
-        Wed, 20 Nov 2024 07:07:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732115256; x=1732720056; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=T15rz/YcFvzeWIWmYn0gRMt/pqbI9YM62Hb9AUjRP4Y=;
-        b=GUcPtb5rUN7Jb/JbJ1LWKCbUUk31pbk1Oo4e4urLmH9a1ZRGvpFjOUQZzPf/eXJerH
-         PO9IsToeiNi1i4rUpWzIJ2Zj540tmV39A0S7opeFGkhTApq8a8Z7AO+ZOuM45+nXosUm
-         YttjTvws3EKcqLECeIfDJ/QIk7cQJAQQHkp5N0gfRq85ngBvx8OGVPLayqqxyYYRqqci
-         mr003qIzfwPGOSMarBgVBPZZYUT1vSlW4pZ1JSogsCBEv1RoR0rHUXIPPoBNaH2D6UyQ
-         dBQiHXkhiPJJDHHr/IHpr8Cp6n3Sc4ODLSdghRrta1X0QMqDp4ZaF6NQImEa7efOCPnp
-         H/2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732115256; x=1732720056;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=T15rz/YcFvzeWIWmYn0gRMt/pqbI9YM62Hb9AUjRP4Y=;
-        b=QwjAJ1/p2eyCYTijtAmhh0Ktue1sNJPsVBnum51YMDM5EUGoh2y1UmSh+p5By0ionw
-         zHIzjadlEg8aP6ubBNSpjg/j0OvkdvNFVciJRKGAUIPS1n1EdbupwYxzKZdhmUeYU1M2
-         9qSgfYYKlioeXgB+2n1En3np99hl/OwmOjU0GYGSqrFJVGZI873xI4y+mrgHebGC9ev4
-         RvuLZae6vCK4rLqZJR7YS3TQMb1MxI4qOoZEb8Ck3ZBcfWlt4e9+Chi3uon7tefXSVY1
-         ztDRzF8hd2Bp+7PfXrwPnsFO3ZqiXk+Ltf3wX+p+Ks8yuNreN5ngNy+1Aa7B4I/9XXKZ
-         HRhg==
-X-Forwarded-Encrypted: i=1; AJvYcCUgDcJwQSyozTlb7774GBgYQ8/4MKDhy7e83H7QkgvXo9JepVqifBgHH4pI4L+lURPn3U1YEZ4T5+q9DLU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8q2L8393dT0w3ahX2LNmCLoLGwznz83h6oVocBlNp7eAE1AGF
-	MHN2M0/EzTfAeIbbdYh+FdIZD8dwcdHkCiE9slFmhG0/jaPyDfEtpHgNiH4+
-X-Gm-Gg: ASbGnctCz2EslW/kUTmW1HGLtCrJmJDxbQLcaKIxktdeVyjLG5m2Q3niNl626Z3tIm+
-	airwU1vuq5MrCClG4SI9eUs9VRJNdDDIIAmtF7gdDGDEvKOnMKUHiSDYhdJwQBuuxJfvE5X8MZB
-	spejMsVXtLHuBgn//pzsTCHJ6A1nRkdZ8GfNZ5H7jqBFnLnB8uPQLB7VWPhK6ULz0F8Vk2NZoWW
-	HmjR2Oxfrn2WQ6X+saM9xCcrq7YYNBDe5z8u6f2G4NrMZNnEe6bj1TI2v4=
-X-Google-Smtp-Source: AGHT+IHxCToREO2TMV86vV4m4GDNa+70BqrbVmzPWlTxmGJXunTC4Zuj7RZBEiF1IRyh8zHh/fbiXQ==
-X-Received: by 2002:a17:907:6eab:b0:aa3:e9a6:a5bf with SMTP id a640c23a62f3a-aa4dd70b960mr330519966b.47.1732115255713;
-        Wed, 20 Nov 2024 07:07:35 -0800 (PST)
-Received: from localhost.localdomain ([46.248.82.114])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20e08624fsm792677466b.183.2024.11.20.07.07.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Nov 2024 07:07:35 -0800 (PST)
-From: Uros Bizjak <ubizjak@gmail.com>
-To: linux-xfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Uros Bizjak <ubizjak@gmail.com>,
-	Chandan Babu R <chandan.babu@oracle.com>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	Christoph Hellwig <hch@infradead.org>,
-	Dave Chinner <dchinner@redhat.com>
-Subject: [PATCH] xfs: Use xchg() in xlog_cil_insert_pcp_aggregate()
-Date: Wed, 20 Nov 2024 16:06:22 +0100
-Message-ID: <20241120150725.3378-1-ubizjak@gmail.com>
-X-Mailer: git-send-email 2.42.0
+	s=arc-20240116; t=1732115242; c=relaxed/simple;
+	bh=1t/6N9hCHjBXgTRsjuiN0ajPB6aEzlYX+6CiXhj9TwA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=MrMnDGwNlmeREgyIKWhCmhfPLDq6Mcbhi+AJYh0enk0YWd3mJs+OPQXZO/KRCjxEixQ6fCW0VTUpFhZKv6kV0k08Q6x4pMxdDkxYu+fIZzHpMyZ7/FVTMZL5HKpiU3z2sZS9FW/l8y4OLoe7OjVF7q75F1vIK2xfAO1m8lwOE6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=M+FUHra/; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AK7gCb1027509;
+	Wed, 20 Nov 2024 15:07:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=MNtJV4GQJxQNjXf05f1XeKL9OhkbYi
+	YRSSqjWf9gb6o=; b=M+FUHra/I84fgjGUSc0PSMD7gsm+RhVtYoKstFozzAEoz4
+	Twrxgym/RTBie3M5Y7XprVWUfaL59JqR/qXe7UvbocVLgYybS0mdkguapv8+6hqA
+	h6BeO+22rQjYYKNk9lqiBB4LX9PO9N8XZJeWplwYu61ARGL+fYjh6LnI8tkl5bU1
+	hBxW9wvyp7eVBxYBrqmKF+4S2NbMN5UA+scIr8SOk7ky9jZEJTa+3AyCqR9gi+ee
+	Swgo013Xc3Lntj6/W+dZAxIU7R9QoGzvHJvzrvk9mkoriZL6SX+7r/p7Afr3mBOr
+	T1x/PXkv5NfMrWIkWvrKdR0zxzJu5h4FfyAwS7hA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42xhtjwjk2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 20 Nov 2024 15:07:01 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4AKEZ8x4001403;
+	Wed, 20 Nov 2024 15:07:01 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42xhtjwjjy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 20 Nov 2024 15:07:01 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AKE3o5c030920;
+	Wed, 20 Nov 2024 15:07:00 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42y63yvhr4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 20 Nov 2024 15:07:00 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4AKF6ukg54460840
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 20 Nov 2024 15:06:56 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6CE4A2004B;
+	Wed, 20 Nov 2024 15:06:56 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 8F76020043;
+	Wed, 20 Nov 2024 15:06:52 +0000 (GMT)
+Received: from vaibhav?linux.ibm.com (unknown [9.124.221.111])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with SMTP;
+	Wed, 20 Nov 2024 15:06:52 +0000 (GMT)
+Received: by vaibhav@linux.ibm.com (sSMTP sendmail emulation); Wed, 20 Nov 2024 20:36:51 +0530
+From: Vaibhav Jain <vaibhav@linux.ibm.com>
+To: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
+        Narayana Murty N
+ <nnmlinux@linux.ibm.com>,
+        linuxppc-dev@lists.ozlabs.org, mpe@ellerman.id.au,
+        linux-kernel@vger.kernel.org
+Cc: mahesh@linux.ibm.com, oohall@gmail.com, npiggin@gmail.com,
+        christophe.leroy@csgroup.eu, maddy@linux.ibm.com, naveen@kernel.org,
+        ganeshgr@linux.ibm.com, sbhat@linux.ibm.com
+Subject: Re: [PATCH] powerpc/pseries/eeh: Fix get PE state translation
+In-Reply-To: <87ttc8d0vf.fsf@gmail.com>
+References: <20241107042027.338065-1-nnmlinux@linux.ibm.com>
+ <87ttc8d0vf.fsf@gmail.com>
+Date: Wed, 20 Nov 2024 20:36:51 +0530
+Message-ID: <87cyiq3px0.fsf@vajain21.in.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: ch3WGdkmSRlpPittI8EafON0y6XvPe1r
+X-Proofpoint-GUID: nDR0RN2ZvcaybgFb48LL70CR94XwNhBX
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
+ clxscore=1011 malwarescore=0 spamscore=0 bulkscore=0 priorityscore=1501
+ impostorscore=0 mlxscore=0 adultscore=0 suspectscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2411200100
 
-try_cmpxchg() loop with constant "new" value can be substituted
-with just xchg() to atomically get and clear the location.
+Hi Ritesh,
 
-The code on x86_64 improves from:
+Thanks for looking into this patch. My responses on behalf of Narayana
+below:
 
-    1e7f:	48 89 4c 24 10       	mov    %rcx,0x10(%rsp)
-    1e84:	48 03 14 c5 00 00 00 	add    0x0(,%rax,8),%rdx
-    1e8b:	00
-			1e88: R_X86_64_32S	__per_cpu_offset
-    1e8c:	8b 02                	mov    (%rdx),%eax
-    1e8e:	41 89 c5             	mov    %eax,%r13d
-    1e91:	31 c9                	xor    %ecx,%ecx
-    1e93:	f0 0f b1 0a          	lock cmpxchg %ecx,(%rdx)
-    1e97:	75 f5                	jne    1e8e <xlog_cil_commit+0x84e>
-    1e99:	48 8b 4c 24 10       	mov    0x10(%rsp),%rcx
-    1e9e:	45 01 e9             	add    %r13d,%r9d
+"Ritesh Harjani (IBM)" <ritesh.list@gmail.com> writes:
 
-to just:
+> Narayana Murty N <nnmlinux@linux.ibm.com> writes:
+>
+>> The PE Reset State "0" obtained from RTAS calls
+>> ibm_read_slot_reset_[state|state2] indicates that
+>> the Reset is deactivated and the PE is not in the MMIO
+>> Stopped or DMA Stopped state.
+>>
+>> With PE Reset State "0", the MMIO and DMA is allowed for
+>> the PE.
+>
+> Looking at the PAPR spec - I do agree that it states the same. i.e.
+> The "0" Initial PE state means the "Not Reset", "Load/Store allowed" &
+> "DMA allowed" (Normal Operations). 
+>
+>> The function pseries_eeh_get_state() is currently
+>> not indicating that to the caller because of  which the
+>> drivers are unable to resume the MMIO and DMA activity.
+>
+> It's new to me, but could you help explain the user visible effect
+> of what gets broken. Since this looks like pseries_eeh_get_state() has
+> always been like this when it got first implemented.
+> Is there also a unit test somewhere which you are testing?
+Without this patch a userspace process performing VFIO EEH-Recovery wont
+get the correct indication that EEH recovery is completed. Test code at
+[2] has an example test case that uses VFIO to inject an EEH error on to
+a pci-device and then waits on it to reach 'EEH_PE_STATE_NORMAL' state
+. That state is never reached without this patch.
 
-    1e7f:	48 03 14 cd 00 00 00 	add    0x0(,%rcx,8),%rdx
-    1e86:	00
-			1e83: R_X86_64_32S	__per_cpu_offset
-    1e87:	31 c9                	xor    %ecx,%ecx
-    1e89:	87 0a                	xchg   %ecx,(%rdx)
-    1e8b:	41 01 cb             	add    %ecx,%r11d
+[2] :
+https://github.com/nnmwebmin/vfio-ppc-tests/commit/006d8fdc41a4
 
-No functional change intended.
+>
+> IIUC eeh_pe_get_state() was implemented[1] for supporting EEH for VFIO PCI
+> devices. i.e. the VFIO_EEH_PE_GET_STATE operation of VFIO EEH PE ioctl op
+> uses pseries_eeh_get_state() helper to query PE state on pseries LPAR.
+> So are you suggesting that EEH functionality for VFIO PCI device was
+> never enabled/tested before on pseries?
+VFIO-EEH had been broken for pseries for a quite some time and was
+recently fixed in kernel. So this issue was probably not discovered
+until recently when we started testing with userspace VFIO.
 
-Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-Cc: Chandan Babu R <chandan.babu@oracle.com>
-Cc: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Christoph Hellwig <hch@infradead.org>
-Cc: Dave Chinner <dchinner@redhat.com>
----
- fs/xfs/xfs_log_cil.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+>
+> [1]: https://lore.kernel.org/all/1402364517-28561-3-git-send-email-gwshan@linux.vnet.ibm.com/
+>
+> Checking the powernv side of implementation I do see that it does
+> enables the EEH_STATE_[MMIO|DMA]_ENABLED flags in the result mask for
+> the callers. So doing the same for pseries eeh get state implementation
+> does look like the right thing to do here IMO.
+>
+>> The patch fixes that by reflecting what is actually allowed.
+>
+> You say this is "fixes" so I am also assuming you are also looking for
+> stable backports of this? If yes - could you please also add the "Fixes"
+> tag and cc stable?
+Yes, agree will re-send adding the fixes tag.
 
-diff --git a/fs/xfs/xfs_log_cil.c b/fs/xfs/xfs_log_cil.c
-index 80da0cf87d7a..9d667be1d909 100644
---- a/fs/xfs/xfs_log_cil.c
-+++ b/fs/xfs/xfs_log_cil.c
-@@ -171,11 +171,8 @@ xlog_cil_insert_pcp_aggregate(
- 	 */
- 	for_each_cpu(cpu, &ctx->cil_pcpmask) {
- 		struct xlog_cil_pcp	*cilpcp = per_cpu_ptr(cil->xc_pcp, cpu);
--		int			old = READ_ONCE(cilpcp->space_used);
- 
--		while (!try_cmpxchg(&cilpcp->space_used, &old, 0))
--			;
--		count += old;
-+		count += xchg(&cilpcp->space_used, 0);
- 	}
- 	atomic_add(count, &ctx->space_used);
- }
+>
+> -ritesh
+>
+>>
+>> Signed-off-by: Narayana Murty N <nnmlinux@linux.ibm.com>
+>> ---
+>>  arch/powerpc/platforms/pseries/eeh_pseries.c | 6 ++++--
+>>  1 file changed, 4 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/arch/powerpc/platforms/pseries/eeh_pseries.c b/arch/powerpc/platforms/pseries/eeh_pseries.c
+>> index 1893f66371fa..b12ef382fec7 100644
+>> --- a/arch/powerpc/platforms/pseries/eeh_pseries.c
+>> +++ b/arch/powerpc/platforms/pseries/eeh_pseries.c
+>> @@ -580,8 +580,10 @@ static int pseries_eeh_get_state(struct eeh_pe *pe, int *delay)
+>>  
+>>  	switch(rets[0]) {
+>>  	case 0:
+>> -		result = EEH_STATE_MMIO_ACTIVE |
+>> -			 EEH_STATE_DMA_ACTIVE;
+>> +		result = EEH_STATE_MMIO_ACTIVE	|
+>> +			 EEH_STATE_DMA_ACTIVE	|
+>> +			 EEH_STATE_MMIO_ENABLED	|
+>> +			 EEH_STATE_DMA_ENABLED;
+>>  		break;
+>>  	case 1:
+>>  		result = EEH_STATE_RESET_ACTIVE |
+>> -- 
+>> 2.45.2
+>
+
 -- 
-2.42.0
-
+Cheers
+~ Vaibhav
 
