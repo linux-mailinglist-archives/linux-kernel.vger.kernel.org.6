@@ -1,178 +1,139 @@
-Return-Path: <linux-kernel+bounces-415162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 807849D3229
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 03:28:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E31C79D322B
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 03:30:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11690B23BE7
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 02:28:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A84CA284161
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 02:30:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 828C53A1B6;
-	Wed, 20 Nov 2024 02:28:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1150D5A4D5;
+	Wed, 20 Nov 2024 02:30:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dRzeKgNm"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M+puC7nl"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1308B27447
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 02:28:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 461584EB45;
+	Wed, 20 Nov 2024 02:30:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732069720; cv=none; b=h/NvWZPIEN05qAu8SWDd4W5hJQ9os2MMm+ejcqaA2BBk8QvUNU9r/B8MOmb27sZV8sTATdoLoJxi1KvhsAJIcWSSt3p9ZHY4+UvSHG3Oe2H1f1UhB5eb9cUtHuIeyGNxpcoN6+tNHRBVMlB4s9dc8Db1W2D9a5eXPSk9qtza5So=
+	t=1732069813; cv=none; b=HDAyrGzuzTCLRh4n6xtBykkYEuP5E6PcqZXaZV+p+naQd4CsDTvrx0Mej1YMvxXSMBPRRbxDOzofuK3M/lDvDP+X0WWI8B6nQOyRwFHesRjl9mp/yhqhAyQNjgisfvD2HTKZPYc+psIRRuKKHgQwLzZdt5qkztwqroTeCwpusXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732069720; c=relaxed/simple;
-	bh=4ZNckUHAo7o6Avi7GR/OAA6XTq6pZs4bLw0W2JufT9Q=;
+	s=arc-20240116; t=1732069813; c=relaxed/simple;
+	bh=pxKqV1xI9qWnWc8lCdM4llK/Shb0tdmvQU207x77kZ8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uuJn7vJEXnkq4/zl0X6GU3C38XYBZ8dtSKZ93ToB0EhHVKlJUkdGd+j0vv2bbhmTtl4srQk1CZ9gVqkSO4q0ps71173lEqGEbtPOE1Gvq+9N+GuoRZP+bBHUtUc+2a97u7ib0TT99RrMcfL6hQ/4ZaRYXBeJNjIKEIMcveAKggU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dRzeKgNm; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-53da2140769so4210011e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 18:28:38 -0800 (PST)
+	 To:Cc:Content-Type; b=gRjWQVq/GlxjALi/+lOWwpfFKE/b3VYxoF7QDtMSjIjau0QjLn+OxVRG6usS7K7++X1CVA12qFPWSM4ENn30Z74hTL8tIjUmc79izbinw7njtIG/OdN4j/15fffd4jF8HNARqznPHFEpcuy3ARp77rM5nSw8Af0EBqNJbCy8glk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M+puC7nl; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5cefc36c5d4so5412705a12.0;
+        Tue, 19 Nov 2024 18:30:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732069717; x=1732674517; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1732069805; x=1732674605; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=4ZNckUHAo7o6Avi7GR/OAA6XTq6pZs4bLw0W2JufT9Q=;
-        b=dRzeKgNmq1wAOkc7v2C9aKpHBnDm0NkQ2K231+gQZXu/XQxCyEjcDtkzkgbN6TtXtl
-         RTBOaKCGSU8oCaTnAa//dkdyLABqlEFJEJWTfyD6if1mEVHxC//Hu/rIFuZjAaJDhNrl
-         7yWGWkeXuEOREERuAlZ5b/T0dyTpLeZRX5jEH4J49FljyHX6Xa5i05WS+rdC46VCZUj6
-         WjUL3bcCi4XkL8SdcdXXmY/WKGK1VCs0sItTo4Y/VW/uSrdms+sSDzAURLTh5g3C6ErY
-         h73hNVstRatvz0p0FtC+d8QJreyU/XthLm+Q5qgBUjvW2T7qfLai3eWzD+bcWj862i5s
-         QZnA==
+        bh=fh+TdjnkDPsXkreYZjskDUHFvw+7Sbm7pXH3lhRyu5M=;
+        b=M+puC7nlSbDx8Q4XfPvnG17V9HFoRpulLUcEkvBiul4en8lUp1Zvlgda+M/qqm5Vsd
+         fxF9uZmmEGCgs5kMQ/WE3M3ULVhUI6VBCXTXkeq1gs9zQqdxglpruUQgG36Ca2kdGbVz
+         gOnR4iZ0UUuXbqLVeKxaihlw8ZJnBK3lAz0BQzWOf34CTrnaUO0fvhEAUBB+hMoNNAK/
+         iJOar8t+3iaFwZ9EPxq1RQZaOHCFvePT4TENP19rJHwaXjFnzks+X8BttWTZ57aIbyBf
+         CDVMCK5J4dFMvHNVWFRvMYYY83xBUBia6M96H5HJRDNroe3KLFIGf8r5Ve6u+HspL8bD
+         qpZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732069717; x=1732674517;
+        d=1e100.net; s=20230601; t=1732069805; x=1732674605;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=4ZNckUHAo7o6Avi7GR/OAA6XTq6pZs4bLw0W2JufT9Q=;
-        b=xORA8KFqIViObpi5YHPxYLJKDxpZJOJ+tkyA1Cg0J5Qgwi1va55F8jkVl+GHa5wg1u
-         y9IzA0ikKJ8AhGknfeOSCLiJFfjrJ3yQw0Qm6OoHXZC2/Vk4lJQvivB757TmqTiXjC3+
-         0wAgzZvOIemZEEjoBdZ/SGzbiQTEeZU6ec/pt9oumqoiKy9azdARDAKmfReC8Cv4fVEv
-         C/UxmK0M9R5qOwWbEua+CENX8L00VPvSJ9PrnNazi3PUk3dAKyGbhZj4/ltV9KPUDzLG
-         75v+pjef3A43gyl1jOJBaQUAtSo33y/ZaHOqJuQxrAvLEAHloLFia4EMz7VwHd4J7N/T
-         HaYA==
-X-Forwarded-Encrypted: i=1; AJvYcCWTlydnq5SOO0q8TXJpexGZcqfJDKYMObh1Fde4I0XDf5x/nmsqvgKQu3h2pLqrp9h7DVZJ1o1TUXM6jmM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyX6yF/3N4T7TY40lvvmOhrCJk7wReRCY6b85jkElfx94TDaV/9
-	ZwbayD6dyL7Qh2rLd7/+nskJZ3NwyHJ2DuUQudCylf/Jvkpe+bsGiseEZTWjKpDn23PeQWOAiSY
-	qwSsT9veDhbJhvHzvnUx0znQ8d9o1jKlI14ph
-X-Google-Smtp-Source: AGHT+IFzpceM6BtUXlk+pmAQjmsYV209zQ7ovr7SvODU1pQQKWx7+yjYr2FsI9kCV2r0dyFDXSqRWV+jq85fFsE7W2U=
-X-Received: by 2002:a05:6512:3b92:b0:53d:a6d1:b72a with SMTP id
- 2adb3069b0e04-53dc133391fmr277385e87.15.1732069716951; Tue, 19 Nov 2024
- 18:28:36 -0800 (PST)
+        bh=fh+TdjnkDPsXkreYZjskDUHFvw+7Sbm7pXH3lhRyu5M=;
+        b=u1CsIgPHmapKqlE5H2KJ7ViYGOZWhds9X8hMY4hGEPfIeJp55zn44K2b7Owb+m+5fY
+         wG0PSHMuj1EC3a+b04XpWzdiIa/+L3k6IbzXEmgvx9nuYZxnP1oX+UXJ99Ml4j1L1XDj
+         M8JWavybqj5/Qq9j9rayrl98LbD2QJns0UZm9wtdR9X3mSB6+JCYO84sTI1L+NtbDIxz
+         wvXqIuJRYK66VrTZMLcqDCf2A4ULXgTNij8g8nJGuxmbkYZ+ea2DwV/crB8pH4HfewuJ
+         VXTiLAqaljOW3KP0mLqLBVw7qltCyg8ThO1zXI52HySgmnywK7Dr1M7/Nu9mPUzpDXqZ
+         6f0w==
+X-Forwarded-Encrypted: i=1; AJvYcCW8KxDj5U1uaJglzBsMhEtprZF+i80TPcxiIUuKNZCqQQ72lARtDkGfX0n5ICu0klu3ZsglNGmm@vger.kernel.org, AJvYcCWcAanpslSmGz7FU53dyPLygfWg+kD8BqCy0buROh7a6QoOCXtDdHpbt0OUbG3lj1O2r+5QQPw+2LOKHnQf@vger.kernel.org, AJvYcCWcZ/oTt0EUcOHwFp5gJhg+my36aR16a3NuYJtBWKfRaeUErcIJUhD+79A3qJUK5wAKxLfBJm3edbbLSZlO@vger.kernel.org
+X-Gm-Message-State: AOJu0YxyUz4flQ5Yc+GL+pdcIDzvUGrhyo5E8IMyPxKyDDqclP0IaziQ
+	32HxJ9grDxFdEi8q+qFPcA8nsreLnfQijHvOM2Hy4SRomMA/EPOMrc4gI7Y5aOZWUrtL/SXIGW9
+	OaTJE4PoaAiffxGa8m+TBArplNLs=
+X-Google-Smtp-Source: AGHT+IGqIEnOEjDI+kEjgAYxgsWZM8sFqQQJ6E3XV7AZLjVFnO1ZackJMXsfxQXI4JGzoyRBKb0YHnabL6STVaEwwWM=
+X-Received: by 2002:a05:6402:d08:b0:5cf:d19c:fb20 with SMTP id
+ 4fb4d7f45d1cf-5cff4c43027mr554043a12.13.1732069805424; Tue, 19 Nov 2024
+ 18:30:05 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241119020519.832013-1-saravanak@google.com> <20241119092829.GF11903@noisy.programming.kicks-ass.net>
-In-Reply-To: <20241119092829.GF11903@noisy.programming.kicks-ass.net>
-From: Saravana Kannan <saravanak@google.com>
-Date: Tue, 19 Nov 2024 18:28:00 -0800
-Message-ID: <CAGETcx_vABsh8HgMi1rYRWmB5RhYwqGT6kKJ+9LX0HrcP8i7yA@mail.gmail.com>
-Subject: Re: [RFC PATCH v1] cpu/suspend: Do a partial hotplug during suspend
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, kernel-team@android.com, 
-	linux-kernel@vger.kernel.org
+References: <20241117165540.GF3387508@ZenIV> <E79FF080-A233-42F6-80EB-543384A0C3AC@gmail.com>
+ <20241118070330.GG3387508@ZenIV> <3pgol63eo77aourqigop3wrub7i3m5rvubusbwb4iy5twldfww@4lhilngahtxg>
+ <20241120020845.GK3387508@ZenIV>
+In-Reply-To: <20241120020845.GK3387508@ZenIV>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Wed, 20 Nov 2024 03:29:53 +0100
+Message-ID: <CAGudoHF59zAFZCH=XnvNi4zS_WeCgSgUzUL362e78mczgsgSNQ@mail.gmail.com>
+Subject: Re: [PATCH] fs: prevent data-race due to missing inode_lock when
+ calling vfs_getattr
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Jeongjun Park <aha310510@gmail.com>, brauner@kernel.org, jack@suse.cz, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 19, 2024 at 1:28=E2=80=AFAM Peter Zijlstra <peterz@infradead.or=
-g> wrote:
+On Wed, Nov 20, 2024 at 3:08=E2=80=AFAM Al Viro <viro@zeniv.linux.org.uk> w=
+rote:
 >
-> On Mon, Nov 18, 2024 at 06:05:15PM -0800, Saravana Kannan wrote:
-> > The hotplug state machine goes through 100+ states when transitioning
-> > from online to offline. And on the way back, it goes through these
-> > states in reverse.
-> >
-> > When a CPU goes offline, some of the states that occur after a CPU is
-> > powered off are about freeing up various per-CPU resources like
-> > kmalloc caches, pages, network buffers, etc. All of these states make
-> > sense when a CPU is permanently hotplugged off.
-> >
-> > However, when offlining a CPU during suspend, we just want to power
-> > down the CPUs to that the system can enter suspend. In this scenario,
-> > we could simply stop the hotplug state machine right after the CPU has
-> > been power off. During resume, we can simply resume the CPU to an
-> > online state from the state where we paused the offline.
-> >
-> > This save both time both during suspend and resume and it is
-> > proportional to the number of CPUs in the system. So, if systems with
-> > a large number of CPUs, we can expect this to have a huge amount of
-> > time saved.
-> >
-> > On a Pixel 6, averaging across 100+ suspend/resumes cycles, the total
-> > time to power off 7 of the 8 CPUs goes from 51 ms down to 24 ms.
-> > Similarly, the average time to power off each individual CPU (they are
-> > different) also goes down by 50%.
-> >
-> > The average time spent powering up CPUs goes down from 34 ms to 32 ms.
-> > Keep in mind that the time saved during resume is not easily
-> > quantified by looking at CPU onlining times. This is because the
-> > actual time savings comes later when per-CPU resources do not need to
-> > be reallocated and would speed up actions like allocations, etc that
-> > can pick up memory from per-CPU kmalloc caches, etc.
-> >
-> > Signed-off-by: Saravana Kannan <saravanak@google.com>
-> > ---
-> >
-> > Hi Thomas/Peter,
-> >
-> > The hotplug state machine rewrite is great! Enables all kinds of
-> > optimizations for suspend/resume.
-> >
-> > About this patch, I'm not sure if the exact state the hotplug state is
-> > paused at (CPUHP_WORKQUEUE_PREP) will work for all arch/boards, but
-> > this is the general idea.
-> >
-> > If it works as is, great! At a glance, it looks like it should work
-> > though. None of the other stages between this and CPUHP_OFFLINE seem
-> > to be touching hardware.
-> >
-> > If CPUHP_WORKQUEUE_PREP doesn't work, then we can make it a config
-> > option to select the state or an arch call or something along those
-> > lines.
-> >
-> > What are your thoughts on this? How would you like me to proceed?
+> On Wed, Nov 20, 2024 at 02:44:17AM +0100, Mateusz Guzik wrote:
 >
-> Well, if we push this one step further, why do we need hotplug at all?
-> Can't we just keep them up and idle?
+> > > Pardon me, but I am unable to follow your reasoning.
+> > >
+> >
+> > I suspect the argument is that the overhead of issuing a syscall is big
+> > enough that the extra cost of taking the lock trip wont be visible, but
+> > that's not accurate -- atomics are measurable when added to syscalls,
+> > even on modern CPUs.
 >
-> That is, if we look at suspend_enter(), you'll note that
-> PM_SUSPEND_TO_IDLE happens before the whole disable_secondary_cpus()
-> thing.
+> Blocking is even more noticable, and the sucker can be contended.  And no=
+t
+> just by chmod() et.al. - write() will do it, for example.
 >
-> So million-dollar question, can this pixel thing do suspend to idle?
 
-Unfortunately not. You saw my rant about firmware and s2idle bugs at
-LPC. But yes, I'm going my part towards pushing for s2idle over s2ram.
+Ye I was going for the best case scenario.
 
-And even if this Pixel could do it, there are a lot of devices in use
-today that will never get a firmware update to enable s2idle. So, why
-have all of them waste time and energy doing useless steps during
-suspend?
+> > Nonetheless, as an example say an inode is owned by 0:0 and is being
+> > chowned to 1:1 and this is handled by setattr_copy.
+> >
+> > The ids are updated one after another:
+> > [snip]
+> >         i_uid_update(idmap, attr, inode);
+> >         i_gid_update(idmap, attr, inode);
+> > [/snip]
+> >
+> > So at least in principle it may be someone issuing getattr in parallel
+> > will happen to spot 1:0 (as opposed to 0:0 or 1:1), which was never set
+> > on the inode and is merely an artifact of hitting the timing.
+> >
+> > This would be a bug, but I don't believe this is serious enough to
+> > justify taking the inode lock to get out of.
+>
+> If anything, such scenarios would be more interesting for permission chec=
+ks...
 
-> Traditionally hybernate is the whole save-to-disk and power machine off
-> thing, and then there was suspend (to RAM) which was some dodgy as heck
-> BIOS thing (on x86) which required all non-boot CPUs to be 'dead'.
+This indeed came up in that context, I can't be arsed to find the
+specific e-mail. Somewhere around looking at eliding lockref in favor
+of rcu-only operation I noted that inodes can arbitrarily change
+during permission checks (including LSMs) and currently there are no
+means to detect that. If memory serves Christian said this is known
+and if LSMs want better it's their business to do it. fwiw I think for
+perms some machinery (maybe with sequence counters) is warranted, but
+I have no interest in fighting about the subject.
 
-My change would also help with the time it takes to power off the CPUs
-during hibernate :) If it'll work (otherwise, we can make sure this
-applies only to suspend).
-
-> But does your (aaargh64) platform actually require us to take out the
-> non-boot CPUs, or is this just histerical raisins?
-
-Lol, I had to google histerical raisins to understand what it meant. I
-might start using this :)
-I'm pretty sure we need to call into the firmware to power off the CPU
-so it can do all the housekeeping before powering down the caches.
-
-Thanks,
-Saravana
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
