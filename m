@@ -1,112 +1,106 @@
-Return-Path: <linux-kernel+bounces-415205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF1B49D32E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 05:24:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D73C9D32E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 05:35:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 48795B215DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 04:24:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 208F128420F
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 04:35:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AC3715625A;
-	Wed, 20 Nov 2024 04:24:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1658314F9F9;
+	Wed, 20 Nov 2024 04:34:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="lL4gVsiO"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E567E40BE5;
-	Wed, 20 Nov 2024 04:24:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LevWA8xf"
+Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 196181876;
+	Wed, 20 Nov 2024 04:34:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732076671; cv=none; b=mi62gnJ6gsJ0YQP6as7tH6T7TMmNC4kag0rIpb9cQ9JqyEVH7bW4RSr7/ZGo21+VQWTgDcA50d9d2KFmPoY4FIPij/qtac+0XuzeJ3WWBHClSz7qV8NePDdp351TkWEnOFU8PA0cEGo6r53hY818XBOn4xHCjzna0au5RCch3yc=
+	t=1732077296; cv=none; b=V/p+reep/N0GkbhXEenrfhoinUzE5YhTJctaKLP3Q+JgiTvI2JeJmprLPc7Isu1oLD0XFmi960kADn6I/Qker+N4FooXAfVVXCzAEpVSw3E485s2eKduuPyyuG9ckCQsthTS8pONcl2TBzSyiyx/ZhZ6OFAQhEA98pJfBjlAa8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732076671; c=relaxed/simple;
-	bh=ipUbqf8QDOA0oz7wtbJTOcajGROMBz6E+cF/cBrZI2c=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=g8mPJPtF1NP2kkDoywL6AempMLqetEhqvB8f++ilNc+gfaZyOVatbp1jj+I20VNFRjPhz5WjqPJH+tEWWroLy2KJVGJp52iTpfBuKPtKFHrcB/CmI9+ZFviLF7qKnTXRPEG7YX5I9gAkxj8goys1iLHj7mEzZd/TqXpNQ4j2r/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=lL4gVsiO reason="signature verification failed"; arc=none smtp.client-ip=220.197.31.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=UcpYERVM16BjhLTxHXglpegcmBwAZwFWWDL500Qf2X8=; b=l
-	L4gVsiOa7NWrrDYVPIXR6KEkWl4B6C+gWCmDC7qkYatPKjqJ3tybxE6GxIlYV/Gy
-	ViuQYeRJ2Dajk0mFqZP1qvYnSFY4m3G49+4tbHaFN8INk0smkIcup9TgNVzvL0H/
-	Ujl3GlEPfoGns03zTpb+iJP86kvRgI+bFYQFUFByEo=
-Received: from 00107082$163.com ( [111.35.191.191] ) by
- ajax-webmail-wmsvr-40-137 (Coremail) ; Wed, 20 Nov 2024 12:24:13 +0800
- (CST)
-Date: Wed, 20 Nov 2024 12:24:13 +0800 (CST)
-From: "David Wang" <00107082@163.com>
-To: "Thomas Gleixner" <tglx@linutronix.de>
-Cc: "Geert Uytterhoeven" <geert@linux-m68k.org>, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 01/13] kernel/irq/proc: use seq_put_decimal_ull_width()
- for decimal values
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
- Copyright (c) 2002-2024 www.mailtech.cn 163com
-In-Reply-To: <87ed36zon8.ffs@tglx>
-References: <20241108160717.9547-1-00107082@163.com>
- <4ce18851-6e9f-bbe-8319-cc5e69fb45c@linux-m68k.org>
- <87ed36zon8.ffs@tglx>
-X-NTES-SC: AL_Qu2YAPycuU4u5SWeY+kXn0oTju85XMCzuv8j3YJeN500iiXP0C0bcnBdGnjV4sO0CiCSvxeTTiFs0cV8WKZybabEqI3pEuR2sWp415XB6+1u
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=GBK
+	s=arc-20240116; t=1732077296; c=relaxed/simple;
+	bh=9wCqL94QV2W0zgMyjrtj3hoZ3K1kai7uFZGPeiZJUhY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=T6IBAV8ehSE3Vay6ITKos/ISFPaKoUPD2RZ8oh3EHrzTGay/RjroFuDm28tvTJr1jpR2Wc0bosMqPcDGCUuW6BlpwyRrzapPO+N7lLr6TQqowDSpWSNrki/TG6VbxFyMelQFu59zpzgfOTjcfMLHfXgDU0Ib9oMe8w0Z5HMqxm8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LevWA8xf; arc=none smtp.client-ip=209.85.166.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-3a789d422bcso559035ab.1;
+        Tue, 19 Nov 2024 20:34:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732077294; x=1732682094; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+jBJ1TYKbV4zN+jYWbN7guI3voUYIaz3agm8n04fwCE=;
+        b=LevWA8xfBOrFTzEaa2Yrkdt0Qf2rlmsdLttcofAqQmQWxk21FtyLfxMVfbefjmUjiH
+         QjT0dZiQYM7ovMfVZRgtnx71ti8grJDPojQ1VlLj4Qj1ZzzOov8qEWWBgGjmWXuFYgPV
+         RMfOBdpElVeiU5O8ozi2OffufZHu7Or9N4AZLDVh1bBr2STNWFHdWeWvN55HPhLDRSHH
+         0Y+5lle7cedoVYz1IXK3Oa1X3kXoDZBwXeJTdfHKIPQRnnFe37cWtwYhyaThGpQKuL0H
+         c4veTlo9L+bR9FG2fyNU9zSsrzCXgqc8f/a4plcY9J9iRwCeXOlLh5cT98pscTmi6DSJ
+         pjIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732077294; x=1732682094;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+jBJ1TYKbV4zN+jYWbN7guI3voUYIaz3agm8n04fwCE=;
+        b=S+O56njIa8ppcP+uSdUoSVd8deFgS8mQGxX3LGBqAaTy0jSvMwNEDt/rSe83O1IwiJ
+         VxjqkfCdb17g+mSLiUsB/W6jchvdwzb2FioYk+cUWkh/7ObOliq1L2U3Vvv5vP7Uqrug
+         1Emp0swUjVTzjFO9hYiE1CX2K7OzSls8F+OtNFHFF0rzPe89pSuZ9zHt8fSDYmOpLaym
+         jBwGCP8aL7uW1NU02cl7FM0oo884VlX/w3AeV3JzFjia9Qku95bp+rhmDtK5hMH19i5l
+         bAGgS5yJ20gUDZuymZJUE3jrLYOuQq6BZUDjNdq88B/YrEngUrAGpMG5hkrMUX1e+BUp
+         v2SQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUdtOD6B1SN4YRdbSIunzlEs3seNFnc18Wly0d1dj6VuKwaJ/91UtrK8r/FDBRk2OHHZqmnBwrqrwdk0J6M@vger.kernel.org, AJvYcCXjca8Fa+gDMF4nZEkq74Jv/qCe2aHLqWibSBsv2bg3Apo1PmKCFxKzHfyluEF7LWMD40VXNC6MJrg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyoQpEsOLq0MVmKFl4GlRLMvI+vd/OGHmQL/Gb+MoIG7l+At+W0
+	b53zUBpEa4we4/QiuEclwlcECYCgBxQue4Bu15NkOgaSVWSWfvXre6VqTg==
+X-Google-Smtp-Source: AGHT+IHn6wEKXryAmMdOQtowc9nRrXQ2sQDm8qS4PUVPfvJ11yc7lE8TSDVWjLDAAVAGWH1WjU/KEQ==
+X-Received: by 2002:a05:6e02:20e6:b0:3a7:4e3e:d03a with SMTP id e9e14a558f8ab-3a7865a8914mr12588235ab.22.1732077294102;
+        Tue, 19 Nov 2024 20:34:54 -0800 (PST)
+Received: from localhost.localdomain ([175.112.156.113])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7f8c1dac1e3sm8499383a12.57.2024.11.19.20.34.52
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Tue, 19 Nov 2024 20:34:53 -0800 (PST)
+From: Ruffalo Lavoisier <ruffalolavoisier@gmail.com>
+X-Google-Original-From: Ruffalo Lavoisier <RuffaloLavoisier@gmail.com>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: Ruffalo Lavoisier <RuffaloLavoisier@gmail.com>,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] docs: remove duplicate word
+Date: Wed, 20 Nov 2024 13:34:13 +0900
+Message-ID: <20241120043414.78811-1-RuffaloLavoisier@gmail.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <25ddb2c9.4b0e.19347d04c05.Coremail.00107082@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:iSgvCgD3v6huZD1nQ2UrAA--.57786W
-X-CM-SenderInfo: qqqrilqqysqiywtou0bp/1tbiMwqdqmc9OCEnGgAMs8
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+Content-Transfer-Encoding: 8bit
 
-CkF0IDIwMjQtMTEtMjAgMDk6MjA6NTksICJUaG9tYXMgR2xlaXhuZXIiIDx0Z2x4QGxpbnV0cm9u
-aXguZGU+IHdyb3RlOgo+T24gVHVlLCBOb3YgMTkgMjAyNCBhdCAyMDo1NSwgR2VlcnQgVXl0dGVy
-aG9ldmVuIHdyb3RlOgo+PiBFLmcuIG9uIEtvZWxzY2ggKFItQ2FyIE0tVyksIHRoZSBvdXRwdXQg
-Y2hhbmdlcyBmcm9tOgo+Pgo+PiAgCSAgICAgICBDUFUwICAgICAgIENQVTEKPj4gICAgICAgMjc6
-ICAgICAgIDE4NzEgICAgICAgMjAxNyBHSUMtMCAgMjcgTGV2ZWwgICAgIGFyY2hfdGltZXIKPj4g
-ICAgICAgMjk6ICAgICAgICA2NDYgICAgICAgICAgMCBHSUMtMCAyMDUgTGV2ZWwgICAgIGU2MGIw
-MDAwLmkyYwo+PiAgICAgICAzMDogICAgICAgICAgMCAgICAgICAgICAwIEdJQy0wIDE3NCBMZXZl
-bCAgICAgZmZjYTAwMDAudGltZXIKPj4gICAgICAgMzE6ICAgICAgICAgIDAgICAgICAgICAgMCBH
-SUMtMCAgMzYgTGV2ZWwgICAgIGU2MDUwMDAwLmdwaW8KPj4gICAgICAgMzI6ICAgICAgICAgIDAg
-ICAgICAgICAgMCBHSUMtMCAgMzcgTGV2ZWwgICAgIGU2MDUxMDAwLmdwaW8KPj4gICAgICAgWy4u
-Ll0KPj4KPj4gdG8KPj4KPj4gIAkgICAgICAgQ1BVMCAgICAgICBDUFUxCj4+ICAgICAgIDI3OiAg
-ICAgICAxOTY2ICAgICAgIDE5MDBHSUMtMCAgMjcgTGV2ZWwgICAgIGFyY2hfdGltZXIKPj4gICAg
-ICAgMjk6ICAgICAgICA1ODAgICAgICAgICAgMEdJQy0wIDIwNSBMZXZlbCAgICAgZTYwYjAwMDAu
-aTJjCj4+ICAgICAgIDMwOiAgICAgICAgICAwICAgICAgICAgIDBHSUMtMCAxNzQgTGV2ZWwgICAg
-IGZmY2EwMDAwLnRpbWVyCj4+ICAgICAgIDMxOiAgICAgICAgICAwICAgICAgICAgIDBHSUMtMCAg
-MzYgTGV2ZWwgICAgIGU2MDUwMDAwLmdwaW8KPj4gICAgICAgMzI6ICAgICAgICAgIDAgICAgICAg
-ICAgMEdJQy0wICAzNyBMZXZlbCAgICAgZTYwNTEwMDAuZ3Bpbwo+PiAgICAgICBbLi4uXQo+Pgo+
-PiBtYWtpbmcgdGhlIG91dHB1dCBoYXJkIHRvIHJlYWQsIGFuZCBwcm9iYWJseSBicmVha2luZyBz
-Y3JpcHRzIHRoYXQgcGFyc2UKPj4gaXRzIGNvbnRlbnRzLgo+Pgo+PiBSZXZlcnRpbmcgdGhlIGNv
-bW1pdCBmaXhlcyB0aGUgaXNzdWUgZm9yIG1lLgo+Cj5JbnRlcmVzdGluZ2x5IGVub3VnaCB0aGUg
-Z2VuZXJpYyB2ZXJzaW9uIGFuZCBxdWl0ZSBzb21lIG9mIHRoZSBjaGlwCj5zcGVjaWZpYyBwcmlu
-dCBmdW5jdGlvbnMgaGF2ZSBhIGxlYWRpbmcgc3BhY2UsIGJ1dCBHSUMgZG9lcyBub3QuCj4KPlRo
-ZSBiZWxvdyBzaG91bGQgcmVzdG9yZSB0aGUgb3JpZ2luYWwgc3RhdGUuCj4KPlRoYW5rcywKPgo+
-ICAgICAgICB0Z2x4Cj4tLS0KPmRpZmYgLS1naXQgYS9rZXJuZWwvaXJxL3Byb2MuYyBiL2tlcm5l
-bC9pcnEvcHJvYy5jCj5pbmRleCBmMzZjMzNiZDJkYTQuLjliNzE1Y2U4Y2YyZSAxMDA2NDQKPi0t
-LSBhL2tlcm5lbC9pcnEvcHJvYy5jCj4rKysgYi9rZXJuZWwvaXJxL3Byb2MuYwo+QEAgLTUwMSw2
-ICs1MDEsNyBAQCBpbnQgc2hvd19pbnRlcnJ1cHRzKHN0cnVjdCBzZXFfZmlsZSAqcCwgdm9pZCAq
-dikKPiAKPiAJCXNlcV9wdXRfZGVjaW1hbF91bGxfd2lkdGgocCwgIiAiLCBjbnQsIDEwKTsKPiAJ
-fQo+KwlzZXFfcHV0YyhwLCAnICcpOwo+IAo+IAlyYXdfc3Bpbl9sb2NrX2lycXNhdmUoJmRlc2Mt
-PmxvY2ssIGZsYWdzKTsKPiAJaWYgKGRlc2MtPmlycV9kYXRhLmNoaXApIHsKCk9uIHNlY29uZCB0
-aG91Z2h0LCAgIGNvbnNpZGVyaW5nIG90aGVyIHBhdGhzIGhhdmUgYWxyZWFkeSBoYWQgYSBsZWFk
-aW5nIHNwYWNlLCAKbWF5YmUgaXQgaXMgbW9yZSBjbGVhbiB0byBqdXN0IGFkZCBhIGxlYWRpbmcg
-c3BhY2UgYmVmb3JlIGlycV9wcmludF9jaGlwOgoKICAgICAgICByYXdfc3Bpbl9sb2NrX2lycXNh
-dmUoJmRlc2MtPmxvY2ssIGZsYWdzKTsKICAgICAgICBpZiAoZGVzYy0+aXJxX2RhdGEuY2hpcCkg
-ewotICAgICAgICAgICAgICAgaWYgKGRlc2MtPmlycV9kYXRhLmNoaXAtPmlycV9wcmludF9jaGlw
-KQorICAgICAgICAgICAgICAgaWYgKGRlc2MtPmlycV9kYXRhLmNoaXAtPmlycV9wcmludF9jaGlw
-KSB7CisgICAgICAgICAgICAgICAgICAgICAgIHNlcV9wdXRjKHAsICcgJyk7CiAgICAgICAgICAg
-ICAgICAgICAgICAgIGRlc2MtPmlycV9kYXRhLmNoaXAtPmlycV9wcmludF9jaGlwKCZkZXNjLT5p
-cnFfZGF0YSwgcCk7Ci0gICAgICAgICAgICAgICBlbHNlIGlmIChkZXNjLT5pcnFfZGF0YS5jaGlw
-LT5uYW1lKQorICAgICAgICAgICAgICAgfSBlbHNlIGlmIChkZXNjLT5pcnFfZGF0YS5jaGlwLT5u
-YW1lKQogICAgICAgICAgICAgICAgICAgICAgICBzZXFfcHJpbnRmKHAsICIgJThzIiwgZGVzYy0+
-aXJxX2RhdGEuY2hpcC0+bmFtZSk7CiAgICAgICAgICAgICAgICBlbHNlCiAgICAgICAgICAgICAg
-ICAgICAgICAgIHNlcV9wcmludGYocCwgIiAlOHMiLCAiLSIpOwoKCgpEYXZpZA==
+- Remove duplicate word, 'to'.
+---
+ Documentation/admin-guide/sysctl/fs.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Documentation/admin-guide/sysctl/fs.rst b/Documentation/admin-guide/sysctl/fs.rst
+index 30c61474dec5..43b128c0225b 100644
+--- a/Documentation/admin-guide/sysctl/fs.rst
++++ b/Documentation/admin-guide/sysctl/fs.rst
+@@ -41,7 +41,7 @@ pre-allocation or re-sizing of any kernel data structures.
+ dentry-negative
+ ----------------------------
+ 
+-Policy for negative dentries. Set to 1 to to always delete the dentry when a
++Policy for negative dentries. Set to 1 to always delete the dentry when a
+ file is removed, and 0 to disable it. By default, this behavior is disabled.
+ 
+ dentry-state
+-- 
+2.46.1
+
 
