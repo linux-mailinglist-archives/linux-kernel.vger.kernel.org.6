@@ -1,150 +1,146 @@
-Return-Path: <linux-kernel+bounces-416410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5AF59D4461
-	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 00:19:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 959D49D445B
+	for <lists+linux-kernel@lfdr.de>; Thu, 21 Nov 2024 00:18:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C6DE282B96
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 23:18:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C8831F21FB0
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 23:18:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC5AF1C8788;
-	Wed, 20 Nov 2024 23:18:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07F281B5337;
+	Wed, 20 Nov 2024 23:18:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Ibo4fAAD"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="a4ud0Eqd"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61C8A27447;
-	Wed, 20 Nov 2024 23:18:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D2A627447
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 23:18:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732144713; cv=none; b=gPr9HY+Da8Fou/QGFI645me1XutXYSIw+/15TuV1MrLy9cnivl6u9XuHMPY38mdBGyJPUgBzZDjqmxCQumj/oKEfccHsfkABd35EeBBF/jrGy678EgJwTyktW00L9aH5tTkvAf8er2uyZV7/ot7cdr4IXu9WzcgyS9ddCwWbwI4=
+	t=1732144706; cv=none; b=g39um9yY+2djfJeStQSdjpvvczw8QI0mVG8b+XufyScxWf3Ru12LLrCmFyrSFilXCHDO2d/pGpsZsu/K3UQPQaAoCLk2Da81TCQtcWDucEiJQHyOJdZVS/dnrm6dg0BhRR6kmOdWfDuEtRYhUzLCpDwDe8MFKmkpl6dfptYSbdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732144713; c=relaxed/simple;
-	bh=SVAHyeGTzoghoI1kXDg2gcjhAZXFJM9LY16aIDIrBCA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=sL5Y5h0jro62tOD2eyMgSafR0Cua6pUTKTyU4oKiff3B244h5OWWCDBSf/aMJBuMMvpiRuYfKW7ANLuwQn6a2YN+xb8A5mjNozFN6CFTsYTjNaLrxqTErWCUhp6WWcVrWXrrW5HObKgVVNPwOkPcT6xEWziEbqOwDJIKrP5JS8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Ibo4fAAD; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AKLNB3d003945;
-	Wed, 20 Nov 2024 23:18:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	lanws6Yx3ikB7msfjQOOsmduMmYwECqYx43uI2TK1no=; b=Ibo4fAADwmwti8Rd
-	dqa17jA8omDgxnj3+QoHhRaVx5TIpePypG0rZNAchheHpXLd+ATN/13qsYvwROqc
-	6YFzfzUXBqhscSNc7rfbxlOjVfaOYhuw18ix5s4AWZ8V6VPmtTHRPGWH6CF26BCw
-	O6fqCBqG04155VJG4B9pYMaQfg+9vdA3eZgbyklYy8a5RqJhy19f+mjitzuzXj/5
-	m8OnhXYIwGbVOVPp9JpGFeuIjB247Zx89l+oNQhoE/l7qiNv+mB9sQXlwJzjWLaI
-	fSBRw9k1miT7nRD0IZ7YqFLSYW4YyaElCvfHI1RfXAHlSHsmeGqLQ3n58mea3MH9
-	c/BzMQ==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 431ce3a42s-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 20 Nov 2024 23:18:09 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AKNI9I4029347
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 20 Nov 2024 23:18:09 GMT
-Received: from [10.110.30.192] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 20 Nov
- 2024 15:18:08 -0800
-Message-ID: <d0da6552-238a-41be-b596-58da6840efbb@quicinc.com>
-Date: Wed, 20 Nov 2024 15:18:07 -0800
+	s=arc-20240116; t=1732144706; c=relaxed/simple;
+	bh=DepY0erriSZwBVNkVSrEEuXyb85a2Qm51ZwsZJ0A0+Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JjD4ox2LpYQGjgIoxLgil6UvnZ4G+vHsOEiK2P/UQk1wH3NVV8E8qHhxQ0OgW7K3HFMn/BcRd1zfAmTM8/xmFthgHl1YEdcVsfqZkirm7nMejzdUIxZLC44vITGFlizXbx9SoNCxspeOrheUziXJp8fjPctF4dQx5cTVU7DlHcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=a4ud0Eqd; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2fb57f97d75so3268831fa.2
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 15:18:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1732144701; x=1732749501; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qk9xg8NxsXbSQYsTpmZ0ltyqprizEJtz7wq8qhfk4DE=;
+        b=a4ud0EqdwSbThY2dQTWmVTTMiklKYbZcDcg/f5gYfMUzMWqe6cOrPLJztceYuI+3U8
+         lVbUsb/BY16QnFq/O3uyuCCce83msD6xEAjlgHNszQmp77YykWj+rqM7/j7ZfGSrF8XS
+         twa2Irp5DoztiTq+srvb2UgL3vRn1vM/dJ9ec=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732144701; x=1732749501;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qk9xg8NxsXbSQYsTpmZ0ltyqprizEJtz7wq8qhfk4DE=;
+        b=H3Svwd/cuE2thD3PPE6pmAgK4+trtvb5onW9cpRkoXpxFluPKpXAR+aSCV7bp9FPZ9
+         NhTWjeNek76maD6SOE1n0lz8eXlSk57qf46kIprNSWs+SNgg1FkmuTMckpvPcc0d5baW
+         g/EOGFtVU/d53z1xFjFrxUM14Q6W0LZWLega0mWcoAN7nLg3t/OrwXmK7VYSjIrOI0RX
+         nMgQb+IXIjrcGogfbdeB5sspuk3lOlW1iEhdv5L/eEH4lrzuml6Z9qpdG3eiggN2HcRD
+         Puj2gjqsXW2ra1B9CjHmtFhiXj1Qma8cO6CVCUBQZqbeg9oRkalAaCxokPEIaEreBDVe
+         GULg==
+X-Forwarded-Encrypted: i=1; AJvYcCUJs7XNFaLqGpNvkz/tDYiiCQZzemhnbSPw5yXihmumtgrDqFOZ8wdQ6Myb8ymdGtdMEfYrVHVxhaDMUaI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyD0/zcR3ojKtb3NVJL+CL9sv+88+kAFeM+t0Yk44j9zCheKc17
+	0pGSOtC1icCAX4qgLtDsVA7PbiF2frBGGxBrrJ6VV7WMU9Wgv2MzX/647JXoRzbuJMPuNaLpScT
+	2uQ==
+X-Gm-Gg: ASbGncvSexFWlMYxYHaWwfxFUG2rXvqeKlR4gAfRrFFjjLgMvFtSEDgO370ubsl2t3r
+	S7Qnt1z/p6Dd7pOqRc0+z8tMa0HbGIE1lcRT8IdjrIXl686IRrtlSMLVysZshGFcCMdU1nnkcUi
+	koqWzeGxYqGRpZ5loJ/tj754okEznVzkVyN4dL69uxaaA4Ebp8RS7Gn9tNGuojHgVbkTIn+pTgI
+	GZBih1bukzfBSS4UL/iqTwgTSWIi3qhZMghqLPv7b7pjXzrOxM3rQhO972g7lcFeClYsBCMH/2M
+	ADEPdkMi5opiGA==
+X-Google-Smtp-Source: AGHT+IFaaNxj4YiGwONeGRVV7JM1+mKI6bDq08745kcbw1mibO695aGhE2eZzCymJQrO/RaPvfougg==
+X-Received: by 2002:a2e:bd0f:0:b0:2ff:5d9b:52e1 with SMTP id 38308e7fff4ca-2ff8dca0b5bmr30497701fa.34.1732144701554;
+        Wed, 20 Nov 2024 15:18:21 -0800 (PST)
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com. [209.85.167.52])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ff69ae80afsm16663041fa.76.2024.11.20.15.18.20
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 20 Nov 2024 15:18:20 -0800 (PST)
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-539e8607c2aso265076e87.3
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 15:18:20 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWWgzgJe9WFKGAHc00XIAajWlcvP7nO1P56MyzP8K1uLU8lAJWa2wvdg30BMxZoUaFoKF3gY1oUq2oGuXw=@vger.kernel.org
+X-Received: by 2002:a05:6512:2347:b0:539:edbe:ac86 with SMTP id
+ 2adb3069b0e04-53dc1326d69mr2039832e87.10.1732144699638; Wed, 20 Nov 2024
+ 15:18:19 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v30 00/30] Introduce QC USB SND audio offloading support
-To: Takashi Iwai <tiwai@suse.de>
-CC: Greg KH <gregkh@linuxfoundation.org>, <srinivas.kandagatla@linaro.org>,
-        <mathias.nyman@intel.com>, <perex@perex.cz>, <conor+dt@kernel.org>,
-        <dmitry.torokhov@gmail.com>, <corbet@lwn.net>, <broonie@kernel.org>,
-        <lgirdwood@gmail.com>, <krzk+dt@kernel.org>,
-        <pierre-louis.bossart@linux.dev>, <Thinh.Nguyen@synopsys.com>,
-        <tiwai@suse.com>, <robh@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-sound@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>, <linux-input@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-doc@vger.kernel.org>
-References: <20241106193413.1730413-1-quic_wcheng@quicinc.com>
- <edfeb642-297e-42bb-ad09-cbf74f995514@quicinc.com>
- <2024111655-approve-throwback-e7df@gregkh>
- <2f512d8d-e5f3-4bdd-8172-37114a382a69@quicinc.com>
- <875xoi3wqw.wl-tiwai@suse.de>
-Content-Language: en-US
-From: Wesley Cheng <quic_wcheng@quicinc.com>
-In-Reply-To: <875xoi3wqw.wl-tiwai@suse.de>
+References: <bdba1f49b4b48e22628482b49ce81f8e1f0d97b1.1731445901.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <bdba1f49b4b48e22628482b49ce81f8e1f0d97b1.1731445901.git.christophe.jaillet@wanadoo.fr>
+From: Doug Anderson <dianders@chromium.org>
+Date: Wed, 20 Nov 2024 15:18:08 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=UQxLkr3vm7F0KtzKw9Kq6=yf8Q5jg2c3E9ksV+Stv4Ow@mail.gmail.com>
+Message-ID: <CAD=FV=UQxLkr3vm7F0KtzKw9Kq6=yf8Q5jg2c3E9ksV+Stv4Ow@mail.gmail.com>
+Subject: Re: [PATCH] drm/bridge: Constify struct i2c_device_id
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Jagan Teki <jagan@amarulasolutions.com>, Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: CyBvhwumMXz5hdJs_nJXfcoj34E6y-gX
-X-Proofpoint-ORIG-GUID: CyBvhwumMXz5hdJs_nJXfcoj34E6y-gX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- malwarescore=0 clxscore=1011 priorityscore=1501 impostorscore=0
- bulkscore=0 mlxscore=0 adultscore=0 spamscore=0 mlxlogscore=999
- suspectscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2409260000 definitions=main-2411200162
+Content-Transfer-Encoding: quoted-printable
 
+Hi,
 
-On 11/20/2024 4:39 AM, Takashi Iwai wrote:
-> On Tue, 19 Nov 2024 18:50:52 +0100,
-> Wesley Cheng wrote:
->>
->> On 11/15/2024 11:42 PM, Greg KH wrote:
->>> On Fri, Nov 15, 2024 at 02:42:47PM -0800, Wesley Cheng wrote:
->>>> Hi,
->>>>
->>>> On 11/6/2024 11:33 AM, Wesley Cheng wrote:
->>>>> Requesting to see if we can get some Acked-By tags, and merge on usb-next.
->>>> Are there any more clarifications that I can help with to get this
->>>> series going?  I know its been a long time coming, so folks may have
->>>> lost context, but if there are any points that might be blocking the
->>>> series from getting merged, please let me know.
->>> I would like others to review this (xhci maintainer for one), to give
->>> their blessing before I even consider this.
->> Thanks, Greg...Yes, I was hoping to see if I could clarify any points for Mathias and Takashi if they had any concerns.  Just so folks are also aware, we did deploy a portion of the series (specifically the XHCI sec interrupter and USB SND core changes) into devices on the market, if that adds any confidence into those changes.  For the most part, there were no major issues within those drivers, and the single minor bug (in the XHCI sec intr) that we did catch was fixed in previous submissions, and should be highlighted in the change revision list.
-> Well, from the sound subsystem side, the only concerns are the design
-> issues: namely, whether the implementations with two cards are
-> acceptable, and whether the current control of PCM mapping is OK from
-> the user POV.  IIRC, there were discussions with Intel people and
-> others, and I haven't followed whether we got consensus.
-> If we reached some agreement, it'd be appreciated if you can put acks
-> from them in the patches, too.
-
-I believe Amadeusz was still against having the two card design, and wants the routing to automatically happen when playback happens on the sound card created by the USB SND layer.  However, even with that kind of implementation, the major pieces brought in by this series should still be relevant, ie soc-usb and the vendor offload driver.  The only thing that would really change is adding a path from the USB SND PCM ops to interact with the ASoC entities.  Complexity-wise, this would obviously have a good amount of changes to the USB SND/ASoC core drivers.  Some things I can think of that we'd need to introduce:
-
-1.  Exposing some of the ASoC PCM (soc-pcm) APIs to be able to be called by soc-usb (to mimic a FE open from ASoC), so we can trigger ASoC DAI ops when USB SND FE is opened.
-
-2.  Proper fallback mechanism in case offload path enablement fails to the legacy USB SND path.
-
-3.  Master kcontrol to disable offload logic for each USB SND device.
-
-IMO, both the points you mentioned correspond to the same topic.  If we go with having offload being operated on one FE, then there is no need for the kcontrol of PCM mapping.  If we have two cards, then we will need the control for offload device mapping.  Can't speak for Pierre, but at least with my discussions with him, I don't think he's against the two card design, just as long as we have the proper kcontrol that notifies userspace of how to utilize the offload path.
-
-> The internal implementation details can be adjusted later, but those
-> two must be set in stone after merging the stuff to the upstream.
+On Tue, Nov 12, 2024 at 1:12=E2=80=AFPM Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
 >
-> (BTW, the mail address of Pierre changed; I corrected in this mail.)
+> 'struct i2c_device_id' is not modified in these drivers.
 >
-Thanks for updating the email address.
+> Constifying this structure moves some data to a read-only section, so
+> increase overall security.
+>
+> On a x86_64, with allmodconfig, as an example:
+> Before:
+> =3D=3D=3D=3D=3D=3D
+>    text    data     bss     dec     hex filename
+>   15566     987      32   16585    40c9 drivers/gpu/drm/bridge/chipone-ic=
+n6211.o
+>
+> After:
+> =3D=3D=3D=3D=3D
+>    text    data     bss     dec     hex filename
+>   15630     923      32   16585    40c9 drivers/gpu/drm/bridge/chipone-ic=
+n6211.o
+>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> Compile tested-only.
+> ---
+>  drivers/gpu/drm/bridge/chipone-icn6211.c   | 2 +-
+>  drivers/gpu/drm/bridge/lontium-lt9211.c    | 2 +-
+>  drivers/gpu/drm/bridge/lontium-lt9611.c    | 2 +-
+>  drivers/gpu/drm/bridge/lontium-lt9611uxc.c | 2 +-
+>  drivers/gpu/drm/bridge/ti-sn65dsi83.c      | 2 +-
+>  drivers/gpu/drm/bridge/ti-sn65dsi86.c      | 2 +-
+>  6 files changed, 6 insertions(+), 6 deletions(-)
 
-Thanks
+I figured it didn't hurt if I just pushed this so I did. Now in drm-misc-ne=
+xt:
 
-Wesley Cheng
+[1/1] drm/bridge: Constify struct i2c_device_id
+      commit: dbf7986f8a56ce47465bb6e0f2b2d166b931d707
 
+-Doug
 
