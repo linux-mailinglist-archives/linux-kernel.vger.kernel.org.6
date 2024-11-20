@@ -1,93 +1,142 @@
-Return-Path: <linux-kernel+bounces-416107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 545EC9D4056
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 17:43:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 831E69D405B
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 17:44:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02E201F20EF1
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:43:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 179D81F22818
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:44:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC033154BFC;
-	Wed, 20 Nov 2024 16:43:07 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5CEC1527B1;
+	Wed, 20 Nov 2024 16:44:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Khhn0moY"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49DA3153BED;
-	Wed, 20 Nov 2024 16:43:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D273F148FE8;
+	Wed, 20 Nov 2024 16:44:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732120987; cv=none; b=kKOdCi9pwLa/WMto0mThubF0StmA32zSqzQM/8qHLtTzCJrzXtoBNyqVKmmsbyc6e17ZTYIPoNNrXNUxrhtsv7gp0Lk5X94fZVj6eLT/iac/C9yw4PmgZw1x27/22Td+2/y1zRPaEO9orT9zkyCJeG+uc39ZV2aV6rd6YW5ybNE=
+	t=1732121046; cv=none; b=Wew6l/P4WTsHCmcktGse+kD8Jv8z2THwHyLnDuPR2LhACc+SAbSEi9PZqNpiuIyrSpd3KvNM/b8q0Xj85rMIegFqKuQAeboL2KHa2OdRzsbOzxzisfbbx97NLjhsGGy7usWv3MucbIpfB5WzSvPCzNVR35++YERsPTiISnDrN14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732120987; c=relaxed/simple;
-	bh=VoKLmbRrI7wCnPyJA/0lO81/9Rgx94RGC1msUcc1qss=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DLNjSeIkIuxL5GUdG3gkegohwNHdt22b8f9Wtxozvdoj+OOLVo0gW3krtNPBDM0DNzF9yNU/FDFb1TpyuOcGiZEYpyjorLn8Muh6BTsxfo2suoKlL5P/XIYM6YTycv4r+nCsGxV7hBdOWsdByEGk8Q0Vjw2YBYQWtdgoUhMSwfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF736C4CECD;
-	Wed, 20 Nov 2024 16:43:05 +0000 (UTC)
-Date: Wed, 20 Nov 2024 11:43:41 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
-Cc: linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, Geert Uytterhoeven
- <geert@linux-m68k.org>, Greg Ungerer <gerg@linux-m68k.org>, Tomas Glozar
- <tglozar@redhat.com>
-Subject: Re: [PATCH RFC 0/2] Add basic tracing support for m68k
-Message-ID: <20241120114341.30ac73c6@gandalf.local.home>
-In-Reply-To: <2dc1cdfa-d33a-48b6-ab77-d04b06a3efe8@yoseli.org>
-References: <20241021-add-m68k-tracing-support-v1-0-0883d704525b@yoseli.org>
-	<3a8f6faa-62c6-4d32-b544-3fb7c00730d7@yoseli.org>
-	<20241115102554.29232d34@gandalf.local.home>
-	<cbb67ee2-8b37-4a4d-b542-f89ddae90e94@yoseli.org>
-	<20241115145502.631c9a2c@gandalf.local.home>
-	<2c43288a-517d-4220-ad31-f84dda8c1805@yoseli.org>
-	<20241118152057.13042840@gandalf.local.home>
-	<22856ed6-b9d0-4206-b88d-4226534c8675@yoseli.org>
-	<20241119102631.76363f2a@gandalf.local.home>
-	<20241119112850.219834f5@gandalf.local.home>
-	<e4456cb1-b1bc-453b-b3b5-3ee4f03995be@yoseli.org>
-	<20241119131035.3c42a533@gandalf.local.home>
-	<66e2b7cd-4a4f-4f60-9846-a14c476bd050@yoseli.org>
-	<20241120103150.3442d658@gandalf.local.home>
-	<2dc1cdfa-d33a-48b6-ab77-d04b06a3efe8@yoseli.org>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1732121046; c=relaxed/simple;
+	bh=VCGY9U7LwXliYd6d+9B7ied1jKmWIaArbzCfTm1DXuo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=J7KnsYjq0yCWTPFZxHorSBKrOkoJkvX51s2XDQg/kkrAUtLCWLi2bjOVg43pszGJ31MBuW4TdXhv9rlr3o534YprBb4h9tqMeJAVRFP0brUXD/kopVHHih+oDn/OhBxzhFSOnvPkUTZhHpGRGvJ2WfxmuJCTru89FpDNvmHi4go=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Khhn0moY; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2128383b86eso8285ad.2;
+        Wed, 20 Nov 2024 08:44:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732121044; x=1732725844; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1vXq/v2AMJrAH9GOZRUpvetNG/P2rLtArw5ggNX+AwQ=;
+        b=Khhn0moY5hlzQJspLmH5fh+iNNcOjIhbL7MAA0nJ3w/byK2bA0+zZEZjvFtrie05dU
+         N2n0p23i1gadN+nNOXfiJhjeLrbJpNFsXlnGZ4tiEEFLkreOEsCbfRO7jcWbOhFFZ7E2
+         F9ShsaCUDYEGV4cbbKJr/Xih6ss13t+SKJ6ZHAN8BjpSSy9quJwYoFch0rpzGQyQAgdO
+         8zjShw+aMkKBqIncnACnVc9X8x4Iznyctpx55V1EQDSxhaTE3AoQv9W5yDP5gDcfjtku
+         fEPmKoVhx2Um1tUPtcEwpJtbv82KkiiCKsD9FWY0VMVk+fAOEoHaKjvUCAKTequCVMXE
+         e6rw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732121044; x=1732725844;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1vXq/v2AMJrAH9GOZRUpvetNG/P2rLtArw5ggNX+AwQ=;
+        b=nj2ALoEnOMgNqkFucLDFIPoehz74RYA4bnLzHuaY5Iwkz3CxMDAl10mZ8qcdaK5/x9
+         FuHWq3OR+J5dN8mnUREI9YxWESA31mQfPUf5Oa6DHgcTGSEKlHDcjouWPl+fSt0Zv3jE
+         p4dvq8XlMlaGTEny2pR6iMF8qbLYy1XDSAd62pBeIawAs6/aBR383H4xSLdGkmk+OoA9
+         AIxWcHoOdS5o1egpNfU2rkTU3JaA5Bvcz0khH1rzx1GUuvdPyUCCYKBkOFsm3K7Ci+4J
+         Aj6N9BN7ZVTxp5cRiWQBvRIvUOiUwAsKgbyUd0rZBCNc5l+rMj4QCKIexOMG8T3FAjka
+         lcBg==
+X-Forwarded-Encrypted: i=1; AJvYcCWs83J2LlQn16Chol9qlft3vZk080E0WcRg8BMZCoWjgNJgjozamngdpH8OF4S8qdOrZHkjZF1fmstbQRqsAvaFdYmCqg==@vger.kernel.org, AJvYcCXja4mLSp8dgR4Km0PSkRzO16cTcdQB5O2SM/TS3ULP4qnEoP0IAwu3dgw9gRpJRaCNmCdDVsbAqzCPEVc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXeE8gBtt60AvwkxZNnpT9Ude9pwejz/UoiLWxNGbVNn4x5IbC
+	WEYQ73Gnwidr44imK9XQkIGT5u5W0psCaiAB81/6odTFMMr49dIO
+X-Google-Smtp-Source: AGHT+IE2ZNOi976fSbaTwURst4LgXE6RnNg00hQA2pr90t3Ffu1ZFVaejX9M0pVhEjAL8iJkyf8dxg==
+X-Received: by 2002:a17:903:251:b0:20c:9d8d:1f65 with SMTP id d9443c01a7336-2126c11bf0fmr42262905ad.30.1732121044085;
+        Wed, 20 Nov 2024 08:44:04 -0800 (PST)
+Received: from localhost.localdomain ([181.84.94.92])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21253806c73sm32467485ad.157.2024.11.20.08.44.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Nov 2024 08:44:03 -0800 (PST)
+From: Kurt Borja <kuurtb@gmail.com>
+To: kuurtb@gmail.com
+Cc: Dell.Client.Kernel@dell.com,
+	hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com,
+	linux-kernel@vger.kernel.org,
+	mario.limonciello@amd.com,
+	platform-driver-x86@vger.kernel.org,
+	w_armin@gmx.de
+Subject: [PATCH v2 3/4] alienware-wmi: Simplify platform device creation
+Date: Wed, 20 Nov 2024 13:43:49 -0300
+Message-ID: <20241120164348.7326-2-kuurtb@gmail.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20241120163834.6446-3-kuurtb@gmail.com>
+References: <20241120163834.6446-3-kuurtb@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Wed, 20 Nov 2024 16:59:55 +0100
-Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org> wrote:
+Simplify platform device creation by using
+platform_device_register_simple().
 
-> > And that way you will see what 'ptr' is before the crash. Or did you do
-> > that already?  
-> 
-> Yes, I did, sorry I thought it was in the previous dump :-(.
+Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
+Signed-off-by: Kurt Borja <kuurtb@gmail.com>
+---
+v2:
+ - Unchanged
+---
+ drivers/platform/x86/dell/alienware-wmi.c | 15 ++++++---------
+ 1 file changed, 6 insertions(+), 9 deletions(-)
 
-Can you see if this makes a difference?
-
-Patch libtracefs:
-
-diff --git a/src/tracefs-events.c b/src/tracefs-events.c
-index 77d1ba89b038..19ea3b3f8d36 100644
---- a/src/tracefs-events.c
-+++ b/src/tracefs-events.c
-@@ -274,7 +274,7 @@ static int open_cpu_files(struct tracefs_instance *instance, cpu_set_t *cpus,
- 		if (snapshot)
- 			tcpu = tracefs_cpu_snapshot_open(instance, cpu, true);
- 		else
--			tcpu = tracefs_cpu_open_mapped(instance, cpu, true);
-+			tcpu = tracefs_cpu_open(instance, cpu, true);
- 		if (!tcpu)
- 			goto error;
+diff --git a/drivers/platform/x86/dell/alienware-wmi.c b/drivers/platform/x86/dell/alienware-wmi.c
+index ecab14d90b27..512f6b22585c 100644
+--- a/drivers/platform/x86/dell/alienware-wmi.c
++++ b/drivers/platform/x86/dell/alienware-wmi.c
+@@ -1163,14 +1163,13 @@ static int __init alienware_wmi_init(void)
+ 	ret = platform_driver_register(&platform_driver);
+ 	if (ret)
+ 		goto fail_platform_driver;
+-	platform_device = platform_device_alloc("alienware-wmi", PLATFORM_DEVID_NONE);
+-	if (!platform_device) {
+-		ret = -ENOMEM;
++
++	platform_device = platform_device_register_simple("alienware-wmi",
++							  PLATFORM_DEVID_NONE, NULL, 0);
++	if (IS_ERR(platform_device)) {
++		ret = PTR_ERR(platform_device);
+ 		goto fail_platform_device1;
+ 	}
+-	ret = platform_device_add(platform_device);
+-	if (ret)
+-		goto fail_platform_device2;
  
+ 	if (quirks->thermal) {
+ 		ret = create_thermal_profile();
+@@ -1187,9 +1186,7 @@ static int __init alienware_wmi_init(void)
+ fail_prep_zones:
+ 	remove_thermal_profile();
+ fail_prep_thermal_profile:
+-	platform_device_del(platform_device);
+-fail_platform_device2:
+-	platform_device_put(platform_device);
++	platform_device_unregister(platform_device);
+ fail_platform_device1:
+ 	platform_driver_unregister(&platform_driver);
+ fail_platform_driver:
+-- 
+2.47.0
 
--- Steve
 
