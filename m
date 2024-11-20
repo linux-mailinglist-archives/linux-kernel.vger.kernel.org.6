@@ -1,105 +1,103 @@
-Return-Path: <linux-kernel+bounces-416017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A96449D3F2E
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:36:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A14F9D3F38
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:39:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63B561F24CC9
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:36:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F524B31AF7
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:36:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5893313B7A1;
-	Wed, 20 Nov 2024 15:36:47 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0DC71369B4;
+	Wed, 20 Nov 2024 15:36:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RiX0pJeV"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B51DD12A177
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 15:36:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A012F84D3E;
+	Wed, 20 Nov 2024 15:36:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732117007; cv=none; b=QF6gkJEqty+wzA5i2rgL1HmhaCXRs0Mi/s9Tr53GjDHqnrAUyyOgUvsYFOxpdEkisKTEuHwaXS4d51a0NSe3ssFH2LcX2dwMue54UoHWg8LugQo/dgz21+ICq4uyxTJlmbjwPTxMaH0s3A2e2x6xx9JO8PsNhvBt35u0+OqhzWk=
+	t=1732117006; cv=none; b=s3Lf5/6psa7kcZkocW2x2mqScicXzqjREtGPMphEk9inLsYJVOhWvTVBxAOBFj0DbxLK7sP58eyaWYPZ/08LjZLufHB7NzAujpYIVxIfbKr/g9M3s86hLmtoGYfK2+gILwP4tMbiL+0Sl0y+yEwvUEJujOniu6hdT/yiGQ+uRz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732117007; c=relaxed/simple;
-	bh=L2DkyljbYpDbQrOOJD3UjrFLxUtyxx4J/tFlahc+ZyY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pHcS2azkQzz2BU5SFCcsyrQ4IK66d2k6STtGvIi8j8niTNyKR557++Dtf7QHmPI4toYjISALK3OD3OFeyIzLE7BYsbXXjjZV7UlIIFr8M+8qMEZQknQj7Lw8brRpszt45xOAHjGQL5mO2QOcXUPdfQVzBuyW3GiXKzAngL0W28c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[IPV6:::1])
-	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
-	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1tDmkn-0008HL-Rc; Wed, 20 Nov 2024 16:36:29 +0100
-Message-ID: <11dd729c-df29-4d10-bf47-73e1fa01322f@pengutronix.de>
-Date: Wed, 20 Nov 2024 16:36:28 +0100
+	s=arc-20240116; t=1732117006; c=relaxed/simple;
+	bh=rRQ4OBZRgRUT2QDchNqnm2+yTXcDEmctPLBAk9SKaYc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RBsF2N5X3EoTYaCy5IIxIAV7Vk/4RkxXUR7laAszgXwNzzrBNZFARfTgyjnpEo4TWHJ98o+KsUmN+bPHuQrm2Y9g8iLwaSP40xHv3zBwZONBPyDb2LdUFjm4AFDzWrH5CL1Ay+fP6cD0KHV2OqldX+2+CplocGokqtHMW+5d9Ng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RiX0pJeV; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2ff3232ee75so25814021fa.0;
+        Wed, 20 Nov 2024 07:36:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732117003; x=1732721803; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=J4480msYWYSV1aWn6FUea6HU3tyZnI63NOgH1lUg7gA=;
+        b=RiX0pJeVzQ7fdQ8P/OjjNe3lUqpRlEwSN2X+9+T86/yH8PoHav9OBJOI7gymjfL4Tk
+         8u3JJ9w3uU1Y7GiiVbSok38oW2LB6KiVSmdsA88F2tBv+eHzu09DMCdLm/nsC7B3D5SM
+         xdWB5bRFNowvFMZcge33J41ddTxGILfwLfDh2j9KPsxjeKnYfca7f6j8m65G5u0TaIvv
+         8PM/8qZ1GnlGyQQxKXr1gWmomSO5mr1zH2A4od0XGIIJ5fHTZn7sngKINzXhs8UktB88
+         e9MRTyPrOp2i5Z6nm5rZwLpqJrHvSH5y34UHR91q1RvrNtmrmnPrvGB4IMzt2tg6v31M
+         dJow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732117003; x=1732721803;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=J4480msYWYSV1aWn6FUea6HU3tyZnI63NOgH1lUg7gA=;
+        b=uv/aHPSvsYpE0UaYQCseffrsMjAu1v7sSxF5Yc6Ubpal3W83D3dEKAFKbSpJTePj11
+         UVkiBCfgsofWl2Iixzsp8iFs/l/iijf2WeXIlVXOgdkHBTKPdeBgHdMOGDukYSf3Ttn+
+         9c6niV6F7WdeLHuEiGOm8Kf8/zULESZvolHd/w0XDtM4cxSl3daDoCEfvV64KeR2sRww
+         uwqnt0IMVUlZ2STWl9QlX7VMdTS50VVcuOLxdBYWMAW5jX/CA++14CVDMq33DAI+i614
+         CZt271AXHOulYYwsBYyfI1mPpHV1JknP3HEBkXXIMYjixuguQM6qJLQ5OgiMUv4+pAMQ
+         cYnw==
+X-Forwarded-Encrypted: i=1; AJvYcCVsvD9qfmq4JtGxeY4AKPzXuKlMwtSljoyzf1R9QLoe34bkJkcPV9HdoaQsc/u8fA4rB5KOgxFtI4obPyo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyng32+K4oOo4LJJc4wDML2RHZB1cksDayKLHPdO6TYTb80zBtD
+	vt+9BR4UIy3JdtYC78McOAlxXoOnjPiEZwghnPiAe7VJcQmG4TmdllmK/ZasTq8fO9AFUf/Vx6v
+	aPoyzhfihD5w69y9RzW8oQAhiHp4=
+X-Gm-Gg: ASbGncu/UoK2a+HVTC61PG2Gcg2LbL3aE4dX5vQopt6ojJJpeqismN9Ws2jHtrqUQcx
+	Wv4ViMA8bTUKZVgypl9kdQIAcv1g2YhQ=
+X-Google-Smtp-Source: AGHT+IE0bt43BHS9nIQ63LeFwzqnyam1nsHgEkDbLK9lae8oPkZ3wEfyCNHxDLWM8UkdXvP2YPMfBynx1DXZIZnRzcg=
+X-Received: by 2002:a2e:a5c7:0:b0:2ff:8d7e:56f with SMTP id
+ 38308e7fff4ca-2ff8dcbee1fmr25369481fa.32.1732117002554; Wed, 20 Nov 2024
+ 07:36:42 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/5] arm64: dts: Add dsp rproc related mem regions
-To: Daniel Baluta <daniel.baluta@nxp.com>, shawnguo@kernel.org,
- s.hauer@pengutronix.de, kernel@pengutronix.de
-Cc: aisheng.dong@nxp.com, imx@lists.linux.dev, conor+dt@kernel.org,
- robh@kernel.org, iuliana.prodan@nxp.com, shengjiu.wang@nxp.com,
- frank.li@nxp.com, linux-kernel@vger.kernel.org, laurentiu.mihalcea@nxp.com,
- devicetree@vger.kernel.org, daniel.baluta@gmail.com, krzk+dt@kernel.org,
- festevam@gmail.com, linux-arm-kernel@lists.infradead.org
-References: <20241120135859.3133984-1-daniel.baluta@nxp.com>
- <20241120135859.3133984-6-daniel.baluta@nxp.com>
-Content-Language: en-US
-From: Ahmad Fatoum <a.fatoum@pengutronix.de>
-In-Reply-To: <20241120135859.3133984-6-daniel.baluta@nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
-X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <20241120150725.3378-1-ubizjak@gmail.com> <ad32f0aa-79df-41b2-90d0-9d98de695a18@riscstar.com>
+In-Reply-To: <ad32f0aa-79df-41b2-90d0-9d98de695a18@riscstar.com>
+From: Uros Bizjak <ubizjak@gmail.com>
+Date: Wed, 20 Nov 2024 16:36:31 +0100
+Message-ID: <CAFULd4afgt7LtqzZ_oFDz4wtMe+TZKGX3E_XpSo2HD5rQEvOjg@mail.gmail.com>
+Subject: Re: [PATCH] xfs: Use xchg() in xlog_cil_insert_pcp_aggregate()
+To: Alex Elder <elder@riscstar.com>
+Cc: linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Chandan Babu R <chandan.babu@oracle.com>, "Darrick J. Wong" <djwong@kernel.org>, 
+	Christoph Hellwig <hch@infradead.org>, Dave Chinner <dchinner@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello Daniel,
+On Wed, Nov 20, 2024 at 4:34=E2=80=AFPM Alex Elder <elder@riscstar.com> wro=
+te:
+>
+> On 11/20/24 9:06 AM, Uros Bizjak wrote:
+> > try_cmpxchg() loop with constant "new" value can be substituted
+> > with just xchg() to atomically get and clear the location.
+>
+> You're right.  With a constant new value (0), there is no need
+> to loop to ensure we get a "stable" update.
+>
+> Is the READ_ONCE() is still needed?
 
-On 20.11.24 14:58, Daniel Baluta wrote:
-> With imx8mp-evk board we are now configuring 'dsp' node for rproc usage,
-> so add rproc specific memory regions.
-> 
-> Also, enable dsp node because it is ready to be used.
-> 
-> Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
+No, xchg() guarantees atomic access on its own.
 
->  &eqos {
->  	pinctrl-names = "default";
->  	pinctrl-0 = <&pinctrl_eqos>;
-> diff --git a/arch/arm64/boot/dts/freescale/imx8mp.dtsi b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-> index fa4ff75af12d..e6f3ac02689c 100644
-> --- a/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-> @@ -282,7 +282,6 @@ reserved-memory {
->  		dsp_reserved: dsp@92400000 {
->  			reg = <0 0x92400000 0 0x1000000>;
->  			no-map;
-> -			status = "disabled";
-
-This reverts commit 010dc015b811 ("arm64: dts: imx8mp: Disable dsp
-reserved memory by default").
-
-Please enable the reserved memory node in your board DTS instead.
-
-Thanks,
-Ahmad
-
->  		};
->  	};
->  
-
-
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Uros.
 
