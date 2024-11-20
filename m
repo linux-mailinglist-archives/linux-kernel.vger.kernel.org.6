@@ -1,168 +1,123 @@
-Return-Path: <linux-kernel+bounces-416222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 126549D4232
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 19:48:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41BF59D4238
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 19:50:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5BCD280D9F
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 18:48:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 081A828156F
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 18:50:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A37B1B5328;
-	Wed, 20 Nov 2024 18:48:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E52741B5ED2;
+	Wed, 20 Nov 2024 18:50:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="b9L1TiaO"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RqOiyanf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA4B0155742;
-	Wed, 20 Nov 2024 18:48:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43A4827447;
+	Wed, 20 Nov 2024 18:50:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732128504; cv=none; b=QKGC9Iun+mCW6QbXAxtzCYG+u7urVB4UGMxsN4WobQwKsDpTYQ+cAZzusVleweUXEnFZrO2AIMFsQpySxCHbUOSw8AxFEyccac96s9SGngR4Ql46VfWs3mOLLZVs6uy6kULk9NKfb9raseeTq9LQW1l3lNYg+w2s4X50S4zvibk=
+	t=1732128606; cv=none; b=BfoHFH+TeSixbY+uUTB4yvan9wEF1bRQpNHgKtMwJnv3S9E4Ti1THo6jknhTCp1D64M0F2wbHuuY4MAjozLzPlu8TFodwS+fw5a0lJt8sjWMZbgX6Ko3qu+TgmLZdthp+KQXCQz9aFQkgcUC8qvTLlm9p4Rygrv1EhT95v3mveU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732128504; c=relaxed/simple;
-	bh=ujSDzaApsf9yiTgCIRSrJbgFe+qCH4hd9AnhtUVjtFM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=utbpiSZWL3CwKSK8UqEjyo0sIhrD1WUgLcDej6mQo3dVbtukXIakTMi/ym/IfOj2eNktsfV7uCb8S1N23iKCFWnhfJcyPZYCuhuo67C4iBIQyZw4laqGw+b9dwqLia1Yo7XaWyeEt/Ep58vWayYQJOAU+U0QwGGedT/Awhtwby0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=b9L1TiaO; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AK9FN5s007711;
-	Wed, 20 Nov 2024 18:48:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ujSDzaApsf9yiTgCIRSrJbgFe+qCH4hd9AnhtUVjtFM=; b=b9L1TiaOdke1hTcg
-	GjOUPgn6HQSjns/mMLEpvvWpJ2ZeOscobZOhuKMmxDBBqZu0TxWjUVhCGMneZKTC
-	6PAEFvVqZuIwM1bEOS92htP6FAH13ZxRTIH6MsYJUujWAQDb4ACpA31nPB3S6rlc
-	H8lJz/WENmiwMztc7APVPGiFrYSZZVetwfRqubTCQwOxTCOv3PRy/Ov2L23YqZIN
-	12Dgq3RmKJt55TQY6f/mBKUER+G6tHJwRMsXUSxdvRgopjONhjTYWRqnccjZBG9F
-	7cVXVbPTsmcJ6N+knKcxrU4PiVeITwDPGhVuvUdGPpKydqcLiBPQhi7iR8W31Hyc
-	fVm4Jg==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4318uvj41e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 20 Nov 2024 18:48:03 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4AKIm2OH012549
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 20 Nov 2024 18:48:02 GMT
-Received: from [10.110.30.192] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 20 Nov
- 2024 10:48:01 -0800
-Message-ID: <a7bca9f6-06f9-4e14-a1ab-761e92a68ceb@quicinc.com>
-Date: Wed, 20 Nov 2024 10:48:00 -0800
+	s=arc-20240116; t=1732128606; c=relaxed/simple;
+	bh=DAu+U4aBQOxNqMfY+fX1HsSU10UR1gHFvVFlgiio8d8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oaA2zyjmphoNxYUXBooRHVQvgxYaYCi2IvGg4R0L132Fx9vNz7JNVkkzmYJURxyspBi6nlsji1MDTyfEi7Id7UyvIEp2EGXEg+uyqJbpYAZVxHZfnsWM81CyLmhfY+sWQEwVZVVGHp2CTFQY5RPqsv0deRX+QTrTnGv7GZ4r+i8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RqOiyanf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6634C4AF09;
+	Wed, 20 Nov 2024 18:50:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732128605;
+	bh=DAu+U4aBQOxNqMfY+fX1HsSU10UR1gHFvVFlgiio8d8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=RqOiyanfLUcVt8Y9ZEvD9A5mw13QEqldqRwm5YPipzGQ2/qCbB5mgzyMAALhWp5u1
+	 R+cAjL4SB0xM/H65MN6uJIXdb/wI3l+Y3P/qatqSux9ASgGJ2H0b2naAMhUflkg24z
+	 V58nTDduwQNm9vCUe7S8BfYddmueGZwbiHObttV9URTqbwNztZxK4zk5fWK628UxbP
+	 96OJ8JMW+xVpFrZHRriwAIrP3cb8FKqLgyP9pbyRpoWfUPXwEI5pQdJAjiSDA/fg5r
+	 wdmFmoyS+6rBePeRy+rZwlHPlk6EF2Qja7aJ9Xb0r2/t+c2STjHSy9eGd8iruw6BWF
+	 s0FQNPS0tGjJg==
+Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-296b0d2271aso91319fac.0;
+        Wed, 20 Nov 2024 10:50:05 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCU040mMqQgDqHu60BfbxI8K4InNDTu3lh6q752q0w/skl9Iwerf6EvUIPdCzqAIqT7FfbCixPGbdMYJLyCG@vger.kernel.org, AJvYcCW2L1AnAJYVjcyUl8jM9JgzxqZtuwwYPPMIkpYSq/UMA9Kal7VtPquDHpY4+wkZmAaPemegezpPgLs=@vger.kernel.org, AJvYcCWktIs0WO5UG924aS+0Gy39KtsQm+emdSdHGrdcanESQCXr9m0ca5CuLKseA4CkmKcbYe3d4s05K70J@vger.kernel.org
+X-Gm-Message-State: AOJu0YxW+sQ7zhWD+dP2O1GcpDv+T/el5MdzeHGwSEBrr5lOy8zYUM5N
+	hPOLNXIy6WwwpgKv9HX7Hw1+0RUuS7Hbm8HNnpYGNyRrFRu4/DtIHxiw9wKBJg4hS2OXRXb9aDb
+	7NhWLlGJ+2bFoFVd8iHMjWOuADUw=
+X-Google-Smtp-Source: AGHT+IEjeNuA0tpcrzagOHqtGo36tK5dX5VbtxF/7j1lMXMnQlZZ73pP9+Gop4Va7zug4x9iChwV+urmvRQR9I0sc/g=
+X-Received: by 2002:a05:6871:d084:b0:27b:55af:ca2b with SMTP id
+ 586e51a60fabf-296d9b5cd91mr3642408fac.11.1732128605011; Wed, 20 Nov 2024
+ 10:50:05 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v30 01/30] usb: host: xhci: Repurpose event handler for
- skipping interrupter events
-To: Mathias Nyman <mathias.nyman@linux.intel.com>,
-        <srinivas.kandagatla@linaro.org>, <mathias.nyman@intel.com>,
-        <perex@perex.cz>, <conor+dt@kernel.org>, <dmitry.torokhov@gmail.com>,
-        <corbet@lwn.net>, <broonie@kernel.org>, <lgirdwood@gmail.com>,
-        <krzk+dt@kernel.org>, <pierre-louis.bossart@linux.intel.com>,
-        <Thinh.Nguyen@synopsys.com>, <tiwai@suse.com>, <robh@kernel.org>,
-        <gregkh@linuxfoundation.org>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-sound@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <linux-input@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>
-References: <20241106193413.1730413-1-quic_wcheng@quicinc.com>
- <20241106193413.1730413-2-quic_wcheng@quicinc.com>
- <18a691df-e7b6-42fc-8dbc-c10c2608cd9c@linux.intel.com>
-Content-Language: en-US
-From: Wesley Cheng <quic_wcheng@quicinc.com>
-In-Reply-To: <18a691df-e7b6-42fc-8dbc-c10c2608cd9c@linux.intel.com>
+References: <c7db7e804c453629c116d508558eaf46477a2d73.1731708405.git.len.brown@intel.com>
+ <CAJZ5v0iC3mX7Yh_ETTw4FY3xUbZeAUgS0Nc9_88fnT1q5EGWyA@mail.gmail.com>
+ <90818e23-0bdb-40ad-b2f9-5117c7d8045e@linux.intel.com> <CAJZ5v0gxNEQx5Q+KXs-AMn=bt7GD=jU-TseMHUc5mHp0tKSBtA@mail.gmail.com>
+ <0147ea1a-3595-47ae-a9d5-5625b267b7a8@linux.intel.com> <CAJZ5v0itnn3T4bwiAO3eAoKH4mLFYswcNWBx6JCrK1GFDEy7vg@mail.gmail.com>
+ <e0dd2cb8-eea2-443d-bf23-4d225528d33f@linux.intel.com>
+In-Reply-To: <e0dd2cb8-eea2-443d-bf23-4d225528d33f@linux.intel.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 20 Nov 2024 19:49:53 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0h5=3LMVCa8kSoomNyF9r_7HLmpkH+YhYEO_N7H6-hAGQ@mail.gmail.com>
+Message-ID: <CAJZ5v0h5=3LMVCa8kSoomNyF9r_7HLmpkH+YhYEO_N7H6-hAGQ@mail.gmail.com>
+Subject: Re: [PATCH v2] ACPI: Replace msleep() with usleep_range() in acpi_os_sleep().
+To: Arjan van de Ven <arjan@linux.intel.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, anna-maria@linutronix.de, 
+	tglx@linutronix.de, peterz@infradead.org, frederic@kernel.org, corbet@lwn.net, 
+	akpm@linux-foundation.org, linux-acpi@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Len Brown <len.brown@intel.com>, Todd Brandt <todd.e.brandt@intel.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: UJkgSqup_QCVRf1BrXCSUM8P7P6OytC2
-X-Proofpoint-GUID: UJkgSqup_QCVRf1BrXCSUM8P7P6OytC2
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
- priorityscore=1501 phishscore=0 adultscore=0 malwarescore=0 mlxscore=0
- lowpriorityscore=0 mlxlogscore=999 spamscore=0 suspectscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2411200130
+Content-Transfer-Encoding: quoted-printable
 
-Hi Mathias,
+On Wed, Nov 20, 2024 at 7:38=E2=80=AFPM Arjan van de Ven <arjan@linux.intel=
+.com> wrote:
+>
+> On 11/20/2024 10:03 AM, Rafael J. Wysocki wrote:
+> > On Tue, Nov 19, 2024 at 4:08=E2=80=AFPM Arjan van de Ven <arjan@linux.i=
+ntel.com> wrote:
+> >>
+> >> On 11/19/2024 5:42 AM, Rafael J. Wysocki wrote:
+> >>> On Mon, Nov 18, 2024 at 3:35=E2=80=AFPM Arjan van de Ven <arjan@linux=
+.intel.com> wrote:
+> >>>>
+> >>>>> And the argument seems to be that it is better to always use more
+> >>>>> resources in a given path (ACPI sleep in this particular case) than=
+ to
+> >>>>> be somewhat inaccurate which is visible in some cases.
+> >>>>>
+> >>>>> This would mean that hrtimers should always be used everywhere, but=
+ they aren't.
+> >>>>
+> >>>> more or less rule of thumb is that regular timers are optimized for =
+not firing case
+> >>>> (e.g. timeouts that get deleted when the actual event happens) while=
+ hrtimers
+> >>>> are optimized for the case where the timer is expected to fire.
+> >>>
+> >>> I've heard that, which makes me wonder why msleep() is still there.
+> >>>
+> >>> One thing that's rarely mentioned is that programming a timer in HW
+> >>> actually takes time, so if it is done too often, it hurts performance
+> >>> through latency (even if this is the TSC deadline timer).
+> >>
+> >> yup and this is why you want to group events together "somewhat", and =
+which is why
+> >> we have slack, to allow that to happen
+> >
+> > So what do you think would be the minimum slack to use in this case?
+> >
+> > I thought about something on the order of 199 us, but now I'm thinking
+> > that 50 us would work too.  Less than this - I'm not sure.
+>
+> 50 usec is likely more than enough in practice.
 
-On 11/20/2024 3:48 AM, Mathias Nyman wrote:
-> On 6.11.2024 21.33, Wesley Cheng wrote:
->> Depending on the interrupter use case, the OS may only be used to handle
->> the interrupter event ring clean up.  In these scenarios, event TRBs don't
->> need to be handled by the OS, so introduce an xhci interrupter flag to tag
->> if the events from an interrupter needs to be handled or not.
->>
->> Signed-off-by: Wesley Cheng <quic_wcheng@quicinc.com>
->> ---
->>   drivers/usb/host/xhci-ring.c | 17 +++++++++++++----
->>   drivers/usb/host/xhci.h      |  1 +
->>   2 files changed, 14 insertions(+), 4 deletions(-)
->>
->> diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
->> index 9f1e150a1c76..b8f6983b7369 100644
->> --- a/drivers/usb/host/xhci-ring.c
->> +++ b/drivers/usb/host/xhci-ring.c
->> @@ -2931,14 +2931,22 @@ static int handle_tx_event(struct xhci_hcd *xhci,
->>   }
->>     /*
->> - * This function handles one OS-owned event on the event ring. It may drop
->> - * xhci->lock between event processing (e.g. to pass up port status changes).
->> + * This function handles one OS-owned event on the event ring, or ignores one event
->> + * on interrupters which are non-OS owned. It may drop xhci->lock between event
->> + * processing (e.g. to pass up port status changes).
->>    */
->>   static int xhci_handle_event_trb(struct xhci_hcd *xhci, struct xhci_interrupter *ir,
->>                    union xhci_trb *event)
->>   {
->>       u32 trb_type;
->>   +    /*
->> +     * Some interrupters do not need to handle event TRBs, as they may be
->> +     * managed by another entity, but rely on the OS to clean up.
->> +     */
->> +    if (ir->skip_events)
->> +        return 0;
->
-> This works for your special case but is a small step sideways from other possible xhci
-> secondary interrupter usecases.
->
-> We currently support just one event handler function even if we support several secondary
-> interrupters. Idea was to add support to pass dedicated handlers for each secondary interrupter,
-> set when the secondary interrupter is requested.
->
-> In your case this dedicated handler wouldn't do anything.
->
-> This patch again has a different approach, it keeps the default handler, and instead adds
-> flags to it, preventing it from handling the event trb.
->
-> Not sure if we should take the time and implement dedicated handlers now, even if we don't
-> have any real users yet, or just take this quick change and rework it later when needed.
->
->
-Yes, I think we had a small discussion on this on v20:
-
-https://lore.kernel.org/linux-usb/a88b41f4-7e53-e162-5a6a-2d470e29c0bb@quicinc.com/
-
-Since I didn't have an environment that exercised the path where we'd actually want to handle secondary interrupter events, I wasn't sure if it was valid to add bits and pieces of it to support such use cases w/o proper testing.  I think having this driver (as is) is still a step forward into the right direction, as these APIs are still going to be required if enabling secondary interrupter events in the Linux environment.
-
-Thanks
-
-Wesley Cheng
-
+And would you use the same slack value regardless of the sleep
+duration, or make it somehow depend on the sleep duration?
 
