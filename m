@@ -1,161 +1,172 @@
-Return-Path: <linux-kernel+bounces-416164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 011519D4157
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 18:44:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB0459D4129
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 18:31:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6474CB27E4E
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 17:30:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80A50283B1B
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 17:31:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F0441AC420;
-	Wed, 20 Nov 2024 17:30:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kf3Dyd2C"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AE6D1AAE00;
+	Wed, 20 Nov 2024 17:31:00 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFBE9487BE;
-	Wed, 20 Nov 2024 17:30:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AA5813B58A
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 17:30:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732123821; cv=none; b=kSMpxYOH1zh+7Y3NgAM+M6pOU8ng3FPz1EaO1VV8IXcL763pdnljRpFO/W8LJFC6Q3i8Q3+jA536WYJkz6qsTOSWCdnXrbmjty1KdOdqTRDF9BWxKuCtRun93JtsUlMWWI+hEW5hQuoTLgCHTPw/dBFwmGSxltpbQ+F09kmCKhU=
+	t=1732123859; cv=none; b=FBUdT/cy67dqzMukmbGPmTJQkwjULnr1H74zQpXJ9PlvPrsJbhKeZ/ozKs8VihX4OSRbCRAchhjmJ/YNFwF6hfBysJDqTntVokgVMLE6S6C98nhGMIWdHSuVO5MQDh+8ID/DW3rEbA713h/+aT1U/UFDdpL1JRED9XCy6b/0G9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732123821; c=relaxed/simple;
-	bh=PFA7J969PABg1BMHj5bUVkB7wuVSRSb1IQcjJeE4WLw=;
+	s=arc-20240116; t=1732123859; c=relaxed/simple;
+	bh=UdmBR0vlYUwE0j7Xk0Auu9zw64mJgjK4bcR4taYvDfk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gcwn+hQQKNGRbLZdO8uCz1fFesc5gsFP4cOShAsrom6ApGjhp4syIdVNNIpRSuVOwyqo3xqnBhfYAm5z44oWMLCVk2nv+V35CsnmBXElzUPry/N4nDipBjHT5pACImX2fTYBpRG5ScLit8gZEJWwMyuVR/eXiuRUCL1T1LV85bs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kf3Dyd2C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD605C4CECD;
-	Wed, 20 Nov 2024 17:30:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732123820;
-	bh=PFA7J969PABg1BMHj5bUVkB7wuVSRSb1IQcjJeE4WLw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Kf3Dyd2CKUZa3tMlA5c9d+2ELCZPrv6chpFxvCS+UiOnBey7DGXhhzWANw/Gp+cVf
-	 9ekUEtoHku9jwPT9QXn/R2VMK+633Zwv3F8SW/w65Og7YAa79XArf9PDSYf46Yny/f
-	 CrYCCnTD0bWSCkL5fF9NGkrNb77XNSWjrPupERZ/bTBF5I2Jc5S3xRmc9IDdaoFlod
-	 GylypmxLKgFB8l61QEhIJKuBcBziS7S2je/uwRmgBZtYP0rWwBCTQiHaso7+9c9Aeo
-	 QatfyLQ2wrkudg0oAe0ccQENxnmONZH9eFt1AMIDeWXdmNfFX87/aC3WxZnfDlQGNL
-	 8lnRD6NSI6heA==
-Date: Wed, 20 Nov 2024 18:30:17 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Valentin Schneider <vschneid@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	kvm@vger.kernel.org, linux-mm@kvack.org, bpf@vger.kernel.org,
-	x86@kernel.org, rcu@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	Nicolas Saenz Julienne <nsaenzju@redhat.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Wanpeng Li <wanpengli@tencent.com>,
-	Vitaly Kuznetsov <vkuznets@redhat.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Neeraj Upadhyay <quic_neeraju@quicinc.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=qZU1nnBcR7mPMYgjqplKC/Ujjj9wkYDDmPKKrQS2RUvftyFpGJJ8VaFsV874N90ggVJjE6SIu5Pp9Zt4bq9Z2flX7kxGyvnIjBgGuXgij9BIKquwp7DUiO/U6r6rsMemHCJnDZ0SMrgEt0TBtQ4k1q+yAU0+hoZGqwVqJUxHx8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1tDoXG-0006Fm-Im; Wed, 20 Nov 2024 18:30:38 +0100
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1tDoXF-001m6C-38;
+	Wed, 20 Nov 2024 18:30:37 +0100
+Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1tDoXF-005I5x-2m;
+	Wed, 20 Nov 2024 18:30:37 +0100
+Date: Wed, 20 Nov 2024 18:30:37 +0100
+From: Marco Felsch <m.felsch@pengutronix.de>
+To: Russ Weight <russ.weight@linux.dev>
+Cc: Luis Chamberlain <mcgrof@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
 	Andrew Morton <akpm@linux-foundation.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	Lorenzo Stoakes <lstoakes@gmail.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Jason Baron <jbaron@akamai.com>, Kees Cook <keescook@chromium.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Juerg Haefliger <juerg.haefliger@canonical.com>,
-	Nicolas Saenz Julienne <nsaenz@kernel.org>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Nadav Amit <namit@vmware.com>, Dan Carpenter <error27@gmail.com>,
-	Chuang Wang <nashuiliang@gmail.com>,
-	Yang Jihong <yangjihong1@huawei.com>,
-	Petr Mladek <pmladek@suse.com>,
-	"Jason A. Donenfeld" <Jason@zx2c4.com>, Song Liu <song@kernel.org>,
-	Julian Pidancet <julian.pidancet@oracle.com>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Dionna Glaze <dionnaglaze@google.com>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Marcelo Tosatti <mtosatti@redhat.com>,
-	Yair Podemsky <ypodemsk@redhat.com>,
-	Daniel Wagner <dwagner@suse.de>, Petr Tesarik <ptesarik@suse.com>
-Subject: Re: [RFC PATCH v3 11/15] context-tracking: Introduce work deferral
- infrastructure
-Message-ID: <Zz4cqfVfyb1enxql@localhost.localdomain>
-References: <20241119153502.41361-1-vschneid@redhat.com>
- <20241119153502.41361-12-vschneid@redhat.com>
- <Zz2_7MbxvfjKsz08@pavilion.home>
- <Zz3w0o_3wZDgJn0K@localhost.localdomain>
- <xhsmho729hlv0.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Kamel Bouhara <kamel.bouhara@bootlin.com>,
+	Marco Felsch <kernel@pengutronix.de>,
+	Henrik Rydberg <rydberg@bitmath.org>,
+	Danilo Krummrich <dakr@redhat.com>, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-input@vger.kernel.org
+Subject: Re: [PATCH 2/5] firmware_loader: add support to handle
+ FW_UPLOAD_ERR_SKIP
+Message-ID: <20241120173037.x6cro7r2wh5aoadg@pengutronix.de>
+References: <20241119-v6-10-topic-touchscreen-axiom-v1-0-6124925b9718@pengutronix.de>
+ <20241119-v6-10-topic-touchscreen-axiom-v1-2-6124925b9718@pengutronix.de>
+ <20241120165049.jzsveoms2unxt3m6@4VRSMR2-DT.corp.robot.car>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <xhsmho729hlv0.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+In-Reply-To: <20241120165049.jzsveoms2unxt3m6@4VRSMR2-DT.corp.robot.car>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Le Wed, Nov 20, 2024 at 06:10:43PM +0100, Valentin Schneider a écrit :
-> On 20/11/24 15:23, Frederic Weisbecker wrote:
+Hi,
+
+On 24-11-20, Russ Weight wrote:
+> On Tue, Nov 19, 2024 at 11:33:51PM +0100, Marco Felsch wrote:
+> > It's no error if a driver indicates that the firmware is already
+> > up-to-date and the update can be skipped.
+> > 
+> > Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
+> > ---
+> >  drivers/base/firmware_loader/sysfs_upload.c | 4 ++++
+> >  1 file changed, 4 insertions(+)
+> > 
+> > diff --git a/drivers/base/firmware_loader/sysfs_upload.c b/drivers/base/firmware_loader/sysfs_upload.c
+> > index b3cbe5b156e3..44f3d8fa5e64 100644
+> > --- a/drivers/base/firmware_loader/sysfs_upload.c
+> > +++ b/drivers/base/firmware_loader/sysfs_upload.c
+> > @@ -174,6 +174,10 @@ static void fw_upload_main(struct work_struct *work)
+> >  	fw_upload_update_progress(fwlp, FW_UPLOAD_PROG_PREPARING);
+> >  	ret = fwlp->ops->prepare(fwl, fwlp->data, fwlp->remaining_size);
+> >  	if (ret != FW_UPLOAD_ERR_NONE) {
+> > +		if (ret == FW_UPLOAD_ERR_SKIP) {
+> > +			dev_info(fw_dev, "firmware already up-to-date, skip update\n");
+> > +			ret = FW_UPLOAD_ERR_NONE;
+> > +		}
 > 
-> > Ah but there is CT_STATE_GUEST and I see the last patch also applies that to
-> > CT_STATE_IDLE.
-> >
-> > So that could be:
-> >
-> > bool ct_set_cpu_work(unsigned int cpu, unsigned int work)
-> > {
-> > 	struct context_tracking *ct = per_cpu_ptr(&context_tracking, cpu);
-> > 	unsigned int old;
-> > 	bool ret = false;
-> >
-> > 	preempt_disable();
-> >
-> > 	old = atomic_read(&ct->state);
-> >
-> > 	/* CT_STATE_IDLE can be added to last patch here */
-> > 	if (!(old & (CT_STATE_USER | CT_STATE_GUEST))) {
-> > 		old &= ~CT_STATE_MASK;
-> > 		old |= CT_STATE_USER;
-> > 	}
+> If you change the error-code from FW_UPLOAD_ERR_SKIP to
+> FW_UPLOAD_ERR_NONE, then the "skip" string provided in the previous
+> patch will never be seen. There are currently no other instances where
+
+Do we really need to set it? As explained within the commit message,
+it's no error if FW_UPLOAD_ERR_SKIP is returned. The previous patch just
+added all pieces which may be required later on.
+
+> an error code requires special-case modifications to the fw_upload
+> code and I don't think it is necessary to add it here.
+
+Because at the moment no one is checking it except for the gb-beagleplay
+driver. This driver prints a dev_warn() string and returns a failure.
+Now the userspace needs some heuristic by parsing dmesg to check the
+reason. This is rather complex and very error prone as the sting can be
+changed in the future.
+
+Therefore I added the support to have a simple error code which can be
+returned by a driver. I'm open to return "skip" as error instead of
+casting it to none. Both is fine for me since both allow the userspace
+to easily check if the error is a 'real' error or if the fw-update was
+just skipped due to already-up-to-date.
+
+I wouldn't say that this is a special case, it is very common but no one
+is performing a fw-version check. Therefore I added this to the common
+code, to make it easier for driver devs.
+
+> The dev_info() message above can be provided by the device driver
+> that is using this API.
 > 
-> Hmph, so that lets us leverage the cmpxchg for a !CT_STATE_KERNEL check,
-> but we get an extra loop if the target CPU exits kernelspace not to
-> userspace (e.g. vcpu or idle) in the meantime - not great, not terrible.
+> I think you can either:
+> 
+> (1) allow "skip" to be treated as an error. The update didn't happen...
 
-The thing is, what you read with atomic_read() should be close to reality.
-If it already is != CT_STATE_KERNEL then you're good (minus racy changes).
-If it is CT_STATE_KERNEL then you still must do a failing cmpxchg() in any case,
-at least to make sure you didn't miss a context tracking change. So the best
-you can do is a bet.
+Please see above.
+
+> -or-
+> 
+> (2) The prepare function could detect the situation and set
+>     a flag in the same device driver. Your write function could
+>     set *written to the full data size and return without writing
+>     anything. Your poll_complete handler could also return
+>     FW_UPLOAD_ERR_NONE. Then you don't need to add FW_UPLOAD_ERR_SKIP
+>     at all. You would get the info message from the device driver
+>     and fw_upload would exit without an error.
+
+Please see above. I don't think that this is special case and why making
+the life hard for driver devs instead of having a well known fw
+behaviour?
+
+Regards,
+  Marco
 
 > 
-> At the cost of one extra bit for the CT_STATE area, with CT_STATE_KERNEL=1
-> we could do: 
+> Thanks,
+> - Russ
 > 
->   old = atomic_read(&ct->state);
->   old &= ~CT_STATE_KERNEL;
-
-And perhaps also old |= CT_STATE_IDLE (I'm seeing the last patch now),
-so you at least get a chance of making it right (only ~CT_STATE_KERNEL
-will always fail) and CPUs usually spend most of their time idle.
-
-Thanks.
+> >  		fw_upload_set_error(fwlp, ret);
+> >  		goto putdev_exit;
+> >  	}
+> > 
+> > -- 
+> > 2.39.5
+> > 
+> 
 
