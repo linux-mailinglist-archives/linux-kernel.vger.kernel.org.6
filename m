@@ -1,47 +1,81 @@
-Return-Path: <linux-kernel+bounces-415188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0442F9D3287
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 04:26:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7B809D328E
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 04:29:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9D57283E9A
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 03:26:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B2571F231A3
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 03:29:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F6A6155CA5;
-	Wed, 20 Nov 2024 03:26:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1500015625A;
+	Wed, 20 Nov 2024 03:29:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CM8WD1Z1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="LvQWIfOa"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2054.outbound.protection.outlook.com [40.107.94.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9182840BE5
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 03:26:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732073209; cv=none; b=PnZ63HmvOHyynrEzSD6aYRfSdfuL1czZ1m4o9Js4A95rZ7wUPxTEprJ08rLFMPUtZAPKn1S11zsT3CmAgwv2j0E7FIHvap+yU+efLjXmEz4Y+HM4hC6VUmrIjiJCR9dFXtIdfcTnLobwe68W0QQMjZWIE57NMaq/YxQxC3Mwlas=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732073209; c=relaxed/simple;
-	bh=pFoFdpRUSILZfAVqihjYwl6kJm2IBX+bSl5vNZz/tRw=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Nj/gTgm9LD1wx2NUdsFzTQ2Fe2QXQ/pFpwF0OcBf5bdGHL85oxfAdUB/MbhYcPvlYElLfHr1bLf45lhwqmUTUpgs+Hx8bWVLPillCuGeZCHByBmFEPfdoz8LlNGTfDrCnzohD/y94Wbtjn6j0Z3tM2vcoLXzdN75m5e7yF2WMeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CM8WD1Z1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B927C4CECD;
-	Wed, 20 Nov 2024 03:26:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732073209;
-	bh=pFoFdpRUSILZfAVqihjYwl6kJm2IBX+bSl5vNZz/tRw=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=CM8WD1Z1qWye61kU1FEj875V+2M6S6c9RvKVkzXsCYVVm1eVztqMQkw9iYKVeN/6d
-	 zDwQrUoQs+z4wbUXbjH9P8FY0b1lKrGks80r2GayN8+Cl30J1Op0fx/fFfj9QBLoH3
-	 JXDbbVWjnyJ9cNGao8vRV2UtFabBIcUWAQYNxwp4oxYDpFY6lXITDffecieh/gKCWJ
-	 7lHY0kYMe14uOwSMJErXUTk8hUCZAwAPNKRWtRtGqRT8W2GsAgivyMlTO5EELZB2gZ
-	 ATdBAmLvLDanslNiUvAdbmOwzAdq+C1sWjtzy3IMZaJA85hLUXfZUkPrXzuFJMT73h
-	 wbYbUlP7npKgw==
-Message-ID: <65b89566-1038-4422-9e2e-4d7da26dd1c7@kernel.org>
-Date: Wed, 20 Nov 2024 11:26:44 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2373740BE5;
+	Wed, 20 Nov 2024 03:29:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.54
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732073355; cv=fail; b=CvnQrdVQxPPmyU8/IXqmH/+lnpRQQEFIKFi5COCIs9QA8j0HNMsdEw1qHBWx68+ItEOJKKdb/ogbfZDsjvXiUYhE/BXb0VvTDKXMQh4mp6iWeAuLbAx8mcee6TW7MdpKZo4yH252CCvDJoo+onfCmuqmXZLedUQMJ8uxjbTv52U=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732073355; c=relaxed/simple;
+	bh=GWqje6QTjWqFQ1S4ALbcMqBlhyAv6M/YKDcPOlYnSig=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=SFryxO5l36hufNNR4qG7TUYoDMkbBPJRWMPzMKxnc1cL+Q3If2dnbXLAlijCW9jwp0WO8DUPmLG8qzUbsXoYabYX6meHbsJxR6e7NKx4z4FSy29Jxr911ruvlHLpNl9e2w4Vrfxoz/dRMT9pcBihBll8hxZk+gQCDLX4of0DVog=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=LvQWIfOa; arc=fail smtp.client-ip=40.107.94.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=HiNbtIg1VUARRQhoulEjunAmkmg/Rc83RgW/yLci++nQCLeevAEc3rHwE4eSkMVMUvAN1hoIIamANOW+uX5sgkhyV+bmIyj7cGd+CQuq0EU/gRQY6vGqwD4Or48bcPqprsVtztPGVn+sUVAOBV/m0PEO1Is+FbxJMvrIxpupkQln6uGaIzmwtzzxSJSWFqCmzXz0R/5b4dwFLlJSwFGHlBv6XaSWw6fB5MhaHHY1GTRVvIOzhdIfR2umPW80mOUH5jPmECJmeRKpBAoPv/GwGAvVSDVqyzeDs/cZ5dhl4A5ceqADJWQ0P7kjMVe4l6Q4lyR/owxlynXtwtALHiiaDw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/mHCt/8vt3QqwS5+HTUNujtRHT7AFFZstcNq1dmXIwk=;
+ b=bNoydlwRaiKDgFp4LlA6/7d8jLV9lH6RpHmq1JLyLIEcV/xdnfG406+irap4Xo+Qu+3VV6lolHCuYFjz8wPkqpcQHONJJeQHglRbOu9jYbXGm+pcemWbpc0MDeGC26JLrVNw3X+PgDAb6NThqOrYZisYF5RAg34/PMlUqFJktTIB/341FKIy/dgCbGtfeSlWcjGLt6JsKxFj75LKQt0ZwjFyJd8A3aYuFnCScDhdnL94y/qjmthfY6nTqnX5cLv9WS8yS0AAh6ExmhGp++67O+oW8qJsLZQVyCSBlsomr2WWs8FnTrY6E3mJy/UdCXCfy6N8PkCKoVgSBjk7yGGFdw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=redhat.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/mHCt/8vt3QqwS5+HTUNujtRHT7AFFZstcNq1dmXIwk=;
+ b=LvQWIfOaAPx703oVWeZlUzkODob+A/ByzxN4vhqJoN4zuFAa4GfAeVGOUImfNNoTZYTUv9bOEABSxQCQCQX7+NMxLHuDtnLVfmokcVp92J1592+hl7tDywD7vPvmaX/nnn3w5qUN9LBjxgmnmUkxQCYnIW9S1mJ+mlnpyP10pwh2vbHdMswrffVN6PkC6hQyr3kxoFW25wuCrxXWHV/sHa4vHLj2e7PALMmH8i9e6mJ/vC4ZwJwZiP7Csv7FCAdsdAqbofuGFBciYleE6+L4+gU2ounwGFtQRBOOZDB6C+hjTdL5N8ORCoBA7F4QfPtTJXpJZ4+ndqZ377xV5Hg/eQ==
+Received: from SJ0PR05CA0071.namprd05.prod.outlook.com (2603:10b6:a03:332::16)
+ by SN7PR12MB7226.namprd12.prod.outlook.com (2603:10b6:806:2a9::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.24; Wed, 20 Nov
+ 2024 03:29:08 +0000
+Received: from CY4PEPF0000EDD6.namprd03.prod.outlook.com
+ (2603:10b6:a03:332:cafe::b7) by SJ0PR05CA0071.outlook.office365.com
+ (2603:10b6:a03:332::16) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.14 via Frontend
+ Transport; Wed, 20 Nov 2024 03:29:07 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ CY4PEPF0000EDD6.mail.protection.outlook.com (10.167.241.202) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8158.14 via Frontend Transport; Wed, 20 Nov 2024 03:29:07 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 19 Nov
+ 2024 19:28:52 -0800
+Received: from [10.110.48.28] (10.126.230.35) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 19 Nov
+ 2024 19:28:52 -0800
+Message-ID: <171354c3-c276-48c8-9a80-795f4aa7a471@nvidia.com>
+Date: Tue, 19 Nov 2024 19:28:51 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,282 +83,218 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Cc: Chao Yu <chao@kernel.org>, Xiuhong Wang <xiuhong.wang.cn@gmail.com>,
- Xiuhong Wang <xiuhong.wang@unisoc.com>, jaegeuk@kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
- hao_hao.wang@unisoc.com, ke.wang@unisoc.com
-Subject: Re: [PATCH] f2fs: Fix to avoid long time to shrink extent cache
-To: Zhiguo Niu <niuzhiguo84@gmail.com>
-References: <20241112110627.1314632-1-xiuhong.wang@unisoc.com>
- <fb436fdb-a4eb-49cc-a730-354611e88b21@kernel.org>
- <CAOsHCa1t+LeeAG2PDJ0BfYtoh_+CUmLjZcp1+dGZWR5PPfmFSQ@mail.gmail.com>
- <5b0c17da-f1e1-490d-a560-3312bc8c3247@kernel.org>
- <CAHJ8P3+dqhsNOy6-jvPaazSSOk7V9pEkQmamE48oLgGK1ORHfg@mail.gmail.com>
+Subject: Re: [PATCH] mm/gup: handle NULL pages in unpin_user_pages()
+To: David Hildenbrand <david@redhat.com>, Andrew Morton
+	<akpm@linux-foundation.org>
+CC: LKML <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>, Oscar Salvador
+	<osalvador@suse.de>, Vivek Kasireddy <vivek.kasireddy@intel.com>, Dave Airlie
+	<airlied@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>, Matthew Wilcox
+	<willy@infradead.org>, Christoph Hellwig <hch@infradead.org>, Jason Gunthorpe
+	<jgg@nvidia.com>, Peter Xu <peterx@redhat.com>, Arnd Bergmann
+	<arnd@arndb.de>, Daniel Vetter <daniel.vetter@ffwll.ch>, Dongwon Kim
+	<dongwon.kim@intel.com>, Hugh Dickins <hughd@google.com>, Junxiao Chang
+	<junxiao.chang@intel.com>, <stable@vger.kernel.org>
+References: <20241119044923.194853-1-jhubbard@nvidia.com>
+ <64d5e357-94b5-48b4-b6cf-0a7a578f82ae@redhat.com>
 Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <CAHJ8P3+dqhsNOy6-jvPaazSSOk7V9pEkQmamE48oLgGK1ORHfg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: John Hubbard <jhubbard@nvidia.com>
+In-Reply-To: <64d5e357-94b5-48b4-b6cf-0a7a578f82ae@redhat.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000EDD6:EE_|SN7PR12MB7226:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5f28c34b-a337-4756-b249-08dd09137dc7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|82310400026|7416014|376014|36860700013|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?RHdxdDloMkpwSzhjMHlJMFpEL1ZZSHEwK2Y1U3lWd1BnTy9DdktDWktpVE4w?=
+ =?utf-8?B?WUNpbitVRlNZa3FPN1dDdEhFeGI5TU1NRit6YVArcDRVYTN1ZGJialZPRlRx?=
+ =?utf-8?B?SkRCS1pZQXY3dFZsNEx1bzh0QS9oOXRaVGZ6V2ZDWFJqdUVLTno0dHVXTm45?=
+ =?utf-8?B?Rk82RDZ4QmZKNG05QWlDc3hOMVNHWHRxekplVTR2UnQvUUF1QnczeGkyN01j?=
+ =?utf-8?B?SkRhZDMrVFc0eGNjSnNpaW56Z2QxMmNPd3FXK0trUWRyekZQR2JJdzlWZWtx?=
+ =?utf-8?B?ODR1SGFlbHY3bFZyY1pBdDhRT2k0Z1JGQUpTNUMzSnIyTklUWkZGWnpFNVhs?=
+ =?utf-8?B?ZUVUN2MrRWN3S0tWaVljRXl6R0NXUndnR1REcE5hREIvdlNJZFdJZ2Z1aHFD?=
+ =?utf-8?B?TDlKamlscjZINTdkNTdGRmFsNlAxcUl2V1JyUmxvcDRQSml3bE9BRmNJTi9u?=
+ =?utf-8?B?ZXR1NXZNSyt3YWpNaEh3S2xPMHJ6L2Q1a3MwTUpkVUVCYUg3MEdmSXdQR2dF?=
+ =?utf-8?B?NklTT2dYeFF1enJxQkRtTGpFenlXVjJsTWxHUWY0VndqOFE3TVFTM0xQbUsw?=
+ =?utf-8?B?cGFILzZMM2Q5RWkyVlExN0tPWVNZM3M3M0hzTzNWYWFvVW44aXlHa3ZycS91?=
+ =?utf-8?B?N3RiRS8zOW1zTURyTHFSbmNhMkUxK2Z2NDlaVmYxMEdZeElGdlBaZCs3S3pX?=
+ =?utf-8?B?V1ZHUHl1WGdLNU1kckJSaytjRk0wYmdZcU5kMldPdkgvWkY5N1NWZDVueFVW?=
+ =?utf-8?B?ZWhOaDl5Q0xheTRVUUdsb1dFYU4yVVlpT3VhZlFGNEFHaGFxUFM5bnRQdTVt?=
+ =?utf-8?B?MHJ2WUJQenRMdGRtQzcwMmt2dDFlTmp0aW04c3QvMlkxWmNseHRXT1pWSEhG?=
+ =?utf-8?B?SWJ4ZjZndzVZOGsrTnhFaVhjWVowQUdjd3lzTE1ISmVVcDNPc0Ezby9ET3lY?=
+ =?utf-8?B?V0NnRU1WVGkvekxZalhRVWsxemtmRUhVbE5FcXRMR2JkQittWjFGOWNkYkg1?=
+ =?utf-8?B?K0VNUnJwZitLcUtBdkFrQWpuZ2ZVVU9sSXJaSWpER2orUW8yeElpLy9Rak5C?=
+ =?utf-8?B?RmFDUEsvOXFTckZUUzF0YU1tQ2NQZDR5OVFwOURjek1pam42YXNQWXo0ZGVm?=
+ =?utf-8?B?cmgzc2ZqeGZJZ3RzVWhiLytlczBncm53QkRYL2tkSUNWQzJwWllJMUJsWXQy?=
+ =?utf-8?B?SFRUQW8vdG5UUlpxWXo4cllyVFA0M0cyUHZOM3ZmZEJHU3dUUlh0RituaWo4?=
+ =?utf-8?B?YlVzaXdRa0FudFY2ZkcyOUpHZ0dWR1o5TjNYekZHcjdJZWFxbEQ2T0w4SHpG?=
+ =?utf-8?B?ai9hbyt6blJ0YnQ2dCtXYXVCaEpVem4yRWlXdDdOdmQzcHUzNzdJUzNKQ2tr?=
+ =?utf-8?B?WEN6K29CTit4NTl6WnZrSzdRTE5HNFNVcy8wNlVMVitSUDBFMW5hU1k0SFM1?=
+ =?utf-8?B?aUZ5TGIwQkxSVHRuN05zT1d2OGlmQ25wQmp5MHFZWjZNRDlydmg0WW03NVRi?=
+ =?utf-8?B?d0o1Z1MvRHlRUG44MDNtRmNKczBOTWZkVWNSSThTN3RLNWRLbXRyTzRVdWRa?=
+ =?utf-8?B?aFd4RVZTSXlUVi9KRHYwdnBiTm10a1JOa2IvZlV0SW9ZanpseG03RFZqa3V5?=
+ =?utf-8?B?V2g0WUczWjZ5cWJDeUR5VURrWjlSTU5JcThQRWdhajJaVE9TV0VrRkVvVTFU?=
+ =?utf-8?B?cFh6a040YnF1NDQ0TkRXWkJLbGtMTXB4YVJ3VVdEWklhZjRBellJVFRidWJ3?=
+ =?utf-8?B?ZFNLZjVLQ2Frb1ZadFpZd0NwU29tTTFMVTltYXRBSVowUDhlUnJHM1QvWnJn?=
+ =?utf-8?B?OHZUY2FRdE5wMTQ0R2p4RHdPMUQwL0tDditTUUQ4bHFLL29Xb0MrQ05MOHpn?=
+ =?utf-8?B?RFZ4UDBwOHNaTERBbFN5L0dSck9kRkcyeUJNNVZMcnBNN1E9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(7416014)(376014)(36860700013)(7053199007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Nov 2024 03:29:07.4496
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5f28c34b-a337-4756-b249-08dd09137dc7
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CY4PEPF0000EDD6.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7226
 
-On 2024/11/19 16:26, Zhiguo Niu wrote:
-> Chao Yu <chao@kernel.org> 于2024年11月19日周二 15:50写道：
+On 11/19/24 6:33 AM, David Hildenbrand wrote:
+> On 19.11.24 05:49, John Hubbard wrote:
+>> The recent addition of "pofs" (pages or folios) handling to gup has a
+>> flaw: it assumes that unpin_user_pages() handles NULL pages in the
+>> pages** array. That's not the case, as I discovered when I ran on a new
+>> configuration on my test machine.
 >>
->> On 2024/11/19 14:46, Xiuhong Wang wrote:
->>> Chao Yu <chao@kernel.org> 于2024年11月19日周二 14:05写道：
->>>>
->>>> On 2024/11/12 19:06, Xiuhong Wang wrote:
->>>>> We encountered a system hang problem based on the following
->>>>> experiment:
->>>>> There are 17 processes, 8 of which do 4k data read, write and
->>>>> compare tests, and 8 do 64k read, write and compare tests. Each
->>>>> thread writes a 256M file, and another thread writes a large file
->>>>> to 80% of the disk, and then keeps doing read operations, all of
->>>>> which are direct operations. This will cause the large file to be
->>>>> filled to 80% of the disk to be severely fragmented. On a 512GB
->>>>> device, this large file may generate a huge zombie extent tree.
->>>>>
->>>>> When system shutting down, the init process needs to wait for the
->>>>> writeback process, and the writeback process may encounter the
->>>>> situation where the READ_EXTENT_CACHE space is insufficient and
->>>>> needs to free the zombie extent tree. The extent tree has a large
->>>>> number of extent nodes, it will a long free time to free, which
->>>>> triggers system hang.
->>>>    > > The stack when the problem occurs is as follows:
->>>>> crash_arm64> bt 1
->>>>> PID: 1        TASK: ffffff80801a9200  CPU: 1    COMMAND: "init"
->>>>>     #0 [ffffffc00806b9a0] __switch_to at ffffffc00810711c
->>>>>     #1 [ffffffc00806ba00] __schedule at ffffffc0097c1c4c
->>>>>     #2 [ffffffc00806ba60] schedule at ffffffc0097c2308
->>>>>     #3 [ffffffc00806bab0] wb_wait_for_completion at ffffffc0086320d4
->>>>>     #4 [ffffffc00806bb20] writeback_inodes_sb at ffffffc00863719c
->>>>>     #5 [ffffffc00806bba0] sync_filesystem at ffffffc00863c98c
->>>>>     #6 [ffffffc00806bbc0] f2fs_quota_off_umount at ffffffc00886fc60
->>>>>     #7 [ffffffc00806bc20] f2fs_put_super at ffffffc0088715b4
->>>>>     #8 [ffffffc00806bc60] generic_shutdown_super at ffffffc0085cd61c
->>>>>     #9 [ffffffc00806bcd0] kill_f2fs_super at ffffffc00886b3dc
->>>>>
->>>>> crash_arm64> bt 14997
->>>>> PID: 14997    TASK: ffffff8119d82400  CPU: 3    COMMAND: "kworker/u16:0"
->>>>>     #0 [ffffffc019f8b760] __detach_extent_node at ffffffc0088d5a58
->>>>>     #1 [ffffffc019f8b790] __release_extent_node at ffffffc0088d5970
->>>>>     #2 [ffffffc019f8b810] f2fs_shrink_extent_tree at ffffffc0088d5c7c
->>>>>     #3 [ffffffc019f8b8a0] f2fs_balance_fs_bg at ffffffc0088c109c
->>>>>     #4 [ffffffc019f8b910] f2fs_write_node_pages at ffffffc0088bd4d8
->>>>>     #5 [ffffffc019f8b990] do_writepages at ffffffc0084a0b5c
->>>>>     #6 [ffffffc019f8b9f0] __writeback_single_inode at ffffffc00862ee28
->>>>>     #7 [ffffffc019f8bb30] writeback_sb_inodes at ffffffc0086358c0
->>>>>     #8 [ffffffc019f8bc10] wb_writeback at ffffffc0086362dc
->>>>>     #9 [ffffffc019f8bcc0] wb_do_writeback at ffffffc008634910
->>>>>
->>>>> Process 14997 ran for too long and caused the system hang.
->>>>>
->>>>> At this time, there are still 1086911 extent nodes in this zombie
->>>>> extent tree that need to be cleaned up.
->>>>>
->>>>> crash_arm64_sprd_v8.0.3++> extent_tree.node_cnt ffffff80896cc500
->>>>>      node_cnt = {
->>>>>        counter = 1086911
->>>>>      },
->>>>>
->>>>> The root cause of this problem is that when the f2fs_balance_fs
->>>>> function is called in the write process, it will determine
->>>>> whether to call f2fs_balance_fs_bg, but it is difficult to
->>>>> meet the condition of excess_cached_nats. When the
->>>>> f2fs_shrink_extent_tree function is called to free during
->>>>> f2fs_write_node_pages, there are too many extent nodes on the
->>>>> extent tree, which causes a loop and causes a system hang.
->>>>>
->>>>> To solve this problem, when calling f2fs_balance_fs, check whether
->>>>> the extent cache is sufficient. If not, release the zombie extent
->>>>> tree.
->>>>>
->>>>> Signed-off-by: Xiuhong Wang <xiuhong.wang@unisoc.com>
->>>>> Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
->>>>> ---
->>>>> Test the problem with the temporary versions:
->>>>> patch did not reproduce the problem, the patch is as follows:
->>>>> @@ -415,7 +415,7 @@ void f2fs_balance_fs(struct f2fs_sb_info *sbi, bool need)
->>>>>                    f2fs_stop_checkpoint(sbi, false, STOP_CP_REASON_FAULT_INJECT);
->>>>>
->>>>>            /* balance_fs_bg is able to be pending */
->>>>> -       if (need && excess_cached_nats(sbi))
->>>>> +       if (need)
->>>>>                    f2fs_balance_fs_bg(sbi, false);
->>>>>
->>>>> ---
->>>>>     fs/f2fs/segment.c | 4 +++-
->>>>>     1 file changed, 3 insertions(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->>>>> index 1766254279d2..390bec177567 100644
->>>>> --- a/fs/f2fs/segment.c
->>>>> +++ b/fs/f2fs/segment.c
->>>>> @@ -415,7 +415,9 @@ void f2fs_balance_fs(struct f2fs_sb_info *sbi, bool need)
->>>>>                 f2fs_stop_checkpoint(sbi, false, STOP_CP_REASON_FAULT_INJECT);
->>>>>
->>>>>         /* balance_fs_bg is able to be pending */
->>>>> -     if (need && excess_cached_nats(sbi))
->>>>> +     if (need && (excess_cached_nats(sbi) ||
->>>>> +                     !f2fs_available_free_memory(sbi, READ_EXTENT_CACHE) ||
->>>>> +                     !f2fs_available_free_memory(sbi, AGE_EXTENT_CACHE)))
->>>>
->>>> Hi,
->>>>
->>>> I doubt if there is no enough memory, we may still run into
->>>> f2fs_shrink_extent_tree() and suffer such long time delay.
->>>>
->>>> So, can we just let __free_extent_tree() break the loop once we have
->>>> released entries w/ target number? something like this:
->>>>
->>>> ---
->>>>     fs/f2fs/extent_cache.c | 15 ++++++++++-----
->>>>     1 file changed, 10 insertions(+), 5 deletions(-)
->>>>
->>>> diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
->>>> index 019c1f7b7fa5..38c71c1c4fb7 100644
->>>> --- a/fs/f2fs/extent_cache.c
->>>> +++ b/fs/f2fs/extent_cache.c
->>>> @@ -379,11 +379,12 @@ static struct extent_tree *__grab_extent_tree(struct inode *inode,
->>>>     }
->>>>
->>>>     static unsigned int __free_extent_tree(struct f2fs_sb_info *sbi,
->>>> -                                       struct extent_tree *et)
->>>> +                               struct extent_tree *et, unsigned int nr_shrink)
->>>>     {
->>>>           struct rb_node *node, *next;
->>>>           struct extent_node *en;
->>>>           unsigned int count = atomic_read(&et->node_cnt);
->>>> +       unsigned int i = 0;
->>>>
->>>>           node = rb_first_cached(&et->root);
->>>>           while (node) {
->>>> @@ -391,6 +392,9 @@ static unsigned int __free_extent_tree(struct f2fs_sb_info *sbi,
->>>>                   en = rb_entry(node, struct extent_node, rb_node);
->>>>                   __release_extent_node(sbi, et, en);
->>>>                   node = next;
->>>> +
->>>> +               if (nr_shrink && ++i >= nr_shrink)
->>>> +                       break;
->>>>           }
->>>>
->>>>           return count - atomic_read(&et->node_cnt);
->>>> @@ -761,7 +765,7 @@ static void __update_extent_tree_range(struct inode *inode,
->>>>           }
->>>>
->>>>           if (is_inode_flag_set(inode, FI_NO_EXTENT))
->>>> -               __free_extent_tree(sbi, et);
->>>> +               __free_extent_tree(sbi, et, 0);
->>>>
->>>>           if (et->largest_updated) {
->>>>                   et->largest_updated = false;
->>>> @@ -942,7 +946,8 @@ static unsigned int __shrink_extent_tree(struct f2fs_sb_info *sbi, int nr_shrink
->>>>           list_for_each_entry_safe(et, next, &eti->zombie_list, list) {
->>>>                   if (atomic_read(&et->node_cnt)) {
->>>>                           write_lock(&et->lock);
->>>> -                       node_cnt += __free_extent_tree(sbi, et);
->>>> +                       node_cnt += __free_extent_tree(sbi, et,
->>>> +                                       nr_shrink - node_cnt - tree_cnt);
->>>>                           write_unlock(&et->lock);
->>>>                   }
->>>>                   f2fs_bug_on(sbi, atomic_read(&et->node_cnt));
->>>> @@ -1095,7 +1100,7 @@ static unsigned int __destroy_extent_node(struct inode *inode,
->>>>                   return 0;
->>>>
->>>>           write_lock(&et->lock);
->>>> -       node_cnt = __free_extent_tree(sbi, et);
->>>> +       node_cnt = __free_extent_tree(sbi, et, 0);
->>>>           write_unlock(&et->lock);
->>>>
->>>>           return node_cnt;
->>>> @@ -1117,7 +1122,7 @@ static void __drop_extent_tree(struct inode *inode, enum extent_type type)
->>>>                   return;
->>>>
->>>>           write_lock(&et->lock);
->>>> -       __free_extent_tree(sbi, et);
->>>> +       __free_extent_tree(sbi, et, 0);
->>>>           if (type == EX_READ) {
->>>>                   set_inode_flag(inode, FI_NO_EXTENT);
->>>>                   if (et->largest.len) {
->>>> --
->>>> 2.40.1
->>>>
->>>> Thanks,
->>>>
->>>>>                 f2fs_balance_fs_bg(sbi, false);
->>>>>
->>>>>         if (!f2fs_is_checkpoint_ready(sbi))
->>>>
->>>
->>>
->>> Hi chao,
->>>
->>> We have also considered this approach, but the problem still occurs
->>> after retesting.
->>> 1. The problem still occurs in the following call of the unmount data process.
->>> f2fs_put_super -> f2fs_leave_shrinker
+>> Fix this by skipping NULL pages in unpin_user_pages(), just like
+>> unpin_folios() already does.
 >>
->> Yes, I guess we need to fix this path as well, however, your patch didn't
->> cover this path as well, am I missing something?
-> Dear Chao,
-> This patch version aim  to shrink extent cache as early as possible on
-> the  "all write path"
-> by "write action" -> f2fs_balance_fs -> f2fs_balance_fs_bg
-
-Zhiguo, thanks for explaining again.
-
-However, I doubt covering all write paths is not enough, because extent
-node can increase when f2fs_precache_extents() was called from paths
-including fadvise/fiemap/swapon/ioc_precache_extents, and there may be
-no writeback, so we may get no chance to call into f2fs_balance_fs_bg(),
-e.g. there is no data update in mountpoint, or mountpoint is readonly.
-
-> As the comment , the "excess_cached_nats" is difficult to achieve in
-> this scenario, and
-
-Another concern is, in high-end products w/ more memory, it may has less
-chance to hit newly added condition in f2fs_balance_fs()? not sure though.
-
-+     if (need && (excess_cached_nats(sbi) ||
-+                     !f2fs_available_free_memory(sbi, READ_EXTENT_CACHE) ||
-+                     !f2fs_available_free_memory(sbi, AGE_EXTENT_CACHE)))
-
-I mean will f2fs_available_free_memory(sbi, {READ,AGE}_EXTENT_CACHE)
-return true if available memory is sufficient?
-
-Thanks,
-
-> trigger the issue in path f2fs_write_node_pages->f2fs_balance_fs_bg(is
-> called directly here).
-> At that time, there were already a lot of extent node cnt.
-> Thanks!
+>> Details: when booting on x86 with "numa=fake=2 movablecore=4G" on Linux
+>> 6.12, and running this:
 >>
->>> 2. Writing back the inode in the normal write-back process will
->>> release the extent cache, and the problem still occurs. The stack is
->>> as follows:
+>>      tools/testing/selftests/mm/gup_longterm
 >>
->> Ditto,
+>> ...I get the following crash:
 >>
->> Thanks,
+>> BUG: kernel NULL pointer dereference, address: 0000000000000008
+>> RIP: 0010:sanity_check_pinned_pages+0x3a/0x2d0
+>> ...
+>> Call Trace:
+>>   <TASK>
+>>   ? __die_body+0x66/0xb0
+>>   ? page_fault_oops+0x30c/0x3b0
+>>   ? do_user_addr_fault+0x6c3/0x720
+>>   ? irqentry_enter+0x34/0x60
+>>   ? exc_page_fault+0x68/0x100
+>>   ? asm_exc_page_fault+0x22/0x30
+>>   ? sanity_check_pinned_pages+0x3a/0x2d0
+>>   unpin_user_pages+0x24/0xe0
+>>   check_and_migrate_movable_pages_or_folios+0x455/0x4b0
+>>   __gup_longterm_locked+0x3bf/0x820
+>>   ? mmap_read_lock_killable+0x12/0x50
+>>   ? __pfx_mmap_read_lock_killable+0x10/0x10
+>>   pin_user_pages+0x66/0xa0
+>>   gup_test_ioctl+0x358/0xb20
+>>   __se_sys_ioctl+0x6b/0xc0
+>>   do_syscall_64+0x7b/0x150
+>>   entry_SYSCALL_64_after_hwframe+0x76/0x7e
 >>
->>> [H 103098.974356] c2 [<ffffffc008aee8a4>] (rb_erase+0x204/0x334)
->>> [H 103098.974389] c2 [<ffffffc0088f8fd0>] (__release_extent_node+0xc8/0x168)
->>> [H 103098.974425] c2 [<ffffffc0088fad74>]
->>> (f2fs_update_extent_tree_range+0x4a0/0x724)
->>> [H 103098.974459] c2 [<ffffffc0088fa8c0>] (f2fs_update_extent_cache+0x19c/0x1b0)
->>> [H 103098.974495] c2 [<ffffffc0088edc70>] (f2fs_outplace_write_data+0x74/0xf0)
->>> [H 103098.974525] c2 [<ffffffc0088ca834>] (f2fs_do_write_data_page+0x3e4/0x6c8)
->>> [H 103098.974552] c2 [<ffffffc0088cb150>]
->>> (f2fs_write_single_data_page+0x478/0xab0)
->>> [H 103098.974574] c2 [<ffffffc0088d0bd0>] (f2fs_write_cache_pages+0x454/0xaac)
->>> [H 103098.974596] c2 [<ffffffc0088d0698>] (__f2fs_write_data_pages+0x40c/0x4f0)
->>> [H 103098.974617] c2 [<ffffffc0088cc860>] (f2fs_write_data_pages+0x30/0x40)
->>> [H 103098.974645] c2 [<ffffffc0084c0e00>] (do_writepages+0x18c/0x3e8)
->>> [H 103098.974678] c2 [<ffffffc0086503cc>] (__writeback_single_inode+0x48/0x498)
->>> [H 103098.974720] c2 [<ffffffc0086562c8>] (writeback_sb_inodes+0x454/0x9b0)
->>> [H 103098.974754] c2 [<ffffffc008655de8>] (__writeback_inodes_wb+0x198/0x224)
->>> [H 103098.974788] c2 [<ffffffc008656d0c>] (wb_writeback+0x1c0/0x698)
->>> [H 103098.974819] c2 [<ffffffc008655614>] (wb_do_writeback+0x420/0x54c)
->>> [H 103098.974853] c2 [<ffffffc008654f50>] (wb_workfn+0xe4/0x388)
+>> Fixes: 94efde1d1539 ("mm/gup: avoid an unnecessary allocation call for FOLL_LONGTERM cases")
+>> Cc: David Hildenbrand <david@redhat.com>
+>> Cc: Oscar Salvador <osalvador@suse.de>
+>> Cc: Vivek Kasireddy <vivek.kasireddy@intel.com>
+>> Cc: Dave Airlie <airlied@redhat.com>
+>> Cc: Gerd Hoffmann <kraxel@redhat.com>
+>> Cc: Matthew Wilcox <willy@infradead.org>
+>> Cc: Christoph Hellwig <hch@infradead.org>
+>> Cc: Jason Gunthorpe <jgg@nvidia.com>
+>> Cc: Peter Xu <peterx@redhat.com>
+>> Cc: Arnd Bergmann <arnd@arndb.de>
+>> Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
+>> Cc: Dongwon Kim <dongwon.kim@intel.com>
+>> Cc: Hugh Dickins <hughd@google.com>
+>> Cc: Junxiao Chang <junxiao.chang@intel.com>
+>> Cc: <stable@vger.kernel.org>
+>> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+>> ---
 >>
+>> Hi,
+>>
+>> I got a nasty shock when I tried out a new test machine setup last
+>> night--I wish I'd noticed the problem earlier! But anyway, this should
+>> make it all better...
+>>
+>> I've asked Greg K-H to hold off on including commit 94efde1d1539
+>> ("mm/gup: avoid an unnecessary allocation call for FOLL_LONGTERM cases")
+>> in linux-stable (6.11.y), but if this fix-to-the-fix looks good, then
+>> maybe both fixes can ultimately end up in stable.
+>>
+> 
+> Ouch!
+> 
+>> thanks,
+>> John Hubbard
+>>
+>>   mm/gup.c | 17 +++++++++++++++--
+>>   1 file changed, 15 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/mm/gup.c b/mm/gup.c
+>> index ad0c8922dac3..6e417502728a 100644
+>> --- a/mm/gup.c
+>> +++ b/mm/gup.c
+>> @@ -52,7 +52,12 @@ static inline void sanity_check_pinned_pages(struct page **pages,
+>>        */
+>>       for (; npages; npages--, pages++) {
+>>           struct page *page = *pages;
+>> -        struct folio *folio = page_folio(page);
+>> +        struct folio *folio;
+>> +
+>> +        if (!page)
+>> +            continue;
+>> +
+>> +        folio = page_folio(page);
+>>           if (is_zero_page(page) ||
+>>               !folio_test_anon(folio))
+>> @@ -248,9 +253,14 @@ static inline struct folio *gup_folio_range_next(struct page *start,
+>>   static inline struct folio *gup_folio_next(struct page **list,
+>>           unsigned long npages, unsigned long i, unsigned int *ntails)
+>>   {
+>> -    struct folio *folio = page_folio(list[i]);
+>> +    struct folio *folio;
+>>       unsigned int nr;
+>> +    if (!list[i])
+>> +        return NULL;
+>> +
+> 
+> I don't particularly enjoy returning NULL here, if we don't teach the other users of that function about that possibility. There are two other users.
+> 
+> Also: we are not setting "ntails" to 1. I think the callers uses that as "nr" to advance npages. So the caller has to make sure to set "nr = 1" in case it sees "NULL".
+> 
+> Alternatively ...
+> 
+>> +    folio = page_folio(list[i]);
+>> +
+>>       for (nr = i + 1; nr < npages; nr++) {
+>>           if (page_folio(list[nr]) != folio)
+>>               break;
+>> @@ -410,6 +420,9 @@ void unpin_user_pages(struct page **pages, unsigned long npages)
+>>       sanity_check_pinned_pages(pages, npages);
+>>       for (i = 0; i < npages; i += nr) {
+> 
+> ... handle it here
+> 
+> if (!pages[i]) {
+>      nr = 1;
+>      continue;
+> }
+> 
+> No strong opinion. But I think we should either update all callers to deal with returning NULL from this function, and set "nr = 1".
+> 
+
+Yes, that makes sense. I'll send a v2 shortly with one or the other
+approach implemented. I appreciate the review feedback as always!
+
+thanks,
+-- 
+John Hubbard
 
 
