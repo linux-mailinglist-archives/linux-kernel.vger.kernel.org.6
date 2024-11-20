@@ -1,136 +1,104 @@
-Return-Path: <linux-kernel+bounces-416140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB45E9D4120
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 18:26:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67D579D40C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 18:04:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C6712B37F04
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 17:03:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F7991F233AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 17:04:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29FE11AAE00;
-	Wed, 20 Nov 2024 17:02:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B42C156230;
+	Wed, 20 Nov 2024 17:04:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ed9/Io31"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BrxgaPWI"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 682281A9B57;
-	Wed, 20 Nov 2024 17:02:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E49C7155330
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 17:04:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732122177; cv=none; b=QpoP77nKKTNUOJ7ehElP9xJYVd6JqxA+hII/WOSO6L/S3QgzJ9oaALoMhq45KUqjUkfJBANkgwLZ7jf6g6jO8jnbFX2zF9uTjM6fwD1lXkEIHWAH9VUtOp+cN7mZ9zAuThpmI7tnQmh6VC0Su0s47ABr2XI4AAQDOEhDPSDrVP8=
+	t=1732122255; cv=none; b=AUWDEMlYYeogoQDVoMr10wN/Cbku1GZjuFp90PBb0K4+72ywLDvVN2/KZJGir9nYEBErZeFL+uOvh4WK07aqFddGFXq0hHaIkVxLRp0ad88ugPpMo/XSB34wB0E5+fowh3EFndl/xDDjdVOIstgA/At53hpSl5YXEpivo1OMPH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732122177; c=relaxed/simple;
-	bh=jAZjr6uZmIpn8znH1f7+i/DoO9TQa5nzhIeLcjQqb/M=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=PjcfQyViIUigyEjrraq0HWRiPP6e9iuU1CIakYHFLf7KE+80mXoIyQAWfDxNdlgSlI1qKZzXdLSQrqvu/gJPvmVRi8helFxXklz15P01f3WhTA8IziGHvqAGLRQjWP4Fl2G5Scjm+VyzmzrYFY59HyXFk+K+Au545nZZSFdlFsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ed9/Io31; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1DBAC4CECD;
-	Wed, 20 Nov 2024 17:02:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732122176;
-	bh=jAZjr6uZmIpn8znH1f7+i/DoO9TQa5nzhIeLcjQqb/M=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ed9/Io31TbUaY0/i/6oc8vGK556Ha1ErkaKHjp/vdBstUO4lsvfFKIiw21wYFxO44
-	 eVsL+LruUm456uQlfE4u8y1gTMCFHKC6Q/JwdOxmgOSzEMYc2j0sXjLQmgBVD54nvE
-	 EsFqSVXlKyUgt6auoXf74My1cwNqWDZajpIvHhUaa5LEefPQx3A/C5JT2q3s4y2t46
-	 b4Bxg7k4FVY6qKOYqyivsKIOhRINeHkaV5Dx9ta8CoC0PFdMay3f9Y/ffFrDawj7i3
-	 ZK+g45vmH3Sa6BGLTk1keFMZFCVvAEmN1lJvrwQNFH0s4Et00ar27KFDLvljPAxh07
-	 PUtwTI8MBq2kA==
-From: SeongJae Park <sj@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: SeongJae Park <sj@kernel.org>,
-	stable@vger.kernel.org,
-	patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org,
-	akpm@linux-foundation.org,
-	linux@roeck-us.net,
-	shuah@kernel.org,
-	patches@kernelci.org,
-	lkft-triage@lists.linaro.org,
-	pavel@denx.de,
-	jonathanh@nvidia.com,
-	f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net,
-	rwarsow@gmx.de,
-	conor@kernel.org,
-	hargar@microsoft.com,
-	broonie@kernel.org,
-	damon@lists.linux.dev
-Subject: Re: [PATCH 6.11 000/107] 6.11.10-rc1 review
-Date: Wed, 20 Nov 2024 09:02:52 -0800
-Message-Id: <20241120170252.69500-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20241120125629.681745345@linuxfoundation.org>
-References: 
+	s=arc-20240116; t=1732122255; c=relaxed/simple;
+	bh=2UvVAtc/uLS9k8h6KdYK775dOKGJMjM75TfPH4ylbAk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cWcZxs35RBUsjD3JVGt5KJ3CQb9T5NCLl4zG/8vuhsG2uEnUiGcxkX568sWZs9h3NQk/k9CVneCUC2h41ZUBj09s9KFFja2WhGBF+9Y31YwxqLBU9Azc8DfrQn+W/Xm72hysFusi/Lh8yAmrlSVLpHzQR27FPqLQZCBauCs2ePA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BrxgaPWI; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-38230ed9baeso3700894f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 09:04:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1732122251; x=1732727051; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=H1f2X60ZGZWbIG/u+FbTLhY1O8lOEuX5gB3Pdf3Y5Gk=;
+        b=BrxgaPWISiMLnrqdCK6mmVRdk0KBxC+30udVsYAhzULPHhiGmzsnSC6O/N7J8vMadd
+         9PNFata/WnxhvpUjt7Cj47yVAO150U/d/sH1q1/ZEitcJU0VlHJQahoqhx4BFnDhB527
+         Q6hpvCEwKHcKCOx1VtRGEjZPbNTXCJz55aruiYIYJ1+VizhWunbLRO1GuyTHZsrktu12
+         r4xUmXSG1RumVnRQ9aaTgAcke9sNOhcyu1MhVMRbOr4uIbdwwhAPkXFhFg5ngly9G8p2
+         BhreNf8IFowLsZs36AUv5Uo7s2ICF56VIs8VeAQuK1MDH0PpMDxWD+C8zbjQcoSPgNjP
+         iXyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732122251; x=1732727051;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=H1f2X60ZGZWbIG/u+FbTLhY1O8lOEuX5gB3Pdf3Y5Gk=;
+        b=F1q4aqksKQqDLynNkw9pwB42kpCtksgL0wuzEBpuTtf7s0NJ9voObmqwHftVNdyNhn
+         TYMeasAPRn/bSM05qk9XjTgDEbfnuTx6EzcTIUa88IF8KCCcKlqIQ2BHxhylIh5M3jhT
+         9gdaoIvDlqLmQQoHghrWhvzfcNY6Wal6C8CFFKe2g+ZrGPqjBxSOQ/83+akx44j86qvR
+         0nXgsUDpLHQU9kI9KEnmMIRG73gyuBkS9wqlzhRuSE4nKgjftbxor8sfb4bX+ujaOmLJ
+         vqAcsXfzLX7RcN29QpdG4Gn822Npbt2sG2F1zEWq0xypO8/syX9I37cEczJvGGbJ/msS
+         urUA==
+X-Forwarded-Encrypted: i=1; AJvYcCXFMeUQj7oHCh6d9nJ4rQVsthZjltVpEFbZKzcJuRwTXObIeAcNursSRjs2JS94VIJ6WTKjA2leNuGII30=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2OWTp+TsWF+ERBOEI+1OzuXnGrVuclB+oX2h2He8SiwLcsYoe
+	f3qNExTaN7YMZgFyT4frv1dlwHpUDXJ1IFt1m3YLuubmiI4PzDu5wbVcwB7TnZA=
+X-Google-Smtp-Source: AGHT+IGLki7Eyzyn3VgPcW31cIDh05nCl81yRDZJNH1FCUDvtx1fvtj7JpUGqQMpryfZCBsaphK1eg==
+X-Received: by 2002:a5d:6d8c:0:b0:382:49ad:54df with SMTP id ffacd0b85a97d-38254adee4amr2828612f8f.2.1732122251151;
+        Wed, 20 Nov 2024 09:04:11 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825493eb92sm2514070f8f.95.2024.11.20.09.04.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Nov 2024 09:04:10 -0800 (PST)
+Date: Wed, 20 Nov 2024 20:04:06 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Paolo Perego <pperego@suse.de>
+Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Dave Penkler <dpenkler@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Kees Bakker <kees@ijzerbout.nl>, Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH] staging:gpib: Fix a dereference before null check issue
+Message-ID: <a0807e04-b2c9-4261-9b3f-7660fe258f56@stanley.mountain>
+References: <20241120144653.377795-1-pperego@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241120144653.377795-1-pperego@suse.de>
 
-Hello,
-
-On Wed, 20 Nov 2024 13:55:35 +0100 Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
-
-> This is the start of the stable review cycle for the 6.11.10 release.
-> There are 107 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Wed, Nov 20, 2024 at 03:46:53PM +0100, Paolo Perego wrote:
+> This commit fixes a dereference before null check issue discovered by
+> Coverity (CID 1601566).
 > 
-> Responses should be made by Fri, 22 Nov 2024 12:56:14 +0000.
-> Anything received after that time might be too late.
+> The check ad line 1450 suggests that a_priv can be NULL, however it has
+> been derefenced before, in the interface_to_usbdev() call.
+> 
+> Signed-off-by: Paolo Perego <pperego@suse.de>
+> ---
 
-This rc kernel passes DAMON functionality test[1] on my test machine.
-Attaching the test results summary below.  Please note that I retrieved the
-kernel from linux-stable-rc tree[2].
+You need a Fixes tag.  But I'm pretty sure the correct fix is to remove the NULL
+check.
 
-Tested-by: SeongJae Park <sj@kernel.org>
+regards,
+dan carpenter
 
-[1] https://github.com/damonitor/damon-tests/tree/next/corr
-[2] c9b39c48bf4a ("Linux 6.11.10-rc1")
-
-Thanks,
-SJ
-
-[...]
-
----
-
-ok 9 selftests: damon: damos_tried_regions.py
-ok 10 selftests: damon: damon_nr_regions.py
-ok 11 selftests: damon: reclaim.sh
-ok 12 selftests: damon: lru_sort.sh
-ok 13 selftests: damon: debugfs_empty_targets.sh
-ok 14 selftests: damon: debugfs_huge_count_read_write.sh
-ok 15 selftests: damon: debugfs_duplicate_context_creation.sh
-ok 16 selftests: damon: debugfs_rm_non_contexts.sh
-ok 17 selftests: damon: debugfs_target_ids_read_before_terminate_race.sh
-ok 18 selftests: damon: debugfs_target_ids_pid_leak.sh
-ok 19 selftests: damon: sysfs_update_removed_scheme_dir.sh
-ok 20 selftests: damon: sysfs_update_schemes_tried_regions_hang.py
-ok 1 selftests: damon-tests: kunit.sh
-ok 2 selftests: damon-tests: huge_count_read_write.sh
-ok 3 selftests: damon-tests: buffer_overflow.sh
-ok 4 selftests: damon-tests: rm_contexts.sh
-ok 5 selftests: damon-tests: record_null_deref.sh
-ok 6 selftests: damon-tests: dbgfs_target_ids_read_before_terminate_race.sh
-ok 7 selftests: damon-tests: dbgfs_target_ids_pid_leak.sh
-ok 8 selftests: damon-tests: damo_tests.sh
-ok 9 selftests: damon-tests: masim-record.sh
-ok 10 selftests: damon-tests: build_i386.sh
-ok 11 selftests: damon-tests: build_arm64.sh # SKIP
-ok 12 selftests: damon-tests: build_m68k.sh # SKIP
-ok 13 selftests: damon-tests: build_i386_idle_flag.sh
-ok 14 selftests: damon-tests: build_i386_highpte.sh
-ok 15 selftests: damon-tests: build_nomemcg.sh
- [33m
- [92mPASS [39m
 
