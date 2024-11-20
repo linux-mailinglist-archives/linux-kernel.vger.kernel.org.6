@@ -1,172 +1,267 @@
-Return-Path: <linux-kernel+bounces-415180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B41DD9D3261
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 04:05:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F9859D3268
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 04:14:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64CE51F23302
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 03:05:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 340E51F2377A
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 03:14:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B74826CDAF;
-	Wed, 20 Nov 2024 03:05:14 +0000 (UTC)
-Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9955F148855;
+	Wed, 20 Nov 2024 03:14:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Q4tDYvYL"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2041.outbound.protection.outlook.com [40.107.244.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B30DF9D9;
-	Wed, 20 Nov 2024 03:05:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732071914; cv=none; b=lkEOvR9QPmXZc4aMEtBITzn2kdrufEEZy6CU8Ng+SEYSllqelBo2MdJhHhjpHJDInLyX7LOxxZH77mtIYcWLAxMYwiOqCdzS8ToQOeDP90rVc8fLtuq72be31TXdFnEtAsyGB+ZlBLizcJFfXoh8vHbhsymjd2MCnZGblcLSit4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732071914; c=relaxed/simple;
-	bh=PYHgJqIhXRjvZtZCJMc+5DZmdkvRvd1KuH9LUviAV4Q=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gHaTO2w0mq7QMgBG+rLPmEraFkOmsjEwwJ+yQgr1T2TTKZnSiFSNsCsCP+s4OVUHdZrfuihwM2d4oFMYIn+1ufHGrZQ2lRXfqbe9RZLbaaurF9vzdjYbK1kxZCcVOkEPDMcWdtLzu1xx3K56EBpcD5XKlHI4zFB4d5FaX4mqlfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.178.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250811.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AK2vPrk009734;
-	Wed, 20 Nov 2024 03:04:48 GMT
-Received: from ala-exchng01.corp.ad.wrs.com (ala-exchng01.wrs.com [147.11.82.252])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 42xgm0kun5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Wed, 20 Nov 2024 03:04:48 +0000 (GMT)
-Received: from ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) by
- ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.43; Tue, 19 Nov 2024 19:04:47 -0800
-Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
- ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server id
- 15.1.2507.43 via Frontend Transport; Tue, 19 Nov 2024 19:04:44 -0800
-From: Lizhi Xu <lizhi.xu@windriver.com>
-To: <viro@zeniv.linux.org.uk>
-CC: <almaz.alexandrovich@paragon-software.com>, <brauner@kernel.org>,
-        <jack@suse.cz>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <lizhi.xu@windriver.com>,
-        <ntfs3@lists.linux.dev>,
-        <syzbot+73d8fc29ec7cba8286fa@syzkaller.appspotmail.com>,
-        <syzkaller-bugs@googlegroups.com>
-Subject: [PATCH V3] fs/ntfs3: check if the inode is bad before creating symlink
-Date: Wed, 20 Nov 2024 11:04:43 +0800
-Message-ID: <20241120030443.2679200-1-lizhi.xu@windriver.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241119163647.GJ3387508@ZenIV>
-References: <20241119163647.GJ3387508@ZenIV>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECEBE4690;
+	Wed, 20 Nov 2024 03:14:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.41
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732072473; cv=fail; b=Oxq7lhWvWq21GNR63IFY4bS87uY/XJ9RHM3EUtrmN8eVxIKM9q3o9uGybDhq+5XScvDI5lMclpk/7pvPOBX4udPWNKESJacnUWq+LQt3jIaZxX4OZ8ZUQOU0eYOGi9ZzaoOO8QdNs6lCPbLQy79Gmv6R/S90aJN0T57dAXMULJE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732072473; c=relaxed/simple;
+	bh=KR+lCHC2RGowC3w3O3WAycth/Mc6bGL2cVLuf51AGrE=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Jb/2aveUAhqeXDTmKgPFVBZRZ8tJB+PmPfXg/kiXCmNrDpK55J8MbBlt8qWxwh36oTn6/pAFlX5Lc7BJd4LAQilqdDXnAs7OJsGz4xYQuxl30KHJK23Dj0iwbL039i25/jy7B9J3m8iEswo+Ei154y0Mdw9x4RvFncXOP38WX/o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Q4tDYvYL; arc=fail smtp.client-ip=40.107.244.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=LHiPqEUckkJB8wRr9iBR5i1kGg/jp2mjIXRM+N77Gqhl+i9najq0yq6qsGFIMsFbvGvJtVPR0vvhLT91yY2XGcYJY6qtjD07L/ydIKDdXt+yObChAA6/Ngdby7BFScpMnC3LouLENQpPGli+R9nneesDMASiwkNPikQa8KJmhqlU+f6DRr70t6/CXYvTDMEwjvuP964DejdoJCkF0Rt4IpqjPBcA4tKf61alSA8S9YE+p1ZhwISg7psNX8anKwuA7hSs1tswcdpTdK7NblO9gEUmsjwWqpTUyOMYJjlEzCxJZSjK2jomRxiHUhowGo6Ep+J96wN4WwgEtZdEiy3hIA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=wDfIu3vM/R6La5a3THsz4CCpFhcV3xLZ1Ug6bNZYpmg=;
+ b=yeaOrLjFaFjeqVQtG33NCZa822800pkhk7MDwYg12WMJ+3mbMrvS5YWLmKBzily9wQNjssn3BR9+lq9CTxDVbe/SC7nz1hHqsxG5DH38zdsZSmuJbmiWMNeWglwcIVzqRktn38+A6EWwxC9ToAlmBKussXbXLEaZh30H+ek47W/Ob3GyeCAgjivoS3Gk/qdF2DE+mwrBN3mNBNWwWPGZByHdWV+eYZEb9FobRuW88Fd64mhMKP90y8gWYEGfTudXLGrapbTvsyx7cMBozxg2ql2+hxdLnG0hiiPXrZmu3yakVq1P+MHM1Vkn613MUeP9hS4JIyoWSrifrt1dcA0mjw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wDfIu3vM/R6La5a3THsz4CCpFhcV3xLZ1Ug6bNZYpmg=;
+ b=Q4tDYvYLNNxn9EYtRCTaIHY9stwU6SrzJXwjLysci1WOjgj7Em+yd1g8nvlGQZIaln1ePWqAPwbD9AfZ3uoxfUmztQcLh1G6EO29vvq+rvlKVswJ+edyFI28jBl3u5KWGOS5fbDWPPGy7KG5YoJdDtUTITS/FZo5IN4fy2o1YmU=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from BL3PR12MB9049.namprd12.prod.outlook.com (2603:10b6:208:3b8::21)
+ by DS0PR12MB7801.namprd12.prod.outlook.com (2603:10b6:8:140::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8158.22; Wed, 20 Nov
+ 2024 03:14:28 +0000
+Received: from BL3PR12MB9049.namprd12.prod.outlook.com
+ ([fe80::c170:6906:9ef3:ecef]) by BL3PR12MB9049.namprd12.prod.outlook.com
+ ([fe80::c170:6906:9ef3:ecef%4]) with mapi id 15.20.8158.023; Wed, 20 Nov 2024
+ 03:14:28 +0000
+Message-ID: <1e43dade-3fa7-4668-8fd8-01875ef91c2b@amd.com>
+Date: Tue, 19 Nov 2024 21:14:24 -0600
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/3] x86/sev: Add SEV-SNP CipherTextHiding support
+Content-Language: en-US
+To: Sean Christopherson <seanjc@google.com>
+Cc: Peter Gonda <pgonda@google.com>, pbonzini@redhat.com, tglx@linutronix.de,
+ mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
+ herbert@gondor.apana.org.au, x86@kernel.org, john.allen@amd.com,
+ davem@davemloft.net, thomas.lendacky@amd.com, michael.roth@amd.com,
+ kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-crypto@vger.kernel.org
+References: <cover.1726602374.git.ashish.kalra@amd.com>
+ <f2b12d3c76b4e40a85da021ee2b7eaeda1dd69f0.1726602374.git.ashish.kalra@amd.com>
+ <CAMkAt6o_963tc4fiS4AFaD6Zb3-LzPZiombaetjFp0GWHzTfBQ@mail.gmail.com>
+ <3319bfba-4918-471e-9ddd-c8d08f03e1c4@amd.com> <ZwlMojz-z0gBxJfQ@google.com>
+From: "Kalra, Ashish" <ashish.kalra@amd.com>
+In-Reply-To: <ZwlMojz-z0gBxJfQ@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SN6PR16CA0061.namprd16.prod.outlook.com
+ (2603:10b6:805:ca::38) To BL3PR12MB9049.namprd12.prod.outlook.com
+ (2603:10b6:208:3b8::21)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: MBj4tbq8NdUTMlIalFvPDc28nckuDK7_
-X-Proofpoint-GUID: MBj4tbq8NdUTMlIalFvPDc28nckuDK7_
-X-Authority-Analysis: v=2.4 cv=E4efprdl c=1 sm=1 tr=0 ts=673d51d0 cx=c_pps a=/ZJR302f846pc/tyiSlYyQ==:117 a=/ZJR302f846pc/tyiSlYyQ==:17 a=OEdkkgd6TnMo6Y_G:21 a=VlfZXiiP6vEA:10 a=edf1wS77AAAA:8 a=hSkVLCK3AAAA:8 a=t7CeM3EgAAAA:8 a=RmbGFA46GKlq9jInG3gA:9
- a=DcSpbTIhAlouE1Uv7lRv:22 a=cQPPKAXgyycSBL8etih5:22 a=FdTzh2GWekK77mhwV6Dw:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-11-19_16,2024-11-18_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- clxscore=1015 malwarescore=0 impostorscore=0 adultscore=0 phishscore=0
- mlxlogscore=836 spamscore=0 priorityscore=1501 bulkscore=0 suspectscore=0
- mlxscore=0 classifier=spam authscore=0 adjust=0 reason=mlx scancount=1
- engine=8.21.0-2409260000 definitions=main-2411200023
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL3PR12MB9049:EE_|DS0PR12MB7801:EE_
+X-MS-Office365-Filtering-Correlation-Id: e82c0d47-04e4-4750-3fd4-08dd09117176
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?bi9haHdLY3N5aXhzNXptS0RnVU93U2p5dmM1TGl3STA3VllDbExrSGk2WWpp?=
+ =?utf-8?B?YXNyalRld0ZXZ2s4RzVHc3BrbUd1Tjh5cHNoMjVHZjIrMFNvKy93aURIc1JO?=
+ =?utf-8?B?Q08wdUhzS3ZOdTZWaGlMc0o1UjQxNEJIQVQrRU1ZZEp2bk5QRmhQRlJpK1BE?=
+ =?utf-8?B?bkJoNEFBL3g3THdLMFE0dWtWS0FrQWIzcmJzcFRteEErd3BFeTd4TDhMVmJ5?=
+ =?utf-8?B?L1JnbVVqRURtQ0ZPMWJIYStEQWlkdk5uMzh4NW00b1BmWHRmZE5LTkxST1dD?=
+ =?utf-8?B?ZW16VDMvbHBWRXRnZUJBY3hCc3NNODlIUndoaE5DbkN6a2FtSlhzUks5U2hJ?=
+ =?utf-8?B?dlNnRHAvQTROZGppTzc2QWF3cHE1aWs0MDRsNGdWcHNkRG1RZDZCclBRc2U1?=
+ =?utf-8?B?TkxpbjlBS2dxMERJZUdDN0xqcG5Zb3MvMWgrb3FJaUJ4c2dBQy9xSjRvLzln?=
+ =?utf-8?B?VkIxSjVhS2tzV0hPNFBHSCsvWjJOcnFaeXUwdXFkd2R1cm10ZCtPZE9RQWVY?=
+ =?utf-8?B?dUtPM0hSZUJzaUdmcGs3b1dhZlBFdDVaVWxON3lGQkZ0d2tRUXZPUWxYNmRl?=
+ =?utf-8?B?SjRWQk9qdVhiTHdnTGJBVEhxT2F6RFJrd3lVNXlPN2dpcFJoT3ZXVktCOWRl?=
+ =?utf-8?B?N1pQZlVoOUIzSS9OUTd6OVJiWFJJRXROaThwMWJpaEtvWWp2M3NvNUU4ck5r?=
+ =?utf-8?B?dTY4SnJ3WGswOVZFeDluQUJDK0xyNHN3d1BkQTV1TmRXU3MyQ0dpQXlZTXk5?=
+ =?utf-8?B?Y1FPRmhqck5EclBtYnJWNkh4NW5qdVZLcm1pZ3BoVWM1U254ZTlROFVLazJ1?=
+ =?utf-8?B?Q0xNN2pyN1Fibmt2c0FnNEhkN3JOTUhKdzhvWFVUVHJVNlJxRFY0alpxNHBo?=
+ =?utf-8?B?Z29JNFZPZy9FNDFrVVluaHhJQXVWdWhWMjZJK2lDa3R4bVdjQ3ZFSlN5cWVj?=
+ =?utf-8?B?TTdtOEpSMzNoUWtJeThqQko2eHI2WldqUk9zNS9hZjlyd0VIdExzRjY4czZn?=
+ =?utf-8?B?ODBWbko1M2g1cmVMTjBkVjFCSk1uZjhPcWg3V3dJV3JMTGhMOTdrOWhhTjdO?=
+ =?utf-8?B?MGE4ZlNBbVFYNlk0L1owZE5tOXhOK0N3K3JLdnJ6K1RoYkg0TTRwR2ErZG01?=
+ =?utf-8?B?YSt1N1M2NU9QZ0NFS0thaUErMHZTdWtJR29oWkw5QjJnL3VsOVV2aHZFaXJE?=
+ =?utf-8?B?K0lRZTFVdWFVTmF1Y1NTWXFsT2pWdE82TlQxeFdUaFB4QnpzMDJGd3V2dG9a?=
+ =?utf-8?B?cFFjQUh0UFBTMWhnZXdtVE9zS3Z2ck5ZNXZhYzFMc0dJT3RYT1JQaVFlb2ZI?=
+ =?utf-8?B?KzJVNWdKNkxJMVFNaG9HWVlIa21xK3N3MVd5U0E4MHAvcEJ2b3BSTXk1bFdH?=
+ =?utf-8?B?NFpsOTRyNjdkRG9mOTZ3SExRb0xwME40TGhWTHlTZFBOMGlKSCtIbzFBaTM4?=
+ =?utf-8?B?bklFckxxdS9BNmhNQzk1Z1BQZ0tubUU0MU5Vd21Ub2Z3cDhCS1B3a1BSZk1o?=
+ =?utf-8?B?aG1ZRUQwZEpYc01yaDZ5Njg2RUFmeE5TZ3A5Sko1anJ1TDNtZHM1Z29yeGY5?=
+ =?utf-8?B?a3duRGEzR0JRVWl0L3hoaWphVTl1Q2E4YkRpcmRqcUFYZ1ZLbnUxSi9ha1l2?=
+ =?utf-8?B?bmo2ZzRrV0c4cFdydDdjOTlBaU5XM3YvMFUrVmRKTGNoc1NWVFcxWDh0RWd6?=
+ =?utf-8?B?YTNVY2N4WVFhN1U1ck1Pa1ZRMXE4c1dXNklTRm1SdDAvaC9oMUt5REhkZ3pJ?=
+ =?utf-8?Q?vgobTUKYLovZaGzngfcJ6rlOX2TLl3JGX0Xho0t?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL3PR12MB9049.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?cldqVzlaM2VYSldPVWh3ZVEwUWxwQm9vT1hIVHlDZWI5QWhiYnhqVmREOWhv?=
+ =?utf-8?B?S21mZFhvd0piT1JicHdyWjd3dnlVaEw1dTV2d205VzB1SXFxKzBFSkdzWlM4?=
+ =?utf-8?B?MElrOEFQaHlDTmVhMGp3czYyOVBPNXFaMVFQQUlhczlkVDM1NEJwU1FQRFlu?=
+ =?utf-8?B?RWh0MHdhTXZFcXl0VDdsUGM5RGNhMmJ0elFDSHpHYUNPVW9QK0xJdEtldzl6?=
+ =?utf-8?B?UDYweVJKRzlDcEZ6eGFhdTNsL1dndHdlTTM5WDI4MmM4VmoxSVcwaVNpKzBF?=
+ =?utf-8?B?UXNRWWt0UG1tS21MeXk5Mzd3S3ZHaU03Mzl2bERsZmdMVXNKY2MxQ1R0dE0w?=
+ =?utf-8?B?YkEwdDJ1bU4zeHdxdHB3Q3JRNnFCVSttNFQ1aldicFEwOTJ1Y2JsL0F4aFRL?=
+ =?utf-8?B?ZnV4TklYK1A5QndXZzlrMm5rV0xTV1dxNnNJM2lVUjlUWktPbGxYSjRvNU1y?=
+ =?utf-8?B?cjM1cmNLQm94K202NDJhY3JuZU9oaWJ2T2J4bFduTGQ0NHQ0RVZ4MEFiSm12?=
+ =?utf-8?B?MCt2NXVOL1U2Q0Q4NmRxaThiZG1PR2VwalJXWklOd2hzbW1SOWJTWThUOFpS?=
+ =?utf-8?B?UXc3dWZDT01HTVhublh1MW05RkdYTWZXZnJqc09RbkdXdGFSaXNNczFXQVBO?=
+ =?utf-8?B?Z2hScnFBN0Iycjh5em42MVNQRm80QUNreGJYTDU0Z2JwaUxIUURFRFljdGdq?=
+ =?utf-8?B?cWNoVXRES0ZMdDlaM0w3bjF5cElXd1kvNDZhYitQa2VmN2ZrWVA1b0puWVhs?=
+ =?utf-8?B?T0hkdTIxQnNURDlPMXZ0V2pOYjRXeDg2RDY3ZEZpY2ZjR2tzSFFCb01hTU5p?=
+ =?utf-8?B?Qy9UdVFWdjFZWVduU0d3bVBOc1EyNUhXeThKVU13bXM0Y3dmTWh2WXltanB4?=
+ =?utf-8?B?NVJkb1FGWTg5UlMzWXNMUFJNRXZIcWJ0UktRVmZJU29sWW5Rbzl6QitkZ1lC?=
+ =?utf-8?B?RUVGd2U0cm5hMkkzZnJCeVA1WXBFLzRjZmNxa05tNk5uOFdVRmFEKzRBQmQ1?=
+ =?utf-8?B?anFteVZaYTU3TnBVdGQwdzhLREQ5cTk4VUo4d3I0Vjc5VkdkcVVMdzFpTjRG?=
+ =?utf-8?B?dlh4dGdWNFRTYUtLcEFIWVNnMUR0Vml3Z2F2S1Axd3B1aDFCbGpFS01LZEJo?=
+ =?utf-8?B?WitjL2hPRXBaUUZ4b1huUGdRZHdMRE1oTng1SzZaV3hZMXRobHBvNWFDMndY?=
+ =?utf-8?B?WlhRQjN0M2pCSXZpV0RnZ3I3K0xEYUd6aTNROS9xaUMyTTZMOEVrcnRDbGRq?=
+ =?utf-8?B?SzJ2alVsVDlFc2dhRGxjMWZTc1doMENjeGJ1Ym95eUdpbS83VlJyUHhxMUta?=
+ =?utf-8?B?aGJJRTJJUU9IYVpxcFRjK2NSdTlBZTFucUZhNVVYOTVvREdJOE5Zb2c1bEJP?=
+ =?utf-8?B?SXJBZzVjaVNBKzdvbWZmV1dQMFY3eWNwNkVNOEtLV1lxL0diWFRyanFUUjBo?=
+ =?utf-8?B?SGFBemdlR05jWkZUZWZWaTVLdnlDdEN5Q2ZUN1JjZE1aZGtrN0dhcGFCdTQ5?=
+ =?utf-8?B?WGtxdkd5bExZWVl0eXFtQlBoRmpFaStDbWk5TkY1VDAvS09BcGh4azFBUWhh?=
+ =?utf-8?B?VmZTUkRNeUp2UGQ4NkdsSkJzZkRuK0RjMVU0UHF4Tmxlcm8xL3V5WGZoVEYr?=
+ =?utf-8?B?MGZNc1FFbGVmYzhQWWhjS0M5b01zVldncWZLcmkvOG00RXJFUGd3c0k2b0Mv?=
+ =?utf-8?B?NVY4NXFxTHUxanBEZ0tQclpIZDlTUFZwRlVPajhoRlMrUmhySWdleHNvaml4?=
+ =?utf-8?B?TThNR0NocnQwTHNOV0hkN1hKMm5JaXE2T3NkZ2ZyRlF0SjVzQTBTQ29QUnlC?=
+ =?utf-8?B?NE5IeStOMjJFWHdPSTZ6ZzlnZHNlc2trckM3U2hZYlJHbmRNeGM0QWp2bzNB?=
+ =?utf-8?B?TVBleFd0Yk9uU2d1eVg3ZllxbE5SUFJ6SWgwZk80d1JEazJCaXJnTzdDbzV1?=
+ =?utf-8?B?bzMxaU01NmdldExWNnArM2F1d0Z1bWRDVlJDY3NXQkowVEdYMXd1bElReGFi?=
+ =?utf-8?B?WDZGa2Q5eEV5TmZDd1VXRUtscTRoY0NoNGZIVmkzdzJqZVliaXlpdFVFNnda?=
+ =?utf-8?B?QUhzNkttWXlmc0JPTEFxUkFmZkhtUmlSNjYyRHF6cW9lbUx0M3RrdjJ3a2VE?=
+ =?utf-8?Q?OkVN+18Js/1CJRv78BCAl1Tn4?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e82c0d47-04e4-4750-3fd4-08dd09117176
+X-MS-Exchange-CrossTenant-AuthSource: BL3PR12MB9049.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Nov 2024 03:14:28.1107
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: YZv1ElDSm9cVc7Bpn00c7iTQ7XoZn3rP6eRYaLFUkN/gacqHHjDgeGphYmOmWdPyHrEHGScSvn2+fYCo3VWu/w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7801
 
-syzbot reported a null-ptr-deref in pick_link. [1]
+Hello Sean,
 
-First, i_link and i_dir_seq are in the same union, they share the same memory
-address, and i_dir_seq will be updated during the execution of walk_component,
-which makes the value of i_link equal to i_dir_seq.
+On 10/11/2024 11:04 AM, Sean Christopherson wrote:
+> On Wed, Oct 02, 2024, Ashish Kalra wrote:
+>> Hello Peter,
+>>
+>> On 10/2/2024 9:58 AM, Peter Gonda wrote:
+>>> On Tue, Sep 17, 2024 at 2:17 PM Ashish Kalra <Ashish.Kalra@amd.com> wrote:
+>>>> diff --git a/drivers/crypto/ccp/sev-dev.c b/drivers/crypto/ccp/sev-dev.c
+>>>> index 564daf748293..77900abb1b46 100644
+>>>> --- a/drivers/crypto/ccp/sev-dev.c
+>>>> +++ b/drivers/crypto/ccp/sev-dev.c
+>>>> @@ -73,11 +73,27 @@ static bool psp_init_on_probe = true;
+>>>>  module_param(psp_init_on_probe, bool, 0444);
+>>>>  MODULE_PARM_DESC(psp_init_on_probe, "  if true, the PSP will be initialized on module init. Else the PSP will be initialized on the first command requiring it");
+>>>>
+>>>> +static bool cipher_text_hiding = true;
+>>>> +module_param(cipher_text_hiding, bool, 0444);
+>>>> +MODULE_PARM_DESC(cipher_text_hiding, "  if true, the PSP will enable Cipher Text Hiding");
+>>>> +
+>>>> +static int max_snp_asid;
+>>>> +module_param(max_snp_asid, int, 0444);
+>>>> +MODULE_PARM_DESC(max_snp_asid, "  override MAX_SNP_ASID for Cipher Text Hiding");
+>>> My read of the spec is if Ciphertext hiding is not enabled there is no
+>>> additional split in the ASID space. Am I understanding that correctly?
+>> Yes that is correct.
+>>> If so, I don't think we want to enable ciphertext hiding by default
+>>> because it might break whatever management of ASIDs systems already
+>>> have. For instance right now we have to split SEV-ES and SEV ASIDS,
+>>> and SNP guests need SEV-ES ASIDS. This change would half the # of SNP
+>>> enable ASIDs on a system.
+>>
+>> My thought here is that we probably want to enable Ciphertext hiding by
+>> default as that should fix any security issues and concerns around SNP
+>> encryption as .Ciphertext hiding prevents host accesses from reading the
+>> ciphertext of SNP guest private memory.
+>>
+>> This patch does add a new CCP module parameter, max_snp_asid, which can be
+>> used to dedicate all SEV-ES ASIDs to SNP guests.
+>>
+>>>
+>>> Also should we move the ASID splitting code to be all in one place?
+>>> Right now KVM handles it in sev_hardware_setup().
+>>
+>> Yes, but there is going to be a separate set of patches to move all ASID
+>> handling code to CCP module.
+>>
+>> This refactoring won't be part of the SNP ciphertext hiding support patches.
+> 
+> It should, because that's not a "refactoring", that's a change of roles and
+> responsibilities.  And this series does the same; even worse, this series leaves
+> things in a half-baked state, where the CCP and KVM have a weird shared ownership
+> of ASID management.
+> 
 
-Secondly, the chmod execution failed, which resulted in setting the mode value
-of file0's inode to REG when executing ntfs_bad_inode.
+Sorry for the delayed reply to your response, the SNP DOWNLOAD_FIRMWARE_EX patches got posted
+in the meanwhile and that had additional considerations of moving SNP GCTX pages stuff
+into the PSP driver from KVM and that again got into this discussion about splitting ASID 
+management across KVM and PSP driver and as you pointed out on those patches that there is
+zero reason that the PSP driver needs to care about ASIDs. 
 
-Third, when creating a symbolic link using the file0 whose inode has been marked
-as bad, it is not determined whether its inode is bad, which ultimately leads to
-null-ptr-deref when performing a mount operation on the symbolic link bus because
-the i_link value is equal to i_dir_seq=2. 
+Well, CipherText Hiding (CTH) support is one reason where the PSP driver gets involved with ASIDs
+as CTH feature has to be enabled as part of SNP_INIT_EX and once CTH feature is enabled, the 
+SEV-ES ASID space is split across SEV-SNP and SEV-ES VMs. 
 
-Note: ("file0, bus" are defined in reproducer [2])
+With reference to SNP GCTX pages, we are looking at some possibilities to push the requirement
+to update SNP GCTX pages to SNP firmware and remove that requirement from the kernel/KVM side.
 
-To avoid null-ptr-deref in pick_link, when creating a symbolic link, first check
-whether the inode of file is already bad.
+Considering that, I will still like to keep ASID management in KVM, there are issues with locking, for example,
+sev_deactivate_lock is used to protect SNP ASID allocations (or actually for protecting ASID 
+reuse/lazy-allocation requiring WBINVD/DF_FLUSH) and guarding this DF_FLUSH from VM destruction
+(DEACTIVATE). Moving ASID management stuff into PSP driver will then add complexity of adding
+this synchronization between different kernel modules or handling locking in two different kernel
+modules, to guard ASID allocation in PSP driver with VM destruction in KVM module.
 
-[1]
-KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
-CPU: 0 UID: 0 PID: 5310 Comm: syz-executor255 Not tainted 6.12.0-rc6-syzkaller-00318-ga9cda7c0ffed #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:pick_link+0x51c/0xd50 fs/namei.c:1864
-Code: c1 e8 03 42 80 3c 38 00 74 08 48 89 df e8 fc 00 e9 ff 48 8b 2b 48 85 ed 0f 84 92 00 00 00 e8 7b 36 7f ff 48 89 e8 48 c1 e8 03 <42> 0f b6 04 38 84 c0 0f 85 a2 05 00 00 0f b6 5d 00 bf 2f 00 00 00
-RSP: 0018:ffffc9000d147998 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: ffff88804558dec8 RCX: ffff88801ec7a440
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000002 R08: ffffffff8215a35f R09: 1ffffffff203a13d
-R10: dffffc0000000000 R11: fffffbfff203a13e R12: 1ffff92001a28f93
-R13: ffffc9000d147af8 R14: 1ffff92001a28f5f R15: dffffc0000000000
-FS:  0000555577611380(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fcc0a595ed8 CR3: 0000000035760000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- step_into+0xca9/0x1080 fs/namei.c:1923
- lookup_last fs/namei.c:2556 [inline]
- path_lookupat+0x16f/0x450 fs/namei.c:2580
- filename_lookup+0x256/0x610 fs/namei.c:2609
- user_path_at+0x3a/0x60 fs/namei.c:3016
- do_mount fs/namespace.c:3844 [inline]
- __do_sys_mount fs/namespace.c:4057 [inline]
- __se_sys_mount+0x297/0x3c0 fs/namespace.c:4034
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f4b18ad5b19
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffc2e486c48 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 0030656c69662f2e RCX: 00007f4b18ad5b19
-RDX: 0000000000000000 RSI: 00000000200000c0 RDI: 0000000000000000
-RBP: 00007f4b18b685f0 R08: 0000000000000000 R09: 00005555776124c0
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffc2e486c70
-R13: 00007ffc2e486e98 R14: 431bde82d7b634db R15: 00007f4b18b1e03b
- </TASK>
+There is also this sev_vmcbs[] array indexed by ASID (part of svm_cpu_data) which gets referenced
+during the ASID free code path in KVM. It just makes it simpler to keep ASID management stuff
+in KVM. 
 
-[2]
-move_mount(0xffffffffffffff9c, &(0x7f00000003c0)='./file0\x00', 0xffffffffffffff9c, &(0x7f0000000400)='./file0/file0\x00', 0x140)
-chmod(&(0x7f0000000080)='./file0\x00', 0x0)
-link(&(0x7f0000000200)='./file0\x00', &(0x7f0000000240)='./bus\x00')
-mount$overlay(0x0, &(0x7f00000000c0)='./bus\x00', 0x0, 0x0, 0x0)
+So probably we can add an API interface exported by the PSP driver something like
+is_sev_ciphertext_hiding_enabled() or sev_override_max_snp_asid() instead of using
+external variables in PSP driver, which KVM can call in sev_hardware_setup() to
+retrieve MAX_SNP_ASID and also overriding max_asid (when CTH feature is enabled) in sev_asid_new(). 
 
-Reported-by: syzbot+73d8fc29ec7cba8286fa@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=73d8fc29ec7cba8286fa
-Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
----
-V1 --> V2: add the root cause of the i_link not set issue and imporve the check
-V2 --> V3: when creating a symbolic link, first check whether the inode of file is bad.
+Thanks,
+Ashish
 
- fs/ntfs3/inode.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/fs/ntfs3/inode.c b/fs/ntfs3/inode.c
-index be04d2845bb7..fefbdcf75016 100644
---- a/fs/ntfs3/inode.c
-+++ b/fs/ntfs3/inode.c
-@@ -1719,6 +1719,9 @@ int ntfs_link_inode(struct inode *inode, struct dentry *dentry)
- 	struct ntfs_sb_info *sbi = inode->i_sb->s_fs_info;
- 	struct NTFS_DE *de;
- 
-+	if (is_bad_inode(inode))
-+		return -EIO;
-+
- 	/* Allocate PATH_MAX bytes. */
- 	de = __getname();
- 	if (!de)
--- 
-2.43.0
-
+> I'm ok with essentially treating CipherText Hiding enablement as an extension of
+> firmware, e.g. it's better than having to go into UEFI settings to toggle the
+> feature on/off.  But we need to have a clear, well-defined vision for how we want
+> this all to look in the end. 
 
