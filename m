@@ -1,84 +1,88 @@
-Return-Path: <linux-kernel+bounces-415153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C5CF9D3216
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 03:12:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A6089D3215
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 03:12:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72CC5B23C93
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 02:12:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F5041F233FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 02:12:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B080249F9;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38CC42E40E;
 	Wed, 20 Nov 2024 02:12:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="NQe6d/JZ"
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="Ozp6WNdp"
 Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 247703D76
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 02:12:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBA76C125
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 02:12:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732068747; cv=none; b=mBAXAIzpAgJLlYWSi4Lh5jYrJ9A+1eY843yskAMNZR2KS+GHtAYjQEo0BVV/cC9vtkFQpjjD77j1RZYESrcyMYUeV/DLLCkKU1JQiSCcdqJkHaJjlL34mPHpLULPkyiFXtCx/7Cu47j/1sSuEspYEuJqHVyD/E8AhbjZfeLVJG4=
+	t=1732068747; cv=none; b=iesBrFHfScXZFeWOqnHZoXUTGCzxbZxfe0Fup6eU2iZfvyVgWT23V7KrPUBLRtOIw9FCed2RDA7xkBaFLz5mq7cLkTaqdMJB9azXR65IxXt9zT9kcOI+LumK0wIP1hyIjBDr78WIV7yNWVRpXz0c6+HSzS3pKyhUwOgZnasiigE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1732068747; c=relaxed/simple;
-	bh=VXDCKncXl8a+GAqohOd37DFimyWx+9tlk7nh6totTXc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=muvmymeYBiN1U7gg4HWqsOZ6p3WkBsAALuoCgbRa6jlBSsoyzwMFqSLeeNl1cDvAZm4NuNzEYRQDxAo6iMj7jyfAJadDz3fLImZXaFXqyHRvYoRfCwPlnsMRtywYGdEr0cNfjKw6Vhn/ACkN2YmKSpsGfnhu6v2hAdYGKna7okw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=NQe6d/JZ; arc=none smtp.client-ip=185.125.188.123
+	bh=25+rPJ9fWY4m+iEBdv+TE+xd7oUG8ckOtydtKO7g9w4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=E7xzgFhuuo4Fbl2LMhcDOeYbmlfuLK/v3mmSKlocyqZznKfmLsl/gxaEwFwxWD9+g3JYsXGIn/XucvQ+IMxQK47cLcVBEH2XIhzDeTwWz8b5ajh7QTF/P/LvDa9bvPEZf2Oun5hSsEN/yEy8GCy4MLitLzTfJWdCe6y5kpuW0Lc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=Ozp6WNdp; arc=none smtp.client-ip=185.125.188.123
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com [209.85.215.197])
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id C38713F0DE
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 02:12:15 +0000 (UTC)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 754583F29F
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 02:12:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1732068735;
-	bh=yM4xnBGDwE+Cit1Pwb2pk+7IvC63ckGEytC7d+3QOY4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version;
-	b=NQe6d/JZKOy0dgDGgmYpkvwU05Ydh+uN24hzv2nIQGiSV4X0cZvrTGJPruaolKhnv
-	 9rCFWSyUQD242WGqqnpzFtFjgGTbhHZMsf+vZa2ryW7shLsnZwHvf8znpDgGRUpuWr
-	 PdBd4QVf2+pvfE7xhkNdVdly8rfx2umdWu6WBlZr/4Yzw8J4WLbFoDMjRPx8ld7YQp
-	 F2sDik1pxOXh39AoPduV+yeohtYU8gJSbK0Q34/zBpm9HSeRj6INyhMD0IzNoOWCD0
-	 XFWyb5QhTg3wUtJWTKzHXFs4z2g3WomEMmpFLot019rrw1aAxI3Ng4tsmf5SXM3Zlh
-	 bLKHg3YDMjSig==
-Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-7f72112de23so3224763a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 18:12:15 -0800 (PST)
+	s=20210705; t=1732068737;
+	bh=LRXICbRWhzx1gwE/Y73pvU27kO5MxS5NaOgmxNu3I6U=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version;
+	b=Ozp6WNdp/0LSiyezhXO17J+wlb85PaGigGyu3UnQ8Pvel837Rj+acQJHy/yARHDbu
+	 SmRuzwfzxxyc8beOjI2+9/tM8bLl68ZAgjtumoI5n6uSJqO89G+YNMhqEy4aDSc2sd
+	 0S7TA/iK1YSaIrnQXFlSbBGGkbroWGmyf3w+nzh833jqAaQRaSgJ46+w0yq96D9l4T
+	 bL+m9quROjMhowSoFw+49t79fT+SmMb+x/dXghXSUcbeUIAegs9pmI0iFmdFZINFNl
+	 kHRZGGpmTzkq+1OJMcg0ri62XTZfwtB9ZtB2SEG8DRL7nZnXWGtsjFKrxalJi7SBjF
+	 zNgWhewh4h3JQ==
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-2ea45ba6b9aso4379672a91.0
+        for <linux-kernel@vger.kernel.org>; Tue, 19 Nov 2024 18:12:17 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732068734; x=1732673534;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yM4xnBGDwE+Cit1Pwb2pk+7IvC63ckGEytC7d+3QOY4=;
-        b=vXemULbacsp5rnqxbDtTF5Ha9FptTzzEPifmxnjHHof+8pa3unJW1vFhjXx7PkcGBM
-         4f7h6Mvw/R1UiEoOzBnucfcJYwIiEQMADdt32o3pUL6h08QPxiUpJZN6hR48b5ep6dZe
-         4S7s3Jk7a8caUsg1GxvKG17pNY9b8qt+iLZ+NWVWZNCPZzEre4u1SnYv8Mr3l4xZdztL
-         8XmQsAkgli2D2qdfNIzwn12+LdAB+NypHx56lMhgfBNtkvZiq2qUo2lvnZqVNFdG6uCQ
-         7I3UiKq4ktQbag/04txVSw3BbJlOP3ssfp+SnPPl02I3eRd+z36QBqZP974pQVo2I+wL
-         +WFw==
-X-Gm-Message-State: AOJu0Yyf9BXyjnTY6KAFmKSdxwDNlCYX6VbHmWXQstvlKB+vfjzOz+eS
-	LRwTKu64Y7R8SLT72GRxYfzScAwYCKm9SuxejGjHYAJKEKsi5VnNy0kO4s7t018gQGFPo1iY3Q+
-	iaTFvA6vx5/coa/r70ByueZESUidF9fwXCILu/TyH+ZFMpiAkxa7MTBsKKLC7LEi2sUdC/eRI8y
-	UA4A==
-X-Received: by 2002:a17:902:ec8c:b0:211:f8c8:372c with SMTP id d9443c01a7336-2126c12e547mr9545075ad.21.1732068734335;
-        Tue, 19 Nov 2024 18:12:14 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFBHJph6EyboWtyJmgnLpsZhot2uEZ1t3rZu08e1Zb6yovJAUXVWm2nJ20NG5FMbdSAf8Kr6Q==
-X-Received: by 2002:a17:902:ec8c:b0:211:f8c8:372c with SMTP id d9443c01a7336-2126c12e547mr9544125ad.21.1732068732775;
-        Tue, 19 Nov 2024 18:12:12 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732068736; x=1732673536;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LRXICbRWhzx1gwE/Y73pvU27kO5MxS5NaOgmxNu3I6U=;
+        b=T/HAFIyr7mpMCJeeJfwGUSTCB2gK/mx1FISTf7H034X4/1zympSpKG9MMgLtgzhCqM
+         ekzgZAkpfYGgwJmeIsxL1ErbFCQfftPl8c3mOSONyoPDGwq3tyLc5uQ2dpUIHvMVEeJJ
+         j1C1ne34sDl6bRWaa9geSjApGNcrj3HRlEt0fbGLcJGhmUlnag0IT1nscWSDGre5+dc1
+         xTp7DGztP8hJExyDiF7CcDVDx96nCDETcCLzLhBg60tRGnZiCFkgtraFze2joUn9U/m2
+         OfmoUPRzDJoCdmY01mpIaUQLYlQVWdTZSyx72CMzUfznTQlmfOJPEPHn0wDaPLhi9PdO
+         FcWw==
+X-Gm-Message-State: AOJu0YzVZAaXGTlH0Uq2O96saStyOjGNiDv8bbocG3FTj7YzmQA5DxI2
+	07ngYalTptdhDW86zRKd2b6gLWF2q4K2DjoIlvQ7cmj0ZYL79iQtjy8r81iQac5wcPWWSt8avgN
+	MQHoTsjo/+aOfYN7HV9fg4TDnp6hAwRwcxxPLPahxqvmY7foaORlPU9H1pSbV/jqyg0BJRBCrWY
+	GmcPgfIm3WpQ==
+X-Received: by 2002:a17:903:190:b0:205:8407:6321 with SMTP id d9443c01a7336-2126faf865emr4075965ad.9.1732068735921;
+        Tue, 19 Nov 2024 18:12:15 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEH4ktCTVbVWmNyF2kNFv6coM9ePcmRoT6nCq5TM40TOGd8HhfegwAOGPzYj7EjZfOTNA8PGw==
+X-Received: by 2002:a17:903:190:b0:205:8407:6321 with SMTP id d9443c01a7336-2126faf865emr4075725ad.9.1732068735627;
+        Tue, 19 Nov 2024 18:12:15 -0800 (PST)
 Received: from zoe.. ([2001:f74:8f00:c00:6aff::1003])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2126f2c5ba0sm1371875ad.47.2024.11.19.18.12.11
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2126f2c5ba0sm1371875ad.47.2024.11.19.18.12.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Nov 2024 18:12:12 -0800 (PST)
+        Tue, 19 Nov 2024 18:12:15 -0800 (PST)
 From: Masahiro Yamada <masahiro.yamada@canonical.com>
 To: kernel-team@lists.ubuntu.com
 Cc: linux-kernel@vger.kernel.org
-Subject: [Plucky/Unstable PATCH 0/2] Avoid arch-dependent source package (step 1)
-Date: Wed, 20 Nov 2024 11:11:00 +0900
-Message-ID: <20241120021205.1590999-1-masahiro.yamada@canonical.com>
+Subject: [Plucky/Unstable PATCH 1/2] UBUNTU: [Packaging] Avoid Arch-Specific Certificate Creation
+Date: Wed, 20 Nov 2024 11:11:01 +0900
+Message-ID: <20241120021205.1590999-2-masahiro.yamada@canonical.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241120021205.1590999-1-masahiro.yamada@canonical.com>
+References: <20241120021205.1590999-1-masahiro.yamada@canonical.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,29 +91,54 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
+Currently, the debian/canonical-(revoked-)certs.pem files are generated
+by the clean target and included in the source package.
 
-Ubuntu kernel produces a different source package
-depending on the architecture of your build machine.
+These files are created by concatenating *-all.pem and *-$(arch).pem
+files.
 
-I tried to resolve this issue in the previous hackathon last year,
-but the patch set was not merged.
-I am resending my patches with smaller chunks.
+When creating a source package, $(arch) expands to the architecture of
+the build machine.
 
-1/2 solves one issue that can potentially produces
-a source package that depends on your build machine architecture.
+Although it is unclear whether arch-specific certificates have ever
+been used, if they were, canonical-(revoked-)certs.pem would become
+architecture-specific, resulting in an architecture-dependent source
+package.
 
-2/2 is a trivial clean-up.
+The source package should be consistent, regardless of the architecture
+of the build machine.
 
+This commit changes the build rules to concatenate all *.pem files,
+ensuring the output is independent of the build machine architecture.
 
+Signed-off-by: Masahiro Yamada <masahiro.yamada@canonical.com>
+---
 
-Masahiro Yamada (2):
-  UBUNTU: [Packaging] Avoid Arch-Specific Certificate Creation
-  UBUNTU: [Packaging] remove unneeded prerequisites of
-    $(DEBIAN)/control.stub
+ debian/rules | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
- debian/rules | 12 +++---------
- 1 file changed, 3 insertions(+), 9 deletions(-)
-
+diff --git a/debian/rules b/debian/rules
+index c6facd5717c6..600e7bab2150 100755
+--- a/debian/rules
++++ b/debian/rules
+@@ -213,7 +213,7 @@ $(DEBIAN)/control.stub: 				\
+ debian/control: $(DEBIAN)/control.stub
+ 	cp $(DEBIAN)/control.stub debian/control
+ 
+-debian/canonical-certs.pem: $(wildcard debian/certs/*-all.pem) $(wildcard debian/certs/*-$(arch).pem) $(wildcard $(DEBIAN)/certs/*-all.pem) $(wildcard $(DEBIAN)/certs/*-$(arch).pem)
++debian/canonical-certs.pem: $(wildcard debian/certs/*.pem $(DEBIAN)/certs/*.pem)
+ 	for cert in $(sort $(notdir $^));					\
+ 	do									\
+ 		for dir in $(DEBIAN) debian;					\
+@@ -225,7 +225,7 @@ debian/canonical-certs.pem: $(wildcard debian/certs/*-all.pem) $(wildcard debian
+ 		done;								\
+ 	done >"$@"
+ 
+-debian/canonical-revoked-certs.pem: $(wildcard debian/revoked-certs/*-all.pem) $(wildcard debian/revoked-certs/*-$(arch).pem) $(wildcard $(DEBIAN)/revoked-certs/*-all.pem) $(wildcard $(DEBIAN)/revoked-certs/*-$(arch).pem)
++debian/canonical-revoked-certs.pem: $(wildcard debian/revoked-certs/*.pem $(DEBIAN)/revoked-certs/*.pem)
+ 	for cert in $(sort $(notdir $^));					\
+ 	do									\
+ 		for dir in $(DEBIAN) debian;					\
 -- 
 2.43.0
 
