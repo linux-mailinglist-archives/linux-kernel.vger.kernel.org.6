@@ -1,78 +1,144 @@
-Return-Path: <linux-kernel+bounces-416292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F5EA9D42DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 21:10:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1DE79D42E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 21:12:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 284D2B22403
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 20:10:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3BA9283449
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 20:12:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AE311B3B2E;
-	Wed, 20 Nov 2024 20:10:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6B381BC9F7;
+	Wed, 20 Nov 2024 20:12:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KacLQQZK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BCH3fpFH"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5BC015855C;
-	Wed, 20 Nov 2024 20:10:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70AB615855C
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 20:12:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732133406; cv=none; b=VzEnTvLOiLpncBoE2c4UKoSP6CQTyxMWrGBtnyf0c50ULGrcJpIuUmxY5FTmeYgoBtqmiidLgMngVM36/csTWQW4Dt6TbpkccVcUsRMiwuYn3/YhDA5j0d8JkY0yNfiOQ7L6lr8zrZIqTGkov2EBUApLEivnKiqZV/m7hfIsg7k=
+	t=1732133527; cv=none; b=rD0bP5QPFwcZiqoc+XG1k0t7LRqZSZC9ycv3r9wjYoK5ubPkxN/2UI6OttgRxwV72ECCKuPdKrcMhlCTKKLPfyfVz/8x7Rs54IBQB0Ax889yYKOuDrSlGDdoqKaWnrlaRMF2PsoQFXY3COKfBo/g/otIe0a6jyWf7YlbsHMBa8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732133406; c=relaxed/simple;
-	bh=7As3HBwUomQn+EwYIRDhmtmG5naKxNQ/Zjfp9tG5avY=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=DNNsrKJpR1c6F9q1vtsvmjNW2Iki55S1fytafFLMuVuKu+TSGzwYZtlv2X0Z6/7bJXfAA8pINmg3RmLVVnksPL5883T+ssiLot2kFlwqikw08eI0JXmGxiZvj18kEkbs+pwuQqTOwBQNqHr7bsFU8pqkW7hY1O6y1zcvqRGl57A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KacLQQZK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47712C4CECD;
-	Wed, 20 Nov 2024 20:10:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732133406;
-	bh=7As3HBwUomQn+EwYIRDhmtmG5naKxNQ/Zjfp9tG5avY=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=KacLQQZKD4PrY3yYlC4V42XLsILZxwS+hin+z76bfoug3jEGlESjqaROZV74RuVdz
-	 X2fEMQpFXbD4PaLZoNUXEmOizA82x55IZWQF0FXodT5L5Y7YHbVwDEWJ/Svkdgp3JH
-	 CzrNucshhzJ1y4RLojntCLOHpeXuH56UQwkiLhZyMJZqqKYL9/sZAuSMSGNSgmajyU
-	 izoxoAYahX9fPn+e9pe/sVniMCtztE06abAYd8konSq+SH3ZtiA6nXEM/DWwXK2vO3
-	 REyA0ED2BPROq0PBRNVFnWhERU5QyiiMlnXtS06hF1oW2FXBf8KE3KYQQxAwVHejS7
-	 MjPdThr2RKuCg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 346AB3809A80;
-	Wed, 20 Nov 2024 20:10:19 +0000 (UTC)
-Subject: Re: [GIT PULL] Kselftest update for Linux 6.13-rc1
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <4c781cbc-d77b-4ddb-8a6b-72514f55b6c8@linuxfoundation.org>
-References: <4c781cbc-d77b-4ddb-8a6b-72514f55b6c8@linuxfoundation.org>
-X-PR-Tracked-List-Id: <linux-kselftest.vger.kernel.org>
-X-PR-Tracked-Message-Id: <4c781cbc-d77b-4ddb-8a6b-72514f55b6c8@linuxfoundation.org>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest tags/linux_kselftest-next-6.13-rc1
-X-PR-Tracked-Commit-Id: a44c26d7fa74a5f4d2795a5c55a2d6ec1ebf1e38
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 856385e0c56e7739bddea869e7a17f040211a2fc
-Message-Id: <173213341781.1333813.7197162804373428701.pr-tracker-bot@kernel.org>
-Date: Wed, 20 Nov 2024 20:10:17 +0000
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, shuah <shuah@kernel.org>, Shuah Khan <skhan@linuxfoundation.org>, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1732133527; c=relaxed/simple;
+	bh=sLF1XsbE9ixkUWHN0JHbT1a460gImKeTFjwLfBo2sok=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OThSei/7Fy3BYBoqAgrztroC+SgnALdJLboK0dL3Thj0oH5oTMiMBYmquzlJsVGlqevcMMWI5B/aXcKk5gLMGfHQf2pslvCR1fAytN1XeOVjPdZM2j7rFd3bQfAVI7XctGLwOnpvAtKZTQAII56LI5BgL7oPBdUELbliwzMDP6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BCH3fpFH; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732133524;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=r/iIx3qM/FiJprXp7nGWe2QnNAvvHTyZi+kXVMR9cYw=;
+	b=BCH3fpFHNVOlJsaqqkLQdVahyhHidnCoAcBQMUtzE98f2EqqlU/hBEFb9befD5mTnhPpJa
+	GX+Te5SHkqdaFiVUESeDosUHji6qt8yEgXpGHy/K4qKBcgPnZTAMGyWUFl1qxTRhhWbE7v
+	x2XwtVCuvJ6pJWAvJoqrjH9MW6pfnRE=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-641-W81dEQBSPiCgkHyzCEpD_g-1; Wed,
+ 20 Nov 2024 15:12:01 -0500
+X-MC-Unique: W81dEQBSPiCgkHyzCEpD_g-1
+X-Mimecast-MFC-AGG-ID: W81dEQBSPiCgkHyzCEpD_g
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7789F195604F;
+	Wed, 20 Nov 2024 20:11:59 +0000 (UTC)
+Received: from t14s.fritz.box (unknown [10.22.80.45])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 65BCB19560A3;
+	Wed, 20 Nov 2024 20:11:53 +0000 (UTC)
+From: David Hildenbrand <david@redhat.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org,
+	David Hildenbrand <david@redhat.com>,
+	syzbot+3511625422f7aa637f0d@syzkaller.appspotmail.com,
+	stable@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Lameter <cl@linux.com>,
+	"Liam R. Howlett" <Liam.Howlett@Oracle.com>
+Subject: [PATCH v1] mm/mempolicy: fix migrate_to_node() assuming there is at least one VMA in a MM
+Date: Wed, 20 Nov 2024 21:11:51 +0100
+Message-ID: <20241120201151.9518-1-david@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-The pull request you sent on Mon, 18 Nov 2024 13:40:02 -0700:
+We currently assume that there is at least one VMA in a MM, which isn't
+true.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest tags/linux_kselftest-next-6.13-rc1
+So we might end up having find_vma() return NULL, to then de-reference
+NULL. So properly handle find_vma() returning NULL.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/856385e0c56e7739bddea869e7a17f040211a2fc
+This fixes the report:
 
-Thank you!
+Oops: general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] PREEMPT SMP KASAN PTI
+KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
+CPU: 1 UID: 0 PID: 6021 Comm: syz-executor284 Not tainted 6.12.0-rc7-syzkaller-00187-gf868cd251776 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
+RIP: 0010:migrate_to_node mm/mempolicy.c:1090 [inline]
+RIP: 0010:do_migrate_pages+0x403/0x6f0 mm/mempolicy.c:1194
+Code: ...
+RSP: 0018:ffffc9000375fd08 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: ffffc9000375fd78 RCX: 0000000000000000
+RDX: ffff88807e171300 RSI: dffffc0000000000 RDI: ffff88803390c044
+RBP: ffff88807e171428 R08: 0000000000000014 R09: fffffbfff2039ef1
+R10: ffffffff901cf78f R11: 0000000000000000 R12: 0000000000000003
+R13: ffffc9000375fe90 R14: ffffc9000375fe98 R15: ffffc9000375fdf8
+FS:  00005555919e1380(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00005555919e1ca8 CR3: 000000007f12a000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ kernel_migrate_pages+0x5b2/0x750 mm/mempolicy.c:1709
+ __do_sys_migrate_pages mm/mempolicy.c:1727 [inline]
+ __se_sys_migrate_pages mm/mempolicy.c:1723 [inline]
+ __x64_sys_migrate_pages+0x96/0x100 mm/mempolicy.c:1723
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
+Fixes: 39743889aaf7 ("[PATCH] Swap Migration V5: sys_migrate_pages interface")
+Reported-by: syzbot+3511625422f7aa637f0d@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/lkml/673d2696.050a0220.3c9d61.012f.GAE@google.com/T/
+Cc: <stable@vger.kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Christoph Lameter <cl@linux.com>
+Cc: Liam R. Howlett <Liam.Howlett@Oracle.com>
+Signed-off-by: David Hildenbrand <david@redhat.com>
+---
+ mm/mempolicy.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+index b646fab3e45e1..fbb6127e4595a 100644
+--- a/mm/mempolicy.c
++++ b/mm/mempolicy.c
+@@ -1080,6 +1080,10 @@ static long migrate_to_node(struct mm_struct *mm, int source, int dest,
+ 
+ 	mmap_read_lock(mm);
+ 	vma = find_vma(mm, 0);
++	if (!vma) {
++		mmap_read_unlock(mm);
++		return 0;
++	}
+ 
+ 	/*
+ 	 * This does not migrate the range, but isolates all pages that
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.47.0
+
 
