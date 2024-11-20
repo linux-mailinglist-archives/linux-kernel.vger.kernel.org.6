@@ -1,182 +1,124 @@
-Return-Path: <linux-kernel+bounces-415628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF98D9D3953
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 12:20:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A94949D3920
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 12:07:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE07AB22AF9
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 11:06:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F436285DE7
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 11:07:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BA1C19F464;
-	Wed, 20 Nov 2024 11:04:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=permerror (0-bit key) header.d=sapience.com header.i=@sapience.com header.b="+7YZLOA4";
-	dkim=pass (2048-bit key) header.d=sapience.com header.i=@sapience.com header.b="EeQ8xmfA"
-Received: from s1.sapience.com (s1.sapience.com [72.84.236.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C3E81A707E;
+	Wed, 20 Nov 2024 11:04:56 +0000 (UTC)
+Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0667F1A2562;
-	Wed, 20 Nov 2024 11:04:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=72.84.236.66
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732100668; cv=fail; b=PuXnMvHHl5u8zv1PMV2AZtjCHDgaVyyWIyb2GOwdJknhP7bPI4Ap7GfW8jOFPEJxd+GZyvDOqN3K9AE/nTcfBCOMfHrcbYmu3NW004TkZ8vc8FnpqNBk/h+2P0gYByErtF8HkL3Uijz+2DkE7a4aS4EirCRkBn7/BVrjgCl73ZY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732100668; c=relaxed/simple;
-	bh=d8Tva37tunzUVXrkergK6kbO7c6e7kSHNNurJrVq/zo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=H8qZR+uBXGHFGDdXNffjNUfXh2A/9ISIRBHAhuowlqmokEzo8A7Zru27pAOWUIACgknFP2iRS5KahqrhbjFDqzML2RyQge3UFM4qYyTdQbKkv/RIajfZbSpaj/aqeGoDzp8zOhGqsh3kGh0rip1mjijR6bthFOprNaTerkvfXkg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sapience.com; spf=pass smtp.mailfrom=sapience.com; dkim=permerror (0-bit key) header.d=sapience.com header.i=@sapience.com header.b=+7YZLOA4; dkim=pass (2048-bit key) header.d=sapience.com header.i=@sapience.com header.b=EeQ8xmfA; arc=fail smtp.client-ip=72.84.236.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sapience.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sapience.com
-Authentication-Results: dkim-srvy7; dkim=pass (Good ed25519-sha256 
-   signature) header.d=sapience.com header.i=@sapience.com 
-   header.a=ed25519-sha256; dkim=pass (Good 2048 bit rsa-sha256 signature) 
-   header.d=sapience.com header.i=@sapience.com header.a=rsa-sha256
-Received: from srv8.sapience.com (srv8.sapience.com [x.x.x.x])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (secp384r1) server-digest SHA384)
-	(No client certificate requested)
-	by s1.sapience.com (Postfix) with ESMTPS id C67ED480AB5;
-	Wed, 20 Nov 2024 06:04:25 -0500 (EST)
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=sapience.com;
- i=@sapience.com; q=dns/txt; s=dk-ed25519-220413; t=1732100665;
- h=message-id : subject : from : to : cc : date : in-reply-to :
- references : content-type : mime-version : from;
- bh=zapun0s3m4q12V8nyro11PzJ8BjJUdOqUJswQ7zVZUA=;
- b=+7YZLOA4TRnSHM2MnOWai+a1Jij2LN3KadrQc+ZfatdzCYnOxOBpg8Ny2e2nQOHPSF2pE
- kYIKHwVkWvsDt1FCg==
-ARC-Seal: i=1; a=rsa-sha256; d=sapience.com; s=arc6-rsa-220412; t=1732100665;
-	cv=none; b=Q94j/SPPdMNajyT1Cgpeu7ZMj1+yHiLeeqjc74L1UbiQ1cjATjDGaICb8eSMwmG/Nd4LhRqG/AwLwEbH1E/2WAtE5k47wv1H4XEbABRGyj1LTSejoU473Bsdjtnjh+w5KMNhONrPoT33A7731qNHnWDupO9G/oZkTQFXlz+1wXMsO159CXp+/QjWCwGlkx1Ae5bIVbA+sR1aKUPVq/9ByIRixfIyLECjl5u5UUuLnVsCSlxKGLWW7ME7pEfTzFfsYqEiLi7XAQLkB2qM5LYb/sTMpXxx8ZoLV5x6BvGvqkWJ0dzs1SiTQfx6amYVMN+Zv3eyq6y6w0KuymhgTnHiUw==
-ARC-Message-Signature: i=1; a=rsa-sha256; d=sapience.com; s=arc6-rsa-220412;
-	t=1732100665; c=relaxed/simple;
-	bh=d8Tva37tunzUVXrkergK6kbO7c6e7kSHNNurJrVq/zo=;
-	h=DKIM-Signature:DKIM-Signature:Message-ID:Subject:From:To:Cc:Date:
-	 In-Reply-To:References:Autocrypt:Content-Type:User-Agent:
-	 MIME-Version; b=Hm86uAoHdP22HhnNg03+4DGnEVjDUg0CPjF2PSFpKPgz0K0Qt2yYQX5OrtPqRsonH0qBT7N2df1hDQZuiP+i96FT9yjZO7P7jZ8PKb8uNZ/acZ81nAsHInFXCQwI+698leWz+iuocrLxa9QirdFXVA260bDWt+IvVXESotrsPLBebClx8xqRUupOOiq4s4CrnFiT0O0hurKEJsGlUX2fC/rr4wUKraYdhQ1C6jAR2bbKN+2X9bVvYSVsoO6AkaZBsawabwWXrQECRUlxoqXW5mVORXn6pGA/VdwVLVVQXdwr3APB0/B3TfcTyCeve17z/epeAcc60XsbQjbON+4APA==
-ARC-Authentication-Results: i=1; arc-srv8.sapience.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sapience.com;
- i=@sapience.com; q=dns/txt; s=dk-rsa-220413; t=1732100665;
- h=message-id : subject : from : to : cc : date : in-reply-to :
- references : content-type : mime-version : from;
- bh=zapun0s3m4q12V8nyro11PzJ8BjJUdOqUJswQ7zVZUA=;
- b=EeQ8xmfAQnxkI53HYOz8eUgAZQR/dLJEaII3Q9pJiwEY/i+A6wmIztqFp3Bfxenr73FJv
- vKwj/RNkO4NBivPqTvfEtUcBK/KQVLZFbwbXRFTEJt01g9UNmUODKu/TqLYYOmoXt/JMlh4
- SzqfKpMr2wAjaN88LAfulQa7dpfPKBgX5tr1I27kwq6EITqb219ED2Dx69NhyxFDYTMz4E6
- vN/XTTdLP+OWkNt52GeXv1VI1LtyjgqwuL8RcUbge+41wqk6yiD50GcE9eg2f+T7w3s1PlQ
- 1ptwR4JtWN/JZ3TGlTY7Y6VjLsD37m13kQOXcXQqUjL0H67IfuyV77rHdwTQ==
-Received: from lap7.sapience.com (lap7w.sapience.com [x.x.x.x])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	by srv8.sapience.com (Postfix) with ESMTPS id 8648D280047;
-	Wed, 20 Nov 2024 06:04:25 -0500 (EST)
-Message-ID: <9ad77de15c483d31ba10b4b7bcf65a9e133f63ae.camel@sapience.com>
-Subject: Re: md-raid  6.11.8 page fault oops
-From: Genes Lists <lists@sapience.com>
-To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-Cc: song@kernel.org, yukuai3@huawei.com, linux-raid@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, 
-	linux@leemhuis.info
-Date: Wed, 20 Nov 2024 06:04:25 -0500
-In-Reply-To: <Zz23Z3RK/AHSXY1I@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
-References: <0b579808e848171fc64e04f0629e24735d034d32.camel@sapience.com>
-	 <34333c67f5490cda041bc0cbe4336b94271d5b49.camel@sapience.com>
-	 <Zzx34Mm5K42GWyKj@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
-	 <ef8bd4f9308dbf941076b2f7bd8a81590a09aa5e.camel@sapience.com>
-	 <Zz23Z3RK/AHSXY1I@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
-Autocrypt: addr=lists@sapience.com; prefer-encrypt=mutual;
- keydata=mDMEXSY9GRYJKwYBBAHaRw8BAQdAwzFfmp+m0ldl2vgmbtPC/XN7/k5vscpADq3BmRy5R
- 7y0LU1haWwgTGlzdHMgKEwwIDIwMTkwNzEwKSA8bGlzdHNAc2FwaWVuY2UuY29tPoiWBBMWCAA+Ah
- sBBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAFiEE5YMoUxcbEgQOvOMKc+dlCv6PxQAFAmPJfooFCRl
- vRHEACgkQc+dlCv6PxQAc/wEA/Dbmg91DOGXll0OW1GKaZQGQDl7fHibMOKRGC6X/emoA+wQR5FIz
- BnV/PrXbao8LS/h0tSkeXgPsYxrzvfZInIAC
-Content-Type: multipart/signed; micalg="pgp-sha384";
-	protocol="application/pgp-signature"; boundary="=-WDsWYzT6rEAUh7xf+AYr"
-User-Agent: Evolution 3.54.1 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A0BF17BB2E;
+	Wed, 20 Nov 2024 11:04:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732100695; cv=none; b=SOU3xlHw74jjQObqMcOoekb2QYofT+HJAHRQa+TgDrj6ahESG0L2axHsDfS8DdursFmIKy+56P/OPrfrYf+Xr9hWP9FBv6+8t73982XZrnd5GQSWI9VsLWwRnqzNPMR3m/rrIrTI203hrIFJXI1aWeqQfKASN07Ivy6MuPJoDnA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732100695; c=relaxed/simple;
+	bh=OVgDtO9cy79NmdkAcw8w1WJzWj8zv5JR955m1f7MFXg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lQ8zClH1ZVoSv5yhmVuTPEl6JDNGLIdakRs+a4DoA1RoxGIZvJUnQCnKL0tTtFbIUYP/XJwKB6jpzbF8FVDhFj1Ey0D6/qUB9r0UvByklHOdhbO1/wNuRruE38mYNEdS/Rld7XJUjZeLHdsX/H2XSlAuMtpi5FuPN4CN0w9EwMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e382589e8fdso4921614276.0;
+        Wed, 20 Nov 2024 03:04:53 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732100693; x=1732705493;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Zp6NHSwjq6RwaH2ECKqkZ0C2RUZPVMxuS7OZbSAMyD4=;
+        b=bbD6LVwhlesTZ8K12IksHlH9gtUSx7BOKKxC81ufNRzqOvHDOvPu+d/9GgsI+ltl3m
+         yvnNh7GaQPLyAXnBW6P5iowJj554XsQnWI3Qpc9YjtzA3SGv/ouPujHK8jbWhcqT38wi
+         i9w0I+ONF875vM2UOVX3gDFF1eC4eupzdEJDh1Yl/AYCrTFSgRSwJlftcZHdrqnxg54z
+         fKiptXo4djSzepn7WUikWisGFtMPy6ubI/y6KiB5yFLJ1SOx1/KXM213C230VG1dXaA2
+         nr0ym1lDaGxdH3m8TFe381cHvXgcm1HmndILbzVLg8yDdv+kDtgq1M1jCLmgZj1L6dn5
+         xZdg==
+X-Forwarded-Encrypted: i=1; AJvYcCUhEqNjkyGcTpgfDrnuOsq73vVDglHzQ/jIkyK0JFa4dN4U5N90+L4Q7ZT5/ZYehinloTb2KOWGtLfm@vger.kernel.org, AJvYcCX08vfz8l6py2cT4YzBsc+Kh8lCaCcLd/3ZIUIa23YcgUBWZLHI5LDRj7NWQDOTlQohCvl/MTprOKVIa2dQ@vger.kernel.org
+X-Gm-Message-State: AOJu0YxP2DuntsHTzqbI2vpGRLJBzcvx/ECqelXTELEokN45UWoDoAGk
+	0yUHKuBlHL4gV2vucI9YizhOq+0vLb1/fLKxZMunQzpsnHOpPikGZ0tjpvG6
+X-Google-Smtp-Source: AGHT+IEvzfm1D7yGYLwAl3xFYA4+17B4OVsEp/4JGaNISiV6xjtmlLOv6r5PhA3pdjbeAfeDtSUEGg==
+X-Received: by 2002:a05:6902:1b82:b0:e38:ba98:47e0 with SMTP id 3f1490d57ef6-e38cb717550mr1854413276.47.1732100692805;
+        Wed, 20 Nov 2024 03:04:52 -0800 (PST)
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com. [209.85.128.172])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e387e73baefsm3141626276.18.2024.11.20.03.04.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 20 Nov 2024 03:04:51 -0800 (PST)
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-6e3c3da5bcdso57096627b3.2;
+        Wed, 20 Nov 2024 03:04:51 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCV2fuk4HISGl1m7CFat2JszeBZr/2dlQf7zGxokFbmjYfg8D98mQljcDdHPL9r1tHWAsYgChcovBqRI2Bbt@vger.kernel.org, AJvYcCW60YkyAphh8wYuzmsI1chOrlVd4WkJ4TJ+HDzsW+hJPLd30QuXmh0ZhCZAcQJxx8eCNG4dyovc5Vlr@vger.kernel.org
+X-Received: by 2002:a05:690c:9c07:b0:6ee:6241:ac9d with SMTP id
+ 00721157ae682-6eebd2ae6efmr25400857b3.28.1732100691631; Wed, 20 Nov 2024
+ 03:04:51 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-
-
---=-WDsWYzT6rEAUh7xf+AYr
-Content-Type: multipart/alternative; boundary="=-vtO7mtNc6IVZEMUQ8cvh"
-
---=-vtO7mtNc6IVZEMUQ8cvh
+References: <505e5950dd2d76e6c3a8af57bc0cd1e0fbf2b637.1732093745.git.00107082@163.com>
+In-Reply-To: <505e5950dd2d76e6c3a8af57bc0cd1e0fbf2b637.1732093745.git.00107082@163.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 20 Nov 2024 12:04:39 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdWEuWrfj3p0pX7FX6AgOKryFUnCEBRhPkhvnSEkMwThpQ@mail.gmail.com>
+Message-ID: <CAMuHMdWEuWrfj3p0pX7FX6AgOKryFUnCEBRhPkhvnSEkMwThpQ@mail.gmail.com>
+Subject: Re: [PATCH 1/3] gpio: Fix a potential abuse of seq_printf() format string
+To: David Wang <00107082@163.com>
+Cc: linus.walleij@linaro.org, brgl@bgdev.pl, kees@kernel.org, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, 2024-11-20 at 15:48 +0530, Ojaswin Mujoo wrote:
->=20
-> Got it, I'm still not sure what might be causing this oops. Would you
-> happen to a have a reproducer that I can play around with on my
-> system?
->=20
-> Regards,
-> ojaswin
->=20
+Hi David,
 
-Sorry, unfortunately I do not have a reproducer otherwise I could
-bisect. This system has an rsync backup of about 5 TB twice a day
-(receives data over net and writes to local raid disks) - and it
-happened during one of them.
+On Wed, Nov 20, 2024 at 10:15=E2=80=AFAM David Wang <00107082@163.com> wrot=
+e:
+> Using device name as format string of seq_printf() is prone to
+> "Format string attack", opens possibility for exploitation.
+> Seq_puts() is safer and more efficient.
+>
+> Signed-off-by: David Wang <00107082@163.com>
 
-gene
+Thanks for your patch!
+
+> --- a/drivers/gpio/gpio-aspeed-sgpio.c
+> +++ b/drivers/gpio/gpio-aspeed-sgpio.c
+> @@ -420,7 +420,7 @@ static void aspeed_sgpio_irq_print_chip(struct irq_da=
+ta *d, struct seq_file *p)
+>         int offset;
+>
+>         irqd_to_aspeed_sgpio_data(d, &gpio, &bank, &bit, &offset);
+> -       seq_printf(p, dev_name(gpio->dev));
+> +       seq_puts(p, dev_name(gpio->dev));
+
+If we want to add the missing space here, the code has to be changed
+to use seq_printf(..., " %s", ...) again.
+
+However, it might be simpler to move this to the core. I.e. add an
+unconditional seq_putc(p, ' ') to show_interrupts()[1], and drop the
+spaces from all callbacks and from the fallbacks in show_interrupts().
+
+[1] https://elixir.bootlin.com/linux/v6.12/source/kernel/irq/proc.c#L503
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 --=20
-Gene
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-
---=-vtO7mtNc6IVZEMUQ8cvh
-Content-Type: text/html; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-
-<html><head><style>pre,code,address {
-  margin: 0px;
-}
-h1,h2,h3,h4,h5,h6 {
-  margin-top: 0.2em;
-  margin-bottom: 0.2em;
-}
-ol,ul {
-  margin-top: 0em;
-  margin-bottom: 0em;
-}
-blockquote {
-  margin-top: 0em;
-  margin-bottom: 0em;
-}
-</style></head><body><div>On Wed, 2024-11-20 at 15:48 +0530, Ojaswin Mujoo =
-wrote:</div><blockquote type=3D"cite" style=3D"margin:0 0 0 .8ex; border-le=
-ft:2px #729fcf solid;padding-left:1ex"><div><br></div><div>Got it, I'm stil=
-l not sure what might be causing this oops. Would you<br></div><div>happen =
-to a have a reproducer that I can play around with on my system?<br></div><=
-div><br></div><div>Regards,<br></div><div>ojaswin<br></div><div><br></div><=
-/blockquote><div><br></div><div>Sorry, unfortunately I do not have a reprod=
-ucer otherwise I could bisect. This system has an rsync backup of about 5 T=
-B twice a day (receives data over net and writes to local raid disks) - and=
- it happened during one of them.</div><div><br></div><div>gene</div><div><b=
-r></div><div><span><pre>-- <br></pre><div><span style=3D"background-color: =
-inherit;">Gene</span></div><div><br></div></span></div></body></html>
-
---=-vtO7mtNc6IVZEMUQ8cvh--
-
---=-WDsWYzT6rEAUh7xf+AYr
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYJAB0WIQRByXNdQO2KDRJ2iXo5BdB0L6Ze2wUCZz3COQAKCRA5BdB0L6Ze
-2wLlAQD/NbMyLy7/vCkTJQfXuiuvHtzeCgbehKprPc0SXSSNsgD9Hi9/7pzuDeGr
-vrYOwdHkl/KMw/gQ4f6+C8UkrlwuPQY=
-=u8Ko
------END PGP SIGNATURE-----
-
---=-WDsWYzT6rEAUh7xf+AYr--
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
