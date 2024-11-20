@@ -1,107 +1,195 @@
-Return-Path: <linux-kernel+bounces-416272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 303279D42B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 20:53:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AB749D42B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 20:53:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB7091F220DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 19:53:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C577E1F21F80
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 19:53:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DBDA1C2DCF;
-	Wed, 20 Nov 2024 19:53:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B90B21C4A00;
+	Wed, 20 Nov 2024 19:53:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="haNXchWb"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dqOs1sB3"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F5C4158A13
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 19:53:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DB151C2337
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 19:53:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732132409; cv=none; b=rCVqj8IfemH1gMT+lX4JlrR++QPQ1tSeED5UW9kBhGJgyQPotQWeL287CCwTHYBfqiL38HKWDLviGrMTyooITyQSphHHWaWb9IU/pAeFMgB1/Y3xAkephwXQrmoJMRKxVSmKo7krSRSWV7ZxJDHmu507D5rC9WLMaU9/r5w95jw=
+	t=1732132411; cv=none; b=d/ABpVIdBnVTfLM0yv8WuW8iCPidg6B+UvGRYOtVgIf3QETlRpfI2vgkzqVC/S4CXfN1Tcn3vYP9EPJsPb/7N2b+dOGO4s/O+2qw//2ZiKVk5uJPx3DuwTeNLLQYTDbTdAKyEvRNunNedTPahrReE3UmgoSr/lmL39rKnY4fQos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732132409; c=relaxed/simple;
-	bh=y63QDW4bB9giI85NRGxdeAGuxqqnxC49AmpJDY3OdtM=;
-	h=Subject:To:Cc:From:Date:Message-Id; b=DA4a/UFyHfaWP2rjGOZsnkZYrx27WwnGNzet3psjR9vcrqswsTneItzl5MjDT54HdeCqABoaykFunHaoucIw4QDtekt7E5TvvlslH5BoqJDli+x91FRrHI9JLgb/RMTG7Erf+9YpTD8PvCuvEnr3vn53Yjh+PIwQK+HFncJehHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=haNXchWb; arc=none smtp.client-ip=192.198.163.15
+	s=arc-20240116; t=1732132411; c=relaxed/simple;
+	bh=3J36Gh0oEqfHMnPHid0T7QcBYIBfjARqblhtajsTFh8=;
+	h=Subject:To:Cc:From:Date:References:In-Reply-To:Message-Id; b=gXJa+1aFuscILdnIv1KEjUb6zQ8SyBMC4koy0bo3025T9tGmm0pFbnpyJZeG0rGoUGrxfEfTFeyow5GBIJZNycc3izg85qpJ8AJd6K79cj+nL6Rtc1EQcZzYPFw9XqiEGFaW7XLNyh7QATT6/yAxMqBXcgoF+cjdvJQUF7aJHIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dqOs1sB3; arc=none smtp.client-ip=192.198.163.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732132408; x=1763668408;
-  h=subject:to:cc:from:date:message-id;
-  bh=y63QDW4bB9giI85NRGxdeAGuxqqnxC49AmpJDY3OdtM=;
-  b=haNXchWbzj38u2yvPZDF8LK+hG3KV/uUhSSphnWSEhBwu0CSn062zF52
-   F9KmMeBVLrwLyBKsLTehzPYCpTatgNOS2Vp39zASDbU8LESXdml4UVrHB
-   n62Lk6YnBwMUomX00Y/gONM4P6aeTomyCM0JgwZW+Li5Ynd7B6FuwPMmd
-   KBq8SlX1rp42rfu3eAc7VxjOBOgV2NRp74SayQAcRUaRYmDeiWfiRdCxz
-   qkp5eLSK1kDQfwaLunkyLhWa3LxaJiOpIzM4msn+YLcWM8o3elFSjIewB
-   7+UkUzd0PCkjGyDm1FbyFaQ2jezGlhvlKN27Z7uATNozC9mT0XMkLIKEN
-   w==;
-X-CSE-ConnectionGUID: mxUSLRheStSsBEeA7TWy9g==
-X-CSE-MsgGUID: YbLX46aMQEyxWHjOYgaebg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11262"; a="32322880"
+  t=1732132410; x=1763668410;
+  h=subject:to:cc:from:date:references:in-reply-to:
+   message-id;
+  bh=3J36Gh0oEqfHMnPHid0T7QcBYIBfjARqblhtajsTFh8=;
+  b=dqOs1sB3+20nk1hcuQ1Xy5YEWHKcItJXNouWtyFQfWz1xXEX/ha7oeyt
+   cQL9d/qjA2lqBk+jJdljNaGZAOoB5xFFzr+nAixPjVDgE1aAjIQgHSu4U
+   xEI5F0iPusO/3f2a1w7RlI//TKsv8NrYDDeUtb+b0P0yGoLYKTTisRRzy
+   9LkQHQw47C0XIJmv6jSYTNOhEH55CF+HCrDHc29W+7LcX4f22lGCNT/AQ
+   l7F5X8DcvO5JlakO482q81YDbWixQr0O4sci2CeOQr2TPCmahvblyYHJm
+   kuAqBXcGpL4vCuGKI0A3Ds8JwXN/232MEqAN/qEpfaJ1Zb2jf2ia/BGOa
+   A==;
+X-CSE-ConnectionGUID: X0/haTQeQfuTgAyhrny/QQ==
+X-CSE-MsgGUID: MDmLaVZZRb2pGnL9wsO2Dw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11262"; a="32322890"
 X-IronPort-AV: E=Sophos;i="6.12,170,1728975600"; 
-   d="scan'208";a="32322880"
+   d="scan'208";a="32322890"
 Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Nov 2024 11:53:28 -0800
-X-CSE-ConnectionGUID: 1UlYEZ9hR9CRyEAAuk+iLQ==
-X-CSE-MsgGUID: Jk0Bm/FVSVaE0qq0MtZXnw==
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Nov 2024 11:53:29 -0800
+X-CSE-ConnectionGUID: ec4J/hhCRDqAQBYaFLPXCg==
+X-CSE-MsgGUID: rigcB/A1Q3ONs6QDpL53lQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.12,170,1728975600"; 
-   d="scan'208";a="90409747"
+   d="scan'208";a="90409766"
 Received: from davehans-spike.ostc.intel.com (HELO localhost.localdomain) ([10.165.164.11])
-  by orviesa007.jf.intel.com with ESMTP; 20 Nov 2024 11:53:27 -0800
-Subject: [PATCH 00/11] x86/cpu: Centralize and standardize CPUID leaf naming
+  by orviesa007.jf.intel.com with ESMTP; 20 Nov 2024 11:53:29 -0800
+Subject: [PATCH 01/11] x86/cpu: Move MWAIT leaf definition to common header
 To: linux-kernel@vger.kernel.org
 Cc: x86@kernel.org,tglx@linutronix.de,bp@alien8.de,rafael@kernel.org,lenb@kernel.org,dave.jiang@intel.com,irenic.rajneesh@gmail.com,david.e.box@intel.com,Dave Hansen <dave.hansen@linux.intel.com>
 From: Dave Hansen <dave.hansen@linux.intel.com>
-Date: Wed, 20 Nov 2024 11:53:27 -0800
-Message-Id: <20241120195327.26E06A69@davehans-spike.ostc.intel.com>
+Date: Wed, 20 Nov 2024 11:53:28 -0800
+References: <20241120195327.26E06A69@davehans-spike.ostc.intel.com>
+In-Reply-To: <20241120195327.26E06A69@davehans-spike.ostc.intel.com>
+Message-Id: <20241120195328.4C71D0A5@davehans-spike.ostc.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-I noticed that the MWAIT code was rather haphazard in how it deals
-with CPUID leaf levels.  As a result, there were a ton of unnecessary
-checks for ->cpuid_level.  It is truly the worst offender because
-there's arch/x86, intel_idle and ACPI that want to poke at it.
 
-Move several of the leaf definitions to one place (cpuid.h).  Use
-the definitions to get rid of magic numbers.  Simplify the code
-when the CPUID feature level dependencies can be used.  Lastly,
-change all the leaf names to be consistent.
+From: Dave Hansen <dave.hansen@linux.intel.com>
 
-This does not get *ALL* the leaves.  The topology and cache ones
-are left along for now, but they can also be converted over.
+Begin constructing a common place to keep all CPUID leaf definitions.
+Move CPUID_MWAIT_LEAF to the CPUID header and include it where
+needed.
 
-It's obviously right in the middle of the merge window, so no
-rush on looking at this.  I just wanted to get it into everyone's
-review queues.  Barring any big issues I'm planning to apply this
-to one of the tip branches after -rc1 drops.
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+---
 
- arch/x86/events/intel/pt.c            |    5 +++--
- arch/x86/events/intel/pt.h            |    3 ---
- arch/x86/include/asm/cpuid.h          |    7 +++++++
- arch/x86/include/asm/fpu/xstate.h     |    4 ----
- arch/x86/include/asm/mwait.h          |    1 -
- arch/x86/kernel/acpi/cstate.c         |    5 +++--
- arch/x86/kernel/cpu/common.c          |    7 ++++---
- arch/x86/kernel/fpu/xstate.c          |   26 +++++++++++---------------
- arch/x86/kernel/hpet.c                |    6 ++----
- arch/x86/kernel/process.c             |    3 ++-
- arch/x86/kernel/smpboot.c             |    5 ++---
- arch/x86/kernel/tsc.c                 |   23 +++++++++++------------
- arch/x86/xen/enlighten_pv.c           |    5 +++--
- drivers/acpi/acpi_pad.c               |    5 ++---
- drivers/dma/ioat/dca.c                |    8 +++++---
- drivers/idle/intel_idle.c             |    6 ++----
- drivers/platform/x86/intel/pmc/core.c |    7 ++++---
- 17 files changed, 61 insertions(+), 65 deletions(-)
+ b/arch/x86/include/asm/cpuid.h  |    2 ++
+ b/arch/x86/include/asm/mwait.h  |    1 -
+ b/arch/x86/kernel/acpi/cstate.c |    1 +
+ b/arch/x86/kernel/hpet.c        |    1 +
+ b/arch/x86/kernel/process.c     |    1 +
+ b/arch/x86/kernel/smpboot.c     |    1 +
+ b/arch/x86/xen/enlighten_pv.c   |    1 +
+ b/drivers/acpi/acpi_pad.c       |    1 +
+ b/drivers/idle/intel_idle.c     |    1 +
+ 9 files changed, 9 insertions(+), 1 deletion(-)
 
+diff -puN arch/x86/include/asm/cpuid.h~mwait-leaf-checks-0 arch/x86/include/asm/cpuid.h
+--- a/arch/x86/include/asm/cpuid.h~mwait-leaf-checks-0	2024-11-20 11:44:15.481584146 -0800
++++ b/arch/x86/include/asm/cpuid.h	2024-11-20 11:44:15.497584759 -0800
+@@ -19,6 +19,8 @@ enum cpuid_regs_idx {
+ 	CPUID_EDX,
+ };
+ 
++#define CPUID_MWAIT_LEAF		5
++
+ #ifdef CONFIG_X86_32
+ extern int have_cpuid_p(void);
+ #else
+diff -puN arch/x86/include/asm/mwait.h~mwait-leaf-checks-0 arch/x86/include/asm/mwait.h
+--- a/arch/x86/include/asm/mwait.h~mwait-leaf-checks-0	2024-11-20 11:44:15.481584146 -0800
++++ b/arch/x86/include/asm/mwait.h	2024-11-20 11:44:15.497584759 -0800
+@@ -15,7 +15,6 @@
+ #define MWAIT_HINT2SUBSTATE(hint)	((hint) & MWAIT_CSTATE_MASK)
+ #define MWAIT_C1_SUBSTATE_MASK  0xf0
+ 
+-#define CPUID_MWAIT_LEAF		5
+ #define CPUID5_ECX_EXTENSIONS_SUPPORTED 0x1
+ #define CPUID5_ECX_INTERRUPT_BREAK	0x2
+ 
+diff -puN arch/x86/kernel/acpi/cstate.c~mwait-leaf-checks-0 arch/x86/kernel/acpi/cstate.c
+--- a/arch/x86/kernel/acpi/cstate.c~mwait-leaf-checks-0	2024-11-20 11:44:15.485584299 -0800
++++ b/arch/x86/kernel/acpi/cstate.c	2024-11-20 11:44:15.497584759 -0800
+@@ -13,6 +13,7 @@
+ #include <linux/sched.h>
+ 
+ #include <acpi/processor.h>
++#include <asm/cpuid.h>
+ #include <asm/mwait.h>
+ #include <asm/special_insns.h>
+ 
+diff -puN arch/x86/kernel/hpet.c~mwait-leaf-checks-0 arch/x86/kernel/hpet.c
+--- a/arch/x86/kernel/hpet.c~mwait-leaf-checks-0	2024-11-20 11:44:15.485584299 -0800
++++ b/arch/x86/kernel/hpet.c	2024-11-20 11:44:15.497584759 -0800
+@@ -7,6 +7,7 @@
+ #include <linux/cpu.h>
+ #include <linux/irq.h>
+ 
++#include <asm/cpuid.h>
+ #include <asm/irq_remapping.h>
+ #include <asm/hpet.h>
+ #include <asm/time.h>
+diff -puN arch/x86/kernel/process.c~mwait-leaf-checks-0 arch/x86/kernel/process.c
+--- a/arch/x86/kernel/process.c~mwait-leaf-checks-0	2024-11-20 11:44:15.489584453 -0800
++++ b/arch/x86/kernel/process.c	2024-11-20 11:44:15.497584759 -0800
+@@ -30,6 +30,7 @@
+ #include <linux/hw_breakpoint.h>
+ #include <linux/entry-common.h>
+ #include <asm/cpu.h>
++#include <asm/cpuid.h>
+ #include <asm/apic.h>
+ #include <linux/uaccess.h>
+ #include <asm/mwait.h>
+diff -puN arch/x86/kernel/smpboot.c~mwait-leaf-checks-0 arch/x86/kernel/smpboot.c
+--- a/arch/x86/kernel/smpboot.c~mwait-leaf-checks-0	2024-11-20 11:44:15.489584453 -0800
++++ b/arch/x86/kernel/smpboot.c	2024-11-20 11:44:15.497584759 -0800
+@@ -64,6 +64,7 @@
+ 
+ #include <asm/acpi.h>
+ #include <asm/cacheinfo.h>
++#include <asm/cpuid.h>
+ #include <asm/desc.h>
+ #include <asm/nmi.h>
+ #include <asm/irq.h>
+diff -puN arch/x86/xen/enlighten_pv.c~mwait-leaf-checks-0 arch/x86/xen/enlighten_pv.c
+--- a/arch/x86/xen/enlighten_pv.c~mwait-leaf-checks-0	2024-11-20 11:44:15.489584453 -0800
++++ b/arch/x86/xen/enlighten_pv.c	2024-11-20 11:44:15.497584759 -0800
+@@ -49,6 +49,7 @@
+ #include <xen/hvc-console.h>
+ #include <xen/acpi.h>
+ 
++#include <asm/cpuid.h>
+ #include <asm/paravirt.h>
+ #include <asm/apic.h>
+ #include <asm/page.h>
+diff -puN drivers/acpi/acpi_pad.c~mwait-leaf-checks-0 drivers/acpi/acpi_pad.c
+--- a/drivers/acpi/acpi_pad.c~mwait-leaf-checks-0	2024-11-20 11:44:15.493584606 -0800
++++ b/drivers/acpi/acpi_pad.c	2024-11-20 11:44:15.497584759 -0800
+@@ -19,6 +19,7 @@
+ #include <linux/acpi.h>
+ #include <linux/perf_event.h>
+ #include <linux/platform_device.h>
++#include <asm/cpuid.h>
+ #include <asm/mwait.h>
+ #include <xen/xen.h>
+ 
+diff -puN drivers/idle/intel_idle.c~mwait-leaf-checks-0 drivers/idle/intel_idle.c
+--- a/drivers/idle/intel_idle.c~mwait-leaf-checks-0	2024-11-20 11:44:15.493584606 -0800
++++ b/drivers/idle/intel_idle.c	2024-11-20 11:44:15.497584759 -0800
+@@ -51,6 +51,7 @@
+ #include <linux/notifier.h>
+ #include <linux/cpu.h>
+ #include <linux/moduleparam.h>
++#include <asm/cpuid.h>
+ #include <asm/cpu_device_id.h>
+ #include <asm/intel-family.h>
+ #include <asm/mwait.h>
+_
 
