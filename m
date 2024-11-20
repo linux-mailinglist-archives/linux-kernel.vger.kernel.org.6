@@ -1,57 +1,108 @@
-Return-Path: <linux-kernel+bounces-415971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 848749D3EA2
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:11:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D9E59D3EA4
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:11:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A9762821A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:11:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB9971F2463D
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:11:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BCED1C6F6D;
-	Wed, 20 Nov 2024 14:59:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93C771DC05D;
+	Wed, 20 Nov 2024 14:59:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Z49uxsyk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ew7HvsRk"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98D331B9B50;
-	Wed, 20 Nov 2024 14:59:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F66B1C75E4;
+	Wed, 20 Nov 2024 14:59:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732114742; cv=none; b=talgwYOC4KoKuUEV3iabw02861f39MLQ98JEDllWLaxidXE6RGK10Mrh0SUhbuOKfg/vMR+VdlxBl9DRLWVnHqSxSnjDfPCx3nB4CbigWOLKJHTu10syCI/i+DznUTy5YTGLEArZTpNimsFFWAJXB5C+Pc+W78gSTZ+K0TcHOz0=
+	t=1732114750; cv=none; b=GQrwG1rtKtaU8zoIVYpr7kRpp3H3M1gGh79MRZlsysnfew6OmFG5hb6j3MR1xdrZwfit+GoTczjU9s8qowCuiLCig2QO2i1BrUZtuaD6B+otOx45W4xgLKzLUtNQ9gu4XAbiVcLAraxP5Fl7Cvjc04s8ojVyj0zVxe54mtXF6FA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732114742; c=relaxed/simple;
-	bh=RPTB3KechpAl4PhGA4iJyVy8SRU9IhGNpYs5OQEcPNE=;
+	s=arc-20240116; t=1732114750; c=relaxed/simple;
+	bh=mgj4bvZ/X9lF9Afs6hkeLwqdCb98lX1871WUaw0D2YA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RnhEh0VsRuL408c9Pp/xt4u7UdJUGGcPMxaOVjFN3fjlH/VkGZWftRptwBGCG7aJygPB5ZaiUygs06xcIU8S2SLML+an4cOe6WNS/ZNo0tw/KdHmQPXyKr2y6xptXhWxopmSoFePyDBtO4HrKHyudvz9d6kdnUh97yM9f6REBlQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Z49uxsyk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF356C4CECD;
-	Wed, 20 Nov 2024 14:59:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1732114741;
-	bh=RPTB3KechpAl4PhGA4iJyVy8SRU9IhGNpYs5OQEcPNE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Z49uxsykhLQB7sEOgYKjGs1sZMYD0MFU6xVt+IolhVmMwMfQs6EZN2UR5TEmfSkQd
-	 RCO3ys2Ac4e11LboYxI+t79HACWj561UjP9kym0bObm4b7Ujpcpq+wNZDHIC6umrk0
-	 vIYTu3NbVSZuKqjEWaufHTAlG0PXUuBBziOBOpK4=
-Date: Wed, 20 Nov 2024 15:58:36 +0100
-From: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-To: Siddh Raman Pant <siddh.raman.pant@oracle.com>
-Cc: "sashal@kernel.org" <sashal@kernel.org>,
-	"stable@vger.kernel.org" <stable@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
-	"shivani.agarwal@broadcom.com" <shivani.agarwal@broadcom.com>
-Subject: Re: 5.10.225 stable kernel cgroup_mutex not held assertion failure
-Message-ID: <2024112022-staleness-caregiver-0707@gregkh>
-References: <20240920092803.101047-1-shivani.agarwal@broadcom.com>
- <4f827551507ed31b0a876c6a14cdca3209c432ae.camel@oracle.com>
- <2024110612-lapping-rebate-ed25@gregkh>
- <6455422802d8334173251dbb96527328e08183cf.camel@oracle.com>
- <c10d6cc49868dd3c471c53fc3c4aba61c33edead.camel@oracle.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=lR9z8/eFuwg1UW2ePQRwhG0ltELJBe8h+TRmGaRTlARm5oVwT7vZT2ehMRj9Il+mwlkke8UP42tBVAMjqKe4wP7s1GhKdE3pxEtv9DXDbzbY0qpISnA8Cc7EtzfrtKw3h+G0wwD4VUsZwiJ+qsXsmt3VhJDKrIS0KJUUvAGz/ls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ew7HvsRk; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=RkowXip/85xKsOA9eS4V3TnfVFLeWlFM6e9qis0TUFo=; b=ew7HvsRkHFTom5sTnUqzSG0oAO
+	ph2CPqO/ygxJ/UPM1WUb+pYR0aHrsOxLuya8BpPk6cbQe7m4o8R6UyxrT56fisaJpI/vFiYU6Bxds
+	9kG361m6Pt6bVUEHKciM9MNv6n0DeDnr3UoPQ1HATq0bL/rvVgpKHO/CPebxjZHz2SGumyNYakGU8
+	gLKwJSCZ55FiCvjyNICyvPDS/wqrke6fPTkuii22vWFlAQRkd2AK+ZRfhifvacNWLsUjG2bXsE/p7
+	Wwtsy0LReGjbKYrASQ0vbBFba1zyTDzJKYiUZiSs1m4+1RHu4gw19DuBmdh21X/FztxkFnivc9Z6I
+	zfyYJrNA==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tDmAb-00000000TrW-1QgA;
+	Wed, 20 Nov 2024 14:59:05 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 025EF3006AB; Wed, 20 Nov 2024 15:59:05 +0100 (CET)
+Date: Wed, 20 Nov 2024 15:59:04 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Valentin Schneider <vschneid@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	kvm@vger.kernel.org, linux-mm@kvack.org, bpf@vger.kernel.org,
+	x86@kernel.org, rcu@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Wanpeng Li <wanpengli@tencent.com>,
+	Vitaly Kuznetsov <vkuznets@redhat.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Neeraj Upadhyay <quic_neeraju@quicinc.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	Lorenzo Stoakes <lstoakes@gmail.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Jason Baron <jbaron@akamai.com>, Kees Cook <keescook@chromium.org>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Juerg Haefliger <juerg.haefliger@canonical.com>,
+	Nicolas Saenz Julienne <nsaenz@kernel.org>,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	Nadav Amit <namit@vmware.com>, Dan Carpenter <error27@gmail.com>,
+	Chuang Wang <nashuiliang@gmail.com>,
+	Yang Jihong <yangjihong1@huawei.com>,
+	Petr Mladek <pmladek@suse.com>,
+	"Jason A. Donenfeld" <Jason@zx2c4.com>, Song Liu <song@kernel.org>,
+	Julian Pidancet <julian.pidancet@oracle.com>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	Dionna Glaze <dionnaglaze@google.com>,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Marcelo Tosatti <mtosatti@redhat.com>,
+	Yair Podemsky <ypodemsk@redhat.com>,
+	Daniel Wagner <dwagner@suse.de>, Petr Tesarik <ptesarik@suse.com>
+Subject: Re: [RFC PATCH v3 08/15] sched/clock, x86: Make __sched_clock_stable
+ forceful
+Message-ID: <20241120145904.GK19989@noisy.programming.kicks-ass.net>
+References: <20241119153502.41361-1-vschneid@redhat.com>
+ <20241119153502.41361-9-vschneid@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,48 +111,15 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c10d6cc49868dd3c471c53fc3c4aba61c33edead.camel@oracle.com>
+In-Reply-To: <20241119153502.41361-9-vschneid@redhat.com>
 
-On Wed, Nov 20, 2024 at 02:46:32PM +0000, Siddh Raman Pant wrote:
-> On Wed, Nov 06 2024 at 11:54:32 +0530, Siddh Raman Pant wrote:
-> > On Wed, Nov 06 2024 at 11:40:39 +0530, gregkh@linuxfoundation.org
-> > wrote:
-> > > On Wed, Oct 30, 2024 at 07:29:38AM +0000, Siddh Raman Pant wrote:
-> > > > Hello maintainers,
-> > > > 
-> > > > On Fri, 20 Sep 2024 02:28:03 -0700, Shivani Agarwal wrote:
-> > > > > Thanks Fedor.
-> > > > > 
-> > > > > Upstream commit 1be59c97c83c is merged in 5.4 with commit 10aeaa47e4aa and
-> > > > > in 4.19 with commit 27d6dbdc6485. The issue is reproducible in 5.4 and 4.19
-> > > > > also.
-> > > > > 
-> > > > > I am sending the backport patch of d23b5c577715 and a7fb0423c201 for 5.4 and
-> > > > > 4.19 in the next email.
-> > > > 
-> > > > Please backport these changes to stable.
-> > > > 
-> > > > "cgroup/cpuset: Prevent UAF in proc_cpuset_show()" has already been
-> > > > backported and bears CVE-2024-43853. As reported, we may already have
-> > > > introduced another problem due to the missing backport.
-> > > 
-> > > What exact commits are needed here?  Please submit backported and tested
-> > > commits and we will be glad to queue them up.
-> > > 
-> > > thanks,
-> > > 
-> > > greg k-h
-> > 
-> > Please see the following thread where Shivani posted the patches:
-> > 
-> > https://lore.kernel.org/all/20240920092803.101047-1-shivani.agarwal@broadcom.com/
-> > 
-> > Thanks,
-> > Siddh
+On Tue, Nov 19, 2024 at 04:34:55PM +0100, Valentin Schneider wrote:
+> Later commits will cause objtool to warn about non __ro_after_init static
+> keys being used in .noinstr sections in order to safely defer instruction
+> patching IPIs targeted at NOHZ_FULL CPUs.
 > 
-> Ping...
+> __sched_clock_stable is used in .noinstr code, and can be modified at
+> runtime (e.g. KVM module loading). Suppressing the text_poke_sync() IPI has
 
-I don't understand what you want here, sorry.
-
-greg k-h
+Wait, what !? loading KVM causes the TSC to be marked unstable?
 
