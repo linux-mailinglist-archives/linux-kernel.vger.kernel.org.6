@@ -1,170 +1,97 @@
-Return-Path: <linux-kernel+bounces-415569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BC0B9D3822
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 11:18:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B8769D382F
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 11:19:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4541284EA3
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 10:18:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A2651F2306D
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 10:19:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30E6D19E97F;
-	Wed, 20 Nov 2024 10:18:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C61119D8A8;
+	Wed, 20 Nov 2024 10:18:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="kPKWJs39"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jG2BqxTe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1847189BAD;
-	Wed, 20 Nov 2024 10:18:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ABA719C561
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 10:18:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732097924; cv=none; b=n+tURyU8Gn2mVPHzHyjUhSiAW0Itk1FkV/Yw2H8QUGDKFpuvnb07nYS7pkre/Fzvns49G9cwhSZn6/nZBQmeu/XCrShFtVnbfvbt2iCToi5dBiR7zik6jr8uyY+1JWc8cjAGv19aln5PGzaLhm2YklaChZMoLTB1xoO8psqJIfE=
+	t=1732097935; cv=none; b=c0B9tKeS6bbdQKG8ypjJ4d9NAvRxhL9mnmD64M48cwUUHVqlZzDxnhhuUkd6+vev9OCaFPE0irkM696wyHSs2vzGE/mkLR/8RviqDZVAo02JjEOiIfUSWie5Q68g4g3jXMTQ+uGhsGqjhpdwgWXKsECdqR1d7u/wOBhLqFTnwEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732097924; c=relaxed/simple;
-	bh=LkPH8U58IahTYF3y5TnmB5SV+dNexaCLUB57OTVcpgQ=;
+	s=arc-20240116; t=1732097935; c=relaxed/simple;
+	bh=5Thvdj4LZp0/89Y9nB/eA+4SIafyW+S6X8Sg9pfd55c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CDerxDIvIRN07itQV+Il6tX7tdNgF4gx9dl3ERPCrV47Ufr46dB6oj4/oZYtU+kDaeilBXzqZEk+FhXv7ASVxE08YPO3nM+EPe6iddx99u+KiEMhThZlYqDVTN29guP6QUOLT0k7JP3Y4A1qUvVBlt8UvAt3+G108M6hICsT5UE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=kPKWJs39; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AK9H3ld021838;
-	Wed, 20 Nov 2024 10:18:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=k2U2KD
-	XYF7mJbcsjBayWTxaZc86neQ5rI++P9n882lo=; b=kPKWJs39gVFE9V44reClQH
-	oiYmxB/YWc9bhBf91zvTTd9gGgpteqmDkaITzWY3I+iTiymWiuAbGyjAa7035Qyo
-	gcGdXBNBszJnUlbr96p7DJhI6aJUBskhtshcHoqMGE7wlzA6S30vBAcskUCxNhPK
-	NZOfVOCwmYRYYeYhFlkclcuZN5ti5M6F4EbH1593G1BjUbIYTfS1YmaBAVx4rY8e
-	wQtd5/nk9MFfgGqHYV8g7nNrE4GbHenRiJALMhjiaekgT/FFFmEl5iZK4btFMXT8
-	Nvhcegd/I77E00rMgIoABsuTSE1o+l1L1phmj429t1SY2lls+VTnCkhOOX0TrIKw
-	==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42xgttckq0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 20 Nov 2024 10:18:21 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AK8Vbko031189;
-	Wed, 20 Nov 2024 10:18:21 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 42y5qseeqg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 20 Nov 2024 10:18:20 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4AKAIJsY58327398
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 20 Nov 2024 10:18:19 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3A5A12004F;
-	Wed, 20 Nov 2024 10:18:19 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id AB91F2005A;
-	Wed, 20 Nov 2024 10:18:17 +0000 (GMT)
-Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com (unknown [9.109.253.82])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Wed, 20 Nov 2024 10:18:17 +0000 (GMT)
-Date: Wed, 20 Nov 2024 15:48:15 +0530
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: Genes Lists <lists@sapience.com>
-Cc: song@kernel.org, yukuai3@huawei.com, linux-raid@vger.kernel.org,
-        linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
-        linux@leemhuis.info
-Subject: Re: md-raid  6.11.8 page fault oops
-Message-ID: <Zz23Z3RK/AHSXY1I@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
-References: <0b579808e848171fc64e04f0629e24735d034d32.camel@sapience.com>
- <34333c67f5490cda041bc0cbe4336b94271d5b49.camel@sapience.com>
- <Zzx34Mm5K42GWyKj@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
- <ef8bd4f9308dbf941076b2f7bd8a81590a09aa5e.camel@sapience.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HuwAOHAyhTVf1vCQXF91Uho1Qpg2gACSFtA4aSkmVQuMQrGGE1+4XczzumjBYS2+DMn7OcMZeVWSQ69B7Pg7yoY7TeBz7K20yeOnyLBNELvDKyY36Jvj4rpVuVbO9tIdI3jQkfMe8r762ew4BPTERwblmp6zQh9IB9YDPmk1oJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jG2BqxTe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D046C4CECD;
+	Wed, 20 Nov 2024 10:18:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732097935;
+	bh=5Thvdj4LZp0/89Y9nB/eA+4SIafyW+S6X8Sg9pfd55c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jG2BqxTeyMIdfRMoUE1DhKUmJM4a4hTmIuEpzJBUn9E4yG6FjGmNg+IaoEGejrQwE
+	 78h1phNAngTjpFSUk/UvZMqN/TH3m6g54pK+6ZETRBqKocbV7aoB+r6A2Iv5401WeV
+	 w8vgEOTQZ4FOE/rn/0LWglf0AIpU4UoICP0i60vGosVjGq5nqa2MYoNeRiDAlrS726
+	 KxvbFvi99COGtWpf+PrdVkPnM5qfoQwJLK88PhtwYre6xfFL8/r2ozt7LvIajCo/Jn
+	 pTKsXY3JR70u8xmMf2eub8HmPQOrcS++F5Inbg6gHlHu1Kv8tzpFvgv3WAW1M7s2u9
+	 9ajAUDGrCtZbA==
+Date: Wed, 20 Nov 2024 11:18:50 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org, 
+	x86@kernel.org
+Subject: Re: [GIT pull] timers/core for v6.13-rc1
+Message-ID: <20241120-backwaren-faible-99807b4768bb@brauner>
+References: <173195757899.1896928.6143737920583881655.tglx@xen13>
+ <173195758632.1896928.11371209657780930206.tglx@xen13>
+ <CAHk-=wiX7=bqOEO06+BsO_25dHoa=KBWcNzLg=-rAKJ=dqKxYg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ef8bd4f9308dbf941076b2f7bd8a81590a09aa5e.camel@sapience.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: reiykG7LFyPxA9MFJVI11BYNXOsDmKG9
-X-Proofpoint-ORIG-GUID: reiykG7LFyPxA9MFJVI11BYNXOsDmKG9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 phishscore=0
- mlxscore=0 malwarescore=0 mlxlogscore=711 adultscore=0 priorityscore=1501
- bulkscore=0 impostorscore=0 spamscore=0 lowpriorityscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2411200070
+In-Reply-To: <CAHk-=wiX7=bqOEO06+BsO_25dHoa=KBWcNzLg=-rAKJ=dqKxYg@mail.gmail.com>
 
-On Tue, Nov 19, 2024 at 08:31:02AM -0500, Genes Lists wrote:
-> On Tue, 2024-11-19 at 17:04 +0530, Ojaswin Mujoo wrote:
-> > > 
-> ...
+On Tue, Nov 19, 2024 at 04:33:45PM -0800, Linus Torvalds wrote:
+> On Mon, 18 Nov 2024 at 11:22, Thomas Gleixner <tglx@linutronix.de> wrote:
+> >
 > 
-> > >  (gdb) list *(rb_first+0x13)
-> > >   0xffffffff81de1af3 is in rb_first (lib/rbtree.c:473).
-> > >   468       struct rb_node  *n;
-> > >   469
-> > >   470       n = root->rb_node;
-> > >   471       if (!n)
-> > >   472           return NULL;
-> > >   473       while (n->rb_left)
-> > 
-> > Now this looks strange, we already make sure n is not NULL and then
-> > somehow this line ends up in
-> > 
-> >  BUG: unable to handle page fault for address: 0000000000200010
-> > 
-> > Now, decoding the code with an x86 vmlinux, I see the fauling opcode
-> > faulting:
-> > 
-> > Code starting with the faulting instruction
-> > ===========================================
-> >    0:   0f 1f 80 00 00 00 00    nopl   0x0(%rax)
-> >    7:   90                      nop
-> >    8:   90                      nop
-> >    9:   90                      nop
-> >    a:   90                      nop
-> >    b:   90                      nop
-> >    c:   90                      nop
-> >    d:   90                      nop
-> >    e:   90                      nop
-> >    f:   90                      nop
-> > 
-> > Now RAX is 0x200000 but I don't think the nopl instruction should
-> > have resulted
-> > in a mem access AFA my limited understanding of x86 ISA goes.
-> > 
-> > I also don't see nopl in my vmlinux in rb_first, my binary being
-> > compiled with
-> > gcc 8.5. Are you by chance using clang or higher version or higher
-> > optimization in gcc.
-> > 
-> > Regards,
-> > ojaswin
+> >   - Core infrastructure for VFS multigrain timestamping
+> >
+> >     This is required to allow the kernel to use coarse grained time stamps
+> >     by default and switch to fine grained time stamps when inode attributes
+> >     are actively observed via getattr().
+> >
+> >     These changes have been provided to the VFS tree as well, so that the
+> >     VFS specific infrastructure could be built on top.
 > 
-> I am using Arch toolchain with 
-> 
->    gcc 14.2.1+r134+gab884fffe3fc-1
-> 
-> I do not set CFLAGS_KERNEL  so compile options are the default.
+> Bah. Except the vfs tree didn't take it as a shared branch, but
+> instead cherry-picked the commits and as a result they are duplicate
+> and caused a (trivial) merge conflict.
 
-Got it, I'm still not sure what might be causing this oops. Would you
-happen to a have a reproducer that I can play around with on my system?
+Wait, I'm confused. I definitely pulled that branch the day after Thomas
+gave it to me and in my vfs.mgtime branch I clearly see:
 
-Regards,
-ojaswin
-> 
-> thanks
-> 
-> gene
-> 
-> 
+commit d7c898a73f875bd205df53074c1d542766171da1
+Merge: 8cf0b93919e1 2a15385742c6
+Author:     Christian Brauner <brauner@kernel.org>
+AuthorDate: Mon Oct 7 12:47:19 2024 +0200
+Commit:     Christian Brauner <brauner@kernel.org>
+CommitDate: Thu Oct 10 10:20:57 2024 +0200
 
+    Merge tag 'timers-core-for-vfs' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/tip/tip into vfs.mgtime
 
+    Timekeeping interfaces for consumption by the VFS tree.
+
+    Signed-off-by: Christian Brauner <brauner@kernel.org>
+
+Unless I did something odd during the pull?
 
