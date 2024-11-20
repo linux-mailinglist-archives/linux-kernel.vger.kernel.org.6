@@ -1,141 +1,179 @@
-Return-Path: <linux-kernel+bounces-416356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A0169D43A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 22:54:00 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A68C9D43AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 22:54:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B61EF1F2207E
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 21:53:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD960B23FFE
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 21:54:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 581F61C07C9;
-	Wed, 20 Nov 2024 21:53:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E60A1C1F0A;
+	Wed, 20 Nov 2024 21:54:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nR6Tdwwc"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=dxuuu.xyz header.i=@dxuuu.xyz header.b="qI/NuPOg";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="rmDemweV"
+Received: from fhigh-b3-smtp.messagingengine.com (fhigh-b3-smtp.messagingengine.com [202.12.124.154])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A89716EC19
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 21:53:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C50B516130B;
+	Wed, 20 Nov 2024 21:54:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732139626; cv=none; b=a+UGHfuQ4NchrANA/U6qzw2SUjUNvgGTLmrpZGVLOsmZzowJCEwNYaHpExhuPCURrP6Eg8aE0nB9WU+ut74f4E+S0mdojW8JSk1TbTXcpQM+BgZ3uEpjODXQM1ndH0mQ7cmtboC08aTlFAITo7Qqvwa4fNziNarwPWWpl/Rz5s4=
+	t=1732139678; cv=none; b=rzZ8mvgmTmY81NATop96AedHhD4OL9tG7eyu57fSS1vlHcbsXzidSIEKaif5JsAxZDpP5XkHjmeAhMLDqW6HFkBBBxY6lXkyrUmQqlUcL++w9I9y7FaMctEEmRUJ05vuCNKnftSkea+Iqlj6i4ZLyjMeNysrPXK4ca/nZkKt7TQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732139626; c=relaxed/simple;
-	bh=r/VcHayKG4EaOZI8wo3ko4simcXIJKTk2WkBMfnIa5g=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Q9c97e/RAcx/FIsxup6xXwfvXlOrRlveF1qTjgRq2kbaq679zWMOWZcaL4xCrlHUOc/PmvYFeC4pSbyLqCISZ0++Cs+QECWjEy1zWt9ufOKakkLMO8nDyaTK6x0UCNZY/3FtYxfUenVnBVsPxw5cc9FhlgBQ3A89a2GriQ1/ePg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nR6Tdwwc; arc=none smtp.client-ip=209.85.219.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e38dbc5d05bso359148276.1
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 13:53:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732139624; x=1732744424; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=tZP9uLmhESgaddk7OpYGm45ZV5lLwiTS6B5XdgU7dFY=;
-        b=nR6TdwwcVlNYiN+XzdHpJcYmiXEvN7vVrlvIRK09BUPxQlwCB4Bs4Z6UDvotL+ohNE
-         w6QQftMa1TVqQK1cTCTQFkhbkLOgrgy1MLYDxCnk57y3sMtLg1QcYcIzsWzItWneEA/s
-         RjJg7rS1kToT51iZPH1CkHLDeFxbMPJCxRXtZDzYWi8dri2JdixXJSLHgRJqhbokrNBO
-         qa3qqIikYrRBgxepZEF1mvbPegJ4hTlCppIrBZSr1wwC9sSQHLZJWQw9p2/5sQ8A/Q7q
-         TrwpNDc5ce5dKKij1RaAw1Y9lyPEmuDcZsMFmEGR33FwX3wUp+RCFRRJTpyCJSl4Prxg
-         WZow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732139624; x=1732744424;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tZP9uLmhESgaddk7OpYGm45ZV5lLwiTS6B5XdgU7dFY=;
-        b=s/5Y7u5Zgqw6lSwT/CGziYlf3kSEqbNBBkEs+74vi1lTFeuQfw3YhEgJEdG71oDuE7
-         i5arNoiz42DpaSz6NpFwlVTbfmLJyVVTbvhEYooeomPGHYHhLfzitECoyyhy14NGCMAn
-         6OgLtHnMBAD8tL2PJyhOPk4v6JhR+duCR4o34EZN6xsGXgItqg836NIW8a/axFc+QMqq
-         8dJkoWWEe+16lRzt8qEBILHvVQ7Yx4O306/pklalnhIy3ZLdlI9xv9ewYRxQnKZpTZps
-         aRTknv8QEMQCa5L8BX6xdUltGmHbrqv6pC2IpxLgFnLyQ2nBcFTm3bTeyDRuRnSCDyLA
-         otbA==
-X-Forwarded-Encrypted: i=1; AJvYcCW8s3wC/Vwi8k4v3diZAkg9RDcCn1JpV0DbxyjBg1mUNybLS98+MZSmpBISuo+GN3n9k3RDX00JG87oTLc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzrs1HaAjPmtZNVe18CxY2TnkS/o1wJUorL09n5VilOFj15j1xu
-	4uOsTSS3Yaz/3OGbsyaTRQKAomE5DFZ2LlJEBYKPcGF1gYQFT3av/e6pG1c2i5jNnDz6U9xlZW3
-	ujw==
-X-Google-Smtp-Source: AGHT+IGffkcftOgF2KIRVjjRpawSwB9GtSSiFJjON/BGaimJ3oaflhdxoE6c2aPgB0fEGghARktE6MhGvsI=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a25:d601:0:b0:e30:d445:a7c with SMTP id
- 3f1490d57ef6-e38cb5470c0mr1664276.1.1732139623994; Wed, 20 Nov 2024 13:53:43
- -0800 (PST)
-Date: Wed, 20 Nov 2024 13:53:42 -0800
-In-Reply-To: <1e43dade-3fa7-4668-8fd8-01875ef91c2b@amd.com>
+	s=arc-20240116; t=1732139678; c=relaxed/simple;
+	bh=BHMpf0cVyl5CAzI0kw/SRq5lsrzKo0uunowvoB1/rGg=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=GRevFeucjzZYcoHscY9lEUTIi54TuvXIEI4/K9c+zU/+i7gSsmdK6ThOg7cRZr8WGTX99XzrJoOxe6A2NxUVTJRExA9sLm6FjX8PH+2Br9MaBEKozdDdMMC64JONKNS1DlJr+kXOb78duF281YwT9OUf8eoH3aJ4NZTocGJbktU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dxuuu.xyz; spf=pass smtp.mailfrom=dxuuu.xyz; dkim=pass (2048-bit key) header.d=dxuuu.xyz header.i=@dxuuu.xyz header.b=qI/NuPOg; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=rmDemweV; arc=none smtp.client-ip=202.12.124.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dxuuu.xyz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dxuuu.xyz
+Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 9FB6125400DB;
+	Wed, 20 Nov 2024 16:54:32 -0500 (EST)
+Received: from phl-imap-08 ([10.202.2.84])
+  by phl-compute-03.internal (MEProxy); Wed, 20 Nov 2024 16:54:32 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dxuuu.xyz; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1732139672;
+	 x=1732226072; bh=BHMpf0cVyl5CAzI0kw/SRq5lsrzKo0uunowvoB1/rGg=; b=
+	qI/NuPOgWJa0nW8Amf1CWjfzzN1YhOwDNsDHfFmCwnvm8f6Z9pQq9Xnjez8fiyLp
+	rvkFGAYuUBD2D7ClHMa47QuVOTH+dvHFp8DYb4EnNaD7JMrlDUwErsivJBz0ULBB
+	seJosy3N5WUnjuyTDayXGqH65lG8ce2hzuzvVRRghsubDgHkWeEkiXmaHkKgurpr
+	fDi4MCAugrdpdoqG1UXUnryyDkjyyYUUoWk8CkgOAQw3Tuc48fJsnMHHlcfzzdHW
+	JCP6ZshKzDoCJqtemlZGoaNW8r4u/JRNWc+tL0ApOlLbEeXUf+lD7JztHHsad6xA
+	H4cz8/lTROoRX+lrZ8Z3Cw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1732139672; x=
+	1732226072; bh=BHMpf0cVyl5CAzI0kw/SRq5lsrzKo0uunowvoB1/rGg=; b=r
+	mDemweVeMIzpgjFv8p7SRaysb12MCFDgU9OlB44ojtM/fSVEIlAAMdEMPJVJAzGJ
+	Jmqs7Jfx1RZHXDjX/JZ6zDkSA4oGMLgqfxR0bHZ1Q28vCuvdyYNBnJ9wYsFP839P
+	6o6F3eLa5eDeqCAIOey72XVV8ofHeoWP/yDjiUc54DAc75IS/mLy+2s4pG+4KUJ6
+	mlaKqTtmvk1m83gONwMmlEcQDN9jNSHvjYrtegAEPObZzPMfuyGIl8x/grn4Nr56
+	WVLXitdecOM2x52hODGLLHmCwf1vuTKS1OxlHmAAKYk3rg92HBlUYp2gY5SPre5p
+	ci+7OiEZVPXZjdxJ3Httw==
+X-ME-Sender: <xms:mFo-ZzB_ThV0BX6xmgbQjNGC3PwhHIVz2U6XK4r-6GqIu2thdTt68Q>
+    <xme:mFo-Z5hj58D4JAUPPdAknjinkVGC6F2eF1-l7lbOm71dhv4MaA_jACU-OCttU3FW5
+    qdA0h7K7ow1Ka57mA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrfeeggdduheefucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnegfrhhlucfvnfffucdlfeehmdenucfjughrpefoggffhffvvefk
+    jghfufgtgfesthhqredtredtjeenucfhrhhomhepfdffrghnihgvlhcuighufdcuoegugi
+    husegugihuuhhurdighiiiqeenucggtffrrghtthgvrhhnpefgleeitefgvefffedufefh
+    ffdtieetgeetgeegheeufeeufeekgfefueffvefhffenucevlhhushhtvghrufhiiigvpe
+    dtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegugihusegugihuuhhurdighiiipdhnsggp
+    rhgtphhtthhopeehpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegrlhgvgigvih
+    drshhtrghrohhvohhithhovhesghhmrghilhdrtghomhdprhgtphhtthhopegurghnihgv
+    lhesihhoghgvrghrsghogidrnhgvthdprhgtphhtthhopegsphhfsehvghgvrhdrkhgvrh
+    hnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgv
+    rhhnvghlrdhorhhgpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrd
+    horhhg
+X-ME-Proxy: <xmx:mFo-Z-lPgJ1Z6e7DlEnvT_Iab3vWIAmhP4v1P2yschmUYvY4vakbug>
+    <xmx:mFo-Z1zIHFXFDgrJM65lLxQ7AfzI5M3WzKlDjJ7Ix2Bovcik4YX9-Q>
+    <xmx:mFo-Z4S7V9LtwLjhnBcgL_g5wmyR6PC9hc76eq4Z-vPhRJT3-FCTGw>
+    <xmx:mFo-Z4YLajjwNobHYwCs7pyFBa6d0Lde-Fo0aatlz_CGRSKJ6Dxb0g>
+    <xmx:mFo-Z-MKd7FEKAPrmn80Q5x2JCC22sYMGPGeCM6ed_ZztqDerZcvsNYe>
+Feedback-ID: i6a694271:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 0E7CF18A0068; Wed, 20 Nov 2024 16:54:32 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <cover.1726602374.git.ashish.kalra@amd.com> <f2b12d3c76b4e40a85da021ee2b7eaeda1dd69f0.1726602374.git.ashish.kalra@amd.com>
- <CAMkAt6o_963tc4fiS4AFaD6Zb3-LzPZiombaetjFp0GWHzTfBQ@mail.gmail.com>
- <3319bfba-4918-471e-9ddd-c8d08f03e1c4@amd.com> <ZwlMojz-z0gBxJfQ@google.com> <1e43dade-3fa7-4668-8fd8-01875ef91c2b@amd.com>
-Message-ID: <Zz5aZlDbKBr6oTMY@google.com>
-Subject: Re: [PATCH v2 3/3] x86/sev: Add SEV-SNP CipherTextHiding support
-From: Sean Christopherson <seanjc@google.com>
-To: Ashish Kalra <ashish.kalra@amd.com>
-Cc: Peter Gonda <pgonda@google.com>, pbonzini@redhat.com, tglx@linutronix.de, 
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, 
-	herbert@gondor.apana.org.au, x86@kernel.org, john.allen@amd.com, 
-	davem@davemloft.net, thomas.lendacky@amd.com, michael.roth@amd.com, 
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-crypto@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Date: Wed, 20 Nov 2024 13:54:11 -0800
+From: "Daniel Xu" <dxu@dxuuu.xyz>
+To: "Alexei Starovoitov" <alexei.starovoitov@gmail.com>
+Cc: "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>,
+ "Network Development" <netdev@vger.kernel.org>,
+ "Daniel Borkmann" <daniel@iogearbox.net>
+Message-Id: <6eb74343-54a4-4725-97e8-e762ab3adfbc@app.fastmail.com>
+In-Reply-To: 
+ <CAADnVQJ5NnDqx_TMbwHOPySUaJRE-N5K7L_whDsfeyMRBNOFkA@mail.gmail.com>
+References: <cover.1692748902.git.dxu@dxuuu.xyz>
+ <eb20fd2c-0fb7-48f7-9fd0-4d654363f4da@app.fastmail.com>
+ <CAADnVQ+T2nSCA8Tcddh8eD27CnvD1E3vPK0zutDt8Boz7MURQA@mail.gmail.com>
+ <7ec1a922-30c5-4899-a23f-11e3ef9d6fef@app.fastmail.com>
+ <CAADnVQJ5NnDqx_TMbwHOPySUaJRE-N5K7L_whDsfeyMRBNOFkA@mail.gmail.com>
+Subject: Re: [RFC PATCH bpf-next 0/2] Improve prog array uref semantics
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 19, 2024, Ashish Kalra wrote:
-> On 10/11/2024 11:04 AM, Sean Christopherson wrote:
-> > On Wed, Oct 02, 2024, Ashish Kalra wrote:
-> >> Yes, but there is going to be a separate set of patches to move all ASID
-> >> handling code to CCP module.
-> >>
-> >> This refactoring won't be part of the SNP ciphertext hiding support patches.
-> > 
-> > It should, because that's not a "refactoring", that's a change of roles and
-> > responsibilities.  And this series does the same; even worse, this series leaves
-> > things in a half-baked state, where the CCP and KVM have a weird shared ownership
-> > of ASID management.
-> 
-> Sorry for the delayed reply to your response, the SNP DOWNLOAD_FIRMWARE_EX
-> patches got posted in the meanwhile and that had additional considerations of
-> moving SNP GCTX pages stuff into the PSP driver from KVM and that again got
-> into this discussion about splitting ASID management across KVM and PSP
-> driver and as you pointed out on those patches that there is zero reason that
-> the PSP driver needs to care about ASIDs. 
-> 
-> Well, CipherText Hiding (CTH) support is one reason where the PSP driver gets
-> involved with ASIDs as CTH feature has to be enabled as part of SNP_INIT_EX
-> and once CTH feature is enabled, the SEV-ES ASID space is split across
-> SEV-SNP and SEV-ES VMs. 
 
-Right, but that's just a case where KVM needs to react to the setup done by the
-PSP, correct?  E.g. it's similar to SEV-ES being enabled/disabled in firmware,
-only that "firmware" happens to be a kernel driver.
 
-> With reference to SNP GCTX pages, we are looking at some possibilities to
-> push the requirement to update SNP GCTX pages to SNP firmware and remove that
-> requirement from the kernel/KVM side.
+On Wed, Nov 20, 2024, at 8:07 AM, Alexei Starovoitov wrote:
+> On Wed, Nov 20, 2024 at 7:55=E2=80=AFAM Daniel Xu <dxu@dxuuu.xyz> wrot=
+e:
+>>
+>>
+>>
+>> On Sat, Nov 16, 2024, at 2:17 PM, Alexei Starovoitov wrote:
+>> > On Tue, Oct 29, 2024 at 11:36=E2=80=AFPM Daniel Xu <dxu@dxuuu.xyz> =
+wrote:
+>> >>
+>> >> Hey Daniel,
+>> >>
+>> >> On Wed, Aug 23, 2023, at 9:08 AM, Daniel Xu wrote:
+>> >> > This patchset changes the behavior of TC and XDP hooks during at=
+tachment
+>> >> > such that any BPF_MAP_TYPE_PROG_ARRAY that the prog uses has an =
+extra
+>> >> > uref taken.
+>> >> >
+>> >> > The goal behind this change is to try and prevent confusion for =
+the
+>> >> > majority of use cases. The current behavior where when the last =
+uref is
+>> >> > dropped the prog array map is emptied is quite confusing. Confus=
+ing
+>> >> > enough for there to be multiple references to it in ebpf-go [0][=
+1].
+>> >> >
+>> >> > Completely solving the problem is difficult. As stated in c9da16=
+1c6517
+>> >> > ("bpf: fix clearing on persistent program array maps"), it is
+>> >> > difficult-to-impossible to walk the full dependency graph b/c it=
+ is too
+>> >> > dynamic.
+>> >> >
+>> >> > However in practice, I've found that all progs in a tailcall cha=
+in
+>> >> > share the same prog array map. Knowing that, if we take a uref o=
+n any
+>> >> > used prog array map when the program is attached, we can simplif=
+y the
+>> >> > majority use case and make it more ergonomic.
+>> >
+>> > Are you proposing to inc map uref when prog is attached?
+>> >
+>> > But that re-adds the circular dependency that uref concept is solvi=
+ng.
+>> > When prog is inserted into prog array prog refcnt is incremented.
+>> > So if prog also incremented uref. The user space can exit
+>> > but prog array and progs will stay there though nothing is using th=
+em.
+>> > I guess I'm missing the idea.
+>>
+>> IIRC the old-style tc/xdp attachment is the one incrementing the uref.
+>
+> uref is incremented when FD is given to user space and
+> file->release() callback decrements uref.
+>
+> I don't think any of the attach operations mess with uref.
+> At least they shouldn't.
 
-Heh, that'd work too.
-
-> Considering that, I will still like to keep ASID management in KVM, there are
-> issues with locking, for example, sev_deactivate_lock is used to protect SNP
-> ASID allocations (or actually for protecting ASID reuse/lazy-allocation
-> requiring WBINVD/DF_FLUSH) and guarding this DF_FLUSH from VM destruction
-> (DEACTIVATE). Moving ASID management stuff into PSP driver will then add
-> complexity of adding this synchronization between different kernel modules or
-> handling locking in two different kernel modules, to guard ASID allocation in
-> PSP driver with VM destruction in KVM module.
-> 
-> There is also this sev_vmcbs[] array indexed by ASID (part of svm_cpu_data)
-> which gets referenced during the ASID free code path in KVM. It just makes it
-> simpler to keep ASID management stuff in KVM. 
-> 
-> So probably we can add an API interface exported by the PSP driver something
-> like is_sev_ciphertext_hiding_enabled() or sev_override_max_snp_asid()
-
-What about adding a cc_attr_flags entry?
+None yet. My patch was adding it. It's fine if it's too much of a hack -
+was just an idea.
 
