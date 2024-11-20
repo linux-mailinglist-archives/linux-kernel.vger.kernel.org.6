@@ -1,91 +1,93 @@
-Return-Path: <linux-kernel+bounces-415639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 844539D3979
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 12:26:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D27399D3935
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 12:12:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 20F42B23311
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 11:11:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C4CD1F26DA4
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 11:12:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A855F19C561;
-	Wed, 20 Nov 2024 11:11:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D91C19DF4F;
+	Wed, 20 Nov 2024 11:12:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="rezgFK9G"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iQWm92VY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3B01146D53;
-	Wed, 20 Nov 2024 11:11:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D7CE17F7
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 11:12:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732101073; cv=none; b=JUB4VYm+HcyJeEu1JMke8muOGNrdvDk20ZLzASld6znfA6riL4hn6rP5EyWiQMfGFBqGuydCYUZvW8PCKFy6P89mxe8+h3VzB49RLqmVcYoAdUTFK4yHgvzlgISY3bgbGl/nfDq8jqe27kyxmoDm2fYYu2JUraH3EjEB7Ej2uEU=
+	t=1732101122; cv=none; b=UDFaQwYXm4zoJev2BOnxSjFXlMjFXMh4TMIOkowK8RWDn9sflz67fXMgRlTAOMpICSPbJnINymO/2G4kYgJfGqKq2SipKp+LWd6Pm+noj46IFkGV6vgkLXAykULnSutjzQAYpcYqOCiwSPabJvQ6FWTM7ZY+nSTxXmA18ScMp94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732101073; c=relaxed/simple;
-	bh=C/pCaXi8Tl2CYDP6P/hKG3s7s1R/DgUiLQ64LQ5p+vo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=W6LtKaIeGtTMnOTWkQZiIj61f7W6qVvuKlMOqquXwALyzomxYwijcrX9mVWCLKTRnWAwjHjuYrxFzTqXRDESRJpAGYOLsRMfSCsNZGijPH9Ujm4JyNbuW6u4K2WUciD3ysU0An3BinI3dpL3ZOsgmXQ6B5EYK0O07+GykzCSkLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=rezgFK9G; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=Fimso/y6Z29t20Np1FUvgnHFVBfSLUNQ/d84Zd3sby4=; b=rezgFK9GQyCYRlsF5F89WYAyyY
-	tnrKmhga1hIUhz73nuNepGslrSJAijiikprnRu+bbqrSs+zMcoTDzH7jL+6q/zTnmufi2QPgczClR
-	UWv7ziMHY9+4d7oisBk9gxK8j+OmfJPA1rx6Wp9U5wNtcigoNe7I8o/zxpqy/bViKtypeQokMmtqy
-	6NagOmPC8iCHbrpf09RocffuE7r7P7V01/1t5PQnNUMZE+ZUUo4j0uE763xi6PjulKB8WcNmCh2CO
-	HzJZXWe3wSLfJgb8syCIrVxFZhVYj0C0ThZwtv/RJ8p46NYjXImn/HSQWWjP49pJkbP6PR/1din2t
-	SbWKnzgw==;
-Received: from [179.118.189.160] (helo=[192.168.15.100])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1tDibt-009m9F-6w; Wed, 20 Nov 2024 12:11:01 +0100
-Message-ID: <72e793e3-e31e-4caa-b2a8-96886036964b@igalia.com>
-Date: Wed, 20 Nov 2024 08:10:54 -0300
+	s=arc-20240116; t=1732101122; c=relaxed/simple;
+	bh=h69bwaT1JWyhvxNrWac0bTEoYmUwTuVlZVpjh3UyqKM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pEBnKQ6XE7Yt1o76lmXxXVo/xZHkydW4VBzqm50s6x9vmJQZCc36QTApeACTQ2ffSPOYG09xlW9ezTJiEtGHMOnSq7I7y+1QohUAwhRzZDQt3qe6F8R5CodEhxoax+vBFc0hL1tnBVgIXGg9WXvKrvdsgnLPktYbAI7LBnKFubU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iQWm92VY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C9E8C4CECD;
+	Wed, 20 Nov 2024 11:12:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732101121;
+	bh=h69bwaT1JWyhvxNrWac0bTEoYmUwTuVlZVpjh3UyqKM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=iQWm92VY1kCxxdVu/QrA/94hnV1/i2JAy2YBgx88A5D8nv4az5YmcVUMcuOq27TZG
+	 7dCFV+7uLijGYEWBk0UsKYKGk0XuuR0B5kaawVUWRHx88uVnBAbeFZdJ6l51K/Msjp
+	 bHugEffU+LKaM8SOU8G7I6wLtqnw1eHfqLHL9rySWMOfDpLj+kmM4UylPMylyY6ZbN
+	 J2hRP0N/dZzsRVnUM15QUzLap13WaItrEtJJ0BAeclHUBgODJTp3XhahYWkv6YxM0M
+	 spUIS14V2n3h5UmWKdFCU3uzrhU0k+NHMkK5FttlxzWoqlCmKEJGcrGuTIFSrFSWtz
+	 jBNsk+jqGdU5g==
+From: Christian Brauner <brauner@kernel.org>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	peterz@infradead.org
+Subject: Re: [PATCH] seqlock: annotate spinning as unlikely() in __read_seqcount_begin
+Date: Wed, 20 Nov 2024 12:11:45 +0100
+Message-ID: <20241120-gastgewerbe-oblag-e8e208731117@brauner>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20230727180355.813995-1-mjguzik@gmail.com>
+References: <20230727180355.813995-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] tmpfs: Unsigned expression compared with zero
-To: guanjing <guanjing@cmss.chinamobile.com>
-Cc: linux-fsdevel@vger.kernel.org, krisman@kernel.org, tytso@mit.edu,
- brauner@kernel.org, akpm@linux-foundation.org, hughd@google.com,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <20241120105150.24008-1-guanjing@cmss.chinamobile.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-In-Reply-To: <20241120105150.24008-1-guanjing@cmss.chinamobile.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1265; i=brauner@kernel.org; h=from:subject:message-id; bh=h69bwaT1JWyhvxNrWac0bTEoYmUwTuVlZVpjh3UyqKM=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTbHv696aJYzx7uzJcCEmfzvHzYdPTydhXu+HpwaT7rh vZ77JESHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABO5cpuRYUG6qvVS5iQ+H0fl 2RovX5WHWuVf6QjJmbpe2l2qyD5Pj+F/ZXrdU7+5CxP26x0quL239WTptJQ9BpJV4latyuu+lJx kBQA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-Hi guanjing,
+On Thu, 27 Jul 2023 20:03:55 +0200, Mateusz Guzik wrote:
+> Annotation already used to be there, but got lost in 52ac39e5db5148f7
+> ("seqlock: seqcount_t: Implement all read APIs as statement expressions").
+> Does not look like it was intentional.
+> 
+> Without it gcc 12 decides to compile the following in path_init:
+>         nd->m_seq = __read_seqcount_begin(&mount_lock.seqcount);
+>         nd->r_seq = __read_seqcount_begin(&rename_lock.seqcount);
+> 
+> [...]
 
-Em 20/11/2024 07:51, guanjing escreveu:
-> The return value from the call to utf8_parse_version() is not
-> of the unsigned type.
-> 
-> However, the return value is being assigned to an unsigned int
-> variable 'version'. This will result in the inability to handle
-> errors that occur when parsing a UTF-8 version number from
-> a string.
-> 
-> Additionally, this patch can help eliminate the following
-> Coccicheck warning:
-> 
-> mm/shmem.c:4378:6-13: WARNING: Unsigned expression compared with zero: version < 0
-> 
-> Fixes: 58e55efd6c72 ("tmpfs: Add casefold lookup support")
-> Signed-off-by: guanjing <guanjing@cmss.chinamobile.com>
+Applied to the vfs-6.14.misc branch of the vfs/vfs.git tree.
+Patches in the vfs-6.14.misc branch should appear in linux-next soon.
 
-Another fix was already sent: 
-https://lore.kernel.org/lkml/20241111-unsignedcompare1601569-v1-1-c4a9c3c75a52@gmail.com/
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.14.misc
+
+[1/1] seqlock: annotate spinning as unlikely() in __read_seqcount_begin
+      https://git.kernel.org/vfs/vfs/c/c795e8ac8471
 
