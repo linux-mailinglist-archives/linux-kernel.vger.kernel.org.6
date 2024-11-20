@@ -1,125 +1,186 @@
-Return-Path: <linux-kernel+bounces-415703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5AD59D3A20
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 13:01:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4410F9D3A05
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 12:56:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 706E0B23D5D
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 11:56:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09430281E55
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 11:56:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF05C4EB45;
-	Wed, 20 Nov 2024 11:55:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 750AA1A38EC;
+	Wed, 20 Nov 2024 11:55:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bFi4ievt"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CgWvGCsH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CDE319F116
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 11:55:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEE3019F41D;
+	Wed, 20 Nov 2024 11:55:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732103703; cv=none; b=l+InxUJsudC+xaXpET2Ad+nOpGmSgNAZm2CcGDRqj4A0OAxMx8vax+n5mgpS4pvFn6MVLIgHulNlRE/QGGYw5ouQt1mOgOJr5YnQ5TLgnSxcHAcTUxOn027TwGX6qpiZQfJd+3+32pbxdF4bYt+KeeSYcr/pZFbJHkmnxYAe7lU=
+	t=1732103738; cv=none; b=tAfag9V4oL1O1+kEQXKlwpXrT+Hmx7ctYt/3artevdK5lIKA3s1iiQg+Zp08AkIyLBg2TsPKHn+spnEAiZmcOeUPLgr1VvXLMVEEw1d9y2mEvrMRu92JWaRuTobq6D2bHVaqTpdXa70B/xwEhHX64tontnQOwuEeh0Tb8aOPiSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732103703; c=relaxed/simple;
-	bh=KyL3kYPj+ynCqBkkIgRzK6ppMn8Q42vYTthv6ynTbZM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dK4iN0jNLVHob947MpyHccVm4BVwRIR/QHlzrD7Hq8VfDYeC/WklxAGdx063xLRQxjv8nyASM9DI2SChfFHX9osHhRnuLsVumvF7emDkOrkiQYbmpBk6D78H5NYgh0kFp+JBJDSQhQ7Uiopfr1y9lb7GuczcVaW3vtJ4rlh6v4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bFi4ievt; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-539f6e1f756so2246314e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 03:55:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1732103699; x=1732708499; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=cYPtpbT0rYtV4i05WMfOS2O/bZheBplF9irAJrqd1/4=;
-        b=bFi4ievtEScwmDM7Bx35Jb0KUYHv1qAtn0XgyOLgEcgXDSXWC7niq7/DDAo/IG8Zaz
-         ULFzEsIwP+WpE4keSDZ5Dm5OphVKgkTeKk9JD8kMFYu+RDpmo4KcFKt51zymazfTTHt6
-         zvJfgrnJxaAC4AhqKzqRSC38oVc1Xq2NX3H7gEzjcOqh3QqLTNgczPUnxOo5Efm925Yo
-         Xmg0jwbARwdx0LQgAXeTGqZ1x+0dYa5G8G1XSXMVfUkotPsqHiHKntB1x6RpyUxhxUXy
-         AEncxeZtAwxGlnbre2njF29IoEpiUSAAuYjXchH224bGIfV88ijV/Pvyy7iDz//2m81g
-         eURA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732103699; x=1732708499;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cYPtpbT0rYtV4i05WMfOS2O/bZheBplF9irAJrqd1/4=;
-        b=RDQo/6fePHZfdFRO652Ka+cox1Sh8owH/H53yTFwvS+a/pz6vvmceDwOFlzZBAjqP5
-         jNDQSewndi8CeRJ8GK5DrmHU38uQuWUjVs2E2k4Zut3qUcbmBDNTym8E+4m7rvnvYYXD
-         aVOaOl1INp9lFFdIZfytEPSIWHqpD5W3hQC6ha+/AXRc3UGC6SpWHEt7Rg1/GeL2jWV6
-         9KDpogyoTdJeRNXFGRXaJiV/AgJK8DSgXLljF0F4rHSbBRaglrRHdD/Sl7U/VPNzIh3i
-         xZs7L//soR8wnVQ7H2dKwZL6Dkf5YQbylF9K2Im0S0oqMNVxAewTD+jMdf5qQoIW7CDc
-         nejQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW+F1jKQUXPu6wqqIZY6isOFAuyvyELfyXERJZVvmHd4dWVddGOOe8doQh2Ud6jNhCHUXc0s7hKitbJGVw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbLF9H5Tlh+F28uncq1ramhk6lMtSnJ84TVsV+ZO3a4vj6kGDM
-	+IqdsTtEB8NjUvEbMPypBrOIYH8OWzYQbrShE72LzSPvdKz2s0CuaH9e4T4K1ZIV+7urjpxg478
-	y
-X-Google-Smtp-Source: AGHT+IFMequDT4bdY6LP9O3I5AvvXInQUMDuGlgE0eHlxcbATY6rHghGabLIkWJMyNfHChGofJMPQQ==
-X-Received: by 2002:a05:6512:1303:b0:53d:a883:5a3e with SMTP id 2adb3069b0e04-53dc1369cb4mr1005535e87.39.1732103699572;
-        Wed, 20 Nov 2024 03:54:59 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53dbd3edd2bsm608508e87.43.2024.11.20.03.54.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Nov 2024 03:54:58 -0800 (PST)
-Date: Wed, 20 Nov 2024 13:54:55 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Kuldeep Singh <quic_kuldsing@quicinc.com>
-Cc: Pratyush Brahma <quic_pbrahma@quicinc.com>, 
-	Bjorn Andersson <bjorn.andersson@example.com>, Konrad Dybcio <konrad.dybcio@example.com>, 
-	Rob Herring <rob.herring@example.com>, Krzysztof Kozlowski <krzysztof.kozlowski@example.com>, 
-	Conor Dooley <conor.dooley@example.com>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, quic_tengfan@quicinc.com, quic_shashim@quicinc.com
-Subject: Re: [PATCH] arm64: dts: qcom: qcs9100: Update memory map for QCS9100
- Ride and QCS9100 Ride Rev3
-Message-ID: <rnrxb5e7xcgnjp4y4id5m5dyswii6xipry3bvtpit2f4c3iqfy@qghr42jz6oze>
-References: <20241119092501.31111-1-quic_pbrahma@quicinc.com>
- <30fda0e2-f314-49b8-8c1c-bf4fac87050d@quicinc.com>
+	s=arc-20240116; t=1732103738; c=relaxed/simple;
+	bh=4iNBk7LC9TBZYuo0MXULQ9ayjztNWrRDsjTo4k/+edQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IFeHM4W2PvTUk1536TKP5Uxm37Kwj6Uq8/mC7x2fpzMniDG0o+rEFk1VHMcCB4XRsiHLXrZfJRHDkExs6CzL+g0bfncOVefBFA1N5ic3o5/vB+RiNETxBsgOAbZgVNbeCcj7W/RbOSyKaj4lyf8/iB0uEyYF86+1d/Y8s6Tac2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CgWvGCsH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48165C4CECD;
+	Wed, 20 Nov 2024 11:55:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732103738;
+	bh=4iNBk7LC9TBZYuo0MXULQ9ayjztNWrRDsjTo4k/+edQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=CgWvGCsHjyFVOTC96wfamrt4sOOgTlSoVorRBJ6/K1dombsbJkqD/MOFkhPecxZS/
+	 lu9zfHTuItNbK19LcgKaf+/imv5yAWabYtabqZQnWX1F5a51Zsf2qaf+8wCaxHf6kq
+	 xNmAF0uZpEt0qvo0SRHkvRMrwKRBPNwkBgl9LaV5gGCNT/zjbUMdwwlHNZTrkNxeCL
+	 DDGQNQ31ENSaO5bEAPqiqSqbr1WzoTY269ChZCcJArjbak0caAgdBquxAFweHp6xs+
+	 3gIjqMlWegWF1849MdnqdWx4pZIMTrssIet+O3Ajbgd6aBb7ST/XEJP1mVyZySfg7X
+	 BsPyVPAnSzyGQ==
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-53d9ff8f1e4so5089485e87.2;
+        Wed, 20 Nov 2024 03:55:38 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVAh2Gd0xUJGBB6Xl/n751WiQTZR753kyUmRreHzjUJMjz2HvJRIwwnlX351rns3cVY3l0IF2zeEXbOrXA=@vger.kernel.org, AJvYcCVcUFS7B7LrcP40NnLr8KCigeOEkI/ZgAOSrAPay77IHYCxkOFSqN3qxMgWgFdgZy76Zmw7TAw2Y39eVIFh@vger.kernel.org, AJvYcCVkd/4aDyIq8h5+G8jRX+eNSSayHvkQqdwJ2hd1/y5EAq+CRy5IjCOvwuNKJ3+xJ2ToeHr7o/hqpA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxclzsF+KTxfO4K6jj5LSP9tcZHqBL/ICOyv2gbs/0KwfKTdqTx
+	I/l68fOVfQhyu4M3HyHxPymiuVGX54aquwKsgsxf/VYHV0Apdr5Fo/uVlTsoJ/mdbIt938A2PtD
+	vbL5mEYp/yu6ZDa+0SvboM9fLDk0=
+X-Google-Smtp-Source: AGHT+IHG318RoJAh5CCrn2UIYr+ZKfZsLdJ+iqL7RCmLwigjuBULnm1HPMkT53qRCaItAM3pDWyEF+zB7dD+9Cd7O08=
+X-Received: by 2002:a05:6512:10cd:b0:53d:a012:eed4 with SMTP id
+ 2adb3069b0e04-53dc1374266mr1023236e87.52.1732103736977; Wed, 20 Nov 2024
+ 03:55:36 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <30fda0e2-f314-49b8-8c1c-bf4fac87050d@quicinc.com>
+References: <20241120-selinux-clean-v1-1-68704e007f7a@linutronix.de>
+In-Reply-To: <20241120-selinux-clean-v1-1-68704e007f7a@linutronix.de>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Wed, 20 Nov 2024 20:55:00 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATUnCPt03BRFSKh1EH=+Sy0Q48wE4ER0BZdJqOb_44L8w@mail.gmail.com>
+Message-ID: <CAK7LNATUnCPt03BRFSKh1EH=+Sy0Q48wE4ER0BZdJqOb_44L8w@mail.gmail.com>
+Subject: Re: [PATCH] selinux: explicitly clean generated av_permissions.h
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+Cc: Paul Moore <paul@paul-moore.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
+	Ondrej Mosnacek <omosnace@redhat.com>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org, selinux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: multipart/mixed; boundary="000000000000f51c87062756d36c"
 
-On Wed, Nov 20, 2024 at 01:41:03AM +0530, Kuldeep Singh wrote:
-> 
-> 
-> On 11/19/2024 2:55 PM, Pratyush Brahma wrote:
-> > This patch series is based on Tengfei Fan's patches [1] which adds support
-> > for QCS9100 Ride and QCS9100 Ride Rev3 boards.
-> > 
-> > Some new carveouts (viz. gunyah_md and a few pil dtb carveouts) have been
-> > introduced and the size and base addresses have been updated for
-> > a few of existing carveouts compared to SA8775P. Also, tz_ffi_mem carveout
-> > and its corresponding scm reference has been removed as it is not required
-> > for these boards. Incorporate these changes in the updated memory map
-> > for QCS9100 Ride and QCS9100 Rev3 boards.
-> > 
-> > [1] https://lore.kernel.org/all/20240911-add_qcs9100_support-v2-4-e43a71ceb017@quicinc.com/
-> > 
-> > Signed-off-by: Pratyush Brahma <quic_pbrahma@quicinc.com>
-> 
-> The memory map for qcs9100-ride-r3 and qcs9100-ride is exactly same.
-> A good churn you are first deleting(based on sa8775p) and then re-adding
-> for qcs9100-ride*.
-> 
-> I think it's better to move common qcs9100-ride* to a common file ex:
-> qcs9100-ride.dtsi and keep specifics further to .dts files?
-> 
-> This will ensure common entities are present at same place with no
-> duplicates.
+--000000000000f51c87062756d36c
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-I'd second this proposal.
+On Wed, Nov 20, 2024 at 6:15=E2=80=AFPM Thomas Wei=C3=9Fschuh
+<thomas.weissschuh@linutronix.de> wrote:
+>
+> av_permissions.h is not declared as a target and therefore won't be
+> added to clean-files automatically by kbuild.
+> For details why it is not a target see the Makefile itself.
+>
+> Signed-off-by: Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
+> ---
+>  security/selinux/Makefile | 3 +++
+>  1 file changed, 3 insertions(+)
+>
+> diff --git a/security/selinux/Makefile b/security/selinux/Makefile
+> index 86f0575f670da66a9dc57e13a236d6a5551af38e..58129a7c8cfa08f9caf5444f7=
+df776f41056b77a 100644
+> --- a/security/selinux/Makefile
+> +++ b/security/selinux/Makefile
+> @@ -41,5 +41,8 @@ targets +=3D flask.h
+>  $(obj)/flask.h: $(obj)/genheaders FORCE
+>         $(call if_changed,genhdrs)
+>
+> +# see the note above, remove this line
+> +clean-files +=3D av_permissions.h
+> +
+>  hostprogs :=3D genheaders
+>  HOST_EXTRACFLAGS +=3D -I$(srctree)/security/selinux/include
 
--- 
-With best wishes
-Dmitry
+
+
+Presumably, the attached fixup.diff (comment in 'targets' assignment)
+would align with the intention of the maintainer of this Makefile
+because you can do
+
+  targets +=3D $(genhdrs)
+
+without the need of the grouped target feature.
+'make clean' removes files listed in 'targets'.
+
+
+
+BTW, the NOTE in this Makefile is not true.
+  https://github.com/torvalds/linux/blob/v6.12/security/selinux/Makefile#L7
+
+
+Even if you use GNU Make 4.3, the grouped target does not work with
+the if_changed macro.
+
+With GNU Make 4.4, it will work as a side-effect of commit
+fabb03eac412b5ea19f1a97be31dc8c6fa7fc047
+
+
+I asked about this behavior some time ago in GNU Make ML.
+
+https://lists.gnu.org/archive/html/help-make/2024-08/msg00001.html
+  or
+https://savannah.gnu.org/bugs/index.php?66073
+
+
+The combination of the grouped target and if_changed
+is working with GNU Make 4.4+, but I do not know if
+it is future promising.
+
+
+
+IMHO, I do not see much benefits for using the group target in this case
+because you can still generate flask.h and av_permissions.h
+separately.
+
+
+
+
+
+
+>
+> ---
+> base-commit: bf9aa14fc523d2763fc9a10672a709224e8fcaf4
+> change-id: 20241120-selinux-clean-dfcd0e7a344b
+>
+> Best regards,
+> --
+> Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
+>
+
+
+--=20
+Best Regards
+Masahiro Yamada
+
+--000000000000f51c87062756d36c
+Content-Type: text/x-patch; charset="US-ASCII"; name="fixup.diff"
+Content-Disposition: attachment; filename="fixup.diff"
+Content-Transfer-Encoding: base64
+Content-ID: <f_m3ptnxzt0>
+X-Attachment-Id: f_m3ptnxzt0
+
+ZGlmZiAtLWdpdCBhL3NlY3VyaXR5L3NlbGludXgvTWFrZWZpbGUgYi9zZWN1cml0eS9zZWxpbnV4
+L01ha2VmaWxlCmluZGV4IDg2ZjA1NzVmNjcwZC4uYmVkZWYwMzczZWY5IDEwMDY0NAotLS0gYS9z
+ZWN1cml0eS9zZWxpbnV4L01ha2VmaWxlCisrKyBiL3NlY3VyaXR5L3NlbGludXgvTWFrZWZpbGUK
+QEAgLTMzLDExICszMywxMCBAQCAkKGFkZHByZWZpeCAkKG9iaikvLCQoc2VsaW51eC15KSk6ICQo
+b2JqKS9mbGFzay5oCiBxdWlldF9jbWRfZ2VuaGRycyA9IEdFTiAgICAgJChhZGRwcmVmaXggJChv
+YmopLywkKGdlbmhkcnMpKQogICAgICAgY21kX2dlbmhkcnMgPSAkPCAkKGFkZHByZWZpeCAkKG9i
+aikvLCQoZ2VuaGRycykpCiAKLSMgc2VlIHRoZSBub3RlIGFib3ZlLCByZXBsYWNlIHRoZSAkdGFy
+Z2V0cyBhbmQgJ2ZsYXNrLmgnIHJ1bGUgd2l0aCB0aGUgbGluZXMKK3RhcmdldHMgKz0gJChnZW5o
+ZHJzKQorIyBzZWUgdGhlIG5vdGUgYWJvdmUsIHJlcGxhY2UgdGhlICdmbGFzay5oJyBydWxlIHdp
+dGggdGhlIGxpbmVzCiAjIGJlbG93OgotIyAgdGFyZ2V0cyArPSAkKGdlbmhkcnMpCiAjICAkKGFk
+ZHByZWZpeCAkKG9iaikvLCQoZ2VuaGRycykpICY6ICQob2JqKS9nZW5oZWFkZXJzIEZPUkNFCi10
+YXJnZXRzICs9IGZsYXNrLmgKICQob2JqKS9mbGFzay5oOiAkKG9iaikvZ2VuaGVhZGVycyBGT1JD
+RQogCSQoY2FsbCBpZl9jaGFuZ2VkLGdlbmhkcnMpCiAK
+--000000000000f51c87062756d36c--
 
