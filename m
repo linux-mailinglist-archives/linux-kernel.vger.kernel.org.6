@@ -1,86 +1,118 @@
-Return-Path: <linux-kernel+bounces-416060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E426C9D3FA8
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 17:05:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0BA49D3FAB
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 17:05:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 897941F22535
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:05:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 872A428454F
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:05:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50A9A14831E;
-	Wed, 20 Nov 2024 16:03:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C945415098E;
+	Wed, 20 Nov 2024 16:03:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aBRUWNLH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E81BC13B58A;
-	Wed, 20 Nov 2024 16:03:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C7B413B58A;
+	Wed, 20 Nov 2024 16:03:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732118590; cv=none; b=tbPKts549sh5vINbSx3Mt1TGb2M49+pIaGUAA3cIOgSQvGIEpDyW4fmPTREs2wwv+Hbd3QbgzJlS3UEnhzxIQSMQk+ydkiEWDBhW9OL9rPqHpv9XwQN9yKuPUJ2cWagYBI4j6MYQ6MuD/Efdt6vX+CtMUPd6wwHiVyu6sUtMJwc=
+	t=1732118605; cv=none; b=ARlfOLutSs6zUMqnattwFzuSR49fEUpHiAOTio0YbvIL1lXGhFQuWBBjekPv75SfL/Reoitjowr7NgVM4ign6bfg2iPjmFqiDA7kY4QkQVUps7Jyr6ohLxtFSbEADntyI1hdXdGkZ/cPidZG5RxmUqCOFDRNyUXTEcEOgKEo3ig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732118590; c=relaxed/simple;
-	bh=RJ4Vucc/cxtUFNACctKnTIOaLzrgb7JCOMjpeh0QwSo=;
+	s=arc-20240116; t=1732118605; c=relaxed/simple;
+	bh=l9At4QAU1UWOdiHd0AM/zaIAhJIXZNKutllsFxhd04c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lC1jK5gyv3QukK1bcP/bfYFin9F+RSp1SkyEhIrelOrv7YqFa1uRdsmwHihDUvKIdK7dKhJzN2eNDq1kZsjshXeGFo3zJQ6uH/rdpGRJ5MmhWhUUsTi7ro5lNe4uI+SzpLFHg/ivDusVBpf2jVpFXcW1RGmP2Qehf2HRxLW9yN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39AEDC4CECD;
-	Wed, 20 Nov 2024 16:03:10 +0000 (UTC)
-Date: Wed, 20 Nov 2024 08:03:08 -0800
-From: Josh Poimboeuf <jpoimboe@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ovfen8eFRUGC4ijEPOY/ufR7D838CcGe2ZXMv21Q+N7izwqpoTVahfTAuX6Tary8DltZmxA3kn3zJVJNTXIsafZoUF4u+FKQW50uoPxj11p3U+JzeX0Irkdb68IBTwLmkdTFdcXpAxgXaV6QeOpXN7jKg8ST8vhCKsZ8YsNpp7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aBRUWNLH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA3DCC4CECD;
+	Wed, 20 Nov 2024 16:03:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732118604;
+	bh=l9At4QAU1UWOdiHd0AM/zaIAhJIXZNKutllsFxhd04c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aBRUWNLHRfZeQXMu7YAN3oI6Uslc8DdiOozdXsGOLr5vSQVyQBykU8uvU1q668mLY
+	 TMtblbKYRnL24mIoJatHJ2AZiGKghQBFG/eTgfk4sIjgVRqe8TfyJ/xk2vwnX1WnHA
+	 wLA6aGH16h/F9Bis7foCon/OkCF9RPqyCsY9TCjStwVdBSUbWembvOCPmjIF4GOvVj
+	 tvbF11Dc4XbXwkRf0KNuvjtSsjT634wGzdQ1R5MtHwraGXLVV/LWT0FSyqQ25APhJs
+	 coRzeI/IFJZzzvtDkp8ZglyDCN+ym0jqz5AWZqyiCK8smJvW+qPsrJTsUl1y8VlJI2
+	 +dPiw54jhcWWQ==
+Date: Wed, 20 Nov 2024 17:03:13 +0100
+From: Ingo Molnar <mingo@kernel.org>
 To: Peter Zijlstra <peterz@infradead.org>
-Cc: seanjc@google.com, pbonzini@redhat.com, tglx@linutronix.de,
-	linux-kernel@vger.kernel.org, x86@kernel.org, kvm@vger.kernel.org,
-	jthoughton@google.com
-Subject: Re: [PATCH v2 01/12] objtool: Generic annotation infrastructure
-Message-ID: <20241120160308.o24km3zwrpbqn7m4@jpoimboe>
-References: <20241111115935.796797988@infradead.org>
- <20241111125218.113053713@infradead.org>
- <20241115183828.6cs64mpbp5cqtce4@jpoimboe>
- <20241116093331.GG22801@noisy.programming.kicks-ass.net>
- <20241120003123.rhb57tk7mljeyusl@jpoimboe>
- <20241120010424.thsbdwfwz2e7elza@jpoimboe>
- <20241120085254.GD19989@noisy.programming.kicks-ass.net>
+Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-trace-kernel@vger.kernel.org, linux-mm@kvack.org,
+	akpm@linux-foundation.org, oleg@redhat.com, rostedt@goodmis.org,
+	mhiramat@kernel.org, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org, jolsa@kernel.org, paulmck@kernel.org,
+	willy@infradead.org, surenb@google.com, mjguzik@gmail.com,
+	brauner@kernel.org, jannh@google.com, mhocko@kernel.org,
+	Andrii Nakryiko <andrii@kernel.org>, vbabka@suse.cz,
+	shakeel.butt@linux.dev, hannes@cmpxchg.org, Liam.Howlett@oracle.com,
+	lorenzo.stoakes@oracle.com, david@redhat.com, arnd@arndb.de,
+	richard.weiyang@gmail.com, zhangpeng.00@bytedance.com,
+	linmiaohe@huawei.com, viro@zeniv.linux.org.uk, hca@linux.ibm.com,
+	Mark Rutland <mark.rutland@arm.com>, Will Deacon <will@kernel.org>,
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Kernel Team <kernel-team@meta.com>
+Subject: Re: [PATCH v4 tip/perf/core 0/4] uprobes,mm: speculative lockless
+ VMA-to-uprobe lookup
+Message-ID: <Zz4IQaF9CCfjS28S@gmail.com>
+References: <20241028010818.2487581-1-andrii@kernel.org>
+ <CAEf4BzYPajbgyvcvm7z1EiPgkee1D1r=a8gaqxzd7k13gh9Uzw@mail.gmail.com>
+ <CAEf4Bza=pwrZvd+3dz-a7eiAQMk9rwBDO1Kk_iwXSCM70CAARw@mail.gmail.com>
+ <CAEf4BzbiZT5mZrQp3EDY688PzAnLV5DrqGQdx6Pzo6oGZ2KCXQ@mail.gmail.com>
+ <20241120154323.GA24774@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241120085254.GD19989@noisy.programming.kicks-ass.net>
+In-Reply-To: <20241120154323.GA24774@noisy.programming.kicks-ass.net>
 
-On Wed, Nov 20, 2024 at 09:52:54AM +0100, Peter Zijlstra wrote:
-> On Tue, Nov 19, 2024 at 05:04:24PM -0800, Josh Poimboeuf wrote:
-> > On Tue, Nov 19, 2024 at 04:31:25PM -0800, Josh Poimboeuf wrote:
-> > > On Sat, Nov 16, 2024 at 10:33:31AM +0100, Peter Zijlstra wrote:
-> > > > On Fri, Nov 15, 2024 at 10:38:28AM -0800, Josh Poimboeuf wrote:
-> > > > > On Mon, Nov 11, 2024 at 12:59:36PM +0100, Peter Zijlstra wrote:
-> > > > > > +#define ASM_ANNOTATE(x)						\
-> > > > > > +	"911:\n\t"						\
-> > > > > > +	".pushsection .discard.annotate,\"M\",@progbits,8\n\t"	\
-> > > > > > +	".long 911b - .\n\t"					\
-> > > > > > +	".long " __stringify(x) "\n\t"				\
-> > > > > > +	".popsection\n\t"
-> > > > > 
-> > > > > Why mergeable and progbits?
-> > > > 
-> > > > In order to get sh_entsize ?
-> > > 
-> > > Is that a guess?  If so, it's not very convincing as I don't see what
-> > > entsize would have to do with it.
+
+* Peter Zijlstra <peterz@infradead.org> wrote:
+
+> On Wed, Nov 20, 2024 at 07:40:15AM -0800, Andrii Nakryiko wrote:
+> > Linus,
 > > 
-> > Oh, nevermind... I see it's a gas syntax issue.
+> > I'm not sure what's going on here, this patch set seems to be in some
+> > sort of "ignore list" on Peter's side with no indication on its
+> > destiny.
 > 
-> Not a guess, only mergable gets entsize, and progbits is a required
-> argument per the syntax in order to specify entsize.
+> *sigh* it is not, but my inbox is like drinking from a firehose :/
 
-If you look at "readelf -WS vmlinux" there are plenty of non-mergeable
-sections with entsize.
+And I've been considering that particular series WIP for two reasons:
 
--- 
-Josh
+ 1) Oleg was still unconvinced about patch 5/5 in the v2 discussion. 
+    Upon re-reading it I think he might have come around and has agreed 
+    to the current approach - but sending a v3 & not seeing Oleg object 
+    would ascertain that.
+
+ 2) There was a build failure reported against -v2 at:
+
+       https://lore.kernel.org/all/202410050745.2Nuvusy4-lkp@intel.com/t.mbox.gz
+
+    We cannot and will not merge patches with build failures.
+
+Andrii did get some other uprobes scalability work merged in v6.13:
+
+    - Switch to RCU Tasks Trace flavor for better performance (Andrii Nakryiko)
+
+    - Massively increase uretprobe SMP scalability by SRCU-protecting
+      the uretprobe lifetime (Andrii Nakryiko)
+
+So we've certainly not been ignoring his patches, to the contrary ...
+
+Thanks,
+
+	Ingo
 
