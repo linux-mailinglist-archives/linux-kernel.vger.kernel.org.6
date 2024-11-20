@@ -1,94 +1,126 @@
-Return-Path: <linux-kernel+bounces-416127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-416128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3671E9D4099
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 17:55:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BAE29D409E
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 17:55:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFF28282548
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:55:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E769B1F24D28
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 16:55:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40947153BEE;
-	Wed, 20 Nov 2024 16:55:11 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 778C3146D57
-	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 16:55:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62DF6156654;
+	Wed, 20 Nov 2024 16:55:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VbZmQLWm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F95F150994;
+	Wed, 20 Nov 2024 16:55:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732121710; cv=none; b=AwaAECjL3iMA/ObTG0RujIK7IRegMr4Xi2KekDBDwvejh81DvlJVxmmQQ2iy9QvhRXZ0AxEpNH098XFcHT7RBCI0hRFbiMSm5nzp09aeaIlKF+pLbQyd2LzRhnN/vV1iSK0KrtjBFPCMfF0lasS14DlnWJt6BkFvu6JI87ayVPM=
+	t=1732121719; cv=none; b=VBfKs1uzWSUKnRc4mDUdamgMEOIdLF4ju87iwYyVgC4dM9oVaIrQOHpz+ZhbUOBPa6A0eQLERRIDdFdnIqHC4llpb9xI8NlqMWq2S6SF5XM2inA/kZz/2ofCyBLEsROaye1smi/1NaZBLLioY0IiAn/PXssnzmajy50RyUg7axM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732121710; c=relaxed/simple;
-	bh=q+tle++Qrkq5T2n4gB+GAFWKdVGxJE71vijQfY4KJYk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iDJT0BoYAuXvBx8VEb3YnOsMnmf8xVOI/uBeO4wDEJevByOKP2jobmC58f24SB5pdlaT82NwZTdgolKO3ThgOa9tYXwf26IxHueUA+D/Zcvh28idwmdNHVvaDdcoZN2+a0wpD97sSx+adqcEVbpqMOyOkKnLRqDyWOLqC8ONeVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 64B5C1480;
-	Wed, 20 Nov 2024 08:55:37 -0800 (PST)
-Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 61B813F66E;
-	Wed, 20 Nov 2024 08:55:06 -0800 (PST)
-Message-ID: <bb01b83a-32cb-4efe-b9d6-06a4cf138b3b@arm.com>
-Date: Wed, 20 Nov 2024 16:55:04 +0000
+	s=arc-20240116; t=1732121719; c=relaxed/simple;
+	bh=hmI5ldVmxI65EUniu7IXHlhGVAjmlmRhEepVsBj3yHs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HC54dsjqgnXEeX5N+w1tdKcE0BNRPGh+HHtZEppFu65csJS74d13CdAAf9jDDE7szacKsgslL+uv625ulX8qUq92okSKDH1ng6xVngsdRNweRTUtfE3vB//2VCCHqEwONalUB4GtNJNFAB+/UOhXuPLtwlzI/2RXtmQkPAWFf4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VbZmQLWm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13F11C4CECD;
+	Wed, 20 Nov 2024 16:55:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732121719;
+	bh=hmI5ldVmxI65EUniu7IXHlhGVAjmlmRhEepVsBj3yHs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VbZmQLWmmmhDFqloOrHNd4yk7zq1dsIkllT9SF5uvvll0QwATG2pV1ycjrppEHw5P
+	 sZMIojJZMgd8G5VEWG1M0j6a41cDR/IuouRcbUEMms2HwFIqzPp/reboy6M9n0vvuK
+	 V6mJNRXXet8swxaCH11Fx/Pv2yUn7fUuZT82hObC+atTl6QPJ3XZlINEVMvAa2bsFo
+	 7HMtT4+usHwkxflPaBIzCClgHSBDsVV8tdWdJ3U8eKB480Sl1VsFL0DJeFcMKkST9M
+	 MkYTY2gpnxWCH+uxLkWrkyquIPO429sA2Mz+/bt6VGSde9kz8OkJWvEUD9xYatR8Z2
+	 FEPKOJmD/ITAg==
+Date: Wed, 20 Nov 2024 08:55:15 -0800
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Valentin Schneider <vschneid@redhat.com>, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, kvm@vger.kernel.org, linux-mm@kvack.org,
+	bpf@vger.kernel.org, x86@kernel.org, rcu@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Wanpeng Li <wanpengli@tencent.com>,
+	Vitaly Kuznetsov <vkuznets@redhat.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Neeraj Upadhyay <quic_neeraju@quicinc.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	Lorenzo Stoakes <lstoakes@gmail.com>,
+	Jason Baron <jbaron@akamai.com>, Kees Cook <keescook@chromium.org>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Juerg Haefliger <juerg.haefliger@canonical.com>,
+	Nicolas Saenz Julienne <nsaenz@kernel.org>,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	Nadav Amit <namit@vmware.com>, Dan Carpenter <error27@gmail.com>,
+	Chuang Wang <nashuiliang@gmail.com>,
+	Yang Jihong <yangjihong1@huawei.com>,
+	Petr Mladek <pmladek@suse.com>,
+	"Jason A. Donenfeld" <Jason@zx2c4.com>, Song Liu <song@kernel.org>,
+	Julian Pidancet <julian.pidancet@oracle.com>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	Dionna Glaze <dionnaglaze@google.com>,
+	Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Marcelo Tosatti <mtosatti@redhat.com>,
+	Yair Podemsky <ypodemsk@redhat.com>,
+	Daniel Wagner <dwagner@suse.de>, Petr Tesarik <ptesarik@suse.com>
+Subject: Re: [RFC PATCH v3 06/15] jump_label: Add forceful jump label type
+Message-ID: <20241120165515.qx4qyenlb5guvmfe@jpoimboe>
+References: <20241119153502.41361-1-vschneid@redhat.com>
+ <20241119153502.41361-7-vschneid@redhat.com>
+ <20241119233902.kierxzg2aywpevqx@jpoimboe>
+ <20241120145649.GJ19989@noisy.programming.kicks-ass.net>
+ <20241120145746.GL38972@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] perf/arm-cmn: Fix arm_cmn_node_to_xp()
-To: Namhyung Kim <namhyung@kernel.org>, Will Deacon <will@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>
-Cc: Stephane Eranian <eranian@google.com>, LKML
- <linux-kernel@vger.kernel.org>, linux-arm-kernel@lists.infradead.org
-References: <20241120164110.266297-1-namhyung@kernel.org>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20241120164110.266297-1-namhyung@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241120145746.GL38972@noisy.programming.kicks-ass.net>
 
-On 20/11/2024 4:41 pm, Namhyung Kim wrote:
-> The portid_bits and deviceid_bits for XP type nodes are set in the
-> arm_cmn_discover() and it's copied to others in arm_cmn_init_dtcs().
-> But to get the XP from a node in the arm_cmn_init_dtcs(), it needs
-> the {port,device}id_bits.
+On Wed, Nov 20, 2024 at 03:57:46PM +0100, Peter Zijlstra wrote:
+> On Wed, Nov 20, 2024 at 03:56:49PM +0100, Peter Zijlstra wrote:
 > 
-> This makes arm-cmn PMU failing to count events on my setup.  What we
-> need is the number of bits in total which is known by the cmn config.
+> > But I think we can make the fall-back safer, we can simply force the IPI
+> > when we poke at noinstr code -- then NOHZ_FULL gets to keep the pieces,
+> > but at least we don't violate any correctness constraints.
+> 
+> I should have read more; that's what is being proposed.
 
-Hmm, what about just moving the assignment to a point where it actually
-makes more sense anyway?
+Hm, now I'm wondering what you read, as I only see the text poke IPIs
+being forced when the caller sets force_ipi, rather than the text poke
+code itself detecting a write to .noinstr.
 
-Cheers,
-Robin.
-
------>8-----
-diff --git a/drivers/perf/arm-cmn.c b/drivers/perf/arm-cmn.c
-index 397a46410f7c..30506c43776f 100644
---- a/drivers/perf/arm-cmn.c
-+++ b/drivers/perf/arm-cmn.c
-@@ -2178,8 +2178,6 @@ static int arm_cmn_init_dtcs(struct arm_cmn *cmn)
-  			continue;
-  
-  		xp = arm_cmn_node_to_xp(cmn, dn);
--		dn->portid_bits = xp->portid_bits;
--		dn->deviceid_bits = xp->deviceid_bits;
-  		dn->dtc = xp->dtc;
-  		dn->dtm = xp->dtm;
-  		if (cmn->multi_dtm)
-@@ -2420,6 +2418,8 @@ static int arm_cmn_discover(struct arm_cmn *cmn, unsigned int rgn_offset)
-  			}
-  
-  			arm_cmn_init_node_info(cmn, reg & CMN_CHILD_NODE_ADDR, dn);
-+			dn->portid_bits = xp->portid_bits;
-+			dn->deviceid_bits = xp->deviceid_bits;
-  
-  			switch (dn->type) {
-  			case CMN_TYPE_DTC:
+-- 
+Josh
 
