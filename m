@@ -1,113 +1,135 @@
-Return-Path: <linux-kernel+bounces-415480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 846859D36E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 10:20:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA3AA9D36E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 10:20:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48C9428464F
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:20:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79C831F26E8B
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 09:20:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62D9719D06B;
-	Wed, 20 Nov 2024 09:18:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P3+muXXx"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6BA319F47E;
+	Wed, 20 Nov 2024 09:18:24 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54E1B199E84;
-	Wed, 20 Nov 2024 09:18:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C52A519F118
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 09:18:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732094300; cv=none; b=lr9tOexaX+arrPV69lBxasS5BqSuiobItsIcISkCR12IUkYEU5wcBbjwiYHsumAgjCyHho1cB0hLYDUmFcHA0DMDsRAKLXEN8kAZ27qQK5aWfZ4ooK+3FXvd4aoKdoJeDA2BkR0c94f6cWkUsKlCymFXjTs+d96r6z8zu1tstvk=
+	t=1732094304; cv=none; b=EmkNttjGA1PA6VzQS52AWjsPpIjqOULExtVHjBUkvXszBAjB+uLEKHhh7P4WzgKEOw9xhbAVXpQCzUs9SifyZKnCKrT31lOCtwULHPg43QqDDTy2ToXvga4f1lCePudyZMUWaYYuNHzIX+W/d0Jr4KiXSvfZ5utQLjU2E9qzu2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732094300; c=relaxed/simple;
-	bh=RQe4qxk3Ec1zQwrzOpzqrFQ+eM9ByiUfT2lAu5S2CTw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KLO7hxmScgXfl97MEAjWYIOCIjt+n2ZzeutxU7u3zEd0wUdQRBw8gYR/5HmxytUfpeqHWEL199Q+4SRH8U2iQ7el2nOfr5N8dVU3NTh4WgD+6FYiuIVRcDBtpLQl1RFOeYQqo8q8E96WZbuJmdCnFUP7zGV2zu/UUV40EwZaI/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P3+muXXx; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-7f450f7f11dso3043273a12.2;
-        Wed, 20 Nov 2024 01:18:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732094298; x=1732699098; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lcVN3Jdae/34UfDNTnVWZvRwthuxsod5WOI/U7hm32s=;
-        b=P3+muXXxdBmsPSDQ0eA8kd2BEtSwMo4cpxyNPDZuer2Y4hUkcb3IQXDqZXKWTcIp7x
-         jxAifGrBb6ZO0ldubzclIjkoa3VKE7mberVl0753ftOdvq3LlGme6y+My4Mt+5ZJNwhK
-         0N0qLzeP4nVJlmzcpNeA73gLzb/Oj9eyjdOofTq+1cMEK00YQQ6NFb5D05wYHrB+YcJ+
-         njFR6gXvP7SdcDGQsNRyK1PjYAULi0gVqRYHO5jSmTzNjOEHLdErVwSJCGED2WnhEIT+
-         +GVmdb4GNusy5mKonj6XDILdDqNENpvj7guTAQ34uQPuS9tTHQcKkQbqiwIZCxCVVmoR
-         yZoA==
+	s=arc-20240116; t=1732094304; c=relaxed/simple;
+	bh=6va+wkhwIco1QHZj1VVk17XoJmd99G2rmtvlnGTPN10=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=gfIvHi/sjGnApkJ6N3+gQ2uzGXbceor6p2A90M5tTMxYUewWpMiWktKwj3bdTx6k4/KSmnBbtkpjrfuboyQHpTGfYrJymzqaWUYk09VmL+5kEF6XgKagpFeqdHRMwtflLyU8N7uCdVSqGr9mWfMP3DNhsxeDrO9DU9tsTwFUHwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a77de12c48so16837205ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 01:18:22 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732094298; x=1732699098;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1732094302; x=1732699102;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lcVN3Jdae/34UfDNTnVWZvRwthuxsod5WOI/U7hm32s=;
-        b=P0IDLw2d2Hm+544LP6ftGmfeYKg1VrSWUGD7Wg9nbpYvt07Fn1azB9hCa0GBcgAvc/
-         149by/Uo9F6bdoIgcwt9TZM/9ZGUzw7yXja3v6j8WX4Oc2F7Lf+20VuB35xqJ+DvRpB4
-         43AoLOlESH3hjdoHTPJA2dxRaLzdqnykcl4IWXJoX/rYymPGlVbDKPK6jrf7HhhXSwJ1
-         l9lh5WlOx+7UV1kTJFSlmyJJrdIs2YDvxIZLh/gQ4cjphBsJ8k8nSlCEJwyGr7NeBy8r
-         uwTcYDbRkYWSqtrrMtdTyVb0pUmvlS4b0nQJZhqa/2tvSR7XMujQp/v1KrJDQdMQI4Sv
-         QIcw==
-X-Forwarded-Encrypted: i=1; AJvYcCUiIKMYdAaxnAosOP5PuvgeE4Oed6PpM42gwTOER+CYYKaJoQXTUGjfm1zBanSwZIw7ygqjMObE3uLEQyw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+B8nN/6ZfBkTAbLIrL6h6ybCNij/NovQCn0u1+J06vGpvEOKh
-	GTygvHr5k0ttbzbg6R0sjnWMMxh3ho03suRgSTjrEW7NTXtndl99
-X-Google-Smtp-Source: AGHT+IE5qBNpPrE4P+vZYRI/OV6G5NqY568aGUhN8/36GNPvukImlh0PPDNwOf2dfGXkozRvvB8w0w==
-X-Received: by 2002:a05:6a20:6a06:b0:1db:e508:cf68 with SMTP id adf61e73a8af0-1ddaebd6caemr3201947637.24.1732094298245;
-        Wed, 20 Nov 2024 01:18:18 -0800 (PST)
-Received: from ?IPV6:2409:40c0:11a2:6510:b9eb:15c5:a64d:93da? ([2409:40c0:11a2:6510:b9eb:15c5:a64d:93da])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7f8c1c176b0sm9217732a12.2.2024.11.20.01.18.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 20 Nov 2024 01:18:17 -0800 (PST)
-Message-ID: <3a73d963-36ef-44db-8fd0-7b4a5c73609c@gmail.com>
-Date: Wed, 20 Nov 2024 14:48:12 +0530
+        bh=jj/krNA+0xga5ye0XvZq56f6vcX0jsGHLzgJT6onnAE=;
+        b=At+PCh49pp5+v+dKas3C3x0yn/gZnV3QzDg1y8aaUNm/0ohSVygXT6r7GnQv5OMpcC
+         sOkLG3mQnqN3q7FvbWS62EvSz5wd6it5S+CzBAkigldeKB8h7tG74NzxrF9mK/PgrIHB
+         U6C7tPiaoi4tOfOMaIVbkVNQF+QMtGgLP9FtVDVyEgm62E9Ku+YspkDoxpviILsG+5gR
+         XQHdtKrfqtm4EJkNcF3ZtHHVQdDOVOZpVRW+4xeKpYqM0MBwCzSbnzlY17aQJ+amV/4k
+         EW9MpQ4ncGhZqcTzt4TB97BEnR7yz2ZOucjemdabburV5eiGORK5FjoUaBz+mR7aTOTT
+         fVYw==
+X-Forwarded-Encrypted: i=1; AJvYcCX3hfuzRjTNkWEJsB8aQqhoLWlRNmcdjUGSIOi6I5V82j3j7mmue0if0CvJx3UU+nuD0GO0qGAVLfgbvV4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyzw4PzU1mVvka173Z27tJP3MVXkhPvby1mCAlifEDtWz/1MpGE
+	afCVRm9xoKy74yxc/M+/Rki5hkesUzQ7dMzCT7cq8E4rcWI6FZrneZbZTZuRsRqrVpzeI7sQs+c
+	6h5FEGnXbWdKeejWHhF/X9bEQzZBifavABsA6wVNlseFa9zxPZZtITZE=
+X-Google-Smtp-Source: AGHT+IFGhL+ZaHQjREBSS6Jq8cwAZgxvMuYLqCBTqKdlETCFNLJh9e6y7Os79E0cHEpNWDnujcHSwBSfpdhvKatD13T+9obGvNe1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5] block: blk-mq: fix uninit-value in blk_rq_prep_clone
- and refactor
-To: Jens Axboe <axboe@kernel.dk>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- hch@infradead.org, hare@suse.de, kbusch@kernel.org
-References: <20241119164412.37609-1-surajsonawane0215@gmail.com>
- <173206838768.183842.958207443357457539.b4-ty@kernel.dk>
-Content-Language: en-US
-From: Suraj Sonawane <surajsonawane0215@gmail.com>
-In-Reply-To: <173206838768.183842.958207443357457539.b4-ty@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1789:b0:3a7:4826:b947 with SMTP id
+ e9e14a558f8ab-3a78656fd09mr22144355ab.17.1732094302052; Wed, 20 Nov 2024
+ 01:18:22 -0800 (PST)
+Date: Wed, 20 Nov 2024 01:18:22 -0800
+In-Reply-To: <00000000000052c1d00616feca15@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <673da95e.050a0220.363a1b.0009.GAE@google.com>
+Subject: Re: [syzbot] [bluetooth?] WARNING in hci_recv_frame
+From: syzbot <syzbot+3e07a461b836821ff70e@syzkaller.appspotmail.com>
+To: johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, luiz.dentz@gmail.com, marcel@holtmann.org, 
+	netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 20/11/24 07:36, Jens Axboe wrote:
-> 
-> On Tue, 19 Nov 2024 22:14:12 +0530, Suraj Sonawane wrote:
->> Fix an issue detected by the `smatch` tool:
->>
->> block/blk-mq.c:3314 blk_rq_prep_clone() error: uninitialized
->> symbol 'bio'.
->>
->> This patch refactors `blk_rq_prep_clone()` to improve code
->> readability and ensure safety by addressing potential misuse of
->> the `bio` variable:
->>
->> [...]
-> 
-> Applied, thanks!
-> 
-> [1/1] block: blk-mq: fix uninit-value in blk_rq_prep_clone and refactor
->        commit: dcbb598e689e30d4636201d35582e167d1b8dfa4
-> 
-> Best regards,
+syzbot has found a reproducer for the following issue on:
 
-Thank you for applying the patch and for your time reviewing it.
+HEAD commit:    a5c93bfec0be Merge tag 'x86-mm-2024-11-18' of git://git.ke..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1378475f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=9b5cb37a5a4eda10
+dashboard link: https://syzkaller.appspot.com/bug?extid=3e07a461b836821ff70e
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12694ae8580000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/70daf24cbd5f/disk-a5c93bfe.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/43d73b55bde3/vmlinux-a5c93bfe.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/1742639611a8/bzImage-a5c93bfe.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+3e07a461b836821ff70e@syzkaller.appspotmail.com
+
+Bluetooth: hci0: Opcode 0x0c03 failed: -112
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 11474 at kernel/workqueue.c:2257 __queue_work+0xc3a/0x1080 kernel/workqueue.c:2256
+Modules linked in:
+CPU: 1 UID: 0 PID: 11474 Comm: syz.3.1469 Not tainted 6.12.0-syzkaller-01518-ga5c93bfec0be #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
+RIP: 0010:__queue_work+0xc3a/0x1080 kernel/workqueue.c:2256
+Code: 07 83 c0 03 38 d0 7c 09 84 d2 74 05 e8 8f 55 98 00 8b 5b 2c 31 ff 83 e3 20 89 de e8 70 79 36 00 85 db 75 60 e8 27 77 36 00 90 <0f> 0b 90 e9 f9 f7 ff ff e8 19 77 36 00 90 0f 0b 90 e9 a8 f7 ff ff
+RSP: 0018:ffffc9000b2b7bf8 EFLAGS: 00010093
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffffff815719b0
+RDX: ffff88802b422440 RSI: ffffffff815719b9 RDI: 0000000000000005
+RBP: ffff8880360a8a80 R08: 0000000000000005 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+R13: 0000000000000008 R14: ffff8880123d3000 R15: ffff8880123d3000
+FS:  00007f22bc8606c0(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f38a17baf98 CR3: 000000006114e000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ queue_work_on+0x11a/0x140 kernel/workqueue.c:2390
+ queue_work include/linux/workqueue.h:662 [inline]
+ hci_recv_frame+0x23f/0x7e0 net/bluetooth/hci_core.c:2946
+ vhci_get_user drivers/bluetooth/hci_vhci.c:511 [inline]
+ vhci_write+0x385/0x470 drivers/bluetooth/hci_vhci.c:607
+ new_sync_write fs/read_write.c:586 [inline]
+ vfs_write+0x5ae/0x1150 fs/read_write.c:679
+ ksys_write+0x12b/0x250 fs/read_write.c:731
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f22bb97d23f
+Code: 89 54 24 18 48 89 74 24 10 89 7c 24 08 e8 c9 8d 02 00 48 8b 54 24 18 48 8b 74 24 10 41 89 c0 8b 7c 24 08 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 31 44 89 c7 48 89 44 24 08 e8 1c 8e 02 00 48
+RSP: 002b:00007f22bc860000 EFLAGS: 00000293 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 00007f22bbb35f80 RCX: 00007f22bb97d23f
+RDX: 0000000000000007 RSI: 0000000020000000 RDI: 00000000000000ca
+RBP: 00007f22bb9f175e R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000020000000 R11: 0000000000000293 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f22bbb35f80 R15: 00007ffc1b246d58
+ </TASK>
+
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
