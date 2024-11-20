@@ -1,124 +1,75 @@
-Return-Path: <linux-kernel+bounces-415889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-415890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BA989D3D9C
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:32:43 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 052B99D3DA7
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 15:34:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42CB728185F
-	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 14:32:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F727B256BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 20 Nov 2024 14:33:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D95521ABEAD;
-	Wed, 20 Nov 2024 14:32:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eTSONToU"
-Received: from mail-ej1-f65.google.com (mail-ej1-f65.google.com [209.85.218.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5124B1AA7AE;
+	Wed, 20 Nov 2024 14:33:15 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A77A4A939;
-	Wed, 20 Nov 2024 14:32:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2031BA939
+	for <linux-kernel@vger.kernel.org>; Wed, 20 Nov 2024 14:33:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732113157; cv=none; b=CYxLIEaD0HNump4+hfj/gZuOyd6VmD8krXTr3x4IChaLR6kRjlDJAZwAyYWsR6UgkAlVoJUDOySzthT6bLX8HSTrKulk2goWpLP3xAeM5cDJffrOhL0XOgT3TbcG6qDzVxHLPjhGQKXVaC2eLlnOjWdNoUfjx/4j8YKliXQdSRc=
+	t=1732113195; cv=none; b=J5+ybhu8rYpmeba30p6EhRDPsuuza0wa9DrqDnDpD4MkXdn1r2teHPEHjuDOmg81ti2qPOUM7WRf1u2TQEKnnkMX8/QYhlbbIRgVryp34h/HNK32tJCwIezJwhmRyQ/1ODB6Jx96tfQTpPOe+bhCBru2qtZRGuJWv16zxe+QfQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732113157; c=relaxed/simple;
-	bh=re6SqNbWzgzWriy6ggaNhl6E2wD6B8Dv3fx1ptxR2NI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iRGc0Pjk+Cf6vduz4bZZ6+xANw6QBPXeGzTtJF3VuYPTnc5POMzcHRRYy679X3ebuxFpktV6fh8AepZbRZZNDXmewmchmN/VnTZGk9K94SQggThx01IbD0Kg/MGcQKoi+n6XmuFqcZeHgUQ8rR9TXK2z9fGCSjkJUPjGVpj1XIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eTSONToU; arc=none smtp.client-ip=209.85.218.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f65.google.com with SMTP id a640c23a62f3a-a9e44654ae3so886789566b.1;
-        Wed, 20 Nov 2024 06:32:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732113153; x=1732717953; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YUsZHDLoQUbtgcasZun3ENnrBrDGzgDwOX2ETmF7VrI=;
-        b=eTSONToUDSuKKZiRTF5bBTqDTC1BDRlQktXMFVpZgAecURmQ08V1wN35DB8VHLkfRC
-         TpKFKe5CZ/Z9ImE1ozh5qEuXBXoq60RAUHd2ydWJrEN6QY0u2jO0Aw8fj4JtGKcaE1RN
-         Zb6QqgqwsAEtuSSY64/8lD0SYFfsYWyOxLN7zq95k4caxf7a+8pT7M380GNG9kVj+52n
-         ayXyoBBWT76zX9jvKr9VO3d8ucBhKXIr2xR38zY7nI4Mp8YSLpFe0ujH8/wY6eOGExBA
-         3D1pGGQRvqDJrTKWVVKhexpRMofoMZlentWy9HthAEfdhNuS5OvfCYcE0LNYvvYk77lm
-         kayg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732113153; x=1732717953;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YUsZHDLoQUbtgcasZun3ENnrBrDGzgDwOX2ETmF7VrI=;
-        b=s6UTIYODNPyCljOu2b5/fUYCD5EfnCrFaz9I/n+pHv07CtrrXzDni2aVFQQTcaq8Cc
-         aMUYJpkI+juNUoWDduUQyGAEeRv+r9323YGr/h1Xlfw/LlxJHIwf9UL85KiWct2wU37C
-         Bt3LEuZ6BVfChAg8hqvdRqOcqRsaoMBoDGHIBp0txQjjSAavy/z5t1S1Sm+gZj28P7tl
-         AZmCJDJWvF5rU7J4y8JLK3GSk1yaN5r0W+apxgZ6NUhpnkAoKu/JqZjyXs2YPLDZsT82
-         WlsRZ+xJl3ndwRqE7NSCy7U473pIm5EnyCAMvPJfNWw990pZsIj4O/WYFW/HeRZ2dbKY
-         oGeA==
-X-Forwarded-Encrypted: i=1; AJvYcCUR1e7LbqFwRz6LOffudsWerJmGuyE/AXWSnIhxzp2HKGeWiezLmoCPqZ+75As5RCsnYlYC4wxUnSo4rg0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxApEdHrw830nJWCY3tl9T5ANEt17DAAE1S9xCEZ+KX41Fvx4i6
-	hhhVHrw9ZsksaAUGUkTYzdVldo+nUnwqFFFD3tTXMsCqV/kePFP4jzJ4XbLh1AgXxKDyGQgBIQz
-	6S6Re7bXdeE4T8c2HzPHueAqTiZ0=
-X-Google-Smtp-Source: AGHT+IEMkNm9u/aDHhYdaOYV4LZ662B9EpY8jCLdFtqzclDlfmICB47DJ3aScSQ3RR1mJJBIO8H1sy6Irq6f1BRv0jc=
-X-Received: by 2002:a17:907:97c5:b0:a99:f4c3:580d with SMTP id
- a640c23a62f3a-aa4dd723faemr272688066b.42.1732113152789; Wed, 20 Nov 2024
- 06:32:32 -0800 (PST)
+	s=arc-20240116; t=1732113195; c=relaxed/simple;
+	bh=tpwHXt9OjnubS8VGjaLMRiwcCx1f7NKywEcpbcAammk=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Uu4Jylg2BZv7OZNsN1V969GNXyZK3Ngp6sFv7ai9UZhuXaAWXAETS/Yx0EVyNC3Rdo4e8HVbAesLUMiJNZWR7i6o8fBEPJA8Wv6t8MiOBkJKRpKCFHN/fzXMnOou4Mdajso69DLohSms8ejG/EupXu4ZKz5ctVAtF8D09qUVU0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XtkJz1qLpz6J6q2;
+	Wed, 20 Nov 2024 22:29:39 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id C3633140D1A;
+	Wed, 20 Nov 2024 22:33:10 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 20 Nov
+ 2024 15:33:10 +0100
+Date: Wed, 20 Nov 2024 14:33:08 +0000
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+CC: Igor Mammedov <imammedo@redhat.com>, Shiju Jose <shiju.jose@huawei.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>, Ani Sinha <anisinha@redhat.com>,
+	Dongjiu Geng <gengdongjiu1@gmail.com>, <linux-kernel@vger.kernel.org>,
+	<qemu-arm@nongnu.org>, <qemu-devel@nongnu.org>
+Subject: Re: [PATCH 3/6] acpi/ghes: rename the function which gets hw error
+ offsets
+Message-ID: <20241120143308.00005c31@huawei.com>
+In-Reply-To: <3dccd08b82755bd42ab61408d5d86b2bfe2f2f01.1731486604.git.mchehab+huawei@kernel.org>
+References: <cover.1731486604.git.mchehab+huawei@kernel.org>
+	<3dccd08b82755bd42ab61408d5d86b2bfe2f2f01.1731486604.git.mchehab+huawei@kernel.org>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241011043153.3788112-1-leonylgao@gmail.com> <173136306889.3322178.5149197946199507685.b4-ty@bootlin.com>
-In-Reply-To: <173136306889.3322178.5149197946199507685.b4-ty@bootlin.com>
-From: Yongliang Gao <leonylgao@gmail.com>
-Date: Wed, 20 Nov 2024 22:32:21 +0800
-Message-ID: <CAJxhyqB4CfLBwfgcDQFm7KZBwom58SPJvTSXdUTo+9saW46+zQ@mail.gmail.com>
-Subject: Re: [PATCH] rtc: check if __rtc_read_time was successful in rtc_timer_do_work()
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Yongliang Gao <leonylgao@tencent.com>, Jingqun Li <jingqunli@tencent.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100012.china.huawei.com (7.191.174.184) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-Hi Alexandre Belloni,
+On Wed, 13 Nov 2024 09:37:00 +0100
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
 
-I've noticed that the post-failure process for __rtc_read_time
-requires careful handling.
-1. Need to call pm_relax.
-2. Potentially need to set the alarm to ensure subsequent interrupts
-can process the
-    expired timer? Could you give me some advice?
-Should I continue to submit a fix patch or create a v2 version of the patch=
-?
-
-Best Regards,
-Yongliang Gao
-
-On Tue, Nov 12, 2024 at 6:11=E2=80=AFAM Alexandre Belloni
-<alexandre.belloni@bootlin.com> wrote:
->
-> On Fri, 11 Oct 2024 12:31:53 +0800, Yongliang Gao wrote:
-> > If the __rtc_read_time call fails,, the struct rtc_time tm; may contain
-> > uninitialized data, or an illegal date/time read from the RTC hardware.
-> >
-> > When calling rtc_tm_to_ktime later, the result may be a very large valu=
-e
-> > (possibly KTIME_MAX). If there are periodic timers in rtc->timerqueue,
-> > they will continually expire, may causing kernel softlockup.
-> >
-> > [...]
->
-> Applied, thanks!
->
-> [1/1] rtc: check if __rtc_read_time was successful in rtc_timer_do_work()
->       https://git.kernel.org/abelloni/c/e8ba8a2bc4f6
->
-> Best regards,
->
-> --
-> Alexandre Belloni, co-owner and COO, Bootlin
-> Embedded Linux and Kernel engineering
-> https://bootlin.com
+> Rename: get_ghes_offsets->get_hw_error_offsets
+> to make clear that this function return offsets based on the
+> hardware error firmware.
+> 
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
